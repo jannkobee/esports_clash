@@ -163,9 +163,10 @@ export interface LaneMinion {
   goldReward: number;
   xpReward: number;
   isAlive: boolean;
+  empowered?: boolean;
 }
 
-export type StructureType = 'outer_tower' | 'inner_tower' | 'nexus_tower' | 'nexus';
+export type StructureType = 'outer_tower' | 'inner_tower' | 'nexus_tower' | 'barracks' | 'nexus';
 
 export interface LaneStructure {
   id: string;
@@ -182,6 +183,7 @@ export interface LaneStructure {
   isAlive: boolean;
   targetId: string | null;
   armor: number;
+  barracksKind?: 'melee' | 'ranged' | 'catapult';
 }
 
 export interface AramChampionUnit {

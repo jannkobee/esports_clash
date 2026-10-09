@@ -52,10 +52,24 @@ export function shouldUseSkill(unit: Fighter, target: Fighter, enemies: Fighter[
   return teamfight || health(unit) < 0.5 || targetCanSurviveAttack;
 }
 
-export function shouldContestBoss(unit: Fighter, allies: Fighter[], enemies: Fighter[], bossHpRatio: number): boolean {
+export function shouldUseSecondSkill(unit: Fighter, target: Fighter, enemies: Fighter[], allies: Fighter[], range: number): boolean {
+  if (unit.cd2 > 0 || unit.mana < 35 || distance(unit, target) > range * 1.35) return false;
+  const iq = unit.player.stats.iq;
+  if (iq < 45) return true;
+  const teamfight = enemies.filter(e => e.isAlive && distance(e, unit) < 180).length >= 2;
+  const threatened = health(unit) < 0.6;
+  const allyNeedsHelp = allies.some(a => a.id !== unit.id && a.isAlive && health(a) < 0.55 && distance(a, unit) < 180);
+  const canFinish = unit.champion.skill2.damage >= target.hp && target.hp > unit.champion.ad * 0.8;
+  if (unit.champion.skill2.damage === 0) return teamfight || threatened || allyNeedsHelp;
+  if (target.hp <= unit.champion.ad * 0.8 && !teamfight) return false;
+  return teamfight || threatened || canFinish || unit.mana >= (iq >= 80 ? 65 : 45);
+}
+
+export function shouldContestBoss(unit: Fighter, allies: Fighter[], enemies: Fighter[], bossHpRatio: number, matchTime: number): boolean {
   const iq = unit.player.stats.iq;
   const healthyAllies = allies.filter(a => a.isAlive && health(a) > 0.5 && distance(a, unit) < 400).length;
   const nearbyEnemies = enemies.filter(e => e.isAlive && distance(e, unit) < 280).length;
+  const canStart = matchTime > 90 && iq >= 80 && healthyAllies >= 3 && nearbyEnemies === 0;
   return iq >= 65 && health(unit) > 0.55 && healthyAllies >= 2 && nearbyEnemies <= healthyAllies
-    && bossHpRatio < (iq >= 85 ? 0.8 : 0.5);
+    && (canStart || bossHpRatio < (iq >= 85 ? 0.8 : 0.5));
 }

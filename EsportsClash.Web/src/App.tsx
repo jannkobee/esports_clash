@@ -400,7 +400,7 @@ export function App() {
       </nav>
 
       {/* VIEW CONTENT */}
-      <main className="max-w-7xl mx-auto px-4 mt-6">
+      <main className={`${activeTab === 'arena' ? 'max-w-[1600px]' : 'max-w-7xl'} mx-auto px-4 mt-6`}>
         {activeTab === 'squad' && (
           <SquadView
             startingFive={startingFive}

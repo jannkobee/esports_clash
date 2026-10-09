@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chooseTeamfightTarget, shouldContestBoss, shouldUseSkill, shouldUseUltimate } from './combatDecision.ts';
+import { chooseTeamfightTarget, shouldContestBoss, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from './combatDecision.ts';
 
 function fighter(id, iq, x = 0, hp = 100, role = 'Mage') {
   return {
     id, x, y: 0, hp, maxHp: 100, isAlive: true, mana: 100, level: 6,
-    cd1: 0, cdUlt: 0, champion: { ad: 30, primaryRole: role, skill1: { damage: 50 } },
+    cd1: 0, cd2: 0, cdUlt: 0, champion: { ad: 30, primaryRole: role, skill1: { damage: 50 }, skill2: { damage: 70 } },
     player: { stats: { iq, lan: 70, tf: 70 } },
   };
 }
@@ -39,10 +39,22 @@ test('high IQ preserves mana for a ready ultimate unless skill secures the kill'
   assert.equal(shouldUseSkill(high, finishableTarget, [finishableTarget], 150), true);
 });
 
+test('second skill usage considers IQ and the fight', () => {
+  const target = fighter('target', 50, 70, 95);
+  const low = fighter('low', 20);
+  const high = fighter('high', 95);
+  high.mana = 45;
+  assert.equal(shouldUseSecondSkill(low, target, [target], [low], 150), true);
+  assert.equal(shouldUseSecondSkill(high, target, [target], [high], 150), false);
+  assert.equal(shouldUseSecondSkill(high, target, [target, fighter('second', 50, 90)], [high], 150), true);
+});
+
 test('boss contest requires sufficient IQ, health, and nearby teammates', () => {
   const high = fighter('high', 95);
   const allies = [high, fighter('a', 50, 20), fighter('b', 50, 30)];
-  assert.equal(shouldContestBoss(high, allies, [], 0.7), true);
-  assert.equal(shouldContestBoss(fighter('low', 40), allies, [], 0.4), false);
-  assert.equal(shouldContestBoss(high, [high], [], 0.7), false);
+  assert.equal(shouldContestBoss(high, allies, [], 0.7, 60), true);
+  assert.equal(shouldContestBoss(high, allies, [], 1, 100), true);
+  assert.equal(shouldContestBoss(high, allies, [], 1, 30), false);
+  assert.equal(shouldContestBoss(fighter('low', 40), allies, [], 0.4, 100), false);
+  assert.equal(shouldContestBoss(high, [high], [], 0.7, 100), false);
 });
