@@ -1,0 +1,28 @@
+# Build output and dependencies
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/dist-ssr/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.local
+*.pfx
+*.pem
+*.key
+
+# Logs and editor files
+*.log
+.vs/
+.vscode/
+.idea/
+.DS_Store
+*.suo
+*.user
+*.swp
+
+# TypeScript build cache
+*.tsbuildinfo
