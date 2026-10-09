@@ -26,7 +26,7 @@ import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
 import { chooseTeamfightTarget, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from '../combatDecision';
 import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from '../skillRangeRules';
-import { ARENA_WIDTH, BARRACKS_X, DRAGON_X, LANE_Y, NEXUS_X, WELL_X, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from '../arenaRules';
+import { ARENA_WIDTH, BARRACKS_X, DRAGON_X, LANE_Y, NEXUS_X, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from '../arenaRules';
 import { getMinionCrashMultiplier, getMinionStructureDamage, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
 import { 
   Play, 
@@ -526,20 +526,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         barracksKind: kind,
         name: `${team === 'blue' ? 'Blue' : 'Red'} ${kind === 'ranged' ? 'Ranged' : kind === 'catapult' ? 'Catapult' : 'Melee'} Barracks`,
         x: BARRACKS_X[team], y: 305 + index * 75,
-        hp: 3200, maxHp: 3200, ad: 0, range: 0, attackTimer: 0,
+        hp: STRUCTURE_HP.barracks, maxHp: STRUCTURE_HP.barracks, ad: 0, range: 0, attackTimer: 0,
         isAlive: true, targetId: null, armor: 20
       }));
     const initialStructures: LaneStructure[] = [
-      { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: 790, y: LANE_Y, hp: 4200, maxHp: 4200, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
-      { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: 590, y: LANE_Y, hp: 5200, maxHp: 5200, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
-      { id: 'b_t3', team: 'blue', type: 'nexus_tower', name: 'Blue Nexus Turret', x: 390, y: LANE_Y, hp: 6200, maxHp: 6200, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
+      { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: 790, y: LANE_Y, hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+      { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: 590, y: LANE_Y, hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+      { id: 'b_t3', team: 'blue', type: 'nexus_tower', name: 'Blue Nexus Turret', x: 390, y: LANE_Y, hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
       ...makeBarracks('blue'),
-      { id: 'b_nexus', team: 'blue', type: 'nexus', name: 'Blue Nexus', x: NEXUS_X.blue, y: LANE_Y, hp: 10000, maxHp: 10000, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
-      { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: 1210, y: LANE_Y, hp: 4200, maxHp: 4200, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
-      { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: 1410, y: LANE_Y, hp: 5200, maxHp: 5200, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
-      { id: 'r_t3', team: 'red', type: 'nexus_tower', name: 'Red Nexus Turret', x: 1610, y: LANE_Y, hp: 6200, maxHp: 6200, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
+      { id: 'b_nexus', team: 'blue', type: 'nexus', name: 'Blue Nexus', x: NEXUS_X.blue, y: LANE_Y, hp: STRUCTURE_HP.nexus, maxHp: STRUCTURE_HP.nexus, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
+      { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: 1210, y: LANE_Y, hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+      { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: 1410, y: LANE_Y, hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+      { id: 'r_t3', team: 'red', type: 'nexus_tower', name: 'Red Nexus Turret', x: 1610, y: LANE_Y, hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
       ...makeBarracks('red'),
-      { id: 'r_nexus', team: 'red', type: 'nexus', name: 'Red Nexus', x: NEXUS_X.red, y: LANE_Y, hp: 10000, maxHp: 10000, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 }
+      { id: 'r_nexus', team: 'red', type: 'nexus', name: 'Red Nexus', x: NEXUS_X.red, y: LANE_Y, hp: STRUCTURE_HP.nexus, maxHp: STRUCTURE_HP.nexus, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 }
     ];
     structuresRef.current = initialStructures;
 
@@ -1285,9 +1285,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         st.targetId = target.id;
       }
 
-      // Fire Turret Shot
+      // The nexus fires five rapid shots, then reloads. Continuous rapid fire
+      // erased every upgraded wave and could stall a fully exposed nexus.
       if (st.attackTimer <= 0) {
-        st.attackTimer = st.type === 'nexus' ? 0.2 : 1.0;
+        if (st.type === 'nexus') {
+          const nextShot = nextNexusVolleyShot(st.volleyShotsRemaining);
+          st.volleyShotsRemaining = nextShot.shotsRemaining;
+          st.attackTimer = nextShot.cooldown;
+        } else {
+          st.attackTimer = 1.0;
+        }
         sound.playSpellHit();
         projectilesRef.current.push({
           id: random().toString(),
@@ -1554,8 +1561,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const threateningMinions = enemyMinions.filter(m => Math.hypot(m.x - u.x, m.y - u.y) <= Math.max(attackRange + 40, 240));
 
       // Skilled shoppers recall on a safe item spike after the mid game.
-      const lateShop = matchEconomyPhase(matchTimeRef.current) === 'Late game'
-        || matchEconomyPhase(matchTimeRef.current) === 'Super late game';
+      const lateShop = matchEconomyPhase(matchTimeRef.current) === 'Late game';
       const hasShopGold = u.gold >= (lateShop ? 1450 : 1700);
       const wantsItemPurchase = hasShopGold && (u.hp < u.maxHp * 0.65 || (u.gold >= (lateShop ? 1900 : 2400) && iq >= 70))
         && localEnemies.length === 0 && threateningMinions.length === 0 && (u.recallCooldown ?? 0) <= 0;

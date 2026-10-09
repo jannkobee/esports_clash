@@ -7,10 +7,24 @@ export const NEXUS_X = { blue: 220, red: 1780 } as const;
 export const BARRACKS_X = { blue: 320, red: 1680 } as const;
 export const DRAGON_X = ARENA_WIDTH / 2;
 
-// Early tower plating wears off over ten game minutes. Wave control still helps
-// break a turret, but a single early push cannot erase the whole lane.
+export const STRUCTURE_HP = {
+  outer_tower: 3400,
+  inner_tower: 4100,
+  nexus_tower: 4800,
+  barracks: 2600,
+  nexus: 7500
+} as const;
+
+export function nextNexusVolleyShot(shotsRemaining = 5): { shotsRemaining: number; cooldown: number } {
+  return shotsRemaining === 1
+    ? { shotsRemaining: 5, cooldown: 2.2 }
+    : { shotsRemaining: shotsRemaining - 1, cooldown: 0.2 };
+}
+
+// Early tower plating fades by the eight-minute late-game transition. Wave
+// control still helps break a turret, but the opening no longer drags on.
 export function towerSiegeMultiplier(gameSeconds: number): number {
-  return 0.22 + 0.78 * Math.min(1, Math.max(0, gameSeconds) / 600);
+  return 0.30 + 0.70 * Math.min(1, Math.max(0, gameSeconds) / 480);
 }
 
 export function canDamageNexus(team: 'blue' | 'red', structures: readonly Pick<LaneStructure, 'team' | 'type' | 'isAlive'>[]): boolean {

@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import { matchEconomyPhase, passiveGoldPerSecond } from './economyRules.ts';
 import { ALL_ITEMS, BOOTS } from './itemsData.ts';
 
-test('8 to 10 minutes is late game and 11 minutes begins super late game without forcing a match to last', () => {
+test('4 minutes begins mid game and 8 minutes begins late game without forcing a match to last', () => {
+  assert.equal(matchEconomyPhase(3 * 60 + 59), 'Opening');
+  assert.equal(matchEconomyPhase(4 * 60), 'Mid game');
   assert.equal(matchEconomyPhase(7 * 60 + 59), 'Mid game');
   assert.equal(matchEconomyPhase(8 * 60), 'Late game');
   assert.equal(matchEconomyPhase(10 * 60 + 59), 'Late game');
-  assert.equal(matchEconomyPhase(11 * 60), 'Super late game');
-  assert.equal(matchEconomyPhase(13 * 60), 'Super late game');
+  assert.equal(matchEconomyPhase(13 * 60), 'Late game');
 });
 
 test('skilled farming can reach 3 to 4 items by 8 to 10 minutes and 5 to 6 by minute 12', () => {

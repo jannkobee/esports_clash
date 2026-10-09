@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ARENA_WIDTH, BARRACKS_X, NEXUS_X, WELL_X, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from './arenaRules.ts';
+import { ARENA_WIDTH, BARRACKS_X, NEXUS_X, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from './arenaRules.ts';
 
 test('expanded map leaves room between each well, nexus, and barracks', () => {
   assert.equal(ARENA_WIDTH, 2000);
@@ -11,9 +11,13 @@ test('expanded map leaves room between each well, nexus, and barracks', () => {
 });
 
 test('tower plating tapers with game time and a nexus opens after its turret and one barracks fall', () => {
-  assert.equal(towerSiegeMultiplier(0), 0.22);
+  assert.equal(towerSiegeMultiplier(0), 0.30);
+  assert.ok(Math.abs(towerSiegeMultiplier(240) - 0.65) < 1e-9);
   assert.ok(towerSiegeMultiplier(300) > towerSiegeMultiplier(0));
-  assert.equal(towerSiegeMultiplier(600), 1);
+  assert.equal(towerSiegeMultiplier(480), 1);
+  assert.ok(STRUCTURE_HP.outer_tower < STRUCTURE_HP.inner_tower);
+  assert.ok(STRUCTURE_HP.inner_tower < STRUCTURE_HP.nexus_tower);
+  assert.ok(STRUCTURE_HP.nexus > STRUCTURE_HP.nexus_tower);
   const defenders = [
     { team: 'red', type: 'nexus_tower', isAlive: true },
     { team: 'red', type: 'barracks', isAlive: true },
@@ -24,6 +28,18 @@ test('tower plating tapers with game time and a nexus opens after its turret and
   assert.equal(canDamageNexus('red', defenders), false);
   defenders[1].isAlive = false;
   assert.equal(canDamageNexus('red', defenders), true);
+});
+
+test('nexus fires five rapid shots then reloads so upgraded waves can siege', () => {
+  let shotsRemaining = 5;
+  const cooldowns = [];
+  for (let shot = 0; shot < 5; shot++) {
+    const next = nextNexusVolleyShot(shotsRemaining);
+    shotsRemaining = next.shotsRemaining;
+    cooldowns.push(next.cooldown);
+  }
+  assert.deepEqual(cooldowns, [0.2, 0.2, 0.2, 0.2, 2.2]);
+  assert.equal(shotsRemaining, 5);
 });
 
 test('destroying one enemy barracks upgrades only its matching creep class', () => {

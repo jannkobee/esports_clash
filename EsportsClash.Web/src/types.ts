@@ -188,6 +188,7 @@ export interface LaneStructure {
   isAlive: boolean;
   targetId: string | null;
   armor: number;
+  volleyShotsRemaining?: number;
   barracksKind?: 'melee' | 'ranged' | 'catapult';
 }
 
