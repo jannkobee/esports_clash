@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ARENA_WIDTH, BARRACKS_X, NEXUS_X, WELL_X, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall } from './arenaRules.ts';
+import { ARENA_WIDTH, BARRACKS_X, NEXUS_X, WELL_X, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from './arenaRules.ts';
 
 test('expanded map leaves room between each well, nexus, and barracks', () => {
   assert.equal(ARENA_WIDTH, 2000);
@@ -8,6 +8,22 @@ test('expanded map leaves room between each well, nexus, and barracks', () => {
   assert.ok(BARRACKS_X.blue > NEXUS_X.blue);
   assert.ok(WELL_X.red - NEXUS_X.red >= 140);
   assert.ok(BARRACKS_X.red < NEXUS_X.red);
+});
+
+test('tower plating tapers with game time and a nexus opens after its turret and one barracks fall', () => {
+  assert.equal(towerSiegeMultiplier(0), 0.22);
+  assert.ok(towerSiegeMultiplier(300) > towerSiegeMultiplier(0));
+  assert.equal(towerSiegeMultiplier(600), 1);
+  const defenders = [
+    { team: 'red', type: 'nexus_tower', isAlive: true },
+    { team: 'red', type: 'barracks', isAlive: true },
+    { team: 'red', type: 'barracks', isAlive: true }
+  ];
+  assert.equal(canDamageNexus('red', defenders), false);
+  defenders[0].isAlive = false;
+  assert.equal(canDamageNexus('red', defenders), false);
+  defenders[1].isAlive = false;
+  assert.equal(canDamageNexus('red', defenders), true);
 });
 
 test('destroying one enemy barracks upgrades only its matching creep class', () => {

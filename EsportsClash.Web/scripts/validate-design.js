@@ -42,10 +42,18 @@ if (/targetFormY - u\.y\)\s*\*\s*2\.0\s*\*\s*dt/.test(matchViewContent)) {
 }
 
 // 5. Check Dragon Empowerment & Siege Multiplier
-if (!matchViewContent.includes('siegeMultiplier') || !matchViewContent.includes('burnTrueDamage')) {
-  errors.push('CRITICAL: Dragon Slayer Aspect missing siege multiplier or burnTrueDamage properties!');
+if (!matchViewContent.includes('adBonus: 45') || !matchViewContent.includes('apBonus: 50')
+  || !matchViewContent.includes('siegeMultiplier: 1.5') || !matchViewContent.includes('burnTrueDamage: true')) {
+  errors.push('CRITICAL: Dragon Slayer Aspect lost its tuned AD/AP, 1.5x siege, or burn values!');
 } else {
-  console.log('✅ Game Pacing: Dragon Slayer Aspect empowered (+60 AD/AP, 2x Tower Siege Damage, True Damage Burn)');
+  console.log('✅ Game Pacing: Dragon Slayer Aspect uses +45 AD, +50 AP, 1.5x siege and true damage burn');
+}
+
+if (!matchViewContent.includes('towerSiegeMultiplier(matchTimeRef.current)')
+  || !matchViewContent.includes('canDamageNexus(structure.team, structuresRef.current)')) {
+  errors.push('CRITICAL: Turret plating or the barracks-gated nexus shield is missing!');
+} else {
+  console.log('✅ Game Pacing: early turret plating and barracks-gated nexus shield verified');
 }
 
 // 6. Check Ranged Projectile System
@@ -107,6 +115,28 @@ if (!itemsContent.includes('item_kraken_slayer') || !itemsContent.includes('item
   errors.push('CRITICAL: Marksman item passives (Kraken Slayer, LDR, Bork) not integrated in AramMatchView.tsx attack execution!');
 } else {
   console.log('✅ Marksman DPS & Anti-Tank: Kraken Slayer, LDR Giant Slayer, Bork % HP on-hit active');
+}
+
+// 14. Keep draft, online room authority, and ability progression wired into the arena.
+const appContent = fs.readFileSync(path.resolve('src/App.tsx'), 'utf8');
+const draftContent = fs.readFileSync(path.resolve('src/components/DraftPhaseView.tsx'), 'utf8');
+const roomContent = fs.readFileSync(path.resolve('server.mjs'), 'utf8');
+if (!appContent.includes('Vs AI') || !appContent.includes('Vs Player') || !draftContent.includes('DRAFT_TURNS')
+    || !draftContent.includes('chooseCoachTeamPick')) {
+  errors.push('CRITICAL: arena mode dashboard or coach-led alternating draft missing!');
+} else {
+  console.log('✅ Draft Flow: Vs AI / Vs Player dashboard and coach-led alternating picks verified');
+}
+if (!roomContent.includes('expectedRevision') || !roomContent.includes('room.tokens[side]')
+    || !roomContent.includes('championIds.has(championId)')) {
+  errors.push('CRITICAL: online room must reject stale, unauthorized, and unknown draft actions!');
+} else {
+  console.log('✅ Online Rooms: server checks draft turns, identity and revisions');
+}
+if (!matchViewContent.includes('abilityDamageMultiplier') || !matchViewContent.includes('abilityCooldownMultiplier')) {
+  errors.push('CRITICAL: avatar abilities must scale with ability ranks!');
+} else {
+  console.log('✅ Ability Ranks: damage and cooldown progression wired into combat');
 }
 
 console.log('================================================================');

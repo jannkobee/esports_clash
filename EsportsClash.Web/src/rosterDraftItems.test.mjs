@@ -16,6 +16,19 @@ test('a picked avatar cannot be assigned to another player or the other team', (
   assert.ok(!all.includes('c0') && !all.includes('c1'));
 });
 
+test('opponent draft keeps a player in role when only an off-role signature remains', () => {
+  const bluePlayers = Array.from({ length: 5 }, (_, index) => ({ id: `blue${index}`, preferredRole: 'Fighter', signatureChampions: [] }));
+  const redPlayers = Array.from({ length: 5 }, (_, index) => ({ id: `red${index}`, preferredRole: index === 0 ? 'Mage' : 'Fighter', signatureChampions: index === 0 ? ['Kage'] : [] }));
+  const champions = [
+    ...Array.from({ length: 5 }, (_, index) => ({ id: `b${index}`, name: `Blue ${index}`, primaryRole: 'Fighter' })),
+    { id: 'kage', name: 'Kage', primaryRole: 'Assassin' },
+    { id: 'mage', name: 'Tequoia', primaryRole: 'Mage' },
+    ...Array.from({ length: 4 }, (_, index) => ({ id: `r${index}`, name: `Red ${index}`, primaryRole: 'Fighter' }))
+  ];
+  const picks = buildUniqueLineups(bluePlayers, redPlayers, champions, {}, []);
+  assert.equal(picks.red[0].champion.name, 'Tequoia');
+});
+
 test('component credit completes an item and a full inventory can replace a starter', () => {
   const item = (id, tier, cost, stats) => ({ id, tier, cost, stats, suitableRoles: ['Marksman'] });
   const starter = item('starter', 'Starting', 500, { ad: 10 });

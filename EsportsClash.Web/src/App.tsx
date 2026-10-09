@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   CHAMPIONS, 
   INITIAL_COACHES, 
@@ -16,6 +16,10 @@ import { ArenaMatchView } from './components/ArenaMatchView';
 import { ThreeAramArena } from './components/ThreeAramArena';
 import { TeamfightArenaView } from './components/TeamfightArenaView';
 import { AramMatchView } from './components/AramMatchView';
+import type { MatchReport } from './matchReplay';
+import { rerollAfterBalanceGame } from './matchReplay';
+import type { OnlineRoom, OnlineSession } from './onlineRooms';
+import { createOnlineRoom, getOnlineRoom, joinOnlineRoom, submitOnlineDraft } from './onlineRooms';
 import { ChampionHubView } from './components/ChampionHubView';
 import { TournamentView } from './components/TournamentView';
 import { sound } from './audio';
@@ -36,6 +40,18 @@ export function App() {
   // Navigation
   const [activeTab, setActiveTab] = useState<'squad' | 'house' | 'packs' | 'evolutions' | 'arena' | 'tournament' | 'champions'>('squad');
   const [inBattle, setInBattle] = useState<boolean>(false);
+  const [arenaChoice, setArenaChoice] = useState<'ai' | 'online' | null>(() =>
+    sessionStorage.getItem('esports-clash-online-session') ? 'online' : null);
+  const [draftSeed, setDraftSeed] = useState(0);
+  const rivalCoach = INITIAL_COACHES[draftSeed % INITIAL_COACHES.length];
+  const [roomCodeInput, setRoomCodeInput] = useState('');
+  const [onlineSession, setOnlineSession] = useState<OnlineSession | null>(() => {
+    try { return JSON.parse(sessionStorage.getItem('esports-clash-online-session') || 'null') as OnlineSession | null; }
+    catch { return null; }
+  });
+  const [onlineRoom, setOnlineRoom] = useState<OnlineRoom | null>(null);
+  const [onlineError, setOnlineError] = useState('');
+  const [onlineBusy, setOnlineBusy] = useState(false);
 
   // Club Resources
   const [teamFunds, setTeamFunds] = useState<number>(3500);
@@ -70,8 +86,66 @@ export function App() {
   // Active Drafted Lineups
   const [draftedBlue, setDraftedBlue] = useState<{ player: PlayerCard; champion: ChampionKit }[]>([]);
   const [draftedRed, setDraftedRed] = useState<{ player: PlayerCard; champion: ChampionKit }[]>([]);
+  const [matchSeed, setMatchSeed] = useState(0);
+  const [replayNumber, setReplayNumber] = useState(0);
+  const [balanceRunsLeft, setBalanceRunsLeft] = useState(0);
+  const [balanceBatchId, setBalanceBatchId] = useState(0);
+  const [replayDraft, setReplayDraft] = useState<MatchReport['draft'] | null>(null);
+  const savedReports = (() => {
+    try { return JSON.parse(localStorage.getItem('esports-clash-match-reports') || '[]') as MatchReport[]; }
+    catch { return []; }
+  })();
+  const balanceSwapped = balanceRunsLeft > 0 && balanceRunsLeft % 2 === 0;
+  const openRecordedMatch = (report: MatchReport) => {
+    if (report.version !== 1 || !Number.isInteger(report.seed) || report.draft?.blue?.length !== 5 || report.draft?.red?.length !== 5) return;
+    setDraftedBlue(report.draft.blue);
+    setDraftedRed(report.draft.red);
+    setReplayDraft(report.draft);
+    setMatchSeed(report.seed);
+    setReplayNumber(1);
+    setBalanceRunsLeft(0);
+    setBalanceBatchId(0);
+    setInBattle(true);
+  };
 
   const bench = roster.filter((p) => !startingFive.some((s) => s.id === p.id));
+
+  useEffect(() => {
+    if (!onlineSession) return;
+    let stopped = false;
+    const refresh = async () => {
+      try {
+        const room = await getOnlineRoom(onlineSession);
+        if (!stopped) { setOnlineRoom(room); setOnlineError(''); }
+      } catch (error) { if (!stopped) setOnlineError((error as Error).message); }
+    };
+    void refresh();
+    const timer = window.setInterval(refresh, 1200);
+    return () => { stopped = true; window.clearInterval(timer); };
+  }, [onlineSession]);
+
+  const beginOnline = async (code?: string) => {
+    setOnlineBusy(true);
+    setOnlineError('');
+    try {
+      const joined = code ? await joinOnlineRoom(code.trim(), startingFive, currentCoach)
+        : await createOnlineRoom(startingFive, currentCoach);
+      const session = { code: joined.room.roomCode!, token: joined.token, side: joined.side };
+      sessionStorage.setItem('esports-clash-online-session', JSON.stringify(session));
+      setOnlineSession(session);
+      setOnlineRoom(joined.room);
+    } catch (error) { setOnlineError((error as Error).message); }
+    finally { setOnlineBusy(false); }
+  };
+
+  const leaveOnline = () => {
+    sessionStorage.removeItem('esports-clash-online-session');
+    setOnlineSession(null);
+    setOnlineRoom(null);
+    setOnlineError('');
+    setArenaChoice(null);
+    setInBattle(false);
+  };
 
   // Swap Starter and Bench Player
   const handleSwapPlayer = (startingIdx: number, benchId: string) => {
@@ -241,16 +315,21 @@ export function App() {
   // Draft Finished -> Launch 1-Lane ARAM Combat
   const handleDraftComplete = (
     blue: { player: PlayerCard; champion: ChampionKit }[],
-    red: { player: PlayerCard; champion: ChampionKit }[]
+    red: { player: PlayerCard; champion: ChampionKit }[], seed: number
   ) => {
     setDraftedBlue(blue);
     setDraftedRed(red);
+    setReplayDraft(null);
+    setMatchSeed(seed);
+    setReplayNumber(0);
+    setBalanceRunsLeft(0);
+    setBalanceBatchId(0);
     setInBattle(true);
   };
 
   // Match Simulation Handler
   const handleMatchComplete = (winTeam: 'blue' | 'red') => {
-    if (winTeam === 'blue') {
+    if (winTeam === (arenaChoice === 'online' ? onlineSession?.side : 'blue')) {
       setTeamFunds((f) => f + 1000);
       setFansCount((c) => c + 350);
       updateEvolutionsProgress('match_win', 1);
@@ -413,22 +492,89 @@ export function App() {
         {activeTab === 'arena' && (
           <div>
             {!inBattle ? (
+              <>
+              {savedReports.length > 0 && <button className="mb-3 px-3 py-2 rounded-lg bg-slate-800 text-cyan-300 text-xs font-bold" onClick={() => openRecordedMatch(savedReports[savedReports.length - 1])}>Replay last saved match</button>}
+              <label className="mb-3 ml-2 inline-block px-3 py-2 rounded-lg bg-slate-800 text-amber-300 text-xs font-bold cursor-pointer">
+                Open match report
+                <input type="file" accept="application/json,.json" className="hidden" onChange={async event => {
+                  const file = event.target.files?.[0];
+                  if (!file) return;
+                  try { openRecordedMatch(JSON.parse(await file.text()) as MatchReport); }
+                  catch { alert('This is not a valid match report.'); }
+                }} />
+              </label>
+              {arenaChoice === null ? <div className="grid gap-4 md:grid-cols-2 max-w-4xl mx-auto mt-10">
+                <button type="button" onClick={() => { setDraftSeed(crypto.getRandomValues(new Uint32Array(1))[0]); setArenaChoice('ai'); }} className="bg-slate-900 border border-cyan-600/50 hover:border-cyan-300 rounded-3xl p-8 text-left shadow-xl">
+                  <Swords className="w-8 h-8 text-cyan-300 mb-4" /><h2 className="text-2xl text-white font-black">Vs AI</h2><p className="text-slate-400 text-sm mt-2">Draft against a coach led rival, then watch both teams play.</p>
+                </button>
+                <button type="button" onClick={() => setArenaChoice('online')} className="bg-slate-900 border border-rose-600/50 hover:border-rose-300 rounded-3xl p-8 text-left shadow-xl">
+                  <Users className="w-8 h-8 text-rose-300 mb-4" /><h2 className="text-2xl text-white font-black">Vs Player</h2><p className="text-slate-400 text-sm mt-2">Create or join an online room. Each player drafts a team; both watch the seeded match.</p>
+                </button>
+              </div> : arenaChoice === 'online' && (!onlineSession || !onlineRoom?.ready) ? <div className="max-w-xl mx-auto bg-slate-900 border border-slate-700 rounded-3xl p-7 mt-8 text-white space-y-4">
+                <h2 className="text-xl font-black">Online Vs Player</h2>
+                {onlineSession ? <><p>Room <strong className="text-amber-300 text-2xl tracking-widest">{onlineSession.code}</strong></p><p className="text-sm text-slate-400">Share this code with your opponent. Waiting for their five player roster.</p><button type="button" className="bg-cyan-700 px-4 py-2 rounded-xl font-bold" onClick={() => navigator.clipboard.writeText(onlineSession.code)}>Copy room code</button></>
+                  : <><button type="button" disabled={onlineBusy} className="w-full bg-cyan-600 hover:bg-cyan-500 rounded-xl p-3 font-black" onClick={() => void beginOnline()}>Create room</button>
+                  <div className="flex gap-2"><input aria-label="Room code" value={roomCodeInput} onChange={event => setRoomCodeInput(event.target.value.toUpperCase())} maxLength={6} placeholder="6 character room code" className="min-w-0 flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 uppercase" /><button type="button" disabled={onlineBusy || !/^[A-F0-9]{6}$/.test(roomCodeInput)} className="bg-rose-600 px-4 py-2 rounded-xl font-bold disabled:opacity-40" onClick={() => void beginOnline(roomCodeInput)}>Join</button></div></>}
+                {onlineError && <p role="alert" className="text-rose-300 text-sm">{onlineError}</p>}
+                <button type="button" className="text-slate-400 text-xs hover:text-white" onClick={leaveOnline}>Back to modes</button>
+              </div> : <>
+              <button type="button" className="mb-3 text-slate-400 text-xs hover:text-white" onClick={arenaChoice === 'online' ? leaveOnline : () => setArenaChoice(null)}>← Back to modes</button>
+              {arenaChoice === 'online' && onlineSession && <div className="mb-3 text-xs text-cyan-300">Room {onlineSession.code} · {onlineSession.side.toUpperCase()} team</div>}
               <DraftPhaseView
+                key={arenaChoice === 'online' ? onlineSession?.code : draftSeed}
                 startingFive={startingFive}
                 allChampions={CHAMPIONS}
                 userCoach={currentCoach}
-                opponentName="Rival Chibi Squad"
-                opponentRoster={INITIAL_PLAYERS.slice(5, 10)}
+                opponentCoach={arenaChoice === 'online' ? onlineRoom!.redCoach : rivalCoach}
+                opponentName={arenaChoice === 'online' ? 'Red team' : 'Rival Chibi Squad'}
+                opponentRoster={arenaChoice === 'online' ? onlineRoom!.redRoster : INITIAL_PLAYERS.slice(5, 10)}
+                draftSeed={arenaChoice === 'online' ? onlineRoom!.seed : draftSeed}
+                online={arenaChoice === 'online' && onlineSession ? { room: onlineRoom!, side: onlineSession.side,
+                  onAction: async (championId, slot) => {
+                    try { setOnlineRoom(await submitOnlineDraft(onlineSession, championId, slot, onlineRoom!.revision)); setOnlineError(''); }
+                    catch (error) { setOnlineError((error as Error).message); setOnlineRoom(await getOnlineRoom(onlineSession)); }
+                  } } : undefined}
                 onDraftComplete={handleDraftComplete}
               />
+              {onlineError && <p role="alert" className="mt-3 text-rose-300 text-sm">{onlineError}</p>}
+              </>}
+              </>
             ) : (
+              <>
+              {arenaChoice === 'online' && onlineSession && !replayDraft && <div className="mb-3 flex justify-between text-xs text-slate-300"><span>Online room {onlineSession.code} · You are {onlineSession.side.toUpperCase()}</span><button type="button" onClick={leaveOnline} className="text-rose-300 hover:text-white font-bold">Leave room</button></div>}
               <AramMatchView
-                blueLineup={draftedBlue}
-                redLineup={draftedRed}
-                blueCoach={currentCoach}
-                opponentName="Rival Chibi Squad"
-                onMatchComplete={handleMatchComplete}
+                key={`${matchSeed}:${replayNumber}`}
+                seed={matchSeed}
+                onlineMode={arenaChoice === 'online' && !replayDraft}
+                onReplay={() => setReplayNumber(number => number + 1)}
+                batchMode={balanceRunsLeft > 0}
+                batchId={balanceBatchId}
+                batchNumber={balanceRunsLeft > 0 ? 26 - balanceRunsLeft : 0}
+                onBatchStart={() => {
+                  setBalanceRunsLeft(25);
+                  setBalanceBatchId(crypto.getRandomValues(new Uint32Array(1))[0]);
+                  setMatchSeed(crypto.getRandomValues(new Uint32Array(1))[0]);
+                  setReplayNumber(number => number + 1);
+                }}
+                onBatchStop={() => {
+                  setBalanceRunsLeft(0);
+                  setReplayNumber(number => number + 1);
+                }}
+                blueLineup={balanceSwapped ? draftedRed : draftedBlue}
+                redLineup={balanceSwapped ? draftedBlue : draftedRed}
+                blueCoach={balanceSwapped ? replayDraft ? replayDraft.redCoach : rivalCoach : replayDraft?.blueCoach ?? (arenaChoice === 'online' ? onlineRoom?.blueCoach : currentCoach) ?? currentCoach}
+                redCoach={balanceSwapped ? replayDraft?.blueCoach ?? currentCoach : replayDraft ? replayDraft.redCoach : arenaChoice === 'online' ? onlineRoom?.redCoach ?? rivalCoach : rivalCoach}
+                blueTeamName={arenaChoice === 'online' && !replayDraft ? 'Blue Player' : balanceSwapped ? 'Rival Chibi Squad' : 'T-Chibi Squad'}
+                opponentName={arenaChoice === 'online' && !replayDraft ? 'Red Player' : balanceSwapped ? 'T-Chibi Squad' : 'Rival Chibi Squad'}
+                onMatchComplete={balanceRunsLeft > 0 ? () => {
+                  setBalanceRunsLeft(left => left - 1);
+                  if (balanceRunsLeft > 1) {
+                    if (rerollAfterBalanceGame(balanceRunsLeft)) setMatchSeed(crypto.getRandomValues(new Uint32Array(1))[0]);
+                    setReplayNumber(number => number + 1);
+                  }
+                } : replayNumber === 0 ? handleMatchComplete : () => {}}
               />
+              </>
             )}
           </div>
         )}

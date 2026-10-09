@@ -222,6 +222,7 @@ export interface AramChampionUnit {
   cd1: number;
   cd2: number;
   cdUlt: number;
+  activeAbilitySlot?: 'skill1' | 'skill2' | 'ultimate';
   stunTimer: number;
   charmTimer: number;
   charmSourceId?: string;
@@ -238,6 +239,8 @@ export interface AramChampionUnit {
   sterakCooldown: number;
   zhonyaActive: boolean;
   zhonyaTimer: number;
+  zhonyaRemaining?: number;
+  lastEnemyDamage?: { attackerId: string; second: number };
   immolateTimer: number;
   krakenCounter: number;
   combatTimer?: number;

@@ -17,15 +17,16 @@ import { getTeamKillScore, getTeamTotalGold, getTowersAliveCount, getTeamNames }
 import { nextMultikillCount } from '../multikillRules';
 import { shouldStartEpicObjective } from '../objectiveRules';
 import { stepLeashedMonster } from '../neutralAggroRules';
-import { advanceSimulationClock } from '../simulationClock';
-import { passiveGoldPerSecond } from '../economyRules';
+import { consumeFixedSteps, createMatchRandom, resolveNeutralKillCredit, SIMULATION_STEP, summarizeMatchReports, type MatchReport, type RecordedMatchEvent } from '../matchReplay';
+import { matchEconomyPhase, passiveGoldPerSecond } from '../economyRules';
+import { abilityDamageMultiplier, abilityCooldownMultiplier, abilityRank, type AbilitySlot } from '../skillProgression';
 import { drawChampionSprite } from './ChampionSpriteRenderer';
 import { drawAvatarSkillAnimation, type SkillSlot } from '../avatarSkillAnimation';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
 import { chooseTeamfightTarget, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from '../combatDecision';
 import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from '../skillRangeRules';
-import { ARENA_WIDTH, BARRACKS_X, DRAGON_X, LANE_Y, NEXUS_X, WELL_X, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall } from '../arenaRules';
+import { ARENA_WIDTH, BARRACKS_X, DRAGON_X, LANE_Y, NEXUS_X, WELL_X, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from '../arenaRules';
 import { getMinionCrashMultiplier, getMinionStructureDamage, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
 import { 
   Play, 
@@ -65,6 +66,7 @@ interface Projectile {
   attackerId: string;
   angle: number;
   skillshot?: boolean;
+  countedShot?: boolean;
   dodgeAttempted?: boolean;
   stunOnHit?: number;
   charmOnHit?: number;
@@ -73,6 +75,7 @@ interface Projectile {
   pullOnHit?: number;
   trueDamage?: boolean;
   skillLabel?: string;
+  abilitySlot?: AbilitySlot;
   collisionRadius?: number;
   comboStage?: 1 | 2;
 }
@@ -156,6 +159,7 @@ interface DragonBoss {
   range: number;
   attackTimer: number;
   slamTimer: number;
+  slamWindup?: number;
   isAlive: boolean;
   spawnTimer: number;
   slayerTeam: 'blue' | 'red' | null;
@@ -179,6 +183,7 @@ export interface KillCallout {
   killerChamp: string;
   killerTeam: 'blue' | 'red';
   killerAvatar?: string;
+  neutralFinisher?: string;
   victimName: string;
   victimChamp: string;
   victimTeam: 'blue' | 'red';
@@ -189,6 +194,14 @@ export interface KillCallout {
 }
 
 interface AramMatchViewProps {
+  seed: number;
+  onlineMode?: boolean;
+  onReplay: () => void;
+  batchMode?: boolean;
+  batchId?: number;
+  batchNumber?: number;
+  onBatchStart: () => void;
+  onBatchStop: () => void;
   blueLineup: { player: PlayerCard; champion: ChampionKit }[];
   redLineup: { player: PlayerCard; champion: ChampionKit }[];
   blueCoach?: CoachCard;
@@ -296,6 +309,14 @@ function calculateDeathTimer(level: number, currentMatchTime: number): number {
 }
 
 export const AramMatchView: React.FC<AramMatchViewProps> = ({
+  seed,
+  onlineMode = false,
+  onReplay,
+  batchMode = false,
+  batchId = 0,
+  batchNumber = 0,
+  onBatchStart,
+  onBatchStop,
   blueLineup,
   redLineup,
   blueCoach,
@@ -314,6 +335,46 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const [paused, setPaused] = useState<boolean>(false);
   const [matchTime, setMatchTime] = useState<number>(0);
   const matchTimeRef = useRef(0);
+  const accumulatorRef = useRef(0);
+  const randomRef = useRef(createMatchRandom(seed));
+  const random = () => randomRef.current();
+  const recordedEventsRef = useRef<RecordedMatchEvent[]>([]);
+  const objectiveCallsRef = useRef(new Set<string>());
+  const skillshotsRef = useRef({ fired: 0, hit: 0 });
+  const fullBuildsAt15Ref = useRef(0);
+  const itemCountsRef = useRef<Partial<Record<8 | 10 | 12 | 13, number[]>>>({});
+  const matchFinishedRef = useRef(false);
+  const latestReportRef = useRef<MatchReport | null>(null);
+  const [balanceSummary, setBalanceSummary] = useState<ReturnType<typeof summarizeMatchReports> | null>(() => {
+    try {
+      const all = JSON.parse(localStorage.getItem('esports-clash-match-reports') || '[]') as MatchReport[];
+      const reports = batchId ? all.filter(report => report.batchId === batchId) : all;
+      return reports.length ? summarizeMatchReports(reports) : null;
+    } catch { return null; }
+  });
+  const downloadMatchReport = () => {
+    if (!latestReportRef.current) return;
+    const blob = new Blob([JSON.stringify(latestReportRef.current, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `esports-clash-${seed}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+  const downloadBalanceReport = () => {
+    try {
+      const all = JSON.parse(localStorage.getItem('esports-clash-match-reports') || '[]') as MatchReport[];
+      const reports = batchId ? all.filter(report => report.batchId === batchId) : all;
+      const blob = new Blob([JSON.stringify({ summary: summarizeMatchReports(reports), reports }, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `esports-clash-balance-${batchId || 'history'}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch { /* Local storage may be disabled; individual match export remains available. */ }
+  };
   const [matchOver, setMatchOver] = useState<boolean>(false);
 
   useEffect(() => {
@@ -428,8 +489,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const addEvent = (text: string, type: MatchEvent['type']) => {
     const mins = Math.floor(matchTimeRef.current / 60);
     const secs = (Math.floor(matchTimeRef.current % 60)).toString().padStart(2, '0');
+    recordedEventsRef.current.push({ second: Math.round(matchTimeRef.current * 100) / 100, type, text });
     setEventFeed((prev) => [
-      { id: Math.random().toString(), text, type, time: `${mins}:${secs}` },
+      { id: random().toString(), text, type, time: `${mins}:${secs}` },
       ...prev.slice(0, 18)
     ]);
   };
@@ -464,20 +526,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         barracksKind: kind,
         name: `${team === 'blue' ? 'Blue' : 'Red'} ${kind === 'ranged' ? 'Ranged' : kind === 'catapult' ? 'Catapult' : 'Melee'} Barracks`,
         x: BARRACKS_X[team], y: 305 + index * 75,
-        hp: 1400, maxHp: 1400, ad: 0, range: 0, attackTimer: 0,
+        hp: 3200, maxHp: 3200, ad: 0, range: 0, attackTimer: 0,
         isAlive: true, targetId: null, armor: 20
       }));
     const initialStructures: LaneStructure[] = [
-      { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: 790, y: LANE_Y, hp: 1900, maxHp: 1900, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
-      { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: 590, y: LANE_Y, hp: 2200, maxHp: 2200, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
-      { id: 'b_t3', team: 'blue', type: 'nexus_tower', name: 'Blue Nexus Turret', x: 390, y: LANE_Y, hp: 2400, maxHp: 2400, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
+      { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: 790, y: LANE_Y, hp: 4200, maxHp: 4200, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+      { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: 590, y: LANE_Y, hp: 5200, maxHp: 5200, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+      { id: 'b_t3', team: 'blue', type: 'nexus_tower', name: 'Blue Nexus Turret', x: 390, y: LANE_Y, hp: 6200, maxHp: 6200, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
       ...makeBarracks('blue'),
-      { id: 'b_nexus', team: 'blue', type: 'nexus', name: 'Blue Nexus', x: NEXUS_X.blue, y: LANE_Y, hp: 4400, maxHp: 4400, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
-      { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: 1210, y: LANE_Y, hp: 1900, maxHp: 1900, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
-      { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: 1410, y: LANE_Y, hp: 2200, maxHp: 2200, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
-      { id: 'r_t3', team: 'red', type: 'nexus_tower', name: 'Red Nexus Turret', x: 1610, y: LANE_Y, hp: 2400, maxHp: 2400, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
+      { id: 'b_nexus', team: 'blue', type: 'nexus', name: 'Blue Nexus', x: NEXUS_X.blue, y: LANE_Y, hp: 10000, maxHp: 10000, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
+      { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: 1210, y: LANE_Y, hp: 4200, maxHp: 4200, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+      { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: 1410, y: LANE_Y, hp: 5200, maxHp: 5200, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+      { id: 'r_t3', team: 'red', type: 'nexus_tower', name: 'Red Nexus Turret', x: 1610, y: LANE_Y, hp: 6200, maxHp: 6200, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
       ...makeBarracks('red'),
-      { id: 'r_nexus', team: 'red', type: 'nexus', name: 'Red Nexus', x: NEXUS_X.red, y: LANE_Y, hp: 4400, maxHp: 4400, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 }
+      { id: 'r_nexus', team: 'red', type: 'nexus', name: 'Red Nexus', x: NEXUS_X.red, y: LANE_Y, hp: 10000, maxHp: 10000, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 }
     ];
     structuresRef.current = initialStructures;
 
@@ -656,6 +718,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const needed = getXpThreshold(u.level + 1);
 
     if (u.xp >= needed && u.level < 18) {
+      const previousSkill1 = abilityRank(u.level, 'skill1');
+      const previousSkill2 = abilityRank(u.level, 'skill2');
       u.level += 1;
       u.maxHp += 110;
       u.hp = Math.min(u.maxHp, u.hp + 120);
@@ -664,7 +728,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       sound.playCoin();
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: u.x,
         y: u.y - 35,
         text: `LEVEL UP! Lvl ${u.level} ✨`,
@@ -672,6 +736,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         opacity: 1,
         scale: 1.3
       });
+      if (abilityRank(u.level, 'skill1') > previousSkill1 || abilityRank(u.level, 'skill2') > previousSkill2) {
+        const upgraded = abilityRank(u.level, 'skill1') > previousSkill1 ? u.champion.skill1 : u.champion.skill2;
+        addEvent(`${u.player.name} upgraded ${upgraded.name} at level ${u.level}.`, 'level');
+      }
 
       if (u.level === 6) {
         u.cdUlt = 0;
@@ -699,7 +767,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     if (u.comboPractice >= needed) {
       u.comboMastered = true;
       const name = AVATAR_COMBOS[u.champion.name].name;
-      floatsRef.current.push({ id: Math.random().toString(), x: u.x, y: u.y - 42,
+      floatsRef.current.push({ id: random().toString(), x: u.x, y: u.y - 42,
         text: `COMBO LEARNED: ${name}`, color: '#facc15', opacity: 1, scale: 1.2 });
       addEvent(`${u.player.name} learned ${name} on ${u.champion.name}!`, 'combo');
     }
@@ -727,7 +795,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.animState = 'cast';
       if (skill === 'skill1') {
         u.mana -= 45;
-        u.cd1 = (u.champion.skill1.cooldown || 10) * cooldownFactor;
+        u.cd1 = (u.champion.skill1.cooldown || 10) * cooldownFactor * abilityCooldownMultiplier(u.level, 'skill1');
         castChampionSkill1(u, target);
         if (!PROJECTILE_SKILL1_CHAMPIONS.has(u.champion.name)) {
           u.comboHitConfirmed = true;
@@ -735,7 +803,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       } else {
         u.mana -= 35;
-        u.cd2 = (u.champion.skill2.cooldown || 10) * cooldownFactor;
+        u.cd2 = (u.champion.skill2.cooldown || 10) * cooldownFactor * abilityCooldownMultiplier(u.level, 'skill2');
         castChampionSkill2(u, target);
         u.comboHitConfirmed = true;
         u.mana = Math.min(100, u.mana + 35);
@@ -776,7 +844,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         u.comboStage = 0;
         u.comboHitConfirmed = false;
         u.mana = 0;
-        u.cdUlt = (u.level >= 16 ? 45 : u.level >= 11 ? 60 : 75) * cooldownFactor;
+        u.cdUlt = (u.level >= 16 ? 45 : u.level >= 11 ? 60 : 75) * cooldownFactor * abilityCooldownMultiplier(u.level, 'ultimate');
         u.animState = 'cast';
         castChampionUltimate(u, target, enemies);
         addEvent(`${u.player.name} executed ${recipe.name}: ${u.champion.skill1.name}, ${u.champion.skill2.name}, ${u.champion.ultimate.name}!`, 'combo');
@@ -804,8 +872,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     return false;
   };
 
-  // Main Simulation Step (60 FPS tick)
+  // Main Simulation Step (fixed 30 Hz game clock)
   const updateAramSimulation = (dt: number) => {
+    for (const minute of [8, 10, 12, 13] as const) {
+      const at = minute * 60;
+      if (matchTimeRef.current - dt < at && matchTimeRef.current >= at) {
+        itemCountsRef.current[minute] = championsRef.current.map(champion => champion.items.filter(item =>
+          item.tier === 'Legendary' || item.tier === 'Mythic').length);
+      }
+    }
+    if (matchTimeRef.current - dt < 900 && matchTimeRef.current >= 900) {
+      fullBuildsAt15Ref.current = championsRef.current.filter(champion => champion.items.filter(item =>
+        item.tier === 'Legendary' || item.tier === 'Mythic').length >= 6).length;
+    }
     // 1. Minion Wave Spawn Timer (Every 22s)
     waveTimerRef.current -= dt;
     if (waveTimerRef.current <= 0) {
@@ -839,6 +918,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           camp.targetId = undefined;
           camp.x = homeX;
           camp.y = homeY;
+          if (camp.type === 'siege_golem') {
+            objectiveCallsRef.current.delete('golem:blue');
+            objectiveCallsRef.current.delete('golem:red');
+          }
           addEvent(`🌲 ${camp.name} has respawned in the jungle!`, 'jungle');
         }
         return;
@@ -857,7 +940,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (target && camp.attackTimer <= 0 && Math.hypot(target.x - camp.x, target.y - camp.y) <= 95) {
         camp.attackTimer = 1.35;
         projectilesRef.current.push({
-          id: Math.random().toString(), x: camp.x, y: camp.y - 16,
+          id: random().toString(), x: camp.x, y: camp.y - 16,
           targetX: target.x, targetY: target.y - 12,
           vx: 0, vy: 0, speed: 430, color: camp.color,
           type: 'jungle_shot', size: 7, targetUnitId: target.id,
@@ -872,6 +955,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       dragon.spawnTimer -= dt;
       if (dragon.spawnTimer <= 0) {
         dragon.isAlive = true;
+        dragon.slamWindup = 0;
         dragon.aggroTeam = null;
         dragon.targetId = undefined;
         dragon.hp = dragon.maxHp + dragon.slainCount * 1200;
@@ -890,38 +974,40 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (nearbyChallengers.length === 0 && dragon.aggroTeam) {
         dragon.aggroTeam = null;
         dragon.targetId = undefined;
+        dragon.slamWindup = 0;
         dragon.hp = Math.min(dragon.maxHp, dragon.hp + 90 * dt);
       }
 
       if (nearbyChallengers.length > 0) {
         const primaryTarget = nearbyChallengers.sort((a, b) => a.hp - b.hp)[0];
 
-        // Boss Slam AOE Shockwave (every 6 seconds)
-        if (dragon.slamTimer <= 0) {
+        // Warn first, then resolve against positions at impact so challengers can evade.
+        if ((dragon.slamWindup ?? 0) > 0) {
+          dragon.slamWindup = Math.max(0, (dragon.slamWindup ?? 0) - dt);
+          if (dragon.slamWindup === 0) {
+            sound.playUltimateExplosion();
+            spellsRef.current.push({
+              id: random().toString(), type: 'boss_slam', x: dragon.x, y: dragon.y,
+              radius: 120, duration: 0.85, maxDuration: 0.85, color: '#f97316'
+            });
+            champs.filter(c => c.isAlive && Math.hypot(c.x - dragon.x, c.y - dragon.y) <= 120)
+              .forEach(c => {
+                applyDamageToChampion(null, c, 160, false, '🔥 Inferno Slam');
+                c.stunTimer = Math.max(c.stunTimer, 1.0);
+              });
+          }
+        } else if (dragon.slamTimer <= 0) {
           dragon.slamTimer = 6.0;
-          sound.playUltimateExplosion();
+          dragon.slamWindup = 1.1;
           spellsRef.current.push({
-            id: Math.random().toString(),
-            type: 'boss_slam',
+            id: random().toString(),
+            type: 'boss_warning',
             x: dragon.x,
             y: dragon.y,
             radius: 120,
-            duration: 1.0,
-            maxDuration: 1.0,
+            duration: 1.1,
+            maxDuration: 1.1,
             color: '#f97316'
-          });
-          nearbyChallengers.forEach((c) => {
-            c.hp = Math.max(1, c.hp - 160);
-            c.stunTimer = 1.0;
-            floatsRef.current.push({
-              id: Math.random().toString(),
-              x: c.x,
-              y: c.y - 30,
-              text: `🔥 INFERNO SLAM -160!`,
-              color: '#fb923c',
-              opacity: 1,
-              scale: 1.2
-            });
           });
         }
         // Boss Flame Breath auto-attack
@@ -929,7 +1015,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           dragon.attackTimer = 1.5;
           sound.playSpellHit();
           projectilesRef.current.push({
-            id: Math.random().toString(),
+            id: random().toString(),
             x: dragon.x,
             y: dragon.y - 10,
             targetX: primaryTarget.x,
@@ -969,10 +1055,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         // Shop items while in well!
         evaluateAndBuyItems(c);
 
-        if (Math.random() < 0.1) {
+        if (random() < 0.1) {
           floatsRef.current.push({
-            id: Math.random().toString(),
-            x: c.x + (Math.random() - 0.5) * 16,
+            id: random().toString(),
+            x: c.x + (random() - 0.5) * 16,
             y: c.y - 25,
             text: `+HP/MANA 💧`,
             color: '#34d399',
@@ -989,7 +1075,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         c.hp = Math.max(0, c.hp - 1400 * dt);
         sound.playSpellHit();
         floatsRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           x: c.x,
           y: c.y - 35,
           text: `⚡ WELL DEFENSE -1400!`,
@@ -1018,6 +1104,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       c.combatTimer = Math.max(0, (c.combatTimer ?? 0) - dt);
       c.trueFormTimer = Math.max(0, (c.trueFormTimer ?? 0) - dt);
       c.grievousTimer = Math.max(0, (c.grievousTimer ?? 0) - dt);
+      c.zhonyaRemaining = Math.max(0, (c.zhonyaRemaining ?? 0) - dt);
+      if (c.zhonyaRemaining === 0) c.zhonyaActive = false;
 
       // Warmog's Passive Regen: Requires out-of-combat (no recent damage taken or dealt)
       const hasWarmogs = c.items.some((it) => it.id === 'item_warmogs');
@@ -1043,6 +1131,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     // Skillshots travel toward the cast-time position and collide with the path.
     projectilesRef.current = projectilesRef.current
       .map((p) => {
+        if (p.skillshot && !p.countedShot) {
+          p.countedShot = true;
+          skillshotsRef.current.fired++;
+        }
         // Yasuo Wind Wall Projectile Dissolution
         const blockedByWindWall = spellsRef.current.some(
           (s) => s.type === 'wind_wall' && Math.hypot(p.x - s.x, p.y - s.y) <= s.radius
@@ -1050,7 +1142,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (blockedByWindWall && p.type !== 'boss_breath') {
           sound.playSpellHit();
           floatsRef.current.push({
-            id: Math.random().toString(),
+            id: random().toString(),
             x: p.x,
             y: p.y - 15,
             text: '💨 WIND WALL DEFLECT!',
@@ -1071,6 +1163,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           const hit = champs.find(c => c.isAlive && c.team !== attacker?.team
             && segmentHitsCircle({ x: p.x, y: p.y }, end, { x: c.x, y: c.y - 15 }, (p.collisionRadius ?? 17) + p.size));
           if (hit) {
+            skillshotsRef.current.hit++;
             handleProjectileImpact({ ...p, targetUnitId: hit.id });
             return null;
           }
@@ -1197,7 +1290,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         st.attackTimer = st.type === 'nexus' ? 0.2 : 1.0;
         sound.playSpellHit();
         projectilesRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           x: st.x,
           y: st.y - 32,
           targetX: target.x,
@@ -1236,7 +1329,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             const isTargetStructure = 'armor' in target;
             const projDamage = isTargetStructure ? getMinionStructureDamage(m.type, m.ad) : m.ad;
             projectilesRef.current.push({
-              id: Math.random().toString(),
+              id: random().toString(),
               x: m.x,
               y: m.y - 8,
               targetX: target.x,
@@ -1299,7 +1392,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           evaluateAndBuyItems(u);
           sound.playCoin();
           floatsRef.current.push({
-            id: Math.random().toString(),
+            id: random().toString(),
             x: u.x,
             y: u.y - 35,
             text: `💧 RECALLED TO FOUNTAIN!`,
@@ -1335,7 +1428,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         wardsRef.current.push({ id: `${u.id}_${matchTimeRef.current}`, team: u.team, bushId: nearbyBush.id,
           x: nearbyBush.x, y: nearbyBush.y, expiresAt: matchTimeRef.current + 75 });
         u.wardReadyAt = matchTimeRef.current + 50;
-        floatsRef.current.push({ id: Math.random().toString(), x: nearbyBush.x, y: nearbyBush.y - 20,
+        floatsRef.current.push({ id: random().toString(), x: nearbyBush.x, y: nearbyBush.y - 20,
           text: 'WARD PLACED', color: '#a3e635', opacity: 1, scale: 0.9 });
       }
 
@@ -1387,7 +1480,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.recallTimer = 0;
           u.recallCooldown = 4.0;
           floatsRef.current.push({
-            id: Math.random().toString(),
+            id: random().toString(),
             x: u.x,
             y: u.y - 35,
             text: `❌ RECALL INTERRUPTED!`,
@@ -1421,7 +1514,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.mana = Math.min(100, u.mana + 45);
           sound.playCoin();
           floatsRef.current.push({
-            id: Math.random().toString(),
+            id: random().toString(),
             x: u.x,
             y: u.y - 25,
             text: `+${r.healAmount} HP / +45 Mana! 💧`,
@@ -1438,7 +1531,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         || wardsRef.current.some(w => w.team === u.team && w.bushId === e.currentBushId)
         || champs.some(a => a.team === u.team && a.isAlive && a.currentBushId === e.currentBushId)));
       const allies = champs.filter((a) => a.team === u.team && a.isAlive);
-      const enemyStructures = structures.filter((st) => st.team !== u.team && st.isAlive);
+      const enemyStructures = structures.filter((st) => st.team !== u.team && st.isAlive
+        && (st.type !== 'nexus' || canDamageNexus(st.team, structures)));
       const enemyMinions = minions.filter((m) => m.team !== u.team && m.isAlive);
       const availableJungleCamps = jungleCamps.filter((c) => c.isAlive && c.type !== 'siege_golem');
 
@@ -1459,9 +1553,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const kiteBackstepThreshold = attackRange * 0.65;
       const threateningMinions = enemyMinions.filter(m => Math.hypot(m.x - u.x, m.y - u.y) <= Math.max(attackRange + 40, 240));
 
-      // Realistic MOBA Recall Timing: Never recall at full HP to shop!
-      const hasShopGold = u.gold >= 1700;
-      const wantsItemPurchase = hasShopGold && (u.hp < u.maxHp * 0.65 || (u.gold >= 2400 && iq >= 70))
+      // Skilled shoppers recall on a safe item spike after the mid game.
+      const lateShop = matchEconomyPhase(matchTimeRef.current) === 'Late game'
+        || matchEconomyPhase(matchTimeRef.current) === 'Super late game';
+      const hasShopGold = u.gold >= (lateShop ? 1450 : 1700);
+      const wantsItemPurchase = hasShopGold && (u.hp < u.maxHp * 0.65 || (u.gold >= (lateShop ? 1900 : 2400) && iq >= 70))
         && localEnemies.length === 0 && threateningMinions.length === 0 && (u.recallCooldown ?? 0) <= 0;
       const isDangerousFight = isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002));
       const wantsRecall = (isLowHpScared || wantsItemPurchase) && !isInsideWell && (u.recallCooldown ?? 0) <= 0;
@@ -1521,7 +1617,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.vx = 0;
           u.vy = 0;
           floatsRef.current.push({
-            id: Math.random().toString(),
+            id: random().toString(),
             x: u.x,
             y: u.y - 35,
             text: wantsItemPurchase ? `🛍️ ITEM SHOP RECALL...` : `💧 SAFE RECALLING...`,
@@ -1530,7 +1626,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             scale: 1.15
           });
           addEvent(wantsItemPurchase
-            ? `🛍️ ${u.player.name} (${u.champion.name}) found a safe position and is recalling to shop items with ${u.gold}g!`
+            ? `🛍️ ${u.player.name} (${u.champion.name}) found a safe position and is recalling to shop items with ${Math.floor(u.gold)}g!`
             : `💧 ${u.player.name} (${u.champion.name}) cleared threats and safely recalled!`, 'fountain');
           return;
         }
@@ -1591,6 +1687,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // MACRO OBJECTIVE 1: CONTEST DRAGON IN UPPER PIT (Game-Ending Objective Priority)
       if (shouldContestDragon && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > 220)) {
+        const callKey = `dragon:${dragon.slainCount}:${u.team}`;
+        if (!objectiveCallsRef.current.has(callKey)) {
+          objectiveCallsRef.current.add(callKey);
+          addEvent(`${u.team.toUpperCase()} called Embermaw with wave priority, pit vision, and healthy teammates.`, 'dragon');
+        }
         const dragonDist = Math.hypot(dragon.x - u.x, dragon.y - u.y);
         u.facing = dragon.x > u.x ? 'right' : 'left';
 
@@ -1630,6 +1731,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         actorHealthFraction: u.hp / u.maxHp
       });
       if (golem && shouldContestGolem && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > 220)) {
+        const callKey = `golem:${u.team}`;
+        if (!objectiveCallsRef.current.has(callKey)) {
+          objectiveCallsRef.current.add(callKey);
+          addEvent(`${u.team.toUpperCase()} called Gravemarch after clearing the wave and scouting the lower pit.`, 'jungle');
+        }
         const dist = Math.hypot(golem.x - u.x, golem.y - u.y);
         u.facing = golem.x > u.x ? 'right' : 'left';
         if (dist <= attackRange + 18) {
@@ -1713,14 +1819,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         } else if (shouldUseUltimate(u, primaryTarget, enemies, allies, ultRange)) {
           u.mana = 0;
           const baseUltCd = u.level >= 16 ? 45.0 : u.level >= 11 ? 60.0 : 75.0;
-          u.cdUlt = baseUltCd * cooldownFactor;
+          u.cdUlt = baseUltCd * cooldownFactor * abilityCooldownMultiplier(u.level, 'ultimate');
           u.animState = 'cast';
           castChampionUltimate(u, primaryTarget, enemies);
         }
         // 2. REASONABLE SKILL 1: 8-12s Cooldown & 45 Mana Cost (Authentic Skill Range)
         else if (shouldUseSkill(u, primaryTarget, enemies, skill1Range)) {
           u.mana -= 45;
-          u.cd1 = (u.champion.skill1.cooldown || 10.0) * cooldownFactor;
+          u.cd1 = (u.champion.skill1.cooldown || 10.0) * cooldownFactor * abilityCooldownMultiplier(u.level, 'skill1');
           u.animState = 'cast';
           castChampionSkill1(u, primaryTarget);
           practiceAvatarCombo(u);
@@ -1728,7 +1834,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         // Skill 2 provides follow-up control, defense, or damage between first casts (Authentic Skill Range)
         else if (shouldUseSecondSkill(u, primaryTarget, enemies, allies, skill2Range)) {
           u.mana -= 35;
-          u.cd2 = (u.champion.skill2.cooldown || 10.0) * cooldownFactor;
+          u.cd2 = (u.champion.skill2.cooldown || 10.0) * cooldownFactor * abilityCooldownMultiplier(u.level, 'skill2');
           u.animState = 'cast';
           castChampionSkill2(u, primaryTarget);
           practiceAvatarCombo(u);
@@ -1780,10 +1886,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const cluster = enemyMinions.filter(m => Math.hypot(m.x - nearestMinion.x, m.y - nearestMinion.y) <= 90);
         if (shouldCastWaveClearSkill(u.champion.primaryRole, u.mana, u.cd1, cluster.length, iq, lanStat)) {
           u.mana -= 45;
-          u.cd1 = (u.champion.skill1.cooldown || 10) * 0.8;
+          u.cd1 = (u.champion.skill1.cooldown || 10) * 0.8 * abilityCooldownMultiplier(u.level, 'skill1');
           u.animState = 'cast';
-          cluster.forEach(m => applyDamageToMinion(u, m, u.champion.skill1.damage * (0.7 + lanStat / 180)));
-          spellsRef.current.push({ id: Math.random().toString(), type: 'wave_burst', x: nearestMinion.x, y: nearestMinion.y,
+          cluster.forEach(m => applyDamageToMinion(u, m, u.champion.skill1.damage * abilityDamageMultiplier(u.level, 'skill1') * (0.7 + lanStat / 180)));
+          spellsRef.current.push({ id: random().toString(), type: 'wave_burst', x: nearestMinion.x, y: nearestMinion.y,
             radius: 90, duration: 0.55, maxDuration: 0.55, color: u.champion.primaryColor });
         } else if (u.attackTimer <= 0) {
           u.attackTimer = 1.0 / Math.max(0.5, u.champion.aspd);
@@ -1865,7 +1971,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       endAramMatch('red');
     }
 
-    setChampions(champs.map((c) => ({ ...c, items: [...c.items] })));
+    if (!batchMode) setChampions(champs.map((c) => ({ ...c, items: [...c.items] })));
   };
 
   // Evaluate & Purchase Items progressively
@@ -1917,7 +2023,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           team: u.team
         },
         ...prev
-      ]);
+      ].slice(0, 12));
 
       showBanner(
         `🛍️ ${u.player.name} completed ${nextItem.name}!`,
@@ -1937,8 +2043,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     dragon.targetId = attacker.id;
     dragon.hp -= damage;
     floatsRef.current.push({
-      id: Math.random().toString(),
-      x: dragon.x + (Math.random() - 0.5) * 40,
+      id: random().toString(),
+      x: dragon.x + (random() - 0.5) * 40,
       y: dragon.y - 30,
       text: `-${Math.round(damage)}`,
       color: '#fb923c',
@@ -1954,25 +2060,25 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       aegisBuffRef.current = {
         team: attacker.team,
-        expiresAt: matchTimeRef.current + 110.0,
-        adBonus: 60,
-        apBonus: 70,
-        siegeMultiplier: 2.0,
+        expiresAt: matchTimeRef.current + 90.0,
+        adBonus: 45,
+        apBonus: 50,
+        siegeMultiplier: 1.5,
         burnTrueDamage: true
       };
 
-      const bounty = 350;
+      const bounty = 250;
       championsRef.current
         .filter((c) => c.team === attacker.team)
         .forEach((ally) => {
           ally.gold += bounty;
           grantChampionXp(ally, 320);
-          ally.shield += 450;
+          ally.shield += 300;
         });
 
       showBanner(
         `🐉 ${attacker.team.toUpperCase()} TEAM SLAIN EMBERMAW!`,
-        `Dragon Slayer Aspect! +60 AD/AP, 2x Tower Siege Damage, & True Damage Burn!`,
+        `Dragon Slayer Aspect! +45 AD, +50 AP, 1.5x Tower Siege Damage, and True Damage Burn!`,
         '🐉'
       );
       addEvent(`🐉 DRAGON SLAIN: ${attacker.player.name} secured Embermaw! Team claimed Dragon Slayer Aspect!`, 'dragon');
@@ -1986,8 +2092,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     camp.targetId = attacker.id;
     camp.hp -= damage;
     floatsRef.current.push({
-      id: Math.random().toString(),
-      x: camp.x + (Math.random() - 0.5) * 20,
+      id: random().toString(),
+      x: camp.x + (random() - 0.5) * 20,
       y: camp.y - 20,
       text: `-${Math.round(damage)}`,
       color: '#facc15',
@@ -2014,7 +2120,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       sound.playCoin();
 
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: camp.x,
         y: camp.y - 30,
         text: `+${camp.goldReward}g 🌲`,
@@ -2049,10 +2155,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const casterIq = caster.player.stats.iq;
     const casterTf = caster.player.stats.tf;
     const teamChemistry = caster.teamChemistry ?? 10;
+    const castSlot = skillName === caster.champion.ultimate.name ? 'ultimate' : caster.activeAbilitySlot ?? 'skill1';
+    const scaledDuration = duration * Math.min(1.1, 0.55 + 0.45 * abilityDamageMultiplier(caster.level, castSlot));
 
     const { isChainStun, finalDuration } = applyChainStun(
       target.stunTimer,
-      duration,
+      scaledDuration,
       casterIq,
       casterTf,
       teamChemistry
@@ -2060,14 +2168,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     target.stunTimer = finalDuration;
     if (ccType === 'knockup') {
-      target.knockupTimer = Math.max(target.knockupTimer ?? 0, duration);
+      target.knockupTimer = Math.max(target.knockupTimer ?? 0, scaledDuration);
       target.knockupMax = Math.max(target.knockupMax ?? 0, target.knockupTimer);
     }
 
     if (isChainStun) {
       sound.playSpellHit();
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: target.x,
         y: target.y - 45,
         text: `⚡ CHAIN STUN!`,
@@ -2101,15 +2209,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             const pull = Math.min(p.pullOnHit, Math.max(0, distance - 38));
             if (distance > 0) { targetChamp.x += dx / distance * pull; targetChamp.y += dy / distance * pull; }
           }
-          applyDamageToChampion(attackerChamp ?? null, targetChamp, p.damage, !!p.trueDamage, p.skillLabel);
+          applyDamageToChampion(attackerChamp ?? null, targetChamp, p.damage, !!p.trueDamage, p.skillLabel, p.abilitySlot ?? 'skill1');
           if (p.splashRadius && attackerChamp) {
             championsRef.current.filter(c => c.team !== attackerChamp.team && c.id !== targetChamp.id && c.isAlive
               && Math.hypot(c.x - targetChamp.x, c.y - targetChamp.y) < p.splashRadius!)
-              .forEach(c => applyDamageToChampion(attackerChamp, c, p.damage * 0.55, !!p.trueDamage, p.skillLabel));
+              .forEach(c => applyDamageToChampion(attackerChamp, c, p.damage * 0.55, !!p.trueDamage, p.skillLabel, p.abilitySlot ?? 'skill1'));
           }
           if (p.healAlliesOnHit && attackerChamp) {
             championsRef.current.filter(c => c.team === attackerChamp.team && c.isAlive && Math.hypot(c.x - attackerChamp.x, c.y - attackerChamp.y) < 190)
-              .forEach(c => { c.hp = Math.min(c.maxHp, c.hp + p.healAlliesOnHit!); emitSkillEffect(attackerChamp, c, false, p.skillLabel || 'Dusk Lance', 'skill1'); });
+              .forEach(c => { c.hp = Math.min(c.maxHp, c.hp + p.healAlliesOnHit! * abilityDamageMultiplier(attackerChamp.level, 'skill1')); emitSkillEffect(attackerChamp, c, false, p.skillLabel || 'Dusk Lance', 'skill1'); });
           }
           if (attackerChamp) emitSkillEffect(attackerChamp, targetChamp, false, p.skillLabel, 'skill1');
           if (p.comboStage && attackerChamp?.comboStage === p.comboStage && attackerChamp.comboTargetId === targetChamp.id) {
@@ -2123,7 +2231,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             : p.type === 'jungle_shot' ? '🌲 Jungle Camp' : undefined);
       } else if (targetMinion) {
         if (attackerChamp) {
-          applyDamageToMinion(attackerChamp, targetMinion, p.damage);
+          applyDamageToMinion(attackerChamp, targetMinion, p.damage * (p.skillshot ? abilityDamageMultiplier(attackerChamp.level, p.abilitySlot ?? 'skill1') : 1));
         } else {
           targetMinion.hp -= p.damage;
           if (targetMinion.hp <= 0 && targetMinion.isAlive) {
@@ -2146,7 +2254,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: p.x,
         y: p.y - 10,
         text: '✨',
@@ -2230,7 +2338,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     let bonusAd = 0;
     const hasInfinity = u.items.some((it) => it.id === 'item_infinity_edge');
     const critChance = Math.min(0.85, 0.1 + u.items.reduce((total, item) => total + (item.stats.crit ?? 0) / 100, 0));
-    const isCrit = Math.random() < critChance;
+    const isCrit = random() < critChance;
     if (isCrit) bonusAd += u.champion.ad * (hasInfinity ? 1.25 : 0.75);
 
     if (aegisBuffRef.current?.team === u.team) {
@@ -2249,7 +2357,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const krakenProcDmg = Math.round((140 + u.champion.ad * 0.45) * (1 + missingHpFactor * 0.50));
         bonusAd += krakenProcDmg;
         floatsRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           x: target.x,
           y: target.y - 36,
           text: `🔱 BRING IT DOWN! (+${krakenProcDmg})`,
@@ -2275,7 +2383,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       bonusAd += giantSlayerBonus;
       if (hpRatio >= 0.2) {
         floatsRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           x: target.x,
           y: target.y - 25,
           text: `🏹 GIANT SLAYER! (+${Math.round(hpRatio * 22)}%)`,
@@ -2319,7 +2427,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const subDy = subTargetCenterY - subOriginY;
         const subAngle = Math.atan2(subDy, subDx);
         projectilesRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           x: subOriginX,
           y: subOriginY,
           targetX: subTarget.x,
@@ -2350,7 +2458,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (u.champion.name === 'Buck') {
         for (let s = -1; s <= 1; s++) {
           projectilesRef.current.push({
-            id: Math.random().toString(),
+            id: random().toString(),
             x: originX,
             y: originY,
             targetX: target.x,
@@ -2369,7 +2477,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       } else {
         projectilesRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           x: originX,
           y: originY,
           targetX: target.x,
@@ -2389,8 +2497,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else {
       // Melee attack: direct strike with melee impact spark
       floatsRef.current.push({
-        id: Math.random().toString(),
-        x: target.x + (Math.random() - 0.5) * 16,
+        id: random().toString(),
+        x: target.x + (random() - 0.5) * 16,
         y: target.y - 15,
         text: '💥',
         color: '#facc15',
@@ -2429,7 +2537,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const abilitySlot: SkillSlot = explicitSlot ?? (ultimate ? 'ultimate'
       : (label === u.champion.skill2.name ? 'skill2' : 'skill1'));
     spellsRef.current.push({
-      id: Math.random().toString(),
+      id: random().toString(),
       type: ultimate ? 'ultimate_burst' : 'skill_burst',
       x: target.x, y: target.y,
       sourceX: u.x, sourceY: u.y,
@@ -2448,9 +2556,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const accuracy = u.player.stats.lan * 0.75 + u.player.stats.flx * 0.15 + u.player.stats.iq * 0.1
       + (u.player.signatureChampions.includes(u.champion.name) ? 7 : 0);
     const origin = { x: u.x + (u.facing === 'right' ? 16 : -16), y: u.y - 15 };
-    const aim = aimAtCast(origin, { x: target.x, y: target.y - 15, vx: target.vx, vy: target.vy }, speed, accuracy);
+    const aim = aimAtCast(origin, { x: target.x, y: target.y - 15, vx: target.vx, vy: target.vy }, speed, accuracy, random);
     projectilesRef.current.push({
-      id: Math.random().toString(), x: origin.x, y: origin.y,
+      id: random().toString(), x: origin.x, y: origin.y,
       targetX: aim.x, targetY: aim.y, vx: 0, vy: 0, speed,
       color: u.champion.accentColor, type: spec.type ?? 'orb', size: spec.size ?? 8,
       targetUnitId: target.id, damage: u.champion.skill1.damage,
@@ -2467,6 +2575,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   // Champion Skill 1 Cast (Remarkable High-Visibility Abilities)
   const castChampionSkill1 = (u: AramChampionUnit, target: AramChampionUnit) => {
+    u.activeAbilitySlot = 'skill1';
+    const utility = abilityDamageMultiplier(u.level, 'skill1');
     sound.playSpellHit();
     emitSkillEffect(u, target, false, u.champion.skill1.name, 'skill1');
 
@@ -2474,7 +2584,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       applyChampionCrowdControl(u, target, 1.2, 'stun', '☀️ Solar Shieldbash');
       applyDamageToChampion(u, target, 120, false, '☀️ Solar Shieldbash');
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'solar_flare',
         x: target.x,
         y: target.y,
@@ -2490,7 +2600,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const angle = Math.atan2(dy, dx);
       for (let w = -2; w <= 2; w++) {
         projectilesRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           x: u.x + (u.facing === 'right' ? 18 : -18),
           y: u.y - 15,
           targetX: target.x,
@@ -2516,7 +2626,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const dy = target.y - u.y;
       const angle = Math.atan2(dy, dx);
       projectilesRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: u.x + (u.facing === 'right' ? 16 : -16),
         y: u.y - 14,
         targetX: target.x,
@@ -2540,7 +2650,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Buck') {
       applyDamageToChampion(u, target, 160, false, '💥 Powder Keg Blast');
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'shotgun_blast',
         x: target.x,
         y: target.y,
@@ -2556,14 +2666,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Valkira') {
       applyChampionCrowdControl(u, target, 0.8, 'stun', '⚔️ Crescent Cleave');
       applyDamageToChampion(u, target, 150, false, '⚔️ Crescent Cleave');
-      u.shield += 100;
+      u.shield += 100 * utility;
     } else if (u.champion.name === 'Kage') {
       // Zed: Razor Shuriken
       const dx = target.x - u.x;
       const dy = target.y - u.y;
       const angle = Math.atan2(dy, dx);
       projectilesRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: u.x + (u.facing === 'right' ? 16 : -16),
         y: u.y - 14,
         targetX: target.x,
@@ -2586,7 +2696,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const dy = target.y - u.y;
       const angle = Math.atan2(dy, dx);
       projectilesRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: u.x + (u.facing === 'right' ? 16 : -16),
         y: u.y - 14,
         targetX: target.x,
@@ -2611,7 +2721,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const angle = Math.atan2(dy, dx);
       for (let a = -1; a <= 1; a++) {
         projectilesRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           x: u.x + (u.facing === 'right' ? 16 : -16),
           y: u.y - 15,
           targetX: target.x,
@@ -2636,7 +2746,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const angle = Math.atan2(dy, dx);
       for (let f = -1; f <= 1; f += 2) {
         projectilesRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           x: u.x + (u.facing === 'right' ? 16 : -16),
           y: u.y - 15,
           targetX: target.x,
@@ -2661,7 +2771,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       applyChampionCrowdControl(u, target, 1.2, 'knockup', '✨ Grand Entrance');
       applyDamageToChampion(u, target, 115, false, '✨ Grand Entrance');
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'grand_entrance',
         x: target.x,
         y: target.y,
@@ -2676,7 +2786,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       applyChampionCrowdControl(u, target, 1.5, 'root', '🐻 Entangling Claws');
       applyDamageToChampion(u, target, 130, false, '🐻 Entangling Claws');
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'spirit_bear',
         x: target.x,
         y: target.y,
@@ -2691,7 +2801,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       applyChampionCrowdControl(u, target, 2.0, 'root', '🌲 Sprout');
       applyDamageToChampion(u, target, 90, false, '🌲 Sprout');
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'sprout_ring',
         x: target.x,
         y: target.y,
@@ -2705,7 +2815,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Zal') {
       // Dazzle: Shadow Wave heal & zap
       championsRef.current.filter((c) => c.team === u.team && c.isAlive).forEach((ally) => {
-        ally.hp = Math.min(ally.maxHp, ally.hp + 180);
+        ally.hp = Math.min(ally.maxHp, ally.hp + 180 * utility);
       });
       applyDamageToChampion(u, target, 130, false, '⚡ Shadow Wave');
       addEvent(`💖 SHADOW WAVE: Zal restored +180 HP to all allies and zapped ${target.player.name}!`, 'combo');
@@ -2717,7 +2827,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Raijin') {
       // Storm Spirit: Static Remnant
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'static_remnant',
         x: u.x,
         y: u.y,
@@ -2734,7 +2844,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const dy = target.y - u.y;
       const angle = Math.atan2(dy, dx);
       projectilesRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: u.x + (u.facing === 'right' ? 16 : -16),
         y: u.y - 12,
         targetX: target.x,
@@ -2756,7 +2866,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // Void Spirit: Aether Remnant Watcher pulling target into void gaze!
       applyChampionCrowdControl(u, target, 1.4, 'stun', '🔮 Aether Remnant');
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'aether_remnant',
         x: target.x,
         y: target.y,
@@ -2779,7 +2889,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const dy = target.y - u.y;
       const angle = Math.atan2(dy, dx);
       projectilesRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: u.x + (u.facing === 'right' ? 16 : -16),
         y: u.y - 14,
         targetX: target.x,
@@ -2807,7 +2917,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const angle = Math.atan2(dy, dx);
       for (let w = -2; w <= 2; w++) {
         projectilesRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           x: u.x + (u.facing === 'right' ? 16 : -16),
           y: u.y - 14,
           targetX: target.x,
@@ -2827,7 +2937,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       championsRef.current.filter(e => e.team !== u.team && e.id !== target.id && e.isAlive && Math.hypot(e.x - target.x, e.y - target.y) < 75)
         .forEach(e => applyDamageToChampion(u, e, 95, false, 'Gloom Raze'));
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'soul_draw',
         x: target.x,
         y: target.y,
@@ -2843,13 +2953,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Solenne') {
       applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Dusk Lance');
       championsRef.current.filter(a => a.team === u.team && a.isAlive && Math.hypot(a.x - u.x, a.y - u.y) < 180)
-        .forEach(a => { a.hp = Math.min(a.maxHp, a.hp + 110); emitSkillEffect(u, a, false, 'Dusk Lance', 'skill1'); });
+        .forEach(a => { a.hp = Math.min(a.maxHp, a.hp + 110 * utility); emitSkillEffect(u, a, false, 'Dusk Lance', 'skill1'); });
       addEvent(`✨ DUSK LANCE: Solenne fired piercing relic beam, healing allies!`, 'combo');
     } else if (u.champion.name === 'Croakwell') {
       // Largo / Croakwell: Ribbon Lash Tongue pulling target continuously!
       applyChampionCrowdControl(u, target, 0.8, 'stun', '👅 Ribbon Lash');
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'ribbon_lash',
         x: target.x,
         y: target.y,
@@ -2870,7 +2980,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Stonewake') {
       applyChampionCrowdControl(u, target, 1.4, 'knockup', 'Faultline');
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'faultline',
         x: target.x,
         y: target.y,
@@ -2906,6 +3016,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   };
 
   const castChampionSkill2 = (u: AramChampionUnit, target: AramChampionUnit) => {
+    u.activeAbilitySlot = 'skill2';
+    const utility = abilityDamageMultiplier(u.level, 'skill2');
     const name = u.champion.name;
     const skill = u.champion.skill2;
     const nearbyAllies = championsRef.current.filter(c => c.team === u.team && c.isAlive);
@@ -2921,15 +3033,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       target.charmSourceId = u.id;
       addEvent(`💖 CHARM: Kyumi charmed ${target.player.name} with Charm of Longing!`, 'combo');
     } else if (name === 'Buck') {
-      spellsRef.current.push({ id: Math.random().toString(), type: 'smoke_screen',
+      spellsRef.current.push({ id: random().toString(), type: 'smoke_screen',
         x: target.x, y: target.y, radius: 55, duration: 2.5, maxDuration: 2.5, color: '#94a3b8' });
     } else if (name === 'Valkira' || name === 'Kaolin') {
-      u.shield += name === 'Valkira' ? 200 : 160;
+      u.shield += (name === 'Valkira' ? 200 : 160) * utility;
     } else if (name === 'Kage' || name === 'Inai') {
       u.x = target.x + (u.team === 'blue' ? -32 : 32);
       u.y = target.y - 12;
     } else if (name === 'Kazemaru') {
-      spellsRef.current.push({ id: Math.random().toString(), type: 'wind_wall',
+      spellsRef.current.push({ id: random().toString(), type: 'wind_wall',
         x: u.x + (target.x - u.x) * 0.5, y: u.y, radius: 50,
         duration: 3.5, maxDuration: 3.5, color: '#38bdf8' });
     } else if (name === 'Cora') {
@@ -2940,7 +3052,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       addEvent(`❄️ FROST: Astra applied Frost Shot frostbite to ${target.player.name}!`, 'micro');
     } else if (name === 'Kindra' || name === 'Kindra & Grim') {
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'wolf_frenzy',
         x: target.x,
         y: target.y,
@@ -2955,7 +3067,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       addEvent(`🐺 FRENZY: Grim dashed to attack in Wolf's Frenzy territory!`, 'combo');
     } else if (name === 'Tequoia') {
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'treants',
         x: u.x,
         y: u.y,
@@ -2974,7 +3086,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         e.fearSourceId = u.id;
       });
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'savage_roar',
         x: u.x,
         y: u.y,
@@ -2991,7 +3103,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // Storm Spirit / Raijin: Electric Vortex continuous tether pulling victim!
       applyChampionCrowdControl(u, target, 1.4, 'stun', '⚡ Electric Vortex');
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'electric_vortex',
         x: target.x,
         y: target.y,
@@ -3010,11 +3122,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       addEvent(`⚡ VORTEX: Raijin tethered and is pulling ${target.player.name} with Electric Vortex!`, 'combo');
     } else if (name === 'Renn') {
       const ally = nearbyAllies.filter(c => c.id !== u.id).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
-      u.shield += 220;
-      if (ally) { ally.shield += 220; emitSkillEffect(u, ally, false, skill.name, 'skill2'); }
+      u.shield += 220 * utility;
+      if (ally) { ally.shield += 220 * utility; emitSkillEffect(u, ally, false, skill.name, 'skill2'); }
     } else if (name === 'Zal') {
       nearbyAllies.filter(c => Math.hypot(c.x - u.x, c.y - u.y) < 200).forEach(c => {
-        c.hp = Math.min(c.maxHp, c.hp + 180);
+        c.hp = Math.min(c.maxHp, c.hp + 180 * utility);
         emitSkillEffect(u, c, false, skill.name, 'skill2');
       });
     } else if (name === 'Xin') {
@@ -3032,7 +3144,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 85)
         .forEach(c => { applyChampionCrowdControl(u, c, 0.5, 'stun', 'Bogbeat'); applyDamageToChampion(u, c, 75, false, skill.name); });
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'bogbeat',
         x: u.x,
         y: u.y,
@@ -3045,11 +3157,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         abilitySlot: 'skill2'
       });
     } else if (name === 'Soulscourge') {
-      u.shield += 120;
+      u.shield += 120 * utility;
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - u.x, c.y - u.y) < 95)
         .forEach(c => applyDamageToChampion(u, c, 65, false, skill.name));
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'soul_draw',
         x: u.x,
         y: u.y,
@@ -3063,9 +3175,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
     } else if (name === 'Stonewake') {
       applyChampionCrowdControl(u, target, 1.0, 'knockup', 'Runic Maul');
-      u.shield += 130;
+      u.shield += 130 * utility;
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'runic_maul',
         x: target.x,
         y: target.y,
@@ -3078,7 +3190,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         abilitySlot: 'skill2'
       });
     } else if (name === 'Mirehook') {
-      u.shield += 110;
+      u.shield += 110 * utility;
       nearbyEnemies.filter(e => Math.hypot(e.x - u.x, e.y - u.y) < 90).forEach(e => {
         if (e.id !== target.id) applyDamageToChampion(u, e, skill.damage * 0.7, false, skill.name);
       });
@@ -3088,7 +3200,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
     } else if (name === 'Voltgrip') {
       applyChampionCrowdControl(u, target, 0.9, 'knockup', skill.name);
-      u.shield += 100;
+      u.shield += 100 * utility;
     } else if (name === 'Aetherbolt') {
       u.x = Math.max(60, Math.min(ARENA_WIDTH - 60, u.x + (u.team === 'blue' ? -65 : 65)));
       u.y = Math.max(90, Math.min(610, u.y + (u.y < LANE_Y ? -35 : 35)));
@@ -3100,9 +3212,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (name === 'Brewmaw') {
       u.x = target.x + (u.team === 'blue' ? -28 : 28);
       applyChampionCrowdControl(u, target, 0.8, 'knockup', skill.name);
-      u.hp = Math.min(u.maxHp, u.hp + 90);
+      u.hp = Math.min(u.maxHp, u.hp + 90 * utility);
     } else if (name === 'Wraithhook') {
-      nearbyAllies.filter(a => Math.hypot(a.x - u.x, a.y - u.y) < 180).forEach(a => { a.shield += 150; });
+      nearbyAllies.filter(a => Math.hypot(a.x - u.x, a.y - u.y) < 180).forEach(a => { a.shield += 150 * utility; });
       target.x += u.team === 'blue' ? 30 : -30;
     }
 
@@ -3114,6 +3226,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   // Champion Ultimate Cast (Level 6 Spike: 75s / 60s / 45s CD)
   const castChampionUltimate = (u: AramChampionUnit, target: AramChampionUnit, enemies: AramChampionUnit[]) => {
+    u.activeAbilitySlot = 'ultimate';
+    const utility = abilityDamageMultiplier(u.level, 'ultimate');
     if (!target) return;
     sound.playUltimateExplosion();
     emitSkillEffect(u, ['Astra', 'Soulscourge', 'Stonewake', 'Croakwell'].includes(u.champion.name) ? u : target, true, u.champion.ultimate.name, 'ultimate');
@@ -3130,7 +3244,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     if (u.champion.name === 'Solana') {
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'solar_flare',
         x: target.x,
         y: target.y,
@@ -3148,7 +3262,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const dy = target.y - u.y;
       const angle = Math.atan2(dy, dx);
       projectilesRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: u.x,
         y: u.y - 15,
         targetX: target.x,
@@ -3164,6 +3278,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         attackerId: u.id,
         skillshot: true,
         skillLabel: 'Crystal Comet',
+        abilitySlot: 'ultimate',
         stunOnHit: 2.5,
         collisionRadius: 25,
         angle
@@ -3176,7 +3291,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const recoilDir = u.facing === 'right' ? -1 : 1;
       u.x = Math.max(100, Math.min(ARENA_WIDTH - 100, u.x + recoilDir * 60));
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'shotgun_blast',
         x: u.x - recoilDir * 20,
         y: u.y - 10,
@@ -3196,7 +3311,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.x = target.x - (u.facing === 'right' ? 25 : -25);
       u.y = target.y;
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'death_mark',
         x: target.x,
         y: target.y,
@@ -3211,7 +3326,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Kazemaru') {
       // Yasuo: Wind Wall & Last Breath
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'wind_wall',
         x: u.x + (u.facing === 'right' ? 35 : -35),
         y: u.y,
@@ -3230,7 +3345,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Kindra' || u.champion.name === 'Kindra & Grim') {
       // Kindred: Lamb's Respite
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'lambs_respite',
         x: u.x,
         y: u.y,
@@ -3240,7 +3355,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         color: '#facc15'
       });
       championsRef.current.filter((c) => c.team === u.team && c.isAlive).forEach((ally) => {
-        ally.hp = Math.min(ally.maxHp, ally.hp + 450);
+        ally.hp = Math.min(ally.maxHp, ally.hp + 450 * utility);
       });
       showBanner(`✨ LAMB'S RESPITE!`, `${u.player.name} blessed a golden sanctuary of immortality!`, '✨');
     } else if (u.champion.name === 'Cora') {
@@ -3264,7 +3379,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Sylla') {
       // Lone Druid: True Form & Savage Roar (Temporary transformation buff)
       u.trueFormTimer = 12.0;
-      u.shield += 450;
+      u.shield += 450 * utility;
       enemies.forEach((e) => {
         if (Math.hypot(e.x - u.x, e.y - u.y) <= 90) applyChampionCrowdControl(u, e, 1.3, 'stun', '🐻 True Form Roar');
       });
@@ -3284,7 +3399,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         .sort((a, b) => a.hp - b.hp)[0];
       if (lowestAlly) {
         spellsRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           type: 'shallow_grave',
           x: lowestAlly.x,
           y: lowestAlly.y,
@@ -3299,7 +3414,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Xin') {
       // Ember Spirit: Sleight of Fist & Remnants
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'sleight_circle',
         x: target.x,
         y: target.y,
@@ -3317,7 +3432,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.x = target.x;
       u.y = target.y;
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'ball_lightning',
         x: target.x,
         y: target.y,
@@ -3331,7 +3446,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Kaolin') {
       // Earth Spirit: Magnetize
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'magnetize_pulse',
         x: u.x,
         y: u.y,
@@ -3367,7 +3482,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
       if (u.champion.name === 'Soulscourge') {
         spellsRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           type: 'dirge_wave',
           x: u.x,
           y: u.y,
@@ -3381,7 +3496,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         });
       } else if (u.champion.name === 'Stonewake') {
         spellsRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           type: 'quake_chorus',
           x: u.x,
           y: u.y,
@@ -3395,7 +3510,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         });
       } else if (u.champion.name === 'Cinderlock') {
         spellsRef.current.push({
-          id: Math.random().toString(),
+          id: random().toString(),
           type: 'cinder_verdict',
           x: target.x,
           y: target.y,
@@ -3410,7 +3525,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
     } else if (u.champion.name === 'Solenne') {
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'daybreak_veil',
         x: u.x,
         y: u.y,
@@ -3427,12 +3542,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         emitSkillEffect(u, e, true, 'Daybreak Veil');
       });
       championsRef.current.filter(a => a.team === u.team && a.isAlive).forEach(a => {
-        a.shield += 220;
+        a.shield += 220 * utility;
         emitSkillEffect(u, a, true, 'Daybreak Veil');
       });
     } else if (u.champion.name === 'Croakwell') {
       spellsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         type: 'marsh_anthem',
         x: u.x,
         y: u.y,
@@ -3445,8 +3560,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         abilitySlot: 'ultimate'
       });
       championsRef.current.filter(a => a.team === u.team && a.isAlive).forEach(a => {
-        a.hp = Math.min(a.maxHp, a.hp + 300);
-        a.shield += 120;
+        a.hp = Math.min(a.maxHp, a.hp + 300 * utility);
+        a.shield += 120 * utility;
         emitSkillEffect(u, a, true, 'Marsh Anthem');
       });
       enemies.filter(e => e.isAlive && Math.hypot(e.x - u.x, e.y - u.y) < 145)
@@ -3455,7 +3570,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const name = u.champion.name;
       const origin = name === 'Voltgrip' || name === 'Corsara' ? u : target;
       const radius = name === 'Mirehook' ? 55 : name === 'Aetherbolt' ? 80 : name === 'Corsara' ? 210 : 150;
-      spellsRef.current.push({ id: Math.random().toString(), type: 'ultimate_burst', x: origin.x, y: origin.y,
+      spellsRef.current.push({ id: random().toString(), type: 'ultimate_burst', x: origin.x, y: origin.y,
         sourceX: u.x, sourceY: u.y, radius, duration: 1.5, maxDuration: 1.5,
         color: u.champion.accentColor, extraText: u.champion.ultimate.name,
         avatarName: name, abilitySlot: 'ultimate' });
@@ -3469,7 +3584,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         return Math.hypot(e.x - origin.x, e.y - origin.y) < radius;
       });
       struck.forEach(e => {
-        if (name === 'Mirehook') { applyChampionCrowdControl(u, e, 1.35, 'stun', 'Feast Lock'); u.hp = Math.min(u.maxHp, u.hp + 90); }
+        if (name === 'Mirehook') { applyChampionCrowdControl(u, e, 1.35, 'stun', 'Feast Lock'); u.hp = Math.min(u.maxHp, u.hp + 90 * utility); }
         if (name === 'Nullweaver') { applyChampionCrowdControl(u, e, 1.3, 'stun', 'Singularity Well'); e.x += (target.x - e.x) * 0.55; e.y += (target.y - e.y) * 0.55; }
         if (name === 'Voltgrip' || name === 'Wraithhook') applyChampionCrowdControl(u, e, 1.0, 'stun', u.champion.ultimate.name);
         if (name === 'Brewmaw') { e.x += (e.x - target.x >= 0 ? 1 : -1) * 80; applyChampionCrowdControl(u, e, 0.7, 'knockup', 'Grand Vintage'); }
@@ -3483,7 +3598,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     target: AramChampionUnit,
     rawDamage: number,
     isTrueDamage: boolean = false,
-    label?: string
+    label?: string,
+    abilitySlot?: AbilitySlot
   ) => {
     if (target.zhonyaActive) return;
 
@@ -3492,7 +3608,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       target.isRecalling = false;
       target.recallTimer = 0;
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: target.x,
         y: target.y - 42,
         text: `❌ RECALL CANCELLED!`,
@@ -3508,8 +3624,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     if (attacker) attacker.combatTimer = 6.0;
 
     const ap = label && attacker && (attacker.champion.primaryRole === 'Mage' || attacker.champion.secondaryRole === 'Mage')
-      ? attacker.items.reduce((total, item) => total + (item.stats.ap ?? 0), 0) : 0;
-    const spellDamage = rawDamage + ap * 0.35;
+      ? attacker.items.reduce((total, item) => total + (item.stats.ap ?? 0), 0)
+        + (aegisBuffRef.current?.team === attacker.team ? aegisBuffRef.current.apBonus : 0) : 0;
+    const itemDamage = label?.includes('Immolate') || label?.includes('Kraken') || label?.includes('Dragon Burn');
+    const slot = abilitySlot ?? (label === attacker?.champion.ultimate.name ? 'ultimate'
+      : label === attacker?.champion.skill2.name ? 'skill2'
+      : label === attacker?.champion.skill1.name ? 'skill1' : attacker?.activeAbilitySlot ?? 'skill1');
+    const spellDamage = attacker && label && !itemDamage
+      ? (rawDamage + ap * 0.35) * abilityDamageMultiplier(attacker.level, slot) : rawDamage + ap * 0.35;
 
     let effectiveArmor = target.champion.armor;
     if (target.trueFormTimer && target.trueFormTimer > 0) {
@@ -3532,7 +3654,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       showBanner('🌿 BRUSH AMBUSH TRAP!', `${attacker.player.name} leaped from brush with an ambush crit!`, '🌿');
       addEvent(`🌿 AMBUSH: ${attacker.player.name} caught ${target.player.name} from brush with an ambush crit!`, 'combo');
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: target.x,
         y: target.y - 36,
         text: '🌿 AMBUSH CRIT! (+35%)',
@@ -3544,12 +3666,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     // Dragon Slayer Aspect: True damage burning tick on every hit!
     if (attacker && aegisBuffRef.current?.team === attacker.team && aegisBuffRef.current.burnTrueDamage) {
-      effective += 35;
+      effective += 20;
       floatsRef.current.push({
-        id: Math.random().toString(),
-        x: target.x + (Math.random() - 0.5) * 18,
+        id: random().toString(),
+        x: target.x + (random() - 0.5) * 18,
         y: target.y - 25,
-        text: '🔥 +35 DRAGON BURN!',
+        text: '🔥 +20 DRAGON BURN!',
         color: '#f97316',
         opacity: 0.95,
         scale: 1.05
@@ -3566,7 +3688,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       target.sterakCooldown = 60.0;
       sound.playCoin();
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: target.x,
         y: target.y - 30,
         text: '🛡️ STERAK LIFELINE (+600)',
@@ -3581,10 +3703,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     if (hasZhonyas && target.hp - finalDamage <= 0 && target.zhonyaTimer <= 0) {
       target.zhonyaActive = true;
       target.zhonyaTimer = 90.0;
+      target.zhonyaRemaining = 2.5;
       target.hp = 1;
       sound.playSpellHit();
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: target.x,
         y: target.y - 30,
         text: '⏳ GOLDEN STASIS!',
@@ -3592,7 +3715,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         opacity: 1,
         scale: 1.4
       });
-      setTimeout(() => { target.zhonyaActive = false; }, 2500);
       return;
     }
 
@@ -3622,7 +3744,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       target.hp = 0;
       attacker.gold += 25;
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: target.x,
         y: target.y - 45,
         text: '☠️ COLLECTED! (+25g)',
@@ -3635,7 +3757,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     if (minFloorHp > 0 && target.hp === minFloorHp) {
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: target.x,
         y: target.y - 32,
         text: hasShallowGrave ? '💖 SHALLOW GRAVE RESCUE!' : '✨ IMMORTAL SANCTUARY!',
@@ -3645,12 +3767,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
     }
 
+    if (attacker && attacker.team !== target.team && finalDamage > 0) {
+      target.lastEnemyDamage = { attackerId: attacker.id, second: matchTimeRef.current };
+    }
     target.damageTaken += finalDamage;
     if (attacker) attacker.damageDealt += finalDamage;
 
     floatsRef.current.push({
-      id: Math.random().toString(),
-      x: target.x + (Math.random() - 0.5) * 20,
+      id: random().toString(),
+      x: target.x + (random() - 0.5) * 20,
       y: target.y - 28,
       text: label ? `${label} -${finalDamage}` : `-${finalDamage}`,
       color: attacker?.team === 'blue' ? '#38bdf8' : '#f43f5e',
@@ -3659,7 +3784,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     });
 
     if (target.hp <= 0 && target.isAlive) {
+      const isNeutralFinish = !attacker && (label?.includes('Jungle Camp') || label?.includes('Flame Breath') || label?.includes('Inferno Slam'));
+      const killer = attacker ?? (isNeutralFinish
+        ? resolveNeutralKillCredit(target.lastEnemyDamage, target.team, matchTimeRef.current, championsRef.current)
+        : null);
       target.isAlive = false;
+      target.lastEnemyDamage = undefined;
       target.deaths++;
       target.respawnTimer = calculateDeathTimer(target.level, matchTimeRef.current);
       target.comboStage = 0;
@@ -3671,20 +3801,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       let streakTitle: string | null = null;
       let isFirstBlood = false;
 
-      if (attacker) {
-        attacker.kills++;
-        attacker.gold += 300;
-        grantChampionXp(attacker, 240);
+      if (killer) {
+        killer.kills++;
+        killer.gold += 300;
+        grantChampionXp(killer, 240);
 
         if (!firstBloodRef.current) {
           firstBloodRef.current = true;
           isFirstBlood = true;
-          attacker.gold += 150;
+          killer.gold += 150;
         }
 
         // Grant assists and assist gold/XP to nearby living teammates
         championsRef.current
-          .filter((c) => c.team === attacker.team && c.id !== attacker.id && c.isAlive && Math.hypot(c.x - target.x, c.y - target.y) <= 460)
+          .filter((c) => c.team === killer.team && c.id !== killer.id && c.isAlive && Math.hypot(c.x - target.x, c.y - target.y) <= 460)
           .forEach((ally) => {
             ally.assists++;
             ally.gold += 150;
@@ -3692,12 +3822,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           });
 
         // Multikill & Spree tracking
-        const tracker = killStreaksRef.current[attacker.id] || { count: 0, lastTime: 0, multiCount: 0 };
+        const tracker = killStreaksRef.current[killer.id] || { count: 0, lastTime: 0, multiCount: 0 };
         const timeSinceLast = matchTimeRef.current - tracker.lastTime;
         tracker.multiCount = nextMultikillCount(tracker.multiCount, timeSinceLast);
         tracker.count += 1;
         tracker.lastTime = matchTimeRef.current;
-        killStreaksRef.current[attacker.id] = tracker;
+        killStreaksRef.current[killer.id] = tracker;
 
         if (tracker.multiCount === 2) multiKillTitle = 'DOUBLE KILL';
         else if (tracker.multiCount === 3) multiKillTitle = 'TRIPLE KILL';
@@ -3720,23 +3850,24 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       const neutralKiller = label?.includes('Jungle Camp') ? 'Jungle Camp'
-        : label?.includes('Flame Breath') ? dragonRef.current.name
+        : label?.includes('Flame Breath') || label?.includes('Inferno Slam') ? dragonRef.current.name
           : label === 'Creep' ? 'Creep' : null;
-      const killerName = attacker?.player.name || neutralKiller || 'Turret';
+      const killerName = killer?.player.name || neutralKiller || 'Turret';
 
       // Trigger the top kill callout
       const callout: KillCallout = {
-        id: Math.random().toString(),
+        id: random().toString(),
         killerName,
-        killerChamp: attacker?.champion.name || (neutralKiller ? 'Neutral Monster' : 'Defense Turret'),
-        killerTeam: attacker?.team || (target.team === 'blue' ? 'red' : 'blue'),
-        killerAvatar: attacker?.player.avatarSvg,
+        killerChamp: killer?.champion.name || (neutralKiller ? 'Neutral Monster' : 'Defense Turret'),
+        killerTeam: killer?.team || (target.team === 'blue' ? 'red' : 'blue'),
+        killerAvatar: killer?.player.avatarSvg,
+        neutralFinisher: isNeutralFinish ? neutralKiller ?? 'Neutral Monster' : undefined,
         victimName: target.player.name,
         victimChamp: target.champion.name,
         victimTeam: target.team,
         victimAvatar: target.player.avatarSvg,
         multiKill: multiKillTitle,
-        streakText: attacker ? streakTitle : 'EXECUTED',
+        streakText: killer ? streakTitle : 'EXECUTED',
         isFirstBlood
       };
 
@@ -3747,35 +3878,36 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }, 4200);
 
       const killEventText = multiKillTitle
-        ? `🔥 ${multiKillTitle}! ${attacker?.player.name} eliminated ${target.player.name}!`
-        : attacker
-          ? `☠️ ${killerName} eliminated ${target.player.name} (${target.champion.name})`
+        ? `🔥 ${multiKillTitle}! ${killer?.player.name} eliminated ${target.player.name}!`
+        : killer
+          ? `☠️ ${killerName} eliminated ${target.player.name} (${target.champion.name})${isNeutralFinish ? ' after a neutral monster struck the final blow' : ''}`
           : `⚡ ${target.player.name} (${target.champion.name}) was EXECUTED by ${killerName}!`;
-      addEvent(killEventText, attacker ? 'kill' : 'execution');
+      addEvent(killEventText, killer ? 'kill' : 'execution');
     }
   };
 
   const applyDamageToStructure = (attacker: AramChampionUnit, structure: LaneStructure, damage: number) => {
     const nearbyAlliedMinions = minionsRef.current.filter((m) => m.team === attacker.team && m.isAlive && Math.abs(m.x - structure.x) <= 240);
     const crashMultiplier = getMinionCrashMultiplier(nearbyAlliedMinions);
-    const dragonSiegeFactor = aegisBuffRef.current?.team === attacker.team ? (aegisBuffRef.current.siegeMultiplier || 2.0) : 1.0;
+    const dragonSiegeFactor = aegisBuffRef.current?.team === attacker.team ? aegisBuffRef.current.siegeMultiplier : 1.0;
     const marksmanBonus = attacker.champion.primaryRole === 'Marksman' ? 1.25 : 1.0;
 
     const finalDamage = Math.round(damage * crashMultiplier * dragonSiegeFactor * marksmanBonus);
-    damageStructure(structure, finalDamage);
+    const appliedDamage = damageStructure(structure, finalDamage);
 
     const isCrashBonus = crashMultiplier >= 1.2;
     floatsRef.current.push({
-      id: Math.random().toString(),
+      id: random().toString(),
       x: structure.x,
       y: structure.y - 40,
-      text: dragonSiegeFactor > 1.0
-        ? `-${finalDamage} 🐉 SIEGE!`
+      text: appliedDamage === 0 ? '🛡️ NEXUS SEALED'
+        : dragonSiegeFactor > 1.0
+        ? `-${appliedDamage} 🐉 SIEGE!`
         : isCrashBonus
-          ? `-${finalDamage} 💥 DEMOLITION!`
+          ? `-${appliedDamage} 💥 DEMOLITION!`
           : crashMultiplier < 0.5
-            ? `-${finalDamage} 🛡️ FORTIFIED`
-            : `-${finalDamage}`,
+            ? `-${appliedDamage} 🛡️ FORTIFIED`
+            : `-${appliedDamage}`,
       color: dragonSiegeFactor > 1.0 ? '#fb923c' : isCrashBonus ? '#f59e0b' : '#facc15',
       opacity: 1,
       scale: dragonSiegeFactor > 1.0 ? 1.3 : isCrashBonus ? 1.25 : 1.0
@@ -3783,9 +3915,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   };
 
   const damageStructure = (structure: LaneStructure, damage: number) => {
-    if (!structure.isAlive) return;
-    structure.hp = Math.max(0, structure.hp - damage);
+    if (!structure.isAlive) return 0;
+    if (structure.type === 'nexus' && !canDamageNexus(structure.team, structuresRef.current)) return 0;
+    const applied = Math.max(1, Math.round(damage * (structure.type.includes('tower') ? towerSiegeMultiplier(matchTimeRef.current) : 1)));
+    structure.hp = Math.max(0, structure.hp - applied);
     if (structure.hp === 0) handleStructureDestruction(structure);
+    return applied;
   };
 
   const handleStructureDestruction = (structure: LaneStructure) => {
@@ -3821,7 +3956,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         .forEach((ally) => grantChampionXp(ally, Math.round(minion.xpReward * 0.7)));
 
       floatsRef.current.push({
-        id: Math.random().toString(),
+        id: random().toString(),
         x: minion.x,
         y: minion.y - 15,
         text: `+${minion.goldReward}g`,
@@ -3833,11 +3968,43 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   };
 
   const endAramMatch = (winner: 'blue' | 'red') => {
+    if (matchFinishedRef.current) return;
+    matchFinishedRef.current = true;
     setMatchOver(true);
     sound.playWalkoutFanfare();
 
     const all = championsRef.current;
-    const mvp = all.sort((a, b) => b.kills * 4 + b.cs * 2 + b.damageDealt / 300 - a.kills * 4 - a.cs * 2 - a.damageDealt / 300)[0];
+    const mvp = [...all].sort((a, b) => b.kills * 4 + b.cs * 2 + b.damageDealt / 300 - a.kills * 4 - a.cs * 2 - a.damageDealt / 300)[0];
+    const rating = (team: 'blue' | 'red') => all.filter(champion => champion.team === team)
+      .reduce((sum, champion) => sum + champion.player.ovr, 0) / Math.max(1, all.filter(champion => champion.team === team).length);
+    const report: MatchReport = {
+      version: 1, seed, batchId: batchMode ? batchId : undefined,
+      draft: { blue: blueLineup, red: redLineup, blueCoach, redCoach },
+      winner, durationSeconds: matchTimeRef.current,
+      blueRating: rating('blue'), redRating: rating('red'),
+      fullBuildsAt15: matchTimeRef.current >= 900 ? fullBuildsAt15Ref.current : null,
+      itemCounts: itemCountsRef.current,
+      blueKills: all.filter(champion => champion.team === 'blue').reduce((sum, champion) => sum + champion.kills, 0),
+      redKills: all.filter(champion => champion.team === 'red').reduce((sum, champion) => sum + champion.kills, 0),
+      skillshotsFired: skillshotsRef.current.fired, skillshotsHit: skillshotsRef.current.hit,
+      events: recordedEventsRef.current
+    };
+    latestReportRef.current = report;
+    try {
+      const prior = JSON.parse(localStorage.getItem('esports-clash-match-reports') || '[]') as MatchReport[];
+      let reports = [...prior.filter(previous => batchMode || previous.batchId !== undefined || previous.seed !== seed), report].slice(-100);
+      let stored = false;
+      while (!stored && reports.length > 0) {
+        try {
+          localStorage.setItem('esports-clash-match-reports', JSON.stringify(reports));
+          stored = true;
+        } catch {
+          reports = reports.slice(Math.max(1, Math.floor(reports.length / 4)));
+        }
+      }
+      setBalanceSummary(summarizeMatchReports(stored
+        ? batchMode ? reports.filter(saved => saved.batchId === batchId) : reports : [report]));
+    } catch { setBalanceSummary(summarizeMatchReports([report])); }
     onMatchComplete(winner, mvp, all);
   };
 
@@ -4885,6 +5052,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.lineTo(-16, 0);
         ctx.closePath();
         ctx.fill();
+        if (!canDamageNexus(st.team, structuresRef.current)) {
+          ctx.strokeStyle = '#fbbf24';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([5, 3]);
+          ctx.beginPath();
+          ctx.arc(0, 0, 40, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
         ctx.restore();
       } else if (st.type === 'barracks') {
         ctx.save();
@@ -4964,6 +5140,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const pct = Math.max(0, st.hp / st.maxHp);
       ctx.fillStyle = st.team === 'blue' ? '#38bdf8' : '#f43f5e';
       ctx.fillRect(bX + 0.5, bY + 0.5, (bW - 1) * pct, bH - 1);
+      const plating = st.type.includes('tower') ? Math.round((1 - towerSiegeMultiplier(matchTimeRef.current)) * 100) : 0;
+      if (plating > 0 || (st.type === 'nexus' && !canDamageNexus(st.team, structuresRef.current))) {
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 8px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(st.type === 'nexus' ? 'SEALED' : `PLATING ${plating}%`, st.x, bY - 3);
+      }
     });
 
     // 12. MINIONS
@@ -5538,6 +5721,22 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.radius * (1 + (1 - alpha)), 0, Math.PI * 2);
         ctx.stroke();
+      } else if (s.type === 'boss_warning') {
+        const pulse = 0.5 + 0.5 * Math.sin(time * 19);
+        ctx.globalAlpha = 0.5 + pulse * 0.35;
+        ctx.fillStyle = 'rgba(249, 115, 22, 0.3)';
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 4 + pulse * 2;
+        ctx.setLineDash([10, 6]);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#fff7ed';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('INFERNO SLAM', s.x, s.y - s.radius - 12);
       } else if (s.type === 'boss_slam') {
         ctx.shadowColor = '#f97316';
         ctx.shadowBlur = 24;
@@ -6213,11 +6412,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const dt = (now - lastTime) / 1000;
       lastTime = now;
 
-      const simDt = advanceSimulationClock(matchTimeRef, dt, speed, paused || matchOver);
-
-      if (simDt > 0) {
+      const steps = batchMode ? (matchFinishedRef.current ? 0 : 120)
+        : consumeFixedSteps(accumulatorRef, dt, speed, paused || matchOver);
+      if (steps > 0) {
+        for (let step = 0; step < steps && !matchFinishedRef.current; step++) {
+          matchTimeRef.current += SIMULATION_STEP;
+          updateAramSimulation(SIMULATION_STEP);
+        }
+        if (batchMode) setChampions(championsRef.current.map(champion => ({ ...champion, items: [...champion.items] })));
         setMatchTime(matchTimeRef.current);
-        updateAramSimulation(simDt);
       }
 
       const canvas = canvasRef.current;
@@ -6229,7 +6432,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
-  }, [paused, matchOver, speed]);
+  }, [paused, matchOver, speed, batchMode]);
 
   const blueChamps = champions.filter((c) => c.team === 'blue');
   const redChamps = champions.filter((c) => c.team === 'red');
@@ -6272,7 +6475,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               <Coins className="w-3 h-3 text-amber-400" />
               <strong className="text-amber-300 font-mono">${blueGold.toLocaleString()}</strong>
               <span className="text-slate-500">|</span>
-              <span>Coach: {blueCoach?.name || 'KkOpa'}</span>
+              <span>Coach: {blueCoach?.name || 'None'}</span>
             </div>
             <div className="flex gap-1 mt-1" aria-label="Blue barracks status">
               {barracksKinds.map(kind => <span key={kind} title={`${kind} barracks ${barracksIntact('blue', kind) ? 'intact' : 'destroyed'}`}
@@ -6292,6 +6495,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               <span className="text-[11px] text-amber-300 font-mono font-bold mt-0.5">
                 {Math.floor(matchTime / 60)}:{(Math.floor(matchTime % 60)).toString().padStart(2, '0')}
               </span>
+              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wide">{matchEconomyPhase(matchTime)}</span>
             </div>
             <span className="text-3xl font-black text-rose-400 drop-shadow">{redKills}</span>
           </div>
@@ -6311,6 +6515,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             {isFullscreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
             {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
           </button>
+          <div className="mt-1 flex items-center gap-2 text-[10px] font-bold text-slate-300">
+            <span title="Match seed; replaying uses the same draft and random sequence">Seed {seed}</span>
+            {!batchMode && !onlineMode && <button onClick={onReplay} className="hover:text-cyan-300" title="Restart this draft with the same seed">Replay</button>}
+            {!batchMode && !onlineMode && <button onClick={onBatchStart} className="hover:text-amber-300" title="Simulate 25 real arena matches with fresh seeds and save balance reports">Run 25</button>}
+            {batchMode && <><span className="text-amber-300">Balance {batchNumber}/25</span><button onClick={onBatchStop} className="text-rose-300 hover:text-rose-100">Stop</button></>}
+            {latestReportRef.current && <button onClick={downloadMatchReport} className="hover:text-emerald-300">Export</button>}
+            {balanceSummary && !batchMode && <button onClick={downloadBalanceReport} className="hover:text-emerald-300">Export balance</button>}
+          </div>
+          {balanceSummary && !batchMode && <div className="mt-1 text-[9px] text-slate-400 text-center" title="Aggregated from completed arena matches saved in this browser">
+            {balanceSummary.matches} games · {balanceSummary.averageMinutes.toFixed(1)}m avg · {(balanceSummary.blueWinRate * 100).toFixed(0)}% blue wins · {(balanceSummary.higherRatedWinRate * 100).toFixed(0)}% higher rated wins · {(balanceSummary.skillshotHitRate * 100).toFixed(0)}% skillshot hits · {balanceSummary.averageObjectiveTime ? `${balanceSummary.averageObjectiveTime.toFixed(1)}m objective avg` : 'no objectives'}
+            <div>{([8, 10, 12, 13] as const).map(minute => balanceSummary.itemTimings[minute].matches
+              ? `${minute}m: ${balanceSummary.itemTimings[minute].averageItems.toFixed(1)} avg items / ${balanceSummary.itemTimings[minute].bestFarmerItems.toFixed(1)} best farmer`
+              : `${minute}m: no item sample`).join(' · ')}</div>
+          </div>}
         </div>
 
         {/* Red Squad Badge */}
@@ -6347,8 +6565,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       {/* ======================================================== */}
       {/* 2. THE EXPANDED ARENA CANVAS WITH DRAGON PIT & JUNGLE */}
       {/* ======================================================== */}
-      <div className="relative w-full rounded-3xl overflow-hidden border-4 border-slate-700 shadow-2xl bg-black pt-10">
-        <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-r from-slate-950 via-indigo-950/80 to-slate-950 border-b border-amber-500/25 pointer-events-none flex items-center px-4 gap-3 z-20">
+      <div className="relative w-full rounded-3xl overflow-hidden border-4 border-slate-700 shadow-2xl bg-black">
+        <div className="relative w-full h-10 bg-gradient-to-r from-slate-950 via-indigo-950/80 to-slate-950 border-b border-amber-500/25 pointer-events-none flex items-center px-4 gap-3 z-20">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 shrink-0">Live kill feed</span>
           {deadChampions.length > 0 && (
             <div className="flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono text-amber-300 pointer-events-auto">
@@ -6380,18 +6598,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             ))}
           </div>
         </div>
-        <canvas
-          ref={canvasRef}
-          width={ARENA_WIDTH}
-          height={760}
-          className="w-full h-auto block"
-        />
-
+        <div className="min-h-[78px] flex flex-wrap items-center justify-center gap-2 bg-slate-950/90 border-b border-slate-700 px-2 py-1">
         {/* TOP KILL CALLOUT BANNER (ESPORTS BROADCAST ANNOUNCEMENT) */}
         {killCallout && (
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 pointer-events-none flex flex-col items-center animate-fade-in">
+          <div className="relative z-40 pointer-events-none flex flex-col items-center animate-fade-in max-w-full">
             {/* Main Kill Card */}
-            <div className="bg-slate-950/95 border-2 border-amber-400/90 shadow-[0_0_30px_rgba(251,191,36,0.5)] px-6 py-2.5 rounded-2xl flex items-center gap-4 backdrop-blur-md">
+            <div className="bg-slate-950/95 border-2 border-amber-400/90 shadow-[0_0_30px_rgba(251,191,36,0.5)] px-2 sm:px-4 py-2 rounded-2xl flex items-center gap-2 sm:gap-4 backdrop-blur-md">
               {/* Killer Info */}
               <div className="flex items-center gap-2.5">
                 {killCallout.killerAvatar ? (
@@ -6417,6 +6629,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                 <div className="text-[9px] text-amber-400 font-mono font-bold">
                   {killCallout.streakText === 'EXECUTED' ? '+0g' : '+300g'}
                 </div>
+                {killCallout.neutralFinisher && <div className="text-[9px] text-orange-300">{killCallout.neutralFinisher} finished</div>}
               </div>
 
               {/* Victim Info */}
@@ -6444,7 +6657,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
         {/* Top-Right Flash Banner */}
         {activeBanner && (
-          <div className="absolute top-[52px] right-3 bg-slate-900/95 backdrop-blur-md border-2 border-amber-400/70 p-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-scale-up max-w-md z-30">
+          <div className="relative bg-slate-900/95 backdrop-blur-md border-2 border-amber-400/70 p-2 rounded-xl shadow-2xl flex items-center gap-2 animate-scale-up max-w-sm z-30">
             <div className="text-2xl">{activeBanner.icon}</div>
             <div>
               <div className="font-black text-amber-300 text-xs tracking-wider uppercase">{activeBanner.text}</div>
@@ -6452,6 +6665,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             </div>
           </div>
         )}
+        </div>
+        <canvas
+          ref={canvasRef}
+          width={ARENA_WIDTH}
+          height={760}
+          className="w-full h-auto block"
+        />
 
         {/* ======================================================== */}
         {/* IN-GAME SQUAD HUD & ITEM SCOREBOARD OVERLAY */}

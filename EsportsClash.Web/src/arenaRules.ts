@@ -7,6 +7,18 @@ export const NEXUS_X = { blue: 220, red: 1780 } as const;
 export const BARRACKS_X = { blue: 320, red: 1680 } as const;
 export const DRAGON_X = ARENA_WIDTH / 2;
 
+// Early tower plating wears off over ten game minutes. Wave control still helps
+// break a turret, but a single early push cannot erase the whole lane.
+export function towerSiegeMultiplier(gameSeconds: number): number {
+  return 0.22 + 0.78 * Math.min(1, Math.max(0, gameSeconds) / 600);
+}
+
+export function canDamageNexus(team: 'blue' | 'red', structures: readonly Pick<LaneStructure, 'team' | 'type' | 'isAlive'>[]): boolean {
+  const defenders = structures.filter(structure => structure.team === team);
+  return !defenders.some(structure => structure.type === 'nexus_tower' && structure.isAlive)
+    && defenders.some(structure => structure.type === 'barracks' && !structure.isAlive);
+}
+
 export type BarracksKind = 'melee' | 'ranged' | 'catapult';
 
 export const ARAM_BUSHES: BushPatch[] = [

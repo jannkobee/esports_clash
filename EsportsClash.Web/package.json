@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "room-server": "node --experimental-strip-types server.mjs",
+    "serve": "node --experimental-strip-types server.mjs",
     "build": "tsc -b && vite build",
     "test": "node --experimental-strip-types --test src/*.test.mjs",
     "check:game": "node scripts/validate-design.js && node --experimental-strip-types --test src/*.test.mjs && tsc -b",
