@@ -28,6 +28,7 @@ import { chooseTeamfightTarget, shouldUseSecondSkill, shouldUseSkill, shouldUseU
 import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from '../skillRangeRules';
 import { ARENA_WIDTH, BARRACKS_X, DRAGON_X, LANE_Y, NEXUS_X, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from '../arenaRules';
 import { getMinionCrashMultiplier, getMinionStructureDamage, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
+import { createRatedAvatar } from '../playerCardPower';
 import { 
   Play, 
   Pause, 
@@ -555,7 +556,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     blueLineup.forEach((item, idx) => {
       const loadout = buyInitialLoadout(item.champion.primaryRole, 1500, item.champion.name);
-      const champCopy = { ...item.champion };
+      const champCopy = createRatedAvatar(item.player, item.champion);
       let bonusHp = 0;
       loadout.items.forEach((it) => {
         if (it.stats.hp) bonusHp += it.stats.hp;
@@ -613,7 +614,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     redLineup.forEach((item, idx) => {
       const loadout = buyInitialLoadout(item.champion.primaryRole, 1500, item.champion.name);
-      const champCopy = { ...item.champion };
+      const champCopy = createRatedAvatar(item.player, item.champion);
       let bonusHp = 0;
       loadout.items.forEach((it) => {
         if (it.stats.hp) bonusHp += it.stats.hp;
@@ -1094,7 +1095,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // Natural Mana & XP Tick
-      // Income rises with individual farm skill; strong last-hitters can finish a build by 15:00.
+      // Income rises with individual farm skill; strong farmers reach item spikes sooner.
       c.gold += passiveGoldPerSecond(c.player.stats.lan) * dt;
       c.mana = Math.min(100, c.mana + (jungleBuffsRef.current[c.team].blue > matchTimeRef.current ? 4.5 : 1.5) * dt);
       c.animTimer += dt;
