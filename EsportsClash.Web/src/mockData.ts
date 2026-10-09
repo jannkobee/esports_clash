@@ -168,7 +168,7 @@ const BASE_PLAYERS: PlayerCard[] = [
   },
   {
     id: 'p_woozy',
-    name: 'WooZy',
+    name: 'Zypoo',
     realName: 'ZywOo',
     origin: 'CS',
     role: 'Fighter',
@@ -328,7 +328,10 @@ const BASE_PLAYERS: PlayerCard[] = [
   }
 ];
 
-export const INITIAL_PLAYERS: PlayerCard[] = [...BASE_PLAYERS, ...createResearchedCards(BASE_PLAYERS)];
+export const INITIAL_PLAYERS: PlayerCard[] = [...BASE_PLAYERS, ...createResearchedCards(BASE_PLAYERS)].map(p => ({
+  ...p,
+  playableRoles: p.playableRoles || [p.preferredRole || p.role || 'Mage']
+}));
 
 export const INITIAL_COACHES: CoachCard[] = [
   {
@@ -495,10 +498,10 @@ export const CHAMPIONS: ChampionKit[] = [
     mr: 32,
     aspd: 0.78,
     range: 1.8,
-    passiveDesc: 'Contempt for the Weak: Basic attacks against targets below 50% HP deal +12% maximum HP as bonus magic damage.',
-    skill1: { name: 'Razor Shuriken', desc: 'Hurls spinning crimson shurikens in a line dealing heavy physical damage.', cooldown: 5, damage: 165, damageType: 'Physical' },
-    skill2: { name: 'Living Shadow', desc: 'Summons a shadow clone that mimics abilities and allows instant swapping.', cooldown: 12, damage: 70, damageType: 'Physical' },
-    ultimate: { name: 'Death Mark', desc: 'Teleports behind victim with crimson death marks, detonating for massive mirror execute after 3s.', cooldown: 65, damage: 460, damageType: 'Physical', isUlt: true },
+    passiveDesc: 'Dusk Execution: Basic attacks against targets below 50% HP deal +12% maximum HP as bonus magic damage.',
+    skill1: { name: 'Shadow Shuriken', desc: 'Hurls spinning crimson shurikens in a line dealing heavy physical damage.', cooldown: 5, damage: 165, damageType: 'Physical' },
+    skill2: { name: 'Shadow Projection', desc: 'Summons a shadow clone that mimics abilities and allows instant swapping.', cooldown: 12, damage: 70, damageType: 'Physical' },
+    ultimate: { name: 'Eclipse Mark', desc: 'Teleports behind victim with crimson death marks, detonating for massive mirror execute after 3s.', cooldown: 65, damage: 460, damageType: 'Physical', isUlt: true },
     primaryColor: '#b91c1c',
     accentColor: '#450a0a'
   },
@@ -517,10 +520,10 @@ export const CHAMPIONS: ChampionKit[] = [
     mr: 34,
     aspd: 0.82,
     range: 2.0,
-    passiveDesc: 'Way of the Wanderer: Critical strike chance is doubled. Generates a 220 HP wind shield upon taking damage.',
-    skill1: { name: 'Steel Tempest & Tornado', desc: 'Thrusts katana forward; launches a howling blue tornado that knocks up enemies for 1.5s.', cooldown: 4, damage: 145, damageType: 'Physical' },
-    skill2: { name: 'Wind Wall', desc: 'Erects a shimmering wall of gusting wind that disintegrates incoming enemy projectiles for 3.5s.', cooldown: 14, damage: 0, damageType: 'Physical' },
-    ultimate: { name: 'Last Breath', desc: 'Blinks to airborne enemies, suspending them mid-air for 5 golden blade slashes and 50% armor shred.', cooldown: 55, damage: 430, damageType: 'Physical', isUlt: true },
+    passiveDesc: 'Gale Walker: Critical strike chance is doubled. Generates a 220 HP wind shield upon taking damage.',
+    skill1: { name: 'Tempest Thrust & Gale', desc: 'Thrusts katana forward; launches a howling blue tornado that knocks up enemies for 1.5s.', cooldown: 4, damage: 145, damageType: 'Physical' },
+    skill2: { name: 'Zephyr Barrier', desc: 'Erects a shimmering wall of gusting wind that disintegrates incoming enemy projectiles for 3.5s.', cooldown: 14, damage: 0, damageType: 'Physical' },
+    ultimate: { name: 'Airborne Sever', desc: 'Blinks to airborne enemies, suspending them mid-air for 5 golden blade slashes and 50% armor shred.', cooldown: 55, damage: 430, damageType: 'Physical', isUlt: true },
     primaryColor: '#0284c7',
     accentColor: '#38bdf8'
   },
@@ -539,10 +542,10 @@ export const CHAMPIONS: ChampionKit[] = [
     mr: 30,
     aspd: 0.84,
     range: 5.5,
-    passiveDesc: 'Mark of the Kindred: Hunting jungle camps and low HP champions increases attack range and damage by +15%.',
-    skill1: { name: 'Dance of Arrows', desc: 'Vaults gracefully and fires 3 spectral purple arrows at the 3 closest enemies.', cooldown: 5, damage: 135, damageType: 'Physical' },
-    skill2: { name: "Wolf's Frenzy", desc: 'Claims a spirit territory where shadowy Wolf furiously lunges and bites enemies.', cooldown: 10, damage: 110, damageType: 'Magic' },
-    ultimate: { name: "Lamb's Respite", desc: 'Blesses a radiant golden sanctuary: no unit inside can fall below 10% HP, healing allies by 450 HP on expiry!', cooldown: 75, damage: 0, damageType: 'True', isUlt: true },
+    passiveDesc: 'Spirit Mark: Hunting jungle camps and low HP champions increases attack range and damage by +15%.',
+    skill1: { name: 'Ghoststep Volley', desc: 'Vaults gracefully and fires 3 spectral purple arrows at the 3 closest enemies.', cooldown: 5, damage: 135, damageType: 'Physical' },
+    skill2: { name: 'Shadow Pounce', desc: 'Claims a spirit territory where shadowy Wolf furiously lunges and bites enemies.', cooldown: 10, damage: 110, damageType: 'Magic' },
+    ultimate: { name: 'Sanctuary of Eternity', desc: 'Blesses a radiant golden sanctuary: no unit inside can fall below 10% HP, healing allies by 450 HP on expiry!', cooldown: 75, damage: 0, damageType: 'True', isUlt: true },
     primaryColor: '#8b5cf6',
     accentColor: '#4c1d95'
   },
@@ -561,10 +564,10 @@ export const CHAMPIONS: ChampionKit[] = [
     mr: 30,
     aspd: 0.82,
     range: 5.5,
-    passiveDesc: 'Clean Cuts: Attacks pass through targets and leave piercing magenta quill feathers embedded on the ground.',
-    skill1: { name: 'Double Daggers', desc: 'Flings two penetrating quill feathers in a line that plant in the ground.', cooldown: 6, damage: 140, damageType: 'Physical' },
-    skill2: { name: 'Bladecaller', desc: 'Recalls all ground feathers back to her hands; hitting enemies with 3+ feathers roots them for 1.3s!', cooldown: 8, damage: 190, damageType: 'Physical' },
-    ultimate: { name: 'Featherstorm', desc: 'Leaps untargetable into the air and rains down 5 piercing quills in a crescent fan.', cooldown: 65, damage: 380, damageType: 'Physical', isUlt: true },
+    passiveDesc: 'Quill Ricochet: Attacks pass through targets and leave piercing magenta quill feathers embedded on the ground.',
+    skill1: { name: 'Twin Plumage', desc: 'Flings two penetrating quill feathers in a line that plant in the ground.', cooldown: 6, damage: 140, damageType: 'Physical' },
+    skill2: { name: 'Feather Recall', desc: 'Recalls all ground feathers back to her hands; hitting enemies with 3+ feathers roots them for 1.3s!', cooldown: 8, damage: 190, damageType: 'Physical' },
+    ultimate: { name: 'Skyward Plumes', desc: 'Leaps untargetable into the air and rains down 5 piercing quills in a crescent fan.', cooldown: 65, damage: 380, damageType: 'Physical', isUlt: true },
     primaryColor: '#d946ef',
     accentColor: '#a21caf'
   },
@@ -583,10 +586,10 @@ export const CHAMPIONS: ChampionKit[] = [
     mr: 42,
     aspd: 0.68,
     range: 2.2,
-    passiveDesc: 'Fey Feathers: Periodically gains a 180 HP glowing feathered cloak shield.',
-    skill1: { name: 'Grand Entrance', desc: 'Dashes forward and leaps into the air, knocking up all enemies in a 75px radius for 1.2s.', cooldown: 9, damage: 115, damageType: 'Magic' },
-    skill2: { name: 'Battle Dance', desc: 'Dashes to an allied champion, granting both a 220 HP golden feathered shield.', cooldown: 8, damage: 0, damageType: 'Magic' },
-    ultimate: { name: 'The Quickness', desc: 'Cloaks in hypnotic golden light with +80% speed, charming all enemies he touches for 1.5s!', cooldown: 65, damage: 290, damageType: 'Magic', isUlt: true },
+    passiveDesc: 'Gilded Cloak: Periodically gains a 180 HP glowing feathered cloak shield.',
+    skill1: { name: 'Gilded Vault', desc: 'Dashes forward and leaps into the air, knocking up all enemies in a 75px radius for 1.2s.', cooldown: 9, damage: 115, damageType: 'Magic' },
+    skill2: { name: 'Harmonic Waltz', desc: 'Dashes to an allied champion, granting both a 220 HP golden feathered shield.', cooldown: 8, damage: 0, damageType: 'Magic' },
+    ultimate: { name: 'Dazzling Rush', desc: 'Cloaks in hypnotic golden light with +80% speed, charming all enemies he touches for 1.5s!', cooldown: 65, damage: 290, damageType: 'Magic', isUlt: true },
     primaryColor: '#f59e0b',
     accentColor: '#d97706'
   },
@@ -628,9 +631,9 @@ export const CHAMPIONS: ChampionKit[] = [
     aspd: 0.76,
     range: 5.8,
     passiveDesc: 'Forest Guardian: Every 4th attack blooms an emerald seed that restores 50 HP and roots minions.',
-    skill1: { name: 'Sprout', desc: 'Encircles the target champion in a ring of 8 living oak trees, trapping them inside for 2.8s!', cooldown: 10, damage: 90, damageType: 'Magic' },
-    skill2: { name: "Nature's Call", desc: 'Animates the foliage into 3 wooden Treants that march forward to tank and attack.', cooldown: 11, damage: 120, damageType: 'Physical' },
-    ultimate: { name: 'Wrath of Nature', desc: 'Releases a bouncing green solar lightning sphere that leaps up to 10 times with escalating damage!', cooldown: 65, damage: 410, damageType: 'Magic', isUlt: true },
+    skill1: { name: 'Verdant Cage', desc: 'Encircles the target champion in a ring of 8 living oak trees, trapping them inside for 2.8s!', cooldown: 10, damage: 90, damageType: 'Magic' },
+    skill2: { name: 'Awaken Treants', desc: 'Animates the foliage into 3 wooden Treants that march forward to tank and attack.', cooldown: 11, damage: 120, damageType: 'Physical' },
+    ultimate: { name: "Nature's Wrath", desc: 'Releases a bouncing green solar lightning sphere that leaps up to 10 times with escalating damage!', cooldown: 65, damage: 410, damageType: 'Magic', isUlt: true },
     primaryColor: '#22c55e',
     accentColor: '#14532d'
   },
@@ -650,9 +653,9 @@ export const CHAMPIONS: ChampionKit[] = [
     aspd: 0.70,
     range: 5.2,
     passiveDesc: 'Weave: Casting abilities shreds nearby enemy armor while fortifying ally armor by +15.',
-    skill1: { name: 'Poison Touch', desc: 'Spits deep violet venom in a cone that poisons targets and slows them by up to 50%.', cooldown: 7, damage: 130, damageType: 'Magic' },
-    skill2: { name: 'Shadow Wave', desc: 'Chains vibrant pink healing lightning through allies (+180 HP) that zaps adjacent enemies!', cooldown: 6, damage: 120, damageType: 'Magic' },
-    ultimate: { name: 'Shallow Grave', desc: 'Projects a luminous pink cross over lowest-HP ally: they cannot die and cannot fall below 1 HP for 4.5s!', cooldown: 70, damage: 0, damageType: 'True', isUlt: true },
+    skill1: { name: 'Venom Hex', desc: 'Spits deep violet venom in a cone that poisons targets and slows them by up to 50%.', cooldown: 7, damage: 130, damageType: 'Magic' },
+    skill2: { name: 'Shadow Surge', desc: 'Chains vibrant pink healing lightning through allies (+180 HP) that zaps adjacent enemies!', cooldown: 6, damage: 120, damageType: 'Magic' },
+    ultimate: { name: 'Soul Sanctuary', desc: 'Projects a luminous pink cross over lowest-HP ally: they cannot die and cannot fall below 1 HP for 4.5s!', cooldown: 70, damage: 0, damageType: 'True', isUlt: true },
     primaryColor: '#ec4899',
     accentColor: '#9d174d'
   },
@@ -672,9 +675,9 @@ export const CHAMPIONS: ChampionKit[] = [
     aspd: 0.80,
     range: 2.0,
     passiveDesc: 'Flame Guard: Shrouds Xin in blazing fire that absorbs 200 magic damage and burns nearby foes.',
-    skill1: { name: 'Searing Chains', desc: 'Flings flaming bolas that wrap around 2 nearby enemies, burning and rooting them for 1.8s.', cooldown: 7, damage: 140, damageType: 'Magic' },
-    skill2: { name: 'Sleight of Fist', desc: 'Dashes through all enemies in a 90px fiery circle in milliseconds with critical slashes before returning!', cooldown: 6, damage: 160, damageType: 'Physical' },
-    ultimate: { name: 'Fire Remnant Dash', desc: 'Drops blazing statues and rocket-dashes through them with fiery shockwave explosions!', cooldown: 55, damage: 440, damageType: 'Magic', isUlt: true },
+    skill1: { name: 'Blazing Bolas', desc: 'Flings flaming bolas that wrap around 2 nearby enemies, burning and rooting them for 1.8s.', cooldown: 7, damage: 140, damageType: 'Magic' },
+    skill2: { name: 'Flash Flurry', desc: 'Dashes through all enemies in a 90px fiery circle in milliseconds with critical slashes before returning!', cooldown: 6, damage: 160, damageType: 'Physical' },
+    ultimate: { name: 'Flame Remnant Charge', desc: 'Drops blazing statues and rocket-dashes through them with fiery shockwave explosions!', cooldown: 55, damage: 440, damageType: 'Magic', isUlt: true },
     primaryColor: '#ea580c',
     accentColor: '#9a3412'
   },
@@ -757,52 +760,166 @@ export const INITIAL_FACILITIES: Facility[] = [
 ];
 
 export const INITIAL_EVOLUTIONS: EvolutionPlan[] = [
+  // --- EA FC ROLE VERSATILITY EVOLUTIONS ---
+  {
+    id: 'evo_role_marksman',
+    name: 'Role Evolution: Marksman Adaptation',
+    desc: 'Train your player in lethal ranged kiting and carry precision. Unlocks Marksman role proficiency and adds a signature marksman.',
+    maxTier: 'GOAT',
+    maxOvr: 96,
+    coinCost: 1200,
+    targetTier: 'Diamond',
+    ovrBoost: 5,
+    statBoost: { lan: 8, clu: 7, flx: 14, tf: 5 },
+    unlockedBadge: '✦ Apex Sharpshooter',
+    unlockedRole: 'Marksman',
+    selectableSignatures: ['Jinxy', 'Astra', 'Cora', 'Aetherbolt', 'Corsara'],
+    objectives: [
+      { id: 'obj_1', desc: 'Deploy player in 1 Clash Arena match', target: 1, current: 0, completed: false },
+      { id: 'obj_2', desc: 'Secure 3 team takedowns in the match', target: 3, current: 0, completed: false }
+    ]
+  },
+  {
+    id: 'evo_role_support',
+    name: 'Role Evolution: Support Tactician',
+    desc: 'Master warding, initiation, peel, and defensive shields. Unlocks Support role proficiency and adds a signature support avatar.',
+    maxTier: 'GOAT',
+    maxOvr: 96,
+    coinCost: 1200,
+    targetTier: 'Diamond',
+    ovrBoost: 5,
+    statBoost: { iq: 9, tf: 7, flx: 14, sta: 6 },
+    unlockedBadge: '✦ Guardian Angel',
+    unlockedRole: 'Support',
+    selectableSignatures: ['Aetheris', 'Wraithhook', 'Voltgrip', 'Renn', 'Solenne'],
+    objectives: [
+      { id: 'obj_1', desc: 'Deploy player in 1 Clash Arena match', target: 1, current: 0, completed: false },
+      { id: 'obj_2', desc: 'Support 5 takedowns or structure sieges', target: 5, current: 0, completed: false }
+    ]
+  },
+  {
+    id: 'evo_role_mage',
+    name: 'Role Evolution: Arcane Maestro',
+    desc: 'Master zone control, high burst magic and wave management. Unlocks Mage role proficiency and adds a signature mage avatar.',
+    maxTier: 'GOAT',
+    maxOvr: 96,
+    coinCost: 1200,
+    targetTier: 'Diamond',
+    ovrBoost: 5,
+    statBoost: { tf: 8, iq: 7, flx: 14, lan: 6 },
+    unlockedBadge: '✦ Arcane Genius',
+    unlockedRole: 'Mage',
+    selectableSignatures: ['Kaelen', 'Hweilin', 'Paxi', 'Kyumi', 'Raijin'],
+    objectives: [
+      { id: 'obj_1', desc: 'Deploy player in 1 Clash Arena match', target: 1, current: 0, completed: false },
+      { id: 'obj_2', desc: 'Score 1 spell takedown or match win', target: 1, current: 0, completed: false }
+    ]
+  },
+  {
+    id: 'evo_role_tank',
+    name: 'Role Evolution: Frontline Bulwark',
+    desc: 'Develop indestructible stamina and bodyblock mechanics. Unlocks Tank role proficiency and adds a signature tank avatar.',
+    maxTier: 'GOAT',
+    maxOvr: 96,
+    coinCost: 1200,
+    targetTier: 'Diamond',
+    ovrBoost: 5,
+    statBoost: { sta: 10, tf: 7, flx: 14, clu: 5 },
+    unlockedBadge: '✦ Iron Fortress',
+    unlockedRole: 'Tank',
+    selectableSignatures: ['Quillback', 'Solana', 'Mirehook', 'Stonewake'],
+    objectives: [
+      { id: 'obj_1', desc: 'Deploy player in 1 Clash Arena match', target: 1, current: 0, completed: false },
+      { id: 'obj_2', desc: 'Withstand 2 tower dives or teamfights', target: 2, current: 0, completed: false }
+    ]
+  },
+  {
+    id: 'evo_role_assassin',
+    name: 'Role Evolution: Shadow Infiltrator',
+    desc: 'Learn lethal flank angles, stealth timings, and target execution. Unlocks Assassin role proficiency and adds a signature assassin.',
+    maxTier: 'GOAT',
+    maxOvr: 96,
+    coinCost: 1200,
+    targetTier: 'Diamond',
+    ovrBoost: 5,
+    statBoost: { lan: 9, clu: 8, flx: 14, tf: 5 },
+    unlockedBadge: '✦ Silent Blade',
+    unlockedRole: 'Assassin',
+    selectableSignatures: ['Kage', 'Inai', 'Veyara', 'Valerie'],
+    objectives: [
+      { id: 'obj_1', desc: 'Deploy player in 1 Clash Arena match', target: 1, current: 0, completed: false },
+      { id: 'obj_2', desc: 'Score 2 kills on enemy backline carries', target: 2, current: 0, completed: false }
+    ]
+  },
+  {
+    id: 'evo_role_fighter',
+    name: 'Role Evolution: Brawler Warlord',
+    desc: 'Excel at close-quarters trading and sustained skirmishes. Unlocks Fighter role proficiency and adds a signature fighter.',
+    maxTier: 'GOAT',
+    maxOvr: 96,
+    coinCost: 1200,
+    targetTier: 'Diamond',
+    ovrBoost: 5,
+    statBoost: { lan: 7, sta: 8, flx: 14, tf: 6 },
+    unlockedBadge: '✦ Relentless Bruiser',
+    unlockedRole: 'Fighter',
+    selectableSignatures: ['Jaxon', 'Valerie', 'Batrix', 'Buck', 'Valkira'],
+    objectives: [
+      { id: 'obj_1', desc: 'Deploy player in 1 Clash Arena match', target: 1, current: 0, completed: false },
+      { id: 'obj_2', desc: 'Clear 3 waves or neutral camps', target: 3, current: 0, completed: false }
+    ]
+  },
+
+  // --- EA FC TIER ASCENDANCE EVOLUTIONS ---
   {
     id: 'evo_rookie_awakening',
-    name: 'Rookie Awakening: To Gold Tier',
-    desc: 'Hone a raw Bronze/Silver talent into a certified Gold starting pro.',
+    name: 'Golden Glow-Up: To Gold Tier',
+    desc: 'EA FC Golden Glow-Up. Hone a raw Bronze/Silver talent into a certified Gold starting pro with massive attribute boosts.',
     maxTier: 'Silver',
-    maxOvr: 72,
-    coinCost: 500,
+    maxOvr: 75,
+    coinCost: 600,
     targetTier: 'Gold',
-    statBoost: { lan: 7, tf: 6, iq: 5, clu: 8, sta: 5, flx: 6 },
-    unlockedBadge: 'Laning Demon',
+    ovrBoost: 7,
+    statBoost: { lan: 8, tf: 7, iq: 6, clu: 8, sta: 6, flx: 8 },
+    unlockedBadge: '✦ Rising Star',
+    selectableSignatures: ['Astra', 'Solana', 'Kyumi', 'Buck'],
     objectives: [
-      { id: 'obj_1', desc: 'Win 3 Tournament Matches with player in lineup', target: 3, current: 0, completed: false },
-      { id: 'obj_2', desc: 'Score 10 Total Takedowns in ARAM Arena', target: 10, current: 0, completed: false },
-      { id: 'obj_3', desc: 'Complete 2 Scrim sessions in Gaming House', target: 2, current: 0, completed: false }
+      { id: 'obj_1', desc: 'Deploy player in 2 Clash Arena matches', target: 2, current: 0, completed: false },
+      { id: 'obj_2', desc: 'Score 5 total team takedowns', target: 5, current: 0, completed: false }
     ]
   },
   {
     id: 'evo_clutch_ascendance',
-    name: 'Ice in Veins: Clutch Ascendance',
-    desc: 'Transform a Gold starter into an elite Platinum clutch playmaker.',
+    name: 'Centurions Upgrade: To Platinum Tier',
+    desc: 'EA FC Centurions Upgrade. Elevate a Gold starter into an elite Platinum clutch playmaker with ice in their veins.',
     maxTier: 'Gold',
-    maxOvr: 84,
-    coinCost: 2500,
+    maxOvr: 85,
+    coinCost: 2000,
     targetTier: 'Platinum',
-    statBoost: { lan: 6, tf: 7, iq: 6, clu: 14, sta: 6, flx: 7 },
-    unlockedBadge: 'Clutch King',
+    ovrBoost: 6,
+    statBoost: { lan: 7, tf: 8, iq: 8, clu: 10, sta: 7, flx: 8 },
+    unlockedBadge: '✦ Clutch Mastermind',
+    selectableSignatures: ['Kazemaru', 'Cora', 'Zal', 'Kage'],
     objectives: [
-      { id: 'obj_1', desc: 'Win 5 Tournament Matches', target: 5, current: 0, completed: false },
-      { id: 'obj_2', desc: 'Score 25 Kills with Signature Champions', target: 25, current: 0, completed: false },
-      { id: 'obj_3', desc: 'Maintain Squad Morale >85% for 3 Days', target: 3, current: 0, completed: false }
+      { id: 'obj_1', desc: 'Win 2 matches with player in starting lineup', target: 2, current: 0, completed: false },
+      { id: 'obj_2', desc: 'Score 8 kills with signature champions', target: 8, current: 0, completed: false }
     ]
   },
   {
     id: 'evo_goat_immortality',
-    name: 'Road to Immortality: The GOAT Path',
-    desc: 'The ultimate ascension. Elevate a Diamond superstar to legendary GOAT status.',
+    name: 'The Immortality Path: To GOAT Tier',
+    desc: 'The pinnacle of competitive mastery. Elevate a Diamond superstar into an immortal GOAT esports icon.',
     maxTier: 'Diamond',
     maxOvr: 95,
-    coinCost: 15000,
+    coinCost: 10000,
     targetTier: 'GOAT',
-    statBoost: { lan: 6, tf: 6, iq: 7, clu: 8, sta: 8, flx: 7 },
-    unlockedBadge: 'Unkillable Demon',
+    ovrBoost: 6,
+    statBoost: { lan: 7, tf: 7, iq: 8, clu: 8, sta: 8, flx: 8 },
+    unlockedBadge: '✦ Unkillable Demon',
+    selectableSignatures: ['Kaelen', 'Flaker', 'Jinxy', 'Valerie', 'Raijin'],
     objectives: [
-      { id: 'obj_1', desc: 'Win 8 Split Matches in Continental League', target: 8, current: 0, completed: false },
-      { id: 'obj_2', desc: 'Achieve 3 Match MVPs', target: 3, current: 0, completed: false },
-      { id: 'obj_3', desc: 'Capture 5 Mayhem Shrines in ARAM Matches', target: 5, current: 0, completed: false }
+      { id: 'obj_1', desc: 'Win 3 Split Matches with player in lineup', target: 3, current: 0, completed: false },
+      { id: 'obj_2', desc: 'Achieve 1 Match MVP award', target: 1, current: 0, completed: false }
     ]
   }
 ];

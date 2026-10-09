@@ -29,3 +29,33 @@ test('displayed overall rating, role fit and signature familiarity each affect c
   const signature = { ...onRole, signatureChampions: [fighter.name] };
   assert.ok(playerCardCombatPower(signature, fighter) > playerCardCombatPower(onRole, fighter));
 });
+
+test('evolved player cards with multiple playableRoles gain full on-role power across all unlocked roles', () => {
+  const marksman = CHAMPIONS.find(avatar => avatar.primaryRole === 'Marksman');
+  const support = CHAMPIONS.find(avatar => avatar.primaryRole === 'Support');
+
+  // Player starts with preferredRole Mage only
+  const singleRolePlayer = {
+    ...rookie,
+    role: 'Mage',
+    preferredRole: 'Mage',
+    playableRoles: ['Mage'],
+    signatureChampions: []
+  };
+
+  // Evolved player has unlocked Marksman and Support
+  const evolvedPlayer = {
+    ...singleRolePlayer,
+    playableRoles: ['Mage', 'Marksman', 'Support'],
+    isEvo: true,
+    evolutionLevel: 2
+  };
+
+  const powerOffRoleMarksman = playerCardCombatPower(singleRolePlayer, marksman);
+  const powerOnRoleMarksman = playerCardCombatPower(evolvedPlayer, marksman);
+  assert.ok(powerOnRoleMarksman > powerOffRoleMarksman, 'Evolved marksman proficiency provides on-role combat bonus');
+
+  const powerOffRoleSupport = playerCardCombatPower(singleRolePlayer, support);
+  const powerOnRoleSupport = playerCardCombatPower(evolvedPlayer, support);
+  assert.ok(powerOnRoleSupport > powerOffRoleSupport, 'Evolved support proficiency provides on-role combat bonus');
+});

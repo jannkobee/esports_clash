@@ -42,9 +42,23 @@ export function draftTieBreak(championId: string, seed: number): number {
   return (hash >>> 0) / 0xffffffff * 20;
 }
 
-export function draftScore(champion: ChampionKit, player: PlayerCard, team: ChampionKit[], coach?: CoachCard): number {
+import { calculateCounterBonus, calculateSynergyBonus } from './avatarSynergyData.ts';
+
+export function draftScore(
+  champion: ChampionKit,
+  player: PlayerCard,
+  team: ChampionKit[],
+  coach?: CoachCard,
+  opponentTeam: ChampionKit[] = []
+): number {
   const preferred = player.preferredRole ?? player.role;
-  const roleFit = champion.primaryRole === preferred ? 38 : champion.secondaryRole === preferred ? 22 : -28;
+  const isPlayablePrimary = player.playableRoles
+    ? player.playableRoles.includes(champion.primaryRole)
+    : champion.primaryRole === preferred;
+  const isPlayableSecondary = player.playableRoles && champion.secondaryRole
+    ? player.playableRoles.includes(champion.secondaryRole)
+    : champion.secondaryRole === preferred;
+  const roleFit = isPlayablePrimary ? 38 : isPlayableSecondary ? 22 : -28;
   const signature = player.signatureChampions.includes(champion.name)
     ? 10 + (player.stats?.flx ?? 50) / 20 + (coach?.playbookBonus ?? 0) / 5 : 0;
   const flexibility = (player.stats?.flx ?? 50) / 10;
@@ -66,7 +80,12 @@ export function draftScore(champion: ChampionKit, player: PlayerCard, team: Cham
   const composition = ((!hasFrontline && frontline ? 13 : 0) + (!hasWaveClear && waveClear ? 12 : 0))
     * (0.7 + (coach?.playbookBonus ?? 8) / 25);
   const teamfightFit = engage || champion.primaryRole === 'Support' ? (player.stats?.tf ?? 50) / 20 : 0;
-  return roleFit + signature + flexibility + neededRole + styleScore + composition + teamfightFit;
+
+  // Actual Data Counter-Pick and Wombo Synergy Intelligence
+  const synergyScore = team.length > 0 ? calculateSynergyBonus(champion.id, team.map(t => t.id)) : 0;
+  const counterScore = opponentTeam.length > 0 ? calculateCounterBonus(champion.id, opponentTeam.map(o => o.id)) : 0;
+
+  return roleFit + signature + flexibility + neededRole + styleScore + composition + teamfightFit + synergyScore + counterScore;
 }
 
 function draftVariance(coach?: CoachCard) {
@@ -74,24 +93,26 @@ function draftVariance(coach?: CoachCard) {
 }
 
 export function chooseCoachPick(champions: ChampionKit[], player: PlayerCard, team: ChampionKit[],
-  unavailableIds: Iterable<string>, coach?: CoachCard, seed = 0): ChampionKit | undefined {
+  unavailableIds: Iterable<string>, coach?: CoachCard, seed = 0, opponentTeam: ChampionKit[] = []): ChampionKit | undefined {
   const unavailable = new Set(unavailableIds);
   return champions.filter(champion => !unavailable.has(champion.id)).sort((a, b) => {
-    const score = (champion: ChampionKit) => draftScore(champion, player, team, coach)
+    const score = (champion: ChampionKit) => draftScore(champion, player, team, coach, opponentTeam)
       + draftTieBreak(champion.id, seed) * draftVariance(coach);
     return score(b) - score(a);
   })[0];
 }
 
 export function chooseCoachTeamPick(champions: ChampionKit[], roster: PlayerCard[], picks: DraftPick[],
-  unavailableIds: Iterable<string>, coach?: CoachCard, seed = 0): DraftPick | undefined {
+  unavailableIds: Iterable<string>, coach?: CoachCard, seed = 0, opponentPicks: DraftPick[] = []): DraftPick | undefined {
   const unavailable = new Set(unavailableIds);
   const team = picks.map(pick => champions.find(champion => champion.id === pick.championId))
+    .filter((champion): champion is ChampionKit => !!champion);
+  const opponentTeam = opponentPicks.map(pick => champions.find(champion => champion.id === pick.championId))
     .filter((champion): champion is ChampionKit => !!champion);
   return roster.flatMap((player, slot) => picks.some(pick => pick.slot === slot) ? []
     : champions.filter(champion => !unavailable.has(champion.id)).map(champion => ({
       slot, championId: champion.id,
-      score: draftScore(champion, player, team, coach) + draftTieBreak(champion.id, seed + slot * 7) * draftVariance(coach)
+      score: draftScore(champion, player, team, coach, opponentTeam) + draftTieBreak(champion.id, seed + slot * 7) * draftVariance(coach)
     }))).sort((a, b) => b.score - a.score)[0];
 }
 

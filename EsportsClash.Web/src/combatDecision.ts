@@ -27,7 +27,7 @@ export function isUnitVisibleTo(target: Fighter, observer: Fighter): boolean {
 export function chooseTeamfightTarget(unit: Fighter, enemies: Fighter[], allies: Fighter[], range: number): Fighter | undefined {
   const iq = Math.max(1, Math.min(99, unit.player.stats.iq)) / 99;
   const execution = Math.max(1, Math.min(99, unit.player.stats.tf)) / 99;
-  const carry = allies.find(a => a.id !== unit.id && (a.champion.primaryRole === 'Marksman' || a.champion.primaryRole === 'Mage') && distance(unit, a) < 240);
+  const carry = allies.find(a => a.id !== unit.id && !a.isRecalling && (a.champion.primaryRole === 'Marksman' || a.champion.primaryRole === 'Mage') && distance(unit, a) < 240);
   return enemies.filter(e => e.isAlive && isUnitVisibleTo(e, unit)).reduce<Fighter | undefined>((best, enemy) => {
     const score = (candidate: Fighter) => {
       const dist = distance(unit, candidate);
@@ -36,9 +36,20 @@ export function chooseTeamfightTarget(unit: Fighter, enemies: Fighter[], allies:
       const vulnerable = candidate.champion.primaryRole === 'Marksman' || candidate.champion.primaryRole === 'Mage';
       const peeling = carry && distance(carry, candidate) < 150;
       const isStunned = (candidate.stunTimer ?? 0) > 0 || (candidate.knockupTimer ?? 0) > 0;
+      const isRecallingFar = candidate.isRecalling && dist > range * 1.25;
+      const canInterruptRecall = candidate.isRecalling && dist <= range * 1.25;
+
+      const isOneTap = unit.player.badges?.some(b => b.toLowerCase().includes('one-tap'));
+      const isAggroDiver = unit.player.badges?.some(b => b.toLowerCase().includes('diver')) || unit.player.personality?.toLowerCase().includes('diver');
+      const isClutchActive = !!unit.clutchSurgeActive;
+
       return -dist / Math.max(60, range) * (1.8 - iq * 0.7)
+        - (isRecallingFar ? (5.0 * iq) : 0)
+        + (canInterruptRecall ? (2.0 * iq) : 0)
         + (reachable ? lowHp * 2.3 * iq * (0.6 + execution * 0.4) : 0)
-        + (reachable && vulnerable && unit.champion.primaryRole === 'Assassin' ? 1.3 * iq : 0)
+        + (reachable && vulnerable && (unit.champion.primaryRole === 'Assassin' || isOneTap) ? (isOneTap ? 3.2 : 1.3 * iq) : 0)
+        + (reachable && lowHp >= 0.55 && isAggroDiver ? 2.6 : 0)
+        + (isClutchActive && reachable ? 1.8 : 0)
         + (reachable && isStunned ? 1.5 * iq * (0.5 + execution * 0.5) : 0)
         + (peeling && (unit.champion.primaryRole === 'Tank' || unit.champion.primaryRole === 'Support') ? 1.6 * iq * (0.6 + execution * 0.4) : 0);
     };

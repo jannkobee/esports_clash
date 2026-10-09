@@ -783,18 +783,23 @@ export const TeamfightArenaView: React.FC<TeamfightArenaViewProps> = ({
         isInBush: u.isInBush
       });
 
-      // Overhead League-Style Health Bar
-      const barWidth = 36;
-      const barHeight = 4;
+      // Overhead League-Style Health Bar (Enlarged)
+      const barWidth = 56;
+      const barHeight = 7;
       const barX = u.x - barWidth / 2;
-      const barY = u.y - 42;
+      const barY = u.y - 46;
 
-      // Level Badge on Left
+      // Level Badge on Left (14x14)
+      const lvlSize = 14;
       ctx.fillStyle = '#0f172a';
-      ctx.fillRect(barX - 8, barY - 1, 7, 7);
+      ctx.fillRect(barX - lvlSize - 2, barY - 2, lvlSize, lvlSize);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(barX - lvlSize - 2, barY - 2, lvlSize, lvlSize);
       ctx.fillStyle = '#fde047';
-      ctx.font = 'bold 7px sans-serif';
-      ctx.fillText(`${u.player.level}`, barX - 6, barY + 5);
+      ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${u.player.level}`, barX - lvlSize / 2 - 2, barY + lvlSize - 4.5);
 
       // HP Bar Background
       ctx.fillStyle = '#020617';
@@ -807,9 +812,9 @@ export const TeamfightArenaView: React.FC<TeamfightArenaViewProps> = ({
 
       // Mana Bar
       ctx.fillStyle = '#020617';
-      ctx.fillRect(barX, barY + 5, barWidth, 2);
+      ctx.fillRect(barX, barY + barHeight + 1.5, barWidth, 2.5);
       ctx.fillStyle = '#eab308';
-      ctx.fillRect(barX + 0.5, barY + 5, (barWidth - 1) * (u.mana / 100), 1.5);
+      ctx.fillRect(barX + 0.5, barY + barHeight + 1.5, (barWidth - 1) * (u.mana / 100), 2);
 
       // Champion & Athlete Name Tag
       ctx.fillStyle = '#ffffff';

@@ -22,6 +22,8 @@ The playable draft launches `AramMatchView`. Its combat decisions live in `src/c
 
 The larger map has three turrets and three barracks per side. Destroying a barracks empowers the matching melee, ranged, or catapult minions in later waves. Jungle camps fight back, and Embermaw is the upper dragon objective. Every champion casts a second skill and has visible effects for all three abilities. The layout and barracks rules are in `src/arenaRules.ts`.
 
+Jungle camps now animate their idle, chase, windup, strike and hit states. Turrets hit diving avatars harder and switch aggro when an avatar attacks a defender inside their range. The club reserves have a searchable, filterable card grid; card faces use distinct fictional names without source-name labels.
+
 The match also has a lower Gravemarch golem objective, four blue and red crest buff camps, five-shot nexus volleys with a reload, a home-only shop, six combat items plus boots and a free ward slot, and a docked squad HUD. Early turret plating and the nexus shield create siege stages. Income, farm, recalls, and player ratings determine item timing.
 
 Use **Replay** to rerun the same draft and random seed. **Export** saves a match report that can be loaded from the draft screen. **Run 25** runs live arena simulations in side-swapped seed pairs; **Export balance** saves the resulting metrics and event timelines. See `../docs/arena-mechanics.md` for the gameplay invariants and source references.

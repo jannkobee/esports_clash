@@ -43,25 +43,44 @@ async function body(req) {
 
 function publicRoom(room) {
   const { tokens, touched, ...state } = room;
-  return { ...state, ready: !!room.redCoach };
+  return { 
+    ...state, 
+    matchType: room.matchType || 'ranked',
+    blueRating: room.blueRating || 300,
+    redRating: room.redRating || 300,
+    ready: !!room.redCoach 
+  };
 }
 
-export function createRoom(roster, coach) {
+export function createRoom(roster, coach, matchType = 'ranked', rating = 300) {
   const blueRoster = safeRoster(roster);
   const blueCoach = safeCoach(coach);
   if (!blueRoster || !blueCoach) throw new Error('Select a valid five player roster and coach.');
   let code;
   do { code = randomBytes(4).toString('hex').slice(0, 6).toUpperCase(); } while (rooms.has(code));
   const token = randomBytes(32).toString('hex');
-  const room = { roomCode: code, turnIndex: 0, bans: {}, picks: { blue: [], red: [] },
-    blueRoster, redRoster: [], blueCoach, redCoach: null,
-    seed: randomBytes(4).readUInt32BE(0), revision: 0,
-    tokens: { blue: token, red: null }, touched: Date.now() };
+  const room = { 
+    roomCode: code, 
+    matchType: matchType === 'normal' ? 'normal' : 'ranked',
+    blueRating: Number.isFinite(rating) ? Math.round(rating) : 300,
+    redRating: 300,
+    turnIndex: 0, 
+    bans: {}, 
+    picks: { blue: [], red: [] },
+    blueRoster, 
+    redRoster: [], 
+    blueCoach, 
+    redCoach: null,
+    seed: randomBytes(4).readUInt32BE(0), 
+    revision: 0,
+    tokens: { blue: token, red: null }, 
+    touched: Date.now() 
+  };
   rooms.set(code, room);
   return { token, side: 'blue', room: publicRoom(room) };
 }
 
-export function joinRoom(code, roster, coach) {
+export function joinRoom(code, roster, coach, rating = 300) {
   const room = rooms.get(code?.toUpperCase());
   if (!room) throw new Error('Room not found or expired.');
   if (room.tokens.red) throw new Error('This room already has two players.');
@@ -71,6 +90,7 @@ export function joinRoom(code, roster, coach) {
   const token = randomBytes(32).toString('hex');
   room.redRoster = redRoster;
   room.redCoach = redCoach;
+  room.redRating = Number.isFinite(rating) ? Math.round(rating) : 300;
   room.tokens.red = token;
   room.revision++;
   room.touched = Date.now();
@@ -135,13 +155,13 @@ export function makeServer() {
       const segments = pathname.split('/').filter(Boolean);
       if (req.method === 'POST' && pathname === '/api/rooms') {
         const data = await body(req);
-        return json(res, 201, createRoom(data.roster, data.coach));
+        return json(res, 201, createRoom(data.roster, data.coach, data.matchType, data.rating));
       }
       const code = segments[2];
       if (!/^[A-F0-9]{6}$/i.test(code || '')) return json(res, 404, { error: 'Room not found.' });
       if (req.method === 'POST' && segments[3] === 'join') {
         const data = await body(req);
-        return json(res, 200, joinRoom(code, data.roster, data.coach));
+        return json(res, 200, joinRoom(code, data.roster, data.coach, data.rating));
       }
       const token = req.headers.authorization?.replace(/^Bearer /, '');
       if (req.method === 'GET' && segments.length === 3) return json(res, 200, getRoom(code, token));

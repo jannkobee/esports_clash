@@ -35,6 +35,15 @@ export const AVATAR_COMBOS: Record<string, AvatarCombo> = {
   Corsara: { name: 'Saltwater Broadside', opener: 'skill2', followup: 'skill1' },
   Brewmaw: { name: 'Cask Crash', opener: 'skill1', followup: 'skill2' },
   Wraithhook: { name: 'Lantern Snare', opener: 'skill1', followup: 'skill2' },
+  Kaelen: { name: 'Spellweave Resonance', opener: 'skill1', followup: 'skill2' },
+  Hweilin: { name: 'Ink Torrent', opener: 'skill2', followup: 'skill1' },
+  Jaxon: { name: 'Hextech Assault', opener: 'skill1', followup: 'skill2' },
+  Valerie: { name: 'Vault Breaker Slam', opener: 'skill1', followup: 'skill2' },
+  Jinxy: { name: 'Zap Cannonade', opener: 'skill2', followup: 'skill1' },
+  Paxi: { name: 'Orb Rift', opener: 'skill1', followup: 'skill2' },
+  Batrix: { name: 'Sticky Firefly', opener: 'skill2', followup: 'skill1' },
+  Quillback: { name: 'Goo Quill Nova', opener: 'skill1', followup: 'skill2' },
+  Aetheris: { name: 'Overcharge Array', opener: 'skill2', followup: 'skill1' },
 };
 
 export function comboPracticeNeeded(player: PlayerCard, avatarName: string): number | null {

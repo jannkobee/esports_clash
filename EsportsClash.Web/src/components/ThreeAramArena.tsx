@@ -943,7 +943,7 @@ export const ThreeAramArena: React.FC<ThreeAramArenaProps> = ({
     // 7. ASSIGN CHAMPIONS TO 3 LANES WITH AUTHENTIC RANGES
     // Lane Assignment Policy:
     // Valkira -> Top (Bruiser 1v1)
-    // Kyumi (Flaker) -> Mid (Mage 1v1)
+    // Kyumi (RuneSage) -> Mid (Mage 1v1)
     // Astra -> Bot (ADC Duo)
     // Solana -> Bot (Support Duo)
     // Buck -> Roam / River Jungler
@@ -1124,7 +1124,7 @@ export const ThreeAramArena: React.FC<ThreeAramArenaProps> = ({
         camera.position.lerp(new THREE.Vector3(0, 28, 22 + 24), 0.06);
         camera.lookAt(0, 0.8, 22);
       } else if (cameraFocus === 'flaker') {
-        const flaker = unitsRef.current.find((u) => u.player.name === 'Flaker') || unitsRef.current[0];
+        const flaker = unitsRef.current.find((u) => u.player.name === 'RuneSage') || unitsRef.current[0];
         if (flaker && flaker.isAlive) {
           camera.position.lerp(new THREE.Vector3(flaker.x - 10, flaker.y + 14, flaker.z + 16), 0.08);
           camera.lookAt(flaker.x, flaker.y + 1.2, flaker.z);
@@ -1378,7 +1378,7 @@ export const ThreeAramArena: React.FC<ThreeAramArenaProps> = ({
           u.attackTimer -= dt;
 
           // FLAKER MICRO: JUKING SIDE-TO-SIDE (Circling / Weaving!)
-          if (u.player.name === 'Flaker') {
+          if (u.player.name === 'RuneSage') {
             const sideAngle = Math.atan2(target.z - u.z, target.x - u.x) + Math.PI / 2;
             u.x += Math.cos(sideAngle) * Math.sin(time * 4) * 2.5 * dt;
             u.z += Math.sin(sideAngle) * Math.sin(time * 4) * 2.5 * dt;
@@ -1607,7 +1607,7 @@ export const ThreeAramArena: React.FC<ThreeAramArenaProps> = ({
                 cameraFocus === 'flaker' ? 'bg-pink-500 text-white shadow' : 'bg-slate-800 text-slate-400 hover:text-white'
               }`}
             >
-              👑 Flaker Cam
+              👑 RuneSage Cam
             </button>
             <button
               onClick={() => setCameraFocus('orbit')}
@@ -1635,7 +1635,7 @@ export const ThreeAramArena: React.FC<ThreeAramArenaProps> = ({
       {/* BOTTOM HINTS & LANE STATUS */}
       <div className="absolute bottom-4 left-6 pointer-events-none">
         <div className="text-[11px] font-bold bg-slate-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-800 text-slate-300 shadow">
-          🛡️ <span className="text-emerald-400">Top</span>: Valkira Duel • <span className="text-cyan-400">Mid</span>: Flaker Kyumi • <span className="text-indigo-400">Bot</span>: Astra & Solana • <span className="text-amber-400">River</span>: Buck Roam
+          🛡️ <span className="text-emerald-400">Top</span>: Valkira Duel • <span className="text-cyan-400">Mid</span>: RuneSage Kyumi • <span className="text-indigo-400">Bot</span>: Astra & Solana • <span className="text-amber-400">River</span>: Buck Roam
         </div>
       </div>
 

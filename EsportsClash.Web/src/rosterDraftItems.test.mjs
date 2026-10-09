@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { buildUniqueLineups, isChampionAvailable } from './draftRules.ts';
 import { getItemPurchasePlan } from './itemStrategy.ts';
 import { RESEARCHED_PLAYERS } from './rosterResearch.ts';
+import { INITIAL_PLAYERS } from './mockData.ts';
 import { ADDITIONAL_CHAMPIONS } from './additionalChampions.ts';
 
 test('a picked avatar cannot be assigned to another player or the other team', () => {
@@ -54,7 +55,14 @@ test('component credit completes an item and a full inventory can replace a star
 test('research pool has 50 distinct inspirations and all requested avatars', () => {
   assert.equal(RESEARCHED_PLAYERS.length, 50);
   assert.equal(new Set(RESEARCHED_PLAYERS.map(p => p[0])).size, 50);
+  assert.equal(new Set(INITIAL_PLAYERS.map(player => player.name)).size, INITIAL_PLAYERS.length);
+  for (const oldAlias of ['Micke', 'd0nk', 'r0pz', 'Critz', 'Sneykingg', 'Nishah']) {
+    assert.ok(!INITIAL_PLAYERS.some(player => player.name === oldAlias));
+  }
   assert.ok(RESEARCHED_PLAYERS.some(p => p[1] === 'Cardrel' && p[0] === 'Caedrel'));
-  assert.deepEqual(ADDITIONAL_CHAMPIONS.map(c => c.name), ['Veyara', 'Cinderlock', 'Solenne', 'Croakwell', 'Soulscourge', 'Stonewake',
-    'Mirehook', 'Nullweaver', 'Voltgrip', 'Aetherbolt', 'Corsara', 'Brewmaw', 'Wraithhook']);
+  assert.deepEqual(ADDITIONAL_CHAMPIONS.map(c => c.name), [
+    'Veyara', 'Cinderlock', 'Solenne', 'Croakwell', 'Soulscourge', 'Stonewake',
+    'Mirehook', 'Nullweaver', 'Voltgrip', 'Aetherbolt', 'Corsara', 'Brewmaw', 'Wraithhook',
+    'Kaelen', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback', 'Aetheris'
+  ]);
 });

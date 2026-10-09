@@ -21,6 +21,19 @@ export function nextNexusVolleyShot(shotsRemaining = 5): { shotsRemaining: numbe
     : { shotsRemaining: shotsRemaining - 1, cooldown: 0.2 };
 }
 
+export function selectTurretTarget<T extends { id: string }>(
+  inRange: readonly T[], currentId: string | null, diveAggressorId?: string
+): T | undefined {
+  return (diveAggressorId ? inRange.find(unit => unit.id === diveAggressorId) : undefined)
+    ?? (currentId ? inRange.find(unit => unit.id === currentId) : undefined)
+    ?? inRange.find(unit => 'type' in unit)
+    ?? inRange[0];
+}
+
+export function turretShotDamage(baseDamage: number, isChampion: boolean, isNexus: boolean): number {
+  return isChampion && !isNexus ? Math.round(baseDamage * 1.8) : baseDamage;
+}
+
 // Early tower plating fades by the eight-minute late-game transition. Wave
 // control still helps break a turret, but the opening no longer drags on.
 export function towerSiegeMultiplier(gameSeconds: number): number {
@@ -90,3 +103,6 @@ export function canUnitRecall(
   const isClearAndSafe = nearestEnemyDist > safeEnemyDistance && nearestMinionDist > 270 && nearestStructureDist > 250;
   return isClearAndSafe && recallCooldown <= 0;
 }
+
+
+

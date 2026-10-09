@@ -6,7 +6,8 @@ export type Motif = 'sun' | 'arrow' | 'orb' | 'shotgun' | 'blades' | 'shadow' | 
   | 'wolf' | 'feathers' | 'wings' | 'bear' | 'roots' | 'grave' | 'ember'
   | 'lightning' | 'boulder' | 'void' | 'elements' | 'ash' | 'mist'
   | 'music' | 'souls' | 'quake' | 'hook' | 'gravity' | 'grapple'
-  | 'relic' | 'broadside' | 'cask' | 'lantern';
+  | 'relic' | 'broadside' | 'cask' | 'lantern'
+  | 'arsenal' | 'paint' | 'hammer' | 'fist' | 'rocket' | 'faerie' | 'lasso' | 'quill' | 'wisp';
 
 export const AVATAR_ANIMATION_MOTIFS: Record<string, Motif> = {
   Solana: 'sun', Astra: 'arrow', Kyumi: 'orb', Buck: 'shotgun',
@@ -17,6 +18,8 @@ export const AVATAR_ANIMATION_MOTIFS: Record<string, Motif> = {
   Croakwell: 'music', Soulscourge: 'souls', Stonewake: 'quake',
   Mirehook: 'hook', Nullweaver: 'gravity', Voltgrip: 'grapple',
   Aetherbolt: 'relic', Corsara: 'broadside', Brewmaw: 'cask', Wraithhook: 'lantern',
+  Kaelen: 'arsenal', Hweilin: 'paint', Jaxon: 'hammer', Valerie: 'fist',
+  Jinxy: 'rocket', Paxi: 'faerie', Batrix: 'lasso', Quillback: 'quill', Aetheris: 'wisp',
 };
 
 export interface AvatarAnimationState {
@@ -1028,6 +1031,84 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       for (let i = 0; i < 5; i++) {
         const a = i * Math.PI * 2 / 5 + p;
         drawFillCircle(x + Math.cos(a) * radius, y + Math.sin(a) * radius, 5, '#5eead4');
+      }
+      break;
+
+    case 'arsenal':
+      drawRing(x, y, radius * (ultimate ? 1.3 : 0.8));
+      drawFillCircle(x, y, ultimate ? 18 : 10, '#f59e0b');
+      // Draw orbiting Pyra (amber flame) and Surge (electric cyan) essence spheres
+      for (let i = 0; i < (ultimate ? 6 : 2); i++) {
+        const a = (i * Math.PI * 2) / (ultimate ? 6 : 2) + p * 4;
+        const color = i % 2 === 0 ? '#f97316' : '#06b6d4';
+        drawFillCircle(x + Math.cos(a) * radius * 0.75, y + Math.sin(a) * radius * 0.75, 6, color);
+      }
+      if (ultimate) {
+        drawBeam(x, y - radius * 1.4, x, y + radius * 0.5, 14, '#fef08a');
+      }
+      break;
+
+    case 'paint':
+      for (let i = 0; i < 4; i++) {
+        const rad = radius * (0.3 + i * 0.25);
+        drawRing(x, y, rad);
+        drawFillCircle(x + Math.cos(p * 4 + i) * rad, y + Math.sin(p * 4 + i) * rad, 5, i % 2 === 0 ? '#06b6d4' : '#a855f7');
+      }
+      break;
+
+    case 'hammer':
+      drawBeam(sourceX, sourceY - 14, x, y - 14, ultimate ? 14 : 7, '#38bdf8');
+      drawRing(x, y, radius * (ultimate ? 1.2 : 0.7));
+      for (let i = 0; i < 6; i++) drawSpoke(x, y, (i * Math.PI) / 3, radius * 0.2, radius * 1.1);
+      break;
+
+    case 'fist':
+      strokeLine(sourceX, sourceY - 15, x, y - 15);
+      drawFillCircle(x, y - 15, ultimate ? 18 : 10, '#ec4899');
+      drawRing(x, y - 15, radius * (ultimate ? 1.25 : 0.75));
+      for (let i = 0; i < 8; i++) drawSpoke(x, y - 15, (i * Math.PI) / 4, 6, radius * 0.9);
+      break;
+
+    case 'rocket':
+      strokeLine(sourceX, sourceY - 14, x, y - 14);
+      drawFillCircle(x, y - 14, ultimate ? 16 : 8, '#f43f5e');
+      drawRing(x, y - 14, radius * (ultimate ? 1.35 : 0.8));
+      for (let i = 0; i < 6; i++) {
+        const a = (i * Math.PI) / 3 + p * 2;
+        drawFillCircle(x + Math.cos(a) * radius * 0.6, y - 14 + Math.sin(a) * radius * 0.6, 4, '#38bdf8');
+      }
+      break;
+
+    case 'faerie':
+      drawRing(x, y, radius * (ultimate ? 1.3 : 0.7));
+      for (let i = 0; i < 5; i++) {
+        const a = (i * Math.PI * 2) / 5 + p * 4;
+        drawFillCircle(x + Math.cos(a) * radius * 0.8, y + Math.sin(a) * radius * 0.8, 6, '#34d399');
+      }
+      break;
+
+    case 'lasso':
+      drawBeam(sourceX, sourceY - 15, x, y - 15, 6, '#f97316');
+      drawRing(x, y, radius * (ultimate ? 1.1 : 0.6));
+      for (let i = 0; i < 4; i++) drawSpoke(x, y, (i * Math.PI) / 2 + p * 3, radius * 0.2, radius * 0.85);
+      break;
+
+    case 'quill':
+      drawRing(x, y, radius * (ultimate ? 1.2 : 0.75));
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4;
+        strokeLine(x, y, x + Math.cos(a) * radius, y + Math.sin(a) * radius);
+        drawFillCircle(x + Math.cos(a) * radius, y + Math.sin(a) * radius, 3, '#84cc16');
+      }
+      break;
+
+    case 'wisp':
+      drawRing(x, y, radius * 0.5);
+      drawRing(x, y, radius * (ultimate ? 1.25 : 0.85));
+      drawFillCircle(x, y, ultimate ? 14 : 8, '#ffffff');
+      for (let i = 0; i < 5; i++) {
+        const a = (i * Math.PI * 2) / 5 + p * 5;
+        drawFillCircle(x + Math.cos(a) * radius * 0.75, y + Math.sin(a) * radius * 0.75, 4, '#38bdf8');
       }
       break;
   }

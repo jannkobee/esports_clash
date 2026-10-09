@@ -4,8 +4,8 @@ import { ADDITIONAL_CHAMPIONS } from './additionalChampions.ts';
 import { AVATAR_ANIMATION_MOTIFS, drawAvatarSkillAnimation } from './avatarSkillAnimation.ts';
 
 test('every avatar has a distinct animation cue and recreated avatars keep source names out of play', () => {
-  assert.equal(Object.keys(AVATAR_ANIMATION_MOTIFS).length, 30);
-  assert.equal(new Set(Object.values(AVATAR_ANIMATION_MOTIFS)).size, 30);
+  assert.equal(Object.keys(AVATAR_ANIMATION_MOTIFS).length, 39);
+  assert.equal(new Set(Object.values(AVATAR_ANIMATION_MOTIFS)).size, 39);
   for (const avatar of ADDITIONAL_CHAMPIONS) {
     assert.ok(AVATAR_ANIMATION_MOTIFS[avatar.name], `${avatar.name} has an animation`);
     assert.notEqual(avatar.name, avatar.basis);
@@ -74,3 +74,45 @@ test('fear flee causes unit to move directly away from fear source', () => {
   victim.x += (dx / dist) * step;
   assert.ok(victim.x > 350, 'feared victim fled away from fear source');
 });
+
+test('all 39 champions have dedicated models and render without errors in drawChampionSprite', async () => {
+  const { drawChampionSprite } = await import('./components/ChampionSpriteRenderer.ts');
+  const canvas = new Proxy({}, {
+    get: (target, key) => {
+      if (key === 'createRadialGradient' || key === 'createLinearGradient') {
+        return () => ({ addColorStop: () => {} });
+      }
+      return key in target ? target[key] : () => {};
+    },
+    set: (target, key, value) => { target[key] = value; return true; },
+  });
+
+  const allChampNames = [
+    'Solana', 'Astra', 'Kyumi', 'Buck', 'Valkira', 'Kage', 'Kazemaru', 'Kindra', 'Cora', 'Renn',
+    'Sylla', 'Tequoia', 'Zal', 'Xin', 'Raijin', 'Kaolin', 'Inai', 'Veyara', 'Cinderlock', 'Solenne',
+    'Croakwell', 'Soulscourge', 'Stonewake', 'Mirehook', 'Nullweaver', 'Voltgrip', 'Aetherbolt', 'Corsara',
+    'Brewmaw', 'Wraithhook', 'Kaelen', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback', 'Aetheris'
+  ];
+
+  assert.equal(allChampNames.length, 39);
+
+  for (const championName of allChampNames) {
+    for (const animState of ['idle', 'walk', 'attack', 'cast']) {
+      assert.doesNotThrow(() => {
+        drawChampionSprite(canvas, {
+          championName,
+          x: 100,
+          y: 200,
+          facing: 'right',
+          animState,
+          animTime: 1.5,
+          team: 'blue',
+          isStunned: false,
+          isCharmed: false,
+          isInBush: false,
+        });
+      }, `${championName} in ${animState} state rendered cleanly`);
+    }
+  }
+});
+

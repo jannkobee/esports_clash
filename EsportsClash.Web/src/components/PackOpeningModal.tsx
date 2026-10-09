@@ -10,13 +10,15 @@ interface PackOpeningModalProps {
   cards: PlayerCard[];
   onClose: () => void;
   duplicateCoins: number;
+  bonusEvoVoucher?: string;
 }
 
 export const PackOpeningModal: React.FC<PackOpeningModalProps> = ({
   packName,
   cards,
   onClose,
-  duplicateCoins
+  duplicateCoins,
+  bonusEvoVoucher
 }) => {
   const [stage, setStage] = useState<'tearing' | 'walkout' | 'summary'>('tearing');
   const [featuredIndex, setFeaturedIndex] = useState(0);
@@ -88,12 +90,20 @@ export const PackOpeningModal: React.FC<PackOpeningModalProps> = ({
               {packName} Opened!
             </h2>
             <p className="text-slate-400 text-sm">
-              {cards.length} new players added to your club roster.
+              {duplicateCoins > 0
+                ? `${cards.length} cards scouted. Duplicates converted to Clash Coins & existing card stats boosted!`
+                : `${cards.length} new players added to your club roster.`}
             </p>
             {duplicateCoins > 0 && (
-              <div className="mt-2 inline-flex items-center gap-2 bg-amber-950/80 border border-amber-500/40 text-amber-300 px-4 py-1 rounded-full text-xs font-bold">
+              <div className="mt-2 inline-flex items-center gap-2 bg-amber-950/80 border border-amber-500/40 text-amber-300 px-4 py-1.5 rounded-full text-xs font-bold animate-pulse">
                 <Coins className="w-4 h-4 text-amber-400" />
-                Duplicates converted to +{duplicateCoins} Coins!
+                <span>Recycled duplicates for 🪙 +{duplicateCoins.toLocaleString()} Coins & boosted player stats!</span>
+              </div>
+            )}
+            {bonusEvoVoucher && (
+              <div className="mt-2 ml-2 inline-flex items-center gap-2 bg-teal-950/90 border border-teal-400/50 text-teal-300 px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                <Sparkles className="w-4 h-4 text-teal-400 animate-spin-slow" />
+                <span>BONUS DROP: {bonusEvoVoucher}</span>
               </div>
             )}
           </div>

@@ -10,7 +10,8 @@ interface EvolutionsViewProps {
   roster: PlayerCard[];
   teamFunds: number;
   onStartEvolution: (cardId: string, planId: string) => void;
-  onClaimEvolution: (cardId: string, planId: string) => void;
+  onClaimEvolution: (cardId: string, planId: string, chosenSignature?: string) => void;
+  onFastTrackEvolution: (cardId: string) => void;
   activeEvolutions: { [cardId: string]: { planId: string; progress: number[] } };
 }
 
@@ -20,10 +21,12 @@ export const EvolutionsView: React.FC<EvolutionsViewProps> = ({
   teamFunds,
   onStartEvolution,
   onClaimEvolution,
+  onFastTrackEvolution,
   activeEvolutions
 }) => {
   const [selectedPlan, setSelectedPlan] = useState<EvolutionPlan>(plans[0]);
   const [selectedCard, setSelectedCard] = useState<PlayerCard | null>(null);
+  const [selectedSignatures, setSelectedSignatures] = useState<{ [cardId: string]: string }>({});
 
   const eligibleCards = roster.filter(
     (c) => c.ovr <= selectedPlan.maxOvr && !activeEvolutions[c.id]
@@ -46,7 +49,7 @@ export const EvolutionsView: React.FC<EvolutionsViewProps> = ({
             EA FC-STYLE EVOLUTIONS HUB
           </h2>
           <p className="text-slate-400 text-xs mt-0.5">
-            Level up your favorite cards, upgrade their rarity tiers, and unlock exclusive PlayStyle+ badges!
+            Level up your favorite cards, unlock secondary combat roles & signature avatars, upgrade rarity tiers, and acquire PlayStyle+ badges!
           </p>
         </div>
       </div>
@@ -72,7 +75,15 @@ export const EvolutionsView: React.FC<EvolutionsViewProps> = ({
                   <CardComponent card={card} compact />
 
                   <div className="flex-1">
-                    <div className="text-sm font-bold text-white mb-1">{plan.name}</div>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="text-sm font-bold text-white">{plan.name}</div>
+                      {plan.unlockedRole && (
+                        <span className="text-[10px] bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 px-2 py-0.5 rounded-full font-bold">
+                          +{plan.unlockedRole} Role
+                        </span>
+                      )}
+                    </div>
+
                     <div className="space-y-1.5 text-xs">
                       {plan.objectives.map((obj, idx) => {
                         const current = evoData.progress[idx] || 0;
@@ -91,20 +102,50 @@ export const EvolutionsView: React.FC<EvolutionsViewProps> = ({
                       })}
                     </div>
 
+                    {plan.selectableSignatures && plan.selectableSignatures.length > 0 && (
+                      <div className="mt-2 text-xs">
+                        <label className="text-slate-400 block text-[10px] font-bold mb-1">
+                          Select Signature Avatar to Unlock:
+                        </label>
+                        <select
+                          value={selectedSignatures[card.id] || plan.selectableSignatures[0]}
+                          onChange={(e) => setSelectedSignatures(prev => ({ ...prev, [card.id]: e.target.value }))}
+                          className="bg-slate-900 border border-teal-500/40 rounded-lg px-2 py-1 text-teal-300 font-bold text-xs w-full focus:outline-none"
+                        >
+                          {plan.selectableSignatures.map(sig => (
+                            <option key={sig} value={sig}>⚡ {sig}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
                     {isComplete ? (
                       <button
                         onClick={() => {
                           sound.playWalkoutFanfare();
                           confetti({ particleCount: 100, spread: 70 });
-                          onClaimEvolution(card.id, plan.id);
+                          const chosenSig = selectedSignatures[card.id] || (plan.selectableSignatures?.[0]);
+                          onClaimEvolution(card.id, plan.id, chosenSig);
                         }}
-                        className="mt-3 w-full py-1.5 bg-gradient-to-r from-teal-400 to-emerald-400 text-slate-950 font-black rounded-lg text-xs hover:brightness-110 shadow"
+                        className="mt-3 w-full py-1.5 bg-gradient-to-r from-teal-400 to-emerald-400 text-slate-950 font-black rounded-lg text-xs hover:brightness-110 shadow flex items-center justify-center gap-1.5"
                       >
-                        🎉 Claim Evolution Upgrade!
+                        <Sparkles className="w-3.5 h-3.5 text-slate-950" /> Claim Evolution (+{plan.ovrBoost || 5} OVR)!
                       </button>
                     ) : (
-                      <div className="mt-2 text-[10px] text-amber-300 font-semibold">
-                        ⏳ Complete objectives in tournament matches to evolve!
+                      <div className="mt-2.5 flex items-center justify-between gap-2">
+                        <div className="text-[10px] text-amber-300 font-semibold truncate">
+                          ⏳ Complete match objectives!
+                        </div>
+                        <button
+                          onClick={() => {
+                            sound.playCoin();
+                            onFastTrackEvolution(card.id);
+                          }}
+                          className="py-1 px-2.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-300 rounded-lg text-[10px] font-black flex items-center gap-1 transition whitespace-nowrap shadow"
+                          title="Instantly complete objectives for 250 Coins"
+                        >
+                          <Zap className="w-3 h-3 text-amber-400" /> Fast-Track (250 🪙)
+                        </button>
                       </div>
                     )}
                   </div>
@@ -161,8 +202,50 @@ export const EvolutionsView: React.FC<EvolutionsViewProps> = ({
                 Upgrades to: <strong className="text-teal-300 uppercase">{selectedPlan.targetTier}</strong>
               </span>
               <span className="bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg border border-white/5">
+                Rating Boost: <strong className="text-emerald-300">+{selectedPlan.ovrBoost || 5} OVR</strong>
+              </span>
+              <span className="bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg border border-white/5">
                 Unlocks Badge: <strong className="text-amber-300">{selectedPlan.unlockedBadge}</strong>
               </span>
+              {selectedPlan.unlockedRole && (
+                <span className="bg-teal-950/80 text-teal-300 px-2.5 py-1 rounded-lg border border-teal-500/30">
+                  ⚡ Secondary Combat Role: <strong className="text-teal-200">{selectedPlan.unlockedRole}</strong>
+                </span>
+              )}
+            </div>
+
+            {selectedPlan.selectableSignatures && selectedPlan.selectableSignatures.length > 0 && (
+              <div className="mt-2 text-xs bg-slate-950/60 p-2 rounded-lg border border-slate-800 text-slate-300">
+                <span className="text-slate-400 font-semibold">Available Signature Avatars: </span>
+                <span className="text-teal-300 font-bold">{selectedPlan.selectableSignatures.join(' · ')}</span>
+              </div>
+            )}
+
+            <div className="mt-2 grid grid-cols-6 gap-2 text-center text-[10px]">
+              <div className="bg-slate-950/80 p-1.5 rounded-lg border border-white/5">
+                <div className="text-slate-400">LAN</div>
+                <div className="font-bold text-teal-300">+{selectedPlan.statBoost.lan || 5}</div>
+              </div>
+              <div className="bg-slate-950/80 p-1.5 rounded-lg border border-white/5">
+                <div className="text-slate-400">TF</div>
+                <div className="font-bold text-teal-300">+{selectedPlan.statBoost.tf || 5}</div>
+              </div>
+              <div className="bg-slate-950/80 p-1.5 rounded-lg border border-white/5">
+                <div className="text-slate-400">IQ</div>
+                <div className="font-bold text-teal-300">+{selectedPlan.statBoost.iq || 5}</div>
+              </div>
+              <div className="bg-slate-950/80 p-1.5 rounded-lg border border-white/5">
+                <div className="text-slate-400">CLU</div>
+                <div className="font-bold text-teal-300">+{selectedPlan.statBoost.clu || 8}</div>
+              </div>
+              <div className="bg-slate-950/80 p-1.5 rounded-lg border border-white/5">
+                <div className="text-slate-400">STA</div>
+                <div className="font-bold text-teal-300">+{selectedPlan.statBoost.sta || 5}</div>
+              </div>
+              <div className="bg-slate-950/80 p-1.5 rounded-lg border border-white/5">
+                <div className="text-slate-400">FLX</div>
+                <div className="font-bold text-teal-300">+{selectedPlan.statBoost.flx || 5}</div>
+              </div>
             </div>
           </div>
 

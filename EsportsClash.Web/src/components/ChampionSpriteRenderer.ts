@@ -109,6 +109,33 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
     case 'Mirehook': case 'Nullweaver': case 'Voltgrip': case 'Aetherbolt': case 'Corsara': case 'Brewmaw': case 'Wraithhook':
       drawNewChampionSprite(ctx, championName, animState, animTime);
       break;
+    case 'Kaelen': case 'c_kaelen':
+      drawChibiKaelen(ctx, animState, animTime);
+      break;
+    case 'Hweilin': case 'c_hwei':
+      drawChibiHweilin(ctx, animState, animTime);
+      break;
+    case 'Jaxon': case 'c_jayce':
+      drawChibiJaxon(ctx, animState, animTime);
+      break;
+    case 'Valerie': case 'c_vi':
+      drawChibiValerie(ctx, animState, animTime);
+      break;
+    case 'Jinxy': case 'c_jinx':
+      drawChibiJinxy(ctx, animState, animTime);
+      break;
+    case 'Paxi': case 'c_puck':
+      drawChibiPaxi(ctx, animState, animTime);
+      break;
+    case 'Batrix': case 'c_batrider':
+      drawChibiBatrix(ctx, animState, animTime);
+      break;
+    case 'Quillback': case 'c_bristleback':
+      drawChibiQuillback(ctx, animState, animTime);
+      break;
+    case 'Aetheris': case 'c_io':
+      drawChibiAetheris(ctx, animState, animTime);
+      break;
     default:
       drawDefaultChampion(ctx, team);
       break;
@@ -2025,6 +2052,1174 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
       ctx.beginPath(); ctx.moveTo(12, -20); ctx.lineTo(34 + Math.sin(phase) * 9, -22); ctx.stroke();
     }
   }
+  ctx.restore();
+}
+
+// =========================================================================
+// 31. KAELEN (INVOKER): ARSENAL GRAND MAGUS
+// Royal Crimson Robes, High Mantle Collar, Golden Hair, Crown & Spellweave Catalyst
+// =========================================================================
+function drawChibiKaelen(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
+  const isCasting = animState === 'cast' || animState === 'attack';
+
+  // Flowing Royal Crimson & Gold Cape Behind
+  ctx.save();
+  ctx.fillStyle = '#991b1b';
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(-10, -18);
+  ctx.quadraticCurveTo(-22 + Math.sin(animTime * 3) * 4, -5, -18, 6);
+  ctx.lineTo(-4, 4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  // Regal White Trousers & Gold Pointed Boots
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(-7, -4, 5, 8);
+  ctx.fillRect(2, -4, 5, 8);
+  ctx.fillStyle = '#d97706';
+  ctx.fillRect(-8, 1, 6, 4);
+  ctx.fillRect(1, 1, 6, 4);
+  // Gold Pointed Boot Tips
+  ctx.fillStyle = '#fbbf24';
+  ctx.beginPath();
+  ctx.moveTo(-2, 3); ctx.lineTo(1, 5); ctx.lineTo(-2, 5); ctx.fill();
+  ctx.moveTo(7, 3); ctx.lineTo(10, 5); ctx.lineTo(7, 5); ctx.fill();
+
+  // Regal Grand Magus Robe (Crimson & Gold Embroidered)
+  ctx.fillStyle = '#7f1d1d';
+  ctx.beginPath();
+  ctx.roundRect(-8, -20, 16, 17, 3);
+  ctx.fill();
+  // Gold Trim Brocade Center
+  ctx.fillStyle = '#fde047';
+  ctx.fillRect(-2, -20, 4, 17);
+  // Royal Sash
+  ctx.fillStyle = '#b45309';
+  ctx.fillRect(-8, -10, 16, 2.5);
+
+  // High Upturned Magus Mantle Collar
+  ctx.fillStyle = '#dc2626';
+  ctx.strokeStyle = '#fde047';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(-11, -19); ctx.lineTo(-17, -32); ctx.lineTo(-8, -24); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(11, -19); ctx.lineTo(17, -32); ctx.lineTo(8, -24); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Long Flowing Golden Platinum Hair (Back locks)
+  ctx.fillStyle = '#fde047';
+  ctx.beginPath();
+  ctx.moveTo(-12, -28); ctx.quadraticCurveTo(-18, -16, -15, -4); ctx.lineTo(-8, -12); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(12, -28); ctx.quadraticCurveTo(18, -16, 15, -4); ctx.lineTo(8, -12); ctx.fill();
+
+  // Chibi Head
+  ctx.fillStyle = '#fffbeb';
+  ctx.beginPath();
+  ctx.arc(0, -29, 13, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Soft Noble Blush
+  ctx.fillStyle = 'rgba(251, 146, 60, 0.35)';
+  ctx.beginPath();
+  ctx.arc(-7, -26, 2.8, 0, Math.PI * 2);
+  ctx.arc(7, -26, 2.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Glowing Golden Anime Eyes
+  ctx.fillStyle = '#92400e';
+  ctx.beginPath();
+  ctx.ellipse(-5, -29, 3.2, 4.2, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -29, 3.2, 4.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#f59e0b';
+  ctx.beginPath();
+  ctx.ellipse(-5, -28.5, 2.2, 3, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -28.5, 2.2, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Starry Glimmer in Eyes
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-6, -30.5, 1.2, 0, Math.PI * 2);
+  ctx.arc(4, -30.5, 1.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Elegant Magus Smile
+  ctx.strokeStyle = '#b45309';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(0, -24, 2, 0.2, Math.PI - 0.2);
+  ctx.stroke();
+
+  // Front Golden Hair Bangs
+  ctx.fillStyle = '#fef08a';
+  ctx.beginPath();
+  ctx.moveTo(-13, -34);
+  ctx.quadraticCurveTo(-6, -37, 0, -32);
+  ctx.quadraticCurveTo(6, -37, 13, -34);
+  ctx.quadraticCurveTo(8, -43, 0, -43);
+  ctx.quadraticCurveTo(-8, -43, -13, -34);
+  ctx.fill();
+
+  // Arcane Magus Diadem / Crown
+  ctx.fillStyle = '#f59e0b';
+  ctx.strokeStyle = '#fef08a';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-8, -39); ctx.lineTo(0, -45); ctx.lineTo(8, -39); ctx.lineTo(0, -40); ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  // Crown Ruby
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath();
+  ctx.arc(0, -41, 1.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Grand Magus Scepter / Spellweave Catalyst
+  ctx.save();
+  ctx.translate(12, -14);
+  const castTilt = isCasting ? -0.4 + Math.sin(animTime * 16) * 0.2 : 0.1;
+  ctx.rotate(castTilt);
+  ctx.strokeStyle = '#78350f';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(0, 14); ctx.lineTo(0, -18); ctx.stroke();
+  // Golden Scepter Head
+  ctx.fillStyle = '#f59e0b';
+  ctx.strokeStyle = '#fef08a';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(0, -20, 4.5, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  // Channeling Arcane Core Gem
+  ctx.fillStyle = isCasting ? '#fde047' : '#f97316';
+  ctx.shadowColor = '#fbbf24';
+  ctx.shadowBlur = isCasting ? 14 : 6;
+  ctx.beginPath();
+  ctx.arc(0, -20, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+// =========================================================================
+// 32. HWEILIN (HWEI): VISIONARY INK PAINTER
+// Teal Flowing Scarf, Ink-Splattered Coat, Giant Bamboo Brush & Pigment Sparks
+// =========================================================================
+function drawChibiHweilin(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
+  const isCasting = animState === 'cast' || animState === 'attack';
+
+  // Flowing Turquoise/Cyan Ink-Stained Scarf
+  ctx.save();
+  ctx.fillStyle = '#0f766e';
+  ctx.strokeStyle = '#2dd4bf';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(-10, -20);
+  ctx.quadraticCurveTo(-22 + Math.sin(animTime * 4) * 3, -12, -18 + Math.sin(animTime * 5) * 4, 3);
+  ctx.lineTo(-12, -3);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  // Dark Indigo Artist Trousers & Cloth Sandals
+  ctx.fillStyle = '#1e1b4b';
+  ctx.fillRect(-7, -4, 5, 8);
+  ctx.fillRect(2, -4, 5, 8);
+  ctx.fillStyle = '#312e81';
+  ctx.fillRect(-8, 1, 6, 3.5);
+  ctx.fillRect(1, 1, 6, 3.5);
+
+  // Painter's Ink Tunic (Slate Blue & Indigo)
+  ctx.fillStyle = '#1e293b';
+  ctx.beginPath();
+  ctx.roundRect(-8, -20, 16, 17, 3);
+  ctx.fill();
+  // Turquoise Sash & Ink Palette Belt
+  ctx.fillStyle = '#0d9488';
+  ctx.fillRect(-8, -10, 16, 2.5);
+  // Colorful Pigment Stains on Coat
+  ctx.fillStyle = '#ec4899';
+  ctx.beginPath(); ctx.arc(-4, -14, 1.4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#06b6d4';
+  ctx.beginPath(); ctx.arc(3, -16, 1.2, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#eab308';
+  ctx.beginPath(); ctx.arc(5, -7, 1.3, 0, Math.PI * 2); ctx.fill();
+
+  // Chibi Head
+  ctx.fillStyle = '#ffedd5';
+  ctx.beginPath();
+  ctx.arc(0, -29, 13, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Soft Artistic Blush
+  ctx.fillStyle = 'rgba(20, 184, 166, 0.25)';
+  ctx.beginPath();
+  ctx.arc(-7, -26, 2.8, 0, Math.PI * 2);
+  ctx.arc(7, -26, 2.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Expressive Deep Teal/Indigo Anime Eyes
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath();
+  ctx.ellipse(-5, -29, 3, 4, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -29, 3, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#14b8a6';
+  ctx.beginPath();
+  ctx.ellipse(-5, -28.5, 2, 2.8, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -28.5, 2, 2.8, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Specular Reflection
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-6, -30.5, 1.1, 0, Math.PI * 2);
+  ctx.arc(4, -30.5, 1.1, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Gentle Pensive Smile
+  ctx.strokeStyle = '#0f766e';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(0, -24, 2, 0.3, Math.PI - 0.3);
+  ctx.stroke();
+
+  // Tousled Dark Ink-Black Hair with Flowing Bangs
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath();
+  ctx.moveTo(-13, -32);
+  ctx.quadraticCurveTo(-6, -37, -2, -31);
+  ctx.quadraticCurveTo(4, -37, 13, -33);
+  ctx.quadraticCurveTo(10, -43, 0, -43);
+  ctx.quadraticCurveTo(-10, -43, -13, -32);
+  ctx.fill();
+  // Side Forehead Lock
+  ctx.beginPath();
+  ctx.moveTo(-3, -34); ctx.quadraticCurveTo(2, -26, 1, -22); ctx.lineTo(-1, -30); ctx.fill();
+
+  // Giant Bamboo Ink Brush (Signature Weapon)
+  ctx.save();
+  ctx.translate(11, -14);
+  const brushSwing = isCasting ? Math.sin(animTime * 18) * 0.7 - 0.3 : 0.2;
+  ctx.rotate(brushSwing);
+  // Bamboo Shaft
+  ctx.strokeStyle = '#78350f';
+  ctx.lineWidth = 3.2;
+  ctx.beginPath();
+  ctx.moveTo(0, 14); ctx.lineTo(0, -18); ctx.stroke();
+  // Golden Brass Ferrule
+  ctx.fillStyle = '#eab308';
+  ctx.fillRect(-2.5, -21, 5, 4);
+  // White Horsehair Brush Bristles
+  ctx.fillStyle = '#f8fafc';
+  ctx.beginPath();
+  ctx.moveTo(-3, -21); ctx.lineTo(3, -21); ctx.lineTo(2, -29); ctx.lineTo(-2, -29); ctx.closePath();
+  ctx.fill();
+  // Glowing Violet & Cyan Ink Tip
+  ctx.fillStyle = isCasting ? '#a855f7' : '#06b6d4';
+  ctx.shadowColor = '#a855f7';
+  ctx.shadowBlur = isCasting ? 12 : 5;
+  ctx.beginPath();
+  ctx.moveTo(-2, -28); ctx.lineTo(2, -28); ctx.lineTo(0, -35); ctx.closePath();
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Floating Ink Splatters when casting
+  if (isCasting) {
+    ctx.fillStyle = '#a855f7';
+    ctx.beginPath(); ctx.arc(-6, -32, 1.8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#06b6d4';
+    ctx.beginPath(); ctx.arc(6, -34, 1.5, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+// =========================================================================
+// 33. JAXON (JAYCE): HEXTECH DEFENDER
+// Polished Piltover Cuirass, Gold Pauldron, Mercury Hammer with Cyan Core
+// =========================================================================
+function drawChibiJaxon(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
+  const isAttacking = animState === 'attack' || animState === 'cast';
+
+  // Piltover Armored Boots & Greaves
+  ctx.fillStyle = '#1e293b';
+  ctx.fillRect(-7, -4, 5, 8);
+  ctx.fillRect(2, -4, 5, 8);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(-8, 1, 6, 4);
+  ctx.fillRect(1, 1, 6, 4);
+  ctx.fillStyle = '#eab308';
+  ctx.fillRect(-8, -2, 6, 2.5); // Gold knee plates
+  ctx.fillRect(1, -2, 6, 2.5);
+
+  // Polished Ivory/Navy Cuirass & Gold Pauldron
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath();
+  ctx.roundRect(-8, -20, 16, 17, 3);
+  ctx.fill();
+  // Silver Breastplate Inset
+  ctx.fillStyle = '#e2e8f0';
+  ctx.beginPath();
+  ctx.roundRect(-5, -19, 10, 11, 2);
+  ctx.fill();
+  // Hextech Power Conduit on Chest
+  ctx.fillStyle = '#00f2ff';
+  ctx.shadowColor = '#38bdf8';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  ctx.arc(0, -14, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  // Gold Belt
+  ctx.fillStyle = '#eab308';
+  ctx.fillRect(-8, -8, 16, 2.5);
+
+  // Left Heavy Gold Pauldron
+  ctx.fillStyle = '#f59e0b';
+  ctx.strokeStyle = '#fef08a';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.roundRect(-13, -22, 6, 8, 2);
+  ctx.fill(); ctx.stroke();
+
+  // Handsome Hero Chibi Head
+  ctx.fillStyle = '#ffedd5';
+  ctx.beginPath();
+  ctx.arc(0, -29, 13, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Subtle Cheek Tone
+  ctx.fillStyle = 'rgba(251, 146, 60, 0.25)';
+  ctx.beginPath();
+  ctx.arc(-7, -26, 2.5, 0, Math.PI * 2);
+  ctx.arc(7, -26, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Confident Sapphire Blue Anime Eyes
+  ctx.fillStyle = '#1e3a8a';
+  ctx.beginPath();
+  ctx.ellipse(-5, -29, 3.2, 4.2, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -29, 3.2, 4.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#38bdf8';
+  ctx.beginPath();
+  ctx.ellipse(-5, -28.5, 2.2, 3, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -28.5, 2.2, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-6, -30.5, 1.2, 0, Math.PI * 2);
+  ctx.arc(4, -30.5, 1.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Confident Hero Smirk
+  ctx.strokeStyle = '#9a3412';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(-2, -24); ctx.quadraticCurveTo(1, -22, 4, -24.5);
+  ctx.stroke();
+
+  // Styled Chestnut Hero Hair
+  ctx.fillStyle = '#451a03';
+  ctx.beginPath();
+  ctx.moveTo(-13, -33);
+  ctx.quadraticCurveTo(-6, -38, 0, -34);
+  ctx.quadraticCurveTo(6, -38, 13, -33);
+  ctx.quadraticCurveTo(11, -44, 2, -44);
+  ctx.quadraticCurveTo(-8, -44, -13, -33);
+  ctx.fill();
+  // Hero Hair Quiff
+  ctx.fillStyle = '#78350f';
+  ctx.beginPath();
+  ctx.moveTo(-3, -38); ctx.quadraticCurveTo(4, -46, 8, -39); ctx.lineTo(1, -38); ctx.fill();
+
+  // Hextech Mercury Hammer / Shock Cannon (Right Hand)
+  ctx.save();
+  ctx.translate(12, -14);
+  const hammerSwing = isAttacking ? -0.5 + Math.sin(animTime * 20) * 0.4 : 0.2;
+  ctx.rotate(hammerSwing);
+  // Heavy Steel Shaft
+  ctx.strokeStyle = '#475569';
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.moveTo(0, 14); ctx.lineTo(0, -20); ctx.stroke();
+  // Brass Gears & Core Mount
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillRect(-4, -24, 8, 6);
+  // Massive Hammerhead (Steel & Gold Trim)
+  ctx.fillStyle = '#1e293b';
+  ctx.strokeStyle = '#eab308';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(-10, -32, 20, 9, 3);
+  ctx.fill(); ctx.stroke();
+  // Glowing Cyan Hextech Crystal Core
+  ctx.fillStyle = '#00f2ff';
+  ctx.shadowColor = '#00f2ff';
+  ctx.shadowBlur = isAttacking ? 16 : 8;
+  ctx.beginPath();
+  ctx.arc(0, -27.5, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+}
+
+// =========================================================================
+// 34. VALERIE (VI): PILTOVER ENFORCER
+// Hot Pink Punk Hair, Goggles, Crimson Vest & Massive Dual Steam Gauntlets
+// =========================================================================
+function drawChibiValerie(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
+  const isPunching = animState === 'attack' || animState === 'cast';
+  const punchL = isPunching ? Math.sin(animTime * 24) * 6 : 0;
+  const punchR = isPunching ? -Math.sin(animTime * 24) * 6 : 0;
+
+  // Tough Brawler Trousers & Heavy Combat Boots
+  ctx.fillStyle = '#1e293b';
+  ctx.fillRect(-7, -4, 5, 8);
+  ctx.fillRect(2, -4, 5, 8);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(-8, 1, 6, 4);
+  ctx.fillRect(1, 1, 6, 4);
+  // Knee Metal Plates
+  ctx.fillStyle = '#64748b';
+  ctx.fillRect(-7.5, -2, 5, 2);
+  ctx.fillRect(2.5, -2, 5, 2);
+
+  // Crimson Leather Brawler Vest
+  ctx.fillStyle = '#991b1b';
+  ctx.beginPath();
+  ctx.roundRect(-8, -20, 16, 17, 3);
+  ctx.fill();
+  // White Undershirt Lapel
+  ctx.fillStyle = '#f8fafc';
+  ctx.beginPath();
+  ctx.moveTo(-4, -20); ctx.lineTo(0, -14); ctx.lineTo(4, -20); ctx.closePath();
+  ctx.fill();
+  // Utility Belt
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(-8, -9, 16, 2.5);
+
+  // Chibi Head
+  ctx.fillStyle = '#ffedd5';
+  ctx.beginPath();
+  ctx.arc(0, -29, 13, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Cheek Tattoo ('VI') & Cheek Tone
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 5px sans-serif';
+  ctx.fillText('VI', -9, -25);
+  ctx.fillStyle = 'rgba(244, 63, 94, 0.3)';
+  ctx.beginPath();
+  ctx.arc(7, -26, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Fierce Hazel Anime Eyes
+  ctx.fillStyle = '#451a03';
+  ctx.beginPath();
+  ctx.ellipse(-5, -29, 3.2, 4.2, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -29, 3.2, 4.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#fbbf24';
+  ctx.beginPath();
+  ctx.ellipse(-5, -28.5, 2.2, 3, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -28.5, 2.2, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-6, -30.5, 1.2, 0, Math.PI * 2);
+  ctx.arc(4, -30.5, 1.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Feisty Grin
+  ctx.strokeStyle = '#991b1b';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(-2, -24); ctx.quadraticCurveTo(2, -22, 4, -25);
+  ctx.stroke();
+
+  // Spiky Vibrant Hot-Pink Punk Hair
+  ctx.fillStyle = '#db2777';
+  ctx.beginPath();
+  ctx.moveTo(-13, -33);
+  ctx.quadraticCurveTo(-6, -39, 0, -34);
+  ctx.quadraticCurveTo(6, -39, 13, -33);
+  ctx.quadraticCurveTo(12, -45, 0, -45);
+  ctx.quadraticCurveTo(-10, -45, -13, -33);
+  ctx.fill();
+  // Spiky Highlights
+  ctx.fillStyle = '#f472b6';
+  ctx.beginPath();
+  ctx.moveTo(-8, -38); ctx.lineTo(-14, -46); ctx.lineTo(-4, -40); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(-2, -40); ctx.lineTo(2, -48); ctx.lineTo(6, -39); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(5, -39); ctx.lineTo(12, -45); ctx.lineTo(10, -36); ctx.fill();
+
+  // Brass Aviator Goggles on Forehead
+  ctx.fillStyle = '#b45309';
+  ctx.fillRect(-9, -38, 18, 3.5);
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillRect(-7, -37.5, 5, 2.5);
+  ctx.fillRect(2, -37.5, 5, 2.5);
+
+  // Left Atlas Gauntlet
+  ctx.save();
+  ctx.translate(-14 + punchL, -14);
+  ctx.fillStyle = '#d97706';
+  ctx.strokeStyle = '#475569';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(-6, -7, 12, 14, 3);
+  ctx.fill(); ctx.stroke();
+  // Heavy Knuckle Plate
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(-5, -6, 10, 4);
+  // Glowing Steam Valve
+  ctx.fillStyle = '#fef08a';
+  ctx.beginPath(); ctx.arc(0, 3, 2, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+
+  // Right Atlas Gauntlet
+  ctx.save();
+  ctx.translate(14 + punchR, -14);
+  ctx.fillStyle = '#d97706';
+  ctx.strokeStyle = '#475569';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(-6, -7, 12, 14, 3);
+  ctx.fill(); ctx.stroke();
+  // Heavy Knuckle Plate
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(-5, -6, 10, 4);
+  // Glowing Steam Valve
+  ctx.fillStyle = '#fef08a';
+  ctx.beginPath(); ctx.arc(0, 3, 2, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+// =========================================================================
+// 35. JINXY (JINX): LOOSE CANNON
+// Twin Floor-Length Cyan Braids, Starry Pink Eyes & Shark Rocket Launcher
+// =========================================================================
+function drawChibiJinxy(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
+  const isShooting = animState === 'attack' || animState === 'cast';
+  const recoil = isShooting ? Math.sin(animTime * 24) * 3 : 0;
+
+  // Twin Floor-Length Electric Blue Braids (Rendered Behind)
+  const braidWave = Math.sin(animTime * 6) * 3;
+  ctx.save();
+  ctx.fillStyle = '#0284c7';
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 1;
+  // Left Braid
+  ctx.beginPath();
+  ctx.moveTo(-11, -30);
+  ctx.quadraticCurveTo(-18 + braidWave, -15, -15 - braidWave, 4);
+  ctx.quadraticCurveTo(-12 + braidWave, 14, -14, 20);
+  ctx.lineTo(-9, 19);
+  ctx.quadraticCurveTo(-8 + braidWave, 10, -9 - braidWave, 0);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  // Right Braid
+  ctx.beginPath();
+  ctx.moveTo(11, -30);
+  ctx.quadraticCurveTo(18 - braidWave, -15, 15 + braidWave, 4);
+  ctx.quadraticCurveTo(12 - braidWave, 14, 14, 20);
+  ctx.lineTo(9, 19);
+  ctx.quadraticCurveTo(8 - braidWave, 10, 9 + braidWave, 0);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  // Braid Ties
+  ctx.fillStyle = '#ec4899';
+  ctx.fillRect(-16, 12, 4, 2);
+  ctx.fillRect(12, 12, 4, 2);
+  ctx.restore();
+
+  // Striped Punk Boots & Stockings
+  ctx.fillStyle = '#18181b';
+  ctx.fillRect(-7, -4, 5, 8);
+  ctx.fillRect(2, -4, 5, 8);
+  ctx.fillStyle = '#ec4899';
+  ctx.fillRect(-8, 1, 6, 4);
+  ctx.fillStyle = '#0284c7';
+  ctx.fillRect(1, 1, 6, 4);
+
+  // Black Leather Crop Top & Bullet Bandolier
+  ctx.fillStyle = '#18181b';
+  ctx.beginPath();
+  ctx.roundRect(-7, -20, 14, 16, 2);
+  ctx.fill();
+  // Pink Harness Straps
+  ctx.fillStyle = '#ec4899';
+  ctx.fillRect(-7, -19, 14, 2);
+  // Gold Bullet Bandolier across chest
+  ctx.fillStyle = '#facc15';
+  for (let b = -4; b <= 4; b += 2.5) {
+    ctx.fillRect(b - 0.7, -15 + b * 0.5, 1.4, 3);
+  }
+
+  // Porcelain Chibi Head
+  ctx.fillStyle = '#fdf4ff';
+  ctx.beginPath();
+  ctx.arc(0, -29, 13, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Manic Rosy Cheeks
+  ctx.fillStyle = 'rgba(244, 63, 94, 0.4)';
+  ctx.beginPath();
+  ctx.arc(-7, -26, 3, 0, Math.PI * 2);
+  ctx.arc(7, -26, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Wild Neon-Pink Anime Eyes with Star Sparkles
+  ctx.fillStyle = '#831843';
+  ctx.beginPath();
+  ctx.ellipse(-5, -29, 3.2, 4.2, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -29, 3.2, 4.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#f43f5e';
+  ctx.beginPath();
+  ctx.ellipse(-5, -28.5, 2.2, 3, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -28.5, 2.2, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Starry Highlights
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-6, -30.5, 1.3, 0, Math.PI * 2);
+  ctx.arc(4, -30.5, 1.3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Wide Manic Toothy Grin
+  ctx.fillStyle = '#991b1b';
+  ctx.beginPath();
+  ctx.arc(0, -23, 4, 0.1, Math.PI - 0.1);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(-3, -24, 6, 2); // White teeth row
+
+  // Messy Neon Blue Bangs
+  ctx.fillStyle = '#0284c7';
+  ctx.beginPath();
+  ctx.moveTo(-13, -33);
+  ctx.quadraticCurveTo(-6, -39, 0, -32);
+  ctx.quadraticCurveTo(6, -39, 13, -33);
+  ctx.quadraticCurveTo(11, -44, 0, -44);
+  ctx.quadraticCurveTo(-11, -44, -13, -33);
+  ctx.fill();
+  // Zigzag Bang strands
+  ctx.fillStyle = '#38bdf8';
+  ctx.beginPath();
+  ctx.moveTo(-6, -34); ctx.lineTo(-2, -26); ctx.lineTo(1, -33); ctx.fill();
+
+  // "Fishbones" Shark Rocket Launcher (Held on Right Shoulder)
+  ctx.save();
+  ctx.translate(12 - recoil, -16);
+  ctx.fillStyle = '#475569';
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 1.2;
+  // Shark Body Tube
+  ctx.beginPath();
+  ctx.roundRect(-6, -8, 22, 10, 4);
+  ctx.fill(); ctx.stroke();
+  // Shark Jaws (White Painted Teeth)
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.moveTo(16, -8); ctx.lineTo(13, -5); ctx.lineTo(16, -2); ctx.lineTo(13, 1); ctx.lineTo(16, 2);
+  ctx.stroke();
+  // Glowing Red Shark Eye
+  ctx.fillStyle = '#ef4444';
+  ctx.shadowColor = '#ef4444';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  ctx.arc(8, -5, 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  // Gunpowder Smoke Puff when shooting
+  if (isShooting) {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.beginPath();
+    ctx.arc(19, -3, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+// =========================================================================
+// 36. PAXI (PUCK): FAERIE DRAGON
+// Levitating Cute Dragon, Translucent Wings, Glowing Antennae & Stardust
+// =========================================================================
+function drawChibiPaxi(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
+  const isCasting = animState === 'cast' || animState === 'attack';
+  const floatBob = Math.sin(animTime * 6) * 3;
+  const wingFlap = Math.sin(animTime * 18);
+
+  ctx.save();
+  ctx.translate(0, floatBob - 4);
+
+  // Iridescent Butterfly / Faerie Dragon Wings Behind
+  ctx.save();
+  ctx.strokeStyle = '#f472b6';
+  ctx.lineWidth = 1.5;
+  // Left Upper Wing
+  ctx.fillStyle = 'rgba(165, 243, 252, 0.85)';
+  ctx.beginPath();
+  ctx.ellipse(-14, -28, 12, 8 + wingFlap * 4, -0.4, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  // Right Upper Wing
+  ctx.beginPath();
+  ctx.ellipse(14, -28, 12, 8 - wingFlap * 4, 0.4, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  // Lower Wings
+  ctx.fillStyle = 'rgba(244, 114, 182, 0.75)';
+  ctx.beginPath();
+  ctx.ellipse(-12, -16, 8, 6 - wingFlap * 2, -0.2, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(12, -16, 8, 6 + wingFlap * 2, 0.2, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  ctx.restore();
+
+  // Curled Chubby Dragon Tail
+  ctx.strokeStyle = '#06b6d4';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(-6, -6);
+  ctx.quadraticCurveTo(-16, -2, -14, 6);
+  ctx.stroke();
+  // Cute Pink Tail Fin
+  ctx.fillStyle = '#ec4899';
+  ctx.beginPath();
+  ctx.arc(-14, 6, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Chubby Cute Cyan Dragon Body
+  ctx.fillStyle = '#06b6d4';
+  ctx.beginPath();
+  ctx.ellipse(0, -12, 10, 11, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Lavender Underbelly Plates
+  ctx.fillStyle = '#e9d5ff';
+  ctx.beginPath();
+  ctx.ellipse(0, -10, 6, 7, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Tiny Stubby Dragon Feet
+  ctx.fillStyle = '#0891b2';
+  ctx.beginPath();
+  ctx.arc(-5, -2, 3, 0, Math.PI * 2);
+  ctx.arc(5, -2, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Cute Round Chibi Dragon Head
+  ctx.fillStyle = '#22d3ee';
+  ctx.beginPath();
+  ctx.arc(0, -28, 13, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Cheerful Rosy Dragon Cheeks
+  ctx.fillStyle = 'rgba(244, 114, 182, 0.5)';
+  ctx.beginPath();
+  ctx.arc(-8, -25, 3.2, 0, Math.PI * 2);
+  ctx.arc(8, -25, 3.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Enormous Glossy Anime Dragon Eyes
+  ctx.fillStyle = '#581c87';
+  ctx.beginPath();
+  ctx.ellipse(-5, -28, 3.5, 4.5, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -28, 3.5, 4.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#c084fc';
+  ctx.beginPath();
+  ctx.ellipse(-5, -27.5, 2.5, 3.2, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -27.5, 2.5, 3.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Big Glossy Star Highlights
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-6, -30, 1.4, 0, Math.PI * 2);
+  ctx.arc(4, -30, 1.4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Joyful Smiling Snout
+  ctx.fillStyle = '#be185d';
+  ctx.beginPath();
+  ctx.arc(0, -22, 2.5, 0, Math.PI);
+  ctx.fill();
+
+  // Curved Antennae with Glowing Faerie Lanterns
+  ctx.strokeStyle = '#06b6d4';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-4, -39); ctx.quadraticCurveTo(-10, -48, -14, -45); ctx.stroke();
+  ctx.moveTo(4, -39); ctx.quadraticCurveTo(10, -48, 14, -45); ctx.stroke();
+  // Glowing Faerie Light Bulbs
+  ctx.fillStyle = '#fde047';
+  ctx.shadowColor = '#fde047';
+  ctx.shadowBlur = isCasting ? 14 : 7;
+  ctx.beginPath();
+  ctx.arc(-14, -45, 3, 0, Math.PI * 2);
+  ctx.arc(14, -45, 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Swirling Faerie Dust Sparkles
+  ctx.fillStyle = '#fef08a';
+  for (let s = 0; s < 3; s++) {
+    const ang = animTime * 4 + s * (Math.PI * 2 / 3);
+    const sx = Math.cos(ang) * 18;
+    const sy = -20 + Math.sin(ang) * 8;
+    ctx.beginPath(); ctx.arc(sx, sy, 1.2, 0, Math.PI * 2); ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+// =========================================================================
+// 37. BATRIX (BATRIDER): FLAME RIDER
+// Giant Flapping Shadow Bat Mount, Goggled Goblin Rider & Blazing Fire Weapon
+// =========================================================================
+function drawChibiBatrix(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
+  const isAttacking = animState === 'attack' || animState === 'cast';
+  const batWingFlap = Math.sin(animTime * 12);
+  const batBob = Math.sin(animTime * 4) * 2;
+
+  ctx.save();
+  ctx.translate(0, batBob - 4);
+
+  // GIANT SHADOW BAT MOUNT
+  // Leathery Wings Flapping
+  ctx.fillStyle = '#312e81';
+  ctx.strokeStyle = '#4c1d95';
+  ctx.lineWidth = 1.5;
+  // Left Bat Wing
+  ctx.beginPath();
+  ctx.moveTo(-6, -10);
+  ctx.lineTo(-24, -22 + batWingFlap * 6);
+  ctx.lineTo(-18, -12);
+  ctx.lineTo(-22, -4 + batWingFlap * 4);
+  ctx.lineTo(-6, -4);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  // Right Bat Wing
+  ctx.beginPath();
+  ctx.moveTo(6, -10);
+  ctx.lineTo(24, -22 - batWingFlap * 6);
+  ctx.lineTo(18, -12);
+  ctx.lineTo(22, -4 - batWingFlap * 4);
+  ctx.lineTo(6, -4);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+
+  // Dark Bat Body & Fur Collar
+  ctx.fillStyle = '#1e1b4b';
+  ctx.beginPath();
+  ctx.ellipse(0, -6, 9, 8, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Pointy Bat Ears
+  ctx.fillStyle = '#4c1d95';
+  ctx.beginPath();
+  ctx.moveTo(-7, -12); ctx.lineTo(-12, -22); ctx.lineTo(-3, -13); ctx.fill();
+  ctx.moveTo(7, -12); ctx.lineTo(12, -22); ctx.lineTo(3, -13); ctx.fill();
+  // Bat Snout & Little White Fangs
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath(); ctx.arc(0, -7, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.moveTo(-2, -5); ctx.lineTo(-1, -2); ctx.lineTo(0, -5); ctx.fill();
+  ctx.moveTo(2, -5); ctx.lineTo(1, -2); ctx.lineTo(0, -5); ctx.fill();
+
+  // CRAZED GOBLIN RIDER (Perched on Bat's Back)
+  // Green Goblin Torso
+  ctx.fillStyle = '#84cc16';
+  ctx.beginPath();
+  ctx.roundRect(-6, -24, 12, 12, 3);
+  ctx.fill();
+  // Leather Harness
+  ctx.fillStyle = '#78350f';
+  ctx.fillRect(-6, -18, 12, 2.5);
+
+  // Goblin Head
+  ctx.fillStyle = '#a3e635';
+  ctx.beginPath();
+  ctx.arc(0, -29, 10, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Pointy Goblin Ears
+  ctx.fillStyle = '#84cc16';
+  ctx.beginPath();
+  ctx.moveTo(-8, -28); ctx.lineTo(-18, -32); ctx.lineTo(-8, -24); ctx.fill();
+  ctx.moveTo(8, -28); ctx.lineTo(18, -32); ctx.lineTo(8, -24); ctx.fill();
+
+  // Pilot Aviator Leather Cap & Brass Goggles
+  ctx.fillStyle = '#78350f';
+  ctx.beginPath();
+  ctx.arc(0, -32, 10, Math.PI, Math.PI * 2);
+  ctx.fill();
+  // Round Brass Goggles
+  ctx.fillStyle = '#ca8a04';
+  ctx.beginPath();
+  ctx.arc(-4, -30, 3.5, 0, Math.PI * 2);
+  ctx.arc(4, -30, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+  // Cyan Glass Lenses
+  ctx.fillStyle = '#bae6fd';
+  ctx.beginPath();
+  ctx.arc(-4, -30, 2.2, 0, Math.PI * 2);
+  ctx.arc(4, -30, 2.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Wide Grinning Goblin Mouth
+  ctx.fillStyle = '#451a03';
+  ctx.beginPath();
+  ctx.arc(0, -24, 3, 0, Math.PI);
+  ctx.fill();
+  ctx.fillStyle = '#fef08a';
+  ctx.fillRect(-1.5, -24, 3, 1.5); // Yellow tooth
+
+  // Flaming Torch / Fire Cocktail (Raised in Hand)
+  ctx.save();
+  ctx.translate(11, -22);
+  const flameWobble = Math.sin(animTime * 14) * 2;
+  // Bottle / Torch Handle
+  ctx.fillStyle = '#78350f';
+  ctx.fillRect(-2, 0, 4, 10);
+  // Licking Fiery Flames
+  ctx.fillStyle = '#ea580c';
+  ctx.shadowColor = '#f59e0b';
+  ctx.shadowBlur = isAttacking ? 16 : 8;
+  ctx.beginPath();
+  ctx.moveTo(-4, 0);
+  ctx.quadraticCurveTo(-6 + flameWobble, -8, 0, -16);
+  ctx.quadraticCurveTo(6 - flameWobble, -8, 4, 0);
+  ctx.closePath();
+  ctx.fill();
+  // Inner Yellow Flame
+  ctx.fillStyle = '#fde047';
+  ctx.beginPath();
+  ctx.moveTo(-2, 0);
+  ctx.quadraticCurveTo(-3 + flameWobble, -5, 0, -11);
+  ctx.quadraticCurveTo(3 - flameWobble, -5, 2, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+
+  ctx.restore();
+}
+
+// =========================================================================
+// 38. QUILLBACK (BRISTLEBACK): SPINY BRAWLER
+// Burly Boar Snout, Ivory Tusks, Fan of Lethal Spine Quills & Spiked War Club
+// =========================================================================
+function drawChibiQuillback(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
+  const isAttacking = animState === 'attack' || animState === 'cast';
+  const bristle = Math.sin(animTime * 8) * 2;
+
+  // Massive Jagged Quills Radiating From Back (Rendered Behind)
+  ctx.save();
+  ctx.strokeStyle = '#451a03';
+  ctx.lineWidth = 2.5;
+  const quillAngles = [-1.8, -1.4, -1.0, -0.6, -0.2, 0.2];
+  quillAngles.forEach((ang, idx) => {
+    const qLen = 18 + (idx % 2 === 0 ? 4 : 0) + bristle;
+    const qBaseX = -4 + idx * 2.5;
+    const qBaseY = -18;
+    const tipX = qBaseX + Math.cos(ang) * qLen;
+    const tipY = qBaseY + Math.sin(ang) * qLen;
+
+    // Quill Body (Dark brown base to sharp yellow tip)
+    ctx.strokeStyle = '#78350f';
+    ctx.beginPath();
+    ctx.moveTo(qBaseX, qBaseY);
+    ctx.lineTo(tipX, tipY);
+    ctx.stroke();
+
+    // Lethal Sharp Amber/Yellow Tip
+    ctx.fillStyle = '#fde047';
+    ctx.beginPath();
+    ctx.arc(tipX, tipY, 2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+
+  // Stocky Brawler Legs & Wrapped Claws
+  ctx.fillStyle = '#713f12';
+  ctx.fillRect(-8, -4, 6, 8);
+  ctx.fillRect(2, -4, 6, 8);
+  ctx.fillStyle = '#a8a29e'; // Wrapping bandages
+  ctx.fillRect(-9, 0, 7, 3);
+  ctx.fillRect(1, 0, 7, 3);
+
+  // Hunched Muscular Brawler Torso
+  ctx.fillStyle = '#854d0e';
+  ctx.beginPath();
+  ctx.roundRect(-9, -20, 18, 17, 4);
+  ctx.fill();
+  // Studded Leather Armor Harness
+  ctx.fillStyle = '#451a03';
+  ctx.fillRect(-9, -12, 18, 3);
+  ctx.fillStyle = '#e2e8f0'; // Iron Studs
+  ctx.beginPath();
+  ctx.arc(-5, -10.5, 1.2, 0, Math.PI * 2);
+  ctx.arc(0, -10.5, 1.2, 0, Math.PI * 2);
+  ctx.arc(5, -10.5, 1.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Tough Hunched Porcupine/Boar Head
+  ctx.fillStyle = '#a16207';
+  ctx.beginPath();
+  ctx.arc(0, -28, 13, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Tough Snout & Nostrils
+  ctx.fillStyle = '#78350f';
+  ctx.beginPath();
+  ctx.ellipse(0, -24, 5.5, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#451a03';
+  ctx.beginPath();
+  ctx.arc(-2, -24, 1.2, 0, Math.PI * 2);
+  ctx.arc(2, -24, 1.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Brass Septum Nose Ring
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.arc(0, -21, 2.5, 0, Math.PI);
+  ctx.stroke();
+
+  // Curved Ivory Tusks
+  ctx.fillStyle = '#fef3c7';
+  ctx.beginPath();
+  ctx.moveTo(-5, -24); ctx.quadraticCurveTo(-9, -28, -8, -32); ctx.lineTo(-4, -26); ctx.fill();
+  ctx.moveTo(5, -24); ctx.quadraticCurveTo(9, -28, 8, -32); ctx.lineTo(4, -26); ctx.fill();
+
+  // Fierce Squinting Brawler Eyes
+  ctx.fillStyle = '#451a03';
+  ctx.beginPath();
+  ctx.ellipse(-5, -29, 2.5, 3.2, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -29, 2.5, 3.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#f59e0b';
+  ctx.beginPath();
+  ctx.ellipse(-5, -29, 1.5, 2, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -29, 1.5, 2, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Spiked Morningstar / Heavy War Club (Right Hand)
+  ctx.save();
+  ctx.translate(13, -14);
+  const maceSwing = isAttacking ? -0.4 + Math.sin(animTime * 20) * 0.5 : 0.2;
+  ctx.rotate(maceSwing);
+  // Heavy Wood Shaft
+  ctx.strokeStyle = '#451a03';
+  ctx.lineWidth = 3.2;
+  ctx.beginPath();
+  ctx.moveTo(0, 12); ctx.lineTo(0, -18); ctx.stroke();
+  // Spiked Iron Macehead
+  ctx.fillStyle = '#1e293b';
+  ctx.beginPath();
+  ctx.arc(0, -20, 6.5, 0, Math.PI * 2);
+  ctx.fill();
+  // Lethal Steel Spikes
+  ctx.fillStyle = '#cbd5e1';
+  ctx.beginPath();
+  ctx.moveTo(0, -28); ctx.lineTo(-2, -24); ctx.lineTo(2, -24); ctx.fill();
+  ctx.moveTo(8, -20); ctx.lineTo(4, -22); ctx.lineTo(4, -18); ctx.fill();
+  ctx.moveTo(-8, -20); ctx.lineTo(-4, -22); ctx.lineTo(-4, -18); ctx.fill();
+  ctx.restore();
+}
+
+// =========================================================================
+// 39. AETHERIS (IO): CELESTIAL WISP
+// Radiant Stellar Corona, Gyroscopic Orbit Rings, Twin Starlight Eyes & Satellite Spirits
+// =========================================================================
+function drawChibiAetheris(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
+  const isCasting = animState === 'cast' || animState === 'attack';
+  const pulse = Math.sin(animTime * 5) * 2;
+  const spin = animTime * 3;
+
+  ctx.save();
+  ctx.translate(0, -20); // Hovering centered above ground
+
+  // Radiant Outer Corona Flare
+  ctx.save();
+  ctx.shadowColor = '#00f2ff';
+  ctx.shadowBlur = isCasting ? 24 : 16;
+  ctx.fillStyle = 'rgba(6, 182, 212, 0.35)';
+  ctx.beginPath();
+  ctx.arc(0, 0, 16 + pulse, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Gyroscopic Concentric Celestial Rings (Rotating in 3D perspective)
+  ctx.save();
+  ctx.strokeStyle = '#bae6fd';
+  ctx.lineWidth = 1.6;
+  // Outer Ring
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 20 + pulse, 8, spin, 0, Math.PI * 2);
+  ctx.stroke();
+  // Inner Intersecting Ring
+  ctx.strokeStyle = '#06b6d4';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 18 + pulse, 7, -spin * 0.8, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  // Multi-Tonal Radiant Plasma Orb Core
+  ctx.save();
+  const grad = ctx.createRadialGradient(0, 0, 2, 0, 0, 13);
+  grad.addColorStop(0, '#ffffff'); // White-hot center
+  grad.addColorStop(0.4, '#38bdf8'); // Azure plasma
+  grad.addColorStop(0.85, '#0284c7'); // Deep cyan rim
+  grad.addColorStop(1, 'rgba(2, 132, 199, 0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(0, 0, 13 + pulse * 0.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Starlight Optic Star Eyes (Expressive Twin Celestial Points)
+  ctx.fillStyle = '#ffffff';
+  ctx.shadowColor = '#ffffff';
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  ctx.arc(-4, -2, 2.2, 0, Math.PI * 2);
+  ctx.arc(4, -2, 2.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Orbiting Satellite Spirits / Wisps (Tethered with Electric Arcs)
+  for (let i = 0; i < 3; i++) {
+    const orbAngle = spin * 1.5 + i * (Math.PI * 2 / 3);
+    const orbDist = 22 + Math.sin(animTime * 4 + i) * 3;
+    const orbX = Math.cos(orbAngle) * orbDist;
+    const orbY = Math.sin(orbAngle) * (orbDist * 0.45);
+
+    // Crackling Electric Arc to Core
+    ctx.strokeStyle = 'rgba(103, 232, 249, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(orbX, orbY);
+    ctx.stroke();
+
+    // Satellite Spirit Orb
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = '#38bdf8';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(orbX, orbY, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
   ctx.restore();
 }
 

@@ -1,8 +1,19 @@
 import type { CoachCard, PlayerCard } from './types';
 import type { DraftSide, DraftSnapshot } from './draftRules';
 
-export interface OnlineSession { code: string; token: string; side: DraftSide }
-export interface OnlineRoom extends DraftSnapshot { ready: boolean }
+export interface OnlineSession { 
+  code: string; 
+  token: string; 
+  side: DraftSide; 
+  matchType?: 'ranked' | 'normal';
+}
+
+export interface OnlineRoom extends DraftSnapshot { 
+  ready: boolean;
+  matchType?: 'ranked' | 'normal';
+  blueRating?: number;
+  redRating?: number;
+}
 
 async function request<T>(path: string, method = 'GET', token?: string, body?: unknown): Promise<T> {
   const response = await fetch(`/api/rooms${path}`, {
@@ -15,12 +26,22 @@ async function request<T>(path: string, method = 'GET', token?: string, body?: u
   return value as T;
 }
 
-export async function createOnlineRoom(roster: PlayerCard[], coach: CoachCard) {
-  return request<{ token: string; side: DraftSide; room: OnlineRoom }>('', 'POST', undefined, { roster, coach });
+export async function createOnlineRoom(
+  roster: PlayerCard[], 
+  coach: CoachCard, 
+  matchType: 'ranked' | 'normal' = 'ranked',
+  rating: number = 300
+) {
+  return request<{ token: string; side: DraftSide; room: OnlineRoom }>('', 'POST', undefined, { roster, coach, matchType, rating });
 }
 
-export async function joinOnlineRoom(code: string, roster: PlayerCard[], coach: CoachCard) {
-  return request<{ token: string; side: DraftSide; room: OnlineRoom }>(`/${code.toUpperCase()}/join`, 'POST', undefined, { roster, coach });
+export async function joinOnlineRoom(
+  code: string, 
+  roster: PlayerCard[], 
+  coach: CoachCard,
+  rating: number = 300
+) {
+  return request<{ token: string; side: DraftSide; room: OnlineRoom }>(`/${code.toUpperCase()}/join`, 'POST', undefined, { roster, coach, rating });
 }
 
 export async function getOnlineRoom(session: OnlineSession) {

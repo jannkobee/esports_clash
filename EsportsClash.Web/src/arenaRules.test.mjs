@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ARENA_WIDTH, BARRACKS_X, NEXUS_X, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from './arenaRules.ts';
+import { ARENA_WIDTH, BARRACKS_X, NEXUS_X, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectTurretTarget, turretShotDamage, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from './arenaRules.ts';
 
 test('expanded map leaves room between each well, nexus, and barracks', () => {
   assert.equal(ARENA_WIDTH, 2000);
@@ -40,6 +40,16 @@ test('nexus fires five rapid shots then reloads so upgraded waves can siege', ()
   }
   assert.deepEqual(cooldowns, [0.2, 0.2, 0.2, 0.2, 2.2]);
   assert.equal(shotsRemaining, 5);
+});
+
+test('turrets punish an in-range champion dive instead of staying locked on creeps', () => {
+  const minion = { id: 'wave1', type: 'melee' };
+  const diver = { id: 'diver', champion: 'Valkira' };
+  assert.equal(selectTurretTarget([minion, diver], minion.id, diver.id)?.id, diver.id);
+  assert.equal(selectTurretTarget([minion, diver], null)?.id, minion.id);
+  assert.equal(turretShotDamage(160, true, false), 288);
+  assert.equal(turretShotDamage(160, false, false), 160);
+  assert.equal(turretShotDamage(85, true, true), 85);
 });
 
 test('destroying one enemy barracks upgrades only its matching creep class', () => {
@@ -104,3 +114,4 @@ test('canUnitRecall enforces safety distance, minion clearance, bush stealth, an
   assert.equal(canUnitRecall(500, 300, 300, 4.0, false), false);
   assert.equal(canUnitRecall(500, 300, 300, 0.5, true), false);
 });
+

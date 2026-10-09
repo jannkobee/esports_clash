@@ -6,8 +6,18 @@ export function playerCardCombatPower(player: PlayerCard, avatar: ChampionKit): 
   const { lan, tf, clu, sta, flx } = player.stats;
   const score = player.ovr * 0.35 + lan * 0.20 + tf * 0.20 + clu * 0.10 + sta * 0.10 + flx * 0.05;
   const preferredRole = player.preferredRole ?? player.role;
-  const roleFit = preferredRole === avatar.primaryRole ? 0.025
-    : preferredRole === avatar.secondaryRole ? 0.01
+  const isPlayablePrimary = Boolean(
+    (player.playableRoles && player.playableRoles.includes(avatar.primaryRole)) ||
+    preferredRole === avatar.primaryRole
+  );
+  const isPlayableSecondary = Boolean(
+    avatar.secondaryRole && (
+      (player.playableRoles && player.playableRoles.includes(avatar.secondaryRole)) ||
+      preferredRole === avatar.secondaryRole
+    )
+  );
+  const roleFit = isPlayablePrimary ? 0.025
+    : isPlayableSecondary ? 0.01
       : -0.05 * (1 - clamp(flx, 1, 99) / 200);
   const signatureFit = player.signatureChampions.includes(avatar.name) ? 0.025 : 0;
   return clamp(score / 100 + roleFit + signatureFit, 0.25, 1.05);

@@ -20,6 +20,10 @@ export interface PlayerCard {
   origin: GameOrigin;
   role?: AvatarRole;
   preferredRole?: AvatarRole;
+  playableRoles?: AvatarRole[]; // All unlocked playable roles from evolution (e.g. ['Mage', 'Support'])
+  isEvo?: boolean;              // EA FC style glowing card treatment
+  evolutionLevel?: number;      // 0, 1, 2, ...
+  evolutionHistory?: string[];  // Completed evolution program names
   tier: CardTier;
   ovr: number;
   stats: PlayerAttributes;
@@ -64,6 +68,7 @@ export interface ChampionKit {
   primaryRole: AvatarRole;
   secondaryRole?: AvatarRole;
   archetype: string;
+  lore?: string;
   hp: number;
   ad: number;
   armor: number;
@@ -96,8 +101,11 @@ export interface EvolutionPlan {
   maxOvr: number;
   coinCost: number;
   targetTier: CardTier;
+  ovrBoost?: number;
   statBoost: Partial<PlayerAttributes>;
   unlockedBadge: string;
+  unlockedRole?: AvatarRole;           // Secondary role unlocked (e.g. Marksman, Support, etc.)
+  selectableSignatures?: string[];     // Candidate signatures to add to player's pool
   objectives: EvolutionObjective[];
 }
 
@@ -188,6 +196,8 @@ export interface LaneStructure {
   isAlive: boolean;
   targetId: string | null;
   armor: number;
+  diveAggressorId?: string;
+  diveAggroUntil?: number;
   volleyShotsRemaining?: number;
   barracksKind?: 'melee' | 'ranged' | 'catapult';
 }
@@ -236,6 +246,8 @@ export interface AramChampionUnit {
   animState: 'idle' | 'walk' | 'attack' | 'cast' | 'dead';
   animTimer: number;
   isInBush: boolean;
+  kaelenEssences?: ('pyra' | 'surge')[];
+  invokedSpell?: string;
   // Item passives state
   sterakCooldown: number;
   zhonyaActive: boolean;
@@ -260,6 +272,13 @@ export interface AramChampionUnit {
   comboExpiresAt?: number;
   comboHitConfirmed?: boolean;
   teamChemistry?: number;
+  // PlayStyle unique trait runtime combat states
+  clutchSurgeActive?: boolean;
+  clutchSurgeTimer?: number;
+  diveShieldActive?: boolean;
+  diveShieldTimer?: number;
+  shotcallAuraTimer?: number;
+  traitFloatTimer?: number;
 }
 
 export interface BushPatch {

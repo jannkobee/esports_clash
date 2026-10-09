@@ -6,7 +6,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   // ==========================================
   {
     id: 'item_guardians_blade',
-    name: "Guardian's Blade",
+    name: "Sentinel's Blade",
     cost: 500,
     tier: 'Starting',
     icon: '⚔️',
@@ -17,7 +17,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_guardians_orb',
-    name: "Guardian's Orb",
+    name: "Aegis Orb",
     cost: 500,
     tier: 'Starting',
     icon: '🔮',
@@ -28,7 +28,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_guardians_horn',
-    name: "Guardian's Horn",
+    name: "Bastion Horn",
     cost: 500,
     tier: 'Starting',
     icon: '🛡️',
@@ -39,7 +39,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_guardians_hammer',
-    name: "Guardian's Hammer",
+    name: "Siphon Mallet",
     cost: 500,
     tier: 'Starting',
     icon: '🔨',
@@ -54,7 +54,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   // ==========================================
   {
     id: 'item_bf_sword',
-    name: 'B.F. Heavy Sword',
+    name: 'Colossal Greatsword',
     cost: 1300,
     tier: 'Component',
     icon: '🗡️',
@@ -65,7 +65,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_lost_chapter',
-    name: 'Lost Chapter',
+    name: 'Forgotten Grimoire',
     cost: 1100,
     tier: 'Component',
     icon: '📖',
@@ -76,7 +76,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_serrated_dirk',
-    name: 'Serrated Dirk',
+    name: 'Jagged Stiletto',
     cost: 1000,
     tier: 'Component',
     icon: '🔪',
@@ -87,7 +87,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_bami_cinder',
-    name: "Bami's Cinder",
+    name: "Ignis Ember",
     cost: 1000,
     tier: 'Component',
     icon: '🔥',
@@ -98,7 +98,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_chain_vest',
-    name: 'Armored Chainmail',
+    name: 'Reinforced Mail',
     cost: 800,
     tier: 'Component',
     icon: '🛡️',
@@ -109,7 +109,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_blasting_wand',
-    name: 'Blasting Wand',
+    name: 'Ether Wand',
     cost: 850,
     tier: 'Component',
     icon: '🪄',
@@ -120,7 +120,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_recurve_bow',
-    name: 'Recurve Bow',
+    name: 'Composite Longbow',
     cost: 700,
     tier: 'Component',
     icon: '🏹',
@@ -131,7 +131,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_caulfield',
-    name: "Caulfield's War Hammer",
+    name: "Striker's War Hammer",
     cost: 1100,
     tier: 'Component',
     icon: '🔨',
@@ -142,7 +142,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_last_whisper',
-    name: 'Last Whisper',
+    name: 'Piercing Whisper',
     cost: 1450,
     tier: 'Component',
     icon: '🏹',
@@ -153,7 +153,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_noonquiver',
-    name: 'Noonquiver',
+    name: 'Solar Quiver',
     cost: 1300,
     tier: 'Component',
     icon: '🎯',
@@ -168,7 +168,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   // ==========================================
   {
     id: 'item_infinity_edge',
-    name: 'Infinity Edge',
+    name: 'Apex Edge',
     cost: 3400,
     tier: 'Mythic',
     icon: '🗡️',
@@ -179,7 +179,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_kraken_slayer',
-    name: 'Kraken Slayer',
+    name: 'Leviathan Harpoon',
     cost: 3000,
     tier: 'Legendary',
     icon: '🔱',
@@ -190,7 +190,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_ldr',
-    name: "Lord Dominik's Regards",
+    name: "Goliath Slayer",
     cost: 3000,
     tier: 'Legendary',
     icon: '🏹',
@@ -201,7 +201,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_bork',
-    name: 'Blade of the Ruined King',
+    name: "Sovereign's Ruin",
     cost: 3200,
     tier: 'Legendary',
     icon: '🗡️',
@@ -212,7 +212,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_mortal_reminder',
-    name: 'Mortal Reminder',
+    name: 'Fatal Verdict',
     cost: 3000,
     tier: 'Legendary',
     icon: '⚔️',
@@ -223,7 +223,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_phantom_dancer',
-    name: 'Phantom Dancer',
+    name: 'Ghoststep Rapier',
     cost: 2600,
     tier: 'Legendary',
     icon: '💃',
@@ -234,7 +234,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_runaans',
-    name: "Runaan's Hurricane",
+    name: "Tempest Galebow",
     cost: 2600,
     tier: 'Legendary',
     icon: '🌪️',
@@ -245,7 +245,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_terminus',
-    name: 'Terminus',
+    name: 'Equinox Cleaver',
     cost: 3000,
     tier: 'Legendary',
     icon: '⚖️',
@@ -256,7 +256,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_collector',
-    name: 'The Debt Collector',
+    name: 'Bounty Collector',
     cost: 3000,
     tier: 'Legendary',
     icon: '💰',
@@ -271,7 +271,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   // ==========================================
   {
     id: 'item_deathcap',
-    name: 'Crown of the Archmage',
+    name: "Archmage's Diadem",
     cost: 3600,
     tier: 'Mythic',
     icon: '👑',
@@ -282,7 +282,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_ludens',
-    name: 'Tempest Echo',
+    name: 'Thunderclap Staff',
     cost: 3000,
     tier: 'Legendary',
     icon: '⚡',
@@ -293,7 +293,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_zhonyas',
-    name: 'Chrono Stasis',
+    name: 'Hourglass of Stasis',
     cost: 3000,
     tier: 'Legendary',
     icon: '⏳',
@@ -304,7 +304,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_void_staff',
-    name: 'Void Scepter',
+    name: 'Void Piercer',
     cost: 2800,
     tier: 'Legendary',
     icon: '🔮',
@@ -319,7 +319,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   // ==========================================
   {
     id: 'item_sunfire',
-    name: 'Solar Aegis',
+    name: 'Sunfire Bulwark',
     cost: 2800,
     tier: 'Legendary',
     icon: '🔥',
@@ -330,7 +330,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_warmogs',
-    name: 'Behemoth Heart',
+    name: "Titan's Heart",
     cost: 3100,
     tier: 'Mythic',
     icon: '❤️',
@@ -341,7 +341,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_thornmail',
-    name: 'Bramble Spikes',
+    name: 'Thorned Cuirass',
     cost: 2700,
     tier: 'Legendary',
     icon: '🌵',
@@ -352,7 +352,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_steraks',
-    name: "Titan's Lifeline",
+    name: 'Colossus Gauntlet',
     cost: 3100,
     tier: 'Legendary',
     icon: '🥊',
@@ -363,7 +363,7 @@ export const ALL_ITEMS: ItemDef[] = ([
   },
   {
     id: 'item_spirit_visage',
-    name: 'Spirit Visage',
+    name: 'Spirit Shroud',
     cost: 2900,
     tier: 'Legendary',
     icon: '🍃',

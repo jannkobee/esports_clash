@@ -5,15 +5,21 @@ import { abilityRank, abilityDamageMultiplier, abilityCooldownMultiplier } from 
 import { chooseCoachPick, chooseCoachTeamPick, draftLineups, DRAFT_TURNS } from './draftRules.ts';
 import { createRoom, joinRoom, getRoom, submitDraftTurn } from '../server.mjs';
 
-test('opening abilities are weak and rank up at level milestones', () => {
+test('opening abilities are weak and rank up at level milestones with level 18 cap', () => {
+  assert.equal(abilityRank(1, 'innate'), 1);
+  assert.equal(abilityRank(18, 'innate'), 1);
   assert.equal(abilityRank(3, 'skill1'), 1);
   assert.equal(abilityRank(3, 'skill2'), 1);
   assert.equal(abilityRank(5, 'ultimate'), 0);
   assert.equal(abilityRank(6, 'ultimate'), 1);
+  assert.equal(abilityRank(11, 'ultimate'), 2);
   assert.equal(abilityRank(16, 'ultimate'), 3);
+  assert.equal(abilityRank(18, 'ultimate'), 4);
+  assert.equal(abilityRank(18, 'skill1'), 7);
+  assert.equal(abilityRank(18, 'skill2'), 7);
   assert.ok(abilityDamageMultiplier(3, 'skill1') < 0.5);
-  assert.ok(abilityDamageMultiplier(9, 'skill1') > 1);
-  assert.ok(abilityDamageMultiplier(16, 'ultimate') > abilityDamageMultiplier(6, 'ultimate'));
+  assert.ok(abilityDamageMultiplier(9, 'skill1') >= 0.85);
+  assert.ok(abilityDamageMultiplier(18, 'ultimate') > abilityDamageMultiplier(6, 'ultimate'));
   assert.ok(abilityCooldownMultiplier(3, 'skill1') > abilityCooldownMultiplier(9, 'skill1'));
 });
 

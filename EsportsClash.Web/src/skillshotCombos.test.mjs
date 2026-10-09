@@ -24,5 +24,5 @@ test('high skill players learn an avatar combo while low skill players do not', 
   assert.equal(comboPracticeNeeded(player(96, 94, 90, 88), 'Veyara'), 2);
   assert.equal(comboPracticeNeeded(player(65, 68, 70, 80), 'Veyara'), null);
   for (const champion of ADDITIONAL_CHAMPIONS) assert.ok(AVATAR_COMBOS[champion.name]);
-  assert.equal(Object.keys(AVATAR_COMBOS).length, 30);
+  assert.equal(Object.keys(AVATAR_COMBOS).length, 39);
 });
