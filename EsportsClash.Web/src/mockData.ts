@@ -1,6 +1,8 @@
 import { ChampionKit, CoachCard, EvolutionPlan, Facility, PlayerCard } from './types';
+import { createResearchedCards } from './rosterResearch';
+import { ADDITIONAL_CHAMPIONS } from './additionalChampions';
 
-export const INITIAL_PLAYERS: PlayerCard[] = [
+const BASE_PLAYERS: PlayerCard[] = [
   // === STARTING FIVE (TOP, JUNGLE, MID, BOT, SUPPORT) ===
   {
     id: 'p_thespicy',
@@ -325,6 +327,8 @@ export const INITIAL_PLAYERS: PlayerCard[] = [
     avatarSvg: 'rookie2'
   }
 ];
+
+export const INITIAL_PLAYERS: PlayerCard[] = [...BASE_PLAYERS, ...createResearchedCards(BASE_PLAYERS)];
 
 export const INITIAL_COACHES: CoachCard[] = [
   {
@@ -739,7 +743,8 @@ export const CHAMPIONS: ChampionKit[] = [
     ultimate: { name: 'Astral Step', desc: 'Instantly teleports and slashes through enemies in a line, marking them with an astral rift that detonates for heavy execute!', cooldown: 60, damage: 450, damageType: 'Magic', isUlt: true },
     primaryColor: '#7c3aed',
     accentColor: '#4c1d95'
-  }
+  },
+  ...ADDITIONAL_CHAMPIONS
 ];
 
 export const INITIAL_FACILITIES: Facility[] = [

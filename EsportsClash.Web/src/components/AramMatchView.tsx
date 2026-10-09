@@ -10,6 +10,7 @@ import {
   PlayerCard 
 } from '../types';
 import { ALL_ITEMS, getRecommendedItem } from '../itemsData';
+import { getItemPurchasePlan } from '../itemStrategy';
 import { drawChampionSprite } from './ChampionSpriteRenderer';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
@@ -1189,26 +1190,28 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (primaryTarget && Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= attackRange * 1.5) {
         u.facing = primaryTarget.x > u.x ? 'right' : 'left';
         const dist = Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y);
+        const haste = u.items.reduce((total, item) => total + (item.stats.haste ?? 0), 0);
+        const cooldownFactor = 100 / (100 + haste);
 
         // 1. REASONABLE ULTIMATE: Level 6+, 100 Mana, 45-75s Cooldown!
         if (shouldUseUltimate(u, primaryTarget, enemies, allies)) {
           u.mana = 0;
           const baseUltCd = u.level >= 16 ? 45.0 : u.level >= 11 ? 60.0 : 75.0;
-          u.cdUlt = baseUltCd;
+          u.cdUlt = baseUltCd * cooldownFactor;
           u.animState = 'cast';
           castChampionUltimate(u, primaryTarget, enemies);
         }
         // 2. REASONABLE SKILL 1: 8-12s Cooldown & 45 Mana Cost
         else if (shouldUseSkill(u, primaryTarget, enemies, attackRange)) {
           u.mana -= 45;
-          u.cd1 = u.champion.skill1.cooldown || 10.0;
+          u.cd1 = (u.champion.skill1.cooldown || 10.0) * cooldownFactor;
           u.animState = 'cast';
           castChampionSkill1(u, primaryTarget);
         }
         // Skill 2 provides follow-up control, defense, or damage between first casts.
         else if (shouldUseSecondSkill(u, primaryTarget, enemies, allies, attackRange)) {
           u.mana -= 35;
-          u.cd2 = u.champion.skill2.cooldown || 10.0;
+          u.cd2 = (u.champion.skill2.cooldown || 10.0) * cooldownFactor;
           u.animState = 'cast';
           castChampionSkill2(u, primaryTarget);
         }
@@ -1319,21 +1322,28 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   // Evaluate & Purchase Items progressively
   const evaluateAndBuyItems = (u: AramChampionUnit) => {
-    const unownedIds = u.items.map((it) => it.id);
-    const nextItem = getRecommendedItem(u.champion.primaryRole, unownedIds, u.gold, u.champion.name);
-
-    if (nextItem && u.items.length < 6) {
-      u.gold -= nextItem.cost;
-      u.items = [...u.items, nextItem];
-
-      if (nextItem.stats.ad) u.champion.ad += nextItem.stats.ad;
-      if (nextItem.stats.hp) {
-        u.maxHp += nextItem.stats.hp;
-        u.hp += nextItem.stats.hp;
+    for (let purchase = 0; purchase < 6; purchase++) {
+      const plan = getItemPurchasePlan(u.champion.primaryRole, u.items, u.gold, u.champion.name, ALL_ITEMS);
+      if (!plan) break;
+      const nextItem = plan.item;
+      u.gold -= plan.goldCost;
+      for (const removed of plan.removed) {
+        const index = u.items.findIndex(item => item.id === removed.id);
+        if (index >= 0) u.items.splice(index, 1);
+        u.champion.ad -= removed.stats.ad ?? 0;
+        u.champion.armor -= removed.stats.armor ?? 0;
+        u.champion.mr -= removed.stats.mr ?? 0;
+        u.champion.aspd -= removed.stats.aspd ?? 0;
+        u.maxHp -= removed.stats.hp ?? 0;
+        u.hp = Math.min(u.hp, u.maxHp);
       }
-      if (nextItem.stats.armor) u.champion.armor += nextItem.stats.armor;
-      if (nextItem.stats.mr) u.champion.mr += nextItem.stats.mr;
-      if (nextItem.stats.aspd) u.champion.aspd += nextItem.stats.aspd;
+      u.items.push(nextItem);
+      u.champion.ad += nextItem.stats.ad ?? 0;
+      u.champion.armor += nextItem.stats.armor ?? 0;
+      u.champion.mr += nextItem.stats.mr ?? 0;
+      u.champion.aspd += nextItem.stats.aspd ?? 0;
+      u.maxHp += nextItem.stats.hp ?? 0;
+      u.hp += nextItem.stats.hp ?? 0;
 
       sound.playCoin();
       const mins = Math.floor(matchTime / 60);
@@ -1489,9 +1499,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     sound.playSpellHit();
 
     let bonusAd = 0;
-    const hasInfinity = u.items.some((it) => it.id === 'item_ie');
-    const isCrit = hasInfinity || Math.random() < 0.25;
-    if (isCrit) bonusAd += u.champion.ad * 0.75;
+    const hasInfinity = u.items.some((it) => it.id === 'item_infinity_edge');
+    const critChance = Math.min(0.85, 0.1 + u.items.reduce((total, item) => total + (item.stats.crit ?? 0) / 100, 0));
+    const isCrit = Math.random() < critChance;
+    if (isCrit) bonusAd += u.champion.ad * (hasInfinity ? 1.15 : 0.75);
 
     if (aegisBuffRef.current?.team === u.team) {
       bonusAd += aegisBuffRef.current.adBonus;
@@ -1695,23 +1706,24 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
   };
 
-  const emitSkillEffect = (u: AramChampionUnit, target: AramChampionUnit, ultimate = false) => {
+  const emitSkillEffect = (u: AramChampionUnit, target: AramChampionUnit, ultimate = false, label = '') => {
     spellsRef.current.push({
       id: Math.random().toString(),
       type: ultimate ? 'ultimate_burst' : 'skill_burst',
       x: target.x, y: target.y,
       sourceX: u.x, sourceY: u.y,
-      radius: ultimate ? 72 : 38,
-      duration: ultimate ? 1.05 : 0.65,
-      maxDuration: ultimate ? 1.05 : 0.65,
-      color: ultimate ? u.champion.accentColor : u.champion.primaryColor
+      radius: ultimate ? 94 : 52,
+      duration: ultimate ? 1.3 : 0.9,
+      maxDuration: ultimate ? 1.3 : 0.9,
+      color: ultimate ? u.champion.accentColor : u.champion.primaryColor,
+      extraText: label
     });
   };
 
   // Champion Skill 1 Cast (Remarkable High-Visibility Abilities)
   const castChampionSkill1 = (u: AramChampionUnit, target: AramChampionUnit) => {
     sound.playSpellHit();
-    emitSkillEffect(u, target);
+    emitSkillEffect(u, target, false, u.champion.skill1.name);
 
     if (u.champion.name === 'Solana') {
       target.stunTimer = 1.2;
@@ -1961,6 +1973,26 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       target.stunTimer = 1.4;
       applyDamageToChampion(u, target, 125, false, '🔮 Aether Remnant');
       addEvent(`🔮 VOID: Inai pulled ${target.player.name} through the Aether Remnant gaze!`, 'combo');
+    } else if (u.champion.name === 'Qiyana') {
+      target.stunTimer = Math.max(target.stunTimer, 0.8);
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Elemental Wrath');
+    } else if (u.champion.name === 'Locke' || u.champion.name === 'Shadow Fiend') {
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, u.champion.skill1.name);
+      championsRef.current.filter(e => e.team !== u.team && e.id !== target.id && e.isAlive && Math.hypot(e.x - target.x, e.y - target.y) < 65)
+        .forEach(e => applyDamageToChampion(u, e, 80, false, u.champion.skill1.name));
+    } else if (u.champion.name === 'Senna') {
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Piercing Darkness');
+      championsRef.current.filter(a => a.team === u.team && a.isAlive && Math.hypot(a.x - u.x, a.y - u.y) < 180)
+        .forEach(a => { a.hp = Math.min(a.maxHp, a.hp + 110); emitSkillEffect(u, a); });
+    } else if (u.champion.name === 'Largo') {
+      target.x += u.team === 'blue' ? -35 : 35;
+      target.stunTimer = Math.max(target.stunTimer, 0.7);
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Catchy Lick');
+    } else if (u.champion.name === 'Earthshaker') {
+      target.stunTimer = Math.max(target.stunTimer, 1.4);
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Fissure');
+      championsRef.current.filter(e => e.team !== u.team && e.id !== target.id && e.isAlive && Math.abs(e.y - target.y) < 32 && Math.abs(e.x - target.x) < 90)
+        .forEach(e => { e.stunTimer = Math.max(e.stunTimer, 0.9); applyDamageToChampion(u, e, 95, false, 'Fissure'); });
     }
   };
 
@@ -1970,7 +2002,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const nearbyAllies = championsRef.current.filter(c => c.team === u.team && c.isAlive);
     const nearbyEnemies = championsRef.current.filter(c => c.team !== u.team && c.isAlive);
     sound.playSpellHit();
-    emitSkillEffect(u, target);
+    emitSkillEffect(u, target, false, skill.name);
 
     if (name === 'Solana') {
       u.x = target.x + (u.team === 'blue' ? -28 : 28);
@@ -2004,6 +2036,24 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (name === 'Xin') {
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 90)
         .forEach(c => applyDamageToChampion(u, c, skill.damage * 0.6, false, skill.name));
+    } else if (name === 'Qiyana' || name === 'Locke') {
+      u.x = target.x + (u.team === 'blue' ? -30 : 30);
+      u.y = target.y;
+    } else if (name === 'Senna') {
+      target.stunTimer = Math.max(target.stunTimer, 1.3);
+      nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 70)
+        .forEach(c => { c.stunTimer = Math.max(c.stunTimer, 0.8); applyDamageToChampion(u, c, 65, false, skill.name); });
+    } else if (name === 'Largo') {
+      target.stunTimer = Math.max(target.stunTimer, 0.8);
+      nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 85)
+        .forEach(c => { c.stunTimer = Math.max(c.stunTimer, 0.5); applyDamageToChampion(u, c, 75, false, skill.name); });
+    } else if (name === 'Shadow Fiend') {
+      u.shield += 110;
+      nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - u.x, c.y - u.y) < 95)
+        .forEach(c => applyDamageToChampion(u, c, 65, false, skill.name));
+    } else if (name === 'Earthshaker') {
+      target.stunTimer = Math.max(target.stunTimer, 1.0);
+      u.shield += 130;
     }
 
     if (skill.damage > 0 && target.isAlive) {
@@ -2015,7 +2065,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   // Champion Ultimate Cast (Level 6 Spike: 75s / 60s / 45s CD)
   const castChampionUltimate = (u: AramChampionUnit, target: AramChampionUnit, enemies: AramChampionUnit[]) => {
     sound.playUltimateExplosion();
-    emitSkillEffect(u, target, true);
+    emitSkillEffect(u, target, true, u.champion.ultimate.name);
     confetti({ particleCount: 65, spread: 55, origin: { x: u.x / ARENA_WIDTH, y: 0.4 } });
 
     const ultRank = u.level >= 16 ? 3 : u.level >= 11 ? 2 : 1;
@@ -2228,6 +2278,33 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.x = target.x + (u.facing === 'right' ? 30 : -30);
       applyDamageToChampion(u, target, ultDamage, true, '🔮 Astral Step');
       showBanner(`🔮 ASTRAL STEP!`, `${u.player.name} cut through reality with planar Astral Step!`, '🔮');
+    } else if (u.champion.name === 'Qiyana' || u.champion.name === 'Locke' || u.champion.name === 'Shadow Fiend' || u.champion.name === 'Earthshaker') {
+      const radius = u.champion.name === 'Earthshaker' ? 155 : 115;
+      const center = u.champion.name === 'Shadow Fiend' || u.champion.name === 'Earthshaker' ? u : target;
+      const victims = enemies.filter(e => e.isAlive && Math.hypot(e.x - center.x, e.y - center.y) <= radius);
+      victims.forEach(e => {
+        if (u.champion.name === 'Qiyana' || u.champion.name === 'Earthshaker') e.stunTimer = Math.max(e.stunTimer, 1.5);
+        if (u.champion.name === 'Shadow Fiend') e.charmTimer = Math.max(e.charmTimer, 1.0);
+        applyDamageToChampion(u, e, ultDamage * (u.champion.name === 'Earthshaker' ? 0.85 + victims.length * 0.08 : 1), false, u.champion.ultimate.name);
+        emitSkillEffect(u, e, true, u.champion.ultimate.name);
+      });
+    } else if (u.champion.name === 'Senna') {
+      enemies.filter(e => e.isAlive && Math.abs(e.y - target.y) < 90).forEach(e => {
+        applyDamageToChampion(u, e, ultDamage, false, 'Dawning Shadow');
+        emitSkillEffect(u, e, true, 'Dawning Shadow');
+      });
+      championsRef.current.filter(a => a.team === u.team && a.isAlive).forEach(a => {
+        a.shield += 220;
+        emitSkillEffect(u, a, true, 'Dawning Shadow');
+      });
+    } else if (u.champion.name === 'Largo') {
+      championsRef.current.filter(a => a.team === u.team && a.isAlive).forEach(a => {
+        a.hp = Math.min(a.maxHp, a.hp + 300);
+        a.shield += 120;
+        emitSkillEffect(u, a, true, 'Amphibian Rhapsody');
+      });
+      enemies.filter(e => e.isAlive && Math.hypot(e.x - u.x, e.y - u.y) < 145)
+        .forEach(e => applyDamageToChampion(u, e, ultDamage, false, 'Amphibian Rhapsody'));
     }
   };
 
@@ -2256,7 +2333,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       sound.playSpellHit();
     }
 
-    let effective = isTrueDamage ? rawDamage : rawDamage * (100 / (100 + target.champion.armor));
+    const ap = label && attacker && (attacker.champion.primaryRole === 'Mage' || attacker.champion.secondaryRole === 'Mage')
+      ? attacker.items.reduce((total, item) => total + (item.stats.ap ?? 0), 0) : 0;
+    const spellDamage = rawDamage + ap * 0.35;
+    let effective = isTrueDamage ? spellDamage : spellDamage * (100 / (100 + target.champion.armor));
 
     if (attacker?.isInBush) {
       effective *= 1.3;
@@ -3661,6 +3741,31 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ctx.beginPath();
           ctx.arc(sx, sy, ultimate ? 4 : 2.5, 0, Math.PI * 2);
           ctx.fill();
+        }
+        // Sharp outer rays and a readable skill label make casts stand out in a crowded fight.
+        ctx.lineCap = 'round';
+        for (let i = 0; i < (ultimate ? 16 : 9); i++) {
+          const angle = i * Math.PI * 2 / (ultimate ? 16 : 9) - time * 0.8;
+          const inner = radius * 1.12;
+          const outer = radius * (ultimate ? 1.65 : 1.42);
+          ctx.strokeStyle = i % 2 ? '#ffffff' : s.color;
+          ctx.lineWidth = ultimate ? 4 : 2.5;
+          ctx.beginPath();
+          ctx.moveTo(s.x + Math.cos(angle) * inner, s.y + Math.sin(angle) * inner);
+          ctx.lineTo(s.x + Math.cos(angle) * outer, s.y + Math.sin(angle) * outer);
+          ctx.stroke();
+        }
+        if (s.extraText) {
+          const label = s.extraText.toUpperCase();
+          ctx.globalAlpha = Math.min(1, alpha * 2);
+          ctx.font = `900 ${ultimate ? 17 : 12}px system-ui`;
+          ctx.textAlign = 'center';
+          ctx.lineWidth = ultimate ? 6 : 4;
+          ctx.strokeStyle = '#020617';
+          ctx.shadowBlur = 0;
+          ctx.strokeText(label, s.x, s.y - radius - (ultimate ? 26 : 15));
+          ctx.fillStyle = ultimate ? '#ffffff' : s.color;
+          ctx.fillText(label, s.x, s.y - radius - (ultimate ? 26 : 15));
         }
       } else if (s.type === 'solar_flare') {
         // Leona / Solana: Blinding Daybreak Flare Solar Beam

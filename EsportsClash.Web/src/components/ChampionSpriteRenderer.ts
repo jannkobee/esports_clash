@@ -102,6 +102,9 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
     case 'Inai':
       drawChibiInai(ctx, animState, animTime);
       break;
+    case 'Qiyana': case 'Locke': case 'Senna': case 'Largo': case 'Shadow Fiend': case 'Earthshaker':
+      drawNewChampionSprite(ctx, championName, animState, animTime);
+      break;
     default:
       drawDefaultChampion(ctx, team);
       break;
@@ -1878,5 +1881,56 @@ function drawDefaultChampion(ctx: CanvasRenderingContext2D, team: string) {
   ctx.beginPath();
   ctx.arc(0, -20, 11, 0, Math.PI * 2);
   ctx.fill();
+}
+
+function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, animState: string, animTime: number) {
+  const colors: Record<string, [string, string]> = {
+    Qiyana: ['#0f766e', '#fde047'], Locke: ['#7c2d12', '#fb923c'],
+    Senna: ['#0f766e', '#f8fafc'], Largo: ['#65a30d', '#facc15'],
+    'Shadow Fiend': ['#450a0a', '#fb7185'], Earthshaker: ['#92400e', '#fcd34d'],
+  };
+  const [body, glow] = colors[name];
+  const casting = animState === 'cast' || animState === 'attack';
+  ctx.save();
+  ctx.shadowColor = glow;
+  ctx.shadowBlur = casting ? 20 : 7;
+  ctx.fillStyle = body;
+  ctx.beginPath();
+  ctx.moveTo(-12, -22); ctx.lineTo(12, -22); ctx.lineTo(16, 0); ctx.lineTo(-16, 0); ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = name === 'Largo' ? '#a3e635' : name === 'Shadow Fiend' ? '#7f1d1d' : '#f5cba7';
+  ctx.beginPath(); ctx.arc(0, -32, 14, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = name === 'Shadow Fiend' ? '#fda4af' : '#0f172a';
+  ctx.beginPath(); ctx.arc(-5, -33, 2.2, 0, Math.PI * 2); ctx.arc(5, -33, 2.2, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = glow;
+  ctx.fillStyle = glow;
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  const pulse = casting ? Math.sin(animTime * 18) * 3 : 0;
+  if (name === 'Qiyana') {
+    ctx.beginPath(); ctx.arc(13, -18, 15 + pulse, -1.1, 1.35); ctx.stroke();
+  } else if (name === 'Locke') {
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath(); ctx.moveTo(10, -27 + i * 8); ctx.lineTo(29 + pulse, -34 + i * 8); ctx.stroke();
+    }
+  } else if (name === 'Senna') {
+    ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(8, -18); ctx.lineTo(32 + pulse, -21); ctx.stroke();
+    ctx.fillRect(19, -28, 11, 5);
+  } else if (name === 'Largo') {
+    ctx.beginPath(); ctx.arc(-8, -45, 6, 0, Math.PI * 2); ctx.arc(8, -45, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(15, -14, 8, 11, -0.5, 0, Math.PI * 2); ctx.stroke();
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(10 + i * 3, -23); ctx.lineTo(16 + i * 3, -5); ctx.stroke(); }
+  } else if (name === 'Shadow Fiend') {
+    ctx.beginPath(); ctx.moveTo(-11, -41); ctx.lineTo(-17, -55); ctx.lineTo(-2, -44);
+    ctx.moveTo(11, -41); ctx.lineTo(17, -55); ctx.lineTo(2, -44); ctx.stroke();
+    ctx.beginPath(); ctx.arc(20, -16, 6 + pulse, 0, Math.PI * 2); ctx.fill();
+  } else {
+    ctx.lineWidth = 7;
+    ctx.beginPath(); ctx.moveTo(13, -21); ctx.lineTo(25, -49); ctx.stroke();
+    ctx.fillRect(17, -55, 19, 10);
+  }
+  ctx.restore();
 }
 

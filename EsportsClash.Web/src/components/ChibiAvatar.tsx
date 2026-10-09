@@ -121,15 +121,18 @@ export const ChibiAvatar: React.FC<ChibiAvatarProps> = ({ avatarType, className 
           accent: '#f97316'
         };
       default:
+        // Give researched cards stable, distinct portraits without adding image files.
+        const hash = [...avatarType].reduce((value, letter) => (value * 31 + letter.charCodeAt(0)) >>> 0, 7);
+        const palette = ['#f43f5e', '#22d3ee', '#a78bfa', '#f59e0b', '#34d399', '#fb7185', '#60a5fa', '#e879f9'];
         return {
-          hair: '#475569',
-          skin: '#ffdfba',
-          glasses: false,
-          headband: false,
-          headset: false,
+          hair: palette[(hash >>> 3) % palette.length],
+          skin: ['#ffdfba', '#deb887', '#f5cba7', '#eabf9f'][hash % 4],
+          glasses: hash % 5 === 0,
+          headband: hash % 7 === 0,
+          headset: hash % 3 === 0,
           pose: 'normal',
-          expression: 'determined',
-          accent: '#64748b'
+          expression: hash % 4 === 0 ? 'intense' : hash % 4 === 1 ? 'joyful' : 'determined',
+          accent: palette[hash % palette.length]
         };
     }
   };

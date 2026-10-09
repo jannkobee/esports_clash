@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChampionKit, CoachCard, PlayerCard } from '../types';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
+import { buildUniqueLineups, isChampionAvailable } from '../draftRules';
 import { Shield, Sparkles, Swords, Ban, Check, UserCheck, Flame } from 'lucide-react';
 
 interface DraftPhaseViewProps {
@@ -45,9 +46,10 @@ export const DraftPhaseView: React.FC<DraftPhaseViewProps> = ({
   };
 
   const handlePickChampion = (champId: string) => {
-    sound.playClick();
     const activePlayer = startingFive[activePlayerIndex];
     if (!activePlayer) return;
+    if (!isChampionAvailable(champId, activePlayer.id, selectedChampForPlayer, [bannedChampId, enemyBannedChampId])) return;
+    sound.playClick();
 
     const newSelections = {
       ...selectedChampForPlayer,
@@ -64,7 +66,7 @@ export const DraftPhaseView: React.FC<DraftPhaseViewProps> = ({
     sound.playClick();
     const defaults: { [playerId: string]: string } = {};
     const used = new Set<string>();
-    startingFive.forEach((p, idx) => {
+    startingFive.forEach((p) => {
       // 1. Signature Avatar match
       let champ = allChampions.find((c) => {
         if (used.has(c.id) || c.id === bannedChampId || c.id === enemyBannedChampId) return false;
@@ -79,7 +81,7 @@ export const DraftPhaseView: React.FC<DraftPhaseViewProps> = ({
       }
       // 3. Fallback
       if (!champ) {
-        champ = allChampions.find((c) => !used.has(c.id) && c.id !== bannedChampId && c.id !== enemyBannedChampId) || allChampions[idx % allChampions.length];
+        champ = allChampions.find((c) => !used.has(c.id) && c.id !== bannedChampId && c.id !== enemyBannedChampId);
       }
       if (champ) {
         used.add(champ.id);
@@ -91,30 +93,8 @@ export const DraftPhaseView: React.FC<DraftPhaseViewProps> = ({
 
   const handleLockIn = () => {
     sound.playWalkoutFanfare();
-
-    // Blue Lineup: Ensure unique champions for the squad
-    const usedIds = new Set<string>();
-    const blueLineup = startingFive.map((p, idx) => {
-      let champId = selectedChampForPlayer[p.id];
-      if (!champId || (usedIds.has(champId) && Object.keys(selectedChampForPlayer).length < 5)) {
-        const unused = allChampions.find((c) => !usedIds.has(c.id) && c.id !== bannedChampId && c.id !== enemyBannedChampId);
-        champId = unused ? unused.id : allChampions[idx % allChampions.length].id;
-      }
-      usedIds.add(champId);
-      const champ = allChampions.find((c) => c.id === champId) || allChampions[0];
-      return { player: p, champion: champ };
-    });
-
-    // Red Lineup (AI picks remaining champions from available pool)
-    const redAvailable = allChampions.filter(
-      (c) => c.id !== bannedChampId && c.id !== enemyBannedChampId && !usedIds.has(c.id)
-    );
-    const redLineup = opponentRoster.slice(0, 5).map((p, idx) => {
-      const champ = redAvailable[idx % redAvailable.length] || allChampions[idx % allChampions.length];
-      return { player: p, champion: champ };
-    });
-
-    onDraftComplete(blueLineup, redLineup);
+    const { blue, red } = buildUniqueLineups(startingFive, opponentRoster, allChampions, selectedChampForPlayer, [bannedChampId, enemyBannedChampId]);
+    onDraftComplete(blue, red);
   };
 
   const allPicked = startingFive.every((p) => selectedChampForPlayer[p.id]);
@@ -238,15 +218,16 @@ export const DraftPhaseView: React.FC<DraftPhaseViewProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {allChampions.map((c) => {
                 const isBanned = c.id === bannedChampId || c.id === enemyBannedChampId;
+                const pickedBy = startingFive.find(p => p.id !== startingFive[activePlayerIndex]?.id && selectedChampForPlayer[p.id] === c.id);
                 const isSelectedForCurrent = selectedChampForPlayer[startingFive[activePlayerIndex]?.id] === c.id;
                 const isSignature = startingFive[activePlayerIndex]?.signatureChampions.includes(c.name);
 
                 return (
                   <div
                     key={c.id}
-                    onClick={() => !isBanned && handlePickChampion(c.id)}
+                    onClick={() => !isBanned && !pickedBy && handlePickChampion(c.id)}
                     className={`relative rounded-2xl p-3 border-2 transition ${
-                      isBanned
+                      isBanned || pickedBy
                         ? 'opacity-40 bg-slate-950 border-rose-950 cursor-not-allowed'
                         : isSelectedForCurrent
                         ? 'border-amber-400 bg-amber-950/30 scale-105 shadow-xl cursor-pointer'
@@ -258,6 +239,7 @@ export const DraftPhaseView: React.FC<DraftPhaseViewProps> = ({
                         BANNED
                       </div>
                     )}
+                    {pickedBy && !isBanned && <div className="absolute top-2 right-2 bg-slate-700 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase">PICKED by {pickedBy.name}</div>}
                     {isSignature && (
                       <div className="absolute top-2 right-2 bg-amber-400 text-slate-950 text-[8px] font-black px-1 py-0.5 rounded uppercase flex items-center gap-0.5">
                         <Flame className="w-2.5 h-2.5" /> Sig
