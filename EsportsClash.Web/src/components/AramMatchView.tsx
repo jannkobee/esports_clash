@@ -11,6 +11,8 @@ import {
 } from '../types';
 import { ALL_ITEMS, getRecommendedItem } from '../itemsData';
 import { getItemPurchasePlan } from '../itemStrategy';
+import { aimAtCast, dodgeProbability, segmentHitsCircle } from '../skillshotRules';
+import { AVATAR_COMBOS, comboPracticeNeeded } from '../avatarCombos';
 import { drawChampionSprite } from './ChampionSpriteRenderer';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
@@ -31,7 +33,9 @@ import {
   ArrowRight,
   Crosshair,
   TrendingUp,
-  Skull
+  Skull,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 
 interface Projectile {
@@ -52,6 +56,17 @@ interface Projectile {
   damage: number;
   attackerId: string;
   angle: number;
+  skillshot?: boolean;
+  dodgeAttempted?: boolean;
+  stunOnHit?: number;
+  charmOnHit?: number;
+  splashRadius?: number;
+  healAlliesOnHit?: number;
+  pullOnHit?: number;
+  trueDamage?: boolean;
+  skillLabel?: string;
+  collisionRadius?: number;
+  comboStage?: 1 | 2;
 }
 
 interface SpellAOE {
@@ -192,6 +207,10 @@ function getXpThreshold(lvl: number): number {
 
 function getChampionAttackRange(champName: string): number {
   switch (champName) {
+    case 'Senna': return 205;
+    case 'Shadow Fiend': return 180;
+    case 'Locke': return 125;
+    case 'Largo': return 65;
     case 'Astra': return 195;
     case 'Tequoia': return 190;
     case 'Kindra':
@@ -213,6 +232,26 @@ function getChampionAttackRange(champName: string): number {
     default: return 55;
   }
 }
+
+const FIRST_SKILLSHOTS: Record<string, Partial<Projectile>> = {
+  Kyumi: { type: 'orb', speed: 390, size: 9, trueDamage: true },
+  Buck: { type: 'pellet', speed: 420, size: 9, splashRadius: 55 },
+  Kage: { type: 'shuriken', speed: 510, size: 8 },
+  Kazemaru: { type: 'tornado', speed: 370, size: 14, stunOnHit: 1.5, collisionRadius: 23 },
+  Kindra: { type: 'spirit_arrow', speed: 480, size: 7 },
+  Cora: { type: 'feather', speed: 470, size: 7 },
+  Tequoia: { type: 'nature_bolt', speed: 380, size: 10, stunOnHit: 1.3 },
+  Zal: { type: 'poison_dart', speed: 450, size: 7 },
+  Xin: { type: 'pellet', speed: 420, size: 8, stunOnHit: 1.2 },
+  Kaolin: { type: 'boulder', speed: 380, size: 14, stunOnHit: 1.5, collisionRadius: 23 },
+  Inai: { type: 'orb', speed: 400, size: 10, stunOnHit: 1.2 },
+  Qiyana: { type: 'shuriken', speed: 480, size: 9, stunOnHit: 0.8 },
+  Locke: { type: 'pellet', speed: 460, size: 8, splashRadius: 55 },
+  Senna: { type: 'laser', speed: 550, size: 9, healAlliesOnHit: 110 },
+  Largo: { type: 'nature_bolt', speed: 360, size: 10, stunOnHit: 0.7, pullOnHit: 35 },
+  'Shadow Fiend': { type: 'orb', speed: 420, size: 11, splashRadius: 60 },
+  Earthshaker: { type: 'boulder', speed: 350, size: 15, stunOnHit: 1.4, splashRadius: 65, collisionRadius: 26 },
+};
 
 function getChampionFormationY(champName: string, idx: number): number {
   switch (champName) {
@@ -254,10 +293,29 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   onMatchComplete
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const matchRootRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fullscreenError, setFullscreenError] = useState(false);
   const [speed, setSpeed] = useState<number>(1);
   const [paused, setPaused] = useState<boolean>(false);
   const [matchTime, setMatchTime] = useState<number>(0);
   const [matchOver, setMatchOver] = useState<boolean>(false);
+
+  useEffect(() => {
+    const syncFullscreen = () => setIsFullscreen(document.fullscreenElement === matchRootRef.current);
+    document.addEventListener('fullscreenchange', syncFullscreen);
+    return () => document.removeEventListener('fullscreenchange', syncFullscreen);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      setFullscreenError(false);
+      if (document.fullscreenElement === matchRootRef.current) await document.exitFullscreen();
+      else await matchRootRef.current?.requestFullscreen();
+    } catch {
+      setFullscreenError(true);
+    }
+  };
 
   // Scoreboard Stats
   const [blueKills, setBlueKills] = useState<number>(0);
@@ -589,6 +647,92 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
   };
 
+  const practiceAvatarCombo = (u: AramChampionUnit) => {
+    if (u.comboMastered) return;
+    const needed = comboPracticeNeeded(u.player, u.champion.name);
+    if (needed === null) return;
+    u.comboPractice = (u.comboPractice ?? 0) + 1;
+    if (u.comboPractice >= needed) {
+      u.comboMastered = true;
+      const name = AVATAR_COMBOS[u.champion.name].name;
+      floatsRef.current.push({ id: Math.random().toString(), x: u.x, y: u.y - 42,
+        text: `COMBO LEARNED: ${name}`, color: '#facc15', opacity: 1, scale: 1.2 });
+      addEvent(`${u.player.name} learned ${name} on ${u.champion.name}!`, 'combo');
+    }
+  };
+
+  const executeAvatarCombo = (
+    u: AramChampionUnit, target: AramChampionUnit, enemies: AramChampionUnit[], allies: AramChampionUnit[],
+    attackRange: number, cooldownFactor: number, dt: number
+  ): boolean => {
+    const recipe = AVATAR_COMBOS[u.champion.name];
+    if (!recipe || !u.comboMastered) return false;
+    if (u.comboStage && (u.comboExpiresAt ?? 0) < matchTime) {
+      u.comboStage = 0;
+      u.comboHitConfirmed = false;
+    }
+    if (u.comboStage && u.comboTargetId !== target.id) {
+      u.comboStage = 0;
+      u.comboHitConfirmed = false;
+    }
+    const castStep = (skill: 'skill1' | 'skill2', stage: 1 | 2) => {
+      u.comboStage = stage;
+      u.comboTargetId = target.id;
+      u.comboHitConfirmed = false;
+      u.comboExpiresAt = matchTime + 4.5;
+      u.animState = 'cast';
+      if (skill === 'skill1') {
+        u.mana -= 45;
+        u.cd1 = (u.champion.skill1.cooldown || 10) * cooldownFactor;
+        castChampionSkill1(u, target);
+        if (!FIRST_SKILLSHOTS[u.champion.name] && u.champion.name !== 'Astra') {
+          u.comboHitConfirmed = true;
+          u.mana = Math.min(100, u.mana + 45);
+        }
+      } else {
+        u.mana -= 35;
+        u.cd2 = (u.champion.skill2.cooldown || 10) * cooldownFactor;
+        castChampionSkill2(u, target);
+        u.comboHitConfirmed = true;
+        u.mana = Math.min(100, u.mana + 35);
+      }
+    };
+    if (!u.comboStage && u.level >= 6 && u.cd1 <= 0 && u.cd2 <= 0 && u.cdUlt <= 0
+      && u.mana >= 100 && target.hp > u.champion.ad && shouldUseUltimate(u, target, enemies, allies)) {
+      castStep(recipe.opener, 1);
+      return true;
+    }
+    if (u.comboStage === 1 && u.comboHitConfirmed && u.mana >= (recipe.followup === 'skill1' ? 45 : 35)
+      && (recipe.followup === 'skill1' ? u.cd1 <= 0 : u.cd2 <= 0)) {
+      castStep(recipe.followup, 2);
+      return true;
+    }
+    if (u.comboStage === 2 && u.comboHitConfirmed && u.mana >= 100 && u.cdUlt <= 0) {
+      u.comboStage = 0;
+      u.comboHitConfirmed = false;
+      u.mana = 0;
+      u.cdUlt = (u.level >= 16 ? 45 : u.level >= 11 ? 60 : 75) * cooldownFactor;
+      u.animState = 'cast';
+      castChampionUltimate(u, target, enemies);
+      addEvent(`${u.player.name} executed ${recipe.name}: ${u.champion.skill1.name}, ${u.champion.skill2.name}, ${u.champion.ultimate.name}!`, 'combo');
+      return true;
+    }
+    if (u.comboStage) {
+      if (Math.hypot(target.x - u.x, target.y - u.y) <= attackRange && u.attackTimer <= 0) {
+        u.attackTimer = 1 / Math.max(0.5, u.champion.aspd);
+        u.animState = 'attack';
+        performChampionAttack(u, target);
+      } else {
+        u.animState = 'walk';
+        const angle = Math.atan2(target.y - u.y, target.x - u.x);
+        u.x += Math.cos(angle) * 70 * dt;
+        u.y += Math.sin(angle) * 70 * dt;
+      }
+      return true;
+    }
+    return false;
+  };
+
   // Main Simulation Step (60 FPS tick)
   const updateAramSimulation = (dt: number) => {
     // 1. Minion Wave Spawn Timer (Every 22s)
@@ -799,31 +943,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
     });
 
-    // Skilled players can read and dodge an incoming projectile.
+    // Skillshots travel toward the cast-time position and collide with the path.
     projectilesRef.current = projectilesRef.current
       .map((p) => {
-        const targetChamp = champs.find((c) => c.id === p.targetUnitId && c.isAlive);
-        if (targetChamp && p.type !== 'turret_shot' && p.type !== 'minion_shot' && p.type !== 'boss_breath') {
-          const distToTarget = Math.hypot(targetChamp.x - p.x, targetChamp.y - p.y);
-          const dodgeChance = Math.max(0, (targetChamp.player.stats.lan * 0.002 + targetChamp.player.stats.iq * 0.0015 - 0.17));
-          if (distToTarget <= 45 && Math.random() < dodgeChance) {
-            targetChamp.y += (Math.random() > 0.5 ? 26 : -26);
-            targetChamp.y = Math.max(80, Math.min(620, targetChamp.y));
-            sound.playClick();
-            floatsRef.current.push({
-              id: Math.random().toString(),
-              x: targetChamp.x,
-              y: targetChamp.y - 30,
-              text: `⚡ DODGED!`,
-              color: '#38bdf8',
-              opacity: 1,
-              scale: 1.3
-            });
-            addEvent(`💫 ${targetChamp.player.name} side-stepped an incoming skillshot!`, 'micro');
-            return null;
-          }
-        }
-
         // Yasuo Wind Wall Projectile Dissolution
         const blockedByWindWall = spellsRef.current.some(
           (s) => s.type === 'wind_wall' && Math.hypot(p.x - s.x, p.y - s.y) <= s.radius
@@ -840,6 +962,38 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             scale: 1.0
           });
           return null;
+        }
+
+        if (p.skillshot) {
+          const dx = p.targetX - p.x;
+          const dy = p.targetY - p.y;
+          const dist = Math.hypot(dx, dy);
+          const travel = Math.min(dist, p.speed * dt);
+          const end = dist > 0 ? { x: p.x + dx / dist * travel, y: p.y + dy / dist * travel } : { x: p.x, y: p.y };
+          const attacker = champs.find(c => c.id === p.attackerId);
+          const intended = champs.find(c => c.id === p.targetUnitId && c.isAlive);
+          if (intended && !p.dodgeAttempted && intended.stunTimer <= 0 && intended.charmTimer <= 0
+            && Math.hypot(intended.x - p.x, intended.y - p.y) < Math.min(190, p.speed * 0.45)
+            && segmentHitsCircle({ x: p.x, y: p.y }, { x: p.targetX, y: p.targetY }, { x: intended.x, y: intended.y - 15 }, (p.collisionRadius ?? 17) + 20)) {
+            p.dodgeAttempted = true;
+            if (Math.random() < dodgeProbability(intended.player.stats.lan, intended.player.stats.iq, attacker?.player.stats.lan ?? 75)) {
+              const length = Math.max(1, dist);
+              const direction = intended.y > 550 ? -1 : intended.y < 150 ? 1 : Math.random() < 0.5 ? -1 : 1;
+              intended.x = Math.max(40, Math.min(ARENA_WIDTH - 40, intended.x - dy / length * 58 * direction));
+              intended.y = Math.max(80, Math.min(620, intended.y + dx / length * 58 * direction));
+              floatsRef.current.push({ id: Math.random().toString(), x: intended.x, y: intended.y - 30,
+                text: 'DODGED!', color: '#38bdf8', opacity: 1, scale: 1.3 });
+              addEvent(`${intended.player.name} sidestepped ${p.skillLabel ?? 'a skillshot'}!`, 'micro');
+            }
+          }
+          const hit = champs.find(c => c.isAlive && c.team !== attacker?.team
+            && segmentHitsCircle({ x: p.x, y: p.y }, end, { x: c.x, y: c.y - 15 }, (p.collisionRadius ?? 17) + p.size));
+          if (hit) {
+            handleProjectileImpact({ ...p, targetUnitId: hit.id });
+            return null;
+          }
+          if (travel >= dist) return null;
+          return { ...p, x: end.x, y: end.y, angle: Math.atan2(dy, dx) };
         }
 
         const dx = p.targetX - p.x;
@@ -1187,14 +1341,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // COMBAT ENGAGEMENT WITH ENEMIES:
-      if (primaryTarget && Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= attackRange * 1.5) {
+      if (primaryTarget && Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= Math.max(attackRange * 1.5, 190)) {
         u.facing = primaryTarget.x > u.x ? 'right' : 'left';
         const dist = Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y);
         const haste = u.items.reduce((total, item) => total + (item.stats.haste ?? 0), 0);
         const cooldownFactor = 100 / (100 + haste);
 
         // 1. REASONABLE ULTIMATE: Level 6+, 100 Mana, 45-75s Cooldown!
-        if (shouldUseUltimate(u, primaryTarget, enemies, allies)) {
+        if (executeAvatarCombo(u, primaryTarget, enemies, allies, attackRange, cooldownFactor, dt)) {
+          // Continue the learned sequence, or wait for its aimed opening cast to hit.
+        } else if (shouldUseUltimate(u, primaryTarget, enemies, allies)) {
           u.mana = 0;
           const baseUltCd = u.level >= 16 ? 45.0 : u.level >= 11 ? 60.0 : 75.0;
           u.cdUlt = baseUltCd * cooldownFactor;
@@ -1202,18 +1358,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           castChampionUltimate(u, primaryTarget, enemies);
         }
         // 2. REASONABLE SKILL 1: 8-12s Cooldown & 45 Mana Cost
-        else if (shouldUseSkill(u, primaryTarget, enemies, attackRange)) {
+        else if (shouldUseSkill(u, primaryTarget, enemies, Math.max(attackRange, 145))) {
           u.mana -= 45;
           u.cd1 = (u.champion.skill1.cooldown || 10.0) * cooldownFactor;
           u.animState = 'cast';
           castChampionSkill1(u, primaryTarget);
+          practiceAvatarCombo(u);
         }
         // Skill 2 provides follow-up control, defense, or damage between first casts.
-        else if (shouldUseSecondSkill(u, primaryTarget, enemies, allies, attackRange)) {
+        else if (shouldUseSecondSkill(u, primaryTarget, enemies, allies, Math.max(attackRange, 145))) {
           u.mana -= 35;
           u.cd2 = (u.champion.skill2.cooldown || 10.0) * cooldownFactor;
           u.animState = 'cast';
           castChampionSkill2(u, primaryTarget);
+          practiceAvatarCombo(u);
         }
         // 3. Basic Attack & Stutter-Step Kiting
         else if (dist <= attackRange) {
@@ -1469,6 +1627,27 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const attackerChamp = championsRef.current.find((c) => c.id === p.attackerId);
 
       if (targetChamp) {
+        if (p.skillshot) {
+          targetChamp.stunTimer = Math.max(targetChamp.stunTimer, p.stunOnHit ?? 0);
+          targetChamp.charmTimer = Math.max(targetChamp.charmTimer, p.charmOnHit ?? 0);
+          if (p.pullOnHit && attackerChamp) targetChamp.x += attackerChamp.team === 'blue' ? -p.pullOnHit : p.pullOnHit;
+          applyDamageToChampion(attackerChamp ?? null, targetChamp, p.damage, !!p.trueDamage, p.skillLabel);
+          if (p.splashRadius && attackerChamp) {
+            championsRef.current.filter(c => c.team !== attackerChamp.team && c.id !== targetChamp.id && c.isAlive
+              && Math.hypot(c.x - targetChamp.x, c.y - targetChamp.y) < p.splashRadius!)
+              .forEach(c => applyDamageToChampion(attackerChamp, c, p.damage * 0.55, !!p.trueDamage, p.skillLabel));
+          }
+          if (p.healAlliesOnHit && attackerChamp) {
+            championsRef.current.filter(c => c.team === attackerChamp.team && c.isAlive && Math.hypot(c.x - attackerChamp.x, c.y - attackerChamp.y) < 190)
+              .forEach(c => { c.hp = Math.min(c.maxHp, c.hp + p.healAlliesOnHit!); emitSkillEffect(attackerChamp, c); });
+          }
+          if (attackerChamp) emitSkillEffect(attackerChamp, targetChamp, false, p.skillLabel);
+          if (p.comboStage && attackerChamp?.comboStage === p.comboStage && attackerChamp.comboTargetId === targetChamp.id) {
+            attackerChamp.comboHitConfirmed = true;
+            attackerChamp.mana = Math.min(100, attackerChamp.mana + 45);
+          }
+          return;
+        }
         applyDamageToChampion(attackerChamp || null, targetChamp, p.damage, false,
           p.type === 'turret_shot' ? '🏰 Turret' : p.type === 'boss_breath' ? '🔥 Flame Breath'
             : p.type === 'jungle_shot' ? '🌲 Jungle Camp' : undefined);
@@ -1486,6 +1665,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const applyMinionDamage = (m: LaneMinion, target: LaneMinion | LaneStructure | AramChampionUnit) => {
     if ('armor' in target) {
       damageStructure(target, m.ad);
+      return;
+    }
+    if ('player' in target) {
+      applyDamageToChampion(null, target, m.ad, false, 'Creep');
       return;
     }
     target.hp -= m.ad;
@@ -1701,6 +1884,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           angle: angle + s * 0.12
         });
       }
+    } else if (u.champion.name === 'Senna' || u.champion.name === 'Shadow Fiend' || u.champion.name === 'Locke') {
+      const originX = u.x + (u.facing === 'right' ? 18 : -18);
+      projectilesRef.current.push({
+        id: Math.random().toString(), x: originX, y: u.y - 15,
+        targetX: target.x, targetY: target.y - 15, vx: 0, vy: 0, speed: 520,
+        color: u.champion.accentColor, type: u.champion.name === 'Senna' ? 'laser' : 'orb',
+        size: 6, targetUnitId: target.id, damage: totalDmg, attackerId: u.id,
+        angle: Math.atan2(target.y - u.y, target.x - originX)
+      });
     } else {
       applyDamageToChampion(u, target, totalDmg, false);
     }
@@ -1720,10 +1912,37 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     });
   };
 
+  const fireFirstSkillshot = (u: AramChampionUnit, target: AramChampionUnit, spec: Partial<Projectile>) => {
+    const speed = spec.speed ?? 420;
+    const accuracy = u.player.stats.lan * 0.75 + u.player.stats.flx * 0.15 + u.player.stats.iq * 0.1
+      + (u.player.signatureChampions.includes(u.champion.name) ? 7 : 0);
+    const origin = { x: u.x + (u.facing === 'right' ? 16 : -16), y: u.y - 15 };
+    const aim = aimAtCast(origin, { x: target.x, y: target.y - 15, vx: target.vx, vy: target.vy }, speed, accuracy);
+    projectilesRef.current.push({
+      id: Math.random().toString(), x: origin.x, y: origin.y,
+      targetX: aim.x, targetY: aim.y, vx: 0, vy: 0, speed,
+      color: u.champion.accentColor, type: spec.type ?? 'orb', size: spec.size ?? 8,
+      targetUnitId: target.id, damage: u.champion.skill1.damage,
+      attackerId: u.id, angle: Math.atan2(aim.y - origin.y, aim.x - origin.x),
+      skillshot: true, skillLabel: u.champion.skill1.name,
+      comboStage: u.comboStage === 1 || u.comboStage === 2 ? u.comboStage : undefined,
+      stunOnHit: spec.stunOnHit, charmOnHit: spec.charmOnHit,
+      splashRadius: spec.splashRadius, healAlliesOnHit: spec.healAlliesOnHit,
+      pullOnHit: spec.pullOnHit, trueDamage: spec.trueDamage,
+      collisionRadius: spec.collisionRadius,
+    });
+    emitSkillEffect(u, u, false, u.champion.skill1.name);
+  };
+
   // Champion Skill 1 Cast (Remarkable High-Visibility Abilities)
   const castChampionSkill1 = (u: AramChampionUnit, target: AramChampionUnit) => {
     sound.playSpellHit();
-    emitSkillEffect(u, target, false, u.champion.skill1.name);
+    const skillshotSpec = FIRST_SKILLSHOTS[u.champion.name];
+    if (skillshotSpec) {
+      fireFirstSkillshot(u, target, skillshotSpec);
+      return;
+    }
+    emitSkillEffect(u, u.champion.name === 'Astra' ? u : target, false, u.champion.skill1.name);
 
     if (u.champion.name === 'Solana') {
       target.stunTimer = 1.2;
@@ -1759,6 +1978,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           targetUnitId: target.id,
           damage: 90,
           attackerId: u.id,
+          skillshot: true,
+          skillLabel: 'Volley Cone',
+          comboStage: u.comboStage === 1 || u.comboStage === 2 ? u.comboStage : undefined,
           angle: angle + w * 0.09
         });
       }
@@ -2065,7 +2287,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   // Champion Ultimate Cast (Level 6 Spike: 75s / 60s / 45s CD)
   const castChampionUltimate = (u: AramChampionUnit, target: AramChampionUnit, enemies: AramChampionUnit[]) => {
     sound.playUltimateExplosion();
-    emitSkillEffect(u, target, true, u.champion.ultimate.name);
+    emitSkillEffect(u, u.champion.name === 'Astra' ? u : target, true, u.champion.ultimate.name);
     confetti({ particleCount: 65, spread: 55, origin: { x: u.x / ARENA_WIDTH, y: 0.4 } });
 
     const ultRank = u.level >= 16 ? 3 : u.level >= 11 ? 2 : 1;
@@ -2112,11 +2334,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         targetUnitId: target.id,
         damage: ultDamage,
         attackerId: u.id,
+        skillshot: true,
+        skillLabel: 'Crystal Comet',
+        stunOnHit: 2.5,
+        collisionRadius: 25,
         angle
       });
-      target.stunTimer = 2.5;
-      applyDamageToChampion(u, target, ultDamage, false, '🏹 Crystal Comet');
-      showBanner(`🏹 CRYSTAL COMET!`, `${u.player.name} landed a cross-map crystal snipe!`, '🏹');
     } else if (u.champion.name === 'Kyumi') {
       target.charmTimer = 1.6;
       applyDamageToChampion(u, target, ultDamage, true, '💖 Spirit Rush');
@@ -2420,6 +2643,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       target.isAlive = false;
       target.deaths++;
       target.respawnTimer = calculateDeathTimer(target.level, matchTime);
+      target.comboStage = 0;
+      target.comboHitConfirmed = false;
       target.isRecalling = false;
       target.recallTimer = 0;
 
@@ -3499,6 +3724,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       ctx.translate(p.x, p.y);
       ctx.rotate(p.angle);
 
+      if (p.skillshot) {
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 20;
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = Math.max(4, p.size * 0.55);
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-30, 0);
+        ctx.lineTo(0, 0);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
       if (p.type === 'ult_arrow') {
         // Astra: Enchanted Crystal Comet (Global Ice Hawk)
         ctx.shadowColor = '#00f2ff';
@@ -3539,7 +3777,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.fill();
       } else if (p.type === 'shuriken') {
         // Zed / Kage: Razor Shuriken
-        ctx.shadowColor = '#ef4444';
+        ctx.shadowColor = p.color;
         ctx.shadowBlur = 14;
         const spin = time * 28;
         ctx.rotate(spin);
@@ -3552,7 +3790,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
         ctx.closePath();
         ctx.fill();
-        ctx.strokeStyle = '#ef4444';
+        ctx.strokeStyle = p.color;
         ctx.lineWidth = 2;
         ctx.stroke();
         ctx.fillStyle = '#ffffff';
@@ -3585,9 +3823,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.fill();
       } else if (p.type === 'nature_bolt') {
         // Furion / Tequoia: Wrath of Nature Solar Bolt
-        ctx.shadowColor = '#22c55e';
+        ctx.shadowColor = p.color;
         ctx.shadowBlur = 16;
-        ctx.fillStyle = '#4ade80';
+        ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(0, 0, 8, 0, Math.PI * 2);
         ctx.fill();
@@ -3598,15 +3836,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.stroke();
       } else if (p.type === 'boulder') {
         // Earth Spirit / Kaolin: Rolling Jade Boulder
-        ctx.shadowColor = '#10b981';
+        ctx.shadowColor = p.color;
         ctx.shadowBlur = 14;
         const spin = time * 8;
         ctx.rotate(spin);
-        ctx.fillStyle = '#059669';
+        ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(0, 0, 13, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#34d399';
+        ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2.5;
         ctx.stroke();
         ctx.fillStyle = '#064e3b';
@@ -3614,7 +3852,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.fillRect(2, 2, 5, 5);
       } else if (p.type === 'poison_dart') {
         // Dazzle / Zal: Shadow Dart
-        ctx.shadowColor = '#ec4899';
+        ctx.shadowColor = p.color;
         ctx.shadowBlur = 12;
         ctx.fillStyle = '#d946ef';
         ctx.beginPath();
@@ -3640,6 +3878,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.beginPath();
         ctx.ellipse(0, 0, 6, 4, 0, 0, Math.PI * 2);
         ctx.fill();
+      } else if (p.type === 'laser') {
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 20;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.moveTo(-24, 0); ctx.lineTo(18, 0); ctx.stroke();
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 12;
+        ctx.globalAlpha = 0.45;
+        ctx.beginPath(); ctx.moveTo(-30, 0); ctx.lineTo(20, 0); ctx.stroke();
+      } else if (p.type === 'pellet') {
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 16;
+        ctx.fillStyle = p.color;
+        ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-10, -7); ctx.lineTo(-5, 0); ctx.lineTo(-10, 7); ctx.closePath(); ctx.fill();
       } else if (p.type === 'arrow') {
         ctx.shadowColor = '#00f2ff';
         ctx.shadowBlur = 14;
@@ -3652,12 +3905,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.moveTo(14, 0); ctx.lineTo(6, -4); ctx.lineTo(6, 4); ctx.closePath();
         ctx.fill();
       } else if (p.type === 'orb') {
-        ctx.shadowColor = '#ec4899';
+        ctx.shadowColor = p.color;
         ctx.shadowBlur = 18;
         const orbGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 10);
         orbGrad.addColorStop(0, '#ffffff');
-        orbGrad.addColorStop(0.5, '#22d3ee');
-        orbGrad.addColorStop(1, '#ec4899');
+        orbGrad.addColorStop(0.5, p.color);
+        orbGrad.addColorStop(1, '#0f172a');
         ctx.fillStyle = orbGrad;
         ctx.beginPath();
         ctx.arc(0, 0, 9, 0, Math.PI * 2);
@@ -4175,9 +4428,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const barracksKinds = ['melee', 'ranged', 'catapult'] as const;
   const barracksIntact = (team: 'blue' | 'red', kind: typeof barracksKinds[number]) =>
     structuresRef.current.some(st => st.team === team && st.type === 'barracks' && st.barracksKind === kind && st.isAlive);
+  const deadChampions = champions.filter(c => !c.isAlive);
 
   return (
-    <div className="space-y-4 animate-fade-in max-w-[1600px] mx-auto">
+    <div ref={matchRootRef} className={`space-y-4 animate-fade-in max-w-[1600px] mx-auto ${isFullscreen ? 'fixed inset-0 z-[100] max-w-none w-screen h-screen overflow-y-auto bg-slate-950 p-3' : ''}`}>
       {/* ======================================================== */}
       {/* 1. TOP BROADCAST SCOREBOARD */}
       {/* ======================================================== */}
@@ -4236,6 +4490,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               </span>
             )}
           </div>
+          <button onClick={toggleFullscreen} className="mt-1 flex items-center gap-1 text-[10px] font-bold text-slate-300 hover:text-amber-300" aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'} aria-pressed={isFullscreen} title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}>
+            {isFullscreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
+            {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          </button>
         </div>
 
         {/* Red Squad Badge */}
@@ -4272,7 +4530,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       {/* ======================================================== */}
       {/* 2. THE EXPANDED ARENA CANVAS WITH DRAGON PIT & JUNGLE */}
       {/* ======================================================== */}
-      <div className="relative w-full rounded-3xl overflow-hidden border-4 border-slate-700 shadow-2xl bg-black">
+      <div className="relative w-full rounded-3xl overflow-hidden border-4 border-slate-700 shadow-2xl bg-black pt-[104px]">
+        <div className="absolute inset-x-0 top-0 h-[104px] bg-gradient-to-r from-slate-950 via-indigo-950/80 to-slate-950 border-b border-amber-500/25 pointer-events-none flex items-center px-5">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live kill feed</span>
+        </div>
         <canvas
           ref={canvasRef}
           width={ARENA_WIDTH}
@@ -4282,7 +4543,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
         {/* TOP KILL CALLOUT BANNER (ESPORTS BROADCAST ANNOUNCEMENT) */}
         {killCallout && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 pointer-events-none flex flex-col items-center animate-fade-in">
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 pointer-events-none flex flex-col items-center animate-fade-in">
             {/* Main Kill Card */}
             <div className="bg-slate-950/95 border-2 border-amber-400/90 shadow-[0_0_30px_rgba(251,191,36,0.5)] px-6 py-2.5 rounded-2xl flex items-center gap-4 backdrop-blur-md">
               {/* Killer Info */}
@@ -4329,7 +4590,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
         {/* Top-Right Flash Banner */}
         {activeBanner && (
-          <div className="absolute top-3 right-3 bg-slate-900/95 backdrop-blur-md border-2 border-amber-400/70 p-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-scale-up max-w-md">
+          <div className="absolute top-[112px] right-3 bg-slate-900/95 backdrop-blur-md border-2 border-amber-400/70 p-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-scale-up max-w-md">
             <div className="text-2xl">{activeBanner.icon}</div>
             <div>
               <div className="font-black text-amber-300 text-xs tracking-wider uppercase">{activeBanner.text}</div>
@@ -4339,7 +4600,18 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         )}
       </div>
 
+      <div className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 flex flex-wrap items-center gap-2 min-h-12" aria-live="polite" aria-label="Death timers">
+        <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 mr-1">Respawn timers</span>
+        {deadChampions.length === 0 && <span className="text-xs text-emerald-300">All champions alive</span>}
+        {deadChampions.map(u => <div key={u.id} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border text-xs font-bold ${u.team === 'blue' ? 'border-cyan-700 text-cyan-200' : 'border-rose-700 text-rose-200'}`}>
+          <ChibiAvatar avatarType={u.player.avatarSvg} size={24} />
+          <span>{u.player.name}</span>
+          <span className="font-mono text-amber-300">{Math.ceil(u.respawnTimer)}s</span>
+        </div>)}
+      </div>
+
       <div className="flex justify-end gap-2">
+        {fullscreenError && <span className="text-xs text-amber-300 self-center">Fullscreen unavailable in this browser</span>}
         <button onClick={() => setPaused(!paused)} className="p-2 bg-slate-800 text-white rounded-lg" aria-label={paused ? 'Resume match' : 'Pause match'}>
           {paused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
         </button>
@@ -4378,6 +4650,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                     <div className="text-xs font-bold text-white flex items-center gap-1.5">
                       <span>{u.player.name}</span>
                       <span className="text-[10px] text-cyan-300">({u.champion.name})</span>
+                      {u.comboMastered && <span className="text-[9px] bg-violet-500/20 text-violet-200 px-1 rounded font-bold" title={`${AVATAR_COMBOS[u.champion.name]?.name} learned`}>Combo: {AVATAR_COMBOS[u.champion.name]?.name}</span>}
+                      {!u.comboMastered && comboPracticeNeeded(u.player, u.champion.name) !== null && <span className="text-[9px] text-violet-300">Combo {u.comboPractice ?? 0}/{comboPracticeNeeded(u.player, u.champion.name)}</span>}
                       {u.level >= 6 && u.cdUlt <= 0 && u.mana >= 100 && (
                         <span className="text-[9px] bg-amber-500/20 text-amber-300 px-1 rounded font-bold">Ult Ready!</span>
                       )}
@@ -4449,6 +4723,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                   <div className="text-xs font-bold text-white flex items-center gap-1.5">
                     <span>{u.player.name}</span>
                     <span className="text-[10px] text-rose-300">({u.champion.name})</span>
+                    {u.comboMastered && <span className="text-[9px] bg-violet-500/20 text-violet-200 px-1 rounded font-bold" title={`${AVATAR_COMBOS[u.champion.name]?.name} learned`}>Combo: {AVATAR_COMBOS[u.champion.name]?.name}</span>}
+                    {!u.comboMastered && comboPracticeNeeded(u.player, u.champion.name) !== null && <span className="text-[9px] text-violet-300">Combo {u.comboPractice ?? 0}/{comboPracticeNeeded(u.player, u.champion.name)}</span>}
                     {u.level >= 6 && u.cdUlt <= 0 && u.mana >= 100 && (
                       <span className="text-[9px] bg-amber-500/20 text-amber-300 px-1 rounded font-bold">Ult Ready!</span>
                     )}

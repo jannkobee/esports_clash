@@ -230,6 +230,12 @@ export interface AramChampionUnit {
   // Autonomous retreat and recall
   isRecalling?: boolean;
   recallTimer?: number;
+  comboPractice?: number;
+  comboMastered?: boolean;
+  comboStage?: 0 | 1 | 2;
+  comboTargetId?: string;
+  comboExpiresAt?: number;
+  comboHitConfirmed?: boolean;
 }
 
 export interface HealthRelic {
