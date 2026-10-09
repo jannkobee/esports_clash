@@ -27,5 +27,12 @@ The links below identify the official champion or hero basis for each avatar. Th
 | Croakwell | [Largo](https://www.dota2.com/hero/largo) | Expanding beat rings and rising music notes |
 | Soulscourge | [Shadow Fiend](https://www.dota2.com/hero/shadowfiend) | Gathered soul lights released as radial lines |
 | Stonewake | [Earthshaker](https://www.dota2.com/hero/earthshaker) | Jagged faultline followed by an expanding quake |
+| Mirehook | [Pudge](https://www.dota2.com/hero/pudge) | A visible barbed chain, then a close capture ring |
+| Nullweaver | [Enigma](https://www.dota2.com/hero/enigma) | Inward orbiting lights collapsing toward a center |
+| Voltgrip | [Blitzcrank](https://www.leagueoflegends.com/en-us/champions/blitzcrank/) | Electric grapple path and charged fist burst |
+| Aetherbolt | [Ezreal](https://www.leagueoflegends.com/en-us/champions/ezreal/) | Narrow relic bolt and a broad crossing beam |
+| Corsara | [Miss Fortune](https://www.leagueoflegends.com/en-us/champions/miss-fortune/) | Spreading pistol trails and a wide broadside cone |
+| Brewmaw | [Gragas](https://www.leagueoflegends.com/en-us/champions/gragas/) | Flying cask, circular splash, and scattered impact |
+| Wraithhook | [Thresh](https://www.leagueoflegends.com/en-us/champions/thresh/) | Spectral chain, lantern lights, and a prison ring |
 
 The source pages describe abilities and show their themes; these entries are design translations for this game's overhead canvas view. Skill one, skill two, and ultimate use the same avatar motif with slot-specific detail where needed. Ultimate effects linger longer and cover more of the fight. The research sources are reference only and do not supply assets to the game.

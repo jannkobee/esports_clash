@@ -1,6 +1,6 @@
-import { ItemDef, CombatRole } from './types';
+import type { ItemDef, CombatRole } from './types';
 
-export const ALL_ITEMS: ItemDef[] = [
+export const ALL_ITEMS: ItemDef[] = ([
   // ==========================================
   // STARTING ITEMS (Cost: 500g)
   // ==========================================
@@ -140,31 +140,64 @@ export const ALL_ITEMS: ItemDef[] = [
     passiveDesc: '+25 AD and +10 Ability Haste.',
     suitableRoles: ['Fighter', 'Assassin', 'Marksman']
   },
+  {
+    id: 'item_last_whisper',
+    name: 'Last Whisper',
+    cost: 1450,
+    tier: 'Component',
+    icon: '🏹',
+    stats: { ad: 20, armorPen: 18 },
+    passiveName: 'Armor Piercing',
+    passiveDesc: 'Ignores 18% of target Armor.',
+    suitableRoles: ['Marksman', 'Assassin', 'Fighter']
+  },
+  {
+    id: 'item_noonquiver',
+    name: 'Noonquiver',
+    cost: 1300,
+    tier: 'Component',
+    icon: '🎯',
+    stats: { ad: 30, aspd: 0.20 },
+    passiveName: 'Precision Fire',
+    passiveDesc: '+30 AD and +20% Attack Speed rapid firing.',
+    suitableRoles: ['Marksman']
+  },
 
   // ==========================================
   // BOT / CARRY & AD LEGENDARY ITEMS
   // ==========================================
   {
     id: 'item_infinity_edge',
-    name: 'Edge of Infinity',
+    name: 'Infinity Edge',
     cost: 3400,
     tier: 'Mythic',
     icon: '🗡️',
-    stats: { ad: 75, crit: 25 },
+    stats: { ad: 80, crit: 25 },
     passiveName: 'Perfection',
-    passiveDesc: 'Increases Critical Strike damage from 175% to 215%. Massive DPS spike!',
+    passiveDesc: 'Increases Critical Strike damage from 175% to 225%. Massive DPS hypercarry spike!',
     suitableRoles: ['Marksman', 'Assassin']
   },
   {
     id: 'item_kraken_slayer',
-    name: 'Leviathan Harpoon',
-    cost: 3100,
+    name: 'Kraken Slayer',
+    cost: 3000,
     tier: 'Legendary',
     icon: '🔱',
-    stats: { ad: 45, aspd: 0.35 },
+    stats: { ad: 45, aspd: 0.40, moveSpeed: 4 },
     passiveName: 'Bring It Down',
-    passiveDesc: 'Every third basic attack unleashes 160 True Damage piercing all armor.',
+    passiveDesc: 'Every third Attack deals bonus physical damage On-Hit, increased based on their missing Health.',
     suitableRoles: ['Marksman', 'Fighter']
+  },
+  {
+    id: 'item_ldr',
+    name: "Lord Dominik's Regards",
+    cost: 3000,
+    tier: 'Legendary',
+    icon: '🏹',
+    stats: { ad: 45, crit: 25, armorPen: 35 },
+    passiveName: 'Giant Slayer',
+    passiveDesc: 'Ignores 35% of target Armor and deals up to +22% bonus damage against high-health tanks.',
+    suitableRoles: ['Marksman', 'Assassin']
   },
   {
     id: 'item_bork',
@@ -172,10 +205,54 @@ export const ALL_ITEMS: ItemDef[] = [
     cost: 3200,
     tier: 'Legendary',
     icon: '🗡️',
-    stats: { ad: 40, aspd: 0.25 },
+    stats: { ad: 40, aspd: 0.25, lifesteal: 10 },
     passiveName: "Mist's Edge",
-    passiveDesc: 'Basic attacks deal 9% of the target’s current HP as bonus physical damage.',
+    passiveDesc: 'Basic attacks deal 9% of the target’s current HP as bonus physical damage on-hit.',
     suitableRoles: ['Marksman', 'Fighter', 'Assassin']
+  },
+  {
+    id: 'item_mortal_reminder',
+    name: 'Mortal Reminder',
+    cost: 3000,
+    tier: 'Legendary',
+    icon: '⚔️',
+    stats: { ad: 40, crit: 25, armorPen: 30 },
+    passiveName: 'Grievous Execution',
+    passiveDesc: 'Ignores 30% Armor and applies Grievous Wounds, cutting enemy healing and shields by 40%.',
+    suitableRoles: ['Marksman', 'Fighter']
+  },
+  {
+    id: 'item_phantom_dancer',
+    name: 'Phantom Dancer',
+    cost: 2600,
+    tier: 'Legendary',
+    icon: '💃',
+    stats: { ad: 35, aspd: 0.60, crit: 25, moveSpeed: 7 },
+    passiveName: 'Spectral Waltz',
+    passiveDesc: 'Grants massive attack speed and ghosting for relentless kiting mobility.',
+    suitableRoles: ['Marksman']
+  },
+  {
+    id: 'item_runaans',
+    name: "Runaan's Hurricane",
+    cost: 2600,
+    tier: 'Legendary',
+    icon: '🌪️',
+    stats: { aspd: 0.40, crit: 25, moveSpeed: 4 },
+    passiveName: "Wind's Fury",
+    passiveDesc: 'Basic attacks fire secondary bolts at up to 2 nearby enemies for 40% damage with on-hit effects.',
+    suitableRoles: ['Marksman']
+  },
+  {
+    id: 'item_terminus',
+    name: 'Terminus',
+    cost: 3000,
+    tier: 'Legendary',
+    icon: '⚖️',
+    stats: { ad: 35, aspd: 0.30, armorPen: 30 },
+    passiveName: 'Shadow & Light',
+    passiveDesc: 'Alternating attacks shred 30% enemy Armor & MR while granting +25 bonus defensive resistances.',
+    suitableRoles: ['Marksman', 'Fighter']
   },
   {
     id: 'item_collector',
@@ -295,7 +372,17 @@ export const ALL_ITEMS: ItemDef[] = [
     passiveDesc: 'Increases all incoming heals and shields by +25%.',
     suitableRoles: ['Tank', 'Support', 'Fighter']
   }
-];
+] as ItemDef[]).map(item => item.tier === 'Legendary' || item.tier === 'Mythic'
+  ? { ...item, cost: Math.round(item.cost * 0.65 / 25) * 25 }
+  : item);
+
+// Boots occupy their own slot and do not displace a completed combat item.
+export const BOOTS: ItemDef = {
+  id: 'item_pathfinder_boots', name: 'Pathfinder Boots', cost: 450, tier: 'Component', icon: '👢',
+  stats: { moveSpeed: 20 }, passiveName: 'Swift Step',
+  passiveDesc: 'Move faster between waves and objectives.',
+  suitableRoles: ['Tank', 'Mage', 'Marksman', 'Support', 'Fighter', 'Assassin']
+};
 
 // Helper: Recommend next item to buy given a champion's role and existing items
 export function getRecommendedItem(role: CombatRole, existingItemIds: string[], gold: number, champName?: string): ItemDef | null {
@@ -304,12 +391,12 @@ export function getRecommendedItem(role: CombatRole, existingItemIds: string[], 
   // Derive target archetype from champName if provided
   let effectiveRole = role;
   if (champName) {
-    if (champName === 'Astra' || champName === 'Cora' || champName === 'Kindra' || champName === 'Solenne') effectiveRole = 'Marksman';
-    else if (champName === 'Kyumi' || champName === 'Raijin' || champName === 'Tequoia') effectiveRole = 'Mage';
-    else if (champName === 'Solana' || champName === 'Kaolin') effectiveRole = 'Tank';
-    else if (champName === 'Zal' || champName === 'Renn') effectiveRole = 'Support';
+    if (champName === 'Astra' || champName === 'Cora' || champName === 'Kindra' || champName === 'Kindra & Grim' || champName === 'Solenne') effectiveRole = 'Marksman';
+    else if (champName === 'Kyumi' || champName === 'Raijin' || champName === 'Tequoia' || champName === 'Soulscourge') effectiveRole = 'Mage';
+    else if (champName === 'Solana' || champName === 'Kaolin' || champName === 'Stonewake') effectiveRole = 'Tank';
+    else if (champName === 'Zal' || champName === 'Renn' || champName === 'Croakwell') effectiveRole = 'Support';
     else if (champName === 'Buck' || champName === 'Valkira' || champName === 'Kazemaru' || champName === 'Sylla' || champName === 'Xin') effectiveRole = 'Fighter';
-    else if (champName === 'Kage' || champName === 'Inai') effectiveRole = 'Assassin';
+    else if (champName === 'Kage' || champName === 'Inai' || champName === 'Cinderlock' || champName === 'Veyara') effectiveRole = 'Assassin';
   }
 
   // 1. If no items yet, pick suitable starting item

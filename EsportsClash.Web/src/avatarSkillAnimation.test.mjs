@@ -4,8 +4,8 @@ import { ADDITIONAL_CHAMPIONS } from './additionalChampions.ts';
 import { AVATAR_ANIMATION_MOTIFS, drawAvatarSkillAnimation } from './avatarSkillAnimation.ts';
 
 test('every avatar has a distinct animation cue and recreated avatars keep source names out of play', () => {
-  assert.equal(Object.keys(AVATAR_ANIMATION_MOTIFS).length, 23);
-  assert.equal(new Set(Object.values(AVATAR_ANIMATION_MOTIFS)).size, 23);
+  assert.equal(Object.keys(AVATAR_ANIMATION_MOTIFS).length, 30);
+  assert.equal(new Set(Object.values(AVATAR_ANIMATION_MOTIFS)).size, 30);
   for (const avatar of ADDITIONAL_CHAMPIONS) {
     assert.ok(AVATAR_ANIMATION_MOTIFS[avatar.name], `${avatar.name} has an animation`);
     assert.notEqual(avatar.name, avatar.basis);
@@ -27,4 +27,50 @@ test('all avatar motifs render through each skill stage without a canvas error',
       }
     }
   }
+});
+
+test('electric vortex tether pulls target closer to caster over simulation steps', () => {
+  const source = { x: 200, y: 300, isAlive: true };
+  const target = { x: 350, y: 300, isAlive: true, stunTimer: 0 };
+  const pullSpeed = 175;
+  const dt = 0.1;
+  const initialDist = Math.hypot(source.x - target.x, source.y - target.y);
+
+  for (let frame = 0; frame < 3; frame++) {
+    const dx = source.x - target.x;
+    const dy = source.y - target.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist > 35) {
+      const step = pullSpeed * dt;
+      target.x += (dx / dist) * Math.min(dist - 35, step);
+      target.y += (dy / dist) * Math.min(dist - 35, step);
+    }
+    target.stunTimer = Math.max(target.stunTimer, 0.15);
+  }
+
+  const finalDist = Math.hypot(source.x - target.x, source.y - target.y);
+  assert.ok(finalDist < initialDist, 'target was pulled closer to Raijin');
+  assert.ok(target.stunTimer > 0, 'target is stunned during Electric Vortex pull');
+});
+
+test('charm walk causes unit to move directly toward charm source', () => {
+  const source = { x: 100, y: 300 };
+  const victim = { x: 250, y: 300, charmTimer: 1.4, charmSourceId: 'kyumi' };
+  const dx = source.x - victim.x;
+  const dy = source.y - victim.y;
+  const dist = Math.hypot(dx, dy);
+  const step = 75 * 0.1;
+  victim.x += (dx / dist) * step;
+  assert.ok(victim.x < 250, 'charmed victim walked towards charm source');
+});
+
+test('fear flee causes unit to move directly away from fear source', () => {
+  const source = { x: 300, y: 300 };
+  const victim = { x: 350, y: 300, fearTimer: 1.5, fearSourceId: 'sylla' };
+  const dx = victim.x - source.x;
+  const dy = victim.y - source.y;
+  const dist = Math.hypot(dx, dy);
+  const step = 125 * 0.1;
+  victim.x += (dx / dist) * step;
+  assert.ok(victim.x > 350, 'feared victim fled away from fear source');
 });

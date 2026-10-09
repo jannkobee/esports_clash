@@ -27,6 +27,8 @@ A mobile esports management simulation combining the tactical depth of **Teamfig
    - Matches are autonomous: each player's IQ drives target selection, retreats, objective calls, and skill timing; TF influences teamfight execution and LAN helps skillshot dodges. Higher IQ improves decisions without guaranteeing perfect play.
    - The expanded bridge separates the turrets and home wells. Six destructible barracks (Melee, Ranged, and Catapult on each side) upgrade matching enemy creeps when destroyed; catapult barracks also enable a catapult every wave.
    - Jungle camps retaliate when attacked. Embermaw, the Ancient Dragon, guards the upper pit and grants a team Aegis when slain. Skill 1, Skill 2, and ultimates have visible cast effects.
+   - Gravemarch, the lower golem objective, adds a siege golem to the winning team's waves. Blue and red crest camps grant temporary team buffs. Bush wards are free, while boots use a dedicated item slot.
+   - Objective calls require lane priority, vision, healthy allies, and enough team and coach macro rating. Playback speed only changes how quickly simulation time passes. See [arena mechanics](docs/arena-mechanics.md) for regression rules.
    - **5 Initial Champions:**
      - 🛡️ **Solana, the Sun Vanguard** *(Leona)*: Solar CC tank, Sunlight Marks, *Daybreak Flare* AOE stun.
      - 🏹 **Astra, the Frost Sovereign** *(Ashe)*: Frost slows, *Frost Flurry* rapid fire, *Enchanted Crystal Comet* global stun.

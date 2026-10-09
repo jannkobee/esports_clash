@@ -426,6 +426,7 @@ export function App() {
                 blueLineup={draftedBlue}
                 redLineup={draftedRed}
                 blueCoach={currentCoach}
+                opponentName="Rival Chibi Squad"
                 onMatchComplete={handleMatchComplete}
               />
             )}

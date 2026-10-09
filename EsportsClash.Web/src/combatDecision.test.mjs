@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chooseTeamfightTarget, shouldContestBoss, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from './combatDecision.ts';
+import { chooseTeamfightTarget, isUnitVisibleTo, shouldContestBoss, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from './combatDecision.ts';
 
 function fighter(id, iq, x = 0, hp = 100, role = 'Mage') {
   return {
@@ -57,4 +57,37 @@ test('boss contest requires sufficient IQ, health, and nearby teammates', () => 
   assert.equal(shouldContestBoss(high, allies, [], 1, 30), false);
   assert.equal(shouldContestBoss(fighter('low', 40), allies, [], 0.4, 100), false);
   assert.equal(shouldContestBoss(high, [high], [], 0.7, 100), false);
+});
+
+test('bush concealment hides targets from outside observers unless revealed, face-checked, or sharing bush', () => {
+  const observer = fighter('observer', 70, 100);
+  const target = fighter('target', 70, 200);
+  target.isInBush = true;
+  target.currentBushId = 'bush_mid_north';
+
+  // 1. Outside observer at 100px distance cannot see target in bush
+  assert.equal(isUnitVisibleTo(target, observer), false);
+  // chooseTeamfightTarget will not acquire hidden target
+  assert.equal(chooseTeamfightTarget(observer, [target], [], 250), undefined);
+
+  // 2. Observer sharing the same bush can see target
+  observer.isInBush = true;
+  observer.currentBushId = 'bush_mid_north';
+  assert.equal(isUnitVisibleTo(target, observer), true);
+
+  // 3. Observer in a different bush cannot see target
+  observer.currentBushId = 'bush_mid_south';
+  assert.equal(isUnitVisibleTo(target, observer), false);
+
+  // 4. Face check within 55px reveals target
+  observer.isInBush = false;
+  observer.currentBushId = undefined;
+  observer.x = 160; // distance 40px <= 55px
+  assert.equal(isUnitVisibleTo(target, observer), true);
+
+  // 5. Revealed timer (recent attack or spell cast) reveals target even at range
+  observer.x = 0; // distance 200px > 55px
+  target.revealedTimer = 1.8;
+  assert.equal(isUnitVisibleTo(target, observer), true);
+  assert.equal(chooseTeamfightTarget(observer, [target], [], 250)?.id, 'target');
 });

@@ -13,11 +13,13 @@ export interface FighterVisualState {
   isStunned: boolean;
   isCharmed: boolean;
   isFeared?: boolean;
+  isKnockedUp?: boolean;
+  knockupHeight?: number;
   isInBush: boolean;
 }
 
 export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: FighterVisualState) {
-  const { championName, x, y, facing, animState, animTime, team, isStunned, isCharmed, isFeared, isInBush } = state;
+  const { championName, x, y, facing, animState, animTime, team, isStunned, isCharmed, isFeared, isKnockedUp, knockupHeight = 0, isInBush } = state;
 
   ctx.save();
   ctx.translate(x, y);
@@ -48,7 +50,7 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
   ctx.ellipse(0, 4, 19, 7.5, 0, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.translate(attackRecoil, -bob);
+  ctx.translate(attackRecoil, -bob - knockupHeight);
 
   switch (championName) {
     case 'Solana':
@@ -104,6 +106,7 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
       drawChibiInai(ctx, animState, animTime);
       break;
     case 'Veyara': case 'Cinderlock': case 'Solenne': case 'Croakwell': case 'Soulscourge': case 'Stonewake':
+    case 'Mirehook': case 'Nullweaver': case 'Voltgrip': case 'Aetherbolt': case 'Corsara': case 'Brewmaw': case 'Wraithhook':
       drawNewChampionSprite(ctx, championName, animState, animTime);
       break;
     default:
@@ -114,12 +117,19 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
   ctx.restore();
 
   // Status Overlays
-  if (isFeared) {
+  if (isKnockedUp) {
+    ctx.save();
+    ctx.fillStyle = '#67e8f9';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🌪️ AIRBORNE', x, y - 56 - knockupHeight);
+    ctx.restore();
+  } else if (isFeared) {
     ctx.save();
     ctx.fillStyle = '#fda4af';
     ctx.font = 'bold 11px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('FEARED', x, y - 50);
+    ctx.fillText('💀 FEARED', x, y - 50);
     ctx.restore();
   } else if (isStunned) {
     ctx.save();
@@ -134,6 +144,13 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
     ctx.font = 'bold 11px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('💖 CHARMED', x, y - 50);
+    ctx.restore();
+  } else if (isInBush) {
+    ctx.save();
+    ctx.fillStyle = '#86efac';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🌿 HIDDEN', x, y - 50);
     ctx.restore();
   }
 }
@@ -1896,6 +1913,10 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
     Veyara: ['#0f766e', '#fde047'], Cinderlock: ['#7c2d12', '#fb923c'],
     Solenne: ['#0f766e', '#f8fafc'], Croakwell: ['#65a30d', '#facc15'],
     'Soulscourge': ['#450a0a', '#fb7185'], Stonewake: ['#92400e', '#fcd34d'],
+    Mirehook: ['#36513e', '#b5d36b'], Nullweaver: ['#34205f', '#a78bfa'],
+    Voltgrip: ['#70591d', '#fde047'], Aetherbolt: ['#14527b', '#67e8f9'],
+    Corsara: ['#7f1d35', '#fb7185'], Brewmaw: ['#693916', '#f59e0b'],
+    Wraithhook: ['#155e58', '#5eead4'],
   };
   const [body, glow] = colors[name];
   const casting = animState === 'cast' || animState === 'attack';
@@ -1934,6 +1955,25 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
     ctx.beginPath(); ctx.moveTo(-11, -41); ctx.lineTo(-17, -55); ctx.lineTo(-2, -44);
     ctx.moveTo(11, -41); ctx.lineTo(17, -55); ctx.lineTo(2, -44); ctx.stroke();
     ctx.beginPath(); ctx.arc(20, -16, 6 + pulse, 0, Math.PI * 2); ctx.fill();
+  } else if (name === 'Mirehook' || name === 'Wraithhook') {
+    ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(10, -24); ctx.lineTo(29 + pulse, -21);
+    ctx.lineTo(34 + pulse, -8); ctx.arc(29 + pulse, -7, 5, 0, Math.PI); ctx.stroke();
+    if (name === 'Wraithhook') { ctx.fillRect(-28, -22, 12, 16); ctx.strokeRect(-29, -23, 14, 18); }
+  } else if (name === 'Nullweaver') {
+    ctx.beginPath(); ctx.arc(21, -23, 10 + pulse, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(21, -23, 4, 0, Math.PI * 2); ctx.fill();
+  } else if (name === 'Voltgrip') {
+    ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(10, -22); ctx.lineTo(31 + pulse, -18); ctx.stroke();
+    ctx.lineWidth = 3; ctx.strokeRect(26 + pulse, -24, 16, 12);
+  } else if (name === 'Aetherbolt') {
+    ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(10, -22); ctx.lineTo(31 + pulse, -29); ctx.stroke();
+    ctx.beginPath(); ctx.arc(32 + pulse, -29, 5, 0, Math.PI * 2); ctx.fill();
+  } else if (name === 'Corsara') {
+    ctx.fillRect(-26, -24, 19, 5); ctx.fillRect(9, -24, 20, 5);
+    ctx.fillRect(-22, -19, 4, 8); ctx.fillRect(22, -19, 4, 8);
+  } else if (name === 'Brewmaw') {
+    ctx.fillStyle = '#a16207'; ctx.beginPath(); ctx.ellipse(25, -16, 14, 18, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#fbbf24'; ctx.strokeRect(14, -25, 22, 18);
   } else {
     ctx.lineWidth = 7;
     ctx.beginPath(); ctx.moveTo(13, -21); ctx.lineTo(25, -49); ctx.stroke();
@@ -1979,6 +2019,10 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
         ctx.lineTo(i * 15 + Math.sin(phase + i) * 4, 11);
         ctx.lineTo(i * 20, 16); ctx.stroke();
       }
+    } else {
+      ctx.strokeStyle = glow;
+      ctx.beginPath(); ctx.arc(0, -22, 24 + Math.sin(phase) * 3, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(12, -20); ctx.lineTo(34 + Math.sin(phase) * 9, -22); ctx.stroke();
     }
   }
   ctx.restore();

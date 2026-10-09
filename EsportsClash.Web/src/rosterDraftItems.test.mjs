@@ -42,5 +42,6 @@ test('research pool has 50 distinct inspirations and all requested avatars', () 
   assert.equal(RESEARCHED_PLAYERS.length, 50);
   assert.equal(new Set(RESEARCHED_PLAYERS.map(p => p[0])).size, 50);
   assert.ok(RESEARCHED_PLAYERS.some(p => p[1] === 'Cardrel' && p[0] === 'Caedrel'));
-  assert.deepEqual(ADDITIONAL_CHAMPIONS.map(c => c.name), ['Veyara', 'Cinderlock', 'Solenne', 'Croakwell', 'Soulscourge', 'Stonewake']);
+  assert.deepEqual(ADDITIONAL_CHAMPIONS.map(c => c.name), ['Veyara', 'Cinderlock', 'Solenne', 'Croakwell', 'Soulscourge', 'Stonewake',
+    'Mirehook', 'Nullweaver', 'Voltgrip', 'Aetherbolt', 'Corsara', 'Brewmaw', 'Wraithhook']);
 });

@@ -1,6 +1,6 @@
-import { ChampionKit, CoachCard, EvolutionPlan, Facility, PlayerCard } from './types';
-import { createResearchedCards } from './rosterResearch';
-import { ADDITIONAL_CHAMPIONS } from './additionalChampions';
+import type { ChampionKit, CoachCard, EvolutionPlan, Facility, PlayerCard } from './types';
+import { createResearchedCards } from './rosterResearch.ts';
+import { ADDITIONAL_CHAMPIONS } from './additionalChampions.ts';
 
 const BASE_PLAYERS: PlayerCard[] = [
   // === STARTING FIVE (TOP, JUNGLE, MID, BOT, SUPPORT) ===
@@ -599,16 +599,16 @@ export const CHAMPIONS: ChampionKit[] = [
     primaryRole: 'Fighter',
     secondaryRole: 'Marksman',
     archetype: 'Summoner Bruiser',
-    hp: 1050,
+    hp: 880,
     ad: 70,
-    armor: 44,
-    mr: 38,
+    armor: 36,
+    mr: 34,
     aspd: 0.72,
     range: 4.5,
     passiveDesc: 'Entangling Claws: Attacks have a 20% chance to summon emerald roots holding the target immobile for 1.5s.',
     skill1: { name: 'Summon Spirit Bear', desc: 'Summons an armored Spirit Bear companion (1800 HP) that charges and brawls alongside him.', cooldown: 18, damage: 130, damageType: 'Physical' },
     skill2: { name: 'Savage Roar', desc: 'Sylla and his bear unleash an emerald sonic roar, terrifying nearby enemies to flee for 1.3s.', cooldown: 12, damage: 80, damageType: 'Magic' },
-    ultimate: { name: 'True Form', desc: 'Transforms into a gargantuan Ironclaw Bear, gaining +600 Max HP, +35 Armor, and cleaving melee sweeps.', cooldown: 70, damage: 340, damageType: 'Physical', isUlt: true },
+    ultimate: { name: 'True Form', desc: 'Transforms into a gargantuan Ironclaw Bear, gaining +450 Shield, +20 Armor, and cleaving melee sweeps for 12s.', cooldown: 70, damage: 340, damageType: 'Physical', isUlt: true },
     primaryColor: '#15803d',
     accentColor: '#166534'
   },

@@ -9,17 +9,24 @@ import {
   LaneStructure, 
   PlayerCard 
 } from '../types';
-import { ALL_ITEMS, getRecommendedItem } from '../itemsData';
+import { ALL_ITEMS, BOOTS, getRecommendedItem } from '../itemsData';
 import { getItemPurchasePlan } from '../itemStrategy';
 import { aimAtCast, dodgeProbability, segmentHitsCircle } from '../skillshotRules';
 import { AVATAR_COMBOS, comboPracticeNeeded } from '../avatarCombos';
+import { getTeamKillScore, getTeamTotalGold, getTowersAliveCount, getTeamNames } from '../scoreboardRules';
+import { nextMultikillCount } from '../multikillRules';
+import { shouldStartEpicObjective } from '../objectiveRules';
+import { stepLeashedMonster } from '../neutralAggroRules';
+import { advanceSimulationClock } from '../simulationClock';
+import { passiveGoldPerSecond } from '../economyRules';
 import { drawChampionSprite } from './ChampionSpriteRenderer';
 import { drawAvatarSkillAnimation, type SkillSlot } from '../avatarSkillAnimation';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
-import { chooseTeamfightTarget, shouldContestBoss, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from '../combatDecision';
-import { ARENA_WIDTH, BARRACKS_X, DRAGON_X, LANE_Y, NEXUS_X, WELL_X, isMinionEmpowered, waveStats } from '../arenaRules';
-import confetti from 'canvas-confetti';
+import { chooseTeamfightTarget, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from '../combatDecision';
+import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from '../skillRangeRules';
+import { ARENA_WIDTH, BARRACKS_X, DRAGON_X, LANE_Y, NEXUS_X, WELL_X, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall } from '../arenaRules';
+import { getMinionCrashMultiplier, getMinionStructureDamage, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
 import { 
   Play, 
   Pause, 
@@ -72,10 +79,7 @@ interface Projectile {
 
 interface SpellAOE {
   id: string;
-  type: 'solar_flare' | 'smoke_screen' | 'chain_whirl' | 'charm_heart' | 'boss_slam' | 'aegis_aura'
-    | 'skill_burst' | 'ultimate_burst'
-    | 'wind_wall' | 'death_mark' | 'lambs_respite' | 'shallow_grave' | 'sprout_ring' | 'sleight_circle'
-    | 'ball_lightning' | 'magnetize_pulse' | 'grand_entrance' | 'static_remnant' | 'spirit_bear' | 'savage_roar';
+  type: string;
   x: number;
   y: number;
   radius: number;
@@ -104,7 +108,7 @@ interface FloatingText {
 interface MatchEvent {
   id: string;
   text: string;
-  type: 'kill' | 'tower' | 'item' | 'level' | 'combo' | 'micro' | 'fountain' | 'dragon' | 'jungle';
+  type: 'kill' | 'execution' | 'tower' | 'item' | 'level' | 'combo' | 'micro' | 'fountain' | 'dragon' | 'jungle';
   time: string;
 }
 
@@ -122,9 +126,11 @@ interface ItemMilestone {
 interface JungleCamp {
   id: string;
   name: string;
-  type: 'golem' | 'wolves' | 'behemoth' | 'drakes';
+  type: 'golem' | 'wolves' | 'behemoth' | 'drakes' | 'blue_buff' | 'red_buff' | 'siege_golem';
   x: number;
   y: number;
+  homeX?: number;
+  homeY?: number;
   hp: number;
   maxHp: number;
   ad: number;
@@ -154,12 +160,17 @@ interface DragonBoss {
   spawnTimer: number;
   slayerTeam: 'blue' | 'red' | null;
   slainCount: number;
+  aggroTeam?: 'blue' | 'red' | null;
+  targetId?: string;
 }
 
 interface AegisBuff {
   team: 'blue' | 'red';
   expiresAt: number;
   adBonus: number;
+  apBonus: number;
+  siegeMultiplier: number;
+  burnTrueDamage: boolean;
 }
 
 export interface KillCallout {
@@ -182,6 +193,9 @@ interface AramMatchViewProps {
   redLineup: { player: PlayerCard; champion: ChampionKit }[];
   blueCoach?: CoachCard;
   redCoach?: CoachCard;
+  blueTeamName?: string;
+  redTeamName?: string;
+  opponentName?: string;
   onMatchComplete: (winner: 'blue' | 'red', mvp: any, stats: any[]) => void;
 }
 
@@ -211,6 +225,13 @@ function getXpThreshold(lvl: number): number {
 function getChampionAttackRange(champName: string): number {
   switch (champName) {
     case 'Solenne': return 205;
+    case 'Aetherbolt': return 205;
+    case 'Corsara': return 190;
+    case 'Nullweaver': return 175;
+    case 'Wraithhook': return 140;
+    case 'Voltgrip': return 62;
+    case 'Mirehook': return 58;
+    case 'Brewmaw': return 60;
     case 'Soulscourge': return 180;
     case 'Cinderlock': return 125;
     case 'Croakwell': return 65;
@@ -236,25 +257,10 @@ function getChampionAttackRange(champName: string): number {
   }
 }
 
-const FIRST_SKILLSHOTS: Record<string, Partial<Projectile>> = {
-  Kyumi: { type: 'orb', speed: 390, size: 9, trueDamage: true },
-  Buck: { type: 'pellet', speed: 420, size: 9, splashRadius: 55 },
-  Kage: { type: 'shuriken', speed: 510, size: 8 },
-  Kazemaru: { type: 'tornado', speed: 370, size: 14, stunOnHit: 1.5, collisionRadius: 23 },
-  Kindra: { type: 'spirit_arrow', speed: 480, size: 7 },
-  Cora: { type: 'feather', speed: 470, size: 7 },
-  Tequoia: { type: 'nature_bolt', speed: 380, size: 10, stunOnHit: 1.3 },
-  Zal: { type: 'poison_dart', speed: 450, size: 7 },
-  Xin: { type: 'pellet', speed: 420, size: 8, stunOnHit: 1.2 },
-  Kaolin: { type: 'boulder', speed: 380, size: 14, stunOnHit: 1.5, collisionRadius: 23 },
-  Inai: { type: 'orb', speed: 400, size: 10, stunOnHit: 1.2 },
-  Veyara: { type: 'shuriken', speed: 480, size: 9, stunOnHit: 0.8 },
-  Cinderlock: { type: 'pellet', speed: 460, size: 8, splashRadius: 55 },
-  Solenne: { type: 'laser', speed: 550, size: 9, healAlliesOnHit: 110 },
-  Croakwell: { type: 'nature_bolt', speed: 360, size: 10, stunOnHit: 0.7, pullOnHit: 35 },
-  'Soulscourge': { type: 'orb', speed: 420, size: 11, splashRadius: 60 },
-  Stonewake: { type: 'boulder', speed: 350, size: 15, stunOnHit: 1.4, splashRadius: 65, collisionRadius: 26 },
-};
+const PROJECTILE_SKILL1_CHAMPIONS = new Set([
+  'Astra', 'Kyumi', 'Kage', 'Kazemaru', 'Kindra', 'Kindra & Grim', 'Cora', 'Kaolin', 'Veyara', 'Cinderlock',
+  'Mirehook', 'Nullweaver', 'Voltgrip', 'Aetherbolt', 'Corsara', 'Brewmaw', 'Wraithhook'
+]);
 
 function getChampionFormationY(champName: string, idx: number): number {
   switch (champName) {
@@ -293,15 +299,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   blueLineup,
   redLineup,
   blueCoach,
+  redCoach,
+  blueTeamName,
+  redTeamName,
+  opponentName,
   onMatchComplete
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fogCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const matchRootRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenError, setFullscreenError] = useState(false);
   const [speed, setSpeed] = useState<number>(1);
   const [paused, setPaused] = useState<boolean>(false);
   const [matchTime, setMatchTime] = useState<number>(0);
+  const matchTimeRef = useRef(0);
   const [matchOver, setMatchOver] = useState<boolean>(false);
 
   useEffect(() => {
@@ -320,18 +332,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
   };
 
-  // Scoreboard Stats
-  const [blueKills, setBlueKills] = useState<number>(0);
-  const [redKills, setRedKills] = useState<number>(0);
-  const [blueGold, setBlueGold] = useState<number>(7000);
-  const [redGold, setRedGold] = useState<number>(7000);
-  const [blueTowersAlive, setBlueTowersAlive] = useState<number>(3);
-  const [redTowersAlive, setRedTowersAlive] = useState<number>(3);
-
   // Event feed & Power Spike banners
   const [eventFeed, setEventFeed] = useState<MatchEvent[]>([]);
   const [activeBanner, setActiveBanner] = useState<{ text: string; subtext: string; icon: string } | null>(null);
   const [killCallout, setKillCallout] = useState<KillCallout | null>(null);
+  const [recentKills, setRecentKills] = useState<KillCallout[]>([]);
   const [itemMilestones, setItemMilestones] = useState<ItemMilestone[]>([]);
 
   // Multikill & First Blood Tracking Refs
@@ -345,6 +350,23 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   // Units State for UI bottom bar
   const [champions, setChampions] = useState<AramChampionUnit[]>([]);
 
+  // In-Game Squad HUD view mode: 'expanded' (tactical overlay) | 'compact' (broadcast strip) | 'docked' (docked in arena) | 'hidden' (minimized)
+  const [hudMode, setHudMode] = useState<'docked' | 'hidden'>('docked');
+
+  // Universal hotkey: Tab toggles in-game scoreboard HUD
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Tab') {
+        const target = e.target as HTMLElement | null;
+        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+        e.preventDefault();
+        setHudMode((prev) => (prev === 'hidden' ? 'docked' : 'hidden'));
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Simulation Refs
   const championsRef = useRef<AramChampionUnit[]>([]);
   const minionsRef = useRef<LaneMinion[]>([]);
@@ -355,17 +377,22 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const floatsRef = useRef<FloatingText[]>([]);
   const waveTimerRef = useRef<number>(2.0);
   const waveCountRef = useRef<number>(0);
+  const wardsRef = useRef<{ id: string; team: 'blue' | 'red'; bushId: string; x: number; y: number; expiresAt: number }[]>([]);
+  const siegeGolemUntilRef = useRef<{ team: 'blue' | 'red'; expiresAt: number } | null>(null);
+  const jungleBuffsRef = useRef<{ blue: { blue: number; red: number }; red: { blue: number; red: number } }>({
+    blue: { blue: 0, red: 0 }, red: { blue: 0, red: 0 }
+  });
 
-  // Epic Dragon Boss Ref
+  // Epic Dragon Boss Ref (Contestable objective that unlocks decisive game-ending buffs)
   const dragonRef = useRef<DragonBoss>({
     id: 'dragon_boss',
     name: 'Embermaw, the Ancient Dragon',
     x: DRAGON_X,
     y: 130,
-    hp: 9200,
-    maxHp: 9200,
-    ad: 110,
-    range: 160,
+    hp: 5200,
+    maxHp: 5200,
+    ad: 120,
+    range: 230,
     attackTimer: 0,
     slamTimer: 6.0,
     isAlive: true,
@@ -379,7 +406,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     { id: 'j_blue_golem', name: 'Frost Sentinel', type: 'golem', x: 576, y: 170, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
     { id: 'j_red_wolves', name: 'Shadow Stalkers', type: 'wolves', x: 1424, y: 170, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#a855f7' },
     { id: 'j_blue_behemoth', name: 'Murk Behemoth', type: 'behemoth', x: 667, y: 575, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#10b981' },
-    { id: 'j_red_drakes', name: 'Crimson Drakes', type: 'drakes', x: 1333, y: 575, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#ef4444' }
+    { id: 'j_red_drakes', name: 'Crimson Drakes', type: 'drakes', x: 1333, y: 575, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#ef4444' },
+    { id: 'j_blue_blue_buff', name: 'Azure Crest', type: 'blue_buff', x: 485, y: 145, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
+    { id: 'j_blue_red_buff', name: 'Crimson Crest', type: 'red_buff', x: 485, y: 600, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
+    { id: 'j_red_blue_buff', name: 'Azure Crest', type: 'blue_buff', x: 1515, y: 145, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
+    { id: 'j_red_red_buff', name: 'Crimson Crest', type: 'red_buff', x: 1515, y: 600, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
+    { id: 'j_siege_golem', name: 'Gravemarch Colossus', type: 'siege_golem', x: 1000, y: 610,
+      hp: 6200, maxHp: 6200, ad: 135, range: 230, goldReward: 250, xpReward: 300,
+      respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#d4a764' }
   ]);
 
   const aegisBuffRef = useRef<AegisBuff | null>(null);
@@ -391,9 +425,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }, 4500);
   };
 
-  const addEvent = (text: string, type: 'kill' | 'tower' | 'item' | 'level' | 'combo' | 'micro' | 'fountain' | 'dragon' | 'jungle') => {
-    const mins = Math.floor(matchTime / 60);
-    const secs = (Math.floor(matchTime % 60)).toString().padStart(2, '0');
+  const addEvent = (text: string, type: MatchEvent['type']) => {
+    const mins = Math.floor(matchTimeRef.current / 60);
+    const secs = (Math.floor(matchTimeRef.current % 60)).toString().padStart(2, '0');
     setEventFeed((prev) => [
       { id: Math.random().toString(), text, type, time: `${mins}:${secs}` },
       ...prev.slice(0, 18)
@@ -430,20 +464,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         barracksKind: kind,
         name: `${team === 'blue' ? 'Blue' : 'Red'} ${kind === 'ranged' ? 'Ranged' : kind === 'catapult' ? 'Catapult' : 'Melee'} Barracks`,
         x: BARRACKS_X[team], y: 305 + index * 75,
-        hp: 1800, maxHp: 1800, ad: 0, range: 0, attackTimer: 0,
-        isAlive: true, targetId: null, armor: 30
+        hp: 1400, maxHp: 1400, ad: 0, range: 0, attackTimer: 0,
+        isAlive: true, targetId: null, armor: 20
       }));
     const initialStructures: LaneStructure[] = [
-      { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: 790, y: LANE_Y, hp: 2400, maxHp: 2400, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
-      { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: 590, y: LANE_Y, hp: 2800, maxHp: 2800, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
-      { id: 'b_t3', team: 'blue', type: 'nexus_tower', name: 'Blue Nexus Turret', x: 390, y: LANE_Y, hp: 3200, maxHp: 3200, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 45 },
+      { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: 790, y: LANE_Y, hp: 1900, maxHp: 1900, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+      { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: 590, y: LANE_Y, hp: 2200, maxHp: 2200, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+      { id: 'b_t3', team: 'blue', type: 'nexus_tower', name: 'Blue Nexus Turret', x: 390, y: LANE_Y, hp: 2400, maxHp: 2400, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
       ...makeBarracks('blue'),
-      { id: 'b_nexus', team: 'blue', type: 'nexus', name: 'Blue Nexus', x: NEXUS_X.blue, y: LANE_Y, hp: 5500, maxHp: 5500, ad: 0, range: 0, attackTimer: 0, isAlive: true, targetId: null, armor: 60 },
-      { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: 1210, y: LANE_Y, hp: 2400, maxHp: 2400, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
-      { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: 1410, y: LANE_Y, hp: 2800, maxHp: 2800, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
-      { id: 'r_t3', team: 'red', type: 'nexus_tower', name: 'Red Nexus Turret', x: 1610, y: LANE_Y, hp: 3200, maxHp: 3200, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 45 },
+      { id: 'b_nexus', team: 'blue', type: 'nexus', name: 'Blue Nexus', x: NEXUS_X.blue, y: LANE_Y, hp: 4400, maxHp: 4400, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
+      { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: 1210, y: LANE_Y, hp: 1900, maxHp: 1900, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+      { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: 1410, y: LANE_Y, hp: 2200, maxHp: 2200, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+      { id: 'r_t3', team: 'red', type: 'nexus_tower', name: 'Red Nexus Turret', x: 1610, y: LANE_Y, hp: 2400, maxHp: 2400, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
       ...makeBarracks('red'),
-      { id: 'r_nexus', team: 'red', type: 'nexus', name: 'Red Nexus', x: NEXUS_X.red, y: LANE_Y, hp: 5500, maxHp: 5500, ad: 0, range: 0, attackTimer: 0, isAlive: true, targetId: null, armor: 60 }
+      { id: 'r_nexus', team: 'red', type: 'nexus', name: 'Red Nexus', x: NEXUS_X.red, y: LANE_Y, hp: 4400, maxHp: 4400, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 }
     ];
     structuresRef.current = initialStructures;
 
@@ -474,6 +508,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         player: item.player,
         champion: champCopy,
         team: 'blue',
+        teamChemistry: blueCoach?.chemistryBonus ?? 10,
         x: WELL_X.blue + (idx % 2) * 20,
         y: getChampionFormationY(item.champion.name, idx),
         vx: 0,
@@ -531,6 +566,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         player: item.player,
         champion: champCopy,
         team: 'red',
+        teamChemistry: redCoach?.chemistryBonus ?? 10,
         x: WELL_X.red - (idx % 2) * 20,
         y: getChampionFormationY(item.champion.name, idx),
         vx: 0,
@@ -603,6 +639,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (waveCountRef.current % 3 === 0 || isMinionEmpowered(team, 'cannon', structuresRef.current)) {
         addMinion('cannon', 0, spawnX - direction * 38, 430);
       }
+      if (siegeGolemUntilRef.current?.team === team && matchTimeRef.current < siegeGolemUntilRef.current.expiresAt) {
+        newMinions.push({ id: `${prefix}_colossus_${waveCountRef.current}`, team, type: 'cannon', siegeGolem: true,
+          x: spawnX - direction * 80, y: 395, hp: 2600, maxHp: 2600, ad: 115, range: 105,
+          speed: 63, attackTimer: 0, goldReward: 90, xpReward: 100, isAlive: true });
+      }
     });
     minionsRef.current = [...minionsRef.current, ...newMinions];
   };
@@ -670,7 +711,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   ): boolean => {
     const recipe = AVATAR_COMBOS[u.champion.name];
     if (!recipe || !u.comboMastered) return false;
-    if (u.comboStage && (u.comboExpiresAt ?? 0) < matchTime) {
+    if (u.comboStage && (u.comboExpiresAt ?? 0) < matchTimeRef.current) {
       u.comboStage = 0;
       u.comboHitConfirmed = false;
     }
@@ -682,13 +723,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.comboStage = stage;
       u.comboTargetId = target.id;
       u.comboHitConfirmed = false;
-      u.comboExpiresAt = matchTime + 4.5;
+      u.comboExpiresAt = matchTimeRef.current + 4.5;
       u.animState = 'cast';
       if (skill === 'skill1') {
         u.mana -= 45;
         u.cd1 = (u.champion.skill1.cooldown || 10) * cooldownFactor;
         castChampionSkill1(u, target);
-        if (!FIRST_SKILLSHOTS[u.champion.name] && u.champion.name !== 'Astra') {
+        if (!PROJECTILE_SKILL1_CHAMPIONS.has(u.champion.name)) {
           u.comboHitConfirmed = true;
           u.mana = Math.min(100, u.mana + 45);
         }
@@ -700,24 +741,51 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         u.mana = Math.min(100, u.mana + 35);
       }
     };
+    const targetDist = Math.hypot(target.x - u.x, target.y - u.y);
+    const openerRange = getSkillCastRange(u.champion.name, recipe.opener, attackRange);
+    const followupRange = getSkillCastRange(u.champion.name, recipe.followup, attackRange);
+    const ultRange = getSkillCastRange(u.champion.name, 'ultimate', attackRange);
+
     if (!u.comboStage && u.level >= 6 && u.cd1 <= 0 && u.cd2 <= 0 && u.cdUlt <= 0
-      && u.mana >= 100 && target.hp > u.champion.ad && shouldUseUltimate(u, target, enemies, allies)) {
-      castStep(recipe.opener, 1);
+      && u.mana >= 100 && target.hp > u.champion.ad && shouldUseUltimate(u, target, enemies, allies, ultRange)) {
+      if (targetDist <= openerRange) {
+        castStep(recipe.opener, 1);
+        return true;
+      }
+      // If beyond opener range, move within cast range to initiate combo
+      u.animState = 'walk';
+      const angle = Math.atan2(target.y - u.y, target.x - u.x);
+      u.x += Math.cos(angle) * 75 * dt;
+      u.y += Math.sin(angle) * 75 * dt;
       return true;
     }
     if (u.comboStage === 1 && u.comboHitConfirmed && u.mana >= (recipe.followup === 'skill1' ? 45 : 35)
       && (recipe.followup === 'skill1' ? u.cd1 <= 0 : u.cd2 <= 0)) {
-      castStep(recipe.followup, 2);
+      if (targetDist <= followupRange) {
+        castStep(recipe.followup, 2);
+        return true;
+      }
+      u.animState = 'walk';
+      const angle = Math.atan2(target.y - u.y, target.x - u.x);
+      u.x += Math.cos(angle) * 75 * dt;
+      u.y += Math.sin(angle) * 75 * dt;
       return true;
     }
     if (u.comboStage === 2 && u.comboHitConfirmed && u.mana >= 100 && u.cdUlt <= 0) {
-      u.comboStage = 0;
-      u.comboHitConfirmed = false;
-      u.mana = 0;
-      u.cdUlt = (u.level >= 16 ? 45 : u.level >= 11 ? 60 : 75) * cooldownFactor;
-      u.animState = 'cast';
-      castChampionUltimate(u, target, enemies);
-      addEvent(`${u.player.name} executed ${recipe.name}: ${u.champion.skill1.name}, ${u.champion.skill2.name}, ${u.champion.ultimate.name}!`, 'combo');
+      if (targetDist <= ultRange) {
+        u.comboStage = 0;
+        u.comboHitConfirmed = false;
+        u.mana = 0;
+        u.cdUlt = (u.level >= 16 ? 45 : u.level >= 11 ? 60 : 75) * cooldownFactor;
+        u.animState = 'cast';
+        castChampionUltimate(u, target, enemies);
+        addEvent(`${u.player.name} executed ${recipe.name}: ${u.champion.skill1.name}, ${u.champion.skill2.name}, ${u.champion.ultimate.name}!`, 'combo');
+        return true;
+      }
+      u.animState = 'walk';
+      const angle = Math.atan2(target.y - u.y, target.x - u.x);
+      u.x += Math.cos(angle) * 75 * dt;
+      u.y += Math.sin(angle) * 75 * dt;
       return true;
     }
     if (u.comboStage) {
@@ -751,33 +819,42 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const relics = relicsRef.current;
     const dragon = dragonRef.current;
     const jungleCamps = jungleCampsRef.current;
+    wardsRef.current = wardsRef.current.filter(w => w.expiresAt > matchTimeRef.current);
 
     // Check Aegis Buff Expiry
-    if (aegisBuffRef.current && matchTime > aegisBuffRef.current.expiresAt) {
+    if (aegisBuffRef.current && matchTimeRef.current > aegisBuffRef.current.expiresAt) {
       aegisBuffRef.current = null;
       addEvent(`🛡️ Aegis of the Immortal has expired!`, 'dragon');
     }
 
     // 2. Jungle Camps Respawn & Logic
     jungleCamps.forEach((camp) => {
+      const homeX = camp.homeX ?? (camp.homeX = camp.x);
+      const homeY = camp.homeY ?? (camp.homeY = camp.y);
       if (!camp.isAlive) {
         camp.respawnTimer -= dt;
         if (camp.respawnTimer <= 0) {
           camp.isAlive = true;
           camp.hp = camp.maxHp;
           camp.targetId = undefined;
+          camp.x = homeX;
+          camp.y = homeY;
           addEvent(`🌲 ${camp.name} has respawned in the jungle!`, 'jungle');
         }
         return;
       }
       camp.attackTimer = Math.max(0, camp.attackTimer - dt);
       const target = champs.find((c) => c.id === camp.targetId && c.isAlive);
-      if (!target || Math.hypot(target.x - camp.x, target.y - camp.y) > camp.range) {
+      const movement = stepLeashedMonster(camp.x, camp.y, homeX, homeY, target ?? null, dt,
+        camp.type === 'siege_golem' ? 82 : 72, camp.type === 'siege_golem' ? 330 : 270);
+      camp.x = movement.x;
+      camp.y = movement.y;
+      if (!movement.chasing) {
         camp.targetId = undefined;
         camp.hp = Math.min(camp.maxHp, camp.hp + 12 * dt);
         return;
       }
-      if (camp.attackTimer <= 0) {
+      if (target && camp.attackTimer <= 0 && Math.hypot(target.x - camp.x, target.y - camp.y) <= 95) {
         camp.attackTimer = 1.35;
         projectilesRef.current.push({
           id: Math.random().toString(), x: camp.x, y: camp.y - 16,
@@ -795,6 +872,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       dragon.spawnTimer -= dt;
       if (dragon.spawnTimer <= 0) {
         dragon.isAlive = true;
+        dragon.aggroTeam = null;
+        dragon.targetId = undefined;
         dragon.hp = dragon.maxHp + dragon.slainCount * 1200;
         dragon.maxHp = dragon.hp;
         showBanner('🔥 EMBERMAW HAS AWAKENED!', 'Contest the volcanic dragon pit for the Aegis!', '🐉');
@@ -804,7 +883,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       dragon.slamTimer -= dt;
       dragon.attackTimer -= dt;
 
-      const nearbyChallengers = champs.filter((c) => c.isAlive && Math.hypot(c.x - dragon.x, c.y - dragon.y) <= dragon.range);
+      const nearbyChallengers = dragon.aggroTeam
+        ? champs.filter((c) => c.isAlive && Math.hypot(c.x - dragon.x, c.y - dragon.y) <= dragon.range)
+        : [];
+
+      if (nearbyChallengers.length === 0 && dragon.aggroTeam) {
+        dragon.aggroTeam = null;
+        dragon.targetId = undefined;
+        dragon.hp = Math.min(dragon.maxHp, dragon.hp + 90 * dt);
+      }
 
       if (nearbyChallengers.length > 0) {
         const primaryTarget = nearbyChallengers.sort((a, b) => a.hp - b.hp)[0];
@@ -871,8 +958,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     champs.forEach((c) => {
       if (!c.isAlive) return;
 
-      const inBlueWell = c.team === 'blue' && (c.x <= WELL_X.blue + 85 && Math.abs(c.y - LANE_Y) <= 90);
-      const inRedWell = c.team === 'red' && (c.x >= WELL_X.red - 85 && Math.abs(c.y - LANE_Y) <= 90);
+      const inBlueWell = c.team === 'blue' && (c.x <= WELL_X.blue + 105 && Math.abs(c.y - LANE_Y) <= 105);
+      const inRedWell = c.team === 'red' && (c.x >= WELL_X.red - 105 && Math.abs(c.y - LANE_Y) <= 105);
 
       if (inBlueWell || inRedWell) {
         // High rapid fountain regeneration (+45% HP/s and +75 Mana/s)
@@ -913,7 +1000,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (c.hp <= 0 && c.isAlive) {
           c.isAlive = false;
           c.deaths++;
-          c.respawnTimer = calculateDeathTimer(c.level, matchTime);
+          c.respawnTimer = calculateDeathTimer(c.level, matchTimeRef.current);
           c.isRecalling = false;
           c.recallTimer = 0;
           addEvent(`⚡ Fountain Defense laser executed ${c.player.name}!`, 'fountain');
@@ -921,15 +1008,22 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // Natural Mana & XP Tick
-      c.gold += 6.5 * dt;
-      c.mana = Math.min(100, c.mana + 1.5 * dt);
+      // Income rises with individual farm skill; strong last-hitters can finish a build by 15:00.
+      c.gold += passiveGoldPerSecond(c.player.stats.lan) * dt;
+      c.mana = Math.min(100, c.mana + (jungleBuffsRef.current[c.team].blue > matchTimeRef.current ? 4.5 : 1.5) * dt);
       c.animTimer += dt;
       grantChampionXp(c, 3.5 * dt);
 
-      // Warmog's Passive Regen
+      // Combat, True Form & Grievous timers decay
+      c.combatTimer = Math.max(0, (c.combatTimer ?? 0) - dt);
+      c.trueFormTimer = Math.max(0, (c.trueFormTimer ?? 0) - dt);
+      c.grievousTimer = Math.max(0, (c.grievousTimer ?? 0) - dt);
+
+      // Warmog's Passive Regen: Requires out-of-combat (no recent damage taken or dealt)
       const hasWarmogs = c.items.some((it) => it.id === 'item_warmogs');
-      if (hasWarmogs && c.hp < c.maxHp) {
-        c.hp = Math.min(c.maxHp, c.hp + c.maxHp * 0.04 * dt);
+      if (hasWarmogs && c.hp < c.maxHp && (c.combatTimer ?? 0) <= 0) {
+        const healFactor = (c.grievousTimer && c.grievousTimer > 0) ? 0.024 : 0.04;
+        c.hp = Math.min(c.maxHp, c.hp + c.maxHp * healFactor * dt);
       }
 
       // Sunfire Immolate Passive
@@ -974,21 +1068,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           const travel = Math.min(dist, p.speed * dt);
           const end = dist > 0 ? { x: p.x + dx / dist * travel, y: p.y + dy / dist * travel } : { x: p.x, y: p.y };
           const attacker = champs.find(c => c.id === p.attackerId);
-          const intended = champs.find(c => c.id === p.targetUnitId && c.isAlive);
-          if (intended && !p.dodgeAttempted && intended.stunTimer <= 0 && intended.charmTimer <= 0
-            && Math.hypot(intended.x - p.x, intended.y - p.y) < Math.min(190, p.speed * 0.45)
-            && segmentHitsCircle({ x: p.x, y: p.y }, { x: p.targetX, y: p.targetY }, { x: intended.x, y: intended.y - 15 }, (p.collisionRadius ?? 17) + 20)) {
-            p.dodgeAttempted = true;
-            if (Math.random() < dodgeProbability(intended.player.stats.lan, intended.player.stats.iq, attacker?.player.stats.lan ?? 75)) {
-              const length = Math.max(1, dist);
-              const direction = intended.y > 550 ? -1 : intended.y < 150 ? 1 : Math.random() < 0.5 ? -1 : 1;
-              intended.x = Math.max(40, Math.min(ARENA_WIDTH - 40, intended.x - dy / length * 58 * direction));
-              intended.y = Math.max(80, Math.min(620, intended.y + dx / length * 58 * direction));
-              floatsRef.current.push({ id: Math.random().toString(), x: intended.x, y: intended.y - 30,
-                text: 'DODGED!', color: '#38bdf8', opacity: 1, scale: 1.3 });
-              addEvent(`${intended.player.name} sidestepped ${p.skillLabel ?? 'a skillshot'}!`, 'micro');
-            }
-          }
           const hit = champs.find(c => c.isAlive && c.team !== attacker?.team
             && segmentHitsCircle({ x: p.x, y: p.y }, end, { x: c.x, y: c.y - 15 }, (p.collisionRadius ?? 17) + p.size));
           if (hit) {
@@ -1012,9 +1091,77 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       })
       .filter((p): p is Projectile => p !== null);
 
-    // 8. Update Spell AOEs
+    // 8. Update Spell AOEs & Continuous Mechanics (Tethers, Pulls, Traps)
     spellsRef.current = spellsRef.current
-      .map((s) => ({ ...s, duration: s.duration - dt }))
+      .map((s) => {
+        // Continuous Pull Tether: Raijin's Electric Vortex
+        if (s.type === 'electric_vortex') {
+          const source = champs.find((c) => c.id === s.sourceUnitId);
+          const target = champs.find((c) => c.id === s.targetUnitId);
+          if (source && target && source.isAlive && target.isAlive) {
+            s.sourceX = source.x;
+            s.sourceY = source.y;
+            s.x = target.x;
+            s.y = target.y;
+            target.stunTimer = Math.max(target.stunTimer, 0.25);
+            const dx = source.x - target.x;
+            const dy = source.y - target.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 36) {
+              const pullStep = Math.min(dist - 36, 175 * dt);
+              target.x += (dx / dist) * pullStep;
+              target.y += (dy / dist) * pullStep;
+            }
+          }
+        } else if (s.type === 'ribbon_lash') {
+          // Croakwell: Ribbon Lash Tongue Pull
+          const source = champs.find((c) => c.id === s.sourceUnitId);
+          const target = champs.find((c) => c.id === s.targetUnitId);
+          if (source && target && source.isAlive && target.isAlive) {
+            s.sourceX = source.x;
+            s.sourceY = source.y;
+            s.x = target.x;
+            s.y = target.y;
+            target.stunTimer = Math.max(target.stunTimer, 0.25);
+            const dx = source.x - target.x;
+            const dy = source.y - target.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 40) {
+              const pullStep = Math.min(dist - 40, 190 * dt);
+              target.x += (dx / dist) * pullStep;
+              target.y += (dy / dist) * pullStep;
+            }
+          }
+        } else if (s.type === 'aether_remnant') {
+          // Inai: Aether Remnant Gaze Pull
+          const target = champs.find((c) => c.id === s.targetUnitId);
+          if (target && target.isAlive) {
+            const dx = s.x - target.x;
+            const dy = s.y - target.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 15) {
+              const pullStep = Math.min(dist - 15, 145 * dt);
+              target.x += (dx / dist) * pullStep;
+              target.y += (dy / dist) * pullStep;
+              target.stunTimer = Math.max(target.stunTimer, 0.25);
+            }
+          }
+        } else if (s.type === 'sprout_ring') {
+          // Tequoia: Sprout Tree Ring Enclosure
+          const target = champs.find((c) => c.id === s.targetUnitId);
+          if (target && target.isAlive) {
+            const dx = target.x - s.x;
+            const dy = target.y - s.y;
+            const dist = Math.hypot(dx, dy);
+            const maxRadius = s.radius - 10;
+            if (dist > maxRadius && dist > 0) {
+              target.x = s.x + (dx / dist) * maxRadius;
+              target.y = s.y + (dy / dist) * maxRadius;
+            }
+          }
+        }
+        return { ...s, duration: s.duration - dt };
+      })
       .filter((s) => s.duration > 0);
 
     // 9. Update Floating Text
@@ -1047,7 +1194,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // Fire Turret Shot
       if (st.attackTimer <= 0) {
-        st.attackTimer = 1.0;
+        st.attackTimer = st.type === 'nexus' ? 0.2 : 1.0;
         sound.playSpellHit();
         projectilesRef.current.push({
           id: Math.random().toString(),
@@ -1060,7 +1207,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           speed: 460,
           color: st.team === 'blue' ? '#38bdf8' : '#f43f5e',
           type: 'turret_shot',
-          size: 9,
+          size: st.type === 'nexus' ? 6 : 9,
           targetUnitId: target.id,
           damage: st.ad,
           attackerId: st.id,
@@ -1086,6 +1233,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (m.attackTimer <= 0) {
           m.attackTimer = 1.2;
           if (m.type === 'caster' || m.type === 'cannon') {
+            const isTargetStructure = 'armor' in target;
+            const projDamage = isTargetStructure ? getMinionStructureDamage(m.type, m.ad) : m.ad;
             projectilesRef.current.push({
               id: Math.random().toString(),
               x: m.x,
@@ -1097,9 +1246,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               speed: 380,
               color: m.team === 'blue' ? '#60a5fa' : '#f87171',
               type: 'minion_shot',
-              size: m.type === 'cannon' ? 6 : 4,
+              size: m.type === 'cannon' ? 7 : 4,
               targetUnitId: target.id,
-              damage: m.ad,
+              damage: projDamage,
               attackerId: m.id,
               angle: 0
             });
@@ -1142,6 +1291,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (u.recallTimer <= 0) {
           u.isRecalling = false;
           u.recallTimer = 0;
+          u.recallCooldown = 12.0;
           u.x = WELL_X[u.team];
           u.y = 380;
           u.hp = u.maxHp;
@@ -1170,21 +1320,77 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (u.stunTimer > 0) u.stunTimer = Math.max(0, u.stunTimer - dt);
       if (u.charmTimer > 0) u.charmTimer = Math.max(0, u.charmTimer - dt);
       if (u.fearTimer && u.fearTimer > 0) u.fearTimer = Math.max(0, u.fearTimer - dt);
+      if (u.knockupTimer && u.knockupTimer > 0) u.knockupTimer = Math.max(0, u.knockupTimer - dt);
+      if (u.untargetableTimer && u.untargetableTimer > 0) u.untargetableTimer = Math.max(0, u.untargetableTimer - dt);
+      if (u.recallCooldown && u.recallCooldown > 0) u.recallCooldown = Math.max(0, u.recallCooldown - dt);
+      if (u.revealedTimer && u.revealedTimer > 0) u.revealedTimer = Math.max(0, u.revealedTimer - dt);
+
+      // Check bush status
+      const bush = getBushAt(u.x, u.y);
+      u.isInBush = !!bush;
+      u.currentBushId = bush?.id;
+      const nearbyBush = ARAM_BUSHES.find(b => Math.hypot(b.x - u.x, b.y - u.y) < 155
+        && !wardsRef.current.some(w => w.team === u.team && w.bushId === b.id));
+      if (nearbyBush && matchTimeRef.current >= (u.wardReadyAt ?? 0) && matchTimeRef.current > 30) {
+        wardsRef.current.push({ id: `${u.id}_${matchTimeRef.current}`, team: u.team, bushId: nearbyBush.id,
+          x: nearbyBush.x, y: nearbyBush.y, expiresAt: matchTimeRef.current + 75 });
+        u.wardReadyAt = matchTimeRef.current + 50;
+        floatsRef.current.push({ id: Math.random().toString(), x: nearbyBush.x, y: nearbyBush.y - 20,
+          text: 'WARD PLACED', color: '#a3e635', opacity: 1, scale: 0.9 });
+      }
 
       // Recovery to Idle
       if (u.attackTimer <= 1.0 / Math.max(0.5, u.champion.aspd) - 0.28) {
         if (u.animState === 'attack') u.animState = 'idle';
       }
 
-      if (u.stunTimer > 0 || u.charmTimer > 0) {
+      // 1. Actual Charm Walk (Kyumi / Renn)
+      if (u.charmTimer > 0) {
+        if (u.isRecalling) { u.isRecalling = false; u.recallTimer = 0; u.recallCooldown = 4.0; }
+        const caster = champs.find((c) => c.id === u.charmSourceId && c.isAlive)
+          || champs.find((c) => c.team !== u.team && c.isAlive && (c.champion.name === 'Kyumi' || c.champion.name === 'Renn'));
+        if (caster) {
+          const dx = caster.x - u.x;
+          const dy = caster.y - u.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 32) {
+            u.facing = dx >= 0 ? 'right' : 'left';
+            u.x += (dx / dist) * 75 * dt;
+            u.y += (dy / dist) * 75 * dt;
+            u.animState = 'walk';
+          }
+        }
+        return;
+      }
+
+      // 2. Actual Fear Flee (Sylla / Soulscourge)
+      if (u.fearTimer && u.fearTimer > 0) {
+        if (u.isRecalling) { u.isRecalling = false; u.recallTimer = 0; u.recallCooldown = 4.0; }
+        const caster = champs.find((c) => c.id === u.fearSourceId && c.isAlive)
+          || champs.find((c) => c.team !== u.team && c.isAlive && (c.champion.name === 'Sylla' || c.champion.name === 'Soulscourge'));
+        if (caster) {
+          const dx = u.x - caster.x;
+          const dy = u.y - caster.y;
+          const dist = Math.max(1, Math.hypot(dx, dy));
+          u.facing = dx >= 0 ? 'right' : 'left';
+          u.x = Math.max(60, Math.min(ARENA_WIDTH - 60, u.x + (dx / dist) * 125 * dt));
+          u.y = Math.max(100, Math.min(600, u.y + (dy / dist) * 125 * dt));
+          u.animState = 'walk';
+        }
+        return;
+      }
+
+      // 3. Stun / Knockup Immobilization
+      if (u.stunTimer > 0 || (u.knockupTimer && u.knockupTimer > 0)) {
         if (u.isRecalling) {
           u.isRecalling = false;
           u.recallTimer = 0;
+          u.recallCooldown = 4.0;
           floatsRef.current.push({
             id: Math.random().toString(),
             x: u.x,
             y: u.y - 35,
-            text: `❌ RECALL STUNNED!`,
+            text: `❌ RECALL INTERRUPTED!`,
             color: '#ef4444',
             opacity: 1,
             scale: 1.2
@@ -1195,8 +1401,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // Check if currently inside fountain well recovering
-      const inBlueWell = u.team === 'blue' && (u.x <= WELL_X.blue + 85 && Math.abs(u.y - LANE_Y) <= 90);
-      const inRedWell = u.team === 'red' && (u.x >= WELL_X.red - 85 && Math.abs(u.y - LANE_Y) <= 90);
+      const inBlueWell = u.team === 'blue' && (u.x <= WELL_X.blue + 105 && Math.abs(u.y - LANE_Y) <= 105);
+      const inRedWell = u.team === 'red' && (u.x >= WELL_X.red - 105 && Math.abs(u.y - LANE_Y) <= 105);
       const isInsideWell = inBlueWell || inRedWell;
 
       // If champion is inside the well, stay in well until HP >= 95% and Mana >= 90!
@@ -1227,33 +1433,90 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
 
       // Targets: Enemies, Allies, Dragon, Jungle, Structures, Minions
-      const enemies = champs.filter((e) => e.team !== u.team && e.isAlive);
+      const enemies = champs.filter((e) => e.team !== u.team && e.isAlive && (!e.isInBush
+        || (e.revealedTimer ?? 0) > 0
+        || wardsRef.current.some(w => w.team === u.team && w.bushId === e.currentBushId)
+        || champs.some(a => a.team === u.team && a.isAlive && a.currentBushId === e.currentBushId)));
       const allies = champs.filter((a) => a.team === u.team && a.isAlive);
       const enemyStructures = structures.filter((st) => st.team !== u.team && st.isAlive);
       const enemyMinions = minions.filter((m) => m.team !== u.team && m.isAlive);
-      const availableJungleCamps = jungleCamps.filter((c) => c.isAlive);
+      const availableJungleCamps = jungleCamps.filter((c) => c.isAlive && c.type !== 'siege_golem');
 
       // Read the local numbers before committing to a fight.
       const localEnemies = enemies.filter((e) => Math.hypot(e.x - u.x, e.y - u.y) <= 400);
       const localAllies = allies.filter((a) => Math.hypot(a.x - u.x, a.y - u.y) <= 400);
       const iq = Math.max(1, Math.min(99, u.player.stats.iq));
+      const tfStat = Math.max(1, Math.min(99, u.player.stats.tf));
+      const flxStat = Math.max(1, Math.min(99, u.player.stats.flx));
+      const lanStat = Math.max(1, Math.min(99, u.player.stats.lan));
       const isOutnumbered = localEnemies.length > localAllies.length + (iq >= 70 ? 0 : 1);
-      const deathFearThreshold = (matchTime > 360 ? 0.34 : matchTime > 180 ? 0.27 : 0.2) + iq * 0.001;
-      const isLowHpScared = u.hp < u.maxHp * deathFearThreshold;
-      const shouldDisengage = isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002));
+      const deathFearThreshold = 0.30 + (99 - iq) * 0.001;
+      const isLowHpScared = u.hp < u.maxHp * deathFearThreshold || (u.mana < 15 && u.hp < u.maxHp * 0.55);
+
+      // AUTHENTIC WEAPON ATTACK RANGES
+      const attackRange = getChampionAttackRange(u.champion.name);
+      const isRanged = attackRange >= 90;
+      const kiteBackstepThreshold = attackRange * 0.65;
+      const threateningMinions = enemyMinions.filter(m => Math.hypot(m.x - u.x, m.y - u.y) <= Math.max(attackRange + 40, 240));
+
+      // Realistic MOBA Recall Timing: Never recall at full HP to shop!
+      const hasShopGold = u.gold >= 1700;
+      const wantsItemPurchase = hasShopGold && (u.hp < u.maxHp * 0.65 || (u.gold >= 2400 && iq >= 70))
+        && localEnemies.length === 0 && threateningMinions.length === 0 && (u.recallCooldown ?? 0) <= 0;
+      const isDangerousFight = isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002));
+      const wantsRecall = (isLowHpScared || wantsItemPurchase) && !isInsideWell && (u.recallCooldown ?? 0) <= 0;
 
       const wellTargetX = WELL_X[u.team];
 
-      // Disengage and recall when the player judges the fight unsafe.
-      if (shouldDisengage && Math.abs(u.x - wellTargetX) > 40 && !isInsideWell) {
-        // Recall only after creating enough distance.
-        const nearestEnemyDist = localEnemies.length > 0
-          ? Math.min(...localEnemies.map((e) => Math.hypot(e.x - u.x, e.y - u.y)))
-          : 999;
+      // 1. If wanting to recall, but enemy minions are threatening nearby: CLEAR FIRST!
+      if (wantsRecall && threateningMinions.length > 0 && localEnemies.length === 0) {
+        const minionToClear = threateningMinions[0];
+        u.facing = minionToClear.x > u.x ? 'right' : 'left';
+        const mDist = Math.hypot(minionToClear.x - u.x, minionToClear.y - u.y);
+        if (mDist <= attackRange + 15) {
+          u.vx = 0; u.vy = 0;
+          if (u.attackTimer <= 0) {
+            u.attackTimer = 1.0 / Math.max(0.5, u.champion.aspd);
+            u.animState = 'attack';
+            u.revealedTimer = 2.0;
+            executeChampionAttack(u, minionToClear, 'minion', u.champion.ad);
+          }
+        } else {
+          u.animState = 'walk';
+          const ang = Math.atan2(minionToClear.y - u.y, minionToClear.x - u.x);
+          u.vx = Math.cos(ang) * (85 + (u.boots?.stats.moveSpeed ?? 0));
+          u.vy = Math.sin(ang) * (85 + (u.boots?.stats.moveSpeed ?? 0));
+          u.x += u.vx * dt;
+          u.y += u.vy * dt;
+        }
+        return;
+      }
 
-        if (nearestEnemyDist > 290 && (u.hp < u.maxHp * 0.38 || u.mana < 22)) {
+      // 2. Disengage and walk backward to safety before channeling recall
+      const nearestEnemyDist = enemies.length > 0
+        ? Math.min(...enemies.map((e) => Math.hypot(e.x - u.x, e.y - u.y)))
+        : 999;
+      const nearestMinionDist = enemyMinions.length > 0
+        ? Math.min(...enemyMinions.map((m) => Math.hypot(m.x - u.x, m.y - u.y)))
+        : 999;
+      const nearestStructureDist = enemyStructures.length > 0
+        ? Math.min(...enemyStructures.map((st) => Math.hypot(st.x - u.x, st.y - u.y)))
+        : 999;
+
+      const canChannelRecall = canUnitRecall(
+        nearestEnemyDist,
+        nearestMinionDist,
+        nearestStructureDist,
+        u.recallCooldown ?? 0,
+        !!u.isInBush
+      );
+
+      if ((isDangerousFight || wantsRecall) && Math.abs(u.x - wellTargetX) > 40 && !isInsideWell) {
+        // Can only channel recall if threats are cleared, distance is established, and recall is not on cooldown!
+        if (wantsRecall && canChannelRecall) {
           u.isRecalling = true;
           u.recallTimer = 2.5;
+          u.recallCooldown = 12.0;
           u.animState = 'cast';
           u.vx = 0;
           u.vy = 0;
@@ -1261,40 +1524,72 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             id: Math.random().toString(),
             x: u.x,
             y: u.y - 35,
-            text: `💧 SAFE RECALLING...`,
-            color: '#38bdf8',
+            text: wantsItemPurchase ? `🛍️ ITEM SHOP RECALL...` : `💧 SAFE RECALLING...`,
+            color: wantsItemPurchase ? '#fbbf24' : '#38bdf8',
             opacity: 1,
             scale: 1.15
           });
-          addEvent(`💧 ${u.player.name} (${u.champion.name}) disengaged and recalled!`, 'fountain');
+          addEvent(wantsItemPurchase
+            ? `🛍️ ${u.player.name} (${u.champion.name}) found a safe position and is recalling to shop items with ${u.gold}g!`
+            : `💧 ${u.player.name} (${u.champion.name}) cleared threats and safely recalled!`, 'fountain');
           return;
         }
 
+        // Otherwise: walk towards safety (duck into nearby bush to shake pursuers or retreat toward fountain well)!
+        const nearbyRetreatBush = !u.isInBush
+          ? ARAM_BUSHES.find(b => Math.hypot(b.x - u.x, b.y - u.y) < 180 && Math.sign(wellTargetX - u.x) === Math.sign(b.x - u.x))
+          : undefined;
+
+        const targetX = nearbyRetreatBush ? nearbyRetreatBush.x : wellTargetX;
+        const targetY = nearbyRetreatBush ? nearbyRetreatBush.y : LANE_Y;
+
         u.animState = 'walk';
-        const retreatAngle = Math.atan2(380 - u.y, wellTargetX - u.x);
-        u.vx = Math.cos(retreatAngle) * 95;
-        u.vy = Math.sin(retreatAngle) * 95;
+        const retreatAngle = Math.atan2(targetY - u.y, targetX - u.x);
+        u.vx = Math.cos(retreatAngle) * (105 + (u.boots?.stats.moveSpeed ?? 0));
+        u.vy = Math.sin(retreatAngle) * (105 + (u.boots?.stats.moveSpeed ?? 0));
         u.x += u.vx * dt;
         u.y += u.vy * dt;
-        u.facing = wellTargetX > u.x ? 'right' : 'left';
+        u.facing = targetX > u.x ? 'right' : 'left';
         return;
       }
 
-      const shouldContestDragon = dragon.isAlive && shouldContestBoss(u, allies, enemies, dragon.hp / dragon.maxHp, matchTime);
+      // A team earns an epic objective window by clearing lane, seeing the pit,
+      // grouping healthy members and reading enemy numbers. Playback speed is irrelevant.
+      const alliedWave = minions.filter(m => m.team === u.team && m.isAlive && Math.abs(m.x - DRAGON_X) < 420);
+      const opposingWave = minions.filter(m => m.team !== u.team && m.isAlive && Math.abs(m.x - DRAGON_X) < 420);
+      const pushedWave = alliedWave.some(m => u.team === 'blue' ? m.x > DRAGON_X + 80 : m.x < DRAGON_X - 80);
+      const nearbyPitAllies = allies.filter(a => Math.hypot(a.x - dragon.x, a.y - dragon.y) < 620);
+      const shouldContestDragon = dragon.isAlive && shouldStartEpicObjective({
+        gameSeconds: matchTimeRef.current,
+        bossHealthFraction: dragon.hp / dragon.maxHp,
+        healthyAllies: nearbyPitAllies.filter(a => a.hp / a.maxHp > 0.58).length,
+        nearbyEnemies: enemies.filter(e => Math.hypot(e.x - dragon.x, e.y - dragon.y) < 360).length,
+        lanePriority: pushedWave && alliedWave.length >= opposingWave.length,
+        hasVision: nearbyPitAllies.some(a => Math.hypot(a.x - dragon.x, a.y - dragon.y) < 340)
+          || wardsRef.current.some(w => w.team === u.team && Math.hypot(w.x - dragon.x, w.y - dragon.y) < 230),
+        averageIq: allies.reduce((sum, a) => sum + a.player.stats.iq, 0) / Math.max(1, allies.length),
+        averageTeamfight: allies.reduce((sum, a) => sum + a.player.stats.tf, 0) / Math.max(1, allies.length),
+        chemistry: u.teamChemistry ?? 10,
+        coachPlaybook: (u.team === 'blue' ? blueCoach : redCoach)?.playbookBonus ?? 8,
+        actorHealthFraction: u.hp / u.maxHp,
+      });
       const nearestJungleCamp = availableJungleCamps.sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0];
-
-      // AUTHENTIC WEAPON ATTACK RANGES
-      const attackRange = getChampionAttackRange(u.champion.name);
-      const isRanged = attackRange >= 90;
-      const kiteBackstepThreshold = attackRange * 0.65;
 
       // Each athlete evaluates the same fight using their own game sense.
       const primaryTarget = chooseTeamfightTarget(u, enemies, allies, attackRange);
-
       const nearestStructure = enemyStructures.sort((a, b) => Math.abs(a.x - u.x) - Math.abs(b.x - u.x))[0];
       const nearestMinion = enemyMinions.sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0];
+      const minionInRange = !!nearestMinion && Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) <= attackRange;
+      const structureInRange = !!nearestStructure && Math.hypot(nearestStructure.x - u.x, nearestStructure.y - u.y) <= attackRange + 40;
+      const alliedCrash = nearestStructure
+        ? minions.filter(m => m.team === u.team && m.isAlive && Math.hypot(m.x - nearestStructure.x, m.y - nearestStructure.y) < 180).length
+        : 0;
+      const closestEnemyChampion = enemies.length
+        ? Math.min(...enemies.map(e => Math.hypot(e.x - u.x, e.y - u.y))) : Infinity;
+      const clearWaveFirst = shouldPrioritizeWaveClear(iq, lanStat, minionInRange, structureInRange, alliedCrash, closestEnemyChampion)
+        && (closestEnemyChampion > 160 || !primaryTarget);
 
-      // MACRO OBJECTIVE 1: CONTEST DRAGON IN UPPER PIT
+      // MACRO OBJECTIVE 1: CONTEST DRAGON IN UPPER PIT (Game-Ending Objective Priority)
       if (shouldContestDragon && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > 220)) {
         const dragonDist = Math.hypot(dragon.x - u.x, dragon.y - u.y);
         u.facing = dragon.x > u.x ? 'right' : 'left';
@@ -1305,23 +1600,64 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             u.attackTimer = 1.0 / Math.max(0.5, u.champion.aspd);
             u.animState = 'attack';
             u.mana = Math.min(100, u.mana + 4);
-            applyDamageToDragon(u, u.champion.ad * 1.2);
+            u.revealedTimer = 2.0;
+            executeChampionAttack(u, dragon, 'dragon', u.champion.ad * 1.2);
           }
         } else {
           u.animState = 'walk';
           const angle = Math.atan2(dragon.y - u.y, dragon.x - u.x);
-          u.vx = Math.cos(angle) * 85;
-          u.vy = Math.sin(angle) * 85;
+          u.vx = Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0));
+          u.vy = Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0));
           u.x += u.vx * dt;
           u.y += u.vy * dt;
         }
         return;
       }
 
-      // Farm a nearby camp only when the lane and local fight are quiet.
-      if (nearestJungleCamp && iq >= 55 && u.hp > u.maxHp * 0.6
-        && Math.hypot(nearestJungleCamp.x - u.x, nearestJungleCamp.y - u.y) < 300
-        && localEnemies.length === 0 && (!nearestMinion || Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) > 200)) {
+      const golem = jungleCamps.find(c => c.type === 'siege_golem' && c.isAlive);
+      const golemAllies = golem ? allies.filter(a => Math.hypot(a.x - golem.x, a.y - golem.y) < 610) : [];
+      const shouldContestGolem = !!golem && !shouldContestDragon && shouldStartEpicObjective({
+        gameSeconds: matchTimeRef.current, bossHealthFraction: golem.hp / golem.maxHp,
+        healthyAllies: golemAllies.filter(a => a.hp / a.maxHp > 0.58).length,
+        nearbyEnemies: enemies.filter(e => Math.hypot(e.x - golem.x, e.y - golem.y) < 360).length,
+        lanePriority: pushedWave && alliedWave.length >= opposingWave.length,
+        hasVision: golemAllies.some(a => Math.hypot(a.x - golem.x, a.y - golem.y) < 350)
+          || wardsRef.current.some(w => w.team === u.team && Math.hypot(w.x - golem.x, w.y - golem.y) < 300),
+        averageIq: allies.reduce((sum, a) => sum + a.player.stats.iq, 0) / Math.max(1, allies.length),
+        averageTeamfight: allies.reduce((sum, a) => sum + a.player.stats.tf, 0) / Math.max(1, allies.length),
+        chemistry: u.teamChemistry ?? 10,
+        coachPlaybook: (u.team === 'blue' ? blueCoach : redCoach)?.playbookBonus ?? 8,
+        actorHealthFraction: u.hp / u.maxHp
+      });
+      if (golem && shouldContestGolem && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > 220)) {
+        const dist = Math.hypot(golem.x - u.x, golem.y - u.y);
+        u.facing = golem.x > u.x ? 'right' : 'left';
+        if (dist <= attackRange + 18) {
+          u.vx = 0; u.vy = 0;
+          if (u.attackTimer <= 0) {
+            u.attackTimer = 1 / Math.max(0.5, u.champion.aspd);
+            u.animState = 'attack';
+            executeChampionAttack(u, golem, 'camp', u.champion.ad * 1.15);
+          }
+        } else {
+          u.animState = 'walk';
+          const angle = Math.atan2(golem.y - u.y, golem.x - u.x);
+          u.x += Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0)) * dt;
+          u.y += Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0)) * dt;
+        }
+        return;
+      }
+
+      // Farm a nearby camp only when lane is quiet AND NOT ON THE FIRST WAVE!
+      const isFirstWave = matchTimeRef.current < 45.0;
+      const isCampInVision = !isFirstWave && nearestJungleCamp && (
+        Math.hypot(nearestJungleCamp.x - u.x, nearestJungleCamp.y - u.y) < 190 ||
+        allies.some(a => Math.hypot(a.x - nearestJungleCamp.x, a.y - nearestJungleCamp.y) < 190)
+      );
+
+      if (!isFirstWave && isCampInVision && nearestJungleCamp && iq >= 55 && u.hp > u.maxHp * 0.6
+        && Math.hypot(nearestJungleCamp.x - u.x, nearestJungleCamp.y - u.y) < 260
+        && localEnemies.length === 0 && (!nearestMinion || Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) > 220)) {
         const campDist = Math.hypot(nearestJungleCamp.x - u.x, nearestJungleCamp.y - u.y);
         u.facing = nearestJungleCamp.x > u.x ? 'right' : 'left';
 
@@ -1331,21 +1667,41 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             u.attackTimer = 1.0 / Math.max(0.5, u.champion.aspd);
             u.animState = 'attack';
             u.mana = Math.min(100, u.mana + 4);
-            applyDamageToJungleCamp(u, nearestJungleCamp, u.champion.ad);
+            u.revealedTimer = 2.0;
+            executeChampionAttack(u, nearestJungleCamp, 'camp', u.champion.ad);
           }
         } else {
           u.animState = 'walk';
           const angle = Math.atan2(nearestJungleCamp.y - u.y, nearestJungleCamp.x - u.x);
-          u.vx = Math.cos(angle) * 85;
-          u.vy = Math.sin(angle) * 85;
+          u.vx = Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0));
+          u.vy = Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0));
           u.x += u.vx * dt;
           u.y += u.vy * dt;
         }
         return;
       }
 
+      // Macro Teamfight Grouping: High TF players converge to fight together
+      const fightingAlly = allies.find(a => a.isAlive && Math.hypot(a.x - u.x, a.y - u.y) <= 500 && (a.animState === 'attack' || a.animState === 'cast'));
+      if (fightingAlly && tfStat >= 55 && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > attackRange)) {
+        u.animState = 'walk';
+        const groupAngle = Math.atan2(fightingAlly.y - u.y, fightingAlly.x - u.x);
+        u.vx = Math.cos(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0));
+        u.vy = Math.sin(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0));
+        u.x += u.vx * dt;
+        u.y += u.vy * dt;
+        u.facing = fightingAlly.x > u.x ? 'right' : 'left';
+        return;
+      }
+
+      // Compute authentic skill cast ranges (e.g. Raijin Electric Vortex strictly 120px / 2-3 hexes)
+      const skill1Range = getSkillCastRange(u.champion.name, 'skill1', attackRange);
+      const skill2Range = getSkillCastRange(u.champion.name, 'skill2', attackRange);
+      const ultRange = getSkillCastRange(u.champion.name, 'ultimate', attackRange);
+      const maxCombatRange = Math.max(attackRange * 1.5, skill1Range, skill2Range, u.level >= 6 ? ultRange : 0, 190);
+
       // COMBAT ENGAGEMENT WITH ENEMIES:
-      if (primaryTarget && Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= Math.max(attackRange * 1.5, 190)) {
+      if (!clearWaveFirst && primaryTarget && Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= maxCombatRange) {
         u.facing = primaryTarget.x > u.x ? 'right' : 'left';
         const dist = Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y);
         const haste = u.items.reduce((total, item) => total + (item.stats.haste ?? 0), 0);
@@ -1354,23 +1710,23 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         // 1. REASONABLE ULTIMATE: Level 6+, 100 Mana, 45-75s Cooldown!
         if (executeAvatarCombo(u, primaryTarget, enemies, allies, attackRange, cooldownFactor, dt)) {
           // Continue the learned sequence, or wait for its aimed opening cast to hit.
-        } else if (shouldUseUltimate(u, primaryTarget, enemies, allies)) {
+        } else if (shouldUseUltimate(u, primaryTarget, enemies, allies, ultRange)) {
           u.mana = 0;
           const baseUltCd = u.level >= 16 ? 45.0 : u.level >= 11 ? 60.0 : 75.0;
           u.cdUlt = baseUltCd * cooldownFactor;
           u.animState = 'cast';
           castChampionUltimate(u, primaryTarget, enemies);
         }
-        // 2. REASONABLE SKILL 1: 8-12s Cooldown & 45 Mana Cost
-        else if (shouldUseSkill(u, primaryTarget, enemies, Math.max(attackRange, 145))) {
+        // 2. REASONABLE SKILL 1: 8-12s Cooldown & 45 Mana Cost (Authentic Skill Range)
+        else if (shouldUseSkill(u, primaryTarget, enemies, skill1Range)) {
           u.mana -= 45;
           u.cd1 = (u.champion.skill1.cooldown || 10.0) * cooldownFactor;
           u.animState = 'cast';
           castChampionSkill1(u, primaryTarget);
           practiceAvatarCombo(u);
         }
-        // Skill 2 provides follow-up control, defense, or damage between first casts.
-        else if (shouldUseSecondSkill(u, primaryTarget, enemies, allies, Math.max(attackRange, 145))) {
+        // Skill 2 provides follow-up control, defense, or damage between first casts (Authentic Skill Range)
+        else if (shouldUseSecondSkill(u, primaryTarget, enemies, allies, skill2Range)) {
           u.mana -= 35;
           u.cd2 = (u.champion.skill2.cooldown || 10.0) * cooldownFactor;
           u.animState = 'cast';
@@ -1384,10 +1740,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             const retreatDir = u.team === 'blue' ? -1 : 1;
             u.x += retreatDir * 65 * dt;
             const formationY = getChampionFormationY(u.champion.name, uIdx);
-            u.y += (formationY - u.y) * 1.5 * dt;
+            const dy = formationY - u.y;
+            if (Math.abs(dy) > 1.5) {
+              u.y += Math.sign(dy) * Math.min(Math.abs(dy), 60 * dt);
+            }
           } else {
             u.vx = 0;
             u.vy = 0;
+            // When basic attack is on cooldown, step into skill range if close ability (like Raijin Electric Vortex) is ready
+            const wantsCloseSkill = (u.cd2 <= 0 && u.mana >= 35 && dist > skill2Range) || (u.cd1 <= 0 && u.mana >= 45 && dist > skill1Range);
+            if (wantsCloseSkill && u.attackTimer > 0) {
+              u.animState = 'walk';
+              const angle = Math.atan2(primaryTarget.y - u.y, primaryTarget.x - u.x);
+              u.x += Math.cos(angle) * (70 + (u.boots?.stats.moveSpeed ?? 0)) * dt;
+              u.y += Math.sin(angle) * (70 + (u.boots?.stats.moveSpeed ?? 0)) * dt;
+            }
           }
 
           if (u.attackTimer <= 0) {
@@ -1401,19 +1768,35 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         else {
           u.animState = 'walk';
           const angle = Math.atan2(primaryTarget.y - u.y, primaryTarget.x - u.x);
-          u.vx = Math.cos(angle) * 85;
-          u.vy = Math.sin(angle) * 85;
+          u.vx = Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0));
+          u.vy = Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0));
           u.x += u.vx * dt;
           u.y += u.vy * dt;
         }
       }
       // SIEGE TURRET
-      else if (nearestStructure && Math.abs(nearestStructure.x - u.x) <= attackRange + 40) {
+      else if (clearWaveFirst && nearestMinion) {
+        u.facing = nearestMinion.x > u.x ? 'right' : 'left';
+        const cluster = enemyMinions.filter(m => Math.hypot(m.x - nearestMinion.x, m.y - nearestMinion.y) <= 90);
+        if (shouldCastWaveClearSkill(u.champion.primaryRole, u.mana, u.cd1, cluster.length, iq, lanStat)) {
+          u.mana -= 45;
+          u.cd1 = (u.champion.skill1.cooldown || 10) * 0.8;
+          u.animState = 'cast';
+          cluster.forEach(m => applyDamageToMinion(u, m, u.champion.skill1.damage * (0.7 + lanStat / 180)));
+          spellsRef.current.push({ id: Math.random().toString(), type: 'wave_burst', x: nearestMinion.x, y: nearestMinion.y,
+            radius: 90, duration: 0.55, maxDuration: 0.55, color: u.champion.primaryColor });
+        } else if (u.attackTimer <= 0) {
+          u.attackTimer = 1.0 / Math.max(0.5, u.champion.aspd);
+          u.animState = 'attack';
+          executeChampionAttack(u, nearestMinion, 'minion', u.champion.ad);
+        }
+      }
+      else if (nearestStructure && structureInRange) {
         u.facing = nearestStructure.x > u.x ? 'right' : 'left';
         if (u.attackTimer <= 0) {
           u.attackTimer = 1.0 / Math.max(0.5, u.champion.aspd);
           u.animState = 'attack';
-          applyDamageToStructure(u, nearestStructure, u.champion.ad);
+          executeChampionAttack(u, nearestStructure, 'structure', u.champion.ad);
         }
       }
       // WAVE CLEAR
@@ -1422,18 +1805,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (u.attackTimer <= 0) {
           u.attackTimer = 1.0 / Math.max(0.5, u.champion.aspd);
           u.animState = 'attack';
-          applyDamageToMinion(u, nearestMinion, u.champion.ad);
+          executeChampionAttack(u, nearestMinion, 'minion', u.champion.ad);
         }
       }
-      // PUSH LANE IN FORMATION
+      // PUSH LANE IN FORMATION (Smooth, natural walking speed - no snapping or accelerated sprint!)
       else {
         u.animState = 'walk';
         const pushDir = u.team === 'blue' ? 1 : -1;
-        u.x += pushDir * 70 * dt;
+        u.x += pushDir * (70 + (u.boots?.stats.moveSpeed ?? 0)) * dt;
         u.facing = pushDir === 1 ? 'right' : 'left';
 
         const targetFormY = getChampionFormationY(u.champion.name, uIdx);
-        u.y += (targetFormY - u.y) * 2.0 * dt;
+        const dy = targetFormY - u.y;
+        if (Math.abs(dy) > 1.5) {
+          u.y += Math.sign(dy) * Math.min(Math.abs(dy), 70 * dt);
+        }
       }
 
       u.x = Math.max(40, Math.min(ARENA_WIDTH - 40, u.x));
@@ -1484,6 +1870,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   // Evaluate & Purchase Items progressively
   const evaluateAndBuyItems = (u: AramChampionUnit) => {
+    const inHomeShop = Math.abs(u.y - LANE_Y) <= 105 && (u.team === 'blue'
+      ? u.x <= WELL_X.blue + 105 : u.x >= WELL_X.red - 105);
+    if (!inHomeShop) return;
+    if (!u.boots && u.gold >= BOOTS.cost) {
+      u.gold -= BOOTS.cost;
+      u.boots = BOOTS;
+      addEvent(`👢 ${u.player.name} bought Pathfinder Boots at the home shop.`, 'item');
+    }
     for (let purchase = 0; purchase < 6; purchase++) {
       const plan = getItemPurchasePlan(u.champion.primaryRole, u.items, u.gold, u.champion.name, ALL_ITEMS);
       if (!plan) break;
@@ -1508,8 +1902,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.hp += nextItem.stats.hp ?? 0;
 
       sound.playCoin();
-      const mins = Math.floor(matchTime / 60);
-      const secs = (Math.floor(matchTime % 60)).toString().padStart(2, '0');
+      const mins = Math.floor(matchTimeRef.current / 60);
+      const secs = (Math.floor(matchTimeRef.current % 60)).toString().padStart(2, '0');
       const timeStr = `${mins}:${secs}`;
 
       setItemMilestones((prev) => [
@@ -1539,6 +1933,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const dragon = dragonRef.current;
     if (!dragon.isAlive) return;
 
+    dragon.aggroTeam = attacker.team;
+    dragon.targetId = attacker.id;
     dragon.hp -= damage;
     floatsRef.current.push({
       id: Math.random().toString(),
@@ -1555,31 +1951,31 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       dragon.slainCount++;
       dragon.spawnTimer = 120.0;
       sound.playUltimateExplosion();
-      confetti({ particleCount: 160, spread: 80, origin: { x: dragon.x / ARENA_WIDTH, y: 0.25 } });
 
       aegisBuffRef.current = {
         team: attacker.team,
-        expiresAt: matchTime + 90.0,
-        adBonus: 25
+        expiresAt: matchTimeRef.current + 110.0,
+        adBonus: 60,
+        apBonus: 70,
+        siegeMultiplier: 2.0,
+        burnTrueDamage: true
       };
 
       const bounty = 350;
-      if (attacker.team === 'blue') setBlueGold((g) => g + bounty * 5);
-      else setRedGold((g) => g + bounty * 5);
-
       championsRef.current
-        .filter((c) => c.team === attacker.team && c.isAlive)
+        .filter((c) => c.team === attacker.team)
         .forEach((ally) => {
+          ally.gold += bounty;
           grantChampionXp(ally, 320);
-          ally.shield += 300;
+          ally.shield += 450;
         });
 
       showBanner(
         `🐉 ${attacker.team.toUpperCase()} TEAM SLAIN EMBERMAW!`,
-        `Claimed Aegis of the Immortal! +350g Team Bounty & Dragon Empowerment!`,
+        `Dragon Slayer Aspect! +60 AD/AP, 2x Tower Siege Damage, & True Damage Burn!`,
         '🐉'
       );
-      addEvent(`🐉 DRAGON SLAIN: ${attacker.player.name} secured Embermaw! Team claimed the Aegis!`, 'dragon');
+      addEvent(`🐉 DRAGON SLAIN: ${attacker.player.name} secured Embermaw! Team claimed Dragon Slayer Aspect!`, 'dragon');
     }
   };
 
@@ -1602,9 +1998,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     if (camp.hp <= 0) {
       camp.isAlive = false;
       camp.targetId = undefined;
-      camp.respawnTimer = 55.0;
+      camp.respawnTimer = camp.type === 'siege_golem' ? 145.0 : 55.0;
       attacker.gold += camp.goldReward;
       grantChampionXp(attacker, camp.xpReward);
+      if (camp.type === 'blue_buff' || camp.type === 'red_buff') {
+        const kind = camp.type === 'blue_buff' ? 'blue' : 'red';
+        jungleBuffsRef.current[attacker.team][kind] = matchTimeRef.current + 90;
+        addEvent(`${attacker.team.toUpperCase()} team claimed ${kind} buff for 90s!`, 'jungle');
+      }
+      if (camp.type === 'siege_golem') {
+        siegeGolemUntilRef.current = { team: attacker.team, expiresAt: matchTimeRef.current + 125 };
+        showBanner('GRAVEMARCH COLOSSUS CLAIMED', `${attacker.team.toUpperCase()} waves gain a siege golem for 125s!`, '🗿');
+        addEvent(`${attacker.team.toUpperCase()} team claimed Gravemarch. A siege golem now joins every wave!`, 'jungle');
+      }
       sound.playCoin();
 
       floatsRef.current.push({
@@ -1621,6 +2027,58 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
   };
 
+  // Apply Authentic Crowd Control & Layered Chain Stun Mechanics
+  const applyChampionCrowdControl = (
+    caster: AramChampionUnit | null,
+    target: AramChampionUnit,
+    duration: number,
+    ccType: 'stun' | 'root' | 'knockup' = 'stun',
+    skillName?: string
+  ) => {
+    if (target.zhonyaActive || !target.isAlive) return;
+
+    if (!caster) {
+      target.stunTimer = Math.max(target.stunTimer, duration);
+      if (ccType === 'knockup') {
+        target.knockupTimer = Math.max(target.knockupTimer ?? 0, duration);
+        target.knockupMax = target.knockupTimer;
+      }
+      return;
+    }
+
+    const casterIq = caster.player.stats.iq;
+    const casterTf = caster.player.stats.tf;
+    const teamChemistry = caster.teamChemistry ?? 10;
+
+    const { isChainStun, finalDuration } = applyChainStun(
+      target.stunTimer,
+      duration,
+      casterIq,
+      casterTf,
+      teamChemistry
+    );
+
+    target.stunTimer = finalDuration;
+    if (ccType === 'knockup') {
+      target.knockupTimer = Math.max(target.knockupTimer ?? 0, duration);
+      target.knockupMax = Math.max(target.knockupMax ?? 0, target.knockupTimer);
+    }
+
+    if (isChainStun) {
+      sound.playSpellHit();
+      floatsRef.current.push({
+        id: Math.random().toString(),
+        x: target.x,
+        y: target.y - 45,
+        text: `⚡ CHAIN STUN!`,
+        color: '#facc15',
+        opacity: 1,
+        scale: 1.3
+      });
+      addEvent(`⚡ CHAIN STUN: ${caster.player.name} (${caster.champion.name}) layered CC on ${target.player.name} for ${finalDuration.toFixed(1)}s!`, 'combo');
+    }
+  };
+
   const handleProjectileImpact = (p: Projectile) => {
     sound.playSpellHit();
 
@@ -1632,9 +2090,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       if (targetChamp) {
         if (p.skillshot) {
-          targetChamp.stunTimer = Math.max(targetChamp.stunTimer, p.stunOnHit ?? 0);
+          if (p.stunOnHit) {
+            applyChampionCrowdControl(attackerChamp ?? null, targetChamp, p.stunOnHit, 'stun', p.skillLabel);
+          }
           targetChamp.charmTimer = Math.max(targetChamp.charmTimer, p.charmOnHit ?? 0);
-          if (p.pullOnHit && attackerChamp) targetChamp.x += attackerChamp.team === 'blue' ? -p.pullOnHit : p.pullOnHit;
+          if (p.pullOnHit && attackerChamp) {
+            const dx = attackerChamp.x - targetChamp.x;
+            const dy = attackerChamp.y - targetChamp.y;
+            const distance = Math.hypot(dx, dy);
+            const pull = Math.min(p.pullOnHit, Math.max(0, distance - 38));
+            if (distance > 0) { targetChamp.x += dx / distance * pull; targetChamp.y += dy / distance * pull; }
+          }
           applyDamageToChampion(attackerChamp ?? null, targetChamp, p.damage, !!p.trueDamage, p.skillLabel);
           if (p.splashRadius && attackerChamp) {
             championsRef.current.filter(c => c.team !== attackerChamp.team && c.id !== targetChamp.id && c.isAlive
@@ -1643,9 +2109,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           }
           if (p.healAlliesOnHit && attackerChamp) {
             championsRef.current.filter(c => c.team === attackerChamp.team && c.isAlive && Math.hypot(c.x - attackerChamp.x, c.y - attackerChamp.y) < 190)
-              .forEach(c => { c.hp = Math.min(c.maxHp, c.hp + p.healAlliesOnHit!); emitSkillEffect(attackerChamp, c); });
+              .forEach(c => { c.hp = Math.min(c.maxHp, c.hp + p.healAlliesOnHit!); emitSkillEffect(attackerChamp, c, false, p.skillLabel || 'Dusk Lance', 'skill1'); });
           }
-          if (attackerChamp) emitSkillEffect(attackerChamp, targetChamp, false, p.skillLabel);
+          if (attackerChamp) emitSkillEffect(attackerChamp, targetChamp, false, p.skillLabel, 'skill1');
           if (p.comboStage && attackerChamp?.comboStage === p.comboStage && attackerChamp.comboTargetId === targetChamp.id) {
             attackerChamp.comboHitConfirmed = true;
             attackerChamp.mana = Math.min(100, attackerChamp.mana + 45);
@@ -1656,19 +2122,45 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           p.type === 'turret_shot' ? '🏰 Turret' : p.type === 'boss_breath' ? '🔥 Flame Breath'
             : p.type === 'jungle_shot' ? '🌲 Jungle Camp' : undefined);
       } else if (targetMinion) {
-        targetMinion.hp -= p.damage;
-        if (targetMinion.hp <= 0 && targetMinion.isAlive) {
-          targetMinion.isAlive = false;
+        if (attackerChamp) {
+          applyDamageToMinion(attackerChamp, targetMinion, p.damage);
+        } else {
+          targetMinion.hp -= p.damage;
+          if (targetMinion.hp <= 0 && targetMinion.isAlive) {
+            targetMinion.isAlive = false;
+          }
         }
-      } else if (targetStructure && p.type === 'minion_shot') {
-        damageStructure(targetStructure, p.damage);
+      } else if (targetStructure) {
+        if (attackerChamp) {
+          applyDamageToStructure(attackerChamp, targetStructure, p.damage);
+        } else {
+          damageStructure(targetStructure, p.damage);
+        }
+      } else {
+        const targetCamp = jungleCampsRef.current.find((c) => c.id === p.targetUnitId && c.isAlive);
+        if (targetCamp && attackerChamp) {
+          applyDamageToJungleCamp(attackerChamp, targetCamp, p.damage);
+        } else if (dragonRef.current.id === p.targetUnitId && dragonRef.current.isAlive && attackerChamp) {
+          applyDamageToDragon(attackerChamp, p.damage);
+        }
       }
+
+      floatsRef.current.push({
+        id: Math.random().toString(),
+        x: p.x,
+        y: p.y - 10,
+        text: '✨',
+        color: p.color || '#facc15',
+        opacity: 0.85,
+        scale: 0.85
+      });
     }
   };
 
   const applyMinionDamage = (m: LaneMinion, target: LaneMinion | LaneStructure | AramChampionUnit) => {
     if ('armor' in target) {
-      damageStructure(target, m.ad);
+      const siegeDmg = getMinionStructureDamage(m.type, m.ad);
+      damageStructure(target, siegeDmg);
       return;
     }
     if ('player' in target) {
@@ -1681,231 +2173,261 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
   };
 
-  // Champion Basic Attack Projectile / Melee Strike
-  const performChampionAttack = (u: AramChampionUnit, target: AramChampionUnit) => {
+  const getChampionBasicProjectile = (champ: ChampionKit): {
+    type: Projectile['type'];
+    color: string;
+    speed: number;
+    size: number;
+  } => {
+    switch (champ.name) {
+      case 'Astra':
+        return { type: 'arrow', color: '#38bdf8', speed: 520, size: 5 };
+      case 'Kindra':
+      case 'Kindra & Grim':
+        return { type: 'spirit_arrow', color: '#a855f7', speed: 520, size: 5 };
+      case 'Cora':
+        return { type: 'feather', color: '#ec4899', speed: 530, size: 5 };
+      case 'Tequoia':
+        return { type: 'nature_bolt', color: '#22c55e', speed: 480, size: 6 };
+      case 'Zal':
+        return { type: 'poison_dart', color: '#d946ef', speed: 470, size: 5 };
+      case 'Raijin':
+        return { type: 'electric_spark', color: '#06b6d4', speed: 490, size: 6 };
+      case 'Sylla':
+        return { type: 'seed_shot', color: '#15803d', speed: 480, size: 5 };
+      case 'Kyumi':
+        return { type: 'orb', color: '#f472b6', speed: 460, size: 7 };
+      case 'Buck':
+        return { type: 'pellet', color: '#fbbf24', speed: 480, size: 4 };
+      case 'Solenne':
+        return { type: 'laser', color: '#fde047', speed: 540, size: 6 };
+      case 'Soulscourge':
+        return { type: 'orb', color: '#a855f7', speed: 500, size: 6 };
+      case 'Cinderlock':
+        return { type: 'orb', color: '#f97316', speed: 510, size: 6 };
+      case 'Veyara':
+        return { type: 'orb', color: '#c084fc', speed: 510, size: 6 };
+      case 'Morrigan':
+        return { type: 'orb', color: '#818cf8', speed: 500, size: 6 };
+      case 'Aurelius':
+        return { type: 'orb', color: '#eab308', speed: 500, size: 6 };
+      case 'Lyra':
+        return { type: 'feather', color: '#38bdf8', speed: 510, size: 5 };
+      default:
+        return { type: 'orb', color: champ.accentColor || '#38bdf8', speed: 500, size: 6 };
+    }
+  };
+
+  // Champion Basic Attack (Ranged Projectiles with Impact Sparks & Melee Slashes)
+  const executeChampionAttack = (
+    u: AramChampionUnit,
+    target: { id: string; x: number; y: number },
+    targetType: 'champion' | 'minion' | 'structure' | 'camp' | 'dragon',
+    baseDamage: number
+  ) => {
     sound.playSpellHit();
 
     let bonusAd = 0;
     const hasInfinity = u.items.some((it) => it.id === 'item_infinity_edge');
     const critChance = Math.min(0.85, 0.1 + u.items.reduce((total, item) => total + (item.stats.crit ?? 0) / 100, 0));
     const isCrit = Math.random() < critChance;
-    if (isCrit) bonusAd += u.champion.ad * (hasInfinity ? 1.15 : 0.75);
+    if (isCrit) bonusAd += u.champion.ad * (hasInfinity ? 1.25 : 0.75);
 
     if (aegisBuffRef.current?.team === u.team) {
       bonusAd += aegisBuffRef.current.adBonus;
     }
+    if (jungleBuffsRef.current[u.team].red > matchTimeRef.current) bonusAd += 28;
 
-    const totalDmg = u.champion.ad + bonusAd;
+    const champTarget = targetType === 'champion' ? championsRef.current.find(c => c.id === target.id) : null;
 
-    if (u.champion.name === 'Astra') {
-      const dx = target.x - u.x;
-      const dy = target.y - u.y;
-      const angle = Math.atan2(dy, dx);
-      projectilesRef.current.push({
-        id: Math.random().toString(),
-        x: u.x + (u.facing === 'right' ? 18 : -18),
-        y: u.y - 15,
-        targetX: target.x,
-        targetY: target.y - 15,
-        vx: 0,
-        vy: 0,
-        speed: 520,
-        color: '#38bdf8',
-        type: 'arrow',
-        size: 5,
-        targetUnitId: target.id,
-        damage: totalDmg,
-        attackerId: u.id,
-        angle
-      });
-    } else if (u.champion.name === 'Kindra' || u.champion.name === 'Kindra & Grim') {
-      const dx = target.x - u.x;
-      const dy = target.y - u.y;
-      const angle = Math.atan2(dy, dx);
-      projectilesRef.current.push({
-        id: Math.random().toString(),
-        x: u.x + (u.facing === 'right' ? 18 : -18),
-        y: u.y - 15,
-        targetX: target.x,
-        targetY: target.y - 15,
-        vx: 0,
-        vy: 0,
-        speed: 520,
-        color: '#a855f7',
-        type: 'spirit_arrow',
-        size: 5,
-        targetUnitId: target.id,
-        damage: totalDmg,
-        attackerId: u.id,
-        angle
-      });
-    } else if (u.champion.name === 'Cora') {
-      const dx = target.x - u.x;
-      const dy = target.y - u.y;
-      const angle = Math.atan2(dy, dx);
-      projectilesRef.current.push({
-        id: Math.random().toString(),
-        x: u.x + (u.facing === 'right' ? 18 : -18),
-        y: u.y - 15,
-        targetX: target.x,
-        targetY: target.y - 15,
-        vx: 0,
-        vy: 0,
-        speed: 530,
-        color: '#ec4899',
-        type: 'feather',
-        size: 5,
-        targetUnitId: target.id,
-        damage: totalDmg,
-        attackerId: u.id,
-        angle
-      });
-    } else if (u.champion.name === 'Tequoia') {
-      const dx = target.x - u.x;
-      const dy = target.y - u.y;
-      const angle = Math.atan2(dy, dx);
-      projectilesRef.current.push({
-        id: Math.random().toString(),
-        x: u.x + (u.facing === 'right' ? 16 : -16),
-        y: u.y - 14,
-        targetX: target.x,
-        targetY: target.y - 15,
-        vx: 0,
-        vy: 0,
-        speed: 480,
-        color: '#22c55e',
-        type: 'nature_bolt',
-        size: 6,
-        targetUnitId: target.id,
-        damage: totalDmg,
-        attackerId: u.id,
-        angle
-      });
-    } else if (u.champion.name === 'Zal') {
-      const dx = target.x - u.x;
-      const dy = target.y - u.y;
-      const angle = Math.atan2(dy, dx);
-      projectilesRef.current.push({
-        id: Math.random().toString(),
-        x: u.x + (u.facing === 'right' ? 16 : -16),
-        y: u.y - 14,
-        targetX: target.x,
-        targetY: target.y - 15,
-        vx: 0,
-        vy: 0,
-        speed: 470,
-        color: '#d946ef',
-        type: 'poison_dart',
-        size: 5,
-        targetUnitId: target.id,
-        damage: totalDmg,
-        attackerId: u.id,
-        angle
-      });
-    } else if (u.champion.name === 'Raijin') {
-      const dx = target.x - u.x;
-      const dy = target.y - u.y;
-      const angle = Math.atan2(dy, dx);
-      projectilesRef.current.push({
-        id: Math.random().toString(),
-        x: u.x + (u.facing === 'right' ? 16 : -16),
-        y: u.y - 14,
-        targetX: target.x,
-        targetY: target.y - 15,
-        vx: 0,
-        vy: 0,
-        speed: 490,
-        color: '#06b6d4',
-        type: 'electric_spark',
-        size: 6,
-        targetUnitId: target.id,
-        damage: totalDmg,
-        attackerId: u.id,
-        angle
-      });
-    } else if (u.champion.name === 'Sylla') {
-      const dx = target.x - u.x;
-      const dy = target.y - u.y;
-      const angle = Math.atan2(dy, dx);
-      projectilesRef.current.push({
-        id: Math.random().toString(),
-        x: u.x + (u.facing === 'right' ? 16 : -16),
-        y: u.y - 14,
-        targetX: target.x,
-        targetY: target.y - 15,
-        vx: 0,
-        vy: 0,
-        speed: 480,
-        color: '#15803d',
-        type: 'seed_shot',
-        size: 5,
-        targetUnitId: target.id,
-        damage: totalDmg,
-        attackerId: u.id,
-        angle
-      });
-    } else if (u.champion.name === 'Kyumi') {
-      const dx = target.x - u.x;
-      const dy = target.y - u.y;
-      const angle = Math.atan2(dy, dx);
-      projectilesRef.current.push({
-        id: Math.random().toString(),
-        x: u.x + (u.facing === 'right' ? 16 : -16),
-        y: u.y - 14,
-        targetX: target.x,
-        targetY: target.y - 15,
-        vx: 0,
-        vy: 0,
-        speed: 460,
-        color: '#f472b6',
-        type: 'orb',
-        size: 7,
-        targetUnitId: target.id,
-        damage: totalDmg,
-        attackerId: u.id,
-        angle
-      });
-    } else if (u.champion.name === 'Buck') {
-      const dx = target.x - u.x;
-      const dy = target.y - u.y;
-      const angle = Math.atan2(dy, dx);
-      for (let s = -1; s <= 1; s++) {
-        projectilesRef.current.push({
+    // Kraken Slayer: Bring It Down (Every 3rd attack deals bonus damage scaling with target missing HP)
+    const hasKraken = u.items.some((it) => it.id === 'item_kraken_slayer');
+    if (hasKraken) {
+      u.krakenCounter = (u.krakenCounter ?? 0) + 1;
+      if (u.krakenCounter % 3 === 0) {
+        const missingHpFactor = champTarget ? Math.min(1.0, Math.max(0, 1 - (champTarget.hp / champTarget.maxHp))) : 0;
+        const krakenProcDmg = Math.round((140 + u.champion.ad * 0.45) * (1 + missingHpFactor * 0.50));
+        bonusAd += krakenProcDmg;
+        floatsRef.current.push({
           id: Math.random().toString(),
-          x: u.x + (u.facing === 'right' ? 20 : -20),
-          y: u.y - 12,
-          targetX: target.x,
-          targetY: target.y - 15 + s * 12,
-          vx: 0,
-          vy: 0,
-          speed: 480,
-          color: '#fbbf24',
-          type: 'pellet',
-          size: 4,
-          targetUnitId: target.id,
-          damage: totalDmg / 2.2,
-          attackerId: u.id,
-          angle: angle + s * 0.12
+          x: target.x,
+          y: target.y - 36,
+          text: `🔱 BRING IT DOWN! (+${krakenProcDmg})`,
+          color: '#38bdf8',
+          opacity: 1,
+          scale: 1.25
         });
       }
-    } else if (u.champion.name === 'Solenne' || u.champion.name === 'Soulscourge' || u.champion.name === 'Cinderlock') {
-      const originX = u.x + (u.facing === 'right' ? 18 : -18);
-      projectilesRef.current.push({
-        id: Math.random().toString(), x: originX, y: u.y - 15,
-        targetX: target.x, targetY: target.y - 15, vx: 0, vy: 0, speed: 520,
-        color: u.champion.accentColor, type: u.champion.name === 'Solenne' ? 'laser' : 'orb',
-        size: 6, targetUnitId: target.id, damage: totalDmg, attackerId: u.id,
-        angle: Math.atan2(target.y - u.y, target.x - originX)
+    }
+
+    // Blade of the Ruined King: Mist's Edge (9% current HP on-hit bonus damage)
+    const hasBork = u.items.some((it) => it.id === 'item_bork');
+    if (hasBork) {
+      const borkBonus = champTarget ? Math.round(Math.max(15, champTarget.hp * 0.09)) : 35;
+      bonusAd += borkBonus;
+    }
+
+    // Lord Dominik's Regards: Giant Slayer (up to +22% bonus damage vs higher max HP targets)
+    const hasLdr = u.items.some((it) => it.id === 'item_ldr');
+    if (hasLdr && champTarget && champTarget.maxHp > u.maxHp) {
+      const hpRatio = Math.min(1.0, (champTarget.maxHp - u.maxHp) / 1200);
+      const giantSlayerBonus = Math.round((baseDamage + bonusAd) * (hpRatio * 0.22));
+      bonusAd += giantSlayerBonus;
+      if (hpRatio >= 0.2) {
+        floatsRef.current.push({
+          id: Math.random().toString(),
+          x: target.x,
+          y: target.y - 25,
+          text: `🏹 GIANT SLAYER! (+${Math.round(hpRatio * 22)}%)`,
+          color: '#fbbf24',
+          opacity: 0.95,
+          scale: 1.1
+        });
+      }
+    }
+
+    // Mortal Reminder: Grievous Execution
+    const hasMortal = u.items.some((it) => it.id === 'item_mortal_reminder');
+    if (hasMortal && champTarget) {
+      champTarget.grievousTimer = 3.5;
+    }
+
+    // Lifesteal Recovery on Attack
+    const lifestealPercent = u.items.reduce((sum, it) => sum + (it.stats.lifesteal ?? 0), 0);
+    if (lifestealPercent > 0 && u.hp < u.maxHp) {
+      const healAmount = Math.round((baseDamage + bonusAd) * (lifestealPercent / 100) * 0.65);
+      u.hp = Math.min(u.maxHp, u.hp + healAmount);
+    }
+
+    const totalDmg = baseDamage + bonusAd;
+    const attackRange = getChampionAttackRange(u.champion.name);
+    const isRanged = attackRange >= 90;
+
+    // Runaan's Hurricane: Wind's Fury (fires secondary bolts at up to 2 nearby enemies)
+    const hasRunaans = u.items.some((it) => it.id === 'item_runaans');
+    if (isRanged && hasRunaans) {
+      const nearbyEnemies = (targetType === 'champion'
+        ? championsRef.current.filter(c => c.team !== u.team && c.isAlive && c.id !== target.id && Math.hypot(c.x - u.x, c.y - u.y) <= attackRange + 40)
+        : minionsRef.current.filter(m => m.team !== u.team && m.isAlive && m.id !== target.id && Math.hypot(m.x - u.x, m.y - u.y) <= attackRange + 40)
+      ).slice(0, 2);
+
+      nearbyEnemies.forEach((subTarget) => {
+        const subOriginX = u.x + (u.facing === 'right' ? 18 : -18);
+        const subOriginY = u.y - 14;
+        const subTargetCenterY = 'champion' in subTarget ? subTarget.y - 14 : subTarget.y;
+        const subDx = subTarget.x - subOriginX;
+        const subDy = subTargetCenterY - subOriginY;
+        const subAngle = Math.atan2(subDy, subDx);
+        projectilesRef.current.push({
+          id: Math.random().toString(),
+          x: subOriginX,
+          y: subOriginY,
+          targetX: subTarget.x,
+          targetY: subTargetCenterY,
+          vx: 0,
+          vy: 0,
+          speed: 620,
+          color: '#a7f3d0',
+          type: 'pellet',
+          size: 7,
+          targetUnitId: subTarget.id,
+          damage: Math.round(totalDmg * 0.40),
+          attackerId: u.id,
+          angle: subAngle
+        });
       });
+    }
+
+    if (isRanged) {
+      const proj = getChampionBasicProjectile(u.champion);
+      const originX = u.x + (u.facing === 'right' ? 18 : -18);
+      const originY = u.y - 14;
+      const targetCenterY = targetType === 'structure' || targetType === 'camp' || targetType === 'dragon' ? target.y : target.y - 14;
+      const dx = target.x - originX;
+      const dy = targetCenterY - originY;
+      const angle = Math.atan2(dy, dx);
+
+      if (u.champion.name === 'Buck') {
+        for (let s = -1; s <= 1; s++) {
+          projectilesRef.current.push({
+            id: Math.random().toString(),
+            x: originX,
+            y: originY,
+            targetX: target.x,
+            targetY: targetCenterY + s * 10,
+            vx: 0,
+            vy: 0,
+            speed: proj.speed,
+            color: proj.color,
+            type: 'pellet',
+            size: proj.size,
+            targetUnitId: target.id,
+            damage: totalDmg / 2.2,
+            attackerId: u.id,
+            angle: angle + s * 0.12
+          });
+        }
+      } else {
+        projectilesRef.current.push({
+          id: Math.random().toString(),
+          x: originX,
+          y: originY,
+          targetX: target.x,
+          targetY: targetCenterY,
+          vx: 0,
+          vy: 0,
+          speed: proj.speed,
+          color: proj.color,
+          type: proj.type,
+          size: proj.size,
+          targetUnitId: target.id,
+          damage: totalDmg,
+          attackerId: u.id,
+          angle
+        });
+      }
     } else {
-      applyDamageToChampion(u, target, totalDmg, false);
+      // Melee attack: direct strike with melee impact spark
+      floatsRef.current.push({
+        id: Math.random().toString(),
+        x: target.x + (Math.random() - 0.5) * 16,
+        y: target.y - 15,
+        text: '💥',
+        color: '#facc15',
+        opacity: 0.9,
+        scale: 0.95
+      });
+      if (targetType === 'champion') {
+        const champTarget = championsRef.current.find(c => c.id === target.id);
+        if (champTarget) applyDamageToChampion(u, champTarget, totalDmg, false);
+      } else if (targetType === 'minion') {
+        const minionTarget = minionsRef.current.find(m => m.id === target.id);
+        if (minionTarget) applyDamageToMinion(u, minionTarget, totalDmg);
+      } else if (targetType === 'structure') {
+        const structTarget = structuresRef.current.find(s => s.id === target.id);
+        if (structTarget) applyDamageToStructure(u, structTarget, totalDmg);
+      } else if (targetType === 'camp') {
+        const campTarget = jungleCampsRef.current.find(c => c.id === target.id);
+        if (campTarget) applyDamageToJungleCamp(u, campTarget, totalDmg);
+      } else if (targetType === 'dragon') {
+        applyDamageToDragon(u, totalDmg * 1.2);
+      }
     }
   };
 
-  const emitSkillEffect = (u: AramChampionUnit, target: AramChampionUnit, ultimate = false, label = '') => {
-    const abilitySlot: SkillSlot | undefined = ultimate ? 'ultimate'
-      : label === u.champion.skill1.name ? 'skill1'
-        : label === u.champion.skill2.name ? 'skill2' : undefined;
+  const performChampionAttack = (u: AramChampionUnit, target: AramChampionUnit) => {
+    executeChampionAttack(u, target, 'champion', u.champion.ad);
+  };
+
+  const emitSkillEffect = (
+    u: AramChampionUnit,
+    target: AramChampionUnit,
+    ultimate = false,
+    label = '',
+    explicitSlot?: SkillSlot
+  ) => {
+    const abilitySlot: SkillSlot = explicitSlot ?? (ultimate ? 'ultimate'
+      : (label === u.champion.skill2.name ? 'skill2' : 'skill1'));
     spellsRef.current.push({
       id: Math.random().toString(),
       type: ultimate ? 'ultimate_burst' : 'skill_burst',
@@ -1940,21 +2462,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       pullOnHit: spec.pullOnHit, trueDamage: spec.trueDamage,
       collisionRadius: spec.collisionRadius,
     });
-    emitSkillEffect(u, u, false, u.champion.skill1.name);
+    emitSkillEffect(u, target, false, u.champion.skill1.name);
   };
 
   // Champion Skill 1 Cast (Remarkable High-Visibility Abilities)
   const castChampionSkill1 = (u: AramChampionUnit, target: AramChampionUnit) => {
     sound.playSpellHit();
-    const skillshotSpec = FIRST_SKILLSHOTS[u.champion.name];
-    if (skillshotSpec) {
-      fireFirstSkillshot(u, target, skillshotSpec);
-      return;
-    }
-    emitSkillEffect(u, u.champion.name === 'Astra' ? u : target, false, u.champion.skill1.name);
+    emitSkillEffect(u, target, false, u.champion.skill1.name, 'skill1');
 
     if (u.champion.name === 'Solana') {
-      target.stunTimer = 1.2;
+      applyChampionCrowdControl(u, target, 1.2, 'stun', '☀️ Solar Shieldbash');
       applyDamageToChampion(u, target, 120, false, '☀️ Solar Shieldbash');
       spellsRef.current.push({
         id: Math.random().toString(),
@@ -1995,13 +2512,49 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
       addEvent(`🏹 POKE: Astra fired Volley barrage across the lane!`, 'micro');
     } else if (u.champion.name === 'Kyumi') {
-      target.charmTimer = 1.4;
-      applyDamageToChampion(u, target, 140, true, '💖 Charm Heart');
-      addEvent(`💖 CHARM: Kyumi charmed ${target.player.name} with Fox Charm!`, 'combo');
+      const dx = target.x - u.x;
+      const dy = target.y - u.y;
+      const angle = Math.atan2(dy, dx);
+      projectilesRef.current.push({
+        id: Math.random().toString(),
+        x: u.x + (u.facing === 'right' ? 16 : -16),
+        y: u.y - 14,
+        targetX: target.x,
+        targetY: target.y - 15,
+        vx: 0,
+        vy: 0,
+        speed: 480,
+        color: '#06b6d4',
+        type: 'orb',
+        size: 9,
+        targetUnitId: target.id,
+        damage: 155,
+        trueDamage: true,
+        attackerId: u.id,
+        skillshot: true,
+        skillLabel: 'Orb of Illusion',
+        comboStage: u.comboStage === 1 || u.comboStage === 2 ? u.comboStage : undefined,
+        angle
+      });
+      addEvent(`🔮 ORB: Kyumi hurled Orb of Illusion spirit fox sphere!`, 'micro');
     } else if (u.champion.name === 'Buck') {
       applyDamageToChampion(u, target, 160, false, '💥 Powder Keg Blast');
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'shotgun_blast',
+        x: target.x,
+        y: target.y,
+        radius: 52,
+        duration: 0.65,
+        maxDuration: 0.65,
+        color: '#f97316',
+        extraText: 'Powder Keg Blast',
+        avatarName: 'Buck',
+        abilitySlot: 'skill1'
+      });
+      addEvent(`💥 POWDER KEG: Buck blasted a fiery powder keg at ${target.player.name}!`, 'combo');
     } else if (u.champion.name === 'Valkira') {
-      target.stunTimer = 0.8;
+      applyChampionCrowdControl(u, target, 0.8, 'stun', '⚔️ Crescent Cleave');
       applyDamageToChampion(u, target, 150, false, '⚔️ Crescent Cleave');
       u.shield += 100;
     } else if (u.champion.name === 'Kage') {
@@ -2049,7 +2602,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         attackerId: u.id,
         angle
       });
-      target.stunTimer = 1.5;
+      applyChampionCrowdControl(u, target, 1.5, 'knockup', '🌪️ Steel Tempest Tornado');
       addEvent(`🌪️ TORNADO: Kazemaru knocked ${target.player.name} airborne with Steel Tempest Tornado!`, 'combo');
     } else if (u.champion.name === 'Kindra' || u.champion.name === 'Kindra & Grim') {
       // Kindred: Dance of Arrows
@@ -2105,7 +2658,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // Rakan: Grand Entrance Knockup!
       u.x = target.x - (u.facing === 'right' ? 25 : -25);
       u.y = target.y;
-      target.stunTimer = 1.2;
+      applyChampionCrowdControl(u, target, 1.2, 'knockup', '✨ Grand Entrance');
       applyDamageToChampion(u, target, 115, false, '✨ Grand Entrance');
       spellsRef.current.push({
         id: Math.random().toString(),
@@ -2120,7 +2673,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       addEvent(`✨ DIVE: Renn leaped with Grand Entrance and knocked up ${target.player.name}!`, 'combo');
     } else if (u.champion.name === 'Sylla') {
       // Lone Druid: Summon Spirit Bear & Entangling Claws
-      target.stunTimer = 1.5;
+      applyChampionCrowdControl(u, target, 1.5, 'root', '🐻 Entangling Claws');
       applyDamageToChampion(u, target, 130, false, '🐻 Entangling Claws');
       spellsRef.current.push({
         id: Math.random().toString(),
@@ -2135,7 +2688,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       addEvent(`🐻 BEAR: Sylla's Spirit Bear clamped down with Entangling Claws on ${target.player.name}!`, 'combo');
     } else if (u.champion.name === 'Tequoia') {
       // Nature's Prophet: Sprout Ring of Trees!
-      target.stunTimer = 2.0;
+      applyChampionCrowdControl(u, target, 2.0, 'root', '🌲 Sprout');
       applyDamageToChampion(u, target, 90, false, '🌲 Sprout');
       spellsRef.current.push({
         id: Math.random().toString(),
@@ -2158,7 +2711,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       addEvent(`💖 SHADOW WAVE: Zal restored +180 HP to all allies and zapped ${target.player.name}!`, 'combo');
     } else if (u.champion.name === 'Xin') {
       // Ember Spirit: Searing Chains
-      target.stunTimer = 1.8;
+      applyChampionCrowdControl(u, target, 1.8, 'root', '🔥 Searing Chains');
       applyDamageToChampion(u, target, 140, false, '🔥 Searing Chains');
       addEvent(`🔥 CHAINS: Xin locked down ${target.player.name} in flaming Searing Chains!`, 'combo');
     } else if (u.champion.name === 'Raijin') {
@@ -2197,33 +2750,158 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         attackerId: u.id,
         angle
       });
-      target.stunTimer = 1.5;
+      applyChampionCrowdControl(u, target, 1.5, 'stun', '🗿 Boulder Smash');
       addEvent(`🗿 BOULDER: Kaolin smashed a giant jade boulder into ${target.player.name}!`, 'combo');
     } else if (u.champion.name === 'Inai') {
-      // Void Spirit: Aether Remnant
-      target.stunTimer = 1.4;
+      // Void Spirit: Aether Remnant Watcher pulling target into void gaze!
+      applyChampionCrowdControl(u, target, 1.4, 'stun', '🔮 Aether Remnant');
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'aether_remnant',
+        x: target.x,
+        y: target.y,
+        sourceX: u.x,
+        sourceY: u.y,
+        sourceUnitId: u.id,
+        targetUnitId: target.id,
+        radius: 45,
+        duration: 1.4,
+        maxDuration: 1.4,
+        color: '#7c3aed',
+        extraText: 'Aether Remnant',
+        avatarName: 'Inai',
+        abilitySlot: 'skill1'
+      });
       applyDamageToChampion(u, target, 125, false, '🔮 Aether Remnant');
-      addEvent(`🔮 VOID: Inai pulled ${target.player.name} through the Aether Remnant gaze!`, 'combo');
+      addEvent(`🔮 VOID: Inai deployed Aether Remnant, pulling ${target.player.name}!`, 'combo');
     } else if (u.champion.name === 'Veyara') {
-      target.stunTimer = Math.max(target.stunTimer, 0.8);
-      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Prism Hurl');
-    } else if (u.champion.name === 'Cinderlock' || u.champion.name === 'Soulscourge') {
-      applyDamageToChampion(u, target, u.champion.skill1.damage, false, u.champion.skill1.name);
-      championsRef.current.filter(e => e.team !== u.team && e.id !== target.id && e.isAlive && Math.hypot(e.x - target.x, e.y - target.y) < 65)
-        .forEach(e => applyDamageToChampion(u, e, 80, false, u.champion.skill1.name));
+      const dx = target.x - u.x;
+      const dy = target.y - u.y;
+      const angle = Math.atan2(dy, dx);
+      projectilesRef.current.push({
+        id: Math.random().toString(),
+        x: u.x + (u.facing === 'right' ? 16 : -16),
+        y: u.y - 14,
+        targetX: target.x,
+        targetY: target.y - 15,
+        vx: 0,
+        vy: 0,
+        speed: 520,
+        color: '#14b8a6',
+        type: 'shuriken',
+        size: 9,
+        targetUnitId: target.id,
+        damage: u.champion.skill1.damage,
+        attackerId: u.id,
+        skillshot: true,
+        skillLabel: 'Prism Hurl',
+        stunOnHit: 0.8,
+        comboStage: u.comboStage === 1 || u.comboStage === 2 ? u.comboStage : undefined,
+        angle
+      });
+      applyChampionCrowdControl(u, target, 0.8, 'stun', '🌀 Prism Hurl');
+      addEvent(`🌀 PRISM: Veyara hurled spinning elemental Ohmlat blade!`, 'combo');
+    } else if (u.champion.name === 'Cinderlock') {
+      const dx = target.x - u.x;
+      const dy = target.y - u.y;
+      const angle = Math.atan2(dy, dx);
+      for (let w = -2; w <= 2; w++) {
+        projectilesRef.current.push({
+          id: Math.random().toString(),
+          x: u.x + (u.facing === 'right' ? 16 : -16),
+          y: u.y - 14,
+          targetX: target.x,
+          targetY: target.y - 15 + w * 18,
+          vx: 0, vy: 0, speed: 530,
+          color: '#fb923c', type: 'pellet', size: 6,
+          targetUnitId: target.id, damage: Math.round(u.champion.skill1.damage * 0.4),
+          attackerId: u.id, skillshot: true, skillLabel: 'Cinder Spikes',
+          comboStage: u.comboStage === 1 || u.comboStage === 2 ? u.comboStage : undefined,
+          angle: angle + w * 0.1
+        });
+      }
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Cinder Spikes');
+      addEvent(`🔥 CINDER: Cinderlock hurled searing ritual iron nails!`, 'combo');
+    } else if (u.champion.name === 'Soulscourge') {
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Gloom Raze');
+      championsRef.current.filter(e => e.team !== u.team && e.id !== target.id && e.isAlive && Math.hypot(e.x - target.x, e.y - target.y) < 75)
+        .forEach(e => applyDamageToChampion(u, e, 95, false, 'Gloom Raze'));
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'soul_draw',
+        x: target.x,
+        y: target.y,
+        radius: 65,
+        duration: 1.0,
+        maxDuration: 1.0,
+        color: '#7f1d1d',
+        extraText: 'Gloom Raze',
+        avatarName: 'Soulscourge',
+        abilitySlot: 'skill1'
+      });
+      addEvent(`💀 RAZE: Soulscourge erupted dark soul geysers under ${target.player.name}!`, 'combo');
     } else if (u.champion.name === 'Solenne') {
       applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Dusk Lance');
       championsRef.current.filter(a => a.team === u.team && a.isAlive && Math.hypot(a.x - u.x, a.y - u.y) < 180)
-        .forEach(a => { a.hp = Math.min(a.maxHp, a.hp + 110); emitSkillEffect(u, a); });
+        .forEach(a => { a.hp = Math.min(a.maxHp, a.hp + 110); emitSkillEffect(u, a, false, 'Dusk Lance', 'skill1'); });
+      addEvent(`✨ DUSK LANCE: Solenne fired piercing relic beam, healing allies!`, 'combo');
     } else if (u.champion.name === 'Croakwell') {
-      target.x += u.team === 'blue' ? -35 : 35;
-      target.stunTimer = Math.max(target.stunTimer, 0.7);
+      // Largo / Croakwell: Ribbon Lash Tongue pulling target continuously!
+      applyChampionCrowdControl(u, target, 0.8, 'stun', '👅 Ribbon Lash');
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'ribbon_lash',
+        x: target.x,
+        y: target.y,
+        sourceX: u.x,
+        sourceY: u.y,
+        sourceUnitId: u.id,
+        targetUnitId: target.id,
+        radius: 32,
+        duration: 0.8,
+        maxDuration: 0.8,
+        color: '#84cc16',
+        extraText: 'Ribbon Lash',
+        avatarName: 'Croakwell',
+        abilitySlot: 'skill1'
+      });
       applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Ribbon Lash');
+      addEvent(`👅 LASH: Croakwell reeled in ${target.player.name} with Ribbon Lash!`, 'combo');
     } else if (u.champion.name === 'Stonewake') {
-      target.stunTimer = Math.max(target.stunTimer, 1.4);
+      applyChampionCrowdControl(u, target, 1.4, 'knockup', 'Faultline');
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'faultline',
+        x: target.x,
+        y: target.y,
+        sourceX: u.x,
+        sourceY: u.y,
+        radius: 80,
+        duration: 1.6,
+        maxDuration: 1.6,
+        color: '#a16207',
+        extraText: 'Faultline',
+        avatarName: 'Stonewake',
+        abilitySlot: 'skill1'
+      });
       applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Faultline');
       championsRef.current.filter(e => e.team !== u.team && e.id !== target.id && e.isAlive && Math.abs(e.y - target.y) < 32 && Math.abs(e.x - target.x) < 90)
-        .forEach(e => { e.stunTimer = Math.max(e.stunTimer, 0.9); applyDamageToChampion(u, e, 95, false, 'Faultline'); });
+        .forEach(e => {
+          applyChampionCrowdControl(u, e, 0.9, 'knockup', 'Faultline');
+          applyDamageToChampion(u, e, 95, false, 'Faultline');
+        });
+    } else if (['Mirehook', 'Voltgrip', 'Wraithhook'].includes(u.champion.name)) {
+      fireFirstSkillshot(u, target, { speed: u.champion.name === 'Voltgrip' ? 530 : 455,
+        size: 9, collisionRadius: 15, stunOnHit: 0.9, pullOnHit: u.champion.name === 'Mirehook' ? 125 : 105 });
+    } else if (u.champion.name === 'Nullweaver') {
+      fireFirstSkillshot(u, target, { speed: 420, size: 11, collisionRadius: 17, stunOnHit: 0.8,
+        splashRadius: 42 });
+    } else if (u.champion.name === 'Aetherbolt') {
+      fireFirstSkillshot(u, target, { speed: 620, size: 7, collisionRadius: 11 });
+    } else if (u.champion.name === 'Corsara') {
+      fireFirstSkillshot(u, target, { speed: 570, size: 8, collisionRadius: 14, splashRadius: 85 });
+    } else if (u.champion.name === 'Brewmaw') {
+      fireFirstSkillshot(u, target, { speed: 390, size: 12, collisionRadius: 22, splashRadius: 90 });
     }
   };
 
@@ -2233,13 +2911,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const nearbyAllies = championsRef.current.filter(c => c.team === u.team && c.isAlive);
     const nearbyEnemies = championsRef.current.filter(c => c.team !== u.team && c.isAlive);
     sound.playSpellHit();
-    emitSkillEffect(u, target, false, skill.name);
+    emitSkillEffect(u, target, false, skill.name, 'skill2');
 
     if (name === 'Solana') {
       u.x = target.x + (u.team === 'blue' ? -28 : 28);
-      target.stunTimer = Math.max(target.stunTimer, 1.1);
+      applyChampionCrowdControl(u, target, 1.1, 'stun', 'Zenith Lance');
     } else if (name === 'Kyumi') {
-      target.charmTimer = Math.max(target.charmTimer, 1.4);
+      target.charmTimer = 1.4;
+      target.charmSourceId = u.id;
+      addEvent(`💖 CHARM: Kyumi charmed ${target.player.name} with Charm of Longing!`, 'combo');
     } else if (name === 'Buck') {
       spellsRef.current.push({ id: Math.random().toString(), type: 'smoke_screen',
         x: target.x, y: target.y, radius: 55, duration: 2.5, maxDuration: 2.5, color: '#94a3b8' });
@@ -2252,17 +2932,90 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       spellsRef.current.push({ id: Math.random().toString(), type: 'wind_wall',
         x: u.x + (target.x - u.x) * 0.5, y: u.y, radius: 50,
         duration: 3.5, maxDuration: 3.5, color: '#38bdf8' });
-    } else if (name === 'Cora' || name === 'Sylla' || name === 'Raijin') {
-      target.stunTimer = Math.max(target.stunTimer, name === 'Cora' ? 1.3 : 1.0);
-      if (name === 'Raijin') target.x = u.x + (u.team === 'blue' ? 45 : -45);
+    } else if (name === 'Cora') {
+      applyChampionCrowdControl(u, target, 1.3, 'root', '🪶 Bladecaller');
+      addEvent(`🪶 BLADECALLER: Cora recalled ground feathers, rooting ${target.player.name}!`, 'combo');
+    } else if (name === 'Astra') {
+      applyChampionCrowdControl(u, target, 0.6, 'stun', '❄️ Frost Shot');
+      addEvent(`❄️ FROST: Astra applied Frost Shot frostbite to ${target.player.name}!`, 'micro');
+    } else if (name === 'Kindra' || name === 'Kindra & Grim') {
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'wolf_frenzy',
+        x: target.x,
+        y: target.y,
+        radius: 60,
+        duration: 2.2,
+        maxDuration: 2.2,
+        color: '#a855f7',
+        extraText: "Wolf's Frenzy",
+        avatarName: 'Kindra',
+        abilitySlot: 'skill2'
+      });
+      addEvent(`🐺 FRENZY: Grim dashed to attack in Wolf's Frenzy territory!`, 'combo');
+    } else if (name === 'Tequoia') {
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'treants',
+        x: u.x,
+        y: u.y,
+        radius: 45,
+        duration: 2.5,
+        maxDuration: 2.5,
+        color: '#22c55e',
+        extraText: "Nature's Call",
+        avatarName: 'Tequoia',
+        abilitySlot: 'skill2'
+      });
+      addEvent(`🌱 TREANTS: Tequoia animated 3 living Treant saplings!`, 'micro');
+    } else if (name === 'Sylla') {
+      nearbyEnemies.filter((c) => Math.hypot(c.x - u.x, c.y - u.y) < 140).forEach((e) => {
+        e.fearTimer = 1.3;
+        e.fearSourceId = u.id;
+      });
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'savage_roar',
+        x: u.x,
+        y: u.y,
+        radius: 140,
+        duration: 1.3,
+        maxDuration: 1.3,
+        color: '#15803d',
+        extraText: 'Savage Roar',
+        avatarName: 'Sylla',
+        abilitySlot: 'skill2'
+      });
+      addEvent(`🐻 ROAR: Sylla and his Spirit Bear terrified enemies with Savage Roar!`, 'combo');
+    } else if (name === 'Raijin') {
+      // Storm Spirit / Raijin: Electric Vortex continuous tether pulling victim!
+      applyChampionCrowdControl(u, target, 1.4, 'stun', '⚡ Electric Vortex');
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'electric_vortex',
+        x: target.x,
+        y: target.y,
+        sourceX: u.x,
+        sourceY: u.y,
+        sourceUnitId: u.id,
+        targetUnitId: target.id,
+        radius: 40,
+        duration: 1.4,
+        maxDuration: 1.4,
+        color: '#06b6d4',
+        extraText: 'Electric Vortex',
+        avatarName: 'Raijin',
+        abilitySlot: 'skill2'
+      });
+      addEvent(`⚡ VORTEX: Raijin tethered and is pulling ${target.player.name} with Electric Vortex!`, 'combo');
     } else if (name === 'Renn') {
       const ally = nearbyAllies.filter(c => c.id !== u.id).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
       u.shield += 220;
-      if (ally) { ally.shield += 220; emitSkillEffect(u, ally); }
+      if (ally) { ally.shield += 220; emitSkillEffect(u, ally, false, skill.name, 'skill2'); }
     } else if (name === 'Zal') {
       nearbyAllies.filter(c => Math.hypot(c.x - u.x, c.y - u.y) < 200).forEach(c => {
         c.hp = Math.min(c.maxHp, c.hp + 180);
-        emitSkillEffect(u, c);
+        emitSkillEffect(u, c, false, skill.name, 'skill2');
       });
     } else if (name === 'Xin') {
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 90)
@@ -2271,20 +3024,86 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.x = target.x + (u.team === 'blue' ? -30 : 30);
       u.y = target.y;
     } else if (name === 'Solenne') {
-      target.stunTimer = Math.max(target.stunTimer, 1.3);
+      applyChampionCrowdControl(u, target, 1.3, 'root', 'Prismatic Barrier');
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 70)
-        .forEach(c => { c.stunTimer = Math.max(c.stunTimer, 0.8); applyDamageToChampion(u, c, 65, false, skill.name); });
+        .forEach(c => { applyChampionCrowdControl(u, c, 0.8, 'root', 'Prismatic Barrier'); applyDamageToChampion(u, c, 65, false, skill.name); });
     } else if (name === 'Croakwell') {
-      target.stunTimer = Math.max(target.stunTimer, 0.8);
+      applyChampionCrowdControl(u, target, 0.8, 'stun', 'Bogbeat');
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 85)
-        .forEach(c => { c.stunTimer = Math.max(c.stunTimer, 0.5); applyDamageToChampion(u, c, 75, false, skill.name); });
+        .forEach(c => { applyChampionCrowdControl(u, c, 0.5, 'stun', 'Bogbeat'); applyDamageToChampion(u, c, 75, false, skill.name); });
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'bogbeat',
+        x: u.x,
+        y: u.y,
+        radius: 85,
+        duration: 1.8,
+        maxDuration: 1.8,
+        color: '#84cc16',
+        extraText: 'Bogbeat',
+        avatarName: 'Croakwell',
+        abilitySlot: 'skill2'
+      });
     } else if (name === 'Soulscourge') {
-      u.shield += 110;
+      u.shield += 120;
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - u.x, c.y - u.y) < 95)
         .forEach(c => applyDamageToChampion(u, c, 65, false, skill.name));
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'soul_draw',
+        x: u.x,
+        y: u.y,
+        radius: 95,
+        duration: 1.2,
+        maxDuration: 1.2,
+        color: '#7f1d1d',
+        extraText: 'Soul Draw',
+        avatarName: 'Soulscourge',
+        abilitySlot: 'skill2'
+      });
     } else if (name === 'Stonewake') {
-      target.stunTimer = Math.max(target.stunTimer, 1.0);
+      applyChampionCrowdControl(u, target, 1.0, 'knockup', 'Runic Maul');
       u.shield += 130;
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'runic_maul',
+        x: target.x,
+        y: target.y,
+        radius: 60,
+        duration: 1.0,
+        maxDuration: 1.0,
+        color: '#facc15',
+        extraText: 'Runic Maul',
+        avatarName: 'Stonewake',
+        abilitySlot: 'skill2'
+      });
+    } else if (name === 'Mirehook') {
+      u.shield += 110;
+      nearbyEnemies.filter(e => Math.hypot(e.x - u.x, e.y - u.y) < 90).forEach(e => {
+        if (e.id !== target.id) applyDamageToChampion(u, e, skill.damage * 0.7, false, skill.name);
+      });
+    } else if (name === 'Nullweaver') {
+      nearbyEnemies.filter(e => Math.hypot(e.x - target.x, e.y - target.y) < 85).forEach(e => {
+        if (e.id !== target.id) applyDamageToChampion(u, e, skill.damage * 0.65, false, skill.name);
+      });
+    } else if (name === 'Voltgrip') {
+      applyChampionCrowdControl(u, target, 0.9, 'knockup', skill.name);
+      u.shield += 100;
+    } else if (name === 'Aetherbolt') {
+      u.x = Math.max(60, Math.min(ARENA_WIDTH - 60, u.x + (u.team === 'blue' ? -65 : 65)));
+      u.y = Math.max(90, Math.min(610, u.y + (u.y < LANE_Y ? -35 : 35)));
+    } else if (name === 'Corsara') {
+      nearbyEnemies.filter(e => Math.hypot(e.x - target.x, e.y - target.y) < 95).forEach(e => {
+        e.stunTimer = Math.max(e.stunTimer, 0.35);
+        if (e.id !== target.id) applyDamageToChampion(u, e, skill.damage * 0.5, false, skill.name);
+      });
+    } else if (name === 'Brewmaw') {
+      u.x = target.x + (u.team === 'blue' ? -28 : 28);
+      applyChampionCrowdControl(u, target, 0.8, 'knockup', skill.name);
+      u.hp = Math.min(u.maxHp, u.hp + 90);
+    } else if (name === 'Wraithhook') {
+      nearbyAllies.filter(a => Math.hypot(a.x - u.x, a.y - u.y) < 180).forEach(a => { a.shield += 150; });
+      target.x += u.team === 'blue' ? 30 : -30;
     }
 
     if (skill.damage > 0 && target.isAlive) {
@@ -2295,9 +3114,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   // Champion Ultimate Cast (Level 6 Spike: 75s / 60s / 45s CD)
   const castChampionUltimate = (u: AramChampionUnit, target: AramChampionUnit, enemies: AramChampionUnit[]) => {
+    if (!target) return;
     sound.playUltimateExplosion();
-    emitSkillEffect(u, ['Astra', 'Soulscourge', 'Stonewake', 'Croakwell'].includes(u.champion.name) ? u : target, true, u.champion.ultimate.name);
-    confetti({ particleCount: 65, spread: 55, origin: { x: u.x / ARENA_WIDTH, y: 0.4 } });
+    emitSkillEffect(u, ['Astra', 'Soulscourge', 'Stonewake', 'Croakwell'].includes(u.champion.name) ? u : target, true, u.champion.ultimate.name, 'ultimate');
 
     const ultRank = u.level >= 16 ? 3 : u.level >= 11 ? 2 : 1;
     const ultDamage = Math.round(u.champion.ultimate.damage * (1 + (ultRank - 1) * 0.25));
@@ -2321,7 +3140,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         color: '#f59e0b'
       });
       enemies.filter((e) => Math.hypot(e.x - target.x, e.y - target.y) <= 80).forEach((e) => {
-        e.stunTimer = 1.8;
+        applyChampionCrowdControl(u, e, 1.8, 'stun', '☀️ Solar Flare');
         applyDamageToChampion(u, e, ultDamage, false, '☀️ Solar Flare');
       });
     } else if (u.champion.name === 'Astra') {
@@ -2351,8 +3170,24 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
     } else if (u.champion.name === 'Kyumi') {
       target.charmTimer = 1.6;
+      target.charmSourceId = u.id;
       applyDamageToChampion(u, target, ultDamage, true, '💖 Spirit Rush');
     } else if (u.champion.name === 'Buck') {
+      const recoilDir = u.facing === 'right' ? -1 : 1;
+      u.x = Math.max(100, Math.min(ARENA_WIDTH - 100, u.x + recoilDir * 60));
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'shotgun_blast',
+        x: u.x - recoilDir * 20,
+        y: u.y - 10,
+        radius: 75,
+        duration: 0.65,
+        maxDuration: 0.65,
+        color: '#f97316',
+        extraText: 'Collateral Blast',
+        avatarName: 'Buck',
+        abilitySlot: 'ultimate'
+      });
       applyDamageToChampion(u, target, ultDamage, false, '💥 Collateral Blast');
     } else if (u.champion.name === 'Valkira') {
       applyDamageToChampion(u, target, ultDamage * 1.3, false, '🩸 Executioner Descent');
@@ -2387,7 +3222,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
       u.x = target.x;
       u.y = target.y - 15;
-      target.stunTimer = 1.8;
+      applyChampionCrowdControl(u, target, 1.8, 'knockup', '⚔️ Last Breath');
+      u.knockupTimer = 1.8;
+      u.knockupMax = 1.8;
       applyDamageToChampion(u, target, ultDamage, false, '⚔️ Last Breath (50% Shred)');
       showBanner(`⚔️ LAST BREATH!`, `${u.player.name} suspended ${target.player.name} in mid-air with Last Breath!`, '⚔️');
     } else if (u.champion.name === 'Kindra' || u.champion.name === 'Kindra & Grim') {
@@ -2408,25 +3245,28 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       showBanner(`✨ LAMB'S RESPITE!`, `${u.player.name} blessed a golden sanctuary of immortality!`, '✨');
     } else if (u.champion.name === 'Cora') {
       // Xayah: Featherstorm & Bladecaller
+      u.untargetableTimer = 1.4;
+      u.knockupTimer = 1.4;
+      u.knockupMax = 1.4;
       applyDamageToChampion(u, target, ultDamage, false, '🪶 Featherstorm');
-      target.stunTimer = 1.3;
+      applyChampionCrowdControl(u, target, 1.3, 'root', '🪶 Featherstorm');
       showBanner(`🪶 FEATHERSTORM!`, `${u.player.name} leaped untargetable and recalled all quills!`, '🪶');
     } else if (u.champion.name === 'Renn') {
       // Rakan: The Quickness
       enemies.forEach((e) => {
         if (Math.hypot(e.x - u.x, e.y - u.y) <= 120) {
           e.charmTimer = 1.5;
+          e.charmSourceId = u.id;
           applyDamageToChampion(u, e, ultDamage * 0.75, false, '✨ The Quickness');
         }
       });
       showBanner(`✨ THE QUICKNESS!`, `${u.player.name} charmed the enemy team in high-speed dance!`, '✨');
     } else if (u.champion.name === 'Sylla') {
-      // Lone Druid: True Form & Savage Roar
-      u.maxHp += 600;
-      u.hp += 600;
-      u.champion.armor += 35;
+      // Lone Druid: True Form & Savage Roar (Temporary transformation buff)
+      u.trueFormTimer = 12.0;
+      u.shield += 450;
       enemies.forEach((e) => {
-        if (Math.hypot(e.x - u.x, e.y - u.y) <= 90) e.stunTimer = 1.3;
+        if (Math.hypot(e.x - u.x, e.y - u.y) <= 90) applyChampionCrowdControl(u, e, 1.3, 'stun', '🐻 True Form Roar');
       });
       applyDamageToChampion(u, target, ultDamage, false, '🐻 True Form Roar');
       showBanner(`🐻 TRUE FORM!`, `${u.player.name} transformed into the colossal Ironclaw Bear!`, '🐻');
@@ -2501,7 +3341,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         color: '#059669'
       });
       enemies.filter((e) => Math.hypot(e.x - u.x, e.y - u.y) <= 100).forEach((e) => {
-        e.stunTimer = 1.0;
+        applyChampionCrowdControl(u, e, 1.0, 'stun', '🗿 Magnetize');
         applyDamageToChampion(u, e, ultDamage, false, '🗿 Magnetize');
       });
       showBanner(`🗿 MAGNETIZE!`, `${u.player.name} triggered resonant jade magnetic shockwaves!`, '🗿');
@@ -2515,15 +3355,73 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const center = u.champion.name === 'Soulscourge' || u.champion.name === 'Stonewake' ? u : target;
       const victims = enemies.filter(e => e.isAlive && Math.hypot(e.x - center.x, e.y - center.y) <= radius);
       victims.forEach(e => {
-        if (u.champion.name === 'Veyara' || u.champion.name === 'Stonewake') e.stunTimer = Math.max(e.stunTimer, 1.5);
+        if (u.champion.name === 'Veyara') applyChampionCrowdControl(u, e, 1.5, 'stun', 'Ultimate');
+        if (u.champion.name === 'Stonewake') applyChampionCrowdControl(u, e, 1.5, 'knockup', 'Quake Chorus');
         if (u.champion.name === 'Soulscourge') {
-          e.stunTimer = Math.max(e.stunTimer, 1.0);
-          e.fearTimer = Math.max(e.fearTimer ?? 0, 1.0);
+          applyChampionCrowdControl(u, e, 1.0, 'stun', 'Dirge Wave');
+          e.fearTimer = Math.max(e.fearTimer ?? 0, 1.5);
+          e.fearSourceId = u.id;
         }
         applyDamageToChampion(u, e, ultDamage * (u.champion.name === 'Stonewake' ? 0.85 + victims.length * 0.08 : 1), false, u.champion.ultimate.name);
         emitSkillEffect(u, e, true, u.champion.ultimate.name);
       });
+      if (u.champion.name === 'Soulscourge') {
+        spellsRef.current.push({
+          id: Math.random().toString(),
+          type: 'dirge_wave',
+          x: u.x,
+          y: u.y,
+          radius,
+          duration: 1.8,
+          maxDuration: 1.8,
+          color: '#831843',
+          extraText: 'Dirge Wave',
+          avatarName: 'Soulscourge',
+          abilitySlot: 'ultimate'
+        });
+      } else if (u.champion.name === 'Stonewake') {
+        spellsRef.current.push({
+          id: Math.random().toString(),
+          type: 'quake_chorus',
+          x: u.x,
+          y: u.y,
+          radius,
+          duration: 1.5,
+          maxDuration: 1.5,
+          color: '#eab308',
+          extraText: 'Quake Chorus',
+          avatarName: 'Stonewake',
+          abilitySlot: 'ultimate'
+        });
+      } else if (u.champion.name === 'Cinderlock') {
+        spellsRef.current.push({
+          id: Math.random().toString(),
+          type: 'cinder_verdict',
+          x: target.x,
+          y: target.y,
+          radius,
+          duration: 1.6,
+          maxDuration: 1.6,
+          color: '#ea580c',
+          extraText: 'Cinder Verdict',
+          avatarName: 'Cinderlock',
+          abilitySlot: 'ultimate'
+        });
+      }
     } else if (u.champion.name === 'Solenne') {
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'daybreak_veil',
+        x: u.x,
+        y: u.y,
+        radius: 130,
+        duration: 2.2,
+        maxDuration: 2.2,
+        color: '#fde047',
+        extraText: 'Daybreak Veil',
+        avatarName: 'Solenne',
+        abilitySlot: 'ultimate'
+      });
       enemies.filter(e => e.isAlive && Math.abs(e.y - target.y) < 90).forEach(e => {
         applyDamageToChampion(u, e, ultDamage, false, 'Daybreak Veil');
         emitSkillEffect(u, e, true, 'Daybreak Veil');
@@ -2533,6 +3431,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         emitSkillEffect(u, a, true, 'Daybreak Veil');
       });
     } else if (u.champion.name === 'Croakwell') {
+      spellsRef.current.push({
+        id: Math.random().toString(),
+        type: 'marsh_anthem',
+        x: u.x,
+        y: u.y,
+        radius: 145,
+        duration: 2.5,
+        maxDuration: 2.5,
+        color: '#10b981',
+        extraText: 'Marsh Anthem',
+        avatarName: 'Croakwell',
+        abilitySlot: 'ultimate'
+      });
       championsRef.current.filter(a => a.team === u.team && a.isAlive).forEach(a => {
         a.hp = Math.min(a.maxHp, a.hp + 300);
         a.shield += 120;
@@ -2540,6 +3451,30 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
       enemies.filter(e => e.isAlive && Math.hypot(e.x - u.x, e.y - u.y) < 145)
         .forEach(e => applyDamageToChampion(u, e, ultDamage, false, 'Marsh Anthem'));
+    } else if (['Mirehook', 'Nullweaver', 'Voltgrip', 'Aetherbolt', 'Corsara', 'Brewmaw', 'Wraithhook'].includes(u.champion.name)) {
+      const name = u.champion.name;
+      const origin = name === 'Voltgrip' || name === 'Corsara' ? u : target;
+      const radius = name === 'Mirehook' ? 55 : name === 'Aetherbolt' ? 80 : name === 'Corsara' ? 210 : 150;
+      spellsRef.current.push({ id: Math.random().toString(), type: 'ultimate_burst', x: origin.x, y: origin.y,
+        sourceX: u.x, sourceY: u.y, radius, duration: 1.5, maxDuration: 1.5,
+        color: u.champion.accentColor, extraText: u.champion.ultimate.name,
+        avatarName: name, abilitySlot: 'ultimate' });
+      const struck = enemies.filter(e => {
+        if (!e.isAlive) return false;
+        if (name === 'Aetherbolt') return Math.abs(e.y - target.y) < 75;
+        if (name === 'Corsara') {
+          const forward = (e.x - u.x) * (u.facing === 'right' ? 1 : -1);
+          return forward > 0 && forward < 260 && Math.abs(e.y - u.y) < forward * 0.55 + 24;
+        }
+        return Math.hypot(e.x - origin.x, e.y - origin.y) < radius;
+      });
+      struck.forEach(e => {
+        if (name === 'Mirehook') { applyChampionCrowdControl(u, e, 1.35, 'stun', 'Feast Lock'); u.hp = Math.min(u.maxHp, u.hp + 90); }
+        if (name === 'Nullweaver') { applyChampionCrowdControl(u, e, 1.3, 'stun', 'Singularity Well'); e.x += (target.x - e.x) * 0.55; e.y += (target.y - e.y) * 0.55; }
+        if (name === 'Voltgrip' || name === 'Wraithhook') applyChampionCrowdControl(u, e, 1.0, 'stun', u.champion.ultimate.name);
+        if (name === 'Brewmaw') { e.x += (e.x - target.x >= 0 ? 1 : -1) * 80; applyChampionCrowdControl(u, e, 0.7, 'knockup', 'Grand Vintage'); }
+        applyDamageToChampion(u, e, ultDamage, false, u.champion.ultimate.name);
+      });
     }
   };
 
@@ -2567,16 +3502,58 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
       sound.playSpellHit();
     }
+    // Taking any damage puts recall on cooldown for 6.0 seconds and triggers combat timer
+    target.recallCooldown = 6.0;
+    target.combatTimer = 6.0;
+    if (attacker) attacker.combatTimer = 6.0;
 
     const ap = label && attacker && (attacker.champion.primaryRole === 'Mage' || attacker.champion.secondaryRole === 'Mage')
       ? attacker.items.reduce((total, item) => total + (item.stats.ap ?? 0), 0) : 0;
     const spellDamage = rawDamage + ap * 0.35;
-    let effective = isTrueDamage ? spellDamage : spellDamage * (100 / (100 + target.champion.armor));
+
+    let effectiveArmor = target.champion.armor;
+    if (target.trueFormTimer && target.trueFormTimer > 0) {
+      effectiveArmor += 30; // Temporary True Form armor bonus
+    }
+
+    let effective = spellDamage;
+    if (!isTrueDamage) {
+      if (attacker) {
+        // Armor penetration percentage (e.g. 35% LDR, 30% Mortal Reminder/Terminus, 18% Last Whisper)
+        const percentPen = Math.min(0.55, attacker.items.reduce((acc, it) => acc + (it.stats.armorPen ?? 0) / 100, 0));
+        const lethality = attacker.items.reduce((acc, it) => acc + (it.stats.lethality ?? 0), 0);
+        effectiveArmor = Math.max(0, effectiveArmor * (1 - percentPen) - lethality);
+      }
+      effective = spellDamage * (100 / (100 + effectiveArmor));
+    }
 
     if (attacker?.isInBush) {
-      effective *= 1.3;
+      effective *= 1.35;
       showBanner('🌿 BRUSH AMBUSH TRAP!', `${attacker.player.name} leaped from brush with an ambush crit!`, '🌿');
-      addEvent(`🌿 AMBUSH: ${attacker.player.name} caught ${target.player.name} from brush!`, 'combo');
+      addEvent(`🌿 AMBUSH: ${attacker.player.name} caught ${target.player.name} from brush with an ambush crit!`, 'combo');
+      floatsRef.current.push({
+        id: Math.random().toString(),
+        x: target.x,
+        y: target.y - 36,
+        text: '🌿 AMBUSH CRIT! (+35%)',
+        color: '#34d399',
+        opacity: 1,
+        scale: 1.3
+      });
+    }
+
+    // Dragon Slayer Aspect: True damage burning tick on every hit!
+    if (attacker && aegisBuffRef.current?.team === attacker.team && aegisBuffRef.current.burnTrueDamage) {
+      effective += 35;
+      floatsRef.current.push({
+        id: Math.random().toString(),
+        x: target.x + (Math.random() - 0.5) * 18,
+        y: target.y - 25,
+        text: '🔥 +35 DRAGON BURN!',
+        color: '#f97316',
+        opacity: 0.95,
+        scale: 1.05
+      });
     }
 
     const finalDamage = Math.round(effective);
@@ -2584,7 +3561,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     // Sterak's Lifeline
     const hasSteraks = target.items.some((it) => it.id === 'item_steraks');
     if (hasSteraks && target.hp - finalDamage <= target.maxHp * 0.3 && target.sterakCooldown <= 0) {
-      target.shield += 600;
+      const shieldValue = (target.grievousTimer && target.grievousTimer > 0) ? 360 : 600;
+      target.shield += shieldValue;
       target.sterakCooldown = 60.0;
       sound.playCoin();
       floatsRef.current.push({
@@ -2624,7 +3602,36 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const inLambsRespite = spellsRef.current.some((s) => s.type === 'lambs_respite' && Math.hypot(s.x - target.x, s.y - target.y) <= s.radius);
 
     const minFloorHp = hasShallowGrave ? 1 : inLambsRespite ? Math.round(target.maxHp * 0.10) : 0;
-    target.hp = Math.max(minFloorHp, target.hp - finalDamage);
+
+    // Shield absorbs incoming damage before health
+    let damageRemaining = finalDamage;
+    if (target.shield > 0) {
+      if (target.shield >= damageRemaining) {
+        target.shield -= damageRemaining;
+        damageRemaining = 0;
+      } else {
+        damageRemaining -= target.shield;
+        target.shield = 0;
+      }
+    }
+    target.hp = Math.max(minFloorHp, target.hp - damageRemaining);
+
+    // The Collector Execute (<5% HP)
+    const hasCollector = attacker?.items.some((it) => it.id === 'item_collector');
+    if (hasCollector && attacker && target.hp > 0 && target.hp <= target.maxHp * 0.05 && !hasShallowGrave && !inLambsRespite) {
+      target.hp = 0;
+      attacker.gold += 25;
+      floatsRef.current.push({
+        id: Math.random().toString(),
+        x: target.x,
+        y: target.y - 45,
+        text: '☠️ COLLECTED! (+25g)',
+        color: '#f43f5e',
+        opacity: 1,
+        scale: 1.4
+      });
+      sound.playCoin();
+    }
 
     if (minFloorHp > 0 && target.hp === minFloorHp) {
       floatsRef.current.push({
@@ -2654,7 +3661,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     if (target.hp <= 0 && target.isAlive) {
       target.isAlive = false;
       target.deaths++;
-      target.respawnTimer = calculateDeathTimer(target.level, matchTime);
+      target.respawnTimer = calculateDeathTimer(target.level, matchTimeRef.current);
       target.comboStage = 0;
       target.comboHitConfirmed = false;
       target.isRecalling = false;
@@ -2675,16 +3682,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           attacker.gold += 150;
         }
 
+        // Grant assists and assist gold/XP to nearby living teammates
+        championsRef.current
+          .filter((c) => c.team === attacker.team && c.id !== attacker.id && c.isAlive && Math.hypot(c.x - target.x, c.y - target.y) <= 460)
+          .forEach((ally) => {
+            ally.assists++;
+            ally.gold += 150;
+            grantChampionXp(ally, 120);
+          });
+
         // Multikill & Spree tracking
         const tracker = killStreaksRef.current[attacker.id] || { count: 0, lastTime: 0, multiCount: 0 };
-        const timeSinceLast = matchTime - tracker.lastTime;
-        if (timeSinceLast <= 11.0) {
-          tracker.multiCount += 1;
-        } else {
-          tracker.multiCount = 1;
-        }
+        const timeSinceLast = matchTimeRef.current - tracker.lastTime;
+        tracker.multiCount = nextMultikillCount(tracker.multiCount, timeSinceLast);
         tracker.count += 1;
-        tracker.lastTime = matchTime;
+        tracker.lastTime = matchTimeRef.current;
         killStreaksRef.current[attacker.id] = tracker;
 
         if (tracker.multiCount === 2) multiKillTitle = 'DOUBLE KILL';
@@ -2700,29 +3712,23 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         sound.playSpellHit();
         if (multiKillTitle) {
           sound.playUltimateExplosion();
-          confetti({ particleCount: 75, spread: 70, origin: { x: 0.5, y: 0.2 } });
         }
-
-        if (attacker.team === 'blue') setBlueGold((g) => g + 300 + (isFirstBlood ? 150 : 0));
-        else setRedGold((g) => g + 300 + (isFirstBlood ? 150 : 0));
       }
 
       if (target && killStreaksRef.current[target.id]) {
         killStreaksRef.current[target.id].count = 0;
       }
 
-      if (attacker?.team === 'blue') setBlueKills((k) => k + 1);
-      else if (attacker?.team === 'red') setRedKills((k) => k + 1);
-
       const neutralKiller = label?.includes('Jungle Camp') ? 'Jungle Camp'
-        : label?.includes('Flame Breath') ? dragonRef.current.name : null;
+        : label?.includes('Flame Breath') ? dragonRef.current.name
+          : label === 'Creep' ? 'Creep' : null;
       const killerName = attacker?.player.name || neutralKiller || 'Turret';
 
       // Trigger the top kill callout
       const callout: KillCallout = {
         id: Math.random().toString(),
         killerName,
-        killerChamp: attacker?.champion.name || 'Structure',
+        killerChamp: attacker?.champion.name || (neutralKiller ? 'Neutral Monster' : 'Defense Turret'),
         killerTeam: attacker?.team || (target.team === 'blue' ? 'red' : 'blue'),
         killerAvatar: attacker?.player.avatarSvg,
         victimName: target.player.name,
@@ -2730,41 +3736,50 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         victimTeam: target.team,
         victimAvatar: target.player.avatarSvg,
         multiKill: multiKillTitle,
-        streakText: streakTitle,
+        streakText: attacker ? streakTitle : 'EXECUTED',
         isFirstBlood
       };
 
-      if (!neutralKiller) {
-        setKillCallout(callout);
-        setTimeout(() => {
-          setKillCallout((curr) => (curr?.id === callout.id ? null : curr));
-        }, 4200);
-      }
+      setKillCallout(callout);
+      setRecentKills((previous) => [callout, ...previous].slice(0, 4));
+      setTimeout(() => {
+        setKillCallout((curr) => (curr?.id === callout.id ? null : curr));
+      }, 4200);
 
       const killEventText = multiKillTitle
         ? `🔥 ${multiKillTitle}! ${attacker?.player.name} eliminated ${target.player.name}!`
-        : `☠️ ${killerName} eliminated ${target.player.name} (${target.champion.name})`;
-      addEvent(killEventText, 'kill');
+        : attacker
+          ? `☠️ ${killerName} eliminated ${target.player.name} (${target.champion.name})`
+          : `⚡ ${target.player.name} (${target.champion.name}) was EXECUTED by ${killerName}!`;
+      addEvent(killEventText, attacker ? 'kill' : 'execution');
     }
   };
 
   const applyDamageToStructure = (attacker: AramChampionUnit, structure: LaneStructure, damage: number) => {
-    const nearbyAlliedMinions = minionsRef.current.filter((m) => m.team === attacker.team && Math.abs(m.x - structure.x) <= 220);
-    const backdoorFactor = nearbyAlliedMinions.length > 0 ? 1.0 : 0.34;
+    const nearbyAlliedMinions = minionsRef.current.filter((m) => m.team === attacker.team && m.isAlive && Math.abs(m.x - structure.x) <= 240);
+    const crashMultiplier = getMinionCrashMultiplier(nearbyAlliedMinions);
+    const dragonSiegeFactor = aegisBuffRef.current?.team === attacker.team ? (aegisBuffRef.current.siegeMultiplier || 2.0) : 1.0;
+    const marksmanBonus = attacker.champion.primaryRole === 'Marksman' ? 1.25 : 1.0;
 
-    const finalDamage = Math.round(damage * backdoorFactor);
+    const finalDamage = Math.round(damage * crashMultiplier * dragonSiegeFactor * marksmanBonus);
     damageStructure(structure, finalDamage);
 
+    const isCrashBonus = crashMultiplier >= 1.2;
     floatsRef.current.push({
       id: Math.random().toString(),
       x: structure.x,
       y: structure.y - 40,
-      text: `-${finalDamage}`,
-      color: '#facc15',
+      text: dragonSiegeFactor > 1.0
+        ? `-${finalDamage} 🐉 SIEGE!`
+        : isCrashBonus
+          ? `-${finalDamage} 💥 DEMOLITION!`
+          : crashMultiplier < 0.5
+            ? `-${finalDamage} 🛡️ FORTIFIED`
+            : `-${finalDamage}`,
+      color: dragonSiegeFactor > 1.0 ? '#fb923c' : isCrashBonus ? '#f59e0b' : '#facc15',
       opacity: 1,
-      scale: 1.1
+      scale: dragonSiegeFactor > 1.0 ? 1.3 : isCrashBonus ? 1.25 : 1.0
     });
-
   };
 
   const damageStructure = (structure: LaneStructure, damage: number) => {
@@ -2781,18 +3796,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const isTower = structure.type !== 'barracks';
     const bounty = isTower ? 250 : 200;
 
-    if (structure.team === 'blue') {
-      setRedGold((g) => g + bounty * 5);
-      if (isTower) setBlueTowersAlive((t) => Math.max(0, t - 1));
-    } else {
-      setBlueGold((g) => g + bounty * 5);
-      if (isTower) setRedTowersAlive((t) => Math.max(0, t - 1));
-    }
+    const enemyTeam = structure.team === 'blue' ? 'red' : 'blue';
+    championsRef.current
+      .filter((c) => c.team === enemyTeam)
+      .forEach((ally) => {
+        ally.gold += bounty;
+      });
 
     const bonus = structure.barracksKind ? `${structure.barracksKind.toUpperCase()} creeps upgraded from the next wave!` : 'Causeways advanced!';
     showBanner(`🏰 ${structure.name} DESTROYED!`, `+${bounty}g Team Bounty. ${bonus}`, '🏰');
     addEvent(`🏰 ${structure.name} destroyed! ${bonus}`, 'tower');
-    confetti({ particleCount: 80, spread: 60, origin: { x: structure.x / ARENA_WIDTH, y: 0.5 } });
   };
 
   const applyDamageToMinion = (attacker: AramChampionUnit, minion: LaneMinion, damage: number) => {
@@ -2806,9 +3819,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       championsRef.current
         .filter((c) => c.team === attacker.team && c.id !== attacker.id && c.isAlive && Math.hypot(c.x - minion.x, c.y - minion.y) <= 320)
         .forEach((ally) => grantChampionXp(ally, Math.round(minion.xpReward * 0.7)));
-
-      if (attacker.team === 'blue') setBlueGold((g) => g + minion.goldReward);
-      else setRedGold((g) => g + minion.goldReward);
 
       floatsRef.current.push({
         id: Math.random().toString(),
@@ -2825,7 +3835,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const endAramMatch = (winner: 'blue' | 'red') => {
     setMatchOver(true);
     sound.playWalkoutFanfare();
-    confetti({ particleCount: 220, spread: 100, origin: { y: 0.4 } });
 
     const all = championsRef.current;
     const mvp = all.sort((a, b) => b.kills * 4 + b.cs * 2 + b.damageDealt / 300 - a.kills * 4 - a.cs * 2 - a.damageDealt / 300)[0];
@@ -2837,6 +3846,24 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   // =========================================================================
 
   // 1. Frost Sentinel (Granite & Ice Golem)
+  const drawGravemarchModel = (ctx: CanvasRenderingContext2D, animTime: number) => {
+    ctx.save();
+    const pulse = Math.sin(animTime * 2) * 2;
+    ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 16;
+    ctx.fillStyle = '#54452d';
+    ctx.beginPath(); ctx.roundRect(-29, -34 + pulse, 58, 49, 10); ctx.fill();
+    ctx.fillStyle = '#8e7650';
+    ctx.fillRect(-44, -29 + pulse, 14, 34);
+    ctx.fillRect(30, -29 + pulse, 14, 34);
+    ctx.fillStyle = '#bda272';
+    ctx.beginPath(); ctx.roundRect(-18, -51 + pulse, 36, 24, 5); ctx.fill();
+    ctx.fillStyle = '#fef08a';
+    ctx.fillRect(-12, -43 + pulse, 8, 5); ctx.fillRect(4, -43 + pulse, 8, 5);
+    ctx.strokeStyle = '#eab308'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(-17, -10 + pulse); ctx.lineTo(0, 5 + pulse); ctx.lineTo(17, -10 + pulse); ctx.stroke();
+    ctx.restore();
+  };
+
   const drawFrostSentinelModel = (ctx: CanvasRenderingContext2D, animTime: number) => {
     const bob = Math.sin(animTime * 3) * 2;
     ctx.save();
@@ -3193,83 +4220,196 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.save();
     ctx.scale(width / 1320, 1);
 
-    // 1. BASE BACKGROUND
-    const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
-    bgGrad.addColorStop(0, '#020617');
-    bgGrad.addColorStop(0.3, '#07152b');
-    bgGrad.addColorStop(0.7, '#081a38');
-    bgGrad.addColorStop(1, '#020617');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, width, height);
+    // 1. ORGANIC FOREST TERRAIN & EARTHEN GROUND BASE
+    const groundGrad = ctx.createLinearGradient(0, 0, 0, height);
+    groundGrad.addColorStop(0, '#091811');
+    groundGrad.addColorStop(0.2, '#0e261d');
+    groundGrad.addColorStop(0.5, '#133326');
+    groundGrad.addColorStop(0.8, '#0e281e');
+    groundGrad.addColorStop(1, '#091710');
+    ctx.fillStyle = groundGrad;
+    ctx.fillRect(0, 0, 1320, height);
 
-    // Aurora Borealis in Sky
-    for (let a = 0; a < 3; a++) {
-      ctx.save();
-      ctx.globalAlpha = 0.08 + Math.sin(time * 1.5 + a) * 0.04;
-      const auroraGrad = ctx.createLinearGradient(0, 0, width, 0);
-      auroraGrad.addColorStop(0, 'rgba(6, 182, 212, 0)');
-      auroraGrad.addColorStop(0.3, a === 0 ? '#10b981' : '#06b6d4');
-      auroraGrad.addColorStop(0.7, a === 1 ? '#a855f7' : '#38bdf8');
-      auroraGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
-      ctx.fillStyle = auroraGrad;
+    // Natural moss & grass texture patches
+    ctx.fillStyle = 'rgba(16, 185, 129, 0.05)';
+    for (let p = 0; p < 25; p++) {
+      const px = (p * 57) % 1300 + 10;
+      const py = (p * 73) % (height - 40) + 20;
+      const pr = 18 + (p % 4) * 8;
       ctx.beginPath();
-      ctx.moveTo(0, a * 50);
-      for (let x = 0; x <= width; x += 40) {
-        const yOffset = Math.sin((x * 0.015) + (time * 1.2) + a) * 24 + (a * 40);
-        ctx.lineTo(x, yOffset);
-      }
-      ctx.lineTo(width, a * 50 + 70);
-      ctx.lineTo(0, a * 50 + 70);
-      ctx.closePath();
+      ctx.arc(px, py, pr, 0, Math.PI * 2);
       ctx.fill();
-      ctx.restore();
     }
 
-    // Snowflakes
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-    for (let i = 0; i < 70; i++) {
-      const sx = (i * 37 + time * 26) % width;
-      const sy = (i * 53 + time * 42) % height;
-      const sz = 1.0 + (i % 3) * 0.8;
-      ctx.fillRect(sx, sy, sz, sz);
-    }
-
-    // 2. EMBERMAW'S VOLCANIC PIT
-    ctx.save();
-    ctx.fillStyle = '#090d16';
+    // Natural Riverbed cutting through the center valley
+    const riverGrad = ctx.createLinearGradient(590, 0, 730, 0);
+    riverGrad.addColorStop(0, 'rgba(6, 78, 59, 0.4)');
+    riverGrad.addColorStop(0.2, 'rgba(15, 118, 110, 0.55)');
+    riverGrad.addColorStop(0.5, 'rgba(13, 148, 136, 0.65)');
+    riverGrad.addColorStop(0.8, 'rgba(15, 118, 110, 0.55)');
+    riverGrad.addColorStop(1, 'rgba(6, 78, 59, 0.4)');
+    ctx.fillStyle = riverGrad;
     ctx.beginPath();
-    ctx.arc(660, 130, 95, 0, Math.PI * 2);
+    ctx.moveTo(630, 0);
+    ctx.bezierCurveTo(610, 200, 690, 480, 640, height);
+    ctx.lineTo(720, height);
+    ctx.bezierCurveTo(770, 480, 690, 200, 710, 0);
+    ctx.closePath();
     ctx.fill();
-    ctx.strokeStyle = '#fb923c';
-    ctx.lineWidth = 3;
+
+    // River water flow ripples
+    ctx.strokeStyle = 'rgba(94, 234, 212, 0.22)';
+    ctx.lineWidth = 1.8;
+    for (let r = 0; r < 9; r++) {
+      const ry = ((r * 85 + time * 35) % height);
+      const rx = 645 + Math.sin(ry * 0.012 + time * 1.5) * 22;
+      ctx.beginPath();
+      ctx.moveTo(rx - 22, ry);
+      ctx.quadraticCurveTo(rx, ry + 4, rx + 22, ry);
+      ctx.stroke();
+    }
+
+    // 2. LIVING FOREST TREES ALONG NORTHERN & SOUTHERN MARGINS
+    const drawTree = (tx: number, ty: number, tr: number, seed: number) => {
+      const sway = Math.sin(time * 1.6 + seed) * 3;
+      // Shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+      ctx.beginPath();
+      ctx.ellipse(tx, ty + tr * 0.45, tr * 0.9, tr * 0.32, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Tree trunk
+      ctx.fillStyle = '#3e2312';
+      ctx.fillRect(tx - tr * 0.16, ty - tr * 0.1, tr * 0.32, tr * 0.55);
+
+      // Layer 1: Dark deep canopy base
+      ctx.fillStyle = '#064e3b';
+      ctx.beginPath();
+      ctx.arc(tx + sway * 0.4, ty - tr * 0.35, tr * 0.85, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Layer 2: Lush emerald mid-canopy
+      ctx.fillStyle = '#047857';
+      ctx.beginPath();
+      ctx.arc(tx + sway * 0.7, ty - tr * 0.5, tr * 0.68, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Layer 3: Vibrant leaf highlight cluster
+      ctx.fillStyle = '#10b981';
+      ctx.beginPath();
+      ctx.arc(tx + sway - tr * 0.15, ty - tr * 0.65, tr * 0.42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#34d399';
+      ctx.beginPath();
+      ctx.arc(tx + sway + tr * 0.15, ty - tr * 0.58, tr * 0.28, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    // Northern Ridge Trees (avoiding Dragon Pit at 660)
+    const northTreePositions = [
+      [80, 50, 24], [140, 42, 28], [210, 58, 22], [280, 45, 26], [360, 52, 24],
+      [440, 40, 26], [510, 56, 22], [800, 52, 24], [870, 40, 26], [950, 55, 22],
+      [1030, 42, 26], [1110, 56, 24], [1180, 46, 28], [1250, 52, 24]
+    ];
+    northTreePositions.forEach(([tx, ty, tr], idx) => drawTree(tx, ty, tr, idx * 1.3));
+
+    // Southern Valley Trees (framing lower valley and bushes)
+    const southTreePositions = [
+      [70, 680, 28], [140, 690, 25], [210, 675, 27], [290, 695, 24], [380, 680, 26],
+      [460, 690, 25], [540, 675, 28], [630, 695, 24], [720, 685, 26], [810, 690, 25],
+      [900, 675, 27], [990, 695, 25], [1080, 680, 28], [1170, 690, 25], [1250, 675, 27]
+    ];
+    southTreePositions.forEach(([tx, ty, tr], idx) => drawTree(tx, ty, tr, idx * 1.7 + 10));
+
+    // 3. SCATTERED NATURAL ROCKS, BOULDERS & PEBBLES
+    const drawRock = (rx: number, ry: number, rw: number, rh: number, color = '#475569') => {
+      // Rock shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(rx + 2, ry + rh * 0.4, rw * 0.95, rh * 0.35, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Rock body
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(rx, ry, rw, rh, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Rock top highlight
+      ctx.fillStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.ellipse(rx - rw * 0.2, ry - rh * 0.3, rw * 0.45, rh * 0.3, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Moss patch on stone
+      ctx.fillStyle = '#047857';
+      ctx.beginPath();
+      ctx.arc(rx + rw * 0.25, ry + rh * 0.1, rw * 0.25, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    // Rocks scattered along riverbanks and trail borders
+    const rockLocations = [
+      [240, 225, 12, 8], [305, 240, 16, 11], [530, 235, 14, 9], [610, 215, 18, 12],
+      [740, 215, 17, 11], [840, 235, 13, 9], [1060, 225, 15, 10], [1160, 240, 12, 8],
+      [250, 520, 15, 10], [330, 510, 12, 8], [600, 535, 18, 12], [730, 535, 16, 11],
+      [870, 515, 14, 9], [1050, 520, 15, 10], [1180, 510, 13, 8]
+    ];
+    rockLocations.forEach(([rx, ry, rw, rh]) => drawRock(rx, ry, rw, rh));
+
+    // 4. EMBERMAW'S VOLCANIC CRATER PIT (Natural scorched granite & magma)
+    ctx.save();
+    ctx.fillStyle = '#1c1917';
+    ctx.beginPath();
+    ctx.arc(660, 130, 96, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 4;
     ctx.stroke();
 
-    const pitGrad = ctx.createRadialGradient(660, 130, 10, 660, 130, 90);
+    for (let b = 0; b < 10; b++) {
+      const ba = b * (Math.PI * 2 / 10);
+      const bx = 660 + Math.cos(ba) * 92;
+      const by = 130 + Math.sin(ba) * 88;
+      drawRock(bx, by, 14, 10, '#292524');
+    }
+
+    const pitGrad = ctx.createRadialGradient(660, 130, 10, 660, 130, 88);
     pitGrad.addColorStop(0, '#451a03');
-    pitGrad.addColorStop(0.5, '#9a3412');
+    pitGrad.addColorStop(0.45, '#9a3412');
+    pitGrad.addColorStop(0.85, '#292524');
     pitGrad.addColorStop(1, '#1c1917');
     ctx.fillStyle = pitGrad;
     ctx.beginPath();
-    ctx.arc(660, 130, 88, 0, Math.PI * 2);
+    ctx.arc(660, 130, 86, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = 'rgba(251, 146, 60, 0.7)';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(251, 146, 60, 0.75)';
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.arc(660, 130, 55, 0, Math.PI * 2);
     ctx.stroke();
 
+    ctx.fillStyle = '#fed7aa';
+    for (let s = 0; s < 5; s++) {
+      const sa = (time * 2 + s * 1.4) % (Math.PI * 2);
+      const sr = 15 + (s * 8);
+      ctx.beginPath();
+      ctx.arc(660 + Math.cos(sa) * sr, 130 + Math.sin(sa) * sr * 0.7, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 10px sans-serif';
+    ctx.font = 'bold 11px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('EMBERMAW • DRAGON PIT', 660, 25);
+    ctx.fillText('EMBERMAW • DRAGON PIT', 660, 24);
     ctx.restore();
 
-    // 3. JUNGLE WALKWAYS & STAIR CONNECTORS
+    // 5. JUNGLE WALKWAYS & NATURAL COBBLESTONE STAIR CONNECTORS
     ctx.fillStyle = '#1e293b';
     ctx.beginPath();
-    ctx.roundRect(320, 120, 240, 95, 16);
-    ctx.roundRect(760, 120, 240, 95, 16);
+    ctx.roundRect(320, 120, 240, 95, 14);
+    ctx.roundRect(760, 120, 240, 95, 14);
     ctx.fill();
     ctx.strokeStyle = '#334155';
     ctx.lineWidth = 2;
@@ -3277,58 +4417,58 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     ctx.fillStyle = '#1e293b';
     ctx.beginPath();
-    ctx.roundRect(360, 520, 600, 105, 16);
+    ctx.roundRect(360, 520, 600, 105, 14);
     ctx.fill();
     ctx.strokeStyle = '#334155';
     ctx.stroke();
 
-    // Stairways between main causeway and side paths
-    ctx.fillStyle = '#0f172a';
+    // Cobblestone connectors between causeway and side paths
+    ctx.fillStyle = '#263346';
     ctx.fillRect(480, 205, 55, 60);
     ctx.fillRect(785, 205, 55, 60);
     ctx.fillRect(480, 495, 55, 55);
     ctx.fillRect(785, 495, 55, 55);
 
-    // 4. MAIN CENTRAL ARAM CAUSEWAY (EXPANDED MIDDLE ARENA: y from 260 to 500)
-    ctx.fillStyle = '#0f172a';
+    // 6. MAIN CENTRAL CAUSEWAY: WEATHERED STONE PAVERS & COBBLESTONES
+    ctx.fillStyle = '#162232';
     ctx.fillRect(50, 260, 1220, 240);
 
-    ctx.fillStyle = '#1e293b';
+    ctx.fillStyle = '#1e2d40';
     ctx.fillRect(54, 264, 1212, 232);
 
-    ctx.fillStyle = '#334155';
+    ctx.fillStyle = '#27384e';
     ctx.fillRect(58, 268, 1204, 224);
 
-    // Pavers Grid Texture
-    ctx.strokeStyle = '#1e293b';
-    ctx.lineWidth = 1;
-    for (let x = 70; x <= 1250; x += 40) {
+    // Weathered Flagstone Paver Grid with stone joints
+    ctx.strokeStyle = '#182433';
+    ctx.lineWidth = 1.5;
+    for (let x = 70; x <= 1250; x += 44) {
       ctx.beginPath();
       ctx.moveTo(x, 268);
       ctx.lineTo(x, 492);
       ctx.stroke();
     }
-    for (let y = 280; y <= 480; y += 30) {
+    for (let y = 280; y <= 480; y += 32) {
       ctx.beginPath();
       ctx.moveTo(58, y);
       ctx.lineTo(1262, y);
       ctx.stroke();
     }
 
-    // Snowdrifts
-    ctx.fillStyle = 'rgba(241, 245, 249, 0.22)';
-    ctx.fillRect(58, 268, 1204, 12);
-    ctx.fillRect(58, 480, 1204, 12);
+    // Moss creeping along stone paver edges
+    ctx.fillStyle = 'rgba(4, 120, 87, 0.35)';
+    ctx.fillRect(58, 268, 1204, 8);
+    ctx.fillRect(58, 484, 1204, 8);
 
-    // Central Ceremonial Highway
-    ctx.fillStyle = '#0f172a';
+    // Central Cobblestone Crossing Highway
+    ctx.fillStyle = '#1a2737';
     ctx.fillRect(80, 350, 1160, 60);
-    ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+    ctx.strokeStyle = 'rgba(71, 85, 105, 0.6)';
     ctx.lineWidth = 2;
     ctx.strokeRect(80, 350, 1160, 60);
 
-    // EXPANDED GRAND MIDDLE BATTLE ARENA PLAZA (Diameter 280px at 660, 380!)
-    ctx.fillStyle = '#0f172a';
+    // 7. EXPANDED GRAND MIDDLE BATTLE ARENA (Ancient Radial Stone Plaza)
+    ctx.fillStyle = '#152132';
     ctx.beginPath();
     ctx.arc(660, 380, 140, 0, Math.PI * 2);
     ctx.fill();
@@ -3336,14 +4476,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.lineWidth = 4;
     ctx.stroke();
 
-    // Inner Runic Arena Ring
-    ctx.strokeStyle = '#06b6d4';
+    // Radial Stone Inset Ring
+    ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.arc(660, 380, 95, 0, Math.PI * 2);
     ctx.stroke();
 
-    // 5. Parapet Braziers
+    // 8. Stone Parapet Braziers
     const torchX = [180, 320, 460, 600, 720, 860, 1000, 1140];
     torchX.forEach((tx) => {
       // Top Brazier
@@ -3373,43 +4513,115 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     ctx.restore();
 
-    // 6. ACTUAL PROCEDURAL JUNGLE MONSTER MODELS!
+    // 6. ACTUAL PROCEDURAL JUNGLE MONSTER MODELS WITH FOG OF WAR SHROUD!
+    const isFirstWaveTime = matchTimeRef.current < 45.0;
     jungleCampsRef.current.forEach((camp) => {
       ctx.save();
-      ctx.translate(camp.x, camp.y);
+      ctx.translate(camp.homeX ?? camp.x, camp.homeY ?? camp.y);
+
+      const isCampScouted = championsRef.current.some(c => c.isAlive && Math.hypot(c.x - camp.x, c.y - camp.y) <= 220);
+      const isShrouded = isFirstWaveTime || !isCampScouted;
 
       // Camp stone perimeter
       ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
       ctx.beginPath();
       ctx.arc(0, 0, 32, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = camp.isAlive ? camp.color : '#475569';
+      ctx.strokeStyle = camp.isAlive ? (isShrouded ? '#334155' : camp.color) : '#475569';
       ctx.lineWidth = 2;
       ctx.stroke();
+      // Trees stay rooted at the camp while an aggroed monster walks beyond the clearing.
+      for (let tree = 0; tree < 8; tree++) {
+        const angle = tree * Math.PI / 4;
+        const tx = Math.cos(angle) * 48;
+        const ty = Math.sin(angle) * 37;
+        ctx.fillStyle = '#173b2a';
+        ctx.beginPath(); ctx.arc(tx, ty, 11, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#2d6945';
+        ctx.beginPath(); ctx.arc(tx - 2, ty - 3, 7, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.translate(camp.x - (camp.homeX ?? camp.x), camp.y - (camp.homeY ?? camp.y));
 
       if (camp.isAlive) {
-        // Draw Actual Procedural Model based on camp type!
-        if (camp.type === 'golem') {
-          drawFrostSentinelModel(ctx, time);
-        } else if (camp.type === 'wolves') {
-          drawShadowWolfModel(ctx, time);
-        } else if (camp.type === 'behemoth') {
-          drawMurkBehemothModel(ctx, time);
+        if (isFirstWaveTime) {
+          // Wave 1 Jungle Shroud: Swirling fog cloud obscuring camp
+          const fogG = ctx.createRadialGradient(0, 0, 4, 0, 0, 36);
+          fogG.addColorStop(0, 'rgba(15, 23, 42, 0.88)');
+          fogG.addColorStop(0.7, 'rgba(30, 41, 59, 0.7)');
+          fogG.addColorStop(1, 'rgba(15, 23, 42, 0)');
+          ctx.fillStyle = fogG;
+          ctx.beginPath();
+          ctx.arc(0, 0, 36, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Swirling mist wisps
+          for (let w = 0; w < 3; w++) {
+            const wa = time * 0.9 + w * (Math.PI * 2 / 3);
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(Math.cos(wa) * 6, Math.sin(wa) * 5, 18 + w * 4, wa, wa + Math.PI * 0.9);
+            ctx.stroke();
+          }
+
+          // Shrouded faint creature silhouette
+          ctx.save();
+          ctx.globalAlpha = 0.28;
+          if (camp.type === 'golem') drawFrostSentinelModel(ctx, time);
+          else if (camp.type === 'wolves') drawShadowWolfModel(ctx, time);
+          else if (camp.type === 'behemoth') drawMurkBehemothModel(ctx, time);
+          else if (camp.type === 'siege_golem') drawGravemarchModel(ctx, time);
+          else if (camp.type === 'blue_buff') drawFrostSentinelModel(ctx, time);
+          else if (camp.type === 'red_buff') drawCrimsonDrakeModel(ctx, time);
+          else drawCrimsonDrakeModel(ctx, time);
+          ctx.restore();
+
+          // Wave 1 Shroud Badge & Unlock Countdown
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = 'bold 8px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('🌫️ WAVE 1 FOG', 0, -28);
+          const unlockRemaining = Math.max(0, Math.ceil(45.0 - matchTimeRef.current));
+          ctx.fillStyle = '#f59e0b';
+          ctx.font = 'bold 8px monospace';
+          ctx.fillText(`🔒 Unlocks: ${unlockRemaining}s`, 0, -18);
+        } else if (!isCampScouted) {
+          // Post-wave 1 but outside vision: light unexplored fog
+          ctx.save();
+          ctx.globalAlpha = 0.38;
+          if (camp.type === 'golem') drawFrostSentinelModel(ctx, time);
+          else if (camp.type === 'wolves') drawShadowWolfModel(ctx, time);
+          else if (camp.type === 'behemoth') drawMurkBehemothModel(ctx, time);
+          else if (camp.type === 'siege_golem') drawGravemarchModel(ctx, time);
+          else if (camp.type === 'blue_buff') drawFrostSentinelModel(ctx, time);
+          else drawCrimsonDrakeModel(ctx, time);
+          ctx.restore();
+
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = 'bold 8px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('🌫️ UNEXPLORED', 0, -26);
         } else {
-          drawCrimsonDrakeModel(ctx, time);
+          // Fully scouted and unlocked!
+          if (camp.type === 'golem') drawFrostSentinelModel(ctx, time);
+          else if (camp.type === 'wolves') drawShadowWolfModel(ctx, time);
+          else if (camp.type === 'behemoth') drawMurkBehemothModel(ctx, time);
+          else if (camp.type === 'siege_golem') drawGravemarchModel(ctx, time);
+          else if (camp.type === 'blue_buff') drawFrostSentinelModel(ctx, time);
+          else drawCrimsonDrakeModel(ctx, time);
+
+          // HP Bar
+          const hpPct = Math.max(0, camp.hp / camp.maxHp);
+          ctx.fillStyle = '#020617';
+          ctx.fillRect(-18, -34, 36, 4);
+          ctx.fillStyle = camp.color;
+          ctx.fillRect(-18, -34, 36 * hpPct, 4);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 8px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(camp.name, 0, -38);
         }
-
-        // HP Bar
-        const hpPct = Math.max(0, camp.hp / camp.maxHp);
-        ctx.fillStyle = '#020617';
-        ctx.fillRect(-18, -34, 36, 4);
-        ctx.fillStyle = camp.color;
-        ctx.fillRect(-18, -34, 36 * hpPct, 4);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 8px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(camp.name, 0, -38);
       } else {
         ctx.fillStyle = '#94a3b8';
         ctx.font = 'bold 9px sans-serif';
@@ -3447,7 +4659,27 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
     ctx.restore();
 
-    // 8. HEALING WELLS AT THE MAP ENDS
+    // 8. Wide home platforms with visible shop stalls and a protected fountain.
+    (['blue', 'red'] as const).forEach((team) => {
+      const left = team === 'blue' ? 8 : ARENA_WIDTH - 178;
+      const color = team === 'blue' ? '#38bdf8' : '#fb7185';
+      ctx.save();
+      ctx.fillStyle = '#101b2c'; ctx.strokeStyle = color; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.roundRect(left, LANE_Y - 108, 170, 216, 24); ctx.fill(); ctx.stroke();
+      for (const offset of [-82, 82]) {
+        ctx.fillStyle = '#334155'; ctx.fillRect(left + 20, LANE_Y + offset - 10, 130, 20);
+        ctx.fillStyle = color;
+        ctx.fillRect(left + 25, LANE_Y + offset - 3, 120, 3);
+      }
+      const shopX = team === 'blue' ? left + 127 : left + 43;
+      ctx.fillStyle = '#78350f'; ctx.fillRect(shopX - 18, LANE_Y - 67, 36, 28);
+      ctx.fillStyle = '#fbbf24'; ctx.fillRect(shopX - 22, LANE_Y - 72, 44, 9);
+      ctx.fillStyle = '#fef3c7'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('SHOP', shopX, LANE_Y - 82);
+      ctx.restore();
+    });
+
+    // HEALING WELLS AT THE MAP ENDS
     // BLUE HEALING WELL (Left)
     ctx.save();
     ctx.translate(WELL_X.blue, LANE_Y);
@@ -3505,12 +4737,93 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.fill();
     ctx.restore();
 
-    // 9. Ambush Brushes
-    ctx.fillStyle = '#475569';
-    ctx.beginPath();
-    ctx.ellipse(818, 245, 45, 16, 0, 0, Math.PI * 2);
-    ctx.ellipse(1182, 510, 45, 16, 0, 0, Math.PI * 2);
-    ctx.fill();
+    // 9. TACTICAL AMBUSH BRUSHES (7 PROCEDURAL STRATEGIC BUSHES)
+    ARAM_BUSHES.forEach((b) => {
+      ctx.save();
+      ctx.translate(b.x, b.y);
+      const rx = b.width / 2;
+      const ry = b.height / 2;
+      const isOccupied = championsRef.current.some((c) => c.isAlive && c.currentBushId === b.id);
+
+      // Dark forest soil bed shadow
+      const soilGrad = ctx.createRadialGradient(0, 0, rx * 0.2, 0, 0, rx + 6);
+      soilGrad.addColorStop(0, 'rgba(4, 28, 18, 0.75)');
+      soilGrad.addColorStop(0.7, 'rgba(6, 45, 30, 0.5)');
+      soilGrad.addColorStop(1, 'rgba(6, 45, 30, 0)');
+      ctx.fillStyle = soilGrad;
+      ctx.beginPath();
+      ctx.ellipse(0, 4, rx + 8, ry + 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Deep emerald moss base
+      ctx.fillStyle = '#064e3b';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Dense swaying grass blades
+      const bladeCount = Math.round(b.width / 4.8);
+      for (let i = 0; i < bladeCount; i++) {
+        const frac = (i / (bladeCount - 1)) * 2 - 1; // -1 .. 1
+        const bladeX = frac * (rx - 5);
+        const maxBladeY = ry * Math.sqrt(Math.max(0, 1 - frac * frac));
+        const bladeY = Math.sin(i * 1.9 + b.x) * 0.45 * maxBladeY;
+
+        const sway = Math.sin(time * 3.2 + i * 0.75 + b.x * 0.01) * (isOccupied ? 6 : 3.5);
+        const bladeH = ry * 0.95 + Math.sin(i * 2.3) * 6;
+
+        const bladeGrad = ctx.createLinearGradient(bladeX, bladeY, bladeX + sway, bladeY - bladeH);
+        bladeGrad.addColorStop(0, '#047857');
+        bladeGrad.addColorStop(0.5, '#10b981');
+        bladeGrad.addColorStop(1, '#86efac');
+
+        ctx.strokeStyle = bladeGrad;
+        ctx.lineWidth = 3.2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(bladeX, bladeY + 2);
+        ctx.quadraticCurveTo(bladeX + sway * 0.5, bladeY - bladeH * 0.5, bladeX + sway, bladeY - bladeH);
+        ctx.stroke();
+
+        // Tip highlight
+        ctx.fillStyle = '#bbf7d0';
+        ctx.beginPath();
+        ctx.arc(bladeX + sway, bladeY - bladeH, 1.3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // If occupied by an athlete, rustling leaf particles & active shimmer!
+      if (isOccupied) {
+        ctx.strokeStyle = 'rgba(167, 243, 208, 0.65)';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, rx + 4, ry + 3, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        for (let p = 0; p < 4; p++) {
+          const pCycle = (time * 1.7 + p * 0.6) % 2;
+          const px = Math.sin(time * 2.2 + p * 1.5) * (rx * 0.65);
+          const py = -ry * 0.4 - pCycle * 14;
+          const pAlpha = 1 - pCycle / 2;
+          ctx.fillStyle = `rgba(134, 239, 172, ${pAlpha * 0.85})`;
+          ctx.beginPath();
+          ctx.arc(px, py, 2.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.fillStyle = '#34d399';
+        ctx.font = 'bold 8px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🌿 OCCUPIED', 0, -ry - 7);
+      } else {
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.7)';
+        ctx.font = 'bold 7px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(b.name, 0, -ry - 5);
+      }
+
+      ctx.restore();
+    });
 
     // 10. Health Relics
     relicsRef.current.forEach((r) => {
@@ -3543,6 +4856,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (st.type === 'nexus') {
         ctx.save();
         ctx.translate(st.x, st.y);
+        ctx.scale(1.55, 1.55);
         ctx.fillStyle = '#090d16';
         ctx.beginPath();
         ctx.arc(0, 0, 32, 0, Math.PI * 2);
@@ -3640,10 +4954,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.restore();
       }
 
-      const bW = 44;
+      const bW = st.type === 'nexus' ? 72 : 44;
       const bH = 5;
       const bX = st.x - bW / 2;
-      const bY = st.y - (st.type === 'nexus' ? 42 : st.type === 'barracks' ? 42 : 62);
+      const bY = st.y - (st.type === 'nexus' ? 68 : st.type === 'barracks' ? 42 : 62);
 
       ctx.fillStyle = '#020617';
       ctx.fillRect(bX, bY, bW, bH);
@@ -3675,7 +4989,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       const teamColor = m.team === 'blue' ? '#2563eb' : '#dc2626';
 
-      if (m.type === 'cannon') {
+      if (m.siegeGolem) {
+        ctx.save();
+        ctx.scale(0.55, 0.55);
+        drawGravemarchModel(ctx, time);
+        ctx.restore();
+      } else if (m.type === 'cannon') {
         ctx.fillStyle = '#451a03';
         ctx.fillRect(-10, -10, 20, 8);
         ctx.fillStyle = '#78716c';
@@ -3964,80 +5283,50 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (s.type === 'skill_burst' || s.type === 'ultimate_burst') {
         const ultimate = s.type === 'ultimate_burst';
         const progress = 1 - alpha;
-        const radius = s.radius * (0.45 + progress * 0.8);
         ctx.globalAlpha = alpha;
-        ctx.shadowColor = s.color;
-        ctx.shadowBlur = ultimate ? 32 : 20;
-        if (s.sourceX !== undefined && s.sourceY !== undefined) {
-          ctx.strokeStyle = s.color;
-          ctx.lineWidth = ultimate ? 7 : 3;
-          ctx.beginPath();
-          ctx.moveTo(s.sourceX, s.sourceY - 14);
-          ctx.lineTo(s.x, s.y - 12);
-          ctx.stroke();
-          ctx.fillStyle = '#ffffff';
-          ctx.beginPath();
-          ctx.arc(s.sourceX, s.sourceY - 14, ultimate ? 11 : 6, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.fillStyle = s.color;
-        ctx.globalAlpha = alpha * (ultimate ? 0.36 : 0.25);
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = alpha;
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = ultimate ? 4 : 2.5;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
-        ctx.stroke();
-        if (ultimate) {
-          ctx.strokeStyle = s.color;
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, radius * 1.22, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-        for (let i = 0; i < (ultimate ? 12 : 7); i++) {
-          const angle = i * Math.PI * 2 / (ultimate ? 12 : 7) + time * 2;
-          const sx = s.x + Math.cos(angle) * radius;
-          const sy = s.y + Math.sin(angle) * radius;
-          ctx.fillStyle = i % 2 ? '#ffffff' : s.color;
-          ctx.beginPath();
-          ctx.arc(sx, sy, ultimate ? 4 : 2.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
+
         if (s.avatarName && s.abilitySlot && s.sourceX !== undefined && s.sourceY !== undefined) {
+          // Dedicated procedural visual animation for this specific avatar ability!
           drawAvatarSkillAnimation(ctx, {
-            avatarName: s.avatarName, slot: s.abilitySlot,
-            x: s.x, y: s.y, sourceX: s.sourceX, sourceY: s.sourceY,
-            radius: s.radius, progress, color: s.color,
+            avatarName: s.avatarName,
+            slot: s.abilitySlot,
+            x: s.x,
+            y: s.y,
+            sourceX: s.sourceX,
+            sourceY: s.sourceY,
+            radius: s.radius,
+            progress,
+            color: s.color,
           });
-        }
-        // Sharp outer rays and a readable skill label make casts stand out in a crowded fight.
-        ctx.lineCap = 'round';
-        for (let i = 0; i < (ultimate ? 16 : 9); i++) {
-          const angle = i * Math.PI * 2 / (ultimate ? 16 : 9) - time * 0.8;
-          const inner = radius * 1.12;
-          const outer = radius * (ultimate ? 1.65 : 1.42);
-          ctx.strokeStyle = i % 2 ? '#ffffff' : s.color;
-          ctx.lineWidth = ultimate ? 4 : 2.5;
+        } else {
+          // Fallback only for neutral/generic impacts
+          const radius = s.radius * (0.45 + progress * 0.8);
+          ctx.shadowColor = s.color;
+          ctx.shadowBlur = ultimate ? 28 : 16;
+          ctx.fillStyle = s.color;
+          ctx.globalAlpha = alpha * 0.25;
           ctx.beginPath();
-          ctx.moveTo(s.x + Math.cos(angle) * inner, s.y + Math.sin(angle) * inner);
-          ctx.lineTo(s.x + Math.cos(angle) * outer, s.y + Math.sin(angle) * outer);
+          ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = alpha;
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = ultimate ? 3.5 : 2;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
           ctx.stroke();
         }
+
         if (s.extraText) {
           const label = s.extraText.toUpperCase();
-          ctx.globalAlpha = Math.min(1, alpha * 2);
-          ctx.font = `900 ${ultimate ? 17 : 12}px system-ui`;
+          ctx.globalAlpha = Math.min(1, alpha * 2.2);
+          ctx.font = `900 ${ultimate ? 16 : 11}px system-ui, sans-serif`;
           ctx.textAlign = 'center';
-          ctx.lineWidth = ultimate ? 6 : 4;
+          ctx.lineWidth = ultimate ? 5 : 3.5;
           ctx.strokeStyle = '#020617';
           ctx.shadowBlur = 0;
-          ctx.strokeText(label, s.x, s.y - radius - (ultimate ? 26 : 15));
-          ctx.fillStyle = ultimate ? '#ffffff' : s.color;
-          ctx.fillText(label, s.x, s.y - radius - (ultimate ? 26 : 15));
+          ctx.strokeText(label, s.x, s.y - s.radius - (ultimate ? 24 : 14));
+          ctx.fillStyle = ultimate ? '#fef08a' : '#ffffff';
+          ctx.fillText(label, s.x, s.y - s.radius - (ultimate ? 24 : 14));
         }
       } else if (s.type === 'solar_flare') {
         // Leona / Solana: Blinding Daybreak Flare Solar Beam
@@ -4260,6 +5549,378 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.stroke();
         ctx.fillStyle = 'rgba(234, 88, 12, 0.25)';
         ctx.fill();
+      } else if (s.type === 'electric_vortex') {
+        // Raijin / Storm Spirit: Electric Vortex continuous lightning tether pulling victim!
+        const sx = s.sourceX ?? s.x;
+        const sy = (s.sourceY ?? s.y) - 12;
+        const tx = s.x;
+        const ty = s.y - 12;
+        const dist = Math.hypot(tx - sx, ty - sy);
+        const steps = Math.max(8, Math.floor(dist / 14));
+
+        ctx.shadowColor = '#06b6d4';
+        ctx.shadowBlur = 26;
+        ctx.strokeStyle = '#22d3ee';
+        ctx.lineWidth = 4.5;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        for (let i = 1; i < steps; i++) {
+          const frac = i / steps;
+          const jitter = Math.sin(time * 35 + i * 2.8) * 12 * (1 - Math.abs(frac - 0.5) * 1.5);
+          const nx = -(ty - sy) / (dist || 1);
+          const ny = (tx - sx) / (dist || 1);
+          ctx.lineTo(sx + (tx - sx) * frac + nx * jitter, sy + (ty - sy) * frac + ny * jitter);
+        }
+        ctx.lineTo(tx, ty);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Vortex suction coil around victim collapsing inwards
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5;
+        for (let ring = 0; ring < 3; ring++) {
+          const rSize = ((time * 40 + ring * 14) % 38);
+          ctx.beginPath();
+          ctx.arc(tx, ty + 12, rSize, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // Crackling lightning sparks orbiting victim
+        for (let sp = 0; sp < 6; sp++) {
+          const spAngle = sp * (Math.PI / 3) + time * 12;
+          const spRad = 18 + Math.sin(time * 20 + sp) * 6;
+          ctx.fillStyle = sp % 2 === 0 ? '#ffffff' : '#06b6d4';
+          ctx.beginPath();
+          ctx.arc(tx + Math.cos(spAngle) * spRad, ty + 12 + Math.sin(spAngle) * spRad * 0.65, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.fillStyle = '#67e8f9';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('⚡ VORTEX PULL', tx, ty - 24);
+      } else if (s.type === 'ribbon_lash') {
+        // Croakwell: Ribbon Lash frog tongue reeling in victim!
+        const sx = s.sourceX ?? s.x;
+        const sy = (s.sourceY ?? s.y) - 8;
+        const tx = s.x;
+        const ty = s.y - 8;
+        const midX = (sx + tx) / 2;
+        const midY = (sy + ty) / 2 + Math.sin(time * 16) * 10;
+
+        ctx.shadowColor = '#ec4899';
+        ctx.shadowBlur = 18;
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.quadraticCurveTo(midX, midY, tx, ty);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#84cc16';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ec4899';
+        ctx.beginPath();
+        ctx.arc(tx, ty, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#bef264';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('👅 REELED', tx, ty - 18);
+      } else if (s.type === 'aether_remnant') {
+        // Inai: Floating Aether Remnant void eye pulling victim!
+        ctx.shadowColor = '#a855f7';
+        ctx.shadowBlur = 24;
+        ctx.fillStyle = '#6b21a8';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y - 10, 16, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#d8b4fe';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y - 10, 6 + Math.sin(time * 10) * 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (s.sourceX !== undefined && s.sourceY !== undefined) {
+          ctx.strokeStyle = 'rgba(168, 85, 247, 0.7)';
+          ctx.lineWidth = 3.5;
+          ctx.beginPath();
+          ctx.moveTo(s.x, s.y - 10);
+          ctx.lineTo(s.sourceX, s.sourceY - 10);
+          ctx.stroke();
+        }
+      } else if (s.type === 'faultline') {
+        // Stonewake: Seismic Faultline Fissure & Rock Spires
+        const sx = s.sourceX ?? (s.x - 60);
+        const sy = s.sourceY ?? s.y;
+        ctx.shadowColor = '#d97706';
+        ctx.shadowBlur = 20;
+        ctx.strokeStyle = '#92400e';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        const segs = 7;
+        for (let i = 1; i <= segs; i++) {
+          const f = i / segs;
+          const px = sx + (s.x - sx) * f;
+          const py = sy + (s.y - sy) * f + (i % 2 === 0 ? 8 : -8);
+          ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        ctx.fillStyle = '#b45309';
+        for (let i = 0; i <= segs; i++) {
+          const f = i / segs;
+          const px = sx + (s.x - sx) * f;
+          const py = sy + (s.y - sy) * f;
+          ctx.beginPath();
+          ctx.moveTo(px - 5, py);
+          ctx.lineTo(px, py - 18 - (i % 3) * 6);
+          ctx.lineTo(px + 5, py);
+          ctx.closePath();
+          ctx.fill();
+        }
+      } else if (s.type === 'runic_maul') {
+        // Stonewake: Golden Seismic Hammer Crater
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 24;
+        ctx.fillStyle = 'rgba(234, 179, 8, 0.25)';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ca8a04';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        for (let c = 0; c < 6; c++) {
+          const ca = c * (Math.PI / 3);
+          ctx.strokeStyle = '#fef08a';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(s.x, s.y);
+          ctx.lineTo(s.x + Math.cos(ca) * s.radius, s.y + Math.sin(ca) * (s.radius * 0.7));
+          ctx.stroke();
+        }
+      } else if (s.type === 'dirge_wave') {
+        // Soulscourge: Expanding Banshee Soul Shockwave
+        ctx.shadowColor = '#9d174d';
+        ctx.shadowBlur = 28;
+        const curR = s.radius * (1 - alpha * 0.3);
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, curR, 0, Math.PI * 2);
+        ctx.stroke();
+        for (let i = 0; i < 8; i++) {
+          const a = (i / 8) * Math.PI * 2 + time * 3;
+          const gx = s.x + Math.cos(a) * (curR * 0.85);
+          const gy = s.y + Math.sin(a) * (curR * 0.6);
+          ctx.fillStyle = '#fda4af';
+          ctx.beginPath();
+          ctx.arc(gx, gy, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(244, 63, 94, 0.4)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(gx, gy);
+          ctx.lineTo(gx - Math.cos(a + 0.3) * 10, gy - Math.sin(a + 0.3) * 8);
+          ctx.stroke();
+        }
+      } else if (s.type === 'quake_chorus') {
+        // Stonewake: Quake Chorus Seismic Shockwaves
+        ctx.shadowColor = '#eab308';
+        ctx.shadowBlur = 30;
+        for (let ring = 0; ring < 3; ring++) {
+          const rFrac = ((time * 1.5 + ring * 0.33) % 1);
+          const rDist = s.radius * rFrac;
+          ctx.strokeStyle = ring % 2 === 0 ? '#facc15' : '#854d0e';
+          ctx.lineWidth = 4 * (1 - rFrac);
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, rDist, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      } else if (s.type === 'marsh_anthem') {
+        // Croakwell: Radiant Emerald Musical Stave & Floating Notes
+        ctx.shadowColor = '#10b981';
+        ctx.shadowBlur = 24;
+        ctx.strokeStyle = '#34d399';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        const notes = ['♪', '♫', '♬', '♩'];
+        ctx.font = 'bold 16px serif';
+        ctx.fillStyle = '#6ee7b7';
+        ctx.textAlign = 'center';
+        for (let n = 0; n < 6; n++) {
+          const na = (n / 6) * Math.PI * 2 + time * 1.2;
+          const nr = s.radius * 0.65;
+          const nx = s.x + Math.cos(na) * nr;
+          const ny = s.y + Math.sin(na) * (nr * 0.7) - ((time * 25 + n * 10) % 25);
+          ctx.fillText(notes[n % notes.length], nx, ny);
+        }
+      } else if (s.type === 'daybreak_veil') {
+        // Solenne: Solar Mandala Aegis Shield
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 28;
+        ctx.fillStyle = 'rgba(253, 224, 71, 0.2)';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#fde047';
+        ctx.lineWidth = 3.5;
+        ctx.stroke();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        for (let p = 0; p < 8; p++) {
+          const pa = (p / 8) * Math.PI * 2 + time;
+          ctx.beginPath();
+          ctx.moveTo(s.x + Math.cos(pa) * (s.radius * 0.4), s.y + Math.sin(pa) * (s.radius * 0.4));
+          ctx.lineTo(s.x + Math.cos(pa) * (s.radius * 0.9), s.y + Math.sin(pa) * (s.radius * 0.9));
+          ctx.stroke();
+        }
+      } else if (s.type === 'cinder_verdict') {
+        // Cinderlock: 4 Hellfire Pillars & Swirling Ash
+        ctx.shadowColor = '#f97316';
+        ctx.shadowBlur = 26;
+        ctx.strokeStyle = '#ea580c';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        for (let fp = 0; fp < 4; fp++) {
+          const fpa = (fp / 4) * Math.PI * 2 + Math.PI / 4;
+          const fpx = s.x + Math.cos(fpa) * (s.radius * 0.75);
+          const fpy = s.y + Math.sin(fpa) * (s.radius * 0.5);
+          const flameH = 24 + Math.sin(time * 15 + fp) * 8;
+          ctx.fillStyle = '#f97316';
+          ctx.beginPath();
+          ctx.moveTo(fpx - 6, fpy);
+          ctx.quadraticCurveTo(fpx - 3, fpy - flameH, fpx, fpy - flameH - 6);
+          ctx.quadraticCurveTo(fpx + 3, fpy - flameH, fpx + 6, fpy);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#fef08a';
+          ctx.beginPath();
+          ctx.arc(fpx, fpy - 4, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (s.type === 'bogbeat') {
+        // Croakwell: Mossy Swamp Ripples with Bubbles
+        ctx.shadowColor = '#84cc16';
+        ctx.shadowBlur = 18;
+        ctx.strokeStyle = '#65a30d';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        for (let b = 0; b < 5; b++) {
+          const ba = (b / 5) * Math.PI * 2 + time * 2;
+          const bx = s.x + Math.cos(ba) * (s.radius * 0.6);
+          const by = s.y + Math.sin(ba) * (s.radius * 0.4);
+          ctx.fillStyle = 'rgba(132, 204, 22, 0.6)';
+          ctx.beginPath();
+          ctx.arc(bx, by, 5 + Math.sin(time * 8 + b) * 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (s.type === 'soul_draw') {
+        // Soulscourge: Dark Crimson Soul Siphon Tendrils
+        ctx.shadowColor = '#b91c1c';
+        ctx.shadowBlur = 20;
+        for (let t = 0; t < 5; t++) {
+          const ta = (t / 5) * Math.PI * 2 + time * 4;
+          ctx.strokeStyle = '#ef4444';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(s.x + Math.cos(ta) * s.radius, s.y + Math.sin(ta) * (s.radius * 0.7));
+          ctx.quadraticCurveTo(s.x + Math.cos(ta + 0.8) * (s.radius * 0.5), s.y + Math.sin(ta + 0.8) * (s.radius * 0.35), s.x, s.y);
+          ctx.stroke();
+        }
+      } else if (s.type === 'smoke_screen') {
+        // Buck: Dense Tactical Smoke Cloud
+        ctx.fillStyle = 'rgba(100, 116, 139, 0.45)';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        for (let p = 0; p < 6; p++) {
+          const pa = p * 1.1 + time;
+          const pr = (p * 8) % (s.radius * 0.7);
+          ctx.fillStyle = 'rgba(148, 163, 184, 0.35)';
+          ctx.beginPath();
+          ctx.arc(s.x + Math.cos(pa) * pr, s.y + Math.sin(pa) * pr * 0.7, 12, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (s.type === 'shotgun_blast') {
+        // Buck: Shotgun Blast Cone & Fiery Bursts
+        ctx.shadowColor = '#f97316';
+        ctx.shadowBlur = 24;
+        ctx.fillStyle = 'rgba(249, 115, 22, 0.35)';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+        for (let b = 0; b < 8; b++) {
+          const ba = (b / 8) * Math.PI * 2;
+          ctx.strokeStyle = '#fef08a';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(s.x, s.y);
+          ctx.lineTo(s.x + Math.cos(ba) * s.radius, s.y + Math.sin(ba) * (s.radius * 0.7));
+          ctx.stroke();
+        }
+      } else if (s.type === 'wolf_frenzy') {
+        // Kindra: Wolf's Frenzy spectral hunting ground
+        ctx.shadowColor = '#a855f7';
+        ctx.shadowBlur = 24;
+        ctx.fillStyle = 'rgba(168, 85, 247, 0.18)';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#c084fc';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        const wolfAngle = time * 3.5;
+        const wx = s.x + Math.cos(wolfAngle) * (s.radius * 0.7);
+        const wy = s.y + Math.sin(wolfAngle) * (s.radius * 0.5);
+        ctx.fillStyle = '#581c87';
+        ctx.beginPath();
+        ctx.arc(wx, wy, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.arc(wx + 2, wy - 2, 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (s.type === 'treants') {
+        // Tequoia: Nature's Call animated wooden Treants
+        ctx.shadowColor = '#22c55e';
+        ctx.shadowBlur = 18;
+        ctx.strokeStyle = '#15803d';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        for (let tr = 0; tr < 3; tr++) {
+          const tra = tr * (Math.PI * 2 / 3) + time * 1.5;
+          const tx = s.x + Math.cos(tra) * (s.radius * 0.6);
+          const ty = s.y + Math.sin(tra) * (s.radius * 0.5);
+          ctx.fillStyle = '#78350f';
+          ctx.fillRect(tx - 3, ty - 6, 6, 12);
+          ctx.fillStyle = '#16a34a';
+          ctx.beginPath();
+          ctx.arc(tx, ty - 8, 7, 0, Math.PI * 2);
+          ctx.fill();
+        }
       } else {
         ctx.strokeStyle = s.color;
         ctx.lineWidth = 3;
@@ -4332,6 +5993,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.stroke();
         ctx.restore();
       }
+      if (jungleBuffsRef.current[u.team].blue > matchTimeRef.current || jungleBuffsRef.current[u.team].red > matchTimeRef.current) {
+        ctx.save();
+        const blueActive = jungleBuffsRef.current[u.team].blue > matchTimeRef.current;
+        const redActive = jungleBuffsRef.current[u.team].red > matchTimeRef.current;
+        ctx.strokeStyle = blueActive && redActive ? '#c084fc' : blueActive ? '#38bdf8' : '#fb7185';
+        ctx.lineWidth = 2; ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.ellipse(u.x, u.y + 2, 20, 7, 0, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+
+      const isKnockedUp = (u.knockupTimer ?? 0) > 0;
+      const knockupMax = u.knockupMax || 1.2;
+      const knockupProgress = isKnockedUp ? Math.max(0, Math.min(1, 1 - ((u.knockupTimer ?? 0) / knockupMax))) : 0;
+      const knockupHeight = isKnockedUp ? Math.sin(knockupProgress * Math.PI) * 34 : 0;
 
       // Draw Procedural TFT Chibi Sprite
       drawChampionSprite(ctx, {
@@ -4345,6 +6020,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         isStunned: u.stunTimer > 0,
         isCharmed: u.charmTimer > 0,
         isFeared: (u.fearTimer ?? 0) > 0,
+        isKnockedUp,
+        knockupHeight,
         isInBush: u.isInBush
       });
 
@@ -4352,7 +6029,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const barWidth = 38;
       const barHeight = 4.5;
       const barX = u.x - barWidth / 2;
-      const barY = u.y - 44;
+      const barY = u.y - 44 - knockupHeight;
 
       // Level badge
       ctx.fillStyle = '#0f172a';
@@ -4386,6 +6063,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       ctx.font = 'bold 9px sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(u.player.name, u.x, barY - 3);
+      ctx.fillStyle = u.team === 'blue' ? '#a5f3fc' : '#fecdd3';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillText(u.champion.name, u.x, u.y + 28);
 
       // Ultimate Cooldown Status Indicator
       if (u.level >= 6) {
@@ -4400,7 +6080,118 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
     });
 
-    // 16. FLOATING COMBAT TEXT
+    // 16. DYNAMIC JUNGLE FOG OF WAR (WAVE 1 SHROUD & VISION CARVING)
+    if (typeof document !== 'undefined') {
+      if (!fogCanvasRef.current) {
+        fogCanvasRef.current = document.createElement('canvas');
+      }
+      const fCanvas = fogCanvasRef.current;
+      if (fCanvas) {
+        if (fCanvas.width !== width || fCanvas.height !== height) {
+          fCanvas.width = width;
+          fCanvas.height = height;
+        }
+        const fCtx = fCanvas.getContext('2d');
+        if (fCtx) {
+          fCtx.clearRect(0, 0, width, height);
+
+          const isWave1 = matchTimeRef.current < 45.0;
+          const fogOpacity = isWave1 ? 0.74 : 0.52;
+
+          fCtx.fillStyle = `rgba(10, 15, 30, ${fogOpacity})`;
+          // Upper jungle (river and dragon quadrant)
+          fCtx.fillRect(0, 0, width, 280);
+          // Lower jungle (river valley quadrant)
+          fCtx.fillRect(0, 480, width, height - 480);
+
+          // Animated drifting mist wisps across jungle corridors
+          for (let m = 0; m < 12; m++) {
+            const mx = ((time * 28 + m * 170) % (width + 200)) - 100;
+            const my = m % 2 === 0 ? 80 + (m * 23) % 150 : 515 + (m * 21) % 170;
+            const mRadius = 45 + (m % 4) * 15;
+            const mistGrad = fCtx.createRadialGradient(mx, my, 0, mx, my, mRadius);
+            mistGrad.addColorStop(0, `rgba(30, 41, 59, ${isWave1 ? 0.35 : 0.2})`);
+            mistGrad.addColorStop(1, 'rgba(30, 41, 59, 0)');
+            fCtx.fillStyle = mistGrad;
+            fCtx.beginPath();
+            fCtx.arc(mx, my, mRadius, 0, Math.PI * 2);
+            fCtx.fill();
+          }
+
+          // Cut out vision around ALIVE champions and structures using destination-out
+          fCtx.globalCompositeOperation = 'destination-out';
+
+          // Alive champions vision cutouts
+          championsRef.current.forEach((champ) => {
+            if (!champ.isAlive) return;
+            const visRad = champ.isInBush ? 130 : 230;
+            const vGrad = fCtx.createRadialGradient(champ.x, champ.y, visRad * 0.45, champ.x, champ.y, visRad);
+            vGrad.addColorStop(0, 'rgba(0, 0, 0, 1)');
+            vGrad.addColorStop(0.8, 'rgba(0, 0, 0, 0.85)');
+            vGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            fCtx.fillStyle = vGrad;
+            fCtx.beginPath();
+            fCtx.arc(champ.x, champ.y, visRad, 0, Math.PI * 2);
+            fCtx.fill();
+          });
+
+          wardsRef.current.forEach((ward) => {
+            fCtx.fillStyle = '#000';
+            fCtx.beginPath(); fCtx.arc(ward.x, ward.y, 145, 0, Math.PI * 2); fCtx.fill();
+          });
+
+          // Alive towers and structures vision cutouts
+          structuresRef.current.forEach((st) => {
+            if (!st.isAlive) return;
+            const vGrad = fCtx.createRadialGradient(st.x, st.y, 140, st.x, st.y, 270);
+            vGrad.addColorStop(0, 'rgba(0, 0, 0, 1)');
+            vGrad.addColorStop(0.8, 'rgba(0, 0, 0, 0.85)');
+            vGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            fCtx.fillStyle = vGrad;
+            fCtx.beginPath();
+            fCtx.arc(st.x, st.y, 270, 0, Math.PI * 2);
+            fCtx.fill();
+          });
+
+          // Reset composite mode
+          fCtx.globalCompositeOperation = 'source-over';
+
+          // Blit fog canvas onto main battleground canvas
+          ctx.drawImage(fCanvas, 0, 0);
+          wardsRef.current.forEach((ward) => {
+            ctx.save();
+            ctx.fillStyle = ward.team === 'blue' ? '#67e8f9' : '#fda4af';
+            ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 12;
+            ctx.beginPath(); ctx.arc(ward.x, ward.y - 12, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.fillRect(ward.x - 1, ward.y - 8, 2, 12);
+            ctx.restore();
+          });
+
+          // Wave 1 Broadcast HUD Banner across upper river
+          if (isWave1) {
+            ctx.save();
+            const bannerX = width / 2;
+            const bannerY = 48;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+            ctx.beginPath();
+            ctx.roundRect(bannerX - 220, bannerY - 14, 440, 28, 8);
+            ctx.fill();
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center';
+            const remainingSec = Math.max(0, Math.ceil(45.0 - matchTimeRef.current));
+            ctx.fillText(`🌫️ JUNGLE SHROUD: Wave 1 in progress — Camps locked for ${remainingSec}s`, bannerX, bannerY + 4);
+            ctx.restore();
+          }
+        }
+      }
+    }
+
+    // 17. FLOATING COMBAT TEXT
     floatsRef.current.forEach((f) => {
       ctx.save();
       ctx.fillStyle = f.color;
@@ -4422,10 +6213,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const dt = (now - lastTime) / 1000;
       lastTime = now;
 
-      const simDt = paused || matchOver ? 0 : dt * speed;
+      const simDt = advanceSimulationClock(matchTimeRef, dt, speed, paused || matchOver);
 
       if (simDt > 0) {
-        setMatchTime((t) => t + simDt);
+        setMatchTime(matchTimeRef.current);
         updateAramSimulation(simDt);
       }
 
@@ -4442,6 +6233,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   const blueChamps = champions.filter((c) => c.team === 'blue');
   const redChamps = champions.filter((c) => c.team === 'red');
+  const { blue: blueKills, red: redKills } = getTeamKillScore(champions);
+  const blueGold = getTeamTotalGold(champions, 'blue');
+  const redGold = getTeamTotalGold(champions, 'red');
+  const blueTowersAlive = getTowersAliveCount(structuresRef.current, 'blue');
+  const redTowersAlive = getTowersAliveCount(structuresRef.current, 'red');
+  const teamNames = getTeamNames({ blueTeamName, redTeamName, opponentName });
 
   const blueAvgLevel = (blueChamps.reduce((acc, c) => acc + c.level, 0) / Math.max(1, blueChamps.length)).toFixed(1);
   const redAvgLevel = (redChamps.reduce((acc, c) => acc + c.level, 0) / Math.max(1, redChamps.length)).toFixed(1);
@@ -4463,7 +6260,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-black text-cyan-400">T-CHIBI SQUAD</h2>
+              <h2 className="text-base font-black text-cyan-400">{teamNames.blue}</h2>
               <span className="text-[10px] bg-cyan-950 text-cyan-300 px-1.5 py-0.5 rounded font-mono font-bold border border-cyan-400/40">
                 {blueTowersAlive}/3 Towers
               </span>
@@ -4502,11 +6299,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           <div className="mt-1 flex items-center gap-2 text-[10px] font-bold">
             {blueGold >= redGold ? (
               <span className="text-cyan-400 bg-cyan-950/80 px-2.5 py-0.5 rounded-full border border-cyan-500/30">
-                +{Math.round(blueGold - redGold).toLocaleString()}g Blue Gold Lead
+                +{Math.round(blueGold - redGold).toLocaleString()}g {teamNames.blue} Lead
               </span>
             ) : (
               <span className="text-rose-400 bg-rose-950/80 px-2.5 py-0.5 rounded-full border border-rose-500/30">
-                +{Math.round(redGold - blueGold).toLocaleString()}g Red Gold Lead
+                +{Math.round(redGold - blueGold).toLocaleString()}g {teamNames.red} Lead
               </span>
             )}
           </div>
@@ -4526,7 +6323,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               <span className="text-[10px] bg-rose-950 text-rose-300 px-1.5 py-0.5 rounded font-mono font-bold border border-rose-400/40">
                 {redTowersAlive}/3 Towers
               </span>
-              <h2 className="text-base font-black text-rose-400">RIVAL POINTIFY</h2>
+              <h2 className="text-base font-black text-rose-400">{teamNames.red}</h2>
             </div>
             <div className="text-[10px] text-slate-400 flex items-center gap-1.5 justify-end mt-0.5">
               <span>Split Contenders</span>
@@ -4550,9 +6347,38 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       {/* ======================================================== */}
       {/* 2. THE EXPANDED ARENA CANVAS WITH DRAGON PIT & JUNGLE */}
       {/* ======================================================== */}
-      <div className="relative w-full rounded-3xl overflow-hidden border-4 border-slate-700 shadow-2xl bg-black pt-[104px]">
-        <div className="absolute inset-x-0 top-0 h-[104px] bg-gradient-to-r from-slate-950 via-indigo-950/80 to-slate-950 border-b border-amber-500/25 pointer-events-none flex items-center px-5">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Live kill feed</span>
+      <div className="relative w-full rounded-3xl overflow-hidden border-4 border-slate-700 shadow-2xl bg-black pt-10">
+        <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-r from-slate-950 via-indigo-950/80 to-slate-950 border-b border-amber-500/25 pointer-events-none flex items-center px-4 gap-3 z-20">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 shrink-0">Live kill feed</span>
+          {deadChampions.length > 0 && (
+            <div className="flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono text-amber-300 pointer-events-auto">
+              <Skull className="w-3 h-3 text-rose-400 shrink-0" />
+              {deadChampions.map(c => (
+                <span key={c.id} className="bg-slate-900/90 px-1.5 py-0.5 rounded border border-slate-800 text-slate-300 shrink-0">
+                  {c.player.name} <strong className="text-amber-300">{Math.ceil(c.respawnTimer)}s</strong>
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="ml-auto flex items-center gap-2 overflow-hidden">
+            {recentKills.length === 0 ? (
+              <span className="text-xs text-slate-400">No champion kills yet</span>
+            ) : recentKills.map((kill) => (
+              kill.streakText === 'EXECUTED' || !kill.killerAvatar ? (
+                <div key={kill.id} className="shrink-0 rounded-lg border border-amber-500/40 bg-amber-950/40 px-2 py-0.5 text-[10px] font-bold flex items-center gap-1">
+                  <span className="text-amber-300">⚡ {kill.killerName}</span>
+                  <span className="text-slate-400">executed</span>
+                  <span className={kill.victimTeam === 'blue' ? 'text-cyan-300' : 'text-rose-300'}>{kill.victimName}</span>
+                </div>
+              ) : (
+                <div key={kill.id} className={`shrink-0 rounded-lg border px-2 py-0.5 text-[10px] font-bold flex items-center gap-1 ${kill.killerTeam === 'blue' ? 'border-cyan-500/40 bg-cyan-950/50' : 'border-rose-500/40 bg-rose-950/50'}`}>
+                  <span className={kill.killerTeam === 'blue' ? 'text-cyan-300' : 'text-rose-300'}>{kill.killerName}</span>
+                  <span className="text-amber-300">⚔</span>
+                  <span className={kill.victimTeam === 'blue' ? 'text-cyan-300' : 'text-rose-300'}>{kill.victimName}</span>
+                </div>
+              )
+            ))}
+          </div>
         </div>
         <canvas
           ref={canvasRef}
@@ -4568,7 +6394,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             <div className="bg-slate-950/95 border-2 border-amber-400/90 shadow-[0_0_30px_rgba(251,191,36,0.5)] px-6 py-2.5 rounded-2xl flex items-center gap-4 backdrop-blur-md">
               {/* Killer Info */}
               <div className="flex items-center gap-2.5">
-                <ChibiAvatar avatarType={killCallout.killerAvatar || 'faker'} size={36} />
+                {killCallout.killerAvatar ? (
+                  <ChibiAvatar avatarType={killCallout.killerAvatar} size={36} />
+                ) : (
+                  <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-lg shadow">
+                    {killCallout.killerName.includes('Dragon') || killCallout.killerName.includes('Embermaw') ? '🐉' : killCallout.killerName.includes('Jungle') ? '🌲' : '🏰'}
+                  </div>
+                )}
                 <div className="text-left">
                   <div className={`font-black text-xs ${killCallout.killerTeam === 'blue' ? 'text-cyan-400' : 'text-rose-400'}`}>
                     {killCallout.killerName}
@@ -4580,9 +6412,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               {/* Action Badge */}
               <div className="flex flex-col items-center px-3 border-x border-slate-700/60">
                 <div className="text-[10px] font-black uppercase tracking-wider text-amber-300">
-                  ⚔️ KILLED ⚔️
+                  {killCallout.streakText === 'EXECUTED' ? '⚡ EXECUTED ⚡' : '⚔️ KILLED ⚔️'}
                 </div>
-                <div className="text-[9px] text-amber-400 font-mono font-bold">+300g</div>
+                <div className="text-[9px] text-amber-400 font-mono font-bold">
+                  {killCallout.streakText === 'EXECUTED' ? '+0g' : '+300g'}
+                </div>
               </div>
 
               {/* Victim Info */}
@@ -4610,7 +6444,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
         {/* Top-Right Flash Banner */}
         {activeBanner && (
-          <div className="absolute top-[112px] right-3 bg-slate-900/95 backdrop-blur-md border-2 border-amber-400/70 p-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-scale-up max-w-md">
+          <div className="absolute top-[52px] right-3 bg-slate-900/95 backdrop-blur-md border-2 border-amber-400/70 p-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-scale-up max-w-md z-30">
             <div className="text-2xl">{activeBanner.icon}</div>
             <div>
               <div className="font-black text-amber-300 text-xs tracking-wider uppercase">{activeBanner.text}</div>
@@ -4618,179 +6452,290 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             </div>
           </div>
         )}
-      </div>
 
-      <div className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 flex flex-wrap items-center gap-2 min-h-12" aria-live="polite" aria-label="Death timers">
-        <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 mr-1">Respawn timers</span>
-        {deadChampions.length === 0 && <span className="text-xs text-emerald-300">All champions alive</span>}
-        {deadChampions.map(u => <div key={u.id} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border text-xs font-bold ${u.team === 'blue' ? 'border-cyan-700 text-cyan-200' : 'border-rose-700 text-rose-200'}`}>
-          <ChibiAvatar avatarType={u.player.avatarSvg} size={24} />
-          <span>{u.player.name}</span>
-          <span className="font-mono text-amber-300">{Math.ceil(u.respawnTimer)}s</span>
-        </div>)}
-      </div>
-
-      <div className="flex justify-end gap-2">
-        {fullscreenError && <span className="text-xs text-amber-300 self-center">Fullscreen unavailable in this browser</span>}
-        <button onClick={() => setPaused(!paused)} className="p-2 bg-slate-800 text-white rounded-lg" aria-label={paused ? 'Resume match' : 'Pause match'}>
-          {paused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
-        </button>
-        {[1, 2, 4].map((s) => (
-          <button key={s} onClick={() => setSpeed(s)} className={`px-3 py-1 rounded-lg text-xs font-bold ${speed === s ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-300'}`}>
-            {s}x
-          </button>
-        ))}
-      </div>
-
-      {/* ======================================================== */}
-      {/* 3. DUAL TEAM ITEM INVENTORY, LEVEL TIMINGS & KDA PANELS */}
-      {/* ======================================================== */}
-      <div className="grid grid-cols-2 gap-4">
-        {/* Blue Squad Athlete Stats & Items */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3 space-y-2">
-          <div className="flex justify-between items-center text-xs font-black uppercase text-cyan-400 border-b border-slate-800 pb-1.5">
-            <span>Blue Squad (Levels & Cooldowns)</span>
-            <span className="font-mono text-amber-300">${blueGold.toLocaleString()} Gold</span>
-          </div>
-
-          {blueChamps.map((u) => {
-            return (
-              <div
-                key={u.id}
-                className={`border rounded-xl p-2 transition flex items-center justify-between ${u.isAlive ? 'bg-slate-950 border-cyan-500/30' : 'bg-slate-950 border-slate-800 opacity-40'}`}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <ChibiAvatar avatarType={u.player.avatarSvg} size={32} />
-                    <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 text-[8px] font-black px-1 rounded-full border border-black shadow">
-                      L{u.level}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <span>{u.player.name}</span>
-                      <span className="text-[10px] text-cyan-300">({u.champion.name})</span>
-                      {u.comboMastered && <span className="text-[9px] bg-violet-500/20 text-violet-200 px-1 rounded font-bold" title={`${AVATAR_COMBOS[u.champion.name]?.name} learned`}>Combo: {AVATAR_COMBOS[u.champion.name]?.name}</span>}
-                      {!u.comboMastered && comboPracticeNeeded(u.player, u.champion.name) !== null && <span className="text-[9px] text-violet-300">Combo {u.comboPractice ?? 0}/{comboPracticeNeeded(u.player, u.champion.name)}</span>}
-                      {u.level >= 6 && u.cdUlt <= 0 && u.mana >= 100 && (
-                        <span className="text-[9px] bg-amber-500/20 text-amber-300 px-1 rounded font-bold">Ult Ready!</span>
-                      )}
-                      {u.level >= 6 && u.cdUlt > 0 && (
-                        <span className="text-[9px] bg-slate-800 text-slate-400 px-1 rounded font-mono">Ult: {Math.ceil(u.cdUlt)}s</span>
-                      )}
-                    </div>
-                    <div className="text-[9px] text-slate-400 font-mono">
-                      KDA: <strong className="text-amber-300">{u.kills}/{u.deaths}/{u.assists}</strong> | CS: <strong className="text-white">{u.cs}</strong>
-                      <span className="text-slate-600"> | </span>
-                      Mana: <strong className="text-yellow-400">{Math.round(u.mana)}/100</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {/* 6-Item Inventory Slots */}
-                  <div className="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800">
-                    {Array.from({ length: 6 }).map((_, slotIdx) => {
-                      const it = u.items[slotIdx];
-                      return (
-                        <button
-                          key={slotIdx}
-                          onClick={() => it && setInspectedItem(it)}
-                          disabled={!it}
-                          className={`w-7 h-7 rounded border flex items-center justify-center text-xs transition ${
-                            it
-                              ? it.tier === 'Mythic'
-                                ? 'bg-amber-950/80 border-amber-400 text-amber-200 hover:scale-110 shadow'
-                                : it.tier === 'Component'
-                                ? 'bg-blue-950/70 border-cyan-500 text-cyan-200 hover:scale-110 shadow'
-                                : 'bg-slate-800 border-slate-600 hover:border-slate-400 hover:scale-110'
-                              : 'bg-slate-950 border-slate-800/60'
-                          }`}
-                        >
-                          {it ? it.icon : ''}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Red Squad Athlete Stats & Items */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3 space-y-2">
-          <div className="flex justify-between items-center text-xs font-black uppercase text-rose-400 border-b border-slate-800 pb-1.5">
-            <span>Red Squad (Levels & Cooldowns)</span>
-            <span className="font-mono text-amber-300">${redGold.toLocaleString()} Gold</span>
-          </div>
-
-          {redChamps.map((u) => (
-            <div
-              key={u.id}
-              className={`bg-slate-950 border rounded-xl p-2 transition flex items-center justify-between ${
-                u.isAlive ? 'border-rose-500/30' : 'border-slate-800 opacity-40'
-              }`}
+        {/* ======================================================== */}
+        {/* IN-GAME SQUAD HUD & ITEM SCOREBOARD OVERLAY */}
+        {/* ======================================================== */}
+        {hudMode === 'hidden' ? (
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 animate-fade-in">
+            <button
+              onClick={() => setHudMode('docked')}
+              className="bg-slate-900/90 hover:bg-slate-800 border-2 border-amber-400/80 text-amber-300 text-xs font-black px-4 py-1.5 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-2 transition hover:scale-105"
+              title="Open In-Game Squad Scoreboard (Tab)"
             >
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <ChibiAvatar avatarType={u.player.avatarSvg} size={32} />
-                  <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 text-[8px] font-black px-1 rounded-full border border-black shadow">
-                    L{u.level}
+              <span>🛡️⚔️ Show In-Game Squads & Items</span>
+              <span className="text-[10px] text-slate-400 font-mono bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">Tab</span>
+            </button>
+          </div>
+        ) : (
+          <div className="w-full bg-slate-950/95 border-t-2 border-slate-700/80 p-2.5 shadow-2xl animate-fade-in">
+            {/* Header bar: Teams, Gold totals, and HUD controls */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-1.5 mb-2 text-xs">
+              {/* Blue Squad Header */}
+              <div className="flex items-center gap-2 font-black uppercase text-cyan-400">
+                <span className="text-sm">🛡️</span>
+                <span className="truncate max-w-[150px]">{teamNames.blue}</span>
+                <span className="font-mono text-amber-300 font-bold bg-amber-950/60 border border-amber-500/30 px-1.5 py-0.5 rounded text-[10px]">
+                  ${blueGold.toLocaleString()}
+                </span>
+                {blueGold > redGold && (
+                  <span className="text-[9px] text-cyan-300 bg-cyan-950/80 border border-cyan-500/30 px-1.5 py-0.5 rounded hidden sm:inline">
+                    +{Math.round(blueGold - redGold).toLocaleString()}g Lead
                   </span>
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <span>{u.player.name}</span>
-                    <span className="text-[10px] text-rose-300">({u.champion.name})</span>
-                    {u.comboMastered && <span className="text-[9px] bg-violet-500/20 text-violet-200 px-1 rounded font-bold" title={`${AVATAR_COMBOS[u.champion.name]?.name} learned`}>Combo: {AVATAR_COMBOS[u.champion.name]?.name}</span>}
-                    {!u.comboMastered && comboPracticeNeeded(u.player, u.champion.name) !== null && <span className="text-[9px] text-violet-300">Combo {u.comboPractice ?? 0}/{comboPracticeNeeded(u.player, u.champion.name)}</span>}
-                    {u.level >= 6 && u.cdUlt <= 0 && u.mana >= 100 && (
-                      <span className="text-[9px] bg-amber-500/20 text-amber-300 px-1 rounded font-bold">Ult Ready!</span>
-                    )}
-                    {u.level >= 6 && u.cdUlt > 0 && (
-                      <span className="text-[9px] bg-slate-800 text-slate-400 px-1 rounded font-mono">Ult: {Math.ceil(u.cdUlt)}s</span>
-                    )}
-                  </div>
-                  <div className="text-[9px] text-slate-400 font-mono">
-                    KDA: <strong className="text-amber-300">{u.kills}/{u.deaths}/{u.assists}</strong> | CS: <strong className="text-white">{u.cs}</strong>
-                    <span className="text-slate-600"> | </span>
-                    Mana: <strong className="text-yellow-400">{Math.round(u.mana)}/100</strong>
-                  </div>
-                </div>
+                )}
               </div>
 
-              {/* 6-Item Inventory Slots */}
-              <div className="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800">
-                {Array.from({ length: 6 }).map((_, slotIdx) => {
-                  const it = u.items[slotIdx];
-                  return (
+              {/* Center Controls & View Switcher */}
+              <div className="flex items-center gap-2">
+                {/* Match playback controls */}
+                <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-0.5 rounded-lg border border-slate-800">
+                  <button
+                    onClick={() => setPaused(!paused)}
+                    className="p-1 text-slate-300 hover:text-white transition"
+                    title={paused ? 'Resume Match' : 'Pause Match'}
+                  >
+                    {paused ? <Play className="w-3.5 h-3.5 text-emerald-400" /> : <Pause className="w-3.5 h-3.5 text-amber-400" />}
+                  </button>
+                  {[1, 2, 4].map((s) => (
                     <button
-                      key={slotIdx}
-                      onClick={() => it && setInspectedItem(it)}
-                      disabled={!it}
-                      className={`w-7 h-7 rounded border flex items-center justify-center text-xs transition ${
-                        it
-                          ? it.tier === 'Mythic'
-                            ? 'bg-amber-950/80 border-amber-400 text-amber-200 hover:scale-110 shadow'
-                            : it.tier === 'Component'
-                            ? 'bg-blue-950/70 border-cyan-500 text-cyan-200 hover:scale-110 shadow'
-                            : 'bg-slate-800 border-slate-600 hover:border-slate-400 hover:scale-110'
-                          : 'bg-slate-950 border-slate-800/60'
+                      key={s}
+                      onClick={() => setSpeed(s)}
+                      className={`px-1.5 py-0.5 rounded text-[10px] font-bold font-mono transition ${
+                        speed === s ? 'bg-amber-400 text-slate-950' : 'text-slate-400 hover:text-white'
                       }`}
                     >
-                      {it ? it.icon : ''}
+                      {s}x
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
+
+                {/* HUD Mode Switcher */}
+                <div className="flex items-center gap-1 bg-slate-900/90 p-0.5 rounded-lg border border-slate-800">
+                  <button
+                    onClick={() => setHudMode('docked')}
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition ${
+                      hudMode === 'docked' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400 hover:text-white'
+                    }`}
+                    title="Dock Under Canvas"
+                  >
+                    ⚓ Docked
+                  </button>
+                  <button
+                    onClick={() => setHudMode('hidden')}
+                    className="px-1.5 py-0.5 text-slate-400 hover:text-rose-400 transition text-[10px] font-bold"
+                    title="Hide HUD (Tab)"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <span className="text-[9px] text-slate-500 font-mono hidden xl:inline" title="Press Tab key anytime to toggle">
+                  (Tab)
+                </span>
+              </div>
+
+              {/* Red Squad Header */}
+              <div className="flex items-center gap-2 font-black uppercase text-rose-400">
+                {redGold > blueGold && (
+                  <span className="text-[9px] text-rose-300 bg-rose-950/80 border border-rose-500/30 px-1.5 py-0.5 rounded hidden sm:inline">
+                    +{Math.round(redGold - blueGold).toLocaleString()}g Lead
+                  </span>
+                )}
+                <span className="font-mono text-amber-300 font-bold bg-amber-950/60 border border-amber-500/30 px-1.5 py-0.5 rounded text-[10px]">
+                  ${redGold.toLocaleString()}
+                </span>
+                <span className="truncate max-w-[150px]">{teamNames.red}</span>
+                <span className="text-sm">⚔️</span>
               </div>
             </div>
-          ))}
-        </div>
+
+            {(
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                {/* Blue Squad Cards */}
+                <div className="space-y-1.5">
+                  {blueChamps.map((u) => (
+                    <div
+                      key={u.id}
+                      className={`border rounded-xl p-1.5 transition flex items-center justify-between gap-2 ${
+                        u.isAlive ? 'bg-slate-950/85 border-cyan-500/30' : 'bg-slate-950/70 border-slate-800 opacity-40'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="relative shrink-0">
+                          <ChibiAvatar avatarType={u.player.avatarSvg} size={30} />
+                          <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 text-[8px] font-black px-1 rounded-full border border-black shadow">
+                            L{u.level}
+                          </span>
+                          {!u.isAlive && (
+                            <div className="absolute inset-0 bg-slate-950/85 rounded-full flex items-center justify-center text-[9px] font-mono font-bold text-amber-300">
+                              💀{Math.ceil(u.respawnTimer)}s
+                            </div>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-white flex items-center gap-1.5 flex-wrap leading-tight">
+                            <span className="truncate max-w-[85px]">{u.player.name}</span>
+                            {u.comboMastered && (
+                              <span className="text-[9px] bg-violet-500/20 text-violet-200 px-1 py-0.5 rounded font-bold border border-violet-500/30" title={`${AVATAR_COMBOS[u.champion.name]?.name} learned`}>
+                                Combo: {AVATAR_COMBOS[u.champion.name]?.name}
+                              </span>
+                            )}
+                            {!u.comboMastered && comboPracticeNeeded(u.player, u.champion.name) !== null && (
+                              <span className="text-[9px] text-violet-300 bg-violet-950/50 px-1 py-0.5 rounded border border-violet-500/20">
+                                Combo {u.comboPractice ?? 0}/{comboPracticeNeeded(u.player, u.champion.name)}
+                              </span>
+                            )}
+                            {u.level >= 6 && u.cdUlt <= 0 && u.mana >= 100 && (
+                              <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1 py-0.5 rounded font-bold animate-pulse">
+                                Ult Ready!
+                              </span>
+                            )}
+                            {u.level >= 6 && u.cdUlt > 0 && (
+                              <span className="text-[9px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono border border-slate-700">
+                                Ult: {Math.ceil(u.cdUlt)}s
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[10px] text-cyan-300 font-bold leading-tight">{u.champion.name}</div>
+                          <div className="text-[9px] text-slate-400 font-mono mt-0.5">
+                            KDA: <strong className="text-amber-300">{u.kills}/{u.deaths}/{u.assists}</strong> | CS: <strong className="text-white">{u.cs}</strong>
+                            <span className="text-slate-600"> | </span>
+                            Mana: <strong className="text-yellow-400">{Math.round(u.mana)}/100</strong>
+                            {!u.isAlive && <span className="text-rose-400 font-bold ml-1.5">💀 Respawns in {Math.ceil(u.respawnTimer)}s</span>}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 6-Item Inventory Slots */}
+                      <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-800 shrink-0">
+                        {Array.from({ length: 6 }).map((_, slotIdx) => {
+                          const it = u.items[slotIdx];
+                          return (
+                            <button
+                              key={slotIdx}
+                              onClick={() => it && setInspectedItem(it)}
+                              disabled={!it}
+                              title={it ? `${it.name} (${it.tier})` : 'Empty item slot'}
+                              className={`w-6 h-6 rounded border flex items-center justify-center text-xs transition ${
+                                it
+                                  ? it.tier === 'Mythic'
+                                    ? 'bg-amber-950/90 border-amber-400 text-amber-200 hover:scale-110 shadow'
+                                    : it.tier === 'Component'
+                                    ? 'bg-blue-950/80 border-cyan-500 text-cyan-200 hover:scale-110 shadow'
+                                    : 'bg-slate-800 border-slate-600 hover:border-slate-400 hover:scale-110'
+                                  : 'bg-slate-950/70 border-slate-800/60'
+                              }`}
+                            >
+                              {it ? it.icon : ''}
+                            </button>
+                          );
+                        })}
+                        <button onClick={() => u.boots && setInspectedItem(u.boots)} disabled={!u.boots}
+                          title={u.boots ? `${u.boots.name} (boots slot)` : 'Empty boots slot'}
+                          className="w-6 h-6 rounded border border-lime-500/60 bg-slate-900 text-xs">{u.boots?.icon ?? '👢'}</button>
+                        <span title={`Free ward: ${matchTime >= (u.wardReadyAt ?? 0) ? 'ready' : `${Math.ceil((u.wardReadyAt ?? 0) - matchTime)}s cooldown`}`}
+                          className={`w-6 h-6 rounded border flex items-center justify-center text-xs ${matchTime >= (u.wardReadyAt ?? 0) ? 'border-lime-400 text-lime-300' : 'border-slate-700 text-slate-500'}`}>◉</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Red Squad Cards */}
+                <div className="space-y-1.5">
+                  {redChamps.map((u) => (
+                    <div
+                      key={u.id}
+                      className={`border rounded-xl p-1.5 transition flex items-center justify-between gap-2 ${
+                        u.isAlive ? 'bg-slate-950/85 border-rose-500/30' : 'bg-slate-950/70 border-slate-800 opacity-40'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="relative shrink-0">
+                          <ChibiAvatar avatarType={u.player.avatarSvg} size={30} />
+                          <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 text-[8px] font-black px-1 rounded-full border border-black shadow">
+                            L{u.level}
+                          </span>
+                          {!u.isAlive && (
+                            <div className="absolute inset-0 bg-slate-950/85 rounded-full flex items-center justify-center text-[9px] font-mono font-bold text-amber-300">
+                              💀{Math.ceil(u.respawnTimer)}s
+                            </div>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-white flex items-center gap-1.5 flex-wrap leading-tight">
+                            <span className="truncate max-w-[85px]">{u.player.name}</span>
+                            {u.comboMastered && (
+                              <span className="text-[9px] bg-violet-500/20 text-violet-200 px-1 py-0.5 rounded font-bold border border-violet-500/30" title={`${AVATAR_COMBOS[u.champion.name]?.name} learned`}>
+                                Combo: {AVATAR_COMBOS[u.champion.name]?.name}
+                              </span>
+                            )}
+                            {!u.comboMastered && comboPracticeNeeded(u.player, u.champion.name) !== null && (
+                              <span className="text-[9px] text-violet-300 bg-violet-950/50 px-1 py-0.5 rounded border border-violet-500/20">
+                                Combo {u.comboPractice ?? 0}/{comboPracticeNeeded(u.player, u.champion.name)}
+                              </span>
+                            )}
+                            {u.level >= 6 && u.cdUlt <= 0 && u.mana >= 100 && (
+                              <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1 py-0.5 rounded font-bold animate-pulse">
+                                Ult Ready!
+                              </span>
+                            )}
+                            {u.level >= 6 && u.cdUlt > 0 && (
+                              <span className="text-[9px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono border border-slate-700">
+                                Ult: {Math.ceil(u.cdUlt)}s
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[10px] text-rose-300 font-bold leading-tight">{u.champion.name}</div>
+                          <div className="text-[9px] text-slate-400 font-mono mt-0.5">
+                            KDA: <strong className="text-amber-300">{u.kills}/{u.deaths}/{u.assists}</strong> | CS: <strong className="text-white">{u.cs}</strong>
+                            <span className="text-slate-600"> | </span>
+                            Mana: <strong className="text-yellow-400">{Math.round(u.mana)}/100</strong>
+                            {!u.isAlive && <span className="text-rose-400 font-bold ml-1.5">💀 Respawns in {Math.ceil(u.respawnTimer)}s</span>}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 6-Item Inventory Slots */}
+                      <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-800 shrink-0">
+                        {Array.from({ length: 6 }).map((_, slotIdx) => {
+                          const it = u.items[slotIdx];
+                          return (
+                            <button
+                              key={slotIdx}
+                              onClick={() => it && setInspectedItem(it)}
+                              disabled={!it}
+                              title={it ? `${it.name} (${it.tier})` : 'Empty item slot'}
+                              className={`w-6 h-6 rounded border flex items-center justify-center text-xs transition ${
+                                it
+                                  ? it.tier === 'Mythic'
+                                    ? 'bg-amber-950/90 border-amber-400 text-amber-200 hover:scale-110 shadow'
+                                    : it.tier === 'Component'
+                                    ? 'bg-blue-950/80 border-cyan-500 text-cyan-200 hover:scale-110 shadow'
+                                    : 'bg-slate-800 border-slate-600 hover:border-slate-400 hover:scale-110'
+                                  : 'bg-slate-950/70 border-slate-800/60'
+                              }`}
+                            >
+                              {it ? it.icon : ''}
+                            </button>
+                          );
+                        })}
+                        <button onClick={() => u.boots && setInspectedItem(u.boots)} disabled={!u.boots}
+                          title={u.boots ? `${u.boots.name} (boots slot)` : 'Empty boots slot'}
+                          className="w-6 h-6 rounded border border-lime-500/60 bg-slate-900 text-xs">{u.boots?.icon ?? '👢'}</button>
+                        <span title={`Free ward: ${matchTime >= (u.wardReadyAt ?? 0) ? 'ready' : `${Math.ceil((u.wardReadyAt ?? 0) - matchTime)}s cooldown`}`}
+                          className={`w-6 h-6 rounded border flex items-center justify-center text-xs ${matchTime >= (u.wardReadyAt ?? 0) ? 'border-lime-400 text-lime-300' : 'border-slate-700 text-slate-500'}`}>◉</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ======================================================== */}
-      {/* 4. ITEM TIMINGS & POWER SPIKES DOSSIER PANEL */}
+      {/* 3. ITEM TIMINGS & POWER SPIKES DOSSIER PANEL */}
       {/* ======================================================== */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
         <div className="flex justify-between items-center mb-3">
@@ -4907,7 +6852,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               onClick={() => setInspectedItem(null)}
               className="mt-4 w-full py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl transition"
             >
-              Close Dossier
+              Close
             </button>
           </div>
         </div>

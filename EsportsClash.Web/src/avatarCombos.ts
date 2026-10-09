@@ -28,6 +28,13 @@ export const AVATAR_COMBOS: Record<string, AvatarCombo> = {
   Croakwell: { name: 'Frog Chorus', opener: 'skill2', followup: 'skill1' },
   'Soulscourge': { name: 'Soul Requiem', opener: 'skill2', followup: 'skill1' },
   Stonewake: { name: 'Seismic Echo', opener: 'skill1', followup: 'skill2' },
+  Mirehook: { name: 'Barbed Feast', opener: 'skill1', followup: 'skill2' },
+  Nullweaver: { name: 'Gravity Collapse', opener: 'skill1', followup: 'skill2' },
+  Voltgrip: { name: 'Arc Catch', opener: 'skill1', followup: 'skill2' },
+  Aetherbolt: { name: 'Phase Shot', opener: 'skill2', followup: 'skill1' },
+  Corsara: { name: 'Saltwater Broadside', opener: 'skill2', followup: 'skill1' },
+  Brewmaw: { name: 'Cask Crash', opener: 'skill1', followup: 'skill2' },
+  Wraithhook: { name: 'Lantern Snare', opener: 'skill1', followup: 'skill2' },
 };
 
 export function comboPracticeNeeded(player: PlayerCard, avatarName: string): number | null {

@@ -140,6 +140,10 @@ export interface ItemDef {
     aspd?: number;
     haste?: number;
     crit?: number;
+    armorPen?: number;
+    lethality?: number;
+    lifesteal?: number;
+    moveSpeed?: number;
   };
   passiveName: string;
   passiveDesc: string;
@@ -164,6 +168,7 @@ export interface LaneMinion {
   xpReward: number;
   isAlive: boolean;
   empowered?: boolean;
+  siegeGolem?: boolean;
 }
 
 export type StructureType = 'outer_tower' | 'inner_tower' | 'nexus_tower' | 'barracks' | 'nexus';
@@ -203,6 +208,8 @@ export interface AramChampionUnit {
   xp: number;
   gold: number;
   items: ItemDef[];
+  boots?: ItemDef;
+  wardReadyAt?: number;
   kills: number;
   deaths: number;
   assists: number;
@@ -217,7 +224,12 @@ export interface AramChampionUnit {
   cdUlt: number;
   stunTimer: number;
   charmTimer: number;
+  charmSourceId?: string;
   fearTimer?: number;
+  fearSourceId?: string;
+  knockupTimer?: number;
+  knockupMax?: number;
+  untargetableTimer?: number;
   facing: 'left' | 'right';
   animState: 'idle' | 'walk' | 'attack' | 'cast' | 'dead';
   animTimer: number;
@@ -228,15 +240,31 @@ export interface AramChampionUnit {
   zhonyaTimer: number;
   immolateTimer: number;
   krakenCounter: number;
-  // Autonomous retreat and recall
+  combatTimer?: number;
+  trueFormTimer?: number;
+  grievousTimer?: number;
+  // Autonomous retreat, recall & vision
   isRecalling?: boolean;
   recallTimer?: number;
+  recallCooldown?: number;
+  currentBushId?: string;
+  revealedTimer?: number;
   comboPractice?: number;
   comboMastered?: boolean;
   comboStage?: 0 | 1 | 2;
   comboTargetId?: string;
   comboExpiresAt?: number;
   comboHitConfirmed?: boolean;
+  teamChemistry?: number;
+}
+
+export interface BushPatch {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 export interface HealthRelic {
