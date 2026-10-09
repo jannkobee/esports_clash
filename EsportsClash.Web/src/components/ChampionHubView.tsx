@@ -72,7 +72,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
               <div className="mt-1.5 font-black text-white text-xs text-center truncate w-full">{c.name}</div>
               <div className="text-[9px] text-cyan-300 font-bold">{c.primaryRole}</div>
               <div className="mt-1 text-[8px] bg-slate-950 text-amber-300 px-1.5 py-0.5 rounded-full border border-white/10 truncate max-w-full">
-                {c.basis}
+                {c.archetype}
               </div>
             </div>
           );
@@ -96,7 +96,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
             <h3 className="text-2xl font-black text-white tracking-wide">{selectedChamp.name}</h3>
             <div className="text-sm font-bold text-amber-300">{selectedChamp.title}</div>
             <div className="text-xs text-slate-400 mt-1">
-              Role: <strong className="text-cyan-300">{selectedChamp.primaryRole}</strong>{selectedChamp.secondaryRole ? <span> / <strong className="text-emerald-300">{selectedChamp.secondaryRole}</strong></span> : null} • Basis: <strong className="text-pink-300">{selectedChamp.basis}</strong>
+              Role: <strong className="text-cyan-300">{selectedChamp.primaryRole}</strong>{selectedChamp.secondaryRole ? <span> / <strong className="text-emerald-300">{selectedChamp.secondaryRole}</strong></span> : null}
             </div>
           </div>
 

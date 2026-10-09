@@ -20,11 +20,11 @@ export interface ItemPurchasePlan {
 
 function effectiveRole(role: AvatarRole, championName: string): AvatarRole {
   const champions: Record<string, AvatarRole> = {
-    Astra: 'Marksman', Cora: 'Marksman', Kindra: 'Marksman', Senna: 'Marksman',
-    Kyumi: 'Mage', Raijin: 'Mage', Tequoia: 'Mage', 'Shadow Fiend': 'Mage',
-    Solana: 'Tank', Kaolin: 'Tank', Earthshaker: 'Tank',
-    Zal: 'Support', Renn: 'Support', Largo: 'Support',
-    Kage: 'Assassin', Inai: 'Assassin', Qiyana: 'Assassin', Locke: 'Assassin',
+    Astra: 'Marksman', Cora: 'Marksman', Kindra: 'Marksman', Solenne: 'Marksman',
+    Kyumi: 'Mage', Raijin: 'Mage', Tequoia: 'Mage', 'Soulscourge': 'Mage',
+    Solana: 'Tank', Kaolin: 'Tank', Stonewake: 'Tank',
+    Zal: 'Support', Renn: 'Support', Croakwell: 'Support',
+    Kage: 'Assassin', Inai: 'Assassin', Veyara: 'Assassin', Cinderlock: 'Assassin',
   };
   return champions[championName] ?? role;
 }

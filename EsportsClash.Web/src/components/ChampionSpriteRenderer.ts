@@ -12,11 +12,12 @@ export interface FighterVisualState {
   team: 'blue' | 'red';
   isStunned: boolean;
   isCharmed: boolean;
+  isFeared?: boolean;
   isInBush: boolean;
 }
 
 export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: FighterVisualState) {
-  const { championName, x, y, facing, animState, animTime, team, isStunned, isCharmed, isInBush } = state;
+  const { championName, x, y, facing, animState, animTime, team, isStunned, isCharmed, isFeared, isInBush } = state;
 
   ctx.save();
   ctx.translate(x, y);
@@ -102,7 +103,7 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
     case 'Inai':
       drawChibiInai(ctx, animState, animTime);
       break;
-    case 'Qiyana': case 'Locke': case 'Senna': case 'Largo': case 'Shadow Fiend': case 'Earthshaker':
+    case 'Veyara': case 'Cinderlock': case 'Solenne': case 'Croakwell': case 'Soulscourge': case 'Stonewake':
       drawNewChampionSprite(ctx, championName, animState, animTime);
       break;
     default:
@@ -113,7 +114,14 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
   ctx.restore();
 
   // Status Overlays
-  if (isStunned) {
+  if (isFeared) {
+    ctx.save();
+    ctx.fillStyle = '#fda4af';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('FEARED', x, y - 50);
+    ctx.restore();
+  } else if (isStunned) {
     ctx.save();
     ctx.fillStyle = '#fde047';
     ctx.font = 'bold 11px sans-serif';
@@ -1885,9 +1893,9 @@ function drawDefaultChampion(ctx: CanvasRenderingContext2D, team: string) {
 
 function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, animState: string, animTime: number) {
   const colors: Record<string, [string, string]> = {
-    Qiyana: ['#0f766e', '#fde047'], Locke: ['#7c2d12', '#fb923c'],
-    Senna: ['#0f766e', '#f8fafc'], Largo: ['#65a30d', '#facc15'],
-    'Shadow Fiend': ['#450a0a', '#fb7185'], Earthshaker: ['#92400e', '#fcd34d'],
+    Veyara: ['#0f766e', '#fde047'], Cinderlock: ['#7c2d12', '#fb923c'],
+    Solenne: ['#0f766e', '#f8fafc'], Croakwell: ['#65a30d', '#facc15'],
+    'Soulscourge': ['#450a0a', '#fb7185'], Stonewake: ['#92400e', '#fcd34d'],
   };
   const [body, glow] = colors[name];
   const casting = animState === 'cast' || animState === 'attack';
@@ -1898,31 +1906,31 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
   ctx.beginPath();
   ctx.moveTo(-12, -22); ctx.lineTo(12, -22); ctx.lineTo(16, 0); ctx.lineTo(-16, 0); ctx.closePath();
   ctx.fill();
-  ctx.fillStyle = name === 'Largo' ? '#a3e635' : name === 'Shadow Fiend' ? '#7f1d1d' : '#f5cba7';
+  ctx.fillStyle = name === 'Croakwell' ? '#a3e635' : name === 'Soulscourge' ? '#7f1d1d' : '#f5cba7';
   ctx.beginPath(); ctx.arc(0, -32, 14, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = name === 'Shadow Fiend' ? '#fda4af' : '#0f172a';
+  ctx.fillStyle = name === 'Soulscourge' ? '#fda4af' : '#0f172a';
   ctx.beginPath(); ctx.arc(-5, -33, 2.2, 0, Math.PI * 2); ctx.arc(5, -33, 2.2, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = glow;
   ctx.fillStyle = glow;
   ctx.lineWidth = 4;
   ctx.lineCap = 'round';
   const pulse = casting ? Math.sin(animTime * 18) * 3 : 0;
-  if (name === 'Qiyana') {
+  if (name === 'Veyara') {
     ctx.beginPath(); ctx.arc(13, -18, 15 + pulse, -1.1, 1.35); ctx.stroke();
-  } else if (name === 'Locke') {
+  } else if (name === 'Cinderlock') {
     for (let i = 0; i < 3; i++) {
       ctx.beginPath(); ctx.moveTo(10, -27 + i * 8); ctx.lineTo(29 + pulse, -34 + i * 8); ctx.stroke();
     }
-  } else if (name === 'Senna') {
+  } else if (name === 'Solenne') {
     ctx.lineWidth = 6;
     ctx.beginPath(); ctx.moveTo(8, -18); ctx.lineTo(32 + pulse, -21); ctx.stroke();
     ctx.fillRect(19, -28, 11, 5);
-  } else if (name === 'Largo') {
+  } else if (name === 'Croakwell') {
     ctx.beginPath(); ctx.arc(-8, -45, 6, 0, Math.PI * 2); ctx.arc(8, -45, 6, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.ellipse(15, -14, 8, 11, -0.5, 0, Math.PI * 2); ctx.stroke();
     ctx.lineWidth = 1.5;
     for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(10 + i * 3, -23); ctx.lineTo(16 + i * 3, -5); ctx.stroke(); }
-  } else if (name === 'Shadow Fiend') {
+  } else if (name === 'Soulscourge') {
     ctx.beginPath(); ctx.moveTo(-11, -41); ctx.lineTo(-17, -55); ctx.lineTo(-2, -44);
     ctx.moveTo(11, -41); ctx.lineTo(17, -55); ctx.lineTo(2, -44); ctx.stroke();
     ctx.beginPath(); ctx.arc(20, -16, 6 + pulse, 0, Math.PI * 2); ctx.fill();
@@ -1930,6 +1938,48 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
     ctx.lineWidth = 7;
     ctx.beginPath(); ctx.moveTo(13, -21); ctx.lineTo(25, -49); ctx.stroke();
     ctx.fillRect(17, -55, 19, 10);
+  }
+  // Each recent avatar has a distinct cast pose and animated accessory.
+  if (casting) {
+    const phase = animTime * 13;
+    ctx.lineWidth = 2.5;
+    ctx.shadowBlur = 16;
+    if (name === 'Veyara') {
+      ['#38bdf8', '#a3e635', '#fbbf24'].forEach((element, i) => {
+        const a = phase + i * Math.PI * 2 / 3;
+        ctx.fillStyle = element;
+        ctx.beginPath(); ctx.arc(Math.cos(a) * 24, -20 + Math.sin(a) * 16, 4, 0, Math.PI * 2); ctx.fill();
+      });
+    } else if (name === 'Cinderlock') {
+      ctx.strokeStyle = '#fed7aa';
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath(); ctx.moveTo(13, -27 + i * 8);
+        ctx.lineTo(31 + Math.sin(phase + i) * 8, -35 + i * 8); ctx.stroke();
+      }
+    } else if (name === 'Solenne') {
+      ctx.strokeStyle = '#ffffff';
+      ctx.beginPath(); ctx.moveTo(25, -22); ctx.lineTo(42 + Math.sin(phase) * 7, -22); ctx.stroke();
+      ctx.beginPath(); ctx.arc(32, -22, 5 + Math.sin(phase) * 2, 0, Math.PI * 2); ctx.stroke();
+    } else if (name === 'Croakwell') {
+      ctx.fillStyle = '#fef08a';
+      ctx.font = 'bold 16px system-ui';
+      ctx.fillText('♪', 24, -32 + Math.sin(phase) * 5);
+      ctx.fillText('♫', -28, -38 - Math.sin(phase) * 4);
+    } else if (name === 'Soulscourge') {
+      ctx.fillStyle = '#fda4af';
+      for (let i = 0; i < 4; i++) {
+        const a = phase * 0.5 + i * Math.PI / 2;
+        ctx.beginPath(); ctx.arc(Math.cos(a) * 26, -22 + Math.sin(a) * 14,
+          3 + Math.sin(phase + i), 0, Math.PI * 2); ctx.fill();
+      }
+    } else if (name === 'Stonewake') {
+      ctx.strokeStyle = '#fef08a';
+      for (let i = -1; i <= 1; i++) {
+        ctx.beginPath(); ctx.moveTo(i * 8, 3);
+        ctx.lineTo(i * 15 + Math.sin(phase + i) * 4, 11);
+        ctx.lineTo(i * 20, 16); ctx.stroke();
+      }
+    }
   }
   ctx.restore();
 }

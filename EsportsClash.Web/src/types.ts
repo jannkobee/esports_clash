@@ -217,6 +217,7 @@ export interface AramChampionUnit {
   cdUlt: number;
   stunTimer: number;
   charmTimer: number;
+  fearTimer?: number;
   facing: 'left' | 'right';
   animState: 'idle' | 'walk' | 'attack' | 'cast' | 'dead';
   animTimer: number;

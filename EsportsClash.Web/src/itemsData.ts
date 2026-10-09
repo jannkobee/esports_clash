@@ -304,7 +304,7 @@ export function getRecommendedItem(role: CombatRole, existingItemIds: string[], 
   // Derive target archetype from champName if provided
   let effectiveRole = role;
   if (champName) {
-    if (champName === 'Astra' || champName === 'Cora' || champName === 'Kindra' || champName === 'Senna') effectiveRole = 'Marksman';
+    if (champName === 'Astra' || champName === 'Cora' || champName === 'Kindra' || champName === 'Solenne') effectiveRole = 'Marksman';
     else if (champName === 'Kyumi' || champName === 'Raijin' || champName === 'Tequoia') effectiveRole = 'Mage';
     else if (champName === 'Solana' || champName === 'Kaolin') effectiveRole = 'Tank';
     else if (champName === 'Zal' || champName === 'Renn') effectiveRole = 'Support';

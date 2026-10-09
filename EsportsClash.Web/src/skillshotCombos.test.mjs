@@ -20,9 +20,9 @@ test('better mechanics lead a moving target more accurately and improve dodge od
 });
 
 test('high skill players learn an avatar combo while low skill players do not', () => {
-  const player = (lan, tf, flx, iq) => ({ stats: { lan, tf, flx, iq }, signatureChampions: ['Qiyana'] });
-  assert.equal(comboPracticeNeeded(player(96, 94, 90, 88), 'Qiyana'), 2);
-  assert.equal(comboPracticeNeeded(player(65, 68, 70, 80), 'Qiyana'), null);
+  const player = (lan, tf, flx, iq) => ({ stats: { lan, tf, flx, iq }, signatureChampions: ['Veyara'] });
+  assert.equal(comboPracticeNeeded(player(96, 94, 90, 88), 'Veyara'), 2);
+  assert.equal(comboPracticeNeeded(player(65, 68, 70, 80), 'Veyara'), null);
   for (const champion of ADDITIONAL_CHAMPIONS) assert.ok(AVATAR_COMBOS[champion.name]);
   assert.equal(Object.keys(AVATAR_COMBOS).length, 23);
 });

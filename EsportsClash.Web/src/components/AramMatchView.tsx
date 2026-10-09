@@ -14,6 +14,7 @@ import { getItemPurchasePlan } from '../itemStrategy';
 import { aimAtCast, dodgeProbability, segmentHitsCircle } from '../skillshotRules';
 import { AVATAR_COMBOS, comboPracticeNeeded } from '../avatarCombos';
 import { drawChampionSprite } from './ChampionSpriteRenderer';
+import { drawAvatarSkillAnimation, type SkillSlot } from '../avatarSkillAnimation';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
 import { chooseTeamfightTarget, shouldContestBoss, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from '../combatDecision';
@@ -86,6 +87,8 @@ interface SpellAOE {
   extraText?: string;
   sourceX?: number;
   sourceY?: number;
+  avatarName?: string;
+  abilitySlot?: SkillSlot;
 }
 
 interface FloatingText {
@@ -207,10 +210,10 @@ function getXpThreshold(lvl: number): number {
 
 function getChampionAttackRange(champName: string): number {
   switch (champName) {
-    case 'Senna': return 205;
-    case 'Shadow Fiend': return 180;
-    case 'Locke': return 125;
-    case 'Largo': return 65;
+    case 'Solenne': return 205;
+    case 'Soulscourge': return 180;
+    case 'Cinderlock': return 125;
+    case 'Croakwell': return 65;
     case 'Astra': return 195;
     case 'Tequoia': return 190;
     case 'Kindra':
@@ -245,12 +248,12 @@ const FIRST_SKILLSHOTS: Record<string, Partial<Projectile>> = {
   Xin: { type: 'pellet', speed: 420, size: 8, stunOnHit: 1.2 },
   Kaolin: { type: 'boulder', speed: 380, size: 14, stunOnHit: 1.5, collisionRadius: 23 },
   Inai: { type: 'orb', speed: 400, size: 10, stunOnHit: 1.2 },
-  Qiyana: { type: 'shuriken', speed: 480, size: 9, stunOnHit: 0.8 },
-  Locke: { type: 'pellet', speed: 460, size: 8, splashRadius: 55 },
-  Senna: { type: 'laser', speed: 550, size: 9, healAlliesOnHit: 110 },
-  Largo: { type: 'nature_bolt', speed: 360, size: 10, stunOnHit: 0.7, pullOnHit: 35 },
-  'Shadow Fiend': { type: 'orb', speed: 420, size: 11, splashRadius: 60 },
-  Earthshaker: { type: 'boulder', speed: 350, size: 15, stunOnHit: 1.4, splashRadius: 65, collisionRadius: 26 },
+  Veyara: { type: 'shuriken', speed: 480, size: 9, stunOnHit: 0.8 },
+  Cinderlock: { type: 'pellet', speed: 460, size: 8, splashRadius: 55 },
+  Solenne: { type: 'laser', speed: 550, size: 9, healAlliesOnHit: 110 },
+  Croakwell: { type: 'nature_bolt', speed: 360, size: 10, stunOnHit: 0.7, pullOnHit: 35 },
+  'Soulscourge': { type: 'orb', speed: 420, size: 11, splashRadius: 60 },
+  Stonewake: { type: 'boulder', speed: 350, size: 15, stunOnHit: 1.4, splashRadius: 65, collisionRadius: 26 },
 };
 
 function getChampionFormationY(champName: string, idx: number): number {
@@ -1166,6 +1169,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (u.cdUlt > 0 && u.level >= 6) u.cdUlt = Math.max(0, u.cdUlt - dt);
       if (u.stunTimer > 0) u.stunTimer = Math.max(0, u.stunTimer - dt);
       if (u.charmTimer > 0) u.charmTimer = Math.max(0, u.charmTimer - dt);
+      if (u.fearTimer && u.fearTimer > 0) u.fearTimer = Math.max(0, u.fearTimer - dt);
 
       // Recovery to Idle
       if (u.attackTimer <= 1.0 / Math.max(0.5, u.champion.aspd) - 0.28) {
@@ -1884,12 +1888,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           angle: angle + s * 0.12
         });
       }
-    } else if (u.champion.name === 'Senna' || u.champion.name === 'Shadow Fiend' || u.champion.name === 'Locke') {
+    } else if (u.champion.name === 'Solenne' || u.champion.name === 'Soulscourge' || u.champion.name === 'Cinderlock') {
       const originX = u.x + (u.facing === 'right' ? 18 : -18);
       projectilesRef.current.push({
         id: Math.random().toString(), x: originX, y: u.y - 15,
         targetX: target.x, targetY: target.y - 15, vx: 0, vy: 0, speed: 520,
-        color: u.champion.accentColor, type: u.champion.name === 'Senna' ? 'laser' : 'orb',
+        color: u.champion.accentColor, type: u.champion.name === 'Solenne' ? 'laser' : 'orb',
         size: 6, targetUnitId: target.id, damage: totalDmg, attackerId: u.id,
         angle: Math.atan2(target.y - u.y, target.x - originX)
       });
@@ -1899,16 +1903,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   };
 
   const emitSkillEffect = (u: AramChampionUnit, target: AramChampionUnit, ultimate = false, label = '') => {
+    const abilitySlot: SkillSlot | undefined = ultimate ? 'ultimate'
+      : label === u.champion.skill1.name ? 'skill1'
+        : label === u.champion.skill2.name ? 'skill2' : undefined;
     spellsRef.current.push({
       id: Math.random().toString(),
       type: ultimate ? 'ultimate_burst' : 'skill_burst',
       x: target.x, y: target.y,
       sourceX: u.x, sourceY: u.y,
-      radius: ultimate ? 94 : 52,
+      radius: ultimate ? (u.champion.name === 'Stonewake' ? 155 : u.champion.name === 'Soulscourge' ? 115 : 94) : 52,
       duration: ultimate ? 1.3 : 0.9,
       maxDuration: ultimate ? 1.3 : 0.9,
       color: ultimate ? u.champion.accentColor : u.champion.primaryColor,
-      extraText: label
+      extraText: label,
+      avatarName: u.champion.name,
+      abilitySlot,
     });
   };
 
@@ -2195,26 +2204,26 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       target.stunTimer = 1.4;
       applyDamageToChampion(u, target, 125, false, '🔮 Aether Remnant');
       addEvent(`🔮 VOID: Inai pulled ${target.player.name} through the Aether Remnant gaze!`, 'combo');
-    } else if (u.champion.name === 'Qiyana') {
+    } else if (u.champion.name === 'Veyara') {
       target.stunTimer = Math.max(target.stunTimer, 0.8);
-      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Elemental Wrath');
-    } else if (u.champion.name === 'Locke' || u.champion.name === 'Shadow Fiend') {
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Prism Hurl');
+    } else if (u.champion.name === 'Cinderlock' || u.champion.name === 'Soulscourge') {
       applyDamageToChampion(u, target, u.champion.skill1.damage, false, u.champion.skill1.name);
       championsRef.current.filter(e => e.team !== u.team && e.id !== target.id && e.isAlive && Math.hypot(e.x - target.x, e.y - target.y) < 65)
         .forEach(e => applyDamageToChampion(u, e, 80, false, u.champion.skill1.name));
-    } else if (u.champion.name === 'Senna') {
-      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Piercing Darkness');
+    } else if (u.champion.name === 'Solenne') {
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Dusk Lance');
       championsRef.current.filter(a => a.team === u.team && a.isAlive && Math.hypot(a.x - u.x, a.y - u.y) < 180)
         .forEach(a => { a.hp = Math.min(a.maxHp, a.hp + 110); emitSkillEffect(u, a); });
-    } else if (u.champion.name === 'Largo') {
+    } else if (u.champion.name === 'Croakwell') {
       target.x += u.team === 'blue' ? -35 : 35;
       target.stunTimer = Math.max(target.stunTimer, 0.7);
-      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Catchy Lick');
-    } else if (u.champion.name === 'Earthshaker') {
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Ribbon Lash');
+    } else if (u.champion.name === 'Stonewake') {
       target.stunTimer = Math.max(target.stunTimer, 1.4);
-      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Fissure');
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, 'Faultline');
       championsRef.current.filter(e => e.team !== u.team && e.id !== target.id && e.isAlive && Math.abs(e.y - target.y) < 32 && Math.abs(e.x - target.x) < 90)
-        .forEach(e => { e.stunTimer = Math.max(e.stunTimer, 0.9); applyDamageToChampion(u, e, 95, false, 'Fissure'); });
+        .forEach(e => { e.stunTimer = Math.max(e.stunTimer, 0.9); applyDamageToChampion(u, e, 95, false, 'Faultline'); });
     }
   };
 
@@ -2258,22 +2267,22 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (name === 'Xin') {
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 90)
         .forEach(c => applyDamageToChampion(u, c, skill.damage * 0.6, false, skill.name));
-    } else if (name === 'Qiyana' || name === 'Locke') {
+    } else if (name === 'Veyara' || name === 'Cinderlock') {
       u.x = target.x + (u.team === 'blue' ? -30 : 30);
       u.y = target.y;
-    } else if (name === 'Senna') {
+    } else if (name === 'Solenne') {
       target.stunTimer = Math.max(target.stunTimer, 1.3);
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 70)
         .forEach(c => { c.stunTimer = Math.max(c.stunTimer, 0.8); applyDamageToChampion(u, c, 65, false, skill.name); });
-    } else if (name === 'Largo') {
+    } else if (name === 'Croakwell') {
       target.stunTimer = Math.max(target.stunTimer, 0.8);
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 85)
         .forEach(c => { c.stunTimer = Math.max(c.stunTimer, 0.5); applyDamageToChampion(u, c, 75, false, skill.name); });
-    } else if (name === 'Shadow Fiend') {
+    } else if (name === 'Soulscourge') {
       u.shield += 110;
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - u.x, c.y - u.y) < 95)
         .forEach(c => applyDamageToChampion(u, c, 65, false, skill.name));
-    } else if (name === 'Earthshaker') {
+    } else if (name === 'Stonewake') {
       target.stunTimer = Math.max(target.stunTimer, 1.0);
       u.shield += 130;
     }
@@ -2287,7 +2296,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   // Champion Ultimate Cast (Level 6 Spike: 75s / 60s / 45s CD)
   const castChampionUltimate = (u: AramChampionUnit, target: AramChampionUnit, enemies: AramChampionUnit[]) => {
     sound.playUltimateExplosion();
-    emitSkillEffect(u, u.champion.name === 'Astra' ? u : target, true, u.champion.ultimate.name);
+    emitSkillEffect(u, ['Astra', 'Soulscourge', 'Stonewake', 'Croakwell'].includes(u.champion.name) ? u : target, true, u.champion.ultimate.name);
     confetti({ particleCount: 65, spread: 55, origin: { x: u.x / ARENA_WIDTH, y: 0.4 } });
 
     const ultRank = u.level >= 16 ? 3 : u.level >= 11 ? 2 : 1;
@@ -2501,33 +2510,36 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.x = target.x + (u.facing === 'right' ? 30 : -30);
       applyDamageToChampion(u, target, ultDamage, true, '🔮 Astral Step');
       showBanner(`🔮 ASTRAL STEP!`, `${u.player.name} cut through reality with planar Astral Step!`, '🔮');
-    } else if (u.champion.name === 'Qiyana' || u.champion.name === 'Locke' || u.champion.name === 'Shadow Fiend' || u.champion.name === 'Earthshaker') {
-      const radius = u.champion.name === 'Earthshaker' ? 155 : 115;
-      const center = u.champion.name === 'Shadow Fiend' || u.champion.name === 'Earthshaker' ? u : target;
+    } else if (u.champion.name === 'Veyara' || u.champion.name === 'Cinderlock' || u.champion.name === 'Soulscourge' || u.champion.name === 'Stonewake') {
+      const radius = u.champion.name === 'Stonewake' ? 155 : 115;
+      const center = u.champion.name === 'Soulscourge' || u.champion.name === 'Stonewake' ? u : target;
       const victims = enemies.filter(e => e.isAlive && Math.hypot(e.x - center.x, e.y - center.y) <= radius);
       victims.forEach(e => {
-        if (u.champion.name === 'Qiyana' || u.champion.name === 'Earthshaker') e.stunTimer = Math.max(e.stunTimer, 1.5);
-        if (u.champion.name === 'Shadow Fiend') e.charmTimer = Math.max(e.charmTimer, 1.0);
-        applyDamageToChampion(u, e, ultDamage * (u.champion.name === 'Earthshaker' ? 0.85 + victims.length * 0.08 : 1), false, u.champion.ultimate.name);
+        if (u.champion.name === 'Veyara' || u.champion.name === 'Stonewake') e.stunTimer = Math.max(e.stunTimer, 1.5);
+        if (u.champion.name === 'Soulscourge') {
+          e.stunTimer = Math.max(e.stunTimer, 1.0);
+          e.fearTimer = Math.max(e.fearTimer ?? 0, 1.0);
+        }
+        applyDamageToChampion(u, e, ultDamage * (u.champion.name === 'Stonewake' ? 0.85 + victims.length * 0.08 : 1), false, u.champion.ultimate.name);
         emitSkillEffect(u, e, true, u.champion.ultimate.name);
       });
-    } else if (u.champion.name === 'Senna') {
+    } else if (u.champion.name === 'Solenne') {
       enemies.filter(e => e.isAlive && Math.abs(e.y - target.y) < 90).forEach(e => {
-        applyDamageToChampion(u, e, ultDamage, false, 'Dawning Shadow');
-        emitSkillEffect(u, e, true, 'Dawning Shadow');
+        applyDamageToChampion(u, e, ultDamage, false, 'Daybreak Veil');
+        emitSkillEffect(u, e, true, 'Daybreak Veil');
       });
       championsRef.current.filter(a => a.team === u.team && a.isAlive).forEach(a => {
         a.shield += 220;
-        emitSkillEffect(u, a, true, 'Dawning Shadow');
+        emitSkillEffect(u, a, true, 'Daybreak Veil');
       });
-    } else if (u.champion.name === 'Largo') {
+    } else if (u.champion.name === 'Croakwell') {
       championsRef.current.filter(a => a.team === u.team && a.isAlive).forEach(a => {
         a.hp = Math.min(a.maxHp, a.hp + 300);
         a.shield += 120;
-        emitSkillEffect(u, a, true, 'Amphibian Rhapsody');
+        emitSkillEffect(u, a, true, 'Marsh Anthem');
       });
       enemies.filter(e => e.isAlive && Math.hypot(e.x - u.x, e.y - u.y) < 145)
-        .forEach(e => applyDamageToChampion(u, e, ultDamage, false, 'Amphibian Rhapsody'));
+        .forEach(e => applyDamageToChampion(u, e, ultDamage, false, 'Marsh Anthem'));
     }
   };
 
@@ -3995,6 +4007,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ctx.arc(sx, sy, ultimate ? 4 : 2.5, 0, Math.PI * 2);
           ctx.fill();
         }
+        if (s.avatarName && s.abilitySlot && s.sourceX !== undefined && s.sourceY !== undefined) {
+          drawAvatarSkillAnimation(ctx, {
+            avatarName: s.avatarName, slot: s.abilitySlot,
+            x: s.x, y: s.y, sourceX: s.sourceX, sourceY: s.sourceY,
+            radius: s.radius, progress, color: s.color,
+          });
+        }
         // Sharp outer rays and a readable skill label make casts stand out in a crowded fight.
         ctx.lineCap = 'round';
         for (let i = 0; i < (ultimate ? 16 : 9); i++) {
@@ -4325,6 +4344,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         team: u.team,
         isStunned: u.stunTimer > 0,
         isCharmed: u.charmTimer > 0,
+        isFeared: (u.fearTimer ?? 0) > 0,
         isInBush: u.isInBush
       });
 

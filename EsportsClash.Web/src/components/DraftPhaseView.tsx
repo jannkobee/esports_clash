@@ -268,7 +268,7 @@ export const DraftPhaseView: React.FC<DraftPhaseViewProps> = ({
                     </div>
 
                     <div className="text-[9px] text-slate-500 mt-1 italic">
-                      Basis: {c.basis}
+                      {c.archetype}
                     </div>
 
                     <div className="mt-2 text-[9px] text-slate-400 bg-black/40 p-1 rounded">

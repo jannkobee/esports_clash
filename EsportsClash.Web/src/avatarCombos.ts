@@ -22,12 +22,12 @@ export const AVATAR_COMBOS: Record<string, AvatarCombo> = {
   Raijin: { name: 'Vortex Remnant', opener: 'skill2', followup: 'skill1' },
   Kaolin: { name: 'Boulder Crash', opener: 'skill2', followup: 'skill1' },
   Inai: { name: 'Void Ambush', opener: 'skill2', followup: 'skill1' },
-  Qiyana: { name: 'Elemental Crown', opener: 'skill2', followup: 'skill1' },
-  Locke: { name: 'Ashen Pursuit', opener: 'skill2', followup: 'skill1' },
-  Senna: { name: 'Mist Snare', opener: 'skill2', followup: 'skill1' },
-  Largo: { name: 'Frog Chorus', opener: 'skill2', followup: 'skill1' },
-  'Shadow Fiend': { name: 'Soul Requiem', opener: 'skill2', followup: 'skill1' },
-  Earthshaker: { name: 'Seismic Echo', opener: 'skill1', followup: 'skill2' },
+  Veyara: { name: 'Elemental Crown', opener: 'skill2', followup: 'skill1' },
+  Cinderlock: { name: 'Ashen Pursuit', opener: 'skill2', followup: 'skill1' },
+  Solenne: { name: 'Mist Snare', opener: 'skill2', followup: 'skill1' },
+  Croakwell: { name: 'Frog Chorus', opener: 'skill2', followup: 'skill1' },
+  'Soulscourge': { name: 'Soul Requiem', opener: 'skill2', followup: 'skill1' },
+  Stonewake: { name: 'Seismic Echo', opener: 'skill1', followup: 'skill2' },
 };
 
 export function comboPracticeNeeded(player: PlayerCard, avatarName: string): number | null {
