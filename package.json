@@ -1,0 +1,11 @@
+{
+  "name": "esports-clash",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "npm --prefix EsportsClash.Web run build",
+    "test": "npm --prefix EsportsClash.Web test",
+    "check:game": "npm --prefix EsportsClash.Web run check:game"
+  }
+}
