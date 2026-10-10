@@ -53,6 +53,7 @@ import { GOLEM_CHARGE_DAMAGE, GOLEM_SPAWN_SECOND, selectGolemChargeTower, should
 import { chooseKnownJungleCamp, neutralAttackRange, shouldFocusExposedNexus, shouldPressWonFight } from '../macroFarmRules';
 import { BLACK_HOLE_RADIUS, shouldSpreadForBlackHole, threatensBlackHole } from '../blackHoleCounterplay';
 import { shouldRetreatLosingFight } from '../fightSurvivalRules';
+import { laneAdvanceLimit, shouldFollowUpControl, shouldPushWithWave, shouldSeekHealthRelic, wouldOverstep } from '../teamTempoRules';
 import { shouldPaxiEscapeJaunt } from '../paxiDecision';
 import { getGroundTargetPoint } from '../groundTargetRules';
 import { aetherisUltimateDurationAtRank, findAetherisInnateAlly } from '../aetherisAbilities';
@@ -1658,6 +1659,44 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // Check Active Recalling Channel (2.5s channel to teleport to base well)
       if (u.isRecalling) {
+        const channelers = champs.filter(ally => ally.isAlive && ally.team === u.team
+          && ally.id !== u.id && isChannelingAbility(ally));
+        const caught = channelers.length > 0 ? champs.filter(enemy => enemy.isAlive
+          && enemy.team !== u.team && isUnitVisibleTo(enemy, u)
+          && isEnemyCaughtInAlliedChannel(enemy, channelers)
+          && Math.hypot(enemy.x - u.x, enemy.y - u.y) <= 650) : [];
+        const firstCaught = caught.sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y)
+          - Math.hypot(b.x - u.x, b.y - u.y))[0];
+        const activeEnemyTower = firstCaught && structures.some(st => st.isAlive
+          && st.team !== u.team && (st.type.includes('tower') || st.type === 'nexus')
+          && Math.hypot(st.x - firstCaught.x, st.y - firstCaught.y) <= st.range);
+        const castReach = Math.max(
+          u.cd1 <= 0 && u.mana >= skill1ManaCost(u) ? getSkillCastRange(u.champion.name, 'skill1', getChampionAttackRange(u.champion.name)) : 0,
+          u.cd2 <= 0 && u.mana >= 35 ? getSkillCastRange(u.champion.name, 'skill2', getChampionAttackRange(u.champion.name)) : 0,
+        );
+        if (shouldFollowUpControl({
+          healthFraction: u.hp / u.maxHp, caughtEnemies: caught.length,
+          freeThreats: champs.filter(enemy => enemy.isAlive && enemy.team !== u.team
+            && Math.hypot(enemy.x - u.x, enemy.y - u.y) < 350
+            && !caught.some(trapped => trapped.id === enemy.id)).length,
+          nearbyAllies: champs.filter(ally => ally.isAlive && ally.team === u.team
+            && ally.id !== u.id && Math.hypot(ally.x - u.x, ally.y - u.y) < 400).length,
+          distanceToCatch: firstCaught ? Math.hypot(firstCaught.x - u.x, firstCaught.y - u.y) : Infinity,
+          attackRange: getChampionAttackRange(u.champion.name), readyCastRange: castReach,
+          controlSeconds: firstCaught ? Math.max(0, ...channelers.filter(ally => isEnemyCaughtInAlliedChannel(firstCaught, [ally]))
+            .map(ally => ally.blackHole?.remaining ?? ally.corsaraBarrage?.remaining ?? ally.monkeySpin?.remaining ?? 0)) : 0,
+          moveSpeed: 85 + (u.boots?.stats.moveSpeed ?? 0),
+          iq: u.player.stats.iq, teamfight: u.player.stats.tf, losingFight: true,
+          underEnemyTower: !!activeEnemyTower,
+          takingTowerFire: structures.some(st => st.isAlive && st.team !== u.team
+            && (st.targetId === u.id || st.diveAggressorId === u.id)),
+          abortingDive: !!u.diveAborting,
+        })) {
+          u.isRecalling = false;
+          u.recallTimer = 0;
+        }
+      }
+      if (u.isRecalling) {
         u.vx = 0;
         u.vy = 0;
         u.animState = 'idle';
@@ -2215,14 +2254,39 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && u.cd1 <= 0 && u.mana >= 45;
 
       const hasActiveAlliedChannel = allies.some(a => a.isAlive && a.id !== u.id && isChannelingAbility(a));
-      const canFollowUpEngage = hasActiveAlliedChannel && !losingFight && u.hp > u.maxHp * 0.25;
+      const caughtEnemies = hasActiveAlliedChannel
+        ? enemies.filter(enemy => isEnemyCaughtInAlliedChannel(enemy, allies)
+          && Math.hypot(enemy.x - u.x, enemy.y - u.y) <= 650) : [];
+      const closestCaught = caughtEnemies.sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y)
+        - Math.hypot(b.x - u.x, b.y - u.y))[0];
+      const readyCastRange = Math.max(
+        u.cd1 <= 0 && u.mana >= skill1ManaCost(u) ? getSkillCastRange(u.champion.name, 'skill1', attackRange) : 0,
+        u.cd2 <= 0 && u.mana >= 35 ? getSkillCastRange(u.champion.name, 'skill2', attackRange) : 0,
+        u.level >= 6 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u)
+          ? getSkillCastRange(u.champion.name, 'ultimate', attackRange) : 0,
+      );
+      const catchUnderTower = !!closestCaught && enemyStructures.some(st => (st.type.includes('tower') || st.type === 'nexus')
+        && Math.hypot(st.x - closestCaught.x, st.y - closestCaught.y) <= st.range);
+      const canFollowUpEngage = hasActiveAlliedChannel && shouldFollowUpControl({
+        healthFraction: u.hp / u.maxHp, caughtEnemies: caughtEnemies.length,
+        freeThreats: localEnemies.filter(enemy => !caughtEnemies.some(caught => caught.id === enemy.id)).length,
+        nearbyAllies: Math.max(0, localAllies.length - 1),
+        distanceToCatch: closestCaught ? Math.hypot(closestCaught.x - u.x, closestCaught.y - u.y) : Infinity,
+        attackRange, readyCastRange,
+        controlSeconds: closestCaught ? Math.max(0, ...allies.filter(ally => isEnemyCaughtInAlliedChannel(closestCaught, [ally]))
+          .map(ally => ally.blackHole?.remaining ?? ally.corsaraBarrage?.remaining ?? ally.monkeySpin?.remaining ?? 0)) : 0,
+        moveSpeed: 85 + (u.boots?.stats.moveSpeed ?? 0),
+        iq, teamfight: tfStat, losingFight,
+        underEnemyTower: catchUnderTower, takingTowerFire: isTakingTurretFire,
+        abortingDive: !!u.diveAborting,
+      });
 
       const rawDangerousFight = u.diveAborting || (!canFollowUpEngage && (losingFight || (!canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002))))));
 
       // Decision Commitment & Anti-Spin Damping:
       // Prevents 30Hz fight/retreat flip-flopping caused by minute distance or health changes.
       let isDangerousFight = rawDangerousFight;
-      if (u.committedState === 'retreat' && (u.decisionCommitTimer ?? 0) > 0 && localEnemies.length > 0 && !isInsideWell) {
+      if (u.committedState === 'retreat' && (u.decisionCommitTimer ?? 0) > 0 && localEnemies.length > 0 && !isInsideWell && !canFollowUpEngage) {
         isDangerousFight = true;
       } else if (u.committedState === 'fight' && (u.decisionCommitTimer ?? 0) > 0 && !isLowHpScared && !losingFight) {
         isDangerousFight = false;
@@ -2250,9 +2314,50 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         losingFight: losingFight || u.diveAborting || isTakingTurretFire
           || (localEnemies.length > 0 && isDangerousFight),
       });
-      const wantsRecall = !pressWonFight && !canFollowUpEngage && !canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isDangerousFight || isLowHpScared || wantsItemPurchase) && !isInsideWell && (u.recallCooldown ?? 0) <= 0;
+      const laneDirection = u.team === 'blue' ? 1 : -1;
+      const alliedLaneWave = minions.filter(m => m.team === u.team && m.isAlive
+        && Math.abs(m.y - LANE_Y) < 150 && laneDirection * (m.x - u.x) > -800
+        && laneDirection * (m.x - u.x) < 400);
+      const waveFrontX = alliedLaneWave.length > 0
+        ? (laneDirection > 0 ? Math.max(...alliedLaneWave.map(m => m.x)) : Math.min(...alliedLaneWave.map(m => m.x)))
+        : undefined;
+      const wavePushCall = shouldPushWithWave({
+        healthFraction: u.hp / u.maxHp, iq, lan: lanStat,
+        coachMacro: (u.team === 'blue' ? blueCoach : redCoach)?.playbookBonus ?? 8,
+        alliedWaveCount: alliedLaneWave.length,
+        enemyWaveCount: enemyMinions.filter(m => waveFrontX !== undefined
+          && Math.hypot(m.x - waveFrontX, m.y - LANE_Y) < 210).length,
+        waveFrontDistance: waveFrontX === undefined ? Infinity : Math.abs(waveFrontX - u.x),
+        structureDistance: nearestPushDistance, nearbyAllies: localAllies.length,
+        nearbyEnemies: localEnemies.length, winningFightWindow: pressWonFight,
+      });
+      const tempoPush = pressWonFight || wavePushCall;
+      const wantsRecall = !tempoPush && !canFollowUpEngage && !canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isDangerousFight || isLowHpScared || wantsItemPurchase) && !isInsideWell && (u.recallCooldown ?? 0) <= 0;
 
       const wellTargetX = WELL_X[u.team];
+
+      const recoveryRelic = relics.filter(relic => relic.respawnTimer <= 0
+        && shouldSeekHealthRelic({
+          healthFraction: u.hp / u.maxHp, missingHealth: u.maxHp - u.hp,
+          healAmount: relic.healAmount, distance: Math.hypot(relic.x - u.x, relic.y - u.y),
+          enemyDistanceToRelic: enemies.length ? Math.min(...enemies.map(enemy => Math.hypot(enemy.x - relic.x, enemy.y - relic.y))) : Infinity,
+          enemyDistanceToUnit: localEnemies.length ? Math.min(...localEnemies.map(enemy => Math.hypot(enemy.x - u.x, enemy.y - u.y))) : Infinity,
+          followUpEngage: canFollowUpEngage, pushWindow: tempoPush,
+          underEnemyTower: isInsideEnemyTowerRange,
+        })).sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0];
+      if (recoveryRelic && !isInsideWell) {
+        const distance = Math.hypot(recoveryRelic.x - u.x, recoveryRelic.y - u.y);
+        if (distance > 25) {
+          const speed = 95 + (u.boots?.stats.moveSpeed ?? 0);
+          u.vx = (recoveryRelic.x - u.x) / distance * speed;
+          u.vy = (recoveryRelic.y - u.y) / distance * speed;
+          u.x += u.vx * dt;
+          u.y += u.vy * dt;
+          u.animState = 'walk';
+          setUnitFacing(u, recoveryRelic.x);
+          return;
+        }
+      }
 
       // 1. If wanting to recall, but enemy minions are threatening nearby: CLEAR FIRST!
       if (wantsRecall && threateningMinions.length > 0 && localEnemies.length === 0 && !u.isInBush) {
@@ -2395,7 +2500,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const opposingWave = minions.filter(m => m.team !== u.team && m.isAlive && Math.abs(m.x - DRAGON_X) < 420);
       const pushedWave = alliedWave.some(m => u.team === 'blue' ? m.x > DRAGON_X + 80 : m.x < DRAGON_X - 80);
       const nearbyPitAllies = allies.filter(a => Math.hypot(a.x - dragon.x, a.y - dragon.y) < 620);
-      const shouldContestDragon = !pressWonFight && dragon.isAlive && shouldStartEpicObjective({
+      const shouldContestDragon = !tempoPush && dragon.isAlive && shouldStartEpicObjective({
         gameSeconds: matchTimeRef.current,
         bossHealthFraction: dragon.hp / dragon.maxHp,
         healthyAllies: nearbyPitAllies.filter(a => a.hp / a.maxHp > 0.58).length,
@@ -2519,7 +2624,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         : undefined;
 
       // Fight calls use player card attitudes, the shotcaller, coach style and a real enemy attack.
-      const primaryTarget = contestFightTarget || chooseTeamfightTarget(u, enemies, allies, attackRange, {
+      const primaryTarget = (canFollowUpEngage ? closestCaught : undefined) || contestFightTarget || chooseTeamfightTarget(u, enemies, allies, attackRange, {
         enemyStructures,
         alliedMinions: alliedMinionsForDive,
         cooldownMemory: cooldownMemoryRef.current,
@@ -2558,10 +2663,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const clearWaveFirst = !isObjectiveFight && !canFollowUpEngage
         && (focusNexus
           ? !alliedWaveAtNexus && !!blockingNexusMinion
-          : (shouldPrioritizeWaveClear(iq, lanStat, minionInRange, structureInRange, alliedCrash, closestEnemyChampion)
+          : ((wavePushCall && minionInRange && alliedCrash < 2)
+            || shouldPrioritizeWaveClear(iq, lanStat, minionInRange, structureInRange, alliedCrash, closestEnemyChampion)
             || (shouldLaningDemonClearWave(u, matchTimeRef.current, minionInRange)
               && alliedCrash < 2 && !structureInRange)))
         && (closestEnemyChampion > 160 || !primaryTarget);
+      const advanceLimit = laneAdvanceLimit({
+        team: u.team, waveFrontX, waveCount: alliedLaneWave.length,
+        structureX: nearestStructure?.x, structureRange: nearestStructure?.range,
+        exposedNexus: focusNexus, objectiveFight: isObjectiveFight,
+      });
+      const holdChaseForWave = !!primaryTarget && !canFollowUpEngage && !pressWonFight
+        && !isObjectiveFight && !focusNexus
+        && primaryTarget.hp / primaryTarget.maxHp > 0.22
+        && wouldOverstep(u.team, primaryTarget.x, advanceLimit)
+        && closestEnemyChampion > Math.max(150, attackRange + 35);
 
       // A vulnerable, low-health nexus is a team finish call. Clear a blocking
       // wave first; otherwise attack or route to it before considering camps.
@@ -2595,7 +2711,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const wasJustAttacked = !!activePostPlan && !!u.lastEnemyDamage
         && u.lastEnemyDamage.second > activePostPlan.startedAt
         && matchTimeRef.current - u.lastEnemyDamage.second <= 2.5;
-      if (activePostPlan?.action === 'regroup' && !focusNexus && !pressWonFight && !wasJustAttacked && dragonAction === 'none' && golemAction === 'none') {
+      if (activePostPlan?.action === 'regroup' && !focusNexus && !tempoPush && !canFollowUpEngage && !wasJustAttacked && dragonAction === 'none' && golemAction === 'none') {
         const laneX = activePostPlan.x + (u.team === 'blue' ? -90 : 90);
         const laneY = LANE_Y;
         const distance = Math.hypot(laneX - u.x, laneY - u.y);
@@ -2615,7 +2731,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // MACRO OBJECTIVE 1: START DRAGON IN UPPER PIT (Game-Ending Objective Priority)
-      const focusDragon = !focusNexus && (!pressWonFight || dragonAction === 'finish') && (dragonAction === 'finish' || (dragonAction === 'none' && shouldContestDragon));
+      const focusDragon = !focusNexus && (!tempoPush || dragonAction === 'finish') && (dragonAction === 'finish' || (dragonAction === 'none' && shouldContestDragon));
       if (!isObjectiveFight && focusDragon && (dragonAction === 'finish' || !primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > 220)) {
         const callKey = `dragon:${dragon.slainCount}:${u.team}`;
         if (!objectiveCallsRef.current.has(callKey)) {
@@ -2654,7 +2770,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         return;
       }
 
-      const shouldContestGolem = !pressWonFight && !!golem && !shouldContestDragon && shouldStartEpicObjective({
+      const shouldContestGolem = !tempoPush && !!golem && !shouldContestDragon && shouldStartEpicObjective({
         gameSeconds: matchTimeRef.current, bossHealthFraction: golem.hp / golem.maxHp,
         healthyAllies: golemAllies.filter(a => a.hp / a.maxHp > 0.58).length,
         nearbyEnemies: enemies.filter(e => Math.hypot(e.x - golem.x, e.y - golem.y) < 360).length,
@@ -2667,7 +2783,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         coachPlaybook: (u.team === 'blue' ? blueCoach : redCoach)?.playbookBonus ?? 8,
         actorHealthFraction: u.hp / u.maxHp
       });
-      const focusGolem = !focusNexus && (!pressWonFight || golemAction === 'finish') && (golemAction === 'finish' || (golemAction === 'none' && shouldContestGolem));
+      const focusGolem = !focusNexus && (!tempoPush || golemAction === 'finish') && (golemAction === 'finish' || (golemAction === 'none' && shouldContestGolem));
       if (!isObjectiveFight && golem && focusGolem && (golemAction === 'finish' || !primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > 220)) {
         const callKey = `golem:${u.team}`;
         if (!objectiveCallsRef.current.has(callKey)) {
@@ -2703,14 +2819,18 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // Camp spawn locations are known to both teams. Vision is needed to see
       // the monster and nearby threats, but not to choose a farming route.
-      const nearestJungleCamp = !isObjectiveFight && dragonAction === 'none' && golemAction === 'none'
+      // Support avatars must NEVER farm neutral jungle camps: low basic attack damage and utility kits.
+      const isSupportAvatar = u.champion.primaryRole === 'Support' || u.champion.secondaryRole === 'Support' || getAvatarCombatProfile(u.champion).Support >= 2;
+      const nearestJungleCamp = !isObjectiveFight && dragonAction === 'none' && golemAction === 'none' && !isSupportAvatar
         ? chooseKnownJungleCamp(availableJungleCamps, {
           x: u.x, y: u.y, team: u.team, hpFraction: u.hp / u.maxHp,
           iq, jungleStrength: getAvatarCombatProfile(u.champion).Jungler,
           gameSeconds: matchTimeRef.current, nearbyEnemyCount: localEnemies.length,
           nearestLaneEnemyDistance: nearestMinion
             ? Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) : Infinity,
-          urgentStructurePush: focusNexus || pressWonFight,
+          urgentStructurePush: focusNexus || tempoPush,
+          role: u.champion.primaryRole,
+          supportStrength: getAvatarCombatProfile(u.champion).Support,
         }) : undefined;
 
       if (nearestJungleCamp) {
@@ -2746,7 +2866,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // Macro Teamfight Grouping: High TF players converge to fight together (exclude channeling allies)
       const fightingAlly = allies.find(a => a.isAlive && !a.isRecalling && !isChannelingAbility(a) && Math.hypot(a.x - u.x, a.y - u.y) <= 500 && (a.animState === 'attack' || a.animState === 'cast'));
-      if (!focusNexus && !pressWonFight && fightingAlly && tfStat >= 55 && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > attackRange)) {
+      if (!focusNexus && !tempoPush && !canFollowUpEngage && fightingAlly && tfStat >= 55 && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > attackRange)) {
         u.animState = 'walk';
         const groupAngle = Math.atan2(fightingAlly.y - u.y, fightingAlly.x - u.x);
         u.vx = Math.cos(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
@@ -2757,13 +2877,26 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         return;
       }
 
+      // Support Macro Tethering: Support champions naturally stick with their living carries / allies for protection and peel
+      const nearestLivingCarry = allies.find(a => a.isAlive && a.id !== u.id && !a.isRecalling && Math.hypot(a.x - u.x, a.y - u.y) <= 550);
+      if (isSupportAvatar && nearestLivingCarry && !primaryTarget && Math.hypot(nearestLivingCarry.x - u.x, nearestLivingCarry.y - u.y) > 130) {
+        u.animState = 'walk';
+        const followAngle = Math.atan2(nearestLivingCarry.y - u.y, nearestLivingCarry.x - u.x);
+        u.vx = Math.cos(followAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed);
+        u.vy = Math.sin(followAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed);
+        u.x += u.vx * dt;
+        u.y += u.vy * dt;
+        setUnitFacing(u, nearestLivingCarry.x);
+        return;
+      }
+
       // Compute authentic skill cast ranges (e.g. Raijin Electric Vortex strictly 120px / 2-3 hexes)
       const skill1Range = getSkillCastRange(u.champion.name, 'skill1', attackRange);
       const skill2Range = getSkillCastRange(u.champion.name, 'skill2', attackRange);
       const ultRange = getSkillCastRange(u.champion.name, 'ultimate', attackRange);
       const standardCombatRange = Math.max(attackRange * 1.5, skill1Range, skill2Range, u.level >= 6 ? ultRange : 0, 190);
-      const isFollowUpEngage = canFollowUpEngage && !!primaryTarget && (isEnemyCaughtInAlliedChannel(primaryTarget, allies) || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= 550);
-      const maxCombatRange = isFollowUpEngage ? Math.max(standardCombatRange, 550) : standardCombatRange;
+      const isFollowUpEngage = canFollowUpEngage && !!primaryTarget && isEnemyCaughtInAlliedChannel(primaryTarget, allies);
+      const maxCombatRange = isFollowUpEngage ? Math.max(standardCombatRange, 650) : standardCombatRange;
 
       if (isFollowUpEngage && !u.followUpEngageSignaled) {
         u.followUpEngageSignaled = true;
@@ -2785,7 +2918,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // COMBAT ENGAGEMENT WITH ENEMIES:
-      if (!clearWaveFirst && primaryTarget && Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= maxCombatRange) {
+      if (!clearWaveFirst && !holdChaseForWave && primaryTarget && Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= maxCombatRange) {
         setUnitFacing(u, primaryTarget.x);
         const dist = Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y);
         const haste = u.items.reduce((total, item) => total + (item.stats.haste ?? 0), 0);
@@ -3002,7 +3135,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       else {
         u.animState = 'walk';
         const pushDir = u.team === 'blue' ? 1 : -1;
-        u.x += pushDir * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
+        const nextX = u.x + pushDir * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
+        u.x = wouldOverstep(u.team, nextX, advanceLimit)
+          ? u.x + Math.sign(advanceLimit - u.x) * Math.min(Math.abs(advanceLimit - u.x), 70 * dt)
+          : nextX;
         u.facing = pushDir === 1 ? 'right' : 'left';
 
         const targetFormY = getChampionFormationY(u.champion.name, uIdx);
@@ -6355,31 +6491,34 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const isDragon = ring.id === 'dragon_boss';
         const isGolem = ring.id === 'j_siege_golem';
 
-        // Non-entrance perimeter of the camp cove
-        const startAngle = ring.entrance + 0.62;
-        const endAngle = ring.entrance + Math.PI * 2 - 0.62;
+        // Non-entrance perimeter of the camp cove: wide flared opening with no gate pinch
+        const isBoss = ring.stones === 16;
+        const gapThreshold = isBoss ? 0.58 : 0.72;
+        const startAngle = ring.entrance + gapThreshold;
+        const endAngle = ring.entrance + Math.PI * 2 - gapThreshold;
 
         ctx.save();
         // 1. Soft foundation shadow
         ctx.beginPath();
         ctx.ellipse(cx, cy + 4, rx + 2, ry + 4, 0, startAngle, endAngle);
-        ctx.lineWidth = sR * 2.3;
-        ctx.lineCap = 'round';
+        ctx.lineWidth = sR * 2.1;
+        ctx.lineCap = 'butt';
         ctx.strokeStyle = isDragon ? 'rgba(0, 0, 0, 0.62)' : 'rgba(0, 0, 0, 0.45)';
         ctx.stroke();
 
         // 2. Continuous bedrock core linking all stones into an authentic cliff wall
         ctx.beginPath();
         ctx.ellipse(cx, cy, rx, ry, 0, startAngle, endAngle);
-        ctx.lineWidth = sR * 1.95;
-        ctx.lineCap = 'round';
+        ctx.lineWidth = sR * 1.75;
+        ctx.lineCap = 'butt';
         ctx.strokeStyle = isDragon ? '#18181b' : isGolem ? '#151f2e' : '#16281e';
         ctx.stroke();
 
         // 3. Cove outer edge / turf transition
         ctx.beginPath();
         ctx.ellipse(cx, cy - 2, rx + sR * 0.35, ry + sR * 0.35, 0, startAngle, endAngle);
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 3.5;
+        ctx.lineCap = 'butt';
         ctx.strokeStyle = isDragon ? 'rgba(120, 53, 15, 0.4)' : isGolem ? 'rgba(30, 41, 59, 0.5)' : 'rgba(4, 120, 87, 0.3)';
         ctx.stroke();
 
@@ -6388,6 +6527,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ctx.beginPath();
           ctx.ellipse(cx, cy + 1, rx - sR * 0.4, ry - sR * 0.4, 0, startAngle, endAngle);
           ctx.lineWidth = 3;
+          ctx.lineCap = 'butt';
           ctx.strokeStyle = 'rgba(234, 88, 12, 0.45)';
           ctx.stroke();
         }
@@ -6792,19 +6932,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const isCampScouted = championsRef.current.some(c => c.isAlive && Math.hypot(c.x - camp.x, c.y - camp.y) <= 220);
       const isShrouded = isFirstWaveTime || !isCampScouted;
 
-      // Camp stone perimeter
+      // Camp stone perimeter: spacious interior clearing pad
       ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
       ctx.beginPath();
-      ctx.arc(0, 0, camp.type === 'siege_golem' ? 77 : 43, 0, Math.PI * 2);
+      ctx.arc(0, 0, camp.type === 'siege_golem' ? 95 : 55, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = camp.isAlive ? (isShrouded ? '#334155' : camp.color) : '#475569';
       ctx.lineWidth = 2;
       ctx.stroke();
-      // Trees stay rooted at the camp while an aggroed monster walks beyond the clearing.
+      // Trees stay rooted along the outer back rim of the camp clearing
       for (let tree = 0; tree < 8; tree++) {
         const angle = tree * Math.PI / 4;
-        const tx = Math.cos(angle) * (camp.type === 'siege_golem' ? 105 : 64);
-        const ty = Math.sin(angle) * (camp.type === 'siege_golem' ? 77 : 50);
+        const tx = Math.cos(angle) * (camp.type === 'siege_golem' ? 122 : 86);
+        const ty = Math.sin(angle) * (camp.type === 'siege_golem' ? 95 : 68);
         ctx.fillStyle = '#173b2a';
         ctx.beginPath(); ctx.arc(tx, ty, 11, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#2d6945';
@@ -7332,6 +7472,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.fillText(st.type === 'nexus' ? 'SEALED' : `PLATING ${plating}%`, st.x, bY - 3);
       }
     });
+
+    // Terrain sits over the road but under combat units and their overhead
+    // labels. Fog can dim unseen rocks without hiding a visible nameplate.
+    ctx.save();
+    ctx.scale(width / 1320, 1);
+    drawRaisedRockTerrain();
+    ctx.restore();
 
     // 12. MINIONS
     minionsRef.current.forEach((m) => {
@@ -9007,13 +9154,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       }
     }
-
-    // Foreground stone remains visible through jungle fog. The drawing uses
-    // the exact collision footprints and can naturally cover units behind it.
-    ctx.save();
-    ctx.scale(width / 1320, 1);
-    drawRaisedRockTerrain();
-    ctx.restore();
 
     // 17. FLOATING COMBAT TEXT
     floatsRef.current.forEach((f) => {

@@ -61,7 +61,7 @@ test('each camp and boss has a solid rocky enclosure with a lane-facing opening'
     const stones = ROCK_TERRAIN.filter(rock => rock.campId === ring.id);
     assert.ok(stones.length >= ring.stones - 4, `${ring.id} should have a nearly complete wall`);
     assert.equal(isInsideRockTerrain(ring.x, ring.y, 13), false);
-    const entryY = ring.y + Math.sin(ring.entrance) * (ring.radius + 75);
+    const entryY = ring.y + Math.sin(ring.entrance) * (ring.radius + 28);
     let walker = { x: ring.x, y: entryY };
     for (let tick = 0; tick < 40; tick++) {
       const dy = ring.y - walker.y;

@@ -12,16 +12,16 @@ export const DRAGON_SPAWN_SECOND = 4 * 60;
 // Each camp has one rocky enclosure with a lane-facing entrance. The boss
 // pits use larger stones. These centers also match the neutral spawn points.
 export const CAMP_ROCK_RINGS = [
-  { id: 'j_blue_golem', x: 576, y: 170, radius: 60, stoneRadius: 19, stones: 12, entrance: Math.PI / 2 },
-  { id: 'j_red_wolves', x: 1424, y: 170, radius: 60, stoneRadius: 19, stones: 12, entrance: Math.PI / 2 },
-  { id: 'j_blue_behemoth', x: 667, y: 575, radius: 60, stoneRadius: 19, stones: 12, entrance: -Math.PI / 2 },
-  { id: 'j_red_drakes', x: 1333, y: 575, radius: 60, stoneRadius: 19, stones: 12, entrance: -Math.PI / 2 },
-  { id: 'j_blue_blue_buff', x: 380, y: 145, radius: 60, stoneRadius: 19, stones: 12, entrance: Math.PI / 2 },
-  { id: 'j_blue_red_buff', x: 485, y: 600, radius: 60, stoneRadius: 19, stones: 12, entrance: -Math.PI / 2 },
-  { id: 'j_red_blue_buff', x: 1620, y: 145, radius: 60, stoneRadius: 19, stones: 12, entrance: Math.PI / 2 },
-  { id: 'j_red_red_buff', x: 1515, y: 600, radius: 60, stoneRadius: 19, stones: 12, entrance: -Math.PI / 2 },
-  { id: 'j_siege_golem', x: 1000, y: 610, radius: 100, stoneRadius: 22, stones: 16, entrance: -Math.PI / 2 },
-  { id: 'dragon_boss', x: 1000, y: 130, radius: 110, stoneRadius: 25, stones: 16, entrance: Math.PI / 2 },
+  { id: 'j_blue_golem', x: 576, y: 170, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
+  { id: 'j_red_wolves', x: 1424, y: 170, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
+  { id: 'j_blue_behemoth', x: 667, y: 575, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
+  { id: 'j_red_drakes', x: 1333, y: 575, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
+  { id: 'j_blue_blue_buff', x: 380, y: 145, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
+  { id: 'j_blue_red_buff', x: 485, y: 600, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
+  { id: 'j_red_blue_buff', x: 1620, y: 145, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
+  { id: 'j_red_red_buff', x: 1515, y: 600, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
+  { id: 'j_siege_golem', x: 1000, y: 610, radius: 115, stoneRadius: 21, stones: 16, entrance: -Math.PI / 2 },
+  { id: 'dragon_boss', x: 1000, y: 130, radius: 122, stoneRadius: 22, stones: 16, entrance: Math.PI / 2 },
 ] as const;
 
 const HIGHGROUND_ROCKS = ([455, 495, 535] as const).flatMap(x => [
@@ -35,10 +35,20 @@ export const ROCK_TERRAIN = [
   ...CAMP_ROCK_RINGS.flatMap(ring => Array.from({ length: ring.stones }, (_, index) => {
     const angle = index * Math.PI * 2 / ring.stones;
     const gapAngle = Math.atan2(Math.sin(angle - ring.entrance), Math.cos(angle - ring.entrance));
-    return Math.abs(gapAngle) <= 0.55 ? null : {
-      x: ring.x + Math.cos(angle) * ring.radius,
-      y: ring.y + Math.sin(angle) * ring.radius,
-      radius: ring.stoneRadius,
+    const absGap = Math.abs(gapAngle);
+    const isBoss = ring.stones === 16;
+    const gapThreshold = isBoss ? 0.50 : 0.62;
+    if (absGap <= gapThreshold) return null;
+
+    // Gently flare stones near the opening edges so the entrance is wide, flared, and never steep
+    const isOpeningEdge = absGap < gapThreshold + 0.50;
+    const stoneRadius = isOpeningEdge ? Math.round(ring.stoneRadius * 0.88) : ring.stoneRadius;
+    const radialOffset = isOpeningEdge ? ring.radius + 3 : ring.radius;
+
+    return {
+      x: ring.x + Math.cos(angle) * radialOffset,
+      y: ring.y + Math.sin(angle) * radialOffset,
+      radius: stoneRadius,
       campId: ring.id,
     };
   }).filter(stone => stone !== null)),
@@ -68,62 +78,105 @@ export function rockApproachWaypoint(
       return { x: gateX, y: flankY };
   }
   const entry = {
-    x: ring.x + Math.cos(ring.entrance) * (ring.radius + 45),
-    y: ring.y + Math.sin(ring.entrance) * (ring.radius + 45),
+    x: ring.x + Math.cos(ring.entrance) * (ring.radius + 38),
+    y: ring.y + Math.sin(ring.entrance) * (ring.radius + 38),
   };
   const distanceToCenter = Math.hypot(from.x - ring.x, from.y - ring.y);
   const approachAngle = Math.atan2(from.y - ring.y, from.x - ring.x);
   const openingAngle = Math.atan2(Math.sin(approachAngle - ring.entrance), Math.cos(approachAngle - ring.entrance));
-  return distanceToCenter < ring.radius - 25
-    || (distanceToCenter <= ring.radius + 46 && Math.abs(openingAngle) < 0.4) ? goal : entry;
+  // If already inside the camp clearing or in front of the wide flared opening, navigate straight to goal
+  return distanceToCenter < ring.radius - 8
+    || (distanceToCenter <= ring.radius + 70 && Math.abs(openingAngle) < 0.95) ? goal : entry;
 }
 
 // Sweep movement in small steps so fast dashes cannot cross a ridge. When a
-// direct route runs into stone, move along its edge toward the target.
+// direct route encounters stone, slide along the rock's tangent toward the target.
 export function resolveRockTerrainMovement(
   from: { x: number; y: number }, to: { x: number; y: number }, bodyRadius = 12
 ): { x: number; y: number } {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const distance = Math.hypot(dx, dy);
-  const routedTo = to;
-  const moveX = routedTo.x - from.x;
-  const moveY = routedTo.y - from.y;
-  const steps = Math.max(1, Math.ceil(Math.min(distance, 350) / 8));
+  if (distance < 0.0001) return { x: to.x, y: to.y };
+
   const teleport = distance > 350;
-  let x = teleport ? routedTo.x : from.x;
-  let y = teleport ? routedTo.y : from.y;
-  for (let step = 0; step < (teleport ? 1 : steps); step++) {
-    let nextX = x + (teleport ? 0 : moveX / steps);
-    let nextY = y + (teleport ? 0 : moveY / steps);
-    for (let pass = 0; pass < 12; pass++) {
-      let corrected = false;
+  if (teleport) {
+    let x = to.x;
+    let y = to.y;
+    for (const rock of ROCK_TERRAIN) {
+      const limit = rock.radius + bodyRadius;
+      const awayX = x - rock.x;
+      const awayY = y - rock.y;
+      const gap = Math.hypot(awayX, awayY);
+      if (gap < limit) {
+        const scale = (limit + 0.5) / Math.max(gap, 0.001);
+        x = rock.x + (gap < 0.001 ? -(limit + 0.5) : awayX * scale);
+        y = rock.y + (gap < 0.001 ? 0 : awayY * scale);
+      }
+    }
+    return { x, y };
+  }
+
+  const steps = Math.max(1, Math.ceil(Math.min(distance, 350) / 8));
+  let x = from.x;
+  let y = from.y;
+
+  for (let step = 0; step < steps; step++) {
+    const stepMoveX = dx / steps;
+    const stepMoveY = dy / steps;
+    const stepSpeed = Math.hypot(stepMoveX, stepMoveY);
+    let nextX = x + stepMoveX;
+    let nextY = y + stepMoveY;
+
+    for (let pass = 0; pass < 8; pass++) {
+      let collided = false;
       for (const rock of ROCK_TERRAIN) {
         const limit = rock.radius + bodyRadius;
-        let awayX = nextX - rock.x;
-        let awayY = nextY - rock.y;
-        let gap = Math.hypot(awayX, awayY);
+        const awayX = nextX - rock.x;
+        const awayY = nextY - rock.y;
+        const gap = Math.hypot(awayX, awayY);
         if (gap >= limit) continue;
-        corrected = true;
-        if (!teleport && pass === 0 && gap > 0.001) {
-          // A head-on approach needs a side choice to avoid sticking to stone.
-          const tangentY = to.y < rock.y ? -1 : 1;
-          const tangentX = dx >= 0 ? -tangentY : tangentY;
-          nextX += tangentX * Math.abs(moveY / steps) * 0.35;
-          nextY += tangentY * Math.max(2, distance / steps * 0.85);
-          awayX = nextX - rock.x;
-          awayY = nextY - rock.y;
-          gap = Math.hypot(awayX, awayY);
+
+        collided = true;
+        const normX = gap > 0.001 ? awayX / gap : 0;
+        const normY = gap > 0.001 ? awayY / gap : 1;
+
+        // Push directly outside the collision boundary
+        nextX = rock.x + normX * (limit + 0.2);
+        nextY = rock.y + normY * (limit + 0.2);
+
+        // Frictionless goal-seeking tangent sliding: slide along the rock contour toward the goal
+        const t1x = -normY;
+        const t1y = normX;
+        const dotGoal = (to.x - nextX) * t1x + (to.y - nextY) * t1y;
+        const tanX = dotGoal >= 0 ? t1x : -t1x;
+        const tanY = dotGoal >= 0 ? t1y : -t1y;
+
+        if (pass === 0 && stepSpeed > 0.001) {
+          nextX += tanX * stepSpeed * 0.75;
+          nextY += tanY * stepSpeed * 0.75;
         }
+      }
+      if (!collided) break;
+    }
+
+    // Safety fallback: ensure final point is strictly outside all rocks
+    for (const rock of ROCK_TERRAIN) {
+      const limit = rock.radius + bodyRadius;
+      const awayX = nextX - rock.x;
+      const awayY = nextY - rock.y;
+      const gap = Math.hypot(awayX, awayY);
+      if (gap < limit) {
         const scale = (limit + 0.5) / Math.max(gap, 0.001);
         nextX = rock.x + (gap < 0.001 ? -(limit + 0.5) : awayX * scale);
         nextY = rock.y + (gap < 0.001 ? 0 : awayY * scale);
       }
-      if (!corrected) break;
     }
+
     x = nextX;
     y = nextY;
   }
+
   return { x, y };
 }
 

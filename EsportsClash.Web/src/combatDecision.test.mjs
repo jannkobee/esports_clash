@@ -161,6 +161,13 @@ test('allies prioritize enemies caught in allied channeled abilities for follow-
   assert.equal(target?.id, 'enemy_barrage');
 });
 
+test('Black Hole follow-up tracks its actual pull radius', () => {
+  const channeler = fighter('nullweaver', 85);
+  channeler.blackHole = { x: 100, y: 0, remaining: 2, tick: 0 };
+  assert.equal(isEnemyCaughtInAlliedChannel(fighter('caught', 50, 200), [channeler]), true);
+  assert.equal(isEnemyCaughtInAlliedChannel(fighter('outside', 50, 211), [channeler]), false);
+});
+
 test('shouldUseUltimate commits follow-up ultimate against enemies caught in allied channel', () => {
   const highIqUnit = fighter('high', 95, 0, 100);
   const target = fighter('target', 50, 80, 100);

@@ -29,6 +29,12 @@ test('lane pressure, enemy threat, and a nexus finish window cancel camp farming
   assert.equal(chooseKnownJungleCamp(camps, { ...actor, urgentStructurePush: true }), undefined);
 });
 
+test('support avatars never solo farm neutral jungle camps', () => {
+  assert.equal(chooseKnownJungleCamp(camps, { ...actor, role: 'Support' }), undefined);
+  assert.equal(chooseKnownJungleCamp(camps, { ...actor, supportStrength: 3 }), undefined);
+  assert.equal(chooseKnownJungleCamp(camps, { ...actor, role: 'Support', supportStrength: 2 }), undefined);
+});
+
 test('an exposed low-health nexus becomes a finish objective, informed by card and coach', () => {
   const nexus = { isAlive: true, hp: 2800, maxHp: 7500 };
   assert.equal(shouldFocusExposedNexus(nexus, true, 90, 12), true);

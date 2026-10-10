@@ -3,7 +3,7 @@ import { shouldHoldFightPlan, shouldHuntExposedCarry } from './playerTraits.ts';
 import { isCrowdControlSkill, shouldHoldSkillForChainStun, getSkillCastRange } from './skillRangeRules.ts';
 import { chooseAreaControlTarget, chooseOpeningControlTarget, countAreaControlTargets, getAreaControlProfile, shouldCommitAreaControlUltimate } from './avatarCombatRoles.ts';
 import { isSelfOrAllySecondSkill, skill1ManaCost, ultimateManaCost } from './abilityRules.ts';
-import { shouldSaveBlackHoleInterrupt } from './blackHoleCounterplay.ts';
+import { BLACK_HOLE_RADIUS, shouldSaveBlackHoleInterrupt } from './blackHoleCounterplay.ts';
 import { isObservedCooling, type EnemyCooldownMemory } from './cooldownKnowledge.ts';
 
 type Fighter = AramChampionUnit;
@@ -38,7 +38,7 @@ export function isEnemyCaughtInAlliedChannel(enemy: Fighter, allies: Fighter[]):
     if (!ally.isAlive) return false;
     if (ally.blackHole) {
       const hole = ally.blackHole;
-      return Math.hypot(enemy.x - hole.x, enemy.y - hole.y) <= 130;
+      return Math.hypot(enemy.x - hole.x, enemy.y - hole.y) <= BLACK_HOLE_RADIUS;
     }
     if (ally.corsaraBarrage) {
       const facing = ally.corsaraBarrage.facing === 'right' ? 1 : -1;

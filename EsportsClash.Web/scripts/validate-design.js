@@ -139,6 +139,15 @@ if (!matchViewContent.includes('abilityDamageMultiplier') || !matchViewContent.i
   console.log('✅ Ability Ranks: damage and cooldown progression wired into combat');
 }
 
+// Raised stone must be behind champion nameplates and health bars.
+const rockDrawAt = matchViewContent.indexOf('drawRaisedRockTerrain();');
+const championLabelAt = matchViewContent.indexOf('// Champion & Athlete Name Tag');
+if (rockDrawAt < 0 || championLabelAt < 0 || rockDrawAt > championLabelAt) {
+  errors.push('CRITICAL: rocky terrain is drawn over avatar labels!');
+} else {
+  console.log('Combat Labels: raised rocks render behind avatar nameplates');
+}
+
 console.log('================================================================');
 if (errors.length > 0) {
   console.error('❌ DESIGN VALIDATION FAILED:');

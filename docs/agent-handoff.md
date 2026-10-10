@@ -863,3 +863,44 @@ Investigated root causes and found three critical bugs:
 **Affected files:** `EsportsClash.Web/src/components/AramMatchView.tsx`, `docs/arena-mechanics.md`, and this handoff.
 
 **Verification:** `npm run check:game` passed all 162 unit tests, design validation, and TypeScript; `npm run build` compiled client bundle cleanly in under 1 second.
+
+## User Request: Situational Follow-Up, Recovery, Wave Tempo, and Readable Labels
+
+**User:** Asked for stronger teamfight decisions so low-health allies still recognize a five-person Black Hole, nearby health recovery when appropriate, less overstepping, wave-led tempo pushes, and rock terrain that never covers avatar labels.
+
+**Agent:** Replaced the fixed 25% follow-up cutoff with a tactical check for how many enemies are actually controlled, remaining control time versus arrival time, free threats, nearby teammates, contribution range, HP, and tower exposure. Black Hole follow-up now uses its actual pull radius. A decisive catch can interrupt a retreat commitment or an active recall; the caught enemy receives target priority. Added safe nearby relic diversion for wounded avatars, with fight and push opportunity checks. Healthy teams now read allied wave position, enemy wave size, local numbers, player IQ/lane skill, and coach macro before a structure push; they delay optional farm and new objectives during a valid wave window. Ordinary lane movement holds near the wave front or outside tower range to reduce unsupported chases. Moved rock drawing under combat units and nameplates, and added an anti-regression draw-order check.
+
+**Affected files:** `EsportsClash.Web/src/teamTempoRules.ts`, `src/teamTempoRules.test.mjs`, `src/components/AramMatchView.tsx`, `src/combatDecision.ts`, `src/combatDecision.test.mjs`, `scripts/validate-design.js`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Focused tests cover low-health five-target follow-up and its tower/free-threat/travel-time limits, situational relic choices, wave tempo, blue/red advance limits, and Black Hole's true pull radius. `npm run check:game` passed design validation, TypeScript, and all 166 tests; `npm run build` passed. A desktop replay shows rock formations behind visible player and avatar labels.
+
+**Limit:** General chase pathing still uses local rock collision. Relic choices consider visible nearby enemies and distance, not a complete terrain path search. Match-wide tempo and engage rates still need a multi-match balance sample.
+
+## User Request: Enlarged Jungle Camps, Flared Openings, Smooth Rock Sliding, and Support Farming Prohibitions
+
+**User:**
+- The openings are too steep and some models are getting stuck in the rocky terrains can you fix it?
+- Make the rocky terrains a bit more larger so it has more room for the jungle camps inside and avatars won't have a hard time farming it.
+- AI should understand what their role is; support avatars can't farm jungle camps since their damage is low.
+
+**Agent:**
+- **Enlarged Camp Geometry & Flared Entrance Openings (`src/arenaRules.ts`):**
+  - Standard camp radius increased from 60 to 76 (inner camp floor area doubled from ~5,280 to ~10,560 px²).
+  - Boss pits enlarged: Gravemarch Golem radius increased from 100 to 115; Dragon Embermaw radius increased from 110 to 122.
+  - Stones flanking the entrance are flared outward (`radius + 3px`, tapered stone radius `0.88×`), creating a wide $\ge 104\text{px}$ clear gateway rather than a steep pinch point.
+  - `rockApproachWaypoint`: Widened entrance approach threshold to $0.95$ radians ($109^\circ$ cone) and made units inside `distanceToCenter < ring.radius - 8` navigate directly to `goal` without getting redirected out of the camp.
+- **Frictionless Goal-Seeking Tangent Sliding (`src/arenaRules.ts`):**
+  - Replaced the artificial nudge in `resolveRockTerrainMovement` with goal-seeking tangent sliding: projects the unit strictly outside obstacle boundaries and slides along the rock's tangent vector toward `to` ($\vec{t}_{\text{goal}}$). Units glide smoothly along rock perimeters with zero sticking, vibrating, or oscillation.
+- **Support Avatars Forbidden from Farming Jungle Camps (`src/macroFarmRules.ts`, `src/components/AramMatchView.tsx`):**
+  - Added role check in `chooseKnownJungleCamp`: if `actor.role === 'Support'` or `actor.supportStrength >= 2`, returns `undefined`.
+  - Non-junglers with `jungleStrength === 0` who are not carries/marksmen also ignore jungle camps.
+  - In `AramMatchView.tsx`: added `isSupportAvatar` check to prevent supports from routing to camps, and added **Support Macro Tethering**: idle supports naturally stick with nearby living carries/allies within 550px for peel and protection.
+- **Canvas Rendering Updates (`src/components/AramMatchView.tsx`):**
+  - Updated bedrock embankment arc in `drawRaisedRockTerrain` to match the wider flared opening (`gapThreshold: 0.58` for bosses, `0.72` for standard camps) with `lineCap: 'butt'` so foundation stroke never bulges into the entrance.
+  - Enlarged interior clearing pads from 43 to 55 (and golem from 77 to 95), and moved decorative background trees to the outer back rim (86px / 68px), leaving the camp interior spacious and uncluttered.
+
+**Affected files:** `EsportsClash.Web/src/arenaRules.ts`, `src/arenaRules.test.mjs`, `src/macroFarmRules.ts`, `src/macroFarmRules.test.mjs`, `src/components/AramMatchView.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Added support role unit test in `src/macroFarmRules.test.mjs`. Adjusted `entryY` test distance in `src/arenaRules.test.mjs` to `ring.radius + 28`. `npm run check:game` passed all 167 unit tests, design validation, and TypeScript; `npm run build` compiled clean production bundle.
+
+**Limit:** Support tethering tethers to the nearest living allied carry within 550px when no primary teamfight target is in engagement range; long-distance rotations continue using standard lane and objective rules.

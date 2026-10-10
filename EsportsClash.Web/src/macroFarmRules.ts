@@ -7,10 +7,20 @@ export function chooseKnownJungleCamp<T extends {
   iq: number; jungleStrength: number; gameSeconds: number;
   nearbyEnemyCount: number; nearestLaneEnemyDistance: number;
   urgentStructurePush: boolean;
+  role?: string;
+  supportStrength?: number;
 }): T | undefined {
   if (actor.gameSeconds < 45 || actor.hpFraction < 0.62 || actor.iq < 52
     || actor.nearbyEnemyCount > 0 || actor.nearestLaneEnemyDistance < 230
     || actor.urgentStructurePush) return undefined;
+
+  // Support avatars must NEVER farm neutral jungle camps: their basic attack damage is low
+  // and their role is team support, lane presence, and vision control.
+  if (actor.role === 'Support' || (actor.supportStrength ?? 0) >= 2) return undefined;
+
+  // Non-junglers with 0 jungle strength who are not carries also avoid camps
+  if (actor.jungleStrength === 0 && actor.role !== 'Marksman' && actor.role !== 'Mage' && actor.role !== 'Carry') return undefined;
+
   if (actor.jungleStrength === 0 && (actor.iq < 76 || actor.nearestLaneEnemyDistance < 320)) return undefined;
 
   const maxRoute = actor.jungleStrength >= 2 ? 560 : actor.jungleStrength >= 1 ? 420 : 300;
