@@ -9,3 +9,4 @@
     "check:game": "npm --prefix EsportsClash.Web run check:game"
   }
 }
+
