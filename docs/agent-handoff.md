@@ -1308,3 +1308,24 @@ Added explicit combat-readiness decisions so viable defenders interrupt optional
 **Verification:** All **10 focused base-defense tests** passed with Node.js 22 type stripping, using a minimal compatible `arenaLayout.ts` fixture **only for local tests**, because the complete layout module was not among the files supplied for this change. The modified files passed TypeScript syntax parsing, and `baseDefenseRules.ts` passed standalone strict type checking. Tests cover threat attribution, mirroring, defense priorities, missing or dead threats, detection hysteresis, safety gates, early fountain exit, and recall-vs-walk travel decisions.
 
 **Limits:** Full `npm run check:game`, `npm run build`, browser match replay, and balance or win-rate effects were **not verified** against the full repository. Apply the files/patch to the actual project, rerun the full tests and build, and inspect a live Nexus siege with defenders farming, recalling, and contesting objectives to validate integrated behavior. The headless simulation still does not reproduce all live defense/recall state transitions.
+
+## User Request: Zoom in the Battlefield (Action Camera, Mini Radar & Spectator Controls)
+
+**User:** "can you zoom in the battlefield? I enlarged the battlefield so it looks too tiny now."
+
+**Agent:** Enlarging the arena width from 2000 to 2600 units within fixed aspect ratio containers caused avatar models, skillshots, and health bars to render shrunken down. Implemented an authentic MOBA spectator camera and zoom system:
+- **Default 1.45x Zoom & Presets:** The arena defaults to 1.45x zoom (bringing the visible viewport width to ~1793 units), making champion models, spells, and health bars ~45% larger and instantly readable. Presets include `Fit` (1.0x full-map view), `1.45x` (balanced action), and `1.85x` (close-up intense combat). Custom zoom scales seamlessly from 1.0x to 2.5x.
+- **Dynamic Auto Action Camera:** Computes an action center by evaluating all living champions with combat weights (low health +1.5, crowd controlled or channeling +2.0, active enemy skirmishes within 520px +3.5). The camera smoothly glides with exponential delta-time damping (`1 - exp(-4.2 * dt)`), tethered to lane (y = 380) while seamlessly tilting toward pit contests (Dragon y ~ 160, Golem y ~ 600).
+- **Strict Viewport Clamping:** Camera viewport is clamped to `[halfW, ARENA_WIDTH - halfW] x [halfH, 760 - halfH]`, mathematically preventing any out-of-bounds void or black borders from ever showing at any zoom level. At 1.0x zoom, the camera locks precisely to (1300, 380), displaying the entire arena identically to before.
+- **Interactive Controls & Mini Radar Map:**
+  - Screen-space Mini Radar Map (260x76px at exact 1:10 scale) in the bottom-right corner shows live towers, bosses, champion blips, and an interactive golden camera viewport box that can be clicked or dragged to jump across the battlefield (toggleable via `M`).
+  - Floating on-canvas HUD pill (top-left) with Auto Cam / Free Pan toggle, zoom presets, and +/- buttons.
+  - Mirrored zoom and Auto Cam controls in the scoreboard toolbar beside playback speed.
+  - Interactive canvas drag-to-pan, mouse wheel zooming, touch pinch-to-zoom / 1-finger drag, double-click or `Spacebar` recentering.
+- Preserves all simulation determinism, coordinate layouts (`ARENA_WIDTH = 2600`), tower dive limits, and execution invariants.
+
+**Affected files:** `EsportsClash.Web/src/components/AramMatchView.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** `npm run check:game` passed: design validation, all 220 unit tests, 3 multi-seed simulation suites (20 seeds, Cardrel parody alias, tower dive limits, and turret execution invariants intact), and `tsc -b`. `npm run build` compiled cleanly.
+
+**Limits:** Headless simulation runs without canvas camera rendering; zoom is purely a visual presentation and spectator enhancement.

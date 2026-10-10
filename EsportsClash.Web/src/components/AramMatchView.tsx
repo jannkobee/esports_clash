@@ -104,7 +104,9 @@ import {
   TrendingUp,
   Skull,
   Maximize2,
-  Minimize2
+  Minimize2,
+  ZoomIn,
+  ZoomOut
 } from 'lucide-react';
 
 interface Projectile {
@@ -432,6 +434,37 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const [fullscreenError, setFullscreenError] = useState(false);
   const [speed, setSpeed] = useState<number>(1);
   const [paused, setPaused] = useState<boolean>(false);
+
+  // Camera Zoom & Spectator Tracking
+  const [zoom, setZoom] = useState<number>(1.45);
+  const [cameraMode, setCameraMode] = useState<'auto' | 'manual'>('auto');
+  const [showMinimap, setShowMinimap] = useState<boolean>(true);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  const zoomRef = useRef(1.45);
+  zoomRef.current = zoom;
+  const cameraModeRef = useRef<'auto' | 'manual'>('auto');
+  cameraModeRef.current = cameraMode;
+  const showMinimapRef = useRef<boolean>(true);
+  showMinimapRef.current = showMinimap;
+
+  const cameraPosRef = useRef<{ x: number; y: number }>({ x: ARENA_WIDTH / 2, y: 380 });
+  const targetCameraPosRef = useRef<{ x: number; y: number }>({ x: ARENA_WIDTH / 2, y: 380 });
+  const isDraggingRef = useRef<boolean>(false);
+  const isDraggingMinimapRef = useRef<boolean>(false);
+  const dragStartRef = useRef<{ clientX: number; clientY: number; camX: number; camY: number }>({
+    clientX: 0,
+    clientY: 0,
+    camX: ARENA_WIDTH / 2,
+    camY: 380
+  });
+  const touchStartRef = useRef<{ x: number; y: number; dist: number; camX: number; camY: number }>({
+    x: 0,
+    y: 0,
+    dist: 0,
+    camX: ARENA_WIDTH / 2,
+    camY: 380
+  });
   const [matchTime, setMatchTime] = useState<number>(0);
   const matchTimeRef = useRef(0);
   const accumulatorRef = useRef(0);
@@ -521,19 +554,281 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   // In-Game Squad HUD view mode: 'expanded' (tactical overlay) | 'compact' (broadcast strip) | 'docked' (docked in arena) | 'hidden' (minimized)
   const [hudMode, setHudMode] = useState<'docked' | 'hidden'>('docked');
 
-  // Universal hotkey: Tab toggles in-game scoreboard HUD
+  const clampCameraPosition = (x: number, y: number, currentZoom: number, width: number, height: number) => {
+    const halfW = (width / 2) / currentZoom;
+    const halfH = (height / 2) / currentZoom;
+    const clampedX = Math.max(halfW, Math.min(width - halfW, x));
+    const clampedY = Math.max(halfH, Math.min(height - halfH, y));
+    return { x: clampedX, y: clampedY, halfW, halfH };
+  };
+
+  const computeActionCenter = (
+    champs: AramChampionUnit[],
+    width: number,
+    height: number
+  ): { x: number; y: number } => {
+    const aliveChamps = champs.filter((c) => c.isAlive);
+    if (aliveChamps.length === 0) {
+      return { x: width / 2, y: 380 };
+    }
+
+    let totalWeight = 0;
+    let sumX = 0;
+    let sumY = 0;
+
+    for (const c of aliveChamps) {
+      let w = 1.0;
+      const hpRatio = c.hp / Math.max(1, c.maxHp);
+      if (hpRatio < 0.6) w += 1.5;
+      if (c.stunTimer > 0 || c.animState === 'cast' || isChannelingAbility(c)) w += 2.0;
+
+      const inCombat = aliveChamps.some(
+        (other) => other.team !== c.team && Math.hypot(other.x - c.x, other.y - c.y) <= 520
+      );
+      if (inCombat) {
+        w += 3.5;
+      }
+
+      totalWeight += w;
+      sumX += c.x * w;
+      sumY += c.y * w;
+    }
+
+    const rawX = sumX / Math.max(0.001, totalWeight);
+    const rawY = sumY / Math.max(0.001, totalWeight);
+    const targetY = 380 + (rawY - 380) * 0.45;
+
+    return { x: rawX, y: targetY };
+  };
+
+  // Universal hotkeys: Tab toggles HUD; Space recenters auto cam; +/- zooms; 0 fits arena; M toggles minimap
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+
       if (e.key === 'Tab') {
-        const target = e.target as HTMLElement | null;
-        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
         e.preventDefault();
         setHudMode((prev) => (prev === 'hidden' ? 'docked' : 'hidden'));
+      } else if (e.code === 'Space') {
+        e.preventDefault();
+        setCameraMode('auto');
+        targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, 760);
+      } else if (e.key === '=' || e.key === '+') {
+        e.preventDefault();
+        setZoom((z) => Math.min(2.5, Math.round((z + 0.15) * 100) / 100));
+      } else if (e.key === '-' || e.key === '_') {
+        e.preventDefault();
+        setZoom((z) => Math.max(1.0, Math.round((z - 0.15) * 100) / 100));
+      } else if (e.key === '0') {
+        e.preventDefault();
+        setZoom(1.0);
+        setCameraMode('manual');
+        targetCameraPosRef.current = { x: ARENA_WIDTH / 2, y: 380 };
+      } else if (e.key === 'm' || e.key === 'M') {
+        setShowMinimap((prev) => !prev);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const canvasX = (e.clientX - rect.left) * scaleX;
+    const canvasY = (e.clientY - rect.top) * scaleY;
+
+    if (showMinimapRef.current) {
+      const Mw = 260;
+      const Mh = 76;
+      const mx = canvas.width - Mw - 18;
+      const my = canvas.height - Mh - 18;
+      if (canvasX >= mx && canvasX <= mx + Mw && canvasY >= my && canvasY <= my + Mh) {
+        isDraggingMinimapRef.current = true;
+        setCameraMode('manual');
+        const worldX = ((canvasX - mx) / Mw) * ARENA_WIDTH;
+        const worldY = ((canvasY - my) / Mh) * 760;
+        targetCameraPosRef.current = { x: worldX, y: worldY };
+        cameraPosRef.current = { x: worldX, y: worldY };
+        return;
+      }
+    }
+
+    isDraggingRef.current = true;
+    setIsDragging(true);
+    dragStartRef.current = {
+      clientX: e.clientX,
+      clientY: e.clientY,
+      camX: cameraPosRef.current.x,
+      camY: cameraPosRef.current.y
+    };
+  };
+
+  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const canvasX = (e.clientX - rect.left) * scaleX;
+    const canvasY = (e.clientY - rect.top) * scaleY;
+
+    if (isDraggingMinimapRef.current) {
+      const Mw = 260;
+      const Mh = 76;
+      const mx = canvas.width - Mw - 18;
+      const my = canvas.height - Mh - 18;
+      const clampedX = Math.max(mx, Math.min(mx + Mw, canvasX));
+      const clampedY = Math.max(my, Math.min(my + Mh, canvasY));
+      const worldX = ((clampedX - mx) / Mw) * ARENA_WIDTH;
+      const worldY = ((clampedY - my) / Mh) * 760;
+      targetCameraPosRef.current = { x: worldX, y: worldY };
+      cameraPosRef.current = { x: worldX, y: worldY };
+      return;
+    }
+
+    if (isDraggingRef.current) {
+      const deltaX = (e.clientX - dragStartRef.current.clientX) * scaleX;
+      const deltaY = (e.clientY - dragStartRef.current.clientY) * scaleY;
+      const z = zoomRef.current;
+      const newX = dragStartRef.current.camX - deltaX / z;
+      const newY = dragStartRef.current.camY - deltaY / z;
+
+      targetCameraPosRef.current = { x: newX, y: newY };
+      cameraPosRef.current = { x: newX, y: newY };
+      if (cameraModeRef.current !== 'manual') {
+        setCameraMode('manual');
+      }
+    }
+  };
+
+  const handleCanvasMouseUp = () => {
+    isDraggingRef.current = false;
+    isDraggingMinimapRef.current = false;
+    setIsDragging(false);
+  };
+
+  const handleCanvasWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 0.15 : -0.15;
+    setZoom((prev) => Math.max(1.0, Math.min(2.5, Math.round((prev + delta) * 100) / 100)));
+  };
+
+  const handleCanvasDoubleClick = () => {
+    setCameraMode('auto');
+    targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, 760);
+  };
+
+  const handleCanvasTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const canvasX = (touch.clientX - rect.left) * scaleX;
+      const canvasY = (touch.clientY - rect.top) * scaleY;
+
+      if (showMinimapRef.current) {
+        const Mw = 260;
+        const Mh = 76;
+        const mx = canvas.width - Mw - 18;
+        const my = canvas.height - Mh - 18;
+        if (canvasX >= mx && canvasX <= mx + Mw && canvasY >= my && canvasY <= my + Mh) {
+          isDraggingMinimapRef.current = true;
+          setCameraMode('manual');
+          const worldX = ((canvasX - mx) / Mw) * ARENA_WIDTH;
+          const worldY = ((canvasY - my) / Mh) * 760;
+          targetCameraPosRef.current = { x: worldX, y: worldY };
+          cameraPosRef.current = { x: worldX, y: worldY };
+          return;
+        }
+      }
+
+      isDraggingRef.current = true;
+      setIsDragging(true);
+      dragStartRef.current = {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        camX: cameraPosRef.current.x,
+        camY: cameraPosRef.current.y
+      };
+    } else if (e.touches.length === 2) {
+      isDraggingRef.current = false;
+      isDraggingMinimapRef.current = false;
+      setIsDragging(false);
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      touchStartRef.current = {
+        x: (t1.clientX + t2.clientX) / 2,
+        y: (t1.clientY + t2.clientY) / 2,
+        dist,
+        camX: cameraPosRef.current.x,
+        camY: cameraPosRef.current.y
+      };
+    }
+  };
+
+  const handleCanvasTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const canvasX = (touch.clientX - rect.left) * scaleX;
+      const canvasY = (touch.clientY - rect.top) * scaleY;
+
+      if (isDraggingMinimapRef.current) {
+        const Mw = 260;
+        const Mh = 76;
+        const mx = canvas.width - Mw - 18;
+        const my = canvas.height - Mh - 18;
+        const clampedX = Math.max(mx, Math.min(mx + Mw, canvasX));
+        const clampedY = Math.max(my, Math.min(my + Mh, canvasY));
+        const worldX = ((clampedX - mx) / Mw) * ARENA_WIDTH;
+        const worldY = ((clampedY - my) / Mh) * 760;
+        targetCameraPosRef.current = { x: worldX, y: worldY };
+        cameraPosRef.current = { x: worldX, y: worldY };
+        return;
+      }
+
+      if (isDraggingRef.current) {
+        const deltaX = (touch.clientX - dragStartRef.current.clientX) * scaleX;
+        const deltaY = (touch.clientY - dragStartRef.current.clientY) * scaleY;
+        const z = zoomRef.current;
+        const newX = dragStartRef.current.camX - deltaX / z;
+        const newY = dragStartRef.current.camY - deltaY / z;
+
+        targetCameraPosRef.current = { x: newX, y: newY };
+        cameraPosRef.current = { x: newX, y: newY };
+        if (cameraModeRef.current !== 'manual') {
+          setCameraMode('manual');
+        }
+      }
+    } else if (e.touches.length === 2 && touchStartRef.current.dist > 0) {
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      const ratio = dist / touchStartRef.current.dist;
+      setZoom((prev) => Math.max(1.0, Math.min(2.5, Math.round(prev * ratio * 100) / 100)));
+      touchStartRef.current.dist = dist;
+    }
+  };
+
+  const handleCanvasTouchEnd = () => {
+    isDraggingRef.current = false;
+    isDraggingMinimapRef.current = false;
+    setIsDragging(false);
+    touchStartRef.current.dist = 0;
+  };
 
   // Simulation Refs
   const championsRef = useRef<AramChampionUnit[]>([]);
@@ -6838,11 +7133,129 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.restore();
   };
 
+  // Screen-space Minimap Radar showing the complete 2600-wide arena overview
+  const drawMinimapRadar = (
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    camX: number,
+    camY: number,
+    halfW: number,
+    halfH: number
+  ) => {
+    const Mw = 260;
+    const Mh = 76;
+    const mx = width - Mw - 18;
+    const my = height - Mh - 18;
+    const scale = Mw / ARENA_WIDTH;
+
+    ctx.save();
+
+    // Radar panel background & glowing outline
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.65)';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = 'rgba(10, 15, 26, 0.9)';
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(mx, my, Mw, Mh, 8);
+    else ctx.rect(mx, my, Mw, Mh);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Subtle lane guide
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(mx + 8, my + 38);
+    ctx.lineTo(mx + Mw - 8, my + 38);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Neutral boss dots
+    const isDragonAlive = dragonRef.current.isAlive;
+    ctx.fillStyle = isDragonAlive ? '#c084fc' : '#475569';
+    ctx.beginPath();
+    ctx.arc(mx + DRAGON_X * scale, my + 160 * scale, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    const isGolemAlive = jungleCampsRef.current.some((camp) => camp.type === 'siege_golem' && camp.isAlive);
+    ctx.fillStyle = isGolemAlive ? '#4ade80' : '#475569';
+    ctx.beginPath();
+    ctx.arc(mx + DRAGON_X * scale, my + 600 * scale, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Structures (Towers, Barracks, Nexus)
+    structuresRef.current.forEach((st) => {
+      if (!st.isAlive) return;
+      ctx.fillStyle = st.team === 'blue' ? '#38bdf8' : '#f43f5e';
+      const sx = mx + st.x * scale;
+      const sy = my + st.y * scale;
+      const sz = st.type === 'nexus' ? 4 : st.type === 'barracks' ? 2.5 : 3;
+      ctx.fillRect(sx - sz / 2, sy - sz / 2, sz, sz);
+    });
+
+    // Champions
+    championsRef.current.forEach((c) => {
+      if (!c.isAlive) return;
+      ctx.fillStyle = c.team === 'blue' ? '#22d3ee' : '#f43f5e';
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.shadowBlur = 4;
+      ctx.beginPath();
+      ctx.arc(mx + c.x * scale, my + c.y * scale, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.shadowBlur = 0;
+
+    // Viewport camera rectangle
+    const vx = (camX - halfW) * scale;
+    const vy = (camY - halfH) * scale;
+    const vw = (halfW * 2) * scale;
+    const vh = (halfH * 2) * scale;
+
+    ctx.fillStyle = 'rgba(251, 191, 36, 0.15)';
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.95)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(mx + vx, my + vy, vw, vh, 2);
+    else ctx.rect(mx + vx, my + vy, vw, vh);
+    ctx.fill();
+    ctx.stroke();
+
+    // Mini label
+    ctx.font = 'bold 8px monospace';
+    ctx.fillStyle = 'rgba(226, 232, 240, 0.65)';
+    ctx.fillText('RADAR', mx + 6, my + 10);
+
+    ctx.restore();
+  };
+
   // =========================================================================
   // HIGH-FIDELITY SPECTATOR-GRADE CANVAS RENDERER (LARGER MIDDLE ARENA)
   // =========================================================================
   const drawAramBattleground = (ctx: CanvasRenderingContext2D, width: number, height: number, time: number) => {
     ctx.clearRect(0, 0, width, height);
+
+    const z = zoomRef.current;
+    const { x: camX, y: camY, halfW, halfH } = clampCameraPosition(
+      cameraPosRef.current.x,
+      cameraPosRef.current.y,
+      z,
+      width,
+      height
+    );
+    cameraPosRef.current.x = camX;
+    cameraPosRef.current.y = camY;
+
+    // Apply world-to-camera transformation
+    ctx.save();
+    ctx.translate(width / 2, height / 2);
+    ctx.scale(z, z);
+    ctx.translate(-camX, -camY);
+
     // Stretch the architectural backdrop to the wider world; actors use world coordinates.
     ctx.save();
     ctx.scale(width / 1320, 1);
@@ -9661,6 +10074,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       ctx.fillText(f.text, f.x, f.y);
       ctx.restore();
     });
+
+    // Restore camera transformation back to screen space
+    ctx.restore();
+
+    // 18. SCREEN-SPACE OVERLAYS (MINIMAP RADAR)
+    if (showMinimapRef.current) {
+      drawMinimapRadar(ctx, width, height, camX, camY, halfW, halfH);
+    }
   };
 
   // Animation Loop
@@ -9683,6 +10104,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (batchMode) setChampions(championsRef.current.map(champion => ({ ...champion, items: [...champion.items] })));
         setMatchTime(matchTimeRef.current);
       }
+
+      // Smooth Auto-Follow Action Camera
+      if (cameraModeRef.current === 'auto') {
+        const actionTarget = computeActionCenter(championsRef.current, ARENA_WIDTH, 760);
+        targetCameraPosRef.current.x = actionTarget.x;
+        targetCameraPosRef.current.y = actionTarget.y;
+      }
+
+      const lerpRate = 1 - Math.exp(-4.2 * Math.min(0.1, dt));
+      cameraPosRef.current.x += (targetCameraPosRef.current.x - cameraPosRef.current.x) * lerpRate;
+      cameraPosRef.current.y += (targetCameraPosRef.current.y - cameraPosRef.current.y) * lerpRate;
 
       const canvas = canvasRef.current;
       if (canvas) {
@@ -9975,12 +10407,110 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           </div>
         )}
         </div>
-        <div className="w-full min-w-0 overflow-hidden rounded-2xl border border-emerald-950/80 bg-[#1b3028] shadow-[0_18px_50px_rgba(0,0,0,0.28)]">
+        <div className="relative group w-full min-w-0 overflow-hidden rounded-2xl border border-emerald-950/80 bg-[#1b3028] shadow-[0_18px_50px_rgba(0,0,0,0.28)]">
+          {/* Floating Spectator Camera Controls */}
+          <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 bg-slate-950/85 backdrop-blur-md px-2.5 py-1.5 rounded-xl border border-slate-700/70 shadow-2xl opacity-90 hover:opacity-100 transition-opacity">
+            {/* Auto / Manual Mode Toggle */}
+            <button
+              onClick={() => {
+                if (cameraMode === 'auto') {
+                  setCameraMode('manual');
+                } else {
+                  setCameraMode('auto');
+                  targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, 760);
+                }
+              }}
+              className={`px-2 py-1 rounded-lg text-xs font-black flex items-center gap-1.5 transition ${
+                cameraMode === 'auto'
+                  ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
+                  : 'bg-slate-800 text-slate-300 hover:text-white'
+              }`}
+              title={cameraMode === 'auto' ? 'Auto Camera following combat (Space)' : 'Free Pan Mode (Space to re-center)'}
+            >
+              <Crosshair className="w-3.5 h-3.5" />
+              <span>{cameraMode === 'auto' ? 'Auto Cam' : 'Free Pan'}</span>
+            </button>
+
+            <div className="h-4 w-px bg-slate-700/60 mx-0.5" />
+
+            {/* Zoom Presets */}
+            <div className="flex items-center gap-1">
+              {[
+                { label: 'Fit', val: 1.0, title: 'Fit Whole Arena (1.0x)' },
+                { label: '1.45x', val: 1.45, title: 'Balanced Battlefield View (1.45x)' },
+                { label: '1.85x', val: 1.85, title: 'Close-up Combat View (1.85x)' }
+              ].map((preset) => (
+                <button
+                  key={preset.label}
+                  onClick={() => {
+                    setZoom(preset.val);
+                    if (preset.val === 1.0) {
+                      targetCameraPosRef.current = { x: ARENA_WIDTH / 2, y: 380 };
+                    }
+                  }}
+                  className={`px-1.5 py-0.5 rounded text-[11px] font-bold font-mono transition ${
+                    Math.abs(zoom - preset.val) < 0.05
+                      ? 'bg-cyan-500 text-slate-950 font-black'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                  }`}
+                  title={preset.title}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="h-4 w-px bg-slate-700/60 mx-0.5" />
+
+            {/* Step Zoom Buttons */}
+            <button
+              onClick={() => setZoom((z) => Math.max(1.0, Math.round((z - 0.15) * 100) / 100))}
+              className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition"
+              title="Zoom Out (-)"
+            >
+              <ZoomOut className="w-3.5 h-3.5" />
+            </button>
+            <span className="text-[11px] font-mono font-bold text-amber-300 min-w-[34px] text-center">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              onClick={() => setZoom((z) => Math.min(2.5, Math.round((z + 0.15) * 100) / 100))}
+              className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition"
+              title="Zoom In (+)"
+            >
+              <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+
+            <div className="h-4 w-px bg-slate-700/60 mx-0.5" />
+
+            {/* Minimap Toggle */}
+            <button
+              onClick={() => setShowMinimap(!showMinimap)}
+              className={`px-1.5 py-0.5 rounded text-[11px] font-semibold transition ${
+                showMinimap ? 'text-cyan-400 bg-cyan-950/60 border border-cyan-800/50' : 'text-slate-400 hover:text-white'
+              }`}
+              title="Toggle Minimap Radar (M)"
+            >
+              🗺️ Map
+            </button>
+          </div>
+
           <canvas
             ref={canvasRef}
             width={ARENA_WIDTH}
             height={760}
-            className="block h-auto w-full max-w-full"
+            className={`block h-auto w-full max-w-full select-none ${
+              isDragging ? 'cursor-grabbing' : 'cursor-grab'
+            }`}
+            onMouseDown={handleCanvasMouseDown}
+            onMouseMove={handleCanvasMouseMove}
+            onMouseUp={handleCanvasMouseUp}
+            onMouseLeave={handleCanvasMouseUp}
+            onWheel={handleCanvasWheel}
+            onDoubleClick={handleCanvasDoubleClick}
+            onTouchStart={handleCanvasTouchStart}
+            onTouchMove={handleCanvasTouchMove}
+            onTouchEnd={handleCanvasTouchEnd}
           />
         </div>
 
@@ -10036,6 +10566,68 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                       }`}
                     >
                       {s}x
+                    </button>
+                  ))}
+                </div>
+
+                {/* Battlefield Zoom & Camera Controls */}
+                <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-0.5 rounded-lg border border-slate-800">
+                  <button
+                    onClick={() => {
+                      if (cameraMode === 'auto') {
+                        setCameraMode('manual');
+                      } else {
+                        setCameraMode('auto');
+                        targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, 760);
+                      }
+                    }}
+                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition flex items-center gap-1 ${
+                      cameraMode === 'auto'
+                        ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                    title={cameraMode === 'auto' ? 'Auto Action Camera (Space)' : 'Free Pan Camera'}
+                  >
+                    <Crosshair className="w-3 h-3" />
+                    <span>{cameraMode === 'auto' ? 'Auto' : 'Free'}</span>
+                  </button>
+                  <button
+                    onClick={() => setZoom((z) => Math.max(1.0, Math.round((z - 0.15) * 100) / 100))}
+                    className="p-0.5 text-slate-400 hover:text-white transition"
+                    title="Zoom Out (-)"
+                  >
+                    <ZoomOut className="w-3 h-3" />
+                  </button>
+                  <span className="text-[10px] font-mono font-bold text-amber-300 min-w-[28px] text-center">
+                    {Math.round(zoom * 100)}%
+                  </span>
+                  <button
+                    onClick={() => setZoom((z) => Math.min(2.5, Math.round((z + 0.15) * 100) / 100))}
+                    className="p-0.5 text-slate-400 hover:text-white transition"
+                    title="Zoom In (+)"
+                  >
+                    <ZoomIn className="w-3 h-3" />
+                  </button>
+                  {[
+                    { label: 'Fit', val: 1.0 },
+                    { label: '1.45x', val: 1.45 },
+                    { label: '1.85x', val: 1.85 }
+                  ].map((p) => (
+                    <button
+                      key={p.label}
+                      onClick={() => {
+                        setZoom(p.val);
+                        if (p.val === 1.0) {
+                          targetCameraPosRef.current = { x: ARENA_WIDTH / 2, y: 380 };
+                        }
+                      }}
+                      className={`px-1 py-0.5 rounded text-[9px] font-mono transition ${
+                        Math.abs(zoom - p.val) < 0.05
+                          ? 'bg-cyan-500 text-slate-950 font-bold'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {p.label}
                     </button>
                   ))}
                 </div>
