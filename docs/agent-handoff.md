@@ -975,3 +975,183 @@ Ran batch multi-seed simulations across seeds and analyzed aggregated telemetry:
 **Verification:** All 175 project tests, 3 multi-seed simulation tests, design validation checks, and TypeScript typechecking passed via `npm run check:game`. Production build succeeded via `npm run build`.
 
 **Limit:** Objective rotations prioritize active lane fights and structure pushes before objective staging; units contest bosses within sight and engage enemies per Invariant 3.
+
+## User Request: More Map and Pathing Polish; Coordinated Camp Rewards
+
+**User:** Asked for additional map/pathing polish, then asked that jungle camps become team objectives available after recalls and that avatars helping kill a camp receive gold and experience. Confirmed Supports should be allowed to join camp takes, relaxing the prior Support farming prohibition for coordinated objectives.
+
+**Agent:** Added subtle biome-tinted dirt trails from the lane to each camp entrance. Hardened rock collision projection by iteratively resolving overlapping neighboring boulders, preventing long movement projections from leaving units inside adjacent terrain. A safe post-recall camp call now requires at least two recently recalled allies, three living teammates, two healthy teammates, an available camp, and no active threat or push; Supports can join this group call but remain excluded from solo camp farming. Recorded each camp's damage contributors and split the fixed gold/XP bounty among same-team contributors, assigning integer rounding remainder to the killer. Camp soft reset clears contributions for the next attempt.
+
+**Affected files:** `EsportsClash.Web/src/arenaRules.ts`, `src/arenaRules.test.mjs`, `src/components/AramMatchView.tsx`, `src/macroFarmRules.ts`, `src/macroFarmRules.test.mjs`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Focused terrain and camp-policy/reward tests passed. `npm run check:game` passed design validation, all game and multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory.
+
+**Limit:** The headless match simulator does not yet model the live post-recall team-camp call or shared XP distribution. General champion pursuit still uses local swept collision outside explicit camp and objective approach routes.
+
+## User Request: Improve Arena Appearance
+
+**User:** Said the arena map did not look good enough.
+
+**Agent:** Reworked the forest-floor palette and added layered meadow texture, clearer riverbanks and water glints, softened warm stone paving on the central causeway, and more visible dashed markings along camp approaches. Added a contained, rounded frame around the responsive canvas. These changes are presentation-only and do not alter collision, route selection, or objective behavior.
+
+**Affected files:** `EsportsClash.Web/src/components/AramMatchView.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** `npm run check:game` passed (178 game tests and 3 simulation tests), `npm run build` passed, and `git diff --check` passed. The map canvas was rendered in the shared browser; a fresh in-match visual review after the reload was not completed.
+
+**Limit:** Decorative trails do not show a live unit-specific route; general pursuit still uses the existing local collision steering. Small-screen visual review remains outstanding.
+
+## User Request: Remove Teammate Unit Collisions
+
+**User:** Asked to remove unit collisions between teammates.
+
+**Agent:** Removed pairwise body-separation from same-team living champions in the Clash Arena and Three Aram arena renderers. Enemy champion separation remains enabled. Terrain collision and attacks/projectile collision are unchanged.
+
+**Affected files:** `EsportsClash.Web/src/arenaRules.ts`, `src/arenaRules.test.mjs`, `src/components/AramMatchView.tsx`, `src/components/ThreeAramArena.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** `npm run check:game` passed design validation, 186 game tests, 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory; `git diff --check` passed.
+
+**Limit:** The adjustment applies to champion avatars; lane minion combat and terrain collision are unchanged.
+
+## User Request: Polish the Recent Map, Pathing, Camp, and Collision Work
+
+**User:** Asked to review the documents for the current state and polish the latest map/pathing, coordinated-camp, arena-appearance, and teammate-collision work.
+
+**Agent:** Audited the documented changes and found that post-recall teammates independently recomputed their camp choice, so a nominal team call could split across camps or disappear when the first member left the well. Added one persistent camp plan per team. A qualifying recalled group now selects one nearby live camp on its own half, locks the recalled participants to that destination for up to 30 game-seconds, and keeps the call active after they leave the well. Enemy threats, lane pushes, epic-objective calls, insufficient surviving participants, expiry, or the camp becoming unavailable immediately cancel the plan. Added deterministic tests for shared home-side selection and completed the pending teammate-collision verification.
+
+**Affected files:** `EsportsClash.Web/src/components/AramMatchView.tsx`, `src/macroFarmRules.ts`, `src/macroFarmRules.test.mjs`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** `npm run check:game` passed design validation, all 180 game tests, all 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory. `git diff --check` passed.
+
+**Limit:** The headless simulator still does not model the live post-recall team-camp plan or shared XP distribution. General pursuit outside explicit camp and objective routes still uses local swept collision rather than a map-wide pathfinder.
+
+## User Request: Better Avatar Models
+
+**User:** Asked for better models for the avatars.
+
+**Agent:** Upgraded the procedural in-match avatar renderer without touching combat geometry. All avatars now stand on a layered team-colored plinth with a segmented allegiance ring, gain a restrained cast aura, and use visual-only walking lean and attack recoil. Rebuilt the 20 avatars that still shared the flattest model tier around six distinct silhouette families—robe, armor, agile, beast, spectral, and mechanical—with individual palettes for skin, hair, eyes, cloth or plating, trim, glow, and shade. The new construction adds separate animated legs and boots, articulated action arms, shaped torsos and shoulders, capes/pelts/wisps/back plating, layered heads, hair or helmets, brows, highlighted eyes, facial detail, chest emblems, and the existing signature weapons and cast accessories. The model catalog is static at module scope to avoid per-avatar, per-frame configuration allocation.
+
+**Affected files:** `EsportsClash.Web/src/components/ChampionSpriteRenderer.ts`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** The focused avatar renderer suite passed for all 45 avatars in idle, walk, attack, and cast states. `npm run check:game` passed design validation, all 180 game tests, all 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory; `git diff --check` passed.
+
+**Limit:** The models remain procedural 2D canvas chibis rather than rigged 3D meshes. A live browser screenshot review is still desirable because this environment does not expose an installed browser automation package.
+
+## User Request: Upgrade the Sound Effects
+
+**User:** Asked to upgrade the sound effects after the avatar-model improvements.
+
+**Agent:** Rebuilt the Web Audio mix around separate combat, impact, and UI buses feeding a dynamics-compressed master bus. Recorded avatar cues now use shaped envelopes, per-material low-pass filtering, a short filtered ambience send, a stronger independently tuned accent layer, and horizontal stereo placement from the caster's arena position. Added deterministic synthesized transient layers for arcane, fire, steel, organic, void, wind, and physical-impact casts; ultimates receive a longer transient, stronger accent, and wider ambience than basic skills. Generic hits and explosions were routed through the new mix while UI cues stay on their own quieter bus. The system retains the existing throttles and 16-voice ceiling and does not consume gameplay randomness.
+
+**Affected files:** `EsportsClash.Web/src/audio.ts`, `src/avatarSkillAudio.ts`, `src/avatarSkillAudio.test.mjs`, `src/components/AramMatchView.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** The focused audio tests passed for all 45 avatars and every shipped recording. `npm run check:game` passed design validation, all 180 game tests, all 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory; `git diff --check` passed.
+
+**Limit:** Automated checks validate routing metadata, files, and safe parameter ranges but cannot judge perceived loudness on the user's speakers or headphones. A live listening pass may still justify small gain adjustments.
+
+## User Request: More Beautiful Abilities
+
+**User:** Asked to make the abilities more beautiful after the avatar-model and sound-effect upgrades.
+
+**Agent:** Polished the shared canvas presentation around all 45 avatars' existing dedicated ability motifs. Every cast now has a soft perspective ground bloom, animated perimeter marking, curved source-to-impact energy trace, source cast ring, deterministic diamond sparks, and an expanding white impact ripple. Ultimates use a brighter bloom, wider trace, fourteen particles, and a rotating twelve-segment seal; Skill 2 remains slightly richer than Skill 1. Re-layered beams and lightning with a colored glow body and white-hot core. All particle layouts use stable avatar-and-slot seeds, preserving deterministic playback without consuming gameplay randomness. No ability range, radius, targeting, damage, control, cooldown, timing, or collision behavior changed.
+
+**Affected files:** `EsportsClash.Web/src/avatarSkillAnimation.ts`, `src/avatarSkillAnimation.test.mjs`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Added a deterministic visual-profile regression test and expanded the canvas mock for gradient rendering. The renderer smoke test covers every avatar, slot, and early/mid/late animation stage. `npm run check:game` passed design validation, all 181 game tests, all 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory; `git diff --check` passed.
+
+**Limit:** Automated checks validate safe canvas rendering and visual hierarchy, but a live browser capture is still desirable for final bloom and particle-density tuning on desktop and small screens.
+
+## User Request: Developer Random 5v5 Mode
+
+**User:** Asked for a developer-only random 5v5 mode so visual and gameplay changes can be reviewed without manually drafting every match.
+
+**Agent:** Added a `Developer Random 5v5` card to the Clash Arena mode selector that is rendered only when `import.meta.env.DEV` is true. One click deterministically shuffles the full player and avatar pools from a fresh crypto-generated seed, selects ten unique players and ten unique avatars, equalizes every player to 100 OVR, assigns five entries to each side, and launches the arena without either draft screen. The arena's normal replay control becomes `New Random 5v5` in this mode and immediately generates another matchup. Developer results are sandboxed from Clash Coins, evolutions, tournament standings, and ladder rating. All ordinary arena rules and protected gameplay invariants remain enabled.
+
+**Affected files:** `EsportsClash.Web/src/App.tsx`, `src/components/AramMatchView.tsx`, `src/devRandomMode.ts`, `src/devRandomMode.test.mjs`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Focused developer-mode tests passed. `npm run check:game` passed design validation, all 184 game tests, all 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory; `git diff --check` passed.
+
+**Limit:** The randomizer intentionally does not enforce a conventional role composition, allowing unusual combinations to exercise more interactions. The mode card is available under `npm run dev` and intentionally omitted from production builds.
+
+## User Request: Generate Original Ability Sounds
+
+**User:** Asked to generate realistic, original sound effects for the 135 ability cues in `ai-ability-sound-generation-prompt.md`, using a local ElevenLabs API key.
+
+**Agent:** Added a resumable batch generator that reads the catalog's exact avatar names and filenames, makes one original sound-generation request per cue, converts responses to mono 48 kHz 24-bit PCM WAV with FFmpeg silence trimming and a -3 dBFS true-peak limiter, validates format, duration and clipping, writes a UTF-8 CSV manifest, and packages each batch into its own ZIP. Generated cues are selected through the manifest at runtime; if no generated cue is present or loads, the existing CC0 recordings and material layers remain the fallback. API access requires `ELEVENLABS_API_KEY` in the local process environment and does not expose the secret in chat.
+
+**Affected files:** `EsportsClash.Web/scripts/generate-ability-sounds.mjs`, `EsportsClash.Web/src/audio.ts`, `EsportsClash.Web/src/avatarSkillAudio.test.mjs`, `EsportsClash.Web/package.json`, this handoff, and `docs/ai-ability-sound-generation-prompt.md`.
+
+**Verification:** The catalog dry-run and focused audio test verify 135 unique entries, three batches of 45, and an exact filename match between every catalog entry and runtime cue mapping. No API requests or generated files have been made.
+
+**Limit:** This environment currently has no `ELEVENLABS_API_KEY` and no `ffmpeg` executable. Configure the key locally and install FFmpeg before running `npm run generate:sounds -- --batch 1`; no claim is made that any generated file currently exists or has been audio-reviewed.
+
+## User Request: Enlarge and Improve Battlefield Models
+
+**User:** Asked to enlarge the Nexus, towers, minions, catapults, and barracks and make them look more realistic.
+
+**Agent:** Replaced the remaining flat battlefield icons with dedicated procedural canvas models and centralized visual scale metrics. The enlarged Nexus now has a stepped stone-and-metal foundation, support pylons, rotating machinery, six orbiting emitters, a faceted illuminated core, and animated seal runes. Towers gained wide foundations, tapered masonry, structural buttresses, team banners, battlements, and housed crystals. The melee forge, ranged watchtower, and catapult siege-yard barracks gained dimensional masonry and richer class-specific equipment. Melee and caster minions now have articulated bodies, armor or robes, faces, weapons, and spell focuses; cannon waves became large wheeled catapults with chassis, throwing arms, ammunition, and banners. Updated contact shadows, empowerment rings, health-bar placement, and destroyed-structure rubble to match the new scale. All changes are visual: collision, attack ranges, health, damage, pathing, targeting, and structure vulnerability are unchanged.
+
+**Affected files:** `EsportsClash.Web/src/components/BattlefieldModelRenderer.ts`, `src/components/AramMatchView.tsx`, `src/battlefieldModels.test.mjs`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Focused model-rendering tests passed for every structure/minion variant and both teams. `npm run check:game` passed design validation, all 186 game tests, all 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory; `git diff --check` passed.
+
+**Limit:** The models remain stylized procedural 2D canvas art rather than textured 3D assets. A live browser review is still useful for tuning crowding in dense late-game waves.
+
+## User Request: Remove Route Lines and Reduce/Redesign Minions
+
+**User:** Asked to remove the distracting curved lines shown on the arena, reduce the oversized minions, and make the minions and catapults retain familiar MOBA readability while looking visibly different from League of Legends units.
+
+**Agent:** Removed the decorative camp-approach roads, including their dark borders and dashed center markings, while retaining the invisible camp waypoints and collision-safe pathing. Reduced ordinary minion render scales from 1.52-1.68 to 0.98-1.14 and resized their shadows, empowerment rings, and health bars. Rebuilt melee troops as original faceted wardlings with cyclops visors, swept crests, angular shields, and short polearms; rebuilt casters with masked angular hoods, split robes, and crescent spell focuses; rebuilt cannon waves as compact shielded arc-launcher catapults with a loaded throwing arm and ember operator. The result preserves immediate melee/caster/siege readability without copying another game's specific unit designs.
+
+**Affected files:** `EsportsClash.Web/src/components/AramMatchView.tsx`, `src/components/BattlefieldModelRenderer.ts`, `src/battlefieldModels.test.mjs`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** The focused battlefield renderer tests passed for all minion and structure variants on both teams. `npm run check:game` passed design validation, all 186 game tests, all 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory.
+
+**Limit:** These are original procedural 2D canvas units rather than textured 3D models. Their collision radii, combat stats, attack ranges, pathing, targeting, and protected gameplay invariants are unchanged. A live in-match visual review remains useful for final size tuning.
+
+## User Request: Rework Propella as a Helicopter Flak Hypercarry
+
+**User:** Asked to rework Propella so she rides a helicopter, uses a flak cannon, and serves as the ultimate carry.
+
+**Agent:** Preserved the stable `Skybreaker` internal ID and `Propella` display name, then rebuilt her as an original helicopter-mounted Marksman/Fighter hypercarry. Her passive now gives flak-splash basic attacks and up to six short-lived rotor attack-speed stacks. `Flakburst Cannon` is a dodgeable explosive shell, `Rotor Overdrive` accelerates and pre-spools sustained fire, and `Air Superiority` starts with an area bombardment before enabling a long late-game gunship window with full rotor stacks, bonus attack speed, and stronger splash. Added dedicated live projectile, shrapnel, crossfire, and bombardment behavior; a full cockpit, rotors, tail, skids, armored fuselage, and triple-barrel cannon to both her battlefield model and portrait; and matching animation, audio, combo, lore, range, and balance documentation. Existing marksman tower-dive requirements remain active.
+
+**Affected files:** `EsportsClash.Web/src/additionalChampions.ts`, `src/types.ts`, `src/propellaRules.ts`, `src/propellaRules.test.mjs`, `src/skillRangeRules.ts`, `src/components/AramMatchView.tsx`, `src/avatarSkillAnimation.ts`, `src/avatarSkillAudio.ts`, `src/avatarCombos.ts`, `src/components/ChampionSpriteRenderer.ts`, `src/components/ChampionArtwork.tsx`, `src/championLore.ts`, `docs/ability-balance-review.md`, `docs/ai-ability-sound-generation-prompt.md`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** The focused Propella, avatar animation, and avatar audio suites passed all 17 tests. `npm run check:game` passed design validation, all 189 game tests, all 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory.
+
+**Limit:** The headless simulator exercises Propella through the shared champion-kit model but does not separately simulate or report her live rotor-stack, flak-splash, Overdrive, or gunship state machine. The helicopter remains a procedural 2D canvas model rather than a rigged 3D asset, and a live browser visual/audio review is still desirable.
+
+## User Request: Replace Propella's Helicopter Silhouette and Lower Her Range
+
+**User:** Rejected the helicopter appearance and supplied two flying-machine references, asking for a new version in that broad direction. Also asked to lower Propella's attack range.
+
+**Agent:** Replaced the enclosed helicopter with an original fantasy flak skiff rather than copying either reference. The new silhouette has a clearly visible goggled pilot in an open cockpit, twin exposed counter-rotating lift fans, mechanical suspension braces, a compact faceted armor pod, radial engine, landing claws, and an oversized forward triple-barrel flak cannon. Removed the tail boom, tail rotor, enclosed canopy, long fuselage, skids, and single main rotor from both the arena model and dossier portrait. Updated Propella's archetype, passive and Skill 2 copy, lore, combat event, sound-generation descriptions, mechanics, and balance notes to use the flak-skiff identity. Reduced her basic attack range from 210 to 180 world units, making close positioning the tradeoff for her strong late-game attack-speed and splash scaling. Her ability ranges, damage, rotor-stack system, and protected tower-dive rules are otherwise unchanged.
+
+**Affected files:** `EsportsClash.Web/src/additionalChampions.ts`, `src/championLore.ts`, `src/propellaRules.ts`, `src/propellaRules.test.mjs`, `src/components/AramMatchView.tsx`, `src/components/ChampionArtwork.tsx`, `src/components/ChampionSpriteRenderer.ts`, `docs/ability-balance-review.md`, `docs/ai-ability-sound-generation-prompt.md`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** The focused Propella, avatar renderer, animation, and audio suites passed all 18 tests. `npm run check:game` passed design validation, all 190 game tests, all 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory.
+
+**Limit:** The references informed only broad open-cockpit flying-machine cues; the result remains original procedural 2D canvas art rather than a replica or textured 3D model. A live in-match visual review is still useful for final silhouette and scale tuning.
+
+## User Request: Continuous Background Music
+
+**User:** Asked to implement background music and chose one continuous soundtrack across menus and matches.
+
+**Agent:** Added an original, softly mixed 84 BPM, 16-bar procedural score with evolving four-chord harmony, sustained pads, a repeating arpeggio, and restrained bass pulses. It starts after the first sound-enabled user interaction, loops without external audio assets, pauses while the page is hidden, and has a persistent Music On/Off button in the main navigation. The local preference defaults to enabled and is saved in `localStorage`. Music uses a dedicated mix bus and deterministic scheduling, independent of combat randomness.
+
+**Affected files:** `EsportsClash.Web/src/backgroundMusic.ts`, `EsportsClash.Web/src/backgroundMusic.test.mjs`, `EsportsClash.Web/src/audio.ts`, `EsportsClash.Web/src/App.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Pure music-loop tests verify deterministic looping, harmonic changes, valid notes, and bass timing. The background-music and avatar-audio test suites and TypeScript compilation passed.
+
+**Limit:** The score is synthesized with Web Audio rather than a recorded orchestra or external music-generation asset. A live browser listening pass is recommended to tune the balance against combat sounds and the user's playback setup.
+
+## User Request: Ability Sound Effects Integration and Regression Verification
+
+**User:** Asked to integrate ability sound effects from `EsportsClash.Web/public/audio/`, validate all 135 WAV files and manifest entries, wire them into the recorded audio runtime, and strengthen regression tests to prevent silent fallback regressions.
+
+**Agent:** Validated the complete set of 135 ability sound WAV files located in `EsportsClash.Web/public/audio/abilities/` against `manifest.csv` and the ability catalog (45 playable avatars $\times$ 3 abilities each: `skill1`, `skill2`, and `ultimate`). Every WAV file was validated to be non-empty mono 48 kHz 24-bit PCM with true-peak levels $\le -2.90$ dBFS (zero clipped samples) and durations satisfying each slot's target duration window. Added `preloadAvatarSkills(avatarNames)` to `SoundManager` in `src/audio.ts` and connected it in `src/components/AramMatchView.tsx` upon match lineup initialization to decode drafted avatar sound cues in memory ahead of first casts. Strengthened `src/avatarSkillAudio.test.mjs` with an automated regression test inspecting disk files and manifest rows 1:1, verifying format parameters, durations, and preventing missing or malformed audio files from going undetected. Preserved legacy sample and synth fallbacks if Web Audio decode fails.
+
+**Affected files:** `EsportsClash.Web/src/audio.ts`, `EsportsClash.Web/src/components/AramMatchView.tsx`, `EsportsClash.Web/src/avatarSkillAudio.test.mjs`, `EsportsClash.Web/scripts/generate-ability-sounds.mjs`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** `node --experimental-strip-types --test src/avatarSkillAudio.test.mjs` passed all 5 tests (including the 135-file disk and manifest inspection). `npm run check:game` passed design validation, all 193 unit tests, 3 simulation tests, and TypeScript compilation. `npm run build` compiled production bundle cleanly.
+
+**Limit:** The Web Audio API requires a user gesture on the page before playing audio; once unlocked, preloaded buffers play with sub-frame latency.
