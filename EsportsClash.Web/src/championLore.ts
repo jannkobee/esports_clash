@@ -123,7 +123,7 @@ export const CHAMPION_LORE: Record<string, string> = {
   c_wukong_lol: 'Cloudtail is the younger of two wandering staff brothers. He loves feints, mist doubles, and whirling through the front line before his opponents can read him.',
   c_monkeyking_dota: 'Stonebranch is Cloudtail’s older brother and his fiercest rival. He bounds through the canopy and plants a court of staff echoes wherever he chooses to stand.',
   c_stepstone: 'Raised in the quiet courtyards of the Verdant March, Stepstone learned to measure a fight by breath, balance, and the ground beneath his feet. His layered stone guards absorb the first rush, then a precise counterstep sends a bell-bright shock through anyone crowding his allies.',
-  c_skybreaker: 'Skybreaker charts storm lanes above the Cloudline Reach in a hand-built rotorcraft of blue steel and orange enamel. Pilot Propella turns careful aerial spacing into pressure, stitching the battlefield with compact salvos before calling a sweeping barrage to scatter entrenched ranks.'
+  c_skybreaker: 'Propella pilots Skybreaker, a hand-built open-cockpit flak skiff whose compact armored pod hangs between two exposed lift fans. She fights like a patient ace: skim beyond retaliation, let the fans and oversized cannon spool together, then cross the redline into full gunship mode. Once supplied with items and room to fire, her widening shrapnel pattern can dismantle an entire formation—making her the arena’s definitive late-game aerial carry.'
 };
 
 export function getChampionLore(championId: string): string {

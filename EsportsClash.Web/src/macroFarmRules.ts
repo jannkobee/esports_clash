@@ -9,21 +9,22 @@ export function chooseKnownJungleCamp<T extends {
   urgentStructurePush: boolean;
   role?: string;
   supportStrength?: number;
+  teamObjective?: boolean;
 }): T | undefined {
   if (actor.gameSeconds < 45 || actor.hpFraction < 0.62 || actor.iq < 52
     || actor.nearbyEnemyCount > 0 || actor.nearestLaneEnemyDistance < 230
     || actor.urgentStructurePush) return undefined;
 
-  // Support avatars must NEVER farm neutral jungle camps: their basic attack damage is low
-  // and their role is team support, lane presence, and vision control.
-  if (actor.role === 'Support' || (actor.supportStrength ?? 0) >= 2) return undefined;
+  if (!actor.teamObjective && (actor.role === 'Support' || (actor.supportStrength ?? 0) >= 2)) return undefined;
 
-  // Non-junglers with 0 jungle strength who are not carries also avoid camps
-  if (actor.jungleStrength === 0 && actor.role !== 'Marksman' && actor.role !== 'Mage' && actor.role !== 'Carry') return undefined;
+  if (!actor.teamObjective && actor.jungleStrength === 0
+    && actor.role !== 'Marksman' && actor.role !== 'Mage' && actor.role !== 'Carry') return undefined;
 
-  if (actor.jungleStrength === 0 && (actor.iq < 76 || actor.nearestLaneEnemyDistance < 320)) return undefined;
+  if (!actor.teamObjective && actor.jungleStrength === 0
+    && (actor.iq < 76 || actor.nearestLaneEnemyDistance < 320)) return undefined;
 
-  const maxRoute = actor.jungleStrength >= 2 ? 560 : actor.jungleStrength >= 1 ? 420 : 300;
+  const maxRoute = actor.teamObjective ? 720
+    : actor.jungleStrength >= 2 ? 560 : actor.jungleStrength >= 1 ? 420 : 300;
   return camps.filter(camp => camp.isAlive && camp.type !== 'siege_golem')
     .map(camp => {
       const homeX = camp.homeX ?? camp.x;
@@ -36,6 +37,54 @@ export function chooseKnownJungleCamp<T extends {
     })
     .filter(candidate => candidate.distance <= maxRoute && candidate.canInvade)
     .sort((a, b) => a.score - b.score)[0]?.camp;
+}
+
+export function shouldStartPostRecallCampObjective(input: {
+  recentlyRecalledAllies: number;
+  livingAllies: number;
+  healthyAllies: number;
+  campAvailable: boolean;
+  activeThreat: boolean;
+  activePush: boolean;
+}): boolean {
+  return input.recentlyRecalledAllies >= 2 && input.livingAllies >= 3
+    && input.healthyAllies >= 2 && input.campAvailable
+    && !input.activeThreat && !input.activePush;
+}
+
+export function choosePostRecallTeamCamp<T extends {
+  id: string; type: string; isAlive: boolean; x: number; y: number; homeX?: number; homeY?: number;
+}>(camps: readonly T[], team: 'blue' | 'red', members: readonly { x: number; y: number }[]): T | undefined {
+  if (members.length < 2) return undefined;
+
+  return camps.filter(camp => {
+    const homeX = camp.homeX ?? camp.x;
+    const ownHalf = team === 'blue' ? homeX < 1000 : homeX > 1000;
+    return camp.isAlive && camp.type !== 'siege_golem' && ownHalf;
+  }).map(camp => {
+    const homeX = camp.homeX ?? camp.x;
+    const homeY = camp.homeY ?? camp.y;
+    const routes = members.map(member => Math.hypot(homeX - member.x, homeY - member.y));
+    return {
+      camp,
+      longestRoute: Math.max(...routes),
+      averageRoute: routes.reduce((sum, route) => sum + route, 0) / routes.length,
+    };
+  }).filter(candidate => candidate.longestRoute <= 720)
+    .sort((a, b) => a.averageRoute - b.averageRoute || a.camp.id.localeCompare(b.camp.id))[0]?.camp;
+}
+
+export function shareJungleCampRewards(
+  goldReward: number, xpReward: number, contributorIds: readonly string[], killerId: string
+): { id: string; gold: number; xp: number }[] {
+  const participants = [...new Set([...contributorIds, killerId])];
+  const goldShare = Math.floor(goldReward / participants.length);
+  const xpShare = Math.floor(xpReward / participants.length);
+  return participants.map(id => ({
+    id,
+    gold: goldShare + (id === killerId ? goldReward - goldShare * participants.length : 0),
+    xp: xpShare + (id === killerId ? xpReward - xpShare * participants.length : 0),
+  }));
 }
 
 export function shouldFocusExposedNexus(nexus: {
@@ -66,4 +115,3 @@ export function shouldPressWonFight(input: {
 export function neutralAttackRange(championRange: number, epic = false): number {
   return Math.min(championRange, epic ? 145 : 130);
 }
-

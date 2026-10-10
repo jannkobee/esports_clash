@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ADDITIONAL_CHAMPIONS } from './additionalChampions.ts';
-import { AVATAR_ANIMATION_MOTIFS, drawAvatarSkillAnimation } from './avatarSkillAnimation.ts';
+import { AVATAR_ANIMATION_MOTIFS, drawAvatarSkillAnimation, getAbilityVfxProfile } from './avatarSkillAnimation.ts';
 
 test('every avatar has a distinct animation cue and recreated avatars keep source names out of play', () => {
   assert.equal(Object.keys(AVATAR_ANIMATION_MOTIFS).length, 45);
@@ -14,7 +14,12 @@ test('every avatar has a distinct animation cue and recreated avatars keep sourc
 
 test('all avatar motifs render through each skill stage without a canvas error', () => {
   const canvas = new Proxy({}, {
-    get: (target, key) => key in target ? target[key] : () => {},
+    get: (target, key) => {
+      if (key === 'createRadialGradient' || key === 'createLinearGradient') {
+        return () => ({ addColorStop: () => {} });
+      }
+      return key in target ? target[key] : () => {};
+    },
     set: (target, key, value) => { target[key] = value; return true; },
   });
   for (const avatarName of Object.keys(AVATAR_ANIMATION_MOTIFS)) {
@@ -26,6 +31,20 @@ test('all avatar motifs render through each skill stage without a canvas error',
         }), `${avatarName} ${slot} at ${progress}`);
       }
     }
+  }
+});
+
+test('ability polish profiles are deterministic and give ultimates the strongest presentation', () => {
+  for (const avatarName of Object.keys(AVATAR_ANIMATION_MOTIFS)) {
+    const skill1 = getAbilityVfxProfile(avatarName, 'skill1');
+    const skill2 = getAbilityVfxProfile(avatarName, 'skill2');
+    const ultimate = getAbilityVfxProfile(avatarName, 'ultimate');
+    assert.deepEqual(skill1, getAbilityVfxProfile(avatarName, 'skill1'), `${avatarName} VFX profile is stable`);
+    assert.ok(skill2.particleCount > skill1.particleCount, `${avatarName} skill 2 has a richer accent`);
+    assert.ok(ultimate.particleCount > skill2.particleCount, `${avatarName} ultimate has the most particles`);
+    assert.ok(ultimate.runeSegments > skill1.runeSegments, `${avatarName} ultimate has the complete rune seal`);
+    assert.ok(ultimate.bloomAlpha > skill2.bloomAlpha, `${avatarName} ultimate has the strongest bloom`);
+    assert.ok(ultimate.trailWidth > skill2.trailWidth, `${avatarName} ultimate has the broadest cast trail`);
   }
 });
 

@@ -37,8 +37,8 @@ test('batch multi-seed simulation collects telemetry, verifies invariants, and g
   assert.ok(analysis.averageDurationMinutes >= 5.0, `Avg duration ${analysis.averageDurationMinutes}m should be >= 5.0m`);
   assert.ok(analysis.averageDurationMinutes <= 18.0, `Avg duration ${analysis.averageDurationMinutes}m should be <= 18.0m`);
 
-  // Invariant 2: Support avatars NEVER solo-farm neutral jungle camps
-  assert.equal(analysis.supportCampFarms, 0, 'Supports must NEVER farm neutral jungle camps');
+  // The headless simulator does not model the live post-recall team-camp call.
+  assert.equal(analysis.supportCampFarms, 0, 'The simulation must not grant solo Support camp clears');
 
   // Invariant 3: Tower dives are attempted and safely aborted when conditions deteriorate
   assert.ok(analysis.towerDives.totalAttempts >= 0);
@@ -60,7 +60,7 @@ test('batch multi-seed simulation collects telemetry, verifies invariants, and g
   console.log(`Average Kills: ${analysis.averageKillsPerMatch} | Skillshot Accuracy: ${analysis.skillshotHitRate}%`);
   console.log(`Objectives: ${analysis.objectives.totalDragons} Dragons, ${analysis.objectives.totalGolems} Golems`);
   console.log(`Tower Dives: ${analysis.towerDives.totalAttempts} attempts, ${analysis.towerDives.aborts} aborts, ${analysis.towerDives.executions} executions`);
-  console.log(`Support Camp Clears: ${analysis.supportCampFarms} (Role invariant strictly enforced)`);
+  console.log(`Solo Support Camp Clears: ${analysis.supportCampFarms} (team objectives are not simulated)`);
   console.log('Role Damage Breakdown:');
   Object.entries(analysis.roleStats).forEach(([role, stat]) => {
     console.log(`  ${role.padEnd(10)}: Avg Damage ${stat.avgDamage.toLocaleString()} | Avg Kills ${stat.avgKills} | Avg Mana Blocks ${stat.avgManaBlocks}`);
@@ -69,4 +69,3 @@ test('batch multi-seed simulation collects telemetry, verifies invariants, and g
   analysis.diagnostics.forEach(diag => console.log(`  * ${diag}`));
   console.log('-----------------------------------------------------\n');
 });
-

@@ -242,15 +242,15 @@ export const ADDITIONAL_CHAMPIONS: ChampionKit[] = [
     primaryColor: '#166534', accentColor: '#facc15'
   },
   {
-    id: 'c_skybreaker', name: 'Skybreaker', displayName: 'Propella', title: 'The Highwind Gunner',
-    basis: 'Original Rotorcraft',
-    primaryRole: 'Marksman', secondaryRole: 'Mage', archetype: 'Aerial Artillery Carry',
-    combatRoles: { Carry: 3, Nuker: 2, Pusher: 1, Initiator: 1 },
-    hp: 960, ad: 91, armor: 30, mr: 33, aspd: 0.76, range: 5.7,
-    passiveDesc: 'Rotor Rhythm: steady aerial volleys keep pressure on distant opponents.',
-    skill1: { name: 'Scatterflare Salvo', desc: 'Fire a tight cluster of explosive rounds into a nearby enemy formation.', cooldown: 6, damage: 175, damageType: 'Physical' },
-    skill2: { name: 'Tailwind Strafe', desc: 'Sweep the lane with a fast crossfire burst that slows its target.', cooldown: 9, damage: 125, damageType: 'Physical' },
-    ultimate: { name: 'Cloudline Barrage', desc: 'Call a broad artillery strike across the enemy formation.', cooldown: 76, damage: 440, damageType: 'Physical', isUlt: true },
+    id: 'c_skybreaker', name: 'Skybreaker', displayName: 'Propella', title: 'The Flakwing Ace',
+    basis: 'Original Rotorcraft Gunship',
+    primaryRole: 'Marksman', secondaryRole: 'Fighter', archetype: 'Open-Cockpit Flak Skiff Hypercarry',
+    combatRoles: { Carry: 3, Nuker: 2, Pusher: 2, Escape: 1 },
+    hp: 925, ad: 96, armor: 28, mr: 31, aspd: 0.78, range: 6.2,
+    passiveDesc: 'Rotary Flak Battery: the flak skiff sprays shrapnel around its target and spools its exposed lift fans, gaining stacking attack speed. Flak splash scales with level.',
+    skill1: { name: 'Flakburst Cannon', desc: 'Fire a high-velocity flak shell that bursts across a wide enemy cluster.', cooldown: 6, damage: 185, damageType: 'Physical' },
+    skill2: { name: 'Rotor Overdrive', desc: 'Push the flak skiff past redline for 5 seconds of heavy attack speed, then rake the target with crossfire.', cooldown: 11, damage: 110, damageType: 'Physical' },
+    ultimate: { name: 'Air Superiority', desc: 'Enter full gunship mode, bombard the target formation, and greatly amplify attack speed and flak splash for up to 11 seconds.', cooldown: 82, damage: 390, damageType: 'Physical', isUlt: true },
     primaryColor: '#1d4ed8', accentColor: '#f97316'
   }
 ];

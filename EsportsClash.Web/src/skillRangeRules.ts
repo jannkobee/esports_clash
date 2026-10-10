@@ -15,6 +15,7 @@ export type SkillSlot = 'skill1' | 'skill2' | 'ultimate';
  */
 export function getSkillCastRange(champName: string, slot: SkillSlot, attackRange: number): number {
   switch (champName) {
+    case 'Skybreaker': return slot === 'skill1' ? 245 : slot === 'skill2' ? attackRange : 300;
     case 'Cinderbloom':
     case 'Cinderlock': return slot === 'skill1' ? 195 : slot === 'skill2' ? 0 : 250;
     case 'Mirehook': return slot === 'skill1' ? 230 : slot === 'skill2' ? 90 : 75;

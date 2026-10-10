@@ -78,9 +78,11 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
     ctx.scale(-1, 1);
   }
 
-  // Walking bounce / breathing
+  // Walking bounce / breathing. Visual-only squash and lean give the models
+  // weight without changing their simulation position or collision footprint.
   const bob = animState === 'walk' ? Math.abs(Math.sin(animTime * 12)) * 3 : Math.sin(animTime * 3) * 1.2;
   const attackRecoil = animState === 'attack' ? -3 : 0;
+  const stride = animState === 'walk' ? Math.sin(animTime * 12) : 0;
 
   // Ground drop shadow
   ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
@@ -88,14 +90,40 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
   ctx.ellipse(0, 4, 17, 6.5, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Team Ring on ground
-  ctx.strokeStyle = team === 'blue' ? '#38bdf8' : '#f43f5e';
+  // Layered team plinth: a soft inner disc and broken outer ring keep team
+  // allegiance legible under detailed silhouettes and crowded spell effects.
+  const teamColor = team === 'blue' ? '#38bdf8' : '#f43f5e';
+  ctx.fillStyle = team === 'blue' ? 'rgba(14, 116, 144, 0.18)' : 'rgba(190, 18, 60, 0.18)';
+  ctx.beginPath();
+  ctx.ellipse(0, 4, 18, 7, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = teamColor;
   ctx.lineWidth = 2.5;
   ctx.beginPath();
   ctx.ellipse(0, 4, 19, 7.5, 0, 0, Math.PI * 2);
   ctx.stroke();
+  ctx.save();
+  ctx.globalAlpha = 0.72;
+  ctx.lineWidth = 1.2;
+  ctx.setLineDash([8, 5]);
+  ctx.beginPath();
+  ctx.ellipse(0, 4, 22, 9.5, 0, animTime * 0.35, animTime * 0.35 + Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  if (animState === 'cast') {
+    const aura = ctx.createRadialGradient(0, -19, 4, 0, -19, 34);
+    aura.addColorStop(0, team === 'blue' ? 'rgba(125, 211, 252, 0.28)' : 'rgba(253, 164, 175, 0.28)');
+    aura.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = aura;
+    ctx.beginPath();
+    ctx.ellipse(0, -18, 32, 40, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
   ctx.translate(attackRecoil, -bob - knockupHeight);
+  ctx.rotate(animState === 'attack' ? -0.055 : stride * 0.026);
+  ctx.scale(animState === 'cast' ? 1.035 : 1, animState === 'attack' ? 0.97 : 1);
 
   switch (championName) {
     case 'Solana':
@@ -152,8 +180,11 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
       break;
     case 'Veyara': case 'Cinderlock': case 'Cinderbloom': case 'Solenne': case 'Croakwell': case 'Soulscourge': case 'Stonewake':
     case 'Mirehook': case 'Nullweaver': case 'Voltgrip': case 'Aetherbolt': case 'Corsara': case 'Brewmaw': case 'Wraithhook':
-    case 'Faelith': case 'Oathmute': case 'Cloudtail': case 'Stonebranch': case 'Stepstone': case 'Skybreaker':
+    case 'Faelith': case 'Oathmute': case 'Cloudtail': case 'Stonebranch': case 'Stepstone':
       drawNewChampionSprite(ctx, championName, animState, animTime);
+      break;
+    case 'Skybreaker':
+      drawChibiPropella(ctx, animState, animTime, team);
       break;
     case 'Kaelen': case 'c_kaelen':
       drawChibiKaelen(ctx, animState, animTime);
@@ -1961,32 +1992,322 @@ function drawDefaultChampion(ctx: CanvasRenderingContext2D, team: string) {
   ctx.fill();
 }
 
+// PROPELLA: an original open-cockpit flak skiff. Twin exposed lift fans, a
+// visible pilot, and an oversized armored cannon create a compact fantasy
+// flying-machine silhouette without reading as a modern helicopter.
+function drawChibiPropella(
+  ctx: CanvasRenderingContext2D,
+  animState: string,
+  animTime: number,
+  team: 'blue' | 'red'
+) {
+  const attacking = animState === 'attack' || animState === 'cast';
+  const teamGlow = team === 'blue' ? '#38bdf8' : '#fb7185';
+  const rotorPhase = animTime * (attacking ? 31 : 22);
+  const recoil = animState === 'attack' ? -4 : 0;
+
+  ctx.save();
+  ctx.translate(recoil, -3);
+
+  // Wash rings anchor the hovering contraption to the arena floor.
+  ctx.strokeStyle = 'rgba(191, 219, 254, 0.34)';
+  ctx.lineWidth = 1.4;
+  for (let wash = 0; wash < 3; wash++) {
+    ctx.beginPath();
+    ctx.ellipse(-4, 5 + wash * 3, 18 + wash * 7, 3 + wash, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Two independently mounted lift fans replace the helicopter tail and main
+  // rotor. Their armored hoops remain readable behind the pilot and gun pod.
+  for (const [fanX, spin] of [[-22, 1], [16, -1]] as const) {
+    ctx.save();
+    ctx.translate(fanX, -25);
+    ctx.scale(0.72, 1);
+    ctx.fillStyle = '#111827';
+    ctx.strokeStyle = teamGlow;
+    ctx.lineWidth = 3.5;
+    ctx.beginPath(); ctx.arc(0, 0, 17, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.rotate(rotorPhase * spin);
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-14, 0); ctx.lineTo(14, 0);
+    ctx.moveTo(0, -14); ctx.lineTo(0, 14);
+    ctx.stroke();
+    ctx.fillStyle = '#f97316';
+    ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  // Exposed suspension arms and a compact radial engine sell the handmade
+  // skiff construction instead of a smooth aircraft fuselage.
+  ctx.strokeStyle = '#64748b'; ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(-22, -23); ctx.lineTo(-13, -10);
+  ctx.moveTo(16, -23); ctx.lineTo(10, -10);
+  ctx.stroke();
+  ctx.fillStyle = '#1e293b';
+  ctx.beginPath(); ctx.arc(-7, -11, 15, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2; ctx.stroke();
+  for (let tooth = 0; tooth < 8; tooth++) {
+    const angle = tooth * Math.PI / 4;
+    ctx.strokeStyle = '#475569';
+    ctx.beginPath(); ctx.moveTo(-7, -11); ctx.lineTo(-7 + Math.cos(angle) * 12, -11 + Math.sin(angle) * 12); ctx.stroke();
+  }
+  ctx.fillStyle = '#f59e0b';
+  ctx.beginPath(); ctx.arc(-7, -11, 4.5, 0, Math.PI * 2); ctx.fill();
+
+  // Faceted armored gun pod with a blunt, shield-like prow.
+  const bodyGradient = ctx.createLinearGradient(-22, -18, 28, 4);
+  bodyGradient.addColorStop(0, '#334155');
+  bodyGradient.addColorStop(0.48, team === 'blue' ? '#1d4ed8' : '#be123c');
+  bodyGradient.addColorStop(1, '#0f172a');
+  ctx.fillStyle = bodyGradient;
+  ctx.beginPath();
+  ctx.moveTo(-25, -13); ctx.lineTo(-13, -23); ctx.lineTo(18, -21);
+  ctx.lineTo(31, -10); ctx.lineTo(23, 3); ctx.lineTo(-17, 5); ctx.lineTo(-29, -4);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.7; ctx.stroke();
+  ctx.strokeStyle = teamGlow; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(-21, -12); ctx.lineTo(-8, -3); ctx.lineTo(-15, 3); ctx.stroke();
+
+  // Open cockpit: Propella is fully visible, with oversized amber goggles,
+  // a windswept scarf, and both hands braced on the controls.
+  ctx.fillStyle = '#172554';
+  ctx.beginPath(); ctx.roundRect(-13, -36, 22, 23, 7); ctx.fill();
+  ctx.strokeStyle = '#fb923c'; ctx.stroke();
+  ctx.fillStyle = '#d6af91';
+  ctx.beginPath(); ctx.arc(-2, -36, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#334155';
+  ctx.beginPath(); ctx.arc(-2, -39, 8.4, Math.PI, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#f59e0b';
+  ctx.beginPath(); ctx.ellipse(-5, -36, 3.6, 2.6, 0, 0, Math.PI * 2); ctx.ellipse(2, -36, 3.6, 2.6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#78350f'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(-1.5, -36); ctx.lineTo(-0.5, -36); ctx.stroke();
+  ctx.fillStyle = '#fb923c';
+  ctx.beginPath(); ctx.moveTo(-9, -31); ctx.lineTo(-24, -27); ctx.lineTo(-12, -23); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#d6af91';
+  ctx.beginPath(); ctx.arc(-9, -19, 3.5, 0, Math.PI * 2); ctx.arc(7, -19, 3.5, 0, Math.PI * 2); ctx.fill();
+
+  // The oversized rotary flak cannon dominates the front silhouette.
+  ctx.fillStyle = '#111827';
+  ctx.beginPath(); ctx.arc(23, -9, 10, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#fb923c'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#475569';
+  for (const barrelY of [-14, -9, -4]) {
+    ctx.beginPath(); ctx.roundRect(21, barrelY, 27 + (attacking ? 4 : 0), 3.2, 1.5); ctx.fill();
+  }
+  ctx.fillStyle = '#facc15';
+  ctx.beginPath(); ctx.arc(23, -9, 4, 0, Math.PI * 2); ctx.fill();
+  if (attacking) {
+    ctx.shadowColor = '#f97316'; ctx.shadowBlur = 18;
+    ctx.fillStyle = '#fef08a';
+    ctx.beginPath();
+    ctx.moveTo(59, -9); ctx.lineTo(47, -17); ctx.lineTo(50, -10); ctx.lineTo(46, -2); ctx.closePath(); ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // Short landing claws reinforce the improvised fantasy-machine profile.
+  ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2.3;
+  ctx.beginPath();
+  ctx.moveTo(-16, 2); ctx.lineTo(-20, 9); ctx.lineTo(-10, 9);
+  ctx.moveTo(15, 2); ctx.lineTo(19, 9); ctx.lineTo(29, 8);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+type SharedModelShape = 'robe' | 'armor' | 'agile' | 'beast' | 'spectral' | 'mechanical';
+type SharedModelConfig = {
+  body: string; shade: string; glow: string; trim: string; skin: string;
+  hair: string; eye: string; shape: SharedModelShape; bulk: number;
+};
+
+// Static model data stays outside the render loop so richer sprites do not
+// allocate a new catalog for every avatar on every animation frame.
+const SHARED_MODEL_CONFIGS: Record<string, SharedModelConfig> = {
+    Veyara: { body: '#0f766e', shade: '#134e4a', glow: '#fde047', trim: '#5eead4', skin: '#f5cba7', hair: '#f8fafc', eye: '#fde047', shape: 'robe', bulk: 0.95 },
+    Cinderlock: { body: '#9a3412', shade: '#431407', glow: '#fb923c', trim: '#fed7aa', skin: '#f0b890', hair: '#1c1917', eye: '#fb923c', shape: 'agile', bulk: 0.88 },
+    Cinderbloom: { body: '#7c2d12', shade: '#3f1609', glow: '#fb923c', trim: '#fdba74', skin: '#eeb38a', hair: '#292524', eye: '#f97316', shape: 'agile', bulk: 0.88 },
+    Solenne: { body: '#0f766e', shade: '#083344', glow: '#f8fafc', trim: '#99f6e4', skin: '#f7cfad', hair: '#cffafe', eye: '#22d3ee', shape: 'armor', bulk: 0.92 },
+    Croakwell: { body: '#65a30d', shade: '#365314', glow: '#facc15', trim: '#d9f99d', skin: '#a3e635', hair: '#3f6212', eye: '#fef08a', shape: 'beast', bulk: 1.05 },
+    Soulscourge: { body: '#450a0a', shade: '#1f0808', glow: '#fb7185', trim: '#fda4af', skin: '#7f1d1d', hair: '#18181b', eye: '#fda4af', shape: 'spectral', bulk: 0.98 },
+    Stonewake: { body: '#92400e', shade: '#451a03', glow: '#fcd34d', trim: '#fde68a', skin: '#d6a66f', hair: '#422006', eye: '#fef3c7', shape: 'armor', bulk: 1.12 },
+    Mirehook: { body: '#36513e', shade: '#172b21', glow: '#b5d36b', trim: '#d9f99d', skin: '#8aa06c', hair: '#1c2b26', eye: '#d9f99d', shape: 'beast', bulk: 1.12 },
+    Nullweaver: { body: '#34205f', shade: '#190d35', glow: '#a78bfa', trim: '#ddd6fe', skin: '#9d8ac7', hair: '#17102a', eye: '#c4b5fd', shape: 'spectral', bulk: 0.94 },
+    Voltgrip: { body: '#70591d', shade: '#302609', glow: '#fde047', trim: '#fef08a', skin: '#b88c57', hair: '#292524', eye: '#fde047', shape: 'mechanical', bulk: 1.12 },
+    Aetherbolt: { body: '#14527b', shade: '#082f49', glow: '#67e8f9', trim: '#cffafe', skin: '#e8c7ad', hair: '#e0f2fe', eye: '#22d3ee', shape: 'armor', bulk: 0.9 },
+    Corsara: { body: '#7f1d35', shade: '#3f0b1b', glow: '#fb7185', trim: '#fecdd3', skin: '#d9a177', hair: '#1c1917', eye: '#fda4af', shape: 'agile', bulk: 0.9 },
+    Brewmaw: { body: '#693916', shade: '#351a08', glow: '#f59e0b', trim: '#fcd34d', skin: '#c28b54', hair: '#3f2b18', eye: '#fbbf24', shape: 'beast', bulk: 1.18 },
+    Wraithhook: { body: '#155e58', shade: '#0a302d', glow: '#5eead4', trim: '#99f6e4', skin: '#6b9b91', hair: '#102a2a', eye: '#5eead4', shape: 'spectral', bulk: 1.02 },
+    Faelith: { body: '#7e22ce', shade: '#3b0764', glow: '#bef264', trim: '#e9d5ff', skin: '#ecc5a8', hair: '#d8b4fe', eye: '#bef264', shape: 'robe', bulk: 0.86 },
+    Oathmute: { body: '#312e81', shade: '#17164a', glow: '#ddd6fe', trim: '#a5b4fc', skin: '#d9c0ae', hair: '#e0e7ff', eye: '#c4b5fd', shape: 'armor', bulk: 0.98 },
+    Cloudtail: { body: '#6b21a8', shade: '#321052', glow: '#fbbf24', trim: '#e9d5ff', skin: '#ead0b7', hair: '#f5f3ff', eye: '#fbbf24', shape: 'agile', bulk: 0.88 },
+    Stonebranch: { body: '#854d0e', shade: '#422006', glow: '#86efac', trim: '#bbf7d0', skin: '#c69a6b', hair: '#365314', eye: '#86efac', shape: 'beast', bulk: 1.02 },
+    Stepstone: { body: '#166534', shade: '#0a351b', glow: '#facc15', trim: '#bbf7d0', skin: '#d5a276', hair: '#172554', eye: '#facc15', shape: 'agile', bulk: 1.0 },
+    Skybreaker: { body: '#1d4ed8', shade: '#172554', glow: '#f97316', trim: '#bfdbfe', skin: '#d6af91', hair: '#334155', eye: '#7dd3fc', shape: 'mechanical', bulk: 1.02 },
+};
+
 function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, animState: string, animTime: number) {
-  const colors: Record<string, [string, string]> = {
-    Veyara: ['#0f766e', '#fde047'], Cinderlock: ['#7c2d12', '#fb923c'], Cinderbloom: ['#7c2d12', '#fb923c'],
-    Solenne: ['#0f766e', '#f8fafc'], Croakwell: ['#65a30d', '#facc15'],
-    'Soulscourge': ['#450a0a', '#fb7185'], Stonewake: ['#92400e', '#fcd34d'],
-    Mirehook: ['#36513e', '#b5d36b'], Nullweaver: ['#34205f', '#a78bfa'],
-    Voltgrip: ['#70591d', '#fde047'], Aetherbolt: ['#14527b', '#67e8f9'],
-    Corsara: ['#7f1d35', '#fb7185'], Brewmaw: ['#693916', '#f59e0b'],
-    Wraithhook: ['#155e58', '#5eead4'],
-    Faelith: ['#7e22ce', '#bef264'], Oathmute: ['#312e81', '#ddd6fe'],
-    Cloudtail: ['#6b21a8', '#fbbf24'], Stonebranch: ['#854d0e', '#86efac'],
-    Stepstone: ['#166534', '#facc15'], Skybreaker: ['#1d4ed8', '#f97316'],
-  };
-  const [body, glow] = colors[name] || ['#7c2d12', '#fb923c'];
+  const model = SHARED_MODEL_CONFIGS[name] || SHARED_MODEL_CONFIGS.Cinderlock;
+  const { body, shade, glow, trim, skin, hair, eye, shape, bulk } = model;
   const casting = animState === 'cast' || animState === 'attack';
+  const walking = animState === 'walk';
+  const stride = walking ? Math.sin(animTime * 11) * 2.2 : 0;
+  const handDrive = animState === 'attack' ? 5 : animState === 'cast' ? 2 : 0;
   ctx.save();
   ctx.shadowColor = glow;
-  ctx.shadowBlur = casting ? 20 : 7;
-  ctx.fillStyle = body;
+  ctx.shadowBlur = casting ? 17 : 4;
+
+  // Back silhouette: capes, spectral wisps, plating and beast pelts make the
+  // models readable before their smaller facial and equipment details.
+  if (shape === 'robe' || shape === 'spectral') {
+    ctx.fillStyle = shade;
+    ctx.beginPath();
+    ctx.moveTo(-10 * bulk, -24);
+    ctx.quadraticCurveTo(-20 * bulk, -12, -17 * bulk, 5);
+    ctx.quadraticCurveTo(0, shape === 'spectral' ? 11 : 5, 17 * bulk, 5);
+    ctx.quadraticCurveTo(20 * bulk, -12, 10 * bulk, -24);
+    ctx.closePath();
+    ctx.fill();
+  } else if (shape === 'mechanical') {
+    ctx.fillStyle = shade;
+    ctx.fillRect(-17 * bulk, -23, 34 * bulk, 18);
+    ctx.fillStyle = trim;
+    ctx.globalAlpha = 0.55;
+    ctx.fillRect(-20 * bulk, -20, 5, 11);
+    ctx.fillRect(15 * bulk, -20, 5, 11);
+    ctx.globalAlpha = 1;
+  } else if (shape === 'beast') {
+    ctx.fillStyle = shade;
+    ctx.beginPath();
+    for (let i = -3; i <= 3; i++) {
+      ctx.moveTo(i * 5 * bulk, -23);
+      ctx.lineTo((i * 5 - 3) * bulk, -33 - Math.abs(i) * 2);
+      ctx.lineTo((i * 5 + 3) * bulk, -24);
+    }
+    ctx.fill();
+  }
+
+  // Separate legs and boots replace the previous single trapezoid body.
+  ctx.fillStyle = shade;
   ctx.beginPath();
-  ctx.moveTo(-12, -22); ctx.lineTo(12, -22); ctx.lineTo(16, 0); ctx.lineTo(-16, 0); ctx.closePath();
+  ctx.roundRect(-8 * bulk, -7 + stride, 6 * bulk, 10, 2);
+  ctx.roundRect(2 * bulk, -7 - stride, 6 * bulk, 10, 2);
   ctx.fill();
-  ctx.fillStyle = name === 'Croakwell' ? '#a3e635' : name === 'Soulscourge' ? '#7f1d1d' : '#f5cba7';
-  ctx.beginPath(); ctx.arc(0, -32, 14, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = name === 'Soulscourge' ? '#fda4af' : '#0f172a';
-  ctx.beginPath(); ctx.arc(-5, -33, 2.2, 0, Math.PI * 2); ctx.arc(5, -33, 2.2, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = trim;
+  ctx.beginPath();
+  ctx.roundRect(-9 * bulk, 0 + stride, 8 * bulk, 4, 2);
+  ctx.roundRect(1 * bulk, 0 - stride, 8 * bulk, 4, 2);
+  ctx.fill();
+
+  // Layered torso with a directional material gradient, collar and emblem.
+  const torso = ctx.createLinearGradient(-14, -22, 13, -2);
+  torso.addColorStop(0, trim);
+  torso.addColorStop(0.18, body);
+  torso.addColorStop(1, shade);
+  ctx.fillStyle = torso;
+  ctx.beginPath();
+  const shoulder = (shape === 'armor' || shape === 'mechanical' ? 15 : 12) * bulk;
+  const waist = (shape === 'robe' || shape === 'beast' ? 15 : 11) * bulk;
+  ctx.moveTo(-shoulder, -22); ctx.quadraticCurveTo(0, -27, shoulder, -22);
+  ctx.lineTo(waist, 0); ctx.quadraticCurveTo(0, 4, -waist, 0); ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = trim;
+  ctx.lineWidth = 1.25;
+  ctx.stroke();
+  ctx.fillStyle = trim;
+  ctx.globalAlpha = 0.82;
+  ctx.beginPath();
+  if (shape === 'mechanical') ctx.roundRect(-5, -18, 10, 8, 2);
+  else { ctx.moveTo(0, -19); ctx.lineTo(4, -13); ctx.lineTo(0, -8); ctx.lineTo(-4, -13); ctx.closePath(); }
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Arms have independent action poses, adding readable attacks at arena scale.
+  ctx.strokeStyle = body;
+  ctx.lineWidth = (shape === 'beast' || shape === 'mechanical' ? 7 : 5.5) * bulk;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-shoulder + 2, -19); ctx.lineTo(-18 * bulk, -10 - handDrive * 0.35);
+  ctx.moveTo(shoulder - 2, -19); ctx.lineTo(19 * bulk + handDrive, -13 - handDrive * 0.7);
+  ctx.stroke();
+  ctx.fillStyle = skin;
+  ctx.beginPath();
+  ctx.arc(-18 * bulk, -9 - handDrive * 0.35, 3.2, 0, Math.PI * 2);
+  ctx.arc(19 * bulk + handDrive, -12 - handDrive * 0.7, 3.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Head, hair/helmet mass, brows and multi-layer eyes.
+  ctx.shadowBlur = casting ? 9 : 2;
+  ctx.fillStyle = hair;
+  ctx.beginPath();
+  if (shape === 'beast') ctx.ellipse(0, -33, 15.5 * bulk, 15, 0, 0, Math.PI * 2);
+  else ctx.arc(0, -34, 14.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = skin;
+  ctx.beginPath();
+  ctx.ellipse(0, -32, 12.5 * (shape === 'beast' ? bulk : 1), 11.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = shade;
+  ctx.lineWidth = 1.1;
+  ctx.stroke();
+
+  if (shape === 'armor' || shape === 'mechanical') {
+    ctx.fillStyle = body;
+    ctx.beginPath();
+    ctx.arc(0, -35, 14.5, Math.PI, Math.PI * 2);
+    ctx.lineTo(11, -32); ctx.lineTo(-11, -32); ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = trim; ctx.lineWidth = 1.4; ctx.stroke();
+    if (shape === 'mechanical') {
+      ctx.fillStyle = glow;
+      ctx.globalAlpha = 0.72;
+      ctx.fillRect(-10, -35, 20, 3.5);
+      ctx.globalAlpha = 1;
+    }
+  } else if (shape === 'robe' || shape === 'spectral') {
+    ctx.fillStyle = hair;
+    ctx.beginPath();
+    ctx.moveTo(-13, -37); ctx.quadraticCurveTo(-5, -49, 0, -41);
+    ctx.quadraticCurveTo(8, -48, 14, -35); ctx.lineTo(8, -39);
+    ctx.quadraticCurveTo(0, -44, -8, -38); ctx.closePath();
+    ctx.fill();
+  } else if (shape === 'agile') {
+    ctx.fillStyle = hair;
+    ctx.beginPath();
+    ctx.moveTo(-13, -38); ctx.lineTo(-5, -49); ctx.lineTo(-1, -41);
+    ctx.lineTo(6, -48); ctx.lineTo(13, -36); ctx.quadraticCurveTo(0, -43, -13, -38); ctx.fill();
+  }
+
+  ctx.strokeStyle = shade;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(-8, -35); ctx.lineTo(-3, -36);
+  ctx.moveTo(3, -36); ctx.lineTo(8, -35);
+  ctx.stroke();
+  ctx.fillStyle = '#f8fafc';
+  ctx.beginPath();
+  ctx.ellipse(-5, -32, 3.1, 3.5, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, -32, 3.1, 3.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = eye;
+  ctx.beginPath();
+  ctx.ellipse(-4.6, -31.7, 1.8, 2.4, 0, 0, Math.PI * 2);
+  ctx.ellipse(5.4, -31.7, 1.8, 2.4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-5.2, -32.6, 0.75, 0, Math.PI * 2);
+  ctx.arc(4.8, -32.6, 0.75, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = shade;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(1, -27.5, 3, 0.25, Math.PI - 0.25);
+  ctx.stroke();
+
   ctx.strokeStyle = glow;
   ctx.fillStyle = glow;
   ctx.lineWidth = 4;

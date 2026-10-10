@@ -9,6 +9,10 @@ export const NEXUS_TOWER_X = { blue: 420, red: 1580 } as const;
 export const DRAGON_X = ARENA_WIDTH / 2;
 export const DRAGON_SPAWN_SECOND = 4 * 60;
 
+export function shouldSeparateUnitsByTeam(teamA: 'blue' | 'red', teamB: 'blue' | 'red'): boolean {
+  return teamA !== teamB;
+}
+
 // Each camp has one rocky enclosure with a lane-facing entrance. The boss
 // pits use larger stones. These centers also match the neutral spawn points.
 export const CAMP_ROCK_RINGS = [
@@ -57,6 +61,28 @@ export const ROCK_TERRAIN = [
 
 export function isInsideRockTerrain(x: number, y: number, bodyRadius = 0): boolean {
   return ROCK_TERRAIN.some(rock => Math.hypot(x - rock.x, y - rock.y) < rock.radius + bodyRadius);
+}
+
+function projectOutsideRockTerrain(
+  x: number, y: number, bodyRadius: number
+): { x: number; y: number } {
+  for (let pass = 0; pass < 16; pass++) {
+    let collided = false;
+    for (const rock of ROCK_TERRAIN) {
+      const limit = rock.radius + bodyRadius;
+      const awayX = x - rock.x;
+      const awayY = y - rock.y;
+      const gap = Math.hypot(awayX, awayY);
+      if (gap >= limit) continue;
+
+      collided = true;
+      const scale = (limit + 0.5) / Math.max(gap, 0.001);
+      x = rock.x + (gap < 0.001 ? -(limit + 0.5) : awayX * scale);
+      y = rock.y + (gap < 0.001 ? 0 : awayY * scale);
+    }
+    if (!collided) break;
+  }
+  return { x, y };
 }
 
 // Farming routes pass through the open base stair and each camp's lane-facing
@@ -110,20 +136,7 @@ export function resolveRockTerrainMovement(
 
   const teleport = distance > 350;
   if (teleport) {
-    let x = to.x;
-    let y = to.y;
-    for (const rock of ROCK_TERRAIN) {
-      const limit = rock.radius + bodyRadius;
-      const awayX = x - rock.x;
-      const awayY = y - rock.y;
-      const gap = Math.hypot(awayX, awayY);
-      if (gap < limit) {
-        const scale = (limit + 0.5) / Math.max(gap, 0.001);
-        x = rock.x + (gap < 0.001 ? -(limit + 0.5) : awayX * scale);
-        y = rock.y + (gap < 0.001 ? 0 : awayY * scale);
-      }
-    }
-    return { x, y };
+    return projectOutsideRockTerrain(to.x, to.y, bodyRadius);
   }
 
   const steps = Math.max(1, Math.ceil(Math.min(distance, 350) / 8));
@@ -169,17 +182,10 @@ export function resolveRockTerrainMovement(
       if (!collided) break;
     }
 
-    // Safety fallback: ensure final point is strictly outside all rocks
-    for (const rock of ROCK_TERRAIN) {
-      const limit = rock.radius + bodyRadius;
-      const awayX = nextX - rock.x;
-      const awayY = nextY - rock.y;
-      const gap = Math.hypot(awayX, awayY);
-      if (gap < limit) {
-        const scale = (limit + 0.5) / Math.max(gap, 0.001);
-        nextX = rock.x + (gap < 0.001 ? -(limit + 0.5) : awayX * scale);
-        nextY = rock.y + (gap < 0.001 ? 0 : awayY * scale);
-      }
+    if (isInsideRockTerrain(nextX, nextY, bodyRadius)) {
+      const clearPosition = projectOutsideRockTerrain(nextX, nextY, bodyRadius);
+      nextX = clearPosition.x;
+      nextY = clearPosition.y;
     }
 
     x = nextX;
@@ -302,4 +308,3 @@ export function canUnitRecall(
   const isClearAndSafe = nearestEnemyDist > safeEnemyDistance && nearestMinionDist > 270 && nearestStructureDist > 250;
   return isClearAndSafe && recallCooldown <= 0;
 }
-

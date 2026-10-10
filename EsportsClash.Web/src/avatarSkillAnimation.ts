@@ -37,6 +37,35 @@ export interface AvatarAnimationState {
   color: string;
 }
 
+export interface AbilityVfxProfile {
+  seed: number;
+  particleCount: number;
+  runeSegments: number;
+  bloomAlpha: number;
+  trailWidth: number;
+}
+
+function stableAbilitySeed(value: string): number {
+  let hash = 2166136261;
+  for (let i = 0; i < value.length; i++) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+/** Stable visual density values keep replays deterministic while giving ultimates extra spectacle. */
+export function getAbilityVfxProfile(avatarName: string, slot: SkillSlot): AbilityVfxProfile {
+  const ultimate = slot === 'ultimate';
+  return {
+    seed: stableAbilitySeed(`${avatarName}:${slot}`),
+    particleCount: ultimate ? 14 : slot === 'skill2' ? 9 : 7,
+    runeSegments: ultimate ? 12 : 6,
+    bloomAlpha: ultimate ? 0.42 : 0.25,
+    trailWidth: ultimate ? 10 : slot === 'skill2' ? 6 : 5,
+  };
+}
+
 export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: AvatarAnimationState): void {
   const motif = AVATAR_ANIMATION_MOTIFS[state.avatarName];
   if (!motif) return;
@@ -48,6 +77,9 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
   const fade = Math.max(0, 1 - p);
   const angle = Math.atan2(y - sourceY, x - sourceX);
   const dist = Math.hypot(x - sourceX, y - sourceY);
+  const profile = getAbilityVfxProfile(state.avatarName, slot);
+  const eased = 1 - Math.pow(1 - p, 3);
+  const impactPulse = Math.sin(p * Math.PI);
 
   ctx.save();
   ctx.globalAlpha = Math.min(1, fade * 1.35);
@@ -81,12 +113,15 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
 
   const drawBeam = (x1: number, y1: number, x2: number, y2: number, w: number, glowColor = '#ffffff') => {
     ctx.save();
-    ctx.strokeStyle = glowColor;
-    ctx.lineWidth = w * 0.5;
-    ctx.shadowBlur = 20;
-    strokeLine(x1, y1, x2, y2);
     ctx.strokeStyle = color;
     ctx.lineWidth = w;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 22;
+    strokeLine(x1, y1, x2, y2);
+    ctx.strokeStyle = glowColor;
+    ctx.lineWidth = Math.max(1.5, w * 0.28);
+    ctx.shadowColor = glowColor;
+    ctx.shadowBlur = 8;
     strokeLine(x1, y1, x2, y2);
     ctx.restore();
   };
@@ -95,15 +130,30 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
     const lDist = Math.hypot(x2 - x1, y2 - y1) || 1;
     const nx = -(y2 - y1) / lDist;
     const ny = (x2 - x1) / lDist;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
+    const points: Array<[number, number]> = [[x1, y1]];
     for (let i = 1; i < segs; i++) {
       const frac = i / segs;
       const jVal = ((i % 2 === 0 ? 1 : -1) * jitter) * (1 - Math.abs(frac - 0.5) * 0.6);
-      ctx.lineTo(x1 + (x2 - x1) * frac + nx * jVal, y1 + (y2 - y1) * frac + ny * jVal);
+      points.push([x1 + (x2 - x1) * frac + nx * jVal, y1 + (y2 - y1) * frac + ny * jVal]);
     }
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
+    points.push([x2, y2]);
+    const strokePoints = () => {
+      ctx.beginPath();
+      ctx.moveTo(points[0][0], points[0][1]);
+      for (let i = 1; i < points.length; i++) ctx.lineTo(points[i][0], points[i][1]);
+      ctx.stroke();
+    };
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = ultimate ? 7 : 4.5;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 20;
+    strokePoints();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = ultimate ? 2.1 : 1.4;
+    ctx.shadowBlur = 6;
+    strokePoints();
+    ctx.restore();
   };
 
   // Helper: Detailed metallic Shuriken
@@ -223,6 +273,122 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
     ctx.restore();
   };
 
+  // A shared presentation layer makes every spell feel grounded and readable without changing its hit area.
+  const drawAbilityFoundation = () => {
+    ctx.save();
+    const groundY = y + Math.min(10, radius * 0.1);
+    const bloomRadius = radius * (ultimate ? 1.12 : 0.88);
+    const bloom = ctx.createRadialGradient(x, groundY, 1, x, groundY, Math.max(2, bloomRadius));
+    bloom.addColorStop(0, '#ffffff');
+    bloom.addColorStop(0.2, color);
+    bloom.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = fade * profile.bloomAlpha * (0.55 + impactPulse * 0.45);
+    ctx.fillStyle = bloom;
+    ctx.beginPath();
+    ctx.ellipse(x, groundY, bloomRadius, bloomRadius * 0.46, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = ultimate ? 2.2 : 1.3;
+    ctx.globalAlpha = fade * (ultimate ? 0.68 : 0.4);
+    ctx.setLineDash(ultimate ? [10, 5] : [5, 7]);
+    ctx.lineDashOffset = -p * (ultimate ? 38 : 24);
+    ctx.beginPath();
+    ctx.ellipse(x, groundY, radius * (ultimate ? 1.02 : 0.74), radius * (ultimate ? 0.42 : 0.31), 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    if (dist > 24) {
+      const normalX = -(y - sourceY) / Math.max(1, dist);
+      const normalY = (x - sourceX) / Math.max(1, dist);
+      const bend = ((profile.seed % 17) - 8) * 0.65;
+      const controlX = (sourceX + x) * 0.5 + normalX * bend;
+      const controlY = (sourceY + y) * 0.5 + normalY * bend - 12;
+      const trace = () => {
+        ctx.beginPath();
+        ctx.moveTo(sourceX, sourceY - 13);
+        ctx.quadraticCurveTo(controlX, controlY, x, y - 9);
+        ctx.stroke();
+      };
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = fade * (ultimate ? 0.28 : 0.17);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = profile.trailWidth;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 16;
+      trace();
+      ctx.globalAlpha = fade * (ultimate ? 0.42 : 0.26);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = Math.max(1, profile.trailWidth * 0.16);
+      ctx.shadowBlur = 4;
+      trace();
+
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = fade * 0.55;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = ultimate ? 2 : 1.2;
+      ctx.beginPath();
+      ctx.arc(sourceX, sourceY - 10, 7 + eased * (ultimate ? 11 : 7), 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.restore();
+  };
+
+  const drawAbilityFinish = () => {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < profile.particleCount; i++) {
+      const seedAngle = ((profile.seed % 6283) / 1000) + (i * Math.PI * 2) / profile.particleCount;
+      const spiral = seedAngle + p * (ultimate ? 3.1 : 2.1) * (i % 2 === 0 ? 1 : -1);
+      const spread = radius * (0.24 + eased * (0.42 + (i % 3) * 0.09));
+      const px = x + Math.cos(spiral) * spread;
+      const py = y + Math.sin(spiral) * spread * 0.62 - (1 - p) * (i % 3) * 2;
+      const size = (ultimate ? 3.8 : 2.6) * (0.72 + ((profile.seed >>> (i % 16)) & 1) * 0.35);
+      ctx.globalAlpha = fade * (0.28 + impactPulse * 0.58);
+      ctx.fillStyle = i % 4 === 0 ? '#ffffff' : color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = ultimate ? 11 : 7;
+      ctx.beginPath();
+      ctx.moveTo(px, py - size);
+      ctx.lineTo(px + size * 0.72, py);
+      ctx.lineTo(px, py + size);
+      ctx.lineTo(px - size * 0.72, py);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = fade * (0.22 + impactPulse * (ultimate ? 0.7 : 0.42));
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = ultimate ? 2.4 : 1.4;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = ultimate ? 18 : 10;
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(3, radius * (0.2 + eased * 0.68)), 0, Math.PI * 2);
+    ctx.stroke();
+
+    if (ultimate) {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = '#fefce8';
+      ctx.globalAlpha = fade * (0.55 + impactPulse * 0.3);
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 13;
+      const sealRadius = radius * 1.08;
+      for (let i = 0; i < profile.runeSegments; i++) {
+        const start = (i * Math.PI * 2) / profile.runeSegments - p * 2.4;
+        const arcLength = (Math.PI * 2 / profile.runeSegments) * 0.58;
+        ctx.beginPath();
+        ctx.arc(x, y, sealRadius, start, start + arcLength);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  };
+
+  drawAbilityFoundation();
+
   switch (motif) {
     case 'bloom':
       drawRing(x, y, radius * 0.7);
@@ -260,14 +426,47 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       }
       break;
     case 'rotor':
-      drawRing(x, y - 10, radius * (ultimate ? 1.2 : 0.7));
-      drawRing(x, y - 10, radius * 0.32);
-      for (let i = 0; i < (ultimate ? 8 : 4); i++) {
-        const rotorAngle = (i * Math.PI * 2) / (ultimate ? 8 : 4) + p * 3;
-        drawBeam(x, y - 10, x + Math.cos(rotorAngle) * radius * 0.9,
-          y - 10 + Math.sin(rotorAngle) * radius * 0.9, ultimate ? 6 : 4, '#bfdbfe');
+      if (slot === 'skill1') {
+        // Flakburst Cannon: dense shell, airburst ring, and directional shrapnel.
+        drawBeam(sourceX, sourceY - 15, x, y - 12, 7, '#fef3c7');
+        drawRing(x, y - 12, radius * 0.72 * impactPulse);
+        drawFillCircle(x, y - 12, 8 + impactPulse * 8, '#f97316');
+        for (let fragment = 0; fragment < 10; fragment++) {
+          const fragmentAngle = fragment * Math.PI * 0.2 + p * 1.5;
+          drawSpoke(x, y - 12, fragmentAngle, 10, radius * (0.45 + p * 0.38));
+        }
+      } else if (slot === 'skill2') {
+        // Rotor Overdrive: fast elliptical rotor disc and crossing cannon tracers.
+        ctx.save();
+        ctx.translate(sourceX, sourceY - 30);
+        ctx.scale(1, 0.34);
+        drawRing(0, 0, radius * 0.88);
+        for (let blade = 0; blade < 4; blade++) {
+          const rotorAngle = blade * Math.PI / 2 + p * 12;
+          strokeLine(0, 0, Math.cos(rotorAngle) * radius * 0.92, Math.sin(rotorAngle) * radius * 0.92);
+        }
+        ctx.restore();
+        for (let tracer = -2; tracer <= 2; tracer++) {
+          const spread = tracer * 7;
+          strokeLine(sourceX + 15, sourceY - 17 + spread * 0.25, x, y - 14 + spread);
+        }
+      } else {
+        // Air Superiority: the whole target zone becomes a layered gunship barrage.
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(1, 0.58);
+        drawRing(0, 0, radius * 1.15);
+        drawRing(0, 0, radius * 0.72);
+        ctx.restore();
+        for (let shell = 0; shell < 12; shell++) {
+          const shellAngle = shell * Math.PI / 6 + p * 2.4;
+          const shellRadius = radius * (0.34 + (shell % 3) * 0.3);
+          const shellX = x + Math.cos(shellAngle) * shellRadius;
+          const shellY = y + Math.sin(shellAngle) * shellRadius * 0.58;
+          drawBeam(shellX, shellY - 46, shellX, shellY, 5, '#fef08a');
+          drawFillCircle(shellX, shellY, 5 + impactPulse * 4, shell % 2 ? '#f97316' : '#facc15');
+        }
       }
-      drawFillCircle(x, y - 10, ultimate ? 12 : 7, '#f97316');
       break;
     // -------------------------------------------------------------
     // 1. SOLANA (Leona) - Solar Vanguard
@@ -1160,6 +1359,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       }
       break;
   }
+
+  drawAbilityFinish();
 
   ctx.restore();
 }

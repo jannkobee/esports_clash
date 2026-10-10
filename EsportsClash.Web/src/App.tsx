@@ -41,6 +41,7 @@ import {
   getEqualizedPlayerPool
 } from './equalizedMode';
 import { PlayerDraftPhaseView } from './components/PlayerDraftPhaseView';
+import { createDevRandomMatch } from './devRandomMode';
 import { sound } from './audio';
 import { settlePackPurchase } from './packEconomy';
 import { 
@@ -52,8 +53,13 @@ import {
   Trophy, 
   Package,
   Layers,
-  Globe
+  Globe,
+  FlaskConical,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
+
+type ArenaChoice = 'ai' | 'equalized_ai' | 'dev_random' | 'online' | null;
 
 export interface PackConfig {
   id: string;
@@ -139,9 +145,10 @@ export const PACK_CATALOG: PackConfig[] = [
 export function App() {
   // Navigation
   const [activeTab, setActiveTab] = useState<'squad' | 'packs' | 'evolutions' | 'arena' | 'ladder' | 'tournament' | 'champions' | 'pro_circuit'>('squad');
+  const [musicEnabled, setMusicEnabled] = useState(() => sound.isMusicEnabled());
   const [selectedOpponentTeam, setSelectedOpponentTeam] = useState<ProTeam | null>(() => PRO_TEAMS_DATABASE[0] ?? null);
   const [inBattle, setInBattle] = useState<boolean>(false);
-  const [arenaChoice, setArenaChoice] = useState<'ai' | 'equalized_ai' | 'online' | null>(() =>
+  const [arenaChoice, setArenaChoice] = useState<ArenaChoice>(() =>
     sessionStorage.getItem('esports-clash-online-session') ? 'online' : null);
   const [draftSeed, setDraftSeed] = useState(0);
   const rivalCoach = INITIAL_COACHES[draftSeed % INITIAL_COACHES.length];
@@ -597,6 +604,13 @@ export function App() {
     setInBattle(true);
   };
 
+  const launchDeveloperRandomMatch = () => {
+    const seed = crypto.getRandomValues(new Uint32Array(1))[0];
+    const matchup = createDevRandomMatch(INITIAL_PLAYERS, CHAMPIONS, seed);
+    setArenaChoice('dev_random');
+    handleDraftComplete(matchup.blue, matchup.red, seed);
+  };
+
   // Queue Ranked Ladder Match against specific ladder rival
   const handleQueueRankedMatch = (opponent: LadderEntry) => {
     setActiveRankedOpponent(opponent);
@@ -610,6 +624,7 @@ export function App() {
 
   // Match Simulation Handler
   const handleMatchComplete = (winTeam: 'blue' | 'red') => {
+    if (arenaChoice === 'dev_random') return;
     const isPlayerWin = winTeam === (arenaChoice === 'online' ? onlineSession?.side : 'blue');
 
     if (isPlayerWin) {
@@ -831,6 +846,25 @@ export function App() {
           >
             <Globe className="w-4 h-4" /> Pro Circuit & Scouting
           </button>
+
+          <button
+            type="button"
+            aria-label={musicEnabled ? 'Mute background music' : 'Enable background music'}
+            aria-pressed={musicEnabled}
+            title={musicEnabled ? 'Background music on' : 'Background music off'}
+            onClick={() => {
+              setMusicEnabled(sound.toggleMusic());
+              sound.playClick();
+            }}
+            className={`ml-auto shrink-0 px-3 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 whitespace-nowrap ${
+              musicEnabled
+                ? 'bg-slate-800 text-cyan-200 hover:bg-slate-700'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            {musicEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            Music {musicEnabled ? 'On' : 'Off'}
+          </button>
         </div>
       </nav>
 
@@ -944,6 +978,38 @@ export function App() {
                         <p className="text-slate-400 text-xs mt-2">Casual multiplayer exhibition. Play friendlies and test squads with zero rating risk.</p>
                       </div>
                     </button>
+                  </div>
+
+                  {import.meta.env.DEV && (
+                    <button
+                      type="button"
+                      onClick={() => { sound.playClick(); launchDeveloperRandomMatch(); }}
+                      className="w-full bg-gradient-to-r from-fuchsia-950/65 via-slate-900 to-cyan-950/65 border border-dashed border-fuchsia-400/60 hover:border-cyan-300 rounded-3xl p-5 text-left shadow-xl transition hover:-translate-y-0.5 group cursor-pointer flex flex-wrap items-center justify-between gap-4"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 rounded-2xl bg-fuchsia-500/15 border border-fuchsia-400/30">
+                          <FlaskConical className="w-7 h-7 text-fuchsia-300 group-hover:text-cyan-300 transition-colors" />
+                        </div>
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h2 className="text-lg text-white font-black">Developer Random 5v5</h2>
+                            <span className="text-[10px] px-2 py-0.5 rounded bg-fuchsia-400/20 text-fuchsia-200 font-black uppercase tracking-wider border border-fuchsia-400/30">Dev build only</span>
+                          </div>
+                          <p className="text-slate-400 text-xs mt-1">Skip both drafts and instantly launch ten unique random avatars on equalized 100 OVR players.</p>
+                        </div>
+                      </div>
+                      <span className="px-4 py-2 rounded-xl bg-fuchsia-500 text-white text-xs font-black shadow-lg group-hover:bg-cyan-500 group-hover:text-slate-950 transition-colors">Launch Random Match</span>
+                    </button>
+                  )}
+                </div>
+              ) : arenaChoice === 'dev_random' ? (
+                <div className="max-w-2xl mx-auto mt-8 rounded-3xl border border-dashed border-fuchsia-400/60 bg-gradient-to-br from-fuchsia-950/50 via-slate-900 to-cyan-950/50 p-7 text-center shadow-2xl">
+                  <FlaskConical className="w-10 h-10 text-fuchsia-300 mx-auto mb-3" />
+                  <h2 className="text-xl font-black text-white">Developer Random 5v5</h2>
+                  <p className="text-xs text-slate-400 mt-2">Generate a fresh equalized matchup with ten unique random avatars. Developer matches do not award progression or affect standings.</p>
+                  <div className="mt-5 flex flex-wrap justify-center gap-3">
+                    <button type="button" onClick={() => { sound.playClick(); launchDeveloperRandomMatch(); }} className="rounded-xl bg-fuchsia-500 hover:bg-fuchsia-400 px-5 py-2 text-xs font-black text-white transition">Launch New Random 5v5</button>
+                    <button type="button" onClick={() => setArenaChoice(null)} className="rounded-xl border border-slate-600 px-5 py-2 text-xs font-bold text-slate-300 hover:text-white transition">Back to modes</button>
                   </div>
                 </div>
               ) : arenaChoice === 'online' && (!onlineSession || !onlineRoom?.ready) ? (
@@ -1185,7 +1251,9 @@ export function App() {
                 key={`${matchSeed}:${replayNumber}`}
                 seed={matchSeed}
                 onlineMode={arenaChoice === 'online' && !replayDraft}
-                onReplay={() => setReplayNumber(number => number + 1)}
+                onReplay={arenaChoice === 'dev_random' ? launchDeveloperRandomMatch : () => setReplayNumber(number => number + 1)}
+                replayLabel={arenaChoice === 'dev_random' ? 'New Random 5v5' : undefined}
+                replayTitle={arenaChoice === 'dev_random' ? 'Generate ten new random avatars and restart immediately' : undefined}
                 batchMode={balanceRunsLeft > 0}
                 batchId={balanceBatchId}
                 batchNumber={balanceRunsLeft > 0 ? 26 - balanceRunsLeft : 0}
@@ -1201,10 +1269,10 @@ export function App() {
                 }}
                 blueLineup={balanceSwapped ? draftedRed : draftedBlue}
                 redLineup={balanceSwapped ? draftedBlue : draftedRed}
-                blueCoach={balanceSwapped ? (replayDraft?.redCoach ?? (arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_RED : arenaChoice === 'online' ? onlineRoom?.redCoach ?? (selectedOpponentTeam?.coach ?? rivalCoach) : (selectedOpponentTeam?.coach ?? rivalCoach))) : (replayDraft?.blueCoach ?? (arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_BLUE : arenaChoice === 'online' ? onlineRoom?.blueCoach ?? currentCoach : currentCoach))}
-                redCoach={balanceSwapped ? (replayDraft?.blueCoach ?? (arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_BLUE : arenaChoice === 'online' ? onlineRoom?.blueCoach ?? currentCoach : currentCoach)) : (replayDraft?.redCoach ?? (arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_RED : arenaChoice === 'online' ? onlineRoom?.redCoach ?? (selectedOpponentTeam?.coach ?? rivalCoach) : (selectedOpponentTeam?.coach ?? rivalCoach)))}
-                blueTeamName={arenaChoice === 'equalized_ai' ? (balanceSwapped ? 'Red All-Stars (100 OVR)' : 'Blue All-Stars (100 OVR)') : (arenaChoice === 'online' && !replayDraft ? 'Blue Player' : balanceSwapped ? (selectedOpponentTeam?.name ?? 'Rival Chibi Squad') : 'T-Chibi Squad')}
-                opponentName={arenaChoice === 'equalized_ai' ? (balanceSwapped ? 'Blue All-Stars (100 OVR)' : 'Red All-Stars (100 OVR)') : (arenaChoice === 'online' && !replayDraft ? 'Red Player' : balanceSwapped ? 'T-Chibi Squad' : (selectedOpponentTeam?.name ?? 'Rival Chibi Squad'))}
+                blueCoach={balanceSwapped ? (replayDraft?.redCoach ?? (arenaChoice === 'equalized_ai' || arenaChoice === 'dev_random' ? EQUALIZED_COACH_RED : arenaChoice === 'online' ? onlineRoom?.redCoach ?? (selectedOpponentTeam?.coach ?? rivalCoach) : (selectedOpponentTeam?.coach ?? rivalCoach))) : (replayDraft?.blueCoach ?? (arenaChoice === 'equalized_ai' || arenaChoice === 'dev_random' ? EQUALIZED_COACH_BLUE : arenaChoice === 'online' ? onlineRoom?.blueCoach ?? currentCoach : currentCoach))}
+                redCoach={balanceSwapped ? (replayDraft?.blueCoach ?? (arenaChoice === 'equalized_ai' || arenaChoice === 'dev_random' ? EQUALIZED_COACH_BLUE : arenaChoice === 'online' ? onlineRoom?.blueCoach ?? currentCoach : currentCoach)) : (replayDraft?.redCoach ?? (arenaChoice === 'equalized_ai' || arenaChoice === 'dev_random' ? EQUALIZED_COACH_RED : arenaChoice === 'online' ? onlineRoom?.redCoach ?? (selectedOpponentTeam?.coach ?? rivalCoach) : (selectedOpponentTeam?.coach ?? rivalCoach)))}
+                blueTeamName={arenaChoice === 'dev_random' ? (balanceSwapped ? 'Dev Red Random' : 'Dev Blue Random') : arenaChoice === 'equalized_ai' ? (balanceSwapped ? 'Red All-Stars (100 OVR)' : 'Blue All-Stars (100 OVR)') : (arenaChoice === 'online' && !replayDraft ? 'Blue Player' : balanceSwapped ? (selectedOpponentTeam?.name ?? 'Rival Chibi Squad') : 'T-Chibi Squad')}
+                opponentName={arenaChoice === 'dev_random' ? (balanceSwapped ? 'Dev Blue Random' : 'Dev Red Random') : arenaChoice === 'equalized_ai' ? (balanceSwapped ? 'Blue All-Stars (100 OVR)' : 'Red All-Stars (100 OVR)') : (arenaChoice === 'online' && !replayDraft ? 'Red Player' : balanceSwapped ? 'T-Chibi Squad' : (selectedOpponentTeam?.name ?? 'Rival Chibi Squad'))}
                 onMatchComplete={balanceRunsLeft > 0 ? () => {
                   setBalanceRunsLeft(left => left - 1);
                   if (balanceRunsLeft > 1) {

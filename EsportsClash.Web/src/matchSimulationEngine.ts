@@ -963,7 +963,7 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     if (!camp.isAlive) return;
     const hunters = sim.champions.filter(c => c.isAlive && Math.hypot(c.x - camp.x, c.y - camp.y) <= 180);
     const validHunter = hunters.find(c => {
-      // Enforce Support restriction invariant
+      // The headless model covers solo camp clears, not live post-recall team calls.
       if (c.champion.primaryRole === 'Support') {
         sim.telemetry.supportCampFarms++;
         return false;

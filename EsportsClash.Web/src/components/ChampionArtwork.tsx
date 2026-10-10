@@ -1099,18 +1099,43 @@ export const ChampionArtwork: React.FC<ChampionArtworkProps> = ({ championId, si
           </defs>
           <circle cx="100" cy="100" r="90" fill="url(#skybreakerGlow)" />
           <circle cx="100" cy="100" r="82" fill="#172554" stroke="#60a5fa" strokeWidth="3" />
-          <path d="M49 126 Q58 83 78 87 L100 101 L122 87 Q143 83 152 126 L139 153 L61 153 Z" fill="#1e40af" stroke="#93c5fd" strokeWidth="3" />
-          <circle cx="100" cy="70" r="24" fill="#e2b38d" />
-          <path d="M76 69 Q78 42 100 42 Q123 42 124 70 L113 60 L87 60 Z" fill="#334155" stroke="#f97316" strokeWidth="3" />
-          <path d="M84 72 Q100 79 116 72" fill="none" stroke="#0f172a" strokeWidth="5" />
-          <circle cx="91" cy="68" r="3" fill="#0f172a" />
-          <circle cx="109" cy="68" r="3" fill="#0f172a" />
-          <path d="M42 48 L158 48 M57 37 L143 59" stroke="#bfdbfe" strokeWidth="5" strokeLinecap="round" />
-          <circle cx="100" cy="48" r="8" fill="#f97316" stroke="#fed7aa" strokeWidth="2" />
-          <path d="M122 110 L166 101 L169 112 L126 123 Z" fill="#475569" stroke="#fb923c" strokeWidth="3" />
-          <circle cx="161" cy="108" r="6" fill="#fb923c" />
-          <circle cx="69" cy="126" r="7" fill="#f97316" />
-          <circle cx="131" cy="126" r="7" fill="#f97316" />
+          {/* Exposed counter-rotating lift fans: deliberately no helicopter tail or main rotor. */}
+          <circle cx="52" cy="103" r="32" fill="#0f172a" stroke="#f97316" strokeWidth="7" />
+          <circle cx="151" cy="94" r="29" fill="#0f172a" stroke="#f97316" strokeWidth="7" />
+          <path d="M25 103 H79 M52 76 V130 M31 82 L73 124 M73 82 L31 124" stroke="#64748b" strokeWidth="7" strokeLinecap="round" />
+          <path d="M127 94 H175 M151 70 V118 M134 77 L168 111 M168 77 L134 111" stroke="#64748b" strokeWidth="7" strokeLinecap="round" />
+          <circle cx="52" cy="103" r="7" fill="#fbbf24" />
+          <circle cx="151" cy="94" r="7" fill="#fbbf24" />
+
+          {/* Exposed braces, radial engine, and faceted armored hover pod. */}
+          <path d="M57 100 L78 125 M146 94 L132 122" stroke="#94a3b8" strokeWidth="7" />
+          <path d="M52 119 L77 101 L130 104 L158 126 L142 157 L79 160 L48 143 Z" fill="#1d4ed8" stroke="#bfdbfe" strokeWidth="4" />
+          <path d="M52 119 L82 132 L75 158 L48 143 Z M82 132 L130 105 L142 157 L75 158 Z" fill="#172554" opacity="0.52" stroke="#60a5fa" strokeWidth="2" />
+          <circle cx="91" cy="130" r="20" fill="#1e293b" stroke="#94a3b8" strokeWidth="3" />
+          <path d="M91 111 V149 M72 130 H110 M78 117 L104 143 M104 117 L78 143" stroke="#475569" strokeWidth="4" />
+          <circle cx="91" cy="130" r="7" fill="#f59e0b" />
+
+          {/* Open cockpit and clearly visible original ace. */}
+          <path d="M72 107 Q81 77 111 78 Q133 82 137 111 L124 125 L78 121 Z" fill="#0f172a" stroke="#fb923c" strokeWidth="4" />
+          <path d="M81 111 Q89 95 104 99 Q120 101 128 115" fill="#334155" stroke="#64748b" strokeWidth="3" />
+          <path d="M88 90 Q91 71 107 69 Q124 72 126 91 L118 105 L96 104 Z" fill="#d6af91" stroke="#334155" strokeWidth="3" />
+          <path d="M89 87 Q91 66 107 64 Q124 67 128 88 L119 80 L96 80 Z" fill="#334155" stroke="#60a5fa" strokeWidth="3" />
+          <ellipse cx="99" cy="87" rx="8" ry="6" fill="#f59e0b" stroke="#78350f" strokeWidth="3" />
+          <ellipse cx="116" cy="87" rx="8" ry="6" fill="#f59e0b" stroke="#78350f" strokeWidth="3" />
+          <path d="M107 87 H109 M98 100 Q108 106 118 99" fill="none" stroke="#7c2d12" strokeWidth="3" />
+          <path d="M90 103 L66 98 L78 114 Z" fill="#fb923c" stroke="#fed7aa" strokeWidth="2" />
+          <circle cx="84" cy="116" r="6" fill="#d6af91" />
+          <circle cx="124" cy="116" r="6" fill="#d6af91" />
+
+          {/* Oversized three-barrel flak cannon dominates the prow. */}
+          <circle cx="139" cy="133" r="19" fill="#111827" stroke="#f97316" strokeWidth="4" />
+          <path d="M136 121 L184 115 M140 132 L190 131 M136 143 L184 149" stroke="#94a3b8" strokeWidth="8" strokeLinecap="round" />
+          <circle cx="139" cy="133" r="8" fill="#fbbf24" stroke="#fef08a" strokeWidth="2" />
+          <path d="M181 113 L197 130 L181 151 L188 132 Z" fill="#fef08a" opacity="0.9" />
+
+          {/* Landing claws and turbulent lift wash. */}
+          <path d="M71 153 L61 169 L78 169 M132 154 L145 169 L162 165" fill="none" stroke="#cbd5e1" strokeWidth="5" strokeLinecap="round" />
+          <path d="M53 176 Q102 188 164 174 M69 184 Q108 192 148 183" fill="none" stroke="#60a5fa" strokeWidth="2" opacity="0.55" />
         </svg>
       );
 

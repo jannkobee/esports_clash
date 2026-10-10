@@ -1,6 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, isInsideRockTerrain, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from './arenaRules.ts';
+import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, isInsideRockTerrain, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from './arenaRules.ts';
+
+test('unit spacing ignores teammates while preserving enemy separation', () => {
+  assert.equal(shouldSeparateUnitsByTeam('blue', 'blue'), false);
+  assert.equal(shouldSeparateUnitsByTeam('red', 'red'), false);
+  assert.equal(shouldSeparateUnitsByTeam('blue', 'red'), true);
+  assert.equal(shouldSeparateUnitsByTeam('red', 'blue'), true);
+});
 
 test('expanded map leaves room between each well, nexus, and barracks', () => {
   assert.equal(ARENA_WIDTH, 2000);
@@ -93,6 +100,12 @@ test('both raised base entrances keep one clear central stair and rocky side wal
     }
     assert.ok(Math.abs(walker.x - goalX) < 8);
   }
+});
+
+test('long movement projections cannot leave units inside neighboring rocks', () => {
+  const from = { x: 0, y: 380 };
+  const projected = resolveRockTerrainMovement(from, { x: 295, y: 160 }, 13);
+  assert.equal(isInsideRockTerrain(projected.x, projected.y, 13), false);
 });
 
 test('units can approach objective pits and jungle camps from nearby lane positions', () => {

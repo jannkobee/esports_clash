@@ -284,6 +284,10 @@ export interface AramChampionUnit {
   aetherisOrbs?: { charges: number; remaining: number };
   aetherisOverchargeTimer?: number;
   aetherisOverchargeSourceId?: string;
+  propellaRotorStacks?: number;
+  propellaRotorTimer?: number;
+  propellaOverdriveTimer?: number;
+  propellaGunshipTimer?: number;
   // Item passives state
   sterakCooldown: number;
   zhonyaActive: boolean;

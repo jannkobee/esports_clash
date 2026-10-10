@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { ChampionKit, CoachCard, ItemDef, PlayerCard } from '../types';
 import { getRecommendedItem } from '../itemsData';
+import { shouldSeparateUnitsByTeam } from '../arenaRules';
 import { sound } from '../audio';
 import confetti from 'canvas-confetti';
 import { 
@@ -1282,7 +1283,7 @@ export const ThreeAramArena: React.FC<ThreeAramArenaProps> = ({
 
       for (let j = i + 1; j < unitsRef.current.length; j++) {
         const u2 = unitsRef.current[j];
-        if (!u2.isAlive) continue;
+        if (!u2.isAlive || !shouldSeparateUnitsByTeam(u1.team, u2.team)) continue;
 
         const dx = u2.x - u1.x;
         const dz = u2.z - u1.z;

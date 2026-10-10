@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chooseKnownJungleCamp, neutralAttackRange, shouldFocusExposedNexus, shouldPressWonFight } from './macroFarmRules.ts';
+import { chooseKnownJungleCamp, neutralAttackRange, shouldFocusExposedNexus, shouldPressWonFight,
+  choosePostRecallTeamCamp, shouldStartPostRecallCampObjective, shareJungleCampRewards } from './macroFarmRules.ts';
 
 const camps = [
   { id: 'home', type: 'blue_buff', x: 530, y: 150, homeX: 485, homeY: 145, isAlive: true },
@@ -29,10 +30,50 @@ test('lane pressure, enemy threat, and a nexus finish window cancel camp farming
   assert.equal(chooseKnownJungleCamp(camps, { ...actor, urgentStructurePush: true }), undefined);
 });
 
-test('support avatars never solo farm neutral jungle camps', () => {
+test('supports join a coordinated post-recall camp objective but do not solo farm', () => {
   assert.equal(chooseKnownJungleCamp(camps, { ...actor, role: 'Support' }), undefined);
   assert.equal(chooseKnownJungleCamp(camps, { ...actor, supportStrength: 3 }), undefined);
   assert.equal(chooseKnownJungleCamp(camps, { ...actor, role: 'Support', supportStrength: 2 }), undefined);
+  assert.equal(chooseKnownJungleCamp(camps, {
+    ...actor, x: 65, y: 380, role: 'Support', supportStrength: 3, teamObjective: true,
+  })?.id, 'home');
+});
+
+test('post-recall camp calls need a healthy group, a live camp, and a safe map', () => {
+  const call = { recentlyRecalledAllies: 2, livingAllies: 5, healthyAllies: 3,
+    campAvailable: true, activeThreat: false, activePush: false };
+  assert.equal(shouldStartPostRecallCampObjective(call), true);
+  assert.equal(shouldStartPostRecallCampObjective({ ...call, recentlyRecalledAllies: 1 }), false);
+  assert.equal(shouldStartPostRecallCampObjective({ ...call, livingAllies: 2 }), false);
+  assert.equal(shouldStartPostRecallCampObjective({ ...call, campAvailable: false }), false);
+  assert.equal(shouldStartPostRecallCampObjective({ ...call, activeThreat: true }), false);
+  assert.equal(shouldStartPostRecallCampObjective({ ...call, activePush: true }), false);
+});
+
+test('a post-recall group receives one shared, nearby home-side camp', () => {
+  const expandedCamps = [
+    ...camps,
+    { id: 'blue-far', type: 'wolves', x: 680, y: 590, isAlive: true },
+    { id: 'red-near', type: 'blue_buff', x: 1620, y: 145, isAlive: true },
+    { id: 'red-far', type: 'red_buff', x: 1515, y: 600, isAlive: true },
+  ];
+  assert.equal(choosePostRecallTeamCamp(expandedCamps, 'blue', [
+    { x: 210, y: 380 }, { x: 230, y: 380 },
+  ])?.id, 'home');
+  assert.equal(choosePostRecallTeamCamp(expandedCamps, 'red', [
+    { x: 1770, y: 380 }, { x: 1790, y: 380 },
+  ])?.id, 'red-near');
+  assert.equal(choosePostRecallTeamCamp(expandedCamps, 'blue', [{ x: 220, y: 380 }]), undefined);
+});
+
+test('jungle camp gold and experience are shared without multiplying the bounty', () => {
+  const rewards = shareJungleCampRewards(85, 110, ['blue-1', 'blue-2', 'blue-1'], 'blue-2');
+  assert.deepEqual(rewards, [
+    { id: 'blue-1', gold: 42, xp: 55 },
+    { id: 'blue-2', gold: 43, xp: 55 },
+  ]);
+  assert.equal(rewards.reduce((sum, share) => sum + share.gold, 0), 85);
+  assert.equal(rewards.reduce((sum, share) => sum + share.xp, 0), 110);
 });
 
 test('an exposed low-health nexus becomes a finish objective, informed by card and coach', () => {

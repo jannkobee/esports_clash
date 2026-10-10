@@ -48,7 +48,7 @@ export const AVATAR_COMBOS: Record<string, AvatarCombo> = {
   Cloudtail: { name: 'Miststaff Ambush', opener: 'skill2', followup: 'skill1' },
   Stonebranch: { name: 'Canopy Strike', opener: 'skill2', followup: 'skill1' },
   Stepstone: { name: 'Ringing Reversal', opener: 'skill2', followup: 'skill1' },
-  Skybreaker: { name: 'Cloudline Run', opener: 'skill1', followup: 'skill2' },
+  Skybreaker: { name: 'Flakwing Redline', opener: 'skill1', followup: 'skill2' },
 };
 
 export function comboPracticeNeeded(player: PlayerCard, avatarName: string): number | null {
