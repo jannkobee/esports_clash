@@ -3,6 +3,35 @@ import { abilityRank } from './skillProgression.ts';
 
 export type DamagingAbilitySlot = 'innate' | 'skill1' | 'skill2' | 'ultimate';
 
+export interface AbilityRatioInfo {
+  adRatio: number;
+  apRatio: number;
+  adPercent: number;
+  apPercent: number;
+  ratioDesc: string;
+}
+
+export function getAbilityRatios(
+  champion: Pick<ChampionKit, 'primaryRole' | 'secondaryRole'>,
+  skill?: { adRatio?: number; apRatio?: number }
+): AbilityRatioInfo {
+  const isMage = champion.primaryRole === 'Mage' || champion.secondaryRole === 'Mage';
+  const isPhysicalRole = champion.primaryRole === 'Assassin'
+    || champion.primaryRole === 'Fighter'
+    || champion.primaryRole === 'Marksman';
+  const adRatio = skill?.adRatio ?? (isPhysicalRole ? 0.36 : 0.18);
+  const apRatio = skill?.apRatio ?? (isMage ? 0.42 : 0.25);
+  const adPercent = Math.round(adRatio * 100);
+  const apPercent = Math.round(apRatio * 100);
+  return {
+    adRatio,
+    apRatio,
+    adPercent,
+    apPercent,
+    ratioDesc: `(+${adPercent}% AD, +${apPercent}% AP)`,
+  };
+}
+
 export function abilityDamageFromStats(
   rawDamage: number,
   champion: Pick<ChampionKit, 'primaryRole' | 'secondaryRole' | 'skill1' | 'skill2' | 'ultimate'>,
@@ -12,13 +41,8 @@ export function abilityDamageFromStats(
 ): number {
   if (slot === 'innate' || rawDamage <= 0) return rawDamage;
   const skill = champion[slot];
-  const isMage = champion.primaryRole === 'Mage' || champion.secondaryRole === 'Mage';
-  const isPhysicalRole = champion.primaryRole === 'Assassin'
-    || champion.primaryRole === 'Fighter'
-    || champion.primaryRole === 'Marksman';
-  const adRatio = skill.adRatio ?? (isPhysicalRole ? 0.36 : 0.18);
-  const apRatio = skill.apRatio ?? (isMage ? 0.42 : 0.25);
-  return rawDamage + bonusAd * adRatio + bonusAp * apRatio;
+  const ratios = getAbilityRatios(champion, skill);
+  return rawDamage + bonusAd * ratios.adRatio + bonusAp * ratios.apRatio;
 }
 
 export function abilityItemStats(unit: Pick<AramChampionUnit, 'items'>): { bonusAd: number; bonusAp: number } {

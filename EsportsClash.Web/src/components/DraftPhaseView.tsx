@@ -9,6 +9,7 @@ import { getChampionLore } from '../championLore';
 import { abilityTargetingDetails } from '../aetherisAbilities';
 import { AVATAR_COMBAT_TYPES, getAvatarCombatProfile } from '../avatarCombatRoles';
 import { KAELEN_INVOKED_SPELLS } from '../kaelenAbilities';
+import { getAbilityRatios } from '../abilityRules';
 import { 
   Ban, 
   Swords, 
@@ -406,7 +407,7 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
               <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
                 <div className="flex justify-between items-baseline mb-0.5">
                   <span className="text-cyan-300 font-bold text-[11px]">Q: {inspected.skill1.name}</span>
-                  <span className="text-slate-400 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +0.2 HP regen/s per held orb' : `CD: ${inspected.skill1.cooldown}s | ${inspected.skill1.damageType} ${inspected.skill1.damage}`}</span>
+                  <span className="text-slate-400 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +0.2 HP regen/s per held orb' : `CD: ${inspected.skill1.cooldown}s | ${inspected.skill1.damageType} ${inspected.skill1.damage}${inspected.skill1.damage > 0 ? ` (+${getAbilityRatios(inspected, inspected.skill1).adPercent}% AD, +${getAbilityRatios(inspected, inspected.skill1).apPercent}% AP)` : ''}`}</span>
                 </div>
                 <div className="text-slate-300 text-[11px] leading-tight">{inspected.skill1.desc}</div>
                 <div className="text-cyan-200 text-[10px] leading-tight">{abilityTargetingDetails(inspected.skill1)}</div>
@@ -416,7 +417,7 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
               <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
                 <div className="flex justify-between items-baseline mb-0.5">
                   <span className="text-purple-300 font-bold text-[11px]">W: {inspected.skill2.name}</span>
-                  <span className="text-slate-400 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +1 movement speed per held orb' : `CD: ${inspected.skill2.cooldown}s | ${inspected.name === 'Aetheris' ? 'Shield · +15% attack damage' : `${inspected.skill2.damageType} ${inspected.skill2.damage}`}`}</span>
+                  <span className="text-slate-400 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +1 movement speed per held orb' : `CD: ${inspected.skill2.cooldown}s | ${inspected.name === 'Aetheris' ? 'Shield · +15% attack damage' : `${inspected.skill2.damageType} ${inspected.skill2.damage}${inspected.skill2.damage > 0 ? ` (+${getAbilityRatios(inspected, inspected.skill2).adPercent}% AD, +${getAbilityRatios(inspected, inspected.skill2).apPercent}% AP)` : ''}`}`}</span>
                 </div>
                 <div className="text-slate-300 text-[11px] leading-tight">{inspected.skill2.desc}</div>
                 <div className="text-cyan-200 text-[10px] leading-tight">{abilityTargetingDetails(inspected.skill2)}</div>
@@ -426,7 +427,7 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
               <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
                 <div className="flex justify-between items-baseline mb-0.5">
                   <span className="text-rose-400 font-bold text-[11px]">{inspected.name === 'Kaelen' ? 'E: ' : 'R: '}{inspected.ultimate.name}</span>
-                  <span className="text-rose-300 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +1% spell/damage amp per held orb' : `CD: ${inspected.ultimate.cooldown}s | ${inspected.name === 'Aetheris' ? 'Team tether · 5-8s by rank' : `${inspected.ultimate.damageType} ${inspected.ultimate.damage}`}`}</span>
+                  <span className="text-rose-300 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +1% spell/damage amp per held orb' : `CD: ${inspected.ultimate.cooldown}s | ${inspected.name === 'Aetheris' ? 'Team tether · 5-8s by rank' : `${inspected.ultimate.damageType} ${inspected.ultimate.damage}${inspected.ultimate.damage > 0 ? ` (+${getAbilityRatios(inspected, inspected.ultimate).adPercent}% AD, +${getAbilityRatios(inspected, inspected.ultimate).apPercent}% AP)` : ''}`}`}</span>
                 </div>
                 <div className="text-slate-300 text-[11px] leading-tight">{inspected.ultimate.desc}</div>
                 <div className="text-cyan-200 text-[10px] leading-tight">{abilityTargetingDetails(inspected.ultimate)}</div>

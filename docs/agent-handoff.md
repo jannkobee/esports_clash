@@ -1184,3 +1184,26 @@ Ran batch multi-seed simulations across seeds and analyzed aggregated telemetry:
 **Verification:** `npm run check:game` passed: design validation, all 196 unit tests, all 3 headless multi-seed simulation tests (50/50 side parity, 0 support camp farms, Cardrel alias preserved), and TypeScript `tsc -b`. `npm run build` compiled production bundle cleanly.
 
 **Limit:** The highground scout ward cooldown shares the standard ward cooldown (75–85s), preventing spam while ensuring at least one vision ward covers the base entrance before the team breaches the ramp.
+
+## User Request: AD and AP Ratio Descriptions on Avatar Abilities
+
+**User:** Asked to add descriptions of the AD and AP scaling ratios into the abilities of all avatars.
+
+**Agent:**
+1. Centralized ratio calculation in `getAbilityRatios(champion, skill)` in `EsportsClash.Web/src/abilityRules.ts`, returning typed ratio percentages and formatted description strings `(+X% AD, +Y% AP)` based on champion primary and secondary roles:
+   - Physical roles (Assassin, Fighter, Marksman without Mage): `+36% AD, +25% AP`.
+   - Physical roles with Mage secondary (e.g. Inai, Aetherbolt, Corsara, Batrix): `+36% AD, +42% AP`.
+   - Primary Mages and secondary Mages: `+18% AD, +42% AP`.
+   - Tanks and Supports without Mage secondary: `+18% AD, +25% AP`.
+   - Per-ability custom overrides (`skill.adRatio`, `skill.apRatio`) take priority when specified.
+2. Updated all 121 damaging ability descriptions across all 45 playable champions in `src/mockData.ts` (17 base champions) and `src/additionalChampions.ts` (28 additional champions) to clearly state their AD and AP ratios (`(+X% AD, +Y% AP)`), while preserving all existing crowd control keywords (`stun`, `knock`, `root`, `snare`, `pull`, `silence`, etc.) and non-damaging utility abilities (`damage === 0`).
+3. Enhanced the avatar inspection UI in `ChampionHubView.tsx` and `DraftPhaseView.tsx`:
+   - In `ChampionHubView.tsx`, added dedicated colored badges (`text-amber-400 +X% AD` and `text-cyan-400 +Y% AP`) in the ability headers alongside rank-scaled damage for Skill 1, Skill 2, and Ultimate.
+   - In `DraftPhaseView.tsx`, displayed AD and AP scaling ratios directly alongside ability cooldowns and base damage values.
+4. Added comprehensive unit tests in `src/abilityRules.test.mjs` verifying ratio calculations, hybrid role handling, and formatted strings.
+
+**Affected files:** `EsportsClash.Web/src/abilityRules.ts`, `EsportsClash.Web/src/abilityRules.test.mjs`, `EsportsClash.Web/src/mockData.ts`, `EsportsClash.Web/src/additionalChampions.ts`, `EsportsClash.Web/src/components/ChampionHubView.tsx`, `EsportsClash.Web/src/components/DraftPhaseView.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** `npm run check:game` passed: design validation, all 197 unit tests, all 3 multi-seed simulation tests (Cardrel alias, tower dive limits, and turret execution invariants intact), and `tsc -b`. `npm run build` compiled cleanly.
+
+**Limit:** Zero-damage utility and crowd control abilities (`damage === 0`) remain non-damaging and do not scale with AD or AP.

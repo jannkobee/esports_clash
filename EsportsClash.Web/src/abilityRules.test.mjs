@@ -4,6 +4,7 @@ import { ALL_ITEMS } from './itemsData.ts';
 import {
   abilityDamageFromStats,
   abilityItemStats,
+  getAbilityRatios,
   maxMana,
   manaRegen,
   skill1ManaCost,
@@ -81,4 +82,51 @@ test('stat scaling never turns a zero-damage utility ability into a damage spell
   tank.champion.primaryRole = 'Tank';
   tank.champion.skill2.damage = 0;
   assert.equal(abilityDamageFromStats(0, tank.champion, 'skill2', 100, 100), 0);
+});
+
+test('getAbilityRatios provides accurate AD and AP ratio percentages and descriptions', () => {
+  const marksman = { primaryRole: 'Marksman' };
+  assert.deepEqual(getAbilityRatios(marksman), {
+    adRatio: 0.36,
+    apRatio: 0.25,
+    adPercent: 36,
+    apPercent: 25,
+    ratioDesc: '(+36% AD, +25% AP)',
+  });
+
+  const mage = { primaryRole: 'Mage' };
+  assert.deepEqual(getAbilityRatios(mage), {
+    adRatio: 0.18,
+    apRatio: 0.42,
+    adPercent: 18,
+    apPercent: 42,
+    ratioDesc: '(+18% AD, +42% AP)',
+  });
+
+  const hybrid = { primaryRole: 'Assassin', secondaryRole: 'Mage' };
+  assert.deepEqual(getAbilityRatios(hybrid), {
+    adRatio: 0.36,
+    apRatio: 0.42,
+    adPercent: 36,
+    apPercent: 42,
+    ratioDesc: '(+36% AD, +42% AP)',
+  });
+
+  const tank = { primaryRole: 'Tank', secondaryRole: 'Support' };
+  assert.deepEqual(getAbilityRatios(tank), {
+    adRatio: 0.18,
+    apRatio: 0.25,
+    adPercent: 18,
+    apPercent: 25,
+    ratioDesc: '(+18% AD, +25% AP)',
+  });
+
+  const custom = { primaryRole: 'Fighter' };
+  assert.deepEqual(getAbilityRatios(custom, { adRatio: 0.55, apRatio: 0.10 }), {
+    adRatio: 0.55,
+    apRatio: 0.1,
+    adPercent: 55,
+    apPercent: 10,
+    ratioDesc: '(+55% AD, +10% AP)',
+  });
 });

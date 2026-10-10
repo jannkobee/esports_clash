@@ -7,6 +7,7 @@ import { sound } from '../audio';
 import { getChampionLore } from '../championLore';
 import { KAELEN_INVOKED_SPELLS, kaelenOrbRankAtLevel, kaelenOrbStatBonuses } from '../kaelenAbilities';
 import { abilityTargetingDetails } from '../aetherisAbilities';
+import { getAbilityRatios } from '../abilityRules';
 import { 
   Shield, 
   Swords, 
@@ -441,6 +442,13 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
                     <span className="text-xs bg-slate-900 text-amber-300 px-2 py-0.5 rounded border border-white/10 font-bold">
                       {isKaelen ? '+1.0 movement speed/orb at rank 1' : `${selectedChamp.skill1.damageType} Dmg: ${getSkillDamageAtRank(selectedChamp.skill1.damage, clampedRank, false)}`}
                     </span>
+                    {!isKaelen && selectedChamp.skill1.damage > 0 && (
+                      <span className="text-xs bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-white/10 font-bold">
+                        <span className="text-amber-400">+{getAbilityRatios(selectedChamp, selectedChamp.skill1).adPercent}% AD</span>
+                        {' · '}
+                        <span className="text-cyan-400">+{getAbilityRatios(selectedChamp, selectedChamp.skill1).apPercent}% AP</span>
+                      </span>
+                    )}
                   </div>
                 </div>
                 <p className="text-sm text-slate-300 leading-relaxed">
@@ -478,6 +486,13 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
                         : selectedChamp.name === 'Aetheris' ? '100 shield · +15% attack damage · 5s'
                           : `${selectedChamp.skill2.damageType} Dmg: ${getSkillDamageAtRank(selectedChamp.skill2.damage, clampedRank, false)}`}
                     </span>
+                    {!isKaelen && selectedChamp.skill2.damage > 0 && (
+                      <span className="text-xs bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-white/10 font-bold">
+                        <span className="text-amber-400">+{getAbilityRatios(selectedChamp, selectedChamp.skill2).adPercent}% AD</span>
+                        {' · '}
+                        <span className="text-cyan-400">+{getAbilityRatios(selectedChamp, selectedChamp.skill2).apPercent}% AP</span>
+                      </span>
+                    )}
                   </div>
                 </div>
                 <p className="text-sm text-slate-300 leading-relaxed">
@@ -545,6 +560,13 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
                         ? `Nearby allies linked for ${clampedRank + 4}s`
                         : `${selectedChamp.ultimate.damageType} Dmg: ${getSkillDamageAtRank(selectedChamp.ultimate.damage, clampedRank, true)}`}
                     </span>
+                    {selectedChamp.ultimate.damage > 0 && (
+                      <span className="text-xs bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-white/10 font-bold">
+                        <span className="text-amber-400">+{getAbilityRatios(selectedChamp, selectedChamp.ultimate).adPercent}% AD</span>
+                        {' · '}
+                        <span className="text-cyan-400">+{getAbilityRatios(selectedChamp, selectedChamp.ultimate).apPercent}% AP</span>
+                      </span>
+                    )}
                   </div>
                 </div>
                 <p className="text-sm text-slate-200 leading-relaxed font-medium">{selectedChamp.ultimate.desc}</p>
