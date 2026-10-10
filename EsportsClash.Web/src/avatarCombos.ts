@@ -23,7 +23,7 @@ export const AVATAR_COMBOS: Record<string, AvatarCombo> = {
   Kaolin: { name: 'Boulder Crash', opener: 'skill2', followup: 'skill1' },
   Inai: { name: 'Void Ambush', opener: 'skill2', followup: 'skill1' },
   Veyara: { name: 'Elemental Crown', opener: 'skill2', followup: 'skill1' },
-  Cinderlock: { name: 'Ashen Pursuit', opener: 'skill2', followup: 'skill1' },
+  Cinderbloom: { name: 'Ashen Pursuit', opener: 'skill2', followup: 'skill1' },
   Solenne: { name: 'Mist Snare', opener: 'skill2', followup: 'skill1' },
   Croakwell: { name: 'Frog Chorus', opener: 'skill2', followup: 'skill1' },
   'Soulscourge': { name: 'Soul Requiem', opener: 'skill2', followup: 'skill1' },
@@ -44,6 +44,10 @@ export const AVATAR_COMBOS: Record<string, AvatarCombo> = {
   Batrix: { name: 'Sticky Firefly', opener: 'skill2', followup: 'skill1' },
   Quillback: { name: 'Goo Quill Nova', opener: 'skill1', followup: 'skill2' },
   Aetheris: { name: 'Overcharge Array', opener: 'skill2', followup: 'skill1' },
+  Faelith: { name: 'Moththorn', opener: 'skill2', followup: 'skill1' },
+  Oathmute: { name: 'Quiet Script', opener: 'skill2', followup: 'skill1' },
+  Cloudtail: { name: 'Miststaff Ambush', opener: 'skill2', followup: 'skill1' },
+  Stonebranch: { name: 'Canopy Strike', opener: 'skill2', followup: 'skill1' },
 };
 
 export function comboPracticeNeeded(player: PlayerCard, avatarName: string): number | null {

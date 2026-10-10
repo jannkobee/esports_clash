@@ -6,7 +6,7 @@ import {
   INITIAL_FACILITIES, 
   INITIAL_PLAYERS 
 } from './mockData';
-import { ChampionKit, CoachCard, EvolutionPlan, Facility, PlayerCard, TournamentTeam, AvatarRole } from './types';
+import { ChampionKit, CoachCard, EvolutionPlan, Facility, PlayerCard, TournamentTeam } from './types';
 import { PackOpeningModal } from './components/PackOpeningModal';
 import { EvolutionsView } from './components/EvolutionsView';
 import { SquadView } from './components/SquadView';
@@ -35,9 +35,9 @@ import {
   ladderOpponentToProTeam 
 } from './ladderRating';
 import { sound } from './audio';
+import { settlePackPurchase } from './packEconomy';
 import { 
   Tv, 
-  Sparkles, 
   Coins, 
   Users, 
   Zap, 
@@ -165,8 +165,6 @@ export function App() {
 
   // Club Resources
   const [teamFunds, setTeamFunds] = useState<number>(3500);
-  const [fansCount, setFansCount] = useState<number>(1250);
-  const [day, setDay] = useState<number>(1);
   const [adsWatched, setAdsWatched] = useState<number>(0);
 
   // Roster State
@@ -180,7 +178,7 @@ export function App() {
   const [activeEvolutions, setActiveEvolutions] = useState<{ [cardId: string]: { planId: string; progress: number[] } }>({});
 
   // Gacha Modal
-  const [packModal, setPackModal] = useState<{ open: boolean; name: string; cards: PlayerCard[]; duplicateCoins: number; bonusEvoVoucher?: string } | null>(null);
+  const [packModal, setPackModal] = useState<{ open: boolean; name: string; cards: PlayerCard[]; duplicateUpgrades: number; spentCoins: number; balanceAfter: number } | null>(null);
 
   // Tournament Split State
   const currentLeague = 'Regional Challenger Split';
@@ -292,13 +290,9 @@ export function App() {
 
   // Run Daily Schedule in House
   const handleRunDailySchedule = (activity: string) => {
-    setDay((d) => d + 1);
-
     if (activity === 'stream') {
       const earned = 350;
-      const newFans = 120;
       setTeamFunds((f) => f + earned);
-      setFansCount((c) => c + newFans);
       sound.playCoin();
     } else if (activity === 'gym' || activity === 'rest') {
       setRoster((prev) =>
@@ -322,6 +316,7 @@ export function App() {
 
   // Gacha Pack Purchase Logic with Smart Duplicate Management
   const handleOpenPack = (packOrName: PackConfig | string, customCost?: number, customCount?: number) => {
+    if (packModal) return;
     const pack: PackConfig = typeof packOrName === 'string'
       ? {
           id: 'custom',
@@ -338,8 +333,6 @@ export function App() {
       alert(`Insufficient Clash Coins! You need 🪙 ${pack.cost.toLocaleString()} Coins.`);
       return;
     }
-
-    if (pack.cost > 0) setTeamFunds((f) => f - pack.cost);
 
     let pool = [...INITIAL_PLAYERS];
     if (pack.roleFilter) {
@@ -362,7 +355,7 @@ export function App() {
     }
 
     const pulledCards: PlayerCard[] = [];
-    let dupCoins = 0;
+    let duplicateUpgrades = 0;
     let upgradedRoster = [...roster];
 
     for (let i = 0; i < pack.count; i++) {
@@ -374,14 +367,8 @@ export function App() {
 
       const existingIndex = upgradedRoster.findIndex(r => r.name === randomBase.name);
       if (existingIndex !== -1) {
-        // DUPLICATE DETECTED: Automatically recycle duplicate into Coins based on tier!
-        const tierCoins = randomBase.tier === 'GOAT' ? 2500
-          : randomBase.tier === 'Diamond' ? 1200
-          : randomBase.tier === 'Platinum' ? 600
-          : randomBase.tier === 'Gold' ? 300
-          : randomBase.tier === 'Silver' ? 120
-          : 60;
-        dupCoins += tierCoins;
+        // A duplicate trains the owned card; pack purchases do not refund coins.
+        duplicateUpgrades += 1;
 
         // Upgrade the existing player's training level and attributes
         const existing = upgradedRoster[existingIndex];
@@ -407,24 +394,19 @@ export function App() {
       }
     }
 
-    // Chance to drop bonus EA FC-style Evolution Kit / Voucher
-    let bonusEvo: string | undefined = undefined;
-    if (Math.random() < 0.45 || pack.tierFilter === 'GOAT') {
-      const evoRoles: AvatarRole[] = ['Marksman', 'Support', 'Mage', 'Tank', 'Assassin', 'Fighter'];
-      const pickedRole = evoRoles[Math.floor(Math.random() * evoRoles.length)];
-      bonusEvo = `⚡ ${pickedRole} Evolution Kit (+350 Coins for Hub)`;
-      setTeamFunds((f) => f + 350);
-    }
-
-    if (dupCoins > 0) setTeamFunds((f) => f + dupCoins);
+    const purchase = settlePackPurchase(teamFunds, pack.cost, duplicateUpgrades);
+    if (!purchase) return;
+    setTeamFunds(purchase.balance);
     setRoster(upgradedRoster);
+    setStartingFive((current) => current.map(card => upgradedRoster.find(updated => updated.id === card.id) ?? card));
 
     setPackModal({
       open: true,
       name: pack.name,
       cards: pulledCards,
-      duplicateCoins: dupCoins,
-      bonusEvoVoucher: bonusEvo
+      duplicateUpgrades: purchase.duplicateUpgrades,
+      spentCoins: pack.cost,
+      balanceAfter: purchase.balance
     });
   };
 
@@ -614,7 +596,6 @@ export function App() {
 
     if (isPlayerWin) {
       setTeamFunds((f) => f + 1000);
-      setFansCount((c) => c + 350);
       updateEvolutionsProgress('match_win', 1);
 
       setStandings((prev) =>
@@ -729,15 +710,6 @@ export function App() {
             <div className="flex items-center gap-1.5 bg-slate-950 px-3 py-1.5 rounded-xl border border-amber-500/30 text-amber-300 shadow">
               <Coins className="w-4 h-4 text-amber-400" />
               <span>🪙 {teamFunds.toLocaleString()} Coins</span>
-            </div>
-
-            <div className="flex items-center gap-1.5 bg-slate-950 px-3 py-1.5 rounded-xl border border-pink-500/30 text-pink-300 shadow">
-              <Sparkles className="w-4 h-4 text-pink-400" />
-              <span>{fansCount.toLocaleString()} Fans</span>
-            </div>
-
-            <div className="bg-slate-950 px-3 py-1.5 rounded-xl border border-white/10 text-slate-300">
-              📅 Day {day}
             </div>
 
             <button
@@ -1141,10 +1113,10 @@ export function App() {
                   <Package className="w-4 h-4" /> Official Card Pack Store
                 </div>
                 <h2 className="text-2xl font-black text-white">
-                  SCOUT & EXPAND YOUR ESPORTS FRANCHISE
+                  SCOUT & TRAIN YOUR ESPORTS ROSTER
                 </h2>
                 <p className="text-slate-400 text-xs mt-1">
-                  Packs feature genuine walkout animations. Duplicate pulls automatically convert to Clash Coins and upgrade existing cards!
+                  Packs feature walkout animations. Duplicate pulls train your existing cards; the listed pack price is deducted from your coins.
                 </p>
               </div>
 
@@ -1377,8 +1349,9 @@ export function App() {
         <PackOpeningModal
           packName={packModal.name}
           cards={packModal.cards}
-          duplicateCoins={packModal.duplicateCoins}
-          bonusEvoVoucher={packModal.bonusEvoVoucher}
+          duplicateUpgrades={packModal.duplicateUpgrades}
+          spentCoins={packModal.spentCoins}
+          balanceAfter={packModal.balanceAfter}
           onClose={() => setPackModal(null)}
         />
       )}

@@ -60,6 +60,9 @@ export interface ChampionSkill {
   isUlt?: boolean;
 }
 
+export type AvatarCombatType = 'Carry' | 'Support' | 'Nuker' | 'Disabler' | 'Jungler' | 'Durable' | 'Escape' | 'Pusher' | 'Initiator';
+export type AvatarCombatTypeStrength = 0 | 1 | 2 | 3;
+
 export interface ChampionKit {
   id: string;
   name: string;
@@ -68,6 +71,7 @@ export interface ChampionKit {
   primaryRole: AvatarRole;
   secondaryRole?: AvatarRole;
   archetype: string;
+  combatRoles?: Partial<Record<AvatarCombatType, AvatarCombatTypeStrength>>;
   lore?: string;
   hp: number;
   ad: number;
@@ -150,8 +154,11 @@ export interface ItemDef {
     crit?: number;
     armorPen?: number;
     lethality?: number;
+    magicPen?: number;
     lifesteal?: number;
     moveSpeed?: number;
+    mana?: number;
+    manaRegen?: number;
   };
   passiveName: string;
   passiveDesc: string;
@@ -177,6 +184,13 @@ export interface LaneMinion {
   isAlive: boolean;
   empowered?: boolean;
   siegeGolem?: boolean;
+  siegeChargeCooldown?: number;
+  siegeChargeWindup?: number;
+  siegeChargeImpactTimer?: number;
+  siegeChargeTargetId?: string;
+  summonedBearOwnerId?: string;
+  summonedBearFocusId?: string;
+  facingX?: number;
 }
 
 export type StructureType = 'outer_tower' | 'inner_tower' | 'nexus_tower' | 'barracks' | 'nexus';
@@ -214,6 +228,19 @@ export interface AramChampionUnit {
   hp: number;
   maxHp: number;
   mana: number;
+  dash?: { kind: 'renn_vault' | 'renn_waltz' | 'renn_rush' | 'kaolin_roll' | 'cinder_lunge' | 'raijin_bolt' | 'canopy_bound'; startX?: number; startY?: number; targetX: number; targetY: number; targetId?: string; remaining: number; speed: number; damage?: number; hitIds?: string[] };
+  blackHole?: { x: number; y: number; remaining: number; tick: number };
+  corsaraBarrage?: { remaining: number; tick: number; facing: 'left' | 'right' };
+  monkeySpin?: { remaining: number; tick: number; hitIds: string[] };
+  monkeyCourt?: { x: number; y: number; remaining: number; tick: number };
+  silenceTimer?: number;
+  forestLink?: { groupId: string; remaining: number };
+  paxiOrb?: { x: number; y: number; targetX: number; targetY: number; remaining: number; hitIds: string[] };
+  cinderQStage?: 1 | 2;
+  cinderQTargetId?: string;
+  cinderQExpiresAt?: number;
+  cinderIgnitedUntil?: number;
+  stealthTimer?: number;
   shield: number;
   level: number;
   xp: number;
@@ -273,12 +300,22 @@ export interface AramChampionUnit {
   comboHitConfirmed?: boolean;
   teamChemistry?: number;
   // PlayStyle unique trait runtime combat states
-  clutchSurgeActive?: boolean;
-  clutchSurgeTimer?: number;
-  diveShieldActive?: boolean;
-  diveShieldTimer?: number;
-  shotcallAuraTimer?: number;
+  clutchCommitActive?: boolean;
+  traitFocusId?: string;
+  iceFocusTimer?: number;
+  clutchCommitTimer?: number;
+  shotcallSignalTimer?: number;
   traitFloatTimer?: number;
+  followUpEngageSignaled?: boolean;
+  decisionCommitTimer?: number;
+  committedState?: 'fight' | 'retreat' | 'cover';
+  supportHealTimer?: number;
+  locketCooldown?: number;
+  censerBuffTimer?: number;
+  diveTimer?: number;
+  diveAborting?: boolean;
+  diveAbortCooldown?: number;
+  diveTargetId?: string;
 }
 
 export interface BushPatch {

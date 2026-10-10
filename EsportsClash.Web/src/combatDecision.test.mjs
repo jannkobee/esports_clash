@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chooseTeamfightTarget, isUnitVisibleTo, shouldContestBoss, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from './combatDecision.ts';
+import { chooseTeamfightTarget, isChannelingAbility, isEnemyCaughtInAlliedChannel, isUnitVisibleTo, shouldContestBoss, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from './combatDecision.ts';
 
 function fighter(id, iq, x = 0, hp = 100, role = 'Mage') {
   return {
@@ -15,6 +15,35 @@ test('high IQ recognizes a reachable low-health carry while low IQ takes the nea
   const carry = fighter('carry', 50, 160, 20, 'Marksman');
   assert.equal(chooseTeamfightTarget(fighter('low', 20), [tank, carry], [], 150)?.id, 'tank');
   assert.equal(chooseTeamfightTarget(fighter('high', 95), [tank, carry], [], 150)?.id, 'carry');
+});
+
+test('One-Tap God hunts an exposed carry only when IQ and isolation allow', () => {
+  const tank = fighter('tank', 50, 70, 100, 'Tank');
+  const carry = fighter('carry', 50, 260, 100, 'Marksman');
+  const hunter = fighter('hunter', 85);
+  hunter.player.badges = ['One-Tap God'];
+  assert.equal(chooseTeamfightTarget(hunter, [tank, carry], [], 150)?.id, 'carry');
+
+  const guard = fighter('guard', 50, 265, 100, 'Tank');
+  assert.equal(chooseTeamfightTarget(hunter, [tank, carry, guard], [], 150)?.id, 'tank');
+  hunter.player.stats.iq = 40;
+  assert.equal(chooseTeamfightTarget(hunter, [tank, carry], [], 150)?.id, 'tank');
+});
+
+test('Ice in Veins retains a reachable fight target after control ends', () => {
+  const steady = fighter('steady', 85);
+  steady.player.badges = ['Ice in Veins'];
+  const first = fighter('first', 50, 90, 100, 'Tank');
+  const second = fighter('second', 50, 70, 10, 'Marksman');
+  steady.traitFocusId = first.id;
+  steady.iceFocusTimer = 1;
+  assert.equal(chooseTeamfightTarget(steady, [first, second], [], 150)?.id, 'first');
+  steady.iceFocusTimer = 0;
+  assert.equal(chooseTeamfightTarget(steady, [first, second], [], 150)?.id, 'second');
+  steady.iceFocusTimer = 1;
+  steady.traitFocusId = first.id;
+  first.isAlive = false;
+  assert.equal(chooseTeamfightTarget(steady, [first, second], [], 150)?.id, 'second');
 });
 
 test('high IQ saves a ready ultimate for impact and still uses it in a teamfight', () => {
@@ -91,3 +120,56 @@ test('bush concealment hides targets from outside observers unless revealed, fac
   assert.equal(isUnitVisibleTo(target, observer), true);
   assert.equal(chooseTeamfightTarget(observer, [target], [], 250)?.id, 'target');
 });
+
+test('isChannelingAbility correctly identifies channeled abilities', () => {
+  const normal = fighter('normal', 70);
+  assert.equal(isChannelingAbility(normal), false);
+  const nullweaver = fighter('nullweaver', 70);
+  nullweaver.blackHole = { x: 200, y: 0, remaining: 3, tick: 0 };
+  assert.equal(isChannelingAbility(nullweaver), true);
+  const corsara = fighter('corsara', 70);
+  corsara.corsaraBarrage = { remaining: 3, tick: 0, facing: 'right' };
+  assert.equal(isChannelingAbility(corsara), true);
+  const cloudtail = fighter('cloudtail', 70);
+  cloudtail.monkeySpin = { remaining: 2, tick: 0, hitIds: [] };
+  assert.equal(isChannelingAbility(cloudtail), true);
+});
+
+test('allies do not defensively peel around an ally who is channeling an ability', () => {
+  const tank = fighter('tank', 80, 0, 100, 'Tank');
+  const enemyNearChanneler = fighter('enemy_near', 50, 40, 100, 'Tank');
+  const enemyTrapped = fighter('enemy_trapped', 50, 150, 60, 'Marksman');
+
+  // Channeling Nullweaver at x = 30
+  const nullweaver = fighter('nullweaver', 80, 30, 100, 'Mage');
+  nullweaver.blackHole = { x: 150, y: 0, remaining: 2.5, tick: 0 };
+
+  // When Nullweaver is channeling, tank prioritizes the trapped enemy in the black hole, not peeling enemy_near
+  const target = chooseTeamfightTarget(tank, [enemyNearChanneler, enemyTrapped], [nullweaver], 150);
+  assert.equal(target?.id, 'enemy_trapped');
+});
+
+test('allies prioritize enemies caught in allied channeled abilities for follow-up engage', () => {
+  const allyMelee = fighter('ally_melee', 70, 0, 100, 'Fighter');
+  const enemyFar = fighter('enemy_far', 50, 100, 100, 'Tank');
+  const enemyInBarrage = fighter('enemy_barrage', 50, 220, 80, 'Marksman');
+
+  const corsara = fighter('corsara', 80, 50, 100, 'Marksman');
+  corsara.corsaraBarrage = { remaining: 2.5, tick: 0, facing: 'right' };
+
+  const target = chooseTeamfightTarget(allyMelee, [enemyFar, enemyInBarrage], [corsara], 150);
+  assert.equal(target?.id, 'enemy_barrage');
+});
+
+test('shouldUseUltimate commits follow-up ultimate against enemies caught in allied channel', () => {
+  const highIqUnit = fighter('high', 95, 0, 100);
+  const target = fighter('target', 50, 80, 100);
+  const corsara = fighter('corsara', 80, 0, 100, 'Marksman');
+  corsara.corsaraBarrage = { remaining: 2.5, tick: 0, facing: 'right' };
+
+  // Without channel or crowd, high IQ holds ultimate against 100% HP target in a 1v1
+  assert.equal(shouldUseUltimate(highIqUnit, target, [target], [highIqUnit]), false);
+  // With allied channel hitting the target, ultimate is committed for follow-up
+  assert.equal(shouldUseUltimate(highIqUnit, target, [target], [highIqUnit, corsara]), true);
+});
+

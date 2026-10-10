@@ -117,7 +117,11 @@ export const CHAMPION_LORE: Record<string, string> = {
   c_bristleback: 'A battle-hardened tavern brawler with an impenetrable spiny hide. The more damage Quillback takes from the flanks and rear, the more furious he becomes—spraying continuous volleys of toxic quills and ramping into an unstoppable warpath frenzy.',
 
   // 39. Aetheris (Io basis)
-  c_io: 'A pure manifestation of cosmic harmonic balance and fundamental electromagnetism. Aetheris binds itself to allied champions with resonant tether beams, amplifying their movement and attack speed, while deploying orbiting spirit wisps and translocating across the map for coordinated strikes.'
+  c_io: 'A pure manifestation of cosmic harmonic balance and fundamental electromagnetism. Aetheris binds itself to allied champions with resonant tether beams, amplifying their movement and attack speed, while deploying orbiting spirit wisps and translocating across the map for coordinated strikes.',
+  c_lulu: 'Faelith, a sprite from the Briar Court, guides a moth familiar through battle. Her bright thorns and protective blooms turn a chaotic charge into a safe escape.',
+  c_silencer: 'Oathmute records the last words of ruined kingdoms. With a stroke of quiet ink, he can close a single mouth or still an entire battlefield for a moment.',
+  c_wukong_lol: 'Cloudtail is the younger of two wandering staff brothers. He loves feints, mist doubles, and whirling through the front line before his opponents can read him.',
+  c_monkeyking_dota: 'Stonebranch is Cloudtail’s older brother and his fiercest rival. He bounds through the canopy and plants a court of staff echoes wherever he chooses to stand.'
 };
 
 export function getChampionLore(championId: string): string {

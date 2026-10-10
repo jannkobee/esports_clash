@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ChampionKit, PlayerCard, AvatarRole } from '../types';
+import { ChampionKit, PlayerCard, AvatarRole, AvatarCombatType } from '../types';
+import { AVATAR_COMBAT_TYPES, getAvatarCombatProfile } from '../avatarCombatRoles';
 import { ChampionArtwork } from './ChampionArtwork';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
@@ -30,6 +31,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
   const [selectedChamp, setSelectedChamp] = useState<ChampionKit>(champions[0]);
   const [activeSkillTab, setActiveSkillTab] = useState<'passive' | 'skill1' | 'skill2' | 'ultimate'>('ultimate');
   const [roleFilter, setRoleFilter] = useState<AvatarRole | 'All'>('All');
+  const [combatTypeFilter, setCombatTypeFilter] = useState<AvatarCombatType | 'All'>('All');
   const [filterBy, setFilterBy] = useState<'Name' | 'Role' | 'Archetype' | 'HP' | 'AD' | 'Range'>('Name');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [inspectRank, setInspectRank] = useState<number>(1);
@@ -38,8 +40,9 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
   const filteredChampions = [...champions]
     .filter((c) => {
       const matchesRole = roleFilter === 'All' || c.primaryRole === roleFilter || c.secondaryRole === roleFilter;
-      const matchesSearch = !searchQuery || c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.archetype.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesRole && matchesSearch;
+      const matchesCombatType = combatTypeFilter === 'All' || getAvatarCombatProfile(c)[combatTypeFilter] > 0;
+      const matchesSearch = !searchQuery || c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.archetype.toLowerCase().includes(searchQuery.toLowerCase()) || AVATAR_COMBAT_TYPES.some(type => type.toLowerCase().includes(searchQuery.toLowerCase()) && getAvatarCombatProfile(c)[type] > 0);
+      return matchesRole && matchesCombatType && matchesSearch;
     })
     .sort((a, b) => {
       if (filterBy === 'Name') return a.name.localeCompare(b.name);
@@ -57,8 +60,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
   );
 
   const handleTestSkill = (type: 's1' | 's2' | 'ult') => {
-    if (type === 'ult') sound.playUltimateExplosion();
-    else sound.playSpellHit();
+    sound.playAvatarSkill(selectedChamp.name, type === 'ult' ? 'ultimate' : type === 's1' ? 'skill1' : 'skill2');
   };
 
   const lore = getChampionLore(selectedChamp.id);
@@ -95,7 +97,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
             <Layers className="w-4 h-4" />
             CHAMPIONS, ABILITY KITS & NARRATIVE LORE
           </div>
-          <h2 className="text-2xl font-black text-white">AVATAR ROSTER DOSSIER</h2>
+          <h2 className="text-2xl font-black text-white">AVATAR ROSTER & COMBAT TYPES</h2>
           <p className="text-slate-400 text-xs mt-0.5">
             Explore all 39 avatars with narrative lore, dual elemental essence weaving (Kaelen), 18-level skill caps, and athlete masteries.
           </p>
@@ -131,6 +133,14 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
 
         {/* Filter / Sort by Selector & Search Box */}
         <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-xl border border-slate-800 text-xs font-bold text-slate-400">
+            <span>Combat type:</span>
+            <select value={combatTypeFilter} onChange={(e) => setCombatTypeFilter(e.target.value as AvatarCombatType | 'All')}
+              className="bg-transparent text-cyan-300 font-bold focus:outline-none cursor-pointer">
+              <option value="All">All types</option>
+              {AVATAR_COMBAT_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
+            </select>
+          </div>
           <div className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-xl border border-slate-800">
             <ArrowUpDown className="w-3.5 h-3.5 text-amber-400" />
             <span className="text-xs font-bold text-slate-400">Filter by:</span>
@@ -218,6 +228,22 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
               <span className="text-slate-600"> · </span>
               <span className="text-purple-300 font-medium">{selectedChamp.archetype}</span>
             </div>
+          </div>
+
+          <div className="w-full rounded-2xl border border-slate-800 bg-slate-950/80 p-3 text-left">
+            <div className="text-[11px] font-black uppercase tracking-wider text-cyan-300 mb-2">Combat types</div>
+            <div className="grid grid-cols-3 gap-x-3 gap-y-2">
+              {AVATAR_COMBAT_TYPES.map(type => {
+                const strength = getAvatarCombatProfile(selectedChamp)[type];
+                return <div key={type} className="min-w-0">
+                  <div className={`text-[10px] font-semibold ${strength ? 'text-slate-200' : 'text-slate-500'}`}>{type}</div>
+                  <div className="mt-1 h-1.5 rounded-full bg-slate-700 overflow-hidden">
+                    <div className="h-full rounded-full bg-cyan-300" style={{ width: `${strength / 3 * 100}%` }} />
+                  </div>
+                </div>;
+              })}
+            </div>
+            <p className="mt-2 text-[10px] text-slate-500">Shows how this avatar tends to play. Player IQ and teamfight skill decide when to use it.</p>
           </div>
 
           {/* Narrative Lore Section */}

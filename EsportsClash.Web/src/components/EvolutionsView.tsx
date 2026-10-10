@@ -26,10 +26,14 @@ export const EvolutionsView: React.FC<EvolutionsViewProps> = ({
 }) => {
   const [selectedPlan, setSelectedPlan] = useState<EvolutionPlan>(plans[0]);
   const [selectedCard, setSelectedCard] = useState<PlayerCard | null>(null);
+  const [eligibleQuery, setEligibleQuery] = useState('');
   const [selectedSignatures, setSelectedSignatures] = useState<{ [cardId: string]: string }>({});
 
   const eligibleCards = roster.filter(
     (c) => c.ovr <= selectedPlan.maxOvr && !activeEvolutions[c.id]
+  );
+  const visibleEligibleCards = eligibleCards.filter(card =>
+    `${card.name} ${card.role} ${card.tier}`.toLowerCase().includes(eligibleQuery.trim().toLowerCase())
   );
 
   const handleStart = () => {
@@ -72,7 +76,7 @@ export const EvolutionsView: React.FC<EvolutionsViewProps> = ({
 
               return (
                 <div key={cardId} className="bg-slate-950 border border-slate-800 rounded-xl p-4 flex gap-4 items-center">
-                  <CardComponent card={card} compact />
+                  <div className="w-36 shrink-0"><CardComponent card={card} compact /></div>
 
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
@@ -193,7 +197,7 @@ export const EvolutionsView: React.FC<EvolutionsViewProps> = ({
         </div>
 
         {/* Center: Selected Plan Details & Eligible Roster */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <div className="lg:col-span-2 min-w-0 bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
           <div className="border-b border-slate-800 pb-3">
             <h3 className="text-lg font-black text-white">{selectedPlan.name}</h3>
             <p className="text-xs text-slate-400 mt-0.5">{selectedPlan.desc}</p>
@@ -250,28 +254,30 @@ export const EvolutionsView: React.FC<EvolutionsViewProps> = ({
           </div>
 
           <div>
-            <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider mb-2">
-              Select Eligible Player from Your Club ({eligibleCards.length} eligible)
-            </h4>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider">
+                Select Eligible Player from Your Club ({eligibleCards.length} eligible)
+              </h4>
+              <input type="search" value={eligibleQuery} onChange={event => setEligibleQuery(event.target.value)}
+                placeholder="Search name, role, tier" aria-label="Search eligible players"
+                className="w-44 rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none" />
+            </div>
 
             {eligibleCards.length === 0 ? (
               <div className="text-center py-6 text-slate-500 text-xs">
-                No eligible players meeting requirements (Max OVR: {selectedPlan.maxOvr}). Open packs to find candidates!
+                No eligible players meet this path's requirements (Max OVR: {selectedPlan.maxOvr}).
               </div>
             ) : (
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {eligibleCards.map((card) => (
-                  <CardComponent
-                    key={card.id}
-                    card={card}
-                    compact
-                    selected={selectedCard?.id === card.id}
-                    onClick={() => {
-                      sound.playClick();
-                      setSelectedCard(card);
-                    }}
-                  />
+              <div className="flex min-w-0 gap-3 overflow-x-auto pb-3">
+                {visibleEligibleCards.map((card) => (
+                  <div key={card.id} className="w-36 shrink-0">
+                    <CardComponent card={card} compact selected={selectedCard?.id === card.id}
+                      onClick={() => { sound.playClick(); setSelectedCard(card); }} />
+                  </div>
                 ))}
+                {visibleEligibleCards.length === 0 && (
+                  <p className="py-6 text-xs text-slate-500">No eligible players match this search.</p>
+                )}
               </div>
             )}
           </div>

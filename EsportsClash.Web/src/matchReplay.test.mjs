@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { consumeFixedSteps, createMatchRandom, rerollAfterBalanceGame, resolveNeutralKillCredit, SIMULATION_STEP, summarizeMatchReports } from './matchReplay.ts';
+import { consumeFixedSteps, createMatchRandom, rerollAfterBalanceGame, resolveNeutralKillCredit, resolveTurretKillReward, SIMULATION_STEP, summarizeMatchReports } from './matchReplay.ts';
 
 test('a seed produces the same random decisions on a rematch', () => {
   const first = createMatchRandom(12345);
@@ -34,6 +34,45 @@ test('neutral kill goes to the last recent opposing attacker', () => {
   assert.equal(resolveNeutralKillCredit(undefined, 'blue', 27, champions), null);
 });
 
+test('turret kill goes to last attacker within 10s; if >10s turret executes and splits 300g to turret team', () => {
+  const champions = [
+    { id: 'red_1', team: 'red', gold: 500, kills: 0 },
+    { id: 'red_2', team: 'red', gold: 500, kills: 0 },
+    { id: 'red_3', team: 'red', gold: 500, kills: 0 },
+    { id: 'red_4', team: 'red', gold: 500, kills: 0 },
+    { id: 'red_5', team: 'red', gold: 500, kills: 0 },
+    { id: 'blue_1', team: 'blue', gold: 500, kills: 0 },
+  ];
+
+  // Case 1: Enemy damaged victim 6 seconds ago (<= 10s) -> killer gets credit, split gold is 0
+  const hitWithin10s = { team: 'blue', lastEnemyDamage: { attackerId: 'red_2', second: 44 } };
+  const res1 = resolveTurretKillReward(hitWithin10s, 50, champions, 10, 300);
+  assert.equal(res1.killer?.id, 'red_2');
+  assert.equal(res1.splitGoldPerAlly, 0);
+  assert.equal(res1.turretTeam, 'red');
+
+  // Case 2: Exactly 10.0 seconds -> still within window, enemy gets credit
+  const hitExactly10s = { team: 'blue', lastEnemyDamage: { attackerId: 'red_2', second: 40 } };
+  const res2 = resolveTurretKillReward(hitExactly10s, 50, champions, 10, 300);
+  assert.equal(res2.killer?.id, 'red_2');
+  assert.equal(res2.splitGoldPerAlly, 0);
+
+  // Case 3: Elapsed time is 11 seconds (> 10s) -> killer is null, red team splits 300g (60g each for 5 allies)
+  const hitExpired = { team: 'blue', lastEnemyDamage: { attackerId: 'red_2', second: 39 } };
+  const res3 = resolveTurretKillReward(hitExpired, 50, champions, 10, 300);
+  assert.equal(res3.killer, null);
+  assert.equal(res3.turretTeam, 'red');
+  assert.equal(res3.splitGoldPerAlly, 60);
+  assert.equal(res3.turretAllies.length, 5);
+
+  // Case 4: No enemy damage ever recorded -> killer is null, red team splits 300g (60g each)
+  const noHit = { team: 'blue', lastEnemyDamage: undefined };
+  const res4 = resolveTurretKillReward(noHit, 50, champions, 10, 300);
+  assert.equal(res4.killer, null);
+  assert.equal(res4.splitGoldPerAlly, 60);
+});
+
+
 test('balance summary uses completed match samples without inventing missing rates', () => {
   const base = { version: 1, seed: 1, draft: { blue: [], red: [] }, winner: 'blue', durationSeconds: 900,
     blueRating: 95, redRating: 80, fullBuildsAt15: 3,
@@ -60,4 +99,9 @@ test('balance summary uses completed match samples without inventing missing rat
   assert.equal(summarizeMatchReports([]).skillshotHitRate, 0);
   assert.equal(summarizeMatchReports([{ ...base, durationSeconds: 300, fullBuildsAt15: null }]).matchesAt15, 0);
   assert.equal(summarizeMatchReports([{ ...base, itemCounts: undefined }]).itemTimings[8].matches, 0);
+  const withInsights = { ...base, insights: { players: { p: { casts: { skill1: 4, skill2: 3, ultimate: 1 },
+    manaBlocks: 2, blackHoleInterrupts: 1, escapeJaunts: 1 } }, timeline: [] } };
+  assert.equal(summarizeMatchReports([base, withInsights]).averageSkill2Casts, 3);
+  assert.equal(summarizeMatchReports([withInsights]).blackHoleInterrupts, 1);
+  assert.equal(summarizeMatchReports([withInsights]).paxiEscapeJaunts, 1);
 });

@@ -148,12 +148,12 @@ export const SquadView: React.FC<SquadViewProps> = ({
                 }`}
               >
                 {/* Slot Position Header */}
-                <div className="w-full flex items-center justify-between px-2 py-1 mb-2 bg-slate-950/80 rounded-xl border border-white/5 text-[10px]">
-                  <span className="font-black text-amber-300 flex items-center gap-1">
+                <div className="w-full min-h-[43px] flex flex-col justify-center gap-0.5 px-2 py-1 mb-2 bg-slate-950/80 rounded-xl border border-white/5 text-[10px]">
+                  <span className="font-black text-amber-300 flex items-center gap-1 leading-tight">
                     <span>{slot.icon}</span>
                     <span>{slot.roleName}</span>
                   </span>
-                  <span className="text-[9px] text-slate-400 font-semibold truncate">
+                  <span className="text-[9px] text-slate-400 font-semibold leading-tight line-clamp-2" title={slot.roleDesc}>
                     {slot.roleDesc}
                   </span>
                 </div>
@@ -166,7 +166,7 @@ export const SquadView: React.FC<SquadViewProps> = ({
                 />
 
                 {/* Slot Actions Bar */}
-                <div className="w-full flex items-center justify-between gap-2 mt-2.5 pt-2 border-t border-white/5">
+                <div className="w-full flex items-center justify-between gap-2 mt-auto pt-2.5 border-t border-white/5">
                   <button
                     onClick={() => handleStartingSlotClick(idx)}
                     className={`flex-1 text-[11px] font-black py-1 px-2 rounded-lg transition flex items-center justify-center gap-1 ${

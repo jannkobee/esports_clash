@@ -15,3 +15,28 @@ export function stepLeashedMonster(
     chasing,
   };
 }
+
+export const CAMP_PATIENCE_SECONDS = 5;
+export const CAMP_SOFT_RESET_SECONDS = 6;
+
+export function neutralCampRespawnSeconds(type: string): number | null {
+  return type === 'siege_golem' ? null : 55;
+}
+
+export function stepCampPatience(
+  hp: number, maxHp: number, patience: number, resetElapsed: number,
+  hasTargetInLeash: boolean, dt: number,
+) {
+  const remaining = Math.max(0, patience - dt);
+  const chasing = hasTargetInLeash && remaining > 0;
+  if (chasing) return { hp, patience: remaining, resetElapsed: 0, chasing };
+
+  const elapsed = resetElapsed + dt;
+  return {
+    hp: elapsed >= CAMP_SOFT_RESET_SECONDS
+      ? maxHp : Math.min(maxHp, hp + maxHp * 0.06 * dt),
+    patience: 0,
+    resetElapsed: elapsed,
+    chasing: false,
+  };
+}

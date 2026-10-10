@@ -3,14 +3,12 @@ import assert from 'node:assert/strict';
 import {
   hasPlayerTrait,
   canAggroDive,
-  shouldTriggerClutchSurge,
-  getClutchSurgeBonuses,
+  shouldHoldClutchFight,
   canAttemptObjectiveSnipe,
-  getObjectiveSmiteBonus,
-  getOneTapTargetPriority,
-  getLaningDemonDamageMultiplier,
-  getTenacityMultiplier,
-  getUnkillableDodgeChance
+  shouldHuntExposedCarry,
+  shouldLaningDemonClearWave,
+  shouldHoldFightPlan,
+  shouldBaitEnemySkill
 } from './playerTraits.ts';
 
 const mockCard = (badges = [], personality = 'Neutral', clu = 85) => ({
@@ -132,53 +130,49 @@ test('canAggroDive permits aggressive tower dives only when enemy is low and div
   assert.equal(canAggroDive(lowDiver, lowEnemy, 200), false);
 });
 
-test('Clutch King triggers Clutch Surge at low health in combat with scaling bonuses', () => {
+test('Clutch King holds an active fight when wounded', () => {
   const clutchUnit = mockUnit(mockCard(['Clutch King'], 'Neutral', 95), 500, 2000); // 25% HP
   const normalUnit = mockUnit(mockCard([]), 500, 2000);
 
   // Triggers when low HP with nearby enemies
-  assert.equal(shouldTriggerClutchSurge(clutchUnit, 2), true);
+  assert.equal(shouldHoldClutchFight(clutchUnit, 2), true);
   // Does not trigger for non-clutch player
-  assert.equal(shouldTriggerClutchSurge(normalUnit, 2), false);
+  assert.equal(shouldHoldClutchFight(normalUnit, 2), false);
   // Does not trigger if no enemies nearby
-  assert.equal(shouldTriggerClutchSurge(clutchUnit, 0), false);
+  assert.equal(shouldHoldClutchFight(clutchUnit, 0), false);
 
-  const bonuses = getClutchSurgeBonuses(clutchUnit, true);
-  assert.ok(bonuses.shieldAmount > 400, 'Provides substantial survival shield');
-  assert.ok(bonuses.aspdMultiplier >= 1.25, 'Provides attack speed burst');
-  assert.ok(bonuses.critBonus >= 0.30, 'Provides critical strike surge');
-  assert.ok(bonuses.damageMultiplier >= 1.20, 'Provides outnumbered outplay multiplier');
+  clutchUnit.clutchCommitActive = true;
+  assert.equal(shouldHoldClutchFight(clutchUnit, 2), false);
 });
 
-test('Baron Steal grants objective execute bonus below threshold', () => {
+test('Baron Steal recognizes a last-hit opportunity without creating bonus damage', () => {
   const stealer = mockUnit(mockCard(['Baron Steal']));
   const nonStealer = mockUnit(mockCard([]));
 
   assert.equal(canAttemptObjectiveSnipe(stealer, 0.25, 300), true);
   assert.equal(canAttemptObjectiveSnipe(nonStealer, 0.25, 300), false);
 
-  // Execute damage triggers on boss <= 22% HP
-  const executeDmg = getObjectiveSmiteBonus(stealer, 1000, 5200); // ~19%
-  assert.ok(executeDmg > 200, 'Smite execute delivers huge true damage burst');
-
-  // No bonus when boss is healthy
-  assert.equal(getObjectiveSmiteBonus(stealer, 4000, 5200), 0);
+  assert.equal(canAttemptObjectiveSnipe(stealer, 0.8, 300), false);
 });
 
-test('Specialized traits: One-Tap God, Laning Demon, Ice in Veins, and Unkillable Demon', () => {
+test('Specialized traits choose targets and timing without stat bonuses', () => {
   const oneTapUnit = mockUnit(mockCard(['One-Tap God']));
   const squishyTarget = mockUnit(mockCard([]), 2000, 2000, 'Marksman');
   const tankTarget = mockUnit(mockCard([]), 3500, 3500, 'Tank');
-  assert.ok(getOneTapTargetPriority(oneTapUnit, squishyTarget) > 200);
-  assert.equal(getOneTapTargetPriority(oneTapUnit, tankTarget), 0);
+  assert.equal(shouldHuntExposedCarry(oneTapUnit, squishyTarget, [squishyTarget]), true);
+  assert.equal(shouldHuntExposedCarry(oneTapUnit, tankTarget, [tankTarget]), false);
+  const nearbyGuard = mockUnit(mockCard([]), 2000, 2000, 'Tank');
+  nearbyGuard.id = 'guard';
+  assert.equal(shouldHuntExposedCarry(oneTapUnit, squishyTarget, [squishyTarget, nearbyGuard]), false);
 
   const laningDemon = mockUnit(mockCard(['Laning Demon']));
-  assert.ok(getLaningDemonDamageMultiplier(laningDemon, 'minion', 120) > 1.2);
-  assert.equal(getLaningDemonDamageMultiplier(laningDemon, 'minion', 300), 1.0); // Expired late game
+  assert.equal(shouldLaningDemonClearWave(laningDemon, 120, true), true);
+  assert.equal(shouldLaningDemonClearWave(laningDemon, 300, true), false);
 
   const iceUnit = mockUnit(mockCard(['Ice in Veins']));
-  assert.equal(getTenacityMultiplier(iceUnit), 0.60); // 40% reduction
+  assert.equal(shouldHoldFightPlan(iceUnit), true);
 
   const unkillableUnit = mockUnit(mockCard(['Unkillable Demon']), 500, 2000); // 25% HP
-  assert.equal(getUnkillableDodgeChance(unkillableUnit), 0.35);
+  assert.equal(shouldBaitEnemySkill(unkillableUnit, 1), true);
+  assert.equal(shouldBaitEnemySkill(unkillableUnit, 0), false);
 });

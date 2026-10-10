@@ -6,6 +6,7 @@ import { ChampionArtwork } from './ChampionArtwork';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
 import { getChampionLore } from '../championLore';
+import { AVATAR_COMBAT_TYPES, getAvatarCombatProfile } from '../avatarCombatRoles';
 import { 
   Ban, 
   Swords, 
@@ -283,6 +284,9 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
                 <div className="text-white font-black text-xs text-center truncate w-full">{champion.name}</div>
                 <div className="text-[10px] text-cyan-300 font-bold">{champion.primaryRole}</div>
                 <div className="text-[9px] text-slate-400 truncate max-w-full text-center mt-0.5">{champion.archetype}</div>
+                <div className="text-[9px] text-cyan-200 truncate max-w-full text-center mt-0.5">
+                  {AVATAR_COMBAT_TYPES.filter(type => getAvatarCombatProfile(champion)[type] >= 2).slice(0, 2).join(' · ')}
+                </div>
 
                 {isRec && !isUsed && (
                   <span className="mt-1 text-[8px] bg-cyan-950 text-cyan-300 px-1.5 py-0.5 rounded-full font-bold border border-cyan-500/40">
@@ -300,7 +304,7 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
         </div>
       </div>
 
-      {/* Right Column: Actual Champions & Lore Dossier Panel */}
+      {/* Right Column: Avatar details and combat types */}
       <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
         {inspected ? (
           <>
@@ -326,10 +330,18 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
               </div>
             </div>
 
-            {/* Narrative Lore Dossier */}
+            <div className="flex flex-wrap gap-1.5">
+              {AVATAR_COMBAT_TYPES.filter(type => getAvatarCombatProfile(inspected)[type] > 0).map(type => (
+                <span key={type} className="rounded-full border border-cyan-500/30 bg-cyan-950/40 px-2 py-0.5 text-[10px] font-semibold text-cyan-200">
+                  {type}
+                </span>
+              ))}
+            </div>
+
+            {/* Narrative lore */}
             <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-1">
               <div className="text-[10px] font-black uppercase text-amber-400 flex items-center gap-1">
-                <BookOpen className="w-3 h-3 text-amber-400" /> Champions & Lore Dossier:
+                <BookOpen className="w-3 h-3 text-amber-400" /> Avatar lore:
               </div>
               <p className="text-xs text-slate-300 italic font-serif leading-relaxed line-clamp-3">
                 "{getChampionLore(inspected.id)}"

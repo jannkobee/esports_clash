@@ -18,6 +18,51 @@ export interface FighterVisualState {
   isInBush: boolean;
 }
 
+export function drawSpiritBearSprite(ctx: CanvasRenderingContext2D, time: number, team: 'blue' | 'red', attack = { windup: 0, strike: 0 }) {
+  ctx.save();
+  const stride = Math.sin(time * 9) * 2;
+  const glow = team === 'blue' ? '#34d399' : '#fb7185';
+  ctx.fillStyle = '#1c2b26';
+  ctx.beginPath(); ctx.ellipse(0, 4, 25, 8, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = glow; ctx.lineWidth = 2.5; ctx.shadowColor = glow; ctx.shadowBlur = 12;
+  ctx.beginPath(); ctx.ellipse(0, 4, 25, 8, 0, 0, Math.PI * 2); ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.translate(attack.strike * 7 - attack.windup * 3, attack.windup * 3 - attack.strike * 2);
+  ctx.fillStyle = '#493d35';
+  ctx.fillRect(-20, -9 + stride, 10, 13);
+  ctx.fillRect(10 + attack.strike * 9, -9 - stride - attack.windup * 13 + attack.strike * 5, 10, 13);
+  ctx.fillStyle = '#6b5947';
+  ctx.beginPath(); ctx.ellipse(0, -15, 24, 19, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#334e46';
+  ctx.beginPath(); ctx.ellipse(0, -22, 23, 12, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#9cae9b'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(-18, -22); ctx.lineTo(18, -22); ctx.stroke();
+  ctx.fillStyle = '#7a6651';
+  ctx.beginPath(); ctx.arc(-15, -35, 7, 0, Math.PI * 2); ctx.arc(15, -35, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#3e342e';
+  ctx.beginPath(); ctx.arc(-15, -35, 3.5, 0, Math.PI * 2); ctx.arc(15, -35, 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#8c765a';
+  ctx.beginPath(); ctx.ellipse(0, -28, 21, 16, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#d2b48b';
+  ctx.beginPath(); ctx.ellipse(0, -19, 10, 7, 0, 0, Math.PI * 2); ctx.fill();
+  // The pointed muzzle and leading paw make a turn visible even at chibi scale.
+  ctx.beginPath(); ctx.moveTo(7, -20); ctx.lineTo(18, -17); ctx.lineTo(7, -15); ctx.fill();
+  ctx.fillStyle = '#29221e';
+  ctx.beginPath(); ctx.ellipse(0, -22, 4, 3, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = glow; ctx.shadowColor = glow; ctx.shadowBlur = 8;
+  ctx.beginPath(); ctx.arc(-8, -31, 2.8, 0, Math.PI * 2); ctx.arc(8, -31, 2.8, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(0, -22, 4, 0, Math.PI * 2); ctx.fill();
+  if (attack.strike > 0) {
+    ctx.strokeStyle = '#d1fae5'; ctx.lineWidth = 2.5; ctx.globalAlpha = attack.strike;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath(); ctx.moveTo(26, -24 + i * 6);
+      ctx.quadraticCurveTo(37, -20 + i * 6, 40, -12 + i * 6); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+}
+
 export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: FighterVisualState) {
   const { championName, x, y, facing, animState, animTime, team, isStunned, isCharmed, isFeared, isKnockedUp, knockupHeight = 0, isInBush } = state;
 
@@ -105,8 +150,9 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
     case 'Inai':
       drawChibiInai(ctx, animState, animTime);
       break;
-    case 'Veyara': case 'Cinderlock': case 'Solenne': case 'Croakwell': case 'Soulscourge': case 'Stonewake':
+    case 'Veyara': case 'Cinderlock': case 'Cinderbloom': case 'Solenne': case 'Croakwell': case 'Soulscourge': case 'Stonewake':
     case 'Mirehook': case 'Nullweaver': case 'Voltgrip': case 'Aetherbolt': case 'Corsara': case 'Brewmaw': case 'Wraithhook':
+    case 'Faelith': case 'Oathmute': case 'Cloudtail': case 'Stonebranch':
       drawNewChampionSprite(ctx, championName, animState, animTime);
       break;
     case 'Kaelen': case 'c_kaelen':
@@ -1405,26 +1451,6 @@ function drawChibiRenn(ctx: CanvasRenderingContext2D, animState: string, animTim
 // Pelt Cowl, Druid Staff & Armored Spirit Bear Companion
 // =========================================================================
 function drawChibiSylla(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
-  // Loyal Armored Spirit Bear Cub at Side
-  ctx.save();
-  ctx.translate(-19, -4);
-  ctx.fillStyle = '#334155';
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 9, 8, 0, 0, Math.PI * 2);
-  ctx.fill();
-  // Bear Ears
-  ctx.fillStyle = '#1e293b';
-  ctx.beginPath();
-  ctx.arc(-5, -6, 2.5, 0, Math.PI * 2);
-  ctx.arc(5, -6, 2.5, 0, Math.PI * 2);
-  ctx.fill();
-  // Emerald Rune on Chest
-  ctx.fillStyle = '#10b981';
-  ctx.beginPath();
-  ctx.arc(0, 0, 2.5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
   // Boots
   ctx.fillStyle = '#451a03';
   ctx.fillRect(-7, -4, 5, 8);
@@ -1937,15 +1963,17 @@ function drawDefaultChampion(ctx: CanvasRenderingContext2D, team: string) {
 
 function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, animState: string, animTime: number) {
   const colors: Record<string, [string, string]> = {
-    Veyara: ['#0f766e', '#fde047'], Cinderlock: ['#7c2d12', '#fb923c'],
+    Veyara: ['#0f766e', '#fde047'], Cinderlock: ['#7c2d12', '#fb923c'], Cinderbloom: ['#7c2d12', '#fb923c'],
     Solenne: ['#0f766e', '#f8fafc'], Croakwell: ['#65a30d', '#facc15'],
     'Soulscourge': ['#450a0a', '#fb7185'], Stonewake: ['#92400e', '#fcd34d'],
     Mirehook: ['#36513e', '#b5d36b'], Nullweaver: ['#34205f', '#a78bfa'],
     Voltgrip: ['#70591d', '#fde047'], Aetherbolt: ['#14527b', '#67e8f9'],
     Corsara: ['#7f1d35', '#fb7185'], Brewmaw: ['#693916', '#f59e0b'],
     Wraithhook: ['#155e58', '#5eead4'],
+    Faelith: ['#7e22ce', '#bef264'], Oathmute: ['#312e81', '#ddd6fe'],
+    Cloudtail: ['#6b21a8', '#fbbf24'], Stonebranch: ['#854d0e', '#86efac'],
   };
-  const [body, glow] = colors[name];
+  const [body, glow] = colors[name] || ['#7c2d12', '#fb923c'];
   const casting = animState === 'cast' || animState === 'attack';
   ctx.save();
   ctx.shadowColor = glow;
@@ -1965,7 +1993,7 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
   const pulse = casting ? Math.sin(animTime * 18) * 3 : 0;
   if (name === 'Veyara') {
     ctx.beginPath(); ctx.arc(13, -18, 15 + pulse, -1.1, 1.35); ctx.stroke();
-  } else if (name === 'Cinderlock') {
+  } else if (name === 'Cinderlock' || name === 'Cinderbloom') {
     for (let i = 0; i < 3; i++) {
       ctx.beginPath(); ctx.moveTo(10, -27 + i * 8); ctx.lineTo(29 + pulse, -34 + i * 8); ctx.stroke();
     }
@@ -2001,6 +2029,21 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
   } else if (name === 'Brewmaw') {
     ctx.fillStyle = '#a16207'; ctx.beginPath(); ctx.ellipse(25, -16, 14, 18, 0, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#fbbf24'; ctx.strokeRect(14, -25, 22, 18);
+  } else if (name === 'Faelith') {
+    ctx.beginPath(); ctx.moveTo(-10, -44); ctx.lineTo(-20, -57); ctx.lineTo(-1, -47);
+    ctx.moveTo(10, -44); ctx.lineTo(20, -57); ctx.lineTo(1, -47); ctx.stroke();
+    ctx.beginPath(); ctx.arc(25 + pulse, -26, 5, 0, Math.PI * 2); ctx.fill();
+  } else if (name === 'Oathmute') {
+    ctx.fillRect(-19, -48, 38, 5);
+    ctx.beginPath(); ctx.moveTo(17, -23); ctx.lineTo(28 + pulse, -47); ctx.stroke();
+    ctx.strokeRect(23 + pulse, -55, 13, 12);
+  } else if (name === 'Cloudtail' || name === 'Stonebranch') {
+    ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(14, -17); ctx.lineTo(28 + pulse, -52); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-15, -9); ctx.bezierCurveTo(-33, -6, -38, -39, -26, -43); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-10, -44); ctx.lineTo(-19, -53); ctx.lineTo(-5, -47);
+    ctx.moveTo(10, -44); ctx.lineTo(19, -53); ctx.lineTo(5, -47); ctx.stroke();
+    if (name === 'Stonebranch') { ctx.fillStyle = '#86efac'; ctx.beginPath(); ctx.arc(-20, -52, 6, 0, Math.PI * 2); ctx.fill(); }
   } else {
     ctx.lineWidth = 7;
     ctx.beginPath(); ctx.moveTo(13, -21); ctx.lineTo(25, -49); ctx.stroke();
@@ -2017,7 +2060,7 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
         ctx.fillStyle = element;
         ctx.beginPath(); ctx.arc(Math.cos(a) * 24, -20 + Math.sin(a) * 16, 4, 0, Math.PI * 2); ctx.fill();
       });
-    } else if (name === 'Cinderlock') {
+    } else if (name === 'Cinderlock' || name === 'Cinderbloom') {
       ctx.strokeStyle = '#fed7aa';
       for (let i = 0; i < 3; i++) {
         ctx.beginPath(); ctx.moveTo(13, -27 + i * 8);

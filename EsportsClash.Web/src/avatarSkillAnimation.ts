@@ -7,19 +7,21 @@ export type Motif = 'sun' | 'arrow' | 'orb' | 'shotgun' | 'blades' | 'shadow' | 
   | 'lightning' | 'boulder' | 'void' | 'elements' | 'ash' | 'mist'
   | 'music' | 'souls' | 'quake' | 'hook' | 'gravity' | 'grapple'
   | 'relic' | 'broadside' | 'cask' | 'lantern'
-  | 'arsenal' | 'paint' | 'hammer' | 'fist' | 'rocket' | 'faerie' | 'lasso' | 'quill' | 'wisp';
+  | 'arsenal' | 'paint' | 'hammer' | 'fist' | 'rocket' | 'faerie' | 'lasso' | 'quill' | 'wisp'
+  | 'bloom' | 'silence' | 'staffspin' | 'canopy';
 
 export const AVATAR_ANIMATION_MOTIFS: Record<string, Motif> = {
   Solana: 'sun', Astra: 'arrow', Kyumi: 'orb', Buck: 'shotgun',
   Valkira: 'blades', Kage: 'shadow', Kazemaru: 'wind', Kindra: 'wolf',
   Cora: 'feathers', Renn: 'wings', Sylla: 'bear', Tequoia: 'roots',
   Zal: 'grave', Xin: 'ember', Raijin: 'lightning', Kaolin: 'boulder',
-  Inai: 'void', Veyara: 'elements', Cinderlock: 'ash', Solenne: 'mist',
+  Inai: 'void', Veyara: 'elements', Cinderbloom: 'ash', Solenne: 'mist',
   Croakwell: 'music', Soulscourge: 'souls', Stonewake: 'quake',
   Mirehook: 'hook', Nullweaver: 'gravity', Voltgrip: 'grapple',
   Aetherbolt: 'relic', Corsara: 'broadside', Brewmaw: 'cask', Wraithhook: 'lantern',
   Kaelen: 'arsenal', Hweilin: 'paint', Jaxon: 'hammer', Valerie: 'fist',
   Jinxy: 'rocket', Paxi: 'faerie', Batrix: 'lasso', Quillback: 'quill', Aetheris: 'wisp',
+  Faelith: 'bloom', Oathmute: 'silence', Cloudtail: 'staffspin', Stonebranch: 'canopy',
 };
 
 export interface AvatarAnimationState {
@@ -221,6 +223,32 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
   };
 
   switch (motif) {
+    case 'bloom':
+      drawRing(x, y, radius * 0.7);
+      for (let i = 0; i < 6; i++) {
+        const a = i * Math.PI / 3 + p * 2;
+        drawFillCircle(x + Math.cos(a) * radius * 0.48, y + Math.sin(a) * radius * 0.48, 5 + p * 3, i % 2 ? '#bef264' : '#c084fc');
+      }
+      break;
+    case 'silence':
+      drawRing(x, y, radius * 0.8);
+      strokeLine(x - radius * 0.45, y + radius * 0.35, x + radius * 0.45, y - radius * 0.35);
+      drawFillCircle(x, y, 4 + p * 4, '#ddd6fe');
+      break;
+    case 'staffspin':
+      for (let i = 0; i < 3; i++) drawRing(x, y, radius * (0.35 + i * 0.2), p * 5 + i, p * 5 + i + Math.PI * 1.3);
+      drawBeam(x - radius * 0.5, y - radius * 0.3, x + radius * 0.5, y + radius * 0.3, 5, '#fbbf24');
+      break;
+    case 'canopy':
+      drawRing(x, y, radius * 0.85);
+      for (let i = 0; i < 5; i++) {
+        const a = i * Math.PI * 2 / 5 + p;
+        const px = x + Math.cos(a) * radius * 0.67;
+        const py = y + Math.sin(a) * radius * 0.67;
+        strokeLine(px, py, px, py - 14);
+        drawFillCircle(px, py - 17, 6, '#86efac');
+      }
+      break;
     // -------------------------------------------------------------
     // 1. SOLANA (Leona) - Solar Vanguard
     // -------------------------------------------------------------

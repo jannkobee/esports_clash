@@ -29,6 +29,8 @@ export interface ChampionMetaStats {
 
 // 1. Hard Counter Relationships (A counters B)
 export const CHAMPION_COUNTERS: ChampionCounter[] = [
+  { championId: 'c_silencer', countersId: 'c_nullweaver', advantage: 12, reason: 'Stillness Decree can interrupt the short-range Black Hole channel.' },
+  { championId: 'c_silencer', countersId: 'c_corsara', advantage: 11, reason: 'Last Edict can cancel Broadside Waltz before its final waves.' },
   // Assassins counter squishy immobile Marksmen / Mages
   { championId: 'c_kage', countersId: 'c_astra', advantage: 20, reason: 'Shadow gap-close and lethal burst instantly assassinates immobile frost archer.' },
   { championId: 'c_kage', countersId: 'c_cora', advantage: 16, reason: 'Untargetable shadow strike bypasses feather ground zoning.' },
@@ -66,6 +68,8 @@ export const CHAMPION_COUNTERS: ChampionCounter[] = [
 
 // 2. High-Impact Teamfight Synergy Combos (A + B = High Synergy)
 export const CHAMPION_SYNERGIES: ChampionSynergy[] = [
+  { champ1Id: 'c_wukong_lol', champ2Id: 'c_monkeyking_dota', comboName: 'Staff Brothers', tier: 'A', bonus: 9,
+    description: 'Cloudtail starts a close fight with Cyclone Dance while Stonebranch covers the escape path with Court of Branches.' },
   {
     champ1Id: 'c_cora',
     champ2Id: 'c_renn',

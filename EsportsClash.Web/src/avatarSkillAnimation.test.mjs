@@ -4,8 +4,8 @@ import { ADDITIONAL_CHAMPIONS } from './additionalChampions.ts';
 import { AVATAR_ANIMATION_MOTIFS, drawAvatarSkillAnimation } from './avatarSkillAnimation.ts';
 
 test('every avatar has a distinct animation cue and recreated avatars keep source names out of play', () => {
-  assert.equal(Object.keys(AVATAR_ANIMATION_MOTIFS).length, 39);
-  assert.equal(new Set(Object.values(AVATAR_ANIMATION_MOTIFS)).size, 39);
+  assert.equal(Object.keys(AVATAR_ANIMATION_MOTIFS).length, 43);
+  assert.equal(new Set(Object.values(AVATAR_ANIMATION_MOTIFS)).size, 43);
   for (const avatar of ADDITIONAL_CHAMPIONS) {
     assert.ok(AVATAR_ANIMATION_MOTIFS[avatar.name], `${avatar.name} has an animation`);
     assert.notEqual(avatar.name, avatar.basis);
@@ -75,7 +75,7 @@ test('fear flee causes unit to move directly away from fear source', () => {
   assert.ok(victim.x > 350, 'feared victim fled away from fear source');
 });
 
-test('all 39 champions have dedicated models and render without errors in drawChampionSprite', async () => {
+test('all 43 champions have dedicated models and render without errors in drawChampionSprite', async () => {
   const { drawChampionSprite } = await import('./components/ChampionSpriteRenderer.ts');
   const canvas = new Proxy({}, {
     get: (target, key) => {
@@ -89,12 +89,13 @@ test('all 39 champions have dedicated models and render without errors in drawCh
 
   const allChampNames = [
     'Solana', 'Astra', 'Kyumi', 'Buck', 'Valkira', 'Kage', 'Kazemaru', 'Kindra', 'Cora', 'Renn',
-    'Sylla', 'Tequoia', 'Zal', 'Xin', 'Raijin', 'Kaolin', 'Inai', 'Veyara', 'Cinderlock', 'Solenne',
+    'Sylla', 'Tequoia', 'Zal', 'Xin', 'Raijin', 'Kaolin', 'Inai', 'Veyara', 'Cinderbloom', 'Solenne',
     'Croakwell', 'Soulscourge', 'Stonewake', 'Mirehook', 'Nullweaver', 'Voltgrip', 'Aetherbolt', 'Corsara',
-    'Brewmaw', 'Wraithhook', 'Kaelen', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback', 'Aetheris'
+    'Brewmaw', 'Wraithhook', 'Kaelen', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback', 'Aetheris',
+    'Faelith', 'Oathmute', 'Cloudtail', 'Stonebranch'
   ];
 
-  assert.equal(allChampNames.length, 39);
+  assert.equal(allChampNames.length, 43);
 
   for (const championName of allChampNames) {
     for (const animState of ['idle', 'walk', 'attack', 'cast']) {
@@ -113,6 +114,19 @@ test('all 39 champions have dedicated models and render without errors in drawCh
         });
       }, `${championName} in ${animState} state rendered cleanly`);
     }
+  }
+});
+
+test('Sylla spirit bear model renders idle, turn and claw strike for both teams', async () => {
+  const { drawSpiritBearSprite } = await import('./components/ChampionSpriteRenderer.ts');
+  const canvas = new Proxy({}, {
+    get: (target, key) => key in target ? target[key] : () => {},
+    set: (target, key, value) => { target[key] = value; return true; },
+  });
+  for (const team of ['blue', 'red']) {
+    assert.doesNotThrow(() => drawSpiritBearSprite(canvas, 2, team));
+    assert.doesNotThrow(() => drawSpiritBearSprite(canvas, 2, team, { windup: 1, strike: 0 }));
+    assert.doesNotThrow(() => drawSpiritBearSprite(canvas, 2, team, { windup: 0, strike: 1 }));
   }
 });
 

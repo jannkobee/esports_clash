@@ -156,7 +156,7 @@ export const GamingHouseView: React.FC<GamingHouseViewProps> = ({
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
         <h3 className="text-md font-black text-amber-300 uppercase tracking-wide mb-3 flex items-center gap-2">
           <Zap className="w-4 h-4" />
-          Assign Daily Team Routine (Advances Day)
+          Choose Team Routine
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -192,8 +192,8 @@ export const GamingHouseView: React.FC<GamingHouseViewProps> = ({
             className="p-3 bg-slate-800 hover:bg-pink-950 hover:border-pink-500 border border-slate-700 rounded-xl text-center transition group flex flex-col items-center gap-1"
           >
             <Video className="w-5 h-5 text-pink-400 group-hover:scale-110 transition" />
-            <span className="text-xs font-bold text-white">Stream to Fans</span>
-            <span className="text-[10px] text-pink-300 font-medium">+Cash & Fans</span>
+            <span className="text-xs font-bold text-white">Sponsor Stream</span>
+            <span className="text-[10px] text-pink-300 font-medium">+350 Coins</span>
           </button>
 
           <button

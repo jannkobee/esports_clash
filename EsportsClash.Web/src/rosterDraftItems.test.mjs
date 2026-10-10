@@ -61,8 +61,9 @@ test('research pool has 50 distinct inspirations and all requested avatars', () 
   }
   assert.ok(RESEARCHED_PLAYERS.some(p => p[1] === 'Cardrel' && p[0] === 'Caedrel'));
   assert.deepEqual(ADDITIONAL_CHAMPIONS.map(c => c.name), [
-    'Veyara', 'Cinderlock', 'Solenne', 'Croakwell', 'Soulscourge', 'Stonewake',
+    'Veyara', 'Cinderbloom', 'Solenne', 'Croakwell', 'Soulscourge', 'Stonewake',
     'Mirehook', 'Nullweaver', 'Voltgrip', 'Aetherbolt', 'Corsara', 'Brewmaw', 'Wraithhook',
-    'Kaelen', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback', 'Aetheris'
+    'Kaelen', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback', 'Aetheris',
+    'Faelith', 'Oathmute', 'Cloudtail', 'Stonebranch'
   ]);
 });

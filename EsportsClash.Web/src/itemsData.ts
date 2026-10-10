@@ -21,7 +21,7 @@ export const ALL_ITEMS: ItemDef[] = ([
     cost: 500,
     tier: 'Starting',
     icon: '🔮',
-    stats: { ap: 45, hp: 150, haste: 10 },
+    stats: { ap: 45, hp: 150, haste: 10, mana: 55, manaRegen: 1.5 },
     passiveName: 'Essence Flow',
     passiveDesc: 'Restores mana over time and empowers poke spells.',
     suitableRoles: ['Mage', 'Support']
@@ -69,7 +69,7 @@ export const ALL_ITEMS: ItemDef[] = ([
     cost: 1100,
     tier: 'Component',
     icon: '📖',
-    stats: { ap: 40, haste: 10 },
+    stats: { ap: 40, haste: 10, mana: 90, manaRegen: 1.8 },
     passiveName: 'Insight',
     passiveDesc: '+40 AP and mana surge upon level up.',
     suitableRoles: ['Mage', 'Support']
@@ -80,7 +80,7 @@ export const ALL_ITEMS: ItemDef[] = ([
     cost: 1000,
     tier: 'Component',
     icon: '🔪',
-    stats: { ad: 30 },
+    stats: { ad: 30, lethality: 10 },
     passiveName: 'Lethality',
     passiveDesc: 'Armor penetration and lethal skirmish damage.',
     suitableRoles: ['Assassin', 'Marksman', 'Fighter']
@@ -260,7 +260,7 @@ export const ALL_ITEMS: ItemDef[] = ([
     cost: 3000,
     tier: 'Legendary',
     icon: '💰',
-    stats: { ad: 55, crit: 20 },
+    stats: { ad: 55, crit: 20, lethality: 12 },
     passiveName: 'Death & Taxes',
     passiveDesc: 'Executes enemy champions falling below 5% HP and grants +25 extra bonus gold.',
     suitableRoles: ['Marksman', 'Assassin']
@@ -286,9 +286,20 @@ export const ALL_ITEMS: ItemDef[] = ([
     cost: 3000,
     tier: 'Legendary',
     icon: '⚡',
-    stats: { ap: 90, haste: 20 },
+    stats: { ap: 90, haste: 20, mana: 130, manaRegen: 2.4 },
     passiveName: 'Echo Burst',
     passiveDesc: 'Spells detonate, discharging 110 + 10% AP magic burst to up to 3 nearby enemies.',
+    suitableRoles: ['Mage', 'Support']
+  },
+  {
+    id: 'item_tempest_folio',
+    name: 'Tempest Folio',
+    cost: 2500,
+    tier: 'Legendary',
+    icon: '📘',
+    stats: { ap: 65, haste: 25, mana: 180, manaRegen: 3 },
+    passiveName: 'Storm Reserve',
+    passiveDesc: 'A deep mana reserve and steady regeneration for repeated spell casts.',
     suitableRoles: ['Mage', 'Support']
   },
   {
@@ -371,6 +382,183 @@ export const ALL_ITEMS: ItemDef[] = ([
     passiveName: 'Boundless Vitality',
     passiveDesc: 'Increases all incoming heals and shields by +25%.',
     suitableRoles: ['Tank', 'Support', 'Fighter']
+  },
+
+  // ==========================================
+  // SUPPORT LEGENDARY ITEMS
+  // ==========================================
+  {
+    id: 'item_echoes_of_helia',
+    name: 'Chime of Renewal',
+    cost: 2200,
+    tier: 'Legendary',
+    icon: '🔔',
+    stats: { ap: 45, hp: 200, haste: 20, mana: 120, manaRegen: 2.5 },
+    passiveName: 'Soul Spring',
+    passiveDesc: 'Casting abilities heals the lowest health nearby ally for 75 HP and grants brief haste.',
+    suitableRoles: ['Support', 'Mage']
+  },
+  {
+    id: 'item_shurelyas',
+    name: "Windwalker's Warhorn",
+    cost: 2300,
+    tier: 'Legendary',
+    icon: '📯',
+    stats: { hp: 250, haste: 25, moveSpeed: 6, manaRegen: 2.5 },
+    passiveName: 'Inspiring Rally',
+    passiveDesc: 'Provides +20 movement speed aura to nearby teammates during combat engages.',
+    suitableRoles: ['Support', 'Tank']
+  },
+  {
+    id: 'item_knights_vow',
+    name: "Warden's Pledge",
+    cost: 2200,
+    tier: 'Legendary',
+    icon: '🛡️',
+    stats: { hp: 400, armor: 40, haste: 15 },
+    passiveName: 'Sacrificial Ward',
+    passiveDesc: 'Absorbs 12% of damage dealt to nearby allied carries and rushes to protect them.',
+    suitableRoles: ['Support', 'Tank']
+  },
+  {
+    id: 'item_locket',
+    name: 'Aegis of the Protector',
+    cost: 2300,
+    tier: 'Legendary',
+    icon: '🌟',
+    stats: { hp: 250, armor: 35, mr: 35, haste: 20 },
+    passiveName: 'Prismatic Bastion',
+    passiveDesc: 'Grants a 160 HP protective barrier to nearby allies when teamfights break out.',
+    suitableRoles: ['Support', 'Tank']
+  },
+  {
+    id: 'item_ardent_censer',
+    name: 'Sunblessed Censer',
+    cost: 2200,
+    tier: 'Legendary',
+    icon: '🪔',
+    stats: { ap: 50, haste: 15, manaRegen: 2.0, moveSpeed: 4 },
+    passiveName: 'Frenzy Aura',
+    passiveDesc: 'Empowers nearby teammates with +18% Attack Speed and +20 on-hit magic damage.',
+    suitableRoles: ['Support', 'Mage']
+  },
+  {
+    id: 'item_redemption',
+    name: 'Beacon of Deliverance',
+    cost: 2300,
+    tier: 'Legendary',
+    icon: '🕊️',
+    stats: { hp: 250, haste: 20, manaRegen: 3.0 },
+    passiveName: 'Holy Radiance',
+    passiveDesc: 'Heals the lowest-health nearby ally for 200 HP upon entering critical danger (60s CD).',
+    suitableRoles: ['Support', 'Mage', 'Tank']
+  },
+
+  // ==========================================
+  // COOLDOWN REDUCTION (ABILITY HASTE) ITEMS
+  // ==========================================
+  {
+    id: 'item_black_cleaver',
+    name: 'Obsidian Cleaver',
+    cost: 3100,
+    tier: 'Legendary',
+    icon: '🪓',
+    stats: { ad: 55, hp: 350, haste: 25 },
+    passiveName: 'Carve & Fervor',
+    passiveDesc: 'Dealing physical damage shreds 25% target armor and grants +15 movement speed.',
+    suitableRoles: ['Fighter', 'Assassin', 'Tank']
+  },
+  {
+    id: 'item_shojin',
+    name: 'Dragonheart Glaive',
+    cost: 3100,
+    tier: 'Legendary',
+    icon: '🐉',
+    stats: { ad: 50, hp: 300, haste: 30 },
+    passiveName: "Dragon's Focus",
+    passiveDesc: 'Amplifies basic ability damage by +12% scaling with total Ability Haste.',
+    suitableRoles: ['Fighter', 'Assassin']
+  },
+  {
+    id: 'item_navori',
+    name: 'Chronoblade Quickflicker',
+    cost: 3000,
+    tier: 'Legendary',
+    icon: '⏱️',
+    stats: { ad: 50, crit: 25, haste: 25 },
+    passiveName: 'Transcendence',
+    passiveDesc: 'Basic attacks reduce remaining basic ability cooldowns by 15%.',
+    suitableRoles: ['Marksman', 'Assassin']
+  },
+  {
+    id: 'item_cosmic_drive',
+    name: 'Cosmic Chronosphere',
+    cost: 3000,
+    tier: 'Legendary',
+    icon: '🌌',
+    stats: { ap: 80, hp: 250, haste: 30, moveSpeed: 5 },
+    passiveName: 'Spelldance',
+    passiveDesc: 'Damaging an enemy with a spell grants +25 movement speed for 3 seconds.',
+    suitableRoles: ['Mage', 'Support', 'Assassin']
+  },
+
+  // ==========================================
+  // LETHALITY & ABILITY AMP ITEMS
+  // ==========================================
+  {
+    id: 'item_ghostblade',
+    name: 'Wraithblade of the Dunes',
+    cost: 2900,
+    tier: 'Legendary',
+    icon: '🗡️',
+    stats: { ad: 60, lethality: 18, haste: 15, moveSpeed: 5 },
+    passiveName: 'Hauntstep',
+    passiveDesc: 'Massive armor penetration and swift out-of-combat ambush speed.',
+    suitableRoles: ['Assassin', 'Marksman', 'Fighter']
+  },
+  {
+    id: 'item_duskblade',
+    name: 'Duskfang Reaver',
+    cost: 3100,
+    tier: 'Legendary',
+    icon: '🌑',
+    stats: { ad: 60, lethality: 18, haste: 20 },
+    passiveName: 'Nightstalker',
+    passiveDesc: 'Abilities deal up to +16% bonus execution damage based on missing enemy health.',
+    suitableRoles: ['Assassin', 'Fighter']
+  },
+  {
+    id: 'item_serpents_fang',
+    name: 'Fang of the Serpent',
+    cost: 2600,
+    tier: 'Legendary',
+    icon: '🐍',
+    stats: { ad: 55, lethality: 15, haste: 15 },
+    passiveName: 'Shield Reaver',
+    passiveDesc: 'Damaging an enemy shatters and halves active defensive shields by 50%.',
+    suitableRoles: ['Assassin', 'Marksman', 'Fighter']
+  },
+  {
+    id: 'item_shadowflame',
+    name: 'Cinderflame Diadem',
+    cost: 3000,
+    tier: 'Legendary',
+    icon: '🕯️',
+    stats: { ap: 90, magicPen: 18, hp: 200 },
+    passiveName: 'Cinderbloom Detonation',
+    passiveDesc: 'Pierces 18 Magic Resist and critically executes wounded foes (<35% HP).',
+    suitableRoles: ['Mage', 'Assassin']
+  },
+  {
+    id: 'item_horizon_focus',
+    name: 'Astral Spyglass',
+    cost: 2800,
+    tier: 'Legendary',
+    icon: '🔭',
+    stats: { ap: 85, haste: 20, hp: 150 },
+    passiveName: 'Hypershot',
+    passiveDesc: 'Landing an ability reveals the target and amplifies all ability damage by 10%.',
+    suitableRoles: ['Mage', 'Support']
   }
 ] as ItemDef[]).map(item => item.tier === 'Legendary' || item.tier === 'Mythic'
   ? { ...item, cost: Math.round(item.cost * 0.65 / 25) * 25 }
@@ -396,7 +584,7 @@ export function getRecommendedItem(role: CombatRole, existingItemIds: string[], 
     else if (champName === 'Solana' || champName === 'Kaolin' || champName === 'Stonewake') effectiveRole = 'Tank';
     else if (champName === 'Zal' || champName === 'Renn' || champName === 'Croakwell') effectiveRole = 'Support';
     else if (champName === 'Buck' || champName === 'Valkira' || champName === 'Kazemaru' || champName === 'Sylla' || champName === 'Xin') effectiveRole = 'Fighter';
-    else if (champName === 'Kage' || champName === 'Inai' || champName === 'Cinderlock' || champName === 'Veyara') effectiveRole = 'Assassin';
+    else if (champName === 'Kage' || champName === 'Inai' || champName === 'Cinderlock' || champName === 'Cinderbloom' || champName === 'Veyara') effectiveRole = 'Assassin';
   }
 
   // 1. If no items yet, pick suitable starting item

@@ -62,9 +62,9 @@ export const RESEARCHED_PLAYERS: readonly Inspiration[] = [
 ];
 
 const signatureByRole: Record<AvatarRole, string[]> = {
-  Tank: ['Solana', 'Kaolin', 'Stonewake'], Mage: ['Kyumi', 'Raijin', 'Cinderlock', 'Soulscourge'],
+  Tank: ['Solana', 'Kaolin', 'Stonewake'], Mage: ['Kyumi', 'Raijin', 'Soulscourge'],
   Marksman: ['Astra', 'Cora', 'Solenne'], Support: ['Renn', 'Zal', 'Croakwell'],
-  Fighter: ['Valkira', 'Buck', 'Stonewake'], Assassin: ['Kage', 'Veyara', 'Inai'],
+  Fighter: ['Valkira', 'Buck', 'Stonewake'], Assassin: ['Kage', 'Veyara', 'Inai', 'Cinderbloom'],
 };
 
 export function createResearchedCards(existing: PlayerCard[]): PlayerCard[] {

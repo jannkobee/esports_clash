@@ -30,7 +30,7 @@ export const PLAYER_TRAITS: Record<PlayerTraitKey, TraitDefinition> = {
     name: 'Aggro Diver',
     badge: 'Aggro Diver',
     icon: '⚡',
-    description: 'Fearlessly dives enemy towers to execute low-HP targets (<38% HP) with a bonus dive shield and movespeed.',
+    description: 'Chases a wounded enemy under their turret when the dive is survivable, then looks for a safe way out.',
     color: '#f97316'
   },
   'Clutch King': {
@@ -38,7 +38,7 @@ export const PLAYER_TRAITS: Record<PlayerTraitKey, TraitDefinition> = {
     name: 'Clutch King',
     badge: 'Clutch King',
     icon: '👑',
-    description: 'Refuses to retreat when low HP (<32%). Triggers Clutch Surge: barrier, +25% attack speed, +30% crit, and outplay bonus when outnumbered.',
+    description: 'When wounded in an active fight, commits to the current attack or skill sequence instead of immediately retreating.',
     color: '#fbbf24'
   },
   'Baron Steal': {
@@ -46,7 +46,7 @@ export const PLAYER_TRAITS: Record<PlayerTraitKey, TraitDefinition> = {
     name: 'Baron Steal',
     badge: 'Baron Steal',
     icon: '🎯',
-    description: 'Specializes in epic objective snipes. Sprints to the pit and delivers a +50% true damage execute burst on monsters below 20% HP.',
+    description: 'Rotates toward a contested objective as it gets low and watches for an ordinary last-hit opening.',
     color: '#38bdf8'
   },
   'One-Tap God': {
@@ -54,7 +54,7 @@ export const PLAYER_TRAITS: Record<PlayerTraitKey, TraitDefinition> = {
     name: 'One-Tap God',
     badge: 'One-Tap God',
     icon: '💥',
-    description: 'Bypasses frontline tanks to lock onto squishy carries (Marksman/Mage). Deals +25% critical burst against isolated enemies.',
+    description: 'Finds an exposed marksman or mage, approaches from a safe angle, and spends a ready burst combo on that target.',
     color: '#ec4899'
   },
   'Laning Demon': {
@@ -62,7 +62,7 @@ export const PLAYER_TRAITS: Record<PlayerTraitKey, TraitDefinition> = {
     name: 'Laning Demon',
     badge: 'Laning Demon',
     icon: '🔥',
-    description: 'Dominates the lane wave early. Deals +20% damage to minions/structures and applies a stacking attack speed slow to opponents.',
+    description: 'Secures last hits, clears the opposing wave, and escorts a friendly wave into the turret before pushing.',
     color: '#ef4444'
   },
   'Unkillable Demon': {
@@ -70,7 +70,7 @@ export const PLAYER_TRAITS: Record<PlayerTraitKey, TraitDefinition> = {
     name: 'Unkillable Demon',
     badge: 'Unkillable Demon',
     icon: '🛡️',
-    description: 'Slippery survivalist. When below 35% HP, gains +35% move speed and 35% damage evasion, baiting enemy cooldowns.',
+    description: 'At low health, retreats through cover, baits a committed enemy skill, and re-enters if the enemy wastes it.',
     color: '#a855f7'
   },
   'Ice in Veins': {
@@ -78,7 +78,7 @@ export const PLAYER_TRAITS: Record<PlayerTraitKey, TraitDefinition> = {
     name: 'Ice in Veins',
     badge: 'Ice in Veins',
     icon: '❄️',
-    description: 'Innate tenacity. Reduces all incoming crowd control durations by 40% and maintains flawless decision-making under high pressure.',
+    description: 'Keeps a chosen fight plan through crowd control and resumes the combo as soon as control ends.',
     color: '#06b6d4'
   },
   'Vision Master': {
@@ -86,7 +86,7 @@ export const PLAYER_TRAITS: Record<PlayerTraitKey, TraitDefinition> = {
     name: 'Vision Master',
     badge: 'Vision Master',
     icon: '👁️',
-    description: 'Proactively places deep vision wards directly in the Dragon and Golem pits, preventing enemy sneak attempts.',
+    description: 'Uses an available ward to scout an unobserved objective pit or flank before the team commits.',
     color: '#10b981'
   },
   'Shotcaller': {
@@ -94,7 +94,7 @@ export const PLAYER_TRAITS: Record<PlayerTraitKey, TraitDefinition> = {
     name: 'Shotcaller',
     badge: 'Shotcaller',
     icon: '📢',
-    description: 'Tactical captain. Sounds a Rally Call during teamfights and objective contests, giving nearby allies +25 move speed and fast regrouping.',
+    description: 'Calls the same objective or fight target for nearby allies and waits for the group before engaging.',
     color: '#8b5cf6'
   },
   'Golden Flash': {
@@ -102,7 +102,7 @@ export const PLAYER_TRAITS: Record<PlayerTraitKey, TraitDefinition> = {
     name: 'Golden Flash',
     badge: 'Golden Flash',
     icon: '⚡',
-    description: 'Peak mechanical reaction time. Gains +15% dodge odds and instant disengage positioning when collapsed upon.',
+    description: 'Reads visible skillshots using the card\'s ordinary dodge mechanics; a distinct sidestep move is planned.',
     color: '#eab308'
   }
 };
@@ -131,42 +131,49 @@ export function hasPlayerTrait(player: PlayerCard, trait: PlayerTraitKey): boole
 export function canAggroDive(
   unit: AramChampionUnit,
   target: AramChampionUnit,
-  nearestTowerDist: number
+  nearestTowerDist: number,
+  context?: {
+    alliedMinionsUnderTower?: number;
+    defendersUnderTower?: number;
+    attackersUnderTower?: number;
+  }
 ): boolean {
   if (!hasPlayerTrait(unit.player, 'Aggro Diver')) return false;
   if (!target.isAlive) return false;
+  if (target.zhonyaActive || (target.untargetableTimer ?? 0) > 0) return false;
+
   const targetHpRatio = target.hp / target.maxHp;
   const unitHpRatio = unit.hp / unit.maxHp;
 
-  // Dive condition: enemy is low (<38%), diver has reasonable health (>30%), and target is near the tower (<320px)
-  return targetHpRatio <= 0.38 && unitHpRatio >= 0.30 && nearestTowerDist <= 320;
+  // Base Aggro Diver condition: enemy is low (<38%), diver has reasonable health (>30%), and target is near the tower (<320px)
+  if (targetHpRatio > 0.38 || unitHpRatio < 0.30 || nearestTowerDist > 320) return false;
+
+  // Tactical and avatar limits when context is available:
+  if (context) {
+    if ((context.defendersUnderTower ?? 1) > (context.attackersUnderTower ?? 1)) {
+      return false;
+    }
+    const role = unit.champion?.primaryRole;
+    if ((role === 'Mage' || role === 'Marksman' || role === 'Support') && (context.alliedMinionsUnderTower ?? 0) === 0 && targetHpRatio > 0.15) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 /**
- * Checks whether Clutch King activates Clutch Surge when dropped low in combat.
+ * Checks whether Clutch King holds the fight instead of retreating.
  */
-export function shouldTriggerClutchSurge(
+export function shouldHoldClutchFight(
   unit: AramChampionUnit,
   localEnemiesCount: number
 ): boolean {
   if (!hasPlayerTrait(unit.player, 'Clutch King')) return false;
-  if (unit.clutchSurgeActive) return false;
+  if (unit.clutchCommitActive) return false;
   const hpRatio = unit.hp / unit.maxHp;
   // Trigger when low HP (<32%) and in active combat with at least 1 enemy nearby
   return hpRatio <= 0.32 && localEnemiesCount >= 1;
-}
-
-/**
- * Calculates Clutch Surge combat bonuses (scales with card CLU attribute).
- */
-export function getClutchSurgeBonuses(unit: AramChampionUnit, isOutnumbered: boolean) {
-  const clu = Math.max(50, Math.min(99, unit.player.stats.clu ?? 75)) / 99;
-  return {
-    shieldAmount: Math.round(unit.maxHp * (0.16 + clu * 0.08)), // 20-24% Max HP shield
-    aspdMultiplier: 1.25 + clu * 0.10,                          // +25-35% Attack Speed
-    critBonus: 0.30 + clu * 0.15,                               // +30-45% Crit Chance
-    damageMultiplier: isOutnumbered ? 1.20 + clu * 0.08 : 1.10   // 1vX outplay bonus damage
-  };
 }
 
 /**
@@ -182,68 +189,42 @@ export function canAttemptObjectiveSnipe(
 }
 
 /**
- * Returns bonus execute damage for Baron Steal specialists against epic bosses.
+ * Checks whether One-Tap God should hunt an exposed carry.
  */
-export function getObjectiveSmiteBonus(
+export function shouldHuntExposedCarry(
   unit: AramChampionUnit,
-  bossHp: number,
-  bossMaxHp: number
-): number {
-  if (!hasPlayerTrait(unit.player, 'Baron Steal')) return 0;
-  const ratio = bossHp / bossMaxHp;
-  if (ratio <= 0.22) {
-    // Delivers high true-damage smite execute (+50% bonus damage)
-    return Math.round(unit.champion.ad * 1.5 + unit.player.stats.clu * 4);
-  }
-  return 0;
-}
-
-/**
- * Checks whether One-Tap God should prioritize target squishy carries.
- */
-export function getOneTapTargetPriority(
-  unit: AramChampionUnit,
-  candidate: AramChampionUnit
-): number {
-  if (!hasPlayerTrait(unit.player, 'One-Tap God')) return 0;
+  candidate: AramChampionUnit,
+  candidateAllies: AramChampionUnit[]
+): boolean {
+  if (!hasPlayerTrait(unit.player, 'One-Tap God') || unit.player.stats.iq < 60) return false;
   const isSquishy = candidate.champion.primaryRole === 'Marksman' || candidate.champion.primaryRole === 'Mage';
-  return isSquishy ? 280 : 0;
+  return isSquishy && !candidateAllies.some(ally => ally.id !== candidate.id && ally.isAlive
+    && Math.hypot(ally.x - candidate.x, ally.y - candidate.y) < 150);
 }
 
 /**
- * Checks whether Laning Demon deals bonus wave/tower damage early game.
+ * Checks whether Laning Demon should focus the early wave before pushing.
  */
-export function getLaningDemonDamageMultiplier(
+export function shouldLaningDemonClearWave(
   unit: AramChampionUnit,
-  targetType: 'minion' | 'structure',
-  matchSeconds: number
-): number {
-  if (!hasPlayerTrait(unit.player, 'Laning Demon')) return 1.0;
-  // Active in the early-to-mid laning phase (<240s)
-  if (matchSeconds <= 240 && (targetType === 'minion' || targetType === 'structure')) {
-    return 1.22; // +22% damage
-  }
-  return 1.0;
+  matchSeconds: number,
+  hasEnemyWave: boolean
+): boolean {
+  return hasPlayerTrait(unit.player, 'Laning Demon') && matchSeconds <= 240 && hasEnemyWave;
 }
 
 /**
- * Tenacity reduction multiplier for Ice in Veins (reduces incoming CC durations).
+ * Ice in Veins keeps the existing target in mind while crowd controlled.
  */
-export function getTenacityMultiplier(unit: AramChampionUnit): number {
-  if (hasPlayerTrait(unit.player, 'Ice in Veins')) {
-    return 0.60; // 40% reduction
-  }
-  return 1.0;
+export function shouldHoldFightPlan(unit: AramChampionUnit): boolean {
+  return hasPlayerTrait(unit.player, 'Ice in Veins') && unit.isAlive && unit.hp > 0;
 }
 
 /**
- * Unkillable Demon evasion chance when low HP (<35%).
+ * Unkillable Demon tries to bait a skill when wounded; damage is unchanged.
  */
-export function getUnkillableDodgeChance(unit: AramChampionUnit): number {
-  if (!hasPlayerTrait(unit.player, 'Unkillable Demon')) return 0;
-  if (unit.hp / unit.maxHp <= 0.35) {
-    return 0.35; // 35% chance to evade/bait
-  }
-  return 0;
+export function shouldBaitEnemySkill(unit: AramChampionUnit, enemiesNearby: number): boolean {
+  return hasPlayerTrait(unit.player, 'Unkillable Demon')
+    && unit.hp / unit.maxHp <= 0.35 && enemiesNearby > 0;
 }
 

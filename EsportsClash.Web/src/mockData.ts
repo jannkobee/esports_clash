@@ -632,7 +632,7 @@ export const CHAMPIONS: ChampionKit[] = [
     range: 5.8,
     passiveDesc: 'Forest Guardian: Every 4th attack blooms an emerald seed that restores 50 HP and roots minions.',
     skill1: { name: 'Verdant Cage', desc: 'Encircles the target champion in a ring of 8 living oak trees, trapping them inside for 2.8s!', cooldown: 10, damage: 90, damageType: 'Magic' },
-    skill2: { name: 'Awaken Treants', desc: 'Animates the foliage into 3 wooden Treants that march forward to tank and attack.', cooldown: 11, damage: 120, damageType: 'Physical' },
+    skill2: { name: 'Forest Link', desc: 'Link every avatar in a zone for 4 seconds. When one takes health damage, each other linked avatar takes 10% of it.', cooldown: 11, damage: 0, damageType: 'Magic' },
     ultimate: { name: "Nature's Wrath", desc: 'Releases a bouncing green solar lightning sphere that leaps up to 10 times with escalating damage!', cooldown: 65, damage: 410, damageType: 'Magic', isUlt: true },
     primaryColor: '#22c55e',
     accentColor: '#14532d'
@@ -699,7 +699,7 @@ export const CHAMPIONS: ChampionKit[] = [
     passiveDesc: 'Overload: Casting any spell charges next attack with an electric burst slowing and dealing +60 AOE magic damage.',
     skill1: { name: 'Static Remnant', desc: 'Leaves a crackling electrical duplicate that detonates when enemies approach.', cooldown: 4, damage: 140, damageType: 'Magic' },
     skill2: { name: 'Electric Vortex', desc: 'Channels a lightning tether that pulls an enemy champion helplessly toward him for 1.4s.', cooldown: 11, damage: 75, damageType: 'Magic' },
-    ultimate: { name: 'Ball Lightning', desc: 'Transforms into an invulnerable supersonic ball of lightning and zips across the map with an electric blast!', cooldown: 50, damage: 420, damageType: 'Magic', isUlt: true },
+    ultimate: { name: 'Ball Lightning', desc: 'Rushes as lightning with a 3 to 1 second cooldown by rank. Each cast consumes a large amount of mana.', cooldown: 3, damage: 420, damageType: 'Magic', isUlt: true },
     primaryColor: '#06b6d4',
     accentColor: '#0891b2'
   },
@@ -754,7 +754,7 @@ export const INITIAL_FACILITIES: Facility[] = [
   { id: 'f_scrim', name: 'PC Scrim Battle-Station', level: 1, maxLevel: 5, cost: 1000, desc: '+XP & Team Synergy drills', icon: 'monitor' },
   { id: 'f_vod', name: 'Tactical VOD & Playbook Room', level: 1, maxLevel: 5, cost: 1000, desc: '+Macro Game IQ & Counter-drafts', icon: 'brain' },
   { id: 'f_gym', name: 'Ergonomic Gym & Physio', level: 1, maxLevel: 5, cost: 1200, desc: 'Heals wrist strain & reduces tilt', icon: 'dumbbell' },
-  { id: 'f_stream', name: 'RGB Creator Stream Studio', level: 1, maxLevel: 5, cost: 1500, desc: 'Generates Sponsorship Cash & Fans', icon: 'video' },
+  { id: 'f_stream', name: 'RGB Creator Stream Studio', level: 1, maxLevel: 5, cost: 1500, desc: 'Generates sponsorship coins', icon: 'video' },
   { id: 'f_kitchen', name: 'Gourmet Cafeteria', level: 1, maxLevel: 5, cost: 1200, desc: 'Boosts Daily Energy & Mood', icon: 'utensils' },
   { id: 'f_beds', name: 'Soundproof Sleep Pods', level: 1, maxLevel: 5, cost: 1000, desc: 'Fast fatigue recovery after Bo5 series', icon: 'bed' }
 ];

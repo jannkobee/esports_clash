@@ -293,22 +293,310 @@ This records decisions in the order the user raised them. It is a handoff, not a
   - Added `hasObjectiveVision` evaluating vision of Dragon and Golem pits via nearby allied champions (within 440px), allied wards (within 320px), or visible spotted enemies in the pit.
   - Added `shouldContestOpponentObjective` assessing contest timing when opponents attack Embermaw or Gravemarch Colossus, taking into account healthy teammates, macro IQ, teamfight rating, chemistry, and `Shotcaller` / `Baron Steal` presence.
   - In `AramMatchView.tsx`, when an opponent team is detected doing an objective, the scouting team sounds a contest alert (`⚔️ CONTEST: [TEAM] spotted opponents on Embermaw/Gravemarch! Regrouping immediately!`), triggers `📢 SHOTCALL RALLY!`, and healthy teammates break off minor tasks to march in formation to the pit, initiating on the vulnerable enemies trapped inside or timing smite burst executes.
-- **Unique Player Card Combat Traits System (`src/playerTraits.ts`, `src/combatDecision.ts`, `src/components/AramMatchView.tsx`):**
-  - **Aggro Diver**: Fearlessly executes low-HP targets (<38% HP) even under enemy turrets. Gains +25 move speed on low-HP targets, a 16% Max HP Dive Shield upon entering turret range, and +18% bonus dive execution damage.
-  - **Clutch King**: Refuses to retreat or cower when dropped below 32% HP in combat. Triggers **Clutch Surge** (+18-24% Max HP shield, +25% attack speed, +30% crit chance, and +20% outplay damage when outnumbered).
-  - **Baron Steal**: Prioritizes sprinting to low-HP epic objectives (<30% HP) and delivers a massive +50% true damage execute burst on monsters below 22% HP to snipe the objective.
-  - **One-Tap God**: Bypasses frontline tanks in target selection to lock onto enemy squishy carries (Marksman/Mage). Deals +25% bonus critical burst against isolated targets.
-  - **Laning Demon**: Dominates the wave early game (<240s) with +22% damage to minions and structures, and applies attack speed slows to opposing laners.
-  - **Unkillable Demon**: When below 35% HP, gains +35% move speed and 35% chance to mitigate incoming damage by 65%, successfully baiting enemy abilities.
-  - **Ice in Veins**: Possesses 40% innate crowd control reduction (tenacity), shrugging off stuns, knockups, and roots.
-  - **Vision Master**: Wards on a reduced 28s cooldown and proactively places deep vision wards directly inside Dragon and Golem pits.
-  - **Shotcaller**: Sounds a tactical rally aura during objective contests, granting nearby allies +25 move speed and rapid convergence.
+- **Unique Player Card Combat Traits System (`src/playerTraits.ts`, `src/combatDecision.ts`, `src/components/AramMatchView.tsx`):
+  - Aggro Diver pursues a wounded enemy under a turret when survivable.
+  - Clutch King stays in an active low-health fight instead of immediately retreating.
+  - Baron Steal recognizes contested low-health objectives, without an extra execute attack.
+  - One-Tap God seeks an isolated carry when IQ and reach allow.
+  - Laning Demon clears an enemy wave before a siege during the early phase.
+  - Unkillable Demon uses cover at low health and can re-enter after an enemy spends a skill.
+  - Ice in Veins retains the current target through normal-duration crowd control.
+  - Vision Master prioritizes pit vision using the ordinary ward cooldown.
+  - Shotcaller signals contests and helps allies converge at ordinary movement speed.
+  - Golden Flash has a proposed skillshot-reading move, but no separate gameplay hook yet.
 - **Pro Circuit & Living Simulation Integration (`src/proTeamsDatabase.ts`):**
   - Updated AI team generator so that coaches and players across 120+ clubs generate authentic combinations of active PlayStyle traits based on their roles and ratings.
 - **Verification (`src/playerTraits.test.mjs`, `src/objectiveRules.test.mjs`):**
   - Added 5 unit tests for player traits and 2 unit tests for objective contestation and vision detection. All 77 unit tests and 14 design validation checks pass cleanly.
 
+## User Request: Turret Kill Attribution Window and Turret Execution Gold Split
+
+**User Request:**
+- If a turret kills an avatar, the kill should go to the last avatar who damaged the killed avatar.
+- If the elapsed time is 10 seconds and the turret kills the avatar, the kill should not go to the last avatar who damaged it; the turret just gets the kill and the team that owns the turret will receive the gold evenly.
+
+**Implementation:**
+- **Turret Kill Attribution & Gold Split Logic (`src/matchReplay.ts`, `src/components/AramMatchView.tsx`):**
+  - Added `resolveTurretKillReward(victim, now, champions, windowSeconds = 10, bounty = 300)`.
+  - When a turret lands the lethal blow on an avatar (`isTurretFinish`):
+    - If the victim was damaged by an enemy avatar within $\le 10.0$ seconds, the kill credit is awarded to that enemy champion (granting them $+1$ kill, 300g bounty, first blood check if applicable, multikill/streak progression, assist gold/XP to living nearby allies, and sound effects).
+    - If the elapsed time since last enemy damage exceeds 10 seconds ($> 10.0$ seconds) or no enemy champion damaged the victim:
+      - The kill is attributed to the turret as an execution (no player is credited with a kill).
+      - The turret's team splits the 300g bounty evenly across all members (`splitGold = Math.floor(300 / turretTeamAllies.length)`, giving 60g each in 5v5).
+      - Floating gold text (`+60g Turret Split! 💰`) appears above each recipient with coin sound effects.
+      - Event log records: `⚡ [Player] ([Champion]) was EXECUTED by Defense Turret! (+[Gold]g split to [TEAM])`.
+- **Verification (`src/matchReplay.test.mjs`):**
+  - Added unit test covering enemy damage within 10s (kill credit awarded, 0 split gold), exactly 10s window boundary, $> 10$s expiry (execution, 60g split to 5 allies), and zero prior damage.
+  - Ran `npm run check:game` (all 78 unit tests and 14 design validation checks pass) and `npm run build` from `EsportsClash.Web`.
+
+## User Request: Objective Contestation Fixed to Engage Enemy Team in Teamfight
+
+**User Request:**
+- We need for the other team to engage and look for a teamfight against the other team not go to the actual pit of the objective.
+
+**Implementation:**
+- **Objective Contestation Teamfight Engagement (`src/components/AramMatchView.tsx`):**
+  - Removed direct pit pathing (`(dragon.x, dragon.y)` / `(golem.x, golem.y)`) and objective monster attacking during opponent objective contestation.
+  - When `isContestingOpponentObjective` triggers, contesting champions prioritize the enemy champions engaged at/near the objective (`contestEnemyPool`), selecting their teamfight focus via `chooseTeamfightTarget`.
+  - When in combat range, contesting units execute the full teamfight combat system (avatar combos, ultimates, skillshots, CC chain stuns, kiting, and focus fire on the enemy champions).
+  - When outside combat range, contesting units march directly toward the enemy champions (`enemyToEngage`) at their normal movement speed to initiate the fight, rather than entering the neutral pit.
+  - While contesting, wave clear and structure attacks are suppressed so units do not get diverted from engaging the enemy team.
+- **Verification:**
+  - Ran `npm run check:game` (all 78 unit tests and 14 design validation checks pass).
+  - Ran `npm run build` (clean TypeScript compilation and Vite build).
+
 ## Practical boundaries
 
 The online room feature synchronizes drafting and a seeded AI match; it is not a server-authoritative ranked match. Research `realName` values are kept internally for roster provenance and deduplication, but should not appear on player card faces. Keep aliases fictional and stable once published so saved reports remain understandable.
+
+
+
+## User Request: Player Card Traits as Moves, Not Stat Buffs
+
+**User:** Read the docs, remove numeric PlayStyle buffs, and list distinct moves. Clutch King should refuse to retreat when wounded rather than gain a shield.
+
+**Agent:** Rewrote the trait descriptions in `docs/arena-mechanics.md` and `src/playerTraits.ts`. Removed trait-only shield, bonus attack damage, objective execute burst, random damage reduction, CC reduction, ward cooldown reduction, and rally speed in `src/components/AramMatchView.tsx`. The implemented choices include diving wounded targets, holding a clutch fight, contesting objectives, selecting an isolated carry, clearing the wave before sieging, baiting a spent skill from cover, retaining a target after crowd control, pit warding, and signaling a contest. Golden Flash's distinct sidestep remains a proposed move. This section supersedes the earlier numeric PlayStyle descriptions.
+
+**Affected files:** `src/playerTraits.ts`, `src/combatDecision.ts`, `src/objectiveRules.ts`, `src/components/AramMatchView.tsx`, `src/types.ts`, their focused tests, and both docs.
+
+**Verification:** `npm run check:game` passed (80 tests plus design checks); `npm run build` passed (TypeScript and Vite).
+
+**Limit:** Baron Steal timing and Shotcaller group coordination remain broad objective decisions rather than a dedicated coordinated action sequence.
+
+## User Request: Header Cleanup, Pack Coins, and Teamfight Combat Types
+
+**User:** Remove Fans and Day 1 from the UI. Fix Pack Store purchases adding coins instead of deducting them. Give avatars several combat types, like Stonewake's teamfight initiation and disabling, and make AI use multi-target crowd control according to player card attributes.
+
+**Agent:** Removed the unused Fans and Day counters from the header and the related fan reward text. Sponsor Stream now describes its coin reward. Pack purchases now settle at the listed cost once; duplicate pulls train the owned card without refunding the purchase, and the active lineup receives the upgraded card. Removed the unrelated coin drop that could make a paid pack profitable. The opening modal shows coins spent and the remaining balance. The initial club owns all 63 cards in the current pack pool, so these pulls normally train existing cards.
+
+**Agent:** In the Evolution Hub, eligible player cards now have a fixed width and scroll inside the panel instead of compressing into narrow strips. Added a name, role, and tier search for large clubs.
+
+**Agent:** Added nine avatar combat types and visible type bars in the avatar hub, type filtering, and type tags during drafting. Stonewake and Nullweaver have explicit multi-type profiles; other avatars derive tendencies from their kits. Skilled players aim Stonewake's Faultline and Nullweaver's opening control through groups. Area control ultimates now evaluate the number of enemies actually in their hit geometry. Stonewake holds Quake Chorus for grouped opponents or emergency peel when the player card's IQ, teamfight rating, and composure support that choice. The learned combo path checks the same rule before spending the ultimate. These types affect decisions, not damage or defenses.
+
+**Affected files:** `src/App.tsx`, `src/packEconomy.ts`, `src/components/PackOpeningModal.tsx`, `src/components/GamingHouseView.tsx`, `src/components/EvolutionsView.tsx`, `src/components/ChampionHubView.tsx`, `src/components/DraftPhaseView.tsx`, `src/mockData.ts`, `src/types.ts`, `src/additionalChampions.ts`, `src/avatarCombatRoles.ts`, `src/combatDecision.ts`, `src/components/AramMatchView.tsx`, relevant tests, and both docs.
+
+**Verification:** `npm run check:game` passed (85 tests plus design checks); `npm run build` passed (TypeScript and Vite). Browser layout was not visually inspected in this workspace.
+
+**Limit:** The nine type ratings are curated or inferred play tendencies, not a copy of source-game balance. Area control timing is wired to the existing ultimate shapes for Stonewake, Nullweaver, Solana, Soulscourge, Veyara, and Kaolin; other kits still use their existing targeting rules.
+
+## User Request: Visible Sylla Spirit Bear and Next Steps
+
+**User:** Asked why Sylla's summoned bear could not be seen and what should be improved next.
+
+**Agent:** Found that Summon Spirit Bear only applied instant root and damage plus a 1.5-second ring effect. Sylla's sprite also contained a tiny decorative cub that was always present, but there was no summoned combat unit. Skill 1 now creates one distinct, large Spirit Bear with a health bar and name label. It follows Sylla, pursues his chosen opponent, attacks nearby champions, creeps, or structures, and uses the existing minion combat path so enemy champions, creeps, and turrets can damage it. Recasting heals and retargets the same bear; it disappears when Sylla dies. The decorative cub was removed so the summon is recognizable as a separate unit. Bear health and attack damage rise with Sylla's level. Savage Roar now radiates from both Sylla and his living bear. The root and initial impact remain part of Skill 1.
+
+**Affected files:** `src/types.ts`, `src/components/AramMatchView.tsx`, `src/components/ChampionSpriteRenderer.ts`, `src/avatarSkillAnimation.test.mjs`, and both docs.
+
+**Verification:** `npm run check:game` passed (86 tests plus design checks); `npm run build` passed. The focused sprite smoke test covers both team colors. No interactive browser screenshot was captured in this workspace.
+
+**Limit:** The bear uses the existing minion damage and target selection rules and does not have a separate inventory or command panel. A useful next step is a visual match review of summons, teamfight readability, and mobile HUD overlap; then improve ability AI cases that still use one-target logic despite area effects.
+
+## User Request: Jungle Leashes, One-Time Gravemarch, and Live Sylla Review
+
+**User:** Asked for jungle camps to regain health after dropping aggro, have an aggro timer or limit based on League, look bigger and scarier, and for the bottom golem to spawn once and charge towers. The user also requested the previously proposed live Sylla review.
+
+**Agent:** Added a five-second camp patience clock refreshed by valid hits inside the home leash. A camp returning after losing its target or patience heals 6% maximum health per second and completes a full reset after six seconds; a fresh valid hit interrupts that reset. Attackers outside the leash cannot keep a camp engaged. Scouted camp bars show patience. This adapts the leash, soft reset, and hard reset ideas from [Riot's patch 12.22 notes](https://www.leagueoflegends.com/en-us/news/game-updates/patch-12-22-notes/) to the arena's shorter distances and match length.
+
+**Agent:** Enlarged the camp models, clearing rings, trees, and fog silhouettes. Gravemarch gained a more threatening silhouette with horns, lit runes, and heavy fists. The neutral Gravemarch appears once per match. On defeat it spawns exactly one allied siege golem near the leading friendly wave; the previous repeating wave buff and neutral respawn are gone. The claimed golem has a readable windup, then charges a live enemy turret in front of it and deals 1,050 base damage subject to tower plating. It can be killed and never respawns. Its charge has a 10-second cooldown.
+
+**Agent:** Ran an actual Vs AI browser draft with Sylla on blue. At 0:16 the live bear was alive with 411/1,240 HP and fighting ahead of Sylla, but its old minion draw layer let champions hide it. Moved the bear to a foreground pass, gave it more space while following Sylla, and checked the replay again at 0:17. [The captured live frame](sylla-live-review.png) shows the larger bear and its nameplate in the teamfight. Inspected the [jungle view](jungle-live-review.png) at 0:50 after first-wave fog cleared, then inspected Gravemarch when scouted. This confirms visual readability at a 1600×900 desktop viewport; mobile was not inspected.
+
+**Affected files:** `src/neutralAggroRules.ts`, `src/neutralAggroRules.test.mjs`, `src/siegeGolemRules.ts`, `src/siegeGolemRules.test.mjs`, `src/types.ts`, `src/components/AramMatchView.tsx`, both docs, and the two visual review screenshots in `docs/`.
+
+**Verification:** `npm run check:game` passed (89 tests plus design checks); `npm run build` passed. The focused rules tests cover camp patience, healing, retagging, Gravemarch's one-time spawn, and legal charge targets. The live browser replay covers desktop visual behavior.
+
+**Limit:** Gravemarch's tower charge uses normal plating, so its actual tower damage is lower early in a match. Jungle patience and leash values are original arena tuning, not a copy of current League balance. The online room still synchronizes a seeded AI match rather than a server-authoritative battle.
+
+## User Request: Creature Attacks and Turns
+
+**User:** Spirit Bear, golems, and neutral camps should visibly attack and turn.
+
+**Agent:** Added persistent horizontal facing to the Spirit Bear, claimed siege golem, and neutral camps. They turn over fixed simulation ticks as their target moves or, for a leashed camp, as they return home. The model narrows briefly during a turn while labels and health bars remain stable. Sylla's bear lunges with its leading paw and claw trail. Frost sentinels and both Gravemarch models lift and slam their fists; wolves bite, behemoths thrust their tusks, and crimson drakes flare their wings and breathe fire. These poses follow existing attack timers. The claimed golem also raises its arm through the tower charge warning and slams on contact. Combat damage, cooldowns, target selection, and leash rules remain tied to their existing simulation events.
+
+**Affected files:** `src/creatureAnimation.ts`, `src/creatureAnimation.test.mjs`, `src/types.ts`, `src/components/AramMatchView.tsx`, `src/components/ChampionSpriteRenderer.ts`, `src/avatarSkillAnimation.test.mjs`, and both docs.
+
+**Verification:** `npm run check:game` passed (91 tests plus design checks) and `npm run build` passed. A live Vs AI Sylla draft was watched in headless Chrome at a 1600x900 desktop viewport; the foreground bear and enlarged neutral camp models remained visible in the running canvas. The pure animation tests cover a multi-tick turn, close-range facing stability, and attack pose expiration. The bear sprite smoke test covers idle, raised paw, and claw strike for both team colors.
+
+**Limit:** The browser review sampled live frames rather than every possible turn and strike frame, and mobile was not inspected. Attack poses are visual; they do not delay the already immediate bear hit or camp projectile launch.
+
+## User Request: Finish Contested Objectives and Repair Starting Cards
+
+**User:** Teams should finish a low-health objective before fighting. They should only turn from a healthy objective when the enemy team actually chooses to fight, and should otherwise focus the boss. After a secure, fighting or regrouping should depend on the shotcaller, AI, and player card attitudes. The user also showed the Starting 5 lineup with clipped trait badges, uneven card footers, and truncated slot information.
+
+**Agent:** Added a health-aware objective action in `src/objectiveRules.ts`. At or below 32% boss health, both the holding team and a scouting contesting team choose to finish Embermaw or Gravemarch. Above that, the holding team keeps attacking unless an enemy champion recently damaged an ally near the pit. A contesting team can initiate a fight or race the boss based on its cards and coach. IQ, teamfight and clutch ratings, PlayStyle traits, and coach style affect the decision; a `Shotcaller` card has a stronger voice over the group. These values affect choices, not damage or defenses. The first team to engage a boss retains its claim while present; if it leaves and the other team takes over, the claim changes. On a kill, a separate team call decides whether to press nearby enemies or regroup toward lane for six game seconds. A fresh enemy hit can interrupt regrouping. The event log records finish, fight, and aftermath calls.
+
+**Agent:** Reworked the Starting 5 card layout in `src/components/CardComponent.tsx` and `src/components/SquadView.tsx`: cards grow to fit their traits, signature avatars can wrap onto two lines, role descriptions have their own row, and Swap/Inspect actions align beneath the cards. The badge row no longer spills over the card border.
+
+**Affected files:** `src/objectiveRules.ts`, `src/objectiveRules.test.mjs`, `src/components/AramMatchView.tsx`, `src/components/CardComponent.tsx`, `src/components/SquadView.tsx`, and both docs.
+
+**Verification:** `npm run check:game` passed (93 tests plus design checks) and `npm run build` passed. Focused tests cover low-health finish, fighting only after an attack on a healthy holder, different coach/card attitudes, shotcaller influence, and post-secure choices. Reviewed the Starting 5 in headless Chrome at 1440x900 and 1200x900; all visible badges fit inside their cards and slot roles are readable.
+
+**Limit:** The objective decision uses a fixed low-health threshold and a recent champion-damage signal; it does not estimate projectile travel time or exact burst damage. The browser check covered the lineup, while objective branch outcomes were checked through rule tests and code review rather than a full live objective contest replay.
+
+## User Request: Recorded Sounds for Every Avatar Skill
+
+**User:** Asked for realistic sounds for each avatar skill using free effects intended for game developers.
+
+**Agent:** Replaced the shared synthetic cast beep in the main arena and avatar hub preview with authored audio cues for all 39 playable avatars' Skill 1, Skill 2, and Ultimate. Each skill pairs a primary recording with a quieter accent and a stable, modest pitch variation for that avatar. The 27 included recordings are selected from Kenney's [RPG Audio](https://kenney.nl/assets/rpg-audio), [Impact Sounds](https://kenney.nl/assets/impact-sounds), and [Sci-fi Sounds](https://kenney.nl/assets/sci-fi-sounds), each CC0 according to the pack's own license file. They are foley, physical impacts, and energy effects; no audio was copied from the games behind avatar inspirations. Sounds preload after the first user interaction. Playback has a per-skill throttle and voice cap so 4x teamfights do not stack an unbounded number of sounds. Generic combat hits and boss explosions now use quieter recorded effects; UI actions retain their existing cues. The passive is always active and has no separate cast cue.
+
+**Affected files:** `src/avatarSkillAudio.ts`, `src/audio.ts`, `src/components/AramMatchView.tsx`, `src/components/ChampionHubView.tsx`, `src/avatarSkillAudio.test.mjs`, `public/audio/kenney/`, and both docs.
+
+**Verification:** `npm run check:game` passed (95 tests plus design checks), including coverage of all 117 active skill cues and shipped sample paths. `npm run build` passed. No speaker-based listening review was possible in this workspace.
+
+**Limit:** Cues share a compact 27-recording palette, so their combinations, pitch, and layering create distinction rather than 117 separate recordings. Browser autoplay policy applies; the first sample may arrive slightly after a cold load. The browser audio mix still needs a live listening pass, especially at 4x speed.
+
+## User Request: Match Creature Turns to Avatar Turns
+
+**User:** Said the new Spirit Bear, golem, and neutral camp turns look unnatural and asked to reuse the avatars' turn behavior.
+
+**Agent:** Removed the creatures' multi-tick width-squeeze turn. Spirit Bear, neutral camps, and the claimed siege golem now switch horizontal facing immediately, the same way avatar sprites flip. A small close-range dead zone preserves the current direction to avoid jitter when standing on a target. Their full silhouettes remain visible throughout; paw, fist, jaw, tusk, fire, and tower-charge attacks keep their existing timer-driven poses. No combat targeting, leash, attack timing, or damage changed. The earlier creature-turn handoff entry describes the superseded animation.
+
+**Affected files:** `src/creatureAnimation.ts`, `src/creatureAnimation.test.mjs`, `src/components/AramMatchView.tsx`, and both docs.
+
+**Verification:** `npm run check:game` passed (95 tests plus design checks) and `npm run build` passed. The focused test checks an immediate full-width flip, close-range facing stability, and the existing attack poses.
+
+**Limit:** This uses the avatars' two-direction sprite flip, so there is no dedicated three-quarter or back view. A live visual review of every neutral model was not performed in this turn.
+
+## User Request: Larger Creeps, Smaller Shots, and Better Farm vs Nexus Calls
+
+**User:** Asked to make creeps a little larger and reduce their projectile attacks. Clarified that the projectile size should shrink, while attack frequency and damage stay the same. Teams should plan farms around known jungle camp locations rather than wait to discover a camp, and stop farming camps when an exposed enemy nexus is low enough to finish.
+
+**Agent:** Enlarged the normal melee, caster, and cannon creep artwork to 1.28× and widened their shadows, empowerment ring, and health bar. Caster shot radius fell from 4 to 2.5 pixels; cannon shot radius fell from 7 to 5 pixels. The projectile rate, damage, speed, and collision behavior did not change. AI now selects a route from a camp's known home location without a vision gate. Jungle-capable avatars can route from farther away; a strong farmer in another role may take a nearby camp when lane is quiet. Threats, low health, early first wave, lane pressure, and an urgent structure finish stop the farm choice. Both teams use the same rule.
+
+**Agent:** Added a nexus finish read based on the nexus's actual health, exposed state, player IQ, and coach macro rating. An exposed low-health nexus suppresses ordinary camp farm and side-objective calls. Healthy attackers move to and hit the nexus when safe; if a defending wave blocks the push, they clear that wave first. Immediate enemy danger can still force a fight. This targets the reported behavior where teams farmed camps despite a finishable nexus.
+
+**Affected files:** `src/components/AramMatchView.tsx`, `src/macroFarmRules.ts`, `src/macroFarmRules.test.mjs`, and both docs.
+
+**Verification:** `npm run check:game` passed (98 tests plus design checks) and `npm run build` passed. Focused tests cover known camp routing without vision, farm cancellation under lane pressure or nexus urgency, and high/low IQ nexus recognition.
+
+**Limit:** The AI knows fixed camp homes and uses current camp availability from simulation; it does not model uncertain enemy clears or hidden respawn timers. The low-nexus threshold varies roughly from 33% to 41% with IQ and coach. Creep and projectile size were checked in code and build, not in a live screenshot in this turn.
+
+## User Request: Channeled Black Hole and Active Skill Kits
+
+**User:** Asked for Nullweaver's ultimate to become a channeled black hole that teams play around; Raijin's Ball Lightning to have a 3-to-1-second cooldown and costly mana use with mana items; visible Renn dashes; Paxi teleporting to an unexpired orb; Kaolin physically rolling into opponents; more useful Skill 2 casts; Tequoia's Forest Link to share 10% damage among avatars in a zone; and Cinderlock's three-stage Q plus invisible, faster W.
+
+**Agent:** Added per-avatar runtime state for dashes, channels, active orbs, linked groups, Cinderlock's Q sequence, and stealth. Nullweaver channels for 3.2 seconds, pulling and repeatedly damaging enemies in a visible black hole. Crowd control or death ends the channel. Higher-rated opponents target the channeler; higher-rated teammates focus enemies caught in the hole. Renn's Gilded Vault, Harmonic Waltz, and Dazzling Rush now travel over simulation ticks with a visible trail; his vault lands control on contact. Kaolin becomes a drawn jade boulder while rolling and stops on the first hostile avatar hit. Paxi's orb travels and remains active briefly; capable players jaunt to it when the position helps a fight. Cinderlock lunges on Q1, ignites on Q2, and makes a critical magic strike on Q3; Ash Veil grants 3.5 seconds of stealth and faster movement until an attack or damage reveals him.
+
+**Agent:** Tequoia's Skill 2 is now Forest Link. It links every living avatar in the target zone for four seconds and shares 10% of actual health lost by one linked avatar with each other linked avatar. The transferred hit never shares again. High-IQ Tequoia players avoid linking a zone with as many allies as enemies. Skill 2 utility casts now get a chance before Skill 1, and self or ally skills are no longer blocked by distance to an enemy. Raijin's ultimate uses fixed 3, 2.3, 1.6, and 1 second cooldowns by rank, but costs 58 to 73 mana each cast. Aegis Orb, Forgotten Grimoire, Thunderclap Staff, and the new Tempest Folio now provide real mana capacity and regeneration; Raijin's item planner values those stats. The mana bar and regeneration use the purchased capacity.
+
+**Affected files:** `src/components/AramMatchView.tsx`, `src/types.ts`, `src/abilityRules.ts`, `src/abilityRules.test.mjs`, `src/combatDecision.ts`, `src/skillRangeRules.ts`, `src/additionalChampions.ts`, `src/mockData.ts`, `src/itemsData.ts`, `src/itemStrategy.ts`, and both docs.
+
+**Verification:** `npm run check:game` passed 101 tests plus design checks and TypeScript; `npm run build` passed. Focused tests cover Raijin's cooldown and mana costs, mana item capacity and regeneration, defensive Skill 2 use beyond enemy range, and affordability of Cinderlock's three Q casts.
+
+**Limit:** These new runtime effects were verified by code and automated checks; a live visual match was not inspected in this turn. Paxi's autonomous jaunt requires a favorable nearby target and card IQ of at least 55. Forest Link can share damage to teammates if the chosen zone contains both teams; this is why higher-IQ users avoid an even or unfavorable zone.
+
+## User Request: Forest Link Marker, Neutral Range, and Match Decisions
+
+**User:** Approved a match inspector and smarter play around Nullweaver's Black Hole and Paxi's orb. Asked for Forest Link to show a marker above linked avatars' IGN instead of lines, and reported that some avatars gain an implausibly long attack range against jungle camps.
+
+**Agent:** Replaced Forest Link's connecting lines and ground ring with a green `LINKED` badge over each affected avatar's nameplate. Normal and epic neutral attacks now stop at a short, fixed maximum distance, even for long-range avatars. The attack executor checks distance again before damage; Runaan secondary bolts do not strike camps, bosses, or structures. Champion attack range is unchanged. This addresses the visual and combat reach that made neutral farming look like a range increase.
+
+**Agent:** Skilled teams spread from a ready enemy Black Hole and save an available interrupt while Nullweaver is a healthy threat; the hold ends once the channel starts so they can interrupt it. Paxi can send an orb toward her own well while endangered and jaunt to it when the destination is safer. A seeded Match Insights panel records each avatar's Q/W/R casts, skillshot hits and attempts, throttled mana shortage windows, Black Hole interruptions, and Paxi engage or escape jaunts. It also shows a scrubbable timeline of casts and major decisions. The saved match report carries the insights and the existing balance summary aggregates selected counters across runs.
+
+**Affected files:** `src/components/AramMatchView.tsx`, `src/macroFarmRules.ts`, `src/macroFarmRules.test.mjs`, `src/blackHoleCounterplay.ts`, `src/blackHoleCounterplay.test.mjs`, `src/paxiDecision.ts`, `src/paxiDecision.test.mjs`, `src/combatDecision.ts`, `src/combatDecision.test.mjs`, `src/matchInspector.ts`, `src/matchInspector.test.mjs`, `src/matchReplay.ts`, `src/matchReplay.test.mjs`, and both docs.
+
+**Verification:** Focused tests cover the neutral range cap, Black Hole counterplay choices, Paxi's escape decision, telemetry counters, and saved report aggregation. `npm run check:game` and `npm run build` pass. A live desktop Vs AI draft with Tequoia and an opposing Nullweaver showed the `LINKED` markers and a populated Insights panel with Q/W casts, skillshot hits, and timeline events. The 25-match balance run is available from the live match header.
+
+**Limit:** The panel records events and a timeline, not positional snapshots or a frame-by-frame video replay. Readiness and risk are local AI estimates; Black Hole spread and Paxi escape depend on card ratings and battlefield geometry. The live visual check used a desktop viewport; mobile and speaker audio were not reviewed.
+
+## User Request: Channeled Ability Follow-Up Engage & Protection Removal
+
+**User:** Reported that when avatars cast channeled abilities (such as Nullweaver's Singularity Well, Corsara's Broadside Waltz, or Cloudtail's Cyclone Dance), their allies protect them or path toward them instead of committing to the follow-up engage.
+
+**Agent:** Removed the convergence behavior where allies treat channeling teammates as grouping anchors or defensive peel targets. Channeled abilities are now recognized as aggressive teamfight engagements rather than distressed carries needing peel:
+- **Peel Exclusion:** `isChannelingAbility` identifies avatars currently channeling abilities (`blackHole`, `corsaraBarrage`, `monkeySpin`). Channeling allies are excluded from defensive carry peeling in `chooseTeamfightTarget`, allowing tanks and supports to engage forward rather than hovering around the channeler.
+- **Grouping Exclusion:** In `AramMatchView.tsx`, `fightingAlly` excludes channeling teammates. Allies no longer path directly to the channeler and abort their own combat loop.
+- **Target Prioritization:** Added `isEnemyCaughtInAlliedChannel`. When any ally channels an engage ability, all living allies within teamfight range (up to 650px) prioritize enemies trapped in or targeted by the channel (e.g. enemies in the Black Hole, barrage cone, or Cyclone Dance knockup), sorting by lowest health and squishy carries for burst execution.
+- **Engagement Commitment & Sprint:** Healthy allies (`u.hp > u.maxHp * 0.25`) during an allied channel engage suppress retreat and recall, bypass routine wave-clearing (`clearWaveFirst = false`), expand combat engagement range to 550px, sprint with +30ms engage bonus speed toward the trapped targets, trigger a floating `⚔️ FOLLOW-UP ENGAGE!` cue, and immediately cast follow-up combos, ultimates, and skills upon reaching ability range.
+
+**Affected files:** `src/combatDecision.ts`, `src/combatDecision.test.mjs`, `src/components/AramMatchView.tsx`, `src/types.ts`, and both docs.
+
+**Verification:** `npm run check:game` passed 113 tests plus design checks; `npm run build` passed with zero errors. Focused tests verify that channeling allies are excluded from carry peel, trapped targets in Black Hole/barrage/spin are prioritized across teamfight range, and follow-up ultimates are committed.
+
+**Limit:** The follow-up engage checks active channel state and enemy positioning inside the ability zone; if an allied channeler is interrupted immediately by crowd control, allies reassess normal teamfight priorities on the next tick.
+
+## User Request: Turret Kill Attribution, 10-Second Execution Window, and Opponent Objective Contestation
+
+**User:**
+1. If a turret kills an avatar, the kill should go to the last avatar who damaged the killed avatar. But if the elapsed time is 10 seconds, the turret gets the execution and the team owning the turret receives the gold evenly.
+2. Fix opponent objective regrouping: when contesting an opponent on Dragon Embermaw or Siege Golem Gravemarch, the team should engage in a teamfight against the opposing champions rather than rushing directly into the objective monster's pit.
+
+**Agent:**
+- **Turret Execution & Kill Attribution:**
+  - In `AramMatchView.tsx` and `matchReplay.ts`, added `resolveTurretKillReward(victim, matchTime, champions, 10)`.
+  - When an avatar dies from a turret shot without direct champion killer:
+    - If `victim.lastEnemyDamage` was within 10 seconds, the champion who dealt the damage is credited with the kill, full 300g reward, XP, and assists.
+    - If elapsed time exceeds 10.0s (or no enemy champion damaged them), the turret secures an authentic execution (`🏰 TURRET EXECUTION!`). No champion gets kill credit, and the 300g bounty is split evenly (60g each) across all five members of the defending team.
+- **Objective Contest Teamfight Priority:**
+  - In `objectiveRules.ts`, added `objectiveFightPreference(players, coach, actor)`, `chooseObjectiveAction`, and `choosePostObjectiveAction`.
+  - Contesting teams scouting opponents at Embermaw/Gravemarch acquire opposing champions as primary targets (`contestFightTarget`) rather than walking into the pit to hit the boss. They look for a teamfight engagement against the enemy champions taking monster damage, only turning to focus the boss when it falls into execution range ($\le 32\%$) or after wiping the contesting threats.
+
+**Affected files:** `src/components/AramMatchView.tsx`, `src/matchReplay.ts`, `src/objectiveRules.ts`, `src/objectiveRules.test.mjs`, and both docs.
+
+**Verification:** `npm run check:game` passed 118 tests; `npm run build` passed.
+
+**Limit:** Execution attribution uses a fixed 10-second timer window; assists use existing proximity checks.
+
+## User Request: Cinderbloom Melee Avatar, AI Steering Stabilization, Support Items, Ability Haste & Ability Damage Scaling
+
+**User:**
+1. Cinderbloom should be a melee avatar.
+2. Too much spinning around if AI can't make decisions; improve it using steering behaviors and anti-oscillation techniques from the internet.
+3. Make more support items.
+4. Make more items that support cooldown reduction (Ability Haste).
+5. Make more items that add damage to abilities (AP, AD, Lethality) and find a way to balance it.
+
+**Agent:**
+- **Cinderbloom Melee Conversion:** Converted Cinderbloom (`c_locke`) from a 125px ranged caster to a dedicated melee avatar (`range: 1.4` kit range, 50px arena melee attack distance, melee slash sparks, no projectile). Preserved champion ID `c_locke` and 43-avatar invariants across animation motifs and combos.
+- **Steering Behavior & Anti-Spin Damping:**
+  - Directional Deadband Hysteresis: `setUnitFacing(unit, targetX, deadband = 12)` ignores sub-12px horizontal deltas during vertical pathing and arrival, stopping 30Hz left/right flipping.
+  - Decision State Commitment: `decisionCommitTimer` (0.45s retreat / 0.35s fight window) and `committedState` prevent rapid toggling between fighting and retreating when distance or HP thresholds slightly fluctuate.
+  - Target Stickiness Hysteresis: Target focus bonus (+1.4 score) prevents fluttering between equidistant targets.
+  - Kiting Hysteresis: Enter backstepping at `dist < threshold * 0.88`; exit only when `dist >= threshold * 1.12`.
+- **Support Items (6 Legendary Items):** Added Chime of Renewal (Echoes of Helia), Windwalker's Warhorn (Shurelya's), Warden's Pledge (Knight's Vow), Aegis of the Protector (Locket), Sunblessed Censer (Ardent Censer), and Beacon of Deliverance (Redemption) with healing, move speed auras, damage redirection, emergency barriers, and attack speed buffs.
+- **Ability Haste Items (4 Dedicated High-Haste Items):** Added Obsidian Cleaver (Black Cleaver, 25 Haste), Dragonheart Glaive (Shojin, 30 Haste), Chronoblade Quickflicker (Navori, 15 Haste + 0.7s basic attack refund), Cosmic Chronosphere (Cosmic Drive, 30 Haste).
+- **Ability Scaling & Penetration Balance Engine:**
+  - Added Wraithblade of the Dunes (Ghostblade, 18 Lethality), Duskfang Reaver (Duskblade, 18 Lethality + up to 12% missing HP damage amp), Fang of the Serpent (Serpent's Fang, 15 Lethality + 40% shield shred), Cinderflame Diadem (Shadowflame, 18 Magic Pen + 22 burst vs shielded/low HP), Astral Spyglass (Horizon Focus, 10% long-range ability amp).
+  - Ability Damage Formula: Base ability damage + AP scaling (`ap * (isMage ? 0.42 : 0.25)`) + bonus AD scaling (`bonusAd * (isPhysicalRole ? 0.36 : 0.18)`). Lethality flat armor pen scales with champion level: `lethality * (0.6 + 0.4 * level / 18)`. Magic Pen reduces effective magic resistance.
+
+**Affected files:** `src/types.ts`, `src/additionalChampions.ts`, `src/itemsData.ts`, `src/itemStrategy.ts`, `src/combatDecision.ts`, `src/abilityRules.ts`, `src/avatarCombos.ts`, `src/avatarSkillAnimation.ts`, `src/avatarSkillAudio.ts`, `src/skillRangeRules.ts`, `src/rosterResearch.ts`, `src/components/ChampionSpriteRenderer.ts`, `src/components/AramMatchView.tsx`, `src/combatSteeringAndItems.test.mjs`, and both docs.
+
+**Verification:** `npm run check:game` passed 118 tests; `npm run build` passed.
+
+**Limit:** Lethality and magic penetration scale linearly with level and stats; items are tuned for fast-paced Clash Arena matches with 0.65 economy scaling.
+
+## User Request: Tower Dive Limits, Avatar Limits & Player Cards, Failed Dive Abort & Emergency Turret Evacuation
+
+**User:**
+Reported that teams are tower diving way too much, throwing games away, and when a tower dive fails they just stand there and die doing nothing about it. They should know the limits of their avatar a lot, but it depends on the player cards also.
+
+**Agent:**
+Investigated root causes and found three critical bugs:
+1. Target selection (`chooseTeamfightTarget`) had zero penalty for enemies standing under live enemy turrets, causing units to ignore lane fights and pursue low-health enemies deep under towers.
+2. In `AramMatchView.tsx`, retreating champions under enemy towers selected `nearbyRetreatBush` (such as `bush_red_river` at $x=1250, y=235$), which was only 160px from the enemy tower (within its 280px range). Upon arriving within 14px of the bush center, the unit set `u.vx = 0, u.vy = 0, animState = 'idle'`, freezing permanently inside turret range while the turret blasted them to death.
+3. Ordinary champions had no turret boundary awareness when closing distance, walking blindly into turret range without dive authorization or minion wave crash. Furthermore, if a target popped Zhonya's Stasis or escaped, divers stood still taking turret true damage.
+
+**Implementation (`src/towerDiveRules.ts`, `src/playerTraits.ts`, `src/combatDecision.ts`, `src/components/AramMatchView.tsx`):**
+- **Avatar Limits (`getAvatarDiveLimits`):**
+  - **Tanks:** High durability; require $\ge 40\%$ HP and $\ge 650$ raw HP; can solo dive if target is low ($\le 38\%$).
+  - **Fighters:** Require $\ge 45\%$ HP and $\ge 600$ raw HP; target $\le 35\%$.
+  - **Assassins:** Require burst skill readiness (`cd1 <= 0` or `cdUlt <= 0` with mana), $\ge 45\%$ HP, and target $\le 32\%$.
+  - **Squishy Mages & Marksmen:** Must NEVER dive into melee tower range without allied minion wave buffer; require $\ge 58-60\%$ HP; target must be an absolute 1-shot execute ($\le 18-20\%$).
+  - **Supports:** Never dive solo; require $\ge 55\%$ HP and wave crash.
+- **Player Card Influence & Tactical Conditions:**
+  - High IQ ($\ge 75$) players strictly calculate lethal thresholds, require minion wave crash ($\ge 2$ minions), and will never dive outnumbered (`defendersUnderTower > attackersUnderTower`).
+  - `Aggro Diver` trait gives higher willingness to execute dives on wounded targets ($\le 38\%$), but respects avatar durability and survival thresholds (never suicides below 30% HP or when outnumbered).
+  - Target Selection Penalty: In `chooseTeamfightTarget`, candidates under active enemy turrets receive a $-3.8 \times \text{IQ} \times (\text{isSquishy} ? 1.5 : 1.0)$ safety penalty unless diving is authorized.
+- **Turret Perimeter Tethering:** Non-diving champions hold at `getTurretPerimeterHoldPoint` (safe boundary outside tower range $+28\text{px}$), allowing ranged units to poke safely from outside the turret zone and melee units to wait with the minion wave rather than walking under the tower.
+- **Failed Dive Abort & Emergency Turret Evacuation (`shouldAbortTowerDive`, `getTurretEvacuationVector`):**
+  - Abort Triggers: Target eliminated, target in Zhonya's Golden Stasis / untargetable, target gained heavy barrier, diver taking turret fire with dropping HP ($< 38\%$ Tank / $< 48\%$ others), dive duration exceeding 2.6 seconds, or minions wiped.
+  - Emergency Evacuation: Diver immediately sets `diveAborting = true`, displays `🏃 ABORT DIVE!`, acquires an evacuation vector directed away from the turret toward home lane safety, gains $+35$ movement speed evacuation sprint, and suppresses routine auto-attacks until safely outside turret range $+50\text{px}$.
+  - Bush Safety Fix: `isBushSafeFromTowers` strictly filters out bushes inside or near enemy turret range. In retreat logic, units inside enemy turret range never stop idle at `distToTarget <= 14`; they keep moving until safely outside the turret zone.
+
+**Affected files:** `src/towerDiveRules.ts`, `src/towerDiveLimits.test.mjs`, `src/playerTraits.ts`, `src/combatDecision.ts`, `src/types.ts`, `src/components/AramMatchView.tsx`, and both docs.
+
+**Verification:** `npm run check:game` passed 126 tests with zero failures; `npm run build` compiled clean production bundle.
+
+**Limit:** Tower dive evaluations use discrete simulation geometry; champions without dashes rely on movement speed and the evacuation sprint bonus to exit turret range before the next shot.
+
 

@@ -1,4 +1,5 @@
 import type { ChampionKit, CoachCard, PlayerCard } from './types';
+import type { MatchInsights } from './matchInspector';
 
 export const SIMULATION_STEP = 1 / 30;
 
@@ -54,12 +55,16 @@ export interface MatchReport {
   skillshotsFired: number;
   skillshotsHit: number;
   events: RecordedMatchEvent[];
+  insights?: MatchInsights;
 }
 
 export function summarizeMatchReports(reports: MatchReport[]) {
   const count = reports.length;
   const total = (get: (report: MatchReport) => number) => reports.reduce((sum, report) => sum + get(report), 0);
   const shots = total(report => report.skillshotsFired);
+  const allAvatarInsights = reports.flatMap(report => Object.values(report.insights?.players ?? {}));
+  const averageMetric = (get: (insight: typeof allAvatarInsights[number]) => number) =>
+    allAvatarInsights.length ? allAvatarInsights.reduce((sum, insight) => sum + get(insight), 0) / allAvatarInsights.length : 0;
   const higherRatedWins = reports.filter(report =>
     report.blueRating === report.redRating ? false :
       (report.blueRating > report.redRating ? report.winner === 'blue' : report.winner === 'red')
@@ -79,6 +84,10 @@ export function summarizeMatchReports(reports: MatchReport[]) {
     blueWinRate: count ? reports.filter(report => report.winner === 'blue').length / count : 0,
     higherRatedWinRate: unequalRatings ? higherRatedWins / unequalRatings : 0,
     skillshotHitRate: shots ? total(report => report.skillshotsHit) / shots : 0,
+    averageSkill2Casts: averageMetric(insight => insight.casts.skill2),
+    averageManaBlocks: averageMetric(insight => insight.manaBlocks),
+    blackHoleInterrupts: allAvatarInsights.reduce((sum, insight) => sum + insight.blackHoleInterrupts, 0),
+    paxiEscapeJaunts: allAvatarInsights.reduce((sum, insight) => sum + insight.escapeJaunts, 0),
     matchesAt15: reached15.length,
     averageFullBuildsAt15: reached15.length
       ? reached15.reduce((sum, report) => sum + (report.fullBuildsAt15 ?? 0), 0) / reached15.length : 0,
@@ -99,4 +108,21 @@ export function resolveNeutralKillCredit<T extends { id: string; team: 'blue' | 
 ): T | null {
   if (!lastHit || now - lastHit.second > windowSeconds || now < lastHit.second) return null;
   return champions.find(champion => champion.id === lastHit.attackerId && champion.team !== victimTeam) ?? null;
+}
+
+export function resolveTurretKillReward<T extends { id: string; team: 'blue' | 'red'; gold: number }>(
+  victim: { team: 'blue' | 'red'; lastEnemyDamage?: { attackerId: string; second: number } },
+  now: number,
+  champions: T[],
+  windowSeconds = 10,
+  bounty = 300
+): { killer: T | null; splitGoldPerAlly: number; turretTeam: 'blue' | 'red'; turretAllies: T[] } {
+  const turretTeam: 'blue' | 'red' = victim.team === 'blue' ? 'red' : 'blue';
+  const killer = resolveNeutralKillCredit(victim.lastEnemyDamage, victim.team, now, champions, windowSeconds);
+  const turretAllies = champions.filter(c => c.team === turretTeam);
+  if (killer) {
+    return { killer, splitGoldPerAlly: 0, turretTeam, turretAllies };
+  }
+  const splitGoldPerAlly = turretAllies.length > 0 ? Math.floor(bounty / turretAllies.length) : 0;
+  return { killer: null, splitGoldPerAlly, turretTeam, turretAllies };
 }

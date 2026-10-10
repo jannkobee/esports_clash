@@ -130,7 +130,7 @@ export const CardComponent: React.FC<CardComponentProps> = ({
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={onClick ? (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onClick(); } } : undefined}
       aria-label={onClick ? `${card.name}, ${card.ovr} overall ${displayedRoles}` : undefined}
-      className={`card-shine relative w-full max-w-[230px] min-w-0 h-[385px] rounded-2xl p-3.5 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl bg-gradient-to-b ${style.bg} border-2 ${style.border} ${style.cardGlow} ${onClick ? 'cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300' : ''} ${selected ? 'ring-4 ring-yellow-300 scale-105 z-10' : ''}`}
+      className={`card-shine relative w-full max-w-[230px] min-w-0 min-h-[440px] flex flex-col rounded-2xl p-3.5 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl bg-gradient-to-b ${style.bg} border-2 ${style.border} ${style.cardGlow} ${onClick ? 'cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300' : ''} ${selected ? 'ring-4 ring-yellow-300 scale-105 z-10' : ''}`}
     >
       {/* Header: OVR + Role + Origin + Tier Badge */}
       <div className="flex justify-between items-start">
@@ -169,11 +169,11 @@ export const CardComponent: React.FC<CardComponentProps> = ({
 
       {/* Fictional player identity and avatar specialties */}
       <div className="text-center mb-2">
-        <div className="text-lg font-black text-white tracking-wide uppercase drop-shadow flex items-center justify-center gap-1">
-          {card.name}
+        <div className="text-lg font-black text-white tracking-wide uppercase drop-shadow flex items-center justify-center gap-1 min-w-0">
+          <span className="min-w-0 truncate" title={card.name}>{card.name}</span>
           {card.tier === 'GOAT' && <span className="text-amber-300 text-xs">👑</span>}
         </div>
-        <div className="text-[11px] text-slate-300 font-medium truncate">
+        <div className="text-[11px] text-slate-300 font-medium leading-4 min-h-8 line-clamp-2" title={card.signatureChampions.slice(0, 2).join(' · ')}>
           Signature avatars: <span className="text-slate-100 font-semibold">{card.signatureChampions.slice(0, 2).join(' · ') || 'Flexible'}</span>
         </div>
       </div>
@@ -207,7 +207,7 @@ export const CardComponent: React.FC<CardComponentProps> = ({
       </div>
 
       {/* Badges & Traits */}
-      <div className="mt-2 flex flex-wrap gap-1 items-center justify-center">
+      <div className="mt-auto pt-3 flex flex-wrap gap-1 items-center justify-center">
         {card.badges.slice(0, 2).map((b, i) => (
           <span key={i} className="text-[10px] bg-white/10 text-amber-200 px-2 py-0.5 rounded-full border border-amber-300/30 font-semibold flex items-center gap-1">
             <Zap className="w-2.5 h-2.5" />

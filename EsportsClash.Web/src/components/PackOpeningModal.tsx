@@ -3,22 +3,24 @@ import { PlayerCard } from '../types';
 import { CardComponent } from './CardComponent';
 import { sound } from '../audio';
 import confetti from 'canvas-confetti';
-import { Sparkles, Coins, X } from 'lucide-react';
+import { Sparkles, X } from 'lucide-react';
 
 interface PackOpeningModalProps {
   packName: string;
   cards: PlayerCard[];
   onClose: () => void;
-  duplicateCoins: number;
-  bonusEvoVoucher?: string;
+  duplicateUpgrades: number;
+  spentCoins: number;
+  balanceAfter: number;
 }
 
 export const PackOpeningModal: React.FC<PackOpeningModalProps> = ({
   packName,
   cards,
   onClose,
-  duplicateCoins,
-  bonusEvoVoucher
+  duplicateUpgrades,
+  spentCoins,
+  balanceAfter
 }) => {
   const [stage, setStage] = useState<'tearing' | 'walkout' | 'summary'>('tearing');
   const [featuredIndex, setFeaturedIndex] = useState(0);
@@ -42,7 +44,6 @@ export const PackOpeningModal: React.FC<PackOpeningModalProps> = ({
 
     const t2 = setTimeout(() => {
       setStage('summary');
-      if (duplicateCoins > 0) sound.playCoin();
     }, 3600);
 
     return () => {
@@ -90,20 +91,17 @@ export const PackOpeningModal: React.FC<PackOpeningModalProps> = ({
               {packName} Opened!
             </h2>
             <p className="text-slate-400 text-sm">
-              {duplicateCoins > 0
-                ? `${cards.length} cards scouted. Duplicates converted to Clash Coins & existing card stats boosted!`
+              {duplicateUpgrades > 0
+                ? `${cards.length} cards scouted. ${duplicateUpgrades} duplicate pulls trained your existing cards.`
                 : `${cards.length} new players added to your club roster.`}
             </p>
-            {duplicateCoins > 0 && (
+            <p className="mt-2 text-xs font-semibold text-amber-300">
+              {spentCoins > 0 ? `Spent ${spentCoins.toLocaleString()} Coins` : 'Free pack'} · Balance: {balanceAfter.toLocaleString()} Coins
+            </p>
+            {duplicateUpgrades > 0 && (
               <div className="mt-2 inline-flex items-center gap-2 bg-amber-950/80 border border-amber-500/40 text-amber-300 px-4 py-1.5 rounded-full text-xs font-bold animate-pulse">
-                <Coins className="w-4 h-4 text-amber-400" />
-                <span>Recycled duplicates for 🪙 +{duplicateCoins.toLocaleString()} Coins & boosted player stats!</span>
-              </div>
-            )}
-            {bonusEvoVoucher && (
-              <div className="mt-2 ml-2 inline-flex items-center gap-2 bg-teal-950/90 border border-teal-400/50 text-teal-300 px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">
-                <Sparkles className="w-4 h-4 text-teal-400 animate-spin-slow" />
-                <span>BONUS DROP: {bonusEvoVoucher}</span>
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>{duplicateUpgrades} existing player {duplicateUpgrades === 1 ? 'card' : 'cards'} trained</span>
               </div>
             )}
           </div>

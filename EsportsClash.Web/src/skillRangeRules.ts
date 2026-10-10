@@ -15,8 +15,14 @@ export type SkillSlot = 'skill1' | 'skill2' | 'ultimate';
  */
 export function getSkillCastRange(champName: string, slot: SkillSlot, attackRange: number): number {
   switch (champName) {
+    case 'Cinderbloom':
+    case 'Cinderlock': return slot === 'skill1' ? 195 : slot === 'skill2' ? 0 : 250;
     case 'Mirehook': return slot === 'skill1' ? 230 : slot === 'skill2' ? 90 : 75;
-    case 'Nullweaver': return slot === 'skill1' ? 215 : slot === 'skill2' ? 190 : 220;
+    case 'Nullweaver': return slot === 'skill1' ? 215 : slot === 'skill2' ? 190 : 175;
+    case 'Faelith': return slot === 'skill1' ? 205 : slot === 'skill2' ? 185 : 215;
+    case 'Oathmute': return slot === 'skill1' ? 205 : slot === 'skill2' ? 180 : 9999;
+    case 'Cloudtail': return slot === 'skill1' ? 90 : slot === 'skill2' ? 0 : 110;
+    case 'Stonebranch': return slot === 'skill1' ? 150 : slot === 'skill2' ? 200 : 170;
     case 'Voltgrip': return slot === 'skill1' ? 255 : slot === 'skill2' ? 75 : 135;
     case 'Aetherbolt': return slot === 'skill1' ? 250 : slot === 'skill2' ? 195 : 430;
     case 'Corsara': return slot === 'skill1' ? 205 : slot === 'skill2' ? 185 : 270;
@@ -130,6 +136,10 @@ export function isCrowdControlSkill(champName: string, slot: SkillSlot): boolean
   switch (champName) {
     case 'Mirehook': case 'Voltgrip': case 'Wraithhook': return true;
     case 'Nullweaver': return slot === 'skill1' || slot === 'ultimate';
+    case 'Faelith': return slot === 'skill2' || slot === 'ultimate';
+    case 'Oathmute': return slot === 'skill2' || slot === 'ultimate';
+    case 'Cloudtail': return slot === 'ultimate';
+    case 'Stonebranch': return slot === 'skill1';
     case 'Brewmaw': return slot !== 'skill1';
     case 'Corsara': return slot === 'skill2';
     case 'Raijin': return slot === 'skill2'; // Electric Vortex (Stun & Pull)
