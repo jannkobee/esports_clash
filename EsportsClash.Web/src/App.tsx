@@ -37,8 +37,10 @@ import {
 import {
   createEqualizedRoster,
   EQUALIZED_COACH_BLUE,
-  EQUALIZED_COACH_RED
+  EQUALIZED_COACH_RED,
+  getEqualizedPlayerPool
 } from './equalizedMode';
+import { PlayerDraftPhaseView } from './components/PlayerDraftPhaseView';
 import { sound } from './audio';
 import { settlePackPurchase } from './packEconomy';
 import { 
@@ -143,6 +145,9 @@ export function App() {
     sessionStorage.getItem('esports-clash-online-session') ? 'online' : null);
   const [draftSeed, setDraftSeed] = useState(0);
   const rivalCoach = INITIAL_COACHES[draftSeed % INITIAL_COACHES.length];
+  const [equalizedBlueRoster, setEqualizedBlueRoster] = useState<PlayerCard[]>(() => createEqualizedRoster('blue'));
+  const [equalizedRedRoster, setEqualizedRedRoster] = useState<PlayerCard[]>(() => createEqualizedRoster('red'));
+  const [equalizedDraftStage, setEqualizedDraftStage] = useState<'player_draft' | 'avatar_draft'>('player_draft');
 
   // Chess-Style Ranked Ladder State (Starts at 300 Rating)
   const [ladderProfile, setLadderProfile] = useState<LadderProfile>(loadLadderProfile);
@@ -912,7 +917,7 @@ export function App() {
                       </div>
                     </button>
 
-                    <button type="button" onClick={() => { sound.playClick(); setDraftSeed(crypto.getRandomValues(new Uint32Array(1))[0]); setArenaChoice('equalized_ai'); }} className="bg-gradient-to-br from-purple-950/40 via-slate-900 to-slate-950 border border-purple-500/60 hover:border-purple-300 rounded-3xl p-6 text-left shadow-xl transition hover:-translate-y-1 group cursor-pointer flex flex-col justify-between">
+                    <button type="button" onClick={() => { sound.playClick(); setDraftSeed(crypto.getRandomValues(new Uint32Array(1))[0]); setEqualizedDraftStage('player_draft'); setArenaChoice('equalized_ai'); }} className="bg-gradient-to-br from-purple-950/40 via-slate-900 to-slate-950 border border-purple-500/60 hover:border-purple-300 rounded-3xl p-6 text-left shadow-xl transition hover:-translate-y-1 group cursor-pointer flex flex-col justify-between">
                       <div>
                         <div className="flex items-center justify-between mb-3">
                           <Zap className="w-8 h-8 text-purple-400" />
@@ -921,8 +926,8 @@ export function App() {
                           </span>
                         </div>
                         <h2 className="text-xl text-white font-black group-hover:text-purple-300 transition-colors">Equalized Draft</h2>
-                        <span className="text-[10px] text-purple-400 font-bold uppercase tracking-wider block mt-0.5">Normal Game · No Rank</span>
-                        <p className="text-slate-400 text-xs mt-2">Squad Lineup bypassed! All 10 players are 100 Overall. Pure test of drafting strategy, combos, and counter-picks with zero rank risk.</p>
+                        <span className="text-[10px] text-purple-400 font-bold uppercase tracking-wider block mt-0.5">Player & Avatar Draft · No Rank</span>
+                        <p className="text-slate-400 text-xs mt-2">Squad Lineup bypassed! Draft your 100 OVR dream team from 63 superstars, followed by avatar drafting with zero rank risk.</p>
                       </div>
                     </button>
 
@@ -1074,8 +1079,50 @@ export function App() {
                     ← Back to Modes
                   </button>
                 </div>
-              ) : <>
-              <button type="button" className="mb-3 text-slate-400 text-xs hover:text-white" onClick={arenaChoice === 'online' ? leaveOnline : () => setArenaChoice(null)}>← Back to modes</button>
+              ) : arenaChoice === 'equalized_ai' && equalizedDraftStage === 'player_draft' ? (
+                <PlayerDraftPhaseView
+                  pool={getEqualizedPlayerPool()}
+                  userCoach={EQUALIZED_COACH_BLUE}
+                  opponentCoach={EQUALIZED_COACH_RED}
+                  draftSeed={draftSeed}
+                  onDraftComplete={(blueRoster, redRoster) => {
+                    setEqualizedBlueRoster(blueRoster);
+                    setEqualizedRedRoster(redRoster);
+                    setEqualizedDraftStage('avatar_draft');
+                  }}
+                  onCancel={() => setArenaChoice(null)}
+                />
+              ) : (
+                <>
+              <div className="mb-3 flex items-center gap-2">
+                {arenaChoice === 'equalized_ai' ? (
+                  <>
+                    <button
+                      type="button"
+                      className="text-slate-400 text-xs hover:text-white cursor-pointer"
+                      onClick={() => setEqualizedDraftStage('player_draft')}
+                    >
+                      ← Back to Player Draft
+                    </button>
+                    <span className="text-slate-600">·</span>
+                    <button
+                      type="button"
+                      className="text-slate-400 text-xs hover:text-white cursor-pointer"
+                      onClick={() => setArenaChoice(null)}
+                    >
+                      Back to modes
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className="text-slate-400 text-xs hover:text-white cursor-pointer"
+                    onClick={arenaChoice === 'online' ? leaveOnline : () => setArenaChoice(null)}
+                  >
+                    ← Back to modes
+                  </button>
+                )}
+              </div>
               {arenaChoice === 'equalized_ai' && (
                 <div className="mb-4 bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border border-purple-500/50 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 text-white shadow-xl">
                   <div className="flex items-center gap-3">
@@ -1084,10 +1131,10 @@ export function App() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-white">EQUALIZED 100 OVR DRAFT MODE</span>
+                        <span className="text-sm font-black text-white">EQUALIZED 100 OVR DRAFT MODE · PHASE 2: AVATAR DRAFT</span>
                         <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Normal Match · Unranked</span>
                       </div>
-                      <p className="text-xs text-purple-200/80 mt-0.5">Squad Lineup bypassed. All 10 players on both sides are 100 Overall with all combat roles unlocked. The match is decided purely by drafting strategy, avatar synergies, and arena execution!</p>
+                      <p className="text-xs text-purple-200/80 mt-0.5">Using your drafted 100 OVR All-Stars! All 10 players have maxed mechanical stats with all combat roles unlocked. Draft your avatar team composition!</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1108,17 +1155,17 @@ export function App() {
                     </span>
                     <span>· You are {onlineSession.side.toUpperCase()} team</span>
                   </div>
-                  <button type="button" onClick={leaveOnline} className="text-rose-300 hover:text-white font-bold">Leave room</button>
+                  <button type="button" onClick={leaveOnline} className="text-rose-300 hover:text-white font-bold cursor-pointer">Leave room</button>
                 </div>
               )}
               <DraftPhaseView
                 key={arenaChoice === 'online' ? onlineSession?.code : draftSeed}
-                startingFive={arenaChoice === 'equalized_ai' ? createEqualizedRoster('blue') : startingFive}
+                startingFive={arenaChoice === 'equalized_ai' ? equalizedBlueRoster : startingFive}
                 allChampions={CHAMPIONS}
                 userCoach={arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_BLUE : currentCoach}
                 opponentCoach={arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_RED : arenaChoice === 'online' ? onlineRoom!.redCoach : (selectedOpponentTeam?.coach ?? rivalCoach)}
                 opponentName={arenaChoice === 'equalized_ai' ? 'Red All-Stars (100 OVR)' : arenaChoice === 'online' ? 'Red team' : (selectedOpponentTeam?.name ?? 'Rival Chibi Squad')}
-                opponentRoster={arenaChoice === 'equalized_ai' ? createEqualizedRoster('red') : arenaChoice === 'online' ? onlineRoom!.redRoster : (selectedOpponentTeam?.starters ?? INITIAL_PLAYERS.slice(5, 10))}
+                opponentRoster={arenaChoice === 'equalized_ai' ? equalizedRedRoster : arenaChoice === 'online' ? onlineRoom!.redRoster : (selectedOpponentTeam?.starters ?? INITIAL_PLAYERS.slice(5, 10))}
                 draftSeed={arenaChoice === 'online' ? onlineRoom!.seed : draftSeed}
                 online={arenaChoice === 'online' && onlineSession ? { room: onlineRoom!, side: onlineSession.side,
                   onAction: async (championId, slot) => {
@@ -1127,10 +1174,11 @@ export function App() {
                   } } : undefined}
                 onDraftComplete={handleDraftComplete}
               />
-              {onlineError && <p role="alert" className="mt-3 text-rose-300 text-sm">{onlineError}</p>}
-              </>}
-              </>
-            ) : (
+                {onlineError && <p role="alert" className="mt-3 text-rose-300 text-sm">{onlineError}</p>}
+                </>
+              )}
+            </>
+          ) : (
               <>
               {arenaChoice === 'online' && onlineSession && !replayDraft && <div className="mb-3 flex justify-between text-xs text-slate-300"><span>Online room {onlineSession.code} · You are {onlineSession.side.toUpperCase()}</span><button type="button" onClick={leaveOnline} className="text-rose-300 hover:text-white font-bold">Leave room</button></div>}
               <AramMatchView

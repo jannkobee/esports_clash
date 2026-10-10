@@ -734,3 +734,36 @@ Investigated root causes and found three critical bugs:
 - `npm run build` compiled clean production build.
 
 **Limit:** Mode is an unranked normal game and does not impact ranked ladder Elo ratings.
+
+## User Request: Player Card Drafting in Unranked Equalized 100 OVR Draft Mode
+
+**User:**
+"Unranked equalized 100 over draft mode should include Player card drafting."
+
+**Implementation:**
+- **Player Card Equalization & Drafting Logic (`src/equalizedMode.ts`):**
+  - Added `equalizePlayerCard(card: PlayerCard)` normalizing any player card to 100 OVR, GOAT tier, level 60, all 100 attributes, all 6 combat roles (`playableRoles`), all avatars as signatures, while preserving original parody alias (`Cardrel`, `TheSpicy`, `Flaker`, etc.) and unique PlayStyle badges.
+  - Added `getEqualizedPlayerPool()` exporting all 63 player cards equalized to 100 OVR.
+  - Added `TEAM_SLOTS` defining the 5 standard competitive slots: TOP (Fighter/Tank), JUNGLE (Assassin/Fighter), MID (Mage/Assassin), BOT (Marksman), and SUPPORT (Support/Tank).
+  - Added `PLAYER_DRAFT_TURNS` establishing a 10-turn Snake Draft sequence (Blue -> Red -> Red -> Blue -> Blue -> Red -> Red -> Blue -> Blue -> Red).
+  - Added `chooseEqualizedPlayerPick(availablePool, currentTeam, opponentTeam, seed)` with AI evaluation that prioritizes needed roles, tactical trait synergies (`Shotcaller`, `Clutch King`, `Aggro Diver`, `One-Tap God`), origin chemistry, and seeded variance.
+- **Interactive Player Card Draft UI (`src/components/PlayerDraftPhaseView.tsx`):**
+  - Live 10-turn snake draft tracker with current turn badge, round indicators, and auto-draft action.
+  - Blue Lineup (5 slots) and Red Lineup (5 slots) showing drafted chibi avatars, player names, OVR badges, role badges, and tactical badges. Supports slot targeting and slot swapping.
+  - Center inspection spotlight showcasing the selected card's chibi avatar, 100 stats breakdown, origin, role versatility, and lock-in button.
+  - Searchable, role-filtered, and origin-filtered grid of all 63 equalized superstars with dimmed drafted overlays.
+  - "Auto-Draft Rest" button allowing quick AI completion of remaining picks.
+  - On 10th pick lock-in, triggers walkout audio and unlocks "Proceed to Avatar Draft →".
+- **Arena Two-Phase Flow (`src/App.tsx`):**
+  - Launching Equalized Draft starts in Phase 1 (`PlayerDraftPhaseView`).
+  - Upon completing the player draft, transitions to Phase 2 (`DraftPhaseView`), where the drafted 100 OVR Blue and Red rosters sit on stage to draft their avatars.
+  - Coaches can return to Phase 1 (`← Back to Player Draft`) at any time before avatars lock in.
+  - Matches played in Equalized mode remain strictly unranked (0 Chess Elo rating risk/reward).
+
+**Affected files:** `EsportsClash.Web/src/equalizedMode.ts`, `EsportsClash.Web/src/equalizedMode.test.mjs`, `EsportsClash.Web/src/components/PlayerDraftPhaseView.tsx`, `EsportsClash.Web/src/App.tsx`, `docs/arena-mechanics.md`, and `docs/agent-handoff.md`.
+
+**Verification:**
+- `npm run check:game` passed all 148 tests (including 7 equalized mode tests), design validation, and TypeScript compilation.
+- `npm run build` compiled clean production build.
+
+**Limit:** Player Card drafting is currently integrated for single-player Equalized Draft in Clash Arena; multiplayer online rooms synchronize avatar drafting for selected rosters.

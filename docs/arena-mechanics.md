@@ -245,12 +245,21 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
 ## Equalized 100 OVR Draft Mode (Normal Game · No Rank)
 
 - **Squad Lineup Bypassed & 100 OVR Normalization:**
-  - In Clash Arena, players can launch `Equalized Draft (Normal · 100 OVR)`. In this mode, user squad cards, bench cards, and collection ratings are completely bypassed.
-  - All 10 players on Blue and Red are equalized to 100 Overall GOAT tier athletes with 100 in all stats (`lan`, `tf`, `iq`, `clu`, `sta`, `flx`), all combat roles unlocked (`playableRoles`), and all avatars registered as signatures.
+  - In Clash Arena, players can launch `Equalized Draft (Normal · 100 OVR · No Rank)`. In this mode, user squad cards, bench cards, and collection ratings are completely bypassed.
+  - Every player card in the game (the pool of 63 athletes) is equalized to 100 Overall GOAT tier with 100 in all stats (`lan`, `tf`, `iq`, `clu`, `sta`, `flx`), all combat roles unlocked (`playableRoles`), and all avatars registered as signatures.
   - `playerCardCombatPower` yields an identical maximum multiplier of 1.05 for every avatar, creating complete mechanical stat parity.
   - Both teams are guided by equalized Master Tactician coaches (`EQUALIZED_COACH_BLUE` and `EQUALIZED_COACH_RED`) with identical 10 playbook and 10 chemistry bonuses.
+- **Two-Phase Draft Flow:**
+  - **Phase 1: Player Card Draft (`PlayerDraftPhaseView`):**
+    - Blue (User) and Red (Opponent AI) participate in a 10-turn Snake Draft (`PLAYER_DRAFT_TURNS`: Blue -> Red -> Red -> Blue -> Blue -> Red -> Red -> Blue -> Blue -> Red).
+    - Coaches draft 5 starting athletes across TOP, JUNGLE, MID, BOT, and SUPPORT slots.
+    - AI Coach evaluates complementary roles, trait synergies (`Shotcaller`, `Clutch King`, `Aggro Diver`, `One-Tap God`), and origin chemistry.
+    - Supports card search, role/origin filters, slot targeting, and an "Auto-Draft Rest" button for quick simulation.
+  - **Phase 2: Avatar Draft (`DraftPhaseView`):**
+    - The drafted 100 OVR Blue and Red rosters sit on stage to draft their avatars via standard ban/pick phases.
+    - Coaches can return to Phase 1 (`← Back to Player Draft`) at any time before avatars lock in.
 - **Pure Draft Outcome & Zero Rating Risk:**
-  - Because all 10 players have identical 100 stats, victory is determined purely by drafting strategy, avatar synergies, wombo combos, and in-game tactical execution.
-  - The mode is strictly a Normal Game: Chess Elo rating is never risked or modified. Match wins grant standard normal coin rewards and evolution progress without impacting the Ranked Ladder.
+  - Because all 10 players have identical 100 stats, victory is determined purely by drafting strategy, player trait moves, avatar synergies, and arena execution.
+  - The mode is strictly a Normal Game: Chess Elo rating is never risked or modified.
   - Normal multiplayer rooms (Vs Player) also feature an `Equalize to 100 OVR` toggle to enable casual equalized friendlies between players.
-- Regression tests in `src/equalizedMode.test.mjs` verify 100 OVR generation, Cardrel parody alias preservation, stat parity (1.05 power across avatars), and coach equity.
+- Regression tests in `src/equalizedMode.test.mjs` verify 100 OVR generation, Cardrel parody alias preservation, stat parity (1.05 power across avatars), snake draft turn structure, AI pick complementary role selection, and coach equity.

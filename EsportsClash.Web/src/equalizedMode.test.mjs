@@ -1,8 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEqualizedRoster, EQUALIZED_COACH_BLUE, EQUALIZED_COACH_RED } from './equalizedMode.ts';
+import {
+  createEqualizedRoster,
+  EQUALIZED_COACH_BLUE,
+  EQUALIZED_COACH_RED,
+  equalizePlayerCard,
+  getEqualizedPlayerPool,
+  chooseEqualizedPlayerPick,
+  PLAYER_DRAFT_TURNS,
+  TEAM_SLOTS
+} from './equalizedMode.ts';
 import { playerCardCombatPower, createRatedAvatar } from './playerCardPower.ts';
-import { CHAMPIONS } from './mockData.ts';
+import { CHAMPIONS, INITIAL_PLAYERS } from './mockData.ts';
 
 test('createEqualizedRoster generates 5 GOAT players with 100 OVR and 100 in all stats', () => {
   const blueRoster = createEqualizedRoster('blue');
@@ -59,4 +68,62 @@ test('Equalized coaches have identical tactical bonuses ensuring pure draft fair
   assert.equal(EQUALIZED_COACH_BLUE.chemistryBonus, EQUALIZED_COACH_RED.chemistryBonus);
   assert.equal(EQUALIZED_COACH_BLUE.style, EQUALIZED_COACH_RED.style);
   assert.equal(EQUALIZED_COACH_BLUE.extraBans, EQUALIZED_COACH_RED.extraBans);
+});
+
+test('getEqualizedPlayerPool returns all 63 cards equalized to 100 OVR GOAT tier', () => {
+  const pool = getEqualizedPlayerPool();
+  assert.equal(pool.length, INITIAL_PLAYERS.length);
+  assert.equal(pool.length, 63);
+
+  for (const card of pool) {
+    assert.equal(card.ovr, 100);
+    assert.equal(card.tier, 'GOAT');
+    assert.equal(card.stats.lan, 100);
+    assert.equal(card.stats.tf, 100);
+    assert.equal(card.stats.iq, 100);
+    assert.equal(card.stats.clu, 100);
+    assert.equal(card.stats.sta, 100);
+    assert.equal(card.stats.flx, 100);
+    assert.deepEqual(card.playableRoles, ['Tank', 'Mage', 'Marksman', 'Support', 'Fighter', 'Assassin']);
+  }
+
+  // Cardrel check
+  const cardrel = pool.find(c => c.name === 'Cardrel');
+  assert.ok(cardrel, 'Cardrel must be in the equalized draft pool');
+  assert.equal(cardrel.realName, 'Caedrel');
+});
+
+test('PLAYER_DRAFT_TURNS has exactly 10 snake draft turns, 5 for Blue and 5 for Red', () => {
+  assert.equal(PLAYER_DRAFT_TURNS.length, 10);
+  const blueTurns = PLAYER_DRAFT_TURNS.filter(t => t.side === 'blue');
+  const redTurns = PLAYER_DRAFT_TURNS.filter(t => t.side === 'red');
+  assert.equal(blueTurns.length, 5);
+  assert.equal(redTurns.length, 5);
+});
+
+test('chooseEqualizedPlayerPick fills complementary empty roles without duplicate picks', () => {
+  const pool = getEqualizedPlayerPool();
+  const blueTeam = [null, null, null, null, null];
+  const redTeam = [null, null, null, null, null];
+  const used = new Set();
+
+  for (let t = 0; t < PLAYER_DRAFT_TURNS.length; t++) {
+    const turn = PLAYER_DRAFT_TURNS[t];
+    const currentTeam = turn.side === 'blue' ? blueTeam : redTeam;
+    const opponentTeam = turn.side === 'blue' ? redTeam : blueTeam;
+    const available = pool.filter(c => !used.has(c.id));
+
+    const pick = chooseEqualizedPlayerPick(available, currentTeam, opponentTeam, 42 + t);
+    assert.ok(pick, `Turn ${t} should produce a valid pick`);
+    assert.ok(!used.has(pick.card.id), 'Picked card must not have been previously drafted');
+    assert.equal(currentTeam[pick.slot], null, 'Picked slot must have been empty');
+
+    currentTeam[pick.slot] = pick.card;
+    used.add(pick.card.id);
+  }
+
+  // Both teams should now be completely filled with 5 valid 100 OVR players
+  assert.equal(blueTeam.filter(p => p !== null).length, 5);
+  assert.equal(redTeam.filter(p => p !== null).length, 5);
+  assert.equal(used.size, 10);
 });
