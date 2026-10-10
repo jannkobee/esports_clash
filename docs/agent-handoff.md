@@ -1144,6 +1144,18 @@ Ran batch multi-seed simulations across seeds and analyzed aggregated telemetry:
 
 **Limit:** The score is synthesized with Web Audio rather than a recorded orchestra or external music-generation asset. A live browser listening pass is recommended to tune the balance against combat sounds and the user's playback setup.
 
+## User Request: Scale Abilities with Item Stats
+
+**User:** Asked for AD purchases to increase damage of abilities that scale with AD.
+
+**Agent:** Centralized bonus-stat ability damage in `abilityRules.ts`. Both the live arena and headless match simulation now add item AD/AP using the existing role-based default ratios before ability-rank and amplification multipliers. `ChampionSkill` supports per-ability `adRatio` and `apRatio` overrides for kit-specific scaling. Basic attack, item/passive damage, shared damage, and damage mitigation paths remain distinct.
+
+**Affected files:** `EsportsClash.Web/src/types.ts`, `src/abilityRules.ts`, `src/abilityRules.test.mjs`, `src/components/AramMatchView.tsx`, `src/matchSimulationEngine.ts`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Focused ability-scaling tests passed, including actual Colossal Greatsword AD, item stat totals, role defaults, explicit per-ability overrides, and ensuring zero-damage utility skills remain non-damaging. All 196 game tests and 3 multi-seed simulation tests passed. `git diff --check` passed. Full `npm run check:game` and `npm run build` reach TypeScript but are blocked by pre-existing `AramMatchView.tsx` errors: two `vision` event types are absent from its `MatchEvent` union and `BushPatch` is not imported.
+
+**Limit:** Existing role-based fallback ratios continue to apply to abilities without explicit overrides; the repository does not yet curate an individual AD/AP ratio for every champion ability.
+
 ## User Request: Ability Sound Effects Integration and Regression Verification
 
 **User:** Asked to integrate ability sound effects from `EsportsClash.Web/public/audio/`, validate all 135 WAV files and manifest entries, wire them into the recorded audio runtime, and strengthen regression tests to prevent silent fallback regressions.
@@ -1155,3 +1167,20 @@ Ran batch multi-seed simulations across seeds and analyzed aggregated telemetry:
 **Verification:** `node --experimental-strip-types --test src/avatarSkillAudio.test.mjs` passed all 5 tests (including the 135-file disk and manifest inspection). `npm run check:game` passed design validation, all 193 unit tests, 3 simulation tests, and TypeScript compilation. `npm run build` compiled production bundle cleanly.
 
 **Limit:** The Web Audio API requires a user gesture on the page before playing audio; once unlocked, preloaded buffers play with sub-frame latency.
+
+## User Request: Highground Warding, Base Ramp Rock Trap Fix, and Low Nexus Commitment
+
+**User:** Reported champions getting stuck at the base ramp rock formation (`Red Ramp North Brush`), requested that AI commit to finish the Nexus when it is low, and asked for highground base warding.
+
+**Agent:** Diagnosed the root cause of the screenshot:
+1. When taking damage in the enemy base, units triggered `isDangerousFight` and searched for a `nearbyRetreatBush`. Because `Math.sign(wellTargetX - u.x) === Math.sign(b.x - u.x)` was evaluated without checking territory ownership, Blue units at the Red base selected `bush_red_high_north` (an enemy base ramp brush at $y = 265$ behind `HIGHGROUND_ROCKS` at $y = 295$). Units walked north from lane ($y = 380$) directly into the solid rock face, where `resolveRockTerrainMovement` stopped them 35px from the bush, preventing `distToTarget <= 14` from ever firing and trapping champions in an infinite walk-into-rock loop.
+2. In `AramMatchView.tsx`, added `!isEnemyBaseRampBush` to `nearbyRetreatBush` filtering. Retreating units in enemy territory now retreat along the unobstructed central lane corridor ($y = LANE_Y = 380$) toward their allied fountain well, eliminating all base rock pinching.
+3. Added proactive highground base scouting in `AramMatchView.tsx`: when approaching the enemy highground ramp ($x \in [1260, 1620]$ for Blue, $x \in [380, 740]$ for Red), champions toss a scout ward (`👁️ HIGHGROUND WARD`) up onto the highground flank bushes or base entrance from up to 300px away, revealing ambushers and clearing highground fog of war.
+4. Enabled decisive Nexus finish commitment: when the enemy Nexus is exposed and low ($\le 40\%$ HP), attackers prioritize destroying the Nexus (`⚔️ NEXUS COMMIT!`), commit even with defenders alive nearby (ignoring conservative 16% / 150px defender retreat blocks), relax attacker minimum health from 38% down to 18% (or lower on critical nexus), and bypass turret perimeter tether halts.
+5. In `matchSimulationEngine.ts`, dynamically evaluated `exposedNexus` in `laneAdvanceLimit` so headless simulation matches also advance cleanly to finish exposed nexuses.
+
+**Affected files:** `EsportsClash.Web/src/components/AramMatchView.tsx`, `EsportsClash.Web/src/matchSimulationEngine.ts`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** `npm run check:game` passed: design validation, all 196 unit tests, all 3 headless multi-seed simulation tests (50/50 side parity, 0 support camp farms, Cardrel alias preserved), and TypeScript `tsc -b`. `npm run build` compiled production bundle cleanly.
+
+**Limit:** The highground scout ward cooldown shares the standard ward cooldown (75–85s), preventing spam while ensuring at least one vision ward covers the base entrance before the team breaches the ramp.

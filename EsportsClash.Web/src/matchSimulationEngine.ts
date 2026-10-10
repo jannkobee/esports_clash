@@ -41,6 +41,10 @@ import {
   type RecordedMatchEvent
 } from './matchReplay.ts';
 import { passiveGoldPerSecond } from './economyRules.ts';
+import {
+  abilityDamageFromStats,
+  abilityItemStats,
+} from './abilityRules.ts';
 import { abilityDamageMultiplier, abilityCooldownMultiplier, abilityRank } from './skillProgression.ts';
 import { maxMana, manaRegen, skill1ManaCost, ultimateManaCost, ultimateBaseCooldown } from './abilityRules.ts';
 import { chooseTeamfightTarget, isEnemyCaughtInAlliedChannel, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from './combatDecision.ts';
@@ -779,7 +783,10 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
             u.mana -= cost;
             u.cdUlt = ultimateBaseCooldown(u) * abilityCooldownMultiplier(u.level, 'ultimate');
             recordAbilityCast(sim.insights, { id: u.id, team: u.team, player: u.player, champion: u.champion }, 'ultimate', now);
-            const ultDmg = u.champion.ultimate.damage * abilityDamageMultiplier(u.level, 'ultimate');
+            const { bonusAd, bonusAp } = abilityItemStats(u);
+            const ultDmg = abilityDamageFromStats(
+              u.champion.ultimate.damage, u.champion, 'ultimate', bonusAd, bonusAp
+            ) * abilityDamageMultiplier(u.level, 'ultimate');
             applyChampionDamage(sim, u, target, ultDmg, false, u.champion.ultimate.name);
           }
         } else {
@@ -800,7 +807,10 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
             if (sim.random() > dodge) {
               sim.skillshots.hit++;
               recordSkillshot(sim.insights, { id: u.id, team: u.team, player: u.player, champion: u.champion }, true, now);
-              const s1Dmg = u.champion.skill1.damage * abilityDamageMultiplier(u.level, 'skill1');
+              const { bonusAd, bonusAp } = abilityItemStats(u);
+              const s1Dmg = abilityDamageFromStats(
+                u.champion.skill1.damage, u.champion, 'skill1', bonusAd, bonusAp
+              ) * abilityDamageMultiplier(u.level, 'skill1');
               applyChampionDamage(sim, u, target, s1Dmg, false, u.champion.skill1.name);
             } else {
               recordSkillshot(sim.insights, { id: u.id, team: u.team, player: u.player, champion: u.champion }, false, now);
@@ -819,7 +829,10 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
             u.mana -= cost;
             u.cd2 = (u.champion.skill2.cooldown || 10) * abilityCooldownMultiplier(u.level, 'skill2');
             recordAbilityCast(sim.insights, { id: u.id, team: u.team, player: u.player, champion: u.champion }, 'skill2', now);
-            const s2Dmg = u.champion.skill2.damage * abilityDamageMultiplier(u.level, 'skill2');
+            const { bonusAd, bonusAp } = abilityItemStats(u);
+            const s2Dmg = abilityDamageFromStats(
+              u.champion.skill2.damage, u.champion, 'skill2', bonusAd, bonusAp
+            ) * abilityDamageMultiplier(u.level, 'skill2');
             applyChampionDamage(sim, u, target, s2Dmg, false, u.champion.skill2.name);
           }
         } else {
@@ -939,13 +952,14 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
           ? (u.team === 'blue' ? Math.max(...alliedWave.map(m => m.x)) : Math.min(...alliedWave.map(m => m.x)))
           : undefined;
         const nearestStructure = enemyStructures[0];
+        const isExposedNexus = !!nearestStructure && nearestStructure.type === 'nexus' && canDamageNexus(nearestStructure.team, sim.structures);
         const advanceLimit = laneAdvanceLimit({
           team: u.team,
           waveFrontX,
           waveCount: alliedWave.length,
           structureX: nearestStructure?.x,
           structureRange: nearestStructure?.range,
-          exposedNexus: false,
+          exposedNexus: isExposedNexus,
           objectiveFight: false,
         });
         const nextX = u.x + dir * 75 * dt;

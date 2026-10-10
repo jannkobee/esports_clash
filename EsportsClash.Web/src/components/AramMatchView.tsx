@@ -36,6 +36,7 @@ import { CAMP_PATIENCE_SECONDS, neutralCampRespawnSeconds, stepCampPatience, ste
 import { consumeFixedSteps, createMatchRandom, resolveNeutralKillCredit, resolveTurretKillReward, SIMULATION_STEP, summarizeMatchReports, type MatchReport, type RecordedMatchEvent } from '../matchReplay';
 import { matchEconomyPhase, passiveGoldPerSecond } from '../economyRules';
 import { abilityDamageMultiplier, abilityCooldownMultiplier, abilityRank, type AbilitySlot } from '../skillProgression';
+import { abilityDamageFromStats, abilityItemStats } from '../abilityRules';
 import { maxMana, manaRegen, skill1ManaCost, ultimateManaCost, ultimateBaseCooldown } from '../abilityRules';
 import { drawChampionSprite, drawSpiritBearSprite } from './ChampionSpriteRenderer';
 import {
@@ -2042,6 +2043,62 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           text: isVisionMaster ? '👁️ MASTER WARD' : 'WARD PLACED', color: isVisionMaster ? '#10b981' : '#a3e635', opacity: 1, scale: 0.95 });
       }
 
+      // Proactive Highground Base Scouting: Ward enemy base ramp and flanking bushes when approaching
+      const enemyHighgroundBushes = u.team === 'blue'
+        ? ARAM_BUSHES.filter(b => b.id === 'bush_red_high_north' || b.id === 'bush_red_high_south')
+        : ARAM_BUSHES.filter(b => b.id === 'bush_blue_high_north' || b.id === 'bush_blue_high_south');
+      const unwardedHighgroundBush = enemyHighgroundBushes.find(b =>
+        Math.hypot(b.x - u.x, b.y - u.y) <= 300
+        && !wardsRef.current.some(w => w.team === u.team && w.bushId === b.id));
+
+      if (unwardedHighgroundBush && matchTimeRef.current >= (u.wardReadyAt ?? 0) && matchTimeRef.current > 30) {
+        wardsRef.current.push({
+          id: `hg_${u.id}_${matchTimeRef.current}`,
+          team: u.team,
+          bushId: unwardedHighgroundBush.id,
+          x: unwardedHighgroundBush.x,
+          y: unwardedHighgroundBush.y,
+          expiresAt: matchTimeRef.current + 85
+        });
+        u.wardReadyAt = matchTimeRef.current + wardCooldown;
+        floatsRef.current.push({
+          id: random().toString(),
+          x: unwardedHighgroundBush.x,
+          y: unwardedHighgroundBush.y - 20,
+          text: isVisionMaster ? '👁️ MASTER HIGHGROUND WARD' : '👁️ HIGHGROUND WARD',
+          color: isVisionMaster ? '#10b981' : '#38bdf8',
+          opacity: 1,
+          scale: 1.05
+        });
+        addEvent(`👁️ VISION: ${u.player.name} (${u.champion.displayName}) warded the highground flank at ${unwardedHighgroundBush.name}!`, 'micro');
+      }
+
+      const highgroundRampX = u.team === 'blue' ? 1520 : 480;
+      const isApproachingHighground = u.team === 'blue' ? (u.x >= 1260 && u.x <= 1620) : (u.x <= 740 && u.x >= 380);
+      const hasRampWard = wardsRef.current.some(w => w.team === u.team && Math.hypot(w.x - highgroundRampX, w.y - LANE_Y) < 220);
+      if (!unwardedHighgroundBush && isApproachingHighground && !hasRampWard
+        && matchTimeRef.current >= (u.wardReadyAt ?? 0) && matchTimeRef.current > 30) {
+        wardsRef.current.push({
+          id: `hg_ramp_${u.id}_${matchTimeRef.current}`,
+          team: u.team,
+          bushId: 'highground_ramp',
+          x: highgroundRampX,
+          y: LANE_Y,
+          expiresAt: matchTimeRef.current + 85
+        });
+        u.wardReadyAt = matchTimeRef.current + wardCooldown;
+        floatsRef.current.push({
+          id: random().toString(),
+          x: highgroundRampX,
+          y: LANE_Y - 20,
+          text: isVisionMaster ? '👁️ MASTER HIGHGROUND WARD' : '👁️ HIGHGROUND WARD',
+          color: isVisionMaster ? '#10b981' : '#38bdf8',
+          opacity: 1,
+          scale: 1.05
+        });
+        addEvent(`👁️ VISION: ${u.player.name} (${u.champion.displayName}) warded the highground ramp to reveal base defenses!`, 'micro');
+      }
+
       // Recovery to Idle
       if (u.attackTimer <= 1.0 / getEffectiveAttackSpeed(u) - 0.28) {
         if (u.animState === 'attack') u.animState = 'idle';
@@ -2569,9 +2626,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
 
         // Otherwise: walk towards safety (duck into nearby bush to take cover or retreat toward fountain well)!
+        const isEnemyBaseRampBush = (b: { id: string }) =>
+          (u.team === 'blue' && (b.id === 'bush_red_high_north' || b.id === 'bush_red_high_south')) ||
+          (u.team === 'red' && (b.id === 'bush_blue_high_north' || b.id === 'bush_blue_high_south'));
+
         const nearbyRetreatBush = !u.isInBush && !u.diveAborting && !isInsideEnemyTowerRange
           ? ARAM_BUSHES.find(b => Math.hypot(b.x - u.x, b.y - u.y) < 180
             && isBushSafeFromTowers(b, enemyStructures)
+            && !isEnemyBaseRampBush(b)
             && (shouldBaitEnemySkill(u, localEnemies.length)
               ? localEnemies.every(enemy => Math.hypot(b.x - enemy.x, b.y - enemy.y) > Math.hypot(u.x - enemy.x, u.y - enemy.y))
               : Math.sign(wellTargetX - u.x) === Math.sign(b.x - u.x)))
@@ -2762,8 +2824,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
       const nearestMinion = enemyMinions.sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0];
       const enemyNexus = structures.find(st => st.team !== u.team && st.type === 'nexus');
-      const focusNexus = !!enemyNexus && shouldFocusExposedNexus(enemyNexus,
-        canDamageNexus(enemyNexus.team, structures), iq, coach?.playbookBonus ?? 8);
+      const isNexusLow = !!enemyNexus && canDamageNexus(enemyNexus.team, structures)
+        && (enemyNexus.hp / enemyNexus.maxHp <= 0.40);
+      const focusNexus = !!enemyNexus && (shouldFocusExposedNexus(enemyNexus,
+        canDamageNexus(enemyNexus.team, structures), iq, coach?.playbookBonus ?? 8) || isNexusLow);
       const nearestStructure = focusNexus ? enemyNexus
         : enemyStructures.sort((a, b) => Math.abs(a.x - u.x) - Math.abs(b.x - u.x))[0];
       const minionInRange = !isObjectiveFight && !!nearestMinion && Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) <= attackRange;
@@ -2781,7 +2845,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && Math.abs(nearestMinion.y - LANE_Y) < 145;
       const clearWaveFirst = !isObjectiveFight && !canFollowUpEngage
         && (focusNexus
-          ? !alliedWaveAtNexus && !!blockingNexusMinion
+          ? !alliedWaveAtNexus && !!blockingNexusMinion && !isNexusLow
           : ((wavePushCall && minionInRange && alliedCrash < 2)
             || shouldPrioritizeWaveClear(iq, lanStat, minionInRange, structureInRange, alliedCrash, closestEnemyChampion)
             || (shouldLaningDemonClearWave(u, matchTimeRef.current, minionInRange)
@@ -2799,22 +2863,35 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && closestEnemyChampion > Math.max(150, attackRange + 35);
 
       // A vulnerable, low-health nexus is a team finish call. Clear a blocking
-      // wave first; otherwise attack or route to it before considering camps.
-      if (focusNexus && enemyNexus && u.hp > u.maxHp * 0.38
-        && (!isObjectiveFight || Math.hypot(enemyNexus.x - u.x, enemyNexus.y - u.y) < 400)
+      // wave first unless critically low; otherwise attack or route to it before considering camps.
+      if (focusNexus && enemyNexus && (u.hp > u.maxHp * 0.18 || isNexusLow)
+        && (!isObjectiveFight || Math.hypot(enemyNexus.x - u.x, enemyNexus.y - u.y) < 550)
         && !clearWaveFirst
-        && (closestEnemyChampion > Math.max(150, attackRange) || enemyNexus.hp / enemyNexus.maxHp <= 0.16)) {
+        && (closestEnemyChampion > Math.max(140, attackRange) || isNexusLow || enemyNexus.hp / enemyNexus.maxHp <= 0.25 || localAllies.length >= localEnemies.length)) {
         const nexusDist = Math.hypot(enemyNexus.x - u.x, enemyNexus.y - u.y);
         setUnitFacing(u, enemyNexus.x);
-        if (nexusDist <= attackRange + 18) {
+        if (nexusDist <= attackRange + 22) {
           u.vx = 0; u.vy = 0;
           if (u.attackTimer <= 0) {
             u.attackTimer = 1 / getEffectiveAttackSpeed(u);
             u.animState = 'attack';
+            if (isNexusLow && random() < 0.22) {
+              floatsRef.current.push({
+                id: random().toString(),
+                x: u.x,
+                y: u.y - 32,
+                text: '⚔️ NEXUS COMMIT!',
+                color: '#fbbf24',
+                opacity: 1,
+                scale: 1.2
+              });
+            }
             executeChampionAttack(u, enemyNexus, 'structure', u.champion.ad);
           }
         } else {
-          const angle = Math.atan2(enemyNexus.y - u.y, enemyNexus.x - u.x);
+          // Direct route toward nexus along the central lane corridor
+          const targetRouteY = Math.abs(u.y - LANE_Y) > 40 ? (u.y * 0.6 + LANE_Y * 0.4) : enemyNexus.y;
+          const angle = Math.atan2(targetRouteY - u.y, enemyNexus.x - u.x);
           const speed = 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
@@ -3245,6 +3322,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         // 4. Close the Distance
         else {
           const isTargetUnderEnemyTower = nearestStructureForDive && nearestStructureForDive.isAlive
+            && (nearestStructureForDive.type !== 'nexus' || !focusNexus)
             && Math.hypot(primaryTarget.x - nearestStructureForDive.x, primaryTarget.y - nearestStructureForDive.y) <= nearestStructureForDive.range;
           if (isTargetUnderEnemyTower && !isAggroDiving && nearestStructureForDive) {
             // Non-divers tether safely at the perimeter outside tower range rather than walking into turret fire!
@@ -5695,22 +5773,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
     }
 
-    const ap = label && attacker
-      ? attacker.items.reduce((total, item) => total + (item.stats.ap ?? 0), 0)
-        + (aegisBuffRef.current?.team === attacker.team ? aegisBuffRef.current.apBonus : 0) : 0;
-    const bonusAd = label && attacker
-      ? attacker.items.reduce((total, item) => total + (item.stats.ad ?? 0), 0)
-        + (aegisBuffRef.current?.team === attacker.team ? aegisBuffRef.current.adBonus : 0) : 0;
+    const itemStats = label && attacker ? abilityItemStats(attacker) : { bonusAd: 0, bonusAp: 0 };
+    const ap = itemStats.bonusAp
+      + (label && attacker && aegisBuffRef.current?.team === attacker.team ? aegisBuffRef.current.apBonus : 0);
+    const bonusAd = itemStats.bonusAd
+      + (label && attacker && aegisBuffRef.current?.team === attacker.team ? aegisBuffRef.current.adBonus : 0);
     const itemDamage = label?.includes('Immolate') || label?.includes('Kraken') || label?.includes('Dragon Burn');
     const slot = abilitySlot ?? (label === attacker?.champion.ultimate.name ? 'ultimate'
       : label === attacker?.champion.skill2.name ? 'skill2'
       : label === attacker?.champion.skill1.name ? 'skill1' : attacker?.activeAbilitySlot ?? 'skill1');
-
-    // Ability scaling: casters get AP ratios, physical classes get bonus AD ratios
-    const isMage = attacker?.champion.primaryRole === 'Mage' || attacker?.champion.secondaryRole === 'Mage';
-    const isPhysicalRole = attacker?.champion.primaryRole === 'Assassin' || attacker?.champion.primaryRole === 'Fighter' || attacker?.champion.primaryRole === 'Marksman';
-    const apRatio = isMage ? 0.42 : 0.25;
-    const adRatio = isPhysicalRole ? 0.36 : 0.18;
 
     let abilityAmp = 1.0;
     if (attacker && label && !itemDamage) {
@@ -5738,7 +5809,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     const spellDamage = sharedDamage ? rawDamage : attacker && label && !itemDamage
-      ? ((rawDamage + ap * apRatio + bonusAd * adRatio) * abilityDamageMultiplier(attacker.level, slot)) * abilityAmp
+      ? (abilityDamageFromStats(rawDamage, attacker.champion, slot, bonusAd, ap)
+        * abilityDamageMultiplier(attacker.level, slot)) * abilityAmp
       : rawDamage + ap * 0.35;
 
     // Fang of the Serpent: reduces target current shield by 40%

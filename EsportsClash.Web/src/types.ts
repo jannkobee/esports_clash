@@ -57,6 +57,8 @@ export interface ChampionSkill {
   cooldown: number;
   damage: number;
   damageType: 'Physical' | 'Magic' | 'True';
+  adRatio?: number;
+  apRatio?: number;
   isUlt?: boolean;
   targeting?: 'unit' | 'ally' | 'ground' | 'self' | 'none';
 }
