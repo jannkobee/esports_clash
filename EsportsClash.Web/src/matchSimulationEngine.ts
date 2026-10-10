@@ -1,3 +1,4 @@
+import { INNER_TOWER_X, OUTER_TOWER_X } from './arenaLayout.ts';
 import type { 
   AramChampionUnit, 
   ChampionKit, 
@@ -319,34 +320,33 @@ export function createSimulationState(options: SimulationOptions): SimulationSta
     }));
 
   const structures: LaneStructure[] = [
-    { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: 790, y: LANE_Y, hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
-    { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: 590, y: LANE_Y, hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+    { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: OUTER_TOWER_X.blue, y: LANE_Y, hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+    { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: INNER_TOWER_X.blue, y: LANE_Y, hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
     { id: 'b_t3', team: 'blue', type: 'nexus_tower', name: 'Blue Nexus Turret', x: NEXUS_TOWER_X.blue, y: LANE_Y, hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
     ...makeBarracks('blue'),
     { id: 'b_nexus', team: 'blue', type: 'nexus', name: 'Blue Nexus', x: NEXUS_X.blue, y: LANE_Y, hp: STRUCTURE_HP.nexus, maxHp: STRUCTURE_HP.nexus, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
-    { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: 1210, y: LANE_Y, hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
-    { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: 1410, y: LANE_Y, hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+    { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: OUTER_TOWER_X.red, y: LANE_Y, hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+    { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: INNER_TOWER_X.red, y: LANE_Y, hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
     { id: 'r_t3', team: 'red', type: 'nexus_tower', name: 'Red Nexus Turret', x: NEXUS_TOWER_X.red, y: LANE_Y, hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
     ...makeBarracks('red'),
     { id: 'r_nexus', team: 'red', type: 'nexus', name: 'Red Nexus', x: NEXUS_X.red, y: LANE_Y, hp: STRUCTURE_HP.nexus, maxHp: STRUCTURE_HP.nexus, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 }
   ];
 
   const relics: HealthRelic[] = [
-    { id: 'relic_top', x: 795, y: 295, respawnTimer: 0, healAmount: 260 },
-    { id: 'relic_bot', x: 1205, y: 465, respawnTimer: 0, healAmount: 260 },
-    { id: 'relic_river', x: DRAGON_X, y: 590, respawnTimer: 0, healAmount: 320 }
+    { id: 'relic_top', x: 1095, y: 295, respawnTimer: 0, healAmount: 260 },
+    { id: 'relic_bot', x: 1505, y: 465, respawnTimer: 0, healAmount: 260 }
   ];
 
   const jungleCamps: JungleCamp[] = [
-    { id: 'j_blue_golem', name: 'Frost Sentinel', type: 'golem', x: 576, y: 170, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
-    { id: 'j_red_wolves', name: 'Shadow Stalkers', type: 'wolves', x: 1424, y: 170, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#a855f7' },
-    { id: 'j_blue_behemoth', name: 'Murk Behemoth', type: 'behemoth', x: 667, y: 575, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#10b981' },
-    { id: 'j_red_drakes', name: 'Crimson Drakes', type: 'drakes', x: 1333, y: 575, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#ef4444' },
-    { id: 'j_blue_blue_buff', name: 'Azure Crest', type: 'blue_buff', x: 380, y: 145, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
-    { id: 'j_blue_red_buff', name: 'Crimson Crest', type: 'red_buff', x: 485, y: 600, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
-    { id: 'j_red_blue_buff', name: 'Azure Crest', type: 'blue_buff', x: 1620, y: 145, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
-    { id: 'j_red_red_buff', name: 'Crimson Crest', type: 'red_buff', x: 1515, y: 600, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
-    { id: 'j_siege_golem', name: 'Gravemarch Colossus', type: 'siege_golem', x: 1000, y: 610, hp: 6200, maxHp: 6200, ad: 135, range: 230, goldReward: 250, xpReward: 300, respawnTimer: 0, isAlive: false, attackTimer: 0, color: '#d4a764' }
+    { id: 'j_blue_golem', name: 'Frost Sentinel', type: 'golem', x: 876, y: 170, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
+    { id: 'j_red_wolves', name: 'Shadow Stalkers', type: 'wolves', x: 1724, y: 170, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#a855f7' },
+    { id: 'j_blue_behemoth', name: 'Murk Behemoth', type: 'behemoth', x: 967, y: 575, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#10b981' },
+    { id: 'j_red_drakes', name: 'Crimson Drakes', type: 'drakes', x: 1633, y: 575, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#ef4444' },
+    { id: 'j_blue_blue_buff', name: 'Azure Crest', type: 'blue_buff', x: 640, y: 145, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
+    { id: 'j_blue_red_buff', name: 'Crimson Crest', type: 'red_buff', x: 785, y: 600, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
+    { id: 'j_red_blue_buff', name: 'Azure Crest', type: 'blue_buff', x: 1960, y: 145, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
+    { id: 'j_red_red_buff', name: 'Crimson Crest', type: 'red_buff', x: 1815, y: 600, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
+    { id: 'j_siege_golem', name: 'Gravemarch Colossus', type: 'siege_golem', x: 1300, y: 610, hp: 6200, maxHp: 6200, ad: 135, range: 230, goldReward: 250, xpReward: 300, respawnTimer: 0, isAlive: false, attackTimer: 0, color: '#d4a764' }
   ];
 
   const dragon: DragonBoss = {

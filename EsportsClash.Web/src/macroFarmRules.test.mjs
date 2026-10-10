@@ -30,6 +30,20 @@ test('lane pressure, enemy threat, and a nexus finish window cancel camp farming
   assert.equal(chooseKnownJungleCamp(camps, { ...actor, urgentStructurePush: true }), undefined);
 });
 
+test('a chosen farm route survives distance changes but never overrides safety or a teamfight', () => {
+  const alternative = { id: 'closer', type: 'wolves', x: 760, y: 500, isAlive: true };
+  const options = [...camps, alternative];
+  assert.equal(chooseKnownJungleCamp(options, actor)?.id, 'closer');
+  const committed = { ...actor, currentCampId: 'home' };
+  assert.equal(chooseKnownJungleCamp(options, committed)?.id, 'home');
+  assert.equal(chooseKnownJungleCamp(options.map(c => c.id === 'home' ? { ...c, isAlive: false } : c), committed)?.id, 'closer');
+  for (const danger of [{ nearbyEnemyCount: 1 }, { hpFraction: 0.4 },
+    { nearestLaneEnemyDistance: 180 }, { urgentStructurePush: true }, { alliedFight: true }]) {
+    assert.equal(chooseKnownJungleCamp(options, { ...committed, ...danger }), undefined);
+    assert.equal(chooseKnownJungleCamp(options, { ...committed, teamObjective: true, role: 'Support', ...danger }), undefined);
+  }
+});
+
 test('supports join a coordinated post-recall camp objective but do not solo farm', () => {
   assert.equal(chooseKnownJungleCamp(camps, { ...actor, role: 'Support' }), undefined);
   assert.equal(chooseKnownJungleCamp(camps, { ...actor, supportStrength: 3 }), undefined);

@@ -1,7 +1,8 @@
+import { DRAGON_X } from './arenaLayout.ts';
 // Camp positions are map knowledge. Vision reveals current monsters and enemies,
 // but a farming route does not require first walking into the camp's sight range.
 export function chooseKnownJungleCamp<T extends {
-  type: string; isAlive: boolean; x: number; y: number; homeX?: number; homeY?: number;
+  id?: string; type: string; isAlive: boolean; x: number; y: number; homeX?: number; homeY?: number;
 }>(camps: readonly T[], actor: {
   x: number; y: number; team: 'blue' | 'red'; hpFraction: number;
   iq: number; jungleStrength: number; gameSeconds: number;
@@ -10,10 +11,12 @@ export function chooseKnownJungleCamp<T extends {
   role?: string;
   supportStrength?: number;
   teamObjective?: boolean;
+  currentCampId?: string;
+  alliedFight?: boolean;
 }): T | undefined {
   if (actor.gameSeconds < 45 || actor.hpFraction < 0.62 || actor.iq < 52
     || actor.nearbyEnemyCount > 0 || actor.nearestLaneEnemyDistance < 230
-    || actor.urgentStructurePush) return undefined;
+    || actor.urgentStructurePush || actor.alliedFight) return undefined;
 
   if (!actor.teamObjective && (actor.role === 'Support' || (actor.supportStrength ?? 0) >= 2)) return undefined;
 
@@ -30,13 +33,16 @@ export function chooseKnownJungleCamp<T extends {
       const homeX = camp.homeX ?? camp.x;
       const homeY = camp.homeY ?? camp.y;
       const distance = Math.hypot(homeX - actor.x, homeY - actor.y);
-      const ownHalf = actor.team === 'blue' ? homeX < 1000 : homeX > 1000;
+      const ownHalf = actor.team === 'blue' ? homeX < DRAGON_X : homeX > DRAGON_X;
       // An enemy camp is still an option, but only after moving into its half.
-      const canInvade = ownHalf || (actor.team === 'blue' ? actor.x > 900 : actor.x < 1100);
+      const canInvade = ownHalf || (actor.team === 'blue' ? actor.x > DRAGON_X - 100 : actor.x < DRAGON_X + 100);
       return { camp, distance, score: distance + (ownHalf ? 0 : 85), canInvade };
     })
     .filter(candidate => candidate.distance <= maxRoute && candidate.canInvade)
-    .sort((a, b) => a.score - b.score)[0]?.camp;
+    // Keep a valid route through the entrance; cancel immediately if any gate above fails.
+    .sort((a, b) => Number(b.camp.id !== undefined && b.camp.id === actor.currentCampId)
+      - Number(a.camp.id !== undefined && a.camp.id === actor.currentCampId)
+      || a.score - b.score)[0]?.camp;
 }
 
 export function shouldStartPostRecallCampObjective(input: {
@@ -59,7 +65,7 @@ export function choosePostRecallTeamCamp<T extends {
 
   return camps.filter(camp => {
     const homeX = camp.homeX ?? camp.x;
-    const ownHalf = team === 'blue' ? homeX < 1000 : homeX > 1000;
+    const ownHalf = team === 'blue' ? homeX < DRAGON_X : homeX > DRAGON_X;
     return camp.isAlive && camp.type !== 'siege_golem' && ownHalf;
   }).map(camp => {
     const homeX = camp.homeX ?? camp.x;

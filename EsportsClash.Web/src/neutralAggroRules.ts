@@ -2,11 +2,13 @@ export function stepLeashedMonster(
   x: number, y: number, homeX: number, homeY: number,
   target: { x: number; y: number } | null, dt: number,
   chaseSpeed = 72, leashRadius = 145,
+  route?: (destination: { x: number; y: number }) => { x: number; y: number },
 ) {
   const homeDistance = Math.hypot(x - homeX, y - homeY);
   const chasing = !!target && Math.hypot(target.x - homeX, target.y - homeY) <= leashRadius
     && homeDistance <= leashRadius;
-  const destination = chasing ? target! : { x: homeX, y: homeY };
+  const goal = chasing ? target! : { x: homeX, y: homeY };
+  const destination = route ? route(goal) : goal;
   const distance = Math.hypot(destination.x - x, destination.y - y);
   const step = Math.min(distance, (chasing ? chaseSpeed : chaseSpeed * 1.35) * dt);
   return {

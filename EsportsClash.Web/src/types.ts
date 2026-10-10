@@ -305,6 +305,9 @@ export interface AramChampionUnit {
   isRecalling?: boolean;
   recallTimer?: number;
   recallCooldown?: number;
+  recallIntent?: boolean;
+  baseDefenseTargetId?: string; // Keeps a short detection margin while an actual threat persists.
+  farmTargetId?: string;
   currentBushId?: string;
   revealedTimer?: number;
   comboPractice?: number;

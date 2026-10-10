@@ -254,7 +254,7 @@ export function getTurretEvacuationVector(
  * A bush located inside or directly next to an enemy tower's attack range is a death trap.
  */
 export function isBushSafeFromTowers(
-  bush: BushPatch,
+  bush: Pick<BushPatch, 'x' | 'y'>,
   enemyStructures: readonly LaneStructure[]
 ): boolean {
   return !enemyStructures.some(st =>

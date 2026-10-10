@@ -1207,3 +1207,43 @@ Ran batch multi-seed simulations across seeds and analyzed aggregated telemetry:
 **Verification:** `npm run check:game` passed: design validation, all 197 unit tests, all 3 multi-seed simulation tests (Cardrel alias, tower dive limits, and turret execution invariants intact), and `tsc -b`. `npm run build` compiled cleanly.
 
 **Limit:** Zero-damage utility and crowd control abilities (`damage === 0`) remain non-damaging and do not scale with AD or AP.
+
+## User Request: Remove the Regen Rune from the Golem Pit
+
+**User:** Asked to remove the regeneration rune visible inside the Gravemarch golem pit.
+
+**Agent:** Removed the lower-pit river health/mana relic, which overlapped Gravemarch's spawn marker, from both live matches and the headless match simulation. The two bridge/lower-valley relics outside the pit remain.
+
+**Affected files:** `EsportsClash.Web/src/components/AramMatchView.tsx`, `EsportsClash.Web/src/matchSimulationEngine.ts`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** `npm run check:game` and `npm run build` passed.
+
+**Limit:** None.
+
+## User Request: Solidify Fighting, Farming, Objective, and Recalling Options
+
+**User:** "solidify fighting, farming, objective, recalling options."
+
+**Agent:** Strengthened the live AI's existing decisions and transitions. Grouping now requires recent visible champion combat, excludes the actor itself and unavailable allies, and stops converging once close enough to fight. This fixes farming/structure attack animations being mistaken for an allied teamfight. Farmers retain an eligible camp destination; threats, recovery, allied fights, and higher-priority calls release it. Team-camp participants also pass individual health and lane safety checks. Recall intent persists while moving to cover and waiting for channel cooldown, with recovery hysteresis and a mana-reset option for primary Mages/Supports. Emergency retreats cannot stop to farm a wave or channel inside tower range. Objective support counts exclude recalling/recovering teammates, and scouting challengers always engage champions above 32% boss HP. This corrects the earlier cautious-contester boss-racing behavior to comply with the explicit protected contest invariant; card/coach attitudes still shape the post-secure call.
+
+**Affected files:** `EsportsClash.Web/src/actionDecisionRules.ts`, `src/actionDecisionRules.test.mjs`, `src/components/AramMatchView.tsx`, `src/macroFarmRules.ts`, `src/macroFarmRules.test.mjs`, `src/objectiveRules.ts`, `src/objectiveRules.test.mjs`, `src/types.ts`, `src/towerDiveRules.ts` (coordinate input typing only), and both gameplay documents. Preserved the pre-existing golem-pit relic removal in the working tree.
+
+**Verification:** Focused decision, farming, and objective scenarios passed (21 tests); included in the final full game checks below.
+
+**Limits:** The headless simulator remains simplified and does not model the live recall intent, grouping, or coordinated camp state. The focused tests cover those decisions; no live browser replay or new balance-rate claim is included. Fixed camp availability remains known simulation state.
+
+## User Request: Reliable Jungle Routes, Curved Terrain, Wider Battlefield, and Base Defense
+
+**User:** Asked to solidify jungle routes, prevent terrain traps, add terrain curvature/style, increase structure spacing, and defend tier 3 and Nexus very hard. When asked whether to expand the battlefield or only rearrange the base, explicitly selected **"Widen the battlefield."**
+
+**Agent:** Expanded world width from 2000 to 2600. Shared mirrored coordinates now place wells at 65/2535, Nexuses at 235/2365, barracks at 430/2170, tier 3 at 610/1990, tier 2 at 830/1770, and outer towers at 1050/1550. Camps, relics, boss pits, base shelves, bushes, and ramp scouting were realigned. Terrain uses irregular scalloped contours and layered cliff shading, with the same contour function positioning collision stones. Gates remain lane-facing; no decorative route markings were restored.
+
+Replaced local entrance steering with cached, body-expanded terrain graphs, A* planning, collision-checked smoothing, and stalled/displaced route recovery. Jungle farmers route out of their current camp as well as into the next; neutral chase/reset routes respect monster body size and ordinary speeds. Stationary embedded units are repaired, while ordinary collision steps cannot eject through walls. Outer upper buffs moved 40 units outward before the central-map translation to remove disconnected boundary pockets.
+
+Added defensive calls that prioritize Nexus, tier 3, barracks, then nearby inner/outer towers. Inner-base emergencies recruit across the map, interrupt farm routes and optional reset/objective/push calls, rally behind threatened buildings, prioritize attackers, and clear siege waves. Healthy recall channels already near the base can cancel to defend; distant recalls finish because teleporting home is faster. Emergency recovery, crowd control, dive aborts, turret attribution, anti-spin safeguards, and parody aliases are preserved. Strong defense changes decisions, not structure damage/HP or invulnerability. Base calls appear in the event log and floating labels.
+
+**Affected files:** `src/arenaLayout.ts`, `src/arenaRules.ts`, `src/arenaRules.test.mjs`, `src/terrainRouting.ts`, `src/terrainRouting.test.mjs`, `src/baseDefenseRules.ts`, `src/baseDefenseRules.test.mjs`, `src/neutralAggroRules.ts`, `src/macroFarmRules.ts`, `src/components/AramMatchView.tsx`, `src/matchSimulationEngine.ts` (layout parity), and both gameplay documents, under `EsportsClash.Web` where applicable.
+
+**Verification:** `npm run check:game` passed design validation, all 213 tests, the additional 3 simulation checks, and TypeScript. `npm run build` passed (existing large-bundle warning remains). Route regressions cover all 90 camp-to-camp rotations, 120 well/flank round trips, compass approaches, large-monster gates, chase/reset speed, embedded positions, and changed/stalled goals. Defense tests cover priorities, whole-map versus local recruitment, waves, dead threats, and mirrored rally points.
+
+**Limits:** No browser visual replay performed. Canvas remains a fit-to-screen overview, so the wider world creates longer travel without a larger viewport. Headless simulation shares layout/collision but not the full live defensive/recall state machine; its small seeded sample is not proof of competitive balance. Dynamic champion pursuit still uses existing combat steering and collision, while planned jungle/return/base routes use the new terrain router.

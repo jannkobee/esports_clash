@@ -10,13 +10,13 @@ test('unit spacing ignores teammates while preserving enemy separation', () => {
 });
 
 test('expanded map leaves room between each well, nexus, and barracks', () => {
-  assert.equal(ARENA_WIDTH, 2000);
+  assert.equal(ARENA_WIDTH, 2600);
   assert.ok(NEXUS_X.blue - WELL_X.blue >= 140);
   assert.ok(BARRACKS_X.blue - NEXUS_X.blue >= 140);
-  assert.ok(NEXUS_TOWER_X.blue - BARRACKS_X.blue >= 65);
+  assert.ok(NEXUS_TOWER_X.blue - BARRACKS_X.blue >= 180);
   assert.ok(WELL_X.red - NEXUS_X.red >= 140);
   assert.ok(NEXUS_X.red - BARRACKS_X.red >= 140);
-  assert.ok(BARRACKS_X.red - NEXUS_TOWER_X.red >= 65);
+  assert.ok(BARRACKS_X.red - NEXUS_TOWER_X.red >= 180);
 });
 
 test('tower plating tapers with game time and a nexus opens after its turret and one barracks fall', () => {
@@ -85,12 +85,12 @@ test('each camp and boss has a solid rocky enclosure with a lane-facing opening'
 });
 
 test('both raised base entrances keep one clear central stair and rocky side walls', () => {
-  for (const x of [515, 1485]) {
+  for (const x of [NEXUS_TOWER_X.blue + 95, NEXUS_TOWER_X.red - 95]) {
     assert.equal(isInsideRockTerrain(x, 295, 13), true);
     assert.equal(isInsideRockTerrain(x, 465, 13), true);
     assert.equal(isInsideRockTerrain(x, 380, 13), false);
   }
-  for (const [startX, goalX] of [[610, 420], [1390, 1580]]) {
+  for (const [startX, goalX] of [[800, 610], [1800, 1990]]) {
     let walker = { x: startX, y: 380 };
     for (let tick = 0; tick < 30; tick++) {
       const dx = goalX - walker.x;
@@ -110,17 +110,18 @@ test('long movement projections cannot leave units inside neighboring rocks', ()
 
 test('units can approach objective pits and jungle camps from nearby lane positions', () => {
   for (const [startX, startY, goalX, goalY] of [
-    [900, 380, 576, 170], [900, 380, 1000, 130], [900, 380, 1000, 610],
-    [1100, 380, 1424, 170], [650, 380, 485, 600], [1350, 380, 1515, 600],
+    [1200, 380, 876, 170], [1200, 380, 1300, 130], [1200, 380, 1300, 610],
+    [1400, 380, 1724, 170], [950, 380, 785, 600], [1650, 380, 1815, 600],
   ]) {
     let walker = { x: startX, y: startY };
     for (let tick = 0; tick < 250; tick++) {
-      const dx = goalX - walker.x;
-      const dy = goalY - walker.y;
+      const waypoint = rockApproachWaypoint(walker, { x: goalX, y: goalY });
+      const dx = waypoint.x - walker.x;
+      const dy = waypoint.y - walker.y;
       const distance = Math.hypot(dx, dy);
-      if (distance < 8) break;
+      if (Math.hypot(goalX - walker.x, goalY - walker.y) < 8) break;
       walker = resolveRockTerrainMovement(walker,
-        { x: walker.x + dx / distance * 7, y: walker.y + dy / distance * 7 }, 13);
+        { x: walker.x + dx / Math.max(0.001, distance) * Math.min(7, distance), y: walker.y + dy / Math.max(0.001, distance) * Math.min(7, distance) }, 13);
       assert.equal(isInsideRockTerrain(walker.x, walker.y, 13), false);
     }
     assert.ok(Math.hypot(goalX - walker.x, goalY - walker.y) < 8,
@@ -130,8 +131,8 @@ test('units can approach objective pits and jungle camps from nearby lane positi
 
 test('campers and objective teams use the base stair and pit opening', () => {
   for (const [startX, goalX, goalY] of [
-    [400, 485, 600], [1600, 1515, 600], [400, 576, 170], [1600, 1424, 170],
-    [400, 1000, 130], [1600, 1000, 130], [400, 1000, 610], [1600, 1000, 610],
+    [590, 785, 600], [2010, 1815, 600], [590, 876, 170], [2010, 1724, 170],
+    [590, 1300, 130], [2010, 1300, 130], [590, 1300, 610], [2010, 1300, 610],
   ]) {
     const goal = { x: goalX, y: goalY };
     let walker = { x: startX, y: 380 };

@@ -1,12 +1,8 @@
 import type { BushPatch, LaneStructure, MinionType } from './types';
+import { createTerrainRouter } from './terrainRouting.ts';
 
-export const ARENA_WIDTH = 2000;
-export const LANE_Y = 380;
-export const WELL_X = { blue: 65, red: 1935 } as const;
-export const NEXUS_X = { blue: 205, red: 1795 } as const;
-export const BARRACKS_X = { blue: 345, red: 1655 } as const;
-export const NEXUS_TOWER_X = { blue: 420, red: 1580 } as const;
-export const DRAGON_X = ARENA_WIDTH / 2;
+import { ARENA_WIDTH, DRAGON_X, NEXUS_TOWER_X, CENTRAL_MAP_OFFSET } from './arenaLayout.ts';
+export { ARENA_WIDTH, LANE_Y, WELL_X, NEXUS_X, BARRACKS_X, NEXUS_TOWER_X, INNER_TOWER_X, OUTER_TOWER_X, DRAGON_X } from './arenaLayout.ts';
 export const DRAGON_SPAWN_SECOND = 4 * 60;
 
 export function shouldSeparateUnitsByTeam(teamA: 'blue' | 'red', teamB: 'blue' | 'red'): boolean {
@@ -20,20 +16,32 @@ export const CAMP_ROCK_RINGS = [
   { id: 'j_red_wolves', x: 1424, y: 170, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
   { id: 'j_blue_behemoth', x: 667, y: 575, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
   { id: 'j_red_drakes', x: 1333, y: 575, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
-  { id: 'j_blue_blue_buff', x: 380, y: 145, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
+  { id: 'j_blue_blue_buff', x: 340, y: 145, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
   { id: 'j_blue_red_buff', x: 485, y: 600, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
-  { id: 'j_red_blue_buff', x: 1620, y: 145, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
+  { id: 'j_red_blue_buff', x: 1660, y: 145, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
   { id: 'j_red_red_buff', x: 1515, y: 600, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
   { id: 'j_siege_golem', x: 1000, y: 610, radius: 115, stoneRadius: 21, stones: 16, entrance: -Math.PI / 2 },
   { id: 'dragon_boss', x: 1000, y: 130, radius: 122, stoneRadius: 22, stones: 16, entrance: Math.PI / 2 },
-] as const;
+].map(ring => ({ ...ring, x: ring.x + CENTRAL_MAP_OFFSET }));
 
-const HIGHGROUND_ROCKS = ([455, 495, 535] as const).flatMap(x => [
+const HIGHGROUND_ROCKS = [35, 75, 115].map(offset => NEXUS_TOWER_X.blue + offset).flatMap(x => [
   { x, y: 295, radius: 22, campId: 'blue_highground' },
   { x, y: 465, radius: 22, campId: 'blue_highground' },
   { x: ARENA_WIDTH - x, y: 295, radius: 22, campId: 'red_highground' },
   { x: ARENA_WIDTH - x, y: 465, radius: 22, campId: 'red_highground' },
 ]);
+
+// Mirrored scalloped contours share their geometry with collision and rendering.
+export function campWallPoint(ring: (typeof CAMP_ROCK_RINGS)[number], angle: number, offset = 0) {
+  const gap = Math.atan2(Math.sin(angle - ring.entrance), Math.cos(angle - ring.entrance));
+  const mirrored = gap * (ring.x <= DRAGON_X ? 1 : -1);
+  const envelope = Math.min(1, Math.max(0, (Math.abs(gap) - 0.9) / 0.65));
+  const curve = envelope * (ring.x === DRAGON_X
+    ? Math.cos(gap * 2) * 8 + Math.cos(gap * 3) * 5
+    : Math.sin(mirrored * 2) * 8 + Math.sin(mirrored * 3) * 5);
+  const radius = ring.radius + curve + offset;
+  return { x: ring.x + Math.cos(angle) * radius, y: ring.y + Math.sin(angle) * radius };
+}
 
 export const ROCK_TERRAIN = [
   ...CAMP_ROCK_RINGS.flatMap(ring => Array.from({ length: ring.stones }, (_, index) => {
@@ -47,11 +55,11 @@ export const ROCK_TERRAIN = [
     // Gently flare stones near the opening edges so the entrance is wide, flared, and never steep
     const isOpeningEdge = absGap < gapThreshold + 0.50;
     const stoneRadius = isOpeningEdge ? Math.round(ring.stoneRadius * 0.88) : ring.stoneRadius;
-    const radialOffset = isOpeningEdge ? ring.radius + 3 : ring.radius;
+    const point = campWallPoint(ring, angle, isOpeningEdge ? 3 : 0);
 
     return {
-      x: ring.x + Math.cos(angle) * radialOffset,
-      y: ring.y + Math.sin(angle) * radialOffset,
+      x: point.x,
+      y: point.y,
       radius: stoneRadius,
       campId: ring.id,
     };
@@ -66,6 +74,7 @@ export function isInsideRockTerrain(x: number, y: number, bodyRadius = 0): boole
 function projectOutsideRockTerrain(
   x: number, y: number, bodyRadius: number
 ): { x: number; y: number } {
+  const origin = { x, y };
   for (let pass = 0; pass < 16; pass++) {
     let collided = false;
     for (const rock of ROCK_TERRAIN) {
@@ -82,46 +91,31 @@ function projectOutsideRockTerrain(
     }
     if (!collided) break;
   }
+  // Overlapping expanded footprints can push a misplaced unit back and forth.
+  // Search nearby free ground only for this invalid-position repair case.
+  if (isInsideRockTerrain(x, y, bodyRadius)) {
+    for (let radius = 2; radius <= 200; radius += 2) {
+      for (let sample = 0; sample < 64; sample++) {
+        const angle = sample * Math.PI * 2 / 64;
+        const candidate = { x: origin.x + Math.cos(angle) * radius, y: origin.y + Math.sin(angle) * radius };
+        if (candidate.x < 40 || candidate.x > ARENA_WIDTH - 40 || candidate.y < 80 || candidate.y > 620) continue;
+        if (!isInsideRockTerrain(candidate.x, candidate.y, bodyRadius)) return candidate;
+      }
+    }
+  }
   return { x, y };
 }
 
-// Farming routes pass through the open base stair and each camp's lane-facing
-// gate instead of repeatedly aiming into its stone wall.
+const terrainWaypoint = createTerrainRouter(ROCK_TERRAIN);
+
+// Routes consider every enclosure, including the one the unit is leaving.
 export function rockApproachWaypoint(
-  from: { x: number; y: number }, goal: { x: number; y: number }
+  from: { x: number; y: number }, goal: { x: number; y: number }, bodyRadius = 13
 ): { x: number; y: number } {
-  const ring = CAMP_ROCK_RINGS.find(pit => Math.hypot(goal.x - pit.x, goal.y - pit.y) < 18);
-  if (!ring) return goal;
-  const blueBase = from.x < 620 && goal.x > 440;
-  const redBase = from.x > ARENA_WIDTH - 620 && goal.x < ARENA_WIDTH - 440;
-  if (blueBase || redBase) {
-    const gateX = blueBase ? 595 : ARENA_WIDTH - 595;
-    const flankY = goal.y < LANE_Y ? 235 : 525;
-    if (Math.abs(from.y - LANE_Y) < 75 && Math.abs(from.x - gateX) > 4)
-      return { x: gateX, y: LANE_Y };
-    if (Math.abs(from.x - gateX) < 5
-      && (goal.y < LANE_Y ? from.y > flankY + 5 : from.y < flankY - 5))
-      return { x: gateX, y: flankY };
+  if (isInsideRockTerrain(from.x, from.y, bodyRadius + 2)) {
+    return projectOutsideRockTerrain(from.x, from.y, bodyRadius + 3);
   }
-  const entry = {
-    x: ring.x + Math.cos(ring.entrance) * (ring.radius + ring.stoneRadius + 38),
-    y: ring.y + Math.sin(ring.entrance) * (ring.radius + ring.stoneRadius + 38),
-  };
-  const distanceToCenter = Math.hypot(from.x - ring.x, from.y - ring.y);
-  const approachAngle = Math.atan2(from.y - ring.y, from.x - ring.x);
-  const openingAngle = Math.atan2(Math.sin(approachAngle - ring.entrance), Math.cos(approachAngle - ring.entrance));
-  // If already inside the clearing or in front of the opening, navigate straight to goal.
-  if (distanceToCenter < ring.radius - 8
-    || (distanceToCenter <= ring.radius + 70 && Math.abs(openingAngle) < 0.95)) return goal;
-  if (Math.abs(openingAngle) >= 0.95) {
-    const arcAngle = approachAngle - Math.sign(openingAngle) * Math.min(Math.abs(openingAngle), 0.55);
-    const approachRadius = ring.radius + ring.stoneRadius + 38;
-    return {
-      x: ring.x + Math.cos(arcAngle) * approachRadius,
-      y: ring.y + Math.sin(arcAngle) * approachRadius,
-    };
-  }
-  return entry;
+  return terrainWaypoint(from, goal, bodyRadius);
 }
 
 // Sweep movement in small steps so fast dashes cannot cross a ridge. When a
@@ -132,7 +126,7 @@ export function resolveRockTerrainMovement(
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const distance = Math.hypot(dx, dy);
-  if (distance < 0.0001) return { x: to.x, y: to.y };
+  if (distance < 0.0001) return projectOutsideRockTerrain(to.x, to.y, bodyRadius);
 
   const teleport = distance > 350;
   if (teleport) {
@@ -183,7 +177,9 @@ export function resolveRockTerrainMovement(
     }
 
     if (isInsideRockTerrain(nextX, nextY, bodyRadius)) {
-      const clearPosition = projectOutsideRockTerrain(nextX, nextY, bodyRadius);
+      // A normal step may not repair itself by crossing to the far side of a wall.
+      const clearPosition = !isInsideRockTerrain(x, y, bodyRadius)
+        ? { x, y } : projectOutsideRockTerrain(nextX, nextY, bodyRadius);
       nextX = clearPosition.x;
       nextY = clearPosition.y;
     }
@@ -250,20 +246,20 @@ export type BarracksKind = 'melee' | 'ranged' | 'catapult';
 
 export const ARAM_BUSHES: BushPatch[] = [
   // 1. Upper Blue River Brush (Guards Blue Jungle & Dragon Pit Approach)
-  { id: 'bush_blue_river', name: 'Blue River Brush', x: 750, y: 235, width: 95, height: 40 },
+  { id: 'bush_blue_river', name: 'Blue River Brush', x: 1050, y: 235, width: 95, height: 40 },
   // 2. Upper Red River Brush (Guards Red Jungle & Dragon Pit Approach)
-  { id: 'bush_red_river', name: 'Red River Brush', x: 1250, y: 235, width: 95, height: 40 },
+  { id: 'bush_red_river', name: 'Red River Brush', x: 1550, y: 235, width: 95, height: 40 },
   // 3. Dragon / Roshan River Chokepoint Brush
-  { id: 'bush_dragon_choke', name: 'Dragon Pit Brush', x: 1000, y: 215, width: 120, height: 38 },
+  { id: 'bush_dragon_choke', name: 'Dragon Pit Brush', x: 1300, y: 215, width: 120, height: 38 },
   // 4. Lower Blue Flank Brush (Valley Ambush)
-  { id: 'bush_blue_lower', name: 'Blue Valley Brush', x: 800, y: 525, width: 105, height: 42 },
+  { id: 'bush_blue_lower', name: 'Blue Valley Brush', x: 1100, y: 525, width: 105, height: 42 },
   // 5. Lower Red Flank Brush (Valley Ambush)
-  { id: 'bush_red_lower', name: 'Red Valley Brush', x: 1200, y: 525, width: 105, height: 42 },
+  { id: 'bush_red_lower', name: 'Red Valley Brush', x: 1500, y: 525, width: 105, height: 42 },
   // Flanking brush immediately outside each raised base entrance.
-  { id: 'bush_blue_high_north', name: 'Blue Ramp North Brush', x: 540, y: 265, width: 94, height: 42 },
-  { id: 'bush_blue_high_south', name: 'Blue Ramp South Brush', x: 540, y: 495, width: 94, height: 42 },
-  { id: 'bush_red_high_north', name: 'Red Ramp North Brush', x: 1460, y: 265, width: 94, height: 42 },
-  { id: 'bush_red_high_south', name: 'Red Ramp South Brush', x: 1460, y: 495, width: 94, height: 42 },
+  { id: 'bush_blue_high_north', name: 'Blue Ramp North Brush', x: 730, y: 245, width: 94, height: 42 },
+  { id: 'bush_blue_high_south', name: 'Blue Ramp South Brush', x: 730, y: 515, width: 94, height: 42 },
+  { id: 'bush_red_high_north', name: 'Red Ramp North Brush', x: 1870, y: 245, width: 94, height: 42 },
+  { id: 'bush_red_high_south', name: 'Red Ramp South Brush', x: 1870, y: 515, width: 94, height: 42 },
 ];
 
 export function getBushAt(x: number, y: number): BushPatch | undefined {

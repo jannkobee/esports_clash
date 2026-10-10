@@ -99,7 +99,9 @@ export function chooseObjectiveAction(s: ObjectiveActionSituation): 'finish' | '
   if (s.bossHealthFraction <= 0.32) return 'finish';
   // The side already taking it only turns when opponents actually attack champions.
   if (s.enemyStartedFight) return 'fight';
-  return s.contestedByEnemy && s.fightPreference >= 6 ? 'fight' : 'finish';
+  // A scouting challenger must engage the holders before entering a healthy pit.
+  // Card/coach attitude still controls the post-secure fight or regroup call.
+  return s.contestedByEnemy ? 'fight' : 'finish';
 }
 
 export function choosePostObjectiveAction(s: {

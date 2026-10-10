@@ -89,7 +89,7 @@ test('both sides finish a low objective; a healthy objective holder only turns a
   assert.equal(chooseObjectiveAction({ ...situation, hasVision: false }), 'none');
 });
 
-test('card and coach attitudes change a healthy objective contest and the post-secure call', () => {
+test('all scouting challengers fight a healthy boss holder; attitudes shape the post-secure call', () => {
   const aggressive = { stats: { iq: 72, tf: 93, clu: 90 }, badges: ['Aggro Diver'], personality: '' };
   const cautious = { stats: { iq: 94, tf: 72, clu: 75 }, badges: ['Baron Steal'], personality: '' };
   const fightBias = objectiveFightPreference([aggressive], { style: 'Aggressive Dive' }, aggressive);
@@ -101,7 +101,9 @@ test('card and coach attitudes change a healthy objective contest and the post-s
   'the shotcaller pulls the squad toward their own objective attitude');
   const contest = { bossHealthFraction: 0.8, hasVision: true, contestedByEnemy: true, enemyStartedFight: false };
   assert.equal(chooseObjectiveAction({ ...contest, fightPreference: fightBias }), 'fight');
-  assert.equal(chooseObjectiveAction({ ...contest, fightPreference: finishBias }), 'finish');
+  assert.equal(chooseObjectiveAction({ ...contest, fightPreference: finishBias }), 'fight');
+  assert.equal(chooseObjectiveAction({ ...contest, bossHealthFraction: 0.32, fightPreference: finishBias }), 'finish');
+  assert.equal(chooseObjectiveAction({ ...contest, bossHealthFraction: 0.321, fightPreference: finishBias }), 'fight');
   const aftermath = { nearbyEnemies: 2, healthyAllies: 4, healthyEnemies: 2, averageHealthFraction: 0.8 };
   assert.equal(choosePostObjectiveAction({ ...aftermath, fightPreference: fightBias }), 'fight');
   assert.equal(choosePostObjectiveAction({ ...aftermath, fightPreference: finishBias }), 'regroup');
