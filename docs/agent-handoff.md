@@ -27,6 +27,7 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## Lore, Level 18 Skill Cap, Ban/Pick Phase, Item Renaming & Enlarged HP/Level Bars
 
 **User:**
+
 - Scrap the Gaming House.
 - Update Champions and Lore with rich narrative lore dossiers and progression details.
 - Add details for the ban/pick phase using actual artwork and dossier info from Champions and Lore.
@@ -35,6 +36,7 @@ This records decisions in the order the user raised them. It is a handoff, not a
 - Rename items to original in-universe Esports Clash names.
 
 **Implementation:**
+
 - **Scrapped Gaming House:** Removed `GamingHouseView` from `App.tsx`, purged navigation tab buttons, state values, and render blocks.
 - **Lore & Champion Dossiers:** Created `championLore.ts` with deep narrative dossiers for all 30 champions. Upgraded `ChampionHubView.tsx` with role filter pills, search bar, narrative excerpts, signature athlete synergy badges, base stats grid, and level 1-18 skill rank progression explorer.
 - **Enhanced Ban/Pick Phase:** Rewrote `DraftPhaseView.tsx` to feature authentic `ChampionArtwork`, role filters, search bar, signature pairing badges, and an inspection dossier containing base stats, narrative lore, and complete ability kit (Innate, Skill 1, Skill 2, Ultimate) with dynamic rank scaling.
@@ -47,6 +49,7 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## Turret True Damage, Clash Arena Rebrand, Card Packs Store, Duplicate Recycling & 30 Champion Artworks
 
 **User:**
+
 - Buff turrets and deal true damage to punish tower dives.
 - Scrap "ARAM" (it literally means All Random All Mid; rename to authentic arena title).
 - Deal with duplicate cards and allow recycling / upgrading.
@@ -55,17 +58,18 @@ This records decisions in the order the user raised them. It is a handoff, not a
 - Replace placeholder avatar where other avatars used Valkira; add unique artwork for each avatar.
 
 **Implementation:**
+
 - **Turret True Damage & Scaling:** Updated `turretShotDamage(baseDamage, isChampion, isNexus)` in `arenaRules.ts` so champion shots deal $1.8\times$ base damage (288 for outer, 342 for inner, 396 for nexus) and flag `isTrueDamage = true` in `AramMatchView.tsx`. Turret shots bypass all champion armor and render bold white true damage floaters to heavily punish dives.
 - **Clash Arena Rebrand:** Rebranded all user-facing instances of "ARAM" to "Clash Arena" / "Bridge of Champions" in `App.tsx`, `SquadView.tsx`, and `mockData.ts` to reflect the strategic drafting nature of the mode.
 - **Card Pack Store & Virtual Economy:**
   - Added Clash Coins (🪙) economy with rewards from matches, daily supply drops, and duplicate recycling.
   - Implemented 6 distinct, reasonably priced packs:
-    - *Rookie Talent Scout* (250 Coins): 3 rising talents with high Bronze/Silver rate.
-    - *Marksmen & Snipers Pack* (600 Coins): 3 dedicated carrying marksmen.
-    - *Midlane Wizards & Assassins* (600 Coins): 3 burst mages and playmakers.
-    - *Frontline Titans & Wardens* (600 Coins): 3 tanks and frontline brawlers.
-    - *Continental Pro Pack* (900 Coins): 4 seasoned stars, guaranteed Gold+ with 35% Plat chance.
-    - *World Championship GOAT Pack* (1,800 Coins): 5 esports legends, guaranteed Platinum+, highest Diamond & GOAT odds.
+    - _Rookie Talent Scout_ (250 Coins): 3 rising talents with high Bronze/Silver rate.
+    - _Marksmen & Snipers Pack_ (600 Coins): 3 dedicated carrying marksmen.
+    - _Midlane Wizards & Assassins_ (600 Coins): 3 burst mages and playmakers.
+    - _Frontline Titans & Wardens_ (600 Coins): 3 tanks and frontline brawlers.
+    - _Continental Pro Pack_ (900 Coins): 4 seasoned stars, guaranteed Gold+ with 35% Plat chance.
+    - _World Championship GOAT Pack_ (1,800 Coins): 5 esports legends, guaranteed Platinum+, highest Diamond & GOAT odds.
 - **Duplicate Card Management & Recycling:**
   - When opening packs, pulling an existing roster player automatically converts the duplicate into Coins (GOAT: 2,500, Diamond: 1,200, Platinum: 600, Gold: 300, Silver: 120, Bronze: 60) and grants $+1$ Level, $+1$ OVR, and $+1$ to all attributes to train the existing roster member.
   - Added a "Recycle Duplicates" button in Club Reserves (`SquadView.tsx`) that detects all excess duplicates across the roster and recycles them into Clash Coins in a single click.
@@ -75,12 +79,14 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ### 2026-10-10: Starting 5 Overhaul, Basis Ability Renames, Avatar Synergy/Counter Matrix, AI Drafting Intelligence, & 125 Pro Teams Database
 
 **User request:**
+
 - Make Starting 5 look better and fix card overlap where cards crowded and overlapped horizontally.
 - Change the ability names of avatars that copied real ability names from their basis (Cora, Renn, Kindra, Kage, Kazemaru, Tequoia, Zal, Xin).
 - Add AI that thinks, counters players, and understands avatar synergies using stored data; make this data accessible in a tab after Tournament Split.
 - Add 100+ pro teams with different head coaches and rosters to create a living simulation for single-player play and Vs AI.
 
 **Implementation:**
+
 - **Starting 5 Layout & Overlap Resolution:**
   - Modified `src/components/CardComponent.tsx`: Replaced fixed `w-64` (256px) with responsive `w-full max-w-[230px] min-w-0 h-[385px]`, reduced chibi avatar to 76px, and tightened typography so cards fit cleanly in grid columns without overlapping.
   - Overhauled `src/components/SquadView.tsx`: Redesigned Starting 5 with `FORMATION_SLOTS` containing tactical lane badges (`TOP LANE 🛡️`, `JUNGLE ⚔️`, `MID LANE 🔮`, `BOT CARRY 🏹`, `SUPPORT 💚`), role descriptions, lane synergy link banners (Top-Jgl Roam, Mid-Jgl Gank Axis, Core Carry Focus, Bot Duo Peel Bond), team average OVR badge, and dedicated Swap/Inspect buttons with `max-w-7xl` spacing.
@@ -123,12 +129,14 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## User Request: 9 New Champions, Combat Class Roles, Multi-Role Card Evolutions & EA FC Evolution System
 
 **User Request:**
+
 1. Integrate 9 new champions: Invoker, Hwei, Jayce, Vi, Jinx, Puck, Batrider, Bristleback, IO.
 2. Remove Top, Jungle, Mid Lane, Bot Carry and Support as Player Card roles. Player cards represent combat classes (`Mage`, `Marksman`, `Fighter`, `Tank`, `Assassin`, `Support`) and tactical Starting 5 positions (`FRONTLINE`, `SKIRMISHER`, `CORE PLAYMAKER`, `DAMAGE CARRY`, `TACTICAL SUPPORT`).
 3. Multi-role player card evolutions: enable cards to evolve into playing multiple roles (e.g. Flaker starting with Mage can evolve into Support, enabling him to play both). Cards gain new Signature Avatars in that role.
 4. Research player evolutions in EA FC and integrate how it adds player ratings (OVR boosts, key stat boosts, card tier upgrades, cosmetic holographic styling, fast-track objectives, player pack drops).
 
 **Implementation:**
+
 - **9 New Champions (Pool Expanded from 30 to 39):**
   - `src/additionalChampions.ts`: Added **Kaelen** (Invoker - Mage/Support), **Hweilin** (Hwei - Mage/Support), **Jaxon** (Jayce - Fighter/Marksman), **Valerie** (Vi - Fighter/Assassin), **Jinxy** (Jinx - Marksman/Assassin), **Paxi** (Puck - Mage/Assassin), **Batrix** (Batrider - Fighter/Mage), **Quillback** (Bristleback - Tank/Fighter), **Aetheris** (IO - Support/Mage). All have unique kits, passives, and original parody names.
   - `src/components/ChampionArtwork.tsx`: Added handcrafted vector SVG artworks for all 9 new champions.
@@ -155,6 +163,7 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## User Request: Kaelen Spellweave, Recall Grouping Bug Fix, Tower Cover Retreats, Wise Open Recalls & Avatar Dossier Sorting
 
 **User Request:**
+
 1. Kaelen multi-skill spellweaving: mimic Quas/Wex/Exort and Invoke from Invoker, but make it original using two essences and invoke (Pyra and Surge, invoked via Spellweave).
 2. Fix bug where avatars go toward avatars that are recalling.
 3. Low-health players should use towers as cover instead of always running to bushes when towers are closer.
@@ -163,6 +172,7 @@ This records decisions in the order the user raised them. It is a handoff, not a
 6. Add "Filter by" in Avatar Roster Dossier, filtered by Name (A–Z) by default.
 
 **Implementation:**
+
 - **Kaelen Original Spellweave Kit:**
   - `src/types.ts`: Added `kaelenEssences?: ('pyra' | 'surge')[]` and `invokedSpell?: string` to `AramChampionUnit`.
   - `src/additionalChampions.ts`: Kaelen kit redesigned around elemental duality:
@@ -194,9 +204,11 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## User Request: Procedural Models for 9 New Avatars
 
 **User Request:**
+
 - New avatars (Kaelen, Hweilin, Jaxon, Valerie, Jinxy, Paxi, Batrix, Quillback, Aetheris) had no battlefield chibi models (falling back to plain team color circles). Add dedicated models for all of them.
 
 **Implementation:**
+
 - `src/components/ChampionSpriteRenderer.ts`:
   - Added dedicated switch branches for all 9 champions (and their IDs) in `drawChampionSprite`.
   - Implemented 9 handcrafted procedural TFT-style chibi sprite rendering functions:
@@ -214,10 +226,12 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## User Request: Tower Recall Fixes, Elimination of Avatar Spinning & Idle Standing
 
 **User Request:**
+
 - Fix recall under the tower; avatars spin before recalls and are just standing there sometimes.
 - User follow-up: "just remove the under the twoer recall just cover before recalling. Undo the implementation huge the old one."
 
 **Implementation:**
+
 - **Removal of Under-Tower Recall & Reversion to Cover-First:**
   - In `src/arenaRules.ts`, removed all tower-specific recall overrides and reverted `canUnitRecall` signature back to `(nearestEnemyDist, nearestMinionDist, nearestStructureDist, recallCooldown, isInBush)`.
   - Re-established strict safe enemy distance: `isInBush ? 300 : 450`, minion distance > 270, and structure distance > 250.
@@ -230,11 +244,13 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## User Request: Chess-Style Ranked Ladder System (Starts at 300, No LP, No Bronze/Silver/Gold)
 
 **User Request:**
+
 - Integrate a ladder system.
 - Replace LP (League Points) with a new rating metric.
 - Do not use Bronze, Silver, Gold; instead use Chess-style ranks starting at 300.
 
 **Implementation:**
+
 - **Chess-Style Rating & Hierarchy (`src/ladderRating.ts`):**
   - Rating begins at exactly **300 Rating** (Pawn tier) with a protected 300 rating floor.
   - No LP or League Points anywhere in the codebase. Metric is labeled as **Rating** (Chess Elo).
@@ -265,11 +281,13 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## User Request: Console App Removal, Multiplayer-Only Ranked Ladder, and Normal (Unranked) Mode
 
 **User Request:**
+
 - Remove the console type `EsportsClash` and update the `README.md` in the root folder.
 - Ladder is for multiplayer only, so Vs Player and Ladder Ranked match should be the same.
 - Integrate normal (not ranked) Vs Player.
 
 **Implementation:**
+
 - **Console App Removal & Root Documentation (`README.md`, `EsportsClash.sln`):**
   - Deleted the legacy `EsportsClash.ConsoleApp/` directory containing the console prototypes.
   - Cleaned `EsportsClash.sln` by removing `EsportsClash.ConsoleApp.csproj` project declarations and configuration mappings.
@@ -285,15 +303,17 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## User Request: Objective Contestation Regrouping & Unique Player Card PlayStyle Traits
 
 **User Request:**
+
 - If the other team knows the opponent is doing objectives like Dragon and Golem, they should regroup immediately and try to contest the objective.
 - Make use of unique player card traits/badges like Clutch King and Aggro Diver so that players do things that other players won't do instead of all matches having the same winning process.
 
 **Implementation:**
+
 - **Epic Objective Contestation & Pit Scouting (`src/objectiveRules.ts`, `src/components/AramMatchView.tsx`):**
   - Added `hasObjectiveVision` evaluating vision of Dragon and Golem pits via nearby allied champions (within 440px), allied wards (within 320px), or visible spotted enemies in the pit.
   - Added `shouldContestOpponentObjective` assessing contest timing when opponents attack Embermaw or Gravemarch Colossus, taking into account healthy teammates, macro IQ, teamfight rating, chemistry, and `Shotcaller` / `Baron Steal` presence.
   - In `AramMatchView.tsx`, when an opponent team is detected doing an objective, the scouting team sounds a contest alert (`⚔️ CONTEST: [TEAM] spotted opponents on Embermaw/Gravemarch! Regrouping immediately!`), triggers `📢 SHOTCALL RALLY!`, and healthy teammates break off minor tasks to march in formation to the pit, initiating on the vulnerable enemies trapped inside or timing smite burst executes.
-- **Unique Player Card Combat Traits System (`src/playerTraits.ts`, `src/combatDecision.ts`, `src/components/AramMatchView.tsx`):
+- \*\*Unique Player Card Combat Traits System (`src/playerTraits.ts`, `src/combatDecision.ts`, `src/components/AramMatchView.tsx`):
   - Aggro Diver pursues a wounded enemy under a turret when survivable.
   - Clutch King stays in an active low-health fight instead of immediately retreating.
   - Baron Steal recognizes contested low-health objectives, without an extra execute attack.
@@ -312,10 +332,12 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## User Request: Turret Kill Attribution Window and Turret Execution Gold Split
 
 **User Request:**
+
 - If a turret kills an avatar, the kill should go to the last avatar who damaged the killed avatar.
 - If the elapsed time is 10 seconds and the turret kills the avatar, the kill should not go to the last avatar who damaged it; the turret just gets the kill and the team that owns the turret will receive the gold evenly.
 
 **Implementation:**
+
 - **Turret Kill Attribution & Gold Split Logic (`src/matchReplay.ts`, `src/components/AramMatchView.tsx`):**
   - Added `resolveTurretKillReward(victim, now, champions, windowSeconds = 10, bounty = 300)`.
   - When a turret lands the lethal blow on an avatar (`isTurretFinish`):
@@ -332,9 +354,11 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## User Request: Objective Contestation Fixed to Engage Enemy Team in Teamfight
 
 **User Request:**
+
 - We need for the other team to engage and look for a teamfight against the other team not go to the actual pit of the objective.
 
 **Implementation:**
+
 - **Objective Contestation Teamfight Engagement (`src/components/AramMatchView.tsx`):**
   - Removed direct pit pathing (`(dragon.x, dragon.y)` / `(golem.x, golem.y)`) and objective monster attacking during opponent objective contestation.
   - When `isContestingOpponentObjective` triggers, contesting champions prioritize the enemy champions engaged at/near the objective (`contestEnemyPool`), selecting their teamfight focus via `chooseTeamfightTarget`.
@@ -348,8 +372,6 @@ This records decisions in the order the user raised them. It is a handoff, not a
 ## Practical boundaries
 
 The online room feature synchronizes drafting and a seeded AI match; it is not a server-authoritative ranked match. Research `realName` values are kept internally for roster provenance and deduplication, but should not appear on player card faces. Keep aliases fictional and stable once published so saved reports remain understandable.
-
-
 
 ## User Request: Player Card Traits as Moves, Not Stat Buffs
 
@@ -508,6 +530,7 @@ The online room feature synchronizes drafting and a seeded AI match; it is not a
 **User:** Reported that when avatars cast channeled abilities (such as Nullweaver's Singularity Well, Corsara's Broadside Waltz, or Cloudtail's Cyclone Dance), their allies protect them or path toward them instead of committing to the follow-up engage.
 
 **Agent:** Removed the convergence behavior where allies treat channeling teammates as grouping anchors or defensive peel targets. Channeled abilities are now recognized as aggressive teamfight engagements rather than distressed carries needing peel:
+
 - **Peel Exclusion:** `isChannelingAbility` identifies avatars currently channeling abilities (`blackHole`, `corsaraBarrage`, `monkeySpin`). Channeling allies are excluded from defensive carry peeling in `chooseTeamfightTarget`, allowing tanks and supports to engage forward rather than hovering around the channeler.
 - **Grouping Exclusion:** In `AramMatchView.tsx`, `fightingAlly` excludes channeling teammates. Allies no longer path directly to the channeler and abort their own combat loop.
 - **Target Prioritization:** Added `isEnemyCaughtInAlliedChannel`. When any ally channels an engage ability, all living allies within teamfight range (up to 650px) prioritize enemies trapped in or targeted by the channel (e.g. enemies in the Black Hole, barrage cone, or Cyclone Dance knockup), sorting by lowest health and squishy carries for burst execution.
@@ -522,10 +545,12 @@ The online room feature synchronizes drafting and a seeded AI match; it is not a
 ## User Request: Turret Kill Attribution, 10-Second Execution Window, and Opponent Objective Contestation
 
 **User:**
+
 1. If a turret kills an avatar, the kill should go to the last avatar who damaged the killed avatar. But if the elapsed time is 10 seconds, the turret gets the execution and the team owning the turret receives the gold evenly.
 2. Fix opponent objective regrouping: when contesting an opponent on Dragon Embermaw or Siege Golem Gravemarch, the team should engage in a teamfight against the opposing champions rather than rushing directly into the objective monster's pit.
 
 **Agent:**
+
 - **Turret Execution & Kill Attribution:**
   - In `AramMatchView.tsx` and `matchReplay.ts`, added `resolveTurretKillReward(victim, matchTime, champions, 10)`.
   - When an avatar dies from a turret shot without direct champion killer:
@@ -544,6 +569,7 @@ The online room feature synchronizes drafting and a seeded AI match; it is not a
 ## User Request: Cinderbloom Melee Avatar, AI Steering Stabilization, Support Items, Ability Haste & Ability Damage Scaling
 
 **User:**
+
 1. Cinderbloom should be a melee avatar.
 2. Too much spinning around if AI can't make decisions; improve it using steering behaviors and anti-oscillation techniques from the internet.
 3. Make more support items.
@@ -551,6 +577,7 @@ The online room feature synchronizes drafting and a seeded AI match; it is not a
 5. Make more items that add damage to abilities (AP, AD, Lethality) and find a way to balance it.
 
 **Agent:**
+
 - **Cinderbloom Melee Conversion:** Converted Cinderbloom (`c_locke`) from a 125px ranged caster to a dedicated melee avatar (`range: 1.4` kit range, 50px arena melee attack distance, melee slash sparks, no projectile). Preserved champion ID `c_locke` and 43-avatar invariants across animation motifs and combos.
 - **Steering Behavior & Anti-Spin Damping:**
   - Directional Deadband Hysteresis: `setUnitFacing(unit, targetX, deadband = 12)` ignores sub-12px horizontal deltas during vertical pathing and arrival, stopping 30Hz left/right flipping.
@@ -576,11 +603,13 @@ Reported that teams are tower diving way too much, throwing games away, and when
 
 **Agent:**
 Investigated root causes and found three critical bugs:
+
 1. Target selection (`chooseTeamfightTarget`) had zero penalty for enemies standing under live enemy turrets, causing units to ignore lane fights and pursue low-health enemies deep under towers.
 2. In `AramMatchView.tsx`, retreating champions under enemy towers selected `nearbyRetreatBush` (such as `bush_red_river` at $x=1250, y=235$), which was only 160px from the enemy tower (within its 280px range). Upon arriving within 14px of the bush center, the unit set `u.vx = 0, u.vy = 0, animState = 'idle'`, freezing permanently inside turret range while the turret blasted them to death.
 3. Ordinary champions had no turret boundary awareness when closing distance, walking blindly into turret range without dive authorization or minion wave crash. Furthermore, if a target popped Zhonya's Stasis or escaped, divers stood still taking turret true damage.
 
 **Implementation (`src/towerDiveRules.ts`, `src/playerTraits.ts`, `src/combatDecision.ts`, `src/components/AramMatchView.tsx`):**
+
 - **Avatar Limits (`getAvatarDiveLimits`):**
   - **Tanks:** High durability; require $\ge 40\%$ HP and $\ge 650$ raw HP; can solo dive if target is low ($\le 38\%$).
   - **Fighters:** Require $\ge 45\%$ HP and $\ge 600$ raw HP; target $\le 35\%$.
@@ -609,6 +638,7 @@ Investigated root causes and found three critical bugs:
 "can we remove some minus health status for example the Nature Link when 4 or more heroes are linked the screen lits up with Nature Link labels. Nature links can only affect enemies, also changed the 'LINKED' status to a unique icon."
 
 **Implementation:**
+
 - **Enemy-Only Targeting:**
   - In `castChampionSkill2` (`AramMatchView.tsx`), Tequoia's Skill 2 targets living enemies only: `championsRef.current.filter(e => e.isAlive && e.team !== u.team && Math.hypot(e.x - target.x, e.y - target.y) <= 125)`.
   - In `applyDamageToChampion`, shared damage propagation enforces `other.team === target.team` and emits the updated event `🌿 NATURE LINK: [player] linked [N] enemy champions!`.
@@ -624,6 +654,7 @@ Investigated root causes and found three critical bugs:
 **Affected files:** `EsportsClash.Web/src/mockData.ts`, `EsportsClash.Web/src/combatDecision.ts`, `EsportsClash.Web/src/components/AramMatchView.tsx`, `EsportsClash.Web/src/combatDecision.test.mjs`, `docs/arena-mechanics.md`, and `docs/agent-handoff.md`.
 
 **Verification:**
+
 - `npm run check:game` passed all 127 tests.
 - `npm run build` compiled clean production build.
 
@@ -632,12 +663,14 @@ Investigated root causes and found three critical bugs:
 ## User Request: Paxi/Raijin Ground Targeting and Kaelen Elemental Conflux
 
 **User:**
+
 - Make Paxi's Q and Raijin's ultimate ground-targeted so they can cast without an enemy target and travel toward the selected ground direction for engaging or disengaging.
 - Replace Kaelen's established Pyra/Surge Spellweave kit. He has no ultimate: Q Orb of Ice, W Orb of Wind, E Orb of Fire, an active innate with a distinct name, and D/F invoked-spell slots. Use Ice/Wind/Fire recipes, FIFO, unique cooldowns, and reduce the innate cooldown at levels 1/7/13/18 to 3/2/1/0 seconds.
 
 **Confirmed decision:** The user explicitly approved replacing the previously documented Kaelen kit. The new active innate is **Conflux**.
 
 **Implementation:**
+
 - **Ground-target rules:** `src/groundTargetRules.ts` calculates an explicit or facing-direction fallback destination, clamps it to cast range, and keeps it inside arena bounds. `src/components/AramMatchView.tsx` uses that for Paxi's Q and Raijin's Ball Lightning; Raijin's retreating AI aims away from combat. Paxi's escape jaunt keeps its 230px travel limit; her ordinary cast range is 700px, and Raijin's ultimate remains 320px.
 - **Kaelen elemental kit:** `src/kaelenAbilities.ts` defines the Ice/Wind/Fire orb FIFO, ten three-orb spells with distinct cooldowns, the D/F invoked-spell FIFO, and Conflux cooldown thresholds. `src/additionalChampions.ts`, `src/types.ts`, `src/components/AramMatchView.tsx`, `src/avatarCombos.ts`, `src/matchInspector.ts`, `src/championLore.ts`, `src/avatarSkillAnimation.ts`, `src/components/ChampionSpriteRenderer.ts`, `src/components/ChampionHubView.tsx`, and `src/components/DraftPhaseView.tsx` now reflect the new kit and its UI/runtime behavior. Orb cooldowns are 5/6/7 seconds for Q/W/E.
 - Kaelen's former `ultimate` data slot is retained only for kit compatibility and now describes E Orb of Fire (`isUlt: false`); generic ultimate progression and the old learned two-skill combo path are disabled for him. Invoked spells use D/F and are tracked separately from ultimate casts.
@@ -653,6 +686,7 @@ Investigated root causes and found three critical bugs:
 ## User Request: Avatar Terminology, Full-Width Roster, Targeting Details, and Aetheris Ability Visuals
 
 **User:**
+
 - Rename champions to avatars in the interface.
 - Make the avatar list full-width, with avatar profile details and ability information in two columns.
 - Alphabetize role filters and their results in both the roster and draft.
@@ -662,6 +696,7 @@ Investigated root causes and found three critical bugs:
 **Confirmed decision:** Aetheris's ultimate lasts 5 seconds at rank 1, scaling to 8 seconds at rank 4 (6 and 7 seconds at ranks 2 and 3).
 
 **Implementation:**
+
 - **Avatar naming and layout:** `EsportsClash.Web/src/components/ChampionHubView.tsx` uses the full page width as two stacked rows: an alphabetically role-filtered, searchable, scrollable avatar-card grid on top; the selected avatar's identity, combat tags, lore, stats, and ability kit below. `DraftPhaseView.tsx` also alphabetizes role filters and the filtered avatar list. Visible navigation, squad, and pro-circuit labels now say avatars; internal `ChampionKit` types, IDs, and persistence fields remain unchanged.
 - **Ability targeting details:** `src/aetherisAbilities.ts` provides shared target-type descriptions, used in roster and draft ability detail panels. `ChampionSkill.targeting` and the relevant kits mark Paxi Q and Raijin R as ground-targeted; Kaelen's orb gathering needs no target; Aetheris Q targets an enemy unit, W an ally, and R is self-centered.
 - **Aetheris visuals and effects:** `src/components/AramMatchView.tsx` draws a live innate tether to the nearest living ally within 280 arena units. Q summons five orbiting spirits for 8 seconds; each Q projectile hit bursts at the enemy for area damage and consumes an orb. W applies a 5-second, visible aura to the nearest ally within 260 units (self if alone), a shield, and +15% basic-attack damage. `Resonant Convergence` heals and shields living allies within 260 arena units, then draws moving tethers for 5/6/7/8 seconds at ultimate ranks 1-4.
@@ -676,6 +711,7 @@ Investigated root causes and found three critical bugs:
 ## User Request: Cooldown-Free Kaelen Orb Stat Bonuses and Conflux R Tab
 
 **User:**
+
 - Remove cooldowns from Kaelen's Ice, Wind, and Fire orbs. Each orb adds a corresponding stat that scales with orb rank.
 - Put the invoked spell list in the Conflux tab; present Conflux as the ultimate in the rightmost tab and label it R.
 - Clarification: orb instances and their stat bonuses are removed when FIFO rotation pushes them outside the current three orbs.
@@ -683,6 +719,7 @@ Investigated root causes and found three critical bugs:
 **Confirmed decision:** The user explicitly approved overriding the previous per-orb cooldowns and "Kaelen has no ultimate" presentation.
 
 **Implementation:**
+
 - Q/W/E now have zero cooldown. Each held orb in Kaelen's maximum-three FIFO contributes a dynamic stat bonus; overflow automatically removes the oldest orb and its corresponding bonus. The combat bonuses are derived directly from the current FIFO, so they also disappear when Conflux consumes the recipe.
 - Per held orb at rank 1: Ice gives +0.2 health regeneration/second, Wind gives +1 movement speed, and Fire gives +1% spell amp and +1% overall damage amp. Each rank raises those values by 25%; orb rank follows the Q rank milestones through rank 7.
 - The roster presents Q Orb of Ice, W Orb of Wind, E Orb of Fire, and rightmost `CONFLUX (R)`. All ten recipes are displayed in that Conflux panel. Conflux keeps its level-scaled 3/2/1/0-second cooldown, and D/F retains its two-spell FIFO.
@@ -713,6 +750,7 @@ Investigated root causes and found three critical bugs:
 "in the Clash Arena, can we add a mode that the Squad Lineup does not matter? All players will be 100 overall and it all comes down with draft but it is only Normal Game and no Rank."
 
 **Implementation:**
+
 - **Roster & Coach Normalization (`src/equalizedMode.ts`):**
   - Added `createEqualizedRoster(team: 'blue' | 'red')` generating balanced 100 OVR GOAT tier rosters:
     - Blue: `TheSpicy` (TOP), `p1mple` (JGL), `Flaker` (MID), `Ouzi` (BOT), `Cardrel` (SUP).
@@ -734,6 +772,7 @@ Investigated root causes and found three critical bugs:
 **Affected files:** `EsportsClash.Web/src/equalizedMode.ts`, `EsportsClash.Web/src/equalizedMode.test.mjs`, `EsportsClash.Web/src/App.tsx`, `docs/arena-mechanics.md`, and `docs/agent-handoff.md`.
 
 **Verification:**
+
 - `npm run check:game` passed all 145 tests, design validation, and TypeScript compilation.
 - `npm run build` compiled clean production build.
 
@@ -745,6 +784,7 @@ Investigated root causes and found three critical bugs:
 "Unranked equalized 100 over draft mode should include Player card drafting."
 
 **Implementation:**
+
 - **Player Card Equalization & Drafting Logic (`src/equalizedMode.ts`):**
   - Added `equalizePlayerCard(card: PlayerCard)` normalizing any player card to 100 OVR, GOAT tier, level 60, all 100 attributes, all 6 combat roles (`playableRoles`), all avatars as signatures, while preserving original parody alias (`Cardrel`, `TheSpicy`, `Flaker`, etc.) and unique PlayStyle badges.
   - Added `getEqualizedPlayerPool()` exporting all 63 player cards equalized to 100 OVR.
@@ -767,6 +807,7 @@ Investigated root causes and found three critical bugs:
 **Affected files:** `EsportsClash.Web/src/equalizedMode.ts`, `EsportsClash.Web/src/equalizedMode.test.mjs`, `EsportsClash.Web/src/components/PlayerDraftPhaseView.tsx`, `EsportsClash.Web/src/App.tsx`, `docs/arena-mechanics.md`, and `docs/agent-handoff.md`.
 
 **Verification:**
+
 - `npm run check:game` passed all 148 tests (including 7 equalized mode tests), design validation, and TypeScript compilation.
 - `npm run build` compiled clean production build.
 
@@ -849,6 +890,7 @@ Investigated root causes and found three critical bugs:
 **User:** "can you make the rocks a bit more natural? It looks like we forced it there."
 
 **Agent:** Replaced the rigid, identical M-shaped two-spiked crown polygons with authentic procedural 3D geological formations across the entire map:
+
 1. **Continuous Bedrock Embankments:** Rendered curved cliff foundations connecting the rocks of all 10 camp rings (`CAMP_ROCK_RINGS`) and continuous bedrock shelves connecting the 4 highground ramp walls. The rocks now form cohesive cliff coves nestled naturally into the jungle terrain rather than detached circular teeth.
 2. **Procedural 3D Organic Boulders:** Implemented a deterministic coordinate hash (`rockHash`) to proceduralize boulder dimensions, aspect ratios, organic 8-point chiseled silhouettes, and subtle orientation angles. Camp boulders now align tangentially along the curvature of each camp cove, naturally embracing the clearing perimeter.
 3. **Multi-Faceted Chiseled Shading:** Each boulder now features layered 3D volume lighting with directional arena sunlight: diffuse contact ground occlusion shadow, dark under-facet crevice shadow, midtone body with smooth directional gradient, sunlit upper-left crest facet, crisp chiseled ridge highlights, and hairline geological fracture fissures.
@@ -879,11 +921,13 @@ Investigated root causes and found three critical bugs:
 ## User Request: Enlarged Jungle Camps, Flared Openings, Smooth Rock Sliding, and Support Farming Prohibitions
 
 **User:**
+
 - The openings are too steep and some models are getting stuck in the rocky terrains can you fix it?
 - Make the rocky terrains a bit more larger so it has more room for the jungle camps inside and avatars won't have a hard time farming it.
 - AI should understand what their role is; support avatars can't farm jungle camps since their damage is low.
 
 **Agent:**
+
 - **Enlarged Camp Geometry & Flared Entrance Openings (`src/arenaRules.ts`):**
   - Standard camp radius increased from 60 to 76 (inner camp floor area doubled from ~5,280 to ~10,560 px²).
   - Boss pits enlarged: Gravemarch Golem radius increased from 100 to 115; Dragon Embermaw radius increased from 110 to 122.
@@ -960,6 +1004,7 @@ Investigated root causes and found three critical bugs:
 **Agent:** Created a fast, deterministic, headless game simulation engine (`src/matchSimulationEngine.ts`) and test suite (`src/matchSimulation.test.mjs`) running pure TypeScript without DOM or canvas dependencies. The engine simulates bridge arena matches with minion wave cycles (22s), sequential structure vulnerability (`canDamageStructure`: Outer → Inner → Nexus Tower → Barracks → Nexus), structure plating (`towerSiegeMultiplier`), tower dive limits and safety aborts (`evaluateTowerDive`, `shouldAbortTowerDive`, `getTurretEvacuationVector`), 10-second turret execution attribution (`resolveTurretKillReward`), epic objectives (Dragon Embermaw & Gravemarch Colossus), neutral camp farming, health relics, fountain regen, and item strategy purchasing.
 
 Ran batch multi-seed simulations across seeds and analyzed aggregated telemetry:
+
 1. **Side Parity & Role Composition:** Initial batch simulation revealed Red team winning 90-100% of matches due to Blue having two Marksmen (Astra and Cora) with zero frontline tanks. Updated Blue default lineup to include Kaolin (TerraByte, Tank), matching Red's Solana. Mirrored and side-swapped simulations confirmed 50.0% Blue / 50.0% Red parity.
 2. **Pacing and Structure Vulnerability:** Early simulations ended in ~4.9–5.2 minutes without sequential structure invulnerability. Enforcing sequential structure gating and applying `towerSiegeMultiplier` (early tower plating fading by 8 minutes) inside `damageStructure` brought average match duration to a healthy 7.7 minutes (median 5.8m, range 4.6m - 15m).
 3. **Tower Dive Abort Telemetry Debounce:** Resolved per-frame telemetry increment of `towerDiveAborts` by restricting `shouldAbortTowerDive` evaluation to units actually inside enemy turret range and debouncing abort state transitions until units clear turret range + 50px.
@@ -1173,6 +1218,7 @@ Ran batch multi-seed simulations across seeds and analyzed aggregated telemetry:
 **User:** Reported champions getting stuck at the base ramp rock formation (`Red Ramp North Brush`), requested that AI commit to finish the Nexus when it is low, and asked for highground base warding.
 
 **Agent:** Diagnosed the root cause of the screenshot:
+
 1. When taking damage in the enemy base, units triggered `isDangerousFight` and searched for a `nearbyRetreatBush`. Because `Math.sign(wellTargetX - u.x) === Math.sign(b.x - u.x)` was evaluated without checking territory ownership, Blue units at the Red base selected `bush_red_high_north` (an enemy base ramp brush at $y = 265$ behind `HIGHGROUND_ROCKS` at $y = 295$). Units walked north from lane ($y = 380$) directly into the solid rock face, where `resolveRockTerrainMovement` stopped them 35px from the bush, preventing `distToTarget <= 14` from ever firing and trapping champions in an infinite walk-into-rock loop.
 2. In `AramMatchView.tsx`, added `!isEnemyBaseRampBush` to `nearbyRetreatBush` filtering. Retreating units in enemy territory now retreat along the unobstructed central lane corridor ($y = LANE_Y = 380$) toward their allied fountain well, eliminating all base rock pinching.
 3. Added proactive highground base scouting in `AramMatchView.tsx`: when approaching the enemy highground ramp ($x \in [1260, 1620]$ for Blue, $x \in [380, 740]$ for Red), champions toss a scout ward (`👁️ HIGHGROUND WARD`) up onto the highground flank bushes or base entrance from up to 300px away, revealing ambushers and clearing highground fog of war.
@@ -1190,6 +1236,7 @@ Ran batch multi-seed simulations across seeds and analyzed aggregated telemetry:
 **User:** Asked to add descriptions of the AD and AP scaling ratios into the abilities of all avatars.
 
 **Agent:**
+
 1. Centralized ratio calculation in `getAbilityRatios(champion, skill)` in `EsportsClash.Web/src/abilityRules.ts`, returning typed ratio percentages and formatted description strings `(+X% AD, +Y% AP)` based on champion primary and secondary roles:
    - Physical roles (Assassin, Fighter, Marksman without Mage): `+36% AD, +25% AP`.
    - Physical roles with Mage secondary (e.g. Inai, Aetherbolt, Corsara, Batrix): `+36% AD, +42% AP`.
@@ -1238,7 +1285,7 @@ Ran batch multi-seed simulations across seeds and analyzed aggregated telemetry:
 
 **Agent:** Expanded world width from 2000 to 2600. Shared mirrored coordinates now place wells at 65/2535, Nexuses at 235/2365, barracks at 430/2170, tier 3 at 610/1990, tier 2 at 830/1770, and outer towers at 1050/1550. Camps, relics, boss pits, base shelves, bushes, and ramp scouting were realigned. Terrain uses irregular scalloped contours and layered cliff shading, with the same contour function positioning collision stones. Gates remain lane-facing; no decorative route markings were restored.
 
-Replaced local entrance steering with cached, body-expanded terrain graphs, A* planning, collision-checked smoothing, and stalled/displaced route recovery. Jungle farmers route out of their current camp as well as into the next; neutral chase/reset routes respect monster body size and ordinary speeds. Stationary embedded units are repaired, while ordinary collision steps cannot eject through walls. Outer upper buffs moved 40 units outward before the central-map translation to remove disconnected boundary pockets.
+Replaced local entrance steering with cached, body-expanded terrain graphs, A\* planning, collision-checked smoothing, and stalled/displaced route recovery. Jungle farmers route out of their current camp as well as into the next; neutral chase/reset routes respect monster body size and ordinary speeds. Stationary embedded units are repaired, while ordinary collision steps cannot eject through walls. Outer upper buffs moved 40 units outward before the central-map translation to remove disconnected boundary pockets.
 
 Added defensive calls that prioritize Nexus, tier 3, barracks, then nearby inner/outer towers. Inner-base emergencies recruit across the map, interrupt farm routes and optional reset/objective/push calls, rally behind threatened buildings, prioritize attackers, and clear siege waves. Healthy recall channels already near the base can cancel to defend; distant recalls finish because teleporting home is faster. Emergency recovery, crowd control, dive aborts, turret attribution, anti-spin safeguards, and parody aliases are preserved. Strong defense changes decisions, not structure damage/HP or invulnerability. Base calls appear in the event log and floating labels.
 
@@ -1247,3 +1294,17 @@ Added defensive calls that prioritize Nexus, tier 3, barracks, then nearby inner
 **Verification:** `npm run check:game` passed design validation, all 213 tests, the additional 3 simulation checks, and TypeScript. `npm run build` passed (existing large-bundle warning remains). Route regressions cover all 90 camp-to-camp rotations, 120 well/flank round trips, compass approaches, large-monster gates, chase/reset speed, embedded positions, and changed/stalled goals. Defense tests cover priorities, whole-map versus local recruitment, waves, dead threats, and mirrored rally points.
 
 **Limits:** No browser visual replay performed. Canvas remains a fit-to-screen overview, so the wider world creates longer travel without a larger viewport. Headless simulation shares layout/collision but not the full live defensive/recall state machine; its small seeded sample is not proof of competitive balance. Dynamic champion pursuit still uses existing combat steering and collision, while planned jungle/return/base routes use the new terrain router.
+
+## User Request: Solidify Base Defense Decisions and Rotations
+
+**User:** "Can you take a look at the base defense? Solidify it." This follows the wider-battlefield and initial Nexus/tier-3 defense work described above.
+
+**Agent:** Strengthened the existing base-defense rules and live arena integration rather than increasing structure HP/damage or granting defenders artificial combat bonuses. Only living, opposing **visible/scouted champions** and publicly observable siege minions can generate a defense call; damaged structures alone do not. Overlapping detection zones assign attackers to their nearest living allied structure, preventing a siege at the Nexus Tower from incorrectly appearing as a direct Nexus attack. Defense priorities remain **Nexus > Nexus Tower > barracks > inner tower > outer tower**; core emergencies recruit globally while outer defenses remain local. The currently defended structure gets a small 35-unit detection margin to prevent call oscillation, but the call clears when the actual threat leaves or dies.
+
+Added explicit combat-readiness decisions so viable defenders interrupt optional farming, shopping, and macro calls, while critically injured, outnumbered, losing-fight, or turret-evacuating units are not forced into suicidal defense. Combat-ready units can leave the fountain before reaching full resources during urgent base sieges. Distant safe defenders compare walking time with recall-channel plus post-teleport travel time; recall channels already in progress are canceled only when walking is faster. The live AI retains the current defense target across ticks, prioritizes enemy champions and siege minions actually threatening the structure, avoids chasing unrelated enemies or clearing distant waves, and cancels coordinated post-recall camp plans under base pressure. Per-building defense announcements can fire independently within the same 20-second callout interval. The behavior is mirrored for Blue and Red.
+
+**Affected files:** `EsportsClash.Web/src/baseDefenseRules.ts`, `src/baseDefenseRules.test.mjs`, `src/types.ts`, and `src/components/AramMatchView.tsx`. The changes were delivered as `base-defense-solidified.zip`, with `base-defense-solidified.patch` included as an alternative to replacing the four files. The previous golem-pit relic removal and objective contest invariants were left unchanged. No gameplay-document update was included in this standalone change package.
+
+**Verification:** All **10 focused base-defense tests** passed with Node.js 22 type stripping, using a minimal compatible `arenaLayout.ts` fixture **only for local tests**, because the complete layout module was not among the files supplied for this change. The modified files passed TypeScript syntax parsing, and `baseDefenseRules.ts` passed standalone strict type checking. Tests cover threat attribution, mirroring, defense priorities, missing or dead threats, detection hysteresis, safety gates, early fountain exit, and recall-vs-walk travel decisions.
+
+**Limits:** Full `npm run check:game`, `npm run build`, browser match replay, and balance or win-rate effects were **not verified** against the full repository. Apply the files/patch to the actual project, rerun the full tests and build, and inspect a live Nexus siege with defenders farming, recalling, and contesting objectives to validate integrated behavior. The headless simulation still does not reproduce all live defense/recall state transitions.
