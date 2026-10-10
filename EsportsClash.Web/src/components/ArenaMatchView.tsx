@@ -274,9 +274,9 @@ export const ArenaMatchView: React.FC<ArenaMatchViewProps> = ({
             if (u.cdUlt <= 0 && target.hp < target.maxHp * 0.7) {
               u.cdUlt = u.champion.ultimate.cooldown;
               const dmg = u.champion.ultimate.damage * (1 + (u.player.stats.lan - 50) * 0.01);
-              applyDamage(u, target, dmg, `${u.champion.name} ULT!`);
+              applyDamage(u, target, dmg, `${u.champion.displayName} ULT!`);
               sound.playUltimateExplosion();
-              addLog(`💥 ${u.player.name} (${u.champion.name}) cast ${u.champion.ultimate.name}!`);
+              addLog(`💥 ${u.player.name} (${u.champion.displayName}) cast ${u.champion.ultimate.name}!`);
 
               if (u.champion.name === 'Solana') enemies.forEach((e) => { e.stun = 2.0; });
               else if (u.champion.name === 'Astra') target.stun = 2.5;
@@ -344,7 +344,7 @@ export const ArenaMatchView: React.FC<ArenaMatchViewProps> = ({
       target.isAlive = false;
       target.deaths++;
       attacker.kills++;
-      addLog(`☠️ [KILL] ${attacker.player.name} (${attacker.champion.name}) slain ${target.player.name}!`);
+      addLog(`☠️ [KILL] ${attacker.player.name} (${attacker.champion.displayName}) slain ${target.player.name}!`);
     }
   };
 
@@ -561,7 +561,7 @@ export const ArenaMatchView: React.FC<ArenaMatchViewProps> = ({
               >
                 <ChibiAvatar avatarType={u.player.avatarSvg} size={38} />
                 <div className="absolute -bottom-1 -right-1 text-[8px] bg-slate-900 text-white px-1 rounded-full font-bold border border-white/20">
-                  {u.champion.name[0]}
+                  {u.champion.displayName[0]}
                 </div>
               </div>
 

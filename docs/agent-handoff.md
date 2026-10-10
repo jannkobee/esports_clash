@@ -646,3 +646,59 @@ Investigated root causes and found three critical bugs:
 
 **Limit:** The arena is an auto-battler and does not expose manual cursor or keyboard ability controls. Ground targets are selected by the simulation (including facing/team direction when no target point is supplied); player-directed manual casting is not added.
 
+## User Request: Avatar Terminology, Full-Width Roster, Targeting Details, and Aetheris Ability Visuals
+
+**User:**
+- Rename champions to avatars in the interface.
+- Make the avatar list full-width, with avatar profile details and ability information in two columns.
+- Alphabetize role filters and their results in both the roster and draft.
+- Show whether abilities are unit/ally targeted, ground-targeted, self-targeted, or need no target.
+- Make Aetheris's innate link visible; make Q orbs orbit Aetheris and burst when their projectile hits an enemy; add a visible ally aura for W; replace the ultimate with an all-nearby-allies tether whose duration scales with ultimate rank.
+
+**Confirmed decision:** Aetheris's ultimate lasts 5 seconds at rank 1, scaling to 8 seconds at rank 4 (6 and 7 seconds at ranks 2 and 3).
+
+**Implementation:**
+- **Avatar naming and layout:** `EsportsClash.Web/src/components/ChampionHubView.tsx` uses the full page width as two stacked rows: an alphabetically role-filtered, searchable, scrollable avatar-card grid on top; the selected avatar's identity, combat tags, lore, stats, and ability kit below. `DraftPhaseView.tsx` also alphabetizes role filters and the filtered avatar list. Visible navigation, squad, and pro-circuit labels now say avatars; internal `ChampionKit` types, IDs, and persistence fields remain unchanged.
+- **Ability targeting details:** `src/aetherisAbilities.ts` provides shared target-type descriptions, used in roster and draft ability detail panels. `ChampionSkill.targeting` and the relevant kits mark Paxi Q and Raijin R as ground-targeted; Kaelen's orb gathering needs no target; Aetheris Q targets an enemy unit, W an ally, and R is self-centered.
+- **Aetheris visuals and effects:** `src/components/AramMatchView.tsx` draws a live innate tether to the nearest living ally within 280 arena units. Q summons five orbiting spirits for 8 seconds; each Q projectile hit bursts at the enemy for area damage and consumes an orb. W applies a 5-second, visible aura to the nearest ally within 260 units (self if alone), a shield, and +15% basic-attack damage. `Resonant Convergence` heals and shields living allies within 260 arena units, then draws moving tethers for 5/6/7/8 seconds at ultimate ranks 1-4.
+- `src/aetherisAbilities.test.mjs` covers rank-based ultimate durations, target-type descriptions, and nearest-ally selection.
+
+**Affected files:** `EsportsClash.Web/src/App.tsx`, `additionalChampions.ts`, `aetherisAbilities.ts`, `aetherisAbilities.test.mjs`, `components/AramMatchView.tsx`, `components/ChampionHubView.tsx`, `components/DraftPhaseView.tsx`, `components/ProCircuitView.tsx`, `components/SquadView.tsx`, `mockData.ts`, `types.ts`, and both gameplay documents.
+
+**Verification:** `npm run check:game` passed all 137 tests, design validation, and TypeScript checks. `npm run build` succeeded with Vite's advisory for a JavaScript bundle over 500 kB. `git diff --check` passed. Browser layout inspection confirmed exactly two full-width stacked sections in the roster at desktop width; narrow layouts stack the same way.
+
+**Limits:** The match is an auto-battler. The targeting labels explain ability target type, but the application still does not provide manual player aim or point-and-click controls. Aetheris's innate tether and Q charges are visual runtime cues; only Overcharge and Resonant Convergence grant the listed shield/healing/attack-damage effects.
+
+## User Request: Cooldown-Free Kaelen Orb Stat Bonuses and Conflux R Tab
+
+**User:**
+- Remove cooldowns from Kaelen's Ice, Wind, and Fire orbs. Each orb adds a corresponding stat that scales with orb rank.
+- Put the invoked spell list in the Conflux tab; present Conflux as the ultimate in the rightmost tab and label it R.
+- Clarification: orb instances and their stat bonuses are removed when FIFO rotation pushes them outside the current three orbs.
+
+**Confirmed decision:** The user explicitly approved overriding the previous per-orb cooldowns and "Kaelen has no ultimate" presentation.
+
+**Implementation:**
+- Q/W/E now have zero cooldown. Each held orb in Kaelen's maximum-three FIFO contributes a dynamic stat bonus; overflow automatically removes the oldest orb and its corresponding bonus. The combat bonuses are derived directly from the current FIFO, so they also disappear when Conflux consumes the recipe.
+- Per held orb at rank 1: Ice gives +0.2 health regeneration/second, Wind gives +1 movement speed, and Fire gives +1% spell amp and +1% overall damage amp. Each rank raises those values by 25%; orb rank follows the Q rank milestones through rank 7.
+- The roster presents Q Orb of Ice, W Orb of Wind, E Orb of Fire, and rightmost `CONFLUX (R)`. All ten recipes are displayed in that Conflux panel. Conflux keeps its level-scaled 3/2/1/0-second cooldown, and D/F retains its two-spell FIFO.
+
+**Affected files:** `EsportsClash.Web/src/kaelenAbilities.ts`, `kaelenAbilities.test.mjs`, `components/AramMatchView.tsx`, `components/ChampionHubView.tsx`, `components/DraftPhaseView.tsx`, `additionalChampions.ts`, `types.ts`, and both gameplay documents.
+
+**Verification:** From `EsportsClash.Web`, `npm run check:game` passed design checks, TypeScript, and all 139 tests; `npm run build` succeeded with Vite's existing large-bundle advisory; `git diff --check` passed. Browser review confirmed the Kaelen tabs display Q/W/E with no cooldown and `CONFLUX (R)` at the right, with all ten recipes in its panel. Tests verify rank scaling and that FIFO overflow removes the displaced orb's bonus.
+
+**Limits:** The match remains an auto-battler. Orbs still consume their existing mana cost; this request removes orb cooldowns and ties stat bonuses to currently held FIFO instances.
+
+## User Request: Subtle Parody Names for Avatars
+
+**User:** Remake avatar names as parody names of their champion/hero inspirations without making the reference too obvious.
+
+**Clarification:** The user specified Cardrel is a Player Card, so Player Card identities must not be renamed; only avatar display names change.
+
+**Implementation:** Added required `ChampionKit.displayName` values for all 43 avatars. Roster and draft lists, match HUDs, kill reports, match insights, and signature-avatar labels display the parody names. Existing kit `name` values, avatar IDs, player-card names, and signature matching remain unchanged so combat rules and saved roster data continue to work. Current aliases are `Dawnna`, `Aiselle`, `Vixelle`, `Gritlock`, `Bessara`, `Vanta`, `Galejandro`, `Lambent`, `Plumeira`, `Gildan`, `Sylvan Solo`, `Fernanda`, `Glimmerick`, `Cindergent`, `Voltaire`, `TerraByte`, `Nulliver`, `Crownfetti`, `Sootcase`, `Sennova`, `Basso Croak`, `Razeberry`, `Quakewell`, `Rotisserie`, `Midnight Equation`, `Plugsy`, `Relic Rick`, `Bounty Belle`, `Kegory`, `Hooklyn`, `Arsenaldo`, `Inkognito`, `Hexley`, `Knuckleberry`, `Boomie`, `Fizzlewing`, `Wickety`, `Hedgehoggin`, `Orbiton`, `Pixabelle`, `Muffleton`, `Stafford`, and `Primate Minister`.
+
+**Affected files:** `EsportsClash.Web/src/types.ts`, `mockData.ts`, `additionalChampions.ts`, `avatarDisplayName.ts`, `matchInspector.ts`, affected roster/draft/match/card UI components, focused tests, and both gameplay documents.
+
+**Verification:** `npm run check:game` passed all design checks, TypeScript validation, and 141 tests; `npm run build` succeeded with Vite's existing large-bundle advisory; `git diff --check` passed. Browser review confirmed the roster displays the new aliases in its list and selected-avatar details, and the Player Card signature-avatar line also uses display aliases. Tests verify unique aliases for all avatars, stable internal kit names, Cardrel remaining a Player Card identity, and alias display in match insights.
+
+**Limit:** Internal kit names intentionally remain available to gameplay logic and saved signature data; only user-facing avatar labels use the new aliases.

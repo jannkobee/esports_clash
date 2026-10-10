@@ -2,6 +2,8 @@ import React from 'react';
 import { PlayerCard } from '../types';
 import { ChibiAvatar } from './ChibiAvatar';
 import { Shield, Zap, Sparkles } from 'lucide-react';
+import { CHAMPIONS } from '../mockData';
+import { avatarDisplayName } from '../avatarDisplayName';
 
 interface CardComponentProps {
   card: PlayerCard;
@@ -173,8 +175,8 @@ export const CardComponent: React.FC<CardComponentProps> = ({
           <span className="min-w-0 truncate" title={card.name}>{card.name}</span>
           {card.tier === 'GOAT' && <span className="text-amber-300 text-xs">👑</span>}
         </div>
-        <div className="text-[11px] text-slate-300 font-medium leading-4 min-h-8 line-clamp-2" title={card.signatureChampions.slice(0, 2).join(' · ')}>
-          Signature avatars: <span className="text-slate-100 font-semibold">{card.signatureChampions.slice(0, 2).join(' · ') || 'Flexible'}</span>
+        <div className="text-[11px] text-slate-300 font-medium leading-4 min-h-8 line-clamp-2" title={card.signatureChampions.slice(0, 2).map(name => avatarDisplayName(name, CHAMPIONS)).join(' · ')}>
+          Signature avatars: <span className="text-slate-100 font-semibold">{card.signatureChampions.slice(0, 2).map(name => avatarDisplayName(name, CHAMPIONS)).join(' · ') || 'Flexible'}</span>
         </div>
       </div>
 
@@ -223,4 +225,3 @@ export const CardComponent: React.FC<CardComponentProps> = ({
     </div>
   );
 };
-

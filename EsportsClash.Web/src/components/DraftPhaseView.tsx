@@ -6,7 +6,9 @@ import { ChampionArtwork } from './ChampionArtwork';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
 import { getChampionLore } from '../championLore';
+import { abilityTargetingDetails } from '../aetherisAbilities';
 import { AVATAR_COMBAT_TYPES, getAvatarCombatProfile } from '../avatarCombatRoles';
+import { KAELEN_INVOKED_SPELLS } from '../kaelenAbilities';
 import { 
   Ban, 
   Swords, 
@@ -114,9 +116,9 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
   // Filter champions
   const filteredChampions = allChampions.filter(c => {
     const matchesRole = roleFilter === 'All' || c.primaryRole === roleFilter || c.secondaryRole === roleFilter;
-    const matchesQuery = !searchQuery || c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesQuery = !searchQuery || c.displayName.toLowerCase().includes(searchQuery.toLowerCase()) || c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesRole && matchesQuery;
-  });
+  }).sort((a, b) => a.displayName.localeCompare(b.displayName));
 
   const inspected = selectedInspectChamp ?? allChampions[0];
   const currentPlayer = myRoster[selectedSlot];
@@ -207,7 +209,7 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
       })}
     </div>
 
-    {/* Main Pick/Ban Selection & Actual Champions & Lore Dossier Side-by-Side */}
+    {/* Main Avatar Pick/Ban Selection and Lore Dossier */}
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
       {/* Left Column: Avatar Grid with Role Filters and Search */}
       <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
@@ -226,7 +228,7 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
         {/* Filter and Search Bar */}
         <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs">
           <div className="flex flex-wrap gap-1">
-            {(['All', 'Tank', 'Mage', 'Marksman', 'Support', 'Fighter', 'Assassin'] as const).map(role => (
+            {(['All', 'Assassin', 'Fighter', 'Mage', 'Marksman', 'Support', 'Tank'] as const).map(role => (
               <button
                 key={role}
                 onClick={() => { sound.playClick(); setRoleFilter(role); }}
@@ -281,7 +283,7 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
                   <ChampionArtwork championId={champion.id} size={42} />
                 </div>
 
-                <div className="text-white font-black text-xs text-center truncate w-full">{champion.name}</div>
+                <div className="text-white font-black text-xs text-center truncate w-full">{champion.displayName}</div>
                 <div className="text-[10px] text-cyan-300 font-bold">{champion.primaryRole}</div>
                 <div className="text-[9px] text-slate-400 truncate max-w-full text-center mt-0.5">{champion.archetype}</div>
                 <div className="text-[9px] text-cyan-200 truncate max-w-full text-center mt-0.5">
@@ -318,7 +320,7 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline gap-2">
-                  <h4 className="text-lg font-black text-white truncate">{inspected.name}</h4>
+                  <h4 className="text-lg font-black text-white truncate">{inspected.displayName}</h4>
                   <span className="text-xs text-amber-300 font-bold">{inspected.title}</span>
                 </div>
                 <div className="text-xs text-slate-400 mt-0.5">
@@ -385,40 +387,58 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
               {/* Passive */}
               <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
                 <div className="text-amber-300 font-bold text-[11px] mb-0.5">
-                  PASSIVE: Innate Combat Trait
+                  {inspected.name === 'Kaelen' ? 'R: CONFLUX (ACTIVE)' : 'PASSIVE: Innate Combat Trait'}
                 </div>
                 <div className="text-slate-300 text-[11px] leading-tight">{inspected.passiveDesc}</div>
+                {inspected.name === 'Kaelen' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-2">
+                    {KAELEN_INVOKED_SPELLS.map(spell => (
+                      <div key={spell.id} className="flex justify-between gap-2 rounded border border-slate-800 bg-slate-900 px-2 py-1 text-[10px]">
+                        <span className="font-bold text-slate-200">{spell.name}</span>
+                        <span className="shrink-0 text-slate-400">{spell.recipe.map(element => element === 'ice' ? 'Q' : element === 'wind' ? 'W' : 'E').join(' ')} · {spell.cooldown}s</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Skill 1 */}
               <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
                 <div className="flex justify-between items-baseline mb-0.5">
                   <span className="text-cyan-300 font-bold text-[11px]">Q: {inspected.skill1.name}</span>
-                  <span className="text-slate-400 text-[10px]">CD: {inspected.skill1.cooldown}s | {inspected.skill1.damageType} {inspected.skill1.damage}</span>
+                  <span className="text-slate-400 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +0.2 HP regen/s per held orb' : `CD: ${inspected.skill1.cooldown}s | ${inspected.skill1.damageType} ${inspected.skill1.damage}`}</span>
                 </div>
                 <div className="text-slate-300 text-[11px] leading-tight">{inspected.skill1.desc}</div>
+                <div className="text-cyan-200 text-[10px] leading-tight">{abilityTargetingDetails(inspected.skill1)}</div>
               </div>
 
               {/* Skill 2 */}
               <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
                 <div className="flex justify-between items-baseline mb-0.5">
                   <span className="text-purple-300 font-bold text-[11px]">W: {inspected.skill2.name}</span>
-                  <span className="text-slate-400 text-[10px]">CD: {inspected.skill2.cooldown}s | {inspected.skill2.damageType} {inspected.skill2.damage}</span>
+                  <span className="text-slate-400 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +1 movement speed per held orb' : `CD: ${inspected.skill2.cooldown}s | ${inspected.name === 'Aetheris' ? 'Shield · +15% attack damage' : `${inspected.skill2.damageType} ${inspected.skill2.damage}`}`}</span>
                 </div>
                 <div className="text-slate-300 text-[11px] leading-tight">{inspected.skill2.desc}</div>
+                <div className="text-cyan-200 text-[10px] leading-tight">{abilityTargetingDetails(inspected.skill2)}</div>
               </div>
 
               {/* Ultimate */}
               <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
                 <div className="flex justify-between items-baseline mb-0.5">
                   <span className="text-rose-400 font-bold text-[11px]">{inspected.name === 'Kaelen' ? 'E: ' : 'R: '}{inspected.ultimate.name}</span>
-                  <span className="text-rose-300 text-[10px]">CD: {inspected.ultimate.cooldown}s | {inspected.name === 'Kaelen' ? 'Elemental orb · No ultimate' : `${inspected.ultimate.damageType} ${inspected.ultimate.damage}`}</span>
+                  <span className="text-rose-300 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +1% spell/damage amp per held orb' : `CD: ${inspected.ultimate.cooldown}s | ${inspected.name === 'Aetheris' ? 'Team tether · 5-8s by rank' : `${inspected.ultimate.damageType} ${inspected.ultimate.damage}`}`}</span>
                 </div>
                 <div className="text-slate-300 text-[11px] leading-tight">{inspected.ultimate.desc}</div>
+                <div className="text-cyan-200 text-[10px] leading-tight">{abilityTargetingDetails(inspected.ultimate)}</div>
               </div>
               {inspected.name === 'Kaelen' && (
                 <div className="rounded-lg border border-cyan-500/20 bg-cyan-950/20 p-2 text-[11px] text-cyan-100">
-                  <strong>Active innate: Conflux.</strong> Invoke the last three Ice/Wind/Fire orbs into one of ten spells. Keep the two newest invocations in FIFO order on D/F; the innate cooldown falls from 3s to 0s at levels 1/7/13/18.
+                  <strong>Conflux (R):</strong> Invoke the current three Ice/Wind/Fire orbs into one of ten spells. Orb stat bonuses last only while those orbs remain held. Keep the two newest invocations in FIFO order on D/F; Conflux cooldown falls from 3s to 0s at levels 1/7/13/18.
+                </div>
+              )}
+              {inspected.name === 'Aetheris' && (
+                <div className="rounded-lg border border-cyan-500/20 bg-cyan-950/20 p-2 text-[11px] text-cyan-100">
+                  <strong>Resonant Convergence:</strong> Tethers nearby allies for 5/6/7/8 seconds at ultimate ranks 1-4.
                 </div>
               )}
             </div>
@@ -444,7 +464,7 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
                     className="w-full py-3 bg-gradient-to-r from-rose-600 to-red-600 hover:brightness-110 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2"
                   >
                     <Ban className="w-4 h-4" />
-                    CONFIRM BAN: {inspected.name.toUpperCase()}
+                    CONFIRM BAN: {inspected.displayName.toUpperCase()}
                   </button>
                 ) : (
                   <button
@@ -454,7 +474,7 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
                     className="w-full py-3 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:brightness-110 text-slate-950 font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2"
                   >
                     <Check className="w-4 h-4" />
-                    CONFIRM PICK FOR {currentPlayer?.name?.toUpperCase()}: {inspected.name.toUpperCase()}
+                    CONFIRM PICK FOR {currentPlayer?.name?.toUpperCase()}: {inspected.displayName.toUpperCase()}
                   </button>
                 )}
               </div>

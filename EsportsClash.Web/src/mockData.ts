@@ -377,6 +377,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_solana',
     name: 'Solana',
+    displayName: 'Dawnna',
     title: 'The Sun Vanguard',
     basis: 'Leona',
     primaryRole: 'Tank',
@@ -399,6 +400,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_astra',
     name: 'Astra',
+    displayName: 'Aiselle',
     title: 'The Frost Sovereign',
     basis: 'Ashe',
     primaryRole: 'Marksman',
@@ -421,6 +423,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_kyumi',
     name: 'Kyumi',
+    displayName: 'Vixelle',
     title: 'The Nine-Tailed Spirit',
     basis: 'Ahri',
     primaryRole: 'Mage',
@@ -443,6 +446,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_buck',
     name: 'Buck',
+    displayName: 'Gritlock',
     title: 'The Boomstick Outlaw',
     basis: 'Graves',
     primaryRole: 'Marksman',
@@ -465,6 +469,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_valkira',
     name: 'Valkira',
+    displayName: 'Bessara',
     title: 'The Warlord Matriarch',
     basis: 'Ambessa',
     primaryRole: 'Fighter',
@@ -487,6 +492,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_kage',
     name: 'Kage',
+    displayName: 'Vanta',
     title: 'The Master of Shadows',
     basis: 'Zed',
     primaryRole: 'Assassin',
@@ -509,6 +515,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_kazemaru',
     name: 'Kazemaru',
+    displayName: 'Galejandro',
     title: 'The Wandering Tempest',
     basis: 'Yasuo',
     primaryRole: 'Fighter',
@@ -531,6 +538,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_kindra',
     name: 'Kindra',
+    displayName: 'Lambent',
     title: 'The Eternal Hunters',
     basis: 'Kindred',
     primaryRole: 'Marksman',
@@ -553,6 +561,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_cora',
     name: 'Cora',
+    displayName: 'Plumeira',
     title: 'The Rebel Feather',
     basis: 'Xayah',
     primaryRole: 'Marksman',
@@ -575,6 +584,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_renn',
     name: 'Renn',
+    displayName: 'Gildan',
     title: 'The Battle Dancer',
     basis: 'Rakan',
     primaryRole: 'Support',
@@ -597,6 +607,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_sylla',
     name: 'Sylla',
+    displayName: 'Sylvan Solo',
     title: 'The Bear Shaman',
     basis: 'Lone Druid',
     primaryRole: 'Fighter',
@@ -619,6 +630,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_tequoia',
     name: 'Tequoia',
+    displayName: 'Fernanda',
     title: "Nature's Sovereign",
     basis: 'Furion',
     primaryRole: 'Mage',
@@ -641,6 +653,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_zal',
     name: 'Zal',
+    displayName: 'Glimmerick',
     title: 'The Shadow Priest',
     basis: 'Dazzle',
     primaryRole: 'Support',
@@ -663,6 +676,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_xin',
     name: 'Xin',
+    displayName: 'Cindergent',
     title: 'The Ember Spirit',
     basis: 'Ember Spirit',
     primaryRole: 'Fighter',
@@ -685,6 +699,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_raijin',
     name: 'Raijin',
+    displayName: 'Voltaire',
     title: 'The Storm Spirit',
     basis: 'Storm Spirit',
     primaryRole: 'Mage',
@@ -699,7 +714,7 @@ export const CHAMPIONS: ChampionKit[] = [
     passiveDesc: 'Overload: Casting any spell charges next attack with an electric burst slowing and dealing +60 AOE magic damage.',
     skill1: { name: 'Static Remnant', desc: 'Leaves a crackling electrical duplicate that detonates when enemies approach.', cooldown: 4, damage: 140, damageType: 'Magic' },
     skill2: { name: 'Electric Vortex', desc: 'Channels a lightning tether that pulls an enemy champion helplessly toward him for 1.4s.', cooldown: 11, damage: 75, damageType: 'Magic' },
-    ultimate: { name: 'Ball Lightning', desc: 'Rushes as lightning with a 3 to 1 second cooldown by rank. Each cast consumes a large amount of mana.', cooldown: 3, damage: 420, damageType: 'Magic', isUlt: true },
+    ultimate: { name: 'Ball Lightning', desc: 'Rushes as lightning toward a chosen ground position or facing direction, even without an enemy unit target.', cooldown: 3, damage: 420, damageType: 'Magic', isUlt: true, targeting: 'ground' },
     primaryColor: '#06b6d4',
     accentColor: '#0891b2'
   },
@@ -707,6 +722,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_kaolin',
     name: 'Kaolin',
+    displayName: 'TerraByte',
     title: 'The Earth Spirit',
     basis: 'Earth Spirit',
     primaryRole: 'Tank',
@@ -729,6 +745,7 @@ export const CHAMPIONS: ChampionKit[] = [
   {
     id: 'c_inai',
     name: 'Inai',
+    displayName: 'Nulliver',
     title: 'The Void Spirit',
     basis: 'Void Spirit',
     primaryRole: 'Assassin',

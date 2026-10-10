@@ -12,7 +12,39 @@ export interface KaelenInvokedSpell {
   controlDuration: number;
 }
 
+export interface KaelenOrbStats {
+  healthRegen: number;
+  moveSpeed: number;
+  spellAmp: number;
+  damageAmp: number;
+}
+
+export type KaelenOrbCounts = Record<KaelenElement, number>;
+
 export const KAELEN_ELEMENTS: readonly KaelenElement[] = ['ice', 'wind', 'fire'];
+const ORB_RANK_MILESTONES = [1, 4, 7, 9, 12, 14, 17] as const;
+
+export function kaelenOrbRankAtLevel(level: number): number {
+  const cappedLevel = Math.min(18, Math.max(1, level));
+  return ORB_RANK_MILESTONES.filter(milestone => cappedLevel >= milestone).length;
+}
+
+export function kaelenOrbCounts(orbs: readonly KaelenElement[]): KaelenOrbCounts {
+  return orbs.slice(-3).reduce<KaelenOrbCounts>((counts, element) => {
+    counts[element] += 1;
+    return counts;
+  }, { ice: 0, wind: 0, fire: 0 });
+}
+
+export function kaelenOrbStatBonuses(level: number, counts: KaelenOrbCounts): KaelenOrbStats {
+  const rankScale = 1 + (kaelenOrbRankAtLevel(level) - 1) * 0.25;
+  return {
+    healthRegen: counts.ice * 0.2 * rankScale,
+    moveSpeed: counts.wind * rankScale,
+    spellAmp: counts.fire * 0.01 * rankScale,
+    damageAmp: counts.fire * 0.01 * rankScale
+  };
+}
 
 export const KAELEN_INVOKED_SPELLS: readonly KaelenInvokedSpell[] = [
   { id: 'glacier-lock', name: 'Glacier Lock', recipe: ['ice', 'ice', 'ice'], cooldown: 12, damage: 180, radius: 75, control: 'stun', controlDuration: 0.8 },

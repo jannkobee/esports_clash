@@ -577,9 +577,9 @@ export const TeamfightArenaView: React.FC<TeamfightArenaViewProps> = ({
         {
           id: Math.random().toString(),
           killer: attacker.player.name,
-          killerChamp: attacker.champion.name,
+          killerChamp: attacker.champion.displayName,
           victim: target.player.name,
-          victimChamp: target.champion.name,
+          victimChamp: target.champion.displayName,
           killerTeam: attacker.team
         },
         ...feed.slice(0, 3)
@@ -927,7 +927,7 @@ export const TeamfightArenaView: React.FC<TeamfightArenaViewProps> = ({
                   <ChibiAvatar avatarType={u.player.avatarSvg} size={32} />
                   <div>
                     <div className="font-bold text-xs text-white leading-tight">{u.player.name}</div>
-                    <div className="text-[10px] text-cyan-300 font-semibold">{u.champion.name} ({u.player.role})</div>
+                    <div className="text-[10px] text-cyan-300 font-semibold">{u.champion.displayName} ({u.player.role})</div>
                   </div>
                 </div>
                 <span className="text-[10px] font-mono font-black text-amber-300">
@@ -1037,7 +1037,7 @@ export const TeamfightArenaView: React.FC<TeamfightArenaViewProps> = ({
                 <div className="flex items-center gap-2 text-right">
                   <div>
                     <div className="font-bold text-xs text-white leading-tight">{u.player.name}</div>
-                    <div className="text-[10px] text-rose-300 font-semibold">{u.champion.name} ({u.player.role})</div>
+                    <div className="text-[10px] text-rose-300 font-semibold">{u.champion.displayName} ({u.player.role})</div>
                   </div>
                   <ChibiAvatar avatarType={u.player.avatarSvg} size={32} />
                 </div>

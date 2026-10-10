@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createMatchInsights, recordAbilityCast, recordSkillshot, recordManaBlock,
   recordBlackHoleInterrupt, recordPaxiJaunt } from './matchInspector.ts';
 
-const actor = { id: 'paxi_1', team: 'blue', player: { name: 'Cardrel' }, champion: { name: 'Paxi' } };
+const actor = { id: 'paxi_1', team: 'blue', player: { name: 'Cardrel' }, champion: { name: 'Paxi', displayName: 'Fizzlewing' } };
 
 test('match insights retain cast, hit, mana, and Jaunt counts with a scrub-ready timeline', () => {
   const insights = createMatchInsights();
@@ -23,4 +23,5 @@ test('match insights retain cast, hit, mana, and Jaunt counts with a scrub-ready
   assert.equal(stats.escapeJaunts, 1);
   assert.equal(stats.blackHoleInterrupts, 1);
   assert.ok(insights.timeline.some(event => event.kind === 'mana' && event.second === 74));
+  assert.ok(insights.timeline.some(event => event.text === 'Cardrel (Fizzlewing) cast Skill 2'));
 });

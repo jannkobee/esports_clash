@@ -4,6 +4,8 @@ import { CardComponent } from './CardComponent';
 import { sound } from '../audio';
 import { Shield, Sparkles, Users, RefreshCw, Search, SlidersHorizontal } from 'lucide-react';
 import { filterReserveCards, type ReserveFilters } from '../reserveFilters';
+import { CHAMPIONS } from '../mockData';
+import { avatarDisplayName } from '../avatarDisplayName';
 
 interface SquadViewProps {
   startingFive: PlayerCard[];
@@ -299,7 +301,7 @@ export const SquadView: React.FC<SquadViewProps> = ({
                 </strong>
               </div>
               <div className="text-center text-slate-400 pt-1">
-                Signature Champions: <strong className="text-white">{inspectCard.signatureChampions.join(', ')}</strong>
+                Signature Avatars: <strong className="text-white">{inspectCard.signatureChampions.map(name => avatarDisplayName(name, CHAMPIONS)).join(', ')}</strong>
               </div>
             </div>
           </div>
@@ -308,4 +310,3 @@ export const SquadView: React.FC<SquadViewProps> = ({
     </div>
   );
 };
-

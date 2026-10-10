@@ -7,6 +7,7 @@ import {
   CHAMPION_META_STATS 
 } from '../avatarSynergyData';
 import { CHAMPIONS } from '../mockData';
+import { avatarDisplayName } from '../avatarDisplayName';
 import { ChampionArtwork } from './ChampionArtwork';
 import { sound } from '../audio';
 import { 
@@ -255,7 +256,7 @@ export const ProCircuitView: React.FC<Props> = ({ onChallengeTeam, selectedOppon
                                 {player.ovr}
                               </div>
                               <div className="text-[8px] text-slate-400 truncate mt-0.5">
-                                {player.signatureChampions[0] || 'Flex'}
+                                {avatarDisplayName(player.signatureChampions[0] || '', CHAMPIONS) || 'Flex'}
                               </div>
                             </div>
                           );
@@ -303,10 +304,10 @@ export const ProCircuitView: React.FC<Props> = ({ onChallengeTeam, selectedOppon
               <Sparkles className="w-4 h-4 text-amber-400" /> High-Impact Teamfight Combos
             </div>
             <h3 className="text-xl font-black text-white mb-4">
-              CHAMPION SYNERGY MATRIX (AI COMBO KNOWLEDGE)
+              AVATAR SYNERGY MATRIX (AI COMBO KNOWLEDGE)
             </h3>
             <p className="text-slate-400 text-xs mb-6 max-w-3xl">
-              When drafting, AI coaches actively evaluate these exact synergy combinations. Pairing complementary champions unlocks dramatic combat multiplier buffs during 5v5 teamfights.
+              When drafting, AI coaches actively evaluate these exact synergy combinations. Pairing complementary avatars unlocks dramatic combat multiplier buffs during 5v5 teamfights.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -398,7 +399,7 @@ export const ProCircuitView: React.FC<Props> = ({ onChallengeTeam, selectedOppon
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider">
-                    <th className="py-3 px-4">Champion</th>
+                    <th className="py-3 px-4">Avatar</th>
                     <th className="py-3 px-4">Meta Tier</th>
                     <th className="py-3 px-4">Win Rate</th>
                     <th className="py-3 px-4">Pick Rate</th>
@@ -419,7 +420,7 @@ export const ProCircuitView: React.FC<Props> = ({ onChallengeTeam, selectedOppon
                             <ChampionArtwork championId={c.id} size={32} />
                           </div>
                           <div>
-                            <div className="font-extrabold text-white">{c.name}</div>
+                            <div className="font-extrabold text-white">{c.displayName}</div>
                             <div className="text-[10px] text-slate-400">{c.primaryRole}</div>
                           </div>
                         </td>
@@ -559,7 +560,7 @@ export const ProCircuitView: React.FC<Props> = ({ onChallengeTeam, selectedOppon
                     <span className="text-xs font-black text-slate-400 w-8">{['TOP', 'JGL', 'MID', 'ADC', 'SUP'][i]}</span>
                     <div>
                       <div className="text-xs font-extrabold text-white">{p.name}</div>
-                      <div className="text-[10px] text-slate-400">Signature: {p.signatureChampions.join(', ')}</div>
+                      <div className="text-[10px] text-slate-400">Signature avatars: {p.signatureChampions.map(name => avatarDisplayName(name, CHAMPIONS)).join(', ')}</div>
                     </div>
                   </div>
                   <div className="text-right">

@@ -681,7 +681,7 @@ export function App() {
     <div className="min-h-screen pb-16">
       {/* TOP RESOURCE BAR */}
       <header className="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-40 px-4 py-3 shadow-xl">
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
+        <div className="w-full max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-tr from-amber-400 to-pink-500 rounded-lg flex items-center justify-center font-black text-slate-950 shadow">
               ⚡
@@ -696,7 +696,7 @@ export function App() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-xs font-bold">
+          <div className="flex flex-wrap items-center justify-end gap-2 text-xs font-bold">
             <button
               onClick={() => { sound.playClick(); setActiveTab('ladder'); setInBattle(false); }}
               className="flex items-center gap-1.5 bg-slate-950 px-3 py-1.5 rounded-xl border border-amber-500/40 hover:border-amber-400 text-amber-300 shadow transition cursor-pointer"
@@ -789,7 +789,7 @@ export function App() {
                 : 'text-slate-400 hover:text-white hover:bg-slate-800'
             }`}
           >
-            <Layers className="w-4 h-4" /> Champions & Lore
+            <Layers className="w-4 h-4" /> Avatars & Lore
           </button>
 
           <button
@@ -817,7 +817,7 @@ export function App() {
       </nav>
 
       {/* VIEW CONTENT */}
-      <main className={`${activeTab === 'arena' ? 'max-w-[1600px]' : 'max-w-7xl'} mx-auto px-4 mt-6`}>
+      <main className={`w-full min-w-0 ${activeTab === 'arena' ? 'max-w-[1600px]' : 'max-w-7xl'} mx-auto px-4 mt-6`}>
         {activeTab === 'squad' && (
           <SquadView
             startingFive={startingFive}

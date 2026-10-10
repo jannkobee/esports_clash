@@ -58,6 +58,7 @@ export interface ChampionSkill {
   damage: number;
   damageType: 'Physical' | 'Magic' | 'True';
   isUlt?: boolean;
+  targeting?: 'unit' | 'ally' | 'ground' | 'self' | 'none';
 }
 
 export type AvatarCombatType = 'Carry' | 'Support' | 'Nuker' | 'Disabler' | 'Jungler' | 'Durable' | 'Escape' | 'Pusher' | 'Initiator';
@@ -66,6 +67,7 @@ export type AvatarCombatTypeStrength = 0 | 1 | 2 | 3;
 export interface ChampionKit {
   id: string;
   name: string;
+  displayName: string;
   title: string;
   basis: string;
   primaryRole: AvatarRole;
@@ -274,9 +276,13 @@ export interface AramChampionUnit {
   animTimer: number;
   isInBush: boolean;
   kaelenOrbs?: ('ice' | 'wind' | 'fire')[];
+  kaelenOrbCursor?: number;
   kaelenInvokedSlots?: string[];
   kaelenInvokeCooldown?: number;
   kaelenSpellCooldowns?: Record<string, number>;
+  aetherisOrbs?: { charges: number; remaining: number };
+  aetherisOverchargeTimer?: number;
+  aetherisOverchargeSourceId?: string;
   // Item passives state
   sterakCooldown: number;
   zhonyaActive: boolean;

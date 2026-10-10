@@ -53,12 +53,15 @@ import { BLACK_HOLE_RADIUS, shouldSpreadForBlackHole, threatensBlackHole } from 
 import { shouldRetreatLosingFight } from '../fightSurvivalRules';
 import { shouldPaxiEscapeJaunt } from '../paxiDecision';
 import { getGroundTargetPoint } from '../groundTargetRules';
+import { aetherisUltimateDurationAtRank, findAetherisInnateAlly } from '../aetherisAbilities';
 import {
   appendKaelenInvokedSpell,
   appendKaelenOrb,
   getKaelenInvokedSpell,
+  kaelenOrbCounts,
   KAELEN_INVOKED_SPELLS,
   kaelenInvokeCooldownAtLevel,
+  kaelenOrbStatBonuses,
   type KaelenElement
 } from '../kaelenAbilities';
 import { addInsightEvent, createMatchInsights, recordAbilityCast, recordBlackHoleInterrupt,
@@ -114,6 +117,7 @@ interface Projectile {
   abilitySlot?: AbilitySlot;
   collisionRadius?: number;
   comboStage?: 1 | 2;
+  aetherisOrb?: boolean;
 }
 
 interface SpellAOE {
@@ -323,6 +327,9 @@ function setUnitFacing(unit: AramChampionUnit, targetX: number, deadband = 12) {
     unit.facing = dx > 0 ? 'right' : 'left';
   }
 }
+
+const getKaelenOrbBonuses = (unit: AramChampionUnit) =>
+  kaelenOrbStatBonuses(unit.level, kaelenOrbCounts(unit.kaelenOrbs ?? []));
 
 const PROJECTILE_SKILL1_CHAMPIONS = new Set([
   'Astra', 'Kyumi', 'Kage', 'Kazemaru', 'Kindra', 'Kindra & Grim', 'Cora', 'Kaolin', 'Veyara', 'Cinderbloom', 'Cinderlock',
@@ -672,6 +679,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         isRecalling: false,
         recallTimer: 0,
         kaelenOrbs: item.champion.name === 'Kaelen' ? [] : undefined,
+        kaelenOrbCursor: item.champion.name === 'Kaelen' ? 0 : undefined,
         kaelenInvokedSlots: item.champion.name === 'Kaelen' ? [] : undefined,
         kaelenInvokeCooldown: item.champion.name === 'Kaelen' ? 0 : undefined,
         kaelenSpellCooldowns: item.champion.name === 'Kaelen' ? {} : undefined
@@ -734,6 +742,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         isRecalling: false,
         recallTimer: 0,
         kaelenOrbs: item.champion.name === 'Kaelen' ? [] : undefined,
+        kaelenOrbCursor: item.champion.name === 'Kaelen' ? 0 : undefined,
         kaelenInvokedSlots: item.champion.name === 'Kaelen' ? [] : undefined,
         kaelenInvokeCooldown: item.champion.name === 'Kaelen' ? 0 : undefined,
         kaelenSpellCooldowns: item.champion.name === 'Kaelen' ? {} : undefined
@@ -810,7 +819,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       if (u.level === 6 && u.champion.name !== 'Kaelen') {
         u.cdUlt = 0;
-        const msg = `${u.player.name} (${u.champion.name}) hit Level 6!`;
+        const msg = `${u.player.name} (${u.champion.displayName}) hit Level 6!`;
         const sub = `Unlocked Ultimate: ${u.champion.ultimate.name}! (75s Cooldown)`;
         showBanner(msg, sub, '⚡');
         addEvent(`⚡ LEVEL 6 SPIKE: ${msg} Unlocked ${u.champion.ultimate.name}!`, 'level');
@@ -840,7 +849,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const name = AVATAR_COMBOS[u.champion.name].name;
       floatsRef.current.push({ id: random().toString(), x: u.x, y: u.y - 42,
         text: `COMBO LEARNED: ${name}`, color: '#facc15', opacity: 1, scale: 1.2 });
-      addEvent(`${u.player.name} learned ${name} on ${u.champion.name}!`, 'combo');
+      addEvent(`${u.player.name} learned ${name} on ${u.champion.displayName}!`, 'combo');
     }
   };
 
@@ -1383,6 +1392,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               target.stunTimer = Math.max(target.stunTimer, 0.25);
             }
           }
+        } else if (s.type === 'aetheris_ultimate_link' || s.type === 'aetheris_overcharge') {
+          const source = champs.find(c => c.id === s.sourceUnitId);
+          const target = champs.find(c => c.id === s.targetUnitId);
+          if (source?.isAlive && target?.isAlive) {
+            s.sourceX = source.x;
+            s.sourceY = source.y;
+            s.x = target.x;
+            s.y = target.y;
+          } else {
+            s.duration = 0;
+          }
         } else if (s.type === 'sprout_ring') {
           // Tequoia: Sprout Tree Ring Enclosure
           const target = champs.find((c) => c.id === s.targetUnitId);
@@ -1619,7 +1639,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             opacity: 1,
             scale: 1.3
           });
-          addEvent(`💧 ${u.player.name} (${u.champion.name}) safely recalled to base!`, 'fountain');
+          addEvent(`💧 ${u.player.name} (${u.champion.displayName}) safely recalled to base!`, 'fountain');
         }
         return;
       }
@@ -1629,6 +1649,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (u.cd1 > 0) u.cd1 = Math.max(0, u.cd1 - dt);
       if (u.cd2 > 0) u.cd2 = Math.max(0, u.cd2 - dt);
       if (u.cdUlt > 0 && (u.level >= 6 || u.champion.name === 'Kaelen')) u.cdUlt = Math.max(0, u.cdUlt - dt);
+      if (u.champion.name === 'Kaelen') {
+        u.hp = Math.min(u.maxHp, u.hp + getKaelenOrbBonuses(u).healthRegen * dt);
+      }
       if (u.kaelenInvokeCooldown && u.kaelenInvokeCooldown > 0) {
         u.kaelenInvokeCooldown = Math.max(0, u.kaelenInvokeCooldown - dt);
       }
@@ -1636,6 +1659,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         Object.keys(u.kaelenSpellCooldowns).forEach(spellId => {
           u.kaelenSpellCooldowns![spellId] = Math.max(0, u.kaelenSpellCooldowns![spellId] - dt);
         });
+      }
+      if (u.aetherisOrbs) {
+        u.aetherisOrbs.remaining = Math.max(0, u.aetherisOrbs.remaining - dt);
+        if (u.aetherisOrbs.remaining <= 0 || u.aetherisOrbs.charges <= 0) u.aetherisOrbs = undefined;
+      }
+      if (u.aetherisOverchargeTimer && u.aetherisOverchargeTimer > 0) {
+        u.aetherisOverchargeTimer = Math.max(0, u.aetherisOverchargeTimer - dt);
+        if (u.aetherisOverchargeTimer === 0) u.aetherisOverchargeSourceId = undefined;
       }
       if (u.stunTimer > 0) u.stunTimer = Math.max(0, u.stunTimer - dt);
       if (u.silenceTimer && u.silenceTimer > 0) u.silenceTimer = Math.max(0, u.silenceTimer - dt);
@@ -2019,7 +2050,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           opacity: 1,
           scale: 1.3
         });
-        addEvent(`👑 CLUTCH: ${u.player.name} (${u.champion.name}) committed to the fight in 1v${localEnemies.length}!`, 'combo');
+        addEvent(`👑 CLUTCH: ${u.player.name} (${u.champion.displayName}) committed to the fight in 1v${localEnemies.length}!`, 'combo');
       }
 
       const nearestStructureForDive = enemyStructures.sort((a, b) => Math.abs(a.x - u.x) - Math.abs(b.x - u.x))[0];
@@ -2075,7 +2106,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             opacity: 1,
             scale: 1.25
           });
-          addEvent(`🏃 ABORT: ${u.player.name} (${u.champion.name}) aborted tower dive: ${abortCheck.reason}!`, 'tower');
+          addEvent(`🏃 ABORT: ${u.player.name} (${u.champion.displayName}) aborted tower dive: ${abortCheck.reason}!`, 'tower');
         }
       } else {
         u.diveTimer = 0;
@@ -2156,8 +2187,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         } else {
           u.animState = 'walk';
           const ang = Math.atan2(minionToClear.y - u.y, minionToClear.x - u.x);
-          u.vx = Math.cos(ang) * (85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
-          u.vy = Math.sin(ang) * (85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+          u.vx = Math.cos(ang) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+          u.vy = Math.sin(ang) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
           u.x += u.vx * dt;
           u.y += u.vy * dt;
         }
@@ -2225,8 +2256,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             scale: 1.15
           });
           addEvent(wantsItemPurchase
-            ? `🛍️ ${u.player.name} (${u.champion.name}) found a safe position and is recalling to shop items with ${Math.floor(u.gold)}g!`
-            : `💧 ${u.player.name} (${u.champion.name}) cleared threats and safely recalled!`, 'fountain');
+            ? `🛍️ ${u.player.name} (${u.champion.displayName}) found a safe position and is recalling to shop items with ${Math.floor(u.gold)}g!`
+            : `💧 ${u.player.name} (${u.champion.displayName}) cleared threats and safely recalled!`, 'fountain');
           return;
         }
 
@@ -2266,7 +2297,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const retreatAngle = Math.atan2(targetY - u.y, targetX - u.x);
         const warhornBonus = allies.some(a => a.isAlive && a.items.some(it => it.id === 'item_shurelyas') && Math.hypot(a.x - u.x, a.y - u.y) <= 240) ? 18 : 0;
         const evacSprint = (u.diveAborting || isInsideEnemyTowerRange) ? 35 : 0;
-        const totalSpeed = 105 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0) + warhornBonus + evacSprint;
+        const totalSpeed = 105 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0) + warhornBonus + evacSprint;
         u.vx = Math.cos(retreatAngle) * totalSpeed;
         u.vy = Math.sin(retreatAngle) * totalSpeed;
         u.x += u.vx * dt;
@@ -2462,7 +2493,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           }
         } else {
           const angle = Math.atan2(enemyNexus.y - u.y, enemyNexus.x - u.x);
-          const speed = 85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
+          const speed = 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
           u.x += u.vx * dt;
@@ -2483,7 +2514,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const distance = Math.hypot(laneX - u.x, laneY - u.y);
         if (distance > 20) {
           const angle = Math.atan2(laneY - u.y, laneX - u.x);
-          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
+          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
           u.x += u.vx * dt;
@@ -2528,8 +2559,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         } else {
           u.animState = 'walk';
           const angle = Math.atan2(dragon.y - u.y, dragon.x - u.x);
-          u.vx = Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
-          u.vy = Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+          u.vx = Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+          u.vy = Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
           u.x += u.vx * dt;
           u.y += u.vy * dt;
         }
@@ -2577,8 +2608,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         } else {
           u.animState = 'walk';
           const angle = Math.atan2(golem.y - u.y, golem.x - u.x);
-          u.x += Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
-          u.y += Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
+          u.x += Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
+          u.y += Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
         }
         return;
       }
@@ -2616,8 +2647,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         } else {
           u.animState = 'walk';
           const angle = Math.atan2(farmY - u.y, farmX - u.x);
-          u.vx = Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
-          u.vy = Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+          u.vx = Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+          u.vy = Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
           u.x += u.vx * dt;
           u.y += u.vy * dt;
         }
@@ -2629,8 +2660,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (!focusNexus && fightingAlly && tfStat >= 55 && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > attackRange)) {
         u.animState = 'walk';
         const groupAngle = Math.atan2(fightingAlly.y - u.y, fightingAlly.x - u.x);
-        u.vx = Math.cos(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
-        u.vy = Math.sin(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+        u.vx = Math.cos(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+        u.vy = Math.sin(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
         u.x += u.vx * dt;
         u.y += u.vy * dt;
         setUnitFacing(u, fightingAlly.x);
@@ -2684,7 +2715,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         // Skill decisions share the actual mana and cooldown rules used by the cast.
         const isCinder = u.champion.name === 'Cinderlock' || u.champion.name === 'Cinderbloom';
         const kaelenActed = u.champion.name === 'Kaelen' && (u.silenceTimer ?? 0) <= 0
-          && processKaelenTurn(u, primaryTarget, enemies, cooldownFactor);
+          && processKaelenTurn(u, primaryTarget, enemies);
         if (kaelenActed) {
           // Kaelen's custom orb and D/F spell cycle owns his active casts.
         } else if (u.champion.name !== 'Kaelen' && (u.silenceTimer ?? 0) <= 0 && isCinder && u.cinderQStage
@@ -2763,8 +2794,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             if (wantsCloseSkill && u.attackTimer > 0) {
               u.animState = 'walk';
               const angle = Math.atan2(primaryTarget.y - u.y, primaryTarget.x - u.x);
-              u.x += Math.cos(angle) * (70 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
-              u.y += Math.sin(angle) * (70 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
+              u.x += Math.cos(angle) * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
+              u.y += Math.sin(angle) * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
             }
           }
 
@@ -2806,7 +2837,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             u.animState = 'walk';
             const angle = Math.atan2(primaryTarget.y - u.y, primaryTarget.x - u.x);
             const engageSprintBonus = isFollowUpEngage ? 30 : 0;
-            const speed = 85 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0) + engageSprintBonus;
+            const speed = 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0) + engageSprintBonus;
             u.vx = Math.cos(angle) * speed;
             u.vy = Math.sin(angle) * speed;
             u.x += u.vx * dt;
@@ -2822,7 +2853,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
         if (enemyToEngage) {
           u.animState = 'walk';
-          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
+          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           const angle = Math.atan2(enemyToEngage.y - u.y, enemyToEngage.x - u.x);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
@@ -2834,7 +2865,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.animState = 'walk';
           const engageX = DRAGON_X;
           const engageY = isContestingDragon ? 230 : 490;
-          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
+          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           const angle = Math.atan2(engageY - u.y, engageX - u.x);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
@@ -2882,7 +2913,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       else {
         u.animState = 'walk';
         const pushDir = u.team === 'blue' ? 1 : -1;
-        u.x += pushDir * (70 + (u.boots?.stats.moveSpeed ?? 0) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
+        u.x += pushDir * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
         u.facing = pushDir === 1 ? 'right' : 'left';
 
         const targetFormY = getChampionFormationY(u.champion.name, uIdx);
@@ -3205,7 +3236,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         opacity: 1,
         scale: 1.3
       });
-      addEvent(`⚡ CHAIN STUN: ${caster.player.name} (${caster.champion.name}) layered CC on ${target.player.name} for ${finalDuration.toFixed(1)}s!`, 'combo');
+      addEvent(`⚡ CHAIN STUN: ${caster.player.name} (${caster.champion.displayName}) layered CC on ${target.player.name} for ${finalDuration.toFixed(1)}s!`, 'combo');
     }
   };
 
@@ -3236,6 +3267,23 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             championsRef.current.filter(c => c.team !== attackerChamp.team && c.id !== targetChamp.id && c.isAlive
               && Math.hypot(c.x - targetChamp.x, c.y - targetChamp.y) < p.splashRadius!)
               .forEach(c => applyDamageToChampion(attackerChamp, c, p.damage * 0.55, !!p.trueDamage, p.skillLabel, p.abilitySlot ?? 'skill1'));
+          }
+          if (p.aetherisOrb && attackerChamp?.champion.name === 'Aetheris') {
+            const orbiting = attackerChamp.aetherisOrbs;
+            if (orbiting && orbiting.charges > 0) orbiting.charges--;
+            spellsRef.current.push({
+              id: random().toString(),
+              type: 'aetheris_orb_explosion',
+              x: targetChamp.x,
+              y: targetChamp.y,
+              radius: 78,
+              duration: 0.65,
+              maxDuration: 0.65,
+              color: '#7dd3fc',
+              extraText: 'SPIRIT BURST',
+              avatarName: 'Aetheris',
+              abilitySlot: 'skill1'
+            });
           }
           if (p.healAlliesOnHit && attackerChamp) {
             championsRef.current.filter(c => c.team === attackerChamp.team && c.isAlive && Math.hypot(c.x - attackerChamp.x, c.y - attackerChamp.y) < 190)
@@ -3443,7 +3491,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     // Unique Card Traits Attack Modifiers
-    const totalDmg = baseDamage + bonusAd;
+    const overchargeMultiplier = (u.aetherisOverchargeTimer ?? 0) > 0 ? 1.15 : 1;
+    const totalDmg = (baseDamage + bonusAd) * overchargeMultiplier;
     const attackRange = getChampionAttackRange(u.champion.name);
     const isRanged = attackRange >= 90;
 
@@ -3605,6 +3654,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       splashRadius: spec.splashRadius, healAlliesOnHit: spec.healAlliesOnHit,
       pullOnHit: spec.pullOnHit, trueDamage: spec.trueDamage,
       collisionRadius: spec.collisionRadius,
+      aetherisOrb: spec.aetherisOrb,
     });
     emitSkillEffect(u, target, false, u.champion.skill1.name);
   };
@@ -4109,7 +4159,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Quillback') {
       fireFirstSkillshot(u, target, { speed: 500, size: 8, collisionRadius: 14, stunOnHit: 0.3 });
     } else if (u.champion.name === 'Aetheris') {
-      fireFirstSkillshot(u, target, { speed: 480, size: 10, collisionRadius: 16, splashRadius: 50 });
+      u.aetherisOrbs = { charges: 5, remaining: 8 };
+      fireFirstSkillshot(u, target, {
+        speed: 480, size: 11, collisionRadius: 17, splashRadius: 78, aetherisOrb: true
+      });
     }
   };
 
@@ -4159,16 +4212,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     addEvent(`⚡ BALL LIGHTNING: ${u.player.name} launched toward a ground point!`, 'combo');
   };
 
-  const castKaelenOrb = (u: AramChampionUnit, element: KaelenElement, cooldownFactor: number) => {
+  const castKaelenOrb = (u: AramChampionUnit, element: KaelenElement) => {
     const slot: SkillSlot = element === 'ice' ? 'skill1' : element === 'wind' ? 'skill2' : 'ultimate';
     const castSlot = element === 'ice' ? 'orbQ' : element === 'wind' ? 'orbW' : 'orbE';
-    const skill = element === 'ice' ? u.champion.skill1 : element === 'wind' ? u.champion.skill2 : u.champion.ultimate;
     if (u.mana < 20) return false;
     u.mana -= 20;
     u.kaelenOrbs = appendKaelenOrb(u.kaelenOrbs ?? [], element);
-    if (slot === 'skill1') u.cd1 = skill.cooldown * cooldownFactor;
-    else if (slot === 'skill2') u.cd2 = skill.cooldown * cooldownFactor;
-    else u.cdUlt = skill.cooldown * cooldownFactor;
     u.activeAbilitySlot = slot;
     recordAbilityCast(insightsRef.current, u, castSlot, matchTimeRef.current);
     sound.playAvatarSkill(u.champion.name, slot);
@@ -4181,7 +4230,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       opacity: 1,
       scale: 1.05
     });
-    addEvent(`🔮 ${u.player.name} gathered a ${element} orb.`, 'combo');
+    const bonuses = getKaelenOrbBonuses(u);
+    const statSummary = element === 'ice' ? `held orbs: +${bonuses.healthRegen.toFixed(1)} HP regen/s`
+      : element === 'wind' ? `held orbs: +${bonuses.moveSpeed.toFixed(1)} movement speed`
+        : `held orbs: +${(bonuses.spellAmp * 100).toFixed(1)}% spell and damage amp`;
+    addEvent(`🔮 ${u.player.name} gathered a ${element} orb (${statSummary}).`, 'combo');
     return true;
   };
 
@@ -4191,7 +4244,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     u.kaelenOrbs = [];
     u.kaelenInvokedSlots = appendKaelenInvokedSpell(u.kaelenInvokedSlots ?? [], spell.id);
     u.kaelenInvokeCooldown = kaelenInvokeCooldownAtLevel(u.level);
+    u.activeAbilitySlot = 'ultimate';
+    u.animState = 'cast';
     recordAbilityCast(insightsRef.current, u, 'conflux', matchTimeRef.current);
+    sound.playAvatarSkill(u.champion.name, 'ultimate');
     floatsRef.current.push({
       id: random().toString(),
       x: u.x,
@@ -4264,8 +4320,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const processKaelenTurn = (
     u: AramChampionUnit,
     target: AramChampionUnit | undefined,
-    enemies: AramChampionUnit[],
-    cooldownFactor: number
+    enemies: AramChampionUnit[]
   ) => {
     const slots = u.kaelenInvokedSlots ?? [];
     const readySpell = slots
@@ -4291,11 +4346,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     const orbCandidates: KaelenElement[] = ['ice', 'wind', 'fire'];
-    const readyOrb = orbCandidates.find(element => {
-      const cd = element === 'ice' ? u.cd1 : element === 'wind' ? u.cd2 : u.cdUlt;
-      return cd <= 0;
-    });
-    return readyOrb ? castKaelenOrb(u, readyOrb, cooldownFactor) : false;
+    const orbCursor = (u.kaelenOrbCursor ?? 0) % orbCandidates.length;
+    const currentOrbs = u.kaelenOrbs ?? [];
+    const nextOrb = orbCandidates
+      .map((element, index) => ({
+        element,
+        index,
+        count: currentOrbs.filter(orb => orb === element).length,
+        cursorDistance: (index - orbCursor + orbCandidates.length) % orbCandidates.length
+      }))
+      .sort((a, b) => a.count - b.count || a.cursorDistance - b.cursorDistance)[0]?.element;
+    if (!nextOrb) return false;
+    const cast = castKaelenOrb(u, nextOrb);
+    if (cast) u.kaelenOrbCursor = (orbCandidates.indexOf(nextOrb) + 1) % orbCandidates.length;
+    return cast;
   };
 
   const castChampionSkill2 = (u: AramChampionUnit, target: AramChampionUnit) => {
@@ -4306,8 +4370,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const skill = u.champion.skill2;
     const nearbyAllies = championsRef.current.filter(c => c.team === u.team && c.isAlive);
     const nearbyEnemies = championsRef.current.filter(c => c.team !== u.team && c.isAlive);
+    const aetherisOverchargeTarget = name === 'Aetheris'
+      ? findAetherisInnateAlly(u, nearbyAllies, 260) ?? u
+      : undefined;
     sound.playAvatarSkill(u.champion.name, 'skill2');
-    emitSkillEffect(u, name === 'Cinderlock' || name === 'Cinderbloom' || name === 'Renn' ? u : target, false, skill.name, 'skill2');
+    emitSkillEffect(u, name === 'Aetheris' ? aetherisOverchargeTarget ?? u
+      : name === 'Cinderlock' || name === 'Cinderbloom' || name === 'Renn' ? u : target, false, skill.name, 'skill2');
 
     if (name === 'Solana') {
       u.x = target.x + (u.team === 'blue' ? -28 : 28);
@@ -4419,6 +4487,27 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           targetId: ally.id, remaining: 0.65, speed: 380 };
         emitSkillEffect(u, ally, false, skill.name, 'skill2');
       }
+    } else if (name === 'Aetheris') {
+      const ally = aetherisOverchargeTarget ?? u;
+      ally.aetherisOverchargeTimer = 5;
+      ally.aetherisOverchargeSourceId = u.id;
+      ally.shield += 100 * utility;
+      spellsRef.current.push({
+        id: random().toString(),
+        type: 'aetheris_overcharge',
+        x: ally.x,
+        y: ally.y,
+        radius: 48,
+        duration: 5,
+        maxDuration: 5,
+        color: '#38bdf8',
+        sourceUnitId: u.id,
+        targetUnitId: ally.id,
+        extraText: 'OVERCHARGE',
+        avatarName: 'Aetheris',
+        abilitySlot: 'skill2'
+      });
+      addEvent(`✨ OVERCHARGE: Aetheris empowered ${ally.player.name} for 5 seconds.`, 'combo');
     } else if (name === 'Zal') {
       nearbyAllies.filter(c => Math.hypot(c.x - u.x, c.y - u.y) < 200).forEach(c => {
         c.hp = Math.min(c.maxHp, c.hp + 180 * utility);
@@ -4575,7 +4664,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     if (!target) return;
     sound.playAvatarSkill(u.champion.name, 'ultimate');
     if (!['Nullweaver', 'Corsara', 'Faelith', 'Oathmute', 'Cloudtail', 'Stonebranch'].includes(u.champion.name)) {
-      emitSkillEffect(u, ['Astra', 'Soulscourge', 'Stonewake', 'Croakwell'].includes(u.champion.name) ? u : target,
+      emitSkillEffect(u, ['Astra', 'Soulscourge', 'Stonewake', 'Croakwell', 'Aetheris'].includes(u.champion.name) ? u : target,
         true, u.champion.ultimate.name, 'ultimate');
     }
 
@@ -4589,7 +4678,38 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     );
     addEvent(`💥 ULTIMATE: ${u.player.name} unleashed ${u.champion.ultimate.name} (Rank ${ultRank})!`, 'combo');
 
-    if (u.champion.name === 'Solana') {
+    if (u.champion.name === 'Aetheris') {
+      const duration = aetherisUltimateDurationAtRank(ultRank);
+      const linkedAllies = championsRef.current.filter(ally => ally.team === u.team && ally.isAlive
+        && Math.hypot(ally.x - u.x, ally.y - u.y) <= 260);
+      linkedAllies.forEach(ally => {
+        ally.hp = Math.min(ally.maxHp, ally.hp + 250 * utility);
+        ally.shield += 150 * utility;
+        if (ally.id === u.id) return;
+        spellsRef.current.push({
+          id: random().toString(),
+          type: 'aetheris_ultimate_link',
+          x: ally.x,
+          y: ally.y,
+          radius: 0,
+          duration,
+          maxDuration: duration,
+          color: '#67e8f9',
+          sourceUnitId: u.id,
+          targetUnitId: ally.id,
+          extraText: 'RESONANT CONVERGENCE',
+          avatarName: 'Aetheris',
+          abilitySlot: 'ultimate'
+        });
+        emitSkillEffect(u, ally, true, 'Resonant Convergence', 'ultimate');
+      });
+      showBanner(
+        '✨ RESONANT CONVERGENCE!',
+        `${u.player.name} linked ${Math.max(0, linkedAllies.length - 1)} nearby allies for ${duration} seconds!`,
+        '✨'
+      );
+      addEvent(`✨ RESONANT CONVERGENCE: Aetheris tethered nearby allies for ${duration}s.`, 'combo');
+    } else if (u.champion.name === 'Solana') {
       spellsRef.current.push({
         id: random().toString(),
         type: 'solar_flare',
@@ -4942,7 +5062,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       spellsRef.current.push({ id: random().toString(), type: 'branch_court', x: target.x, y: target.y,
         radius: 120, duration: 4.2, maxDuration: 4.2, color: '#86efac', sourceUnitId: u.id,
         avatarName: 'Stonebranch', abilitySlot: 'ultimate' });
-    } else if (['Mirehook', 'Voltgrip', 'Aetherbolt', 'Brewmaw', 'Wraithhook', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback', 'Aetheris'].includes(u.champion.name)) {
+    } else if (['Mirehook', 'Voltgrip', 'Aetherbolt', 'Brewmaw', 'Wraithhook', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback'].includes(u.champion.name)) {
       const name = u.champion.name;
       const origin = name === 'Voltgrip' || name === 'Corsara' || name === 'Quillback' || name === 'Aetheris' ? u : target;
       const radius = name === 'Mirehook' ? 55 : name === 'Aetherbolt' ? 80 : name === 'Corsara' ? 210 : 150;
@@ -4973,12 +5093,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const finalUltDmg = name === 'Jinxy' ? Math.round(ultDamage * (1 + (1 - e.hp / e.maxHp) * 0.6)) : ultDamage;
         applyDamageToChampion(u, e, finalUltDmg, false, u.champion.ultimate.name);
       });
-      if (name === 'Aetheris') {
-        championsRef.current.filter(a => a.team === u.team && a.isAlive).forEach(a => {
-          a.hp = Math.min(a.maxHp, a.hp + 250 * utility);
-          a.shield += 150 * utility;
-        });
-      }
     }
   };
 
@@ -5044,6 +5158,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     let abilityAmp = 1.0;
     if (attacker && label && !itemDamage) {
+      abilityAmp += getKaelenOrbBonuses(attacker).spellAmp;
       // Shojin: +10% non-ultimate ability damage
       if (attacker.items.some(it => it.id === 'item_shojin') && slot !== 'ultimate') {
         abilityAmp += 0.10;
@@ -5080,7 +5195,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       effectiveArmor += 30; // Temporary True Form armor bonus
     }
 
-    let effective = spellDamage;
+    let effective = spellDamage * (1 + (attacker ? getKaelenOrbBonuses(attacker).damageAmp : 0));
     if (!isTrueDamage) {
       if (attacker) {
         // Armor penetration percentage (e.g. 35% LDR, 30% Mortal Reminder/Terminus, 18% Last Whisper, 24% Black Cleaver)
@@ -5375,12 +5490,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const callout: KillCallout = {
         id: random().toString(),
         killerName,
-        killerChamp: killer?.champion.name || (isTurretFinish ? 'Defense Turret' : neutralKiller ? 'Neutral Monster' : 'Defense Turret'),
+        killerChamp: killer?.champion.displayName || (isTurretFinish ? 'Defense Turret' : neutralKiller ? 'Neutral Monster' : 'Defense Turret'),
         killerTeam: killer?.team || turretTeam,
         killerAvatar: killer?.player.avatarSvg,
         neutralFinisher: isNeutralFinish ? (isTurretFinish ? 'Defense Turret' : neutralKiller ?? 'Neutral Monster') : undefined,
         victimName: target.player.name,
-        victimChamp: target.champion.name,
+        victimChamp: target.champion.displayName,
         victimTeam: target.team,
         victimAvatar: target.player.avatarSvg,
         multiKill: multiKillTitle,
@@ -5397,10 +5512,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const killEventText = multiKillTitle
         ? `🔥 ${multiKillTitle}! ${killer?.player.name} eliminated ${target.player.name}!`
         : killer
-          ? `☠️ ${killer.player.name} eliminated ${target.player.name} (${target.champion.name})${isTurretFinish ? ' under Defense Turret fire' : isMonsterFinish ? ' after a neutral monster struck the final blow' : ''}`
+          ? `☠️ ${killer.player.name} eliminated ${target.player.name} (${target.champion.displayName})${isTurretFinish ? ' under Defense Turret fire' : isMonsterFinish ? ' after a neutral monster struck the final blow' : ''}`
           : isTurretFinish
-            ? `⚡ ${target.player.name} (${target.champion.name}) was EXECUTED by Defense Turret!${turretReward && turretReward.splitGoldPerAlly > 0 ? ` (+${turretReward.splitGoldPerAlly}g split to ${turretReward.turretTeam.toUpperCase()})` : ''}`
-            : `⚡ ${target.player.name} (${target.champion.name}) was EXECUTED by ${killerName}!`;
+            ? `⚡ ${target.player.name} (${target.champion.displayName}) was EXECUTED by Defense Turret!${turretReward && turretReward.splitGoldPerAlly > 0 ? ` (+${turretReward.splitGoldPerAlly}g split to ${turretReward.turretTeam.toUpperCase()})` : ''}`
+            : `⚡ ${target.player.name} (${target.champion.displayName}) was EXECUTED by ${killerName}!`;
       addEvent(killEventText, killer ? 'kill' : 'execution');
     }
   };
@@ -7813,6 +7928,59 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           }
           ctx.restore();
         }
+      } else if (s.type === 'aetheris_orb_explosion') {
+        const progress = 1 - s.duration / s.maxDuration;
+        const burstRadius = Math.max(8, s.radius * progress);
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, 1 - progress);
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 24;
+        ctx.strokeStyle = '#bae6fd';
+        ctx.lineWidth = 5 * (1 - progress) + 1;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y - 12, burstRadius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+        ctx.fill();
+        ctx.restore();
+      } else if (s.type === 'aetheris_overcharge') {
+        const pulse = (Math.sin(time * 8) + 1) / 2;
+        ctx.save();
+        ctx.globalAlpha = Math.min(0.9, s.duration / s.maxDuration + 0.25);
+        ctx.shadowColor = '#22d3ee';
+        ctx.shadowBlur = 20;
+        ctx.strokeStyle = '#a5f3fc';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(s.x, s.y - 16, 19 + pulse * 5, 30 + pulse * 5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        for (let i = 0; i < 3; i++) {
+          const angle = time * 3 + i * Math.PI * 2 / 3;
+          ctx.fillStyle = '#e0f2fe';
+          ctx.beginPath();
+          ctx.arc(s.x + Math.cos(angle) * 26, s.y - 16 + Math.sin(angle) * 34, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      } else if (s.type === 'aetheris_ultimate_link') {
+        const source = championsRef.current.find(c => c.id === s.sourceUnitId);
+        const target = championsRef.current.find(c => c.id === s.targetUnitId);
+        if (source?.isAlive && target?.isAlive) {
+          const pulse = (Math.sin(time * 6) + 1) / 2;
+          ctx.save();
+          ctx.globalAlpha = Math.min(0.9, s.duration / s.maxDuration + 0.15);
+          ctx.strokeStyle = '#67e8f9';
+          ctx.lineWidth = 2.5 + pulse;
+          ctx.shadowColor = '#22d3ee';
+          ctx.shadowBlur = 14;
+          ctx.setLineDash([8, 5]);
+          ctx.lineDashOffset = -time * 28;
+          ctx.beginPath();
+          ctx.moveTo(source.x, source.y - 15);
+          ctx.lineTo(target.x, target.y - 15);
+          ctx.stroke();
+          ctx.restore();
+        }
       } else if (s.type === 'forest_link') {
         // Draw shimmering vine links between all connected targets
         const linkedUnits = championsRef.current.filter(c => c.isAlive && c.forestLink?.groupId === s.id);
@@ -7979,6 +8147,48 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         knockupHeight,
         isInBush: u.isInBush
       });
+
+      if (u.champion.name === 'Aetheris' && u.isAlive) {
+        const link = findAetherisInnateAlly(u, championsRef.current);
+        if (link) {
+          const pulse = (Math.sin(time * 7) + 1) / 2;
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(u.x, u.y - 13);
+          ctx.quadraticCurveTo((u.x + link.x) / 2, Math.min(u.y, link.y) - 28 - pulse * 8, link.x, link.y - 13);
+          ctx.strokeStyle = '#67e8f9';
+          ctx.lineWidth = 2.5 + pulse;
+          ctx.shadowColor = '#22d3ee';
+          ctx.shadowBlur = 14;
+          ctx.setLineDash([7, 5]);
+          ctx.lineDashOffset = -time * 22;
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = '#e0f2fe';
+          ctx.beginPath();
+          ctx.arc(link.x, link.y - 24, 4 + pulse * 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        const orbCharges = u.aetherisOrbs?.charges ?? 0;
+        for (let i = 0; i < orbCharges; i++) {
+          const angle = time * 4.2 + i * Math.PI * 2 / Math.max(orbCharges, 1);
+          const orbX = u.x + Math.cos(angle) * 29;
+          const orbY = u.y - 20 + Math.sin(angle) * 14;
+          ctx.save();
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 16;
+          ctx.fillStyle = '#bae6fd';
+          ctx.strokeStyle = '#0284c7';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(orbX, orbY, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
 
       if (u.paxiOrb) {
         ctx.save(); ctx.fillStyle = '#6ee7b7'; ctx.strokeStyle = '#e0f2fe';
@@ -8150,7 +8360,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
       ctx.fillStyle = u.team === 'blue' ? '#a5f3fc' : '#fecdd3';
       ctx.font = 'bold 9px sans-serif';
-      ctx.fillText(u.champion.name, u.x, u.y + 30);
+      ctx.fillText(u.champion.displayName, u.x, u.y + 30);
 
       // Ultimate Cooldown Status Indicator
       if (u.level >= 6) {
@@ -8769,7 +8979,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-cyan-300 font-bold leading-tight">{u.champion.name}</div>
+                          <div className="text-[10px] text-cyan-300 font-bold leading-tight">{u.champion.displayName}</div>
                           
                           {/* Live Health Bar */}
                           <div className="mt-1 w-full max-w-[210px]">
@@ -8907,7 +9117,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-rose-300 font-bold leading-tight">{u.champion.name}</div>
+                          <div className="text-[10px] text-rose-300 font-bold leading-tight">{u.champion.displayName}</div>
                           
                           {/* Live Health Bar */}
                           <div className="mt-1 w-full max-w-[210px]">

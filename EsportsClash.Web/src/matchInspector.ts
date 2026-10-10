@@ -28,13 +28,13 @@ export interface MatchInsights {
   timeline: InsightEvent[];
 }
 
-export type InsightActor = { id: string; team: 'blue' | 'red'; player: { name: string }; champion: { name: string } };
+export type InsightActor = { id: string; team: 'blue' | 'red'; player: { name: string }; champion: { name: string; displayName: string } };
 
 export const createMatchInsights = (): MatchInsights => ({ players: {}, timeline: [] });
 
 function avatar(insights: MatchInsights, actor: InsightActor): AvatarInsight {
   return insights.players[actor.id] ??= {
-    id: actor.id, player: actor.player.name, avatar: actor.champion.name, team: actor.team,
+    id: actor.id, player: actor.player.name, avatar: actor.champion.displayName, team: actor.team,
     casts: {
       skill1: 0, skill2: 0, ultimate: 0, conflux: 0,
       orbQ: 0, orbW: 0, orbE: 0, invokedD: 0, invokedF: 0
@@ -62,7 +62,7 @@ export function recordAbilityCast(insights: MatchInsights, actor: InsightActor, 
     invokedF: 'F invoked spell'
   }[slot];
   addInsightEvent(insights, { second, kind: 'cast', actorId: actor.id,
-    text: `${actor.player.name} (${actor.champion.name}) cast ${label}` });
+    text: `${actor.player.name} (${actor.champion.displayName}) cast ${label}` });
 }
 
 export function recordSkillshot(insights: MatchInsights, actor: InsightActor, hit: boolean, second: number): void {
