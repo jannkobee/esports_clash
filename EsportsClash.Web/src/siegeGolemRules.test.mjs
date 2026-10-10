@@ -1,6 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { selectGolemChargeTower } from './siegeGolemRules.ts';
+import { GOLEM_SPAWN_SECOND, selectGolemChargeTower, shouldAwakenGolem } from './siegeGolemRules.ts';
+
+test('the one-time Colossus awakens at two minutes', () => {
+  assert.equal(GOLEM_SPAWN_SECOND, 120);
+  assert.equal(shouldAwakenGolem(119, false), false);
+  assert.equal(shouldAwakenGolem(120, false), true);
+  assert.equal(shouldAwakenGolem(121, true), false);
+});
 
 test('one siege golem charges the next live enemy tower in front of it', () => {
   const structures = [

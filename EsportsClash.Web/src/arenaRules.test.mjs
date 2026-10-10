@@ -1,13 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ARENA_WIDTH, BARRACKS_X, NEXUS_X, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectTurretTarget, turretShotDamage, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from './arenaRules.ts';
+import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, isInsideRockTerrain, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from './arenaRules.ts';
 
 test('expanded map leaves room between each well, nexus, and barracks', () => {
   assert.equal(ARENA_WIDTH, 2000);
   assert.ok(NEXUS_X.blue - WELL_X.blue >= 140);
-  assert.ok(BARRACKS_X.blue > NEXUS_X.blue);
+  assert.ok(BARRACKS_X.blue - NEXUS_X.blue >= 140);
+  assert.ok(NEXUS_TOWER_X.blue - BARRACKS_X.blue >= 65);
   assert.ok(WELL_X.red - NEXUS_X.red >= 140);
-  assert.ok(BARRACKS_X.red < NEXUS_X.red);
+  assert.ok(NEXUS_X.red - BARRACKS_X.red >= 140);
+  assert.ok(BARRACKS_X.red - NEXUS_TOWER_X.red >= 65);
 });
 
 test('tower plating tapers with game time and a nexus opens after its turret and one barracks fall', () => {
@@ -42,6 +44,97 @@ test('nexus fires five rapid shots then reloads so upgraded waves can siege', ()
   assert.equal(shotsRemaining, 5);
 });
 
+test('each nexus pulse selects up to six distinct enemies and keeps dive aggro first', () => {
+  const wave = Array.from({ length: 8 }, (_, i) => ({ id: `m${i}`, type: 'melee' }));
+  const champions = Array.from({ length: 5 }, (_, i) => ({ id: `c${i}`, champion: 'Valkira' }));
+  const targets = selectNexusTargets([...wave, ...champions], null, 'c2');
+  assert.equal(targets.length, 6);
+  assert.equal(targets[0].id, 'c2');
+  assert.equal(new Set(targets.map(target => target.id)).size, 6);
+  assert.equal(targets.filter(target => target.id.startsWith('c')).length, 5);
+  assert.deepEqual(selectNexusTargets([wave[0]], null).map(target => target.id), ['m0']);
+});
+
+test('each camp and boss has a solid rocky enclosure with a lane-facing opening', () => {
+  assert.equal(DRAGON_SPAWN_SECOND, 240);
+  for (const ring of CAMP_ROCK_RINGS) {
+    const stones = ROCK_TERRAIN.filter(rock => rock.campId === ring.id);
+    assert.ok(stones.length >= ring.stones - 4, `${ring.id} should have a nearly complete wall`);
+    assert.equal(isInsideRockTerrain(ring.x, ring.y, 13), false);
+    const entryY = ring.y + Math.sin(ring.entrance) * (ring.radius + 75);
+    let walker = { x: ring.x, y: entryY };
+    for (let tick = 0; tick < 40; tick++) {
+      const dy = ring.y - walker.y;
+      if (Math.abs(dy) < 7) break;
+      walker = resolveRockTerrainMovement(walker,
+        { x: walker.x, y: walker.y + Math.sign(dy) * 7 }, 13);
+      assert.equal(isInsideRockTerrain(walker.x, walker.y, 13), false);
+    }
+    assert.ok(Math.hypot(walker.x - ring.x, walker.y - ring.y) < 8, `${ring.id} should be reachable through its opening`);
+    const sideRock = stones.find(rock => Math.abs(rock.y - ring.y) < 2 && rock.x > ring.x);
+    assert.ok(sideRock, `${ring.id} should have a side wall`);
+    assert.equal(isInsideRockTerrain(sideRock.x, sideRock.y, 13), true);
+  }
+});
+
+test('both raised base entrances keep one clear central stair and rocky side walls', () => {
+  for (const x of [515, 1485]) {
+    assert.equal(isInsideRockTerrain(x, 295, 13), true);
+    assert.equal(isInsideRockTerrain(x, 465, 13), true);
+    assert.equal(isInsideRockTerrain(x, 380, 13), false);
+  }
+  for (const [startX, goalX] of [[610, 420], [1390, 1580]]) {
+    let walker = { x: startX, y: 380 };
+    for (let tick = 0; tick < 30; tick++) {
+      const dx = goalX - walker.x;
+      if (Math.abs(dx) < 7) break;
+      walker = resolveRockTerrainMovement(walker, { x: walker.x + Math.sign(dx) * 7, y: walker.y }, 13);
+      assert.equal(isInsideRockTerrain(walker.x, walker.y, 13), false);
+    }
+    assert.ok(Math.abs(walker.x - goalX) < 8);
+  }
+});
+
+test('units can approach objective pits and jungle camps from nearby lane positions', () => {
+  for (const [startX, startY, goalX, goalY] of [
+    [900, 380, 576, 170], [900, 380, 1000, 130], [900, 380, 1000, 610],
+    [1100, 380, 1424, 170], [650, 380, 485, 600], [1350, 380, 1515, 600],
+  ]) {
+    let walker = { x: startX, y: startY };
+    for (let tick = 0; tick < 250; tick++) {
+      const dx = goalX - walker.x;
+      const dy = goalY - walker.y;
+      const distance = Math.hypot(dx, dy);
+      if (distance < 8) break;
+      walker = resolveRockTerrainMovement(walker,
+        { x: walker.x + dx / distance * 7, y: walker.y + dy / distance * 7 }, 13);
+      assert.equal(isInsideRockTerrain(walker.x, walker.y, 13), false);
+    }
+    assert.ok(Math.hypot(goalX - walker.x, goalY - walker.y) < 8,
+      `${startX},${startY} should reach ${goalX},${goalY}; stopped at ${walker.x.toFixed(0)},${walker.y.toFixed(0)}`);
+  }
+});
+
+test('a farmer leaving either base uses the stair and camp opening', () => {
+  for (const [startX, goalX, goalY] of [
+    [400, 485, 600], [1600, 1515, 600], [400, 576, 170], [1600, 1424, 170],
+  ]) {
+    const goal = { x: goalX, y: goalY };
+    let walker = { x: startX, y: 380 };
+    for (let tick = 0; tick < 350; tick++) {
+      if (Math.hypot(goal.x - walker.x, goal.y - walker.y) < 8) break;
+      const waypoint = rockApproachWaypoint(walker, goal);
+      const distance = Math.hypot(waypoint.x - walker.x, waypoint.y - walker.y);
+      walker = resolveRockTerrainMovement(walker,
+        { x: walker.x + (waypoint.x - walker.x) / distance * Math.min(7, distance),
+          y: walker.y + (waypoint.y - walker.y) / distance * Math.min(7, distance) }, 13);
+      assert.equal(isInsideRockTerrain(walker.x, walker.y, 13), false);
+    }
+    assert.ok(Math.hypot(goal.x - walker.x, goal.y - walker.y) < 8,
+      `${startX} should reach camp; stopped at ${walker.x.toFixed(0)},${walker.y.toFixed(0)}`);
+  }
+});
+
 test('turrets punish an in-range champion dive instead of staying locked on creeps', () => {
   const minion = { id: 'wave1', type: 'melee' };
   const diver = { id: 'diver', champion: 'Valkira' };
@@ -74,10 +167,10 @@ test('empowered minions gain health, damage, and speed', () => {
   }
 });
 
-test('five strategic bushes cover key flank and jungle choke points (mid bushes removed)', () => {
-  assert.equal(ARAM_BUSHES.length, 5);
+test('nine strategic bushes cover river, pit, valley and highground flanks', () => {
+  assert.equal(ARAM_BUSHES.length, 9);
   const ids = new Set(ARAM_BUSHES.map(b => b.id));
-  assert.equal(ids.size, 5);
+  assert.equal(ids.size, 9);
   for (const b of ARAM_BUSHES) {
     assert.ok(b.width >= 90);
     assert.ok(b.height >= 35);

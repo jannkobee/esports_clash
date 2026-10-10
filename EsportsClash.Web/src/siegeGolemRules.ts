@@ -1,6 +1,11 @@
 import type { LaneMinion, LaneStructure } from './types';
 
 export const GOLEM_CHARGE_DAMAGE = 1050;
+export const GOLEM_SPAWN_SECOND = 2 * 60;
+
+export function shouldAwakenGolem(gameSeconds: number, alreadyAwakened: boolean): boolean {
+  return !alreadyAwakened && gameSeconds >= GOLEM_SPAWN_SECOND;
+}
 
 export function selectGolemChargeTower(
   golem: Pick<LaneMinion, 'team' | 'x' | 'y'>,

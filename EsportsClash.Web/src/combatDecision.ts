@@ -4,6 +4,7 @@ import { isCrowdControlSkill, shouldHoldSkillForChainStun, getSkillCastRange } f
 import { chooseAreaControlTarget, chooseOpeningControlTarget, countAreaControlTargets, getAreaControlProfile, shouldCommitAreaControlUltimate } from './avatarCombatRoles.ts';
 import { isSelfOrAllySecondSkill, skill1ManaCost, ultimateManaCost } from './abilityRules.ts';
 import { shouldSaveBlackHoleInterrupt } from './blackHoleCounterplay.ts';
+import { isObservedCooling, type EnemyCooldownMemory } from './cooldownKnowledge.ts';
 
 type Fighter = AramChampionUnit;
 
@@ -60,6 +61,8 @@ export function chooseTeamfightTarget(
   options?: {
     enemyStructures?: readonly { id: string; team: 'blue' | 'red'; type: string; isAlive: boolean; x: number; y: number; range: number }[];
     alliedMinions?: readonly { x: number; y: number; isAlive: boolean }[];
+    cooldownMemory?: EnemyCooldownMemory;
+    matchSecond?: number;
   }
 ): Fighter | undefined {
   const iq = Math.max(1, Math.min(99, unit.player.stats.iq)) / 99;
@@ -149,6 +152,10 @@ export function chooseTeamfightTarget(
       const towerDangerPenalty = enemyTower && !canDiveUnderTower
         ? (3.8 * iq * (isSquishy ? 1.5 : 1.0))
         : 0;
+      const observedUltDown = unit.player.stats.iq >= 78 && isObservedCooling(
+        options?.cooldownMemory?.[unit.team], candidate.id, 'ultimate', options?.matchSecond ?? 0);
+      const spentKeySkill = unit.player.stats.iq >= 86 && isObservedCooling(
+        options?.cooldownMemory?.[unit.team], candidate.id, 'skill2', options?.matchSecond ?? 0);
 
       return -dist / Math.max(60, range) * (1.8 - iq * 0.7)
         - (isRecallingFar ? (5.0 * iq) : 0)
@@ -160,6 +167,8 @@ export function chooseTeamfightTarget(
         + (isClutchActive && reachable ? 1.8 : 0)
         + (reachable && isStunned ? 1.5 * iq * (0.5 + execution * 0.5) : 0)
         + (peeling && (unit.champion.primaryRole === 'Tank' || unit.champion.primaryRole === 'Support') ? 1.6 * iq * (0.6 + execution * 0.4) : 0)
+        + (reachable && observedUltDown ? 0.95 * iq : 0)
+        + (reachable && spentKeySkill ? 0.38 * iq : 0)
         - towerDangerPenalty;
     };
     return !best || score(enemy) > score(best) ? enemy : best;

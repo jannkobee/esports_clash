@@ -11,6 +11,8 @@ test('rated players spread before a ready Black Hole and retain control to inter
   assert.equal(shouldSpreadForBlackHole(unit, nullweaver, ally), true);
   assert.equal(shouldSaveBlackHoleInterrupt(unit, nullweaver), true);
   assert.equal(shouldSpreadForBlackHole(unit, { ...nullweaver, cdUlt: 12 }, ally), false);
+  assert.equal(shouldSpreadForBlackHole(unit, { ...nullweaver, cdUlt: 12 }, ally, false), true);
+  assert.equal(shouldSpreadForBlackHole(unit, nullweaver, ally, true), false);
   assert.equal(shouldSaveBlackHoleInterrupt(unit, { ...nullweaver, blackHole: { remaining: 2 } }), false);
   assert.equal(shouldSpreadForBlackHole({ ...unit, player: { stats: { iq: 40, tf: 40 } } }, nullweaver, ally), false);
 });

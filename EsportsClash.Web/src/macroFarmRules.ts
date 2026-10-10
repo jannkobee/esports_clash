@@ -36,6 +36,23 @@ export function shouldFocusExposedNexus(nexus: {
     + Math.max(0, Math.min(20, coachMacro)) * 0.001;
   return nexus.hp / nexus.maxHp <= recognitionThreshold;
 }
+
+// A recent won fight creates a short siege window. Better macro readers keep
+// the call longer, while anyone still backs away when the push is unsafe.
+export function shouldPressWonFight(input: {
+  secondsSinceTeamKill: number; aliveAllies: number; aliveEnemies: number;
+  healthFraction: number; nearestStructureDistance: number;
+  iq: number; coachMacro: number; losingFight: boolean;
+}): boolean {
+  const { secondsSinceTeamKill, aliveAllies, aliveEnemies, healthFraction,
+    nearestStructureDistance, iq, coachMacro, losingFight } = input;
+  if (losingFight || aliveAllies < 2 || aliveAllies <= aliveEnemies
+    || nearestStructureDistance > 900 || secondsSinceTeamKill < 0) return false;
+  const strongRead = iq >= 72 || coachMacro >= 13;
+  if (healthFraction < (strongRead ? 0.35 : 0.48)) return false;
+  if (aliveEnemies > 1 && aliveAllies < aliveEnemies + 2) return false;
+  return secondsSinceTeamKill <= (strongRead ? 18 : 12);
+}
 export function neutralAttackRange(championRange: number, epic = false): number {
   return Math.min(championRange, epic ? 145 : 130);
 }

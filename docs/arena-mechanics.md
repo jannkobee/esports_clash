@@ -263,3 +263,50 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
   - The mode is strictly a Normal Game: Chess Elo rating is never risked or modified.
   - Normal multiplayer rooms (Vs Player) also feature an `Equalize to 100 OVR` toggle to enable casual equalized friendlies between players.
 - Regression tests in `src/equalizedMode.test.mjs` verify 100 OVR generation, Cardrel parody alias preservation, stat parity (1.05 power across avatars), snake draft turn structure, AI pick complementary role selection, and coach equity.
+
+## Ability and Teamfight Decisions (Current)
+
+- Nullweaver's Singularity Well has a 105px pull radius and 175px cast reach. Corsara's Broadside Waltz is a repeated-wave channel that crowd control or silence can interrupt. Faelith, Oathmute, Cloudtail and Stonebranch have separate original kits; Cloudtail and Stonebranch are brothers in the game's lore. `docs/ability-balance-review.md` lists the per-avatar balance observations and proposed measurements.
+- A team remembers an enemy Q, W or R cooldown only after a nearby living ally sees that ability used. Oathmute's global ultimate reveals its own cooldown to both teams, without revealing unseen Q/W casts. Knowledge expires when the observed cooldown is expected to finish. Teams presume unknown enemy abilities may be ready.
+- Higher-IQ cards use remembered ultimate and key-skill downtime to choose fight targets, judge incoming damage, time Black Hole spacing and bait an enemy skill from cover. Objective contests use the same target knowledge. Cards with lower IQ make these reads less consistently. Ratings change decisions, not combat stats.
+- An allied channel is an engage opportunity only for teammates who can survive their local fight. The retreat check compares nearby pressure, available personal damage, allied help and reachable targets. A low-health enemy is not a safe finish when multiple nearby opponents can punish it. Clutch and Unkillable traits obey the losing-fight check.
+- `src/cooldownKnowledge.test.mjs` and `src/blackHoleCounterplay.test.mjs` cover visibility, global casts, memory expiry, IQ-dependent retreat and target choice, multi-enemy finish bait, and Black Hole danger. `npm run check:game` passed 153 tests plus design validation and TypeScript; `npm run build` passed.
+- Cooldown estimates do not follow hidden cooldown resets or post-cast haste changes. Balance and teamfight timing still need a complete stable live match batch.
+
+## Respawn and Hook Travel
+
+- Champion death timers use `calculateDeathTimer` in `src/combatPacingRules.ts` for both combat and fountain deaths. The current checkpoints are 8 seconds at level 3/1:00, 13 seconds at level 10/4:00, 20 seconds at level 15/8:00, 27 seconds at level 18/12:00, and a hard cap of 28 seconds.
+- Mirehook, Voltgrip, and Wraithhook Skill 1 remain dodgeable projectile hooks. Their projectile head and chain are drawn during flight. A hit applies ordinary damage/control and starts a visible grab: the victim travels toward the living caster at 560 world units per second, stopping 43 units away. The pull lasts at most 1.1 seconds, stops if the caster dies, and interrupts recall. No instant position jump is permitted for these hooks.
+- `src/combatPacingRules.test.mjs` checks the timer curve and that a hook pull takes several simulation ticks. `npm run check:game` passed 155 tests plus design validation and TypeScript; `npm run build` passed. A live desktop match showed a hook chain in a crowded fight ([frame](hook-live-review.png)); a frame-by-frame pull capture and measured kill-to-structure conversion remain open.
+
+## Raised Base and Gravemarch Siege Rules
+
+- The arena remains 2000 world units wide. Wells are at x=65/1935, Nexuses at x=205/1795, matching barracks at x=345/1655, and third turrets at x=420/1580. Each barracks is 140 units from its Nexus; the raised base extends from the third turret through its well. The raised stone and drifting mist are visual terrain and currently give no height-based attack or vision bonus.
+- Four entrance bushes at x=540/1460 on the north and south flanks precede the ramps. They follow ordinary bush concealment, ward, and reveal rules. The rocky clusters between camps and epic pits were made solid in the follow-up below.
+- The neutral Gravemarch Colossus starts absent, awakens once at 2:00, and never respawns after defeat. A claim queues exactly one friendly siege Golem for the claiming team's next 22-second creep wave. The lane model uses the same 1.7 scale as the neutral model, with its health bar and name raised to fit. Its charge still targets a living enemy tower. Embermaw starts absent and first awakens at 4:00.
+- After a champion kill, an AI card may keep a short structure-push call when at least two allies survive, they outnumber living enemies, the next enemy structure is within 900 units, and the actor is healthy and not losing its local fight. High-IQ cards or strong macro coaches keep the read up to 18 seconds at 35% health; others require 48% health and a kill within 12 seconds. While the call applies, shopping recall, optional jungle farming, fresh epic starts, and passive regrouping yield to the lane siege. Dangerous fights still trigger retreat. This is a decision rule, not a damage buff.
+- `src/arenaRules.test.mjs`, `src/macroFarmRules.test.mjs`, and `src/siegeGolemRules.test.mjs` cover the new geometry, entrances, push call, and awakening. `npm run check:game` passed all 157 tests, design validation, and TypeScript; `npm run build` passed. A live visual review of the claimed reinforcement remains open.
+
+## Solid Rock and Nexus Volley Rules
+
+- `CAMP_ROCK_RINGS` in `src/arenaRules.ts` defines one nearly circular, raised stone enclosure around each of the eight ordinary camps and both epic pits. Each ring has a lane-facing opening wide enough for an avatar to enter; the two top buff camps were moved outward so their walls do not overlap adjacent camps. Mirrored rows of solid stones frame the north and south sides of each high-ground ramp, leaving its central stair open at lane y=380. Farming AI uses `rockApproachWaypoint` to reach the open ramp stair and camp gate, including routes from either base to upper and lower flank camps. `ROCK_TERRAIN` supplies both collision and canvas footprints. Champions, minions (including the claimed Colossus and Spirit Bear), and neutral camps cannot occupy these footprints. Movement is swept in short steps to prevent short dashes crossing stone. A teleport longer than 350 units can cross stone but its destination is pushed clear if it lands inside it. Rocks currently block units, not spell projectiles.
+- Alive barracks have unique canvas models: a Melee forge with crossed blades, a Ranged watchtower with a drawn bow, and a Catapult siege yard with wheels and a loaded arm. Destroying each barracks retains its matching creep upgrade rule.
+- The Nexus is drawn at 1.85 scale with six orbiting emitters. Its existing volley remains five pulses at 0.2-second intervals followed by a 2.2-second reload. Each pulse picks up to six **distinct** targets in range, prioritizing a dive aggressor and then champions before minions, and fires one true-damage shot at each. A unit is never hit six times by one pulse solely because fewer targets are present. The current 85 damage per shot is unchanged.
+- `src/arenaRules.test.mjs` checks five-pulse timing, six distinct targets, collision, each camp opening, nearby lane approaches, both central high-ground stairs, and farming routes from both bases to upper and lower camps. `src/siegeGolemRules.test.mjs` checks the 2:00 one-time awakening. The Dragon's first spawn time is 4:00. Rocks do not absorb projectiles; non-farming pursuit still uses local collision rather than a general pathfinder.
+
+## Natural Geological Rock Formations and Cove Embankments
+
+- **Continuous Bedrock Foundations (`drawRaisedRockTerrain` in `AramMatchView.tsx`):**
+  - Camp walls are drawn over a continuous curved bedrock embankment along the non-entrance perimeter (`entrance + 0.62` to `entrance + 2*Math.PI - 0.62`).
+  - Highground walls have continuous horizontal bedrock shelves connecting the 3 stones in each row.
+  - This eliminates isolated "teeth" and embeds all camps naturally into organic cliff coves.
+- **Procedural 3D Organic Boulders:**
+  - Deterministic coordinate hashing (`rockHash`) varies rock width, height, chiseled vertices, and tilt per stone without any frame jitter.
+  - Boulders around camp perimeters align tangentially with the cove curve, naturally wrapping around the clearing.
+  - Multi-faceted 3D lighting: soft ground contact shadow, dark under-facet base, midtone body with directional light gradient, sunlit upper-left crest facet, chiseled ridge highlights, and hairline fracture fissures.
+- **Biome Theming:**
+  - **Dragon Pit (`dragon_boss`):** Scorched basalt/obsidian, glowing molten magma veins (`rgba(249, 115, 22, 0.85)` / `#fed7aa`), amber ember rim lighting, no green vegetation.
+  - **Siege Golem Pit (`j_siege_golem`):** Ancient monolithic runic slate with deep teal lichen (`#0d9488`).
+  - **Jungle Camps:** Weathered river granite with lush emerald moss patches (`#047857`, `#10b981`) and base scree pebbles.
+  - **Highground Base Ramps:** Fortified masonry bedrock ledges.
+- **Invariant Protection:** All 132 `ROCK_TERRAIN` positions, radii, and collision tests in `arenaRules.ts` remain identical, ensuring zero regression to pathing, movement, or dash clipping.

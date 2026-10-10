@@ -485,6 +485,8 @@ The online room feature synchronizes drafting and a seeded AI match; it is not a
 
 **Limit:** These new runtime effects were verified by code and automated checks; a live visual match was not inspected in this turn. Paxi's autonomous jaunt requires a favorable nearby target and card IQ of at least 55. Forest Link can share damage to teammates if the chosen zone contains both teams; this is why higher-IQ users avoid an even or unfavorable zone.
 
+**Later change:** The Nature Link section below supersedes this early Forest Link behavior: only enemy champions are linked and share damage.
+
 ## User Request: Forest Link Marker, Neutral Range, and Match Decisions
 
 **User:** Approved a match inspector and smarter play around Nullweaver's Black Hole and Paxi's orb. Asked for Forest Link to show a marker above linked avatars' IGN instead of lines, and reported that some avatars gain an implausibly long attack range against jungle camps.
@@ -498,6 +500,8 @@ The online room feature synchronizes drafting and a seeded AI match; it is not a
 **Verification:** Focused tests cover the neutral range cap, Black Hole counterplay choices, Paxi's escape decision, telemetry counters, and saved report aggregation. `npm run check:game` and `npm run build` pass. A live desktop Vs AI draft with Tequoia and an opposing Nullweaver showed the `LINKED` markers and a populated Insights panel with Q/W casts, skillshot hits, and timeline events. The 25-match balance run is available from the live match header.
 
 **Limit:** The panel records events and a timeline, not positional snapshots or a frame-by-frame video replay. Readiness and risk are local AI estimates; Black Hole spread and Paxi escape depend on card ratings and battlefield geometry. The live visual check used a desktop viewport; mobile and speaker audio were not reviewed.
+
+**Later change:** The Nature Link section below replaces the `LINKED` text badge with an emerald overhead crest.
 
 ## User Request: Channeled Ability Follow-Up Engage & Protection Removal
 
@@ -767,3 +771,95 @@ Investigated root causes and found three critical bugs:
 - `npm run build` compiled clean production build.
 
 **Limit:** Player Card drafting is currently integrated for single-player Equalized Draft in Clash Arena; multiplayer online rooms synchronize avatar drafting for selected rosters.
+
+## User Request: Four Original Avatars, Channel Counterplay, and Ability Review
+
+**User:** Asked for a smaller Nullweaver Singularity Well, original avatars inspired by Lulu, Silencer, League's Wukong, and Dota's Monkey King as two brothers, a channeled Corsara ultimate, a review of every ability, and reliable retreat from fights a card cannot win.
+
+**Agent:** Reduced Singularity Well's pull radius to 105px and cast range to 175px. Added Faelith, Oathmute, Cloudtail, and Stonebranch with distinct kits, draft roles, combat visuals, audio and lore; Cloudtail and Stonebranch are brothers. Corsara's Broadside Waltz now fires repeated waves during a channel and can be interrupted. Oathmute can silence a channel. The survival decision estimates nearby damage and help before Clutch King or Unkillable Demon may commit. The 43-avatar audit and proposed tuning metrics are in `docs/ability-balance-review.md`.
+
+**Affected files:** `EsportsClash.Web/src/additionalChampions.ts`, `src/components/AramMatchView.tsx`, `src/combatDecision.ts`, `src/fightSurvivalRules.ts`, avatar animation/audio/lore and combo files, `src/newAvatarRules.test.mjs`, and `docs/ability-balance-review.md`.
+
+**Verification:** The gameplay checks and production build passed after these additions. A desktop browser review confirmed the Forest Link overhead marker and a populated Match Insights panel; a full 25-match balance run was not completed because the live page reloaded while source changed.
+
+**Limit:** Cloudtail's decoy is visual and is not a separately targetable combat unit. Balance suggestions are hypotheses pending a stable batch of complete matches.
+
+## User Request: Cooldown-Aware, Higher-Quality Teamfights
+
+**User:** "Solidify teamfight decisions. Players or teams should know if cooldowns are down. World's best should play like world's best."
+
+**Agent:** Added team-specific enemy cooldown memory. A team records Q, W, and R only when an opposing cast is visible to one of its nearby living avatars; Oathmute's global ultimate reveals only its own cooldown. The memory expires at the observed ready time. High-IQ cards use observed downtime to select vulnerable fight targets, reassess enemy burst and Black Hole danger, and bait a spent skill from cover. Unknown cooldowns are treated as a threat rather than read from hidden enemy state. Objective-contest target selection receives the same memory. An allied channel no longer forces a teammate into a fight its survival check expects to lose, and an isolated card no longer stays for one easy last hit while several enemies can punish it. These are tactical choices governed by card IQ and teamfight ratings, with no extra damage or defense granted to elite cards.
+
+**Affected files:** `EsportsClash.Web/src/cooldownKnowledge.ts`, `src/cooldownKnowledge.test.mjs`, `src/combatDecision.ts`, `src/fightSurvivalRules.ts`, `src/blackHoleCounterplay.ts`, `src/blackHoleCounterplay.test.mjs`, `src/components/AramMatchView.tsx`, and `docs/arena-mechanics.md`.
+
+**Verification:** `npm run check:game` passed design validation, TypeScript, and all 153 tests; `npm run build` passed. Tests cover witnessed and unseen casts, global ultimate knowledge, high versus lower IQ retreat, cooldown-based target selection, Black Hole readiness, and refusing a baited finish.
+
+**Limit:** Cooldown memory estimates readiness from a witnessed cast and the observed cooldown value. It does not account for hidden cooldown resets or cooldown reduction granted after a cast until another visible cast occurs. A complete live match batch is still needed to tune engage rates and fight outcomes.
+
+## User Request: Shorter Respawns and Readable Hook Grabs
+
+**User:** "Decrease death timers I think its too long. Hook champs should indicate or have noticeable grabs instead of teleporting the hooked avatar in front of the hooker avatar. Do you have any recommendations?"
+
+**Agent:** Replaced the old level and match-time death formula, which could reach 75 seconds, with a short-arena curve: roughly 8 seconds at level 3, 13 seconds at level 10 near 4:00, 20 seconds at level 15 near 8:00, and at most 28 seconds late. Both ordinary and fountain deaths use the same function. Mirehook, Voltgrip, and Wraithhook now fire a visible hooked head with an animated chain. When it lands, the target displays a grab cue and moves along the chain over multiple simulation ticks until stopping 43px from the caster. The chain and target ring remain visible during the drag. The grab interrupts recall, and the pull is cleared on death or if the caster dies.
+
+**Affected files:** `EsportsClash.Web/src/combatPacingRules.ts`, `src/combatPacingRules.test.mjs`, `src/types.ts`, `src/components/AramMatchView.tsx`, and `docs/arena-mechanics.md`.
+
+**Verification:** `npm run check:game` passed design validation, TypeScript, and 155 tests; `npm run build` passed. Focused tests cover timer checkpoints and multi-tick pull travel. A live desktop Vs AI match with Rotisserie and Hooklyn showed the new hook chain rendering in a crowded fight at 3:28; [the captured frame](hook-live-review.png) records that view.
+
+**Limit:** The captured frame shows an outgoing chain, while continuous victim travel is covered by the deterministic rule test; a frame-by-frame live pull capture was not made. Shorter death timers can reduce the time available to convert a kill into structure damage; track that conversion in seeded matches before changing structure health or wave strength.
+
+## User Request: Raised Bases, Siege Decisions, and Midgame Colossus
+
+**User:** Asked for high ground from each third turret to its well, more space between barracks and Nexus, smarter push/recall/jungle priorities after a won fight, a claimed Colossus that keeps its height and arrives with the next wave, a four-minute neutral Colossus spawn, rocky routes beside both epic pits, fog on high ground, and brush immediately before each ramp.
+
+**Agent:** Moved each third turret outward and each barracks farther from its Nexus, while preserving the well-to-Nexus gap. Drew mirrored raised base platforms, ramp steps, retaining edges, animated ground mist, and rocky clusters between the jungle camps and epic pits. Added four flank bushes before the raised entrances; these use the existing brush vision and ward rules. The one-time Gravemarch Colossus awakens at 4:00, its claim queues one full-size reinforcement for the next 22-second creep wave, and it never respawns. The team now remembers its latest champion kill: healthy survivors with a numbers advantage and a reachable enemy structure keep a short siege call, delaying shopping recall, jungle farming, and new epic starts. Lower-IQ cards use a shorter, more cautious window; unsafe or losing fights still permit retreat.
+
+**Affected files:** `EsportsClash.Web/src/arenaRules.ts`, `src/arenaRules.test.mjs`, `src/macroFarmRules.ts`, `src/macroFarmRules.test.mjs`, `src/siegeGolemRules.ts`, `src/siegeGolemRules.test.mjs`, `src/components/AramMatchView.tsx`, `scripts/validate-design.js`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Geometry, brush coverage, won-fight siege conditions, and the one-time 4:00 awakening have focused regression tests. `npm run check:game` passed design validation, all 157 tests, and TypeScript compilation; `npm run build` passed.
+
+**Limit:** High-ground fog is ambient visual mist; the four new entrance bushes supply actual concealment through the existing vision system. The next-wave reward is wired into the existing 22-second wave timer; it has not yet been reviewed in a frame-by-frame live match. The rocky clusters gained collision in the follow-up below.
+
+## User Request: Solid Ridges, Distinct Barracks, and Six-Target Nexus
+
+**User:** Clarified that the rocky terrain must be raised and impassable, asked for separate Melee, Ranged, and Catapult barracks models, and requested a larger Nexus that fires true damage at six targets at once for five consecutive shots.
+
+**Agent:** Promoted the twelve rocky outcrops to shared world-space terrain footprints. Champions, lane minions, summoned units, and aggroed neutral camps are projected around them after movement, including short dashes and forced movement. Units approaching each three-rock ridge follow the lane-side passage and can reach either epic pit. The canvas now draws the same footprints as raised cliff faces. Replaced the generic barracks icon boxes with a melee forge and crossed blades, a ranged watchtower and drawn bow, and a catapult siege yard. Enlarged the Nexus and gave it six orbiting emitters. Each of its five rapid pulses launches one true-damage projectile at each of up to six distinct in-range enemies, prioritizing a dive aggressor and then champions; the existing reload follows the fifth pulse. Ordinary turret damage behavior is preserved.
+
+**Affected files:** `EsportsClash.Web/src/arenaRules.ts`, `src/arenaRules.test.mjs`, `src/components/AramMatchView.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Focused tests cover six distinct Nexus targets, five-pulse cadence, solid terrain, and routes in both directions around all four ridges. `npm run check:game` passed design validation, all 159 tests, and TypeScript; `npm run build` passed.
+
+**Limit:** Rocks block units but do not yet absorb spell projectiles. Long teleports can land beyond a ridge, while short movement and dashes collide with it. Live visual review of the new barracks and Nexus models remains open.
+
+## User Follow-Up: Circular Camp Rocks, Timed Boss Spawns, and High-Ground Chokepoints
+
+**User:** Showed a reference of a rocky objective pit and asked for one circular rock path around every jungle camp. Embermaw should first appear at midgame, the Colossus at two minutes. Then asked to extend the rocky enclosure to both high-ground ramps so the central stair before the third turret becomes a chokepoint.
+
+**Agent:** Replaced the earlier separated three-rock ridges with nearly circular, raised, solid stone rings around eight ordinary camps and both boss pits. Each ring opens toward the lane. Moved the two upper buff camps outward to prevent their rings overlapping the neighboring camps. Framed both high-ground ramps with paired rock rows, keeping a clear central stair. Farming AI now follows the stair and camp opening, including from inside either base. The Colossus now awakens once at 2:00; Embermaw starts absent and awakens at 4:00. The dead-pit label distinguishes the dragon's first awakening from later respawns. The prior distinct barracks and Nexus volley remain in place.
+
+**Affected files:** `EsportsClash.Web/src/arenaRules.ts`, `src/arenaRules.test.mjs`, `src/siegeGolemRules.ts`, `src/siegeGolemRules.test.mjs`, `src/components/AramMatchView.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Tests cover a clear lane-facing opening for every ring, nearby lane approaches, rock collision, both central stairs, farming routes from both bases, and the 2:00/4:00 spawn constants. The full game check passed 162 tests, design validation, and TypeScript; the production build passed. A live desktop replay showed the rings, ramp rocks, barracks models, and enlarged Nexus.
+
+**Limit:** Rocks block units but not spell projectiles. Farming has a defined route through gates; other pursuits still use local collision instead of a full terrain pathfinder.
+
+## User Request: Natural Geological Rock Formations and Cove Embankments
+
+**User:** "can you make the rocks a bit more natural? It looks like we forced it there."
+
+**Agent:** Replaced the rigid, identical M-shaped two-spiked crown polygons with authentic procedural 3D geological formations across the entire map:
+1. **Continuous Bedrock Embankments:** Rendered curved cliff foundations connecting the rocks of all 10 camp rings (`CAMP_ROCK_RINGS`) and continuous bedrock shelves connecting the 4 highground ramp walls. The rocks now form cohesive cliff coves nestled naturally into the jungle terrain rather than detached circular teeth.
+2. **Procedural 3D Organic Boulders:** Implemented a deterministic coordinate hash (`rockHash`) to proceduralize boulder dimensions, aspect ratios, organic 8-point chiseled silhouettes, and subtle orientation angles. Camp boulders now align tangentially along the curvature of each camp cove, naturally embracing the clearing perimeter.
+3. **Multi-Faceted Chiseled Shading:** Each boulder now features layered 3D volume lighting with directional arena sunlight: diffuse contact ground occlusion shadow, dark under-facet crevice shadow, midtone body with smooth directional gradient, sunlit upper-left crest facet, crisp chiseled ridge highlights, and hairline geological fracture fissures.
+4. **Authentic Biome Theming:**
+   - **Embermaw Dragon Pit:** Volcanic obsidian and charred basalt boulders with glowing molten magma veins (`#fed7aa` / `rgba(249, 115, 22, 0.85)`), amber ember rim reflections, and no out-of-place vegetation.
+   - **Gravemarch Siege Golem Pit:** Ancient monolithic runic slate with deep teal/sea-green lichen (`#0d9488`, `#2dd4bf`).
+   - **Jungle Camps:** Weathered river granite with lush velvet emerald moss patches (`#047857`, `#10b981`) and subtle scree pebbles at the base.
+   - **Highground Base Ramps:** Structured fortified masonry bedrock ledges framing the lane stairs.
+5. **Polished Riverbank Stones:** Refined `drawRock` with smooth river-pebble contours, soft directional light, and natural moss fringes.
+6. **Zero Physics / Collision Impact:** Preserved all 132 `ROCK_TERRAIN` positions and radii in `arenaRules.ts`, maintaining 100% collision integrity for unit movement, dash checks, and pathing.
+
+**Affected files:** `EsportsClash.Web/src/components/AramMatchView.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** `npm run check:game` passed all 162 unit tests, design validation, and TypeScript; `npm run build` compiled client bundle cleanly in under 1 second.

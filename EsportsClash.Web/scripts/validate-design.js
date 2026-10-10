@@ -15,7 +15,7 @@ const arenaRulesContent = fs.readFileSync(arenaRulesPath, 'utf8');
 if (arenaRulesContent.includes('bush_mid_north') || arenaRulesContent.includes('bush_mid_south')) {
   errors.push('CRITICAL: Mid bushes (bush_mid_north / bush_mid_south) must remain removed!');
 } else {
-  console.log('✅ Bush Layout: 5 strategic bushes verified (Mid bushes absent)');
+  console.log('✅ Bush Layout: river, pit, valley, and highground flank bushes verified (Mid bushes absent)');
 }
 
 // 2. Check Confetti (must be 0 confetti across game)

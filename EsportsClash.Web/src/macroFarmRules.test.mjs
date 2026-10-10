@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chooseKnownJungleCamp, neutralAttackRange, shouldFocusExposedNexus } from './macroFarmRules.ts';
+import { chooseKnownJungleCamp, neutralAttackRange, shouldFocusExposedNexus, shouldPressWonFight } from './macroFarmRules.ts';
 
 const camps = [
   { id: 'home', type: 'blue_buff', x: 530, y: 150, homeX: 485, homeY: 145, isAlive: true },
@@ -35,4 +35,17 @@ test('an exposed low-health nexus becomes a finish objective, informed by card a
   assert.equal(shouldFocusExposedNexus(nexus, true, 30, 4), false);
   assert.equal(shouldFocusExposedNexus(nexus, false, 90, 12), false);
   assert.equal(shouldFocusExposedNexus({ ...nexus, isAlive: false }, true, 90, 12), false);
+});
+
+test('a won fight sends healthy survivors to structures before shopping or farming', () => {
+  const opportunity = { secondsSinceTeamKill: 6, aliveAllies: 4, aliveEnemies: 1,
+    healthFraction: 0.62, nearestStructureDistance: 450, iq: 86, coachMacro: 15, losingFight: false };
+  assert.equal(shouldPressWonFight(opportunity), true);
+  assert.equal(shouldPressWonFight({ ...opportunity, aliveEnemies: 4 }), false);
+  assert.equal(shouldPressWonFight({ ...opportunity, healthFraction: 0.2 }), false);
+  assert.equal(shouldPressWonFight({ ...opportunity, losingFight: true }), false);
+  assert.equal(shouldPressWonFight({ ...opportunity, nearestStructureDistance: 950 }), false);
+  assert.equal(shouldPressWonFight({ ...opportunity, secondsSinceTeamKill: 19 }), false);
+  assert.equal(shouldPressWonFight({ ...opportunity, iq: 45, coachMacro: 5,
+    healthFraction: 0.42 }), false);
 });
