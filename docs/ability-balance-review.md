@@ -1,6 +1,6 @@
 # Ability balance review
 
-This is a static review of all 43 current avatar kits in `src/mockData.ts` and `src/additionalChampions.ts`, their cast branches in `src/components/AramMatchView.tsx`, and AI choices in `src/combatDecision.ts`. It records proposed tuning, not changes already made. The game's ability-rank multiplier, armor, items, target count, and the match clock make displayed base damage an incomplete measure of power. Compare equal-card seeded drafts before changing numbers.
+This is a static review of all 45 current avatar kits in `src/mockData.ts` and `src/additionalChampions.ts`, their cast branches in `src/components/AramMatchView.tsx`, and AI choices in `src/combatDecision.ts`. It records proposed tuning, not changes already made. The game's ability-rank multiplier, armor, items, target count, and the match clock make displayed base damage an incomplete measure of power. Compare equal-card seeded drafts before changing numbers.
 
 ## Rules to measure first
 
@@ -57,6 +57,8 @@ This is a static review of all 43 current avatar kits in `src/mockData.ts` and `
 | Oathmute | W and global R interrupt channels. Measure casts denied and channel interrupts; lower silence duration if one cast routinely shuts down a whole teamfight. |
 | Cloudtail | W creates a brief visual decoy and stealth, R spins close to enemies. Track R hits per cast and whether the decoy changes target decisions; improve decoy behavior before raising damage. |
 | Stonebranch | Q line stun, W canopy leap, and stationary R court reward location choice. Track time enemies remain in the court; favor a clearer escape route over a damage nerf. |
+| Stepstone | Bellbreak Kick deals rank-scaled single-target damage and sends an enemy toward nearby allies. Measure how often the displacement benefits an allied follow-up, its effect on target deaths, and whether arena-edge clamps produce awkward landings. |
+| Skybreaker | The aerial artillery carry attacks safely from extended range. Track salvos landed per fight and deaths caught during barrage setup before tuning the physical burst. |
 
 ## Measurement plan
 

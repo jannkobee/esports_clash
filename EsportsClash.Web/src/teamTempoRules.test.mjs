@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { laneAdvanceLimit, shouldFollowUpControl, shouldPushWithWave, shouldSeekHealthRelic, wouldOverstep } from './teamTempoRules.ts';
+import { laneAdvanceLimit, shouldCoordinateObjectiveRecall, shouldFollowUpControl, shouldPushWithWave, shouldSeekHealthRelic, shouldStageForObjective, wouldOverstep } from './teamTempoRules.ts';
 
 test('a low-health ranged ally follows a five-target Black Hole when threats are controlled', () => {
   const engage = { healthFraction: 0.18, caughtEnemies: 5, freeThreats: 0, nearbyAllies: 3,
@@ -41,4 +41,32 @@ test('wave tempo pushes a healthy advantage and holds without a wave', () => {
     structureX: 1200, structureRange: 230, exposedNexus: false, objectiveFight: false }), 1458);
   assert.equal(wouldOverstep('blue', 720, 685), true);
   assert.equal(wouldOverstep('red', 1430, 1458), true);
+});
+
+test('objective reset coordinates safe recalls only 45 to 60 seconds before spawn', () => {
+  const reset = { secondsUntilObjective: 52, livingAllies: 5, safeRecallers: 3,
+    activeThreat: false, activePush: false };
+  assert.equal(shouldCoordinateObjectiveRecall(reset), true);
+  assert.equal(shouldCoordinateObjectiveRecall({ ...reset, secondsUntilObjective: 45 }), true);
+  assert.equal(shouldCoordinateObjectiveRecall({ ...reset, secondsUntilObjective: 60 }), true);
+  assert.equal(shouldCoordinateObjectiveRecall({ ...reset, secondsUntilObjective: 44 }), false);
+  assert.equal(shouldCoordinateObjectiveRecall({ ...reset, secondsUntilObjective: 61 }), false);
+  assert.equal(shouldCoordinateObjectiveRecall({ ...reset, livingAllies: 2 }), false);
+  assert.equal(shouldCoordinateObjectiveRecall({ ...reset, safeRecallers: 2 }), false);
+  assert.equal(shouldCoordinateObjectiveRecall({ ...reset, activeThreat: true }), false);
+  assert.equal(shouldCoordinateObjectiveRecall({ ...reset, activePush: true }), false);
+});
+
+test('objective staging requires a healthy avatar, lane priority, and no active fight', () => {
+  const stage = { secondsUntilObjective: 20, healthFraction: 0.72,
+    lanePriority: true, nearbyEnemies: 0, activeFight: false };
+  assert.equal(shouldStageForObjective(stage), true);
+  assert.equal(shouldStageForObjective({ ...stage, secondsUntilObjective: 0 }), true);
+  assert.equal(shouldStageForObjective({ ...stage, secondsUntilObjective: 25 }), true);
+  assert.equal(shouldStageForObjective({ ...stage, secondsUntilObjective: 26 }), false);
+  assert.equal(shouldStageForObjective({ ...stage, healthFraction: 0.4 }), false);
+  assert.equal(shouldStageForObjective({ ...stage, lanePriority: false }), false);
+  assert.equal(shouldStageForObjective({ ...stage, nearbyEnemies: 1 }), false);
+  assert.equal(shouldStageForObjective({ ...stage, nearbyEnemies: 2 }), false);
+  assert.equal(shouldStageForObjective({ ...stage, activeFight: true }), false);
 });

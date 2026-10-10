@@ -152,7 +152,7 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
       break;
     case 'Veyara': case 'Cinderlock': case 'Cinderbloom': case 'Solenne': case 'Croakwell': case 'Soulscourge': case 'Stonewake':
     case 'Mirehook': case 'Nullweaver': case 'Voltgrip': case 'Aetherbolt': case 'Corsara': case 'Brewmaw': case 'Wraithhook':
-    case 'Faelith': case 'Oathmute': case 'Cloudtail': case 'Stonebranch':
+    case 'Faelith': case 'Oathmute': case 'Cloudtail': case 'Stonebranch': case 'Stepstone': case 'Skybreaker':
       drawNewChampionSprite(ctx, championName, animState, animTime);
       break;
     case 'Kaelen': case 'c_kaelen':
@@ -1972,6 +1972,7 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
     Wraithhook: ['#155e58', '#5eead4'],
     Faelith: ['#7e22ce', '#bef264'], Oathmute: ['#312e81', '#ddd6fe'],
     Cloudtail: ['#6b21a8', '#fbbf24'], Stonebranch: ['#854d0e', '#86efac'],
+    Stepstone: ['#166534', '#facc15'], Skybreaker: ['#1d4ed8', '#f97316'],
   };
   const [body, glow] = colors[name] || ['#7c2d12', '#fb923c'];
   const casting = animState === 'cast' || animState === 'attack';
@@ -2044,6 +2045,19 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
     ctx.beginPath(); ctx.moveTo(-10, -44); ctx.lineTo(-19, -53); ctx.lineTo(-5, -47);
     ctx.moveTo(10, -44); ctx.lineTo(19, -53); ctx.lineTo(5, -47); ctx.stroke();
     if (name === 'Stonebranch') { ctx.fillStyle = '#86efac'; ctx.beginPath(); ctx.arc(-20, -52, 6, 0, Math.PI * 2); ctx.fill(); }
+  } else if (name === 'Stepstone') {
+    ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(-12, -42); ctx.lineTo(0, -49); ctx.lineTo(12, -42); ctx.stroke();
+    ctx.fillRect(-25, -19, 14, 8);
+    ctx.fillRect(11, -19, 14, 8);
+    ctx.beginPath(); ctx.arc(0, -17, 18 + pulse, -0.65, 0.65); ctx.stroke();
+  } else if (name === 'Skybreaker') {
+    ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(-25, -49); ctx.lineTo(25, -49); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-25, -53); ctx.lineTo(25, -53); ctx.stroke();
+    ctx.fillRect(12, -22, 26, 7);
+    ctx.fillRect(-28, -13, 9, 7);
+    ctx.fillRect(-32, -55, 14, 3);
   } else {
     ctx.lineWidth = 7;
     ctx.beginPath(); ctx.moveTo(13, -21); ctx.lineTo(25, -49); ctx.stroke();
@@ -2089,6 +2103,16 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
         ctx.lineTo(i * 15 + Math.sin(phase + i) * 4, 11);
         ctx.lineTo(i * 20, 16); ctx.stroke();
       }
+    } else if (name === 'Stepstone') {
+      ctx.strokeStyle = '#fef08a';
+      ctx.beginPath(); ctx.arc(0, -19, 28 + Math.sin(phase) * 4, phase, phase + Math.PI * 1.4); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-22, -18); ctx.lineTo(22, -18); ctx.stroke();
+    } else if (name === 'Skybreaker') {
+      ctx.strokeStyle = '#bfdbfe';
+      ctx.beginPath(); ctx.moveTo(-29, -51); ctx.lineTo(29, -51); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(25, -17); ctx.lineTo(46 + Math.sin(phase) * 6, -24); ctx.stroke();
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath(); ctx.arc(40 + Math.sin(phase) * 6, -24, 4, 0, Math.PI * 2); ctx.fill();
     } else {
       ctx.strokeStyle = glow;
       ctx.beginPath(); ctx.arc(0, -22, 24 + Math.sin(phase) * 3, 0, Math.PI * 2); ctx.stroke();

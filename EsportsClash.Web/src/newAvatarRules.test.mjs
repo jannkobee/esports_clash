@@ -15,14 +15,21 @@ const fighter = (name, id, x, hp = 900, iq = 90) => ({
   player: { stats: { iq, tf: 85, clu: 85, lan: 85, flx: 85 } },
 });
 
-test('four new fictional avatars have distinct source themes, kits, and tactical roles', () => {
-  const additions = ADDITIONAL_CHAMPIONS.slice(-4);
-  assert.deepEqual(additions.map(champion => champion.name), ['Faelith', 'Oathmute', 'Cloudtail', 'Stonebranch']);
-  assert.equal(new Set(additions.map(champion => champion.basis)).size, 4);
+test('six original avatars have distinct themes, complete kits, and tactical roles', () => {
+  const additions = ADDITIONAL_CHAMPIONS.slice(-6);
+  assert.deepEqual(additions.map(champion => champion.name),
+    ['Faelith', 'Oathmute', 'Cloudtail', 'Stonebranch', 'Stepstone', 'Skybreaker']);
+  assert.equal(new Set(additions.map(champion => champion.basis)).size, 6);
   assert.ok(additions.every(champion => champion.name !== champion.basis));
   assert.equal(kit('Cloudtail').primaryRole, 'Fighter');
   assert.equal(kit('Stonebranch').primaryRole, 'Fighter');
   assert.equal(kit('Oathmute').skill2.damageType, 'Magic');
+  assert.equal(kit('Stepstone').primaryRole, 'Fighter');
+  assert.equal(kit('Stepstone').ultimate.name, 'Bellbreak Kick');
+  assert.match(kit('Stepstone').ultimate.desc, /toward nearby allies/);
+  assert.equal(kit('Skybreaker').primaryRole, 'Marksman');
+  assert.ok(kit('Stepstone').displayName);
+  assert.ok(kit('Skybreaker').displayName);
 });
 
 test('compact Singularity Well has a reachable cast but a smaller danger area', () => {

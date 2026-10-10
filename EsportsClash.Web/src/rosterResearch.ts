@@ -25,7 +25,7 @@ export const RESEARCHED_PLAYERS: readonly Inspiration[] = [
   ['Ruler', 'Protractor', 'LoL', 'Marksman', 95, 93],
   ['Zeus', 'Z3us', 'LoL', 'Fighter', 93, 90],
   ['Viper', 'Vyper', 'LoL', 'Marksman', 94, 91],
-  ['Caedrel', 'Cardrel', 'LoL', 'Support', 88, 97],
+  ['Caedrel', 'Cardrel', 'LoL', 'Fighter', 90, 97],
   ['Tyler1', 'BigTonka', 'LoL', 'Fighter', 86, 78],
   ['Yatoro', 'Totoro', 'Dota2', 'Marksman', 96, 92],
   ['Collapse', 'Collapz', 'Dota2', 'Tank', 94, 93],
@@ -64,7 +64,7 @@ export const RESEARCHED_PLAYERS: readonly Inspiration[] = [
 const signatureByRole: Record<AvatarRole, string[]> = {
   Tank: ['Solana', 'Kaolin', 'Stonewake'], Mage: ['Kyumi', 'Raijin', 'Soulscourge'],
   Marksman: ['Astra', 'Cora', 'Solenne'], Support: ['Renn', 'Zal', 'Croakwell'],
-  Fighter: ['Valkira', 'Buck', 'Stonewake'], Assassin: ['Kage', 'Veyara', 'Inai', 'Cinderbloom'],
+  Fighter: ['Stepstone', 'Valkira', 'Buck', 'Stonewake'], Assassin: ['Kage', 'Veyara', 'Inai', 'Cinderbloom'],
 };
 
 export function createResearchedCards(existing: PlayerCard[]): PlayerCard[] {

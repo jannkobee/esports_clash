@@ -47,6 +47,8 @@ const KITS: Record<string, readonly [string, string, string]> = {
   Oathmute: ['sci-laserRetro_000', 'rpg-cloth1', 'sci-spaceEngineLow_000'],
   Cloudtail: ['impact-impactWood_heavy_000', 'rpg-cloth1', 'impact-impactPunch_heavy_000'],
   Stonebranch: ['impact-impactMining_000', 'rpg-creak1', 'impact-impactWood_heavy_000'],
+  Stepstone: ['impact-impactPunch_medium_000', 'rpg-metalClick', 'impact-impactPunch_heavy_000'],
+  Skybreaker: ['sci-thrusterFire_000', 'sci-laserRetro_000', 'sci-explosionCrunch_000'],
 };
 
 export const AVATAR_SOUND_ASSETS = [...new Set(Object.values(KITS).flat())];

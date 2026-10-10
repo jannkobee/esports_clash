@@ -1064,6 +1064,56 @@ export const ChampionArtwork: React.FC<ChampionArtworkProps> = ({ championId, si
         </svg>
       );
 
+    case 'c_stepstone':
+      return (
+        <svg width={size} height={size} viewBox="0 0 200 200" className={className}>
+          <defs>
+            <radialGradient id="stepstoneGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#fde68a" stopOpacity="0.85" />
+              <stop offset="72%" stopColor="#22c55e" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#052e16" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="90" fill="url(#stepstoneGlow)" />
+          <circle cx="100" cy="100" r="82" fill="#052e16" stroke="#4ade80" strokeWidth="3" />
+          <path d="M45 126 Q55 82 78 87 L100 99 L122 87 Q145 82 155 126 L141 154 L59 154 Z" fill="#166534" stroke="#86efac" strokeWidth="3" />
+          <circle cx="100" cy="67" r="25" fill="#d6a47a" />
+          <path d="M75 64 Q79 35 100 39 Q122 38 126 63 L113 57 L88 57 Z" fill="#1f2937" stroke="#facc15" strokeWidth="3" />
+          <path d="M79 60 Q100 70 121 60" fill="none" stroke="#facc15" strokeWidth="5" />
+          <circle cx="91" cy="68" r="3" fill="#111827" />
+          <circle cx="109" cy="68" r="3" fill="#111827" />
+          <path d="M79 106 L58 119 L49 106 L65 95 Z M121 106 L142 119 L151 106 L135 95 Z" fill="#facc15" stroke="#fef3c7" strokeWidth="2" />
+          <path d="M83 132 L100 120 L117 132 L100 145 Z" fill="#14532d" stroke="#fef08a" strokeWidth="2" />
+        </svg>
+      );
+
+    case 'c_skybreaker':
+      return (
+        <svg width={size} height={size} viewBox="0 0 200 200" className={className}>
+          <defs>
+            <radialGradient id="skybreakerGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#bfdbfe" stopOpacity="0.9" />
+              <stop offset="72%" stopColor="#2563eb" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#172554" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="90" fill="url(#skybreakerGlow)" />
+          <circle cx="100" cy="100" r="82" fill="#172554" stroke="#60a5fa" strokeWidth="3" />
+          <path d="M49 126 Q58 83 78 87 L100 101 L122 87 Q143 83 152 126 L139 153 L61 153 Z" fill="#1e40af" stroke="#93c5fd" strokeWidth="3" />
+          <circle cx="100" cy="70" r="24" fill="#e2b38d" />
+          <path d="M76 69 Q78 42 100 42 Q123 42 124 70 L113 60 L87 60 Z" fill="#334155" stroke="#f97316" strokeWidth="3" />
+          <path d="M84 72 Q100 79 116 72" fill="none" stroke="#0f172a" strokeWidth="5" />
+          <circle cx="91" cy="68" r="3" fill="#0f172a" />
+          <circle cx="109" cy="68" r="3" fill="#0f172a" />
+          <path d="M42 48 L158 48 M57 37 L143 59" stroke="#bfdbfe" strokeWidth="5" strokeLinecap="round" />
+          <circle cx="100" cy="48" r="8" fill="#f97316" stroke="#fed7aa" strokeWidth="2" />
+          <path d="M122 110 L166 101 L169 112 L126 123 Z" fill="#475569" stroke="#fb923c" strokeWidth="3" />
+          <circle cx="161" cy="108" r="6" fill="#fb923c" />
+          <circle cx="69" cy="126" r="7" fill="#f97316" />
+          <circle cx="131" cy="126" r="7" fill="#f97316" />
+        </svg>
+      );
+
     // DEFAULT FALLBACK (Elite Esports Crest)
     default:
       return (

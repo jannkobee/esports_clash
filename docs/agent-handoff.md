@@ -904,3 +904,39 @@ Investigated root causes and found three critical bugs:
 **Verification:** Added support role unit test in `src/macroFarmRules.test.mjs`. Adjusted `entryY` test distance in `src/arenaRules.test.mjs` to `ring.radius + 28`. `npm run check:game` passed all 167 unit tests, design validation, and TypeScript; `npm run build` compiled clean production bundle.
 
 **Limit:** Support tethering tethers to the nearest living allied carry within 550px when no primary teamfight target is in engagement range; long-distance rotations continue using standard lane and objective rules.
+
+## User Request: Synchronized Team Tempo and Objective Setup
+
+**User:** Strengthen team tempo around coordinated recalls, wave management, and objective preparation 45–60 seconds before spawn, while keeping Player Cards active on the map and able to group rather than idle in mid.
+
+**Agent:** Added a testable team reset policy in `src/teamTempoRules.ts`. A reset is called only during the 45–60-second pre-spawn window when at least three living allies independently need HP/mana or a shop purchase and can recall using the existing distance, minion, structure, bush, and cooldown checks. Nearby enemy pressure, recent champion damage, tower aggro, and the actor's current push suppress the call. The call persists as teammates start channels so their staggered update order does not cancel coordination. Unsafe or ineligible teammates remain under ordinary lane, combat, and retreat decisions. Healthy teammates can move to grouped staging positions beside the next objective during its final 25 seconds only after their wave is pushed and lane priority is held; active fights, nearby enemies, and recent won-fight pushes retain priority. Existing ward placement and objective-start/contest rules remain in force.
+
+**Affected files:** `EsportsClash.Web/src/teamTempoRules.ts`, `src/teamTempoRules.test.mjs`, `src/components/AramMatchView.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** Added tests for the recall timing boundaries, required safe-recaller count, active threats/pushes, and the staging health/wave/fight gates. `npm run check:game` passed design validation, TypeScript, and all 169 tests; `npm run build` passed with the existing large-bundle advisory; `git diff --check` passed.
+
+**Limit:** The reset asks only safe, resource-needing teammates to recall; it does not force a full five-person recall when the other members are healthy or exposed. Gravemarch uses only its actual one-time awakening timer; Dragon uses its actual spawn/respawn timer.
+
+## User Request: Cardrel Role and New Avatar Additions
+
+**User:** Asked to add Lee Sin and Grycopter as Avatars and make Cardrel a Diamond Fighter because he mains Lee Sin.
+
+**Agent:** Updated Cardrel's standard researched card to Fighter / preferred Fighter at 90 OVR, which assigns the Diamond tier. Added Stepstone, an original mobile martial-vanguard Fighter, and Skybreaker, an original rotorcraft-artillery Marksman. Both have full kits, distinct display aliases, combat roles, animation motifs, recorded skill cues, custom sprite styling, original roster artwork, and lore. Cardrel's Fighter signature list now includes Stepstone first. Equalized mode gives Cardrel Fighter role while preserving its GOAT normalization for all cards.
+
+**Affected files:** `EsportsClash.Web/src/additionalChampions.ts`, `src/rosterResearch.ts`, `src/equalizedMode.ts`, `src/equalizedMode.test.mjs`, `src/reserveFilters.test.mjs`, `src/newAvatarRules.test.mjs`, `src/avatarSkillAnimation.ts`, `src/avatarSkillAnimation.test.mjs`, `src/avatarSkillAudio.ts`, `src/avatarSkillAudio.test.mjs`, `src/avatarCombos.ts`, `src/rosterDraftItems.test.mjs`, `src/skillshotCombos.test.mjs`, `src/components/ChampionSpriteRenderer.ts`, `src/components/ChampionArtwork.tsx`, `src/championLore.ts`, `docs/arena-mechanics.md`, `docs/ability-balance-review.md`, and this handoff.
+
+**Verification:** `npm run check:game` passed design validation, all game tests, and TypeScript checking. `npm run build` succeeded with the existing large-bundle advisory. `git diff --check` passed.
+
+**Limit:** Lee Sin and Gyrocopter are specific copyrighted characters, so no direct adaptations or character-specific names, abilities, or lore were added. The new avatars use only broad martial-arts and rotorcraft-artillery archetypes, with original identities and kits.
+
+## User Request: Kickswitch Displacement Kick
+
+**User:** Asked whether Kickswitch had an Insec combo/kick, then requested a kick inspired by the broad tactical effect. Confirmed the ultimate slot for the new ability.
+
+**Agent:** Replaced Stepstone's Bellbreak Form with Bellbreak Kick, an original single-target ultimate that deals rank-scaled damage, briefly lifts the target, and displaces them toward nearby living allies. With no nearby allies, it aims toward Kickswitch. Its destination is clamped to arena bounds. Updated the Stepstone combo label and gave its ultimate a focused martial animation effect.
+
+**Affected files:** `EsportsClash.Web/src/additionalChampions.ts`, `src/avatarCombos.ts`, `src/kickswitchAbilities.ts`, `src/kickswitchAbilities.test.mjs`, `src/components/AramMatchView.tsx`, `src/avatarSkillAnimation.ts`, `src/newAvatarRules.test.mjs`, `docs/arena-mechanics.md`, `docs/ability-balance-review.md`, and this handoff.
+
+**Verification:** The focused kick/avatar/combo tests passed (9 tests). `npm run check:game` passed design validation, all 171 game tests, and TypeScript checking. `npm run build` succeeded with the existing large-bundle advisory; `git diff --check` passed.
+
+**Limit:** This implements only the broad team-directed displacement gameplay function with original naming and presentation; it does not reproduce a named character's exact ability or choreography.

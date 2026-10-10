@@ -1,5 +1,5 @@
 // src/championLore.ts
-// Lore dossiers for all 30 playable avatars in Esports Clash
+// Lore dossiers for all playable avatars in Esports Clash
 
 export const CHAMPION_LORE: Record<string, string> = {
   // 1. Solana (Leona basis)
@@ -121,7 +121,9 @@ export const CHAMPION_LORE: Record<string, string> = {
   c_lulu: 'Faelith, a sprite from the Briar Court, guides a moth familiar through battle. Her bright thorns and protective blooms turn a chaotic charge into a safe escape.',
   c_silencer: 'Oathmute records the last words of ruined kingdoms. With a stroke of quiet ink, he can close a single mouth or still an entire battlefield for a moment.',
   c_wukong_lol: 'Cloudtail is the younger of two wandering staff brothers. He loves feints, mist doubles, and whirling through the front line before his opponents can read him.',
-  c_monkeyking_dota: 'Stonebranch is Cloudtail’s older brother and his fiercest rival. He bounds through the canopy and plants a court of staff echoes wherever he chooses to stand.'
+  c_monkeyking_dota: 'Stonebranch is Cloudtail’s older brother and his fiercest rival. He bounds through the canopy and plants a court of staff echoes wherever he chooses to stand.',
+  c_stepstone: 'Raised in the quiet courtyards of the Verdant March, Stepstone learned to measure a fight by breath, balance, and the ground beneath his feet. His layered stone guards absorb the first rush, then a precise counterstep sends a bell-bright shock through anyone crowding his allies.',
+  c_skybreaker: 'Skybreaker charts storm lanes above the Cloudline Reach in a hand-built rotorcraft of blue steel and orange enamel. Pilot Propella turns careful aerial spacing into pressure, stitching the battlefield with compact salvos before calling a sweeping barrage to scatter entrenched ranks.'
 };
 
 export function getChampionLore(championId: string): string {

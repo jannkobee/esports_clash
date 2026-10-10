@@ -39,6 +39,12 @@ test('Cardrel is preserved as parody alias in Blue roster per AGENTS.md invarian
   const cardrel = blueRoster.find(p => p.name === 'Cardrel');
   assert.ok(cardrel, 'Cardrel must be present in the equalized roster');
   assert.equal(cardrel.realName, 'Caedrel');
+  assert.equal(cardrel.role, 'Fighter');
+  const baseCardrel = INITIAL_PLAYERS.find(p => p.name === 'Cardrel');
+  assert.equal(baseCardrel?.tier, 'Diamond');
+  assert.equal(baseCardrel?.role, 'Fighter');
+  assert.equal(baseCardrel?.preferredRole, 'Fighter');
+  assert.equal(baseCardrel?.signatureChampions[0], 'Stepstone');
 });
 
 test('Equalized players produce identical max combat power (1.05) across all avatars and roles', () => {
@@ -91,6 +97,7 @@ test('getEqualizedPlayerPool returns all 63 cards equalized to 100 OVR GOAT tier
   const cardrel = pool.find(c => c.name === 'Cardrel');
   assert.ok(cardrel, 'Cardrel must be in the equalized draft pool');
   assert.equal(cardrel.realName, 'Caedrel');
+  assert.equal(cardrel.role, 'Fighter');
 });
 
 test('PLAYER_DRAFT_TURNS has exactly 10 snake draft turns, 5 for Blue and 5 for Red', () => {

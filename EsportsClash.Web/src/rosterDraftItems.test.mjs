@@ -64,6 +64,6 @@ test('research pool has 50 distinct inspirations and all requested avatars', () 
     'Veyara', 'Cinderbloom', 'Solenne', 'Croakwell', 'Soulscourge', 'Stonewake',
     'Mirehook', 'Nullweaver', 'Voltgrip', 'Aetherbolt', 'Corsara', 'Brewmaw', 'Wraithhook',
     'Kaelen', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback', 'Aetheris',
-    'Faelith', 'Oathmute', 'Cloudtail', 'Stonebranch'
+    'Faelith', 'Oathmute', 'Cloudtail', 'Stonebranch', 'Stepstone', 'Skybreaker'
   ]);
 });

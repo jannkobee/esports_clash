@@ -54,6 +54,31 @@ export function shouldPushWithWave(input: {
     || (macroRead >= 52 && alliedWaveCount >= enemyWaveCount + 2);
 }
 
+export function shouldCoordinateObjectiveRecall(input: {
+  secondsUntilObjective: number;
+  livingAllies: number;
+  safeRecallers: number;
+  activeThreat: boolean;
+  activePush: boolean;
+}): boolean {
+  const { secondsUntilObjective, livingAllies, safeRecallers, activeThreat, activePush } = input;
+  return secondsUntilObjective >= 45 && secondsUntilObjective <= 60
+    && livingAllies >= 3 && safeRecallers >= 3
+    && !activeThreat && !activePush;
+}
+
+export function shouldStageForObjective(input: {
+  secondsUntilObjective: number;
+  healthFraction: number;
+  lanePriority: boolean;
+  nearbyEnemies: number;
+  activeFight: boolean;
+}): boolean {
+  const { secondsUntilObjective, healthFraction, lanePriority, nearbyEnemies, activeFight } = input;
+  return secondsUntilObjective >= 0 && secondsUntilObjective <= 25
+    && healthFraction >= 0.5 && lanePriority && nearbyEnemies === 0 && !activeFight;
+}
+
 export function laneAdvanceLimit(input: {
   team: 'blue' | 'red'; waveFrontX?: number; waveCount: number;
   structureX?: number; structureRange?: number;

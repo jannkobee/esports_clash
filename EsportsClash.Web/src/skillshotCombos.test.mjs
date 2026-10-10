@@ -28,5 +28,5 @@ test('high skill players learn a supported avatar combo while Kaelen uses Conflu
     assert.ok(AVATAR_COMBOS[champion.name]);
   }
   assert.equal(comboPracticeNeeded(player(96, 94, 90, 88), 'Kaelen'), null);
-  assert.equal(Object.keys(AVATAR_COMBOS).length, 42);
+  assert.equal(Object.keys(AVATAR_COMBOS).length, 44);
 });

@@ -171,7 +171,7 @@ export function createEqualizedRoster(side: 'blue' | 'red'): PlayerCard[] {
     { name: 'p1mple', role: 'Assassin', avatarSvg: 's1mple', realName: 's1mple' },
     { name: 'Flaker', role: 'Mage', avatarSvg: 'faker', realName: 'Faker' },
     { name: 'Ouzi', role: 'Marksman', avatarSvg: 'uzi', realName: 'Uzi' },
-    { name: 'Cardrel', role: 'Support', avatarSvg: 'caedrel', realName: 'Caedrel' },
+    { name: 'Cardrel', role: 'Fighter', avatarSvg: 'caedrel', realName: 'Caedrel' },
   ];
 
   const redProfiles = [

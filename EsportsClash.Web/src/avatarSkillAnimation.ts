@@ -8,7 +8,7 @@ export type Motif = 'sun' | 'arrow' | 'orb' | 'shotgun' | 'blades' | 'shadow' | 
   | 'music' | 'souls' | 'quake' | 'hook' | 'gravity' | 'grapple'
   | 'relic' | 'broadside' | 'cask' | 'lantern'
   | 'arsenal' | 'paint' | 'hammer' | 'fist' | 'rocket' | 'faerie' | 'lasso' | 'quill' | 'wisp'
-  | 'bloom' | 'silence' | 'staffspin' | 'canopy';
+  | 'bloom' | 'silence' | 'staffspin' | 'canopy' | 'martial' | 'rotor';
 
 export const AVATAR_ANIMATION_MOTIFS: Record<string, Motif> = {
   Solana: 'sun', Astra: 'arrow', Kyumi: 'orb', Buck: 'shotgun',
@@ -22,6 +22,7 @@ export const AVATAR_ANIMATION_MOTIFS: Record<string, Motif> = {
   Kaelen: 'arsenal', Hweilin: 'paint', Jaxon: 'hammer', Valerie: 'fist',
   Jinxy: 'rocket', Paxi: 'faerie', Batrix: 'lasso', Quillback: 'quill', Aetheris: 'wisp',
   Faelith: 'bloom', Oathmute: 'silence', Cloudtail: 'staffspin', Stonebranch: 'canopy',
+  Stepstone: 'martial', Skybreaker: 'rotor',
 };
 
 export interface AvatarAnimationState {
@@ -248,6 +249,25 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
         strokeLine(px, py, px, py - 14);
         drawFillCircle(px, py - 17, 6, '#86efac');
       }
+      break;
+    case 'martial':
+      drawRing(x, y, radius * (ultimate ? 1.15 : 0.65), angle - 1.2, angle + 1.2);
+      drawBeam(sourceX, sourceY - 15, x, y - 15, ultimate ? 12 : 6, '#fef08a');
+      if (ultimate) drawRing(x, y, radius * 0.72, angle - 0.85, angle + 0.85);
+      for (let i = 0; i < (ultimate ? 6 : 2); i++) {
+        const strikeAngle = angle + (i - (ultimate ? 2.5 : 0.5)) * 0.28;
+        drawSpoke(x, y - 15, strikeAngle, 7, radius * (ultimate ? 1.05 : 0.7));
+      }
+      break;
+    case 'rotor':
+      drawRing(x, y - 10, radius * (ultimate ? 1.2 : 0.7));
+      drawRing(x, y - 10, radius * 0.32);
+      for (let i = 0; i < (ultimate ? 8 : 4); i++) {
+        const rotorAngle = (i * Math.PI * 2) / (ultimate ? 8 : 4) + p * 3;
+        drawBeam(x, y - 10, x + Math.cos(rotorAngle) * radius * 0.9,
+          y - 10 + Math.sin(rotorAngle) * radius * 0.9, ultimate ? 6 : 4, '#bfdbfe');
+      }
+      drawFillCircle(x, y - 10, ultimate ? 12 : 7, '#f97316');
       break;
     // -------------------------------------------------------------
     // 1. SOLANA (Leona) - Solar Vanguard

@@ -53,9 +53,10 @@ import { GOLEM_CHARGE_DAMAGE, GOLEM_SPAWN_SECOND, selectGolemChargeTower, should
 import { chooseKnownJungleCamp, neutralAttackRange, shouldFocusExposedNexus, shouldPressWonFight } from '../macroFarmRules';
 import { BLACK_HOLE_RADIUS, shouldSpreadForBlackHole, threatensBlackHole } from '../blackHoleCounterplay';
 import { shouldRetreatLosingFight } from '../fightSurvivalRules';
-import { laneAdvanceLimit, shouldFollowUpControl, shouldPushWithWave, shouldSeekHealthRelic, wouldOverstep } from '../teamTempoRules';
+import { laneAdvanceLimit, shouldCoordinateObjectiveRecall, shouldFollowUpControl, shouldPushWithWave, shouldSeekHealthRelic, shouldStageForObjective, wouldOverstep } from '../teamTempoRules';
 import { shouldPaxiEscapeJaunt } from '../paxiDecision';
 import { getGroundTargetPoint } from '../groundTargetRules';
+import { getTeamwardKickDestination } from '../kickswitchAbilities';
 import { aetherisUltimateDurationAtRank, findAetherisInnateAlly } from '../aetherisAbilities';
 import {
   appendKaelenInvokedSpell,
@@ -504,6 +505,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const waveCountRef = useRef<number>(0);
   const pendingSiegeGolemRef = useRef<Partial<Record<'blue' | 'red', true>>>({});
   const golemAwakenedRef = useRef(false);
+  const objectiveRecallPlanRef = useRef<Partial<Record<'blue' | 'red', string>>>({});
   const lastTeamKillAtRef = useRef({ blue: -Infinity, red: -Infinity });
   const wardsRef = useRef<{ id: string; team: 'blue' | 'red'; bushId: string; x: number; y: number; expiresAt: number }[]>([]);
   const jungleBuffsRef = useRef<{ blue: { blue: number; red: number }; red: { blue: number; red: number } }>({
@@ -754,6 +756,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     postObjectivePlanRef.current = {};
     pendingSiegeGolemRef.current = {};
     golemAwakenedRef.current = false;
+    objectiveRecallPlanRef.current = {};
     lastTeamKillAtRef.current = { blue: -Infinity, red: -Infinity };
     setChampions(initChamps);
   }, [blueLineup, redLineup]);
@@ -1638,6 +1641,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     minionsRef.current = minions.filter((m) => m.isAlive);
 
+    const upcomingTempoObjective = [
+      ...(!dragon.isAlive && dragon.spawnTimer > 0
+        ? [{ key: `dragon:${dragon.slainCount}`, type: 'dragon' as const, secondsUntil: dragon.spawnTimer }]
+        : []),
+      ...(!golemAwakenedRef.current && matchTimeRef.current < GOLEM_SPAWN_SECOND
+        ? [{ key: 'golem:initial', type: 'golem' as const,
+          secondsUntil: GOLEM_SPAWN_SECOND - matchTimeRef.current }]
+        : [])
+    ].sort((a, b) => a.secondsUntil - b.secondsUntil)[0];
+
     // 12. Champions Micro & Macro Intelligence
     champs.forEach((u, uIdx) => {
       if (!u.isAlive) {
@@ -2332,7 +2345,63 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         nearbyEnemies: localEnemies.length, winningFightWindow: pressWonFight,
       });
       const tempoPush = pressWonFight || wavePushCall;
-      const wantsRecall = !tempoPush && !canFollowUpEngage && !canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isDangerousFight || isLowHpScared || wantsItemPurchase) && !isInsideWell && (u.recallCooldown ?? 0) <= 0;
+      const teamHasActiveThreat = allies.some(ally => {
+        const recentChampionDamage = ally.lastEnemyDamage
+          && matchTimeRef.current - ally.lastEnemyDamage.second <= 3;
+        const nearbyEnemy = champs.some(enemy => enemy.isAlive && enemy.team !== u.team
+          && Math.hypot(enemy.x - ally.x, enemy.y - ally.y) <= 620);
+        const towerAggro = structures.some(structure => structure.isAlive && structure.team !== u.team
+          && (structure.targetId === ally.id || structure.diveAggressorId === ally.id));
+        return !!recentChampionDamage || nearbyEnemy || towerAggro;
+      });
+      const objectiveResetCandidates = upcomingTempoObjective
+        ? allies.filter(ally => {
+          const allyInWell = ally.team === 'blue'
+            ? ally.x <= WELL_X.blue + 105 && Math.abs(ally.y - LANE_Y) <= 105
+            : ally.x >= WELL_X.red - 105 && Math.abs(ally.y - LANE_Y) <= 105;
+          if (ally.isRecalling || allyInWell) return false;
+          const allyEnemies = champs.filter(enemy => enemy.isAlive && enemy.team !== ally.team);
+          const allyEnemyMinions = minions.filter(minion => minion.isAlive && minion.team !== ally.team);
+          const allyEnemyStructures = structures.filter(structure => structure.isAlive && structure.team !== ally.team);
+          const nearestDistance = (targets: { x: number; y: number }[]) => targets.length
+            ? Math.min(...targets.map(target => Math.hypot(target.x - ally.x, target.y - ally.y)))
+            : Infinity;
+          const safe = canUnitRecall(
+            nearestDistance(allyEnemies),
+            nearestDistance(allyEnemyMinions),
+            nearestDistance(allyEnemyStructures),
+            ally.recallCooldown ?? 0,
+            !!getBushAt(ally.x, ally.y)
+          );
+          const lateShop = matchEconomyPhase(matchTimeRef.current) === 'Late game';
+          const hasShopGold = ally.gold >= (lateShop ? 1450 : 1700);
+          const wantsShop = hasShopGold
+            && (ally.hp < ally.maxHp * 0.65 || (ally.gold >= (lateShop ? 1900 : 2400) && ally.player.stats.iq >= 70))
+            && !!getItemPurchasePlan(ally.champion.primaryRole, ally.items, ally.gold, ally.champion.name, ALL_ITEMS);
+          const needsReset = ally.hp < ally.maxHp * 0.82
+            || ally.mana < maxMana(ally) * 0.75 || wantsShop;
+          return safe && needsReset;
+        })
+        : [];
+      const existingRecallPlan = objectiveRecallPlanRef.current[u.team];
+      if (!upcomingTempoObjective || upcomingTempoObjective.secondsUntil < 18
+        || (existingRecallPlan && existingRecallPlan !== upcomingTempoObjective.key)) {
+        objectiveRecallPlanRef.current[u.team] = undefined;
+      }
+      if (upcomingTempoObjective && shouldCoordinateObjectiveRecall({
+        secondsUntilObjective: upcomingTempoObjective.secondsUntil,
+        livingAllies: allies.length,
+        safeRecallers: objectiveResetCandidates.length,
+        activeThreat: teamHasActiveThreat,
+        activePush: tempoPush,
+      })) {
+        objectiveRecallPlanRef.current[u.team] = upcomingTempoObjective.key;
+      }
+      const wantsObjectiveRecall = !!upcomingTempoObjective
+        && upcomingTempoObjective.secondsUntil >= 18
+        && objectiveRecallPlanRef.current[u.team] === upcomingTempoObjective.key
+        && objectiveResetCandidates.some(ally => ally.id === u.id);
+      const wantsRecall = !tempoPush && !canFollowUpEngage && !canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isDangerousFight || isLowHpScared || wantsItemPurchase || wantsObjectiveRecall) && !isInsideWell && (u.recallCooldown ?? 0) <= 0;
 
       const wellTargetX = WELL_X[u.team];
 
@@ -2726,6 +2795,45 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.animState = 'walk';
         } else {
           u.vx = 0; u.vy = 0; u.animState = 'idle';
+        }
+        return;
+      }
+
+      const stagingBoss = upcomingTempoObjective?.type === 'dragon'
+        ? dragon
+        : upcomingTempoObjective?.type === 'golem'
+          ? jungleCamps.find(camp => camp.type === 'siege_golem')
+          : undefined;
+      const stagingEnemies = stagingBoss
+        ? enemies.filter(enemy => Math.hypot(enemy.x - stagingBoss.x, enemy.y - stagingBoss.y) <= 500)
+        : [];
+      const hasLanePriorityForSetup = pushedWave && alliedWave.length >= opposingWave.length;
+      if (upcomingTempoObjective && stagingBoss && !focusNexus && !pressWonFight
+        && !canFollowUpEngage && !isDangerousFight && !isObjectiveFight
+        && shouldStageForObjective({
+          secondsUntilObjective: upcomingTempoObjective.secondsUntil,
+          healthFraction: u.hp / u.maxHp,
+          lanePriority: hasLanePriorityForSetup,
+          nearbyEnemies: stagingEnemies.length,
+          activeFight: localEnemies.length > 0 || u.diveAborting || isTakingTurretFire,
+        })) {
+        const approachX = stagingBoss.x + (u.team === 'blue' ? -215 : 215);
+        const approachY = stagingBoss.y + ((uIdx % 5) - 2) * 48;
+        const approachDistance = Math.hypot(approachX - u.x, approachY - u.y);
+        if (approachDistance > 20) {
+          const angle = Math.atan2(approachY - u.y, approachX - u.x);
+          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed
+            + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
+          u.vx = Math.cos(angle) * speed;
+          u.vy = Math.sin(angle) * speed;
+          u.x += u.vx * dt;
+          u.y += u.vy * dt;
+          u.animState = 'walk';
+          setUnitFacing(u, approachX);
+        } else {
+          u.vx = 0;
+          u.vy = 0;
+          u.animState = 'idle';
         }
         return;
       }
@@ -4905,7 +5013,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const utility = abilityDamageMultiplier(u.level, 'ultimate');
     if (!target) return;
     sound.playAvatarSkill(u.champion.name, 'ultimate');
-    if (!['Nullweaver', 'Corsara', 'Faelith', 'Oathmute', 'Cloudtail', 'Stonebranch'].includes(u.champion.name)) {
+    if (!['Nullweaver', 'Corsara', 'Faelith', 'Oathmute', 'Cloudtail', 'Stonebranch', 'Stepstone'].includes(u.champion.name)) {
       emitSkillEffect(u, ['Astra', 'Soulscourge', 'Stonewake', 'Croakwell', 'Aetheris'].includes(u.champion.name) ? u : target,
         true, u.champion.ultimate.name, 'ultimate');
     }
@@ -5304,6 +5412,22 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       spellsRef.current.push({ id: random().toString(), type: 'branch_court', x: target.x, y: target.y,
         radius: 120, duration: 4.2, maxDuration: 4.2, color: '#86efac', sourceUnitId: u.id,
         avatarName: 'Stonebranch', abilitySlot: 'ultimate' });
+    } else if (u.champion.name === 'Stepstone') {
+      const nearbyAllies = championsRef.current.filter(ally => ally.isAlive && ally.team === u.team
+        && Math.hypot(ally.x - u.x, ally.y - u.y) <= 360);
+      const destination = getTeamwardKickDestination(
+        target,
+        nearbyAllies,
+        u,
+        180,
+        { minX: 60, maxX: ARENA_WIDTH - 60, minY: 90, maxY: 610 }
+      );
+      target.x = destination.x;
+      target.y = destination.y;
+      applyChampionCrowdControl(u, target, 0.45, 'knockup', u.champion.ultimate.name);
+      applyDamageToChampion(u, target, ultDamage, false, u.champion.ultimate.name, 'ultimate');
+      emitSkillEffect(u, target, true, u.champion.ultimate.name, 'ultimate');
+      addEvent(`🔔 BELLBREAK KICK: ${u.player.name} sent ${target.player.name} toward the allied formation!`, 'combo');
     } else if (['Mirehook', 'Voltgrip', 'Aetherbolt', 'Brewmaw', 'Wraithhook', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback'].includes(u.champion.name)) {
       const name = u.champion.name;
       const origin = name === 'Voltgrip' || name === 'Corsara' || name === 'Quillback' || name === 'Aetheris' ? u : target;

@@ -228,5 +228,29 @@ export const ADDITIONAL_CHAMPIONS: ChampionKit[] = [
     skill1: { name: 'Skyroot Strike', desc: 'Slam an extended staff through a short line and stun enemies it crosses.', cooldown: 9, damage: 170, damageType: 'Physical' },
     skill2: { name: 'Canopy Bound', desc: 'Leap through the trees toward an enemy and land with an area strike.', cooldown: 12, damage: 105, damageType: 'Physical' },
     ultimate: { name: 'Court of Branches', desc: 'Summon a stationary circle of staff-wielding echoes that strike enemies entering it.', cooldown: 82, damage: 360, damageType: 'Physical', isUlt: true },
-    primaryColor: '#a16207', accentColor: '#86efac' }
+    primaryColor: '#a16207', accentColor: '#86efac' },
+  {
+    id: 'c_stepstone', name: 'Stepstone', displayName: 'Kickswitch', title: 'The Quiet Bell',
+    basis: 'Original Martial Arts',
+    primaryRole: 'Fighter', secondaryRole: 'Tank', archetype: 'Mobile Martial Vanguard',
+    combatRoles: { Carry: 2, Durable: 2, Disabler: 2, Initiator: 2, Escape: 1 },
+    hp: 1140, ad: 84, armor: 43, mr: 36, aspd: 0.72, range: 1.6,
+    passiveDesc: 'Measured Rhythm: deliberate footwork turns each exchange into a chance to counter.',
+    skill1: { name: 'Quarry Rush', desc: 'Close on a nearby foe with a driving palm strike.', cooldown: 7, damage: 150, damageType: 'Physical' },
+    skill2: { name: 'Crosswind Guard', desc: 'Brace behind a turning guard and strike enemies crowding nearby allies.', cooldown: 10, damage: 115, damageType: 'Physical' },
+    ultimate: { name: 'Bellbreak Kick', desc: 'Deliver a focused turning kick that sends one enemy toward nearby allies, dealing heavy damage and briefly lifting them.', cooldown: 72, damage: 420, damageType: 'Physical', isUlt: true },
+    primaryColor: '#166534', accentColor: '#facc15'
+  },
+  {
+    id: 'c_skybreaker', name: 'Skybreaker', displayName: 'Propella', title: 'The Highwind Gunner',
+    basis: 'Original Rotorcraft',
+    primaryRole: 'Marksman', secondaryRole: 'Mage', archetype: 'Aerial Artillery Carry',
+    combatRoles: { Carry: 3, Nuker: 2, Pusher: 1, Initiator: 1 },
+    hp: 960, ad: 91, armor: 30, mr: 33, aspd: 0.76, range: 5.7,
+    passiveDesc: 'Rotor Rhythm: steady aerial volleys keep pressure on distant opponents.',
+    skill1: { name: 'Scatterflare Salvo', desc: 'Fire a tight cluster of explosive rounds into a nearby enemy formation.', cooldown: 6, damage: 175, damageType: 'Physical' },
+    skill2: { name: 'Tailwind Strafe', desc: 'Sweep the lane with a fast crossfire burst that slows its target.', cooldown: 9, damage: 125, damageType: 'Physical' },
+    ultimate: { name: 'Cloudline Barrage', desc: 'Call a broad artillery strike across the enemy formation.', cooldown: 76, damage: 440, damageType: 'Physical', isUlt: true },
+    primaryColor: '#1d4ed8', accentColor: '#f97316'
+  }
 ];

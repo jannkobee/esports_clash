@@ -6,7 +6,7 @@ import { AVATAR_ANIMATION_MOTIFS } from './avatarSkillAnimation.ts';
 import { AVATAR_SOUND_ASSETS, getAvatarSkillSoundCue } from './avatarSkillAudio.ts';
 
 test('all playable avatars have three distinct recorded skill cues', () => {
-  assert.equal(Object.keys(AVATAR_ANIMATION_MOTIFS).length, 43);
+  assert.equal(Object.keys(AVATAR_ANIMATION_MOTIFS).length, 45);
   for (const avatarName of Object.keys(AVATAR_ANIMATION_MOTIFS)) {
     const cues = ['skill1', 'skill2', 'ultimate'].map(slot => getAvatarSkillSoundCue(avatarName, slot));
     assert.ok(cues.every(Boolean), `${avatarName} has all skill cues`);
