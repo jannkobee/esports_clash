@@ -78,15 +78,24 @@ export function rockApproachWaypoint(
       return { x: gateX, y: flankY };
   }
   const entry = {
-    x: ring.x + Math.cos(ring.entrance) * (ring.radius + 38),
-    y: ring.y + Math.sin(ring.entrance) * (ring.radius + 38),
+    x: ring.x + Math.cos(ring.entrance) * (ring.radius + ring.stoneRadius + 38),
+    y: ring.y + Math.sin(ring.entrance) * (ring.radius + ring.stoneRadius + 38),
   };
   const distanceToCenter = Math.hypot(from.x - ring.x, from.y - ring.y);
   const approachAngle = Math.atan2(from.y - ring.y, from.x - ring.x);
   const openingAngle = Math.atan2(Math.sin(approachAngle - ring.entrance), Math.cos(approachAngle - ring.entrance));
-  // If already inside the camp clearing or in front of the wide flared opening, navigate straight to goal
-  return distanceToCenter < ring.radius - 8
-    || (distanceToCenter <= ring.radius + 70 && Math.abs(openingAngle) < 0.95) ? goal : entry;
+  // If already inside the clearing or in front of the opening, navigate straight to goal.
+  if (distanceToCenter < ring.radius - 8
+    || (distanceToCenter <= ring.radius + 70 && Math.abs(openingAngle) < 0.95)) return goal;
+  if (Math.abs(openingAngle) >= 0.95) {
+    const arcAngle = approachAngle - Math.sign(openingAngle) * Math.min(Math.abs(openingAngle), 0.55);
+    const approachRadius = ring.radius + ring.stoneRadius + 38;
+    return {
+      x: ring.x + Math.cos(arcAngle) * approachRadius,
+      y: ring.y + Math.sin(arcAngle) * approachRadius,
+    };
+  }
+  return entry;
 }
 
 // Sweep movement in small steps so fast dashes cannot cross a ridge. When a
@@ -293,6 +302,4 @@ export function canUnitRecall(
   const isClearAndSafe = nearestEnemyDist > safeEnemyDistance && nearestMinionDist > 270 && nearestStructureDist > 250;
   return isClearAndSafe && recallCooldown <= 0;
 }
-
-
 

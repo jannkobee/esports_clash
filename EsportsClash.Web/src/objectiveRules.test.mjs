@@ -15,6 +15,16 @@ test('objective calls require a pushed wave, vision, teammates and ratings', () 
   assert.equal(shouldStartEpicObjective({ ...good, gameSeconds: 50 }), false);
 });
 
+test('an available objective can start in early midgame with an average coordinated team', () => {
+  const earlyMidgame = { gameSeconds: 120, bossHealthFraction: 1, healthyAllies: 3,
+    nearbyEnemies: 0, lanePriority: true, hasVision: true, averageIq: 60,
+    averageTeamfight: 60, chemistry: 10, coachPlaybook: 8, actorHealthFraction: 0.9 };
+  assert.equal(shouldStartEpicObjective(earlyMidgame), true);
+  assert.equal(shouldStartEpicObjective({ ...earlyMidgame, lanePriority: false }), false);
+  assert.equal(shouldStartEpicObjective({ ...earlyMidgame, healthyAllies: 2 }), false);
+  assert.equal(shouldStartEpicObjective({ ...earlyMidgame, hasVision: false }), false);
+});
+
 test('teams regroup to contest opponent objective when pit is scouted and healthy allies respond', () => {
   const contestSituation = {
     gameSeconds: 200,

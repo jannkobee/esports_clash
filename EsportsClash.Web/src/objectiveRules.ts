@@ -23,7 +23,7 @@ export function shouldStartEpicObjective(s: ObjectiveSituation): boolean {
   const macro = s.averageIq * 0.43 + s.averageTeamfight * 0.29
     + Math.min(99, s.chemistry * 4) * 0.16 + Math.min(99, s.coachPlaybook * 5) * 0.12;
   const finishOpportunity = s.bossHealthFraction < 0.4 && s.nearbyEnemies === 0;
-  return macro >= (finishOpportunity ? 60 : 72);
+  return macro >= (finishOpportunity ? 50 : 54);
 }
 
 export interface ObjectiveContestSituation {

@@ -2869,7 +2869,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           }
         } else {
           u.animState = 'walk';
-          const angle = Math.atan2(dragon.y - u.y, dragon.x - u.x);
+          const waypoint = rockApproachWaypoint(u, dragon);
+          const angle = Math.atan2(waypoint.y - u.y, waypoint.x - u.x);
           u.vx = Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
           u.vy = Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
           u.x += u.vx * dt;
@@ -2918,7 +2919,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           }
         } else {
           u.animState = 'walk';
-          const angle = Math.atan2(golem.y - u.y, golem.x - u.x);
+          const waypoint = rockApproachWaypoint(u, golem);
+          const angle = Math.atan2(waypoint.y - u.y, waypoint.x - u.x);
           u.x += Math.cos(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
           u.y += Math.sin(angle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
         }

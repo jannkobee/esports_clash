@@ -115,9 +115,10 @@ test('units can approach objective pits and jungle camps from nearby lane positi
   }
 });
 
-test('a farmer leaving either base uses the stair and camp opening', () => {
+test('campers and objective teams use the base stair and pit opening', () => {
   for (const [startX, goalX, goalY] of [
     [400, 485, 600], [1600, 1515, 600], [400, 576, 170], [1600, 1424, 170],
+    [400, 1000, 130], [1600, 1000, 130], [400, 1000, 610], [1600, 1000, 610],
   ]) {
     const goal = { x: goalX, y: goalY };
     let walker = { x: startX, y: 380 };
@@ -131,7 +132,7 @@ test('a farmer leaving either base uses the stair and camp opening', () => {
       assert.equal(isInsideRockTerrain(walker.x, walker.y, 13), false);
     }
     assert.ok(Math.hypot(goal.x - walker.x, goal.y - walker.y) < 8,
-      `${startX} should reach camp; stopped at ${walker.x.toFixed(0)},${walker.y.toFixed(0)}`);
+      `${startX} should reach camp or objective; stopped at ${walker.x.toFixed(0)},${walker.y.toFixed(0)}`);
   }
 });
 
@@ -207,4 +208,3 @@ test('canUnitRecall enforces safety distance, minion clearance, bush stealth, an
   assert.equal(canUnitRecall(500, 300, 300, 4.0, false), false);
   assert.equal(canUnitRecall(500, 300, 300, 0.5, true), false);
 });
-

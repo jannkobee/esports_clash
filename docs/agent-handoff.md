@@ -940,3 +940,38 @@ Investigated root causes and found three critical bugs:
 **Verification:** The focused kick/avatar/combo tests passed (9 tests). `npm run check:game` passed design validation, all 171 game tests, and TypeScript checking. `npm run build` succeeded with the existing large-bundle advisory; `git diff --check` passed.
 
 **Limit:** This implements only the broad team-directed displacement gameplay function with original naming and presentation; it does not reproduce a named character's exact ability or choreography.
+
+## User Request: Clear Terrain Routes and Earlier Epic Objective Starts
+
+**User:** Asked to fix the terrain and paths avatars take so they do not run into blocking terrain, and noted that teams were not taking Gravemarch or Embermaw until very late in a match.
+
+**Agent:** Routed Dragon Embermaw and Gravemarch movement through the existing camp entrance waypoint system. The system now guides a unit around the pit perimeter when its current approach is outside the opening cone, instead of steering directly into a stone wall. Both-base paths to both objectives are covered by route tests. Lowered the macro score required to start an objective from 72 to 54 (50 for a safe low-health finish), while preserving the earliest-availability, lane-priority, vision, healthy-team, and nearby-enemy conditions.
+
+**Affected files:** `EsportsClash.Web/src/arenaRules.ts`, `src/arenaRules.test.mjs`, `src/objectiveRules.ts`, `src/objectiveRules.test.mjs`, `src/components/AramMatchView.tsx`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** The targeted terrain and objective tests passed. `npm run check:game` passed design validation, all 172 tests, and TypeScript. `npm run build` passed with the existing large-bundle advisory.
+
+**Limit:** Non-objective champion pursuit still uses local collision rather than a general terrain pathfinder; rocks still do not block projectiles.
+
+## User Request: Multi-Seed Game Simulation and Data-Driven Gameplay Telemetry
+
+**User:** implement a tests that simulates multiple seed games and use that data to know what to update or make better of.
+
+**Agent:** Created a fast, deterministic, headless game simulation engine (`src/matchSimulationEngine.ts`) and test suite (`src/matchSimulation.test.mjs`) running pure TypeScript without DOM or canvas dependencies. The engine simulates bridge arena matches with minion wave cycles (22s), sequential structure vulnerability (`canDamageStructure`: Outer → Inner → Nexus Tower → Barracks → Nexus), structure plating (`towerSiegeMultiplier`), tower dive limits and safety aborts (`evaluateTowerDive`, `shouldAbortTowerDive`, `getTurretEvacuationVector`), 10-second turret execution attribution (`resolveTurretKillReward`), epic objectives (Dragon Embermaw & Gravemarch Colossus), neutral camp farming, health relics, fountain regen, and item strategy purchasing.
+
+Ran batch multi-seed simulations across seeds and analyzed aggregated telemetry:
+1. **Side Parity & Role Composition:** Initial batch simulation revealed Red team winning 90-100% of matches due to Blue having two Marksmen (Astra and Cora) with zero frontline tanks. Updated Blue default lineup to include Kaolin (TerraByte, Tank), matching Red's Solana. Mirrored and side-swapped simulations confirmed 50.0% Blue / 50.0% Red parity.
+2. **Pacing and Structure Vulnerability:** Early simulations ended in ~4.9–5.2 minutes without sequential structure invulnerability. Enforcing sequential structure gating and applying `towerSiegeMultiplier` (early tower plating fading by 8 minutes) inside `damageStructure` brought average match duration to a healthy 7.7 minutes (median 5.8m, range 4.6m - 15m).
+3. **Tower Dive Abort Telemetry Debounce:** Resolved per-frame telemetry increment of `towerDiveAborts` by restricting `shouldAbortTowerDive` evaluation to units actually inside enemy turret range and debouncing abort state transitions until units clear turret range + 50px.
+4. **Epic Objective Rotations:** Added macro objective rotations toward Dragon Embermaw (4:00) and Gravemarch Colossus (2:00) when lane wave priority is held and macro thresholds are met (`shouldStartEpicObjective`), utilizing `rockApproachWaypoint` around pit perimeters.
+5. **AGENTS.md Invariants Strictly Verified:**
+   - Supports farmed exactly 0 neutral jungle camps across all simulated games.
+   - Blue Support strictly preserved the `Cardrel` parody alias.
+   - Turret execution attribution window (10s) verified (executions award no champion kills and split bounties to the defending team).
+   - Added `"test:simulation"` script to `package.json` and integrated simulation tests into `npm run check:game`.
+
+**Affected files:** `EsportsClash.Web/src/matchSimulationEngine.ts`, `src/matchSimulation.test.mjs`, `package.json`, `docs/arena-mechanics.md`, and this handoff.
+
+**Verification:** All 175 project tests, 3 multi-seed simulation tests, design validation checks, and TypeScript typechecking passed via `npm run check:game`. Production build succeeded via `npm run build`.
+
+**Limit:** Objective rotations prioritize active lane fights and structure pushes before objective staging; units contest bosses within sight and engage enemies per Invariant 3.

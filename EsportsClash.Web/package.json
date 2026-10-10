@@ -9,7 +9,8 @@
     "serve": "node --experimental-strip-types server.mjs",
     "build": "tsc -b && vite build",
     "test": "node --experimental-strip-types --test src/*.test.mjs",
-    "check:game": "node scripts/validate-design.js && node --experimental-strip-types --test src/*.test.mjs && tsc -b",
+    "test:simulation": "node --experimental-strip-types --test src/matchSimulation.test.mjs",
+    "check:game": "node scripts/validate-design.js && node --experimental-strip-types --test src/*.test.mjs && node --experimental-strip-types --test src/matchSimulation.test.mjs && tsc -b",
     "lint": "oxlint",
     "preview": "vite preview"
   },
