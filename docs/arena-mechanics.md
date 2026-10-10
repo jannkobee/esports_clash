@@ -240,5 +240,17 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
 - **Unique Status Crest & Visual Links:**
   - The overhead rectangular `'LINKED'` text badge is replaced with a custom circular emerald crest icon at `(u.x, barY - 18)`.
   - The icon features interlocking vine chain rings, an emerald leaf bud accent, and a radial arc that ticks down with remaining link duration.
-  - Active links render dynamic dashed green vine tether lines (`s.type === 'forest_link'`) directly between connected enemy champions on the battlefield.
 - Regression tests in `src/combatDecision.test.mjs` verify AI cast decisions with clustered allies and enemies.
+
+## Equalized 100 OVR Draft Mode (Normal Game · No Rank)
+
+- **Squad Lineup Bypassed & 100 OVR Normalization:**
+  - In Clash Arena, players can launch `Equalized Draft (Normal · 100 OVR)`. In this mode, user squad cards, bench cards, and collection ratings are completely bypassed.
+  - All 10 players on Blue and Red are equalized to 100 Overall GOAT tier athletes with 100 in all stats (`lan`, `tf`, `iq`, `clu`, `sta`, `flx`), all combat roles unlocked (`playableRoles`), and all avatars registered as signatures.
+  - `playerCardCombatPower` yields an identical maximum multiplier of 1.05 for every avatar, creating complete mechanical stat parity.
+  - Both teams are guided by equalized Master Tactician coaches (`EQUALIZED_COACH_BLUE` and `EQUALIZED_COACH_RED`) with identical 10 playbook and 10 chemistry bonuses.
+- **Pure Draft Outcome & Zero Rating Risk:**
+  - Because all 10 players have identical 100 stats, victory is determined purely by drafting strategy, avatar synergies, wombo combos, and in-game tactical execution.
+  - The mode is strictly a Normal Game: Chess Elo rating is never risked or modified. Match wins grant standard normal coin rewards and evolution progress without impacting the Ranked Ladder.
+  - Normal multiplayer rooms (Vs Player) also feature an `Equalize to 100 OVR` toggle to enable casual equalized friendlies between players.
+- Regression tests in `src/equalizedMode.test.mjs` verify 100 OVR generation, Cardrel parody alias preservation, stat parity (1.05 power across avatars), and coach equity.

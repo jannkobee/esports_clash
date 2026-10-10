@@ -702,3 +702,35 @@ Investigated root causes and found three critical bugs:
 **Verification:** `npm run check:game` passed all design checks, TypeScript validation, and 141 tests; `npm run build` succeeded with Vite's existing large-bundle advisory; `git diff --check` passed. Browser review confirmed the roster displays the new aliases in its list and selected-avatar details, and the Player Card signature-avatar line also uses display aliases. Tests verify unique aliases for all avatars, stable internal kit names, Cardrel remaining a Player Card identity, and alias display in match insights.
 
 **Limit:** Internal kit names intentionally remain available to gameplay logic and saved signature data; only user-facing avatar labels use the new aliases.
+
+## User Request: Equalized 100 OVR Draft Mode (Normal Game · No Rank)
+
+**User:**
+"in the Clash Arena, can we add a mode that the Squad Lineup does not matter? All players will be 100 overall and it all comes down with draft but it is only Normal Game and no Rank."
+
+**Implementation:**
+- **Roster & Coach Normalization (`src/equalizedMode.ts`):**
+  - Added `createEqualizedRoster(team: 'blue' | 'red')` generating balanced 100 OVR GOAT tier rosters:
+    - Blue: `TheSpicy` (TOP), `p1mple` (JGL), `Flaker` (MID), `Ouzi` (BOT), `Cardrel` (SUP).
+    - Red: `Zypoo` (TOP), `d4nk` (JGL), `M0cke` (MID), `flopz` (BOT), `SneakBro` (SUP).
+    - Preserves `Cardrel` as the parody alias per `AGENTS.md`.
+    - Every player card has 100 OVR, 100 in all attributes (`lan: 100, tf: 100, iq: 100, clu: 100, sta: 100, flx: 100`), all combat roles unlocked in `playableRoles`, and all avatars in `signatureChampions`.
+    - Produces identical max combat power (1.05) across all avatars and roles.
+  - Added `EQUALIZED_COACH_BLUE` and `EQUALIZED_COACH_RED` (Master Tacticians) with identical 10 playbook and 10 chemistry bonuses.
+- **Arena Mode & Flow Integration (`src/App.tsx`):**
+  - Extended `arenaChoice` to include `'equalized_ai'`.
+  - Added dedicated 3rd mode card in the Clash Arena mode selection grid: `Equalized Draft (Normal · 100 OVR · No Rank)`.
+  - In `DraftPhaseView` and `AramMatchView`: When `arenaChoice === 'equalized_ai'`, passes the equalized rosters, coaches, and team names `Blue All-Stars (100 OVR)` / `Red All-Stars (100 OVR)`.
+  - Added visual banner above the draft board indicating `⚡ EQUALIZED 100 OVR DRAFT MODE · Normal Match · Unranked`.
+  - Added `Equalize to 100 OVR` option in multiplayer Normal room creation (`onlineMatchType === 'normal'`).
+  - Matches played in Equalized mode are strictly unranked (0 Chess Elo rating risk/reward).
+- **Verification (`src/equalizedMode.test.mjs`):**
+  - Unit tests verify 100 OVR stats, Cardrel parody preservation, exact 1.05 combat power parity across all avatars/roles, and coach equity.
+
+**Affected files:** `EsportsClash.Web/src/equalizedMode.ts`, `EsportsClash.Web/src/equalizedMode.test.mjs`, `EsportsClash.Web/src/App.tsx`, `docs/arena-mechanics.md`, and `docs/agent-handoff.md`.
+
+**Verification:**
+- `npm run check:game` passed all 145 tests, design validation, and TypeScript compilation.
+- `npm run build` compiled clean production build.
+
+**Limit:** Mode is an unranked normal game and does not impact ranked ladder Elo ratings.

@@ -34,6 +34,11 @@ import {
   getChessRank, 
   ladderOpponentToProTeam 
 } from './ladderRating';
+import {
+  createEqualizedRoster,
+  EQUALIZED_COACH_BLUE,
+  EQUALIZED_COACH_RED
+} from './equalizedMode';
 import { sound } from './audio';
 import { settlePackPurchase } from './packEconomy';
 import { 
@@ -134,7 +139,7 @@ export function App() {
   const [activeTab, setActiveTab] = useState<'squad' | 'packs' | 'evolutions' | 'arena' | 'ladder' | 'tournament' | 'champions' | 'pro_circuit'>('squad');
   const [selectedOpponentTeam, setSelectedOpponentTeam] = useState<ProTeam | null>(() => PRO_TEAMS_DATABASE[0] ?? null);
   const [inBattle, setInBattle] = useState<boolean>(false);
-  const [arenaChoice, setArenaChoice] = useState<'ai' | 'online' | null>(() =>
+  const [arenaChoice, setArenaChoice] = useState<'ai' | 'equalized_ai' | 'online' | null>(() =>
     sessionStorage.getItem('esports-clash-online-session') ? 'online' : null);
   const [draftSeed, setDraftSeed] = useState(0);
   const rivalCoach = INITIAL_COACHES[draftSeed % INITIAL_COACHES.length];
@@ -233,14 +238,22 @@ export function App() {
   }, [onlineSession]);
 
   const [onlineMatchType, setOnlineMatchType] = useState<'ranked' | 'normal'>('ranked');
+  const [useEqualizedRoster, setUseEqualizedRoster] = useState<boolean>(false);
 
   const beginOnline = async (code?: string, matchType: 'ranked' | 'normal' = onlineMatchType) => {
     setOnlineBusy(true);
     setOnlineError('');
     try {
+      const activeRoster = (matchType === 'normal' && useEqualizedRoster)
+        ? createEqualizedRoster(code ? 'red' : 'blue')
+        : startingFive;
+      const activeCoach = (matchType === 'normal' && useEqualizedRoster)
+        ? (code ? EQUALIZED_COACH_RED : EQUALIZED_COACH_BLUE)
+        : currentCoach;
+
       const joined = code 
-        ? await joinOnlineRoom(code.trim(), startingFive, currentCoach, ladderProfile.rating)
-        : await createOnlineRoom(startingFive, currentCoach, matchType, ladderProfile.rating);
+        ? await joinOnlineRoom(code.trim(), activeRoster, activeCoach, ladderProfile.rating)
+        : await createOnlineRoom(activeRoster, activeCoach, matchType, ladderProfile.rating);
       const effectiveType = joined.room.matchType || matchType;
       const session = { 
         code: joined.room.roomCode!, 
@@ -870,22 +883,61 @@ export function App() {
                     </button>
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <button type="button" onClick={() => { sound.playClick(); setOnlineMatchType('ranked'); setArenaChoice('online'); }} className="bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-950 border border-amber-500/50 hover:border-amber-300 rounded-3xl p-6 text-left shadow-xl transition hover:-translate-y-1 group cursor-pointer">
-                      <div className="flex items-center justify-between mb-3">
-                        <Trophy className="w-8 h-8 text-amber-400" />
-                        <span className="text-xs px-2 py-0.5 rounded bg-amber-400/20 text-amber-300 font-mono font-bold border border-amber-400/30">
-                          {ladderProfile.rating} Rating
-                        </span>
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <button type="button" onClick={() => { sound.playClick(); setOnlineMatchType('ranked'); setArenaChoice('online'); }} className="bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-950 border border-amber-500/50 hover:border-amber-300 rounded-3xl p-6 text-left shadow-xl transition hover:-translate-y-1 group cursor-pointer flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <Trophy className="w-8 h-8 text-amber-400" />
+                          <span className="text-xs px-2 py-0.5 rounded bg-amber-400/20 text-amber-300 font-mono font-bold border border-amber-400/30">
+                            {ladderProfile.rating} Rating
+                          </span>
+                        </div>
+                        <h2 className="text-xl text-white font-black group-hover:text-amber-300 transition-colors">Ranked Ladder</h2>
+                        <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider block mt-0.5">Vs Player · Competitive</span>
+                        <p className="text-slate-400 text-xs mt-2">Multiplayer competitive ladder match. Chess Elo Rating (starting at 300) on the line!</p>
                       </div>
-                      <h2 className="text-xl text-white font-black group-hover:text-amber-300 transition-colors">Ranked Ladder (Vs Player)</h2>
-                      <p className="text-slate-400 text-xs mt-1.5">Multiplayer competitive ladder match. Chess Elo Rating (starting at 300) on the line!</p>
                     </button>
-                    <button type="button" onClick={() => { setDraftSeed(crypto.getRandomValues(new Uint32Array(1))[0]); setArenaChoice('ai'); }} className="bg-slate-900 border border-cyan-600/50 hover:border-cyan-300 rounded-3xl p-6 text-left shadow-xl transition hover:-translate-y-1 cursor-pointer">
-                      <Swords className="w-8 h-8 text-cyan-300 mb-3" /><h2 className="text-xl text-white font-black">Vs AI ({selectedOpponentTeam?.name || 'Pro Team'})</h2><p className="text-slate-400 text-xs mt-1.5">Single-player scrimmage against {selectedOpponentTeam?.name || 'a pro coach'} with synergy AI.</p>
+
+                    <button type="button" onClick={() => { sound.playClick(); setDraftSeed(crypto.getRandomValues(new Uint32Array(1))[0]); setArenaChoice('ai'); }} className="bg-slate-900 border border-cyan-600/50 hover:border-cyan-300 rounded-3xl p-6 text-left shadow-xl transition hover:-translate-y-1 group cursor-pointer flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <Swords className="w-8 h-8 text-cyan-300" />
+                          <span className="text-xs px-2 py-0.5 rounded bg-cyan-400/20 text-cyan-300 font-mono font-bold border border-cyan-400/30">
+                            Squad Match
+                          </span>
+                        </div>
+                        <h2 className="text-xl text-white font-black group-hover:text-cyan-300 transition-colors">Vs AI ({selectedOpponentTeam?.name || 'Pro Team'})</h2>
+                        <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider block mt-0.5">Single-Player Scrimmage</span>
+                        <p className="text-slate-400 text-xs mt-2">Single-player match using your squad lineup against {selectedOpponentTeam?.name || 'a pro coach'} with synergy AI.</p>
+                      </div>
                     </button>
-                    <button type="button" onClick={() => { sound.playClick(); setOnlineMatchType('normal'); setArenaChoice('online'); }} className="bg-slate-900 border border-emerald-600/50 hover:border-emerald-300 rounded-3xl p-6 text-left shadow-xl transition hover:-translate-y-1 cursor-pointer">
-                      <Users className="w-8 h-8 text-emerald-300 mb-3" /><h2 className="text-xl text-white font-black">Normal Match (Vs Player)</h2><p className="text-slate-400 text-xs mt-1.5">Casual multiplayer exhibition. Play friendlies and test squads with zero rating risk.</p>
+
+                    <button type="button" onClick={() => { sound.playClick(); setDraftSeed(crypto.getRandomValues(new Uint32Array(1))[0]); setArenaChoice('equalized_ai'); }} className="bg-gradient-to-br from-purple-950/40 via-slate-900 to-slate-950 border border-purple-500/60 hover:border-purple-300 rounded-3xl p-6 text-left shadow-xl transition hover:-translate-y-1 group cursor-pointer flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <Zap className="w-8 h-8 text-purple-400" />
+                          <span className="text-xs px-2 py-0.5 rounded bg-purple-400/20 text-purple-300 font-mono font-bold border border-purple-400/30">
+                            100 OVR · Normal
+                          </span>
+                        </div>
+                        <h2 className="text-xl text-white font-black group-hover:text-purple-300 transition-colors">Equalized Draft</h2>
+                        <span className="text-[10px] text-purple-400 font-bold uppercase tracking-wider block mt-0.5">Normal Game · No Rank</span>
+                        <p className="text-slate-400 text-xs mt-2">Squad Lineup bypassed! All 10 players are 100 Overall. Pure test of drafting strategy, combos, and counter-picks with zero rank risk.</p>
+                      </div>
+                    </button>
+
+                    <button type="button" onClick={() => { sound.playClick(); setOnlineMatchType('normal'); setArenaChoice('online'); }} className="bg-slate-900 border border-emerald-600/50 hover:border-emerald-300 rounded-3xl p-6 text-left shadow-xl transition hover:-translate-y-1 group cursor-pointer flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <Users className="w-8 h-8 text-emerald-300" />
+                          <span className="text-xs px-2 py-0.5 rounded bg-emerald-400/20 text-emerald-300 font-mono font-bold border border-emerald-400/30">
+                            Unranked
+                          </span>
+                        </div>
+                        <h2 className="text-xl text-white font-black group-hover:text-emerald-300 transition-colors">Normal (Vs Player)</h2>
+                        <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block mt-0.5">Multiplayer Exhibition</span>
+                        <p className="text-slate-400 text-xs mt-2">Casual multiplayer exhibition. Play friendlies and test squads with zero rating risk.</p>
+                      </div>
                     </button>
                   </div>
                 </div>
@@ -957,6 +1009,22 @@ export function App() {
                     </div>
                   ) : (
                     <div className="space-y-4">
+                      {onlineMatchType === 'normal' && (
+                        <label className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 cursor-pointer hover:border-purple-500/50 transition">
+                          <input
+                            type="checkbox"
+                            checked={useEqualizedRoster}
+                            onChange={(e) => setUseEqualizedRoster(e.target.checked)}
+                            className="w-4 h-4 rounded text-purple-500 focus:ring-purple-400"
+                          />
+                          <div className="flex items-center gap-1.5">
+                            <Zap className="w-3.5 h-3.5 text-purple-400" />
+                            <span className="font-bold text-white">Equalize to 100 OVR</span>
+                            <span className="text-[10px] text-purple-300">(Squad lineup bypassed)</span>
+                          </div>
+                        </label>
+                      )}
+
                       <button
                         type="button"
                         disabled={onlineBusy}
@@ -1008,6 +1076,25 @@ export function App() {
                 </div>
               ) : <>
               <button type="button" className="mb-3 text-slate-400 text-xs hover:text-white" onClick={arenaChoice === 'online' ? leaveOnline : () => setArenaChoice(null)}>← Back to modes</button>
+              {arenaChoice === 'equalized_ai' && (
+                <div className="mb-4 bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border border-purple-500/50 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 text-white shadow-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-purple-500/20 border border-purple-400/30 text-purple-300">
+                      <Zap className="w-5 h-5 text-purple-300" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-black text-white">EQUALIZED 100 OVR DRAFT MODE</span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Normal Match · Unranked</span>
+                      </div>
+                      <p className="text-xs text-purple-200/80 mt-0.5">Squad Lineup bypassed. All 10 players on both sides are 100 Overall with all combat roles unlocked. The match is decided purely by drafting strategy, avatar synergies, and arena execution!</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-bold text-amber-300 bg-black/50 px-3 py-1.5 rounded-xl border border-amber-400/20">Zero Rating Risk</span>
+                  </div>
+                </div>
+              )}
               {arenaChoice === 'online' && onlineSession && (
                 <div className="mb-3 flex justify-between items-center text-xs text-slate-300">
                   <div className="flex items-center gap-2">
@@ -1026,12 +1113,12 @@ export function App() {
               )}
               <DraftPhaseView
                 key={arenaChoice === 'online' ? onlineSession?.code : draftSeed}
-                startingFive={startingFive}
+                startingFive={arenaChoice === 'equalized_ai' ? createEqualizedRoster('blue') : startingFive}
                 allChampions={CHAMPIONS}
-                userCoach={currentCoach}
-                opponentCoach={arenaChoice === 'online' ? onlineRoom!.redCoach : (selectedOpponentTeam?.coach ?? rivalCoach)}
-                opponentName={arenaChoice === 'online' ? 'Red team' : (selectedOpponentTeam?.name ?? 'Rival Chibi Squad')}
-                opponentRoster={arenaChoice === 'online' ? onlineRoom!.redRoster : (selectedOpponentTeam?.starters ?? INITIAL_PLAYERS.slice(5, 10))}
+                userCoach={arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_BLUE : currentCoach}
+                opponentCoach={arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_RED : arenaChoice === 'online' ? onlineRoom!.redCoach : (selectedOpponentTeam?.coach ?? rivalCoach)}
+                opponentName={arenaChoice === 'equalized_ai' ? 'Red All-Stars (100 OVR)' : arenaChoice === 'online' ? 'Red team' : (selectedOpponentTeam?.name ?? 'Rival Chibi Squad')}
+                opponentRoster={arenaChoice === 'equalized_ai' ? createEqualizedRoster('red') : arenaChoice === 'online' ? onlineRoom!.redRoster : (selectedOpponentTeam?.starters ?? INITIAL_PLAYERS.slice(5, 10))}
                 draftSeed={arenaChoice === 'online' ? onlineRoom!.seed : draftSeed}
                 online={arenaChoice === 'online' && onlineSession ? { room: onlineRoom!, side: onlineSession.side,
                   onAction: async (championId, slot) => {
@@ -1066,10 +1153,10 @@ export function App() {
                 }}
                 blueLineup={balanceSwapped ? draftedRed : draftedBlue}
                 redLineup={balanceSwapped ? draftedBlue : draftedRed}
-                blueCoach={balanceSwapped ? replayDraft ? replayDraft.redCoach : (selectedOpponentTeam?.coach ?? rivalCoach) : replayDraft?.blueCoach ?? (arenaChoice === 'online' ? onlineRoom?.blueCoach : currentCoach) ?? currentCoach}
-                redCoach={balanceSwapped ? replayDraft?.blueCoach ?? currentCoach : replayDraft ? replayDraft.redCoach : arenaChoice === 'online' ? onlineRoom?.redCoach ?? (selectedOpponentTeam?.coach ?? rivalCoach) : (selectedOpponentTeam?.coach ?? rivalCoach)}
-                blueTeamName={arenaChoice === 'online' && !replayDraft ? 'Blue Player' : balanceSwapped ? (selectedOpponentTeam?.name ?? 'Rival Chibi Squad') : 'T-Chibi Squad'}
-                opponentName={arenaChoice === 'online' && !replayDraft ? 'Red Player' : balanceSwapped ? 'T-Chibi Squad' : (selectedOpponentTeam?.name ?? 'Rival Chibi Squad')}
+                blueCoach={balanceSwapped ? (replayDraft?.redCoach ?? (arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_RED : arenaChoice === 'online' ? onlineRoom?.redCoach ?? (selectedOpponentTeam?.coach ?? rivalCoach) : (selectedOpponentTeam?.coach ?? rivalCoach))) : (replayDraft?.blueCoach ?? (arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_BLUE : arenaChoice === 'online' ? onlineRoom?.blueCoach ?? currentCoach : currentCoach))}
+                redCoach={balanceSwapped ? (replayDraft?.blueCoach ?? (arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_BLUE : arenaChoice === 'online' ? onlineRoom?.blueCoach ?? currentCoach : currentCoach)) : (replayDraft?.redCoach ?? (arenaChoice === 'equalized_ai' ? EQUALIZED_COACH_RED : arenaChoice === 'online' ? onlineRoom?.redCoach ?? (selectedOpponentTeam?.coach ?? rivalCoach) : (selectedOpponentTeam?.coach ?? rivalCoach)))}
+                blueTeamName={arenaChoice === 'equalized_ai' ? (balanceSwapped ? 'Red All-Stars (100 OVR)' : 'Blue All-Stars (100 OVR)') : (arenaChoice === 'online' && !replayDraft ? 'Blue Player' : balanceSwapped ? (selectedOpponentTeam?.name ?? 'Rival Chibi Squad') : 'T-Chibi Squad')}
+                opponentName={arenaChoice === 'equalized_ai' ? (balanceSwapped ? 'Blue All-Stars (100 OVR)' : 'Red All-Stars (100 OVR)') : (arenaChoice === 'online' && !replayDraft ? 'Red Player' : balanceSwapped ? 'T-Chibi Squad' : (selectedOpponentTeam?.name ?? 'Rival Chibi Squad'))}
                 onMatchComplete={balanceRunsLeft > 0 ? () => {
                   setBalanceRunsLeft(left => left - 1);
                   if (balanceRunsLeft > 1) {
