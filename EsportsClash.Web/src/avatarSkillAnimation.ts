@@ -1064,11 +1064,11 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
 
     case 'arsenal':
       drawRing(x, y, radius * (ultimate ? 1.3 : 0.8));
-      drawFillCircle(x, y, ultimate ? 18 : 10, '#f59e0b');
-      // Draw orbiting Pyra (amber flame) and Surge (electric cyan) essence spheres
-      for (let i = 0; i < (ultimate ? 6 : 2); i++) {
-        const a = (i * Math.PI * 2) / (ultimate ? 6 : 2) + p * 4;
-        const color = i % 2 === 0 ? '#f97316' : '#06b6d4';
+      drawFillCircle(x, y, ultimate ? 18 : 10, '#e0f2fe');
+      const elements = ['#7dd3fc', '#a7f3d0', '#fb923c'];
+      for (let i = 0; i < (ultimate ? 9 : 3); i++) {
+        const a = (i * Math.PI * 2) / (ultimate ? 9 : 3) + p * 4;
+        const color = elements[i % elements.length];
         drawFillCircle(x + Math.cos(a) * radius * 0.75, y + Math.sin(a) * radius * 0.75, 6, color);
       }
       if (ultimate) {

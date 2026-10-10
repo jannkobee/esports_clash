@@ -64,16 +64,16 @@ The seven recent avatars and their [official basis references](avatar-animation-
   - Player cards feature `playableRoles: AvatarRole[]`. Unlocking a secondary role via the Evolutions Hub allows the card to pilot champions from multiple classes with full on-role combat scaling (+0.025 on-role power bonus) and full AI draft score incentives (+38 role fit).
   - Card evolutions grant +4 to +7 OVR boosts, attribute progression (LAN, TF, IQ, CLU, STA, FLX), tier promotions (up to GOAT), and custom selectable signature avatars.
   - Active evolutions can be fast-tracked for 250 Clash Coins.
-## Kaelen Spellweave and Combat Micro Decisions
+## Kaelen Conflux and Ground-Target Abilities
 
-- **Kaelen Dual Weave & Spellweave Synthesis:**
-  - Kaelen wields primordial duality: **Pyra** (Flame essence) and **Surge** (Storm essence).
-  - Skill 1 (`Pyra Essence Bolt`, 175 Magic damage) collects Pyra essence. Skill 2 (`Surge Essence Pulse`, 130 Magic damage + haste) collects Surge essence.
-  - Ultimate (`Spellweave Cataclysm`) synthesizes the two most recent essences into an invoked spell:
-    - `Pyra + Pyra` -> `Sunstrike Cataclysm` (540 Magic damage + 1.2s stun)
-    - `Pyra + Surge` -> `Chaos Blast Wave` (460 Magic damage + 1.2s disarm & knockback)
-    - `Surge + Surge` -> `Ghost Shroud EMP` (380 Magic damage + 1.5s root & phase haste)
-  - Real-time rotating elemental orbs orbit Kaelen on canvas matching active essence charges.
+- **Kaelen's element buttons:** Q is `Orb of Ice` (5s cooldown), W is `Orb of Wind` (6s), and E is `Orb of Fire` (7s). These gather one orb each and are not level-gated ultimates.
+- **Conflux (active innate):** Pressing Conflux consumes the current three-orb FIFO, invokes the matching spell, and stores it in D/F. D shows the oldest retained invocation; F shows the newest. Adding a third invoked spell drops D and shifts F into D.
+- Conflux cooldown is 3s at levels 1-6, 2s at 7-12, 1s at 13-17, and 0s at level 18. Invoked spells retain separate cooldowns.
+- The ten unordered three-orb recipes are `QQQ` Glacier Lock (12s), `QQW` Rime Gale (10s), `QQE` Sleetflare (11s), `QWW` Whiteout Step (9s), `QWE` Primal Tempest (14s), `QEE` Emberfrost Lance (8s), `WWW` Skyshatter (13s), `WWE` Ashen Cyclone (15s), `WEE` Sirocco Flare (16s), and `EEE` Solar Pike (17s). Each has a distinct cooldown and effect.
+- `Orb of Fire` occupies the data model's former ultimate slot only for shared kit compatibility; Kaelen has no ultimate, ultimate unlock spike, or level-6 ultimate cooldown.
+- **Ground targeting:** Paxi's Illusory Orb and Raijin's Ball Lightning resolve toward a ground point rather than binding to an enemy unit. Their direction can be computed without a target; Paxi can send her orb toward home, while Raijin's retreating AI may launch Ball Lightning away from the fight. The arena clamps destinations to valid bounds.
+- These abilities do not change the established turret-dive authorization, perimeter tethering, evacuation, or safe-bush rules. Ground targeting permits aim without a target lock; it does not authorize unsafe turret dives.
+- The arena is an auto-battler: its AI selects ground points from target positions or retreat direction. Manual mouse/keyboard ability input is not currently exposed.
 - **Cover-First Retreats & Recall Mechanics:**
   - When retreating at low health or wishing to recall, avatars take cover in a nearby retreat bush (`nearbyRetreatBush`) or retreat toward the fountain well (`wellTargetX`).
   - An arrival deadband (14px) snaps retreating avatars smoothly to their cover position, zeros velocity (`vx = 0, vy = 0`), sets `animState = 'idle'`, and locks facing down-lane, permanently preventing 30Hz left-right direction flip spinning.
@@ -224,7 +224,19 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
     - Suppresses routine auto-attacks and skill casts to avoid stopping inside turret range.
     - Clears abort state once safely outside the turret attack range $+50$px.
 - **Turret-Safe Bush Invariants:**
-  - `isBushSafeFromTowers` strictly filters out bushes located within or adjacent to enemy turret attack ranges (e.g. `bush_red_river` when diving Red outer tower). Units retreating under tower never path into bushes inside turret range and never freeze in `idle` inside turret range.
 - Regression tests in `src/towerDiveLimits.test.mjs` verify all avatar limits, player card factors, failed dive abort triggers, emergency evacuation vectors, and bush safety checks.
 
+## Nature Link (Tequoia Skill 2) Invariants & Status Representation
+
+- **Enemy-Only Targeting:**
+  - Tequoia's Skill 2 (`Nature Link` / `Forest Link`) exclusively targets and links enemy champions (`e.team !== u.team`). Allied champions are never linked and never take shared damage.
+  - AI cast logic in `combatDecision.ts` evaluates enemy clumping ($\ge 2$ hostile champions within 125px or $\ge 1$ in an active teamfight) without requiring friendly count checks, allowing aggressive usage even with melee allies engaging in the center.
+- **Shared Damage Clutter Elimination:**
+  - When linked enemy champions take shared health damage (10% true damage propagated to all other living linked enemies), repetitive floating text labels (`Nature Link -XX` / `Forest Link -XX`) are suppressed in `applyDamageToChampion`.
+  - This eliminates visual screen clutter when 4 or more heroes are linked, keeping the battlefield clean and legible while preserving full health bar depletion and combat logs.
+- **Unique Status Crest & Visual Links:**
+  - The overhead rectangular `'LINKED'` text badge is replaced with a custom circular emerald crest icon at `(u.x, barY - 18)`.
+  - The icon features interlocking vine chain rings, an emerald leaf bud accent, and a radial arc that ticks down with remaining link duration.
+  - Active links render dynamic dashed green vine tether lines (`s.type === 'forest_link'`) directly between connected enemy champions on the battlefield.
+- Regression tests in `src/combatDecision.test.mjs` verify AI cast decisions with clustered allies and enemies.
 

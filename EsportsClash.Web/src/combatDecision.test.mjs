@@ -173,3 +173,20 @@ test('shouldUseUltimate commits follow-up ultimate against enemies caught in all
   assert.equal(shouldUseUltimate(highIqUnit, target, [target], [highIqUnit, corsara]), true);
 });
 
+test('Tequoia casts Nature Link when multiple enemies are clumped without worrying about allied counts', () => {
+  const tequoia = fighter('tequoia', 80, 0, 100, 'Mage');
+  tequoia.champion.name = 'Tequoia';
+  tequoia.champion.skill2 = { name: 'Nature Link', cooldown: 11, damage: 0, damageType: 'Magic' };
+
+  const targetEnemy = fighter('target_enemy', 50, 100, 100);
+  const clumpedEnemy = fighter('clumped_enemy', 50, 140, 100);
+  const alliedMelee = fighter('allied_melee', 80, 110, 100, 'Tank');
+  const alliedCarry = fighter('allied_carry', 80, 115, 100, 'Marksman');
+
+  // Even with 2 allies clustered right next to targetEnemy, Tequoia casts because Nature Link only affects enemies
+  assert.equal(shouldUseSecondSkill(tequoia, targetEnemy, [targetEnemy, clumpedEnemy], [tequoia, alliedMelee, alliedCarry], 180), true);
+
+  // If only 1 enemy is present outside teamfight, Tequoia holds Nature Link
+  assert.equal(shouldUseSecondSkill(tequoia, targetEnemy, [targetEnemy], [tequoia], 180), false);
+});
+

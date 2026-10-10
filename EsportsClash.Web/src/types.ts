@@ -273,8 +273,10 @@ export interface AramChampionUnit {
   animState: 'idle' | 'walk' | 'attack' | 'cast' | 'dead';
   animTimer: number;
   isInBush: boolean;
-  kaelenEssences?: ('pyra' | 'surge')[];
-  invokedSpell?: string;
+  kaelenOrbs?: ('ice' | 'wind' | 'fire')[];
+  kaelenInvokedSlots?: string[];
+  kaelenInvokeCooldown?: number;
+  kaelenSpellCooldowns?: Record<string, number>;
   // Item passives state
   sterakCooldown: number;
   zhonyaActive: boolean;
@@ -334,4 +336,3 @@ export interface HealthRelic {
   respawnTimer: number;
   healAmount: number;
 }
-

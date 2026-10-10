@@ -632,7 +632,7 @@ export const CHAMPIONS: ChampionKit[] = [
     range: 5.8,
     passiveDesc: 'Forest Guardian: Every 4th attack blooms an emerald seed that restores 50 HP and roots minions.',
     skill1: { name: 'Verdant Cage', desc: 'Encircles the target champion in a ring of 8 living oak trees, trapping them inside for 2.8s!', cooldown: 10, damage: 90, damageType: 'Magic' },
-    skill2: { name: 'Forest Link', desc: 'Link every avatar in a zone for 4 seconds. When one takes health damage, each other linked avatar takes 10% of it.', cooldown: 11, damage: 0, damageType: 'Magic' },
+    skill2: { name: 'Nature Link', desc: 'Link enemy champions in a zone for 4 seconds. When one takes health damage, each other linked enemy takes 10% of it as true damage.', cooldown: 11, damage: 0, damageType: 'Magic' },
     ultimate: { name: "Nature's Wrath", desc: 'Releases a bouncing green solar lightning sphere that leaps up to 10 times with escalating damage!', cooldown: 65, damage: 410, damageType: 'Magic', isUlt: true },
     primaryColor: '#22c55e',
     accentColor: '#14532d'

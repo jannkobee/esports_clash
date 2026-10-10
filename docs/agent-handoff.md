@@ -599,4 +599,50 @@ Investigated root causes and found three critical bugs:
 
 **Limit:** Tower dive evaluations use discrete simulation geometry; champions without dashes rely on movement speed and the evacuation sprint bonus to exit turret range before the next shot.
 
+## User Request: Nature Link Enemy-Only Targeting, Floating Damage Status Cleanup & Unique Linked Icon
+
+**User:**
+"can we remove some minus health status for example the Nature Link when 4 or more heroes are linked the screen lits up with Nature Link labels. Nature links can only affect enemies, also changed the 'LINKED' status to a unique icon."
+
+**Implementation:**
+- **Enemy-Only Targeting:**
+  - In `castChampionSkill2` (`AramMatchView.tsx`), Tequoia's Skill 2 targets living enemies only: `championsRef.current.filter(e => e.isAlive && e.team !== u.team && Math.hypot(e.x - target.x, e.y - target.y) <= 125)`.
+  - In `applyDamageToChampion`, shared damage propagation enforces `other.team === target.team` and emits the updated event `🌿 NATURE LINK: [player] linked [N] enemy champions!`.
+  - In `combatDecision.ts`, Tequoia's AI cast evaluation checks `hostile >= 2 || (teamfight && hostile >= 1)` without needing to compare against friendly allies because allies will never be bound.
+- **Floating Status Text Suppression:**
+  - In `applyDamageToChampion` (`AramMatchView.tsx`), `floatsRef.current.push` is suppressed when `sharedDamage === true` or `label === 'Nature Link' || label === 'Forest Link'`.
+  - When multiple enemies are linked and taking damage, floating combat labels no longer flood the screen; actual health reduction and health bars deplete cleanly.
+- **Unique Status Crest & Battlefield Tether Lines:**
+  - Replaced the rectangular text box `ctx.fillText('LINKED', ...)` above champions with a custom vector circular emerald crest at `(u.x, barY - 18)`.
+  - The crest features a dark green backing, glowing emerald border, a radial timer ring displaying remaining link duration (`progress = remaining / 4`), dual interlocking vine loops (`#86efac`), central knot highlight, and a sprouting leaf bud accent (`#22c55e`).
+  - Added battlefield tether rendering (`s.type === 'forest_link'`) drawing dynamic animated dashed green vine lines directly between linked enemies.
+
+**Affected files:** `EsportsClash.Web/src/mockData.ts`, `EsportsClash.Web/src/combatDecision.ts`, `EsportsClash.Web/src/components/AramMatchView.tsx`, `EsportsClash.Web/src/combatDecision.test.mjs`, `docs/arena-mechanics.md`, and `docs/agent-handoff.md`.
+
+**Verification:**
+- `npm run check:game` passed all 127 tests.
+- `npm run build` compiled clean production build.
+
+**Limit:** Nature Link transfers 10% true damage between linked enemies for 4.0 seconds. The radial duration ring scales linearly from 4.0s to 0s.
+
+## User Request: Paxi/Raijin Ground Targeting and Kaelen Elemental Conflux
+
+**User:**
+- Make Paxi's Q and Raijin's ultimate ground-targeted so they can cast without an enemy target and travel toward the selected ground direction for engaging or disengaging.
+- Replace Kaelen's established Pyra/Surge Spellweave kit. He has no ultimate: Q Orb of Ice, W Orb of Wind, E Orb of Fire, an active innate with a distinct name, and D/F invoked-spell slots. Use Ice/Wind/Fire recipes, FIFO, unique cooldowns, and reduce the innate cooldown at levels 1/7/13/18 to 3/2/1/0 seconds.
+
+**Confirmed decision:** The user explicitly approved replacing the previously documented Kaelen kit. The new active innate is **Conflux**.
+
+**Implementation:**
+- **Ground-target rules:** `src/groundTargetRules.ts` calculates an explicit or facing-direction fallback destination, clamps it to cast range, and keeps it inside arena bounds. `src/components/AramMatchView.tsx` uses that for Paxi's Q and Raijin's Ball Lightning; Raijin's retreating AI aims away from combat. Paxi's escape jaunt keeps its 230px travel limit; her ordinary cast range is 700px, and Raijin's ultimate remains 320px.
+- **Kaelen elemental kit:** `src/kaelenAbilities.ts` defines the Ice/Wind/Fire orb FIFO, ten three-orb spells with distinct cooldowns, the D/F invoked-spell FIFO, and Conflux cooldown thresholds. `src/additionalChampions.ts`, `src/types.ts`, `src/components/AramMatchView.tsx`, `src/avatarCombos.ts`, `src/matchInspector.ts`, `src/championLore.ts`, `src/avatarSkillAnimation.ts`, `src/components/ChampionSpriteRenderer.ts`, `src/components/ChampionHubView.tsx`, and `src/components/DraftPhaseView.tsx` now reflect the new kit and its UI/runtime behavior. Orb cooldowns are 5/6/7 seconds for Q/W/E.
+- Kaelen's former `ultimate` data slot is retained only for kit compatibility and now describes E Orb of Fire (`isUlt: false`); generic ultimate progression and the old learned two-skill combo path are disabled for him. Invoked spells use D/F and are tracked separately from ultimate casts.
+- **Safety:** Ground aiming does not bypass turret-dive authorization, perimeter tethering, evacuation, or turret-safe retreat rules.
+- **Tests:** Added `src/groundTargetRules.test.mjs` and `src/kaelenAbilities.test.mjs`, and extended `src/skillRangeAndChainStun.test.mjs` and `src/skillshotCombos.test.mjs`.
+
+**Affected files:** `EsportsClash.Web/src/additionalChampions.ts`, `avatarCombos.ts`, `avatarSkillAnimation.ts`, `championLore.ts`, `components/AramMatchView.tsx`, `components/ChampionHubView.tsx`, `components/ChampionSpriteRenderer.ts`, `components/DraftPhaseView.tsx`, `groundTargetRules.ts`, `groundTargetRules.test.mjs`, `kaelenAbilities.ts`, `kaelenAbilities.test.mjs`, `matchInspector.ts`, `skillRangeAndChainStun.test.mjs`, `skillRangeRules.ts`, `skillshotCombos.test.mjs`, `types.ts`, and both gameplay documents.
+
+**Verification:** From `EsportsClash.Web`, `npm run check:game` passed all 134 tests and TypeScript checks; `npm run build` completed successfully. Vite reports the existing large-chunk advisory (the main JavaScript bundle is over 500 kB).
+
+**Limit:** The arena is an auto-battler and does not expose manual cursor or keyboard ability controls. Ground targets are selected by the simulation (including facing/team direction when no target point is supplied); player-directed manual casting is not added.
 

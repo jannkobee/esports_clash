@@ -1,4 +1,4 @@
-export type CastSlot = 'skill1' | 'skill2' | 'ultimate';
+export type CastSlot = 'skill1' | 'skill2' | 'ultimate' | 'conflux' | 'orbQ' | 'orbW' | 'orbE' | 'invokedD' | 'invokedF';
 export type InsightKind = 'cast' | 'hit' | 'mana' | 'channel' | 'jaunt' | 'decision';
 
 export interface InsightEvent {
@@ -35,7 +35,10 @@ export const createMatchInsights = (): MatchInsights => ({ players: {}, timeline
 function avatar(insights: MatchInsights, actor: InsightActor): AvatarInsight {
   return insights.players[actor.id] ??= {
     id: actor.id, player: actor.player.name, avatar: actor.champion.name, team: actor.team,
-    casts: { skill1: 0, skill2: 0, ultimate: 0 }, skillshotsFired: 0, skillshotsHit: 0,
+    casts: {
+      skill1: 0, skill2: 0, ultimate: 0, conflux: 0,
+      orbQ: 0, orbW: 0, orbE: 0, invokedD: 0, invokedF: 0
+    }, skillshotsFired: 0, skillshotsHit: 0,
     manaBlocks: 0, blackHoleInterrupts: 0, engageJaunts: 0, escapeJaunts: 0
   };
 }
@@ -47,8 +50,19 @@ export function addInsightEvent(insights: MatchInsights, event: InsightEvent): v
 
 export function recordAbilityCast(insights: MatchInsights, actor: InsightActor, slot: CastSlot, second: number): void {
   avatar(insights, actor).casts[slot]++;
+  const label = {
+    skill1: 'Skill 1',
+    skill2: 'Skill 2',
+    ultimate: 'Ultimate',
+    conflux: 'Conflux',
+    orbQ: 'Orb of Ice',
+    orbW: 'Orb of Wind',
+    orbE: 'Orb of Fire',
+    invokedD: 'D invoked spell',
+    invokedF: 'F invoked spell'
+  }[slot];
   addInsightEvent(insights, { second, kind: 'cast', actorId: actor.id,
-    text: `${actor.player.name} (${actor.champion.name}) cast ${slot === 'ultimate' ? 'Ultimate' : slot === 'skill1' ? 'Skill 1' : 'Skill 2'}` });
+    text: `${actor.player.name} (${actor.champion.name}) cast ${label}` });
 }
 
 export function recordSkillshot(insights: MatchInsights, actor: InsightActor, hit: boolean, second: number): void {
@@ -66,8 +80,19 @@ export function recordManaBlock(insights: MatchInsights, actor: InsightActor, sl
   if (last !== undefined && second - last < 5) return;
   (stats.lastManaBlockAt ??= {})[slot] = second;
   stats.manaBlocks++;
+  const label = {
+    skill1: 'Skill 1',
+    skill2: 'Skill 2',
+    ultimate: 'Ultimate',
+    conflux: 'Conflux',
+    orbQ: 'Orb of Ice',
+    orbW: 'Orb of Wind',
+    orbE: 'Orb of Fire',
+    invokedD: 'D invoked spell',
+    invokedF: 'F invoked spell'
+  }[slot];
   addInsightEvent(insights, { second, kind: 'mana', actorId: actor.id,
-    text: `${actor.player.name} lacked ${Math.ceil(needed)} mana for ${slot === 'ultimate' ? 'Ultimate' : slot === 'skill1' ? 'Skill 1' : 'Skill 2'}` });
+    text: `${actor.player.name} lacked ${Math.ceil(needed)} mana for ${label}` });
 }
 
 export function recordBlackHoleInterrupt(insights: MatchInsights, actor: InsightActor, second: number): void {

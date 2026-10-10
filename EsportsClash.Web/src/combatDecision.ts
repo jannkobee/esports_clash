@@ -255,8 +255,7 @@ export function shouldUseSecondSkill(unit: Fighter, target: Fighter, enemies: Fi
   if (['Cinderlock', 'Cinderbloom'].includes(unit.champion.name)) return distance(unit, target) < 230 && (health(unit) < 0.8 || teamfight || unit.cd1 <= 0);
   if (unit.champion.name === 'Tequoia') {
     const hostile = enemies.filter(e => e.isAlive && distance(e, target) < 125).length;
-    const friendly = allies.filter(a => a.isAlive && distance(a, target) < 125).length;
-    return hostile >= 2 && (iq < 55 || hostile > friendly);
+    return hostile >= 2 || (teamfight && hostile >= 1);
   }
   if (utilityCast) return threatened || allyNeedsHelp || teamfight;
   const canFinish = unit.champion.skill2.damage >= target.hp && target.hp > unit.champion.ad * 0.8;

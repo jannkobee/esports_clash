@@ -2100,7 +2100,7 @@ function drawNewChampionSprite(ctx: CanvasRenderingContext2D, name: string, anim
 
 // =========================================================================
 // 31. KAELEN (INVOKER): ARSENAL GRAND MAGUS
-// Royal Crimson Robes, High Mantle Collar, Golden Hair, Crown & Spellweave Catalyst
+// Royal Crimson Robes, High Mantle Collar, Golden Hair, Crown & elemental scepter
 // =========================================================================
 function drawChibiKaelen(ctx: CanvasRenderingContext2D, animState: string, animTime: number) {
   const isCasting = animState === 'cast' || animState === 'attack';
@@ -2221,7 +2221,7 @@ function drawChibiKaelen(ctx: CanvasRenderingContext2D, animState: string, animT
   ctx.arc(0, -41, 1.8, 0, Math.PI * 2);
   ctx.fill();
 
-  // Grand Magus Scepter / Spellweave Catalyst
+  // Grand Magus scepter, channeling the Ice/Wind/Fire orbs
   ctx.save();
   ctx.translate(12, -14);
   const castTilt = isCasting ? -0.4 + Math.sin(animTime * 16) * 0.2 : 0.1;
@@ -3265,4 +3265,3 @@ function drawChibiAetheris(ctx: CanvasRenderingContext2D, animState: string, ani
 
   ctx.restore();
 }
-

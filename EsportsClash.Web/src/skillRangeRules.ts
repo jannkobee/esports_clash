@@ -36,6 +36,11 @@ export function getSkillCastRange(champName: string, slot: SkillSlot, attackRang
       if (slot === 'skill1') return 110; // Static Remnant trap mine (close range, 2.4 hexes)
       return 320; // Ball Lightning supersonic zip (7.1 hexes)
 
+    case 'Paxi':
+      if (slot === 'skill1') return 700; // Illusory Orb is ground-aimed and may be sent without a unit target.
+      if (slot === 'skill2') return 90;
+      return 250;
+
     case 'Solana':
       if (slot === 'skill1') return 65; // Solar Shieldbash: Point-blank melee bash (1.4 hexes)
       if (slot === 'skill2') return 190; // Zenith Lance: Linear gap-closing spear (4.2 hexes)

@@ -411,11 +411,16 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
               {/* Ultimate */}
               <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
                 <div className="flex justify-between items-baseline mb-0.5">
-                  <span className="text-rose-400 font-bold text-[11px]">R: {inspected.ultimate.name}</span>
-                  <span className="text-rose-300 text-[10px]">CD: {inspected.ultimate.cooldown}s | {inspected.ultimate.damageType} {inspected.ultimate.damage}</span>
+                  <span className="text-rose-400 font-bold text-[11px]">{inspected.name === 'Kaelen' ? 'E: ' : 'R: '}{inspected.ultimate.name}</span>
+                  <span className="text-rose-300 text-[10px]">CD: {inspected.ultimate.cooldown}s | {inspected.name === 'Kaelen' ? 'Elemental orb · No ultimate' : `${inspected.ultimate.damageType} ${inspected.ultimate.damage}`}</span>
                 </div>
                 <div className="text-slate-300 text-[11px] leading-tight">{inspected.ultimate.desc}</div>
               </div>
+              {inspected.name === 'Kaelen' && (
+                <div className="rounded-lg border border-cyan-500/20 bg-cyan-950/20 p-2 text-[11px] text-cyan-100">
+                  <strong>Active innate: Conflux.</strong> Invoke the last three Ice/Wind/Fire orbs into one of ten spells. Keep the two newest invocations in FIFO order on D/F; the innate cooldown falls from 3s to 0s at levels 1/7/13/18.
+                </div>
+              )}
             </div>
 
             {/* Signature Athlete Synergy Notification */}

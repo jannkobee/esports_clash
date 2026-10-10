@@ -59,6 +59,11 @@ test('HEX_SIZE is 45px and Raijin Electric Vortex is strictly restricted to 2-3 
   assert.equal(getSkillCastRange('Astra', 'ultimate', 180), 550);
 });
 
+test('Paxi Illusory Orb and Raijin Ball Lightning use ground-target travel ranges', () => {
+  assert.equal(getSkillCastRange('Paxi', 'skill1', 165), 700);
+  assert.equal(getSkillCastRange('Raijin', 'ultimate', 165), 320);
+});
+
 test('Raijin cannot cast Electric Vortex when target is at basic attack distance (145px) beyond Vortex range (120px)', () => {
   const raijin = createUnit('Raijin', 80, 80, 15, 0);
   const target = createUnit('Dummy', 50, 50, 10, 145); // 145px away: within 165 attack range, but outside 120 vortex range!

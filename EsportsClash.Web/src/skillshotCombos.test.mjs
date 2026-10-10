@@ -19,10 +19,14 @@ test('better mechanics lead a moving target more accurately and improve dodge od
   assert.ok(dodgeProbability(95, 90, 70) > dodgeProbability(45, 45, 70));
 });
 
-test('high skill players learn an avatar combo while low skill players do not', () => {
+test('high skill players learn a supported avatar combo while Kaelen uses Conflux instead', () => {
   const player = (lan, tf, flx, iq) => ({ stats: { lan, tf, flx, iq }, signatureChampions: ['Veyara'] });
   assert.equal(comboPracticeNeeded(player(96, 94, 90, 88), 'Veyara'), 2);
   assert.equal(comboPracticeNeeded(player(65, 68, 70, 80), 'Veyara'), null);
-  for (const champion of ADDITIONAL_CHAMPIONS) assert.ok(AVATAR_COMBOS[champion.name]);
-  assert.equal(Object.keys(AVATAR_COMBOS).length, 43);
+  for (const champion of ADDITIONAL_CHAMPIONS) {
+    if (champion.name === 'Kaelen') continue;
+    assert.ok(AVATAR_COMBOS[champion.name]);
+  }
+  assert.equal(comboPracticeNeeded(player(96, 94, 90, 88), 'Kaelen'), null);
+  assert.equal(Object.keys(AVATAR_COMBOS).length, 42);
 });
