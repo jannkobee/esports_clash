@@ -461,6 +461,46 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
 - **Interactive Spectator Controls:** A single compact toolbar provides Auto/Free camera mode, fit/action zoom, and `+`/`-` buttons. Canvas supports drag-to-pan, mouse wheel zooming, touch pinch/drag, and `Spacebar` / double-click to re-center. Keyboard shortcuts do not override focused buttons, inputs, or other interactive controls.
 - Simulation coordinates ($[0, 2600] \times [0, 760]$), physics, pathing, and deterministic seed progression are unchanged.
 
+## Three.js presentation boundary (Phase 1 static underlay, 2026-10-11)
+
+- The live Clash Arena uses a layered presentation stack: a Three.js WebGL underlay followed by a transparent Canvas overlay, followed by the existing DOM/React spectator interface.
+- Three currently owns only the flat forest floor, river bed, central causeway, base floor plates, and central plaza. These are represented by one shader material on one plane. Canvas draws their legacy equivalents only when WebGL is unavailable or its context is lost; healthy rendering must not double-paint them.
+- The underlay uses the same orthographic 2600x760 world, camera center, camera clamp, and 1.0-2.5 zoom as Canvas. Canvas Y-down coordinates are deliberately mapped to Three Y-up coordinates. Responsive resizing changes presentation resolution only and never world coordinates.
+- Three is driven from the existing arena RAF and mutable presentation refs. It must not schedule simulation, mutate unit/world state, consume gameplay RNG, perform collision/hit checks, resolve damage, or use animation completion as a combat clock.
+- Renderer lifecycle requirements for this increment are mandatory: arena-only lazy loading, maximum 2x device pixel ratio, `ResizeObserver` sizing, context-loss Canvas fallback, restoration, and complete resource/listener/observer disposal on unmount.
+- Canvas still owns animated river glints and base mist plus all terrain props, actors, structures, creeps, monsters, attacks, abilities, fog, labels, combat text, and minimap. The conventional spectator controls and HUD stay in DOM/React.
+- Protected gameplay invariants are unaffected: tower-dive authorization/abort and +35 evacuation sprint, turret-safe retreats, 10-second turret attribution, champion-first objective contest above the 32% boss threshold, fixed-step determinism, steering deadbands/commitment, and fictional player aliases remain authoritative in simulation code.
+- Verification: `threeArenaTerrain.test.mjs` covers camera parity and disposal; browser smoke checks cover exact layer bounds at five viewports and WebGL loss/restoration; final `npm run check:game` and `npm run build` results are recorded in `agent-handoff.md`.
+
+## Context-sensitive retreat routing (Phase 2, 2026-10-11)
+
+- A retreat is a destination-and-route decision, not an automatic nearby-bush selection. Candidate destinations are homeward lane ground, allied tower cover, healthy teammates moving homeward, safe open ground, fountain, and safe bushes.
+- Candidate safety is a hard gate before card preferences: the point must be passable, reachable by the shared terrain graph, at least 50px beyond every live enemy structure's range, and at least 150px from an enemy (220px for critical-health avatars). A valid safe bush is optional cover, never a safety bypass.
+- IQ and TF affect only the ordering of already safe candidates. IQ values safe homeward progress and close cover under immediate pressure; TF values regrouping at healthy allies and allied towers. They cannot select a bush in turret range, an enemy-adjacent point, an impassable destination, or an unreachable route.
+- The live unit holds a valid retreat plan for approximately 0.65-0.95 seconds to prevent route switching. It may replan immediately for a material safety change: enemy arrival, enemy-tower danger, or impassable terrain. This supplements and does not replace the protected 0.45s retreat/fight decision commitment or 12px facing deadband.
+- Normal retreat movement continues to use `rockApproachWaypoint` and collision-safe terrain movement. The same terrain graph provides a route-length estimate for selection; no independent routing system exists.
+- Failed-dive evacuation and being inside enemy turret range override this planner. `getTurretEvacuationVector` and the protected +35 evacuation sprint remain unchanged; ordinary retreat speed is unchanged and is reserved for Phase 3 audit.
+- Plans are cleared upon resuming normal activity. No unit may intentionally idle at a retreat destination inside enemy turret range.
+
+## Retreat movement speed (Phase 3, 2026-10-11)
+
+- Ordinary live retreat uses the normal terrain-routing base speed of 85 units/s. Retreat state alone grants no movement-speed bonus.
+- Retreat speed is calculated from an explicit additive breakdown: 85 ordinary base, Pathfinder Boots, Kaelen wind-orb movement, active stealth movement, and the nearby Windwalker's Warhorn +20 aura. These are item/ability effects, not retreat bonuses.
+- Failed-dive evacuation and any unit still inside enemy turret range use the established 105 emergency base plus the protected +35 evacuation sprint. The unmodified emergency total remains 140 units/s. Do not remove, reduce, or fold away the +35 component without explicit user confirmation.
+- Paxi orb relocation and Raijin's 540-unit/s Ball Lightning are discrete escape abilities rather than ordinary retreat speed. Their cooldown, mana, targeting, and safety rules remain authoritative.
+- Playback speed changes wall-clock presentation of the whole fixed-step simulation; it must never be read as an actor movement modifier.
+- `movementSpeedRules.ts` owns the live retreat-speed breakdown. The headless engine still has a simplified 95 + 35 tower-evacuation approximation and does not represent live retreat routing or speed balance.
+
+## Basic-attack reach and structure safety (Phase 4, 2026-10-11)
+
+- `basicAttackRangeRules.ts` is the authoritative source for avatar basic-attack weapon reach in both the live and headless simulators. All playable avatars must resolve to a finite 40-205 unit range. Existing authored melee/ranged differences and Skybreaker's fixed 180-unit Propella range remain; card IQ, TF, OVR, and playstyle must never change physical attack range.
+- Structure contact uses explicit target footprints: tower 32, barracks 35, and Nexus 58 units. Effective center-to-center reach is basic weapon range plus that footprint. Because towers and the Nexus retaliate, their basic-attack reach is capped at their own targeting radii: 135 and 190 units respectively. Barracks do not attack and retain edge-aware uncapped reach.
+- The live simulator must revalidate structure existence and range when an attack windup fires. Selection-time range alone cannot authorize a hit after either side moves. The headless simulator uses the same predicate rather than a kit-range approximation.
+- The turret no-wave perimeter remains 28 units beyond the 135-unit tower radius, at 163 units from center. An attacker held there cannot basic-attack the tower. Once within 135 units, existing turret targeting and minion/champion aggro rules remain authoritative.
+- Basic attacks and abilities are separate range systems. `getSkillCastRange` continues to own spells, including legitimate long-range casts; tower safety changes must not globally shorten abilities. No runtime temporary basic-range modifier currently exists. Kindra's described +15% range and Buck's described Smoke Screen range limit remain an explicit Phase 7 ability-consistency gap.
+- Tower-dive authorization is unchanged: class, HP/raw HP, minion buffer, IQ, lethal/execute checks, and outnumbering gates still apply. Abort conditions, attack suppression, evacuation vector, and the protected +35 evacuation sprint remain intact.
+- Verification: the focused Phase 4 suites passed 34/34; full `npm run check:game` passed 253 game tests, 3 multi-seed simulations, design validation, and TypeScript; `npm run build` passed. No live browser balance or frame-time claim was made.
+
 ## Compact One-Screen Spectator Shell
 
 - `AramMatchView.tsx` now occupies the viewport while a live match is mounted, without browser-page scrolling. `spectator.css` allocates a compact score header, unified playback/camera toolbar, announcement/objective rail, flexible undistorted canvas, and bottom broadcast dock. This replaces the previous stacked match panels, not the manager/draft pages. Exiting to Lobby restores the original page overflow state.

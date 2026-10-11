@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { perceiveChampions } from '../decisionPerception';
 import { resolveFightCommitment } from '../decisionCommitment';
+import { beginOrContinueAction, chooseCommittedActionTarget, decisiveActionKey,
+  inspectActionProgress, isActionRetryBlocked, recordActionFailure } from '../decisionActionRecovery';
 import { runSimulationSlice, shouldPublishHud } from '../simulationPresentation';
+import { ARENA_RENDER_HEIGHT, clampArenaCamera } from '../arenaPresentationCamera';
+import type { ThreeArenaTerrain } from '../threeArenaTerrain';
 import { SpectatorRoster } from './SpectatorRoster';
 import './spectator.css';
 import { drawKaelenSpell } from '../kaelenSpellVisuals';
@@ -61,7 +65,7 @@ import { sound } from '../audio';
 import { chooseTeamfightTarget, isChannelingAbility, isEnemyCaughtInAlliedChannel, isUnitVisibleTo, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from '../combatDecision';
 import { createEnemyCooldownMemory, isObservedCooling, observeCooldownRise, type CooldownSnapshot } from '../cooldownKnowledge';
 import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from '../skillRangeRules';
-import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from '../arenaRules';
+import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, rockRouteDistance, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from '../arenaRules';
 import { getMinionCrashMultiplier, getMinionStructureDamage, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
 import { createRatedAvatar } from '../playerCardPower';
 import { campAnimation } from '../campAnimation';
@@ -70,6 +74,9 @@ import { chooseKnownJungleCamp, neutralAttackRange, shouldFocusExposedNexus, sho
   choosePostRecallTeamCamp, shouldStartPostRecallCampObjective, shareJungleCampRewards } from '../macroFarmRules';
 import { BLACK_HOLE_RADIUS, shouldSpreadForBlackHole, threatensBlackHole } from '../blackHoleCounterplay';
 import { shouldRetreatLosingFight } from '../fightSurvivalRules';
+import { chooseRetreatPlan, shouldKeepRetreatPlan } from '../retreatRouting';
+import { retreatSpeedBreakdown } from '../movementSpeedRules';
+import { canBasicAttackStructure, getChampionBasicAttackRange } from '../basicAttackRangeRules';
 import { isInsideRockTerrain } from '../arenaRules';
 import { chooseNearbyFightingAlly, shouldKeepRecallPlan } from '../actionDecisionRules';
 import { INNER_TOWER_X, OUTER_TOWER_X } from '../arenaLayout';
@@ -82,7 +89,7 @@ import { shouldPaxiEscapeJaunt } from '../paxiDecision';
 import { getGroundTargetPoint } from '../groundTargetRules';
 import { getTeamwardKickDestination } from '../kickswitchAbilities';
 import { aetherisUltimateDurationAtRank, findAetherisInnateAlly } from '../aetherisAbilities';
-import { PROPELLA_ATTACK_RANGE, PROPELLA_OVERDRIVE_SECONDS, PROPELLA_ROTOR_STACK_SECONDS, propellaAttackSpeedBonus,
+import { PROPELLA_OVERDRIVE_SECONDS, PROPELLA_ROTOR_STACK_SECONDS, propellaAttackSpeedBonus,
   propellaFlakSplashRatio, propellaGunshipDurationAtRank, propellaRotorStacksAfterAttack } from '../propellaRules';
 import {
   appendKaelenInvokedSpell,
@@ -325,47 +332,6 @@ function getXpThreshold(lvl: number): number {
   return table[lvl] || 99999;
 }
 
-function getChampionAttackRange(champName: string): number {
-  switch (champName) {
-    case 'Skybreaker': return PROPELLA_ATTACK_RANGE;
-    case 'Solenne': return 205;
-    case 'Aetherbolt': return 205;
-    case 'Corsara': return 190;
-    case 'Nullweaver': return 175;
-    case 'Faelith': return 180;
-    case 'Oathmute': return 185;
-    case 'Cloudtail': return 58;
-    case 'Stonebranch': return 62;
-    case 'Wraithhook': return 140;
-    case 'Voltgrip': return 62;
-    case 'Mirehook': return 58;
-    case 'Brewmaw': return 60;
-    case 'Soulscourge': return 180;
-    case 'Cinderbloom':
-    case 'Cinderlock': return 50;
-    case 'Croakwell': return 65;
-    case 'Astra': return 195;
-    case 'Tequoia': return 190;
-    case 'Kindra':
-    case 'Kindra & Grim': return 185;
-    case 'Cora': return 180;
-    case 'Zal': return 170;
-    case 'Raijin': return 165;
-    case 'Kyumi': return 145;
-    case 'Sylla': return 130;
-    case 'Buck': return 95;
-    case 'Renn': return 65;
-    case 'Kazemaru': return 55;
-    case 'Inai': return 55;
-    case 'Kage': return 50;
-    case 'Xin': return 50;
-    case 'Kaolin': return 50;
-    case 'Valkira': return 50;
-    case 'Solana': return 40;
-    default: return 55;
-  }
-}
-
 function getEffectiveAttackSpeed(unit: AramChampionUnit): number {
   const censerBonus = (unit.censerBuffTimer ?? 0) > 0 ? 0.25 : 0;
   const propellaBonus = unit.champion.name === 'Skybreaker'
@@ -440,6 +406,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   onMatchComplete
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const threeTerrainHostRef = useRef<HTMLDivElement>(null);
+  const threeTerrainRef = useRef<ThreeArenaTerrain | null>(null);
+  const threeTerrainAvailableRef = useRef(false);
   const fogCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const matchRootRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -452,6 +421,45 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const oldOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = oldOverflow; };
+  }, []);
+
+  useEffect(() => {
+    const host = threeTerrainHostRef.current;
+    if (!host) return;
+    let unmounted = false;
+    host.dataset.renderer = 'canvas-fallback';
+    void import('../threeArenaTerrain').then(({ ThreeArenaTerrain }) => {
+      if (unmounted) return;
+      try {
+        const terrain = new ThreeArenaTerrain(
+          host,
+          ARENA_WIDTH,
+          ARENA_RENDER_HEIGHT,
+          NEXUS_TOWER_X.blue,
+          NEXUS_TOWER_X.red,
+          available => {
+            threeTerrainAvailableRef.current = available;
+            host.dataset.renderer = available ? 'three' : 'canvas-fallback';
+          },
+        );
+        threeTerrainRef.current = terrain;
+        threeTerrainAvailableRef.current = terrain.isAvailable();
+      } catch {
+        // WebGL is optional for this first migration increment. The Canvas renderer
+        // keeps the same static underlay when renderer creation is unavailable.
+        threeTerrainAvailableRef.current = false;
+        host.dataset.renderer = 'canvas-fallback';
+      }
+    }).catch(() => {
+      threeTerrainAvailableRef.current = false;
+      host.dataset.renderer = 'canvas-fallback';
+    });
+    return () => {
+      unmounted = true;
+      threeTerrainAvailableRef.current = false;
+      threeTerrainRef.current?.dispose();
+      threeTerrainRef.current = null;
+    };
   }, []);
 
   // Camera Zoom & Spectator Tracking
@@ -572,14 +580,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   // In-Game Squad HUD view mode: 'expanded' (tactical overlay) | 'compact' (broadcast strip) | 'docked' (docked in arena) | 'hidden' (minimized)
   const [hudMode, setHudMode] = useState<'docked' | 'hidden'>('docked');
-
-  const clampCameraPosition = (x: number, y: number, currentZoom: number, width: number, height: number) => {
-    const halfW = (width / 2) / currentZoom;
-    const halfH = (height / 2) / currentZoom;
-    const clampedX = Math.max(halfW, Math.min(width - halfW, x));
-    const clampedY = Math.max(halfH, Math.min(height - halfH, y));
-    return { x: clampedX, y: clampedY, halfW, halfH };
-  };
 
   const computeActionCenter = (
     champs: AramChampionUnit[],
@@ -2042,6 +2042,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         u.recallIntent = false;
         u.farmTargetId = undefined;
         u.baseDefenseTargetId = undefined;
+        u.actionIntent = undefined;
+        u.actionFailures = undefined;
         u.respawnTimer = Math.max(0, u.respawnTimer - dt);
         if (u.respawnTimer <= 0) {
           u.isAlive = true;
@@ -2052,6 +2054,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.recallTimer = 0;
           u.x = WELL_X[u.team];
           u.y = getChampionFormationY(u.champion.name, uIdx);
+          u.actionIntent = undefined;
+          u.actionFailures = undefined;
           evaluateAndBuyItems(u);
           addEvent(`💧 ${u.player.name} respawned in home fountain!`, 'fountain');
         }
@@ -2076,6 +2080,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       }
       if (u.isRecalling) {
+        u.actionIntent = undefined;
         const channelers = champs.filter(ally => ally.isAlive && ally.team === u.team
           && ally.id !== u.id && isChannelingAbility(ally));
         const caught = channelers.length > 0 ? champs.filter(enemy => enemy.isAlive
@@ -2088,8 +2093,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           && st.team !== u.team && (st.type.includes('tower') || st.type === 'nexus')
           && Math.hypot(st.x - firstCaught.x, st.y - firstCaught.y) <= st.range);
         const castReach = Math.max(
-          u.cd1 <= 0 && u.mana >= skill1ManaCost(u) ? getSkillCastRange(u.champion.name, 'skill1', getChampionAttackRange(u.champion.name)) : 0,
-          u.cd2 <= 0 && u.mana >= 35 ? getSkillCastRange(u.champion.name, 'skill2', getChampionAttackRange(u.champion.name)) : 0,
+          u.cd1 <= 0 && u.mana >= skill1ManaCost(u) ? getSkillCastRange(u.champion.name, 'skill1', getChampionBasicAttackRange(u.champion)) : 0,
+          u.cd2 <= 0 && u.mana >= 35 ? getSkillCastRange(u.champion.name, 'skill2', getChampionBasicAttackRange(u.champion)) : 0,
         );
         if (shouldFollowUpControl({
           healthFraction: u.hp / u.maxHp, caughtEnemies: caught.length,
@@ -2099,7 +2104,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           nearbyAllies: champs.filter(ally => ally.isAlive && ally.team === u.team
             && ally.id !== u.id && Math.hypot(ally.x - u.x, ally.y - u.y) < 400).length,
           distanceToCatch: firstCaught ? Math.hypot(firstCaught.x - u.x, firstCaught.y - u.y) : Infinity,
-          attackRange: getChampionAttackRange(u.champion.name), readyCastRange: castReach,
+          attackRange: getChampionBasicAttackRange(u.champion), readyCastRange: castReach,
           controlSeconds: firstCaught ? Math.max(0, ...channelers.filter(ally => isEnemyCaughtInAlliedChannel(firstCaught, [ally]))
             .map(ally => ally.blackHole?.remaining ?? ally.corsaraBarrage?.remaining ?? ally.monkeySpin?.remaining ?? 0)) : 0,
           moveSpeed: 85 + (u.boots?.stats.moveSpeed ?? 0),
@@ -2495,6 +2500,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // 1. Actual Charm Walk (Kyumi / Renn)
       if (u.charmTimer > 0) {
+        u.actionIntent = undefined;
         if (u.isRecalling) { u.isRecalling = false; u.recallTimer = 0; u.recallCooldown = 4.0; }
         const caster = champs.find((c) => c.id === u.charmSourceId && c.isAlive)
           || champs.find((c) => c.team !== u.team && c.isAlive && (c.champion.name === 'Kyumi' || c.champion.name === 'Renn'));
@@ -2514,6 +2520,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // 2. Actual Fear Flee (Sylla / Soulscourge)
       if (u.fearTimer && u.fearTimer > 0) {
+        u.actionIntent = undefined;
         if (u.isRecalling) { u.isRecalling = false; u.recallTimer = 0; u.recallCooldown = 4.0; }
         const caster = champs.find((c) => c.id === u.fearSourceId && c.isAlive)
           || champs.find((c) => c.team !== u.team && c.isAlive && (c.champion.name === 'Sylla' || c.champion.name === 'Soulscourge'));
@@ -2531,6 +2538,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // 3. Stun / Knockup Immobilization
       if (u.stunTimer > 0 || (u.knockupTimer && u.knockupTimer > 0)) {
+        u.actionIntent = undefined;
         if (u.isRecalling) {
           u.isRecalling = false;
           u.recallTimer = 0;
@@ -2563,6 +2571,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && !shouldLeaveWellToDefend(wellDefense, {
           healthFraction: u.hp / u.maxHp, manaFraction: u.mana / maxMana(u),
         })) {
+        u.actionIntent = undefined;
         u.animState = 'idle';
         u.vx = 0;
         u.vy = 0;
@@ -2595,6 +2604,35 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && (st.type !== 'nexus' || canDamageNexus(st.team, structures)));
       const enemyMinions = minions.filter((m) => m.team !== u.team && m.isAlive);
       const availableJungleCamps = jungleCamps.filter((c) => c.isAlive && c.type !== 'siege_golem');
+
+      // Resolve the previous concrete action before choosing another one. Point
+      // actions retain their stored destination; entity actions follow live state.
+      if (u.actionIntent) {
+        const pointAction = ['regroup', 'stage', 'push', 'hold'].includes(u.actionIntent.kind);
+        const trackedTarget = pointAction
+          ? { x: u.actionIntent.targetX, y: u.actionIntent.targetY }
+          : [...champs, ...minions, ...structures, ...jungleCamps, ...relics, dragon]
+            .find(target => target.id === u.actionIntent?.targetId);
+        const trackedAvailable = pointAction || !!trackedTarget
+          && (!('isAlive' in trackedTarget) || trackedTarget.isAlive);
+        const shouldAuditRoute = u.actionIntent.mode === 'move' && !!trackedTarget
+          && matchTimeRef.current - u.actionIntent.lastProgressAt >= 0.45;
+        const trackedReachable = !shouldAuditRoute
+          || Number.isFinite(rockRouteDistance(u, trackedTarget!, 13));
+        const progress = inspectActionProgress({
+          intent: u.actionIntent,
+          failures: u.actionFailures,
+          actor: u,
+          target: trackedTarget,
+          now: matchTimeRef.current,
+          emergencyInterrupt: !!u.diveAborting || u.committedState === 'retreat',
+          available: trackedAvailable,
+          safe: !u.diveAborting,
+          reachable: trackedReachable,
+        });
+        u.actionIntent = progress.intent;
+        u.actionFailures = progress.failures;
+      }
 
       // Read the local numbers before committing to a fight.
       const fightingAlly = chooseNearbyFightingAlly(u, allies, enemies, matchTimeRef.current);
@@ -2632,10 +2670,35 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const isLowHpScared = u.hp < u.maxHp * deathFearThreshold || (u.mana < 15 && u.hp < u.maxHp * 0.55);
 
       // AUTHENTIC WEAPON ATTACK RANGES
-      const attackRange = getChampionAttackRange(u.champion.name);
+      const attackRange = getChampionBasicAttackRange(u.champion);
       const isRanged = attackRange >= 90;
       const kiteBackstepThreshold = attackRange * 0.65;
       const threateningMinions = enemyMinions.filter(m => Math.hypot(m.x - u.x, m.y - u.y) <= Math.max(attackRange + 40, 240));
+      const liveAlliedMinionCount = minions.reduce((count, minion) =>
+        count + Number(minion.team === u.team && minion.isAlive), 0);
+      const actionContextFor = (kind: string, target: { x: number; y: number; isAlive?: boolean }) => [
+        kind,
+        target.isAlive === false ? 0 : 1,
+        Math.floor(target.x / 80),
+        Math.floor(target.y / 80),
+        localEnemies.length,
+        localAllies.length,
+        enemyMinions.length,
+        liveAlliedMinionCount,
+        Number(u.cd1 <= 0 && u.mana >= skill1ManaCost(u)),
+        Number(u.cd2 <= 0 && u.mana >= 35),
+        Number(u.level >= 6 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u)),
+      ].join('|');
+      const setActionIntent = (kind: Parameters<typeof beginOrContinueAction>[0]['kind'],
+        target: { id: string; x: number; y: number }, mode: Parameters<typeof beginOrContinueAction>[0]['mode'],
+        contextKey = actionContextFor(kind, target), commitSeconds?: number) => {
+        u.actionIntent = beginOrContinueAction({ intent: u.actionIntent, kind, target, actor: u,
+          contextKey, mode, now: matchTimeRef.current, commitSeconds });
+      };
+      const actionCandidate = <T extends { id: string; x: number; y: number; isAlive?: boolean }>(
+        kind: Parameters<typeof beginOrContinueAction>[0]['kind'], target: T, safe = true,
+      ) => ({ ...target, contextKey: actionContextFor(kind, target),
+        available: target.isAlive !== false, safe, reachable: true });
 
       // Skilled shoppers recall on a safe item spike after the mid game.
       const lateShop = matchEconomyPhase(matchTimeRef.current) === 'Late game';
@@ -2664,12 +2727,22 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const nearestStructureForDive = enemyStructures.sort((a, b) => Math.abs(a.x - u.x) - Math.abs(b.x - u.x))[0];
       const structureDistForDive = nearestStructureForDive ? Math.hypot(nearestStructureForDive.x - u.x, nearestStructureForDive.y - u.y) : 999;
       const alliedMinionsForDive = minions.filter(m => m.team === u.team && m.isAlive);
-      const initialPrimaryTarget = chooseTeamfightTarget(u, enemies, allies, attackRange, {
+      const initiallyPreferredTarget = chooseTeamfightTarget(u, enemies, allies, attackRange, {
         enemyStructures,
         alliedMinions: alliedMinionsForDive,
         cooldownMemory: cooldownMemoryRef.current,
         matchSecond: matchTimeRef.current
       });
+      const initialTargetCandidate = chooseCommittedActionTarget({
+        intent: u.actionIntent,
+        kind: 'champion',
+        preferred: initiallyPreferredTarget ? actionCandidate('champion', initiallyPreferredTarget) : undefined,
+        candidates: enemies.map(enemy => actionCandidate('champion', enemy)),
+        failures: u.actionFailures,
+        now: matchTimeRef.current,
+      });
+      const initialPrimaryTarget = initialTargetCandidate
+        ? enemies.find(enemy => enemy.id === initialTargetCandidate.id) : undefined;
 
       // Update dive timers & cooldowns
       u.diveAbortCooldown = Math.max(0, (u.diveAbortCooldown ?? 0) - dt);
@@ -2705,6 +2778,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         });
         if (abortCheck.shouldAbort && !u.diveAborting) {
           u.diveAborting = true;
+          u.actionIntent = undefined;
           u.diveAbortCooldown = 3.5;
           u.committedState = 'retreat';
           floatsRef.current.push({
@@ -2931,6 +3005,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (recoveryRelic && !isInsideWell && !defenseCall) {
         const distance = Math.hypot(recoveryRelic.x - u.x, recoveryRelic.y - u.y);
         if (distance > 25) {
+          setActionIntent('relic', recoveryRelic, 'move');
           const speed = 95 + (u.boots?.stats.moveSpeed ?? 0);
           u.vx = (recoveryRelic.x - u.x) / distance * speed;
           u.vy = (recoveryRelic.y - u.y) / distance * speed;
@@ -2947,6 +3022,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && u.hp / u.maxHp >= 0.4 && !u.diveAborting && !isInsideEnemyTowerRange
         && threateningMinions.every(m => isBushSafeFromTowers(m, enemyStructures))) {
         const minionToClear = threateningMinions[0];
+        setActionIntent('minion', minionToClear,
+          Math.hypot(minionToClear.x - u.x, minionToClear.y - u.y) <= attackRange + 15 ? 'execute' : 'move');
         setUnitFacing(u, minionToClear.x);
         const mDist = Math.hypot(minionToClear.x - u.x, minionToClear.y - u.y);
         if (mDist <= attackRange + 15) {
@@ -2994,6 +3071,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       if (((isDangerousFight && !defendNow) || wantsRecall) && Math.abs(u.x - wellTargetX) > 40 && !isInsideWell) {
+        u.actionIntent = undefined;
         // Can only channel recall if threats are cleared, distance is established, and recall is not on cooldown!
         if (wantsRecall && canChannelRecall && !u.diveAborting && !isInsideEnemyTowerRange) {
           u.isRecalling = true;
@@ -3016,29 +3094,55 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           return;
         }
 
-        // Otherwise: walk towards safety (duck into nearby bush to take cover or retreat toward fountain well)!
-        const isEnemyBaseRampBush = (b: { id: string }) =>
-          (u.team === 'blue' && (b.id === 'bush_red_high_north' || b.id === 'bush_red_high_south')) ||
-          (u.team === 'red' && (b.id === 'bush_blue_high_north' || b.id === 'bush_blue_high_south'));
-
-        const nearbyRetreatBush = !u.isInBush && !u.diveAborting && !isInsideEnemyTowerRange
-          ? ARAM_BUSHES.find(b => Math.hypot(b.x - u.x, b.y - u.y) < 180
-            && isBushSafeFromTowers(b, enemyStructures)
-            && !isInsideRockTerrain(b.x, b.y, 13)
-            && !isEnemyBaseRampBush(b)
-            && (shouldBaitEnemySkill(u, localEnemies.length)
-              ? localEnemies.every(enemy => Math.hypot(b.x - enemy.x, b.y - enemy.y) > Math.hypot(u.x - enemy.x, u.y - enemy.y))
-              : Math.sign(wellTargetX - u.x) === Math.sign(b.x - u.x)))
-          : undefined;
-
-        let targetX = nearbyRetreatBush ? nearbyRetreatBush.x : wellTargetX;
-        let targetY = nearbyRetreatBush ? nearbyRetreatBush.y : LANE_Y;
+        // Rank safe homeward ground, allied cover, teammates, fountain and bushes.
+        // A bush is only one scored cover option, never the default retreat target.
+        let targetX: number = wellTargetX;
+        let targetY: number = LANE_Y;
 
         // Emergency Turret Evacuation vector when aborting or trapped under tower
         if ((u.diveAborting || isInsideEnemyTowerRange) && nearestStructureForDive) {
+          u.retreatPlan = undefined;
           const evac = getTurretEvacuationVector(u, nearestStructureForDive, LANE_Y);
           targetX = evac.targetX;
           targetY = evac.targetY;
+        } else {
+          const retreatInput = {
+            actor: {
+              id: u.id,
+              team: u.team,
+              x: u.x,
+              y: u.y,
+              healthFraction: u.hp / Math.max(1, u.maxHp),
+              iq,
+              teamfight: tfStat,
+              hasEscapeAbility: (u.champion.name === 'Paxi' && (!!u.paxiOrb || (u.cd1 <= 0 && u.mana >= 45)))
+                || (u.champion.name === 'Raijin' && u.level >= 6 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u)),
+            },
+            now: matchTimeRef.current,
+            laneY: LANE_Y,
+            well: { x: wellTargetX, y: LANE_Y },
+            enemies: enemies.map(enemy => ({ id: enemy.id, team: enemy.team, x: enemy.x, y: enemy.y,
+              healthFraction: enemy.hp / Math.max(1, enemy.maxHp), isAlive: enemy.isAlive })),
+            allies: allies.map(ally => ({ id: ally.id, team: ally.team, x: ally.x, y: ally.y,
+              healthFraction: ally.hp / Math.max(1, ally.maxHp), isAlive: ally.isAlive })),
+            structures: structures.map(structure => ({ id: structure.id, team: structure.team, type: structure.type,
+              x: structure.x, y: structure.y, range: structure.range, isAlive: structure.isAlive })),
+            bushes: ARAM_BUSHES,
+            isPassable: (point: { x: number; y: number }) => !isInsideRockTerrain(point.x, point.y, 13),
+            routeLength: (from: { x: number; y: number }, to: { x: number; y: number }) => rockRouteDistance(from, to, 13),
+          };
+          const plan = shouldKeepRetreatPlan(u.retreatPlan, retreatInput)
+            ? u.retreatPlan
+            : chooseRetreatPlan(retreatInput);
+          if (plan) {
+            u.retreatPlan = plan;
+            targetX = plan.x;
+            targetY = plan.y;
+          } else {
+            // The fountain lane remains the conservative fallback if every local
+            // cover candidate is unsafe or blocked.
+            u.retreatPlan = undefined;
+          }
         }
 
         const distToTarget = Math.hypot(targetX - u.x, targetY - u.y);
@@ -3060,9 +3164,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const retreatWaypoint = u.diveAborting || isInsideEnemyTowerRange
           ? { x: targetX, y: targetY } : rockApproachWaypoint(u, { x: targetX, y: targetY });
         const retreatAngle = Math.atan2(retreatWaypoint.y - u.y, retreatWaypoint.x - u.x);
-        const warhornBonus = allies.some(a => a.isAlive && a.items.some(it => it.id === 'item_shurelyas') && Math.hypot(a.x - u.x, a.y - u.y) <= 240) ? 18 : 0;
-        const evacSprint = (u.diveAborting || isInsideEnemyTowerRange) ? 35 : 0;
-        const totalSpeed = Math.min(105 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0) + warhornBonus + evacSprint,
+        const emergencyTowerEvacuation = !!u.diveAborting || isInsideEnemyTowerRange;
+        const retreatSpeed = retreatSpeedBreakdown({
+          bootsMoveSpeed: u.boots?.stats.moveSpeed,
+          orbMoveSpeed: getKaelenOrbBonuses(u).moveSpeed,
+          stealthActive: (u.stealthTimer ?? 0) > 0,
+          warhornAuraActive: allies.some(a => a.isAlive && a.items.some(it => it.id === 'item_shurelyas')
+            && Math.hypot(a.x - u.x, a.y - u.y) <= 240),
+          emergencyTowerEvacuation,
+        });
+        const totalSpeed = Math.min(retreatSpeed.total,
           Math.hypot(retreatWaypoint.x - u.x, retreatWaypoint.y - u.y) / dt);
         u.vx = Math.cos(retreatAngle) * totalSpeed;
         u.vy = Math.sin(retreatAngle) * totalSpeed;
@@ -3071,6 +3182,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         setUnitFacing(u, retreatWaypoint.x);
         return;
       }
+
+      u.retreatPlan = undefined;
 
       // A team earns an epic objective window by clearing lane, seeing the pit,
       // grouping healthy members and reading enemy numbers. Playback speed is irrelevant.
@@ -3205,12 +3318,36 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // Fight calls use player card attitudes, the shotcaller, coach style and a real enemy attack.
       const defenseTarget = defenseCall && chooseTeamfightTarget(u,
         enemies.filter(enemy => defenseCall.attackers.some(attacker => attacker.id === enemy.id)), allies, attackRange, contestTargetOptions);
-      const primaryTarget = defenseCall ? defenseTarget : (canFollowUpEngage ? closestCaught : undefined) || contestFightTarget || chooseTeamfightTarget(u, enemies, allies, attackRange, {
+      const preferredPrimaryTarget = defenseCall ? defenseTarget : (canFollowUpEngage ? closestCaught : undefined) || contestFightTarget || chooseTeamfightTarget(u, enemies, allies, attackRange, {
         enemyStructures,
         alliedMinions: alliedMinionsForDive,
         cooldownMemory: cooldownMemoryRef.current,
         matchSecond: matchTimeRef.current
       });
+      const combatContext = defenseCall ? 'defense' : canFollowUpEngage ? 'follow-up'
+        : isObjectiveFight ? 'objective-fight' : 'lane-fight';
+      const combatPool = defenseCall
+        ? enemies.filter(enemy => defenseCall.attackers.some(attacker => attacker.id === enemy.id))
+        : canFollowUpEngage && closestCaught ? caughtEnemies
+          : isObjectiveFight ? contestEnemyPool : enemies;
+      const combatCandidates = combatPool.map(enemy => ({
+        ...actionCandidate('champion', enemy),
+        contextKey: `${combatContext}:${actionContextFor('champion', enemy)}`,
+      }));
+      const preferredCombatCandidate = preferredPrimaryTarget ? {
+        ...actionCandidate('champion', preferredPrimaryTarget),
+        contextKey: `${combatContext}:${actionContextFor('champion', preferredPrimaryTarget)}`,
+      } : undefined;
+      const committedCombatCandidate = chooseCommittedActionTarget({
+        intent: u.actionIntent,
+        kind: 'champion',
+        preferred: preferredCombatCandidate,
+        candidates: combatCandidates,
+        failures: u.actionFailures,
+        now: matchTimeRef.current,
+      });
+      const primaryTarget = committedCombatCandidate
+        ? combatPool.find(enemy => enemy.id === committedCombatCandidate.id) : undefined;
       // Reinforce the threatened defensive layer before starting side activities.
       // Emergency retreat/recall and dive evacuation have already run above.
       const moveToDefense = () => {
@@ -3225,6 +3362,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         setUnitFacing(u, defenseCall.building.x);
       };
       if (defenseCall && defenseCall.distance > 320) {
+        setActionIntent('defend', defenseCall.building, 'move',
+          `defend:${defenseCall.building.id}:${defenseCall.attackers.length}:${defenseCall.wave.length}`, 0.9);
         moveToDefense();
         return;
       }
@@ -3243,17 +3382,42 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         .filter(minion => defenseCall.wave.some(threat => threat.id === minion.id))
         .sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0]
         : undefined;
-      const nearestMinion = defenseCall ? defenseMinion : enemyMinions
+      const actionableMinions = defenseCall
+        ? enemyMinions.filter(minion => defenseCall.wave.some(threat => threat.id === minion.id))
+        : enemyMinions;
+      const preferredMinion = defenseCall ? defenseMinion : actionableMinions
         .sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0];
+      const committedMinionCandidate = chooseCommittedActionTarget({
+        intent: u.actionIntent,
+        kind: 'minion',
+        preferred: preferredMinion ? actionCandidate('minion', preferredMinion) : undefined,
+        candidates: actionableMinions.map(minion => actionCandidate('minion', minion)),
+        failures: u.actionFailures,
+        now: matchTimeRef.current,
+      });
+      const nearestMinion = committedMinionCandidate
+        ? actionableMinions.find(minion => minion.id === committedMinionCandidate.id) : undefined;
       const enemyNexus = structures.find(st => st.team !== u.team && st.type === 'nexus');
       const isNexusLow = !!enemyNexus && canDamageNexus(enemyNexus.team, structures)
         && (enemyNexus.hp / enemyNexus.maxHp <= 0.40);
       const focusNexus = !defenseCall && !!enemyNexus && (shouldFocusExposedNexus(enemyNexus,
         canDamageNexus(enemyNexus.team, structures), iq, coach?.playbookBonus ?? 8) || isNexusLow);
-      const nearestStructure = focusNexus ? enemyNexus
+      const preferredStructure = focusNexus ? enemyNexus
         : enemyStructures.sort((a, b) => Math.abs(a.x - u.x) - Math.abs(b.x - u.x))[0];
+      const committedStructureCandidate = chooseCommittedActionTarget({
+        intent: u.actionIntent,
+        kind: 'structure',
+        preferred: preferredStructure ? actionCandidate('structure', preferredStructure) : undefined,
+        candidates: enemyStructures.map(structure => actionCandidate('structure', structure)),
+        failures: focusNexus && isNexusLow ? undefined : u.actionFailures,
+        now: matchTimeRef.current,
+      });
+      const nearestStructure = committedStructureCandidate
+        ? enemyStructures.find(structure => structure.id === committedStructureCandidate.id) : undefined;
       const minionInRange = !isObjectiveFight && !!nearestMinion && Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) <= attackRange;
-      const structureInRange = !isObjectiveFight && !!nearestStructure && Math.hypot(nearestStructure.x - u.x, nearestStructure.y - u.y) <= attackRange + 40;
+      const structureInRange = !isObjectiveFight && !!nearestStructure && canBasicAttackStructure({
+        x: u.x, y: u.y, attackRange,
+      }, nearestStructure);
       const alliedCrash = nearestStructure
         ? minions.filter(m => m.team === u.team && m.isAlive && Math.hypot(m.x - nearestStructure.x, m.y - nearestStructure.y) < 180).length
         : 0;
@@ -3294,8 +3458,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && !clearWaveFirst
         && (closestEnemyChampion > Math.max(140, attackRange) || isNexusLow || enemyNexus.hp / enemyNexus.maxHp <= 0.25 || localAllies.length >= localEnemies.length)) {
         const nexusDist = Math.hypot(enemyNexus.x - u.x, enemyNexus.y - u.y);
+        setActionIntent('structure', enemyNexus,
+          canBasicAttackStructure({ x: u.x, y: u.y, attackRange }, enemyNexus) ? 'execute' : 'move');
         setUnitFacing(u, enemyNexus.x);
-        if (nexusDist <= attackRange + 22) {
+        if (canBasicAttackStructure({ x: u.x, y: u.y, attackRange }, enemyNexus)) {
           u.vx = 0; u.vy = 0;
           if (u.attackTimer <= 0) {
             u.attackTimer = 1 / getEffectiveAttackSpeed(u);
@@ -3336,6 +3502,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const laneX = activePostPlan.x + (u.team === 'blue' ? -90 : 90);
         const laneY = LANE_Y;
         const distance = Math.hypot(laneX - u.x, laneY - u.y);
+        setActionIntent('regroup', { id: `post-objective:${u.team}`, x: laneX, y: laneY },
+          distance > 20 ? 'move' : 'hold', `post-objective:${u.team}:${Number(wasJustAttacked)}`, 1.0);
         if (distance > 20) {
           const angle = Math.atan2(laneY - u.y, laneX - u.x);
           const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
@@ -3372,6 +3540,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const approachX = stagingBoss.x + (u.team === 'blue' ? -215 : 215);
         const approachY = stagingBoss.y + ((uIdx % 5) - 2) * 48;
         const approachDistance = Math.hypot(approachX - u.x, approachY - u.y);
+        setActionIntent('stage', { id: `stage:${upcomingTempoObjective.key}`, x: approachX, y: approachY },
+          approachDistance > 20 ? 'move' : 'hold',
+          `stage:${upcomingTempoObjective.key}:${Math.ceil(upcomingTempoObjective.secondsUntil / 3)}`, 0.9);
         if (approachDistance > 20) {
           const angle = Math.atan2(approachY - u.y, approachX - u.x);
           const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed
@@ -3408,6 +3579,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           }
         }
         const dragonDist = Math.hypot(dragon.x - u.x, dragon.y - u.y);
+        setActionIntent('objective', dragon,
+          dragonDist <= neutralAttackRange(attackRange, true) + 12 ? 'execute' : 'move',
+          `dragon:${dragon.slainCount}:${dragonAction}:${Math.ceil(dragon.hp / Math.max(1, dragon.maxHp) * 10)}`, 1.0);
         setUnitFacing(u, dragon.x);
 
         if (dragonDist <= neutralAttackRange(attackRange, true) + 12) {
@@ -3463,6 +3637,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           }
         }
         const dist = Math.hypot(golem.x - u.x, golem.y - u.y);
+        setActionIntent('objective', golem,
+          dist <= neutralAttackRange(attackRange, true) + 12 ? 'execute' : 'move',
+          `golem:${golemAction}:${Math.ceil(golem.hp / Math.max(1, golem.maxHp) * 10)}`, 1.0);
         setUnitFacing(u, golem.x);
         if (dist <= neutralAttackRange(attackRange, true) + 12) {
           u.vx = 0; u.vy = 0;
@@ -3534,17 +3711,23 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       }
       const isPostRecallTeamCampMember = !!teamCampPlan?.memberIds.includes(u.id);
+      const retryableJungleCamps = availableJungleCamps.filter(camp => !isActionRetryBlocked(
+        u.actionFailures,
+        decisiveActionKey('camp', camp.id),
+        matchTimeRef.current,
+        actionContextFor('camp', camp),
+      ));
       const nearestJungleCamp = !defenseCall && !isObjectiveFight && !canFollowUpEngage && !fightingAlly
         && !focusNexus && !tempoPush && dragonAction === 'none' && golemAction === 'none'
         ? isPostRecallTeamCampMember && plannedTeamCamp
-          ? chooseKnownJungleCamp([plannedTeamCamp], {
+          ? chooseKnownJungleCamp(retryableJungleCamps.filter(camp => camp.id === plannedTeamCamp?.id), {
             x: u.x, y: u.y, team: u.team, hpFraction: u.hp / u.maxHp,
             iq, jungleStrength: getAvatarCombatProfile(u.champion).Jungler,
             gameSeconds: matchTimeRef.current, nearbyEnemyCount: localEnemies.length,
             nearestLaneEnemyDistance: nearestMinion ? Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) : Infinity,
             urgentStructurePush: false, teamObjective: true,
           })
-          : !isSupportAvatar ? chooseKnownJungleCamp(availableJungleCamps, {
+          : !isSupportAvatar ? chooseKnownJungleCamp(retryableJungleCamps, {
           x: u.x, y: u.y, team: u.team, hpFraction: u.hp / u.maxHp,
           iq, jungleStrength: getAvatarCombatProfile(u.champion).Jungler,
           gameSeconds: matchTimeRef.current, nearbyEnemyCount: localEnemies.length,
@@ -3567,6 +3750,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const farmX = farmWaypoint.x;
         const farmY = farmWaypoint.y;
         const campDist = Math.hypot(nearestJungleCamp.x - u.x, nearestJungleCamp.y - u.y);
+        setActionIntent('camp', nearestJungleCamp,
+          distanceToHome <= 220 && campDist <= neutralAttackRange(attackRange) + 12 ? 'execute' : 'move');
         setUnitFacing(u, farmX);
 
         if (distanceToHome <= 220 && campDist <= neutralAttackRange(attackRange) + 12) {
@@ -3596,6 +3781,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && !defenseCall && fightingAlly && tfStat >= 55 && Math.hypot(fightingAlly.x - u.x, fightingAlly.y - u.y) > 130
         && isBushSafeFromTowers(fightingAlly, enemyStructures)
         && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > attackRange)) {
+        setActionIntent('regroup', fightingAlly, 'move',
+          `fight-regroup:${actionContextFor('regroup', fightingAlly)}`, 0.8);
         u.animState = 'walk';
         const groupAngle = Math.atan2(fightingAlly.y - u.y, fightingAlly.x - u.x);
         u.vx = Math.cos(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
@@ -3609,6 +3796,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // Support Macro Tethering: Support champions naturally stick with their living carries / allies for protection and peel
       const nearestLivingCarry = allies.find(a => a.isAlive && a.id !== u.id && !a.isRecalling && Math.hypot(a.x - u.x, a.y - u.y) <= 550);
       if (!defenseCall && isSupportAvatar && nearestLivingCarry && !primaryTarget && Math.hypot(nearestLivingCarry.x - u.x, nearestLivingCarry.y - u.y) > 130) {
+        setActionIntent('regroup', nearestLivingCarry, 'move',
+          `support-tether:${actionContextFor('regroup', nearestLivingCarry)}`, 0.8);
         u.animState = 'walk';
         const followAngle = Math.atan2(nearestLivingCarry.y - u.y, nearestLivingCarry.x - u.x);
         u.vx = Math.cos(followAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed);
@@ -3650,6 +3839,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (!clearWaveFirst && !holdChaseForWave && primaryTarget && Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= maxCombatRange) {
         setUnitFacing(u, primaryTarget.x);
         const dist = Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y);
+        setActionIntent('champion', primaryTarget, dist > attackRange ? 'move' : 'execute',
+          committedCombatCandidate?.contextKey ?? actionContextFor('champion', primaryTarget), 0.8);
         const haste = u.items.reduce((total, item) => total + (item.stats.haste ?? 0), 0);
         const cooldownFactor = 100 / (100 + haste);
         if (u.champion.name !== 'Kaelen' && u.level >= 6 && u.cdUlt <= 0
@@ -3781,8 +3972,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             && Math.hypot(primaryTarget.x - nearestStructureForDive.x, primaryTarget.y - nearestStructureForDive.y) <= nearestStructureForDive.range;
           if (isTargetUnderEnemyTower && !isAggroDiving && nearestStructureForDive) {
             // Non-divers tether safely at the perimeter outside tower range rather than walking into turret fire!
+            if (u.actionIntent?.kind === 'champion') {
+              u.actionFailures = recordActionFailure(u.actionFailures, u.actionIntent,
+                'unsafe', matchTimeRef.current);
+              u.actionIntent = undefined;
+            }
             const holdPoint = getTurretPerimeterHoldPoint(u, nearestStructureForDive, LANE_Y);
             const distToHold = Math.hypot(holdPoint.x - u.x, holdPoint.y - u.y);
+            setActionIntent('hold', { id: `tower-perimeter:${nearestStructureForDive.id}`,
+              x: holdPoint.x, y: holdPoint.y }, distToHold > 14 ? 'move' : 'hold',
+              `tower-perimeter:${nearestStructureForDive.id}:${alliedMinionsUnderTower}`, 0.8);
             setUnitFacing(u, primaryTarget.x);
             if (distToHold > 14) {
               u.animState = 'walk';
@@ -3815,6 +4014,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           || enemies.find(e => e.isAlive);
 
         if (enemyToEngage) {
+          setActionIntent('champion', enemyToEngage, 'move',
+            committedCombatCandidate?.contextKey ?? `objective-fight:${actionContextFor('champion', enemyToEngage)}`, 0.8);
           u.animState = 'walk';
           const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           const angle = Math.atan2(enemyToEngage.y - u.y, enemyToEngage.x - u.x);
@@ -3828,6 +4029,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.animState = 'walk';
           const engageX = DRAGON_X;
           const engageY = isContestingDragon ? 230 : 490;
+          setActionIntent('regroup', { id: `objective-approach:${isContestingDragon ? 'dragon' : 'golem'}`,
+            x: engageX, y: engageY }, 'move',
+            `objective-approach:${isContestingDragon ? 'dragon' : 'golem'}`, 0.8);
           const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           const angle = Math.atan2(engageY - u.y, engageX - u.x);
           u.vx = Math.cos(angle) * speed;
@@ -3839,6 +4043,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
       // SIEGE TURRET
       else if (clearWaveFirst && nearestMinion) {
+        setActionIntent('minion', nearestMinion, 'execute');
         setUnitFacing(u, nearestMinion.x);
         const cluster = enemyMinions.filter(m => Math.hypot(m.x - nearestMinion.x, m.y - nearestMinion.y) <= 90);
         if (u.champion.name !== 'Cinderlock' && u.champion.name !== 'Cinderbloom' && shouldCastWaveClearSkill(u.champion.primaryRole, u.mana, u.cd1, cluster.length, iq, lanStat)) {
@@ -3866,6 +4071,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (siegeChampion && shouldChaseDefenseTarget(defenseCall.building, siegeChampion,
           { targetUnderEnemyTurret: siegeUnderEnemyTurret, healthFraction: u.hp / u.maxHp })) {
           const gap = Math.hypot(siegeChampion.x - u.x, siegeChampion.y - u.y);
+          setActionIntent('defend', siegeChampion, gap > attackRange * 0.92 ? 'move' : 'execute',
+            `defend:${defenseCall.building.id}:${actionContextFor('defend', siegeChampion)}`, 0.9);
           setUnitFacing(u, siegeChampion.x);
           if (gap > attackRange * 0.92) {
             const angle = Math.atan2(siegeChampion.y - u.y, siegeChampion.x - u.x);
@@ -3892,9 +4099,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             defenseCall.rally = { x: u.x + (waveTarget.x - u.x) * stop, y: u.y + (waveTarget.y - u.y) * stop };
           }
         }
+        setActionIntent('defend', defenseCall.building,
+          defenseCall.distance > 12 ? 'move' : 'hold',
+          `defend:${defenseCall.building.id}:${defenseCall.attackers.length}:${defenseCall.wave.length}`, 0.9);
         moveToDefense();
       }
       else if (nearestStructure && structureInRange) {
+        setActionIntent('structure', nearestStructure, 'execute');
         setUnitFacing(u, nearestStructure.x);
         if (u.attackTimer <= 0) {
           u.attackTimer = 1.0 / getEffectiveAttackSpeed(u);
@@ -3904,6 +4115,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
       // WAVE CLEAR
       else if (nearestMinion && Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) <= attackRange) {
+        setActionIntent('minion', nearestMinion, 'execute');
         setUnitFacing(u, nearestMinion.x);
         if (u.attackTimer <= 0) {
           u.attackTimer = 1.0 / getEffectiveAttackSpeed(u);
@@ -3921,6 +4133,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           const exitX = u.team === 'blue' ? Math.min(enclosingCamp.x, advanceLimit) : Math.max(enclosingCamp.x, advanceLimit);
           const waypoint = rockApproachWaypoint(u, { x: exitX, y: LANE_Y });
           const distance = Math.hypot(waypoint.x - u.x, waypoint.y - u.y);
+          setActionIntent('push', { id: `camp-exit:${enclosingCamp.id}`, x: waypoint.x, y: waypoint.y },
+            distance > 8 ? 'move' : 'hold', `camp-exit:${enclosingCamp.id}`, 0.8);
           const speed = Math.min(70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed
             + ((u.stealthTimer ?? 0) > 0 ? 60 : 0), distance / dt);
           const angle = Math.atan2(waypoint.y - u.y, waypoint.x - u.x);
@@ -3931,13 +4145,24 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           setUnitFacing(u, waypoint.x);
           return;
         }
+        const targetFormY = getChampionFormationY(u.champion.name, uIdx);
+        const advanceDistance = Math.hypot(advanceLimit - u.x, targetFormY - u.y);
+        setActionIntent(advanceDistance <= 3 ? 'hold' : 'push',
+          { id: `lane-advance:${u.team}`, x: advanceLimit, y: targetFormY },
+          advanceDistance <= 3 ? 'hold' : 'move',
+          `lane:${u.team}:${Math.floor(advanceLimit / 40)}:${enemyMinions.length}`, 0.8);
+        if (advanceDistance <= 3) {
+          u.vx = 0;
+          u.vy = 0;
+          u.animState = 'idle';
+          return;
+        }
         const nextX = u.x + pushDir * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
         u.x = wouldOverstep(u.team, nextX, advanceLimit)
           ? u.x + Math.sign(advanceLimit - u.x) * Math.min(Math.abs(advanceLimit - u.x), 70 * dt)
           : nextX;
         u.facing = pushDir === 1 ? 'right' : 'left';
 
-        const targetFormY = getChampionFormationY(u.champion.name, uIdx);
         const dy = targetFormY - u.y;
         if (Math.abs(dy) > 1.5) {
           u.y += Math.sign(dy) * Math.min(Math.abs(dy), 70 * dt);
@@ -4495,9 +4720,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     targetType: 'champion' | 'minion' | 'structure' | 'camp' | 'dragon',
     baseDamage: number
   ) => {
+    const attackRange = getChampionBasicAttackRange(u.champion);
+    if (targetType === 'structure') {
+      const structureTarget = structuresRef.current.find(candidate => candidate.id === target.id);
+      if (!structureTarget || !canBasicAttackStructure({ x: u.x, y: u.y, attackRange }, structureTarget)) return;
+    }
     if ((targetType === 'camp' || targetType === 'dragon')
       && Math.hypot(target.x - u.x, target.y - u.y)
-        > neutralAttackRange(getChampionAttackRange(u.champion.name), targetType === 'dragon' || target.id === 'j_siege_golem') + 12) return;
+        > neutralAttackRange(attackRange, targetType === 'dragon' || target.id === 'j_siege_golem') + 12) return;
     sound.playSpellHit();
     if (u.champion.name === 'Skybreaker') {
       u.propellaRotorStacks = propellaRotorStacksAfterAttack(u.propellaRotorStacks ?? 0);
@@ -4588,7 +4818,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     // Unique Card Traits Attack Modifiers
     const overchargeMultiplier = (u.aetherisOverchargeTimer ?? 0) > 0 ? 1.15 : 1;
     const totalDmg = (baseDamage + bonusAd) * overchargeMultiplier;
-    const attackRange = getChampionAttackRange(u.champion.name);
     const isRanged = attackRange >= 90;
 
     // Runaan's Hurricane: Wind's Fury (fires secondary bolts at up to 2 nearby enemies)
@@ -7290,7 +7519,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.clearRect(0, 0, width, height);
 
     const z = zoomRef.current;
-    const { x: camX, y: camY, halfW, halfH } = clampCameraPosition(
+    const { x: camX, y: camY, halfW, halfH } = clampArenaCamera(
       cameraPosRef.current.x,
       cameraPosRef.current.y,
       z,
@@ -7310,60 +7539,62 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.save();
     ctx.scale(width / 1320, 1);
 
-    // 1. FOREST FLOOR: warm canopy light, layered clearings and a soft vignette
-    const groundGrad = ctx.createLinearGradient(0, 0, 0, height);
-    groundGrad.addColorStop(0, '#1b3028');
-    groundGrad.addColorStop(0.22, '#344a38');
-    groundGrad.addColorStop(0.5, '#405441');
-    groundGrad.addColorStop(0.78, '#344838');
-    groundGrad.addColorStop(1, '#1a2d26');
-    ctx.fillStyle = groundGrad;
-    ctx.fillRect(0, 0, 1320, height);
+    const drawLegacyStaticTerrain = !threeTerrainAvailableRef.current;
+    if (drawLegacyStaticTerrain) {
+      // WebGL fallback for the static terrain layers migrated in Phase 1.
+      const groundGrad = ctx.createLinearGradient(0, 0, 0, height);
+      groundGrad.addColorStop(0, '#1b3028');
+      groundGrad.addColorStop(0.22, '#344a38');
+      groundGrad.addColorStop(0.5, '#405441');
+      groundGrad.addColorStop(0.78, '#344838');
+      groundGrad.addColorStop(1, '#1a2d26');
+      ctx.fillStyle = groundGrad;
+      ctx.fillRect(0, 0, 1320, height);
 
-    // Broad, irregular meadow patches keep the ground from reading as a flat grid.
-    for (let p = 0; p < 42; p++) {
-      const px = (p * 137 + 41) % 1300 + 10;
-      const py = (p * 97 + 29) % (height - 48) + 24;
-      const pr = 34 + (p % 5) * 13;
-      const ph = 13 + (p % 4) * 5;
-      ctx.fillStyle = p % 3 === 0 ? 'rgba(177, 166, 111, 0.075)' : 'rgba(157, 190, 126, 0.07)';
+      for (let p = 0; p < 42; p++) {
+        const px = (p * 137 + 41) % 1300 + 10;
+        const py = (p * 97 + 29) % (height - 48) + 24;
+        const pr = 34 + (p % 5) * 13;
+        const ph = 13 + (p % 4) * 5;
+        ctx.fillStyle = p % 3 === 0 ? 'rgba(177, 166, 111, 0.075)' : 'rgba(157, 190, 126, 0.07)';
+        ctx.beginPath();
+        ctx.ellipse(px, py, pr, ph, (p % 7) * 0.14, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const vignette = ctx.createRadialGradient(660, height * 0.5, 170, 660, height * 0.5, 790);
+      vignette.addColorStop(0, 'rgba(5, 15, 13, 0)');
+      vignette.addColorStop(1, 'rgba(5, 15, 13, 0.42)');
+      ctx.fillStyle = vignette;
+      ctx.fillRect(0, 0, 1320, height);
+
+      const riverGrad = ctx.createLinearGradient(590, 0, 730, 0);
+      riverGrad.addColorStop(0, 'rgba(17, 54, 57, 0.42)');
+      riverGrad.addColorStop(0.2, 'rgba(39, 105, 111, 0.72)');
+      riverGrad.addColorStop(0.5, 'rgba(62, 139, 143, 0.82)');
+      riverGrad.addColorStop(0.8, 'rgba(39, 105, 111, 0.72)');
+      riverGrad.addColorStop(1, 'rgba(17, 54, 57, 0.42)');
+      ctx.fillStyle = riverGrad;
       ctx.beginPath();
-      ctx.ellipse(px, py, pr, ph, (p % 7) * 0.14, 0, Math.PI * 2);
+      ctx.moveTo(630, 0);
+      ctx.bezierCurveTo(610, 200, 690, 480, 640, height);
+      ctx.lineTo(720, height);
+      ctx.bezierCurveTo(770, 480, 690, 200, 710, 0);
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(13, 35, 37, 0.65)';
+      ctx.lineWidth = 14;
+      ctx.stroke();
       ctx.fill();
+
+      ctx.strokeStyle = 'rgba(168, 211, 191, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(632, 0);
+      ctx.bezierCurveTo(612, 200, 692, 480, 642, height);
+      ctx.stroke();
     }
 
-    const vignette = ctx.createRadialGradient(660, height * 0.5, 170, 660, height * 0.5, 790);
-    vignette.addColorStop(0, 'rgba(5, 15, 13, 0)');
-    vignette.addColorStop(1, 'rgba(5, 15, 13, 0.42)');
-    ctx.fillStyle = vignette;
-    ctx.fillRect(0, 0, 1320, height);
-
-    // A cool river cuts through the green valley beneath the stone crossing.
-    const riverGrad = ctx.createLinearGradient(590, 0, 730, 0);
-    riverGrad.addColorStop(0, 'rgba(17, 54, 57, 0.42)');
-    riverGrad.addColorStop(0.2, 'rgba(39, 105, 111, 0.72)');
-    riverGrad.addColorStop(0.5, 'rgba(62, 139, 143, 0.82)');
-    riverGrad.addColorStop(0.8, 'rgba(39, 105, 111, 0.72)');
-    riverGrad.addColorStop(1, 'rgba(17, 54, 57, 0.42)');
-    ctx.fillStyle = riverGrad;
-    ctx.beginPath();
-    ctx.moveTo(630, 0);
-    ctx.bezierCurveTo(610, 200, 690, 480, 640, height);
-    ctx.lineTo(720, height);
-    ctx.bezierCurveTo(770, 480, 690, 200, 710, 0);
-    ctx.closePath();
-    ctx.strokeStyle = 'rgba(13, 35, 37, 0.65)';
-    ctx.lineWidth = 14;
-    ctx.stroke();
-    ctx.fill();
-
-    // Riverbank highlights and slow-moving water glints.
-    ctx.strokeStyle = 'rgba(168, 211, 191, 0.3)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(632, 0);
-    ctx.bezierCurveTo(612, 200, 692, 480, 642, height);
-    ctx.stroke();
+    // Water glints remain a Canvas animation until the effects migration.
     ctx.strokeStyle = 'rgba(126, 202, 191, 0.34)';
     ctx.lineWidth = 1.8;
     for (let r = 0; r < 12; r++) {
@@ -7833,7 +8064,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.fillRect(480, 495, 55, 55);
     ctx.fillRect(785, 495, 55, 55);
 
-    // 6. MAIN CENTRAL CAUSEWAY: warm, weathered stone with softened edges
+    const blueRampX = NEXUS_TOWER_X.blue / ARENA_WIDTH * 1320;
+    const redRampX = NEXUS_TOWER_X.red / ARENA_WIDTH * 1320;
+    const basePlatforms = [
+      { start: 50, end: blueRampX, edge: blueRampX, color: '#38bdf8' },
+      { start: redRampX, end: 1270, edge: redRampX, color: '#fb7185' },
+    ];
+
+    if (drawLegacyStaticTerrain) {
+    // 6. MAIN CENTRAL CAUSEWAY: Canvas fallback for the migrated Three.js surface
     ctx.fillStyle = 'rgba(14, 21, 22, 0.48)';
     ctx.beginPath();
     ctx.roundRect(46, 266, 1228, 230, 23);
@@ -7886,10 +8125,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.fillRect(60, 487, 1200, 5);
 
     // Raised stone bases begin at the third turrets and run to each well.
-    const blueRampX = NEXUS_TOWER_X.blue / ARENA_WIDTH * 1320;
-    const redRampX = NEXUS_TOWER_X.red / ARENA_WIDTH * 1320;
-    ([{ start: 50, end: blueRampX, edge: blueRampX, color: '#38bdf8' },
-      { start: redRampX, end: 1270, edge: redRampX, color: '#fb7185' }]).forEach(platform => {
+    basePlatforms.forEach(platform => {
       ctx.fillStyle = 'rgba(148, 163, 184, 0.11)';
       ctx.fillRect(platform.start, 269, platform.end - platform.start, 222);
       ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
@@ -7902,15 +8138,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const x = platform.edge + (platform.edge === blueRampX ? 1 : -1) * step * 10;
         ctx.strokeStyle = `rgba(203, 213, 225, ${0.35 - step * 0.07})`;
         ctx.beginPath(); ctx.moveTo(x, 280); ctx.lineTo(x, 480); ctx.stroke();
-      }
-      for (let mist = 0; mist < 4; mist++) {
-        const drift = Math.sin(time * 0.5 + mist * 2.1) * 13;
-        const fogX = platform.start + (platform.end - platform.start) * (mist + 0.5) / 4 + drift;
-        const fog = ctx.createRadialGradient(fogX, 310 + mist * 43, 4, fogX, 310 + mist * 43, 68);
-        fog.addColorStop(0, 'rgba(203, 213, 225, 0.20)');
-        fog.addColorStop(1, 'rgba(203, 213, 225, 0)');
-        ctx.fillStyle = fog;
-        ctx.fillRect(fogX - 68, 270, 136, 220);
       }
     });
 
@@ -7936,6 +8163,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.beginPath();
     ctx.arc(660, 380, 95, 0, Math.PI * 2);
     ctx.stroke();
+    }
+
+    // Base mist remains an animation-layer effect on Canvas in this increment.
+    basePlatforms.forEach(platform => {
+      for (let mist = 0; mist < 4; mist++) {
+        const drift = Math.sin(time * 0.5 + mist * 2.1) * 13;
+        const fogX = platform.start + (platform.end - platform.start) * (mist + 0.5) / 4 + drift;
+        const fog = ctx.createRadialGradient(fogX, 310 + mist * 43, 4, fogX, 310 + mist * 43, 68);
+        fog.addColorStop(0, 'rgba(203, 213, 225, 0.20)');
+        fog.addColorStop(1, 'rgba(203, 213, 225, 0)');
+        ctx.fillStyle = fog;
+        ctx.fillRect(fogX - 68, 270, 136, 220);
+      }
+    });
 
     // 8. Stone Parapet Braziers
     const torchX = [180, 320, 460, 600, 720, 860, 1000, 1140];
@@ -10149,6 +10390,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       const canvas = canvasRef.current;
       if (canvas) {
+        const viewport = clampArenaCamera(
+          cameraPosRef.current.x,
+          cameraPosRef.current.y,
+          zoomRef.current,
+          canvas.width,
+          canvas.height,
+        );
+        cameraPosRef.current.x = viewport.x;
+        cameraPosRef.current.y = viewport.y;
+        threeTerrainRef.current?.render(viewport.x, viewport.y, zoomRef.current);
         const ctx = canvas.getContext('2d');
         if (ctx) drawAramBattleground(ctx, canvas.width, canvas.height, now * 0.001);
       }
@@ -10235,11 +10486,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         {fullscreenError && <span>Fullscreen unavailable; viewport mode active.</span>}
       </div>
       <div className="spectator-stage">
+        <div className="spectator-render-stack">
+          <div ref={threeTerrainHostRef} className="spectator-three-host" aria-hidden="true" />
           <canvas
             ref={canvasRef}
             width={ARENA_WIDTH}
-            height={760}
-            className={`select-none ${
+            height={ARENA_RENDER_HEIGHT}
+            className={`spectator-canvas-overlay select-none ${
               isDragging ? 'cursor-grabbing' : 'cursor-grab'
             }`}
             onMouseDown={handleCanvasMouseDown}
@@ -10252,6 +10505,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             onTouchMove={handleCanvasTouchMove}
             onTouchEnd={handleCanvasTouchEnd}
           />
+        </div>
       </div>
       <footer className="spectator-dock">
         <div className="spectator-tabs" role="group" aria-label="Broadcast panels">

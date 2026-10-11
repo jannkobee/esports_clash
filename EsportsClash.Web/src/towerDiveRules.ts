@@ -1,5 +1,6 @@
 import type { AramChampionUnit, LaneStructure, BushPatch } from './types';
 import { hasPlayerTrait } from './playerTraits.ts';
+import { getChampionBasicAttackRange } from './basicAttackRangeRules.ts';
 
 export interface AvatarDiveLimits {
   role: string;
@@ -199,7 +200,7 @@ export function shouldAbortTowerDive(check: AbortDiveCheck): { shouldAbort: bool
 
   // 3. Target escaped beyond reasonable reach
   const distToTarget = Math.hypot(target.x - diver.x, target.y - diver.y);
-  if (distToTarget > diver.champion.range * 45 + 160) {
+  if (distToTarget > getChampionBasicAttackRange(diver.champion) + 160) {
     return { shouldAbort: true, reason: 'Target retreated deeper into base - out of reach' };
   }
 

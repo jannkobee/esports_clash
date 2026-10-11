@@ -336,6 +336,8 @@ export interface AramChampionUnit {
   followUpEngageSignaled?: boolean;
   decisionCommitTimer?: number;
   committedState?: 'fight' | 'retreat' | 'cover';
+  actionIntent?: import('./decisionActionRecovery').DecisiveActionIntent;
+  actionFailures?: import('./decisionActionRecovery').DecisiveActionFailure[];
   supportHealTimer?: number;
   locketCooldown?: number;
   censerBuffTimer?: number;
@@ -343,6 +345,13 @@ export interface AramChampionUnit {
   diveAborting?: boolean;
   diveAbortCooldown?: number;
   diveTargetId?: string;
+  retreatPlan?: {
+    id: string;
+    kind: 'home-lane' | 'allied-tower' | 'teammate' | 'open-ground' | 'fountain' | 'bush';
+    x: number;
+    y: number;
+    committedUntil: number;
+  };
 }
 
 export interface BushPatch {

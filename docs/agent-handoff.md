@@ -1366,3 +1366,102 @@ Replaced the stacked live scoreboard/cards/timings/log layout with a viewport-fi
 - Remaining: map layer baking, ability VFX additive glow, structure outlines.
 - Related decisions this session: ability AD/AP ratios are capped at 10% (`MAX_ABILITY_RATIO`); cast types live in `abilityCastTypes.ts` (Raijin Ball Lightning is no-target); lane towers rally defenders in front with a 260 chase leash (`baseDefenseRules.ts`).
 
+## 2026-10-11: Three.js migration Phase 1 — static arena underlay
+
+**User request:** Start the first bounded Three.js rendering increment only, preserve gameplay and the existing UI, verify it, document remaining old-renderer ownership, and stop.
+
+**Decision and implementation:**
+
+- The live fixed-step simulator remains `src/components/AramMatchView.tsx`; the unused independent `ThreeAramArena.tsx` simulator was not mounted or reused.
+- `src/threeArenaTerrain.ts` adds one presentation-only Three.js scene, one orthographic camera, and one shader-driven plane. It now owns the forest floor, river bed, central causeway, allied base floor plates, and central plaza.
+- `src/arenaPresentationCamera.ts` provides shared, dependency-free camera clamping and world-to-screen parity math. Both renderers use the existing 2600x760 world, 1.0-2.5 zoom, and current spectator camera position.
+- `AramMatchView.tsx` keeps one request-animation-frame loop. It renders Three from camera state, then renders the transparent Canvas overlay. No Three callback advances simulation, resolves hits, deals damage, or changes RNG order.
+- The Three surface is lazy-loaded only when a live arena mounts. It caps device pixel ratio at 2, follows its host with `ResizeObserver`, handles WebGL context loss/restoration, and disposes shared geometry, materials, textures, renderer state, listeners, and the observer on unmount.
+- Canvas retains the old versions of the migrated flat layers only as an automatic fallback when WebGL is unavailable or lost. It does not double-paint them while Three is healthy. Animated water glints and base mist remain in the Canvas effect layer.
+- `src/components/spectator.css` stacks the WebGL surface below the input-owning Canvas at exactly the same responsive aspect ratio. DOM/React menus, HUD, feed, roster, logs, and modals are unchanged.
+- `scripts/validate-design.js` now protects the underlay order, fallback, and prohibition on mounting the legacy independent Three simulator. `scripts/check-spectator-browser.mjs` verifies the two surfaces remain aligned and exercises context fallback.
+
+**Affected files:** `src/arenaPresentationCamera.ts`, `src/threeArenaTerrain.ts`, `src/threeArenaTerrain.test.mjs`, `src/components/AramMatchView.tsx`, `src/components/spectator.css`, `scripts/validate-design.js`, and `scripts/check-spectator-browser.mjs`.
+
+**Verification and measurements:**
+
+- Focused Three terrain tests: 3/3 passed for camera/frustum parity at 1x, 1.45x, and 2.5x; Canvas-compatible Y orientation; bounded migrated layer ownership; and once-only disposal of shared resources.
+- Browser smoke test passed at 1920x1080, 1366x768, 1280x720, 1024x600, and 390x844. WebGL and Canvas bounds matched exactly, all ten roster rows stayed visible, controls/pause/tabs/modals worked, and a synthetic WebGL context loss selected the Canvas fallback before restoration. A 1366x768 screenshot was visually inspected for correct underlay ordering.
+- `npm run check:game` passed design validation, 240 game tests, 3 multi-seed simulation tests, and TypeScript. `npm run build` passed with the existing large-chunk advisory.
+- Phase 0 entry-bundle baseline was 1,036.85 kB minified / 282.09 kB gzip. An eager Three import measured 1,569.48 / 415.23 kB. Lazy loading reduced the final entry to 1,039.42 / 283.08 kB and emits an arena-only Three chunk of 531.39 / 132.63 kB. This is a bundle measurement, not an FPS or frame-time improvement claim.
+- The Three terrain resource profile is one mesh, one geometry, one shader material, and no textures. No live browser CPU/GPU frame-time profile was taken.
+
+**Protected behavior:** No simulation rules, fixed-step timing, movement, collision, combat, tower behavior, dive safety/evacuation sprint, objective contestation, kill attribution, steering commitment, or player/card identity changed.
+
+**Remaining migration limits:** Canvas still renders trees, rocks/cliffs, bushes, jungle walkways and pits, camps and bosses, wells/shops, structures, minions, avatars and summons, projectiles, abilities, fog/wards, labels, floating text, and the minimap. DOM/React continues to own conventional UI. The next requested increment should migrate the remaining static terrain props only; actors and attacks/effects remain later increments. No migration-complete claim is made.
+
+## 2026-10-11: Phase 2 — context-sensitive retreat routing
+
+**User request:** Complete Phase 2 only: replace bush-focused retreat behavior with context-sensitive safe destination and route selection, while preserving decision commitment, facing deadbands, tower safety, and the protected failed-dive evacuation sprint.
+
+**Decision and implementation:**
+
+- Added `src/retreatRouting.ts`, a pure policy that ranks homeward lane ground, allied tower cover, healthy homeward teammates, safe open ground, fountain, and safe bushes. Bushes carry a cover penalty and are no longer the default merely because they are nearby.
+- Every candidate must be passable, outside every live enemy structure range plus 50px, sufficiently separated from enemies (220px at critical health, otherwise 150px), and reachable through the existing terrain router. IQ and TF adjust ranking only after these gates pass: IQ favors safe homeward routing and can value immediate cover; TF favors allied tower/teammate regrouping. Neither attribute can authorize an unsafe destination.
+- `terrainRouting.ts` now exposes a route-distance estimate from the same cached/static A* graph used for movement; `arenaRules.ts` exposes it as `rockRouteDistance`. This avoids a competing pathing system and lets retreat selection consider real terrain detours and unreachable goals.
+- Live `AramMatchView.tsx` retains a chosen retreat plan for roughly 0.65-0.95 seconds, depending on IQ. It replans early only when terrain, enemy proximity, or tower safety invalidates the destination. The existing 0.45s fight/retreat commitment and 12px facing deadband are unchanged.
+- Emergency dive aborts and any unit already in enemy turret range bypass the general planner and retain the existing protected `getTurretEvacuationVector` plus exactly the existing +35 movement-speed sprint. Ordinary retreat speed was not changed.
+- Added runtime `retreatPlan` state to `AramChampionUnit`, cleared when normal activity resumes. Existing `rockApproachWaypoint` continues to steer normal retreat movement around terrain, preventing unsafe shortcuts and stuck wall routes.
+
+**Affected files:** `src/retreatRouting.ts`, `src/retreatRouting.test.mjs`, `src/terrainRouting.ts`, `src/arenaRules.ts`, `src/types.ts`, and `src/components/AramMatchView.tsx`.
+
+**Verification:**
+
+- Focused tests: 4 new retreat-policy tests passed, covering non-default bush selection, enemy-tower/enemy-proximity/passability/unreachable hard gates, tower/teammate alternatives, and stable-plan invalidation. Existing terrain-routing and tower-dive suites also passed.
+- `npm run check:game` passed design validation, 244 game tests, 3 multi-seed simulation tests, and TypeScript. `npm run build` passed; the existing chunk-size warning remains. Final entry bundle measured 1,042.19 kB minified / 284.09 kB gzip; the arena-only Three chunk remains 531.39 kB / 132.63 kB gzip.
+- No new browser verification was required because this phase has no rendering or squad UI change. An optional existing direct-fixture browser harness was attempted but currently fails before arena simulation mounts with Vite's duplicate-React invalid-hook-call error; this does not invalidate the focused or full gameplay test results and was not expanded into a separate UI-harness repair phase.
+- The simplified headless simulator does not execute the live retreat planner, so its unchanged 10-seed 80% Blue / 20% Red diagnostic is not evidence for or against Phase 2 balance.
+
+**Protected behavior and limits:** Tower-safe bushes remain mandatory, units do not intentionally stop inside enemy turret range, dive aborts still outrank ordinary routing, and no movement-speed values were adjusted. The route-length estimate is recomputed only when a plan is created/replanned, but no browser frame-time profile was captured. Phase 3's speed audit is intentionally not started.
+
+## 2026-10-11: Phase 3 — retreat speed audit
+
+**User request:** Audit why retreating avatars appear faster, distinguish ordinary retreat from legitimate movement effects, correct unexplained acceleration, preserve the protected failed-dive evacuation sprint, and stop before Phase 4.
+
+**Finding and implementation:**
+
+- The live ordinary-retreat branch used a hard-coded 105-unit base while normal lane/terrain routing predominantly uses 85. With no item or ability effect, retreat therefore had an unexplained +20 units/s, or 23.5% advantage over ordinary routing. `src/movementSpeedRules.ts` now makes the breakdown explicit, and ordinary retreat uses the same 85-unit base. This changes unmodified ordinary retreat from 105 to 85 units/s (19.0% lower than its prior value).
+- Legitimate modifiers remain additive: Pathfinder Boots +20; Kaelen wind orbs +1 to +7.5 depending on level and held-orb count; an active stealth movement state +60; and a nearby Windwalker's Warhorn aura +20. Warhorn previously applied 18 despite advertising +20, so runtime now matches its existing tooltip.
+- Failed-dive or in-turret-range evacuation keeps its pre-existing 105 emergency base and the exact protected +35 sprint. Its unmodified live speed remains 140 units/s; the fix does not reduce its exit speed, change `getTurretEvacuationVector`, or alter attack suppression/abort duration.
+- Paxi's escape is an instant relocation to the traveling orb, not a walking-speed bonus. Raijin's Ball Lightning is a 540-unit/s dash toward a ground point. Those explicit escape mechanics remain unchanged. Playback at 2x/4x advances the whole fixed-step simulation faster in wall-clock time and does not grant retreat-only movement.
+- The simplified headless simulator retains its separate 95 + 35 tower-evacuation approximation. It does not execute the live retreat route/speed policy, so its multi-seed results cannot measure this live change.
+
+**Affected files:** `EsportsClash.Web/src/movementSpeedRules.ts`, `src/movementSpeedRules.test.mjs`, `src/components/AramMatchView.tsx`, `docs/agent-handoff.md`, and `docs/arena-mechanics.md`.
+
+**Verification and measurements:**
+
+- Focused movement-speed plus tower-dive suites passed 12/12 tests. The four new cases cover ordinary baseline parity, explicit boots/orb/stealth/Warhorn modifiers, exact +35 evacuation protection with the unchanged 140-unit emergency total, and invalid negative modifier clamping.
+- `npm run check:game` passed design validation, all 248 game tests, 3 multi-seed simulation tests, and TypeScript.
+- `npm run build` passed with the existing large-chunk advisory. The entry bundle measured 1,042.58 kB minified / 284.33 kB gzip; the lazy Three terrain chunk remained 531.39 / 132.63 kB.
+- No browser check was required because this phase changes simulation speed values but adds no rendering or squad UI. No live-match frame-time, travel-time replay, or balance improvement is claimed.
+
+**Protected behavior and remaining limits:** The +35 failed-dive evacuation sprint and its prior absolute live speed are preserved, as are dive authorization/abort rules, turret-safe retreat destinations, 0.45s retreat commitment, 12px facing deadband, escape abilities, and deterministic fixed-step timing. Other contextual movement bases (combat kiting, objective movement, relic recovery, farming, and the simplified headless engine) were measured but not normalized; changing them would exceed this phase. Phase 4 was not started.
+
+## 2026-10-11: Phase 4 — ranged attacks and tower safety
+
+**User request:** Audit effective basic-attack reach against tower targeting, collision radii, structure hit distance, temporary bonuses, and special cases; correct excessive reach without flattening melee/ranged identity or shortening abilities; preserve every tower-dive safeguard; and stop before Phase 5.
+
+**Finding and implementation:**
+
+- Live basic attacks used authored per-avatar ranges, but structure attacks added a blanket 40-unit allowance. This let a 205-range attacker hit a tower from 245 units while the tower could only acquire targets within 135. The headless engine used the still larger `kit range × 45 + 25` approximation, reaching 304 units for Skybreaker. Structure attacks also lacked a final authoritative distance check when their windup fired.
+- `src/basicAttackRangeRules.ts` now owns one presentation-independent basic-attack range mapping for live and headless simulation. Existing authored differences are preserved; Skybreaker continues to use the established 180-unit Propella range. Previously unmapped ranged kits no longer silently inherit the 55-unit melee fallback: their kit ranges are converted through a bounded fallback, while all 45 avatars resolve to finite 40-205 unit weapon ranges. Player-card IQ, TF, OVR, and style do not alter physical reach.
+- Structures now have explicit hit radii: tower 32, barracks 35, and Nexus 58. Effective reach is weapon range plus the target footprint, capped at the armed structure's own targeting radius (135 for towers, 190 for the Nexus). Barracks remain edge-aware without an artificial retaliation cap because they do not attack.
+- Both live and headless structure targeting use the shared predicate. Live attacks revalidate that the structure still exists and remains in range when the attack fires, preventing windup movement from producing a remote hit. Neutral-monster basic attacks, tower-dive reach aborts, and survival reach estimates now use the same authored weapon range rather than competing formulas.
+- Long-range abilities remain governed by `getSkillCastRange`; no spell was shortened. No implemented temporary basic-range modifier was found. Kindra's passive text advertises +15% range and Buck's Smoke Screen text advertises a range limit, but neither has a corresponding runtime range modifier; implementing those ability semantics is deferred to the Phase 7 ability audit rather than silently adding them here.
+
+**Affected files:** `EsportsClash.Web/src/basicAttackRangeRules.ts`, `src/basicAttackRangeRules.test.mjs`, `src/components/AramMatchView.tsx`, `src/matchSimulationEngine.ts`, `src/towerDiveRules.ts`, `src/fightSurvivalRules.ts`, `docs/agent-handoff.md`, and `docs/arena-mechanics.md`.
+
+**Verification and measurements:**
+
+- Focused attack-range, tower-dive, arena, skill-range/chain-stun, and fight-survival suites passed 34/34 tests. The five new tests cover all 45 finite ranges and ranged fallback behavior, card-stat isolation, structure radii/caps, no-wave perimeter safety, and separation of spell range from tower basic-attack reach.
+- `npm run check:game` passed design validation, all 253 game tests, 3 multi-seed simulation tests, and TypeScript. The simplified 10-seed diagnostic produced Blue 20% / Red 80%, 8.5-minute average duration (5.1-12.2 range), 103.6 average kills, 41% accuracy, 5 dragons, 3 golems, 659 dive attempts, 4,827 aborts, 3 turret executions, and zero support solo camps. Its shift from the prior small sample is recorded but is not live-simulator balance evidence or a causal performance claim.
+- `npm run build` passed with the existing large-chunk advisory: entry 1,042.64 kB minified / 284.55 kB gzip and lazy Three chunk 531.39 / 132.63 kB. No browser check was required because this phase changes simulation rules only and has no rendering or squad UI change.
+- Maximum live tower hit distance changed from 245 to 135 units (-110, 44.9%); the headless theoretical maximum changed from 304 to 135 (-169, 55.6%). The no-wave hold point remains 163 units from tower center, so it cannot siege. Maximum Nexus reach changed from the old 227-unit focus branch to 190 (-37, 16.3%). Melee Solana changes from 80 to 72 against structures (40 weapon + 32 tower radius), while maximum barracks reach changes from 245 to 240 (205 + 35), preserving meaningful melee/ranged differences against non-retaliating structures.
+
+**Protected behavior and remaining limits:** Tower targeting/retaliation and minion priority remain unchanged once an attacker enters 135 units. Class, health, minion-buffer, IQ, execute, and outnumbering dive gates; failed-dive aborts; the exact +35 evacuation sprint; and turret-safe retreat rules are intact. This phase did not tune abilities, implement the two text-only range mechanics, profile a live browser match, or establish competitive balance from the headless sample. Phase 5 was not started.
+

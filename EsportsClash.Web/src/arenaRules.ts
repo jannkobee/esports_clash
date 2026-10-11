@@ -118,6 +118,13 @@ export function rockApproachWaypoint(
   return terrainWaypoint(from, goal, bodyRadius);
 }
 
+/** Estimated walkable path length using the same static router as live movement. */
+export function rockRouteDistance(
+  from: { x: number; y: number }, goal: { x: number; y: number }, bodyRadius = 13
+): number {
+  return terrainWaypoint.routeDistance(from, goal, bodyRadius);
+}
+
 // Sweep movement in small steps so fast dashes cannot cross a ridge. When a
 // direct route encounters stone, slide along the rock's tangent toward the target.
 export function resolveRockTerrainMovement(

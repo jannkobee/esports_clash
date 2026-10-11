@@ -1,5 +1,6 @@
 import type { AramChampionUnit } from './types';
 import { isObservedCooling, type EnemyCooldownMemory, type KnownSlot, type TeamSide } from './cooldownKnowledge.ts';
+import { getChampionBasicAttackRange } from './basicAttackRangeRules.ts';
 
 type Combatant = Pick<AramChampionUnit, 'id' | 'x' | 'y' | 'hp' | 'maxHp' | 'shield' | 'isAlive' | 'stunTimer' | 'cd1' | 'cd2' | 'cdUlt' | 'level' | 'mana' | 'champion' | 'player'>;
 
@@ -19,7 +20,8 @@ export function shouldRetreatLosingFight(unit: Combatant, allies: Combatant[], e
   const threats = enemies.filter(enemy => enemy.isAlive && distance(unit, enemy) <= 250);
   if (threats.length === 0) return false;
   const helpers = allies.filter(ally => ally.id !== unit.id && ally.isAlive && distance(unit, ally) <= 235);
-  const reachable = threats.filter(enemy => distance(unit, enemy) <= (unit.champion.range * 45 + 85));
+  const reachable = threats.filter(enemy => distance(unit, enemy)
+    <= getChampionBasicAttackRange(unit.champion) + 85);
   const lowestTarget = reachable.sort((a, b) => a.hp + a.shield - b.hp - b.shield)[0];
   const alliedDamage = helpers.reduce((sum, ally) => sum + pressure(ally) * 0.48, 0);
   const incoming = threats.reduce((sum, enemy) => {

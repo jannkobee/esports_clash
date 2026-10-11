@@ -3,6 +3,9 @@ type Point = { x: number; y: number };
 type Rock = Point & { radius: number };
 type Node = Point & { edges: { index: number; cost: number }[] };
 type Route = { goal: Point; points: Point[]; index: number; bestDistance: number; stalled: number };
+export type TerrainRouter = ((from: Point, requestedGoal: Point, radius?: number) => Point) & {
+  routeDistance: (from: Point, requestedGoal: Point, radius?: number) => number;
+};
 
 const CELL = 20;
 const MIN_X = 40;
@@ -13,7 +16,7 @@ const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 
 /** Static, body-expanded terrain graph. Only route planning uses the grid;
  * movement follows smoothed, collision-free segments at ordinary walk speed. */
-export function createTerrainRouter(rocks: readonly Rock[]) {
+export function createTerrainRouter(rocks: readonly Rock[]): TerrainRouter {
   const graphs = new Map<number, Node[]>();
   const routes = new WeakMap<Point, { radius: number; route: Route }>();
 
@@ -100,9 +103,24 @@ export function createTerrainRouter(rocks: readonly Rock[]) {
     return [];
   }
 
-  return function waypoint(from: Point, requestedGoal: Point, radius = 13): Point {
-    const goal = { x: Math.max(MIN_X, Math.min(MAX_X, requestedGoal.x)),
-      y: Math.max(MIN_Y, Math.min(MAX_Y, requestedGoal.y)) };
+  const clampGoal = (requestedGoal: Point) => ({ x: Math.max(MIN_X, Math.min(MAX_X, requestedGoal.x)),
+    y: Math.max(MIN_Y, Math.min(MAX_Y, requestedGoal.y)) });
+
+  const routeDistance = (from: Point, requestedGoal: Point, radius = 13): number => {
+    const goal = clampGoal(requestedGoal);
+    const points = clear(from, goal, radius) ? [goal] : plan(from, goal, radius);
+    if (points.length === 0) return Infinity;
+    let length = 0;
+    let previous = from;
+    for (const point of points) {
+      length += distance(previous, point);
+      previous = point;
+    }
+    return length;
+  };
+
+  const waypoint = (from: Point, requestedGoal: Point, radius = 13): Point => {
+    const goal = clampGoal(requestedGoal);
     if (clear(from, goal, radius)) {
       routes.delete(from);
       return goal;
@@ -134,4 +152,5 @@ export function createTerrainRouter(rocks: readonly Rock[]) {
     } else route.stalled++;
     return target;
   };
+  return Object.assign(waypoint, { routeDistance });
 }

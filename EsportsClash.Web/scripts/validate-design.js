@@ -151,6 +151,24 @@ if (rockDrawAt < 0 || championLabelAt < 0 || rockDrawAt > championLabelAt) {
   console.log('Combat Labels: raised rocks render behind avatar nameplates');
 }
 
+// The bounded Three.js migration must remain a presentation-only underlay with
+// an explicit Canvas fallback. It must not mount the legacy independent simulator.
+const threeTerrainPath = path.resolve('src/threeArenaTerrain.ts');
+const threeTerrainContent = fs.readFileSync(threeTerrainPath, 'utf8');
+const threeHostAt = matchViewContent.indexOf('ref={threeTerrainHostRef}');
+const canvasOverlayAt = matchViewContent.indexOf('ref={canvasRef}');
+if (!matchViewContent.includes('ThreeArenaTerrain')
+    || !matchViewContent.includes('!threeTerrainAvailableRef.current')
+    || !threeTerrainContent.includes('THREE.OrthographicCamera')
+    || threeHostAt < 0 || canvasOverlayAt < 0 || threeHostAt > canvasOverlayAt) {
+  errors.push('CRITICAL: Three.js static terrain must remain below Canvas with its fallback intact!');
+} else {
+  console.log('Rendering Migration: Three.js static terrain underlay and Canvas fallback verified');
+}
+if (matchViewContent.includes('<ThreeAramArena')) {
+  errors.push('CRITICAL: Legacy ThreeAramArena simulator must not replace the live fixed-step arena!');
+}
+
 console.log('================================================================');
 if (errors.length > 0) {
   console.error('❌ DESIGN VALIDATION FAILED:');

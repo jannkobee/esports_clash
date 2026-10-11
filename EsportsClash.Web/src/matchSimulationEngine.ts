@@ -82,6 +82,7 @@ import {
   recordSkillshot
 } from './matchInspector.ts';
 import { createEqualizedRoster, EQUALIZED_COACH_BLUE, EQUALIZED_COACH_RED } from './equalizedMode.ts';
+import { canBasicAttackStructure, getChampionBasicAttackRange } from './basicAttackRangeRules.ts';
 
 export interface JungleCamp {
   id: string;
@@ -699,7 +700,7 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     const enemyLiveTurrets = enemyStructures.filter(s => s.type.includes('tower'));
     const closestEnemyTower = enemyLiveTurrets.sort((a, b) => Math.abs(a.x - u.x) - Math.abs(b.x - u.x))[0];
 
-    const attackRange = u.champion.range * 45;
+    const attackRange = getChampionBasicAttackRange(u.champion);
 
     // Check Tower Dive & Evacuation
     let isDiving = false;
@@ -864,7 +865,9 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
       }
     } else {
       // Lane wave push or structure assault
-      const targetStructure = enemyStructures.find(s => Math.hypot(s.x - u.x, s.y - u.y) <= attackRange + 25);
+      const targetStructure = enemyStructures.find(s => canBasicAttackStructure({
+        x: u.x, y: u.y, attackRange,
+      }, s));
       if (targetStructure) {
         if (u.attackTimer <= 0) {
           u.attackTimer = 1 / Math.max(0.5, u.champion.aspd);

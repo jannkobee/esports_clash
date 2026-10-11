@@ -56,12 +56,16 @@ try {
     const geometry = await evaluate(`(() => {
       const shell = document.querySelector('.spectator-shell');
       const box = e => {const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom,right:r.right};};
-      return { shell:box(shell), canvas:box(shell.querySelector('canvas')), dock:box(shell.querySelector('footer')),
+      return { shell:box(shell), canvas:box(shell.querySelector('.spectator-canvas-overlay')), terrain:box(shell.querySelector('.spectator-three-terrain')), dock:box(shell.querySelector('footer')),
+        renderer:shell.querySelector('.spectator-three-host').dataset.renderer, canvasCount:shell.querySelectorAll('.spectator-stage canvas').length,
         units:[...shell.querySelectorAll('.spectator-unit')].map(box), overflow:shell.scrollWidth > shell.clientWidth || shell.scrollHeight > shell.clientHeight,
         clippedItems:[...shell.querySelectorAll('.spectator-items')].some(e => e.getBoundingClientRect().right > e.closest('.spectator-roster').getBoundingClientRect().right + 1) };
     })()`);
     assert.equal(geometry.overflow, false, JSON.stringify({width,height,geometry}));
     assert.equal(geometry.clippedItems, false, `Items clipped at ${width}`);
+    assert.equal(geometry.renderer, 'three');
+    assert.equal(geometry.canvasCount, 2);
+    assert.deepEqual(geometry.terrain, geometry.canvas);
     assert.equal(geometry.units.length, 10);
     assert.ok(geometry.canvas.height > 90);
     assert.ok(geometry.units.every(box => box.bottom <= height + 1));
@@ -71,6 +75,12 @@ try {
     console.log(JSON.stringify({width,height,canvas:geometry.canvas,screenshot}));
   }
   await send('Emulation.setDeviceMetricsOverride', { width:1366, height:768, deviceScaleFactor:1, mobile:false });
+  await evaluate(`document.querySelector('.spectator-three-terrain').dispatchEvent(new Event('webglcontextlost', {cancelable:true}))`);
+  await delay(100);
+  assert.equal(await evaluate(`document.querySelector('.spectator-three-host').dataset.renderer`), 'canvas-fallback');
+  await evaluate(`document.querySelector('.spectator-three-terrain').dispatchEvent(new Event('webglcontextrestored'))`);
+  await delay(100);
+  assert.equal(await evaluate(`document.querySelector('.spectator-three-host').dataset.renderer`), 'three');
   const click = label => evaluate(`(() => {const b=[...document.querySelectorAll('.spectator-shell button')].find(b=>b.textContent.trim()===${JSON.stringify(label)});if(!b)throw Error('Missing button');b.click();})()`);
   if (process.env.CHECK_COMBAT === '1') {
     await click('4x');
