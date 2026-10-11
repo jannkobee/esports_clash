@@ -1,0 +1,39 @@
+.spectator-shell { position:fixed; inset:0; z-index:50; height:100dvh; width:100%; overflow:hidden; display:flex; flex-direction:column; gap:0; background:#050a13; color:#dbeafe; font-size:12px; }
+.spectator-shell button:focus-visible,.spectator-shell summary:focus-visible { outline:2px solid #fbbf24; outline-offset:2px; }
+.spectator-top { flex:none; height:58px; display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; padding:5px 16px; gap:16px; border-bottom:1px solid #28374e; background:linear-gradient(90deg,#08283b,#080f1c 45%,#080f1c 55%,#351724); }
+.spectator-team { min-width:0; display:flex; flex-direction:column; gap:2px; }
+.spectator-team b { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:14px; color:#67e8f9; }
+.spectator-team.red { text-align:right; } .spectator-team.red b { color:#fda4af; }
+.spectator-team small { color:#94a3b8; font-size:10px; }
+.spectator-score { display:flex; align-items:center; gap:22px; font-variant-numeric:tabular-nums; }
+.spectator-score>strong { font-size:30px; font-weight:900; } .spectator-score>div { text-align:center; }
+.spectator-score time { font-size:15px; font-weight:800; color:#fcd34d; } .spectator-score small { display:block; font-size:9px; text-transform:uppercase; letter-spacing:.12em; color:#94a3b8; }
+.spectator-toolbar { flex:none; min-height:36px; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:4px 10px; border-bottom:1px solid #263247; background:#101827; }
+.spectator-control-group { display:flex; align-items:center; gap:4px; }
+.spectator-toolbar button,.spectator-toolbar summary,.spectator-tabs button { border:1px solid #334155; border-radius:4px; padding:3px 7px; font-size:11px; white-space:nowrap; cursor:pointer; }
+.spectator-toolbar button[aria-pressed=true],.spectator-tabs button[aria-pressed=true] { background:#164e63; border-color:#22d3ee; color:#cffafe; }
+.spectator-menu { position:relative; } .spectator-menu>div { position:absolute; right:0; top:28px; z-index:80; padding:12px; display:grid; gap:8px; width:230px; background:#0f172a; border:1px solid #475569; border-radius:8px; box-shadow:0 12px 30px #0009; }
+.spectator-feed { flex:none; height:25px; padding:3px 12px; display:flex; align-items:center; gap:16px; overflow:hidden; white-space:nowrap; color:#94a3b8; border-bottom:1px solid #1e293b; font-size:10px; }
+.spectator-feed strong { color:#fcd34d; overflow:hidden; text-overflow:ellipsis; }
+.spectator-stage { flex:1; min-height:0; position:relative; display:flex; align-items:center; justify-content:center; background:radial-gradient(ellipse,#142a29,#060c13); container-type:size; overflow:hidden; }
+.spectator-stage canvas { display:block; flex:none; width:min(100cqw,342.105263cqh); height:auto; max-width:100%; max-height:100%; touch-action:none; }
+.spectator-dock { flex:none; border-top:1px solid #334155; background:#090f1c; }
+.spectator-tabs { display:flex; gap:5px; align-items:center; height:28px; padding:3px 10px; background:#101827; }
+.spectator-tabs button { padding:1px 8px; font-size:10px; }.spectator-tabs small { margin-left:auto; color:#64748b; font-size:10px; }
+.spectator-squads { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:1px; background:#334155; }
+.spectator-roster { min-width:0; background:#090f1c; padding:2px 6px; }
+.spectator-unit { height:35px; min-width:0; display:flex; align-items:center; gap:7px; border-bottom:1px solid #1e293b; }
+.spectator-unit:last-child { border:0; }.spectator-unit.fallen { opacity:.5; }
+.spectator-portrait { position:relative; width:29px; height:29px; flex:none; border:1px solid #155e75; overflow:hidden; border-radius:4px; }
+.red .spectator-portrait { border-color:#9f1239; }.spectator-portrait>span { position:absolute; bottom:0; right:0; font-size:9px; line-height:12px; color:#fde68a; background:#020617e8; padding:0 2px; }
+.spectator-vitals { flex:1; min-width:50px; }.spectator-name { display:flex; justify-content:space-between; align-items:center; gap:5px; font-size:10px; line-height:14px; }.spectator-name b,.spectator-name span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }.spectator-name span { font-size:9px; color:#64748b; }
+.spectator-health,.spectator-mana { position:relative; height:5px; background:#253047; overflow:hidden; }.spectator-health i { display:block; height:100%; background:#22d3ee; }.red .spectator-health i { background:#fb7185; }.spectator-health em { position:absolute; right:0; top:0; height:100%; background:#e2e8f099; }.spectator-mana { height:2px; margin-top:2px; }.spectator-mana i { display:block; height:100%; background:#6366f1; }
+.spectator-kda { width:65px; text-align:center; font-variant-numeric:tabular-nums; flex:none; }.spectator-kda b { display:block; font-size:10px; }.spectator-kda span { display:block; font-size:8px; color:#94a3b8; }
+.spectator-xp { height:1px; margin-top:1px; background:#253047; }.spectator-xp i { display:block; height:100%; background:#c084fc; }.spectator-items>span { font-size:9px; color:#475569; align-self:center; }.spectator-items>.ward-ready { color:#a3e635; }
+.spectator-skills { display:flex; gap:2px; }.spectator-skills span { width:17px; height:19px; background:#1e293b; border:1px solid #334155; border-radius:3px; text-align:center; font-size:9px; line-height:17px; color:#94a3b8; }.spectator-skills .ready { color:#6ee7b7; border-color:#065f46; }
+.spectator-items { display:flex; gap:2px; flex:none; }.spectator-items button { width:20px; height:23px; font-size:13px; background:#172033; border:1px solid #334155; border-radius:3px; }.spectator-items button:disabled { color:#475569; }
+.spectator-records { height:179px; padding:7px 12px; display:flex; flex-direction:column; gap:5px; overflow:hidden; }.spectator-records p { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; }.spectator-records time { color:#fbbf24; margin-right:10px; }.spectator-records nav { margin-top:auto; display:flex; gap:12px; font-size:10px; color:#67e8f9; }
+@media(max-width:1000px) { .spectator-unit { gap:4px; }.spectator-items button { width:17px; font-size:11px; }.spectator-kda { width:52px; }.spectator-name span { display:none; }.spectator-skills span { width:14px; }.spectator-toolbar { gap:3px; }.spectator-toolbar button { padding:3px 5px; font-size:10px; } }
+@media(max-width:700px) { .spectator-top { height:50px; padding:3px 8px; gap:6px; }.spectator-team b { font-size:11px; }.spectator-team small { font-size:8px; }.spectator-score { gap:7px; }.spectator-score>strong { font-size:23px; }.spectator-score time { font-size:12px; }.spectator-toolbar { flex-wrap:wrap; padding:3px 5px; }.spectator-unit { height:45px; display:grid; grid-template-columns:23px minmax(0,1fr) 43px; gap:2px 4px; }.spectator-portrait { width:23px; height:23px; grid-row:span 2; }.spectator-items { grid-column:2; }.spectator-items button { height:16px; width:16px; font-size:10px; }.spectator-skills { grid-column:3; grid-row:2; }.spectator-skills span { height:15px; width:13px; font-size:8px; line-height:13px; }.spectator-kda { grid-column:3; grid-row:1; width:43px; }.spectator-kda span { font-size:7px; }.spectator-records { height:229px; }.spectator-tabs small { display:none; } }
+@media(max-height:650px) and (min-width:701px) { .spectator-top { height:46px; }.spectator-unit { height:29px; }.spectator-portrait { height:25px; width:25px; }.spectator-records { height:149px; }.spectator-feed { height:21px; } }
+@media(max-width:700px) { .spectator-unit { height:62px; grid-template-rows:24px 16px 15px; }.spectator-items { grid-column:2 / span 2; grid-row:2; }.spectator-skills { grid-column:2; grid-row:3; }.spectator-records { height:314px; } }

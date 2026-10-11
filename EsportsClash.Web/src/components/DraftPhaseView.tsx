@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ConfluxSpellbook } from './ConfluxSpellbook';
 import type { ChampionKit, CoachCard, PlayerCard, AvatarRole } from '../types';
 import type { DraftSide, DraftSnapshot } from '../draftRules';
 import { chooseCoachBan, chooseCoachPick, chooseCoachTeamPick, DRAFT_TURNS, draftLineups } from '../draftRules';
@@ -439,9 +440,10 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
               )}
               {inspected.name === 'Aetheris' && (
                 <div className="rounded-lg border border-cyan-500/20 bg-cyan-950/20 p-2 text-[11px] text-cyan-100">
-                  <strong>Resonant Convergence:</strong> Tethers nearby allies for 5/6/7/8 seconds at ultimate ranks 1-4.
+                  <strong>Resonant Convergence:</strong> Tethers nearby allies for 5/6/7/8 seconds at ultimate ranks 1/2/3/4.
                 </div>
               )}
+              {inspected.name === 'Kaelen' && <ConfluxSpellbook champion={inspected} />}
             </div>
 
             {/* Signature Athlete Synergy Notification */}

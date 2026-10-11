@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ConfluxSpellbook } from './ConfluxSpellbook';
 import { ChampionKit, PlayerCard, AvatarRole, AvatarCombatType } from '../types';
 import { AVATAR_COMBAT_TYPES, getAvatarCombatProfile } from '../avatarCombatRoles';
 import { ChampionArtwork } from './ChampionArtwork';
@@ -314,7 +315,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
               </h4>
               <p className="text-xs text-slate-400 mt-0.5">
                 {isKaelen
-                  ? 'Kaelen: cooldown-free Q/W/E orbs grant rank-scaled stats while held in the three-orb FIFO · Conflux occupies R · Invoked slots D/F.'
+                  ? 'Arsenaldo: cooldown-free Q/W/E orbs cost 5 mana and grant stats while held · Conflux occupies R · Invoked slots D/F · Five situational combos.'
                   : 'Cap 18: Innate Passive Always Active · Q & W reach Rank 7 · Ultimate reaches Rank 4!'}
               </p>
             </div>
@@ -527,15 +528,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
                 <div className="rounded-xl border border-cyan-500/20 bg-slate-900/60 p-2.5 text-xs text-slate-300">
                   <strong className="text-cyan-200">D</strong> holds the oldest invocation and <strong className="text-orange-200">F</strong> the newest. A new Conflux result shifts the previous F spell to D and drops the old D spell (FIFO).
                 </div>
-                <h6 className="text-xs font-black uppercase tracking-wide text-amber-300">Conflux spellbook (10 recipes)</h6>
-                <div className="grid gap-1.5 sm:grid-cols-2">
-                  {KAELEN_INVOKED_SPELLS.map(spell => (
-                    <div key={spell.id} className="flex items-center justify-between gap-2 rounded-lg border border-slate-800 bg-slate-900 px-2.5 py-1.5 text-[11px]">
-                      <span className="font-bold text-slate-200">{spell.name}</span>
-                      <span className="shrink-0 text-slate-400">{spell.recipe.map(element => element === 'ice' ? 'Q' : element === 'wind' ? 'W' : 'E').join(' ')} · {spell.cooldown}s</span>
-                    </div>
-                  ))}
-                </div>
+                <ConfluxSpellbook champion={selectedChamp} />
                 <button
                   onClick={() => handleTestSkill('ult')}
                   className="px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:brightness-110 text-white text-xs font-black rounded-xl transition flex items-center gap-1.5 shadow-lg"

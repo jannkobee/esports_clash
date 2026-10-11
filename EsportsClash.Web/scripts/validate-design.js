@@ -64,7 +64,10 @@ if (!matchViewContent.includes('getChampionBasicProjectile') || !matchViewConten
 }
 
 // 7. Check In-Game Squad HUD placement (must be inside the arena container)
-if (!matchViewContent.includes('IN-GAME SQUAD HUD & ITEM SCOREBOARD OVERLAY') || !matchViewContent.includes('hudMode')) {
+if (!matchViewContent.includes('className="spectator-shell"')
+  || !matchViewContent.includes('className="spectator-dock"')
+  || (matchViewContent.match(/<SpectatorRoster units=/g) ?? []).length !== 2
+  || !matchViewContent.includes('hudMode')) {
   errors.push('CRITICAL: In-Game Squad HUD missing or displaced from arena container in AramMatchView.tsx!');
 } else {
   console.log('✅ Viewport Integration: Squad status & item inventory HUD docked inside game screen');

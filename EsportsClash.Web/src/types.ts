@@ -61,6 +61,8 @@ export interface ChampionSkill {
   apRatio?: number;
   isUlt?: boolean;
   targeting?: 'unit' | 'ally' | 'ground' | 'self' | 'none';
+  /** Dota-style cast group, stamped from abilityCastTypes.ts. */
+  castType?: 'unit' | 'point_or_unit' | 'area' | 'no_target' | 'toggle';
 }
 
 export type AvatarCombatType = 'Carry' | 'Support' | 'Nuker' | 'Disabler' | 'Jungler' | 'Durable' | 'Escape' | 'Pusher' | 'Initiator';
@@ -283,6 +285,13 @@ export interface AramChampionUnit {
   kaelenInvokedSlots?: string[];
   kaelenInvokeCooldown?: number;
   kaelenSpellCooldowns?: Record<string, number>;
+  kaelenActionTimer?: number;
+  kaelenComboId?: string;
+  kaelenComboStep?: number;
+  kaelenComboCycle?: number;
+  kaelenComboTargetId?: string;
+  kaelenLastSpellHitAt?: number;
+  kaelenAwaitSpellId?: string;
   aetherisOrbs?: { charges: number; remaining: number };
   aetherisOverchargeTimer?: number;
   aetherisOverchargeSourceId?: string;

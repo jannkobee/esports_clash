@@ -1,5 +1,15 @@
 # Conversation handoff for the next agent
 
+## Simulator architecture and scheduling — first pass
+
+User: Make the battle simulator solid, break up monolithic decisions, and eliminate lag spikes.
+
+Implemented: Extracted perception into `EsportsClash.Web/src/decisionPerception.ts` and fight/retreat commitment into `decisionCommitment.ts`, called from `components/AramMatchView.tsx`. These retain live per-actor observations, target order, and existing safety thresholds. `simulationPresentation.ts` caps roster snapshot publication at 10Hz (plus initial/final flush), skips paused cloning, and gives batch execution an 8ms cooperative time slice between whole ticks. Live 30Hz simulation remains unchanged.
+
+Verification: Added `simulationArchitecture.test.mjs`, including 1,024 equivalence cases. `npm run check:game` passes 237 tests plus 3 simulation tests and TypeScript; `npm run build` passes with the existing large-bundle warning; `git diff --check` passes.
+
+Limits: Initial extraction only, not a completed engine rewrite. Decision orchestration, spell executors, and rendering still contain large blocks. No browser before/after frame-time capture was performed, so zero lag spikes or measured FPS gains are not claimed. One expensive tick can exceed the batch budget, and events can render between roster publications. Protected tower, objective, farming/recall and alias invariants were not relaxed.
+
 This records decisions in the order the user raised them. It is a handoff, not a promise that every match will have the same outcome. Read [arena-mechanics.md](arena-mechanics.md) for exact rules and regression checks.
 
 ## What the user wants from this game
@@ -1329,3 +1339,30 @@ Added explicit combat-readiness decisions so viable defenders interrupt optional
 **Verification:** `npm run check:game` passed: design validation, all 220 unit tests, 3 multi-seed simulation suites (20 seeds, Cardrel parody alias, tower dive limits, and turret execution invariants intact), and `tsc -b`. `npm run build` compiled cleanly.
 
 **Limits:** Headless simulation runs without canvas camera rendering; zoom is purely a visual presentation and spectator enhancement.
+
+## User Request: Arsenaldo's Detailed Conflux Spellbook, Multiple Combos, and One-Screen Spectator UI
+
+**User:** Rework Arsenaldo, detail all Conflux spells like other avatar abilities, add meteor/rolling-snowball style spells and multiple combos; bundle the live match UI into one compact spectator screen without scrolling.
+
+**Decision / implementation:** Retained Arsenaldo's internal `Kaelen` identity, all ten recipe IDs, Q/W/E three-orb FIFO, D/F two-spell FIFO, and Conflux's 3/2/1/0-second level thresholds. Reworked `rime-gale` into **Rimeball Roll** (a growing, piercing snowball) and `solar-pike` into **Solar Meteor** (a dodgeable 0.8-second ground telegraph and impact). Other spells now distinguish ground eruptions, piercing lance/wind/flame fronts, control effects, and a self-centered Whiteout recovery burst. Spell instances track per-target hits, ignore dead/stasis/untargetable avatars, and use swept collision for missiles. Knockback respects terrain. Whiteout restores 80 HP and never grants invulnerability or forced movement. Existing ability bonus-stat caps are preserved; invoked damage uses basic-skill progression, not the unused ultimate orb slot.
+
+The AI now chooses **Frozen Starfall**, **Avalanche Break**, **Stormfall**, **Whiteout Reversal**, or **Elemental Collapse** based on health, nearby threats, clusters, and cooldowns. It builds exact recipes, preloads the first two spells, waits for setup hits, and releases missed sequences. Spell cooldowns survive re-invocation. To support actual sequences, orb mana cost is now 5 and invoked costs are 25-35, with a 0.18-second AI action cadence (not an orb cooldown). Tower authorization, aborts, retreat priority, and all protected invariants remain unchanged.
+
+Shared `ConfluxSpellbook` appears in both avatar dossiers and drafting: all ten selectable spells show recipe, level-scaled damage, bonus-stat ratios, mana, cooldown, range, area, cast timing, targeting, control, description, and combo advice. The five combo chains link back to individual spells.
+
+Replaced the stacked live scoreboard/cards/timings/log layout with a viewport-fixed broadcast shell: compact team/kill/clock/structure header, one control toolbar, a thin announcement/objective rail, undistorted camera canvas, and two five-player roster tables in a bottom dock. Rows retain HP, mana, XP, level/death countdown, KDA, CS/gold, cooldowns (D/F for Arsenaldo), six item slots, boots, wards, and click-to-focus portraits. Event logs and power spikes use paginated dock tabs. Insights, item descriptions, and replay/batch/export tools open on demand rather than expanding the page. The existing action camera, minimap, drag/pinch/wheel controls remain. Lobby exits restore page scrolling. Keyboard focus on controls is no longer intercepted by global spectator shortcuts.
+
+**Affected files:** `src/kaelenAbilities.ts`, `src/kaelenSpellRuntime.ts`, `src/kaelenSpellVisuals.ts`, `src/kaelenSpellRuntime.test.mjs`, `src/types.ts`, `src/additionalChampions.ts`, `src/championLore.ts`, `src/components/{AramMatchView,ChampionHubView,DraftPhaseView,ConfluxSpellbook,SpectatorRoster}.tsx`, `src/components/spectator.css`, `src/App.tsx`, `scripts/validate-design.js`, `scripts/check-spectator-browser.mjs`, and both gameplay documents (code paths under `EsportsClash.Web`). Preserved pre-existing ability-type/ratio and base-defense edits in the dirty worktree.
+
+**Verification:** Final `npm run check:game` passed design validation, all 233 tests, the additional 3 simulation checks, and TypeScript. `npm run build` and `git diff --check` passed. Disposable Chrome verified the real live arena at 1920x1080, 1366x768, 1280x720, 1024x600, and 390x844, with ten visible rows and no spectator-shell scrolling/clipped inventory bounds. Browser tests exercised playback, tabs, item details, insights, lobby exit, and all ten spellbook selectors. A live fixture confirmed Arsenaldo casts invoked D/F spells; unit tests cover all 270 recipe rebuild combinations, meteor dodging/timing, snowball growth/swept hits, immunity exclusions, combo selection/cooldowns, and every spell visual. Visually inspected the 1366x768 capture; a final mobile-row overflow found after adding XP/ward indicators was corrected and all viewport checks rerun successfully.
+
+**Limits:** One-screen redesign applies to the live spectator view, not every management/draft page. Detailed overlays may scroll. A portrait phone fits the HUD but has a much smaller battlefield than landscape/desktop. The headless simulator does not model these live Conflux sequences; its balance sample cannot establish this rework's win rate. Existing production bundle-size warning remains; invoked spells reuse the established Arsenaldo audio palette.
+
+
+## Art polish pass 1 (Canvas 2D)
+- Decision: user chose to stay on Canvas 2D. `drawChampionSprite` in `src/components/ChampionSpriteRenderer.ts` now paints each body into a pooled offscreen canvas (`paintCelBody`), then blits it with an 8-direction dark ink outline, a two-tone cel shade and a rim light. Falls back to direct drawing when no DOM canvas exists (node tests).
+- Presentation only: no simulation, collision or RNG changes.
+- Verified: tsc, avatarSkillAnimation and battlefieldModels tests. Not yet judged in a live browser.
+- Remaining: map layer baking, ability VFX additive glow, structure outlines.
+- Related decisions this session: ability AD/AP ratios are capped at 10% (`MAX_ABILITY_RATIO`); cast types live in `abilityCastTypes.ts` (Raijin Ball Lightning is no-target); lane towers rally defenders in front with a 260 chase leash (`baseDefenseRules.ts`).
+

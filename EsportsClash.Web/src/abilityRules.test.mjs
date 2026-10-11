@@ -61,20 +61,20 @@ test('item bonus AD and AP increase role-scaled ability damage', () => {
   assert.deepEqual(itemStats, { bonusAd: 65, bonusAp: 20 });
   assert.equal(
     abilityDamageFromStats(100, marksman.champion, 'skill1', itemStats.bonusAd, itemStats.bonusAp),
-    128.4,
+    107.7,
   );
   assert.equal(
     abilityDamageFromStats(100, marksman.champion, 'skill1', greatsword.stats.ad ?? 0, 0),
-    114.4,
+    104,
   );
 });
 
 test('individual abilities can override their default AD and AP ratios', () => {
   const mage = unit('Mage');
-  mage.champion.skill2.adRatio = 0.5;
-  mage.champion.skill2.apRatio = 0.8;
-  assert.equal(abilityDamageFromStats(100, mage.champion, 'skill2', 40, 50), 160);
-  assert.equal(abilityDamageFromStats(100, mage.champion, 'skill1', 40, 50), 128.2);
+  mage.champion.skill2.adRatio = 0.5; // clamped to the 10% cap
+  mage.champion.skill2.apRatio = 0.8; // clamped to the 10% cap
+  assert.equal(abilityDamageFromStats(100, mage.champion, 'skill2', 40, 50), 109);
+  assert.equal(abilityDamageFromStats(100, mage.champion, 'skill1', 40, 50), 107);
 });
 
 test('stat scaling never turns a zero-damage utility ability into a damage spell', () => {
@@ -87,46 +87,46 @@ test('stat scaling never turns a zero-damage utility ability into a damage spell
 test('getAbilityRatios provides accurate AD and AP ratio percentages and descriptions', () => {
   const marksman = { primaryRole: 'Marksman' };
   assert.deepEqual(getAbilityRatios(marksman), {
-    adRatio: 0.36,
-    apRatio: 0.25,
-    adPercent: 36,
-    apPercent: 25,
-    ratioDesc: '(+36% AD, +25% AP)',
+    adRatio: 0.1,
+    apRatio: 0.06,
+    adPercent: 10,
+    apPercent: 6,
+    ratioDesc: '(+10% AD, +6% AP)',
   });
 
   const mage = { primaryRole: 'Mage' };
   assert.deepEqual(getAbilityRatios(mage), {
-    adRatio: 0.18,
-    apRatio: 0.42,
-    adPercent: 18,
-    apPercent: 42,
-    ratioDesc: '(+18% AD, +42% AP)',
+    adRatio: 0.05,
+    apRatio: 0.1,
+    adPercent: 5,
+    apPercent: 10,
+    ratioDesc: '(+5% AD, +10% AP)',
   });
 
   const hybrid = { primaryRole: 'Assassin', secondaryRole: 'Mage' };
   assert.deepEqual(getAbilityRatios(hybrid), {
-    adRatio: 0.36,
-    apRatio: 0.42,
-    adPercent: 36,
-    apPercent: 42,
-    ratioDesc: '(+36% AD, +42% AP)',
+    adRatio: 0.1,
+    apRatio: 0.1,
+    adPercent: 10,
+    apPercent: 10,
+    ratioDesc: '(+10% AD, +10% AP)',
   });
 
   const tank = { primaryRole: 'Tank', secondaryRole: 'Support' };
   assert.deepEqual(getAbilityRatios(tank), {
-    adRatio: 0.18,
-    apRatio: 0.25,
-    adPercent: 18,
-    apPercent: 25,
-    ratioDesc: '(+18% AD, +25% AP)',
+    adRatio: 0.05,
+    apRatio: 0.06,
+    adPercent: 5,
+    apPercent: 6,
+    ratioDesc: '(+5% AD, +6% AP)',
   });
 
   const custom = { primaryRole: 'Fighter' };
   assert.deepEqual(getAbilityRatios(custom, { adRatio: 0.55, apRatio: 0.10 }), {
-    adRatio: 0.55,
+    adRatio: 0.1,
     apRatio: 0.1,
-    adPercent: 55,
+    adPercent: 10,
     apPercent: 10,
-    ratioDesc: '(+55% AD, +10% AP)',
+    ratioDesc: '(+10% AD, +10% AP)',
   });
 });

@@ -1,4 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { perceiveChampions } from '../decisionPerception';
+import { resolveFightCommitment } from '../decisionCommitment';
+import { runSimulationSlice, shouldPublishHud } from '../simulationPresentation';
+import { SpectatorRoster } from './SpectatorRoster';
+import './spectator.css';
+import { drawKaelenSpell } from '../kaelenSpellVisuals';
+import { KAELEN_COMBOS, KAELEN_ORB_MANA, KAELEN_ACTION_INTERVAL, chooseKaelenCombo, nextKaelenRecipeOrb } from '../kaelenAbilities';
+import { advanceKaelenCast, kaelenCastLifetime, kaelenCastPosition, type KaelenCast } from '../kaelenSpellRuntime';
 import { 
   AramChampionUnit, 
   ChampionKit, 
@@ -66,7 +74,8 @@ import { isInsideRockTerrain } from '../arenaRules';
 import { chooseNearbyFightingAlly, shouldKeepRecallPlan } from '../actionDecisionRules';
 import { INNER_TOWER_X, OUTER_TOWER_X } from '../arenaLayout';
 import { campWallPoint } from '../arenaRules';
-import { chooseBaseDefense, shouldStandAndDefendBase, shouldLeaveWellToDefend,
+import { shouldCastNoTargetMobilityUltimate } from '../abilityCastTypes';
+import { chooseBaseDefense, shouldChaseDefenseTarget, shouldStandAndDefendBase, shouldLeaveWellToDefend,
   shouldRecallToDefendBase, shouldInterruptRecallForDefense } from '../baseDefenseRules';
 import { laneAdvanceLimit, shouldCoordinateObjectiveRecall, shouldFollowUpControl, shouldPushWithWave, shouldSeekHealthRelic, shouldStageForObjective, wouldOverstep } from '../teamTempoRules';
 import { shouldPaxiEscapeJaunt } from '../paxiDecision';
@@ -145,6 +154,7 @@ interface Projectile {
 }
 
 interface SpellAOE {
+  kaelenCast?: KaelenCast;
   id: string;
   type: string;
   x: number;
@@ -271,6 +281,7 @@ export interface KillCallout {
 }
 
 interface AramMatchViewProps {
+  onExit?: () => void;
   seed: number;
   onlineMode?: boolean;
   onReplay: () => void;
@@ -411,6 +422,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   seed,
   onlineMode = false,
   onReplay,
+  onExit,
   replayLabel = 'Replay',
   replayTitle = 'Restart this draft with the same seed',
   batchMode = false,
@@ -434,6 +446,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const [fullscreenError, setFullscreenError] = useState(false);
   const [speed, setSpeed] = useState<number>(1);
   const [paused, setPaused] = useState<boolean>(false);
+  const [dockTab, setDockTab] = useState<'squads' | 'events' | 'items'>('squads');
+  const [recordPage, setRecordPage] = useState(0);
+  useEffect(() => {
+    const oldOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = oldOverflow; };
+  }, []);
 
   // Camera Zoom & Spectator Tracking
   const [zoom, setZoom] = useState<number>(1.45);
@@ -605,7 +624,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+      if (target?.closest('input, textarea, select, button, summary, a, [contenteditable="true"]')) return;
 
       if (e.key === 'Tab') {
         e.preventDefault();
@@ -1721,6 +1740,27 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     // 8. Update Spell AOEs & Continuous Mechanics (Tethers, Pulls, Traps)
     spellsRef.current = spellsRef.current
       .map((s) => {
+        if (s.kaelenCast) {
+          const source = champs.find(c => c.id === s.sourceUnitId);
+          const spell = KAELEN_INVOKED_SPELLS.find(spell => spell.id === s.kaelenCast!.spellId);
+          if (source && spell) {
+            const hits = advanceKaelenCast(s.kaelenCast, spell, dt, champs.filter(enemy => enemy.team !== source.team));
+            Object.assign(s, kaelenCastPosition(s.kaelenCast, spell));
+            hits.forEach(enemy => {
+              if (spell.control === 'stun' || spell.control === 'root' || spell.control === 'knockup') {
+                applyChampionCrowdControl(source, enemy, spell.controlDuration, spell.control, spell.name);
+              } else if (spell.control === 'knockback') {
+                const origin = s.kaelenCast!.origin;
+                const gap = Math.max(1, Math.hypot(enemy.x - origin.x, enemy.y - origin.y));
+                const destination = { x: Math.max(40, Math.min(ARENA_WIDTH - 40, enemy.x + (enemy.x - origin.x) / gap * 58)),
+                  y: Math.max(80, Math.min(620, enemy.y + (enemy.y - origin.y) / gap * 58)) };
+                Object.assign(enemy, resolveRockTerrainMovement(enemy, destination, 13));
+              }
+              applyDamageToChampion(source, enemy, spell.damage, false, spell.name, 'skill1');
+              if (enemy.id === source.kaelenComboTargetId && source.kaelenAwaitSpellId === spell.id) source.kaelenLastSpellHitAt = matchTimeRef.current;
+            });
+          }
+        }
         // Continuous Pull Tether: Raijin's Electric Vortex
         if (s.type === 'electric_vortex') {
           const source = champs.find((c) => c.id === s.sourceUnitId);
@@ -1996,6 +2036,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     // 12. Champions Micro & Macro Intelligence
     champs.forEach((u, uIdx) => {
       if (!u.isAlive) {
+        u.kaelenComboId = undefined;
+        u.kaelenAwaitSpellId = undefined;
+        u.kaelenLastSpellHitAt = undefined;
         u.recallIntent = false;
         u.farmTargetId = undefined;
         u.baseDefenseTargetId = undefined;
@@ -2113,6 +2156,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (u.kaelenInvokeCooldown && u.kaelenInvokeCooldown > 0) {
         u.kaelenInvokeCooldown = Math.max(0, u.kaelenInvokeCooldown - dt);
       }
+      u.kaelenActionTimer = Math.max(0, (u.kaelenActionTimer ?? 0) - dt);
       if (u.kaelenSpellCooldowns) {
         Object.keys(u.kaelenSpellCooldowns).forEach(spellId => {
           u.kaelenSpellCooldowns![spellId] = Math.max(0, u.kaelenSpellCooldowns![spellId] - dt);
@@ -2545,21 +2589,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
 
       // Targets: Enemies, Allies, Dragon, Jungle, Structures, Minions
-      const enemies = champs.filter((e) => e.team !== u.team && e.isAlive && ((e.stealthTimer ?? 0) <= 0 || Math.hypot(e.x - u.x, e.y - u.y) < 48) && (!e.isInBush
-        || (e.revealedTimer ?? 0) > 0
-        || wardsRef.current.some(w => w.team === u.team && w.bushId === e.currentBushId)
-        || champs.some(a => a.team === u.team && a.isAlive && a.currentBushId === e.currentBushId)));
-      const allies = champs.filter((a) => a.team === u.team && a.isAlive);
+      const { enemies, allies, localEnemies, localAllies, availableAllies } =
+        perceiveChampions(u, champs, wardsRef.current);
       const enemyStructures = structures.filter((st) => st.team !== u.team && st.isAlive
         && (st.type !== 'nexus' || canDamageNexus(st.team, structures)));
       const enemyMinions = minions.filter((m) => m.team !== u.team && m.isAlive);
       const availableJungleCamps = jungleCamps.filter((c) => c.isAlive && c.type !== 'siege_golem');
 
       // Read the local numbers before committing to a fight.
-      const localEnemies = enemies.filter((e) => Math.hypot(e.x - u.x, e.y - u.y) <= 400);
-      const availableAllies = allies.filter(a => !a.isRecalling && !a.recallIntent && !a.diveAborting);
-      const localAllies = allies.filter(a => (a.id === u.id || availableAllies.includes(a))
-        && Math.hypot(a.x - u.x, a.y - u.y) <= 400);
       const fightingAlly = chooseNearbyFightingAlly(u, allies, enemies, matchTimeRef.current);
       const defenseCall = chooseBaseDefense(u, structures, enemies, minions, u.baseDefenseTargetId);
       u.baseDefenseTargetId = defenseCall?.building.id;
@@ -2747,24 +2784,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       const rawDangerousFight = u.diveAborting || (!canFollowUpEngage && (losingFight || (!canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002))))));
 
-      // Decision Commitment & Anti-Spin Damping:
-      // Prevents 30Hz fight/retreat flip-flopping caused by minute distance or health changes.
-      let isDangerousFight = rawDangerousFight;
-      if (u.committedState === 'retreat' && (u.decisionCommitTimer ?? 0) > 0 && localEnemies.length > 0 && !isInsideWell && !canFollowUpEngage) {
-        isDangerousFight = true;
-      } else if (u.committedState === 'fight' && (u.decisionCommitTimer ?? 0) > 0 && !isLowHpScared && !losingFight && !u.diveAborting) {
-        isDangerousFight = false;
-      }
-
-      if (isDangerousFight && u.committedState !== 'retreat') {
-        u.committedState = 'retreat';
-        u.decisionCommitTimer = 0.45;
-      } else if (!isDangerousFight && u.committedState !== 'fight' && localEnemies.length > 0) {
-        u.committedState = 'fight';
-        u.decisionCommitTimer = 0.35;
-      } else if (localEnemies.length === 0) {
-        u.committedState = undefined;
-      }
+      const commitment = resolveFightCommitment({
+        committedState: u.committedState, timer: u.decisionCommitTimer ?? 0,
+        dangerous: !!rawDangerousFight, enemyCount: localEnemies.length,
+        inWell: isInsideWell, followUp: canFollowUpEngage, lowHealth: isLowHpScared,
+        losingFight, abortingDive: !!u.diveAborting,
+      });
+      const isDangerousFight = commitment.dangerous;
+      u.committedState = commitment.committedState;
+      u.decisionCommitTimer = commitment.timer;
 
       const nearestPushDistance = enemyStructures.length
         ? Math.min(...enemyStructures.map(st => Math.hypot(st.x - u.x, st.y - u.y))) : Infinity;
@@ -3595,7 +3623,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const skill1Range = getSkillCastRange(u.champion.name, 'skill1', attackRange);
       const skill2Range = getSkillCastRange(u.champion.name, 'skill2', attackRange);
       const ultRange = getSkillCastRange(u.champion.name, 'ultimate', attackRange);
-      const standardCombatRange = Math.max(attackRange * 1.5, skill1Range, skill2Range, u.level >= 6 ? ultRange : 0, 190);
+      const standardCombatRange = Math.max(attackRange * 1.5, skill1Range, skill2Range, u.level >= 6 ? ultRange : 0, u.champion.name === 'Kaelen' ? 420 : 190);
       const isFollowUpEngage = canFollowUpEngage && !!primaryTarget && isEnemyCaughtInAlliedChannel(primaryTarget, allies);
       const maxCombatRange = isFollowUpEngage ? Math.max(standardCombatRange, 650) : standardCombatRange;
 
@@ -3652,7 +3680,18 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         } else if (u.champion.name !== 'Kaelen' && (u.silenceTimer ?? 0) <= 0
           && (shouldUseUltimate(u, primaryTarget, enemies, allies, ultRange)
             || (u.champion.name === 'Raijin' && u.committedState === 'retreat'
-              && u.hp / u.maxHp < 0.55 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u)))) {
+              && u.hp / u.maxHp < 0.55 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u))
+            // Ball Lightning is a no-target ability: use it at will to close a gap or finish a foe.
+            || (u.champion.name === 'Raijin' && u.level >= 6 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u)
+              && shouldCastNoTargetMobilityUltimate({
+                healthFraction: u.hp / u.maxHp,
+                targetDistance: dist,
+                targetHealthFraction: primaryTarget.hp / primaryTarget.maxHp,
+                targetUnderEnemyTurret: enemyStructures.some(st => st.type !== 'nexus'
+                  && Math.hypot(primaryTarget.x - st.x, primaryTarget.y - st.y) <= st.range + 20),
+                nearbyAllies: allies.filter(a => a.id !== u.id && Math.hypot(a.x - u.x, a.y - u.y) <= 320).length,
+                nearbyEnemies: enemies.filter(e => Math.hypot(e.x - primaryTarget.x, e.y - primaryTarget.y) <= 320).length,
+              })))) {
           u.mana -= ultimateManaCost(u);
           const baseUltCd = ultimateBaseCooldown(u);
           u.cdUlt = u.champion.name === 'Raijin' ? baseUltCd
@@ -3817,6 +3856,33 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       }
       else if (defenseCall) {
+        // Never idle behind a dying structure: engage whoever is sieging it, within the defense leash
+        // and outside enemy turret fire, instead of waiting at the rally point.
+        const siegeChampion = defenseTarget || enemies
+          .filter(enemy => defenseCall.attackers.some(attacker => attacker.id === enemy.id))
+          .sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0];
+        const siegeUnderEnemyTurret = !!siegeChampion && enemyStructures.some(st =>
+          st.type !== 'nexus' && Math.hypot(siegeChampion.x - st.x, siegeChampion.y - st.y) <= st.range + 20);
+        if (siegeChampion && shouldChaseDefenseTarget(defenseCall.building, siegeChampion,
+          { targetUnderEnemyTurret: siegeUnderEnemyTurret, healthFraction: u.hp / u.maxHp })) {
+          const gap = Math.hypot(siegeChampion.x - u.x, siegeChampion.y - u.y);
+          setUnitFacing(u, siegeChampion.x);
+          if (gap > attackRange * 0.92) {
+            const angle = Math.atan2(siegeChampion.y - u.y, siegeChampion.x - u.x);
+            const chaseSpeed = 88 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed;
+            u.vx = Math.cos(angle) * chaseSpeed; u.vy = Math.sin(angle) * chaseSpeed;
+            u.x += u.vx * dt; u.y += u.vy * dt;
+            u.animState = 'walk';
+          } else {
+            u.vx = 0; u.vy = 0;
+            if (u.attackTimer <= 0) {
+              u.attackTimer = 1.0 / getEffectiveAttackSpeed(u);
+              u.animState = 'attack';
+              performChampionAttack(u, siegeChampion);
+            }
+          }
+          return;
+        }
         const waveTarget = defenseMinion;
         // Step into range of siege creeps, but never pursue them outside the defensive zone.
         if (waveTarget && !defenseTarget) {
@@ -3951,7 +4017,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       endAramMatch('red');
     }
 
-    if (!batchMode) setChampions(champs.map((c) => ({ ...c, items: [...c.items] })));
   };
 
   // Evaluate & Purchase Items progressively
@@ -5253,8 +5318,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const castKaelenOrb = (u: AramChampionUnit, element: KaelenElement) => {
     const slot: SkillSlot = element === 'ice' ? 'skill1' : element === 'wind' ? 'skill2' : 'ultimate';
     const castSlot = element === 'ice' ? 'orbQ' : element === 'wind' ? 'orbW' : 'orbE';
-    if (u.mana < 20) return false;
-    u.mana -= 20;
+    if (u.mana < KAELEN_ORB_MANA) return false;
+    u.mana -= KAELEN_ORB_MANA;
     u.kaelenOrbs = appendKaelenOrb(u.kaelenOrbs ?? [], element);
     u.activeAbilitySlot = slot;
     recordAbilityCast(insightsRef.current, u, castSlot, matchTimeRef.current);
@@ -5300,104 +5365,89 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   };
 
   const castKaelenInvokedSpell = (
-    u: AramChampionUnit,
-    spell: (typeof KAELEN_INVOKED_SPELLS)[number],
-    target: AramChampionUnit | undefined,
-    enemies: AramChampionUnit[],
-    fallbackDirection: -1 | 1,
-    abilitySlot: 'skill1' | 'skill2',
-    castSlot: 'invokedD' | 'invokedF'
+    u: AramChampionUnit, spell: (typeof KAELEN_INVOKED_SPELLS)[number],
+    target: AramChampionUnit, slotIndex: number,
   ) => {
-    const destination = getGroundTargetPoint(
-      u,
-      target ? { x: target.x, y: target.y } : undefined,
-      fallbackDirection,
-      320,
-      { minX: 60, maxX: ARENA_WIDTH - 60, minY: 90, maxY: 610 }
-    );
+    if ((u.kaelenSpellCooldowns?.[spell.id] ?? 0) > 0 || u.mana < spell.mana) return false;
+    if (spell.shape !== 'self' && Math.hypot(target.x - u.x, target.y - u.y) > spell.range) return false;
+    const destination = spell.shape === 'self' ? { x: u.x, y: u.y } : getGroundTargetPoint(
+      u, { x: target.x, y: target.y }, u.team === 'blue' ? 1 : -1, spell.range,
+      { minX: 40, maxX: ARENA_WIDTH - 40, minY: 80, maxY: 620 });
+    u.mana -= spell.mana;
     u.kaelenSpellCooldowns ??= {};
-    if ((u.kaelenSpellCooldowns[spell.id] ?? 0) > 0 || u.mana < 45) return false;
-    u.mana -= 45;
     u.kaelenSpellCooldowns[spell.id] = spell.cooldown;
-    u.activeAbilitySlot = abilitySlot;
+    u.activeAbilitySlot = slotIndex === 0 ? 'skill1' : 'skill2';
     u.animState = 'cast';
-    recordAbilityCast(insightsRef.current, u, castSlot, matchTimeRef.current);
-    sound.playAvatarSkill(u.champion.name, abilitySlot, u.x / ARENA_WIDTH * 2 - 1);
-    spellsRef.current.push({
-      id: random().toString(),
-      type: 'kaelen_invoke',
-      x: destination.x,
-      y: destination.y,
-      radius: spell.radius,
-      duration: 0.8,
-      maxDuration: 0.8,
-      color: '#a5f3fc',
-      extraText: spell.name,
-      avatarName: 'Kaelen',
-      abilitySlot
-    });
-    enemies.filter(enemy => enemy.isAlive
-      && Math.hypot(enemy.x - destination.x, enemy.y - destination.y) <= spell.radius)
-      .forEach(enemy => {
-        if (spell.control === 'stun') applyChampionCrowdControl(u, enemy, spell.controlDuration, 'stun', spell.name);
-        else if (spell.control === 'root') applyChampionCrowdControl(u, enemy, spell.controlDuration, 'root', spell.name);
-        else if (spell.control === 'knockup') applyChampionCrowdControl(u, enemy, spell.controlDuration, 'knockup', spell.name);
-        else if (spell.control === 'knockback') {
-          const dx = enemy.x - destination.x;
-          const dy = enemy.y - destination.y;
-          const distance = Math.hypot(dx, dy) || 1;
-          enemy.x = Math.max(60, Math.min(ARENA_WIDTH - 60, enemy.x + dx / distance * 58));
-          enemy.y = Math.max(90, Math.min(610, enemy.y + dy / distance * 58));
-        }
-        applyDamageToChampion(u, enemy, spell.damage, false, spell.name, 'ultimate');
-      });
-    addEvent(`❄️🌬️🔥 ${u.player.name} cast ${spell.name} at a ground point!`, 'combo');
+    recordAbilityCast(insightsRef.current, u, slotIndex === 0 ? 'invokedD' : 'invokedF', matchTimeRef.current);
+    sound.playAvatarSkill(u.champion.name, u.activeAbilitySlot, u.x / ARENA_WIDTH * 2 - 1);
+    if (spell.shape === 'self') u.hp = Math.min(u.maxHp, u.hp + 80);
+    const cast: KaelenCast = { spellId: spell.id, origin: { x: u.x, y: u.y }, aim: destination,
+      elapsed: 0, hitIds: [], resolved: false };
+    const lifetime = kaelenCastLifetime(spell);
+    spellsRef.current.push({ id: random().toString(), type: 'kaelen_invoke',
+      ...kaelenCastPosition(cast, spell), duration: lifetime, maxDuration: lifetime,
+      color: spell.color, extraText: spell.name, sourceUnitId: u.id, kaelenCast: cast });
+    addEvent(u.player.name + ' cast ' + spell.name + '!', 'combo');
     return true;
   };
 
-  const processKaelenTurn = (
-    u: AramChampionUnit,
-    target: AramChampionUnit | undefined,
-    enemies: AramChampionUnit[]
-  ) => {
+  const processKaelenTurn = (u: AramChampionUnit, target: AramChampionUnit | undefined, enemies: AramChampionUnit[]) => {
+    if (!target || !target.isAlive || target.zhonyaActive || (target.untargetableTimer ?? 0) > 0
+      || u.diveAborting || u.isRecalling || (u.kaelenActionTimer ?? 0) > 0) return false;
+    let combo = KAELEN_COMBOS.find(combo => combo.id === u.kaelenComboId);
+    if (u.kaelenComboTargetId !== target.id) combo = undefined;
+    if (!combo) {
+      combo = chooseKaelenCombo({ healthFraction: u.hp / u.maxHp,
+        enemyDistance: Math.hypot(target.x - u.x, target.y - u.y),
+        clusteredEnemies: enemies.filter(enemy => Math.hypot(enemy.x - target.x, enemy.y - target.y) < 140).length,
+        cycle: u.kaelenComboCycle ?? 0, cooldowns: u.kaelenSpellCooldowns ?? {} });
+      if (!combo) return false;
+      u.kaelenComboId = combo.id;
+      u.kaelenComboStep = 0;
+      u.kaelenComboTargetId = target.id;
+      u.kaelenLastSpellHitAt = undefined;
+    }
+    const step = u.kaelenComboStep ?? 0;
+    const desired = KAELEN_INVOKED_SPELLS.find(spell => spell.id === combo!.spells[step]);
+    if (!desired) { u.kaelenComboId = undefined; return false; }
     const slots = u.kaelenInvokedSlots ?? [];
-    const readySpell = slots
-      .map((spellId, index) => ({
-        spell: KAELEN_INVOKED_SPELLS.find(candidate => candidate.id === spellId),
-        index
-      }))
-      .find(({ spell }) => !!spell && (u.kaelenSpellCooldowns?.[spell.id] ?? 0) <= 0);
-    const fallbackDirection = u.team === 'blue' ? 1 : -1;
-    if (readySpell?.spell) {
-      return castKaelenInvokedSpell(
-        u,
-        readySpell.spell,
-        target,
-        enemies,
-        fallbackDirection,
-        readySpell.index === 0 ? 'skill1' : 'skill2',
-        readySpell.index === 0 ? 'invokedD' : 'invokedF'
-      );
+    // Preload the first two spells before opening. Follow-ups do not spend
+    // the entire control window gathering another recipe or waiting on R.
+    const prepareId = !slots.includes(desired.id) ? desired.id
+      : step === 0 && !slots.includes(combo.spells[1]) ? combo.spells[1] : undefined;
+    let acted = false;
+    if (prepareId) {
+      const spell = KAELEN_INVOKED_SPELLS.find(spell => spell.id === prepareId)!;
+      const current = u.kaelenOrbs ?? [];
+      if (getKaelenInvokedSpell(current)?.id === spell.id) {
+        acted = castKaelenConflux(u);
+      } else {
+        // Preserve the longest FIFO suffix matching the next recipe prefix.
+        acted = castKaelenOrb(u, nextKaelenRecipeOrb(current, spell.recipe));
+      }
+    } else {
+      // Wait for the opening projectile/telegraph to connect. On a miss, release
+      // the sequence instead of firing the finisher at a stale landing point.
+      const pending = spellsRef.current.find(effect => effect.sourceUnitId === u.id && effect.kaelenCast
+        && effect.kaelenCast.spellId === combo!.spells[step - 1]);
+      if (step > 0 && u.kaelenLastSpellHitAt === undefined && pending?.kaelenCast && !pending.kaelenCast.resolved) return false;
+      if (step > 0 && u.kaelenLastSpellHitAt === undefined && combo.id !== 'peel') {
+        u.kaelenComboId = undefined; return false;
+      }
+      acted = castKaelenInvokedSpell(u, desired, target, slots.indexOf(desired.id));
+      if (acted) {
+        if (step === 0) addEvent(u.player.name + ' begins ' + combo.name + '.', 'combo');
+        u.kaelenComboStep = step + 1;
+        u.kaelenAwaitSpellId = desired.id;
+        u.kaelenLastSpellHitAt = undefined;
+        if (step + 1 >= combo.spells.length) {
+          u.kaelenComboId = undefined;
+          u.kaelenComboCycle = (u.kaelenComboCycle ?? 0) + 1;
+        }
+      }
     }
-    if ((u.kaelenOrbs?.length ?? 0) === 3 && (u.kaelenInvokeCooldown ?? 0) <= 0) {
-      return castKaelenConflux(u);
-    }
-
-    const orbCandidates: KaelenElement[] = ['ice', 'wind', 'fire'];
-    const orbCursor = (u.kaelenOrbCursor ?? 0) % orbCandidates.length;
-    const currentOrbs = u.kaelenOrbs ?? [];
-    const nextOrb = orbCandidates
-      .map((element, index) => ({
-        element,
-        index,
-        count: currentOrbs.filter(orb => orb === element).length,
-        cursorDistance: (index - orbCursor + orbCandidates.length) % orbCandidates.length
-      }))
-      .sort((a, b) => a.count - b.count || a.cursorDistance - b.cursorDistance)[0]?.element;
-    if (!nextOrb) return false;
-    const cast = castKaelenOrb(u, nextOrb);
-    if (cast) u.kaelenOrbCursor = (orbCandidates.indexOf(nextOrb) + 1) % orbCandidates.length;
-    return cast;
+    if (acted) u.kaelenActionTimer = KAELEN_ACTION_INTERVAL;
+    return acted;
   };
 
   const castChampionSkill2 = (u: AramChampionUnit, target: AramChampionUnit) => {
@@ -8771,30 +8821,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ctx.fillText(label, s.x, s.y - s.radius - (ultimate ? 24 : 14));
         }
       } else if (s.type === 'kaelen_invoke') {
-        const progress = 1 - alpha;
-        const pulse = s.radius * (0.45 + progress * 0.7);
-        ctx.globalAlpha = alpha;
-        ctx.shadowColor = '#67e8f9';
-        ctx.shadowBlur = 22;
-        ctx.fillStyle = 'rgba(14, 116, 144, 0.2)';
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, pulse, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = progress < 0.5 ? '#bae6fd' : '#fb923c';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, pulse, progress * Math.PI * 2, (progress + 0.72) * Math.PI * 2);
-        ctx.stroke();
-        if (s.extraText) {
-          ctx.globalAlpha = alpha;
-          ctx.font = '900 12px system-ui, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.lineWidth = 3;
-          ctx.strokeStyle = '#020617';
-          ctx.strokeText(s.extraText.toUpperCase(), s.x, s.y - s.radius - 12);
-          ctx.fillStyle = '#f8fafc';
-          ctx.fillText(s.extraText.toUpperCase(), s.x, s.y - s.radius - 12);
-        }
+        if (s.kaelenCast) drawKaelenSpell(ctx, s.kaelenCast, alpha);
       } else if (s.type === 'solar_flare') {
         // Leona / Solana: Blinding Daybreak Flare Solar Beam
         ctx.shadowColor = '#f59e0b';
@@ -10088,6 +10115,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   useEffect(() => {
     let animId: number;
     let lastTime = performance.now();
+    const lastHud = { current: -Infinity };
 
     const loop = (now: number) => {
       animId = requestAnimationFrame(loop);
@@ -10097,11 +10125,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const steps = batchMode ? (matchFinishedRef.current ? 0 : 120)
         : consumeFixedSteps(accumulatorRef, dt, speed, paused || matchOver);
       if (steps > 0) {
-        for (let step = 0; step < steps && !matchFinishedRef.current; step++) {
+        runSimulationSlice(steps, () => {
           matchTimeRef.current += SIMULATION_STEP;
           updateAramSimulation(SIMULATION_STEP);
-        }
-        if (batchMode) setChampions(championsRef.current.map(champion => ({ ...champion, items: [...champion.items] })));
+        }, () => matchFinishedRef.current, () => performance.now(), batchMode ? 8 : Infinity);
+      }
+      if ((steps > 0 || lastHud.current === -Infinity)
+        && shouldPublishHud(lastHud, now, matchFinishedRef.current && steps > 0)) {
+        setChampions(championsRef.current.map(champion => ({ ...champion, items: [...champion.items] })));
         setMatchTime(matchTimeRef.current);
       }
 
@@ -10148,122 +10179,95 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const insightWindow = insightsRef.current.timeline.filter(event =>
     event.second <= insightWindowEnd && event.second >= Math.max(0, insightWindowEnd - 30)).reverse();
 
+  const focusUnit = (unit: AramChampionUnit) => {
+    setCameraMode('manual');
+    targetCameraPosRef.current = { x: unit.x, y: unit.y };
+  };
+  const hudXpProgress = (unit: AramChampionUnit) => {
+    if (unit.level >= 18) return 1;
+    const base = unit.level <= 3 ? 0 : getXpThreshold(unit.level);
+    return Math.max(0, Math.min(1, (unit.xp - base) / Math.max(1, getXpThreshold(unit.level + 1) - base)));
+  };
+  const records = dockTab === 'items' ? itemMilestones.map(ms => ({ time: ms.time, text: ms.playerName + ' / ' + ms.itemName + ' / ' + ms.stats })) : eventFeed;
+  const pages = Math.max(1, Math.ceil(records.length / 5));
+  const page = Math.min(recordPage, pages - 1);
   return (
-    <div ref={matchRootRef} className={`relative space-y-4 animate-fade-in max-w-[1600px] mx-auto ${isFullscreen ? 'fixed inset-0 z-[100] max-w-none w-screen h-screen overflow-y-auto bg-slate-950 p-3' : ''}`}>
-      {/* ======================================================== */}
-      {/* 1. TOP BROADCAST SCOREBOARD */}
-      {/* ======================================================== */}
-      <div className="bg-slate-900 border-2 border-slate-700 rounded-2xl p-3 shadow-2xl flex justify-between items-center relative overflow-hidden">
-        {/* Blue Squad Badge */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-cyan-600 rounded-xl flex items-center justify-center font-black text-white text-xl shadow">
-            🛡️
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-black text-cyan-400">{teamNames.blue}</h2>
-              <span className="text-[10px] bg-cyan-950 text-cyan-300 px-1.5 py-0.5 rounded font-mono font-bold border border-cyan-400/40">
-                {blueTowersAlive}/3 Towers
-              </span>
-              <span className="text-[10px] bg-amber-950 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold border border-amber-400/40">
-                Avg Lvl {blueAvgLevel}
-              </span>
-            </div>
-            <div className="text-[10px] text-slate-400 flex items-center gap-1.5 mt-0.5">
-              <Coins className="w-3 h-3 text-amber-400" />
-              <strong className="text-amber-300 font-mono">${blueGold.toLocaleString()}</strong>
-              <span className="text-slate-500">|</span>
-              <span>Coach: {blueCoach?.name || 'None'}</span>
-            </div>
-            <div className="flex gap-1 mt-1" aria-label="Blue barracks status">
-              {barracksKinds.map(kind => <span key={kind} title={`${kind} barracks ${barracksIntact('blue', kind) ? 'intact' : 'destroyed'}`}
-                className={`text-[9px] px-1.5 py-0.5 rounded border ${barracksIntact('blue', kind) ? 'text-cyan-300 border-cyan-700' : 'text-amber-300 border-amber-600'}`}>
-                {kind === 'catapult' ? 'Cata' : kind === 'ranged' ? 'Range' : 'Melee'} {barracksIntact('blue', kind) ? '◆' : '✕'}
-              </span>)}
-            </div>
-          </div>
+    <div ref={matchRootRef} className="spectator-shell" aria-label="Clash Arena spectator">
+      <header className="spectator-top">
+        <div className="spectator-team"><b>{teamNames.blue}</b><small>{blueGold.toLocaleString()}g | {blueTowersAlive}/3 towers | Lv {blueAvgLevel}</small>
+          <small>{barracksKinds.map(kind => (barracksIntact('blue', kind) ? '+ ' : 'x ') + kind).join(' | ')}</small></div>
+        <div className="spectator-score"><strong className="text-cyan-300">{blueKills}</strong><div><time>{Math.floor(matchTime / 60)}:{String(Math.floor(matchTime % 60)).padStart(2, '0')}</time>
+          <small>{matchOver ? 'Final' : paused ? 'Paused' : matchEconomyPhase(matchTime)}</small></div><strong className="text-rose-300">{redKills}</strong></div>
+        <div className="spectator-team red"><b>{teamNames.red}</b><small>{redGold.toLocaleString()}g | {redTowersAlive}/3 towers | Lv {redAvgLevel}</small>
+          <small>{barracksKinds.map(kind => (barracksIntact('red', kind) ? '+ ' : 'x ') + kind).join(' | ')}</small></div>
+      </header>
+      <div className="spectator-toolbar" role="toolbar" aria-label="Spectator controls">
+        <div className="spectator-control-group">
+          <button onClick={onExit}>Lobby</button>
+          <button onClick={() => setPaused(!paused)} aria-label={paused ? 'Resume match' : 'Pause match'}>{paused ? 'Play' : 'Pause'}</button>
+          {[1, 2, 4].map(value => <button key={value} aria-pressed={speed === value} onClick={() => setSpeed(value)}>{value}x</button>)}
+          <button aria-pressed={cameraMode === 'auto'} onClick={() => { setCameraMode(cameraMode === 'auto' ? 'manual' : 'auto'); targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, 760); }}>{cameraMode === 'auto' ? 'Auto cam' : 'Free pan'}</button>
+          <button onClick={() => setZoom(z => Math.max(1, z - 0.15))} aria-label="Zoom out">-</button>
+          <button onClick={() => setZoom(zoom === 1 ? 1.45 : 1)} title="Toggle fit / action zoom">{Math.round(zoom * 100)}%</button>
+          <button onClick={() => setZoom(z => Math.min(2.5, z + 0.15))} aria-label="Zoom in">+</button>
+          <button aria-pressed={showMinimap} onClick={() => setShowMinimap(!showMinimap)}>Map</button>
         </div>
-
-        {/* Center Live Scoreboard & Gold Advantage */}
-        <div className="flex flex-col items-center">
-          <div className="flex items-center bg-slate-950 px-6 py-1.5 rounded-xl border border-slate-700 gap-6">
-            <span className="text-3xl font-black text-cyan-400 drop-shadow">{blueKills}</span>
-            <div className="flex flex-col items-center">
-              <Swords className="w-5 h-5 text-amber-400 animate-pulse" />
-              <span className="text-[11px] text-amber-300 font-mono font-bold mt-0.5">
-                {Math.floor(matchTime / 60)}:{(Math.floor(matchTime % 60)).toString().padStart(2, '0')}
-              </span>
-              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wide">{matchEconomyPhase(matchTime)}</span>
-            </div>
-            <span className="text-3xl font-black text-rose-400 drop-shadow">{redKills}</span>
-          </div>
-
-          <div className="mt-1 flex items-center gap-2 text-[10px] font-bold">
-            {blueGold >= redGold ? (
-              <span className="text-cyan-400 bg-cyan-950/80 px-2.5 py-0.5 rounded-full border border-cyan-500/30">
-                +{Math.round(blueGold - redGold).toLocaleString()}g {teamNames.blue} Lead
-              </span>
-            ) : (
-              <span className="text-rose-400 bg-rose-950/80 px-2.5 py-0.5 rounded-full border border-rose-500/30">
-                +{Math.round(redGold - blueGold).toLocaleString()}g {teamNames.red} Lead
-              </span>
-            )}
-          </div>
-          <button onClick={toggleFullscreen} className="mt-1 flex items-center gap-1 text-[10px] font-bold text-slate-300 hover:text-amber-300" aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'} aria-pressed={isFullscreen} title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}>
-            {isFullscreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
-            {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-          </button>
-          <div className="mt-1 flex items-center gap-2 text-[10px] font-bold text-slate-300">
-            <span title="Match seed; replaying uses the same draft and random sequence">Seed {seed}</span>
-            <button onClick={() => setShowInsights(value => !value)} aria-expanded={showInsights}
-              className={`font-bold ${showInsights ? 'text-emerald-300' : 'hover:text-emerald-300'}`}
-              title="Open live ability stats and the match event timeline">Insights</button>
-            {!batchMode && !onlineMode && <button onClick={onReplay} className="hover:text-cyan-300" title={replayTitle}>{replayLabel}</button>}
-            {!batchMode && !onlineMode && <button onClick={onBatchStart} className="hover:text-amber-300" title="Simulate 25 real arena matches with fresh seeds and save balance reports">Run 25</button>}
-            {batchMode && <><span className="text-amber-300">Balance {batchNumber}/25</span><button onClick={onBatchStop} className="text-rose-300 hover:text-rose-100">Stop</button></>}
-            {latestReportRef.current && <button onClick={downloadMatchReport} className="hover:text-emerald-300">Export</button>}
-            {balanceSummary && !batchMode && <button onClick={downloadBalanceReport} className="hover:text-emerald-300">Export balance</button>}
-          </div>
-          {balanceSummary && !batchMode && <div className="mt-1 text-[9px] text-slate-400 text-center" title="Aggregated from completed arena matches saved in this browser">
-            {balanceSummary.matches} games · {balanceSummary.averageMinutes.toFixed(1)}m avg · {(balanceSummary.blueWinRate * 100).toFixed(0)}% blue wins · {(balanceSummary.higherRatedWinRate * 100).toFixed(0)}% higher rated wins · {(balanceSummary.skillshotHitRate * 100).toFixed(0)}% skillshot hits · {balanceSummary.averageObjectiveTime ? `${balanceSummary.averageObjectiveTime.toFixed(1)}m objective avg` : 'no objectives'}
-            <div>Skill 2 {balanceSummary.averageSkill2Casts.toFixed(1)} casts/avatar · Mana waits {balanceSummary.averageManaBlocks.toFixed(1)}/avatar · Black Hole interrupts {balanceSummary.blackHoleInterrupts} · Paxi escapes {balanceSummary.paxiEscapeJaunts}</div>
-            <div>{([8, 10, 12, 13] as const).map(minute => balanceSummary.itemTimings[minute].matches
-              ? `${minute}m: ${balanceSummary.itemTimings[minute].averageItems.toFixed(1)} avg items / ${balanceSummary.itemTimings[minute].bestFarmerItems.toFixed(1)} best farmer`
-              : `${minute}m: no item sample`).join(' · ')}</div>
-          </div>}
-        </div>
-
-        {/* Red Squad Badge */}
-        <div className="flex items-center gap-3 text-right">
-          <div>
-            <div className="flex items-center gap-2 justify-end">
-              <span className="text-[10px] bg-amber-950 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold border border-amber-400/40">
-                Avg Lvl {redAvgLevel}
-              </span>
-              <span className="text-[10px] bg-rose-950 text-rose-300 px-1.5 py-0.5 rounded font-mono font-bold border border-rose-400/40">
-                {redTowersAlive}/3 Towers
-              </span>
-              <h2 className="text-base font-black text-rose-400">{teamNames.red}</h2>
-            </div>
-            <div className="text-[10px] text-slate-400 flex items-center gap-1.5 justify-end mt-0.5">
-              <span>Split Contenders</span>
-              <span className="text-slate-500">|</span>
-              <Coins className="w-3 h-3 text-amber-400" />
-              <strong className="text-amber-300 font-mono">${redGold.toLocaleString()}</strong>
-            </div>
-            <div className="flex gap-1 mt-1 justify-end" aria-label="Red barracks status">
-              {barracksKinds.map(kind => <span key={kind} title={`${kind} barracks ${barracksIntact('red', kind) ? 'intact' : 'destroyed'}`}
-                className={`text-[9px] px-1.5 py-0.5 rounded border ${barracksIntact('red', kind) ? 'text-rose-300 border-rose-700' : 'text-amber-300 border-amber-600'}`}>
-                {kind === 'catapult' ? 'Cata' : kind === 'ranged' ? 'Range' : 'Melee'} {barracksIntact('red', kind) ? '◆' : '✕'}
-              </span>)}
-            </div>
-          </div>
-          <div className="w-10 h-10 bg-rose-600 rounded-xl flex items-center justify-center font-black text-white text-xl shadow">
-            ⚔️
-          </div>
+        <div className="spectator-control-group">
+          <button aria-expanded={showInsights} onClick={() => setShowInsights(!showInsights)}>Insights</button>
+          <button onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}>{isFullscreen ? 'Window' : 'Fullscreen'}</button>
+          <details className="spectator-menu"><summary>More</summary><div>
+            <span className="text-slate-400">Seed {seed} | {Math.abs(blueGold - redGold).toLocaleString()}g lead</span>
+            <span className="text-slate-400">Coaches: {blueCoach?.name ?? 'None'} / {redCoach?.name ?? 'None'}</span>
+            {!batchMode && !onlineMode && <button onClick={onReplay} title={replayTitle}>{replayLabel}</button>}
+            {!batchMode && !onlineMode && <button onClick={onBatchStart}>Run 25 balance matches</button>}
+            {batchMode && <button onClick={onBatchStop}>Stop batch ({batchNumber}/25)</button>}
+            {latestReportRef.current && <button onClick={downloadMatchReport}>Export match</button>}
+            {balanceSummary && <><button onClick={downloadBalanceReport}>Export balance</button><span>{balanceSummary.matches} games | {balanceSummary.averageMinutes.toFixed(1)}m average</span></>}
+            <button onClick={() => sound.toggleMusic()}>Toggle music</button>
+            <span className="text-slate-500">Drag to pan | Wheel to zoom | Space: auto | M: map | Tab: squads</span>
+          </div></details>
         </div>
       </div>
-
+      <div className="spectator-feed" aria-live="polite">
+        <span className="shrink-0 text-cyan-300">LIVE</span>
+        <strong>{activeBanner ? activeBanner.text + ' | ' + activeBanner.subtext : killCallout ? killCallout.killerName + ' | ' + killCallout.victimName + (killCallout.multiKill ? ' | ' + killCallout.multiKill : '') : 'Bridge of Champions'}</strong>
+        <span className="ml-auto truncate">{dragonRef.current.isAlive ? 'Embermaw alive' : 'Embermaw ' + Math.ceil(dragonRef.current.spawnTimer) + 's'} | {jungleCampsRef.current.find(c => c.type === 'siege_golem')?.isAlive ? 'Gravemarch alive' : 'Gravemarch waiting'}</span>
+        {fullscreenError && <span>Fullscreen unavailable; viewport mode active.</span>}
+      </div>
+      <div className="spectator-stage">
+          <canvas
+            ref={canvasRef}
+            width={ARENA_WIDTH}
+            height={760}
+            className={`select-none ${
+              isDragging ? 'cursor-grabbing' : 'cursor-grab'
+            }`}
+            onMouseDown={handleCanvasMouseDown}
+            onMouseMove={handleCanvasMouseMove}
+            onMouseUp={handleCanvasMouseUp}
+            onMouseLeave={handleCanvasMouseUp}
+            onWheel={handleCanvasWheel}
+            onDoubleClick={handleCanvasDoubleClick}
+            onTouchStart={handleCanvasTouchStart}
+            onTouchMove={handleCanvasTouchMove}
+            onTouchEnd={handleCanvasTouchEnd}
+          />
+      </div>
+      <footer className="spectator-dock">
+        <div className="spectator-tabs" role="group" aria-label="Broadcast panels">
+          {(['squads', 'events', 'items'] as const).map(tab => <button key={tab} aria-pressed={dockTab === tab && hudMode !== 'hidden'} onClick={() => { setDockTab(tab); setRecordPage(0); setHudMode('docked'); }}>{tab === 'squads' ? 'Squads & items' : tab === 'events' ? 'Event log' : 'Power spikes'}</button>)}
+          <button onClick={() => setHudMode(hudMode === 'hidden' ? 'docked' : 'hidden')}>{hudMode === 'hidden' ? 'Show' : 'Hide'} panel</button>
+          <small>Click a portrait to focus | Items open their details | HP / mana / cooldowns</small>
+        </div>
+        {hudMode !== 'hidden' && (dockTab === 'squads' ? <div className="spectator-squads">
+          <SpectatorRoster units={blueChamps} team="blue" onItem={setInspectedItem} onFocus={focusUnit} xpProgress={hudXpProgress} second={matchTime} />
+          <SpectatorRoster units={redChamps} team="red" onItem={setInspectedItem} onFocus={focusUnit} xpProgress={hudXpProgress} second={matchTime} />
+        </div> : <div className="spectator-records">
+          {records.slice(page * 5, page * 5 + 5).map((event, index) => <p key={index} title={event.text}><time>{event.time}</time>{event.text}</p>)}
+          {records.length === 0 && <p>No {dockTab === 'items' ? 'purchases or power spikes' : 'events'} recorded yet.</p>}
+          <nav aria-label="Log pages"><button disabled={page === 0} onClick={() => setRecordPage(page - 1)}>Newer</button><span>{page + 1}/{pages}</span><button disabled={page >= pages - 1} onClick={() => setRecordPage(page + 1)}>Older</button></nav>
+        </div>)}
+      </footer>
       {showInsights && <section aria-label="Match insights" className="absolute top-28 right-3 z-[70] w-[min(94vw,680px)] max-h-[70vh] overflow-y-auto rounded-2xl border border-emerald-500/50 bg-slate-950/95 p-3 text-slate-100 shadow-2xl backdrop-blur">
         <div className="flex items-start justify-between gap-3 border-b border-slate-700 pb-2">
           <div>
@@ -10274,10 +10278,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         </div>
         <div className="mt-2 overflow-x-auto">
           <table className="w-full min-w-[540px] text-left text-[10px]">
-            <thead className="text-slate-400"><tr><th className="pb-1">Player / avatar</th><th>Q</th><th>W</th><th>R</th><th>Shots hit/fired</th><th>Mana waits</th><th>Special</th></tr></thead>
+            <thead className="text-slate-400"><tr><th className="pb-1">Player / avatar</th><th>Q</th><th>W</th><th>R / Conflux</th><th>D / F</th><th>Shots hit/fired</th><th>Mana waits</th><th>Special</th></tr></thead>
             <tbody>{insightPlayers.map(stats => <tr key={stats.id} className="border-t border-slate-800">
               <td className={`py-1 font-bold ${stats.team === 'blue' ? 'text-cyan-300' : 'text-rose-300'}`}>{stats.player} <span className="font-normal text-slate-400">{stats.avatar}</span></td>
-              <td>{stats.casts.skill1}</td><td className="font-bold text-emerald-300">{stats.casts.skill2}</td><td>{stats.casts.ultimate}</td>
+              <td>{stats.casts.skill1 + stats.casts.orbQ}</td><td className="font-bold text-emerald-300">{stats.casts.skill2 + stats.casts.orbW}</td><td>{stats.casts.ultimate + stats.casts.conflux}</td>
+              <td>{stats.casts.invokedD} / {stats.casts.invokedF}</td>
               <td>{stats.skillshotsHit}/{stats.skillshotsFired}</td><td>{stats.manaBlocks}</td>
               <td>{stats.blackHoleInterrupts ? `${stats.blackHoleInterrupts} interrupts` : stats.escapeJaunts || stats.engageJaunts ? `${stats.escapeJaunts} escapes / ${stats.engageJaunts} engages` : '—'}</td>
             </tr>)}</tbody>
@@ -10302,729 +10307,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           </div>
         </div>
       </section>}
-
-      {/* ======================================================== */}
-      {/* 2. THE EXPANDED ARENA CANVAS WITH DRAGON PIT & JUNGLE */}
-      {/* ======================================================== */}
-      <div className="relative w-full rounded-3xl overflow-hidden border-4 border-slate-700 shadow-2xl bg-black">
-        <div className="relative w-full h-10 bg-gradient-to-r from-slate-950 via-indigo-950/80 to-slate-950 border-b border-amber-500/25 pointer-events-none flex items-center px-4 gap-3 z-20">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 shrink-0">Live kill feed</span>
-          {deadChampions.length > 0 && (
-            <div className="flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono text-amber-300 pointer-events-auto">
-              <Skull className="w-3 h-3 text-rose-400 shrink-0" />
-              {deadChampions.map(c => (
-                <span key={c.id} className="bg-slate-900/90 px-1.5 py-0.5 rounded border border-slate-800 text-slate-300 shrink-0">
-                  {c.player.name} <strong className="text-amber-300">{Math.ceil(c.respawnTimer)}s</strong>
-                </span>
-              ))}
-            </div>
-          )}
-          <div className="ml-auto flex items-center gap-2 overflow-hidden">
-            {recentKills.length === 0 ? (
-              <span className="text-xs text-slate-400">No champion kills yet</span>
-            ) : recentKills.map((kill) => (
-              kill.streakText === 'EXECUTED' || !kill.killerAvatar ? (
-                <div key={kill.id} className="shrink-0 rounded-lg border border-amber-500/40 bg-amber-950/40 px-2 py-0.5 text-[10px] font-bold flex items-center gap-1">
-                  <span className="text-amber-300">⚡ {kill.killerName}</span>
-                  <span className="text-slate-400">executed</span>
-                  <span className={kill.victimTeam === 'blue' ? 'text-cyan-300' : 'text-rose-300'}>{kill.victimName}</span>
-                </div>
-              ) : (
-                <div key={kill.id} className={`shrink-0 rounded-lg border px-2 py-0.5 text-[10px] font-bold flex items-center gap-1 ${kill.killerTeam === 'blue' ? 'border-cyan-500/40 bg-cyan-950/50' : 'border-rose-500/40 bg-rose-950/50'}`}>
-                  <span className={kill.killerTeam === 'blue' ? 'text-cyan-300' : 'text-rose-300'}>{kill.killerName}</span>
-                  <span className="text-amber-300">⚔</span>
-                  <span className={kill.victimTeam === 'blue' ? 'text-cyan-300' : 'text-rose-300'}>{kill.victimName}</span>
-                </div>
-              )
-            ))}
-          </div>
-        </div>
-        <div className="min-h-[78px] flex flex-wrap items-center justify-center gap-2 bg-slate-950/90 border-b border-slate-700 px-2 py-1">
-        {/* TOP KILL CALLOUT BANNER (ESPORTS BROADCAST ANNOUNCEMENT) */}
-        {killCallout && (
-          <div className="relative z-40 pointer-events-none flex flex-col items-center animate-fade-in max-w-full">
-            {/* Main Kill Card */}
-            <div className="bg-slate-950/95 border-2 border-amber-400/90 shadow-[0_0_30px_rgba(251,191,36,0.5)] px-2 sm:px-4 py-2 rounded-2xl flex items-center gap-2 sm:gap-4 backdrop-blur-md">
-              {/* Killer Info */}
-              <div className="flex items-center gap-2.5">
-                {killCallout.killerAvatar ? (
-                  <ChibiAvatar avatarType={killCallout.killerAvatar} size={36} />
-                ) : (
-                  <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-lg shadow">
-                    {killCallout.killerName.includes('Dragon') || killCallout.killerName.includes('Embermaw') ? '🐉' : killCallout.killerName.includes('Jungle') ? '🌲' : '🏰'}
-                  </div>
-                )}
-                <div className="text-left">
-                  <div className={`font-black text-xs ${killCallout.killerTeam === 'blue' ? 'text-cyan-400' : 'text-rose-400'}`}>
-                    {killCallout.killerName}
-                  </div>
-                  <div className="text-[10px] text-slate-400 font-semibold">{killCallout.killerChamp}</div>
-                </div>
-              </div>
-
-              {/* Action Badge */}
-              <div className="flex flex-col items-center px-3 border-x border-slate-700/60">
-                <div className="text-[10px] font-black uppercase tracking-wider text-amber-300">
-                  {killCallout.streakText === 'EXECUTED' ? '⚡ EXECUTED ⚡' : '⚔️ KILLED ⚔️'}
-                </div>
-                <div className="text-[9px] text-amber-400 font-mono font-bold">
-                  {killCallout.streakText === 'EXECUTED' ? '+0g' : '+300g'}
-                </div>
-                {killCallout.neutralFinisher && <div className="text-[9px] text-orange-300">{killCallout.neutralFinisher} finished</div>}
-              </div>
-
-              {/* Victim Info */}
-              <div className="flex items-center gap-2.5 opacity-80">
-                <div className="text-right">
-                  <div className={`font-bold text-xs ${killCallout.victimTeam === 'blue' ? 'text-cyan-400' : 'text-rose-400'}`}>
-                    {killCallout.victimName}
-                  </div>
-                  <div className="text-[10px] text-slate-400">{killCallout.victimChamp}</div>
-                </div>
-                <ChibiAvatar avatarType={killCallout.victimAvatar || 'faker'} size={36} />
-              </div>
-            </div>
-
-            {/* Multikill & Streak Callout Sub-Badge */}
-            {(killCallout.multiKill || killCallout.isFirstBlood || killCallout.streakText) && (
-              <div className="mt-1.5 px-5 py-1 bg-gradient-to-r from-amber-500 via-rose-500 to-amber-500 text-slate-950 font-black text-xs uppercase tracking-widest rounded-full shadow-lg border border-yellow-200 animate-pulse flex items-center gap-2">
-                {killCallout.isFirstBlood && <span>🩸 FIRST BLOOD!</span>}
-                {killCallout.multiKill && <span>⚡ {killCallout.multiKill}!</span>}
-                {killCallout.streakText && <span className="text-[10px] font-bold">({killCallout.streakText})</span>}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Top-Right Flash Banner */}
-        {activeBanner && (
-          <div className="relative bg-slate-900/95 backdrop-blur-md border-2 border-amber-400/70 p-2 rounded-xl shadow-2xl flex items-center gap-2 animate-scale-up max-w-sm z-30">
-            <div className="text-2xl">{activeBanner.icon}</div>
-            <div>
-              <div className="font-black text-amber-300 text-xs tracking-wider uppercase">{activeBanner.text}</div>
-              <div className="text-[10px] text-slate-300 font-semibold mt-0.5">{activeBanner.subtext}</div>
-            </div>
-          </div>
-        )}
-        </div>
-        <div className="relative group w-full min-w-0 overflow-hidden rounded-2xl border border-emerald-950/80 bg-[#1b3028] shadow-[0_18px_50px_rgba(0,0,0,0.28)]">
-          {/* Floating Spectator Camera Controls */}
-          <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 bg-slate-950/85 backdrop-blur-md px-2.5 py-1.5 rounded-xl border border-slate-700/70 shadow-2xl opacity-90 hover:opacity-100 transition-opacity">
-            {/* Auto / Manual Mode Toggle */}
-            <button
-              onClick={() => {
-                if (cameraMode === 'auto') {
-                  setCameraMode('manual');
-                } else {
-                  setCameraMode('auto');
-                  targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, 760);
-                }
-              }}
-              className={`px-2 py-1 rounded-lg text-xs font-black flex items-center gap-1.5 transition ${
-                cameraMode === 'auto'
-                  ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white'
-              }`}
-              title={cameraMode === 'auto' ? 'Auto Camera following combat (Space)' : 'Free Pan Mode (Space to re-center)'}
-            >
-              <Crosshair className="w-3.5 h-3.5" />
-              <span>{cameraMode === 'auto' ? 'Auto Cam' : 'Free Pan'}</span>
-            </button>
-
-            <div className="h-4 w-px bg-slate-700/60 mx-0.5" />
-
-            {/* Zoom Presets */}
-            <div className="flex items-center gap-1">
-              {[
-                { label: 'Fit', val: 1.0, title: 'Fit Whole Arena (1.0x)' },
-                { label: '1.45x', val: 1.45, title: 'Balanced Battlefield View (1.45x)' },
-                { label: '1.85x', val: 1.85, title: 'Close-up Combat View (1.85x)' }
-              ].map((preset) => (
-                <button
-                  key={preset.label}
-                  onClick={() => {
-                    setZoom(preset.val);
-                    if (preset.val === 1.0) {
-                      targetCameraPosRef.current = { x: ARENA_WIDTH / 2, y: 380 };
-                    }
-                  }}
-                  className={`px-1.5 py-0.5 rounded text-[11px] font-bold font-mono transition ${
-                    Math.abs(zoom - preset.val) < 0.05
-                      ? 'bg-cyan-500 text-slate-950 font-black'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
-                  }`}
-                  title={preset.title}
-                >
-                  {preset.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="h-4 w-px bg-slate-700/60 mx-0.5" />
-
-            {/* Step Zoom Buttons */}
-            <button
-              onClick={() => setZoom((z) => Math.max(1.0, Math.round((z - 0.15) * 100) / 100))}
-              className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition"
-              title="Zoom Out (-)"
-            >
-              <ZoomOut className="w-3.5 h-3.5" />
-            </button>
-            <span className="text-[11px] font-mono font-bold text-amber-300 min-w-[34px] text-center">
-              {Math.round(zoom * 100)}%
-            </span>
-            <button
-              onClick={() => setZoom((z) => Math.min(2.5, Math.round((z + 0.15) * 100) / 100))}
-              className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition"
-              title="Zoom In (+)"
-            >
-              <ZoomIn className="w-3.5 h-3.5" />
-            </button>
-
-            <div className="h-4 w-px bg-slate-700/60 mx-0.5" />
-
-            {/* Minimap Toggle */}
-            <button
-              onClick={() => setShowMinimap(!showMinimap)}
-              className={`px-1.5 py-0.5 rounded text-[11px] font-semibold transition ${
-                showMinimap ? 'text-cyan-400 bg-cyan-950/60 border border-cyan-800/50' : 'text-slate-400 hover:text-white'
-              }`}
-              title="Toggle Minimap Radar (M)"
-            >
-              🗺️ Map
-            </button>
-          </div>
-
-          <canvas
-            ref={canvasRef}
-            width={ARENA_WIDTH}
-            height={760}
-            className={`block h-auto w-full max-w-full select-none ${
-              isDragging ? 'cursor-grabbing' : 'cursor-grab'
-            }`}
-            onMouseDown={handleCanvasMouseDown}
-            onMouseMove={handleCanvasMouseMove}
-            onMouseUp={handleCanvasMouseUp}
-            onMouseLeave={handleCanvasMouseUp}
-            onWheel={handleCanvasWheel}
-            onDoubleClick={handleCanvasDoubleClick}
-            onTouchStart={handleCanvasTouchStart}
-            onTouchMove={handleCanvasTouchMove}
-            onTouchEnd={handleCanvasTouchEnd}
-          />
-        </div>
-
-        {/* ======================================================== */}
-        {/* IN-GAME SQUAD HUD & ITEM SCOREBOARD OVERLAY */}
-        {/* ======================================================== */}
-        {hudMode === 'hidden' ? (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 animate-fade-in">
-            <button
-              onClick={() => setHudMode('docked')}
-              className="bg-slate-900/90 hover:bg-slate-800 border-2 border-amber-400/80 text-amber-300 text-xs font-black px-4 py-1.5 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-2 transition hover:scale-105"
-              title="Open In-Game Squad Scoreboard (Tab)"
-            >
-              <span>🛡️⚔️ Show In-Game Squads & Items</span>
-              <span className="text-[10px] text-slate-400 font-mono bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">Tab</span>
-            </button>
-          </div>
-        ) : (
-          <div className="w-full bg-slate-950/95 border-t-2 border-slate-700/80 p-2.5 shadow-2xl animate-fade-in">
-            {/* Header bar: Teams, Gold totals, and HUD controls */}
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-1.5 mb-2 text-xs">
-              {/* Blue Squad Header */}
-              <div className="flex items-center gap-2 font-black uppercase text-cyan-400">
-                <span className="text-sm">🛡️</span>
-                <span className="truncate max-w-[150px]">{teamNames.blue}</span>
-                <span className="font-mono text-amber-300 font-bold bg-amber-950/60 border border-amber-500/30 px-1.5 py-0.5 rounded text-[10px]">
-                  ${blueGold.toLocaleString()}
-                </span>
-                {blueGold > redGold && (
-                  <span className="text-[9px] text-cyan-300 bg-cyan-950/80 border border-cyan-500/30 px-1.5 py-0.5 rounded hidden sm:inline">
-                    +{Math.round(blueGold - redGold).toLocaleString()}g Lead
-                  </span>
-                )}
-              </div>
-
-              {/* Center Controls & View Switcher */}
-              <div className="flex items-center gap-2">
-                {/* Match playback controls */}
-                <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-0.5 rounded-lg border border-slate-800">
-                  <button
-                    onClick={() => setPaused(!paused)}
-                    className="p-1 text-slate-300 hover:text-white transition"
-                    title={paused ? 'Resume Match' : 'Pause Match'}
-                  >
-                    {paused ? <Play className="w-3.5 h-3.5 text-emerald-400" /> : <Pause className="w-3.5 h-3.5 text-amber-400" />}
-                  </button>
-                  {[1, 2, 4].map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => setSpeed(s)}
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-bold font-mono transition ${
-                        speed === s ? 'bg-amber-400 text-slate-950' : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {s}x
-                    </button>
-                  ))}
-                </div>
-
-                {/* Battlefield Zoom & Camera Controls */}
-                <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-0.5 rounded-lg border border-slate-800">
-                  <button
-                    onClick={() => {
-                      if (cameraMode === 'auto') {
-                        setCameraMode('manual');
-                      } else {
-                        setCameraMode('auto');
-                        targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, 760);
-                      }
-                    }}
-                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition flex items-center gap-1 ${
-                      cameraMode === 'auto'
-                        ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                    title={cameraMode === 'auto' ? 'Auto Action Camera (Space)' : 'Free Pan Camera'}
-                  >
-                    <Crosshair className="w-3 h-3" />
-                    <span>{cameraMode === 'auto' ? 'Auto' : 'Free'}</span>
-                  </button>
-                  <button
-                    onClick={() => setZoom((z) => Math.max(1.0, Math.round((z - 0.15) * 100) / 100))}
-                    className="p-0.5 text-slate-400 hover:text-white transition"
-                    title="Zoom Out (-)"
-                  >
-                    <ZoomOut className="w-3 h-3" />
-                  </button>
-                  <span className="text-[10px] font-mono font-bold text-amber-300 min-w-[28px] text-center">
-                    {Math.round(zoom * 100)}%
-                  </span>
-                  <button
-                    onClick={() => setZoom((z) => Math.min(2.5, Math.round((z + 0.15) * 100) / 100))}
-                    className="p-0.5 text-slate-400 hover:text-white transition"
-                    title="Zoom In (+)"
-                  >
-                    <ZoomIn className="w-3 h-3" />
-                  </button>
-                  {[
-                    { label: 'Fit', val: 1.0 },
-                    { label: '1.45x', val: 1.45 },
-                    { label: '1.85x', val: 1.85 }
-                  ].map((p) => (
-                    <button
-                      key={p.label}
-                      onClick={() => {
-                        setZoom(p.val);
-                        if (p.val === 1.0) {
-                          targetCameraPosRef.current = { x: ARENA_WIDTH / 2, y: 380 };
-                        }
-                      }}
-                      className={`px-1 py-0.5 rounded text-[9px] font-mono transition ${
-                        Math.abs(zoom - p.val) < 0.05
-                          ? 'bg-cyan-500 text-slate-950 font-bold'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* HUD Mode Switcher */}
-                <div className="flex items-center gap-1 bg-slate-900/90 p-0.5 rounded-lg border border-slate-800">
-                  <button
-                    onClick={() => setHudMode('docked')}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition ${
-                      hudMode === 'docked' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400 hover:text-white'
-                    }`}
-                    title="Dock Under Canvas"
-                  >
-                    ⚓ Docked
-                  </button>
-                  <button
-                    onClick={() => setHudMode('hidden')}
-                    className="px-1.5 py-0.5 text-slate-400 hover:text-rose-400 transition text-[10px] font-bold"
-                    title="Hide HUD (Tab)"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                <span className="text-[9px] text-slate-500 font-mono hidden xl:inline" title="Press Tab key anytime to toggle">
-                  (Tab)
-                </span>
-              </div>
-
-              {/* Red Squad Header */}
-              <div className="flex items-center gap-2 font-black uppercase text-rose-400">
-                {redGold > blueGold && (
-                  <span className="text-[9px] text-rose-300 bg-rose-950/80 border border-rose-500/30 px-1.5 py-0.5 rounded hidden sm:inline">
-                    +{Math.round(redGold - blueGold).toLocaleString()}g Lead
-                  </span>
-                )}
-                <span className="font-mono text-amber-300 font-bold bg-amber-950/60 border border-amber-500/30 px-1.5 py-0.5 rounded text-[10px]">
-                  ${redGold.toLocaleString()}
-                </span>
-                <span className="truncate max-w-[150px]">{teamNames.red}</span>
-                <span className="text-sm">⚔️</span>
-              </div>
-            </div>
-
-            {(
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                {/* Blue Squad Cards */}
-                <div className="space-y-1.5">
-                  {blueChamps.map((u) => (
-                    <div
-                      key={u.id}
-                      className={`border rounded-xl p-2 transition flex items-center justify-between gap-2.5 ${
-                        u.isAlive ? 'bg-slate-950/85 border-cyan-500/30' : 'bg-slate-950/70 border-slate-800 opacity-40'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                        <div className="relative shrink-0">
-                          <ChibiAvatar avatarType={u.player.avatarSvg} size={36} />
-                          <span className="absolute -bottom-1 -right-1 bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 text-[9px] font-black px-1.5 py-0.2 rounded-full border border-black shadow">
-                            L{u.level}
-                          </span>
-                          {!u.isAlive && (
-                            <div className="absolute inset-0 bg-slate-950/85 rounded-full flex items-center justify-center text-[9px] font-mono font-bold text-amber-300">
-                              💀{Math.ceil(u.respawnTimer)}s
-                            </div>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-xs font-bold text-white flex items-center gap-1.5 flex-wrap leading-tight">
-                            <span className="truncate max-w-[85px]">{u.player.name}</span>
-                            {u.comboMastered && (
-                              <span className="text-[9px] bg-violet-500/20 text-violet-200 px-1 py-0.5 rounded font-bold border border-violet-500/30" title={`${AVATAR_COMBOS[u.champion.name]?.name} learned`}>
-                                Combo: {AVATAR_COMBOS[u.champion.name]?.name}
-                              </span>
-                            )}
-                            {!u.comboMastered && comboPracticeNeeded(u.player, u.champion.name) !== null && (
-                              <span className="text-[9px] text-violet-300 bg-violet-950/50 px-1 py-0.5 rounded border border-violet-500/20">
-                                Combo {u.comboPractice ?? 0}/{comboPracticeNeeded(u.player, u.champion.name)}
-                              </span>
-                            )}
-                            {u.level >= 6 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u) && (
-                              <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1 py-0.5 rounded font-bold animate-pulse">
-                                Ult Ready!
-                              </span>
-                            )}
-                            {u.level >= 6 && u.cdUlt > 0 && (
-                              <span className="text-[9px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono border border-slate-700">
-                                Ult: {Math.ceil(u.cdUlt)}s
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[10px] text-cyan-300 font-bold leading-tight">{u.champion.displayName}</div>
-                          
-                          {/* Live Health Bar */}
-                          <div className="mt-1 w-full max-w-[210px]">
-                            <div className="flex items-center justify-between text-[9px] font-mono leading-none mb-0.5">
-                              <span className="font-bold text-slate-200">
-                                {Math.round(u.hp)}/{u.maxHp} HP
-                              </span>
-                              <span className={u.hp / u.maxHp <= 0.3 ? 'text-rose-400 font-bold' : 'text-slate-400'}>
-                                {Math.round((u.hp / u.maxHp) * 100)}%
-                              </span>
-                            </div>
-                            <div className="w-full bg-slate-900 border border-slate-700/80 rounded h-2 overflow-hidden relative">
-                              <div
-                                className="h-full bg-gradient-to-r from-cyan-500 to-sky-400 transition-all duration-150"
-                                style={{ width: `${Math.max(0, Math.min(100, (u.hp / u.maxHp) * 100))}%` }}
-                              />
-                              {u.shield > 0 && (
-                                <div
-                                  className="absolute top-0 bottom-0 bg-white/70 border-r border-white"
-                                  style={{
-                                    left: `${Math.max(0, Math.min(100, (u.hp / u.maxHp) * 100))}%`,
-                                    width: `${Math.max(0, Math.min(100 - (u.hp / u.maxHp) * 100, (u.shield / u.maxHp) * 100))}%`
-                                  }}
-                                />
-                              )}
-                            </div>
-                            {/* Level / XP Progress Bar */}
-                            <div className="flex items-center gap-1.5 mt-0.5">
-                              <span className="text-[8px] font-mono text-purple-300 font-bold shrink-0">
-                                {u.level >= 18 ? 'MAX' : `XP ${Math.round(u.xp)}/${getXpThreshold(u.level + 1)}`}
-                              </span>
-                              <div
-                                className="flex-1 bg-slate-900 border border-slate-800 rounded-sm h-1.5 overflow-hidden"
-                                title={u.level >= 18 ? 'Level 18 (Capped)' : `Level ${u.level} Progress`}
-                              >
-                                <div
-                                  className={`h-full ${u.level >= 18 ? 'bg-amber-400' : 'bg-gradient-to-r from-purple-500 to-indigo-400'}`}
-                                  style={{
-                                    width: `${
-                                      u.level >= 18
-                                        ? 100
-                                        : Math.max(0, Math.min(100, ((u.xp - getXpThreshold(u.level)) / Math.max(1, getXpThreshold(u.level + 1) - getXpThreshold(u.level))) * 100))
-                                    }%`
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="text-[9px] text-slate-400 font-mono mt-0.5">
-                            KDA: <strong className="text-amber-300">{u.kills}/{u.deaths}/{u.assists}</strong> | CS: <strong className="text-white">{u.cs}</strong>
-                            <span className="text-slate-600"> | </span>
-                            Mana: <strong className="text-yellow-400">{Math.round(u.mana)}/100</strong>
-                            {!u.isAlive && <span className="text-rose-400 font-bold ml-1.5">💀 Respawns in {Math.ceil(u.respawnTimer)}s</span>}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 6-Item Inventory Slots */}
-                      <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-800 shrink-0">
-                        {Array.from({ length: 6 }).map((_, slotIdx) => {
-                          const it = u.items[slotIdx];
-                          return (
-                            <button
-                              key={slotIdx}
-                              onClick={() => it && setInspectedItem(it)}
-                              disabled={!it}
-                              title={it ? `${it.name} (${it.tier})` : 'Empty item slot'}
-                              className={`w-6 h-6 rounded border flex items-center justify-center text-xs transition ${
-                                it
-                                  ? it.tier === 'Mythic'
-                                    ? 'bg-amber-950/90 border-amber-400 text-amber-200 hover:scale-110 shadow'
-                                    : it.tier === 'Component'
-                                    ? 'bg-blue-950/80 border-cyan-500 text-cyan-200 hover:scale-110 shadow'
-                                    : 'bg-slate-800 border-slate-600 hover:border-slate-400 hover:scale-110'
-                                  : 'bg-slate-950/70 border-slate-800/60'
-                              }`}
-                            >
-                              {it ? it.icon : ''}
-                            </button>
-                          );
-                        })}
-                        <button onClick={() => u.boots && setInspectedItem(u.boots)} disabled={!u.boots}
-                          title={u.boots ? `${u.boots.name} (boots slot)` : 'Empty boots slot'}
-                          className="w-6 h-6 rounded border border-lime-500/60 bg-slate-900 text-xs">{u.boots?.icon ?? '👢'}</button>
-                        <span title={`Free ward: ${matchTime >= (u.wardReadyAt ?? 0) ? 'ready' : `${Math.ceil((u.wardReadyAt ?? 0) - matchTime)}s cooldown`}`}
-                          className={`w-6 h-6 rounded border flex items-center justify-center text-xs ${matchTime >= (u.wardReadyAt ?? 0) ? 'border-lime-400 text-lime-300' : 'border-slate-700 text-slate-500'}`}>◉</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Red Squad Cards */}
-                <div className="space-y-1.5">
-                  {redChamps.map((u) => (
-                    <div
-                      key={u.id}
-                      className={`border rounded-xl p-2 transition flex items-center justify-between gap-2.5 ${
-                        u.isAlive ? 'bg-slate-950/85 border-rose-500/30' : 'bg-slate-950/70 border-slate-800 opacity-40'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                        <div className="relative shrink-0">
-                          <ChibiAvatar avatarType={u.player.avatarSvg} size={36} />
-                          <span className="absolute -bottom-1 -right-1 bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 text-[9px] font-black px-1.5 py-0.2 rounded-full border border-black shadow">
-                            L{u.level}
-                          </span>
-                          {!u.isAlive && (
-                            <div className="absolute inset-0 bg-slate-950/85 rounded-full flex items-center justify-center text-[9px] font-mono font-bold text-amber-300">
-                              💀{Math.ceil(u.respawnTimer)}s
-                            </div>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-xs font-bold text-white flex items-center gap-1.5 flex-wrap leading-tight">
-                            <span className="truncate max-w-[85px]">{u.player.name}</span>
-                            {u.comboMastered && (
-                              <span className="text-[9px] bg-violet-500/20 text-violet-200 px-1 py-0.5 rounded font-bold border border-violet-500/30" title={`${AVATAR_COMBOS[u.champion.name]?.name} learned`}>
-                                Combo: {AVATAR_COMBOS[u.champion.name]?.name}
-                              </span>
-                            )}
-                            {!u.comboMastered && comboPracticeNeeded(u.player, u.champion.name) !== null && (
-                              <span className="text-[9px] text-violet-300 bg-violet-950/50 px-1 py-0.5 rounded border border-violet-500/20">
-                                Combo {u.comboPractice ?? 0}/{comboPracticeNeeded(u.player, u.champion.name)}
-                              </span>
-                            )}
-                            {u.level >= 6 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u) && (
-                              <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1 py-0.5 rounded font-bold animate-pulse">
-                                Ult Ready!
-                              </span>
-                            )}
-                            {u.level >= 6 && u.cdUlt > 0 && (
-                              <span className="text-[9px] bg-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono border border-slate-700">
-                                Ult: {Math.ceil(u.cdUlt)}s
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[10px] text-rose-300 font-bold leading-tight">{u.champion.displayName}</div>
-                          
-                          {/* Live Health Bar */}
-                          <div className="mt-1 w-full max-w-[210px]">
-                            <div className="flex items-center justify-between text-[9px] font-mono leading-none mb-0.5">
-                              <span className="font-bold text-slate-200">
-                                {Math.round(u.hp)}/{u.maxHp} HP
-                              </span>
-                              <span className={u.hp / u.maxHp <= 0.3 ? 'text-rose-400 font-bold' : 'text-slate-400'}>
-                                {Math.round((u.hp / u.maxHp) * 100)}%
-                              </span>
-                            </div>
-                            <div className="w-full bg-slate-900 border border-slate-700/80 rounded h-2 overflow-hidden relative">
-                              <div
-                                className="h-full bg-gradient-to-r from-rose-600 to-rose-400 transition-all duration-150"
-                                style={{ width: `${Math.max(0, Math.min(100, (u.hp / u.maxHp) * 100))}%` }}
-                              />
-                              {u.shield > 0 && (
-                                <div
-                                  className="absolute top-0 bottom-0 bg-white/70 border-r border-white"
-                                  style={{
-                                    left: `${Math.max(0, Math.min(100, (u.hp / u.maxHp) * 100))}%`,
-                                    width: `${Math.max(0, Math.min(100 - (u.hp / u.maxHp) * 100, (u.shield / u.maxHp) * 100))}%`
-                                  }}
-                                />
-                              )}
-                            </div>
-                            {/* Level / XP Progress Bar */}
-                            <div className="flex items-center gap-1.5 mt-0.5">
-                              <span className="text-[8px] font-mono text-purple-300 font-bold shrink-0">
-                                {u.level >= 18 ? 'MAX' : `XP ${Math.round(u.xp)}/${getXpThreshold(u.level + 1)}`}
-                              </span>
-                              <div
-                                className="flex-1 bg-slate-900 border border-slate-800 rounded-sm h-1.5 overflow-hidden"
-                                title={u.level >= 18 ? 'Level 18 (Capped)' : `Level ${u.level} Progress`}
-                              >
-                                <div
-                                  className={`h-full ${u.level >= 18 ? 'bg-amber-400' : 'bg-gradient-to-r from-purple-500 to-indigo-400'}`}
-                                  style={{
-                                    width: `${
-                                      u.level >= 18
-                                        ? 100
-                                        : Math.max(0, Math.min(100, ((u.xp - getXpThreshold(u.level)) / Math.max(1, getXpThreshold(u.level + 1) - getXpThreshold(u.level))) * 100))
-                                    }%`
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="text-[9px] text-slate-400 font-mono mt-0.5">
-                            KDA: <strong className="text-amber-300">{u.kills}/{u.deaths}/{u.assists}</strong> | CS: <strong className="text-white">{u.cs}</strong>
-                            <span className="text-slate-600"> | </span>
-                            Mana: <strong className="text-yellow-400">{Math.round(u.mana)}/100</strong>
-                            {!u.isAlive && <span className="text-rose-400 font-bold ml-1.5">💀 Respawns in {Math.ceil(u.respawnTimer)}s</span>}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 6-Item Inventory Slots */}
-                      <div className="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-800 shrink-0">
-                        {Array.from({ length: 6 }).map((_, slotIdx) => {
-                          const it = u.items[slotIdx];
-                          return (
-                            <button
-                              key={slotIdx}
-                              onClick={() => it && setInspectedItem(it)}
-                              disabled={!it}
-                              title={it ? `${it.name} (${it.tier})` : 'Empty item slot'}
-                              className={`w-6 h-6 rounded border flex items-center justify-center text-xs transition ${
-                                it
-                                  ? it.tier === 'Mythic'
-                                    ? 'bg-amber-950/90 border-amber-400 text-amber-200 hover:scale-110 shadow'
-                                    : it.tier === 'Component'
-                                    ? 'bg-blue-950/80 border-cyan-500 text-cyan-200 hover:scale-110 shadow'
-                                    : 'bg-slate-800 border-slate-600 hover:border-slate-400 hover:scale-110'
-                                  : 'bg-slate-950/70 border-slate-800/60'
-                              }`}
-                            >
-                              {it ? it.icon : ''}
-                            </button>
-                          );
-                        })}
-                        <button onClick={() => u.boots && setInspectedItem(u.boots)} disabled={!u.boots}
-                          title={u.boots ? `${u.boots.name} (boots slot)` : 'Empty boots slot'}
-                          className="w-6 h-6 rounded border border-lime-500/60 bg-slate-900 text-xs">{u.boots?.icon ?? '👢'}</button>
-                        <span title={`Free ward: ${matchTime >= (u.wardReadyAt ?? 0) ? 'ready' : `${Math.ceil((u.wardReadyAt ?? 0) - matchTime)}s cooldown`}`}
-                          className={`w-6 h-6 rounded border flex items-center justify-center text-xs ${matchTime >= (u.wardReadyAt ?? 0) ? 'border-lime-400 text-lime-300' : 'border-slate-700 text-slate-500'}`}>◉</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* ======================================================== */}
-      {/* 3. ITEM TIMINGS & POWER SPIKES DOSSIER PANEL */}
-      {/* ======================================================== */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-xs font-black uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
-            <TrendingUp className="w-4 h-4 text-amber-400" />
-            <span>Match Item Timings & Power Spikes</span>
-          </h3>
-          <span className="text-[10px] text-slate-400">Recorded In-Game Purchases & Objectives</span>
-        </div>
-
-        {itemMilestones.length === 0 ? (
-          <div className="text-xs text-slate-500 italic p-3 text-center bg-slate-950 rounded-xl border border-slate-800/50">
-            Champions building initial components and trading towards legendary item spikes...
-          </div>
-        ) : (
-          <div className="grid grid-cols-4 gap-2.5">
-            {itemMilestones.map((ms, idx) => (
-              <div
-                key={idx}
-                className={`bg-slate-950 border rounded-xl p-2.5 shadow text-xs flex items-center gap-2.5 ${
-                  ms.team === 'blue' ? 'border-cyan-500/30' : 'border-rose-500/30'
-                }`}
-              >
-                <div className="w-8 h-8 rounded-lg bg-slate-800 border border-amber-400/40 flex items-center justify-center text-base shadow">
-                  {ms.itemIcon}
-                </div>
-                <div>
-                  <div className="font-black text-white leading-tight flex items-center gap-1">
-                    <span>{ms.itemName}</span>
-                    <span className="text-[9px] font-mono text-amber-400">[{ms.time}]</span>
-                  </div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">
-                    {ms.playerName} ({ms.champName}) • <strong className="text-amber-300">{ms.stats}</strong>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* ======================================================== */}
-      {/* 5. LIVE MATCH EVENT LOG & ANNOUNCEMENTS */}
-      {/* ======================================================== */}
-      <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3 max-h-36 overflow-y-auto font-mono text-xs text-slate-300 space-y-1">
-        {eventFeed.map((evt) => (
-          <div key={evt.id} className="flex items-center gap-2 leading-relaxed">
-            <span className="text-slate-500 font-bold">[{evt.time}]</span>
-            <span className={
-              evt.type === 'tower' ? 'text-amber-400 font-black' :
-              evt.type === 'dragon' ? 'text-cyan-300 font-black' :
-              evt.type === 'jungle' ? 'text-emerald-300 font-bold' :
-              evt.type === 'item' ? 'text-yellow-300 font-bold' :
-              evt.type === 'level' ? 'text-purple-300 font-bold' :
-              evt.type === 'combo' ? 'text-emerald-400 font-black' :
-              evt.type === 'micro' ? 'text-cyan-300 font-bold' :
-              evt.type === 'fountain' ? 'text-blue-300 font-bold' :
-              'text-rose-300'
-            }>
-              {evt.text}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* ======================================================== */}
-      {/* 6. ITEM INSPECTION MODAL */}
-      {/* ======================================================== */}
       {inspectedItem && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-slate-900 border-2 border-amber-500/50 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative animate-scale-up">

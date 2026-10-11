@@ -63,6 +63,88 @@ export function drawSpiritBearSprite(ctx: CanvasRenderingContext2D, time: number
   ctx.restore();
 }
 
+// ---------------------------------------------------------------------------
+// Cel-shaded presentation pass (visual only; never touches simulation state).
+// The champion body is painted into a pooled offscreen canvas, then blitted
+// with a thick dark outline, a two-tone shade and a rim light. Falls back to
+// direct drawing when no DOM canvas exists (node tests, SSR).
+// ---------------------------------------------------------------------------
+const CEL_SCALE = 2;
+const CEL_BOX = { x: -48, y: -80, w: 96, h: 104 };
+const CEL_OUTLINE = 1.7;
+const CEL_OFFSETS: Array<[number, number]> = Array.from({ length: 8 }, (_, i) => [
+  Math.cos((i / 8) * Math.PI * 2) * CEL_OUTLINE,
+  Math.sin((i / 8) * Math.PI * 2) * CEL_OUTLINE,
+]);
+let celBody: HTMLCanvasElement | null = null;
+let celInk: HTMLCanvasElement | null = null;
+
+function makeCelCanvas(): HTMLCanvasElement | null {
+  if (typeof document === 'undefined') return null;
+  const c = document.createElement('canvas');
+  c.width = CEL_BOX.w * CEL_SCALE;
+  c.height = CEL_BOX.h * CEL_SCALE;
+  return c;
+}
+
+function paintCelBody(ctx: CanvasRenderingContext2D, paint: (c: CanvasRenderingContext2D) => void): boolean {
+  try {
+    celBody = celBody ?? makeCelCanvas();
+    celInk = celInk ?? makeCelCanvas();
+    if (!celBody || !celInk) return false;
+    const bctx = celBody.getContext('2d');
+    const ictx = celInk.getContext('2d');
+    if (!bctx || !ictx) return false;
+    const W = celBody.width;
+    const H = celBody.height;
+
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.globalCompositeOperation = 'source-over';
+    bctx.globalAlpha = 1;
+    bctx.clearRect(0, 0, W, H);
+    bctx.save();
+    bctx.setTransform(CEL_SCALE, 0, 0, CEL_SCALE, -CEL_BOX.x * CEL_SCALE, -CEL_BOX.y * CEL_SCALE);
+    paint(bctx);
+    bctx.restore();
+
+    // Two-tone cel shade + rim light clipped to the painted silhouette.
+    bctx.save();
+    bctx.setTransform(1, 0, 0, 1, 0, 0);
+    bctx.globalCompositeOperation = 'source-atop';
+    const shade = bctx.createLinearGradient(0, 0, 0, H);
+    shade.addColorStop(0, 'rgba(255, 255, 255, 0.10)');
+    shade.addColorStop(0.55, 'rgba(255, 255, 255, 0)');
+    shade.addColorStop(0.62, 'rgba(10, 14, 40, 0.16)');
+    shade.addColorStop(1, 'rgba(10, 14, 40, 0.26)');
+    bctx.fillStyle = shade;
+    bctx.fillRect(0, 0, W, H);
+    const rim = bctx.createLinearGradient(W * 0.1, 0, W * 0.55, 0);
+    rim.addColorStop(0, 'rgba(255, 255, 255, 0.16)');
+    rim.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    bctx.fillStyle = rim;
+    bctx.fillRect(0, 0, W, H);
+    bctx.restore();
+
+    // Solid ink silhouette used for the outline.
+    ictx.setTransform(1, 0, 0, 1, 0, 0);
+    ictx.globalCompositeOperation = 'source-over';
+    ictx.clearRect(0, 0, W, H);
+    ictx.drawImage(celBody, 0, 0);
+    ictx.globalCompositeOperation = 'source-in';
+    ictx.fillStyle = '#0b1020';
+    ictx.fillRect(0, 0, W, H);
+    ictx.globalCompositeOperation = 'source-over';
+
+    for (const [ox, oy] of CEL_OFFSETS) {
+      ctx.drawImage(celInk, CEL_BOX.x + ox, CEL_BOX.y + oy, CEL_BOX.w, CEL_BOX.h);
+    }
+    ctx.drawImage(celBody, CEL_BOX.x, CEL_BOX.y, CEL_BOX.w, CEL_BOX.h);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: FighterVisualState) {
   const { championName, x, y, facing, animState, animTime, team, isStunned, isCharmed, isFeared, isKnockedUp, knockupHeight = 0, isInBush } = state;
 
@@ -121,101 +203,108 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
     ctx.fill();
   }
 
-  ctx.translate(attackRecoil, -bob - knockupHeight);
-  ctx.rotate(animState === 'attack' ? -0.055 : stride * 0.026);
-  ctx.scale(animState === 'cast' ? 1.035 : 1, animState === 'attack' ? 0.97 : 1);
+  const paintBody = (ctx: CanvasRenderingContext2D) => {
+    ctx.translate(attackRecoil, -bob - knockupHeight);
+    ctx.rotate(animState === 'attack' ? -0.055 : stride * 0.026);
+    ctx.scale(animState === 'cast' ? 1.035 : 1, animState === 'attack' ? 0.97 : 1);
 
-  switch (championName) {
-    case 'Solana':
-      drawChibiSolana(ctx, animState, animTime);
-      break;
-    case 'Astra':
-      drawChibiAstra(ctx, animState, animTime);
-      break;
-    case 'Kyumi':
-      drawChibiKyumi(ctx, animState, animTime);
-      break;
-    case 'Buck':
-      drawChibiBuck(ctx, animState, animTime);
-      break;
-    case 'Valkira':
-      drawChibiValkira(ctx, animState, animTime);
-      break;
-    case 'Kage':
-      drawChibiKage(ctx, animState, animTime);
-      break;
-    case 'Kazemaru':
-      drawChibiKazemaru(ctx, animState, animTime);
-      break;
-    case 'Kindra':
-    case 'Kindra & Grim':
-      drawChibiKindra(ctx, animState, animTime);
-      break;
-    case 'Cora':
-      drawChibiCora(ctx, animState, animTime);
-      break;
-    case 'Renn':
-      drawChibiRenn(ctx, animState, animTime);
-      break;
-    case 'Sylla':
-      drawChibiSylla(ctx, animState, animTime);
-      break;
-    case 'Tequoia':
-      drawChibiTequoia(ctx, animState, animTime);
-      break;
-    case 'Zal':
-      drawChibiZal(ctx, animState, animTime);
-      break;
-    case 'Xin':
-      drawChibiXin(ctx, animState, animTime);
-      break;
-    case 'Raijin':
-      drawChibiRaijin(ctx, animState, animTime);
-      break;
-    case 'Kaolin':
-      drawChibiKaolin(ctx, animState, animTime);
-      break;
-    case 'Inai':
-      drawChibiInai(ctx, animState, animTime);
-      break;
-    case 'Veyara': case 'Cinderlock': case 'Cinderbloom': case 'Solenne': case 'Croakwell': case 'Soulscourge': case 'Stonewake':
-    case 'Mirehook': case 'Nullweaver': case 'Voltgrip': case 'Aetherbolt': case 'Corsara': case 'Brewmaw': case 'Wraithhook':
-    case 'Faelith': case 'Oathmute': case 'Cloudtail': case 'Stonebranch': case 'Stepstone':
-      drawNewChampionSprite(ctx, championName, animState, animTime);
-      break;
-    case 'Skybreaker':
-      drawChibiPropella(ctx, animState, animTime, team);
-      break;
-    case 'Kaelen': case 'c_kaelen':
-      drawChibiKaelen(ctx, animState, animTime);
-      break;
-    case 'Hweilin': case 'c_hwei':
-      drawChibiHweilin(ctx, animState, animTime);
-      break;
-    case 'Jaxon': case 'c_jayce':
-      drawChibiJaxon(ctx, animState, animTime);
-      break;
-    case 'Valerie': case 'c_vi':
-      drawChibiValerie(ctx, animState, animTime);
-      break;
-    case 'Jinxy': case 'c_jinx':
-      drawChibiJinxy(ctx, animState, animTime);
-      break;
-    case 'Paxi': case 'c_puck':
-      drawChibiPaxi(ctx, animState, animTime);
-      break;
-    case 'Batrix': case 'c_batrider':
-      drawChibiBatrix(ctx, animState, animTime);
-      break;
-    case 'Quillback': case 'c_bristleback':
-      drawChibiQuillback(ctx, animState, animTime);
-      break;
-    case 'Aetheris': case 'c_io':
-      drawChibiAetheris(ctx, animState, animTime);
-      break;
-    default:
-      drawDefaultChampion(ctx, team);
-      break;
+    switch (championName) {
+      case 'Solana':
+        drawChibiSolana(ctx, animState, animTime);
+        break;
+      case 'Astra':
+        drawChibiAstra(ctx, animState, animTime);
+        break;
+      case 'Kyumi':
+        drawChibiKyumi(ctx, animState, animTime);
+        break;
+      case 'Buck':
+        drawChibiBuck(ctx, animState, animTime);
+        break;
+      case 'Valkira':
+        drawChibiValkira(ctx, animState, animTime);
+        break;
+      case 'Kage':
+        drawChibiKage(ctx, animState, animTime);
+        break;
+      case 'Kazemaru':
+        drawChibiKazemaru(ctx, animState, animTime);
+        break;
+      case 'Kindra':
+      case 'Kindra & Grim':
+        drawChibiKindra(ctx, animState, animTime);
+        break;
+      case 'Cora':
+        drawChibiCora(ctx, animState, animTime);
+        break;
+      case 'Renn':
+        drawChibiRenn(ctx, animState, animTime);
+        break;
+      case 'Sylla':
+        drawChibiSylla(ctx, animState, animTime);
+        break;
+      case 'Tequoia':
+        drawChibiTequoia(ctx, animState, animTime);
+        break;
+      case 'Zal':
+        drawChibiZal(ctx, animState, animTime);
+        break;
+      case 'Xin':
+        drawChibiXin(ctx, animState, animTime);
+        break;
+      case 'Raijin':
+        drawChibiRaijin(ctx, animState, animTime);
+        break;
+      case 'Kaolin':
+        drawChibiKaolin(ctx, animState, animTime);
+        break;
+      case 'Inai':
+        drawChibiInai(ctx, animState, animTime);
+        break;
+      case 'Veyara': case 'Cinderlock': case 'Cinderbloom': case 'Solenne': case 'Croakwell': case 'Soulscourge': case 'Stonewake':
+      case 'Mirehook': case 'Nullweaver': case 'Voltgrip': case 'Aetherbolt': case 'Corsara': case 'Brewmaw': case 'Wraithhook':
+      case 'Faelith': case 'Oathmute': case 'Cloudtail': case 'Stonebranch': case 'Stepstone':
+        drawNewChampionSprite(ctx, championName, animState, animTime);
+        break;
+      case 'Skybreaker':
+        drawChibiPropella(ctx, animState, animTime, team);
+        break;
+      case 'Kaelen': case 'c_kaelen':
+        drawChibiKaelen(ctx, animState, animTime);
+        break;
+      case 'Hweilin': case 'c_hwei':
+        drawChibiHweilin(ctx, animState, animTime);
+        break;
+      case 'Jaxon': case 'c_jayce':
+        drawChibiJaxon(ctx, animState, animTime);
+        break;
+      case 'Valerie': case 'c_vi':
+        drawChibiValerie(ctx, animState, animTime);
+        break;
+      case 'Jinxy': case 'c_jinx':
+        drawChibiJinxy(ctx, animState, animTime);
+        break;
+      case 'Paxi': case 'c_puck':
+        drawChibiPaxi(ctx, animState, animTime);
+        break;
+      case 'Batrix': case 'c_batrider':
+        drawChibiBatrix(ctx, animState, animTime);
+        break;
+      case 'Quillback': case 'c_bristleback':
+        drawChibiQuillback(ctx, animState, animTime);
+        break;
+      case 'Aetheris': case 'c_io':
+        drawChibiAetheris(ctx, animState, animTime);
+        break;
+      default:
+        drawDefaultChampion(ctx, team);
+        break;
+    }
+
+  };
+
+  if (!paintCelBody(ctx, paintBody)) {
+    paintBody(ctx);
   }
 
   ctx.restore();

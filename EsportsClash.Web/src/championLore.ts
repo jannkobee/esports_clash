@@ -93,7 +93,7 @@ export const CHAMPION_LORE: Record<string, string> = {
   c_wraithhook: 'The immortal sovereign of an eternal ghost empire, cursed to never truly fall. Wraithhook smashes enemies with colossal vampiric critical strikes and wraithfire stuns, and upon taking fatal blows, resurrects on the battlefield to continue his unrelenting conquest.',
 
   // 31. Kaelen (Invoker basis)
-  c_invoker: 'Kaelen, the Arsenal Prodigy, commands Ice, Wind, and Fire through Conflux. He gathers three elemental orbs in sequence, then weaves their combination into one of ten battlefield spells, keeping his two newest invocations ready to answer the next threat.',
+  c_invoker: 'Arsenaldo, the Arsenal Prodigy, commands Ice, Wind, and Fire through Conflux. Three gathered orbs become one of ten battlefield spells, with his two newest invocations always at hand. He freezes a landing zone before calling down a solar meteor, rolls an avalanche into a frostfire eruption, or turns a desperate close-range clash into a whiteout reversal. His mastery is in the sequence: control first, devastation second.',
 
   // 32. Hweilin (Hwei basis)
   c_hwei: 'A melancholic artistic virtuoso whose emotional brushstrokes manifest directly into destructive and protective sorceries. Hweilin splashes fiery pigments, paints currents of surging light to empower comrades, and opens spiraling vortices of tragic torment that entrap enemy squads.',

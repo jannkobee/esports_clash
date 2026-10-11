@@ -48,13 +48,36 @@ export function chooseBaseDefense<T extends Building>(
       return {
         building, urgent, critical, attackers, wave, distance,
         score: priority + damagedFraction * 10 + Math.min(8, attackers.length * 2 + wave.length),
-        rally: { x: building.x + (actor.team === 'blue' ? -65 : 65), y: building.y },
+        rally: defenseRallyPoint(actor.team, building),
       };
     })
     .filter(call => (call.attackers.length > 0 || call.wave.length > 0)
       && (call.urgent || call.distance <= 650))
     .sort((a, b) => b.score - a.score || a.distance - b.distance
       || a.building.id.localeCompare(b.building.id))[0];
+}
+
+// Home emergencies (nexus, nexus tower, barracks) are held from just behind the
+// structure. Lane towers are defended from the FRONT: standing behind a dying
+// tier 1 tower leaves its attackers untouched, so defenders step ahead of it,
+// toward the enemy, where they can trade with whoever is sieging it.
+export function defenseRallyPoint(team: Team, building: Position & { type: string }): Position {
+  const towardEnemy = team === 'blue' ? 1 : -1;
+  if (HOME_EMERGENCIES.has(building.type)) return { x: building.x - towardEnemy * 65, y: building.y };
+  return { x: building.x + towardEnemy * 40, y: building.y };
+}
+
+// How far past a threatened structure a defender may chase its attackers.
+export const DEFENSE_CHASE_LEASH = 260;
+
+// Defenders must actively engage attackers instead of idling at the rally point.
+// The chase stays within a leash of the structure and never enters enemy turret fire.
+export function shouldChaseDefenseTarget(
+  building: Position & { range: number }, target: Position,
+  state: { targetUnderEnemyTurret: boolean; healthFraction: number },
+): boolean {
+  if (state.targetUnderEnemyTurret || state.healthFraction < 0.35) return false;
+  return Math.hypot(target.x - building.x, target.y - building.y) <= building.range + DEFENSE_CHASE_LEASH;
 }
 
 type DefenseCall = { urgent: boolean; critical: boolean } | undefined;

@@ -1,4 +1,5 @@
 import type { AramChampionUnit, ChampionSkill } from './types';
+import { CAST_TYPE_DETAILS, CAST_TYPE_LABELS } from './abilityCastTypes.ts';
 
 export function aetherisUltimateDurationAtRank(rank: number): number {
   return Math.min(8, Math.max(5, Math.floor(rank) + 4));
@@ -18,6 +19,7 @@ export function findAetherisInnateAlly(
 }
 
 export function abilityTargetingDetails(skill: ChampionSkill): string {
+  if (skill.castType) return `${CAST_TYPE_LABELS[skill.castType]}: ${CAST_TYPE_DETAILS[skill.castType]}`;
   switch (skill.targeting ?? 'unit') {
     case 'ground':
       return 'Ground-targeted: choose a position or direction; no enemy unit needs to be selected.';

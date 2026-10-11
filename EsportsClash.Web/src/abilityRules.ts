@@ -11,6 +11,9 @@ export interface AbilityRatioInfo {
   ratioDesc: string;
 }
 
+/** Bonus-stat scaling on any ability is capped at 10% so items flavor abilities rather than dominate them. */
+export const MAX_ABILITY_RATIO = 0.10;
+
 export function getAbilityRatios(
   champion: Pick<ChampionKit, 'primaryRole' | 'secondaryRole'>,
   skill?: { adRatio?: number; apRatio?: number }
@@ -19,8 +22,8 @@ export function getAbilityRatios(
   const isPhysicalRole = champion.primaryRole === 'Assassin'
     || champion.primaryRole === 'Fighter'
     || champion.primaryRole === 'Marksman';
-  const adRatio = skill?.adRatio ?? (isPhysicalRole ? 0.36 : 0.18);
-  const apRatio = skill?.apRatio ?? (isMage ? 0.42 : 0.25);
+  const adRatio = Math.min(MAX_ABILITY_RATIO, skill?.adRatio ?? (isPhysicalRole ? 0.10 : 0.05));
+  const apRatio = Math.min(MAX_ABILITY_RATIO, skill?.apRatio ?? (isMage ? 0.10 : 0.06));
   const adPercent = Math.round(adRatio * 100);
   const apPercent = Math.round(apRatio * 100);
   return {

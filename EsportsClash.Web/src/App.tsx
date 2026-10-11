@@ -1248,6 +1248,7 @@ export function App() {
               <>
               {arenaChoice === 'online' && onlineSession && !replayDraft && <div className="mb-3 flex justify-between text-xs text-slate-300"><span>Online room {onlineSession.code} · You are {onlineSession.side.toUpperCase()}</span><button type="button" onClick={leaveOnline} className="text-rose-300 hover:text-white font-bold">Leave room</button></div>}
               <AramMatchView
+                onExit={() => { if (arenaChoice === 'online' && onlineSession && !replayDraft) leaveOnline(); setInBattle(false); setBalanceRunsLeft(0); }}
                 key={`${matchSeed}:${replayNumber}`}
                 seed={matchSeed}
                 onlineMode={arenaChoice === 'online' && !replayDraft}
