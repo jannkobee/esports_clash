@@ -9,6 +9,7 @@ export interface FighterVisualState {
   facing: 'left' | 'right';
   animState: 'idle' | 'walk' | 'attack' | 'cast' | 'dead';
   animTime: number;
+  basicAttackPose?: { windup: number; strike: number };
   team: 'blue' | 'red';
   isStunned: boolean;
   isCharmed: boolean;
@@ -163,7 +164,9 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
   // Walking bounce / breathing. Visual-only squash and lean give the models
   // weight without changing their simulation position or collision footprint.
   const bob = animState === 'walk' ? Math.abs(Math.sin(animTime * 12)) * 3 : Math.sin(animTime * 3) * 1.2;
-  const attackRecoil = animState === 'attack' ? -3 : 0;
+  const timedAttack = state.basicAttackPose && (state.basicAttackPose.windup > 0 || state.basicAttackPose.strike > 0)
+    ? state.basicAttackPose : undefined;
+  const attackRecoil = timedAttack ? -5 * timedAttack.windup + 7 * timedAttack.strike : animState === 'attack' ? -3 : 0;
   const stride = animState === 'walk' ? Math.sin(animTime * 12) : 0;
 
   // Ground drop shadow
@@ -205,7 +208,7 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
 
   const paintBody = (ctx: CanvasRenderingContext2D) => {
     ctx.translate(attackRecoil, -bob - knockupHeight);
-    ctx.rotate(animState === 'attack' ? -0.055 : stride * 0.026);
+    ctx.rotate(timedAttack ? -0.09 * timedAttack.windup + 0.08 * timedAttack.strike : animState === 'attack' ? -0.055 : stride * 0.026);
     ctx.scale(animState === 'cast' ? 1.035 : 1, animState === 'attack' ? 0.97 : 1);
 
     switch (championName) {

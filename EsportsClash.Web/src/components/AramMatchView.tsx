@@ -66,7 +66,7 @@ import { chooseTeamfightTarget, isChannelingAbility, isEnemyCaughtInAlliedChanne
 import { createEnemyCooldownMemory, isObservedCooling, observeCooldownRise, type CooldownSnapshot } from '../cooldownKnowledge';
 import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from '../skillRangeRules';
 import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, rockRouteDistance, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from '../arenaRules';
-import { getMinionCrashMultiplier, getMinionStructureDamage, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
+import { getMinionCrashMultiplier, getMinionStructureDamage, getWaveClearProfile, isInsideWaveClear, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
 import { createRatedAvatar } from '../playerCardPower';
 import { campAnimation } from '../campAnimation';
 import { GOLEM_CHARGE_DAMAGE, GOLEM_SPAWN_SECOND, selectGolemChargeTower, shouldAwakenGolem } from '../siegeGolemRules';
@@ -77,6 +77,11 @@ import { shouldRetreatLosingFight } from '../fightSurvivalRules';
 import { chooseRetreatPlan, shouldKeepRetreatPlan } from '../retreatRouting';
 import { retreatSpeedBreakdown } from '../movementSpeedRules';
 import { canBasicAttackStructure, getChampionBasicAttackRange } from '../basicAttackRangeRules';
+import { BUCK_SMOKE_DURATION, BUCK_SMOKE_RADIUS, getAbilityAdjustedBasicAttackRange,
+  getKindraHuntDamageMultiplier, getLambsRespiteExpiryHeal, getLambsRespiteMinimumHealth,
+  KINDRA_HUNT_DURATION, LAMBS_RESPITE_DURATION, LAMBS_RESPITE_RADIUS,
+  shouldTriggerKindraHunt } from '../abilityRuntimeRules';
+import { advanceCreepAttack, advanceTargetedProjectile, creepAttackPose, startCreepAttack } from '../creepAttackTiming';
 import { isInsideRockTerrain } from '../arenaRules';
 import { chooseNearbyFightingAlly, shouldKeepRecallPlan } from '../actionDecisionRules';
 import { INNER_TOWER_X, OUTER_TOWER_X } from '../arenaLayout';
@@ -84,7 +89,7 @@ import { campWallPoint } from '../arenaRules';
 import { shouldCastNoTargetMobilityUltimate } from '../abilityCastTypes';
 import { chooseBaseDefense, shouldChaseDefenseTarget, shouldStandAndDefendBase, shouldLeaveWellToDefend,
   shouldRecallToDefendBase, shouldInterruptRecallForDefense } from '../baseDefenseRules';
-import { laneAdvanceLimit, shouldCoordinateObjectiveRecall, shouldFollowUpControl, shouldPushWithWave, shouldSeekHealthRelic, shouldStageForObjective, wouldOverstep } from '../teamTempoRules';
+import { isTeamfightApproachSafe, laneAdvanceLimit, shouldCoordinateObjectiveRecall, shouldFollowUpControl, shouldPrioritizeTeamfight, shouldPushWithWave, shouldSeekHealthRelic, shouldStageForObjective, shouldStartProactiveAllIn, wouldOverstep } from '../teamTempoRules';
 import { shouldPaxiEscapeJaunt } from '../paxiDecision';
 import { getGroundTargetPoint } from '../groundTargetRules';
 import { getTeamwardKickDestination } from '../kickswitchAbilities';
@@ -126,6 +131,8 @@ import {
 } from 'lucide-react';
 
 interface Projectile {
+  creepAttackTarget?: 'minion' | 'camp' | 'dragon';
+  waveClear?: boolean;
   id: string;
   x: number;
   y: number;
@@ -161,6 +168,8 @@ interface Projectile {
 }
 
 interface SpellAOE {
+  halfWidth?: number;
+  halfHeight?: number;
   kaelenCast?: KaelenCast;
   id: string;
   type: string;
@@ -868,6 +877,25 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const jungleBuffsRef = useRef<{ blue: { blue: number; red: number }; red: { blue: number; red: number } }>({
     blue: { blue: 0, red: 0 }, red: { blue: 0, red: 0 }
   });
+
+  const isInsideEnemySmoke = (unit: AramChampionUnit) => spellsRef.current.some(spell => {
+    if (spell.type !== 'smoke_screen' || Math.hypot(spell.x - unit.x, spell.y - unit.y) > spell.radius) return false;
+    const source = championsRef.current.find(champion => champion.id === spell.sourceUnitId);
+    return !!source && source.team !== unit.team;
+  });
+
+  const getLiveBasicAttackRange = (unit: AramChampionUnit) => getAbilityAdjustedBasicAttackRange(
+    unit.champion, unit.kindraHuntTimer ?? 0, isInsideEnemySmoke(unit)
+  );
+
+  const triggerKindraHunt = (unit: AramChampionUnit) => {
+    const wasInactive = (unit.kindraHuntTimer ?? 0) <= 0;
+    unit.kindraHuntTimer = KINDRA_HUNT_DURATION;
+    if (wasInactive) floatsRef.current.push({
+      id: random().toString(), x: unit.x, y: unit.y - 42,
+      text: 'SPIRIT MARK +15%', color: '#c084fc', opacity: 1, scale: 1.1
+    });
+  };
 
   // Epic Dragon Boss Ref (Contestable objective that unlocks decisive game-ending buffs)
   const dragonRef = useRef<DragonBoss>({
@@ -1712,8 +1740,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           const travel = Math.min(dist, p.speed * dt);
           const end = dist > 0 ? { x: p.x + dx / dist * travel, y: p.y + dy / dist * travel } : { x: p.x, y: p.y };
           const attacker = champs.find(c => c.id === p.attackerId);
-          const hit = champs.find(c => c.isAlive && c.team !== attacker?.team
+          const candidates = p.waveClear ? [...champs, ...minions] : champs;
+          const hits = candidates.filter(c => c.isAlive && c.team !== attacker?.team
             && segmentHitsCircle({ x: p.x, y: p.y }, end, { x: c.x, y: c.y - 15 }, (p.collisionRadius ?? 17) + p.size));
+          // A wave shot stops at the first enemy along this tick's segment, not roster order.
+          const hit = p.waveClear ? hits.sort((a, b) => Math.hypot(a.x - p.x, a.y - 15 - p.y)
+            - Math.hypot(b.x - p.x, b.y - 15 - p.y))[0] : hits[0];
           if (hit) {
             skillshotsRef.current.hit++;
             if (attacker) recordSkillshot(insightsRef.current, attacker, true, matchTimeRef.current);
@@ -1724,6 +1756,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           return { ...p, x: end.x, y: end.y, angle: Math.atan2(dy, dx) };
         }
 
+        if (p.creepAttackTarget) {
+          const target = p.creepAttackTarget === 'minion' ? minions.find(m => m.id === p.targetUnitId)
+            : p.creepAttackTarget === 'camp' ? jungleCamps.find(c => c.id === p.targetUnitId) : dragon;
+          if (!target?.isAlive) return null;
+          p.targetX = target.x;
+          p.targetY = target.y - (p.creepAttackTarget === 'minion' ? 14 : 0);
+          const next = advanceTargetedProjectile(p, { x: p.targetX, y: p.targetY }, p.speed, dt);
+          if (next.arrived) {
+            handleProjectileImpact({ ...p, ...next });
+            return null;
+          }
+          return { ...p, ...next };
+        }
         const dx = p.targetX - p.x;
         const dy = p.targetY - p.y;
         const dist = Math.hypot(dx, dy);
@@ -1731,9 +1776,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           handleProjectileImpact(p);
           return null;
         }
-        const vx = (dx / dist) * p.speed * dt;
-        const vy = (dy / dist) * p.speed * dt;
-        return { ...p, x: p.x + vx, y: p.y + vy, angle: Math.atan2(dy, dx) };
+        return { ...p, x: p.x + dx / dist * p.speed * dt,
+          y: p.y + dy / dist * p.speed * dt, angle: Math.atan2(dy, dx) };
       })
       .filter((p): p is Projectile => p !== null);
 
@@ -1836,6 +1880,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               target.x = s.x + (dx / dist) * maxRadius;
               target.y = s.y + (dy / dist) * maxRadius;
             }
+          }
+        }
+        if (s.type === 'lambs_respite' && s.duration > 0 && s.duration - dt <= 0) {
+          const source = champs.find(champion => champion.id === s.sourceUnitId);
+          if (source) {
+            const heal = getLambsRespiteExpiryHeal(abilityDamageMultiplier(source.level, 'ultimate'));
+            champs.filter(ally => ally.isAlive && ally.team === source.team
+              && Math.hypot(ally.x - s.x, ally.y - s.y) <= s.radius)
+              .forEach(ally => {
+                ally.hp = Math.min(ally.maxHp, ally.hp + heal);
+                floatsRef.current.push({ id: random().toString(), x: ally.x, y: ally.y - 34,
+                  text: `+${Math.round(heal)} SANCTUARY`, color: '#fde047', opacity: 1, scale: 1.05 });
+              });
           }
         }
         return { ...s, duration: s.duration - dt };
@@ -2035,6 +2092,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     // 12. Champions Micro & Macro Intelligence
     champs.forEach((u, uIdx) => {
+      try {
       if (!u.isAlive) {
         u.kaelenComboId = undefined;
         u.kaelenAwaitSpellId = undefined;
@@ -2175,6 +2233,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         u.aetherisOverchargeTimer = Math.max(0, u.aetherisOverchargeTimer - dt);
         if (u.aetherisOverchargeTimer === 0) u.aetherisOverchargeSourceId = undefined;
       }
+      if (u.kindraHuntTimer && u.kindraHuntTimer > 0) {
+        u.kindraHuntTimer = Math.max(0, u.kindraHuntTimer - dt);
+      }
       if (u.stunTimer > 0) u.stunTimer = Math.max(0, u.stunTimer - dt);
       if (u.silenceTimer && u.silenceTimer > 0) u.silenceTimer = Math.max(0, u.silenceTimer - dt);
       if (u.charmTimer > 0) u.charmTimer = Math.max(0, u.charmTimer - dt);
@@ -2196,6 +2257,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
       if (u.decisionCommitTimer && u.decisionCommitTimer > 0) {
         u.decisionCommitTimer = Math.max(0, u.decisionCommitTimer - dt);
+      }
+      if (u.allInCommitTimer && u.allInCommitTimer > 0) {
+        u.allInCommitTimer = Math.max(0, u.allInCommitTimer - dt);
       }
       if (u.censerBuffTimer && u.censerBuffTimer > 0) {
         u.censerBuffTimer = Math.max(0, u.censerBuffTimer - dt);
@@ -2670,7 +2734,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const isLowHpScared = u.hp < u.maxHp * deathFearThreshold || (u.mana < 15 && u.hp < u.maxHp * 0.55);
 
       // AUTHENTIC WEAPON ATTACK RANGES
-      const attackRange = getChampionBasicAttackRange(u.champion);
+      const baseAttackRange = getChampionBasicAttackRange(u.champion);
+      const attackRange = getLiveBasicAttackRange(u);
       const isRanged = attackRange >= 90;
       const kiteBackstepThreshold = attackRange * 0.65;
       const threateningMinions = enemyMinions.filter(m => Math.hypot(m.x - u.x, m.y - u.y) <= Math.max(attackRange + 40, 240));
@@ -2835,10 +2900,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const closestCaught = caughtEnemies.sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y)
         - Math.hypot(b.x - u.x, b.y - u.y))[0];
       const readyCastRange = Math.max(
-        u.cd1 <= 0 && u.mana >= skill1ManaCost(u) ? getSkillCastRange(u.champion.name, 'skill1', attackRange) : 0,
-        u.cd2 <= 0 && u.mana >= 35 ? getSkillCastRange(u.champion.name, 'skill2', attackRange) : 0,
+        u.cd1 <= 0 && u.mana >= skill1ManaCost(u) ? getSkillCastRange(u.champion.name, 'skill1', baseAttackRange) : 0,
+        u.cd2 <= 0 && u.mana >= 35 ? getSkillCastRange(u.champion.name, 'skill2', baseAttackRange) : 0,
         u.level >= 6 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u)
-          ? getSkillCastRange(u.champion.name, 'ultimate', attackRange) : 0,
+          ? getSkillCastRange(u.champion.name, 'ultimate', baseAttackRange) : 0,
       );
       const catchUnderTower = !!closestCaught && enemyStructures.some(st => (st.type.includes('tower') || st.type === 'nexus')
         && Math.hypot(st.x - closestCaught.x, st.y - closestCaught.y) <= st.range);
@@ -2856,21 +2921,85 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         abortingDive: !!u.diveAborting,
       });
 
-      const rawDangerousFight = u.diveAborting || (!canFollowUpEngage && (losingFight || (!canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002))))));
+      const allInTargetUnderTower = !!initialPrimaryTarget && enemyStructures.some(st =>
+        (st.type.includes('tower') || st.type === 'nexus')
+        && Math.hypot(st.x - initialPrimaryTarget.x, st.y - initialPrimaryTarget.y) <= st.range + 28);
+      const groupedAllInAllies = initialPrimaryTarget ? allies.filter(ally => ally.isAlive
+        && !ally.isRecalling && !ally.recallIntent && !ally.diveAborting
+        && Math.hypot(ally.x - initialPrimaryTarget.x, ally.y - initialPrimaryTarget.y) <= 420) : [];
+      const groupedAllInEnemies = initialPrimaryTarget ? enemies.filter(enemy => enemy.isAlive
+        && isUnitVisibleTo(enemy, u)
+        && Math.hypot(enemy.x - initialPrimaryTarget.x, enemy.y - initialPrimaryTarget.y) <= 380) : [];
+      const readyAllInContributors = groupedAllInAllies.filter(ally =>
+        (ally.cd1 <= 0 && ally.mana >= skill1ManaCost(ally))
+        || (ally.cd2 <= 0 && ally.mana >= 35)
+        || (ally.level >= 6 && ally.cdUlt <= 0 && ally.mana >= ultimateManaCost(ally))).length;
+      const averageHealth = (units: AramChampionUnit[]) => units.length
+        ? units.reduce((sum, unit) => sum + unit.hp / Math.max(1, unit.maxHp), 0) / units.length : 0;
+      const proactiveAllIn = !!initialPrimaryTarget && !isInsideWell && shouldStartProactiveAllIn({
+        healthFraction: u.hp / u.maxHp,
+        alliedAverageHealth: averageHealth(groupedAllInAllies),
+        enemyAverageHealth: averageHealth(groupedAllInEnemies),
+        groupedAllies: groupedAllInAllies.length,
+        groupedEnemies: groupedAllInEnemies.length,
+        readyContributors: readyAllInContributors,
+        targetDistance: Math.hypot(initialPrimaryTarget.x - u.x, initialPrimaryTarget.y - u.y),
+        approachSafe: isTeamfightApproachSafe(u, initialPrimaryTarget, enemyStructures),
+        targetUnderEnemyTower: allInTargetUnderTower,
+        takingTowerFire: isTakingTurretFire,
+        abortingDive: !!u.diveAborting,
+        losingFight,
+        iq,
+        teamfight: tfStat,
+      });
+      if (proactiveAllIn) u.allInCommitTimer = Math.max(u.allInCommitTimer ?? 0, 12);
+      const activeAllInCommit = proactiveAllIn || !!initialPrimaryTarget
+        && (u.allInCommitTimer ?? 0) > 0
+        && u.hp / u.maxHp >= 0.25
+        && Math.hypot(initialPrimaryTarget.x - u.x, initialPrimaryTarget.y - u.y) <= 500
+        && !isTakingTurretFire && !u.diveAborting && !allInTargetUnderTower
+        && isTeamfightApproachSafe(u, initialPrimaryTarget, enemyStructures);
+      if (!activeAllInCommit) u.allInCommitTimer = 0;
+      const allInFocusPool = activeAllInCommit ? enemies.filter(enemy => isUnitVisibleTo(enemy, u)
+        && Math.hypot(enemy.x - u.x, enemy.y - u.y) <= 500
+        && isTeamfightApproachSafe(u, enemy, enemyStructures)
+        && !enemyStructures.some(st => (st.type.includes('tower') || st.type === 'nexus')
+          && Math.hypot(st.x - enemy.x, st.y - enemy.y) <= st.range + 28)) : [];
+      const proactiveFocusTarget = allInFocusPool
+        .sort((a, b) => (a.hp + a.shield) - (b.hp + b.shield)
+          || a.hp / a.maxHp - b.hp / b.maxHp || a.id.localeCompare(b.id))[0];
+      const coordinatedEngage = canFollowUpEngage || activeAllInCommit;
+
+      const rawDangerousFight = u.diveAborting || (!coordinatedEngage && (losingFight || (!canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002))))));
 
       const commitment = resolveFightCommitment({
         committedState: u.committedState, timer: u.decisionCommitTimer ?? 0,
         dangerous: !!rawDangerousFight, enemyCount: localEnemies.length,
-        inWell: isInsideWell, followUp: canFollowUpEngage, lowHealth: isLowHpScared,
+        inWell: isInsideWell, followUp: coordinatedEngage, lowHealth: isLowHpScared,
         losingFight, abortingDive: !!u.diveAborting,
       });
       const isDangerousFight = commitment.dangerous;
       u.committedState = commitment.committedState;
       u.decisionCommitTimer = commitment.timer;
+      if (activeAllInCommit) u.decisionCommitTimer = Math.max(u.decisionCommitTimer ?? 0, 1.2);
 
+      const canReinforceFightingAlly = !!fightingAlly && tfStat >= 55
+        && Math.hypot(fightingAlly.x - u.x, fightingAlly.y - u.y) > 130
+        && isBushSafeFromTowers(fightingAlly, enemyStructures)
+        && isTeamfightApproachSafe(u, fightingAlly, enemyStructures);
+      const prioritizeFightWith = (target: AramChampionUnit | undefined, reinforceAlly = true) => !isInsideWell && shouldPrioritizeTeamfight({
+        dangerousFight: !!isDangerousFight, lowHealth: isLowHpScared,
+        abortingDive: !!u.diveAborting, takingTowerFire: !!isTakingTurretFire,
+        targetDistance: target && isUnitVisibleTo(target, u) && !target.zhonyaActive
+          && (target.untargetableTimer ?? 0) <= 0
+          && isTeamfightApproachSafe(u, target, enemyStructures)
+          ? Math.hypot(target.x - u.x, target.y - u.y) : Infinity,
+        attackRange, readyCastRange, canReinforceAlly: reinforceAlly && canReinforceFightingAlly,
+      });
+      const teamfightPriority = activeAllInCommit || prioritizeFightWith(initialPrimaryTarget);
       const nearestPushDistance = enemyStructures.length
         ? Math.min(...enemyStructures.map(st => Math.hypot(st.x - u.x, st.y - u.y))) : Infinity;
-      const pressWonFight = shouldPressWonFight({
+      const pressWonFight = !teamfightPriority && shouldPressWonFight({
         secondsSinceTeamKill: matchTimeRef.current - lastTeamKillAtRef.current[u.team],
         aliveAllies: allies.length,
         aliveEnemies: champs.filter(champ => champ.team !== u.team && champ.isAlive).length,
@@ -2896,6 +3025,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         waveFrontDistance: waveFrontX === undefined ? Infinity : Math.abs(waveFrontX - u.x),
         structureDistance: nearestPushDistance, nearbyAllies: localAllies.length,
         nearbyEnemies: localEnemies.length, winningFightWindow: pressWonFight,
+        activeFight: teamfightPriority,
       });
       const tempoPush = pressWonFight || wavePushCall;
       const teamHasActiveThreat = allies.some(ally => {
@@ -2937,7 +3067,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         })
         : [];
       const existingRecallPlan = objectiveRecallPlanRef.current[u.team];
-      if (!upcomingTempoObjective || upcomingTempoObjective.secondsUntil < 18
+      if (teamHasActiveThreat || !upcomingTempoObjective || upcomingTempoObjective.secondsUntil < 18
         || (existingRecallPlan && existingRecallPlan !== upcomingTempoObjective.key)) {
         objectiveRecallPlanRef.current[u.team] = undefined;
       }
@@ -2982,12 +3112,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         lowHealth: isLowHpScared, dangerousFight: !!isDangerousFight,
         shopping: wantsItemPurchase, objectiveReset: wantsObjectiveRecall,
         previousIntent: !!u.recallIntent, inWell: isInsideWell,
-        followUp: canFollowUpEngage,
-        combatCommit: !u.diveAborting && !!(canPunishSpentSkill || isClutchRefusingRetreat || isAggroDiving),
-        pushWindow: tempoPush, objectiveCall: nearbyActiveObjective || !!fightingAlly || !!defenseCall,
+        followUp: coordinatedEngage,
+        combatCommit: !u.diveAborting && !!(activeAllInCommit || canPunishSpentSkill || isClutchRefusingRetreat || isAggroDiving),
+        pushWindow: tempoPush, objectiveCall: teamfightPriority || nearbyActiveObjective || !!fightingAlly || !!defenseCall,
       }));
       u.recallIntent = wantsRecall;
-      if (wantsRecall || isDangerousFight || canFollowUpEngage || fightingAlly || tempoPush || nearbyActiveObjective || defenseCall) {
+      if (wantsRecall || isDangerousFight || teamfightPriority || coordinatedEngage || fightingAlly || tempoPush || nearbyActiveObjective || defenseCall) {
         u.farmTargetId = undefined;
       }
 
@@ -2999,7 +3129,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           healAmount: relic.healAmount, distance: Math.hypot(relic.x - u.x, relic.y - u.y),
           enemyDistanceToRelic: enemies.length ? Math.min(...enemies.map(enemy => Math.hypot(enemy.x - relic.x, enemy.y - relic.y))) : Infinity,
           enemyDistanceToUnit: localEnemies.length ? Math.min(...localEnemies.map(enemy => Math.hypot(enemy.x - u.x, enemy.y - u.y))) : Infinity,
-          followUpEngage: canFollowUpEngage, pushWindow: tempoPush,
+          followUpEngage: coordinatedEngage, pushWindow: tempoPush,
+          activeFight: teamfightPriority,
           underEnemyTower: isInsideEnemyTowerRange,
         })).sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0];
       if (recoveryRelic && !isInsideWell && !defenseCall) {
@@ -3191,7 +3322,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const opposingWave = minions.filter(m => m.team !== u.team && m.isAlive && Math.abs(m.x - DRAGON_X) < 420);
       const pushedWave = alliedWave.some(m => u.team === 'blue' ? m.x > DRAGON_X + 80 : m.x < DRAGON_X - 80);
       const nearbyPitAllies = availableAllies.filter(a => Math.hypot(a.x - dragon.x, a.y - dragon.y) < 620);
-      const shouldContestDragon = !defenseCall && !tempoPush && !canFollowUpEngage && !fightingAlly && dragon.isAlive && shouldStartEpicObjective({
+      const shouldContestDragon = !defenseCall && !teamfightPriority && !tempoPush && !coordinatedEngage && !fightingAlly && dragon.isAlive && shouldStartEpicObjective({
         gameSeconds: matchTimeRef.current,
         bossHealthFraction: dragon.hp / dragon.maxHp,
         healthyAllies: nearbyPitAllies.filter(a => a.hp / a.maxHp > 0.58).length,
@@ -3318,17 +3449,30 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // Fight calls use player card attitudes, the shotcaller, coach style and a real enemy attack.
       const defenseTarget = defenseCall && chooseTeamfightTarget(u,
         enemies.filter(enemy => defenseCall.attackers.some(attacker => attacker.id === enemy.id)), allies, attackRange, contestTargetOptions);
-      const preferredPrimaryTarget = defenseCall ? defenseTarget : (canFollowUpEngage ? closestCaught : undefined) || contestFightTarget || chooseTeamfightTarget(u, enemies, allies, attackRange, {
+      const finishFocusPool = pressWonFight ? enemies.filter(enemy => isUnitVisibleTo(enemy, u)
+        && Math.hypot(enemy.x - u.x, enemy.y - u.y) <= 500
+        && isTeamfightApproachSafe(u, enemy, enemyStructures)
+        && !enemyStructures.some(st => (st.type.includes('tower') || st.type === 'nexus')
+          && Math.hypot(st.x - enemy.x, st.y - enemy.y) <= st.range + 28))
+        .sort((a, b) => (a.hp + a.shield) - (b.hp + b.shield)
+          || a.hp / a.maxHp - b.hp / b.maxHp || a.id.localeCompare(b.id)) : [];
+      const finishFocusTarget = finishFocusPool[0];
+      const canFinishWonFight = pressWonFight && !!finishFocusTarget;
+      const preferredPrimaryTarget = defenseCall ? defenseTarget : (canFollowUpEngage ? closestCaught : undefined)
+        || proactiveFocusTarget || finishFocusTarget || contestFightTarget || chooseTeamfightTarget(u, enemies, allies, attackRange, {
         enemyStructures,
         alliedMinions: alliedMinionsForDive,
         cooldownMemory: cooldownMemoryRef.current,
         matchSecond: matchTimeRef.current
       });
-      const combatContext = defenseCall ? 'defense' : canFollowUpEngage ? 'follow-up'
+      const combatContext = defenseCall ? 'defense' : canFollowUpEngage ? 'follow-up' : activeAllInCommit ? 'all-in'
+        : canFinishWonFight ? 'finish-fight'
         : isObjectiveFight ? 'objective-fight' : 'lane-fight';
       const combatPool = defenseCall
         ? enemies.filter(enemy => defenseCall.attackers.some(attacker => attacker.id === enemy.id))
         : canFollowUpEngage && closestCaught ? caughtEnemies
+          : activeAllInCommit ? allInFocusPool
+          : canFinishWonFight ? finishFocusPool
           : isObjectiveFight ? contestEnemyPool : enemies;
       const combatCandidates = combatPool.map(enemy => ({
         ...actionCandidate('champion', enemy),
@@ -3348,6 +3492,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
       const primaryTarget = committedCombatCandidate
         ? combatPool.find(enemy => enemy.id === committedCombatCandidate.id) : undefined;
+      const selectedTeamfightPriority = activeAllInCommit || canFinishWonFight || prioritizeFightWith(primaryTarget);
       // Reinforce the threatened defensive layer before starting side activities.
       // Emergency retreat/recall and dive evacuation have already run above.
       const moveToDefense = () => {
@@ -3432,20 +3577,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const clearWaveFirst = defenseCall
         ? !!defenseMinion && minionInRange && (!defenseTarget
           || Math.hypot(defenseTarget.x - u.x, defenseTarget.y - u.y) > attackRange + 40)
-        : !isObjectiveFight && !canFollowUpEngage
+        : !isObjectiveFight && !coordinatedEngage
         && (focusNexus
           ? !alliedWaveAtNexus && !!blockingNexusMinion && !isNexusLow
-          : ((wavePushCall && minionInRange && alliedCrash < 2)
+          : (!selectedTeamfightPriority && ((wavePushCall && minionInRange && alliedCrash < 2)
             || shouldPrioritizeWaveClear(iq, lanStat, minionInRange, structureInRange, alliedCrash, closestEnemyChampion)
             || (shouldLaningDemonClearWave(u, matchTimeRef.current, minionInRange)
-              && alliedCrash < 2 && !structureInRange)))
+              && alliedCrash < 2 && !structureInRange))))
         && (closestEnemyChampion > 160 || !primaryTarget);
       const advanceLimit = laneAdvanceLimit({
         team: u.team, waveFrontX, waveCount: alliedLaneWave.length,
         structureX: nearestStructure?.x, structureRange: nearestStructure?.range,
         exposedNexus: focusNexus, objectiveFight: isObjectiveFight,
       });
-      const holdChaseForWave = !defenseCall && !!primaryTarget && !canFollowUpEngage && !pressWonFight
+      const holdChaseForWave = !defenseCall && !!primaryTarget && !activeAllInCommit && !prioritizeFightWith(primaryTarget, false) && !canFollowUpEngage && !pressWonFight
         && !isObjectiveFight && !focusNexus
         && primaryTarget.hp / primaryTarget.maxHp > 0.22
         && wouldOverstep(u.team, primaryTarget.x, advanceLimit)
@@ -3493,12 +3638,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         return;
       }
 
-      // The secure call owns the next few seconds. A fresh champion hit can
-      // interrupt a regroup, but an old hit from the objective fight cannot.
+      // Optional regrouping yields to a viable fight without waiting to take damage.
+      // An old hit from the objective fight alone still cannot interrupt regrouping.
       const wasJustAttacked = !!activePostPlan && !!u.lastEnemyDamage
         && u.lastEnemyDamage.second > activePostPlan.startedAt
         && matchTimeRef.current - u.lastEnemyDamage.second <= 2.5;
-      if (!defenseCall && activePostPlan?.action === 'regroup' && !focusNexus && !tempoPush && !canFollowUpEngage && !wasJustAttacked && dragonAction === 'none' && golemAction === 'none') {
+      if (!defenseCall && activePostPlan?.action === 'regroup' && !focusNexus && !selectedTeamfightPriority && !tempoPush && !coordinatedEngage && !wasJustAttacked && dragonAction === 'none' && golemAction === 'none') {
         const laneX = activePostPlan.x + (u.team === 'blue' ? -90 : 90);
         const laneY = LANE_Y;
         const distance = Math.hypot(laneX - u.x, laneY - u.y);
@@ -3529,7 +3674,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         : [];
       const hasLanePriorityForSetup = pushedWave && alliedWave.length >= opposingWave.length;
       if (!defenseCall && upcomingTempoObjective && stagingBoss && !focusNexus && !pressWonFight
-        && !canFollowUpEngage && !isDangerousFight && !isObjectiveFight
+        && !selectedTeamfightPriority && !coordinatedEngage && !isDangerousFight && !isObjectiveFight
         && shouldStageForObjective({
           secondsUntilObjective: upcomingTempoObjective.secondsUntil,
           healthFraction: u.hp / u.maxHp,
@@ -3607,7 +3752,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         return;
       }
 
-      const shouldContestGolem = !defenseCall && !tempoPush && !canFollowUpEngage && !fightingAlly && !!golem && !shouldContestDragon && shouldStartEpicObjective({
+      const shouldContestGolem = !defenseCall && !selectedTeamfightPriority && !tempoPush && !coordinatedEngage && !fightingAlly && !!golem && !shouldContestDragon && shouldStartEpicObjective({
         gameSeconds: matchTimeRef.current, bossHealthFraction: golem.hp / golem.maxHp,
         healthyAllies: golemAllies.filter(a => a.hp / a.maxHp > 0.58).length,
         nearbyEnemies: enemies.filter(e => Math.hypot(e.x - golem.x, e.y - golem.y) < 360).length,
@@ -3717,7 +3862,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         matchTimeRef.current,
         actionContextFor('camp', camp),
       ));
-      const nearestJungleCamp = !defenseCall && !isObjectiveFight && !canFollowUpEngage && !fightingAlly
+      const nearestJungleCamp = !defenseCall && !selectedTeamfightPriority && !isObjectiveFight && !coordinatedEngage && !fightingAlly
         && !focusNexus && !tempoPush && dragonAction === 'none' && golemAction === 'none'
         ? isPostRecallTeamCampMember && plannedTeamCamp
           ? chooseKnownJungleCamp(retryableJungleCamps.filter(camp => camp.id === plannedTeamCamp?.id), {
@@ -3777,9 +3922,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // Macro Teamfight Grouping: High TF players converge to fight together (exclude channeling allies)
-      if (!focusNexus && !tempoPush && !canFollowUpEngage && !isObjectiveFight
-        && !defenseCall && fightingAlly && tfStat >= 55 && Math.hypot(fightingAlly.x - u.x, fightingAlly.y - u.y) > 130
-        && isBushSafeFromTowers(fightingAlly, enemyStructures)
+      if (!focusNexus && !tempoPush && !coordinatedEngage && !isObjectiveFight
+        && !defenseCall && fightingAlly && canReinforceFightingAlly
         && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > attackRange)) {
         setActionIntent('regroup', fightingAlly, 'move',
           `fight-regroup:${actionContextFor('regroup', fightingAlly)}`, 0.8);
@@ -3809,29 +3953,32 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // Compute authentic skill cast ranges (e.g. Raijin Electric Vortex strictly 120px / 2-3 hexes)
-      const skill1Range = getSkillCastRange(u.champion.name, 'skill1', attackRange);
-      const skill2Range = getSkillCastRange(u.champion.name, 'skill2', attackRange);
-      const ultRange = getSkillCastRange(u.champion.name, 'ultimate', attackRange);
+      const skill1Range = getSkillCastRange(u.champion.name, 'skill1', baseAttackRange);
+      const skill2Range = getSkillCastRange(u.champion.name, 'skill2', baseAttackRange);
+      const ultRange = getSkillCastRange(u.champion.name, 'ultimate', baseAttackRange);
       const standardCombatRange = Math.max(attackRange * 1.5, skill1Range, skill2Range, u.level >= 6 ? ultRange : 0, u.champion.name === 'Kaelen' ? 420 : 190);
       const isFollowUpEngage = canFollowUpEngage && !!primaryTarget && isEnemyCaughtInAlliedChannel(primaryTarget, allies);
-      const maxCombatRange = isFollowUpEngage ? Math.max(standardCombatRange, 650) : standardCombatRange;
+      const maxCombatRange = isFollowUpEngage ? Math.max(standardCombatRange, 650)
+        : activeAllInCommit || canFinishWonFight ? Math.max(standardCombatRange, 500) : standardCombatRange;
 
-      if (isFollowUpEngage && !u.followUpEngageSignaled) {
+      if ((isFollowUpEngage || activeAllInCommit) && !u.followUpEngageSignaled) {
         u.followUpEngageSignaled = true;
         floatsRef.current.push({
           id: random().toString(),
           x: u.x,
           y: u.y - 32,
-          text: '⚔️ FOLLOW-UP ENGAGE!',
-          color: '#38bdf8',
+          text: activeAllInCommit ? '⚔️ ALL-IN!' : '⚔️ FOLLOW-UP ENGAGE!',
+          color: activeAllInCommit ? '#fb923c' : '#38bdf8',
           opacity: 1,
           scale: 1.15
         });
-        const channeler = allies.find(a => a.isAlive && isChannelingAbility(a));
-        if (channeler) {
+        const channeler = isFollowUpEngage ? allies.find(a => a.isAlive && isChannelingAbility(a)) : undefined;
+        if (activeAllInCommit) {
+          addEvent(`⚔️ ALL-IN: ${u.player.name} (${u.champion.displayName}) committed to a proactive ${groupedAllInAllies.length}v${groupedAllInEnemies.length} teamfight!`, 'combo');
+        } else if (channeler) {
           addEvent(`⚔️ ENGAGE: ${u.player.name} committed follow-up engage with ${channeler.player.name}!`, 'combo');
         }
-      } else if (!canFollowUpEngage && u.followUpEngageSignaled) {
+      } else if (!coordinatedEngage && u.followUpEngageSignaled) {
         u.followUpEngageSignaled = false;
       }
 
@@ -3840,7 +3987,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         setUnitFacing(u, primaryTarget.x);
         const dist = Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y);
         setActionIntent('champion', primaryTarget, dist > attackRange ? 'move' : 'execute',
-          committedCombatCandidate?.contextKey ?? actionContextFor('champion', primaryTarget), 0.8);
+          committedCombatCandidate?.contextKey ?? actionContextFor('champion', primaryTarget), activeAllInCommit || canFinishWonFight ? 1.2 : 0.8);
         const haste = u.items.reduce((total, item) => total + (item.stats.haste ?? 0), 0);
         const cooldownFactor = 100 / (100 + haste);
         if (u.champion.name !== 'Kaelen' && u.level >= 6 && u.cdUlt <= 0
@@ -4045,15 +4192,41 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       else if (clearWaveFirst && nearestMinion) {
         setActionIntent('minion', nearestMinion, 'execute');
         setUnitFacing(u, nearestMinion.x);
-        const cluster = enemyMinions.filter(m => Math.hypot(m.x - nearestMinion.x, m.y - nearestMinion.y) <= 90);
-        if (u.champion.name !== 'Cinderlock' && u.champion.name !== 'Cinderbloom' && shouldCastWaveClearSkill(u.champion.primaryRole, u.mana, u.cd1, cluster.length, iq, lanStat)) {
-          u.mana -= 45;
+        const waveProfile = getWaveClearProfile(u.champion.name);
+        const cluster = waveProfile ? enemyMinions.filter(m => isInsideWaveClear(m, nearestMinion, waveProfile)) : [];
+        const stats = abilityItemStats(u);
+        const waveDamage = abilityDamageFromStats(u.champion.skill1.damage, u.champion, 'skill1', stats.bonusAd, stats.bonusAp)
+          * abilityDamageMultiplier(u.level, 'skill1') * (0.7 + lanStat / 180);
+        const manaCost = skill1ManaCost(u);
+        const haste = u.items.reduce((sum, item) => sum + (item.stats.haste ?? 0), 0);
+        const cooldown = (u.champion.skill1.cooldown || 10) * 100 / (100 + haste) * abilityCooldownMultiplier(u.level, 'skill1');
+        if (waveProfile && Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) <= getSkillCastRange(u.champion.name, 'skill1', baseAttackRange)
+          && shouldCastWaveClearSkill(u.champion.primaryRole, u.mana, u.cd1, cluster.length, iq, lanStat, {
+            supported: true, manaCost, maxMana: maxMana(u), cooldownSeconds: cooldown,
+            damage: waveDamage * (waveProfile.speed ? 0.55 : 1), basicDamage: u.champion.ad,
+            minionHealth: cluster.map(m => m.hp), nearbyEnemies: enemies.filter(e => Math.hypot(e.x - u.x, e.y - u.y) <= 450).length,
+            secondsUntilObjective: upcomingTempoObjective?.secondsUntil ?? Infinity,
+            siegeOpportunity: structureInRange || tempoPush, teamfight: tfStat,
+            laningDemon: hasPlayerTrait(u.player, 'Laning Demon'),
+            macroStyle: (u.team === 'blue' ? blueCoach : redCoach)?.style === 'Objective Macro',
+          })) {
+          u.creepAttack = undefined;
+          u.mana -= manaCost;
           recordAbilityCast(insightsRef.current, u, 'skill1', matchTimeRef.current);
-          u.cd1 = (u.champion.skill1.cooldown || 10) * 0.8 * abilityCooldownMultiplier(u.level, 'skill1');
+          u.cd1 = cooldown;
           u.animState = 'cast';
-          cluster.forEach(m => applyDamageToMinion(u, m, u.champion.skill1.damage * abilityDamageMultiplier(u.level, 'skill1') * (0.7 + lanStat / 180)));
-          spellsRef.current.push({ id: random().toString(), type: 'wave_burst', x: nearestMinion.x, y: nearestMinion.y,
-            radius: 90, duration: 0.55, maxDuration: 0.55, color: u.champion.primaryColor });
+          u.activeAbilitySlot = 'skill1';
+          sound.playAvatarSkill(u.champion.name, 'skill1', u.x / ARENA_WIDTH * 2 - 1);
+          if (waveProfile.speed) {
+            fireFirstSkillshot(u, { ...nearestMinion, vx: 0, vy: 0 }, {
+              waveClear: true, speed: waveProfile.speed, size: waveProfile.size,
+              collisionRadius: waveProfile.collisionRadius, splashRadius: waveProfile.radius,
+              type: u.champion.name === 'Skybreaker' ? 'flak_round' : 'orb',
+            });
+          } else {
+            cluster.forEach(m => applyDamageToMinion(u, m, waveDamage));
+            emitSkillEffect(u, nearestMinion, false, u.champion.skill1.name, 'skill1', waveProfile);
+          }
         } else if (u.attackTimer <= 0) {
           u.attackTimer = 1.0 / getEffectiveAttackSpeed(u);
           u.animState = 'attack';
@@ -4171,6 +4344,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       u.x = Math.max(40, Math.min(ARENA_WIDTH - 40, u.x));
       u.y = Math.max(80, Math.min(620, u.y));
+      } finally {
+        // Release after this actor's safety/decision pass, even when that pass returns early.
+        // Later actors observe the resulting damage in the original roster order.
+        settleCreepAttack(u);
+      }
     });
 
     // 13. PAIRWISE ANTI-CLUMPING SEPARATION PHYSICS
@@ -4524,6 +4702,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const attackerChamp = championsRef.current.find((c) => c.id === p.attackerId);
 
       if (targetChamp) {
+        const triggersKindraHunt = !!attackerChamp && shouldTriggerKindraHunt(
+          attackerChamp.champion.name, 'champion', targetChamp.hp / targetChamp.maxHp
+        );
         if (p.skillshot) {
           if (p.stunOnHit) {
             applyChampionCrowdControl(attackerChamp ?? null, targetChamp, p.stunOnHit, 'stun', p.skillLabel);
@@ -4549,6 +4730,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             championsRef.current.filter(c => c.team !== attackerChamp.team && c.id !== targetChamp.id && c.isAlive
               && Math.hypot(c.x - targetChamp.x, c.y - targetChamp.y) < p.splashRadius!)
               .forEach(c => applyDamageToChampion(attackerChamp, c, p.damage * 0.55, !!p.trueDamage, p.skillLabel, p.abilitySlot ?? 'skill1'));
+            if (p.waveClear) {
+              const stats = abilityItemStats(attackerChamp);
+              const damage = abilityDamageFromStats(p.damage, attackerChamp.champion, 'skill1', stats.bonusAd, stats.bonusAp)
+                * abilityDamageMultiplier(attackerChamp.level, 'skill1') * (0.7 + attackerChamp.player.stats.lan / 180);
+              minionsRef.current.filter(m => m.isAlive && m.team !== attackerChamp.team
+                && Math.hypot(m.x - targetChamp.x, m.y - targetChamp.y) <= p.splashRadius!)
+                .forEach(m => applyDamageToMinion(attackerChamp, m, damage * 0.55));
+            }
           }
           if (p.aetherisOrb && attackerChamp?.champion.name === 'Aetheris') {
             const orbiting = attackerChamp.aetherisOrbs;
@@ -4571,7 +4760,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             championsRef.current.filter(c => c.team === attackerChamp.team && c.isAlive && Math.hypot(c.x - attackerChamp.x, c.y - attackerChamp.y) < 190)
               .forEach(c => { c.hp = Math.min(c.maxHp, c.hp + p.healAlliesOnHit! * abilityDamageMultiplier(attackerChamp.level, 'skill1')); emitSkillEffect(attackerChamp, c, false, p.skillLabel || 'Dusk Lance', 'skill1'); });
           }
-          if (attackerChamp) emitSkillEffect(attackerChamp, targetChamp, false, p.skillLabel, 'skill1');
+          if (attackerChamp) emitSkillEffect(attackerChamp, targetChamp, false, p.skillLabel, 'skill1',
+            p.waveClear ? getWaveClearProfile(attackerChamp.champion.name) : undefined);
           if (p.comboStage && attackerChamp?.comboStage === p.comboStage && attackerChamp.comboTargetId === targetChamp.id) {
             attackerChamp.comboHitConfirmed = true;
             attackerChamp.mana = Math.min(maxMana(attackerChamp), attackerChamp.mana + 45);
@@ -4581,6 +4771,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         applyDamageToChampion(attackerChamp || null, targetChamp, p.damage, !!p.trueDamage || p.type === 'turret_shot',
           p.trueDamage ? 'Nexus True Strike' : p.type === 'turret_shot' ? '🏰 Turret' : p.type === 'boss_breath' ? '🔥 Flame Breath'
             : p.type === 'jungle_shot' ? '🌲 Jungle Camp' : undefined);
+        if (attackerChamp && triggersKindraHunt) triggerKindraHunt(attackerChamp);
         if (p.flakSplashRatio && attackerChamp) {
           const splashDamage = p.damage * p.flakSplashRatio;
           championsRef.current.filter(enemy => enemy.team !== attackerChamp.team && enemy.isAlive
@@ -4599,7 +4790,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       } else if (targetMinion) {
         if (attackerChamp) {
-          applyDamageToMinion(attackerChamp, targetMinion, p.damage * (p.skillshot ? abilityDamageMultiplier(attackerChamp.level, p.abilitySlot ?? 'skill1') : 1));
+          if (p.waveClear) {
+            const stats = abilityItemStats(attackerChamp);
+            const damage = abilityDamageFromStats(p.damage, attackerChamp.champion, 'skill1', stats.bonusAd, stats.bonusAp)
+              * abilityDamageMultiplier(attackerChamp.level, 'skill1') * (0.7 + attackerChamp.player.stats.lan / 180);
+            applyDamageToMinion(attackerChamp, targetMinion, damage);
+            minionsRef.current.filter(m => m.isAlive && m.team !== attackerChamp.team && m.id !== targetMinion.id
+              && Math.hypot(m.x - targetMinion.x, m.y - targetMinion.y) <= (p.splashRadius ?? 0))
+              .forEach(m => applyDamageToMinion(attackerChamp, m, damage * 0.55));
+            emitSkillEffect(attackerChamp, targetMinion, false, p.skillLabel, 'skill1', getWaveClearProfile(attackerChamp.champion.name));
+          } else applyDamageToMinion(attackerChamp, targetMinion, p.damage * (p.skillshot ? abilityDamageMultiplier(attackerChamp.level, p.abilitySlot ?? 'skill1') : 1));
           if (p.flakSplashRatio) {
             const splashDamage = p.damage * p.flakSplashRatio;
             minionsRef.current.filter(minion => minion.team !== attackerChamp.team && minion.isAlive
@@ -4632,8 +4832,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const targetCamp = jungleCampsRef.current.find((c) => c.id === p.targetUnitId && c.isAlive);
         if (targetCamp && attackerChamp) {
           applyDamageToJungleCamp(attackerChamp, targetCamp, p.damage);
+          if (shouldTriggerKindraHunt(attackerChamp.champion.name, 'camp')) triggerKindraHunt(attackerChamp);
         } else if (dragonRef.current.id === p.targetUnitId && dragonRef.current.isAlive && attackerChamp) {
           applyDamageToDragon(attackerChamp, p.damage);
+          if (shouldTriggerKindraHunt(attackerChamp.champion.name, 'dragon')) triggerKindraHunt(attackerChamp);
         }
       }
 
@@ -4714,13 +4916,38 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   };
 
   // Champion Basic Attack (Ranged Projectiles with Impact Sparks & Melee Slashes)
+  const settleCreepAttack = (u: AramChampionUnit) => {
+    const pending = u.creepAttack;
+    if (!pending) return;
+    const target = pending.targetType === 'minion' ? minionsRef.current.find(m => m.id === pending.targetId)
+      : pending.targetType === 'camp' ? jungleCampsRef.current.find(c => c.id === pending.targetId) : dragonRef.current;
+    const attackRange = getLiveBasicAttackRange(u);
+    const reach = pending.targetType === 'minion' ? attackRange
+      : neutralAttackRange(attackRange, pending.targetType === 'dragon' || pending.targetId === 'j_siege_golem') + 12;
+    const interrupted = !u.isAlive || !!u.isRecalling || !!u.diveAborting || u.committedState === 'retreat'
+      || u.stunTimer > 0 || u.charmTimer > 0 || (u.fearTimer ?? 0) > 0 || (u.knockupTimer ?? 0) > 0
+      || !!u.zhonyaActive || isChannelingAbility(u) || u.animState === 'cast'
+      || (!!u.actionIntent && u.actionIntent.targetId !== pending.targetId);
+    const result = advanceCreepAttack(pending, matchTimeRef.current, interrupted,
+      !!target?.isAlive && Math.hypot(target.x - u.x, target.y - u.y) <= reach);
+    u.creepAttack = result.state;
+    if (result.release && target) executeChampionAttack(u, target, pending.targetType, pending.damage, true);
+  };
+
   const executeChampionAttack = (
     u: AramChampionUnit,
     target: { id: string; x: number; y: number },
     targetType: 'champion' | 'minion' | 'structure' | 'camp' | 'dragon',
-    baseDamage: number
+    baseDamage: number,
+    releaseCreepAttack = false
   ) => {
-    const attackRange = getChampionBasicAttackRange(u.champion);
+    const attackRange = getLiveBasicAttackRange(u);
+    if (!releaseCreepAttack && (targetType === 'minion' || targetType === 'camp' || targetType === 'dragon')) {
+      if (!u.creepAttack || u.creepAttack.released) {
+        u.creepAttack = startCreepAttack(target.id, targetType, baseDamage, matchTimeRef.current, 1 / getEffectiveAttackSpeed(u));
+      }
+      return;
+    }
     if (targetType === 'structure') {
       const structureTarget = structuresRef.current.find(candidate => candidate.id === target.id);
       if (!structureTarget || !canBasicAttackStructure({ x: u.x, y: u.y, attackRange }, structureTarget)) return;
@@ -4817,7 +5044,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     // Unique Card Traits Attack Modifiers
     const overchargeMultiplier = (u.aetherisOverchargeTimer ?? 0) > 0 ? 1.15 : 1;
-    const totalDmg = (baseDamage + bonusAd) * overchargeMultiplier;
+    const totalDmg = (baseDamage + bonusAd) * overchargeMultiplier
+      * getKindraHuntDamageMultiplier(u.champion.name, u.kindraHuntTimer ?? 0);
     const isRanged = attackRange >= 90;
 
     // Runaan's Hurricane: Wind's Fury (fires secondary bolts at up to 2 nearby enemies)
@@ -4848,6 +5076,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           type: 'pellet',
           size: 7,
           targetUnitId: subTarget.id,
+          creepAttackTarget: targetType === 'minion' ? 'minion' : undefined,
           damage: Math.round(totalDmg * 0.40),
           attackerId: u.id,
           angle: subAngle
@@ -4865,13 +5094,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const angle = Math.atan2(dy, dx);
 
       if (u.champion.name === 'Buck') {
-        for (let s = -1; s <= 1; s++) {
+        for (const spread of [-1.5, -0.5, 0.5, 1.5]) {
           projectilesRef.current.push({
             id: random().toString(),
             x: originX,
             y: originY,
             targetX: target.x,
-            targetY: targetCenterY + s * 10,
+            targetY: targetCenterY + spread * 8,
             vx: 0,
             vy: 0,
             speed: proj.speed,
@@ -4879,9 +5108,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             type: 'pellet',
             size: proj.size,
             targetUnitId: target.id,
-            damage: totalDmg / 2.2,
+            creepAttackTarget: releaseCreepAttack ? targetType as 'minion' | 'camp' | 'dragon' : undefined,
+            damage: totalDmg / 4,
             attackerId: u.id,
-            angle: angle + s * 0.12
+            angle: angle + spread * 0.08
           });
         }
       } else {
@@ -4898,6 +5128,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           type: proj.type,
           size: proj.size,
           targetUnitId: target.id,
+          creepAttackTarget: releaseCreepAttack ? targetType as 'minion' | 'camp' | 'dragon' : undefined,
           damage: totalDmg,
           attackerId: u.id,
           angle,
@@ -4941,19 +5172,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   const emitSkillEffect = (
     u: AramChampionUnit,
-    target: AramChampionUnit,
+    target: { x: number; y: number },
     ultimate = false,
     label = '',
-    explicitSlot?: SkillSlot
+    explicitSlot?: SkillSlot,
+    waveGeometry?: { radius: number; halfWidth?: number; halfHeight?: number }
   ) => {
     const abilitySlot: SkillSlot = explicitSlot ?? (ultimate ? 'ultimate'
       : (label === u.champion.skill2.name ? 'skill2' : 'skill1'));
     spellsRef.current.push({
       id: random().toString(),
-      type: ultimate ? 'ultimate_burst' : 'skill_burst',
+      type: waveGeometry ? 'wave_clear_impact' : ultimate ? 'ultimate_burst' : 'skill_burst',
       x: target.x, y: target.y,
       sourceX: u.x, sourceY: u.y,
-      radius: ultimate ? (u.champion.name === 'Stonewake' ? 155 : u.champion.name === 'Soulscourge' ? 115 : 94) : 52,
+      radius: waveGeometry?.radius ?? (ultimate ? (u.champion.name === 'Stonewake' ? 155 : u.champion.name === 'Soulscourge' ? 115 : 94) : 52),
+      halfWidth: waveGeometry?.halfWidth, halfHeight: waveGeometry?.halfHeight,
       duration: ultimate ? 1.3 : 0.9,
       maxDuration: ultimate ? 1.3 : 0.9,
       color: ultimate ? u.champion.accentColor : u.champion.primaryColor,
@@ -4963,7 +5196,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     });
   };
 
-  const fireFirstSkillshot = (u: AramChampionUnit, target: AramChampionUnit, spec: Partial<Projectile>) => {
+  const fireFirstSkillshot = (u: AramChampionUnit, target: { id: string; x: number; y: number; vx: number; vy: number }, spec: Partial<Projectile>) => {
     const speed = spec.speed ?? 420;
     const accuracy = u.player.stats.lan * 0.75 + u.player.stats.flx * 0.15 + u.player.stats.iq * 0.1
       + (u.player.signatureChampions.includes(u.champion.name) ? 7 : 0);
@@ -4982,8 +5215,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       hookOnHit: spec.hookOnHit, trueDamage: spec.trueDamage,
       collisionRadius: spec.collisionRadius,
       aetherisOrb: spec.aetherisOrb,
+      waveClear: spec.waveClear,
     });
-    emitSkillEffect(u, target, false, u.champion.skill1.name);
+    if (!spec.waveClear) emitSkillEffect(u, target, false, u.champion.skill1.name);
   };
 
   const setPaxiGroundOrb = (
@@ -5703,7 +5937,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       addEvent(`💖 CHARM: Kyumi charmed ${target.player.name} with Charm of Longing!`, 'combo');
     } else if (name === 'Buck') {
       spellsRef.current.push({ id: random().toString(), type: 'smoke_screen',
-        x: target.x, y: target.y, radius: 55, duration: 2.5, maxDuration: 2.5, color: '#94a3b8' });
+        x: target.x, y: target.y, radius: BUCK_SMOKE_RADIUS,
+        duration: BUCK_SMOKE_DURATION, maxDuration: BUCK_SMOKE_DURATION,
+        color: '#94a3b8', sourceUnitId: u.id, avatarName: 'Buck', abilitySlot: 'skill2' });
+      nearbyEnemies.filter(enemy => Math.hypot(enemy.x - target.x, enemy.y - target.y) <= BUCK_SMOKE_RADIUS)
+        .forEach(enemy => applyDamageToChampion(u, enemy, skill.damage, false, skill.name, 'skill2'));
     } else if (name === 'Valkira') {
       u.shield += 200 * utility;
     } else if (name === 'Kaolin') {
@@ -5975,7 +6213,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       nearbyAllies.filter(a => Math.hypot(a.x - u.x, a.y - u.y) < 160).forEach(a => { a.shield += 160 * utility; });
     }
 
-    if (skill.damage > 0 && target.isAlive && !['Kaolin', 'Cinderbloom', 'Cinderlock', 'Tequoia', 'Stonebranch'].includes(name)) {
+    if (skill.damage > 0 && target.isAlive && !['Buck', 'Kaolin', 'Cinderbloom', 'Cinderlock', 'Tequoia', 'Stonebranch'].includes(name)) {
       applyDamageToChampion(u, target, skill.damage, skill.damageType === 'True', skill.name);
     }
     addEvent(`✨ ${u.player.name} used ${skill.name}!`, 'combo');
@@ -6141,13 +6379,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         type: 'lambs_respite',
         x: u.x,
         y: u.y,
-        radius: 65,
-        duration: 4.0,
-        maxDuration: 4.0,
-        color: '#facc15'
-      });
-      championsRef.current.filter((c) => c.team === u.team && c.isAlive).forEach((ally) => {
-        ally.hp = Math.min(ally.maxHp, ally.hp + 450 * utility);
+        radius: LAMBS_RESPITE_RADIUS,
+        duration: LAMBS_RESPITE_DURATION,
+        maxDuration: LAMBS_RESPITE_DURATION,
+        color: '#facc15',
+        sourceUnitId: u.id,
+        avatarName: 'Kindra',
+        abilitySlot: 'ultimate'
       });
       showBanner(`✨ SANCTUARY OF ETERNITY!`, `${u.player.name} blessed a golden sanctuary of immortality!`, '✨');
     } else if (u.champion.name === 'Cora') {
@@ -6662,7 +6900,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     // Lamb's Respite: Units inside cannot fall below 10% HP!
     const inLambsRespite = spellsRef.current.some((s) => s.type === 'lambs_respite' && Math.hypot(s.x - target.x, s.y - target.y) <= s.radius);
 
-    const minFloorHp = hasShallowGrave ? 1 : inLambsRespite ? Math.round(target.maxHp * 0.10) : 0;
+    const minFloorHp = hasShallowGrave ? 1 : inLambsRespite ? getLambsRespiteMinimumHealth(target.maxHp) : 0;
 
     // Shield absorbs incoming damage before health
     let damageRemaining = damageToTarget;
@@ -6935,6 +7173,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   };
 
   const applyDamageToMinion = (attacker: AramChampionUnit, minion: LaneMinion, damage: number) => {
+    if (!minion.isAlive || minion.team === attacker.team) return;
+    minion.hitFlashUntil = matchTimeRef.current + 0.16;
     minion.hp -= damage;
     if (minion.hp <= 0 && minion.isAlive) {
       minion.isAlive = false;
@@ -8705,6 +8945,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       ctx.restore();
+      if ((m.hitFlashUntil ?? 0) > matchTimeRef.current) {
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, ((m.hitFlashUntil ?? 0) - matchTimeRef.current) / 0.16);
+        ctx.strokeStyle = '#fff7cc'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(0, -10, 15, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
       const minionMetric = m.type === 'cannon' ? BATTLEFIELD_MODEL_METRICS.cannonMinion
         : m.type === 'caster' ? BATTLEFIELD_MODEL_METRICS.casterMinion : BATTLEFIELD_MODEL_METRICS.meleeMinion;
       const mW = m.siegeGolem ? 60 : minionMetric.healthWidth;
@@ -9013,7 +9260,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const alpha = s.duration / s.maxDuration;
       ctx.save();
 
-      if (s.type === 'skill_burst' || s.type === 'ultimate_burst') {
+      if (s.type === 'wave_clear_impact') {
+        ctx.globalAlpha = alpha * 0.75;
+        ctx.strokeStyle = s.color; ctx.fillStyle = s.color; ctx.lineWidth = 3;
+        ctx.beginPath();
+        if (s.halfWidth !== undefined && s.halfHeight !== undefined)
+          ctx.rect(s.x - s.halfWidth, s.y - s.halfHeight, s.halfWidth * 2, s.halfHeight * 2);
+        else ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.stroke(); ctx.globalAlpha = alpha * 0.15; ctx.fill();
+      } else if (s.type === 'skill_burst' || s.type === 'ultimate_burst') {
         const ultimate = s.type === 'ultimate_burst';
         const progress = 1 - alpha;
         ctx.globalAlpha = alpha;
@@ -9965,7 +10220,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         y: u.y,
         facing: u.facing,
         animState: u.animState,
-        animTime: u.animTimer,
+        animTime: u.creepAttack ? matchTimeRef.current - u.creepAttack.startedAt : u.animTimer,
+        basicAttackPose: creepAttackPose(u.creepAttack, matchTimeRef.current),
         team: u.team,
         isStunned: u.stunTimer > 0,
         isCharmed: u.charmTimer > 0,

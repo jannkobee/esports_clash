@@ -1,3 +1,27 @@
+import { segmentHitsCircle, type Point } from './skillshotRules.ts';
+
+/** Optional fight priority cannot release a wave leash across a live turret zone. */
+export function isTeamfightApproachSafe(from: Point, to: Point,
+  enemyStructures: readonly (Point & { type: string; range: number; isAlive: boolean })[],
+): boolean {
+  return !enemyStructures.some(structure => structure.isAlive
+    && (structure.type.includes('tower') || structure.type === 'nexus')
+    && segmentHitsCircle(from, to, structure, structure.range + 28));
+}
+
+/** Tempo may defer optional macro work, never authorize combat or override recovery. */
+export function shouldPrioritizeTeamfight(input: {
+  dangerousFight: boolean; lowHealth: boolean; abortingDive: boolean; takingTowerFire: boolean;
+  targetDistance: number; attackRange: number; readyCastRange: number;
+  canReinforceAlly: boolean;
+}): boolean {
+  if (input.dangerousFight || input.lowHealth || input.abortingDive || input.takingTowerFire) return false;
+  // The caller supplies Infinity for invisible, unavailable, or tower-protected targets.
+  // This is an opportunity radius, not additional attack/cast reach.
+  const opportunityRange = Math.min(400, Math.max(190, input.attackRange * 1.5, input.readyCastRange));
+  return input.canReinforceAlly || input.targetDistance <= opportunityRange;
+}
+
 export function shouldFollowUpControl(input: {
   healthFraction: number; caughtEnemies: number; freeThreats: number; nearbyAllies: number;
   distanceToCatch: number; attackRange: number; readyCastRange: number;
@@ -25,17 +49,53 @@ export function shouldFollowUpControl(input: {
   return caughtEnemies >= 2 ? read >= 56 : read >= 78 && healthFraction >= 0.45;
 }
 
+/**
+ * Starts a real teamfight without requiring crowd control to have landed first.
+ * This is deliberately a grouped, visible commitment window: card IQ/TF and
+ * cooldown readiness influence the call, while health, numbers, and turret
+ * safety remain hard gates.
+ */
+export function shouldStartProactiveAllIn(input: {
+  healthFraction: number; alliedAverageHealth: number; enemyAverageHealth: number;
+  groupedAllies: number; groupedEnemies: number; readyContributors: number;
+  targetDistance: number; approachSafe: boolean; targetUnderEnemyTower: boolean;
+  takingTowerFire: boolean; abortingDive: boolean; losingFight: boolean;
+  iq: number; teamfight: number;
+}): boolean {
+  const { healthFraction, alliedAverageHealth, enemyAverageHealth, groupedAllies,
+    groupedEnemies, readyContributors, targetDistance, approachSafe,
+    targetUnderEnemyTower, takingTowerFire, abortingDive, losingFight, iq,
+    teamfight } = input;
+  if (!Number.isFinite(targetDistance) || targetDistance > 500 || !approachSafe
+    || targetUnderEnemyTower || takingTowerFire || abortingDive) return false;
+  if (healthFraction < 0.5 || alliedAverageHealth < 0.56
+    || groupedAllies < 3 || groupedEnemies < 3 || groupedAllies < groupedEnemies) return false;
+  const healthEdge = alliedAverageHealth - enemyAverageHealth;
+  if (healthEdge < -0.1) return false;
+  const fullClash = groupedAllies >= 4 && groupedEnemies >= 4;
+  // A local survival read may look bad for the frontliner in an otherwise
+  // healthy 5v5. Only a clear team-health edge may override it in smaller fights.
+  if (losingFight && !fullClash && healthEdge < 0.08) return false;
+  if (readyContributors < Math.ceil(groupedAllies * 0.6)) return false;
+
+  const readiness = readyContributors / groupedAllies;
+  const callScore = iq * 0.3 + teamfight * 0.7 + readiness * 18
+    + Math.max(-8, Math.min(12, healthEdge * 80)) + (fullClash ? 8 : 0);
+  return callScore >= 68;
+}
+
 export function shouldSeekHealthRelic(input: {
   healthFraction: number; missingHealth: number; healAmount: number;
   distance: number; enemyDistanceToRelic: number; enemyDistanceToUnit: number;
   followUpEngage: boolean; pushWindow: boolean; underEnemyTower: boolean;
+  activeFight?: boolean;
 }): boolean {
   const { healthFraction, missingHealth, healAmount, distance, enemyDistanceToRelic,
     enemyDistanceToUnit, followUpEngage, pushWindow, underEnemyTower } = input;
   if (underEnemyTower || enemyDistanceToRelic < 185 || missingHealth < healAmount * 0.55) return false;
   if (followUpEngage && healthFraction >= 0.12) return false;
   if (healthFraction < 0.25) return distance <= 240 && enemyDistanceToUnit > 110;
-  if (pushWindow || enemyDistanceToUnit < 200) return false;
+  if (input.activeFight || pushWindow || enemyDistanceToUnit < 200) return false;
   return healthFraction < 0.52 && distance <= 180;
 }
 
@@ -44,10 +104,11 @@ export function shouldPushWithWave(input: {
   alliedWaveCount: number; enemyWaveCount: number; waveFrontDistance: number;
   structureDistance: number; nearbyAllies: number; nearbyEnemies: number;
   winningFightWindow: boolean;
+  activeFight?: boolean;
 }): boolean {
   const { healthFraction, iq, lan, coachMacro, alliedWaveCount, enemyWaveCount,
     waveFrontDistance, structureDistance, nearbyAllies, nearbyEnemies, winningFightWindow } = input;
-  if (healthFraction < 0.43 || alliedWaveCount < 2 || waveFrontDistance > 360
+  if (input.activeFight || healthFraction < 0.43 || alliedWaveCount < 2 || waveFrontDistance > 360
     || structureDistance > 650 || nearbyEnemies > nearbyAllies + 1) return false;
   const macroRead = iq * 0.42 + lan * 0.38 + coachMacro * 1.5;
   return winningFightWindow || (macroRead >= 65 && alliedWaveCount >= enemyWaveCount)

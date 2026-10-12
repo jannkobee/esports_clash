@@ -174,6 +174,7 @@ export interface ItemDef {
 export type MinionType = 'melee' | 'caster' | 'cannon';
 
 export interface LaneMinion {
+  hitFlashUntil?: number;
   id: string;
   team: 'blue' | 'red';
   type: MinionType;
@@ -223,6 +224,7 @@ export interface LaneStructure {
 }
 
 export interface AramChampionUnit {
+  creepAttack?: import('./creepAttackTiming').CreepAttackState;
   id: string;
   player: PlayerCard;
   champion: ChampionKit;
@@ -295,6 +297,7 @@ export interface AramChampionUnit {
   aetherisOrbs?: { charges: number; remaining: number };
   aetherisOverchargeTimer?: number;
   aetherisOverchargeSourceId?: string;
+  kindraHuntTimer?: number;
   propellaRotorStacks?: number;
   propellaRotorTimer?: number;
   propellaOverdriveTimer?: number;
@@ -335,6 +338,7 @@ export interface AramChampionUnit {
   traitFloatTimer?: number;
   followUpEngageSignaled?: boolean;
   decisionCommitTimer?: number;
+  allInCommitTimer?: number;
   committedState?: 'fight' | 'retreat' | 'cover';
   actionIntent?: import('./decisionActionRecovery').DecisiveActionIntent;
   actionFailures?: import('./decisionActionRecovery').DecisiveActionFailure[];

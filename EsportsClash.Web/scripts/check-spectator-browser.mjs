@@ -26,8 +26,11 @@ const evaluate = async expression => {
 };
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 try {
-  await send('Runtime.enable');
   await send('Page.enable');
+  // Dispose a previous failed fixture before subscribing to this run's exceptions.
+  await send('Page.navigate', { url: 'about:blank' });
+  await delay(100);
+  await send('Runtime.enable');
   await send('Page.navigate', { url: 'http://127.0.0.1:5173/' });
   for (let retry = 0; retry < 40; retry++) {
     if (await evaluate('!!document.querySelector("nav button")')) break;
@@ -82,6 +85,18 @@ try {
   await delay(100);
   assert.equal(await evaluate(`document.querySelector('.spectator-three-host').dataset.renderer`), 'three');
   const click = label => evaluate(`(() => {const b=[...document.querySelectorAll('.spectator-shell button')].find(b=>b.textContent.trim()===${JSON.stringify(label)});if(!b)throw Error('Missing button');b.click();})()`);
+  if (process.env.CHECK_PHASE6 === '1') {
+    const { checkPhase6 } = await import('./phase6-browser-fixture.mjs');
+    await checkPhase6({ evaluate, send, delay, outputDir });
+  }
+  if (process.env.CHECK_PHASE7 === '1') {
+    const { checkPhase7 } = await import('./phase7-browser-fixture.mjs');
+    await checkPhase7({ evaluate, send, delay, outputDir });
+  }
+  if (process.env.CHECK_COMBAT_ENGAGE === '1') {
+    const { checkCombatEngage } = await import('./combat-engage-browser-fixture.mjs');
+    await checkCombatEngage({ evaluate, delay, click });
+  }
   if (process.env.CHECK_COMBAT === '1') {
     await click('4x');
     await delay(30000);
@@ -122,4 +137,4 @@ try {
   }
   assert.deepEqual(errors, []);
   console.log('Spectator geometry, playback, tabs, item inspection, insights, and exit passed.');
-} finally { ws.close(); }
+} finally { if (errors.length) console.error('Browser errors:', errors); ws.close(); }

@@ -57,6 +57,12 @@ export function getSkillCastRange(champName: string, slot: SkillSlot, attackRang
       if (slot === 'skill2') return 110; // Concussion Tackle / Smoke: Close-range tackle (2.4 hexes, 2-3 hexes risk!)
       return 220; // Heavy Artillery shell (4.9 hexes)
 
+    case 'Kindra':
+    case 'Kindra & Grim':
+      if (slot === 'skill1') return 185;
+      if (slot === 'skill2') return 185;
+      return 259;
+
     case 'Sylla':
       if (slot === 'skill1') return 130; // Spirit Bear entangle
       if (slot === 'skill2') return 115; // Savage Roar: Point-blank fear roar (2.5 hexes, 2-3 hexes risk!)
@@ -152,7 +158,6 @@ export function isCrowdControlSkill(champName: string, slot: SkillSlot): boolean
     case 'Solana': return slot === 'skill1' || slot === 'skill2' || slot === 'ultimate'; // Shieldbash, Zenith, Flare
     case 'Astra': return slot === 'ultimate'; // Crystal Comet
     case 'Kyumi': return slot === 'skill2'; // Foxfire Charm
-    case 'Buck': return slot === 'skill2'; // Concussion Tackle
     case 'Sylla': return slot === 'skill2'; // Savage Roar Fear
     case 'Cora': return slot === 'skill1' || slot === 'ultimate'; // Dark Binding, Soul Shackles
     case 'Kaolin': return slot === 'skill1' || slot === 'ultimate'; // Boulder Smash, Magnetize
