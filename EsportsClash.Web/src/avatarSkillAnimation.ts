@@ -59,10 +59,10 @@ export function getAbilityVfxProfile(avatarName: string, slot: SkillSlot): Abili
   const ultimate = slot === 'ultimate';
   return {
     seed: stableAbilitySeed(`${avatarName}:${slot}`),
-    particleCount: ultimate ? 14 : slot === 'skill2' ? 9 : 7,
-    runeSegments: ultimate ? 12 : 6,
-    bloomAlpha: ultimate ? 0.42 : 0.25,
-    trailWidth: ultimate ? 10 : slot === 'skill2' ? 6 : 5,
+    particleCount: ultimate ? 3 : slot === 'skill2' ? 2 : 1,
+    runeSegments: ultimate ? 4 : 2,
+    bloomAlpha: ultimate ? 0.22 : 0.12,
+    trailWidth: ultimate ? 8 : slot === 'skill2' ? 5 : 4,
   };
 }
 
@@ -88,8 +88,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
   ctx.lineWidth = ultimate ? 4.5 : 3;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
-  ctx.shadowColor = color;
-  ctx.shadowBlur = ultimate ? 24 : 16;
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
 
   // Utility drawing primitives for high-fidelity ability visual motifs
   const strokeLine = (x1: number, y1: number, x2: number, y2: number) => {
@@ -115,13 +115,13 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
     ctx.save();
     ctx.strokeStyle = color;
     ctx.lineWidth = w;
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 22;
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
     strokeLine(x1, y1, x2, y2);
     ctx.strokeStyle = glowColor;
     ctx.lineWidth = Math.max(1.5, w * 0.28);
-    ctx.shadowColor = glowColor;
-    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
     strokeLine(x1, y1, x2, y2);
     ctx.restore();
   };
@@ -146,12 +146,12 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
     ctx.save();
     ctx.strokeStyle = color;
     ctx.lineWidth = ultimate ? 7 : 4.5;
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 20;
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
     strokePoints();
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = ultimate ? 2.1 : 1.4;
-    ctx.shadowBlur = 6;
+    ctx.shadowBlur = 0;
     strokePoints();
     ctx.restore();
   };
@@ -278,13 +278,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
     ctx.save();
     const groundY = y + Math.min(10, radius * 0.1);
     const bloomRadius = radius * (ultimate ? 1.12 : 0.88);
-    const bloom = ctx.createRadialGradient(x, groundY, 1, x, groundY, Math.max(2, bloomRadius));
-    bloom.addColorStop(0, '#ffffff');
-    bloom.addColorStop(0.2, color);
-    bloom.addColorStop(1, 'rgba(255, 255, 255, 0)');
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.globalAlpha = fade * profile.bloomAlpha * (0.55 + impactPulse * 0.45);
-    ctx.fillStyle = bloom;
+    ctx.globalAlpha = fade * profile.bloomAlpha * (0.45 + impactPulse * 0.35);
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.ellipse(x, groundY, bloomRadius, bloomRadius * 0.46, 0, 0, Math.PI * 2);
     ctx.fill();
@@ -316,13 +311,13 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       ctx.globalAlpha = fade * (ultimate ? 0.28 : 0.17);
       ctx.strokeStyle = color;
       ctx.lineWidth = profile.trailWidth;
-      ctx.shadowColor = color;
-      ctx.shadowBlur = 16;
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
       trace();
       ctx.globalAlpha = fade * (ultimate ? 0.42 : 0.26);
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = Math.max(1, profile.trailWidth * 0.16);
-      ctx.shadowBlur = 4;
+      ctx.shadowBlur = 0;
       trace();
 
       ctx.globalCompositeOperation = 'source-over';
@@ -339,6 +334,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
   const drawAbilityFinish = () => {
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
     for (let i = 0; i < profile.particleCount; i++) {
       const seedAngle = ((profile.seed % 6283) / 1000) + (i * Math.PI * 2) / profile.particleCount;
       const spiral = seedAngle + p * (ultimate ? 3.1 : 2.1) * (i % 2 === 0 ? 1 : -1);
@@ -348,8 +345,6 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       const size = (ultimate ? 3.8 : 2.6) * (0.72 + ((profile.seed >>> (i % 16)) & 1) * 0.35);
       ctx.globalAlpha = fade * (0.28 + impactPulse * 0.58);
       ctx.fillStyle = i % 4 === 0 ? '#ffffff' : color;
-      ctx.shadowColor = color;
-      ctx.shadowBlur = ultimate ? 11 : 7;
       ctx.beginPath();
       ctx.moveTo(px, py - size);
       ctx.lineTo(px + size * 0.72, py);
@@ -362,8 +357,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
     ctx.globalAlpha = fade * (0.22 + impactPulse * (ultimate ? 0.7 : 0.42));
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = ultimate ? 2.4 : 1.4;
-    ctx.shadowColor = color;
-    ctx.shadowBlur = ultimate ? 18 : 10;
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
     ctx.beginPath();
     ctx.arc(x, y, Math.max(3, radius * (0.2 + eased * 0.68)), 0, Math.PI * 2);
     ctx.stroke();
@@ -373,8 +368,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       ctx.lineWidth = 2.2;
       ctx.strokeStyle = '#fefce8';
       ctx.globalAlpha = fade * (0.55 + impactPulse * 0.3);
-      ctx.shadowColor = color;
-      ctx.shadowBlur = 13;
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
       const sealRadius = radius * 1.08;
       for (let i = 0; i < profile.runeSegments; i++) {
         const start = (i * Math.PI * 2) / profile.runeSegments - p * 2.4;
@@ -431,8 +426,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
         drawBeam(sourceX, sourceY - 15, x, y - 12, 7, '#fef3c7');
         drawRing(x, y - 12, radius * 0.72 * impactPulse);
         drawFillCircle(x, y - 12, 8 + impactPulse * 8, '#f97316');
-        for (let fragment = 0; fragment < 10; fragment++) {
-          const fragmentAngle = fragment * Math.PI * 0.2 + p * 1.5;
+        for (let fragment = 0; fragment < 5; fragment++) {
+          const fragmentAngle = fragment * Math.PI * 0.4 + p * 1.5;
           drawSpoke(x, y - 12, fragmentAngle, 10, radius * (0.45 + p * 0.38));
         }
       } else if (slot === 'skill2') {
@@ -458,8 +453,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
         drawRing(0, 0, radius * 1.15);
         drawRing(0, 0, radius * 0.72);
         ctx.restore();
-        for (let shell = 0; shell < 12; shell++) {
-          const shellAngle = shell * Math.PI / 6 + p * 2.4;
+        for (let shell = 0; shell < 6; shell++) {
+          const shellAngle = shell * Math.PI / 3 + p * 2.4;
           const shellRadius = radius * (0.34 + (shell % 3) * 0.3);
           const shellX = x + Math.cos(shellAngle) * shellRadius;
           const shellY = y + Math.sin(shellAngle) * shellRadius * 0.58;
@@ -514,23 +509,15 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
         // Daybreak Flare: Towering celestial solar pillar dropping from the sky
         ctx.save();
         const beamTopY = y - 280;
-        const grad = typeof ctx.createLinearGradient === 'function' ? ctx.createLinearGradient(x, beamTopY, x, y) : null;
-        if (grad && typeof grad.addColorStop === 'function') {
-          grad.addColorStop(0, 'rgba(254, 240, 138, 0.1)');
-          grad.addColorStop(0.7, 'rgba(251, 191, 36, 0.7)');
-          grad.addColorStop(1, '#ffffff');
-          ctx.fillStyle = grad;
-        } else {
-          ctx.fillStyle = 'rgba(251, 191, 36, 0.65)';
-        }
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.65)';
         ctx.fillRect(x - 22, beamTopY, 44, y - beamTopY);
         ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3.5;
         strokeLine(x - 22, beamTopY, x - 22, y); strokeLine(x + 22, beamTopY, x + 22, y);
         // Blinding solar mandala ground scorch rings
         drawRing(x, y, radius * 1.05);
         drawRing(x, y, radius * 0.65);
-        for (let i = 0; i < 12; i++) {
-          const sa = i * Math.PI / 6 + p * 2;
+        for (let i = 0; i < 6; i++) {
+          const sa = i * Math.PI / 3 + p * 2;
           drawSpoke(x, y, sa, radius * 0.45, radius * 1.4);
           drawFillCircle(x + Math.cos(sa) * radius * 0.85, y + Math.sin(sa) * radius * 0.85, 4, '#fef08a');
         }
@@ -577,9 +564,9 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       } else {
         // Enchanted Crystal Comet: Giant flying ice hawk arrow supernova
         drawBeam(sourceX, sourceY - 14, x, y - 12, 9, '#e0f2fe');
-        // Supernova ice crystal explosion: 12 flying jagged ice crystal shards
-        for (let i = 0; i < 12; i++) {
-          const ca = i * Math.PI / 6 + p * 2;
+        // Supernova ice crystal explosion: 6 flying jagged ice crystal shards
+        for (let i = 0; i < 6; i++) {
+          const ca = i * Math.PI / 3 + p * 2;
           const cDist = radius * (0.4 + p * 0.9);
           const cx = x + Math.cos(ca) * cDist;
           const cy = y + Math.sin(ca) * cDist;
@@ -653,15 +640,15 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
         strokeLine(x - radius * 0.95, y, x + radius * 0.95, y);
         strokeLine(x, y - radius * 0.85, x, y + radius * 0.85);
         drawRing(x, y, radius * 0.6);
-        for (let i = 0; i < 8; i++) {
-          const sa = i * Math.PI / 4 + 0.3;
+        for (let i = 0; i < 4; i++) {
+          const sa = i * Math.PI / 2 + 0.3;
           drawFillCircle(x + Math.cos(sa) * radius * 0.75, y + Math.sin(sa) * radius * 0.75, 4, '#f97316');
         }
         ctx.restore();
       } else if (slot === 'skill2') {
         // Smoke Screen: Billowing tactical dark smog clouds with grenade canister
-        for (let i = 0; i < 8; i++) {
-          const sa = i * Math.PI / 4 + p * 2;
+        for (let i = 0; i < 4; i++) {
+          const sa = i * Math.PI / 2 + p * 2;
           const sr = radius * 0.58;
           drawFillCircle(x + Math.cos(sa) * sr, y + Math.sin(sa) * sr * 0.85, radius * 0.48, 'rgba(51, 65, 85, 0.65)');
         }
@@ -853,8 +840,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       if (slot === 'skill1') {
         // Grand Entrance: Golden acrobatic knockup ring with floating feathers
         drawRing(x, y, radius * 0.95);
-        for (let i = 0; i < 8; i++) {
-          const ga = i * Math.PI / 4;
+        for (let i = 0; i < 4; i++) {
+          const ga = i * Math.PI / 2;
           drawSpoke(x, y, ga, radius * 0.4, radius * 1.2);
           drawFeatherQuill(x + Math.cos(ga) * radius * 0.85, y + Math.sin(ga) * radius * 0.85, 18, ga, '#f59e0b');
         }
@@ -915,10 +902,10 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
     // -------------------------------------------------------------
     case 'roots':
       if (slot === 'skill1') {
-        // Sprout: Ring of 8 living oak trees encaging victim
+        // Sprout: Ring of 4 living oak trees encaging victim
         drawRing(x, y, radius * 0.9);
-        for (let i = 0; i < 8; i++) {
-          const ta = i * Math.PI / 4;
+        for (let i = 0; i < 4; i++) {
+          const ta = i * Math.PI / 2;
           const tx = x + Math.cos(ta) * radius * 0.9;
           const ty = y + Math.sin(ta) * radius * 0.9;
           drawLivingOakTree(tx, ty, 14);
@@ -935,7 +922,7 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       } else {
         // Wrath of Nature: Bouncing green lightning sphere
         drawRing(x, y, radius * 1.05);
-        for (let i = 0; i < 10; i++) drawSpoke(x, y, i * Math.PI / 5 + p * 3, radius * 0.4, radius * 1.35);
+        for (let i = 0; i < 5; i++) drawSpoke(x, y, i * Math.PI * 2 / 5 + p * 3, radius * 0.4, radius * 1.35);
         drawFillCircle(x, y, 14, '#22c55e');
       }
       break;
@@ -1024,7 +1011,7 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
         drawFillCircle(x, y, radius * 0.55, '#38bdf8');
         drawRing(x, y, radius * 0.8, -p * 8, -p * 8 + Math.PI * 1.5);
         drawRing(x, y, radius * 1.1, p * 8, p * 8 + Math.PI * 1.5);
-        for (let i = 0; i < 8; i++) drawSpoke(x, y, i * Math.PI / 4 + p * 5, radius * 0.5, radius * 1.3);
+        for (let i = 0; i < 4; i++) drawSpoke(x, y, i * Math.PI / 2 + p * 5, radius * 0.5, radius * 1.3);
       }
       break;
 
@@ -1104,7 +1091,7 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
         // Crownfall Surge: Sweeping elemental shockwave across walls & river
         drawRing(x, y, radius * 1.25);
         drawRing(x, y, radius * 0.8);
-        for (let i = 0; i < 8; i++) drawSpoke(x, y, i * Math.PI / 4, radius * 0.6, radius * 1.4);
+        for (let i = 0; i < 4; i++) drawSpoke(x, y, i * Math.PI / 2, radius * 0.6, radius * 1.4);
       }
       break;
 
@@ -1205,8 +1192,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       } else {
         // Dirge Wave: Concentric screaming soul nova
         drawRing(x, y, radius * 1.15);
-        for (let i = 0; i < 16; i++) {
-          const a = i * Math.PI / 8 + p * 0.8;
+        for (let i = 0; i < 8; i++) {
+          const a = i * Math.PI / 4 + p * 0.8;
           drawSpoke(x, y, a, radius * 0.2, radius * 1.3);
           drawFillCircle(x + Math.cos(a) * radius, y + Math.sin(a) * radius, 5, '#fb7185');
         }
@@ -1234,7 +1221,7 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
         drawRing(x, y, radius * 1.25);
         drawRing(x, y, radius * 0.85);
         drawRing(x, y, radius * 0.5);
-        for (let i = 0; i < 12; i++) drawSpoke(x, y, i * Math.PI / 6, radius * 0.7, radius * 1.5);
+        for (let i = 0; i < 6; i++) drawSpoke(x, y, i * Math.PI / 3, radius * 0.7, radius * 1.5);
       }
       break;
 
@@ -1270,7 +1257,7 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
     case 'cask':
       drawRing(x, y, radius * (ultimate ? 1.25 : 0.85));
       drawFillCircle(x, y - 10, 13, '#a16207');
-      for (let i = 0; i < 8; i++) drawSpoke(x, y, i * Math.PI / 4, radius * 0.2, radius * (ultimate ? 1.3 : 0.95));
+      for (let i = 0; i < 4; i++) drawSpoke(x, y, i * Math.PI / 2, radius * 0.2, radius * (ultimate ? 1.3 : 0.95));
       break;
     case 'lantern':
       strokeLine(sourceX, sourceY - 16, x, y - 16);
@@ -1285,8 +1272,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       drawRing(x, y, radius * (ultimate ? 1.3 : 0.8));
       drawFillCircle(x, y, ultimate ? 18 : 10, '#e0f2fe');
       const elements = ['#7dd3fc', '#a7f3d0', '#fb923c'];
-      for (let i = 0; i < (ultimate ? 9 : 3); i++) {
-        const a = (i * Math.PI * 2) / (ultimate ? 9 : 3) + p * 4;
+      for (let i = 0; i < (ultimate ? 6 : 3); i++) {
+        const a = (i * Math.PI * 2) / (ultimate ? 6 : 3) + p * 4;
         const color = elements[i % elements.length];
         drawFillCircle(x + Math.cos(a) * radius * 0.75, y + Math.sin(a) * radius * 0.75, 6, color);
       }
@@ -1313,7 +1300,7 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
       strokeLine(sourceX, sourceY - 15, x, y - 15);
       drawFillCircle(x, y - 15, ultimate ? 18 : 10, '#ec4899');
       drawRing(x, y - 15, radius * (ultimate ? 1.25 : 0.75));
-      for (let i = 0; i < 8; i++) drawSpoke(x, y - 15, (i * Math.PI) / 4, 6, radius * 0.9);
+      for (let i = 0; i < 4; i++) drawSpoke(x, y - 15, (i * Math.PI) / 2, 6, radius * 0.9);
       break;
 
     case 'rocket':
@@ -1342,8 +1329,8 @@ export function drawAvatarSkillAnimation(ctx: CanvasRenderingContext2D, state: A
 
     case 'quill':
       drawRing(x, y, radius * (ultimate ? 1.2 : 0.75));
-      for (let i = 0; i < 8; i++) {
-        const a = (i * Math.PI) / 4;
+      for (let i = 0; i < 4; i++) {
+        const a = (i * Math.PI) / 2;
         strokeLine(x, y, x + Math.cos(a) * radius, y + Math.sin(a) * radius);
         drawFillCircle(x + Math.cos(a) * radius, y + Math.sin(a) * radius, 3, '#84cc16');
       }

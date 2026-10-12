@@ -7268,7 +7268,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       ctx.lineTo(side * 30, -23 + pulse);
       ctx.closePath(); ctx.fill();
     }
-    ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 16;
+    ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 0;
     ctx.fillStyle = '#54452d';
     ctx.beginPath(); ctx.roundRect(-29 + attack.strike * 6, -34 + pulse + attack.windup * 5, 58, 49, 10); ctx.fill();
     ctx.fillStyle = '#8e7650';
@@ -7327,7 +7327,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     // Glowing Cyan Core
     ctx.fillStyle = '#38bdf8';
     ctx.shadowColor = '#00f2ff';
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = 0;
     ctx.beginPath();
     ctx.arc(0, -5, 4.5, 0, Math.PI * 2);
     ctx.fill();
@@ -7643,7 +7643,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.moveTo(57, -28); ctx.lineTo(61, -21); ctx.lineTo(64, -28);
     ctx.moveTo(69, -28); ctx.lineTo(71, -23); ctx.lineTo(74, -29);
     ctx.fill();
-    ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 12;
+    ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 0;
     ctx.fillStyle = '#fef08a';
     ctx.beginPath(); ctx.arc(51, -43, 3.5, 0, Math.PI * 2); ctx.fill();
     ctx.shadowBlur = 0;
@@ -7682,7 +7682,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     // Radar panel background & glowing outline
     ctx.shadowColor = 'rgba(0, 0, 0, 0.65)';
-    ctx.shadowBlur = 12;
+    ctx.shadowBlur = 0;
     ctx.fillStyle = 'rgba(10, 15, 26, 0.9)';
     ctx.beginPath();
     if (ctx.roundRect) ctx.roundRect(mx, my, Mw, Mh, 8);
@@ -7732,7 +7732,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (!c.isAlive) return;
       ctx.fillStyle = c.team === 'blue' ? '#22d3ee' : '#f43f5e';
       ctx.shadowColor = ctx.fillStyle;
-      ctx.shadowBlur = 4;
+      ctx.shadowBlur = 0;
       ctx.beginPath();
       ctx.arc(mx + c.x * scale, my + c.y * scale, 2.5, 0, Math.PI * 2);
       ctx.fill();
@@ -8417,14 +8417,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     // Base mist remains an animation-layer effect on Canvas in this increment.
     basePlatforms.forEach(platform => {
+      ctx.fillStyle = 'rgba(203, 213, 225, 0.08)';
       for (let mist = 0; mist < 4; mist++) {
         const drift = Math.sin(time * 0.5 + mist * 2.1) * 13;
         const fogX = platform.start + (platform.end - platform.start) * (mist + 0.5) / 4 + drift;
-        const fog = ctx.createRadialGradient(fogX, 310 + mist * 43, 4, fogX, 310 + mist * 43, 68);
-        fog.addColorStop(0, 'rgba(203, 213, 225, 0.20)');
-        fog.addColorStop(1, 'rgba(203, 213, 225, 0)');
-        ctx.fillStyle = fog;
-        ctx.fillRect(fogX - 68, 270, 136, 220);
+        ctx.beginPath();
+        ctx.arc(fogX, 310 + mist * 43, 56, 0, Math.PI * 2);
+        ctx.fill();
       }
     });
 
@@ -8744,11 +8743,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const isOccupied = championsRef.current.some((c) => c.isAlive && c.currentBushId === b.id);
 
       // Dark forest soil bed shadow
-      const soilGrad = ctx.createRadialGradient(0, 0, rx * 0.2, 0, 0, rx + 6);
-      soilGrad.addColorStop(0, 'rgba(4, 28, 18, 0.75)');
-      soilGrad.addColorStop(0.7, 'rgba(6, 45, 30, 0.5)');
-      soilGrad.addColorStop(1, 'rgba(6, 45, 30, 0)');
-      ctx.fillStyle = soilGrad;
+      ctx.fillStyle = 'rgba(4, 28, 18, 0.65)';
       ctx.beginPath();
       ctx.ellipse(0, 4, rx + 8, ry + 6, 0, 0, Math.PI * 2);
       ctx.fill();
@@ -8761,6 +8756,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // Dense swaying grass blades
       const bladeCount = Math.round(b.width / 4.8);
+      ctx.lineWidth = 3.2;
+      ctx.lineCap = 'round';
       for (let i = 0; i < bladeCount; i++) {
         const frac = (i / (bladeCount - 1)) * 2 - 1; // -1 .. 1
         const bladeX = frac * (rx - 5);
@@ -8770,14 +8767,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const sway = Math.sin(time * 3.2 + i * 0.75 + b.x * 0.01) * (isOccupied ? 6 : 3.5);
         const bladeH = ry * 0.95 + Math.sin(i * 2.3) * 6;
 
-        const bladeGrad = ctx.createLinearGradient(bladeX, bladeY, bladeX + sway, bladeY - bladeH);
-        bladeGrad.addColorStop(0, '#047857');
-        bladeGrad.addColorStop(0.5, '#10b981');
-        bladeGrad.addColorStop(1, '#86efac');
-
-        ctx.strokeStyle = bladeGrad;
-        ctx.lineWidth = 3.2;
-        ctx.lineCap = 'round';
+        ctx.strokeStyle = i % 3 === 0 ? '#10b981' : i % 3 === 1 ? '#059669' : '#34d399';
         ctx.beginPath();
         ctx.moveTo(bladeX, bladeY + 2);
         ctx.quadraticCurveTo(bladeX + sway * 0.5, bladeY - bladeH * 0.5, bladeX + sway, bladeY - bladeH);
@@ -8928,7 +8918,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (m.empowered) {
         ctx.strokeStyle = '#fbbf24';
         ctx.shadowColor = '#f59e0b';
-        ctx.shadowBlur = 13;
+        ctx.shadowBlur = 0;
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.ellipse(0, -6, m.type === 'cannon' ? 18 : 14, m.type === 'cannon' ? 13 : 18, 0, 0, Math.PI * 2);
@@ -8988,7 +8978,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       ctx.lineWidth = 8;
       ctx.beginPath(); ctx.moveTo(sourceX, sourceY); ctx.lineTo(endX, endY); ctx.stroke();
       ctx.shadowColor = color;
-      ctx.shadowBlur = 12;
+      ctx.shadowBlur = 0;
       ctx.strokeStyle = color;
       ctx.lineWidth = 4;
       ctx.setLineDash([10, 5]);
@@ -9008,7 +8998,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       if (p.skillshot) {
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = p.color;
         ctx.lineWidth = Math.max(4, p.size * 0.55);
         ctx.lineCap = 'round';
@@ -9021,7 +9011,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       if (p.type === 'hook') {
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 4;
         ctx.beginPath();
@@ -9032,7 +9022,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (p.type === 'ult_arrow') {
         // Astra: Enchanted Crystal Comet (Global Ice Hawk)
         ctx.shadowColor = '#00f2ff';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         const tailGrad = ctx.createLinearGradient(-50, 0, 0, 0);
         tailGrad.addColorStop(0, 'rgba(56, 189, 248, 0)');
         tailGrad.addColorStop(1, '#38bdf8');
@@ -9050,7 +9040,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (p.type === 'tornado') {
         // Yasuo / Kazemaru: Spinning Wind Tornado
         ctx.shadowColor = '#38bdf8';
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 0;
         const spin = time * 20;
         ctx.rotate(spin);
         ctx.strokeStyle = '#38bdf8';
@@ -9070,7 +9060,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (p.type === 'shuriken') {
         // Zed / Kage: Razor Shuriken
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 14;
+        ctx.shadowBlur = 0;
         const spin = time * 28;
         ctx.rotate(spin);
         ctx.fillStyle = '#18181b';
@@ -9092,7 +9082,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (p.type === 'feather') {
         // Xayah / Cora: Magenta Quill Feather
         ctx.shadowColor = '#f472b6';
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = '#ec4899';
         ctx.beginPath();
         ctx.moveTo(14, 0); ctx.lineTo(-10, -5); ctx.lineTo(-14, 0); ctx.lineTo(-10, 5); ctx.closePath();
@@ -9104,7 +9094,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (p.type === 'spirit_arrow') {
         // Kindred / Kindra: Spectral Arrow
         ctx.shadowColor = '#c084fc';
-        ctx.shadowBlur = 14;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#a855f7';
         ctx.lineWidth = 2.5;
         ctx.beginPath();
@@ -9116,7 +9106,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (p.type === 'nature_bolt') {
         // Furion / Tequoia: Wrath of Nature Solar Bolt
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 16;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(0, 0, 8, 0, Math.PI * 2);
@@ -9129,7 +9119,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (p.type === 'boulder') {
         // Earth Spirit / Kaolin: Rolling Jade Boulder
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 14;
+        ctx.shadowBlur = 0;
         const spin = time * 8;
         ctx.rotate(spin);
         ctx.fillStyle = p.color;
@@ -9145,7 +9135,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (p.type === 'poison_dart') {
         // Dazzle / Zal: Shadow Dart
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = '#d946ef';
         ctx.beginPath();
         ctx.moveTo(10, 0); ctx.lineTo(-8, -3.5); ctx.lineTo(-8, 3.5); ctx.closePath();
@@ -9153,7 +9143,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (p.type === 'electric_spark') {
         // Storm Spirit / Raijin: Electric Spark
         ctx.shadowColor = '#06b6d4';
-        ctx.shadowBlur = 16;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = '#38bdf8';
         ctx.beginPath();
         ctx.arc(0, 0, 7, 0, Math.PI * 2);
@@ -9165,14 +9155,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (p.type === 'seed_shot') {
         // Lone Druid / Sylla: Seed Shot
         ctx.shadowColor = '#15803d';
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = '#16a34a';
         ctx.beginPath();
         ctx.ellipse(0, 0, 6, 4, 0, 0, Math.PI * 2);
         ctx.fill();
       } else if (p.type === 'laser') {
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 6;
         ctx.beginPath(); ctx.moveTo(-24, 0); ctx.lineTo(18, 0); ctx.stroke();
@@ -9182,7 +9172,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.beginPath(); ctx.moveTo(-30, 0); ctx.lineTo(20, 0); ctx.stroke();
       } else if (p.type === 'flak_round') {
         ctx.shadowColor = '#f97316';
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = '#334155';
         ctx.beginPath(); ctx.roundRect(-11, -5, 20, 10, 3); ctx.fill();
         ctx.strokeStyle = '#fdba74'; ctx.lineWidth = 2; ctx.stroke();
@@ -9194,12 +9184,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       } else if (p.type === 'pellet') {
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 16;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = p.color;
         ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-10, -7); ctx.lineTo(-5, 0); ctx.lineTo(-10, 7); ctx.closePath(); ctx.fill();
       } else if (p.type === 'arrow') {
         ctx.shadowColor = '#00f2ff';
-        ctx.shadowBlur = 14;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -9210,7 +9200,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.fill();
       } else if (p.type === 'orb') {
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 0;
         const orbGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 10);
         orbGrad.addColorStop(0, '#ffffff');
         orbGrad.addColorStop(0.5, p.color);
@@ -9221,7 +9211,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.fill();
       } else if (p.type === 'boss_breath') {
         ctx.shadowColor = '#f97316';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = '#fbbf24';
         ctx.beginPath();
         ctx.moveTo(12, 0);
@@ -9232,15 +9222,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.fill();
       } else if (p.type === 'jungle_shot') {
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 14;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.moveTo(11, 0); ctx.lineTo(-7, -6); ctx.lineTo(-4, 0); ctx.lineTo(-7, 6);
         ctx.closePath(); ctx.fill();
       } else {
         ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = p.type === 'minion_shot' ? 4 : 8;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
         ctx.beginPath();
         ctx.arc(0, 0, p.size, 0, Math.PI * 2);
         ctx.fill();
@@ -9257,7 +9247,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       ctx.save();
       ctx.strokeStyle = color;
       ctx.shadowColor = color;
-      ctx.shadowBlur = 18;
+      ctx.shadowBlur = 0;
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.arc(target.x, target.y - 15, 19 + Math.sin(time * 24) * 2, 0, Math.PI * 2);
@@ -9299,8 +9289,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         } else {
           // Fallback only for neutral/generic impacts
           const radius = s.radius * (0.45 + progress * 0.8);
-          ctx.shadowColor = s.color;
-          ctx.shadowBlur = ultimate ? 28 : 16;
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
           ctx.fillStyle = s.color;
           ctx.globalAlpha = alpha * 0.25;
           ctx.beginPath();
@@ -9331,7 +9321,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'solar_flare') {
         // Leona / Solana: Blinding Daybreak Flare Solar Beam
         ctx.shadowColor = '#f59e0b';
-        ctx.shadowBlur = 28;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#fde047';
         ctx.lineWidth = 4;
         ctx.globalAlpha = alpha;
@@ -9354,7 +9344,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'wind_wall') {
         // Yasuo / Kazemaru: Shimmering Cyan Wind Wall Barrier
         ctx.shadowColor = '#38bdf8';
-        ctx.shadowBlur = 22;
+        ctx.shadowBlur = 0;
         ctx.globalAlpha = Math.min(1, alpha * 1.5);
         // Vertical Shimmering Air Curtain (90px wide, 14px thick)
         const wallGrad = ctx.createLinearGradient(s.x, s.y - 45, s.x, s.y + 45);
@@ -9379,7 +9369,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'death_mark') {
         // Zed / Kage: Pulsing Crimson Death Mark
         ctx.shadowColor = '#dc2626';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.globalAlpha = Math.min(1, alpha * 1.4);
         // Blood Red Circle on Ground
         ctx.strokeStyle = '#dc2626';
@@ -9402,7 +9392,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'shallow_grave') {
         // Dazzle / Zal: Signature Pink Immortality Cross
         ctx.shadowColor = '#ec4899';
-        ctx.shadowBlur = 26;
+        ctx.shadowBlur = 0;
         ctx.globalAlpha = Math.min(1, alpha * 1.5);
         // Luminous Bright Pink Cross over Ally
         ctx.fillStyle = '#f472b6';
@@ -9427,7 +9417,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'lambs_respite') {
         // Kindred / Kindra: 130px Golden Sanctuary of Immortality
         ctx.shadowColor = '#facc15';
-        ctx.shadowBlur = 28;
+        ctx.shadowBlur = 0;
         ctx.globalAlpha = Math.min(1, alpha * 1.3);
         // Golden Protective Sanctuary Circle
         ctx.fillStyle = 'rgba(250, 204, 21, 0.18)';
@@ -9454,7 +9444,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         // Furion / Tequoia: Ring of 8 Living Oak Trees
         ctx.globalAlpha = Math.min(1, alpha * 1.4);
         ctx.shadowColor = '#22c55e';
-        ctx.shadowBlur = 14;
+        ctx.shadowBlur = 0;
         for (let t = 0; t < 8; t++) {
           const treeAngle = (t / 8) * Math.PI * 2;
           const tx = s.x + Math.cos(treeAngle) * s.radius;
@@ -9475,7 +9465,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'sleight_circle') {
         // Ember Spirit / Xin: Sleight of Fist Blazing Rune Circle
         ctx.shadowColor = '#ea580c';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#ea580c';
         ctx.lineWidth = 3.5;
         ctx.globalAlpha = alpha;
@@ -9495,7 +9485,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'ball_lightning') {
         // Storm Spirit / Raijin: Supersonic Ball Lightning
         ctx.shadowColor = '#06b6d4';
-        ctx.shadowBlur = 30;
+        ctx.shadowBlur = 0;
         ctx.globalAlpha = alpha;
         ctx.fillStyle = 'rgba(6, 182, 212, 0.65)';
         ctx.beginPath();
@@ -9509,7 +9499,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'grand_entrance') {
         // Rakan / Renn: Grand Entrance Golden Knockup Ring
         ctx.shadowColor = '#f59e0b';
-        ctx.shadowBlur = 22;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#f59e0b';
         ctx.lineWidth = 4;
         ctx.globalAlpha = alpha;
@@ -9519,7 +9509,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'static_remnant') {
         // Storm Spirit / Raijin: Static Remnant
         ctx.shadowColor = '#06b6d4';
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 0;
         ctx.globalAlpha = alpha;
         ctx.fillStyle = '#38bdf8';
         ctx.beginPath();
@@ -9531,7 +9521,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'magnetize_pulse') {
         // Earth Spirit / Kaolin: Magnetize Resonance Rings
         ctx.shadowColor = '#10b981';
-        ctx.shadowBlur = 22;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#059669';
         ctx.lineWidth = 3;
         ctx.globalAlpha = alpha;
@@ -9556,7 +9546,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.fillText('INFERNO SLAM', s.x, s.y - s.radius - 12);
       } else if (s.type === 'boss_slam') {
         ctx.shadowColor = '#f97316';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#fbbf24';
         ctx.lineWidth = 4;
         ctx.globalAlpha = alpha;
@@ -9575,7 +9565,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const steps = Math.max(8, Math.floor(dist / 14));
 
         ctx.shadowColor = '#06b6d4';
-        ctx.shadowBlur = 26;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#22d3ee';
         ctx.lineWidth = 4.5;
         ctx.beginPath();
@@ -9605,8 +9595,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
 
         // Crackling lightning sparks orbiting victim
-        for (let sp = 0; sp < 6; sp++) {
-          const spAngle = sp * (Math.PI / 3) + time * 12;
+        for (let sp = 0; sp < 3; sp++) {
+          const spAngle = sp * (Math.PI * 2 / 3) + time * 12;
           const spRad = 18 + Math.sin(time * 20 + sp) * 6;
           ctx.fillStyle = sp % 2 === 0 ? '#ffffff' : '#06b6d4';
           ctx.beginPath();
@@ -9628,7 +9618,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const midY = (sy + ty) / 2 + Math.sin(time * 16) * 10;
 
         ctx.shadowColor = '#ec4899';
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#f43f5e';
         ctx.lineWidth = 5;
         ctx.lineCap = 'round';
@@ -9653,7 +9643,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'aether_remnant') {
         // Inai: Floating Aether Remnant void eye pulling victim!
         ctx.shadowColor = '#a855f7';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = '#6b21a8';
         ctx.beginPath();
         ctx.arc(s.x, s.y - 10, 16, 0, Math.PI * 2);
@@ -9680,7 +9670,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const sx = s.sourceX ?? (s.x - 60);
         const sy = s.sourceY ?? s.y;
         ctx.shadowColor = '#d97706';
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#92400e';
         ctx.lineWidth = 6;
         ctx.beginPath();
@@ -9709,7 +9699,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'runic_maul') {
         // Stonewake: Golden Seismic Hammer Crater
         ctx.shadowColor = '#facc15';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = 'rgba(234, 179, 8, 0.25)';
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
@@ -9729,7 +9719,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'dirge_wave') {
         // Soulscourge: Expanding Banshee Soul Shockwave
         ctx.shadowColor = '#9d174d';
-        ctx.shadowBlur = 28;
+        ctx.shadowBlur = 0;
         const curR = s.radius * (1 - alpha * 0.3);
         ctx.strokeStyle = '#f43f5e';
         ctx.lineWidth = 3.5;
@@ -9754,7 +9744,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'quake_chorus') {
         // Stonewake: Quake Chorus Seismic Shockwaves
         ctx.shadowColor = '#eab308';
-        ctx.shadowBlur = 30;
+        ctx.shadowBlur = 0;
         for (let ring = 0; ring < 3; ring++) {
           const rFrac = ((time * 1.5 + ring * 0.33) % 1);
           const rDist = s.radius * rFrac;
@@ -9767,7 +9757,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'marsh_anthem') {
         // Croakwell: Radiant Emerald Musical Stave & Floating Notes
         ctx.shadowColor = '#10b981';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#34d399';
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -9787,7 +9777,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'daybreak_veil') {
         // Solenne: Solar Mandala Aegis Shield
         ctx.shadowColor = '#facc15';
-        ctx.shadowBlur = 28;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = 'rgba(253, 224, 71, 0.2)';
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
@@ -9807,7 +9797,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'cinder_verdict') {
         // Cinderlock: 4 Hellfire Pillars & Swirling Ash
         ctx.shadowColor = '#f97316';
-        ctx.shadowBlur = 26;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#ea580c';
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -9833,7 +9823,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'bogbeat') {
         // Croakwell: Mossy Swamp Ripples with Bubbles
         ctx.shadowColor = '#84cc16';
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#65a30d';
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -9851,7 +9841,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'soul_draw') {
         // Soulscourge: Dark Crimson Soul Siphon Tendrils
         ctx.shadowColor = '#b91c1c';
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 0;
         for (let t = 0; t < 5; t++) {
           const ta = (t / 5) * Math.PI * 2 + time * 4;
           ctx.strokeStyle = '#ef4444';
@@ -9866,11 +9856,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.globalAlpha = alpha;
         ctx.strokeStyle = '#fed7aa';
         ctx.shadowColor = '#f97316';
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 0;
         ctx.lineWidth = 2.5;
         ctx.beginPath(); ctx.arc(s.x, s.y, s.radius * (0.25 + burst * 0.75), 0, Math.PI * 2); ctx.stroke();
-        for (let fragment = 0; fragment < 10; fragment++) {
-          const a = fragment * Math.PI * 0.2 + time * 0.8;
+        for (let fragment = 0; fragment < 5; fragment++) {
+          const a = fragment * Math.PI * 0.4 + time * 0.8;
           const inner = 12 + burst * 20;
           const outer = inner + 8 + (fragment % 3) * 4;
           ctx.beginPath();
@@ -9882,7 +9872,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.globalAlpha = alpha;
         ctx.strokeStyle = '#bfdbfe';
         ctx.shadowColor = '#60a5fa';
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 0;
         ctx.lineWidth = 3;
         for (let blade = 0; blade < 4; blade++) {
           const a = time * 16 + blade * Math.PI / 2;
@@ -9896,11 +9886,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.globalAlpha = Math.min(1, alpha * 1.4);
         ctx.strokeStyle = '#93c5fd';
         ctx.shadowColor = '#fb923c';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.lineWidth = 3;
         ctx.beginPath(); ctx.ellipse(s.x, s.y, s.radius, s.radius * 0.58, 0, 0, Math.PI * 2); ctx.stroke();
-        for (let shell = 0; shell < 12; shell++) {
-          const a = shell * Math.PI * 2 / 12 + barrage * 2.2;
+        for (let shell = 0; shell < 6; shell++) {
+          const a = shell * Math.PI / 3 + barrage * 2.2;
           const r = s.radius * (0.25 + (shell % 4) * 0.18);
           const sx = s.x + Math.cos(a) * r;
           const sy = s.y + Math.sin(a) * r * 0.58;
@@ -9928,7 +9918,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'shotgun_blast') {
         // Buck: Shotgun Blast Cone & Fiery Bursts
         ctx.shadowColor = '#f97316';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = 'rgba(249, 115, 22, 0.35)';
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
@@ -9945,7 +9935,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'wolf_frenzy') {
         // Kindra: Wolf's Frenzy spectral hunting ground
         ctx.shadowColor = '#a855f7';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.fillStyle = 'rgba(168, 85, 247, 0.18)';
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
@@ -10011,7 +10001,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ctx.save();
           ctx.translate(s.x, s.y);
           ctx.rotate(time * 2);
-          ctx.shadowColor = '#a78bfa'; ctx.shadowBlur = 28;
+          ctx.shadowColor = '#a78bfa'; ctx.shadowBlur = 0;
           ctx.fillStyle = 'rgba(22, 8, 43, 0.82)';
           ctx.strokeStyle = '#c4b5fd'; ctx.lineWidth = 5;
           ctx.beginPath(); ctx.arc(0, 0, s.radius * 0.58, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
@@ -10026,7 +10016,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.save();
         ctx.globalAlpha = Math.max(0, 1 - progress);
         ctx.shadowColor = '#38bdf8';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#bae6fd';
         ctx.lineWidth = 5 * (1 - progress) + 1;
         ctx.beginPath();
@@ -10040,7 +10030,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.save();
         ctx.globalAlpha = Math.min(0.9, s.duration / s.maxDuration + 0.25);
         ctx.shadowColor = '#22d3ee';
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#a5f3fc';
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -10064,7 +10054,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ctx.strokeStyle = '#67e8f9';
           ctx.lineWidth = 2.5 + pulse;
           ctx.shadowColor = '#22d3ee';
-          ctx.shadowBlur = 14;
+          ctx.shadowBlur = 0;
           ctx.setLineDash([8, 5]);
           ctx.lineDashOffset = -time * 28;
           ctx.beginPath();
@@ -10083,7 +10073,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ctx.setLineDash([5, 4]);
           ctx.lineDashOffset = -time * 24;
           ctx.shadowColor = '#4ade80';
-          ctx.shadowBlur = 8;
+          ctx.shadowBlur = 0;
           ctx.globalAlpha = Math.min(0.7, (s.duration / s.maxDuration));
           for (let i = 0; i < linkedUnits.length; i++) {
             for (let j = i + 1; j < linkedUnits.length; j++) {
@@ -10098,7 +10088,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (s.type === 'treants') {
         // Tequoia: Nature's Call animated wooden Treants
         ctx.shadowColor = '#22c55e';
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#15803d';
         ctx.lineWidth = 2.5;
         ctx.beginPath();
@@ -10145,7 +10135,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.save();
         const progress = Math.max(0, Math.min(1, 1 - u.recallTimer / 2.5));
         ctx.shadowColor = '#38bdf8';
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 2.5;
 
@@ -10181,7 +10171,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.strokeStyle = '#f59e0b';
         ctx.lineWidth = 2.5;
         ctx.shadowColor = '#fde047';
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 0;
         ctx.beginPath();
         ctx.arc(u.x, u.y - 14, 22, 0, Math.PI * 2);
         ctx.stroke();
@@ -10192,7 +10182,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const blueActive = jungleBuffsRef.current[u.team].blue > matchTimeRef.current;
         const redActive = jungleBuffsRef.current[u.team].red > matchTimeRef.current;
         ctx.strokeStyle = blueActive && redActive ? '#c084fc' : blueActive ? '#38bdf8' : '#fb7185';
-        ctx.lineWidth = 2; ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 10;
+        ctx.lineWidth = 2; ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 0;
         ctx.beginPath(); ctx.ellipse(u.x, u.y + 2, 20, 7, 0, 0, Math.PI * 2); ctx.stroke();
         ctx.restore();
       }
@@ -10209,7 +10199,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             : u.dash.kind === 'cinder_lunge' ? '#fb923c' : '#fbbf24';
         ctx.strokeStyle = trailColor;
         ctx.lineWidth = u.dash.kind === 'kaolin_roll' ? 11 : 7;
-        ctx.globalAlpha = 0.6; ctx.shadowColor = trailColor; ctx.shadowBlur = 14;
+        ctx.globalAlpha = 0.6; ctx.shadowColor = trailColor; ctx.shadowBlur = 0;
         ctx.beginPath(); ctx.moveTo(u.dash.startX, u.dash.startY - 16);
         ctx.lineTo(u.x, u.y - 16); ctx.stroke(); ctx.restore();
       }
@@ -10219,7 +10209,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.save();
         ctx.translate(u.x, u.y - 18); ctx.rotate(time * 11);
         ctx.fillStyle = '#14532d'; ctx.strokeStyle = '#86efac'; ctx.lineWidth = 4;
-        ctx.shadowColor = '#4ade80'; ctx.shadowBlur = 18;
+        ctx.shadowColor = '#4ade80'; ctx.shadowBlur = 0;
         ctx.beginPath(); ctx.arc(0, 0, 23, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.moveTo(0, 0);
           ctx.lineTo(Math.cos(i * Math.PI * 0.4) * 20, Math.sin(i * Math.PI * 0.4) * 20); ctx.stroke(); }
@@ -10252,7 +10242,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ctx.strokeStyle = '#67e8f9';
           ctx.lineWidth = 2.5 + pulse;
           ctx.shadowColor = '#22d3ee';
-          ctx.shadowBlur = 14;
+          ctx.shadowBlur = 0;
           ctx.setLineDash([7, 5]);
           ctx.lineDashOffset = -time * 22;
           ctx.stroke();
@@ -10271,7 +10261,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           const orbY = u.y - 20 + Math.sin(angle) * 14;
           ctx.save();
           ctx.shadowColor = '#38bdf8';
-          ctx.shadowBlur = 16;
+          ctx.shadowBlur = 0;
           ctx.fillStyle = '#bae6fd';
           ctx.strokeStyle = '#0284c7';
           ctx.lineWidth = 2;
@@ -10285,7 +10275,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       if (u.paxiOrb) {
         ctx.save(); ctx.fillStyle = '#6ee7b7'; ctx.strokeStyle = '#e0f2fe';
-        ctx.shadowColor = '#5eead4'; ctx.shadowBlur = 20; ctx.lineWidth = 3;
+        ctx.shadowColor = '#5eead4'; ctx.shadowBlur = 0; ctx.lineWidth = 3;
         ctx.beginPath(); ctx.arc(u.paxiOrb.x, u.paxiOrb.y - 15, 13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         ctx.restore();
       }
@@ -10308,7 +10298,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ctx.arc(orbX, orbY, 4.5, 0, Math.PI * 2);
           ctx.fillStyle = orbColors[element];
           ctx.shadowColor = orbColors[element];
-          ctx.shadowBlur = 8;
+          ctx.shadowBlur = 0;
           ctx.fill();
           ctx.strokeStyle = '#ffffff';
           ctx.lineWidth = 1;
@@ -10409,7 +10399,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.strokeStyle = '#166534';
         ctx.lineWidth = 1.5;
         ctx.shadowColor = '#22c55e';
-        ctx.shadowBlur = 6;
+        ctx.shadowBlur = 0;
         ctx.beginPath();
         ctx.arc(iconX, iconY, 8.5, 0, Math.PI * 2);
         ctx.fill();
@@ -10568,7 +10558,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           wardsRef.current.forEach((ward) => {
             ctx.save();
             ctx.fillStyle = ward.team === 'blue' ? '#67e8f9' : '#fda4af';
-            ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 12;
+            ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 0;
             ctx.beginPath(); ctx.arc(ward.x, ward.y - 12, 5, 0, Math.PI * 2); ctx.fill();
             ctx.fillRect(ward.x - 1, ward.y - 8, 2, 12);
             ctx.restore();

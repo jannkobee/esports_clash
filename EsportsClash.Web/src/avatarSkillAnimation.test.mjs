@@ -42,6 +42,8 @@ test('ability polish profiles are deterministic and give ultimates the strongest
     assert.deepEqual(skill1, getAbilityVfxProfile(avatarName, 'skill1'), `${avatarName} VFX profile is stable`);
     assert.ok(skill2.particleCount > skill1.particleCount, `${avatarName} skill 2 has a richer accent`);
     assert.ok(ultimate.particleCount > skill2.particleCount, `${avatarName} ultimate has the most particles`);
+    assert.ok(ultimate.particleCount <= 3, `${avatarName} ultimate particle count is capped to prevent clash lag`);
+    assert.ok(skill1.particleCount <= 1, `${avatarName} skill 1 particle count is capped to prevent clash lag`);
     assert.ok(ultimate.runeSegments > skill1.runeSegments, `${avatarName} ultimate has the complete rune seal`);
     assert.ok(ultimate.bloomAlpha > skill2.bloomAlpha, `${avatarName} ultimate has the strongest bloom`);
     assert.ok(ultimate.trailWidth > skill2.trailWidth, `${avatarName} ultimate has the broadest cast trail`);

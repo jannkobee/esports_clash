@@ -197,12 +197,9 @@ export function drawChampionSprite(ctx: CanvasRenderingContext2D, state: Fighter
   ctx.restore();
 
   if (animState === 'cast') {
-    const aura = ctx.createRadialGradient(0, -19, 4, 0, -19, 34);
-    aura.addColorStop(0, team === 'blue' ? 'rgba(125, 211, 252, 0.28)' : 'rgba(253, 164, 175, 0.28)');
-    aura.addColorStop(1, 'rgba(255, 255, 255, 0)');
-    ctx.fillStyle = aura;
+    ctx.fillStyle = team === 'blue' ? 'rgba(125, 211, 252, 0.22)' : 'rgba(253, 164, 175, 0.22)';
     ctx.beginPath();
-    ctx.ellipse(0, -18, 32, 40, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, -18, 30, 36, 0, 0, Math.PI * 2);
     ctx.fill();
   }
 
