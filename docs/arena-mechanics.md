@@ -569,3 +569,19 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
 - Failed-dive abort conditions, outward evacuation vector, attack suppression, abort cooldown, and clearance requirement remain. Per explicit user confirmation, `movementSpeedRules.ts` no longer adds the former +35 evacuation sprint; the unmodified live evacuation pace is 105 instead of 140 units/s, so failed dives receive more punishment.
 - Files: `src/teamTempoRules.ts`, `src/teamTempoRules.test.mjs`, `src/movementSpeedRules.ts`, `src/movementSpeedRules.test.mjs`, `src/types.ts`, `src/components/AramMatchView.tsx`, `scripts/combat-engage-browser-fixture.mjs`, and `scripts/check-spectator-browser.mjs`. Focused tests passed 24/24; `npm run check:game` passed 281 game tests, 3 deterministic simulation tests, design validation, and TypeScript; production build passed. Controlled live verification began with ten of ten units accepting champion intents without any active channel/landed CC. The 30-simulation-second diagnostic observed three total deaths and a minimum of three red survivors in its final run; it did not observe a complete team wipe, so wipe frequency in representative matches remains unmeasured.
 
+## Tower durability and siege scaling (Phase 8, 2026-10-12)
+
+- Structure health is outer 3,600, inner 5,000, nexus tower 6,500, barracks 3,000, and Nexus 9,000. Inner-base durability rises without regeneration, an artificial time gate, or invented armor.
+- Champion building basics use authored AD including purchased AD plus persistent buff AD. Crit bonus, Kraken/BORK, Kindra hunt, overcharge, lifesteal, and Navori do not trigger on structures. The crit RNG draw remains solely to preserve deterministic consumption order.
+- No allied minion keeps the 0.28 backdoor factor; one removes it. Extra minions add 5% each, a cannon adds 10%, capped at 1.35. Minions retain class siege damage. Dragon Aspect retains 1.5 champion siege for its owner for 120 seconds in live and headless; Gravemarch's 1,050 plated charge is unchanged.
+- Plating remains 30% initially and reaches 100% at eight minutes. Sequential progression, Nexus shielding, turret rules, dive limits/abort without the removed +35 bonus, attribution, and base defense remain authoritative.
+- Representative full-team/full-wave TTD after the change is outer/inner/nexus-tower 10.6/14.7/19.1 seconds at 120s, 3.4/4.8/6.2 at 300s, and 1.5/2.1/2.7 at 540s. These rule-level estimates exclude defenders, travel, Dragon and Gravemarch.
+- Verification: 25 focused tests, 285 game tests, 3 deterministic simulations, TypeScript, and build passed. The same ten headless seeds averaged 8.5 minutes before and 8.3 after; all post-change matches ended within 5.0–12.0 minutes. Rendering/UI did not change, so no browser visual check was performed.
+
+## Future final phase after Phase 12: Phase 13 advanced dynamic teamfight AI
+
+- The attached strategic-AI specification is the final backlog phase and is not active behavior yet.
+- When requested, extend existing policies with dynamic combat-strength, participation, resource, position, visibility, objective, respawn, lane-pressure and base-threat evaluation across 1v1–5v5 fights, contests, picks/counter-engages, sieges, split pushes, retreats/re-engages and post-fight transitions.
+- Use existing responsibilities where possible for `OBSERVE → EVALUATE → PREPARE → ENGAGE → REASSESS → RESOLVE → TRANSITION`, explainable deterministic utilities, meaningful triggers, role autonomy, non-omniscient perception, diagnostics, and clean resumption of assignments.
+- Cover the attachment's 30 minimum scenario regressions. Preserve tower-dive/abort, retreat, attribution, objective, commitment, RNG-order, bounded-pass, farming, recall, defense and alias invariants. Outcomes must emerge from combat, not scripts.
+

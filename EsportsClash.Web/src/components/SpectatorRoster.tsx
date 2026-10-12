@@ -10,12 +10,12 @@ export function SpectatorRoster({ units, team, onItem, onFocus, xpProgress, seco
 }) {
   return <div className={`spectator-roster ${team}`} aria-label={`${team} squad status and item inventory`}>
     {units.map(unit => <div className={`spectator-unit ${unit.isAlive ? '' : 'fallen'}`} key={unit.id}>
-      <button className="spectator-portrait" onClick={() => onFocus(unit)} title={`Follow ${unit.player.name} / ${unit.champion.displayName}`}>
+      <button className="spectator-portrait" onClick={() => onFocus(unit)} title={`Follow ${unit.player.name} / ${unit.champion.displayName}, ${unit.champion.title}`}>
         <ChampionArtwork championId={unit.champion.id} size={29} className="h-full w-full" />
         <span>{unit.isAlive ? unit.level : `${Math.ceil(unit.respawnTimer)}s`}</span>
       </button>
       <div className="spectator-vitals">
-        <div className="spectator-name"><b>{unit.player.name}</b><span>{unit.champion.displayName}</span></div>
+        <div className="spectator-name"><b>{unit.player.name}</b><span title={`${unit.champion.displayName} — ${unit.champion.title}`}>{unit.champion.displayName}</span></div>
         <div className="spectator-health" role="meter" aria-label={`${unit.player.name} health`} aria-valuenow={Math.round(unit.hp)} aria-valuemin={0} aria-valuemax={Math.round(unit.maxHp)}
           title={`${Math.ceil(unit.hp)}/${Math.ceil(unit.maxHp)} HP · ${Math.ceil(unit.shield)} shield`}>
           <i style={{ width: `${Math.max(0, Math.min(100, unit.hp / unit.maxHp * 100))}%` }} />

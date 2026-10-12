@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { consumeFixedSteps, createMatchRandom, rerollAfterBalanceGame, resolveNeutralKillCredit, resolveTurretKillReward, SIMULATION_STEP, summarizeMatchReports } from './matchReplay.ts';
+import { consumeFixedSteps, createMatchRandom, refreshMatchReportAvatarPresentation, rerollAfterBalanceGame, resolveNeutralKillCredit, resolveTurretKillReward, SIMULATION_STEP, summarizeMatchReports } from './matchReplay.ts';
+import { CHAMPIONS, INITIAL_PLAYERS } from './mockData.ts';
 
 test('a seed produces the same random decisions on a rematch', () => {
   const first = createMatchRandom(12345);
@@ -24,6 +25,24 @@ test('balance games share a seed across a side-swapped pair', () => {
   assert.equal(rerollAfterBalanceGame(25), false);
   assert.equal(rerollAfterBalanceGame(24), true);
   assert.equal(rerollAfterBalanceGame(2), true);
+});
+
+test('old reports refresh display identity by stable id without renaming mechanics or player aliases', () => {
+  const paxi = CHAMPIONS.find(avatar => avatar.name === 'Paxi');
+  assert.ok(paxi);
+  const stale = { ...paxi, displayName: 'Old Display', title: 'Old Title' };
+  const slots = Array.from({ length: 5 }, (_, index) => ({ player: INITIAL_PLAYERS[index], champion: stale }));
+  const report = { version: 1, seed: 42, draft: { blue: slots, red: slots }, winner: 'blue', durationSeconds: 60,
+    blueRating: 80, redRating: 80, fullBuildsAt15: null, blueKills: 1, redKills: 0,
+    skillshotsFired: 0, skillshotsHit: 0, events: [] };
+  const refreshed = refreshMatchReportAvatarPresentation(report, CHAMPIONS);
+  const avatar = refreshed.draft.blue[0].champion;
+  assert.equal(avatar.id, paxi.id);
+  assert.equal(avatar.name, 'Paxi');
+  assert.equal(avatar.displayName, 'Fizzlewing');
+  assert.equal(avatar.title, 'The Dreamrift Trickster');
+  assert.equal(refreshed.draft.blue[0].player.name, INITIAL_PLAYERS[0].name);
+  assert.equal(report.draft.blue[0].champion.displayName, 'Old Display', 'report import must not mutate saved data');
 });
 
 test('neutral kill goes to the last recent opposing attacker', () => {

@@ -16,7 +16,7 @@ import { ThreeAramArena } from './components/ThreeAramArena';
 import { TeamfightArenaView } from './components/TeamfightArenaView';
 import { AramMatchView } from './components/AramMatchView';
 import type { MatchReport } from './matchReplay';
-import { rerollAfterBalanceGame } from './matchReplay';
+import { refreshMatchReportAvatarPresentation, rerollAfterBalanceGame } from './matchReplay';
 import type { OnlineRoom, OnlineSession } from './onlineRooms';
 import { createOnlineRoom, getOnlineRoom, joinOnlineRoom, submitOnlineDraft } from './onlineRooms';
 import { ChampionHubView } from './components/ChampionHubView';
@@ -223,9 +223,10 @@ export function App() {
   const balanceSwapped = balanceRunsLeft > 0 && balanceRunsLeft % 2 === 0;
   const openRecordedMatch = (report: MatchReport) => {
     if (report.version !== 1 || !Number.isInteger(report.seed) || report.draft?.blue?.length !== 5 || report.draft?.red?.length !== 5) return;
-    setDraftedBlue(report.draft.blue);
-    setDraftedRed(report.draft.red);
-    setReplayDraft(report.draft);
+    const refreshedReport = refreshMatchReportAvatarPresentation(report, CHAMPIONS);
+    setDraftedBlue(refreshedReport.draft.blue);
+    setDraftedRed(refreshedReport.draft.red);
+    setReplayDraft(refreshedReport.draft);
     setMatchSeed(report.seed);
     setReplayNumber(1);
     setBalanceRunsLeft(0);

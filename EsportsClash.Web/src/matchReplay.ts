@@ -1,5 +1,6 @@
 import type { ChampionKit, CoachCard, PlayerCard } from './types';
 import type { MatchInsights } from './matchInspector';
+import { refreshAvatarPresentation } from './avatarIdentity.ts';
 
 export const SIMULATION_STEP = 1 / 30;
 
@@ -56,6 +57,17 @@ export interface MatchReport {
   skillshotsHit: number;
   events: RecordedMatchEvent[];
   insights?: MatchInsights;
+}
+
+export function refreshMatchReportAvatarPresentation(report: MatchReport, catalog: readonly ChampionKit[]): MatchReport {
+  const refreshSide = (side: MatchReport['draft']['blue']) => side.map(slot => ({
+    ...slot,
+    champion: refreshAvatarPresentation(slot.champion, catalog),
+  }));
+  return {
+    ...report,
+    draft: { ...report.draft, blue: refreshSide(report.draft.blue), red: refreshSide(report.draft.red) },
+  };
 }
 
 export function summarizeMatchReports(reports: MatchReport[]) {

@@ -27,6 +27,9 @@ test('tower plating tapers with game time and a nexus opens after its turret and
   assert.ok(STRUCTURE_HP.outer_tower < STRUCTURE_HP.inner_tower);
   assert.ok(STRUCTURE_HP.inner_tower < STRUCTURE_HP.nexus_tower);
   assert.ok(STRUCTURE_HP.nexus > STRUCTURE_HP.nexus_tower);
+  assert.deepEqual(STRUCTURE_HP, {
+    outer_tower: 3600, inner_tower: 5000, nexus_tower: 6500, barracks: 3000, nexus: 9000
+  });
   const defenders = [
     { team: 'red', type: 'nexus_tower', isAlive: true },
     { team: 'red', type: 'barracks', isAlive: true },

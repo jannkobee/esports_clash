@@ -199,11 +199,11 @@ export function resolveRockTerrainMovement(
 }
 
 export const STRUCTURE_HP = {
-  outer_tower: 3400,
-  inner_tower: 4100,
-  nexus_tower: 4800,
-  barracks: 2600,
-  nexus: 7500
+  outer_tower: 3600,
+  inner_tower: 5000,
+  nexus_tower: 6500,
+  barracks: 3000,
+  nexus: 9000
 } as const;
 
 export function nextNexusVolleyShot(shotsRemaining = 5): { shotsRemaining: number; cooldown: number } {

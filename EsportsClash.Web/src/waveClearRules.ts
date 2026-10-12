@@ -38,16 +38,17 @@ export interface WaveClearContext {
  * Calculates the Demolition Crash Multiplier when allied minions crash into an enemy structure.
  * - 0 minions: 0.28x (Backdoor Protection penalty - towers are fortified)
  * - 1 minion: 1.0x (Standard siege)
- * - 2+ minions: +22% per additional minion
- * - Cannon / Catapult minion: +30% siege fortification shred
- * Capped at 2.5x (Double to 2.5x damage fast push!)
+ * - 2+ minions: +5% per additional minion
+ * - Cannon / Catapult minion: +10% siege support
+ * Capped at 1.35x. The wave already contributes its own structure DPS, so a
+ * full crash must not also multiply every champion's late-game item scaling.
  */
 export function getMinionCrashMultiplier(alliedMinions: { type: MinionType }[]): number {
   if (alliedMinions.length === 0) return 0.28;
   const count = alliedMinions.length;
   const hasCannon = alliedMinions.some((m) => m.type === 'cannon');
-  const bonus = (count - 1) * 0.22 + (hasCannon ? 0.30 : 0);
-  return Math.min(2.5, 1.0 + bonus);
+  const bonus = (count - 1) * 0.05 + (hasCannon ? 0.10 : 0);
+  return Math.min(1.35, 1.0 + bonus);
 }
 
 /**

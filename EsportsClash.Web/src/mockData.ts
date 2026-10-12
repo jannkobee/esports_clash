@@ -2,6 +2,7 @@ import type { ChampionKit, CoachCard, EvolutionPlan, Facility, PlayerCard } from
 import { createResearchedCards } from './rosterResearch.ts';
 import { ADDITIONAL_CHAMPIONS } from './additionalChampions.ts';
 import { applyAbilityCastTypes } from './abilityCastTypes.ts';
+import { applyAvatarIdentities } from './avatarIdentity.ts';
 
 const BASE_PLAYERS: PlayerCard[] = [
   // === STARTING FIVE (TOP, JUNGLE, MID, BOT, SUPPORT) ===
@@ -373,7 +374,7 @@ export const INITIAL_COACHES: CoachCard[] = [
   }
 ];
 
-export const CHAMPIONS: ChampionKit[] = [
+const CHAMPION_DEFINITIONS: ChampionKit[] = [
   // 1. Solana (Leona - LoL)
   {
     id: 'c_solana',
@@ -767,6 +768,8 @@ export const CHAMPIONS: ChampionKit[] = [
   },
   ...ADDITIONAL_CHAMPIONS
 ];
+
+export const CHAMPIONS: ChampionKit[] = applyAvatarIdentities(CHAMPION_DEFINITIONS);
 applyAbilityCastTypes(CHAMPIONS);
 
 export const INITIAL_FACILITIES: Facility[] = [

@@ -70,6 +70,7 @@ import {
   towerSiegeMultiplier
 } from './arenaRules.ts';
 import { getMinionCrashMultiplier, getMinionStructureDamage, shouldPrioritizeWaveClear } from './waveClearRules.ts';
+import { activeSiegeMultiplier } from './structureSiegeRules.ts';
 import { createRatedAvatar } from './playerCardPower.ts';
 import { shouldAwakenGolem, selectGolemChargeTower, GOLEM_CHARGE_DAMAGE } from './siegeGolemRules.ts';
 import { chooseKnownJungleCamp, shouldFocusExposedNexus, shouldPressWonFight } from './macroFarmRules.ts';
@@ -874,7 +875,8 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
           const nearbyMinions = sim.minions.filter(m => m.team === u.team && m.isAlive && Math.abs(m.x - targetStructure.x) <= 240);
           const crashMul = getMinionCrashMultiplier(nearbyMinions);
           const marksmanMul = u.champion.primaryRole === 'Marksman' ? 1.25 : 1.0;
-          damageStructure(sim, targetStructure, Math.round(u.champion.ad * crashMul * marksmanMul));
+          const dragonSiegeMul = activeSiegeMultiplier(sim.aegisBuff, u.team, now);
+          damageStructure(sim, targetStructure, Math.round(u.champion.ad * crashMul * marksmanMul * dragonSiegeMul));
         }
       } else {
         const dir = u.team === 'blue' ? 1 : -1;

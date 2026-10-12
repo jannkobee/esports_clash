@@ -1576,3 +1576,37 @@ Replaced the stacked live scoreboard/cards/timings/log layout with a viewport-fi
 
 **Remaining limits:** The all-in is intentionally aggressive and needs representative seed sampling before tuning its frequency or 12-second duration. A full 5v5 wipe was not observed in the bounded controlled run, so it must not be claimed as guaranteed. The simplified headless simulator does not execute this live policy. Phase 8 tower durability was not started.
 
+## 2026-10-12: Phase 8 — tower durability and siege-scaling audit
+
+**User request:** Complete Phase 8 only, then record the attached dynamic teamfight-AI specification as a new final phase after Phase 12 without implementing it now.
+
+**Decision and implementation:** The primary defect was multiplicative scaling, not HP alone. A seven-unit cannon crash formerly multiplied every champion's item-scaled attack by 2.5. One minion still removes the 0.28 backdoor penalty, but further minions now add 5% each, a cannon adds 10%, and the factor caps at 1.35; minions retain their own siege damage. Live building attacks use authored AD (including purchased AD) plus persistent buff AD, but no longer receive champion-only crit, Kraken/BORK, Kindra hunt, overcharge, lifesteal, or Navori effects. The crit RNG draw remains to preserve deterministic consumption order. Health changed from 3,400/4,100/4,800/2,600/7,500 to 3,600 outer, 5,000 inner, 6,500 nexus tower, 3,000 barracks, and 9,000 Nexus. The headless engine now applies the existing 1.5 Dragon siege multiplier to its owner for its authored 120 seconds, matching live behavior.
+
+The deterministic comparison uses a full wave and five representative attackers. Early (120s) AD/AS: 82/.72, 78/.76, 68/.68, 88/.82 marksman, 58/.70; mid (300s): 135/.88, 128/.93, 105/.80, 155/1.08 marksman, 88/.78; late (540s): 210/1.12, 195/1.18, 155/.95, 255/1.50 marksman, 125/.90. It includes plating, marksman scaling, and minion DPS, but excludes defenders, movement/windup downtime, Dragon Aspect, and Gravemarch.
+
+| Phase | Siege DPS before → after | Outer TTD | Inner TTD | Nexus-tower TTD |
+|---|---:|---:|---:|---:|
+| Early | 459 → 340 | 7.4s → 10.6s | 8.9s → 14.7s | 10.5s → 19.1s |
+| Mid | 1,559 → 1,050 | 2.2s → 3.4s | 2.6s → 4.8s | 3.1s → 6.2s |
+| Late | 3,815 → 2,431 | 0.9s → 1.5s | 1.1s → 2.1s | 1.3s → 2.7s |
+
+These are unobstructed analytical windows, not observed live-match destruction times. Late wipe conversion remains fast. Sequential progression, Nexus shielding, plating decay, golem charge, turret damage/aggro, dive gates and abort (without the explicitly removed +35 bonus), attribution, objective rules, steering safeguards, and aliases are unchanged.
+
+**Files and verification:** `src/arenaRules.ts` and test, `src/waveClearRules.ts`, new `src/structureSiegeRules.ts` and test, `src/components/AramMatchView.tsx`, `src/matchSimulationEngine.ts`, and both docs. Focused durability tests passed 25/25. `npm run check:game` passed design validation, 285 game tests, 3 deterministic simulation tests, and TypeScript. `npm run build` passed (entry 1,060.80/290.35 kB, lazy Three 531.39/132.63 kB; existing advisory remains). The same seeds 101–110 averaged 8.5 minutes before and 8.3 after; all ten post-change matches ended in 5.0–12.0 minutes, so this sample showed no stalemate. Post-change: Blue 2/Red 8, 100.6 average kills, five Dragons, two Golems, zero support solo camps. This is simplified headless evidence, not live balance evidence. No rendering/UI changed, so no browser visual check was performed.
+
+**Limits:** Live per-structure attacker uptime is not recorded. Structure armor remains metadata; no building armor/penetration or ability damage system was invented. Existing headless side imbalance and abort telemetry are outside Phase 8. Phase 9 was not started.
+
+## Backlog addition after Phase 12: Phase 13 — advanced dynamic MOBA teamfight AI
+
+The attached specification is now the final backlog phase. It was not implemented in Phase 8 and must start with a fresh architecture audit. Extend the existing perception, commitment, action-recovery, tempo, objective, retreat, farming, recall, defense, and targeting policies—do not create a competing strategic controller or script winners.
+
+- Evaluate realistically available participants, health/mana/shields, builds/levels, ready cooldowns, roles, damage/control/sustain, positioning/terrain/towers/escapes, visibility uncertainty, objectives/respawns, lane pressure and base danger. Counts and gold are inputs, not automatic outcomes.
+- Support 1v1–5v5 and uneven fights, objective baits/contests/steals/trades, picks/counter-engages, tower/base defense and sieges, split pushes/cross-map trades, disengage/regroup/re-engage, and natural wipes/partial wins/trades/escapes/interruption.
+- Use existing responsibilities where possible for `OBSERVE → EVALUATE → PREPARE → ENGAGE → REASSESS → RESOLVE → TRANSITION`; reassess on meaningful deaths, arrivals, major cooldowns, objective HP, formation, critical health and base-threat changes while preserving hysteresis and emergency interrupts.
+- Compare explainable deterministic utilities for engage/continue/counter-engage, disengage/retreat, defend ally/base, contest/secure/steal/trade objective, push/split push, regroup, farm and recall. Team intent coordinates without removing role-aware autonomy. Never double-count the actor, distant/unavailable allies, farming/structure attacks as champion combat, or unseen enemies through omniscience.
+- Choose post-fight end/structure/objective/lane/base/resource/chase/regroup/recovery/farm transitions from survivability, travel time, respawns and map pressure, then resume normal assignments cleanly. Add lightweight lifecycle, intent, target, participation, advantage, priority, competing-score and transition diagnostics.
+- Cover all 30 minimum scenarios from the attachment, including favorable/unfavorable/even 5v5, early carry deaths, wins/losses against numbers, objective bait/steal/secure-loss/concession/base pressure, split push, turret defense, failed/counter-engage, post-win objective/end/recovery, regroup/defense, reinforcements/deaths, no-secure contests, carry protection, false-fight prevention, oscillation/unavailable-gathering/unsafe-recall/lethal-objective prevention, and return to lane/farm. Prefer parameterized/property simulations; test decisions and transitions, not predetermined outcomes.
+- Preserve every protected invariant, deterministic RNG order, bounded passes, and farming/objective/recall/base-defense compatibility. Deliver architecture findings, implementation ownership/integration, scenario evidence, diagnostics, and remaining engine-data limits.
+
+Do not start Phase 13 until explicitly requested. Phase 9 remains the next implementation phase.
+

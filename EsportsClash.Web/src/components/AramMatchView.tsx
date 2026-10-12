@@ -67,6 +67,7 @@ import { createEnemyCooldownMemory, isObservedCooling, observeCooldownRise, type
 import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from '../skillRangeRules';
 import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, rockRouteDistance, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from '../arenaRules';
 import { getMinionCrashMultiplier, getMinionStructureDamage, getWaveClearProfile, isInsideWaveClear, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
+import { structureBasicAttackDamage } from '../structureSiegeRules';
 import { createRatedAvatar } from '../playerCardPower';
 import { campAnimation } from '../campAnimation';
 import { GOLEM_CHARGE_DAMAGE, GOLEM_SPAWN_SECOND, selectGolemChargeTower, shouldAwakenGolem } from '../siegeGolemRules';
@@ -4962,6 +4963,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     let bonusAd = 0;
+    let persistentStructureBonus = 0;
     const hasInfinity = u.items.some((it) => it.id === 'item_infinity_edge');
     const critChance = Math.min(0.85, 0.1 + u.items.reduce((total, item) => total + (item.stats.crit ?? 0) / 100, 0));
     const isCrit = random() < critChance;
@@ -4969,8 +4971,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     if (aegisBuffRef.current?.team === u.team) {
       bonusAd += aegisBuffRef.current.adBonus;
+      persistentStructureBonus += aegisBuffRef.current.adBonus;
     }
-    if (jungleBuffsRef.current[u.team].red > matchTimeRef.current) bonusAd += 28;
+    if (jungleBuffsRef.current[u.team].red > matchTimeRef.current) {
+      bonusAd += 28;
+      persistentStructureBonus += 28;
+    }
 
     const champTarget = targetType === 'champion' ? championsRef.current.find(c => c.id === target.id) : null;
     if (u.champion.name === 'Faelith' && (targetType === 'champion' || targetType === 'minion')) {
@@ -4979,7 +4985,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     // Kraken Slayer: Bring It Down (Every 3rd attack deals bonus damage scaling with target missing HP)
     const hasKraken = u.items.some((it) => it.id === 'item_kraken_slayer');
-    if (hasKraken) {
+    if (hasKraken && targetType !== 'structure') {
       u.krakenCounter = (u.krakenCounter ?? 0) + 1;
       if (u.krakenCounter % 3 === 0) {
         const missingHpFactor = champTarget ? Math.min(1.0, Math.max(0, 1 - (champTarget.hp / champTarget.maxHp))) : 0;
@@ -4999,7 +5005,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     // Blade of the Ruined King: Mist's Edge (9% current HP on-hit bonus damage)
     const hasBork = u.items.some((it) => it.id === 'item_bork');
-    if (hasBork) {
+    if (hasBork && targetType !== 'structure') {
       const borkBonus = champTarget ? Math.round(Math.max(15, champTarget.hp * 0.09)) : 35;
       bonusAd += borkBonus;
     }
@@ -5031,21 +5037,25 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     // Lifesteal Recovery on Attack
     const lifestealPercent = u.items.reduce((sum, it) => sum + (it.stats.lifesteal ?? 0), 0);
-    if (lifestealPercent > 0 && u.hp < u.maxHp) {
+    if (targetType !== 'structure' && lifestealPercent > 0 && u.hp < u.maxHp) {
       const healAmount = Math.round((baseDamage + bonusAd) * (lifestealPercent / 100) * 0.65);
       u.hp = Math.min(u.maxHp, u.hp + healAmount);
     }
 
     // Navori Quickblades: basic attacks refund non-ultimate ability cooldowns
-    if (u.items.some((it) => it.id === 'item_navori')) {
+    if (targetType !== 'structure' && u.items.some((it) => it.id === 'item_navori')) {
       u.cd1 = Math.max(0, u.cd1 - 0.7);
       u.cd2 = Math.max(0, u.cd2 - 0.7);
     }
 
     // Unique Card Traits Attack Modifiers
     const overchargeMultiplier = (u.aetherisOverchargeTimer ?? 0) > 0 ? 1.15 : 1;
-    const totalDmg = (baseDamage + bonusAd) * overchargeMultiplier
-      * getKindraHuntDamageMultiplier(u.champion.name, u.kindraHuntTimer ?? 0);
+    const totalDmg = targetType === 'structure'
+      ? structureBasicAttackDamage({ baseAttackDamage: baseDamage, persistentAttackBonus: persistentStructureBonus,
+        criticalBonus: isCrit ? u.champion.ad * (hasInfinity ? 1.25 : 0.75) : 0,
+        championOnHitBonus: bonusAd - persistentStructureBonus, temporaryCombatMultiplier: overchargeMultiplier })
+      : (baseDamage + bonusAd) * overchargeMultiplier
+        * getKindraHuntDamageMultiplier(u.champion.name, u.kindraHuntTimer ?? 0);
     const isRanged = attackRange >= 90;
 
     // Runaan's Hurricane: Wind's Fury (fires secondary bolts at up to 2 nearby enemies)
