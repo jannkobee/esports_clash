@@ -1,5 +1,5 @@
 import type { AramChampionUnit } from './types';
-import { shouldHoldFightPlan, shouldHuntExposedCarry } from './playerTraits.ts';
+import { hasPersonalityCombination, personalityActionDelta, personalityOf } from './playerPersonality.ts';
 import { isCrowdControlSkill, shouldHoldSkillForChainStun, getSkillCastRange } from './skillRangeRules.ts';
 import { chooseAreaControlTarget, chooseOpeningControlTarget, countAreaControlTargets, getAreaControlProfile, shouldCommitAreaControlUltimate } from './avatarCombatRoles.ts';
 import { isSelfOrAllySecondSkill, skill1ManaCost, ultimateManaCost } from './abilityRules.ts';
@@ -67,7 +67,9 @@ export function chooseTeamfightTarget(
 ): Fighter | undefined {
   const iq = Math.max(1, Math.min(99, unit.player.stats.iq)) / 99;
   const execution = Math.max(1, Math.min(99, unit.player.stats.tf)) / 99;
-  const isAggroDiver = unit.player.badges?.some(b => b.toLowerCase().includes('diver')) || unit.player.personality?.toLowerCase().includes('diver');
+  const psychology = unit.psychology;
+  const traits = personalityOf(unit.player);
+  const isAggroDiver = false; // Personality never authorizes a tower dive; towerDiveRules is authoritative.
   // Exclude channeling allies from carry peel; a channeler is leading an aggressive engage, not in distress
   const carry = allies.find(a => a.id !== unit.id && !a.isRecalling && !isChannelingAbility(a) && (a.champion.primaryRole === 'Marksman' || a.champion.primaryRole === 'Mage') && distance(unit, a) < 240);
   const visibleEnemies = enemies.filter(e => e.isAlive && isUnitVisibleTo(e, unit));
@@ -79,7 +81,10 @@ export function chooseTeamfightTarget(
 
   if (unit.player.stats.iq >= 60 && unit.player.stats.tf >= 55) {
     const channeler = visibleEnemies.find(e => (e.blackHole || e.corsaraBarrage || e.monkeySpin) && distance(unit, e) < range * 1.8 && (!isUnderEnemyTower(e) || isAggroDiver));
-    if (channeler) return channeler;
+    if (channeler) {
+      unit.traitFocusId = channeler.id;
+      return channeler;
+    }
   }
   // Follow-Up Engage Priority:
   // When an ally channels an engage ability (Black Hole, Broadside Waltz, Cyclone Dance),
@@ -94,18 +99,23 @@ export function chooseTeamfightTarget(
         const bVuln = (b.champion.primaryRole === 'Marksman' || b.champion.primaryRole === 'Mage') ? -0.2 : 0;
         return (health(a) + aVuln) - (health(b) + bVuln);
       });
-      if (shouldHoldFightPlan(unit)) unit.traitFocusId = trappedEnemies[0].id;
+      unit.traitFocusId = trappedEnemies[0].id;
       return trappedEnemies[0];
     }
   }
-  if (shouldHoldFightPlan(unit) && (unit.iceFocusTimer ?? 0) > 0) {
-    const heldTarget = visibleEnemies.find(e => e.id === unit.traitFocusId && distance(unit, e) <= range * 2.2);
+  // Cold as Ice retains a viable committed target after disruption; this is a
+  // preference only and never suppresses death, visibility, or tower safety.
+  if (traits.includes('cold_as_ice') && (unit.iceFocusTimer ?? 0) > 0) {
+    const heldTarget = visibleEnemies.find(e => e.id === unit.traitFocusId && distance(unit, e) <= range * 2.2 && !isUnderEnemyTower(e));
     if (heldTarget) return heldTarget;
   }
   if (unit.cd1 <= 0 && unit.mana >= 45 && unit.player.stats.iq >= 65 && unit.player.stats.tf >= 60) {
     const openingTarget = chooseOpeningControlTarget(unit, visibleEnemies,
       getSkillCastRange(unit.champion.name, 'skill1', range));
-    if (openingTarget && (!isUnderEnemyTower(openingTarget) || isAggroDiver)) return openingTarget;
+    if (openingTarget && (!isUnderEnemyTower(openingTarget) || isAggroDiver)) {
+      unit.traitFocusId = openingTarget.id;
+      return openingTarget;
+    }
   }
   const areaProfile = getAreaControlProfile(unit.champion);
   if (areaProfile && unit.level >= 6 && unit.cdUlt <= 0 && unit.player.stats.iq >= 65) {
@@ -113,16 +123,20 @@ export function chooseTeamfightTarget(
     const groupedTarget = chooseAreaControlTarget(unit, visibleEnemies, castRange, areaProfile);
     if (groupedTarget && countAreaControlTargets(unit, groupedTarget, visibleEnemies, areaProfile) >= 2) {
       if (!isUnderEnemyTower(groupedTarget) || isAggroDiver) {
-        if (shouldHoldFightPlan(unit)) unit.traitFocusId = groupedTarget.id;
+        unit.traitFocusId = groupedTarget.id;
         return groupedTarget;
       }
     }
   }
   const exposedCarry = visibleEnemies
-    .filter(e => distance(unit, e) <= range * 2.2 && shouldHuntExposedCarry(unit, e, visibleEnemies) && (!isUnderEnemyTower(e) || isAggroDiver))
+    .filter(e => distance(unit, e) <= range * 2.2
+      && unit.player.stats.iq >= 60 && (traits.includes('patient_predator') || traits.includes('egoistic'))
+      && (e.champion.primaryRole === 'Marksman' || e.champion.primaryRole === 'Mage')
+      && !visibleEnemies.some(ally => ally.id !== e.id && distance(ally, e) < 150)
+      && !isUnderEnemyTower(e))
     .sort((a, b) => distance(unit, a) - distance(unit, b))[0];
   if (exposedCarry) {
-    if (shouldHoldFightPlan(unit)) unit.traitFocusId = exposedCarry.id;
+    unit.traitFocusId = exposedCarry.id;
     return exposedCarry;
   }
   const selected = visibleEnemies.reduce<Fighter | undefined>((best, enemy) => {
@@ -131,12 +145,12 @@ export function chooseTeamfightTarget(
       const reachable = dist <= range * 2.2;
       const lowHp = 1 - health(candidate);
       const vulnerable = candidate.champion.primaryRole === 'Marksman' || candidate.champion.primaryRole === 'Mage';
-      const peeling = carry && distance(carry, candidate) < 150;
+      const peeling = !!carry && distance(carry, candidate) < 150;
+      const isolated = !visibleEnemies.some(ally => ally.id !== candidate.id && distance(ally, candidate) < 150);
       const isStunned = (candidate.stunTimer ?? 0) > 0 || (candidate.knockupTimer ?? 0) > 0;
       const isRecallingFar = candidate.isRecalling && dist > range * 1.25;
       const canInterruptRecall = candidate.isRecalling && dist <= range * 1.25;
 
-      const isClutchActive = !!unit.clutchCommitActive;
       const isCurrentFocus = candidate.id === unit.traitFocusId;
 
       // Enemy tower danger penalty
@@ -148,7 +162,7 @@ export function chooseTeamfightTarget(
         : 0;
       const diverRole = unit.champion.primaryRole;
       const isSquishy = diverRole === 'Mage' || diverRole === 'Marksman' || diverRole === 'Support';
-      const canDiveUnderTower = isAggroDiver || (alliedMinionsUnderTower >= 2 && lowHp >= 0.78 && health(unit) >= 0.55 && !isSquishy);
+      const canDiveUnderTower = alliedMinionsUnderTower >= 2 && lowHp >= 0.78 && health(unit) >= 0.55 && !isSquishy;
       const towerDangerPenalty = enemyTower && !canDiveUnderTower
         ? (3.8 * iq * (isSquishy ? 1.5 : 1.0))
         : 0;
@@ -163,17 +177,24 @@ export function chooseTeamfightTarget(
         + (isCurrentFocus && reachable ? 1.4 : 0)
         + (reachable ? lowHp * 2.3 * iq * (0.6 + execution * 0.4) : 0)
         + (reachable && vulnerable && unit.champion.primaryRole === 'Assassin' ? 1.3 * iq : 0)
-        + (reachable && lowHp >= 0.55 && isAggroDiver ? 2.6 : 0)
-        + (isClutchActive && reachable ? 1.8 : 0)
+        + (reachable ? personalityActionDelta(unit.player, psychology ?? { mood: { confidence: 50, excitement: 30, frustration: 10, composure: 70, trust: 60 }, recentWins: 0, recentLosses: 0, processedEventIds: [] }, 'engage', undefined, {
+          healthFraction: health(unit), nearbyAllies: allies.length, nearbyEnemies: visibleEnemies.length,
+          isSafe: !enemyTower || canDiveUnderTower, isolatedTarget: isolated,
+        }) * .22 : 0)
+        + (traits.includes('revenge_driven') && candidate.id === psychology?.recentKillerId ? 1.1 : 0)
+        + (traits.includes('tunnel_vision') && isCurrentFocus && reachable ? 1.2 : 0)
         + (reachable && isStunned ? 1.5 * iq * (0.5 + execution * 0.5) : 0)
         + (peeling && (unit.champion.primaryRole === 'Tank' || unit.champion.primaryRole === 'Support') ? 1.6 * iq * (0.6 + execution * 0.4) : 0)
+        + (peeling ? personalityActionDelta(unit.player, psychology ?? { mood: { confidence: 50, excitement: 30, frustration: 10, composure: 70, trust: 60 }, recentWins: 0, recentLosses: 0, processedEventIds: [] }, 'peel', undefined, {
+          healthFraction: health(unit), nearbyAllies: allies.length, nearbyEnemies: visibleEnemies.length, allyThreatened: peeling,
+        }) * .28 : 0)
         + (reachable && observedUltDown ? 0.95 * iq : 0)
         + (reachable && spentKeySkill ? 0.38 * iq : 0)
         - towerDangerPenalty;
     };
     return !best || score(enemy) > score(best) ? enemy : best;
   }, undefined);
-  if (shouldHoldFightPlan(unit)) unit.traitFocusId = selected?.id;
+  if (selected) unit.traitFocusId = selected.id;
   return selected;
 }
 
@@ -200,7 +221,16 @@ export function shouldUseUltimate(unit: Fighter, target: Fighter, enemies: Fight
   }
 
   const areaProfile = getAreaControlProfile(unit.champion);
-  if (areaProfile) return shouldCommitAreaControlUltimate(unit, target, enemies, allies, areaProfile);
+  if (areaProfile) {
+    const normalCommit = shouldCommitAreaControlUltimate(unit, target, enemies, allies, areaProfile);
+    const groupedEnemies = countAreaControlTargets(unit, target, enemies, areaProfile);
+    const clutchShowman = hasPersonalityCombination(unit.player, 'clutch_performer', 'showman');
+    // The combination can favor a real three-target reversal window, but it
+    // changes neither spell damage nor the caller's range/cooldown rules.
+    const reversalWindow = clutchShowman && groupedEnemies >= 3 && health(unit) >= 0.28
+      && health(unit) <= 0.62 && allies.filter(ally => ally.isAlive && distance(ally, unit) <= 260).length >= 2;
+    return normalCommit || reversalWindow;
+  }
 
   const iq = unit.player.stats.iq;
   const nearbyEnemies = enemies.filter(e => e.isAlive && distance(e, target) < 100).length;

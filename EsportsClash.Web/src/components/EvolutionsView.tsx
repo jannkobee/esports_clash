@@ -53,7 +53,7 @@ export const EvolutionsView: React.FC<EvolutionsViewProps> = ({
             EA FC-STYLE EVOLUTIONS HUB
           </h2>
           <p className="text-slate-400 text-xs mt-0.5">
-            Level up your favorite cards, unlock secondary combat roles & signature avatars, upgrade rarity tiers, and acquire PlayStyle+ badges!
+            Level up your favorite cards, unlock secondary combat roles & signature avatars, upgrade rarity tiers, and earn evolution marks.
           </p>
         </div>
       </div>

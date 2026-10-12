@@ -17,11 +17,11 @@ test('high IQ recognizes a reachable low-health carry while low IQ takes the nea
   assert.equal(chooseTeamfightTarget(fighter('high', 95), [tank, carry], [], 150)?.id, 'carry');
 });
 
-test('One-Tap God hunts an exposed carry only when IQ and isolation allow', () => {
+test('Patient Predator hunts an exposed carry only when IQ and isolation allow', () => {
   const tank = fighter('tank', 50, 70, 100, 'Tank');
   const carry = fighter('carry', 50, 260, 100, 'Marksman');
   const hunter = fighter('hunter', 85);
-  hunter.player.badges = ['One-Tap God'];
+  hunter.player.primaryPersonality = 'patient_predator';
   assert.equal(chooseTeamfightTarget(hunter, [tank, carry], [], 150)?.id, 'carry');
 
   const guard = fighter('guard', 50, 265, 100, 'Tank');
@@ -30,9 +30,9 @@ test('One-Tap God hunts an exposed carry only when IQ and isolation allow', () =
   assert.equal(chooseTeamfightTarget(hunter, [tank, carry], [], 150)?.id, 'tank');
 });
 
-test('Ice in Veins retains a reachable fight target after control ends', () => {
+test('Cold as Ice retains a reachable fight target after control ends', () => {
   const steady = fighter('steady', 85);
-  steady.player.badges = ['Ice in Veins'];
+  steady.player.primaryPersonality = 'cold_as_ice';
   const first = fighter('first', 50, 90, 100, 'Tank');
   const second = fighter('second', 50, 70, 10, 'Marksman');
   steady.traitFocusId = first.id;

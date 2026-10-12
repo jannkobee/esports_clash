@@ -4,8 +4,10 @@ import {
   INITIAL_COACHES, 
   INITIAL_EVOLUTIONS, 
   INITIAL_FACILITIES, 
-  INITIAL_PLAYERS 
+  INITIAL_PLAYERS,
+  KOVI_PLAYER_CARD
 } from './mockData';
+import { loadStartingFive, persistClubRoster, reconcileClubRoster } from './clubRosterPersistence';
 import { ChampionKit, CoachCard, EvolutionPlan, Facility, PlayerCard, TournamentTeam } from './types';
 import { PackOpeningModal } from './components/PackOpeningModal';
 import { EvolutionsView } from './components/EvolutionsView';
@@ -185,9 +187,12 @@ export function App() {
   const [adsWatched, setAdsWatched] = useState<number>(0);
 
   // Roster State
-  const [roster, setRoster] = useState<PlayerCard[]>(INITIAL_PLAYERS);
-  const [startingFive, setStartingFive] = useState<PlayerCard[]>(INITIAL_PLAYERS.slice(0, 5));
+  const [roster, setRoster] = useState<PlayerCard[]>(() => reconcileClubRoster(INITIAL_PLAYERS, [KOVI_PLAYER_CARD]));
+  const [startingFive, setStartingFive] = useState<PlayerCard[]>(() =>
+    loadStartingFive(reconcileClubRoster(INITIAL_PLAYERS, [KOVI_PLAYER_CARD]), INITIAL_PLAYERS.slice(0, 5)));
   const [currentCoach] = useState<CoachCard>(INITIAL_COACHES[0]);
+
+  useEffect(() => { persistClubRoster(roster, startingFive); }, [roster, startingFive]);
 
   // Facilities & Evolutions
   const [facilities, setFacilities] = useState<Facility[]>(INITIAL_FACILITIES);

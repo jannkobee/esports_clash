@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import type { PlayerCard, CoachCard, AvatarRole, GameOrigin } from '../types';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
+import { PERSONALITIES, personalityOf } from '../playerPersonality';
 import { 
   TEAM_SLOTS, 
   PLAYER_DRAFT_TURNS, 
@@ -29,6 +30,8 @@ interface Props {
   onCancel: () => void;
 }
 
+const primaryPersonalityName = (player: PlayerCard) => PERSONALITIES[personalityOf(player)[0]].name;
+
 export const PlayerDraftPhaseView: React.FC<Props> = ({
   pool,
   userCoach,
@@ -47,6 +50,7 @@ export const PlayerDraftPhaseView: React.FC<Props> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [aiThinking, setAiThinking] = useState(false);
   const [swappingSlot, setSwappingSlot] = useState<number | null>(null);
+  const selectedPersonalities = selectedCard ? personalityOf(selectedCard) : [];
 
   const usedIds = useMemo(() => {
     const ids = new Set<string>();
@@ -383,11 +387,9 @@ export const PlayerDraftPhaseView: React.FC<Props> = ({
                             <div className="flex flex-col items-end">
                               <span className="text-xs font-black text-amber-300 font-mono">100 OVR</span>
                               <div className="flex gap-1 text-[8px] text-slate-400">
-                                {player.badges?.slice(0, 1).map((b) => (
-                                  <span key={b} className="bg-slate-800 px-1 rounded text-purple-300 font-medium">
-                                    {b}
-                                  </span>
-                                ))}
+                                <span className="bg-slate-800 px-1 rounded text-purple-300 font-medium">
+                                  {primaryPersonalityName(player)}
+                                </span>
                               </div>
                             </div>
                             <button
@@ -462,7 +464,7 @@ export const PlayerDraftPhaseView: React.FC<Props> = ({
                     <span>·</span>
                     <span className="text-purple-300">{selectedCard.origin}</span>
                     <span>·</span>
-                    <span className="text-slate-400">{selectedCard.personality}</span>
+                    <span className="text-slate-400">{PERSONALITIES[selectedPersonalities[0]].name}</span>
                   </div>
                 </div>
               </div>
@@ -495,23 +497,18 @@ export const PlayerDraftPhaseView: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* PlayStyle Badges */}
+              {/* Personality profile */}
               <div className="mb-4">
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                  PlayStyle Tactical Badges:
+                  Player personality:
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {(selectedCard.badges || []).map((badge) => (
-                    <span
-                      key={badge}
-                      className="text-[10px] font-black px-2 py-0.5 rounded-lg bg-purple-500/20 text-purple-200 border border-purple-400/30"
-                    >
-                      ✦ {badge}
-                    </span>
-                  ))}
-                  {(!selectedCard.badges || selectedCard.badges.length === 0) && (
-                    <span className="text-[10px] text-slate-500 italic">Universal Competitor</span>
-                  )}
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-lg bg-purple-500/20 text-purple-200 border border-purple-400/30">
+                    Primary Personality: {PERSONALITIES[selectedPersonalities[0]].name}
+                  </span>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-200 border border-sky-400/30">
+                    Secondary Personality: {PERSONALITIES[selectedPersonalities[1]].name}
+                  </span>
                 </div>
               </div>
 
@@ -627,11 +624,9 @@ export const PlayerDraftPhaseView: React.FC<Props> = ({
                             <div className="flex flex-col items-end">
                               <span className="text-xs font-black text-amber-300 font-mono">100 OVR</span>
                               <div className="flex gap-1 text-[8px] text-slate-400">
-                                {player.badges?.slice(0, 1).map((b) => (
-                                  <span key={b} className="bg-slate-800 px-1 rounded text-rose-300 font-medium">
-                                    {b}
-                                  </span>
-                                ))}
+                                <span className="bg-slate-800 px-1 rounded text-rose-300 font-medium">
+                                  {primaryPersonalityName(player)}
+                                </span>
                               </div>
                             </div>
                             <div className="w-8 h-8 rounded-full bg-slate-900 border border-white/10 p-0.5 flex items-center justify-center">
@@ -771,14 +766,9 @@ export const PlayerDraftPhaseView: React.FC<Props> = ({
                 </div>
 
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {(card.badges || []).slice(0, 1).map((b) => (
-                    <span
-                      key={b}
-                      className="text-[8px] font-semibold px-1 py-0.2 rounded bg-purple-500/20 text-purple-300 truncate max-w-full"
-                    >
-                      {b}
-                    </span>
-                  ))}
+                  <span className="text-[8px] font-semibold px-1 py-0.2 rounded bg-purple-500/20 text-purple-300 truncate max-w-full">
+                    {primaryPersonalityName(card)}
+                  </span>
                 </div>
               </div>
             );

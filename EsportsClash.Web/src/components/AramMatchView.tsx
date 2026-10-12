@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { perceiveChampions } from '../decisionPerception';
 import { resolveFightCommitment } from '../decisionCommitment';
 import { beginOrContinueAction, chooseCommittedActionTarget, decisiveActionKey,
-  inspectActionProgress, isActionRetryBlocked, recordActionFailure } from '../decisionActionRecovery';
+  inspectActionProgress, isActionRetryBlocked, recordActionFailure, type DecisiveActionKind } from '../decisionActionRecovery';
 import { runSimulationSlice, shouldPublishHud } from '../simulationPresentation';
 import { ARENA_RENDER_HEIGHT, clampArenaCamera } from '../arenaPresentationCamera';
 import type { ThreeArenaTerrain } from '../threeArenaTerrain';
@@ -30,13 +30,14 @@ import { getTeamKillScore, getTeamTotalGold, getTowersAliveCount, getTeamNames }
 import { nextMultikillCount } from '../multikillRules';
 import { shouldStartEpicObjective, shouldContestOpponentObjective, hasObjectiveVision,
   objectiveFightPreference, chooseObjectiveAction, choosePostObjectiveAction } from '../objectiveRules';
-import {
-  hasPlayerTrait,
-  canAggroDive,
-  shouldHoldClutchFight,
-  shouldLaningDemonClearWave,
-  shouldBaitEnemySkill
-} from '../playerTraits';
+import { applyMoodEvent, applyTeamPsychologyEvent, decayMood, deriveTeamPsychology, ensurePsychology, normalizePlayerPersonality,
+  personalityActionDelta, personalityCallAlignment, personalityDecisionBreakdown, personalityOf, type PersonalityAction } from '../playerPersonality';
+import { observeEngagementOutcome, type EngagementObservation, type EngagementSnapshot } from '../engagementOutcomeRules';
+
+const PERSONALITY_ACTION_FOR_INTENT: Record<DecisiveActionKind, PersonalityAction> = {
+  champion: 'engage', structure: 'siege', minion: 'wave', camp: 'farm', objective: 'objective',
+  defend: 'peel', regroup: 'regroup', stage: 'regroup', relic: 'retreat', push: 'siege', hold: 'regroup',
+};
 import {
   evaluateTowerDive,
   shouldAbortTowerDive,
@@ -874,6 +875,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const objectiveRecallPlanRef = useRef<Partial<Record<'blue' | 'red', string>>>({});
   const postRecallCampPlanRef = useRef<Partial<Record<'blue' | 'red', PostRecallCampPlan>>>({});
   const lastTeamKillAtRef = useRef({ blue: -Infinity, red: -Infinity });
+  const engagementTrackerRef = useRef<EngagementSnapshot | undefined>(undefined);
+  const nextEngagementIdRef = useRef(1);
+  const engagementOutcomeCooldownRef = useRef(0);
   const wardsRef = useRef<{ id: string; team: 'blue' | 'red'; bushId: string; x: number; y: number; expiresAt: number }[]>([]);
   const jungleBuffsRef = useRef<{ blue: { blue: number; red: number }; red: { blue: number; red: number } }>({
     blue: { blue: 0, red: 0 }, red: { blue: 0, red: 0 }
@@ -953,6 +957,38 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ]);
   };
 
+  // Personality reads only observed match outcomes. This bounded five-player
+  // update is deliberately event-driven, never a per-tick social simulation.
+  const recordTeamPsychologyEvent = (team: 'blue' | 'red', eventId: string,
+    kind: 'comeback' | 'teamfight_win' | 'teamfight_loss' | 'team_wipe' | 'objective_steal' | 'objective_loss' | 'defense' | 'failed_siege' | 'failed_engagement' | 'coordination',
+    leadershipOutcome?: 'success' | 'failure') => {
+    applyTeamPsychologyEvent(championsRef.current.filter(unit => unit.team === team), eventId, kind, leadershipOutcome);
+  };
+
+  // Rescue credit uses only an identified recent enemy hit plus a concrete ally
+  // heal/shield. It never infers fault or awards mood for ordinary sustain.
+  const recordRescue = (rescuer: AramChampionUnit, rescued: AramChampionUnit) => {
+    const recentThreat = rescued.lastEnemyDamage;
+    if (rescuer.id === rescued.id || !recentThreat || matchTimeRef.current - recentThreat.second > 2.4
+      || rescued.hp / rescued.maxHp > 0.55) return;
+    const eventId = `rescue:${rescuer.id}:${rescued.id}:${recentThreat.attackerId}:${Math.floor(matchTimeRef.current / 4)}`;
+    const alreadyRecorded = rescuer.psychology?.processedEventIds.includes(eventId)
+      || rescued.psychology?.processedEventIds.includes(eventId);
+    rescuer.psychology = applyMoodEvent(ensurePsychology(rescuer.player, rescuer.psychology), eventId,
+      'rescue', personalityOf(rescuer.player));
+    rescued.psychology = applyMoodEvent(ensurePsychology(rescued.player, rescued.psychology), eventId,
+      'rescue', personalityOf(rescued.player));
+    const improvePair = (relationship?: { trust: number; cooperation: number }) => {
+      if (!relationship) return;
+      relationship.trust = Math.min(100, relationship.trust + 4);
+      relationship.cooperation = Math.min(100, relationship.cooperation + 4);
+    };
+    if (!alreadyRecorded) {
+      improvePair(rescuer.relationships?.[rescued.id]);
+      improvePair(rescued.relationships?.[rescuer.id]);
+    }
+  };
+
   // Helper: Initial item purchase (Buys Starter 500g + 1st Component 700-1000g right at match start!)
   const buyInitialLoadout = (role: any, startingGold: number, champName?: string): { items: ItemDef[]; remainingGold: number } => {
     const items: ItemDef[] = [];
@@ -1010,8 +1046,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const initChamps: AramChampionUnit[] = [];
 
     blueLineup.forEach((item, idx) => {
+      const player = normalizePlayerPersonality(item.player);
       const loadout = buyInitialLoadout(item.champion.primaryRole, 1500, item.champion.name);
-      const champCopy = createRatedAvatar(item.player, item.champion);
+      const champCopy = createRatedAvatar(player, item.champion);
       let bonusHp = 0;
       loadout.items.forEach((it) => {
         if (it.stats.hp) bonusHp += it.stats.hp;
@@ -1022,8 +1059,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
 
       initChamps.push({
-        id: `blue_${item.player.id}`,
-        player: item.player,
+        id: `blue_${player.id}`,
+        player,
         champion: champCopy,
         team: 'blue',
         teamChemistry: blueCoach?.chemistryBonus ?? 10,
@@ -1073,8 +1110,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     });
 
     redLineup.forEach((item, idx) => {
+      const player = normalizePlayerPersonality(item.player);
       const loadout = buyInitialLoadout(item.champion.primaryRole, 1500, item.champion.name);
-      const champCopy = createRatedAvatar(item.player, item.champion);
+      const champCopy = createRatedAvatar(player, item.champion);
       let bonusHp = 0;
       loadout.items.forEach((it) => {
         if (it.stats.hp) bonusHp += it.stats.hp;
@@ -1085,8 +1123,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
 
       initChamps.push({
-        id: `red_${item.player.id}`,
-        player: item.player,
+        id: `red_${player.id}`,
+        player,
         champion: champCopy,
         team: 'red',
         teamChemistry: redCoach?.chemistryBonus ?? 10,
@@ -1135,6 +1173,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
     });
 
+    initChamps.forEach(unit => {
+      unit.psychology = ensurePsychology(unit.player);
+      unit.relationships = Object.fromEntries(initChamps.filter(other => other.team === unit.team && other.id !== unit.id)
+        .map(other => [other.id, { trust: 60, cooperation: 60, rivalry: 10, leadershipRespect: 60 }]));
+    });
     championsRef.current = initChamps;
     cooldownMemoryRef.current = createEnemyCooldownMemory();
     cooldownSnapshotsRef.current = {};
@@ -1144,6 +1187,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     objectiveRecallPlanRef.current = {};
     postRecallCampPlanRef.current = {};
     lastTeamKillAtRef.current = { blue: -Infinity, red: -Infinity };
+    engagementTrackerRef.current = undefined;
+    nextEngagementIdRef.current = 1;
+    engagementOutcomeCooldownRef.current = 0;
     const matchChamps = [...blueLineup.map(i => i.champion.name), ...redLineup.map(i => i.champion.name)];
     sound.preloadAvatarSkills(matchChamps);
     setChampions(initChamps);
@@ -1385,6 +1431,31 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     const champs = championsRef.current;
+    const activeEngagement = engagementTrackerRef.current;
+    const engagement: EngagementObservation = matchTimeRef.current < engagementOutcomeCooldownRef.current
+      ? { failedTeams: [] }
+      : observeEngagementOutcome(champs, matchTimeRef.current, activeEngagement, nextEngagementIdRef.current);
+    if (engagement.next && !activeEngagement) nextEngagementIdRef.current++;
+    engagementTrackerRef.current = engagement.next;
+    if (engagement.endedByDeath) engagementOutcomeCooldownRef.current = matchTimeRef.current + 8;
+    if (activeEngagement && !engagement.next && engagement.failedTeams.length > 0) {
+      engagement.failedTeams.forEach(team => {
+        const eventId = `failed-engagement:${activeEngagement.id}:${team}`;
+        recordTeamPsychologyEvent(team, eventId, 'failed_engagement');
+        champs.filter(unit => unit.team === team && unit.isAlive).forEach(unit => {
+          const psychology = ensurePsychology(unit.player, unit.psychology);
+          const retreat = personalityDecisionBreakdown(unit.player, psychology, 'retreat');
+          unit.decisionTelemetry = {
+            action: 'retreat', baseline: 0, baselineReason: 'observed failed group engagement',
+            personalityDelta: retreat.personalityDelta, moodDelta: retreat.moodDelta,
+            coordinationDelta: retreat.coordinationDelta,
+            safetyGate: 'the existing retreat policy remains authoritative',
+            explanation: `failed engagement:${activeEngagement.id}; observed group withdrawal after damage`,
+            at: matchTimeRef.current,
+          };
+        });
+      });
+    }
     champs.forEach(actor => {
       const previous = cooldownSnapshotsRef.current[actor.id];
       const witnessed = actor.isAlive && champs.some(observer => observer.team !== actor.team && observer.isAlive
@@ -1667,6 +1738,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           const woundedAlly = champs.find(a => a.team === c.team && a.isAlive && a.hp < a.maxHp * 0.85 && Math.hypot(a.x - c.x, a.y - c.y) <= 240);
           if (woundedAlly) {
             const healVal = c.items.some((it) => it.id === 'item_redemption') ? 95 : 65;
+            recordRescue(c, woundedAlly);
             woundedAlly.hp = Math.min(woundedAlly.maxHp, woundedAlly.hp + healVal);
             floatsRef.current.push({
               id: random().toString(),
@@ -1690,6 +1762,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const endangeredAlly = champs.find(a => a.team === c.team && a.isAlive && a.hp <= a.maxHp * 0.35 && Math.hypot(a.x - c.x, a.y - c.y) <= 220);
         if (endangeredAlly) {
           c.locketCooldown = 45.0;
+          recordRescue(c, endangeredAlly);
           endangeredAlly.shield += 190;
           floatsRef.current.push({
             id: random().toString(),
@@ -2211,6 +2284,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // Decrement timers
       if (u.attackTimer > 0) u.attackTimer = Math.max(0, u.attackTimer - dt);
+      u.psychology = decayMood(ensurePsychology(u.player, u.psychology), personalityOf(u.player), dt);
       if (u.cd1 > 0) u.cd1 = Math.max(0, u.cd1 - dt);
       if (u.cd2 > 0) u.cd2 = Math.max(0, u.cd2 - dt);
       if (u.cdUlt > 0 && (u.level >= 6 || u.champion.name === 'Kaelen')) u.cdUlt = Math.max(0, u.cdUlt - dt);
@@ -2440,7 +2514,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.currentBushId = bush?.id;
 
       // Vision Master & Strategic Warding
-      const isVisionMaster = hasPlayerTrait(u.player, 'Vision Master');
+      const isVisionMaster = personalityOf(u.player).some(id => id === 'bush_stalker' || id === 'objective_zealot');
       const wardCooldown = 50;
 
       // Deep pit warding for Vision Master
@@ -2665,6 +2739,18 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // Targets: Enemies, Allies, Dragon, Jungle, Structures, Minions
       const { enemies, allies, localEnemies, localAllies, availableAllies } =
         perceiveChampions(u, champs, wardsRef.current);
+      const teamPsychology = deriveTeamPsychology(allies);
+      const iglRelationship = teamPsychology.iglId ? u.relationships?.[teamPsychology.iglId] : undefined;
+      const baseCallAlignment = u.id === teamPsychology.iglId ? 1
+        : ((iglRelationship?.leadershipRespect ?? 60) + (iglRelationship?.cooperation ?? 60) + (u.psychology?.mood.trust ?? 60)) / 300;
+      const callAlignment = Math.max(0, Math.min(1, baseCallAlignment + personalityCallAlignment(
+        u.player, ensurePsychology(u.player, u.psychology), {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          isolatedTarget: localEnemies.length === 1 && localAllies.length <= 1,
+          allyThreatened: allies.some(ally => ally.id !== u.id && ally.hp / ally.maxHp < .48
+            && enemies.some(enemy => Math.hypot(enemy.x - ally.x, enemy.y - ally.y) < 170)),
+        },
+      )));
       const enemyStructures = structures.filter((st) => st.team !== u.team && st.isAlive
         && (st.type !== 'nexus' || canDamageNexus(st.team, structures)));
       const enemyMinions = minions.filter((m) => m.team !== u.team && m.isAlive);
@@ -2760,6 +2846,30 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         contextKey = actionContextFor(kind, target), commitSeconds?: number) => {
         u.actionIntent = beginOrContinueAction({ intent: u.actionIntent, kind, target, actor: u,
           contextKey, mode, now: matchTimeRef.current, commitSeconds });
+        const action = PERSONALITY_ACTION_FOR_INTENT[kind];
+        const breakdown = personalityDecisionBreakdown(u.player, ensurePsychology(u.player, u.psychology), action, teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          callAlignment, isSafe: !u.diveAborting && !losingFight,
+          allyThreatened: allies.some(ally => ally.id !== u.id && ally.hp / ally.maxHp < .48
+            && enemies.some(enemy => Math.hypot(enemy.x - ally.x, enemy.y - ally.y) < 170)),
+          isolatedTarget: kind === 'champion' && localEnemies.length === 1,
+          alliedResourcesReady: localAllies.filter(ally => ally.cd1 <= 0 || ally.cd2 <= 0 || (ally.level >= 6 && ally.cdUlt <= 0)).length >= 2,
+          siegeOpportunity: kind === 'structure' || kind === 'push', isInBush: !!u.isInBush,
+        });
+        const baseline = ['champion', 'defend', 'objective'].includes(kind) ? localAllies.length - localEnemies.length : 0;
+        const safetyGate = u.diveAborting ? 'dive abort controls movement'
+          : kind === 'hold' ? 'turret-perimeter safety hold'
+          : losingFight ? 'retreat risk remains eligible to interrupt this intent'
+          : 'existing availability, route, commitment, and safety checks passed';
+        u.decisionTelemetry = {
+          action, baseline, baselineReason: `${kind} candidate selected by the existing decision policy`,
+          personalityDelta: breakdown.personalityDelta, moodDelta: breakdown.moodDelta,
+          coordinationDelta: breakdown.coordinationDelta, combinationDelta: breakdown.combinationDelta,
+          combinations: breakdown.combinations.map(combination => `${combination.label}: ${combination.reason}`),
+          safetyGate, targetId: target.id, commitUntil: u.actionIntent.committedUntil,
+          explanation: `${kind}:${target.id}; ${mode}; IGL alignment ${Math.round(callAlignment * 100)}%${breakdown.combinations.length ? `; ${breakdown.combinations.map(combination => combination.label).join(', ')}` : ''}`,
+          at: matchTimeRef.current,
+        };
       };
       const actionCandidate = <T extends { id: string; x: number; y: number; isAlive?: boolean }>(
         kind: Parameters<typeof beginOrContinueAction>[0]['kind'], target: T, safe = true,
@@ -2773,8 +2883,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && localEnemies.length === 0 && threateningMinions.length === 0 && (u.recallCooldown ?? 0) <= 0;
       const wantsItemPurchase = safeShopWindow
         && !!getItemPurchasePlan(u.champion.primaryRole, u.items, u.gold, u.champion.name, ALL_ITEMS);
-      // Unique Card PlayStyle: Clutch King Surge trigger
-      if (!losingFight && shouldHoldClutchFight(u, localEnemies.length)) {
+      // Clutch Performer can briefly commit to a viable fight, without overriding danger exits.
+      if (!losingFight && personalityOf(u.player).includes('clutch_performer') && localEnemies.length > 0
+        && u.hp / u.maxHp > .28 && u.hp / u.maxHp < .42 && !u.clutchCommitActive) {
         u.clutchCommitActive = true;
         u.clutchCommitTimer = 6.0;
         sound.playUltimateExplosion();
@@ -2809,6 +2920,25 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
       const initialPrimaryTarget = initialTargetCandidate
         ? enemies.find(enemy => enemy.id === initialTargetCandidate.id) : undefined;
+      if (initialPrimaryTarget) {
+        const psychology = ensurePsychology(u.player, u.psychology);
+        const engage = personalityDecisionBreakdown(u.player, psychology, 'engage', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          callAlignment, isSafe: !u.diveAborting && !losingFight, isolatedTarget: localEnemies.length === 1,
+          isInBush: !!u.isInBush,
+        });
+        u.decisionTelemetry = {
+          action: 'engage', baseline: localAllies.length - localEnemies.length,
+          baselineReason: 'existing target policy selected a visible legal opponent',
+          personalityDelta: engage.personalityDelta, moodDelta: engage.moodDelta,
+          coordinationDelta: engage.coordinationDelta, combinationDelta: engage.combinationDelta,
+          combinations: engage.combinations.map(combination => `${combination.label}: ${combination.reason}`),
+          safetyGate: u.diveAborting ? 'dive abort blocks aggression' : 'target remains subject to turret and retreat gates',
+          targetId: initialPrimaryTarget.id,
+          explanation: `target:${initialPrimaryTarget.id}; ${u.player.personality} preference applied after baseline evaluation`,
+          at: matchTimeRef.current,
+        };
+      }
 
       // Update dive timers & cooldowns
       u.diveAbortCooldown = Math.max(0, (u.diveAbortCooldown ?? 0) - dt);
@@ -2847,6 +2977,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.actionIntent = undefined;
           u.diveAbortCooldown = 3.5;
           u.committedState = 'retreat';
+          const retreat = personalityDecisionBreakdown(u.player, ensurePsychology(u.player, u.psychology), 'retreat', teamPsychology);
+          u.decisionTelemetry = {
+            action: 'retreat', baseline: localAllies.length - localEnemies.length,
+            baselineReason: 'tower dive abort rule fired',
+            personalityDelta: retreat.personalityDelta, moodDelta: retreat.moodDelta,
+            coordinationDelta: retreat.coordinationDelta,
+            safetyGate: `tower dive abort: ${abortCheck.reason}`,
+            targetId: nearestStructureForDive.id,
+            explanation: 'protected evacuation overrides the previous combat intent',
+            at: matchTimeRef.current,
+          };
           floatsRef.current.push({
             id: random().toString(),
             x: u.x,
@@ -2877,19 +3018,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           })
         : { canDive: false };
 
-      const traitCanDive = initialPrimaryTarget
-        ? canAggroDive(u, initialPrimaryTarget, structureDistForDive, {
-            alliedMinionsUnderTower,
-            defendersUnderTower,
-            attackersUnderTower
-          })
-        : false;
-
       const isAggroDiving = !losingFight && !u.diveAborting && (u.diveAbortCooldown ?? 0) <= 0
-        && (diveEval.canDive || traitCanDive);
+        && diveEval.canDive;
 
       const isClutchRefusingRetreat = !losingFight && !isTakingTurretFire && u.clutchCommitActive && localEnemies.length > 0;
-      const canPunishSpentSkill = !losingFight && !isTakingTurretFire && shouldBaitEnemySkill(u, localEnemies.length) && u.isInBush
+      const canPunishSpentSkill = !losingFight && !isTakingTurretFire && personalityOf(u.player).includes('counterpuncher') && u.isInBush
         && localEnemies.some(enemy => isObservedCooling(cooldownMemoryRef.current[u.team], enemy.id, 'skill1', matchTimeRef.current)
           || isObservedCooling(cooldownMemoryRef.current[u.team], enemy.id, 'skill2', matchTimeRef.current))
         && u.cd1 <= 0 && u.mana >= 45;
@@ -2935,9 +3068,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         (ally.cd1 <= 0 && ally.mana >= skill1ManaCost(ally))
         || (ally.cd2 <= 0 && ally.mana >= 35)
         || (ally.level >= 6 && ally.cdUlt <= 0 && ally.mana >= ultimateManaCost(ally))).length;
+      const personalityTraits = personalityOf(u.player);
+      const safeIsolatedTarget = !!initialPrimaryTarget && localEnemies.length === 1 && localAllies.length >= localEnemies.length
+        && !allInTargetUnderTower && isTeamfightApproachSafe(u, initialPrimaryTarget, enemyStructures);
+      const firstBloodWindow = matchTimeRef.current <= 180 && personalityTraits.includes('first_blood_hunter')
+        && safeIsolatedTarget && u.hp / u.maxHp >= .62 && initialPrimaryTarget!.hp / initialPrimaryTarget!.maxHp <= .7;
+      const bushPickWindow = personalityTraits.includes('bush_stalker') && !!u.isInBush && safeIsolatedTarget;
+      const perfectionistWaits = personalityTraits.includes('perfectionist') && (u.allInCommitTimer ?? 0) <= 0
+        && readyAllInContributors < Math.min(3, Math.max(2, groupedAllInAllies.length));
       const averageHealth = (units: AramChampionUnit[]) => units.length
         ? units.reduce((sum, unit) => sum + unit.hp / Math.max(1, unit.maxHp), 0) / units.length : 0;
-      const proactiveAllIn = !!initialPrimaryTarget && !isInsideWell && shouldStartProactiveAllIn({
+      const proactiveAllIn = !!initialPrimaryTarget && !isInsideWell && !perfectionistWaits && shouldStartProactiveAllIn({
         healthFraction: u.hp / u.maxHp,
         alliedAverageHealth: averageHealth(groupedAllInAllies),
         enemyAverageHealth: averageHealth(groupedAllInEnemies),
@@ -2971,7 +3112,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           || a.hp / a.maxHp - b.hp / b.maxHp || a.id.localeCompare(b.id))[0];
       const coordinatedEngage = canFollowUpEngage || activeAllInCommit;
 
-      const rawDangerousFight = u.diveAborting || (!coordinatedEngage && (losingFight || (!canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002))))));
+      const personalityCautiousRetreat = !coordinatedEngage && !isClutchRefusingRetreat && !isAggroDiving
+        && personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'retreat', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          callAlignment, isSafe: !u.diveAborting && !isTakingTurretFire,
+        }) >= 4.5 && isOutnumbered && u.hp / u.maxHp < .58;
+      const rawDangerousFight = u.diveAborting || personalityCautiousRetreat || (!coordinatedEngage && (losingFight || (!canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002))))));
 
       const commitment = resolveFightCommitment({
         committedState: u.committedState, timer: u.decisionCommitTimer ?? 0,
@@ -2997,7 +3143,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ? Math.hypot(target.x - u.x, target.y - u.y) : Infinity,
         attackRange, readyCastRange, canReinforceAlly: reinforceAlly && canReinforceFightingAlly,
       });
-      const teamfightPriority = activeAllInCommit || prioritizeFightWith(initialPrimaryTarget);
+      const teamfightPriority = activeAllInCommit || prioritizeFightWith(initialPrimaryTarget)
+        || ((firstBloodWindow || bushPickWindow) && !isDangerousFight && !!initialPrimaryTarget);
       const nearestPushDistance = enemyStructures.length
         ? Math.min(...enemyStructures.map(st => Math.hypot(st.x - u.x, st.y - u.y))) : Infinity;
       const pressWonFight = !teamfightPriority && shouldPressWonFight({
@@ -3028,7 +3175,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         nearbyEnemies: localEnemies.length, winningFightWindow: pressWonFight,
         activeFight: teamfightPriority,
       });
-      const tempoPush = pressWonFight || wavePushCall;
+      const personalitySiegeConversion = pressWonFight && personalityActionDelta(u.player,
+        ensurePsychology(u.player, u.psychology), 'siege', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          callAlignment, isSafe: !u.diveAborting && !isTakingTurretFire && !isDangerousFight,
+          siegeOpportunity: true,
+        }) >= 4;
+      // The pair can only reinforce an already-earned, safe conversion window;
+      // the existing wave, tower, and structure-vulnerability gates still choose execution.
+      const tempoPush = pressWonFight || wavePushCall || personalitySiegeConversion;
       const teamHasActiveThreat = allies.some(ally => {
         const recentChampionDamage = ally.lastEnemyDamage
           && matchTimeRef.current - ally.lastEnemyDamage.second <= 3;
@@ -3106,6 +3261,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         movementSpeed: 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed,
         channelSeconds: 2.5, canChannel: canChannelRecall && !isInsideWell && defendNow,
       });
+      const personalityRecoveryReset = !defendNow && !isInsideWell && canChannelRecall
+        && personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'retreat', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          callAlignment, isSafe: localEnemies.length === 0 && threateningMinions.length === 0,
+        }) >= 4.5 && u.hp / u.maxHp < .64;
       const wantsRecall = (!!defenseCall && !defendNow && !isInsideWell)
         || recallToDefend || (!defendNow && shouldKeepRecallPlan({
         healthFraction: u.hp / u.maxHp, manaFraction: u.mana / maxMana(u),
@@ -3116,7 +3276,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         followUp: coordinatedEngage,
         combatCommit: !u.diveAborting && !!(activeAllInCommit || canPunishSpentSkill || isClutchRefusingRetreat || isAggroDiving),
         pushWindow: tempoPush, objectiveCall: teamfightPriority || nearbyActiveObjective || !!fightingAlly || !!defenseCall,
-      }));
+      })) || personalityRecoveryReset;
       u.recallIntent = wantsRecall;
       if (wantsRecall || isDangerousFight || teamfightPriority || coordinatedEngage || fightingAlly || tempoPush || nearbyActiveObjective || defenseCall) {
         u.farmTargetId = undefined;
@@ -3204,6 +3364,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       if (((isDangerousFight && !defendNow) || wantsRecall) && Math.abs(u.x - wellTargetX) > 40 && !isInsideWell) {
         u.actionIntent = undefined;
+        const retreat = personalityDecisionBreakdown(u.player, ensurePsychology(u.player, u.psychology), 'retreat', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          callAlignment, isSafe: !u.diveAborting && !isInsideEnemyTowerRange,
+        });
+        u.decisionTelemetry = {
+          action: 'retreat', baseline: localAllies.length - localEnemies.length,
+          baselineReason: wantsRecall ? 'existing recall/recovery policy selected a reset' : 'existing danger policy selected withdrawal',
+          personalityDelta: retreat.personalityDelta, moodDelta: retreat.moodDelta,
+          coordinationDelta: retreat.coordinationDelta, combinationDelta: retreat.combinationDelta,
+          combinations: retreat.combinations.map(combination => `${combination.label}: ${combination.reason}`),
+          safetyGate: u.diveAborting ? 'tower evacuation remains mandatory' : isInsideEnemyTowerRange ? 'exit enemy tower range first' : 'existing retreat and recall safety checks passed',
+          explanation: wantsRecall ? 'resetting only after the authored recall safety gates' : 'retreating without overriding the protected danger policy',
+          at: matchTimeRef.current,
+        };
         // Can only channel recall if threats are cleared, distance is established, and recall is not on cooldown!
         if (wantsRecall && canChannelRecall && !u.diveAborting && !isInsideEnemyTowerRange) {
           u.isRecalling = true;
@@ -3323,7 +3497,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const opposingWave = minions.filter(m => m.team !== u.team && m.isAlive && Math.abs(m.x - DRAGON_X) < 420);
       const pushedWave = alliedWave.some(m => u.team === 'blue' ? m.x > DRAGON_X + 80 : m.x < DRAGON_X - 80);
       const nearbyPitAllies = availableAllies.filter(a => Math.hypot(a.x - dragon.x, a.y - dragon.y) < 620);
-      const shouldContestDragon = !defenseCall && !teamfightPriority && !tempoPush && !coordinatedEngage && !fightingAlly && dragon.isAlive && shouldStartEpicObjective({
+      const objectivePreference = personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'objective', teamPsychology, {
+        healthFraction: u.hp / u.maxHp, nearbyAllies: nearbyPitAllies.length, nearbyEnemies: localEnemies.length,
+        callAlignment, isSafe: !u.diveAborting && !losingFight,
+      });
+      const shouldContestDragon = !defenseCall && !teamfightPriority && !tempoPush && !coordinatedEngage && !fightingAlly && dragon.isAlive && objectivePreference >= -2.5 && shouldStartEpicObjective({
         gameSeconds: matchTimeRef.current,
         bossHealthFraction: dragon.hp / dragon.maxHp,
         healthyAllies: nearbyPitAllies.filter(a => a.hp / a.maxHp > 0.58).length,
@@ -3348,14 +3526,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const hasDragonVision = hasObjectiveVision(u.team, dragon, allies, enemies, wardsRef.current);
       const enemiesAtDragon = enemies.filter(e => Math.hypot(e.x - dragon.x, e.y - dragon.y) < 360);
       const healthyContestAllies = availableAllies.filter(a => a.hp / a.maxHp > 0.35).length;
-      const shouldContestEnemyDragon = isOpponentAtDragon && hasDragonVision && shouldContestOpponentObjective({
+      const dragonContestPreference = personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology),
+        dragon.hp / dragon.maxHp <= .32 ? 'objective' : 'engage', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: healthyContestAllies, nearbyEnemies: enemiesAtDragon.length,
+          callAlignment, isSafe: !u.diveAborting && !losingFight, isContestedObjective: true,
+          objectiveHealthFraction: dragon.hp / dragon.maxHp,
+        });
+      const shouldContestEnemyDragon = isOpponentAtDragon && hasDragonVision && (callAlignment >= .48 || dragonContestPreference >= 1) && shouldContestOpponentObjective({
         gameSeconds: matchTimeRef.current,
         bossHealthFraction: dragon.hp / dragon.maxHp,
         healthyAllies: healthyContestAllies,
         enemiesAtBoss: enemiesAtDragon.length,
         hasVisionOfPit: hasDragonVision,
-        hasShotcaller: allies.some(a => hasPlayerTrait(a.player, 'Shotcaller')),
-        hasStealSpecialist: hasPlayerTrait(u.player, 'Baron Steal'),
+        hasShotcaller: allies.some(a => personalityOf(a.player).includes('igl')),
+        hasStealSpecialist: personalityOf(u.player).includes('steal_gambler'),
         averageIq: allies.reduce((sum, a) => sum + a.player.stats.iq, 0) / Math.max(1, allies.length),
         averageTeamfight: allies.reduce((sum, a) => sum + a.player.stats.tf, 0) / Math.max(1, allies.length),
         chemistry: u.teamChemistry ?? 10,
@@ -3369,14 +3553,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && !!golem.claimTeam && golem.hp < golem.maxHp;
       const hasGolemVision = !!golem && hasObjectiveVision(u.team, golem, allies, enemies, wardsRef.current);
       const enemiesAtGolem = golem ? enemies.filter(e => Math.hypot(e.x - golem.x, e.y - golem.y) < 360) : [];
-      const shouldContestEnemyGolem = !!golem && isOpponentAtGolem && hasGolemVision && !shouldContestEnemyDragon && shouldContestOpponentObjective({
+      const golemContestPreference = golem ? personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology),
+        golem.hp / golem.maxHp <= .32 ? 'objective' : 'engage', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: healthyContestAllies, nearbyEnemies: enemiesAtGolem.length,
+          callAlignment, isSafe: !u.diveAborting && !losingFight, isContestedObjective: true,
+          objectiveHealthFraction: golem.hp / golem.maxHp,
+        }) : -Infinity;
+      const shouldContestEnemyGolem = !!golem && isOpponentAtGolem && hasGolemVision && !shouldContestEnemyDragon && (callAlignment >= .48 || golemContestPreference >= 1) && shouldContestOpponentObjective({
         gameSeconds: matchTimeRef.current,
         bossHealthFraction: golem.hp / golem.maxHp,
         healthyAllies: healthyContestAllies,
         enemiesAtBoss: enemiesAtGolem.length,
         hasVisionOfPit: hasGolemVision,
-        hasShotcaller: allies.some(a => hasPlayerTrait(a.player, 'Shotcaller')),
-        hasStealSpecialist: hasPlayerTrait(u.player, 'Baron Steal'),
+        hasShotcaller: allies.some(a => personalityOf(a.player).includes('igl')),
+        hasStealSpecialist: personalityOf(u.player).includes('steal_gambler'),
         averageIq: allies.reduce((sum, a) => sum + a.player.stats.iq, 0) / Math.max(1, allies.length),
         averageTeamfight: allies.reduce((sum, a) => sum + a.player.stats.tf, 0) / Math.max(1, allies.length),
         chemistry: u.teamChemistry ?? 10,
@@ -3385,7 +3575,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
 
       const coach = u.team === 'blue' ? blueCoach : redCoach;
-      const fightPreference = objectiveFightPreference(allies.map(a => a.player), coach, u.player);
+      const fightPreference = objectiveFightPreference(allies.map(a => a.player), coach, u.player)
+        + personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'engage', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          callAlignment, isSafe: !u.diveAborting && !losingFight,
+          isContestedObjective: isOpponentAtDragon || isOpponentAtGolem,
+          objectiveHealthFraction: isOpponentAtDragon ? dragon.hp / dragon.maxHp : golem ? golem.hp / golem.maxHp : undefined,
+        }) * Math.max(.4, callAlignment);
       const enemyStartedFightAt = (boss: { x: number; y: number }) => allies.some(ally =>
         Math.hypot(ally.x - boss.x, ally.y - boss.y) < 460
         && !!ally.lastEnemyDamage && matchTimeRef.current - ally.lastEnemyDamage.second <= 2.5
@@ -3429,7 +3625,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       }
 
-      if (isObjectiveFight && hasPlayerTrait(u.player, 'Shotcaller') && (u.shotcallSignalTimer ?? 0) <= 0) {
+      if (isObjectiveFight && teamPsychology.iglId === u.id && (u.shotcallSignalTimer ?? 0) <= 0) {
         u.shotcallSignalTimer = 5.0;
         allies.forEach(a => { a.shotcallSignalTimer = 5.0; });
         floatsRef.current.push({
@@ -3569,6 +3765,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         : 0;
       const closestEnemyChampion = enemies.length
         ? Math.min(...enemies.map(e => Math.hypot(e.x - u.x, e.y - u.y))) : Infinity;
+      const waveArchitectSetup = personalityTraits.includes('wave_architect') && !!nearestStructure
+        && Math.hypot(nearestStructure.x - u.x, nearestStructure.y - u.y) <= 520
+        && personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'wave', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          callAlignment, isSafe: !u.diveAborting && !losingFight, siegeOpportunity: true,
+        }) > 2;
       const alliedWaveAtNexus = focusNexus && enemyNexus
         ? minions.some(m => m.team === u.team && m.isAlive && Math.hypot(m.x - enemyNexus.x, m.y - enemyNexus.y) < 220)
         : false;
@@ -3582,8 +3784,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && (focusNexus
           ? !alliedWaveAtNexus && !!blockingNexusMinion && !isNexusLow
           : (!selectedTeamfightPriority && ((wavePushCall && minionInRange && alliedCrash < 2)
+            || (waveArchitectSetup && minionInRange && alliedCrash < 2)
             || shouldPrioritizeWaveClear(iq, lanStat, minionInRange, structureInRange, alliedCrash, closestEnemyChampion)
-            || (shouldLaningDemonClearWave(u, matchTimeRef.current, minionInRange)
+            || (personalityOf(u.player).includes('wave_architect') && matchTimeRef.current <= 240 && minionInRange
               && alliedCrash < 2 && !structureInRange))))
         && (closestEnemyChampion > 160 || !primaryTarget);
       const advanceLimit = laneAdvanceLimit({
@@ -3591,7 +3794,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         structureX: nearestStructure?.x, structureRange: nearestStructure?.range,
         exposedNexus: focusNexus, objectiveFight: isObjectiveFight,
       });
+      const personalityCanContinueChase = !!primaryTarget && !u.diveAborting && !isDangerousFight
+        && isTeamfightApproachSafe(u, primaryTarget, enemyStructures)
+        && personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'chase', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          callAlignment, isSafe: true, isolatedTarget: localEnemies.length === 1,
+        }) >= 3.5;
       const holdChaseForWave = !defenseCall && !!primaryTarget && !activeAllInCommit && !prioritizeFightWith(primaryTarget, false) && !canFollowUpEngage && !pressWonFight
+        && !personalityCanContinueChase
         && !isObjectiveFight && !focusNexus
         && primaryTarget.hp / primaryTarget.maxHp > 0.22
         && wouldOverstep(u.team, primaryTarget.x, advanceLimit)
@@ -3753,7 +3963,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         return;
       }
 
-      const shouldContestGolem = !defenseCall && !selectedTeamfightPriority && !tempoPush && !coordinatedEngage && !fightingAlly && !!golem && !shouldContestDragon && shouldStartEpicObjective({
+      const shouldContestGolem = !defenseCall && !selectedTeamfightPriority && !tempoPush && !coordinatedEngage && !fightingAlly && !!golem && !shouldContestDragon && objectivePreference >= -2.5 && shouldStartEpicObjective({
         gameSeconds: matchTimeRef.current, bossHealthFraction: golem.hp / golem.maxHp,
         healthyAllies: golemAllies.filter(a => a.hp / a.maxHp > 0.58).length,
         nearbyEnemies: enemies.filter(e => Math.hypot(e.x - golem.x, e.y - golem.y) < 360).length,
@@ -3857,14 +4067,43 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       }
       const isPostRecallTeamCampMember = !!teamCampPlan?.memberIds.includes(u.id);
+      const callLeader = teamPsychology.iglId ? allies.find(ally => ally.id === teamPsychology.iglId && ally.isAlive) : undefined;
+      const personalityRegroupCall = !!callLeader && callLeader.id !== u.id && !defenseCall && !selectedTeamfightPriority
+        && !isObjectiveFight && !coordinatedEngage && !fightingAlly && !focusNexus && !tempoPush
+        && localEnemies.length === 0 && Math.hypot(callLeader.x - u.x, callLeader.y - u.y) > 175
+        && isTeamfightApproachSafe(u, callLeader, enemyStructures)
+        && personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'regroup', teamPsychology, {
+          healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+          callAlignment, isSafe: true,
+        }) >= 2.2;
+      if (personalityRegroupCall && callLeader) {
+        const groupDistance = Math.hypot(callLeader.x - u.x, callLeader.y - u.y);
+        setActionIntent('regroup', callLeader, 'move',
+          `personality-regroup:${callLeader.id}:${Math.floor(groupDistance / 80)}`, 0.8);
+        const angle = Math.atan2(callLeader.y - u.y, callLeader.x - u.x);
+        const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed,
+          groupDistance / dt);
+        u.vx = Math.cos(angle) * speed;
+        u.vy = Math.sin(angle) * speed;
+        u.x += u.vx * dt;
+        u.y += u.vy * dt;
+        u.animState = 'walk';
+        setUnitFacing(u, callLeader.x);
+        return;
+      }
       const retryableJungleCamps = availableJungleCamps.filter(camp => !isActionRetryBlocked(
         u.actionFailures,
         decisiveActionKey('camp', camp.id),
         matchTimeRef.current,
         actionContextFor('camp', camp),
       ));
+      const personalityFarmReady = personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'farm', teamPsychology, {
+        healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+        callAlignment, isSafe: localEnemies.length === 0,
+      }) >= -0.25 || matchTimeRef.current > 180;
       const nearestJungleCamp = !defenseCall && !selectedTeamfightPriority && !isObjectiveFight && !coordinatedEngage && !fightingAlly
         && !focusNexus && !tempoPush && dragonAction === 'none' && golemAction === 'none'
+        && personalityFarmReady
         ? isPostRecallTeamCampMember && plannedTeamCamp
           ? chooseKnownJungleCamp(retryableJungleCamps.filter(camp => camp.id === plannedTeamCamp?.id), {
             x: u.x, y: u.y, team: u.team, hpFraction: u.hp / u.maxHp,
@@ -4208,7 +4447,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             minionHealth: cluster.map(m => m.hp), nearbyEnemies: enemies.filter(e => Math.hypot(e.x - u.x, e.y - u.y) <= 450).length,
             secondsUntilObjective: upcomingTempoObjective?.secondsUntil ?? Infinity,
             siegeOpportunity: structureInRange || tempoPush, teamfight: tfStat,
-            laningDemon: hasPlayerTrait(u.player, 'Laning Demon'),
+            laningDemon: personalityOf(u.player).includes('wave_architect'),
             macroStyle: (u.team === 'blue' ? blueCoach : redCoach)?.style === 'Objective Macro',
           })) {
           u.creepAttack = undefined;
@@ -4489,7 +4728,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const nearbyAllies = allies.filter(c => Math.hypot(c.x - x, c.y - y) < 650);
     const nearbyEnemies = championsRef.current.filter(c => c.team !== team && c.isAlive
       && Math.hypot(c.x - x, c.y - y) < 650);
-    const preference = objectiveFightPreference(allies.map(c => c.player), team === 'blue' ? blueCoach : redCoach);
+    const psychology = deriveTeamPsychology(allies);
+    const personalityPressure = allies.reduce((sum, ally) => sum + personalityActionDelta(ally.player,
+      ensurePsychology(ally.player, ally.psychology), 'objective', psychology), 0) / Math.max(1, allies.length);
+    const preference = objectiveFightPreference(allies.map(c => c.player), team === 'blue' ? blueCoach : redCoach) + personalityPressure;
     const action = choosePostObjectiveAction({ fightPreference: preference,
       nearbyEnemies: nearbyEnemies.length,
       healthyAllies: nearbyAllies.filter(c => c.hp / c.maxHp > 0.45).length,
@@ -4497,6 +4739,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       averageHealthFraction: nearbyAllies.reduce((sum, c) => sum + c.hp / c.maxHp, 0) / Math.max(1, nearbyAllies.length) });
     postObjectivePlanRef.current[team] = { x, y, action,
       startedAt: matchTimeRef.current, until: matchTimeRef.current + 6 };
+    const eventId = `objective:${name}:${Math.floor(matchTimeRef.current * 10)}:${team}`;
+    const iglCallSucceeded = nearbyAllies.some(ally => ally.id === psychology.iglId && (ally.shotcallSignalTimer ?? 0) > 0);
+    recordTeamPsychologyEvent(team, eventId, nearbyEnemies.length >= 2 ? 'objective_steal' : 'coordination', iglCallSucceeded ? 'success' : undefined);
+    if (nearbyEnemies.length >= 2) recordTeamPsychologyEvent(team, `${eventId}:coordination`, 'coordination');
+    const opposingTeam = team === 'blue' ? 'red' : 'blue';
+    const opposingPsychology = deriveTeamPsychology(championsRef.current.filter(unit => unit.team === opposingTeam));
+    const iglCallFailed = nearbyEnemies.some(enemy => enemy.id === opposingPsychology.iglId && (enemy.shotcallSignalTimer ?? 0) > 0);
+    if (nearbyEnemies.length >= 2) recordTeamPsychologyEvent(opposingTeam, eventId, 'objective_loss', iglCallFailed ? 'failure' : undefined);
     addEvent(`${team.toUpperCase()} secured ${name} and called to ${action === 'fight' ? 'press the nearby fight' : 'regroup toward lane'}.`, eventType);
   };
 
@@ -4660,7 +4910,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const scaledDuration = duration * Math.min(1.1, 0.55 + 0.45 * abilityDamageMultiplier(caster.level, castSlot));
 
     const tenacityDuration = scaledDuration;
-    if (hasPlayerTrait(target.player, 'Ice in Veins')) {
+    if (personalityOf(target.player).includes('cold_as_ice')) {
       target.iceFocusTimer = Math.max(target.iceFocusTimer ?? 0, tenacityDuration + 1);
     }
 
@@ -7010,6 +7260,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       target.propellaGunshipTimer = 0;
       target.lastEnemyDamage = undefined;
       target.deaths++;
+      target.psychology = applyMoodEvent(ensurePsychology(target.player, target.psychology),
+        `death:${target.id}:${target.deaths}`, 'death', personalityOf(target.player));
       target.respawnTimer = calculateDeathTimer(target.level, matchTimeRef.current);
       target.comboStage = 0;
       target.comboHitConfirmed = false;
@@ -7021,7 +7273,18 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       let isFirstBlood = false;
 
       if (killer) {
+        const opposingTeam = killer.team === 'blue' ? 'red' : 'blue';
+        const scoreBeforeKill = getTeamKillScore(championsRef.current);
+        const goldBeforeKill = {
+          [killer.team]: getTeamTotalGold(championsRef.current, killer.team),
+          [opposingTeam]: getTeamTotalGold(championsRef.current, opposingTeam),
+        };
+        const wasMateriallyBehind = scoreBeforeKill[killer.team] + 2 <= scoreBeforeKill[opposingTeam]
+          || goldBeforeKill[killer.team] + 1000 <= goldBeforeKill[opposingTeam];
         killer.kills++;
+        killer.psychology = applyMoodEvent(ensurePsychology(killer.player, killer.psychology),
+          `kill:${killer.id}:${target.id}:${killer.kills}`, 'kill', personalityOf(killer.player));
+        target.psychology.recentKillerId = killer.id;
         lastTeamKillAtRef.current[killer.team] = matchTimeRef.current;
         killer.gold += 300;
         grantChampionXp(killer, 240);
@@ -7037,9 +7300,34 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           .filter((c) => c.team === killer.team && c.id !== killer.id && c.isAlive && Math.hypot(c.x - target.x, c.y - target.y) <= 460)
           .forEach((ally) => {
             ally.assists++;
+            ally.psychology = applyMoodEvent(ensurePsychology(ally.player, ally.psychology),
+              `assist:${ally.id}:${target.id}:${ally.assists}`, 'assist', personalityOf(ally.player));
             ally.gold += 150;
             grantChampionXp(ally, 120);
           });
+        const nearbyWinners = championsRef.current.filter(c => c.team === killer.team && c.isAlive
+          && Math.hypot(c.x - target.x, c.y - target.y) <= 460);
+        const nearbyLosers = championsRef.current.filter(c => c.team === target.team && c.isAlive
+          && Math.hypot(c.x - target.x, c.y - target.y) <= 460);
+        const fightEventId = `fight:${target.id}:${target.deaths}:${killer.team}`;
+        if (nearbyWinners.length >= 3 && nearbyLosers.length >= 2) {
+          const winningIgl = deriveTeamPsychology(championsRef.current.filter(unit => unit.team === killer.team)).iglId;
+          const losingIgl = deriveTeamPsychology(championsRef.current.filter(unit => unit.team === target.team)).iglId;
+          const winningCallSucceeded = nearbyWinners.some(unit => unit.id === winningIgl && (unit.shotcallSignalTimer ?? 0) > 0);
+          const losingCallFailed = nearbyLosers.some(unit => unit.id === losingIgl && (unit.shotcallSignalTimer ?? 0) > 0);
+          recordTeamPsychologyEvent(killer.team, fightEventId, 'teamfight_win', winningCallSucceeded ? 'success' : undefined);
+          recordTeamPsychologyEvent(target.team, fightEventId, 'teamfight_loss', losingCallFailed ? 'failure' : undefined);
+          if (wasMateriallyBehind) {
+            recordTeamPsychologyEvent(killer.team, `${fightEventId}:comeback`, 'comeback', winningCallSucceeded ? 'success' : undefined);
+          }
+        }
+        if (!championsRef.current.some(c => c.team === target.team && c.isAlive)) {
+          recordTeamPsychologyEvent(killer.team, `${fightEventId}:wipe`, 'team_wipe');
+        }
+        if (structuresRef.current.some(structure => structure.team === killer.team && structure.isAlive
+          && Math.hypot(structure.x - target.x, structure.y - target.y) <= structure.range + 150)) {
+          recordTeamPsychologyEvent(killer.team, `${fightEventId}:defense`, 'defense');
+        }
 
         // Multikill & Spree tracking
         const tracker = killStreaksRef.current[killer.id] || { count: 0, lastTime: 0, multiCount: 0 };
@@ -7053,6 +7341,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         else if (tracker.multiCount === 3) multiKillTitle = 'TRIPLE KILL';
         else if (tracker.multiCount === 4) multiKillTitle = 'QUADRA KILL';
         else if (tracker.multiCount >= 5) multiKillTitle = 'PENTA KILL';
+        if (tracker.multiCount >= 2) {
+          killer.psychology = applyMoodEvent(ensurePsychology(killer.player, killer.psychology),
+            `multikill:${killer.id}:${tracker.multiCount}:${Math.floor(matchTimeRef.current * 10)}`,
+            'multikill', personalityOf(killer.player));
+        }
 
         if (tracker.count === 3) streakTitle = 'KILLING SPREE';
         else if (tracker.count === 4) streakTitle = 'RAMPAGE';
@@ -7176,6 +7469,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       .forEach((ally) => {
         ally.gold += bounty;
       });
+
+    recordTeamPsychologyEvent(enemyTeam, `siege:${structure.id}:${Math.floor(matchTimeRef.current * 10)}`, 'teamfight_win');
+    recordTeamPsychologyEvent(structure.team, `siege:${structure.id}:${Math.floor(matchTimeRef.current * 10)}`, 'failed_siege');
 
     const bonus = structure.barracksKind ? `${structure.barracksKind.toUpperCase()} creeps upgraded from the next wave!` : 'Causeways advanced!';
     showBanner(`🏰 ${structure.name} DESTROYED!`, `+${bounty}g Team Bounty. ${bonus}`, '🏰');

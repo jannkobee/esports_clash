@@ -27,7 +27,10 @@ export interface PlayerCard {
   tier: CardTier;
   ovr: number;
   stats: PlayerAttributes;
+  /** Legacy presentation text; use primaryPersonality / secondaryPersonality for gameplay. */
   personality: string;
+  primaryPersonality?: import('./playerPersonality').PersonalityId;
+  secondaryPersonality?: import('./playerPersonality').PersonalityId;
   badges: string[];
   signatureChampions: string[];
   morale: number;   // 0-100
@@ -329,7 +332,10 @@ export interface AramChampionUnit {
   comboExpiresAt?: number;
   comboHitConfirmed?: boolean;
   teamChemistry?: number;
-  // PlayStyle unique trait runtime combat states
+  psychology?: import('./playerPersonality').PlayerPsychologyState;
+  relationships?: Record<string, import('./playerPersonality').TeammateRelationship>;
+  decisionTelemetry?: import('./playerPersonality').PersonalityDecisionTelemetry;
+  /** Transitional decision state; it is driven by personality compatibility helpers, not card badges. */
   clutchCommitActive?: boolean;
   traitFocusId?: string;
   iceFocusTimer?: number;

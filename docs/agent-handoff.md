@@ -1610,3 +1610,52 @@ The attached specification is now the final backlog phase. It was not implemente
 
 Do not start Phase 13 until explicitly requested. Phase 9 remains the next implementation phase.
 
+## Player personality and psychology foundation (2026-10-12)
+
+- Replaced card PlayStyle behavior with `playerPersonality.ts`: 30 stable personality IDs, primary/secondary combinations, bounded five-axis mood, event de-duplication, simulation-time recovery, five-player relationships, deterministic IGL selection, and derived team morale/momentum/cohesion/leadership authority.
+- Card normalization assigns two personalities and strips legacy PlayStyle badge labels. The old `playerTraits.ts` system has been removed. `combatDecision.ts` adjusts only legal target preference; `towerDiveRules.ts` no longer grants a trait exception, so protected dive authorization and abort behavior remain absolute.
+- Live matches initialize psychology and bounded teammate relationships. Kills, deaths, assists, nearby teamfight wins/losses, wipes, objective wins/losses, successful defenses, and failed sieges now apply one deduplicated event. Objective willingness and post-objective calls use personality, team psychology, IGL respect, and cooperation only after existing legality/safety gates; no personality grants combat statistics or physics. The spectator roster now exposes individual confidence/tilt plus a compact team mentality and IGL summary. Affected files: `src/playerPersonality.ts`, `src/types.ts`, `src/combatDecision.ts`, `src/towerDiveRules.ts`, `src/objectiveRules.ts`, `src/components/AramMatchView.tsx`, `src/components/SpectatorRoster.tsx`, roster/UI files, and tests. Verification remains from the prior foundation pass; per user direction, defer the next full check until the complete coding pass ends.
+
+## Failed group-engagement psychology (2026-10-12)
+
+- Added `engagementOutcomeRules.ts` and a simulation-owned tracker for repeated unsuccessful engagements. It begins only after at least two recently damaged players per side are in observed close contact, retains the actual participants, then resolves only after contact has ended for 3.4 seconds. It records `failed_engagement` only when no participant died and a participant group took at least 8% average health loss while retreating at least 55px toward its own side.
+- The resulting event is deduplicated by engagement and team, applies a bounded confidence/excitement/trust loss with frustration increase, slightly reduces current-team cooperation, and records a diagnostic retreat explanation. Single trades, passive spacing, unobserved opponents, deaths, and unrelated teammates do not trigger it; a death ends the tracker and suppresses this detector for eight seconds so the existing kill/teamfight path remains authoritative.
+- Affected files: `src/engagementOutcomeRules.ts`, `src/playerPersonality.ts`, `src/components/AramMatchView.tsx`, and both gameplay documents. Verification is intentionally deferred to the requested final combined pass.
+
+## Personality decision telemetry integration (2026-10-12)
+
+- Every live `DecisiveActionIntent` now writes one compact, current decision record instead of introducing a competing log. Champion fights, objective calls, defense, regroup/staging, wave clear, camps, relic recovery, structures/pushes, and safety holds report their action, target, existing-policy baseline, separated personality/mood/team-coordination deltas, IGL alignment, commitment window, and the existing safety/route/availability context.
+- Forced retreat, safe recall, and tower-dive abort replace the prior aggressive record with their actual protected reason. This makes it clear when safety won without implying that personality overrode it. The spectator roster displays the current action next to the psychology state and exposes the complete breakdown in its native hover detail.
+- Affected files: `src/playerPersonality.ts`, `src/types.ts`, `src/components/AramMatchView.tsx`, `src/components/SpectatorRoster.tsx`, and both gameplay documents. Verification remains deferred to the requested final combined pass.
+
+## Observed recovery and leadership psychology (2026-10-12)
+
+- Added bounded mood events for staged Double/Triple/Quadra/Penta multikills and genuine comeback teamfight wins. A comeback requires the winning side to have been at least two kills or 1,000 net-worth behind before a nearby 3v2-or-larger fight win; no outcome is scripted.
+- A rescue requires an ally heal or Locket shield while the recipient is below 55% HP and has an identified enemy hit within 2.4 seconds. It improves only that rescuing pair's trust/cooperation and uses a deterministic four-second event key to prevent sustain farming.
+- Leadership respect changes only when the currently selected IGL was visibly part of an active shotcall signal and that observed objective/teamfight result succeeds or fails. Successful calls add respect; failed calls reduce it. Generic kills, damage, and unproven teammate mistakes never create social blame or authority changes.
+- Affected files: `src/playerPersonality.ts`, `src/components/AramMatchView.tsx`, and both gameplay documents. Verification remains deferred to the requested final combined pass.
+
+## kovi Diamond Mage card (2026-10-12)
+
+- Added the owned-by-default reserve card `p_kovi`: exact lowercase display name `kovi`, Diamond Mage, 92 OVR with existing Diamond-range attributes, Mage signatures (Kyumi, Raijin, Soulscourge), and the permanent `clutch_performer` + `showman` personality pair. The card uses a distinct deterministic fallback avatar key, not another card's portrait, and does not replace any Starting 5 member.
+- `clubRosterPersistence.ts` persists roster and Starting 5 IDs. On load it adds `p_kovi` if absent and collapses only duplicate `p_kovi` entries by highest OVR; it deliberately preserves ordinary pack duplicates and existing progression. Current clubs did not previously have roster persistence, so this introduces the first migration path rather than overwriting an older save format.
+- The Clutch Showman pairing may select a legitimate three-target area-ultimate reversal while under pressure with allied support. It grants no stats and retains authored ability, range, cooldown, targetability, tower, retreat, and commitment gates.
+- Affected: `src/mockData.ts`, `src/clubRosterPersistence.ts`, `src/App.tsx`, `src/playerPersonality.ts`, `src/combatDecision.ts`, and both handoff/mechanics docs. Verification deferred with the broader coding pass at user request.
+
+## Personality combination and call-response pass (2026-10-12)
+
+- Added an explicit conditional combination engine rather than stacking permanent numerical buffs. It recognizes IGL + Untiltable, Egoistic + Overconfident, Cold as Ice + Patient Predator, Short Fuse + Limit Tester, Bodyguard + Loyalist, Objective Zealot + Steal Gambler, Siege Closer + Overconfident, and the conflicting Overconfident + Survivalist pair. Each result is tied to observable local conditions such as a real isolated target, an endangered ally, a legal low-health objective finish, numerical support, safe approach, and actual recent results.
+- Overconfident + Survivalist resolves once per decision: survival takes the retreat/regroup preference when low health, outnumbered, or unsafe; pressure is considered only while healthy, supported, and safe. Existing commitment hysteresis remains authoritative, so this does not create tick-by-tick attack/retreat oscillation.
+- Personality definitions now include explicit strengths, weaknesses, and observable effects. Card personality pills expose the description and trade-off in their native hover detail. Live decision telemetry records the separate pair contribution and activated pair reason.
+- Call response is now personality-aware: Loyalist/IGL/Captain/Glue Guy increase coordination; Challenger can reduce alignment only for an adverse call; Egoistic can favor an isolated personal opportunity; Bodyguard follows endangered allies. This adjusts preference only and never overrides tower, retreat, recall, objective, vision, or commitment gates.
+- Added condition-specific live integrations: First Blood Hunter only adds an early, healthy, safe isolated-pick priority; Perfectionist defers optional all-ins until allied resources are ready; Bush Stalker can use a safe isolated bush pick; Counterpuncher retains observed-cooldown punishment; Wave Architect can prepare a nearby pre-siege wave; Bodyguard + Loyalist increases legal peel target priority; Objective Zealot + Steal Gambler contests holders above 32% and only favors objective completion at or below the existing 32% execution rule.
+- Affected files: `src/playerPersonality.ts`, `src/combatDecision.ts`, `src/components/AramMatchView.tsx`, `src/components/CardComponent.tsx`, and both gameplay documents. Per user instruction, no checks, build, or browser verification have been run after this coding pass.
+
+## Personality live-choice coverage pass (2026-10-12)
+
+- Extended personality from action telemetry into remaining legal choice branches. A sufficiently strong safe chase preference can continue a target chase instead of yielding solely to optional wave hold; target visibility, safe approach, tower perimeter, dive abort, fight commitment, and danger exits remain required.
+- Survival/recovery preference can choose an earlier reset only after the existing channel-safety checks find no local enemies or threatening minions. It cannot cancel base defense, channel inside danger, or bypass recall cooldown/range rules. The protected retreat telemetry now includes activated pair details.
+- IGL/Captain/Loyalist/Glue-style regroup preference can select a living call leader before optional jungle farming only when no local enemy is present, all existing urgent calls are absent, the route is safe, and the actor is meaningfully separated. Silent independent players and early First Blood Hunter farming trade-offs remain bounded by the same farm/objective/defense gates.
+- First Blood Hunter suppresses optional camp farming only during the first 180 simulation seconds; after that it returns to baseline farm eligibility. Objective Golem starts now receive the same existing objective-preference eligibility check already used by Embermaw.
+- Affected file: `src/components/AramMatchView.tsx`. Documentation updated here and in `docs/arena-mechanics.md`. Verification remains deferred until the user requests the final combined check.
+

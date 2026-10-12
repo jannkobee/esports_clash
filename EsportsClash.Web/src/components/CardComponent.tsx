@@ -1,9 +1,10 @@
 import React from 'react';
 import { PlayerCard } from '../types';
 import { ChibiAvatar } from './ChibiAvatar';
-import { Shield, Zap, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { CHAMPIONS } from '../mockData';
 import { avatarDisplayName } from '../avatarDisplayName';
+import { PERSONALITIES, personalityOf } from '../playerPersonality';
 
 interface CardComponentProps {
   card: PlayerCard;
@@ -81,6 +82,7 @@ export const CardComponent: React.FC<CardComponentProps> = ({
   };
 
   const style = getTierStyles();
+  const [primaryPersonality, secondaryPersonality] = personalityOf(card);
   const displayedRoles = card.playableRoles && card.playableRoles.length > 0
     ? card.playableRoles.join(' · ')
     : (card.preferredRole || card.role || 'Pro');
@@ -208,17 +210,14 @@ export const CardComponent: React.FC<CardComponentProps> = ({
         </div>
       </div>
 
-      {/* Badges & Traits */}
+      {/* Personality */}
       <div className="mt-auto pt-3 flex flex-wrap gap-1 items-center justify-center">
-        {card.badges.slice(0, 2).map((b, i) => (
-          <span key={i} className="text-[10px] bg-white/10 text-amber-200 px-2 py-0.5 rounded-full border border-amber-300/30 font-semibold flex items-center gap-1">
-            <Zap className="w-2.5 h-2.5" />
-            {b}
-          </span>
-        ))}
-        {card.personality && (
-          <span className="text-[10px] bg-purple-950/80 text-purple-200 px-2 py-0.5 rounded-full border border-purple-400/30">
-            {card.personality}
+        <span className="text-[10px] bg-purple-950/80 text-purple-200 px-2 py-0.5 rounded-full border border-purple-400/30 uppercase" title={`${PERSONALITIES[primaryPersonality].description} Strength: ${PERSONALITIES[primaryPersonality].strengths.join(', ')}. Risk: ${PERSONALITIES[primaryPersonality].weaknesses.join(', ')}.`}>
+          Primary Personality: {PERSONALITIES[primaryPersonality].name}
+        </span>
+        {secondaryPersonality && (
+          <span className="text-[10px] bg-white/10 text-sky-200 px-2 py-0.5 rounded-full border border-sky-300/30 uppercase" title={`${PERSONALITIES[secondaryPersonality].description} Strength: ${PERSONALITIES[secondaryPersonality].strengths.join(', ')}. Risk: ${PERSONALITIES[secondaryPersonality].weaknesses.join(', ')}.`}>
+            Secondary Personality: {PERSONALITIES[secondaryPersonality].name}
           </span>
         )}
       </div>

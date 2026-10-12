@@ -2,13 +2,26 @@ import type { AramChampionUnit, ItemDef } from '../types';
 import { ChampionArtwork } from './ChampionArtwork';
 import { maxMana } from '../abilityRules';
 import { KAELEN_INVOKED_SPELLS } from '../kaelenAbilities';
+import { deriveTeamPsychology } from '../playerPersonality';
+
+const signed = (value: number) => `${value >= 0 ? '+' : ''}${value.toFixed(1)}`;
+const decisionDetail = (unit: AramChampionUnit) => {
+  const decision = unit.decisionTelemetry;
+  if (!decision) return '';
+  return `Decision ${decision.action.toUpperCase()}${decision.targetId ? ` → ${decision.targetId}` : ''} · Baseline ${signed(decision.baseline)} (${decision.baselineReason ?? 'existing policy'}) · Personality ${signed(decision.personalityDelta)} · Mood ${signed(decision.moodDelta)} · Team ${signed(decision.coordinationDelta)} · ${decision.safetyGate ?? 'existing safety checks'} · ${decision.explanation}`;
+};
 
 export function SpectatorRoster({ units, team, onItem, onFocus, xpProgress, second }: {
   units: AramChampionUnit[]; team: 'blue' | 'red'; onItem: (item: ItemDef) => void;
   onFocus: (unit: AramChampionUnit) => void;
   xpProgress: (unit: AramChampionUnit) => number; second: number;
 }) {
+  const psychology = deriveTeamPsychology(units);
+  const igl = units.find(unit => unit.id === psychology.iglId);
   return <div className={`spectator-roster ${team}`} aria-label={`${team} squad status and item inventory`}>
+    <div className="spectator-team-psychology" title={`Morale ${Math.round(psychology.morale)} · Momentum ${Math.round(psychology.momentum)} · Cohesion ${Math.round(psychology.cohesion)} · Leadership authority ${Math.round(psychology.leadershipAuthority)}`}>
+      <b>{psychology.mentalities.join(' · ') || 'STEADY'}</b><span>IGL {igl?.player.name ?? '—'}</span>
+    </div>
     {units.map(unit => <div className={`spectator-unit ${unit.isAlive ? '' : 'fallen'}`} key={unit.id}>
       <button className="spectator-portrait" onClick={() => onFocus(unit)} title={`Follow ${unit.player.name} / ${unit.champion.displayName}, ${unit.champion.title}`}>
         <ChampionArtwork championId={unit.champion.id} size={29} className="h-full w-full" />
@@ -16,6 +29,9 @@ export function SpectatorRoster({ units, team, onItem, onFocus, xpProgress, seco
       </button>
       <div className="spectator-vitals">
         <div className="spectator-name"><b>{unit.player.name}</b><span title={`${unit.champion.displayName} — ${unit.champion.title}`}>{unit.champion.displayName}</span></div>
+        {unit.psychology && <div className="spectator-psychology" title={`Confidence ${Math.round(unit.psychology.mood.confidence)} · Tilt ${Math.round(unit.psychology.mood.frustration)} · Trust ${Math.round(unit.psychology.mood.trust)}${unit.decisionTelemetry ? ` · ${decisionDetail(unit)}` : ''}`}>
+          {unit.psychology.mood.frustration >= 65 ? 'TILTED' : unit.psychology.mood.confidence >= 70 ? 'CONFIDENT' : 'COMPOSED'}{unit.decisionTelemetry ? ` · ${unit.decisionTelemetry.action.toUpperCase()}` : ''}
+        </div>}
         <div className="spectator-health" role="meter" aria-label={`${unit.player.name} health`} aria-valuenow={Math.round(unit.hp)} aria-valuemin={0} aria-valuemax={Math.round(unit.maxHp)}
           title={`${Math.ceil(unit.hp)}/${Math.ceil(unit.maxHp)} HP · ${Math.ceil(unit.shield)} shield`}>
           <i style={{ width: `${Math.max(0, Math.min(100, unit.hp / unit.maxHp * 100))}%` }} />

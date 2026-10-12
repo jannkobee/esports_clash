@@ -2,6 +2,7 @@
 // Living simulation database containing 120+ authentic pro teams with distinct coaches, rosters, and tactical AI archetypes.
 
 import type { CoachCard, PlayerCard, CardTier, AvatarRole } from './types';
+import { normalizePlayerPersonality } from './playerPersonality.ts';
 
 export interface ProTeam {
   id: string;
@@ -308,8 +309,8 @@ function generateTeamRoster(teamId: string, baseOvr: number, customNames?: strin
       avatarSvg: (i % 6) + 1 === 1 ? 'faker' : (i % 6) + 1 === 2 ? 'simple' : (i % 6) + 1 === 3 ? 'niko' : (i % 6) + 1 === 4 ? 'uzi' : (i % 6) + 1 === 5 ? 'zywoo' : 'topson'
     };
 
-    if (isStarter) starters.push(card);
-    else reserves.push(card);
+    if (isStarter) starters.push(normalizePlayerPersonality(card));
+    else reserves.push(normalizePlayerPersonality(card));
   }
 
   return { starters, reserves };

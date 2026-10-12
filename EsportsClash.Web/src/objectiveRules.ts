@@ -1,5 +1,5 @@
 import type { CoachCard, PlayerCard } from './types';
-import { hasPlayerTrait } from './playerTraits.ts';
+import { personalityOf, PERSONALITIES } from './playerPersonality.ts';
 
 export interface ObjectiveSituation {
   gameSeconds: number;
@@ -61,21 +61,18 @@ export function shouldContestOpponentObjective(s: ObjectiveContestSituation): bo
   return (s.hasShotcaller && s.healthyAllies >= s.enemiesAtBoss && macro >= 48) || macro >= 52;
 }
 
-// Ratings and PlayStyles shape decisions, never the damage dealt to an objective.
+// Ratings and personality shape decisions, never damage dealt to an objective.
 export function objectiveFightPreference(players: PlayerCard[], coach?: CoachCard, actor?: PlayerCard): number {
   if (players.length === 0) return 0;
   const cardPreference = (player: PlayerCard) => {
     const { iq, tf, clu } = player.stats;
-    return (tf - iq) * 0.38 + (clu - 75) * 0.1
-      + (hasPlayerTrait(player, 'Aggro Diver') ? 10 : 0)
-      + (hasPlayerTrait(player, 'One-Tap God') ? 9 : 0)
-      + (hasPlayerTrait(player, 'Clutch King') ? 5 : 0)
-      - (hasPlayerTrait(player, 'Baron Steal') ? 12 : 0)
-      - (hasPlayerTrait(player, 'Vision Master') ? 7 : 0)
-      - (hasPlayerTrait(player, 'Laning Demon') ? 5 : 0);
+    const traits = personalityOf(player);
+    const preference = traits.reduce((sum, id) => sum + (PERSONALITIES[id].preferences.engage ?? 0)
+      - (PERSONALITIES[id].preferences.objective ?? 0) * .7, 0);
+    return (tf - iq) * 0.38 + (clu - 75) * 0.1 + preference * 3;
   };
   const average = players.reduce((sum, player) => sum + cardPreference(player), 0) / players.length;
-  const caller = players.find(player => hasPlayerTrait(player, 'Shotcaller'));
+  const caller = players.find(player => personalityOf(player).includes('igl'));
   const teamVoice = caller ? average * 0.45 + cardPreference(caller) * 0.55 : average;
   const individualVoice = actor && !caller ? cardPreference(actor) * 0.25 : 0;
   const coachVoice = coach?.style === 'Aggressive Dive' ? 12

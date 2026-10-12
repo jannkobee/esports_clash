@@ -90,12 +90,12 @@ test('both sides finish a low objective; a healthy objective holder only turns a
 });
 
 test('all scouting challengers fight a healthy boss holder; attitudes shape the post-secure call', () => {
-  const aggressive = { stats: { iq: 72, tf: 93, clu: 90 }, badges: ['Aggro Diver'], personality: '' };
-  const cautious = { stats: { iq: 94, tf: 72, clu: 75 }, badges: ['Baron Steal'], personality: '' };
+  const aggressive = { id: 'aggressive', stats: { iq: 72, tf: 93, clu: 90 }, badges: [], personality: '', primaryPersonality: 'limit_tester', secondaryPersonality: 'showman' };
+  const cautious = { id: 'cautious', stats: { iq: 94, tf: 72, clu: 75 }, badges: [], personality: '', primaryPersonality: 'objective_zealot', secondaryPersonality: 'cold_as_ice' };
   const fightBias = objectiveFightPreference([aggressive], { style: 'Aggressive Dive' }, aggressive);
   const finishBias = objectiveFightPreference([cautious], { style: 'Objective Macro' }, cautious);
   assert.ok(fightBias > finishBias);
-  const cautiousCaller = { ...cautious, badges: ['Baron Steal', 'Shotcaller'] };
+  const cautiousCaller = { ...cautious, primaryPersonality: 'igl', secondaryPersonality: 'objective_zealot' };
   assert.ok(objectiveFightPreference([cautiousCaller, aggressive], { style: 'Dynamic Adapt' })
     < objectiveFightPreference([cautious, aggressive], { style: 'Dynamic Adapt' }),
   'the shotcaller pulls the squad toward their own objective attitude');

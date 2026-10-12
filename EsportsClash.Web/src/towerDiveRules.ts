@@ -1,5 +1,4 @@
 import type { AramChampionUnit, LaneStructure, BushPatch } from './types';
-import { hasPlayerTrait } from './playerTraits.ts';
 import { getChampionBasicAttackRange } from './basicAttackRangeRules.ts';
 
 export interface AvatarDiveLimits {
@@ -92,7 +91,7 @@ export interface TowerDiveSituation {
 
 /**
  * Comprehensive evaluation of whether a champion should execute or continue a tower dive,
- * respecting avatar limits (durability, burst, role) and player card attributes (IQ, traits).
+ * respecting avatar limits (durability, burst, role) and player-card judgment.
  */
 export function evaluateTowerDive(situation: TowerDiveSituation): { canDive: boolean; reason?: string } {
   const { diver, target, tower, alliedMinionsUnderTower, defendersUnderTower, attackersUnderTower } = situation;
@@ -114,18 +113,15 @@ export function evaluateTowerDive(situation: TowerDiveSituation): { canDive: boo
   const diverHpRatio = diver.hp / diver.maxHp;
   const targetHpRatio = target.hp / target.maxHp;
   const iq = diver.player?.stats?.iq ?? 75;
-  const hasAggroDiverTrait = hasPlayerTrait(diver.player, 'Aggro Diver');
 
   // 1. Raw HP Check: Turrets deal 288-396 true damage per shot.
   // Diver must be able to survive at least 2 turret shots.
-  const minRequiredHp = hasAggroDiverTrait ? Math.max(480, limits.minHealthRaw * 0.85) : limits.minHealthRaw;
-  if (diver.hp < minRequiredHp || diverHpRatio < (hasAggroDiverTrait ? 0.30 : limits.minHealthFraction)) {
+  if (diver.hp < limits.minHealthRaw || diverHpRatio < limits.minHealthFraction) {
     return { canDive: false, reason: 'Diver HP too low to withstand turret true damage shots' };
   }
 
   // 2. Target Lethality Check:
-  const allowedTargetHp = hasAggroDiverTrait ? 0.38 : limits.maxTargetHealthFraction;
-  if (targetHpRatio > allowedTargetHp) {
+  if (targetHpRatio > limits.maxTargetHealthFraction) {
     return { canDive: false, reason: 'Target HP too healthy for a lethal dive' };
   }
 
@@ -136,13 +132,13 @@ export function evaluateTowerDive(situation: TowerDiveSituation): { canDive: boo
   }
 
   // 4. Minion Wave Buffer:
-  // Diving with 0 minions requires either an Aggro Diver or very low target with healthy diver
+  // Squishy ranged avatars never solo dive; high-IQ cards wait for a real wave crash.
   if (alliedMinionsUnderTower === 0) {
     if (limits.isSquishyRanged) {
       // Squishy mages and marksmen should never dive into turret range with 0 minions
       return { canDive: false, reason: 'Squishy ranged avatar cannot dive without minion wave buffer' };
     }
-    if (!hasAggroDiverTrait && iq >= 70 && targetHpRatio > 0.18) {
+    if (iq >= 70 && targetHpRatio > 0.18) {
       // High IQ player refuses to dive without wave crash unless target is 1-hit execute
       return { canDive: false, reason: 'High IQ player holds until minion wave crashes' };
     }
@@ -157,12 +153,9 @@ export function evaluateTowerDive(situation: TowerDiveSituation): { canDive: boo
     }
   }
 
-  // 6. Aggro Diver Trait vs Normal Players:
-  // Normal players only dive if target is low and conditions are favorable
-  if (!hasAggroDiverTrait) {
-    if (targetHpRatio > 0.22 && alliedMinionsUnderTower < 2) {
-      return { canDive: false, reason: 'Non-diver requires wave advantage and critically low target' };
-    }
+  // 6. A real wave crash is mandatory for a non-execute dive.
+  if (targetHpRatio > 0.22 && alliedMinionsUnderTower < 2) {
+    return { canDive: false, reason: 'Requires wave advantage and critically low target' };
   }
 
   return { canDive: true };

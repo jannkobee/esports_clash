@@ -3,6 +3,7 @@ import { createResearchedCards } from './rosterResearch.ts';
 import { ADDITIONAL_CHAMPIONS } from './additionalChampions.ts';
 import { applyAbilityCastTypes } from './abilityCastTypes.ts';
 import { applyAvatarIdentities } from './avatarIdentity.ts';
+import { normalizePlayerPersonality } from './playerPersonality.ts';
 
 const BASE_PLAYERS: PlayerCard[] = [
   // === STARTING FIVE (TOP, JUNGLE, MID, BOT, SUPPORT) ===
@@ -115,6 +116,7 @@ const BASE_PLAYERS: PlayerCard[] = [
     origin: 'LoL',
     role: 'Mage',
     preferredRole: 'Mage',
+    playableRoles: ['Mage'],
     tier: 'Diamond',
     ovr: 92,
     stats: { lan: 93, tf: 94, iq: 90, clu: 91, sta: 88, flx: 95 },
@@ -327,11 +329,36 @@ const BASE_PLAYERS: PlayerCard[] = [
     currentXp: 200,
     maxXp: 1800,
     avatarSvg: 'rookie2'
+  },
+  {
+    id: 'p_kovi',
+    name: 'kovi',
+    realName: 'kovi',
+    origin: 'LoL',
+    role: 'Mage',
+    preferredRole: 'Mage',
+    tier: 'Diamond',
+    ovr: 92,
+    stats: { lan: 93, tf: 94, iq: 91, clu: 95, sta: 89, flx: 92 },
+    personality: 'Clutch Performer',
+    primaryPersonality: 'clutch_performer',
+    secondaryPersonality: 'showman',
+    badges: [],
+    signatureChampions: ['Kyumi', 'Raijin', 'Soulscourge'],
+    morale: 90,
+    fatigue: 14,
+    level: 42,
+    currentXp: 800,
+    maxXp: 4200,
+    avatarSvg: 'kovi'
   }
 ];
 
+export const KOVI_PLAYER_ID = 'p_kovi';
+export const KOVI_PLAYER_CARD: PlayerCard = BASE_PLAYERS.find(player => player.id === KOVI_PLAYER_ID)!;
+
 export const INITIAL_PLAYERS: PlayerCard[] = [...BASE_PLAYERS, ...createResearchedCards(BASE_PLAYERS)].map(p => ({
-  ...p,
+  ...normalizePlayerPersonality(p),
   playableRoles: p.playableRoles || [p.preferredRole || p.role || 'Mage']
 }));
 

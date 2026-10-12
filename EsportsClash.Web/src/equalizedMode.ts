@@ -1,5 +1,6 @@
 import type { CoachCard, PlayerCard, AvatarRole, CardTier, GameOrigin } from './types.ts';
 import { CHAMPIONS, INITIAL_PLAYERS } from './mockData.ts';
+import { personalityOf } from './playerPersonality.ts';
 
 export const EQUALIZED_COACH_BLUE: CoachCard = {
   id: 'c_eq_blue',
@@ -129,22 +130,12 @@ export function chooseEqualizedPlayerPick(
     }
 
     let traitScore = 0;
-    const currentBadges = new Set(
-      currentTeam.filter((p): p is PlayerCard => p !== null).flatMap((p) => p.badges || [])
-    );
-
-    if (card.badges?.includes('Shotcaller') && !currentBadges.has('Shotcaller')) {
-      traitScore += 20;
-    }
-    if (card.badges?.includes('Clutch King') && !currentBadges.has('Clutch King')) {
-      traitScore += 15;
-    }
-    if (card.badges?.includes('Aggro Diver') || card.badges?.includes('Unkillable Demon')) {
-      traitScore += 10;
-    }
-    if (card.badges?.includes('One-Tap God') || card.badges?.includes('Laning Demon')) {
-      traitScore += 8;
-    }
+    const currentPersonalities = new Set(currentTeam.filter((p): p is PlayerCard => p !== null).flatMap(personalityOf));
+    const traits = personalityOf(card);
+    if (traits.includes('igl') && !currentPersonalities.has('igl')) traitScore += 20;
+    if (traits.some(id => id === 'clutch_performer' || id === 'untiltable') && ![...currentPersonalities].some(id => id === 'clutch_performer' || id === 'untiltable')) traitScore += 15;
+    if (traits.some(id => id === 'limit_tester' || id === 'survivalist')) traitScore += 10;
+    if (traits.some(id => id === 'patient_predator' || id === 'wave_architect')) traitScore += 8;
 
     const currentOrigins = currentTeam.filter((p): p is PlayerCard => p !== null).map((p) => p.origin);
     const originMatches = currentOrigins.filter((o) => o === card.origin).length;
@@ -204,7 +195,9 @@ export function createEqualizedRoster(side: 'blue' | 'red'): PlayerCard[] {
       flx: 100
     },
     personality: 'Grandmaster Tactician',
-    badges: ['Clutch King', 'Unkillable Demon', 'One-Tap God', 'Laning Demon'],
+    primaryPersonality: idx === 0 ? 'igl' : idx === 1 ? 'clutch_performer' : idx === 2 ? 'perfectionist' : idx === 3 ? 'siege_closer' : 'bodyguard',
+    secondaryPersonality: idx === 0 ? 'untiltable' : idx === 1 ? 'limit_tester' : idx === 2 ? 'cold_as_ice' : idx === 3 ? 'wave_architect' : 'loyalist',
+    badges: [],
     signatureChampions: allChampionNames,
     morale: 100,
     fatigue: 0,
