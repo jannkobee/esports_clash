@@ -3,6 +3,8 @@ import { ChampionArtwork } from './ChampionArtwork';
 import { maxMana } from '../abilityRules';
 import { KAELEN_INVOKED_SPELLS } from '../kaelenAbilities';
 import { deriveTeamPsychology } from '../playerPersonality';
+import { abilityCompactSummary, getAbilityPresentation } from '../abilityPresentation';
+import { abilityRank } from '../skillProgression';
 
 const signed = (value: number) => `${value >= 0 ? '+' : ''}${value.toFixed(1)}`;
 const decisionDetail = (unit: AramChampionUnit) => {
@@ -10,6 +12,13 @@ const decisionDetail = (unit: AramChampionUnit) => {
   if (!decision) return '';
   return `Decision ${decision.action.toUpperCase()}${decision.targetId ? ` → ${decision.targetId}` : ''} · Baseline ${signed(decision.baseline)} (${decision.baselineReason ?? 'existing policy'}) · Personality ${signed(decision.personalityDelta)} · Mood ${signed(decision.moodDelta)} · Team ${signed(decision.coordinationDelta)} · ${decision.safetyGate ?? 'existing safety checks'} · ${decision.explanation}`;
 };
+
+const abilityMechanicsSummary = (unit: AramChampionUnit) => unit.champion.name === 'Kaelen'
+  ? 'Kaelen uses the dedicated Conflux invocation slots shown below.'
+  : (['skill1', 'skill2', 'ultimate'] as const).map((slot, index) => {
+    const ability = getAbilityPresentation(unit.champion, slot, abilityRank(unit.level, slot));
+    return `${['Q', 'W', 'R'][index]} ${ability.name}: ${abilityCompactSummary(ability)}${ability.movement ? ` · ${ability.movement.kind.toUpperCase()}` : ''}`;
+  }).join('\n');
 
 export function SpectatorRoster({ units, team, onItem, onFocus, xpProgress, second }: {
   units: AramChampionUnit[]; team: 'blue' | 'red'; onItem: (item: ItemDef) => void;
@@ -43,7 +52,7 @@ export function SpectatorRoster({ units, team, onItem, onFocus, xpProgress, seco
       <div className="spectator-kda" title={`${unit.kills} kills / ${unit.deaths} deaths / ${unit.assists} assists · ${unit.cs} CS · ${Math.floor(unit.gold)} gold`}>
         <b>{unit.kills}/{unit.deaths}/{unit.assists}</b><span>{unit.cs} CS · {Math.floor(unit.gold)}g</span>
       </div>
-      <div className="spectator-skills" aria-label={`${unit.player.name} ability cooldowns`}>
+      <div className="spectator-skills" aria-label={`${unit.player.name} ability cooldowns`} title={abilityMechanicsSummary(unit)}>
         {unit.champion.name === 'Kaelen' ? ['D', 'F'].map((slot, index) => {
           const spell = KAELEN_INVOKED_SPELLS.find(s => s.id === unit.kaelenInvokedSlots?.[index]);
           const cd = spell ? unit.kaelenSpellCooldowns?.[spell.id] ?? 0 : -1;

@@ -1659,3 +1659,29 @@ Do not start Phase 13 until explicitly requested. Phase 9 remains the next imple
 - First Blood Hunter suppresses optional camp farming only during the first 180 simulation seconds; after that it returns to baseline farm eligibility. Objective Golem starts now receive the same existing objective-preference eligibility check already used by Embermaw.
 - Affected file: `src/components/AramMatchView.tsx`. Documentation updated here and in `docs/arena-mechanics.md`. Verification remains deferred until the user requests the final combined check.
 
+## Ability documentation and movement-consistency overhaul — initial implementation (2026-10-12)
+
+- Added `src/abilityPresentation.ts`, the shared UI-facing adapter for every standard active ability. It derives cast type, targeting explanation, cast range, rank-aware damage and cooldown values, mana cost, authored scaling, CC duration, geometry explanation, and known movement classification from the existing kit, cast-type, range, ratio, and progression rules. It does not create a second combat executor.
+- Champion Hub now shows an authoritative mechanical readout for each selected standard active ability, including targeting, range, cost, rank cooldown, CC, geometry, and movement timing where the live runtime has one. Draft dossier now includes the same compact source for Q/W/R, so its numbers and movement labels do not need a separate tooltip table. Kaelen retains the existing dedicated Conflux spellbook because its ten invoked spells are independently authored.
+- Movement audit corrected two clear description/runtime mismatches: Solana's Zenith Lance and Veyara's Facet Dash now use the existing deterministic dash state instead of snapping position. They travel at authored simulation speed, resolve their damage/control and impact VFX only on an enemy collision or valid endpoint, and retain existing target, mana, cooldown, terrain, safety, and interruption ownership. Actual teleports (Kage/Inai/Paxi Jaunt) remain classified separately.
+- Standard ultimate rank damage now uses the shared `abilityDamageMultiplier` table in both regular and ground-targeted Raijin casts; the generic Skill 2 damage path now uses the same rank multiplier. This removes a known dossier/runtime rank-table mismatch without adding a new balance system.
+- Affected: `src/abilityPresentation.ts`, `src/types.ts`, `src/components/ChampionHubView.tsx`, `src/components/DraftPhaseView.tsx`, `src/components/AramMatchView.tsx`, and both documentation files. Remaining work: full per-executor inventory/description reconciliation, expanded mobility telemetry, further visual movement audit, and the user-deferred combined checks/build/browser validation.
+
+## Ability documentation and movement-consistency overhaul — continued implementation (2026-10-12)
+
+**User direction:** Finish the coding pass before running `npm run check:game`, `npm run build`, focused tests, or browser verification.
+
+**Implemented:** Valerie's Vault Breaker Punch, Jaxon's Thundering Leap, and Brewmaw's Barrel Rush now use finite deterministic movement states instead of coordinate snaps. Their damage and control resolve at collision or endpoint. Each dash now retains cast origin for bounded movement traces; Match Insights reports completions. Raijin's Ball Lightning now deals its path damage at contact instead of at cast. Leap lift and trails are render-only and do not change authoritative movement or hitboxes. Corrected Solana's written CC timing and Stonebranch's Canopy Bound movement attribution; expanded the shared movement presentation with the new charge, leap, dash, and blink facts.
+
+**Protected behavior:** This does not introduce extra casts, range, immunity, unsafe tower dives, altered objective logic, or new gameplay RNG. Existing AI eligibility, mana, cooldown, and protected safety gates remain in control.
+
+**Status:** Still unverified by explicit user direction. The remaining per-ability reconciliation, focused tests, and live visual cases must be completed before final acceptance is claimed.
+
+**Latest safety follow-up:** In-flight dash state is canceled and traced when hard crowd control lands, and each simulation step checks rock-terrain collision before committing the next position. A terrain contact stops the dash at the existing terrain-safe resolution point. `abilityCatalogAudit.ts` plus its pending test derive the roster/standard-active/passive/invoked/movement totals directly from source data; they have been added but not run.
+
+**Latest scaling follow-up:** Movement state now carries authored base damage into `applyDamageToChampion`, which remains the single owner of level rank, item-ratio, amplification, mitigation, and true-damage resolution. This prevents deferred Valerie/Jaxon/Brewmaw/Stonebranch/Raijin/Renn contact damage from receiving rank scaling twice.
+
+**Spectator integration:** `SpectatorRoster.tsx` now provides a compact hover summary for live Q/W/R mechanics using the same shared presentation adapter as Champion Hub and Draft. It preserves the existing small cooldown HUD; Kaelen retains his dedicated Conflux slot information.
+
+**Performance guard:** Shared presentation records are cached by champion, slot, and rank, so live roster updates reuse immutable mechanics summaries instead of reconstructing their detailed text.
+

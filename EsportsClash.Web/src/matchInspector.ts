@@ -1,5 +1,5 @@
 export type CastSlot = 'skill1' | 'skill2' | 'ultimate' | 'conflux' | 'orbQ' | 'orbW' | 'orbE' | 'invokedD' | 'invokedF';
-export type InsightKind = 'cast' | 'hit' | 'mana' | 'channel' | 'jaunt' | 'decision';
+export type InsightKind = 'cast' | 'hit' | 'mana' | 'channel' | 'jaunt' | 'movement' | 'decision';
 
 export interface InsightEvent {
   second: number;
@@ -20,7 +20,22 @@ export interface AvatarInsight {
   blackHoleInterrupts: number;
   engageJaunts: number;
   escapeJaunts: number;
+  movementTraces: AbilityMovementTrace[];
   lastManaBlockAt?: Partial<Record<CastSlot, number>>;
+}
+
+export interface AbilityMovementTrace {
+  second: number;
+  kind: string;
+  startX: number;
+  startY: number;
+  targetX: number;
+  targetY: number;
+  endX: number;
+  endY: number;
+  targetId?: string;
+  result: 'collision' | 'endpoint' | 'interrupted' | 'terrain';
+  interruptionReason?: 'hard_cc' | 'terrain';
 }
 
 export interface MatchInsights {
@@ -39,7 +54,7 @@ function avatar(insights: MatchInsights, actor: InsightActor): AvatarInsight {
       skill1: 0, skill2: 0, ultimate: 0, conflux: 0,
       orbQ: 0, orbW: 0, orbE: 0, invokedD: 0, invokedF: 0
     }, skillshotsFired: 0, skillshotsHit: 0,
-    manaBlocks: 0, blackHoleInterrupts: 0, engageJaunts: 0, escapeJaunts: 0
+    manaBlocks: 0, blackHoleInterrupts: 0, engageJaunts: 0, escapeJaunts: 0, movementTraces: []
   };
 }
 
@@ -108,4 +123,15 @@ export function recordPaxiJaunt(insights: MatchInsights, actor: InsightActor, se
   else stats.engageJaunts++;
   addInsightEvent(insights, { second, kind: 'jaunt', actorId: actor.id,
     text: `${actor.player.name} jaunted to ${purpose === 'escape' ? 'escape' : 'engage'}` });
+}
+
+/** One bounded completion record per movement ability; never called per tick. */
+export function recordAbilityMovement(insights: MatchInsights, actor: InsightActor, trace: AbilityMovementTrace): void {
+  const history = avatar(insights, actor).movementTraces;
+  history.push(trace);
+  if (history.length > 24) history.splice(0, history.length - 24);
+  addInsightEvent(insights, { second: trace.second, kind: 'movement', actorId: actor.id,
+    text: `${actor.player.name}'s ${trace.kind} ${trace.result === 'collision' ? 'stopped on collision'
+      : trace.result === 'interrupted' ? 'was interrupted by crowd control'
+        : trace.result === 'terrain' ? 'stopped at terrain' : 'completed movement'}` });
 }

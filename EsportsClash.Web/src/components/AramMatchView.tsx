@@ -108,7 +108,7 @@ import {
   kaelenOrbStatBonuses,
   type KaelenElement
 } from '../kaelenAbilities';
-import { addInsightEvent, createMatchInsights, recordAbilityCast, recordBlackHoleInterrupt,
+import { addInsightEvent, createMatchInsights, recordAbilityCast, recordAbilityMovement, recordBlackHoleInterrupt,
   recordManaBlock, recordPaxiJaunt, recordSkillshot } from '../matchInspector';
 import { getAvatarCombatProfile } from '../avatarCombatRoles';
 import { 
@@ -1381,7 +1381,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           : ultimateBaseCooldown(u) * cooldownFactor * abilityCooldownMultiplier(u.level, 'ultimate');
         u.animState = 'cast';
         if (u.champion.name === 'Raijin') {
-          castRaijinGroundUltimate(u, target, enemies, u.team === 'blue' ? 1 : -1);
+          castRaijinGroundUltimate(u, target, u.team === 'blue' ? 1 : -1);
         } else {
           castChampionUltimate(u, target, enemies);
         }
@@ -2359,6 +2359,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         u.cinderQStage = undefined;
         u.cd1 = Math.max(u.cd1, u.champion.skill1.cooldown);
       }
+      const hardCrowdControl = u.stunTimer > 0 || (u.knockupTimer ?? 0) > 0
+        || u.charmTimer > 0 || (u.fearTimer ?? 0) > 0;
+      if (u.dash && hardCrowdControl) {
+        const dash = u.dash;
+        recordAbilityMovement(insightsRef.current, u, {
+          second: matchTimeRef.current, kind: dash.kind, startX: dash.startX ?? u.x, startY: dash.startY ?? u.y,
+          targetX: dash.targetX, targetY: dash.targetY, endX: u.x, endY: u.y,
+          targetId: dash.targetId, result: 'interrupted', interruptionReason: 'hard_cc',
+        });
+        u.dash = undefined;
+      }
       if (u.paxiOrb) {
         const orb = u.paxiOrb;
         orb.remaining -= dt;
@@ -2462,10 +2473,41 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const dy = dash.targetY - u.y;
         const distance = Math.hypot(dx, dy);
         const step = Math.min(distance, dash.speed * dt);
-        if (distance > 0) { u.x += dx / distance * step; u.y += dy / distance * step; u.facing = dx >= 0 ? 'right' : 'left'; }
+        const rawDestination = distance > 0
+          ? { x: u.x + dx / distance * step, y: u.y + dy / distance * step }
+          : { x: u.x, y: u.y };
+        if (isInsideRockTerrain(rawDestination.x, rawDestination.y, 13)) {
+          const terrainSafePosition = resolveRockTerrainMovement({ x: u.x, y: u.y }, rawDestination, 13);
+          u.x = terrainSafePosition.x;
+          u.y = terrainSafePosition.y;
+          recordAbilityMovement(insightsRef.current, u, {
+            second: matchTimeRef.current, kind: dash.kind, startX: dash.startX ?? u.x, startY: dash.startY ?? u.y,
+            targetX: dash.targetX, targetY: dash.targetY, endX: u.x, endY: u.y,
+            targetId: dash.targetId, result: 'terrain', interruptionReason: 'terrain',
+          });
+          u.dash = undefined;
+          return;
+        }
+        if (distance > 0) { u.x = rawDestination.x; u.y = rawDestination.y; u.facing = dx >= 0 ? 'right' : 'left'; }
         dash.remaining -= dt;
         u.animState = 'walk';
         const hit = champs.find(e => e.team !== u.team && e.isAlive && Math.hypot(e.x - u.x, e.y - u.y) < (dash.kind === 'kaolin_roll' ? 35 : 28));
+        const resolveTargetDashImpact = (victim: AramChampionUnit) => {
+          if (dash.kind === 'valerie_punch') {
+            applyChampionCrowdControl(u, victim, 0.9, 'knockup', 'Vault Breaker Punch');
+            applyDamageToChampion(u, victim, dash.damage ?? u.champion.skill1.damage, false, 'Vault Breaker Punch', 'skill1');
+            emitSkillEffect(u, victim, false, 'Vault Breaker Punch', 'skill1');
+          } else if (dash.kind === 'jaxon_leap') {
+            applyChampionCrowdControl(u, victim, 0.7, 'root', 'Thundering Leap');
+            applyDamageToChampion(u, victim, dash.damage ?? u.champion.skill2.damage, false, 'Thundering Leap', 'skill2');
+            emitSkillEffect(u, victim, false, 'Thundering Leap', 'skill2');
+          } else if (dash.kind === 'brewmaw_rush') {
+            applyChampionCrowdControl(u, victim, 0.8, 'knockup', 'Barrel Rush');
+            applyDamageToChampion(u, victim, dash.damage ?? u.champion.skill2.damage, false, 'Barrel Rush', 'skill2');
+            u.hp = Math.min(u.maxHp, u.hp + 90 * abilityDamageMultiplier(u.level, 'skill2'));
+            emitSkillEffect(u, victim, false, 'Barrel Rush', 'skill2');
+          }
+        };
         if (hit && dash.kind === 'raijin_bolt' && !(dash.hitIds ?? []).includes(hit.id)) {
           (dash.hitIds ??= []).push(hit.id);
           applyDamageToChampion(u, hit, dash.damage ?? u.champion.ultimate.damage, false, '⚡ Ball Lightning');
@@ -2478,7 +2520,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               applyDamageToChampion(u, e, dash.damage ?? 180, false, 'Dazzling Rush', 'ultimate');
             });
         }
-        if (hit && (dash.kind === 'renn_vault' || dash.kind === 'kaolin_roll' || dash.kind === 'cinder_lunge' || dash.kind === 'canopy_bound')) {
+        if (hit && (dash.kind === 'renn_vault' || dash.kind === 'kaolin_roll' || dash.kind === 'cinder_lunge' || dash.kind === 'canopy_bound' || dash.kind === 'solana_lance' || dash.kind === 'veyara_dash' || dash.kind === 'valerie_punch' || dash.kind === 'jaxon_leap' || dash.kind === 'brewmaw_rush')) {
           if (dash.kind === 'renn_vault') {
             spellsRef.current.push({ id: random().toString(), type: 'grand_entrance', x: u.x, y: u.y,
               radius: 65, duration: 0.8, maxDuration: 0.8, color: '#f59e0b' });
@@ -2492,7 +2534,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               .forEach(e => applyDamageToChampion(u, e, dash.damage ?? 105, false, 'Canopy Bound', 'skill2'));
             spellsRef.current.push({ id: random().toString(), type: 'canopy_landing', x: u.x, y: u.y,
               radius: 65, duration: 0.8, maxDuration: 0.8, color: '#86efac', avatarName: 'Stonebranch', abilitySlot: 'skill2' });
+          } else if (dash.kind === 'solana_lance') {
+            applyChampionCrowdControl(u, hit, 1.1, 'stun', 'Zenith Lance');
+            applyDamageToChampion(u, hit, dash.damage ?? u.champion.skill2.damage, false, 'Zenith Lance', 'skill2');
+            emitSkillEffect(u, hit, false, 'Zenith Lance', 'skill2');
+          } else if (dash.kind === 'veyara_dash') {
+            applyDamageToChampion(u, hit, dash.damage ?? u.champion.skill2.damage, false, 'Facet Dash', 'skill2');
+            emitSkillEffect(u, hit, false, 'Facet Dash', 'skill2');
+          } else {
+            resolveTargetDashImpact(hit);
           }
+          recordAbilityMovement(insightsRef.current, u, {
+            second: matchTimeRef.current, kind: dash.kind, startX: dash.startX ?? u.x, startY: dash.startY ?? u.y,
+            targetX: dash.targetX, targetY: dash.targetY, endX: u.x, endY: u.y,
+            targetId: dash.targetId, result: 'collision',
+          });
           u.dash = undefined;
         } else if (distance <= step + 1 || dash.remaining <= 0) {
           if (dash.kind === 'raijin_bolt') {
@@ -2503,6 +2559,22 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                 applyDamageToChampion(u, enemy, dash.damage ?? u.champion.ultimate.damage, false, '⚡ Ball Lightning');
               });
           }
+          const endpointTarget = dash.targetId ? champs.find(enemy => enemy.id === dash.targetId && enemy.isAlive) : undefined;
+          if (endpointTarget && dash.kind === 'solana_lance') {
+            applyChampionCrowdControl(u, endpointTarget, 1.1, 'stun', 'Zenith Lance');
+            applyDamageToChampion(u, endpointTarget, dash.damage ?? u.champion.skill2.damage, false, 'Zenith Lance', 'skill2');
+            emitSkillEffect(u, endpointTarget, false, 'Zenith Lance', 'skill2');
+          } else if (endpointTarget && dash.kind === 'veyara_dash') {
+            applyDamageToChampion(u, endpointTarget, dash.damage ?? u.champion.skill2.damage, false, 'Facet Dash', 'skill2');
+            emitSkillEffect(u, endpointTarget, false, 'Facet Dash', 'skill2');
+          } else if (endpointTarget && (dash.kind === 'valerie_punch' || dash.kind === 'jaxon_leap' || dash.kind === 'brewmaw_rush')) {
+            resolveTargetDashImpact(endpointTarget);
+          }
+          recordAbilityMovement(insightsRef.current, u, {
+            second: matchTimeRef.current, kind: dash.kind, startX: dash.startX ?? u.x, startY: dash.startY ?? u.y,
+            targetX: dash.targetX, targetY: dash.targetY, endX: u.x, endY: u.y,
+            targetId: dash.targetId, result: 'endpoint',
+          });
           u.dash = undefined;
         }
         return;
@@ -4280,7 +4352,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             castRaijinGroundUltimate(
               u,
               isDisengaging ? undefined : primaryTarget,
-              enemies,
               isDisengaging ? (u.team === 'blue' ? -1 : 1) : (u.team === 'blue' ? 1 : -1)
             );
           } else {
@@ -5697,7 +5768,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       addEvent(`🪶 FEATHERS: Cora flung Twin Plumage quill barrage!`, 'micro');
     } else if (u.champion.name === 'Renn') {
       // Renn: Gilded Vault Knockup!
-      u.dash = { kind: 'renn_vault', targetX: target.x, targetY: target.y, targetId: target.id,
+      u.dash = { kind: 'renn_vault', startX: u.x, startY: u.y, targetX: target.x, targetY: target.y, targetId: target.id,
         remaining: 0.75, speed: 360, damage: u.champion.skill1.damage };
       addEvent(`✨ DIVE: Renn leaped with Gilded Vault toward ${target.player.name}!`, 'combo');
     } else if (u.champion.name === 'Sylla') {
@@ -5851,7 +5922,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Cinderlock' || u.champion.name === 'Cinderbloom') {
       const stage = u.cinderQStage ?? 0;
       if (stage === 0) {
-        u.dash = { kind: 'cinder_lunge', targetX: target.x - (target.x >= u.x ? 22 : -22), targetY: target.y,
+        u.dash = { kind: 'cinder_lunge', startX: u.x, startY: u.y, targetX: target.x - (target.x >= u.x ? 22 : -22), targetY: target.y,
           targetId: target.id, remaining: 0.7, speed: 400 };
         u.cinderQStage = 1;
       } else if (stage === 1) {
@@ -5967,8 +6038,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (u.champion.name === 'Jaxon') {
       fireFirstSkillshot(u, target, { speed: 640, size: 9, collisionRadius: 13, splashRadius: 60 });
     } else if (u.champion.name === 'Valerie') {
-      u.x = target.x + (u.team === 'blue' ? -25 : 25);
-      applyChampionCrowdControl(u, target, 0.9, 'knockup', 'Vault Breaker Punch');
+      u.dash = { kind: 'valerie_punch', startX: u.x, startY: u.y,
+        targetX: target.x + (u.team === 'blue' ? -25 : 25), targetY: target.y, targetId: target.id,
+        remaining: .65, speed: 385, damage: u.champion.skill1.damage };
     } else if (u.champion.name === 'Jinxy') {
       fireFirstSkillshot(u, target, { speed: 580, size: 11, collisionRadius: 15, splashRadius: 80 });
     } else if (u.champion.name === 'Paxi') {
@@ -5995,7 +6067,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const castRaijinGroundUltimate = (
     u: AramChampionUnit,
     target: AramChampionUnit | undefined,
-    enemies: AramChampionUnit[],
     fallbackDirection: -1 | 1
   ) => {
     const destination = getGroundTargetPoint(
@@ -6005,14 +6076,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       320,
       { minX: 60, maxX: ARENA_WIDTH - 60, minY: 90, maxY: 610 }
     );
-    const ultRank = u.level >= 18 ? 4 : u.level >= 16 ? 3 : u.level >= 11 ? 2 : 1;
-    const damage = Math.round(u.champion.ultimate.damage * (1 + (ultRank - 1) * 0.25));
+    // applyDamageToChampion owns rank and item scaling; dash state keeps authored base damage.
+    const damage = u.champion.ultimate.damage;
     const hitIds: string[] = [];
     u.activeAbilitySlot = 'ultimate';
     recordAbilityCast(insightsRef.current, u, 'ultimate', matchTimeRef.current);
     sound.playAvatarSkill(u.champion.name, 'ultimate', u.x / ARENA_WIDTH * 2 - 1);
     u.dash = {
-      kind: 'raijin_bolt',
+      kind: 'raijin_bolt', startX: u.x, startY: u.y,
       targetX: destination.x,
       targetY: destination.y,
       remaining: 0.75,
@@ -6030,11 +6101,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       maxDuration: 1,
       color: '#06b6d4'
     });
-    enemies.filter(enemy => enemy.isAlive && Math.hypot(enemy.x - destination.x, enemy.y - destination.y) <= 55)
-      .forEach(enemy => {
-        hitIds.push(enemy.id);
-        applyDamageToChampion(u, enemy, damage, false, '⚡ Ball Lightning');
-      });
     addEvent(`⚡ BALL LIGHTNING: ${u.player.name} launched toward a ground point!`, 'combo');
   };
 
@@ -6186,11 +6252,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       : undefined;
     sound.playAvatarSkill(u.champion.name, 'skill2', u.x / ARENA_WIDTH * 2 - 1);
     emitSkillEffect(u, name === 'Aetheris' ? aetherisOverchargeTarget ?? u
-      : name === 'Cinderlock' || name === 'Cinderbloom' || name === 'Renn' ? u : target, false, skill.name, 'skill2');
+      : name === 'Cinderlock' || name === 'Cinderbloom' || name === 'Renn' || name === 'Solana' || name === 'Veyara' ? u : target, false, skill.name, 'skill2');
 
     if (name === 'Solana') {
-      u.x = target.x + (u.team === 'blue' ? -28 : 28);
-      applyChampionCrowdControl(u, target, 1.1, 'stun', 'Zenith Lance');
+      const landingX = target.x + (u.team === 'blue' ? -28 : 28);
+      u.dash = { kind: 'solana_lance', startX: u.x, startY: u.y, targetX: landingX, targetY: target.y, targetId: target.id,
+        remaining: .72, speed: 400, damage: skill.damage };
     } else if (name === 'Kyumi') {
       target.charmTimer = 1.4;
       target.charmSourceId = u.id;
@@ -6205,7 +6272,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (name === 'Valkira') {
       u.shield += 200 * utility;
     } else if (name === 'Kaolin') {
-      u.dash = { kind: 'kaolin_roll', targetX: target.x, targetY: target.y,
+      u.dash = { kind: 'kaolin_roll', startX: u.x, startY: u.y, targetX: target.x, targetY: target.y,
         targetId: target.id, remaining: 0.8, speed: 365, damage: skill.damage };
     } else if (name === 'Kage' || name === 'Inai') {
       u.x = target.x + (u.team === 'blue' ? -32 : 32);
@@ -6298,7 +6365,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.shield += 220 * utility;
       if (ally) {
         ally.shield += 220 * utility;
-        u.dash = { kind: 'renn_waltz', targetX: ally.x, targetY: ally.y,
+        u.dash = { kind: 'renn_waltz', startX: u.x, startY: u.y, targetX: ally.x, targetY: ally.y,
           targetId: ally.id, remaining: 0.65, speed: 380 };
         emitSkillEffect(u, ally, false, skill.name, 'skill2');
       }
@@ -6332,8 +6399,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       nearbyEnemies.filter(c => c.id !== target.id && Math.hypot(c.x - target.x, c.y - target.y) < 90)
         .forEach(c => applyDamageToChampion(u, c, skill.damage * 0.6, false, skill.name));
     } else if (name === 'Veyara') {
-      u.x = target.x + (u.team === 'blue' ? -30 : 30);
-      u.y = target.y;
+      const landingX = target.x + (u.team === 'blue' ? -30 : 30);
+      u.dash = { kind: 'veyara_dash', startX: u.x, startY: u.y, targetX: landingX, targetY: target.y, targetId: target.id,
+        remaining: .7, speed: 390, damage: skill.damage };
     } else if (name === 'Cinderlock' || name === 'Cinderbloom') {
       u.stealthTimer = 3.5;
       u.revealedTimer = 0;
@@ -6419,8 +6487,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         radius: 33, duration: 1.8, maxDuration: 1.8, color: '#c084fc', avatarName: name, abilitySlot: 'skill2' });
       u.y = Math.max(100, Math.min(610, u.y + (u.y <= target.y ? -46 : 46)));
     } else if (name === 'Stonebranch') {
-      u.dash = { kind: 'canopy_bound', targetX: target.x, targetY: target.y, targetId: target.id,
-        remaining: 0.9, speed: 350, damage: skill.damage * utility };
+      u.dash = { kind: 'canopy_bound', startX: u.x, startY: u.y, targetX: target.x, targetY: target.y, targetId: target.id,
+        remaining: 0.9, speed: 350, damage: skill.damage };
     } else if (name === 'Voltgrip') {
       applyChampionCrowdControl(u, target, 0.9, 'knockup', skill.name);
       u.shield += 100 * utility;
@@ -6433,9 +6501,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (e.id !== target.id) applyDamageToChampion(u, e, skill.damage * 0.5, false, skill.name);
       });
     } else if (name === 'Brewmaw') {
-      u.x = target.x + (u.team === 'blue' ? -28 : 28);
-      applyChampionCrowdControl(u, target, 0.8, 'knockup', skill.name);
-      u.hp = Math.min(u.maxHp, u.hp + 90 * utility);
+      u.dash = { kind: 'brewmaw_rush', startX: u.x, startY: u.y,
+        targetX: target.x + (u.team === 'blue' ? -28 : 28), targetY: target.y, targetId: target.id,
+        remaining: .55, speed: 360, damage: skill.damage };
     } else if (name === 'Wraithhook') {
       nearbyAllies.filter(a => Math.hypot(a.x - u.x, a.y - u.y) < 180).forEach(a => { a.shield += 150 * utility; });
       target.x += u.team === 'blue' ? 30 : -30;
@@ -6444,8 +6512,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     } else if (name === 'Hweilin') {
       nearbyAllies.filter(a => Math.hypot(a.x - u.x, a.y - u.y) < 140).forEach(a => { a.shield += 130 * utility; });
     } else if (name === 'Jaxon') {
-      u.x = target.x + (u.team === 'blue' ? -25 : 25);
-      applyChampionCrowdControl(u, target, 0.7, 'root', 'Thundering Leap');
+      u.dash = { kind: 'jaxon_leap', startX: u.x, startY: u.y,
+        targetX: target.x + (u.team === 'blue' ? -25 : 25), targetY: target.y, targetId: target.id,
+        remaining: .65, speed: 385, damage: skill.damage };
     } else if (name === 'Valerie') {
       u.shield += 140 * utility;
     } else if (name === 'Jinxy') {
@@ -6473,8 +6542,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       nearbyAllies.filter(a => Math.hypot(a.x - u.x, a.y - u.y) < 160).forEach(a => { a.shield += 160 * utility; });
     }
 
-    if (skill.damage > 0 && target.isAlive && !['Buck', 'Kaolin', 'Cinderbloom', 'Cinderlock', 'Tequoia', 'Stonebranch'].includes(name)) {
-      applyDamageToChampion(u, target, skill.damage, skill.damageType === 'True', skill.name);
+    if (skill.damage > 0 && target.isAlive && !['Buck', 'Kaolin', 'Cinderbloom', 'Cinderlock', 'Tequoia', 'Stonebranch', 'Solana', 'Veyara', 'Brewmaw', 'Jaxon'].includes(name)) {
+      applyDamageToChampion(u, target, Math.round(skill.damage * utility), skill.damageType === 'True', skill.name);
     }
     addEvent(`✨ ${u.player.name} used ${skill.name}!`, 'combo');
   };
@@ -6492,7 +6561,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     const ultRank = u.level >= 18 ? 4 : u.level >= 16 ? 3 : u.level >= 11 ? 2 : 1;
-    const ultDamage = Math.round(u.champion.ultimate.damage * (1 + (ultRank - 1) * 0.25));
+    // Keep live ultimate damage on the same authored rank table displayed by
+    // the dossier and used by the shared progression helpers.
+    const ultDamage = Math.round(u.champion.ultimate.damage * abilityDamageMultiplier(u.level, 'ultimate'));
 
     showBanner(
       `💥 ${u.player.name.toUpperCase()} CAST ${u.champion.ultimate.name.toUpperCase()}!`,
@@ -6657,8 +6728,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       applyChampionCrowdControl(u, target, 1.3, 'root', '🪶 Skyward Plumes');
       showBanner(`🪶 SKYWARD PLUMES!`, `${u.player.name} leaped untargetable and recalled all quills!`, '🪶');
     } else if (u.champion.name === 'Renn') {
-      u.dash = { kind: 'renn_rush', targetX: target.x, targetY: target.y,
-        remaining: 1.1, speed: 380, damage: ultDamage * 0.75, hitIds: [] };
+      u.dash = { kind: 'renn_rush', startX: u.x, startY: u.y, targetX: target.x, targetY: target.y,
+        remaining: 1.1, speed: 380, damage: u.champion.ultimate.damage * 0.75, hitIds: [] };
       showBanner('DAZZLING RUSH!', `${u.player.name} rushed through the enemy team!`, '?');
     } else if (u.champion.name === 'Sylla') {
       // Lone Druid: True Form & Savage Roar (Temporary transformation buff)
@@ -6713,8 +6784,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       showBanner(`🔥 SLEIGHT OF FIST!`, `${u.player.name} slashed through the flame remnant field!`, '🔥');
     } else if (u.champion.name === 'Raijin') {
       // Storm Spirit: Ball Lightning
-      u.dash = { kind: 'raijin_bolt', targetX: target.x, targetY: target.y, targetId: target.id,
-        remaining: 0.75, speed: 540 };
+      u.dash = { kind: 'raijin_bolt', startX: u.x, startY: u.y, targetX: target.x, targetY: target.y, targetId: target.id,
+        remaining: 0.75, speed: 540, damage: u.champion.ultimate.damage, hitIds: [] };
       spellsRef.current.push({
         id: random().toString(),
         type: 'ball_lightning',
@@ -6725,7 +6796,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         maxDuration: 1.0,
         color: '#06b6d4'
       });
-      applyDamageToChampion(u, target, ultDamage, false, '⚡ Ball Lightning');
       showBanner(`⚡ BALL LIGHTNING!`, `${u.player.name} zipped in supersonic ball lightning blast!`, '⚡');
     } else if (u.champion.name === 'Kaolin') {
       // Earth Spirit: Magnetize
@@ -10487,12 +10557,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const knockupMax = u.knockupMax || 1.2;
       const knockupProgress = isKnockedUp ? Math.max(0, Math.min(1, 1 - ((u.knockupTimer ?? 0) / knockupMax))) : 0;
       const knockupHeight = isKnockedUp ? Math.sin(knockupProgress * Math.PI) * 34 : 0;
+      const dashLiftDuration = u.dash?.kind === 'renn_vault' ? .75
+        : u.dash?.kind === 'canopy_bound' ? .9 : u.dash?.kind === 'jaxon_leap' ? .65 : 0;
+      // This is presentation-only: the simulation's x/y path and collision position stay unchanged.
+      const dashLift = dashLiftDuration && u.dash
+        ? Math.sin(Math.max(0, Math.min(1, 1 - u.dash.remaining / dashLiftDuration)) * Math.PI) * 26 : 0;
 
       if (u.dash && u.dash.startX !== undefined && u.dash.startY !== undefined) {
         ctx.save();
         const trailColor = u.dash.kind === 'kaolin_roll' ? '#86efac'
           : u.dash.kind === 'raijin_bolt' ? '#67e8f9'
-            : u.dash.kind === 'cinder_lunge' ? '#fb923c' : '#fbbf24';
+            : u.dash.kind === 'cinder_lunge' || u.dash.kind === 'brewmaw_rush' ? '#fb923c'
+              : u.dash.kind === 'valerie_punch' ? '#f43f5e'
+                : u.dash.kind === 'jaxon_leap' ? '#7dd3fc' : '#fbbf24';
         ctx.strokeStyle = trailColor;
         ctx.lineWidth = u.dash.kind === 'kaolin_roll' ? 11 : 7;
         ctx.globalAlpha = 0.6; ctx.shadowColor = trailColor; ctx.shadowBlur = 0;
@@ -10523,7 +10600,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         isCharmed: u.charmTimer > 0,
         isFeared: (u.fearTimer ?? 0) > 0,
         isKnockedUp,
-        knockupHeight,
+        knockupHeight: knockupHeight + dashLift,
         isInBush: u.isInBush
       });
 
@@ -11078,7 +11155,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         <div className="flex items-start justify-between gap-3 border-b border-slate-700 pb-2">
           <div>
             <h3 className="text-sm font-black text-emerald-300">Match Insights</h3>
-            <p className="text-[10px] text-slate-400">Cast totals, projectile hits, mana waits, and decisions from this seeded match.</p>
+            <p className="text-[10px] text-slate-400">Cast totals, projectile hits, mana waits, movement completions, and decisions from this seeded match.</p>
           </div>
           <button onClick={() => setShowInsights(false)} aria-label="Close match insights" className="rounded p-1 hover:bg-slate-800"><X className="h-4 w-4" /></button>
         </div>
@@ -11107,7 +11184,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           <div className="max-h-36 space-y-1 overflow-y-auto">
             {insightWindow.slice(0, 35).map((event, index) => <div key={`${event.second}-${event.kind}-${index}`} className="flex gap-2 rounded bg-slate-900/80 px-2 py-1 text-[10px]">
               <span className="shrink-0 font-mono text-amber-300">{Math.floor(event.second / 60)}:{String(Math.floor(event.second % 60)).padStart(2, '0')}</span>
-              <span className={event.kind === 'decision' ? 'text-violet-300' : event.kind === 'mana' ? 'text-orange-300' : 'text-slate-200'}>{event.text}</span>
+              <span className={event.kind === 'decision' ? 'text-violet-300' : event.kind === 'mana' ? 'text-orange-300' : event.kind === 'movement' ? 'text-emerald-300' : 'text-slate-200'}>{event.text}</span>
             </div>)}
             {insightWindow.length === 0 && <p className="text-[10px] text-slate-500">No recorded decisions or casts in this window.</p>}
           </div>

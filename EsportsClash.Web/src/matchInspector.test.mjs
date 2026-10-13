@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createMatchInsights, recordAbilityCast, recordSkillshot, recordManaBlock,
-  recordBlackHoleInterrupt, recordPaxiJaunt } from './matchInspector.ts';
+  recordAbilityMovement, recordBlackHoleInterrupt, recordPaxiJaunt } from './matchInspector.ts';
 
 const actor = { id: 'paxi_1', team: 'blue', player: { name: 'Cardrel' }, champion: { name: 'Paxi', displayName: 'Fizzlewing' } };
 
@@ -14,6 +14,10 @@ test('match insights retain cast, hit, mana, and Jaunt counts with a scrub-ready
   recordManaBlock(insights, actor, 'ultimate', 75, 20);
   recordManaBlock(insights, actor, 'ultimate', 80, 15);
   recordPaxiJaunt(insights, actor, 81, 'escape');
+  recordAbilityMovement(insights, actor, {
+    second: 81.5, kind: 'solana_lance', startX: 100, startY: 300, targetX: 260, targetY: 300,
+    endX: 242, endY: 300, targetId: 'enemy_1', result: 'collision'
+  });
   recordBlackHoleInterrupt(insights, actor, 82);
   const stats = insights.players[actor.id];
   assert.equal(stats.casts.skill2, 1);
@@ -21,6 +25,8 @@ test('match insights retain cast, hit, mana, and Jaunt counts with a scrub-ready
   assert.equal(stats.skillshotsFired, 1);
   assert.equal(stats.manaBlocks, 2);
   assert.equal(stats.escapeJaunts, 1);
+  assert.equal(stats.movementTraces.length, 1);
+  assert.equal(stats.movementTraces[0].result, 'collision');
   assert.equal(stats.blackHoleInterrupts, 1);
   assert.ok(insights.timeline.some(event => event.kind === 'mana' && event.second === 74));
   assert.ok(insights.timeline.some(event => event.text === 'Cardrel (Fizzlewing) cast Skill 2'));

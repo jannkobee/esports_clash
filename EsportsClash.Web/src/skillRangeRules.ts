@@ -179,7 +179,7 @@ export function isCrowdControlSkill(champName: string, slot: SkillSlot): boolean
 export function getSkillCrowdControlDuration(champName: string, slot: SkillSlot): number {
   switch (champName) {
     case 'Raijin': return slot === 'skill2' ? 1.4 : 0;
-    case 'Solana': return slot === 'skill1' ? 1.2 : slot === 'skill2' ? 0.8 : 2.0;
+    case 'Solana': return slot === 'skill1' ? 1.2 : slot === 'skill2' ? 1.1 : 1.8;
     case 'Astra': return slot === 'ultimate' ? 2.5 : 0;
     case 'Kyumi': return slot === 'skill2' ? 1.2 : 0;
     case 'Buck': return slot === 'skill2' ? 0.9 : 0;

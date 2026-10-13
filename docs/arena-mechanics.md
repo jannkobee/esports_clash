@@ -611,3 +611,21 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
 - A personality-led regroup is limited to a living IGL, a safe route, no local enemy, material separation, and no higher-priority defense/objective/fight/push. It is evaluated before optional camp farm only; it does not invent lanes, change farming limits, or alter movement speed.
 - Early First Blood Hunter farm trade-off ends after 180 simulation seconds. Embermaw and Gravemarch optional starts both continue to require their pre-existing objective preference, health, wave, vision, group, and enemy-number gates.
 
+## Ability documentation and movement-consistency invariants (2026-10-12)
+
+- `abilityPresentation.ts` is a UI adapter over the existing champion kit, cast-type, range, ratio, and skill-progression rules. It may describe them, but it never chooses casts, changes combat physics, or duplicates execution. Standard Q/W/R panels in Champion Hub and Draft use this shared source; Kaelen's independently executable Conflux spells retain their dedicated spellbook.
+- Solana Zenith Lance and Veyara Facet Dash are genuine simulation-time dashes, not instant position writes. Their control/damage and impact VFX occur at collision or endpoint; they remain subject to their existing legal cast, cooldown, mana, collision, interruption, terrain, tower-dive, retreat, and deterministic fixed-step rules. Kage/Inai relocation and Paxi's post-orb Jaunt remain genuine teleports and are not converted into dashes.
+- Standard ultimate rank scaling uses the existing `abilityDamageMultiplier` table for both targeted and Raijin ground casts. Generic Skill 2 direct damage uses the same table. This aligns presentation with execution without changing authored base values or adding stat/range/cooldown exceptions.
+- Full ability-executor audit, movement telemetry expansion, controlled visual checks, and the required final game/build checks are still pending at the user's direction to finish coding first.
+
+## Ability documentation and movement-consistency follow-up (2026-10-12)
+
+- Valerie's Vault Breaker Punch, Jaxon's Thundering Leap, and Brewmaw's Barrel Rush now advance with fixed simulation movement instead of direct coordinate snaps. Their damage and crowd control resolve only at a valid collision or endpoint.
+- Dash traces are bounded and include cast origin, intended destination, actual endpoint, target, and collision/endpoint result. They are diagnostic only and do not add RNG, decision changes, or per-frame logging. Match Insights surfaces their completion events.
+- Leap height and movement trails are rendering-only. They never alter the simulation path, hitbox, collision timing, replay determinism, map bounds, tower rules, recall, or objectives.
+- Explicit teleports/blinks remain instant only when already authored. Mobility continues to require the ordinary AI eligibility, mana, cooldown, target, and protected safety gates. Verification remains deferred until coding completion as requested.
+- Hard crowd control cancels an in-flight dash and emits one bounded `interrupted` movement trace. A movement step that would enter rock terrain stops at the existing terrain-safe resolver and emits one bounded `terrain` trace. Neither branch applies contact damage, consumes new RNG, or bypasses protected movement/tower rules.
+- Dash state stores authored base damage only. `applyDamageToChampion` remains the sole owner of rank progression, ratios, items, amplification, mitigation, and true-damage resolution, preventing deferred impacts from receiving rank scaling twice.
+- The live spectator cooldown group may present shared ability facts in a compact hover summary only. It does not create a second spell state or affect cooldowns, mana, cast selection, or simulation.
+- Presentation records are cached by champion, slot, and rank. This keeps repeated live roster updates from rebuilding long mechanical descriptions; cached data remains read-only and gameplay-independent.
+

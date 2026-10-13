@@ -240,7 +240,7 @@ export interface AramChampionUnit {
   maxHp: number;
   mana: number;
   hookPull?: import('./combatPacingRules').HookPullState;
-  dash?: { kind: 'renn_vault' | 'renn_waltz' | 'renn_rush' | 'kaolin_roll' | 'cinder_lunge' | 'raijin_bolt' | 'canopy_bound'; startX?: number; startY?: number; targetX: number; targetY: number; targetId?: string; remaining: number; speed: number; damage?: number; hitIds?: string[] };
+  dash?: { kind: 'renn_vault' | 'renn_waltz' | 'renn_rush' | 'kaolin_roll' | 'cinder_lunge' | 'raijin_bolt' | 'canopy_bound' | 'solana_lance' | 'veyara_dash' | 'valerie_punch' | 'jaxon_leap' | 'brewmaw_rush'; startX?: number; startY?: number; targetX: number; targetY: number; targetId?: string; remaining: number; speed: number; damage?: number; hitIds?: string[] };
   blackHole?: { x: number; y: number; remaining: number; tick: number };
   corsaraBarrage?: { remaining: number; tick: number; facing: 'left' | 'right' };
   monkeySpin?: { remaining: number; tick: number; hitIds: string[] };

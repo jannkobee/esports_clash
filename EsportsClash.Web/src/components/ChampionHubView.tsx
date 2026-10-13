@@ -9,6 +9,7 @@ import { getChampionLore } from '../championLore';
 import { KAELEN_INVOKED_SPELLS, kaelenOrbRankAtLevel, kaelenOrbStatBonuses } from '../kaelenAbilities';
 import { abilityTargetingDetails } from '../aetherisAbilities';
 import { getAbilityRatios } from '../abilityRules';
+import { getAbilityPresentation } from '../abilityPresentation';
 import { 
   Shield, 
   Swords, 
@@ -91,6 +92,8 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
   const isKaelen = selectedChamp.name === 'Kaelen';
   const currentMaxRank = isKaelen ? 1 : activeSkillTab === 'ultimate' ? 4 : activeSkillTab === 'passive' ? 1 : 7;
   const clampedRank = Math.min(currentMaxRank, Math.max(1, inspectRank));
+  const activePresentation = !isKaelen && activeSkillTab !== 'passive'
+    ? getAbilityPresentation(selectedChamp, activeSkillTab, clampedRank) : undefined;
 
   return (
     <div className="min-h-[calc(100vh-8rem)] w-full min-w-0 px-3 xl:px-6 py-4 animate-fade-in">
@@ -404,6 +407,20 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
 
           {/* Active Skill Details Display */}
           <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-4">
+            {activePresentation && (
+              <div className="rounded-xl border border-cyan-500/25 bg-cyan-950/20 p-3 space-y-2">
+                <div className="flex flex-wrap gap-1.5 text-[10px] font-black uppercase">
+                  <span className="rounded bg-cyan-400/15 px-2 py-1 text-cyan-200">{activePresentation.castType}</span>
+                  <span className="rounded bg-slate-900 px-2 py-1 text-slate-300">{activePresentation.range} RANGE</span>
+                  <span className="rounded bg-slate-900 px-2 py-1 text-slate-300">{activePresentation.manaCost} MANA</span>
+                  <span className="rounded bg-slate-900 px-2 py-1 text-slate-300">{activePresentation.cooldown}s CD</span>
+                  {activePresentation.movement && <span className="rounded bg-amber-400/15 px-2 py-1 text-amber-200">{activePresentation.movement.kind.toUpperCase()}</span>}
+                  {activePresentation.crowdControl && <span className="rounded bg-purple-400/15 px-2 py-1 text-purple-200">CC {activePresentation.crowdControl.duration.toFixed(1)}s</span>}
+                </div>
+                <p className="text-xs leading-relaxed text-slate-300">{activePresentation.detailedDescription}</p>
+                <p className="text-[10px] leading-relaxed text-cyan-200">Geometry: {activePresentation.geometry}{activePresentation.movement ? ` Movement: ${activePresentation.movement.distance || 'authored'} units${activePresentation.movement.duration ? ` over ${activePresentation.movement.duration}s` : ''}.` : ''}</p>
+              </div>
+            )}
             {activeSkillTab === 'passive' && (
               <div className="space-y-3">
                 <div className="flex justify-between items-center">

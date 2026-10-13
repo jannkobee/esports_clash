@@ -11,6 +11,7 @@ import { abilityTargetingDetails } from '../aetherisAbilities';
 import { AVATAR_COMBAT_TYPES, getAvatarCombatProfile } from '../avatarCombatRoles';
 import { KAELEN_INVOKED_SPELLS } from '../kaelenAbilities';
 import { getAbilityRatios } from '../abilityRules';
+import { abilityCompactSummary, getAbilityPresentation } from '../abilityPresentation';
 import { 
   Ban, 
   Swords, 
@@ -125,6 +126,11 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
   const inspected = selectedInspectChamp ?? allChampions[0];
   const currentPlayer = myRoster[selectedSlot];
   const isSignatureForCurrent = inspected && currentPlayer?.signatureChampions.includes(inspected.name);
+  const inspectedAbilities = inspected && inspected.name !== 'Kaelen' ? {
+    skill1: getAbilityPresentation(inspected, 'skill1'),
+    skill2: getAbilityPresentation(inspected, 'skill2'),
+    ultimate: getAbilityPresentation(inspected, 'ultimate'),
+  } : undefined;
 
   return <div className="space-y-5 max-w-7xl mx-auto animate-fade-in">
     {/* Header Banner */}
@@ -381,6 +387,17 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
             </div>
 
             {/* Ability Kit Breakdown */}
+            {inspectedAbilities && (
+              <div className="rounded-xl border border-cyan-500/20 bg-cyan-950/20 p-2.5 text-[10px] leading-relaxed text-cyan-100">
+                <strong className="text-cyan-200">Authoritative ability mechanics</strong>
+                <div className="mt-1 grid gap-1">
+                  {(['skill1', 'skill2', 'ultimate'] as const).map(slot => {
+                    const ability = inspectedAbilities[slot];
+                    return <div key={slot}><b>{slot === 'skill1' ? 'Q' : slot === 'skill2' ? 'W' : 'R'}: {ability.name}</b> — {abilityCompactSummary(ability)}{ability.movement ? ` · ${ability.movement.kind.toUpperCase()}` : ''}</div>;
+                  })}
+                </div>
+              </div>
+            )}
             <div className="space-y-2 border-t border-slate-800 pt-3">
               <div className="text-xs font-black text-amber-300 uppercase tracking-wide">
                 Ability Kit & Mechanics
