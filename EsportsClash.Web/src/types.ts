@@ -200,6 +200,9 @@ export interface LaneMinion {
   siegeChargeTargetId?: string;
   summonedBearOwnerId?: string;
   summonedBearFocusId?: string;
+  prismWardenOwnerId?: string;
+  prismWardenFocusId?: string;
+  prismWardenExpiresAt?: number;
   facingX?: number;
 }
 
@@ -297,6 +300,22 @@ export interface AramChampionUnit {
   kaelenComboTargetId?: string;
   kaelenLastSpellHitAt?: number;
   kaelenAwaitSpellId?: string;
+  kaelenPlanExpiresAt?: number;
+  kaelenTacticalGoal?: string;
+  kaelenPlanSpells?: string[];
+  kaelenSlowTimer?: number;
+  kaelenSlowAmount?: number;
+  kaelenEquinoxTimer?: number;
+  kaelenEquinoxMoveSpeed?: number;
+  kaelenEquinoxShield?: number;
+  kaelenFrostStacks?: number;
+  kaelenFrostExpiresAt?: number;
+  kaelenFrostRootLockoutUntil?: number;
+  kaelenFrostSourceId?: string;
+  kaelenAshenStacks?: number;
+  kaelenAshenExpiresAt?: number;
+  kaelenAshenNextTickAt?: number;
+  kaelenAshenSourceId?: string;
   aetherisOrbs?: { charges: number; remaining: number };
   aetherisOverchargeTimer?: number;
   aetherisOverchargeSourceId?: string;

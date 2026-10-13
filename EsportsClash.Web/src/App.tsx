@@ -12,6 +12,7 @@ import { ChampionKit, CoachCard, EvolutionPlan, Facility, PlayerCard, Tournament
 import { PackOpeningModal } from './components/PackOpeningModal';
 import { EvolutionsView } from './components/EvolutionsView';
 import { SquadView } from './components/SquadView';
+import { CloudSavePanel } from './components/CloudSavePanel';
 import { DraftPhaseView } from './components/DraftPhaseView';
 import { ArenaMatchView } from './components/ArenaMatchView';
 import { ThreeAramArena } from './components/ThreeAramArena';
@@ -877,15 +878,27 @@ export function App() {
       {/* VIEW CONTENT */}
       <main className={`w-full min-w-0 ${activeTab === 'arena' ? 'max-w-[1600px]' : 'max-w-7xl'} mx-auto px-4 mt-6`}>
         {activeTab === 'squad' && (
-          <SquadView
-            startingFive={startingFive}
-            bench={bench}
-            coach={currentCoach}
-            onSwapPlayer={handleSwapPlayer}
-            onRecycleDuplicates={handleRecycleDuplicates}
-            duplicateCount={duplicateCount}
-            duplicateValue={duplicateValue}
-          />
+          <div className="space-y-4">
+            <SquadView
+              startingFive={startingFive}
+              bench={bench}
+              coach={currentCoach}
+              onSwapPlayer={handleSwapPlayer}
+              onRecycleDuplicates={handleRecycleDuplicates}
+              duplicateCount={duplicateCount}
+              duplicateValue={duplicateValue}
+            />
+            <CloudSavePanel roster={roster} startingFive={startingFive} onRestore={snapshot => {
+              const restoredRoster = reconcileClubRoster(snapshot.roster, [KOVI_PLAYER_CARD]);
+              const restoredStarters = snapshot.starting_five
+                .map(id => restoredRoster.find(card => card.id === id))
+                .filter((card): card is PlayerCard => !!card);
+              if (restoredStarters.length !== 5) return false;
+              setRoster(restoredRoster);
+              setStartingFive(restoredStarters);
+              return true;
+            }} />
+          </div>
         )}
 
         {activeTab === 'arena' && (

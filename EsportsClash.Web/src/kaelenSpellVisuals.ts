@@ -42,6 +42,17 @@ export function drawKaelenSpell(ctx: CanvasRenderingContext2D, cast: KaelenCast,
       const height = 180 * (1 - cast.elapsed / spell.delay);
       ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(position.x - 45, position.y - height - 80); ctx.lineTo(position.x, position.y - height); ctx.stroke();
       ctx.fillStyle = '#fef08a'; ctx.beginPath(); ctx.arc(position.x, position.y - height, 22, 0, Math.PI * 2); ctx.fill();
+    } else if (spell.shape === 'summon') {
+      ctx.translate(position.x, position.y); ctx.rotate(cast.elapsed * .7);
+      ctx.fillStyle = '#fecdd3'; ctx.beginPath(); ctx.moveTo(0, -22); ctx.lineTo(18, 8); ctx.lineTo(0, 21); ctx.lineTo(-18, 8); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = '#fef3c7'; ctx.lineWidth = 3; ctx.stroke();
+    } else if (spell.shape === 'ally') {
+      ctx.strokeStyle = '#e9d5ff'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(position.x, position.y, spell.radius * (.75 + Math.sin(cast.elapsed * 9) * .08), 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = 'rgba(196, 181, 253, .25)'; ctx.beginPath(); ctx.arc(position.x, position.y, spell.radius * .62, 0, Math.PI * 2); ctx.fill();
+    } else if (spell.zone) {
+      ctx.lineWidth = 2.5;
+      for (let ring = .35; ring <= .95; ring += .3) { ctx.beginPath(); ctx.arc(position.x, position.y, spell.radius * ring, cast.elapsed * 2, cast.elapsed * 2 + Math.PI * 1.4); ctx.stroke(); }
+      if (spell.id === 'sleetflare') { ctx.strokeStyle = '#fda4af'; ctx.beginPath(); ctx.moveTo(position.x - spell.radius * .6, position.y); ctx.lineTo(position.x + spell.radius * .6, position.y); ctx.stroke(); }
     } else if (!winding) {
       ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(position.x, position.y,
         spell.radius * Math.min(1.2, 0.3 + (cast.elapsed - spell.delay) * 3), 0, Math.PI * 2); ctx.stroke();

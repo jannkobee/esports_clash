@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { CHAMPIONS } from './mockData.ts';
-import { auditAbilityCatalog } from './abilityCatalogAudit.ts';
+import { auditAbilityCatalog, buildAbilityAuditMatrix } from './abilityCatalogAudit.ts';
 
 test('ability catalog accounts for every champion, standard slot, passive, invoked spell, and declared movement state', () => {
   const audit = auditAbilityCatalog(CHAMPIONS);
@@ -19,4 +19,17 @@ test('ability catalog accounts for every champion, standard slot, passive, invok
   assert.ok(audit.movementAbilities.some(ability => ability.champion === 'Jaxon' && ability.kind === 'Leap'));
   assert.ok(audit.movementAbilities.some(ability => ability.champion === 'Valerie' && ability.kind === 'Charge'));
   assert.ok(audit.movementAbilities.some(ability => ability.champion === 'Paxi' && ability.kind === 'Teleport'));
+});
+
+test('ability audit matrix inventories standard, passive, and invoked executors without duplicating combat data', () => {
+  const matrix = buildAbilityAuditMatrix(CHAMPIONS);
+  assert.equal(matrix.length, 190);
+  assert.equal(matrix.filter(entry => entry.kind === 'standard-active').length, 135);
+  assert.equal(matrix.filter(entry => entry.kind === 'passive').length, 45);
+  assert.equal(matrix.filter(entry => entry.kind === 'invoked').length, 10);
+  assert.equal(new Set(matrix.map(entry => entry.id)).size, matrix.length);
+  assert.ok(matrix.every(entry => entry.description.trim().length >= 12));
+  assert.ok(matrix.some(entry => entry.name === 'Vault Breaker Punch' && entry.movement === 'Charge'));
+  assert.ok(matrix.some(entry => entry.name === 'Rimeball Roll' && entry.runtimeExecutor.includes('castKaelenInvokedSpell')));
+  assert.ok(matrix.filter(entry => entry.movement).every(entry => entry.status === 'requires-live-verification'));
 });

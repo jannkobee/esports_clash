@@ -9,8 +9,8 @@ import type { ThreeArenaTerrain } from '../threeArenaTerrain';
 import { SpectatorRoster } from './SpectatorRoster';
 import './spectator.css';
 import { drawKaelenSpell } from '../kaelenSpellVisuals';
-import { KAELEN_COMBOS, KAELEN_ORB_MANA, KAELEN_ACTION_INTERVAL, chooseKaelenCombo, nextKaelenRecipeOrb } from '../kaelenAbilities';
-import { advanceKaelenCast, kaelenCastLifetime, kaelenCastPosition, type KaelenCast } from '../kaelenSpellRuntime';
+import { KAELEN_ORB_MANA, KAELEN_ACTION_INTERVAL, chooseKaelenPlan, nextKaelenRecipeOrb } from '../kaelenAbilities';
+import { advanceKaelenCast, isKaelenZoneActive, kaelenCastLifetime, kaelenCastPosition, type KaelenCast } from '../kaelenSpellRuntime';
 import { 
   AramChampionUnit, 
   ChampionKit, 
@@ -364,6 +364,12 @@ function setUnitFacing(unit: AramChampionUnit, targetX: number, deadband = 12) {
 
 const getKaelenOrbBonuses = (unit: AramChampionUnit) =>
   kaelenOrbStatBonuses(unit.level, kaelenOrbCounts(unit.kaelenOrbs ?? []));
+
+// Keeps elemental buffs and slows in the existing movement model without changing base stats.
+const getKaelenMovementAdjustment = (unit: AramChampionUnit) => {
+  const orbAndBuff = getKaelenOrbBonuses(unit).moveSpeed + ((unit.kaelenEquinoxTimer ?? 0) > 0 ? unit.kaelenEquinoxMoveSpeed ?? 0 : 0);
+  return orbAndBuff - 90 * Math.max(0, Math.min(.45, unit.kaelenSlowAmount ?? 0));
+};
 
 const PROJECTILE_SKILL1_CHAMPIONS = new Set([
   'Astra', 'Kyumi', 'Kage', 'Kazemaru', 'Kindra', 'Kindra & Grim', 'Cora', 'Kaolin', 'Veyara', 'Cinderbloom', 'Cinderlock',
@@ -1861,22 +1867,49 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (s.kaelenCast) {
           const source = champs.find(c => c.id === s.sourceUnitId);
           const spell = KAELEN_INVOKED_SPELLS.find(spell => spell.id === s.kaelenCast!.spellId);
-          if (source && spell) {
+          if (source && spell && spell.targeting !== 'ally' && spell.targeting !== 'summon') {
             const hits = advanceKaelenCast(s.kaelenCast, spell, dt, champs.filter(enemy => enemy.team !== source.team));
             Object.assign(s, kaelenCastPosition(s.kaelenCast, spell));
-            hits.forEach(enemy => {
-              if (spell.control === 'stun' || spell.control === 'root' || spell.control === 'knockup') {
+            const initialHits = spell.zone && s.kaelenCast.zoneStarted ? [] : hits;
+            if (spell.zone && s.kaelenCast.elapsed >= spell.delay) s.kaelenCast.zoneStarted = true;
+            if (initialHits.length > 0 && spell.id === 'sirocco-flare') sound.playUltimateExplosion();
+            initialHits.forEach(enemy => {
+              if (spell.id !== 'glacier-lock' && (spell.control === 'stun' || spell.control === 'root' || spell.control === 'knockup')) {
                 applyChampionCrowdControl(source, enemy, spell.controlDuration, spell.control, spell.name);
               } else if (spell.control === 'knockback') {
-                const origin = s.kaelenCast!.origin;
-                const gap = Math.max(1, Math.hypot(enemy.x - origin.x, enemy.y - origin.y));
-                const destination = { x: Math.max(40, Math.min(ARENA_WIDTH - 40, enemy.x + (enemy.x - origin.x) / gap * 58)),
-                  y: Math.max(80, Math.min(620, enemy.y + (enemy.y - origin.y) / gap * 58)) };
+                const origin = s.kaelenCast!.origin, aim = s.kaelenCast!.aim;
+                const gap = Math.max(1, Math.hypot(aim.x - origin.x, aim.y - origin.y));
+                const destination = { x: Math.max(40, Math.min(ARENA_WIDTH - 40, enemy.x + (aim.x - origin.x) / gap * 54)),
+                  y: Math.max(80, Math.min(620, enemy.y + (aim.y - origin.y) / gap * 54)) };
                 Object.assign(enemy, resolveRockTerrainMovement(enemy, destination, 13));
               }
               applyDamageToChampion(source, enemy, spell.damage, false, spell.name, 'skill1');
+              if (spell.slow) {
+                enemy.kaelenSlowTimer = Math.max(enemy.kaelenSlowTimer ?? 0, spell.slow.duration);
+                enemy.kaelenSlowAmount = Math.max(enemy.kaelenSlowAmount ?? 0, spell.slow.amount);
+              }
+              if (spell.id === 'glacier-lock') {
+                enemy.kaelenFrostStacks = 0;
+                enemy.kaelenFrostExpiresAt = matchTimeRef.current + (spell.debuff?.duration ?? 3.2);
+                enemy.kaelenFrostSourceId = source.id;
+              }
+              if (spell.debuff && spell.id !== 'glacier-lock') {
+                enemy.kaelenAshenStacks = Math.min(spell.debuff.maxStacks ?? 1, (enemy.kaelenAshenStacks ?? 0) + 1);
+                enemy.kaelenAshenExpiresAt = matchTimeRef.current + spell.debuff.duration;
+                enemy.kaelenAshenNextTickAt = matchTimeRef.current + spell.debuff.tickInterval;
+                enemy.kaelenAshenSourceId = source.id;
+              }
               if (enemy.id === source.kaelenComboTargetId && source.kaelenAwaitSpellId === spell.id) source.kaelenLastSpellHitAt = matchTimeRef.current;
             });
+            if (spell.zone && isKaelenZoneActive(s.kaelenCast, spell) && (s.kaelenCast.nextTickAt ?? 0) <= s.kaelenCast.elapsed) {
+              s.kaelenCast.nextTickAt = s.kaelenCast.elapsed + spell.zone.tickInterval;
+              const position = kaelenCastPosition(s.kaelenCast, spell);
+              champs.filter(enemy => enemy.team !== source.team && enemy.isAlive && !enemy.zhonyaActive
+                && Math.hypot(enemy.x - position.x, enemy.y - position.y) <= spell.radius).forEach(enemy => {
+                applyDamageToChampion(source, enemy, spell.zone!.tickDamage, false, `${spell.name} zone`, 'skill1');
+                if (spell.slow) { enemy.kaelenSlowTimer = Math.max(enemy.kaelenSlowTimer ?? 0, spell.slow.duration); enemy.kaelenSlowAmount = Math.max(enemy.kaelenSlowAmount ?? 0, spell.slow.amount); }
+              });
+            }
           }
         }
         // Continuous Pull Tether: Raijin's Electric Vortex
@@ -2043,18 +2076,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       m.attackTimer = Math.max(0, m.attackTimer - dt);
       if (m.siegeGolem) m.siegeChargeImpactTimer = Math.max(0, (m.siegeChargeImpactTimer ?? 0) - dt);
 
-      if (m.summonedBearOwnerId) {
-        const owner = champs.find(c => c.id === m.summonedBearOwnerId && c.isAlive);
-        if (!owner) { m.isAlive = false; return; }
+      if (m.summonedBearOwnerId || m.prismWardenOwnerId) {
+        const isWarden = !!m.prismWardenOwnerId;
+        const owner = champs.find(c => c.id === (m.summonedBearOwnerId ?? m.prismWardenOwnerId) && c.isAlive);
+        if (!owner || (isWarden && (m.prismWardenExpiresAt ?? 0) <= matchTimeRef.current)) { m.isAlive = false; return; }
 
         const nearby = (unit: { x: number; y: number }, range: number) =>
           Math.hypot(unit.x - m.x, unit.y - m.y) <= range;
         const hostileChamps = champs.filter(c => c.team !== m.team && c.isAlive && nearby(c, 280));
-        const focus = hostileChamps.find(c => c.id === m.summonedBearFocusId);
+        const focus = hostileChamps.find(c => c.id === (m.summonedBearFocusId ?? m.prismWardenFocusId));
         const championTarget = focus ?? hostileChamps.sort((a, b) =>
           Math.hypot(a.x - m.x, a.y - m.y) - Math.hypot(b.x - m.x, b.y - m.y))[0];
-        const enemyMinion = minions.find(e => e.team !== m.team && e.isAlive && nearby(e, 160));
-        const enemyStructure = structures.find(s => s.team !== m.team && s.isAlive && nearby(s, 140)
+        const enemyMinion = minions.find(e => e.team !== m.team && e.isAlive && nearby(e, isWarden ? 220 : 160));
+        // Prism Warden is intentionally barred from structure targeting; it is area pressure, not siege damage.
+        const enemyStructure = isWarden ? undefined : structures.find(s => s.team !== m.team && s.isAlive && nearby(s, 140)
           && (s.type !== 'nexus' || canDamageNexus(s.team, structures)));
         const target = championTarget ?? enemyMinion ?? enemyStructure;
         const follow = target ?? { x: owner.x + (owner.team === 'blue' ? 45 : -45), y: owner.y + 52 };
@@ -2066,8 +2101,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           m.x += (follow.x - m.x) / distance * step;
           m.y += (follow.y - m.y) / distance * step;
         } else if (target && m.attackTimer <= 0) {
-          m.attackTimer = 1.15;
-          if ('player' in target) applyDamageToChampion(owner, target, m.ad, false, 'Spirit Bear Claws');
+          m.attackTimer = isWarden ? 1.2 : 1.15;
+          if ('player' in target) {
+            applyDamageToChampion(owner, target, m.ad, false, isWarden ? 'Prism Warden Bolt' : 'Spirit Bear Claws');
+            if (isWarden) { target.kaelenSlowTimer = Math.max(target.kaelenSlowTimer ?? 0, .65); target.kaelenSlowAmount = Math.max(target.kaelenSlowAmount ?? 0, .12); }
+          }
           else if ('armor' in target) applyDamageToStructure(owner, target, m.ad);
           else applyDamageToMinion(owner, target, m.ad);
         }
@@ -2169,6 +2207,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       try {
       if (!u.isAlive) {
         u.kaelenComboId = undefined;
+        u.kaelenPlanSpells = undefined;
+        u.kaelenPlanExpiresAt = undefined;
+        u.kaelenTacticalGoal = undefined;
         u.kaelenAwaitSpellId = undefined;
         u.kaelenLastSpellHitAt = undefined;
         u.recallIntent = false;
@@ -2199,7 +2240,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const nearbyDefense = chooseBaseDefense(u, structures,
           champs.filter(enemy => enemy.team !== u.team && isUnitVisibleTo(enemy, u)),
           minions, u.baseDefenseTargetId);
-        const defenseSpeed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed;
+        const defenseSpeed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u);
         // Do not cancel a nearly finished recall when it is the quicker way home.
         if (nearbyDefense && shouldInterruptRecallForDefense(nearbyDefense, {
           position: u, rally: nearbyDefense.rally, well: { x: WELL_X[u.team], y: LANE_Y },
@@ -2290,6 +2331,27 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (u.cdUlt > 0 && (u.level >= 6 || u.champion.name === 'Kaelen')) u.cdUlt = Math.max(0, u.cdUlt - dt);
       if (u.champion.name === 'Kaelen') {
         u.hp = Math.min(u.maxHp, u.hp + getKaelenOrbBonuses(u).healthRegen * dt);
+      }
+      if ((u.kaelenSlowTimer ?? 0) > 0) {
+        u.kaelenSlowTimer = Math.max(0, u.kaelenSlowTimer! - dt);
+        if (u.kaelenSlowTimer === 0) u.kaelenSlowAmount = 0;
+      }
+      if ((u.kaelenEquinoxTimer ?? 0) > 0) {
+        u.kaelenEquinoxTimer = Math.max(0, u.kaelenEquinoxTimer! - dt);
+        if (u.kaelenEquinoxTimer === 0) {
+          u.shield = Math.max(0, u.shield - (u.kaelenEquinoxShield ?? 0));
+          u.kaelenEquinoxShield = 0; u.kaelenEquinoxMoveSpeed = 0;
+        }
+      }
+      if ((u.kaelenFrostExpiresAt ?? 0) <= matchTimeRef.current) {
+        u.kaelenFrostStacks = 0; u.kaelenFrostSourceId = undefined;
+      }
+      if ((u.kaelenAshenExpiresAt ?? 0) > matchTimeRef.current && (u.kaelenAshenNextTickAt ?? Infinity) <= matchTimeRef.current) {
+        const source = champs.find(c => c.id === u.kaelenAshenSourceId && c.isAlive) ?? null;
+        applyDamageToChampion(source, u, 24 * Math.max(1, u.kaelenAshenStacks ?? 1), false, 'Ashen Hail burn', 'skill1');
+        u.kaelenAshenNextTickAt = matchTimeRef.current + .55;
+      } else if ((u.kaelenAshenExpiresAt ?? 0) <= matchTimeRef.current) {
+        u.kaelenAshenStacks = 0; u.kaelenAshenSourceId = undefined;
       }
       if (u.kaelenInvokeCooldown && u.kaelenInvokeCooldown > 0) {
         u.kaelenInvokeCooldown = Math.max(0, u.kaelenInvokeCooldown - dt);
@@ -3401,8 +3463,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         } else {
           u.animState = 'walk';
           const ang = Math.atan2(minionToClear.y - u.y, minionToClear.x - u.x);
-          u.vx = Math.cos(ang) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
-          u.vy = Math.sin(ang) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+          u.vx = Math.cos(ang) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+          u.vy = Math.sin(ang) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
           u.x += u.vx * dt;
           u.y += u.vy * dt;
         }
@@ -3768,7 +3830,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (!defenseCall) return;
         const waypoint = rockApproachWaypoint(u, defenseCall.rally);
         const distance = Math.hypot(waypoint.x - u.x, waypoint.y - u.y);
-        const speed = Math.min(90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed, distance / dt);
+        const speed = Math.min(90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u), distance / dt);
         u.vx = distance > 8 ? (waypoint.x - u.x) / distance * speed : 0;
         u.vy = distance > 8 ? (waypoint.y - u.y) / distance * speed : 0;
         u.x += u.vx * dt; u.y += u.vy * dt;
@@ -3911,7 +3973,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           // Direct route toward nexus along the central lane corridor
           const targetRouteY = Math.abs(u.y - LANE_Y) > 40 ? (u.y * 0.6 + LANE_Y * 0.4) : enemyNexus.y;
           const angle = Math.atan2(targetRouteY - u.y, enemyNexus.x - u.x);
-          const speed = 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
+          const speed = 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
           u.x += u.vx * dt;
@@ -3934,7 +3996,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           distance > 20 ? 'move' : 'hold', `post-objective:${u.team}:${Number(wasJustAttacked)}`, 1.0);
         if (distance > 20) {
           const angle = Math.atan2(laneY - u.y, laneX - u.x);
-          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
+          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
           u.x += u.vx * dt;
@@ -3973,7 +4035,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           `stage:${upcomingTempoObjective.key}:${Math.ceil(upcomingTempoObjective.secondsUntil / 3)}`, 0.9);
         if (approachDistance > 20) {
           const angle = Math.atan2(approachY - u.y, approachX - u.x);
-          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed
+          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u)
             + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
@@ -4025,7 +4087,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.animState = 'walk';
           const waypoint = rockApproachWaypoint(u, dragon);
           const angle = Math.atan2(waypoint.y - u.y, waypoint.x - u.x);
-          const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed
+          const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u)
             + ((u.stealthTimer ?? 0) > 0 ? 60 : 0), Math.hypot(waypoint.x - u.x, waypoint.y - u.y) / dt);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
@@ -4080,7 +4142,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.animState = 'walk';
           const waypoint = rockApproachWaypoint(u, golem);
           const angle = Math.atan2(waypoint.y - u.y, waypoint.x - u.x);
-          const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed
+          const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u)
             + ((u.stealthTimer ?? 0) > 0 ? 60 : 0), Math.hypot(waypoint.x - u.x, waypoint.y - u.y) / dt);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
@@ -4153,7 +4215,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         setActionIntent('regroup', callLeader, 'move',
           `personality-regroup:${callLeader.id}:${Math.floor(groupDistance / 80)}`, 0.8);
         const angle = Math.atan2(callLeader.y - u.y, callLeader.x - u.x);
-        const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed,
+        const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u),
           groupDistance / dt);
         u.vx = Math.cos(angle) * speed;
         u.vy = Math.sin(angle) * speed;
@@ -4223,7 +4285,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         } else {
           u.animState = 'walk';
           const angle = Math.atan2(farmY - u.y, farmX - u.x);
-          const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed
+          const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u)
             + ((u.stealthTimer ?? 0) > 0 ? 60 : 0), Math.hypot(farmX - u.x, farmY - u.y) / dt);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
@@ -4241,8 +4303,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           `fight-regroup:${actionContextFor('regroup', fightingAlly)}`, 0.8);
         u.animState = 'walk';
         const groupAngle = Math.atan2(fightingAlly.y - u.y, fightingAlly.x - u.x);
-        u.vx = Math.cos(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
-        u.vy = Math.sin(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+        u.vx = Math.cos(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
+        u.vy = Math.sin(groupAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0));
         u.x += u.vx * dt;
         u.y += u.vy * dt;
         setUnitFacing(u, fightingAlly.x);
@@ -4256,8 +4318,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           `support-tether:${actionContextFor('regroup', nearestLivingCarry)}`, 0.8);
         u.animState = 'walk';
         const followAngle = Math.atan2(nearestLivingCarry.y - u.y, nearestLivingCarry.x - u.x);
-        u.vx = Math.cos(followAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed);
-        u.vy = Math.sin(followAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed);
+        u.vx = Math.cos(followAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u));
+        u.vy = Math.sin(followAngle) * (85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u));
         u.x += u.vx * dt;
         u.y += u.vy * dt;
         setUnitFacing(u, nearestLivingCarry.x);
@@ -4292,6 +4354,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       } else if (!coordinatedEngage && u.followUpEngageSignaled) {
         u.followUpEngageSignaled = false;
+      }
+
+      // Equinox remains valid defensive utility even when no enemy is inside direct combat range.
+      if (u.champion.name === 'Kaelen' && !primaryTarget && (u.silenceTimer ?? 0) <= 0
+        && (u.kaelenActionTimer ?? 0) <= 0
+        && allies.filter(ally => ally.isAlive && Math.hypot(ally.x - u.x, ally.y - u.y) <= 260 && ally.hp / ally.maxHp < .55).length >= 2) {
+        const accord = KAELEN_INVOKED_SPELLS.find(spell => spell.id === 'primal-tempest');
+        if (accord && (u.kaelenInvokedSlots ?? []).includes(accord.id)
+          && castKaelenInvokedSpell(u, accord, u, (u.kaelenInvokedSlots ?? []).indexOf(accord.id))) {
+          u.kaelenActionTimer = KAELEN_ACTION_INTERVAL;
+          addEvent(`🛡 ARSENALDO: ${u.player.name} used Equinox Accord without requiring an enemy target.`, 'combo');
+          return;
+        }
       }
 
       // COMBAT ENGAGEMENT WITH ENEMIES:
@@ -4405,8 +4480,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             if (wantsCloseSkill && u.attackTimer > 0) {
               u.animState = 'walk';
               const angle = Math.atan2(primaryTarget.y - u.y, primaryTarget.x - u.x);
-              u.x += Math.cos(angle) * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
-              u.y += Math.sin(angle) * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
+              u.x += Math.cos(angle) * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
+              u.y += Math.sin(angle) * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
             }
           }
 
@@ -4457,7 +4532,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             u.animState = 'walk';
             const angle = Math.atan2(primaryTarget.y - u.y, primaryTarget.x - u.x);
             const engageSprintBonus = isFollowUpEngage ? 30 : 0;
-            const speed = 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0) + engageSprintBonus;
+          const speed = 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0) + engageSprintBonus;
             u.vx = Math.cos(angle) * speed;
             u.vy = Math.sin(angle) * speed;
             u.x += u.vx * dt;
@@ -4475,7 +4550,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           setActionIntent('champion', enemyToEngage, 'move',
             committedCombatCandidate?.contextKey ?? `objective-fight:${actionContextFor('champion', enemyToEngage)}`, 0.8);
           u.animState = 'walk';
-          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
+          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           const angle = Math.atan2(enemyToEngage.y - u.y, enemyToEngage.x - u.x);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
@@ -4490,7 +4565,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           setActionIntent('regroup', { id: `objective-approach:${isContestingDragon ? 'dragon' : 'golem'}`,
             x: engageX, y: engageY }, 'move',
             `objective-approach:${isContestingDragon ? 'dragon' : 'golem'}`, 0.8);
-          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
+          const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           const angle = Math.atan2(engageY - u.y, engageX - u.x);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
@@ -4560,7 +4635,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           setUnitFacing(u, siegeChampion.x);
           if (gap > attackRange * 0.92) {
             const angle = Math.atan2(siegeChampion.y - u.y, siegeChampion.x - u.x);
-            const chaseSpeed = 88 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed;
+            const chaseSpeed = 88 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u);
             u.vx = Math.cos(angle) * chaseSpeed; u.vy = Math.sin(angle) * chaseSpeed;
             u.x += u.vx * dt; u.y += u.vy * dt;
             u.animState = 'walk';
@@ -4619,7 +4694,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           const distance = Math.hypot(waypoint.x - u.x, waypoint.y - u.y);
           setActionIntent('push', { id: `camp-exit:${enclosingCamp.id}`, x: waypoint.x, y: waypoint.y },
             distance > 8 ? 'move' : 'hold', `camp-exit:${enclosingCamp.id}`, 0.8);
-          const speed = Math.min(70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed
+          const speed = Math.min(70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u)
             + ((u.stealthTimer ?? 0) > 0 ? 60 : 0), distance / dt);
           const angle = Math.atan2(waypoint.y - u.y, waypoint.x - u.x);
           u.vx = Math.cos(angle) * speed;
@@ -4641,7 +4716,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.animState = 'idle';
           return;
         }
-        const nextX = u.x + pushDir * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
+        const nextX = u.x + pushDir * (70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0)) * dt;
         u.x = wouldOverstep(u.team, nextX, advanceLimit)
           ? u.x + Math.sign(advanceLimit - u.x) * Math.min(Math.abs(advanceLimit - u.x), 70 * dt)
           : nextX;
@@ -5584,7 +5659,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     if (u.champion.name === 'Solana') {
       applyChampionCrowdControl(u, target, 1.2, 'stun', '☀️ Solar Shieldbash');
-      applyDamageToChampion(u, target, 120, false, '☀️ Solar Shieldbash');
+      applyDamageToChampion(u, target, u.champion.skill1.damage, false, '☀️ Solar Shieldbash');
       spellsRef.current.push({
         id: random().toString(),
         type: 'solar_flare',
@@ -6158,8 +6233,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     target: AramChampionUnit, slotIndex: number,
   ) => {
     if ((u.kaelenSpellCooldowns?.[spell.id] ?? 0) > 0 || u.mana < spell.mana) return false;
-    if (spell.shape !== 'self' && Math.hypot(target.x - u.x, target.y - u.y) > spell.range) return false;
-    const destination = spell.shape === 'self' ? { x: u.x, y: u.y } : getGroundTargetPoint(
+    const alliedTarget = spell.targeting === 'ally'
+      ? championsRef.current.filter(ally => ally.team === u.team && ally.isAlive && Math.hypot(ally.x - u.x, ally.y - u.y) <= spell.range)
+        .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0] ?? u
+      : undefined;
+    const castTarget = alliedTarget ?? target;
+    if (Math.hypot(castTarget.x - u.x, castTarget.y - u.y) > spell.range) return false;
+    const destination = spell.targeting === 'ally' ? { x: castTarget.x, y: castTarget.y } : getGroundTargetPoint(
       u, { x: target.x, y: target.y }, u.team === 'blue' ? 1 : -1, spell.range,
       { minX: 40, maxX: ARENA_WIDTH - 40, minY: 80, maxY: 620 });
     u.mana -= spell.mana;
@@ -6169,7 +6249,27 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     u.animState = 'cast';
     recordAbilityCast(insightsRef.current, u, slotIndex === 0 ? 'invokedD' : 'invokedF', matchTimeRef.current);
     sound.playAvatarSkill(u.champion.name, u.activeAbilitySlot, u.x / ARENA_WIDTH * 2 - 1);
-    if (spell.shape === 'self') u.hp = Math.min(u.maxHp, u.hp + 80);
+    if (spell.shield) {
+      championsRef.current.filter(ally => ally.team === u.team && ally.isAlive && Math.hypot(ally.x - destination.x, ally.y - destination.y) <= spell.radius).forEach(ally => {
+        const priorEquinox = ally.kaelenEquinoxShield ?? 0;
+        ally.shield += Math.max(0, spell.shield!.amount - priorEquinox);
+        ally.kaelenEquinoxShield = spell.shield!.amount;
+        ally.kaelenEquinoxTimer = spell.shield!.duration;
+        ally.kaelenEquinoxMoveSpeed = spell.shield!.moveSpeed;
+      });
+    }
+    if (spell.summon) {
+      const wardenId = `prism-warden-${u.id}`;
+      const existing = minionsRef.current.find(minion => minion.prismWardenOwnerId === u.id && minion.isAlive);
+      if (existing) {
+        existing.x = destination.x; existing.y = destination.y; existing.hp = existing.maxHp = spell.summon.health;
+        existing.prismWardenFocusId = target.id; existing.prismWardenExpiresAt = matchTimeRef.current + spell.summon.duration;
+      } else minionsRef.current.push({ id: wardenId, team: u.team, type: 'caster', x: destination.x, y: destination.y,
+        hp: spell.summon.health, maxHp: spell.summon.health, ad: spell.summon.attackDamage, range: 155, speed: 82,
+        attackTimer: 0, goldReward: 0, xpReward: 0, isAlive: true, prismWardenOwnerId: u.id,
+        prismWardenFocusId: target.id, prismWardenExpiresAt: matchTimeRef.current + spell.summon.duration });
+      sound.playCoin();
+    }
     const cast: KaelenCast = { spellId: spell.id, origin: { x: u.x, y: u.y }, aim: destination,
       elapsed: 0, hitIds: [], resolved: false };
     const lifetime = kaelenCastLifetime(spell);
@@ -6183,27 +6283,38 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const processKaelenTurn = (u: AramChampionUnit, target: AramChampionUnit | undefined, enemies: AramChampionUnit[]) => {
     if (!target || !target.isAlive || target.zhonyaActive || (target.untargetableTimer ?? 0) > 0
       || u.diveAborting || u.isRecalling || (u.kaelenActionTimer ?? 0) > 0) return false;
-    let combo = KAELEN_COMBOS.find(combo => combo.id === u.kaelenComboId);
-    if (u.kaelenComboTargetId !== target.id) combo = undefined;
+    const nearbyAllies = championsRef.current.filter(ally => ally.team === u.team && ally.isAlive && Math.hypot(ally.x - u.x, ally.y - u.y) < 260);
+    const needsProtection = nearbyAllies.filter(ally => ally.hp / ally.maxHp < .5).length;
+    const cluster = enemies.filter(enemy => Math.hypot(enemy.x - target.x, enemy.y - target.y) < 145).length;
+    const gravemarch = jungleCampsRef.current.find(camp => camp.type === 'siege_golem' && camp.isAlive);
+    const objectiveFight = Math.hypot(u.x - DRAGON_X, u.y - LANE_Y) < 260
+      || !!gravemarch && Math.hypot(u.x - gravemarch.x, u.y - gravemarch.y) < 260;
+    let combo = u.kaelenComboId && u.kaelenPlanExpiresAt && u.kaelenPlanExpiresAt > matchTimeRef.current && u.kaelenComboTargetId === target.id
+      ? { id: u.kaelenComboId, name: u.kaelenTacticalGoal ?? 'Adaptive Conflux', spells: [] as string[], tacticalGoal: u.kaelenTacticalGoal ?? 'adaptive pressure' }
+      : undefined;
+    // The plan is rebuilt from current resources and threat, not pinned to a preset rotation.
     if (!combo) {
-      combo = chooseKaelenCombo({ healthFraction: u.hp / u.maxHp,
-        enemyDistance: Math.hypot(target.x - u.x, target.y - u.y),
-        clusteredEnemies: enemies.filter(enemy => Math.hypot(enemy.x - target.x, enemy.y - target.y) < 140).length,
-        cycle: u.kaelenComboCycle ?? 0, cooldowns: u.kaelenSpellCooldowns ?? {} });
-      if (!combo) return false;
-      u.kaelenComboId = combo.id;
-      u.kaelenComboStep = 0;
-      u.kaelenComboTargetId = target.id;
-      u.kaelenLastSpellHitAt = undefined;
+      const plan = chooseKaelenPlan({ healthFraction: u.hp / u.maxHp, enemyDistance: Math.hypot(target.x - u.x, target.y - u.y),
+        clusteredEnemies: cluster, threatenedAllies: needsProtection, objectiveFight, defending: u.hp / u.maxHp < .58,
+        mana: u.mana, iq: u.player.stats.iq, cooldowns: u.kaelenSpellCooldowns ?? {}, cycle: u.kaelenComboCycle ?? 0,
+        personality: personalityOf(u.player) });
+      if (!plan) return false;
+      u.kaelenComboId = plan.id; u.kaelenComboStep = 0; u.kaelenComboTargetId = target.id;
+      u.kaelenPlanExpiresAt = matchTimeRef.current + 7; u.kaelenTacticalGoal = plan.tacticalGoal;
+      // Store the evolving spell IDs under the existing plan ID as a local dynamic sequence.
+      u.kaelenInvokedSlots ??= [];
+      u.kaelenPlanSpells = plan.spells;
+      combo = { ...plan };
+      addEvent(`🔮 ARSENALDO PLAN: ${plan.tacticalGoal} · ${plan.spells.length} legal spell${plan.spells.length === 1 ? '' : 's'} queued.`, 'combo');
     }
+    const planSpells = u.kaelenPlanSpells ?? combo.spells;
     const step = u.kaelenComboStep ?? 0;
-    const desired = KAELEN_INVOKED_SPELLS.find(spell => spell.id === combo!.spells[step]);
+    const desired = KAELEN_INVOKED_SPELLS.find(spell => spell.id === planSpells[step]);
     if (!desired) { u.kaelenComboId = undefined; return false; }
     const slots = u.kaelenInvokedSlots ?? [];
-    // Preload the first two spells before opening. Follow-ups do not spend
-    // the entire control window gathering another recipe or waiting on R.
+    // Preload two slots when legal; each successful cast makes space for later reinvocation.
     const prepareId = !slots.includes(desired.id) ? desired.id
-      : step === 0 && !slots.includes(combo.spells[1]) ? combo.spells[1] : undefined;
+      : step === 0 && !slots.includes(planSpells[1] ?? '') ? planSpells[1] : undefined;
     let acted = false;
     if (prepareId) {
       const spell = KAELEN_INVOKED_SPELLS.find(spell => spell.id === prepareId)!;
@@ -6218,19 +6329,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // Wait for the opening projectile/telegraph to connect. On a miss, release
       // the sequence instead of firing the finisher at a stale landing point.
       const pending = spellsRef.current.find(effect => effect.sourceUnitId === u.id && effect.kaelenCast
-        && effect.kaelenCast.spellId === combo!.spells[step - 1]);
+        && effect.kaelenCast.spellId === planSpells[step - 1]);
       if (step > 0 && u.kaelenLastSpellHitAt === undefined && pending?.kaelenCast && !pending.kaelenCast.resolved) return false;
-      if (step > 0 && u.kaelenLastSpellHitAt === undefined && combo.id !== 'peel') {
+      if (step > 0 && u.kaelenLastSpellHitAt === undefined && desired.targeting === 'ground' && cluster < 2) {
         u.kaelenComboId = undefined; return false;
       }
       acted = castKaelenInvokedSpell(u, desired, target, slots.indexOf(desired.id));
       if (acted) {
-        if (step === 0) addEvent(u.player.name + ' begins ' + combo.name + '.', 'combo');
+        if (step === 0) addEvent(u.player.name + ' begins ' + (u.kaelenTacticalGoal ?? 'an adaptive Conflux plan') + '.', 'combo');
         u.kaelenComboStep = step + 1;
         u.kaelenAwaitSpellId = desired.id;
         u.kaelenLastSpellHitAt = undefined;
-        if (step + 1 >= combo.spells.length) {
+        if (step + 1 >= planSpells.length) {
           u.kaelenComboId = undefined;
+          u.kaelenPlanExpiresAt = undefined;
           u.kaelenComboCycle = (u.kaelenComboCycle ?? 0) + 1;
         }
       }
@@ -6543,7 +6655,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     if (skill.damage > 0 && target.isAlive && !['Buck', 'Kaolin', 'Cinderbloom', 'Cinderlock', 'Tequoia', 'Stonebranch', 'Solana', 'Veyara', 'Brewmaw', 'Jaxon'].includes(name)) {
-      applyDamageToChampion(u, target, Math.round(skill.damage * utility), skill.damageType === 'True', skill.name);
+      // Damage application owns the per-rank multiplier. Passing a pre-scaled
+      // value here would multiply the rank progression a second time.
+      applyDamageToChampion(u, target, skill.damage, skill.damageType === 'True', skill.name);
     }
     addEvent(`✨ ${u.player.name} used ${skill.name}!`, 'combo');
   };
@@ -6561,9 +6675,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     const ultRank = u.level >= 18 ? 4 : u.level >= 16 ? 3 : u.level >= 11 ? 2 : 1;
-    // Keep live ultimate damage on the same authored rank table displayed by
-    // the dossier and used by the shared progression helpers.
-    const ultDamage = Math.round(u.champion.ultimate.damage * abilityDamageMultiplier(u.level, 'ultimate'));
+    // applyDamageToChampion owns the authored rank multiplier. Keep this raw
+    // base value so every ultimate, including deferred projectiles, is scaled
+    // exactly once and agrees with the dossier presentation.
+    const ultDamage = u.champion.ultimate.damage;
 
     showBanner(
       `💥 ${u.player.name.toUpperCase()} CAST ${u.champion.ultimate.name.toUpperCase()}!`,
@@ -7034,6 +7149,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     target.stealthTimer = 0;
     if (attacker) attacker.stealthTimer = 0;
 
+    // Hoarfrost only reacts to real subsequent hostile champion hits. The mark has a
+    // short per-target control lockout so coordinated follow-up cannot create a root loop.
+    if (attacker && attacker.team !== target.team && (target.kaelenFrostExpiresAt ?? 0) > matchTimeRef.current
+      && label !== 'Hoarfrost Decree') {
+      target.kaelenFrostStacks = Math.min(3, (target.kaelenFrostStacks ?? 0) + 1);
+      if ((target.kaelenFrostStacks ?? 0) >= 3 && (target.kaelenFrostRootLockoutUntil ?? 0) <= matchTimeRef.current) {
+        const source = championsRef.current.find(c => c.id === target.kaelenFrostSourceId && c.isAlive) ?? attacker;
+        applyChampionCrowdControl(source, target, .65, 'root', 'Hoarfrost Fracture');
+        target.kaelenFrostStacks = 0;
+        target.kaelenFrostRootLockoutUntil = matchTimeRef.current + 4;
+        floatsRef.current.push({ id: random().toString(), x: target.x, y: target.y - 48, text: '❄ FROST FRACTURE', color: '#bae6fd', opacity: 1, scale: 1.08 });
+      }
+    }
+
     // Interrupt Recall channel immediately if taking damage
     if (target.isRecalling) {
       target.isRecalling = false;
@@ -7236,11 +7365,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     let damageRemaining = damageToTarget;
     if (target.shield > 0) {
       if (target.shield >= damageRemaining) {
+        const absorbed = damageRemaining;
         target.shield -= damageRemaining;
         damageRemaining = 0;
+        if ((target.kaelenEquinoxShield ?? 0) > 0) target.kaelenEquinoxShield = Math.max(0, target.kaelenEquinoxShield! - absorbed);
       } else {
+        const absorbed = target.shield;
         damageRemaining -= target.shield;
         target.shield = 0;
+        if ((target.kaelenEquinoxShield ?? 0) > 0) target.kaelenEquinoxShield = Math.max(0, target.kaelenEquinoxShield! - absorbed);
       }
     }
     const hpBefore = target.hp;
@@ -9271,7 +9404,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     // 12. MINIONS
     minionsRef.current.forEach((m) => {
-      if (m.summonedBearOwnerId) return;
+      if (m.summonedBearOwnerId || m.prismWardenOwnerId) return;
       ctx.save();
       ctx.translate(m.x, m.y);
 
@@ -10656,6 +10789,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ctx.save(); ctx.strokeStyle = '#fdba74'; ctx.setLineDash([5, 5]);
         ctx.beginPath(); ctx.arc(u.x, u.y - 18, 24, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
       }
+      if ((u.kaelenFrostExpiresAt ?? 0) > matchTimeRef.current) {
+        const stacks = u.kaelenFrostStacks ?? 0;
+        ctx.save(); ctx.textAlign = 'center'; ctx.font = 'bold 9px system-ui'; ctx.fillStyle = '#e0f2fe';
+        ctx.strokeStyle = '#082f49'; ctx.lineWidth = 3; const label = `❄ ${stacks}/3 FROST`;
+        ctx.strokeText(label, u.x, u.y - 64 - knockupHeight); ctx.fillText(label, u.x, u.y - 64 - knockupHeight);
+        ctx.strokeStyle = '#7dd3fc'; ctx.beginPath(); ctx.arc(u.x, u.y - 18, 20 + stacks * 2, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      }
+      if ((u.kaelenAshenExpiresAt ?? 0) > matchTimeRef.current) {
+        ctx.save(); ctx.strokeStyle = '#fb7185'; ctx.lineWidth = 2; ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.arc(u.x, u.y - 18, 24, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      }
 
       // Show the current three-orb FIFO and the two invoked spell slots.
       if (u.champion.name === 'Kaelen' && u.isAlive) {
@@ -10832,21 +10976,31 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     });
 
     // Summons occupy a separate foreground pass so crowded teamfights cannot hide the bear.
-    minionsRef.current.filter(m => m.summonedBearOwnerId && m.isAlive).forEach(m => {
+    minionsRef.current.filter(m => (m.summonedBearOwnerId || m.prismWardenOwnerId) && m.isAlive).forEach(m => {
       ctx.save();
       ctx.translate(m.x, m.y);
+      if (m.prismWardenOwnerId) {
+        const pulse = 1 + Math.sin(time * 5) * .1;
+        ctx.scale(pulse, pulse);
+        const prism = ctx.createRadialGradient(0, -5, 2, 0, 0, 27);
+        prism.addColorStop(0, '#fef3c7'); prism.addColorStop(.45, '#fb7185'); prism.addColorStop(1, '#701a75');
+        ctx.fillStyle = prism; ctx.beginPath(); ctx.moveTo(0, -28); ctx.lineTo(23, 8); ctx.lineTo(0, 25); ctx.lineTo(-23, 8); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = '#fde68a'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = '#fff7ed'; ctx.beginPath(); ctx.arc(0, -2, 5, 0, Math.PI * 2); ctx.fill();
+      } else {
       ctx.save();
       ctx.scale(1.18 * creatureFacingScale(m.facingX ?? (m.team === 'blue' ? 1 : -1)), 1.18);
       drawSpiritBearSprite(ctx, time, m.team, creatureAttackPose(m.attackTimer, 1.15));
       ctx.restore();
+      }
       const hpPct = Math.max(0, m.hp / m.maxHp);
       ctx.fillStyle = '#020617'; ctx.fillRect(-24, -57, 48, 5);
       ctx.fillStyle = m.team === 'blue' ? '#34d399' : '#fb7185';
       ctx.fillRect(-23, -56, 46 * hpPct, 3);
       ctx.font = 'bold 10px system-ui, sans-serif'; ctx.textAlign = 'center';
       ctx.lineWidth = 3; ctx.strokeStyle = '#020617';
-      ctx.strokeText('SPIRIT BEAR', 0, -63);
-      ctx.fillStyle = '#ecfdf5'; ctx.fillText('SPIRIT BEAR', 0, -63);
+      ctx.strokeText(m.prismWardenOwnerId ? 'PRISM WARDEN' : 'SPIRIT BEAR', 0, -63);
+      ctx.fillStyle = m.prismWardenOwnerId ? '#fef3c7' : '#ecfdf5'; ctx.fillText(m.prismWardenOwnerId ? 'PRISM WARDEN' : 'SPIRIT BEAR', 0, -63);
       ctx.restore();
     });
 

@@ -8,7 +8,6 @@ import { sound } from '../audio';
 import { getChampionLore } from '../championLore';
 import { KAELEN_INVOKED_SPELLS, kaelenOrbRankAtLevel, kaelenOrbStatBonuses } from '../kaelenAbilities';
 import { abilityTargetingDetails } from '../aetherisAbilities';
-import { getAbilityRatios } from '../abilityRules';
 import { getAbilityPresentation } from '../abilityPresentation';
 import { 
   Shield, 
@@ -68,26 +67,6 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
   };
 
   const lore = getChampionLore(selectedChamp.id);
-
-  // Scaled calculations for ranks
-  // 7 Ranks for basic skills, 4 Ranks for ultimate, Level 18 cap
-  const getSkillDamageAtRank = (baseDamage: number, rank: number, isUlt: boolean) => {
-    if (isUlt) {
-      const mult = [0, 0.55, 0.80, 1.05, 1.30][rank] ?? 1.30;
-      return Math.round(baseDamage * mult);
-    }
-    const mult = [0, 0.40, 0.55, 0.70, 0.85, 1.00, 1.15, 1.30][rank] ?? 1.30;
-    return Math.round(baseDamage * mult);
-  };
-
-  const getSkillCdAtRank = (baseCd: number, rank: number, isUlt: boolean) => {
-    if (isUlt) {
-      const mult = [1.20, 1.15, 1.00, 0.85, 0.70][rank] ?? 0.70;
-      return (baseCd * mult).toFixed(1);
-    }
-    const mult = [1.35, 1.30, 1.20, 1.10, 1.00, 0.90, 0.80, 0.70][rank] ?? 0.70;
-    return (baseCd * mult).toFixed(1);
-  };
 
   const isKaelen = selectedChamp.name === 'Kaelen';
   const currentMaxRank = isKaelen ? 1 : activeSkillTab === 'ultimate' ? 4 : activeSkillTab === 'passive' ? 1 : 7;
@@ -318,7 +297,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
               </h4>
               <p className="text-xs text-slate-400 mt-0.5">
                 {isKaelen
-                  ? 'Arsenaldo: cooldown-free Q/W/E orbs cost 5 mana and grant stats while held · Conflux occupies R · Invoked slots D/F · Five situational combos.'
+                  ? 'Arsenaldo: cooldown-free Q/W/E orbs cost 5 mana and grant stats while held · Conflux occupies R · D/F are FIFO loadout slots · adaptive multi-spell plans.'
                   : 'Cap 18: Innate Passive Always Active · Q & W reach Rank 7 · Ultimate reaches Rank 4!'}
               </p>
             </div>
@@ -455,16 +434,16 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
                   </h5>
                   <div className="flex gap-2">
                     <span className="text-xs bg-slate-900 text-cyan-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                      {isKaelen ? 'No cooldown' : `CD: ${getSkillCdAtRank(selectedChamp.skill1.cooldown || 10, clampedRank, false)}s`}
+                      {isKaelen ? 'No cooldown' : `CD: ${activePresentation?.cooldown ?? selectedChamp.skill1.cooldown}s`}
                     </span>
                     <span className="text-xs bg-slate-900 text-amber-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                      {isKaelen ? '+1.0 movement speed/orb at rank 1' : `${selectedChamp.skill1.damageType} Dmg: ${getSkillDamageAtRank(selectedChamp.skill1.damage, clampedRank, false)}`}
+                      {isKaelen ? '+1.0 movement speed/orb at rank 1' : activePresentation?.damage ? `${activePresentation.damage.type} Dmg: ${activePresentation.damage.atRank}` : 'Utility ability'}
                     </span>
-                    {!isKaelen && selectedChamp.skill1.damage > 0 && (
+                    {!isKaelen && activePresentation?.damage && (
                       <span className="text-xs bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                        <span className="text-amber-400">+{getAbilityRatios(selectedChamp, selectedChamp.skill1).adPercent}% AD</span>
+                        <span className="text-amber-400">+{activePresentation.damage.adPercent}% AD</span>
                         {' · '}
-                        <span className="text-cyan-400">+{getAbilityRatios(selectedChamp, selectedChamp.skill1).apPercent}% AP</span>
+                        <span className="text-cyan-400">+{activePresentation.damage.apPercent}% AP</span>
                       </span>
                     )}
                   </div>
@@ -497,18 +476,18 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
                   </h5>
                   <div className="flex gap-2">
                     <span className="text-xs bg-slate-900 text-purple-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                      {isKaelen ? 'No cooldown' : `CD: ${getSkillCdAtRank(selectedChamp.skill2.cooldown || 10, clampedRank, false)}s`}
+                      {isKaelen ? 'No cooldown' : `CD: ${activePresentation?.cooldown ?? selectedChamp.skill2.cooldown}s`}
                     </span>
                     <span className="text-xs bg-slate-900 text-amber-300 px-2 py-0.5 rounded border border-white/10 font-bold">
                       {isKaelen ? '+1% spell + damage amp/orb at rank 1'
                         : selectedChamp.name === 'Aetheris' ? '100 shield · +15% attack damage · 5s'
-                          : `${selectedChamp.skill2.damageType} Dmg: ${getSkillDamageAtRank(selectedChamp.skill2.damage, clampedRank, false)}`}
+                          : activePresentation?.damage ? `${activePresentation.damage.type} Dmg: ${activePresentation.damage.atRank}` : 'Utility ability'}
                     </span>
-                    {!isKaelen && selectedChamp.skill2.damage > 0 && (
+                    {!isKaelen && activePresentation?.damage && (
                       <span className="text-xs bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                        <span className="text-amber-400">+{getAbilityRatios(selectedChamp, selectedChamp.skill2).adPercent}% AD</span>
+                        <span className="text-amber-400">+{activePresentation.damage.adPercent}% AD</span>
                         {' · '}
-                        <span className="text-cyan-400">+{getAbilityRatios(selectedChamp, selectedChamp.skill2).apPercent}% AP</span>
+                        <span className="text-cyan-400">+{activePresentation.damage.apPercent}% AP</span>
                       </span>
                     )}
                   </div>
@@ -563,18 +542,18 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
                   </h5>
                   <div className="flex gap-2">
                     <span className="text-xs bg-slate-900 text-rose-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                      CD: {getSkillCdAtRank(selectedChamp.ultimate.cooldown || 70, clampedRank, true)}s (100 Mana)
+                      CD: {activePresentation?.cooldown ?? selectedChamp.ultimate.cooldown}s ({activePresentation?.manaCost ?? 100} Mana)
                     </span>
                     <span className="text-xs bg-rose-950 text-rose-200 px-2 py-0.5 rounded border border-rose-500/40 font-bold">
                       {selectedChamp.name === 'Aetheris'
                         ? `Nearby allies linked for ${clampedRank + 4}s`
-                        : `${selectedChamp.ultimate.damageType} Dmg: ${getSkillDamageAtRank(selectedChamp.ultimate.damage, clampedRank, true)}`}
+                        : activePresentation?.damage ? `${activePresentation.damage.type} Dmg: ${activePresentation.damage.atRank}` : 'Utility ultimate'}
                     </span>
-                    {selectedChamp.ultimate.damage > 0 && (
+                    {activePresentation?.damage && (
                       <span className="text-xs bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                        <span className="text-amber-400">+{getAbilityRatios(selectedChamp, selectedChamp.ultimate).adPercent}% AD</span>
+                        <span className="text-amber-400">+{activePresentation.damage.adPercent}% AD</span>
                         {' · '}
-                        <span className="text-cyan-400">+{getAbilityRatios(selectedChamp, selectedChamp.ultimate).apPercent}% AP</span>
+                        <span className="text-cyan-400">+{activePresentation.damage.apPercent}% AP</span>
                       </span>
                     )}
                   </div>
