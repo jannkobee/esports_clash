@@ -76,10 +76,10 @@ test('Equalized coaches have identical tactical bonuses ensuring pure draft fair
   assert.equal(EQUALIZED_COACH_BLUE.extraBans, EQUALIZED_COACH_RED.extraBans);
 });
 
-test('getEqualizedPlayerPool returns all 63 cards equalized to 100 OVR GOAT tier', () => {
+test('getEqualizedPlayerPool returns the complete roster including kovi equalized to 100 OVR GOAT tier', () => {
   const pool = getEqualizedPlayerPool();
   assert.equal(pool.length, INITIAL_PLAYERS.length);
-  assert.equal(pool.length, 63);
+  assert.equal(pool.filter(card => card.id === 'p_kovi').length, 1);
 
   for (const card of pool) {
     assert.equal(card.ovr, 100);

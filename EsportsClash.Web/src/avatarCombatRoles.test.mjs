@@ -66,5 +66,6 @@ test('Stonewake aims Faultline through a group when the player can read the open
   assert.equal(chooseOpeningControlTarget(caster, [isolated, first, second], 160)?.id, 'first');
   assert.equal(chooseTeamfightTarget(caster, [isolated, first, second], [caster], 75)?.id, 'first');
   caster.player.stats.iq = 35;
+  caster.traitFocusId = undefined; // Compare fresh choices, not the previous high-IQ commitment.
   assert.notEqual(chooseTeamfightTarget(caster, [isolated, first, second], [caster], 75)?.id, 'first');
 });

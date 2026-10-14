@@ -58,7 +58,7 @@ test('recent visible champion combat rallies nearby allies and expires when cont
   assert.equal(chooseNearbyFightingAlly(actor, [attackedAlly], [], 10), undefined);
   assert.equal(chooseNearbyFightingAlly(actor, [attackedAlly], [{ ...enemy, x: 1200 }], 10), undefined);
   for (const state of [{ isAlive: false }, { isRecalling: true }, { recallIntent: true },
-    { diveAborting: true }, { committedState: 'retreat' }, { blackHole: {} },
+    { committedState: 'retreat' }, { blackHole: {} },
     { corsaraBarrage: {} }, { monkeySpin: {} }]) {
     assert.equal(chooseNearbyFightingAlly(actor, [{ ...attackedAlly, ...state }], [enemy], 10), undefined);
   }

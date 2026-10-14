@@ -82,13 +82,13 @@ export function shouldChaseDefenseTarget(
 
 type DefenseCall = { urgent: boolean; critical: boolean } | undefined;
 
-// A real fight loss, tower-fire evacuation or very low HP still beats a defense
+// A real fight loss, turret fire or very low HP still beats a defense
 // call. Otherwise a threatened base must interrupt optional shopping/farming.
 export function shouldStandAndDefendBase(call: DefenseCall, state: {
   healthFraction: number; losingFight: boolean; outnumbered: boolean;
-  diveAborting: boolean; takingTurretFire: boolean;
+  takingTurretFire: boolean;
 }): boolean {
-  if (!call || state.losingFight || state.diveAborting || state.takingTurretFire) return false;
+  if (!call || state.losingFight || state.takingTurretFire) return false;
   const minimumHp = call.critical ? 0.32 : call.urgent ? 0.40 : 0.47;
   return state.healthFraction >= minimumHp && (!state.outnumbered || state.healthFraction >= 0.65);
 }

@@ -1,252 +1,74 @@
 import type { AramChampionUnit, LaneStructure, BushPatch } from './types';
 import { getChampionBasicAttackRange } from './basicAttackRangeRules.ts';
 
-export interface AvatarDiveLimits {
-  role: string;
-  minHealthFraction: number;
-  minHealthRaw: number;
-  maxTargetHealthFraction: number;
-  canSoloDiveWithoutMinions: boolean;
-  isSquishyRanged: boolean;
-  diveBurstRequired: boolean;
-}
-
-/**
- * Returns role-specific avatar durability and execution limits for tower diving.
- */
-export function getAvatarDiveLimits(role: string): AvatarDiveLimits {
-  switch (role) {
-    case 'Tank':
-      return {
-        role,
-        minHealthFraction: 0.40,
-        minHealthRaw: 650,
-        maxTargetHealthFraction: 0.38,
-        canSoloDiveWithoutMinions: true,
-        isSquishyRanged: false,
-        diveBurstRequired: false,
-      };
-    case 'Fighter':
-      return {
-        role,
-        minHealthFraction: 0.45,
-        minHealthRaw: 600,
-        maxTargetHealthFraction: 0.35,
-        canSoloDiveWithoutMinions: true,
-        isSquishyRanged: false,
-        diveBurstRequired: false,
-      };
-    case 'Assassin':
-      return {
-        role,
-        minHealthFraction: 0.45,
-        minHealthRaw: 550,
-        maxTargetHealthFraction: 0.32,
-        canSoloDiveWithoutMinions: true,
-        isSquishyRanged: false,
-        diveBurstRequired: true,
-      };
-    case 'Marksman':
-      return {
-        role,
-        minHealthFraction: 0.60,
-        minHealthRaw: 700,
-        maxTargetHealthFraction: 0.18,
-        canSoloDiveWithoutMinions: false,
-        isSquishyRanged: true,
-        diveBurstRequired: false,
-      };
-    case 'Mage':
-      return {
-        role,
-        minHealthFraction: 0.58,
-        minHealthRaw: 620,
-        maxTargetHealthFraction: 0.20,
-        canSoloDiveWithoutMinions: false,
-        isSquishyRanged: true,
-        diveBurstRequired: true,
-      };
-    case 'Support':
-    default:
-      return {
-        role,
-        minHealthFraction: 0.55,
-        minHealthRaw: 580,
-        maxTargetHealthFraction: 0.22,
-        canSoloDiveWithoutMinions: false,
-        isSquishyRanged: true,
-        diveBurstRequired: false,
-      };
-  }
-}
-
-export interface TowerDiveSituation {
+export interface TowerDiveRiskSituation {
   diver: AramChampionUnit;
-  target: AramChampionUnit;
+  target?: AramChampionUnit;
   tower: LaneStructure;
   alliedMinionsUnderTower: number;
   defendersUnderTower: number;
   attackersUnderTower: number;
-}
-
-/**
- * Comprehensive evaluation of whether a champion should execute or continue a tower dive,
- * respecting avatar limits (durability, burst, role) and player-card judgment.
- */
-export function evaluateTowerDive(situation: TowerDiveSituation): { canDive: boolean; reason?: string } {
-  const { diver, target, tower, alliedMinionsUnderTower, defendersUnderTower, attackersUnderTower } = situation;
-
-  if (!target.isAlive) {
-    return { canDive: false, reason: 'Target is already eliminated' };
-  }
-
-  // Invulnerability or massive shields make diving suicidal
-  if (target.zhonyaActive || (target.untargetableTimer ?? 0) > 0) {
-    return { canDive: false, reason: 'Target is golden in Zhonya stasis / untargetable' };
-  }
-  if (target.shield >= target.hp * 0.75) {
-    return { canDive: false, reason: 'Target has protective barrier/shield absorbing lethal' };
-  }
-
-  const role = diver.champion.primaryRole;
-  const limits = getAvatarDiveLimits(role);
-  const diverHpRatio = diver.hp / diver.maxHp;
-  const targetHpRatio = target.hp / target.maxHp;
-  const iq = diver.player?.stats?.iq ?? 75;
-
-  // 1. Raw HP Check: Turrets deal 288-396 true damage per shot.
-  // Diver must be able to survive at least 2 turret shots.
-  if (diver.hp < limits.minHealthRaw || diverHpRatio < limits.minHealthFraction) {
-    return { canDive: false, reason: 'Diver HP too low to withstand turret true damage shots' };
-  }
-
-  // 2. Target Lethality Check:
-  if (targetHpRatio > limits.maxTargetHealthFraction) {
-    return { canDive: false, reason: 'Target HP too healthy for a lethal dive' };
-  }
-
-  // 3. Defenders vs Attackers:
-  // Diving outnumbered under an enemy turret is throwing the game
-  if (defendersUnderTower > attackersUnderTower) {
-    return { canDive: false, reason: 'Outnumbered under enemy turret' };
-  }
-
-  // 4. Minion Wave Buffer:
-  // Squishy ranged avatars never solo dive; high-IQ cards wait for a real wave crash.
-  if (alliedMinionsUnderTower === 0) {
-    if (limits.isSquishyRanged) {
-      // Squishy mages and marksmen should never dive into turret range with 0 minions
-      return { canDive: false, reason: 'Squishy ranged avatar cannot dive without minion wave buffer' };
-    }
-    if (iq >= 70 && targetHpRatio > 0.18) {
-      // High IQ player refuses to dive without wave crash unless target is 1-hit execute
-      return { canDive: false, reason: 'High IQ player holds until minion wave crashes' };
-    }
-  }
-
-  // 5. Cooldown & Burst Check:
-  // Assassins and mages must have ability resources ready to burst the target down
-  if (limits.diveBurstRequired) {
-    const hasBurstReady = (diver.cd1 <= 0 && diver.mana >= 35) || (diver.level >= 6 && diver.cdUlt <= 0 && diver.mana >= 80);
-    if (!hasBurstReady && targetHpRatio > 0.12) {
-      return { canDive: false, reason: 'Burst cooldowns not ready to execute target quickly' };
-    }
-  }
-
-  // 6. A real wave crash is mandatory for a non-execute dive.
-  if (targetHpRatio > 0.22 && alliedMinionsUnderTower < 2) {
-    return { canDive: false, reason: 'Requires wave advantage and critically low target' };
-  }
-
-  return { canDive: true };
-}
-
-export interface AbortDiveCheck {
-  diver: AramChampionUnit;
-  target?: AramChampionUnit | null;
-  tower: LaneStructure;
-  alliedMinionsUnderTower: number;
-  defendersUnderTower: number;
-  diveDuration: number;
   takingTurretFire: boolean;
 }
 
-/**
- * Checks whether an in-progress tower dive has failed and must be aborted immediately
- * to avoid throwing the game and getting executed by the turret.
- */
-export function shouldAbortTowerDive(check: AbortDiveCheck): { shouldAbort: boolean; reason: string } {
-  const { diver, target, tower, alliedMinionsUnderTower, defendersUnderTower, diveDuration, takingTurretFire } = check;
-
-  // 1. Target eliminated -> Dive finished, evacuate immediately!
-  if (!target || !target.isAlive) {
-    return { shouldAbort: true, reason: 'Target eliminated - evacuating turret zone' };
-  }
-
-  // 2. Target became invulnerable or heavily protected -> Dive failed!
-  if (target.zhonyaActive || (target.untargetableTimer ?? 0) > 0) {
-    return { shouldAbort: true, reason: 'Target entered Golden Stasis (Zhonya) - dive failed' };
-  }
-  if (target.shield >= target.hp * 0.8 && target.hp > 150) {
-    return { shouldAbort: true, reason: 'Target gained heavy shield - cannot execute' };
-  }
-
-  // 3. Target escaped beyond reasonable reach
-  const distToTarget = Math.hypot(target.x - diver.x, target.y - diver.y);
-  if (distToTarget > getChampionBasicAttackRange(diver.champion) + 160) {
-    return { shouldAbort: true, reason: 'Target retreated deeper into base - out of reach' };
-  }
-
-  // 4. Diver taking turret fire and HP dropping below safety threshold
-  const diverHpRatio = diver.hp / diver.maxHp;
-  const isTank = diver.champion.primaryRole === 'Tank';
-  const emergencyHpThreshold = isTank ? 0.35 : 0.48;
-
-  if (takingTurretFire && (diverHpRatio < emergencyHpThreshold || diver.hp < 480)) {
-    return { shouldAbort: true, reason: 'Taking critical turret true damage - emergency evacuation' };
-  }
-
-  // 5. Dive timeout: After 2.6 seconds under tower, staying longer is throwing
-  if (diveDuration >= 2.6) {
-    return { shouldAbort: true, reason: 'Dive window exceeded 2.6s - disengaging before next shot' };
-  }
-
-  // 6. Minions wiped while diver is under tower
-  if (alliedMinionsUnderTower === 0 && takingTurretFire && target.hp / target.maxHp > 0.15) {
-    return { shouldAbort: true, reason: 'Minion wave dead and turret locked on diver' };
-  }
-
-  // 7. Diver suddenly outnumbered under tower
-  if (defendersUnderTower >= 2 && !isTank && diverHpRatio < 0.65) {
-    return { shouldAbort: true, reason: 'Enemy reinforcements arrived under tower' };
-  }
-
-  return { shouldAbort: false, reason: '' };
+export interface TowerDiveRisk {
+  shouldCommit: boolean;
+  risk: number;
+  expectedEliminationSeconds: number;
+  expectedSurvivalSeconds: number;
+  reason: string;
 }
 
 /**
- * Calculates the emergency evacuation target position and direction away from an enemy turret,
- * pulling the diver toward safety in lane and their allied side.
+ * A compact pre-engagement risk read, not a forced evacuation controller.
+ * Turret damage remains real; IQ and the current local team state only affect
+ * how much of a marginal risk a player is willing to accept.
  */
-export function getTurretEvacuationVector(
-  diver: { x: number; y: number; team: 'blue' | 'red' },
-  tower: { x: number; y: number; range: number },
-  laneY: number = 360
-): { targetX: number; targetY: number; escapeDirX: number } {
-  const escapeDirX = diver.team === 'blue' ? -1 : 1;
-  // Move well outside the turret range with safety buffer
-  const safeDistance = tower.range + 75;
-  const targetX = tower.x + escapeDirX * safeDistance;
-  // Pull slightly toward lane center for clean regrouping
-  const targetY = laneY + (diver.y - laneY) * 0.4;
+export function assessTowerDiveRisk(situation: TowerDiveRiskSituation): TowerDiveRisk {
+  const { diver, target, tower, alliedMinionsUnderTower, defendersUnderTower,
+    attackersUnderTower, takingTurretFire } = situation;
+  const unavailable = (reason: string): TowerDiveRisk => ({ shouldCommit: false, risk: Infinity,
+    expectedEliminationSeconds: Infinity, expectedSurvivalSeconds: 0, reason });
+  if (!target?.isAlive || target.zhonyaActive || (target.untargetableTimer ?? 0) > 0) {
+    return unavailable('target unavailable');
+  }
 
-  return { targetX, targetY, escapeDirX };
+  const distance = Math.hypot(target.x - diver.x, target.y - diver.y);
+  const attackRange = getChampionBasicAttackRange(diver.champion);
+  const approachSeconds = Math.max(0, distance - attackRange) / 85;
+  const burstReady = (diver.cd1 <= 0 && diver.mana >= 35 ? diver.champion.skill1.damage : 0)
+    + (diver.cd2 <= 0 && diver.mana >= 35 ? diver.champion.skill2.damage : 0)
+    + (diver.level >= 6 && diver.cdUlt <= 0 && diver.mana >= 80 ? diver.champion.ultimate.damage : 0);
+  const alliedPressure = Math.max(0, attackersUnderTower - 1) * Math.max(65, diver.champion.ad * .65);
+  const targetEffectiveHp = target.hp + target.shield;
+  const damagePerSecond = Math.max(45, diver.champion.ad + burstReady * .55 + alliedPressure);
+  const expectedEliminationSeconds = approachSeconds + targetEffectiveHp / damagePerSecond;
+  const turretDps = takingTurretFire ? tower.ad * 1.8 : tower.ad * (alliedMinionsUnderTower > 0 ? .32 : .9);
+  const defenderPressure = Math.max(0, defendersUnderTower - Math.max(0, attackersUnderTower - 1)) * 55;
+  const expectedSurvivalSeconds = (diver.hp + diver.shield) / Math.max(1, turretDps + defenderPressure);
+  const iq = Math.max(1, Math.min(99, diver.player?.stats?.iq ?? 75));
+  const traitIds = [diver.player?.primaryPersonality, diver.player?.secondaryPersonality]
+    .filter(trait => !!trait);
+  // The authored personality IDs drive gameplay. Normalize legacy display text
+  // too so incomplete older cards remain deterministic during migration.
+  const traits = [...traitIds, (diver.player?.personality ?? '').toLowerCase().replace(/[ /-]+/g, '_')].join('|');
+  const riskTolerance = .72 + (100 - iq) * .004
+    + (traits.includes('overconfident') || traits.includes('limit_tester') ? .18 : 0)
+    + (traits.includes('clutch_performer') && targetEffectiveHp <= diver.champion.ad * 3 ? .14 : 0)
+    - (traits.includes('survivalist') || traits.includes('cold_as_ice') ? .14 : 0);
+  const risk = expectedEliminationSeconds / Math.max(.15, expectedSurvivalSeconds);
+  const meaningfulWindow = expectedEliminationSeconds <= 5.5 && distance <= attackRange + 240;
+  return {
+    shouldCommit: meaningfulWindow && risk <= riskTolerance,
+    risk,
+    expectedEliminationSeconds,
+    expectedSurvivalSeconds,
+    reason: meaningfulWindow && risk <= riskTolerance ? 'favorable local damage window'
+      : !meaningfulWindow ? 'target cannot be pressured soon enough' : 'survival window is too short',
+  };
 }
 
-/**
- * Determines whether a retreat bush is safe from enemy towers.
- * A bush located inside or directly next to an enemy tower's attack range is a death trap.
- */
+/** Keeps general retreat routing from selecting a bush that is already a turret death trap. */
 export function isBushSafeFromTowers(
   bush: Pick<BushPatch, 'x' | 'y'>,
   enemyStructures: readonly LaneStructure[]
@@ -256,18 +78,12 @@ export function isBushSafeFromTowers(
   );
 }
 
-/**
- * Calculates a perimeter tether point outside an enemy turret's range,
- * allowing non-diving champions to poke or hold without wandering into turret fire.
- */
+/** A non-committing unit may hold a normal perimeter rather than drifting into fire. */
 export function getTurretPerimeterHoldPoint(
   unit: { x: number; y: number; team: 'blue' | 'red' },
   tower: { x: number; y: number; range: number },
-  laneY: number = 360
 ): { x: number; y: number } {
   const safeDirX = unit.team === 'blue' ? -1 : 1;
-  const safeDist = tower.range + 28;
-  const perimeterX = tower.x + safeDirX * safeDist;
-  const clampedX = unit.team === 'blue' ? Math.min(unit.x, perimeterX) : Math.max(unit.x, perimeterX);
-  return { x: clampedX, y: unit.y };
+  const perimeterX = tower.x + safeDirX * (tower.range + 28);
+  return { x: unit.team === 'blue' ? Math.min(unit.x, perimeterX) : Math.max(unit.x, perimeterX), y: unit.y };
 }

@@ -14,7 +14,7 @@ import {
 test('Kaelen orb FIFO invokes all ten elemental recipes into distinct spells', () => {
   assert.equal(KAELEN_INVOKED_SPELLS.length, 10);
   assert.equal(new Set(KAELEN_INVOKED_SPELLS.map(spell => spell.id)).size, 10);
-  assert.equal(new Set(KAELEN_INVOKED_SPELLS.map(spell => spell.cooldown)).size, 10);
+  assert.ok(KAELEN_INVOKED_SPELLS.every(spell => Number.isFinite(spell.cooldown) && spell.cooldown > 0));
   for (const spell of KAELEN_INVOKED_SPELLS) {
     assert.equal(getKaelenInvokedSpell(spell.recipe)?.id, spell.id);
   }

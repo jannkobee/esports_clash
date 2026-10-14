@@ -28,6 +28,8 @@ test('spellbook defines bounded utility, control and persistence metadata', () =
   assert.equal(spell('primal-tempest').targeting, 'ally');
   assert.equal(spell('solar-pike').summon.duration, 12);
   assert.ok(spell('sleetflare').zone.tickInterval > 0);
+  assert.equal(spell('glacier-lock').ratios.apRatio, .20);
+  assert.equal(spell('sirocco-flare').ratios.apRatio, .25);
 });
 
 test('Solar Meteor remains delayed, ground-fixed and zone-bounded', () => {
@@ -54,6 +56,19 @@ test('plans adapt to threat, resource gates, IQ sequence length and no fixed two
   const defense = chooseKaelenPlan({ ...base, healthFraction: .45, enemyDistance: 90, clusteredEnemies: 1, threatenedAllies: 2 }); assert.equal(defense.id, 'disengage');
   const lowSkill = chooseKaelenPlan({ ...base, iq: 40 }); assert.ok(lowSkill.spells.length <= 2);
   const cooldowns = Object.fromEntries(KAELEN_INVOKED_SPELLS.map(entry => [entry.id, 1])); assert.equal(chooseKaelenPlan({ ...base, cooldowns }), undefined);
+});
+
+test('urgent Conflux protection outranks optional personality plans and falls back only to available spells', () => {
+  const context = { healthFraction: .4, enemyDistance: 90, clusteredEnemies: 3, threatenedAllies: 2,
+    objectiveFight: true, defending: true, mana: 300, iq: 94, cooldowns: {}, cycle: 0 };
+  for (const personality of [['bodyguard'], ['objective_zealot'], ['perfectionist'], []]) {
+    for (const cycle of [0, 1]) assert.equal(chooseKaelenPlan({ ...context, personality, cycle }).id, 'disengage');
+  }
+  const unavailable = KAELEN_COMBOS.find(combo => combo.id === 'disengage').spells;
+  const cooldowns = Object.fromEntries(unavailable.map(id => [id, 20]));
+  const fallback = chooseKaelenPlan({ ...context, cooldowns });
+  assert.ok(fallback);
+  assert.ok(fallback.spells.every(id => !unavailable.includes(id)));
 });
 
 test('invoked effects reject dead, untargetable and stasis targets and render safely', () => {

@@ -153,7 +153,7 @@ export function personalityCombinationInfluences(
   const influences: PersonalityCombinationInfluence[] = [];
   const add = (id: string, label: string, delta: number, reason: string) => influences.push({ id, label, delta, reason });
 
-  if (has('igl', 'untiltable') && state.recentLosses >= 2 && (action === 'regroup' || action === 'defend')) {
+  if (has('igl', 'untiltable') && state.recentLosses >= 2 && action === 'regroup') {
     add('igl_untiltable', 'Composed call', 2.4, 'keeps an organized recovery call after setbacks');
   }
   if (has('egoistic', 'overconfident') && state.recentWins >= 2 && healthy && allies >= enemies && context.isSafe !== false

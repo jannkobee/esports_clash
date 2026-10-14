@@ -1,8 +1,8 @@
 import type { ChampionKit, ChampionSkill } from './types';
-import { CAST_TYPE_DETAILS, CAST_TYPE_LABELS, getAbilityCastType, type CastSlot } from './abilityCastTypes';
-import { getAbilityRatios, skill1ManaCost, ultimateManaCost } from './abilityRules';
-import { abilityCooldownMultiplier, abilityDamageMultiplier, LEVEL_CAP } from './skillProgression';
-import { getSkillCastRange, getSkillCrowdControlDuration, isCrowdControlSkill } from './skillRangeRules';
+import { CAST_TYPE_DETAILS, CAST_TYPE_LABELS, getAbilityCastType, type CastSlot } from './abilityCastTypes.ts';
+import { getAbilityRatios, skill1ManaCost, ultimateManaCost } from './abilityRules.ts';
+import { abilityCooldownMultiplier, abilityDamageMultiplier, LEVEL_CAP } from './skillProgression.ts';
+import { getSkillCastRange, getSkillCrowdControlDuration, isCrowdControlSkill } from './skillRangeRules.ts';
 
 export type AbilityDisplaySlot = 'skill1' | 'skill2' | 'ultimate';
 export type AbilityMovementKind = 'Dash' | 'Leap' | 'Roll' | 'Teleport' | 'Charge' | 'Forced Movement';

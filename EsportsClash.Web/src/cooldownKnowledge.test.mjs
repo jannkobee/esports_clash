@@ -67,6 +67,7 @@ test('elite cards focus a visible enemy whose ultimate was spent', () => {
   assert.equal(chooseTeamfightTarget(unit, [first, exposed], [unit], 150,
     { cooldownMemory: memory, matchSecond: 20 })?.id, 'exposed');
   unit.player.stats.iq = 45;
+  unit.traitFocusId = undefined; // The comparison starts without the elite card's sticky target.
   assert.equal(chooseTeamfightTarget(unit, [first, exposed], [unit], 150,
     { cooldownMemory: memory, matchSecond: 20 })?.id, 'first');
 });

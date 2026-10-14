@@ -16,7 +16,7 @@ export function perceiveChampions(unit: AramChampionUnit, champions: readonly Ar
     const distance = Math.hypot(actor.x - unit.x, actor.y - unit.y);
     if (actor.team === unit.team) {
       allies.push(actor);
-      const available = !actor.isRecalling && !actor.recallIntent && !actor.diveAborting;
+      const available = !actor.isRecalling && !actor.recallIntent && actor.committedState !== 'retreat';
       if (available) availableAllies.push(actor);
       if ((actor.id === unit.id || available) && distance <= 400) localAllies.push(actor);
     } else if (((actor.stealthTimer ?? 0) <= 0 || distance < 48)

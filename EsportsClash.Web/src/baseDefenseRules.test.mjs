@@ -63,13 +63,11 @@ test('defense maintains limited detection hysteresis, then fully releases the ca
 
 test('champions defend when viable; do not suicide under tower fire or losing fights', () => {
   const call = { urgent: true, critical: true };
-  const ready = { healthFraction: 0.7, losingFight: false, outnumbered: false,
-    diveAborting: false, takingTurretFire: false };
+  const ready = { healthFraction: 0.7, losingFight: false, outnumbered: false, takingTurretFire: false };
   assert.equal(shouldStandAndDefendBase(call, ready), true);
   assert.equal(shouldStandAndDefendBase(undefined, ready), false);
   assert.equal(shouldStandAndDefendBase(call, { ...ready, healthFraction: 0.25 }), false);
   assert.equal(shouldStandAndDefendBase(call, { ...ready, losingFight: true }), false);
-  assert.equal(shouldStandAndDefendBase(call, { ...ready, diveAborting: true }), false);
   assert.equal(shouldStandAndDefendBase(call, { ...ready, takingTurretFire: true }), false);
   assert.equal(shouldStandAndDefendBase(call, { ...ready, outnumbered: true, healthFraction: 0.55 }), false);
   assert.equal(shouldStandAndDefendBase(call, { ...ready, outnumbered: true }), true);

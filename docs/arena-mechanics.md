@@ -240,21 +240,12 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
 - When the channeled ability ends or is interrupted, units smoothly transition back to standard arena engagement and wave-clear priorities.
 - Regression tests in `src/combatDecision.test.mjs` verify peel exclusion, target prioritization, and follow-up ultimate triggering.
 
-## Tower Dive Limits, Avatar Durability & Emergency Evacuation Invariants
+## Risk-Based Tower Combat & Natural Retreat Invariants
 
-- **Avatar Durability & Role Limits (`getAvatarDiveLimits`):**
-  - Towers deal 288-396 true damage per shot. Champions must have sufficient durability to absorb at least two full turret shots before considering a dive.
-  - Tanks: Require at least 40% max HP and 650 raw HP; may solo dive low targets ($\le 38\%$).
-  - Fighters: Require at least 45% max HP and 600 raw HP; target $\le 35\%$.
-  - Assassins: Require burst cooldown readiness (`cd1 <= 0` or `cdUlt <= 0`), at least 45% max HP, and target $\le 32\%$.
-  - Squishy Mages & Marksmen: Strictly forbidden from diving into melee turret range without an active allied minion wave buffer under the tower; require at least 58-60% max HP; target must be an absolute execute ($\le 18-20\%$).
-  - Supports: Never solo dive; require at least 55% max HP and minion wave presence.
-- **Player Card Invariants:**
-  - High IQ ($\ge 75$) players demand minion wave crash ($\ge 2$ minions under tower), calculate lethal burst windows, and never dive when outnumbered (`defendersUnderTower > attackersUnderTower`).
-  - `Aggro Diver` trait enables calculated aggression on low targets ($\le 38\%$), but respects avatar limits and will never suicide dive when wounded ($< 30\%$ HP) or outnumbered.
-  - In `chooseTeamfightTarget`, enemies standing under live opposing turrets receive a $-3.8 \times \text{IQ} \times (\text{isSquishy} ? 1.5 : 1.0)$ safety penalty to prevent tunneling into enemy defenses.
-- **Turret Perimeter Tethering:**
-  - Non-diving units hold at `getTurretPerimeterHoldPoint` (safe boundary 28px outside turret attack range), allowing ranged champions to poke safely from outside the turret radius and melee champions to wait with their minion wave.
+- **Contextual commitment (`assessTowerDiveRisk`):** Before beginning a tower fight, the AI estimates an elimination window from real legal attacks, ready abilities, nearby allies, range, and target effective health; it compares that with a survival window built from tower pressure, minion cover, defenders, health, and shielding. It may commit only when that local window is meaningful and favorable.
+- **Personality without hidden stat changes:** IQ and existing player personality influence tolerance around marginal risk reads; they do not modify tower damage, range, target selection, cadence, movement speed, invulnerability, structure gating, or randomness. A target under a live opposing turret still receives the existing target-selection safety penalty.
+- **Perimeter and terrain safety:** A unit declining a new tower commitment can hold at `getTurretPerimeterHoldPoint`, 28px outside attack range. `isBushSafeFromTowers` keeps the ordinary retreat router from selecting bushes in or near enemy turret range. Units already in tower range do not stop idle there.
+<!-- Superseded Abort Dive record retained only for historical handoff context:
 - **Failed Dive Abort & Emergency Turret Evacuation (`shouldAbortTowerDive`):**
   - When an in-progress dive fails (target killed, target in Zhonya's Golden Stasis or untargetable, target heavily shielded, diver taking turret fire with dropping HP, dive duration $> 2.6$s, or minions wiped), the diver triggers immediate emergency evacuation:
     - Sets `diveAborting = true` and `diveAbortCooldown = 3.5s`.
@@ -265,6 +256,9 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
     - Clears abort state once safely outside the turret attack range $+50$px.
 - **Turret-Safe Bush Invariants:**
 - Regression tests in `src/towerDiveLimits.test.mjs` verify all avatar limits, player card factors, failed dive abort triggers, emergency evacuation vectors, and bush safety checks.
+-->
+- **Natural disengagement:** There is no Abort Dive state, timeout, cooldown, forced evacuation vector, special sprint, attack suppression, or Abort Dive UI/event. When an established fight becomes unfavorable, normal decision commitment and the terrain-aware retreat planner choose whether and where to disengage at ordinary movement speed. A bad commitment can still be lethal.
+- Focused coverage in `src/towerDiveLimits.test.mjs` covers a favorable coordinated commitment, an unfavorable decline without an abort state, and safe bush/perimeter behavior. Verification remains deferred to the requested final combined pass.
 
 ## Nature Link (Tequoia Skill 2) Invariants & Status Representation
 
@@ -391,7 +385,7 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
 - `src/matchSimulationEngine.ts` implements a fast, deterministic, headless game simulator allowing batch execution of complete bridge arena matches across seeds.
 - **Sequential Structure Vulnerability (`canDamageStructure`):** Enforces strict structure destruction gating (Outer Turret → Inner Turret → Nexus Turret → Barracks → Nexus). Units cannot bypass active forward defenses.
 - **Tower Plating & Siege Pacing:** Integrates `towerSiegeMultiplier(sim.matchTime)` within `damageStructure`, providing early tower damage reduction (30% increasing to 100% over 8 minutes) that prevents premature match collapse and stabilizes average match duration at 7.7 minutes (median 5.8m).
-- **Tower Dive Limits and Safety Aborts:** Accurately applies `evaluateTowerDive` and `shouldAbortTowerDive` only to champions actually inside enemy turret range. When an abort condition occurs, diver sets `diveAborting = true`, acquires `getTurretEvacuationVector` toward home safety with a +35 sprint speed bonus, and debounces abort counts until safely clearing turret range + 50px.
+- **Risk-Based Tower Combat:** Applies `assessTowerDiveRisk` to a live local tower situation. Headless telemetry reports committed dive opportunities and risk declines; it does not create an abort state or use forced evacuation movement.
 - **Turret Execution 10-Second Attribution:** Enforces `resolveTurretKillReward` with the 10-second attribution window. Champion damage within $\le 10$ seconds awards kill and gold to the enemy attacker; damage older than 10 seconds triggers a turret execution splitting 300g (60g each in 5v5) across defending allies with 0 champion kills awarded.
 - **Headless simulation scope:** The multi-seed simulator still models only solo camp farming and therefore reports zero Support camp participation; it does not yet model the live post-recall team-camp objective.
 - **Cardrel Parody Alias Invariant:** Strictly preserves `Cardrel` parody alias across all simulation lineups and tests.
@@ -433,7 +427,7 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
 - `arenaRules.ts` supplies shared scalloped wall contours to collision stones and the layered canvas cliff renderer. Openings remain lane-facing and mirrored; center boss contours are themselves symmetric. No walking-speed boost, ghosting through stone, or visible route guide is added.
 - `terrainRouting.ts` caches body-expanded static graphs and per-unit routes, uses A* and collision-checked segment smoothing, and replans after goal changes, displacement, or stalled progress. Camp farming, camp exit to lane, normal recovery, base reinforcement, and neutral chase/reset use these waypoints. Collision repairs embedded stationary bodies, but normal failed steps fall back to the previous walkable point rather than jumping across a wall. Upper outer buff centers are farther outward to avoid sealed top-boundary pockets.
 - `baseDefenseRules.ts` ranks threatened Nexus > tier 3 > barracks > inner tower > outer tower. Scouted living champions and approaching enemy creeps trigger calls; destroyed structures and absent/dead threats do not. Inner-base calls recruit any available healthy defender across the map; ordinary tower calls recruit within 650 units. Units rally 65 units behind the building, target attackers through the standard combat pipeline, and clear approaching waves.
-- Defense preempts farming, new epic-objective starts, post-objective staging, optional shopping resets, and enemy-Nexus pushes. Healthy nearby recallers can interrupt their channel; distant recalls complete to arrive home faster. Emergency retreat, low-health recovery, existing skill channels, tower-dive abort/evacuation, and turret-safe positioning retain precedence. No defensive damage/HP buffs or suicide overrides are granted.
+- Defense preempts farming, new epic-objective starts, post-objective staging, optional shopping resets, and enemy-Nexus pushes. Healthy nearby recallers can interrupt their channel; distant recalls complete to arrive home faster. Natural retreat, low-health recovery, existing skill channels, risk-based tower commitments, and turret-safe positioning retain precedence. No defensive damage/HP buffs or suicide overrides are granted.
 - Affected code: `arenaLayout.ts`, `arenaRules.ts`, `terrainRouting.ts`, `baseDefenseRules.ts`, `neutralAggroRules.ts`, `macroFarmRules.ts`, live `AramMatchView.tsx`, and headless layout initialization. Tests cover mirrored priorities, dead threats, 90 camp rotations, 120 well/flank round trips, compass approaches, large-monster gates, and embedded/stalled recovery. Required final verification is `npm run check:game` plus `npm run build` (results in the handoff).
 - Limits: headless combat does not model the full live defensive/recall state machine; no browser replay or competitive-balance claim. Existing dynamic chase steering still relies on collision sliding rather than globally planned combat paths.
 
@@ -481,7 +475,7 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
 - IQ and TF affect only the ordering of already safe candidates. IQ values safe homeward progress and close cover under immediate pressure; TF values regrouping at healthy allies and allied towers. They cannot select a bush in turret range, an enemy-adjacent point, an impassable destination, or an unreachable route.
 - The live unit holds a valid retreat plan for approximately 0.65-0.95 seconds to prevent route switching. It may replan immediately for a material safety change: enemy arrival, enemy-tower danger, or impassable terrain. This supplements and does not replace the protected 0.45s retreat/fight decision commitment or 12px facing deadband.
 - Normal retreat movement continues to use `rockApproachWaypoint` and collision-safe terrain movement. The same terrain graph provides a route-length estimate for selection; no independent routing system exists.
-- Failed-dive evacuation and being inside enemy turret range override this planner. `getTurretEvacuationVector` and the protected +35 evacuation sprint remain unchanged; ordinary retreat speed is unchanged and is reserved for Phase 3 audit.
+- Being inside enemy turret range prevents an idle stop and can invalidate an unsafe destination, but it does not override the planner with a fixed vector or special speed. The ordinary terrain-aware route remains in control at normal movement speed.
 - Plans are cleared upon resuming normal activity. No unit may intentionally idle at a retreat destination inside enemy turret range.
 
 ## Retreat movement speed (Phase 3, 2026-10-11)
@@ -640,11 +634,38 @@ Traits change choices, routes, targets, and timing. They grant no hidden damage,
 - Browser storage remains an offline fallback. Cloud persistence is opt-in through an authenticated client and transfers roster/Starting 5/replay snapshots as data; it never grants gameplay authority to a network response.
 - The Squad cloud panel is an explicit save/restore action, never an automatic decision or combat request. A restored roster still runs required-card reconciliation and requires exactly five valid starters before replacing the local lineup.
 
+## Roster-wide ability ratio invariant (2026-10-13)
+
+- Every damaging standard Q/W/R uses the shared role-authored 15–25% bonus-AD/AP ratio source: Mage 15/25, Marksman 25/15, Assassin 23/18, Fighter 22/16, Tank 18/15, Support 15/20. Explicit skill values are clamped inside that same envelope; zero-damage utility cannot become damaging through items.
+- Ratios are applied once in the shared damage resolver, before the already-owned rank scaling, item amplification, mitigation, shields, and attribution. They do not change base damage, HP, range, cooldown, mana, movement, AI safety, tower/retreat rules, objective behavior, or RNG order.
+
 ## Arsenaldo Conflux invariants (2026-10-13)
 
 - Arsenaldo is Kaelen's public Conflux identity only; stable Kaelen IDs, recipes, saved state, and internal references remain unchanged. Ten legacy three-orb recipes map one-to-one to the reworked spellbook.
 - D/F is a two-entry FIFO invocation loadout, not a two-cast or two-spell-per-fight limit. Tactical plans may construct legal recipes, cast an available slot, reinvoke a later spell, and replan. Every orb still costs mana, every spell has its own cooldown/mana gate, and Conflux's level-based cooldown remains authoritative. A stale/invalid target, lost opportunity, tower abort, recall, death, unavailable mana, or cooldown cancels/replans rather than bypassing a gate.
 - Hoarfrost's mark expires, has a three-hit follow-up threshold, consumes its stacks on a short root, and applies a target-specific lockout. Undertow/Pressure hit each target at most once per cast. Slows have explicit timer/magnitude caps; Ashen Hail stacks are capped and expire; zone damage has explicit duration/tick cadence and only applies while inside. No Arsenaldo effect grants indefinite CC or unbounded DoT.
 - Equinox shields refresh rather than stack and do not grant invulnerability. Prism Warden is limited to one live summon per Arsenaldo, is killable, expires on its owner/lifetime, has bounded attacks and slow, and never targets structures. It does not alter waves, tower damage, objective secure, Nexus vulnerability, or ownership rules.
-- Conflux planning may use IQ and existing personality traits only as decision preference. It cannot modify raw spell damage, CC duration, range, cooldown, mana regeneration, champion statistics, targetability, tower authorization, retreat/abort, objective contest priority, vision, or deterministic RNG order. Existing tower dive/evacuation, objective champion-first contesting, steering/anti-spin, attribution, and parody alias invariants remain final authority.
+- Conflux planning may use IQ and existing personality traits only as decision preference. It cannot modify raw spell damage, CC duration, range, cooldown, mana regeneration, champion statistics, targetability, tower-risk assessment, retreat routing, objective contest priority, vision, or deterministic RNG order. Existing risk-based tower combat, objective champion-first contesting, steering/anti-spin, attribution, and parody alias invariants remain final authority.
+- Each damaging invoked spell has an explicit authored ratio override in the bounded 15–22% bonus-AD and 15–25% AP range. It is passed once to the existing shared damage resolver; orb amp, rank scaling, mitigation, and normal item interactions retain their existing owners. Utility-only spells do not gain hidden damage scaling.
+
+## Nexus finish commitment invariant (2026-10-13)
+
+- An enemy Nexus may receive a dedicated finish commitment only while `canDamageNexus` confirms it is exposed and live attackers have a bounded, favorable authored-structure-DPS and survival window. This is a structure siege, not a champion tower dive. The calculation uses actual basic-attack structure damage/cadence, approach distance, Nexus volley pressure, and a bounded nearby-defender margin; it does not add damage, range, speed, invulnerability, ability-to-structure damage, or a second combat simulator.
+- A viable finish outranks optional farm, wave clear unless it genuinely blocks the legal siege, side objectives, shopping/recall, regrouping, and unrelated champion chase. Critical allied-base defense and genuine lethal danger remain higher priority. The finish applies no global turret-safety exception: Nexus attack range, Nexus vulnerability, structure damage, defensive true damage, and normal terrain-aware retreat remain authoritative.
+- Finish state is re-evaluated on material legal, attacker, damage-window, or survival changes and emits bounded `NEXUS_FINISH_*` diagnostics; it is never held by a blind long timer or a legacy dive-abort state.
+
+## Risk-based tower combat and natural retreat invariant (2026-10-14)
+
+- Per explicit user approval, the standalone Abort Dive subsystem is retired. There is no dive-abort state, fixed timeout, cooldown, forced evacuation vector, special speed, attack suppression, or abort-only UI/telemetry. Existing historical notes describing it are superseded by this section.
+- Tower threat remains fully real: authored damage, true-damage behavior, range, cadence, target selection, minion aggro, terrain, structures, and death attribution are unchanged. Before a tower fight, the shared risk read estimates elimination and survival windows from real local state. IQ and personality influence acceptance only around marginal windows; they never alter gameplay stats or legal restrictions.
+- A favorable tower risk can support an existing combat/all-in commitment. An unfavorable read avoids a new commitment, but does not force a unit to run or suppress a legal attack. Later disengagement uses the normal terrain-aware retreat router at normal movement speed. Decision commitments, target stickiness, action recovery, and facing deadband remain responsible for preventing oscillation.
+- Nexus finishing remains an independently legal, bounded structure-siege decision. It may take legitimate match-ending risk but cannot bypass Nexus exposure, attack range, authored structure damage, defensive fire, or actual lethal-window evaluation.
+
+## Utility decision migration boundary (2026-10-14)
+
+- The user reconfirmed the latest risk-based tower combat rules; historical Abort Dive requirements in AGENTS.md are superseded. No removed abort state, speed bonus, forced evacuation or suppression may be restored by this migration.
+- `utilityDecision.ts` rejects owner-invalid candidates before scoring. Normalized finite factors are bounded; danger/travel/resource/opportunity costs cannot become negative bonuses. Personality and mood are small decision contributions only. Valid higher-priority emergencies/finishes cannot be displaced by optional preferences. A commitment cannot retain an unavailable candidate or survive a changed context merely because its score is high.
+- Stable caller order and bounded candidate counts preserve deterministic ties. No RNG, combat-stat modification, movement execution, ability executor or persistent controller is introduced. `decisionActionRecovery.ts` retains its twelve-target pass, retry blocks and existing target preference through the shared selector; full cross-kind macro arbitration is not implemented yet.
+- Arsenaldo's corrected comparator ranks preferred plans ahead of unlisted plans, uses a symmetric tie-break, and prioritizes urgent protection over optional personality sequences. Spell availability, mana, cooldown, FIFO invocation and authored effects remain authoritative.
+- Verification: 295 game tests plus 3 deterministic simulation tests, TypeScript and build passed; 256 target-selection equivalence cases passed. Live controlled 5v5, Conflux, attack/wave and spectator fixtures passed. Headless baseline and selector microbenchmark measurements are in `ai-overhaul-audit.md` and `ai-baseline.json`; neither establishes full live/headless parity or completion of the requested 40-scenario matrix. New tactical coordination, influence maps, broader memory/prediction, unified macro execution and learning remain future work under the current request.
 

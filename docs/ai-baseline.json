@@ -1,0 +1,924 @@
+{
+  "version": 1,
+  "engine": "simplified-headless",
+  "maxSeconds": 1200,
+  "results": [
+    {
+      "seed": 101,
+      "swapped": false,
+      "completed": true,
+      "winner": "blue",
+      "seconds": 485.73333333350416,
+      "ticks": 14572,
+      "wallMs": 1461.4084,
+      "msPerTickIncludingObservation": 0.10028880043919847,
+      "deaths": 134,
+      "actionOrAnimationSwitches": 0,
+      "recallInterruptionHeuristic": 0,
+      "deathsInsideEnemyStructureRange": 86,
+      "telemetry": {
+        "towerDiveAttempts": 1288,
+        "towerDiveSuccesses": 0,
+        "towerDiveRiskDeclines": 7424,
+        "turretExecutions": 8,
+        "supportCampFarms": 0,
+        "dragonKills": {
+          "blue": 0,
+          "red": 0
+        },
+        "golemKills": {
+          "blue": 0,
+          "red": 0
+        }
+      },
+      "damage": [
+        {
+          "player": "eq_blue_1",
+          "champion": "Kaolin",
+          "team": "blue",
+          "damage": 5300
+        },
+        {
+          "player": "eq_blue_2",
+          "champion": "Veyara",
+          "team": "blue",
+          "damage": 16198
+        },
+        {
+          "player": "eq_blue_3",
+          "champion": "Raijin",
+          "team": "blue",
+          "damage": 5298
+        },
+        {
+          "player": "eq_blue_4",
+          "champion": "Cora",
+          "team": "blue",
+          "damage": 29223
+        },
+        {
+          "player": "eq_blue_5",
+          "champion": "Tequoia",
+          "team": "blue",
+          "damage": 5735
+        },
+        {
+          "player": "eq_red_1",
+          "champion": "Solana",
+          "team": "red",
+          "damage": 3865
+        },
+        {
+          "player": "eq_red_2",
+          "champion": "Cinderbloom",
+          "team": "red",
+          "damage": 16406
+        },
+        {
+          "player": "eq_red_3",
+          "champion": "Nullweaver",
+          "team": "red",
+          "damage": 7248
+        },
+        {
+          "player": "eq_red_4",
+          "champion": "Kindra",
+          "team": "red",
+          "damage": 43329
+        },
+        {
+          "player": "eq_red_5",
+          "champion": "Mirehook",
+          "team": "red",
+          "damage": 5737
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "swapped": true,
+      "completed": true,
+      "winner": "blue",
+      "seconds": 390.6000000000951,
+      "ticks": 11718,
+      "wallMs": 951.8076000000001,
+      "msPerTickIncludingObservation": 0.08122611367127497,
+      "deaths": 104,
+      "actionOrAnimationSwitches": 0,
+      "recallInterruptionHeuristic": 0,
+      "deathsInsideEnemyStructureRange": 64,
+      "telemetry": {
+        "towerDiveAttempts": 2215,
+        "towerDiveSuccesses": 0,
+        "towerDiveRiskDeclines": 6150,
+        "turretExecutions": 4,
+        "supportCampFarms": 0,
+        "dragonKills": {
+          "blue": 1,
+          "red": 0
+        },
+        "golemKills": {
+          "blue": 0,
+          "red": 0
+        }
+      },
+      "damage": [
+        {
+          "player": "eq_red_1",
+          "champion": "Solana",
+          "team": "blue",
+          "damage": 3575
+        },
+        {
+          "player": "eq_red_2",
+          "champion": "Cinderbloom",
+          "team": "blue",
+          "damage": 11972
+        },
+        {
+          "player": "eq_red_3",
+          "champion": "Nullweaver",
+          "team": "blue",
+          "damage": 4977
+        },
+        {
+          "player": "eq_red_4",
+          "champion": "Kindra",
+          "team": "blue",
+          "damage": 24095
+        },
+        {
+          "player": "eq_red_5",
+          "champion": "Mirehook",
+          "team": "blue",
+          "damage": 4294
+        },
+        {
+          "player": "eq_blue_1",
+          "champion": "Kaolin",
+          "team": "red",
+          "damage": 4243
+        },
+        {
+          "player": "eq_blue_2",
+          "champion": "Veyara",
+          "team": "red",
+          "damage": 13732
+        },
+        {
+          "player": "eq_blue_3",
+          "champion": "Raijin",
+          "team": "red",
+          "damage": 4757
+        },
+        {
+          "player": "eq_blue_4",
+          "champion": "Cora",
+          "team": "red",
+          "damage": 30984
+        },
+        {
+          "player": "eq_blue_5",
+          "champion": "Tequoia",
+          "team": "red",
+          "damage": 5762
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "swapped": false,
+      "completed": true,
+      "winner": "blue",
+      "seconds": 735.999999999988,
+      "ticks": 22080,
+      "wallMs": 1767.1142,
+      "msPerTickIncludingObservation": 0.08003234601449276,
+      "deaths": 188,
+      "actionOrAnimationSwitches": 0,
+      "recallInterruptionHeuristic": 0,
+      "deathsInsideEnemyStructureRange": 133,
+      "telemetry": {
+        "towerDiveAttempts": 4032,
+        "towerDiveSuccesses": 0,
+        "towerDiveRiskDeclines": 12026,
+        "turretExecutions": 15,
+        "supportCampFarms": 0,
+        "dragonKills": {
+          "blue": 1,
+          "red": 0
+        },
+        "golemKills": {
+          "blue": 1,
+          "red": 0
+        }
+      },
+      "damage": [
+        {
+          "player": "eq_blue_1",
+          "champion": "Kaolin",
+          "team": "blue",
+          "damage": 6439
+        },
+        {
+          "player": "eq_blue_2",
+          "champion": "Veyara",
+          "team": "blue",
+          "damage": 25052
+        },
+        {
+          "player": "eq_blue_3",
+          "champion": "Raijin",
+          "team": "blue",
+          "damage": 5377
+        },
+        {
+          "player": "eq_blue_4",
+          "champion": "Cora",
+          "team": "blue",
+          "damage": 51360
+        },
+        {
+          "player": "eq_blue_5",
+          "champion": "Tequoia",
+          "team": "blue",
+          "damage": 7118
+        },
+        {
+          "player": "eq_red_1",
+          "champion": "Solana",
+          "team": "red",
+          "damage": 5059
+        },
+        {
+          "player": "eq_red_2",
+          "champion": "Cinderbloom",
+          "team": "red",
+          "damage": 25554
+        },
+        {
+          "player": "eq_red_3",
+          "champion": "Nullweaver",
+          "team": "red",
+          "damage": 8155
+        },
+        {
+          "player": "eq_red_4",
+          "champion": "Kindra",
+          "team": "red",
+          "damage": 56742
+        },
+        {
+          "player": "eq_red_5",
+          "champion": "Mirehook",
+          "team": "red",
+          "damage": 6868
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "swapped": true,
+      "completed": true,
+      "winner": "blue",
+      "seconds": 832.9999999998997,
+      "ticks": 24990,
+      "wallMs": 1816.2082,
+      "msPerTickIncludingObservation": 0.07267739895958383,
+      "deaths": 208,
+      "actionOrAnimationSwitches": 0,
+      "recallInterruptionHeuristic": 0,
+      "deathsInsideEnemyStructureRange": 126,
+      "telemetry": {
+        "towerDiveAttempts": 5188,
+        "towerDiveSuccesses": 0,
+        "towerDiveRiskDeclines": 9818,
+        "turretExecutions": 12,
+        "supportCampFarms": 0,
+        "dragonKills": {
+          "blue": 0,
+          "red": 1
+        },
+        "golemKills": {
+          "blue": 1,
+          "red": 0
+        }
+      },
+      "damage": [
+        {
+          "player": "eq_red_1",
+          "champion": "Solana",
+          "team": "blue",
+          "damage": 5948
+        },
+        {
+          "player": "eq_red_2",
+          "champion": "Cinderbloom",
+          "team": "blue",
+          "damage": 27391
+        },
+        {
+          "player": "eq_red_3",
+          "champion": "Nullweaver",
+          "team": "blue",
+          "damage": 10028
+        },
+        {
+          "player": "eq_red_4",
+          "champion": "Kindra",
+          "team": "blue",
+          "damage": 78593
+        },
+        {
+          "player": "eq_red_5",
+          "champion": "Mirehook",
+          "team": "blue",
+          "damage": 7786
+        },
+        {
+          "player": "eq_blue_1",
+          "champion": "Kaolin",
+          "team": "red",
+          "damage": 7480
+        },
+        {
+          "player": "eq_blue_2",
+          "champion": "Veyara",
+          "team": "red",
+          "damage": 31446
+        },
+        {
+          "player": "eq_blue_3",
+          "champion": "Raijin",
+          "team": "red",
+          "damage": 7035
+        },
+        {
+          "player": "eq_blue_4",
+          "champion": "Cora",
+          "team": "red",
+          "damage": 61945
+        },
+        {
+          "player": "eq_blue_5",
+          "champion": "Tequoia",
+          "team": "red",
+          "damage": 8465
+        }
+      ]
+    },
+    {
+      "seed": 103,
+      "swapped": false,
+      "completed": true,
+      "winner": "red",
+      "seconds": 758.0999999999678,
+      "ticks": 22743,
+      "wallMs": 1622.6691999999994,
+      "msPerTickIncludingObservation": 0.07134807193422149,
+      "deaths": 199,
+      "actionOrAnimationSwitches": 0,
+      "recallInterruptionHeuristic": 0,
+      "deathsInsideEnemyStructureRange": 141,
+      "telemetry": {
+        "towerDiveAttempts": 3486,
+        "towerDiveSuccesses": 0,
+        "towerDiveRiskDeclines": 10260,
+        "turretExecutions": 14,
+        "supportCampFarms": 0,
+        "dragonKills": {
+          "blue": 1,
+          "red": 0
+        },
+        "golemKills": {
+          "blue": 0,
+          "red": 0
+        }
+      },
+      "damage": [
+        {
+          "player": "eq_blue_1",
+          "champion": "Kaolin",
+          "team": "blue",
+          "damage": 7364
+        },
+        {
+          "player": "eq_blue_2",
+          "champion": "Veyara",
+          "team": "blue",
+          "damage": 29103
+        },
+        {
+          "player": "eq_blue_3",
+          "champion": "Raijin",
+          "team": "blue",
+          "damage": 5526
+        },
+        {
+          "player": "eq_blue_4",
+          "champion": "Cora",
+          "team": "blue",
+          "damage": 59657
+        },
+        {
+          "player": "eq_blue_5",
+          "champion": "Tequoia",
+          "team": "blue",
+          "damage": 7102
+        },
+        {
+          "player": "eq_red_1",
+          "champion": "Solana",
+          "team": "red",
+          "damage": 5420
+        },
+        {
+          "player": "eq_red_2",
+          "champion": "Cinderbloom",
+          "team": "red",
+          "damage": 20492
+        },
+        {
+          "player": "eq_red_3",
+          "champion": "Nullweaver",
+          "team": "red",
+          "damage": 9209
+        },
+        {
+          "player": "eq_red_4",
+          "champion": "Kindra",
+          "team": "red",
+          "damage": 51883
+        },
+        {
+          "player": "eq_red_5",
+          "champion": "Mirehook",
+          "team": "red",
+          "damage": 8390
+        }
+      ]
+    },
+    {
+      "seed": 103,
+      "swapped": true,
+      "completed": true,
+      "winner": "red",
+      "seconds": 316.7000000000363,
+      "ticks": 9501,
+      "wallMs": 779.916299999999,
+      "msPerTickIncludingObservation": 0.08208781180928312,
+      "deaths": 88,
+      "actionOrAnimationSwitches": 0,
+      "recallInterruptionHeuristic": 0,
+      "deathsInsideEnemyStructureRange": 42,
+      "telemetry": {
+        "towerDiveAttempts": 1618,
+        "towerDiveSuccesses": 0,
+        "towerDiveRiskDeclines": 3292,
+        "turretExecutions": 1,
+        "supportCampFarms": 0,
+        "dragonKills": {
+          "blue": 0,
+          "red": 0
+        },
+        "golemKills": {
+          "blue": 0,
+          "red": 0
+        }
+      },
+      "damage": [
+        {
+          "player": "eq_red_1",
+          "champion": "Solana",
+          "team": "blue",
+          "damage": 2726
+        },
+        {
+          "player": "eq_red_2",
+          "champion": "Cinderbloom",
+          "team": "blue",
+          "damage": 9212
+        },
+        {
+          "player": "eq_red_3",
+          "champion": "Nullweaver",
+          "team": "blue",
+          "damage": 5130
+        },
+        {
+          "player": "eq_red_4",
+          "champion": "Kindra",
+          "team": "blue",
+          "damage": 24357
+        },
+        {
+          "player": "eq_red_5",
+          "champion": "Mirehook",
+          "team": "blue",
+          "damage": 3794
+        },
+        {
+          "player": "eq_blue_1",
+          "champion": "Kaolin",
+          "team": "red",
+          "damage": 3588
+        },
+        {
+          "player": "eq_blue_2",
+          "champion": "Veyara",
+          "team": "red",
+          "damage": 9518
+        },
+        {
+          "player": "eq_blue_3",
+          "champion": "Raijin",
+          "team": "red",
+          "damage": 3723
+        },
+        {
+          "player": "eq_blue_4",
+          "champion": "Cora",
+          "team": "red",
+          "damage": 19282
+        },
+        {
+          "player": "eq_blue_5",
+          "champion": "Tequoia",
+          "team": "red",
+          "damage": 4825
+        }
+      ]
+    },
+    {
+      "seed": 104,
+      "swapped": false,
+      "completed": true,
+      "winner": "red",
+      "seconds": 395.2666666667655,
+      "ticks": 11858,
+      "wallMs": 899.4319999999989,
+      "msPerTickIncludingObservation": 0.07585022769438345,
+      "deaths": 101,
+      "actionOrAnimationSwitches": 0,
+      "recallInterruptionHeuristic": 0,
+      "deathsInsideEnemyStructureRange": 39,
+      "telemetry": {
+        "towerDiveAttempts": 1621,
+        "towerDiveSuccesses": 0,
+        "towerDiveRiskDeclines": 4331,
+        "turretExecutions": 1,
+        "supportCampFarms": 0,
+        "dragonKills": {
+          "blue": 1,
+          "red": 0
+        },
+        "golemKills": {
+          "blue": 0,
+          "red": 0
+        }
+      },
+      "damage": [
+        {
+          "player": "eq_blue_1",
+          "champion": "Kaolin",
+          "team": "blue",
+          "damage": 5513
+        },
+        {
+          "player": "eq_blue_2",
+          "champion": "Veyara",
+          "team": "blue",
+          "damage": 17136
+        },
+        {
+          "player": "eq_blue_3",
+          "champion": "Raijin",
+          "team": "blue",
+          "damage": 4477
+        },
+        {
+          "player": "eq_blue_4",
+          "champion": "Cora",
+          "team": "blue",
+          "damage": 29639
+        },
+        {
+          "player": "eq_blue_5",
+          "champion": "Tequoia",
+          "team": "blue",
+          "damage": 6313
+        },
+        {
+          "player": "eq_red_1",
+          "champion": "Solana",
+          "team": "red",
+          "damage": 3267
+        },
+        {
+          "player": "eq_red_2",
+          "champion": "Cinderbloom",
+          "team": "red",
+          "damage": 12316
+        },
+        {
+          "player": "eq_red_3",
+          "champion": "Nullweaver",
+          "team": "red",
+          "damage": 6705
+        },
+        {
+          "player": "eq_red_4",
+          "champion": "Kindra",
+          "team": "red",
+          "damage": 36053
+        },
+        {
+          "player": "eq_red_5",
+          "champion": "Mirehook",
+          "team": "red",
+          "damage": 4936
+        }
+      ]
+    },
+    {
+      "seed": 104,
+      "swapped": true,
+      "completed": true,
+      "winner": "blue",
+      "seconds": 260.03333333332455,
+      "ticks": 7801,
+      "wallMs": 560.8791999999994,
+      "msPerTickIncludingObservation": 0.0718983720035892,
+      "deaths": 74,
+      "actionOrAnimationSwitches": 0,
+      "recallInterruptionHeuristic": 0,
+      "deathsInsideEnemyStructureRange": 27,
+      "telemetry": {
+        "towerDiveAttempts": 309,
+        "towerDiveSuccesses": 0,
+        "towerDiveRiskDeclines": 1515,
+        "turretExecutions": 2,
+        "supportCampFarms": 0,
+        "dragonKills": {
+          "blue": 0,
+          "red": 0
+        },
+        "golemKills": {
+          "blue": 0,
+          "red": 0
+        }
+      },
+      "damage": [
+        {
+          "player": "eq_red_1",
+          "champion": "Solana",
+          "team": "blue",
+          "damage": 2825
+        },
+        {
+          "player": "eq_red_2",
+          "champion": "Cinderbloom",
+          "team": "blue",
+          "damage": 7338
+        },
+        {
+          "player": "eq_red_3",
+          "champion": "Nullweaver",
+          "team": "blue",
+          "damage": 4298
+        },
+        {
+          "player": "eq_red_4",
+          "champion": "Kindra",
+          "team": "blue",
+          "damage": 28472
+        },
+        {
+          "player": "eq_red_5",
+          "champion": "Mirehook",
+          "team": "blue",
+          "damage": 3255
+        },
+        {
+          "player": "eq_blue_1",
+          "champion": "Kaolin",
+          "team": "red",
+          "damage": 3303
+        },
+        {
+          "player": "eq_blue_2",
+          "champion": "Veyara",
+          "team": "red",
+          "damage": 10842
+        },
+        {
+          "player": "eq_blue_3",
+          "champion": "Raijin",
+          "team": "red",
+          "damage": 3386
+        },
+        {
+          "player": "eq_blue_4",
+          "champion": "Cora",
+          "team": "red",
+          "damage": 15922
+        },
+        {
+          "player": "eq_blue_5",
+          "champion": "Tequoia",
+          "team": "red",
+          "damage": 3979
+        }
+      ]
+    },
+    {
+      "seed": 105,
+      "swapped": false,
+      "completed": true,
+      "winner": "red",
+      "seconds": 697.7333333333561,
+      "ticks": 20932,
+      "wallMs": 2025.4601999999995,
+      "msPerTickIncludingObservation": 0.09676381616663479,
+      "deaths": 182,
+      "actionOrAnimationSwitches": 0,
+      "recallInterruptionHeuristic": 0,
+      "deathsInsideEnemyStructureRange": 121,
+      "telemetry": {
+        "towerDiveAttempts": 3034,
+        "towerDiveSuccesses": 0,
+        "towerDiveRiskDeclines": 8598,
+        "turretExecutions": 15,
+        "supportCampFarms": 0,
+        "dragonKills": {
+          "blue": 0,
+          "red": 1
+        },
+        "golemKills": {
+          "blue": 0,
+          "red": 1
+        }
+      },
+      "damage": [
+        {
+          "player": "eq_blue_1",
+          "champion": "Kaolin",
+          "team": "blue",
+          "damage": 7388
+        },
+        {
+          "player": "eq_blue_2",
+          "champion": "Veyara",
+          "team": "blue",
+          "damage": 27794
+        },
+        {
+          "player": "eq_blue_3",
+          "champion": "Raijin",
+          "team": "blue",
+          "damage": 6451
+        },
+        {
+          "player": "eq_blue_4",
+          "champion": "Cora",
+          "team": "blue",
+          "damage": 65943
+        },
+        {
+          "player": "eq_blue_5",
+          "champion": "Tequoia",
+          "team": "blue",
+          "damage": 8377
+        },
+        {
+          "player": "eq_red_1",
+          "champion": "Solana",
+          "team": "red",
+          "damage": 4164
+        },
+        {
+          "player": "eq_red_2",
+          "champion": "Cinderbloom",
+          "team": "red",
+          "damage": 16938
+        },
+        {
+          "player": "eq_red_3",
+          "champion": "Nullweaver",
+          "team": "red",
+          "damage": 7298
+        },
+        {
+          "player": "eq_red_4",
+          "champion": "Kindra",
+          "team": "red",
+          "damage": 41866
+        },
+        {
+          "player": "eq_red_5",
+          "champion": "Mirehook",
+          "team": "red",
+          "damage": 6865
+        }
+      ]
+    },
+    {
+      "seed": 105,
+      "swapped": true,
+      "completed": true,
+      "winner": "blue",
+      "seconds": 263.2999999999938,
+      "ticks": 7899,
+      "wallMs": 823.1337999999996,
+      "msPerTickIncludingObservation": 0.10420734270160775,
+      "deaths": 72,
+      "actionOrAnimationSwitches": 0,
+      "recallInterruptionHeuristic": 0,
+      "deathsInsideEnemyStructureRange": 31,
+      "telemetry": {
+        "towerDiveAttempts": 1469,
+        "towerDiveSuccesses": 0,
+        "towerDiveRiskDeclines": 2861,
+        "turretExecutions": 1,
+        "supportCampFarms": 0,
+        "dragonKills": {
+          "blue": 0,
+          "red": 0
+        },
+        "golemKills": {
+          "blue": 0,
+          "red": 0
+        }
+      },
+      "damage": [
+        {
+          "player": "eq_red_1",
+          "champion": "Solana",
+          "team": "blue",
+          "damage": 2821
+        },
+        {
+          "player": "eq_red_2",
+          "champion": "Cinderbloom",
+          "team": "blue",
+          "damage": 6564
+        },
+        {
+          "player": "eq_red_3",
+          "champion": "Nullweaver",
+          "team": "blue",
+          "damage": 4599
+        },
+        {
+          "player": "eq_red_4",
+          "champion": "Kindra",
+          "team": "blue",
+          "damage": 19084
+        },
+        {
+          "player": "eq_red_5",
+          "champion": "Mirehook",
+          "team": "blue",
+          "damage": 3913
+        },
+        {
+          "player": "eq_blue_1",
+          "champion": "Kaolin",
+          "team": "red",
+          "damage": 3530
+        },
+        {
+          "player": "eq_blue_2",
+          "champion": "Veyara",
+          "team": "red",
+          "damage": 10585
+        },
+        {
+          "player": "eq_blue_3",
+          "champion": "Raijin",
+          "team": "red",
+          "damage": 3508
+        },
+        {
+          "player": "eq_blue_4",
+          "champion": "Cora",
+          "team": "red",
+          "damage": 15509
+        },
+        {
+          "player": "eq_blue_5",
+          "champion": "Tequoia",
+          "team": "red",
+          "damage": 3742
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Animation switches include farming and attacks; not equivalent to decision switches.",
+    "Deaths in structure range are not proof of turret lethal attribution.",
+    "Recall interruptions are a position/health heuristic, not event-attributed.",
+    "No live parity: headless omits full ability/projectile/Conflux/psychology execution.",
+    "Teamfight durations, objective contests/conversion, Nexus opportunities, cancellations, path failures and unnecessary farming are not instrumented; no fabricated zeros."
+  ]
+}

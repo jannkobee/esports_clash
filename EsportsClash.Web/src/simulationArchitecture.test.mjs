@@ -4,19 +4,19 @@ import { resolveFightCommitment } from './decisionCommitment.ts';
 import { perceiveChampions } from './decisionPerception.ts';
 import { runSimulationSlice, shouldPublishHud } from './simulationPresentation.ts';
 
-test('commitment extraction matches original arbitration across all flags', () => {
-  for (const state of [undefined, 'fight', 'retreat', 'cover']) for (let flags = 0; flags < 256; flags++) {
-    const bits = Array.from({ length: 8 }, (_, i) => !!(flags & (1 << i)));
-    const [dangerous, nearby, inWell, followUp, lowHealth, losingFight, abortingDive, active] = bits;
+test('commitment extraction matches risk-based arbitration across all flags', () => {
+  for (const state of [undefined, 'fight', 'retreat', 'cover']) for (let flags = 0; flags < 128; flags++) {
+    const bits = Array.from({ length: 7 }, (_, i) => !!(flags & (1 << i)));
+    const [dangerous, nearby, inWell, followUp, lowHealth, losingFight, active] = bits;
     const timer = active ? 0.2 : 0;
     let expected = dangerous, committedState = state, nextTimer = timer;
     if (state === 'retreat' && timer > 0 && nearby && !inWell && !followUp) expected = true;
-    else if (state === 'fight' && timer > 0 && !lowHealth && !losingFight && !abortingDive) expected = false;
+    else if (state === 'fight' && timer > 0 && !lowHealth && !losingFight) expected = false;
     if (expected && state !== 'retreat') { committedState = 'retreat'; nextTimer = 0.45; }
     else if (!expected && state !== 'fight' && nearby) { committedState = 'fight'; nextTimer = 0.35; }
     else if (!nearby) committedState = undefined;
     assert.deepEqual(resolveFightCommitment({ committedState: state, timer, dangerous,
-      enemyCount: nearby ? 1 : 0, inWell, followUp, lowHealth, losingFight, abortingDive }),
+      enemyCount: nearby ? 1 : 0, inWell, followUp, lowHealth, losingFight }),
     { dangerous: expected, committedState, timer: nextTimer });
   }
 });

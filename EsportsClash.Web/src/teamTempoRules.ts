@@ -11,11 +11,11 @@ export function isTeamfightApproachSafe(from: Point, to: Point,
 
 /** Tempo may defer optional macro work, never authorize combat or override recovery. */
 export function shouldPrioritizeTeamfight(input: {
-  dangerousFight: boolean; lowHealth: boolean; abortingDive: boolean; takingTowerFire: boolean;
+  dangerousFight: boolean; lowHealth: boolean; takingTowerFire: boolean;
   targetDistance: number; attackRange: number; readyCastRange: number;
   canReinforceAlly: boolean;
 }): boolean {
-  if (input.dangerousFight || input.lowHealth || input.abortingDive || input.takingTowerFire) return false;
+  if (input.dangerousFight || input.lowHealth || input.takingTowerFire) return false;
   // The caller supplies Infinity for invisible, unavailable, or tower-protected targets.
   // This is an opportunity radius, not additional attack/cast reach.
   const opportunityRange = Math.min(400, Math.max(190, input.attackRange * 1.5, input.readyCastRange));
@@ -27,13 +27,13 @@ export function shouldFollowUpControl(input: {
   distanceToCatch: number; attackRange: number; readyCastRange: number;
   controlSeconds: number; moveSpeed: number;
   iq: number; teamfight: number; losingFight: boolean;
-  underEnemyTower: boolean; takingTowerFire: boolean; abortingDive: boolean;
+  underEnemyTower: boolean; takingTowerFire: boolean;
 }): boolean {
   const { healthFraction, caughtEnemies, freeThreats, nearbyAllies, distanceToCatch,
     attackRange, readyCastRange, controlSeconds, moveSpeed, iq, teamfight, losingFight,
-    underEnemyTower, takingTowerFire, abortingDive } = input;
+    underEnemyTower, takingTowerFire } = input;
   if (caughtEnemies === 0 || distanceToCatch > 650 || healthFraction <= 0.10
-    || underEnemyTower || takingTowerFire || abortingDive) return false;
+    || underEnemyTower || takingTowerFire) return false;
   const decisiveCatch = caughtEnemies >= 3 && freeThreats <= 1;
   const canContributeAtLowHealth = attackRange >= 100 || readyCastRange >= 150
     || distanceToCatch <= Math.max(attackRange + 45, 135);
@@ -59,15 +59,15 @@ export function shouldStartProactiveAllIn(input: {
   healthFraction: number; alliedAverageHealth: number; enemyAverageHealth: number;
   groupedAllies: number; groupedEnemies: number; readyContributors: number;
   targetDistance: number; approachSafe: boolean; targetUnderEnemyTower: boolean;
-  takingTowerFire: boolean; abortingDive: boolean; losingFight: boolean;
+  towerRiskAcceptable?: boolean; takingTowerFire: boolean; losingFight: boolean;
   iq: number; teamfight: number;
 }): boolean {
   const { healthFraction, alliedAverageHealth, enemyAverageHealth, groupedAllies,
     groupedEnemies, readyContributors, targetDistance, approachSafe,
-    targetUnderEnemyTower, takingTowerFire, abortingDive, losingFight, iq,
+    targetUnderEnemyTower, towerRiskAcceptable, takingTowerFire, losingFight, iq,
     teamfight } = input;
   if (!Number.isFinite(targetDistance) || targetDistance > 500 || !approachSafe
-    || targetUnderEnemyTower || takingTowerFire || abortingDive) return false;
+    || (targetUnderEnemyTower && !towerRiskAcceptable) || takingTowerFire) return false;
   if (healthFraction < 0.5 || alliedAverageHealth < 0.56
     || groupedAllies < 3 || groupedEnemies < 3 || groupedAllies < groupedEnemies) return false;
   const healthEdge = alliedAverageHealth - enemyAverageHealth;

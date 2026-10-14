@@ -14,7 +14,7 @@ test('ability catalog accounts for every champion, standard slot, passive, invok
   assert.equal(audit.movementAbilities.length, 20);
   assert.deepEqual(
     audit.movementAbilities.filter(ability => ability.kind === 'Dash').map(ability => `${ability.champion}:${ability.slot}`).sort(),
-    ['Brewmaw:skill2', 'Cinderbloom:skill1', 'Renn:skill2', 'Renn:ultimate', 'Solana:skill2', 'Veyara:skill2'].sort(),
+    ['Brewmaw:skill2', 'Cinderbloom:skill1', 'Raijin:ultimate', 'Renn:skill2', 'Renn:ultimate', 'Solana:skill2', 'Veyara:skill2'].sort(),
   );
   assert.ok(audit.movementAbilities.some(ability => ability.champion === 'Jaxon' && ability.kind === 'Leap'));
   assert.ok(audit.movementAbilities.some(ability => ability.champion === 'Valerie' && ability.kind === 'Charge'));

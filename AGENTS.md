@@ -1,5 +1,9 @@
 # Repository handoff
 
+## Latest tower-rule approval (2026-10-14)
+
+The user explicitly reconfirmed that `docs/agent-handoff.md` and `docs/arena-mechanics.md`'s latest risk-based tower combat supersede the historical Tower Dive Limits & Evacuation subsystem below. Do not restore `diveAborting`, `shouldAbortTowerDive`, forced evacuation, abort-only attack suppression, fixed dive timeouts, or the +35 sprint. Keep real tower damage/range/targeting, normal terrain-aware retreat, safe bushes/perimeter, attribution, anti-oscillation, and legal Nexus finishing. IQ/personality influence marginal risk only, never combat stats or mechanical legality. The contradiction-confirmation rule still applies to future changes to these current invariants.
+
 Read [docs/agent-handoff.md](docs/agent-handoff.md) before changing the game. It records the user's requests as a conversation and names the code that implements each decision.
 
 Read [docs/arena-mechanics.md](docs/arena-mechanics.md) for gameplay invariants. After a gameplay or squad UI change, update both documents with the decision, affected files, verification, and remaining limits. Run `npm run check:game` and `npm run build` from `EsportsClash.Web`.

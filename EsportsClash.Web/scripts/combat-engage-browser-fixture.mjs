@@ -17,7 +17,7 @@ export async function checkCombatEngage({ evaluate, delay, click }) {
       unit.y = 300 + sideIndex * 35;
       unit.hp = unit.maxHp; unit.mana = 100; unit.level = 6;
       unit.cd1 = 0; unit.cd2 = 0; unit.cdUlt = 0;
-      unit.isRecalling = false; unit.recallIntent = false; unit.diveAborting = false;
+      unit.isRecalling = false; unit.recallIntent = false;
       unit.committedState = undefined; unit.decisionCommitTimer = 0;
       unit.allInCommitTimer = 0;
       unit.actionIntent = undefined; unit.followUpEngageSignaled = false;
@@ -37,13 +37,13 @@ export async function checkCombatEngage({ evaluate, delay, click }) {
       signaled: champions.filter(unit => unit.followUpEngageSignaled).length,
       fighting: champions.filter(unit => unit.committedState === 'fight').length,
       championIntents: champions.filter(unit => unit.actionIntent?.kind === 'champion').length,
-      aborting: champions.filter(unit => unit.diveAborting).length,
+      legacyAbortStates: champions.filter(unit => Object.hasOwn(unit, 'diveAborting')).length,
     };
   })()`);
   assert.ok(result.signaled >= 6, JSON.stringify(result));
   assert.ok(result.fighting >= 6, JSON.stringify(result));
   assert.ok(result.championIntents >= 6, JSON.stringify(result));
-  assert.equal(result.aborting, 0, JSON.stringify(result));
+  assert.equal(result.legacyAbortStates, 0, JSON.stringify(result));
   console.log('Controlled proactive all-in check:', JSON.stringify(result));
 
   await click('4x');

@@ -32,7 +32,7 @@ export function chooseNearbyFightingAlly(
   enemies: readonly AramChampionUnit[], second: number,
 ): AramChampionUnit | undefined {
   return allies.filter(ally => ally.id !== unit.id && ally.isAlive && !ally.isRecalling
-    && !ally.recallIntent && !ally.diveAborting && ally.committedState !== 'retreat'
+    && !ally.recallIntent && ally.committedState !== 'retreat'
     && !ally.blackHole && !ally.corsaraBarrage && !ally.monkeySpin
     && Math.hypot(ally.x - unit.x, ally.y - unit.y) <= 500
     && enemies.some(enemy => enemy.isAlive && Math.hypot(enemy.x - ally.x, enemy.y - ally.y) <= 250

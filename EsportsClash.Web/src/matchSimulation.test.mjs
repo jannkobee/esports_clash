@@ -40,9 +40,9 @@ test('batch multi-seed simulation collects telemetry, verifies invariants, and g
   // The headless simulator does not model the live post-recall team-camp call.
   assert.equal(analysis.supportCampFarms, 0, 'The simulation must not grant solo Support camp clears');
 
-  // Invariant 3: Tower dives are attempted and safely aborted when conditions deteriorate
+  // Tower dives are assessed through risk rather than a forced abort controller.
   assert.ok(analysis.towerDives.totalAttempts >= 0);
-  assert.ok(typeof analysis.towerDives.abortRate === 'number');
+  assert.ok(typeof analysis.towerDives.riskDeclineRate === 'number');
 
   // Invariant 4: Both teams participate in combat and earn gold/kills
   assert.ok(analysis.averageBlueKills > 0, 'Blue team should record kills');
@@ -59,7 +59,7 @@ test('batch multi-seed simulation collects telemetry, verifies invariants, and g
   console.log(`Average Duration: ${analysis.averageDurationMinutes} mins (Range: ${analysis.minDurationMinutes} - ${analysis.maxDurationMinutes} mins)`);
   console.log(`Average Kills: ${analysis.averageKillsPerMatch} | Skillshot Accuracy: ${analysis.skillshotHitRate}%`);
   console.log(`Objectives: ${analysis.objectives.totalDragons} Dragons, ${analysis.objectives.totalGolems} Golems`);
-  console.log(`Tower Dives: ${analysis.towerDives.totalAttempts} attempts, ${analysis.towerDives.aborts} aborts, ${analysis.towerDives.executions} executions`);
+  console.log(`Tower Dives: ${analysis.towerDives.totalAttempts} commitments, ${analysis.towerDives.riskDeclines} risk declines, ${analysis.towerDives.executions} executions`);
   console.log(`Solo Support Camp Clears: ${analysis.supportCampFarms} (team objectives are not simulated)`);
   console.log('Role Damage Breakdown:');
   Object.entries(analysis.roleStats).forEach(([role, stat]) => {

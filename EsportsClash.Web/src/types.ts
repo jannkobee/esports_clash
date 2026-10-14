@@ -316,6 +316,7 @@ export interface AramChampionUnit {
   kaelenAshenExpiresAt?: number;
   kaelenAshenNextTickAt?: number;
   kaelenAshenSourceId?: string;
+  kaelenAshenRatios?: { adRatio: number; apRatio: number };
   aetherisOrbs?: { charges: number; remaining: number };
   aetherisOverchargeTimer?: number;
   aetherisOverchargeSourceId?: string;
@@ -370,10 +371,11 @@ export interface AramChampionUnit {
   supportHealTimer?: number;
   locketCooldown?: number;
   censerBuffTimer?: number;
-  diveTimer?: number;
-  diveAborting?: boolean;
-  diveAbortCooldown?: number;
-  diveTargetId?: string;
+  /** Simulation-owned finish state; it only describes a currently viable legal Nexus siege. */
+  nexusFinishTargetId?: string;
+  nexusFinishContextKey?: string;
+  nexusFinishBlockedKey?: string;
+  nexusFinishLastAttackAt?: number;
   retreatPlan?: {
     id: string;
     kind: 'home-lane' | 'allied-tower' | 'teammate' | 'open-ground' | 'fountain' | 'bush';

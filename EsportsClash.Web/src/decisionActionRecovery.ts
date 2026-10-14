@@ -1,3 +1,5 @@
+import { selectUtilityDecision, type UtilityFactors } from './utilityDecision.ts';
+
 export type DecisiveActionKind =
   | 'champion'
   | 'structure'
@@ -48,6 +50,8 @@ export interface DecisiveActionCandidate {
   available?: boolean;
   safe?: boolean;
   reachable?: boolean;
+  /** Optional normalized policy inputs. Omitted during behavior-preserving migration. */
+  utility?: UtilityFactors;
 }
 
 const FAILURE_RETRY_SECONDS: Record<ActionFailureReason, number> = {
@@ -119,20 +123,22 @@ export function chooseCommittedActionTarget<T extends DecisiveActionCandidate>(i
   failures?: readonly DecisiveActionFailure[];
   now: number;
 }): T | undefined {
-  const viable = input.candidates.slice(0, MAX_CANDIDATES_PER_PASS).filter(candidate =>
-    candidate.available !== false && candidate.safe !== false && candidate.reachable !== false
-    && !isActionRetryBlocked(input.failures, decisiveActionKey(input.kind, candidate.id),
-      input.now, candidate.contextKey));
-  const held = input.intent?.kind === input.kind && input.intent.committedUntil > input.now
-    ? viable.find(candidate => candidate.id === input.intent?.targetId
-      && candidate.contextKey === input.intent?.contextKey)
-    : undefined;
-  if (held) return held;
-  if (input.preferred) {
-    const preferred = viable.find(candidate => candidate.id === input.preferred?.id);
-    if (preferred) return preferred;
-  }
-  return viable[0];
+  return selectUtilityDecision({
+    actorAvailable: true, now: input.now, explain: false,
+    commitment: input.intent?.kind === input.kind ? {
+      key: input.intent.key, contextKey: input.intent.contextKey, until: input.intent.committedUntil,
+    } : undefined,
+    candidates: input.candidates.slice(0, MAX_CANDIDATES_PER_PASS).map(candidate => ({
+      key: decisiveActionKey(input.kind, candidate.id), contextKey: candidate.contextKey,
+      value: candidate, priority: 'tactical' as const,
+      rejected: candidate.available === false ? 'unavailable' : candidate.safe === false ? 'unsafe'
+        : candidate.reachable === false ? 'unreachable'
+          : isActionRetryBlocked(input.failures, decisiveActionKey(input.kind, candidate.id), input.now, candidate.contextKey)
+            ? 'retry-blocked' : undefined,
+      factors: candidate.utility ?? { tactical: Number(candidate.id === input.preferred?.id) },
+      reason: candidate.id === input.preferred?.id ? 'existing policy preference' : 'available fallback',
+    })),
+  }).selected?.value;
 }
 
 export function beginOrContinueAction(input: {

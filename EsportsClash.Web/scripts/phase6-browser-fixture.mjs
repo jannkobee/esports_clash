@@ -29,7 +29,7 @@ export async function checkPhase6({ evaluate, send, delay, outputDir }) {
         isAlive:true,hp:10000,maxHp:10000,mana:100,x:1200,y:380,vx:0,vy:0,level:3,
         attackTimer:${wave ? 1.25 : 0},cd1:${wave ? 0 : 999},cd2:999,cdUlt:999,items:[],boots:undefined,
         isRecalling:false,recallIntent:false,recallCooldown:0,committedState:undefined,decisionCommitTimer:0,
-        actionIntent:undefined,actionFailures:undefined,diveAborting:false,stunTimer:0,charmTimer:0,fearTimer:0,
+        actionIntent:undefined,actionFailures:undefined,stunTimer:0,charmTimer:0,fearTimer:0,
         lastEnemyDamage:undefined,animState:'idle',creepAttack:undefined});
       r.structures.current.forEach(s=>{s.x=s.team==='blue'?100:2500;s.y=380;});
       r.projectiles.current=[];

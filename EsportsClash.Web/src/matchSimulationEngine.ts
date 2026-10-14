@@ -23,9 +23,7 @@ import {
   chooseObjectiveAction
 } from './objectiveRules.ts';
 import {
-  evaluateTowerDive,
-  shouldAbortTowerDive,
-  getTurretEvacuationVector,
+  assessTowerDiveRisk,
   getTurretPerimeterHoldPoint
 } from './towerDiveRules.ts';
 import {
@@ -162,7 +160,7 @@ export interface SimulationState {
   telemetry: {
     towerDiveAttempts: number;
     towerDiveSuccesses: number;
-    towerDiveAborts: number;
+    towerDiveRiskDeclines: number;
     turretExecutions: number;
     supportCampFarms: number;
     dragonKills: { blue: number; red: number };
@@ -232,9 +230,9 @@ export interface BatchSimulationAnalysis {
   skillshotHitRate: number;
   towerDives: {
     totalAttempts: number;
-    aborts: number;
+    riskDeclines: number;
     executions: number;
-    abortRate: number;
+    riskDeclineRate: number;
   };
   supportCampFarms: number;
   objectives: {
@@ -471,7 +469,7 @@ export function createSimulationState(options: SimulationOptions): SimulationSta
     telemetry: {
       towerDiveAttempts: 0,
       towerDiveSuccesses: 0,
-      towerDiveAborts: 0,
+      towerDiveRiskDeclines: 0,
       turretExecutions: 0,
       supportCampFarms: 0,
       dragonKills: { blue: 0, red: 0 },
@@ -703,61 +701,31 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
 
     const attackRange = getChampionBasicAttackRange(u.champion);
 
-    // Check Tower Dive & Evacuation
+    // Read tower risk before committing. The headless simulator deliberately
+    // has no abort state, evacuation vector, or special exit speed.
     let isDiving = false;
     if (closestEnemyTower) {
       const isInsideTower = Math.hypot(u.x - closestEnemyTower.x, u.y - closestEnemyTower.y) <= closestEnemyTower.range;
       const underTowerEnemies = enemies.filter(e => Math.hypot(e.x - closestEnemyTower.x, e.y - closestEnemyTower.y) <= closestEnemyTower.range);
       const alliedWaveUnderTower = sim.minions.filter(m => m.team === u.team && m.isAlive && Math.hypot(m.x - closestEnemyTower.x, m.y - closestEnemyTower.y) <= closestEnemyTower.range);
 
-      if (isInsideTower) {
-        u.diveTimer = (u.diveTimer ?? 0) + dt;
-        const targetUnderTower = underTowerEnemies[0] ?? null;
-        const abortCheck = shouldAbortTowerDive({
-          diver: u,
-          target: targetUnderTower,
-          tower: closestEnemyTower,
-          alliedMinionsUnderTower: alliedWaveUnderTower.length,
-          defendersUnderTower: underTowerEnemies.length,
-          diveDuration: u.diveTimer,
-          takingTurretFire: closestEnemyTower.targetId === u.id,
-        });
-
-        if (abortCheck.shouldAbort && !u.diveAborting) {
-          u.diveAborting = true;
-          sim.telemetry.towerDiveAborts++;
-        }
-      } else {
-        u.diveTimer = 0;
-        if (Math.hypot(u.x - closestEnemyTower.x, u.y - closestEnemyTower.y) > closestEnemyTower.range + 50) {
-          u.diveAborting = false;
-        }
-      }
-
-      if (u.diveAborting) {
-        const evac = getTurretEvacuationVector(u, closestEnemyTower);
-        const edx = evac.targetX - u.x;
-        const edy = evac.targetY - u.y;
-        const edist = Math.hypot(edx, edy) || 1;
-        u.x += (edx / edist) * (95 + 35) * dt;
-        u.y += (edy / edist) * (95 + 35) * dt;
-        return;
-      }
-
       if (underTowerEnemies.length > 0) {
         const targetUnderTower = underTowerEnemies[0];
-        const diveDecision = evaluateTowerDive({
+        const diveDecision = assessTowerDiveRisk({
           diver: u,
           target: targetUnderTower,
           tower: closestEnemyTower,
           alliedMinionsUnderTower: alliedWaveUnderTower.length,
           attackersUnderTower: allies.filter(a => Math.hypot(a.x - closestEnemyTower.x, a.y - closestEnemyTower.y) <= closestEnemyTower.range).length + 1,
           defendersUnderTower: underTowerEnemies.length,
+          takingTurretFire: closestEnemyTower.targetId === u.id,
         });
 
-        if (diveDecision.canDive) {
+        if (diveDecision.shouldCommit) {
           isDiving = true;
           sim.telemetry.towerDiveAttempts++;
+        } else if (isInsideTower) {
+          sim.telemetry.towerDiveRiskDeclines++;
         }
       }
     }
@@ -1198,7 +1166,7 @@ export function simulateBatchMatches(seeds: number[], options?: Omit<SimulationO
   const totalHits = results.reduce((sum, r) => sum + r.report.skillshotsHit, 0);
 
   const totalDives = results.reduce((sum, r) => sum + r.telemetry.towerDiveAttempts, 0);
-  const totalAborts = results.reduce((sum, r) => sum + r.telemetry.towerDiveAborts, 0);
+  const totalRiskDeclines = results.reduce((sum, r) => sum + r.telemetry.towerDiveRiskDeclines, 0);
   const totalExecutions = results.reduce((sum, r) => sum + r.telemetry.turretExecutions, 0);
   const totalSupportCamps = results.reduce((sum, r) => sum + r.telemetry.supportCampFarms, 0);
 
@@ -1257,8 +1225,8 @@ export function simulateBatchMatches(seeds: number[], options?: Omit<SimulationO
     diagnostics.push(`[Role Violation] Supports attempted ${totalSupportCamps} camp farms. Enforce strict macro farm filtering.`);
   }
 
-  const diveAbortRate = totalDives > 0 ? Math.round((totalAborts / totalDives) * 100) : 0;
-  diagnostics.push(`[Tower Dive Safety] ${totalDives} total dive attempts, ${totalAborts} safety aborts (${diveAbortRate}% abort rate), ${totalExecutions} turret executions.`);
+  const diveRiskDeclineRate = totalDives > 0 ? Math.round((totalRiskDeclines / totalDives) * 100) : 0;
+  diagnostics.push(`[Tower Dive Risk] ${totalDives} committed dives, ${totalRiskDeclines} risk declines, ${totalExecutions} turret executions.`);
 
   const mageManaBlocks = roleStats['Mage']?.avgManaBlocks ?? 0;
   if (mageManaBlocks > 8) {
@@ -1283,9 +1251,9 @@ export function simulateBatchMatches(seeds: number[], options?: Omit<SimulationO
     skillshotHitRate: totalShots > 0 ? Math.round((totalHits / totalShots) * 100) : 0,
     towerDives: {
       totalAttempts: totalDives,
-      aborts: totalAborts,
+      riskDeclines: totalRiskDeclines,
       executions: totalExecutions,
-      abortRate: diveAbortRate
+      riskDeclineRate: diveRiskDeclineRate
     },
     supportCampFarms: totalSupportCamps,
     objectives: {

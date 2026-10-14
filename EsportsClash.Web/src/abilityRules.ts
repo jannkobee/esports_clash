@@ -11,19 +11,26 @@ export interface AbilityRatioInfo {
   ratioDesc: string;
 }
 
-/** Bonus-stat scaling on any ability is capped at 10% so items flavor abilities rather than dominate them. */
-export const MAX_ABILITY_RATIO = 0.10;
+/** Every damaging standard ability receives a modest, role-authored item ratio. */
+export const MIN_ABILITY_RATIO = 0.15;
+export const MAX_ABILITY_RATIO = 0.25;
 
 export function getAbilityRatios(
   champion: Pick<ChampionKit, 'primaryRole' | 'secondaryRole'>,
   skill?: { adRatio?: number; apRatio?: number }
 ): AbilityRatioInfo {
-  const isMage = champion.primaryRole === 'Mage' || champion.secondaryRole === 'Mage';
-  const isPhysicalRole = champion.primaryRole === 'Assassin'
-    || champion.primaryRole === 'Fighter'
-    || champion.primaryRole === 'Marksman';
-  const adRatio = Math.min(MAX_ABILITY_RATIO, skill?.adRatio ?? (isPhysicalRole ? 0.10 : 0.05));
-  const apRatio = Math.min(MAX_ABILITY_RATIO, skill?.apRatio ?? (isMage ? 0.10 : 0.06));
+  const roleRatios: Record<ChampionKit['primaryRole'], { adRatio: number; apRatio: number }> = {
+    Mage: { adRatio: .15, apRatio: .25 },
+    Marksman: { adRatio: .25, apRatio: .15 },
+    Assassin: { adRatio: .23, apRatio: .18 },
+    Fighter: { adRatio: .22, apRatio: .16 },
+    Tank: { adRatio: .18, apRatio: .15 },
+    Support: { adRatio: .15, apRatio: .20 },
+  };
+  const defaults = roleRatios[champion.primaryRole];
+  const clampRatio = (ratio: number) => Math.max(MIN_ABILITY_RATIO, Math.min(MAX_ABILITY_RATIO, ratio));
+  const adRatio = clampRatio(skill?.adRatio ?? defaults.adRatio);
+  const apRatio = clampRatio(skill?.apRatio ?? defaults.apRatio);
   const adPercent = Math.round(adRatio * 100);
   const apPercent = Math.round(apRatio * 100);
   return {
@@ -40,11 +47,12 @@ export function abilityDamageFromStats(
   champion: Pick<ChampionKit, 'primaryRole' | 'secondaryRole' | 'skill1' | 'skill2' | 'ultimate'>,
   slot: DamagingAbilitySlot,
   bonusAd: number,
-  bonusAp: number
+  bonusAp: number,
+  ratioOverride?: { adRatio: number; apRatio: number }
 ): number {
   if (slot === 'innate' || rawDamage <= 0) return rawDamage;
   const skill = champion[slot];
-  const ratios = getAbilityRatios(champion, skill);
+  const ratios = ratioOverride ?? getAbilityRatios(champion, skill);
   return rawDamage + bonusAd * ratios.adRatio + bonusAp * ratios.apRatio;
 }
 

@@ -39,9 +39,7 @@ const PERSONALITY_ACTION_FOR_INTENT: Record<DecisiveActionKind, PersonalityActio
   defend: 'peel', regroup: 'regroup', stage: 'regroup', relic: 'retreat', push: 'siege', hold: 'regroup',
 };
 import {
-  evaluateTowerDive,
-  shouldAbortTowerDive,
-  getTurretEvacuationVector,
+  assessTowerDiveRisk,
   isBushSafeFromTowers,
   getTurretPerimeterHoldPoint
 } from '../towerDiveRules';
@@ -69,6 +67,7 @@ import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from
 import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, rockRouteDistance, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from '../arenaRules';
 import { getMinionCrashMultiplier, getMinionStructureDamage, getWaveClearProfile, isInsideWaveClear, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
 import { structureBasicAttackDamage } from '../structureSiegeRules';
+import { evaluateNexusFinish } from '../nexusFinishRules';
 import { createRatedAvatar } from '../playerCardPower';
 import { campAnimation } from '../campAnimation';
 import { GOLEM_CHARGE_DAMAGE, GOLEM_SPAWN_SECOND, selectGolemChargeTower, shouldAwakenGolem } from '../siegeGolemRules';
@@ -1883,7 +1882,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                   y: Math.max(80, Math.min(620, enemy.y + (aim.y - origin.y) / gap * 54)) };
                 Object.assign(enemy, resolveRockTerrainMovement(enemy, destination, 13));
               }
-              applyDamageToChampion(source, enemy, spell.damage, false, spell.name, 'skill1');
+              applyDamageToChampion(source, enemy, spell.damage, false, spell.name, 'skill1', false, spell.ratios);
               if (spell.slow) {
                 enemy.kaelenSlowTimer = Math.max(enemy.kaelenSlowTimer ?? 0, spell.slow.duration);
                 enemy.kaelenSlowAmount = Math.max(enemy.kaelenSlowAmount ?? 0, spell.slow.amount);
@@ -1898,6 +1897,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                 enemy.kaelenAshenExpiresAt = matchTimeRef.current + spell.debuff.duration;
                 enemy.kaelenAshenNextTickAt = matchTimeRef.current + spell.debuff.tickInterval;
                 enemy.kaelenAshenSourceId = source.id;
+                enemy.kaelenAshenRatios = spell.ratios;
               }
               if (enemy.id === source.kaelenComboTargetId && source.kaelenAwaitSpellId === spell.id) source.kaelenLastSpellHitAt = matchTimeRef.current;
             });
@@ -1906,7 +1906,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               const position = kaelenCastPosition(s.kaelenCast, spell);
               champs.filter(enemy => enemy.team !== source.team && enemy.isAlive && !enemy.zhonyaActive
                 && Math.hypot(enemy.x - position.x, enemy.y - position.y) <= spell.radius).forEach(enemy => {
-                applyDamageToChampion(source, enemy, spell.zone!.tickDamage, false, `${spell.name} zone`, 'skill1');
+                applyDamageToChampion(source, enemy, spell.zone!.tickDamage, false, `${spell.name} zone`, 'skill1', false, spell.ratios);
                 if (spell.slow) { enemy.kaelenSlowTimer = Math.max(enemy.kaelenSlowTimer ?? 0, spell.slow.duration); enemy.kaelenSlowAmount = Math.max(enemy.kaelenSlowAmount ?? 0, spell.slow.amount); }
               });
             }
@@ -2236,7 +2236,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // Check Active Recalling Channel (2.5s channel to teleport to base well)
-      if (u.isRecalling && u.hp / u.maxHp >= 0.6 && u.mana / maxMana(u) >= 0.25 && !u.diveAborting) {
+      if (u.isRecalling && u.hp / u.maxHp >= 0.6 && u.mana / maxMana(u) >= 0.25) {
         const nearbyDefense = chooseBaseDefense(u, structures,
           champs.filter(enemy => enemy.team !== u.team && isUnitVisibleTo(enemy, u)),
           minions, u.baseDefenseTargetId);
@@ -2285,7 +2285,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           underEnemyTower: !!activeEnemyTower,
           takingTowerFire: structures.some(st => st.isAlive && st.team !== u.team
             && (st.targetId === u.id || st.diveAggressorId === u.id)),
-          abortingDive: !!u.diveAborting,
         })) {
           u.isRecalling = false;
           u.recallTimer = 0;
@@ -2348,10 +2347,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
       if ((u.kaelenAshenExpiresAt ?? 0) > matchTimeRef.current && (u.kaelenAshenNextTickAt ?? Infinity) <= matchTimeRef.current) {
         const source = champs.find(c => c.id === u.kaelenAshenSourceId && c.isAlive) ?? null;
-        applyDamageToChampion(source, u, 24 * Math.max(1, u.kaelenAshenStacks ?? 1), false, 'Ashen Hail burn', 'skill1');
+        applyDamageToChampion(source, u, 24 * Math.max(1, u.kaelenAshenStacks ?? 1), false, 'Ashen Hail burn', 'skill1', false, u.kaelenAshenRatios);
         u.kaelenAshenNextTickAt = matchTimeRef.current + .55;
       } else if ((u.kaelenAshenExpiresAt ?? 0) <= matchTimeRef.current) {
-        u.kaelenAshenStacks = 0; u.kaelenAshenSourceId = undefined;
+        u.kaelenAshenStacks = 0; u.kaelenAshenSourceId = undefined; u.kaelenAshenRatios = undefined;
       }
       if (u.kaelenInvokeCooldown && u.kaelenInvokeCooldown > 0) {
         u.kaelenInvokeCooldown = Math.max(0, u.kaelenInvokeCooldown - dt);
@@ -2910,9 +2909,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           actor: u,
           target: trackedTarget,
           now: matchTimeRef.current,
-          emergencyInterrupt: !!u.diveAborting || u.committedState === 'retreat',
+          emergencyInterrupt: u.committedState === 'retreat',
           available: trackedAvailable,
-          safe: !u.diveAborting,
+          safe: u.committedState !== 'retreat',
           reachable: trackedReachable,
         });
         u.actionIntent = progress.intent;
@@ -2983,7 +2982,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const action = PERSONALITY_ACTION_FOR_INTENT[kind];
         const breakdown = personalityDecisionBreakdown(u.player, ensurePsychology(u.player, u.psychology), action, teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
-          callAlignment, isSafe: !u.diveAborting && !losingFight,
+          callAlignment, isSafe: !losingFight,
           allyThreatened: allies.some(ally => ally.id !== u.id && ally.hp / ally.maxHp < .48
             && enemies.some(enemy => Math.hypot(enemy.x - ally.x, enemy.y - ally.y) < 170)),
           isolatedTarget: kind === 'champion' && localEnemies.length === 1,
@@ -2991,8 +2990,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           siegeOpportunity: kind === 'structure' || kind === 'push', isInBush: !!u.isInBush,
         });
         const baseline = ['champion', 'defend', 'objective'].includes(kind) ? localAllies.length - localEnemies.length : 0;
-        const safetyGate = u.diveAborting ? 'dive abort controls movement'
-          : kind === 'hold' ? 'turret-perimeter safety hold'
+        const safetyGate = kind === 'hold' ? 'turret-perimeter safety hold'
           : losingFight ? 'retreat risk remains eligible to interrupt this intent'
           : 'existing availability, route, commitment, and safety checks passed';
         u.decisionTelemetry = {
@@ -3058,7 +3056,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const psychology = ensurePsychology(u.player, u.psychology);
         const engage = personalityDecisionBreakdown(u.player, psychology, 'engage', teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
-          callAlignment, isSafe: !u.diveAborting && !losingFight, isolatedTarget: localEnemies.length === 1,
+          callAlignment, isSafe: !losingFight, isolatedTarget: localEnemies.length === 1,
           isInBush: !!u.isInBush,
         });
         u.decisionTelemetry = {
@@ -3067,15 +3065,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           personalityDelta: engage.personalityDelta, moodDelta: engage.moodDelta,
           coordinationDelta: engage.coordinationDelta, combinationDelta: engage.combinationDelta,
           combinations: engage.combinations.map(combination => `${combination.label}: ${combination.reason}`),
-          safetyGate: u.diveAborting ? 'dive abort blocks aggression' : 'target remains subject to turret and retreat gates',
+          safetyGate: 'target remains subject to turret risk and retreat evaluation',
           targetId: initialPrimaryTarget.id,
           explanation: `target:${initialPrimaryTarget.id}; ${u.player.personality} preference applied after baseline evaluation`,
           at: matchTimeRef.current,
         };
       }
 
-      // Update dive timers & cooldowns
-      u.diveAbortCooldown = Math.max(0, (u.diveAbortCooldown ?? 0) - dt);
+      // Tower risk is evaluated before a commitment, but never installs a
+      // separate abort state or forced evacuation controller.
       const isInsideEnemyTowerRange = nearestStructureForDive
         ? structureDistForDive <= nearestStructureForDive.range + 30
         : false;
@@ -3094,66 +3092,64 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ? (nearestStructureForDive.targetId === u.id || nearestStructureForDive.diveAggressorId === u.id)
         : false;
 
-      // Check if active dive has failed and must abort immediately
-      if (isInsideEnemyTowerRange && nearestStructureForDive) {
-        u.diveTimer = (u.diveTimer ?? 0) + dt;
-        const abortCheck = shouldAbortTowerDive({
-          diver: u,
-          target: initialPrimaryTarget,
-          tower: nearestStructureForDive,
-          alliedMinionsUnderTower,
-          defendersUnderTower,
-          diveDuration: u.diveTimer,
-          takingTurretFire: isTakingTurretFire
-        });
-        if (abortCheck.shouldAbort && !u.diveAborting) {
-          u.diveAborting = true;
-          u.actionIntent = undefined;
-          u.diveAbortCooldown = 3.5;
-          u.committedState = 'retreat';
-          const retreat = personalityDecisionBreakdown(u.player, ensurePsychology(u.player, u.psychology), 'retreat', teamPsychology);
-          u.decisionTelemetry = {
-            action: 'retreat', baseline: localAllies.length - localEnemies.length,
-            baselineReason: 'tower dive abort rule fired',
-            personalityDelta: retreat.personalityDelta, moodDelta: retreat.moodDelta,
-            coordinationDelta: retreat.coordinationDelta,
-            safetyGate: `tower dive abort: ${abortCheck.reason}`,
-            targetId: nearestStructureForDive.id,
-            explanation: 'protected evacuation overrides the previous combat intent',
-            at: matchTimeRef.current,
+      // Nexus finishing is a legal structure-siege decision. It is evaluated
+      // alongside, rather than being interrupted by, normal tower risk.
+      const nexusFinishTarget = structures.find(structure => structure.team !== u.team && structure.type === 'nexus');
+      const nexusFinish = evaluateNexusFinish({
+        nexus: nexusFinishTarget,
+        exposed: !!nexusFinishTarget && canDamageNexus(nexusFinishTarget.team, structures),
+        attackers: allies.map(ally => {
+          const allyRange = getLiveBasicAttackRange(ally);
+          return {
+            id: ally.id,
+            isAlive: ally.isAlive,
+            hp: ally.hp,
+            maxHp: ally.maxHp,
+            distance: nexusFinishTarget ? Math.hypot(ally.x - nexusFinishTarget.x, ally.y - nexusFinishTarget.y) : Infinity,
+            attackRange: allyRange,
+            structureAttackDamage: structureBasicAttackDamage({ baseAttackDamage: ally.champion.ad }),
+            attacksPerSecond: getEffectiveAttackSpeed(ally),
+            approachSpeed: 85 + (ally.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(ally),
           };
-          floatsRef.current.push({
-            id: random().toString(),
-            x: u.x,
-            y: u.y - 36,
-            text: '🏃 ABORT DIVE!',
-            color: '#f87171',
-            opacity: 1,
-            scale: 1.25
-          });
-          addEvent(`🏃 ABORT: ${u.player.name} (${u.champion.displayName}) aborted tower dive: ${abortCheck.reason}!`, 'tower');
-        }
-      } else {
-        u.diveTimer = 0;
-        if (structureDistForDive > (nearestStructureForDive?.range ?? 280) + 60) {
-          u.diveAborting = false;
-        }
+        }),
+        actorId: u.id,
+        nearbyDefenders: nexusFinishTarget
+          ? enemies.filter(enemy => Math.hypot(enemy.x - nexusFinishTarget.x, enemy.y - nexusFinishTarget.y) <= 330).length
+          : 0,
+        actorTakingNexusFire: !!nexusFinishTarget && nearestStructureForDive?.id === nexusFinishTarget.id && isTakingTurretFire,
+      });
+      const nexusFinishCommit = !defenseCall && nexusFinish.feasible && !!nexusFinishTarget;
+      if (nexusFinishCommit && (u.nexusFinishTargetId !== nexusFinishTarget!.id
+        || u.nexusFinishContextKey !== nexusFinish.contextKey)) {
+        u.nexusFinishTargetId = nexusFinishTarget!.id;
+        u.nexusFinishContextKey = nexusFinish.contextKey;
+        u.nexusFinishBlockedKey = undefined;
+        addEvent(`NEXUS_FINISH_EVALUATED: ${u.team} ${nexusFinish.availableAttackers} attackers, ${nexusFinish.estimatedFinishSeconds.toFixed(1)}s finish, ${Number.isFinite(nexusFinish.estimatedSurvivalSeconds) ? nexusFinish.estimatedSurvivalSeconds.toFixed(1) : 'safe'}s survival.`, 'tower');
+        addEvent(`NEXUS_FINISH_COMMITTED: ${u.player.name} advances on ${nexusFinishTarget!.name}.`, 'tower');
+      } else if (!nexusFinishCommit && u.nexusFinishTargetId) {
+        addEvent(`NEXUS_FINISH_CANCELLED: ${u.player.name} — ${nexusFinish.reason}.`, 'tower');
+        u.nexusFinishTargetId = undefined;
+        u.nexusFinishContextKey = undefined;
+      } else if (!nexusFinishCommit && nexusFinishTarget
+        && nexusFinishTarget.hp / nexusFinishTarget.maxHp <= .40
+        && u.nexusFinishBlockedKey !== nexusFinish.contextKey) {
+        u.nexusFinishBlockedKey = nexusFinish.contextKey;
+        addEvent(`NEXUS_FINISH_BLOCKED: ${u.player.name} — ${nexusFinish.reason}.`, 'tower');
       }
 
-      // Evaluate whether to initiate or maintain dive
-      const diveEval = nearestStructureForDive && initialPrimaryTarget
-        ? evaluateTowerDive({
-            diver: u,
-            target: initialPrimaryTarget,
-            tower: nearestStructureForDive,
-            alliedMinionsUnderTower,
-            defendersUnderTower,
-            attackersUnderTower
-          })
-        : { canDive: false };
-
-      const isAggroDiving = !losingFight && !u.diveAborting && (u.diveAbortCooldown ?? 0) <= 0
-        && diveEval.canDive;
+      const towerDiveRisk = nearestStructureForDive && initialPrimaryTarget
+        ? assessTowerDiveRisk({ diver: u, target: initialPrimaryTarget, tower: nearestStructureForDive,
+          alliedMinionsUnderTower, defendersUnderTower, attackersUnderTower, takingTurretFire: isTakingTurretFire })
+        : { shouldCommit: false, risk: Infinity, expectedEliminationSeconds: Infinity,
+          expectedSurvivalSeconds: 0, reason: 'no structure engagement' };
+      const isAggroDiving = !losingFight && towerDiveRisk.shouldCommit;
+      if (initialPrimaryTarget && nearestStructureForDive && isInsideEnemyTowerRange && u.decisionTelemetry) {
+        u.decisionTelemetry = {
+          ...u.decisionTelemetry,
+          safetyGate: `tower risk ${Number.isFinite(towerDiveRisk.risk) ? towerDiveRisk.risk.toFixed(2) : 'n/a'}; ${towerDiveRisk.reason}`,
+          explanation: `${u.decisionTelemetry.explanation}; elimination ${towerDiveRisk.expectedEliminationSeconds.toFixed(1)}s / survival ${towerDiveRisk.expectedSurvivalSeconds.toFixed(1)}s`,
+        };
+      }
 
       const isClutchRefusingRetreat = !losingFight && !isTakingTurretFire && u.clutchCommitActive && localEnemies.length > 0;
       const canPunishSpentSkill = !losingFight && !isTakingTurretFire && personalityOf(u.player).includes('counterpuncher') && u.isInBush
@@ -3186,14 +3182,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         moveSpeed: 85 + (u.boots?.stats.moveSpeed ?? 0),
         iq, teamfight: tfStat, losingFight,
         underEnemyTower: catchUnderTower, takingTowerFire: isTakingTurretFire,
-        abortingDive: !!u.diveAborting,
       });
 
       const allInTargetUnderTower = !!initialPrimaryTarget && enemyStructures.some(st =>
         (st.type.includes('tower') || st.type === 'nexus')
         && Math.hypot(st.x - initialPrimaryTarget.x, st.y - initialPrimaryTarget.y) <= st.range + 28);
       const groupedAllInAllies = initialPrimaryTarget ? allies.filter(ally => ally.isAlive
-        && !ally.isRecalling && !ally.recallIntent && !ally.diveAborting
+        && !ally.isRecalling && !ally.recallIntent && ally.committedState !== 'retreat'
         && Math.hypot(ally.x - initialPrimaryTarget.x, ally.y - initialPrimaryTarget.y) <= 420) : [];
       const groupedAllInEnemies = initialPrimaryTarget ? enemies.filter(enemy => enemy.isAlive
         && isUnitVisibleTo(enemy, u)
@@ -3220,10 +3215,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         groupedEnemies: groupedAllInEnemies.length,
         readyContributors: readyAllInContributors,
         targetDistance: Math.hypot(initialPrimaryTarget.x - u.x, initialPrimaryTarget.y - u.y),
-        approachSafe: isTeamfightApproachSafe(u, initialPrimaryTarget, enemyStructures),
+        approachSafe: isTeamfightApproachSafe(u, initialPrimaryTarget, enemyStructures) || towerDiveRisk.shouldCommit,
         targetUnderEnemyTower: allInTargetUnderTower,
+        towerRiskAcceptable: towerDiveRisk.shouldCommit,
         takingTowerFire: isTakingTurretFire,
-        abortingDive: !!u.diveAborting,
         losingFight,
         iq,
         teamfight: tfStat,
@@ -3233,7 +3228,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && (u.allInCommitTimer ?? 0) > 0
         && u.hp / u.maxHp >= 0.25
         && Math.hypot(initialPrimaryTarget.x - u.x, initialPrimaryTarget.y - u.y) <= 500
-        && !isTakingTurretFire && !u.diveAborting && !allInTargetUnderTower
+        && !isTakingTurretFire && !allInTargetUnderTower
         && isTeamfightApproachSafe(u, initialPrimaryTarget, enemyStructures);
       if (!activeAllInCommit) u.allInCommitTimer = 0;
       const allInFocusPool = activeAllInCommit ? enemies.filter(enemy => isUnitVisibleTo(enemy, u)
@@ -3249,15 +3244,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const personalityCautiousRetreat = !coordinatedEngage && !isClutchRefusingRetreat && !isAggroDiving
         && personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'retreat', teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
-          callAlignment, isSafe: !u.diveAborting && !isTakingTurretFire,
+          callAlignment, isSafe: !isTakingTurretFire,
         }) >= 4.5 && isOutnumbered && u.hp / u.maxHp < .58;
-      const rawDangerousFight = u.diveAborting || personalityCautiousRetreat || (!coordinatedEngage && (losingFight || (!canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002))))));
+      const rawDangerousFight = (!nexusFinishCommit && personalityCautiousRetreat) || (!nexusFinishCommit && !coordinatedEngage && (losingFight || (!canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002))))));
 
       const commitment = resolveFightCommitment({
-        committedState: u.committedState, timer: u.decisionCommitTimer ?? 0,
+        committedState: nexusFinishCommit ? undefined : u.committedState, timer: nexusFinishCommit ? 0 : u.decisionCommitTimer ?? 0,
         dangerous: !!rawDangerousFight, enemyCount: localEnemies.length,
         inWell: isInsideWell, followUp: coordinatedEngage, lowHealth: isLowHpScared,
-        losingFight, abortingDive: !!u.diveAborting,
+        losingFight: nexusFinishCommit ? false : losingFight,
       });
       const isDangerousFight = commitment.dangerous;
       u.committedState = commitment.committedState;
@@ -3270,7 +3265,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && isTeamfightApproachSafe(u, fightingAlly, enemyStructures);
       const prioritizeFightWith = (target: AramChampionUnit | undefined, reinforceAlly = true) => !isInsideWell && shouldPrioritizeTeamfight({
         dangerousFight: !!isDangerousFight, lowHealth: isLowHpScared,
-        abortingDive: !!u.diveAborting, takingTowerFire: !!isTakingTurretFire,
+        takingTowerFire: !!isTakingTurretFire,
         targetDistance: target && isUnitVisibleTo(target, u) && !target.zhonyaActive
           && (target.untargetableTimer ?? 0) <= 0
           && isTeamfightApproachSafe(u, target, enemyStructures)
@@ -3288,7 +3283,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         healthFraction: u.hp / u.maxHp,
         nearestStructureDistance: nearestPushDistance,
         iq, coachMacro: (u.team === 'blue' ? blueCoach : redCoach)?.playbookBonus ?? 8,
-        losingFight: losingFight || u.diveAborting || isTakingTurretFire
+        losingFight: losingFight || isTakingTurretFire
           || (localEnemies.length > 0 && isDangerousFight),
       });
       const laneDirection = u.team === 'blue' ? 1 : -1;
@@ -3312,7 +3307,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const personalitySiegeConversion = pressWonFight && personalityActionDelta(u.player,
         ensurePsychology(u.player, u.psychology), 'siege', teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
-          callAlignment, isSafe: !u.diveAborting && !isTakingTurretFire && !isDangerousFight,
+          callAlignment, isSafe: !isTakingTurretFire && !isDangerousFight,
           siegeOpportunity: true,
         }) >= 4;
       // The pair can only reinforce an already-earned, safe conversion window;
@@ -3380,7 +3375,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           && hasObjectiveVision(u.team, boss, allies, enemies, wardsRef.current));
       const defendNow = shouldStandAndDefendBase(defenseCall, {
         healthFraction: u.hp / u.maxHp, losingFight, outnumbered: isOutnumbered,
-        diveAborting: !!u.diveAborting, takingTurretFire: !!isTakingTurretFire,
+        takingTurretFire: !!isTakingTurretFire,
       });
       const nearestEnemyDist = enemies.length
         ? Math.min(...enemies.map(enemy => Math.hypot(enemy.x - u.x, enemy.y - u.y))) : 999;
@@ -3400,7 +3395,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
           callAlignment, isSafe: localEnemies.length === 0 && threateningMinions.length === 0,
         }) >= 4.5 && u.hp / u.maxHp < .64;
-      const wantsRecall = (!!defenseCall && !defendNow && !isInsideWell)
+      const wantsRecall = !nexusFinishCommit && ((!!defenseCall && !defendNow && !isInsideWell)
         || recallToDefend || (!defendNow && shouldKeepRecallPlan({
         healthFraction: u.hp / u.maxHp, manaFraction: u.mana / maxMana(u),
         manaDependent: ['Mage', 'Support'].includes(u.champion.primaryRole),
@@ -3408,9 +3403,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         shopping: wantsItemPurchase, objectiveReset: wantsObjectiveRecall,
         previousIntent: !!u.recallIntent, inWell: isInsideWell,
         followUp: coordinatedEngage,
-        combatCommit: !u.diveAborting && !!(activeAllInCommit || canPunishSpentSkill || isClutchRefusingRetreat || isAggroDiving),
+        combatCommit: !!(activeAllInCommit || canPunishSpentSkill || isClutchRefusingRetreat || isAggroDiving),
         pushWindow: tempoPush, objectiveCall: teamfightPriority || nearbyActiveObjective || !!fightingAlly || !!defenseCall,
-      })) || personalityRecoveryReset;
+      })) || personalityRecoveryReset);
       u.recallIntent = wantsRecall;
       if (wantsRecall || isDangerousFight || teamfightPriority || coordinatedEngage || fightingAlly || tempoPush || nearbyActiveObjective || defenseCall) {
         u.farmTargetId = undefined;
@@ -3428,7 +3423,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           activeFight: teamfightPriority,
           underEnemyTower: isInsideEnemyTowerRange,
         })).sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0];
-      if (recoveryRelic && !isInsideWell && !defenseCall) {
+      if (recoveryRelic && !isInsideWell && !defenseCall && !nexusFinishCommit) {
         const distance = Math.hypot(recoveryRelic.x - u.x, recoveryRelic.y - u.y);
         if (distance > 25) {
           setActionIntent('relic', recoveryRelic, 'move');
@@ -3445,7 +3440,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       // 1. If wanting to recall, but enemy minions are threatening nearby: CLEAR FIRST!
       if (wantsRecall && !recallToDefend && !defenseCall && threateningMinions.length > 0 && localEnemies.length === 0 && !u.isInBush
-        && u.hp / u.maxHp >= 0.4 && !u.diveAborting && !isInsideEnemyTowerRange
+        && u.hp / u.maxHp >= 0.4 && !isInsideEnemyTowerRange
         && threateningMinions.every(m => isBushSafeFromTowers(m, enemyStructures))) {
         const minionToClear = threateningMinions[0];
         setActionIntent('minion', minionToClear,
@@ -3500,7 +3495,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         u.actionIntent = undefined;
         const retreat = personalityDecisionBreakdown(u.player, ensurePsychology(u.player, u.psychology), 'retreat', teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
-          callAlignment, isSafe: !u.diveAborting && !isInsideEnemyTowerRange,
+          callAlignment, isSafe: !isInsideEnemyTowerRange,
         });
         u.decisionTelemetry = {
           action: 'retreat', baseline: localAllies.length - localEnemies.length,
@@ -3508,12 +3503,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           personalityDelta: retreat.personalityDelta, moodDelta: retreat.moodDelta,
           coordinationDelta: retreat.coordinationDelta, combinationDelta: retreat.combinationDelta,
           combinations: retreat.combinations.map(combination => `${combination.label}: ${combination.reason}`),
-          safetyGate: u.diveAborting ? 'tower evacuation remains mandatory' : isInsideEnemyTowerRange ? 'exit enemy tower range first' : 'existing retreat and recall safety checks passed',
-          explanation: wantsRecall ? 'resetting only after the authored recall safety gates' : 'retreating without overriding the protected danger policy',
+          safetyGate: isInsideEnemyTowerRange ? 'ordinary retreat must first reach tower-safe ground' : 'existing retreat and recall safety checks passed',
+          explanation: wantsRecall ? 'resetting only after the authored recall safety gates' : 'retreating through the normal risk-aware route',
           at: matchTimeRef.current,
         };
         // Can only channel recall if threats are cleared, distance is established, and recall is not on cooldown!
-        if (wantsRecall && canChannelRecall && !u.diveAborting && !isInsideEnemyTowerRange) {
+        if (wantsRecall && canChannelRecall && !isInsideEnemyTowerRange) {
           u.isRecalling = true;
           u.recallTimer = 2.5;
           u.animState = 'idle'; // MUST be 'idle' so teammates don't mistake it for combat casting!
@@ -3539,13 +3534,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         let targetX: number = wellTargetX;
         let targetY: number = LANE_Y;
 
-        // Emergency Turret Evacuation vector when aborting or trapped under tower
-        if ((u.diveAborting || isInsideEnemyTowerRange) && nearestStructureForDive) {
-          u.retreatPlan = undefined;
-          const evac = getTurretEvacuationVector(u, nearestStructureForDive, LANE_Y);
-          targetX = evac.targetX;
-          targetY = evac.targetY;
-        } else {
+        {
           const retreatInput = {
             actor: {
               id: u.id,
@@ -3599,19 +3588,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
 
         u.animState = 'walk';
-        // Emergency tower evacuation keeps its protected outward vector.
-        // Ordinary cover/recall routes must first exit any enclosing camp walls.
-        const retreatWaypoint = u.diveAborting || isInsideEnemyTowerRange
-          ? { x: targetX, y: targetY } : rockApproachWaypoint(u, { x: targetX, y: targetY });
+        // Every retreat uses the same terrain-aware route; tower danger affects
+        // the scored destination but never installs a dive-only movement mode.
+        const retreatWaypoint = rockApproachWaypoint(u, { x: targetX, y: targetY });
         const retreatAngle = Math.atan2(retreatWaypoint.y - u.y, retreatWaypoint.x - u.x);
-        const emergencyTowerEvacuation = !!u.diveAborting || isInsideEnemyTowerRange;
         const retreatSpeed = retreatSpeedBreakdown({
           bootsMoveSpeed: u.boots?.stats.moveSpeed,
           orbMoveSpeed: getKaelenOrbBonuses(u).moveSpeed,
           stealthActive: (u.stealthTimer ?? 0) > 0,
           warhornAuraActive: allies.some(a => a.isAlive && a.items.some(it => it.id === 'item_shurelyas')
             && Math.hypot(a.x - u.x, a.y - u.y) <= 240),
-          emergencyTowerEvacuation,
+          emergencyTowerEvacuation: false,
         });
         const totalSpeed = Math.min(retreatSpeed.total,
           Math.hypot(retreatWaypoint.x - u.x, retreatWaypoint.y - u.y) / dt);
@@ -3633,9 +3620,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const nearbyPitAllies = availableAllies.filter(a => Math.hypot(a.x - dragon.x, a.y - dragon.y) < 620);
       const objectivePreference = personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'objective', teamPsychology, {
         healthFraction: u.hp / u.maxHp, nearbyAllies: nearbyPitAllies.length, nearbyEnemies: localEnemies.length,
-        callAlignment, isSafe: !u.diveAborting && !losingFight,
+        callAlignment, isSafe: !losingFight,
       });
-      const shouldContestDragon = !defenseCall && !teamfightPriority && !tempoPush && !coordinatedEngage && !fightingAlly && dragon.isAlive && objectivePreference >= -2.5 && shouldStartEpicObjective({
+      const shouldContestDragon = !nexusFinishCommit && !defenseCall && !teamfightPriority && !tempoPush && !coordinatedEngage && !fightingAlly && dragon.isAlive && objectivePreference >= -2.5 && shouldStartEpicObjective({
         gameSeconds: matchTimeRef.current,
         bossHealthFraction: dragon.hp / dragon.maxHp,
         healthyAllies: nearbyPitAllies.filter(a => a.hp / a.maxHp > 0.58).length,
@@ -3663,10 +3650,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const dragonContestPreference = personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology),
         dragon.hp / dragon.maxHp <= .32 ? 'objective' : 'engage', teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: healthyContestAllies, nearbyEnemies: enemiesAtDragon.length,
-          callAlignment, isSafe: !u.diveAborting && !losingFight, isContestedObjective: true,
+          callAlignment, isSafe: !losingFight, isContestedObjective: true,
           objectiveHealthFraction: dragon.hp / dragon.maxHp,
         });
-      const shouldContestEnemyDragon = isOpponentAtDragon && hasDragonVision && (callAlignment >= .48 || dragonContestPreference >= 1) && shouldContestOpponentObjective({
+      const shouldContestEnemyDragon = !nexusFinishCommit && isOpponentAtDragon && hasDragonVision && (callAlignment >= .48 || dragonContestPreference >= 1) && shouldContestOpponentObjective({
         gameSeconds: matchTimeRef.current,
         bossHealthFraction: dragon.hp / dragon.maxHp,
         healthyAllies: healthyContestAllies,
@@ -3690,10 +3677,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const golemContestPreference = golem ? personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology),
         golem.hp / golem.maxHp <= .32 ? 'objective' : 'engage', teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: healthyContestAllies, nearbyEnemies: enemiesAtGolem.length,
-          callAlignment, isSafe: !u.diveAborting && !losingFight, isContestedObjective: true,
+          callAlignment, isSafe: !losingFight, isContestedObjective: true,
           objectiveHealthFraction: golem.hp / golem.maxHp,
         }) : -Infinity;
-      const shouldContestEnemyGolem = !!golem && isOpponentAtGolem && hasGolemVision && !shouldContestEnemyDragon && (callAlignment >= .48 || golemContestPreference >= 1) && shouldContestOpponentObjective({
+      const shouldContestEnemyGolem = !nexusFinishCommit && !!golem && isOpponentAtGolem && hasGolemVision && !shouldContestEnemyDragon && (callAlignment >= .48 || golemContestPreference >= 1) && shouldContestOpponentObjective({
         gameSeconds: matchTimeRef.current,
         bossHealthFraction: golem.hp / golem.maxHp,
         healthyAllies: healthyContestAllies,
@@ -3712,7 +3699,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const fightPreference = objectiveFightPreference(allies.map(a => a.player), coach, u.player)
         + personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'engage', teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
-          callAlignment, isSafe: !u.diveAborting && !losingFight,
+          callAlignment, isSafe: !losingFight,
           isContestedObjective: isOpponentAtDragon || isOpponentAtGolem,
           objectiveHealthFraction: isOpponentAtDragon ? dragon.hp / dragon.maxHp : golem ? golem.hp / golem.maxHp : undefined,
         }) * Math.max(.4, callAlignment);
@@ -3723,11 +3710,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           && enemy.isAlive && Math.hypot(enemy.x - boss.x, enemy.y - boss.y) < 520));
       const teamTakingDragon = dragon.isAlive && dragon.claimTeam === u.team && dragon.hp < dragon.maxHp;
       const teamTakingGolem = !!golem && golem.claimTeam === u.team && golem.hp < golem.maxHp;
-      const dragonAction = !defenseCall && (teamTakingDragon || shouldContestEnemyDragon)
+      const dragonAction = !nexusFinishCommit && !defenseCall && (teamTakingDragon || shouldContestEnemyDragon)
         ? chooseObjectiveAction({ bossHealthFraction: dragon.hp / dragon.maxHp,
           hasVision: hasDragonVision, contestedByEnemy: !!shouldContestEnemyDragon,
           enemyStartedFight: enemyStartedFightAt(dragon), fightPreference }) : 'none';
-      const golemAction = !defenseCall && golem && dragonAction === 'none' && (teamTakingGolem || shouldContestEnemyGolem)
+      const golemAction = !nexusFinishCommit && !defenseCall && golem && dragonAction === 'none' && (teamTakingGolem || shouldContestEnemyGolem)
         ? chooseObjectiveAction({ bossHealthFraction: golem.hp / golem.maxHp,
           hasVision: hasGolemVision, contestedByEnemy: !!shouldContestEnemyGolem,
           enemyStartedFight: enemyStartedFightAt(golem), fightPreference }) : 'none';
@@ -3738,7 +3725,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && Math.hypot(u.x - postPlan.x, u.y - postPlan.y) < 680 ? postPlan : undefined;
       const postFightEnemies = activePostPlan?.action === 'fight'
         ? enemies.filter(e => Math.hypot(e.x - activePostPlan.x, e.y - activePostPlan.y) < 650) : [];
-      const isPostObjectiveFight = !defenseCall && postFightEnemies.length > 0 && dragonAction === 'none' && golemAction === 'none';
+      const isPostObjectiveFight = !nexusFinishCommit && !defenseCall && postFightEnemies.length > 0 && dragonAction === 'none' && golemAction === 'none';
       const isObjectiveFight = isContestingDragon || isContestingGolem || isPostObjectiveFight;
 
       if (isContestingDragon) {
@@ -3903,7 +3890,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && Math.hypot(nearestStructure.x - u.x, nearestStructure.y - u.y) <= 520
         && personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'wave', teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
-          callAlignment, isSafe: !u.diveAborting && !losingFight, siegeOpportunity: true,
+          callAlignment, isSafe: !losingFight, siegeOpportunity: true,
         }) > 2;
       const alliedWaveAtNexus = focusNexus && enemyNexus
         ? minions.some(m => m.team === u.team && m.isAlive && Math.hypot(m.x - enemyNexus.x, m.y - enemyNexus.y) < 220)
@@ -3928,7 +3915,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         structureX: nearestStructure?.x, structureRange: nearestStructure?.range,
         exposedNexus: focusNexus, objectiveFight: isObjectiveFight,
       });
-      const personalityCanContinueChase = !!primaryTarget && !u.diveAborting && !isDangerousFight
+      const personalityCanContinueChase = !!primaryTarget && !isDangerousFight
         && isTeamfightApproachSafe(u, primaryTarget, enemyStructures)
         && personalityActionDelta(u.player, ensurePsychology(u.player, u.psychology), 'chase', teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
@@ -3941,15 +3928,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && wouldOverstep(u.team, primaryTarget.x, advanceLimit)
         && closestEnemyChampion > Math.max(150, attackRange + 35);
 
-      // A vulnerable, low-health nexus is a team finish call. Clear a blocking
-      // wave first unless critically low; otherwise attack or route to it before considering camps.
-      if (focusNexus && enemyNexus && (u.hp > u.maxHp * 0.18 || isNexusLow)
-        && (!isObjectiveFight || Math.hypot(enemyNexus.x - u.x, enemyNexus.y - u.y) < 550)
-        && !clearWaveFirst
-        && (closestEnemyChampion > Math.max(140, attackRange) || isNexusLow || enemyNexus.hp / enemyNexus.maxHp <= 0.25 || localAllies.length >= localEnemies.length)) {
+      // A feasible commitment outranks optional objectives, farming, regrouping,
+      // and champion chasing. It remains subject to the evaluator's legal
+      // exposure, approach, structure-DPS, and survival checks.
+      if (nexusFinishCommit && enemyNexus && !clearWaveFirst) {
         const nexusDist = Math.hypot(enemyNexus.x - u.x, enemyNexus.y - u.y);
         setActionIntent('structure', enemyNexus,
-          canBasicAttackStructure({ x: u.x, y: u.y, attackRange }, enemyNexus) ? 'execute' : 'move');
+          canBasicAttackStructure({ x: u.x, y: u.y, attackRange }, enemyNexus) ? 'execute' : 'move',
+          `nexus-finish:${nexusFinish.contextKey}`);
         setUnitFacing(u, enemyNexus.x);
         if (canBasicAttackStructure({ x: u.x, y: u.y, attackRange }, enemyNexus)) {
           u.vx = 0; u.vy = 0;
@@ -3968,6 +3954,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
               });
             }
             executeChampionAttack(u, enemyNexus, 'structure', u.champion.ad);
+            if ((u.nexusFinishLastAttackAt ?? -Infinity) + 0.75 <= matchTimeRef.current) {
+              u.nexusFinishLastAttackAt = matchTimeRef.current;
+              addEvent(`NEXUS_FINISH_ATTACK: ${u.player.name} applied an authored structure hit to ${enemyNexus.name}.`, 'tower');
+            }
           }
         } else {
           // Direct route toward nexus along the central lane corridor
@@ -4025,7 +4015,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           healthFraction: u.hp / u.maxHp,
           lanePriority: hasLanePriorityForSetup,
           nearbyEnemies: stagingEnemies.length,
-          activeFight: localEnemies.length > 0 || u.diveAborting || isTakingTurretFire,
+          activeFight: localEnemies.length > 0 || isTakingTurretFire,
         })) {
         const approachX = stagingBoss.x + (u.team === 'blue' ? -215 : 215);
         const approachY = stagingBoss.y + ((uIdx % 5) - 2) * 48;
@@ -4485,12 +4475,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             }
           }
 
-          if (primaryTarget.zhonyaActive && isInsideEnemyTowerRange) {
-            u.diveAborting = true;
-            u.diveAbortCooldown = 3.5;
-            u.committedState = 'retreat';
-          }
-
           if (u.attackTimer <= 0) {
             u.attackTimer = 1.0 / getEffectiveAttackSpeed(u);
             u.animState = 'attack';
@@ -4510,7 +4494,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                 'unsafe', matchTimeRef.current);
               u.actionIntent = undefined;
             }
-            const holdPoint = getTurretPerimeterHoldPoint(u, nearestStructureForDive, LANE_Y);
+            const holdPoint = getTurretPerimeterHoldPoint(u, nearestStructureForDive);
             const distToHold = Math.hypot(holdPoint.x - u.x, holdPoint.y - u.y);
             setActionIntent('hold', { id: `tower-perimeter:${nearestStructureForDive.id}`,
               x: holdPoint.x, y: holdPoint.y }, distToHold > 14 ? 'move' : 'hold',
@@ -5321,7 +5305,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const attackRange = getLiveBasicAttackRange(u);
     const reach = pending.targetType === 'minion' ? attackRange
       : neutralAttackRange(attackRange, pending.targetType === 'dragon' || pending.targetId === 'j_siege_golem') + 12;
-    const interrupted = !u.isAlive || !!u.isRecalling || !!u.diveAborting || u.committedState === 'retreat'
+    const interrupted = !u.isAlive || !!u.isRecalling || u.committedState === 'retreat'
       || u.stunTimer > 0 || u.charmTimer > 0 || (u.fearTimer ?? 0) > 0 || (u.knockupTimer ?? 0) > 0
       || !!u.zhonyaActive || isChannelingAbility(u) || u.animState === 'cast'
       || (!!u.actionIntent && u.actionIntent.targetId !== pending.targetId);
@@ -6282,7 +6266,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   const processKaelenTurn = (u: AramChampionUnit, target: AramChampionUnit | undefined, enemies: AramChampionUnit[]) => {
     if (!target || !target.isAlive || target.zhonyaActive || (target.untargetableTimer ?? 0) > 0
-      || u.diveAborting || u.isRecalling || (u.kaelenActionTimer ?? 0) > 0) return false;
+      || u.isRecalling || (u.kaelenActionTimer ?? 0) > 0) return false;
     const nearbyAllies = championsRef.current.filter(ally => ally.team === u.team && ally.isAlive && Math.hypot(ally.x - u.x, ally.y - u.y) < 260);
     const needsProtection = nearbyAllies.filter(ally => ally.hp / ally.maxHp < .5).length;
     const cluster = enemies.filter(enemy => Math.hypot(enemy.x - target.x, enemy.y - target.y) < 145).length;
@@ -7143,7 +7127,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     isTrueDamage: boolean = false,
     label?: string,
     abilitySlot?: AbilitySlot,
-    sharedDamage: boolean = false
+    sharedDamage: boolean = false,
+    ratioOverride?: { adRatio: number; apRatio: number }
   ) => {
     if (target.zhonyaActive) return;
     target.stealthTimer = 0;
@@ -7229,7 +7214,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     const spellDamage = sharedDamage ? rawDamage : attacker && label && !itemDamage
-      ? (abilityDamageFromStats(rawDamage, attacker.champion, slot, bonusAd, ap)
+      ? (abilityDamageFromStats(rawDamage, attacker.champion, slot, bonusAd, ap, ratioOverride)
         * abilityDamageMultiplier(attacker.level, slot)) * abilityAmp
       : rawDamage + ap * 0.35;
 
@@ -7662,7 +7647,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     structure.isAlive = false;
     sound.playUltimateExplosion();
 
-    if (structure.type === 'nexus') return;
+    if (structure.type === 'nexus') {
+      addEvent(`NEXUS_FINISH_COMPLETED: ${structure.name} was destroyed through normal structure damage.`, 'tower');
+      return;
+    }
     const isTower = structure.type !== 'barracks';
     const bounty = isTower ? 250 : 200;
 

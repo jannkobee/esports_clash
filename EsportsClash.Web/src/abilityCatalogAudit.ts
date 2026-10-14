@@ -1,6 +1,6 @@
 import type { ChampionKit } from './types';
-import { KAELEN_INVOKED_SPELLS } from './kaelenAbilities';
-import { getAbilityPresentation, type AbilityDisplaySlot } from './abilityPresentation';
+import { KAELEN_INVOKED_SPELLS } from './kaelenAbilities.ts';
+import { getAbilityPresentation, type AbilityDisplaySlot } from './abilityPresentation.ts';
 
 export interface AbilityCatalogAudit {
   avatars: number;
