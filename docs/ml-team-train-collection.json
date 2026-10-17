@@ -1,0 +1,325 @@
+{
+  "planHash": "f4f40e817bbe36c94eda7acb6e805f8221d6c7abef618b96ee53049a221ed9e5",
+  "results": [
+    {
+      "id": "train-137-d0-original",
+      "split": "train",
+      "seed": 137,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rewardDelta": 0.06614037688401009
+    },
+    {
+      "id": "train-138-d0-swapped",
+      "split": "train",
+      "seed": 138,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rewardDelta": 0.7394682528622554
+    },
+    {
+      "id": "train-139-d1-original",
+      "split": "train",
+      "seed": 139,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_dns",
+      "rewardDelta": -0.0036688108859395108
+    },
+    {
+      "id": "train-140-d1-swapped",
+      "split": "train",
+      "seed": 140,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_research_gumayusi",
+      "rewardDelta": 0
+    },
+    {
+      "id": "train-141-d0-original",
+      "split": "train",
+      "seed": 141,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_bigtail",
+      "rewardDelta": -0.571040893754997
+    },
+    {
+      "id": "train-142-d0-swapped",
+      "split": "train",
+      "seed": 142,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_woozy",
+      "rewardDelta": -0.6785186573069556
+    },
+    {
+      "id": "train-143-d1-original",
+      "split": "train",
+      "seed": 143,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_turbogamer",
+      "rewardDelta": 0.5807033916074126
+    },
+    {
+      "id": "train-144-d1-swapped",
+      "split": "train",
+      "seed": 144,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_research_gumayusi",
+      "rewardDelta": -0.6475259890575342
+    },
+    {
+      "id": "train-145-d0-original",
+      "split": "train",
+      "seed": 145,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_craps",
+      "rewardDelta": 0
+    },
+    {
+      "id": "train-146-d0-swapped",
+      "split": "train",
+      "seed": 146,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_craps",
+      "rewardDelta": 0.6264145813894276
+    },
+    {
+      "id": "train-147-d1-original",
+      "split": "train",
+      "seed": 147,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_toaster",
+      "rewardDelta": -0.05827159773610846
+    },
+    {
+      "id": "train-148-d1-swapped",
+      "split": "train",
+      "seed": 148,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rewardDelta": -0.006529797219775035
+    },
+    {
+      "id": "train-149-d0-original",
+      "split": "train",
+      "seed": 149,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_daft",
+      "rewardDelta": -0.042355051532344826
+    },
+    {
+      "id": "train-150-d0-swapped",
+      "split": "train",
+      "seed": 150,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_bigtail",
+      "rewardDelta": 0.4854574360925632
+    },
+    {
+      "id": "train-151-d1-original",
+      "split": "train",
+      "seed": 151,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rewardDelta": -0.006078635666775689
+    },
+    {
+      "id": "train-152-d1-swapped",
+      "split": "train",
+      "seed": 152,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_turbogamer",
+      "rewardDelta": 0.6119293333333398
+    },
+    {
+      "id": "train-153-d0-original",
+      "split": "train",
+      "seed": 153,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rewardDelta": 0.06342382191079143
+    },
+    {
+      "id": "train-154-d0-swapped",
+      "split": "train",
+      "seed": 154,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_bigtail",
+      "rewardDelta": 0.10987972857856758
+    },
+    {
+      "id": "train-155-d1-original",
+      "split": "train",
+      "seed": 155,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rewardDelta": -0.09155248756503964
+    },
+    {
+      "id": "train-156-d1-swapped",
+      "split": "train",
+      "seed": 156,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_turbogamer",
+      "rewardDelta": -0.007763053142678444
+    },
+    {
+      "id": "train-157-d0-original",
+      "split": "train",
+      "seed": 157,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_craps",
+      "rewardDelta": 0.016264915240367883
+    },
+    {
+      "id": "train-158-d0-swapped",
+      "split": "train",
+      "seed": 158,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_craps",
+      "rewardDelta": 0.7265974547476302
+    },
+    {
+      "id": "train-159-d1-original",
+      "split": "train",
+      "seed": 159,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rewardDelta": -0.1256070960036626
+    },
+    {
+      "id": "train-160-d1-swapped",
+      "split": "train",
+      "seed": 160,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_godson",
+      "rewardDelta": -0.014772677103551624
+    },
+    {
+      "id": "train-161-d0-original",
+      "split": "train",
+      "seed": 161,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_bigtail",
+      "rewardDelta": -0.045098342683921794
+    },
+    {
+      "id": "train-162-d0-swapped",
+      "split": "train",
+      "seed": 162,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rewardDelta": 0.01290239277677696
+    },
+    {
+      "id": "train-163-d1-original",
+      "split": "train",
+      "seed": 163,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rewardDelta": 0.6448474687954489
+    },
+    {
+      "id": "train-164-d1-swapped",
+      "split": "train",
+      "seed": 164,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_kovi",
+      "rewardDelta": 0.1711717696071605
+    },
+    {
+      "id": "train-165-d0-original",
+      "split": "train",
+      "seed": 165,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_craps",
+      "rewardDelta": -0.138950100256571
+    },
+    {
+      "id": "train-166-d0-swapped",
+      "split": "train",
+      "seed": 166,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rewardDelta": 0
+    },
+    {
+      "id": "train-167-d1-original",
+      "split": "train",
+      "seed": 167,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_turbogamer",
+      "rewardDelta": 0
+    },
+    {
+      "id": "train-168-d1-swapped",
+      "split": "train",
+      "seed": 168,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_toaster",
+      "rewardDelta": 0.8525089952467418
+    }
+  ]
+}

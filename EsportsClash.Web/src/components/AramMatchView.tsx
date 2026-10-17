@@ -3,6 +3,29 @@ import { perceiveChampions } from '../decisionPerception';
 import { resolveFightCommitment } from '../decisionCommitment';
 import { beginOrContinueAction, chooseCommittedActionTarget, decisiveActionKey,
   inspectActionProgress, isActionRetryBlocked, recordActionFailure, type DecisiveActionKind } from '../decisionActionRecovery';
+import { chooseMacroAction, nextMacroCommitment } from '../macroActionDecision';
+import { evaluateResidualPush, planResidualPush } from '../residualPushRules';
+import { assignSafeMacroExperiment, createExperimentRandom, safeMacroExperimentGate } from '../safeMacroExperiment';
+import { pairedMacroTargetMatches, pairedStateFingerprint, parsePairedMacroTarget, serializePairedState } from '../pairedMacroReplay';
+import { pairedScoutAfter } from '../pairedStudyDraft';
+import { summarizeTaskOutcome, type TaskEvent, type TaskEventKind } from '../taskOutcome';
+import { captureTeamTaskSnapshot, summarizeTeamTaskOutcome, type TeamTaskSnapshot } from '../teamTaskOutcome';
+import { chooseRewardGuidedMacro } from '../rewardMacroDecision';
+import { buildTaskActionContext } from '../taskActionContext';
+import { captureTerrainRoutes, restoreTerrainRoutes } from '../arenaRules';
+import { macroScenarioPosition, parseMacroScenarioFixture } from '../macroScenarioFixture';
+import { inspectSafeMacroExperiment } from '../safeMacroExperiment';
+import { isInsideEnemyWellBeam, isInsideHealingWell, isUnsafeWellChase } from '../baseSafetyRules';
+import { coordinateTeamIntent, teamIntentRole, type TeamIntent } from '../teamIntentDecision';
+import { createSpatialInfluence } from '../spatialInfluence';
+import { estimateTacticalOutlook } from '../tacticalOutlook';
+import { createOpponentTacticalMemory, observeOpponentTacticalMemory, readOpponentTacticalMemory } from '../opponentTacticalMemory';
+import { choosePostFightConversion } from '../postFightConversion';
+import { recordAIDecision, settleExperimentOutcome, shouldRecordAIDecision, type AIDecisionRecord } from '../aiDecisionTelemetry';
+import { scoreUtility } from '../utilityDecision';
+import { summarizeDecisionCalibration } from '../decisionCalibration';
+import { adaptiveFeatures, adaptivePolicyScore, adaptivePreferenceAllowed, loadAdaptivePolicy, trainAdaptivePolicy,
+  type AdaptiveAction, type AdaptivePolicy } from '../adaptivePolicy';
 import { runSimulationSlice, shouldPublishHud } from '../simulationPresentation';
 import { ARENA_RENDER_HEIGHT, clampArenaCamera } from '../arenaPresentationCamera';
 import type { ThreeArenaTerrain } from '../threeArenaTerrain';
@@ -425,6 +448,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const threeTerrainHostRef = useRef<HTMLDivElement>(null);
   const threeTerrainRef = useRef<ThreeArenaTerrain | null>(null);
   const threeTerrainAvailableRef = useRef(false);
+  const [arenaView, setArenaView] = useState<'3d' | '2d'>('3d');
+  const [webglAvailable, setWebglAvailable] = useState(false);
+  const arenaViewRef = useRef(arenaView);
+  arenaViewRef.current = arenaView;
   const fogCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const matchRootRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -455,14 +482,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           NEXUS_TOWER_X.red,
           available => {
             threeTerrainAvailableRef.current = available;
+            if (!unmounted) setWebglAvailable(available);
             host.dataset.renderer = available ? 'three' : 'canvas-fallback';
           },
         );
         threeTerrainRef.current = terrain;
         threeTerrainAvailableRef.current = terrain.isAvailable();
       } catch {
-        // WebGL is optional for this first migration increment. The Canvas renderer
-        // keeps the same static underlay when renderer creation is unavailable.
+        // The complete Canvas view remains available if WebGL cannot start.
         threeTerrainAvailableRef.current = false;
         host.dataset.renderer = 'canvas-fallback';
       }
@@ -479,12 +506,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   }, []);
 
   // Camera Zoom & Spectator Tracking
-  const [zoom, setZoom] = useState<number>(1.45);
+  const [zoom, setZoom] = useState<number>(2);
   const [cameraMode, setCameraMode] = useState<'auto' | 'manual'>('auto');
   const [showMinimap, setShowMinimap] = useState<boolean>(true);
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const zoomRef = useRef(1.45);
+  const zoomRef = useRef(2);
   zoomRef.current = zoom;
   const cameraModeRef = useRef<'auto' | 'manual'>('auto');
   cameraModeRef.current = cameraMode;
@@ -518,7 +545,35 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const [showInsights, setShowInsights] = useState(false);
   const [insightAt, setInsightAt] = useState<number | null>(null);
   const objectiveCallsRef = useRef(new Set<string>());
+  const teamIntentRef = useRef<Partial<Record<'blue' | 'red', TeamIntent>>>({});
   const cooldownMemoryRef = useRef(createEnemyCooldownMemory());
+  const opponentTacticalMemoryRef = useRef(createOpponentTacticalMemory());
+  const aiDecisionRecordsRef = useRef<AIDecisionRecord[]>([]);
+  const macroExperimentEnabledRef = useRef((() => { try {
+    return sessionStorage.getItem('esports-clash-macro-experiment') === '1';
+  } catch { return false; } })());
+  const pairedMacroModeRef = useRef<'scout' | 'replay' | null>((() => { try {
+    const mode = sessionStorage.getItem('esports-clash-macro-pair-mode');
+    return macroExperimentEnabledRef.current && (mode === 'scout' || mode === 'replay') ? mode : null;
+  } catch { return null; } })());
+  const pairedMacroTargetRef = useRef((() => { try {
+    return parsePairedMacroTarget(sessionStorage.getItem('esports-clash-macro-pair-target'));
+  } catch { return undefined; } })());
+  const pairedScoutAfterRef = useRef((() => { try {
+    return pairedScoutAfter(sessionStorage.getItem('esports-clash-macro-pair-after'));
+  } catch { return 120; } })());
+  const macroExperimentRandomRef = useRef<(() => number) | null>((() => { try {
+    const seedText = sessionStorage.getItem('esports-clash-macro-experiment-seed');
+    return seedText !== null && /^\d+$/.test(seedText) ? createExperimentRandom(Number(seedText)) : null;
+  } catch { return null; } })());
+  const lastMacroExperimentRef = useRef<Record<string, number>>({});
+  const adaptivePolicyRef = useRef<AdaptivePolicy>((() => { try {
+    return loadAdaptivePolicy(JSON.parse(localStorage.getItem('esports-clash-adaptive-policy') || ''));
+  } catch { return loadAdaptivePolicy(null); } })());
+  const evaluationReferencePolicyRef = useRef<AdaptivePolicy | null>((() => { try {
+    const stored = localStorage.getItem('esports-clash-evaluation-reference-policy');
+    return stored ? loadAdaptivePolicy(JSON.parse(stored)) : null;
+  } catch { return null; } })());
   const cooldownSnapshotsRef = useRef<Record<string, CooldownSnapshot>>({});
   const postObjectivePlanRef = useRef<Partial<Record<'blue' | 'red', {
     x: number; y: number; startedAt: number; until: number; action: 'fight' | 'regroup';
@@ -668,6 +723,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  const minimapRect = (width: number, height: number) => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (arenaViewRef.current === '3d' && threeTerrainAvailableRef.current && rect?.width && rect.height) {
+      const cssWidth = Math.min(180, rect.width * .3);
+      const Mw = cssWidth * width / rect.width, Mh = cssWidth * 760 / 2600 * height / rect.height;
+      return { Mw, Mh, mx: width - Mw - 12 * width / rect.width, my: height - Mh - 12 * height / rect.height };
+    }
+    return { Mw: 260, Mh: 76, mx: width - 278, my: height - 94 };
+  };
+
   const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -678,10 +743,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const canvasY = (e.clientY - rect.top) * scaleY;
 
     if (showMinimapRef.current) {
-      const Mw = 260;
-      const Mh = 76;
-      const mx = canvas.width - Mw - 18;
-      const my = canvas.height - Mh - 18;
+      const { Mw, Mh, mx, my } = minimapRect(canvas.width, canvas.height);
       if (canvasX >= mx && canvasX <= mx + Mw && canvasY >= my && canvasY <= my + Mh) {
         isDraggingMinimapRef.current = true;
         setCameraMode('manual');
@@ -713,10 +775,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const canvasY = (e.clientY - rect.top) * scaleY;
 
     if (isDraggingMinimapRef.current) {
-      const Mw = 260;
-      const Mh = 76;
-      const mx = canvas.width - Mw - 18;
-      const my = canvas.height - Mh - 18;
+      const { Mw, Mh, mx, my } = minimapRect(canvas.width, canvas.height);
       const clampedX = Math.max(mx, Math.min(mx + Mw, canvasX));
       const clampedY = Math.max(my, Math.min(my + Mh, canvasY));
       const worldX = ((clampedX - mx) / Mw) * ARENA_WIDTH;
@@ -730,8 +789,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const deltaX = (e.clientX - dragStartRef.current.clientX) * scaleX;
       const deltaY = (e.clientY - dragStartRef.current.clientY) * scaleY;
       const z = zoomRef.current;
-      const newX = dragStartRef.current.camX - deltaX / z;
-      const newY = dragStartRef.current.camY - deltaY / z;
+      const pan = arenaViewRef.current === '3d' && threeTerrainAvailableRef.current
+        ? threeTerrainRef.current?.pan(deltaX * 2 / canvas.width, deltaY * 2 / canvas.height, z) : null;
+      const newX = dragStartRef.current.camX - (pan?.x ?? deltaX / z);
+      const newY = dragStartRef.current.camY - (pan?.y ?? deltaY / z);
 
       targetCameraPosRef.current = { x: newX, y: newY };
       cameraPosRef.current = { x: newX, y: newY };
@@ -770,10 +831,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const canvasY = (touch.clientY - rect.top) * scaleY;
 
       if (showMinimapRef.current) {
-        const Mw = 260;
-        const Mh = 76;
-        const mx = canvas.width - Mw - 18;
-        const my = canvas.height - Mh - 18;
+        const { Mw, Mh, mx, my } = minimapRect(canvas.width, canvas.height);
         if (canvasX >= mx && canvasX <= mx + Mw && canvasY >= my && canvasY <= my + Mh) {
           isDraggingMinimapRef.current = true;
           setCameraMode('manual');
@@ -822,10 +880,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const canvasY = (touch.clientY - rect.top) * scaleY;
 
       if (isDraggingMinimapRef.current) {
-        const Mw = 260;
-        const Mh = 76;
-        const mx = canvas.width - Mw - 18;
-        const my = canvas.height - Mh - 18;
+        const { Mw, Mh, mx, my } = minimapRect(canvas.width, canvas.height);
         const clampedX = Math.max(mx, Math.min(mx + Mw, canvasX));
         const clampedY = Math.max(my, Math.min(my + Mh, canvasY));
         const worldX = ((clampedX - mx) / Mw) * ARENA_WIDTH;
@@ -839,8 +894,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const deltaX = (touch.clientX - dragStartRef.current.clientX) * scaleX;
         const deltaY = (touch.clientY - dragStartRef.current.clientY) * scaleY;
         const z = zoomRef.current;
-        const newX = dragStartRef.current.camX - deltaX / z;
-        const newY = dragStartRef.current.camY - deltaY / z;
+        const pan = arenaViewRef.current === '3d' && threeTerrainAvailableRef.current
+          ? threeTerrainRef.current?.pan(deltaX * 2 / canvas.width, deltaY * 2 / canvas.height, z) : null;
+        const newX = dragStartRef.current.camX - (pan?.x ?? deltaX / z);
+        const newY = dragStartRef.current.camY - (pan?.y ?? deltaY / z);
 
         targetCameraPosRef.current = { x: newX, y: newY };
         cameraPosRef.current = { x: newX, y: newY };
@@ -942,6 +999,99 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   const aegisBuffRef = useRef<AegisBuff | null>(null);
 
+  const teamTaskSnapshot = (team: 'blue' | 'red') => captureTeamTaskSnapshot({
+    second: matchTimeRef.current, team, champions: championsRef.current,
+    structures: structuresRef.current, dragonTeam: aegisBuffRef.current?.team, siegeUnits: minionsRef.current,
+  });
+
+  const capturePairedCheckpoint = () => structuredClone({
+    terrainRoutes: captureTerrainRoutes([...championsRef.current, ...jungleCampsRef.current]),
+    second: matchTimeRef.current,
+    randomState: randomRef.current.getState(),
+    champions: championsRef.current, minions: minionsRef.current,
+    structures: structuresRef.current, relics: relicsRef.current,
+    projectiles: projectilesRef.current, spells: spellsRef.current,
+    floats: floatsRef.current, waveTimer: waveTimerRef.current,
+    waveCount: waveCountRef.current,
+    pendingSiegeGolem: pendingSiegeGolemRef.current,
+    golemAwakened: golemAwakenedRef.current,
+    objectiveRecallPlan: objectiveRecallPlanRef.current,
+    postRecallCampPlan: postRecallCampPlanRef.current,
+    lastTeamKillAt: lastTeamKillAtRef.current,
+    engagementTracker: engagementTrackerRef.current,
+    nextEngagementId: nextEngagementIdRef.current,
+    engagementOutcomeCooldown: engagementOutcomeCooldownRef.current,
+    wards: wardsRef.current, jungleBuffs: jungleBuffsRef.current,
+    dragon: dragonRef.current, jungleCamps: jungleCampsRef.current,
+    aegisBuff: aegisBuffRef.current,
+    objectiveCalls: objectiveCallsRef.current,
+    teamIntent: teamIntentRef.current,
+    cooldownMemory: cooldownMemoryRef.current,
+    opponentTacticalMemory: opponentTacticalMemoryRef.current,
+    cooldownSnapshots: cooldownSnapshotsRef.current,
+    postObjectivePlan: postObjectivePlanRef.current,
+    lastMacroExperiment: lastMacroExperimentRef.current,
+    aiDecisionRecords: aiDecisionRecordsRef.current,
+    recordedEvents: recordedEventsRef.current,
+    insights: insightsRef.current,
+    firstBlood: firstBloodRef.current,
+    killStreaks: killStreaksRef.current,
+    skillshots: skillshotsRef.current,
+    fullBuildsAt15: fullBuildsAt15Ref.current,
+    itemCounts: itemCountsRef.current,
+    matchFinished: matchFinishedRef.current,
+    latestReport: latestReportRef.current,
+  });
+  const pairedCheckpointRef = useRef<ReturnType<typeof capturePairedCheckpoint> | null>(null);
+
+  const restorePairedCheckpoint = (rawTarget: unknown): boolean => {
+    if (!macroExperimentEnabledRef.current || !pairedCheckpointRef.current) return false;
+    const target = parsePairedMacroTarget(JSON.stringify(rawTarget));
+    if (!target || Math.abs(target.second - pairedCheckpointRef.current.second) > 1e-6) return false;
+    const state = structuredClone(pairedCheckpointRef.current);
+    matchTimeRef.current = state.second - SIMULATION_STEP;
+    accumulatorRef.current = 0;
+    randomRef.current.setState(state.randomState);
+    championsRef.current = state.champions; minionsRef.current = state.minions;
+    structuresRef.current = state.structures; relicsRef.current = state.relics;
+    projectilesRef.current = state.projectiles; spellsRef.current = state.spells;
+    floatsRef.current = state.floats; waveTimerRef.current = state.waveTimer;
+    waveCountRef.current = state.waveCount;
+    pendingSiegeGolemRef.current = state.pendingSiegeGolem;
+    golemAwakenedRef.current = state.golemAwakened;
+    objectiveRecallPlanRef.current = state.objectiveRecallPlan;
+    postRecallCampPlanRef.current = state.postRecallCampPlan;
+    lastTeamKillAtRef.current = state.lastTeamKillAt;
+    engagementTrackerRef.current = state.engagementTracker;
+    nextEngagementIdRef.current = state.nextEngagementId;
+    engagementOutcomeCooldownRef.current = state.engagementOutcomeCooldown;
+    wardsRef.current = state.wards; jungleBuffsRef.current = state.jungleBuffs;
+    dragonRef.current = state.dragon; jungleCampsRef.current = state.jungleCamps;
+    restoreTerrainRoutes([...state.champions, ...state.jungleCamps], state.terrainRoutes);
+    aegisBuffRef.current = state.aegisBuff;
+    objectiveCallsRef.current = state.objectiveCalls;
+    teamIntentRef.current = state.teamIntent;
+    cooldownMemoryRef.current = state.cooldownMemory;
+    opponentTacticalMemoryRef.current = state.opponentTacticalMemory;
+    cooldownSnapshotsRef.current = state.cooldownSnapshots;
+    postObjectivePlanRef.current = state.postObjectivePlan;
+    lastMacroExperimentRef.current = state.lastMacroExperiment;
+    aiDecisionRecordsRef.current = state.aiDecisionRecords;
+    recordedEventsRef.current = state.recordedEvents;
+    insightsRef.current = state.insights;
+    firstBloodRef.current = state.firstBlood;
+    killStreaksRef.current = state.killStreaks;
+    skillshotsRef.current = state.skillshots;
+    fullBuildsAt15Ref.current = state.fullBuildsAt15;
+    itemCountsRef.current = state.itemCounts;
+    matchFinishedRef.current = state.matchFinished;
+    latestReportRef.current = state.latestReport;
+    pairedMacroModeRef.current = 'replay';
+    pairedMacroTargetRef.current = target;
+    (window as Window & { __esportsPairedMacro?: Record<string, unknown> }).__esportsPairedMacro = undefined;
+    return true;
+  };
+
   const showBanner = (text: string, subtext: string, icon: string) => {
     setActiveBanner({ text, subtext, icon });
     setTimeout(() => {
@@ -956,10 +1106,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     if ((type === 'dragon' || type === 'jungle') && /called|committed|chose|focus|regroup/i.test(text)) {
       addInsightEvent(insightsRef.current, { second: matchTimeRef.current, kind: 'decision', text });
     }
-    setEventFeed((prev) => [
-      { id: random().toString(), text, type, time: `${mins}:${secs}` },
-      ...prev.slice(0, 18)
-    ]);
+    // Consume gameplay RNG synchronously, never inside React's deferred/replayed updater.
+    const event: MatchEvent = { id: random().toString(), text, type, time: `${mins}:${secs}` };
+    setEventFeed((prev) => [event, ...prev.slice(0, 18)]);
   };
 
   // Personality reads only observed match outcomes. This bounded five-player
@@ -1178,6 +1327,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
     });
 
+    const scenarioFixture = macroExperimentEnabledRef.current ? (() => { try {
+      return parseMacroScenarioFixture(sessionStorage.getItem('esports-clash-macro-scenario'));
+    } catch { return undefined; } })() : undefined;
+    if (scenarioFixture) for (const team of ['blue', 'red'] as const)
+      initChamps.filter(unit => unit.team === team).forEach((unit, index) => {
+        const position = macroScenarioPosition(team, index, scenarioFixture);
+        unit.x = position.x;
+        unit.y = position.y;
+      });
     initChamps.forEach(unit => {
       unit.psychology = ensurePsychology(unit.player);
       unit.relationships = Object.fromEntries(initChamps.filter(other => other.team === unit.team && other.id !== unit.id)
@@ -1185,6 +1343,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     });
     championsRef.current = initChamps;
     cooldownMemoryRef.current = createEnemyCooldownMemory();
+    opponentTacticalMemoryRef.current = createOpponentTacticalMemory();
+    aiDecisionRecordsRef.current = [];
+    lastMacroExperimentRef.current = {};
     cooldownSnapshotsRef.current = {};
     postObjectivePlanRef.current = {};
     pendingSiegeGolemRef.current = {};
@@ -1416,7 +1577,96 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   };
 
   // Main Simulation Step (fixed 30 Hz game clock)
+  const recordPairedTaskEvent = (actorId: string, kind: TaskEventKind, targetId: string, amount: number) => {
+    if (!macroExperimentEnabledRef.current || pairedMacroModeRef.current !== 'replay') return;
+    const event = (window as Window & { __esportsPairedMacro?: Record<string, unknown> }).__esportsPairedMacro;
+    if (!event?.matched || event.actorId !== actorId || event.followup) return;
+    const events = (event.taskEvents ??= []) as TaskEvent[];
+    events.push({ second: matchTimeRef.current, kind, targetId, amount });
+  };
   const updateAramSimulation = (dt: number) => {
+    const pairedEvent = (window as Window & { __esportsPairedMacro?: Record<string, unknown> }).__esportsPairedMacro;
+    const pairedTarget = pairedMacroTargetRef.current;
+    if (pairedMacroModeRef.current === 'replay' && pairedEvent?.matched === true && pairedTarget
+      && matchTimeRef.current - pairedTarget.second <= (pairedTarget.horizonSeconds ?? 3) + .05) {
+      const actor = championsRef.current.find(unit => unit.id === pairedTarget.actorId);
+      if (actor) {
+        const behavior = (pairedEvent.behaviorTrace ??= []) as unknown[];
+        behavior.push({ second: matchTimeRef.current - SIMULATION_STEP,
+          x: actor.x, y: actor.y, hpFraction: actor.hp / actor.maxHp,
+          damageDealt: actor.damageDealt, animState: actor.animState,
+          intent: actor.actionIntent?.kind, targetId: actor.actionIntent?.targetId,
+          cd1: actor.cd1, cd2: actor.cd2, cdUlt: actor.cdUlt,
+          decision: pairedEvent.lastDecision });
+      }
+    }
+    if (pairedMacroModeRef.current === 'replay' && pairedEvent?.matched === true && pairedTarget
+      && sessionStorage.getItem('esports-clash-macro-pair-trace') === '1'
+      && matchTimeRef.current - pairedTarget.second <= (pairedTarget.horizonSeconds ?? 3) + .05) {
+      const state = capturePairedCheckpoint();
+      const trace = (pairedEvent.trace ??= []) as { second: number; fields: Record<string, string> }[];
+      trace.push({ second: matchTimeRef.current,
+        fields: Object.fromEntries(Object.entries(state).map(([key, value]) =>
+          [key, pairedStateFingerprint(value)])) });
+      if (trace.length > 400) trace.shift();
+    }
+    if (pairedMacroModeRef.current === 'replay' && pairedEvent?.matched === true
+      && !pairedEvent.followup && pairedTarget
+      && matchTimeRef.current - pairedTarget.second >= (pairedTarget.horizonSeconds ?? 3)) {
+      const actor = championsRef.current.find(unit => unit.id === pairedTarget.actorId);
+      if (actor) {
+        const liveEnemies = championsRef.current.filter(unit => unit.team !== actor.team && unit.isAlive);
+        pairedEvent.followup = {
+          second: matchTimeRef.current,
+          actor: { x: actor.x, y: actor.y, hpFraction: actor.hp / actor.maxHp,
+            mana: actor.mana, isAlive: actor.isAlive, gold: actor.gold, cs: actor.cs,
+            kills: actor.kills, deaths: actor.deaths, damageDealt: actor.damageDealt,
+            economicValue: actor.gold + actor.items.reduce((sum, item) => sum + item.cost, 0)
+              + (actor.boots?.cost ?? 0) },
+          team: {
+            ownStructureHp: structuresRef.current.filter(structure => structure.team === actor.team)
+              .reduce((sum, structure) => sum + Math.max(0, structure.hp), 0),
+            enemyStructureHp: structuresRef.current.filter(structure => structure.team !== actor.team)
+              .reduce((sum, structure) => sum + Math.max(0, structure.hp), 0),
+            dragonAspect: aegisBuffRef.current?.team === actor.team,
+            siegeGolemUnits: minionsRef.current.filter(minion => minion.team === actor.team
+              && minion.isAlive && minion.siegeGolem).length,
+          },
+          nearestEnemyDistance: liveEnemies.length
+            ? Math.min(...liveEnemies.map(enemy => Math.hypot(enemy.x - actor.x, enemy.y - actor.y))) : null,
+          insideEnemyTower: structuresRef.current.some(structure => structure.isAlive
+            && structure.team !== actor.team && (structure.type.includes('tower') || structure.type === 'nexus')
+            && Math.hypot(structure.x - actor.x, structure.y - actor.y) <= structure.range),
+        };
+        pairedEvent.followupStateFingerprint = pairedStateFingerprint(capturePairedCheckpoint());
+        const start = pairedEvent.actorStart as { deaths: number };
+        pairedEvent.taskOutcome = summarizeTaskOutcome({ second: pairedTarget.second, deaths: start.deaths },
+          { second: matchTimeRef.current, deaths: actor.deaths }, (pairedEvent.taskEvents ?? []) as TaskEvent[]);
+        if (pairedEvent.taskOutcome && pairedEvent.teamStart)
+          pairedEvent.teamOutcome = summarizeTeamTaskOutcome(pairedEvent.teamStart as TeamTaskSnapshot,
+            teamTaskSnapshot(actor.team), pairedEvent.taskOutcome as NonNullable<ReturnType<typeof summarizeTaskOutcome>>);
+      }
+    }
+    if (pairedMacroModeRef.current === 'scout' && matchTimeRef.current >= pairedScoutAfterRef.current
+      && !(window as Window & { __esportsPairedMacro?: unknown }).__esportsPairedMacro)
+      pairedCheckpointRef.current = capturePairedCheckpoint();
+    if (macroExperimentEnabledRef.current
+      && aiDecisionRecordsRef.current.some(record => record.experiment && !record.outcome)) {
+      for (const unit of championsRef.current) settleExperimentOutcome(aiDecisionRecordsRef.current, {
+        second: matchTimeRef.current, actorId: unit.id, team: unit.team, candidates: [],
+        snapshot: { healthFraction: unit.hp / unit.maxHp, gold: unit.gold, cs: unit.cs,
+          kills: unit.kills, deaths: unit.deaths, damageDealt: unit.damageDealt },
+      });
+    }
+    const pinnedPairRecord = pairedEvent?.assignmentRecord as AIDecisionRecord | undefined;
+    if (pairedMacroModeRef.current === 'replay' && pairedEvent?.matched && pinnedPairRecord
+      && !pinnedPairRecord.outcome) {
+      const actor = championsRef.current.find(unit => unit.id === pinnedPairRecord.actorId);
+      if (actor) settleExperimentOutcome([pinnedPairRecord], { second: matchTimeRef.current,
+        actorId: actor.id, team: actor.team, candidates: [], snapshot: {
+          healthFraction: actor.hp / actor.maxHp, gold: actor.gold, cs: actor.cs,
+          kills: actor.kills, deaths: actor.deaths, damageDealt: actor.damageDealt } });
+    }
     for (const minute of [8, 10, 12, 13] as const) {
       const at = minute * 60;
       if (matchTimeRef.current - dt < at && matchTimeRef.current >= at) {
@@ -1649,10 +1899,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     champs.forEach((c) => {
       if (!c.isAlive) return;
 
-      const inBlueWell = c.team === 'blue' && (c.x <= WELL_X.blue + 105 && Math.abs(c.y - LANE_Y) <= 105);
-      const inRedWell = c.team === 'red' && (c.x >= WELL_X.red - 105 && Math.abs(c.y - LANE_Y) <= 105);
-
-      if (inBlueWell || inRedWell) {
+      if (isInsideHealingWell(c.team, c)) {
         // High rapid fountain regeneration (+45% HP/s and +75 Mana/s)
         c.hp = Math.min(c.maxHp, c.hp + c.maxHp * 0.45 * dt);
         c.mana = Math.min(maxMana(c), c.mana + 75 * dt);
@@ -1674,9 +1921,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // Fountain Defense Laser on Intruders
-      const redInvadingBlueWell = c.team === 'red' && c.x <= WELL_X.blue + 50;
-      const blueInvadingRedWell = c.team === 'blue' && c.x >= WELL_X.red - 50;
-      if (redInvadingBlueWell || blueInvadingRedWell) {
+      if (isInsideEnemyWellBeam(c.team, c)) {
         c.hp = Math.max(0, c.hp - 1400 * dt);
         sound.playSpellHit();
         floatsRef.current.push({
@@ -2204,6 +2449,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     // 12. Champions Micro & Macro Intelligence
     champs.forEach((u, uIdx) => {
+      let auditedMacro: { selected: string; x: number; y: number;
+        pushPlan?: { kind: string; target: { id: string; x: number; y: number } } } | undefined;
       try {
       if (!u.isAlive) {
         u.kaelenComboId = undefined;
@@ -2872,6 +3119,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // Targets: Enemies, Allies, Dragon, Jungle, Structures, Minions
       const { enemies, allies, localEnemies, localAllies, availableAllies } =
         perceiveChampions(u, champs, wardsRef.current);
+      observeOpponentTacticalMemory({ memory: opponentTacticalMemoryRef.current, viewer: u.team,
+        now: matchTimeRef.current, visibleOpponents: enemies,
+        observedFocuses: allies.flatMap(ally => ally.lastEnemyDamage
+          ? [{ attackerId: ally.lastEnemyDamage.attackerId, targetId: ally.id, second: ally.lastEnemyDamage.second }]
+          : []),
+      });
       const teamPsychology = deriveTeamPsychology(allies);
       const iglRelationship = teamPsychology.iglId ? u.relationships?.[teamPsychology.iglId] : undefined;
       const baseCallAlignment = u.id === teamPsychology.iglId ? 1
@@ -2884,10 +3137,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             && enemies.some(enemy => Math.hypot(enemy.x - ally.x, enemy.y - ally.y) < 170)),
         },
       )));
-      const enemyStructures = structures.filter((st) => st.team !== u.team && st.isAlive
-        && (st.type !== 'nexus' || canDamageNexus(st.team, structures)));
+      // A sealed Nexus still fires. Attack legality must not hide it from threat reads.
+      const enemyStructures = structures.filter((st) => st.team !== u.team && st.isAlive);
+      const attackableEnemyStructures = enemyStructures.filter(st => st.type !== 'nexus' || canDamageNexus(st.team, structures));
       const enemyMinions = minions.filter((m) => m.team !== u.team && m.isAlive);
       const availableJungleCamps = jungleCamps.filter((c) => c.isAlive && c.type !== 'siege_golem');
+      const spatialInfluence = createSpatialInfluence({ team: u.team, allies, enemies, structures });
+      const localInfluence = spatialInfluence.at(u);
 
       // Resolve the previous concrete action before choosing another one. Point
       // actions retain their stored destination; entity actions follow live state.
@@ -3006,7 +3262,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const actionCandidate = <T extends { id: string; x: number; y: number; isAlive?: boolean }>(
         kind: Parameters<typeof beginOrContinueAction>[0]['kind'], target: T, safe = true,
       ) => ({ ...target, contextKey: actionContextFor(kind, target),
-        available: target.isAlive !== false, safe, reachable: true });
+        available: target.isAlive !== false,
+        safe: safe && (kind !== 'champion' || !isUnsafeWellChase(u,
+          { ...target, team: u.team === 'blue' ? 'red' : 'blue' }, attackRange)), reachable: true });
 
       // Skilled shoppers recall on a safe item spike after the mid game.
       const lateShop = matchEconomyPhase(matchTimeRef.current) === 'Late game';
@@ -3096,20 +3354,33 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // alongside, rather than being interrupted by, normal tower risk.
       const nexusFinishTarget = structures.find(structure => structure.team !== u.team && structure.type === 'nexus');
       const nexusFinish = evaluateNexusFinish({
-        nexus: nexusFinishTarget,
+        nexus: nexusFinishTarget ? { ...nexusFinishTarget,
+          volleyActive: [...allies, ...minions.filter(minion => minion.team === u.team)]
+            .some(ally => ally.isAlive && Math.hypot(ally.x - nexusFinishTarget.x, ally.y - nexusFinishTarget.y)
+              <= nexusFinishTarget.range) } : undefined,
         exposed: !!nexusFinishTarget && canDamageNexus(nexusFinishTarget.team, structures),
         attackers: allies.map(ally => {
           const allyRange = getLiveBasicAttackRange(ally);
           return {
             id: ally.id,
-            isAlive: ally.isAlive,
+            isAlive: ally.isAlive && !ally.isRecalling && ally.stunTimer <= 0,
             hp: ally.hp,
             maxHp: ally.maxHp,
             distance: nexusFinishTarget ? Math.hypot(ally.x - nexusFinishTarget.x, ally.y - nexusFinishTarget.y) : Infinity,
             attackRange: allyRange,
-            structureAttackDamage: structureBasicAttackDamage({ baseAttackDamage: ally.champion.ad }),
+            structureAttackDamage: Math.round(structureBasicAttackDamage({ baseAttackDamage: ally.champion.ad,
+              persistentAttackBonus: aegisBuffRef.current?.team === ally.team ? aegisBuffRef.current.adBonus : 0 })
+              * getMinionCrashMultiplier(minions.filter(minion => minion.team === ally.team && minion.isAlive
+                && !!nexusFinishTarget && Math.abs(minion.x - nexusFinishTarget.x) <= 240))
+              * (aegisBuffRef.current?.team === ally.team ? aegisBuffRef.current.siegeMultiplier : 1)
+              * (ally.champion.primaryRole === 'Marksman' ? 1.25 : 1)),
             attacksPerSecond: getEffectiveAttackSpeed(ally),
             approachSpeed: 85 + (ally.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(ally),
+            attackReadyIn: ally.attackTimer,
+            incomingDamage: projectilesRef.current.filter(projectile => projectile.targetUnitId === ally.id
+              && projectile.attackerId === nexusFinishTarget?.id).reduce((sum, projectile) => sum + projectile.damage, 0),
+            approachSafe: !!nexusFinishTarget && isTeamfightApproachSafe(ally, nexusFinishTarget,
+              enemyStructures.filter(structure => structure.id !== nexusFinishTarget.id)),
           };
         }),
         actorId: u.id,
@@ -3246,13 +3517,18 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
           callAlignment, isSafe: !isTakingTurretFire,
         }) >= 4.5 && isOutnumbered && u.hp / u.maxHp < .58;
-      const rawDangerousFight = (!nexusFinishCommit && personalityCautiousRetreat) || (!nexusFinishCommit && !coordinatedEngage && (losingFight || (!canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002))))));
+      const lethalBaseEnvironment = isInsideEnemyWellBeam(u.team, u)
+        || (!nexusFinishCommit && !!nexusFinishTarget
+          && Math.hypot(u.x - nexusFinishTarget.x, u.y - nexusFinishTarget.y) <= nexusFinishTarget.range
+          && nexusFinish.estimatedSurvivalSeconds < 1);
+      const rawDangerousFight = lethalBaseEnvironment || (!nexusFinishCommit && personalityCautiousRetreat) || (!nexusFinishCommit && !coordinatedEngage && (losingFight || (!canPunishSpentSkill && !isClutchRefusingRetreat && !isAggroDiving && (isLowHpScared || (isOutnumbered && u.hp < u.maxHp * (0.4 + iq * 0.002))))));
 
       const commitment = resolveFightCommitment({
         committedState: nexusFinishCommit ? undefined : u.committedState, timer: nexusFinishCommit ? 0 : u.decisionCommitTimer ?? 0,
         dangerous: !!rawDangerousFight, enemyCount: localEnemies.length,
         inWell: isInsideWell, followUp: coordinatedEngage, lowHealth: isLowHpScared,
         losingFight: nexusFinishCommit ? false : losingFight,
+        lethalEnvironment: lethalBaseEnvironment,
       });
       const isDangerousFight = commitment.dangerous;
       u.committedState = commitment.committedState;
@@ -3423,7 +3699,34 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           activeFight: teamfightPriority,
           underEnemyTower: isInsideEnemyTowerRange,
         })).sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0];
-      if (recoveryRelic && !isInsideWell && !defenseCall && !nexusFinishCommit) {
+      const recoveryRetreatAvailable = !isInsideWell
+        && ((isDangerousFight && !defendNow) || wantsRecall);
+      const recoveryRelicAvailable = !!recoveryRelic && !isInsideWell && !defenseCall && !nexusFinishCommit;
+      const recoveryMacroCandidates = [
+        { action: 'retreat' as const, available: recoveryRetreatAvailable,
+          priority: (isDangerousFight || recallToDefend) ? 'emergency' as const : 'tactical' as const,
+          contextKey: `recovery:${wantsRecall ? 'recall' : 'danger'}:${Math.floor(u.hp / Math.max(1, u.maxHp) * 10)}`,
+          factors: { tactical: wantsRecall ? .7 : .45, danger: isDangerousFight ? 1 : 0,
+            resource: wantsRecall ? 0 : .15 },
+          reason: 'existing recall and retreat safety gates passed' },
+        { action: 'relic' as const, available: recoveryRelicAvailable,
+          priority: 'tactical' as const,
+          contextKey: `relic:${recoveryRelic?.id ?? 'none'}`,
+          factors: { tactical: Math.min(1, (recoveryRelic?.healAmount ?? 0) / Math.max(1, u.maxHp - u.hp)),
+            travel: recoveryRelic ? Math.min(1, Math.hypot(recoveryRelic.x - u.x, recoveryRelic.y - u.y) / 700) : 1,
+            danger: isDangerousFight ? 1 : 0 },
+          reason: 'existing health-relic safety gate passed' },
+      ];
+      const recoveryMacroDecision = chooseMacroAction({ actorAvailable: u.isAlive,
+        now: matchTimeRef.current, candidates: recoveryMacroCandidates, commitment: u.macroDecision });
+      const selectedRecoveryAction = recoveryMacroDecision.selected?.value;
+      const selectedRecoveryCandidate = selectedRecoveryAction
+        ? recoveryMacroCandidates.find(candidate => candidate.action === selectedRecoveryAction) : undefined;
+      if (selectedRecoveryCandidate) u.macroDecision = {
+        action: selectedRecoveryCandidate.action, contextKey: selectedRecoveryCandidate.contextKey,
+        until: matchTimeRef.current + .45,
+      };
+      if (selectedRecoveryAction === 'relic' && recoveryRelic) {
         const distance = Math.hypot(recoveryRelic.x - u.x, recoveryRelic.y - u.y);
         if (distance > 25) {
           setActionIntent('relic', recoveryRelic, 'move');
@@ -3439,7 +3742,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // 1. If wanting to recall, but enemy minions are threatening nearby: CLEAR FIRST!
-      if (wantsRecall && !recallToDefend && !defenseCall && threateningMinions.length > 0 && localEnemies.length === 0 && !u.isInBush
+      if (selectedRecoveryAction === 'retreat' && wantsRecall && !recallToDefend && !defenseCall && threateningMinions.length > 0 && localEnemies.length === 0 && !u.isInBush
         && u.hp / u.maxHp >= 0.4 && !isInsideEnemyTowerRange
         && threateningMinions.every(m => isBushSafeFromTowers(m, enemyStructures))) {
         const minionToClear = threateningMinions[0];
@@ -3467,7 +3770,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // 2. Disengage or use the precomputed safe recall route for distant base defenders.
-      if (u.champion.name === 'Paxi' && isDangerousFight && localEnemies.length > 0
+      if (selectedRecoveryAction === 'retreat' && u.champion.name === 'Paxi' && isDangerousFight && localEnemies.length > 0
         && iq >= 55 && flxStat >= 55 && !isInsideWell) {
         if (u.paxiOrb && shouldPaxiEscapeJaunt(u, u.paxiOrb, localEnemies, wellTargetX)) {
           u.x = u.paxiOrb.x; u.y = u.paxiOrb.y;
@@ -3491,7 +3794,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       }
 
-      if (((isDangerousFight && !defendNow) || wantsRecall) && Math.abs(u.x - wellTargetX) > 40 && !isInsideWell) {
+      if (selectedRecoveryAction === 'retreat' && Math.abs(u.x - wellTargetX) > 40 && !isInsideWell) {
         u.actionIntent = undefined;
         const retreat = personalityDecisionBreakdown(u.player, ensurePsychology(u.player, u.psychology), 'retreat', teamPsychology, {
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
@@ -3559,6 +3862,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             bushes: ARAM_BUSHES,
             isPassable: (point: { x: number; y: number }) => !isInsideRockTerrain(point.x, point.y, 13),
             routeLength: (from: { x: number; y: number }, to: { x: number; y: number }) => rockRouteDistance(from, to, 13),
+            influenceThreat: (point: { x: number; y: number }) => spatialInfluence.at(point).threat,
           };
           const plan = shouldKeepRetreatPlan(u.retreatPlan, retreatInput)
             ? u.retreatPlan
@@ -3811,6 +4115,18 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const primaryTarget = committedCombatCandidate
         ? combatPool.find(enemy => enemy.id === committedCombatCandidate.id) : undefined;
       const selectedTeamfightPriority = activeAllInCommit || canFinishWonFight || prioritizeFightWith(primaryTarget);
+      const tacticalOutlook = primaryTarget ? estimateTacticalOutlook({
+        actor: u, target: primaryTarget,
+        travelSpeed: 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u),
+        interactionRange: Math.max(attackRange, readyCastRange), nearbyAllies: localAllies.length,
+        nearbyEnemies: localEnemies.length,
+        approachThreat: spatialInfluence.approach(u, primaryTarget).threat,
+        approachCover: spatialInfluence.approach(u, primaryTarget).cover,
+      }) : undefined;
+      const primaryTargetMemory = readOpponentTacticalMemory(opponentTacticalMemoryRef.current, u.team,
+        primaryTarget?.id, u.id, matchTimeRef.current);
+      const localFocusPressure = localEnemies.filter(enemy => readOpponentTacticalMemory(
+        opponentTacticalMemoryRef.current, u.team, enemy.id, u.id, matchTimeRef.current).focusingActor).length;
       // Reinforce the threatened defensive layer before starting side activities.
       // Emergency retreat/recall and dive evacuation have already run above.
       const moveToDefense = () => {
@@ -3863,20 +4179,27 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const enemyNexus = structures.find(st => st.team !== u.team && st.type === 'nexus');
       const isNexusLow = !!enemyNexus && canDamageNexus(enemyNexus.team, structures)
         && (enemyNexus.hp / enemyNexus.maxHp <= 0.40);
-      const focusNexus = !defenseCall && !!enemyNexus && (shouldFocusExposedNexus(enemyNexus,
+      const focusNexus = nexusFinishCommit && !defenseCall && !!enemyNexus && (shouldFocusExposedNexus(enemyNexus,
         canDamageNexus(enemyNexus.team, structures), iq, coach?.playbookBonus ?? 8) || isNexusLow);
       const preferredStructure = focusNexus ? enemyNexus
-        : enemyStructures.sort((a, b) => Math.abs(a.x - u.x) - Math.abs(b.x - u.x))[0];
+        : attackableEnemyStructures.sort((a, b) => Math.abs(a.x - u.x) - Math.abs(b.x - u.x))[0];
+      const pushOutlook = preferredStructure ? estimateTacticalOutlook({
+        actor: u, target: preferredStructure,
+        travelSpeed: 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u),
+        interactionRange: attackRange, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
+        approachThreat: spatialInfluence.approach(u, preferredStructure).threat,
+        approachCover: spatialInfluence.approach(u, preferredStructure).cover,
+      }) : undefined;
       const committedStructureCandidate = chooseCommittedActionTarget({
         intent: u.actionIntent,
         kind: 'structure',
         preferred: preferredStructure ? actionCandidate('structure', preferredStructure) : undefined,
-        candidates: enemyStructures.map(structure => actionCandidate('structure', structure)),
+        candidates: attackableEnemyStructures.map(structure => actionCandidate('structure', structure)),
         failures: focusNexus && isNexusLow ? undefined : u.actionFailures,
         now: matchTimeRef.current,
       });
       const nearestStructure = committedStructureCandidate
-        ? enemyStructures.find(structure => structure.id === committedStructureCandidate.id) : undefined;
+        ? attackableEnemyStructures.find(structure => structure.id === committedStructureCandidate.id) : undefined;
       const minionInRange = !isObjectiveFight && !!nearestMinion && Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) <= attackRange;
       const structureInRange = !isObjectiveFight && !!nearestStructure && canBasicAttackStructure({
         x: u.x, y: u.y, attackRange,
@@ -3913,7 +4236,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const advanceLimit = laneAdvanceLimit({
         team: u.team, waveFrontX, waveCount: alliedLaneWave.length,
         structureX: nearestStructure?.x, structureRange: nearestStructure?.range,
-        exposedNexus: focusNexus, objectiveFight: isObjectiveFight,
+        exposedNexus: focusNexus, objectiveFight: isObjectiveFight, attackRange,
+        structureApproachUnsafe: nearestStructure?.type === 'nexus' && !nexusFinishCommit
+          && nexusFinish.estimatedSurvivalSeconds < 3,
       });
       const personalityCanContinueChase = !!primaryTarget && !isDangerousFight
         && isTeamfightApproachSafe(u, primaryTarget, enemyStructures)
@@ -4042,8 +4367,32 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // MACRO OBJECTIVE 1: START DRAGON IN UPPER PIT (Game-Ending Objective Priority)
-      const focusDragon = !defenseCall && !focusNexus && (!tempoPush || dragonAction === 'finish') && (dragonAction === 'finish' || (dragonAction === 'none' && shouldContestDragon));
-      if (!isObjectiveFight && focusDragon && (dragonAction === 'finish' || !primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > 220)) {
+      const dragonStartAvailable = !isObjectiveFight && !defenseCall && !focusNexus
+        && (!tempoPush || dragonAction === 'finish')
+        && (dragonAction === 'finish' || (dragonAction === 'none' && shouldContestDragon))
+        && (dragonAction === 'finish' || !primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > 220);
+      const dragonOutlook = estimateTacticalOutlook({ actor: u, target: dragon,
+        travelSpeed: 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u),
+        interactionRange: neutralAttackRange(attackRange, true), nearbyAllies: nearbyPitAllies.length,
+        nearbyEnemies: enemiesAtDragon.length, approachThreat: spatialInfluence.approach(u, dragon).threat,
+        approachCover: spatialInfluence.approach(u, dragon).cover,
+      });
+      const dragonStartDecision = chooseMacroAction({ actorAvailable: u.isAlive,
+        now: matchTimeRef.current, commitment: u.macroDecision, candidates: [
+          { action: 'objective' as const, available: dragonStartAvailable,
+            priority: dragonAction === 'finish' ? 'finish' as const : 'tactical' as const,
+            contextKey: `dragon-start:${dragon.slainCount}:${dragonAction}`,
+            factors: { strategic: dragonAction === 'finish' ? .9 : .7, tactical: dragonOutlook.pressure,
+              coordination: Math.max(nearbyPitAllies.length / Math.max(1, allies.length), dragonOutlook.support),
+              danger: Math.max(isDangerousFight ? 1 : 0, 1 - dragonOutlook.survival) },
+            reason: 'existing Dragon start, vision, wave, and safety gates passed' },
+          { action: 'fight' as const, available: !dragonStartAvailable && !!primaryTarget && selectedTeamfightPriority,
+            priority: 'tactical' as const, contextKey: `dragon-fight:${primaryTarget?.id ?? 'none'}`,
+            factors: { tactical: .9, danger: isDangerousFight ? 1 : 0 },
+            reason: 'existing combat policy has a nearer active target' },
+        ] });
+      const focusDragon = dragonStartDecision.selected?.value === 'objective';
+      if (focusDragon) {
         const callKey = `dragon:${dragon.slainCount}:${u.team}`;
         if (!objectiveCallsRef.current.has(callKey)) {
           objectiveCallsRef.current.add(callKey);
@@ -4100,8 +4449,32 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         coachPlaybook: (u.team === 'blue' ? blueCoach : redCoach)?.playbookBonus ?? 8,
         actorHealthFraction: u.hp / u.maxHp
       });
-      const focusGolem = !defenseCall && !focusNexus && (!tempoPush || golemAction === 'finish') && (golemAction === 'finish' || (golemAction === 'none' && shouldContestGolem));
-      if (!isObjectiveFight && golem && focusGolem && (golemAction === 'finish' || !primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > 220)) {
+      const golemStartAvailable = !isObjectiveFight && !!golem && !defenseCall && !focusNexus
+        && (!tempoPush || golemAction === 'finish')
+        && (golemAction === 'finish' || (golemAction === 'none' && shouldContestGolem))
+        && (golemAction === 'finish' || !primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > 220);
+      const golemOutlook = golem ? estimateTacticalOutlook({ actor: u, target: golem,
+        travelSpeed: 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u),
+        interactionRange: neutralAttackRange(attackRange, true), nearbyAllies: golemAllies.length,
+        nearbyEnemies: enemiesAtGolem.length, approachThreat: spatialInfluence.approach(u, golem).threat,
+        approachCover: spatialInfluence.approach(u, golem).cover,
+      }) : undefined;
+      const golemStartDecision = chooseMacroAction({ actorAvailable: u.isAlive,
+        now: matchTimeRef.current, commitment: u.macroDecision, candidates: [
+          { action: 'objective' as const, available: golemStartAvailable,
+            priority: golemAction === 'finish' ? 'finish' as const : 'tactical' as const,
+            contextKey: `golem-start:${golem?.id ?? 'none'}:${golemAction}`,
+            factors: { strategic: golemAction === 'finish' ? .9 : .7, tactical: golemOutlook?.pressure ?? 0,
+              coordination: Math.max(golemAllies.length / Math.max(1, allies.length), golemOutlook?.support ?? 0),
+              danger: Math.max(isDangerousFight ? 1 : 0, 1 - (golemOutlook?.survival ?? 0)) },
+            reason: 'existing Gravemarch start, vision, wave, and safety gates passed' },
+          { action: 'fight' as const, available: !golemStartAvailable && !!primaryTarget && selectedTeamfightPriority,
+            priority: 'tactical' as const, contextKey: `golem-fight:${primaryTarget?.id ?? 'none'}`,
+            factors: { tactical: .9, danger: isDangerousFight ? 1 : 0 },
+            reason: 'existing combat policy has a nearer active target' },
+        ] });
+      const focusGolem = golemStartDecision.selected?.value === 'objective';
+      if (golem && focusGolem) {
         const callKey = `golem:${u.team}`;
         if (!objectiveCallsRef.current.has(callKey)) {
           objectiveCallsRef.current.add(callKey);
@@ -4200,21 +4573,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           healthFraction: u.hp / u.maxHp, nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length,
           callAlignment, isSafe: true,
         }) >= 2.2;
-      if (personalityRegroupCall && callLeader) {
-        const groupDistance = Math.hypot(callLeader.x - u.x, callLeader.y - u.y);
-        setActionIntent('regroup', callLeader, 'move',
-          `personality-regroup:${callLeader.id}:${Math.floor(groupDistance / 80)}`, 0.8);
-        const angle = Math.atan2(callLeader.y - u.y, callLeader.x - u.x);
-        const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u),
-          groupDistance / dt);
-        u.vx = Math.cos(angle) * speed;
-        u.vy = Math.sin(angle) * speed;
-        u.x += u.vx * dt;
-        u.y += u.vy * dt;
-        u.animState = 'walk';
-        setUnitFacing(u, callLeader.x);
-        return;
-      }
       const retryableJungleCamps = availableJungleCamps.filter(camp => !isActionRetryBlocked(
         u.actionFailures,
         decisiveActionKey('camp', camp.id),
@@ -4250,7 +4608,346 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         : undefined;
       u.farmTargetId = nearestJungleCamp?.id;
 
-      if (nearestJungleCamp) {
+      // The stronger finish/defense/objective branches above have already
+      // returned. Arbitrate the remaining legal macro work once rather than
+      // allowing farm, regroup, combat, wave and push branches to race.
+      const nearestLivingCarry = allies.find(ally => ally.isAlive && ally.id !== u.id && !ally.isRecalling
+        && !isInsideEnemyWellBeam(u.team, ally)
+        && Math.hypot(ally.x - u.x, ally.y - u.y) <= 550);
+      const regroupTarget = personalityRegroupCall && callLeader ? callLeader
+        : (!focusNexus && !tempoPush && !coordinatedEngage && !isObjectiveFight && !defenseCall
+          && !!fightingAlly && canReinforceFightingAlly
+          && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > attackRange))
+          ? fightingAlly
+          : !defenseCall && isSupportAvatar && nearestLivingCarry && !primaryTarget
+            && Math.hypot(nearestLivingCarry.x - u.x, nearestLivingCarry.y - u.y) > 130
+            ? nearestLivingCarry : undefined;
+      const canRegroup = !!regroupTarget;
+      const skill1Range = getSkillCastRange(u.champion.name, 'skill1', baseAttackRange);
+      const skill2Range = getSkillCastRange(u.champion.name, 'skill2', baseAttackRange);
+      const ultRange = getSkillCastRange(u.champion.name, 'ultimate', baseAttackRange);
+      const standardCombatRange = Math.max(attackRange * 1.5, skill1Range, skill2Range, u.level >= 6 ? ultRange : 0, u.champion.name === 'Kaelen' ? 420 : 190);
+      const isFollowUpEngage = canFollowUpEngage && !!primaryTarget && isEnemyCaughtInAlliedChannel(primaryTarget, allies);
+      const maxCombatRange = isFollowUpEngage ? Math.max(standardCombatRange, 650)
+        : activeAllInCommit || canFinishWonFight ? Math.max(standardCombatRange, 500) : standardCombatRange;
+      const postFightConversion = choosePostFightConversion({ now: matchTimeRef.current, wonFight: pressWonFight,
+        candidates: [
+          { action: 'push' as const, available: tempoPush, contextKey: `push:${Math.floor(advanceLimit / 40)}`,
+            factors: { strategic: .75, tactical: pushOutlook?.pressure ?? .3, danger: 1 - (pushOutlook?.survival ?? 0) }, reason: 'existing post-win push gate passed' },
+          { action: 'objective' as const, available: dragonStartAvailable || golemStartAvailable, contextKey: `objective:${dragonAction}:${golemAction}`,
+            factors: { strategic: .7 }, reason: 'existing objective-start gate passed' },
+          { action: 'reset' as const, available: wantsRecall && !isDangerousFight, contextKey: `reset:${Math.floor(u.hp / Math.max(1, u.maxHp) * 10)}`,
+            factors: { resource: .2 }, reason: 'existing safe recall gate passed' },
+          { action: 'farm' as const, available: !!nearestJungleCamp, contextKey: `farm:${nearestJungleCamp?.id ?? 'none'}`,
+            factors: { strategic: .4, travel: .2 }, reason: 'existing safe farm gate passed' },
+          { action: 'regroup' as const, available: canRegroup, contextKey: `regroup:${callLeader?.id ?? fightingAlly?.id ?? 'none'}`,
+            factors: { coordination: .7 }, reason: 'existing regroup gate passed' },
+        ],
+      }).selected?.value;
+      const teamIntentCandidates = [
+        { intent: 'defend' as const, available: !!defenseCall && defenseCall.urgent,
+          priority: 'emergency' as const, contextKey: `defend:${defenseCall?.building.id ?? 'none'}`,
+          factors: { tactical: .9 }, reason: 'existing urgent base-defense call is active' },
+        { intent: 'fight' as const, available: !!primaryTarget && !clearWaveFirst && !holdChaseForWave
+            && (selectedTeamfightPriority || isObjectiveFight || !!fightingAlly),
+          priority: 'tactical' as const, contextKey: `fight:${primaryTarget?.id ?? 'none'}:${isObjectiveFight ? 1 : 0}`,
+          factors: { tactical: selectedTeamfightPriority || isObjectiveFight ? .9 : .55,
+            coordination: coordinatedEngage ? .8 : 0, danger: isDangerousFight ? 1 : 0 },
+          reason: 'existing live fight or objective-contest policy is active' },
+        { intent: 'objective' as const, available: dragonAction === 'finish' || golemAction === 'finish',
+          priority: 'finish' as const, contextKey: `objective:${dragonAction}:${golemAction}`,
+          factors: { strategic: .9 }, reason: 'existing low-health objective finish policy is active' },
+        { intent: 'regroup' as const, available: canRegroup,
+          priority: 'tactical' as const,
+          contextKey: `regroup:${callLeader?.id ?? fightingAlly?.id ?? nearestLivingCarry?.id ?? 'none'}`,
+          factors: { tactical: .55, coordination: callAlignment, personality: personalityRegroupCall ? 1 : 0 },
+          reason: 'existing IGL, reinforcement, or carry-protection policy requested regrouping' },
+        { intent: 'push' as const, available: tempoPush,
+          priority: 'optional' as const, contextKey: `push:${Math.floor(advanceLimit / 40)}`,
+          factors: { strategic: .62, tactical: structureInRange ? .5 : .18 },
+          reason: 'existing safe conversion policy found a push window' },
+        { intent: 'hold' as const, available: true, priority: 'optional' as const,
+          contextKey: `hold:${Math.floor(matchTimeRef.current)}`,
+          factors: { tactical: .05 }, reason: 'no stronger existing team call is legal' },
+      ];
+      const teamIntentDecision = coordinateTeamIntent({ now: matchTimeRef.current,
+        candidates: teamIntentCandidates, commitment: teamIntentRef.current[u.team] });
+      const selectedTeamIntent = teamIntentDecision.selected?.value;
+      const selectedTeamIntentCandidate = selectedTeamIntent
+        ? teamIntentCandidates.find(candidate => candidate.intent === selectedTeamIntent) : undefined;
+      if (selectedTeamIntentCandidate) teamIntentRef.current[u.team] = {
+        intent: selectedTeamIntentCandidate.intent, contextKey: selectedTeamIntentCandidate.contextKey,
+        until: matchTimeRef.current + .65,
+      };
+      const assignedTeamIntent = teamIntentRole(selectedTeamIntent, u.champion.primaryRole);
+      const learnedFeatures = adaptiveFeatures(u.player, u.champion, u.hp / u.maxHp, u.mana / maxMana(u));
+      const learnedMacroEnabled = adaptivePreferenceAllowed(u.hp / u.maxHp, isDangerousFight);
+      const learnedMacroScore = (action: AdaptiveAction) => learnedMacroEnabled
+        ? adaptivePolicyScore(adaptivePolicyRef.current, action, learnedFeatures) : 0;
+      const enclosingPushCamp = CAMP_ROCK_RINGS.find(ring => Math.hypot(u.x - ring.x, u.y - ring.y)
+        < ring.radius + ring.stoneRadius + 45);
+      const pushCampExit = enclosingPushCamp ? rockApproachWaypoint(u, {
+        x: u.team === 'blue' ? Math.min(enclosingPushCamp.x, advanceLimit) : Math.max(enclosingPushCamp.x, advanceLimit),
+        y: LANE_Y,
+      }) : undefined;
+      const residualPushPlan = planResidualPush({
+        structureInRange: structureInRange && nearestStructure ? nearestStructure : undefined,
+        minionInRange: nearestMinion && Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) <= attackRange
+          ? nearestMinion : undefined,
+        campExit: pushCampExit && enclosingPushCamp ? { id: `camp-exit:${enclosingPushCamp.id}`, ...pushCampExit } : undefined,
+        laneDestination: { id: `lane-advance:${u.team}`, x: advanceLimit,
+          y: getChampionFormationY(u.champion.name, uIdx) },
+      });
+      const residualPushOutlook = evaluateResidualPush({ plan: residualPushPlan, actor: u,
+        attackRange, travelSpeed: 70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u),
+        nearbyAllies: localAllies.length, nearbyEnemies: localEnemies.length, influence: spatialInfluence });
+      const macroCandidates = [
+        { action: 'fight' as const, available: !!primaryTarget && !clearWaveFirst && !holdChaseForWave
+            && (isObjectiveFight || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= maxCombatRange),
+          priority: 'tactical' as const, contextKey: `fight:${primaryTarget?.id ?? 'none'}:${isObjectiveFight ? 1 : 0}`,
+          factors: { tactical: Math.max(selectedTeamfightPriority || isObjectiveFight ? .95 : .72,
+              tacticalOutlook?.pressure ?? 0, primaryTargetMemory.retreating ? .82 : 0),
+            coordination: Math.max(assignedTeamIntent === 'fight' ? .9 : (coordinatedEngage || isObjectiveFight ? .8 : 0), tacticalOutlook?.support ?? 0),
+            danger: Math.max(isDangerousFight ? 1 : 0, 1 - (tacticalOutlook?.survival ?? 1), localFocusPressure > 0 ? .65 : 0), learned: learnedMacroScore('fight') },
+          reason: 'existing combat and objective-fight policy supplied a reachable target' },
+        { action: 'wave' as const, available: clearWaveFirst && !!nearestMinion,
+          priority: 'tactical' as const, contextKey: `wave:${nearestMinion?.id ?? 'none'}:${alliedCrash}`,
+          factors: { strategic: wavePushCall ? .72 : .45, tactical: .58,
+            personality: personalityTraits.includes('wave_architect') ? 1 : 0, danger: closestEnemyChampion <= 160 ? 1 : 0, learned: learnedMacroScore('wave') },
+          reason: 'existing wave policy requires a safe, actionable minion' },
+        { action: 'regroup' as const, available: canRegroup,
+          priority: 'tactical' as const,
+          contextKey: `regroup:${regroupTarget?.id ?? 'none'}`,
+          factors: { tactical: assignedTeamIntent === 'regroup' ? .82 : .55, coordination: Math.max(assignedTeamIntent === 'regroup' ? .9 : callAlignment, postFightConversion === 'regroup' ? .85 : 0), personality: personalityRegroupCall ? 1 : 0,
+            danger: localEnemies.length > 0 ? 1 : 0, opportunity: Math.max(1 - localInfluence.cover, localFocusPressure > 0 ? .8 : 0), learned: learnedMacroScore('regroup') },
+          reason: 'existing IGL, fight-reinforcement, or carry-protection rule requested regrouping' },
+        { action: 'farm' as const, available: !!nearestJungleCamp,
+          priority: 'optional' as const, contextKey: `farm:${nearestJungleCamp?.id ?? 'none'}`,
+          factors: { strategic: .42, tactical: postFightConversion === 'farm' ? .65 : .36, personality: personalityFarmReady ? .35 : 0,
+            travel: nearestJungleCamp ? Math.min(1, Math.hypot(nearestJungleCamp.x - u.x, nearestJungleCamp.y - u.y) / 700) : 1, learned: learnedMacroScore('farm') },
+          reason: 'existing safe camp-farm policy selected a known camp' },
+        { action: 'push' as const, available: !defenseCall,
+          priority: 'optional' as const, contextKey: `push:${residualPushPlan.kind}:${residualPushPlan.target.id}:${Math.floor(advanceLimit / 40)}:${enemyMinions.length}`,
+          factors: { strategic: tempoPush ? .62 : .18, tactical: residualPushOutlook.tactical,
+            coordination: Math.max(assignedTeamIntent === 'push' ? .75 : 0, postFightConversion === 'push' ? .85 : 0),
+            danger: residualPushOutlook.danger,
+            personality: personalityTraits.includes('siege_closer') ? .35 : 0, learned: learnedMacroScore('push') },
+          reason: 'existing lane-advance fallback remains available' },
+      ];
+      const priorMacroCommitment = u.macroDecision;
+      const residualMacroDecision = chooseMacroAction({ actorAvailable: u.isAlive,
+        now: matchTimeRef.current, candidates: macroCandidates, commitment: priorMacroCommitment });
+      const experimentInput = {
+        enabled: macroExperimentEnabledRef.current, now: matchTimeRef.current,
+        lastAssignmentSecond: lastMacroExperimentRef.current[u.id] ?? -Infinity,
+        healthFraction: u.hp / u.maxHp, dangerousFight: isDangerousFight,
+        insideEnemyTower: isInsideEnemyTowerRange, objectiveFight: isObjectiveFight,
+        defending: !!defenseCall, influenceThreat: localInfluence.threat,
+        survival: tacticalOutlook?.survival ?? 1,
+        enemyDistance: closestEnemyChampion,
+        incumbent: residualMacroDecision.selected?.value, selectionReason: residualMacroDecision.reason,
+        candidates: macroCandidates,
+        randomDraw: macroExperimentEnabledRef.current && !pairedMacroModeRef.current
+          ? (macroExperimentRandomRef.current?.() ?? Math.random()) : -1,
+      };
+      const experimentInspection = pairedMacroModeRef.current ? inspectSafeMacroExperiment(experimentInput) : undefined;
+      const experimentGate = experimentInspection ? experimentInspection.gates[0]
+        : macroExperimentEnabledRef.current ? safeMacroExperimentGate(experimentInput) : undefined;
+      if (experimentInspection) {
+        const auditWindow = window as Window & { __esportsMacroOpportunityAudit?: {
+          total: number; firstGates: Record<string, number>; allGates: Record<string, number>;
+          safeExceptGap: Record<string, { count: number; minGap: number; maxGap: number }>;
+          examples: unknown[];
+        } };
+        const audit = (auditWindow.__esportsMacroOpportunityAudit ??= {
+          total: 0, firstGates: {}, allGates: {}, safeExceptGap: {}, examples: [] });
+        audit.total++;
+        const first = experimentGate ?? 'eligible';
+        audit.firstGates[first] = (audit.firstGates[first] ?? 0) + 1;
+        for (const gate of experimentInspection.gates) audit.allGates[gate] = (audit.allGates[gate] ?? 0) + 1;
+        if (experimentInspection.pair && experimentInspection.gates.length === 1 && experimentGate === 'utility-gap') {
+          const pair = experimentInspection.pair;
+          const key = `${u.player.id}:${[pair.incumbent, pair.alternate].sort().join('-')}`;
+          const row = (audit.safeExceptGap[key] ??= { count: 0, minGap: pair.utilityGap, maxGap: pair.utilityGap });
+          row.count++;
+          row.minGap = Math.min(row.minGap, pair.utilityGap);
+          row.maxGap = Math.max(row.maxGap, pair.utilityGap);
+          if (row.count === 1 && audit.examples.length < 24) audit.examples.push({
+            second: matchTimeRef.current, actorId: u.id, cardId: u.player.id, ...pair,
+            healthFraction: u.hp / u.maxHp, previousIntent: u.actionIntent?.kind,
+            actor: { x: u.x, y: u.y },
+            candidates: macroCandidates.filter(candidate => candidate.available).map(candidate => ({
+              action: candidate.action, contextKey: candidate.contextKey, factors: candidate.factors,
+              ...scoreUtility(candidate.factors),
+            })),
+            farm: nearestJungleCamp ? { id: nearestJungleCamp.id, x: nearestJungleCamp.x,
+              y: nearestJungleCamp.y, distance: Math.hypot(nearestJungleCamp.x - u.x, nearestJungleCamp.y - u.y) } : undefined,
+            push: { plan: residualPushPlan, structureInRange, minionInRange, advanceLimit,
+              laneY: getChampionFormationY(u.champion.name, uIdx), localThreat: localInfluence.threat,
+              structure: preferredStructure ? { id: preferredStructure.id, x: preferredStructure.x,
+                y: preferredStructure.y, distance: Math.hypot(preferredStructure.x - u.x, preferredStructure.y - u.y),
+                outlook: pushOutlook } : undefined,
+              enclosingCamp: CAMP_ROCK_RINGS.find(ring => Math.hypot(u.x - ring.x, u.y - ring.y)
+                < ring.radius + ring.stoneRadius + 45)?.id },
+          });
+        }
+      }
+      let experimentAssignment = experimentGate === undefined && macroExperimentEnabledRef.current
+        && !pairedMacroModeRef.current ? assignSafeMacroExperiment(experimentInput) : undefined;
+      const pairMode = pairedMacroModeRef.current;
+      const pairWindow = window as Window & { __esportsPairedMacro?: Record<string, unknown>;
+        __esportsPairedRestore?: (target: unknown) => boolean };
+      const pairTarget = pairedMacroTargetRef.current;
+      const pairAtTarget = pairMode === 'replay' && pairTarget?.actorId === u.id
+        && Math.abs(pairTarget.second - matchTimeRef.current) < 1e-6;
+      const scoutPairFilter = pairMode === 'scout'
+        ? sessionStorage.getItem('esports-clash-macro-pair-filter') : null;
+      const scoutCardFilter = pairMode === 'scout'
+        ? sessionStorage.getItem('esports-clash-macro-pair-card') : null;
+      if ((pairMode === 'scout' && !pairWindow.__esportsPairedMacro
+        && pairedCheckpointRef.current?.second === matchTimeRef.current
+        && (!scoutCardFilter || scoutCardFilter === u.player.id)) || pairAtTarget) {
+        // Evaluation-only predecision observations, outside the simulation checkpoint.
+        // Dynamic camp state is masked unless existing team vision covers the camp.
+        const taskCamp = nearestJungleCamp;
+        const taskCampHome = taskCamp ? { x: taskCamp.homeX ?? taskCamp.x, y: taskCamp.homeY ?? taskCamp.y } : undefined;
+        const taskCampWaypoint = taskCamp && taskCampHome ? rockApproachWaypoint({ x: u.x, y: u.y },
+          Math.hypot(taskCampHome.x - u.x, taskCampHome.y - u.y) < 50 ? taskCamp : taskCampHome) : undefined;
+        const customCaster = u.champion.name === 'Kaelen';
+        const taskContext = experimentGate === undefined ? buildTaskActionContext({ features: learnedFeatures, actor: u, team: u.team,
+          seconds: matchTimeRef.current, attackRange, attackReady: u.attackTimer <= 0,
+          basicDps: u.champion.ad * getEffectiveAttackSpeed(u),
+          travelSpeed: 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u)
+            + ((u.stealthTimer ?? 0) > 0 ? 60 : 0),
+          customCaster, ready1: !customCaster && (u.silenceTimer ?? 0) <= 0 && u.cd1 <= 0 && u.mana >= skill1ManaCost(u),
+          ready2: !customCaster && (u.silenceTimer ?? 0) <= 0 && u.cd2 <= 0 && u.mana >= 35,
+          readyUlt: !customCaster && (u.silenceTimer ?? 0) <= 0 && u.level >= 6 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u),
+          allies: allies.filter(ally => ally.id !== u.id), visibleEnemies: enemies,
+          alliedMinions: alliedMinionsForDive, enemyMinions,
+          enemyTowers: enemyStructures.filter(structure => structure.type.includes('tower') || structure.type === 'nexus'),
+          camp: taskCamp ? { ...taskCamp, home: taskCampHome,
+            observed: hasObjectiveVision(u.team, taskCamp, allies, enemies, wardsRef.current),
+            contributors: Math.max(1, allies.filter(ally => ally.id === u.id
+              || (taskCamp.damageContributors?.[ally.id] ?? 0) > 0).length),
+            engaged: !!taskCamp.targetId,
+            leashFraction: Math.hypot(taskCamp.x - taskCampHome!.x, taskCamp.y - taskCampHome!.y) / 220,
+          } : undefined, campWaypoint: taskCampWaypoint,
+          push: residualPushPlan, laneDestination: { x: advanceLimit, y: getChampionFormationY(u.champion.name, uIdx) },
+          structure: nearestStructure, waveCrash: alliedCrash, influence: spatialInfluence,
+        }) : undefined;
+        const rewardDecision = pairAtTarget && pairTarget?.arm === 'reward' ? chooseRewardGuidedMacro({
+          experiment: experimentInput, policy: pairTarget.rewardPolicy, features: learnedFeatures,
+          taskPolicy: pairTarget.rewardTaskPolicy, confidencePolicy: pairTarget.rewardConfidencePolicy, taskContext }) : undefined;
+        const forcedDraw = pairTarget?.arm === 'alternate' || rewardDecision?.changed ? .75 : .25;
+        const pairAssignment = experimentGate === undefined
+          ? assignSafeMacroExperiment({ ...experimentInput, randomDraw: forcedDraw }) : undefined;
+        if ((pairAssignment && (!scoutPairFilter || pairAssignment.pair === scoutPairFilter)) || pairAtTarget) {
+          const predecisionState = {
+            terrainRoutes: captureTerrainRoutes([...championsRef.current, ...jungleCampsRef.current]),
+            second: matchTimeRef.current, randomState: randomRef.current.getState(),
+            champions: championsRef.current, minions: minionsRef.current,
+            structures: structuresRef.current, relics: relicsRef.current,
+            projectiles: projectilesRef.current, spells: spellsRef.current,
+            waveTimer: waveTimerRef.current, waveCount: waveCountRef.current,
+            pendingSiegeGolem: pendingSiegeGolemRef.current,
+            golemAwakened: golemAwakenedRef.current,
+            objectiveRecallPlan: objectiveRecallPlanRef.current,
+            postRecallCampPlan: postRecallCampPlanRef.current,
+            lastTeamKillAt: lastTeamKillAtRef.current,
+            engagementTracker: engagementTrackerRef.current,
+            nextEngagementId: nextEngagementIdRef.current,
+            engagementOutcomeCooldown: engagementOutcomeCooldownRef.current,
+            wards: wardsRef.current, jungleBuffs: jungleBuffsRef.current,
+            dragon: dragonRef.current, jungleCamps: jungleCampsRef.current,
+            aegisBuff: aegisBuffRef.current, objectiveCalls: objectiveCallsRef.current,
+            teamIntent: teamIntentRef.current, cooldownMemory: cooldownMemoryRef.current,
+            opponentTacticalMemory: opponentTacticalMemoryRef.current,
+            cooldownSnapshots: cooldownSnapshotsRef.current,
+            postObjectivePlan: postObjectivePlanRef.current,
+            lastMacroExperiment: lastMacroExperimentRef.current,
+          };
+          const fingerprint = pairedStateFingerprint(predecisionState);
+          const matched = !!pairTarget && !!pairAssignment && pairedMacroTargetMatches(
+            pairTarget, u.id, matchTimeRef.current, pairAssignment, fingerprint);
+          pairWindow.__esportsPairedMacro = {
+            mode: pairMode, actorId: u.id, second: matchTimeRef.current,
+            cardId: u.player.id, champion: u.champion.name,
+            incumbent: pairAssignment?.incumbent, alternate: pairAssignment?.alternate,
+            fingerprint, matched, gate: experimentGate ?? null, rewardDecision,
+            predecisionState: sessionStorage.getItem('esports-clash-checkpoint-state') === '1'
+              ? serializePairedState(predecisionState) : undefined,
+            decisionCandidates: structuredClone(macroCandidates), features: learnedFeatures, taskContext,
+            teamStart: teamTaskSnapshot(u.team),
+            actorStart: { x: u.x, y: u.y, hpFraction: u.hp / u.maxHp,
+              gold: u.gold, cs: u.cs, kills: u.kills, deaths: u.deaths,
+              damageDealt: u.damageDealt },
+          };
+          if (pairMode === 'scout') pairWindow.__esportsPairedRestore = restorePairedCheckpoint;
+          if (pairMode === 'replay' && matched) experimentAssignment = pairAssignment;
+        }
+      }
+      if (experimentAssignment) lastMacroExperimentRef.current[u.id] = matchTimeRef.current;
+      const selectedMacroAction = experimentAssignment?.selected ?? residualMacroDecision.selected?.value;
+      if (pairedMacroModeRef.current && selectedMacroAction)
+        auditedMacro = { selected: selectedMacroAction, x: u.x, y: u.y,
+          pushPlan: selectedMacroAction === 'push' ? residualPushPlan : undefined };
+      const selectedMacroCandidate = selectedMacroAction
+        ? macroCandidates.find(candidate => candidate.action === selectedMacroAction) : undefined;
+      u.macroDecision = nextMacroCommitment(selectedMacroCandidate,
+        residualMacroDecision.reason, priorMacroCommitment, matchTimeRef.current);
+      const activePair = pairWindow.__esportsPairedMacro;
+      if (pairMode === 'replay' && activePair?.matched === true && activePair.actorId === u.id)
+        activePair.lastDecision = { second: matchTimeRef.current, selected: selectedMacroAction,
+          reason: experimentAssignment ? `assigned:${experimentAssignment.arm}` : residualMacroDecision.reason,
+          until: u.macroDecision?.until };
+      const decisionRecord: AIDecisionRecord = {
+        second: matchTimeRef.current, actorId: u.id, team: u.team,
+        selected: selectedMacroAction, contextKey: selectedMacroCandidate?.contextKey, features: learnedFeatures,
+        selectionReason: experimentAssignment ? `evaluation-experiment:${experimentAssignment.arm}` : residualMacroDecision.reason,
+        heldAction: priorMacroCommitment?.action,
+        experiment: experimentAssignment ? { incumbent: experimentAssignment.incumbent,
+          alternate: experimentAssignment.alternate, pair: experimentAssignment.pair,
+          arm: experimentAssignment.arm, propensity: experimentAssignment.propensity,
+          utilityGap: experimentAssignment.utilityGap } : undefined,
+        experimentGate: macroExperimentEnabledRef.current ? experimentGate ?? 'eligible' : undefined,
+        learnedSuppressedReason: learnedMacroEnabled ? undefined : u.hp / u.maxHp < .3 ? 'low-health' : 'dangerous-fight',
+        snapshot: { healthFraction: u.hp / u.maxHp, gold: u.gold, cs: u.cs, kills: u.kills,
+          deaths: u.deaths, damageDealt: u.damageDealt },
+        candidates: macroCandidates.map(candidate => ({ key: candidate.action, available: candidate.available,
+          priority: candidate.priority, reason: candidate.reason })),
+      };
+      if (shouldRecordAIDecision(aiDecisionRecordsRef.current, decisionRecord)) {
+        const zeroPolicyDecision = chooseMacroAction({ actorAvailable: u.isAlive,
+          now: matchTimeRef.current, commitment: priorMacroCommitment,
+          candidates: macroCandidates.map(candidate => ({ ...candidate,
+            factors: { ...candidate.factors, learned: 0 } })),
+        });
+        decisionRecord.zeroPolicySelected = zeroPolicyDecision.selected?.value;
+        decisionRecord.zeroPolicyReason = zeroPolicyDecision.reason;
+        if (evaluationReferencePolicyRef.current) {
+          const referencePolicy = evaluationReferencePolicyRef.current;
+          const referenceDecision = chooseMacroAction({ actorAvailable: u.isAlive,
+            now: matchTimeRef.current, commitment: priorMacroCommitment,
+            candidates: macroCandidates.map(candidate => ({ ...candidate,
+              factors: { ...candidate.factors, learned: learnedMacroEnabled
+                ? adaptivePolicyScore(referencePolicy, candidate.action, learnedFeatures) : 0 } })),
+          });
+          decisionRecord.referencePolicySelected = referenceDecision.selected?.value;
+        }
+        if (decisionRecord.zeroPolicySelected !== selectedMacroAction) {
+          decisionRecord.candidates = macroCandidates.map(candidate => ({
+            key: candidate.action, available: candidate.available, priority: candidate.priority,
+            reason: candidate.reason, learnedFactor: candidate.factors.learned ?? 0,
+            baselineUtility: scoreUtility({ ...candidate.factors, learned: 0 }, false).utility,
+            actualUtility: scoreUtility(candidate.factors, false).utility,
+          }));
+        }
+        recordAIDecision(aiDecisionRecordsRef.current, decisionRecord);
+        if (experimentAssignment && pairMode === 'replay' && pairWindow.__esportsPairedMacro?.matched)
+          pairWindow.__esportsPairedMacro.assignmentRecord = decisionRecord;
+      }
+
+      if (selectedMacroAction === 'farm' && nearestJungleCamp) {
         const campHomeX = nearestJungleCamp.homeX ?? nearestJungleCamp.x;
         const campHomeY = nearestJungleCamp.homeY ?? nearestJungleCamp.y;
         const distanceToHome = Math.hypot(campHomeX - u.x, campHomeY - u.y);
@@ -4285,8 +4982,25 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         return;
       }
 
+      // Execute the same safe IGL destination that made regroup available to the selector.
+      if (selectedMacroAction === 'regroup' && personalityRegroupCall && callLeader) {
+        const waypoint = rockApproachWaypoint(u, callLeader);
+        const distance = Math.hypot(waypoint.x - u.x, waypoint.y - u.y);
+        setActionIntent('regroup', callLeader, 'move', `igl-regroup:${callLeader.id}`, 0.8);
+        const speed = Math.min(85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u)
+          + ((u.stealthTimer ?? 0) > 0 ? 60 : 0), distance / dt);
+        const angle = Math.atan2(waypoint.y - u.y, waypoint.x - u.x);
+        u.vx = Math.cos(angle) * speed;
+        u.vy = Math.sin(angle) * speed;
+        u.x += u.vx * dt;
+        u.y += u.vy * dt;
+        u.animState = 'walk';
+        setUnitFacing(u, waypoint.x);
+        return;
+      }
+
       // Macro Teamfight Grouping: High TF players converge to fight together (exclude channeling allies)
-      if (!focusNexus && !tempoPush && !coordinatedEngage && !isObjectiveFight
+      if (selectedMacroAction === 'regroup' && !focusNexus && !tempoPush && !coordinatedEngage && !isObjectiveFight
         && !defenseCall && fightingAlly && canReinforceFightingAlly
         && (!primaryTarget || Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) > attackRange)) {
         setActionIntent('regroup', fightingAlly, 'move',
@@ -4302,8 +5016,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // Support Macro Tethering: Support champions naturally stick with their living carries / allies for protection and peel
-      const nearestLivingCarry = allies.find(a => a.isAlive && a.id !== u.id && !a.isRecalling && Math.hypot(a.x - u.x, a.y - u.y) <= 550);
-      if (!defenseCall && isSupportAvatar && nearestLivingCarry && !primaryTarget && Math.hypot(nearestLivingCarry.x - u.x, nearestLivingCarry.y - u.y) > 130) {
+      if (selectedMacroAction === 'regroup' && !defenseCall && isSupportAvatar && nearestLivingCarry && !primaryTarget && Math.hypot(nearestLivingCarry.x - u.x, nearestLivingCarry.y - u.y) > 130) {
         setActionIntent('regroup', nearestLivingCarry, 'move',
           `support-tether:${actionContextFor('regroup', nearestLivingCarry)}`, 0.8);
         u.animState = 'walk';
@@ -4315,15 +5028,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         setUnitFacing(u, nearestLivingCarry.x);
         return;
       }
-
-      // Compute authentic skill cast ranges (e.g. Raijin Electric Vortex strictly 120px / 2-3 hexes)
-      const skill1Range = getSkillCastRange(u.champion.name, 'skill1', baseAttackRange);
-      const skill2Range = getSkillCastRange(u.champion.name, 'skill2', baseAttackRange);
-      const ultRange = getSkillCastRange(u.champion.name, 'ultimate', baseAttackRange);
-      const standardCombatRange = Math.max(attackRange * 1.5, skill1Range, skill2Range, u.level >= 6 ? ultRange : 0, u.champion.name === 'Kaelen' ? 420 : 190);
-      const isFollowUpEngage = canFollowUpEngage && !!primaryTarget && isEnemyCaughtInAlliedChannel(primaryTarget, allies);
-      const maxCombatRange = isFollowUpEngage ? Math.max(standardCombatRange, 650)
-        : activeAllInCommit || canFinishWonFight ? Math.max(standardCombatRange, 500) : standardCombatRange;
 
       if ((isFollowUpEngage || activeAllInCommit) && !u.followUpEngageSignaled) {
         u.followUpEngageSignaled = true;
@@ -4360,7 +5064,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // COMBAT ENGAGEMENT WITH ENEMIES:
-      if (!clearWaveFirst && !holdChaseForWave && primaryTarget && Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= maxCombatRange) {
+      if (selectedMacroAction === 'fight' && !clearWaveFirst && !holdChaseForWave && primaryTarget && Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y) <= maxCombatRange) {
         setUnitFacing(u, primaryTarget.x);
         const dist = Math.hypot(primaryTarget.x - u.x, primaryTarget.y - u.y);
         setActionIntent('champion', primaryTarget, dist > attackRange ? 'move' : 'execute',
@@ -4525,7 +5229,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       }
       // A fight call pursues enemy champions; a finish call already returned from the objective branch.
-      else if (isObjectiveFight) {
+      else if (selectedMacroAction === 'fight' && isObjectiveFight) {
         const enemyToEngage = primaryTarget
           || (contestEnemyPool.length > 0 ? contestEnemyPool[0] : null)
           || enemies.find(e => e.isAlive);
@@ -4559,7 +5263,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       }
       // SIEGE TURRET
-      else if (clearWaveFirst && nearestMinion) {
+      else if (selectedMacroAction === 'wave' && clearWaveFirst && nearestMinion) {
         setActionIntent('minion', nearestMinion, 'execute');
         setUnitFacing(u, nearestMinion.x);
         const waveProfile = getWaveClearProfile(u.champion.name);
@@ -4670,14 +5374,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       else {
         u.animState = 'walk';
         const pushDir = u.team === 'blue' ? 1 : -1;
-        const enclosingCamp = CAMP_ROCK_RINGS.find(ring => Math.hypot(u.x - ring.x, u.y - ring.y)
-          < ring.radius + ring.stoneRadius + 45);
-        if (enclosingCamp) {
-          const exitX = u.team === 'blue' ? Math.min(enclosingCamp.x, advanceLimit) : Math.max(enclosingCamp.x, advanceLimit);
-          const waypoint = rockApproachWaypoint(u, { x: exitX, y: LANE_Y });
+        if (residualPushPlan.kind === 'camp-exit') {
+          const waypoint = residualPushPlan.target;
           const distance = Math.hypot(waypoint.x - u.x, waypoint.y - u.y);
-          setActionIntent('push', { id: `camp-exit:${enclosingCamp.id}`, x: waypoint.x, y: waypoint.y },
-            distance > 8 ? 'move' : 'hold', `camp-exit:${enclosingCamp.id}`, 0.8);
+          setActionIntent('push', waypoint,
+            distance > 8 ? 'move' : 'hold', waypoint.id, 0.8);
           const speed = Math.min(70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u)
             + ((u.stealthTimer ?? 0) > 0 ? 60 : 0), distance / dt);
           const angle = Math.atan2(waypoint.y - u.y, waypoint.x - u.x);
@@ -4688,10 +5389,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           setUnitFacing(u, waypoint.x);
           return;
         }
-        const targetFormY = getChampionFormationY(u.champion.name, uIdx);
+        const targetFormY = residualPushPlan.target.y;
         const advanceDistance = Math.hypot(advanceLimit - u.x, targetFormY - u.y);
         setActionIntent(advanceDistance <= 3 ? 'hold' : 'push',
-          { id: `lane-advance:${u.team}`, x: advanceLimit, y: targetFormY },
+          residualPushPlan.target,
           advanceDistance <= 3 ? 'hold' : 'move',
           `lane:${u.team}:${Math.floor(advanceLimit / 40)}:${enemyMinions.length}`, 0.8);
         if (advanceDistance <= 3) {
@@ -4718,6 +5419,37 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         // Release after this actor's safety/decision pass, even when that pass returns early.
         // Later actors observe the resulting damage in the original roster order.
         settleCreepAttack(u);
+        if (auditedMacro) {
+          const auditWindow = window as Window & { __esportsMacroExecutionAudit?: {
+            counts: Record<string, number>; regroupPaths: Record<string, number>; samples: unknown[];
+            pushPlans?: { total: number; mismatches: number; examples: unknown[] } } };
+          const audit = (auditWindow.__esportsMacroExecutionAudit ??= { counts: {}, regroupPaths: {}, samples: [] });
+          const key = `${auditedMacro.selected}:${u.actionIntent?.kind ?? 'none'}`;
+          audit.counts[key] = (audit.counts[key] ?? 0) + 1;
+          if (auditedMacro.pushPlan) {
+            const plans = (audit.pushPlans ??= { total: 0, mismatches: 0, examples: [] });
+            const plan = auditedMacro.pushPlan;
+            const expectedIntent = plan.kind === 'structure' || plan.kind === 'minion' ? plan.kind : 'push';
+            const matched = (u.actionIntent?.kind === expectedIntent
+              || expectedIntent === 'push' && u.actionIntent?.kind === 'hold')
+              && u.actionIntent?.targetId === plan.target.id;
+            plans.total++;
+            if (!matched) {
+              plans.mismatches++;
+              if (plans.examples.length < 12) plans.examples.push({ second: matchTimeRef.current,
+                actorId: u.id, plan, intent: u.actionIntent });
+            }
+          }
+          if (auditedMacro.selected === 'regroup') {
+            const path = u.actionIntent?.contextKey.split(':')[0] ?? 'none';
+            audit.regroupPaths[path] = (audit.regroupPaths[path] ?? 0) + 1;
+          }
+          if (audit.counts[key] <= 3) audit.samples.push({ second: matchTimeRef.current,
+            actorId: u.id, selected: auditedMacro.selected, intent: u.actionIntent?.kind,
+            distanceMoved: Math.hypot(u.x - auditedMacro.x, u.y - auditedMacro.y),
+            animState: u.animState, cd1: u.cd1, cd2: u.cd2, cdUlt: u.cdUlt,
+            damageDealt: u.damageDealt });
+        }
       }
     });
 
@@ -4976,6 +5708,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const participant = championsRef.current.find(champion => champion.id === share.id);
         if (!participant) return;
         participant.gold += share.gold;
+        recordPairedTaskEvent(participant.id, 'camp-share', camp.id, share.gold);
         grantChampionXp(participant, share.xp);
         floatsRef.current.push({
           id: random().toString(),
@@ -7613,7 +8346,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const marksmanBonus = attacker.champion.primaryRole === 'Marksman' ? 1.25 : 1.0;
 
     const finalDamage = Math.round(damage * crashMultiplier * dragonSiegeFactor * marksmanBonus);
+    const previousHp = structure.hp;
     const appliedDamage = damageStructure(structure, finalDamage);
+    if (appliedDamage > 0) recordPairedTaskEvent(attacker.id, 'structure-damage', structure.id,
+      Math.min(previousHp, appliedDamage));
 
     const isCrashBonus = crashMultiplier >= 1.2;
     floatsRef.current.push({
@@ -7677,6 +8413,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       minion.isAlive = false;
       attacker.cs += 1;
       attacker.gold += minion.goldReward;
+      recordPairedTaskEvent(attacker.id, 'minion-last-hit', minion.id, minion.goldReward);
       grantChampionXp(attacker, minion.xpReward);
 
       championsRef.current
@@ -7705,6 +8442,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const mvp = [...all].sort((a, b) => b.kills * 4 + b.cs * 2 + b.damageDealt / 300 - a.kills * 4 - a.cs * 2 - a.damageDealt / 300)[0];
     const rating = (team: 'blue' | 'red') => all.filter(champion => champion.team === team)
       .reduce((sum, champion) => sum + champion.player.ovr, 0) / Math.max(1, all.filter(champion => champion.team === team).length);
+    adaptivePolicyRef.current = trainAdaptivePolicy(adaptivePolicyRef.current, aiDecisionRecordsRef.current, winner);
+    try { localStorage.setItem('esports-clash-adaptive-policy', JSON.stringify(adaptivePolicyRef.current)); } catch { /* Local policy remains session-only. */ }
     const report: MatchReport = {
       version: 1, seed, batchId: batchMode ? batchId : undefined,
       draft: { blue: blueLineup, red: redLineup, blueCoach, redCoach },
@@ -7716,7 +8455,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       redKills: all.filter(champion => champion.team === 'red').reduce((sum, champion) => sum + champion.kills, 0),
       skillshotsFired: skillshotsRef.current.fired, skillshotsHit: skillshotsRef.current.hit,
       events: recordedEventsRef.current,
-      insights: insightsRef.current
+      insights: insightsRef.current,
+      aiDecisionRecords: [...aiDecisionRecordsRef.current],
+      decisionCalibration: summarizeDecisionCalibration(aiDecisionRecordsRef.current)
     };
     latestReportRef.current = report;
     try {
@@ -8159,13 +8900,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     halfW: number,
     halfH: number
   ) => {
+    const mini = minimapRect(width, height);
     const Mw = 260;
     const Mh = 76;
-    const mx = width - Mw - 18;
-    const my = height - Mh - 18;
+    const mx = 0;
+    const my = 0;
     const scale = Mw / ARENA_WIDTH;
 
     ctx.save();
+    ctx.translate(mini.mx, mini.my);
+    ctx.scale(mini.Mw / Mw, mini.Mh / Mh);
 
     // Radar panel background & glowing outline
     ctx.shadowColor = 'rgba(0, 0, 0, 0.65)';
@@ -8227,10 +8971,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.shadowBlur = 0;
 
     // Viewport camera rectangle
-    const vx = (camX - halfW) * scale;
-    const vy = (camY - halfH) * scale;
-    const vw = (halfW * 2) * scale;
-    const vh = (halfH * 2) * scale;
+    const vx = Math.max(0, camX - halfW) * scale;
+    const vy = Math.max(0, camY - halfH) * scale;
+    const vw = Math.min(Mw - vx, halfW * 2 * scale);
+    const vh = Math.min(Mh - vy, halfH * 2 * scale);
 
     ctx.fillStyle = 'rgba(251, 191, 36, 0.15)';
     ctx.strokeStyle = 'rgba(251, 191, 36, 0.95)';
@@ -11123,6 +11867,70 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
   };
 
+  const drawArena3dOverlay = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+    const renderer = threeTerrainRef.current;
+    if (!renderer) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    // Use CSS pixels for sharp, undistorted labels at any stage aspect ratio.
+    ctx.save();
+    ctx.scale(canvas.width / rect.width, canvas.height / rect.height);
+    const project = (x: number, y: number, height: number) => renderer.project(x, y, height, rect.width, rect.height);
+    const bar = (entity: { id: string; x: number; y: number; hp: number; maxHp: number }, color: string,
+      label = '', width = 42, mana?: number) => {
+      const p = project(entity.x, entity.y, renderer.actorHeight(entity.id));
+      if (p.x < -width || p.x > rect.width + width || p.y < -30 || p.y > rect.height + 30) return;
+      ctx.fillStyle = '#06101ce8'; ctx.fillRect(p.x - width / 2 - 1, p.y - 1, width + 2, mana === undefined ? 5 : 8);
+      ctx.fillStyle = color; ctx.fillRect(p.x - width / 2, p.y, width * Math.max(0, Math.min(1, entity.hp / entity.maxHp)), 3);
+      if (mana !== undefined) { ctx.fillStyle = '#818cf8'; ctx.fillRect(p.x - width / 2, p.y + 5, width * Math.max(0, Math.min(1, mana)), 1); }
+      if (label) {
+        ctx.font = '600 10px system-ui'; ctx.textAlign = 'center';
+        ctx.lineWidth = 3; ctx.strokeStyle = '#06101c'; ctx.strokeText(label, p.x, p.y - 5);
+        ctx.fillStyle = '#e6efed'; ctx.fillText(label, p.x, p.y - 5);
+      }
+    };
+    structuresRef.current.filter(st => st.isAlive).forEach(st => bar(st, st.team === 'blue' ? '#38c9ed' : '#f16b84', '', 42));
+    minionsRef.current.filter(m => m.isAlive && m.hp < m.maxHp).forEach(m => bar(m, m.team === 'blue' ? '#38c9ed' : '#f16b84', '', 19));
+    [...jungleCampsRef.current, dragonRef.current].filter(c => c.isAlive).forEach(c => bar(c, '#e1b86e', c.name, 44));
+    championsRef.current.filter(c => c.isAlive).forEach(c => bar(c, c.team === 'blue' ? '#38c9ed' : '#f16b84',
+      `${c.level}  ${c.player.name}`, 48, c.mana / Math.max(1, maxMana(c))));
+    floatsRef.current.forEach(f => {
+      const p = project(f.x, f.y, 55);
+      ctx.globalAlpha = f.opacity; ctx.font = `bold ${Math.round(11 * f.scale)}px system-ui`;
+      ctx.textAlign = 'center'; ctx.fillStyle = f.color; ctx.fillText(f.text, p.x, p.y);
+    });
+    ctx.restore();
+    if (showMinimapRef.current) {
+      const v = renderer.viewport(cameraPosRef.current.x, cameraPosRef.current.y, zoomRef.current);
+      drawMinimapRadar(ctx, canvas.width, canvas.height, v.x, v.y, v.halfW, v.halfH);
+    }
+  };
+
+  // Evaluation-only stepping keeps checkpoint comparisons independent of animation-frame grouping.
+  useEffect(() => {
+    if (!macroExperimentEnabledRef.current || !pairedMacroModeRef.current || !paused) return;
+    const fixtureWindow = window as Window & { __esportsPairedStep?: (steps: number) => boolean;
+      __esportsPairedInspect?: () => unknown };
+    fixtureWindow.__esportsPairedInspect = () => ({ second: matchTimeRef.current,
+      fingerprint: pairedStateFingerprint(capturePairedCheckpoint()), randomState: randomRef.current.getState(),
+      finished: matchFinishedRef.current,
+      executionAudit: (window as Window & { __esportsMacroExecutionAudit?: unknown }).__esportsMacroExecutionAudit,
+      opportunityAudit: (window as Window & { __esportsMacroOpportunityAudit?: unknown }).__esportsMacroOpportunityAudit });
+    fixtureWindow.__esportsPairedStep = (steps: number) => {
+      if (!pairedMacroModeRef.current || !Number.isInteger(steps)
+        || steps < 1 || steps > 960 || matchFinishedRef.current) return false;
+      for (let index = 0; index < steps && !matchFinishedRef.current; index++) {
+        matchTimeRef.current += SIMULATION_STEP;
+        updateAramSimulation(SIMULATION_STEP);
+        if (pairedMacroModeRef.current === 'scout'
+          && (window as Window & { __esportsPairedMacro?: unknown }).__esportsPairedMacro) break;
+      }
+      return true;
+    };
+    return () => { delete fixtureWindow.__esportsPairedStep; delete fixtureWindow.__esportsPairedInspect; };
+  }, [paused]);
+
   // Animation Loop
   useEffect(() => {
     let animId: number;
@@ -11161,7 +11969,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       const canvas = canvasRef.current;
       if (canvas) {
-        const viewport = clampArenaCamera(
+        const use3d = arenaViewRef.current === '3d' && threeTerrainAvailableRef.current;
+        const viewport = (use3d ? threeTerrainRef.current?.viewport(cameraPosRef.current.x, cameraPosRef.current.y, zoomRef.current) : null) ?? clampArenaCamera(
           cameraPosRef.current.x,
           cameraPosRef.current.y,
           zoomRef.current,
@@ -11170,9 +11979,18 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         );
         cameraPosRef.current.x = viewport.x;
         cameraPosRef.current.y = viewport.y;
-        threeTerrainRef.current?.render(viewport.x, viewport.y, zoomRef.current);
         const ctx = canvas.getContext('2d');
-        if (ctx) drawAramBattleground(ctx, canvas.width, canvas.height, now * 0.001);
+        const rendered3d = use3d && threeTerrainRef.current?.renderArena({
+          champions: championsRef.current, minions: minionsRef.current, structures: structuresRef.current,
+          camps: jungleCampsRef.current, dragon: dragonRef.current, projectiles: projectilesRef.current,
+          spells: spellsRef.current, wards: wardsRef.current, second: matchTimeRef.current,
+        }, viewport.x, viewport.y, zoomRef.current);
+        if (rendered3d) {
+          if (ctx) drawArena3dOverlay(ctx, canvas);
+        } else {
+          threeTerrainRef.current?.render(viewport.x, viewport.y, zoomRef.current);
+          if (ctx) drawAramBattleground(ctx, canvas.width, canvas.height, now * 0.001);
+        }
       }
     };
 
@@ -11230,9 +12048,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           {[1, 2, 4].map(value => <button key={value} aria-pressed={speed === value} onClick={() => setSpeed(value)}>{value}x</button>)}
           <button aria-pressed={cameraMode === 'auto'} onClick={() => { setCameraMode(cameraMode === 'auto' ? 'manual' : 'auto'); targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, 760); }}>{cameraMode === 'auto' ? 'Auto cam' : 'Free pan'}</button>
           <button onClick={() => setZoom(z => Math.max(1, z - 0.15))} aria-label="Zoom out">-</button>
-          <button onClick={() => setZoom(zoom === 1 ? 1.45 : 1)} title="Toggle fit / action zoom">{Math.round(zoom * 100)}%</button>
+          <button onClick={() => setZoom(zoom === 1 ? 2 : 1)} title="Toggle fit / action zoom">{Math.round(zoom * 100)}%</button>
           <button onClick={() => setZoom(z => Math.min(2.5, z + 0.15))} aria-label="Zoom in">+</button>
           <button aria-pressed={showMinimap} onClick={() => setShowMinimap(!showMinimap)}>Map</button>
+          <button aria-pressed={arenaView === '3d'} onClick={() => setArenaView(v => v === '3d' ? '2d' : '3d')}
+            title={webglAvailable ? 'Switch between 3D arena and 2D tactical view' : 'WebGL unavailable; showing 2D fallback'}>
+            {arenaView === '3d' ? webglAvailable ? '3D arena' : '2D fallback' : '2D tactical'}
+          </button>
         </div>
         <div className="spectator-control-group">
           <button aria-expanded={showInsights} onClick={() => setShowInsights(!showInsights)}>Insights</button>
@@ -11257,7 +12079,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         {fullscreenError && <span>Fullscreen unavailable; viewport mode active.</span>}
       </div>
       <div className="spectator-stage">
-        <div className="spectator-render-stack">
+        <div className="spectator-render-stack" data-view={arenaView === '3d' && webglAvailable ? '3d' : '2d'}>
           <div ref={threeTerrainHostRef} className="spectator-three-host" aria-hidden="true" />
           <canvas
             ref={canvasRef}

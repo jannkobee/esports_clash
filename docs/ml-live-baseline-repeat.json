@@ -1,0 +1,104 @@
+{
+  "method": "Zero-policy repeat on held-out seed 51",
+  "outcome": {
+    "winner": "blue",
+    "durationSeconds": 519.2000000001851,
+    "blueKills": 17,
+    "redKills": 4,
+    "objectiveEvents": 27,
+    "towerEvents": 302
+  },
+  "decisions": {
+    "total": 5328,
+    "selected": {
+      "push": 1892,
+      "wave": 676,
+      "fight": 2467,
+      "regroup": 198,
+      "farm": 95
+    },
+    "offered": {
+      "push": 5328,
+      "wave": 678,
+      "fight": 2517,
+      "regroup": 297,
+      "farm": 218
+    },
+    "sameTierAlternatives": {
+      "fight": 98,
+      "push": 13,
+      "farm": 95,
+      "regroup": 52,
+      "wave": 1
+    },
+    "byCard": {
+      "p_bigtail": {
+        "push": 225,
+        "fight": 269,
+        "regroup": 13,
+        "wave": 45,
+        "farm": 5
+      },
+      "p_daft": {
+        "push": 209,
+        "wave": 58,
+        "fight": 295,
+        "regroup": 18,
+        "farm": 34
+      },
+      "p_flaker": {
+        "push": 219,
+        "wave": 114,
+        "fight": 305,
+        "regroup": 21
+      },
+      "p_p1mple": {
+        "push": 232,
+        "fight": 225,
+        "wave": 23,
+        "regroup": 14
+      },
+      "p_thespicy": {
+        "push": 191,
+        "wave": 135,
+        "fight": 378,
+        "regroup": 14
+      },
+      "p_craps": {
+        "push": 175,
+        "fight": 171,
+        "regroup": 15,
+        "farm": 17,
+        "wave": 26
+      },
+      "p_mirecle": {
+        "push": 127,
+        "wave": 124,
+        "fight": 231,
+        "regroup": 22,
+        "farm": 3
+      },
+      "p_neko": {
+        "push": 200,
+        "fight": 187,
+        "regroup": 21,
+        "wave": 36,
+        "farm": 10
+      },
+      "p_ouzi": {
+        "push": 219,
+        "fight": 175,
+        "regroup": 8,
+        "wave": 33,
+        "farm": 9
+      },
+      "p_woozy": {
+        "push": 95,
+        "wave": 82,
+        "fight": 231,
+        "regroup": 52,
+        "farm": 17
+      }
+    }
+  }
+}

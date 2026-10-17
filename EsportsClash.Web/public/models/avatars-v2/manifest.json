@@ -1,0 +1,1493 @@
+{
+  "version": 2,
+  "date": "2026-10-17",
+  "units": "meters",
+  "worldUnitsPerMeter": 40,
+  "avatars": [
+    {
+      "id": "c_solana",
+      "name": "Dawnna",
+      "file": "c_solana.glb",
+      "bytes": 896496,
+      "sha256": "5bd7596e63d5d4d6e730855aefa418f39825839ea2c09b0908cdb7fa7e1a062b",
+      "triangles": 10032,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 34,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_astra",
+      "name": "Aiselle",
+      "file": "c_astra.glb",
+      "bytes": 1005616,
+      "sha256": "d608d269ad1caad6bd835159674e12c8efdbfdba19555dbc8df2b6cf798a2508",
+      "triangles": 11020,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 30,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_kyumi",
+      "name": "Vixelle",
+      "file": "c_kyumi.glb",
+      "bytes": 922872,
+      "sha256": "9fbf2c6d6509b2604d8ab5dc6a7b6daebc336e8230ed5bb504f508f5ebe64db8",
+      "triangles": 12040,
+      "skins": 16,
+      "joints": 17,
+      "uvMeshes": 36,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_buck",
+      "name": "Gritlock",
+      "file": "c_buck.glb",
+      "bytes": 935080,
+      "sha256": "4cb4b1a42caa5028c320e0ff31f9fee62de1de44391eb8e1399b3cd369d26ce3",
+      "triangles": 10360,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 31,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_valkira",
+      "name": "Bessara",
+      "file": "c_valkira.glb",
+      "bytes": 870808,
+      "sha256": "9d790e77136e172e54391cd413f0cec8e3b56b9c009a104117417d1147ac865f",
+      "triangles": 9680,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 33,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_kage",
+      "name": "Vanta",
+      "file": "c_kage.glb",
+      "bytes": 823572,
+      "sha256": "e8c7be1b43613e90bdd46bbb5b929d0cfde96d8f3ddbfb02e7b6477765326502",
+      "triangles": 8784,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 29,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_kazemaru",
+      "name": "Galejandro",
+      "file": "c_kazemaru.glb",
+      "bytes": 842292,
+      "sha256": "099a1d2c7a992dc3af0ae18eb29020f6d96b55017948c0717d4355aec3ddd91e",
+      "triangles": 9248,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 30,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_kindra",
+      "name": "Lambent",
+      "file": "c_kindra.glb",
+      "bytes": 908964,
+      "sha256": "fd24dbf3305f1b4b1ad59dbf82cbdc4640f2f2590532a88f974281ffb658fc01",
+      "triangles": 10004,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 31,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_cora",
+      "name": "Plumeira",
+      "file": "c_cora.glb",
+      "bytes": 903580,
+      "sha256": "1a172f0c4ddef460b0fa3d087e89fd30f10afee962236da49a853e9f838b65a3",
+      "triangles": 9588,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 27,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_renn",
+      "name": "Gildan",
+      "file": "c_renn.glb",
+      "bytes": 953316,
+      "sha256": "7911ca8d91ccbfec33cff2abf0c0c2fc24083bb965459b98dc0e761ef0a7f099",
+      "triangles": 10104,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 27,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_sylla",
+      "name": "Sylvan Solo",
+      "file": "c_sylla.glb",
+      "bytes": 1102024,
+      "sha256": "67443f50ded844cbe03e246e7838bfa60d622c575a5bc46f4504109cf687ee61",
+      "triangles": 12884,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 36,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_tequoia",
+      "name": "Fernanda",
+      "file": "c_tequoia.glb",
+      "bytes": 918008,
+      "sha256": "8e5234f3ff0748fc0713443fdc6a30c9454c4c2fd09bd346112c8013fb739335",
+      "triangles": 10232,
+      "skins": 16,
+      "joints": 17,
+      "uvMeshes": 30,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_zal",
+      "name": "Glimmerick",
+      "file": "c_zal.glb",
+      "bytes": 852340,
+      "sha256": "b1ea8efbed3ad349db51c21349628a016ead0d32b3b0027a398b47c78804ce64",
+      "triangles": 9224,
+      "skins": 16,
+      "joints": 17,
+      "uvMeshes": 31,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_xin",
+      "name": "Cindergent",
+      "file": "c_xin.glb",
+      "bytes": 884056,
+      "sha256": "c98d73ac1d231b3b54f7bda287d44335da109fdc8efd478379ae50f772466294",
+      "triangles": 9904,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 33,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_raijin",
+      "name": "Voltaire",
+      "file": "c_raijin.glb",
+      "bytes": 873976,
+      "sha256": "48ef3ec5c92c61ae7f7c4afd4bd2e31feef9a8bcb780102b63e9906d52aa23a9",
+      "triangles": 10388,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 33,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 4
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 10
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 8
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 8
+        }
+      ]
+    },
+    {
+      "id": "c_kaolin",
+      "name": "TerraByte",
+      "file": "c_kaolin.glb",
+      "bytes": 848108,
+      "sha256": "797edcbd19e9e5aa32a294e8398fd4613bf0057942b9f97294d0c449e24b536b",
+      "triangles": 9080,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 31,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_inai",
+      "name": "Nulliver",
+      "file": "c_inai.glb",
+      "bytes": 860132,
+      "sha256": "2e54ae96e7f9d676a1d62863885daf26abd3274528701afb84a113533e512f60",
+      "triangles": 9792,
+      "skins": 16,
+      "joints": 17,
+      "uvMeshes": 31,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_qiyana",
+      "name": "Crownfetti",
+      "file": "c_qiyana.glb",
+      "bytes": 854424,
+      "sha256": "c964023ea827396ce6a0651c3cbf0e2d130ed9f2beb9c1a49e1502a1ba3d151d",
+      "triangles": 9252,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 29,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_locke",
+      "name": "Sootcase",
+      "file": "c_locke.glb",
+      "bytes": 853264,
+      "sha256": "abd996b18fff16666fcfa2d55e240d929b0c39290e99505e607b007df0cd6952",
+      "triangles": 9428,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 30,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_senna",
+      "name": "Sennova",
+      "file": "c_senna.glb",
+      "bytes": 857288,
+      "sha256": "8e5235158727e927f8036e62123aa15cd2db098f80165329026b185fd0e5a290",
+      "triangles": 9692,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 30,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_largo",
+      "name": "Basso Croak",
+      "file": "c_largo.glb",
+      "bytes": 329992,
+      "sha256": "2c8fdd236196ec5f94aa4622f2892366bb1eef7ffee4568d7bb5664e106d5850",
+      "triangles": 3772,
+      "skins": 1,
+      "joints": 17,
+      "uvMeshes": 9,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_shadowfiend",
+      "name": "Razeberry",
+      "file": "c_shadowfiend.glb",
+      "bytes": 67072,
+      "sha256": "179b11f87a6530bb931e28972ef41c52f5886f00a68b5b498b604ff22446da26",
+      "triangles": 1176,
+      "skins": 1,
+      "joints": 17,
+      "uvMeshes": 10,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_earthshaker",
+      "name": "Quakewell",
+      "file": "c_earthshaker.glb",
+      "bytes": 941060,
+      "sha256": "99fbbad1828f0fd1084bee761a39fbcfae6032e003fc28686208fa1b31047af5",
+      "triangles": 10032,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 27,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_mirehook",
+      "name": "Rotisserie",
+      "file": "c_mirehook.glb",
+      "bytes": 988964,
+      "sha256": "d86e6403b21633560346f2bdcfe3fa430fcf204bc4460dc423568f22d1454942",
+      "triangles": 10680,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 29,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_nullweaver",
+      "name": "Midnight Equation",
+      "file": "c_nullweaver.glb",
+      "bytes": 73992,
+      "sha256": "c7b0c8bd6137db9ea201df80700c59bc68d8d63e284e0812fdd1128060b1860a",
+      "triangles": 712,
+      "skins": 1,
+      "joints": 17,
+      "uvMeshes": 9,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 5
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 11
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 9
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 9
+        }
+      ]
+    },
+    {
+      "id": "c_voltgrip",
+      "name": "Plugsy",
+      "file": "c_voltgrip.glb",
+      "bytes": 156908,
+      "sha256": "b85391936326ce5973d482f7e608052e3c678b7c742eb315ae3e89eb45901a02",
+      "triangles": 2932,
+      "skins": 5,
+      "joints": 17,
+      "uvMeshes": 15,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_aetherbolt",
+      "name": "Relic Rick",
+      "file": "c_aetherbolt.glb",
+      "bytes": 835688,
+      "sha256": "8cd559c34652b0e95fe2e1692271fe43812506cc8484b3676243798389ac6726",
+      "triangles": 9304,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 28,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_corsara",
+      "name": "Bounty Belle",
+      "file": "c_corsara.glb",
+      "bytes": 882964,
+      "sha256": "be7b9580cf34ea7df69339111bccb24c2223db28934d3f3e4704cfa117d4f891",
+      "triangles": 10312,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 35,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_brewmaw",
+      "name": "Kegory",
+      "file": "c_brewmaw.glb",
+      "bytes": 875224,
+      "sha256": "2b801c342743c2fd391990e3d6ef4b65e84c0b38b6c9110eb877b37115d17448",
+      "triangles": 9600,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 28,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_wraithhook",
+      "name": "Hooklyn",
+      "file": "c_wraithhook.glb",
+      "bytes": 875948,
+      "sha256": "85047526a158e095e801a2d83e73c74f6af89d0e3ad8e1b523f7825a232eeca7",
+      "triangles": 9952,
+      "skins": 16,
+      "joints": 17,
+      "uvMeshes": 33,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_invoker",
+      "name": "Arsenaldo",
+      "file": "c_invoker.glb",
+      "bytes": 3619068,
+      "sha256": "85d77baf909441f2e7aa084c84d2766deb8b2f4f6a7ac398c4211a8af24c3f4c",
+      "triangles": 70380,
+      "skins": 26,
+      "joints": 17,
+      "uvMeshes": 29,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 7
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 13
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 11
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 11
+        }
+      ]
+    },
+    {
+      "id": "c_hwei",
+      "name": "Inkognito",
+      "file": "c_hwei.glb",
+      "bytes": 865440,
+      "sha256": "7981099967a1eceb53e662496f662d1f9a4b645b2391e0836c8b7d27c3d69884",
+      "triangles": 11340,
+      "skins": 16,
+      "joints": 17,
+      "uvMeshes": 34,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_jayce",
+      "name": "Hexley",
+      "file": "c_jayce.glb",
+      "bytes": 846104,
+      "sha256": "18dd17d0093f6b117ab3dddf6a3d67905ad291c9e1f8442879c888d120cec323",
+      "triangles": 9392,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 31,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_vi",
+      "name": "Knuckleberry",
+      "file": "c_vi.glb",
+      "bytes": 824208,
+      "sha256": "12bf4ce37b18719f45f0290b1cd087d972c197f61f4773c3d321e1ad24caabe9",
+      "triangles": 8952,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 30,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_jinx",
+      "name": "Boomie",
+      "file": "c_jinx.glb",
+      "bytes": 1184720,
+      "sha256": "049dd00ea0e8975956471ecb687d5103e8a37aa552656b336703f02bb2a42916",
+      "triangles": 12772,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 30,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_puck",
+      "name": "Fizzlewing",
+      "file": "c_puck.glb",
+      "bytes": 177208,
+      "sha256": "0b288c6e91f7630d088d5836e9a45791f637d3515a1808a5c5287aa13ac0406b",
+      "triangles": 2128,
+      "skins": 1,
+      "joints": 17,
+      "uvMeshes": 9,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 3
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 9
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 7
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 7
+        }
+      ]
+    },
+    {
+      "id": "c_batrider",
+      "name": "Wickety",
+      "file": "c_batrider.glb",
+      "bytes": 190216,
+      "sha256": "a691c380ce78d4b7681715912c1ccbdb9350eded6115b504106fc54d47202189",
+      "triangles": 3536,
+      "skins": 1,
+      "joints": 17,
+      "uvMeshes": 14,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 3
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 9
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 7
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 7
+        }
+      ]
+    },
+    {
+      "id": "c_bristleback",
+      "name": "Hedgehoggin",
+      "file": "c_bristleback.glb",
+      "bytes": 125620,
+      "sha256": "00b6eee68a0bce483042b772de87f27344722573c7e89f7428f24ffa2968955b",
+      "triangles": 2240,
+      "skins": 7,
+      "joints": 17,
+      "uvMeshes": 12,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_io",
+      "name": "Orbiton",
+      "file": "c_io.glb",
+      "bytes": 67424,
+      "sha256": "8a09ca5fc72f3f5eece61698d97c20b3fa8dc5b7af5a78b8073a47c8b9a052d6",
+      "triangles": 2592,
+      "skins": 1,
+      "joints": 17,
+      "uvMeshes": 8,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 6
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 12
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 10
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 10
+        }
+      ]
+    },
+    {
+      "id": "c_lulu",
+      "name": "Pixabelle",
+      "file": "c_lulu.glb",
+      "bytes": 912468,
+      "sha256": "23c1556e4081ce2e5e36f117571033b856bd675b72cebd76899e50803ae9c024",
+      "triangles": 10436,
+      "skins": 16,
+      "joints": 17,
+      "uvMeshes": 32,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_silencer",
+      "name": "Muffleton",
+      "file": "c_silencer.glb",
+      "bytes": 870616,
+      "sha256": "0ff8c2ec5cb2cea8ec7d40b206ce810bd51e09ebdc80dc910222acb4feed0ceb",
+      "triangles": 9624,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 32,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_wukong_lol",
+      "name": "Stafford",
+      "file": "c_wukong_lol.glb",
+      "bytes": 915280,
+      "sha256": "9158f0454b9e3a599aeb327048d8549eadfb6cf1f91cdf72aecf9825f86c8285",
+      "triangles": 10008,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 29,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "name": "Primate Minister",
+      "file": "c_monkeyking_dota.glb",
+      "bytes": 958700,
+      "sha256": "f87a54c7b28305837b003c196122fa917d6fbac5444c4c5c34f5fd1d88321108",
+      "triangles": 10732,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 30,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_stepstone",
+      "name": "Kickswitch",
+      "file": "c_stepstone.glb",
+      "bytes": 826696,
+      "sha256": "eb0d066053fbaf396c8d7927520a8ea4fcda204ce0abaf7364914e53202acc6b",
+      "triangles": 9528,
+      "skins": 15,
+      "joints": 17,
+      "uvMeshes": 31,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 1
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 7
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 5
+        }
+      ]
+    },
+    {
+      "id": "c_skybreaker",
+      "name": "Propella",
+      "file": "c_skybreaker.glb",
+      "bytes": 200632,
+      "sha256": "081bc4c2ac45352bb5359232ad2a60f70f4e63cb14cc5991718ba2d6c27a3bcc",
+      "triangles": 3628,
+      "skins": 1,
+      "joints": 17,
+      "uvMeshes": 15,
+      "clips": [
+        {
+          "name": "Idle",
+          "duration": 2.8559932708740234,
+          "tracks": 3
+        },
+        {
+          "name": "Walk",
+          "duration": 0.6283185482025146,
+          "tracks": 9
+        },
+        {
+          "name": "Attack",
+          "duration": 0.6499999761581421,
+          "tracks": 7
+        },
+        {
+          "name": "Cast",
+          "duration": 1.100000023841858,
+          "tracks": 7
+        }
+      ]
+    }
+  ]
+}

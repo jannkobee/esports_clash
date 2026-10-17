@@ -1,0 +1,16 @@
+{
+  "walkout": {
+    "width": 222.265625,
+    "height": 535.390625
+  },
+  "summary": {
+    "cards": 4,
+    "overflow": false
+  },
+  "mobile": {
+    "overflow": false,
+    "closeTop": 58.796875,
+    "closeBottom": 98.796875,
+    "viewport": 844
+  }
+}

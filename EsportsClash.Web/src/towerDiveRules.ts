@@ -1,5 +1,6 @@
 import type { AramChampionUnit, LaneStructure, BushPatch } from './types';
 import { getChampionBasicAttackRange } from './basicAttackRangeRules.ts';
+import { isInsideHealingWell, isUnsafeWellChase } from './baseSafetyRules.ts';
 
 export interface TowerDiveRiskSituation {
   diver: AramChampionUnit;
@@ -35,15 +36,20 @@ export function assessTowerDiveRisk(situation: TowerDiveRiskSituation): TowerDiv
 
   const distance = Math.hypot(target.x - diver.x, target.y - diver.y);
   const attackRange = getChampionBasicAttackRange(diver.champion);
+  if (isUnsafeWellChase(diver, target, attackRange)) return unavailable('well defense makes this chase unsafe');
   const approachSeconds = Math.max(0, distance - attackRange) / 85;
   const burstReady = (diver.cd1 <= 0 && diver.mana >= 35 ? diver.champion.skill1.damage : 0)
     + (diver.cd2 <= 0 && diver.mana >= 35 ? diver.champion.skill2.damage : 0)
     + (diver.level >= 6 && diver.cdUlt <= 0 && diver.mana >= 80 ? diver.champion.ultimate.damage : 0);
   const alliedPressure = Math.max(0, attackersUnderTower - 1) * Math.max(65, diver.champion.ad * .65);
   const targetEffectiveHp = target.hp + target.shield;
-  const damagePerSecond = Math.max(45, diver.champion.ad + burstReady * .55 + alliedPressure);
+  const healingPerSecond = isInsideHealingWell(target.team, target) ? target.maxHp * .45 : 0;
+  const damagePerSecond = Math.max(45, diver.champion.ad + burstReady * .55 + alliedPressure) - healingPerSecond;
+  if (damagePerSecond <= 0) return unavailable('well regeneration exceeds local damage');
   const expectedEliminationSeconds = approachSeconds + targetEffectiveHp / damagePerSecond;
-  const turretDps = takingTurretFire ? tower.ad * 1.8 : tower.ad * (alliedMinionsUnderTower > 0 ? .32 : .9);
+  // Nexus pulses hit several champions at once: grouping/minions do not divide its damage.
+  const turretDps = tower.type === 'nexus' ? tower.ad / .6
+    : takingTurretFire ? tower.ad * 1.8 : tower.ad * (alliedMinionsUnderTower > 0 ? .32 : .9);
   const defenderPressure = Math.max(0, defendersUnderTower - Math.max(0, attackersUnderTower - 1)) * 55;
   const expectedSurvivalSeconds = (diver.hp + diver.shield) / Math.max(1, turretDps + defenderPressure);
   const iq = Math.max(1, Math.min(99, diver.player?.stats?.iq ?? 75));

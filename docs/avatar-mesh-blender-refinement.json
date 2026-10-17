@@ -1,0 +1,210 @@
+{
+  "version": 8,
+  "blender": "4.5.3 LTS",
+  "models": [
+    {
+      "id": "c_solana",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 1943916
+    },
+    {
+      "id": "c_astra",
+      "editedSurfaces": 9,
+      "replacedArmFaces": 10206,
+      "bytes": 4268192
+    },
+    {
+      "id": "c_kyumi",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 1943488
+    },
+    {
+      "id": "c_buck",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2081176
+    },
+    {
+      "id": "c_valkira",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 1921120
+    },
+    {
+      "id": "c_kage",
+      "editedSurfaces": 10,
+      "replacedArmFaces": 10165,
+      "bytes": 4303940
+    },
+    {
+      "id": "c_kazemaru",
+      "editedSurfaces": 10,
+      "replacedArmFaces": 10165,
+      "bytes": 4328832
+    },
+    {
+      "id": "c_kindra",
+      "editedSurfaces": 9,
+      "replacedArmFaces": 10206,
+      "bytes": 4277204
+    },
+    {
+      "id": "c_cora",
+      "editedSurfaces": 9,
+      "replacedArmFaces": 10206,
+      "bytes": 4294032
+    },
+    {
+      "id": "c_renn",
+      "editedSurfaces": 10,
+      "replacedArmFaces": 10165,
+      "bytes": 4306752
+    },
+    {
+      "id": "c_sylla",
+      "editedSurfaces": 5,
+      "replacedArmFaces": 0,
+      "bytes": 2142112
+    },
+    {
+      "id": "c_tequoia",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 1950712
+    },
+    {
+      "id": "c_zal",
+      "editedSurfaces": 5,
+      "replacedArmFaces": 0,
+      "bytes": 2114124
+    },
+    {
+      "id": "c_xin",
+      "editedSurfaces": 10,
+      "replacedArmFaces": 10165,
+      "bytes": 4323916
+    },
+    {
+      "id": "c_raijin",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2073728
+    },
+    {
+      "id": "c_kaolin",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2079368
+    },
+    {
+      "id": "c_inai",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2102160
+    },
+    {
+      "id": "c_qiyana",
+      "editedSurfaces": 9,
+      "replacedArmFaces": 10206,
+      "bytes": 4292960
+    },
+    {
+      "id": "c_locke",
+      "editedSurfaces": 10,
+      "replacedArmFaces": 10165,
+      "bytes": 4260976
+    },
+    {
+      "id": "c_senna",
+      "editedSurfaces": 9,
+      "replacedArmFaces": 10206,
+      "bytes": 4312736
+    },
+    {
+      "id": "c_earthshaker",
+      "editedSurfaces": 5,
+      "replacedArmFaces": 0,
+      "bytes": 2119764
+    },
+    {
+      "id": "c_mirehook",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2077132
+    },
+    {
+      "id": "c_aetherbolt",
+      "editedSurfaces": 10,
+      "replacedArmFaces": 10165,
+      "bytes": 4318520
+    },
+    {
+      "id": "c_corsara",
+      "editedSurfaces": 9,
+      "replacedArmFaces": 10206,
+      "bytes": 4306988
+    },
+    {
+      "id": "c_brewmaw",
+      "editedSurfaces": 5,
+      "replacedArmFaces": 0,
+      "bytes": 2151632
+    },
+    {
+      "id": "c_wraithhook",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2077960
+    },
+    {
+      "id": "c_invoker",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2105732
+    },
+    {
+      "id": "c_hwei",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2308264
+    },
+    {
+      "id": "c_jayce",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2111280
+    },
+    {
+      "id": "c_vi",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2208728
+    },
+    {
+      "id": "c_jinx",
+      "editedSurfaces": 9,
+      "replacedArmFaces": 10206,
+      "bytes": 4296516
+    },
+    {
+      "id": "c_lulu",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 1937604
+    },
+    {
+      "id": "c_silencer",
+      "editedSurfaces": 4,
+      "replacedArmFaces": 0,
+      "bytes": 2075976
+    },
+    {
+      "id": "c_stepstone",
+      "editedSurfaces": 10,
+      "replacedArmFaces": 10165,
+      "bytes": 4334348
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+    "chrome":  [
+                   {
+                       "port":  9223,
+                       "pid":  30964,
+                       "profile":  "C:\\Users\\User\\AppData\\Local\\Temp\\esports-confidence-9223-bd0a16dc9f534eb4bb8a608742168fdb"
+                   },
+                   {
+                       "port":  9224,
+                       "pid":  31624,
+                       "profile":  "C:\\Users\\User\\AppData\\Local\\Temp\\esports-confidence-9224-0175d3eda69f40e6984575ab3abfa77a"
+                   },
+                   {
+                       "port":  9225,
+                       "pid":  15908,
+                       "profile":  "C:\\Users\\User\\AppData\\Local\\Temp\\esports-confidence-9225-7bbc5765c190477481167ddc78c3e61d"
+                   }
+               ],
+    "viteLauncherPid":  25976
+}

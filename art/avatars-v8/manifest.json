@@ -1,0 +1,861 @@
+{
+  "version": 8,
+  "blender": "4.5.3 LTS",
+  "models": [
+    {
+      "id": "c_solana",
+      "file": "c_solana.blend",
+      "bytes": 2340977,
+      "sha256": "c39911d52f7c33af59a1616c1689f724c8d5ab1775e0e47aa9da3db2afb4e62b",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_astra",
+      "file": "c_astra.blend",
+      "bytes": 3869581,
+      "sha256": "15babe898c68f08f53c426547415278b1b641da804ebaa3217d5fc396c7c66e8",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_kyumi",
+      "file": "c_kyumi.blend",
+      "bytes": 2272116,
+      "sha256": "fb70e13b04799179fe17debc337218c1365112888ef99868a138fa5b8d41d627",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_buck",
+      "file": "c_buck.blend",
+      "bytes": 2226298,
+      "sha256": "e97ef0313eea3a1122575f5cb5d0c288090a13ed7dd477f15282a7f5d570481d",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_valkira",
+      "file": "c_valkira.blend",
+      "bytes": 2378546,
+      "sha256": "f205dc6a5f5ada371963542431cf419205f20d708ef57b127792b5212cc1fd1a",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_kage",
+      "file": "c_kage.blend",
+      "bytes": 3594459,
+      "sha256": "647495abdb687ca1f9ed211478c35bbd2462da047b2449e34a742126792e0032",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_kazemaru",
+      "file": "c_kazemaru.blend",
+      "bytes": 3691728,
+      "sha256": "e3ede02395495a8229281c80deb199b8046cd79a0df88ea5629bbcfe4c710e77",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_kindra",
+      "file": "c_kindra.blend",
+      "bytes": 3908350,
+      "sha256": "8e1731d9fbe6d3b973520e2d9172c7aadd12793c1a1b542ff48e6787ebd504a1",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_cora",
+      "file": "c_cora.blend",
+      "bytes": 3754120,
+      "sha256": "9bd4f1a2d100df8002c26b97505f3d4d7c03eeea73777f320aba69d5c751c55f",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_renn",
+      "file": "c_renn.blend",
+      "bytes": 3620576,
+      "sha256": "eb12e41d11b504c630459c3a360a6931a92bf5250fc89456e0f582120b40b9ce",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_sylla",
+      "file": "c_sylla.blend",
+      "bytes": 2331977,
+      "sha256": "049e40b54847e28f4b093d5adbaa2c489170a1ea3ea5554b162c79249a81abcd",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_tequoia",
+      "file": "c_tequoia.blend",
+      "bytes": 2358128,
+      "sha256": "7839ad1b303f88e5bc9017df88397e889bb0efbcb163d9c8f95946fb748eb917",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_zal",
+      "file": "c_zal.blend",
+      "bytes": 2187862,
+      "sha256": "ee135889db25699edce112e45b44c3d562f3121d19ef9471b4bfcae0c1969d61",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_xin",
+      "file": "c_xin.blend",
+      "bytes": 3837353,
+      "sha256": "a1f9c59243855b395bd522c18e9b4854f163394b0a1c8293a584c317340e88d1",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_raijin",
+      "file": "c_raijin.blend",
+      "bytes": 2072871,
+      "sha256": "03fd6ab96239180196e5759e3cb9fca3add6c17308a0fdb64e2b002301483784",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_kaolin",
+      "file": "c_kaolin.blend",
+      "bytes": 2208505,
+      "sha256": "d69ebf13c1944a3be5c1a163894014d0fe0ee600344299cc37659051e575f515",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_inai",
+      "file": "c_inai.blend",
+      "bytes": 2267819,
+      "sha256": "e93e4b458eb31f099c4b48f7215b7cbf2da0afd424f3a85e58c25018b1c4876c",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_qiyana",
+      "file": "c_qiyana.blend",
+      "bytes": 3804299,
+      "sha256": "82d4bc7f5a0f62d44144dfe4b048b98a1a165cf23430761cf53f273daa776ba0",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_locke",
+      "file": "c_locke.blend",
+      "bytes": 3682425,
+      "sha256": "a76b44e1fd9e2403b701f46adef3fa10db19d6aa41e71ad767b2ba686457fbf1",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_senna",
+      "file": "c_senna.blend",
+      "bytes": 3965923,
+      "sha256": "edf6d49a5cefaddaf295835f8d8d38fe31b38b2c1f71762255b808d72305fb2c",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_largo",
+      "file": "c_largo.blend",
+      "bytes": 385094,
+      "sha256": "2a0a24101002792ee2178e474938c5f58a4de62a3202d462064957f53f0b0353",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    },
+    {
+      "id": "c_shadowfiend",
+      "file": "c_shadowfiend.blend",
+      "bytes": 391751,
+      "sha256": "6f3c474d998271f5d570e73411c2866396af0b134f45390e35c5c2635c00cba8",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    },
+    {
+      "id": "c_earthshaker",
+      "file": "c_earthshaker.blend",
+      "bytes": 2647388,
+      "sha256": "9033bbd5e6e1df908602efac22230cfe285e26d35e31629aecb63faf9c3cfbe2",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_mirehook",
+      "file": "c_mirehook.blend",
+      "bytes": 2532637,
+      "sha256": "260c2f0c43b25f84a8636cdb80d44055f82d35f23c39f28870b60ec761bd6eaa",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_nullweaver",
+      "file": "c_nullweaver.blend",
+      "bytes": 318234,
+      "sha256": "e999a5ca3c68fb246f0f3f1ad4f77f6aab3e46152aeed9fa88faa78973cb56db",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    },
+    {
+      "id": "c_voltgrip",
+      "file": "c_voltgrip.blend",
+      "bytes": 419038,
+      "sha256": "f4c6c02e02d9f1624651e077260bc9c77c29c85312be03bfcec59b6f581a07ec",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    },
+    {
+      "id": "c_aetherbolt",
+      "file": "c_aetherbolt.blend",
+      "bytes": 3708109,
+      "sha256": "60caeffb6341e2f7939cf0f2b26bb88c344f88bdc40da048abe252181d5d311a",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_corsara",
+      "file": "c_corsara.blend",
+      "bytes": 3927796,
+      "sha256": "c9eeedcc86b1194dcdaf25723aca8d8ec6649c6fe9a231b109e9a7706aabc04f",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_brewmaw",
+      "file": "c_brewmaw.blend",
+      "bytes": 2342740,
+      "sha256": "f54e63da1c66237a9689255f9db378cd91c9cef2f3184e5466b499dfcd43f547",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_wraithhook",
+      "file": "c_wraithhook.blend",
+      "bytes": 2204317,
+      "sha256": "9adb6525b27d3e74de6b7b0bdef4b72461a732479b3f825c81a23142fb716b25",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_invoker",
+      "file": "c_invoker.blend",
+      "bytes": 3119271,
+      "sha256": "8659387e085e34ca8d64115efb945834f0d0098d0474a2c92c515fa3a771c3f6",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_hwei",
+      "file": "c_hwei.blend",
+      "bytes": 2845511,
+      "sha256": "32f2dd4b9650f2d9d0d725affbe88c27189c854d1947dd87cb3c5ae64d4d4f2b",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_jayce",
+      "file": "c_jayce.blend",
+      "bytes": 2280817,
+      "sha256": "8853d15e182251d7031d55690ba85dad9a52faa7c45ef6a690c00ea5c3c9ea45",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_vi",
+      "file": "c_vi.blend",
+      "bytes": 2559639,
+      "sha256": "f300aba2d6469b788268c1d5f3f722102860c33103a4f446f2ddfad7eb05e4b0",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_jinx",
+      "file": "c_jinx.blend",
+      "bytes": 3910960,
+      "sha256": "dfed41547ed070340823a34011844e6a012e0f15cfa839c1a40b63c53ee102d4",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_puck",
+      "file": "c_puck.blend",
+      "bytes": 270350,
+      "sha256": "ed1f73a42bfe38544d7e425b8f6a202624bf8034fdb4105bf2dc1f6afc2ba5b8",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    },
+    {
+      "id": "c_batrider",
+      "file": "c_batrider.blend",
+      "bytes": 299649,
+      "sha256": "025979524cfee7ba13c1ae2ba0941acf0ce75f02ea70562fd3ee0c0407976abc",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    },
+    {
+      "id": "c_bristleback",
+      "file": "c_bristleback.blend",
+      "bytes": 368223,
+      "sha256": "d36771e555dcb588617d8bb7b04ce89e86d5823233005eae171c1e6cc8b8fea1",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    },
+    {
+      "id": "c_io",
+      "file": "c_io.blend",
+      "bytes": 335496,
+      "sha256": "fe4d8bbfa6bc951617b6169f6ce4def2ce6c545440f37b7518f7a235053305ed",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    },
+    {
+      "id": "c_lulu",
+      "file": "c_lulu.blend",
+      "bytes": 2327915,
+      "sha256": "14f00ac123a6917404b5562949c5a805e7be80fbee1021acc4db96128427df7d",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_silencer",
+      "file": "c_silencer.blend",
+      "bytes": 2528629,
+      "sha256": "d5c57f90060ecefa8c8d67bb1e2f85f30f6342375a28505ef1fa54f2d418e4c0",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_wukong_lol",
+      "file": "c_wukong_lol.blend",
+      "bytes": 754827,
+      "sha256": "718f9384cf67f63ea10822fd0d06db95b44accfa41d4a25b5e7e9137bc0d48fc",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "file": "c_monkeyking_dota.blend",
+      "bytes": 821542,
+      "sha256": "d8e217773751ab9906ccf6491c2a7a2c220c4c3ab6c79a83bac00f402c1767d1",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    },
+    {
+      "id": "c_stepstone",
+      "file": "c_stepstone.blend",
+      "bytes": 3636117,
+      "sha256": "9e111d6196e7aa64e8d1b83fe7936496a118206958c339bec23e09adfadb1dc0",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 2
+    },
+    {
+      "id": "c_skybreaker",
+      "file": "c_skybreaker.blend",
+      "bytes": 278733,
+      "sha256": "f422bb7bdaa6da1cd4af97f36f44cffb94ff4aebaad883e6d9fb2a27afb28eb3",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "gripShapes": 0
+    }
+  ]
+}

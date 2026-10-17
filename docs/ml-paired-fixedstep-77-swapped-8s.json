@@ -1,0 +1,463 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 77,
+  "swapped": true,
+  "scout": {
+    "label": "scout",
+    "event": {
+      "mode": "scout",
+      "actorId": "red_p_daft",
+      "second": 347.2000000000606,
+      "cardId": "p_daft",
+      "champion": "Kyumi",
+      "incumbent": "regroup",
+      "alternate": "wave",
+      "fingerprint": "84653:766c0024:1fdd1b14",
+      "matched": false,
+      "gate": null,
+      "actorStart": {
+        "x": 1360.8728709141028,
+        "y": 366.26267536481987,
+        "hpFraction": 1,
+        "gold": 355.90399999964484,
+        "cs": 5,
+        "kills": 0,
+        "deaths": 0,
+        "damageDealt": 4007
+      }
+    },
+    "lastSecond": 348.06666666672794,
+    "wallSeconds": 126.053
+  },
+  "replays": [
+    {
+      "label": "incumbent-a",
+      "event": {
+        "mode": "replay",
+        "actorId": "red_p_daft",
+        "second": 347.2000000000606,
+        "cardId": "p_daft",
+        "champion": "Kyumi",
+        "incumbent": "regroup",
+        "alternate": "wave",
+        "fingerprint": "84653:766c0024:1fdd1b14",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 1360.8728709141028,
+          "y": 366.26267536481987,
+          "hpFraction": 1,
+          "gold": 355.90399999964484,
+          "cs": 5,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 4007
+        },
+        "followup": {
+          "second": 355.20000000006695,
+          "actor": {
+            "x": 1259.6356876901666,
+            "y": 373.5254600588123,
+            "hpFraction": 1,
+            "mana": 335,
+            "isAlive": true,
+            "gold": 471.06999999964614,
+            "cs": 6,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 4007
+          },
+          "nearestEnemyDistance": 483.36018537672106,
+          "insideEnemyTower": false
+        }
+      },
+      "record": {
+        "second": 347.2000000000606,
+        "actorId": "red_p_daft",
+        "team": "red",
+        "selected": "regroup",
+        "contextKey": "regroup:red_p_bigtail",
+        "features": {
+          "bias": 1,
+          "iq": 0.91,
+          "teamfight": 0.95,
+          "lane": 0.92,
+          "flexibility": 0.89,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Mage": 1,
+          "card:p_daft": 1,
+          "personality:bush_stalker": 1,
+          "personality:steal_gambler": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "wave",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "wave",
+          "pair": "regroup-wave",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.027186430988793198
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 355.90399999964484,
+          "cs": 5,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 4007
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 56.066000000000486,
+          "csGain": 1,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.11704950000000036
+        }
+      },
+      "actor": {
+        "x": 1259.6356876901666,
+        "y": 373.5254600588123,
+        "hp": 2136,
+        "actionIntent": "minion"
+      },
+      "lastSecond": 355.2333333334003,
+      "wallSeconds": 0.085
+    },
+    {
+      "label": "incumbent-b",
+      "event": {
+        "mode": "replay",
+        "actorId": "red_p_daft",
+        "second": 347.2000000000606,
+        "cardId": "p_daft",
+        "champion": "Kyumi",
+        "incumbent": "regroup",
+        "alternate": "wave",
+        "fingerprint": "84653:766c0024:1fdd1b14",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 1360.8728709141028,
+          "y": 366.26267536481987,
+          "hpFraction": 1,
+          "gold": 355.90399999964484,
+          "cs": 5,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 4007
+        },
+        "followup": {
+          "second": 355.20000000006695,
+          "actor": {
+            "x": 1259.6356876901666,
+            "y": 373.5254600588123,
+            "hpFraction": 1,
+            "mana": 335,
+            "isAlive": true,
+            "gold": 471.06999999964614,
+            "cs": 6,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 4007
+          },
+          "nearestEnemyDistance": 483.36018537672106,
+          "insideEnemyTower": false
+        }
+      },
+      "record": {
+        "second": 347.2000000000606,
+        "actorId": "red_p_daft",
+        "team": "red",
+        "selected": "regroup",
+        "contextKey": "regroup:red_p_bigtail",
+        "features": {
+          "bias": 1,
+          "iq": 0.91,
+          "teamfight": 0.95,
+          "lane": 0.92,
+          "flexibility": 0.89,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Mage": 1,
+          "card:p_daft": 1,
+          "personality:bush_stalker": 1,
+          "personality:steal_gambler": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "wave",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "wave",
+          "pair": "regroup-wave",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.027186430988793198
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 355.90399999964484,
+          "cs": 5,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 4007
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 56.066000000000486,
+          "csGain": 1,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.11704950000000036
+        }
+      },
+      "actor": {
+        "x": 1259.6356876901666,
+        "y": 373.5254600588123,
+        "hp": 2136,
+        "actionIntent": "minion"
+      },
+      "lastSecond": 355.2333333334003,
+      "wallSeconds": 0.068
+    },
+    {
+      "label": "alternate",
+      "event": {
+        "mode": "replay",
+        "actorId": "red_p_daft",
+        "second": 347.2000000000606,
+        "cardId": "p_daft",
+        "champion": "Kyumi",
+        "incumbent": "regroup",
+        "alternate": "wave",
+        "fingerprint": "84653:766c0024:1fdd1b14",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 1360.8728709141028,
+          "y": 366.26267536481987,
+          "hpFraction": 1,
+          "gold": 355.90399999964484,
+          "cs": 5,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 4007
+        },
+        "followup": {
+          "second": 355.20000000006695,
+          "actor": {
+            "x": 1221.071448056034,
+            "y": 373.37433942257803,
+            "hpFraction": 1,
+            "mana": 335,
+            "isAlive": true,
+            "gold": 478.06999999964614,
+            "cs": 7,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 4007
+          },
+          "nearestEnemyDistance": 449.4742134001826,
+          "insideEnemyTower": false
+        }
+      },
+      "record": {
+        "second": 347.2000000000606,
+        "actorId": "red_p_daft",
+        "team": "red",
+        "selected": "wave",
+        "contextKey": "wave:b_melee_16_2:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.91,
+          "teamfight": 0.95,
+          "lane": 0.92,
+          "flexibility": 0.89,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Mage": 1,
+          "card:p_daft": 1,
+          "personality:bush_stalker": 1,
+          "personality:steal_gambler": 0.5
+        },
+        "selectionReason": "evaluation-experiment:alternate",
+        "heldAction": "wave",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "wave",
+          "pair": "regroup-wave",
+          "arm": "alternate",
+          "propensity": 0.5,
+          "utilityGap": 0.027186430988793198
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 355.90399999964484,
+          "cs": 5,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 4007
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target",
+            "learnedFactor": 0.08466443879476353,
+            "baselineUtility": 0.18684374875829388,
+            "actualUtility": 0.1902303263100844
+          },
+          {
+            "key": "wave",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion",
+            "learnedFactor": 0.03033739324270292,
+            "baselineUtility": 0.28,
+            "actualUtility": 0.28121349572970816
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+            "learnedFactor": -0.11500183203746646,
+            "baselineUtility": 0.313,
+            "actualUtility": 0.30839992671850136
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp",
+            "learnedFactor": -0.14748585742001408,
+            "baselineUtility": 0.13349999999999998,
+            "actualUtility": 0.12760056570319941
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available",
+            "learnedFactor": 0.14748585742001408,
+            "baselineUtility": -0.13229618373875046,
+            "actualUtility": -0.1263967494419499
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 35.066000000000486,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.026299500000000364
+        }
+      },
+      "actor": {
+        "x": 1221.071448056034,
+        "y": 373.37433942257803,
+        "hp": 2136,
+        "actionIntent": "minion"
+      },
+      "lastSecond": 355.1666666667336,
+      "wallSeconds": 0.076
+    }
+  ],
+  "validPair": true,
+  "descriptiveAlternateMinusIncumbent": -0.09075,
+  "extendedDifference": {
+    "healthFraction": 0,
+    "gold": 7,
+    "damageDealt": 0,
+    "kills": 0,
+    "deaths": 0,
+    "x": -38.56423963413272,
+    "y": -0.15112063623428185,
+    "nearestEnemyDistance": -33.885971976538485
+  }
+}

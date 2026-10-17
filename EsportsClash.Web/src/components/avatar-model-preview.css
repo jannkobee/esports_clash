@@ -1,0 +1,15 @@
+.avatar-model-preview { display:grid; grid-template-columns:minmax(0,1fr) minmax(220px,.65fr); border:1px solid #324351; border-radius:14px; overflow:hidden; background:#0e1722; }
+.avatar-model-preview__stage { min-width:0; height:330px; position:relative; background:radial-gradient(ellipse at 50% 70%,#294354 0%,#142430 44%,#0c1721 78%); }
+.avatar-model-preview__eyebrow { position:absolute; top:15px; left:18px; z-index:1; color:#99b6c6; font-size:10px; letter-spacing:.12em; text-transform:uppercase; pointer-events:none; }
+.avatar-model-preview__canvas,.avatar-model-preview__canvas canvas { width:100%; height:100%; display:block; }
+.avatar-model-preview__canvas { touch-action:pan-y; cursor:grab; }.avatar-model-preview__canvas:active { cursor:grabbing; }
+.avatar-model-preview__caption { position:absolute; bottom:12px; left:15px; right:15px; color:#d6e5e9; font-size:11px; text-align:center; pointer-events:none; text-shadow:0 1px 3px #000; }
+.avatar-model-preview__fallback { position:absolute; inset:35px 0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; pointer-events:none; font-size:11px; color:#9cb5c8; background:#0c1721; }
+.avatar-model-preview__details { display:flex; flex-direction:column; justify-content:center; gap:14px; padding:24px; min-width:0; border-left:1px solid #263948; }
+.avatar-model-preview__details>strong { color:#e5e1ce; font-size:16px; line-height:1.4; }.avatar-model-preview__details>p { color:#9ab0be; font-size:12px; line-height:1.7; }
+.avatar-model-preview__details label { display:flex; gap:8px; align-items:center; color:#b6cbd6; font-size:11px; }.avatar-model-preview__details input { flex:1; min-width:30px; accent-color:#8fd5e3; cursor:pointer; }
+.avatar-model-preview__controls { display:flex; gap:8px; flex-wrap:wrap; }.avatar-model-preview__controls button,.avatar-model-preview__controls select { background:#1c2d3b; border:1px solid #405766; border-radius:5px; color:#d9e7e9; padding:5px 8px; font-size:11px; cursor:pointer; }
+.avatar-model-preview__controls button[aria-pressed=true] { border-color:#a4dcdf; background:#254958; }.avatar-model-preview :is(button,input,select):focus-visible { outline:2px solid #f4ce83; outline-offset:3px; }.avatar-model-preview :disabled { opacity:.45; cursor:default; }
+.avatar-model-preview__controls a { display:inline-flex; align-items:center; background:#29454b; border:1px solid #5c7d7e; border-radius:5px; color:#d9e7e9; padding:5px 8px; font-size:11px; text-decoration:none; }
+.avatar-model-preview__controls a:focus-visible { outline:2px solid #f4ce83; outline-offset:3px; }
+@media(max-width:700px) { .avatar-model-preview { grid-template-columns:minmax(0,1fr); }.avatar-model-preview__stage { height:290px; }.avatar-model-preview__details { border-left:0; border-top:1px solid #263948; padding:18px; gap:12px; } }

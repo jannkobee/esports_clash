@@ -1,17 +1,24 @@
 import type { ChampionKit, CoachCard, PlayerCard } from './types';
 import type { MatchInsights } from './matchInspector';
+import type { AIDecisionRecord } from './aiDecisionTelemetry';
+import type { summarizeDecisionCalibration } from './decisionCalibration';
 import { refreshAvatarPresentation } from './avatarIdentity.ts';
 
 export const SIMULATION_STEP = 1 / 30;
 
-export function createMatchRandom(seed: number): () => number {
+export type MatchRandom = (() => number) & { getState: () => number; setState: (state: number) => void };
+
+export function createMatchRandom(seed: number): MatchRandom {
   let state = seed >>> 0;
-  return () => {
+  const next = (() => {
     state = (state + 0x6d2b79f5) >>> 0;
     let value = Math.imul(state ^ (state >>> 15), state | 1);
     value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
     return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
-  };
+  }) as MatchRandom;
+  next.getState = () => state;
+  next.setState = value => { if (Number.isInteger(value) && value >= 0 && value <= 0xffffffff) state = value >>> 0; };
+  return next;
 }
 
 export function consumeFixedSteps(
@@ -57,6 +64,8 @@ export interface MatchReport {
   skillshotsHit: number;
   events: RecordedMatchEvent[];
   insights?: MatchInsights;
+  aiDecisionRecords?: AIDecisionRecord[];
+  decisionCalibration?: ReturnType<typeof summarizeDecisionCalibration>;
 }
 
 export function refreshMatchReportAvatarPresentation(report: MatchReport, catalog: readonly ChampionKit[]): MatchReport {

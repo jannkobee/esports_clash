@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-17",
+  "revision": 8,
+  "gameTests": 399,
+  "deterministicSimulationTests": 3,
+  "typeScript": true,
+  "productionBuild": true,
+  "assetMetrics": {
+    "models": 45,
+    "glbBytes": 145622804,
+    "blendFiles": 45,
+    "blendBytes": 105588696,
+    "gripShapes": 68,
+    "refinedLicensedSets": 34,
+    "replacedOutfitArms": 14,
+    "removedArmTriangles": 142597,
+    "nativeClips": 450,
+    "nativeSamples": 2250,
+    "loadedGroundedRigs": 37,
+    "stanceComparisons": 11692,
+    "maxHorizontalStanceDrift": 2.864289338439558e-14
+  },
+  "studioAll45AndTenControls": true,
+  "liveArenaExactStateRngExecutionOpportunityAudits": [
+    30,
+    60,
+    90
+  ],
+  "videoDecodePlaySeek": true,
+  "strictGlbTreeAndBlenderImport": true,
+  "scriptSyntax": true,
+  "gitDiffCheck": true,
+  "limits": "Shared anatomy/style families, modest proportion edits, simple creature hulls, approximate fingers and some clipping; no physical cloth, full bespoke ability choreography, terrain-height solver or measured device frame times.",
+  "evidenceSha256": {
+    "manifest.json": "236d7f8909cf81b4fd02dce637b1420f518ffcd5f93b1f34bee074c5045bbbf8",
+    "avatar-mesh-blender-refinement.json": "900547c3b88191f923440d930723494d8f89c6f4c57aa7ae57ae0302b6c4e5fd",
+    "avatar-mesh-comparison.json": "f12c74cc7c70660c4cf423bb2722a78e47f66e2c2ed31d36bd4b60bdcedf46e8",
+    "avatar-mesh-native-verification.json": "dcd0f0c622c3bacac9ac9d34b9cc852b05e18035ba857e5ad6c3ef2ebba36707",
+    "avatar-mesh-verification.json": "836b67565e27edc1f919ae8ec55853433baa9ceeecd644e908cbc31469c448c2",
+    "avatar-mesh-arena-verification.json": "fd5cc6a0b339a10d58fe4bfee4191109bd10c173aa01d1a8ecae7dff338d1569",
+    "avatar-mesh-preview.webm": "88670e7bb10300c52b3fc58a4535055965f75eee04d8667b85e645a59522c5f1",
+    "avatar-mesh-video-verification.json": "650ccad1693ce72ae66dd9b7104edc5fc0cc1f6a6763998abf570bc89523ade7"
+  },
+  "ownedReviewServicesClosed": true,
+  "additionalDenseSourceGripProbe": {
+    "models": 12,
+    "states": [
+      "idle",
+      "walk",
+      "run",
+      "attack",
+      "cast"
+    ],
+    "samplesPerState": 49,
+    "totalPoses": 2940,
+    "maxPalmContactError": 4.1288356908244804e-14
+  }
+}

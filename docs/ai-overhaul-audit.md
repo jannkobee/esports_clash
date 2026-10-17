@@ -97,3 +97,77 @@ The working tree also contains the user's earlier uncommitted changes listed at 
 | Optimization and learning | Not ready for trustworthy training; no policy tuned or deployed |
 
 The full overhaul acceptance criteria are **not met**. The next implementation dependency is extracting candidate generation and one selected macro action from `AramMatchView` while preserving executor behavior, followed by the requested coordination/spatial/prediction/memory integrations and live scenario matrix. Passing compilation or this initial adapter does not complete those stages.
+
+## Residual macro selection migration (2026-10-14)
+
+`macroActionDecision.ts` now adapts prevalidated live candidates to the shared utility selector. It adds a context-bound 0.65-second commitment and covers the residual choices reached after the existing Nexus, urgent-defense, objective, retreat, recall, and relic branches: fight, dedicated wave clear, regroup, farm, and lane push. A higher-priority valid emergency can interrupt the residual commitment.
+
+`AramMatchView.tsx` gates farm, fight, wave-clear, and regroup execution with that selected action. Existing candidate providers still own all hard conditions, including visibility, lane safety, terrain, targetability, resources, action recovery, turret risk, and objective rules. Objective starts, safe recall/relic routing, Nexus finishing, and base defense remain earlier policy/execution paths and are not falsely described as migrated.
+
+Focused macro tests cover priority, failure gates, determinism, and interruption. `npm.cmd run check:game` passed 300 game tests and three deterministic simulation tests; TypeScript passed. Production build passed with the existing chunk-size warning. The controlled live 5v5 fixture passed: all ten actors committed, two deaths occurred during the sample, and no legacy abort state appeared.
+
+## Recovery and objective-start migration (2026-10-14)
+
+`macroActionDecision.ts` now includes prevalidated `relic` work. In the live loop, recall/retreat and relic candidates are selected only after their owning policies validate safety. Emergency danger or defense recall outranks a tactical relic; a rejected recall leaves a legal relic selectable. The recovery commitment is context-bound for 0.45 seconds.
+
+Dragon and Gravemarch start/finish candidates now cross the same selector after the existing objective evaluators validate wave priority, vision, health, contest, combat, defense, and Nexus conditions. The migration retains objective finish priority, normal-start tactical priority, and the existing champion-first contest behavior above 32% boss health. It does not provide live/headless parity, a shared team intent system, influence maps, prediction, memory, or learning.
+
+Added macro regression coverage for recovery recall/relic priority. `npm.cmd run check:game` passed 301 game tests, three deterministic simulation tests, and TypeScript; `npm.cmd run build` passed. The controlled browser fixture passed at five viewport sizes; its proactive 5v5 sample recorded all ten actors fighting, two deaths, and no legacy abort state. The existing production chunk-size warning remains.
+
+## Shared team-intent migration (2026-10-14)
+
+`teamIntentDecision.ts` adds a bounded shared-team preference, using the same deterministic utility tiers as macro selection. It accepts only prevalidated defend, fight, objective-finish, regroup, push, and hold calls and retains a legal context for 0.65 seconds. Live state stores one call per team. The call only contributes to legal local residual-macro scores: it cannot manufacture a global target or bypass any execution owner. Supports map a fight call to legal regroup/peel preference, while other roles map it to legal fight preference.
+
+Focused tests cover emergency/finish priority, release on invalidation, and role mapping. `npm.cmd run check:game` passed 304 game tests, three deterministic simulation tests, and TypeScript; `npm.cmd run build` passed with the existing production chunk-size warning. The controlled browser fixture passed at five viewport sizes with all ten actors fighting, two deaths, and no legacy abort state. This does not establish coordinated live/headless parity or deliver influence maps, prediction, generalized memory, or learning.
+
+## Spatial influence migration (2026-10-14)
+
+`spatialInfluence.ts` provides bounded, deterministic threat and cover reads from live local champions and structures. The live caller supplies the read only as a post-gate score contribution to retreat ranking and existing objective, fight, regroup, and push candidates. No hard gate, range, target, route, movement, resource, damage, or tower/objective rule moved into the field. It is not a generalized pathfinder, prediction system, or memory system.
+
+Per the user's explicit deferred-validation direction, no test, build, browser, benchmark, or verification command has run after this phase. The remaining acceptance criteria are still incomplete.
+
+## Tactical outlook migration (2026-10-14)
+
+`tacticalOutlook.ts` derives bounded travel, survival, support, and pressure signals from current local state and the read-only spatial approach. Existing legal fight, Dragon, Gravemarch, and push candidates consume those values as score inputs only. It has no combat simulation, fog inference, cooldown prediction, RNG, target creation, or execution authority.
+
+Per the user's explicit deferred-validation direction, no test, build, browser, benchmark, or verification command has run after this phase. The remaining acceptance criteria are still incomplete.
+
+## Visible opponent tactical-memory migration (2026-10-14)
+
+`opponentTacticalMemory.ts` keeps only short-lived per-viewer observations: visible homeward movement and observed damage focus. The live loop resets it per match and uses it solely as bounded fight/regroup score input after existing legal candidate gates. It introduces no fog inference, hidden cooldown data, speculative target selection, or mechanics authority.
+
+Per the user's explicit deferred-validation direction, no test, build, browser, benchmark, or verification command has run after this phase. The remaining acceptance criteria are still incomplete.
+
+## Post-fight conversion migration (2026-10-14)
+
+`postFightConversion.ts` ranks only prevalidated post-win push, objective, reset, farm, and regroup options. The live loop uses the selected conversion as a bounded residual-macro score contribution. No hard gate or executor moved into this module.
+
+Per the user's explicit deferred-validation direction, no test, build, browser, benchmark, or verification command has run after this phase. The remaining acceptance criteria are still incomplete.
+
+## Bounded decision telemetry migration (2026-10-14)
+
+`aiDecisionTelemetry.ts` keeps at most 240 residual macro diagnostic records in memory for final review. Records include time, actor/team, selected context, and candidate availability/reason. They are strictly observational and cannot alter simulation behavior.
+
+Per the user's explicit deferred-validation direction, no test, build, browser, benchmark, or verification command has run after this phase. The remaining acceptance criteria are still incomplete.
+
+## Deferred final verification (2026-10-14)
+
+`npm.cmd run check:game` passed 304 game tests, 3 deterministic simulations, and TypeScript. `npm.cmd run build` passed with the existing chunk-size warning. The controlled browser fixture passed across five viewports with ten fighters, two deaths, and no legacy abort state. Full live/headless parity, learning, and the broader requested scenario matrix remain unproven.
+
+## Scenario-matrix evidence (2026-10-14)
+
+Phase 6 live fixtures passed Valkira/Astra windup and one-hit timing at 1x/4x and Hweilin wave collision/resource behavior. Phase 7 passed Kindra hunt/smoke/respite values. A fresh normal fixture passed proactive 5v5 engagement, 30-second survival sample, spectator controls, and legacy-abort absence. The combined run's combat check correctly failed after deliberate Phase 6 mutations; the required fresh-fixture rerun passed. New score-layer quality, full scenario coverage, and live/headless parity remain unproven.
+
+## New decision-layer scenarios (2026-10-14)
+
+Five focused Node scenarios passed: spatial threat/cover reads, supported versus exposed outlook ranking, visible-memory expiry and unseen-attacker exclusion, and legal post-fight push selection without invented conversion. These verify isolated contracts, not full live quality or parity.
+
+## Live/headless parity audit (2026-10-14)
+
+`liveHeadlessParity.ts` records a source-backed scope inventory. Authored core combat/structure/objective/attribution rules are shared but execute in separate live/headless loops. Residual macro, team intent, spatial/outlook/memory/conversion scoring and browser/choreography are live-only; headless strategic reads are simplified. Headless reports are explicitly limited to their own deterministic executor and must not be used as live-AI parity evidence.
+
+## ML preparation: telemetry export (2026-10-14)
+
+Live match exports now carry bounded residual-macro telemetry. `decisionCalibration.ts` produces descriptive offered/selected counts for offline human review. This is not a trainer, optimizer, model runtime, or live policy input; it is preparatory evidence collection only.
+
+Verification after export integration: `npm.cmd run check:game` passed 309 game tests, 3 deterministic simulations, and TypeScript; `npm.cmd run build` passed with the existing chunk-size warning. No local live export was available for calibration review because the browser-debug session was not running.

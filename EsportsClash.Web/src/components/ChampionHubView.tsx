@@ -3,6 +3,7 @@ import { ConfluxSpellbook } from './ConfluxSpellbook';
 import { ChampionKit, PlayerCard, AvatarRole, AvatarCombatType } from '../types';
 import { AVATAR_COMBAT_TYPES, getAvatarCombatProfile } from '../avatarCombatRoles';
 import { ChampionArtwork } from './ChampionArtwork';
+import { AvatarModelPreview } from './AvatarModelPreview';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
 import { getChampionLore } from '../championLore';
@@ -212,6 +213,8 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
               </span>
             ))}
           </div>
+
+          <AvatarModelPreview champion={selectedChamp} />
 
           {/* Narrative Lore Section */}
           <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-1">

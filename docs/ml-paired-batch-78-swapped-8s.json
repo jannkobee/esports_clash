@@ -1,0 +1,445 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 78,
+  "swapped": true,
+  "scout": {
+    "label": "scout",
+    "event": {
+      "mode": "scout",
+      "actorId": "blue_p_woozy",
+      "second": 183.36666666665883,
+      "cardId": "p_woozy",
+      "champion": "Kindra",
+      "incumbent": "regroup",
+      "alternate": "fight",
+      "fingerprint": "74340:d90e54ea:d191c88e",
+      "matched": false,
+      "gate": null,
+      "actorStart": {
+        "x": 397.856866234161,
+        "y": 392.68979325020246,
+        "hpFraction": 1,
+        "gold": 614.7386666667122,
+        "cs": 2,
+        "kills": 0,
+        "deaths": 0,
+        "damageDealt": 2952
+      }
+    },
+    "lastSecond": 183.36666666665883,
+    "wallSeconds": 62.122
+  },
+  "replays": [
+    {
+      "label": "incumbent-a",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_woozy",
+        "second": 183.36666666665883,
+        "cardId": "p_woozy",
+        "champion": "Kindra",
+        "incumbent": "regroup",
+        "alternate": "fight",
+        "fingerprint": "74340:d90e54ea:d191c88e",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 397.856866234161,
+          "y": 392.68979325020246,
+          "hpFraction": 1,
+          "gold": 614.7386666667122,
+          "cs": 2,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 2952
+        },
+        "followup": {
+          "second": 191.3999999999917,
+          "actor": {
+            "x": 179.00000000000006,
+            "y": 398.66666666666725,
+            "hpFraction": 1,
+            "mana": 100,
+            "isAlive": true,
+            "gold": 712.018666666722,
+            "cs": 2,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 2952
+          },
+          "nearestEnemyDistance": 1048.0687790931906,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "506684:295b3e2e:26904a32"
+      },
+      "record": {
+        "second": 183.36666666665883,
+        "actorId": "blue_p_woozy",
+        "team": "blue",
+        "selected": "regroup",
+        "contextKey": "regroup:blue_p_craps",
+        "features": {
+          "bias": 1,
+          "iq": 0.95,
+          "teamfight": 0.96,
+          "lane": 0.96,
+          "flexibility": 0.96,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Marksman": 1,
+          "card:p_woozy": 1,
+          "personality:momentum_junkie": 1,
+          "personality:showman": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "retreat",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "fight",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.02682766111540688
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 614.7386666667122,
+          "cs": 2,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 2952
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333161,
+          "healthChange": 0,
+          "goldGain": 36.480000000003656,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.02736000000000274
+        }
+      },
+      "wallSeconds": 0.9123999999985098
+    },
+    {
+      "label": "incumbent-b",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_woozy",
+        "second": 183.36666666665883,
+        "cardId": "p_woozy",
+        "champion": "Kindra",
+        "incumbent": "regroup",
+        "alternate": "fight",
+        "fingerprint": "74340:d90e54ea:d191c88e",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 397.856866234161,
+          "y": 392.68979325020246,
+          "hpFraction": 1,
+          "gold": 614.7386666667122,
+          "cs": 2,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 2952
+        },
+        "followup": {
+          "second": 191.3999999999917,
+          "actor": {
+            "x": 179.00000000000006,
+            "y": 398.66666666666725,
+            "hpFraction": 1,
+            "mana": 100,
+            "isAlive": true,
+            "gold": 712.018666666722,
+            "cs": 2,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 2952
+          },
+          "nearestEnemyDistance": 1048.0687790931906,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "506684:295b3e2e:26904a32"
+      },
+      "record": {
+        "second": 183.36666666665883,
+        "actorId": "blue_p_woozy",
+        "team": "blue",
+        "selected": "regroup",
+        "contextKey": "regroup:blue_p_craps",
+        "features": {
+          "bias": 1,
+          "iq": 0.95,
+          "teamfight": 0.96,
+          "lane": 0.96,
+          "flexibility": 0.96,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Marksman": 1,
+          "card:p_woozy": 1,
+          "personality:momentum_junkie": 1,
+          "personality:showman": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "retreat",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "fight",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.02682766111540688
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 614.7386666667122,
+          "cs": 2,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 2952
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333161,
+          "healthChange": 0,
+          "goldGain": 36.480000000003656,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.02736000000000274
+        }
+      },
+      "wallSeconds": 0.831
+    },
+    {
+      "label": "alternate",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_woozy",
+        "second": 183.36666666665883,
+        "cardId": "p_woozy",
+        "champion": "Kindra",
+        "incumbent": "regroup",
+        "alternate": "fight",
+        "fingerprint": "74340:d90e54ea:d191c88e",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 397.856866234161,
+          "y": 392.68979325020246,
+          "hpFraction": 1,
+          "gold": 614.7386666667122,
+          "cs": 2,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 2952
+        },
+        "followup": {
+          "second": 191.3999999999917,
+          "actor": {
+            "x": 178.99999999999966,
+            "y": 398.6666666666656,
+            "hpFraction": 1,
+            "mana": 100,
+            "isAlive": true,
+            "gold": 712.018666666722,
+            "cs": 2,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 2952
+          },
+          "nearestEnemyDistance": 1048.0687790931909,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "507301:c3533da3:cd34c3bf"
+      },
+      "record": {
+        "second": 183.36666666665883,
+        "actorId": "blue_p_woozy",
+        "team": "blue",
+        "selected": "fight",
+        "contextKey": "fight:red_p_flaker:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.95,
+          "teamfight": 0.96,
+          "lane": 0.96,
+          "flexibility": 0.96,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Marksman": 1,
+          "card:p_woozy": 1,
+          "personality:momentum_junkie": 1,
+          "personality:showman": 0.5
+        },
+        "selectionReason": "evaluation-experiment:alternate",
+        "heldAction": "retreat",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "fight",
+          "pair": "fight-regroup",
+          "arm": "alternate",
+          "propensity": 0.5,
+          "utilityGap": 0.02682766111540688
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 614.7386666667122,
+          "cs": 2,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 2952
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target",
+            "learnedFactor": 0.11365885546143019,
+            "baselineUtility": 0.16866105465854805,
+            "actualUtility": 0.17320740887700525
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion",
+            "learnedFactor": 0.047353393242702914,
+            "baselineUtility": 0.28,
+            "actualUtility": 0.2818941357297081
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+            "learnedFactor": -0.1610122487041331,
+            "baselineUtility": 0.20647555994057745,
+            "actualUtility": 0.20003506999241213
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp",
+            "learnedFactor": -0.1877886074200141,
+            "baselineUtility": 0.13349999999999998,
+            "actualUtility": 0.12598845570319941
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available",
+            "learnedFactor": 0.1877886074200141,
+            "baselineUtility": -0.13384710058169927,
+            "actualUtility": -0.1263355562848987
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333161,
+          "healthChange": 0,
+          "goldGain": 36.480000000003656,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.02736000000000274
+        }
+      },
+      "wallSeconds": 0.8032000000011176
+    }
+  ],
+  "validPair": true,
+  "descriptiveAlternateMinusIncumbent": 0,
+  "extendedDifference": {
+    "healthFraction": 0,
+    "gold": 0,
+    "damageDealt": 0,
+    "kills": 0,
+    "deaths": 0,
+    "x": -3.979039320256561e-13,
+    "y": -1.6484591469634324e-12,
+    "nearestEnemyDistance": 2.2737367544323206e-13
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "plan": "ml-paired-rubric-plan.json",
+  "attempted": 6,
+  "accepted": 3,
+  "strata": {
+    "fight-regroup": {
+      "planned": 3,
+      "accepted": 2,
+      "cards": [
+        "p_bigtail",
+        "p_woozy"
+      ],
+      "classifications": {
+        "no-material-difference": 2
+      }
+    },
+    "regroup-wave": {
+      "planned": 3,
+      "accepted": 1,
+      "cards": [
+        "p_woozy"
+      ],
+      "classifications": {
+        "no-material-difference": 1
+      }
+    }
+  },
+  "cases": [
+    {
+      "seed": 80,
+      "side": "original",
+      "pair": "fight-regroup",
+      "file": "ml-paired-rubric-80-original-fight-regroup.json",
+      "status": "accepted",
+      "cardId": "p_bigtail",
+      "champion": "Buck",
+      "incumbent": "regroup",
+      "alternate": "fight",
+      "classification": "no-material-difference",
+      "delta": {
+        "alive": 0,
+        "healthFraction": 0,
+        "structureMargin": 0,
+        "dragonAspect": 0,
+        "siegeGolemUnits": 0,
+        "economicValue": 0,
+        "gold": 0,
+        "damageDealt": 0
+      },
+      "thresholded": {
+        "healthFraction": 0,
+        "structureMargin": 0,
+        "dragonAspect": 0,
+        "siegeGolemUnits": 0,
+        "economicValue": 0
+      }
+    },
+    {
+      "seed": 80,
+      "side": "swapped",
+      "pair": "regroup-wave",
+      "file": "ml-paired-rubric-80-swapped-regroup-wave.json",
+      "status": "no-target",
+      "reason": "timeout"
+    },
+    {
+      "seed": 81,
+      "side": "original",
+      "pair": "fight-regroup",
+      "file": "ml-paired-rubric-81-original-fight-regroup.json",
+      "status": "invalid-pair",
+      "reason": "duplicate controls differed",
+      "cardId": "p_flaker"
+    },
+    {
+      "seed": 81,
+      "side": "swapped",
+      "pair": "regroup-wave",
+      "file": "ml-paired-rubric-81-swapped-regroup-wave.json",
+      "status": "accepted",
+      "cardId": "p_woozy",
+      "champion": "Kindra",
+      "incumbent": "regroup",
+      "alternate": "wave",
+      "classification": "no-material-difference",
+      "delta": {
+        "alive": 0,
+        "healthFraction": 0,
+        "structureMargin": 0,
+        "dragonAspect": 0,
+        "siegeGolemUnits": 0,
+        "economicValue": 0,
+        "gold": 0,
+        "damageDealt": 0
+      },
+      "thresholded": {
+        "healthFraction": 0,
+        "structureMargin": 0,
+        "dragonAspect": 0,
+        "siegeGolemUnits": 0,
+        "economicValue": 0
+      }
+    },
+    {
+      "seed": 82,
+      "side": "original",
+      "pair": "fight-regroup",
+      "file": "ml-paired-rubric-82-original-fight-regroup.json",
+      "status": "accepted",
+      "cardId": "p_woozy",
+      "champion": "Kindra",
+      "incumbent": "regroup",
+      "alternate": "fight",
+      "classification": "no-material-difference",
+      "delta": {
+        "alive": 0,
+        "healthFraction": 0,
+        "structureMargin": 0,
+        "dragonAspect": 0,
+        "siegeGolemUnits": 0,
+        "economicValue": 0,
+        "gold": 2.842170943040401e-14,
+        "damageDealt": 0
+      },
+      "thresholded": {
+        "healthFraction": 0,
+        "structureMargin": 0,
+        "dragonAspect": 0,
+        "siegeGolemUnits": 0,
+        "economicValue": 0
+      }
+    },
+    {
+      "seed": 82,
+      "side": "swapped",
+      "pair": "regroup-wave",
+      "file": "ml-paired-rubric-82-swapped-regroup-wave.json",
+      "status": "no-target",
+      "reason": "timeout"
+    }
+  ],
+  "policyPromoted": false
+}

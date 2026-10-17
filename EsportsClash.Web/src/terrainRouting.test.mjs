@@ -4,6 +4,36 @@ import { CAMP_ROCK_RINGS, ROCK_TERRAIN, rockApproachWaypoint,
   resolveRockTerrainMovement, isInsideRockTerrain } from './arenaRules.ts';
 import { stepLeashedMonster } from './neutralAggroRules.ts';
 import { ARENA_WIDTH, WELL_X, NEXUS_TOWER_X } from './arenaLayout.ts';
+import { createTerrainRouter } from './terrainRouting.ts';
+
+test('checkpoint restores moving-goal route hysteresis onto cloned actors without sharing mutable caches', () => {
+  const router = createTerrainRouter([{ x: 200, y: 200, radius: 50 }]);
+  const actor = { id: 'camp', x: 120, y: 200 };
+  router(actor, { x: 280, y: 200 });
+  const saved = router.capture([actor]), untouched = structuredClone(saved);
+  assert.equal(saved.length, 1);
+  const clone = structuredClone(actor);
+  router(clone, { x: 290, y: 200 });
+  assert.equal(router.capture([clone])[0].cached.route.goal.x, 290);
+  router.restore([clone], saved);
+  assert.equal(router.capture([clone])[0].cached.route.goal.x, 280);
+  for (let tick = 0; tick < 100; tick++) {
+    const goal = { x: 290, y: 200 + Math.sin(tick / 10) * 2 };
+    const a = router(actor, goal), b = router(clone, goal);
+    assert.deepEqual(a, b);
+    const step = point => {
+      const length = Math.hypot(a.x - point.x, a.y - point.y);
+      if (length) { point.x += (a.x - point.x) / length * Math.min(2, length);
+        point.y += (a.y - point.y) / length * Math.min(2, length); }
+    };
+    step(actor); step(clone);
+    assert.deepEqual(actor, clone);
+    assert.deepEqual(router.capture([actor]), router.capture([clone]));
+  }
+  assert.deepEqual(saved, untouched);
+  router.restore([clone], []);
+  assert.deepEqual(router.capture([clone]), []);
+});
 
 function walkRoute(start, goal, radius = 13) {
   const walker = { x: start.x, y: start.y };

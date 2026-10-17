@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-17",
+  "details": true,
+  "fixtures": [
+    {
+      "label": "Hook + linked chain",
+      "effects": 14,
+      "pooledEffects": 14
+    },
+    {
+      "label": "Electric dash",
+      "effects": 4,
+      "pooledEffects": 4
+    },
+    {
+      "label": "Ember dash",
+      "effects": 4,
+      "pooledEffects": 4
+    },
+    {
+      "label": "Feathered dash",
+      "effects": 8,
+      "pooledEffects": 8
+    },
+    {
+      "label": "Death Mark",
+      "effects": 6,
+      "pooledEffects": 6
+    },
+    {
+      "label": "Shallow Grave",
+      "effects": 6,
+      "pooledEffects": 6
+    },
+    {
+      "label": "Singularity Well",
+      "effects": 36,
+      "pooledEffects": 36
+    },
+    {
+      "label": "Court of Branches",
+      "effects": 19,
+      "pooledEffects": 19
+    },
+    {
+      "label": "Cyclone Dance",
+      "effects": 5,
+      "pooledEffects": 5
+    },
+    {
+      "label": "Broadside Waltz",
+      "effects": 14,
+      "pooledEffects": 14
+    },
+    {
+      "label": "Prism formation",
+      "effects": 13,
+      "pooledEffects": 13
+    },
+    {
+      "label": "Entangling Claws",
+      "effects": 6,
+      "pooledEffects": 6
+    }
+  ],
+  "videoMime": "video/webm;codecs=vp9",
+  "limits": "Controlled renderer fixtures; the source GLB is a scale reference. Full live ability matrix and device frame times remain unmeasured."
+}

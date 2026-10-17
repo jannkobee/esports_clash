@@ -1,0 +1,558 @@
+{
+  "date": "2026-10-17",
+  "covered": [
+    {
+      "id": "c_solana",
+      "calls": 36,
+      "signature": "Dawn shield and long sunblade",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_astra",
+      "calls": 32,
+      "signature": "Crystal longbow and arrow quiver",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_kyumi",
+      "calls": 38,
+      "signature": "Foxfire pearl and nine white-tipped tails",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_buck",
+      "calls": 33,
+      "signature": "Seismic double-barrel shotgun",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_valkira",
+      "calls": 35,
+      "signature": "Paired crescent execution blades",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_kage",
+      "calls": 31,
+      "signature": "Twin wrist blades and back shuriken",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_kazemaru",
+      "calls": 32,
+      "signature": "Storm katana and lacquered sheath",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_kindra",
+      "calls": 33,
+      "signature": "Crescent spirit bow with wolf companion ornament",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_cora",
+      "calls": 29,
+      "signature": "Razor-feather fan and feather knives",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_renn",
+      "calls": 29,
+      "signature": "Layered herald plumage",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_sylla",
+      "calls": 31,
+      "signature": "Bear shaman staff and Ironclaw true form",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_tequoia",
+      "calls": 32,
+      "signature": "Forked living-oak staff",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_zal",
+      "calls": 33,
+      "signature": "Venom mask and sanctuary staff",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_xin",
+      "calls": 35,
+      "signature": "Twin ember sabers",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_raijin",
+      "calls": 35,
+      "signature": "Storm halo and lightning satellites",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_kaolin",
+      "calls": 33,
+      "signature": "Mountain remnant spear",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_inai",
+      "calls": 33,
+      "signature": "Double-ended void glaive",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_qiyana",
+      "calls": 31,
+      "signature": "Three-gem elemental hoop",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_locke",
+      "calls": 32,
+      "signature": "Ash saber and talisman streamers",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_senna",
+      "calls": 32,
+      "signature": "Oversized mist relic cannon",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_largo",
+      "calls": 11,
+      "signature": "Bogbeat drum and ribbon tongue",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_shadowfiend",
+      "calls": 12,
+      "signature": "Soul furnace and raking talons",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_earthshaker",
+      "calls": 29,
+      "signature": "Runic earthquake totem",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_mirehook",
+      "calls": 31,
+      "signature": "Barbed hook and hanging chain",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_nullweaver",
+      "calls": 11,
+      "signature": "Gravitic halo and floating shards",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_voltgrip",
+      "calls": 17,
+      "signature": "Rocket fist and exposed electric coil",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_aetherbolt",
+      "calls": 30,
+      "signature": "Celestial casting gauntlet",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_corsara",
+      "calls": 37,
+      "signature": "Twin privateer flintlocks",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_brewmaw",
+      "calls": 30,
+      "signature": "Oak vintage cask",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_wraithhook",
+      "calls": 35,
+      "signature": "Spectral hook and caged lantern",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_invoker",
+      "calls": 36,
+      "signature": "Ice, wind and fire orbital arsenal",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_hwei",
+      "calls": 36,
+      "signature": "Broad calligraphy brush and ink palette",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_jayce",
+      "calls": 33,
+      "signature": "Mercury hammer with plasma barrel",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_vi",
+      "calls": 32,
+      "signature": "Paired hydraulic breaker fists",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_jinx",
+      "calls": 32,
+      "signature": "Mayhem launcher and ammunition belt",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_puck",
+      "calls": 11,
+      "signature": "Dreamrift wings and curled dragon tail",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_batrider",
+      "calls": 16,
+      "signature": "Cinder bat mount and burning lasso",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_bristleback",
+      "calls": 14,
+      "signature": "Layered barbed quill carapace",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_io",
+      "calls": 10,
+      "signature": "Five harmonic spirit satellites",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_lulu",
+      "calls": 34,
+      "signature": "Briar staff and luminous moth",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_silencer",
+      "calls": 34,
+      "signature": "Floating edict tablet and silence quill",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_wukong_lol",
+      "calls": 31,
+      "signature": "Gold-banded mist staff",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "calls": 32,
+      "signature": "Canopy sovereign staff and branch crown",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_stepstone",
+      "calls": 33,
+      "signature": "Bell bracers and stone kick guards",
+      "format": "glb",
+      "canvases": 1
+    },
+    {
+      "id": "c_skybreaker",
+      "calls": 16,
+      "signature": "Twin lift rotors and rotary flak cannon",
+      "format": "glb",
+      "canvases": 1
+    }
+  ],
+  "renderStats": [
+    {
+      "id": "c_solana",
+      "calls": 35,
+      "triangles": 10072
+    },
+    {
+      "id": "c_astra",
+      "calls": 31,
+      "triangles": 11060
+    },
+    {
+      "id": "c_kyumi",
+      "calls": 37,
+      "triangles": 12080
+    },
+    {
+      "id": "c_buck",
+      "calls": 32,
+      "triangles": 10400
+    },
+    {
+      "id": "c_valkira",
+      "calls": 34,
+      "triangles": 9720
+    },
+    {
+      "id": "c_kage",
+      "calls": 30,
+      "triangles": 8824
+    },
+    {
+      "id": "c_kazemaru",
+      "calls": 31,
+      "triangles": 9288
+    },
+    {
+      "id": "c_kindra",
+      "calls": 32,
+      "triangles": 10044
+    },
+    {
+      "id": "c_cora",
+      "calls": 28,
+      "triangles": 9628
+    },
+    {
+      "id": "c_renn",
+      "calls": 28,
+      "triangles": 10144
+    },
+    {
+      "id": "c_sylla",
+      "calls": 30,
+      "triangles": 10276
+    },
+    {
+      "id": "c_tequoia",
+      "calls": 31,
+      "triangles": 10272
+    },
+    {
+      "id": "c_zal",
+      "calls": 32,
+      "triangles": 9264
+    },
+    {
+      "id": "c_xin",
+      "calls": 34,
+      "triangles": 9944
+    },
+    {
+      "id": "c_raijin",
+      "calls": 34,
+      "triangles": 10428
+    },
+    {
+      "id": "c_kaolin",
+      "calls": 32,
+      "triangles": 9120
+    },
+    {
+      "id": "c_inai",
+      "calls": 32,
+      "triangles": 9832
+    },
+    {
+      "id": "c_qiyana",
+      "calls": 30,
+      "triangles": 9292
+    },
+    {
+      "id": "c_locke",
+      "calls": 31,
+      "triangles": 9468
+    },
+    {
+      "id": "c_senna",
+      "calls": 31,
+      "triangles": 9732
+    },
+    {
+      "id": "c_largo",
+      "calls": 10,
+      "triangles": 3812
+    },
+    {
+      "id": "c_shadowfiend",
+      "calls": 11,
+      "triangles": 1216
+    },
+    {
+      "id": "c_earthshaker",
+      "calls": 28,
+      "triangles": 10072
+    },
+    {
+      "id": "c_mirehook",
+      "calls": 30,
+      "triangles": 10720
+    },
+    {
+      "id": "c_nullweaver",
+      "calls": 10,
+      "triangles": 752
+    },
+    {
+      "id": "c_voltgrip",
+      "calls": 16,
+      "triangles": 2972
+    },
+    {
+      "id": "c_aetherbolt",
+      "calls": 29,
+      "triangles": 9344
+    },
+    {
+      "id": "c_corsara",
+      "calls": 36,
+      "triangles": 10352
+    },
+    {
+      "id": "c_brewmaw",
+      "calls": 29,
+      "triangles": 9640
+    },
+    {
+      "id": "c_wraithhook",
+      "calls": 34,
+      "triangles": 9992
+    },
+    {
+      "id": "c_invoker",
+      "calls": 35,
+      "triangles": 12316
+    },
+    {
+      "id": "c_hwei",
+      "calls": 35,
+      "triangles": 11380
+    },
+    {
+      "id": "c_jayce",
+      "calls": 32,
+      "triangles": 9432
+    },
+    {
+      "id": "c_vi",
+      "calls": 31,
+      "triangles": 8992
+    },
+    {
+      "id": "c_jinx",
+      "calls": 31,
+      "triangles": 12812
+    },
+    {
+      "id": "c_puck",
+      "calls": 10,
+      "triangles": 2168
+    },
+    {
+      "id": "c_batrider",
+      "calls": 15,
+      "triangles": 3576
+    },
+    {
+      "id": "c_bristleback",
+      "calls": 13,
+      "triangles": 2280
+    },
+    {
+      "id": "c_io",
+      "calls": 9,
+      "triangles": 2632
+    },
+    {
+      "id": "c_lulu",
+      "calls": 33,
+      "triangles": 10476
+    },
+    {
+      "id": "c_silencer",
+      "calls": 33,
+      "triangles": 9664
+    },
+    {
+      "id": "c_wukong_lol",
+      "calls": 30,
+      "triangles": 10048
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "calls": 31,
+      "triangles": 10772
+    },
+    {
+      "id": "c_stepstone",
+      "calls": 32,
+      "triangles": 9568
+    },
+    {
+      "id": "c_skybreaker",
+      "calls": 15,
+      "triangles": 3484
+    }
+  ],
+  "studio": {
+    "keyboardRotation": true,
+    "poses": true,
+    "animateReset": true,
+    "reducedMotionStartsStill": true,
+    "mobileOverflow": false,
+    "contextRecovery": true,
+    "unmount": true
+  },
+  "errors": [],
+  "limits": "Procedural model review and controlled browser fixtures; no authored rig/texture or physical-device performance claim."
+}

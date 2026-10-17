@@ -1,0 +1,37 @@
+{
+  "method": "Existing held-out contexts used only to diagnose prediction/utility units; not the fresh test set",
+  "authority": [
+    {
+      "id": "heldout-87-d0-original",
+      "cardId": "p_bigtail",
+      "gapWithoutLearned": 0.09500228129028965,
+      "predictedRewardAdvantage": 0.08261686288107672,
+      "additiveContribution": 0.003304674515243069,
+      "remainingGap": 0.09169760677504658
+    },
+    {
+      "id": "heldout-88-d0-swapped",
+      "cardId": "p_craps",
+      "gapWithoutLearned": 0.1031651252927902,
+      "predictedRewardAdvantage": -0.03056544241551977,
+      "additiveContribution": -0.0012226176966207908,
+      "remainingGap": 0.10438774298941099
+    },
+    {
+      "id": "heldout-89-d1-original",
+      "cardId": "p_research_oner",
+      "gapWithoutLearned": 0.05389292921726348,
+      "predictedRewardAdvantage": 0.013797406432835464,
+      "additiveContribution": 0.0005518962573134186,
+      "remainingGap": 0.05334103295995006
+    },
+    {
+      "id": "heldout-90-d1-swapped",
+      "cardId": "p_research_oner",
+      "gapWithoutLearned": 0.10677941804860451,
+      "predictedRewardAdvantage": 0.013797406432835464,
+      "additiveContribution": 0.0005518962573134186,
+      "remainingGap": 0.1062275217912911
+    }
+  ]
+}

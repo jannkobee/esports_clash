@@ -1,0 +1,22 @@
+/** Authored anatomy assets use the existing combat IDs and character-specific equipment. */
+export const AUTHORED_AVATARS: Readonly<Record<string, { gender: 'male' | 'female'; hair: string; beard?: boolean; faceWidth?: number }>> = Object.freeze({
+  c_solana: {gender:'female',hair:'Hair_Buns'}, c_astra: {gender:'female',hair:'Hair_Long'},
+  c_kyumi: {gender:'female',hair:'Hair_Long'}, c_buck: {gender:'male',hair:'Hair_Buzzed'},
+  c_valkira: {gender:'female',hair:'Hair_Long'}, c_kage: {gender:'male',hair:'Hair_Buzzed'},
+  c_kazemaru: {gender:'male',hair:'Hair_SimpleParted'}, c_kindra: {gender:'female',hair:'Hair_Buns'},
+  c_cora: {gender:'female',hair:'Hair_Buns'}, c_renn: {gender:'male',hair:'Hair_SimpleParted'},
+  c_sylla: {gender:'male',hair:'Hair_SimpleParted',beard:true}, c_tequoia: {gender:'female',hair:'Hair_Long'},
+  c_zal: {gender:'male',hair:'Hair_Buzzed',beard:true}, c_xin: {gender:'male',hair:'Hair_SimpleParted'},
+  c_raijin: {gender:'male',hair:'Hair_Buzzed'}, c_kaolin: {gender:'male',hair:'Hair_Buzzed',faceWidth:1.1},
+  c_inai: {gender:'male',hair:'Hair_SimpleParted'}, c_qiyana: {gender:'female',hair:'Hair_Buns'},
+  c_locke: {gender:'male',hair:'Hair_Buzzed'}, c_senna: {gender:'female',hair:'Hair_Long'},
+  c_earthshaker: {gender:'male',hair:'Hair_Buzzed',beard:true,faceWidth:1.13},
+  c_mirehook: {gender:'male',hair:'Hair_Buzzed',faceWidth:1.18},
+  c_aetherbolt: {gender:'male',hair:'Hair_SimpleParted'}, c_corsara: {gender:'female',hair:'Hair_Buns'},
+  c_brewmaw: {gender:'male',hair:'Hair_SimpleParted',beard:true,faceWidth:1.1},
+  c_wraithhook: {gender:'male',hair:'Hair_Buzzed'}, c_invoker: {gender:'male',hair:'Hair_SimpleParted'},
+  c_hwei: {gender:'male',hair:'Hair_Long'}, c_jayce: {gender:'male',hair:'Hair_SimpleParted'},
+  c_vi: {gender:'female',hair:'Hair_BuzzedFemale'}, c_jinx: {gender:'female',hair:'Hair_Long'},
+  c_lulu: {gender:'female',hair:'Hair_Buns'}, c_silencer: {gender:'male',hair:'Hair_Buzzed'},
+  c_stepstone: {gender:'male',hair:'Hair_SimpleParted'},
+});

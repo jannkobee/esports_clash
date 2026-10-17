@@ -1,0 +1,1521 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 1030,
+  "swapped": true,
+  "draft": 6,
+  "afterSeconds": 600,
+  "pairFilter": "farm-push",
+  "cardFilter": "",
+  "horizonSeconds": 30,
+  "auditOnly": false,
+  "scout": {
+    "label": "scout",
+    "rejected": "match ended before eligible pair",
+    "inspection": {
+      "second": 550.4666666668234,
+      "fingerprint": "1361236:5810abfe:4cc4895a",
+      "randomState": 2279931178,
+      "finished": true,
+      "executionAudit": {
+        "counts": {
+          "push:push": 24097,
+          "wave:minion": 11573,
+          "fight:champion": 34495,
+          "regroup:regroup": 15366,
+          "fight:hold": 247,
+          "push:minion": 469,
+          "push:structure": 2726,
+          "farm:camp": 4985,
+          "push:hold": 1094
+        },
+        "regroupPaths": {
+          "fight-regroup": 3561,
+          "igl-regroup": 11787,
+          "support-tether": 18
+        },
+        "samples": [
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_research_skiter",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_research_malr1ne",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_research_atf",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 15.299999999999956,
+            "actorId": "red_p_research_yatoro",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 15.33333333333329,
+            "actorId": "red_p_research_yatoro",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 15.366666666666623,
+            "actorId": "red_p_research_yatoro",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.066666666666624,
+            "actorId": "red_p_research_caedrel",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.8333333333333908,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.066666666666624,
+            "actorId": "red_p_research_tyler1",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333372,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.066666666666624,
+            "actorId": "red_p_research_yatoro",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333434,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 22.433333333333607,
+            "actorId": "red_p_research_tyler1",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 2.8333333333332407,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 22.933333333333632,
+            "actorId": "red_p_research_tyler1",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 2.8333333333333504,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 22.966666666666967,
+            "actorId": "red_p_research_tyler1",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 2.8333333333333504,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 23.266666666666982,
+            "actorId": "red_p_research_caedrel",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 1.5393939393939609,
+            "cdUlt": 999,
+            "damageDealt": 395
+          },
+          {
+            "second": 25.166666666667076,
+            "actorId": "blue_p_research_cr1t",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 2.6696969696969983,
+            "cd2": 0.42121212121214513,
+            "cdUlt": 999,
+            "damageDealt": 882
+          },
+          {
+            "second": 40.800000000000246,
+            "actorId": "red_p_research_tyler1",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 6.669696969696973,
+            "cd2": 11.01818181818182,
+            "cdUlt": 999,
+            "damageDealt": 43
+          },
+          {
+            "second": 41.700000000000195,
+            "actorId": "red_p_research_tyler1",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 5.769696969696976,
+            "cd2": 10.118181818181823,
+            "cdUlt": 999,
+            "damageDealt": 43
+          },
+          {
+            "second": 41.733333333333526,
+            "actorId": "red_p_research_tyler1",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 5.7363636363636425,
+            "cd2": 10.08484848484849,
+            "cdUlt": 999,
+            "damageDealt": 43
+          },
+          {
+            "second": 41.933333333333515,
+            "actorId": "red_p_research_tyler1",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "walk",
+            "cd1": 5.536363636363643,
+            "cd2": 9.88484848484849,
+            "cdUlt": 999,
+            "damageDealt": 43
+          },
+          {
+            "second": 46.39999999999993,
+            "actorId": "red_p_research_miposhka",
+            "selected": "push",
+            "intent": "structure",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0.7242424242424391,
+            "cdUlt": 999,
+            "damageDealt": 689
+          },
+          {
+            "second": 46.43333333333326,
+            "actorId": "red_p_research_miposhka",
+            "selected": "push",
+            "intent": "structure",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0.6909090909091058,
+            "cdUlt": 999,
+            "damageDealt": 689
+          },
+          {
+            "second": 46.46666666666659,
+            "actorId": "red_p_research_miposhka",
+            "selected": "push",
+            "intent": "structure",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0.6575757575757725,
+            "cdUlt": 999,
+            "damageDealt": 689
+          },
+          {
+            "second": 51.666666666666295,
+            "actorId": "red_p_research_caedrel",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 2.833333333333343,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 541
+          },
+          {
+            "second": 51.699999999999626,
+            "actorId": "red_p_research_caedrel",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 2.833333333333343,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 541
+          },
+          {
+            "second": 51.73333333333296,
+            "actorId": "red_p_research_caedrel",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 2.833333333333343,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 541
+          },
+          {
+            "second": 76.03333333333158,
+            "actorId": "blue_p_research_sneyking",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1697
+          },
+          {
+            "second": 76.06666666666491,
+            "actorId": "blue_p_research_sneyking",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1697
+          },
+          {
+            "second": 76.09999999999825,
+            "actorId": "blue_p_research_sneyking",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1697
+          }
+        ],
+        "pushPlans": {
+          "total": 28386,
+          "mismatches": 0,
+          "examples": []
+        }
+      },
+      "opportunityAudit": {
+        "total": 103660,
+        "firstGates": {
+          "legal-pair": 5577,
+          "commitment": 51851,
+          "health": 26151,
+          "defense": 14388,
+          "tower": 4027,
+          "utility-gap": 346,
+          "eligible": 98,
+          "influence": 17,
+          "danger": 151,
+          "survival": 6,
+          "objective": 1048
+        },
+        "allGates": {
+          "legal-pair": 96683,
+          "commitment": 94145,
+          "health": 26151,
+          "defense": 21246,
+          "influence": 425,
+          "survival": 537,
+          "utility-gap": 5182,
+          "danger": 587,
+          "tower": 6860,
+          "enemy-near": 4,
+          "objective": 1120
+        },
+        "safeExceptGap": {
+          "p_research_caedrel:farm-push": {
+            "count": 112,
+            "minGap": 0.10069062545263067,
+            "maxGap": 0.39020824730663745
+          },
+          "p_research_atf:farm-push": {
+            "count": 58,
+            "minGap": 0.10001354163909135,
+            "maxGap": 0.38881276621623373
+          },
+          "p_research_skiter:farm-push": {
+            "count": 61,
+            "minGap": 0.10117878198072337,
+            "maxGap": 0.36862331653689173
+          },
+          "p_research_tyler1:farm-push": {
+            "count": 57,
+            "minGap": 0.1037753608140475,
+            "maxGap": 0.35252089817742843
+          },
+          "p_research_malr1ne:farm-push": {
+            "count": 36,
+            "minGap": 0.1007753554775722,
+            "maxGap": 0.3708114467621616
+          },
+          "p_research_yatoro:fight-regroup": {
+            "count": 8,
+            "minGap": 0.21679747203592437,
+            "maxGap": 0.39779778326517196
+          },
+          "p_research_malr1ne:regroup-wave": {
+            "count": 7,
+            "minGap": 0.32202240901120677,
+            "maxGap": 0.3464408539226147
+          },
+          "p_research_skiter:fight-regroup": {
+            "count": 1,
+            "minGap": 0.24186721580083184,
+            "maxGap": 0.24186721580083184
+          },
+          "p_research_collapse:regroup-wave": {
+            "count": 3,
+            "minGap": 0.3228615091133074,
+            "maxGap": 0.35585421931859457
+          },
+          "p_research_sneyking:fight-regroup": {
+            "count": 3,
+            "minGap": 0.26842465107638847,
+            "maxGap": 0.27979186139080947
+          }
+        },
+        "examples": [
+          {
+            "second": 51.666666666666295,
+            "actorId": "red_p_research_caedrel",
+            "cardId": "p_research_caedrel",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.3848853808871141,
+            "healthFraction": 1,
+            "previousIntent": "push",
+            "actor": {
+              "x": 1606.8396160700684,
+              "y": 419.37281656827304
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_red_drakes",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.22544371626771864,
+                  "learned": -0.2049523574200141
+                },
+                "utility": 0.20275753407642755,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.022544371626771864,
+                  "learned": -0.008198094296800565
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:red:28:7",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.8266455460213917,
+                  "personality": 0,
+                  "learned": 0.2049523574200141
+                },
+                "utility": -0.18212784681068653,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.2893259411074871,
+                  "personality": 0,
+                  "learned": 0.008198094296800565
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_red_drakes",
+              "x": 1633,
+              "y": 575,
+              "distance": 157.81060138740304
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:red",
+                  "x": 1142.6666666666858,
+                  "y": 420
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1142.6666666666858,
+              "laneY": 420,
+              "localThreat": 0.13322773010695863,
+              "structure": {
+                "id": "b_t1",
+                "x": 1050,
+                "y": 380,
+                "distance": 558.2298601020731,
+                "outlook": {
+                  "travelSeconds": 5.979174824730271,
+                  "survival": 0.3387418337633869,
+                  "support": 0.8958543843851822,
+                  "pressure": 0.0734395885680979
+                }
+              }
+            }
+          },
+          {
+            "second": 87.56666666666426,
+            "actorId": "blue_p_research_atf",
+            "cardId": "p_research_atf",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.16679017414980818,
+            "healthFraction": 1,
+            "previousIntent": "push",
+            "actor": {
+              "x": 185,
+              "y": 389.33333333333326
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.7377901058992399,
+                  "learned": -0.20538519075334746
+                },
+                "utility": 0.1515055817799421,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.07377901058992399,
+                  "learned": -0.0082154076301339
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:34:3",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.35,
+                  "personality": 0,
+                  "learned": 0.20538519075334746
+                },
+                "utility": -0.01528459236986608,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.12249999999999998,
+                  "personality": 0,
+                  "learned": 0.0082154076301339
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_blue_buff",
+              "x": 640,
+              "y": 145,
+              "distance": 516.453074129468
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 1387,
+                  "y": 390
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1387,
+              "laneY": 390,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 1365.0319084589603,
+                "outlook": {
+                  "travelSeconds": 12.086018175799621,
+                  "survival": 0.5194194338276137,
+                  "support": 0.8564060061322158,
+                  "pressure": 0.4013763835804734
+                }
+              }
+            }
+          },
+          {
+            "second": 94.03333333333056,
+            "actorId": "blue_p_research_skiter",
+            "cardId": "p_research_skiter",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.10117878198072337,
+            "healthFraction": 0.9728915662650602,
+            "previousIntent": "camp",
+            "actor": {
+              "x": 571.1915766124097,
+              "y": 272.4044043745881
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0,
+                  "learned": -0.1977652252409575
+                },
+                "utility": 0.22558939099036168,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": 0,
+                  "learned": -0.0079106090096383
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:21:9",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0,
+                  "personality": 0.35,
+                  "learned": 0.1977652252409575
+                },
+                "utility": 0.12441060900963831,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": 0,
+                  "personality": 0.017499999999999998,
+                  "learned": 0.0079106090096383
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_blue_buff",
+              "x": 571.1915766124097,
+              "y": 272.4044043745881,
+              "distance": 0
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 873.6666666666713,
+                  "y": 400
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 873.6666666666713,
+              "laneY": 400,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 984.7043931518167,
+                "outlook": {
+                  "travelSeconds": 7.663851363350635,
+                  "survival": 0.4398194367656087,
+                  "support": 0.8720979095711301,
+                  "pressure": 0.41693660365777124
+                }
+              }
+            }
+          },
+          {
+            "second": 116.6666666666626,
+            "actorId": "red_p_research_tyler1",
+            "cardId": "p_research_tyler1",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.18918945339312182,
+            "healthFraction": 1,
+            "previousIntent": "push",
+            "actor": {
+              "x": 2415,
+              "y": 370
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_red_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.7251319373263132,
+                  "learned": -0.19791502408668077
+                },
+                "utility": 0.15307020530390145,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.07251319373263132,
+                  "learned": -0.00791660096346723
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:red:30:13",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.40867385443625037,
+                  "personality": 0,
+                  "learned": 0.19791502408668077
+                },
+                "utility": -0.03611924808922039,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.14303584905268762,
+                  "personality": 0,
+                  "learned": 0.00791660096346723
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_red_blue_buff",
+              "x": 1960,
+              "y": 145,
+              "distance": 507.5923561284192
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:red",
+                  "x": 1213,
+                  "y": 370
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1213,
+              "laneY": 370,
+              "localThreat": 0,
+              "structure": {
+                "id": "b_t1",
+                "x": 1050,
+                "y": 380,
+                "distance": 1365.0366295451563,
+                "outlook": {
+                  "travelSeconds": 12.543205995668155,
+                  "survival": 0.43794280508989497,
+                  "support": 0.7701025569528492,
+                  "pressure": 0.08811173883664986
+                }
+              }
+            }
+          },
+          {
+            "second": 136.3666666666615,
+            "actorId": "blue_p_research_malr1ne",
+            "cardId": "p_research_malr1ne",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.12265614088656353,
+            "healthFraction": 1,
+            "previousIntent": "regroup",
+            "actor": {
+              "x": 824.4767890713346,
+              "y": 367.80551656483533
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_red_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.3364663157871813,
+                  "learned": -0.1800063574200141
+                },
+                "utility": 0.19265311412448127,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.03364663157871813,
+                  "learned": -0.007200254296800565
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:18:8",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.10343794588252234,
+                  "personality": 0,
+                  "learned": 0.1800063574200141
+                },
+                "utility": 0.06999697323791775,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.03620328105888281,
+                  "personality": 0,
+                  "learned": 0.007200254296800565
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_red_buff",
+              "x": 785,
+              "y": 600,
+              "distance": 235.52642105102692
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 757.0000000000027,
+                  "y": 365
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 757.0000000000027,
+              "laneY": 365,
+              "localThreat": 0.10343794588252234,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 725.6256852003596,
+                "outlook": {
+                  "travelSeconds": 5.529768430479615,
+                  "survival": 0.26650155408569975,
+                  "support": 0.8084461307509813,
+                  "pressure": 0.4398193583023185
+                }
+              }
+            }
+          },
+          {
+            "second": 282.766666666676,
+            "actorId": "red_p_research_yatoro",
+            "cardId": "p_research_yatoro",
+            "incumbent": "regroup",
+            "alternate": "fight",
+            "utilityGap": 0.21679747203592437,
+            "healthFraction": 1,
+            "previousIntent": "regroup",
+            "actor": {
+              "x": 1905.056224964601,
+              "y": 372.5044365410974
+            },
+            "candidates": [
+              {
+                "action": "fight",
+                "contextKey": "fight:blue_p_research_sneyking:0",
+                "factors": {
+                  "tactical": 0.82,
+                  "coordination": 0.7383720251155964,
+                  "danger": 0.44330481680881473,
+                  "learned": 0.07887968879476352
+                },
+                "utility": 0.14160314468257695,
+                "contributions": {
+                  "tactical": 0.205,
+                  "coordination": 0.08860464301387157,
+                  "danger": -0.15515668588308515,
+                  "learned": 0.003155187551790541
+                },
+                "valid": true
+              },
+              {
+                "action": "regroup",
+                "contextKey": "regroup:red_p_research_tyler1",
+                "factors": {
+                  "tactical": 0.82,
+                  "coordination": 0.9,
+                  "personality": 1,
+                  "danger": 0,
+                  "opportunity": 0,
+                  "learned": -0.11498458203746643
+                },
+                "utility": 0.3584006167185013,
+                "contributions": {
+                  "tactical": 0.205,
+                  "coordination": 0.108,
+                  "personality": 0.05,
+                  "danger": 0,
+                  "opportunity": 0,
+                  "learned": -0.004599383281498657
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:red:24:4",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.8267910953429343,
+                  "personality": 0.35,
+                  "learned": 0.20413094075334745
+                },
+                "utility": -0.16471164573989308,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.289376883370027,
+                  "personality": 0.017499999999999998,
+                  "learned": 0.008165237630133899
+                },
+                "valid": true
+              }
+            ],
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:red",
+                  "x": 993,
+                  "y": 400
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 993,
+              "laneY": 400,
+              "localThreat": 0.13395547671467134,
+              "structure": {
+                "id": "b_t2",
+                "x": 830,
+                "y": 380,
+                "distance": 1075.0823551275992,
+                "outlook": {
+                  "travelSeconds": 8.381736715500944,
+                  "survival": 0.1961861122746979,
+                  "support": 0.5907269004866326,
+                  "pressure": 0.32146283352092236
+                }
+              }
+            }
+          },
+          {
+            "second": 284.86666666667765,
+            "actorId": "blue_p_research_malr1ne",
+            "cardId": "p_research_malr1ne",
+            "incumbent": "wave",
+            "alternate": "regroup",
+            "utilityGap": 0.32202240901120677,
+            "healthFraction": 1,
+            "previousIntent": "regroup",
+            "actor": {
+              "x": 1107.75305451954,
+              "y": 390.09296674928186
+            },
+            "candidates": [
+              {
+                "action": "wave",
+                "contextKey": "wave:r_melee_13_2:0",
+                "factors": {
+                  "strategic": 0.45,
+                  "tactical": 0.58,
+                  "personality": 0,
+                  "danger": 0,
+                  "learned": 0.030337893242702918
+                },
+                "utility": 0.28121351572970815,
+                "contributions": {
+                  "strategic": 0.135,
+                  "tactical": 0.145,
+                  "personality": 0,
+                  "danger": 0,
+                  "learned": 0.0012135157297081167
+                },
+                "valid": true
+              },
+              {
+                "action": "regroup",
+                "contextKey": "regroup:blue_p_research_sneyking",
+                "factors": {
+                  "tactical": 0.82,
+                  "coordination": 0.9,
+                  "personality": 0,
+                  "danger": 1,
+                  "opportunity": 0,
+                  "learned": -0.09522233203746644
+                },
+                "utility": -0.040808893281498636,
+                "contributions": {
+                  "tactical": 0.205,
+                  "coordination": 0.108,
+                  "personality": 0,
+                  "danger": -0.35,
+                  "opportunity": 0,
+                  "learned": -0.0038088932814986575
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:minion:r_melee_13_2:28:9",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.42787337351269583,
+                  "personality": 0,
+                  "learned": 0.1800063574200141
+                },
+                "utility": -0.043555426432642964,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.14975568072944354,
+                  "personality": 0,
+                  "learned": 0.007200254296800565
+                },
+                "valid": true
+              }
+            ],
+            "push": {
+              "plan": {
+                "kind": "minion",
+                "target": {
+                  "id": "r_melee_13_2",
+                  "team": "red",
+                  "type": "melee",
+                  "x": 1170.6666666666936,
+                  "y": 380,
+                  "hp": -10,
+                  "ad": 22,
+                  "range": 35,
+                  "speed": 70,
+                  "goldReward": 21,
+                  "xpReward": 32,
+                  "maxHp": 475,
+                  "attackTimer": 1.0666666666666662,
+                  "isAlive": false,
+                  "empowered": false,
+                  "hitFlashUntil": 288.1600000000135
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": true,
+              "advanceLimit": 1154.0000000000055,
+              "laneY": 365,
+              "localThreat": 0.5646853633040989,
+              "structure": {
+                "id": "r_t2",
+                "x": 1770,
+                "y": 380,
+                "distance": 662.3238518851646,
+                "outlook": {
+                  "travelSeconds": 4.926893827477758,
+                  "survival": 0.2148943958863754,
+                  "support": 0.6543682480744416,
+                  "pressure": 0
+                }
+              }
+            }
+          },
+          {
+            "second": 327.86666666671186,
+            "actorId": "blue_p_research_skiter",
+            "cardId": "p_research_skiter",
+            "incumbent": "fight",
+            "alternate": "regroup",
+            "utilityGap": 0.24186721580083184,
+            "healthFraction": 0.9929577464788732,
+            "previousIntent": "minion",
+            "actor": {
+              "x": 1415.3437362990921,
+              "y": 381.7963732415386
+            },
+            "candidates": [
+              {
+                "action": "fight",
+                "contextKey": "fight:red_p_research_miposhka:0",
+                "factors": {
+                  "tactical": 0.95,
+                  "coordination": 0.8689443499658739,
+                  "danger": 0.4085578127966627,
+                  "learned": 0.06044689950747648
+                },
+                "utility": 0.20119596349737193,
+                "contributions": {
+                  "tactical": 0.2375,
+                  "coordination": 0.10427332199590486,
+                  "danger": -0.14299523447883195,
+                  "learned": 0.0024178759802990593
+                },
+                "valid": true
+              },
+              {
+                "action": "regroup",
+                "contextKey": "regroup:blue_p_research_cr1t",
+                "factors": {
+                  "tactical": 0.82,
+                  "coordination": 0.9,
+                  "personality": 0,
+                  "danger": 1,
+                  "opportunity": 0,
+                  "learned": -0.09178130758649837
+                },
+                "utility": -0.040671252303459915,
+                "contributions": {
+                  "tactical": 0.205,
+                  "coordination": 0.108,
+                  "personality": 0,
+                  "danger": -0.35,
+                  "opportunity": 0,
+                  "learned": -0.003671252303459935
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:minion:r_melee_15_1:27:9",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.25876415992351604,
+                  "coordination": 0,
+                  "danger": 0.26088510026598566,
+                  "personality": 0.35,
+                  "learned": 0.17796770584193874
+                },
+                "utility": 0.05199996312146159,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.06469103998087901,
+                  "coordination": 0,
+                  "danger": -0.09130978509309498,
+                  "personality": 0.017499999999999998,
+                  "learned": 0.00711870823367755
+                },
+                "valid": true
+              }
+            ],
+            "push": {
+              "plan": {
+                "kind": "minion",
+                "target": {
+                  "id": "r_melee_15_1",
+                  "team": "red",
+                  "type": "melee",
+                  "x": 1436.3333333333505,
+                  "y": 365,
+                  "hp": -328,
+                  "ad": 22,
+                  "range": 35,
+                  "speed": 70,
+                  "goldReward": 21,
+                  "xpReward": 32,
+                  "maxHp": 475,
+                  "attackTimer": 0.2999999999999996,
+                  "isAlive": false,
+                  "empowered": false,
+                  "hitFlashUntil": 329.29333333337956
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": true,
+              "advanceLimit": 1107.0000000000075,
+              "laneY": 400,
+              "localThreat": 0.4730527319231669,
+              "structure": {
+                "id": "r_t2",
+                "x": 1770,
+                "y": 380,
+                "distance": 354.6608130864063,
+                "outlook": {
+                  "travelSeconds": 1.6634363151086313,
+                  "survival": 0.4180460363886247,
+                  "support": 0.8030148107866104,
+                  "pressure": 0.0915144820831236
+                }
+              }
+            }
+          },
+          {
+            "second": 485.7000000001708,
+            "actorId": "red_p_research_collapse",
+            "cardId": "p_research_collapse",
+            "incumbent": "wave",
+            "alternate": "regroup",
+            "utilityGap": 0.3228615091133074,
+            "healthFraction": 0.9978575254418853,
+            "previousIntent": "regroup",
+            "actor": {
+              "x": 2015.0008403238526,
+              "y": 367.07993259178085
+            },
+            "candidates": [
+              {
+                "action": "wave",
+                "contextKey": "wave:b_melee_22_1:0",
+                "factors": {
+                  "strategic": 0.45,
+                  "tactical": 0.58,
+                  "personality": 0,
+                  "danger": 0,
+                  "learned": 0.03057046524432541
+                },
+                "utility": 0.28122281860977305,
+                "contributions": {
+                  "strategic": 0.135,
+                  "tactical": 0.145,
+                  "personality": 0,
+                  "danger": 0,
+                  "learned": 0.0012228186097730165
+                },
+                "valid": true
+              },
+              {
+                "action": "regroup",
+                "contextKey": "regroup:red_p_research_miposhka",
+                "factors": {
+                  "tactical": 0.82,
+                  "coordination": 0.9,
+                  "personality": 0,
+                  "danger": 1,
+                  "opportunity": 0,
+                  "learned": -0.11596726258835922
+                },
+                "utility": -0.041638690503534345,
+                "contributions": {
+                  "tactical": 0.205,
+                  "coordination": 0.108,
+                  "personality": 0,
+                  "danger": -0.35,
+                  "opportunity": 0,
+                  "learned": -0.004638690503534369
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:minion:b_melee_22_1:24:11",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.3225921339415844,
+                  "coordination": 0,
+                  "danger": 0.23444946222628182,
+                  "personality": 0.35,
+                  "learned": 0.19378883692563093
+                },
+                "utility": 0.07784227518322272,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.0806480334853961,
+                  "coordination": 0,
+                  "danger": -0.08205731177919863,
+                  "personality": 0.017499999999999998,
+                  "learned": 0.0077515534770252375
+                },
+                "valid": true
+              }
+            ],
+            "push": {
+              "plan": {
+                "kind": "minion",
+                "target": {
+                  "id": "b_melee_22_1",
+                  "team": "blue",
+                  "type": "melee",
+                  "x": 2027.7333333333418,
+                  "y": 365,
+                  "hp": -5,
+                  "ad": 30,
+                  "range": 35,
+                  "speed": 82,
+                  "goldReward": 21,
+                  "xpReward": 32,
+                  "maxHp": 665,
+                  "attackTimer": 0.1666666666666663,
+                  "isAlive": false,
+                  "empowered": true,
+                  "hitFlashUntil": 490.5266666668412
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": true,
+              "advanceLimit": 993,
+              "laneY": 380,
+              "localThreat": 0.5377031483090172,
+              "structure": {
+                "id": "b_t2",
+                "x": 830,
+                "y": 380,
+                "distance": 1185.0712719959376,
+                "outlook": {
+                  "travelSeconds": 10.905440685675597,
+                  "survival": 0.22322222074269088,
+                  "support": 0.7397252400346759,
+                  "pressure": 0.38823638959861867
+                }
+              }
+            }
+          },
+          {
+            "second": 509.06666666685607,
+            "actorId": "blue_p_research_sneyking",
+            "cardId": "p_research_sneyking",
+            "incumbent": "fight",
+            "alternate": "regroup",
+            "utilityGap": 0.27979186139080947,
+            "healthFraction": 1,
+            "previousIntent": "regroup",
+            "actor": {
+              "x": 1265.0162477216563,
+              "y": 379.98959998062315
+            },
+            "candidates": [
+              {
+                "action": "fight",
+                "contextKey": "fight:red_p_research_collapse:0",
+                "factors": {
+                  "tactical": 0.95,
+                  "coordination": 0.8447589891828684,
+                  "danger": 0.36952388245936674,
+                  "learned": 0.06068885546143017
+                },
+                "utility": 0.21196527405962307,
+                "contributions": {
+                  "tactical": 0.2375,
+                  "coordination": 0.1013710787019442,
+                  "danger": -0.12933335886077835,
+                  "learned": 0.002427554218457207
+                },
+                "valid": true
+              },
+              {
+                "action": "regroup",
+                "contextKey": "regroup:blue_p_research_cr1t",
+                "factors": {
+                  "tactical": 0.82,
+                  "coordination": 0.9,
+                  "personality": 0,
+                  "danger": 1,
+                  "opportunity": 0.18125024922014088,
+                  "learned": -0.09097624870413311
+                },
+                "utility": -0.06782658733118643,
+                "contributions": {
+                  "tactical": 0.205,
+                  "coordination": 0.108,
+                  "personality": 0,
+                  "danger": -0.35,
+                  "opportunity": -0.02718753738302113,
+                  "learned": -0.0036390499481653246
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:53:10",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.4908898427556086,
+                  "personality": 0,
+                  "learned": 0.20810527408668075
+                },
+                "utility": -0.06448723400099575,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.171811444964463,
+                  "personality": 0,
+                  "learned": 0.00832421096346723
+                },
+                "valid": true
+              }
+            ],
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 2147,
+                  "y": 430
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 2147,
+              "laneY": 430,
+              "localThreat": 0.4533000287191042,
+              "structure": {
+                "id": "r_nexus",
+                "x": 2365,
+                "y": 380,
+                "distance": 1099.983752327508,
+                "outlook": {
+                  "travelSeconds": 9.856988117404837,
+                  "survival": 0.2561205266762776,
+                  "support": 0.6135975825593674,
+                  "pressure": 0
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "wallSeconds": 75.769
+  },
+  "replays": [],
+  "validPair": false,
+  "draftLineup": [
+    {
+      "playerId": "p_research_caedrel",
+      "championId": "c_valkira"
+    },
+    {
+      "playerId": "p_research_tyler1",
+      "championId": "c_stepstone"
+    },
+    {
+      "playerId": "p_research_yatoro",
+      "championId": "c_astra"
+    },
+    {
+      "playerId": "p_research_collapse",
+      "championId": "c_solana"
+    },
+    {
+      "playerId": "p_research_miposhka",
+      "championId": "c_zal"
+    },
+    {
+      "playerId": "p_research_skiter",
+      "championId": "c_cora"
+    },
+    {
+      "playerId": "p_research_malr1ne",
+      "championId": "c_kyumi"
+    },
+    {
+      "playerId": "p_research_atf",
+      "championId": "c_batrider"
+    },
+    {
+      "playerId": "p_research_cr1t",
+      "championId": "c_renn"
+    },
+    {
+      "playerId": "p_research_sneyking",
+      "championId": "c_largo"
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "date": "2026-10-17",
+  "models": 45,
+  "clipsPerModel": 10,
+  "nativeClipsChecked": 450,
+  "nativeSamples": 2250,
+  "sharedStyles": 11,
+  "assetBytes": 145831924,
+  "blender": {
+    "files": 45,
+    "bytes": 112681817,
+    "actionsPerFile": 10,
+    "manifest": "art/avatars-v6/manifest.json"
+  },
+  "game": {
+    "passed": true,
+    "tests": 386,
+    "simulations": 3,
+    "typescript": true,
+    "log": "avatar-combat-game-check.log"
+  },
+  "build": {
+    "passed": true,
+    "existingChunkAdvisory": true,
+    "log": "avatar-combat-build.log"
+  },
+  "native": "avatar-combat-native-verification.json",
+  "studio": "avatar-combat-verification.json",
+  "arena": {
+    "file": "avatar-combat-arena-verification.json",
+    "exactStateAndRngAtSeconds": [
+      30.00000000000065,
+      59.999999999999154,
+      89.99999999999746
+    ],
+    "errors": []
+  },
+  "video": {
+    "file": "avatar-combat-preview.webm",
+    "verification": "avatar-combat-video-verification.json",
+    "width": 1500,
+    "height": 1080,
+    "duration": 14.821186
+  },
+  "reviewed": [
+    "avatar-combat-motion-sheet.png",
+    "avatar-combat-attack-sheet.png",
+    "avatar-combat-cast-sheet.png",
+    "avatar-combat-video-frame-1.png",
+    "avatar-combat-video-frame-2.png",
+    "avatar-combat-video-frame-3.png",
+    "avatar-combat-arsenaldo-turnaround.png",
+    "avatar-combat-aiselle-turnaround.png",
+    "avatar-combat-knuckleberry-turnaround.png"
+  ],
+  "hashes": [
+    {
+      "file": "EsportsClash.Web/src/avatarCombatMotion.ts",
+      "bytes": 12777,
+      "sha256": "79008ac5061f9555221efed726a3970427e7990de182de7aa69f74d4056ff1b4"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarCombatMotion.test.mjs",
+      "bytes": 3669,
+      "sha256": "7e70bf2ff79c95a8513f3aaa391632436767826df2ad32b1bc7fa5a42ba425d5"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarMotionTimeline.ts",
+      "bytes": 1475,
+      "sha256": "efc0920e72dc3a5c7f69b517be027abeaa3afb3ea94b88483e45de50e3226b19"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarModelAnimations.ts",
+      "bytes": 2130,
+      "sha256": "23c9c129b0ed3fd2bf352bc5548436b409b2e923efc4a391eb5e94e0531c4f5f"
+    },
+    {
+      "file": "EsportsClash.Web/src/threeAvatarModels.ts",
+      "bytes": 35964,
+      "sha256": "f2cf3c0b03f24df68b853c2c2aa7a53922913b257e5b0b26539706f8a7986976"
+    },
+    {
+      "file": "EsportsClash.Web/src/threeArenaScene.ts",
+      "bytes": 20764,
+      "sha256": "73135fc26b0a2df88f1e725b695928441886b01ca677abe3651d148497b01139"
+    },
+    {
+      "file": "EsportsClash.Web/src/threeArenaScene.test.mjs",
+      "bytes": 4260,
+      "sha256": "3662fe1095b082bdcfd74ded254e79cc022ad1e8862496bac9b03a716a822685"
+    },
+    {
+      "file": "EsportsClash.Web/src/threeAvatarPreview.ts",
+      "bytes": 6261,
+      "sha256": "ace53f7710f7820ed183f337807e19e0d34c1f8753aca222787a6c0ff7f4242a"
+    },
+    {
+      "file": "EsportsClash.Web/src/components/AvatarModelPreview.tsx",
+      "bytes": 4840,
+      "sha256": "483083f51331dd99cf4ad2a33dbf94a72927f06fe29457f5865bca2a0bb29939"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarModelUrl.ts",
+      "bytes": 385,
+      "sha256": "0a6ca6d4f7fa7a35b81d5dac3a928691d2b7b3d345ee3516c2179c6bdb66090c"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarAuthoredAssets.test.mjs",
+      "bytes": 4191,
+      "sha256": "d1a76c0cf5b6ba8b445e3c16328aa3f37e75271fd066829379b3b265c1208762"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarStance.test.mjs",
+      "bytes": 4960,
+      "sha256": "ac898f9efa2608bb21c30a87ffd4453ac538a64a254c2611a390c5a3aa44d7f8"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/prepare-authored-avatars.mjs",
+      "bytes": 2648,
+      "sha256": "f40f5c2842daad7af79fff907a5090c62fd31ab79dbada70a0dab6000993e868"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/merge-authored-avatars.mjs",
+      "bytes": 7506,
+      "sha256": "31cf7891cf2eec06a7565f5660dbb2b384c7cdeba8356954abb29dd7109dfa66"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/save-avatar-blend-sources.py",
+      "bytes": 1454,
+      "sha256": "8e776029ed08641cbad54fd1f2d85071b53248f177730138c0f9b1534b818652"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/check-authored-avatar-assets.mjs",
+      "bytes": 4412,
+      "sha256": "1b315f2f2bcf9e59f73c7514c72a5cfdfe500810c82c4e2a443c10209f12f80e"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/render-avatar-model-plates.mjs",
+      "bytes": 6474,
+      "sha256": "d77d56dd46df79b68541f10d7640f89a6e7ceb1c8383e8ee55cff1db83e8c4f7"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/check-avatar-designs.mjs",
+      "bytes": 11595,
+      "sha256": "6efe807089ce2c649cca273dfc92e07fac3d2265a59bdd5a78a0ed0291e060de"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/render-avatar-combat-motion.mjs",
+      "bytes": 6706,
+      "sha256": "a5d98d3f725a2d3c2bcdc5e3b387472d33d8bcbd6be3789c3c8d3a16ed7346b8"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/check-avatar-combat-video.mjs",
+      "bytes": 3084,
+      "sha256": "e399b97c1c3de9d3c55241c4d9a08058019148e7cb779edda72ff289c39a3d0e"
+    },
+    {
+      "file": "EsportsClash.Web/public/models/avatars-v6/manifest.json",
+      "bytes": 42963,
+      "sha256": "ec691a604f64431dc947e7213e1865ff40591ead44d6624c99dd5d7ef1ca0ded"
+    },
+    {
+      "file": "EsportsClash.Web/public/models/avatars-v6/README.md",
+      "bytes": 1200,
+      "sha256": "93f57daeb177505b94792674d23646d4b7919a21cacefb3847ca91849e3a0ad4"
+    },
+    {
+      "file": "art/README.md",
+      "bytes": 6260,
+      "sha256": "04a33b9dee2be12b7785aef6deff8170731f6f0aea7aea04dfe7a61b1e7487ff"
+    },
+    {
+      "file": "art/avatars-v6/manifest.json",
+      "bytes": 17789,
+      "sha256": "03230c67200827f5a759ebe0010382d3f53f4b0d813f0c4281bf004ce45171c2"
+    },
+    {
+      "file": "docs/avatar-combat-motion.md",
+      "bytes": 7076,
+      "sha256": "f26ceaacefd226f3a1aa49b64c263695e29d9c9c246286b3a79181afb4c6b646"
+    },
+    {
+      "file": "docs/agent-handoff.md",
+      "bytes": 347587,
+      "sha256": "733c03ab9b9525b048085a8de60760844c152f64b5be61d2844ea8790df9bf7c"
+    },
+    {
+      "file": "docs/arena-mechanics.md",
+      "bytes": 219168,
+      "sha256": "0379655ffa9cf683819e7fdd4c324b3a3a2e12b523c9b89ee7bf037bf99abd37"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "discarded": true,
+  "plan": "docs/ml-context-plan.json",
+  "planHash": "f39f37c75bf4a8d62ba17742cf5fe47f662c058844a41f6971945021cfe51fb8",
+  "candidateFitted": false,
+  "heldoutCollected": false,
+  "reason": "Camp waypoint observation used the live actor as the terrain cache key. This could disturb cached movement and caused predecision context equality to fail in seed 109. All initial training cases are rejected as model evidence, including otherwise valid duplicate controls. Fixed by using a fresh coordinate object. Recollect all training cases under the independently hash-locked v2 plan; no old training labels or weights initialize that model. Same training/evaluation seed split and all fitting/reward/gating parameters are retained."
+}

@@ -107,6 +107,8 @@ function projectOutsideRockTerrain(
 }
 
 const terrainWaypoint = createTerrainRouter(ROCK_TERRAIN);
+export const captureTerrainRoutes = terrainWaypoint.capture;
+export const restoreTerrainRoutes = terrainWaypoint.restore;
 
 // Routes consider every enclosure, including the one the unit is leaving.
 export function rockApproachWaypoint(

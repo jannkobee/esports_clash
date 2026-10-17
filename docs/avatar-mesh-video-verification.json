@@ -1,0 +1,21 @@
+{
+  "width": 1500,
+  "height": 1080,
+  "currentTime": 2.154266,
+  "duration": 9.304953,
+  "decodedFrames": 30,
+  "frames": [
+    {
+      "second": 3.256733,
+      "file": "avatar-mesh-video-frame-1.png"
+    },
+    {
+      "second": 5.117724,
+      "file": "avatar-mesh-video-frame-2.png"
+    },
+    {
+      "second": 8.560556,
+      "file": "avatar-mesh-video-frame-3.png"
+    }
+  ]
+}

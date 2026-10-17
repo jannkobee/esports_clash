@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-17",
+  "revision": 7,
+  "gameTests": 393,
+  "deterministicSimulationTests": 3,
+  "typeScript": true,
+  "productionBuild": true,
+  "assetMetrics": {
+    "models": 45,
+    "glbBytes": 147978524,
+    "blendFiles": 45,
+    "blendBytes": 114648979,
+    "gripShapes": 68,
+    "closedLoadedHands": 51,
+    "nativeClips": 450,
+    "nativeSamples": 2250,
+    "groundedImportedRigs": 37,
+    "consecutiveStanceComparisons": 11692,
+    "maxConsecutiveHorizontalDrift": 2.864289338439558e-14
+  },
+  "studioAll45AndTenControls": true,
+  "liveArenaExactStateRngAuditSeconds": [
+    30,
+    60,
+    90
+  ],
+  "videoDecodePlaySeek": true,
+  "checks": [
+    "npm run check:game",
+    "npm run build",
+    "check-authored-avatar-assets.mjs (v7 including loaded grip/contact checks)",
+    "check-avatar-designs.mjs (GLB required)",
+    "check-arena-3d.mjs (GLB required)",
+    "check-avatar-combat-video.mjs"
+  ],
+  "limits": "Shared style curves and simple equipment/creature meshes; approximate finger closure, some clothing intersections, planar foot contacts. No terrain-height solver, cloth physics, custom full ability matrix, full-match or device frame-time claim.",
+  "evidenceSha256": {
+    "manifest.json": "620c6f455e5596de4d9240c55139d69d4787c693301bcf698a1ea830c8072c03",
+    "avatar-contact-native-verification.json": "9540617dbfa158634265519f79a31d0eb0d243d7bb0e37feeb1deef004f8b6a5",
+    "avatar-contact-verification.json": "ad786f2d8550bbe58d5bbd23eee37e13fc564d298e7510623cd2492610b8a8df",
+    "avatar-contact-arena-verification.json": "28e912612e988a0025707f3d4b9c941413b3deae5059f2d24a004f238ee415f1",
+    "avatar-contact-preview.webm": "63943cc951094456de3635f572f1d8e2aa6f6669c1bf7539c421ce5eaf50966f",
+    "avatar-contact-video-verification.json": "31168636a98d98b369b8dbca88a9d5072560ae70d40d0dd5e1763cb43d1a0fee"
+  }
+}

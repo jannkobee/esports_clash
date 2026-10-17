@@ -3,11 +3,12 @@ export function resolveFightCommitment(s: {
   committedState?: 'fight' | 'retreat' | 'cover'; timer: number; dangerous: boolean;
   enemyCount: number; inWell: boolean; followUp: boolean;
   lowHealth: boolean; losingFight: boolean;
+  lethalEnvironment?: boolean;
 }) {
-  let dangerous = s.dangerous;
+  let dangerous = s.dangerous || !!s.lethalEnvironment;
   if (s.committedState === 'retreat' && s.timer > 0 && s.enemyCount > 0 && !s.inWell && !s.followUp) {
     dangerous = true;
-  } else if (s.committedState === 'fight' && s.timer > 0 && !s.lowHealth && !s.losingFight) {
+  } else if (s.committedState === 'fight' && s.timer > 0 && !s.lowHealth && !s.losingFight && !s.lethalEnvironment) {
     dangerous = false;
   }
   let committedState = s.committedState;

@@ -1,0 +1,166 @@
+{
+  "planHash": "a2391c3cffeeca22b836b3497d8e1c53842ab758361fe9e81cc48a525cdce88c",
+  "modelHash": "e59ab169e4cd6ce918d97b7b5047d146915eb32316a13cd18af0ef7eccfc4ce0",
+  "results": [
+    {
+      "id": "heldout-185-d0-original",
+      "seed": 185,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_bigtail",
+      "rawHash": "7680c26933af2504752b7a020c102c2af6821f70e5f1e72038868acf017d3152",
+      "changed": false
+    },
+    {
+      "id": "heldout-186-d0-swapped",
+      "seed": 186,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rawHash": "1d5b74251ab88850f8ebfe9143af7ac288764e2cc2f09bfc18ca335e5c8d807d",
+      "changed": false
+    },
+    {
+      "id": "heldout-187-d1-original",
+      "seed": 187,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rawHash": "88ec598af9a5374da9bc89a0a77d192c4d7c6b795126b1b22962665663a98023",
+      "changed": false
+    },
+    {
+      "id": "heldout-188-d1-swapped",
+      "seed": 188,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_toaster",
+      "rawHash": "f4a36b9e3bcdbb4b797800cf4f2f37c7a334611485f82d770ca7d8793387d56e",
+      "changed": false
+    },
+    {
+      "id": "heldout-189-d0-original",
+      "seed": 189,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rawHash": "200fdcc384028c68613d1e3d8a283b4e160522311c75013d89a40b148a58f1b6",
+      "changed": false
+    },
+    {
+      "id": "heldout-190-d0-swapped",
+      "seed": 190,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_craps",
+      "rawHash": "2477d3ea87d1fd10474d646d2d09fca0e9e1b9d944aea10aa7531fa7317edab2",
+      "changed": false
+    },
+    {
+      "id": "heldout-191-d1-original",
+      "seed": 191,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_kovi",
+      "rawHash": "01e8eefee3a9ce682b8157e65eee66c0ea784f73382bb29734529c9a181c901f",
+      "changed": false
+    },
+    {
+      "id": "heldout-192-d1-swapped",
+      "seed": 192,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_kovi",
+      "rawHash": "4cdd5a7bd1ac08996940dd0c69c88071e85a5095b20f265c34405262f378f337",
+      "changed": false
+    },
+    {
+      "id": "heldout-193-d0-original",
+      "seed": 193,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rawHash": "56022c1251a33a6f248ec825ff6570674cac363b1574db4f7aeb81c39a26d3e5",
+      "changed": false
+    },
+    {
+      "id": "heldout-194-d0-swapped",
+      "seed": 194,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rawHash": "093600bc02d5f947b34c5036ed6108d7264443903d47cf4f05b6d172e0aa72b6",
+      "changed": false
+    },
+    {
+      "id": "heldout-195-d1-original",
+      "seed": 195,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rawHash": "32e14ce0173741782d08cd235902b968e64efa20b20562a9149371581a35a5d9",
+      "changed": false
+    },
+    {
+      "id": "heldout-196-d1-swapped",
+      "seed": 196,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rawHash": "f6f12372879a54e5e48ba8a6f5d160746287d602bb6f4b8283283c796aa5f5df",
+      "changed": false
+    },
+    {
+      "id": "heldout-197-d0-original",
+      "seed": 197,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_ouzi",
+      "rawHash": "e17036d101ddfe20fd489379a84bd5ce5ad72eac4192c96cb2bc11981a544d0e",
+      "changed": false
+    },
+    {
+      "id": "heldout-198-d0-swapped",
+      "seed": 198,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_bigtail",
+      "rawHash": "d0f0039bf959e534840ea18c74bd0fc2c86b17f817d8587c0f5f1d7404944ab1",
+      "changed": false
+    },
+    {
+      "id": "heldout-199-d1-original",
+      "seed": 199,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rawHash": "e8b28f8f4a42730a258aa9c629c7965f3100849c6a18e4541829d726cee6ecc1",
+      "changed": false
+    },
+    {
+      "id": "heldout-200-d1-swapped",
+      "seed": 200,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_turbogamer",
+      "rawHash": "733f2356e1385e061024c428d2dffd8266338f6976d53118e2050567495ca305",
+      "changed": false
+    }
+  ]
+}

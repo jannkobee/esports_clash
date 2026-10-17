@@ -1,0 +1,7 @@
+{
+  "planHash": "a51d78fd971ac5db2c218de2681a8d8d09242f739e03b6eb2dd09711d4289266",
+  "originalSourceHash": "5a4dc29625d6329ee10d33d06c9ed48ca18a3a7619592adee9f056d6eb6625e6",
+  "correctedSourceHash": "7838609d254ef43ec2cd8756b6d959d93e97c8b9c95fc57f14dd8b94d8d2de6e",
+  "stage": "After first training case; before model fitting or any held-out collection",
+  "reason": "Analyzer treated absent task events as an array. Empty event lists are optional in the existing recorder and mean zero useful work. Recompute using taskEvents ?? [], matching the existing task/reward analyzers. Add explicit model/source hash assertion. No gameplay, features, fitting, seeds, split, threshold, or reward semantics changed."
+}

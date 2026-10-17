@@ -1,0 +1,458 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 81,
+  "swapped": false,
+  "pairFilter": "fight-regroup",
+  "cardFilter": "",
+  "horizonSeconds": 8,
+  "scout": {
+    "label": "scout",
+    "event": {
+      "mode": "scout",
+      "actorId": "blue_p_flaker",
+      "second": 257.4999999999892,
+      "cardId": "p_flaker",
+      "champion": "Astra",
+      "incumbent": "regroup",
+      "alternate": "fight",
+      "fingerprint": "80288:62e9d5f5:2930395d",
+      "matched": false,
+      "gate": null,
+      "actorStart": {
+        "x": 1012.8950576870309,
+        "y": 377.6921843063292,
+        "hpFraction": 1,
+        "gold": 316.1274999998555,
+        "cs": 13,
+        "kills": 2,
+        "deaths": 1,
+        "damageDealt": 5434
+      }
+    },
+    "lastSecond": 257.96666666665624,
+    "wallSeconds": 103.294
+  },
+  "replays": [
+    {
+      "label": "incumbent-a",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_flaker",
+        "second": 257.4999999999892,
+        "cardId": "p_flaker",
+        "champion": "Astra",
+        "incumbent": "regroup",
+        "alternate": "fight",
+        "fingerprint": "80288:62e9d5f5:2930395d",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 1012.8950576870309,
+          "y": 377.6921843063292,
+          "hpFraction": 1,
+          "gold": 316.1274999998555,
+          "cs": 13,
+          "kills": 2,
+          "deaths": 1,
+          "damageDealt": 5434
+        },
+        "followup": {
+          "second": 265.49999999999557,
+          "actor": {
+            "x": 1431.317086438447,
+            "y": 395.35554732072154,
+            "hpFraction": 0.5862913096695227,
+            "mana": 61.29999999999964,
+            "isAlive": true,
+            "gold": 415.0336666665246,
+            "cs": 13,
+            "kills": 2,
+            "deaths": 1,
+            "damageDealt": 5803,
+            "economicValue": 6190.033666666524
+          },
+          "team": {
+            "ownStructureHp": 30341,
+            "enemyStructureHp": 20809,
+            "dragonAspect": false,
+            "siegeGolemUnits": 0
+          },
+          "nearestEnemyDistance": 35.8188157541943,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "599401:ec46aeff:3a9e8d5f"
+      },
+      "record": {
+        "second": 257.4999999999892,
+        "actorId": "blue_p_flaker",
+        "team": "blue",
+        "selected": "regroup",
+        "contextKey": "regroup:blue_p_flaker",
+        "features": {
+          "bias": 1,
+          "iq": 0.98,
+          "teamfight": 0.98,
+          "lane": 0.99,
+          "flexibility": 0.96,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Marksman": 1,
+          "card:p_flaker": 1,
+          "personality:iron_will": 1,
+          "personality:glue_guy": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "fight",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "fight",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.09814384413014579
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 316.1274999998555,
+          "cs": 13,
+          "kills": 2,
+          "deaths": 1,
+          "damageDealt": 5434
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 36.83116666666757,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.027623375000000675
+        }
+      },
+      "wallSeconds": 0.976
+    },
+    {
+      "label": "incumbent-b",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_flaker",
+        "second": 257.4999999999892,
+        "cardId": "p_flaker",
+        "champion": "Astra",
+        "incumbent": "regroup",
+        "alternate": "fight",
+        "fingerprint": "80288:62e9d5f5:2930395d",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 1012.8950576870309,
+          "y": 377.6921843063292,
+          "hpFraction": 1,
+          "gold": 316.1274999998555,
+          "cs": 13,
+          "kills": 2,
+          "deaths": 1,
+          "damageDealt": 5434
+        },
+        "followup": {
+          "second": 265.49999999999557,
+          "actor": {
+            "x": 1621.2469456462734,
+            "y": 373.8101943173857,
+            "hpFraction": 1,
+            "mana": 30.250000000000092,
+            "isAlive": true,
+            "gold": 736.0336666665175,
+            "cs": 14,
+            "kills": 3,
+            "deaths": 1,
+            "damageDealt": 6229,
+            "economicValue": 6511.033666666517
+          },
+          "team": {
+            "ownStructureHp": 30341,
+            "enemyStructureHp": 20809,
+            "dragonAspect": false,
+            "siegeGolemUnits": 0
+          },
+          "nearestEnemyDistance": 67.09400766868283,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "596379:ec6d3791:bd6a4755"
+      },
+      "record": {
+        "second": 257.4999999999892,
+        "actorId": "blue_p_flaker",
+        "team": "blue",
+        "selected": "regroup",
+        "contextKey": "regroup:blue_p_flaker",
+        "features": {
+          "bias": 1,
+          "iq": 0.98,
+          "teamfight": 0.98,
+          "lane": 0.99,
+          "flexibility": 0.96,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Marksman": 1,
+          "card:p_flaker": 1,
+          "personality:iron_will": 1,
+          "personality:glue_guy": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "fight",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "fight",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.09814384413014579
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 316.1274999998555,
+          "cs": 13,
+          "kills": 2,
+          "deaths": 1,
+          "damageDealt": 5434
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 36.83116666666757,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.027623375000000675
+        }
+      },
+      "wallSeconds": 0.9342999999988824
+    },
+    {
+      "label": "alternate",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_flaker",
+        "second": 257.4999999999892,
+        "cardId": "p_flaker",
+        "champion": "Astra",
+        "incumbent": "regroup",
+        "alternate": "fight",
+        "fingerprint": "80288:62e9d5f5:2930395d",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 1012.8950576870309,
+          "y": 377.6921843063292,
+          "hpFraction": 1,
+          "gold": 316.1274999998555,
+          "cs": 13,
+          "kills": 2,
+          "deaths": 1,
+          "damageDealt": 5434
+        },
+        "followup": {
+          "second": 265.49999999999557,
+          "actor": {
+            "x": 1561.3843548694206,
+            "y": 385.3399089782262,
+            "hpFraction": 1,
+            "mana": 14.850000000000016,
+            "isAlive": true,
+            "gold": 436.0336666665246,
+            "cs": 14,
+            "kills": 2,
+            "deaths": 1,
+            "damageDealt": 6491,
+            "economicValue": 6211.033666666524
+          },
+          "team": {
+            "ownStructureHp": 30341,
+            "enemyStructureHp": 20809,
+            "dragonAspect": false,
+            "siegeGolemUnits": 0
+          },
+          "nearestEnemyDistance": 191.7662671635409,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "598711:f4ae4e3f:49e85853"
+      },
+      "record": {
+        "second": 257.4999999999892,
+        "actorId": "blue_p_flaker",
+        "team": "blue",
+        "selected": "fight",
+        "contextKey": "fight:red_p_craps:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.98,
+          "teamfight": 0.98,
+          "lane": 0.99,
+          "flexibility": 0.96,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Marksman": 1,
+          "card:p_flaker": 1,
+          "personality:iron_will": 1,
+          "personality:glue_guy": 0.5
+        },
+        "selectionReason": "evaluation-experiment:alternate",
+        "heldAction": "fight",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "fight",
+          "pair": "fight-regroup",
+          "arm": "alternate",
+          "propensity": 0.5,
+          "utilityGap": 0.09814384413014579
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 316.1274999998555,
+          "cs": 13,
+          "kills": 2,
+          "deaths": 1,
+          "damageDealt": 5434
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target",
+            "learnedFactor": 0.08068860546143018,
+            "baselineUtility": 0.2069416317032317,
+            "actualUtility": 0.2101691759216889
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion",
+            "learnedFactor": 0.03648589324270291,
+            "baselineUtility": 0.28,
+            "actualUtility": 0.28145943572970816
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+            "learnedFactor": -0.11717449870413311,
+            "baselineUtility": 0.313,
+            "actualUtility": 0.3083130200518347
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp",
+            "learnedFactor": -0.18987885742001412,
+            "baselineUtility": 0.13349999999999998,
+            "actualUtility": 0.1259048457031994
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available",
+            "learnedFactor": 0.18987885742001412,
+            "baselineUtility": -0.14509527028392902,
+            "actualUtility": -0.13750011598712844
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 36.83116666666757,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 623,
+          "progress": 0.32762337500000066
+        }
+      },
+      "wallSeconds": 1.1644000000003725
+    }
+  ],
+  "validPair": false
+}

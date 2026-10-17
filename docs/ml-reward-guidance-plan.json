@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "method": "Frozen reward-guided decision candidate, evaluated once at the first existing safe close farm/push checkpoint; two incumbent controls, alternate and actual learned-choice replay",
+  "model": "ml-task-candidate.json",
+  "modelHash": "7e2b09e71f945dd619a3e7fc359a363076e94f9536cb06051529eb70a384128f",
+  "trainingHash": "5fedc4e0339b979d9ca5c62d5d733ce9631cce05bbed87d8293235c5f014aa03",
+  "minimumPredictedRewardAdvantage": 0.02,
+  "scoutSeconds": 240,
+  "horizonSeconds": 30,
+  "pair": "farm-push",
+  "rollout": "First safe choice only; ordinary retreat/replanning thereafter. All existing experiment gates remain unchanged.",
+  "promotion": false,
+  "cases": [
+    {
+      "id": "fresh-93-d0-original",
+      "seed": 93,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "fresh-94-d0-swapped",
+      "seed": 94,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "fresh-95-d1-original",
+      "seed": 95,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "fresh-96-d1-swapped",
+      "seed": 96,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "fresh-97-d0-original",
+      "seed": 97,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "fresh-98-d0-swapped",
+      "seed": 98,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "fresh-99-d1-original",
+      "seed": 99,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "fresh-100-d1-swapped",
+      "seed": 100,
+      "draft": 1,
+      "swapped": true
+    }
+  ]
+}

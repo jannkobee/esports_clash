@@ -1,0 +1,20 @@
+{
+    "chrome":  [
+                   {
+                       "port":  9223,
+                       "pid":  5960,
+                       "profile":  "C:\\Users\\User\\AppData\\Local\\Temp\\esports-broad-9223-d28ea7ae3e744f24b208b6dfc53139c0"
+                   },
+                   {
+                       "port":  9224,
+                       "pid":  36892,
+                       "profile":  "C:\\Users\\User\\AppData\\Local\\Temp\\esports-broad-9224-2a370ba1bedc45baadd96adbcf08d9ff"
+                   },
+                   {
+                       "port":  9225,
+                       "pid":  37728,
+                       "profile":  "C:\\Users\\User\\AppData\\Local\\Temp\\esports-broad-9225-b1f9fdf63d1449c8ab235717fa4fe522"
+                   }
+               ],
+    "viteLauncherPid":  22216
+}

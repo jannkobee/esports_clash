@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-17",
+  "fixtures": [
+    {
+      "label": "Melee crescents",
+      "effects": 18,
+      "pooledEffects": 18
+    },
+    {
+      "label": "Chain lightning",
+      "effects": 39,
+      "pooledEffects": 39
+    },
+    {
+      "label": "Frost shards",
+      "effects": 26,
+      "pooledEffects": 26
+    },
+    {
+      "label": "Fire eruption",
+      "effects": 29,
+      "pooledEffects": 29
+    },
+    {
+      "label": "Earth rupture",
+      "effects": 25,
+      "pooledEffects": 25
+    },
+    {
+      "label": "Growing roots",
+      "effects": 37,
+      "pooledEffects": 37
+    },
+    {
+      "label": "Healing motes",
+      "effects": 19,
+      "pooledEffects": 19
+    },
+    {
+      "label": "Gravity vortex",
+      "effects": 12,
+      "pooledEffects": 12
+    },
+    {
+      "label": "Wind currents",
+      "effects": 9,
+      "pooledEffects": 9
+    },
+    {
+      "label": "Resonant waves",
+      "effects": 15,
+      "pooledEffects": 15
+    },
+    {
+      "label": "Wind barrier",
+      "effects": 11,
+      "pooledEffects": 11
+    },
+    {
+      "label": "Solar Meteor",
+      "effects": 8,
+      "pooledEffects": 8
+    }
+  ],
+  "videoMime": "video/webm;codecs=vp9",
+  "limits": "Controlled renderer fixtures; the source GLB is a scale reference. Full live ability matrix and device frame times remain unmeasured."
+}

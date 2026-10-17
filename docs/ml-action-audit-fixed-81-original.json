@@ -1,0 +1,15 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 81,
+  "swapped": false,
+  "pairFilter": "",
+  "cardFilter": "",
+  "horizonSeconds": 8,
+  "scout": {
+    "label": "scout",
+    "rejected": "match ended before eligible pair",
+    "wallSeconds": 112.139
+  },
+  "replays": [],
+  "validPair": false
+}

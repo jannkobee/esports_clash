@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-17",
+  "sourceHashes": {
+    "src/avatarDesigns.ts": "a801056bf292175532e897a1b37bad0caa9e3abefe7272aceb239ffef20a179e",
+    "src/threeAvatarModels.ts": "10709444d49a3e9f38317104b6aa176d2329e869af45669d73df92f96429e69a",
+    "src/threeAvatarModels.test.mjs": "6b17af7d487992a991cfc89555118051b37cef1ca10187c021095bd97afcff1b",
+    "src/threeAvatarPreview.ts": "f6c00ef8d0f36f042fd4f9390e20d97e48f52287b6ee7555a09686cbcb27aaa6",
+    "src/threeArenaScene.ts": "1f9bee7e434aef54f88f8a0589c365a3b82312c810a73c4c79f068bfb75d4898",
+    "src/components/AvatarModelPreview.tsx": "99d81aa1b6c3919afea97b93e34a6fd872384ca33b354adb82480ab318e41979",
+    "src/components/avatar-model-preview.css": "c1cd198d42bc925019acf54c9ab500121eb4f4b755ca9f9d2682d4d403d25238",
+    "src/components/ChampionHubView.tsx": "d536065b016ab4c7f6f86fd038bf3482315ecd656d53093685bf50bd6e695eb9",
+    "scripts/check-avatar-designs.mjs": "2c2739f41950566ac11441654900725f8895e116b2cc46a01a867f7a064f9a50",
+    "scripts/check-arena-3d.mjs": "2022d681d07dfa1e48176445aaae08f7604d56a3c9e3c77558cb8bd1340bce44",
+    "scripts/validate-design.js": "dd0c036ad5a39a6251d0f21f885a37755301f2e9f80659e9302a1543a21e207f"
+  },
+  "gameCheck": {
+    "passed": true,
+    "tests": 368,
+    "simulationTests": 3,
+    "typeScript": true
+  },
+  "build": {
+    "passed": true,
+    "exitCode": 0,
+    "warning": "Existing chunks over 500 kB advisory"
+  },
+  "studio": {
+    "passed": true,
+    "avatars": 45,
+    "evidence": "avatar-designs-verification.json"
+  },
+  "live": {
+    "passed": true,
+    "evidence": "avatar-designs-arena-verification.json",
+    "exactStateAndRngAtSeconds": [
+      30.00000000000065,
+      59.999999999999154,
+      89.99999999999746
+    ]
+  },
+  "spectatorSmoke": {
+    "passed": true,
+    "viewports": 5
+  },
+  "whitespace": {
+    "trackedDiff": true,
+    "newFiles": true
+  },
+  "servicesClosed": {
+    "5176": true,
+    "9226": true
+  },
+  "limits": "Stylized procedural models; no full avatar ability matrix, skeletal/texture production assets or device/full-match performance claim."
+}

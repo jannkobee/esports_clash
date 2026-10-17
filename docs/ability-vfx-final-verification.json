@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-17",
+  "scope": "Read-only 3D ability/projectile rendering over existing spell events",
+  "checks": {
+    "gameTests": 375,
+    "simulationTests": 3,
+    "typeScript": true,
+    "build": true,
+    "existingLargeChunkAdvisory": true,
+    "frozenInputsAndPoolReuse": true,
+    "invokedSpellTiming": true,
+    "channelCancellation": true,
+    "representativeWebGLFixtures": 12,
+    "videoDecoded": {
+      "decoded": true,
+      "width": 1600,
+      "height": 1100,
+      "seekedSecond": 1
+    },
+    "exactStateAndRngAtSeconds": [
+      30.00000000000065,
+      59.999999999999154,
+      89.99999999999746
+    ],
+    "threeViewportLayouts": true,
+    "contextRecovery": true,
+    "disposal": true
+  },
+  "sceneCounts": [
+    {
+      "width": 1440,
+      "height": 1000,
+      "calls": 475,
+      "triangles": 172534
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "calls": 485,
+      "triangles": 173198
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "calls": 405,
+      "triangles": 169554
+    }
+  ],
+  "ownedServicesClosed": {
+    "5182": true,
+    "9232": true
+  },
+  "hashes": {
+    "EsportsClash.Web/src/threeAbilityEffects.ts": "d42b93d28e2145ee3835f04495235fd292992076c73c4f78057c3520c3c8b072",
+    "EsportsClash.Web/src/threeAbilityEffects.test.mjs": "956e837db2597ab92a089dfcc4d8dd766dab88f7fdadfe971ac2af880ce6402d",
+    "EsportsClash.Web/src/threeArenaScene.ts": "728f67b40d353a709502d84d2e1847833e7e389210abced63612595798e6c5e3",
+    "EsportsClash.Web/src/threeArenaScene.test.mjs": "4cf6cfed2b68ed441d088515937edbb618db3fb638da802cd6958c6efba0d463",
+    "EsportsClash.Web/src/avatarSkillAnimation.ts": "f2537dc5c8d2b6e6d524c08363938087ed0457ff38ca0c4fcfbe5b6262053173",
+    "EsportsClash.Web/src/kaelenAbilities.ts": "7e72c38cc102aad44c9aa79eca2c3fb8d44e78e967a6d76543e14ee214eb84bd",
+    "EsportsClash.Web/src/kaelenSpellRuntime.ts": "73776a5d6782fa9ec6de4eba05675f1dd9fa3345d751c5401ef88eae83dd1f71",
+    "EsportsClash.Web/scripts/check-ability-vfx.mjs": "4b3d3b019b381a03adef39adf565fba10b3def7d2fc793e06c45e5384f38f4c8",
+    "docs/ability-vfx-fixtures.json": "d384417391bab24c26a45aa63164fc2a4b8e2c34a84aebfbb5085827e37d0a89",
+    "docs/ability-vfx-arena-verification.json": "33ed37c9cb9514e4c8214de3b2cf24883470a1c276b765b66f70975e49011b3b",
+    "docs/ability-vfx-preview.png": "09428a25aa9bcd8d6147c85456b63eb02b9eb2298437fd85a37e54447aa9bda0",
+    "docs/ability-vfx-preview.webm": "dcb224bafe9250b682030ffece2657ad47fb0f807f53136be2d25a07653e6d64",
+    "docs/ability-vfx-video-verification.json": "c8c445fb9799f9165dd5c154816c630b6972f697d1bbe01cb5621f11abe21454",
+    "docs/ability-vfx-game-check.log": "f2d8f1f6d9bb968ad4920fa2bccd2d5f9d54dc3643fb53d884c5458617f2fd15",
+    "docs/ability-vfx-build.log": "e85256fb7b09486422b884e313e47c5c4f73303ae4131023f84e432bdcfd80fc"
+  },
+  "limits": "Shared geometry styles and selected spell cases; no complete bespoke 45-avatar ability matrix, full-match or physical-device frame-time claim. Existing 2D effects and gameplay remain unchanged."
+}

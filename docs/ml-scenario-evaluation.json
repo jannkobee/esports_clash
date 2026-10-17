@@ -1,0 +1,951 @@
+{
+  "method": "Fresh real-browser mid-lane episodes; only starting positions adjusted, all live gates and mechanics intact; evaluation-only randomized assignments; no auto-promotion",
+  "episodes": [
+    {
+      "name": "one-front-120",
+      "seed": 81,
+      "swapped": false,
+      "gap": 260,
+      "spread": 30,
+      "frontCount": 1,
+      "rearOffset": 120,
+      "placed": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 1170,
+          "y": 320,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 1050,
+          "y": 350,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 1050,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 1050,
+          "y": 410,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 1050,
+          "y": 440,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_craps",
+          "x": 1430,
+          "y": 320,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 1550,
+          "y": 350,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_neko",
+          "x": 1550,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 1550,
+          "y": 410,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 1550,
+          "y": 440,
+          "hpFraction": 1
+        }
+      ],
+      "observedSeconds": 35.63333333333387,
+      "sampled": 287,
+      "assignments": 1,
+      "validOutcomes": 1,
+      "gates": {
+        "legal-pair": 160,
+        "defense": 54,
+        "health": 36,
+        "commitment": 16,
+        "tower": 14,
+        "eligible": 1,
+        "cooldown": 5,
+        "survival": 1
+      },
+      "offered": {
+        "push": 119,
+        "fight+push": 138,
+        "wave+push": 16,
+        "regroup+push": 9,
+        "fight+regroup+push": 5
+      },
+      "pairedGates": {
+        "eligible": 1,
+        "commitment": 3,
+        "survival": 1
+      },
+      "experimentRecords": [
+        {
+          "second": 30.93333333333403,
+          "actorId": "red_p_ouzi",
+          "team": "red",
+          "selected": "fight",
+          "contextKey": "fight:blue_p_p1mple:0",
+          "features": {
+            "bias": 1,
+            "iq": 0.88,
+            "teamfight": 0.96,
+            "lane": 0.98,
+            "flexibility": 0.85,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Assassin": 1,
+            "card:p_ouzi": 1,
+            "personality:untiltable": 1,
+            "personality:first_blood_hunter": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "push",
+          "experiment": {
+            "incumbent": "fight",
+            "alternate": "regroup",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.0002934592814521353
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 381.40800000000115,
+            "cs": 0,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 133
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target",
+              "learnedFactor": 0.05387193879476352,
+              "baselineUtility": 0.20784211522719712,
+              "actualUtility": 0.20999699277898765
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion",
+              "learnedFactor": 0.030338893242702922,
+              "baselineUtility": 0.28,
+              "actualUtility": 0.28121355572970813
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+              "learnedFactor": -0.08421083203746645,
+              "baselineUtility": 0.21307196677903417,
+              "actualUtility": 0.2097035334975355
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp",
+              "learnedFactor": -0.24101219075334743,
+              "baselineUtility": 0.11599999999999999,
+              "actualUtility": 0.1063595123698661
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available",
+              "learnedFactor": 0.24101219075334743,
+              "baselineUtility": -0.09907372677457371,
+              "actualUtility": -0.08943323914443982
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.033333333333271,
+            "healthChange": 0,
+            "goldGain": 36.99000000000012,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.02774250000000009
+          }
+        }
+      ]
+    },
+    {
+      "name": "one-front-200",
+      "seed": 82,
+      "swapped": false,
+      "gap": 260,
+      "spread": 30,
+      "frontCount": 1,
+      "rearOffset": 200,
+      "placed": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 1170,
+          "y": 320,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 970,
+          "y": 350,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 970,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 970,
+          "y": 410,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 970,
+          "y": 440,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_craps",
+          "x": 1430,
+          "y": 320,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 1630,
+          "y": 350,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_neko",
+          "x": 1630,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 1630,
+          "y": 410,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 1630,
+          "y": 440,
+          "hpFraction": 1
+        }
+      ],
+      "observedSeconds": 35.73333333333387,
+      "sampled": 476,
+      "assignments": 0,
+      "validOutcomes": 0,
+      "gates": {
+        "legal-pair": 246,
+        "commitment": 17,
+        "defense": 34,
+        "health": 177,
+        "danger": 1,
+        "survival": 1
+      },
+      "offered": {
+        "push": 209,
+        "fight+push": 162,
+        "fight+regroup+push": 20,
+        "regroup+push": 44,
+        "wave+push": 41
+      },
+      "pairedGates": {
+        "commitment": 10,
+        "health": 9,
+        "survival": 1
+      },
+      "experimentRecords": []
+    },
+    {
+      "name": "two-front-120",
+      "seed": 83,
+      "swapped": false,
+      "gap": 260,
+      "spread": 30,
+      "frontCount": 2,
+      "rearOffset": 120,
+      "placed": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 1170,
+          "y": 320,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 1170,
+          "y": 350,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 1050,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 1050,
+          "y": 410,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 1050,
+          "y": 440,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_craps",
+          "x": 1430,
+          "y": 320,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 1430,
+          "y": 350,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_neko",
+          "x": 1550,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 1550,
+          "y": 410,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 1550,
+          "y": 440,
+          "hpFraction": 1
+        }
+      ],
+      "observedSeconds": 35.666666666667204,
+      "sampled": 293,
+      "assignments": 0,
+      "validOutcomes": 0,
+      "gates": {
+        "legal-pair": 142,
+        "commitment": 13,
+        "defense": 33,
+        "influence": 5,
+        "health": 79,
+        "tower": 21
+      },
+      "offered": {
+        "push": 95,
+        "fight+push": 144,
+        "fight+regroup+push": 15,
+        "wave+push": 36,
+        "regroup+push": 3
+      },
+      "pairedGates": {
+        "commitment": 4,
+        "influence": 5,
+        "health": 6
+      },
+      "experimentRecords": []
+    },
+    {
+      "name": "two-front-200",
+      "seed": 84,
+      "swapped": false,
+      "gap": 260,
+      "spread": 30,
+      "frontCount": 2,
+      "rearOffset": 200,
+      "placed": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 1170,
+          "y": 320,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 1170,
+          "y": 350,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 970,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 970,
+          "y": 410,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 970,
+          "y": 440,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_craps",
+          "x": 1430,
+          "y": 320,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 1430,
+          "y": 350,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_neko",
+          "x": 1630,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 1630,
+          "y": 410,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 1630,
+          "y": 440,
+          "hpFraction": 1
+        }
+      ],
+      "observedSeconds": 35.10000000000057,
+      "sampled": 418,
+      "assignments": 0,
+      "validOutcomes": 0,
+      "gates": {
+        "legal-pair": 179,
+        "defense": 37,
+        "health": 182,
+        "commitment": 9,
+        "influence": 2,
+        "tower": 9
+      },
+      "offered": {
+        "push": 165,
+        "fight+push": 184,
+        "wave+push": 37,
+        "regroup+push": 24,
+        "fight+regroup+push": 8
+      },
+      "pairedGates": {
+        "commitment": 1,
+        "influence": 2,
+        "health": 5
+      },
+      "experimentRecords": []
+    },
+    {
+      "name": "one-front-wide",
+      "seed": 85,
+      "swapped": false,
+      "gap": 310,
+      "spread": 35,
+      "frontCount": 1,
+      "rearOffset": 200,
+      "placed": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 1145,
+          "y": 310,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 945,
+          "y": 345,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 945,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 945,
+          "y": 415,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 945,
+          "y": 450,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_craps",
+          "x": 1455,
+          "y": 310,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 1655,
+          "y": 345,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_neko",
+          "x": 1655,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 1655,
+          "y": 415,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 1655,
+          "y": 450,
+          "hpFraction": 1
+        }
+      ],
+      "observedSeconds": 36.46666666666716,
+      "sampled": 444,
+      "assignments": 0,
+      "validOutcomes": 0,
+      "gates": {
+        "legal-pair": 207,
+        "commitment": 20,
+        "defense": 29,
+        "health": 185,
+        "tower": 3
+      },
+      "offered": {
+        "push": 139,
+        "fight+push": 194,
+        "fight+regroup+push": 12,
+        "regroup+push": 44,
+        "wave+push": 55
+      },
+      "pairedGates": {
+        "commitment": 8,
+        "health": 4
+      },
+      "experimentRecords": []
+    },
+    {
+      "name": "two-front-wide",
+      "seed": 86,
+      "swapped": false,
+      "gap": 310,
+      "spread": 35,
+      "frontCount": 2,
+      "rearOffset": 200,
+      "placed": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 1145,
+          "y": 310,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 1145,
+          "y": 345,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 945,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 945,
+          "y": 415,
+          "hpFraction": 1
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 945,
+          "y": 450,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_craps",
+          "x": 1455,
+          "y": 310,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 1455,
+          "y": 345,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_neko",
+          "x": 1655,
+          "y": 380,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 1655,
+          "y": 415,
+          "hpFraction": 1
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 1655,
+          "y": 450,
+          "hpFraction": 1
+        }
+      ],
+      "observedSeconds": 36.70000000000048,
+      "sampled": 458,
+      "assignments": 0,
+      "validOutcomes": 0,
+      "gates": {
+        "legal-pair": 274,
+        "commitment": 15,
+        "defense": 51,
+        "influence": 16,
+        "health": 89,
+        "survival": 2,
+        "tower": 11
+      },
+      "offered": {
+        "push": 108,
+        "fight+push": 242,
+        "fight+regroup+push": 30,
+        "regroup+push": 16,
+        "wave+push": 62
+      },
+      "pairedGates": {
+        "commitment": 6,
+        "influence": 16,
+        "health": 6,
+        "survival": 2
+      },
+      "experimentRecords": []
+    }
+  ],
+  "fit": {
+    "assigned": 1,
+    "validOutcomes": 1,
+    "trainedGroups": 0,
+    "groups": [
+      {
+        "pair": "fight-regroup",
+        "incumbent": "fight",
+        "alternate": "regroup",
+        "assigned": {
+          "incumbent": 1,
+          "alternate": 0
+        },
+        "outcomes": {
+          "incumbent": 1,
+          "alternate": 0
+        }
+      }
+    ],
+    "incumbent": {
+      "version": 2,
+      "matches": 1,
+      "weights": {
+        "fight": {
+          "bias": 0.009166666666666665,
+          "iq": 0.009891666666666661,
+          "teamfight": 0.009325000000000002,
+          "lane": 0.009883333333333334,
+          "flexibility": 0.008716666666666668,
+          "health": -0.00008956120523627778,
+          "mana": 0.022126666666666468,
+          "roleFit": -0.001,
+          "role:Marksman": 0.012499999999999999,
+          "card:p_woozy": 0.015,
+          "personality:momentum_junkie": 0.015,
+          "personality:showman": 0.0075,
+          "role:Fighter": -0.02,
+          "card:p_neko": 0,
+          "personality:short_fuse": 0,
+          "personality:untiltable": -0.0033333333333333335,
+          "card:p_craps": -0.02,
+          "personality:limit_tester": -0.02,
+          "personality:cold_as_ice": -0.01,
+          "role:Assassin": -0.0033333333333333335,
+          "card:p_ouzi": -0.0033333333333333335,
+          "personality:first_blood_hunter": -0.004166666666666667,
+          "card:p_mirecle": -0.0025,
+          "personality:bush_stalker": 0.01875,
+          "role:Tank": 0.02,
+          "card:p_p1mple": 0.02,
+          "personality:revenge_driven": 0.01
+        },
+        "wave": {
+          "bias": 0.005,
+          "iq": 0.00475,
+          "teamfight": 0.0048,
+          "lane": 0.0048,
+          "flexibility": 0.0048,
+          "health": 0.002766893242702919,
+          "mana": 0.005,
+          "roleFit": 0,
+          "role:Marksman": 0.005,
+          "card:p_woozy": 0.005,
+          "personality:momentum_junkie": 0.005,
+          "personality:showman": 0.0025
+        },
+        "regroup": {
+          "bias": -0.014166666666666668,
+          "iq": -0.014641666666666662,
+          "teamfight": -0.014124999999999999,
+          "lane": -0.014683333333333333,
+          "flexibility": -0.013516666666666666,
+          "health": -0.002677332037466642,
+          "mana": -0.027126666666666473,
+          "roleFit": 0.001,
+          "role:Marksman": -0.0175,
+          "card:p_woozy": -0.02,
+          "personality:momentum_junkie": -0.02,
+          "personality:showman": -0.01,
+          "role:Fighter": 0.02,
+          "card:p_neko": 0,
+          "personality:short_fuse": 0,
+          "personality:untiltable": 0.0033333333333333335,
+          "card:p_craps": 0.02,
+          "personality:limit_tester": 0.02,
+          "personality:cold_as_ice": 0.01,
+          "role:Assassin": 0.0033333333333333335,
+          "card:p_ouzi": 0.0033333333333333335,
+          "personality:first_blood_hunter": 0.004166666666666667,
+          "card:p_mirecle": 0.0025,
+          "personality:bush_stalker": -0.01875,
+          "role:Tank": -0.02,
+          "card:p_p1mple": -0.02,
+          "personality:revenge_driven": -0.01
+        },
+        "farm": {
+          "bias": -0.0275,
+          "iq": -0.024708333333333332,
+          "teamfight": -0.026325000000000008,
+          "lane": -0.027416666666666676,
+          "flexibility": -0.024350000000000004,
+          "health": -0.02684769075334742,
+          "mana": -0.0275,
+          "roleFit": -0.016333333333333335,
+          "role:Assassin": -0.016666666666666666,
+          "card:p_ouzi": -0.016666666666666666,
+          "personality:untiltable": -0.023333333333333334,
+          "personality:first_blood_hunter": -0.015833333333333335,
+          "role:Fighter": -0.013333333333333334,
+          "card:p_neko": -0.013333333333333334,
+          "personality:short_fuse": -0.013333333333333334,
+          "role:Mage": 0.01,
+          "card:p_daft": 0.01,
+          "personality:bush_stalker": 0.00625,
+          "personality:steal_gambler": 0.005,
+          "role:Marksman": -0.0075,
+          "card:p_mirecle": -0.0075
+        },
+        "push": {
+          "bias": 0.0275,
+          "iq": 0.024708333333333332,
+          "teamfight": 0.026325000000000008,
+          "lane": 0.027416666666666676,
+          "flexibility": 0.024350000000000004,
+          "health": 0.02684769075334742,
+          "mana": 0.0275,
+          "roleFit": 0.016333333333333335,
+          "role:Assassin": 0.016666666666666666,
+          "card:p_ouzi": 0.016666666666666666,
+          "personality:untiltable": 0.023333333333333334,
+          "personality:first_blood_hunter": 0.015833333333333335,
+          "role:Fighter": 0.013333333333333334,
+          "card:p_neko": 0.013333333333333334,
+          "personality:short_fuse": 0.013333333333333334,
+          "role:Mage": -0.01,
+          "card:p_daft": -0.01,
+          "personality:bush_stalker": -0.00625,
+          "personality:steal_gambler": -0.005,
+          "role:Marksman": 0.0075,
+          "card:p_mirecle": 0.0075
+        }
+      }
+    },
+    "candidate": {
+      "version": 2,
+      "matches": 1,
+      "weights": {
+        "fight": {
+          "bias": 0.009166666666666665,
+          "iq": 0.009891666666666661,
+          "teamfight": 0.009325000000000002,
+          "lane": 0.009883333333333334,
+          "flexibility": 0.008716666666666668,
+          "health": -0.00008956120523627778,
+          "mana": 0.022126666666666468,
+          "roleFit": -0.001,
+          "role:Marksman": 0.012499999999999999,
+          "card:p_woozy": 0.015,
+          "personality:momentum_junkie": 0.015,
+          "personality:showman": 0.0075,
+          "role:Fighter": -0.02,
+          "card:p_neko": 0,
+          "personality:short_fuse": 0,
+          "personality:untiltable": -0.0033333333333333335,
+          "card:p_craps": -0.02,
+          "personality:limit_tester": -0.02,
+          "personality:cold_as_ice": -0.01,
+          "role:Assassin": -0.0033333333333333335,
+          "card:p_ouzi": -0.0033333333333333335,
+          "personality:first_blood_hunter": -0.004166666666666667,
+          "card:p_mirecle": -0.0025,
+          "personality:bush_stalker": 0.01875,
+          "role:Tank": 0.02,
+          "card:p_p1mple": 0.02,
+          "personality:revenge_driven": 0.01
+        },
+        "wave": {
+          "bias": 0.005,
+          "iq": 0.00475,
+          "teamfight": 0.0048,
+          "lane": 0.0048,
+          "flexibility": 0.0048,
+          "health": 0.002766893242702919,
+          "mana": 0.005,
+          "roleFit": 0,
+          "role:Marksman": 0.005,
+          "card:p_woozy": 0.005,
+          "personality:momentum_junkie": 0.005,
+          "personality:showman": 0.0025
+        },
+        "regroup": {
+          "bias": -0.014166666666666668,
+          "iq": -0.014641666666666662,
+          "teamfight": -0.014124999999999999,
+          "lane": -0.014683333333333333,
+          "flexibility": -0.013516666666666666,
+          "health": -0.002677332037466642,
+          "mana": -0.027126666666666473,
+          "roleFit": 0.001,
+          "role:Marksman": -0.0175,
+          "card:p_woozy": -0.02,
+          "personality:momentum_junkie": -0.02,
+          "personality:showman": -0.01,
+          "role:Fighter": 0.02,
+          "card:p_neko": 0,
+          "personality:short_fuse": 0,
+          "personality:untiltable": 0.0033333333333333335,
+          "card:p_craps": 0.02,
+          "personality:limit_tester": 0.02,
+          "personality:cold_as_ice": 0.01,
+          "role:Assassin": 0.0033333333333333335,
+          "card:p_ouzi": 0.0033333333333333335,
+          "personality:first_blood_hunter": 0.004166666666666667,
+          "card:p_mirecle": 0.0025,
+          "personality:bush_stalker": -0.01875,
+          "role:Tank": -0.02,
+          "card:p_p1mple": -0.02,
+          "personality:revenge_driven": -0.01
+        },
+        "farm": {
+          "bias": -0.0275,
+          "iq": -0.024708333333333332,
+          "teamfight": -0.026325000000000008,
+          "lane": -0.027416666666666676,
+          "flexibility": -0.024350000000000004,
+          "health": -0.02684769075334742,
+          "mana": -0.0275,
+          "roleFit": -0.016333333333333335,
+          "role:Assassin": -0.016666666666666666,
+          "card:p_ouzi": -0.016666666666666666,
+          "personality:untiltable": -0.023333333333333334,
+          "personality:first_blood_hunter": -0.015833333333333335,
+          "role:Fighter": -0.013333333333333334,
+          "card:p_neko": -0.013333333333333334,
+          "personality:short_fuse": -0.013333333333333334,
+          "role:Mage": 0.01,
+          "card:p_daft": 0.01,
+          "personality:bush_stalker": 0.00625,
+          "personality:steal_gambler": 0.005,
+          "role:Marksman": -0.0075,
+          "card:p_mirecle": -0.0075
+        },
+        "push": {
+          "bias": 0.0275,
+          "iq": 0.024708333333333332,
+          "teamfight": 0.026325000000000008,
+          "lane": 0.027416666666666676,
+          "flexibility": 0.024350000000000004,
+          "health": 0.02684769075334742,
+          "mana": 0.0275,
+          "roleFit": 0.016333333333333335,
+          "role:Assassin": 0.016666666666666666,
+          "card:p_ouzi": 0.016666666666666666,
+          "personality:untiltable": 0.023333333333333334,
+          "personality:first_blood_hunter": 0.015833333333333335,
+          "role:Fighter": 0.013333333333333334,
+          "card:p_neko": 0.013333333333333334,
+          "personality:short_fuse": 0.013333333333333334,
+          "role:Mage": -0.01,
+          "card:p_daft": -0.01,
+          "personality:bush_stalker": -0.00625,
+          "personality:steal_gambler": -0.005,
+          "role:Marksman": 0.0075,
+          "card:p_mirecle": 0.0075
+        }
+      }
+    }
+  }
+}

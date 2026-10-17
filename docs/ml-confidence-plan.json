@@ -1,0 +1,1004 @@
+{
+  "schema": "confidence-task-v1",
+  "createdAt": "2026-10-16T15:53:48.077Z",
+  "sourceHash": "f94a5ca0acbb9cc37d762e775ab2bfc7df42cfca1c5a12c0840f048fde9710f7",
+  "sourceManifest": [
+    [
+      "../docs/ml-live-evaluation.json",
+      "aa7d14f2f49a8e5a277728a075118c469e59a5c5ac0327c9ffe9e14591df54ac"
+    ],
+    [
+      "scripts/collect-confidence-shard.mjs",
+      "83153443d546e7d4636b2d455c1aee40b6f5eb2e510a83aab854d40477f8c17b"
+    ],
+    [
+      "scripts/confidence-task-study.mjs",
+      "c11483fa55ad91fd186107eb82a541ba87c93849507544d31a1d1dda44fc25f3"
+    ],
+    [
+      "scripts/paired-behavior.mjs",
+      "93a6cb3b2d1e13707667bfd5320c7d7d2ae61fb6f141804accd5644b84afe029"
+    ],
+    [
+      "scripts/paired-live-rollout.mjs",
+      "f770aa7720eb84137d247c087c0fe62b7d12a2e74601b940d67e03d35df56827"
+    ],
+    [
+      "scripts/paired-outcome-rubric.mjs",
+      "6dd22bd6e5aa9de397441454ed08feb900fee22c9a7ec62f9ebe718fbc9cfbee"
+    ],
+    [
+      "src/App.tsx",
+      "3a0209bc2d019cf89bfc4d8afe3819100e732912865622fa96b173de7fe8968a"
+    ],
+    [
+      "src/abilityCastTypes.ts",
+      "8e7d8378488ae065bf6df36bda9cb5937ad02686198cc65808c2db412edf867a"
+    ],
+    [
+      "src/abilityCatalogAudit.ts",
+      "7b5cc61addb965cdc3f2addae09b73d71835e76f0e0a97f458c747741cf5e79e"
+    ],
+    [
+      "src/abilityPresentation.ts",
+      "4fee844f24b44dc8243bf486ec491f70856dd53e26988738361b21a7ca48a1d3"
+    ],
+    [
+      "src/abilityRules.ts",
+      "3bf99b0e86d53c469126809752a8de065b7cb792a9a64f7ea4667078fbd38dc8"
+    ],
+    [
+      "src/abilityRuntimeRules.ts",
+      "bee5669c74339c5bd3265f09371a40f21c1a31b636f53b7a83ff664442d1836d"
+    ],
+    [
+      "src/actionDecisionRules.ts",
+      "931c7a3d1fe35796a5567c97fe436db5df0cecb4fb56b189bc2791d801308dc6"
+    ],
+    [
+      "src/adaptivePolicy.ts",
+      "4219e4efaf71cf060f052788f598a8ae061337cc023835b3fec3caf757928c50"
+    ],
+    [
+      "src/additionalChampions.ts",
+      "8aa28da1067477f007d5629c8ce05704203339ef84c2a4d6fb2decc281961809"
+    ],
+    [
+      "src/aetherisAbilities.ts",
+      "1828c8a079f646da9bab1b8e6b44182a6018486947ef974a2493ca5233d994b6"
+    ],
+    [
+      "src/aiDecisionTelemetry.ts",
+      "11ee473aea2e91c6098133646c372695ceffb58b211519d4a1922dc901e6d830"
+    ],
+    [
+      "src/arenaLayout.ts",
+      "f68a5219c1ad01fe10fc6dc533961ee08a57b7dc88b39722aa68966a1402fe03"
+    ],
+    [
+      "src/arenaPresentationCamera.ts",
+      "329b035d0f04bd9208aaf3afef245cf5cfc7c37b51d94689bf5865a02f3fb336"
+    ],
+    [
+      "src/arenaRules.ts",
+      "923f626c6585c05da98a1316071d51fb1d029d5f4ebc03d8d3f771037895a0ab"
+    ],
+    [
+      "src/audio.ts",
+      "24c5d907eaecbd112840b05c0ad887d15989d8dc4c607dcebbc04be651b2440c"
+    ],
+    [
+      "src/avatarCombatRoles.ts",
+      "8b0a50b61ebf653aabaff0eebb09e70a800efe7de16b8297625bc901a5d43a79"
+    ],
+    [
+      "src/avatarCombos.ts",
+      "3dcf2a1df61461f4318f4e617e815ab2348f3c14d7314ef281ad1ac9c8a7c558"
+    ],
+    [
+      "src/avatarDisplayName.ts",
+      "8a311693b02a5fec530b60f4109911ee7fe749beffdb65da18f9f83807640269"
+    ],
+    [
+      "src/avatarIdentity.ts",
+      "6f6c96f0a6a8c7c62809f9c1dfb7d4b8c9e205cfba9280d9106f3a9c6023c30f"
+    ],
+    [
+      "src/avatarSkillAnimation.ts",
+      "f2537dc5c8d2b6e6d524c08363938087ed0457ff38ca0c4fcfbe5b6262053173"
+    ],
+    [
+      "src/avatarSkillAudio.ts",
+      "d4ecbce65f42718a7e379253c51e7dac89425c9114ad8394468d53b457ea37f2"
+    ],
+    [
+      "src/avatarSynergyData.ts",
+      "c07d90581660eee540d8690b65279cf1b2362184d37bc277394a802376239b7a"
+    ],
+    [
+      "src/backgroundMusic.ts",
+      "9418a61fd473094a277aada306c1bef79b0e1e8c6f785488450f259965bc7b10"
+    ],
+    [
+      "src/baseDefenseRules.ts",
+      "b2d13439c031db4a1cee9486c4f965a691cb7d73fbacec6fb3a3f66fd8a142bc"
+    ],
+    [
+      "src/baseSafetyRules.ts",
+      "99189377ca9d273aaabddf614c134d12f5350f1045acd5677b68345d75e69674"
+    ],
+    [
+      "src/basicAttackRangeRules.ts",
+      "0e98b0a88c38dca0ea4891cfc75999f42610cb20c537235ab3ea5a76ce82ccd1"
+    ],
+    [
+      "src/blackHoleCounterplay.ts",
+      "27f54d84e01c7a2a5af144e1d6cb3467e3d6ca1d6a1fd127aec4d9c89ad52ece"
+    ],
+    [
+      "src/campAnimation.ts",
+      "10304897b46726e6900991679f8b70fe2f3f34baffb1ed33a1cadfc232066a16"
+    ],
+    [
+      "src/championLore.ts",
+      "04abc011c7a9d856660c517a82b45eab821a1fcaf3567f15d9051ce9accf1d0c"
+    ],
+    [
+      "src/cloudPersistence.ts",
+      "20ec2ab76c2217bdf9c09cb269424093a9a88eb1e05b08202b558c84ae32fe82"
+    ],
+    [
+      "src/clubRosterPersistence.ts",
+      "15f7a85fe34bf2a939a8b0d00fcf95164477ec8f93d48bb2d260eb99f1095880"
+    ],
+    [
+      "src/combatDecision.ts",
+      "760d5deca0358af8d75642cbb1b40d15390c51bbce706c7d102c75bd1f41cf25"
+    ],
+    [
+      "src/combatPacingRules.ts",
+      "3d9dc0ed76ad2faa7359f0fffeb37aa36833aded904b4c4d7e0465dbd57ad6d4"
+    ],
+    [
+      "src/components/AramMatchView.tsx",
+      "a5a6d2aa9d8500d3146d7011bbc5a371e97bcfc4088d3f2c62898a1c3638050d"
+    ],
+    [
+      "src/components/ArenaMatchView.tsx",
+      "60009debaa04ffb6f096a42da2c5086b48103d26b0d8a6ac3dfc42fbf12d6af1"
+    ],
+    [
+      "src/components/BattlefieldModelRenderer.ts",
+      "105b7dc270138cc6737713a847f4e6dfe2b062fc3be9b0b11f141721f15a9669"
+    ],
+    [
+      "src/components/CardComponent.tsx",
+      "048eb9f4216e1d8fa6cfc306948dddbb250f52856081d23507814d7e27b708d2"
+    ],
+    [
+      "src/components/ChampionArtwork.tsx",
+      "7eb756ffd5b1c54cfec503de3432b716df4dd056a84cbdb00db6c9c673a73767"
+    ],
+    [
+      "src/components/ChampionHubView.tsx",
+      "252773db87c88c12fe65fb75cd10c00cc235d0bb69ec067058247b3b7c3d1ebc"
+    ],
+    [
+      "src/components/ChampionSpriteRenderer.ts",
+      "0f0cdfc3c6260460ae7820538760d6365cbf3ce50f21930b38eed831a0e4cd02"
+    ],
+    [
+      "src/components/ChibiAvatar.tsx",
+      "d790a071c52269ad86166258cd4b4fd88bf86220a8857fe4e9bedbe1fb5b52c5"
+    ],
+    [
+      "src/components/CloudSavePanel.tsx",
+      "3b0a96ce2254758cc26b3971abd7d51712c21a5e6c90a54276f38930717272bc"
+    ],
+    [
+      "src/components/ConfluxSpellbook.tsx",
+      "d381ff9037e47a4836f5ed1adae73277dee63c2cefe4b6220ae1074912a4edba"
+    ],
+    [
+      "src/components/DraftPhaseView.tsx",
+      "31a45fe0c211b43ad3058985b3f05c4f72f8c2154d054a8ecc733b31151eeeff"
+    ],
+    [
+      "src/components/EvolutionsView.tsx",
+      "c5c4cde2055d034f7aa8d8d2bf65fff9df0e63a27b1bdc32ead37aa14f5b2ed0"
+    ],
+    [
+      "src/components/GamingHouseView.tsx",
+      "3d22ca875e1db80cb782c8249af5398a289689b768b880982d9dd5c0c39426bf"
+    ],
+    [
+      "src/components/PackOpeningModal.tsx",
+      "0820f9cd823828563337e513e3936c621a44b77eeda82393d5a4cf4c5c55b830"
+    ],
+    [
+      "src/components/PlayerDraftPhaseView.tsx",
+      "d448cd8e6b3d81472256bcbd03fd178d489844dd38fe51fb6ab4574285cd28fb"
+    ],
+    [
+      "src/components/ProCircuitView.tsx",
+      "83fd2867ff7516f2e7cf9798d4352883026193c1873b46e78a56f571aa5eab84"
+    ],
+    [
+      "src/components/RankedLadderView.tsx",
+      "738d41525860a51ed2eb67fcdebaf062b78bb7623cbc5dd91597d2c8c09da58b"
+    ],
+    [
+      "src/components/SpectatorRoster.tsx",
+      "20298381a03b2123660fb53faf1677e72ca98c6683cc9c0370cebf16b6705d7e"
+    ],
+    [
+      "src/components/SquadView.tsx",
+      "27ff02322acae44113ba6b5c32d09c08e95c3f474e06359c5b5bd0c3466681c6"
+    ],
+    [
+      "src/components/TeamfightArenaView.tsx",
+      "3b6ba46409d8dea269319e87b6b501006dfc7fe0c750426182e7ca52919ca736"
+    ],
+    [
+      "src/components/ThreeAramArena.tsx",
+      "58cbba154135bbc5227836669665adb0882d0a3759758dc7695327322cfb3610"
+    ],
+    [
+      "src/components/TournamentView.tsx",
+      "259b790355c2a1e7b8b44bc0ca4d8565f53c7202783c469ee73f2801601b75ec"
+    ],
+    [
+      "src/cooldownKnowledge.ts",
+      "898d3fe04f10dee0af6b2efbc86364c6d4c6c4d2326f63c528b045272d0cd164"
+    ],
+    [
+      "src/creatureAnimation.ts",
+      "8f40b74ce3acdf263ed4f76f56955e84c5024f08f971bc7507a1d8f389d00faa"
+    ],
+    [
+      "src/creepAttackTiming.ts",
+      "7d8beb27f9e7c11ec0532640528fc53ae1cb90b9c3060d8c08ccfa66e4badc38"
+    ],
+    [
+      "src/decisionActionRecovery.ts",
+      "b12e7984d2485aa1535bc55cb4a4bead2f689bd7332e08ff6b1d5ecaf1410a43"
+    ],
+    [
+      "src/decisionCalibration.ts",
+      "ebb9541ed8fc02ea7628316bdf78ecb86007bf0d8904ba8a7af9703a78b4ddab"
+    ],
+    [
+      "src/decisionCommitment.ts",
+      "a6a018fbe6b4e20cbc264ed1779f128fd517aa4a5bb57224943d758c063b62af"
+    ],
+    [
+      "src/decisionPerception.ts",
+      "bf7a0a5e3c7d3545103fbdfc4488b89e455aea252ec4e3e26821be06baa22207"
+    ],
+    [
+      "src/devRandomMode.ts",
+      "f22310850ec45c38a6456c677fde3daf7050ed3db76031eef4d3d107742aa9f6"
+    ],
+    [
+      "src/draftRules.ts",
+      "e445e7ad4602def7361f308e609903bdacb27777aa75b5738ab0841848f0d6ce"
+    ],
+    [
+      "src/economyRules.ts",
+      "5bd4a2fe5cc6fd4d83f7cfbb701fbc33c952f15c57cf76c05a31ad065738a316"
+    ],
+    [
+      "src/engagementOutcomeRules.ts",
+      "c34a3004635af44ba3eb49501bf4463a52fdb655d8db3944fe51229d12114eee"
+    ],
+    [
+      "src/equalizedMode.ts",
+      "d14301180a13759b371d3cd8aa2ceb883606c07bc33f71575b40f1972f71906c"
+    ],
+    [
+      "src/fightSurvivalRules.ts",
+      "f108bee6c53012599f4eb334902fd300bef9bb140e2b46ecbf411acdc5a6e287"
+    ],
+    [
+      "src/groundTargetRules.ts",
+      "342326d2b397e8bd8ec1d945cd0b46f1039f57e89c2fedcbdfc31465be2931c3"
+    ],
+    [
+      "src/itemStrategy.ts",
+      "596f697cb770f15ef454cdc8349f9ffcfd2a366e398f8c22a72d13e7a3df8430"
+    ],
+    [
+      "src/itemsData.ts",
+      "b493fbd04d47dd679deca4b752decb6c3806e421d3d91aefe16fabc7d310f3d0"
+    ],
+    [
+      "src/kaelenAbilities.ts",
+      "7e72c38cc102aad44c9aa79eca2c3fb8d44e78e967a6d76543e14ee214eb84bd"
+    ],
+    [
+      "src/kaelenSpellRuntime.ts",
+      "73776a5d6782fa9ec6de4eba05675f1dd9fa3345d751c5401ef88eae83dd1f71"
+    ],
+    [
+      "src/kaelenSpellVisuals.ts",
+      "0b49d6b394c62c7c430d0d96b17d9c5e9bea09c3ccb702f526685c643372a108"
+    ],
+    [
+      "src/kickswitchAbilities.ts",
+      "fd50773073962987e5c014cd8b313ba5399bbb45981a34e6ce896e46013bed01"
+    ],
+    [
+      "src/ladderRating.ts",
+      "8e4b2f9fada1590863aeb4e6386322313ce0d5f7485998d326c4082c6b82a47d"
+    ],
+    [
+      "src/liveHeadlessParity.ts",
+      "06b54c7d2c98b328a1b1b8e0b3baafe59639c7bdd0ae545d464d84a0ab49e947"
+    ],
+    [
+      "src/macroActionDecision.ts",
+      "ff36be160c1fe13b42a70e74ce5cdf3ccaedd8d357f7922d945b60c9690d2306"
+    ],
+    [
+      "src/macroFarmRules.ts",
+      "e3b1d1e202d1603f2664caffdbb9eb5400e4a510321eb6284d31d540fc96b2a6"
+    ],
+    [
+      "src/macroScenarioFixture.ts",
+      "5e6bb1baa42168c49e8686f00e71f1be0a250180ebf6ab4a08a80602cb4a11d1"
+    ],
+    [
+      "src/main.tsx",
+      "6e9e5807fcbd48b75a96db5cbef36c996262196be42e6d4760dc86babbe61ad2"
+    ],
+    [
+      "src/matchInspector.ts",
+      "4fdfcf078355a5cdaeacc24c0e2e702b62863f9b085e195804a2e000537e9dfc"
+    ],
+    [
+      "src/matchReplay.ts",
+      "960e01af6539cad0b7670b221bd77d834370d95f9d42018ca9d03290656c3c1e"
+    ],
+    [
+      "src/matchSimulationEngine.ts",
+      "6c163b00e34a955c72bcfbe3b4b9892ef96ecf363c5b24d641cdbe6f5388509d"
+    ],
+    [
+      "src/mockData.ts",
+      "67d32b980dc5dfe0f4ff1e4e9b3c37cba42826957915595de1fb3cf1e63887b0"
+    ],
+    [
+      "src/movementSpeedRules.ts",
+      "d99453f76b55179d1534b30c49a8f1f6b274dbf5b9cf824072aef136ed77cb6b"
+    ],
+    [
+      "src/multikillRules.ts",
+      "9d579c9b38e662190fc25d8712e71f3a239d9378137d08dba04db194726a03f8"
+    ],
+    [
+      "src/neutralAggroRules.ts",
+      "72748d8c72e82cc2c7ed2a35b94d482b8045e4b6f61201a306a774a81d95e2cd"
+    ],
+    [
+      "src/nexusFinishRules.ts",
+      "02e5690e5fa99a8b0e7125749708c54db0c64bec20b0f3f4d17d54162183b029"
+    ],
+    [
+      "src/objectiveRules.ts",
+      "24f1afa5f84f1a5bacccf60b772b27c7b6b8e243769d98d2e49f0ac6a3825ce3"
+    ],
+    [
+      "src/offlineOutcomePolicy.ts",
+      "a6cb3945ec224d9816ee26ac6c1f2348f621c1e212191aa512820d5b358813b5"
+    ],
+    [
+      "src/onlineRooms.ts",
+      "441ad56d649b78a516c76fa969b2f6721251af31656f094e8f0cfa4ce21d5605"
+    ],
+    [
+      "src/opponentTacticalMemory.ts",
+      "362bc2816d380812613a736ccb0386fdd82d7888325d4e6b43f5cf63b129a03d"
+    ],
+    [
+      "src/packEconomy.ts",
+      "a71840de4b57d20032aa7e407509747cb65d14e19734f2a71d9a4a52c0770550"
+    ],
+    [
+      "src/pairedMacroReplay.ts",
+      "d3533304e58a1d61a69c242fa5dabe9b19fb7eab4523f78498ecb8bccf9901e0"
+    ],
+    [
+      "src/pairedTaskLearning.ts",
+      "9d13db7066a89a5fea167aeb28f78648771d2e4f0fbb77c265245132056841b2"
+    ],
+    [
+      "src/paxiDecision.ts",
+      "826d9bdfc7fcbc8d63a74b96530656f77451d8c61bdcd504898fcc51502e5fd4"
+    ],
+    [
+      "src/playerCardPower.ts",
+      "6e5180cf1fa31a430b608800b2a7a346aca97f95e266486b4eee89df26f9f36f"
+    ],
+    [
+      "src/playerPersonality.ts",
+      "e7b39ca88142486e48f768a1281c2fc4ab6586f52df19831d1667405e8d19a0e"
+    ],
+    [
+      "src/postFightConversion.ts",
+      "0cd5ae182de9a4169f3ab89176400e14faf8069f08bb1a7a583fd6e0a40600c6"
+    ],
+    [
+      "src/proTeamsDatabase.ts",
+      "dbe3e72cb6117b40692441a15c81d8378754cb6ab21fe3a54a7a7002e9d75d8e"
+    ],
+    [
+      "src/propellaRules.ts",
+      "f39bd7a1a0f1fb57166e2b8102c6e74c32aa6af7e98a33e6442f571997925426"
+    ],
+    [
+      "src/randomizedMacroLearning.ts",
+      "5e7b27389b29751344cb10bc86e2629dfa6001c8ed792595e9634d9f2d4ae380"
+    ],
+    [
+      "src/reserveFilters.ts",
+      "b0cd8e65286168afc909eccb68cb9d8483faea4ac8bed209659015b6859f029f"
+    ],
+    [
+      "src/residualPushRules.ts",
+      "114704d765616a6413263a07ebefe429d88d214a462b5da8e07d0662533318bf"
+    ],
+    [
+      "src/retreatRouting.ts",
+      "0f15599d634232d7b1fc2e2c2c0da075718cbd191e4ff1982e475d95ed456f24"
+    ],
+    [
+      "src/rewardMacroDecision.ts",
+      "7c26e4162b55e508025186f490967e6634fa159ecd92e367c038cc4c37a46ac0"
+    ],
+    [
+      "src/rosterResearch.ts",
+      "177b9f654196cc41025a4a54e655a5a33c59f9f0d1a4fb97b0b65c71e6f6dbaa"
+    ],
+    [
+      "src/safeMacroExperiment.ts",
+      "6a8886fe1fba935b59404a13fd9c9cf0c57edbcf793eeeefe17798c02e2684c6"
+    ],
+    [
+      "src/scoreboardRules.ts",
+      "4ed10a7c3c989b1b765d1c6630800c1a0045f31ca924b5843323ec3faeec90b9"
+    ],
+    [
+      "src/siegeGolemRules.ts",
+      "0e2487c3ddf7235faa4df116211bc7838b2b086b765fbc61b95e0cdb9152f81b"
+    ],
+    [
+      "src/simulationClock.ts",
+      "844d010afe8b55df333af9ac86b2b2bbb834c3f36f153f27fa7897cb454bc446"
+    ],
+    [
+      "src/simulationPresentation.ts",
+      "748c3f4cb469ec0d173b72b2d6c42ef65986e16fc98750a18aa18d34edf8eebb"
+    ],
+    [
+      "src/skillProgression.ts",
+      "3559ea9ed2b7c646e58ee458572e5650c54e4633dd11c0bc2fa9b234b92940b2"
+    ],
+    [
+      "src/skillRangeRules.ts",
+      "4e2f1377a0cba0ed6aeb375e84d58f140cb14f0582e8d367e6dd58e8b2ed0629"
+    ],
+    [
+      "src/skillshotRules.ts",
+      "d326580594bfb40d6aa829198e43cdb5b07ba3f7ae1ab707669d4218a34af264"
+    ],
+    [
+      "src/spatialInfluence.ts",
+      "04736d4bfff8bcbdc41e1d9504f32c93c204b665bc884f2944dd3f599e905297"
+    ],
+    [
+      "src/structureSiegeRules.ts",
+      "ec3cd0a636b72fc384b15d7e672f0acd775cc23caec168ad79a67d669c1b0a03"
+    ],
+    [
+      "src/tacticalOutlook.ts",
+      "91380f40bd2787ec302273b0f47df09089f0baedb95bb7996b28dbfa2e9ee669"
+    ],
+    [
+      "src/taskActionContext.ts",
+      "c168a1e64a767aab543e25ecf00b78a0bfeb9acfb36a785fbd9b238ea33cf106"
+    ],
+    [
+      "src/taskConfidencePolicy.ts",
+      "bd3f759d3aa4e706162c0990de95f8f8f5fe3265e31947252fdbfe3fb55f7502"
+    ],
+    [
+      "src/taskContextPolicy.ts",
+      "09c1977dab782d8aec29d28371bac6f3e6f60c3e7db7adfe7cf9551ed5051922"
+    ],
+    [
+      "src/taskOutcome.ts",
+      "21fc48489218fd64ec4aaa2c09689c1b5d443e79f04d50c52ef5d98c0971e03e"
+    ],
+    [
+      "src/teamIntentDecision.ts",
+      "8d6c67560f76d2882bfdb961dc66b6fbbf30765e51f8b1a837703d72024fbf14"
+    ],
+    [
+      "src/teamTaskOutcome.ts",
+      "46be2444eaeef37d08577fbbbacf19a0a6e0faf94b5ca16ebdbe231025473c08"
+    ],
+    [
+      "src/teamTempoRules.ts",
+      "7867f5eb4afb67da08bed2254a8970acd27d0e02c1cbba9718cc18499370dc2a"
+    ],
+    [
+      "src/terrainRouting.ts",
+      "f50c981b93cd03228ee9e63ad2c4a7c5044bc4024258b6c4d9f126f2871d1f0c"
+    ],
+    [
+      "src/threeArenaTerrain.ts",
+      "6f7d3a9002f962d27b4d08a188dc726858cfbfb7680d7d3fb8b05a0acc17552b"
+    ],
+    [
+      "src/towerDiveRules.ts",
+      "7ad999131a0d5b48104763144ccca0bb9803b14643c5e4c97812faf5f6d1c82a"
+    ],
+    [
+      "src/types.ts",
+      "1014b56ae3bc75d2c50ff6fccb00fa7829d95c078fb3f733b0ea90848c42a2a6"
+    ],
+    [
+      "src/utilityDecision.ts",
+      "901c2ac2494c26f02c200959fe91d4f6c40862fc8c92fe3b0d89d64357185b64"
+    ],
+    [
+      "src/waveClearRules.ts",
+      "4cde733198a47b43f655daf0a279e720c3ec2482e42e99e1c9c98b431eaa8013"
+    ]
+  ],
+  "priorPlanHash": "e4de6cbc2e0bebfd8fe1ce2ac9a0221eb2351a23ecfb6cda38c72031e24019a3",
+  "pair": "farm-push",
+  "horizonSeconds": 30,
+  "scoutSeconds": 240,
+  "confidence": {
+    "level": 0.9,
+    "minimumFitting": 16,
+    "minimumCalibration": 16,
+    "margin": 0.02,
+    "method": "split-one-sided-v1"
+  },
+  "fit": {
+    "minimumEpisodes": 16,
+    "minimumInformative": 4,
+    "taskPenalty": 1,
+    "sharedPenalty": 4,
+    "maximumWeight": 1,
+    "targetBound": 1
+  },
+  "reward": {
+    "deaths": 0.55,
+    "structures": 0.15,
+    "economy": 0.1,
+    "health": 0.05,
+    "dragon": 0.025,
+    "siege": 0.025,
+    "actor": 0.1,
+    "structureScale": 1000,
+    "economyScale": 750,
+    "healthScale": 2,
+    "siegeScale": 2
+  },
+  "acceptance": {
+    "minimumValid": 12,
+    "minimumChanges": 3,
+    "minimumCoverage": 0.9,
+    "description": "Positive total team reward; more material gains (>=0.02) than losses; no extra actor/allied-team death case or broader worse changed case. At least 90% observed lower-bound coverage on supported contexts. Zero changes is not success. Full-match evidence remains necessary."
+  },
+  "method": "Fit only seeds 137-152; calibrate signed, unclipped overprediction on 153-168 with the fixed finite-sample one-sided quantile; never refit afterward. Reject unsupported push kinds and reverse direction. No confidence-level, buffer or threshold retuning on held-out outcomes.",
+  "collection": "First eligible safe pair after 120 seconds. Retain all missing/invalid worlds. Freeze model and witness before fresh collection. Older held-out seeds 169-184 remain seen and are excluded.",
+  "comparator": "Same proper-fit model with raw 0.02 threshold, computed from the forced paired arms. Diagnostic counterfactual comparator, not a separately executed learned arm.",
+  "development": [
+    {
+      "id": "train-137-d0-original",
+      "split": "fit",
+      "seed": 137,
+      "draft": 0,
+      "swapped": false,
+      "rawFile": "ml-team-train-137-d0-original.json",
+      "expectedRawHash": "927ac871a22c780010362c160b211f27f007995b1c8ccd0a0e3c9d49c8f8c5a6"
+    },
+    {
+      "id": "train-138-d0-swapped",
+      "split": "fit",
+      "seed": 138,
+      "draft": 0,
+      "swapped": true,
+      "rawFile": "ml-team-train-138-d0-swapped.json",
+      "expectedRawHash": "feadb971c21663cfd752f3bd5340628b06d1c1b649cd3858a05dd2829a02cf44"
+    },
+    {
+      "id": "train-139-d1-original",
+      "split": "fit",
+      "seed": 139,
+      "draft": 1,
+      "swapped": false,
+      "rawFile": "ml-team-train-139-d1-original.json",
+      "expectedRawHash": "f6927a65cdf9efdf196416e3ac271f0a8f5fccee3cb4efd04393131750f500c5"
+    },
+    {
+      "id": "train-140-d1-swapped",
+      "split": "fit",
+      "seed": 140,
+      "draft": 1,
+      "swapped": true,
+      "rawFile": "ml-team-train-140-d1-swapped.json",
+      "expectedRawHash": "6f184be0e0d94e20fb0665b4dbb68a2830a849f3dfc5fe72c898023743602eab"
+    },
+    {
+      "id": "train-141-d0-original",
+      "split": "fit",
+      "seed": 141,
+      "draft": 0,
+      "swapped": false,
+      "rawFile": "ml-team-train-141-d0-original.json",
+      "expectedRawHash": "a66870d0c6e18d4eac1162d0d35b900770388dbbf4ceff48065d508eb98a905e"
+    },
+    {
+      "id": "train-142-d0-swapped",
+      "split": "fit",
+      "seed": 142,
+      "draft": 0,
+      "swapped": true,
+      "rawFile": "ml-team-train-142-d0-swapped.json",
+      "expectedRawHash": "57bb05e9930c0c7d19c89fceb4c2c9e1b77bbe467ea4fd75e93f9d6baf8ef5b9"
+    },
+    {
+      "id": "train-143-d1-original",
+      "split": "fit",
+      "seed": 143,
+      "draft": 1,
+      "swapped": false,
+      "rawFile": "ml-team-train-143-d1-original.json",
+      "expectedRawHash": "7f3f475d1ca8e490f76b840c7073bfdaf704cbf349b39eb2a0bfa70053bde5de"
+    },
+    {
+      "id": "train-144-d1-swapped",
+      "split": "fit",
+      "seed": 144,
+      "draft": 1,
+      "swapped": true,
+      "rawFile": "ml-team-train-144-d1-swapped.json",
+      "expectedRawHash": "ff82c1861629211d94cf2fe3eaa100815943e9947bbf763f1e1853629986fa40"
+    },
+    {
+      "id": "train-145-d0-original",
+      "split": "fit",
+      "seed": 145,
+      "draft": 0,
+      "swapped": false,
+      "rawFile": "ml-team-train-145-d0-original.json",
+      "expectedRawHash": "21db9677f51e8d93fecbd9bb2538126c83e67cd0d2118014920d5a9ef18d4d38"
+    },
+    {
+      "id": "train-146-d0-swapped",
+      "split": "fit",
+      "seed": 146,
+      "draft": 0,
+      "swapped": true,
+      "rawFile": "ml-team-train-146-d0-swapped.json",
+      "expectedRawHash": "883db3798352bd16c3815b450b5e1263caba7607b44f27577ab5a2857df21218"
+    },
+    {
+      "id": "train-147-d1-original",
+      "split": "fit",
+      "seed": 147,
+      "draft": 1,
+      "swapped": false,
+      "rawFile": "ml-team-train-147-d1-original.json",
+      "expectedRawHash": "16458e9668ddc597c75a17ab26a7e520abe2d06e53080085e4a3e36132ebf4a9"
+    },
+    {
+      "id": "train-148-d1-swapped",
+      "split": "fit",
+      "seed": 148,
+      "draft": 1,
+      "swapped": true,
+      "rawFile": "ml-team-train-148-d1-swapped.json",
+      "expectedRawHash": "8369d1120ee63db9c6fc1da5279508737295005575ccdcabbe1d6b49c808c6df"
+    },
+    {
+      "id": "train-149-d0-original",
+      "split": "fit",
+      "seed": 149,
+      "draft": 0,
+      "swapped": false,
+      "rawFile": "ml-team-train-149-d0-original.json",
+      "expectedRawHash": "2d2bb22c918effc12e4b78874eee4a408af74bd63d98e0b429926982aff8e9ab"
+    },
+    {
+      "id": "train-150-d0-swapped",
+      "split": "fit",
+      "seed": 150,
+      "draft": 0,
+      "swapped": true,
+      "rawFile": "ml-team-train-150-d0-swapped.json",
+      "expectedRawHash": "977e5996125ab71e49de8e367eaf6224c7907f9115c033232d51f44cb0f81dc6"
+    },
+    {
+      "id": "train-151-d1-original",
+      "split": "fit",
+      "seed": 151,
+      "draft": 1,
+      "swapped": false,
+      "rawFile": "ml-team-train-151-d1-original.json",
+      "expectedRawHash": "8ad23c2f5888986a272e01b1edede6eb77aade44ac7ed62b49cebb450d37cf07"
+    },
+    {
+      "id": "train-152-d1-swapped",
+      "split": "fit",
+      "seed": 152,
+      "draft": 1,
+      "swapped": true,
+      "rawFile": "ml-team-train-152-d1-swapped.json",
+      "expectedRawHash": "564b92dad18ebb2b5249a4900cd89a5117ef337b3808febcb35709fec25d107d"
+    },
+    {
+      "id": "train-153-d0-original",
+      "split": "calibration",
+      "seed": 153,
+      "draft": 0,
+      "swapped": false,
+      "rawFile": "ml-team-train-153-d0-original.json",
+      "expectedRawHash": "31cbd608ddf22a17330ee42500a0ace814f51e76790b206c884e93d285d1df0f"
+    },
+    {
+      "id": "train-154-d0-swapped",
+      "split": "calibration",
+      "seed": 154,
+      "draft": 0,
+      "swapped": true,
+      "rawFile": "ml-team-train-154-d0-swapped.json",
+      "expectedRawHash": "697d3b208bdfdb9a4aff37d7e7ba6834b9e91bd58ef5c26c1fe2923051ba7081"
+    },
+    {
+      "id": "train-155-d1-original",
+      "split": "calibration",
+      "seed": 155,
+      "draft": 1,
+      "swapped": false,
+      "rawFile": "ml-team-train-155-d1-original.json",
+      "expectedRawHash": "80df0f3cc520ee0b4b27f718196ab795d2b5c7915e6988ba3ee14173ac0eb224"
+    },
+    {
+      "id": "train-156-d1-swapped",
+      "split": "calibration",
+      "seed": 156,
+      "draft": 1,
+      "swapped": true,
+      "rawFile": "ml-team-train-156-d1-swapped.json",
+      "expectedRawHash": "c10eec27821ee68b73b3b390e64a8213c362fb34d95994a3b88f1feec2f5bb61"
+    },
+    {
+      "id": "train-157-d0-original",
+      "split": "calibration",
+      "seed": 157,
+      "draft": 0,
+      "swapped": false,
+      "rawFile": "ml-team-train-157-d0-original.json",
+      "expectedRawHash": "47781147e3d9cc23b8cf2189f56296ffb89905ccd4eed1b3f79bae862fc1a741"
+    },
+    {
+      "id": "train-158-d0-swapped",
+      "split": "calibration",
+      "seed": 158,
+      "draft": 0,
+      "swapped": true,
+      "rawFile": "ml-team-train-158-d0-swapped.json",
+      "expectedRawHash": "9765f5bd93970eaf65e8ce8f54f5531fa4247dc67d15980c5cc0c2a91fc77c16"
+    },
+    {
+      "id": "train-159-d1-original",
+      "split": "calibration",
+      "seed": 159,
+      "draft": 1,
+      "swapped": false,
+      "rawFile": "ml-team-train-159-d1-original.json",
+      "expectedRawHash": "a674b41cd6f14432e617163d95a951f3eb46c3e69b50bafe6f8d21553cdae42b"
+    },
+    {
+      "id": "train-160-d1-swapped",
+      "split": "calibration",
+      "seed": 160,
+      "draft": 1,
+      "swapped": true,
+      "rawFile": "ml-team-train-160-d1-swapped.json",
+      "expectedRawHash": "92ce5714f29c7b8666ceb5aa2ab012e704094d178ed22cd7c4368d92459d1711"
+    },
+    {
+      "id": "train-161-d0-original",
+      "split": "calibration",
+      "seed": 161,
+      "draft": 0,
+      "swapped": false,
+      "rawFile": "ml-team-train-161-d0-original.json",
+      "expectedRawHash": "8da2c96e4f070abacdbdfe6c1518c0aebb5eeb5920494110e0fd365018e9ab6f"
+    },
+    {
+      "id": "train-162-d0-swapped",
+      "split": "calibration",
+      "seed": 162,
+      "draft": 0,
+      "swapped": true,
+      "rawFile": "ml-team-train-162-d0-swapped.json",
+      "expectedRawHash": "e853201f56c2cd9bdbff85f5dc25b59c296ca77749e5679393027ae456975916"
+    },
+    {
+      "id": "train-163-d1-original",
+      "split": "calibration",
+      "seed": 163,
+      "draft": 1,
+      "swapped": false,
+      "rawFile": "ml-team-train-163-d1-original.json",
+      "expectedRawHash": "e9508b8e665b3cb2e28591418ee9ec8beb710fdbeb85e07355de608106720f0b"
+    },
+    {
+      "id": "train-164-d1-swapped",
+      "split": "calibration",
+      "seed": 164,
+      "draft": 1,
+      "swapped": true,
+      "rawFile": "ml-team-train-164-d1-swapped.json",
+      "expectedRawHash": "18aad0796444d958fa22ea0522a95e016d901bfe2d7e5962843576b3b0c24c16"
+    },
+    {
+      "id": "train-165-d0-original",
+      "split": "calibration",
+      "seed": 165,
+      "draft": 0,
+      "swapped": false,
+      "rawFile": "ml-team-train-165-d0-original.json",
+      "expectedRawHash": "32fc33f71b3a7028ceb4fee1afd40c8183b4a8dfbfa87379b59ad05f3dd05554"
+    },
+    {
+      "id": "train-166-d0-swapped",
+      "split": "calibration",
+      "seed": 166,
+      "draft": 0,
+      "swapped": true,
+      "rawFile": "ml-team-train-166-d0-swapped.json",
+      "expectedRawHash": "6f5491909592c51f482af334ae18208155fe30310dc019b854166f3fd75e61d0"
+    },
+    {
+      "id": "train-167-d1-original",
+      "split": "calibration",
+      "seed": 167,
+      "draft": 1,
+      "swapped": false,
+      "rawFile": "ml-team-train-167-d1-original.json",
+      "expectedRawHash": "7fa7174e76339de7d135824597fa7a0af0410789827b642a978df7de03daba8e"
+    },
+    {
+      "id": "train-168-d1-swapped",
+      "split": "calibration",
+      "seed": 168,
+      "draft": 1,
+      "swapped": true,
+      "rawFile": "ml-team-train-168-d1-swapped.json",
+      "expectedRawHash": "78663003261b0281dec7b39695076e4f122d48885ac33fe8ddaaa634a7646c8f"
+    }
+  ],
+  "cases": [
+    {
+      "id": "heldout-185-d0-original",
+      "split": "heldout",
+      "seed": 185,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "heldout-186-d0-swapped",
+      "split": "heldout",
+      "seed": 186,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "heldout-187-d1-original",
+      "split": "heldout",
+      "seed": 187,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "heldout-188-d1-swapped",
+      "split": "heldout",
+      "seed": 188,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "heldout-189-d0-original",
+      "split": "heldout",
+      "seed": 189,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "heldout-190-d0-swapped",
+      "split": "heldout",
+      "seed": 190,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "heldout-191-d1-original",
+      "split": "heldout",
+      "seed": 191,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "heldout-192-d1-swapped",
+      "split": "heldout",
+      "seed": 192,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "heldout-193-d0-original",
+      "split": "heldout",
+      "seed": 193,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "heldout-194-d0-swapped",
+      "split": "heldout",
+      "seed": 194,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "heldout-195-d1-original",
+      "split": "heldout",
+      "seed": 195,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "heldout-196-d1-swapped",
+      "split": "heldout",
+      "seed": 196,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "heldout-197-d0-original",
+      "split": "heldout",
+      "seed": 197,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "heldout-198-d0-swapped",
+      "split": "heldout",
+      "seed": 198,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "heldout-199-d1-original",
+      "split": "heldout",
+      "seed": 199,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "heldout-200-d1-swapped",
+      "split": "heldout",
+      "seed": 200,
+      "draft": 1,
+      "swapped": true
+    }
+  ]
+}

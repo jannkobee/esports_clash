@@ -1,0 +1,445 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 77,
+  "swapped": true,
+  "scout": {
+    "label": "scout",
+    "event": {
+      "mode": "scout",
+      "actorId": "blue_p_mirecle",
+      "second": 333.1666666667161,
+      "cardId": "p_mirecle",
+      "champion": "Cora",
+      "incumbent": "wave",
+      "alternate": "regroup",
+      "fingerprint": "92369:aa42767b:62747423",
+      "matched": false,
+      "gate": null,
+      "actorStart": {
+        "x": 668.3359421128112,
+        "y": 424.232942702995,
+        "hpFraction": 1,
+        "gold": 711.3449999997987,
+        "cs": 10,
+        "kills": 1,
+        "deaths": 2,
+        "damageDealt": 5310
+      }
+    },
+    "lastSecond": 333.3000000000495,
+    "wallSeconds": 122.956
+  },
+  "replays": [
+    {
+      "label": "incumbent-a",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_mirecle",
+        "second": 333.1666666667161,
+        "cardId": "p_mirecle",
+        "champion": "Cora",
+        "incumbent": "wave",
+        "alternate": "regroup",
+        "fingerprint": "92369:aa42767b:62747423",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 668.3359421128112,
+          "y": 424.232942702995,
+          "hpFraction": 1,
+          "gold": 711.3449999997987,
+          "cs": 10,
+          "kills": 1,
+          "deaths": 2,
+          "damageDealt": 5310
+        },
+        "followup": {
+          "second": 341.16666666672245,
+          "actor": {
+            "x": 668.7392438118598,
+            "y": 423.4159129940786,
+            "hpFraction": 0,
+            "mana": 100,
+            "isAlive": false,
+            "gold": 925.6419999997861,
+            "cs": 15,
+            "kills": 1,
+            "deaths": 3,
+            "damageDealt": 5310
+          },
+          "nearestEnemyDistance": 34,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "691823:7e2917c9:36ff44f5"
+      },
+      "record": {
+        "second": 333.1666666667161,
+        "actorId": "blue_p_mirecle",
+        "team": "blue",
+        "selected": "wave",
+        "contextKey": "wave:r_melee_15_2:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.97,
+          "teamfight": 0.99,
+          "lane": 0.98,
+          "flexibility": 0.98,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0.4,
+          "role:Marksman": 1,
+          "card:p_mirecle": 1,
+          "personality:first_blood_hunter": 1,
+          "personality:bush_stalker": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "fight",
+        "experiment": {
+          "incumbent": "wave",
+          "alternate": "regroup",
+          "pair": "regroup-wave",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.0627162378422792
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 711.3449999997987,
+          "cs": 10,
+          "kills": 1,
+          "deaths": 2,
+          "damageDealt": 5310
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "wave",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 78.57899999999506,
+          "csGain": 2,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.20893424999999627
+        }
+      },
+      "wallSeconds": 0.852300000000745
+    },
+    {
+      "label": "incumbent-b",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_mirecle",
+        "second": 333.1666666667161,
+        "cardId": "p_mirecle",
+        "champion": "Cora",
+        "incumbent": "wave",
+        "alternate": "regroup",
+        "fingerprint": "92369:aa42767b:62747423",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 668.3359421128112,
+          "y": 424.232942702995,
+          "hpFraction": 1,
+          "gold": 711.3449999997987,
+          "cs": 10,
+          "kills": 1,
+          "deaths": 2,
+          "damageDealt": 5310
+        },
+        "followup": {
+          "second": 341.16666666672245,
+          "actor": {
+            "x": 668.7392438118598,
+            "y": 423.4159129940786,
+            "hpFraction": 0,
+            "mana": 100,
+            "isAlive": false,
+            "gold": 925.6419999997861,
+            "cs": 15,
+            "kills": 1,
+            "deaths": 3,
+            "damageDealt": 5310
+          },
+          "nearestEnemyDistance": 34,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "691823:7e2917c9:36ff44f5"
+      },
+      "record": {
+        "second": 333.1666666667161,
+        "actorId": "blue_p_mirecle",
+        "team": "blue",
+        "selected": "wave",
+        "contextKey": "wave:r_melee_15_2:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.97,
+          "teamfight": 0.99,
+          "lane": 0.98,
+          "flexibility": 0.98,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0.4,
+          "role:Marksman": 1,
+          "card:p_mirecle": 1,
+          "personality:first_blood_hunter": 1,
+          "personality:bush_stalker": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "fight",
+        "experiment": {
+          "incumbent": "wave",
+          "alternate": "regroup",
+          "pair": "regroup-wave",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.0627162378422792
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 711.3449999997987,
+          "cs": 10,
+          "kills": 1,
+          "deaths": 2,
+          "damageDealt": 5310
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "wave",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 78.57899999999506,
+          "csGain": 2,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.20893424999999627
+        }
+      },
+      "wallSeconds": 0.8076000000014901
+    },
+    {
+      "label": "alternate",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_mirecle",
+        "second": 333.1666666667161,
+        "cardId": "p_mirecle",
+        "champion": "Cora",
+        "incumbent": "wave",
+        "alternate": "regroup",
+        "fingerprint": "92369:aa42767b:62747423",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 668.3359421128112,
+          "y": 424.232942702995,
+          "hpFraction": 1,
+          "gold": 711.3449999997987,
+          "cs": 10,
+          "kills": 1,
+          "deaths": 2,
+          "damageDealt": 5310
+        },
+        "followup": {
+          "second": 341.16666666672245,
+          "actor": {
+            "x": 703.4109405954555,
+            "y": 424.8354391852249,
+            "hpFraction": 0,
+            "mana": 22.150000000000027,
+            "isAlive": false,
+            "gold": 937.9979999997863,
+            "cs": 16,
+            "kills": 1,
+            "deaths": 3,
+            "damageDealt": 5508
+          },
+          "nearestEnemyDistance": 67.03452313224196,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "691373:763de1ae:74ec243e"
+      },
+      "record": {
+        "second": 333.1666666667161,
+        "actorId": "blue_p_mirecle",
+        "team": "blue",
+        "selected": "regroup",
+        "contextKey": "regroup:blue_p_craps",
+        "features": {
+          "bias": 1,
+          "iq": 0.97,
+          "teamfight": 0.99,
+          "lane": 0.98,
+          "flexibility": 0.98,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0.4,
+          "role:Marksman": 1,
+          "card:p_mirecle": 1,
+          "personality:first_blood_hunter": 1,
+          "personality:bush_stalker": 0.5
+        },
+        "selectionReason": "evaluation-experiment:alternate",
+        "heldAction": "fight",
+        "experiment": {
+          "incumbent": "wave",
+          "alternate": "regroup",
+          "pair": "regroup-wave",
+          "arm": "alternate",
+          "propensity": 0.5,
+          "utilityGap": 0.0627162378422792
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 711.3449999997987,
+          "cs": 10,
+          "kills": 1,
+          "deaths": 2,
+          "damageDealt": 5310
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target",
+            "learnedFactor": 0.08306677212809684,
+            "baselineUtility": 0.06863256375210541,
+            "actualUtility": 0.07195523463722929
+          },
+          {
+            "key": "wave",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion",
+            "learnedFactor": 0.03653439324270291,
+            "baselineUtility": 0.28,
+            "actualUtility": 0.28146137572970814
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+            "learnedFactor": -0.11960116537079978,
+            "baselineUtility": 0.22352918450226095,
+            "actualUtility": 0.21874513788742894
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp",
+            "learnedFactor": -0.2168495240866808,
+            "baselineUtility": 0.13349999999999998,
+            "actualUtility": 0.12482601903653275
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available",
+            "learnedFactor": 0.2168495240866808,
+            "baselineUtility": -0.14798238230758964,
+            "actualUtility": -0.13930840134412242
+          }
+        ],
+        "zeroPolicySelected": "wave",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 78.57899999999506,
+          "csGain": 2,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.20893424999999627
+        }
+      },
+      "wallSeconds": 0.677199999999255
+    }
+  ],
+  "validPair": true,
+  "descriptiveAlternateMinusIncumbent": 0,
+  "extendedDifference": {
+    "healthFraction": 0,
+    "gold": 12.356000000000222,
+    "damageDealt": 198,
+    "kills": 0,
+    "deaths": 0,
+    "x": 34.671696783595735,
+    "y": 1.4195261911463035,
+    "nearestEnemyDistance": 33.03452313224196
+  }
+}

@@ -5,6 +5,7 @@ import { writeFile, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 const port = process.env.CDP_PORT ?? '9223';
+const vitePort = process.env.VITE_PORT ?? '5173';
 const pages = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
 const page = pages.find(page => page.type === 'page');
 assert.ok(page, 'A disposable browser page is required');
@@ -31,7 +32,7 @@ try {
   await send('Page.navigate', { url: 'about:blank' });
   await delay(100);
   await send('Runtime.enable');
-  await send('Page.navigate', { url: 'http://127.0.0.1:5173/' });
+  await send('Page.navigate', { url: `http://127.0.0.1:${vitePort}/` });
   for (let retry = 0; retry < 40; retry++) {
     if (await evaluate('!!document.querySelector("nav button")')) break;
     await delay(500);

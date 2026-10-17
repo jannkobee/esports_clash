@@ -1,0 +1,215 @@
+{
+  "method": "Diagnostic baseline, natural fixed-step before/after coverage and separate exact-state paired rollouts. Before/after trajectories are not paired causal outcomes.",
+  "instrumentationPreservedState": true,
+  "examples": [
+    {
+      "cardId": "p_bigtail",
+      "second": 45.03333333333334,
+      "utilityGap": 0.26545232252752493,
+      "localThreat": 0,
+      "distantStructurePixels": 921.2543646813538,
+      "pushDangerContribution": -0.17372216314097774
+    },
+    {
+      "cardId": "p_craps",
+      "second": 45.23333333333333,
+      "utilityGap": 0.26429291988298775,
+      "localThreat": 0,
+      "distantStructurePixels": 1185.6637147372119,
+      "pushDangerContribution": -0.20058117021855654
+    },
+    {
+      "cardId": "p_neko",
+      "second": 45.23333333333333,
+      "utilityGap": 0.26000903988298774,
+      "localThreat": 0,
+      "distantStructurePixels": 1185.6637147372119,
+      "pushDangerContribution": -0.20058117021855654
+    },
+    {
+      "cardId": "p_daft",
+      "second": 56.799999999999336,
+      "utilityGap": 0.29390973542724236,
+      "localThreat": 0,
+      "distantStructurePixels": 1083.0904856012723,
+      "pushDangerContribution": -0.19820425651786583
+    }
+  ],
+  "runs": [
+    {
+      "seed": 81,
+      "side": "original",
+      "beforeSource": "ml-gate-audit-81-original.json",
+      "afterSource": "ml-scoring-coverage-81-original.json",
+      "before": {
+        "seconds": 179.99999999999235,
+        "ticks": 37217,
+        "eligible": 0,
+        "withLegalPair": 2980,
+        "safeExceptGap": 147,
+        "firstGates": {
+          "legal-pair": 1637,
+          "commitment": 18122,
+          "defense": 6004,
+          "health": 10158,
+          "utility-gap": 147,
+          "tower": 1087,
+          "danger": 62
+        }
+      },
+      "after": {
+        "seconds": 179.99999999999235,
+        "ticks": 36353,
+        "eligible": 132,
+        "withLegalPair": 3685,
+        "safeExceptGap": 576,
+        "firstGates": {
+          "legal-pair": 1259,
+          "commitment": 19153,
+          "defense": 5966,
+          "health": 7728,
+          "utility-gap": 576,
+          "eligible": 132,
+          "tower": 1492,
+          "danger": 46,
+          "survival": 1
+        },
+        "pushPlans": {
+          "total": 15120,
+          "mismatches": 0,
+          "examples": []
+        }
+      }
+    },
+    {
+      "seed": 82,
+      "side": "swapped",
+      "beforeSource": "ml-gate-audit-82-swapped.json",
+      "afterSource": "ml-scoring-coverage-82-swapped.json",
+      "before": {
+        "seconds": 179.99999999999235,
+        "ticks": 37091,
+        "eligible": 0,
+        "withLegalPair": 2913,
+        "safeExceptGap": 157,
+        "firstGates": {
+          "legal-pair": 1295,
+          "commitment": 18593,
+          "defense": 4904,
+          "influence": 6,
+          "health": 10447,
+          "tower": 1689,
+          "utility-gap": 157
+        }
+      },
+      "after": {
+        "seconds": 179.99999999999235,
+        "ticks": 37124,
+        "eligible": 11,
+        "withLegalPair": 2511,
+        "safeExceptGap": 121,
+        "firstGates": {
+          "legal-pair": 1551,
+          "commitment": 18805,
+          "defense": 4942,
+          "influence": 7,
+          "health": 10773,
+          "tower": 900,
+          "utility-gap": 121,
+          "eligible": 11,
+          "danger": 13,
+          "survival": 1
+        },
+        "pushPlans": {
+          "total": 14903,
+          "mismatches": 0,
+          "examples": []
+        }
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "source": "ml-scoring-after-81-original.json",
+      "seed": 81,
+      "swapped": false,
+      "actorId": "blue_p_bigtail",
+      "cardId": "p_bigtail",
+      "second": 128.23333333332863,
+      "validPair": true,
+      "experiment": {
+        "incumbent": "farm",
+        "alternate": "push",
+        "pair": "farm-push",
+        "arm": "incumbent",
+        "propensity": 0.5,
+        "utilityGap": 0.09170854862291922
+      },
+      "firstBehaviorDifference": 128.23333333332863,
+      "maxPositionDifferenceFirstCommitment": 64.76823569291017,
+      "descriptiveThreeSecondProgressDelta": 0,
+      "outcome": {
+        "classification": "no-material-difference",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0,
+          "gold": 0,
+          "damageDealt": 0
+        },
+        "thresholded": {
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0
+        }
+      }
+    },
+    {
+      "source": "ml-scoring-after-82-swapped.json",
+      "seed": 82,
+      "swapped": true,
+      "actorId": "blue_p_neko",
+      "cardId": "p_neko",
+      "second": 149.8333333333274,
+      "validPair": true,
+      "experiment": {
+        "incumbent": "farm",
+        "alternate": "push",
+        "pair": "farm-push",
+        "arm": "incumbent",
+        "propensity": 0.5,
+        "utilityGap": 0.09824094533931906
+      },
+      "firstBehaviorDifference": 149.8333333333274,
+      "maxPositionDifferenceFirstCommitment": 76.78978902478703,
+      "descriptiveThreeSecondProgressDelta": 0.007366071428571425,
+      "outcome": {
+        "classification": "no-material-difference",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0,
+          "gold": 0,
+          "damageDealt": 0
+        },
+        "thresholded": {
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0
+        }
+      }
+    }
+  ],
+  "limits": "One draft, two early-match windows and two selected contexts. Tick counts are correlated. No learned-policy benefit established or offline policy promoted.",
+  "policyPromoted": false
+}

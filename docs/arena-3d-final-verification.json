@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-17",
+  "gameCheck": {
+    "passed": true,
+    "tests": 366,
+    "deterministicSimulationTests": 3,
+    "typeScript": true
+  },
+  "build": {
+    "passed": true,
+    "directExitCode": 0,
+    "warning": "Existing chunks over 500 kB advisory"
+  },
+  "browser": {
+    "passed": true,
+    "evidence": "arena-3d-verification.json",
+    "spectatorSmokeViewports": 5,
+    "mousePan": true,
+    "touchPan": true,
+    "minimap": true,
+    "contextRecovery": true
+  },
+  "sourceHashes": {
+    "src/threeArenaScene.ts": "9eae4a4bb66fdec71900f860efafccc1ee02547c30db3fadd9ebefb75d308263",
+    "src/threeArenaScene.test.mjs": "a516153e374f607c459659c6a8898d1357b975f8e23a881375942bf278ca5e34",
+    "src/threeArenaTerrain.ts": "7277149c950165c9539e0a51f9758a597cc7060a45b5ed6f89f130f4d29f2fe5",
+    "src/components/AramMatchView.tsx": "d0717b0fdc03a92f2bf063b296cbbd0153a2adff4d4af3bb5ed34baf3ee086fe",
+    "src/components/spectator.css": "d0976d9a7dbd59b85130116d963e4089bd6a9c872323f9276f5a2fc1850d9658",
+    "scripts/validate-design.js": "4b5a03f4e90b0745fae93cdb5e3fab116ada6e3b60c445aa8802cf35fcfa80ae",
+    "scripts/check-arena-3d.mjs": "8b8ee42f22c89cc2d0211c94aadfa317a1cfc8b5b65d0ba21dfa4d0ea78e9b06",
+    "scripts/check-spectator-browser.mjs": "2d89b9125183632b996268a14350b8ece31ed311b91088bc9bd9042fcdfa9e76"
+  },
+  "servicesClosed": {
+    "5174": true,
+    "9223": true
+  },
+  "limits": "Controlled live rendering evidence through 90 seconds; no full-match, physical-device performance or art-complete claim."
+}

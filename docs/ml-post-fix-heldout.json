@@ -1,0 +1,263 @@
+{
+  "method": "Natural held-out seed 79, candidate executed; exact same-state incumbent diagnostic; candidate not auto-promoted",
+  "runs": [
+    {
+      "label": "post-fix-heldout-79-original",
+      "seed": 79,
+      "swapped": false,
+      "outcome": {
+        "winner": "blue",
+        "durationSeconds": 651.4666666667315,
+        "blueKills": 40,
+        "redKills": 14,
+        "objectiveEvents": 59,
+        "towerEvents": 121
+      },
+      "decisions": {
+        "total": 5620,
+        "selected": {
+          "push": 1727,
+          "wave": 673,
+          "fight": 2834,
+          "regroup": 214,
+          "farm": 172
+        },
+        "offered": {
+          "push": 5620,
+          "wave": 680,
+          "fight": 2871,
+          "regroup": 412,
+          "farm": 345
+        },
+        "sameTierAlternatives": {
+          "fight": 184,
+          "regroup": 44,
+          "push": 27,
+          "farm": 172,
+          "wave": 14
+        },
+        "byCard": {
+          "p_bigtail": {
+            "push": 184,
+            "fight": 308,
+            "regroup": 10,
+            "farm": 18,
+            "wave": 53
+          },
+          "p_daft": {
+            "push": 161,
+            "wave": 81,
+            "fight": 366,
+            "regroup": 15,
+            "farm": 25
+          },
+          "p_flaker": {
+            "push": 184,
+            "wave": 109,
+            "fight": 380,
+            "regroup": 29
+          },
+          "p_p1mple": {
+            "push": 172,
+            "fight": 340,
+            "regroup": 15,
+            "wave": 35
+          },
+          "p_thespicy": {
+            "push": 214,
+            "wave": 103,
+            "fight": 479,
+            "regroup": 31
+          },
+          "p_craps": {
+            "push": 195,
+            "fight": 199,
+            "wave": 26,
+            "regroup": 14,
+            "farm": 26
+          },
+          "p_mirecle": {
+            "push": 126,
+            "wave": 75,
+            "fight": 225,
+            "farm": 33,
+            "regroup": 29
+          },
+          "p_neko": {
+            "push": 156,
+            "fight": 154,
+            "wave": 41,
+            "regroup": 18,
+            "farm": 27
+          },
+          "p_ouzi": {
+            "push": 203,
+            "fight": 175,
+            "regroup": 20,
+            "wave": 35,
+            "farm": 26
+          },
+          "p_woozy": {
+            "push": 132,
+            "wave": 115,
+            "fight": 208,
+            "regroup": 33,
+            "farm": 17
+          }
+        },
+        "sameStateCompared": 5620,
+        "sameStateChanged": 0,
+        "changedEpisodes": 0,
+        "lowHealthComparisons": 6,
+        "dangerousFightComparisons": 60,
+        "suppressedChanged": 0,
+        "localOutcomeSamples": 5194,
+        "outcomeHorizonMin": 2.0000000000000497,
+        "outcomeHorizonMax": 5.9666666666663275,
+        "changedWithOutcome": 0,
+        "referenceCompared": 5620,
+        "referenceChanged": 0,
+        "referenceChangedWithOutcome": 0,
+        "referenceSuppressedChanged": 0,
+        "experimentAssignments": 0,
+        "experimentWithOutcome": 0,
+        "experimentArms": {
+          "incumbent": 0,
+          "alternate": 0
+        },
+        "experimentGateCounts": {},
+        "meanLocalProgress": 0.10749952269458528
+      },
+      "referenceExamples": []
+    },
+    {
+      "label": "post-fix-heldout-79-swapped",
+      "seed": 79,
+      "swapped": true,
+      "outcome": {
+        "winner": "red",
+        "durationSeconds": 740.6333333333171,
+        "blueKills": 15,
+        "redKills": 27,
+        "objectiveEvents": 51,
+        "towerEvents": 225
+      },
+      "decisions": {
+        "total": 7274,
+        "selected": {
+          "push": 2335,
+          "wave": 881,
+          "fight": 3394,
+          "regroup": 384,
+          "farm": 280
+        },
+        "offered": {
+          "push": 7274,
+          "wave": 884,
+          "fight": 3470,
+          "regroup": 632,
+          "farm": 629
+        },
+        "sameTierAlternatives": {
+          "fight": 244,
+          "regroup": 79,
+          "farm": 280,
+          "push": 24,
+          "wave": 4
+        },
+        "byCard": {
+          "p_craps": {
+            "push": 236,
+            "fight": 335,
+            "wave": 28,
+            "regroup": 37,
+            "farm": 41
+          },
+          "p_mirecle": {
+            "push": 197,
+            "wave": 136,
+            "fight": 270,
+            "regroup": 30,
+            "farm": 12
+          },
+          "p_neko": {
+            "push": 237,
+            "fight": 337,
+            "wave": 38,
+            "regroup": 62,
+            "farm": 14
+          },
+          "p_ouzi": {
+            "push": 243,
+            "fight": 352,
+            "wave": 18,
+            "regroup": 56,
+            "farm": 110
+          },
+          "p_woozy": {
+            "push": 163,
+            "wave": 132,
+            "fight": 280,
+            "regroup": 28,
+            "farm": 19
+          },
+          "p_bigtail": {
+            "push": 217,
+            "fight": 293,
+            "farm": 32,
+            "regroup": 35,
+            "wave": 62
+          },
+          "p_daft": {
+            "push": 202,
+            "wave": 103,
+            "fight": 322,
+            "farm": 52,
+            "regroup": 33
+          },
+          "p_flaker": {
+            "push": 226,
+            "wave": 175,
+            "fight": 392,
+            "regroup": 22
+          },
+          "p_p1mple": {
+            "push": 349,
+            "fight": 386,
+            "regroup": 52,
+            "wave": 25
+          },
+          "p_thespicy": {
+            "push": 265,
+            "wave": 164,
+            "fight": 427,
+            "regroup": 29
+          }
+        },
+        "sameStateCompared": 7274,
+        "sameStateChanged": 5,
+        "changedEpisodes": 4,
+        "lowHealthComparisons": 2,
+        "dangerousFightComparisons": 92,
+        "suppressedChanged": 0,
+        "localOutcomeSamples": 6846,
+        "outcomeHorizonMin": 2.0000000000000036,
+        "outcomeHorizonMax": 5.96666666666124,
+        "changedWithOutcome": 5,
+        "referenceCompared": 7274,
+        "referenceChanged": 0,
+        "referenceChangedWithOutcome": 0,
+        "referenceSuppressedChanged": 0,
+        "experimentAssignments": 0,
+        "experimentWithOutcome": 0,
+        "experimentArms": {
+          "incumbent": 0,
+          "alternate": 0
+        },
+        "experimentGateCounts": {},
+        "meanLocalProgress": 0.08801982087403197
+      },
+      "referenceExamples": []
+    }
+  ]
+}

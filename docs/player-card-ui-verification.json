@@ -1,0 +1,20 @@
+{
+  "portraits": {
+    "count": 64,
+    "unique": 64,
+    "allMapped": true,
+    "width": 1254,
+    "height": 1254
+  },
+  "desktopNoOverflow": true,
+  "mobileNoOverflow": true,
+  "keyboardSelection": true,
+  "reserveSwap": true,
+  "inspectorEscapeAndFocusRestore": true,
+  "mobileInspectorFits": true,
+  "screenshots": [
+    "player-cards-desktop.png",
+    "player-cards-mobile.png",
+    "player-cards-inspector-mobile.png"
+  ]
+}

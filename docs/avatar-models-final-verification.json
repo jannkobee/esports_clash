@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-17",
+  "models": 45,
+  "rawBytes": 33991920,
+  "triangles": 388392,
+  "archive": {
+    "bytes": 5972059,
+    "sha256": "697a9c85eee9799f0e7f32db88516f9da9aefafe4f21337b92a60e4359dff2ca",
+    "entriesVerified": true
+  },
+  "gameCheck": {
+    "passed": true,
+    "tests": 370,
+    "simulationTests": 3,
+    "typeScript": true
+  },
+  "build": {
+    "passed": true,
+    "exitCode": 0,
+    "warning": "Existing chunk-size advisory"
+  },
+  "studio": {
+    "passed": true,
+    "importedModels": 45,
+    "downloadBinaryVerified": true,
+    "evidence": "avatar-models-verification.json"
+  },
+  "arena": {
+    "passed": true,
+    "tenGlbActorsRequired": true,
+    "evidence": "avatar-models-arena-verification.json",
+    "exactStateAndRngAtSeconds": [
+      30.00000000000065,
+      59.999999999999154,
+      89.99999999999746
+    ]
+  },
+  "spectatorSmoke": {
+    "passed": true,
+    "viewports": 5
+  },
+  "sourceHashes": {
+    "src/avatarSurfaceGeometry.ts": "3a39d339ad1cd39dfa6e7076506a4efc8c1f174e56971c17db69230062390508",
+    "src/avatarSculptBody.ts": "236c846ecf502a326506438df829c1f8ce4a11d32d41af3d31a2ade0bd1c2292",
+    "src/avatarModelAnimations.ts": "290dcfbebe90368ccefe30867e43234cb81c03b1b05aa8f863cb95e49514cd79",
+    "src/avatarModelAssets.ts": "bcb1edec60d978a24f6dc1785760a82e099959abb151e75db9f4275bfc578e4c",
+    "src/avatarModelAssets.test.mjs": "92656834bfea59c17d05691821f4631c7c92cd4f2c38c270ffdd517b74cc549a",
+    "src/threeAvatarModels.ts": "a4d2eeedbdb0a2d89e3922f75adc141f1f8f77e0fac90f9281fd289c8a4779a9",
+    "src/threeArenaScene.ts": "9aeb4e809c81049936d0f938a37f3573eb100a7e0806135a8397bed56c8bf6bb",
+    "src/threeArenaTerrain.ts": "2a6cb9d93bfb0434dbac2f7aa1fc482b8f841f0ac516b2ab98a011bd03bf3ef1",
+    "src/threeAvatarPreview.ts": "ef7a3a94c084e471e84882e396f7107e617dfb3a08a93fd76e86b4f716e09edb",
+    "src/components/AvatarModelPreview.tsx": "faa18eb811b4f61cfc0eca8191aa111a19a8c92561199748fb0368d917daf9a3",
+    "src/components/avatar-model-preview.css": "899f7d591636b8ef2babbc9675fa422785aad4ec9b1371cd04ec0ee107984714",
+    "scripts/export-avatar-models.mjs": "9b7e6d753d254e8551423d4452dd4d516bd195c351d09cd9f6e86f28dcd479cc",
+    "scripts/check-avatar-designs.mjs": "4441bcfd2dfbdc151d0556a5dcf3baa74fe348b41679d76f41872ad922e933c8",
+    "scripts/check-arena-3d.mjs": "0b856f3daf90d0e7d1aff917d5a5effc8fcfbbc76cf5f0a32e77815b64977e29",
+    "scripts/render-avatar-model-plates.mjs": "2baed35ca6859596f83143f2d7f4f57bb3198ed150707384123959c558f8d636"
+  },
+  "servicesClosed": {
+    "5178": true,
+    "9228": true
+  },
+  "whitespace": true,
+  "limits": "Original parametric surface model files; no Blender session, painted image maps, finished accessory/face/finger/species-specific rig or device/full-match performance claim."
+}

@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-17",
+  "scope": "Arsenaldo art revision 3; other 44 GLBs remain the preceding pass",
+  "asset": {
+    "id": "c_invoker",
+    "name": "Arsenaldo",
+    "file": "c_invoker.glb",
+    "bytes": 3619068,
+    "sha256": "85d77baf909441f2e7aa084c84d2766deb8b2f4f6a7ac398c4211a8af24c3f4c",
+    "triangles": 70380,
+    "skins": 26,
+    "joints": 17,
+    "uvMeshes": 29,
+    "clips": [
+      {
+        "name": "Idle",
+        "duration": 2.8559932708740234,
+        "tracks": 7
+      },
+      {
+        "name": "Walk",
+        "duration": 0.6283185482025146,
+        "tracks": 13
+      },
+      {
+        "name": "Attack",
+        "duration": 0.6499999761581421,
+        "tracks": 11
+      },
+      {
+        "name": "Cast",
+        "duration": 1.100000023841858,
+        "tracks": 11
+      }
+    ]
+  },
+  "checks": {
+    "gameTests": 370,
+    "deterministicSimulationChecks": 3,
+    "typeScript": true,
+    "build": true,
+    "largeChunkAdvisory": true,
+    "studioAll45Glbs": true,
+    "desktopPhoneInspected": true,
+    "actualImportedTurnaroundInspected": true
+  },
+  "ownedServicesClosed": {
+    "5180": true,
+    "9230": true
+  },
+  "hashes": {
+    "EsportsClash.Web/src/arsenaldoModel.ts": "c0f4d22e222420d179a03fff6570457b4f54dd1f96ac1a88641e22e9373ea64e",
+    "EsportsClash.Web/src/avatarSculptBody.ts": "3fc05c8b9dc8e84543ac94398e29e6f6d93f763c1bff4801cf643702436ccce4",
+    "EsportsClash.Web/src/threeAvatarModels.ts": "808409455be91633808dba8c8c2aa3c1be8138e081e939b55cb5d0b807a28486",
+    "EsportsClash.Web/src/avatarModelUrl.ts": "64f21bf78e8bde14c94b25a623ad19005a98a456d477880cfbca056b704d3c42",
+    "EsportsClash.Web/src/avatarModelAssets.ts": "b24faa232ba18aaa3f790986e75772c2b8775e503f5166bf4b5d3480c5d1cca6",
+    "EsportsClash.Web/src/threeAvatarPreview.ts": "2dba1b83d8af8b5f95961979a12cb5866f43e6b5eeaca950bd5c1b88d1250c3a",
+    "EsportsClash.Web/src/avatarDesigns.ts": "ed1a4d166831a02fc4b5621954df796890a63baaddb1821da5ecaa75342e2afc",
+    "EsportsClash.Web/src/components/AvatarModelPreview.tsx": "7d208bc6c62da305be123b23262973d88cbb77ea66b9b38308f88af485ebfa1f",
+    "EsportsClash.Web/scripts/export-avatar-models.mjs": "5f53d490917d6f81fcb9078188da1cc587620e0666c3331ee7935429742e76c1",
+    "EsportsClash.Web/scripts/render-avatar-model-plates.mjs": "35078d7c4e5b36c856dac833d6aa7e3959dbe47d35937e469610334aa0f42c3e",
+    "EsportsClash.Web/public/models/avatars-v2/c_invoker.glb": "85d77baf909441f2e7aa084c84d2766deb8b2f4f6a7ac398c4211a8af24c3f4c",
+    "EsportsClash.Web/public/models/avatars-v2/manifest.json": "2044c159d71a0e4656baa37ae2927ea05a7eca4da3a7c8983f915d2b39ffd7b2",
+    "docs/arsenaldo-art-verification.json": "c0b001596cacadac1ad0f5ec5876a71f8ee04f021e51cab02bf31beda25e4b02",
+    "docs/arsenaldo-art-arsenaldo-turnaround.png": "de974fb0994deebc9e6888ddc5c05d8431707fa6a78d3934ae3670994447618e",
+    "docs/arsenaldo-art-studio.png": "05a52ef85f5cdde66dba11f62d760941d30679c364ab796f1c5a356a2bcf6dfa",
+    "docs/arsenaldo-art-studio-mobile.png": "a3655c641987cf689a52319aab23382bfb0ba822e2cc13a01f154efd79d38ee0",
+    "docs/arsenaldo-art-game-check.log": "fd8026fd9397a18fca01128cb2a82ab32d3934919f436272aa6e924dbe45922d",
+    "docs/arsenaldo-art-build.log": "8713695fda8996dbaf9008d1a90650bba22c8a208f95b1598ea1c13ef97123b9"
+  },
+  "limits": "Parametric art below Wild Rift quality; no painted image maps, completed facial/finger controls, new full-match study or physical-device performance claim. Historical v2 ZIP predates this hero."
+}

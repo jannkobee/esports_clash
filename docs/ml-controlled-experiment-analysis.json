@@ -1,0 +1,421 @@
+{
+  "method": "Offline intent-to-treat contrast from evaluation-only 50/50 assignments; descriptive 95% bands ignore actor/match interference; candidate not auto-promoted",
+  "trainingRuns": [
+    {
+      "label": "controlled-71-original",
+      "assignments": 4,
+      "outcomes": 3,
+      "arms": {
+        "incumbent": 1,
+        "alternate": 3
+      },
+      "gates": {
+        "legal-pair": 2133,
+        "commitment": 585,
+        "defense": 536,
+        "influence": 11,
+        "health": 1615,
+        "tower": 176,
+        "danger": 10,
+        "utility-gap": 73,
+        "survival": 24,
+        "eligible": 4,
+        "cooldown": 12
+      }
+    },
+    {
+      "label": "controlled-71-swapped",
+      "assignments": 4,
+      "outcomes": 4,
+      "arms": {
+        "incumbent": 3,
+        "alternate": 1
+      },
+      "gates": {
+        "legal-pair": 1920,
+        "commitment": 295,
+        "defense": 437,
+        "health": 1296,
+        "tower": 213,
+        "danger": 5,
+        "utility-gap": 135,
+        "eligible": 4,
+        "cooldown": 22,
+        "survival": 20,
+        "influence": 11
+      }
+    },
+    {
+      "label": "controlled-72-original",
+      "assignments": 3,
+      "outcomes": 3,
+      "arms": {
+        "incumbent": 1,
+        "alternate": 2
+      },
+      "gates": {
+        "legal-pair": 1597,
+        "commitment": 326,
+        "defense": 427,
+        "influence": 10,
+        "health": 940,
+        "utility-gap": 40,
+        "tower": 269,
+        "survival": 12,
+        "danger": 24,
+        "eligible": 3,
+        "cooldown": 7,
+        "objective": 40
+      }
+    },
+    {
+      "label": "controlled-72-swapped",
+      "assignments": 5,
+      "outcomes": 4,
+      "arms": {
+        "incumbent": 2,
+        "alternate": 3
+      },
+      "gates": {
+        "legal-pair": 3016,
+        "commitment": 1438,
+        "defense": 798,
+        "influence": 27,
+        "health": 1792,
+        "survival": 48,
+        "tower": 374,
+        "utility-gap": 168,
+        "danger": 24,
+        "objective": 88,
+        "eligible": 5,
+        "cooldown": 20
+      }
+    }
+  ],
+  "assigned": 16,
+  "validOutcomes": 14,
+  "trainedGroups": 1,
+  "groups": [
+    {
+      "pair": "fight-regroup",
+      "incumbent": "regroup",
+      "alternate": "fight",
+      "assigned": {
+        "incumbent": 4,
+        "alternate": 6
+      },
+      "outcomes": {
+        "incumbent": 4,
+        "alternate": 4
+      },
+      "meanProgressPerSecond": {
+        "incumbent": 0.017877298886138104,
+        "alternate": 0.02014228618419844
+      },
+      "alternateMinusIncumbent": 0.0022649872980603364,
+      "descriptive95PercentHalfWidth": 0.027470743727328148
+    },
+    {
+      "pair": "fight-regroup",
+      "incumbent": "fight",
+      "alternate": "regroup",
+      "assigned": {
+        "incumbent": 1,
+        "alternate": 1
+      },
+      "outcomes": {
+        "incumbent": 1,
+        "alternate": 1
+      },
+      "meanProgressPerSecond": {
+        "incumbent": 0.009120000000004094,
+        "alternate": 0.008271662049855825
+      },
+      "alternateMinusIncumbent": -0.0008483379501482684
+    },
+    {
+      "pair": "regroup-wave",
+      "incumbent": "wave",
+      "alternate": "regroup",
+      "assigned": {
+        "incumbent": 1,
+        "alternate": 1
+      },
+      "outcomes": {
+        "incumbent": 1,
+        "alternate": 1
+      },
+      "meanProgressPerSecond": {
+        "incumbent": 0.00814989089499966,
+        "alternate": 0.009247499999992054
+      },
+      "alternateMinusIncumbent": 0.0010976091049923944
+    },
+    {
+      "pair": "regroup-wave",
+      "incumbent": "regroup",
+      "alternate": "wave",
+      "assigned": {
+        "incumbent": 1,
+        "alternate": 1
+      },
+      "outcomes": {
+        "incumbent": 1,
+        "alternate": 1
+      },
+      "meanProgressPerSecond": {
+        "incumbent": 0.009247499999999277,
+        "alternate": 0.056177420886125595
+      },
+      "alternateMinusIncumbent": 0.04692992088612632
+    }
+  ],
+  "incumbent": {
+    "version": 2,
+    "matches": 1,
+    "weights": {
+      "fight": {
+        "bias": 0.009166666666666665,
+        "iq": 0.009891666666666661,
+        "teamfight": 0.009325000000000002,
+        "lane": 0.009883333333333334,
+        "flexibility": 0.008716666666666668,
+        "health": -0.00008956120523627778,
+        "mana": 0.022126666666666468,
+        "roleFit": -0.001,
+        "role:Marksman": 0.012499999999999999,
+        "card:p_woozy": 0.015,
+        "personality:momentum_junkie": 0.015,
+        "personality:showman": 0.0075,
+        "role:Fighter": -0.02,
+        "card:p_neko": 0,
+        "personality:short_fuse": 0,
+        "personality:untiltable": -0.0033333333333333335,
+        "card:p_craps": -0.02,
+        "personality:limit_tester": -0.02,
+        "personality:cold_as_ice": -0.01,
+        "role:Assassin": -0.0033333333333333335,
+        "card:p_ouzi": -0.0033333333333333335,
+        "personality:first_blood_hunter": -0.004166666666666667,
+        "card:p_mirecle": -0.0025,
+        "personality:bush_stalker": 0.01875,
+        "role:Tank": 0.02,
+        "card:p_p1mple": 0.02,
+        "personality:revenge_driven": 0.01
+      },
+      "wave": {
+        "bias": 0.005,
+        "iq": 0.00475,
+        "teamfight": 0.0048,
+        "lane": 0.0048,
+        "flexibility": 0.0048,
+        "health": 0.002766893242702919,
+        "mana": 0.005,
+        "roleFit": 0,
+        "role:Marksman": 0.005,
+        "card:p_woozy": 0.005,
+        "personality:momentum_junkie": 0.005,
+        "personality:showman": 0.0025
+      },
+      "regroup": {
+        "bias": -0.014166666666666668,
+        "iq": -0.014641666666666662,
+        "teamfight": -0.014124999999999999,
+        "lane": -0.014683333333333333,
+        "flexibility": -0.013516666666666666,
+        "health": -0.002677332037466642,
+        "mana": -0.027126666666666473,
+        "roleFit": 0.001,
+        "role:Marksman": -0.0175,
+        "card:p_woozy": -0.02,
+        "personality:momentum_junkie": -0.02,
+        "personality:showman": -0.01,
+        "role:Fighter": 0.02,
+        "card:p_neko": 0,
+        "personality:short_fuse": 0,
+        "personality:untiltable": 0.0033333333333333335,
+        "card:p_craps": 0.02,
+        "personality:limit_tester": 0.02,
+        "personality:cold_as_ice": 0.01,
+        "role:Assassin": 0.0033333333333333335,
+        "card:p_ouzi": 0.0033333333333333335,
+        "personality:first_blood_hunter": 0.004166666666666667,
+        "card:p_mirecle": 0.0025,
+        "personality:bush_stalker": -0.01875,
+        "role:Tank": -0.02,
+        "card:p_p1mple": -0.02,
+        "personality:revenge_driven": -0.01
+      },
+      "farm": {
+        "bias": -0.0275,
+        "iq": -0.024708333333333332,
+        "teamfight": -0.026325000000000008,
+        "lane": -0.027416666666666676,
+        "flexibility": -0.024350000000000004,
+        "health": -0.02684769075334742,
+        "mana": -0.0275,
+        "roleFit": -0.016333333333333335,
+        "role:Assassin": -0.016666666666666666,
+        "card:p_ouzi": -0.016666666666666666,
+        "personality:untiltable": -0.023333333333333334,
+        "personality:first_blood_hunter": -0.015833333333333335,
+        "role:Fighter": -0.013333333333333334,
+        "card:p_neko": -0.013333333333333334,
+        "personality:short_fuse": -0.013333333333333334,
+        "role:Mage": 0.01,
+        "card:p_daft": 0.01,
+        "personality:bush_stalker": 0.00625,
+        "personality:steal_gambler": 0.005,
+        "role:Marksman": -0.0075,
+        "card:p_mirecle": -0.0075
+      },
+      "push": {
+        "bias": 0.0275,
+        "iq": 0.024708333333333332,
+        "teamfight": 0.026325000000000008,
+        "lane": 0.027416666666666676,
+        "flexibility": 0.024350000000000004,
+        "health": 0.02684769075334742,
+        "mana": 0.0275,
+        "roleFit": 0.016333333333333335,
+        "role:Assassin": 0.016666666666666666,
+        "card:p_ouzi": 0.016666666666666666,
+        "personality:untiltable": 0.023333333333333334,
+        "personality:first_blood_hunter": 0.015833333333333335,
+        "role:Fighter": 0.013333333333333334,
+        "card:p_neko": 0.013333333333333334,
+        "personality:short_fuse": 0.013333333333333334,
+        "role:Mage": -0.01,
+        "card:p_daft": -0.01,
+        "personality:bush_stalker": -0.00625,
+        "personality:steal_gambler": -0.005,
+        "role:Marksman": 0.0075,
+        "card:p_mirecle": 0.0075
+      }
+    }
+  },
+  "candidate": {
+    "version": 2,
+    "matches": 1,
+    "weights": {
+      "fight": {
+        "bias": 0.009544164549676722,
+        "iq": 0.009891666666666661,
+        "teamfight": 0.009325000000000002,
+        "lane": 0.009883333333333334,
+        "flexibility": 0.008716666666666668,
+        "health": -0.00008956120523627778,
+        "mana": 0.022126666666666468,
+        "roleFit": -0.001,
+        "role:Marksman": 0.012499999999999999,
+        "card:p_woozy": 0.015,
+        "personality:momentum_junkie": 0.015,
+        "personality:showman": 0.0075,
+        "role:Fighter": -0.02,
+        "card:p_neko": 0,
+        "personality:short_fuse": 0,
+        "personality:untiltable": -0.0033333333333333335,
+        "card:p_craps": -0.02,
+        "personality:limit_tester": -0.02,
+        "personality:cold_as_ice": -0.01,
+        "role:Assassin": -0.0033333333333333335,
+        "card:p_ouzi": -0.0033333333333333335,
+        "personality:first_blood_hunter": -0.004166666666666667,
+        "card:p_mirecle": -0.0025,
+        "personality:bush_stalker": 0.01875,
+        "role:Tank": 0.02,
+        "card:p_p1mple": 0.02,
+        "personality:revenge_driven": 0.01
+      },
+      "wave": {
+        "bias": 0.005,
+        "iq": 0.00475,
+        "teamfight": 0.0048,
+        "lane": 0.0048,
+        "flexibility": 0.0048,
+        "health": 0.002766893242702919,
+        "mana": 0.005,
+        "roleFit": 0,
+        "role:Marksman": 0.005,
+        "card:p_woozy": 0.005,
+        "personality:momentum_junkie": 0.005,
+        "personality:showman": 0.0025
+      },
+      "regroup": {
+        "bias": -0.014544164549676724,
+        "iq": -0.014641666666666662,
+        "teamfight": -0.014124999999999999,
+        "lane": -0.014683333333333333,
+        "flexibility": -0.013516666666666666,
+        "health": -0.002677332037466642,
+        "mana": -0.027126666666666473,
+        "roleFit": 0.001,
+        "role:Marksman": -0.0175,
+        "card:p_woozy": -0.02,
+        "personality:momentum_junkie": -0.02,
+        "personality:showman": -0.01,
+        "role:Fighter": 0.02,
+        "card:p_neko": 0,
+        "personality:short_fuse": 0,
+        "personality:untiltable": 0.0033333333333333335,
+        "card:p_craps": 0.02,
+        "personality:limit_tester": 0.02,
+        "personality:cold_as_ice": 0.01,
+        "role:Assassin": 0.0033333333333333335,
+        "card:p_ouzi": 0.0033333333333333335,
+        "personality:first_blood_hunter": 0.004166666666666667,
+        "card:p_mirecle": 0.0025,
+        "personality:bush_stalker": -0.01875,
+        "role:Tank": -0.02,
+        "card:p_p1mple": -0.02,
+        "personality:revenge_driven": -0.01
+      },
+      "farm": {
+        "bias": -0.0275,
+        "iq": -0.024708333333333332,
+        "teamfight": -0.026325000000000008,
+        "lane": -0.027416666666666676,
+        "flexibility": -0.024350000000000004,
+        "health": -0.02684769075334742,
+        "mana": -0.0275,
+        "roleFit": -0.016333333333333335,
+        "role:Assassin": -0.016666666666666666,
+        "card:p_ouzi": -0.016666666666666666,
+        "personality:untiltable": -0.023333333333333334,
+        "personality:first_blood_hunter": -0.015833333333333335,
+        "role:Fighter": -0.013333333333333334,
+        "card:p_neko": -0.013333333333333334,
+        "personality:short_fuse": -0.013333333333333334,
+        "role:Mage": 0.01,
+        "card:p_daft": 0.01,
+        "personality:bush_stalker": 0.00625,
+        "personality:steal_gambler": 0.005,
+        "role:Marksman": -0.0075,
+        "card:p_mirecle": -0.0075
+      },
+      "push": {
+        "bias": 0.0275,
+        "iq": 0.024708333333333332,
+        "teamfight": 0.026325000000000008,
+        "lane": 0.027416666666666676,
+        "flexibility": 0.024350000000000004,
+        "health": 0.02684769075334742,
+        "mana": 0.0275,
+        "roleFit": 0.016333333333333335,
+        "role:Assassin": 0.016666666666666666,
+        "card:p_ouzi": 0.016666666666666666,
+        "personality:untiltable": 0.023333333333333334,
+        "personality:first_blood_hunter": 0.015833333333333335,
+        "role:Fighter": 0.013333333333333334,
+        "card:p_neko": 0.013333333333333334,
+        "personality:short_fuse": 0.013333333333333334,
+        "role:Mage": -0.01,
+        "card:p_daft": -0.01,
+        "personality:bush_stalker": -0.00625,
+        "personality:steal_gambler": -0.005,
+        "role:Marksman": 0.0075,
+        "card:p_mirecle": 0.0075
+      }
+    }
+  }
+}

@@ -1,0 +1,469 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 80,
+  "swapped": false,
+  "pairFilter": "fight-regroup",
+  "cardFilter": "",
+  "horizonSeconds": 8,
+  "scout": {
+    "label": "scout",
+    "event": {
+      "mode": "scout",
+      "actorId": "blue_p_bigtail",
+      "second": 163.99999999999326,
+      "cardId": "p_bigtail",
+      "champion": "Buck",
+      "incumbent": "regroup",
+      "alternate": "fight",
+      "fingerprint": "76139:f0493c80:f9d52038",
+      "matched": false,
+      "gate": null,
+      "actorStart": {
+        "x": 894.8049300438888,
+        "y": 349.6105393453373,
+        "hpFraction": 1,
+        "gold": 206.71999999996106,
+        "cs": 3,
+        "kills": 0,
+        "deaths": 0,
+        "damageDealt": 1247
+      }
+    },
+    "lastSecond": 164.1333333333266,
+    "wallSeconds": 60.443
+  },
+  "replays": [
+    {
+      "label": "incumbent-a",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_bigtail",
+        "second": 163.99999999999326,
+        "cardId": "p_bigtail",
+        "champion": "Buck",
+        "incumbent": "regroup",
+        "alternate": "fight",
+        "fingerprint": "76139:f0493c80:f9d52038",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 894.8049300438888,
+          "y": 349.6105393453373,
+          "hpFraction": 1,
+          "gold": 206.71999999996106,
+          "cs": 3,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1247
+        },
+        "followup": {
+          "second": 172.03333333332614,
+          "actor": {
+            "x": 1345.922109023263,
+            "y": 341.18569110548134,
+            "hpFraction": 1,
+            "mana": 100,
+            "isAlive": true,
+            "gold": 319.5599999999639,
+            "cs": 4,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 1247,
+            "economicValue": 3844.559999999964
+          },
+          "team": {
+            "ownStructureHp": 31065,
+            "enemyStructureHp": 29593,
+            "dragonAspect": false,
+            "siegeGolemUnits": 0
+          },
+          "nearestEnemyDistance": 256.8620168446248,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "479714:b231fe14:e784ed8"
+      },
+      "record": {
+        "second": 163.99999999999326,
+        "actorId": "blue_p_bigtail",
+        "team": "blue",
+        "selected": "regroup",
+        "contextKey": "regroup:blue_p_flaker",
+        "features": {
+          "bias": 1,
+          "iq": 0.97,
+          "teamfight": 0.94,
+          "lane": 0.88,
+          "flexibility": 0.95,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Marksman": 1,
+          "card:p_bigtail": 1,
+          "personality:iron_will": 1,
+          "personality:egoistic": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "regroup",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "fight",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.010050079694591374
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 206.71999999996106,
+          "cs": 3,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1247
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333161,
+          "healthChange": 0,
+          "goldGain": 34.439999999999884,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.025829999999999912
+        }
+      },
+      "wallSeconds": 0.858300000000745
+    },
+    {
+      "label": "incumbent-b",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_bigtail",
+        "second": 163.99999999999326,
+        "cardId": "p_bigtail",
+        "champion": "Buck",
+        "incumbent": "regroup",
+        "alternate": "fight",
+        "fingerprint": "76139:f0493c80:f9d52038",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 894.8049300438888,
+          "y": 349.6105393453373,
+          "hpFraction": 1,
+          "gold": 206.71999999996106,
+          "cs": 3,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1247
+        },
+        "followup": {
+          "second": 172.03333333332614,
+          "actor": {
+            "x": 1345.922109023263,
+            "y": 341.18569110548134,
+            "hpFraction": 1,
+            "mana": 100,
+            "isAlive": true,
+            "gold": 319.5599999999639,
+            "cs": 4,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 1247,
+            "economicValue": 3844.559999999964
+          },
+          "team": {
+            "ownStructureHp": 31065,
+            "enemyStructureHp": 29593,
+            "dragonAspect": false,
+            "siegeGolemUnits": 0
+          },
+          "nearestEnemyDistance": 256.8620168446248,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "479714:b231fe14:e784ed8"
+      },
+      "record": {
+        "second": 163.99999999999326,
+        "actorId": "blue_p_bigtail",
+        "team": "blue",
+        "selected": "regroup",
+        "contextKey": "regroup:blue_p_flaker",
+        "features": {
+          "bias": 1,
+          "iq": 0.97,
+          "teamfight": 0.94,
+          "lane": 0.88,
+          "flexibility": 0.95,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Marksman": 1,
+          "card:p_bigtail": 1,
+          "personality:iron_will": 1,
+          "personality:egoistic": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "regroup",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "fight",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.010050079694591374
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 206.71999999996106,
+          "cs": 3,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1247
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333161,
+          "healthChange": 0,
+          "goldGain": 34.439999999999884,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.025829999999999912
+        }
+      },
+      "wallSeconds": 0.7870999999996274
+    },
+    {
+      "label": "alternate",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_bigtail",
+        "second": 163.99999999999326,
+        "cardId": "p_bigtail",
+        "champion": "Buck",
+        "incumbent": "regroup",
+        "alternate": "fight",
+        "fingerprint": "76139:f0493c80:f9d52038",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 894.8049300438888,
+          "y": 349.6105393453373,
+          "hpFraction": 1,
+          "gold": 206.71999999996106,
+          "cs": 3,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1247
+        },
+        "followup": {
+          "second": 172.03333333332614,
+          "actor": {
+            "x": 1345.349445192369,
+            "y": 341.1742101121671,
+            "hpFraction": 1,
+            "mana": 100,
+            "isAlive": true,
+            "gold": 319.5599999999639,
+            "cs": 4,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 1247,
+            "economicValue": 3844.559999999964
+          },
+          "team": {
+            "ownStructureHp": 31065,
+            "enemyStructureHp": 29593,
+            "dragonAspect": false,
+            "siegeGolemUnits": 0
+          },
+          "nearestEnemyDistance": 257.4328843416052,
+          "insideEnemyTower": false
+        },
+        "followupStateFingerprint": "480224:664c6206:d32d9076"
+      },
+      "record": {
+        "second": 163.99999999999326,
+        "actorId": "blue_p_bigtail",
+        "team": "blue",
+        "selected": "fight",
+        "contextKey": "fight:red_p_craps:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.97,
+          "teamfight": 0.94,
+          "lane": 0.88,
+          "flexibility": 0.95,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Marksman": 1,
+          "card:p_bigtail": 1,
+          "personality:iron_will": 1,
+          "personality:egoistic": 0.5
+        },
+        "selectionReason": "evaluation-experiment:alternate",
+        "heldAction": "regroup",
+        "experiment": {
+          "incumbent": "regroup",
+          "alternate": "fight",
+          "pair": "fight-regroup",
+          "arm": "alternate",
+          "propensity": 0.5,
+          "utilityGap": 0.010050079694591374
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 206.71999999996106,
+          "cs": 3,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1247
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target",
+            "learnedFactor": 0.0790423554614302,
+            "baselineUtility": 0.1998788141777857,
+            "actualUtility": 0.2030405083962429
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion",
+            "learnedFactor": 0.03567039324270292,
+            "baselineUtility": 0.28,
+            "actualUtility": 0.2814268157297081
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+            "learnedFactor": -0.1147127487041331,
+            "baselineUtility": 0.2176790980389996,
+            "actualUtility": 0.21309058809083428
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp",
+            "learnedFactor": -0.18531944075334741,
+            "baselineUtility": 0.13349999999999998,
+            "actualUtility": 0.12608722236986608
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available",
+            "learnedFactor": 0.18531944075334741,
+            "baselineUtility": -0.05075906042302239,
+            "actualUtility": -0.04334628279288849
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333161,
+          "healthChange": 0,
+          "goldGain": 34.439999999999884,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.025829999999999912
+        }
+      },
+      "wallSeconds": 0.7531999999992549
+    }
+  ],
+  "validPair": true,
+  "descriptiveAlternateMinusIncumbent": 0,
+  "extendedDifference": {
+    "healthFraction": 0,
+    "gold": 0,
+    "damageDealt": 0,
+    "kills": 0,
+    "deaths": 0,
+    "x": -0.5726638308938163,
+    "y": -0.011480993314251009,
+    "nearestEnemyDistance": 0.5708674969803837
+  }
+}

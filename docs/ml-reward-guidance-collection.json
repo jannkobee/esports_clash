@@ -1,0 +1,379 @@
+{
+  "plan": {
+    "version": 1,
+    "method": "Frozen reward-guided decision candidate, evaluated once at the first existing safe close farm/push checkpoint; two incumbent controls, alternate and actual learned-choice replay",
+    "model": "ml-task-candidate.json",
+    "modelHash": "7e2b09e71f945dd619a3e7fc359a363076e94f9536cb06051529eb70a384128f",
+    "trainingHash": "5fedc4e0339b979d9ca5c62d5d733ce9631cce05bbed87d8293235c5f014aa03",
+    "minimumPredictedRewardAdvantage": 0.02,
+    "scoutSeconds": 240,
+    "horizonSeconds": 30,
+    "pair": "farm-push",
+    "rollout": "First safe choice only; ordinary retreat/replanning thereafter. All existing experiment gates remain unchanged.",
+    "promotion": false,
+    "cases": [
+      {
+        "id": "fresh-93-d0-original",
+        "seed": 93,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "fresh-94-d0-swapped",
+        "seed": 94,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "fresh-95-d1-original",
+        "seed": 95,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "fresh-96-d1-swapped",
+        "seed": 96,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "fresh-97-d0-original",
+        "seed": 97,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "fresh-98-d0-swapped",
+        "seed": 98,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "fresh-99-d1-original",
+        "seed": 99,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "fresh-100-d1-swapped",
+        "seed": 100,
+        "draft": 1,
+        "swapped": true
+      }
+    ]
+  },
+  "results": [
+    {
+      "id": "fresh-93-d0-original",
+      "seed": 93,
+      "draft": 0,
+      "swapped": false,
+      "validPair": true,
+      "validRewardReplay": true,
+      "cardId": "p_craps",
+      "second": 134.49999999999494,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.030674624400379637,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "incumbent": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 175,
+        "campClears": 2,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 11.933333333332655,
+        "reward": 0.42
+      },
+      "rewardGuided": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 175,
+        "campClears": 2,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 11.933333333332655,
+        "reward": 0.42
+      }
+    },
+    {
+      "id": "fresh-94-d0-swapped",
+      "seed": 94,
+      "draft": 0,
+      "swapped": true,
+      "validPair": true,
+      "validRewardReplay": true,
+      "cardId": "p_neko",
+      "second": 178.0333333333258,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.05764582191573283,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "incumbent": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "rewardGuided": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      }
+    },
+    {
+      "id": "fresh-95-d1-original",
+      "seed": 95,
+      "draft": 1,
+      "swapped": false,
+      "validPair": true,
+      "validRewardReplay": true,
+      "cardId": "p_godson",
+      "second": 156.06666666666038,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.03092645948248737,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "incumbent": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 56,
+        "minionKills": 3,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 26.466666666665162,
+        "reward": 0.1344
+      },
+      "rewardGuided": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 56,
+        "minionKills": 3,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 26.466666666665162,
+        "reward": 0.1344
+      }
+    },
+    {
+      "id": "fresh-96-d1-swapped",
+      "seed": 96,
+      "draft": 1,
+      "swapped": true,
+      "validPair": true,
+      "validRewardReplay": true,
+      "cardId": "p_toaster",
+      "second": 134.0333333333283,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.03870193298657107,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "incumbent": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "rewardGuided": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      }
+    },
+    {
+      "id": "fresh-97-d0-original",
+      "seed": 97,
+      "draft": 0,
+      "swapped": false,
+      "validPair": true,
+      "validRewardReplay": true,
+      "cardId": "p_bigtail",
+      "second": 143.83333333332774,
+      "decision": {
+        "selected": "push",
+        "changed": true,
+        "predictedAdvantage": 0.08258313648357207,
+        "margin": 0.02,
+        "reason": "predicted-task-benefit"
+      },
+      "incumbent": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 75,
+        "campClears": 1,
+        "waveGold": 21,
+        "minionKills": 1,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 8.433333333332854,
+        "reward": 0.2304
+      },
+      "rewardGuided": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 21,
+        "minionKills": 1,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 14.59999999999917,
+        "reward": 0.0504
+      }
+    },
+    {
+      "id": "fresh-98-d0-swapped",
+      "seed": 98,
+      "draft": 0,
+      "swapped": true,
+      "validPair": true,
+      "validRewardReplay": true,
+      "cardId": "p_craps",
+      "second": 125.19999999999546,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.03053404897478022,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "incumbent": {
+        "horizonSeconds": 30.03333333333164,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "rewardGuided": {
+        "horizonSeconds": 30.03333333333164,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      }
+    },
+    {
+      "id": "fresh-99-d1-original",
+      "seed": 99,
+      "draft": 1,
+      "swapped": false,
+      "validPair": true,
+      "validRewardReplay": true,
+      "cardId": "p_turbogamer",
+      "second": 134.26666666666162,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.035247614808233026,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "incumbent": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "rewardGuided": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      }
+    },
+    {
+      "id": "fresh-100-d1-swapped",
+      "seed": 100,
+      "draft": 1,
+      "swapped": true,
+      "validPair": true,
+      "validRewardReplay": true,
+      "cardId": "p_dns",
+      "second": 136.43333333332816,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.03579815327914682,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "incumbent": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "rewardGuided": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      }
+    }
+  ]
+}

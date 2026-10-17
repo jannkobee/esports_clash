@@ -28,3 +28,13 @@ test('normal terrain-aware retreat helpers still reject turret death-trap bushes
   assert.equal(isBushSafeFromTowers({ x: 1310, y: 360 }, [tower]), false);
   assert.deepEqual(getTurretPerimeterHoldPoint({ x: 1240, y: 360, team: 'blue' }, tower), { x: 1137, y: 360 });
 });
+
+test('Nexus multishot risk is not divided among five attackers or hidden behind minions', () => {
+  const nexus = { ...tower, id: 'r_nexus', type: 'nexus', x: 2365, range: 190, ad: 85 };
+  const input = { diver: unit({ x: 2300 }), target: unit({ team: 'red', x: 2370 }), tower: nexus,
+    alliedMinionsUnderTower: 0, defendersUnderTower: 1, attackersUnderTower: 5, takingTurretFire: false };
+  const a = assessTowerDiveRisk(input);
+  const b = assessTowerDiveRisk({ ...input, alliedMinionsUnderTower: 20 });
+  assert.equal(a.expectedSurvivalSeconds, b.expectedSurvivalSeconds);
+  assert.equal(assessTowerDiveRisk({ ...input, target: unit({ team: 'red', x: 2520 }) }).shouldCommit, false);
+});

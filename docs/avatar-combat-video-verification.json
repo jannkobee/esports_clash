@@ -1,0 +1,21 @@
+{
+  "width": 1500,
+  "height": 1080,
+  "currentTime": 2.161793,
+  "duration": 14.821186,
+  "decodedFrames": 28,
+  "frames": [
+    {
+      "second": 5.187415,
+      "file": "avatar-combat-video-frame-1.png"
+    },
+    {
+      "second": 8.151652,
+      "file": "avatar-combat-video-frame-2.png"
+    },
+    {
+      "second": 13.635491,
+      "file": "avatar-combat-video-frame-3.png"
+    }
+  ]
+}

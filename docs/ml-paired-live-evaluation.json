@@ -1,0 +1,31 @@
+{
+  "method": "Evaluation-only real browser replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 77,
+  "swapped": true,
+  "scout": {
+    "label": "scout",
+    "event": {
+      "mode": "scout",
+      "actorId": "blue_p_craps",
+      "second": 165.33333333332652,
+      "cardId": "p_craps",
+      "champion": "Valkira",
+      "incumbent": "regroup",
+      "alternate": "fight",
+      "fingerprint": "75608:98288ad0:3906a99c",
+      "matched": false,
+      "gate": null
+    },
+    "lastSecond": 166.0666666666598,
+    "wallSeconds": 54.032
+  },
+  "replays": [
+    {
+      "label": "incumbent-a",
+      "lastSecond": 173.5666666666594,
+      "rejected": "target decision not reached",
+      "wallSeconds": 55.377
+    }
+  ],
+  "validPair": false
+}

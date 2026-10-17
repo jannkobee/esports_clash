@@ -1,0 +1,816 @@
+{
+  "version": 6,
+  "blender": "4.5.3 LTS",
+  "models": [
+    {
+      "id": "c_solana",
+      "file": "c_solana.blend",
+      "bytes": 2136455,
+      "sha256": "2c6095fe0cf71641eb0427bce2d1562191ebacfde9b678f436b4c58f38c38cee",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_astra",
+      "file": "c_astra.blend",
+      "bytes": 4715483,
+      "sha256": "8b1c8fc762e9d5aa02eb6eba4b3ccf92bde1d71f73b4d20444edbdfecbf49ed2",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_kyumi",
+      "file": "c_kyumi.blend",
+      "bytes": 2176433,
+      "sha256": "8caaa3436786f45a1fe93293e7a72cdb0479e1c742484a667fe42ce9897e3a93",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_buck",
+      "file": "c_buck.blend",
+      "bytes": 2001778,
+      "sha256": "8b64a77e684300924639683a782f2fded4d594f41dae167d36cfcc91fa39ecf1",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_valkira",
+      "file": "c_valkira.blend",
+      "bytes": 2116441,
+      "sha256": "2b1ad4fd2530bbbccd9b3a4879a76f6c0053a1038bad9965847d8299822032d0",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_kage",
+      "file": "c_kage.blend",
+      "bytes": 4999594,
+      "sha256": "cc421d9ccffc62ecd1118e88db3631587f6b4e1557d8d686d38d34d5d7284083",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_kazemaru",
+      "file": "c_kazemaru.blend",
+      "bytes": 4606408,
+      "sha256": "ff091c6d184573e69fd6dee72f872a5c96ef5cdeb21b71571be88e6db61194d8",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_kindra",
+      "file": "c_kindra.blend",
+      "bytes": 4749986,
+      "sha256": "7df74de069aabccd64251243ee85b0e1a2a0e3d3a147fba1f148e5ef73f383d7",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_cora",
+      "file": "c_cora.blend",
+      "bytes": 4722090,
+      "sha256": "ff4a11758d6522953ec45e425b1227b35263a8e8c55000897a7dfd85b8083a1f",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_renn",
+      "file": "c_renn.blend",
+      "bytes": 4594946,
+      "sha256": "2e46a820ce85e3d5746e764bf6fe39fa351d4c2740cd13c1c444adddb8aee9c6",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_sylla",
+      "file": "c_sylla.blend",
+      "bytes": 2542799,
+      "sha256": "927e7684589c33e7973ea1e53bab484162185a59ff497acc3d5048443b61be8a",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_tequoia",
+      "file": "c_tequoia.blend",
+      "bytes": 2163624,
+      "sha256": "76a6b8189ea9751de54bf41c58eee8170af7ef9c618aab521d9e835456ed7b20",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_zal",
+      "file": "c_zal.blend",
+      "bytes": 2006738,
+      "sha256": "8263e595129f03f8dac9d0789b97edba17e83a0ff36fcdb365d1a207d0fd721e",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_xin",
+      "file": "c_xin.blend",
+      "bytes": 4623624,
+      "sha256": "6c30d0d75f8fe780f8e4b7b4aa943a917858049203f2436e4e1bfca561c1a14a",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_raijin",
+      "file": "c_raijin.blend",
+      "bytes": 1982958,
+      "sha256": "26fd203b802e639358c1fd6683c536aebf999442b728812b79960dcd0f3bd00f",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_kaolin",
+      "file": "c_kaolin.blend",
+      "bytes": 1945950,
+      "sha256": "a5b3a8d3392d669c2e32bfc5e792a73e0b45f10eadeb05a2b9492447ea32a246",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_inai",
+      "file": "c_inai.blend",
+      "bytes": 2013444,
+      "sha256": "e85896aa72be4e79da3a554c0732080fb7dd0c0a9e79b90a328a54ba6f3b8eb5",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_qiyana",
+      "file": "c_qiyana.blend",
+      "bytes": 4744368,
+      "sha256": "ce1a66845469df7333b8b8009f082060a6f4689e2c0ed87f1355a20272eb7fe5",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_locke",
+      "file": "c_locke.blend",
+      "bytes": 4559595,
+      "sha256": "2bb027b88e4e1f610a41b9ae47028830e149e48e8f860c88f779009221f2ca48",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_senna",
+      "file": "c_senna.blend",
+      "bytes": 4796241,
+      "sha256": "6da9bb6b1135cbf1405107981f5575d8fbaf7070c0b2bfac00af4ae535468b19",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_largo",
+      "file": "c_largo.blend",
+      "bytes": 288226,
+      "sha256": "22e3c97ef9cb5ae7492aed6b05f97192886e769f8dcb9f3e2e95a4501ff3c933",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_shadowfiend",
+      "file": "c_shadowfiend.blend",
+      "bytes": 219176,
+      "sha256": "2c22939373e663a2dd1051984a206253abe58a791bd17d27967680044f9363ff",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_earthshaker",
+      "file": "c_earthshaker.blend",
+      "bytes": 2027578,
+      "sha256": "a352ec6710cf899db5fbe874a1abc38b9cd96b8ae79ec894c4270dfd3bc33106",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_mirehook",
+      "file": "c_mirehook.blend",
+      "bytes": 2002534,
+      "sha256": "a0f46dbc6f145a02b9259803936db6f7b9b8aeffef95c7dc31dfdef83c74ffc4",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_nullweaver",
+      "file": "c_nullweaver.blend",
+      "bytes": 241949,
+      "sha256": "0d18e80c1983fa71c5012a302e61b4e68f639ee8869fed0ebd7d5e70d41f2256",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_voltgrip",
+      "file": "c_voltgrip.blend",
+      "bytes": 247815,
+      "sha256": "ebfa1fa36bd69da50002c79682cd0619a077bd2f2e2fd0b2ad9cadbc2c7fc70d",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_aetherbolt",
+      "file": "c_aetherbolt.blend",
+      "bytes": 4618129,
+      "sha256": "6eaaf333eb31c68324969ac102e8e1939771f44afaf3e4becdf35589a05c0da1",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_corsara",
+      "file": "c_corsara.blend",
+      "bytes": 4799332,
+      "sha256": "030779d295fbec7a051b40ba30e035c5499cffd445dec00aff1018534623a802",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_brewmaw",
+      "file": "c_brewmaw.blend",
+      "bytes": 2065126,
+      "sha256": "e77bc1b32fd9c7b57bafc622910c9fae5d9cab65a35f6ad775e5c2ab3fa4453d",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_wraithhook",
+      "file": "c_wraithhook.blend",
+      "bytes": 1983708,
+      "sha256": "c6a17dc0ea043057781a88857affba9e6fc1b9371752f15bf19317fec78ac409",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_invoker",
+      "file": "c_invoker.blend",
+      "bytes": 3022428,
+      "sha256": "f89c8671fadcc95154e535c30b6ebd11d3eef2fa51959f68343ccfcb829aab52",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_hwei",
+      "file": "c_hwei.blend",
+      "bytes": 2657576,
+      "sha256": "bf78b9839165059d2afa7f1a8362deca53dd523e2030d37eb93c7eec387a0491",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_jayce",
+      "file": "c_jayce.blend",
+      "bytes": 2011587,
+      "sha256": "0bb490e25fcaab46c2fd82a57a26af71be766c420132f5c50d3cef2052181a20",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_vi",
+      "file": "c_vi.blend",
+      "bytes": 2388205,
+      "sha256": "a1cd72c252e44f52cbca25a7471411b171165081a77ddebc507f58bad0b8297e",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_jinx",
+      "file": "c_jinx.blend",
+      "bytes": 4775148,
+      "sha256": "d9502aeba08278c292e2aa210c8d5713b68533497c4d7ef836a20229b745b4dd",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_puck",
+      "file": "c_puck.blend",
+      "bytes": 249864,
+      "sha256": "4ab528db2c94f3bdeb17d3a03d33c3de3513152fe41fae1de30705334003fc7d",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_batrider",
+      "file": "c_batrider.blend",
+      "bytes": 255329,
+      "sha256": "45b3481d045d6ecf517b5d034ae3956f64866c9e64efd4324c1bf4fc6786997c",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_bristleback",
+      "file": "c_bristleback.blend",
+      "bytes": 235536,
+      "sha256": "bf152e0c6f087309ad661227dcf8a15318cefe0519ba74278133bf89916a9066",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_io",
+      "file": "c_io.blend",
+      "bytes": 257289,
+      "sha256": "eb5ea21dd3e9a7463e1e21053c655713e8ca9b0416bc0cf80b417a77c11b34f7",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_lulu",
+      "file": "c_lulu.blend",
+      "bytes": 2146867,
+      "sha256": "050ff3ca4933507ae21442dd23fc6b1f96c2606032d432e5987c08866501122e",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_silencer",
+      "file": "c_silencer.blend",
+      "bytes": 1970341,
+      "sha256": "1b6f3da901ee539a43274d39ff79091cccd901d35754f266be10c1c8a9487f08",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_wukong_lol",
+      "file": "c_wukong_lol.blend",
+      "bytes": 560455,
+      "sha256": "e5db4f03cf1433cc68a025d26f8fe0242cc2535c4f59fcc0ba641aa822debc36",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "file": "c_monkeyking_dota.blend",
+      "bytes": 579336,
+      "sha256": "1e690b50ab78b44a1808a65a4be393491b906f819afbf667bcf4aff560b2dccb",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_stepstone",
+      "file": "c_stepstone.blend",
+      "bytes": 4626874,
+      "sha256": "8d836ffe51c9e364140618a752d688d68f9d08706d3b90bce0f87de93f6bbf00",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "id": "c_skybreaker",
+      "file": "c_skybreaker.blend",
+      "bytes": 252454,
+      "sha256": "ff5bda4e847eee0663d843620aa1cfd8bfec562c9bd82f0e787af6d4d6083570",
+      "actions": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import type { AramChampionUnit } from './types';
+import { isUnsafeWellChase } from './baseSafetyRules.ts';
 import { hasPersonalityCombination, personalityActionDelta, personalityOf } from './playerPersonality.ts';
 import { isCrowdControlSkill, shouldHoldSkillForChainStun, getSkillCastRange } from './skillRangeRules.ts';
 import { chooseAreaControlTarget, chooseOpeningControlTarget, countAreaControlTargets, getAreaControlProfile, shouldCommitAreaControlUltimate } from './avatarCombatRoles.ts';
@@ -72,7 +73,8 @@ export function chooseTeamfightTarget(
   const isAggroDiver = false; // Personality never authorizes a tower dive; towerDiveRules is authoritative.
   // Exclude channeling allies from carry peel; a channeler is leading an aggressive engage, not in distress
   const carry = allies.find(a => a.id !== unit.id && !a.isRecalling && !isChannelingAbility(a) && (a.champion.primaryRole === 'Marksman' || a.champion.primaryRole === 'Mage') && distance(unit, a) < 240);
-  const visibleEnemies = enemies.filter(e => e.isAlive && isUnitVisibleTo(e, unit));
+  const visibleEnemies = enemies.filter(e => e.isAlive && isUnitVisibleTo(e, unit)
+    && !isUnsafeWellChase(unit, e, range));
 
   // Under-tower check helper
   const isUnderEnemyTower = (fighter: Fighter) => options?.enemyStructures?.some(

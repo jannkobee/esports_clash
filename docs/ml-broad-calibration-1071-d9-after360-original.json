@@ -1,0 +1,4843 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 1071,
+  "swapped": false,
+  "draft": 9,
+  "afterSeconds": 360,
+  "pairFilter": "farm-push",
+  "cardFilter": "",
+  "horizonSeconds": 30,
+  "auditOnly": false,
+  "scout": {
+    "label": "scout",
+    "event": {
+      "mode": "scout",
+      "actorId": "red_p_research_yekindar",
+      "second": 387.4000000000926,
+      "cardId": "p_research_yekindar",
+      "champion": "Inai",
+      "incumbent": "farm",
+      "alternate": "push",
+      "fingerprint": "93678:16503843:8abfcf27",
+      "matched": false,
+      "gate": null,
+      "decisionCandidates": [
+        {
+          "action": "fight",
+          "available": false,
+          "priority": "tactical",
+          "contextKey": "fight:blue_p_research_twistzz:0",
+          "factors": {
+            "tactical": 0.82,
+            "coordination": 0.6534742022441217,
+            "danger": 0.6088231876309986,
+            "learned": 0.06811708180811875
+          },
+          "reason": "existing combat and objective-fight policy supplied a reachable target"
+        },
+        {
+          "action": "wave",
+          "available": false,
+          "priority": "tactical",
+          "contextKey": "wave:none:0",
+          "factors": {
+            "strategic": 0.45,
+            "tactical": 0.58,
+            "personality": 0,
+            "danger": 0,
+            "learned": 0.03228388928207519
+          },
+          "reason": "existing wave policy requires a safe, actionable minion"
+        },
+        {
+          "action": "regroup",
+          "available": false,
+          "priority": "tactical",
+          "contextKey": "regroup:none",
+          "factors": {
+            "tactical": 0.55,
+            "coordination": 0.8820278662204168,
+            "personality": 0,
+            "danger": 0,
+            "opportunity": 0.2712399343821206,
+            "learned": -0.10040097109019396
+          },
+          "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+        },
+        {
+          "action": "farm",
+          "available": true,
+          "priority": "optional",
+          "contextKey": "farm:j_red_wolves",
+          "factors": {
+            "strategic": 0.42,
+            "tactical": 0.36,
+            "personality": 0.35,
+            "travel": 0.3952376837129635,
+            "learned": -0.20595802495678792
+          },
+          "reason": "existing safe camp-farm policy selected a known camp"
+        },
+        {
+          "action": "push",
+          "available": true,
+          "priority": "optional",
+          "contextKey": "push:camp-exit:camp-exit:j_red_blue_buff:11:0",
+          "factors": {
+            "strategic": 0.18,
+            "tactical": 0.18,
+            "coordination": 0,
+            "danger": 0,
+            "personality": 0,
+            "learned": 0.20595802495678792
+          },
+          "reason": "existing lane-advance fallback remains available"
+        }
+      ],
+      "features": {
+        "bias": 1,
+        "iq": 0.85,
+        "teamfight": 0.91,
+        "lane": 0.92,
+        "flexibility": 0.89,
+        "health": 0.9723502304147466,
+        "mana": 1,
+        "roleFit": 1,
+        "role:Assassin": 1,
+        "card:p_research_yekindar": 1,
+        "personality:showman": 1,
+        "personality:survivalist": 0.5
+      },
+      "taskContext": {
+        "version": 1,
+        "actions": {
+          "farm": {
+            "bias": 1,
+            "iq": 0.85,
+            "teamfight": 0.91,
+            "lane": 0.92,
+            "flexibility": 0.89,
+            "health": 0.9723502304147466,
+            "mana": 1,
+            "roleFit": 1,
+            "role:Assassin": 1,
+            "card:p_research_yekindar": 1,
+            "personality:showman": 1,
+            "personality:survivalist": 0.5,
+            "task:travel": 0.08862285444651977,
+            "task:routeDetour": 0.08213658986780405,
+            "task:threat": 0,
+            "task:cover": 0.4804418698764627,
+            "task:allies": 0,
+            "task:enemies": 0,
+            "task:enemyProximity": 0,
+            "task:towerExposure": 0,
+            "task:waveAllies": 0,
+            "task:waveEnemies": 0,
+            "task:waveDistance": 0,
+            "task:laneDistance": 0.36,
+            "task:campKnown": 1,
+            "task:campHealth": 1,
+            "task:campReward": 0.5,
+            "task:campIncoming": 0.42,
+            "task:campClear": 0.13653424121045205,
+            "task:campShare": 1,
+            "task:campLeash": 0,
+            "task:campEngaged": 0,
+            "task:campHome": 1,
+            "task:kind:structure": 0,
+            "task:kind:minion": 0,
+            "task:kind:camp-exit": 0,
+            "task:kind:advance": 0,
+            "task:targetHealth": 0,
+            "task:waveCrash": 0,
+            "task:structureDistance": 0,
+            "task:ready1": 1,
+            "task:ready2": 1,
+            "task:readyUlt": 0,
+            "task:customCaster": 0,
+            "task:attackReady": 0,
+            "task:basicDps": 0.7629343799999999,
+            "task:gameTime": 0.4304444444445473
+          },
+          "push": {
+            "bias": 1,
+            "iq": 0.85,
+            "teamfight": 0.91,
+            "lane": 0.92,
+            "flexibility": 0.89,
+            "health": 0.9723502304147466,
+            "mana": 1,
+            "roleFit": 1,
+            "role:Assassin": 1,
+            "card:p_research_yekindar": 1,
+            "personality:showman": 1,
+            "personality:survivalist": 0.5,
+            "task:travel": 0.017726712543634823,
+            "task:routeDetour": 0,
+            "task:threat": 0,
+            "task:cover": 0.8531223684917859,
+            "task:allies": 0.2,
+            "task:enemies": 0,
+            "task:enemyProximity": 0,
+            "task:towerExposure": 0,
+            "task:waveAllies": 0,
+            "task:waveEnemies": 0,
+            "task:waveDistance": 0,
+            "task:laneDistance": 0.1,
+            "task:campKnown": 0,
+            "task:campHealth": 0,
+            "task:campReward": 0,
+            "task:campIncoming": 0,
+            "task:campClear": 0,
+            "task:campShare": 0,
+            "task:campLeash": 0,
+            "task:campEngaged": 0,
+            "task:campHome": 0,
+            "task:kind:structure": 0,
+            "task:kind:minion": 0,
+            "task:kind:camp-exit": 1,
+            "task:kind:advance": 0,
+            "task:targetHealth": 0,
+            "task:waveCrash": 0,
+            "task:structureDistance": 1,
+            "task:ready1": 1,
+            "task:ready2": 1,
+            "task:readyUlt": 0,
+            "task:customCaster": 0,
+            "task:attackReady": 0,
+            "task:basicDps": 0.7629343799999999,
+            "task:gameTime": 0.4304444444445473
+          }
+        }
+      },
+      "teamStart": {
+        "second": 387.4000000000926,
+        "ownDeaths": 5,
+        "enemyDeaths": 17,
+        "ownStructureHp": 30887,
+        "enemyStructureHp": 9000,
+        "ownEconomy": 53785.516000000134,
+        "enemyEconomy": 31775.721833333137,
+        "ownHealth": 4.1485697729294,
+        "enemyHealth": 2.590774797685113,
+        "dragonBalance": 1,
+        "siegeBalance": 0,
+        "ownNexusAlive": true,
+        "enemyNexusAlive": true
+      },
+      "actorStart": {
+        "x": 1999.3319868619294,
+        "y": 197.14004527978403,
+        "hpFraction": 0.9723502304147466,
+        "gold": 1561.3679999998549,
+        "cs": 11,
+        "kills": 4,
+        "deaths": 3,
+        "damageDealt": 9385
+      }
+    },
+    "lastSecond": 387.4000000000926,
+    "inspection": {
+      "second": 387.4000000000926,
+      "fingerprint": "621980:6254b11d:35222e75",
+      "randomState": 4036390086,
+      "finished": false,
+      "executionAudit": {
+        "counts": {
+          "push:push": 18495,
+          "wave:minion": 7338,
+          "fight:champion": 19843,
+          "fight:hold": 248,
+          "regroup:regroup": 7614,
+          "push:minion": 327,
+          "push:hold": 1016,
+          "farm:camp": 4865,
+          "push:structure": 2006
+        },
+        "regroupPaths": {
+          "igl-regroup": 5654,
+          "fight-regroup": 1931,
+          "support-tether": 29
+        },
+        "samples": [
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_research_kscerato",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_research_spinx",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_research_twistzz",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 15.299999999999956,
+            "actorId": "red_p_research_torzsi",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 15.33333333333329,
+            "actorId": "red_p_research_torzsi",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 15.366666666666623,
+            "actorId": "red_p_research_torzsi",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.09999999999996,
+            "actorId": "red_p_research_torzsi",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.8333333333333517,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.133333333333294,
+            "actorId": "red_p_research_torzsi",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333275,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.133333333333294,
+            "actorId": "red_p_p1mple",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 0,
+            "animState": "cast",
+            "cd1": 14.181818181818182,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 20.133333333333493,
+            "actorId": "blue_p_research_spinx",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 2.8757575757575857,
+            "cd2": 6.487878787878799,
+            "cdUlt": 999,
+            "damageDealt": 425
+          },
+          {
+            "second": 20.133333333333493,
+            "actorId": "blue_p_research_twistzz",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 2.275757575757588,
+            "cd2": 5.206060606060618,
+            "cdUlt": 999,
+            "damageDealt": 413
+          },
+          {
+            "second": 20.133333333333493,
+            "actorId": "blue_p_research_senzu",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 2.8424242424242525,
+            "cd2": 11.715151515151524,
+            "cdUlt": 999,
+            "damageDealt": 247
+          },
+          {
+            "second": 27.233333333333846,
+            "actorId": "red_p_research_xertion",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 2.8333333333335244,
+            "animState": "walk",
+            "cd1": 0.8000000000000076,
+            "cd2": 2.5696969696969987,
+            "cdUlt": 999,
+            "damageDealt": 22
+          },
+          {
+            "second": 27.26666666666718,
+            "actorId": "red_p_research_xertion",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 2.8333333333335595,
+            "animState": "walk",
+            "cd1": 0.7666666666666743,
+            "cd2": 2.5363636363636655,
+            "cdUlt": 999,
+            "damageDealt": 22
+          },
+          {
+            "second": 27.300000000000516,
+            "actorId": "red_p_research_xertion",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 2.8333333333335595,
+            "animState": "walk",
+            "cd1": 0.7333333333333409,
+            "cd2": 2.5030303030303322,
+            "cdUlt": 999,
+            "damageDealt": 22
+          },
+          {
+            "second": 31.166666666667375,
+            "actorId": "red_p_research_yekindar",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 4.687878787878805,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 738
+          },
+          {
+            "second": 31.20000000000071,
+            "actorId": "red_p_research_yekindar",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 4.654545454545472,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 738
+          },
+          {
+            "second": 31.233333333334045,
+            "actorId": "red_p_research_yekindar",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 4.621212121212139,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 738
+          },
+          {
+            "second": 32.73333333333404,
+            "actorId": "red_p_thespicy",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0.9121212121212335,
+            "cdUlt": 999,
+            "damageDealt": 1015
+          },
+          {
+            "second": 32.76666666666737,
+            "actorId": "red_p_thespicy",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0.8787878787879002,
+            "cdUlt": 999,
+            "damageDealt": 1015
+          },
+          {
+            "second": 32.8000000000007,
+            "actorId": "red_p_thespicy",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0.8454545454545669,
+            "cdUlt": 999,
+            "damageDealt": 1015
+          },
+          {
+            "second": 54.86666666666611,
+            "actorId": "blue_p_research_xantares",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.500000000000002,
+            "animState": "walk",
+            "cd1": 1.769696969697,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1114
+          },
+          {
+            "second": 54.899999999999444,
+            "actorId": "blue_p_research_xantares",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.500000000000002,
+            "animState": "walk",
+            "cd1": 1.7363636363636665,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1114
+          },
+          {
+            "second": 54.933333333332776,
+            "actorId": "blue_p_research_xantares",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.500000000000002,
+            "animState": "walk",
+            "cd1": 1.703030303030333,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1114
+          },
+          {
+            "second": 60.56666666666579,
+            "actorId": "red_p_research_yekindar",
+            "selected": "push",
+            "intent": "structure",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 738
+          },
+          {
+            "second": 60.59999999999912,
+            "actorId": "red_p_research_yekindar",
+            "selected": "push",
+            "intent": "structure",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 738
+          },
+          {
+            "second": 60.63333333333245,
+            "actorId": "red_p_research_yekindar",
+            "selected": "push",
+            "intent": "structure",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 738
+          }
+        ],
+        "pushPlans": {
+          "total": 21844,
+          "mismatches": 0,
+          "examples": []
+        }
+      },
+      "opportunityAudit": {
+        "total": 71488,
+        "firstGates": {
+          "legal-pair": 2710,
+          "commitment": 32112,
+          "defense": 14094,
+          "danger": 68,
+          "health": 19023,
+          "tower": 2467,
+          "utility-gap": 348,
+          "eligible": 77,
+          "influence": 13,
+          "survival": 5,
+          "objective": 571
+        },
+        "allGates": {
+          "legal-pair": 66115,
+          "commitment": 65830,
+          "defense": 20456,
+          "danger": 656,
+          "health": 19023,
+          "influence": 256,
+          "survival": 286,
+          "utility-gap": 4524,
+          "tower": 5001,
+          "enemy-near": 6,
+          "objective": 602
+        },
+        "safeExceptGap": {
+          "p_research_xantares:farm-push": {
+            "count": 96,
+            "minGap": 0.10290305264662512,
+            "maxGap": 0.40984394949445346
+          },
+          "p_research_kscerato:farm-push": {
+            "count": 16,
+            "minGap": 0.14629108035775634,
+            "maxGap": 0.3306891106408536
+          },
+          "p_research_senzu:farm-push": {
+            "count": 45,
+            "minGap": 0.10125082490668683,
+            "maxGap": 0.30466438521563066
+          },
+          "p_thespicy:farm-push": {
+            "count": 75,
+            "minGap": 0.10184553815389424,
+            "maxGap": 0.29989685690167645
+          },
+          "p_research_xertion:farm-push": {
+            "count": 35,
+            "minGap": 0.108517143899331,
+            "maxGap": 0.30769847496178737
+          },
+          "p_research_yekindar:farm-push": {
+            "count": 60,
+            "minGap": 0.10129559612968424,
+            "maxGap": 0.24050321375225447
+          },
+          "p_research_twistzz:farm-push": {
+            "count": 17,
+            "minGap": 0.11033085615956782,
+            "maxGap": 0.17234269865462645
+          },
+          "p_research_spinx:farm-push": {
+            "count": 4,
+            "minGap": 0.14300252403566727,
+            "maxGap": 0.3749107039775683
+          }
+        },
+        "examples": [
+          {
+            "second": 54.86666666666611,
+            "actorId": "blue_p_research_xantares",
+            "cardId": "p_research_xantares",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.20730762379181195,
+            "healthFraction": 1,
+            "previousIntent": "regroup",
+            "actor": {
+              "x": 173.49991693699053,
+              "y": 379.86574402745777
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.7461250171759751,
+                  "learned": -0.20311994075334744
+                },
+                "utility": 0.15076270065226854,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.07461250171759752,
+                  "learned": -0.008124797630133898
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:34:13",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.46762777362764946,
+                  "personality": 0,
+                  "learned": 0.20311994075334744
+                },
+                "utility": -0.05654492313954341,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.1636697207696773,
+                  "personality": 0,
+                  "learned": 0.008124797630133898
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_blue_buff",
+              "x": 640,
+              "y": 145,
+              "distance": 522.2875120231826
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 1387,
+                  "y": 430
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1387,
+              "laneY": 430,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 1376.5000896102906,
+                "outlook": {
+                  "travelSeconds": 12.195238948669434,
+                  "survival": 0.40651575323299965,
+                  "support": 0.7716622867163891,
+                  "pressure": 0
+                }
+              }
+            }
+          },
+          {
+            "second": 55.56666666666607,
+            "actorId": "blue_p_research_kscerato",
+            "cardId": "p_research_kscerato",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.19098705552218018,
+            "healthFraction": 1,
+            "previousIntent": "push",
+            "actor": {
+              "x": 125,
+              "y": 350
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.7918590886808905,
+                  "learned": -0.22818660742001412
+                },
+                "utility": 0.14518662683511036,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.07918590886808906,
+                  "learned": -0.009127464296800565
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:34:13",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.43979397995391545,
+                  "personality": 0,
+                  "learned": 0.22818660742001412
+                },
+                "utility": -0.045800428687069815,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.15392789298387038,
+                  "personality": 0,
+                  "learned": 0.009127464296800565
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_blue_buff",
+              "x": 640,
+              "y": 145,
+              "distance": 554.3013620766234
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 1387,
+                  "y": 350
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1387,
+              "laneY": 350,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 1425.315754490913,
+                "outlook": {
+                  "travelSeconds": 13.117292899913457,
+                  "survival": 0.4128280435194344,
+                  "support": 0.7691666666666668,
+                  "pressure": 0
+                }
+              }
+            }
+          },
+          {
+            "second": 62.93333333333232,
+            "actorId": "blue_p_research_senzu",
+            "cardId": "p_research_senzu",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.194867463436951,
+            "healthFraction": 1,
+            "previousIntent": "push",
+            "actor": {
+              "x": 125,
+              "y": 350
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.7918590886808905,
+                  "learned": -0.2043576074200141
+                },
+                "utility": 0.14613978683511036,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.07918590886808906,
+                  "learned": -0.008174304296800564
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:34:11",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.4454342311389749,
+                  "personality": 0,
+                  "learned": 0.2043576074200141
+                },
+                "utility": -0.048727676601840644,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.1559019808986412,
+                  "personality": 0,
+                  "learned": 0.008174304296800564
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_blue_buff",
+              "x": 640,
+              "y": 145,
+              "distance": 554.3013620766234
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 1387,
+                  "y": 350
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1387,
+              "laneY": 350,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 1425.315754490913,
+                "outlook": {
+                  "travelSeconds": 13.098245280865838,
+                  "survival": 0.35315002999908923,
+                  "support": 0.6420962333690775,
+                  "pressure": 0
+                }
+              }
+            }
+          },
+          {
+            "second": 76.66666666666488,
+            "actorId": "red_p_thespicy",
+            "cardId": "p_thespicy",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.165266973561972,
+            "healthFraction": 1,
+            "previousIntent": "push",
+            "actor": {
+              "x": 2415,
+              "y": 419.66666666666634
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_red_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.759251481257286,
+                  "learned": -0.19902319075334746
+                },
+                "utility": 0.1496139242441375,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.0759251481257286,
+                  "learned": -0.007960927630133898
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:red:30:6",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.3503256484227669,
+                  "personality": 0,
+                  "learned": 0.19902319075334746
+                },
+                "utility": -0.01565304931783451,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.12261397694796841,
+                  "personality": 0,
+                  "learned": 0.007960927630133898
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_red_blue_buff",
+              "x": 1960,
+              "y": 145,
+              "distance": 531.4760368801002
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:red",
+                  "x": 1213,
+                  "y": 420
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1213,
+              "laneY": 420,
+              "localThreat": 0,
+              "structure": {
+                "id": "b_t1",
+                "x": 1050,
+                "y": 380,
+                "distance": 1365.5762316489124,
+                "outlook": {
+                  "travelSeconds": 12.481678396656308,
+                  "survival": 0.48048792384199496,
+                  "support": 0.7739787824642345,
+                  "pressure": 0.2531774848936808
+                }
+              }
+            }
+          },
+          {
+            "second": 108.96666666666304,
+            "actorId": "red_p_research_xertion",
+            "cardId": "p_research_xertion",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.23183566163402974,
+            "healthFraction": 1,
+            "previousIntent": "push",
+            "actor": {
+              "x": 1512.6322022662298,
+              "y": 370
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_red_drakes",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.3396078372550563,
+                  "learned": -0.20556777408668075
+                },
+                "utility": 0.19131650531102712,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.03396078372550563,
+                  "learned": -0.00822271096346723
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:red:26:0",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.4221196208184854,
+                  "personality": 0,
+                  "learned": 0.20556777408668075
+                },
+                "utility": -0.04051915632300264,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.14774186728646987,
+                  "personality": 0,
+                  "learned": 0.00822271096346723
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_red_drakes",
+              "x": 1633,
+              "y": 575,
+              "distance": 237.72548607853938
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:red",
+                  "x": 1049.333333333361,
+                  "y": 370
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1049.333333333361,
+              "laneY": 370,
+              "localThreat": 0,
+              "structure": {
+                "id": "b_t1",
+                "x": 1050,
+                "y": 380,
+                "distance": 462.7402668600408,
+                "outlook": {
+                  "travelSeconds": 3.930859684381341,
+                  "survival": 0.6478554490489999,
+                  "support": 0.9939174898101603,
+                  "pressure": 0.46460227120363246
+                }
+              }
+            }
+          },
+          {
+            "second": 128.89999999999526,
+            "actorId": "red_p_research_yekindar",
+            "cardId": "p_research_yekindar",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.17351698379279387,
+            "healthFraction": 1,
+            "previousIntent": "push",
+            "actor": {
+              "x": 2295,
+              "y": 350
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_red_red_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.7731462358705604,
+                  "learned": -0.2067003574200141
+                },
+                "utility": 0.14791736211614337,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.07731462358705604,
+                  "learned": -0.008268014296800564
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:red:24:4",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.3796218170670031,
+                  "personality": 0,
+                  "learned": 0.2067003574200141
+                },
+                "utility": -0.025599621676650513,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.13286763597345108,
+                  "personality": 0,
+                  "learned": 0.008268014296800564
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_red_red_buff",
+              "x": 1815,
+              "y": 600,
+              "distance": 541.2023651093923
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:red",
+                  "x": 993,
+                  "y": 350
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 993,
+              "laneY": 350,
+              "localThreat": 0,
+              "structure": {
+                "id": "b_t2",
+                "x": 830,
+                "y": 380,
+                "distance": 1465.3071350402959,
+                "outlook": {
+                  "travelSeconds": 13.431496524193294,
+                  "survival": 0.4641621989238,
+                  "support": 0.7691666666666668,
+                  "pressure": 0.018053569892059196
+                }
+              }
+            }
+          },
+          {
+            "second": 132.7666666666617,
+            "actorId": "blue_p_research_twistzz",
+            "cardId": "p_research_twistzz",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.12092122750780485,
+            "healthFraction": 1,
+            "previousIntent": "camp",
+            "actor": {
+              "x": 617.7093266031698,
+              "y": 335.4226480087512
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.2738898147108518,
+                  "learned": -0.20553844075334746
+                },
+                "utility": 0.19788948089878092,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.027388981471085178,
+                  "learned": -0.0082215376301339
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:34:8",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.08643795496902239,
+                  "personality": 0,
+                  "learned": 0.20553844075334746
+                },
+                "utility": 0.07696825339097607,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.030253284239157834,
+                  "personality": 0,
+                  "learned": 0.0082215376301339
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_blue_buff",
+              "x": 640,
+              "y": 145,
+              "distance": 191.72287029759624
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 1387,
+                  "y": 420
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1387,
+              "laneY": 420,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 933.3557949749211,
+                "outlook": {
+                  "travelSeconds": 8.412912333094486,
+                  "survival": 0.45820408277696373,
+                  "support": 0.7849880965731243,
+                  "pressure": 0.037852041388481805
+                }
+              }
+            }
+          },
+          {
+            "second": 240.56666666665558,
+            "actorId": "blue_p_research_spinx",
+            "cardId": "p_research_spinx",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.342523558792842,
+            "healthFraction": 1,
+            "previousIntent": "regroup",
+            "actor": {
+              "x": 550.6931941041983,
+              "y": 483.71172096131625
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_red_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.31825173104355325,
+                  "learned": -0.2201491074200141
+                },
+                "utility": 0.1928688625988441,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.03182517310435533,
+                  "learned": -0.008805964296800564
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:34:5",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.735601887116567,
+                  "personality": 0,
+                  "learned": 0.2201491074200141
+                },
+                "utility": -0.1496546961939979,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.25746066049079847,
+                  "personality": 0,
+                  "learned": 0.008805964296800564
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_red_buff",
+              "x": 760,
+              "y": 560,
+              "distance": 222.7762117304873
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 1387,
+                  "y": 370
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1387,
+              "laneY": 370,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 1004.6741826952793,
+                "outlook": {
+                  "travelSeconds": 9.082611263764566,
+                  "survival": 0.26628251065789255,
+                  "support": 0.7973295957675414,
+                  "pressure": 0.26050236644005736
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "wallSeconds": 59.104
+  },
+  "replays": [
+    {
+      "label": "incumbent-a",
+      "event": {
+        "mode": "replay",
+        "actorId": "red_p_research_yekindar",
+        "second": 387.4000000000926,
+        "cardId": "p_research_yekindar",
+        "champion": "Inai",
+        "incumbent": "farm",
+        "alternate": "push",
+        "fingerprint": "93678:16503843:8abfcf27",
+        "matched": true,
+        "gate": null,
+        "decisionCandidates": [
+          {
+            "action": "fight",
+            "available": false,
+            "priority": "tactical",
+            "contextKey": "fight:blue_p_research_twistzz:0",
+            "factors": {
+              "tactical": 0.82,
+              "coordination": 0.6534742022441217,
+              "danger": 0.6088231876309986,
+              "learned": 0.06811708180811875
+            },
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "action": "wave",
+            "available": false,
+            "priority": "tactical",
+            "contextKey": "wave:none:0",
+            "factors": {
+              "strategic": 0.45,
+              "tactical": 0.58,
+              "personality": 0,
+              "danger": 0,
+              "learned": 0.03228388928207519
+            },
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "action": "regroup",
+            "available": false,
+            "priority": "tactical",
+            "contextKey": "regroup:none",
+            "factors": {
+              "tactical": 0.55,
+              "coordination": 0.8820278662204168,
+              "personality": 0,
+              "danger": 0,
+              "opportunity": 0.2712399343821206,
+              "learned": -0.10040097109019396
+            },
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "action": "farm",
+            "available": true,
+            "priority": "optional",
+            "contextKey": "farm:j_red_wolves",
+            "factors": {
+              "strategic": 0.42,
+              "tactical": 0.36,
+              "personality": 0.35,
+              "travel": 0.3952376837129635,
+              "learned": -0.20595802495678792
+            },
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "action": "push",
+            "available": true,
+            "priority": "optional",
+            "contextKey": "push:camp-exit:camp-exit:j_red_blue_buff:11:0",
+            "factors": {
+              "strategic": 0.18,
+              "tactical": 0.18,
+              "coordination": 0,
+              "danger": 0,
+              "personality": 0,
+              "learned": 0.20595802495678792
+            },
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "features": {
+          "bias": 1,
+          "iq": 0.85,
+          "teamfight": 0.91,
+          "lane": 0.92,
+          "flexibility": 0.89,
+          "health": 0.9723502304147466,
+          "mana": 1,
+          "roleFit": 1,
+          "role:Assassin": 1,
+          "card:p_research_yekindar": 1,
+          "personality:showman": 1,
+          "personality:survivalist": 0.5
+        },
+        "taskContext": {
+          "version": 1,
+          "actions": {
+            "farm": {
+              "bias": 1,
+              "iq": 0.85,
+              "teamfight": 0.91,
+              "lane": 0.92,
+              "flexibility": 0.89,
+              "health": 0.9723502304147466,
+              "mana": 1,
+              "roleFit": 1,
+              "role:Assassin": 1,
+              "card:p_research_yekindar": 1,
+              "personality:showman": 1,
+              "personality:survivalist": 0.5,
+              "task:travel": 0.08862285444651977,
+              "task:routeDetour": 0.08213658986780405,
+              "task:threat": 0,
+              "task:cover": 0.4804418698764627,
+              "task:allies": 0,
+              "task:enemies": 0,
+              "task:enemyProximity": 0,
+              "task:towerExposure": 0,
+              "task:waveAllies": 0,
+              "task:waveEnemies": 0,
+              "task:waveDistance": 0,
+              "task:laneDistance": 0.36,
+              "task:campKnown": 1,
+              "task:campHealth": 1,
+              "task:campReward": 0.5,
+              "task:campIncoming": 0.42,
+              "task:campClear": 0.13653424121045205,
+              "task:campShare": 1,
+              "task:campLeash": 0,
+              "task:campEngaged": 0,
+              "task:campHome": 1,
+              "task:kind:structure": 0,
+              "task:kind:minion": 0,
+              "task:kind:camp-exit": 0,
+              "task:kind:advance": 0,
+              "task:targetHealth": 0,
+              "task:waveCrash": 0,
+              "task:structureDistance": 0,
+              "task:ready1": 1,
+              "task:ready2": 1,
+              "task:readyUlt": 0,
+              "task:customCaster": 0,
+              "task:attackReady": 0,
+              "task:basicDps": 0.7629343799999999,
+              "task:gameTime": 0.4304444444445473
+            },
+            "push": {
+              "bias": 1,
+              "iq": 0.85,
+              "teamfight": 0.91,
+              "lane": 0.92,
+              "flexibility": 0.89,
+              "health": 0.9723502304147466,
+              "mana": 1,
+              "roleFit": 1,
+              "role:Assassin": 1,
+              "card:p_research_yekindar": 1,
+              "personality:showman": 1,
+              "personality:survivalist": 0.5,
+              "task:travel": 0.017726712543634823,
+              "task:routeDetour": 0,
+              "task:threat": 0,
+              "task:cover": 0.8531223684917859,
+              "task:allies": 0.2,
+              "task:enemies": 0,
+              "task:enemyProximity": 0,
+              "task:towerExposure": 0,
+              "task:waveAllies": 0,
+              "task:waveEnemies": 0,
+              "task:waveDistance": 0,
+              "task:laneDistance": 0.1,
+              "task:campKnown": 0,
+              "task:campHealth": 0,
+              "task:campReward": 0,
+              "task:campIncoming": 0,
+              "task:campClear": 0,
+              "task:campShare": 0,
+              "task:campLeash": 0,
+              "task:campEngaged": 0,
+              "task:campHome": 0,
+              "task:kind:structure": 0,
+              "task:kind:minion": 0,
+              "task:kind:camp-exit": 1,
+              "task:kind:advance": 0,
+              "task:targetHealth": 0,
+              "task:waveCrash": 0,
+              "task:structureDistance": 1,
+              "task:ready1": 1,
+              "task:ready2": 1,
+              "task:readyUlt": 0,
+              "task:customCaster": 0,
+              "task:attackReady": 0,
+              "task:basicDps": 0.7629343799999999,
+              "task:gameTime": 0.4304444444445473
+            }
+          }
+        },
+        "teamStart": {
+          "second": 387.4000000000926,
+          "ownDeaths": 5,
+          "enemyDeaths": 17,
+          "ownStructureHp": 30887,
+          "enemyStructureHp": 9000,
+          "ownEconomy": 53785.516000000134,
+          "enemyEconomy": 31775.721833333137,
+          "ownHealth": 4.1485697729294,
+          "enemyHealth": 2.590774797685113,
+          "dragonBalance": 1,
+          "siegeBalance": 0,
+          "ownNexusAlive": true,
+          "enemyNexusAlive": true
+        },
+        "actorStart": {
+          "x": 1999.3319868619294,
+          "y": 197.14004527978403,
+          "hpFraction": 0.9723502304147466,
+          "gold": 1561.3679999998549,
+          "cs": 11,
+          "kills": 4,
+          "deaths": 3,
+          "damageDealt": 9385
+        },
+        "lastDecision": {
+          "second": 392.6333333334301,
+          "selected": "farm",
+          "reason": "commitment",
+          "until": 393.21666666676333
+        },
+        "assignmentRecord": {
+          "second": 387.4000000000926,
+          "actorId": "red_p_research_yekindar",
+          "team": "red",
+          "selected": "farm",
+          "contextKey": "farm:j_red_wolves",
+          "features": {
+            "bias": 1,
+            "iq": 0.85,
+            "teamfight": 0.91,
+            "lane": 0.92,
+            "flexibility": 0.89,
+            "health": 0.9723502304147466,
+            "mana": 1,
+            "roleFit": 1,
+            "role:Assassin": 1,
+            "card:p_research_yekindar": 1,
+            "personality:showman": 1,
+            "personality:survivalist": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "farm",
+          "experiment": {
+            "incumbent": "farm",
+            "alternate": "push",
+            "pair": "farm-push",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.07849958963216061
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 0.9723502304147466,
+            "gold": 1561.3679999998549,
+            "cs": 11,
+            "kills": 4,
+            "deaths": 3,
+            "damageDealt": 9385
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "farm",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0000000000023874,
+            "healthChange": 0,
+            "goldGain": 35.066000000000486,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.026299500000000364
+          }
+        },
+        "behaviorTrace": [
+          {
+            "second": 387.4000000000926,
+            "x": 1995.967438941621,
+            "y": 198.1043156215182,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.800000000000132,
+            "decision": {
+              "second": 387.4000000000926,
+              "selected": "farm",
+              "reason": "assigned:incumbent",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.43333333342594,
+            "x": 1992.6028910213124,
+            "y": 199.06858596325236,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.766666666666799,
+            "decision": {
+              "second": 387.43333333342594,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.4666666667593,
+            "x": 1989.238343101004,
+            "y": 200.03285630498652,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.733333333333466,
+            "decision": {
+              "second": 387.4666666667593,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.50000000009265,
+            "x": 1985.8737951806954,
+            "y": 200.9971266467207,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.700000000000133,
+            "decision": {
+              "second": 387.50000000009265,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.533333333426,
+            "x": 1982.509247260387,
+            "y": 201.96139698845485,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.6666666666668,
+            "decision": {
+              "second": 387.533333333426,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.5666666667594,
+            "x": 1979.1446993400784,
+            "y": 202.92566733018901,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.633333333333466,
+            "decision": {
+              "second": 387.5666666667594,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.60000000009273,
+            "x": 1975.78015141977,
+            "y": 203.88993767192318,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.600000000000133,
+            "decision": {
+              "second": 387.60000000009273,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.6333333334261,
+            "x": 1972.4156034994614,
+            "y": 204.85420801365734,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.5666666666668,
+            "decision": {
+              "second": 387.6333333334261,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.66666666675945,
+            "x": 1969.051055579153,
+            "y": 205.8184783553915,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.533333333333466,
+            "decision": {
+              "second": 387.66666666675945,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.7000000000928,
+            "x": 1965.6865076588444,
+            "y": 206.78274869712567,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.500000000000133,
+            "decision": {
+              "second": 387.7000000000928,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.7333333334262,
+            "x": 1962.321959738536,
+            "y": 207.74701903885983,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.4666666666668,
+            "decision": {
+              "second": 387.7333333334262,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.76666666675953,
+            "x": 1958.9574118182275,
+            "y": 208.711289380594,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.433333333333467,
+            "decision": {
+              "second": 387.76666666675953,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.8000000000929,
+            "x": 1955.592863897919,
+            "y": 209.67555972232816,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.400000000000134,
+            "decision": {
+              "second": 387.8000000000929,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.83333333342625,
+            "x": 1952.2283159776105,
+            "y": 210.63983006406232,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.3666666666668,
+            "decision": {
+              "second": 387.83333333342625,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.8666666667596,
+            "x": 1948.863768057302,
+            "y": 211.6041004057965,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.333333333333467,
+            "decision": {
+              "second": 387.8666666667596,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.900000000093,
+            "x": 1945.4992201369935,
+            "y": 212.56837074753065,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.300000000000134,
+            "decision": {
+              "second": 387.900000000093,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.93333333342633,
+            "x": 1942.134672216685,
+            "y": 213.5326410892648,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.2666666666668,
+            "decision": {
+              "second": 387.93333333342633,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 387.9666666667597,
+            "x": 1938.7701242963765,
+            "y": 214.49691143099898,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.233333333333468,
+            "decision": {
+              "second": 387.9666666667597,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 388.00000000009305,
+            "x": 1935.405576376068,
+            "y": 215.46118177273314,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.200000000000134,
+            "decision": {
+              "second": 388.00000000009305,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 388.0333333334264,
+            "x": 1932.0410284557595,
+            "y": 216.4254521144673,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.166666666666801,
+            "decision": {
+              "second": 388.0333333334264,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.05000000009255
+            }
+          },
+          {
+            "second": 388.0666666667598,
+            "x": 1928.676480535451,
+            "y": 217.38972245620147,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.133333333333468,
+            "decision": {
+              "second": 388.0666666667598,
+              "selected": "farm",
+              "reason": "utility",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.10000000009313,
+            "x": 1925.3119326151425,
+            "y": 218.35399279793563,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.100000000000135,
+            "decision": {
+              "second": 388.10000000009313,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.1333333334265,
+            "x": 1921.947384694834,
+            "y": 219.3182631396698,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.066666666666801,
+            "decision": {
+              "second": 388.1333333334265,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.16666666675985,
+            "x": 1918.5828367745255,
+            "y": 220.28253348140396,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.033333333333468,
+            "decision": {
+              "second": 388.16666666675985,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.2000000000932,
+            "x": 1915.218288854217,
+            "y": 221.24680382313812,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 10.000000000000135,
+            "decision": {
+              "second": 388.2000000000932,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.2333333334266,
+            "x": 1911.8537409339085,
+            "y": 222.2110741648723,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.966666666666802,
+            "decision": {
+              "second": 388.2333333334266,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.26666666675993,
+            "x": 1908.4891930136,
+            "y": 223.17534450660645,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.933333333333469,
+            "decision": {
+              "second": 388.26666666675993,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.3000000000933,
+            "x": 1905.1246450932915,
+            "y": 224.1396148483406,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.900000000000135,
+            "decision": {
+              "second": 388.3000000000933,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.33333333342665,
+            "x": 1901.760097172983,
+            "y": 225.10388519007478,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.866666666666802,
+            "decision": {
+              "second": 388.33333333342665,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.36666666676,
+            "x": 1898.3955492526745,
+            "y": 226.06815553180894,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.833333333333469,
+            "decision": {
+              "second": 388.36666666676,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.40000000009337,
+            "x": 1895.031001332366,
+            "y": 227.0324258735431,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.800000000000136,
+            "decision": {
+              "second": 388.40000000009337,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.43333333342673,
+            "x": 1891.6664534120575,
+            "y": 227.99669621527727,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.766666666666802,
+            "decision": {
+              "second": 388.43333333342673,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.4666666667601,
+            "x": 1888.301905491749,
+            "y": 228.96096655701143,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.73333333333347,
+            "decision": {
+              "second": 388.4666666667601,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.50000000009345,
+            "x": 1884.9373575714405,
+            "y": 229.9252368987456,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.700000000000136,
+            "decision": {
+              "second": 388.50000000009345,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.5333333334268,
+            "x": 1881.572809651132,
+            "y": 230.88950724047976,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.666666666666803,
+            "decision": {
+              "second": 388.5333333334268,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.56666666676017,
+            "x": 1878.2082617308236,
+            "y": 231.85377758221395,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.63333333333347,
+            "decision": {
+              "second": 388.56666666676017,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.60000000009353,
+            "x": 1874.843713810515,
+            "y": 232.81804792394814,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.600000000000136,
+            "decision": {
+              "second": 388.60000000009353,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.6333333334269,
+            "x": 1871.4791658902066,
+            "y": 233.78231826568233,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.566666666666803,
+            "decision": {
+              "second": 388.6333333334269,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.66666666676025,
+            "x": 1868.114617969898,
+            "y": 234.74658860741653,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.53333333333347,
+            "decision": {
+              "second": 388.66666666676025,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.7000000000936,
+            "x": 1864.7500700495896,
+            "y": 235.71085894915072,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.500000000000137,
+            "decision": {
+              "second": 388.7000000000936,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 388.71666666675975
+            }
+          },
+          {
+            "second": 388.73333333342697,
+            "x": 1861.385522129281,
+            "y": 236.6751292908849,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.466666666666804,
+            "decision": {
+              "second": 388.73333333342697,
+              "selected": "farm",
+              "reason": "utility",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 388.76666666676033,
+            "x": 1858.0209742089726,
+            "y": 237.6393996326191,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.43333333333347,
+            "decision": {
+              "second": 388.76666666676033,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 388.8000000000937,
+            "x": 1854.656426288664,
+            "y": 238.6036699743533,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.400000000000137,
+            "decision": {
+              "second": 388.8000000000937,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 388.83333333342705,
+            "x": 1851.2918783683556,
+            "y": 239.5679403160875,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.366666666666804,
+            "decision": {
+              "second": 388.83333333342705,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 388.8666666667604,
+            "x": 1847.927330448047,
+            "y": 240.53221065782168,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.33333333333347,
+            "decision": {
+              "second": 388.8666666667604,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 388.90000000009377,
+            "x": 1844.5627825277386,
+            "y": 241.49648099955587,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.300000000000137,
+            "decision": {
+              "second": 388.90000000009377,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 388.93333333342713,
+            "x": 1841.19823460743,
+            "y": 242.46075134129006,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.266666666666804,
+            "decision": {
+              "second": 388.93333333342713,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 388.9666666667605,
+            "x": 1837.8336866871216,
+            "y": 243.42502168302426,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.233333333333471,
+            "decision": {
+              "second": 388.9666666667605,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.00000000009385,
+            "x": 1834.469138766813,
+            "y": 244.38929202475845,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.200000000000138,
+            "decision": {
+              "second": 389.00000000009385,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.0333333334272,
+            "x": 1831.1045908465046,
+            "y": 245.35356236649264,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.166666666666805,
+            "decision": {
+              "second": 389.0333333334272,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.06666666676057,
+            "x": 1827.740042926196,
+            "y": 246.31783270822683,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.133333333333471,
+            "decision": {
+              "second": 389.06666666676057,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.1000000000939,
+            "x": 1824.2551667393095,
+            "y": 245.99281276719105,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.100000000000138,
+            "decision": {
+              "second": 389.1000000000939,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.1333333334273,
+            "x": 1820.770290552423,
+            "y": 245.66779282615528,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.066666666666805,
+            "decision": {
+              "second": 389.1333333334273,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.16666666676065,
+            "x": 1817.2854143655363,
+            "y": 245.3427728851195,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.033333333333472,
+            "decision": {
+              "second": 389.16666666676065,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.200000000094,
+            "x": 1813.8005381786497,
+            "y": 245.01775294408372,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 9.000000000000139,
+            "decision": {
+              "second": 389.200000000094,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.23333333342737,
+            "x": 1810.3156619917631,
+            "y": 244.69273300304795,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.966666666666805,
+            "decision": {
+              "second": 389.23333333342737,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.2666666667607,
+            "x": 1806.8307858048765,
+            "y": 244.36771306201217,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.933333333333472,
+            "decision": {
+              "second": 389.2666666667607,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.3000000000941,
+            "x": 1803.34590961799,
+            "y": 244.0426931209764,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.900000000000139,
+            "decision": {
+              "second": 389.3000000000941,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.33333333342745,
+            "x": 1799.8610334311034,
+            "y": 243.71767317994062,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.866666666666806,
+            "decision": {
+              "second": 389.33333333342745,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.3666666667608,
+            "x": 1796.3761572442168,
+            "y": 243.39265323890484,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.833333333333472,
+            "decision": {
+              "second": 389.3666666667608,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 389.38333333342695
+            }
+          },
+          {
+            "second": 389.40000000009417,
+            "x": 1792.8912810573302,
+            "y": 243.06763329786907,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.80000000000014,
+            "decision": {
+              "second": 389.40000000009417,
+              "selected": "farm",
+              "reason": "utility",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.4333333334275,
+            "x": 1789.4064048704436,
+            "y": 242.7426133568333,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.766666666666806,
+            "decision": {
+              "second": 389.4333333334275,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.4666666667609,
+            "x": 1786.2270711672456,
+            "y": 241.27911166441538,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.733333333333473,
+            "decision": {
+              "second": 389.4666666667609,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.50000000009425,
+            "x": 1783.0477374640477,
+            "y": 239.81560997199747,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.70000000000014,
+            "decision": {
+              "second": 389.50000000009425,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.5333333334276,
+            "x": 1779.8684037608498,
+            "y": 238.35210827957957,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.666666666666806,
+            "decision": {
+              "second": 389.5333333334276,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.56666666676097,
+            "x": 1776.6890700576519,
+            "y": 236.88860658716166,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.633333333333473,
+            "decision": {
+              "second": 389.56666666676097,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.6000000000943,
+            "x": 1773.509736354454,
+            "y": 235.42510489474375,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.60000000000014,
+            "decision": {
+              "second": 389.6000000000943,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.6333333334277,
+            "x": 1771.3977183065042,
+            "y": 232.63415886066593,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.566666666666807,
+            "decision": {
+              "second": 389.6333333334277,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.66666666676105,
+            "x": 1769.2857002585545,
+            "y": 229.84321282658811,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.533333333333474,
+            "decision": {
+              "second": 389.66666666676105,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.7000000000944,
+            "x": 1767.1736822106047,
+            "y": 227.0522667925103,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.50000000000014,
+            "decision": {
+              "second": 389.7000000000944,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.73333333342777,
+            "x": 1765.061664162655,
+            "y": 224.26132075843248,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.466666666666807,
+            "decision": {
+              "second": 389.73333333342777,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.7666666667611,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.433333333333474,
+            "decision": {
+              "second": 389.7666666667611,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.8000000000945,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.40000000000014,
+            "decision": {
+              "second": 389.8000000000945,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.83333333342784,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.366666666666807,
+            "decision": {
+              "second": 389.83333333342784,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.8666666667612,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.333333333333474,
+            "decision": {
+              "second": 389.8666666667612,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.90000000009456,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.300000000000141,
+            "decision": {
+              "second": 389.90000000009456,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.9333333334279,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.266666666666808,
+            "decision": {
+              "second": 389.9333333334279,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 389.9666666667613,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.233333333333475,
+            "decision": {
+              "second": 389.9666666667613,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 390.00000000009464,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.200000000000141,
+            "decision": {
+              "second": 390.00000000009464,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 390.033333333428,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.166666666666808,
+            "decision": {
+              "second": 390.033333333428,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.05000000009414
+            }
+          },
+          {
+            "second": 390.06666666676136,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.133333333333475,
+            "decision": {
+              "second": 390.06666666676136,
+              "selected": "farm",
+              "reason": "utility",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.1000000000947,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.100000000000142,
+            "decision": {
+              "second": 390.1000000000947,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.1333333334281,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.066666666666809,
+            "decision": {
+              "second": 390.1333333334281,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.16666666676144,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.033333333333475,
+            "decision": {
+              "second": 390.16666666676144,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.2000000000948,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 8.000000000000142,
+            "decision": {
+              "second": 390.2000000000948,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.23333333342816,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.966666666666809,
+            "decision": {
+              "second": 390.23333333342816,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.2666666667615,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.933333333333476,
+            "decision": {
+              "second": 390.2666666667615,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.3000000000949,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.9000000000001425,
+            "decision": {
+              "second": 390.3000000000949,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.33333333342824,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.866666666666809,
+            "decision": {
+              "second": 390.33333333342824,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.3666666667616,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.833333333333476,
+            "decision": {
+              "second": 390.3666666667616,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.40000000009496,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.800000000000143,
+            "decision": {
+              "second": 390.40000000009496,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.4333333334283,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.76666666666681,
+            "decision": {
+              "second": 390.4333333334283,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.4666666667617,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.733333333333476,
+            "decision": {
+              "second": 390.4666666667617,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.50000000009504,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.700000000000143,
+            "decision": {
+              "second": 390.50000000009504,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.5333333334284,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9723502304147466,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.66666666666681,
+            "decision": {
+              "second": 390.5333333334284,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.56666666676176,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.633333333333477,
+            "decision": {
+              "second": 390.56666666676176,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.6000000000951,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.6000000000001435,
+            "decision": {
+              "second": 390.6000000000951,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.6333333334285,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.56666666666681,
+            "decision": {
+              "second": 390.6333333334285,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.66666666676184,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.533333333333477,
+            "decision": {
+              "second": 390.66666666676184,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.7000000000952,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.500000000000144,
+            "decision": {
+              "second": 390.7000000000952,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 390.71666666676134
+            }
+          },
+          {
+            "second": 390.73333333342856,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.466666666666811,
+            "decision": {
+              "second": 390.73333333342856,
+              "selected": "farm",
+              "reason": "utility",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 390.7666666667619,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.4333333333334775,
+            "decision": {
+              "second": 390.7666666667619,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 390.8000000000953,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.400000000000144,
+            "decision": {
+              "second": 390.8000000000953,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 390.83333333342864,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.366666666666811,
+            "decision": {
+              "second": 390.83333333342864,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 390.866666666762,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.333333333333478,
+            "decision": {
+              "second": 390.866666666762,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 390.90000000009536,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.300000000000145,
+            "decision": {
+              "second": 390.90000000009536,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 390.9333333334287,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.266666666666811,
+            "decision": {
+              "second": 390.9333333334287,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 390.9666666667621,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.233333333333478,
+            "decision": {
+              "second": 390.9666666667621,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.00000000009544,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.200000000000145,
+            "decision": {
+              "second": 391.00000000009544,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.0333333334288,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.166666666666812,
+            "decision": {
+              "second": 391.0333333334288,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.06666666676216,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.1333333333334785,
+            "decision": {
+              "second": 391.06666666676216,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.1000000000955,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.100000000000145,
+            "decision": {
+              "second": 391.1000000000955,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.1333333334289,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.066666666666812,
+            "decision": {
+              "second": 391.1333333334289,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.16666666676224,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.033333333333479,
+            "decision": {
+              "second": 391.16666666676224,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.2000000000956,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 7.000000000000146,
+            "decision": {
+              "second": 391.2000000000956,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.23333333342896,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.9666666666668124,
+            "decision": {
+              "second": 391.23333333342896,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.2666666667623,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.933333333333479,
+            "decision": {
+              "second": 391.2666666667623,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.3000000000957,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.900000000000146,
+            "decision": {
+              "second": 391.3000000000957,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.33333333342904,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.866666666666813,
+            "decision": {
+              "second": 391.33333333342904,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.3666666667624,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.83333333333348,
+            "decision": {
+              "second": 391.3666666667624,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 391.38333333342854
+            }
+          },
+          {
+            "second": 391.40000000009576,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.800000000000146,
+            "decision": {
+              "second": 391.40000000009576,
+              "selected": "farm",
+              "reason": "utility",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.4333333334291,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.766666666666813,
+            "decision": {
+              "second": 391.4333333334291,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.4666666667625,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.73333333333348,
+            "decision": {
+              "second": 391.4666666667625,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.50000000009584,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.700000000000147,
+            "decision": {
+              "second": 391.50000000009584,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.5333333334292,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.6666666666668135,
+            "decision": {
+              "second": 391.5333333334292,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.56666666676256,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.63333333333348,
+            "decision": {
+              "second": 391.56666666676256,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.6000000000959,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.600000000000147,
+            "decision": {
+              "second": 391.6000000000959,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.6333333334293,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.566666666666814,
+            "decision": {
+              "second": 391.6333333334293,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.66666666676264,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.533333333333481,
+            "decision": {
+              "second": 391.66666666676264,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.700000000096,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.500000000000147,
+            "decision": {
+              "second": 391.700000000096,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.73333333342936,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.466666666666814,
+            "decision": {
+              "second": 391.73333333342936,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.7666666667627,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.433333333333481,
+            "decision": {
+              "second": 391.7666666667627,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.8000000000961,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.400000000000148,
+            "decision": {
+              "second": 391.8000000000961,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.83333333342944,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9608294930875576,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.366666666666815,
+            "decision": {
+              "second": 391.83333333342944,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.8666666667628,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.333333333333481,
+            "decision": {
+              "second": 391.8666666667628,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.90000000009616,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.300000000000148,
+            "decision": {
+              "second": 391.90000000009616,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.9333333334295,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.266666666666815,
+            "decision": {
+              "second": 391.9333333334295,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 391.9666666667629,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.233333333333482,
+            "decision": {
+              "second": 391.9666666667629,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 392.00000000009624,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.2000000000001485,
+            "decision": {
+              "second": 392.00000000009624,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 392.0333333334296,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.166666666666815,
+            "decision": {
+              "second": 392.0333333334296,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.05000000009574
+            }
+          },
+          {
+            "second": 392.06666666676296,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.133333333333482,
+            "decision": {
+              "second": 392.06666666676296,
+              "selected": "farm",
+              "reason": "utility",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.1000000000963,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.100000000000149,
+            "decision": {
+              "second": 392.1000000000963,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.1333333334297,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.066666666666816,
+            "decision": {
+              "second": 392.1333333334297,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.16666666676304,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.033333333333482,
+            "decision": {
+              "second": 392.16666666676304,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.2000000000964,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 6.000000000000149,
+            "decision": {
+              "second": 392.2000000000964,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.23333333342975,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "idle",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.966666666666816,
+            "decision": {
+              "second": 392.23333333342975,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.2666666667631,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.933333333333483,
+            "decision": {
+              "second": 392.2666666667631,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.3000000000965,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.90000000000015,
+            "decision": {
+              "second": 392.3000000000965,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.33333333342983,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.866666666666816,
+            "decision": {
+              "second": 392.33333333342983,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.3666666667632,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.833333333333483,
+            "decision": {
+              "second": 392.3666666667632,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.40000000009655,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.80000000000015,
+            "decision": {
+              "second": 392.40000000009655,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.4333333334299,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.766666666666817,
+            "decision": {
+              "second": 392.4333333334299,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.4666666667633,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.7333333333334835,
+            "decision": {
+              "second": 392.4666666667633,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.50000000009663,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.70000000000015,
+            "decision": {
+              "second": 392.50000000009663,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.53333333343,
+            "x": 1762.9496461147053,
+            "y": 221.47037472435466,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "attack",
+            "intent": "camp",
+            "targetId": "j_red_wolves",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.666666666666817,
+            "decision": {
+              "second": 392.53333333343,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 392.71666666676293
+            }
+          },
+          {
+            "second": 392.56666666676335,
+            "x": 1761.7421167571354,
+            "y": 224.75547333027305,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_drakes",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.633333333333484,
+            "decision": {
+              "second": 392.56666666676335,
+              "selected": "farm",
+              "reason": "utility",
+              "until": 393.21666666676333
+            }
+          },
+          {
+            "second": 392.6000000000967,
+            "x": 1760.5345873995655,
+            "y": 228.04057193619144,
+            "hpFraction": 0.9493087557603687,
+            "damageDealt": 9385,
+            "animState": "walk",
+            "intent": "camp",
+            "targetId": "j_red_drakes",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 5.600000000000151,
+            "decision": {
+              "second": 392.6000000000967,
+              "selected": "farm",
+              "reason": "commitment",
+              "until": 393.21666666676333
+            }
+          }
+        ],
+        "taskEvents": [
+          {
+            "second": 392.53333333343,
+            "kind": "camp-share",
+            "targetId": "j_red_wolves",
+            "amount": 75
+          }
+        ]
+      },
+      "record": {
+        "second": 387.4000000000926,
+        "actorId": "red_p_research_yekindar",
+        "team": "red",
+        "selected": "farm",
+        "contextKey": "farm:j_red_wolves",
+        "features": {
+          "bias": 1,
+          "iq": 0.85,
+          "teamfight": 0.91,
+          "lane": 0.92,
+          "flexibility": 0.89,
+          "health": 0.9723502304147466,
+          "mana": 1,
+          "roleFit": 1,
+          "role:Assassin": 1,
+          "card:p_research_yekindar": 1,
+          "personality:showman": 1,
+          "personality:survivalist": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "farm",
+        "experiment": {
+          "incumbent": "farm",
+          "alternate": "push",
+          "pair": "farm-push",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.07849958963216061
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 0.9723502304147466,
+          "gold": 1561.3679999998549,
+          "cs": 11,
+          "kills": 4,
+          "deaths": 3,
+          "damageDealt": 9385
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "farm",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 35.066000000000486,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.026299500000000364
+        }
+      },
+      "wallSeconds": 1.8226999999955296,
+      "rejected": "missing fixed-step assignment or follow-up"
+    }
+  ],
+  "validPair": false,
+  "draftLineup": [
+    {
+      "playerId": "p_research_kscerato",
+      "championId": "c_stepstone"
+    },
+    {
+      "playerId": "p_research_spinx",
+      "championId": "c_qiyana"
+    },
+    {
+      "playerId": "p_research_twistzz",
+      "championId": "c_valkira"
+    },
+    {
+      "playerId": "p_research_senzu",
+      "championId": "c_kage"
+    },
+    {
+      "playerId": "p_research_xantares",
+      "championId": "c_batrider"
+    },
+    {
+      "playerId": "p_research_yekindar",
+      "championId": "c_inai"
+    },
+    {
+      "playerId": "p_research_xertion",
+      "championId": "c_locke"
+    },
+    {
+      "playerId": "p_research_torzsi",
+      "championId": "c_astra"
+    },
+    {
+      "playerId": "p_thespicy",
+      "championId": "c_kazemaru"
+    },
+    {
+      "playerId": "p_p1mple",
+      "championId": "c_voltgrip"
+    }
+  ]
+}

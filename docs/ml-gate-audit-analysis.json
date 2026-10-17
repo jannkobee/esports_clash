@@ -1,0 +1,179 @@
+{
+  "method": "Evaluation-only gate coverage at residual decision ticks; simultaneous gates overlap; repeated ticks are not independent observations",
+  "limits": "Early-match samples from one draft. No alternate was authorized by this analysis. No causal ML benefit or basis for policy promotion.",
+  "runs": [
+    {
+      "source": "../docs/ml-gate-audit-81-original.json",
+      "seed": 81,
+      "swapped": false,
+      "seconds": 179.99999999999235,
+      "ticks": 37217,
+      "eligible": 0,
+      "withLegalPair": 2980,
+      "safeExceptGap": 147,
+      "firstGates": {
+        "legal-pair": 1637,
+        "commitment": 18122,
+        "defense": 6004,
+        "health": 10158,
+        "utility-gap": 147,
+        "tower": 1087,
+        "danger": 62
+      },
+      "allGates": {
+        "legal-pair": 34237,
+        "commitment": 34032,
+        "defense": 10057,
+        "health": 10158,
+        "danger": 454,
+        "utility-gap": 2978,
+        "tower": 1771,
+        "influence": 10,
+        "survival": 41
+      },
+      "cardPairs": {
+        "p_bigtail:farm-push": {
+          "count": 52,
+          "minGap": 0.19816245260778415,
+          "maxGap": 0.4331131050560464
+        },
+        "p_craps:farm-push": {
+          "count": 61,
+          "minGap": 0.2154183588303709,
+          "maxGap": 0.4225292474415622
+        },
+        "p_neko:farm-push": {
+          "count": 15,
+          "minGap": 0.21884638525716377,
+          "maxGap": 0.3286850280179594
+        },
+        "p_daft:farm-push": {
+          "count": 17,
+          "minGap": 0.29390973542724236,
+          "maxGap": 0.395858995693818
+        },
+        "p_flaker:fight-regroup": {
+          "count": 2,
+          "minGap": 0.2889834401099721,
+          "maxGap": 0.3445199496689881
+        }
+      }
+    },
+    {
+      "source": "../docs/ml-gate-audit-82-swapped.json",
+      "seed": 82,
+      "swapped": true,
+      "seconds": 179.99999999999235,
+      "ticks": 37091,
+      "eligible": 0,
+      "withLegalPair": 2913,
+      "safeExceptGap": 157,
+      "firstGates": {
+        "legal-pair": 1295,
+        "commitment": 18593,
+        "defense": 4904,
+        "influence": 6,
+        "health": 10447,
+        "tower": 1689,
+        "utility-gap": 157
+      },
+      "allGates": {
+        "legal-pair": 34178,
+        "commitment": 34286,
+        "defense": 9437,
+        "influence": 38,
+        "survival": 42,
+        "utility-gap": 2913,
+        "health": 10447,
+        "danger": 507,
+        "tower": 2911
+      },
+      "cardPairs": {
+        "p_bigtail:farm-push": {
+          "count": 85,
+          "minGap": 0.2560675853892258,
+          "maxGap": 0.4002834447543331
+        },
+        "p_daft:farm-push": {
+          "count": 35,
+          "minGap": 0.2558266652451393,
+          "maxGap": 0.37607657463172595
+        },
+        "p_woozy:farm-push": {
+          "count": 3,
+          "minGap": 0.27064486941402477,
+          "maxGap": 0.35984785949302145
+        },
+        "p_craps:farm-push": {
+          "count": 17,
+          "minGap": 0.22792421523975728,
+          "maxGap": 0.38202290836159236
+        },
+        "p_neko:farm-push": {
+          "count": 17,
+          "minGap": 0.22613767344531233,
+          "maxGap": 0.3277898769210846
+        }
+      }
+    }
+  ],
+  "totals": {
+    "ticks": 74308,
+    "eligible": 0,
+    "withLegalPair": 5893,
+    "safeExceptGap": 304,
+    "firstGates": {
+      "legal-pair": 2932,
+      "commitment": 36715,
+      "defense": 10908,
+      "health": 20605,
+      "utility-gap": 304,
+      "tower": 2776,
+      "danger": 62,
+      "influence": 6
+    },
+    "allGates": {
+      "legal-pair": 68415,
+      "commitment": 68318,
+      "defense": 19494,
+      "health": 20605,
+      "danger": 961,
+      "utility-gap": 5891,
+      "tower": 4682,
+      "influence": 48,
+      "survival": 83
+    },
+    "cardPairs": {
+      "p_bigtail:farm-push": {
+        "count": 137,
+        "minGap": 0.19816245260778415,
+        "maxGap": 0.4331131050560464
+      },
+      "p_craps:farm-push": {
+        "count": 78,
+        "minGap": 0.2154183588303709,
+        "maxGap": 0.4225292474415622
+      },
+      "p_neko:farm-push": {
+        "count": 32,
+        "minGap": 0.21884638525716377,
+        "maxGap": 0.3286850280179594
+      },
+      "p_daft:farm-push": {
+        "count": 52,
+        "minGap": 0.2558266652451393,
+        "maxGap": 0.395858995693818
+      },
+      "p_flaker:fight-regroup": {
+        "count": 2,
+        "minGap": 0.2889834401099721,
+        "maxGap": 0.3445199496689881
+      },
+      "p_woozy:farm-push": {
+        "count": 3,
+        "minGap": 0.27064486941402477,
+        "maxGap": 0.35984785949302145
+      }
+    }
+  }
+}

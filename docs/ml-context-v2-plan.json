@@ -1,0 +1,272 @@
+{
+  "schema": "action-specific-task-v1",
+  "sourceHash": "b92fb7f08cb253edfe32b9c50fa54d28bdef37d5d8fcf20761a1f0749aab3c8a",
+  "pair": "farm-push",
+  "horizonSeconds": 30,
+  "scoutSeconds": 240,
+  "minimumPredictedRewardAdvantage": 0.02,
+  "fit": {
+    "minimumEpisodes": 16,
+    "minimumInformative": 4,
+    "taskPenalty": 1,
+    "sharedPenalty": 4,
+    "maximumWeight": 1,
+    "targetBound": 1
+  },
+  "acceptance": "Exploratory positive evidence requires at least 8 valid held-out cases, at least 2 changed choices, positive total reward, more improved than worsened cases, zero added deaths, and no changed case rated worse by the broader rubric. This is not approval for full-match deployment.",
+  "collection": "First naturally eligible safe farm/push pair after 120s in each world; retain missing/invalid cases. Freeze training-only model before collecting any held-out outcomes. No retuning.",
+  "cases": [
+    {
+      "id": "train-101-d0-original",
+      "split": "train",
+      "seed": 101,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "train-102-d0-swapped",
+      "split": "train",
+      "seed": 102,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "train-103-d1-original",
+      "split": "train",
+      "seed": 103,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "train-104-d1-swapped",
+      "split": "train",
+      "seed": 104,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "train-105-d0-original",
+      "split": "train",
+      "seed": 105,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "train-106-d0-swapped",
+      "split": "train",
+      "seed": 106,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "train-107-d1-original",
+      "split": "train",
+      "seed": 107,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "train-108-d1-swapped",
+      "split": "train",
+      "seed": 108,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "train-109-d0-original",
+      "split": "train",
+      "seed": 109,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "train-110-d0-swapped",
+      "split": "train",
+      "seed": 110,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "train-111-d1-original",
+      "split": "train",
+      "seed": 111,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "train-112-d1-swapped",
+      "split": "train",
+      "seed": 112,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "train-113-d0-original",
+      "split": "train",
+      "seed": 113,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "train-114-d0-swapped",
+      "split": "train",
+      "seed": 114,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "train-115-d1-original",
+      "split": "train",
+      "seed": 115,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "train-116-d1-swapped",
+      "split": "train",
+      "seed": 116,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "train-117-d0-original",
+      "split": "train",
+      "seed": 117,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "train-118-d0-swapped",
+      "split": "train",
+      "seed": 118,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "train-119-d1-original",
+      "split": "train",
+      "seed": 119,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "train-120-d1-swapped",
+      "split": "train",
+      "seed": 120,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "train-121-d0-original",
+      "split": "train",
+      "seed": 121,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "train-122-d0-swapped",
+      "split": "train",
+      "seed": 122,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "train-123-d1-original",
+      "split": "train",
+      "seed": 123,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "train-124-d1-swapped",
+      "split": "train",
+      "seed": 124,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "heldout-125-d0-original",
+      "split": "heldout",
+      "seed": 125,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "heldout-126-d0-swapped",
+      "split": "heldout",
+      "seed": 126,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "heldout-127-d1-original",
+      "split": "heldout",
+      "seed": 127,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "heldout-128-d1-swapped",
+      "split": "heldout",
+      "seed": 128,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "heldout-129-d0-original",
+      "split": "heldout",
+      "seed": 129,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "heldout-130-d0-swapped",
+      "split": "heldout",
+      "seed": 130,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "heldout-131-d1-original",
+      "split": "heldout",
+      "seed": 131,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "heldout-132-d1-swapped",
+      "split": "heldout",
+      "seed": 132,
+      "draft": 1,
+      "swapped": true
+    },
+    {
+      "id": "heldout-133-d0-original",
+      "split": "heldout",
+      "seed": 133,
+      "draft": 0,
+      "swapped": false
+    },
+    {
+      "id": "heldout-134-d0-swapped",
+      "split": "heldout",
+      "seed": 134,
+      "draft": 0,
+      "swapped": true
+    },
+    {
+      "id": "heldout-135-d1-original",
+      "split": "heldout",
+      "seed": 135,
+      "draft": 1,
+      "swapped": false
+    },
+    {
+      "id": "heldout-136-d1-swapped",
+      "split": "heldout",
+      "seed": 136,
+      "draft": 1,
+      "swapped": true
+    }
+  ]
+}

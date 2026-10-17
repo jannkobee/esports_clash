@@ -368,6 +368,8 @@ export interface AramChampionUnit {
   committedState?: 'fight' | 'retreat' | 'cover';
   actionIntent?: import('./decisionActionRecovery').DecisiveActionIntent;
   actionFailures?: import('./decisionActionRecovery').DecisiveActionFailure[];
+  /** Bounded cross-kind macro preference; legal emergency gates may always interrupt it. */
+  macroDecision?: import('./macroActionDecision').MacroActionCommitment;
   supportHealTimer?: number;
   locketCooldown?: number;
   censerBuffTimer?: number;

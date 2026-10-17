@@ -1,0 +1,9 @@
+{
+  "createdAt": "2026-10-16T14:26:51.513Z",
+  "modelHash": "4bcb7c986f386fa7cd9db935f15675504099fedf4040690f29a754247f6bbed1",
+  "trainingHash": "25e4e3a0a333f1e350136052ef1d95a1b374a1a60b1116d4e7975db719d5b022",
+  "planHash": "e678ce526cd3af0bba290d2424144230bb77a3c350296bbf2924416c6a4f1098",
+  "trainingEpisodes": 24,
+  "informativeEpisodes": 9,
+  "stage": "Before first held-out collection"
+}

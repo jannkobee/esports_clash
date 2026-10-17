@@ -1,0 +1,452 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 77,
+  "swapped": true,
+  "scout": {
+    "label": "scout",
+    "event": {
+      "mode": "scout",
+      "actorId": "blue_p_neko",
+      "second": 127.73333333332864,
+      "cardId": "p_neko",
+      "champion": "Kazemaru",
+      "incumbent": "fight",
+      "alternate": "regroup",
+      "fingerprint": "74280:908612c8:f7db4e64",
+      "matched": false,
+      "gate": null,
+      "actorStart": {
+        "x": 846.8750440576708,
+        "y": 447.2080620560873,
+        "hpFraction": 1,
+        "gold": 339.0946666667088,
+        "cs": 0,
+        "kills": 0,
+        "deaths": 0,
+        "damageDealt": 843
+      }
+    },
+    "lastSecond": 127.76666666666198,
+    "wallSeconds": 40.634
+  },
+  "replays": [
+    {
+      "label": "incumbent-a",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_neko",
+        "second": 127.73333333332864,
+        "cardId": "p_neko",
+        "champion": "Kazemaru",
+        "incumbent": "fight",
+        "alternate": "regroup",
+        "fingerprint": "74280:908612c8:f7db4e64",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 846.8750440576708,
+          "y": 447.2080620560873,
+          "hpFraction": 1,
+          "gold": 339.0946666667088,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 843
+        },
+        "followup": {
+          "second": 135.76666666666154,
+          "actor": {
+            "x": 1262.5702174814207,
+            "y": 399.5783980944199,
+            "hpFraction": 0.47050754458161864,
+            "mana": 100,
+            "isAlive": true,
+            "gold": 437.054666666707,
+            "cs": 0,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 843
+          },
+          "nearestEnemyDistance": 152.72064684385128,
+          "insideEnemyTower": false
+        }
+      },
+      "record": {
+        "second": 127.73333333332864,
+        "actorId": "blue_p_neko",
+        "team": "blue",
+        "selected": "fight",
+        "contextKey": "fight:red_p_thespicy:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.89,
+          "teamfight": 0.93,
+          "lane": 0.97,
+          "flexibility": 0.88,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 1,
+          "role:Fighter": 1,
+          "card:p_neko": 1,
+          "personality:short_fuse": 1,
+          "personality:untiltable": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "farm",
+        "experiment": {
+          "incumbent": "fight",
+          "alternate": "regroup",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.006181129888708531
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 339.0946666667088,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 843
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "fight",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333175,
+          "healthChange": -0.033607681755829955,
+          "goldGain": 36.73499999999933,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.01578856138545901
+        }
+      },
+      "actor": {
+        "x": 1234.582550288734,
+        "y": 398.7474437566977,
+        "hp": 686,
+        "committedState": "retreat"
+      },
+      "lastSecond": 135.96666666666152,
+      "wallSeconds": 2.973
+    },
+    {
+      "label": "incumbent-b",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_neko",
+        "second": 127.73333333332864,
+        "cardId": "p_neko",
+        "champion": "Kazemaru",
+        "incumbent": "fight",
+        "alternate": "regroup",
+        "fingerprint": "74280:908612c8:f7db4e64",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 846.8750440576708,
+          "y": 447.2080620560873,
+          "hpFraction": 1,
+          "gold": 339.0946666667088,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 843
+        },
+        "followup": {
+          "second": 135.76666666666154,
+          "actor": {
+            "x": 1342.7794647686667,
+            "y": 393.62803596288944,
+            "hpFraction": 0.4842249657064472,
+            "mana": 62.04999999999993,
+            "isAlive": true,
+            "gold": 437.054666666707,
+            "cs": 0,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 957
+          },
+          "nearestEnemyDistance": 128.74766087452707,
+          "insideEnemyTower": false
+        }
+      },
+      "record": {
+        "second": 127.73333333332864,
+        "actorId": "blue_p_neko",
+        "team": "blue",
+        "selected": "fight",
+        "contextKey": "fight:red_p_thespicy:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.89,
+          "teamfight": 0.93,
+          "lane": 0.97,
+          "flexibility": 0.88,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 1,
+          "role:Fighter": 1,
+          "card:p_neko": 1,
+          "personality:short_fuse": 1,
+          "personality:untiltable": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "farm",
+        "experiment": {
+          "incumbent": "fight",
+          "alternate": "regroup",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.006181129888708531
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 339.0946666667088,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 843
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "fight",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333175,
+          "healthChange": -0.033607681755829955,
+          "goldGain": 36.73499999999933,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.01578856138545901
+        }
+      },
+      "actor": {
+        "x": 1304.2924726031583,
+        "y": 392.6381723126924,
+        "hp": 706,
+        "committedState": "retreat"
+      },
+      "lastSecond": 135.99999999999486,
+      "wallSeconds": 3.189
+    },
+    {
+      "label": "alternate",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_neko",
+        "second": 127.73333333332864,
+        "cardId": "p_neko",
+        "champion": "Kazemaru",
+        "incumbent": "fight",
+        "alternate": "regroup",
+        "fingerprint": "74280:908612c8:f7db4e64",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 846.8750440576708,
+          "y": 447.2080620560873,
+          "hpFraction": 1,
+          "gold": 339.0946666667088,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 843
+        },
+        "followup": {
+          "second": 135.76666666666154,
+          "actor": {
+            "x": 1343.9730279916894,
+            "y": 394.20317641043334,
+            "hpFraction": 0.3772290809327846,
+            "mana": 61.749999999999936,
+            "isAlive": true,
+            "gold": 437.054666666707,
+            "cs": 0,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 957
+          },
+          "nearestEnemyDistance": 134.58360826657722,
+          "insideEnemyTower": false
+        }
+      },
+      "record": {
+        "second": 127.73333333332864,
+        "actorId": "blue_p_neko",
+        "team": "blue",
+        "selected": "regroup",
+        "contextKey": "regroup:blue_p_craps",
+        "features": {
+          "bias": 1,
+          "iq": 0.89,
+          "teamfight": 0.93,
+          "lane": 0.97,
+          "flexibility": 0.88,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 1,
+          "role:Fighter": 1,
+          "card:p_neko": 1,
+          "personality:short_fuse": 1,
+          "personality:untiltable": 0.5
+        },
+        "selectionReason": "evaluation-experiment:alternate",
+        "heldAction": "farm",
+        "experiment": {
+          "incumbent": "fight",
+          "alternate": "regroup",
+          "pair": "fight-regroup",
+          "arm": "alternate",
+          "propensity": 0.5,
+          "utilityGap": 0.006181129888708531
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 339.0946666667088,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 843
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target",
+            "learnedFactor": 0.04327043879476353,
+            "baselineUtility": 0.209261925311437,
+            "actualUtility": 0.21099274286322756
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion",
+            "learnedFactor": 0.03033839324270292,
+            "baselineUtility": 0.28,
+            "actualUtility": 0.28121353572970814
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+            "learnedFactor": -0.07360883203746643,
+            "baselineUtility": 0.2077559662560177,
+            "actualUtility": 0.20481161297451903
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp",
+            "learnedFactor": -0.24434252408668078,
+            "baselineUtility": 0.13349999999999998,
+            "actualUtility": 0.12372629903653275
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available",
+            "learnedFactor": 0.24434252408668078,
+            "baselineUtility": -0.08950942428356434,
+            "actualUtility": -0.07973572332009711
+          }
+        ],
+        "zeroPolicySelected": "fight",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333175,
+          "healthChange": -0.033607681755829955,
+          "goldGain": 36.73499999999933,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.01578856138545901
+        }
+      },
+      "actor": {
+        "x": 1270.4929434226683,
+        "y": 392.5334758955528,
+        "hp": 470,
+        "committedState": "retreat"
+      },
+      "lastSecond": 136.43333333332816,
+      "wallSeconds": 2.697
+    }
+  ],
+  "validPair": false
+}

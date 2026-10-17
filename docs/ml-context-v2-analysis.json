@@ -1,0 +1,1222 @@
+{
+  "plan": {
+    "schema": "action-specific-task-v1",
+    "sourceHash": "b92fb7f08cb253edfe32b9c50fa54d28bdef37d5d8fcf20761a1f0749aab3c8a",
+    "pair": "farm-push",
+    "horizonSeconds": 30,
+    "scoutSeconds": 240,
+    "minimumPredictedRewardAdvantage": 0.02,
+    "fit": {
+      "minimumEpisodes": 16,
+      "minimumInformative": 4,
+      "taskPenalty": 1,
+      "sharedPenalty": 4,
+      "maximumWeight": 1,
+      "targetBound": 1
+    },
+    "acceptance": "Exploratory positive evidence requires at least 8 valid held-out cases, at least 2 changed choices, positive total reward, more improved than worsened cases, zero added deaths, and no changed case rated worse by the broader rubric. This is not approval for full-match deployment.",
+    "collection": "First naturally eligible safe farm/push pair after 120s in each world; retain missing/invalid cases. Freeze training-only model before collecting any held-out outcomes. No retuning.",
+    "cases": [
+      {
+        "id": "train-101-d0-original",
+        "split": "train",
+        "seed": 101,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "train-102-d0-swapped",
+        "split": "train",
+        "seed": 102,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "train-103-d1-original",
+        "split": "train",
+        "seed": 103,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "train-104-d1-swapped",
+        "split": "train",
+        "seed": 104,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "train-105-d0-original",
+        "split": "train",
+        "seed": 105,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "train-106-d0-swapped",
+        "split": "train",
+        "seed": 106,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "train-107-d1-original",
+        "split": "train",
+        "seed": 107,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "train-108-d1-swapped",
+        "split": "train",
+        "seed": 108,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "train-109-d0-original",
+        "split": "train",
+        "seed": 109,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "train-110-d0-swapped",
+        "split": "train",
+        "seed": 110,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "train-111-d1-original",
+        "split": "train",
+        "seed": 111,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "train-112-d1-swapped",
+        "split": "train",
+        "seed": 112,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "train-113-d0-original",
+        "split": "train",
+        "seed": 113,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "train-114-d0-swapped",
+        "split": "train",
+        "seed": 114,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "train-115-d1-original",
+        "split": "train",
+        "seed": 115,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "train-116-d1-swapped",
+        "split": "train",
+        "seed": 116,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "train-117-d0-original",
+        "split": "train",
+        "seed": 117,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "train-118-d0-swapped",
+        "split": "train",
+        "seed": 118,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "train-119-d1-original",
+        "split": "train",
+        "seed": 119,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "train-120-d1-swapped",
+        "split": "train",
+        "seed": 120,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "train-121-d0-original",
+        "split": "train",
+        "seed": 121,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "train-122-d0-swapped",
+        "split": "train",
+        "seed": 122,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "train-123-d1-original",
+        "split": "train",
+        "seed": 123,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "train-124-d1-swapped",
+        "split": "train",
+        "seed": 124,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "heldout-125-d0-original",
+        "split": "heldout",
+        "seed": 125,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "heldout-126-d0-swapped",
+        "split": "heldout",
+        "seed": 126,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "heldout-127-d1-original",
+        "split": "heldout",
+        "seed": 127,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "heldout-128-d1-swapped",
+        "split": "heldout",
+        "seed": 128,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "heldout-129-d0-original",
+        "split": "heldout",
+        "seed": 129,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "heldout-130-d0-swapped",
+        "split": "heldout",
+        "seed": 130,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "heldout-131-d1-original",
+        "split": "heldout",
+        "seed": 131,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "heldout-132-d1-swapped",
+        "split": "heldout",
+        "seed": 132,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "heldout-133-d0-original",
+        "split": "heldout",
+        "seed": 133,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "heldout-134-d0-swapped",
+        "split": "heldout",
+        "seed": 134,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "heldout-135-d1-original",
+        "split": "heldout",
+        "seed": 135,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "heldout-136-d1-swapped",
+        "split": "heldout",
+        "seed": 136,
+        "draft": 1,
+        "swapped": true
+      }
+    ]
+  },
+  "modelHash": "4bcb7c986f386fa7cd9db935f15675504099fedf4040690f29a754247f6bbed1",
+  "trainingHash": "25e4e3a0a333f1e350136052ef1d95a1b374a1a60b1116d4e7975db719d5b022",
+  "fit": {
+    "policy": {
+      "kind": "task-context",
+      "version": 1,
+      "weights": {
+        "farm": {
+          "bias": -0.001191944393613028,
+          "card:p_bigtail": -0.004464293503206946,
+          "card:p_craps": 0.0023020550567538454,
+          "card:p_daft": -0.007008999145427501,
+          "card:p_kovi": -0.013805462658728014,
+          "card:p_mirecle": -0.017661794902637546,
+          "card:p_neko": 0.0007162559177071962,
+          "card:p_research_oner": -0.008337145767000322,
+          "card:p_toaster": -0.02341779083666304,
+          "card:p_turbogamer": -0.006250508968492602,
+          "card:p_woozy": 0.07673574041408192,
+          "flexibility": 0.004091864361566309,
+          "health": 0.011980468696843414,
+          "iq": 0.002541664574962719,
+          "lane": 0.005957839325185975,
+          "mana": -0.001191944393613028,
+          "personality:bush_stalker": -0.045508196401901915,
+          "personality:clutch_performer": -0.013805462658728014,
+          "personality:cold_as_ice": 0.0011510275283769227,
+          "personality:egoistic": -0.002232146751603473,
+          "personality:first_blood_hunter": -0.017661794902637546,
+          "personality:iron_will": -0.004464293503206946,
+          "personality:limit_tester": 0.0023020550567538454,
+          "personality:momentum_junkie": 0.07673574041408192,
+          "personality:short_fuse": 0.0007162559177071962,
+          "personality:showman": 0.02833988439343065,
+          "personality:siege_closer": -0.004168572883500161,
+          "personality:steal_gambler": -0.0035044995727137505,
+          "personality:survivalist": -0.01170889541833152,
+          "personality:untiltable": 0.0003581279588535981,
+          "personality:wave_architect": -0.008337145767000322,
+          "role:Assassin": -0.022142608425728336,
+          "role:Fighter": -0.020399479862201995,
+          "role:Mage": -0.007008999145427501,
+          "role:Marksman": 0.054609652008237426,
+          "role:Tank": -0.006250508968492602,
+          "roleFit": -0.015205505413639157,
+          "task:allies": -0.06238890847590587,
+          "task:attackReady": -0.09321518964255388,
+          "task:basicDps": -0.01843325565407924,
+          "task:campClear": 0.032522172796384516,
+          "task:campEngaged": -0.24402547255018403,
+          "task:campHealth": 0.09125377382144609,
+          "task:campHome": -0.004767777574452112,
+          "task:campIncoming": 0.02041898707972254,
+          "task:campKnown": -0.004767777574452112,
+          "task:campLeash": -0.179608320575511,
+          "task:campReward": 0.04547247646805633,
+          "task:campShare": 0.11724495870063997,
+          "task:cover": -0.08197127694158443,
+          "task:customCaster": 0,
+          "task:enemies": 0,
+          "task:enemyProximity": -0.031182968387918904,
+          "task:gameTime": -0.005921858916788757,
+          "task:kind:advance": 0,
+          "task:kind:camp-exit": 0,
+          "task:kind:minion": 0,
+          "task:kind:structure": 0,
+          "task:laneDistance": 0.10801822638043088,
+          "task:ready1": 0.020234258299518318,
+          "task:ready2": -0.040787011778364926,
+          "task:readyUlt": -0.014494384137871255,
+          "task:routeDetour": -0.0439210120426037,
+          "task:structureDistance": 0,
+          "task:targetHealth": 0,
+          "task:threat": 0.0074566522364615615,
+          "task:towerExposure": 0,
+          "task:travel": -0.031041381418457723,
+          "task:waveAllies": 0.05148278964361322,
+          "task:waveCrash": 0,
+          "task:waveDistance": -0.016802417969599026,
+          "task:waveEnemies": 0,
+          "teamfight": 0.0036243079316947216
+        },
+        "push": {
+          "bias": 0.001191944393613028,
+          "card:p_bigtail": 0.004464293503206946,
+          "card:p_craps": -0.0023020550567538454,
+          "card:p_daft": 0.007008999145427501,
+          "card:p_kovi": 0.013805462658728014,
+          "card:p_mirecle": 0.017661794902637546,
+          "card:p_neko": -0.0007162559177071962,
+          "card:p_research_oner": 0.008337145767000322,
+          "card:p_toaster": 0.02341779083666304,
+          "card:p_turbogamer": 0.006250508968492602,
+          "card:p_woozy": -0.07673574041408192,
+          "flexibility": -0.004091864361566309,
+          "health": -0.011980468696843414,
+          "iq": -0.002541664574962719,
+          "lane": -0.005957839325185975,
+          "mana": 0.001191944393613028,
+          "personality:bush_stalker": 0.045508196401901915,
+          "personality:clutch_performer": 0.013805462658728014,
+          "personality:cold_as_ice": -0.0011510275283769227,
+          "personality:egoistic": 0.002232146751603473,
+          "personality:first_blood_hunter": 0.017661794902637546,
+          "personality:iron_will": 0.004464293503206946,
+          "personality:limit_tester": -0.0023020550567538454,
+          "personality:momentum_junkie": -0.07673574041408192,
+          "personality:short_fuse": -0.0007162559177071962,
+          "personality:showman": -0.02833988439343065,
+          "personality:siege_closer": 0.004168572883500161,
+          "personality:steal_gambler": 0.0035044995727137505,
+          "personality:survivalist": 0.01170889541833152,
+          "personality:untiltable": -0.0003581279588535981,
+          "personality:wave_architect": 0.008337145767000322,
+          "role:Assassin": 0.022142608425728336,
+          "role:Fighter": 0.020399479862201995,
+          "role:Mage": 0.007008999145427501,
+          "role:Marksman": -0.054609652008237426,
+          "role:Tank": 0.006250508968492602,
+          "roleFit": 0.015205505413639157,
+          "task:allies": 0.02188018329766178,
+          "task:attackReady": 0.09321518964255388,
+          "task:basicDps": 0.01843325565407924,
+          "task:campClear": 0,
+          "task:campEngaged": 0,
+          "task:campHealth": 0,
+          "task:campHome": 0,
+          "task:campIncoming": 0,
+          "task:campKnown": 0,
+          "task:campLeash": 0,
+          "task:campReward": 0,
+          "task:campShare": 0,
+          "task:cover": -0.009378653249215364,
+          "task:customCaster": 0,
+          "task:enemies": 0,
+          "task:enemyProximity": -0.007042096931514615,
+          "task:gameTime": 0.005921858916788757,
+          "task:kind:advance": 0.0008459615557498967,
+          "task:kind:camp-exit": 0.003921816018702173,
+          "task:kind:minion": 0,
+          "task:kind:structure": 0,
+          "task:laneDistance": 0.06556361357179365,
+          "task:ready1": -0.020234258299518318,
+          "task:ready2": 0.040787011778364926,
+          "task:readyUlt": 0.014494384137871255,
+          "task:routeDetour": 0,
+          "task:structureDistance": -0.02389573071261171,
+          "task:targetHealth": 0,
+          "task:threat": -0.003348083283775397,
+          "task:towerExposure": 0,
+          "task:travel": 0.003868531239436524,
+          "task:waveAllies": -0.026776383334077194,
+          "task:waveCrash": -0.00047365117475971566,
+          "task:waveDistance": -0.05988057683102743,
+          "task:waveEnemies": 0,
+          "teamfight": -0.0036243079316947216
+        }
+      }
+    },
+    "sufficient": true,
+    "configuration": {
+      "minimumEpisodes": 16,
+      "minimumInformative": 4,
+      "taskPenalty": 1,
+      "sharedPenalty": 4,
+      "maximumWeight": 1,
+      "targetBound": 1
+    },
+    "trainingEpisodes": 24,
+    "informativeEpisodes": 9,
+    "trainingSeeds": [
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124
+    ],
+    "fittedLoss": 0.009836412092769054,
+    "zeroLoss": 0.08837625185185187
+  },
+  "summary": {
+    "planned": 12,
+    "valid": 11,
+    "changed": 6,
+    "improved": 1,
+    "worsened": 1,
+    "rewardDelta": 1.1502666666666665,
+    "deathDelta": -1,
+    "extraDeathCases": 0,
+    "broaderWorse": 2,
+    "predictionLoss": 0.2390505472511251,
+    "zeroPredictionLoss": 0.1823194391919192
+  },
+  "passesExploratoryGate": false,
+  "reports": [
+    {
+      "id": "heldout-125-d0-original",
+      "split": "heldout",
+      "seed": 125,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_bigtail",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 50,
+        "campClears": 1,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 7.766666666666225,
+        "reward": 0.12
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 50,
+        "campClears": 1,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 7.8666666666662195,
+        "reward": 0.12
+      },
+      "rewardDelta": 0,
+      "rawHash": "5e1a50c1d712e5a0d697c897564f2c0030fb46d8e97990f9463c4a8efb6947e6",
+      "changed": false,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.17502800811272393,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "deathDelta": 0,
+      "predictionError": 0.030634803623907754,
+      "zeroPredictionError": 0,
+      "rubric": {
+        "classification": "no-material-difference",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0,
+          "gold": 0,
+          "damageDealt": 0
+        },
+        "thresholded": {
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0
+        }
+      }
+    },
+    {
+      "id": "heldout-126-d0-swapped",
+      "split": "heldout",
+      "seed": 126,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_craps",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 14,
+        "minionKills": 1,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 9.9666666666661,
+        "reward": 0.0336
+      },
+      "rewardDelta": 0,
+      "rawHash": "3398c934b14a890a3de8964defe261cbe7198f8dc0f12170cf5279bf100f5fad",
+      "changed": false,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.09751257376185327,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "deathDelta": 0,
+      "predictionError": 0.01719050699845741,
+      "zeroPredictionError": 0.0011289599999999998,
+      "rubric": {
+        "classification": "no-material-difference",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0,
+          "gold": 0,
+          "damageDealt": 0
+        },
+        "thresholded": {
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0
+        }
+      }
+    },
+    {
+      "id": "heldout-127-d1-original",
+      "split": "heldout",
+      "seed": 127,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_toaster",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 1,
+        "firstCompletionSeconds": null,
+        "reward": -1
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 85,
+        "campClears": 1,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 12.03333333333265,
+        "reward": 0.20400000000000001
+      },
+      "rewardDelta": 1.204,
+      "rawHash": "1d9d4416a7ae9f62162e8024667a75f178c57ad675c19ef77e62a4d004e264fb",
+      "changed": true,
+      "decision": {
+        "selected": "push",
+        "changed": true,
+        "predictedAdvantage": 0.03879519041705751,
+        "margin": 0.02,
+        "reason": "predicted-task-benefit"
+      },
+      "deathDelta": -1,
+      "predictionError": 0.9239146859653808,
+      "zeroPredictionError": 1,
+      "rubric": {
+        "classification": "survival-improved",
+        "delta": {
+          "alive": 1,
+          "healthFraction": 0.5381303813038131,
+          "structureMargin": 1495,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 455.1580000000222,
+          "gold": 455.15800000002173,
+          "damageDealt": -19
+        }
+      }
+    },
+    {
+      "id": "heldout-128-d1-swapped",
+      "split": "heldout",
+      "seed": 128,
+      "draft": 1,
+      "swapped": true,
+      "status": "invalid-controls"
+    },
+    {
+      "id": "heldout-129-d0-original",
+      "split": "heldout",
+      "seed": 129,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_craps",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "rewardDelta": 0,
+      "rawHash": "3c959705792b3b06bec1c4d0e585bfec651f4417f2148de9d0449c9db9bd2088",
+      "changed": true,
+      "decision": {
+        "selected": "push",
+        "changed": true,
+        "predictedAdvantage": 0.02813418437734986,
+        "margin": 0.02,
+        "reason": "predicted-task-benefit"
+      },
+      "deathDelta": 0,
+      "predictionError": 0.0007915323305787169,
+      "zeroPredictionError": 0,
+      "rubric": {
+        "classification": "no-material-difference",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0,
+          "gold": 0,
+          "damageDealt": 0
+        },
+        "thresholded": {
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0
+        }
+      }
+    },
+    {
+      "id": "heldout-130-d0-swapped",
+      "split": "heldout",
+      "seed": 130,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_neko",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 125,
+        "deaths": 0,
+        "firstCompletionSeconds": 12.366666666665964,
+        "reward": 0.08333333333333334
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 125,
+        "deaths": 0,
+        "firstCompletionSeconds": 12.366666666665964,
+        "reward": 0.08333333333333334
+      },
+      "rewardDelta": 0,
+      "rawHash": "4c45a19ddcfb6cd85ea2cca12cb94a2badb9d622f7e6094e42923488bd4a6a55",
+      "changed": true,
+      "decision": {
+        "selected": "push",
+        "changed": true,
+        "predictedAdvantage": 0.4790190301755979,
+        "margin": 0.02,
+        "reason": "predicted-task-benefit"
+      },
+      "deathDelta": 0,
+      "predictionError": 0.22945923127037035,
+      "zeroPredictionError": 0,
+      "rubric": {
+        "classification": "worse",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0,
+          "structureMargin": -454,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": -1.3642420526593924e-12,
+          "gold": -1.4352963262354024e-12,
+          "damageDealt": -98
+        },
+        "thresholded": {
+          "healthFraction": 0,
+          "structureMargin": -1,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0
+        }
+      }
+    },
+    {
+      "id": "heldout-131-d1-original",
+      "split": "heldout",
+      "seed": 131,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_kovi",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 160,
+        "campClears": 2,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 1,
+        "firstCompletionSeconds": 8.133333333332871,
+        "reward": -1
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 160,
+        "campClears": 2,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 8.299999999999528,
+        "reward": 0.384
+      },
+      "rewardDelta": 0,
+      "rawHash": "2f0b7b87dda445ce54b33813ec7611ed562c54a0f7a3da71fa57e1c00b9a6093",
+      "changed": false,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.17521480386852847,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "deathDelta": 0,
+      "predictionError": 1.3811298352317436,
+      "zeroPredictionError": 1,
+      "rubric": {
+        "classification": "both-dead",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0,
+          "gold": 0,
+          "damageDealt": 0
+        }
+      }
+    },
+    {
+      "id": "heldout-132-d1-swapped",
+      "split": "heldout",
+      "seed": 132,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_kovi",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 143,
+        "deaths": 0,
+        "firstCompletionSeconds": 11.033333333332706,
+        "reward": 0.09533333333333334
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 143,
+        "deaths": 0,
+        "firstCompletionSeconds": 11.066666666666038,
+        "reward": 0.09533333333333334
+      },
+      "rewardDelta": 0,
+      "rawHash": "88405da8662cd51433d952491a76e2bce6fe05ac2f52e0c06d81083b7f3d8b1e",
+      "changed": true,
+      "decision": {
+        "selected": "push",
+        "changed": true,
+        "predictedAdvantage": 0.04003653932800774,
+        "margin": 0.02,
+        "reason": "predicted-task-benefit"
+      },
+      "deathDelta": 0,
+      "predictionError": 0.0016029244813631105,
+      "zeroPredictionError": 0,
+      "rubric": {
+        "classification": "better",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0.04515272244355917,
+          "structureMargin": 119,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 250.00000000000045,
+          "gold": 250.00000000000034,
+          "damageDealt": 0
+        },
+        "thresholded": {
+          "healthFraction": 0,
+          "structureMargin": 1,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 1
+        }
+      }
+    },
+    {
+      "id": "heldout-133-d0-original",
+      "split": "heldout",
+      "seed": 133,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_ouzi",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 87,
+        "campClears": 3,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 5.999999999999659,
+        "reward": 0.20879999999999999
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 79,
+        "campClears": 3,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 6.03333333333299,
+        "reward": 0.1896
+      },
+      "rewardDelta": 0,
+      "rawHash": "02979791108694ed34eb7c93f6b13db802fa3714c5850f43b77897bcf4883308",
+      "changed": false,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.0406763507996451,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "deathDelta": 0,
+      "predictionError": 0.00046123364366941694,
+      "zeroPredictionError": 0.0003686399999999998,
+      "rubric": {
+        "classification": "no-material-difference",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0,
+          "gold": 0,
+          "damageDealt": 0
+        },
+        "thresholded": {
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0
+        }
+      }
+    },
+    {
+      "id": "heldout-134-d0-swapped",
+      "split": "heldout",
+      "seed": 134,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_daft",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 14,
+        "minionKills": 1,
+        "structureDamage": 140,
+        "deaths": 0,
+        "firstCompletionSeconds": 21.233333333332126,
+        "reward": 0.12693333333333334
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 14,
+        "minionKills": 1,
+        "structureDamage": 140,
+        "deaths": 0,
+        "firstCompletionSeconds": 21.233333333332126,
+        "reward": 0.12693333333333334
+      },
+      "rewardDelta": 0,
+      "rawHash": "c3a42ba84bc745c3cd3e5403ada928f34d5f2689f3f3d4fcac505eb269e5cd57",
+      "changed": true,
+      "decision": {
+        "selected": "push",
+        "changed": true,
+        "predictedAdvantage": 0.03214592866956931,
+        "margin": 0.02,
+        "reason": "predicted-task-benefit"
+      },
+      "deathDelta": 0,
+      "predictionError": 0.001033360730029038,
+      "zeroPredictionError": 0,
+      "rubric": {
+        "classification": "no-material-difference",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0,
+          "gold": 0,
+          "damageDealt": 0
+        },
+        "thresholded": {
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0
+        }
+      }
+    },
+    {
+      "id": "heldout-135-d1-original",
+      "split": "heldout",
+      "seed": 135,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_research_oner",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 49,
+        "minionKills": 3,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 9.699999999999449,
+        "reward": 0.1176
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 35,
+        "minionKills": 2,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 9.73333333333278,
+        "reward": 0.084
+      },
+      "rewardDelta": 0,
+      "rawHash": "aa5bd62a144ab3df53bb6c3abf397bb7a02c9c0f9ba5cd60ad9348fc72c8fc2e",
+      "changed": false,
+      "decision": {
+        "selected": "farm",
+        "changed": false,
+        "predictedAdvantage": -0.0007513209958928124,
+        "margin": 0.02,
+        "reason": "insufficient-task-advantage"
+      },
+      "deathDelta": 0,
+      "predictionError": 0.0010790357123148717,
+      "zeroPredictionError": 0.0011289599999999994,
+      "rubric": {
+        "classification": "no-material-difference",
+        "delta": {
+          "alive": 0,
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0,
+          "gold": 0,
+          "damageDealt": 0
+        },
+        "thresholded": {
+          "healthFraction": 0,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0
+        }
+      }
+    },
+    {
+      "id": "heldout-136-d1-swapped",
+      "split": "heldout",
+      "seed": 136,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "validPair": true,
+      "cardId": "p_toaster",
+      "incumbent": "farm",
+      "alternate": "push",
+      "control": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 35,
+        "minionKills": 2,
+        "structureDamage": 134,
+        "deaths": 0,
+        "firstCompletionSeconds": 15.566666666665782,
+        "reward": 0.17333333333333334
+      },
+      "alternative": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 14,
+        "minionKills": 1,
+        "structureDamage": 129,
+        "deaths": 0,
+        "firstCompletionSeconds": 18.833333333332263,
+        "reward": 0.11960000000000001
+      },
+      "rewardDelta": -0.05373333333333333,
+      "rawHash": "74b3683a3539109ce8de7235876fb5f8014968bad870fb93f72ec6facd10f9ff",
+      "changed": true,
+      "decision": {
+        "selected": "push",
+        "changed": true,
+        "predictedAdvantage": 0.15183628936068622,
+        "margin": 0.02,
+        "reason": "predicted-task-benefit"
+      },
+      "deathDelta": 0,
+      "predictionError": 0.04225886977456156,
+      "zeroPredictionError": 0.0028872711111111106,
+      "rubric": {
+        "classification": "worse",
+        "delta": {
+          "alive": 0,
+          "healthFraction": -0.15633245382585753,
+          "structureMargin": -21,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": -21.000000000006366,
+          "gold": -21.000000000006594,
+          "damageDealt": 246
+        },
+        "thresholded": {
+          "healthFraction": -1,
+          "structureMargin": 0,
+          "dragonAspect": 0,
+          "siegeGolemUnits": 0,
+          "economicValue": 0
+        }
+      }
+    }
+  ],
+  "promoted": false,
+  "limits": "First-choice 30-second proxy windows only, two fixed drafts, approximate route and basic-attack clear time. No full-match improvement or safety guarantee. No tuning on these held-out outcomes."
+}

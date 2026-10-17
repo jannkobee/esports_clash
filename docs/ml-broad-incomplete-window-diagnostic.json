@@ -1,0 +1,8 @@
+{
+  "seed": 1016,
+  "reason": "Matched start but thirty-second continuation incomplete",
+  "observedAfterRunner": {
+    "second": 392.4333333334299,
+    "finished": true
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "method": "Predeclared exploratory task-outcome collection; one first safe farm/push checkpoint per seed/draft/side, duplicate incumbent controls and equal thirty-second continuations; no forced commitment and no live promotion",
+  "horizonSeconds": 30,
+  "scoutSeconds": 240,
+  "pair": "farm-push",
+  "reward": "Actual camp-share plus minion-last-hit gold (0.6 * min(1, gold/250)) and actor structure damage (0.4 * min(1, damage/600)); any death including respawn gives -1; passive income and movement earn zero",
+  "fit": { "minimumEpisodes": 4, "minimumDrafts": 2, "minimumCards": 2, "minimumInformativeEpisodes": 2, "minimumRewardDifference": 0.02, "maximumWeightChange": 0.08, "promotion": false },
+  "cases": [
+    { "id": "train-81-d0-original", "split": "train", "seed": 81, "draft": 0, "swapped": false },
+    { "id": "train-82-d0-swapped", "split": "train", "seed": 82, "draft": 0, "swapped": true },
+    { "id": "train-83-d1-original", "split": "train", "seed": 83, "draft": 1, "swapped": false },
+    { "id": "train-84-d1-swapped", "split": "train", "seed": 84, "draft": 1, "swapped": true },
+    { "id": "train-85-d0-original", "split": "train", "seed": 85, "draft": 0, "swapped": false },
+    { "id": "train-86-d0-swapped", "split": "train", "seed": 86, "draft": 0, "swapped": true },
+    { "id": "train-91-d1-original", "split": "train", "seed": 91, "draft": 1, "swapped": false },
+    { "id": "train-92-d1-swapped", "split": "train", "seed": 92, "draft": 1, "swapped": true },
+    { "id": "heldout-87-d0-original", "split": "heldout", "seed": 87, "draft": 0, "swapped": false },
+    { "id": "heldout-88-d0-swapped", "split": "heldout", "seed": 88, "draft": 0, "swapped": true },
+    { "id": "heldout-89-d1-original", "split": "heldout", "seed": 89, "draft": 1, "swapped": false },
+    { "id": "heldout-90-d1-swapped", "split": "heldout", "seed": 90, "draft": 1, "swapped": true }
+  ]
+}

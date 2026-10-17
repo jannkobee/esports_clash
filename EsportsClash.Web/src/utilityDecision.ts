@@ -1,7 +1,7 @@
 /** Common deterministic arbitration. Mechanical validators stay with their owners. */
 export type UtilityPriority = 'optional' | 'tactical' | 'finish' | 'emergency';
 export type UtilityFactors = Partial<Record<
-  'strategic' | 'tactical' | 'coordination' | 'personality' | 'mood'
+  'strategic' | 'tactical' | 'coordination' | 'personality' | 'mood' | 'learned'
   | 'danger' | 'travel' | 'resource' | 'opportunity', number>>;
 export interface UtilityCandidate<T> {
   key: string;
@@ -33,7 +33,7 @@ const PRIORITY: Record<UtilityPriority, number> = { optional: 0, tactical: 1, fi
 // Every input factor is normalized to [-1, 1]. Preferences cannot outweigh a
 // higher-priority validated emergency or finish. Weights never affect mechanics.
 export const UTILITY_WEIGHTS: Readonly<Required<UtilityFactors>> = Object.freeze({
-  strategic: .30, tactical: .25, coordination: .12, personality: .05, mood: .03,
+  strategic: .30, tactical: .25, coordination: .12, personality: .05, mood: .03, learned: .04,
   danger: -.35, travel: -.10, resource: -.08, opportunity: -.15,
 });
 export const MAX_UTILITY_CANDIDATES = 32;

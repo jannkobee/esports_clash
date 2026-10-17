@@ -1,0 +1,85 @@
+{
+  "planHash": "a51d78fd971ac5db2c218de2681a8d8d09242f739e03b6eb2dd09711d4289266",
+  "results": [
+    {
+      "id": "train-101-d0-original",
+      "split": "train",
+      "seed": 101,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rewardDelta": 0
+    },
+    {
+      "id": "train-102-d0-swapped",
+      "split": "train",
+      "seed": 102,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_bigtail",
+      "rewardDelta": 0
+    },
+    {
+      "id": "train-103-d1-original",
+      "split": "train",
+      "seed": 103,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_toaster",
+      "rewardDelta": 0
+    },
+    {
+      "id": "train-104-d1-swapped",
+      "split": "train",
+      "seed": 104,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_turbogamer",
+      "rewardDelta": 0
+    },
+    {
+      "id": "train-105-d0-original",
+      "split": "train",
+      "seed": 105,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rewardDelta": 0
+    },
+    {
+      "id": "train-106-d0-swapped",
+      "split": "train",
+      "seed": 106,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_daft",
+      "rewardDelta": 0.07973333333333335
+    },
+    {
+      "id": "train-107-d1-original",
+      "split": "train",
+      "seed": 107,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rewardDelta": 0
+    },
+    {
+      "id": "train-108-d1-swapped",
+      "split": "train",
+      "seed": 108,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_toaster",
+      "rewardDelta": 0
+    }
+  ]
+}

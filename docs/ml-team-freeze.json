@@ -1,0 +1,11 @@
+{
+  "createdAt": "2026-10-16T14:54:45.219Z",
+  "modelHash": "34ad3ebdc427ba3165ac7f27acb4897dd7ef4b8d9384bf8a367e5e04f55d6577",
+  "trainingHash": "3b4cf683d31ef6030796b7f19976ad455717fa8bfee9f8f33da06d7a19e5df4f",
+  "planHash": "f4f40e817bbe36c94eda7acb6e805f8221d6c7abef618b96ee53049a221ed9e5",
+  "sourceHash": "03190cb4f78f55b67bf699426b1262341cb8d85b5d45bf568d03656c775372a5",
+  "objective": "team-v1",
+  "trainingEpisodes": 32,
+  "informativeEpisodes": 21,
+  "stage": "Before first held-out collection"
+}

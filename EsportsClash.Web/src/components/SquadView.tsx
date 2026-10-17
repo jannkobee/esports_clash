@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AvatarRole, CardTier, CoachCard, GameOrigin, PlayerCard } from '../types';
 import { CardComponent } from './CardComponent';
 import { sound } from '../audio';
@@ -27,6 +27,26 @@ export const SquadView: React.FC<SquadViewProps> = ({
   duplicateValue = 0
 }) => {
   const [inspectCard, setInspectCard] = useState<PlayerCard | null>(null);
+  const inspectorRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!inspectCard) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    inspectorRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setInspectCard(null);
+      if (event.key === 'Tab') {
+        const buttons = inspectorRef.current?.querySelectorAll<HTMLElement>('button, [tabindex="0"]');
+        if (!buttons?.length) return;
+        const first = buttons[0], last = buttons[buttons.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => { document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', handleKey); previousFocus?.focus(); };
+  }, [inspectCard]);
   const [selectedStartingIdx, setSelectedStartingIdx] = useState<number | null>(null);
   const [reserveFilters, setReserveFilters] = useState<ReserveFilters>({ query: '', role: 'all', origin: 'all', tier: 'all', sort: 'rating' });
   const [reservePage, setReservePage] = useState(1);
@@ -280,11 +300,12 @@ export const SquadView: React.FC<SquadViewProps> = ({
 
       {/* Full Screen Card Inspector Modal */}
       {inspectCard && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl max-w-md w-full relative animate-fade-in flex flex-col items-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={event => { if (event.target === event.currentTarget) setInspectCard(null); }}>
+          <div ref={inspectorRef} role="dialog" aria-modal="true" aria-label={`${inspectCard.name} player details`} className="bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl max-w-md w-full max-h-[92dvh] overflow-y-auto relative animate-fade-in flex flex-col items-center">
             <button
               onClick={() => setInspectCard(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white font-bold"
+              aria-label="Close player details"
+              className="absolute top-3 right-3 z-10 p-2 rounded-full bg-slate-800 text-slate-300 hover:text-white font-bold focus-visible:outline-2 focus-visible:outline-amber-300"
             >
               ✕
             </button>

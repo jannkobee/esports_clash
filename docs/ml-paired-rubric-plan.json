@@ -1,0 +1,16 @@
+{
+  "name": "Paired live macro outcome pilot",
+  "createdBeforeCollection": "2026-10-15",
+  "horizonSeconds": 8,
+  "cases": [
+    { "seed": 80, "side": "original", "pair": "fight-regroup" },
+    { "seed": 80, "side": "swapped", "pair": "regroup-wave" },
+    { "seed": 81, "side": "original", "pair": "fight-regroup" },
+    { "seed": 81, "side": "swapped", "pair": "regroup-wave" },
+    { "seed": 82, "side": "original", "pair": "fight-regroup" },
+    { "seed": 82, "side": "swapped", "pair": "regroup-wave" }
+  ],
+  "acceptance": "Exact actor/time/legal pair/predecision fingerprint, duplicate-incumbent three-second outcome and eight-second actor plus full-state fingerprint; all planned cases are reported, including no-target and rejected cases.",
+  "primaryEndpoint": "Survival comparison first. If both arms die, classify both-dead. If both live, compare health fraction at 0.05, structure margin at 100 HP, Dragon Aspect control, living Siege Golem units, and actor economic value at 50 gold. Better requires at least one favorable threshold and no unfavorable threshold; worse is symmetric; mixed has both; otherwise no-material-difference. Damage and the older three-second proxy are descriptive only.",
+  "promotionRule": "No live policy promotion from this six-case pilot. A later policy decision requires repeated within-card/action evidence across independent seeds and longer team outcomes."
+}

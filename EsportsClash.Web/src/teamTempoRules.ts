@@ -1,10 +1,12 @@
 import { segmentHitsCircle, type Point } from './skillshotRules.ts';
+import { capBaseLaneAdvance, isInsideEnemyWellBeam } from './baseSafetyRules.ts';
 
 /** Optional fight priority cannot release a wave leash across a live turret zone. */
-export function isTeamfightApproachSafe(from: Point, to: Point,
+export function isTeamfightApproachSafe(from: Point & { team?: 'blue' | 'red' }, to: Point,
   enemyStructures: readonly (Point & { type: string; range: number; isAlive: boolean })[],
 ): boolean {
-  return !enemyStructures.some(structure => structure.isAlive
+  return !(from.team && isInsideEnemyWellBeam(from.team, to))
+    && !enemyStructures.some(structure => structure.isAlive
     && (structure.type.includes('tower') || structure.type === 'nexus')
     && segmentHitsCircle(from, to, structure, structure.range + 28));
 }
@@ -144,14 +146,19 @@ export function laneAdvanceLimit(input: {
   team: 'blue' | 'red'; waveFrontX?: number; waveCount: number;
   structureX?: number; structureRange?: number;
   exposedNexus: boolean; objectiveFight: boolean;
+  attackRange?: number;
+  structureApproachUnsafe?: boolean;
 }): number {
   const direction = input.team === 'blue' ? 1 : -1;
-  if (input.exposedNexus || input.objectiveFight) return direction > 0 ? Infinity : -Infinity;
+  const cap = (limit: number) => capBaseLaneAdvance(input.team, limit, input.attackRange ?? 50);
+  if (input.structureApproachUnsafe && input.structureX !== undefined && input.structureRange !== undefined)
+    return cap(input.structureX - direction * (input.structureRange + 28));
+  if (input.exposedNexus || input.objectiveFight) return cap(direction > 0 ? Infinity : -Infinity);
   if (input.waveCount > 0 && input.waveFrontX !== undefined)
-    return input.waveFrontX + direction * 65;
+    return cap(input.waveFrontX + direction * 65);
   if (input.structureX !== undefined && input.structureRange !== undefined)
-    return input.structureX - direction * (input.structureRange + 28);
-  return direction > 0 ? Infinity : -Infinity;
+    return cap(input.structureX - direction * (input.structureRange + 28));
+  return cap(direction > 0 ? Infinity : -Infinity);
 }
 
 export function wouldOverstep(team: 'blue' | 'red', x: number, limit: number): boolean {

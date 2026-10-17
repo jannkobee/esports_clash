@@ -1,0 +1,415 @@
+{
+  "date": "2026-10-17",
+  "originalAuthor": "Quaternius",
+  "license": "CC0-1.0",
+  "files": [
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Female_FullBody.gltf",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Female_FullBody.gltf",
+      "bytes": 31656,
+      "sha256": "adedf28000a0716f689b009a70314506fc62f827498f77ba852acb5610f3f3f4"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Female_FullBody.bin",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Female_FullBody.bin",
+      "bytes": 990808,
+      "sha256": "3a8220a485b33d05d879115a50697728b45a151781106033afb8b8c243fca208"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Hair_2_Normal.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Hair_2_Normal.png",
+      "bytes": 4710013,
+      "sha256": "172f230aae0d4366c3cfc0402b2e6d1811b11f8487344bff28605eeacac1558d"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Hair_2_BaseColor.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Hair_2_BaseColor.png",
+      "bytes": 1729467,
+      "sha256": "f9f4f2fb3eeeefb0b6f0fdef38b0770fd6607640c1c680b8139dd76697e9f9b3"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Eye_Normal.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Eye_Normal_png.png",
+      "bytes": 15099,
+      "sha256": "9ed61f7726a54fe346a78b9e5a18905d8e2b88f86235d97f53cd207a26f3f8c7"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Eye_Brown.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Eye_Brown.png",
+      "bytes": 35958,
+      "sha256": "d08e3356a83211bc6ca21fe3a8e39f4b5c1a3b8f85457fc2c0fb57be09935025"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Female_Normal.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Female_Normal.png",
+      "bytes": 3940537,
+      "sha256": "cf922460b43ccd31e983e34db05514c9d451dd2f9cdd01a843978e797719f859"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Female_Dark_BaseColor.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Female_Dark_BaseColor.png",
+      "bytes": 1319410,
+      "sha256": "d366843ee7d9e9f37ec87a0e1c98c7f2e45573c08eeb80a51a6d9344e68cf288"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Female_Roughness.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Female_Roughness.png",
+      "bytes": 3277022,
+      "sha256": "d2beabf2bd0313e32c68dcdbb80dca371a6e994fabf96efa97128bf9f14fa57b"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Male_FullBody.gltf",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Male_FullBody.gltf",
+      "bytes": 30989,
+      "sha256": "e7fcea214ecf8855afbf910b50de6f9c7d1decfb71ca28bad8a4481452dafeb4"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Male_FullBody.bin",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Male_FullBody.bin",
+      "bytes": 720076,
+      "sha256": "459003f9745853ae562a85506a2b94dd56515c1f37728f9fa3d2ce1a3e4cd92f"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Hair_1_Normal.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Hair_1_Normal_png.png",
+      "bytes": 4326126,
+      "sha256": "57fd0ad8c96a4d01b38769637e066cecaa285b456f6e48ce00863754a457affb"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Hair_1_BaseColor.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Hair_1_BaseColor.png",
+      "bytes": 1570376,
+      "sha256": "bc7aa863bd22ab0a995cd838cceb4d3a5186ee54ee2fb0108fad85d20c057e6e"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Male_Normal.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Male_Normal.png",
+      "bytes": 4252937,
+      "sha256": "9b25cf9200216eb754b79cf4c63b5380c419780788322f3c57cdd2b3e02679a6"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Male_Dark.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Male_Dark.png",
+      "bytes": 1384380,
+      "sha256": "df680cbc1967a61e85998bfafb8f7bc0a36dd604bb3266486c4b06b1a184bb45"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Male_Roughness.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Base Characters/Godot - UE/T_Superhero_Male_Roughness.png",
+      "bytes": 3152049,
+      "sha256": "c70dabf48574cda55644d556beae1ee7cf1bdcf68a50d259d20f2f2358f27991"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Eyebrows_Female.gltf",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Eyebrows_Female.gltf",
+      "bytes": 2855,
+      "sha256": "9d24b43ac63197c3c242349d54d599d7d8dd5bdee6e7ce37847224f3ff1fb14d"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Eyebrows_Female.bin",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Eyebrows_Female.bin",
+      "bytes": 67248,
+      "sha256": "f2efdf2b9d44137630ff4df01cfd9068fe3c3f8c2896c009860404ea17989dbf"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/T_Hair_2_Normal.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/T_Hair_2_Normal.png",
+      "bytes": 4710013,
+      "sha256": "172f230aae0d4366c3cfc0402b2e6d1811b11f8487344bff28605eeacac1558d"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/T_Hair_2_BaseColor.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/T_Hair_2_BaseColor.png",
+      "bytes": 1729467,
+      "sha256": "f9f4f2fb3eeeefb0b6f0fdef38b0770fd6607640c1c680b8139dd76697e9f9b3"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Eyebrows_Regular.gltf",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Eyebrows_Regular.gltf",
+      "bytes": 2018,
+      "sha256": "a91059d18fad4bd3af7546a4226976d8a2139eb82c3fe0790a1c5287c6ac6ed8"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Eyebrows_Regular.bin",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Eyebrows_Regular.bin",
+      "bytes": 26576,
+      "sha256": "434c62e704037b5d2a12a0c7237513617806fc6cf53d67608f120b0908dd3396"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/T_Hair_1_Normal.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/T_Hair_1_Normal.png",
+      "bytes": 4326126,
+      "sha256": "57fd0ad8c96a4d01b38769637e066cecaa285b456f6e48ce00863754a457affb"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/T_Hair_1_BaseColor.png",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/T_Hair_1_BaseColor.png",
+      "bytes": 1570376,
+      "sha256": "bc7aa863bd22ab0a995cd838cceb4d3a5186ee54ee2fb0108fad85d20c057e6e"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Beard.gltf",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Beard.gltf",
+      "bytes": 2005,
+      "sha256": "c91ef54606aad25a9d1191deaba90cb411c0067d8cef262b2f4819f242e5b365"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Beard.bin",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Beard.bin",
+      "bytes": 25276,
+      "sha256": "781cf9b719d75a9f8d73881d2ca0713fe580d774edc96adaded392aad37a72b7"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Buns.gltf",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Buns.gltf",
+      "bytes": 2243,
+      "sha256": "2bb3593575e21c9af39a53e48c42c1314b0a894e9577f3f14abffcb145cd56c5"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Buns.bin",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Buns.bin",
+      "bytes": 131768,
+      "sha256": "4f6d4c010201278483da8d6d46ec40e3beb8d9e679ec2139bed216c561bccd38"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Buzzed.gltf",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Buzzed.gltf",
+      "bytes": 2006,
+      "sha256": "43752a4c8f2464eb2494a8ab179bf7ad237638a3d47fb3de0a38361db40e1451"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Buzzed.bin",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Buzzed.bin",
+      "bytes": 19892,
+      "sha256": "89992fc7a5319df6f2908e44a3b694329fac4b500629a573224702e5fdd16f77"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_BuzzedFemale.gltf",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_BuzzedFemale.gltf",
+      "bytes": 2191,
+      "sha256": "3f30e5a7b0fc6d04d2980a4e937cc5e4b03ca923c9247869168ef13e1b40b747"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_BuzzedFemale.bin",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_BuzzedFemale.bin",
+      "bytes": 19892,
+      "sha256": "6f1ab9bc997b01311dc0635ee165edfe27bd9715222718bc4cf4265e10b933af"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Long.gltf",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Long.gltf",
+      "bytes": 2056,
+      "sha256": "94500e2e37e09efc8b8b920b8c6437ef1c76ca35863992b82d0d5de6e77122e9"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Long.bin",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_Long.bin",
+      "bytes": 115996,
+      "sha256": "13996da35c7afbf8cb5097da37207ee5b7c2e2904d4ab9e2ace9843030fff8d5"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_SimpleParted.gltf",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_SimpleParted.gltf",
+      "bytes": 2010,
+      "sha256": "ce6c666d00bcca2baa0c58d0442505f90f8feff952592effc4697a2341e9e56d"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_SimpleParted.bin",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/Hairstyles/Origin at 0/glTF (Godot)/Hair_SimpleParted.bin",
+      "bytes": 32032,
+      "sha256": "57c6359703a37e346ee38a9c7ba55c8dee761c0a02da99847d06f5a91728f3cc"
+    },
+    {
+      "repo": "NafisRayan/Animate-Rigged-Humanoid-No-Blender",
+      "commit": "5821923af517ac5fdc82505faa92a0d575fc1b1a",
+      "path": "Universal Base Characters[Standard]/Universal Base Characters[Standard]/License_Standard.txt",
+      "local": "base/Universal Base Characters[Standard]/Universal Base Characters[Standard]/License_Standard.txt",
+      "bytes": 784,
+      "sha256": "e08f717c3cfd999f4b44f2be4522b11a3ac3c0e5b6364b3a8788d25d4c90ff94"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Female_Ranger.gltf",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Female_Ranger.gltf",
+      "bytes": 45461,
+      "sha256": "9b98b2ae6af3b4a1ec22bf8928b939e0751f08b25b636de82bfa7364fb34d3e1"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Female_Ranger.bin",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Female_Ranger.bin",
+      "bytes": 1959556,
+      "sha256": "d015964ba0a26eee9c9d2ea6f07aa660bba88aa536cf8bb6b67944b9e97c46df"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Ranger_Normal.png",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Ranger_Normal.png",
+      "bytes": 12713653,
+      "sha256": "dd64da2af3180f0c8f0b721cfc5f0d2720c351b97da8285c6cf49e7717c84147"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Ranger_BaseColor.png",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Ranger_BaseColor.png",
+      "bytes": 6630927,
+      "sha256": "846ef2170b04ee584ad83bb8a1e86dab57a9a43b1193204505912c274d949925"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Ranger_ORM.png",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Ranger_ORM.png",
+      "bytes": 10792085,
+      "sha256": "aca03d2fba12508ef07d5968ca22267fb207ea26ae898b6b2def8a296bd44f1c"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Female_Normal.png",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Female_Normal.png",
+      "bytes": 3913459,
+      "sha256": "e1051d3d56df9cf061bc14c769c37253aecd595f8275f9d4c0d6e0e953c00e18"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Female_Dark_BaseColor.png",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Female_Dark_BaseColor.png",
+      "bytes": 1348542,
+      "sha256": "3b6ab973f9f3d6f8961226a0dbd99cf6d1b72df3795a8a5c1620a55754c161c2"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Female_Roughness.png",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Female_Roughness.png",
+      "bytes": 3274215,
+      "sha256": "da541fbd4b3bffe754fada5c29f8a0d8f836bf20ce7df8273607af4729a3a5ae"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Male_Ranger.gltf",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Male_Ranger.gltf",
+      "bytes": 41447,
+      "sha256": "e1033a212332d84d98c19bc4927c621635478d0aa15d13c79da68d3ba9e0196f"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Male_Ranger.bin",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/Male_Ranger.bin",
+      "bytes": 1746884,
+      "sha256": "5bbb0d42cb324c6c27ce00417e68a876d92978f07d161f83590f0d7c0570eff6"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Male_Normal.png",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Male_Normal.png",
+      "bytes": 4064184,
+      "sha256": "10cd71e2453e577fdd43e912b6016a99baf64964f0593e524bdd304855e15e2a"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Male_Dark_BaseColor.png",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Male_Dark_BaseColor.png",
+      "bytes": 1316151,
+      "sha256": "b4dcc0f4139aab548d7c070c4655bd2080ef16caeaaabee6c4aeb693c524e802"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Male_Roughness.png",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/Exports/glTF (Godot-Unreal)/Outfits/T_Regular_Male_Roughness.png",
+      "bytes": 3160102,
+      "sha256": "086c2eb25bddfdb77d8e639ccbffb8df723ef4a1910d8e1b217e852f8668bfe5"
+    },
+    {
+      "repo": "agentkaerf/FreeModels",
+      "commit": "db3df04d1e4714298a09510b26fb6de6645138a2",
+      "path": "Modular Character Outfits - Fantasy[Standard]/License_Standard.txt",
+      "local": "outfits/Modular Character Outfits - Fantasy[Standard]/License_Standard.txt",
+      "bytes": 728,
+      "sha256": "2202cc2f608c4210790b112e5f121bc2e7f8dced7b5b1c7f4be6203461bdebbb"
+    }
+  ]
+}

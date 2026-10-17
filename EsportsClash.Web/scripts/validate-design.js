@@ -151,8 +151,8 @@ if (rockDrawAt < 0 || championLabelAt < 0 || rockDrawAt > championLabelAt) {
   console.log('Combat Labels: raised rocks render behind avatar nameplates');
 }
 
-// The bounded Three.js migration must remain a presentation-only underlay with
-// an explicit Canvas fallback. It must not mount the legacy independent simulator.
+// Both Three views remain presentation-only, with a complete Canvas fallback.
+// They must not mount the legacy independent simulator or schedule gameplay.
 const threeTerrainPath = path.resolve('src/threeArenaTerrain.ts');
 const threeTerrainContent = fs.readFileSync(threeTerrainPath, 'utf8');
 const threeHostAt = matchViewContent.indexOf('ref={threeTerrainHostRef}');
@@ -161,9 +161,16 @@ if (!matchViewContent.includes('ThreeArenaTerrain')
     || !matchViewContent.includes('!threeTerrainAvailableRef.current')
     || !threeTerrainContent.includes('THREE.OrthographicCamera')
     || threeHostAt < 0 || canvasOverlayAt < 0 || threeHostAt > canvasOverlayAt) {
-  errors.push('CRITICAL: Three.js static terrain must remain below Canvas with its fallback intact!');
+  errors.push('CRITICAL: Three.js must remain below the Canvas HUD with its fallback intact!');
 } else {
-  console.log('Rendering Migration: Three.js static terrain underlay and Canvas fallback verified');
+  console.log('Rendering Migration: Three.js surface and Canvas fallback verified');
+}
+const threeSceneContent = fs.readFileSync(path.resolve('src/threeArenaScene.ts'), 'utf8');
+const threeAvatarContent = fs.readFileSync(path.resolve('src/threeAvatarModels.ts'), 'utf8');
+if (!matchViewContent.includes('renderArena({') || !matchViewContent.includes('drawArena3dOverlay')
+    || ['requestAnimationFrame(', 'Math.random(', 'createMatchRandom(', 'updateAramSimulation(', 'runSimulationSlice(']
+      .some(token => threeSceneContent.includes(token) || threeTerrainContent.includes(token) || threeAvatarContent.includes(token))) {
+  errors.push('CRITICAL: The 3D arena must use live read-only inputs and the existing simulation/RAF!');
 }
 if (matchViewContent.includes('<ThreeAramArena')) {
   errors.push('CRITICAL: Legacy ThreeAramArena simulator must not replace the live fixed-step arena!');

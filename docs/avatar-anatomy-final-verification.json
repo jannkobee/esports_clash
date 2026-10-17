@@ -1,0 +1,185 @@
+{
+  "date": "2026-10-17",
+  "models": 34,
+  "scoutOutfits": 14,
+  "assetBytes": 125542076,
+  "gameCheck": {
+    "passed": true,
+    "tests": 381,
+    "simulations": 3,
+    "typescript": true,
+    "log": "avatar-anatomy-game-check.log"
+  },
+  "build": {
+    "passed": true,
+    "existingChunkAdvisory": true,
+    "log": "avatar-anatomy-build.log"
+  },
+  "browser": [
+    "avatar-anatomy-native-verification.json",
+    "avatar-anatomy-verification.json",
+    "avatar-anatomy-arena-verification.json"
+  ],
+  "reviewedImages": [
+    "avatar-anatomy-aiselle-turnaround.png",
+    "avatar-anatomy-arsenaldo-turnaround.png",
+    "avatar-anatomy-vixelle-turnaround.png",
+    "avatar-anatomy-roster.png",
+    "avatar-anatomy-studio.png",
+    "avatar-anatomy-studio-mobile.png",
+    "avatar-anatomy-arena-desktop.png",
+    "avatar-anatomy-arena-mobile.png"
+  ],
+  "hashes": [
+    {
+      "file": ".gitignore",
+      "bytes": 350,
+      "sha256": "e0489f2f2d51229cb560aea96175a5f582117985ae0bf8f457d9b7a10afd5ea3"
+    },
+    {
+      "file": "art/README.md",
+      "bytes": 5195,
+      "sha256": "317d7c0609cead29e5cb11978fc9bf65501f23aa860cd9b58438ac0df8dfeff6"
+    },
+    {
+      "file": "art/character-sources.json",
+      "bytes": 26369,
+      "sha256": "fdb0e80a6ffbc7077d509dadc2304754b3ac95270f65d0a80ea969d2a6ac2d54"
+    },
+    {
+      "file": "art/licenses/quaternius-base-characters.txt",
+      "bytes": 784,
+      "sha256": "e08f717c3cfd999f4b44f2be4522b11a3ac3c0e5b6364b3a8788d25d4c90ff94"
+    },
+    {
+      "file": "art/licenses/quaternius-fantasy-outfits.txt",
+      "bytes": 728,
+      "sha256": "2202cc2f608c4210790b112e5f121bc2e7f8dced7b5b1c7f4be6203461bdebbb"
+    },
+    {
+      "file": "art/avatars/c_astra.blend",
+      "bytes": 4468719,
+      "sha256": "4d2597f543830818159ac7c6abbc48d002c376f130b0a8aba88118153e4f8c0b"
+    },
+    {
+      "file": "art/avatars/c_kyumi.blend",
+      "bytes": 1975774,
+      "sha256": "d575a04cf8855ad49d2b49b6a34137122a2615c8091fc32509126bf30838394b"
+    },
+    {
+      "file": "art/avatars/c_invoker.blend",
+      "bytes": 2732490,
+      "sha256": "cd0077f6332d71223f373c64d102ef7da2f4d5a9d583acb61b9e9941dd92ca1b"
+    },
+    {
+      "file": "docs/agent-handoff.md",
+      "bytes": 342417,
+      "sha256": "7b4f80f5d11789003e7140d0e6aedee87734c17f9b37612dd40d86c3dac9a338"
+    },
+    {
+      "file": "docs/arena-mechanics.md",
+      "bytes": 214966,
+      "sha256": "9d364a2857224adfc682c798346b94c0e010748effc1fb4c2a93f02bb2a96572"
+    },
+    {
+      "file": "docs/avatar-anatomy-upgrade.md",
+      "bytes": 4612,
+      "sha256": "229c3dafd3cda552925823f52d393194f367c2698ad52aaf9064a34cae9ba2f9"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarArt.ts",
+      "bytes": 2018,
+      "sha256": "5550d0bad12da2c4023da624309bafef9bdac238508ca9287f7cd8db088a5e24"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarModelUrl.ts",
+      "bytes": 388,
+      "sha256": "affec5ad44c7f9ef6635b03bc072317d54848775c5f92a2b3f804e4104a3c415"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarSculptBody.ts",
+      "bytes": 11289,
+      "sha256": "a20414928188d8a5a7d0f47883ea43be3aa396cc436106bee6f70986101c0e2e"
+    },
+    {
+      "file": "EsportsClash.Web/src/arsenaldoModel.ts",
+      "bytes": 18348,
+      "sha256": "77580a47b9f2adc33c4cd70a162dbfaccc2a94ccf7281f4bb1c6c18c53d3d736"
+    },
+    {
+      "file": "EsportsClash.Web/src/threeAvatarModels.ts",
+      "bytes": 34995,
+      "sha256": "0f8d3cdc1c8bc21f52d0944cfa521aff861a5f8c6f29a7db069bebfcf8de251c"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarModelAssets.ts",
+      "bytes": 2571,
+      "sha256": "0a95856355bd6dd3d7b76ea5dec297d2362f42d50e02d8e51f8e9162deee2e05"
+    },
+    {
+      "file": "EsportsClash.Web/src/threeAvatarPreview.ts",
+      "bytes": 5976,
+      "sha256": "fdb11439fe3e93c87376f1cebcb3f1ba5ef1dfa5d720b0e41bfeb1dd874e9d0f"
+    },
+    {
+      "file": "EsportsClash.Web/src/threeArenaTerrain.ts",
+      "bytes": 14942,
+      "sha256": "663f663db52a5078bbe8e5b9a62232edf577027f9a4e5b7b7f160b1fc3e16856"
+    },
+    {
+      "file": "EsportsClash.Web/src/avatarAuthoredAssets.test.mjs",
+      "bytes": 4191,
+      "sha256": "195c1ea7660e787fefe4a970f3e5923826c2227394a0dde25c8c5b658ecbcb88"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/prepare-authored-avatars.mjs",
+      "bytes": 2310,
+      "sha256": "53e761019e855d758f8b8a3ea6c82c01513ffe4777c85c2cbd1e4164d7831a75"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/build-authored-anatomy.py",
+      "bytes": 13668,
+      "sha256": "2f54c8fbdc6ec8ccec0b36812b36cd3c5d3af412b369099c7faf5b76dfb9a3e1"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/merge-authored-avatars.mjs",
+      "bytes": 7000,
+      "sha256": "a9f4ee3458463b309e7718bc6abfcabee971ad51e3887d70f04a5f815526078e"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/fetch-character-sources.mjs",
+      "bytes": 1312,
+      "sha256": "ba37450d8b23c77b7d64024805b1b9259d5281ad44d6d7350aa3e1d965f9a8be"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/save-avatar-blend-sources.py",
+      "bytes": 722,
+      "sha256": "896a384ce51caeec3199f548d6fed5e9afed1cd08e79de4a060ec14905e473a4"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/check-authored-avatar-assets.mjs",
+      "bytes": 4040,
+      "sha256": "48198665644b9a035fecb02e534e36c594bc0b910bad997b6edf1124f90444ac"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/render-avatar-model-plates.mjs",
+      "bytes": 6083,
+      "sha256": "8a3ebbba1b05e3b5aa08c1c3f1dc68d28ba2c6b8610537b1d52ac5749a3bc5dd"
+    },
+    {
+      "file": "EsportsClash.Web/scripts/check-avatar-designs.mjs",
+      "bytes": 11035,
+      "sha256": "e50604e4fc0920fee35037f8dd3662044475a879d6f0c1cb477437ef6ec77378"
+    },
+    {
+      "file": "EsportsClash.Web/public/models/avatars-v4/manifest.json",
+      "bytes": 25114,
+      "sha256": "112defcd8d371c455bde272429284ed17d95b9e2b86e885953ee304c9f24a29c"
+    },
+    {
+      "file": "EsportsClash.Web/public/models/avatars-v4/README.md",
+      "bytes": 973,
+      "sha256": "beb37b11f4ba9265303afb4e1e80a7f1dfb9ed42fc9f953b1a03d3c91aeebf37"
+    }
+  ]
+}

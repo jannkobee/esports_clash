@@ -1,0 +1,463 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 75,
+  "swapped": true,
+  "scout": {
+    "label": "scout",
+    "event": {
+      "mode": "scout",
+      "actorId": "red_p_p1mple",
+      "second": 196.29999999999143,
+      "cardId": "p_p1mple",
+      "champion": "Solana",
+      "incumbent": "fight",
+      "alternate": "regroup",
+      "fingerprint": "75804:f40fae78:6080c3e8",
+      "matched": false,
+      "gate": null,
+      "actorStart": {
+        "x": 1644.0876336867032,
+        "y": 377.3279771332151,
+        "hpFraction": 1,
+        "gold": 462.0644999997906,
+        "cs": 0,
+        "kills": 0,
+        "deaths": 0,
+        "damageDealt": 1538
+      }
+    },
+    "lastSecond": 196.43333333332475,
+    "wallSeconds": 66.256
+  },
+  "replays": [
+    {
+      "label": "incumbent-a",
+      "event": {
+        "mode": "replay",
+        "actorId": "red_p_p1mple",
+        "second": 196.29999999999143,
+        "cardId": "p_p1mple",
+        "champion": "Solana",
+        "incumbent": "fight",
+        "alternate": "regroup",
+        "fingerprint": "75804:f40fae78:6080c3e8",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 1644.0876336867032,
+          "y": 377.3279771332151,
+          "hpFraction": 1,
+          "gold": 462.0644999997906,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1538
+        },
+        "followup": {
+          "second": 204.3333333333243,
+          "actor": {
+            "x": 1129.9732452063395,
+            "y": 435.6887710177024,
+            "hpFraction": 0.8225750776665516,
+            "mana": 28.299999999999958,
+            "isAlive": true,
+            "gold": 561.3844999997863,
+            "cs": 0,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 1714
+          },
+          "nearestEnemyDistance": 75.40057221010825,
+          "insideEnemyTower": true
+        }
+      },
+      "record": {
+        "second": 196.29999999999143,
+        "actorId": "red_p_p1mple",
+        "team": "red",
+        "selected": "fight",
+        "contextKey": "fight:blue_p_ouzi:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.95,
+          "teamfight": 0.97,
+          "lane": 0.99,
+          "flexibility": 0.93,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Tank": 1,
+          "card:p_p1mple": 1,
+          "personality:bush_stalker": 1,
+          "personality:revenge_driven": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "regroup",
+        "experiment": {
+          "incumbent": "fight",
+          "alternate": "regroup",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.01298630909966872
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 462.0644999997906,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1538
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "fight",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333161,
+          "healthChange": 0,
+          "goldGain": 37.245000000000914,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.027933750000000687
+        }
+      },
+      "actor": {
+        "x": 1129.9732452063395,
+        "y": 435.6887710177024,
+        "hp": 2007,
+        "committedState": "fight"
+      },
+      "lastSecond": 204.56666666665762,
+      "wallSeconds": 3.098
+    },
+    {
+      "label": "incumbent-b",
+      "event": {
+        "mode": "replay",
+        "actorId": "red_p_p1mple",
+        "second": 196.29999999999143,
+        "cardId": "p_p1mple",
+        "champion": "Solana",
+        "incumbent": "fight",
+        "alternate": "regroup",
+        "fingerprint": "75804:f40fae78:6080c3e8",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 1644.0876336867032,
+          "y": 377.3279771332151,
+          "hpFraction": 1,
+          "gold": 462.0644999997906,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1538
+        },
+        "followup": {
+          "second": 204.3333333333243,
+          "actor": {
+            "x": 1129.9732452063395,
+            "y": 435.6887710177024,
+            "hpFraction": 0.8225750776665516,
+            "mana": 28.299999999999958,
+            "isAlive": true,
+            "gold": 561.3844999997863,
+            "cs": 0,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 1714
+          },
+          "nearestEnemyDistance": 75.40057221010825,
+          "insideEnemyTower": true
+        }
+      },
+      "record": {
+        "second": 196.29999999999143,
+        "actorId": "red_p_p1mple",
+        "team": "red",
+        "selected": "fight",
+        "contextKey": "fight:blue_p_ouzi:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.95,
+          "teamfight": 0.97,
+          "lane": 0.99,
+          "flexibility": 0.93,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Tank": 1,
+          "card:p_p1mple": 1,
+          "personality:bush_stalker": 1,
+          "personality:revenge_driven": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "regroup",
+        "experiment": {
+          "incumbent": "fight",
+          "alternate": "regroup",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.01298630909966872
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 462.0644999997906,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1538
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "fight",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333161,
+          "healthChange": 0,
+          "goldGain": 37.245000000000914,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.027933750000000687
+        }
+      },
+      "actor": {
+        "x": 1132.555356696259,
+        "y": 436.20417179377495,
+        "hp": 1914,
+        "committedState": "fight"
+      },
+      "lastSecond": 204.99999999999093,
+      "wallSeconds": 3.052
+    },
+    {
+      "label": "alternate",
+      "event": {
+        "mode": "replay",
+        "actorId": "red_p_p1mple",
+        "second": 196.29999999999143,
+        "cardId": "p_p1mple",
+        "champion": "Solana",
+        "incumbent": "fight",
+        "alternate": "regroup",
+        "fingerprint": "75804:f40fae78:6080c3e8",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 1644.0876336867032,
+          "y": 377.3279771332151,
+          "hpFraction": 1,
+          "gold": 462.0644999997906,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1538
+        },
+        "followup": {
+          "second": 204.3333333333243,
+          "actor": {
+            "x": 1129.7321532979618,
+            "y": 435.59413879464705,
+            "hpFraction": 0.8225750776665516,
+            "mana": 28.299999999999958,
+            "isAlive": true,
+            "gold": 561.3844999997863,
+            "cs": 0,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 1714
+          },
+          "nearestEnemyDistance": 75.14928536505874,
+          "insideEnemyTower": true
+        }
+      },
+      "record": {
+        "second": 196.29999999999143,
+        "actorId": "red_p_p1mple",
+        "team": "red",
+        "selected": "regroup",
+        "contextKey": "regroup:red_p_flaker",
+        "features": {
+          "bias": 1,
+          "iq": 0.95,
+          "teamfight": 0.97,
+          "lane": 0.99,
+          "flexibility": 0.93,
+          "health": 1,
+          "mana": 1,
+          "roleFit": 0,
+          "role:Tank": 1,
+          "card:p_p1mple": 1,
+          "personality:bush_stalker": 1,
+          "personality:revenge_driven": 0.5
+        },
+        "selectionReason": "evaluation-experiment:alternate",
+        "heldAction": "regroup",
+        "experiment": {
+          "incumbent": "fight",
+          "alternate": "regroup",
+          "pair": "fight-regroup",
+          "arm": "alternate",
+          "propensity": 0.5,
+          "utilityGap": 0.01298630909966872
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 462.0644999997906,
+          "cs": 0,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 1538
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target",
+            "learnedFactor": 0.1312871054614302,
+            "baselineUtility": 0.18987582837893743,
+            "actualUtility": 0.19512731259739463
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion",
+            "learnedFactor": 0.03115139324270292,
+            "baselineUtility": 0.28,
+            "actualUtility": 0.2812460557297081
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+            "learnedFactor": -0.16243849870413313,
+            "baselineUtility": 0.18863854344589123,
+            "actualUtility": 0.1821410034977259
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp",
+            "learnedFactor": -0.1743938574200141,
+            "baselineUtility": 0.13349999999999998,
+            "actualUtility": 0.12652424570319942
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available",
+            "learnedFactor": 0.1743938574200141,
+            "baselineUtility": -0.09134053717319346,
+            "actualUtility": -0.0843647828763929
+          }
+        ],
+        "zeroPolicySelected": "fight",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.033333333333161,
+          "healthChange": 0,
+          "goldGain": 37.245000000000914,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 0,
+          "progress": 0.027933750000000687
+        }
+      },
+      "actor": {
+        "x": 1129.7321532979618,
+        "y": 435.59413879464705,
+        "hp": 2007,
+        "committedState": "fight"
+      },
+      "lastSecond": 204.56666666665762,
+      "wallSeconds": 2.876
+    }
+  ],
+  "validPair": true,
+  "descriptiveAlternateMinusIncumbent": 0,
+  "extendedDifference": {
+    "healthFraction": 0,
+    "gold": 0,
+    "damageDealt": 0,
+    "kills": 0,
+    "deaths": 0,
+    "x": -0.24109190837771166,
+    "y": -0.09463222305532781,
+    "nearestEnemyDistance": -0.25128684504950627
+  }
+}

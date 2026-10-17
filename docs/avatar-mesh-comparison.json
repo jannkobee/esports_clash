@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-17",
+  "rows": [
+    {
+      "id": "c_astra",
+      "version": 7,
+      "calls": 24,
+      "triangles": 37060
+    },
+    {
+      "id": "c_astra",
+      "version": 8,
+      "calls": 38,
+      "triangles": 31702
+    },
+    {
+      "id": "c_vi",
+      "version": 7,
+      "calls": 28,
+      "triangles": 11434
+    },
+    {
+      "id": "c_vi",
+      "version": 8,
+      "calls": 42,
+      "triangles": 18778
+    },
+    {
+      "id": "c_senna",
+      "version": 7,
+      "calls": 24,
+      "triangles": 36948
+    },
+    {
+      "id": "c_senna",
+      "version": 8,
+      "calls": 38,
+      "triangles": 32210
+    },
+    {
+      "id": "c_earthshaker",
+      "version": 7,
+      "calls": 26,
+      "triangles": 12908
+    },
+    {
+      "id": "c_earthshaker",
+      "version": 8,
+      "calls": 37,
+      "triangles": 16796
+    },
+    {
+      "id": "c_puck",
+      "version": 7,
+      "calls": 10,
+      "triangles": 2130
+    },
+    {
+      "id": "c_puck",
+      "version": 8,
+      "calls": 11,
+      "triangles": 2736
+    },
+    {
+      "id": "c_voltgrip",
+      "version": 7,
+      "calls": 16,
+      "triangles": 2934
+    },
+    {
+      "id": "c_voltgrip",
+      "version": 8,
+      "calls": 27,
+      "triangles": 9642
+    }
+  ],
+  "scope": "Six exact shipped GLB pairs under matching camera/light/idle pose; runtime v8 includes all 45."
+}

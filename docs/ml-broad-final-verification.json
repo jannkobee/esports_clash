@@ -1,0 +1,203 @@
+{
+  "planHash": "c82349ae4833cbdc13e758d02c4006a36baf5da4b5eeb7146b18e3974288f1e0",
+  "modelHash": "63a784994876a6ce71bf4dad350df5156b6a5d24a1be1683637b43a84e9d8c34",
+  "sourceHash": "4a1b08e8051e68f10800c6629b89c8f3c51822b6b789adfd5aabcf77ad6973c8",
+  "sourceFiles": 146,
+  "all96RawCasesPresentAndValidated": true,
+  "properWeightsUnchanged": true,
+  "properRawHash": "446211e05dd9614c9afee934ff2825210ec8daac5adee12a157b42345240a3fa",
+  "calibrationRawHash": "f7af58968681ce1d7636dd9a5859e2c2a2bcecaf0075263d558f8ab90323aa5d",
+  "heldoutRawHashes": [
+    {
+      "id": "heldout-1073-d2-after120-original",
+      "hash": "d74b3a7342b4c04cda8039f4ef2b15ae54f5df67e35d3f6529a2cefb53f29ead",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1074-d2-after360-original",
+      "hash": "74bae2e0c8f0882bb0c9e7956a2613eb9f32e9fc0a910da54152e6bbf96c668b",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1075-d2-after600-original",
+      "hash": "2fdeb54871c7248e84b6a331e3aa8e65d82a692a50041f3994b2922efb3a69f8",
+      "status": "no-target"
+    },
+    {
+      "id": "heldout-1076-d3-after120-swapped",
+      "hash": "dc6688e9ed12528a248370ed02c892a8f8595f11a7462e89d31730da96a4f4fa",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1077-d3-after360-swapped",
+      "hash": "78f77ce26c0ecbfb4599a7d1ebe24d0cb5d1cd55a3d70d4b2bccde5a479541c3",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1078-d3-after600-swapped",
+      "hash": "083a8fda0d617b03d987b930fc4dfac509993622441f0845ae7781459d59c894",
+      "status": "no-target"
+    },
+    {
+      "id": "heldout-1079-d4-after120-original",
+      "hash": "176d3f0aac5943965743b8cb89966a15c0b8e799c118361841e6825695ec26fb",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1080-d4-after360-original",
+      "hash": "b265910fbc4ce4b1fa647870a670a7fdf79c9aca766122c4ea073662cfddbab9",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1081-d4-after600-original",
+      "hash": "40b8ccb44b0dc1ef6327e28867c8a257bee9420dec8f0e555eab74beb4f57c7e",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1082-d5-after120-swapped",
+      "hash": "205e36c0707dfab07ff6544c095a3d02193d965922abaaf2b7330daa6aebe4c1",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1083-d5-after360-swapped",
+      "hash": "94d1383f8a48fbf6b4065f702044b83654edae2d21fad1e1826cb40fe99e0f64",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1084-d5-after600-swapped",
+      "hash": "7263f6d1d444507e85e6f0ce50e2af45e13d1d5dfcc803d54f4668bbfcd3e205",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1085-d6-after120-original",
+      "hash": "69c9efea058aa0bbb5420ebbd23f1541e62512a3b8e550ed22e92b20c869af74",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1086-d6-after360-original",
+      "hash": "f8f9d3a5a7064a121a9fba1258eb05ed2a72365ade0e54524d3c3b9d4af5d940",
+      "status": "invalid-controls"
+    },
+    {
+      "id": "heldout-1087-d6-after600-original",
+      "hash": "049fcca4c0b9acadfedb143305878851b95a5dfae2e8791f98e74da166e495bb",
+      "status": "no-target"
+    },
+    {
+      "id": "heldout-1088-d7-after120-swapped",
+      "hash": "d13f2cbc8d5ee68f2dbfa058f52da972d023c3599d2342d14107481b6acca486",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1089-d7-after360-swapped",
+      "hash": "08204e69feb80dae27d3373930e4485cfe2b2e69dc080c99529c0943032b4492",
+      "status": "no-target"
+    },
+    {
+      "id": "heldout-1090-d7-after600-swapped",
+      "hash": "48e019f8b2d311410bf9d8961076e0c787c6076abbc2040f6d17af9c66a28817",
+      "status": "no-target"
+    },
+    {
+      "id": "heldout-1091-d8-after120-original",
+      "hash": "217a28ec88fdc3eeab258a742f0b435bce125cfcd1e0be3fc609a0fccfb2b045",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1092-d8-after360-original",
+      "hash": "5ada3bf8f0ff35b52fcca4c45ed742eb0efa987ac063e1470dc9678124a89833",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1093-d8-after600-original",
+      "hash": "8c611db60b5595044a71d3578cb4f483c5b00f42b500e1fd3c1e48059fb279b1",
+      "status": "no-target"
+    },
+    {
+      "id": "heldout-1094-d9-after120-swapped",
+      "hash": "c71096a63df1cc001540d94d3b1afc50b46ed4a81208c4a07ad6d591baeb2a4d",
+      "status": "valid"
+    },
+    {
+      "id": "heldout-1095-d9-after360-swapped",
+      "hash": "d8af690dc1cf9411be252ad6d6fad5b207e82e70279a14a036f27279f679bee1",
+      "status": "invalid-controls"
+    },
+    {
+      "id": "heldout-1096-d9-after600-swapped",
+      "hash": "54d266153a074c8f96cd301d834f10a65fff779d627894e0335d23caf0087448",
+      "status": "no-target"
+    }
+  ],
+  "incomplete": [
+    {
+      "seed": 1015,
+      "split": "fit",
+      "matched": true,
+      "reason": "missing fixed-step assignment or follow-up",
+      "second": 376.46666666675054,
+      "lastTrace": 386.700000000092
+    },
+    {
+      "seed": 1016,
+      "split": "fit",
+      "matched": true,
+      "reason": "missing fixed-step assignment or follow-up",
+      "second": 365.66666666674195,
+      "lastTrace": 392.40000000009655
+    },
+    {
+      "seed": 1060,
+      "split": "calibration",
+      "matched": true,
+      "reason": "missing fixed-step assignment or follow-up",
+      "second": 601.0666666667773,
+      "lastTrace": 626.0666666667546
+    },
+    {
+      "seed": 1071,
+      "split": "calibration",
+      "matched": true,
+      "reason": "missing fixed-step assignment or follow-up",
+      "second": 387.4000000000926,
+      "lastTrace": 392.6000000000967
+    },
+    {
+      "seed": 1086,
+      "split": "heldout",
+      "matched": true,
+      "reason": "missing fixed-step assignment or follow-up",
+      "second": 360.26666666673765,
+      "lastTrace": 384.566666666757
+    },
+    {
+      "seed": 1095,
+      "split": "heldout",
+      "matched": true,
+      "reason": "missing fixed-step assignment or follow-up",
+      "second": 364.60000000007443,
+      "lastTrace": 392.2666666667631
+    }
+  ],
+  "stages": {
+    "120": {
+      "fit": 15,
+      "calibration": 8,
+      "heldout": 8
+    },
+    "360": {
+      "fit": 11,
+      "calibration": 7,
+      "heldout": 5
+    },
+    "600": {
+      "fit": 1,
+      "calibration": 3,
+      "heldout": 2
+    }
+  },
+  "calibrationCards": 13,
+  "evaluationCards": 13,
+  "ownedServicesClosed": true,
+  "whitespaceCheckPassed": true
+}

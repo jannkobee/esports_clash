@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { ArenaScene, applyArenaSceneCamera, arenaScenePan, clampArenaSceneCamera, type ArenaSceneFrame } from './threeArenaScene.ts';
 import {
   clampArenaCamera,
   type ArenaCameraViewport,
@@ -46,8 +47,11 @@ export function disposeArenaTerrainResources(root: THREE.Object3D): ArenaTerrain
   const geometries = new Set<THREE.BufferGeometry>();
   const materials = new Set<THREE.Material>();
   const textures = new Set<THREE.Texture>();
+  const skeletons = new Set<THREE.Skeleton>();
 
   root.traverse(object => {
+    if (object instanceof THREE.InstancedMesh) object.dispose();
+    if (object instanceof THREE.SkinnedMesh) skeletons.add(object.skeleton);
     const renderObject = object as THREE.Object3D & {
       geometry?: THREE.BufferGeometry;
       material?: THREE.Material | THREE.Material[];
@@ -66,7 +70,13 @@ export function disposeArenaTerrainResources(root: THREE.Object3D): ArenaTerrain
     });
   });
 
-  textures.forEach(texture => texture.dispose());
+  const bitmaps = new Set<ImageBitmap>();
+  textures.forEach(texture => {
+    if (typeof ImageBitmap !== 'undefined' && texture.image instanceof ImageBitmap) bitmaps.add(texture.image);
+    texture.dispose();
+  });
+  bitmaps.forEach(bitmap => bitmap.close());
+  skeletons.forEach(skeleton => skeleton.dispose());
   materials.forEach(material => material.dispose());
   geometries.forEach(geometry => geometry.dispose());
   return { geometries: geometries.size, materials: materials.size, textures: textures.size };
@@ -195,6 +205,7 @@ export class ThreeArenaTerrain {
   private readonly onAvailabilityChange: (available: boolean) => void;
   private readonly scene = new THREE.Scene();
   private readonly camera = new THREE.OrthographicCamera();
+  private readonly arena: ArenaScene;
   private readonly renderer: THREE.WebGLRenderer;
   private readonly resizeObserver: ResizeObserver;
   private available = true;
@@ -253,6 +264,7 @@ export class ThreeArenaTerrain {
     terrain.position.set(worldWidth / 2, worldHeight / 2, 0);
     terrain.frustumCulled = false;
     this.scene.add(terrain);
+    this.arena = new ArenaScene(terrain.clone(), worldWidth, worldHeight);
 
     this.camera.position.z = 10;
     this.resizeObserver = new ResizeObserver(() => this.resizeToHost());
@@ -278,14 +290,48 @@ export class ThreeArenaTerrain {
     return viewport;
   }
 
+  renderArena(frame: ArenaSceneFrame, centerX: number, centerY: number, zoom: number): boolean {
+    if (!this.isAvailable()) return false;
+    this.resizeToHost();
+    applyArenaSceneCamera(this.arena.camera, centerX, centerY, zoom,
+      this.renderWidth / this.renderHeight, this.worldWidth);
+    try {
+      this.arena.update(frame);
+      this.renderer.render(this.arena.scene, this.arena.camera);
+      this.host.dataset.actors = String(this.arena.stats().actors);
+      return true;
+    } catch {
+      this.setAvailable(false);
+      return false;
+    }
+  }
+
+  project(x: number, y: number, height: number, width: number, screenHeight: number) {
+    return this.arena.project(x, y, height, width, screenHeight);
+  }
+
+  actorHeight(id: string): number { return this.arena.actorHeight(id); }
+
+  pan(dx: number, dy: number, zoom: number) {
+    return arenaScenePan(dx, dy, zoom, this.renderWidth / this.renderHeight, this.worldWidth);
+  }
+
+  viewport(x: number, y: number, zoom: number) {
+    return clampArenaSceneCamera(x, y, zoom, Math.max(1, this.host.clientWidth) / Math.max(1, this.host.clientHeight),
+      this.worldWidth, this.worldHeight);
+  }
+
   dispose(): ArenaTerrainDisposalStats {
     if (this.disposed) return { geometries: 0, materials: 0, textures: 0 };
     this.disposed = true;
+    this.arena.close();
     this.resizeObserver.disconnect();
     const canvas = this.renderer.domElement;
     canvas.removeEventListener('webglcontextlost', this.handleContextLost);
     canvas.removeEventListener('webglcontextrestored', this.handleContextRestored);
-    const stats = disposeArenaTerrainResources(this.scene);
+    const resources = new THREE.Group();
+    resources.add(this.scene, this.arena.scene);
+    const stats = disposeArenaTerrainResources(resources);
     this.renderer.dispose();
     this.renderer.forceContextLoss();
     if (canvas.parentElement === this.host) this.host.removeChild(canvas);

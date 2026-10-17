@@ -1,0 +1,59 @@
+.player-card {
+  --card-accent: #cf9871; --card-dark: #3c2921;
+  position: relative; isolation: isolate; width: 100%; max-width: 230px; min-width: 0;
+  border: 1px solid var(--card-accent); border-radius: 13px; padding: 5px;
+  background: linear-gradient(138deg, #ffffff45, #ffffff05 17%, #0004 44%, #ffffff1a 80%, #fff5), #11151e;
+  color: #f1f4f8; box-shadow: 0 12px 24px #0005, inset 0 1px 0 #fff4;
+  font-family: Inter, 'Segoe UI', sans-serif; text-align: left;
+  transition: transform .2s ease, box-shadow .2s ease; overflow: hidden;
+}
+.player-card[data-tier="silver"] { --card-accent: #becbd8; --card-dark: #333f4b; }
+.player-card[data-tier="gold"] { --card-accent: #e3bd75; --card-dark: #493b22; }
+.player-card[data-tier="platinum"] { --card-accent: #89d6c9; --card-dark: #214740; }
+.player-card[data-tier="diamond"] { --card-accent: #9ccdf1; --card-dark: #203951; }
+.player-card[data-tier="goat"] { --card-accent: #f2d396; --card-dark: #493821; }
+.player-card[data-evolved="true"] { --card-accent: #87ecc0; --card-dark: #164f3c; }
+.player-card--interactive { cursor: pointer; }
+.player-card--interactive:hover { transform: translateY(-4px); box-shadow: 0 18px 32px #0008, 0 0 0 1px var(--card-accent); }
+.player-card--interactive:focus-visible { outline: 3px solid #f8e6ad; outline-offset: 4px; }
+.player-card--selected { box-shadow: 0 0 0 3px #f8d579, 0 12px 25px #0008; }
+.player-card__edition { display: flex; justify-content: space-between; align-items: center; gap: 4px; padding: 6px 5px 8px; color: var(--card-accent); font-size: 8px; font-weight: 800; letter-spacing: .08em; }
+.player-card__edition>span:last-child, .player-card__evo { display: inline-flex; align-items: center; gap: 3px; text-transform: uppercase; }
+.player-card__edition-divider { color: #ffffff50; padding: 0 2px; }
+.player-card__hero { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 7px 7px 0 0; background: #191b20; }
+.player-card__hero::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(0deg, #10151d 0%, #10151ddd 12%, #10151d00 46%), linear-gradient(90deg, #080d1770, #0000 35%); }
+.player-card__portrait { position: absolute; inset: 0; background-size: 800% 800%; background-repeat: no-repeat; }
+.player-card__monogram { position: absolute; inset: 0; display: grid; place-items: center; font-size: 70px; color: var(--card-accent); background: radial-gradient(ellipse, var(--card-dark), #10151d); font-weight: 900; }
+.player-card__rating { position: absolute; top: 8px; left: 8px; z-index: 1; display: flex; flex-direction: column; text-align: center; text-shadow: 0 2px 12px #000b; }
+.player-card__rating strong { font-size: 37px; line-height: 1; letter-spacing: -.06em; color: var(--card-accent); font-weight: 850; }
+.player-card__rating span { margin-top: 3px; font-size: 7px; letter-spacing: .08em; color: #f1f4f8; font-weight: 700; }
+.player-card__origin { position: absolute; top: 9px; right: 7px; z-index: 1; font-size: 9px; font-weight: 700; border: 1px solid #ffffff35; border-radius: 3px; padding: 3px 5px; background: #0d111abf; color: #e5eaf1; }
+.player-card__identity { position: absolute; inset: auto 8px 5px; z-index: 1; min-width: 0; }
+.player-card__role { font-size: 9px; color: var(--card-accent); text-transform: uppercase; letter-spacing: .11em; font-weight: 700; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.player-card__identity h3 { margin: 2px 0 0; font-size: clamp(17px, 1.7vw, 23px); line-height: 1.2; font-weight: 850; letter-spacing: -.035em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-card__selected { position: absolute; bottom: 60px; right: 8px; z-index: 2; display: inline-flex; align-items: center; gap: 3px; border-radius: 4px; padding: 4px 6px; color: #1b1c1e; background: #f8d579; font-weight: 800; font-size: 9px; }
+.player-card__specialty { display: flex; flex-direction: column; gap: 3px; padding: 7px 8px 9px; background: #10151d; }
+.player-card__specialty>span { color: #9ba9bb; text-transform: uppercase; font-size: 7px; letter-spacing: .13em; }
+.player-card__specialty strong { font-size: 10px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.player-card__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px 4px; margin: 0; padding: 10px 6px; border-top: 1px solid #ffffff17; border-bottom: 1px solid #ffffff17; background: linear-gradient(120deg, var(--card-dark), #111923 75%); }
+.player-card__stats>div { display: flex; flex-direction: column-reverse; align-items: center; gap: 2px; }
+.player-card__stats dt { color: #c5cedb; font-size: 8px; font-weight: 500; white-space: nowrap; }
+.player-card__stats dd { font-size: 21px; font-weight: 750; line-height: 1; font-variant-numeric: tabular-nums; margin: 0; }
+.player-card__traits { display: flex; flex-wrap: wrap; gap: 5px; padding: 10px 5px; min-height: 48px; align-items: center; background: #10151d; }
+.player-card__traits>span { padding: 3px 5px; border: 1px solid #ffffff20; border-radius: 4px; font-size: 8px; font-weight: 500; color: #d8e0eb; }
+.player-card__traits>span>span { color: var(--card-accent); margin-right: 2px; }
+.player-card__footer { display: flex; align-items: center; justify-content: space-between; padding: 5px 7px; gap: 4px; color: #b2bfd0; font-size: 8px; font-weight: 500; letter-spacing: .04em; background: #10151d; border-radius: 0 0 5px 5px; }
+.player-card__footer strong { color: var(--card-accent); font-size: 10px; margin-left: 2px; }
+.player-card__xp { height: 2px; margin: 0 7px 4px; overflow: hidden; background: #ffffff12; }
+.player-card__xp>span { display: block; height: 100%; background: var(--card-accent); }
+.player-card--compact .player-card__edition { font-size: 7px; letter-spacing: 0; padding: 4px 3px 6px; }
+.player-card--compact .player-card__rating { top: 6px; left: 6px; }
+.player-card--compact .player-card__rating strong { font-size: 29px; }
+.player-card--compact .player-card__rating span { font-size: 6px; }
+.player-card--compact .player-card__identity h3 { font-size: 17px; }
+.player-card--compact .player-card__role { font-size: 8px; letter-spacing: .03em; }
+.player-card--compact .player-card__stats { padding: 8px 3px; }
+.player-card--compact .player-card__stats dd { font-size: 16px; }
+.player-card--compact .player-card__stats dt { font-size: 7px; }
+.player-card--compact .player-card__origin { font-size: 8px; padding: 2px 4px; }
+@media (prefers-reduced-motion: reduce) { .player-card { transition: none; }.player-card--interactive:hover { transform: none; } }

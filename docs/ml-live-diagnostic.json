@@ -1,0 +1,108 @@
+{
+  "method": "Real live seed 53 with seed-47-trained policy and same-state/local-outcome diagnostics",
+  "outcome": {
+    "winner": "blue",
+    "durationSeconds": 811.9666666665855,
+    "blueKills": 37,
+    "redKills": 23,
+    "objectiveEvents": 57,
+    "towerEvents": 385
+  },
+  "decisions": {
+    "total": 7439,
+    "selected": {
+      "push": 1925,
+      "wave": 900,
+      "fight": 4031,
+      "regroup": 358,
+      "farm": 225
+    },
+    "offered": {
+      "push": 7439,
+      "wave": 906,
+      "fight": 4153,
+      "regroup": 586,
+      "farm": 653
+    },
+    "sameTierAlternatives": {
+      "fight": 222,
+      "regroup": 128,
+      "push": 28,
+      "farm": 225,
+      "wave": 6
+    },
+    "byCard": {
+      "p_bigtail": {
+        "push": 191,
+        "fight": 425,
+        "wave": 57,
+        "farm": 13,
+        "regroup": 21
+      },
+      "p_daft": {
+        "push": 206,
+        "wave": 94,
+        "fight": 468,
+        "regroup": 20,
+        "farm": 73
+      },
+      "p_flaker": {
+        "push": 215,
+        "wave": 143,
+        "fight": 526,
+        "regroup": 20
+      },
+      "p_p1mple": {
+        "push": 226,
+        "fight": 526,
+        "regroup": 21,
+        "wave": 19
+      },
+      "p_thespicy": {
+        "push": 188,
+        "wave": 145,
+        "fight": 431,
+        "regroup": 29
+      },
+      "p_craps": {
+        "push": 217,
+        "fight": 325,
+        "regroup": 50,
+        "wave": 41,
+        "farm": 40
+      },
+      "p_mirecle": {
+        "push": 143,
+        "wave": 157,
+        "fight": 340,
+        "regroup": 33,
+        "farm": 13
+      },
+      "p_neko": {
+        "push": 210,
+        "fight": 415,
+        "regroup": 49,
+        "wave": 51,
+        "farm": 41
+      },
+      "p_ouzi": {
+        "push": 190,
+        "fight": 244,
+        "wave": 30,
+        "regroup": 46,
+        "farm": 36
+      },
+      "p_woozy": {
+        "push": 139,
+        "wave": 163,
+        "fight": 331,
+        "regroup": 69,
+        "farm": 9
+      }
+    },
+    "sameStateCompared": 7439,
+    "sameStateChanged": 2,
+    "localOutcomeSamples": 7264,
+    "meanLocalProgress": 0.03367797157415898
+  }
+}

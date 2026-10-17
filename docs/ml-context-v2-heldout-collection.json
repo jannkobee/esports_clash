@@ -1,0 +1,124 @@
+{
+  "planHash": "e678ce526cd3af0bba290d2424144230bb77a3c350296bbf2924416c6a4f1098",
+  "modelHash": "4bcb7c986f386fa7cd9db935f15675504099fedf4040690f29a754247f6bbed1",
+  "results": [
+    {
+      "id": "heldout-125-d0-original",
+      "split": "heldout",
+      "seed": 125,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_bigtail",
+      "rewardDelta": 0
+    },
+    {
+      "id": "heldout-126-d0-swapped",
+      "split": "heldout",
+      "seed": 126,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_craps",
+      "rewardDelta": 0.0336
+    },
+    {
+      "id": "heldout-127-d1-original",
+      "split": "heldout",
+      "seed": 127,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_toaster",
+      "rewardDelta": 1.204
+    },
+    {
+      "id": "heldout-128-d1-swapped",
+      "split": "heldout",
+      "seed": 128,
+      "draft": 1,
+      "swapped": true,
+      "status": "invalid-controls"
+    },
+    {
+      "id": "heldout-129-d0-original",
+      "split": "heldout",
+      "seed": 129,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_craps",
+      "rewardDelta": 0
+    },
+    {
+      "id": "heldout-130-d0-swapped",
+      "split": "heldout",
+      "seed": 130,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_neko",
+      "rewardDelta": 0
+    },
+    {
+      "id": "heldout-131-d1-original",
+      "split": "heldout",
+      "seed": 131,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_kovi",
+      "rewardDelta": 1.384
+    },
+    {
+      "id": "heldout-132-d1-swapped",
+      "split": "heldout",
+      "seed": 132,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_kovi",
+      "rewardDelta": 0
+    },
+    {
+      "id": "heldout-133-d0-original",
+      "split": "heldout",
+      "seed": 133,
+      "draft": 0,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_ouzi",
+      "rewardDelta": -0.019199999999999995
+    },
+    {
+      "id": "heldout-134-d0-swapped",
+      "split": "heldout",
+      "seed": 134,
+      "draft": 0,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_daft",
+      "rewardDelta": 0
+    },
+    {
+      "id": "heldout-135-d1-original",
+      "split": "heldout",
+      "seed": 135,
+      "draft": 1,
+      "swapped": false,
+      "status": "valid",
+      "cardId": "p_research_oner",
+      "rewardDelta": -0.03359999999999999
+    },
+    {
+      "id": "heldout-136-d1-swapped",
+      "split": "heldout",
+      "seed": 136,
+      "draft": 1,
+      "swapped": true,
+      "status": "valid",
+      "cardId": "p_toaster",
+      "rewardDelta": -0.05373333333333333
+    }
+  ]
+}

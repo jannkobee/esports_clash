@@ -1,0 +1,470 @@
+{
+  "method": "Evaluation-only real browser same-mounted-checkpoint replay; accept only identical predecision state and duplicate-incumbent outcome before arm comparison; no live promotion",
+  "seed": 74,
+  "swapped": false,
+  "scout": {
+    "label": "scout",
+    "event": {
+      "mode": "scout",
+      "actorId": "blue_p_thespicy",
+      "second": 282.86666666667605,
+      "cardId": "p_thespicy",
+      "champion": "Kaelen",
+      "incumbent": "fight",
+      "alternate": "regroup",
+      "fingerprint": "85122:a8f84353:a8f9381f",
+      "matched": false,
+      "gate": null,
+      "actorStart": {
+        "x": 716.2680023969327,
+        "y": 363.7141986664359,
+        "hpFraction": 1,
+        "gold": 190.65866666689232,
+        "cs": 7,
+        "kills": 0,
+        "deaths": 0,
+        "damageDealt": 9362
+      }
+    },
+    "lastSecond": 282.9333333333428,
+    "wallSeconds": 103.171
+  },
+  "replays": [
+    {
+      "label": "incumbent-a",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_thespicy",
+        "second": 282.86666666667605,
+        "cardId": "p_thespicy",
+        "champion": "Kaelen",
+        "incumbent": "fight",
+        "alternate": "regroup",
+        "fingerprint": "85122:a8f84353:a8f9381f",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 716.2680023969327,
+          "y": 363.7141986664359,
+          "hpFraction": 1,
+          "gold": 190.65866666689232,
+          "cs": 7,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 9362
+        },
+        "followup": {
+          "second": 290.8666666666824,
+          "actor": {
+            "x": 1053.7190082755708,
+            "y": 376.0166567334907,
+            "hpFraction": 0.941920326864147,
+            "mana": 376.80000000000973,
+            "isAlive": true,
+            "gold": 437.53333333355766,
+            "cs": 7,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 9681
+          },
+          "nearestEnemyDistance": 192.0991986965098,
+          "insideEnemyTower": false
+        }
+      },
+      "record": {
+        "second": 282.86666666667605,
+        "actorId": "blue_p_thespicy",
+        "team": "blue",
+        "selected": "fight",
+        "contextKey": "fight:red_p_woozy:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.85,
+          "teamfight": 0.95,
+          "lane": 0.96,
+          "flexibility": 0.88,
+          "health": 1,
+          "mana": 0.9365934065934161,
+          "roleFit": 0,
+          "role:Mage": 1,
+          "card:p_thespicy": 1,
+          "personality:bush_stalker": 1,
+          "personality:revenge_driven": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "fight",
+        "experiment": {
+          "incumbent": "fight",
+          "alternate": "regroup",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.0041703895018387616
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 190.65866666689232,
+          "cs": 7,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 9362
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target",
+            "learnedFactor": 0.08797612890465385,
+            "baselineUtility": 0.2134246048394962,
+            "actualUtility": 0.21694364999568236
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion",
+            "learnedFactor": 0.029879360275669998,
+            "baselineUtility": 0.28,
+            "actualUtility": 0.2811951744110268
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+            "learnedFactor": -0.11785548918032386,
+            "baselineUtility": 0.21748748006105656,
+            "actualUtility": 0.2127732604938436
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp",
+            "learnedFactor": -0.15761284276799972,
+            "baselineUtility": 0.13349999999999998,
+            "actualUtility": 0.12719548628927999
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available",
+            "learnedFactor": 0.15761284276799972,
+            "baselineUtility": -0.1697693774649899,
+            "actualUtility": -0.1634648637542699
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 36.07466666666775,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 58,
+          "progress": 0.08505600000000081
+        }
+      },
+      "actor": {
+        "x": 1074.6937431619444,
+        "y": 374.9877908106313,
+        "hp": 1825.2799999999997,
+        "actionIntent": "champion",
+        "committedState": "fight"
+      },
+      "lastSecond": 290.83333333334906,
+      "wallSeconds": 0.088
+    },
+    {
+      "label": "incumbent-b",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_thespicy",
+        "second": 282.86666666667605,
+        "cardId": "p_thespicy",
+        "champion": "Kaelen",
+        "incumbent": "fight",
+        "alternate": "regroup",
+        "fingerprint": "85122:a8f84353:a8f9381f",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 716.2680023969327,
+          "y": 363.7141986664359,
+          "hpFraction": 1,
+          "gold": 190.65866666689232,
+          "cs": 7,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 9362
+        },
+        "followup": {
+          "second": 290.8666666666824,
+          "actor": {
+            "x": 865.1591666147774,
+            "y": 350.93548833572555,
+            "hpFraction": 1,
+            "mana": 400.30000000000973,
+            "isAlive": true,
+            "gold": 587.5333333335661,
+            "cs": 7,
+            "kills": 1,
+            "deaths": 0,
+            "damageDealt": 9934
+          },
+          "nearestEnemyDistance": 96.19668060285409,
+          "insideEnemyTower": false
+        }
+      },
+      "record": {
+        "second": 282.86666666667605,
+        "actorId": "blue_p_thespicy",
+        "team": "blue",
+        "selected": "fight",
+        "contextKey": "fight:red_p_woozy:0",
+        "features": {
+          "bias": 1,
+          "iq": 0.85,
+          "teamfight": 0.95,
+          "lane": 0.96,
+          "flexibility": 0.88,
+          "health": 1,
+          "mana": 0.9365934065934161,
+          "roleFit": 0,
+          "role:Mage": 1,
+          "card:p_thespicy": 1,
+          "personality:bush_stalker": 1,
+          "personality:revenge_driven": 0.5
+        },
+        "selectionReason": "evaluation-experiment:incumbent",
+        "heldAction": "fight",
+        "experiment": {
+          "incumbent": "fight",
+          "alternate": "regroup",
+          "pair": "fight-regroup",
+          "arm": "incumbent",
+          "propensity": 0.5,
+          "utilityGap": 0.0041703895018387616
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 190.65866666689232,
+          "cs": 7,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 9362
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target",
+            "learnedFactor": 0.08797612890465385,
+            "baselineUtility": 0.2134246048394962,
+            "actualUtility": 0.21694364999568236
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion",
+            "learnedFactor": 0.029879360275669998,
+            "baselineUtility": 0.28,
+            "actualUtility": 0.2811951744110268
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+            "learnedFactor": -0.11785548918032386,
+            "baselineUtility": 0.21748748006105656,
+            "actualUtility": 0.2127732604938436
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp",
+            "learnedFactor": -0.15761284276799972,
+            "baselineUtility": 0.13349999999999998,
+            "actualUtility": 0.12719548628927999
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available",
+            "learnedFactor": 0.15761284276799972,
+            "baselineUtility": -0.1697693774649899,
+            "actualUtility": -0.1634648637542699
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 36.07466666666775,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 58,
+          "progress": 0.08505600000000081
+        }
+      },
+      "actor": {
+        "x": 854.3258332814443,
+        "y": 350.93548833572555,
+        "hp": 1958,
+        "actionIntent": "champion",
+        "committedState": "fight"
+      },
+      "lastSecond": 290.9000000000158,
+      "wallSeconds": 0.111
+    },
+    {
+      "label": "alternate",
+      "event": {
+        "mode": "replay",
+        "actorId": "blue_p_thespicy",
+        "second": 282.86666666667605,
+        "cardId": "p_thespicy",
+        "champion": "Kaelen",
+        "incumbent": "fight",
+        "alternate": "regroup",
+        "fingerprint": "85122:a8f84353:a8f9381f",
+        "matched": true,
+        "gate": null,
+        "actorStart": {
+          "x": 716.2680023969327,
+          "y": 363.7141986664359,
+          "hpFraction": 1,
+          "gold": 190.65866666689232,
+          "cs": 7,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 9362
+        },
+        "followup": {
+          "second": 290.8666666666824,
+          "actor": {
+            "x": 904.935522609825,
+            "y": 351.5101513947584,
+            "hpFraction": 1,
+            "mana": 410.30000000000973,
+            "isAlive": true,
+            "gold": 437.5333333335583,
+            "cs": 7,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 9882
+          },
+          "nearestEnemyDistance": 99.35801604101421,
+          "insideEnemyTower": false
+        }
+      },
+      "record": {
+        "second": 282.86666666667605,
+        "actorId": "blue_p_thespicy",
+        "team": "blue",
+        "selected": "regroup",
+        "contextKey": "regroup:blue_p_flaker",
+        "features": {
+          "bias": 1,
+          "iq": 0.85,
+          "teamfight": 0.95,
+          "lane": 0.96,
+          "flexibility": 0.88,
+          "health": 1,
+          "mana": 0.9365934065934161,
+          "roleFit": 0,
+          "role:Mage": 1,
+          "card:p_thespicy": 1,
+          "personality:bush_stalker": 1,
+          "personality:revenge_driven": 0.5
+        },
+        "selectionReason": "evaluation-experiment:alternate",
+        "heldAction": "fight",
+        "experiment": {
+          "incumbent": "fight",
+          "alternate": "regroup",
+          "pair": "fight-regroup",
+          "arm": "alternate",
+          "propensity": 0.5,
+          "utilityGap": 0.0041703895018387616
+        },
+        "experimentGate": "eligible",
+        "snapshot": {
+          "healthFraction": 1,
+          "gold": 190.65866666689232,
+          "cs": 7,
+          "kills": 0,
+          "deaths": 0,
+          "damageDealt": 9362
+        },
+        "candidates": [
+          {
+            "key": "fight",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing combat and objective-fight policy supplied a reachable target"
+          },
+          {
+            "key": "wave",
+            "available": false,
+            "priority": "tactical",
+            "reason": "existing wave policy requires a safe, actionable minion"
+          },
+          {
+            "key": "regroup",
+            "available": true,
+            "priority": "tactical",
+            "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+          },
+          {
+            "key": "farm",
+            "available": false,
+            "priority": "optional",
+            "reason": "existing safe camp-farm policy selected a known camp"
+          },
+          {
+            "key": "push",
+            "available": true,
+            "priority": "optional",
+            "reason": "existing lane-advance fallback remains available"
+          }
+        ],
+        "zeroPolicySelected": "regroup",
+        "zeroPolicyReason": "utility",
+        "outcome": {
+          "horizonSeconds": 3.0000000000023874,
+          "healthChange": 0,
+          "goldGain": 36.07466666666775,
+          "csGain": 0,
+          "killGain": 0,
+          "deathGain": 0,
+          "damageGain": 58,
+          "progress": 0.08505600000000081
+        }
+      },
+      "actor": {
+        "x": 894.1021892764918,
+        "y": 350,
+        "hp": 1958,
+        "actionIntent": "champion",
+        "committedState": "fight"
+      },
+      "lastSecond": 290.366666666682,
+      "wallSeconds": 0.081
+    }
+  ],
+  "validPair": false
+}

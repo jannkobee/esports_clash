@@ -1,0 +1,1019 @@
+{
+  "method": "Controlled real-browser arena with mirrored positions, health/cooldown and structure states; real fire and movement unchanged",
+  "results": [
+    {
+      "team": "blue",
+      "scenario": "well-chase",
+      "simulatedSeconds": 15,
+      "start": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 2390,
+          "hp": 1098,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 2390,
+          "hp": 1757,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 2390,
+          "hp": 974,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 2390,
+          "hp": 1006,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 2390,
+          "hp": 1110,
+          "deaths": 0
+        }
+      ],
+      "beamEntries": 0,
+      "nexusRangeEntries": 676,
+      "retreatingIds": [
+        "blue_p_flaker",
+        "blue_p_daft",
+        "blue_p_bigtail",
+        "blue_p_thespicy",
+        "blue_p_p1mple"
+      ],
+      "finishCommitSeen": false,
+      "wellTargetSeen": false,
+      "nexusHp": 8700,
+      "finished": false,
+      "attackers": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 191.0000000000001,
+          "y": 350,
+          "hp": 1098,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 214.33333333333354,
+          "y": 380,
+          "hp": 1757,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 233.00000000000028,
+          "y": 398.6666666666665,
+          "hp": 974,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 240.0000000000003,
+          "y": 366.0000000000001,
+          "hp": 1006,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 205.00000000000017,
+          "y": 340.33333333333366,
+          "hp": 1110,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "team": "blue",
+      "scenario": "fragile-nexus",
+      "simulatedSeconds": 15,
+      "start": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 2140,
+          "hp": 274.5,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 2140,
+          "hp": 439.25,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 2140,
+          "hp": 243.5,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 2140,
+          "hp": 251.5,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 2140,
+          "hp": 277.5,
+          "deaths": 0
+        }
+      ],
+      "beamEntries": 0,
+      "nexusRangeEntries": 0,
+      "retreatingIds": [
+        "blue_p_thespicy",
+        "blue_p_p1mple",
+        "blue_p_flaker",
+        "blue_p_daft",
+        "blue_p_bigtail"
+      ],
+      "finishCommitSeen": false,
+      "wellTargetSeen": false,
+      "nexusHp": 3500,
+      "finished": false,
+      "attackers": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 870.0000000000041,
+          "y": 350,
+          "hp": 1098,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 870.0000000000041,
+          "y": 380,
+          "hp": 1757,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 870.0000000000041,
+          "y": 398.6666666666665,
+          "hp": 974,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 870.0000000000041,
+          "y": 366.0000000000001,
+          "hp": 1006,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 870.0000000000041,
+          "y": 340.33333333333366,
+          "hp": 1110,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "team": "blue",
+      "scenario": "sealed-nexus",
+      "simulatedSeconds": 15,
+      "start": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 2390,
+          "hp": 1098,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 2390,
+          "hp": 1757,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 2390,
+          "hp": 974,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 2390,
+          "hp": 1006,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 2390,
+          "hp": 1110,
+          "deaths": 0
+        }
+      ],
+      "beamEntries": 0,
+      "nexusRangeEntries": 375,
+      "retreatingIds": [
+        "blue_p_thespicy",
+        "blue_p_p1mple",
+        "blue_p_flaker",
+        "blue_p_daft",
+        "blue_p_bigtail"
+      ],
+      "finishCommitSeen": false,
+      "wellTargetSeen": false,
+      "nexusHp": 9000,
+      "finished": false,
+      "attackers": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 106.62288966716518,
+          "y": 351.1812555564416,
+          "hp": 1098,
+          "isAlive": true,
+          "deaths": 1,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 1983.8404566466086,
+          "y": 380,
+          "hp": 0,
+          "isAlive": false,
+          "deaths": 1,
+          "finish": false
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 226.61049804316366,
+          "y": 400,
+          "hp": 974,
+          "isAlive": true,
+          "deaths": 1,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 2033.0121659344172,
+          "y": 392.0533918888828,
+          "hp": 0,
+          "isAlive": false,
+          "deaths": 1,
+          "finish": false
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 2032.887615446506,
+          "y": 343.15067847660947,
+          "hp": 0,
+          "isAlive": false,
+          "deaths": 1,
+          "finish": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "team": "blue",
+      "scenario": "legal-finish",
+      "simulatedSeconds": 3,
+      "start": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 2315,
+          "hp": 1098,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 2315,
+          "hp": 1757,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 2315,
+          "hp": 974,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 2315,
+          "hp": 1006,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 2315,
+          "hp": 1110,
+          "deaths": 0
+        }
+      ],
+      "beamEntries": 0,
+      "nexusRangeEntries": 5,
+      "retreatingIds": [
+        "blue_p_flaker",
+        "blue_p_daft",
+        "blue_p_bigtail"
+      ],
+      "finishCommitSeen": true,
+      "wellTargetSeen": false,
+      "nexusHp": 0,
+      "finished": true,
+      "attackers": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 2315,
+          "y": 350,
+          "hp": 1098,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": true
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 2315,
+          "y": 365,
+          "hp": 1757,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 2312.1666666666665,
+          "y": 380,
+          "hp": 974,
+          "isAlive": true,
+          "deaths": 0,
+          "finish": false
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 2312.1707236252346,
+          "y": 394.8484316227804,
+          "hp": 1006,
+          "isAlive": true,
+          "deaths": 0,
+          "finish": false
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 2312.1827907305606,
+          "y": 409.6981561497029,
+          "hp": 1110,
+          "isAlive": true,
+          "deaths": 0,
+          "finish": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "team": "blue",
+      "scenario": "beam-retreat",
+      "simulatedSeconds": 1,
+      "start": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 2490,
+          "hp": 1098,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 2490,
+          "hp": 1757,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 2490,
+          "hp": 974,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 2490,
+          "hp": 1006,
+          "deaths": 0
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 2490,
+          "hp": 1110,
+          "deaths": 0
+        }
+      ],
+      "beamEntries": 0,
+      "nexusRangeEntries": 150,
+      "retreatingIds": [
+        "blue_p_thespicy",
+        "blue_p_p1mple",
+        "blue_p_flaker",
+        "blue_p_daft",
+        "blue_p_bigtail"
+      ],
+      "finishCommitSeen": false,
+      "wellTargetSeen": false,
+      "nexusHp": 8849,
+      "finished": false,
+      "attackers": [
+        {
+          "id": "blue_p_thespicy",
+          "x": 2443.9172140130627,
+          "y": 350.17707416614735,
+          "hp": 711.3333333333333,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        },
+        {
+          "id": "blue_p_p1mple",
+          "x": 2443.83175438859,
+          "y": 365.2596929146869,
+          "hp": 1370.3333333333333,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        },
+        {
+          "id": "blue_p_flaker",
+          "x": 2443.825962261122,
+          "y": 379.99345329771467,
+          "hp": 672.3333333333334,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        },
+        {
+          "id": "blue_p_daft",
+          "x": 2443.8270478643826,
+          "y": 394.7003658040472,
+          "hp": 704.3333333333334,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        },
+        {
+          "id": "blue_p_bigtail",
+          "x": 2444.746354977737,
+          "y": 409.86396675552834,
+          "hp": 808.3333333333333,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "team": "red",
+      "scenario": "well-chase",
+      "simulatedSeconds": 15,
+      "start": [
+        {
+          "id": "red_p_craps",
+          "x": 210,
+          "hp": 1178,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 210,
+          "hp": 1048,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_neko",
+          "x": 210,
+          "hp": 1128,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 210,
+          "hp": 1001,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 210,
+          "hp": 1002,
+          "deaths": 0
+        }
+      ],
+      "beamEntries": 0,
+      "nexusRangeEntries": 945,
+      "retreatingIds": [
+        "red_p_woozy",
+        "red_p_mirecle",
+        "red_p_craps",
+        "red_p_ouzi",
+        "red_p_neko"
+      ],
+      "finishCommitSeen": false,
+      "wellTargetSeen": false,
+      "nexusHp": 8144,
+      "finished": false,
+      "attackers": [
+        {
+          "id": "red_p_craps",
+          "x": 2385.666666666657,
+          "y": 419.66666666666634,
+          "hp": 1178,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 2383.3333333333235,
+          "y": 350,
+          "hp": 1048,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "red_p_neko",
+          "x": 2383.3333333333235,
+          "y": 419.66666666666634,
+          "hp": 1128,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 2385.666666666657,
+          "y": 398.6666666666665,
+          "hp": 1001,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 2383.3333333333235,
+          "y": 398.6666666666665,
+          "hp": 1002,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "team": "red",
+      "scenario": "fragile-nexus",
+      "simulatedSeconds": 15,
+      "start": [
+        {
+          "id": "red_p_craps",
+          "x": 460,
+          "hp": 294.5,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 460,
+          "hp": 262,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_neko",
+          "x": 460,
+          "hp": 282,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 460,
+          "hp": 250.25,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 460,
+          "hp": 250.5,
+          "deaths": 0
+        }
+      ],
+      "beamEntries": 0,
+      "nexusRangeEntries": 0,
+      "retreatingIds": [
+        "red_p_craps",
+        "red_p_ouzi",
+        "red_p_neko",
+        "red_p_woozy",
+        "red_p_mirecle"
+      ],
+      "finishCommitSeen": false,
+      "wellTargetSeen": false,
+      "nexusHp": 3500,
+      "finished": false,
+      "attackers": [
+        {
+          "id": "red_p_craps",
+          "x": 1729.9999999999789,
+          "y": 419.66666666666634,
+          "hp": 1178,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 1729.9999999999789,
+          "y": 350,
+          "hp": 1048,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "red_p_neko",
+          "x": 1729.9999999999789,
+          "y": 419.66666666666634,
+          "hp": 1128,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 1729.9999999999789,
+          "y": 398.6666666666665,
+          "hp": 1001,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 1729.9999999999789,
+          "y": 398.6666666666665,
+          "hp": 1002,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "push",
+          "finish": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "team": "red",
+      "scenario": "sealed-nexus",
+      "simulatedSeconds": 15,
+      "start": [
+        {
+          "id": "red_p_craps",
+          "x": 210,
+          "hp": 1178,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 210,
+          "hp": 1048,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_neko",
+          "x": 210,
+          "hp": 1128,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 210,
+          "hp": 1001,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 210,
+          "hp": 1002,
+          "deaths": 0
+        }
+      ],
+      "beamEntries": 0,
+      "nexusRangeEntries": 375,
+      "retreatingIds": [
+        "red_p_craps",
+        "red_p_ouzi",
+        "red_p_neko",
+        "red_p_woozy",
+        "red_p_mirecle"
+      ],
+      "finishCommitSeen": false,
+      "wellTargetSeen": false,
+      "nexusHp": 9000,
+      "finished": false,
+      "attackers": [
+        {
+          "id": "red_p_craps",
+          "x": 2490.666666666664,
+          "y": 420,
+          "hp": 1178,
+          "isAlive": true,
+          "deaths": 1,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 611.0694791171273,
+          "y": 358.4556554041222,
+          "hp": 0,
+          "isAlive": false,
+          "deaths": 1,
+          "finish": false
+        },
+        {
+          "id": "red_p_neko",
+          "x": 608.4103753268116,
+          "y": 408.93630793981225,
+          "hp": 0,
+          "isAlive": false,
+          "deaths": 1,
+          "finish": false
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 2350.6666666666547,
+          "y": 400,
+          "hp": 1001,
+          "isAlive": true,
+          "deaths": 1,
+          "intent": "push",
+          "finish": false
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 566.9513553057008,
+          "y": 404.1081099932843,
+          "hp": 0,
+          "isAlive": false,
+          "deaths": 1,
+          "finish": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "team": "red",
+      "scenario": "legal-finish",
+      "simulatedSeconds": 3,
+      "start": [
+        {
+          "id": "red_p_craps",
+          "x": 285,
+          "hp": 1178,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 285,
+          "hp": 1048,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_neko",
+          "x": 285,
+          "hp": 1128,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 285,
+          "hp": 1001,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 285,
+          "hp": 1002,
+          "deaths": 0
+        }
+      ],
+      "beamEntries": 0,
+      "nexusRangeEntries": 5,
+      "retreatingIds": [
+        "red_p_ouzi",
+        "red_p_neko",
+        "red_p_woozy",
+        "red_p_mirecle"
+      ],
+      "finishCommitSeen": false,
+      "wellTargetSeen": false,
+      "nexusHp": 0,
+      "finished": true,
+      "attackers": [
+        {
+          "id": "red_p_craps",
+          "x": 285,
+          "y": 350,
+          "hp": 1178,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 287.82927637476524,
+          "y": 365.1515683772196,
+          "hp": 1048,
+          "isAlive": true,
+          "deaths": 0,
+          "finish": false
+        },
+        {
+          "id": "red_p_neko",
+          "x": 287.8333333333333,
+          "y": 380,
+          "hp": 1128,
+          "isAlive": true,
+          "deaths": 0,
+          "finish": false
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 287.82927637476524,
+          "y": 394.8484316227804,
+          "hp": 1001,
+          "isAlive": true,
+          "deaths": 0,
+          "finish": false
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 287.81720926943945,
+          "y": 409.6981561497029,
+          "hp": 1002,
+          "isAlive": true,
+          "deaths": 0,
+          "finish": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "team": "red",
+      "scenario": "beam-retreat",
+      "simulatedSeconds": 1,
+      "start": [
+        {
+          "id": "red_p_craps",
+          "x": 110,
+          "hp": 1178,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 110,
+          "hp": 1048,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_neko",
+          "x": 110,
+          "hp": 1128,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 110,
+          "hp": 1001,
+          "deaths": 0
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 110,
+          "hp": 1002,
+          "deaths": 0
+        }
+      ],
+      "beamEntries": 0,
+      "nexusRangeEntries": 150,
+      "retreatingIds": [
+        "red_p_craps",
+        "red_p_ouzi",
+        "red_p_neko",
+        "red_p_woozy",
+        "red_p_mirecle"
+      ],
+      "finishCommitSeen": false,
+      "wellTargetSeen": false,
+      "nexusHp": 8786,
+      "finished": false,
+      "attackers": [
+        {
+          "id": "red_p_craps",
+          "x": 156.0827859869383,
+          "y": 350.17707416614735,
+          "hp": 876.3333333333333,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        },
+        {
+          "id": "red_p_ouzi",
+          "x": 156.16824561140965,
+          "y": 365.2596929146868,
+          "hp": 746.3333333333334,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        },
+        {
+          "id": "red_p_neko",
+          "x": 156.17403773887546,
+          "y": 379.99345329771467,
+          "hp": 741.3333333333333,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        },
+        {
+          "id": "red_p_woozy",
+          "x": 156.17295213561906,
+          "y": 394.7003658040472,
+          "hp": 614.3333333333334,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        },
+        {
+          "id": "red_p_mirecle",
+          "x": 155.25364502226563,
+          "y": 409.8639667555282,
+          "hp": 615.3333333333334,
+          "isAlive": true,
+          "deaths": 0,
+          "intent": "structure",
+          "finish": false
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

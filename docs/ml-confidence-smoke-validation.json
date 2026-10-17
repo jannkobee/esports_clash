@@ -1,0 +1,20 @@
+{
+  "seed": 137,
+  "excludedFromFreshEvaluation": true,
+  "validPair": true,
+  "validLearnedReplay": true,
+  "priorWorldUnchanged": true,
+  "abstentionReproducedIncumbent": true,
+  "decision": {
+    "selected": "farm",
+    "changed": false,
+    "predictedAdvantage": 0.20007080704577798,
+    "margin": 0.02,
+    "allowed": false,
+    "reason": "uncertain-task-advantage",
+    "uncertainty": 0.581120299510202,
+    "lowerBoundAdvantage": -0.3810494924644241,
+    "calibrationSamples": 16,
+    "calibrationLevel": 0.9
+  }
+}

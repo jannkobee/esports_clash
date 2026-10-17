@@ -33,6 +33,8 @@ export type RetreatRoutingInput = {
   bushes: readonly RetreatBush[];
   isPassable: (point: RetreatPoint) => boolean;
   routeLength: (from: RetreatPoint, to: RetreatPoint) => number;
+  /** Read-only optional score from the spatial field; safety gates remain above. */
+  influenceThreat?: (point: RetreatPoint) => number;
 };
 
 type ScoredDestination = RetreatPoint & { id: string; kind: RetreatDestinationKind; score: number };
@@ -116,7 +118,8 @@ function score(candidate: Omit<ScoredDestination, 'score'>, input: RetreatRoutin
     bush: 34 - (enemyGap < 300 ? iq * 0.16 : 0),
   };
   const escapeBonus = actor.hasEscapeAbility && candidate.kind !== 'bush' ? -4 : 0;
-  return safetyCost + routeCost + progressBonus + kindBias[candidate.kind] + escapeBonus;
+  const influenceCost = Math.max(0, Math.min(1, input.influenceThreat?.(candidate) ?? 0)) * 20;
+  return safetyCost + routeCost + progressBonus + kindBias[candidate.kind] + escapeBonus + influenceCost;
 }
 
 export function chooseRetreatPlan(input: RetreatRoutingInput): RetreatPlan | undefined {

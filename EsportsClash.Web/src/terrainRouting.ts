@@ -3,8 +3,11 @@ type Point = { x: number; y: number };
 type Rock = Point & { radius: number };
 type Node = Point & { edges: { index: number; cost: number }[] };
 type Route = { goal: Point; points: Point[]; index: number; bestDistance: number; stalled: number };
+export type TerrainRouteCheckpoint = Array<{ id: string; cached: { radius: number; route: Route } }>;
 export type TerrainRouter = ((from: Point, requestedGoal: Point, radius?: number) => Point) & {
   routeDistance: (from: Point, requestedGoal: Point, radius?: number) => number;
+  capture: (actors: readonly (Point & { id: string })[]) => TerrainRouteCheckpoint;
+  restore: (actors: readonly (Point & { id: string })[], checkpoint: TerrainRouteCheckpoint) => void;
 };
 
 const CELL = 20;
@@ -152,5 +155,20 @@ export function createTerrainRouter(rocks: readonly Rock[]): TerrainRouter {
     } else route.stalled++;
     return target;
   };
-  return Object.assign(waypoint, { routeDistance });
+  // WeakMap keys change when a simulation checkpoint clones its actors. Preserve
+  // the route's retained goal, cursor and stall hysteresis, then bind new keys.
+  const capture = (actors: readonly (Point & { id: string })[]): TerrainRouteCheckpoint =>
+    actors.flatMap(actor => {
+      const cached = routes.get(actor);
+      return cached ? [{ id: actor.id, cached: structuredClone(cached) }] : [];
+    });
+  const restore = (actors: readonly (Point & { id: string })[], checkpoint: TerrainRouteCheckpoint) => {
+    const saved = new Map(checkpoint.map(item => [item.id, item.cached]));
+    for (const actor of actors) {
+      routes.delete(actor);
+      const cached = saved.get(actor.id);
+      if (cached) routes.set(actor, structuredClone(cached));
+    }
+  };
+  return Object.assign(waypoint, { routeDistance, capture, restore });
 }

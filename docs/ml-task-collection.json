@@ -1,0 +1,503 @@
+{
+  "plan": {
+    "version": 1,
+    "method": "Predeclared exploratory task-outcome collection; one first safe farm/push checkpoint per seed/draft/side, duplicate incumbent controls and equal thirty-second continuations; no forced commitment and no live promotion",
+    "horizonSeconds": 30,
+    "scoutSeconds": 240,
+    "pair": "farm-push",
+    "reward": "Actual camp-share plus minion-last-hit gold (0.6 * min(1, gold/250)) and actor structure damage (0.4 * min(1, damage/600)); any death including respawn gives -1; passive income and movement earn zero",
+    "fit": {
+      "minimumEpisodes": 4,
+      "minimumDrafts": 2,
+      "minimumCards": 2,
+      "minimumInformativeEpisodes": 2,
+      "minimumRewardDifference": 0.02,
+      "maximumWeightChange": 0.08,
+      "promotion": false
+    },
+    "cases": [
+      {
+        "id": "train-81-d0-original",
+        "split": "train",
+        "seed": 81,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "train-82-d0-swapped",
+        "split": "train",
+        "seed": 82,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "train-83-d1-original",
+        "split": "train",
+        "seed": 83,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "train-84-d1-swapped",
+        "split": "train",
+        "seed": 84,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "train-85-d0-original",
+        "split": "train",
+        "seed": 85,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "train-86-d0-swapped",
+        "split": "train",
+        "seed": 86,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "train-91-d1-original",
+        "split": "train",
+        "seed": 91,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "train-92-d1-swapped",
+        "split": "train",
+        "seed": 92,
+        "draft": 1,
+        "swapped": true
+      },
+      {
+        "id": "heldout-87-d0-original",
+        "split": "heldout",
+        "seed": 87,
+        "draft": 0,
+        "swapped": false
+      },
+      {
+        "id": "heldout-88-d0-swapped",
+        "split": "heldout",
+        "seed": 88,
+        "draft": 0,
+        "swapped": true
+      },
+      {
+        "id": "heldout-89-d1-original",
+        "split": "heldout",
+        "seed": 89,
+        "draft": 1,
+        "swapped": false
+      },
+      {
+        "id": "heldout-90-d1-swapped",
+        "split": "heldout",
+        "seed": 90,
+        "draft": 1,
+        "swapped": true
+      }
+    ]
+  },
+  "results": [
+    {
+      "id": "train-81-d0-original",
+      "split": "train",
+      "seed": 81,
+      "draft": 0,
+      "swapped": false,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-train-81-d0-original.json",
+      "validPair": true,
+      "cardId": "p_bigtail",
+      "second": 128.23333333332863,
+      "incumbentTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 308,
+        "deaths": 0,
+        "firstCompletionSeconds": 8.233333333332865,
+        "reward": 0.20533333333333334
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 308,
+        "deaths": 0,
+        "firstCompletionSeconds": 8.866666666666163,
+        "reward": 0.20533333333333334
+      }
+    },
+    {
+      "id": "train-82-d0-swapped",
+      "split": "train",
+      "seed": 82,
+      "draft": 0,
+      "swapped": true,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-train-82-d0-swapped.json",
+      "validPair": true,
+      "cardId": "p_neko",
+      "second": 149.8333333333274,
+      "incumbentTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 100,
+        "campClears": 1,
+        "waveGold": 14,
+        "minionKills": 1,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 8.933333333332826,
+        "reward": 0.2736
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      }
+    },
+    {
+      "id": "train-83-d1-original",
+      "split": "train",
+      "seed": 83,
+      "draft": 1,
+      "swapped": false,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-train-83-d1-original.json",
+      "validPair": true,
+      "cardId": "p_toaster",
+      "second": 120.2666666666624,
+      "incumbentTask": {
+        "horizonSeconds": 30.03333333333164,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.03333333333164,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      }
+    },
+    {
+      "id": "train-84-d1-swapped",
+      "split": "train",
+      "seed": 84,
+      "draft": 1,
+      "swapped": true,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-train-84-d1-swapped.json",
+      "validPair": true,
+      "cardId": "p_dns",
+      "second": 135.2999999999949,
+      "incumbentTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      }
+    },
+    {
+      "id": "train-85-d0-original",
+      "split": "train",
+      "seed": 85,
+      "draft": 0,
+      "swapped": false,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-train-85-d0-original.json",
+      "validPair": true,
+      "cardId": "p_bigtail",
+      "second": 200.43333333332453,
+      "incumbentTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 50,
+        "campClears": 1,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 1,
+        "firstCompletionSeconds": 9.233333333332808,
+        "reward": -1
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 50,
+        "campClears": 1,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 7.999999999999545,
+        "reward": 0.12
+      }
+    },
+    {
+      "id": "train-86-d0-swapped",
+      "split": "train",
+      "seed": 86,
+      "draft": 0,
+      "swapped": true,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-train-86-d0-swapped.json",
+      "validPair": true,
+      "cardId": "p_woozy",
+      "second": 151.69999999999396,
+      "incumbentTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 21,
+        "minionKills": 1,
+        "structureDamage": 0,
+        "deaths": 1,
+        "firstCompletionSeconds": 12.833333333332604,
+        "reward": -1
+      }
+    },
+    {
+      "id": "train-91-d1-original",
+      "split": "train",
+      "seed": 91,
+      "draft": 1,
+      "swapped": false,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-train-91-d1-original.json",
+      "validPair": true,
+      "cardId": "p_turbogamer",
+      "second": 155.99999999999372,
+      "incumbentTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      }
+    },
+    {
+      "id": "train-92-d1-swapped",
+      "split": "train",
+      "seed": 92,
+      "draft": 1,
+      "swapped": true,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-train-92-d1-swapped.json",
+      "validPair": true,
+      "cardId": "p_toaster",
+      "second": 180.43333333332566,
+      "incumbentTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 260,
+        "campClears": 3,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 8.833333333332831,
+        "reward": 0.6
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 260,
+        "campClears": 3,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 8.133333333332871,
+        "reward": 0.6
+      }
+    },
+    {
+      "id": "heldout-87-d0-original",
+      "split": "heldout",
+      "seed": 87,
+      "draft": 0,
+      "swapped": false,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-heldout-87-d0-original.json",
+      "validPair": true,
+      "cardId": "p_bigtail",
+      "second": 126.36666666666206,
+      "incumbentTask": {
+        "horizonSeconds": 30.03333333333164,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.03333333333164,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 63,
+        "minionKills": 4,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 11.066666666666052,
+        "reward": 0.1512
+      }
+    },
+    {
+      "id": "heldout-88-d0-swapped",
+      "split": "heldout",
+      "seed": 88,
+      "draft": 0,
+      "swapped": true,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-heldout-88-d0-swapped.json",
+      "validPair": true,
+      "cardId": "p_craps",
+      "second": 138.63333333332804,
+      "incumbentTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 294,
+        "deaths": 0,
+        "firstCompletionSeconds": 8.56666666666618,
+        "reward": 0.196
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 294,
+        "deaths": 0,
+        "firstCompletionSeconds": 8.599999999999511,
+        "reward": 0.196
+      }
+    },
+    {
+      "id": "heldout-89-d1-original",
+      "split": "heldout",
+      "seed": 89,
+      "draft": 1,
+      "swapped": false,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-heldout-89-d1-original.json",
+      "validPair": true,
+      "cardId": "p_research_oner",
+      "second": 156.833333333327,
+      "incumbentTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.033333333331626,
+        "campGold": 0,
+        "campClears": 0,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": null,
+        "reward": 0
+      }
+    },
+    {
+      "id": "heldout-90-d1-swapped",
+      "split": "heldout",
+      "seed": 90,
+      "draft": 1,
+      "swapped": true,
+      "source": "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\docs\\ml-task-heldout-90-d1-swapped.json",
+      "validPair": true,
+      "cardId": "p_research_oner",
+      "second": 127.9999999999953,
+      "incumbentTask": {
+        "horizonSeconds": 30.03333333333164,
+        "campGold": 50,
+        "campClears": 1,
+        "waveGold": 0,
+        "minionKills": 0,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 4.133333333333113,
+        "reward": 0.12
+      },
+      "alternateTask": {
+        "horizonSeconds": 30.03333333333164,
+        "campGold": 50,
+        "campClears": 1,
+        "waveGold": 35,
+        "minionKills": 2,
+        "structureDamage": 0,
+        "deaths": 0,
+        "firstCompletionSeconds": 4.133333333333113,
+        "reward": 0.20400000000000001
+      }
+    }
+  ]
+}

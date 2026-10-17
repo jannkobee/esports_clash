@@ -1,0 +1,1399 @@
+{
+  "method": "Evaluation-only 50/50 randomized close, legal same-tier macro choice; seeds 71/72, original and swapped sides; outcome is actor 2-6s progress",
+  "runs": [
+    {
+      "label": "controlled-74-original",
+      "seed": 74,
+      "swapped": false,
+      "outcome": {
+        "winner": "blue",
+        "durationSeconds": 981.4666666664314,
+        "blueKills": 31,
+        "redKills": 11,
+        "objectiveEvents": 56,
+        "towerEvents": 146
+      },
+      "decisions": {
+        "total": 9166,
+        "selected": {
+          "push": 2617,
+          "wave": 1187,
+          "fight": 4618,
+          "regroup": 482,
+          "farm": 262
+        },
+        "offered": {
+          "push": 9166,
+          "wave": 1192,
+          "fight": 4755,
+          "regroup": 807,
+          "farm": 611
+        },
+        "sameTierAlternatives": {
+          "fight": 275,
+          "regroup": 142,
+          "push": 30,
+          "farm": 262,
+          "wave": 50
+        },
+        "byCard": {
+          "p_bigtail": {
+            "push": 258,
+            "fight": 492,
+            "regroup": 30,
+            "wave": 61,
+            "farm": 34
+          },
+          "p_daft": {
+            "push": 260,
+            "wave": 147,
+            "fight": 463,
+            "regroup": 50,
+            "farm": 56
+          },
+          "p_flaker": {
+            "push": 305,
+            "wave": 183,
+            "fight": 686,
+            "regroup": 37
+          },
+          "p_p1mple": {
+            "push": 363,
+            "fight": 575,
+            "regroup": 84,
+            "wave": 13
+          },
+          "p_thespicy": {
+            "push": 353,
+            "wave": 310,
+            "fight": 800,
+            "regroup": 27
+          },
+          "p_craps": {
+            "push": 278,
+            "fight": 352,
+            "regroup": 45,
+            "wave": 71,
+            "farm": 29
+          },
+          "p_mirecle": {
+            "push": 192,
+            "wave": 124,
+            "fight": 354,
+            "regroup": 27,
+            "farm": 39
+          },
+          "p_neko": {
+            "push": 252,
+            "fight": 303,
+            "regroup": 84,
+            "wave": 72,
+            "farm": 20
+          },
+          "p_ouzi": {
+            "push": 235,
+            "fight": 311,
+            "regroup": 36,
+            "wave": 58,
+            "farm": 70
+          },
+          "p_woozy": {
+            "push": 121,
+            "wave": 148,
+            "fight": 282,
+            "regroup": 62,
+            "farm": 14
+          }
+        },
+        "sameStateCompared": 9166,
+        "sameStateChanged": 5,
+        "changedEpisodes": 5,
+        "lowHealthComparisons": 8,
+        "dangerousFightComparisons": 84,
+        "suppressedChanged": 0,
+        "localOutcomeSamples": 8561,
+        "outcomeHorizonMin": 2.0000000000000178,
+        "outcomeHorizonMax": 5.999999999994543,
+        "changedWithOutcome": 5,
+        "referenceCompared": 0,
+        "referenceChanged": 0,
+        "referenceChangedWithOutcome": 0,
+        "referenceSuppressedChanged": 0,
+        "experimentAssignments": 14,
+        "experimentWithOutcome": 14,
+        "experimentArms": {
+          "incumbent": 9,
+          "alternate": 5
+        },
+        "experimentGateCounts": {
+          "legal-pair": 3457,
+          "commitment": 788,
+          "defense": 907,
+          "influence": 31,
+          "health": 3092,
+          "survival": 67,
+          "tower": 315,
+          "utility-gap": 231,
+          "eligible": 14,
+          "cooldown": 101,
+          "objective": 125,
+          "danger": 38
+        },
+        "meanLocalProgress": 0.09268610473548718
+      },
+      "experimentRecords": [
+        {
+          "second": 199.73333333332457,
+          "actorId": "blue_p_flaker",
+          "team": "blue",
+          "selected": "regroup",
+          "contextKey": "regroup:blue_p_flaker",
+          "features": {
+            "bias": 1,
+            "iq": 0.98,
+            "teamfight": 0.98,
+            "lane": 0.99,
+            "flexibility": 0.96,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Marksman": 1,
+            "card:p_flaker": 1,
+            "personality:iron_will": 1,
+            "personality:glue_guy": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "fight",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "fight",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.006307405395322735
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 682.689333333157,
+            "cs": 15,
+            "kills": 1,
+            "deaths": 0,
+            "damageDealt": 6347
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.033333333333161,
+            "healthChange": 0,
+            "goldGain": 37.658833333329085,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.02824412499999681
+          }
+        },
+        {
+          "second": 334.733333333384,
+          "actorId": "blue_p_flaker",
+          "team": "blue",
+          "selected": "regroup",
+          "contextKey": "regroup:blue_p_flaker",
+          "features": {
+            "bias": 1,
+            "iq": 0.98,
+            "teamfight": 0.98,
+            "lane": 0.99,
+            "flexibility": 0.96,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Marksman": 1,
+            "card:p_flaker": 1,
+            "personality:iron_will": 1,
+            "personality:glue_guy": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "fight",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "fight",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.0023561895860594873
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 222.36416666662362,
+            "cs": 1,
+            "kills": 1,
+            "deaths": 1,
+            "damageDealt": 2114
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0000000000023874,
+            "healthChange": 0,
+            "goldGain": 36.83116666666754,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.027623375000000654
+          }
+        },
+        {
+          "second": 374.20000000008207,
+          "actorId": "blue_p_p1mple",
+          "team": "blue",
+          "selected": "fight",
+          "contextKey": "fight:red_p_ouzi:0",
+          "features": {
+            "bias": 1,
+            "iq": 0.95,
+            "teamfight": 0.97,
+            "lane": 0.99,
+            "flexibility": 0.93,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Tank": 1,
+            "card:p_p1mple": 1,
+            "personality:bush_stalker": 1,
+            "personality:revenge_driven": 0.5
+          },
+          "selectionReason": "evaluation-experiment:alternate",
+          "heldAction": "push",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "fight",
+            "pair": "fight-regroup",
+            "arm": "alternate",
+            "propensity": 0.5,
+            "utilityGap": 0.001071400167290737
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 609.9078333332697,
+            "cs": 0,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 1286
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target",
+              "learnedFactor": 0.1312871054614302,
+              "baselineUtility": 0.19476054679754834,
+              "actualUtility": 0.20001203101600554
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion",
+              "learnedFactor": 0.03115139324270292,
+              "baselineUtility": 0.28,
+              "actualUtility": 0.2812460557297081
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+              "learnedFactor": -0.16243849870413313,
+              "baselineUtility": 0.2075809711314616,
+              "actualUtility": 0.20108343118329627
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp",
+              "learnedFactor": -0.1743938574200141,
+              "baselineUtility": 0.13349999999999998,
+              "actualUtility": 0.12652424570319942
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available",
+              "learnedFactor": 0.1743938574200141,
+              "baselineUtility": -0.09638424235932516,
+              "actualUtility": -0.0894084880625246
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0000000000023874,
+            "healthChange": 0,
+            "goldGain": 36.83116666666251,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.027623374999996883
+          }
+        },
+        {
+          "second": 540.6000000001657,
+          "actorId": "blue_p_flaker",
+          "team": "blue",
+          "selected": "regroup",
+          "contextKey": "regroup:blue_p_flaker",
+          "features": {
+            "bias": 1,
+            "iq": 0.98,
+            "teamfight": 0.98,
+            "lane": 0.99,
+            "flexibility": 0.96,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Marksman": 1,
+            "card:p_flaker": 1,
+            "personality:iron_will": 1,
+            "personality:glue_guy": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "fight",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "fight",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.0743389364448564
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 239.14033333331008,
+            "cs": 5,
+            "kills": 0,
+            "deaths": 0,
+            "damageDealt": 1680
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": 0,
+            "goldGain": 37.245000000000914,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 189,
+            "progress": 0.2169337500000007
+          }
+        },
+        {
+          "second": 566.266666666809,
+          "actorId": "red_p_woozy",
+          "team": "red",
+          "selected": "wave",
+          "contextKey": "wave:b_melee_26_2:0",
+          "features": {
+            "bias": 1,
+            "iq": 0.95,
+            "teamfight": 0.96,
+            "lane": 0.96,
+            "flexibility": 0.96,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Marksman": 1,
+            "card:p_woozy": 1,
+            "personality:momentum_junkie": 1,
+            "personality:showman": 0.5
+          },
+          "selectionReason": "evaluation-experiment:alternate",
+          "heldAction": "regroup",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "wave",
+            "pair": "regroup-wave",
+            "arm": "alternate",
+            "propensity": 0.5,
+            "utilityGap": 0.07466537432212655
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 246.1680000000514,
+            "cs": 1,
+            "kills": 1,
+            "deaths": 0,
+            "damageDealt": 1656
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target",
+              "learnedFactor": 0.11365885546143019,
+              "baselineUtility": 0.07392396503958323,
+              "actualUtility": 0.07847031925804045
+            },
+            {
+              "key": "wave",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion",
+              "learnedFactor": 0.047353393242702914,
+              "baselineUtility": 0.28,
+              "actualUtility": 0.2818941357297081
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+              "learnedFactor": -0.1610122487041331,
+              "baselineUtility": 0.363,
+              "actualUtility": 0.35655951005183467
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp",
+              "learnedFactor": -0.1877886074200141,
+              "baselineUtility": 0.13349999999999998,
+              "actualUtility": 0.12598845570319941
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available",
+              "learnedFactor": 0.1877886074200141,
+              "baselineUtility": -0.1711672550739415,
+              "actualUtility": -0.16365571077714094
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": 0,
+            "goldGain": 36.47999999999922,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.027359999999999416
+          }
+        },
+        {
+          "second": 603.6333333334417,
+          "actorId": "red_p_neko",
+          "team": "red",
+          "selected": "fight",
+          "contextKey": "fight:blue_p_daft:0",
+          "features": {
+            "bias": 1,
+            "iq": 0.89,
+            "teamfight": 0.93,
+            "lane": 0.97,
+            "flexibility": 0.88,
+            "health": 0.9517009602194776,
+            "mana": 1,
+            "roleFit": 1,
+            "role:Fighter": 1,
+            "card:p_neko": 1,
+            "personality:short_fuse": 1,
+            "personality:untiltable": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "regroup",
+          "experiment": {
+            "incumbent": "fight",
+            "alternate": "regroup",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.004676961533839563
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 0.9517009602194776,
+            "gold": 232.25583333341132,
+            "cs": 4,
+            "kills": 0,
+            "deaths": 1,
+            "damageDealt": 582
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "fight",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": 0,
+            "goldGain": 36.73499999999933,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.027551249999999496
+          }
+        },
+        {
+          "second": 611.3333333334347,
+          "actorId": "red_p_neko",
+          "team": "red",
+          "selected": "regroup",
+          "contextKey": "regroup:red_p_craps",
+          "features": {
+            "bias": 1,
+            "iq": 0.89,
+            "teamfight": 0.93,
+            "lane": 0.97,
+            "flexibility": 0.88,
+            "health": 0.9517009602194776,
+            "mana": 1,
+            "roleFit": 1,
+            "role:Fighter": 1,
+            "card:p_neko": 1,
+            "personality:short_fuse": 1,
+            "personality:untiltable": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "wave",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "fight",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.09785548335459313
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 0.9517009602194776,
+            "gold": 405.5423333334096,
+            "cs": 6,
+            "kills": 0,
+            "deaths": 1,
+            "damageDealt": 582
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": -0.010288065843621408,
+            "goldGain": 36.73499999999933,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.023950426954732006
+          }
+        },
+        {
+          "second": 622.700000000091,
+          "actorId": "blue_p_flaker",
+          "team": "blue",
+          "selected": "regroup",
+          "contextKey": "regroup:blue_p_flaker",
+          "features": {
+            "bias": 1,
+            "iq": 0.98,
+            "teamfight": 0.98,
+            "lane": 0.99,
+            "flexibility": 0.96,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Marksman": 1,
+            "card:p_flaker": 1,
+            "personality:iron_will": 1,
+            "personality:glue_guy": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "fight",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "fight",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.040171343159278616
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 231.77066666658283,
+            "cs": 10,
+            "kills": 0,
+            "deaths": 1,
+            "damageDealt": 3390
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": 0,
+            "goldGain": 187.2450000000009,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.14043375000000066
+          }
+        },
+        {
+          "second": 870.099999999866,
+          "actorId": "red_p_craps",
+          "team": "red",
+          "selected": "regroup",
+          "contextKey": "regroup:red_p_craps",
+          "features": {
+            "bias": 1,
+            "iq": 0.9,
+            "teamfight": 0.94,
+            "lane": 0.93,
+            "flexibility": 0.95,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Fighter": 1,
+            "card:p_craps": 1,
+            "personality:limit_tester": 1,
+            "personality:cold_as_ice": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "fight",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "fight",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.033051877626065485
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 582.3421666665715,
+            "cs": 11,
+            "kills": 1,
+            "deaths": 4,
+            "damageDealt": 5062
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": 0,
+            "goldGain": 35.71500000000128,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.026786250000000962
+          }
+        },
+        {
+          "second": 873.9666666665291,
+          "actorId": "blue_p_bigtail",
+          "team": "blue",
+          "selected": "regroup",
+          "contextKey": "regroup:blue_p_flaker",
+          "features": {
+            "bias": 1,
+            "iq": 0.97,
+            "teamfight": 0.94,
+            "lane": 0.88,
+            "flexibility": 0.95,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Marksman": 1,
+            "card:p_bigtail": 1,
+            "personality:iron_will": 1,
+            "personality:egoistic": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "fight",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "fight",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.028793529262045148
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 94.82533333322196,
+            "cs": 5,
+            "kills": 3,
+            "deaths": 4,
+            "damageDealt": 5930
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": 0,
+            "goldGain": 184.44000000000057,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 198,
+            "progress": 0.33633000000000046
+          }
+        },
+        {
+          "second": 878.7666666665248,
+          "actorId": "blue_p_flaker",
+          "team": "blue",
+          "selected": "regroup",
+          "contextKey": "regroup:blue_p_flaker",
+          "features": {
+            "bias": 1,
+            "iq": 0.98,
+            "teamfight": 0.98,
+            "lane": 0.99,
+            "flexibility": 0.96,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Marksman": 1,
+            "card:p_flaker": 1,
+            "personality:iron_will": 1,
+            "personality:glue_guy": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "fight",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "fight",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.08125959220358153
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 241.91599999988102,
+            "cs": 27,
+            "kills": 9,
+            "deaths": 3,
+            "damageDealt": 29106
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": 0,
+            "goldGain": 187.2450000000009,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 271,
+            "progress": 0.4114337500000006
+          }
+        },
+        {
+          "second": 882.7999999998544,
+          "actorId": "blue_p_flaker",
+          "team": "blue",
+          "selected": "regroup",
+          "contextKey": "regroup:blue_p_flaker",
+          "features": {
+            "bias": 1,
+            "iq": 0.98,
+            "teamfight": 0.98,
+            "lane": 0.99,
+            "flexibility": 0.96,
+            "health": 1,
+            "mana": 0.04049999999999994,
+            "roleFit": 0,
+            "role:Marksman": 1,
+            "card:p_flaker": 1,
+            "personality:iron_will": 1,
+            "personality:glue_guy": 0.5
+          },
+          "selectionReason": "evaluation-experiment:alternate",
+          "heldAction": "fight",
+          "experiment": {
+            "incumbent": "fight",
+            "alternate": "regroup",
+            "pair": "fight-regroup",
+            "arm": "alternate",
+            "propensity": 0.5,
+            "utilityGap": 0.013217497358206931
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 441.9898333332156,
+            "cs": 27,
+            "kills": 9,
+            "deaths": 3,
+            "damageDealt": 29377
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target",
+              "learnedFactor": 0.05945806879476371,
+              "baselineUtility": 0.2646933161249177,
+              "actualUtility": 0.26707163887670826
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion",
+              "learnedFactor": 0.031688393242702916,
+              "baselineUtility": 0.28,
+              "actualUtility": 0.28126753572970814
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+              "learnedFactor": -0.09114646203746662,
+              "baselineUtility": 0.2575,
+              "actualUtility": 0.25385414151850133
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp",
+              "learnedFactor": -0.16349260742001412,
+              "baselineUtility": 0.13349999999999998,
+              "actualUtility": 0.12696029570319942
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available",
+              "learnedFactor": 0.16349260742001412,
+              "baselineUtility": -0.07961233002314153,
+              "actualUtility": -0.07307262572634096
+            }
+          ],
+          "zeroPolicySelected": "fight",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": 0,
+            "goldGain": 37.245000000000914,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.027933750000000687
+          }
+        },
+        {
+          "second": 891.766666666513,
+          "actorId": "blue_p_thespicy",
+          "team": "blue",
+          "selected": "wave",
+          "contextKey": "wave:r_caster_41_2:0",
+          "features": {
+            "bias": 1,
+            "iq": 0.85,
+            "teamfight": 0.95,
+            "lane": 0.96,
+            "flexibility": 0.88,
+            "health": 0.8577619211370913,
+            "mana": 0.0586080586080683,
+            "roleFit": 0,
+            "role:Mage": 1,
+            "card:p_thespicy": 1,
+            "personality:bush_stalker": 1,
+            "personality:revenge_driven": 0.5
+          },
+          "selectionReason": "evaluation-experiment:alternate",
+          "heldAction": "fight",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "wave",
+            "pair": "regroup-wave",
+            "arm": "alternate",
+            "propensity": 0.5,
+            "utilityGap": 0.028249850772067875
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 0.8577619211370913,
+            "gold": 3262.653333333378,
+            "cs": 15,
+            "kills": 5,
+            "deaths": 1,
+            "damageDealt": 34740
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target",
+              "learnedFactor": 0.06856197878533836,
+              "baselineUtility": 0.18,
+              "actualUtility": 0.18274247915141353
+            },
+            {
+              "key": "wave",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion",
+              "learnedFactor": 0.025095875956482428,
+              "baselineUtility": 0.28,
+              "actualUtility": 0.2810038350382593
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+              "learnedFactor": -0.0936578547418208,
+              "baselineUtility": 0.313,
+              "actualUtility": 0.3092536858103272
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp",
+              "learnedFactor": -0.12964948174374102,
+              "baselineUtility": 0.13349999999999998,
+              "actualUtility": 0.12831402073025033
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available",
+              "learnedFactor": 0.12964948174374102,
+              "baselineUtility": 0.37028220007722773,
+              "actualUtility": 0.37546817934697735
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": 0.000020632737276371493,
+            "goldGain": 36.47999999998319,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.027367221458034125
+          }
+        },
+        {
+          "second": 933.9999999998079,
+          "actorId": "red_p_woozy",
+          "team": "red",
+          "selected": "wave",
+          "contextKey": "wave:b_caster_42_1:0",
+          "features": {
+            "bias": 1,
+            "iq": 0.95,
+            "teamfight": 0.96,
+            "lane": 0.96,
+            "flexibility": 0.96,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 0,
+            "role:Marksman": 1,
+            "card:p_woozy": 1,
+            "personality:momentum_junkie": 1,
+            "personality:showman": 0.5
+          },
+          "selectionReason": "evaluation-experiment:alternate",
+          "heldAction": "regroup",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "wave",
+            "pair": "regroup-wave",
+            "arm": "alternate",
+            "propensity": 0.5,
+            "utilityGap": 0.035512149396842
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 518.2773333334738,
+            "cs": 12,
+            "kills": 2,
+            "deaths": 6,
+            "damageDealt": 12156
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target",
+              "learnedFactor": 0.11365885546143019,
+              "baselineUtility": 0.15087133428553856,
+              "actualUtility": 0.15541768850399576
+            },
+            {
+              "key": "wave",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion",
+              "learnedFactor": 0.047353393242702914,
+              "baselineUtility": 0.28,
+              "actualUtility": 0.2818941357297081
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+              "learnedFactor": -0.1610122487041331,
+              "baselineUtility": 0.32384677507471543,
+              "actualUtility": 0.3174062851265501
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp",
+              "learnedFactor": -0.1877886074200141,
+              "baselineUtility": 0.13349999999999998,
+              "actualUtility": 0.12598845570319941
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available",
+              "learnedFactor": 0.1877886074200141,
+              "baselineUtility": -0.16410002911965157,
+              "actualUtility": -0.156588484822851
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.0333333333305745,
+            "healthChange": 0,
+            "goldGain": 64.48000000000366,
+            "csGain": 2,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.19836000000000273
+          }
+        }
+      ]
+    }
+  ]
+}

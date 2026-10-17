@@ -1,0 +1,328 @@
+{
+  "method": "Evaluation-only 50/50 randomized close, legal same-tier macro choice; seeds 71/72, original and swapped sides; outcome is actor 2-6s progress",
+  "runs": [
+    {
+      "label": "controlled-74-original",
+      "seed": 74,
+      "swapped": false,
+      "outcome": {
+        "winner": "blue",
+        "durationSeconds": 443.06666666680354,
+        "blueKills": 29,
+        "redKills": 7,
+        "objectiveEvents": 16,
+        "towerEvents": 328
+      },
+      "decisions": {
+        "total": 4121,
+        "selected": {
+          "push": 1040,
+          "fight": 2341,
+          "regroup": 217,
+          "wave": 489,
+          "farm": 34
+        },
+        "offered": {
+          "push": 4121,
+          "fight": 2427,
+          "regroup": 363,
+          "wave": 491,
+          "farm": 159
+        },
+        "sameTierAlternatives": {
+          "fight": 130,
+          "regroup": 88,
+          "farm": 34,
+          "push": 1,
+          "wave": 16
+        },
+        "byCard": {
+          "p_bigtail": {
+            "push": 105,
+            "fight": 251,
+            "wave": 37,
+            "regroup": 11,
+            "farm": 1
+          },
+          "p_daft": {
+            "push": 115,
+            "fight": 342,
+            "wave": 41,
+            "regroup": 10,
+            "farm": 19
+          },
+          "p_flaker": {
+            "push": 119,
+            "fight": 336,
+            "wave": 107,
+            "regroup": 13
+          },
+          "p_p1mple": {
+            "push": 140,
+            "fight": 281,
+            "wave": 24,
+            "regroup": 5
+          },
+          "p_thespicy": {
+            "push": 120,
+            "fight": 268,
+            "wave": 82,
+            "regroup": 34
+          },
+          "p_craps": {
+            "push": 122,
+            "fight": 197,
+            "regroup": 17,
+            "wave": 31
+          },
+          "p_mirecle": {
+            "push": 92,
+            "fight": 155,
+            "regroup": 24,
+            "wave": 33
+          },
+          "p_neko": {
+            "push": 88,
+            "fight": 138,
+            "regroup": 61,
+            "wave": 14,
+            "farm": 13
+          },
+          "p_ouzi": {
+            "push": 72,
+            "fight": 167,
+            "wave": 20,
+            "regroup": 12
+          },
+          "p_woozy": {
+            "push": 67,
+            "fight": 206,
+            "wave": 100,
+            "regroup": 30,
+            "farm": 1
+          }
+        },
+        "sameStateCompared": 4121,
+        "sameStateChanged": 1,
+        "changedEpisodes": 1,
+        "lowHealthComparisons": 50,
+        "dangerousFightComparisons": 33,
+        "suppressedChanged": 0,
+        "localOutcomeSamples": 3729,
+        "outcomeHorizonMin": 2.000000000000039,
+        "outcomeHorizonMax": 5.966666666671415,
+        "changedWithOutcome": 1,
+        "referenceCompared": 0,
+        "referenceChanged": 0,
+        "referenceChangedWithOutcome": 0,
+        "referenceSuppressedChanged": 0,
+        "experimentAssignments": 2,
+        "experimentWithOutcome": 2,
+        "experimentArms": {
+          "incumbent": 2,
+          "alternate": 0
+        },
+        "experimentGateCounts": {
+          "legal-pair": 1594,
+          "commitment": 243,
+          "defense": 528,
+          "influence": 14,
+          "health": 1347,
+          "tower": 179,
+          "utility-gap": 31,
+          "survival": 48,
+          "cooldown": 44,
+          "danger": 15,
+          "eligible": 2,
+          "objective": 76
+        },
+        "meanLocalProgress": 0.10247044199577884
+      },
+      "experimentRecords": [
+        {
+          "second": 149.66666666666075,
+          "actorId": "red_p_woozy",
+          "team": "red",
+          "selected": "regroup",
+          "contextKey": "regroup:red_p_craps",
+          "features": {
+            "bias": 1,
+            "iq": 0.95,
+            "teamfight": 0.96,
+            "lane": 0.96,
+            "flexibility": 0.96,
+            "health": 0.9562803608605135,
+            "mana": 0.7144999999999907,
+            "roleFit": 0,
+            "role:Marksman": 1,
+            "card:p_woozy": 1,
+            "personality:momentum_junkie": 1,
+            "personality:showman": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "wave",
+          "experiment": {
+            "incumbent": "regroup",
+            "alternate": "wave",
+            "pair": "regroup-wave",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.055151375828094984
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 0.9562803608605135,
+            "gold": 752.3466666667791,
+            "cs": 10,
+            "kills": 0,
+            "deaths": 1,
+            "damageDealt": 1943
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target"
+            },
+            {
+              "key": "wave",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion"
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping"
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp"
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available"
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.033333333333161,
+            "healthChange": 0,
+            "goldGain": 78.48000000000366,
+            "csGain": 2,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.20886000000000274
+          }
+        },
+        {
+          "second": 198.066666666658,
+          "actorId": "red_p_neko",
+          "team": "red",
+          "selected": "fight",
+          "contextKey": "fight:blue_p_thespicy:0",
+          "features": {
+            "bias": 1,
+            "iq": 0.89,
+            "teamfight": 0.93,
+            "lane": 0.97,
+            "flexibility": 0.88,
+            "health": 1,
+            "mana": 1,
+            "roleFit": 1,
+            "role:Fighter": 1,
+            "card:p_neko": 1,
+            "personality:short_fuse": 1,
+            "personality:untiltable": 0.5
+          },
+          "selectionReason": "evaluation-experiment:incumbent",
+          "heldAction": "retreat",
+          "experiment": {
+            "incumbent": "fight",
+            "alternate": "regroup",
+            "pair": "fight-regroup",
+            "arm": "incumbent",
+            "propensity": 0.5,
+            "utilityGap": 0.0012412550932872357
+          },
+          "experimentGate": "eligible",
+          "snapshot": {
+            "healthFraction": 1,
+            "gold": 176.8763333334258,
+            "cs": 4,
+            "kills": 0,
+            "deaths": 1,
+            "damageDealt": 1168
+          },
+          "candidates": [
+            {
+              "key": "fight",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing combat and objective-fight policy supplied a reachable target",
+              "learnedFactor": 0.04327043879476353,
+              "baselineUtility": 0.20403035823575677,
+              "actualUtility": 0.20576117578754732
+            },
+            {
+              "key": "wave",
+              "available": false,
+              "priority": "tactical",
+              "reason": "existing wave policy requires a safe, actionable minion",
+              "learnedFactor": 0.03033839324270292,
+              "baselineUtility": 0.28,
+              "actualUtility": 0.28121353572970814
+            },
+            {
+              "key": "regroup",
+              "available": true,
+              "priority": "tactical",
+              "reason": "existing IGL, fight-reinforcement, or carry-protection rule requested regrouping",
+              "learnedFactor": -0.07360883203746643,
+              "baselineUtility": 0.20746427397575876,
+              "actualUtility": 0.2045199206942601
+            },
+            {
+              "key": "farm",
+              "available": false,
+              "priority": "optional",
+              "reason": "existing safe camp-farm policy selected a known camp",
+              "learnedFactor": -0.24434252408668078,
+              "baselineUtility": 0.13349999999999998,
+              "actualUtility": 0.12372629903653275
+            },
+            {
+              "key": "push",
+              "available": true,
+              "priority": "optional",
+              "reason": "existing lane-advance fallback remains available",
+              "learnedFactor": 0.24434252408668078,
+              "baselineUtility": -0.14895154002086028,
+              "actualUtility": -0.13917783905739306
+            }
+          ],
+          "zeroPolicySelected": "regroup",
+          "zeroPolicyReason": "utility",
+          "outcome": {
+            "horizonSeconds": 3.033333333333161,
+            "healthChange": 0,
+            "goldGain": 36.73499999999933,
+            "csGain": 0,
+            "killGain": 0,
+            "deathGain": 0,
+            "damageGain": 0,
+            "progress": 0.027551249999999496
+          }
+        }
+      ]
+    }
+  ]
+}

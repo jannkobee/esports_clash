@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-17",
+  "scope": "Selected spell choreography, current dash trails, hooks and summon formation over existing simulation",
+  "checks": {
+    "gameTests": 380,
+    "simulationTests": 3,
+    "typeScript": true,
+    "build": true,
+    "existingLargeChunkAdvisory": true,
+    "newDetailTests": 5,
+    "allTwelveDashKinds": true,
+    "frozenInputsAndFutureTargetsIgnored": true,
+    "hookOrnamentsBounded": true,
+    "targetFollowing": true,
+    "immediateWardenFormation": true,
+    "bothBroadsideFacings": true,
+    "videoDecoded": {
+      "decoded": true,
+      "width": 1600,
+      "height": 1100,
+      "seekedSecond": 1
+    },
+    "representativeWebGLFixtures": 12,
+    "exactStateAndRngAtSeconds": [
+      30.00000000000065,
+      59.999999999999154,
+      89.99999999999746
+    ],
+    "contextRecovery": true,
+    "disposal": true
+  },
+  "sceneCounts": [
+    {
+      "width": 1440,
+      "height": 1000,
+      "calls": 475,
+      "triangles": 172534
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "calls": 487,
+      "triangles": 173142
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "calls": 405,
+      "triangles": 169554
+    }
+  ],
+  "ownedServicesClosed": {
+    "5184": true,
+    "9234": true
+  },
+  "hashes": {
+    "EsportsClash.Web/src/threeAbilityDetails.ts": "ce948e64a915aa7a94f703986e6933adef0189dca1344ab066690bf8cb647d97",
+    "EsportsClash.Web/src/threeAbilityDetails.test.mjs": "f5f658df10f74fc9b55d3eb8716289c724dc9ae108a779ac27b0c5c147fd9ecd",
+    "EsportsClash.Web/src/threeAbilityEffects.ts": "7d73f5b70306b113a9741153c89923cf57e522769d3211439cecf0ae93d302be",
+    "EsportsClash.Web/src/threeAbilityEffects.test.mjs": "2e20bd5c9c72694fc06e4314f219778260edf0affee6bfc4ea87c34c951f9d9d",
+    "EsportsClash.Web/scripts/check-ability-vfx.mjs": "46127d80069816629952e51de9272882b1811e212e67e037aa18ba22f3c0308b",
+    "docs/ability-details.md": "18ca627c5d7d3432dca121a4c78d78e740bc7ec5813552d3c45f27ec8e23d379",
+    "docs/ability-details-fixtures.json": "2f7e4e62a3bec25aeaf51df8f46e370d2a6c8802ed9674e5af2ede493ff18dcb",
+    "docs/ability-details-arena-verification.json": "d3a7b73b456286dbd3cb40c5927fdfb6c6d666bf90ca9697dfdfa2777b1169dc",
+    "docs/ability-details-preview.png": "0805fae69b4c86c9771a10346eec118d0ac9712813fa76eee39be929a129c209",
+    "docs/ability-details-preview.webm": "6150ee397c834718f110153d550ab32508a57a31bde48488fd8f4d766766598d",
+    "docs/ability-details-video-verification.json": "c8c445fb9799f9165dd5c154816c630b6972f697d1bbe01cb5621f11abe21454",
+    "docs/ability-details-game-check.log": "af7d18f01f63acc2983e8adf55301bb5980a9e37469058fa2869d363e738ed6d",
+    "docs/ability-details-build.log": "de93e94e1c92ef03f47fab84f32e0a325221382c413c7caa78c6253dd4c23070"
+  },
+  "limits": "Selected geometry spell details; no complete bespoke ability matrix, full-match or device-frame-time claim. Live gameplay, GLBs and historical ML evidence unchanged."
+}

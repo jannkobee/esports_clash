@@ -1,0 +1,786 @@
+{
+  "method": "Real AramMatchView, fixed lineup, 4x live browser; train seed 47, held-out seed 51",
+  "comparableDecisionSamples": 236,
+  "changedDecisionSamples": 0,
+  "train": {
+    "label": "train",
+    "seed": 47,
+    "startingPolicy": {
+      "version": 2,
+      "matches": 0,
+      "weights": {
+        "fight": {},
+        "wave": {},
+        "regroup": {},
+        "farm": {},
+        "push": {}
+      }
+    },
+    "endingPolicy": {
+      "version": 2,
+      "matches": 1,
+      "weights": {
+        "fight": {
+          "bias": 0.009166666666666665,
+          "iq": 0.009891666666666661,
+          "teamfight": 0.009325000000000002,
+          "lane": 0.009883333333333334,
+          "flexibility": 0.008716666666666668,
+          "health": -0.00008956120523627778,
+          "mana": 0.022126666666666468,
+          "roleFit": -0.001,
+          "role:Marksman": 0.012499999999999999,
+          "card:p_woozy": 0.015,
+          "personality:momentum_junkie": 0.015,
+          "personality:showman": 0.0075,
+          "role:Fighter": -0.02,
+          "card:p_neko": 0,
+          "personality:short_fuse": 0,
+          "personality:untiltable": -0.0033333333333333335,
+          "card:p_craps": -0.02,
+          "personality:limit_tester": -0.02,
+          "personality:cold_as_ice": -0.01,
+          "role:Assassin": -0.0033333333333333335,
+          "card:p_ouzi": -0.0033333333333333335,
+          "personality:first_blood_hunter": -0.004166666666666667,
+          "card:p_mirecle": -0.0025,
+          "personality:bush_stalker": 0.01875,
+          "role:Tank": 0.02,
+          "card:p_p1mple": 0.02,
+          "personality:revenge_driven": 0.01
+        },
+        "wave": {
+          "bias": 0.005,
+          "iq": 0.00475,
+          "teamfight": 0.0048,
+          "lane": 0.0048,
+          "flexibility": 0.0048,
+          "health": 0.002766893242702919,
+          "mana": 0.005,
+          "roleFit": 0,
+          "role:Marksman": 0.005,
+          "card:p_woozy": 0.005,
+          "personality:momentum_junkie": 0.005,
+          "personality:showman": 0.0025
+        },
+        "regroup": {
+          "bias": -0.014166666666666668,
+          "iq": -0.014641666666666662,
+          "teamfight": -0.014124999999999999,
+          "lane": -0.014683333333333333,
+          "flexibility": -0.013516666666666666,
+          "health": -0.002677332037466642,
+          "mana": -0.027126666666666473,
+          "roleFit": 0.001,
+          "role:Marksman": -0.0175,
+          "card:p_woozy": -0.02,
+          "personality:momentum_junkie": -0.02,
+          "personality:showman": -0.01,
+          "role:Fighter": 0.02,
+          "card:p_neko": 0,
+          "personality:short_fuse": 0,
+          "personality:untiltable": 0.0033333333333333335,
+          "card:p_craps": 0.02,
+          "personality:limit_tester": 0.02,
+          "personality:cold_as_ice": 0.01,
+          "role:Assassin": 0.0033333333333333335,
+          "card:p_ouzi": 0.0033333333333333335,
+          "personality:first_blood_hunter": 0.004166666666666667,
+          "card:p_mirecle": 0.0025,
+          "personality:bush_stalker": -0.01875,
+          "role:Tank": -0.02,
+          "card:p_p1mple": -0.02,
+          "personality:revenge_driven": -0.01
+        },
+        "farm": {
+          "bias": -0.0275,
+          "iq": -0.024708333333333332,
+          "teamfight": -0.026325000000000008,
+          "lane": -0.027416666666666676,
+          "flexibility": -0.024350000000000004,
+          "health": -0.02684769075334742,
+          "mana": -0.0275,
+          "roleFit": -0.016333333333333335,
+          "role:Assassin": -0.016666666666666666,
+          "card:p_ouzi": -0.016666666666666666,
+          "personality:untiltable": -0.023333333333333334,
+          "personality:first_blood_hunter": -0.015833333333333335,
+          "role:Fighter": -0.013333333333333334,
+          "card:p_neko": -0.013333333333333334,
+          "personality:short_fuse": -0.013333333333333334,
+          "role:Mage": 0.01,
+          "card:p_daft": 0.01,
+          "personality:bush_stalker": 0.00625,
+          "personality:steal_gambler": 0.005,
+          "role:Marksman": -0.0075,
+          "card:p_mirecle": -0.0075
+        },
+        "push": {
+          "bias": 0.0275,
+          "iq": 0.024708333333333332,
+          "teamfight": 0.026325000000000008,
+          "lane": 0.027416666666666676,
+          "flexibility": 0.024350000000000004,
+          "health": 0.02684769075334742,
+          "mana": 0.0275,
+          "roleFit": 0.016333333333333335,
+          "role:Assassin": 0.016666666666666666,
+          "card:p_ouzi": 0.016666666666666666,
+          "personality:untiltable": 0.023333333333333334,
+          "personality:first_blood_hunter": 0.015833333333333335,
+          "role:Fighter": 0.013333333333333334,
+          "card:p_neko": 0.013333333333333334,
+          "personality:short_fuse": 0.013333333333333334,
+          "role:Mage": -0.01,
+          "card:p_daft": -0.01,
+          "personality:bush_stalker": -0.00625,
+          "personality:steal_gambler": -0.005,
+          "role:Marksman": 0.0075,
+          "card:p_mirecle": 0.0075
+        }
+      }
+    },
+    "outcome": {
+      "winner": "blue",
+      "durationSeconds": 1144.9666666662827,
+      "blueKills": 63,
+      "redKills": 35,
+      "objectiveEvents": 95,
+      "towerEvents": 355
+    },
+    "decisions": {
+      "total": 9011,
+      "selected": {
+        "push": 2183,
+        "wave": 967,
+        "fight": 4927,
+        "regroup": 567,
+        "farm": 367
+      },
+      "offered": {
+        "push": 9011,
+        "wave": 980,
+        "fight": 5124,
+        "regroup": 992,
+        "farm": 989
+      },
+      "sameTierAlternatives": {
+        "push": 35,
+        "regroup": 210,
+        "farm": 367,
+        "fight": 392,
+        "wave": 33
+      },
+      "byCard": {
+        "p_bigtail": {
+          "push": 195,
+          "fight": 519,
+          "regroup": 49,
+          "wave": 73,
+          "farm": 21
+        },
+        "p_daft": {
+          "push": 223,
+          "wave": 104,
+          "fight": 515,
+          "regroup": 55,
+          "farm": 101
+        },
+        "p_flaker": {
+          "push": 212,
+          "wave": 176,
+          "fight": 509,
+          "regroup": 21
+        },
+        "p_p1mple": {
+          "push": 323,
+          "fight": 638,
+          "regroup": 106,
+          "wave": 37
+        },
+        "p_thespicy": {
+          "push": 213,
+          "wave": 175,
+          "fight": 597,
+          "regroup": 41
+        },
+        "p_craps": {
+          "push": 228,
+          "fight": 458,
+          "wave": 41,
+          "regroup": 48,
+          "farm": 37
+        },
+        "p_mirecle": {
+          "push": 224,
+          "wave": 186,
+          "fight": 410,
+          "regroup": 49,
+          "farm": 58
+        },
+        "p_neko": {
+          "push": 192,
+          "fight": 469,
+          "wave": 53,
+          "regroup": 46,
+          "farm": 23
+        },
+        "p_ouzi": {
+          "push": 197,
+          "fight": 432,
+          "wave": 40,
+          "farm": 53,
+          "regroup": 30
+        },
+        "p_woozy": {
+          "push": 176,
+          "wave": 82,
+          "fight": 380,
+          "farm": 74,
+          "regroup": 122
+        }
+      }
+    }
+  },
+  "baseline": {
+    "label": "heldout-baseline",
+    "seed": 51,
+    "startingPolicy": {
+      "version": 2,
+      "matches": 0,
+      "weights": {
+        "fight": {},
+        "wave": {},
+        "regroup": {},
+        "farm": {},
+        "push": {}
+      }
+    },
+    "endingPolicy": {
+      "version": 2,
+      "matches": 1,
+      "weights": {
+        "fight": {
+          "bias": 0.046666666666666655,
+          "iq": 0.04133333333333333,
+          "teamfight": 0.04413333333333333,
+          "lane": 0.0444,
+          "flexibility": 0.0408,
+          "health": 0.043951833835575646,
+          "mana": 0.029980319865319932,
+          "roleFit": -0.008,
+          "role:Mage": 0.04,
+          "card:p_daft": 0.02,
+          "personality:bush_stalker": 0.04999999999999999,
+          "personality:steal_gambler": 0.01,
+          "role:Marksman": -0.013333333333333332,
+          "card:p_mirecle": -0.02,
+          "personality:first_blood_hunter": -0.02,
+          "card:p_thespicy": 0.02,
+          "personality:revenge_driven": 0.02,
+          "card:p_flaker": 0.006666666666666667,
+          "personality:iron_will": 0.006666666666666667,
+          "personality:glue_guy": 0.0033333333333333335,
+          "role:Tank": 0.02,
+          "card:p_p1mple": 0.02
+        },
+        "wave": {},
+        "regroup": {
+          "bias": -0.046666666666666655,
+          "iq": -0.04133333333333333,
+          "teamfight": -0.04413333333333333,
+          "lane": -0.0444,
+          "flexibility": -0.0408,
+          "health": -0.043951833835575646,
+          "mana": -0.029980319865319932,
+          "roleFit": 0.008,
+          "role:Mage": -0.04,
+          "card:p_daft": -0.02,
+          "personality:bush_stalker": -0.04999999999999999,
+          "personality:steal_gambler": -0.01,
+          "role:Marksman": 0.013333333333333332,
+          "card:p_mirecle": 0.02,
+          "personality:first_blood_hunter": 0.02,
+          "card:p_thespicy": -0.02,
+          "personality:revenge_driven": -0.02,
+          "card:p_flaker": -0.006666666666666667,
+          "personality:iron_will": -0.006666666666666667,
+          "personality:glue_guy": -0.0033333333333333335,
+          "role:Tank": -0.02,
+          "card:p_p1mple": -0.02
+        },
+        "farm": {},
+        "push": {}
+      }
+    },
+    "outcome": {
+      "winner": "blue",
+      "durationSeconds": 394.4333333334315,
+      "blueKills": 13,
+      "redKills": 3,
+      "objectiveEvents": 23,
+      "towerEvents": 206
+    },
+    "decisions": {
+      "total": 3871,
+      "selected": {
+        "push": 1367,
+        "wave": 497,
+        "fight": 1781,
+        "regroup": 134,
+        "farm": 92
+      },
+      "offered": {
+        "push": 3871,
+        "wave": 497,
+        "fight": 1826,
+        "regroup": 221,
+        "farm": 273
+      },
+      "sameTierAlternatives": {
+        "regroup": 45,
+        "fight": 81,
+        "push": 23,
+        "farm": 92,
+        "wave": 6
+      },
+      "byCard": {
+        "p_bigtail": {
+          "push": 183,
+          "fight": 148,
+          "regroup": 16,
+          "wave": 20,
+          "farm": 26
+        },
+        "p_daft": {
+          "push": 172,
+          "wave": 60,
+          "fight": 159,
+          "regroup": 28,
+          "farm": 20
+        },
+        "p_flaker": {
+          "push": 194,
+          "wave": 105,
+          "fight": 188,
+          "regroup": 15
+        },
+        "p_p1mple": {
+          "push": 183,
+          "fight": 239,
+          "regroup": 13,
+          "wave": 10
+        },
+        "p_thespicy": {
+          "push": 174,
+          "wave": 96,
+          "fight": 319,
+          "regroup": 15
+        },
+        "p_craps": {
+          "push": 75,
+          "fight": 147,
+          "wave": 19,
+          "regroup": 6,
+          "farm": 11
+        },
+        "p_mirecle": {
+          "push": 104,
+          "wave": 73,
+          "fight": 162,
+          "regroup": 1
+        },
+        "p_neko": {
+          "push": 96,
+          "fight": 123,
+          "wave": 20,
+          "farm": 13,
+          "regroup": 16
+        },
+        "p_ouzi": {
+          "push": 108,
+          "fight": 157,
+          "wave": 23,
+          "regroup": 11,
+          "farm": 15
+        },
+        "p_woozy": {
+          "push": 78,
+          "wave": 71,
+          "fight": 139,
+          "farm": 7,
+          "regroup": 13
+        }
+      }
+    }
+  },
+  "learned": {
+    "label": "heldout-learned",
+    "seed": 51,
+    "startingPolicy": {
+      "version": 2,
+      "matches": 1,
+      "weights": {
+        "fight": {
+          "bias": 0.009166666666666665,
+          "iq": 0.009891666666666661,
+          "teamfight": 0.009325000000000002,
+          "lane": 0.009883333333333334,
+          "flexibility": 0.008716666666666668,
+          "health": -0.00008956120523627778,
+          "mana": 0.022126666666666468,
+          "roleFit": -0.001,
+          "role:Marksman": 0.012499999999999999,
+          "card:p_woozy": 0.015,
+          "personality:momentum_junkie": 0.015,
+          "personality:showman": 0.0075,
+          "role:Fighter": -0.02,
+          "card:p_neko": 0,
+          "personality:short_fuse": 0,
+          "personality:untiltable": -0.0033333333333333335,
+          "card:p_craps": -0.02,
+          "personality:limit_tester": -0.02,
+          "personality:cold_as_ice": -0.01,
+          "role:Assassin": -0.0033333333333333335,
+          "card:p_ouzi": -0.0033333333333333335,
+          "personality:first_blood_hunter": -0.004166666666666667,
+          "card:p_mirecle": -0.0025,
+          "personality:bush_stalker": 0.01875,
+          "role:Tank": 0.02,
+          "card:p_p1mple": 0.02,
+          "personality:revenge_driven": 0.01
+        },
+        "wave": {
+          "bias": 0.005,
+          "iq": 0.00475,
+          "teamfight": 0.0048,
+          "lane": 0.0048,
+          "flexibility": 0.0048,
+          "health": 0.002766893242702919,
+          "mana": 0.005,
+          "roleFit": 0,
+          "role:Marksman": 0.005,
+          "card:p_woozy": 0.005,
+          "personality:momentum_junkie": 0.005,
+          "personality:showman": 0.0025
+        },
+        "regroup": {
+          "bias": -0.014166666666666668,
+          "iq": -0.014641666666666662,
+          "teamfight": -0.014124999999999999,
+          "lane": -0.014683333333333333,
+          "flexibility": -0.013516666666666666,
+          "health": -0.002677332037466642,
+          "mana": -0.027126666666666473,
+          "roleFit": 0.001,
+          "role:Marksman": -0.0175,
+          "card:p_woozy": -0.02,
+          "personality:momentum_junkie": -0.02,
+          "personality:showman": -0.01,
+          "role:Fighter": 0.02,
+          "card:p_neko": 0,
+          "personality:short_fuse": 0,
+          "personality:untiltable": 0.0033333333333333335,
+          "card:p_craps": 0.02,
+          "personality:limit_tester": 0.02,
+          "personality:cold_as_ice": 0.01,
+          "role:Assassin": 0.0033333333333333335,
+          "card:p_ouzi": 0.0033333333333333335,
+          "personality:first_blood_hunter": 0.004166666666666667,
+          "card:p_mirecle": 0.0025,
+          "personality:bush_stalker": -0.01875,
+          "role:Tank": -0.02,
+          "card:p_p1mple": -0.02,
+          "personality:revenge_driven": -0.01
+        },
+        "farm": {
+          "bias": -0.0275,
+          "iq": -0.024708333333333332,
+          "teamfight": -0.026325000000000008,
+          "lane": -0.027416666666666676,
+          "flexibility": -0.024350000000000004,
+          "health": -0.02684769075334742,
+          "mana": -0.0275,
+          "roleFit": -0.016333333333333335,
+          "role:Assassin": -0.016666666666666666,
+          "card:p_ouzi": -0.016666666666666666,
+          "personality:untiltable": -0.023333333333333334,
+          "personality:first_blood_hunter": -0.015833333333333335,
+          "role:Fighter": -0.013333333333333334,
+          "card:p_neko": -0.013333333333333334,
+          "personality:short_fuse": -0.013333333333333334,
+          "role:Mage": 0.01,
+          "card:p_daft": 0.01,
+          "personality:bush_stalker": 0.00625,
+          "personality:steal_gambler": 0.005,
+          "role:Marksman": -0.0075,
+          "card:p_mirecle": -0.0075
+        },
+        "push": {
+          "bias": 0.0275,
+          "iq": 0.024708333333333332,
+          "teamfight": 0.026325000000000008,
+          "lane": 0.027416666666666676,
+          "flexibility": 0.024350000000000004,
+          "health": 0.02684769075334742,
+          "mana": 0.0275,
+          "roleFit": 0.016333333333333335,
+          "role:Assassin": 0.016666666666666666,
+          "card:p_ouzi": 0.016666666666666666,
+          "personality:untiltable": 0.023333333333333334,
+          "personality:first_blood_hunter": 0.015833333333333335,
+          "role:Fighter": 0.013333333333333334,
+          "card:p_neko": 0.013333333333333334,
+          "personality:short_fuse": 0.013333333333333334,
+          "role:Mage": -0.01,
+          "card:p_daft": -0.01,
+          "personality:bush_stalker": -0.00625,
+          "personality:steal_gambler": -0.005,
+          "role:Marksman": 0.0075,
+          "card:p_mirecle": 0.0075
+        }
+      }
+    },
+    "endingPolicy": {
+      "version": 2,
+      "matches": 2,
+      "weights": {
+        "fight": {
+          "bias": 0.05472222222222223,
+          "iq": 0.05308055555555556,
+          "teamfight": 0.05304722222222223,
+          "lane": 0.05297222222222223,
+          "flexibility": 0.051494444444444454,
+          "health": 0.03632040048058748,
+          "mana": 0.0625056384742947,
+          "roleFit": -0.001,
+          "role:Marksman": 0.04805555555555556,
+          "card:p_woozy": 0.015,
+          "personality:momentum_junkie": 0.015,
+          "personality:showman": 0.0075,
+          "role:Fighter": -0.02,
+          "card:p_neko": 0,
+          "personality:short_fuse": 0,
+          "personality:untiltable": -0.0033333333333333335,
+          "card:p_craps": -0.02,
+          "personality:limit_tester": -0.02,
+          "personality:cold_as_ice": -0.01,
+          "role:Assassin": -0.0033333333333333335,
+          "card:p_ouzi": -0.0033333333333333335,
+          "personality:first_blood_hunter": -0.004166666666666667,
+          "card:p_mirecle": -0.0025,
+          "personality:bush_stalker": 0.02875,
+          "role:Tank": 0.02,
+          "card:p_p1mple": 0.02,
+          "personality:revenge_driven": 0.015000000000000001,
+          "role:Mage": 0.01,
+          "card:p_thespicy": 0.01,
+          "card:p_flaker": 0.02,
+          "personality:iron_will": 0.035555555555555556,
+          "personality:glue_guy": 0.01,
+          "card:p_bigtail": 0.015555555555555557,
+          "personality:egoistic": 0.007777777777777778
+        },
+        "wave": {
+          "bias": 0.005,
+          "iq": 0.00475,
+          "teamfight": 0.0048,
+          "lane": 0.0048,
+          "flexibility": 0.0048,
+          "health": 0.002766893242702919,
+          "mana": 0.005,
+          "roleFit": 0,
+          "role:Marksman": 0.005,
+          "card:p_woozy": 0.005,
+          "personality:momentum_junkie": 0.005,
+          "personality:showman": 0.0025
+        },
+        "regroup": {
+          "bias": -0.059722222222222225,
+          "iq": -0.05783055555555555,
+          "teamfight": -0.05784722222222223,
+          "lane": -0.05777222222222223,
+          "flexibility": -0.05629444444444446,
+          "health": -0.0390872937232904,
+          "mana": -0.06750563847429471,
+          "roleFit": 0.001,
+          "role:Marksman": -0.053055555555555564,
+          "card:p_woozy": -0.02,
+          "personality:momentum_junkie": -0.02,
+          "personality:showman": -0.01,
+          "role:Fighter": 0.02,
+          "card:p_neko": 0,
+          "personality:short_fuse": 0,
+          "personality:untiltable": 0.0033333333333333335,
+          "card:p_craps": 0.02,
+          "personality:limit_tester": 0.02,
+          "personality:cold_as_ice": 0.01,
+          "role:Assassin": 0.0033333333333333335,
+          "card:p_ouzi": 0.0033333333333333335,
+          "personality:first_blood_hunter": 0.004166666666666667,
+          "card:p_mirecle": 0.0025,
+          "personality:bush_stalker": -0.02875,
+          "role:Tank": -0.02,
+          "card:p_p1mple": -0.02,
+          "personality:revenge_driven": -0.015000000000000001,
+          "role:Mage": -0.01,
+          "card:p_thespicy": -0.01,
+          "card:p_flaker": -0.02,
+          "personality:iron_will": -0.035555555555555556,
+          "personality:glue_guy": -0.01,
+          "card:p_bigtail": -0.015555555555555557,
+          "personality:egoistic": -0.007777777777777778
+        },
+        "farm": {
+          "bias": -0.0275,
+          "iq": -0.024708333333333332,
+          "teamfight": -0.026325000000000008,
+          "lane": -0.027416666666666676,
+          "flexibility": -0.024350000000000004,
+          "health": -0.02684769075334742,
+          "mana": -0.0275,
+          "roleFit": -0.016333333333333335,
+          "role:Assassin": -0.016666666666666666,
+          "card:p_ouzi": -0.016666666666666666,
+          "personality:untiltable": -0.023333333333333334,
+          "personality:first_blood_hunter": -0.015833333333333335,
+          "role:Fighter": -0.013333333333333334,
+          "card:p_neko": -0.013333333333333334,
+          "personality:short_fuse": -0.013333333333333334,
+          "role:Mage": 0.01,
+          "card:p_daft": 0.01,
+          "personality:bush_stalker": 0.00625,
+          "personality:steal_gambler": 0.005,
+          "role:Marksman": -0.0075,
+          "card:p_mirecle": -0.0075
+        },
+        "push": {
+          "bias": 0.0275,
+          "iq": 0.024708333333333332,
+          "teamfight": 0.026325000000000008,
+          "lane": 0.027416666666666676,
+          "flexibility": 0.024350000000000004,
+          "health": 0.02684769075334742,
+          "mana": 0.0275,
+          "roleFit": 0.016333333333333335,
+          "role:Assassin": 0.016666666666666666,
+          "card:p_ouzi": 0.016666666666666666,
+          "personality:untiltable": 0.023333333333333334,
+          "personality:first_blood_hunter": 0.015833333333333335,
+          "role:Fighter": 0.013333333333333334,
+          "card:p_neko": 0.013333333333333334,
+          "personality:short_fuse": 0.013333333333333334,
+          "role:Mage": -0.01,
+          "card:p_daft": -0.01,
+          "personality:bush_stalker": -0.00625,
+          "personality:steal_gambler": -0.005,
+          "role:Marksman": 0.0075,
+          "card:p_mirecle": 0.0075
+        }
+      }
+    },
+    "outcome": {
+      "winner": "blue",
+      "durationSeconds": 547.900000000159,
+      "blueKills": 20,
+      "redKills": 5,
+      "objectiveEvents": 31,
+      "towerEvents": 195
+    },
+    "decisions": {
+      "total": 5661,
+      "selected": {
+        "push": 1868,
+        "wave": 679,
+        "fight": 2712,
+        "regroup": 196,
+        "farm": 206
+      },
+      "offered": {
+        "push": 5661,
+        "wave": 679,
+        "fight": 2749,
+        "regroup": 340,
+        "farm": 441
+      },
+      "sameTierAlternatives": {
+        "fight": 137,
+        "push": 22,
+        "farm": 206,
+        "regroup": 37,
+        "wave": 7
+      },
+      "byCard": {
+        "p_bigtail": {
+          "push": 217,
+          "fight": 274,
+          "regroup": 21,
+          "wave": 40,
+          "farm": 2
+        },
+        "p_daft": {
+          "push": 159,
+          "wave": 91,
+          "fight": 316,
+          "regroup": 21,
+          "farm": 53
+        },
+        "p_flaker": {
+          "push": 206,
+          "wave": 96,
+          "fight": 392,
+          "regroup": 17,
+          "farm": 1
+        },
+        "p_p1mple": {
+          "push": 247,
+          "fight": 337,
+          "wave": 31,
+          "regroup": 26
+        },
+        "p_thespicy": {
+          "push": 174,
+          "wave": 139,
+          "fight": 349,
+          "regroup": 14,
+          "farm": 1
+        },
+        "p_craps": {
+          "push": 186,
+          "fight": 218,
+          "regroup": 16,
+          "farm": 50,
+          "wave": 18
+        },
+        "p_mirecle": {
+          "push": 166,
+          "wave": 105,
+          "fight": 165,
+          "regroup": 23,
+          "farm": 20
+        },
+        "p_neko": {
+          "push": 185,
+          "fight": 189,
+          "regroup": 21,
+          "wave": 32,
+          "farm": 42
+        },
+        "p_ouzi": {
+          "push": 236,
+          "fight": 202,
+          "regroup": 18,
+          "wave": 40,
+          "farm": 7
+        },
+        "p_woozy": {
+          "push": 92,
+          "wave": 87,
+          "fight": 270,
+          "regroup": 19,
+          "farm": 30
+        }
+      }
+    }
+  }
+}
