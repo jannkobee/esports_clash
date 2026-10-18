@@ -38,6 +38,15 @@ function readMusicPreference(): boolean {
   }
 }
 
+function readMutePreference(): boolean {
+  try {
+    // Quiet by default while the game is being tested; explicit opt-in persists.
+    return localStorage.getItem('esports-clash-audio-muted') !== 'false';
+  } catch {
+    return true;
+  }
+}
+
 class SoundManager {
   private ctx: AudioContext | null = null;
   private buffers = new Map<string, Promise<AudioBuffer>>();
@@ -54,13 +63,15 @@ class SoundManager {
   private musicGain: GainNode | null = null;
   private ambienceInput: DelayNode | null = null;
   private musicEnabled = readMusicPreference();
+  private muted = readMutePreference();
   private musicTimer: number | null = null;
   private musicStarting = false;
   private musicStep = 0;
   private musicNextStepAt = 0;
   private visibilityHandlerRegistered = false;
 
-  private initCtx() {
+  private initCtx(): boolean {
+    if (this.muted) return false;
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new AudioCtx();
@@ -77,6 +88,7 @@ class SoundManager {
       AVATAR_SOUND_ASSETS.forEach(sample => { void this.loadSample(sample).catch(() => undefined); });
       void this.loadGeneratedFiles();
     }
+    return true;
   }
 
   private initMixer(): void {
@@ -136,7 +148,7 @@ class SoundManager {
       if (document.hidden) {
         this.stopMusicScheduler();
         this.setMusicGain(0, 0.18);
-      } else if (this.musicEnabled) {
+      } else if (this.musicEnabled && !this.muted) {
         this.setMusicGain(0.28, 0.4);
         this.startMusic();
       }
@@ -155,7 +167,7 @@ class SoundManager {
 
   private startMusic(): void {
     const ctx = this.ctx;
-    if (!ctx || !this.musicEnabled || this.musicTimer !== null || document.hidden || this.musicStarting) return;
+    if (!ctx || this.muted || !this.musicEnabled || this.musicTimer !== null || document.hidden || this.musicStarting) return;
     if (ctx.state !== 'running') {
       this.musicStarting = true;
       void ctx.resume().then(() => {
@@ -178,7 +190,7 @@ class SoundManager {
 
   private scheduleMusic(): void {
     const ctx = this.ctx;
-    if (!ctx || !this.musicEnabled || ctx.state !== 'running' || document.hidden) return;
+    if (!ctx || this.muted || !this.musicEnabled || ctx.state !== 'running' || document.hidden) return;
     const stepDuration = 30 / BACKGROUND_MUSIC_BPM;
     const scheduleUntil = ctx.currentTime + 0.2;
     while (this.musicNextStepAt < scheduleUntil) {
@@ -255,6 +267,26 @@ class SoundManager {
     return this.musicEnabled;
   }
 
+  isMuted(): boolean { return this.muted; }
+
+  toggleMuted(): boolean {
+    this.muted = !this.muted;
+    try {
+      localStorage.setItem('esports-clash-audio-muted', String(this.muted));
+    } catch {
+      // The current session still respects mute when storage is unavailable.
+    }
+    if (this.masterGain && this.ctx) {
+      this.masterGain.gain.cancelScheduledValues(this.ctx.currentTime);
+      this.masterGain.gain.setValueAtTime(this.muted ? 0 : 0.82, this.ctx.currentTime);
+    }
+    if (this.muted) this.stopMusicScheduler();
+    else {
+      try { this.initCtx(); } catch { /* A later user gesture can unlock audio. */ }
+    }
+    return this.muted;
+  }
+
   toggleMusic(): boolean {
     this.musicEnabled = !this.musicEnabled;
     try {
@@ -324,6 +356,7 @@ class SoundManager {
   }
 
   private playRecordedCue(cue: NonNullable<ReturnType<typeof getAvatarSkillSoundCue>>, slot: SkillSlot, pan: number): void {
+    if (this.muted) return;
     void this.loadGeneratedFiles().then(files => {
       if (files.has(cue.generatedFilename)) {
         void this.loadGeneratedSample(cue.generatedFilename)
@@ -338,6 +371,7 @@ class SoundManager {
   }
 
   private playLegacyCue(cue: NonNullable<ReturnType<typeof getAvatarSkillSoundCue>>, slot: SkillSlot, pan: number): void {
+    if (this.muted) return;
     void this.loadSample(cue.sample)
       .then(buffer => this.playSample(buffer, cue.gain, cue.rate, 0, {
         bus: 'combat', pan, lowpassHz: cue.lowpassHz, reverb: cue.reverb,
@@ -356,7 +390,7 @@ class SoundManager {
     preserveTail?: boolean;
   } = {}): void {
     const ctx = this.ctx;
-    if (!ctx || this.activeVoices >= 16) return;
+    if (!ctx || this.muted || this.activeVoices >= 16) return;
     const source = ctx.createBufferSource();
     const gain = ctx.createGain();
     const filter = ctx.createBiquadFilter();
@@ -393,7 +427,7 @@ class SoundManager {
   private playMaterialLayer(character: SoundCharacter, slot: SkillSlot, pan: number): void {
     const ctx = this.ctx;
     const bus = this.combatBus;
-    if (!ctx || !bus || this.activeVoices >= (slot === 'ultimate' ? 16 : 11)) return;
+    if (!ctx || this.muted || !bus || this.activeVoices >= (slot === 'ultimate' ? 16 : 11)) return;
     const profiles: Record<SoundCharacter, { wave: OscillatorType; start: number; end: number }> = {
       arcane: { wave: 'sine', start: 430, end: 1120 },
       fire: { wave: 'sawtooth', start: 190, end: 58 },
@@ -438,7 +472,7 @@ class SoundManager {
 
   preloadAvatarSkills(avatarNames: string[]): void {
     try {
-      this.initCtx();
+      if (!this.initCtx()) return;
       if (!this.ctx) return;
       avatarNames.forEach(avatarName => {
         (['skill1', 'skill2', 'ultimate'] as const).forEach(slot => {
@@ -455,7 +489,7 @@ class SoundManager {
 
   playAvatarSkill(avatarName: string, slot: SkillSlot, pan = 0): void {
     try {
-      this.initCtx();
+      if (!this.initCtx()) return;
       const cue = getAvatarSkillSoundCue(avatarName, slot);
       if (!cue || !this.ctx) return;
       const key = `${avatarName}:${slot}`;
@@ -472,7 +506,7 @@ class SoundManager {
 
   playClick() {
     try {
-      this.initCtx();
+      if (!this.initCtx()) return;
       if (!this.ctx) return;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
@@ -492,7 +526,7 @@ class SoundManager {
 
   playCoin() {
     try {
-      this.initCtx();
+      if (!this.initCtx()) return;
       if (!this.ctx) return;
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
@@ -513,7 +547,7 @@ class SoundManager {
 
   playPackTear() {
     try {
-      this.initCtx();
+      if (!this.initCtx()) return;
       if (!this.ctx) return;
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
@@ -534,7 +568,7 @@ class SoundManager {
 
   playWalkoutFanfare() {
     try {
-      this.initCtx();
+      if (!this.initCtx()) return;
       if (!this.ctx) return;
       const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
       notes.forEach((freq, idx) => {
@@ -557,7 +591,7 @@ class SoundManager {
 
   playSpellHit() {
     try {
-      this.initCtx();
+      if (!this.initCtx()) return;
       if (!this.ctx) return;
       const stamp = performance.now();
       if (stamp - this.lastImpact < 75 || this.activeVoices >= 12) return;
@@ -574,7 +608,7 @@ class SoundManager {
 
   private playSynthHit() {
     try {
-      if (!this.ctx) return;
+      if (!this.ctx || this.muted) return;
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
@@ -594,7 +628,7 @@ class SoundManager {
 
   playUltimateExplosion() {
     try {
-      this.initCtx();
+      if (!this.initCtx()) return;
       if (!this.ctx) return;
       const stamp = performance.now();
       if (stamp - this.lastExplosion < 120 || this.activeVoices >= 16) return;
@@ -612,7 +646,7 @@ class SoundManager {
 
   private playSynthExplosion() {
     try {
-      if (!this.ctx) return;
+      if (!this.ctx || this.muted) return;
       const now = this.ctx.currentTime;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();

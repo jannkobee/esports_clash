@@ -12,4 +12,5 @@
 .avatar-model-preview__controls button[aria-pressed=true] { border-color:#a4dcdf; background:#254958; }.avatar-model-preview :is(button,input,select):focus-visible { outline:2px solid #f4ce83; outline-offset:3px; }.avatar-model-preview :disabled { opacity:.45; cursor:default; }
 .avatar-model-preview__controls a { display:inline-flex; align-items:center; background:#29454b; border:1px solid #5c7d7e; border-radius:5px; color:#d9e7e9; padding:5px 8px; font-size:11px; text-decoration:none; }
 .avatar-model-preview__controls a:focus-visible { outline:2px solid #f4ce83; outline-offset:3px; }
+.avatar-model-preview__details>label select { min-width:0; max-width:100%; background:#1c2d3b; border:1px solid #405766; border-radius:5px; color:#d9e7e9; padding:5px 8px; }
 @media(max-width:700px) { .avatar-model-preview { grid-template-columns:minmax(0,1fr); }.avatar-model-preview__stage { height:290px; }.avatar-model-preview__details { border-left:0; border-top:1px solid #263948; padding:18px; gap:12px; } }

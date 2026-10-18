@@ -230,6 +230,8 @@ export interface LaneStructure {
 }
 
 export interface AramChampionUnit {
+  basicAttackVisual?:{targetId:string;x:number;y:number;releasedAt:number;melee:boolean};
+  voltaireOverloadTimer?:number;
   creepAttack?: import('./creepAttackTiming').CreepAttackState;
   id: string;
   player: PlayerCard;

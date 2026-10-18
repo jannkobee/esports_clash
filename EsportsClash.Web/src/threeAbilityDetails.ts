@@ -48,21 +48,22 @@ export function drawDashDetail(p: DetailPainter, unit: AbilitySource, second: nu
 
 /** The projectile's existing endpoint controls both chain and hook. Chain links are visual only. */
 export function drawHookDetail(p: DetailPainter, x: number, y: number, size: number, angle: number,
-  color: string, source?: { readonly x: number; readonly y: number }) {
+  color: string, source?: { readonly x: number; readonly y: number; readonly height?:number }, height=27) {
   if (source) {
     const dx = x - source.x, dy = y - source.y, length = Math.hypot(dx, dy);
     // Bounded ornament density; the base tether always reaches the authoritative endpoint.
-    p.beam([source.x, 29, source.y], [x, 27, y], '#65737c', .65, .7);
+    const startHeight=source.height??29;
+    p.beam([source.x, startHeight, source.y], [x, height, y], '#65737c', .65, .7);
     const count = Math.min(22, Math.floor(length / 12));
     for (let i = 1; i <= count; i++) {
       const t = i / (count + 1), sag = Math.sin(t * Math.PI) * Math.min(9, length * .025);
-      const link = p.mesh('chain', '#acbdc3', .72, [source.x + dx * t, 29 - t * 2 - sag, source.y + dy * t], [2.7, 1.55, 2.2]);
+      const link = p.mesh('chain', '#acbdc3', .72, [source.x + dx * t, startHeight+(height-startHeight)*t-sag, source.y + dy * t], [2.7, 1.55, 2.2]);
       link.rotation.set(i % 2 ? .8 : -.8, -angle, 0);
     }
   }
-  const hook = p.mesh('hook', '#d3e1df', .95, [x, 27, y], [size * 1.5, size * 1.5, size * 1.5]);
+  const hook = p.mesh('hook', '#d3e1df', .95, [x, height, y], [size * 1.5, size * 1.5, size * 1.5]);
   hook.rotation.set(0, -angle, 0);
-  p.mesh('shard', color, .7, [x, 28, y], [size * .7, size * .7, size * .7]);
+  p.mesh('shard', color, .7, [x, height+1, y], [size * .7, size * .7, size * .7]);
 }
 
 export function drawPrismFormation(p: DetailPainter, x: number, y: number, age: number, color: string, fade: number) {
@@ -80,6 +81,35 @@ export function drawPrismFormation(p: DetailPainter, x: number, y: number, age: 
 export function drawSpellDetail(p: DetailPainter, spell: AbilitySpell, progress: number, second: number,
   fade: number, source?: AbilitySource): boolean {
   const {x, y, color} = spell, radius = Math.max(4, spell.radius), type = spell.type;
+  if(type==='static_remnant'){
+    const age=spell.maxDuration-spell.duration,armed=age>=.3,alpha=armed?.6:.25;
+    p.mesh('ball','#d8ffff',alpha,[x,58,y],[5,6,5]);
+    p.mesh('cone',color,alpha*.65,[x,36,y],[10,29,7]);
+    for(const side of [-1,1]){
+      p.beam([x+side*7,48,y],[x+side*15,38,y+3],color,1.5,alpha);
+      p.beam([x+side*15,38,y+3],[x+side*9,43,y+9],'#ddffff',1,alpha);
+      p.beam([x+side*5,24,y],[x+side*8,4,y+3],color,1.7,alpha);
+    }
+    const crown=p.mesh('arc','#dcffff',alpha,[x,64,y],[8,1,8]);crown.rotation.y=second*2;
+    return true;
+  }
+  if(type==='static_remnant_detonation'||type==='voltaire_overload'||type==='voltaire_arrival'){
+    for(let i=0;i<7;i++){
+      const a=i*Math.PI*2/7,r=radius*(.15+progress*.8),height=10+Math.sin(progress*Math.PI)*20;
+      p.beam([x+Math.cos(a)*r*.4,20,y+Math.sin(a)*r*.4],[x+Math.cos(a)*r,height,y+Math.sin(a)*r],i%2?color:'#e2ffff',1.4,fade);
+      p.mesh('shard',color,fade*.7,[x+Math.cos(a)*r,height,y+Math.sin(a)*r],[1.4,4,1.4]);
+    }
+    return true;
+  }
+  if(type==='electric_vortex'){
+    const tip=source?.weaponSocket?.tip??[spell.sourceX??x-40,35,spell.sourceY??y];
+    p.beam([...tip],[x,31,y],color,2,fade*.7);
+    for(let i=0;i<5;i++){
+      const a=second*9+i*Math.PI*.4,r=10+i;
+      p.beam([x+Math.cos(a)*r,10+i*9,y+Math.sin(a)*r],[x+Math.cos(a+.8)*r,15+i*9,y+Math.sin(a+.8)*r],'#dcffff',1.2,fade);
+    }
+    return true;
+  }
   if (type === 'death_mark') {
     for (const side of [-1, 1]) {
       p.beam([x - 13, 53 + side * 12, y], [x + 13, 53 - side * 12, y], color, 1.7, fade);
@@ -165,7 +195,8 @@ export function drawSpellDetail(p: DetailPainter, spell: AbilitySpell, progress:
       p.mesh('shard', '#ffe7ad', .9, [source.x + direction * travel, 28, py], [3, 2, 2]);
     }
     const flash = .25 + Math.max(0, Math.sin(second * 25)) * .65;
-    p.mesh('shard', '#ffe1ab', flash, [source.x + direction * 17, 31, source.y], [8, 5, 5]); return true;
+    const tip=source.weaponSocket?.tip??[source.x+direction*17,31,source.y];
+    p.mesh('shard', '#ffe1ab', flash, [...tip], [8, 5, 5]); return true;
   }
   return false;
 }

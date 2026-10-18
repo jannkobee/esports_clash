@@ -1,3 +1,7 @@
+import { arenaElevationGLSL } from './arenaElevation.ts';
+import { ARENA_LIGHTING, arenaCampArt } from './arenaArtDirection.ts';
+import { LANDSCAPE, WELL_RADII, HEALING_SHRINE_Y } from './arenaLandform.ts';
+import { ARAM_BUSHES, CAMP_ROCK_RINGS } from './arenaRules.ts';
 import * as THREE from 'three';
 import { ArenaScene, applyArenaSceneCamera, arenaScenePan, clampArenaSceneCamera, type ArenaSceneFrame } from './threeArenaScene.ts';
 import {
@@ -10,10 +14,10 @@ export const MAX_TERRAIN_PIXEL_RATIO = 2;
 
 export const ARENA_STATIC_TERRAIN_LAYERS = [
   'forest-floor',
-  'river-bed',
-  'central-causeway',
-  'base-floor-plates',
-  'central-plaza',
+  'forested-lowlands',
+  'raised-stone-ridge',
+  'stone-base-courtyards',
+  'sanctuary-shrines',
 ] as const;
 
 export function applyArenaCamera(
@@ -84,118 +88,129 @@ export function disposeArenaTerrainResources(root: THREE.Object3D): ArenaTerrain
 
 const terrainVertexShader = /* glsl */`
   varying vec2 vWorld;
+  varying vec3 vTerrainNormal;
   uniform vec2 uWorldSize;
+  uniform float uRelief;
+  ${arenaElevationGLSL}
 
   void main() {
     vWorld = vec2(uv.x * uWorldSize.x, (1.0 - uv.y) * uWorldSize.y);
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    vec3 raised=position;raised.z+=uRelief*ridgeHeight(vWorld);
+    // World-space slope normal uses the same height profile as the CPU grounding.
+    float dx=(ridgeHeight(vWorld+vec2(2.,0.))-ridgeHeight(vWorld-vec2(2.,0.)))*.25;
+    float dz=(ridgeHeight(vWorld+vec2(0.,2.))-ridgeHeight(vWorld-vec2(0.,2.)))*.25;
+    vTerrainNormal=normalize(vec3(-dx,1.,-dz));
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(raised, 1.0);
   }
 `;
 
 const terrainFragmentShader = /* glsl */`
-  varying vec2 vWorld;
-  uniform vec2 uWorldSize;
-  uniform float uBlueRampX;
-  uniform float uRedRampX;
-
-  float hash21(vec2 p) {
-    p = fract(p * vec2(123.34, 456.21));
-    p += dot(p, p + 45.32);
-    return fract(p.x * p.y);
+ varying vec2 vWorld;
+ varying vec3 vTerrainNormal;
+ uniform vec2 uWorldSize;
+ uniform float uTime;
+ float hash21(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+ float grain(vec2 p){vec2 c=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash21(c),hash21(c+vec2(1.,0.)),f.x),mix(hash21(c+vec2(0.,1.)),hash21(c+vec2(1.)),f.x),f.y);}
+ ${arenaElevationGLSL}
+ void main(){
+  vec2 p=vWorld,edges=ridgeLaneEdges(p.x);float north=edges.x,south=edges.y;
+  float n=grain(p*.026)*.55+grain(p*.087)*.28+grain(p*.31)*.17;
+  float warm=smoothstep(250.,650.,p.y)*.30+smoothstep(1500.,2400.,p.x)*.12;
+  vec3 forest=mix(vec3(.11,.22,.16),vec3(.24,.27,.15),warm);
+  vec3 color=forest*(.72+n*.66);
+  float leafLitter=smoothstep(.70,.89,grain(p*.14))*grain(p*.029);
+  color=mix(color,vec3(.36,.31,.17),leafLitter*.34);
+  float moss=smoothstep(.49,.76,grain(p*.038));
+  color=mix(color,vec3(.20,.31,.17),moss*.28);
+  float trail=min(abs(p.y-(174.+sin(p.x*.006)*13.)),abs(p.y-(584.+sin(p.x*.006)*13.)));
+  float dirt=1.-smoothstep(8.,26.,trail+grain(p*.09)*9.);
+  color=mix(color,vec3(.34,.30,.20)*(.85+n*.25),dirt*.73);
+  ${CAMP_ROCK_RINGS.map(ring=>`if(all(lessThan(abs(p-vec2(${ring.x.toFixed(1)},${ring.y.toFixed(1)})),vec2(${(ring.radius*1.18).toFixed(1)})))){
+   float clearing=length((p-vec2(${ring.x.toFixed(1)},${ring.y.toFixed(1)}))/vec2(${(ring.radius*.82).toFixed(1)},${(ring.radius*.77).toFixed(1)}));
+   float pad=1.-smoothstep(.70,1.12,clearing+(grain(p*.07)-.5)*.16);
+   color=mix(color,vec3(${arenaCampArt(ring.id).ground.map(n=>n.toFixed(3)).join(',')})*(.83+n*.30),pad*.9);
+   vec2 local=p-vec2(${ring.x.toFixed(1)},${ring.y.toFixed(1)});
+   float angle=atan(local.y,local.x)-(${ring.entrance.toFixed(6)});
+   float mouth=1.-smoothstep(.5,1.05,abs(atan(sin(angle),cos(angle))));
+   float bankShade=(1.-smoothstep(.06,.27,abs(clearing-1.07)))*(1.-mouth);
+   color*=1.-bankShade*.19;
+   float debris=pad*(1.-smoothstep(.65,1.08,clearing))*smoothstep(.74,.88,grain(p*.27));
+   color=mix(color,vec3(.43,.39,.28),debris*.18);
+   vec2 entrance=vec2(${Math.cos(ring.entrance).toFixed(6)},${Math.sin(ring.entrance).toFixed(6)});
+   float approach=dot(local,entrance),crossing=abs(dot(local,vec2(-entrance.y,entrance.x)));
+   float scuff=smoothstep(${(ring.radius*.35).toFixed(1)},${(ring.radius*.70).toFixed(1)},approach)*
+    (1.-smoothstep(${(ring.radius*.98).toFixed(1)},${(ring.radius*1.15).toFixed(1)},approach))*(1.-smoothstep(5.,18.,crossing));
+   color=mix(color,vec3(${arenaCampArt(ring.id).ground.map(n=>(n*1.18).toFixed(3)).join(',')}),scuff*.48);
+  }`).join('\n')}
+  float elevation=ridgeHeight(p),outside=max(north-p.y,p.y-south),ramp=ridgeRamp(p.x,p.y<380.);
+  float shoulder=step(.1,outside)*smoothstep(.1,3.,elevation)*(1.-smoothstep(31.,32.,elevation));
+  float strata=1.-smoothstep(.08,.24,abs(sin(elevation*.54+grain(p*.05)*.9)));
+  vec3 bank=mix(vec3(.24,.29,.25),vec3(.43,.43,.34),elevation/32.);
+  bank*=.86+n*.24;bank=mix(bank,bank*.57,strata*.32);
+  color=mix(color,bank,shoulder*.95);
+  float rampPath=ramp*(1.-smoothstep(66.,94.,outside))*step(-10.,outside);
+  float stepMark=(1.-smoothstep(.5,1.5,abs(mod(outside+2.,11.)-5.5)))*step(0.,outside);
+  color=mix(color,vec3(.40,.39,.29)*(.90+n*.17),rampPath*.88);
+  color=mix(color,vec3(.58,.55,.40),stepMark*rampPath*.30);
+  // Eroded edges blend paving into turf while the wide center stays readable.
+  float encroachment=(grain(p*.062)-.5)*9.+(grain(p*.18)-.5)*3.;
+  float base=1.-smoothstep(${LANDSCAPE.left-6}.0,${LANDSCAPE.left+7}.0,min(p.x,uWorldSize.x-p.x)+encroachment*.45);
+  float lane=smoothstep(north-7.,north+7.,p.y+encroachment)*(1.-smoothstep(south-7.,south+7.,p.y+encroachment));
+  float stone=max(base,lane);
+  vec2 paving=p+vec2(mod(floor(p.y/38.),2.)*29.,0.);
+  vec2 cell=floor(paving/vec2(58.,38.)),tile=mod(paving,vec2(58.,38.));
+  float edge=min(min(tile.x,58.-tile.x),min(tile.y,38.-tile.y));
+  float grout=1.-smoothstep(.7,2.1,edge+(grain(p*.2)-.5)*1.2);
+  float slab=hash21(cell);
+  vec3 flagstone=mix(vec3(.32,.36,.34),vec3(.49,.48,.40),slab);
+  flagstone*=.86+n*.28;
+  float bevel=(1.-smoothstep(2.,4.8,edge))*(1.-grout);
+  flagstone+=vec3(.048,.042,.030)*bevel;
+  float crack=(1.-smoothstep(.012,.035,abs(grain(p*.052+cell*.13)-.49)))*step(.63,slab);
+  flagstone=mix(flagstone,vec3(.14,.20,.17),crack*.58);
+  vec3 joint=mix(vec3(.13,.18,.16),vec3(.25,.31,.18),smoothstep(.42,.75,grain(p*.10)));
+  flagstone=mix(flagstone,joint,grout*.85);
+  flagstone=mix(flagstone,vec3(.23,.31,.17),smoothstep(.68,.86,grain(p*.037))*.26);
+  float laneEdge=min(abs(p.y-north),abs(p.y-south));
+  float verge=(1.-smoothstep(3.,25.,laneEdge+encroachment))*(1.-base);
+  float rooted=verge*smoothstep(.36,.73,grain(p*.11));
+  flagstone=mix(flagstone,vec3(.26,.33,.19)*(.83+n*.25),rooted*.72);
+  // Travel wear warms the lane center; joints retain dirt and small moss colonies.
+  float wear=1.-smoothstep(28.,88.,abs(p.y-(north+south)*.5));
+  flagstone=mix(flagstone,flagstone*vec3(1.10,1.05,.93),wear*.42);
+  color=mix(color,flagstone,stone);
+  color=mix(color,vec3(.52,.51,.40),(1.-smoothstep(2.,5.,laneEdge))*stone*(1.-rooted)*.24);
+  float footShade=(1.-smoothstep(0.,15.,outside-(44.+ramp*46.)))*step(44.+ramp*46.,outside)*(1.-base);
+  color*=1.-footShade*.15;
+  // Warm key and cool shade match model lighting without a shadow-map pass.
+  vec3 lightDirection=normalize(vec3(${ARENA_LIGHTING.sunDirection.map(n=>n.toFixed(3)).join(',')}));
+  float slopeLight=max(0.,dot(normalize(vTerrainNormal),lightDirection));
+  color*=mix(vec3(.76,.84,.87),vec3(1.05,1.02,.94),slopeLight);
+  float canopy=grain(p*.008+vec2(uTime*.002,-uTime*.0015));
+  float woodland=(1.-stone)*(1.-rampPath*.8);
+  color*=1.-smoothstep(.40,.76,canopy)*(.04+woodland*.12);
+  // Only actual concealment ellipses receive a dark root bed and olive boundary.
+  ${ARAM_BUSHES.map(b=>`{
+   float brush=length((p-vec2(${b.x.toFixed(1)},${b.y.toFixed(1)}))/vec2(${(b.width/2).toFixed(1)},${(b.height/2).toFixed(1)}));
+   float rootBed=1.-smoothstep(.82,1.04,brush);
+   color=mix(color,color*vec3(.69,.79,.66),rootBed*.56);
+   float edge=(1.-smoothstep(.015,.075,abs(brush-.98)));
+   color=mix(color,vec3(.40,.45,.25),edge*.27);
+  }`).join('\n')}
+  // The safe grounds read as warm courtyards, never as giant healing pools.
+  for(int side=0;side<2;side++){
+   float homeX=side==0?65.:2535.;
+   vec3 accent=side==0?vec3(.28,.64,.64):vec3(.66,.35,.40);
+   float sanctuary=1.-smoothstep(.75,1.10,length((p-vec2(homeX,380.))/vec2(${WELL_RADII.x}.0,${WELL_RADII.y}.0)));
+   color=mix(color,color*vec3(1.08,1.02,.91),sanctuary*.45);
+   float shrine=1.-smoothstep(12.,22.,length(p-vec2(homeX,${HEALING_SHRINE_Y}.0)));
+   color+=accent*shrine*(.09+sin(uTime*1.3)*.025);
+   float nexusX=side==0?235.:2365.;
+   float inlay=(1.-smoothstep(.4,1.5,abs(length(p-vec2(nexusX,380.))-67.)))*base;
+   color=mix(color,vec3(.63,.56,.37),inlay*.40);
   }
-
-  float roundedBoxMask(vec2 p, vec2 center, vec2 halfSize, float radius) {
-    vec2 q = abs(p - center) - halfSize + vec2(radius);
-    float distance = min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - radius;
-    return 1.0 - smoothstep(-1.0, 1.0, distance);
-  }
-
-  float rectMask(vec2 p, vec2 minimum, vec2 maximum) {
-    vec2 enter = smoothstep(minimum - vec2(1.0), minimum + vec2(1.0), p);
-    vec2 leave = 1.0 - smoothstep(maximum - vec2(1.0), maximum + vec2(1.0), p);
-    return enter.x * enter.y * leave.x * leave.y;
-  }
-
-  void main() {
-    float sx = uWorldSize.x / 1320.0;
-    vec2 design = vec2(vWorld.x / sx, vWorld.y);
-    float y = clamp(vWorld.y / uWorldSize.y, 0.0, 1.0);
-
-    vec3 top = vec3(0.106, 0.188, 0.157);
-    vec3 middle = vec3(0.251, 0.329, 0.255);
-    vec3 bottom = vec3(0.102, 0.176, 0.149);
-    vec3 color = y < 0.5 ? mix(top, middle, y * 2.0) : mix(middle, bottom, (y - 0.5) * 2.0);
-
-    vec2 meadowCell = floor(vec2(design.x / 92.0, design.y / 58.0));
-    float meadowNoise = hash21(meadowCell);
-    color += meadowNoise > 0.67 ? vec3(0.025, 0.033, 0.014) : vec3(0.0);
-    float vignette = smoothstep(300.0, 790.0, length(vec2(design.x - 660.0, (design.y - 380.0) * 1.25)));
-    color = mix(color, vec3(0.02, 0.059, 0.051), vignette * 0.42);
-
-    float riverCenter = 670.0 + sin((design.y / 760.0) * 6.2831853 - 0.7) * 16.0;
-    float riverDistance = abs(design.x - riverCenter);
-    float riverEdge = 42.0 + sin(design.y * 0.015) * 4.0;
-    float riverOutline = 1.0 - smoothstep(riverEdge + 5.0, riverEdge + 8.0, riverDistance);
-    float river = 1.0 - smoothstep(riverEdge - 2.0, riverEdge + 1.0, riverDistance);
-    color = mix(color, vec3(0.051, 0.137, 0.145), riverOutline * 0.65);
-    float riverLight = 1.0 - smoothstep(0.0, riverEdge, riverDistance);
-    color = mix(color, mix(vec3(0.153, 0.412, 0.435), vec3(0.243, 0.545, 0.561), riverLight), river * 0.82);
-
-    float causewayShadow = roundedBoxMask(design, vec2(660.0, 381.0), vec2(614.0, 115.0), 23.0);
-    color = mix(color, vec3(0.055, 0.082, 0.086), causewayShadow * 0.72);
-    float causeway = roundedBoxMask(design, vec2(660.0, 380.0), vec2(608.0, 116.0), 20.0);
-    float causewayY = clamp((design.y - 264.0) / 232.0, 0.0, 1.0);
-    vec3 causewayColor = causewayY < 0.5
-      ? mix(vec3(0.318, 0.310, 0.271), vec3(0.486, 0.467, 0.392), causewayY * 2.0)
-      : mix(vec3(0.486, 0.467, 0.392), vec3(0.278, 0.282, 0.247), (causewayY - 0.5) * 2.0);
-    color = mix(color, causewayColor, causeway);
-
-    float causewayInner = roundedBoxMask(design, vec2(660.0, 380.0), vec2(602.0, 110.0), 15.0);
-    float causewayBorder = max(0.0, causeway - causewayInner);
-    color = mix(color, vec3(0.80, 0.75, 0.60), causewayBorder * 0.42);
-
-    float verticalJoint = 1.0 - smoothstep(0.7, 1.5, min(mod(design.x - 60.0, 44.0), 44.0 - mod(design.x - 60.0, 44.0)));
-    float horizontalJoint = 1.0 - smoothstep(0.7, 1.5, min(mod(design.y - 280.0, 32.0), 32.0 - mod(design.y - 280.0, 32.0)));
-    float joint = max(verticalJoint, horizontalJoint) * causewayInner;
-    color = mix(color, vec3(0.122, 0.153, 0.133), joint * 0.28);
-
-    float sheen = rectMask(design, vec2(70.0, 350.0), vec2(1250.0, 410.0));
-    float sheenStrength = 1.0 - abs(design.y - 380.0) / 30.0;
-    color = mix(color, vec3(0.835, 0.773, 0.592), sheen * max(0.0, sheenStrength) * 0.18);
-    float moss = max(rectMask(design, vec2(60.0, 268.0), vec2(1260.0, 273.0)), rectMask(design, vec2(60.0, 487.0), vec2(1260.0, 492.0)));
-    color = mix(color, vec3(0.322, 0.467, 0.282), moss * 0.62);
-
-    float bluePlate = rectMask(vWorld, vec2(50.0 * sx, 269.0), vec2(uBlueRampX, 491.0));
-    float redPlate = rectMask(vWorld, vec2(uRedRampX, 269.0), vec2(1270.0 * sx, 491.0));
-    color = mix(color, vec3(0.24, 0.28, 0.34), (bluePlate + redPlate) * 0.23);
-    float plateCap = max(
-      max(rectMask(vWorld, vec2(50.0 * sx, 264.0), vec2(uBlueRampX, 272.0)), rectMask(vWorld, vec2(50.0 * sx, 488.0), vec2(uBlueRampX, 496.0))),
-      max(rectMask(vWorld, vec2(uRedRampX, 264.0), vec2(1270.0 * sx, 272.0)), rectMask(vWorld, vec2(uRedRampX, 488.0), vec2(1270.0 * sx, 496.0)))
-    );
-    color = mix(color, vec3(0.059, 0.090, 0.165), plateCap * 0.55);
-    float blueEdge = 1.0 - smoothstep(1.0, 3.0, abs(vWorld.x - uBlueRampX));
-    float redEdge = 1.0 - smoothstep(1.0, 3.0, abs(vWorld.x - uRedRampX));
-    float edgeY = rectMask(vWorld, vec2(0.0, 270.0), vec2(uWorldSize.x, 490.0));
-    color = mix(color, vec3(0.22, 0.74, 0.97), blueEdge * edgeY);
-    color = mix(color, vec3(0.98, 0.44, 0.53), redEdge * edgeY);
-
-    float highway = rectMask(design, vec2(80.0, 350.0), vec2(1240.0, 410.0));
-    color = mix(color, vec3(0.357, 0.353, 0.290), highway);
-    float highwayInner = rectMask(design, vec2(81.0, 352.0), vec2(1239.0, 408.0));
-    color = mix(color, vec3(0.50, 0.46, 0.35), max(0.0, highway - highwayInner) * 0.52);
-
-    vec2 plazaDelta = vec2((design.x - 660.0) / 140.0, (design.y - 380.0) / 140.0);
-    float plazaDistance = length(plazaDelta);
-    float plaza = 1.0 - smoothstep(0.985, 1.015, plazaDistance);
-    color = mix(color, vec3(0.082, 0.129, 0.196), plaza);
-    float plazaOuterRing = 1.0 - smoothstep(0.0, 0.018, abs(plazaDistance - 0.985));
-    color = mix(color, vec3(0.278, 0.341, 0.412), plazaOuterRing);
-    vec2 insetDelta = vec2((design.x - 660.0) / 95.0, (design.y - 380.0) / 95.0);
-    float insetRing = 1.0 - smoothstep(0.0, 0.025, abs(length(insetDelta) - 1.0));
-    color = mix(color, vec3(0.063, 0.725, 0.506), insetRing * 0.4);
-
-    gl_FragColor = vec4(color, 1.0);
-  }
+  gl_FragColor=vec4(color,1.);
+ }
 `;
 
 export class ThreeArenaTerrain {
@@ -248,12 +263,14 @@ export class ThreeArenaTerrain {
     this.renderer.domElement.addEventListener('webglcontextrestored', this.handleContextRestored);
     this.host.replaceChildren(this.renderer.domElement);
 
-    const geometry = new THREE.PlaneGeometry(worldWidth, worldHeight);
+    const geometry = new THREE.PlaneGeometry(worldWidth, worldHeight, Math.ceil(worldWidth / 10), Math.ceil(worldHeight / 10));
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uWorldSize: { value: new THREE.Vector2(worldWidth, worldHeight) },
         uBlueRampX: { value: blueRampX },
         uRedRampX: { value: redRampX },
+        uTime:{value:0},
+        uRelief:{value:0},
       },
       vertexShader: terrainVertexShader,
       fragmentShader: terrainFragmentShader,

@@ -10,7 +10,7 @@ export const AVATAR_CONTACTS:Readonly<Record<string,ContactProfile>>=Object.free
  c_kindra:{bow:true,closeLeft:.9,closeRight:.55},c_cora:{right:[0,0,-7],closeRight:.75},c_renn:{},
  c_sylla:staff,c_tequoia:staff,c_zal:staff,c_xin:{...sword,left:[0,2,-5],closeLeft:1},c_raijin:{},
  c_kaolin:{...staff,twoHand:'staff',closeLeft:1},c_inai:{...staff,twoHand:'staff',closeLeft:1},
- c_qiyana:{right:[0,2,0],closeRight:1},c_locke:sword,c_senna:{...gun,twoHand:'gun',closeLeft:.85},
+ c_qiyana:{right:[19,-23,0],closeRight:1},c_locke:sword,c_senna:{...gun,twoHand:'gun',closeLeft:.85},
  c_largo:{right:[0,2,-9]},c_shadowfiend:{},c_earthshaker:{right:[11.5,2,-8],twoHand:'totem',closeRight:1,closeLeft:1},
  c_mirehook:{right:[0,2,-7],left:[0,2,-4],closeRight:1,closeLeft:1},c_nullweaver:{},c_voltgrip:{},
  c_aetherbolt:{left:[0,2,2],closeLeft:.7},c_corsara:{...gun,left:[0,2,-4],closeLeft:1},

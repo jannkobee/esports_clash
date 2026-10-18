@@ -107,7 +107,7 @@ export function sculptAvatarBody(outfit: THREE.Group, id: string, d: AvatarDesig
         [38, 2, 1.7], [43, 2.4, 2.1], [47, 2.8, 2.4], [50, 2.1, 2]], 16).translate(x, 0, 0), armWeight);
       mesh(`sleeve-${i}`, primary, () => loftSurface([[41, 2.6, 2.3], [46, 3, 2.6], [49, 3.2, 2.8], [51, 1.7, 2]], 16).translate(x, 0, 0), () => [upper, upper, 1]);
       // A closed bridge overlaps the chest and sleeve, with a continuous chest/arm blend.
-      mesh(`shoulder-gusset-${i}`,primary,()=>new THREE.SphereGeometry(1,20,14).scale(4.5*profile.limb,3.3,3.4*profile.limb).translate(x-side*1.4,49,0),
+      mesh(`shoulder-gusset-${i}`,primary,()=>new THREE.SphereGeometry(1,20,14).scale(5.6*profile.limb,3.5,3.4*profile.limb).translate(x-side*2.4,49,0),
         (px)=>[chest,upper,THREE.MathUtils.clamp((width+1-Math.abs(px))/5,0,1)]);
       if(profile.finish==='plate'||profile.finish==='leather'){
         mesh(`layered-pauldron-${i}`,profile.finish==='plate'?'#a5b9ba':dark,()=>new THREE.SphereGeometry(1,20,12,0,Math.PI*2,0,Math.PI*.65).scale(4.8,2.8,3.7).translate(x-side*.5,50.8,0),()=>[upper,upper,1]);
@@ -140,7 +140,7 @@ export function sculptAvatarBody(outfit: THREE.Group, id: string, d: AvatarDesig
         [23, width * .84, 4.7], [32, width * .73, 4.5], [36, width * .65, 4.2]], 32, .09), (x,y) => [hips,legBones[x<0?0:1][0],1-THREE.MathUtils.clamp((32-y)/25,0,1)*.32]);
       surface('coat-front-trim', accent, () => beveledPanel([[-.6, 8], [.6, 8], [.8, 34], [-.8, 34]], .35, .08), [0, 0, 6.4]);
     }
-    mesh('fitted-neckline',dark,()=>loftSurface([[53,3.5,2.9],[54,3.8,3],[56,3.25,2.75],[57,2.8,2.5]],24),()=>[head,head,1]);
+    mesh('fitted-neckline',dark,()=>loftSurface([[51,3.6,3],[54,3.8,3],[57,2.8,2.5],[60,2.5,2.3]],24),(_x,y)=>[chest,head,1-THREE.MathUtils.smoothstep(y,53,59)]);
     const seamColor=new THREE.Color(accent).lerp(new THREE.Color(primary),.45).getStyle();
     for(const side of [-1,1])mesh('tailored-seam-'+side,seamColor,()=>taperedCurve([[side*width*.28,35,4.5],[side*width*.52,43,5.3],[side*width*.63,49,4.9]],.18,.8,14),(_x,y)=>[spine,chest,THREE.MathUtils.clamp((48-y)/10,0,1)]);
     mesh('waist-seam',dark,()=>loftSurface([[31.4,width*.76,4.8],[32,width*.78,4.9],[33.4,width*.77,4.8]],24),()=>[hips,hips,1]);

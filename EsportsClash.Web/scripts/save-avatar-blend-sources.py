@@ -2,7 +2,7 @@
 import bpy, sys, json, hashlib
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
-version=8 if '--mesh' in sys.argv else 7 if '--contact' in sys.argv else 6 if '--combat' in sys.argv else 5 if '--stance' in sys.argv else 4
+version=9 if '--polish' in sys.argv else 8 if '--mesh' in sys.argv else 7 if '--contact' in sys.argv else 6 if '--combat' in sys.argv else 5 if '--stance' in sys.argv else 4
 output=ROOT/(f'art/avatars-v{version}' if version>=5 else 'art/avatars');output.mkdir(parents=True,exist_ok=True)
 avatars=[row['id'] for row in json.loads((ROOT/f'EsportsClash.Web/public/models/avatars-v{version}/manifest.json').read_text())['avatars']] if version>=6 else ['c_astra','c_kyumi','c_invoker']
 records=[]

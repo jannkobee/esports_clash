@@ -36,7 +36,7 @@ test('standing avatars have a curved spine, level planted feet, attached costume
 });
 
 test('historical stance and current combat assets retain valid rigs/clips and imported poses survive sanitized names',async()=>{
- for(const version of [5,6,7,8]){
+ for(const version of [5,6,7,8,9]){
  const directory=new URL(`../public/models/avatars-v${version}/`,import.meta.url);
  const manifest=JSON.parse(await readFile(new URL('manifest.json',directory),'utf8'));
  assert.deepEqual(manifest.avatars.map(a=>a.id).sort(),CHAMPIONS.map(c=>c.id).sort());

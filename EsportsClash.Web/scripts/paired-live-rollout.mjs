@@ -69,9 +69,9 @@ const outputPath = resolve(explicitOutput ?? (process.argv.includes('--checkpoin
 async function episode(label, mode, target) {
   await send('Page.navigate', { url: 'about:blank' });
   await delay(100);
-  await send('Page.navigate', { url: `http://127.0.0.1:${vitePort}/` });
+  await send('Page.navigate', { url: `http://127.0.0.1:${vitePort}/${process.argv.includes('--compiled-page') ? 'evolution-compiled.html' : process.argv.includes('--fast-page') ? 'evolution.html' : ''}` });
   for (let retry = 0; retry < 60; retry++) {
-    if (await evaluate('!!document.querySelector("#root")')) break;
+    if (await evaluate(process.argv.includes('--fast-page') || process.argv.includes('--compiled-page') ? '!!window.__evolutionPageReady' : '!!document.querySelector("#root")')) break;
     await delay(100);
   }
   await evaluate(`(async () => {
@@ -90,18 +90,21 @@ async function episode(label, mode, target) {
     window.__esportsPairedMacro = undefined;
     window.__esportsMacroExecutionAudit = undefined;
     window.__esportsMacroOpportunityAudit = undefined;
-    const React = (await import('/node_modules/.vite/deps/react.js')).default;
-    const rootModule = await import('/node_modules/.vite/deps/react-dom_client.js');
+    const compiled = window.__evolutionModules;
+    const React = compiled?.React ?? (await import('/node_modules/.vite/deps/react.js')).default;
+    const rootModule = compiled ?? await import('/node_modules/.vite/deps/react-dom_client.js');
     const createRoot = rootModule.createRoot ?? rootModule.default?.createRoot;
-    const { AramMatchView } = await import('/src/components/AramMatchView.tsx');
-    const { INITIAL_PLAYERS, CHAMPIONS, INITIAL_COACHES } = await import('/src/mockData.ts');
-    const { buildPairedStudyDraft } = await import('/src/pairedStudyDraft.ts');
+    const { AramMatchView } = compiled ?? await import('/src/components/AramMatchView.tsx');
+    const { INITIAL_PLAYERS, CHAMPIONS, INITIAL_COACHES } = compiled ?? await import('/src/mockData.ts');
+    const { buildPairedStudyDraft } = compiled ?? await import('/src/pairedStudyDraft.ts');
     document.querySelector('#root').style.display = 'none';
     const host = document.createElement('div'); document.body.append(host);
     const lineup = buildPairedStudyDraft(INITIAL_PLAYERS, CHAMPIONS, ${draft});
     window.__esportsPairedLineup = lineup.map(({ champion, player }) => ({ playerId: player.id, championId: champion.id }));
     window.fixtureRoot = createRoot(host);
     window.fixtureRoot.render(React.createElement(AramMatchView, { seed: ${seed},
+      evaluationRenderless: ${process.argv.includes('--renderless')},
+      evaluationStartPaused: ${process.argv.includes('--fixed-scout')},
       blueLineup: ${swapped ? 'lineup.slice(5)' : 'lineup.slice(0, 5)'},
       redLineup: ${swapped ? 'lineup.slice(0, 5)' : 'lineup.slice(5)'},
       blueCoach: INITIAL_COACHES[0], redCoach: INITIAL_COACHES[0],
@@ -160,7 +163,7 @@ async function episode(label, mode, target) {
     }
     if (target && frame.lastSecond > target.second + 8)
       return { label, ...frame, rejected: 'target decision not reached', wallSeconds: (Date.now() - started) / 1000 };
-    await delay(250);
+    if (!fixedScout) await delay(250);
   }
   return { label, rejected: 'timeout', wallSeconds: (Date.now() - started) / 1000 };
 }

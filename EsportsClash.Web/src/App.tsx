@@ -13,6 +13,7 @@ import { PackOpeningModal } from './components/PackOpeningModal';
 import { EvolutionsView } from './components/EvolutionsView';
 import { SquadView } from './components/SquadView';
 import { CloudSavePanel } from './components/CloudSavePanel';
+import { OnlineNormalView } from './components/OnlineNormalView';
 import { DraftPhaseView } from './components/DraftPhaseView';
 import { ArenaMatchView } from './components/ArenaMatchView';
 import { ThreeAramArena } from './components/ThreeAramArena';
@@ -147,8 +148,9 @@ export const PACK_CATALOG: PackConfig[] = [
 
 export function App() {
   // Navigation
-  const [activeTab, setActiveTab] = useState<'squad' | 'packs' | 'evolutions' | 'arena' | 'ladder' | 'tournament' | 'champions' | 'pro_circuit'>('squad');
+  const [activeTab, setActiveTab] = useState<'squad' | 'packs' | 'evolutions' | 'arena' | 'ladder' | 'tournament' | 'champions' | 'pro_circuit' | 'online_normal'>('squad');
   const [musicEnabled, setMusicEnabled] = useState(() => sound.isMusicEnabled());
+  const [audioMuted, setAudioMuted] = useState(() => sound.isMuted());
   const [selectedOpponentTeam, setSelectedOpponentTeam] = useState<ProTeam | null>(() => PRO_TEAMS_DATABASE[0] ?? null);
   const [inBattle, setInBattle] = useState<boolean>(false);
   const [arenaChoice, setArenaChoice] = useState<ArenaChoice>(() =>
@@ -854,29 +856,45 @@ export function App() {
             <Globe className="w-4 h-4" /> Pro Circuit & Scouting
           </button>
 
+          <button type="button" onClick={() => { sound.playClick(); setActiveTab('online_normal'); setInBattle(false); }} className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'online_normal' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
+            <Globe className="w-4 h-4" /> Online Normal
+          </button>
+
           <button
             type="button"
-            aria-label={musicEnabled ? 'Mute background music' : 'Enable background music'}
-            aria-pressed={musicEnabled}
-            title={musicEnabled ? 'Background music on' : 'Background music off'}
+            aria-label={audioMuted ? 'Enable all sounds' : 'Mute all sounds'}
+            aria-pressed={!audioMuted}
+            onClick={() => setAudioMuted(sound.toggleMuted())}
+            className="ml-auto shrink-0 px-3 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800"
+          >
+            {audioMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            Sound {audioMuted ? 'Off' : 'On'}
+          </button>
+          <button
+            type="button"
+            disabled={audioMuted}
+            aria-label={audioMuted ? 'Background music muted' : musicEnabled ? 'Mute background music' : 'Enable background music'}
+            aria-pressed={musicEnabled && !audioMuted}
+            title={audioMuted ? 'Enable sound to play music' : musicEnabled ? 'Background music on' : 'Background music off'}
             onClick={() => {
               setMusicEnabled(sound.toggleMusic());
               sound.playClick();
             }}
-            className={`ml-auto shrink-0 px-3 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 whitespace-nowrap ${
-              musicEnabled
+            className={`shrink-0 px-3 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 whitespace-nowrap disabled:opacity-40 ${
+              musicEnabled && !audioMuted
                 ? 'bg-slate-800 text-cyan-200 hover:bg-slate-700'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800'
             }`}
           >
-            {musicEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-            Music {musicEnabled ? 'On' : 'Off'}
+            {musicEnabled && !audioMuted ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            Music {musicEnabled && !audioMuted ? 'On' : 'Off'}
           </button>
         </div>
       </nav>
 
       {/* VIEW CONTENT */}
       <main className={`w-full min-w-0 ${activeTab === 'arena' ? 'max-w-[1600px]' : 'max-w-7xl'} mx-auto px-4 mt-6`}>
+        {activeTab === 'online_normal' && <OnlineNormalView />}
         {activeTab === 'squad' && (
           <div className="space-y-4">
             <SquadView

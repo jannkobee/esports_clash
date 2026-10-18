@@ -10,6 +10,7 @@ import {disposeArenaTerrainResources} from './threeArenaTerrain.ts';
 import {ArenaScene} from './threeArenaScene.ts';
 import {avatarDesign} from './avatarDesigns.ts';
 import {hasStandingAnatomy} from './avatarStance.ts';
+import {weaponCycle} from './avatarWeaponPolish.ts';
 
 test('two bone contact solver reaches targets, obeys the bend pole and clamps unreachable input',()=>{
  const parent=new THREE.Group(),upper=new THREE.Group(),lower=new THREE.Group(),end=new THREE.Group();
@@ -32,7 +33,7 @@ test('all roster fittings exist and both hands maintain contact with bows and tw
   const model=buildAvatarModel(kit,resources),parts=new Map();model.body.traverse(n=>{if(n.userData.avatarPart)parts.set(n.userData.avatarPart,n);});
   for(const state of ['idle','walk','run','attack','cast'])for(const time of [0,.18,.42,.7]){
    model.animate(Object.freeze({motionState:state,motionTime:time}),time);model.body.updateMatrixWorld(true);
-   const p=profile.twoHand,target=profile.bow?parts.get('bow').localToWorld(new THREE.Vector3(-(state==='attack'?Math.sin(Math.PI*Math.min(1,time/.8))**2*5:1),0,0)):
+   const p=profile.twoHand,target=profile.bow?parts.get('bow').localToWorld(new THREE.Vector3(-weaponCycle(kit.id,{motionState:state,motionTime:time},time).draw*5,0,0)):
     parts.get('right-grip').localToWorld(new THREE.Vector3(p==='totem'?-11.5:p==='keg'?-8:p==='gun'?-2:0,p==='gun'?-6:p==='staff'?8:p==='keg'?2:8,p==='totem'||p==='keg'?8:p==='gun'?8:5));
    const palm=model.body.getObjectByName(profile.bow?'HandR':'HandL').localToWorld(new THREE.Vector3(0,-2,0));
    assert.ok(palm.distanceTo(target)<.001,`${kit.id} ${state} ${time}: contact error ${palm.distanceTo(target)}`);
@@ -44,7 +45,7 @@ test('all roster fittings exist and both hands maintain contact with bows and tw
 
 test('walking distance drives stride and a stance foot stays fixed as its body moves, including pause and rewind',()=>{
  const resources=new AvatarModelResources(),kit=CHAMPIONS.find(c=>c.id==='c_vi'),model=buildAvatarModel(kit,resources),actor=new THREE.Group();actor.add(model.body);
- const scale=model.body.scale.y,gait=contactGait('strafe'),speed=50;let history,first;
+ const scale=model.body.scale.y,gait=contactGait('walk'),speed=50;let history,first;
  for(let frame=0;frame<12;frame++){
   const second=frame/60,x=0,y=second*speed;
   const unit=Object.freeze({isAlive:true,hp:100,animState:'walk',attackTimer:0,x,y,vx:0,vy:speed});

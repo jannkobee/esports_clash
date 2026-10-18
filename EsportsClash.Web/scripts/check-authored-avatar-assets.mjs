@@ -29,7 +29,7 @@ try{
    const mixer=new THREE.AnimationMixer(file.scene),clips=[];
    for(const clip of file.animations){
     mixer.stopAllAction();mixer.clipAction(clip).play();const frames=[];
-    for(const time of ${['avatars-v6','avatars-v7','avatars-v8'].includes(folder)?'[0,.18,.42,.7,1].map(f=>f*clip.duration)':'[0,.15,.35]'}){
+    for(const time of ${['avatars-v6','avatars-v7','avatars-v8','avatars-v9'].includes(folder)?'[0,.18,.42,.7,1].map(f=>f*clip.duration)':'[0,.15,.35]'}){
      mixer.setTime(time);file.scene.updateMatrixWorld(true);const box=new THREE.Box3();
      for(const mesh of meshes){if(mesh.isSkinnedMesh)mesh.skeleton.update();const count=mesh.geometry.attributes.position.count;
       for(let i=0;i<count;i+=Math.max(1,Math.floor(count/24))){const point=mesh.getVertexPosition(i,new THREE.Vector3()).applyMatrix4(mesh.matrixWorld);
@@ -50,7 +50,7 @@ try{
    }
    mixer.stopAllAction();mixer.uncacheRoot(file.scene);
    let contacts;
-   if(['avatars-v7','avatars-v8'].includes('${folder}')){
+   if(['avatars-v7','avatars-v8','avatars-v9'].includes('${folder}')){
     let root;file.scene.traverse(n=>{if(n.userData.avatarPart==='avatar-root')root=n;});
     const resources=new AvatarModelResources(),model=bindAvatarModel(root,resources),profile=AVATAR_CONTACTS[asset.id];
     file.scene.scale.setScalar(40);let hands=0,closedHands=0;

@@ -1,3 +1,6 @@
+import { barracksPosition, minionSpawnPosition, advanceLaneMinion, drawNaturalArena, HEALING_SHRINE_Y } from '../arenaLandform.ts';
+import { arenaCampArt } from '../arenaArtDirection.ts';
+import { placeArenaNameplates, type NameplateAnchor, type OverlayBox } from '../arenaNameplates.ts';
 import React, { useEffect, useRef, useState } from 'react';
 import { perceiveChampions } from '../decisionPerception';
 import { resolveFightCommitment } from '../decisionCommitment';
@@ -87,7 +90,7 @@ import { sound } from '../audio';
 import { chooseTeamfightTarget, isChannelingAbility, isEnemyCaughtInAlliedChannel, isUnitVisibleTo, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from '../combatDecision';
 import { createEnemyCooldownMemory, isObservedCooling, observeCooldownRise, type CooldownSnapshot } from '../cooldownKnowledge';
 import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from '../skillRangeRules';
-import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, rockRouteDistance, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from '../arenaRules';
+import { ARENA_WIDTH, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, rockRouteDistance, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from '../arenaRules';
 import { getMinionCrashMultiplier, getMinionStructureDamage, getWaveClearProfile, isInsideWaveClear, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
 import { structureBasicAttackDamage } from '../structureSiegeRules';
 import { evaluateNexusFinish } from '../nexusFinishRules';
@@ -116,6 +119,7 @@ import { chooseBaseDefense, shouldChaseDefenseTarget, shouldStandAndDefendBase, 
 import { isTeamfightApproachSafe, laneAdvanceLimit, shouldCoordinateObjectiveRecall, shouldFollowUpControl, shouldPrioritizeTeamfight, shouldPushWithWave, shouldSeekHealthRelic, shouldStageForObjective, shouldStartProactiveAllIn, wouldOverstep } from '../teamTempoRules';
 import { shouldPaxiEscapeJaunt } from '../paxiDecision';
 import { getGroundTargetPoint } from '../groundTargetRules';
+import {VOLTAIRE,advanceStaticRemnant,consumeVoltaireOverload,collectVoltaireBallHits,type StaticRemnant} from '../voltaireRules';
 import { getTeamwardKickDestination } from '../kickswitchAbilities';
 import { aetherisUltimateDurationAtRank, findAetherisInnateAlly } from '../aetherisAbilities';
 import { PROPELLA_OVERDRIVE_SECONDS, PROPELLA_ROTOR_STACK_SECONDS, propellaAttackSpeedBonus,
@@ -155,6 +159,7 @@ import {
 } from 'lucide-react';
 
 interface Projectile {
+  voltaireOverload?:boolean;
   creepAttackTarget?: 'minion' | 'camp' | 'dragon';
   waveClear?: boolean;
   id: string;
@@ -192,6 +197,7 @@ interface Projectile {
 }
 
 interface SpellAOE {
+  voltaireRemnant?:StaticRemnant;
   halfWidth?: number;
   halfHeight?: number;
   kaelenCast?: KaelenCast;
@@ -213,6 +219,7 @@ interface SpellAOE {
 }
 
 interface FloatingText {
+  weaponImpact?: { avatarId: string; x: number; y: number; kind: 'melee' | 'ranged' };
   id: string;
   x: number;
   y: number;
@@ -321,6 +328,11 @@ export interface KillCallout {
 }
 
 interface AramMatchViewProps {
+  /** Development fixtures only; the same simulation executes without spectator rendering. */
+  evaluationRenderless?: boolean;
+  evaluationStartPaused?: boolean;
+  /** Private renderless worker bridge; ignored by production browser bundles. */
+  trustedServer?: boolean;
   onExit?: () => void;
   seed: number;
   onlineMode?: boolean;
@@ -424,6 +436,9 @@ function getChampionFormationY(champName: string, idx: number): number {
 }
 
 export const AramMatchView: React.FC<AramMatchViewProps> = ({
+  evaluationRenderless = false,
+  evaluationStartPaused = false,
+  trustedServer = false,
   seed,
   onlineMode = false,
   onReplay,
@@ -444,6 +459,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   opponentName,
   onMatchComplete
 }) => {
+  const renderlessEvaluation = import.meta.env.DEV && evaluationRenderless;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const threeTerrainHostRef = useRef<HTMLDivElement>(null);
   const threeTerrainRef = useRef<ThreeArenaTerrain | null>(null);
@@ -457,7 +473,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenError, setFullscreenError] = useState(false);
   const [speed, setSpeed] = useState<number>(1);
-  const [paused, setPaused] = useState<boolean>(false);
+  const [paused, setPaused] = useState<boolean>(import.meta.env.DEV && evaluationStartPaused);
   const [dockTab, setDockTab] = useState<'squads' | 'events' | 'items'>('squads');
   const [recordPage, setRecordPage] = useState(0);
   useEffect(() => {
@@ -468,7 +484,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   useEffect(() => {
     const host = threeTerrainHostRef.current;
-    if (!host) return;
+    if (!host || renderlessEvaluation) return;
     let unmounted = false;
     host.dataset.renderer = 'canvas-fallback';
     void import('../threeArenaTerrain').then(({ ThreeArenaTerrain }) => {
@@ -503,7 +519,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       threeTerrainRef.current?.dispose();
       threeTerrainRef.current = null;
     };
-  }, []);
+  }, [renderlessEvaluation]);
 
   // Camera Zoom & Spectator Tracking
   const [zoom, setZoom] = useState<number>(2);
@@ -686,7 +702,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     const rawX = sumX / Math.max(0.001, totalWeight);
     const rawY = sumY / Math.max(0.001, totalWeight);
-    const targetY = 380 + (rawY - 380) * 0.45;
+    // In 3D, follow actual jungle fights and leave room above the raised bodies.
+    const targetY = arenaViewRef.current==='3d' ? rawY-38 : 380 + (rawY - 380) * 0.45;
 
     return { x: rawX, y: targetY };
   };
@@ -1166,13 +1183,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   useEffect(() => {
     // Three spaced turrets, three destructible barracks, and a nexus per side.
     const makeBarracks = (team: 'blue' | 'red'): LaneStructure[] =>
-      (['melee', 'ranged', 'catapult'] as const).map((kind, index) => ({
+      (['melee', 'ranged', 'catapult'] as const).map((kind) => ({
         id: `${team === 'blue' ? 'b' : 'r'}_${kind}_barracks`,
         team,
         type: 'barracks',
         barracksKind: kind,
         name: `${team === 'blue' ? 'Blue' : 'Red'} ${kind === 'ranged' ? 'Ranged' : kind === 'catapult' ? 'Catapult' : 'Melee'} Barracks`,
-        x: BARRACKS_X[team], y: 305 + index * 75,
+        ...barracksPosition(team, kind),
         hp: STRUCTURE_HP.barracks, maxHp: STRUCTURE_HP.barracks, ad: 0, range: 0, attackTimer: 0,
         isAlive: true, targetId: null, armor: 20
       }));
@@ -1190,7 +1207,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ];
     structuresRef.current = initialStructures;
 
-    // 2. Health & Mana Relics on Bridge & Lower Valley
+    // 2. Health & Mana Relics on the lane and lower jungle
     relicsRef.current = [
       { id: 'relic_top', x: 1095, y: 295, respawnTimer: 0, healAmount: 260 },
       { id: 'relic_bot', x: 1505, y: 465, respawnTimer: 0, healAmount: 260 }
@@ -1368,7 +1385,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     (['blue', 'red'] as const).forEach((team) => {
       const direction = team === 'blue' ? 1 : -1;
       const prefix = team === 'blue' ? 'b' : 'r';
-      const spawnX = BARRACKS_X[team] + direction * 42;
+      const spawnX = NEXUS_X[team] + direction * 68;
       const addMinion = (type: LaneMinion['type'], index: number, x: number, y: number) => {
         const empowered = isMinionEmpowered(team, type, structuresRef.current);
         const stats = waveStats(type, empowered);
@@ -1383,16 +1400,18 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         });
       };
       for (let i = 0; i < 3; i++) {
-        addMinion('melee', i, spawnX + direction * (20 + i * 16), 350 + i * 15);
-        addMinion('caster', i, spawnX - direction * (16 + i * 16), 365 + i * 15);
+        const melee = minionSpawnPosition(team, 'melee', i), caster = minionSpawnPosition(team, 'caster', i);
+        addMinion('melee', i, melee.x, melee.y);
+        addMinion('caster', i, caster.x, caster.y);
       }
       if (waveCountRef.current % 3 === 0 || isMinionEmpowered(team, 'cannon', structuresRef.current)) {
-        addMinion('cannon', 0, spawnX - direction * 38, 430);
+        const cannon = minionSpawnPosition(team, 'cannon', 0);
+        addMinion('cannon', 0, cannon.x, cannon.y);
       }
       if (pendingSiegeGolemRef.current[team]) {
         newMinions.push({
           id: `siege_golem_${team}_${waveCountRef.current}`, team, type: 'melee', siegeGolem: true,
-          x: spawnX - direction * 55, y: LANE_Y,
+          x: spawnX, y: LANE_Y,
           hp: 3200, maxHp: 3200, ad: 110, range: 75, speed: 86,
           attackTimer: 0, goldReward: 110, xpReward: 130, isAlive: true,
           siegeChargeCooldown: 2.5, siegeChargeWindup: 0
@@ -2108,6 +2127,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     // 8. Update Spell AOEs & Continuous Mechanics (Tethers, Pulls, Traps)
     spellsRef.current = spellsRef.current
       .map((s) => {
+        if(s.voltaireRemnant){
+          const owner=champs.find(c=>c.id===s.sourceUnitId);
+          const victims=owner?advanceStaticRemnant(s.voltaireRemnant,s,dt,champs.filter(e=>e.team!==owner.team)):[];
+          if(victims.length&&owner){
+            victims.forEach(id=>{const enemy=champs.find(c=>c.id===id)!;applyDamageToChampion(owner,enemy,owner.champion.skill1.damage,false,'Static Remnant','skill1');});
+            return {...s,type:'static_remnant_detonation',radius:VOLTAIRE.blastRadius,duration:.32,maxDuration:.32,voltaireRemnant:undefined};
+          }
+          if(s.voltaireRemnant.resolved)return {...s,duration:0};
+        }
         if (s.kaelenCast) {
           const source = champs.find(c => c.id === s.sourceUnitId);
           const spell = KAELEN_INVOKED_SPELLS.find(spell => spell.id === s.kaelenCast!.spellId);
@@ -2395,8 +2423,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       const dir = m.team === 'blue' ? 1 : -1;
-      const enemyMinions = minions.filter((em) => em.team !== m.team && em.isAlive && Math.abs(em.x - m.x) <= m.range + 20);
-      const enemyStructures = structures.filter((es) => es.team !== m.team && es.isAlive && Math.abs(es.x - m.x) <= m.range + 30);
+      const enemyMinions = minions.filter((em) => em.team !== m.team && em.isAlive && Math.hypot(em.x - m.x, em.y - m.y) <= m.range + 20);
+      const enemyStructures = structures.filter((es) => es.team !== m.team && es.isAlive && Math.hypot(es.x - m.x, es.y - m.y) <= m.range + 30);
       const enemyChamps = champs.filter((ec) => ec.team !== m.team && ec.isAlive && Math.hypot(ec.x - m.x, ec.y - m.y) <= m.range + 10);
 
       const target = enemyMinions[0] || enemyStructures[0] || enemyChamps[0];
@@ -2430,7 +2458,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           }
         }
       } else {
-        m.x += dir * m.speed * dt;
+        advanceLaneMinion(m, dt);
         m.x = Math.max(40, Math.min(ARENA_WIDTH - 40, m.x));
       }
     });
@@ -2467,6 +2495,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         u.respawnTimer = Math.max(0, u.respawnTimer - dt);
         if (u.respawnTimer <= 0) {
           u.isAlive = true;
+          u.voltaireOverloadTimer=0;u.basicAttackVisual=undefined;
           u.hookPull = undefined;
           u.hp = u.maxHp;
           u.mana = maxMana(u);
@@ -2582,6 +2611,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         u.kaelenSlowTimer = Math.max(0, u.kaelenSlowTimer! - dt);
         if (u.kaelenSlowTimer === 0) u.kaelenSlowAmount = 0;
       }
+      if((u.voltaireOverloadTimer??0)>0)u.voltaireOverloadTimer=Math.max(0,u.voltaireOverloadTimer!-dt);
       if ((u.kaelenEquinoxTimer ?? 0) > 0) {
         u.kaelenEquinoxTimer = Math.max(0, u.kaelenEquinoxTimer! - dt);
         if (u.kaelenEquinoxTimer === 0) {
@@ -2816,9 +2846,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             emitSkillEffect(u, victim, false, 'Barrel Rush', 'skill2');
           }
         };
-        if (hit && dash.kind === 'raijin_bolt' && !(dash.hitIds ?? []).includes(hit.id)) {
-          (dash.hitIds ??= []).push(hit.id);
-          applyDamageToChampion(u, hit, dash.damage ?? u.champion.ultimate.damage, false, '⚡ Ball Lightning');
+        if (dash.kind === 'raijin_bolt') {
+          collectVoltaireBallHits(dash,u,champs.filter(enemy=>enemy.team!==u.team)).forEach(id=>{
+              const enemy=champs.find(enemy=>enemy.id===id)!;
+              applyDamageToChampion(u,enemy,dash.damage??u.champion.ultimate.damage,false,'⚡ Ball Lightning','ultimate');
+            });
         }
         if (dash.kind === 'renn_rush') {
           champs.filter(e => e.team !== u.team && e.isAlive && !(dash.hitIds ?? []).includes(e.id)
@@ -2860,11 +2892,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.dash = undefined;
         } else if (distance <= step + 1 || dash.remaining <= 0) {
           if (dash.kind === 'raijin_bolt') {
-            champs.filter(enemy => enemy.team !== u.team && enemy.isAlive
-              && !(dash.hitIds ?? []).includes(enemy.id) && Math.hypot(enemy.x - u.x, enemy.y - u.y) <= 55)
-              .forEach(enemy => {
-                (dash.hitIds ??= []).push(enemy.id);
-                applyDamageToChampion(u, enemy, dash.damage ?? u.champion.ultimate.damage, false, '⚡ Ball Lightning');
+            spellsRef.current.push({id:`arrival:${u.id}:${matchTimeRef.current}`,type:'voltaire_arrival',x:u.x,y:u.y,radius:VOLTAIRE.ballArrivalRadius,
+              duration:.3,maxDuration:.3,color:'#83efff',sourceUnitId:u.id,avatarName:'Raijin',abilitySlot:'ultimate'});
+            collectVoltaireBallHits(dash,u,champs.filter(enemy=>enemy.team!==u.team),true)
+              .forEach(id => {
+                const enemy=champs.find(enemy=>enemy.id===id)!;
+                applyDamageToChampion(u, enemy, dash.damage ?? u.champion.ultimate.damage, false, '⚡ Ball Lightning','ultimate');
               });
           }
           const endpointTarget = dash.targetId ? champs.find(enemy => enemy.id === dash.targetId && enemy.isAlive) : undefined;
@@ -3077,8 +3110,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
 
       // Check if currently inside fountain well recovering
-      const inBlueWell = u.team === 'blue' && (u.x <= WELL_X.blue + 105 && Math.abs(u.y - LANE_Y) <= 105);
-      const inRedWell = u.team === 'red' && (u.x >= WELL_X.red - 105 && Math.abs(u.y - LANE_Y) <= 105);
+      const inBlueWell = u.team === 'blue' && isInsideHealingWell(u.team, u);
+      const inRedWell = u.team === 'red' && isInsideHealingWell(u.team, u);
       const isInsideWell = inBlueWell || inRedWell;
 
       // Healthy fountain defenders leave early if a core building is under siege.
@@ -3600,9 +3633,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       });
       const objectiveResetCandidates = upcomingTempoObjective
         ? allies.filter(ally => {
-          const allyInWell = ally.team === 'blue'
-            ? ally.x <= WELL_X.blue + 105 && Math.abs(ally.y - LANE_Y) <= 105
-            : ally.x >= WELL_X.red - 105 && Math.abs(ally.y - LANE_Y) <= 105;
+          const allyInWell = isInsideHealingWell(ally.team, ally);
           if (ally.isRecalling || allyInWell) return false;
           const allyEnemies = champs.filter(enemy => enemy.isAlive && enemy.team !== ally.team);
           const allyEnemyMinions = minions.filter(minion => minion.isAlive && minion.team !== ally.team);
@@ -4519,9 +4550,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // the monster and nearby threats, but not to choose a farming route.
       // Supports may join a coordinated post-recall camp call, but never solo-farm camps.
       const isSupportAvatar = u.champion.primaryRole === 'Support' || u.champion.secondaryRole === 'Support' || getAvatarCombatProfile(u.champion).Support >= 2;
-      const atTeamWell = (ally: AramChampionUnit) => ally.team === 'blue'
-        ? ally.x <= WELL_X.blue + 105 && Math.abs(ally.y - LANE_Y) <= 105
-        : ally.x >= WELL_X.red - 105 && Math.abs(ally.y - LANE_Y) <= 105;
+      const atTeamWell = (ally: AramChampionUnit) => isInsideHealingWell(ally.team, ally);
       const recentlyRecalledAllies = allies.filter(ally => (ally.recallCooldown ?? 0) > 0 && atTeamWell(ally));
       const canStartTeamCampObjective = shouldStartPostRecallCampObjective({
         recentlyRecalledAllies: recentlyRecalledAllies.length,
@@ -5526,8 +5555,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   // Evaluate & Purchase Items progressively
   const evaluateAndBuyItems = (u: AramChampionUnit) => {
-    const inHomeShop = Math.abs(u.y - LANE_Y) <= 105 && (u.team === 'blue'
-      ? u.x <= WELL_X.blue + 105 : u.x >= WELL_X.red - 105);
+    const inHomeShop = isInsideHealingWell(u.team, u);
     if (!inHomeShop) return;
     if (!u.boots && u.gold >= BOOTS.cost) {
       u.gold -= BOOTS.cost;
@@ -5814,6 +5842,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const targetMinion = minionsRef.current.find((m) => m.id === p.targetUnitId && m.isAlive);
       const targetStructure = structuresRef.current.find((st) => st.id === p.targetUnitId && st.isAlive);
       const attackerChamp = championsRef.current.find((c) => c.id === p.attackerId);
+      const impactTarget = targetChamp ?? targetMinion ?? targetStructure
+        ?? jungleCampsRef.current.find(c=>c.id===p.targetUnitId&&c.isAlive)
+        ?? (dragonRef.current.id===p.targetUnitId&&dragonRef.current.isAlive?dragonRef.current:undefined);
+      const detonateOverload=()=>{if(p.voltaireOverload&&attackerChamp&&impactTarget&&!targetStructure&&!targetChamp?.zhonyaActive){
+        championsRef.current.filter(e=>e.isAlive&&e.team!==attackerChamp.team&&!e.zhonyaActive&&!(e.untargetableTimer!>0)
+          &&Math.hypot(e.x-impactTarget.x,e.y-impactTarget.y)<=VOLTAIRE.overloadRadius).forEach(enemy=>{
+            enemy.kaelenSlowTimer=Math.max(enemy.kaelenSlowTimer??0,VOLTAIRE.slowDuration);
+            enemy.kaelenSlowAmount=Math.max(enemy.kaelenSlowAmount??0,VOLTAIRE.slowAmount);
+            applyDamageToChampion(attackerChamp,enemy,VOLTAIRE.overloadDamage,false,'Overload','innate',false,{adRatio:0,apRatio:0});
+          });
+        minionsRef.current.filter(e=>e.isAlive&&e.team!==attackerChamp.team&&Math.hypot(e.x-impactTarget.x,e.y-impactTarget.y)<=VOLTAIRE.overloadRadius)
+          .forEach(enemy=>applyDamageToMinion(attackerChamp,enemy,VOLTAIRE.overloadDamage));
+        spellsRef.current.push({id:`overload:${p.id}`,type:'voltaire_overload',x:impactTarget.x,y:impactTarget.y,radius:VOLTAIRE.overloadRadius,
+          duration:.3,maxDuration:.3,color:'#83efff',sourceUnitId:attackerChamp.id,avatarName:'Raijin'});
+      }};
 
       if (targetChamp) {
         const triggersKindraHunt = !!attackerChamp && shouldTriggerKindraHunt(
@@ -5953,6 +5996,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         }
       }
 
+      detonateOverload();
       floatsRef.current.push({
         id: random().toString(),
         x: p.x,
@@ -5960,7 +6004,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         text: '✨',
         color: p.color || '#facc15',
         opacity: 0.85,
-        scale: 0.85
+        scale: 0.85,
+        weaponImpact: attackerChamp&&impactTarget ? {avatarId:attackerChamp.champion.id,x:impactTarget.x,y:impactTarget.y,kind:'ranged'} : undefined
       });
     }
   };
@@ -6074,6 +6119,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       u.propellaRotorStacks = propellaRotorStacksAfterAttack(u.propellaRotorStacks ?? 0);
       u.propellaRotorTimer = PROPELLA_ROTOR_STACK_SECONDS;
     }
+    u.basicAttackVisual={targetId:target.id,x:target.x,y:target.y,releasedAt:matchTimeRef.current,melee:attackRange<90};
 
     let bonusAd = 0;
     let persistentStructureBonus = 0;
@@ -6170,6 +6216,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       : (baseDamage + bonusAd) * overchargeMultiplier
         * getKindraHuntDamageMultiplier(u.champion.name, u.kindraHuntTimer ?? 0);
     const isRanged = attackRange >= 90;
+    const chargedOverload=u.champion.name==='Raijin'&&consumeVoltaireOverload(u,targetType);
 
     // Runaan's Hurricane: Wind's Fury (fires secondary bolts at up to 2 nearby enemies)
     const hasRunaans = u.items.some((it) => it.id === 'item_runaans');
@@ -6257,7 +6304,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           angle,
           flakSplashRatio: u.champion.name === 'Skybreaker' && (targetType === 'champion' || targetType === 'minion')
             ? propellaFlakSplashRatio(u.level, (u.propellaGunshipTimer ?? 0) > 0)
-            : undefined
+            : undefined,
+          voltaireOverload:chargedOverload
         });
       }
     } else {
@@ -6269,7 +6317,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         text: '💥',
         color: '#facc15',
         opacity: 0.9,
-        scale: 0.95
+        scale: 0.95,
+        weaponImpact:{avatarId:u.champion.id,x:target.x,y:target.y,kind:'melee'}
       });
       if (targetType === 'champion') {
         const champTarget = championsRef.current.find(c => c.id === target.id);
@@ -6372,7 +6421,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     u.activeAbilitySlot = 'skill1';
     const utility = abilityDamageMultiplier(u.level, 'skill1');
     sound.playAvatarSkill(u.champion.name, 'skill1', u.x / ARENA_WIDTH * 2 - 1);
-    emitSkillEffect(u, target, false, u.champion.skill1.name, 'skill1');
+    if(u.champion.name!=='Raijin')emitSkillEffect(u, target, false, u.champion.skill1.name, 'skill1');
 
     if (u.champion.name === 'Solana') {
       applyChampionCrowdControl(u, target, 1.2, 'stun', '☀️ Solar Shieldbash');
@@ -6625,18 +6674,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       applyDamageToChampion(u, target, 140, false, '🔥 Searing Chains');
       addEvent(`🔥 CHAINS: Xin locked down ${target.player.name} in flaming Searing Chains!`, 'combo');
     } else if (u.champion.name === 'Raijin') {
-      // Storm Spirit: Static Remnant
+      u.voltaireOverloadTimer=VOLTAIRE.overloadLifetime;
       spellsRef.current.push({
         id: random().toString(),
         type: 'static_remnant',
         x: u.x,
         y: u.y,
-        radius: 40,
-        duration: 3.0,
-        maxDuration: 3.0,
-        color: '#06b6d4'
+        radius: VOLTAIRE.triggerRadius,
+        duration: VOLTAIRE.remnantLifetime,
+        maxDuration: VOLTAIRE.remnantLifetime,
+        color: '#06b6d4',sourceUnitId:u.id,avatarName:'Raijin',abilitySlot:'skill1',voltaireRemnant:{elapsed:0,resolved:false}
       });
-      applyDamageToChampion(u, target, 140, false, '⚡ Static Remnant');
       addEvent(`⚡ STATIC: Raijin planted a crackling Static Remnant!`, 'micro');
     } else if (u.champion.name === 'Kaolin') {
       // Earth Spirit: Boulder Smash
@@ -6861,11 +6909,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     target: AramChampionUnit | undefined,
     fallbackDirection: -1 | 1
   ) => {
+    u.voltaireOverloadTimer=VOLTAIRE.overloadLifetime;
     const destination = getGroundTargetPoint(
       u,
       target ? { x: target.x, y: target.y } : undefined,
       fallbackDirection,
-      320,
+      VOLTAIRE.ballRange,
       { minX: 60, maxX: ARENA_WIDTH - 60, minY: 90, maxY: 610 }
     );
     // applyDamageToChampion owns rank and item scaling; dash state keeps authored base damage.
@@ -6878,8 +6927,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       kind: 'raijin_bolt', startX: u.x, startY: u.y,
       targetX: destination.x,
       targetY: destination.y,
-      remaining: 0.75,
-      speed: 540,
+      remaining: VOLTAIRE.ballDuration,
+      speed: VOLTAIRE.ballSpeed,
       damage,
       hitIds
     };
@@ -6891,7 +6940,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       radius: 55,
       duration: 1,
       maxDuration: 1,
-      color: '#06b6d4'
+      color: '#06b6d4',sourceUnitId:u.id,avatarName:'Raijin',abilitySlot:'ultimate'
     });
     addEvent(`⚡ BALL LIGHTNING: ${u.player.name} launched toward a ground point!`, 'combo');
   };
@@ -7168,6 +7217,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
       addEvent(`🐻 ROAR: Sylla${bear ? ' and his Spirit Bear' : ''} terrified nearby enemies with Savage Roar!`, 'combo');
     } else if (name === 'Raijin') {
+      u.voltaireOverloadTimer=VOLTAIRE.overloadLifetime;
       // Storm Spirit / Raijin: Electric Vortex continuous tether pulling victim!
       applyChampionCrowdControl(u, target, 1.4, 'stun', '⚡ Electric Vortex');
       spellsRef.current.push({
@@ -7381,6 +7431,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
   // Champion Ultimate Cast (Level 6 Spike: 75s / 60s / 45s CD)
   const castChampionUltimate = (u: AramChampionUnit, target: AramChampionUnit, enemies: AramChampionUnit[]) => {
+    if(u.champion.name==='Raijin'){castRaijinGroundUltimate(u,target,u.team==='blue'?1:-1);return;}
     recordAbilityCast(insightsRef.current, u, 'ultimate', matchTimeRef.current);
     u.activeAbilitySlot = 'ultimate';
     const utility = abilityDamageMultiplier(u.level, 'ultimate');
@@ -7614,21 +7665,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         applyDamageToChampion(u, e, ultDamage, false, '🔥 Sleight of Fist');
       });
       showBanner(`🔥 SLEIGHT OF FIST!`, `${u.player.name} slashed through the flame remnant field!`, '🔥');
-    } else if (u.champion.name === 'Raijin') {
-      // Storm Spirit: Ball Lightning
-      u.dash = { kind: 'raijin_bolt', startX: u.x, startY: u.y, targetX: target.x, targetY: target.y, targetId: target.id,
-        remaining: 0.75, speed: 540, damage: u.champion.ultimate.damage, hitIds: [] };
-      spellsRef.current.push({
-        id: random().toString(),
-        type: 'ball_lightning',
-        x: target.x,
-        y: target.y,
-        radius: 55,
-        duration: 1.0,
-        maxDuration: 1.0,
-        color: '#06b6d4'
-      });
-      showBanner(`⚡ BALL LIGHTNING!`, `${u.player.name} zipped in supersonic ball lightning blast!`, '⚡');
     } else if (u.champion.name === 'Kaolin') {
       // Earth Spirit: Magnetize
       spellsRef.current.push({
@@ -8400,7 +8436,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     recordTeamPsychologyEvent(enemyTeam, `siege:${structure.id}:${Math.floor(matchTimeRef.current * 10)}`, 'teamfight_win');
     recordTeamPsychologyEvent(structure.team, `siege:${structure.id}:${Math.floor(matchTimeRef.current * 10)}`, 'failed_siege');
 
-    const bonus = structure.barracksKind ? `${structure.barracksKind.toUpperCase()} creeps upgraded from the next wave!` : 'Causeways advanced!';
+    const bonus = structure.barracksKind ? `${structure.barracksKind.toUpperCase()} creeps upgraded from the next wave!` : 'Base defenses breached!';
     showBanner(`🏰 ${structure.name} DESTROYED!`, `+${bounty}g Team Bounty. ${bonus}`, '🏰');
     addEvent(`🏰 ${structure.name} destroyed! ${bonus}`, 'tower');
   };
@@ -8925,6 +8961,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
+    ctx.save(); ctx.beginPath(); ctx.roundRect(0, 0, Mw, Mh, 8); ctx.clip();
+    ctx.scale(scale, scale); drawNaturalArena(ctx, matchTimeRef.current); ctx.restore();
+
     // Subtle lane guide
     ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
     ctx.lineWidth = 1;
@@ -9020,71 +9059,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.save();
     ctx.scale(width / 1320, 1);
 
-    const drawLegacyStaticTerrain = !threeTerrainAvailableRef.current;
-    if (drawLegacyStaticTerrain) {
-      // WebGL fallback for the static terrain layers migrated in Phase 1.
-      const groundGrad = ctx.createLinearGradient(0, 0, 0, height);
-      groundGrad.addColorStop(0, '#1b3028');
-      groundGrad.addColorStop(0.22, '#344a38');
-      groundGrad.addColorStop(0.5, '#405441');
-      groundGrad.addColorStop(0.78, '#344838');
-      groundGrad.addColorStop(1, '#1a2d26');
-      ctx.fillStyle = groundGrad;
-      ctx.fillRect(0, 0, 1320, height);
-
-      for (let p = 0; p < 42; p++) {
-        const px = (p * 137 + 41) % 1300 + 10;
-        const py = (p * 97 + 29) % (height - 48) + 24;
-        const pr = 34 + (p % 5) * 13;
-        const ph = 13 + (p % 4) * 5;
-        ctx.fillStyle = p % 3 === 0 ? 'rgba(177, 166, 111, 0.075)' : 'rgba(157, 190, 126, 0.07)';
-        ctx.beginPath();
-        ctx.ellipse(px, py, pr, ph, (p % 7) * 0.14, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      const vignette = ctx.createRadialGradient(660, height * 0.5, 170, 660, height * 0.5, 790);
-      vignette.addColorStop(0, 'rgba(5, 15, 13, 0)');
-      vignette.addColorStop(1, 'rgba(5, 15, 13, 0.42)');
-      ctx.fillStyle = vignette;
-      ctx.fillRect(0, 0, 1320, height);
-
-      const riverGrad = ctx.createLinearGradient(590, 0, 730, 0);
-      riverGrad.addColorStop(0, 'rgba(17, 54, 57, 0.42)');
-      riverGrad.addColorStop(0.2, 'rgba(39, 105, 111, 0.72)');
-      riverGrad.addColorStop(0.5, 'rgba(62, 139, 143, 0.82)');
-      riverGrad.addColorStop(0.8, 'rgba(39, 105, 111, 0.72)');
-      riverGrad.addColorStop(1, 'rgba(17, 54, 57, 0.42)');
-      ctx.fillStyle = riverGrad;
-      ctx.beginPath();
-      ctx.moveTo(630, 0);
-      ctx.bezierCurveTo(610, 200, 690, 480, 640, height);
-      ctx.lineTo(720, height);
-      ctx.bezierCurveTo(770, 480, 690, 200, 710, 0);
-      ctx.closePath();
-      ctx.strokeStyle = 'rgba(13, 35, 37, 0.65)';
-      ctx.lineWidth = 14;
-      ctx.stroke();
-      ctx.fill();
-
-      ctx.strokeStyle = 'rgba(168, 211, 191, 0.3)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(632, 0);
-      ctx.bezierCurveTo(612, 200, 692, 480, 642, height);
-      ctx.stroke();
-    }
-
-    // Water glints remain a Canvas animation until the effects migration.
-    ctx.strokeStyle = 'rgba(126, 202, 191, 0.34)';
-    ctx.lineWidth = 1.8;
-    for (let r = 0; r < 12; r++) {
-      const ry = ((r * 85 + time * 35) % height);
-      const rx = 645 + Math.sin(ry * 0.012 + time * 1.5) * 22;
-      ctx.beginPath();
-      ctx.moveTo(rx - 22, ry);
-      ctx.quadraticCurveTo(rx, ry + 4, rx + 22, ry);
-      ctx.stroke();
+    if (!threeTerrainAvailableRef.current) {
+      ctx.save(); ctx.scale(1320 / ARENA_WIDTH, 1);
+      drawNaturalArena(ctx, time); ctx.restore();
     }
 
     // 2. LIVING FOREST TREES ALONG NORTHERN & SOUTHERN MARGINS
@@ -9205,487 +9182,59 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ];
     rockLocations.forEach(([rx, ry, rw, rh]) => drawRock(rx, ry, rw, rh));
 
-    // Natural geological formations: Continuous curved bedrock coves and 3D multi-faceted boulders
-    const campRingMap = new Map<string, (typeof CAMP_ROCK_RINGS)[number]>(
-      CAMP_ROCK_RINGS.map(ring => [ring.id, ring])
-    );
-
     const drawRaisedRockTerrain = () => {
-      // Step A: Continuous bedrock embankments linking camp rings into cohesive cliff coves
-      CAMP_ROCK_RINGS.forEach(ring => {
-        const sR = (ring.stoneRadius / ARENA_WIDTH) * 1320;
-        const isDragon = ring.id === 'dragon_boss';
-        const isGolem = ring.id === 'j_siege_golem';
-
-        // Non-entrance perimeter of the camp cove: wide flared opening with no gate pinch
-        const isBoss = ring.stones === 16;
-        const gapThreshold = isBoss ? 0.58 : 0.72;
-        const startAngle = ring.entrance + gapThreshold;
-        const endAngle = ring.entrance + Math.PI * 2 - gapThreshold;
-        const traceContour = (offset = 0, lift = 0) => {
+      // Continuous stratified coves, with the same openings as the 3D cliffs.
+      for (const ring of CAMP_ROCK_RINGS) {
+        const boss = ring.stones === 16, gap = boss ? .71 : .93;
+        const trace = (offset: number, lift: number) => {
           ctx.beginPath();
-          for (let i = 0; i <= 72; i++) {
-            const point = campWallPoint(ring, startAngle + (endAngle - startAngle) * i / 72, offset);
-            const x = point.x / ARENA_WIDTH * 1320;
-            if (i === 0) ctx.moveTo(x, point.y + lift);
-            else ctx.lineTo(x, point.y + lift);
+          for (let i = 0; i <= 80; i++) {
+            const p = campWallPoint(ring, ring.entrance + gap + (Math.PI * 2 - gap * 2) * i / 80, offset);
+            if (!i) ctx.moveTo(p.x / ARENA_WIDTH * 1320, p.y - lift);
+            else ctx.lineTo(p.x / ARENA_WIDTH * 1320, p.y - lift);
           }
         };
-
-        ctx.save();
-        // 1. Soft foundation shadow
-        ctx.beginPath();
-        traceContour(4, 4);
-        ctx.lineWidth = sR * 2.1;
-        ctx.lineCap = 'butt';
-        ctx.strokeStyle = isDragon ? 'rgba(0, 0, 0, 0.62)' : 'rgba(0, 0, 0, 0.45)';
-        ctx.stroke();
-
-        // 2. Continuous bedrock core linking all stones into an authentic cliff wall
-        ctx.beginPath();
-        traceContour();
-        ctx.lineWidth = sR * 1.75;
-        ctx.lineCap = 'butt';
-        ctx.strokeStyle = isDragon ? '#18181b' : isGolem ? '#151f2e' : '#16281e';
-        ctx.stroke();
-
-        // 3. Cove outer edge / turf transition
-        ctx.beginPath();
-        traceContour(ring.stoneRadius * 0.35, -2);
-        ctx.lineWidth = 3.5;
-        ctx.lineCap = 'butt';
-        ctx.strokeStyle = isDragon ? 'rgba(120, 53, 15, 0.4)' : isGolem ? 'rgba(30, 41, 59, 0.5)' : 'rgba(4, 120, 87, 0.3)';
-        ctx.stroke();
-
-        // 4. Subtle inner caldera glow for Dragon pit
-        if (isDragon) {
-          ctx.beginPath();
-          traceContour(-ring.stoneRadius * 0.4, 1);
-          ctx.lineWidth = 3;
-          ctx.lineCap = 'butt';
-          ctx.strokeStyle = 'rgba(234, 88, 12, 0.45)';
-          ctx.stroke();
+        const r = ring.stoneRadius / ARENA_WIDTH * 1320;
+        ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        trace(0, -5); ctx.strokeStyle = 'rgba(8,21,20,.65)'; ctx.lineWidth = r * 2.25; ctx.stroke();
+        trace(0, 0); ctx.strokeStyle = '#293c3d'; ctx.lineWidth = r * 2; ctx.stroke();
+        trace(0, 8); ctx.strokeStyle = arenaCampArt(ring.id).stone; ctx.lineWidth = r * 1.7; ctx.stroke();
+        trace(2, 16); ctx.strokeStyle = '#87907a'; ctx.lineWidth = r * 1.1; ctx.stroke();
+        trace(4, 18); ctx.strokeStyle = '#586f48'; ctx.lineWidth = r * .70; ctx.stroke();
+        for (let layer = 0; layer < 3; layer++) {
+          trace(-ring.stoneRadius * .45 + layer * 2, 3 + layer * 4);
+          ctx.strokeStyle = ring.id === 'j_siege_golem' ? 'rgba(157,137,175,.58)' : 'rgba(173,171,139,.42)';
+          ctx.lineWidth = .8; ctx.setLineDash([15 + layer * 2, 7]); ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        for (let i = 0; i < 13; i++) {
+          const a = ring.entrance + gap + .2 + (Math.PI * 2 - gap * 2 - .4) * i / 12;
+          const p = campWallPoint(ring, a), x = p.x / ARENA_WIDTH * 1320, y = p.y;
+          ctx.strokeStyle = '#514e38';ctx.lineWidth = 2;
+          ctx.beginPath();ctx.moveTo(x,y-18);ctx.bezierCurveTo(x-4,y-11,x+4,y-5,x-2,y+4);ctx.stroke();
+          ctx.fillStyle = i % 2 ? '#73844f' : '#47684a';
+          ctx.beginPath();ctx.ellipse(x,y-19,5,3,i*.5,0,Math.PI*2);ctx.fill();
         }
         ctx.restore();
-      });
-
-      // Step B: Continuous bedrock shelves for Highground base ramp walls
-      const highgroundSegments = [
-        { x1: ((NEXUS_TOWER_X.blue + 35) / ARENA_WIDTH) * 1320, x2: ((NEXUS_TOWER_X.blue + 115) / ARENA_WIDTH) * 1320, y: 295 },
-        { x1: ((NEXUS_TOWER_X.blue + 35) / ARENA_WIDTH) * 1320, x2: ((NEXUS_TOWER_X.blue + 115) / ARENA_WIDTH) * 1320, y: 465 },
-        { x1: ((NEXUS_TOWER_X.red - 115) / ARENA_WIDTH) * 1320, x2: ((NEXUS_TOWER_X.red - 35) / ARENA_WIDTH) * 1320, y: 295 },
-        { x1: ((NEXUS_TOWER_X.red - 115) / ARENA_WIDTH) * 1320, x2: ((NEXUS_TOWER_X.red - 35) / ARENA_WIDTH) * 1320, y: 465 },
-      ];
-      highgroundSegments.forEach(({ x1, x2, y }) => {
-        ctx.save();
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.48)';
-        ctx.beginPath();
-        ctx.roundRect(x1 - 18, y + 4, (x2 - x1) + 36, 18, 9);
-        ctx.fill();
-
-        ctx.fillStyle = '#1e293b';
-        ctx.beginPath();
-        ctx.roundRect(x1 - 16, y - 6, (x2 - x1) + 32, 22, 7);
-        ctx.fill();
-
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+      }
+      for (const team of ['blue','red'] as const) for (const y of [295,465]) {
+        const rocks = ROCK_TERRAIN.filter(r => r.campId === team + '_highground' && r.y === y).sort((a,b) => a.x-b.x);
+        if (!rocks.length) continue;
+        const x1 = (rocks[0].x - 16) / ARENA_WIDTH * 1320, x2 = (rocks[rocks.length-1].x + 16) / ARENA_WIDTH * 1320;
+        ctx.save();ctx.lineCap='round';
+        for (const [lift,color,line] of [[0,'#30413f',21],[8,'#69776b',17],[14,'#607849',9]] as const) {
+          ctx.strokeStyle=color;ctx.lineWidth=line;ctx.beginPath();ctx.moveTo(x1,y-lift);ctx.lineTo(x2,y-lift);ctx.stroke();
+        }
         ctx.restore();
-      });
-
-      // Step C: Procedural 3D organic boulders for each rock in ROCK_TERRAIN
-      ROCK_TERRAIN.forEach((rock) => {
-        const ridgeX = (rock.x / ARENA_WIDTH) * 1320;
-        const ridgeY = rock.y;
-        const baseR = (rock.radius / ARENA_WIDTH) * 1320;
-
-        const isDragon = rock.campId === 'dragon_boss';
-        const isGolem = rock.campId === 'j_siege_golem';
-        const isHighground = rock.campId.includes('highground');
-
-        const h1 = rockHash(rock.x, rock.y, 1);
-        const h2 = rockHash(rock.x, rock.y, 2);
-        const h3 = rockHash(rock.x, rock.y, 3);
-        const h4 = rockHash(rock.x, rock.y, 4);
-        const h5 = rockHash(rock.x, rock.y, 5);
-
-        const wR = baseR * (0.95 + h1 * 0.22);
-        const hR = baseR * (0.86 + h2 * 0.24);
-
-        // Natural tangential orientation along the camp cove / ridge
-        let alignAngle = 0;
-        const camp = campRingMap.get(rock.campId);
-        if (camp) {
-          const dx = ((rock.x - camp.x) / ARENA_WIDTH) * 1320;
-          const dy = rock.y - camp.y;
-          alignAngle = Math.atan2(dy, dx) + Math.PI / 2 + (h3 - 0.5) * 0.32;
-        } else {
-          alignAngle = (h3 - 0.5) * 0.22;
-        }
-
-        ctx.save();
-        ctx.translate(ridgeX, ridgeY);
-        ctx.rotate(alignAngle);
-
-        // 1. Soft contact shadow
-        ctx.fillStyle = isDragon ? 'rgba(0, 0, 0, 0.52)' : 'rgba(0, 0, 0, 0.42)';
-        ctx.beginPath();
-        ctx.ellipse(h4 * 2 - 1, hR * 0.32 + 3, wR * 1.15, hR * 0.65, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 2. Chiseled 8-point organic boulder silhouette
-        const pts: [number, number][] = [];
-        for (let k = 0; k < 8; k++) {
-          const ang = k * (Math.PI * 2 / 8);
-          const vh = rockHash(rock.x + k * 17, rock.y + k * 23, k + 6);
-          const distFactor = (ang > 0.2 && ang < Math.PI - 0.2)
-            ? (0.88 + vh * 0.22)
-            : (0.92 + vh * 0.24);
-          pts.push([
-            Math.cos(ang) * wR * distFactor,
-            Math.sin(ang) * hR * distFactor,
-          ]);
-        }
-
-        // Base dark shaded under-facet
-        ctx.fillStyle = isDragon ? '#18181b' : isGolem ? '#101726' : isHighground ? '#182232' : '#15201b';
-        ctx.beginPath();
-        ctx.moveTo(pts[0][0], pts[0][1]);
-        for (let k = 1; k < 8; k++) {
-          ctx.lineTo(pts[k][0], pts[k][1]);
-        }
-        ctx.closePath();
-        ctx.fill();
-
-        // 3. Midtone Rock Body (lifted toward light)
-        const midColor1 = isDragon ? '#292524' : isGolem ? '#222f3e' : isHighground ? '#283648' : '#2b3b34';
-        const midColor2 = isDragon ? '#44403c' : isGolem ? '#334155' : isHighground ? '#3f4f66' : '#3d4f44';
-        const bodyGrad = ctx.createLinearGradient(-wR * 0.6, -hR * 0.8, wR * 0.5, hR * 0.6);
-        bodyGrad.addColorStop(0, midColor2);
-        bodyGrad.addColorStop(0.5, midColor1);
-        bodyGrad.addColorStop(1, isDragon ? '#1c1917' : '#141d24');
-        ctx.fillStyle = bodyGrad;
-
-        ctx.beginPath();
-        ctx.moveTo(pts[0][0] * 0.95, pts[0][1] * 0.92 - 1.5);
-        ctx.lineTo(pts[1][0] * 0.95, pts[1][1] * 0.92 - 1.5);
-        ctx.lineTo(pts[2][0] * 0.92, pts[2][1] * 0.88 - 2.5);
-        ctx.lineTo(pts[3][0] * 0.88, pts[3][1] * 0.82 - 3);
-        ctx.lineTo(pts[4][0] * 0.88, pts[4][1] * 0.82 - 3);
-        ctx.lineTo(pts[5][0] * 0.92, pts[5][1] * 0.88 - 2.5);
-        ctx.lineTo(pts[6][0] * 0.95, pts[6][1] * 0.92 - 1.5);
-        ctx.lineTo(pts[7][0] * 0.95, pts[7][1] * 0.92 - 1.5);
-        ctx.closePath();
-        ctx.fill();
-
-        // 4. Sunlit Upper Crest Facet
-        const sunlitColor = isDragon ? '#57534e' : isGolem ? '#475569' : isHighground ? '#53657d' : '#526b5d';
-        ctx.fillStyle = sunlitColor;
-        ctx.beginPath();
-        ctx.moveTo(pts[5][0] * 0.92, pts[5][1] * 0.88 - 2.5);
-        ctx.lineTo(pts[6][0] * 0.95, pts[6][1] * 0.92 - 1.5);
-        ctx.lineTo(pts[7][0] * 0.95, pts[7][1] * 0.92 - 1.5);
-        ctx.lineTo(-wR * 0.1, -hR * 0.2);
-        ctx.closePath();
-        ctx.fill();
-
-        // 5. Crisp Chiseled Crest Highlight Ridge
-        const crestHighlight = isDragon
-          ? 'rgba(249, 115, 22, 0.45)'
-          : isGolem
-            ? 'rgba(148, 163, 184, 0.5)'
-            : isHighground
-              ? 'rgba(203, 213, 225, 0.55)'
-              : 'rgba(167, 243, 208, 0.45)';
-        ctx.strokeStyle = crestHighlight;
-        ctx.lineWidth = 1.3;
-        ctx.beginPath();
-        ctx.moveTo(pts[5][0] * 0.92, pts[5][1] * 0.88 - 2.5);
-        ctx.lineTo(pts[6][0] * 0.95, pts[6][1] * 0.92 - 1.5);
-        ctx.lineTo(pts[7][0] * 0.95, pts[7][1] * 0.92 - 1.5);
-        ctx.stroke();
-
-        // 6. Geological Fracture Fissures
-        ctx.strokeStyle = isDragon ? 'rgba(249, 115, 22, 0.85)' : 'rgba(15, 23, 42, 0.65)';
-        ctx.lineWidth = isDragon ? 1.4 : 1.0;
-        const crackX1 = pts[6][0] * 0.7;
-        const crackY1 = pts[6][1] * 0.7;
-        const crackMidX = (h4 - 0.5) * wR * 0.3;
-        const crackMidY = -hR * 0.15;
-        const crackEndX = (h5 - 0.5) * wR * 0.5;
-        const crackEndY = hR * 0.3;
-        ctx.beginPath();
-        ctx.moveTo(crackX1, crackY1);
-        ctx.lineTo(crackMidX, crackMidY);
-        ctx.lineTo(crackEndX, crackEndY);
-        ctx.stroke();
-
-        if (isDragon) {
-          ctx.strokeStyle = '#fed7aa';
-          ctx.lineWidth = 0.6;
-          ctx.beginPath();
-          ctx.moveTo(crackX1, crackY1);
-          ctx.lineTo(crackMidX, crackMidY);
-          ctx.lineTo(crackEndX, crackEndY);
-          ctx.stroke();
-        }
-
-        // 7. Biome Surface Overgrowth (Moss / Lichen / Ember Dust)
-        if (!isDragon) {
-          const mossX = -wR * 0.25 + (h4 - 0.5) * 4;
-          const mossY = -hR * 0.35 + (h5 - 0.5) * 3;
-          const mossR = baseR * (0.28 + h1 * 0.12);
-          ctx.fillStyle = isGolem ? '#0d9488' : '#047857';
-          ctx.beginPath();
-          ctx.ellipse(mossX, mossY, mossR, mossR * 0.68, (h2 - 0.5) * 0.6, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.fillStyle = isGolem ? '#2dd4bf' : '#10b981';
-          ctx.beginPath();
-          ctx.arc(mossX - 1, mossY - 1, mossR * 0.42, 0, Math.PI * 2);
-          ctx.fill();
-
-          if (h3 > 0.4) {
-            ctx.fillStyle = isGolem ? '#115e59' : '#065f46';
-            ctx.beginPath();
-            ctx.arc(wR * 0.28, hR * 0.1, baseR * 0.18, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        } else if (h1 > 0.4) {
-          ctx.fillStyle = 'rgba(251, 146, 60, 0.7)';
-          ctx.beginPath();
-          ctx.arc(wR * 0.2, -hR * 0.2, 1.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // 8. Scree Pebbles at Ground Contact
-        if (h5 > 0.3) {
-          const pX = (h2 - 0.5) * wR * 0.8;
-          const pY = hR * 0.65;
-          ctx.fillStyle = isDragon ? '#292524' : '#1e293b';
-          ctx.beginPath();
-          ctx.ellipse(pX, pY, 3, 2, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        ctx.restore();
-      });
+      }
     };
 
-    // 4. EMBERMAW'S VOLCANIC CRATER PIT (Natural scorched granite & magma)
-    ctx.save();
-    ctx.fillStyle = '#1c1917';
-    ctx.beginPath();
-    ctx.arc(660, 130, 96, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#78350f';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    for (let b = 0; b < 10; b++) {
-      const ba = b * (Math.PI * 2 / 10);
-      const bx = 660 + Math.cos(ba) * 92;
-      const by = 130 + Math.sin(ba) * 88;
-      drawRock(bx, by, 14, 10, '#292524');
-    }
-
-    const pitGrad = ctx.createRadialGradient(660, 130, 10, 660, 130, 88);
-    pitGrad.addColorStop(0, '#451a03');
-    pitGrad.addColorStop(0.45, '#9a3412');
-    pitGrad.addColorStop(0.85, '#292524');
-    pitGrad.addColorStop(1, '#1c1917');
-    ctx.fillStyle = pitGrad;
-    ctx.beginPath();
-    ctx.arc(660, 130, 86, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.strokeStyle = 'rgba(251, 146, 60, 0.75)';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.arc(660, 130, 55, 0, Math.PI * 2);
-    ctx.stroke();
-
-    ctx.fillStyle = '#fed7aa';
-    for (let s = 0; s < 5; s++) {
-      const sa = (time * 2 + s * 1.4) % (Math.PI * 2);
-      const sr = 15 + (s * 8);
-      ctx.beginPath();
-      ctx.arc(660 + Math.cos(sa) * sr, 130 + Math.sin(sa) * sr * 0.7, 2, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 11px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('EMBERMAW • DRAGON PIT', 660, 24);
+    ctx.save();ctx.translate(DRAGON_X / ARENA_WIDTH * 1320,130);
+    const crater = ctx.createRadialGradient(0,0,3,0,0,85);
+    crater.addColorStop(0,'rgba(116,77,51,.50)');crater.addColorStop(1,'rgba(46,54,45,0)');
+    ctx.fillStyle=crater;ctx.beginPath();ctx.ellipse(0,0,52,85,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#e4d7b4';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillText('EMBERMAW - FOREST CRATER',0,-109);
     ctx.restore();
-
-    // 5. JUNGLE WALKWAYS & NATURAL COBBLESTONE STAIR CONNECTORS
-    ctx.fillStyle = 'rgba(17, 27, 25, 0.58)';
-    ctx.beginPath();
-    ctx.roundRect(320, 120, 240, 95, 22);
-    ctx.roundRect(760, 120, 240, 95, 22);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(196, 175, 125, 0.44)';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    ctx.fillStyle = 'rgba(17, 27, 25, 0.58)';
-    ctx.beginPath();
-    ctx.roundRect(360, 520, 600, 105, 22);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(196, 175, 125, 0.44)';
-    ctx.stroke();
-
-    // Cobblestone connectors between causeway and side paths
-    ctx.fillStyle = '#6d7059';
-    ctx.fillRect(480, 205, 55, 60);
-    ctx.fillRect(785, 205, 55, 60);
-    ctx.fillRect(480, 495, 55, 55);
-    ctx.fillRect(785, 495, 55, 55);
-
-    const blueRampX = NEXUS_TOWER_X.blue / ARENA_WIDTH * 1320;
-    const redRampX = NEXUS_TOWER_X.red / ARENA_WIDTH * 1320;
-    const basePlatforms = [
-      { start: 50, end: blueRampX, edge: blueRampX, color: '#38bdf8' },
-      { start: redRampX, end: 1270, edge: redRampX, color: '#fb7185' },
-    ];
-
-    if (drawLegacyStaticTerrain) {
-    // 6. MAIN CENTRAL CAUSEWAY: Canvas fallback for the migrated Three.js surface
-    ctx.fillStyle = 'rgba(14, 21, 22, 0.48)';
-    ctx.beginPath();
-    ctx.roundRect(46, 266, 1228, 230, 23);
-    ctx.fill();
-
-    const causewayGrad = ctx.createLinearGradient(0, 268, 0, 492);
-    causewayGrad.addColorStop(0, '#514f45');
-    causewayGrad.addColorStop(0.12, '#706b59');
-    causewayGrad.addColorStop(0.5, '#7c7764');
-    causewayGrad.addColorStop(0.88, '#6d6857');
-    causewayGrad.addColorStop(1, '#47483f');
-    ctx.fillStyle = causewayGrad;
-    ctx.beginPath();
-    ctx.roundRect(52, 264, 1216, 232, 20);
-    ctx.fill();
-
-    ctx.strokeStyle = 'rgba(224, 211, 169, 0.42)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(58, 270, 1204, 220, 15);
-    ctx.stroke();
-
-    // Broken flagstone joints and a pale worn centerline guide the eye.
-    ctx.strokeStyle = 'rgba(31, 39, 34, 0.32)';
-    ctx.lineWidth = 1;
-    for (let x = 70; x <= 1250; x += 44) {
-      ctx.beginPath();
-      const offset = (Math.floor(x / 44) % 2) * 14;
-      ctx.moveTo(x, 270 + offset);
-      ctx.lineTo(x, 490 - offset);
-      ctx.stroke();
-    }
-    for (let y = 280; y <= 480; y += 32) {
-      ctx.beginPath();
-      ctx.moveTo(60, y);
-      ctx.lineTo(1260, y);
-      ctx.stroke();
-    }
-
-    const roadSheen = ctx.createLinearGradient(0, 350, 0, 410);
-    roadSheen.addColorStop(0, 'rgba(213, 197, 151, 0)');
-    roadSheen.addColorStop(0.5, 'rgba(213, 197, 151, 0.18)');
-    roadSheen.addColorStop(1, 'rgba(213, 197, 151, 0)');
-    ctx.fillStyle = roadSheen;
-    ctx.fillRect(70, 350, 1180, 60);
-
-    // Moss and scattered weeds soften the paving-to-meadow transition.
-    ctx.fillStyle = 'rgba(82, 119, 72, 0.62)';
-    ctx.fillRect(60, 268, 1200, 5);
-    ctx.fillRect(60, 487, 1200, 5);
-
-    // Raised stone bases begin at the third turrets and run to each well.
-    basePlatforms.forEach(platform => {
-      ctx.fillStyle = 'rgba(148, 163, 184, 0.11)';
-      ctx.fillRect(platform.start, 269, platform.end - platform.start, 222);
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
-      ctx.fillRect(platform.start, 264, platform.end - platform.start, 8);
-      ctx.fillRect(platform.start, 488, platform.end - platform.start, 8);
-      ctx.strokeStyle = platform.color;
-      ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(platform.edge, 270); ctx.lineTo(platform.edge, 490); ctx.stroke();
-      for (let step = 1; step <= 3; step++) {
-        const x = platform.edge + (platform.edge === blueRampX ? 1 : -1) * step * 10;
-        ctx.strokeStyle = `rgba(203, 213, 225, ${0.35 - step * 0.07})`;
-        ctx.beginPath(); ctx.moveTo(x, 280); ctx.lineTo(x, 480); ctx.stroke();
-      }
-    });
-
-    // Central Cobblestone Crossing Highway
-    ctx.fillStyle = '#5b5a4a';
-    ctx.fillRect(80, 350, 1160, 60);
-    ctx.strokeStyle = 'rgba(230, 213, 165, 0.52)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(80, 350, 1160, 60);
-
-    // 7. EXPANDED GRAND MIDDLE BATTLE ARENA (Ancient Radial Stone Plaza)
-    ctx.fillStyle = '#152132';
-    ctx.beginPath();
-    ctx.arc(660, 380, 140, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#475569';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    // Radial Stone Inset Ring
-    ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.arc(660, 380, 95, 0, Math.PI * 2);
-    ctx.stroke();
-    }
-
-    // Base mist remains an animation-layer effect on Canvas in this increment.
-    basePlatforms.forEach(platform => {
-      ctx.fillStyle = 'rgba(203, 213, 225, 0.08)';
-      for (let mist = 0; mist < 4; mist++) {
-        const drift = Math.sin(time * 0.5 + mist * 2.1) * 13;
-        const fogX = platform.start + (platform.end - platform.start) * (mist + 0.5) / 4 + drift;
-        ctx.beginPath();
-        ctx.arc(fogX, 310 + mist * 43, 56, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    });
-
-    // 8. Stone Parapet Braziers
-    const torchX = [180, 320, 460, 600, 720, 860, 1000, 1140];
-    torchX.forEach((tx) => {
-      // Top Brazier
-      ctx.fillStyle = '#090d16';
-      ctx.fillRect(tx - 6, 262, 12, 14);
-      ctx.fillStyle = '#ea580c';
-      ctx.beginPath();
-      ctx.arc(tx, 262 + Math.sin(time * 9 + tx) * 2, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#fef08a';
-      ctx.beginPath();
-      ctx.arc(tx, 261, 3, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Bottom Brazier
-      ctx.fillStyle = '#090d16';
-      ctx.fillRect(tx - 6, 484, 12, 14);
-      ctx.fillStyle = '#ea580c';
-      ctx.beginPath();
-      ctx.arc(tx, 494 + Math.sin(time * 9 + tx) * 2, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#fef08a';
-      ctx.beginPath();
-      ctx.arc(tx, 494, 3, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
     ctx.restore();
 
     // 6. ACTUAL PROCEDURAL JUNGLE MONSTER MODELS WITH FOG OF WAR SHROUD!
@@ -9697,23 +9246,24 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const isCampScouted = championsRef.current.some(c => c.isAlive && Math.hypot(c.x - camp.x, c.y - camp.y) <= 220);
       const isShrouded = isFirstWaveTime || !isCampScouted;
 
-      // Camp stone perimeter: spacious interior clearing pad
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      // Organic clearings and lair remnants replace repeated circular pads/trees.
+      const radius = camp.type === 'siege_golem' ? 90 : 59;
+      ctx.fillStyle = `rgb(${arenaCampArt(camp.id).ground.map(n=>Math.round(n*255)).join(',')})`;
       ctx.beginPath();
-      ctx.arc(0, 0, camp.type === 'siege_golem' ? 95 : 55, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = camp.isAlive ? (isShrouded ? '#334155' : camp.color) : '#475569';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      // Trees stay rooted along the outer back rim of the camp clearing
-      for (let tree = 0; tree < 8; tree++) {
-        const angle = tree * Math.PI / 4;
-        const tx = Math.cos(angle) * (camp.type === 'siege_golem' ? 122 : 86);
-        const ty = Math.sin(angle) * (camp.type === 'siege_golem' ? 95 : 68);
-        ctx.fillStyle = '#173b2a';
-        ctx.beginPath(); ctx.arc(tx, ty, 11, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#2d6945';
-        ctx.beginPath(); ctx.arc(tx - 2, ty - 3, 7, 0, Math.PI * 2); ctx.fill();
+      for (let i = 0; i < 24; i++) {
+        const a = i * Math.PI / 12, r = radius * (1 + Math.sin(i * 1.7) * .06);
+        const x = Math.cos(a)*r, y = Math.sin(a)*r*.86;
+        if (!i) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.closePath();ctx.fill();
+      ctx.strokeStyle='rgba(124,133,91,.5)';ctx.lineWidth=3;ctx.stroke();
+      const back = camp.y < LANE_Y ? -33 : 33;
+      if (camp.type === 'drakes' || camp.type === 'red_buff') {
+        ctx.strokeStyle='#8b7953';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,back,15,10,0,0,Math.PI*2);ctx.stroke();
+        for (const x of [-6,0,6]) {ctx.fillStyle='#a7a582';ctx.beginPath();ctx.ellipse(x,back,3,4,-.2,0,Math.PI*2);ctx.fill();}
+      } else if (camp.type === 'behemoth' || camp.type === 'wolves') {
+        ctx.strokeStyle='#81704e';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(-18,back-3);ctx.lineTo(17,back+4);ctx.stroke();
+        ctx.fillStyle='#78905c';ctx.beginPath();ctx.ellipse(-10,back-3,7,3,0,0,Math.PI*2);ctx.fill();
       }
       ctx.translate(camp.x - (camp.homeX ?? camp.x), camp.y - (camp.homeY ?? camp.y));
 
@@ -9887,83 +9437,31 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
     ctx.restore();
 
-    // 8. Wide home platforms with visible shop stalls and a protected fountain.
-    (['blue', 'red'] as const).forEach((team) => {
-      const left = team === 'blue' ? 8 : ARENA_WIDTH - 178;
-      const color = team === 'blue' ? '#38bdf8' : '#fb7185';
-      ctx.save();
-      ctx.fillStyle = '#101b2c'; ctx.strokeStyle = color; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.roundRect(left, LANE_Y - 108, 170, 216, 24); ctx.fill(); ctx.stroke();
-      for (const offset of [-82, 82]) {
-        ctx.fillStyle = '#334155'; ctx.fillRect(left + 20, LANE_Y + offset - 10, 130, 20);
-        ctx.fillStyle = color;
-        ctx.fillRect(left + 25, LANE_Y + offset - 3, 120, 3);
+    // Cozy sanctuary courtyards with cabins and a small healing lantern.
+    for (const team of ['blue', 'red'] as const) {
+      const color = team === 'blue' ? '#78d4d5' : '#e39aa9', dir = team === 'blue' ? 1 : -1;
+      ctx.save(); ctx.translate(WELL_X[team], LANE_Y);
+      for (const side of [-1,1]) {
+        const x=dir*16,y=side*193;
+        ctx.fillStyle='#403f35';ctx.beginPath();ctx.ellipse(x,y+16,35,17,0,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#b3a486';ctx.fillRect(x-23,y-14,46,32);
+        ctx.fillStyle='#69583f';ctx.fillRect(x-4,y+1,8,17);
+        ctx.fillStyle=team==='blue'?'#526b72':'#825961';
+        ctx.beginPath();ctx.moveTo(x-32,y-13);ctx.lineTo(x,y-39);ctx.lineTo(x+32,y-13);ctx.closePath();ctx.fill();
+        ctx.strokeStyle='#c0ad80';ctx.lineWidth=2;ctx.stroke();
+        for(const dx of [-15,15]) {ctx.fillStyle='#ebc582';ctx.fillRect(x+dx-4,y-5,8,9);ctx.strokeStyle='#6b5a3d';ctx.lineWidth=1;ctx.strokeRect(x+dx-4,y-5,8,9);}
+        ctx.fillStyle='#8a7550';ctx.fillRect(x+dir*43-13,y+9,26,5);
+        ctx.fillStyle='#61794d';ctx.beginPath();ctx.ellipse(x-31,y+10,7,10,0,0,Math.PI*2);ctx.fill();
       }
-      const shopX = team === 'blue' ? left + 127 : left + 43;
-      ctx.fillStyle = '#78350f'; ctx.fillRect(shopX - 18, LANE_Y - 67, 36, 28);
-      ctx.fillStyle = '#fbbf24'; ctx.fillRect(shopX - 22, LANE_Y - 72, 44, 9);
-      ctx.fillStyle = '#fef3c7'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText('SHOP', shopX, LANE_Y - 82);
-      ctx.restore();
-    });
-
-    // HEALING WELLS AT THE MAP ENDS
-    // BLUE HEALING WELL (Left)
-    ctx.save();
-    ctx.translate(WELL_X.blue, LANE_Y);
-    ctx.fillStyle = '#0f172a';
-    ctx.beginPath();
-    ctx.arc(0, 0, 56, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#0284c7';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    const blueWater = ctx.createRadialGradient(0, 0, 5, 0, 0, 52);
-    blueWater.addColorStop(0, '#e0f2fe');
-    blueWater.addColorStop(0.4, '#38bdf8');
-    blueWater.addColorStop(0.8, '#0284c7');
-    blueWater.addColorStop(1, '#075985');
-    ctx.fillStyle = blueWater;
-    ctx.beginPath();
-    ctx.arc(0, 0, 52, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Spire Crystal
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.moveTo(0, -16); ctx.lineTo(9, 0); ctx.lineTo(0, 16); ctx.lineTo(-9, 0);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-
-    // RED HEALING WELL (Right)
-    ctx.save();
-    ctx.translate(WELL_X.red, LANE_Y);
-    ctx.fillStyle = '#0f172a';
-    ctx.beginPath();
-    ctx.arc(0, 0, 56, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#e11d48';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    const redWater = ctx.createRadialGradient(0, 0, 5, 0, 0, 52);
-    redWater.addColorStop(0, '#ffe4e6');
-    redWater.addColorStop(0.4, '#f43f5e');
-    redWater.addColorStop(0.8, '#be123c');
-    redWater.addColorStop(1, '#881337');
-    ctx.fillStyle = redWater;
-    ctx.beginPath();
-    ctx.arc(0, 0, 52, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.moveTo(0, -16); ctx.lineTo(9, 0); ctx.lineTo(0, 16); ctx.lineTo(-9, 0);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
+      ctx.save();ctx.translate(0,HEALING_SHRINE_Y-LANE_Y);
+      ctx.fillStyle='#a49a79';ctx.beginPath();ctx.ellipse(0,0,17,12,0,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#74684b';ctx.fillRect(-3,-25,6,25);
+      ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(0,-43);ctx.lineTo(7,-33);ctx.lineTo(0,-22);ctx.lineTo(-7,-33);ctx.closePath();ctx.fill();
+      ctx.strokeStyle=color;ctx.globalAlpha=.25+Math.sin(time*1.3)*.08;ctx.lineWidth=1;
+      ctx.beginPath();ctx.ellipse(0,0,22,16,0,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
+      ctx.fillStyle='#e4d6ac';ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText('SANCTUARY / SHOP',0,-64);
+      ctx.restore();ctx.restore();
+    }
 
     // 9. TACTICAL AMBUSH BRUSHES (7 PROCEDURAL STRATEGIC BUSHES)
     ARAM_BUSHES.forEach((b) => {
@@ -10714,18 +10212,20 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ctx.stroke();
         }
       } else if (s.type === 'ball_lightning') {
+        const source=championsRef.current.find(c=>c.id===s.sourceUnitId);
+        if(!source?.isAlive||source.dash?.kind!=='raijin_bolt')return;
         // Storm Spirit / Raijin: Supersonic Ball Lightning
         ctx.shadowColor = '#06b6d4';
         ctx.shadowBlur = 0;
         ctx.globalAlpha = alpha;
         ctx.fillStyle = 'rgba(6, 182, 212, 0.65)';
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.arc(source.x, source.y-18, 17, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.radius * 0.6, 0, Math.PI * 2);
+        ctx.arc(source.x, source.y-18, 10, 0, Math.PI * 2);
         ctx.stroke();
       } else if (s.type === 'grand_entrance') {
         // Rakan / Renn: Grand Entrance Golden Knockup Ring
@@ -11877,24 +11377,44 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.save();
     ctx.scale(canvas.width / rect.width, canvas.height / rect.height);
     const project = (x: number, y: number, height: number) => renderer.project(x, y, height, rect.width, rect.height);
+    type Plate = NameplateAnchor & { anchorX:number; anchorY:number; color:string; label:string; barWidth:number; health:number; mana?:number };
+    const plates:Plate[]=[];
+    ctx.font='600 10px system-ui';
     const bar = (entity: { id: string; x: number; y: number; hp: number; maxHp: number }, color: string,
-      label = '', width = 42, mana?: number) => {
+      label = '', width = 42, mana?: number, priority=1) => {
       const p = project(entity.x, entity.y, renderer.actorHeight(entity.id));
-      if (p.x < -width || p.x > rect.width + width || p.y < -30 || p.y > rect.height + 30) return;
-      ctx.fillStyle = '#06101ce8'; ctx.fillRect(p.x - width / 2 - 1, p.y - 1, width + 2, mana === undefined ? 5 : 8);
-      ctx.fillStyle = color; ctx.fillRect(p.x - width / 2, p.y, width * Math.max(0, Math.min(1, entity.hp / entity.maxHp)), 3);
-      if (mana !== undefined) { ctx.fillStyle = '#818cf8'; ctx.fillRect(p.x - width / 2, p.y + 5, width * Math.max(0, Math.min(1, mana)), 1); }
-      if (label) {
-        ctx.font = '600 10px system-ui'; ctx.textAlign = 'center';
-        ctx.lineWidth = 3; ctx.strokeStyle = '#06101c'; ctx.strokeText(label, p.x, p.y - 5);
-        ctx.fillStyle = '#e6efed'; ctx.fillText(label, p.x, p.y - 5);
-      }
+      plates.push({id:entity.id,x:p.x,y:p.y+8,anchorX:p.x,anchorY:p.y,color,label,barWidth:width,
+        width:Math.max(1,Math.min(rect.width-16,Math.max(width+4,label?ctx.measureText(label).width+8:0))),
+        height:(label?16:2)+(mana===undefined?6:10),priority,
+        health:Math.max(0,Math.min(1,entity.hp/Math.max(1,entity.maxHp))),mana});
     };
     structuresRef.current.filter(st => st.isAlive).forEach(st => bar(st, st.team === 'blue' ? '#38c9ed' : '#f16b84', '', 42));
-    minionsRef.current.filter(m => m.isAlive && m.hp < m.maxHp).forEach(m => bar(m, m.team === 'blue' ? '#38c9ed' : '#f16b84', '', 19));
-    [...jungleCampsRef.current, dragonRef.current].filter(c => c.isAlive).forEach(c => bar(c, '#e1b86e', c.name, 44));
+    minionsRef.current.filter(m => m.isAlive && m.hp < m.maxHp).forEach(m => bar(m, m.team === 'blue' ? '#38c9ed' : '#f16b84', '', 19,undefined,0));
+    [...jungleCampsRef.current, dragonRef.current].filter(c => c.isAlive).forEach(c => bar(c, '#e1b86e', c.name, 44,undefined,2));
     championsRef.current.filter(c => c.isAlive).forEach(c => bar(c, c.team === 'blue' ? '#38c9ed' : '#f16b84',
-      `${c.level}  ${c.player.name}`, 48, c.mana / Math.max(1, maxMana(c))));
+      `${c.level}  ${c.player.name}`, 48, c.mana / Math.max(1, maxMana(c)),3));
+    const reserved:OverlayBox[]=[];
+    if(showMinimapRef.current){
+      const m=minimapRect(canvas.width,canvas.height);
+      reserved.push({x:m.mx*rect.width/canvas.width-5,y:m.my*rect.height/canvas.height-5,
+        width:m.Mw*rect.width/canvas.width+10,height:m.Mh*rect.height/canvas.height+10});
+    }
+    const positions=placeArenaNameplates(plates,rect.width,rect.height,reserved);
+    // Lower-priority bars paint first; champion health/name remains the foreground.
+    for(const plate of plates.sort((a,b)=>a.priority-b.priority)){
+      const placed=positions.get(plate.id);if(!placed)continue;
+      const x=placed.x,y=placed.y-(plate.mana===undefined?6:9),width=Math.min(plate.barWidth,Math.max(1,plate.width-4));
+      if(Math.hypot(x-plate.anchorX,y-plate.anchorY)>8){
+        ctx.strokeStyle='#b4c4c77a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(plate.anchorX,plate.anchorY+2);ctx.lineTo(x,y+5);ctx.stroke();
+      }
+      ctx.fillStyle='#06101ce8';ctx.fillRect(x-width/2-1,y-1,width+2,plate.mana===undefined?5:8);
+      ctx.fillStyle=plate.color;ctx.fillRect(x-width/2,y,width*plate.health,3);
+      if(plate.mana!==undefined){ctx.fillStyle='#818cf8';ctx.fillRect(x-width/2,y+5,width*Math.max(0,Math.min(1,plate.mana)),1);}
+      if(plate.label){
+        ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#06101c';ctx.strokeText(plate.label,x,y-5,Math.max(1,plate.width-6));
+        ctx.fillStyle='#e6efed';ctx.fillText(plate.label,x,y-5,Math.max(1,plate.width-6));
+      }
+    }
     floatsRef.current.forEach(f => {
       const p = project(f.x, f.y, 55);
       ctx.globalAlpha = f.opacity; ctx.font = `bold ${Math.round(11 * f.scale)}px system-ui`;
@@ -11931,6 +11451,33 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     return () => { delete fixtureWindow.__esportsPairedStep; delete fixtureWindow.__esportsPairedInspect; };
   }, [paused]);
 
+  // Read-only exports plus fixed-step execution for the private authoritative worker.
+  // Neither the public viewer nor its socket receives these execution hooks.
+  useEffect(() => {
+    if (!import.meta.env.DEV || !trustedServer || !paused) return;
+    const host = window as Window & { __esportsTrusted?: {
+      step: (count: number) => boolean; snapshot: () => unknown;
+    } };
+    host.__esportsTrusted = {
+      step: count => {
+        if (!Number.isInteger(count) || count < 1 || count > 300) return false;
+        for (let i = 0; i < count && !matchFinishedRef.current; i++) {
+          matchTimeRef.current += SIMULATION_STEP;
+          updateAramSimulation(SIMULATION_STEP);
+        }
+        return true;
+      },
+      snapshot: () => structuredClone({ schema: 1, second: matchTimeRef.current,
+        fingerprint: pairedStateFingerprint(capturePairedCheckpoint()), randomState: randomRef.current.getState(),
+        finished: matchFinishedRef.current, report: latestReportRef.current,
+        frame: { second: matchTimeRef.current, champions: championsRef.current, minions: minionsRef.current,
+          structures: structuresRef.current, camps: jungleCampsRef.current, dragon: dragonRef.current,
+          projectiles: projectilesRef.current, spells: spellsRef.current, wards: wardsRef.current },
+        events: recordedEventsRef.current }),
+    };
+    return () => { delete host.__esportsTrusted; };
+  }, [trustedServer, paused]);
+
   // Animation Loop
   useEffect(() => {
     let animId: number;
@@ -11950,11 +11497,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           updateAramSimulation(SIMULATION_STEP);
         }, () => matchFinishedRef.current, () => performance.now(), batchMode ? 8 : Infinity);
       }
-      if ((steps > 0 || lastHud.current === -Infinity)
+      if (!renderlessEvaluation && (steps > 0 || lastHud.current === -Infinity)
         && shouldPublishHud(lastHud, now, matchFinishedRef.current && steps > 0)) {
         setChampions(championsRef.current.map(champion => ({ ...champion, items: [...champion.items] })));
         setMatchTime(matchTimeRef.current);
       }
+
+      if (renderlessEvaluation) return;
 
       // Smooth Auto-Follow Action Camera
       if (cameraModeRef.current === 'auto') {
@@ -11984,6 +11533,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           champions: championsRef.current, minions: minionsRef.current, structures: structuresRef.current,
           camps: jungleCampsRef.current, dragon: dragonRef.current, projectiles: projectilesRef.current,
           spells: spellsRef.current, wards: wardsRef.current, second: matchTimeRef.current,
+          impacts: floatsRef.current.flatMap(f=>f.weaponImpact?[{...f.weaponImpact,id:f.id,color:f.color,age:Math.max(0,((f.weaponImpact.kind==='melee'?.9:.85)-f.opacity)/1.1)}]:[]),
         }, viewport.x, viewport.y, zoomRef.current);
         if (rendered3d) {
           if (ctx) drawArena3dOverlay(ctx, canvas);
@@ -11996,7 +11546,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
-  }, [paused, matchOver, speed, batchMode]);
+  }, [paused, matchOver, speed, batchMode, renderlessEvaluation]);
 
   const blueChamps = champions.filter((c) => c.team === 'blue');
   const redChamps = champions.filter((c) => c.team === 'red');
@@ -12031,6 +11581,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const records = dockTab === 'items' ? itemMilestones.map(ms => ({ time: ms.time, text: ms.playerName + ' / ' + ms.itemName + ' / ' + ms.stats })) : eventFeed;
   const pages = Math.max(1, Math.ceil(records.length / 5));
   const page = Math.min(recordPage, pages - 1);
+  if (renderlessEvaluation) return <div ref={matchRootRef} className="spectator-shell" aria-label="Private fixed-step evaluation">
+    <button aria-label={paused ? 'Resume match' : 'Pause match'} onClick={() => setPaused(value => !value)}>{paused ? 'Resume' : 'Pause'}</button>
+    <button onClick={() => setSpeed(4)}>4x</button>
+  </div>;
   return (
     <div ref={matchRootRef} className="spectator-shell" aria-label="Clash Arena spectator">
       <header className="spectator-top">
@@ -12074,7 +11628,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       </div>
       <div className="spectator-feed" aria-live="polite">
         <span className="shrink-0 text-cyan-300">LIVE</span>
-        <strong>{activeBanner ? activeBanner.text + ' | ' + activeBanner.subtext : killCallout ? killCallout.killerName + ' | ' + killCallout.victimName + (killCallout.multiKill ? ' | ' + killCallout.multiKill : '') : 'Bridge of Champions'}</strong>
+        <strong>{activeBanner ? activeBanner.text + ' | ' + activeBanner.subtext : killCallout ? killCallout.killerName + ' | ' + killCallout.victimName + (killCallout.multiKill ? ' | ' + killCallout.multiKill : '') : 'Clash of the Wilds'}</strong>
         <span className="ml-auto truncate">{dragonRef.current.isAlive ? 'Embermaw alive' : 'Embermaw ' + Math.ceil(dragonRef.current.spawnTimer) + 's'} | {jungleCampsRef.current.find(c => c.type === 'siege_golem')?.isAlive ? 'Gravemarch alive' : 'Gravemarch waiting'}</span>
         {fullscreenError && <span>Fullscreen unavailable; viewport mode active.</span>}
       </div>

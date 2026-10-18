@@ -3,17 +3,23 @@ import { AVATAR_ANIMATION_MOTIFS } from './avatarSkillAnimation.ts';
 import { KAELEN_INVOKED_SPELLS } from './kaelenAbilities.ts';
 import { kaelenCastPosition, type KaelenCast } from './kaelenSpellRuntime.ts';
 import { drawDashDetail, drawHookDetail, drawPrismFormation, drawSpellDetail, type DetailPainter } from './threeAbilityDetails.ts';
+import {AvatarProjectilePresentation} from './avatarProjectilePresentation.ts';
+import type {WeaponSocket} from './avatarWeaponSockets.ts';
+import {AVATAR_WEAPON_FINISH,WEAPON_FINISH_COLORS} from './avatarWeaponPolish.ts';
 
 type Point = { readonly x: number; readonly y: number };
 type V = [number, number, number];
+export type WeaponImpact=Point & {readonly id:string;readonly avatarId:string;readonly kind:'melee'|'ranged';readonly color:string;readonly age:number};
 export type AbilityProjectile = Point & { readonly id: string; readonly color: string; readonly size: number;
-  readonly angle: number; readonly type?: string; readonly attackerId?: string };
+  readonly angle: number; readonly type?: string; readonly attackerId?: string; readonly targetX?:number; readonly targetY?:number };
 export type AbilitySpell = Point & { readonly id: string; readonly radius: number; readonly color: string;
   readonly duration: number; readonly maxDuration: number; readonly type?: string;
   readonly halfWidth?: number; readonly halfHeight?: number; readonly avatarName?: string;
   readonly abilitySlot?: string; readonly sourceX?: number; readonly sourceY?: number;
-  readonly sourceUnitId?: string; readonly targetUnitId?: string; readonly kaelenCast?: Readonly<KaelenCast> };
+  readonly sourceUnitId?: string; readonly targetUnitId?: string; readonly sourceHeight?:number; readonly kaelenCast?: Readonly<KaelenCast> };
 export type AbilitySource = Point & { readonly id: string; readonly isAlive?: boolean;
+  readonly visualEvolution?: {readonly version:number;readonly facet_count:number;readonly trail_segments:number;readonly accent_height:number};
+  readonly champion?: {readonly name:string}; readonly weaponSocket?:WeaponSocket; readonly attackAge?:number;
   readonly dash?: { readonly kind: string; readonly remaining: number; readonly startX?: number; readonly startY?: number };
   readonly blackHole?: Point & { readonly remaining: number };
   readonly corsaraBarrage?: { readonly remaining: number; readonly facing: 'left' | 'right' };
@@ -99,6 +105,9 @@ export class ArenaAbilityEffects {
   private readonly arcGlowMaterial = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false,
     blending: THREE.AdditiveBlending, side: THREE.DoubleSide, toneMapped: false, forceSinglePass: true });
   private used = 0;
+  private readonly launches=new AvatarProjectilePresentation();
+  private readonly weaponTrails=new Map<string,{second:number;tip:V}[]>();
+  private lastSecond=-1;
   private readonly from = new THREE.Vector3();
   private readonly to = new THREE.Vector3();
   private readonly delta = new THREE.Vector3();
@@ -106,8 +115,10 @@ export class ArenaAbilityEffects {
   private readonly details: DetailPainter = {
     mesh: (...args) => this.mesh(...args), beam: (...args) => this.beam(...args), ring: (...args) => this.ring(...args),
   };
+  private readonly groundHeight: (x:number,y:number)=>number;
 
-  constructor() {
+  constructor(groundHeight: (x:number,y:number)=>number = () => 0) {
+    this.groundHeight=groundHeight;
     this.root.name = 'ability-effects'; this.owner.visible = false; this.root.add(this.owner);
     const material = new THREE.MeshBasicMaterial();
     for (const geometry of Object.values(this.geometry)) this.owner.add(new THREE.Mesh(geometry, material));
@@ -116,7 +127,7 @@ export class ArenaAbilityEffects {
   }
 
   private mesh(shape: keyof ArenaAbilityEffects['geometry'], color: string, alpha: number,
-    at: V, scale: V, glow = true) {
+    at: V, scale: V, glow = true, worldHeight = false) {
     let mesh = this.pool[this.used++];
     if (!mesh) {
       mesh = new THREE.Mesh(this.geometry[shape], new THREE.MeshBasicMaterial({ transparent: true,
@@ -130,17 +141,30 @@ export class ArenaAbilityEffects {
     // Glow particles are rendered in geometry batches; opaque smoke/rocks remain normal meshes.
     const parent = glow ? this.owner : this.root;
     if (mesh.parent !== parent) parent.add(mesh);
-    mesh.position.set(...at); mesh.scale.set(...scale); mesh.rotation.set(0, 0, 0); return mesh;
+    mesh.position.set(at[0],at[1]+(worldHeight?0:this.groundHeight(at[0],at[2])),at[2]); mesh.scale.set(...scale); mesh.rotation.set(0, 0, 0); return mesh;
   }
   private beam(a: V, b: V, color: string, width: number, alpha: number) {
-    this.from.set(...a); this.to.set(...b); this.delta.subVectors(this.to, this.from);
+    this.from.set(a[0],a[1]+this.groundHeight(a[0],a[2]),a[2]); this.to.set(b[0],b[1]+this.groundHeight(b[0],b[2]),b[2]); this.delta.subVectors(this.to, this.from);
     const length = this.delta.length();
-    const mesh = this.mesh('beam', color, alpha, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2], [width, Math.max(.01, length), width]);
+    const mesh = this.mesh('beam', color, alpha, [(this.from.x+this.to.x)/2,(this.from.y+this.to.y)/2,(this.from.z+this.to.z)/2], [width, Math.max(.01, length), width],true,true);
     if (length > .001) mesh.quaternion.setFromUnitVectors(this.up, this.delta.divideScalar(length));
     return mesh;
   }
   private ring(x: number, y: number, radius: number, color: string, alpha: number, height = 2) {
-    const mesh = this.mesh('ring', color, alpha, [x, height, y], [radius, radius, 1]); mesh.rotation.x = -Math.PI / 2; return mesh;
+    const mesh = this.mesh('ring', color, alpha, [x, height, y], [radius, radius, 1]); mesh.rotation.x = -Math.PI / 2;
+    if(height<=3&&alpha>.001){
+      const center=this.groundHeight(x,y);
+      const crossesSlope=Array.from({length:8},(_,i)=>this.groundHeight(x+Math.cos(i*Math.PI/4)*radius,y+Math.sin(i*Math.PI/4)*radius)).some(h=>Math.abs(h-center)>.8);
+      if(crossesSlope){
+        mesh.visible=false;
+        let a:V=[x+radius,height,y];
+        for(let i=1;i<=64;i++){
+          const angle=i*Math.PI/32,b:V=[x+Math.cos(angle)*radius,height,y+Math.sin(angle)*radius];
+          this.beam(a,b,color,Math.max(.6,radius*.016),alpha);a=b;
+        }
+      }
+    }
+    return mesh;
   }
   private sparks(x: number, y: number, radius: number, age: number, color: string, count = 7) {
     const t = Math.min(1, Math.max(0, age)), fade = (1 - t) ** 1.3;
@@ -161,11 +185,48 @@ export class ArenaAbilityEffects {
     }
   }
 
-  private projectile(p: AbilityProjectile, second: number, source?: Point) {
-    const size = Math.max(2, Math.min(16, p.size)), type = p.type ?? 'orb', dx = Math.cos(p.angle), dz = Math.sin(p.angle);
-    const at: V = [p.x, 27, p.y], tail: V = [p.x - dx * (size * 5 + 12), 27, p.y - dz * (size * 5 + 12)];
+  private projectile(input: AbilityProjectile, second: number, source?: AbilitySource) {
+    const presentation=this.launches.sample(input,second,source?.weaponSocket,source);
+    const p=presentation?{...input,x:presentation.at[0],y:presentation.at[2]}:input;
+    const size = Math.max(2, Math.min(16, p.size)), type = p.type==='orb'&&(presentation?.style??source?.weaponSocket?.style)==='gun'?'flak_round':p.type ?? 'orb', dx = Math.cos(p.angle), dz = Math.sin(p.angle);
+    const height=presentation?.at[1]??27;
+    const at: V = [p.x, height, p.y], tail: V = presentation?.tail??[p.x - dx * (size * 5 + 12), height, p.y - dz * (size * 5 + 12)];
+    if(presentation&&presentation.age<.09){
+      const fade=1-presentation.age/.09,origin=presentation.launch;
+      // Keep the flash on the moving weapon; the projectile retains its launch snapshot.
+      const flash=source?.weaponSocket?.tip??origin;
+      if(source?.weaponSocket?.style==='gun'){
+        const base=source.weaponSocket.base,flashFloor=this.groundHeight(flash[0],flash[2]),baseFloor=this.groundHeight(base[0],base[2]);
+        this.delta.set(flash[0]-base[0],flash[1]+flashFloor-base[1]-baseFloor,flash[2]-base[2]).normalize();
+        const flare=this.mesh('cone',p.color,fade*.8,
+          [flash[0]+this.delta.x*size,flash[1]+flashFloor+this.delta.y*size,flash[2]+this.delta.z*size],[size*.8,size*2,size*.8],true,true);
+        flare.quaternion.setFromUnitVectors(this.up,this.delta);
+        const endX=flash[0]+this.delta.x*size*2.5,endZ=flash[2]+this.delta.z*size*2.5;
+        this.beam(flash,[endX,flash[1]+flashFloor+this.delta.y*size*2.5-this.groundHeight(endX,endZ),endZ],'#fff4d5',size*.25,fade);
+      }else{
+        this.mesh('ball',p.color,fade*.4,flash,[size*.65,size*.65,size*.65]);
+      }
+      const finish=AVATAR_WEAPON_FINISH[source?.weaponSocket?.avatarId??'']??'steel',color=WEAPON_FINISH_COLORS[finish];
+      if(finish==='powder'||finish==='rocket'){
+        // Short hot embers and a small rising puff; density is bounded per shot.
+        for(let i=0;i<3;i++){
+          const a=i*2.399,travel=(1-fade)*13;
+          this.mesh('shard',color,fade*.65,[flash[0]+dx*travel+Math.sin(a)*3,flash[1]+(1-fade)*(5+i*3),flash[2]+dz*travel+Math.cos(a)*3],[.6,1.5,.6]);
+        }
+        this.mesh('ball','#8e9297',fade*.16,[flash[0]+dx*6,flash[1]+(1-fade)*9,flash[2]+dz*6],[size*.8,size*.6,size*.8],false);
+      }else if(finish==='frost'||finish==='spirit'){
+        for(const side of [-1,1]){
+          const shard=this.mesh('shard',color,fade*.75,[flash[0]-dz*side*size,flash[1]+side*size*.3,flash[2]+dx*side*size],[.6,3,.6]);shard.rotation.z=side*.6;
+        }
+      }else if(finish==='nature'||finish==='ink'){
+        for(const side of [-1,1]){
+          const leaf=this.mesh(finish==='ink'?'ball':'shard',color,fade*.65,[flash[0]+side*size,flash[1]+fade*3,flash[2]],[size*.5,.6,size]);leaf.rotation.y=side*.7;
+        }
+      }else if(finish==='storm')this.lightning(flash,[flash[0]+dx*12,flash[1]+4,flash[2]+dz*12],color,fade,second,.7);
+    }
     if (type === 'hook') {
-      drawHookDetail(this.details, p.x, p.y, size, p.angle, p.color, source);
+      const tip=source?.weaponSocket?.tip;
+      drawHookDetail(this.details, p.x, p.y, size, p.angle, p.color, tip?{x:tip[0],y:tip[2],height:tip[1]}:source,height);
     } else if (type === 'tornado') {
       this.vortex(p.x, p.y, size * 2.7, p.color, second, .85, false); return;
     } else if (type === 'electric_spark') {
@@ -182,12 +243,12 @@ export class ArenaAbilityEffects {
     } else if (type === 'nature_bolt' || type === 'seed_shot') {
       this.mesh('shard', '#ecf8a4', .95, at, [size * .6, size, size * .6]);
       for (const side of [-1, 1]) {
-        const leaf = this.mesh('shard', p.color, .8, [p.x - dx * size, 28, p.y - dz * size], [size * .65, .5, size * 1.8]);
+        const leaf = this.mesh('shard', p.color, .8, [p.x - dx * size, height+1, p.y - dz * size], [size * .65, .5, size * 1.8]);
         leaf.rotation.y = -p.angle + side * .65;
       }
-    } else if (type === 'flak_round') {
+    } else if (type === 'pellet' || type === 'flak_round') {
       this.beam(tail, at, p.color, size * .55, .5);
-      const shell = this.mesh('cone', '#ead7ab', 1, at, [size * .7, size * 2.8, size * .7], false);
+      const shell = this.mesh('cone', '#ead7ab', 1, at, [size * .45, size * (type==='pellet'?1.5:2.8), size * .45], false);
       shell.quaternion.setFromUnitVectors(this.up, this.delta.set(dx, 0, dz));
     } else if (['arrow','ult_arrow','spirit_arrow','poison_dart','feather'].includes(type)) {
       this.beam(tail, at, p.color, Math.max(.7, size * .25), .85);
@@ -203,8 +264,12 @@ export class ArenaAbilityEffects {
       this.mesh('shard', '#fff3d6', 1, at, [size * .65, size * .65, size * .65]);
     }
     // Tapering travelling afterimages use the actual current projectile position/direction.
-    for (let i = 1; i <= 3; i++) this.mesh('shard', p.color, .4 / i,
-      [p.x - dx * i * size * 2.5, 27 + Math.sin(second * 12 + i) * 2, p.y - dz * i * size * 2.5], [size / i, size / i, size / i]);
+    for (let i = 1; i <= 3; i++) {
+      const fraction=i/3;
+      this.mesh('shard', p.color, .4 / i,
+        presentation?[at[0]+(tail[0]-at[0])*fraction,height,at[2]+(tail[2]-at[2])*fraction]:
+          [p.x - dx * i * size * 2.5, height + Math.sin(second * 12 + i) * 2, p.y - dz * i * size * 2.5], [size / i, size / i, size / i]);
+    }
   }
 
   private vortex(x: number, y: number, radius: number, color: string, time: number, alpha: number, dark: boolean) {
@@ -295,9 +360,9 @@ export class ArenaAbilityEffects {
       for (let i = 0; i < 4; i++) this.beam([x - r, 5 + i * 17, y], [x + r, 5 + i * 17, y], color, 1, fade * .6);
     } else if (style === 'beam') {
       if (s.sourceX !== undefined && s.sourceY !== undefined && Math.hypot(x - s.sourceX, y - s.sourceY) > 5) {
-        if (s.type === 'electric_vortex') this.lightning([s.sourceX, 34, s.sourceY], [x, 27, y], color, fade, second, 2.1);
-        this.beam([s.sourceX, 34, s.sourceY], [x, 27, y], color, (ultimate ? 7 : 4) * (.5 + pulse), fade * .45);
-        this.beam([s.sourceX, 34, s.sourceY], [x, 27, y], '#fff9dc', ultimate ? 1.8 : 1, fade * .8);
+        if (s.type === 'electric_vortex') this.lightning([s.sourceX, s.sourceHeight??34, s.sourceY], [x, 27, y], color, fade, second, 2.1);
+        this.beam([s.sourceX, s.sourceHeight??34, s.sourceY], [x, 27, y], color, (ultimate ? 7 : 4) * (.5 + pulse), fade * .45);
+        this.beam([s.sourceX, s.sourceHeight??34, s.sourceY], [x, 27, y], '#fff9dc', ultimate ? 1.8 : 1, fade * .8);
       }
       this.mesh('shard', '#fff4d9', fade, [x, 27, y], [r * .12, r * .3, r * .12]);
       this.sparks(x, y, r * .8, p, color);
@@ -316,12 +381,18 @@ export class ArenaAbilityEffects {
   }
 
   update(projectiles: readonly AbilityProjectile[], spells: readonly AbilitySpell[], second: number,
-    sources: readonly AbilitySource[]) {
+    sources: readonly AbilitySource[],impacts:readonly WeaponImpact[]=[]) {
     this.used = 0;
+    this.launches.begin(second,new Set(projectiles.map(p=>p.id)));
+    if(second<this.lastSecond)this.weaponTrails.clear();
+    this.lastSecond=second;
     for (const event of spells) {
       let s = event;
       if (s.duration <= 0) continue;
-      const source = s.sourceUnitId ? sources.find(unit => unit.id === s.sourceUnitId) : undefined;
+      // The actor itself becomes the travelling ball; only a real arrival may burst.
+      if(s.type==='ball_lightning')continue;
+      const source = s.sourceUnitId ? sources.find(unit => unit.id === s.sourceUnitId) :
+        sources.find(unit=>!!s.avatarName&&unit.champion?.name===s.avatarName&&s.sourceX!==undefined&&s.sourceY!==undefined&&Math.hypot(unit.x-s.sourceX,unit.y-s.sourceY)<60);
       // Channel events can outlive an interrupted channel in the simulation's visual-event list.
       // Read the live state before drawing either its footprint or its particles.
       if (s.sourceUnitId && ['black_hole','broadside_channel','cyclone_dance','branch_court'].includes(s.type ?? '')) {
@@ -345,9 +416,18 @@ export class ArenaAbilityEffects {
         if (target?.isAlive === false || source?.isAlive === false) continue;
         if (target) s = { ...s, x: target.x, y: target.y };
       }
-      if (this.invoked(s, second)) continue;
       const p = THREE.MathUtils.clamp(1 - s.duration / Math.max(.01, s.maxDuration), 0, 1), fade = Math.min(1, (1 - p) * 2.2);
       const warning = /warning|telegraph/.test(s.type ?? '');
+      const evolution=source?.visualEvolution;
+      if(!warning&&evolution?.version===1&&[evolution.facet_count,evolution.accent_height].every(Number.isFinite)&&!s.halfWidth&&!s.halfHeight) {
+        // Decorative facets stay inside the existing event outline and lifetime,
+        // including Arsenaldo's invoked spells. They never produce hit events.
+        const count=Math.max(0,Math.min(5,Math.floor(evolution.facet_count))),radius=Math.max(0,s.radius)*.32;
+        for(let i=0;i<count;i++){const a=i*Math.PI*2/Math.max(1,count)+p*.6;
+          const facet=this.mesh('shard',s.color,fade*.35,[s.x+Math.cos(a)*radius,Math.max(1,Math.min(5,evolution.accent_height))*Math.sin(p*Math.PI)+2,s.y+Math.sin(a)*radius],[.7,1.5,.7]);facet.rotation.y=a;
+        }
+      }
+      if (this.invoked(s, second)) continue;
       // Exact footprints stay as outlines; opaque fills no longer cover the fight.
       if (s.halfWidth && s.halfHeight) {
         const w = s.halfWidth, h = s.halfHeight;
@@ -357,11 +437,40 @@ export class ArenaAbilityEffects {
         }
       } else this.ring(s.x, s.y, Math.max(3, s.radius), s.color, warning ? .8 : fade * .3);
       if (warning) { this.ring(s.x, s.y, Math.max(3, s.radius) * p, s.color, .9); continue; }
-      const resolved = source ? { ...s, sourceX: source.x, sourceY: source.y } : s;
+      const tip=source?.weaponSocket?.tip;
+      const resolved = source ? { ...s, sourceX: tip?.[0]??source.x, sourceY: tip?.[2]??source.y,sourceHeight:tip?.[1] } : s;
       if (!drawSpellDetail(this.details, resolved, p, second, fade, source)) this.burst(resolved, abilityEffectStyle(s), p, second, fade);
     }
     for (const unit of sources) drawDashDetail(this.details, unit, second);
     for (const p of projectiles) this.projectile(p, second, sources.find(unit => unit.id === p.attackerId));
+    const activeTrails=new Set<string>();
+    for(const unit of sources){
+      const socket=unit.weaponSocket,age=unit.attackAge;
+      if(!socket||unit.isAlive===false||age===undefined||age<0||age>.2||!['blade','fist'].includes(socket.style))continue;
+      activeTrails.add(unit.id);
+      const history=this.weaponTrails.get(unit.id)??[];
+      if(history.length===0||history[history.length-1].second!==second)history.push({second,tip:[...socket.tip]});
+      const segments=unit.visualEvolution?.version===1&&Number.isFinite(unit.visualEvolution.trail_segments)?Math.max(3,Math.min(6,unit.visualEvolution.trail_segments)):6;
+      while(history.length>segments||history[0].second<second-.08)history.shift();
+      this.weaponTrails.set(unit.id,history);
+      const finish=AVATAR_WEAPON_FINISH[socket.avatarId??'']??'steel',color=WEAPON_FINISH_COLORS[finish],fade=(1-age/.2)*.65;
+      this.beam(socket.base,socket.tip,color,socket.style==='fist'?2:1,fade);
+      for(let i=1;i<history.length;i++)this.beam(history[i-1].tip,history[i].tip,color,1.2,fade*i/history.length);
+    }
+    for(const impact of impacts){
+      if(impact.age<0||impact.age>.28)continue;
+      const finish=AVATAR_WEAPON_FINISH[impact.avatarId]??'steel',color=WEAPON_FINISH_COLORS[finish];
+      const t=impact.age/.28,fade=(1-t)**2,height=impact.kind==='melee'?24:27;
+      for(let i=0;i<5;i++){
+        const a=i*2.399,reach=3+t*(finish==='earth'?17:12),px=impact.x+Math.cos(a)*reach,pz=impact.y+Math.sin(a)*reach;
+        const shape=finish==='ink'||finish==='void'?'ball':'shard';
+        const chip=this.mesh(shape,color,fade*.85,[px,height+Math.sin(t*Math.PI)*(4+i),pz],finish==='earth'?[1.6,1.4,1.6]:[.65,3*(1-t)+.3,.65],finish!=='earth');
+        chip.rotation.set(a,t*4,a*.3);
+      }
+      if(finish==='storm')this.lightning([impact.x-7,height,impact.y],[impact.x+7,height+7,impact.y],color,fade,second,.8);
+      if(finish==='fist'||finish==='powder'||finish==='rocket')this.mesh('ball',color,fade*.35,[impact.x,height,impact.y],[3+6*t,3+6*t,3+6*t]);
+    }
+    for(const id of this.weaponTrails.keys())if(!activeTrails.has(id))this.weaponTrails.delete(id);
     for (let i = this.used; i < this.pool.length; i++) this.pool[i].visible = false;
     this.flushGlow();
   }

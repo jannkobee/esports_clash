@@ -214,7 +214,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
             ))}
           </div>
 
-          <AvatarModelPreview champion={selectedChamp} />
+          <AvatarModelPreview champion={selectedChamp} ability={activeSkillTab} />
 
           {/* Narrative Lore Section */}
           <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-1">
@@ -400,6 +400,8 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
                   {activePresentation.crowdControl && <span className="rounded bg-purple-400/15 px-2 py-1 text-purple-200">CC {activePresentation.crowdControl.duration.toFixed(1)}s</span>}
                 </div>
                 <p className="text-xs leading-relaxed text-slate-300">{activePresentation.detailedDescription}</p>
+                {activePresentation.visualDescription&&<p className="text-xs leading-relaxed text-cyan-200"><strong>What you see: </strong>{activePresentation.visualDescription}</p>}
+                {activePresentation.counterplay&&<p className="text-xs leading-relaxed text-amber-200"><strong>Play around it: </strong>{activePresentation.counterplay}</p>}
                 <p className="text-[10px] leading-relaxed text-cyan-200">Geometry: {activePresentation.geometry}{activePresentation.movement ? ` Movement: ${activePresentation.movement.distance || 'authored'} units${activePresentation.movement.duration ? ` over ${activePresentation.movement.duration}s` : ''}.` : ''}</p>
               </div>
             )}

@@ -31,6 +31,8 @@ export interface AbilityPresentation {
   maxRank: number;
   crowdControl?: { duration: number; detail: string };
   movement?: AbilityMovementPresentation;
+  visualDescription?:string;
+  counterplay?:string;
 }
 
 const motion = (kind: AbilityMovementKind, distance: number, duration: number, detail: string): AbilityMovementPresentation =>
@@ -46,7 +48,7 @@ const MOVEMENT_PRESENTATION: Record<string, AbilityMovementPresentation> = {
   'Kaolin:skill2': motion('Roll', 292, .8, 'Rolls over simulation time and stops on the first enemy collision.'),
   'Cinderlock:skill1': motion('Dash', 280, .7, 'The opening-stage lunge travels to a valid target over time before its ignite and finisher stages.'),
   'Cinderbloom:skill1': motion('Dash', 280, .7, 'The opening-stage lunge travels to a valid target over time before its ignite and finisher stages.'),
-  'Raijin:ultimate': motion('Dash', 405, .75, 'Ball Lightning moves through the arena over time and can hit each enemy once.'),
+  'Raijin:ultimate': motion('Dash', 320, .75, 'Transforms into a visible lightning ball, travels to the legal ground destination and reforms at the actual stopping point. Each enemy can be hit once.'),
   'Stonebranch:skill2': motion('Leap', 315, .9, 'Canopy Bound travels over time and lands with its authored area impact.'),
   'Paxi:skill1': motion('Teleport', 700, 0, 'Illusory Orb travels first; the later Jaunt relocation is a genuine teleport.'),
   'Inai:skill2': motion('Teleport', 0, 0, 'The authored void relocation resolves instantly at the legal target position.'),
@@ -131,6 +133,10 @@ export function getAbilityPresentation(champion: ChampionKit, slot: AbilityDispl
     maxRank,
     crowdControl: ccDuration > 0 ? { duration: ccDuration, detail: 'Duration is applied by the live crowd-control runtime on a valid hit.' } : undefined,
     movement,
+    ...(champion.id==='c_raijin'?{
+      visualDescription:slot==='skill1'?'A blue electrical double remains where Voltaire cast. Its armed outline brightens; lightning erupts only when an enemy triggers it.':slot==='skill2'?'A lightning tether connects Voltaire to the victim. Electrical coils surround the victim as they are pulled inward.':'The standing model and orbiting drums disappear into a bright, rotating lightning sphere. A short electric wake follows its actual path; the normal model returns immediately when travel ends.',
+      counterplay:slot==='skill1'?'Stay outside the trigger circle, or move away before the double arms.':slot==='skill2'?'Keep outside its short 120-unit cast range.':'Spread away from the flight path. Terrain and hard control can stop travel; the form itself grants no immunity.',
+    }:{}),
   };
   presentationCache.set(cacheKey, presentation);
   return presentation;

@@ -22,7 +22,7 @@ export function avatarModelAnimations(model: AvatarModel): THREE.AnimationClip[]
       // Store them explicitly so a consuming mixer cannot retain the preceding clip's pose.
       if (articulated || changes(positions[i], 3) || node === model.body) tracks.push(new THREE.VectorKeyframeTrack(`${node.uuid}.position`, times, positions[i]));
       if (articulated || changes(rotations[i], 4)) tracks.push(new THREE.QuaternionKeyframeTrack(`${node.uuid}.quaternion`, times, rotations[i]));
-      if(node.userData.avatarPart?.startsWith('bowstring-'))tracks.push(new THREE.VectorKeyframeTrack(`${node.uuid}.scale`,times,scales[i]));
+      if(node.userData.avatarPart?.startsWith('bowstring-')||node.userData.avatarPart==='nocked-arrow')tracks.push(new THREE.VectorKeyframeTrack(`${node.uuid}.scale`,times,scales[i]));
     });
     return new THREE.AnimationClip(spec.name, spec.duration, tracks);
   });

@@ -6,17 +6,20 @@ import { beveledPanel, clothCape, loftSurface, taperedCurve } from './avatarSurf
 import { sculptAvatarBody } from './avatarSculptBody.ts';
 import { arsenaldoElements } from './arsenaldoModel.ts';
 import { attachStandingCostume, standingStance } from './avatarStance.ts';
-import {combatAnimator} from './avatarCombatMotion.ts';
+import {combatAnimator,getAvatarAnimProfile} from './avatarCombatMotion.ts';
 import {avatarContactRig} from './avatarContactRig.ts';
 import {equipmentWorkshop} from './avatarEquipment.ts';
 import {AVATAR_MESH_PROFILES} from './avatarMeshProfiles.ts';
 import {addCreatureMeshDetails,wingMembrane} from './avatarCreatureMeshes.ts';
+import {voltaireModelForm} from './voltaireModelForm.ts';
 
 type Shape = 'box' | 'ball' | 'gem' | 'cone' | 'rod' | 'torus' | 'robe' | 'leaf';
 type V = [number, number, number];
 export type AvatarPose = { animState?: string; animTimer?: number; trueFormTimer?: number;
   motionState?: string; motionTime?: number; previousMotion?: string; previousMotionTime?: number; motionBlend?: number; recoil?: number; clipPhase?:number;
   gaitPhase?:number; plantFeet?:boolean; moveX?:number; moveZ?:number;
+  dash?:{readonly kind:string;readonly remaining:number};
+  voltaireOverloadTimer?:number;
   kaelenOrbs?: readonly ('ice' | 'wind' | 'fire')[]; propellaRotorStacks?: number;
   propellaOverdriveTimer?: number; propellaGunshipTimer?: number };
 export type AvatarModel = { body: THREE.Group; height: number; animate: (pose: AvatarPose, second: number) => void; dispose: () => void };
@@ -104,7 +107,7 @@ export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 
   const body = new THREE.Group(), outfit = new THREE.Group(); outfit.name = 'outfit'; body.add(outfit);
   body.name = `avatar:${id}`; body.userData.designId = id;
   body.userData.artistOutfit=!!options.externalOutfit;
-  body.userData.meshRevision=8;body.userData.meshProfile=AVATAR_MESH_PROFILES[id];
+  body.userData.meshRevision=9;body.userData.meshProfile=AVATAR_MESH_PROFILES[id];
   const p = kit.primaryColor, a = kit.accentColor;
   const dark = new THREE.Color(p).multiplyScalar(.32).getStyle();
   const steel = '#b8c4c7', gold = '#d7b16a', ivory = '#eee7d4', leather = '#4a3c36';
@@ -133,7 +136,7 @@ export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 
     workshop.gun(parent,length,radius,color,count);
   };
   const staff = (parent: THREE.Object3D, color = leather, length = 66) => workshop.staff(parent,color,length);
-  const crown = (parent: THREE.Object3D, color: string, count = 5, y = 69) => {
+  const crown = (parent: THREE.Object3D, color: string, count = 5, y = 73) => {
     ring(parent, color, 9, [0, y - 3, 0], [Math.PI / 2, 0, 0]);
     for (let i = 0; i < count; i++) {
       const angle = (i / count) * Math.PI * 2;
@@ -172,7 +175,7 @@ export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 
         const string=group(bow,upper?'bowstring-upper':'bowstring-lower',[0,upper?15:-15,0]);
         m(string,'rod',ivory,[.4,30,.4],[0,0,0]);
       }
-      bar(right, ivory, [0, 3, 5], [0, 3, 35], .8);
+      bar(group(right,'nocked-arrow'), ivory, [0, 3, 5], [0, 3, 35], .8);
       if (id === 'c_astra') {
         if (options.externalAnatomy) {
           for (const side of [-1, 1]) bar(outfit, '#b4e7f8', [0, 68, 4], [side * 4, 69, 2], .45);
@@ -183,7 +186,7 @@ export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 
         }
         for (let i = 0; i < 4; i++) bar(outfit, ivory, [5 + i * 2, 32, -10], [5 + i * 2, 57, -10], .7);
       } else {
-        m(outfit, 'gem', ivory, [8.5, 11, 3], [0, 62, 6]);
+        m(outfit, 'gem', ivory, [5.5, 5, 1.2], [0, 70, 6]);
         for (const side of [-1, 1]) bar(outfit, ivory, [side * 6, 67, 0], [side * 13, 80, -3], 2.5);
         const wolf = group(outfit, 'wolf-spirit', [-20, 30, -8]);
         m(wolf, 'ball', dark, [9, 6, 17], [0, 0, 0]); m(wolf, 'cone', ivory, [6, 17, 6], [0, 1, 20]).rotation.x = Math.PI / 2;
@@ -235,8 +238,8 @@ export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 
     }
     case 'c_sylla': {
       cape('#465b34', 36, 17); staff(right); m(right, 'gem', '#93c78b', [8, 11, 6], [0, 38, 5]);
-      m(outfit, 'ball', '#5e513a', [12, 10, 11], [0, 69, -3]);
-      for (const side of [-1, 1]) m(outfit, 'ball', '#5e513a', [5, 5, 4], [side * 10, 76, -3]);
+      m(outfit, 'ball', '#5e513a', [8, 7, 7], [0, 72, -6]);
+      for (const side of [-1, 1]) m(outfit, 'ball', '#5e513a', [3.5, 3.5, 3], [side * 7, 78, -4]);
       m(outfit, 'cone', ivory, [5, 18, 4], [0, 53, 6]).rotation.z = Math.PI;
       bear = group(body, 'ironclaw-form'); bear.visible = false;
       m(bear, 'ball', '#4d523c', [24, 26, 17], [0, 33, 0]);
@@ -258,8 +261,8 @@ export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 
       } break;
     }
     case 'c_zal':
-      m(outfit, 'gem', '#e4c996', [9, 20, 4], [0, 67, 7]);
-      for (const side of [-1, 1]) m(outfit, 'box', '#792460', [2, 9, 1], [side * 4, 68, 11]);
+      m(outfit, 'gem', '#e4c996', [4, 4, 1.5], [0, 72, 5]);
+      for (const side of [-1, 1]) m(outfit, 'box', '#792460', [1, 3, .5], [side * 2, 72, 6]);
       staff(right, ivory); m(right, 'gem', '#ff9ce6', [6, 10, 6], [0, 40, 5], true);
       for (let i = 0; i < 6; i++) m(outfit, 'gem', ivory, [2, 4, 2], [(i - 2.5) * 4, 45 - Math.sin(i / 5 * Math.PI) * 8, 9]); break;
     case 'c_xin':
@@ -285,12 +288,12 @@ export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 
       ring(outfit, a, 21, [0, 33, 0], [Math.PI / 2, 0, 0], true); break;
     case 'c_qiyana': {
       crown(outfit, gold, 5); const hoop = group(right, 'elemental-hoop', [0, 21, 0]);
-      ring(hoop, gold, 25, [0, 0, 0]);
+      ring(hoop, gold, 19, [0, 0, 0]);
       ['#60c1f4', '#87ca76', '#d2af79'].forEach((color, i) => { const angle = i * Math.PI * 2 / 3;
-        m(hoop, 'gem', color, [5, 8, 3], [Math.cos(angle) * 25, Math.sin(angle) * 25, 0], true); }); break;
+        m(hoop, 'gem', color, [3, 5, 2], [Math.cos(angle) * 19, Math.sin(angle) * 19, 0], true); }); break;
     }
     case 'c_locke':
-      cape('#272831', 44, 13); m(outfit, 'cone', '#37323b', [19, 6, 17], [0, 72, 0]);
+      cape('#272831', 44, 13); m(outfit, 'cone', '#37323b', [16, 5, 14], [0, 73, 0]);
       blade(right, '#ffd4aa', 40, 3);
       for (let i = 0; i < 3; i++) m(outfit, 'box', ivory, [4, 19, 1], [-8 + i * 8, 24, 9]).rotation.z = (i - 1) * .16; break;
     case 'c_senna':
@@ -364,7 +367,7 @@ export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 
       workshop.keg(right);
       m(outfit, 'cone', d.hair, [8, 20, 6], [0, 53, 5]).rotation.z = Math.PI; break;
     case 'c_wraithhook':
-      cape('#234c45', 46, 19); m(outfit, 'gem', ivory, [8, 11, 5], [0, 63, 5]);
+      cape('#234c45', 46, 19); m(outfit, 'gem', ivory, [3, 4, 1.2], [0, 72, 5]);
       staff(right, '#89af9e', 78); ring(right, '#b9ecdb', 12, [-5, 49, 5]);
       { const lantern = group(left, 'lantern', [0, -10, 7]);
         m(lantern, 'gem', '#86f4cf', [6, 12, 6], [0, 0, 0], true);
@@ -387,7 +390,7 @@ export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 
       for (const arm of [left, right])workshop.gauntlet(arm,'#697789');
       m(outfit, 'leaf', d.hair, [4, 14, 7], [0, 75, -2]).rotation.z = .3; break;
     case 'c_jinx':
-      gun(right, 49, 7, '#4e6683'); m(right, 'cone', '#e9958f', [3.4, 7, 3.4], [0, 2, 49]).rotation.x = Math.PI / 2;
+      gun(right, 49, 7, '#4e6683'); // Keep the launcher's actual bore open.
       if (!options.externalAnatomy) for (const side of [-1, 1]) for (let i = 0; i < 5; i++) m(outfit, 'ball', d.hair, [3, 5, 3], [side * (8 + i), 62 - i * 10, -6]);
       for (let i = 0; i < 5; i++) m(outfit, 'rod', gold, [2, 7, 2], [-8 + i * 4, 29, 10]); break;
     case 'c_puck': {
@@ -430,8 +433,8 @@ export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 
       m(moth, 'ball', '#ddf8a8', [2, 4, 2], [0, 0, 0], true); break;
     }
     case 'c_silencer':
-      cape('#303053', 42, 15); m(outfit, 'gem', '#a7a6c7', [9, 13, 9], [0, 63, 0]);
-      m(outfit, 'box', '#363451', [13, 3, 1], [0, 64, 9]);
+      cape('#303053', 42, 15); m(outfit, 'gem', '#a7a6c7', [6, 8, 4], [0, 72, -2]);
+      if(!options.externalAnatomy)m(outfit, 'box', '#363451', [9, 2, 1], [0, 64, 6]);
       m(left, 'box', ivory, [18, 29, 3], [0, -5, 8]);
       for (let i = 0; i < 4; i++) m(left, 'box', p, [11, .8, 1], [0, 5 - i * 5, 10]);
       feather(right, '#b4afe6', [0, 1, 7], 23, -.3); break;
@@ -500,7 +503,7 @@ export function disposeAvatarRig(body: THREE.Object3D) {
 }
 
 /** Rebind exported node metadata after a GLB load, without retaining unit data. */
-export function bindAvatarModel(body: THREE.Group, resources: AvatarModelResources): AvatarModel {
+export function bindAvatarModel(body: THREE.Group, resources: AvatarModelResources, options?: { drivenByMixer?: boolean;preserveNativeMotion?:boolean }): AvatarModel {
   const id = String(body.userData.designId), height = Number(body.userData.hudHeight);
   const parts = new Map<string, THREE.Object3D>();
   body.traverse(node => { const key = node.userData.avatarPart; if (key) parts.set(key, node); });
@@ -511,31 +514,72 @@ export function bindAvatarModel(body: THREE.Group, resources: AvatarModelResourc
   const orbiters = [...parts].filter(([key]) => /^(element-orb|storm-drum|satellite):/.test(key)).map(([, node]) => node);
   const rotors = [...parts].filter(([key]) => key.startsWith('lift-rotor:')).map(([, node]) => node);
   const wings = [...parts].filter(([key]) => /^(dream-wing|bat-wing):/.test(key)).map(([, node]) => node);
-  const bear = parts.get('ironclaw-form'), gunship = parts.get('gunship-fins');
+  const bear = parts.get('ironclaw-form'), gunship = parts.get('gunship-fins'), pivot = parts.get('motion-pivot');
+  const chest = body.getObjectByName('Chest');
   const elementalColors = { ice: '#8ad9f8', wind: '#b5a4f3', fire: '#ff9960' };
   const stance = standingStance(body, id);
   const combat = combatAnimator(body, id);
   const contacts=avatarContactRig(body,id);
+  const abilityForm=voltaireModelForm(body,resources);
   return { body, height, dispose: () => disposeAvatarRig(body), animate(pose, second) {
-    contacts.reset();
-    const walk = pose.animState === 'walk', attacking = pose.animState === 'attack', casting = pose.animState === 'cast';
-    const swing = Math.sin((pose.animTimer ?? 0) * 14);
-    left.rotation.x = casting ? -.7 : attacking ? -.5 : walk ? Math.sin(second * 10) * .3 : .04;
-    right.rotation.x = casting ? -.85 : attacking ? -.8 + swing * .45 : walk ? -Math.sin(second * 10) * .3 : -.07;
-    forearms.forEach(arm => { if (arm) arm.rotation.x = casting ? -.65 : attacking ? -.8 : -.15; });
-    if (id === 'c_invoker') {
-      left.rotation.z = casting ? -.32 : -.12; right.rotation.z = casting ? .4 : .16;
-      if (!walk && !attacking && !casting) {
-        if (forearms[0]) forearms[0].rotation.x = -.32;
-        if (forearms[1]) forearms[1].rotation.x = -.42;
-      }
+    if(options?.preserveNativeMotion){
+      // Imported review clips own every transform. Only live spell colors may
+      // change; contacts/recoil/orbit curves would overwrite the submitted work.
+      if(id==='c_invoker'&&pose.kaelenOrbs)orbiters.forEach((orb,i)=>{
+        const element=pose.kaelenOrbs?.[i]??(['ice','wind','fire'] as const)[i];
+        orb.traverse(node=>{if(node instanceof THREE.Mesh)node.material=resources.material(elementalColors[element],true);});
+      });
+      return;
     }
-    legs.forEach((leg, i) => { leg.rotation.x = walk ? Math.sin(second * 10 + i * Math.PI) * .4 : 0; });
-    calves.forEach((calf, i) => { if (calf) calf.rotation.x = walk ? Math.max(0, -Math.sin(second * 10 + i * Math.PI)) * .65 : 0; });
-    body.position.y = body.userData.floating ? 8 + Math.sin(second * 2.2) * 2 : walk ? Math.abs(Math.sin(second * 10)) * 1.6 : 0;
-    stance(pose, second);
-    combat(pose, second);
-    contacts.apply(pose,second);
+    if (!options?.drivenByMixer) {
+      contacts.reset();
+      const walk = pose.animState === 'walk', attacking = pose.animState === 'attack', casting = pose.animState === 'cast';
+      const swing = Math.sin((pose.animTimer ?? 0) * 14);
+      left.rotation.x = casting ? -.7 : attacking ? -.5 : walk ? Math.sin(second * 10) * .3 : .04;
+      right.rotation.x = casting ? -.85 : attacking ? -.8 + swing * .45 : walk ? -Math.sin(second * 10) * .3 : -.07;
+      forearms.forEach(arm => { if (arm) arm.rotation.x = casting ? -.65 : attacking ? -.8 : -.15; });
+      if (id === 'c_invoker') {
+        left.rotation.z = casting ? -.32 : -.12; right.rotation.z = casting ? .4 : .16;
+        if (!walk && !attacking && !casting) {
+          if (forearms[0]) forearms[0].rotation.x = -.32;
+          if (forearms[1]) forearms[1].rotation.x = -.42;
+        }
+      }
+      legs.forEach((leg, i) => { leg.rotation.x = walk ? Math.sin(second * 10 + i * Math.PI) * .4 : 0; });
+      calves.forEach((calf, i) => { if (calf) calf.rotation.x = walk ? Math.max(0, -Math.sin(second * 10 + i * Math.PI)) * .65 : 0; });
+      body.position.y = body.userData.floating ? 8 + Math.sin(second * 2.2) * 2 : walk ? Math.abs(Math.sin(second * 10)) * 1.6 : 0;
+      stance(pose, second);
+      combat(pose, second);
+      contacts.apply(pose,second);
+    } else {
+      const profile = getAvatarAnimProfile(id);
+      const hipsNode = body.getObjectByName('Hips');
+      const hit = pose.motionState === 'hit' ? 1 : 0;
+      const death = pose.motionState === 'death' ? 1 : 0;
+      const isTurn = pose.motionState === 'turnleft' || pose.motionState === 'turnright';
+      const turnDir = pose.motionState === 'turnleft' ? -1 : 1;
+      const turnPhase = pose.motionTime ?? 0;
+      const turnWave = isTurn ? Math.sin(Math.PI * turnPhase) : 0;
+
+      if (chest) {
+        chest.rotation.x -= (pose.recoil ?? 0) * .2;
+        // Per-avatar hit reaction snap on top of the Blender clip base.
+        chest.rotation.z += hit * (profile.hitWeight ?? 1) * .12;
+        // Per-avatar turn banking on top of the Blender clip base.
+        chest.rotation.z += turnWave * turnDir * (profile.turnBank ?? 0) * .2;
+      }
+      if (hipsNode) {
+        // Per-avatar hit displacement.
+        hipsNode.position.z -= hit * (profile.hitWeight ?? 1) * 1.5;
+        // Per-avatar death drop on top of the Blender clip base.
+        hipsNode.position.y -= death * (profile.deathDrop ?? 22);
+      }
+      // Creature pivot banking for skiffs/dragons/riders.
+      if (pivot && isTurn) {
+        pivot.rotation.z += turnWave * turnDir * (profile.turnBank ?? 0) * .15;
+      }
+      contacts.apply(pose, second);
+    }
     orbiters.forEach((orb, i) => {
       const angle = (pose.clipPhase===undefined?second*1.4:pose.clipPhase*Math.PI*2) + i * Math.PI * 2 / orbiters.length;
       orb.position.set(Math.cos(angle) * (id === 'c_io' ? 25 : 29), 55 + Math.sin(angle) * 11, Math.sin(angle) * 19);
@@ -550,5 +594,6 @@ export function bindAvatarModel(body: THREE.Group, resources: AvatarModelResourc
     wings.forEach((wing, i) => { wing.rotation.z = Math.sin(pose.clipPhase===undefined?second*7:pose.clipPhase*Math.PI*2) * .18 * (i % 2 ? -1 : 1); });
     if (bear) { bear.visible = (pose.trueFormTimer ?? 0) > 0; bear.scale.setScalar(bear.visible ? 1 : 0); outfit.visible = !bear.visible; }
     if (gunship) { gunship.visible = (pose.propellaGunshipTimer ?? 0) > 0; gunship.scale.setScalar(gunship.visible ? 1 : 0); }
+    abilityForm(pose,second);
   } };
 }

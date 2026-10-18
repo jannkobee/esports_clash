@@ -58,3 +58,36 @@ test('imported GLB skeleton clones and live visual form changes remain isolated'
   assert.notEqual(a.getObjectByName('ForearmR'),b.getObjectByName('ForearmR'));
   one.dispose();two.dispose();disposeAvatarRig(file.scene);disposeArenaTerrainResources(file.scene);disposeArenaTerrainResources(resources.owner);
 });
+
+test('AvatarAssetLibrary plays and blends editable Blender clips directly via AnimationMixer', async () => {
+  const { AvatarAssetLibrary } = await import('./avatarModelAssets.ts');
+  const resources = new AvatarModelResources();
+  const library = new AvatarAssetLibrary(resources);
+  const file = await parse('c_invoker');
+  library['files'].set('c_invoker', file);
+
+  const instance = library.instantiate('c_invoker');
+  assert.ok(instance, 'instance created from library');
+  assert.equal(instance.body.userData.assetFormat, 'glb');
+
+  // Test direct playback of Walk clip
+  instance.animate({ motionState: 'walk', motionTime: 0.15 }, 0.15);
+  const getRightArm = scene => { let found; scene.traverse(node => { if (node.userData.avatarPart === 'right-arm') found = node; }); return found; };
+  const walkRotX = getRightArm(instance.body).quaternion.x;
+
+  // Test direct playback of Attack clip
+  instance.animate({ motionState: 'attack', motionTime: 0.35 }, 0.35);
+  const attackRotX = getRightArm(instance.body).quaternion.x;
+  assert.notEqual(walkRotX, attackRotX, 'mixer evaluates distinct clip poses');
+
+  // Test smooth clip crossfading / blending
+  instance.animate({ motionState: 'attack', motionTime: 0.35, previousMotion: 'walk', previousMotionTime: 0.15, motionBlend: 0.5 }, 0.35);
+  const blendRotX = getRightArm(instance.body).quaternion.x;
+  assert.ok(Number.isFinite(blendRotX), 'blended quaternion is finite');
+
+  instance.dispose();
+  library.close();
+  disposeAvatarRig(file.scene);
+  disposeArenaTerrainResources(file.scene);
+  disposeArenaTerrainResources(resources.owner);
+});

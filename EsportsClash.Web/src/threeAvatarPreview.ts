@@ -4,6 +4,8 @@ import type { ChampionKit } from './types.ts';
 import { AvatarAssetLibrary } from './avatarModelAssets.ts';
 import { disposeArenaTerrainResources } from './threeArenaTerrain.ts';
 import {combatDuration} from './avatarCombatMotion.ts';
+import {ArenaAbilityEffects} from './threeAbilityEffects.ts';
+import type {AvatarModelVariant} from './avatarModelUrl.ts';
 
 export class AvatarPreview {
   private readonly renderer: THREE.WebGLRenderer;
@@ -12,10 +14,12 @@ export class AvatarPreview {
   private readonly resources: AvatarModelResources;
   private readonly assets: AvatarAssetLibrary;
   private kit?: ChampionKit;
+  private variant:AvatarModelVariant='current';
   private readonly resize: ResizeObserver;
   private readonly visibility: IntersectionObserver;
   private readonly host: HTMLElement;
   private model?: AvatarModel;
+  private readonly abilityEffects=new ArenaAbilityEffects();
   private yaw = .6;
   private pose = 'idle';
   private motion = false;
@@ -28,12 +32,12 @@ export class AvatarPreview {
   private width = 0;
   private height = 0;
   private pixelRatio = 0;
-  private readonly status: (available: boolean) => void;
+  private readonly status: (available: boolean,variant?:AvatarModelVariant) => void;
 
   private readonly lost = (event: Event) => { event.preventDefault(); this.available = false; this.status(false); };
   private readonly restored = () => { this.available = true; this.status(true); this.requestFrame(); };
 
-  constructor(host: HTMLElement, status: (available: boolean) => void) {
+  constructor(host: HTMLElement, status: (available: boolean,variant?:AvatarModelVariant) => void) {
     this.host = host; this.status = status;
     this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'low-power' });
     this.resources = new AvatarModelResources();
@@ -44,7 +48,7 @@ export class AvatarPreview {
     host.replaceChildren(this.renderer.domElement);
     this.renderer.domElement.addEventListener('webglcontextlost', this.lost);
     this.renderer.domElement.addEventListener('webglcontextrestored', this.restored);
-    this.scene.add(this.resources.owner, this.assets.owner, new THREE.HemisphereLight('#e8f5ff', '#252b43', 2.2));
+    this.scene.add(this.resources.owner, this.assets.owner,this.abilityEffects.root, new THREE.HemisphereLight('#e8f5ff', '#252b43', 2.2));
     const key = new THREE.DirectionalLight('#ffe8cc', 3); key.position.set(-80, 150, 130); this.scene.add(key);
     const rim = new THREE.DirectionalLight('#85bbed', 2); rim.position.set(90, 70, -100); this.scene.add(rim);
     this.resources.mesh(this.scene, 'rod', '#27394a', [36, 4, 36], [0, -3, 0]);
@@ -58,18 +62,21 @@ export class AvatarPreview {
     this.visibility.observe(host); this.status(true);
   }
 
-  setKit(kit: ChampionKit) {
-    this.kit = kit;
+  setKit(kit: ChampionKit,variant:AvatarModelVariant='current') {
+    this.kit = kit;this.variant=variant;
     if (this.model) { this.model.dispose(); this.scene.remove(this.model.body); }
-    this.model = this.assets.instantiate(kit.id) ?? buildAvatarModel(kit, this.resources); this.scene.add(this.model.body);
-    this.host.dataset.modelFormat = this.assets.has(kit.id) ? 'glb' : 'surface';
-    if (!this.assets.has(kit.id)) this.assets.request(kit.id, () => { if (!this.disposed && this.kit?.id === kit.id) this.setKit(this.kit); });
+    this.model = this.assets.instantiate(kit.id,variant) ?? buildAvatarModel(kit, this.resources); this.scene.add(this.model.body);
+    this.host.dataset.modelFormat = this.assets.has(kit.id,variant) ? 'glb' : 'surface';
+    this.host.dataset.modelVariant=String(this.model.body.userData.modelVariant??'surface');
+    this.host.dataset.modelUrl=this.assets.sourceUrl(kit.id,variant);
+    this.status(true,this.model.body.userData.modelVariant);
+    if (!this.assets.has(kit.id,variant)) this.assets.request(kit.id, () => { if (!this.disposed && this.kit?.id === kit.id&&this.variant===variant) this.setKit(this.kit,variant); },variant);
     this.host.dataset.designId = kit.id; this.requestFrame();
   }
   setView(yaw: number, pose: string, motion: boolean) {
     if(pose!==this.pose||motion!==this.motion){
       const phase=pose==='cast'?.55:pose==='death'?.85:pose==='hit'?.4:pose.startsWith('turn')?.5:.42;
-      this.second=motion?0:combatDuration(this.kit?.id??'',pose)*phase;
+      this.second=motion?0:pose.startsWith('ability-')?.45:combatDuration(this.kit?.id??'',pose)*phase;
     }
     this.yaw = yaw; this.pose = pose; this.motion = motion;
     this.lastTime = 0; this.requestFrame();
@@ -88,7 +95,15 @@ export class AvatarPreview {
     }
     if (this.motion && this.lastTime) this.second += Math.min(.05, (now - this.lastTime) / 1000);
     this.lastTime = now;
-    this.model.animate({ animState: this.pose, animTimer: this.second }, this.second);
+    const ability=this.kit?.id==='c_raijin'&&this.pose.startsWith('ability-'),time=this.second%2;
+    const ball=ability&&this.pose==='ability-r'&&time<.75;
+    this.model.animate({ animState:ability?(ball?'walk':'cast'):this.pose,animTimer:this.second,
+      voltaireOverloadTimer:ability&&this.pose==='ability-passive'?6:0,
+      dash:ball?{kind:'raijin_bolt',remaining:.75-time}:undefined },this.second);
+    const type=this.pose==='ability-q'?'static_remnant':this.pose==='ability-w'?'electric_vortex':undefined;
+    this.abilityEffects.update([],ability&&type?[{id:'studio-ability',type,x:type==='electric_vortex'?48:-30,y:0,radius:type==='electric_vortex'?18:65,
+      duration:type==='static_remnant'?4-time:1.4-Math.min(1.39,time),maxDuration:type==='static_remnant'?4:1.4,color:'#83efff',sourceX:0,sourceY:0,sourceUnitId:'studio',targetUnitId:type==='electric_vortex'?'victim':undefined}]:[],this.second,
+      [{id:'studio',x:0,y:0,isAlive:true},{id:'victim',x:48,y:0,isAlive:true}]);
     const span = this.kit?.id === 'c_invoker' ? Math.max(90, this.model.height * 1.12) : Math.max(110, this.model.height * 1.42);
     const aspect = width / height;
     const halfH = span / (2 * Math.min(1, aspect));

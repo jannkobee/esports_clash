@@ -10,8 +10,8 @@ import {disposeArenaTerrainResources} from '../src/threeArenaTerrain.ts';
 import {COMBAT_MOTIONS} from '../src/avatarCombatMotion.ts';
 import {AVATAR_MESH_PROFILES} from '../src/avatarMeshProfiles.ts';
 globalThis.FileReader=class{result;onloadend;async readAsArrayBuffer(blob){this.result=await blob.arrayBuffer();this.onloadend?.();}async readAsDataURL(blob){this.result=`data:${blob.type};base64,${Buffer.from(await blob.arrayBuffer()).toString('base64')}`;this.onloadend?.();}};
-const mesh=process.argv.includes('--mesh'),contact=mesh||process.argv.includes('--contact'),combat=contact||process.argv.includes('--combat'),stance=combat||process.argv.includes('--stance'),version=mesh?8:contact?7:combat?6:stance?5:4;
-const output=mesh?'../.local-tools/mesh-prep':contact?'../.local-tools/contact-prep':combat?'../.local-tools/combat-prep':stance?'../.local-tools/stance-prep':'../.local-tools/artist-prep',selected=process.argv.find(a=>a.startsWith('--only='))?.slice(7);
+const polish=process.argv.includes('--polish'),mesh=polish||process.argv.includes('--mesh'),contact=mesh||process.argv.includes('--contact'),combat=contact||process.argv.includes('--combat'),stance=combat||process.argv.includes('--stance'),version=polish?9:mesh?8:contact?7:combat?6:stance?5:4;
+const output=polish?'../.local-tools/polish-prep':mesh?'../.local-tools/mesh-prep':contact?'../.local-tools/contact-prep':combat?'../.local-tools/combat-prep':stance?'../.local-tools/stance-prep':'../.local-tools/artist-prep',selected=process.argv.find(a=>a.startsWith('--only='))?.slice(7);
 await mkdir(output+'/bodies',{recursive:true});await mkdir(output+'/parts',{recursive:true});
 const exporter=new GLTFExporter(),resources=new AvatarModelResources(),rows=[];
 for(const kit of CHAMPIONS){

@@ -2,6 +2,8 @@ import {readFile,writeFile} from 'node:fs/promises';
 const prefix=process.env.OUTPUT_PREFIX??'avatar-combat';
 if(!/^[a-z0-9-]+$/.test(prefix))throw Error('Invalid output prefix');
 const port=process.env.CDP_PORT??'9238';
+const width=Number(process.env.VIDEO_WIDTH??1500),height=Number(process.env.VIDEO_HEIGHT??1080);
+if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1)throw Error('Invalid review dimensions');
 const page=(await(await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find(p=>p.type==='page');
 const ws=new WebSocket(page.webSocketDebuggerUrl);await new Promise(done=>ws.addEventListener('open',done,{once:true}));
 let id=0;const pending=new Map();ws.onmessage=event=>{const r=JSON.parse(event.data);if(!r.id)return;const p=pending.get(r.id);pending.delete(r.id);r.error?p.reject(Error(JSON.stringify(r.error))):p.resolve(r.result);};
@@ -16,7 +18,7 @@ try{
   const seek=wait('seeked');video.currentTime=2;await seek;
   await video.play();await new Promise(done=>setTimeout(done,150));video.pause();
   const result={width:video.videoWidth,height:video.videoHeight,currentTime:video.currentTime,duration:Number.isFinite(video.duration)?video.duration:null,decodedFrames:video.getVideoPlaybackQuality().totalVideoFrames};
-  if(result.width!==1500||result.height!==1080||result.currentTime<2||result.decodedFrames<1)throw Error('Video dimensions, seek or decode failed');
+  if(result.width!==${width}||result.height!==${height}||result.currentTime<2||result.decodedFrames<1)throw Error('Video dimensions, seek or decode failed');
   const frames=[];
   for(const fraction of [.35,.55,.92]){
    const sought=wait('seeked');video.currentTime=video.duration*fraction;await sought;

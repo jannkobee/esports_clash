@@ -1,12 +1,13 @@
+import { WELL_RADII } from './arenaLandform.ts';
 import { LANE_Y, NEXUS_X, WELL_X } from './arenaLayout.ts';
 
 type Team = 'blue' | 'red';
 type Point = { x: number; y: number };
 
-/** Matches the existing well mechanics; this module only informs AI decisions. */
+/** One shared footprint for healing, shopping and AI recovery decisions. */
 export function isInsideHealingWell(team: Team, point: Point): boolean {
-  return (team === 'blue' ? point.x <= WELL_X.blue + 105 : point.x >= WELL_X.red - 105)
-    && Math.abs(point.y - LANE_Y) <= 105;
+  return ((point.x - WELL_X[team]) / WELL_RADII.x) ** 2
+    + ((point.y - LANE_Y) / WELL_RADII.y) ** 2 <= 1;
 }
 
 export function isInsideEnemyWellBeam(team: Team, point: Point): boolean {

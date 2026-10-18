@@ -73,7 +73,9 @@ try {
       window.__esportsPairedMacro = undefined;
       document.querySelector('#arena-fixture')?.remove();
       const host = document.createElement('div'); host.id = 'arena-fixture'; document.body.append(host);
-      const avatars = [CHAMPIONS.find(c => c.name === 'Kaelen'), ...CHAMPIONS.filter(c => c.name !== 'Kaelen').slice(0,9)];
+      const avatars = ${process.env.AVATAR_REWORK === '1'}
+        ? ['c_solana','c_vi','c_raijin','c_astra','c_renn','c_earthshaker','c_kazemaru','c_hwei','c_buck','c_sylla'].map(id=>CHAMPIONS.find(c=>c.id===id))
+        : [CHAMPIONS.find(c => c.name === 'Kaelen'), ...CHAMPIONS.filter(c => c.name !== 'Kaelen').slice(0,9)];
       const lineup = avatars.map((champion,i) => ({champion,player:INITIAL_PLAYERS[i]}));
       window.fixtureRoot = createRoot(host);
       window.fixtureRoot.render(React.createElement(AramMatchView, {seed:47, blueLineup:lineup.slice(0,5),redLineup:lineup.slice(5),

@@ -1,3 +1,5 @@
+import { isInsideHealingWell } from './baseSafetyRules.ts';
+import { barracksPosition, minionSpawnPosition, advanceLaneMinion } from './arenaLandform.ts';
 import { INNER_TOWER_X, OUTER_TOWER_X } from './arenaLayout.ts';
 import type { 
   AramChampionUnit, 
@@ -50,7 +52,6 @@ import { chooseTeamfightTarget, isEnemyCaughtInAlliedChannel, shouldUseSecondSki
 import { createEnemyCooldownMemory, observeCooldownRise } from './cooldownKnowledge.ts';
 import { getSkillCastRange, applyChainStun } from './skillRangeRules.ts';
 import {
-  BARRACKS_X,
   DRAGON_SPAWN_SECOND,
   DRAGON_X,
   LANE_Y,
@@ -308,13 +309,13 @@ export function createSimulationState(options: SimulationOptions): SimulationSta
   const redCoach = options.redCoach ?? EQUALIZED_COACH_RED;
 
   const makeBarracks = (team: 'blue' | 'red'): LaneStructure[] =>
-    (['melee', 'ranged', 'catapult'] as const).map((kind, index) => ({
+    (['melee', 'ranged', 'catapult'] as const).map((kind) => ({
       id: `${team === 'blue' ? 'b' : 'r'}_${kind}_barracks`,
       team,
       type: 'barracks',
       barracksKind: kind,
       name: `${team === 'blue' ? 'Blue' : 'Red'} ${kind} Barracks`,
-      x: BARRACKS_X[team], y: 305 + index * 75,
+      ...barracksPosition(team, kind),
       hp: STRUCTURE_HP.barracks, maxHp: STRUCTURE_HP.barracks, ad: 0, range: 0, attackTimer: 0,
       isAlive: true, targetId: null, armor: 20
     }));
@@ -490,7 +491,7 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     sim.waveTimer = 22.0;
     (['blue', 'red'] as const).forEach(team => {
       const dir = team === 'blue' ? 1 : -1;
-      const spawnX = BARRACKS_X[team] + dir * 42;
+      const spawnX = NEXUS_X[team] + dir * 68;
       const addM = (type: LaneMinion['type'], idx: number, x: number, y: number) => {
         const emp = isMinionEmpowered(team, type, sim.structures);
         const stats = waveStats(type, emp);
@@ -505,17 +506,19 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
         });
       };
       for (let i = 0; i < 3; i++) {
-        addM('melee', i, spawnX + dir * (20 + i * 16), 350 + i * 15);
-        addM('caster', i, spawnX - dir * (16 + i * 16), 365 + i * 15);
+        const melee = minionSpawnPosition(team, 'melee', i), caster = minionSpawnPosition(team, 'caster', i);
+        addM('melee', i, melee.x, melee.y);
+        addM('caster', i, caster.x, caster.y);
       }
       if (sim.waveCount % 3 === 0 || isMinionEmpowered(team, 'cannon', sim.structures)) {
-        addM('cannon', 0, spawnX - dir * 38, 430);
+        const cannon = minionSpawnPosition(team, 'cannon', 0);
+        addM('cannon', 0, cannon.x, cannon.y);
       }
       if (sim.pendingSiegeGolem[team]) {
         sim.minions.push({
           id: `siege_golem_${team}_${sim.waveCount}`,
           team, type: 'melee', siegeGolem: true,
-          x: spawnX - dir * 55, y: LANE_Y,
+          x: spawnX, y: LANE_Y,
           hp: 3200, maxHp: 3200, ad: 110, range: 75, speed: 86,
           attackTimer: 0, goldReward: 110, xpReward: 130, isAlive: true,
           siegeChargeCooldown: 2.5, siegeChargeWindup: 0
@@ -573,7 +576,7 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     c.mana = Math.min(maxMana(c), c.mana + (1.5 + manaRegen(c)) * dt);
 
     // In Fountain Well
-    const inWell = c.team === 'blue' ? (c.x <= WELL_X.blue + 105) : (c.x >= WELL_X.red - 105);
+    const inWell = isInsideHealingWell(c.team, c);
     if (inWell) {
       c.hp = Math.min(c.maxHp, c.hp + c.maxHp * 0.45 * dt);
       c.mana = Math.min(maxMana(c), c.mana + 75 * dt);
@@ -657,8 +660,7 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
       }
     } else {
       // March down lane
-      const dir = m.team === 'blue' ? 1 : -1;
-      m.x += dir * m.speed * dt;
+      advanceLaneMinion(m, dt);
     }
   });
   sim.minions = sim.minions.filter(m => m.isAlive);

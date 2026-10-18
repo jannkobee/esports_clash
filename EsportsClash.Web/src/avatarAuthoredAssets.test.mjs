@@ -29,7 +29,7 @@ test('34 authored GLBs keep original native animation channels and contain valid
  const manifest=JSON.parse(await readFile(new URL('manifest.json',folder),'utf8'));
  assert.deepEqual(manifest.avatars.map(a=>a.id).sort(),Object.keys(AUTHORED_AVATARS).sort());
  for(const asset of manifest.avatars){
-  assert.match(avatarModelUrl(asset.id),/avatars-v8\/.+\.glb\?art=8$/);
+  assert.match(avatarModelUrl(asset.id),/avatars-v9\/.+\.glb\?art=9$/);
   const bytes=await readFile(new URL(asset.file,folder)),file=decode(bytes),{json,bin}=file;
   assert.equal(bytes.readUInt32LE(8),bytes.length);assert.equal(bytes.length,asset.bytes);
   assert.equal(createHash('sha256').update(bytes).digest('hex'),asset.sha256);
@@ -64,5 +64,5 @@ test('34 authored GLBs keep original native animation channels and contain valid
    }
   }
  }
- assert.match(avatarModelUrl('c_puck'),/avatars-v8/);
+ assert.match(avatarModelUrl('c_puck'),/avatars-v9/);
 });

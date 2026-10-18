@@ -2,7 +2,7 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {addGripMorph} from './avatar-grip-morph.mjs';
 import {AVATAR_CONTACTS} from '../src/avatarContactProfiles.ts';
-const mesh=process.argv.includes('--mesh'),contact=mesh||process.argv.includes('--contact'),combat=contact||process.argv.includes('--combat'),stance=combat||process.argv.includes('--stance'),prep=mesh?'../.local-tools/mesh-prep':contact?'../.local-tools/contact-prep':combat?'../.local-tools/combat-prep':stance?'../.local-tools/stance-prep':'../.local-tools/artist-prep';
+const polish=process.argv.includes('--polish'),mesh=polish||process.argv.includes('--mesh'),contact=mesh||process.argv.includes('--contact'),combat=contact||process.argv.includes('--combat'),stance=combat||process.argv.includes('--stance'),prep=polish?'../.local-tools/polish-prep':mesh?'../.local-tools/mesh-prep':contact?'../.local-tools/contact-prep':combat?'../.local-tools/combat-prep':stance?'../.local-tools/stance-prep':'../.local-tools/artist-prep';
 const config=JSON.parse(await readFile(prep+'/avatars.json','utf8')),output='public/models/avatars-v'+config.version;await mkdir(output,{recursive:true});
 export function decodeGlb(bytes){
  if(bytes.readUInt32LE(0)!==0x46546c67)throw Error('Not a GLB');
@@ -35,7 +35,7 @@ for(const spec of config.avatars){
  const {json:body,binary:bodyBin}=decodeGlb(bodyBytes);
  let {json:part,binary:partBin}=spec.anatomy===false?
   {json:Object.fromEntries(['bufferViews','accessors','images','samplers','textures','materials','meshes','nodes'].map(key=>[key,[]])),binary:Buffer.alloc(0)}:
-  decodeGlb(await readFile(`${mesh?prep:'../.local-tools/artist-prep'}/parts/${spec.id}.glb`));
+  decodeGlb(await readFile(`${polish?'../.local-tools/mesh-prep':mesh?prep:'../.local-tools/artist-prep'}/parts/${spec.id}.glb`));
  if(part.animations?.length||part.images?.some(image=>image.uri))throw Error('Parts must be self-contained with no replacement animations');
  if(contact)partBin=addGripMorph(part,partBin,AVATAR_CONTACTS[spec.id]??{});
  const remapped=new Set();

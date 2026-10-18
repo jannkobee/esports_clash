@@ -45,10 +45,10 @@ test('orthographic camera uses the same downward screen axis as Canvas', () => {
 test('static terrain scope is bounded and shared resources dispose exactly once', () => {
   assert.deepEqual(ARENA_STATIC_TERRAIN_LAYERS, [
     'forest-floor',
-    'river-bed',
-    'central-causeway',
-    'base-floor-plates',
-    'central-plaza',
+    'forested-lowlands',
+    'raised-stone-ridge',
+    'stone-base-courtyards',
+    'sanctuary-shrines',
   ]);
 
   const root = new THREE.Scene();

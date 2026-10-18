@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { writeFile } from 'node:fs/promises';
 const port=process.env.CDP_PORT??'9226',vite=process.env.VITE_PORT??'5176';
 const outputPrefix=process.env.OUTPUT_PREFIX??'avatar-designs',useGlb=process.env.USE_GLB==='1';
+const idleFrames=Number(process.env.IDLE_FRAMES??1);
+assert.ok(Number.isInteger(idleFrames)&&idleFrames>=1&&idleFrames<=600);
 assert.match(outputPrefix,/^[a-z0-9-]+$/);
 const page=(await(await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find(p=>p.type==='page');
 const ws=new WebSocket(page.webSocketDebuggerUrl); await new Promise(done=>ws.addEventListener('open',done,{once:true}));
@@ -46,22 +48,22 @@ try {
   await evaluate(`[...document.querySelectorAll('button[aria-pressed]')].find(b=>b.textContent.includes('Arsenaldo')).click()`);await delay(100);
   assert.equal(await evaluate(`document.querySelector('.avatar-model-preview button[aria-pressed]').getAttribute('aria-pressed')`),'false');
   const angle=await evaluate(`document.querySelector('.avatar-model-preview input').value`);
-  const poses=await evaluate(`[...document.querySelector('.avatar-model-preview select').options].map(o=>o.value)`);
-  assert.deepEqual(poses,['idle','walk','run','strafe','attack','cast','hit','death','turnleft','turnright']);
+  const poses=await evaluate(`[...document.querySelector('select[aria-label="Avatar pose"]').options].map(o=>o.value)`);
+  assert.deepEqual(poses,['idle','walk','run','attack','cast','hit','death','turnleft','turnright']);
   for(const pose of poses){
-    await evaluate(`(()=>{const e=document.querySelector('.avatar-model-preview select');e.value=${JSON.stringify(pose)};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
-    await delay(30);assert.equal(await evaluate(`document.querySelector('.avatar-model-preview select').value`),pose);
+    await evaluate(`(()=>{const e=document.querySelector('select[aria-label="Avatar pose"]');e.value=${JSON.stringify(pose)};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+    await delay(30);assert.equal(await evaluate(`document.querySelector('select[aria-label="Avatar pose"]').value`),pose);
   }
   await evaluate(`document.querySelector('.avatar-model-preview input').focus()`);
   await send('Input.dispatchKeyEvent',{type:'keyDown',key:'ArrowRight',code:'ArrowRight'});
   await send('Input.dispatchKeyEvent',{type:'keyUp',key:'ArrowRight',code:'ArrowRight'});
   assert.notEqual(await evaluate(`document.querySelector('.avatar-model-preview input').value`),angle);
-  await evaluate(`(()=>{const select=document.querySelector('.avatar-model-preview select');select.value='cast';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
-  assert.equal(await evaluate(`document.querySelector('.avatar-model-preview select').value`),'cast');
+  await evaluate(`(()=>{const select=document.querySelector('select[aria-label="Avatar pose"]');select.value='cast';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+  assert.equal(await evaluate(`document.querySelector('select[aria-label="Avatar pose"]').value`),'cast');
   await evaluate(`document.querySelector('.avatar-model-preview button[aria-pressed]').click()`);await delay(100);
   assert.equal(await evaluate(`document.querySelector('.avatar-model-preview button[aria-pressed]').getAttribute('aria-pressed')`),'true');
   await evaluate(`[...document.querySelectorAll('.avatar-model-preview button')].find(b=>b.textContent==='Reset view').click()`);await delay(100);
-  assert.equal(await evaluate(`document.querySelector('.avatar-model-preview select').value`),'idle');
+  assert.equal(await evaluate(`document.querySelector('select[aria-label="Avatar pose"]').value`),'idle');
   await evaluate(`document.querySelector('.avatar-model-preview').scrollIntoView({block:'center'})`);await delay(100);
   await shot(`${outputPrefix}-studio`);
   await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});await delay(150);
@@ -99,7 +101,10 @@ try {
       if(${useGlb})await assets.request(kit.id);
       const model=${useGlb} ? assets.instantiate(kit.id) : buildAvatarModel(kit,resources);
       if(!model)throw Error('Missing GLB model '+kit.id);
-      model.animate({animState:'idle'},.35);scene.add(model.body);
+      for(let frame=0;frame<${idleFrames};frame++)model.animate({animState:'idle'},.35);
+      scene.add(model.body);
+      let hips;model.body.traverse(node=>{if(node.name==='Hips')hips=node;});
+      if(!hips||!Number.isFinite(hips.position.y)||hips.position.y<15)throw Error(kit.id+' hips sank while holding idle: '+hips?.position.y);
       const half=Math.max(61,model.height*.7);Object.assign(camera,{left:-half,right:half,top:half,bottom:-half});
       camera.position.set(110,110,190);camera.lookAt(0,model.height*.43,0);camera.updateProjectionMatrix();renderer.render(scene,camera);
       const x=i%9*300,y=100+Math.floor(i/9)*378;
@@ -107,7 +112,7 @@ try {
       ctx.strokeStyle='#324957';ctx.strokeRect(x+2,y,296,366);
       ctx.fillStyle='#e7e4d8';ctx.font='bold 19px system-ui';ctx.fillText(kit.displayName,x+15,y+320);
       ctx.fillStyle='#88b7c7';ctx.font='14px system-ui';ctx.fillText(kit.primaryRole+' / '+kit.archetype,x+15,y+345,272);
-      renderStats.push({id:kit.id,calls:renderer.info.render.calls,triangles:renderer.info.render.triangles});model.dispose();scene.remove(model.body);
+      renderStats.push({id:kit.id,calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,idleFrames:${idleFrames},hipHeight:hips.position.y});model.dispose();scene.remove(model.body);
     }
     assets.close();disposeArenaTerrainResources(scene);renderer.dispose();renderer.forceContextLoss();
     return {url:canvas.toDataURL('image/png'),renderStats};
@@ -116,6 +121,6 @@ try {
   assert.deepEqual(errors,[]);
   await writeFile(`../docs/${outputPrefix}-verification.json`,JSON.stringify({date:'2026-10-17',covered,renderStats:sheet.renderStats,
     studio:{keyboardRotation:true,poses:true,animateReset:true,reducedMotionStartsStill:true,mobileOverflow:false,contextRecovery:true,unmount:true},errors,
-    limits:'Controlled studio review; 34 shared artist anatomy sets, scout outfit retargeting, 11 earlier creature models. No physical-device performance claim.'},null,2)+'\n');
+    limits:'Controlled studio review with repeated idle frames; shared anatomy/outfits and code-built creature meshes. No physical-device performance claim.'},null,2)+'\n');
   console.log('All 45 real studio models, controls, mobile layout, context recovery, cleanup and model-sheet export passed.');
 } finally {if(errors.length)console.error(errors);ws.close();}

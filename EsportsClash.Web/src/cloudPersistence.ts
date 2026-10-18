@@ -34,7 +34,7 @@ export function persistApiSession(session: ApiSession | null): void {
   else localStorage.removeItem(API_SESSION_KEY);
 }
 
-async function request<T>(path: string, session: ApiSession | null, init: RequestInit = {}): Promise<T> {
+export async function request<T>(path: string, session: ApiSession | null, init: RequestInit = {}): Promise<T> {
   if (!isCloudPersistenceConfigured()) throw new Error('Cloud persistence is not configured.');
   const response = await fetch(`${apiBaseUrl}${path}`, {
     ...init,
