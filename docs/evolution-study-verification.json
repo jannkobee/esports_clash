@@ -1,0 +1,30 @@
+{
+  "verified_at": "2026-10-18T04:09:38.662549+00:00",
+  "run_id": "6e1523e6-15dc-4924-9d51-4c1a74ac794c",
+  "state": {
+    "status": "running",
+    "progress": {
+      "stage": "fit",
+      "current_seed": 21009,
+      "completed": 8,
+      "planned": 80
+    }
+  },
+  "source_hash": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+  "restart_completed_artifacts_unchanged": true,
+  "case_statuses": {
+    "incomplete": 1,
+    "valid": 7
+  },
+  "completed_evidence_hashes": {
+    "case-21006.json": "b164302b98b1fcecc34c61fa86f183707922500203b55191c2ff7f379abbc1b7",
+    "case-21004.json": "d37dccb8efd6430468fcc4cd9a71764edfda46ab45b2f395a5ee9521fcbd2a2d",
+    "case-21002.json": "7b45cd1d21641e91bf647fd27e4ca0c3e8deffac7c64f8fe41dd6385ab006a29",
+    "case-21005.json": "1505021f7e8fd90443ca1c20e413b9ce672b25ec223efc86f5eca4cf3bf5b068",
+    "case-21008.json": "1c14cc3cce3a9fce5a6b4e6a30fbabbbdd87274b30fb123d86353c0329873336",
+    "case-21007.json": "2382565781f4246d6b53c6ad48d7245787b375178a50a36d319ea4a1a31f2e59",
+    "case-21001.json": "6700f796beada4f3cfcb150fb10597525eb39878746e9b49a0209855dd20479b",
+    "case-21003.json": "437e76548895f2532ba042729bd26de41020d41642e6dea53e9ebfabc2b9c099"
+  },
+  "promoted": false
+}

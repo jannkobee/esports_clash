@@ -1,0 +1,62 @@
+{
+  "id": "9aff3ccf-ecb5-47da-8068-429e66b2f823",
+  "original_sha256": "f26c855ff883f9d697513cdf1285a27e80297b881e0b8cfab241f62a15204476",
+  "original_unchanged": true,
+  "candidates": [
+    {
+      "id": "candidate-01",
+      "sha256": "d3fb13d4da5ac6f94ce87b5244e177724a8f71d6cbffc77314067dbb299b04a7",
+      "bytes": 5253484,
+      "rig_timing_topology_textures_palette_preserved": true,
+      "technically_compatible": true
+    },
+    {
+      "id": "candidate-02",
+      "sha256": "7ebe2167cb0e09ce998095facc7f89ef156e6683a6d177c61aba6530e30adca1",
+      "bytes": 5253308,
+      "rig_timing_topology_textures_palette_preserved": true,
+      "technically_compatible": true
+    },
+    {
+      "id": "candidate-03",
+      "sha256": "48f83148d617238b45712d07ccd23f6400cd624a6406121d9831fdb5b685b606",
+      "bytes": 5270808,
+      "rig_timing_topology_textures_palette_preserved": true,
+      "technically_compatible": true
+    },
+    {
+      "id": "candidate-04",
+      "sha256": "01ed549cbbb1e1fe16a9f1ff91a3a760bf9b8ee6574ab0179cac1278a965843c",
+      "bytes": 5253472,
+      "rig_timing_topology_textures_palette_preserved": true,
+      "technically_compatible": true
+    },
+    {
+      "id": "candidate-05",
+      "sha256": "0cbd77817d0794c02ef21a6114677b55bec68a5b4a9d73124c3ebbea40643486",
+      "bytes": 5270824,
+      "rig_timing_topology_textures_palette_preserved": true,
+      "technically_compatible": true
+    }
+  ],
+  "operations": {
+    "active": [],
+    "resources": {
+      "anonymous_mib": 73.5078125,
+      "available_vm_mib": 5717.53125,
+      "vm_total_mib": 7834.796875,
+      "cgroup_peak_mib": 1023.78125,
+      "gpu_vram_mib": null,
+      "scope": "Avatar worker cgroup and Linux Docker VM; CPU/SwiftShader validation."
+    },
+    "storage_bytes": 69917651,
+    "external_ai": false
+  },
+  "requires_owner_approval": true,
+  "approved_or_published_by_validation": false,
+  "blender_scene_reload": {
+    "meshes": 22,
+    "actions": 10,
+    "packed_images": 11
+  }
+}

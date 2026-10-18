@@ -1,0 +1,24 @@
+{
+  "verified_at": "2026-10-18T04:45:16.090Z",
+  "before": {
+    "match_id": "85cfd7ff-ed52-4b24-b732-3456e27089ff",
+    "sequence": 968,
+    "second": 483.50000000016905,
+    "fingerprint": "666174:6d14c6cd:e2416409",
+    "plan_hash": "98214ccb94141a46bddabea6d872dae9920908fc2c380643bb6106b853f91ff9",
+    "status": "running",
+    "error": null
+  },
+  "after": {
+    "match_id": "85cfd7ff-ed52-4b24-b732-3456e27089ff",
+    "sequence": 974,
+    "second": 486.50000000017144,
+    "fingerprint": "670044:9d0b106d:bc371dc5",
+    "plan_hash": "98214ccb94141a46bddabea6d872dae9920908fc2c380643bb6106b853f91ff9",
+    "status": "running",
+    "error": null
+  },
+  "recovery_seconds": 4.724,
+  "method": "Real match-worker restart; frozen seed replay must pass saved fingerprint equality before any new frame; same allocation advanced.",
+  "training_runner_restarted": false
+}

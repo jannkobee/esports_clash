@@ -1,0 +1,41 @@
+{
+  "id": "4e52f431-5afd-4856-af13-93b2338f2a23",
+  "plan": {
+    "version": 2,
+    "seed_start": 24001,
+    "fit_cases": 32,
+    "calibration_cases": 24,
+    "evaluation_cases": 24,
+    "horizon_seconds": 30,
+    "after_seconds": 120,
+    "max_minutes": 90,
+    "policy_scope": "offline-live-macro",
+    "minimum_evaluation_cases": 18,
+    "automatic_promotion": false,
+    "operations": {
+      "fit_cases": 32,
+      "calibration_cases": 24,
+      "evaluation_cases": 24,
+      "max_minutes": 90,
+      "speed": "headless",
+      "storage_gib": 20,
+      "failed_days": 7,
+      "raw_days": 14,
+      "log_days": 30,
+      "quarantine_hours": 24,
+      "automatic_cleanup": true,
+      "ram_mib": 2048,
+      "minimum_available_mib": 2048,
+      "reserved_mib": 2048,
+      "workers": 1,
+      "scout_seconds": 360,
+      "batch_size": 64,
+      "replay_capacity": 512,
+      "evaluation_every": 1
+    }
+  },
+  "status_at_allocation": "queued",
+  "status": "failed",
+  "reason": "Preflight study retained after finalization correction changed frozen worker source; incompatible resume correctly refused",
+  "completed_cases": 12
+}

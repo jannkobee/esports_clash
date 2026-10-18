@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-17",
+  "problem": "Living humanoid bodies sink underground while rings/bars/orbitals remain visible",
+  "cause": "Cached constant native track values allow additive contact/pose changes to accumulate without a clean base pose",
+  "fix": "Restore per-clone native TRS before mixer evaluation, capture clip result before overlays; avoid fading a clip into itself",
+  "gameTests": 406,
+  "simulationTests": 3,
+  "typeScript": true,
+  "productionBuild": true,
+  "browserModels": 45,
+  "consecutiveHeldIdleFramesPerModel": 240,
+  "minimumObservedHipHeight": 24.774700498580934,
+  "liveArenaExactAuditsSeconds": [
+    30,
+    60,
+    90
+  ],
+  "assetsRegenerated": false,
+  "evidenceSha256": {
+    "avatar-visibility-verification.json": "ad02b8a8921243dde30fd8aa54379ee3e1bdc906c72366fe3ea4af828bcdbdc3",
+    "avatar-visibility-arena-verification.json": "6b06062a4dbebac47ec57ff624999b4c722c0d3d669000c9bf9cfc43069a72c6",
+    "avatar-visibility-game-check.log": "40821149acc96b38bbaa89d340fdd2e4c4abce3050ff9306a327cb87fda63abe",
+    "avatar-visibility-build.log": "748daf9a92132f79d3d1cfd3a148312ee77869c6cfd56aa87a4b12755b1946e1"
+  }
+}

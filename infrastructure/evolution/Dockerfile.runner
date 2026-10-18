@@ -1,0 +1,20 @@
+FROM node:24-bookworm-slim AS node
+FROM python:3.12-slim-bookworm
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && apt-get update && apt-get install -y --no-install-recommends chromium \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+WORKDIR /workspace/EsportsClash.Web
+COPY EsportsClash.Web/package.json EsportsClash.Web/package-lock.json ./
+RUN npm ci
+COPY EsportsClash.Web/src/ ./src/
+COPY EsportsClash.Web/scripts/ ./scripts/
+COPY EsportsClash.Web/index.html EsportsClash.Web/evolution.html EsportsClash.Web/evolution-compiled.html EsportsClash.Web/vite.config.ts EsportsClash.Web/vite.evolution.config.ts EsportsClash.Web/tsconfig.json EsportsClash.Web/tsconfig.app.json EsportsClash.Web/tsconfig.node.json EsportsClash.Web/tailwind.config.js ./
+RUN node node_modules/vite/bin/vite.js build --config vite.evolution.config.ts
+COPY docs/ml-live-evaluation.json /workspace/docs/ml-live-evaluation.json
+COPY infrastructure/evolution/runner/ /runner/
+COPY infrastructure/evolution/evidence.mjs /workspace/EsportsClash.Web/scripts/evolution-evidence.mjs
+ENV PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
+CMD ["python", "/runner/server.py"]

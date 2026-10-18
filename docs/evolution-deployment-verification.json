@@ -1,0 +1,186 @@
+{
+  "verified_at": "2026-10-18T04:07:54.607Z",
+  "origin": "http://127.0.0.1:8088",
+  "unauthenticated_status": 401,
+  "owner_status": 200,
+  "schedule": {
+    "id": 1,
+    "enabled": true,
+    "review_hours": 48,
+    "training_interval_minutes": 360,
+    "next_seed": 22001,
+    "next_training_at": "2026-10-18T10:04:44.000000Z",
+    "preferences": {
+      "prefer_small_changes": true
+    },
+    "created_at": "2026-10-18T04:03:00.000000Z",
+    "updated_at": "2026-10-18T04:04:45.000000Z"
+  },
+  "capabilities": {
+    "live_macro_training": true,
+    "production_promotion": false,
+    "mechanical_patch_release": false,
+    "avatar_evolution": false
+  },
+  "runs": [
+    {
+      "id": "6e1523e6-15dc-4924-9d51-4c1a74ac794c",
+      "status": "running",
+      "plan": {
+        "version": 1,
+        "seed_start": 21001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": {
+        "stage": "fit",
+        "current_seed": 21005,
+        "completed": 4,
+        "planned": 80
+      },
+      "result": null,
+      "error": null,
+      "started_at": "2026-10-18T04:04:45.000000Z",
+      "finished_at": null,
+      "created_at": "2026-10-18T04:04:44.000000Z",
+      "updated_at": "2026-10-18T04:07:12.000000Z"
+    },
+    {
+      "id": "25071c38-302b-436f-96ef-9c34c01e72c0",
+      "status": "cancelled",
+      "plan": {
+        "version": 1,
+        "seed_start": 20001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": {
+        "stage": "fit",
+        "current_seed": 20001,
+        "completed": 0,
+        "planned": 80
+      },
+      "result": null,
+      "error": null,
+      "started_at": "2026-10-18T03:54:05.000000Z",
+      "finished_at": null,
+      "created_at": "2026-10-18T04:03:25.000000Z",
+      "updated_at": "2026-10-18T04:03:25.000000Z"
+    },
+    {
+      "id": "ded35667-acdf-47db-9cf7-7a67550ce78d",
+      "status": "failed",
+      "plan": {
+        "version": 1,
+        "seed_start": 20001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": [],
+      "result": null,
+      "error": "Browser or Vite stopped during startup",
+      "started_at": "2026-10-18T03:56:49.000000Z",
+      "finished_at": null,
+      "created_at": "2026-10-18T04:03:25.000000Z",
+      "updated_at": "2026-10-18T04:03:25.000000Z"
+    },
+    {
+      "id": "27c826ae-117f-4fd6-b5e4-4002199dc877",
+      "status": "cancelled",
+      "plan": {
+        "version": 1,
+        "seed_start": 20001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": {
+        "stage": "fit",
+        "current_seed": 20001,
+        "completed": 0,
+        "planned": 80
+      },
+      "result": null,
+      "error": "Run stopped; checkpoints retained",
+      "started_at": "2026-10-18T03:50:02.000000Z",
+      "finished_at": null,
+      "created_at": "2026-10-18T04:03:25.000000Z",
+      "updated_at": "2026-10-18T04:03:25.000000Z"
+    },
+    {
+      "id": "26102ff3-9932-4ad7-96f0-e1e1f9b21e34",
+      "status": "cancelled",
+      "plan": {
+        "version": 1,
+        "seed_start": 20001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": {
+        "stage": "fit",
+        "current_seed": 20002,
+        "completed": 1,
+        "planned": 80
+      },
+      "result": null,
+      "error": "Run stopped; checkpoints retained",
+      "started_at": "2026-10-18T04:03:02.000000Z",
+      "finished_at": "2026-10-18T04:03:48.000000Z",
+      "created_at": "2026-10-18T04:03:00.000000Z",
+      "updated_at": "2026-10-18T04:03:48.000000Z"
+    }
+  ],
+  "reviews": [],
+  "ui": {
+    "desktop": {
+      "loaded": true,
+      "learning": true,
+      "balance": true,
+      "history": true,
+      "errors": []
+    },
+    "mobile": {
+      "pageWidth": 390,
+      "contentWidth": 390,
+      "labWidth": 390
+    },
+    "viewport_checks": [
+      "1280x900",
+      "390x844"
+    ]
+  }
+}

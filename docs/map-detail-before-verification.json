@@ -1,0 +1,29 @@
+{
+  "views": [
+    {
+      "name": "overview",
+      "calls": 395,
+      "triangles": 180371
+    },
+    {
+      "name": "river",
+      "calls": 317,
+      "triangles": 177331
+    },
+    {
+      "name": "blue-base",
+      "calls": 166,
+      "triangles": 91131
+    },
+    {
+      "name": "dragon-pit",
+      "calls": 266,
+      "triangles": 175095
+    }
+  ],
+  "resources": {
+    "geometries": 237,
+    "materials": 169,
+    "textures": 79
+  }
+}

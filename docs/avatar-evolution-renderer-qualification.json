@@ -1,0 +1,219 @@
+{
+  "scope": "Final deployed renderer compatibility; excluded from generation and ML",
+  "folder": "1e2f99f8-2f5a-451f-9be0-5f0098f51162",
+  "results": [
+    {
+      "id": "baseline",
+      "passed": true,
+      "poses_equal_first_cycle": true,
+      "renderer": {
+        "triangles": 40699,
+        "draw_calls": 21,
+        "geometries": 23,
+        "textures": 26,
+        "mean_frame_ms": 0.6800000000745058,
+        "scope": "Standardized local renderer; software GPU in Docker, not device FPS."
+      },
+      "ability": {
+        "effects": {
+          "effects": 9,
+          "pooledEffects": 9
+        },
+        "triangles": 40891
+      },
+      "previews": [
+        {
+          "name": "front",
+          "file": "baseline-front.png",
+          "pose": "Idle",
+          "phase": 0.2,
+          "angle": 0
+        },
+        {
+          "name": "side",
+          "file": "baseline-side.png",
+          "pose": "Idle",
+          "phase": 0.2,
+          "angle": 1.5707963267948966
+        },
+        {
+          "name": "back",
+          "file": "baseline-back.png",
+          "pose": "Idle",
+          "phase": 0.2,
+          "angle": 3.141592653589793
+        },
+        {
+          "name": "anticipation",
+          "file": "baseline-anticipation.png",
+          "pose": "Attack",
+          "phase": 0.15,
+          "angle": 0.6
+        },
+        {
+          "name": "strike",
+          "file": "baseline-strike.png",
+          "pose": "Attack",
+          "phase": 0.42,
+          "angle": 0.6
+        },
+        {
+          "name": "recovery",
+          "file": "baseline-recovery.png",
+          "pose": "Attack",
+          "phase": 0.82,
+          "angle": 0.6
+        },
+        {
+          "name": "ability",
+          "file": "baseline-ability.png",
+          "pose": "Ability",
+          "phase": 0.45,
+          "angle": 0.6
+        }
+      ]
+    },
+    {
+      "id": "candidate-01",
+      "passed": true,
+      "poses_equal_first_cycle": true,
+      "renderer": {
+        "triangles": 40699,
+        "draw_calls": 21,
+        "geometries": 23,
+        "textures": 26,
+        "mean_frame_ms": 0.5800000000745058,
+        "scope": "Standardized local renderer; software GPU in Docker, not device FPS."
+      },
+      "ability": {
+        "effects": {
+          "effects": 12,
+          "pooledEffects": 12
+        },
+        "triangles": 40915
+      },
+      "previews": [
+        {
+          "name": "front",
+          "file": "candidate-01-front.png",
+          "pose": "Idle",
+          "phase": 0.2,
+          "angle": 0
+        },
+        {
+          "name": "side",
+          "file": "candidate-01-side.png",
+          "pose": "Idle",
+          "phase": 0.2,
+          "angle": 1.5707963267948966
+        },
+        {
+          "name": "back",
+          "file": "candidate-01-back.png",
+          "pose": "Idle",
+          "phase": 0.2,
+          "angle": 3.141592653589793
+        },
+        {
+          "name": "anticipation",
+          "file": "candidate-01-anticipation.png",
+          "pose": "Attack",
+          "phase": 0.15,
+          "angle": 0.6
+        },
+        {
+          "name": "strike",
+          "file": "candidate-01-strike.png",
+          "pose": "Attack",
+          "phase": 0.42,
+          "angle": 0.6
+        },
+        {
+          "name": "recovery",
+          "file": "candidate-01-recovery.png",
+          "pose": "Attack",
+          "phase": 0.82,
+          "angle": 0.6
+        },
+        {
+          "name": "ability",
+          "file": "candidate-01-ability.png",
+          "pose": "Ability",
+          "phase": 0.45,
+          "angle": 0.6
+        }
+      ]
+    },
+    {
+      "id": "candidate-03",
+      "passed": true,
+      "poses_equal_first_cycle": true,
+      "renderer": {
+        "triangles": 40699,
+        "draw_calls": 21,
+        "geometries": 23,
+        "textures": 26,
+        "mean_frame_ms": 0.5199999999254942,
+        "scope": "Standardized local renderer; software GPU in Docker, not device FPS."
+      },
+      "ability": {
+        "effects": {
+          "effects": 14,
+          "pooledEffects": 14
+        },
+        "triangles": 40931
+      },
+      "previews": [
+        {
+          "name": "front",
+          "file": "candidate-03-front.png",
+          "pose": "Idle",
+          "phase": 0.2,
+          "angle": 0
+        },
+        {
+          "name": "side",
+          "file": "candidate-03-side.png",
+          "pose": "Idle",
+          "phase": 0.2,
+          "angle": 1.5707963267948966
+        },
+        {
+          "name": "back",
+          "file": "candidate-03-back.png",
+          "pose": "Idle",
+          "phase": 0.2,
+          "angle": 3.141592653589793
+        },
+        {
+          "name": "anticipation",
+          "file": "candidate-03-anticipation.png",
+          "pose": "Attack",
+          "phase": 0.15,
+          "angle": 0.6
+        },
+        {
+          "name": "strike",
+          "file": "candidate-03-strike.png",
+          "pose": "Attack",
+          "phase": 0.42,
+          "angle": 0.6
+        },
+        {
+          "name": "recovery",
+          "file": "candidate-03-recovery.png",
+          "pose": "Attack",
+          "phase": 0.82,
+          "angle": 0.6
+        },
+        {
+          "name": "ability",
+          "file": "candidate-03-ability.png",
+          "pose": "Ability",
+          "phase": 0.45,
+          "angle": 0.6
+        }
+      ]
+    }
+  ]
+}

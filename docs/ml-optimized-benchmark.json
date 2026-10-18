@@ -1,0 +1,92 @@
+{
+  "verified_at": "2026-10-18T08:13:35.444Z",
+  "seed": 47,
+  "draft": 2,
+  "policy": "empty-adaptive",
+  "scope": "Compatibility only; excluded from learning. Paced modes execute the same 30 Hz ticks with 1x/4x wall-clock budgets; they do not benchmark the frontend speed button.",
+  "source_sha256": "0b1d1d6396e6d1255a07c893c49ae36a24ee6cc596d06e56b10959b09ffce99b",
+  "modes": [
+    {
+      "mode": "headless",
+      "simulated_seconds": 462.6000000001524,
+      "wall_seconds": 114.379,
+      "effective_speed": 4.0444487187346665,
+      "cpu_seconds": 151.901426,
+      "cpu_percent": 132.80534538682798,
+      "memory": {
+        "mean_anon_mib": 856.9858710106383,
+        "max_sampled_anon_mib": 1081.25390625,
+        "max_sampled_working_set_mib": 1193.8359375,
+        "vram_mib": null
+      },
+      "states": [
+        {
+          "second": 0,
+          "fingerprint": "37892:fb2eb0be:4d910bea",
+          "randomState": 47,
+          "finished": false
+        },
+        {
+          "second": 30.00000000000065,
+          "fingerprint": "396516:8cdf07ee:d41c55de",
+          "randomState": 980932196,
+          "finished": false
+        },
+        {
+          "second": 119.99999999999575,
+          "fingerprint": "449014:3c3c8609:903ccc9d",
+          "randomState": 3911906840,
+          "finished": false
+        },
+        {
+          "second": 462.6000000001524,
+          "fingerprint": "1197911:ee6b37af:65092de7",
+          "randomState": 899024906,
+          "finished": true
+        }
+      ]
+    },
+    {
+      "mode": "optimized4x",
+      "simulated_seconds": 462.6000000001524,
+      "wall_seconds": 125.448,
+      "effective_speed": 3.6875837000203466,
+      "cpu_seconds": 126.029124,
+      "cpu_percent": 100.46323895159748,
+      "memory": {
+        "mean_anon_mib": 856.5176949786324,
+        "max_sampled_anon_mib": 1004.4921875,
+        "max_sampled_working_set_mib": 1185.796875,
+        "vram_mib": null
+      },
+      "states": [
+        {
+          "second": 0,
+          "fingerprint": "37892:fb2eb0be:4d910bea",
+          "randomState": 47,
+          "finished": false
+        },
+        {
+          "second": 30.00000000000065,
+          "fingerprint": "396516:8cdf07ee:d41c55de",
+          "randomState": 980932196,
+          "finished": false
+        },
+        {
+          "second": 119.99999999999575,
+          "fingerprint": "449014:3c3c8609:903ccc9d",
+          "randomState": 3911906840,
+          "finished": false
+        },
+        {
+          "second": 462.6000000001524,
+          "fingerprint": "1197911:ee6b37af:65092de7",
+          "randomState": 899024906,
+          "finished": true
+        }
+      ]
+    }
+  ],
+  "parity": true,
+  "cross_version_full_state_rng_event_parity": true
+}

@@ -1,0 +1,53 @@
+{
+  "id": "1ebdb836-6803-42bd-9fdd-ad92f2aeeb5b",
+  "plan": {
+    "version": 2,
+    "seed_start": 25001,
+    "fit_cases": 32,
+    "calibration_cases": 24,
+    "evaluation_cases": 24,
+    "horizon_seconds": 30,
+    "after_seconds": 120,
+    "max_minutes": 90,
+    "policy_scope": "offline-live-macro",
+    "minimum_evaluation_cases": 18,
+    "automatic_promotion": false,
+    "operations": {
+      "fit_cases": 32,
+      "calibration_cases": 24,
+      "evaluation_cases": 24,
+      "max_minutes": 90,
+      "speed": "headless",
+      "storage_gib": 20,
+      "failed_days": 7,
+      "raw_days": 14,
+      "log_days": 30,
+      "quarantine_hours": 24,
+      "automatic_cleanup": true,
+      "ram_mib": 2048,
+      "minimum_available_mib": 2048,
+      "reserved_mib": 2048,
+      "workers": 1,
+      "scout_seconds": 360,
+      "batch_size": 64,
+      "replay_capacity": 512,
+      "evaluation_every": 1
+    }
+  },
+  "status_at_allocation": "queued",
+  "runtime": {
+    "docker_image": "sha256:2feae106e9a8e36c388671113db70977f45db119f1ddca038a40a0489c29f2f6",
+    "versions": [
+      "v24.22.0",
+      "Python 3.12.15",
+      "Chromium 155.0.8059.79 built on Debian GNU/Linux 12 (bookworm)"
+    ],
+    "torch": "2.6.0+cpu",
+    "limits": {
+      "cpus": 2,
+      "memory_mib": 3072,
+      "anonymous_ram_admission_mib": 2048
+    },
+    "production_promotion": false
+  }
+}

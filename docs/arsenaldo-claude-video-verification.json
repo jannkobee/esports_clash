@@ -1,0 +1,21 @@
+{
+  "width": 1200,
+  "height": 1370,
+  "currentTime": 2.139087,
+  "duration": 9.581415,
+  "decodedFrames": 34,
+  "frames": [
+    {
+      "second": 3.353495,
+      "file": "arsenaldo-claude-video-frame-1.png"
+    },
+    {
+      "second": 5.269778,
+      "file": "arsenaldo-claude-video-frame-2.png"
+    },
+    {
+      "second": 8.814901,
+      "file": "arsenaldo-claude-video-frame-3.png"
+    }
+  ]
+}

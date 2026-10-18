@@ -1,0 +1,64 @@
+# Add after compose.evolution.yaml. No database/artifact volumes are replaced.
+x-dev-api: &dev-api
+  environment:
+    DEV_VITE_URL: http://localhost:8088
+  volumes:
+    - ./EsportsClash.Api/app:/app/app:ro
+    - ./EsportsClash.Api/bootstrap/app.php:/app/bootstrap/app.php:ro
+    - ./EsportsClash.Api/config:/app/config:ro
+    - ./EsportsClash.Api/routes:/app/routes:ro
+    - ./EsportsClash.Api/resources/views:/app/resources/views:ro
+    - ./EsportsClash.Api/public:/app/public:ro
+    - ./EsportsClash.Api/tests:/app/tests:ro
+
+services:
+  api:
+    <<: *dev-api
+    command: [php, artisan, serve, --no-reload, --host=0.0.0.0, --port=8000]
+    # PHP source reloads on every request. --no-reload avoids .env restarts;
+    # Blade/browser reloads are driven by Vite, never APP_DEBUG trace output.
+
+  worker:
+    <<: *dev-api
+    command: [php, artisan, 'queue:listen', '--sleep=3', '--timeout=30', '--tries=10']
+
+  scheduler:
+    <<: *dev-api
+
+  frontend-dev:
+    image: teamfight-evolution-frontend-dev:local
+    build:
+      context: .
+      dockerfile: infrastructure/evolution/Dockerfile.dev
+    environment:
+      DOCKER_DEV: '1'
+      VITE_API_URL: /backend/api/v1
+    volumes:
+      - ./EsportsClash.Web/src:/workspace/EsportsClash.Web/src:ro
+      - ./EsportsClash.Web/public:/workspace/EsportsClash.Web/public:ro
+      - ./EsportsClash.Web/index.html:/workspace/EsportsClash.Web/index.html:ro
+      - ./EsportsClash.Web/vite.config.ts:/workspace/EsportsClash.Web/vite.config.ts:ro
+      - ./EsportsClash.Web/avatar-review.html:/workspace/EsportsClash.Web/avatar-review.html:ro
+      - ./EsportsClash.Api/app:/workspace/EsportsClash.Api/app:ro
+      - ./EsportsClash.Api/bootstrap/app.php:/workspace/EsportsClash.Api/bootstrap/app.php:ro
+      - ./EsportsClash.Api/resources/views:/workspace/EsportsClash.Api/resources/views:ro
+      - ./EsportsClash.Api/public:/workspace/EsportsClash.Api/public:ro
+      - ./EsportsClash.Api/routes:/workspace/EsportsClash.Api/routes:ro
+      - ./EsportsClash.Api/config:/workspace/EsportsClash.Api/config:ro
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:5173/@vite/client').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+    mem_limit: 1024m
+    cpus: 1
+
+  web:
+    volumes:
+      - ./infrastructure/evolution/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      frontend-dev: {condition: service_healthy}
+
+# ML, avatar generation and trusted online execution retain their frozen images.
+# Rebuild/requalify those workers explicitly between runs, never during a study.

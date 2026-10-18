@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-17",
+  "revision": 9,
+  "models": 45,
+  "glbBytes": 145634328,
+  "packedBlenderBytes": 106283045,
+  "actionsPerModel": 10,
+  "runtimeJoints": 17,
+  "gripShapes": 68,
+  "review": {
+    "beforeAndAfter": "all 45 actual textured models in guard and attack poses; six sheets per revision inspected",
+    "nativeClipSamples": 2250,
+    "socketPoses": 225,
+    "denseSupportingPalmPoses": 2940,
+    "maximumSupportingPalmError": 3.5973967184827834e-14,
+    "effects": "six native-clip release/flight/impact fixtures, images and video inspected",
+    "video": "saved bytes decode, play and seek; three frames extracted"
+  },
+  "checks": {
+    "gameTests": 414,
+    "deterministicSimulations": 3,
+    "typescript": "passed",
+    "productionBuild": "passed with existing chunk/plugin timing advisories",
+    "studio": "45 selections, controls, download, mobile, context recovery and disposal passed",
+    "arena": "GLB required; exact 3D/2D state, RNG, execution and opportunity comparison at 30/60/90 seconds; viewports and controls passed",
+    "temporaryServices": "verified owned Chrome and Vite closed, ports released"
+  },
+  "evidence": [
+    "avatar-polish-before-review.json",
+    "avatar-polish-after-review.json",
+    "avatar-polish-native-verification.json",
+    "avatar-polish-effects-verification.json",
+    "avatar-polish-effects-video-verification.json",
+    "avatar-polish-verification.json",
+    "avatar-polish-arena-verification.json",
+    "avatar-polish-game-check.log",
+    "avatar-polish-build.log",
+    "avatar-polish-blender.log",
+    "avatar-polish-owned-processes.json"
+  ],
+  "limits": [
+    "Shared anatomy and motion/particle families, approximate fingers, basic creature hulls and some intersections remain",
+    "Primary sockets do not cover every alternate weapon or ability",
+    "Impact review fixtures use explicitly authored example cues; live impact particles use existing combat cues",
+    "Planar foot contacts and visual projectile convergence remain; no new cloth, ragdoll or 3D collision",
+    "No device performance claim, combat balance change or ML promotion"
+  ]
+}

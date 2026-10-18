@@ -1,0 +1,111 @@
+{
+  "views": [
+    {
+      "name": "overview",
+      "calls": 464,
+      "triangles": 330005
+    },
+    {
+      "name": "river",
+      "calls": 370,
+      "triangles": 321493
+    },
+    {
+      "name": "blue-base",
+      "calls": 202,
+      "triangles": 197827
+    },
+    {
+      "name": "dragon-pit",
+      "calls": 312,
+      "triangles": 317373
+    }
+  ],
+  "scenery": {
+    "staticBatches": 48,
+    "instances": 4184,
+    "particleDraws": 6,
+    "particles": 578
+  },
+  "pauseAndRewind": true,
+  "programs": [
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "MI_Eyes",
+      "runnable": true
+    },
+    {
+      "name": "hair-#8f4b2c.001",
+      "runnable": true
+    },
+    {
+      "name": "skin-#b9805d",
+      "runnable": true
+    },
+    {
+      "name": "hand-#b9805d",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "cloth-#38bdf8.006",
+      "runnable": true
+    },
+    {
+      "name": "cloth-#0284c7.004",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    },
+    {
+      "name": "",
+      "runnable": true
+    }
+  ],
+  "resources": {
+    "geometries": 253,
+    "materials": 215,
+    "textures": 79
+  },
+  "errors": []
+}

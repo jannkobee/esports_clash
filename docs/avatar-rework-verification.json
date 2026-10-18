@@ -1,0 +1,203 @@
+{
+  "coverage": [
+    {
+      "id": "c_solana",
+      "alias": "Dawnna",
+      "range": 40,
+      "horizontalError": 1.4880740823551088e-7,
+      "height": 29.999999941396148,
+      "lunge": 0
+    },
+    {
+      "id": "c_valkira",
+      "alias": "Bessara",
+      "range": 50,
+      "horizontalError": 8.923275083796281e-8,
+      "height": 29.999999977326194,
+      "lunge": 0
+    },
+    {
+      "id": "c_kage",
+      "alias": "Vanta",
+      "range": 50,
+      "horizontalError": 3.0570758271374185e-7,
+      "height": 30.000000195007434,
+      "lunge": 0
+    },
+    {
+      "id": "c_kazemaru",
+      "alias": "Galejandro",
+      "range": 55,
+      "horizontalError": 1.739168241412065e-7,
+      "height": 29.99999972684462,
+      "lunge": 0
+    },
+    {
+      "id": "c_renn",
+      "alias": "Gildan",
+      "range": 65,
+      "horizontalError": 1.1103788703071277e-7,
+      "height": 30.00000001106665,
+      "lunge": 28.350611767975995
+    },
+    {
+      "id": "c_xin",
+      "alias": "Cindergent",
+      "range": 50,
+      "horizontalError": 6.051771132668769e-7,
+      "height": 29.99999960036194,
+      "lunge": 0
+    },
+    {
+      "id": "c_kaolin",
+      "alias": "TerraByte",
+      "range": 50,
+      "horizontalError": 5.153833840968784e-7,
+      "height": 29.99999952519812,
+      "lunge": 22.75927141235957
+    },
+    {
+      "id": "c_inai",
+      "alias": "Nulliver",
+      "range": 55,
+      "horizontalError": 1.5843275642879967e-7,
+      "height": 30.000000635170586,
+      "lunge": 0.390299310717063
+    },
+    {
+      "id": "c_qiyana",
+      "alias": "Crownfetti",
+      "range": 51,
+      "horizontalError": 4.5994194190746695e-8,
+      "height": 29.9999999979119,
+      "lunge": 0
+    },
+    {
+      "id": "c_locke",
+      "alias": "Sootcase",
+      "range": 50,
+      "horizontalError": 0.0000012362580646388865,
+      "height": 29.999999338376554,
+      "lunge": 0
+    },
+    {
+      "id": "c_largo",
+      "alias": "Basso Croak",
+      "range": 65,
+      "horizontalError": 0,
+      "height": 33.47410770680177,
+      "lunge": 27.70755622398762
+    },
+    {
+      "id": "c_earthshaker",
+      "alias": "Quakewell",
+      "range": 45,
+      "horizontalError": 2.3170447459653216e-7,
+      "height": 29.99999982093877,
+      "lunge": 1.140082771280759
+    },
+    {
+      "id": "c_mirehook",
+      "alias": "Rotisserie",
+      "range": 58,
+      "horizontalError": 1.3260544495798006e-8,
+      "height": 29.999999993435104,
+      "lunge": 22.480689938725572
+    },
+    {
+      "id": "c_voltgrip",
+      "alias": "Plugsy",
+      "range": 62,
+      "horizontalError": 0,
+      "height": 35.4579348875597,
+      "lunge": 18.376219729221365
+    },
+    {
+      "id": "c_brewmaw",
+      "alias": "Kegory",
+      "range": 60,
+      "horizontalError": 1.147412990059938e-7,
+      "height": 29.99999986301774,
+      "lunge": 6.9684136713830505
+    },
+    {
+      "id": "c_vi",
+      "alias": "Knuckleberry",
+      "range": 48,
+      "horizontalError": 3.346925610905698e-7,
+      "height": 30.0000001258269,
+      "lunge": 9.039496532025783
+    },
+    {
+      "id": "c_bristleback",
+      "alias": "Hedgehoggin",
+      "range": 45,
+      "horizontalError": 0,
+      "height": 21.799544292262432,
+      "lunge": 25.109004646556937
+    },
+    {
+      "id": "c_wukong_lol",
+      "alias": "Stafford",
+      "range": 58,
+      "horizontalError": 2.8421709430404007e-13,
+      "height": 30.000000000000092,
+      "lunge": 0
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "alias": "Primate Minister",
+      "range": 62,
+      "horizontalError": 0,
+      "height": 30.000000000000043,
+      "lunge": 6.323255194250124
+    },
+    {
+      "id": "c_stepstone",
+      "alias": "Kickswitch",
+      "range": 48,
+      "horizontalError": 1.0794013769339336e-8,
+      "height": 30.000000006148046,
+      "lunge": 12.953766206900683
+    }
+  ],
+  "formChecks": [
+    {
+      "state": "passive",
+      "ballVisible": false,
+      "outfitVisible": true
+    },
+    {
+      "state": "q",
+      "ballVisible": false,
+      "outfitVisible": true
+    },
+    {
+      "state": "w",
+      "ballVisible": false,
+      "outfitVisible": true
+    },
+    {
+      "state": "r",
+      "ballVisible": true,
+      "outfitVisible": false
+    },
+    {
+      "state": "arrival",
+      "ballVisible": false,
+      "outfitVisible": true
+    },
+    {
+      "state": "interrupted",
+      "ballVisible": false,
+      "outfitVisible": true
+    }
+  ],
+  "studioPreviews": [
+    "ability-passive",
+    "ability-q",
+    "ability-w",
+    "ability-r"
+  ],
+  "switchToOtherAvatar": "idle"
+}

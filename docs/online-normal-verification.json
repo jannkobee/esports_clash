@@ -1,0 +1,46 @@
+{
+  "verified_at": "2026-10-18T04:48:48.154Z",
+  "scope": "Two authenticated local verification accounts; no global player/population claim",
+  "browser": {
+    "match_id": "85cfd7ff-ed52-4b24-b732-3456e27089ff",
+    "two_isolated_authenticated_browsers": true,
+    "renderer": "Canvas fallback; WebGL separately visually inspected (two software GL viewers saturate the 2-CPU test container)",
+    "identical_shared_snapshots": 375,
+    "browser_close_did_not_stop_match": true,
+    "reconnected_to_same_match": true,
+    "final_sequence": 1267,
+    "terminal_fingerprint": "1403634:dea6332b:28a9b6af",
+    "mobile": {
+      "width": 390,
+      "content": 390,
+      "alerts": []
+    }
+  },
+  "ownership_foreign_card_blocked": true,
+  "evolution_owner_access_blocked": true,
+  "browser_completion_blocked": true,
+  "result_consistent_across_accounts": true,
+  "match": {
+    "id": "85cfd7ff-ed52-4b24-b732-3456e27089ff",
+    "status": "completed",
+    "sequence": 1267,
+    "plan_hash": "98214ccb94141a46bddabea6d872dae9920908fc2c380643bb6106b853f91ff9",
+    "result_hash": "6ec7f03e3a1158928f42780fd6e135f8537ac39ededf92aad879b8869e087123",
+    "versions": {
+      "catalog_version": "79f8710120bea9194262c257763a3f9e481caf9626a09551caf4e6023755a3c9",
+      "rules_version": "8ebbd4d487600ab342f4deb81cf548cf44a0cca407c5e7b6789e410028cc714a",
+      "policy_version": "rule-baseline-empty-adaptive-v2",
+      "observation_version": "live-spectator-v1"
+    },
+    "winner": "red",
+    "duration_seconds": 632.5666666667487,
+    "terminal_nexus": {
+      "blue": false,
+      "red": true
+    }
+  },
+  "replay_first_sequence": 1,
+  "replay_terminal_sequence": 1267,
+  "owned_cards_per_account": 5,
+  "ranked_rating_or_currency_grants": false
+}

@@ -1,0 +1,49 @@
+{
+  "owner_login": true,
+  "settings_saved_unchanged": {
+    "enabled": "1",
+    "interval_minutes": "60",
+    "candidates_per_cycle": "5",
+    "generations": "1",
+    "storage_gib": "4",
+    "avatar_ids[]": "c_invoker"
+  },
+  "csrf_rejected": 419,
+  "summary": {
+    "title": "Arsenaldo candidates",
+    "passed": 5,
+    "approveButtons": 5,
+    "errors": []
+  },
+  "iframe": {
+    "canvas": true,
+    "status": "Arsenaldo · actual claude rig · baseline"
+  },
+  "mobile": {
+    "viewport": 390,
+    "content": 390,
+    "frames": [
+      {
+        "viewport": 326,
+        "content": 326,
+        "canvas": 326
+      },
+      {
+        "viewport": 326,
+        "content": 326,
+        "canvas": 326
+      }
+    ]
+  },
+  "private_asset_requires_login": true,
+  "unapproved_public_releases": 0,
+  "download": {
+    "url": "http://api:8000/evolution/avatars/files/9aff3ccf-ecb5-47da-8068-429e66b2f823/candidate-01.glb",
+    "status": 200,
+    "bytes": 5253484,
+    "magic": 1179937895,
+    "sha256": "d3fb13d4da5ac6f94ce87b5244e177724a8f71d6cbffc77314067dbb299b04a7"
+  },
+  "published_during_validation": false,
+  "verified_at": "2026-10-18T09:58:11.476Z"
+}

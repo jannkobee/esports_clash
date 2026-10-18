@@ -1,0 +1,21 @@
+{
+  "width": 1600,
+  "height": 960,
+  "currentTime": 2.165814,
+  "duration": 6.981615,
+  "decodedFrames": 48,
+  "frames": [
+    {
+      "second": 2.443565,
+      "file": "map-detail-video-frame-1.png"
+    },
+    {
+      "second": 3.839888,
+      "file": "map-detail-video-frame-2.png"
+    },
+    {
+      "second": 6.423085,
+      "file": "map-detail-video-frame-3.png"
+    }
+  ]
+}

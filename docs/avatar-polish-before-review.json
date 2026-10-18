@@ -1,0 +1,372 @@
+{
+  "coverage": [
+    {
+      "id": "c_solana",
+      "state": "idle"
+    },
+    {
+      "id": "c_astra",
+      "state": "idle"
+    },
+    {
+      "id": "c_kyumi",
+      "state": "idle"
+    },
+    {
+      "id": "c_buck",
+      "state": "idle"
+    },
+    {
+      "id": "c_valkira",
+      "state": "idle"
+    },
+    {
+      "id": "c_kage",
+      "state": "idle"
+    },
+    {
+      "id": "c_kazemaru",
+      "state": "idle"
+    },
+    {
+      "id": "c_kindra",
+      "state": "idle"
+    },
+    {
+      "id": "c_cora",
+      "state": "idle"
+    },
+    {
+      "id": "c_renn",
+      "state": "idle"
+    },
+    {
+      "id": "c_sylla",
+      "state": "idle"
+    },
+    {
+      "id": "c_tequoia",
+      "state": "idle"
+    },
+    {
+      "id": "c_zal",
+      "state": "idle"
+    },
+    {
+      "id": "c_xin",
+      "state": "idle"
+    },
+    {
+      "id": "c_raijin",
+      "state": "idle"
+    },
+    {
+      "id": "c_kaolin",
+      "state": "idle"
+    },
+    {
+      "id": "c_inai",
+      "state": "idle"
+    },
+    {
+      "id": "c_qiyana",
+      "state": "idle"
+    },
+    {
+      "id": "c_locke",
+      "state": "idle"
+    },
+    {
+      "id": "c_senna",
+      "state": "idle"
+    },
+    {
+      "id": "c_largo",
+      "state": "idle"
+    },
+    {
+      "id": "c_shadowfiend",
+      "state": "idle"
+    },
+    {
+      "id": "c_earthshaker",
+      "state": "idle"
+    },
+    {
+      "id": "c_mirehook",
+      "state": "idle"
+    },
+    {
+      "id": "c_nullweaver",
+      "state": "idle"
+    },
+    {
+      "id": "c_voltgrip",
+      "state": "idle"
+    },
+    {
+      "id": "c_aetherbolt",
+      "state": "idle"
+    },
+    {
+      "id": "c_corsara",
+      "state": "idle"
+    },
+    {
+      "id": "c_brewmaw",
+      "state": "idle"
+    },
+    {
+      "id": "c_wraithhook",
+      "state": "idle"
+    },
+    {
+      "id": "c_invoker",
+      "state": "idle"
+    },
+    {
+      "id": "c_hwei",
+      "state": "idle"
+    },
+    {
+      "id": "c_jayce",
+      "state": "idle"
+    },
+    {
+      "id": "c_vi",
+      "state": "idle"
+    },
+    {
+      "id": "c_jinx",
+      "state": "idle"
+    },
+    {
+      "id": "c_puck",
+      "state": "idle"
+    },
+    {
+      "id": "c_batrider",
+      "state": "idle"
+    },
+    {
+      "id": "c_bristleback",
+      "state": "idle"
+    },
+    {
+      "id": "c_io",
+      "state": "idle"
+    },
+    {
+      "id": "c_lulu",
+      "state": "idle"
+    },
+    {
+      "id": "c_silencer",
+      "state": "idle"
+    },
+    {
+      "id": "c_wukong_lol",
+      "state": "idle"
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "state": "idle"
+    },
+    {
+      "id": "c_stepstone",
+      "state": "idle"
+    },
+    {
+      "id": "c_skybreaker",
+      "state": "idle"
+    },
+    {
+      "id": "c_solana",
+      "state": "attack"
+    },
+    {
+      "id": "c_astra",
+      "state": "attack"
+    },
+    {
+      "id": "c_kyumi",
+      "state": "attack"
+    },
+    {
+      "id": "c_buck",
+      "state": "attack"
+    },
+    {
+      "id": "c_valkira",
+      "state": "attack"
+    },
+    {
+      "id": "c_kage",
+      "state": "attack"
+    },
+    {
+      "id": "c_kazemaru",
+      "state": "attack"
+    },
+    {
+      "id": "c_kindra",
+      "state": "attack"
+    },
+    {
+      "id": "c_cora",
+      "state": "attack"
+    },
+    {
+      "id": "c_renn",
+      "state": "attack"
+    },
+    {
+      "id": "c_sylla",
+      "state": "attack"
+    },
+    {
+      "id": "c_tequoia",
+      "state": "attack"
+    },
+    {
+      "id": "c_zal",
+      "state": "attack"
+    },
+    {
+      "id": "c_xin",
+      "state": "attack"
+    },
+    {
+      "id": "c_raijin",
+      "state": "attack"
+    },
+    {
+      "id": "c_kaolin",
+      "state": "attack"
+    },
+    {
+      "id": "c_inai",
+      "state": "attack"
+    },
+    {
+      "id": "c_qiyana",
+      "state": "attack"
+    },
+    {
+      "id": "c_locke",
+      "state": "attack"
+    },
+    {
+      "id": "c_senna",
+      "state": "attack"
+    },
+    {
+      "id": "c_largo",
+      "state": "attack"
+    },
+    {
+      "id": "c_shadowfiend",
+      "state": "attack"
+    },
+    {
+      "id": "c_earthshaker",
+      "state": "attack"
+    },
+    {
+      "id": "c_mirehook",
+      "state": "attack"
+    },
+    {
+      "id": "c_nullweaver",
+      "state": "attack"
+    },
+    {
+      "id": "c_voltgrip",
+      "state": "attack"
+    },
+    {
+      "id": "c_aetherbolt",
+      "state": "attack"
+    },
+    {
+      "id": "c_corsara",
+      "state": "attack"
+    },
+    {
+      "id": "c_brewmaw",
+      "state": "attack"
+    },
+    {
+      "id": "c_wraithhook",
+      "state": "attack"
+    },
+    {
+      "id": "c_invoker",
+      "state": "attack"
+    },
+    {
+      "id": "c_hwei",
+      "state": "attack"
+    },
+    {
+      "id": "c_jayce",
+      "state": "attack"
+    },
+    {
+      "id": "c_vi",
+      "state": "attack"
+    },
+    {
+      "id": "c_jinx",
+      "state": "attack"
+    },
+    {
+      "id": "c_puck",
+      "state": "attack"
+    },
+    {
+      "id": "c_batrider",
+      "state": "attack"
+    },
+    {
+      "id": "c_bristleback",
+      "state": "attack"
+    },
+    {
+      "id": "c_io",
+      "state": "attack"
+    },
+    {
+      "id": "c_lulu",
+      "state": "attack"
+    },
+    {
+      "id": "c_silencer",
+      "state": "attack"
+    },
+    {
+      "id": "c_wukong_lol",
+      "state": "attack"
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "state": "attack"
+    },
+    {
+      "id": "c_stepstone",
+      "state": "attack"
+    },
+    {
+      "id": "c_skybreaker",
+      "state": "attack"
+    }
+  ],
+  "sheets": [
+    "avatar-polish-before-idle-1.png",
+    "avatar-polish-before-idle-2.png",
+    "avatar-polish-before-idle-3.png",
+    "avatar-polish-before-attack-1.png",
+    "avatar-polish-before-attack-2.png",
+    "avatar-polish-before-attack-3.png"
+  ]
+}

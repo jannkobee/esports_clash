@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-17",
+  "scope": "3D weapon-mounted auto-attack and source-effect presentation",
+  "cause": "Projectiles and source effects used ground coordinates and fixed heights, independent of the posed equipment. Live basic-attack release also crossfaded from idle.",
+  "modelCount": 45,
+  "texturedNativeClipSocketSamples": 225,
+  "checks": {
+    "gameTests": 410,
+    "deterministicSimulations": 3,
+    "typescript": "passed",
+    "productionBuild": "passed",
+    "actualModelVisualReview": "six release and flight fixtures inspected",
+    "live3d2dStateAndRng": "exact at 30, 60 and 90 seconds",
+    "viewportsControlsContextRecoveryDisposal": "passed"
+  },
+  "evidence": [
+    "avatar-weapon-verification.json",
+    "avatar-weapon-release.png",
+    "avatar-weapon-flight.png",
+    "avatar-weapon-arena-verification.json",
+    "avatar-weapon-game-check.log",
+    "avatar-weapon-build.log",
+    "avatar-weapon-owned-processes.json"
+  ],
+  "limits": [
+    "Primary weapon mounts, not every alternate weapon or ability",
+    "First observed nearby launch; existing mid-flight projectiles keep the collision path",
+    "Visual flight converges to the existing collision plane; gameplay remains two-dimensional",
+    "Existing clothing/weapon intersections, approximate fingers and simplified model surfaces remain",
+    "No GLB or editable Blender asset regenerated"
+  ]
+}

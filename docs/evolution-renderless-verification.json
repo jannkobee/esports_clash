@@ -1,0 +1,997 @@
+{
+  "seed": 47,
+  "scope": "Known compatibility fixture; excluded from learning evidence",
+  "exact_live_state_rng_and_audits": true,
+  "episodes": [
+    {
+      "renderless": false,
+      "wall_seconds": 5.424,
+      "states": [
+        {
+          "second": 0,
+          "fingerprint": "37892:fb2eb0be:4d910bea",
+          "randomState": 47,
+          "finished": false
+        },
+        {
+          "second": 30.00000000000065,
+          "fingerprint": "396516:8cdf07ee:d41c55de",
+          "randomState": 980932196,
+          "finished": false,
+          "executionAudit": {
+            "counts": {
+              "push:push": 6019,
+              "wave:minion": 1078,
+              "fight:champion": 540,
+              "fight:hold": 27
+            },
+            "regroupPaths": {},
+            "samples": [
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_thespicy",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_p1mple",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_flaker",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.733333333333288,
+                "actorId": "red_p_ouzi",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.96666666666662,
+                "actorId": "red_p_craps",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.999999999999954,
+                "actorId": "red_p_craps",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 16.333333333333304,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.8333333333333215,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 16.333333333333304,
+                "actorId": "red_p_ouzi",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.833333333333283,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 21.866666666666912,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.8333333333332287,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 27.26666666666718,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 4.187878787878807,
+                "cd2": 8.033333333333351,
+                "cdUlt": 999,
+                "damageDealt": 147
+              },
+              {
+                "second": 27.300000000000516,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 4.154545454545474,
+                "cd2": 8.000000000000018,
+                "cdUlt": 999,
+                "damageDealt": 147
+              },
+              {
+                "second": 27.300000000000516,
+                "actorId": "red_p_ouzi",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 2.124242424242442,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 208
+              }
+            ],
+            "pushPlans": {
+              "total": 6019,
+              "mismatches": 0,
+              "examples": []
+            }
+          },
+          "opportunityAudit": {
+            "total": 7664,
+            "firstGates": {
+              "legal-pair": 548,
+              "commitment": 7116
+            },
+            "allGates": {
+              "legal-pair": 7664,
+              "commitment": 7116
+            },
+            "safeExceptGap": {},
+            "examples": []
+          }
+        },
+        {
+          "second": 59.999999999999154,
+          "fingerprint": "421812:7ffdf94d:43626629",
+          "randomState": 2330358927,
+          "finished": false,
+          "executionAudit": {
+            "counts": {
+              "push:push": 7860,
+              "wave:minion": 2534,
+              "fight:champion": 2391,
+              "fight:hold": 128,
+              "push:minion": 14,
+              "regroup:regroup": 80,
+              "push:structure": 58
+            },
+            "regroupPaths": {
+              "fight-regroup": 80
+            },
+            "samples": [
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_thespicy",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_p1mple",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_flaker",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.733333333333288,
+                "actorId": "red_p_ouzi",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.96666666666662,
+                "actorId": "red_p_craps",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.999999999999954,
+                "actorId": "red_p_craps",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 16.333333333333304,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.8333333333333215,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 16.333333333333304,
+                "actorId": "red_p_ouzi",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.833333333333283,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 21.866666666666912,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.8333333333332287,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 27.26666666666718,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 4.187878787878807,
+                "cd2": 8.033333333333351,
+                "cdUlt": 999,
+                "damageDealt": 147
+              },
+              {
+                "second": 27.300000000000516,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 4.154545454545474,
+                "cd2": 8.000000000000018,
+                "cdUlt": 999,
+                "damageDealt": 147
+              },
+              {
+                "second": 27.300000000000516,
+                "actorId": "red_p_ouzi",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 2.124242424242442,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 208
+              },
+              {
+                "second": 38.86666666666702,
+                "actorId": "red_p_mirecle",
+                "selected": "push",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 38.900000000000354,
+                "actorId": "red_p_mirecle",
+                "selected": "push",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 38.933333333333685,
+                "actorId": "red_p_mirecle",
+                "selected": "push",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 40.36666666666694,
+                "actorId": "red_p_neko",
+                "selected": "regroup",
+                "intent": "regroup",
+                "distanceMoved": 2.8333333333333073,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 41.40000000000021,
+                "actorId": "red_p_neko",
+                "selected": "regroup",
+                "intent": "regroup",
+                "distanceMoved": 2.8333333333333988,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 41.43333333333354,
+                "actorId": "red_p_neko",
+                "selected": "regroup",
+                "intent": "regroup",
+                "distanceMoved": 2.8333333333333988,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 55.66666666666607,
+                "actorId": "red_p_craps",
+                "selected": "push",
+                "intent": "structure",
+                "distanceMoved": 0,
+                "animState": "walk",
+                "cd1": 7.1606060606060655,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 771
+              },
+              {
+                "second": 55.6999999999994,
+                "actorId": "red_p_craps",
+                "selected": "push",
+                "intent": "structure",
+                "distanceMoved": 0,
+                "animState": "walk",
+                "cd1": 7.127272727272732,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 771
+              },
+              {
+                "second": 55.73333333333273,
+                "actorId": "red_p_craps",
+                "selected": "push",
+                "intent": "structure",
+                "distanceMoved": 0,
+                "animState": "walk",
+                "cd1": 7.093939393939399,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 771
+              }
+            ],
+            "pushPlans": {
+              "total": 7932,
+              "mismatches": 0,
+              "examples": []
+            }
+          },
+          "opportunityAudit": {
+            "total": 13453,
+            "firstGates": {
+              "legal-pair": 895,
+              "commitment": 9966,
+              "defense": 1468,
+              "danger": 50,
+              "influence": 3,
+              "health": 963,
+              "tower": 108
+            },
+            "allGates": {
+              "legal-pair": 13436,
+              "commitment": 12368,
+              "defense": 2016,
+              "danger": 121,
+              "influence": 17,
+              "survival": 17,
+              "utility-gap": 14,
+              "health": 963,
+              "tower": 155
+            },
+            "safeExceptGap": {},
+            "examples": []
+          }
+        }
+      ]
+    },
+    {
+      "renderless": true,
+      "wall_seconds": 12.855,
+      "states": [
+        {
+          "second": 0,
+          "fingerprint": "37892:fb2eb0be:4d910bea",
+          "randomState": 47,
+          "finished": false
+        },
+        {
+          "second": 30.00000000000065,
+          "fingerprint": "396516:8cdf07ee:d41c55de",
+          "randomState": 980932196,
+          "finished": false,
+          "executionAudit": {
+            "counts": {
+              "push:push": 6019,
+              "wave:minion": 1078,
+              "fight:champion": 540,
+              "fight:hold": 27
+            },
+            "regroupPaths": {},
+            "samples": [
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_thespicy",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_p1mple",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_flaker",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.733333333333288,
+                "actorId": "red_p_ouzi",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.96666666666662,
+                "actorId": "red_p_craps",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.999999999999954,
+                "actorId": "red_p_craps",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 16.333333333333304,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.8333333333333215,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 16.333333333333304,
+                "actorId": "red_p_ouzi",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.833333333333283,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 21.866666666666912,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.8333333333332287,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 27.26666666666718,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 4.187878787878807,
+                "cd2": 8.033333333333351,
+                "cdUlt": 999,
+                "damageDealt": 147
+              },
+              {
+                "second": 27.300000000000516,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 4.154545454545474,
+                "cd2": 8.000000000000018,
+                "cdUlt": 999,
+                "damageDealt": 147
+              },
+              {
+                "second": 27.300000000000516,
+                "actorId": "red_p_ouzi",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 2.124242424242442,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 208
+              }
+            ],
+            "pushPlans": {
+              "total": 6019,
+              "mismatches": 0,
+              "examples": []
+            }
+          },
+          "opportunityAudit": {
+            "total": 7664,
+            "firstGates": {
+              "legal-pair": 548,
+              "commitment": 7116
+            },
+            "allGates": {
+              "legal-pair": 7664,
+              "commitment": 7116
+            },
+            "safeExceptGap": {},
+            "examples": []
+          }
+        },
+        {
+          "second": 59.999999999999154,
+          "fingerprint": "421812:7ffdf94d:43626629",
+          "randomState": 2330358927,
+          "finished": false,
+          "executionAudit": {
+            "counts": {
+              "push:push": 7860,
+              "wave:minion": 2534,
+              "fight:champion": 2391,
+              "fight:hold": 128,
+              "push:minion": 14,
+              "regroup:regroup": 80,
+              "push:structure": 58
+            },
+            "regroupPaths": {
+              "fight-regroup": 80
+            },
+            "samples": [
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_thespicy",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_p1mple",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 0.03333333333333333,
+                "actorId": "blue_p_flaker",
+                "selected": "push",
+                "intent": "push",
+                "distanceMoved": 2.3333333333333286,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.733333333333288,
+                "actorId": "red_p_ouzi",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.96666666666662,
+                "actorId": "red_p_craps",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 15.999999999999954,
+                "actorId": "red_p_craps",
+                "selected": "wave",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "attack",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 16.333333333333304,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.8333333333333215,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 16.333333333333304,
+                "actorId": "red_p_ouzi",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.833333333333283,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 21.866666666666912,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "champion",
+                "distanceMoved": 2.8333333333332287,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 27.26666666666718,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 4.187878787878807,
+                "cd2": 8.033333333333351,
+                "cdUlt": 999,
+                "damageDealt": 147
+              },
+              {
+                "second": 27.300000000000516,
+                "actorId": "red_p_craps",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 4.154545454545474,
+                "cd2": 8.000000000000018,
+                "cdUlt": 999,
+                "damageDealt": 147
+              },
+              {
+                "second": 27.300000000000516,
+                "actorId": "red_p_ouzi",
+                "selected": "fight",
+                "intent": "hold",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 2.124242424242442,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 208
+              },
+              {
+                "second": 38.86666666666702,
+                "actorId": "red_p_mirecle",
+                "selected": "push",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 38.900000000000354,
+                "actorId": "red_p_mirecle",
+                "selected": "push",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 38.933333333333685,
+                "actorId": "red_p_mirecle",
+                "selected": "push",
+                "intent": "minion",
+                "distanceMoved": 0,
+                "animState": "idle",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 40.36666666666694,
+                "actorId": "red_p_neko",
+                "selected": "regroup",
+                "intent": "regroup",
+                "distanceMoved": 2.8333333333333073,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 41.40000000000021,
+                "actorId": "red_p_neko",
+                "selected": "regroup",
+                "intent": "regroup",
+                "distanceMoved": 2.8333333333333988,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 41.43333333333354,
+                "actorId": "red_p_neko",
+                "selected": "regroup",
+                "intent": "regroup",
+                "distanceMoved": 2.8333333333333988,
+                "animState": "walk",
+                "cd1": 0,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 0
+              },
+              {
+                "second": 55.66666666666607,
+                "actorId": "red_p_craps",
+                "selected": "push",
+                "intent": "structure",
+                "distanceMoved": 0,
+                "animState": "walk",
+                "cd1": 7.1606060606060655,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 771
+              },
+              {
+                "second": 55.6999999999994,
+                "actorId": "red_p_craps",
+                "selected": "push",
+                "intent": "structure",
+                "distanceMoved": 0,
+                "animState": "walk",
+                "cd1": 7.127272727272732,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 771
+              },
+              {
+                "second": 55.73333333333273,
+                "actorId": "red_p_craps",
+                "selected": "push",
+                "intent": "structure",
+                "distanceMoved": 0,
+                "animState": "walk",
+                "cd1": 7.093939393939399,
+                "cd2": 0,
+                "cdUlt": 999,
+                "damageDealt": 771
+              }
+            ],
+            "pushPlans": {
+              "total": 7932,
+              "mismatches": 0,
+              "examples": []
+            }
+          },
+          "opportunityAudit": {
+            "total": 13453,
+            "firstGates": {
+              "legal-pair": 895,
+              "commitment": 9966,
+              "defense": 1468,
+              "danger": 50,
+              "influence": 3,
+              "health": 963,
+              "tower": 108
+            },
+            "allGates": {
+              "legal-pair": 13436,
+              "commitment": 12368,
+              "defense": 2016,
+              "danger": 121,
+              "influence": 17,
+              "survival": 17,
+              "utility-gap": 14,
+              "health": 963,
+              "tower": 155
+            },
+            "safeExceptGap": {},
+            "examples": []
+          }
+        }
+      ]
+    }
+  ]
+}

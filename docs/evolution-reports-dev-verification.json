@@ -1,0 +1,44 @@
+{
+  "owner_login": true,
+  "ml": {
+    "rows": 9,
+    "modelRows": 1,
+    "active": "ML reports"
+  },
+  "models": {
+    "rows": 1,
+    "active": "Model reports",
+    "mlEvidence": false
+  },
+  "download": {
+    "status": 200,
+    "type": "avatar-model",
+    "candidates": 5,
+    "disposition": "attachment; filename=\"model-report-9aff3ccf-ecb5-47da-8068-429e66b2f823.json\""
+  },
+  "mobile": {
+    "viewport": 390,
+    "content": 390
+  },
+  "blade_reload": true,
+  "css_reload": true,
+  "php_reload": true,
+  "backend_reload_frames": 3,
+  "react_hmr": true,
+  "react_full_page_reload": false,
+  "verified_at": "2026-10-18T10:17:18.304Z",
+  "docker_development_enabled": true,
+  "execution_workers_unchanged": {
+    "runner": "dbf61db38adb28dfffd289415ea06fd4ee0bebd77e672d13b75232a48078978f",
+    "avatar-worker": "9ccc2cb25ddb8cc26dd8fad75eb8e6c63064c60c36c069238512e49ce2f15293",
+    "match-worker": "b3392d518ca9fcf7a614999894d22d859878675b2579c9d2bbc4c22bec61d8e9"
+  },
+  "validation": {
+    "backend_tests": 41,
+    "backend_assertions": 320,
+    "game_tests": 439,
+    "deterministic_simulations": 3,
+    "production_build": true
+  },
+  "temporary_source_edits_restored": true
+}

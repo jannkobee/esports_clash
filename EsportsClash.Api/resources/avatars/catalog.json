@@ -1,0 +1,1580 @@
+{
+  "version": 1,
+  "avatars": [
+    {
+      "id": "c_solana",
+      "name": "Dawnna",
+      "internal_name": "Solana",
+      "role": "Tank",
+      "design": {
+        "body": "knight",
+        "width": 15,
+        "height": 69,
+        "skin": "#b9805d",
+        "hair": "#8f4b2c",
+        "silhouette": "Solar shield and radiating crown",
+        "costume": "Ivory plate over amber cloth; sunburst shoulders",
+        "signature": "Dawn shield and long sunblade"
+      },
+      "motif": "sun",
+      "variant": "current",
+      "file": "avatars-v9/c_solana.glb",
+      "sha256": "4a4f6865b296093759fbfb4c32502bb4d919ffaff98ec77817d820ab5cb43b68",
+      "bytes": 2964356,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Solar Shieldbash"
+        },
+        {
+          "slot": "skill2",
+          "name": "Zenith Lance"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Daybreak Flare"
+        }
+      ]
+    },
+    {
+      "id": "c_astra",
+      "name": "Aiselle",
+      "internal_name": "Astra",
+      "role": "Marksman",
+      "design": {
+        "body": "scout",
+        "width": 10,
+        "height": 67,
+        "skin": "#e3c7b4",
+        "hair": "#e5edf4",
+        "silhouette": "Swept frost bow and split winter cape",
+        "costume": "Midnight quilted coat, ice-blue trim, silver braid",
+        "signature": "Crystal longbow and arrow quiver"
+      },
+      "motif": "arrow",
+      "variant": "current",
+      "file": "avatars-v9/c_astra.glb",
+      "sha256": "595c8ec4a5ae868b30c3d86e41c3c3f0c432ff05d8c4aef4ca8634bfe4b5b719",
+      "bytes": 5056544,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Volley Cone"
+        },
+        {
+          "slot": "skill2",
+          "name": "Frost Flurry"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Enchanted Crystal Comet"
+        }
+      ]
+    },
+    {
+      "id": "c_kyumi",
+      "name": "Vixelle",
+      "internal_name": "Kyumi",
+      "role": "Mage",
+      "design": {
+        "body": "robe",
+        "width": 10,
+        "height": 65,
+        "skin": "#c99a7d",
+        "hair": "#251d35",
+        "silhouette": "Nine fanned fox tails and pointed ears",
+        "costume": "Rose wrap jacket, pearl skirt panels, dark thigh boots",
+        "signature": "Foxfire pearl and nine white-tipped tails"
+      },
+      "motif": "orb",
+      "variant": "current",
+      "file": "avatars-v9/c_kyumi.glb",
+      "sha256": "ce04a9a7f032764cf08930eb5601227955f05cdf07d1cc23c0a18f4ce7b37639",
+      "bytes": 2725292,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Orb of Illusion"
+        },
+        {
+          "slot": "skill2",
+          "name": "Charm of Longing"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Spirit Rush"
+        }
+      ]
+    },
+    {
+      "id": "c_buck",
+      "name": "Gritlock",
+      "internal_name": "Buck",
+      "role": "Marksman",
+      "design": {
+        "body": "brawler",
+        "width": 16,
+        "height": 64,
+        "skin": "#a87555",
+        "hair": "#38291f",
+        "silhouette": "Broad trench coat and double-barrel shotgun",
+        "costume": "Weathered leather, brass ammunition bandolier, beard",
+        "signature": "Seismic double-barrel shotgun"
+      },
+      "motif": "shotgun",
+      "variant": "current",
+      "file": "avatars-v9/c_buck.glb",
+      "sha256": "0e1848c96fe3060bfb0329da8a87a14048f16e7094048fffe3a7fe5d6d5921cf",
+      "bytes": 3088208,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Powder Keg Blast"
+        },
+        {
+          "slot": "skill2",
+          "name": "Smoke Screen"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Collateral Blast"
+        }
+      ]
+    },
+    {
+      "id": "c_valkira",
+      "name": "Bessara",
+      "internal_name": "Valkira",
+      "role": "Fighter",
+      "design": {
+        "body": "knight",
+        "width": 14,
+        "height": 70,
+        "skin": "#cc9a80",
+        "hair": "#e8ded4",
+        "silhouette": "Asymmetric war plate and two cleavers",
+        "costume": "Crimson half-cape, exposed sword arm, silver hair crest",
+        "signature": "Paired crescent execution blades"
+      },
+      "motif": "blades",
+      "variant": "current",
+      "file": "avatars-v9/c_valkira.glb",
+      "sha256": "3badc48d93c7048ec3fbaa6c0fc7ebb6aee55c75bb246f48690e5e9993eda606",
+      "bytes": 3135024,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Crescent Cleave"
+        },
+        {
+          "slot": "skill2",
+          "name": "Iron Will Slam"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Executioner's Descent"
+        }
+      ]
+    },
+    {
+      "id": "c_kage",
+      "name": "Vanta",
+      "internal_name": "Kage",
+      "role": "Assassin",
+      "design": {
+        "body": "scout",
+        "width": 11,
+        "height": 66,
+        "skin": "#9b786b",
+        "hair": "#18202c",
+        "silhouette": "Bladed forearms and angular shadow mask",
+        "costume": "Charcoal lamellar armor with crimson seams",
+        "signature": "Twin wrist blades and back shuriken"
+      },
+      "motif": "shadow",
+      "variant": "current",
+      "file": "avatars-v9/c_kage.glb",
+      "sha256": "b67f7cb2935d227bbf5fa4b859315638bd66d7b8bb0c2248bd5c20626a7e080c",
+      "bytes": 4976284,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Shadow Shuriken"
+        },
+        {
+          "slot": "skill2",
+          "name": "Shadow Projection"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Eclipse Mark"
+        }
+      ]
+    },
+    {
+      "id": "c_kazemaru",
+      "name": "Galejandro",
+      "internal_name": "Kazemaru",
+      "role": "Fighter",
+      "design": {
+        "body": "scout",
+        "width": 11,
+        "height": 70,
+        "skin": "#c38d69",
+        "hair": "#1c2935",
+        "silhouette": "High tied hair, wind scarf and long katana",
+        "costume": "Indigo half-robe, rope belt and single shoulder guard",
+        "signature": "Storm katana and lacquered sheath"
+      },
+      "motif": "wind",
+      "variant": "current",
+      "file": "avatars-v9/c_kazemaru.glb",
+      "sha256": "bb246c730ecff67b5b1c7de30cd41c715a8c6fe681421587fccaf31a882caa83",
+      "bytes": 5196712,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Tempest Thrust & Gale"
+        },
+        {
+          "slot": "skill2",
+          "name": "Zephyr Barrier"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Airborne Sever"
+        }
+      ]
+    },
+    {
+      "id": "c_kindra",
+      "name": "Lambent",
+      "internal_name": "Kindra",
+      "role": "Marksman",
+      "design": {
+        "body": "scout",
+        "width": 10,
+        "height": 63,
+        "skin": "#e4dbe7",
+        "hair": "#dad7e6",
+        "silhouette": "Horned lamb mask and trailing spectral wolf",
+        "costume": "Ivory fur over violet wraps and cloven greaves",
+        "signature": "Crescent spirit bow with wolf companion ornament"
+      },
+      "motif": "wolf",
+      "variant": "current",
+      "file": "avatars-v9/c_kindra.glb",
+      "sha256": "b03f20c6a119c8f4319213e76dbc0d304b42054b876f875be3d23977d0e46968",
+      "bytes": 5089172,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Ghoststep Volley"
+        },
+        {
+          "slot": "skill2",
+          "name": "Shadow Pounce"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Sanctuary of Eternity"
+        }
+      ]
+    },
+    {
+      "id": "c_cora",
+      "name": "Plumeira",
+      "internal_name": "Cora",
+      "role": "Marksman",
+      "design": {
+        "body": "scout",
+        "width": 10,
+        "height": 66,
+        "skin": "#bf8a76",
+        "hair": "#662f71",
+        "silhouette": "One sweeping fan of long feather blades",
+        "costume": "Plum feather mantle, fitted leather and silver talons",
+        "signature": "Razor-feather fan and feather knives"
+      },
+      "motif": "feathers",
+      "variant": "current",
+      "file": "avatars-v9/c_cora.glb",
+      "sha256": "bdeb55c2342ef51062a2dcb025e1cd26d45e699ae24ce13506bbf64b33b4ddfc",
+      "bytes": 4986896,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Twin Plumage"
+        },
+        {
+          "slot": "skill2",
+          "name": "Feather Recall"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Skyward Plumes"
+        }
+      ]
+    },
+    {
+      "id": "c_renn",
+      "name": "Gildan",
+      "internal_name": "Renn",
+      "role": "Support",
+      "design": {
+        "body": "scout",
+        "width": 11,
+        "height": 70,
+        "skin": "#b7855e",
+        "hair": "#f1d58d",
+        "silhouette": "Two rising gold feather wings and dancer stance",
+        "costume": "Open gilded vest, asymmetric feather coat and light boots",
+        "signature": "Layered herald plumage"
+      },
+      "motif": "wings",
+      "variant": "current",
+      "file": "avatars-v9/c_renn.glb",
+      "sha256": "560fd6d71f4a9385070f1a9b167168d2406fcf92e2a5f3cf18e504bf7b085ba4",
+      "bytes": 5063816,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Gilded Vault"
+        },
+        {
+          "slot": "skill2",
+          "name": "Harmonic Waltz"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Dazzling Rush"
+        }
+      ]
+    },
+    {
+      "id": "c_sylla",
+      "name": "Sylvan Solo",
+      "internal_name": "Sylla",
+      "role": "Fighter",
+      "design": {
+        "body": "brawler",
+        "width": 14,
+        "height": 68,
+        "skin": "#b38e69",
+        "hair": "#d1c6b1",
+        "silhouette": "Bear-pelt hood, antler staff and heavy beard",
+        "costume": "Moss wraps, bark plates and copper animal charms",
+        "signature": "Bear shaman staff and Ironclaw true form"
+      },
+      "motif": "bear",
+      "variant": "current",
+      "file": "avatars-v9/c_sylla.glb",
+      "sha256": "da54a6a37fd17ff32d42eb0fb933b956f362f85fbc04752f4ece89be3b2f5316",
+      "bytes": 3443532,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Summon Spirit Bear"
+        },
+        {
+          "slot": "skill2",
+          "name": "Savage Roar"
+        },
+        {
+          "slot": "ultimate",
+          "name": "True Form"
+        }
+      ]
+    },
+    {
+      "id": "c_tequoia",
+      "name": "Fernanda",
+      "internal_name": "Tequoia",
+      "role": "Mage",
+      "design": {
+        "body": "robe",
+        "width": 11,
+        "height": 69,
+        "skin": "#8f6044",
+        "hair": "#29261b",
+        "silhouette": "Branch antlers, leaf skirt and living staff",
+        "costume": "Deep forest robes, bark corset and seedpod jewelry",
+        "signature": "Forked living-oak staff"
+      },
+      "motif": "roots",
+      "variant": "current",
+      "file": "avatars-v9/c_tequoia.glb",
+      "sha256": "c17750000f72071d7621c80543c181071a70102964755777040fa4e6a430571a",
+      "bytes": 3008220,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Verdant Cage"
+        },
+        {
+          "slot": "skill2",
+          "name": "Nature Link"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Nature's Wrath"
+        }
+      ]
+    },
+    {
+      "id": "c_zal",
+      "name": "Glimmerick",
+      "internal_name": "Zal",
+      "role": "Support",
+      "design": {
+        "body": "robe",
+        "width": 11,
+        "height": 65,
+        "skin": "#8d687e",
+        "hair": "#e4d5cf",
+        "silhouette": "Tall ritual mask and crooked bone staff",
+        "costume": "Violet spirit wraps, magenta sash and bone charms",
+        "signature": "Venom mask and sanctuary staff"
+      },
+      "motif": "grave",
+      "variant": "current",
+      "file": "avatars-v9/c_zal.glb",
+      "sha256": "f0a54edd1a33d9a616894346ed417bd197f98320d01f2b907bc7d46fc0f3d236",
+      "bytes": 3100840,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Venom Hex"
+        },
+        {
+          "slot": "skill2",
+          "name": "Shadow Surge"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Soul Sanctuary"
+        }
+      ]
+    },
+    {
+      "id": "c_xin",
+      "name": "Cindergent",
+      "internal_name": "Xin",
+      "role": "Fighter",
+      "design": {
+        "body": "scout",
+        "width": 12,
+        "height": 69,
+        "skin": "#bd724d",
+        "hair": "#8b2f16",
+        "silhouette": "Flame crest and two curved fire swords",
+        "costume": "Burnt-orange martial robes and brass bracers",
+        "signature": "Twin ember sabers"
+      },
+      "motif": "ember",
+      "variant": "current",
+      "file": "avatars-v9/c_xin.glb",
+      "sha256": "a97517e2a42e3541b99d860e4522d99bf6703e9a357049ad5417fcdeeb303304",
+      "bytes": 5503184,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Blazing Bolas"
+        },
+        {
+          "slot": "skill2",
+          "name": "Flash Flurry"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Flame Remnant Charge"
+        }
+      ]
+    },
+    {
+      "id": "c_raijin",
+      "name": "Voltaire",
+      "internal_name": "Raijin",
+      "role": "Mage",
+      "design": {
+        "body": "brawler",
+        "width": 17,
+        "height": 65,
+        "skin": "#75c2cd",
+        "hair": "#d8e9ed",
+        "silhouette": "Round storm spirit with floating lightning drums",
+        "costume": "Teal cloud coat, copper coils and luminous eyebrows",
+        "signature": "Storm halo and lightning satellites"
+      },
+      "motif": "lightning",
+      "variant": "current",
+      "file": "avatars-v9/c_raijin.glb",
+      "sha256": "9c0717f7b1001b83d722b355fc05e114d6e2f04d9c4b2f53413d7b336ab3e31b",
+      "bytes": 2814116,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Static Remnant"
+        },
+        {
+          "slot": "skill2",
+          "name": "Electric Vortex"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Ball Lightning"
+        }
+      ]
+    },
+    {
+      "id": "c_kaolin",
+      "name": "TerraByte",
+      "internal_name": "Kaolin",
+      "role": "Tank",
+      "design": {
+        "body": "stone",
+        "width": 17,
+        "height": 73,
+        "skin": "#65a88a",
+        "hair": "#274e43",
+        "silhouette": "Segmented jade golem and square stone spear",
+        "costume": "Carved jade armor with bright fault-line inlays",
+        "signature": "Mountain remnant spear"
+      },
+      "motif": "boulder",
+      "variant": "current",
+      "file": "avatars-v9/c_kaolin.glb",
+      "sha256": "f56146d83061a79ff25d3190ca10c7a38b30bc15fc3cff21a2a6429c6e1e7d0b",
+      "bytes": 3124944,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Boulder Smash"
+        },
+        {
+          "slot": "skill2",
+          "name": "Rolling Boulder"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Magnetize"
+        }
+      ]
+    },
+    {
+      "id": "c_inai",
+      "name": "Nulliver",
+      "internal_name": "Inai",
+      "role": "Assassin",
+      "design": {
+        "body": "robe",
+        "width": 12,
+        "height": 72,
+        "skin": "#ba9bd4",
+        "hair": "#e4d8ec",
+        "silhouette": "Floating split robe, white beard and crescent blade",
+        "costume": "Violet astral panels around an open dark core",
+        "signature": "Double-ended void glaive"
+      },
+      "motif": "void",
+      "variant": "current",
+      "file": "avatars-v9/c_inai.glb",
+      "sha256": "952c1c72f7deca7f7c0e0c3407ad8bdb7f1ce9ce6828c3273e8917a23ab6ebfb",
+      "bytes": 3110408,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Aether Remnant"
+        },
+        {
+          "slot": "skill2",
+          "name": "Dissimilate"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Astral Step"
+        }
+      ]
+    },
+    {
+      "id": "c_qiyana",
+      "name": "Crownfetti",
+      "internal_name": "Veyara",
+      "role": "Assassin",
+      "design": {
+        "body": "scout",
+        "width": 11,
+        "height": 67,
+        "skin": "#a8754e",
+        "hair": "#ece2c5",
+        "silhouette": "Oversized elemental ring blade and stepped crown",
+        "costume": "Turquoise silk panels and engraved gold guards",
+        "signature": "Three-gem elemental hoop"
+      },
+      "motif": "elements",
+      "variant": "current",
+      "file": "avatars-v9/c_qiyana.glb",
+      "sha256": "300663209946daa252627557231aff9c038f51048a7f9d08a43adb4c6b08be20",
+      "bytes": 4986800,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Prism Hurl"
+        },
+        {
+          "slot": "skill2",
+          "name": "Facet Dash"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Crownfall Surge"
+        }
+      ]
+    },
+    {
+      "id": "c_locke",
+      "name": "Sootcase",
+      "internal_name": "Cinderbloom",
+      "role": "Assassin",
+      "design": {
+        "body": "scout",
+        "width": 11,
+        "height": 68,
+        "skin": "#a98570",
+        "hair": "#dcd8d1",
+        "silhouette": "Wide ash hat, long coat and ember-edged saber",
+        "costume": "Charcoal exorcist coat, parchment seals and burnt lining",
+        "signature": "Ash saber and talisman streamers"
+      },
+      "motif": "ash",
+      "variant": "current",
+      "file": "avatars-v9/c_locke.glb",
+      "sha256": "35945f9ef22387076427d59dad949dc0e3cc189f864344cbdacbc86da5576d03",
+      "bytes": 5183340,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Cinder Sequence"
+        },
+        {
+          "slot": "skill2",
+          "name": "Ash Veil"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Cinder Verdict"
+        }
+      ]
+    },
+    {
+      "id": "c_senna",
+      "name": "Sennova",
+      "internal_name": "Solenne",
+      "role": "Support",
+      "design": {
+        "body": "scout",
+        "width": 11,
+        "height": 72,
+        "skin": "#78513c",
+        "hair": "#242832",
+        "silhouette": "Long pale locs and a shoulder-length relic cannon",
+        "costume": "White mantled coat over teal armor and heavy greaves",
+        "signature": "Oversized mist relic cannon"
+      },
+      "motif": "mist",
+      "variant": "current",
+      "file": "avatars-v9/c_senna.glb",
+      "sha256": "2ac4d12444e03b27b84d8a82c0a58cc176a928e7b1f3d649b0754bb68c1cd67b",
+      "bytes": 5185176,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Dusk Lance"
+        },
+        {
+          "slot": "skill2",
+          "name": "Mistbind"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Daybreak Veil"
+        }
+      ]
+    },
+    {
+      "id": "c_largo",
+      "name": "Basso Croak",
+      "internal_name": "Croakwell",
+      "role": "Support",
+      "design": {
+        "body": "frog",
+        "width": 19,
+        "height": 59,
+        "skin": "#8da94f",
+        "hair": "#3f512b",
+        "silhouette": "Wide frog mouth, throat pouch and round drum",
+        "costume": "Marsh bandleader vest, reed collar and gold buttons",
+        "signature": "Bogbeat drum and ribbon tongue"
+      },
+      "motif": "music",
+      "variant": "current",
+      "file": "avatars-v9/c_largo.glb",
+      "sha256": "7a670ae024064ac19de806c6ee7032ccc1eb87b74b6a9a4efc7f923e9e6ed698",
+      "bytes": 1082404,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Ribbon Lash"
+        },
+        {
+          "slot": "skill2",
+          "name": "Bogbeat"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Marsh Anthem"
+        }
+      ]
+    },
+    {
+      "id": "c_shadowfiend",
+      "name": "Razeberry",
+      "internal_name": "Soulscourge",
+      "role": "Mage",
+      "design": {
+        "body": "demon",
+        "width": 20,
+        "height": 79,
+        "skin": "#332330",
+        "hair": "#391a26",
+        "silhouette": "Horned furnace torso, long claws and trailing smoke",
+        "costume": "Obsidian rib plates around a hot rose soul core",
+        "signature": "Soul furnace and raking talons"
+      },
+      "motif": "souls",
+      "variant": "current",
+      "file": "avatars-v9/c_shadowfiend.glb",
+      "sha256": "b8535add11618b893dab64400f58854bc43e0573748ca7b95860183c95490921",
+      "bytes": 936296,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Gloom Raze"
+        },
+        {
+          "slot": "skill2",
+          "name": "Soul Draw"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Dirge Wave"
+        }
+      ]
+    },
+    {
+      "id": "c_earthshaker",
+      "name": "Quakewell",
+      "internal_name": "Stonewake",
+      "role": "Tank",
+      "design": {
+        "body": "brawler",
+        "width": 20,
+        "height": 76,
+        "skin": "#9c754d",
+        "hair": "#61422b",
+        "silhouette": "Heavy stone shoulders and enormous horizontal totem",
+        "costume": "Ochre fur, slate plates and gold seismic runes",
+        "signature": "Runic earthquake totem"
+      },
+      "motif": "quake",
+      "variant": "current",
+      "file": "avatars-v9/c_earthshaker.glb",
+      "sha256": "3a94c3d0071d34472d7b2cf427959f3f02343df4c9f93c3a34cb8e23dc9efaad",
+      "bytes": 3007116,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Faultline"
+        },
+        {
+          "slot": "skill2",
+          "name": "Runic Maul"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Quake Chorus"
+        }
+      ]
+    },
+    {
+      "id": "c_mirehook",
+      "name": "Rotisserie",
+      "internal_name": "Mirehook",
+      "role": "Tank",
+      "design": {
+        "body": "brawler",
+        "width": 22,
+        "height": 69,
+        "skin": "#a3aa80",
+        "hair": "#3c493b",
+        "silhouette": "Stooped scavenger, hook arm and stitched apron",
+        "costume": "Mire-green bulk, patched leather and rusted chain",
+        "signature": "Barbed hook and hanging chain"
+      },
+      "motif": "hook",
+      "variant": "current",
+      "file": "avatars-v9/c_mirehook.glb",
+      "sha256": "3ea4f4bcfa45209f82a905d5239b505c097e2d16851ac949251d6856b9dd8bcb",
+      "bytes": 2936124,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Barbed Chain"
+        },
+        {
+          "slot": "skill2",
+          "name": "Rot Cloud"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Feast Lock"
+        }
+      ]
+    },
+    {
+      "id": "c_nullweaver",
+      "name": "Midnight Equation",
+      "internal_name": "Nullweaver",
+      "role": "Mage",
+      "design": {
+        "body": "wisp",
+        "width": 15,
+        "height": 77,
+        "skin": "#5c438c",
+        "hair": "#231b3c",
+        "silhouette": "Faceless floating void shell with orbital fragments",
+        "costume": "Layered violet carapace around a dark singularity",
+        "signature": "Gravitic halo and floating shards"
+      },
+      "motif": "gravity",
+      "variant": "current",
+      "file": "avatars-v9/c_nullweaver.glb",
+      "sha256": "8b116fb663ba229e6de36653ef2131f4f5086896620d0e62a6cb5860dc6794f4",
+      "bytes": 653828,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Gravitic Pin"
+        },
+        {
+          "slot": "skill2",
+          "name": "Dark Filament"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Singularity Well"
+        }
+      ]
+    },
+    {
+      "id": "c_voltgrip",
+      "name": "Plugsy",
+      "internal_name": "Voltgrip",
+      "role": "Support",
+      "design": {
+        "body": "machine",
+        "width": 20,
+        "height": 73,
+        "skin": "#ac8636",
+        "hair": "#3e4650",
+        "silhouette": "Round riveted chassis and oversized grappling fist",
+        "costume": "Aged brass shell, dark joints and cyan power cell",
+        "signature": "Rocket fist and exposed electric coil"
+      },
+      "motif": "grapple",
+      "variant": "current",
+      "file": "avatars-v9/c_voltgrip.glb",
+      "sha256": "3677ef49cca5a4171e3e668c54dec94e661bc06dde8ae39d1b67f71b31312a32",
+      "bytes": 1203556,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Arc Grapple"
+        },
+        {
+          "slot": "skill2",
+          "name": "Charged Fist"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Thunder Dome"
+        }
+      ]
+    },
+    {
+      "id": "c_aetherbolt",
+      "name": "Relic Rick",
+      "internal_name": "Aetherbolt",
+      "role": "Marksman",
+      "design": {
+        "body": "scout",
+        "width": 10,
+        "height": 65,
+        "skin": "#cda17d",
+        "hair": "#c2a270",
+        "silhouette": "Short explorer jacket and one luminous gauntlet",
+        "costume": "Blue expedition coat, satchel and bronze buckles",
+        "signature": "Celestial casting gauntlet"
+      },
+      "motif": "relic",
+      "variant": "current",
+      "file": "avatars-v9/c_aetherbolt.glb",
+      "sha256": "7d47834f0ae59903fcdba1daded721024ada097dc71321251d9fc25dea0d1836",
+      "bytes": 5233824,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Relic Bolt"
+        },
+        {
+          "slot": "skill2",
+          "name": "Phase Skip"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Horizon Lance"
+        }
+      ]
+    },
+    {
+      "id": "c_corsara",
+      "name": "Bounty Belle",
+      "internal_name": "Corsara",
+      "role": "Marksman",
+      "design": {
+        "body": "scout",
+        "width": 11,
+        "height": 69,
+        "skin": "#bc886d",
+        "hair": "#923b37",
+        "silhouette": "Broad privateer hat and two long pistols",
+        "costume": "Wine captain coat, cream blouse and brass epaulettes",
+        "signature": "Twin privateer flintlocks"
+      },
+      "motif": "broadside",
+      "variant": "current",
+      "file": "avatars-v9/c_corsara.glb",
+      "sha256": "4f393c7d6c43dbb87fc2d0b2051976060be3d3766449e3652468ddd18d082b30",
+      "bytes": 5371436,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Ricochet Round"
+        },
+        {
+          "slot": "skill2",
+          "name": "Saltstorm"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Broadside Waltz"
+        }
+      ]
+    },
+    {
+      "id": "c_brewmaw",
+      "name": "Kegory",
+      "internal_name": "Brewmaw",
+      "role": "Tank",
+      "design": {
+        "body": "brawler",
+        "width": 23,
+        "height": 66,
+        "skin": "#bb9369",
+        "hair": "#4b3023",
+        "silhouette": "Round brewmaster with a massive strapped cask",
+        "costume": "Patched russet apron, rope harness and gold keg hoops",
+        "signature": "Oak vintage cask"
+      },
+      "motif": "cask",
+      "variant": "current",
+      "file": "avatars-v9/c_brewmaw.glb",
+      "sha256": "fe1e32acd70c7fdee6412632bbf450b4535041b9f229e6328e9453ae2da52571",
+      "bytes": 3277160,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Bursting Cask"
+        },
+        {
+          "slot": "skill2",
+          "name": "Barrel Rush"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Grand Vintage"
+        }
+      ]
+    },
+    {
+      "id": "c_wraithhook",
+      "name": "Hooklyn",
+      "internal_name": "Wraithhook",
+      "role": "Support",
+      "design": {
+        "body": "robe",
+        "width": 13,
+        "height": 75,
+        "skin": "#75a69b",
+        "hair": "#224b48",
+        "silhouette": "Hooded chain warden, hooked scythe and lantern",
+        "costume": "Tattered green mantle, dark ribs and pale spirit mask",
+        "signature": "Spectral hook and caged lantern"
+      },
+      "motif": "lantern",
+      "variant": "current",
+      "file": "avatars-v9/c_wraithhook.glb",
+      "sha256": "3adf8d56c1630cca1f9c7d7f52a8dba312adf7332997098d88c66ef0444a5cf0",
+      "bytes": 3163612,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Spectral Harpoon"
+        },
+        {
+          "slot": "skill2",
+          "name": "Guiding Lantern"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Lantern Prison"
+        }
+      ]
+    },
+    {
+      "id": "c_invoker",
+      "name": "Arsenaldo",
+      "internal_name": "Kaelen",
+      "role": "Mage",
+      "design": {
+        "body": "robe",
+        "width": 12,
+        "height": 74,
+        "skin": "#cfa88d",
+        "hair": "#e7d6b4",
+        "silhouette": "Layered brass shoulders, split coat and an asymmetric mantle",
+        "costume": "Navy brocade, ivory coat panels and burgundy velvet with brass trim",
+        "signature": "Ice, wind and fire orbital arsenal"
+      },
+      "motif": "arsenal",
+      "variant": "claude",
+      "file": "imports/arsenaldo-claude.glb",
+      "sha256": "f26c855ff883f9d697513cdf1285a27e80297b881e0b8cfab241f62a15204476",
+      "bytes": 4876152,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Orb of Ice"
+        },
+        {
+          "slot": "skill2",
+          "name": "Orb of Wind"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Orb of Fire"
+        }
+      ]
+    },
+    {
+      "id": "c_hwei",
+      "name": "Inkognito",
+      "internal_name": "Hweilin",
+      "role": "Mage",
+      "design": {
+        "body": "robe",
+        "width": 10,
+        "height": 71,
+        "skin": "#bca58e",
+        "hair": "#202b40",
+        "silhouette": "Long ink hair, flowing sleeves and oversized brush",
+        "costume": "Petrol-blue art robes with three pigment vessels",
+        "signature": "Broad calligraphy brush and ink palette"
+      },
+      "motif": "paint",
+      "variant": "current",
+      "file": "avatars-v9/c_hwei.glb",
+      "sha256": "60e5ad63f0175cf541ab0048f1573b4c285544e0ba98d022e5d853631b990d67",
+      "bytes": 3326320,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Molten Splatter"
+        },
+        {
+          "slot": "skill2",
+          "name": "Gleaming Wash"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Vortex of Torment"
+        }
+      ]
+    },
+    {
+      "id": "c_jayce",
+      "name": "Hexley",
+      "internal_name": "Jaxon",
+      "role": "Fighter",
+      "design": {
+        "body": "knight",
+        "width": 15,
+        "height": 72,
+        "skin": "#c19a7a",
+        "hair": "#4c3027",
+        "silhouette": "Square inventor shoulders and split hammer-cannon",
+        "costume": "Cobalt engineering plate, cream coat and copper joints",
+        "signature": "Mercury hammer with plasma barrel"
+      },
+      "motif": "hammer",
+      "variant": "current",
+      "file": "avatars-v9/c_jayce.glb",
+      "sha256": "3cca5a85f80c5b06db634a86a717dcf933aaa779800eced6c1fae7c63f509c3a",
+      "bytes": 3152788,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Shock Blast Plasma"
+        },
+        {
+          "slot": "skill2",
+          "name": "Thundering Leap"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Mercury Overdrive"
+        }
+      ]
+    },
+    {
+      "id": "c_vi",
+      "name": "Knuckleberry",
+      "internal_name": "Valerie",
+      "role": "Fighter",
+      "design": {
+        "body": "brawler",
+        "width": 14,
+        "height": 68,
+        "skin": "#bd947e",
+        "hair": "#c74a77",
+        "silhouette": "Two giant industrial gauntlets and swept mohawk",
+        "costume": "Short magenta jacket, dark work trousers and brass plates",
+        "signature": "Paired hydraulic breaker fists"
+      },
+      "motif": "fist",
+      "variant": "current",
+      "file": "avatars-v9/c_vi.glb",
+      "sha256": "0006ec257b59802b748c9bbda3c4357c08ffa7d2d9c7d7492224405c8276009b",
+      "bytes": 3375432,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Vault Breaker Punch"
+        },
+        {
+          "slot": "skill2",
+          "name": "Denting Impact"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Cease and Desist Slam"
+        }
+      ]
+    },
+    {
+      "id": "c_jinx",
+      "name": "Boomie",
+      "internal_name": "Jinxy",
+      "role": "Marksman",
+      "design": {
+        "body": "scout",
+        "width": 9,
+        "height": 67,
+        "skin": "#d0b8b0",
+        "hair": "#357bb8",
+        "silhouette": "Two long blue braids and oversized rocket tube",
+        "costume": "Blue utility harness, red straps and mismatch boots",
+        "signature": "Mayhem launcher and ammunition belt"
+      },
+      "motif": "rocket",
+      "variant": "current",
+      "file": "avatars-v9/c_jinx.glb",
+      "sha256": "19b66d98d3a35c3e4eaca3d8a318c2fffd4cf4cfe52411066bfb754ae695b1ba",
+      "bytes": 5143932,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Fishbones Rockets"
+        },
+        {
+          "slot": "skill2",
+          "name": "Shock Pistols Zap"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Super Mega Rocket"
+        }
+      ]
+    },
+    {
+      "id": "c_puck",
+      "name": "Fizzlewing",
+      "internal_name": "Paxi",
+      "role": "Mage",
+      "design": {
+        "body": "dragon",
+        "width": 13,
+        "height": 53,
+        "skin": "#53b5a7",
+        "hair": "#218c91",
+        "silhouette": "Small hovering faerie dragon with four petal wings",
+        "costume": "Mint scales, pearl belly and cyan wing veins",
+        "signature": "Dreamrift wings and curled dragon tail"
+      },
+      "motif": "faerie",
+      "variant": "current",
+      "file": "avatars-v9/c_puck.glb",
+      "sha256": "ae370f92b6671267f6455c472bea0ab881574b35f92e211d4c4d39f5620906ca",
+      "bytes": 643284,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Illusory Orb Jaunt"
+        },
+        {
+          "slot": "skill2",
+          "name": "Waning Rift Silence"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Dream Coil Tether"
+        }
+      ]
+    },
+    {
+      "id": "c_batrider",
+      "name": "Wickety",
+      "internal_name": "Batrix",
+      "role": "Fighter",
+      "design": {
+        "body": "rider",
+        "width": 13,
+        "height": 74,
+        "skin": "#af815e",
+        "hair": "#4a2e21",
+        "silhouette": "Goggled rider on a broad bat with wing fingers",
+        "costume": "Scorched flight vest, fuel tank and coiled fire rope",
+        "signature": "Cinder bat mount and burning lasso"
+      },
+      "motif": "lasso",
+      "variant": "current",
+      "file": "avatars-v9/c_batrider.glb",
+      "sha256": "b8a470c365c62eeeb34dab537add630983d1c394280683dbf0bc4e9211cd8ce9",
+      "bytes": 637996,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Firefly Scorched Path"
+        },
+        {
+          "slot": "skill2",
+          "name": "Flamebreak Grenade"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Flaming Lasso Drag"
+        }
+      ]
+    },
+    {
+      "id": "c_bristleback",
+      "name": "Hedgehoggin",
+      "internal_name": "Quillback",
+      "role": "Tank",
+      "design": {
+        "body": "hedgehog",
+        "width": 20,
+        "height": 63,
+        "skin": "#b49b69",
+        "hair": "#5a6840",
+        "silhouette": "Hunched beast with a dense fan of back quills",
+        "costume": "Olive pelt, scratched shoulder band and iron nose ring",
+        "signature": "Layered barbed quill carapace"
+      },
+      "motif": "quill",
+      "variant": "current",
+      "file": "avatars-v9/c_bristleback.glb",
+      "sha256": "42632e8cb65e1eeaeddc5bf6383c226a37bbc6de5dd78bb1761b3bfaf1f0ed85",
+      "bytes": 757984,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Viscous Nasal Slime"
+        },
+        {
+          "slot": "skill2",
+          "name": "Quill Spray Nova"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Warpath Stampede"
+        }
+      ]
+    },
+    {
+      "id": "c_io",
+      "name": "Orbiton",
+      "internal_name": "Aetheris",
+      "role": "Support",
+      "design": {
+        "body": "wisp",
+        "width": 13,
+        "height": 62,
+        "skin": "#e0f3f4",
+        "hair": "#8dd8ec",
+        "silhouette": "Pure floating light core with concentric orbitals",
+        "costume": "Porcelain light shell with cyan harmonic rings",
+        "signature": "Five harmonic spirit satellites"
+      },
+      "motif": "wisp",
+      "variant": "current",
+      "file": "avatars-v9/c_io.glb",
+      "sha256": "da51355d8e5f6f02c8bd001c082c82068a27c26e9b36cd9882df6c1b721699f6",
+      "bytes": 655184,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Spirits Orbit Array"
+        },
+        {
+          "slot": "skill2",
+          "name": "Overcharge Surge"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Resonant Convergence"
+        }
+      ]
+    },
+    {
+      "id": "c_lulu",
+      "name": "Pixabelle",
+      "internal_name": "Faelith",
+      "role": "Support",
+      "design": {
+        "body": "robe",
+        "width": 9,
+        "height": 60,
+        "skin": "#b296ba",
+        "hair": "#73579a",
+        "silhouette": "Petal hat, hooked blossom staff and moth familiar",
+        "costume": "Purple bellflower dress with lime leaves and soft boots",
+        "signature": "Briar staff and luminous moth"
+      },
+      "motif": "bloom",
+      "variant": "current",
+      "file": "avatars-v9/c_lulu.glb",
+      "sha256": "d8efe43722ad02744c5f8f6b1c753375dfa81e6d2f5bf0170dfdd717e794a9b0",
+      "bytes": 2980092,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Glimmerthorn"
+        },
+        {
+          "slot": "skill2",
+          "name": "Mothspell"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Wildheart Bloom"
+        }
+      ]
+    },
+    {
+      "id": "c_silencer",
+      "name": "Muffleton",
+      "internal_name": "Oathmute",
+      "role": "Mage",
+      "design": {
+        "body": "knight",
+        "width": 12,
+        "height": 72,
+        "skin": "#b6a2a1",
+        "hair": "#3a345b",
+        "silhouette": "Closed veil helmet, upright edict and crescent quill",
+        "costume": "Indigo magistrate armor, pale scroll panels and wax seals",
+        "signature": "Floating edict tablet and silence quill"
+      },
+      "motif": "silence",
+      "variant": "current",
+      "file": "avatars-v9/c_silencer.glb",
+      "sha256": "60cd432ffca1b70140821ad680b14f2fa89d839e5b937dea0fc303f5ba23df1c",
+      "bytes": 2861164,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Inkblight"
+        },
+        {
+          "slot": "skill2",
+          "name": "Last Edict"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Stillness Decree"
+        }
+      ]
+    },
+    {
+      "id": "c_wukong_lol",
+      "name": "Stafford",
+      "internal_name": "Cloudtail",
+      "role": "Fighter",
+      "design": {
+        "body": "monkey",
+        "width": 12,
+        "height": 66,
+        "skin": "#bd926a",
+        "hair": "#8c6a45",
+        "silhouette": "Long curled tail, mist scarf and tapered longstaff",
+        "costume": "Lavender wraps, brass knee guards and tousled crest",
+        "signature": "Gold-banded mist staff"
+      },
+      "motif": "staffspin",
+      "variant": "current",
+      "file": "avatars-v9/c_wukong_lol.glb",
+      "sha256": "9ed24c98e637f9bde96a9820ec7d69b565f79024417ff66079b87e271f7f134d",
+      "bytes": 1687964,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Longstaff Crack"
+        },
+        {
+          "slot": "skill2",
+          "name": "Mist Double"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Cyclone Dance"
+        }
+      ]
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "name": "Primate Minister",
+      "internal_name": "Stonebranch",
+      "role": "Fighter",
+      "design": {
+        "body": "monkey",
+        "width": 14,
+        "height": 73,
+        "skin": "#bc8c5a",
+        "hair": "#5e3d25",
+        "silhouette": "Leaf crown, long tail and thick jade-ended staff",
+        "costume": "Bark-gold armor with living shoulder leaves",
+        "signature": "Canopy sovereign staff and branch crown"
+      },
+      "motif": "canopy",
+      "variant": "current",
+      "file": "avatars-v9/c_monkeyking_dota.glb",
+      "sha256": "c839c2f1fa3c3ac9482b05122fdb5af514cfa0b2eee6742a15083fa9381fdf6d",
+      "bytes": 1771572,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Skyroot Strike"
+        },
+        {
+          "slot": "skill2",
+          "name": "Canopy Bound"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Court of Branches"
+        }
+      ]
+    },
+    {
+      "id": "c_stepstone",
+      "name": "Kickswitch",
+      "internal_name": "Stepstone",
+      "role": "Fighter",
+      "design": {
+        "body": "scout",
+        "width": 12,
+        "height": 68,
+        "skin": "#ba8258",
+        "hair": "#28242a",
+        "silhouette": "Unarmed monk, wrapped fists and broad stone greaves",
+        "costume": "Green sleeveless tunic, yellow sash and small brass bells",
+        "signature": "Bell bracers and stone kick guards"
+      },
+      "motif": "martial",
+      "variant": "current",
+      "file": "avatars-v9/c_stepstone.glb",
+      "sha256": "5d587b9b884e526d21d8571347239cf35d26293170f0c6bc954db9c5fcbd84c1",
+      "bytes": 4967804,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Quarry Rush"
+        },
+        {
+          "slot": "skill2",
+          "name": "Crosswind Guard"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Bellbreak Kick"
+        }
+      ]
+    },
+    {
+      "id": "c_skybreaker",
+      "name": "Propella",
+      "internal_name": "Skybreaker",
+      "role": "Marksman",
+      "design": {
+        "body": "skiff",
+        "width": 17,
+        "height": 75,
+        "skin": "#c79d79",
+        "hair": "#513e32",
+        "silhouette": "Open pilot pod between two exposed lift fans",
+        "costume": "Cobalt armored skiff, orange fins and leather flight cap",
+        "signature": "Twin lift rotors and rotary flak cannon"
+      },
+      "motif": "rotor",
+      "variant": "current",
+      "file": "avatars-v9/c_skybreaker.glb",
+      "sha256": "5eec25f75b53b169f24ec2d65d33665a24871f814af83780b8168774a86f2ecd",
+      "bytes": 688524,
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Flakburst Cannon"
+        },
+        {
+          "slot": "skill2",
+          "name": "Rotor Overdrive"
+        },
+        {
+          "slot": "ultimate",
+          "name": "Air Superiority"
+        }
+      ]
+    }
+  ]
+}

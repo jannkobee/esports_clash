@@ -1,0 +1,42 @@
+{
+  "verified_at": "2026-10-18T08:21:27.038Z",
+  "scope": "Experimental isolated worker-count benchmark; excluded from learning; no concurrent training enabled",
+  "workers": 2,
+  "aggregate_cpu_limit": 2,
+  "aggregate_ram_limit_mib": 3072,
+  "wall_seconds": 170.138,
+  "aggregate_simulated_seconds_per_wall_second": 5.4379386145382265,
+  "sum_of_sampled_anon_peaks_mib": 1834.91015625,
+  "final_state_rng_events_and_audits_match": true,
+  "runs": [
+    {
+      "mode": "headless",
+      "simulated_seconds": 462.6000000001524,
+      "wall_seconds": 158.852,
+      "effective_speed": 2.9121446377770024,
+      "cpu_seconds": 158.754496,
+      "cpu_percent": 99.93861959559841,
+      "memory": {
+        "mean_anon_mib": 802.867852393617,
+        "max_sampled_anon_mib": 904.578125,
+        "max_sampled_working_set_mib": 962.06640625,
+        "vram_mib": null
+      }
+    },
+    {
+      "mode": "headless",
+      "simulated_seconds": 462.6000000001524,
+      "wall_seconds": 157.613,
+      "effective_speed": 2.9350370845054177,
+      "cpu_seconds": 157.613588,
+      "cpu_percent": 100.00037306567351,
+      "memory": {
+        "mean_anon_mib": 768.2952958776596,
+        "max_sampled_anon_mib": 930.33203125,
+        "max_sampled_working_set_mib": 1019.10546875,
+        "vram_mib": null
+      }
+    }
+  ],
+  "four_workers": "Not attempted: four times the measured single-worker peak plus reserves must fit the same 3 GiB budget before qualification."
+}

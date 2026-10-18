@@ -1,0 +1,31 @@
+{
+  "engine_hash": "c032e0ef205c8b452bfa56b00f70b609f384a1af754dd7f77e6d345db7591b2b",
+  "manifest": [
+    [
+      "glb.mjs",
+      "36391b1b894dcb44092f4c83e1fcab65ec7a9eb4e440a482e1f434f131019e35"
+    ],
+    [
+      "job.mjs",
+      "f3f9eb1fb7e4118f0ffaaf25e2677b4041d23c729d74bffccf45feec9325c5fd"
+    ],
+    [
+      "browser.mjs",
+      "e80f8ffe8f50ceaaaaf45a67bf2e48a0fdf734990f18dbc55712fbc2fb8e6017"
+    ],
+    [
+      "blender-scene.py",
+      "fcafd8cac58cabeae8f3f72303c08a6fa35e063281004e4f94322df71a35d08b"
+    ],
+    [
+      "server.mjs",
+      "4d0dd2034f1a976284848b42fe148814309b9b6f2a16c5c197118c3b216e77a3"
+    ],
+    [
+      "avatar-review-BHbFNfKO.js",
+      "029384407295aeab2cb44add3a0e0ba2de0af6fb3340bfe2f820213bf213be93"
+    ]
+  ],
+  "started_at": "2026-10-18T09:35:11.691Z",
+  "plan_hash": "01739f534a558d6d9019f1ba02123d965ee2e3a183d7d5280de20a06cf1aaad9"
+}

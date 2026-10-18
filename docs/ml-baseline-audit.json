@@ -1,0 +1,246 @@
+{
+  "scope": "Historical measured Docker studies, not a controlled speed comparison; original denominators preserved.",
+  "studies": [
+    {
+      "id": "656d3d29-21c3-49c6-9f59-e34f25e09a2d",
+      "raw_hashes_verified": true,
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "statuses": {
+            "valid": 31,
+            "no-target": 1
+          },
+          "cards": 19,
+          "drafts": 8,
+          "informative": 20
+        },
+        "calibration": {
+          "planned": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 14,
+          "drafts": 8,
+          "informative": 15
+        },
+        "heldout": {
+          "planned": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 12
+        }
+      },
+      "evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 1.0,
+        "prediction_loss": 0.24628460783554415,
+        "zero_prediction_loss": 0.12829366764725897,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "fit": {
+        "trainingEpisodes": 31,
+        "informativeEpisodes": 20,
+        "fittedLoss": 0.06884635167769348
+      },
+      "confidence_buffer": 1.0805205618150104,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "predicted_advantage_range": [
+        -0.5538043438872462,
+        0.3012363906330148
+      ],
+      "lower_bound_range": [
+        -1.6343249057022566,
+        -0.7792841711819957
+      ],
+      "timing": {
+        "total_wall_seconds": 2970.4683442115784,
+        "world_wall_mean": 37.03381323516369,
+        "scout_wall_mean": 22.4655,
+        "continuation_wall_mean": 4.02711724137933,
+        "worlds_per_minute": 1.61590680114587,
+        "recorded_simulated_seconds": 19541.566666665956
+      },
+      "raw_bytes": 143717594,
+      "profile_bytes": 129723996
+    },
+    {
+      "id": "6e1523e6-15dc-4924-9d51-4c1a74ac794c",
+      "raw_hashes_verified": true,
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "statuses": {
+            "valid": 30,
+            "incomplete": 2
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 17
+        },
+        "calibration": {
+          "planned": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 20,
+          "drafts": 8,
+          "informative": 12
+        },
+        "heldout": {
+          "planned": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 16,
+          "drafts": 8,
+          "informative": 11
+        }
+      },
+      "evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 1.0,
+        "prediction_loss": 0.18327489001844421,
+        "zero_prediction_loss": 0.15186185124505616,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "fit": {
+        "trainingEpisodes": 30,
+        "informativeEpisodes": 17,
+        "fittedLoss": 0.03387918445280187
+      },
+      "confidence_buffer": 0.9242085147385293,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "predicted_advantage_range": [
+        -0.3459965877508548,
+        0.2987201938054055
+      ],
+      "lower_bound_range": [
+        -1.2702051024893841,
+        -0.6254883209331238
+      ],
+      "timing": {
+        "total_wall_seconds": 3044.083254337311,
+        "world_wall_mean": 37.74163812246078,
+        "scout_wall_mean": 22.19473076923077,
+        "continuation_wall_mean": 4.225717054263534,
+        "worlds_per_minute": 1.5768294093667776,
+        "recorded_simulated_seconds": 18889.833333332466
+      },
+      "raw_bytes": 141717448,
+      "profile_bytes": 129715059
+    },
+    {
+      "id": "f717fd4b-dabb-4fd6-b4f7-c5b1b2ab0e03",
+      "raw_hashes_verified": true,
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "statuses": {
+            "valid": 31,
+            "no-target": 1
+          },
+          "cards": 21,
+          "drafts": 8,
+          "informative": 18
+        },
+        "calibration": {
+          "planned": 24,
+          "statuses": {
+            "valid": 23,
+            "no-target": 1
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 15
+        },
+        "heldout": {
+          "planned": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 10
+        }
+      },
+      "evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 0.9166666666666666,
+        "prediction_loss": 0.18435446776489536,
+        "zero_prediction_loss": 0.08772350280201059,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "fit": {
+        "trainingEpisodes": 31,
+        "informativeEpisodes": 18,
+        "fittedLoss": 0.05509835787976959
+      },
+      "confidence_buffer": 0.6722477403139642,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "predicted_advantage_range": [
+        -0.6382698190180078,
+        0.4349530067609244
+      ],
+      "lower_bound_range": [
+        -1.310517559331972,
+        -0.23729473355303976
+      ],
+      "timing": {
+        "total_wall_seconds": 3123.907243490219,
+        "world_wall_mean": 38.96245569586754,
+        "scout_wall_mean": 24.4444,
+        "continuation_wall_mean": 4.03052790697677,
+        "worlds_per_minute": 1.536537299563718,
+        "recorded_simulated_seconds": 19822.39999999949
+      },
+      "raw_bytes": 142765230,
+      "profile_bytes": 132185332
+    }
+  ]
+}

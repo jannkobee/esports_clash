@@ -1,0 +1,928 @@
+{
+  "verified_at": "2026-10-18T08:32:46.947Z",
+  "origin": "http://localhost:8089/evolution",
+  "unauthenticated_status": 401,
+  "owner_status": 200,
+  "schedule": {
+    "id": 1,
+    "enabled": false,
+    "review_hours": 48,
+    "training_interval_minutes": 120,
+    "next_seed": 24001,
+    "next_training_at": "2026-10-18T07:58:48.000000Z",
+    "preferences": {
+      "prefer_small_changes": true,
+      "operations_snapshot": {
+        "policy": {
+          "storage_gib": 20,
+          "failed_days": 7,
+          "raw_days": 14,
+          "log_days": 30,
+          "quarantine_hours": 24,
+          "automatic_cleanup": true,
+          "ram_mib": 2048,
+          "minimum_available_mib": 2048,
+          "reserved_mib": 2048,
+          "workers": 1,
+          "fit_cases": 32,
+          "calibration_cases": 24,
+          "evaluation_cases": 24,
+          "max_minutes": 90,
+          "scout_seconds": 360,
+          "speed": "headless",
+          "batch_size": 64,
+          "replay_capacity": 512,
+          "evaluation_every": 1
+        },
+        "resources": {
+          "at": 1792312322.0757737,
+          "vm_total_mib": 7834.796875,
+          "vm_available_mib": 5535.18359375,
+          "ml_anon_mib": 240.2734375,
+          "ml_working_set_mib": 314.19140625,
+          "ml_file_cache_mib": 78.5703125,
+          "cgroup_limit_mib": 3072,
+          "cgroup_peak_mib": 353.19140625,
+          "oom_kills": 0,
+          "gpu_vram_mib": null,
+          "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+          "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+          "cpu_usec": 12126306,
+          "cpu_percent": 17.439618584073337
+        },
+        "history": [
+          {
+            "at": 1792312291.5339303,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5574.27734375,
+            "ml_anon_mib": 240.76171875,
+            "ml_working_set_mib": 318.09765625,
+            "ml_file_cache_mib": 80.6171875,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 340.12890625,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 6799925,
+            "cpu_percent": 0
+          },
+          {
+            "at": 1792312203.7599702,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5579.26953125,
+            "ml_anon_mib": 24.6328125,
+            "ml_working_set_mib": 85.7890625,
+            "ml_file_cache_mib": 89.62890625,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 30132203,
+            "cpu_percent": 3.4963287228282716
+          },
+          {
+            "at": 1792312142.7991118,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5583.1875,
+            "ml_anon_mib": 24.63671875,
+            "ml_working_set_mib": 86.875,
+            "ml_file_cache_mib": 153.33984375,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 28000811,
+            "cpu_percent": 3.8388056664796157
+          },
+          {
+            "at": 1792312081.7235794,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5624.79296875,
+            "ml_anon_mib": 23.65234375,
+            "ml_working_set_mib": 85.87890625,
+            "ml_file_cache_mib": 153.3359375,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 25656240,
+            "cpu_percent": 1.926321647051418
+          },
+          {
+            "at": 1792312021.1676488,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5594.57421875,
+            "ml_anon_mib": 23.65234375,
+            "ml_working_set_mib": 86.66796875,
+            "ml_file_cache_mib": 153.3359375,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 24489738,
+            "cpu_percent": 1.7723186528039923
+          },
+          {
+            "at": 1792311963.6767457,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5566.66796875,
+            "ml_anon_mib": 22.66796875,
+            "ml_working_set_mib": 84.20703125,
+            "ml_file_cache_mib": 153.3359375,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 23470816,
+            "cpu_percent": 1.78471280694497
+          },
+          {
+            "at": 1792311903.205896,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5146.6015625,
+            "ml_anon_mib": 22.66796875,
+            "ml_working_set_mib": 84.21875,
+            "ml_file_cache_mib": 153.3359375,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 22391585,
+            "cpu_percent": 2.017819674064356
+          },
+          {
+            "at": 1792311842.6793773,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5349.84375,
+            "ml_anon_mib": 20.31640625,
+            "ml_working_set_mib": 82.28125,
+            "ml_file_cache_mib": 153.3359375,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 21170269,
+            "cpu_percent": 1.9397835687690916
+          },
+          {
+            "at": 1792311782.14283,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5860.75390625,
+            "ml_anon_mib": 21.68359375,
+            "ml_working_set_mib": 83.41796875,
+            "ml_file_cache_mib": 153.3359375,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 19995991,
+            "cpu_percent": 2.026842014896896
+          },
+          {
+            "at": 1792311721.5679557,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5772.4296875,
+            "ml_anon_mib": 22.66796875,
+            "ml_working_set_mib": 84.37109375,
+            "ml_file_cache_mib": 153.3359375,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 18768234,
+            "cpu_percent": 2.2970604047040153
+          },
+          {
+            "at": 1792311691.1250036,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5845.12890625,
+            "ml_anon_mib": 22.6640625,
+            "ml_working_set_mib": 84.171875,
+            "ml_file_cache_mib": 153.328125,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 18068941,
+            "cpu_percent": 3.1786264076031294
+          },
+          {
+            "at": 1792311663.6308005,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 3981.47265625,
+            "ml_anon_mib": 21.6796875,
+            "ml_working_set_mib": 83.32421875,
+            "ml_file_cache_mib": 153.328125,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 17195003,
+            "cpu_percent": 1.9284396948384284
+          },
+          {
+            "at": 1792311603.0991695,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 4177.5078125,
+            "ml_anon_mib": 21.6796875,
+            "ml_working_set_mib": 84.4609375,
+            "ml_file_cache_mib": 162.578125,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 16027687,
+            "cpu_percent": 2.157918504930266
+          },
+          {
+            "at": 1792311542.5371048,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 4326.74609375,
+            "ml_anon_mib": 21.6796875,
+            "ml_working_set_mib": 87.2265625,
+            "ml_file_cache_mib": 219.84375,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 14720807,
+            "cpu_percent": 2.275006079983889
+          },
+          {
+            "at": 1792311481.90219,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 5768.4609375,
+            "ml_anon_mib": 21.6796875,
+            "ml_working_set_mib": 93.63671875,
+            "ml_file_cache_mib": 392.9921875,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 13341359,
+            "cpu_percent": 2.1043596254119254
+          },
+          {
+            "at": 1792311421.226867,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 4843.03125,
+            "ml_anon_mib": 21.6796875,
+            "ml_working_set_mib": 94.734375,
+            "ml_file_cache_mib": 408.5703125,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 12064532,
+            "cpu_percent": 1.7070596043878197
+          },
+          {
+            "at": 1792311363.6865797,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 4905.8984375,
+            "ml_anon_mib": 22.6640625,
+            "ml_working_set_mib": 96.453125,
+            "ml_file_cache_mib": 433.05078125,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 11082285,
+            "cpu_percent": 2.213760740372252
+          },
+          {
+            "at": 1792311318.1269588,
+            "vm_total_mib": 7834.796875,
+            "vm_available_mib": 4937.6875,
+            "ml_anon_mib": 22.1328125,
+            "ml_working_set_mib": 100.6640625,
+            "ml_file_cache_mib": 445.16015625,
+            "cgroup_limit_mib": 3072,
+            "cgroup_peak_mib": 513.28125,
+            "oom_kills": 0,
+            "gpu_vram_mib": null,
+            "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+            "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+            "cpu_usec": 10073704,
+            "cpu_percent": null
+          }
+        ],
+        "actual_storage_bytes": 1197033708,
+        "registered_bytes": 1192790252,
+        "protected_count": 5470,
+        "retained_checkpoints": 3,
+        "protected_models": [
+          {
+            "id": "73b295506307247aea33375083fdf3d5f7d9fec7f4ec33b2057cadbdeb73da56",
+            "path": "656d3d29-21c3-49c6-9f59-e34f25e09a2d/checkpoint.pt",
+            "kind": "checkpoint",
+            "run_id": "656d3d29-21c3-49c6-9f59-e34f25e09a2d",
+            "sha": "26fd89da677065cec19971b422acf6676dda2a5a5b9da4144833e15b04571261",
+            "bytes": 9960,
+            "modified": 1792304296.896857,
+            "state": "present",
+            "quarantined": null,
+            "owners": "study:656d3d29-21c3-49c6-9f59-e34f25e09a2d"
+          },
+          {
+            "id": "cd9ec0bd25393578520245c5d3c3b6affe343109c4e8a1582527246072ec6dfa",
+            "path": "6e1523e6-15dc-4924-9d51-4c1a74ac794c/checkpoint.pt",
+            "kind": "checkpoint",
+            "run_id": "6e1523e6-15dc-4924-9d51-4c1a74ac794c",
+            "sha": "172f8e9f80207c549246ca50d6ad80e2bdb34153f4d26c29435aa89559036cf4",
+            "bytes": 10088,
+            "modified": 1792297449.900268,
+            "state": "present",
+            "quarantined": null,
+            "owners": "study:6e1523e6-15dc-4924-9d51-4c1a74ac794c"
+          },
+          {
+            "id": "dc912529ac38c7dabe3f1de9a0818e979d38ea13597e7aa2f1e70c0f21953622",
+            "path": "f717fd4b-dabb-4fd6-b4f7-c5b1b2ab0e03/checkpoint.pt",
+            "kind": "checkpoint",
+            "run_id": "f717fd4b-dabb-4fd6-b4f7-c5b1b2ab0e03",
+            "sha": "8f3c84360ce1dcf300c8844b35349c272c316fec14c621e238a23a16824591bd",
+            "bytes": 10472,
+            "modified": 1792301240.647593,
+            "state": "present",
+            "quarantined": null,
+            "owners": "study:f717fd4b-dabb-4fd6-b4f7-c5b1b2ab0e03"
+          }
+        ],
+        "pause_reason": null,
+        "preview": {
+          "dry_run": true,
+          "candidates": [],
+          "recoverable_bytes": 0
+        },
+        "limitations": [
+          "One simulator is qualified; higher concurrency is rejected.",
+          "Legacy evidence stays pinned.",
+          "No production model is deployed. Registry references protect future deployment/match/rollback pins.",
+          "CPU-only training; no measured GPU VRAM attribution."
+        ]
+      },
+      "operations_checked_at": "2026-10-18T08:32:02+00:00",
+      "cleanup_preview": {
+        "dry_run": true,
+        "candidates": [],
+        "recoverable_bytes": 0
+      },
+      "operations": {
+        "storage_gib": 20,
+        "failed_days": 7,
+        "raw_days": 14,
+        "log_days": 30,
+        "quarantine_hours": 24,
+        "automatic_cleanup": true,
+        "ram_mib": 2048,
+        "minimum_available_mib": 2048,
+        "reserved_mib": 2048,
+        "workers": 1,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "max_minutes": 90,
+        "scout_seconds": 360,
+        "speed": "headless",
+        "batch_size": 64,
+        "replay_capacity": 512,
+        "evaluation_every": 1
+      }
+    },
+    "created_at": "2026-10-18T04:03:00.000000Z",
+    "updated_at": "2026-10-18T08:32:02.000000Z"
+  },
+  "capabilities": {
+    "live_macro_training": true,
+    "production_promotion": false,
+    "mechanical_patch_release": false,
+    "avatar_evolution": false
+  },
+  "runs": [
+    {
+      "id": "656d3d29-21c3-49c6-9f59-e34f25e09a2d",
+      "status": "completed",
+      "plan": {
+        "version": 1,
+        "seed_start": 23001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": {
+        "stage": "complete",
+        "current_seed": 23080,
+        "completed": 80,
+        "planned": 80
+      },
+      "result": {
+        "source_hash": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+        "evaluation": {
+          "planned": 24,
+          "attempted": 24,
+          "valid": 24,
+          "changed": 0,
+          "improved": 0,
+          "worsened": 0,
+          "reward_delta": 0,
+          "extra_death_cases": 0,
+          "extra_team_death_cases": 0,
+          "broader_worse": 0,
+          "supported": 24,
+          "coverage": 1,
+          "prediction_loss": 0.24628460783554415,
+          "zero_prediction_loss": 0.12829366764725897,
+          "passes_exploratory_gate": false,
+          "production_eligible": false,
+          "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+        },
+        "promoted": false,
+        "fitting": {
+          "sufficient": true,
+          "trainingEpisodes": 31,
+          "informativeEpisodes": 20
+        },
+        "artifact_path": "656d3d29-21c3-49c6-9f59-e34f25e09a2d",
+        "candidate_hash": "c2807c0ef40d87f623cb9279246e683f66efb5b22944f70d49a159d455291b4e"
+      },
+      "error": null,
+      "started_at": "2026-10-18T05:58:49.000000Z",
+      "finished_at": "2026-10-18T06:48:38.000000Z",
+      "created_at": "2026-10-18T05:58:48.000000Z",
+      "updated_at": "2026-10-18T06:48:38.000000Z"
+    },
+    {
+      "id": "f717fd4b-dabb-4fd6-b4f7-c5b1b2ab0e03",
+      "status": "completed",
+      "plan": {
+        "version": 1,
+        "seed_start": 22001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": {
+        "stage": "complete",
+        "current_seed": 22080,
+        "completed": 80,
+        "planned": 80
+      },
+      "result": {
+        "source_hash": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+        "evaluation": {
+          "planned": 24,
+          "attempted": 24,
+          "valid": 24,
+          "changed": 0,
+          "improved": 0,
+          "worsened": 0,
+          "reward_delta": 0,
+          "extra_death_cases": 0,
+          "extra_team_death_cases": 0,
+          "broader_worse": 0,
+          "supported": 24,
+          "coverage": 0.9166666666666666,
+          "prediction_loss": 0.18435446776489536,
+          "zero_prediction_loss": 0.08772350280201059,
+          "passes_exploratory_gate": false,
+          "production_eligible": false,
+          "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+        },
+        "promoted": false,
+        "fitting": {
+          "sufficient": true,
+          "trainingEpisodes": 31,
+          "informativeEpisodes": 18
+        },
+        "artifact_path": "f717fd4b-dabb-4fd6-b4f7-c5b1b2ab0e03",
+        "candidate_hash": "c09c50befa60956a0599798d268e59d179f463e3ae3c753988ed97459fc43482"
+      },
+      "error": null,
+      "started_at": "2026-10-18T05:04:55.000000Z",
+      "finished_at": "2026-10-18T05:57:13.000000Z",
+      "created_at": "2026-10-18T05:04:53.000000Z",
+      "updated_at": "2026-10-18T05:57:13.000000Z"
+    },
+    {
+      "id": "6e1523e6-15dc-4924-9d51-4c1a74ac794c",
+      "status": "completed",
+      "plan": {
+        "version": 1,
+        "seed_start": 21001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": {
+        "stage": "complete",
+        "current_seed": 21080,
+        "completed": 80,
+        "planned": 80
+      },
+      "result": {
+        "source_hash": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+        "evaluation": {
+          "planned": 24,
+          "attempted": 24,
+          "valid": 24,
+          "changed": 0,
+          "improved": 0,
+          "worsened": 0,
+          "reward_delta": 0,
+          "extra_death_cases": 0,
+          "extra_team_death_cases": 0,
+          "broader_worse": 0,
+          "supported": 24,
+          "coverage": 1,
+          "prediction_loss": 0.18327489001844421,
+          "zero_prediction_loss": 0.15186185124505616,
+          "passes_exploratory_gate": false,
+          "production_eligible": false,
+          "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+        },
+        "promoted": false,
+        "fitting": {
+          "sufficient": true,
+          "trainingEpisodes": 30,
+          "informativeEpisodes": 17
+        },
+        "artifact_path": "6e1523e6-15dc-4924-9d51-4c1a74ac794c",
+        "candidate_hash": "61d2ced4dc0ec2e8618c6b60a968d9b48d72ff66a0e33f8e3d2e39061ae03c69"
+      },
+      "error": null,
+      "started_at": "2026-10-18T04:04:45.000000Z",
+      "finished_at": "2026-10-18T04:55:51.000000Z",
+      "created_at": "2026-10-18T04:04:44.000000Z",
+      "updated_at": "2026-10-18T04:55:51.000000Z"
+    },
+    {
+      "id": "27c826ae-117f-4fd6-b5e4-4002199dc877",
+      "status": "cancelled",
+      "plan": {
+        "version": 1,
+        "seed_start": 20001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": {
+        "stage": "fit",
+        "current_seed": 20001,
+        "completed": 0,
+        "planned": 80
+      },
+      "result": null,
+      "error": "Run stopped; checkpoints retained",
+      "started_at": "2026-10-18T03:50:02.000000Z",
+      "finished_at": null,
+      "created_at": "2026-10-18T04:03:25.000000Z",
+      "updated_at": "2026-10-18T04:03:25.000000Z"
+    },
+    {
+      "id": "25071c38-302b-436f-96ef-9c34c01e72c0",
+      "status": "cancelled",
+      "plan": {
+        "version": 1,
+        "seed_start": 20001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": {
+        "stage": "fit",
+        "current_seed": 20001,
+        "completed": 0,
+        "planned": 80
+      },
+      "result": null,
+      "error": null,
+      "started_at": "2026-10-18T03:54:05.000000Z",
+      "finished_at": null,
+      "created_at": "2026-10-18T04:03:25.000000Z",
+      "updated_at": "2026-10-18T04:03:25.000000Z"
+    },
+    {
+      "id": "ded35667-acdf-47db-9cf7-7a67550ce78d",
+      "status": "failed",
+      "plan": {
+        "version": 1,
+        "seed_start": 20001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": [],
+      "result": null,
+      "error": "Browser or Vite stopped during startup",
+      "started_at": "2026-10-18T03:56:49.000000Z",
+      "finished_at": null,
+      "created_at": "2026-10-18T04:03:25.000000Z",
+      "updated_at": "2026-10-18T04:03:25.000000Z"
+    },
+    {
+      "id": "26102ff3-9932-4ad7-96f0-e1e1f9b21e34",
+      "status": "cancelled",
+      "plan": {
+        "version": 1,
+        "seed_start": 20001,
+        "fit_cases": 32,
+        "calibration_cases": 24,
+        "evaluation_cases": 24,
+        "horizon_seconds": 30,
+        "after_seconds": 120,
+        "max_minutes": 90,
+        "policy_scope": "offline-live-macro",
+        "minimum_evaluation_cases": 18,
+        "automatic_promotion": false
+      },
+      "progress": {
+        "stage": "fit",
+        "current_seed": 20002,
+        "completed": 1,
+        "planned": 80
+      },
+      "result": null,
+      "error": "Run stopped; checkpoints retained",
+      "started_at": "2026-10-18T04:03:02.000000Z",
+      "finished_at": "2026-10-18T04:03:48.000000Z",
+      "created_at": "2026-10-18T04:03:00.000000Z",
+      "updated_at": "2026-10-18T04:03:48.000000Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "bc6c15a9-3375-4cc3-ae4a-3f418c9db667",
+      "run_id": "656d3d29-21c3-49c6-9f59-e34f25e09a2d",
+      "status": "open",
+      "baseline_version": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+      "preferences": {
+        "prefer_small_changes": true
+      },
+      "deadline_at": "2026-10-20T06:48:38.000000Z",
+      "decided_at": null,
+      "selected_proposal_id": null,
+      "decided_by": null,
+      "reason": null,
+      "created_at": "2026-10-18T06:48:38.000000Z",
+      "updated_at": "2026-10-18T06:48:38.000000Z",
+      "proposals": [
+        {
+          "id": 3,
+          "review_id": "bc6c15a9-3375-4cc3-ae4a-3f418c9db667",
+          "title": "Keep the current game balance",
+          "status": "pending",
+          "changes": [],
+          "evidence": {
+            "baseline_version": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+            "run_id": "656d3d29-21c3-49c6-9f59-e34f25e09a2d",
+            "summary": {
+              "planned": 24,
+              "attempted": 24,
+              "valid": 24,
+              "changed": 0,
+              "improved": 0,
+              "worsened": 0,
+              "reward_delta": 0,
+              "extra_death_cases": 0,
+              "extra_team_death_cases": 0,
+              "broader_worse": 0,
+              "supported": 24,
+              "coverage": 1,
+              "prediction_loss": 0.24628460783554415,
+              "zero_prediction_loss": 0.12829366764725897,
+              "passes_exploratory_gate": false,
+              "production_eligible": false,
+              "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+            },
+            "reason": "This macro-learning study does not establish avatar or item imbalance."
+          },
+          "evaluation": {
+            "passed": true,
+            "kind": "no-change"
+          },
+          "manifest_hash": "8a80973390b686d7d8243ea406443b4d738f3f3190e29912700b43ad346ed6c8",
+          "created_at": "2026-10-18T06:48:38.000000Z",
+          "updated_at": "2026-10-18T06:48:38.000000Z"
+        }
+      ]
+    },
+    {
+      "id": "0e057918-876f-465f-a852-80f24be8413d",
+      "run_id": "f717fd4b-dabb-4fd6-b4f7-c5b1b2ab0e03",
+      "status": "open",
+      "baseline_version": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+      "preferences": {
+        "prefer_small_changes": true
+      },
+      "deadline_at": "2026-10-20T05:57:13.000000Z",
+      "decided_at": null,
+      "selected_proposal_id": null,
+      "decided_by": null,
+      "reason": null,
+      "created_at": "2026-10-18T05:57:13.000000Z",
+      "updated_at": "2026-10-18T05:57:13.000000Z",
+      "proposals": [
+        {
+          "id": 2,
+          "review_id": "0e057918-876f-465f-a852-80f24be8413d",
+          "title": "Keep the current game balance",
+          "status": "pending",
+          "changes": [],
+          "evidence": {
+            "baseline_version": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+            "run_id": "f717fd4b-dabb-4fd6-b4f7-c5b1b2ab0e03",
+            "summary": {
+              "planned": 24,
+              "attempted": 24,
+              "valid": 24,
+              "changed": 0,
+              "improved": 0,
+              "worsened": 0,
+              "reward_delta": 0,
+              "extra_death_cases": 0,
+              "extra_team_death_cases": 0,
+              "broader_worse": 0,
+              "supported": 24,
+              "coverage": 0.9166666666666666,
+              "prediction_loss": 0.18435446776489536,
+              "zero_prediction_loss": 0.08772350280201059,
+              "passes_exploratory_gate": false,
+              "production_eligible": false,
+              "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+            },
+            "reason": "This macro-learning study does not establish avatar or item imbalance."
+          },
+          "evaluation": {
+            "passed": true,
+            "kind": "no-change"
+          },
+          "manifest_hash": "caddf93adece6df6134e96a0988da06e8664b7bf6b530989b1b39669e6481039",
+          "created_at": "2026-10-18T05:57:13.000000Z",
+          "updated_at": "2026-10-18T05:57:13.000000Z"
+        }
+      ]
+    },
+    {
+      "id": "49d32bb4-eb27-4724-9efa-ac04f2df8b13",
+      "run_id": "6e1523e6-15dc-4924-9d51-4c1a74ac794c",
+      "status": "open",
+      "baseline_version": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+      "preferences": {
+        "prefer_small_changes": true
+      },
+      "deadline_at": "2026-10-20T04:55:51.000000Z",
+      "decided_at": null,
+      "selected_proposal_id": null,
+      "decided_by": null,
+      "reason": null,
+      "created_at": "2026-10-18T04:55:51.000000Z",
+      "updated_at": "2026-10-18T04:55:51.000000Z",
+      "proposals": [
+        {
+          "id": 1,
+          "review_id": "49d32bb4-eb27-4724-9efa-ac04f2df8b13",
+          "title": "Keep the current game balance",
+          "status": "pending",
+          "changes": [],
+          "evidence": {
+            "baseline_version": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+            "run_id": "6e1523e6-15dc-4924-9d51-4c1a74ac794c",
+            "summary": {
+              "planned": 24,
+              "attempted": 24,
+              "valid": 24,
+              "changed": 0,
+              "improved": 0,
+              "worsened": 0,
+              "reward_delta": 0,
+              "extra_death_cases": 0,
+              "extra_team_death_cases": 0,
+              "broader_worse": 0,
+              "supported": 24,
+              "coverage": 1,
+              "prediction_loss": 0.18327489001844421,
+              "zero_prediction_loss": 0.15186185124505616,
+              "passes_exploratory_gate": false,
+              "production_eligible": false,
+              "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+            },
+            "reason": "This macro-learning study does not establish avatar or item imbalance."
+          },
+          "evaluation": {
+            "passed": true,
+            "kind": "no-change"
+          },
+          "manifest_hash": "3bc375e6a3712f12310dd2eadbc11f71d1102b94e046de02f024fa2d535387fe",
+          "created_at": "2026-10-18T04:55:51.000000Z",
+          "updated_at": "2026-10-18T04:55:51.000000Z"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "desktop": {
+      "loaded": true,
+      "learning": true,
+      "balance": true,
+      "history": true,
+      "errors": []
+    },
+    "mobile": {
+      "pageWidth": 390,
+      "contentWidth": 390,
+      "labWidth": 390
+    },
+    "native_session_login_logout": true,
+    "csrf_missing_rejected": 419,
+    "live_report_refresh": true,
+    "schedule_form_saved_existing_values": true,
+    "report_download": {
+      "status": 200,
+      "id": "656d3d29-21c3-49c6-9f59-e34f25e09a2d"
+    },
+    "removed_from_game": true,
+    "operations": {
+      "health": "MEASURED RESOURCES\n\nMemory & storage health\n\nLinux Docker VM and this worker cgroup; not Windows physical RAM. Checked 2026-10-18T08:32:35+00:00. Anonymous RAM and cached file pages are shown separately.\n\nML anonymous RAM\n246 MiB\nSoft limit 2048 MiB\nDocker VM available\n5,512 MiB\nTotal 7,835 MiB; reserve 2048\nManaged ML storage\n1.11 GiB\nBudget 20 GiB · 5470 protected files\nCgroup lifetime peak\n353 MiB\n0 cgroup OOM kills\n\nWorking set 332 MiB · file cache 87 MiB · 3 retained checkpoints. GPU VRAM: unavailable (CPU-only image). CPU 14.3%.\n\nResource admission is available. One simulation worker is qualified.\n\nDry-run recoverable storage: 0.00 MiB. Legacy evidence is pinned; cleanup cannot evict it to force training.\n\nProtected model/checkpoint references\nRecent measured resource samples (up to 120)",
+      "controls": true,
+      "cleanup": {
+        "dry_run": false,
+        "candidates": [],
+        "recoverable_bytes": 0
+      }
+    },
+    "viewport_checks": [
+      "1280x900",
+      "390x844"
+    ]
+  }
+}

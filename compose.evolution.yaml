@@ -1,0 +1,162 @@
+name: teamfight-evolution
+x-api: &api
+  image: teamfight-evolution-api:local
+  build:
+    context: .
+    dockerfile: infrastructure/evolution/Dockerfile.api
+  environment: &api-env
+    APP_ENV: local
+    APP_DEBUG: "false"
+    APP_KEY: ${EVOLUTION_APP_KEY:?Run infrastructure/evolution/setup.ps1 first}
+    APP_URL: http://localhost:8089
+    LOG_CHANNEL: stderr
+    DB_CONNECTION: pgsql
+    DB_HOST: database
+    DB_DATABASE: teamfight
+    DB_USERNAME: teamfight
+    DB_PASSWORD: ${EVOLUTION_DB_PASSWORD:?Missing database password}
+    QUEUE_CONNECTION: database
+    CACHE_STORE: database
+    SESSION_DRIVER: database
+    FRONTEND_URLS: http://localhost:8088,http://127.0.0.1:8088
+    EVOLUTION_RUNNER_URL: http://runner:8090
+    EVOLUTION_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN:?Missing worker token}
+    EVOLUTION_OWNER_EMAIL: ${EVOLUTION_OWNER_EMAIL:-owner@teamfight.local}
+    EVOLUTION_OWNER_PASSWORD: ${EVOLUTION_OWNER_PASSWORD:?Missing initial owner password}
+    ONLINE_WORKER_URL: http://match-worker:8092
+    ONLINE_WORKER_TOKEN: ${ONLINE_WORKER_TOKEN:-}
+  restart: unless-stopped
+  mem_limit: 384m
+  cpus: 0.5
+
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: teamfight
+      POSTGRES_USER: teamfight
+      POSTGRES_PASSWORD: ${EVOLUTION_DB_PASSWORD}
+    volumes: [evolution-database:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U teamfight -d teamfight"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    mem_limit: 256m
+    cpus: 0.5
+
+  init:
+    <<: *api
+    command: [sh, -c, "php artisan migrate --force && php artisan evolution:bootstrap-owner && php artisan online:install-catalog"]
+    depends_on:
+      database: {condition: service_healthy}
+    restart: "no"
+
+  api:
+    <<: *api
+    ports: ["127.0.0.1:8089:8000"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, php, -r, "exit(@file_get_contents('http://127.0.0.1:8000/up') === false ? 1 : 0);"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  worker:
+    <<: *api
+    command: [php, artisan, "queue:work", "--sleep=3", "--timeout=30", "--tries=10", "--max-time=3600"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+      runner: {condition: service_healthy}
+
+  scheduler:
+    <<: *api
+    command: [php, artisan, "schedule:work"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+      runner: {condition: service_healthy}
+
+  runner:
+    init: true
+    pids_limit: 512
+    image: teamfight-evolution-runner:local
+    build:
+      context: .
+      dockerfile: infrastructure/evolution/Dockerfile.runner
+    environment:
+      EVOLUTION_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN}
+      EVOLUTION_DATA: /data
+    volumes: [evolution-artifacts:/data]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+    mem_limit: 3g
+    mem_reservation: 1536m
+    cpus: 2
+    shm_size: 256m
+    stop_grace_period: 30s
+
+  web:
+    image: teamfight-evolution-web:local
+    build:
+      context: .
+      dockerfile: infrastructure/evolution/Dockerfile.web
+    ports: ["127.0.0.1:8088:80"]
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+    mem_limit: 128m
+    cpus: 0.5
+
+  match-worker:
+    init: true
+    image: teamfight-online-worker:local
+    build:
+      context: .
+      dockerfile: infrastructure/online/Dockerfile
+    environment:
+      ONLINE_WORKER_TOKEN: ${ONLINE_WORKER_TOKEN:?Run infrastructure/evolution/setup.ps1}
+      ONLINE_SPEED: ${ONLINE_SPEED:-1}
+    volumes: [online-matches:/online-data]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8092/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+    mem_limit: 1536m
+    cpus: 2
+    shm_size: 256m
+
+  avatar-worker:
+    init: true
+    pids_limit: 256
+    image: teamfight-avatar-worker:local
+    build:
+      context: .
+      dockerfile: infrastructure/avatar-evolution/Dockerfile
+    environment:
+      EVOLUTION_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN}
+      AVATAR_DATA: /avatar-data
+    volumes: [avatar-artifacts:/avatar-data]
+    restart: unless-stopped
+    mem_limit: 1280m
+    cpus: 1
+    shm_size: 256m
+    stop_grace_period: 30s
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:8094/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  evolution-database:
+  evolution-artifacts:
+  online-matches:
+  avatar-artifacts:

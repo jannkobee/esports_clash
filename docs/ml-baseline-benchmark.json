@@ -1,0 +1,132 @@
+{
+  "verified_at": "2026-10-18T07:55:04.274Z",
+  "seed": 47,
+  "draft": 2,
+  "policy": "empty-adaptive",
+  "scope": "Compatibility only; excluded from learning. Paced modes execute the same 30 Hz ticks with 1x/4x wall-clock budgets; they do not benchmark the frontend speed button.",
+  "source_sha256": "8751281296c5b332a39e1d5f1d85411004f75dce33df5a61cc1f537733902d24",
+  "modes": [
+    {
+      "mode": "headless",
+      "simulated_seconds": 462.6000000001524,
+      "wall_seconds": 111.207,
+      "effective_speed": 4.159810083898967,
+      "cpu_seconds": 145.942604,
+      "cpu_percent": 131.23508771929824,
+      "memory": {
+        "mean_anon_mib": 606.0768783244681,
+        "max_sampled_anon_mib": 670.421875,
+        "max_sampled_working_set_mib": 1645.23828125,
+        "vram_mib": null
+      },
+      "states": [
+        {
+          "second": 0,
+          "fingerprint": "37892:fb2eb0be:4d910bea",
+          "randomState": 47,
+          "finished": false
+        },
+        {
+          "second": 30.00000000000065,
+          "fingerprint": "396516:8cdf07ee:d41c55de",
+          "randomState": 980932196,
+          "finished": false
+        },
+        {
+          "second": 119.99999999999575,
+          "fingerprint": "449014:3c3c8609:903ccc9d",
+          "randomState": 3911906840,
+          "finished": false
+        },
+        {
+          "second": 462.6000000001524,
+          "fingerprint": "1197911:ee6b37af:65092de7",
+          "randomState": 899024906,
+          "finished": true
+        }
+      ]
+    },
+    {
+      "mode": "1x",
+      "simulated_seconds": 462.6000000001524,
+      "wall_seconds": 462.701,
+      "effective_speed": 0.999781716486786,
+      "cpu_seconds": 516.89632,
+      "cpu_percent": 111.71281670020163,
+      "memory": {
+        "mean_anon_mib": 779.7314136744061,
+        "max_sampled_anon_mib": 977.0546875,
+        "max_sampled_working_set_mib": 2017.98046875,
+        "vram_mib": null
+      },
+      "states": [
+        {
+          "second": 0,
+          "fingerprint": "37892:fb2eb0be:4d910bea",
+          "randomState": 47,
+          "finished": false
+        },
+        {
+          "second": 30.00000000000065,
+          "fingerprint": "396516:8cdf07ee:d41c55de",
+          "randomState": 980932196,
+          "finished": false
+        },
+        {
+          "second": 119.99999999999575,
+          "fingerprint": "449014:3c3c8609:903ccc9d",
+          "randomState": 3911906840,
+          "finished": false
+        },
+        {
+          "second": 462.6000000001524,
+          "fingerprint": "1197911:ee6b37af:65092de7",
+          "randomState": 899024906,
+          "finished": true
+        }
+      ]
+    },
+    {
+      "mode": "4x",
+      "simulated_seconds": 462.6000000001524,
+      "wall_seconds": 135.854,
+      "effective_speed": 3.4051260912461347,
+      "cpu_seconds": 158.47913,
+      "cpu_percent": 116.65400356264813,
+      "memory": {
+        "mean_anon_mib": 978.3382411858975,
+        "max_sampled_anon_mib": 1573.54296875,
+        "max_sampled_working_set_mib": 2602.6015625,
+        "vram_mib": null
+      },
+      "states": [
+        {
+          "second": 0,
+          "fingerprint": "37892:fb2eb0be:4d910bea",
+          "randomState": 47,
+          "finished": false
+        },
+        {
+          "second": 30.00000000000065,
+          "fingerprint": "396516:8cdf07ee:d41c55de",
+          "randomState": 980932196,
+          "finished": false
+        },
+        {
+          "second": 119.99999999999575,
+          "fingerprint": "449014:3c3c8609:903ccc9d",
+          "randomState": 3911906840,
+          "finished": false
+        },
+        {
+          "second": 462.6000000001524,
+          "fingerprint": "1197911:ee6b37af:65092de7",
+          "randomState": 899024906,
+          "finished": true
+        }
+      ]
+    }
+  ],
+  "parity": true,
+  "exact_execution_and_opportunity_audits_equal": true
+}

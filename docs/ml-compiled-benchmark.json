@@ -1,0 +1,53 @@
+{
+  "verified_at": "2026-10-18T08:23:18.182Z",
+  "seed": 47,
+  "draft": 2,
+  "policy": "empty-adaptive",
+  "scope": "Compatibility only; excluded from learning. Paced modes execute the same 30 Hz ticks with 1x/4x wall-clock budgets; they do not benchmark the frontend speed button.",
+  "source_sha256": "0b1d1d6396e6d1255a07c893c49ae36a24ee6cc596d06e56b10959b09ffce99b",
+  "modes": [
+    {
+      "mode": "headless",
+      "simulated_seconds": 462.6000000001524,
+      "wall_seconds": 108.851,
+      "effective_speed": 4.2498461199268025,
+      "cpu_seconds": 140.025707,
+      "cpu_percent": 128.63979844006948,
+      "memory": {
+        "mean_anon_mib": 283.40857712765956,
+        "max_sampled_anon_mib": 396.69140625,
+        "max_sampled_working_set_mib": 443.796875,
+        "vram_mib": null
+      },
+      "states": [
+        {
+          "second": 0,
+          "fingerprint": "37892:fb2eb0be:4d910bea",
+          "randomState": 47,
+          "finished": false
+        },
+        {
+          "second": 30.00000000000065,
+          "fingerprint": "396516:8cdf07ee:d41c55de",
+          "randomState": 980932196,
+          "finished": false
+        },
+        {
+          "second": 119.99999999999575,
+          "fingerprint": "449014:3c3c8609:903ccc9d",
+          "randomState": 3911906840,
+          "finished": false
+        },
+        {
+          "second": 462.6000000001524,
+          "fingerprint": "1197911:ee6b37af:65092de7",
+          "randomState": 899024906,
+          "finished": true
+        }
+      ]
+    }
+  ],
+  "parity": true,
+  "cross_version_parity": true,
+  "priority": "Memory validation; further throughput tuning deferred by owner"
+}

@@ -1,0 +1,13 @@
+{
+  "verified_at": "2026-10-18T04:50:06.536Z",
+  "match_id": "85cfd7ff-ed52-4b24-b732-3456e27089ff",
+  "services_restarted": [
+    "api",
+    "worker",
+    "match-worker"
+  ],
+  "same_completed_result_hash": "6ec7f03e3a1158928f42780fd6e135f8537ac39ededf92aad879b8869e087123",
+  "same_terminal_sequence": 1267,
+  "both_accounts_ownership_clubs_and_replay_preserved": true,
+  "training_runner_restarted": false
+}

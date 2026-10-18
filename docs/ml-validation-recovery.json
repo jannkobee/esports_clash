@@ -1,0 +1,120 @@
+{
+  "before": {
+    "id": "1ebdb836-6803-42bd-9fdd-ad92f2aeeb5b",
+    "state": {
+      "status": "running",
+      "progress": {
+        "resources": {
+          "at": 1792312935.1106987,
+          "vm_total_mib": 7834.796875,
+          "vm_available_mib": 5277.7578125,
+          "ml_anon_mib": 310.69140625,
+          "ml_working_set_mib": 346.5625,
+          "ml_file_cache_mib": 17.69140625,
+          "cgroup_limit_mib": 3072.0,
+          "cgroup_peak_mib": 563.5546875,
+          "oom_kills": 0,
+          "gpu_vram_mib": null,
+          "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+          "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+          "cpu_usec": 89589470,
+          "cpu_percent": 126.13958826426568
+        },
+        "current_batch_size": 64,
+        "collector": "compiled fitting / trusted Vite evaluation",
+        "stage": "fit",
+        "current_seed": 25003,
+        "completed": 2,
+        "planned": 80,
+        "counts": {
+          "valid": 2
+        },
+        "informative_contrasts": 1,
+        "learned_action_changes": 0,
+        "simulated_seconds": 453.99999999997937,
+        "worlds_per_minute": 1.7694272265793425,
+        "mean_world_seconds": 33.90927815437317,
+        "simulated_seconds_per_wall_second": 6.694333007224874,
+        "estimated_remaining_collection_seconds": 2644.923696041107,
+        "speed": "headless",
+        "active_simulation_workers": 1
+      }
+    },
+    "starts": {
+      "count": 1
+    },
+    "case_statuses": {
+      "valid": 2
+    },
+    "hashes": {
+      "plan.json": "7144c2e17096e535cb0cce42a0d6b6e2b18d5ac4d9c9640bebdec721eadd6322",
+      "execution.json": "e6d5b111cdff4652b91e6f3391e900055068d172483aa6d8789d5ab0fedfae36",
+      "case-25001.json": "af4b62ffe9f19781b9ca4ea6d434e76017d9e8723e8f722bfb4acc928b86613e",
+      "raw-25001.json.gz": "18952c2f8ea552a5c7b396a767373b5daad0b55b544fbd64bf7301402c74e10c",
+      "case-25002.json": "68c2545651f74c1d22d50fa78a046200963cdf7694fbac21be056728f151174e",
+      "raw-25002.json.gz": "00d140ec5fd17ae5bf1bdc7b3d82852b236460472b860f61af8365f56fc52b34"
+    },
+    "raw_hashes_verified": true
+  },
+  "after": {
+    "id": "1ebdb836-6803-42bd-9fdd-ad92f2aeeb5b",
+    "state": {
+      "status": "running",
+      "progress": {
+        "resources": {
+          "at": 1792312953.4547112,
+          "vm_total_mib": 7834.796875,
+          "vm_available_mib": 5460.33984375,
+          "ml_anon_mib": 157.62109375,
+          "ml_working_set_mib": 177.8046875,
+          "ml_file_cache_mib": 7.078125,
+          "cgroup_limit_mib": 3072.0,
+          "cgroup_peak_mib": 180.33984375,
+          "oom_kills": 0,
+          "gpu_vram_mib": null,
+          "gpu_note": "CPU-only PyTorch image; GPU/Windows-host attribution unavailable",
+          "memory_scope": "Linux Docker VM and this worker cgroup; not Windows physical RAM",
+          "cpu_usec": 1902909,
+          "cpu_percent": 499.86719966806356
+        },
+        "current_batch_size": 64,
+        "collector": "compiled fitting / trusted Vite evaluation",
+        "stage": "fit",
+        "current_seed": 25004,
+        "completed": 3,
+        "planned": 80,
+        "counts": {
+          "valid": 2,
+          "incomplete": 1
+        },
+        "informative_contrasts": 1,
+        "learned_action_changes": 0,
+        "simulated_seconds": 453.99999999997937,
+        "worlds_per_minute": 2.0890735121078055,
+        "mean_world_seconds": 28.720865805943806,
+        "simulated_seconds_per_wall_second": 5.269107636093891,
+        "estimated_remaining_collection_seconds": 2211.506667057673,
+        "speed": "headless",
+        "active_simulation_workers": 1
+      }
+    },
+    "starts": {
+      "count": 2
+    },
+    "case_statuses": {
+      "valid": 2,
+      "incomplete": 1
+    },
+    "hashes": {
+      "plan.json": "7144c2e17096e535cb0cce42a0d6b6e2b18d5ac4d9c9640bebdec721eadd6322",
+      "execution.json": "e6d5b111cdff4652b91e6f3391e900055068d172483aa6d8789d5ab0fedfae36",
+      "case-25001.json": "af4b62ffe9f19781b9ca4ea6d434e76017d9e8723e8f722bfb4acc928b86613e",
+      "raw-25001.json.gz": "18952c2f8ea552a5c7b396a767373b5daad0b55b544fbd64bf7301402c74e10c",
+      "case-25002.json": "68c2545651f74c1d22d50fa78a046200963cdf7694fbac21be056728f151174e",
+      "raw-25002.json.gz": "00d140ec5fd17ae5bf1bdc7b3d82852b236460472b860f61af8365f56fc52b34",
+      "case-25003.json": "89e3ddebc0c3d9db0f792ce82b0f47722dc4674fc74bd9e2da905d80a2db4adf"
+    },
+    "raw_hashes_verified": true
+  },
+  "all_previous_case_raw_plan_execution_hashes_preserved": true
+}
