@@ -58,9 +58,10 @@ export function AvatarModelPreview({ champion,ability='ultimate' }: { champion: 
         <label>Model version <select aria-label="Arsenaldo model version" value={arsenaldoVariant} onChange={event=>{
           const next=event.target.value as AvatarModelVariant;setArsenaldoVariant(next);saveArsenaldoModelVariant(next);
         }}>
-          <option value="claude">Claude animation</option><option value="current">Current original</option>
+          <option value="submitted">Latest supplied model</option><option value="claude">Claude animation</option><option value="current">Current original</option>
         </select></label>
-        <p>{arsenaldoVariant==='claude'?(loadedVariant==='current'?'Claude animation is unavailable; showing the current original.':'Submitted model with its ten native animation clips.'):'Current model with the existing animation and contact adjustments.'} This selection also applies to Arsenaldo in your next 3D match.</p>
+        <p>{arsenaldoVariant==='submitted'?(loadedVariant==='current'?'Supplied model is unavailable; showing the current original.':'Latest supplied appearance. This GLB has no skeleton or animation clips; elemental orbs and spell effects remain active.'):
+          arsenaldoVariant==='claude'?(loadedVariant==='current'?'Claude animation is unavailable; showing the current original.':'Earlier model with its ten native animation clips.'):'Current model with the existing animation and contact adjustments.'} This selection also applies to Arsenaldo in your next 3D match.</p>
       </>}
       <label>Rotate model <input type="range" min="0" max="360" value={Math.round(angle)} disabled={status !== 'ready'}
         onChange={event => setAngle(Number(event.target.value))} /></label>
@@ -79,7 +80,7 @@ export function AvatarModelPreview({ champion,ability='ultimate' }: { champion: 
         {champion.id==='c_raijin'&&<button type="button" disabled={status!=='ready'} onClick={()=>{
           setPose({passive:'ability-passive',skill1:'ability-q',skill2:'ability-w',ultimate:'ability-r'}[ability]);setMotion(true);
         }}>Preview {ability==='passive'?'Overload':champion[ability].name}</button>}
-        <a href={resolvedAsset??avatarModelUrl(champion.id,variant)} download={`${champion.displayName}${variant==='claude'?'-Claude':''}.glb`}>Download GLB</a>
+        <a href={resolvedAsset??avatarModelUrl(champion.id,variant)} download={`${champion.displayName}${variant==='claude'?'-Claude':variant==='submitted'?'-Supplied':''}.glb`}>Download GLB</a>
       </div>
     </div>
   </section>;

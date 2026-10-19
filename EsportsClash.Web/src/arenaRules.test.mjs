@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, isInsideRockTerrain, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from './arenaRules.ts';
 
-test('unit spacing ignores teammates while preserving enemy separation', () => {
-  assert.equal(shouldSeparateUnitsByTeam('blue', 'blue'), false);
-  assert.equal(shouldSeparateUnitsByTeam('red', 'red'), false);
+test('owner-approved unit contacts include allies and enemies', () => {
+  assert.equal(shouldSeparateUnitsByTeam('blue', 'blue'), true);
+  assert.equal(shouldSeparateUnitsByTeam('red', 'red'), true);
   assert.equal(shouldSeparateUnitsByTeam('blue', 'red'), true);
   assert.equal(shouldSeparateUnitsByTeam('red', 'blue'), true);
 });

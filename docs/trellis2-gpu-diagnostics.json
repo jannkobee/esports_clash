@@ -1,0 +1,52 @@
+{
+  "kind": "GPU-and-node-diagnostics-only",
+  "python": "3.12.15",
+  "torch": "2.9.1+cu128",
+  "cuda": "12.8",
+  "numpy": "1.26.4",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "gpu_bfloat16_matmul": true,
+  "nvdiffrast_cuda_rasterize": true,
+  "cumesh_cuda_normals": true,
+  "ovoxel_cuda_roundtrip": true,
+  "flexgemm_cuda_sparse_convolution": true,
+  "workflow_nodes": [
+    "Trellis2LoadImageWithTransparency_GGUF",
+    "Trellis2PreProcessImage_GGUF",
+    "Trellis2LoadModel_GGUF",
+    "Trellis2MeshWithVoxelGenerator_GGUF",
+    "Trellis2OvoxelExportToGLB_GGUF",
+    "EsportsTrellisExport"
+  ],
+  "node_count": 592,
+  "models": {
+    "ready": true,
+    "quantization": "Q4_K_M",
+    "manifest_sha256": "7c52ca4bdd597eee548ce5c40cf637c65a5f3deb417288c858c256a7354f7f6c"
+  },
+  "resources": {
+    "gpu": "NVIDIA GeForce RTX 3060",
+    "gpu_total_mib": 12288,
+    "gpu_used_mib": 1329,
+    "gpu_free_mib": 10787,
+    "driver": "617.42",
+    "vm_available_mib": 4617.0390625,
+    "comfy_tree_rss_mib": 0,
+    "worker_anonymous_mib": 773.609375,
+    "scope": "Docker Linux VM RAM; sampled whole-device VRAM includes other applications."
+  },
+  "status": "passed",
+  "engine_source_hashes": {
+    "service.py": "150474f1788c56fce48d5c635fb079bbe8b2994facb5f61f2804ae0e24cd7cf4",
+    "diagnose.py": "61e5dd5acfdc6d12446a7a81ddc4c1fd801d5fb589dd497c54202a7a7395169e",
+    "export_node.py": "41568ab48506cc5b06da4b494502bd9cae8a89a7b0192986a69b28a3cf6daf91",
+    "workflow-v1.json": "6f588b6311220778616564fc56cad10c557793c3a75547293621d4ca6775cca8",
+    "model-pins.json": "9601953b49e52fa252c4d27427b8acf3a0ea00974ea9afbc267d130c2e1b1715",
+    "limits.json": "f47e59850dfa2715f3ba4f9dd9455ad6c8ef5d187a536b97b873ca64cd6ecdd7",
+    "Dockerfile": "2bc3dbabe54122f8e7cadb00b532af6026a98f12fe08fa1d3c7f0e04797cfb2e",
+    "catalog.json": "1004d9f10c44002fd098c3df03ed86bc0863a573384edf750fd7f9e0aac6c6d7",
+    "reference-index.json": "eec7f0c51d17040c54266070043a8da80eca1bed268b3837b1ba92d9ad447cf9",
+    "patch_nodes.py": "b9338c79c229dddb0643612a30bb1427d4d82a2fb300af1a2d570864abef30fc"
+  },
+  "engine_image_id": "sha256:97cc501a71f16df6dedd47ac887955676c4f3630358ba54ed7389229129b6e77"
+}

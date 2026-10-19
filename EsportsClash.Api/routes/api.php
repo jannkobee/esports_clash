@@ -12,6 +12,7 @@ Route::post('/internal/online/authorize-stream', [OnlineController::class, 'auth
 
 Route::prefix('v1')->group(function (): void {
     Route::get('/avatar-visuals',[\App\Http\Controllers\AvatarEvolutionController::class,'manifest']);
+    Route::post('/avatar-visuals/health',[\App\Http\Controllers\AvatarEvolutionController::class,'signal'])->middleware('throttle:10,1');
     Route::get('/avatar-visuals/assets/{release}/{hash}.glb',[\App\Http\Controllers\AvatarEvolutionController::class,'published'])->whereNumber('release')->where('hash','[a-f0-9]{64}')->middleware('throttle:120,1');
     Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
     Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');

@@ -3,6 +3,7 @@ import { ARENA_LIGHTING, arenaCampArt } from './arenaArtDirection.ts';
 import { LANDSCAPE, WELL_RADII, HEALING_SHRINE_Y } from './arenaLandform.ts';
 import { ARAM_BUSHES, CAMP_ROCK_RINGS } from './arenaRules.ts';
 import * as THREE from 'three';
+import type { VisualRelease } from './avatarVisualRelease.ts';
 import { ArenaScene, applyArenaSceneCamera, arenaScenePan, clampArenaSceneCamera, type ArenaSceneFrame } from './threeArenaScene.ts';
 import {
   clampArenaCamera,
@@ -245,6 +246,7 @@ export class ThreeArenaTerrain {
     blueRampX: number,
     redRampX: number,
     onAvailabilityChange: (available: boolean) => void,
+    visualSnapshot?:Promise<ReadonlyMap<string,VisualRelease>>,
   ) {
     this.host = host;
     this.worldWidth = worldWidth;
@@ -281,7 +283,7 @@ export class ThreeArenaTerrain {
     terrain.position.set(worldWidth / 2, worldHeight / 2, 0);
     terrain.frustumCulled = false;
     this.scene.add(terrain);
-    this.arena = new ArenaScene(terrain.clone(), worldWidth, worldHeight);
+    this.arena = new ArenaScene(terrain.clone(), worldWidth, worldHeight,visualSnapshot);
 
     this.camera.position.z = 10;
     this.resizeObserver = new ResizeObserver(() => this.resizeToHost());

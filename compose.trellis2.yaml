@@ -1,0 +1,44 @@
+# Optional isolated GPU worker. Never included by the normal dev startup.
+# Explicit use: add -f compose.trellis2.yaml and start trellis-worker.
+services:
+  trellis-worker:
+    image: teamfight-trellis2:pilot
+    build:
+      context: .
+      dockerfile: infrastructure/trellis2/Dockerfile
+    environment:
+      TRELLIS_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN:?Missing private worker token}
+      TRELLIS_DATA: /trellis-data
+      TRELLIS_IMAGE_ID: ${TRELLIS_IMAGE_ID:-not-recorded}
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+      OPENBLAS_NUM_THREADS: "2"
+      MALLOC_ARENA_MAX: "2"
+      MALLOC_TRIM_THRESHOLD_: "131072"
+    volumes:
+      - ./.local-tools/trellis2/data:/trellis-data
+      - ./infrastructure/trellis2/control.py:/opt/trellis/control.py:ro
+      - visual-gpu-lease:/gpu-lease
+    command: [python, /opt/trellis/control.py]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    mem_limit: 5120m
+    memswap_limit: 5120m
+    cpus: 2
+    pids_limit: 256
+    shm_size: 256m
+    stop_grace_period: 20s
+    healthcheck:
+      test: [CMD, python, -c, "import os,urllib.request; r=urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8096/operations',headers={'Authorization':'Bearer '+os.environ['TRELLIS_WORKER_TOKEN']}),timeout=8); assert r.status==200"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  visual-gpu-lease:

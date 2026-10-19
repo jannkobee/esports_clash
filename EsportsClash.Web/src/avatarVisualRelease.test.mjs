@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import {visualReleaseUrl} from './avatarVisualRelease.ts';
+import {visualReleaseUrl,validateVisualReleases} from './avatarVisualRelease.ts';
 import {AvatarAssetLibrary} from './avatarModelAssets.ts';
 import {AvatarModelResources} from './threeAvatarModels.ts';
 import {avatarModelUrl} from './avatarModelUrl.ts';
@@ -26,6 +26,20 @@ test('one release snapshot is retained for a renderer and a failed approved asse
     assert.equal(await library.request('c_kyumi'),true);
     assert.equal(requests,1);assert.equal(loaded.length,3);library.close();
   }finally{globalThis.fetch=oldFetch;if(oldWindow===undefined)delete globalThis.window;else globalThis.window=oldWindow;disposeArenaTerrainResources(resources.owner);}
+});
+test('a match-pinned snapshot survives renderer recreation without fetching the current global manifest',async()=>{
+  const oldFetch=globalThis.fetch,oldWindow=globalThis.window;
+  const pinned=Promise.resolve(validateVisualReleases([{id:9,avatar_id:'c_astra',variant:'current',sha256:'a'.repeat(64)}]));
+  try{
+    globalThis.window={};globalThis.fetch=async()=>{throw Error('A pinned match must not fetch a newer global release');};
+    for(let scene=0;scene<2;scene++){
+      const resources=new AvatarModelResources(),library=new AvatarAssetLibrary(resources,undefined,pinned),urls=[];
+      library.loader.loadAsync=async url=>{urls.push(url);return {scene:new THREE.Group(),animations:[]};};
+      assert.equal(await library.request('c_astra'),true);assert.deepEqual(urls,['/backend/api/v1/avatar-visuals/assets/9/'+'a'.repeat(64)+'.glb']);
+      library.close();disposeArenaTerrainResources(resources.owner);
+    }
+    assert.equal(validateVisualReleases([{id:1,avatar_id:'c_astra',variant:'current',sha256:'../invalid'}]).size,0);
+  }finally{globalThis.fetch=oldFetch;if(oldWindow===undefined)delete globalThis.window;else globalThis.window=oldWindow;}
 });
 test('evolved ability decoration is bounded, follows existing lifetimes and leaves borrowed events unchanged',()=>{
   const baseline=new ArenaAbilityEffects(),evolved=new ArenaAbilityEffects();

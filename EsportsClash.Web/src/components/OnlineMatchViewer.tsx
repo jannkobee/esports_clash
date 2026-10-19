@@ -4,8 +4,9 @@ import type { OnlineSnapshot } from '../onlineSpectator';
 import { interpolateSpectatorFrame } from '../onlineSpectator';
 import { ARENA_RENDER_HEIGHT } from '../arenaPresentationCamera';
 import { NEXUS_TOWER_X } from '../arenaLayout';
+import {validateVisualReleases,type VisualRelease} from '../avatarVisualRelease';
 
-export function OnlineMatchViewer({ message }: { message: OnlineSnapshot | null }) {
+export function OnlineMatchViewer({ message,matchId,visuals }: { message: OnlineSnapshot | null;matchId?:string;visuals?:readonly VisualRelease[] }) {
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const frames = useRef<{ current: OnlineSnapshot | null; previous: OnlineSnapshot | null; received: number }>({ current: null, previous: null, received: 0 });
@@ -16,7 +17,8 @@ export function OnlineMatchViewer({ message }: { message: OnlineSnapshot | null 
     let renderer: ThreeArenaTerrain | null = null, closed = false, raf = 0;
     void import('../threeArenaTerrain').then(({ ThreeArenaTerrain }) => {
       if (!closed && host.current) {
-        try { renderer = new ThreeArenaTerrain(host.current, 2600, ARENA_RENDER_HEIGHT, NEXUS_TOWER_X.blue, NEXUS_TOWER_X.red, () => {}); }
+        try { renderer = new ThreeArenaTerrain(host.current, 2600, ARENA_RENDER_HEIGHT, NEXUS_TOWER_X.blue, NEXUS_TOWER_X.red, () => {},
+          Promise.resolve(validateVisualReleases(visuals??[]))); }
         catch { /* Read-only Canvas fallback remains available. */ }
       }
     });
@@ -49,7 +51,7 @@ export function OnlineMatchViewer({ message }: { message: OnlineSnapshot | null 
     };
     raf = requestAnimationFrame(draw);
     return () => { closed = true; cancelAnimationFrame(raf); renderer?.dispose(); renderer = null; };
-  }, []);
+  }, [matchId]);
   return <div className="relative h-[380px] w-full overflow-hidden rounded-xl border border-slate-700 bg-slate-950 sm:h-[480px]">
     <div ref={host} className="absolute inset-0" />
     <canvas ref={canvas} className="pointer-events-none absolute inset-0 h-full w-full" aria-label="Read-only authoritative match viewer" />

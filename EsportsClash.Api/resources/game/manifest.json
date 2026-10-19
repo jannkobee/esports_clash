@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "catalog_version": "79f8710120bea9194262c257763a3f9e481caf9626a09551caf4e6023755a3c9",
-  "rules_version": "a590f2594b68a4ca6ddf985f9645b46ba4feec82c65de6737958cd084d1b271f",
+  "rules_version": "8eaad81b95071b0d4f5c7aeb22800f8fdce755f2a351a22fa746be218d58eb0f",
   "policy_version": "rule-baseline-empty-adaptive-v2",
   "observation_version": "live-spectator-v1",
   "sources": [
@@ -32,6 +32,10 @@
     [
       "abilityRuntimeRules.ts",
       "bee5669c74339c5bd3265f09371a40f21c1a31b636f53b7a83ff664442d1836d"
+    ],
+    [
+      "abilityVisualEvolution.ts",
+      "cc57e704d9c0c0de4189851bf8b4e8bcf21af6e49f74c5590c04e31d31c1fd17"
     ],
     [
       "actionDecisionRules.ts",
@@ -79,11 +83,15 @@
     ],
     [
       "arenaRules.ts",
-      "923f626c6585c05da98a1316071d51fb1d029d5f4ebc03d8d3f771037895a0ab"
+      "f2aa8b99182a765eabbe53b7cc6692b67c71db2248ad01f21cd4d31d3522c144"
     ],
     [
       "arenaSceneryVisibility.ts",
       "a94d5257fa0564956b0cf0d9d26c9658f93331edba3ff674707a0fe765d29136"
+    ],
+    [
+      "arenaUnitCollision.ts",
+      "3cc70c7ca9ad22dc541aef3ee683c2d32e2fe089d14dfacc9d17b1193579d72c"
     ],
     [
       "arsenaldoModel.ts",
@@ -135,7 +143,7 @@
     ],
     [
       "avatarEvolutionReview.ts",
-      "64da47ac9727517a07c8dbdec92cec78ebe82f7a850ab0b7c0477d00e8c89683"
+      "add394c25db99d77960e9794832c35dbd76dd79a6b6639d84a935f0f27782801"
     ],
     [
       "avatarIdentity.ts",
@@ -155,11 +163,11 @@
     ],
     [
       "avatarModelAssets.ts",
-      "eb22c031541462e27eac44fef240d1125a4a7cfee5a022879ad08a4abc7aa63a"
+      "a0d8b6c488abee85eeed1d59d725a9f10a214384c7a04fb353776d9beb0caf24"
     ],
     [
       "avatarModelUrl.ts",
-      "a2e960cdd1a77e2c4f3947406ce68017e273c5dae7d5508c4555cd84cd4a777a"
+      "b154ad5f7684313ce0c29a322fce4b18bc60f911a7c30c7f1bd1605e8bdbb306"
     ],
     [
       "avatarMotionTimeline.ts",
@@ -195,7 +203,7 @@
     ],
     [
       "avatarVisualRelease.ts",
-      "eb187c400d4f5064da25e93194dcdadc093db8c031057d9b25a82af672996b02"
+      "114ecd8c0cb759cb85dbd3f06cc991eec6ba7f8cb2736fec21279646307383c0"
     ],
     [
       "avatarWeaponPolish.ts",
@@ -251,7 +259,7 @@
     ],
     [
       "components/AramMatchView.tsx",
-      "0b1d1d6396e6d1255a07c893c49ae36a24ee6cc596d06e56b10959b09ffce99b"
+      "88ed7b4053b4490d8a0eb3d032fc095752a8a9e2eb940079acb22cb319aea976"
     ],
     [
       "components/ArenaMatchView.tsx",
@@ -259,7 +267,7 @@
     ],
     [
       "components/AvatarModelPreview.tsx",
-      "75ec670603732cba7a41aba2bb616caf0e484e49a8194078041e09f65a8524a2"
+      "6e9d0bff2402c8c55fcc47c3a1a7aa53f832a0630b14ae55013f7ea325346f0f"
     ],
     [
       "components/BattlefieldModelRenderer.ts",
@@ -307,11 +315,11 @@
     ],
     [
       "components/OnlineMatchViewer.tsx",
-      "4a5234010fa0a640922d778f67871a31a5e41e0e967a40bede0d45930c05d445"
+      "88a600d227f57e86c84cfb558322c615860c964332005ae411b09ee4dce08638"
     ],
     [
       "components/OnlineNormalView.tsx",
-      "92fb976a3a5e6f45cb6ccf11614eb025b7229fb19870a71a7ce594b8f5c061c6"
+      "cfe8038b6dbdbbf9896d8ab19325de9dbdf20c53e4a00aec235dff4c5c2c6d32"
     ],
     [
       "components/PackOpeningModal.tsx",
@@ -343,7 +351,7 @@
     ],
     [
       "components/ThreeAramArena.tsx",
-      "58cbba154135bbc5227836669665adb0882d0a3759758dc7695327322cfb3610"
+      "2db6abc2406aac14f4afb6dcd34a9e7a2880ced52d397edf42cd7e4cfd1e5129"
     ],
     [
       "components/TournamentView.tsx",
@@ -483,7 +491,7 @@
     ],
     [
       "matchSimulationEngine.ts",
-      "93e08fb84b10646e5ae03e847e8680161c2f5ca4e1e20c8781653a792ba6c0ca"
+      "e2f3522ce07c60ac945451dc0654a99de0a059aa6a8e88daa7a5722f827d6e82"
     ],
     [
       "mockData.ts",
@@ -634,6 +642,10 @@
       "ec3cd0a636b72fc384b15d7e672f0acd775cc23caec168ad79a67d669c1b0a03"
     ],
     [
+      "submittedArsenaldo.ts",
+      "0f996db4961420181ff3aa910f6854b921164f7deabbf6a1c1224095afb7c202"
+    ],
+    [
       "tacticalOutlook.ts",
       "91380f40bd2787ec302273b0f47df09089f0baedb95bb7996b28dbfa2e9ee669"
     ],
@@ -675,7 +687,7 @@
     ],
     [
       "threeAbilityEffects.ts",
-      "e90eeeb92d2e36b9c4bffa75616144f4905279ab9d7c8234d72da9177c739497"
+      "a596d985ec68497e46afda15e8c1c44353fbbe9be1b114041baa7a3520d8f6ab"
     ],
     [
       "threeArenaCliffs.ts",
@@ -683,7 +695,7 @@
     ],
     [
       "threeArenaScene.ts",
-      "acb4ff68a81249c335ffdbd88a729d75b1af57eb27830f51ddbb1ab7d1db5f3e"
+      "c653f0f3f1107251c4fc56b9b662f9a2d6d06dfbef440831634c496a8ffd7877"
     ],
     [
       "threeArenaScenery.ts",
@@ -691,7 +703,7 @@
     ],
     [
       "threeArenaTerrain.ts",
-      "bf9ceb2707d3509d3f3e635497c70b235217203fb1cc06b53b9b5c2b455f64fc"
+      "f0fbe8e4db6b2d180759c35451f83d61e4f685a74bc39f8209f46c3fac184ee9"
     ],
     [
       "threeAvatarModels.ts",
@@ -708,6 +720,10 @@
     [
       "types.ts",
       "978f2b05fd3a1b35a709e1c4df734c784bca0b1bb50266e392c18440c2d37dea"
+    ],
+    [
+      "unitCollision.ts",
+      "4183734a014e0d9c54b96bf209866bffce49c000930740f360e037569c5fbbc6"
     ],
     [
       "utilityDecision.ts",

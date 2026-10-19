@@ -18,5 +18,8 @@ COPY EsportsClash.Web/public/models/avatars-v9/ ./public/models/avatars-v9/
 COPY EsportsClash.Web/public/models/imports/arsenaldo-claude.glb ./public/models/imports/arsenaldo-claude.glb
 COPY EsportsClash.Api/resources/avatars/catalog.json /workspace/catalog.json
 COPY infrastructure/avatar-evolution/ /workspace/infrastructure/avatar-evolution/
+WORKDIR /workspace/infrastructure/avatar-evolution
+RUN npm ci --ignore-scripts --no-audit --no-fund
+WORKDIR /workspace/EsportsClash.Web
 ENV AVATAR_DATA=/avatar-data NODE_ENV=production OMP_NUM_THREADS=1
 CMD ["node","/workspace/infrastructure/avatar-evolution/server.mjs"]

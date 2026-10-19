@@ -5,7 +5,8 @@ import { avatarDesign } from './avatarDesigns.ts';
 import { bindAvatarModel, disposeAvatarRig, type AvatarModel, type AvatarModelResources, type AvatarPose } from './threeAvatarModels.ts';
 import { avatarModelUrl,type AvatarModelVariant } from './avatarModelUrl.ts';
 import { disposeArenaTerrainResources } from './threeArenaTerrain.ts';
-import {loadVisualReleases,visualReleaseUrl,type VisualRelease} from './avatarVisualRelease.ts';
+import {loadVisualReleases,visualReleaseUrl,reportVisualHealth,type VisualRelease} from './avatarVisualRelease.ts';
+import {bindSubmittedArsenaldo} from './submittedArsenaldo.ts';
 
 export { avatarModelUrl } from './avatarModelUrl.ts';
 
@@ -15,14 +16,18 @@ export class AvatarAssetLibrary {
   private readonly files = new Map<string, GLTF>();
   private readonly pending = new Map<string, Promise<boolean>>();
   private readonly resolvedURLs=new Map<string,string>();
+  private readonly selectedReleases=new Map<string,VisualRelease>();
   private readonly nativeImports=new WeakSet<GLTF>();
   private readonly loader = new GLTFLoader();
   private closed = false;
   private readonly resources: AvatarModelResources;
   private releaseSnapshot?:Promise<ReadonlyMap<string,VisualRelease>>;
   private readonly override?: (id:string,variant:AvatarModelVariant)=>string;
-  constructor(resources: AvatarModelResources,override?: (id:string,variant:AvatarModelVariant)=>string) { this.resources = resources; this.override=override;this.owner.visible = false; }
-  private key(id:string,variant:AvatarModelVariant){return id==='c_invoker'&&variant==='claude'?`${id}:claude`:id;}
+  constructor(resources: AvatarModelResources,override?: (id:string,variant:AvatarModelVariant)=>string,
+    snapshot?:Promise<ReadonlyMap<string,VisualRelease>>) {
+    this.resources = resources; this.override=override;this.owner.visible = false;this.releaseSnapshot=snapshot;
+  }
+  private key(id:string,variant:AvatarModelVariant){return id==='c_invoker'&&variant!=='current'?`${id}:${variant}`:id;}
   has(id: string,variant:AvatarModelVariant='current') { return this.files.has(this.key(id,variant)); }
   sourceUrl(id:string,variant:AvatarModelVariant='current'){return this.resolvedURLs.get(this.key(id,variant))??avatarModelUrl(id,variant);}
   request(id: string, ready?: () => void,variant:AvatarModelVariant='current') {
@@ -31,11 +36,14 @@ export class AvatarAssetLibrary {
     let promise = this.pending.get(key);
     if (!promise) {
       const url=this.override?Promise.resolve(this.override(id,variant)):(this.releaseSnapshot??=loadVisualReleases()).then(releases=>{
-        const release=releases.get(`${id}:${variant}`);return release?visualReleaseUrl(release)??avatarModelUrl(id,variant):avatarModelUrl(id,variant);
+        const release=releases.get(`${id}:${variant}`);if(release)this.selectedReleases.set(key,release);
+        return release?visualReleaseUrl(release)??avatarModelUrl(id,variant):avatarModelUrl(id,variant);
       });
       promise = url.then(async path=>{
         try{const file=await this.loader.loadAsync(path);this.resolvedURLs.set(key,path);return file;}
-        catch(error){if(path!==avatarModelUrl(id,variant)){const file=await this.loader.loadAsync(avatarModelUrl(id,variant));this.resolvedURLs.set(key,avatarModelUrl(id,variant));return file;}throw error;}
+        catch(error){if(path!==avatarModelUrl(id,variant)){
+          const release=this.selectedReleases.get(key);if(release)reportVisualHealth(release,'load');
+          const file=await this.loader.loadAsync(avatarModelUrl(id,variant));this.resolvedURLs.set(key,avatarModelUrl(id,variant));return file;}throw error;}
       }).then(file => {
         if (this.closed) {
           disposeAvatarRig(file.scene); disposeArenaTerrainResources(file.scene); return false;
@@ -58,14 +66,20 @@ export class AvatarAssetLibrary {
     const file = this.files.get(this.key(id,variant)); if (!file || this.closed) return;
     const scene = cloneSkeleton(file.scene);
     scene.traverse(node => { if (node instanceof THREE.SkinnedMesh) node.frustumCulled = false; });
+    if(id==='c_invoker'&&variant==='submitted'&&this.sourceUrl(id,variant)===avatarModelUrl(id,'submitted')){
+      return bindSubmittedArsenaldo(scene,this.resources);
+    }
     let root: THREE.Group | undefined;
     scene.traverse(node => { if (node.userData.avatarPart === 'avatar-root') root = node as THREE.Group; });
     if (!root) return;
     const hasAnimations = file.animations && file.animations.length > 0;
-    const preserveNativeMotion=this.nativeImports.has(file);
+    const preserveNativeMotion=this.nativeImports.has(file)||
+      (root.userData.assetPreparation?.provider==='unirig'&&root.userData.assetPreparation?.animation_mode==='retargeted-native-clips');
     const binding = bindAvatarModel(root, this.resources, { drivenByMixer: hasAnimations,preserveNativeMotion });
     const body = new THREE.Group(); body.scale.setScalar(40); body.add(scene);
-    body.userData = { designId: id, assetFormat: 'glb',modelVariant:preserveNativeMotion?'claude':'current', clips: file.animations.map(clip => clip.name),visualEvolution:root.userData.avatarEvolution?.visual };
+    body.userData = { designId: id, assetFormat: 'glb',modelVariant:this.nativeImports.has(file)?'claude':'current', clips: file.animations.map(clip => clip.name),visualEvolution:root.userData.avatarEvolution?.visual };
+    const release=this.selectedReleases.get(this.key(id,variant));
+    if(release&&this.sourceUrl(id,variant)===visualReleaseUrl(release))body.userData.visualRelease={...release};
 
     if (!hasAnimations) {
       return { body, height: binding.height, animate: binding.animate, dispose: () => disposeAvatarRig(body) };

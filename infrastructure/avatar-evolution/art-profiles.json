@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "pilot": "c_invoker",
+  "profiles": {
+    "c_invoker": {
+      "name": "Arsenaldo",
+      "archetype": "Orb-conjuring mage in a tailored split coat and asymmetric mantle",
+      "silhouette": "Layered brass shoulders, ivory lapels, navy waistcoat, burgundy half-mantle",
+      "equipment": "Ice, wind and fire orbital arsenal; no staff, gun or sword",
+      "motifs": ["three elemental sigils", "brass inlay", "navy brocade", "engraved enamel"],
+      "identity_constraints": ["Preserve face and hair", "Preserve skin tones", "Preserve elemental orb colors", "Preserve original rig and Claude clips", "Never enlarge gameplay indicators or hitboxes"],
+      "components": {
+        "brocade": {"nodes": ["arsenaldo-surface-1"], "materials": [3], "finish": "brocade", "normal_scale": 0.22},
+        "velvet": {"nodes": ["arsenaldo-surface-3", "arsenaldo-surface-4"], "materials": [5,6], "finish": "velvet", "normal_scale": 0.14},
+        "brass": {"nodes": ["arsenaldo-surface-5", "arsenaldo-surface-7"], "materials": [7,9], "finish": "engraved-brass", "normal_scale": 0.26},
+        "leather": {"nodes": ["arsenaldo-surface-10"], "materials": [12], "finish": "stitched-leather", "normal_scale": 0.16}
+      },
+      "budgets": {"max_triangles": 41000, "max_materials": 21, "max_texture_side": 512, "max_added_texture_mib": 8, "max_glb_mib": 16, "max_frame_regression_fraction": 0.08, "min_silhouette_iou": 0.98},
+      "vfx": {"max_facets": 0, "max_trail_segments": 6, "theme": "ice-wind-fire", "source_socket": "existing-authoritative-weapon-socket", "preserve_warning_geometry": true}
+    }
+  }
+}

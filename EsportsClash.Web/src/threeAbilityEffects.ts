@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { abilityVisualEnvelope, type AbilityVisualStyle } from './abilityVisualEvolution.ts';
 import { AVATAR_ANIMATION_MOTIFS } from './avatarSkillAnimation.ts';
 import { KAELEN_INVOKED_SPELLS } from './kaelenAbilities.ts';
 import { kaelenCastPosition, type KaelenCast } from './kaelenSpellRuntime.ts';
@@ -18,7 +19,7 @@ export type AbilitySpell = Point & { readonly id: string; readonly radius: numbe
   readonly abilitySlot?: string; readonly sourceX?: number; readonly sourceY?: number;
   readonly sourceUnitId?: string; readonly targetUnitId?: string; readonly sourceHeight?:number; readonly kaelenCast?: Readonly<KaelenCast> };
 export type AbilitySource = Point & { readonly id: string; readonly isAlive?: boolean;
-  readonly visualEvolution?: {readonly version:number;readonly facet_count:number;readonly trail_segments:number;readonly accent_height:number};
+  readonly visualEvolution?: {readonly version:number;readonly facet_count:number;readonly trail_segments:number;readonly accent_height:number;readonly ability_style?:AbilityVisualStyle};
   readonly champion?: {readonly name:string}; readonly weaponSocket?:WeaponSocket; readonly attackAge?:number;
   readonly dash?: { readonly kind: string; readonly remaining: number; readonly startX?: number; readonly startY?: number };
   readonly blackHole?: Point & { readonly remaining: number };
@@ -165,6 +166,17 @@ export class ArenaAbilityEffects {
       }
     }
     return mesh;
+  }
+  private finishExistingEffects(start: number, source: AbilitySource | undefined, phase: number) {
+    const envelope=abilityVisualEnvelope(source?.visualEvolution?.ability_style,phase);if(!envelope)return;
+    for(let index=start;index<this.used;index++){
+      const mesh=this.pool[index];
+      // Exact ground outlines and socket/endpoint placement stay unchanged.
+      if(mesh.geometry===this.geometry.ring)continue;
+      (mesh.material as THREE.MeshBasicMaterial).opacity*=envelope.opacity;
+      if(mesh.geometry===this.geometry.beam){mesh.scale.x*=envelope.taper;mesh.scale.z*=envelope.taper;}
+      else mesh.scale.multiplyScalar(.92+.08*envelope.taper);
+    }
   }
   private sparks(x: number, y: number, radius: number, age: number, color: string, count = 7) {
     const t = Math.min(1, Math.max(0, age)), fade = (1 - t) ** 1.3;
@@ -418,6 +430,7 @@ export class ArenaAbilityEffects {
       }
       const p = THREE.MathUtils.clamp(1 - s.duration / Math.max(.01, s.maxDuration), 0, 1), fade = Math.min(1, (1 - p) * 2.2);
       const warning = /warning|telegraph/.test(s.type ?? '');
+      const effectStart=this.used;
       const evolution=source?.visualEvolution;
       if(!warning&&evolution?.version===1&&[evolution.facet_count,evolution.accent_height].every(Number.isFinite)&&!s.halfWidth&&!s.halfHeight) {
         // Decorative facets stay inside the existing event outline and lifetime,
@@ -427,7 +440,7 @@ export class ArenaAbilityEffects {
           const facet=this.mesh('shard',s.color,fade*.35,[s.x+Math.cos(a)*radius,Math.max(1,Math.min(5,evolution.accent_height))*Math.sin(p*Math.PI)+2,s.y+Math.sin(a)*radius],[.7,1.5,.7]);facet.rotation.y=a;
         }
       }
-      if (this.invoked(s, second)) continue;
+      if (this.invoked(s, second)) {if(!warning)this.finishExistingEffects(effectStart,source,p);continue;}
       // Exact footprints stay as outlines; opaque fills no longer cover the fight.
       if (s.halfWidth && s.halfHeight) {
         const w = s.halfWidth, h = s.halfHeight;
@@ -440,9 +453,14 @@ export class ArenaAbilityEffects {
       const tip=source?.weaponSocket?.tip;
       const resolved = source ? { ...s, sourceX: tip?.[0]??source.x, sourceY: tip?.[2]??source.y,sourceHeight:tip?.[1] } : s;
       if (!drawSpellDetail(this.details, resolved, p, second, fade, source)) this.burst(resolved, abilityEffectStyle(s), p, second, fade);
+      this.finishExistingEffects(effectStart,source,p);
     }
     for (const unit of sources) drawDashDetail(this.details, unit, second);
-    for (const p of projectiles) this.projectile(p, second, sources.find(unit => unit.id === p.attackerId));
+    for (const p of projectiles) {
+      const source=sources.find(unit=>unit.id===p.attackerId),start=this.used;
+      this.projectile(p,second,source);
+      this.finishExistingEffects(start,source,.35);
+    }
     const activeTrails=new Set<string>();
     for(const unit of sources){
       const socket=unit.weaponSocket,age=unit.attackAge;

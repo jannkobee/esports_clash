@@ -18,7 +18,9 @@ class EvolutionDashboardController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate(['email' => ['required', 'email'], 'password' => ['required', 'string']]);
-        if (! Auth::attempt([...$credentials, 'is_evolution_admin' => true])) {
+        $attempted = Auth::attempt([...$credentials, 'is_evolution_admin' => true]);
+        \Log::debug('login attempt', ['email' => $credentials['email'], 'result' => var_export($attempted, true)]);
+        if (! $attempted) {
             throw ValidationException::withMessages(['email' => 'The owner email or password is incorrect.']);
         }
         $request->session()->regenerate();

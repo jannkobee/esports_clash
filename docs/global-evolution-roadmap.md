@@ -1,5 +1,7 @@
 # Esports Clash: combined online product and evolution roadmap
 
+**Latest owner steering (2026-10-18):** pause TRELLIS.2/GGUF implementation and use the [supplied Arsenaldo model](arsenaldo-supplied-model.md). The visual-generation schedule is paused; ML remains independent. Resume generative art only after official DINOv3 access and real low-memory inference/rig/browser qualification. The supplied GLB is static, with no skeletal clips; earlier animated variants remain selectable.
+
 Latest owner priority: Part 6 **Autonomous Avatar Model Evolution** now precedes remaining ML validation and wallet/Ranked work. Its independent procedural/Blender worker, first five-candidate Arsenaldo cycle, Laravel owner review/release history and rollback are implemented and deployed locally. The five compatible experiments await owner review; no overall artistic-improvement claim or automatic publishing. See [avatar-evolution.md](avatar-evolution.md). Continuous ML remains independent and its outstanding validation is deferred.
 
 Decision date: 2026-10-18, Asia/Manila.
@@ -92,3 +94,42 @@ Added this combined source-backed roadmap and linked it from the existing evolut
 ## ML operations implementation update
 
 The Blade relocation is complete. The prioritized ML operations milestone is deployed locally and undergoing complete independent cycle validation. Resource budgets, fitting-only compatible replay, actual checkpoints, safe reference-aware retention and native owner controls are implemented; measured fitting memory and crash recovery evidence are recorded in [ml-operations.md](ml-operations.md). The owner has deferred further speed tuning. The two-hour schedule and 48-hour review window are preserved. Wallet/packs, Ranked, broader learning, validated alternative patches and production release remain subsequent milestones. No candidate is promoted by this update.
+
+## 2026-10-19: Asset Preparation pipeline and cancellation
+
+Implemented/deployed: separate Laravel preparation studio; continuous completed-source admission; native per-character skeleton/clip transfer candidates; constrained attachment regions; editable exports; explicit geometry/game-renderer qualification; identity/equipment review; existing immutable publication/canary/rollback path; per-job/bulk cancellation and durable stop acknowledgement. Outcome/quality/browser verification and feature-test execution remain deferred. No candidate qualification or live promotion is claimed. Remaining: qualify actual roster candidates, repair profile/topology/appendage failures, establish broader runtime/performance evidence, then publish only eligible reviewed versions. See avatar-asset-preparation.md.
+
+## 2026-10-19: UniRig provider, owner-started visual jobs and report deletion
+
+Owner selected UniRig. Added isolated pinned provider, actual skeleton/skin stages, reviewed native animation retargeting boundary and shared GPU lease with TRELLIS. Removed automatic visual job admission/schedule controls across generation/preparation/enhancements; ML automation remains. Added owner-only report deletion/redaction with active/review guards and recovery tombstones. Official checkpoints are provisioned; native build/readiness is distinct from actual inference. No visual job or runtime qualification is started automatically. Remaining model work is owner-requested rigging, mapping/profile repair where needed, qualification, then eligible publication. See unirig-manual-visual-workflows.md.
+
+
+## 2026-10-19: Owner content studio
+
+Avatar management and Item management added to Laravel: versioned editable drafts, per-skill gameplay / VFX / animation prompts, avatar / item appearance briefs, structured stats, manual item creation, validation, review completeness, exports and restore. Existing-avatar appearance prompts hand off to manual 3D concept workflow. See `content-management.md`. Live custom-content publishing, arbitrary new-mechanic code generation and an autonomous concept-image provider remain future work; no visual automation re-enabled.
+
+
+## 2026-10-19: Asset Preparation visibility and report cleanup
+
+Live catalog publishing paused at owner request. Asset Preparation now has a real observed ten-stage tracker, explanations, timestamps, bounded transition history and labeled resource samples, plus confirmed atomic bulk preparation-report deletion. Existing manual qualification/publication, cancellation acknowledgements and asset rollback metadata remain protected. Migration 9 deployed; 79 backend tests / 852 assertions and browser UI checks pass. See `preparation-progress-and-deletion.md` for scope and the resource-wait observation. This does not establish successful inference/rigging qualification.
+
+
+## 2026-10-19: Preparation lifecycle controls
+
+Pause (confirmed dual-worker stop), Resume and stop-before-Retry added with unique linked attempts, pending-request cancellation, bounded admission recovery and report-deletion protection. Migration 10 deployed; 85 tests / 912 assertions and Blade compilation pass. Native model-memory checkpointing is not provided: unfinished work may repeat. Owner authorized Dawnna continuation; the next blocker is the ~8 GiB Docker VM cap and Windows host memory pressure. A 10 GiB WSL cap / global VM restart is prepared for review and has not been applied. See `preparation-pause-resume-retry.md`.
+
+## 2026-10-19: Approved maintenance applied; actual UniRig inference
+
+The owner approved the prepared WSL change and confirmed apps closed. The 10 GiB cap/restart is now applied and original services restored, superseding the earlier pending note. Dawnna actually produced a predicted skeleton and skin weights after compatible extraction, bit-identical inference-only checkpoint and single-file handoff repairs. Material-export compatibility and subsequent animation/runtime qualification are tracked in `wsl-memory-dawnna-continuation.md`. Live model remains protected. ML automation remains enabled; its restored study failed a historical evidence integrity check and produced no proposal. No live catalog publishing work resumed.
+
+Dawnna actual outcome: rigging and ten native clips exported, but qualification rejected skin coverage/clipping and the game helper-node hierarchy. No live deployment. Next asset milestone is attachment/helper preservation and skin/deformation repair followed by fresh qualification and identity review. Specific errors/partial evidence now survive failures. See `wsl-memory-dawnna-continuation.md`.
+
+## 2026-10-19: Prepared-model repairs and completed-source guard
+
+Fixed real helper hierarchy/coordinate handling, explicit native-clip playback, Blender helper weight false positive, and Laravel's missing viewer module. Completed generated GLBs now block duplicate generation in UI/backend including report-deletion tombstones. Actual Dawnna renders successfully, but sampled clipping and texture quality remain unresolved; no live publication. Deleted/redacted source/preparation records block a fresh tracked retry until clarified. See `avatar-preparation-repairs-20261019.md` for implementation, validation and the higher-precision texture diagnostic lead.
+
+Final repair checks pass: 451 game tests plus 3 simulations/TypeScript, production build, 86 backend tests / 925 assertions. Owner confirmed intentional report/settings cleanup; no history restoration or ML re-enablement. Candidate still requires clipping/texture repair and human review before deployment.
+
+Clickable generation cards completed: per-avatar status/history with scoped 10-second refresh, owner protection and existing output links, no admission on click or deleted-report restoration. 14 generation tests / 108 assertions and actual 45-card browser navigation pass. Higher-precision texture comparison remains a separate active repair.
+
+Texture corruption fixed for the verified 512 profile: matched local Q4/Q8 comparison, Q4 geometry plus pinned Q8 texture deployed, source surfaces preserved, original assets retained. Existing rigged-model clipping remains unresolved and prevents publication. Cards also open scoped status pages. Evidence and remaining boundaries: `trellis-texture-precision-repair.md` and `trellis-texture-comparison.html`. No visual automation, deleted-report restoration or ML setting change.

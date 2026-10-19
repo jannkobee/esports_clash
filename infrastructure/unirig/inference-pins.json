@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "source_path": "skin/articulation-xl/model.ckpt",
+  "source_sha256": "9d40cf42fb9d4c10d8b373d9f4f557c6fbbc5ebacae7ae6b3dce5a0d8a18bc33",
+  "path": "skin/articulation-xl/inference-only.ckpt",
+  "sha256": "337f05c775107f85f72447af1335fcafbfbab10fc47e398dd287d32fde16166e",
+  "bytes": 1458565200,
+  "model_tensor_digest": "7253154495693e4278c7b5cccf87bc716d95bfe5378cb50e83413e2d365af798",
+  "model_tensor_bytes": 1457985356,
+  "model_tensor_count": 1156,
+  "removed_training_keys": [
+    "optimizer_states",
+    "lr_schedulers"
+  ],
+  "torch": "2.5.1+cu124",
+  "scope": "Exact model weights and remaining Lightning metadata preserved; training optimizer/scheduler state removed for prediction only."
+}

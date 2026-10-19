@@ -1,0 +1,65 @@
+import {readFile,writeFile,mkdir,lstat,readdir} from 'node:fs/promises';
+import {join} from 'node:path';
+import {spawn} from 'node:child_process';
+import {sha} from './glb.mjs';
+
+export async function preparationEngine(){
+  const files=['prepare-avatar.py','retarget-unirig.py','qualify-prepared.py','preparation-job.mjs','preparation-server.mjs','browser.mjs','glb.mjs','package-lock.json'];
+  const manifest=await Promise.all(files.map(async name=>[name,sha(await readFile(join(import.meta.dirname,name)))]));
+  const assets='/workspace/EsportsClash.Web/avatar-review-dist/assets';
+  for(const name of (await readdir(assets)).sort())manifest.push([name,sha(await readFile(join(assets,name)))]);
+  return sha(JSON.stringify(manifest));
+}
+export async function preparationRequest(path,request,response,ctx){
+  const {root,children,reply,json,uuid,atomic,stopOwnedJob,catalog}=ctx;
+  if(path==='/preparations/operations'){
+    reply(response,200,{engine_sha256:await preparationEngine(),profiles:['humanoid-template-v1','custom-template-v1'],validation_default:'deferred',active:[...children.keys()]});return true;
+  }
+  const match=path.match(/^\/preparations\/([a-f0-9-]+)(?:\/(cancel|validate))?$/);
+  if(!match)return false;if(!uuid.test(match[1]))throw Error('Invalid preparation identifier');
+  const id=match[1],folder=join(root,id),file=join(folder,'state.json');
+  if(match[2]==='cancel'&&request.method==='POST'){
+    await mkdir(folder,{recursive:true});await writeFile(join(folder,'cancelled.json'),JSON.stringify({at:new Date().toISOString()}));
+    const child=children.get(id);if(child){await stopOwnedJob(child.pid);await new Promise(resolve=>child.exitCode!==null||child.signalCode!==null?resolve():child.once('exit',resolve));children.delete(id);}
+    let state={};try{state=JSON.parse(await readFile(file,'utf8'));}catch{}
+    state={...state,id,status:'cancelled',stage:'cancelled',publication_eligible:false};await atomic(file,state);reply(response,200,state);return true;
+  }
+  if(request.method==='GET'){reply(response,200,JSON.parse(await readFile(file,'utf8')));return true;}
+  if(request.method!=='POST'){reply(response,405,{error:'POST required'});return true;}
+  try{await lstat(join(folder,'cancelled.json'));reply(response,200,{id,status:'cancelled'});return true;}catch(e){if(e.code!=='ENOENT')throw e;}
+  if(match[2]==='validate'){
+    const state=JSON.parse(await readFile(file,'utf8'));
+    if(!['awaiting_validation','needs_review'].includes(state.status)){reply(response,409,{error:'Preparation is not awaiting qualification'});return true;}
+    await writeFile(join(folder,'validate.json'),JSON.stringify({requested_at:new Date().toISOString()}));
+    await atomic(file,{...state,status:'queued',stage:'validation_requested'});reply(response,202,{id,status:'queued'});return true;
+  }
+  const plan=await json(request),meta=catalog.avatars.find(a=>a.id===plan.avatar_id);
+  if(plan.version!==1||!meta||!uuid.test(plan.generation_id)||!/^[a-f0-9]{64}$/.test(plan.source_sha256)||plan.engine_sha256!==await preparationEngine()
+    ||plan.donor_sha256!==meta.sha256||plan.provider!=='unirig'||plan.profile!=='unirig-v1'||!/^[a-f0-9]{64}$/.test(plan.unirig_engine_sha256)||!Number.isFinite(plan.yaw)||Math.abs(plan.yaw)>180
+    ||!Number.isInteger(plan.storage_gib)||plan.storage_gib<1||plan.storage_gib>20||!Array.isArray(plan.attachments)||plan.attachments.length>32)throw Error('Unsupported frozen asset preparation plan');
+  if(plan.baseline&&(!uuid.test(plan.baseline.run_id)||!/^candidate-\d{2}\.glb$/.test(plan.baseline.file)||!/^[a-f0-9]{64}$/.test(plan.baseline.sha256)))throw Error('Invalid frozen baseline');
+  if(!plan.bone_map||typeof plan.bone_map!=='object'||Array.isArray(plan.bone_map)&&plan.bone_map.length||Object.keys(plan.bone_map).length>17||Object.values(plan.bone_map).some(name=>typeof name!=='string'||!name.match(/^[A-Za-z0-9_.:\/-]{1,100}$/)))throw Error('Invalid reviewed retarget mapping');
+  for(const a of plan.attachments)if(!a||!/^[A-Za-z][A-Za-z0-9_.-]{0,79}$/.test(a.bone)||!['min','max'].every(k=>Array.isArray(a[k])&&a[k].length===3&&a[k].every(v=>typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=1))||a.min.some((v,i)=>v>=a.max[i]))throw Error('Invalid rigid attachment region');
+  await mkdir(folder,{recursive:true});
+  let state;
+  try{const frozen=JSON.parse(await readFile(join(folder,'preparation-plan.json'),'utf8'));if(JSON.stringify(frozen)!==JSON.stringify(plan))throw Error('Preparation plan is immutable');state=JSON.parse(await readFile(file,'utf8'));}
+  catch(e){if(e.code!=='ENOENT')throw e;await atomic(join(folder,'preparation-plan.json'),plan);state={id,status:'queued',stage:'preparing',publication_eligible:false};await atomic(file,state);}
+  if(['cancelled','failed','ready','needs_review','awaiting_retarget','awaiting_validation'].includes(state.status)){reply(response,200,state);return true;}
+  if(children.has(id)){reply(response,202,state);return true;}
+  if(!ctx.claim()){reply(response,409,{error:'One bounded asset worker is already active'});return true;}
+  try{
+    const resource=await ctx.resource(),used=await ctx.storageBytes();if(resource.available_vm_mib<2048||resource.anonymous_mib>900||used>=plan.storage_gib*1024**3){await atomic(file,{...state,status:'waiting_resources',stage:'resource_admission'});reply(response,200,{...state,status:'waiting_resources'});return true;}
+    // Recheck the tombstone after asynchronous admission, immediately before spawn.
+    try{await lstat(join(folder,'cancelled.json'));reply(response,200,{id,status:'cancelled'});return true;}catch(e){if(e.code!=='ENOENT')throw e;}
+    let launches=0;try{launches=JSON.parse(await readFile(join(folder,'preparation-starts.json'),'utf8')).count;}catch(e){if(e.code!=='ENOENT')throw e;}
+    if(launches>=4){await atomic(file,{...state,status:'failed',error:'Bounded recovery attempts exhausted; create a new preparation.'});reply(response,200,{...state,status:'failed'});return true;}
+    await atomic(join(folder,'preparation-starts.json'),{count:launches+1});
+    try{await lstat(join(folder,'cancelled.json'));reply(response,200,{id,status:'cancelled'});return true;}catch(e){if(e.code!=='ENOENT')throw e;}
+    const child=spawn('node',['--max-old-space-size=256',join(import.meta.dirname,'preparation-job.mjs'),folder],{stdio:['ignore','ignore','pipe'],detached:true});children.set(id,child);
+    let errors='';child.stderr.on('data',chunk=>{errors=(errors+chunk).slice(-2000);});
+    const timer=setTimeout(()=>void stopOwnedJob(child.pid),20*60*1000);
+    child.once('exit',async (code,signal)=>{clearTimeout(timer);children.delete(id);try{await lstat(join(folder,'cancelled.json'));return;}catch{}
+      if(code!==0){const last=JSON.parse(await readFile(file,'utf8'));await atomic(file,{...last,status:'failed',error:last.error||errors||`Preparation subprocess stopped (exit ${code}, signal ${signal??'none'}); source retained.`});}});
+    reply(response,202,state);return true;
+  }finally{ctx.release();}
+}

@@ -1,3 +1,4 @@
+import { captureUnitCollisionStarts, resolveArenaUnitCollisions } from './arenaUnitCollision.ts';
 import { isInsideHealingWell } from './baseSafetyRules.ts';
 import { barracksPosition, minionSpawnPosition, advanceLaneMinion } from './arenaLandform.ts';
 import { INNER_TOWER_X, OUTER_TOWER_X } from './arenaLayout.ts';
@@ -528,6 +529,8 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     });
   }
 
+  const crowdStarts = captureUnitCollisionStarts([...sim.champions, ...sim.minions]);
+
   // 2. Boss & Jungle Spawns
   if (shouldAwakenGolem(now, sim.golemAwakened)) {
     const colossus = sim.jungleCamps.find(c => c.type === 'siege_golem');
@@ -999,6 +1002,11 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
       sim.champions.filter(c => c.team === slayerTeam).forEach(c => { c.gold += 300; });
     }
   }
+  resolveArenaUnitCollisions(sim.champions, sim.minions, [
+    ...sim.jungleCamps.map(unit => ({ ...unit, radius: unit.type === 'siege_golem' ? 32 : 23 })),
+    { ...sim.dragon, id: 'dragon:collision', radius: 32 },
+  ], crowdStarts, dt);
+
 }
 
 function damageStructure(sim: SimulationState, structure: LaneStructure, damage: number): void {

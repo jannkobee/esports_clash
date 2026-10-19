@@ -1,0 +1,12 @@
+FROM teamfight-trellis2:texture-q8-guided
+# Diagnostic control only. Never tagged as the production worker.
+RUN python - <<'PY'
+from pathlib import Path
+import json
+p=Path('/opt/ComfyUI/custom_nodes/ComfyUI-Trellis2-GGUF/trellis2_gguf/pipelines/trellis2_image_to_3d.py')
+s=p.read_text();needle="gguf_quant='Q8_0',  # Pinned texture precision; shape remains Q4."
+assert s.count(needle)==1
+p.write_text(s.replace(needle,"gguf_quant='Q4_K_M',  # Explicit texture control experiment."))
+for name in ['limits.json','model-pins.json']:
+ p=Path('/opt/trellis')/name;d=json.loads(p.read_text());d['texture_quantization']='Q4_K_M';p.write_text(json.dumps(d,indent=2))
+PY

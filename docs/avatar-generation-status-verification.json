@@ -1,0 +1,7 @@
+{
+  "clickable_cards": 45,
+  "image_navigation": true,
+  "avatar_status_url": "http://localhost:8089/evolution/avatars/trellis/avatar/c_solana",
+  "scoped_refresh": "http://localhost:8089/evolution/avatars/trellis/live?avatar_id=c_solana",
+  "no_job_started": true
+}

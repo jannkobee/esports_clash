@@ -1,0 +1,21 @@
+{
+  "owner_login": true,
+  "initial": {
+    "reports": 1,
+    "eligible": 0,
+    "busy": 1,
+    "progress": 1,
+    "forms": true
+  },
+  "selection_preserved": true,
+  "client_only_selection_fixture": true,
+  "open_details_preserved": true,
+  "confirmation_required": true,
+  "mobile": {
+    "viewport": 390,
+    "content": 390
+  },
+  "no_delete_submitted": true,
+  "no_preparation_started": true,
+  "verified_at": "2026-10-19T05:19:18.379Z"
+}

@@ -1,0 +1,18 @@
+{
+  "version":1,
+  "concurrency":1,
+  "quantization":"Q4_K_M",
+  "texture_quantization":"Q8_0",
+  "resolution":512,
+  "sampling_steps":12,
+  "texture_size":1024,
+  "max_tokens":16384,
+  "max_generation_seconds":1800,
+  "max_process_ram_mib":4608,
+  "ram_budget_metric":"worker_anonymous_mib",
+  "min_vm_available_mib":5376,
+  "max_gpu_used_mib":11000,
+  "min_gpu_free_mib":8500,
+  "max_glb_bytes":33554432,
+  "unload_after_generation":true
+}

@@ -5,8 +5,9 @@ import { ARENA_WIDTH, DRAGON_X, NEXUS_TOWER_X, CENTRAL_MAP_OFFSET } from './aren
 export { ARENA_WIDTH, LANE_Y, WELL_X, NEXUS_X, BARRACKS_X, NEXUS_TOWER_X, INNER_TOWER_X, OUTER_TOWER_X, DRAGON_X } from './arenaLayout.ts';
 export const DRAGON_SPAWN_SECOND = 4 * 60;
 
-export function shouldSeparateUnitsByTeam(teamA: 'blue' | 'red', teamB: 'blue' | 'red'): boolean {
-  return teamA !== teamB;
+export function shouldSeparateUnitsByTeam(_teamA: 'blue' | 'red', _teamB: 'blue' | 'red'): boolean {
+  // Owner explicitly replaced allied pass-through with sliding on 2026-10-18.
+  return true;
 }
 
 // Each camp has one rocky enclosure with a lane-facing entrance. The boss

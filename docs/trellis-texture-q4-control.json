@@ -1,0 +1,16 @@
+{
+  "artifact": {
+    "file": "c56e183b-85fd-48df-8d58-a30ae442998a.glb",
+    "sha256": "d75d4dd6081a7617844563924064f2a70912c906d5682f440c291b53cfff0621",
+    "bytes": 4576548,
+    "meshes": 1,
+    "materials": 1,
+    "images": 2,
+    "skins": 0,
+    "animations": 0,
+    "publication_eligible": false,
+    "qualification": "Generated source only. Blender binding, identity, animations and real-browser performance qualification are still required."
+  },
+  "seconds": 161.71482187999936,
+  "publication_eligible": false
+}

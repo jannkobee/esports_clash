@@ -2,10 +2,14 @@ FROM php:8.3-cli-bookworm
 RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev libonig-dev libxml2-dev libsqlite3-dev unzip git libzip-dev \
     && docker-php-ext-install pdo_pgsql pdo_sqlite mbstring dom xml xmlwriter zip pcntl \
     && rm -rf /var/lib/apt/lists/*
+RUN pecl install redis-6.3.0 && docker-php-ext-enable redis
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY infrastructure/evolution/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 WORKDIR /app
 COPY EsportsClash.Api/composer.json EsportsClash.Api/composer.lock ./
 RUN composer install --no-scripts --prefer-dist --no-interaction
 COPY EsportsClash.Api/ ./
+COPY infrastructure/trellis2/references/ /app/resources/avatars/generation-references/
+COPY infrastructure/trellis2/reference-index.json /app/resources/avatars/generation-reference-index.json
 RUN touch .env && composer dump-autoload --optimize --no-scripts
 CMD ["php", "artisan", "serve", "--no-reload", "--host=0.0.0.0", "--port=8000"]

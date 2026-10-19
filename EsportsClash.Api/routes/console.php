@@ -44,6 +44,7 @@ Artisan::command('evolution:recover', function (\App\Services\EvolutionService $
         $settings = \App\Models\EvolutionSetting::lockForUpdate()->findOrFail(1);
         foreach ($records as $record) {
             if (! \Illuminate\Support\Str::isUuid($record['id'])) throw new \RuntimeException('Invalid recovery run ID');
+            if(\App\Models\EvolutionRun::withTrashed()->where('id',$record['id'])->whereNotNull('deleted_at')->exists())continue;
             $state = $record['state'];
             $run = \App\Models\EvolutionRun::firstOrCreate(['id' => $record['id']], ['plan' => $record['plan'],
                 'status' => $state['status'], 'progress' => $state['progress'] ?? [], 'result' => $state['result'] ?? null,
@@ -93,7 +94,61 @@ Artisan::command('online:recover', function () {
 
 Artisan::command('avatars:tick',function(\App\Services\AvatarEvolutionService $service){
     $settings=\App\Models\AvatarEvolutionSetting::current();$settings->update(['heartbeat_at'=>now()]);
-    foreach(\App\Models\AvatarEvolutionRun::whereIn('status',$service::ACTIVE)->where('updated_at','<',now()->subMinute())->pluck('id') as $id)\App\Jobs\PollAvatarEvolution::dispatch($id);
-    $service->start('avatar-scheduler',scheduled:true);
-})->purpose('Keep the independent avatar generator scheduled and recover its polls');
+    if(!config('avatars.engine_ready'))return;
+    foreach(\App\Models\AvatarEvolutionRun::whereIn('status',[...$service::ACTIVE,'complete'])->where('updated_at','<',now()->subMinute())->pluck('id') as $id)\App\Jobs\PollAvatarEvolution::dispatch($id);
+    foreach(\App\Models\AvatarVisualRelease::where('active',true)->whereNotNull('source_sha256')->where(function($query){$query->whereNull('last_checked_at')->orWhere('last_checked_at','<',now()->subMinutes(5));})->pluck('id')as $id)\App\Jobs\CheckAvatarVisualHealth::dispatch($id);
+    if(!$settings->maintenance_at||$settings->maintenance_at->isBefore(now()->subHour())){\App\Jobs\MaintainAvatarArtifacts::dispatch();$settings->update(['maintenance_at'=>now()]);}
+    // Visual work is owner-started only. Recover existing requested jobs and
+    // monitor published releases, but never admit a scheduled enhancement.
+})->purpose('Recover requested enhancement jobs and monitor existing visual releases');
 \Illuminate\Support\Facades\Schedule::command('avatars:tick')->everyMinute()->withoutOverlapping(2);
+
+Artisan::command('trellis:recover',function(){
+    if(!\Illuminate\Support\Facades\Schema::hasTable('trellis_generations'))return;
+    foreach(\App\Models\TrellisGeneration::whereIn('status',\App\Services\TrellisGenerationService::ACTIVE)->where('updated_at','<',now()->subMinute())->pluck('id')as $id)\App\Jobs\PollTrellisGeneration::dispatch($id);
+})->purpose('Recover durable TRELLIS.2 generation polling without restarting completed inference');
+\Illuminate\Support\Facades\Schedule::command('trellis:recover')->everyMinute()->withoutOverlapping(2);
+
+Artisan::command('avatars:recover-cancellations',function(){
+    foreach(\App\Services\AvatarJobCancellationService::TYPES as $type=>$model){
+        if(!\Illuminate\Support\Facades\Schema::hasTable((new $model)->getTable()))continue;
+        foreach($model::whereIn('status',$type==='preparation'?['cancelling','pausing']:['cancelling'])->pluck('id')as $id)\App\Jobs\CancelAvatarJob::dispatch($type,$id);
+    }
+})->purpose('Retry cancellation until the owning worker acknowledges the stop');
+\Illuminate\Support\Facades\Schedule::command('avatars:recover-cancellations')->everyMinute()->withoutOverlapping(2);
+
+Artisan::command('avatars:recover-preparations',function(){
+    if(!\Illuminate\Support\Facades\Schema::hasTable('avatar_preparations'))return;
+    foreach(\App\Models\AvatarPreparation::whereIn('status',\App\Services\AvatarPreparationService::ACTIVE)->where('updated_at','<',now()->subMinute())->pluck('id')as $id)\App\Jobs\PollAvatarPreparation::dispatch($id);
+    foreach(\App\Models\AvatarPreparation::whereIn('status',['paused','cancelled'])->whereIn('control->intent',['resume','retry'])->whereNull('control->replacement_id')->pluck('id')as $id)\App\Jobs\RestartAvatarPreparation::dispatch($id);
+    // No automatic source admission: the owner queues preparations explicitly.
+})->purpose('Recover durable preparation polls without publishing unqualified assets');
+\Illuminate\Support\Facades\Schedule::command('avatars:recover-preparations')->everyMinute()->withoutOverlapping(2);
+
+Artisan::command('avatars:manual-only',function(){
+    \App\Models\AvatarEvolutionSetting::current()->update(['enabled'=>false]);
+    \App\Models\AvatarPreparationSetting::current()->update(['enabled'=>false]);
+    $ids=\Illuminate\Support\Facades\DB::table('evolution_audits')->whereIn('actor',['preparation-scheduler','avatar-scheduler'])->pluck('subject_id');
+    $service=app(\App\Services\AvatarJobCancellationService::class);$count=0;
+    foreach(['preparation','enhancement']as $type){$model=$service::TYPES[$type];foreach($model::whereIn('id',$ids)->whereIn('status',$service::CANCELLABLE)->pluck('id')as $id){$service->request($type,$id,'owner-manual-only');$count++;}}
+    $this->info('Visual admission disabled; automatic visual jobs requested to stop: '.$count.'. ML automation unchanged.');
+})->purpose('Disable visual automation and stop its outstanding jobs without touching ML');
+
+
+Artisan::command('content:import', function (\App\Services\ContentManagementService $service) {
+    $owner=\App\Models\User::where('is_evolution_admin',true)->orderBy('id')->first();
+    if (!$owner) { $this->error('Create an owner account first.'); return 1; }
+    foreach (['avatar','item'] as $kind) {
+        $count=$service->import($kind,$owner->id);
+        $this->info("Imported $count $kind drafts; existing drafts preserved.");
+    }
+})->purpose('Copy current avatars and item snapshot into owner-managed drafts; never publishes or starts jobs');
+
+
+Artisan::command('avatars:preparation-control {id} {operation}',function(\App\Services\AvatarPreparationControlService $controls,\App\Services\AvatarPreparationService $service){
+    if(!\Illuminate\Support\Str::isUuid($this->argument('id'))||!in_array($this->argument('operation'),['pause','resume','retry','qualify'],true)){$this->error('Use a preparation UUID and pause, resume, retry or qualify.');return 1;}
+    $run=\App\Models\AvatarPreparation::findOrFail($this->argument('id'));
+    if($this->argument('operation')==='qualify')$service->validate($run,'owner:server-cli');
+    else $controls->request($run,$this->argument('operation'),'owner:server-cli');
+    $this->info('Explicit owner control requested: '.$this->argument('operation').' for '.$run->id);
+})->purpose('Explicit manual preparation control; no automatic avatar admission');

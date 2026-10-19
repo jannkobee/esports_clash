@@ -1,0 +1,893 @@
+{
+  "source": "EsportsClash.Web/src/itemsData.ts",
+  "source_sha256": "b493fbd04d47dd679deca4b752decb6c3806e421d3d91aefe16fabc7d310f3d0",
+  "items": [
+    {
+      "id": "item_guardians_blade",
+      "name": "Sentinel's Blade",
+      "cost": 500,
+      "tier": "Starting",
+      "icon": "⚔️",
+      "stats": {
+        "ad": 25,
+        "hp": 150,
+        "haste": 10
+      },
+      "passiveName": "Warpath",
+      "passiveDesc": "+10 Ability Haste and early health for lane skirmishes.",
+      "suitableRoles": [
+        "Fighter",
+        "Marksman",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_guardians_orb",
+      "name": "Aegis Orb",
+      "cost": 500,
+      "tier": "Starting",
+      "icon": "🔮",
+      "stats": {
+        "ap": 45,
+        "hp": 150,
+        "haste": 10,
+        "mana": 55,
+        "manaRegen": 1.5
+      },
+      "passiveName": "Essence Flow",
+      "passiveDesc": "Restores mana over time and empowers poke spells.",
+      "suitableRoles": [
+        "Mage",
+        "Support"
+      ]
+    },
+    {
+      "id": "item_guardians_horn",
+      "name": "Bastion Horn",
+      "cost": 500,
+      "tier": "Starting",
+      "icon": "🛡️",
+      "stats": {
+        "hp": 180
+      },
+      "passiveName": "Unyielding",
+      "passiveDesc": "Reduces damage taken from attacks and spells by 15 flat.",
+      "suitableRoles": [
+        "Tank",
+        "Support",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_guardians_hammer",
+      "name": "Siphon Mallet",
+      "cost": 500,
+      "tier": "Starting",
+      "icon": "🔨",
+      "stats": {
+        "ad": 25,
+        "hp": 150
+      },
+      "passiveName": "Vampiric Drain",
+      "passiveDesc": "Grants +7% Lifesteal to sustain through minion waves.",
+      "suitableRoles": [
+        "Marksman",
+        "Fighter",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_bf_sword",
+      "name": "Colossal Greatsword",
+      "cost": 1300,
+      "tier": "Component",
+      "icon": "🗡️",
+      "stats": {
+        "ad": 40
+      },
+      "passiveName": "Raw Power",
+      "passiveDesc": "+40 Attack Damage weapon spike.",
+      "suitableRoles": [
+        "Marksman",
+        "Fighter",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_lost_chapter",
+      "name": "Forgotten Grimoire",
+      "cost": 1100,
+      "tier": "Component",
+      "icon": "📖",
+      "stats": {
+        "ap": 40,
+        "haste": 10,
+        "mana": 90,
+        "manaRegen": 1.8
+      },
+      "passiveName": "Insight",
+      "passiveDesc": "+40 AP and mana surge upon level up.",
+      "suitableRoles": [
+        "Mage",
+        "Support"
+      ]
+    },
+    {
+      "id": "item_serrated_dirk",
+      "name": "Jagged Stiletto",
+      "cost": 1000,
+      "tier": "Component",
+      "icon": "🔪",
+      "stats": {
+        "ad": 30,
+        "lethality": 10
+      },
+      "passiveName": "Lethality",
+      "passiveDesc": "Armor penetration and lethal skirmish damage.",
+      "suitableRoles": [
+        "Assassin",
+        "Marksman",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_bami_cinder",
+      "name": "Ignis Ember",
+      "cost": 1000,
+      "tier": "Component",
+      "icon": "🔥",
+      "stats": {
+        "hp": 260
+      },
+      "passiveName": "Kindle",
+      "passiveDesc": "Grants early health and area wave burn.",
+      "suitableRoles": [
+        "Tank",
+        "Fighter",
+        "Support"
+      ]
+    },
+    {
+      "id": "item_chain_vest",
+      "name": "Reinforced Mail",
+      "cost": 800,
+      "tier": "Component",
+      "icon": "🛡️",
+      "stats": {
+        "armor": 40
+      },
+      "passiveName": "Plated Guard",
+      "passiveDesc": "+40 Armor defensive foundation.",
+      "suitableRoles": [
+        "Tank",
+        "Support",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_blasting_wand",
+      "name": "Ether Wand",
+      "cost": 850,
+      "tier": "Component",
+      "icon": "🪄",
+      "stats": {
+        "ap": 45
+      },
+      "passiveName": "Arcane Spark",
+      "passiveDesc": "+45 Ability Power poke amplification.",
+      "suitableRoles": [
+        "Mage",
+        "Support"
+      ]
+    },
+    {
+      "id": "item_recurve_bow",
+      "name": "Composite Longbow",
+      "cost": 700,
+      "tier": "Component",
+      "icon": "🏹",
+      "stats": {
+        "aspd": 0.2
+      },
+      "passiveName": "Steelfiber",
+      "passiveDesc": "+20% Attack Speed rapid fire.",
+      "suitableRoles": [
+        "Marksman",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_caulfield",
+      "name": "Striker's War Hammer",
+      "cost": 1100,
+      "tier": "Component",
+      "icon": "🔨",
+      "stats": {
+        "ad": 25,
+        "haste": 10
+      },
+      "passiveName": "Tempered Steel",
+      "passiveDesc": "+25 AD and +10 Ability Haste.",
+      "suitableRoles": [
+        "Fighter",
+        "Assassin",
+        "Marksman"
+      ]
+    },
+    {
+      "id": "item_last_whisper",
+      "name": "Piercing Whisper",
+      "cost": 1450,
+      "tier": "Component",
+      "icon": "🏹",
+      "stats": {
+        "ad": 20,
+        "armorPen": 18
+      },
+      "passiveName": "Armor Piercing",
+      "passiveDesc": "Ignores 18% of target Armor.",
+      "suitableRoles": [
+        "Marksman",
+        "Assassin",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_noonquiver",
+      "name": "Solar Quiver",
+      "cost": 1300,
+      "tier": "Component",
+      "icon": "🎯",
+      "stats": {
+        "ad": 30,
+        "aspd": 0.2
+      },
+      "passiveName": "Precision Fire",
+      "passiveDesc": "+30 AD and +20% Attack Speed rapid firing.",
+      "suitableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "item_infinity_edge",
+      "name": "Apex Edge",
+      "cost": 2200,
+      "tier": "Mythic",
+      "icon": "🗡️",
+      "stats": {
+        "ad": 80,
+        "crit": 25
+      },
+      "passiveName": "Perfection",
+      "passiveDesc": "Increases Critical Strike damage from 175% to 225%. Massive DPS hypercarry spike!",
+      "suitableRoles": [
+        "Marksman",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_kraken_slayer",
+      "name": "Leviathan Harpoon",
+      "cost": 1950,
+      "tier": "Legendary",
+      "icon": "🔱",
+      "stats": {
+        "ad": 45,
+        "aspd": 0.4,
+        "moveSpeed": 4
+      },
+      "passiveName": "Bring It Down",
+      "passiveDesc": "Every third Attack deals bonus physical damage On-Hit, increased based on their missing Health.",
+      "suitableRoles": [
+        "Marksman",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_ldr",
+      "name": "Goliath Slayer",
+      "cost": 1950,
+      "tier": "Legendary",
+      "icon": "🏹",
+      "stats": {
+        "ad": 45,
+        "crit": 25,
+        "armorPen": 35
+      },
+      "passiveName": "Giant Slayer",
+      "passiveDesc": "Ignores 35% of target Armor and deals up to +22% bonus damage against high-health tanks.",
+      "suitableRoles": [
+        "Marksman",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_bork",
+      "name": "Sovereign's Ruin",
+      "cost": 2075,
+      "tier": "Legendary",
+      "icon": "🗡️",
+      "stats": {
+        "ad": 40,
+        "aspd": 0.25,
+        "lifesteal": 10
+      },
+      "passiveName": "Mist's Edge",
+      "passiveDesc": "Basic attacks deal 9% of the target’s current HP as bonus physical damage on-hit.",
+      "suitableRoles": [
+        "Marksman",
+        "Fighter",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_mortal_reminder",
+      "name": "Fatal Verdict",
+      "cost": 1950,
+      "tier": "Legendary",
+      "icon": "⚔️",
+      "stats": {
+        "ad": 40,
+        "crit": 25,
+        "armorPen": 30
+      },
+      "passiveName": "Grievous Execution",
+      "passiveDesc": "Ignores 30% Armor and applies Grievous Wounds, cutting enemy healing and shields by 40%.",
+      "suitableRoles": [
+        "Marksman",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_phantom_dancer",
+      "name": "Ghoststep Rapier",
+      "cost": 1700,
+      "tier": "Legendary",
+      "icon": "💃",
+      "stats": {
+        "ad": 35,
+        "aspd": 0.6,
+        "crit": 25,
+        "moveSpeed": 7
+      },
+      "passiveName": "Spectral Waltz",
+      "passiveDesc": "Grants massive attack speed and ghosting for relentless kiting mobility.",
+      "suitableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "item_runaans",
+      "name": "Tempest Galebow",
+      "cost": 1700,
+      "tier": "Legendary",
+      "icon": "🌪️",
+      "stats": {
+        "aspd": 0.4,
+        "crit": 25,
+        "moveSpeed": 4
+      },
+      "passiveName": "Wind's Fury",
+      "passiveDesc": "Basic attacks fire secondary bolts at up to 2 nearby enemies for 40% damage with on-hit effects.",
+      "suitableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "item_terminus",
+      "name": "Equinox Cleaver",
+      "cost": 1950,
+      "tier": "Legendary",
+      "icon": "⚖️",
+      "stats": {
+        "ad": 35,
+        "aspd": 0.3,
+        "armorPen": 30
+      },
+      "passiveName": "Shadow & Light",
+      "passiveDesc": "Alternating attacks shred 30% enemy Armor & MR while granting +25 bonus defensive resistances.",
+      "suitableRoles": [
+        "Marksman",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_collector",
+      "name": "Bounty Collector",
+      "cost": 1950,
+      "tier": "Legendary",
+      "icon": "💰",
+      "stats": {
+        "ad": 55,
+        "crit": 20,
+        "lethality": 12
+      },
+      "passiveName": "Death & Taxes",
+      "passiveDesc": "Executes enemy champions falling below 5% HP and grants +25 extra bonus gold.",
+      "suitableRoles": [
+        "Marksman",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_deathcap",
+      "name": "Archmage's Diadem",
+      "cost": 2350,
+      "tier": "Mythic",
+      "icon": "👑",
+      "stats": {
+        "ap": 130
+      },
+      "passiveName": "Magical Opus",
+      "passiveDesc": "Increases total Ability Power by +35%. Pure annihilation burst!",
+      "suitableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "item_ludens",
+      "name": "Thunderclap Staff",
+      "cost": 1950,
+      "tier": "Legendary",
+      "icon": "⚡",
+      "stats": {
+        "ap": 90,
+        "haste": 20,
+        "mana": 130,
+        "manaRegen": 2.4
+      },
+      "passiveName": "Echo Burst",
+      "passiveDesc": "Spells detonate, discharging 110 + 10% AP magic burst to up to 3 nearby enemies.",
+      "suitableRoles": [
+        "Mage",
+        "Support"
+      ]
+    },
+    {
+      "id": "item_tempest_folio",
+      "name": "Tempest Folio",
+      "cost": 1625,
+      "tier": "Legendary",
+      "icon": "📘",
+      "stats": {
+        "ap": 65,
+        "haste": 25,
+        "mana": 180,
+        "manaRegen": 3
+      },
+      "passiveName": "Storm Reserve",
+      "passiveDesc": "A deep mana reserve and steady regeneration for repeated spell casts.",
+      "suitableRoles": [
+        "Mage",
+        "Support"
+      ]
+    },
+    {
+      "id": "item_zhonyas",
+      "name": "Hourglass of Stasis",
+      "cost": 1950,
+      "tier": "Legendary",
+      "icon": "⏳",
+      "stats": {
+        "ap": 80,
+        "armor": 45,
+        "haste": 15
+      },
+      "passiveName": "Golden Stasis",
+      "passiveDesc": "Upon lethal burst damage, enters golden invulnerability for 2.5s (90s CD).",
+      "suitableRoles": [
+        "Mage",
+        "Support",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_void_staff",
+      "name": "Void Piercer",
+      "cost": 1825,
+      "tier": "Legendary",
+      "icon": "🔮",
+      "stats": {
+        "ap": 75
+      },
+      "passiveName": "Dissolution",
+      "passiveDesc": "Ignores 40% of the target’s Magic Resistance.",
+      "suitableRoles": [
+        "Mage",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_sunfire",
+      "name": "Sunfire Bulwark",
+      "cost": 1825,
+      "tier": "Legendary",
+      "icon": "🔥",
+      "stats": {
+        "hp": 450,
+        "armor": 50
+      },
+      "passiveName": "Immolate",
+      "passiveDesc": "Constantly burns nearby enemy champions and minions for 35 magic damage/sec.",
+      "suitableRoles": [
+        "Tank",
+        "Fighter",
+        "Support"
+      ]
+    },
+    {
+      "id": "item_warmogs",
+      "name": "Titan's Heart",
+      "cost": 2025,
+      "tier": "Mythic",
+      "icon": "❤️",
+      "stats": {
+        "hp": 850,
+        "haste": 10
+      },
+      "passiveName": "Behemoth's Vigor",
+      "passiveDesc": "Rapidly regenerates 5% Max HP per second after 6 seconds out of combat.",
+      "suitableRoles": [
+        "Tank",
+        "Support",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_thornmail",
+      "name": "Thorned Cuirass",
+      "cost": 1750,
+      "tier": "Legendary",
+      "icon": "🌵",
+      "stats": {
+        "hp": 350,
+        "armor": 65
+      },
+      "passiveName": "Thorns",
+      "passiveDesc": "Reflects 25 + 10% bonus armor damage back to attackers and inflicts Grievous Wounds.",
+      "suitableRoles": [
+        "Tank",
+        "Support"
+      ]
+    },
+    {
+      "id": "item_steraks",
+      "name": "Colossus Gauntlet",
+      "cost": 2025,
+      "tier": "Legendary",
+      "icon": "🥊",
+      "stats": {
+        "hp": 400,
+        "ad": 45
+      },
+      "passiveName": "Lifeline",
+      "passiveDesc": "When dropping below 30% HP, gain a massive 600 HP shield for 4.5 seconds.",
+      "suitableRoles": [
+        "Fighter",
+        "Tank",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_spirit_visage",
+      "name": "Spirit Shroud",
+      "cost": 1875,
+      "tier": "Legendary",
+      "icon": "🍃",
+      "stats": {
+        "hp": 450,
+        "mr": 55,
+        "haste": 15
+      },
+      "passiveName": "Boundless Vitality",
+      "passiveDesc": "Increases all incoming heals and shields by +25%.",
+      "suitableRoles": [
+        "Tank",
+        "Support",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_echoes_of_helia",
+      "name": "Chime of Renewal",
+      "cost": 1425,
+      "tier": "Legendary",
+      "icon": "🔔",
+      "stats": {
+        "ap": 45,
+        "hp": 200,
+        "haste": 20,
+        "mana": 120,
+        "manaRegen": 2.5
+      },
+      "passiveName": "Soul Spring",
+      "passiveDesc": "Casting abilities heals the lowest health nearby ally for 75 HP and grants brief haste.",
+      "suitableRoles": [
+        "Support",
+        "Mage"
+      ]
+    },
+    {
+      "id": "item_shurelyas",
+      "name": "Windwalker's Warhorn",
+      "cost": 1500,
+      "tier": "Legendary",
+      "icon": "📯",
+      "stats": {
+        "hp": 250,
+        "haste": 25,
+        "moveSpeed": 6,
+        "manaRegen": 2.5
+      },
+      "passiveName": "Inspiring Rally",
+      "passiveDesc": "Provides +20 movement speed aura to nearby teammates during combat engages.",
+      "suitableRoles": [
+        "Support",
+        "Tank"
+      ]
+    },
+    {
+      "id": "item_knights_vow",
+      "name": "Warden's Pledge",
+      "cost": 1425,
+      "tier": "Legendary",
+      "icon": "🛡️",
+      "stats": {
+        "hp": 400,
+        "armor": 40,
+        "haste": 15
+      },
+      "passiveName": "Sacrificial Ward",
+      "passiveDesc": "Absorbs 12% of damage dealt to nearby allied carries and rushes to protect them.",
+      "suitableRoles": [
+        "Support",
+        "Tank"
+      ]
+    },
+    {
+      "id": "item_locket",
+      "name": "Aegis of the Protector",
+      "cost": 1500,
+      "tier": "Legendary",
+      "icon": "🌟",
+      "stats": {
+        "hp": 250,
+        "armor": 35,
+        "mr": 35,
+        "haste": 20
+      },
+      "passiveName": "Prismatic Bastion",
+      "passiveDesc": "Grants a 160 HP protective barrier to nearby allies when teamfights break out.",
+      "suitableRoles": [
+        "Support",
+        "Tank"
+      ]
+    },
+    {
+      "id": "item_ardent_censer",
+      "name": "Sunblessed Censer",
+      "cost": 1425,
+      "tier": "Legendary",
+      "icon": "🪔",
+      "stats": {
+        "ap": 50,
+        "haste": 15,
+        "manaRegen": 2,
+        "moveSpeed": 4
+      },
+      "passiveName": "Frenzy Aura",
+      "passiveDesc": "Empowers nearby teammates with +18% Attack Speed and +20 on-hit magic damage.",
+      "suitableRoles": [
+        "Support",
+        "Mage"
+      ]
+    },
+    {
+      "id": "item_redemption",
+      "name": "Beacon of Deliverance",
+      "cost": 1500,
+      "tier": "Legendary",
+      "icon": "🕊️",
+      "stats": {
+        "hp": 250,
+        "haste": 20,
+        "manaRegen": 3
+      },
+      "passiveName": "Holy Radiance",
+      "passiveDesc": "Heals the lowest-health nearby ally for 200 HP upon entering critical danger (60s CD).",
+      "suitableRoles": [
+        "Support",
+        "Mage",
+        "Tank"
+      ]
+    },
+    {
+      "id": "item_black_cleaver",
+      "name": "Obsidian Cleaver",
+      "cost": 2025,
+      "tier": "Legendary",
+      "icon": "🪓",
+      "stats": {
+        "ad": 55,
+        "hp": 350,
+        "haste": 25
+      },
+      "passiveName": "Carve & Fervor",
+      "passiveDesc": "Dealing physical damage shreds 25% target armor and grants +15 movement speed.",
+      "suitableRoles": [
+        "Fighter",
+        "Assassin",
+        "Tank"
+      ]
+    },
+    {
+      "id": "item_shojin",
+      "name": "Dragonheart Glaive",
+      "cost": 2025,
+      "tier": "Legendary",
+      "icon": "🐉",
+      "stats": {
+        "ad": 50,
+        "hp": 300,
+        "haste": 30
+      },
+      "passiveName": "Dragon's Focus",
+      "passiveDesc": "Amplifies basic ability damage by +12% scaling with total Ability Haste.",
+      "suitableRoles": [
+        "Fighter",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_navori",
+      "name": "Chronoblade Quickflicker",
+      "cost": 1950,
+      "tier": "Legendary",
+      "icon": "⏱️",
+      "stats": {
+        "ad": 50,
+        "crit": 25,
+        "haste": 25
+      },
+      "passiveName": "Transcendence",
+      "passiveDesc": "Basic attacks reduce remaining basic ability cooldowns by 15%.",
+      "suitableRoles": [
+        "Marksman",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_cosmic_drive",
+      "name": "Cosmic Chronosphere",
+      "cost": 1950,
+      "tier": "Legendary",
+      "icon": "🌌",
+      "stats": {
+        "ap": 80,
+        "hp": 250,
+        "haste": 30,
+        "moveSpeed": 5
+      },
+      "passiveName": "Spelldance",
+      "passiveDesc": "Damaging an enemy with a spell grants +25 movement speed for 3 seconds.",
+      "suitableRoles": [
+        "Mage",
+        "Support",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_ghostblade",
+      "name": "Wraithblade of the Dunes",
+      "cost": 1875,
+      "tier": "Legendary",
+      "icon": "🗡️",
+      "stats": {
+        "ad": 60,
+        "lethality": 18,
+        "haste": 15,
+        "moveSpeed": 5
+      },
+      "passiveName": "Hauntstep",
+      "passiveDesc": "Massive armor penetration and swift out-of-combat ambush speed.",
+      "suitableRoles": [
+        "Assassin",
+        "Marksman",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_duskblade",
+      "name": "Duskfang Reaver",
+      "cost": 2025,
+      "tier": "Legendary",
+      "icon": "🌑",
+      "stats": {
+        "ad": 60,
+        "lethality": 18,
+        "haste": 20
+      },
+      "passiveName": "Nightstalker",
+      "passiveDesc": "Abilities deal up to +16% bonus execution damage based on missing enemy health.",
+      "suitableRoles": [
+        "Assassin",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_serpents_fang",
+      "name": "Fang of the Serpent",
+      "cost": 1700,
+      "tier": "Legendary",
+      "icon": "🐍",
+      "stats": {
+        "ad": 55,
+        "lethality": 15,
+        "haste": 15
+      },
+      "passiveName": "Shield Reaver",
+      "passiveDesc": "Damaging an enemy shatters and halves active defensive shields by 50%.",
+      "suitableRoles": [
+        "Assassin",
+        "Marksman",
+        "Fighter"
+      ]
+    },
+    {
+      "id": "item_shadowflame",
+      "name": "Cinderflame Diadem",
+      "cost": 1950,
+      "tier": "Legendary",
+      "icon": "🕯️",
+      "stats": {
+        "ap": 90,
+        "magicPen": 18,
+        "hp": 200
+      },
+      "passiveName": "Cinderbloom Detonation",
+      "passiveDesc": "Pierces 18 Magic Resist and critically executes wounded foes (<35% HP).",
+      "suitableRoles": [
+        "Mage",
+        "Assassin"
+      ]
+    },
+    {
+      "id": "item_horizon_focus",
+      "name": "Astral Spyglass",
+      "cost": 1825,
+      "tier": "Legendary",
+      "icon": "🔭",
+      "stats": {
+        "ap": 85,
+        "haste": 20,
+        "hp": 150
+      },
+      "passiveName": "Hypershot",
+      "passiveDesc": "Landing an ability reveals the target and amplifies all ability damage by 10%.",
+      "suitableRoles": [
+        "Mage",
+        "Support"
+      ]
+    },
+    {
+      "id": "item_pathfinder_boots",
+      "name": "Pathfinder Boots",
+      "cost": 450,
+      "tier": "Component",
+      "icon": "👢",
+      "stats": {
+        "moveSpeed": 20
+      },
+      "passiveName": "Swift Step",
+      "passiveDesc": "Move faster between waves and objectives.",
+      "suitableRoles": [
+        "Tank",
+        "Mage",
+        "Marksman",
+        "Support",
+        "Fighter",
+        "Assassin"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # Local autonomous evolution foundation
 
+**Latest visual update (2026-10-18):** owner paused TRELLIS.2 and selected a [supplied static Arsenaldo GLB](arsenaldo-supplied-model.md). Visual generation is paused; ML is unchanged. Avatar/VFX publishing had moved to [problem-driven automation](autonomous-art-evolution.md), which published versions before this pause. Manual-review/no-publication statements below are historical; gameplay balance retains owner approval.
+
 ML reports: **http://localhost:8089/evolution/ml/reports**. Avatar model reports: **http://localhost:8089/evolution/avatars/reports**. Both use the owner login and independent evidence. Docker development hot reload is enabled; see [docker-development.md](docker-development.md) for start/stop and source/worker boundaries.
 
 The owner has prioritized the separate **Avatar Evolution Engine** and deferred remaining ML validation. Its first Arsenaldo five-candidate Docker cycle is complete and waiting for owner review at **http://localhost:8089/evolution/avatars**. Laravel schedules generation independently; approval/publishing and rollback remain owner controls. See [avatar-evolution.md](avatar-evolution.md) for implementation, measured evidence and limits. No avatar candidate has been published and no failed ML model has been promoted.

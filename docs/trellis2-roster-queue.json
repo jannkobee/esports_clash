@@ -1,0 +1,34 @@
+﻿{
+    "queued": [
+        {
+            "id": "9835db71-dff1-44e0-99a4-77bcfcc06b6e",
+            "avatar_id": "c_astra",
+            "status": "queued",
+            "seed": 25002
+        },
+        {
+            "id": "52ac52e5-63a9-42ea-910a-80178ed6eff1",
+            "avatar_id": "c_kyumi",
+            "status": "queued",
+            "seed": 25003
+        },
+        {
+            "id": "cbcaaa14-e4c6-4840-bf38-596a023554f2",
+            "avatar_id": "c_buck",
+            "status": "queued",
+            "seed": 25004
+        },
+        {
+            "id": "022d7241-88b9-42a8-b285-451517bf12d6",
+            "avatar_id": "c_kage",
+            "status": "queued",
+            "seed": 25005
+        },
+        {
+            "id": "9ae9a7ae-0673-49f5-a072-3b9c3cacab4c",
+            "avatar_id": "c_monkeyking_dota",
+            "status": "queued",
+            "seed": 25006
+        }
+    ]
+}

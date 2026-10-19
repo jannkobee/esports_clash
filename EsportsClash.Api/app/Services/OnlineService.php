@@ -94,6 +94,8 @@ class OnlineService
                 'versions' => array_intersect_key($catalog->manifest, array_flip(['catalog_version', 'rules_version', 'policy_version', 'observation_version'])),
                 'blue' => $opponent->lineup, 'red' => $ticket->lineup,
                 'clubs' => ['blue' => $opponent->club_name, 'red' => $ticket->club_name],
+                'visual_releases' => \App\Models\AvatarVisualRelease::where('active',true)
+                    ->get(['id','avatar_id','variant','version','sha256'])->toArray(),
                 'coach_id' => $catalog->payload['coaches'][0]['id']];
             $match = OnlineMatch::create(['id' => $id, 'blue_user_id' => $opponent->user_id, 'red_user_id' => $user->id,
                 'plan' => $plan, 'plan_hash' => hash('sha256', json_encode($plan, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES))]);

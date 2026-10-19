@@ -29,6 +29,7 @@
                 @if(isset($evaluation['reason']))<p class="fine">{{ $evaluation['reason'] }}</p>@endif
             @endif
             <div class="run-links"><a href="{{ route('evolution.report', $run) }}">View report →</a><a href="{{ route('evolution.download', $run) }}">Download JSON</a><code>{{ $run->id }}</code></div>
+            @include('evolution.delete-report',['type'=>'ml'])
         </article>
     @empty<p class="muted">No studies recorded yet. Start a cycle or enable the schedule.</p>@endforelse
 </section>

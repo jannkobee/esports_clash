@@ -1,6 +1,7 @@
 @extends('evolution.layout')
 @section('title', 'Learning report')
 @section('content')
+@include('evolution.delete-report',['type'=>'ml'])
 <div class="actions"><a href="{{ route('evolution.reports') }}">All ML reports</a></div>
 <a href="{{ route('dashboard') }}">← Evolution Lab</a>
 <div class="page-heading"><div><p class="eyebrow">MACHINE LEARNING REPORT</p><h1>{{ ucfirst($run->status) }} study</h1><code>{{ $run->id }}</code></div><a class="button primary" href="{{ route('evolution.download', $run) }}">Download report JSON</a></div>

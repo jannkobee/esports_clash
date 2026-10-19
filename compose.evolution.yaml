@@ -25,11 +25,28 @@ x-api: &api
     EVOLUTION_OWNER_PASSWORD: ${EVOLUTION_OWNER_PASSWORD:?Missing initial owner password}
     ONLINE_WORKER_URL: http://match-worker:8092
     ONLINE_WORKER_TOKEN: ${ONLINE_WORKER_TOKEN:-}
+    REDIS_HOST: avatar-redis
+    REDIS_QUEUE_RETRY_AFTER: 180
+    AVATAR_QUEUE_CONNECTION: redis
+    ART_ENGINE_READY: "true"
   restart: unless-stopped
   mem_limit: 384m
   cpus: 0.5
 
 services:
+  avatar-redis:
+    image: redis:7.2-alpine
+    command: [redis-server, --appendonly, "yes", --appendfsync, everysec, --maxmemory, 96mb, --maxmemory-policy, noeviction]
+    volumes: [avatar-queue-data:/data]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    mem_limit: 128m
+    cpus: 0.25
+
   database:
     image: postgres:16-alpine
     environment:
@@ -77,6 +94,15 @@ services:
     depends_on:
       init: {condition: service_completed_successfully}
       runner: {condition: service_healthy}
+
+  avatar-queue-worker:
+    <<: *api
+    command: [php, artisan, "queue:work", redis, "--queue=avatars", "--sleep=3", "--timeout=120", "--tries=4", "--max-time=3600"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+      avatar-redis: {condition: service_healthy}
+      avatar-worker: {condition: service_healthy}
+    mem_limit: 256m
 
   runner:
     init: true
@@ -143,7 +169,9 @@ services:
     environment:
       EVOLUTION_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN}
       AVATAR_DATA: /avatar-data
-    volumes: [avatar-artifacts:/avatar-data]
+    volumes:
+      - avatar-artifacts:/avatar-data
+      - ./.local-tools/trellis2/data/output:/trellis-sources:ro
     restart: unless-stopped
     mem_limit: 1280m
     cpus: 1
@@ -160,3 +188,4 @@ volumes:
   evolution-artifacts:
   online-matches:
   avatar-artifacts:
+  avatar-queue-data:

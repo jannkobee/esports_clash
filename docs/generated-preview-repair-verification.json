@@ -1,0 +1,10 @@
+{
+  "ready": true,
+  "meshes": 1,
+  "vertices": 34419,
+  "triangles": 37612,
+  "skinned_meshes": 0,
+  "animation_clips": 0,
+  "shader_errors": [],
+  "draw_calls": 1
+}

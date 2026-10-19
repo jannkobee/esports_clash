@@ -44,6 +44,21 @@ class OnlineTest extends TestCase
             'report' => ['seed' => $match->plan['seed'], 'winner' => 'blue', 'durationSeconds' => 600, 'draft' => $draft]];
     }
 
+    public function test_match_allocation_pins_visual_versions_for_reconnect_and_replay(): void
+    {
+        $run=\App\Models\AvatarEvolutionRun::create(['id'=>(string)\Illuminate\Support\Str::uuid(),'avatar_id'=>'c_invoker','plan'=>[]]);
+        $release=\App\Models\AvatarVisualRelease::create(['avatar_id'=>'c_invoker','variant'=>'claude','version'=>2,'run_id'=>$run->id,
+            'candidate_id'=>'candidate-01','file'=>'candidate-01.glb','sha256'=>str_repeat('a',64),'validation'=>[],'approved_by'=>'fixture']);
+        $match=$this->allocated();$this->assertSame($release->id,$match->plan['visual_releases'][0]['id']);
+        $pinned=$match->plan['visual_releases'];$planHash=$match->plan_hash;
+        $release->update(['active'=>false]);
+        \App\Models\AvatarVisualRelease::create(['avatar_id'=>'c_invoker','variant'=>'claude','version'=>3,'run_id'=>$run->id,
+            'candidate_id'=>'candidate-02','file'=>'candidate-02.glb','sha256'=>str_repeat('b',64),'validation'=>[],'approved_by'=>'fixture']);
+        $this->getJson('/api/v1/online/matches/'.$match->id)->assertOk()->assertJsonPath('data.plan.visual_releases.0.sha256',str_repeat('a',64));
+        $this->assertSame($pinned,$match->fresh()->plan['visual_releases']);$this->assertSame($planHash,$match->fresh()->plan_hash);
+        $next=$this->allocated();$this->assertSame(str_repeat('b',64),$next->plan['visual_releases'][0]['sha256']);
+    }
+
     public function test_authentication_and_idempotent_starter_ownership(): void
     {
         $this->getJson('/api/v1/online')->assertUnauthorized();

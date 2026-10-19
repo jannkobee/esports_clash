@@ -3,15 +3,31 @@ x-dev-api: &dev-api
   environment:
     DEV_VITE_URL: http://localhost:8088
   volumes:
+    - ./infrastructure/evolution/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
     - ./EsportsClash.Api/app:/app/app:ro
     - ./EsportsClash.Api/bootstrap/app.php:/app/bootstrap/app.php:ro
     - ./EsportsClash.Api/config:/app/config:ro
+    - ./EsportsClash.Api/database/migrations:/app/database/migrations:ro
     - ./EsportsClash.Api/routes:/app/routes:ro
     - ./EsportsClash.Api/resources/views:/app/resources/views:ro
+    - ./EsportsClash.Api/resources/game/management-items.json:/app/resources/game/management-items.json:ro
+    - ./infrastructure/trellis2/references:/app/resources/avatars/generation-references:ro
+    - ./infrastructure/trellis2/reference-index.json:/app/resources/avatars/generation-reference-index.json:ro
+    - ./.local-tools/trellis2/data/output:/app/storage/trellis-sources:ro
     - ./EsportsClash.Api/public:/app/public:ro
     - ./EsportsClash.Api/tests:/app/tests:ro
 
 services:
+  avatar-worker:
+    volumes:
+      - ./infrastructure/avatar-evolution/browser.mjs:/workspace/infrastructure/avatar-evolution/browser.mjs:ro
+      - ./infrastructure/avatar-evolution/server.mjs:/workspace/infrastructure/avatar-evolution/server.mjs:ro
+      - ./infrastructure/avatar-evolution/preparation-server.mjs:/workspace/infrastructure/avatar-evolution/preparation-server.mjs:ro
+      - ./infrastructure/avatar-evolution/preparation-job.mjs:/workspace/infrastructure/avatar-evolution/preparation-job.mjs:ro
+      - ./infrastructure/avatar-evolution/prepare-avatar.py:/workspace/infrastructure/avatar-evolution/prepare-avatar.py:ro
+      - ./infrastructure/avatar-evolution/qualify-prepared.py:/workspace/infrastructure/avatar-evolution/qualify-prepared.py:ro
+      - ./infrastructure/avatar-evolution/retarget-unirig.py:/workspace/infrastructure/avatar-evolution/retarget-unirig.py:ro
+
   api:
     <<: *dev-api
     command: [php, artisan, serve, --no-reload, --host=0.0.0.0, --port=8000]
@@ -24,6 +40,10 @@ services:
 
   scheduler:
     <<: *dev-api
+
+  avatar-queue-worker:
+    <<: *dev-api
+    command: [php, artisan, 'queue:listen', redis, '--queue=avatars', '--sleep=3', '--timeout=120', '--tries=4']
 
   frontend-dev:
     image: teamfight-evolution-frontend-dev:local
@@ -57,6 +77,7 @@ services:
   web:
     volumes:
       - ./infrastructure/evolution/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./EsportsClash.Web/public/models:/dev-public/models:ro
     depends_on:
       frontend-dev: {condition: service_healthy}
 

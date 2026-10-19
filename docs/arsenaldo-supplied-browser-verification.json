@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-18",
+  "actual": {
+    "variant": "submitted",
+    "animationSupport": "static-mesh",
+    "clips": [],
+    "source": "/models/imports/arsenaldo-submitted-20261018.glb?rev=29661d60",
+    "height": 74,
+    "maps": {
+      "map": {
+        "width": 4096,
+        "height": 4096
+      },
+      "normalMap": {
+        "width": 4096,
+        "height": 4096
+      },
+      "metalnessMap": {
+        "width": 4096,
+        "height": 4096
+      },
+      "roughnessMap": {
+        "width": 4096,
+        "height": 4096
+      }
+    },
+    "drawCalls": 30,
+    "triangles": 55234,
+    "staticTransformPreserved": true,
+    "shaderErrors": 0
+  },
+  "mobile": {
+    "overflow": false,
+    "canvas": 334,
+    "viewport": 390
+  },
+  "downloaded": {
+    "bytes": 33281216,
+    "sha256": "29661d603b85a3c9227331a5d3b1b930ce23ed241e01f866e1563581c613a4d4"
+  },
+  "oldAnimatedVariantSelectable": true,
+  "errors": []
+}

@@ -1,0 +1,84 @@
+{
+  "initial": {
+    "cards": 45,
+    "title": "3D Generation",
+    "nav": [
+      {
+        "text": "ML controls",
+        "active": null
+      },
+      {
+        "text": "ML reports",
+        "active": null
+      },
+      {
+        "text": "3D Generation",
+        "active": "page"
+      },
+      {
+        "text": "3D Enhancements",
+        "active": null
+      },
+      {
+        "text": "Enhancement reports",
+        "active": null
+      }
+    ],
+    "images": 7
+  },
+  "filtered": [
+    "Dawnna"
+  ],
+  "csrf": 419,
+  "mobile": {
+    "viewport": 390,
+    "content": 390
+  },
+  "references": [
+    {
+      "avatar": "Dawnna full-body generation reference",
+      "status": 200,
+      "png": true,
+      "bytes": 1485879
+    },
+    {
+      "avatar": "Aiselle full-body generation reference",
+      "status": 200,
+      "png": true,
+      "bytes": 2397176
+    },
+    {
+      "avatar": "Vixelle full-body generation reference",
+      "status": 200,
+      "png": true,
+      "bytes": 2436456
+    },
+    {
+      "avatar": "Gritlock full-body generation reference",
+      "status": 200,
+      "png": true,
+      "bytes": 2326872
+    },
+    {
+      "avatar": "Vanta full-body generation reference",
+      "status": 200,
+      "png": true,
+      "bytes": 1903397
+    },
+    {
+      "avatar": "Arsenaldo full-body generation reference",
+      "status": 200,
+      "png": true,
+      "bytes": 1566656
+    },
+    {
+      "avatar": "Primate Minister full-body generation reference",
+      "status": 200,
+      "png": true,
+      "bytes": 2522175
+    }
+  ],
+  "live_history_refresh": true,
+  "seed_input_preserved": true,
+  "verified_at": "2026-10-19T02:10:00.372Z"
+}

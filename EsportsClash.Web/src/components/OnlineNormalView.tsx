@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { isCloudPersistenceConfigured, loadApiSession, loginCloudAccount, persistApiSession, registerCloudAccount, request, type ApiSession } from '../cloudPersistence';
 import { acceptOnlineSnapshot, type OnlineSnapshot } from '../onlineSpectator';
 import { OnlineMatchViewer } from './OnlineMatchViewer';
+import type { VisualRelease } from '../avatarVisualRelease';
 
 interface Match { id: string; status: string; sequence: number; error?: string;
-  plan: { clubs: { blue: string; red: string }; versions: Record<string, string> }; result?: { winner: string } }
+  plan: { clubs: { blue: string; red: string }; versions: Record<string, string>;visual_releases?:VisualRelease[] }; result?: { winner: string } }
 interface Dashboard {
   club: { name: string; revision: number; lineup: { instance_id: string; avatar_id: string }[] };
   cards: { id: string; definition: { name: string; preferredRole?: string; role?: string; ovr: number } }[];
@@ -138,7 +139,7 @@ export function OnlineNormalView() {
       <h3 className="font-black">{selected.plan.clubs.blue} vs {selected.plan.clubs.red}</h3>
       <p className="text-xs text-slate-300">{connection} · server sequence {frame?.sequence ?? 0} · {Math.floor(frame?.snapshot.second ?? 0)}s {selected.result && `· ${selected.result.winner} wins`}</p>
       {selected.error && <p className="text-sm text-red-300">{selected.error}</p>}
-      <OnlineMatchViewer message={frame} />
+      <OnlineMatchViewer message={frame} matchId={selected.id} visuals={selected.plan.visual_releases} />
       <div className="flex flex-wrap items-center gap-2">
         <label className="text-xs">Replay snapshot<input type="number" min={1} max={Math.max(1, selected.sequence)} value={replaySequence} onChange={event => setReplaySequence(Number(event.target.value))} className="ml-2 w-24 rounded bg-slate-950 p-2" /></label>
         <button className={button} onClick={() => void replay()}>View saved snapshot</button>

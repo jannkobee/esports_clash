@@ -11,16 +11,16 @@ class AvatarEvolutionController extends Controller
     public function index(AvatarEvolutionService $service)
     {
         try{$operations=$service->worker()->get($service->endpoint('/operations'))->throw()->json();}catch(\Throwable){$operations=null;}
-        return view('evolution.avatars.index',['settings'=>AvatarEvolutionSetting::current(),'catalog'=>$service->catalog(),
-            'runs'=>AvatarEvolutionRun::latest()->limit(30)->get(),'releases'=>AvatarVisualRelease::latest()->limit(50)->get(),'operations'=>$operations]);
+        return view('evolution.avatars.index',['settings'=>AvatarEvolutionSetting::current(),'catalog'=>array_values(array_filter($service->catalog(),fn($avatar)=>isset($service->profiles()[$avatar['id']]))),
+            'runs'=>AvatarEvolutionRun::where(fn($query)=>$query->whereNull('plan->version')->orWhere('plan->version','<>',3))->latest()->limit(30)->get(),'releases'=>AvatarVisualRelease::latest()->limit(50)->get(),'operations'=>$operations]);
     }
-    public function show(AvatarEvolutionRun $run) { return view('evolution.avatars.show',['run'=>$run,'releases'=>AvatarVisualRelease::where('avatar_id',$run->avatar_id)->latest()->get()]); }
+    public function show(AvatarEvolutionRun $run) { if(($run->plan['version']??0)===3)return redirect()->route('preparations.index');return view('evolution.avatars.show',['run'=>$run,'releases'=>AvatarVisualRelease::where('avatar_id',$run->avatar_id)->latest()->get()]); }
     public function reports()
     {
         return response()->view('evolution.avatars.reports',[
-            'runs'=>AvatarEvolutionRun::latest()->paginate(20),
-            'runCount'=>AvatarEvolutionRun::count(),
-            'reviewCount'=>AvatarEvolutionRun::where('status','review')->count(),
+            'runs'=>AvatarEvolutionRun::where(fn($query)=>$query->whereNull('plan->version')->orWhere('plan->version','<>',3))->latest()->paginate(20),
+            'runCount'=>AvatarEvolutionRun::where(fn($query)=>$query->whereNull('plan->version')->orWhere('plan->version','<>',3))->count(),
+            'activeCount'=>AvatarEvolutionRun::whereIn('status',[...AvatarEvolutionService::ACTIVE,'complete'])->count(),
             'releaseCount'=>AvatarVisualRelease::count(),
         ])->header('Cache-Control','no-store');
     }
@@ -41,13 +41,7 @@ class AvatarEvolutionController extends Controller
     public function regenerate(Request $request,AvatarEvolutionRun $run,AvatarEvolutionService $service)
     {
         $focus=$request->validate(['focus'=>['required','in:balanced,silhouette,equipment,motion']])['focus'];
-        $new=DB::transaction(function()use($run,$service,$request,$focus){
-            AvatarEvolutionSetting::lockForUpdate()->findOrFail(1);
-            $old=AvatarEvolutionRun::lockForUpdate()->findOrFail($run->id);
-            if(in_array($old->status,AvatarEvolutionService::ACTIVE,true))throw ValidationException::withMessages(['avatar'=>'Let the current generation finish first.']);
-            if($old->status==='review')$old->update(['status'=>'superseded']);
-            return $service->start('user:'.$request->user()->id,$old->avatar_id,focus:$focus);
-        });
+        $new=$service->start('user:'.$request->user()->id,$run->avatar_id,focus:$focus);
         return redirect()->route('avatars.show',$new);
     }
     public function settings(Request $request,EvolutionService $audit)
@@ -55,10 +49,11 @@ class AvatarEvolutionController extends Controller
         $data=$request->validate(['enabled'=>['sometimes','boolean'],'interval_minutes'=>['sometimes','integer','min:5','max:10080'],
             'candidates_per_cycle'=>['sometimes','integer','min:3','max:10'],'generations'=>['sometimes','integer','min:1','max:3'],
             'storage_gib'=>['sometimes','integer','min:1','max:20'],'avatar_ids'=>['sometimes','array','min:1','max:45'],'avatar_ids.*'=>['string','distinct']]);
-        $allowed=array_column(app(AvatarEvolutionService::class)->catalog(),'id');
+        $allowed=array_keys(app(AvatarEvolutionService::class)->profiles());
+        $data['enabled']=false; // Visual automation removed at the owner's request.
         if(array_diff($data['avatar_ids']??[],$allowed))throw ValidationException::withMessages(['avatar_ids'=>'Select shipped avatars.']);
         AvatarEvolutionSetting::current()->update($data);$audit->audit('avatars','avatar.settings','user:'.$request->user()->id,$data);
-        return redirect()->route('avatars.index')->with('status','Avatar automation settings saved. Publishing requires owner approval.');
+        return redirect()->route('avatars.index')->with('status','Art analysis schedule saved. Qualified visual repairs publish automatically; balance approvals are unchanged.');
     }
     public function decide(Request $request,AvatarEvolutionRun $run,AvatarEvolutionService $service)
     {
@@ -81,12 +76,24 @@ class AvatarEvolutionController extends Controller
     public function file(AvatarEvolutionService $service,string $id,string $file)
     {
         abort_unless(\Illuminate\Support\Str::isUuid($id)&&preg_match('/^[a-z0-9-]+\.(glb|blend|png|json)$/',$file),404);
-        AvatarEvolutionRun::findOrFail($id);
+        if(!AvatarEvolutionRun::find($id))\App\Models\AvatarPreparation::findOrFail($id);
         return $this->assetResponse($service,$id,$file,false);
     }
     public function manifest()
     {
         return response()->json(['releases'=>AvatarVisualRelease::where('active',true)->get(['id','avatar_id','variant','version','sha256'])])->header('Cache-Control','no-store');
+    }
+    public function signal(Request $request)
+    {
+        $data=$request->validate(['release_id'=>['required','integer','min:1'],'sha256'=>['required','regex:/^[a-f0-9]{64}$/'],
+            'kind'=>['required','in:load,decode,shader,texture,animation,performance']]);
+        $release=AvatarVisualRelease::where('active',true)->findOrFail($data['release_id']);
+        abort_unless(hash_equals($release->sha256,$data['sha256']),409);
+        DB::table('avatar_visual_health_signals')->upsert([['release_id'=>$release->id,'kind'=>$data['kind'],'count'=>0,'created_at'=>now(),'updated_at'=>now()]],['release_id','kind'],['updated_at']);
+        DB::table('avatar_visual_health_signals')->where('release_id',$release->id)->where('kind',$data['kind'])->increment('count');
+        // Browser signals are untrusted diagnostics. Only a private, independently
+        // reproduced canary failure can quarantine or roll back a release.
+        return response()->json(['recorded'=>true,'rollback_authorized'=>false],202);
     }
     public function published(AvatarEvolutionService $service,AvatarVisualRelease $release,string $hash)
     {

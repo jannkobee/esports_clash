@@ -21,10 +21,14 @@
 <main>
     @auth
     <nav class="report-nav" aria-label="Evolution sections">
+        <a href="{{ route('management.index', 'avatar') }}" @if(request()->routeIs('management.*') && request()->route('kind') === 'avatar') aria-current="page" @endif>Avatar management</a>
+        <a href="{{ route('management.index', 'item') }}" @if(request()->routeIs('management.*') && request()->route('kind') === 'item') aria-current="page" @endif>Item management</a>
         <a href="{{ route('dashboard') }}" @if(request()->routeIs('dashboard')) aria-current="page" @endif>ML controls</a>
         <a href="{{ route('evolution.reports') }}" @if(request()->routeIs('evolution.reports', 'evolution.report')) aria-current="page" @endif>ML reports</a>
-        <a href="{{ route('avatars.index') }}" @if(request()->routeIs('avatars.index')) aria-current="page" @endif>Model controls</a>
-        <a href="{{ route('avatars.reports') }}" @if(request()->routeIs('avatars.reports', 'avatars.show')) aria-current="page" @endif>Model reports</a>
+        <a href="{{ route('trellis.index') }}" @if(request()->routeIs('trellis.*')) aria-current="page" @endif>3D Generation</a>
+        <a href="{{ route('preparations.index') }}" @if(request()->routeIs('preparations.*')) aria-current="page" @endif>Asset Preparation</a>
+        <a href="{{ route('avatars.index') }}" @if(request()->routeIs('avatars.index')) aria-current="page" @endif>3D Enhancements</a>
+        <a href="{{ route('avatars.reports') }}" @if(request()->routeIs('avatars.reports', 'avatars.show')) aria-current="page" @endif>Enhancement reports</a>
     </nav>
     @endauth
     @if(session('status'))<div class="notice success" role="status">{{ session('status') }}</div>@endif

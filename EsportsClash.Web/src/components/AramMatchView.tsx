@@ -1,3 +1,5 @@
+import { captureUnitCollisionStarts, resolveArenaUnitCollisions } from '../arenaUnitCollision';
+import { loadVisualReleases } from '../avatarVisualRelease';
 import { barracksPosition, minionSpawnPosition, advanceLaneMinion, drawNaturalArena, HEALING_SHRINE_Y } from '../arenaLandform.ts';
 import { arenaCampArt } from '../arenaArtDirection.ts';
 import { placeArenaNameplates, type NameplateAnchor, type OverlayBox } from '../arenaNameplates.ts';
@@ -90,7 +92,7 @@ import { sound } from '../audio';
 import { chooseTeamfightTarget, isChannelingAbility, isEnemyCaughtInAlliedChannel, isUnitVisibleTo, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from '../combatDecision';
 import { createEnemyCooldownMemory, isObservedCooling, observeCooldownRise, type CooldownSnapshot } from '../cooldownKnowledge';
 import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from '../skillRangeRules';
-import { ARENA_WIDTH, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, rockRouteDistance, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from '../arenaRules';
+import { ARENA_WIDTH, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, rockRouteDistance, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from '../arenaRules';
 import { getMinionCrashMultiplier, getMinionStructureDamage, getWaveClearProfile, isInsideWaveClear, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
 import { structureBasicAttackDamage } from '../structureSiegeRules';
 import { evaluateNexusFinish } from '../nexusFinishRules';
@@ -460,6 +462,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   onMatchComplete
 }) => {
   const renderlessEvaluation = import.meta.env.DEV && evaluationRenderless;
+  const visualSnapshotRef=useRef<ReturnType<typeof loadVisualReleases>|undefined>(undefined);
+  if(!renderlessEvaluation&&!visualSnapshotRef.current)visualSnapshotRef.current=loadVisualReleases();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const threeTerrainHostRef = useRef<HTMLDivElement>(null);
   const threeTerrainRef = useRef<ThreeArenaTerrain | null>(null);
@@ -501,6 +505,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             if (!unmounted) setWebglAvailable(available);
             host.dataset.renderer = available ? 'three' : 'canvas-fallback';
           },
+          visualSnapshotRef.current,
         );
         threeTerrainRef.current = terrain;
         threeTerrainAvailableRef.current = terrain.isAvailable();
@@ -1742,6 +1747,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const relics = relicsRef.current;
     const dragon = dragonRef.current;
     const jungleCamps = jungleCampsRef.current;
+    const crowdStarts = captureUnitCollisionStarts([...champs, ...minions]);
     const championStarts = new Map(champs.map(unit => [unit.id, { x: unit.x, y: unit.y }]));
     const minionStarts = new Map(minions.map(unit => [unit.id, { x: unit.x, y: unit.y }]));
     const campStarts = new Map(jungleCamps.map(unit => [unit.id, { x: unit.x, y: unit.y }]));
@@ -5482,46 +5488,6 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
     });
 
-    // 13. PAIRWISE ANTI-CLUMPING SEPARATION PHYSICS
-    for (let i = 0; i < champs.length; i++) {
-      for (let j = i + 1; j < champs.length; j++) {
-        const c1 = champs[i];
-        const c2 = champs[j];
-        if (!c1.isAlive || !c2.isAlive || !shouldSeparateUnitsByTeam(c1.team, c2.team)) continue;
-
-        const dx = c2.x - c1.x;
-        const dy = c2.y - c1.y;
-        const d = Math.hypot(dx, dy);
-        const minDistance = 34;
-
-        if (d < minDistance && d > 0.05) {
-          const overlap = (minDistance - d) / 2;
-          const nx = dx / d;
-          const ny = dy / d;
-
-          // If a unit is channeling recall, only push the other unit so the recall position remains steady!
-          if (c1.isRecalling && c2.isRecalling) continue;
-          if (c1.isRecalling) {
-            c2.x += nx * overlap * 2;
-            c2.y += ny * overlap * 2;
-          } else if (c2.isRecalling) {
-            c1.x -= nx * overlap * 2;
-            c1.y -= ny * overlap * 2;
-          } else {
-            c1.x -= nx * overlap;
-            c1.y -= ny * overlap;
-            c2.x += nx * overlap;
-            c2.y += ny * overlap;
-          }
-
-          c1.x = Math.max(40, Math.min(ARENA_WIDTH - 40, c1.x));
-          c1.y = Math.max(80, Math.min(620, c1.y));
-          c2.x = Math.max(40, Math.min(ARENA_WIDTH - 40, c2.x));
-          c2.y = Math.max(80, Math.min(620, c2.y));
-        }
-      }
-    }
-
     // Raised rock outcrops block all walking units, including dashes and
     // forced movement. Project each tick onto the rock edge so units can
     // slide around it instead of stepping inside the terrain.
@@ -5540,6 +5506,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const start = campStarts.get(unit.id);
       if (start) Object.assign(unit, resolveRockTerrainMovement(start, unit, unit.type === 'siege_golem' ? 32 : 23));
     });
+
+    // Walkers slide around every living body without displacing its owner.
+    // Authoritative dashes, pulls, CC, recalls and teleports retain their path.
+    resolveArenaUnitCollisions(champs, minions, [
+      ...jungleCamps.map(unit => ({ ...unit, radius: unit.type === 'siege_golem' ? 32 : 23 })),
+      { ...dragon, id: 'dragon:collision', radius: 32 },
+    ], crowdStarts, dt);
 
     // Check Nexus Victory
     const blueNexus = structures.find((s) => s.id === 'b_nexus');

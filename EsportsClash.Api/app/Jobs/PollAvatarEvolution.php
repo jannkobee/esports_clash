@@ -11,12 +11,13 @@ class PollAvatarEvolution implements ShouldQueue,ShouldBeUniqueUntilProcessing
     public int $tries=10;
     public int $timeout=25;
     public int $uniqueFor=90;
-    public function __construct(public string $runId) {}
+    public function __construct(public string $runId) { $this->onConnection(config('avatars.queue_connection'))->onQueue(config('avatars.queue')); }
     public function uniqueId(): string { return $this->runId; }
     public function backoff(): array { return [15,30,60]; }
     public function handle(AvatarEvolutionService $service): void
     {
         $run=AvatarEvolutionRun::findOrFail($this->runId);
+        if($run->status==='complete'){$service->finalize($run->id);return;}
         if(!in_array($run->status,AvatarEvolutionService::ACTIVE,true))return;
         $service->worker()->post($service->endpoint('/runs/'.$run->id),$run->plan)->throw();
         $state=$service->worker()->get($service->endpoint('/runs/'.$run->id))->throw()->json();
@@ -26,5 +27,11 @@ class PollAvatarEvolution implements ShouldQueue,ShouldBeUniqueUntilProcessing
             $run->update(['status'=>$state['status'],'report'=>$state['report']??null,'manifest_hash'=>$state['manifest_hash']??null,'error'=>$state['error']??null]);
         });
         if(in_array($state['status'],AvatarEvolutionService::ACTIVE,true))self::dispatch($run->id)->delay(now()->addSeconds(20));
+        elseif($state['status']==='complete')$service->finalize($run->id);
+    }
+    public function failed(?\Throwable $error): void
+    {
+        AvatarEvolutionRun::where('id',$this->runId)->whereIn('status',[...AvatarEvolutionService::ACTIVE,'complete'])
+            ->update(['status'=>'failed','error'=>'Art orchestration retries exhausted; immutable artifacts retained.']);
     }
 }

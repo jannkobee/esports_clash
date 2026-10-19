@@ -11,6 +11,41 @@ Route::middleware('guest')->group(function () {
 });
 Route::post('/logout', [EvolutionDashboardController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth', EnsureEvolutionOwner::class])->prefix('evolution')->group(function () {
+    Route::prefix('management/{kind}')->whereIn('kind',['avatar','item'])->controller(\App\Http\Controllers\ContentManagementController::class)->group(function () {
+        Route::get('/', 'index')->name('management.index');
+        Route::get('/create', 'create')->name('management.create');
+        Route::post('/import', 'import')->middleware('throttle:6,1')->name('management.import');
+        Route::post('/', 'store')->name('management.store');
+        Route::get('/{content}/edit', 'edit')->whereUuid('content')->name('management.edit');
+        Route::put('/{content}', 'update')->whereUuid('content')->name('management.update');
+        Route::post('/{content}/action', 'action')->whereUuid('content')->name('management.action');
+        Route::get('/{content}/download', 'download')->whereUuid('content')->name('management.download');
+    });
+
+    Route::delete('/reports/preparation/bulk',[\App\Http\Controllers\ReportDeletionController::class,'bulkPreparations'])->name('preparations.bulk-delete');
+    Route::delete('/reports/{type}/{id}',[\App\Http\Controllers\ReportDeletionController::class,'destroy'])->whereIn('type',['ml','generation','preparation','enhancement'])->whereUuid('id')->name('reports.delete');
+    Route::post('/avatar-jobs/{type}/cancel-all',[\App\Http\Controllers\AvatarJobCancellationController::class,'cancelAll'])->whereIn('type',['generation','preparation','enhancement'])->name('avatar-jobs.cancel-all');
+    Route::post('/avatar-jobs/{type}/{id}/cancel',[\App\Http\Controllers\AvatarJobCancellationController::class,'cancel'])->whereIn('type',['generation','preparation','enhancement'])->whereUuid('id')->name('avatar-jobs.cancel');
+    Route::get('/avatars/preparation',[\App\Http\Controllers\AvatarPreparationController::class,'index'])->name('preparations.index');
+    Route::get('/avatars/preparation/live',[\App\Http\Controllers\AvatarPreparationController::class,'live'])->name('preparations.live');
+    Route::post('/avatars/preparation/settings',[\App\Http\Controllers\AvatarPreparationController::class,'settings'])->name('preparations.settings');
+    Route::post('/avatars/preparation',[\App\Http\Controllers\AvatarPreparationController::class,'start'])->middleware('throttle:6,1')->name('preparations.start');
+    Route::post('/avatars/preparation/{preparation}/control',[\App\Http\Controllers\AvatarPreparationController::class,'control'])->whereUuid('preparation')->middleware('throttle:6,1')->name('preparations.control');
+    Route::post('/avatars/preparation/{preparation}/validate',[\App\Http\Controllers\AvatarPreparationController::class,'validateAsset'])->whereUuid('preparation')->name('preparations.validate');
+    Route::post('/avatars/preparation/{preparation}/publish',[\App\Http\Controllers\AvatarPreparationController::class,'publish'])->whereUuid('preparation')->name('preparations.publish');
+    Route::get('/avatars/preparation/{preparation}/report',[\App\Http\Controllers\AvatarPreparationController::class,'report'])->whereUuid('preparation')->name('preparations.report');
+    Route::get('/avatars/preparation/{preparation}/preview',[\App\Http\Controllers\AvatarPreparationController::class,'preview'])->whereUuid('preparation')->name('preparations.preview');
+    Route::get('/avatars/preparation/{preparation}/files/{file}',[\App\Http\Controllers\AvatarPreparationController::class,'file'])->whereUuid('preparation')->name('preparations.file');
+    Route::get('/avatars/trellis',[\App\Http\Controllers\TrellisGenerationController::class,'index'])->name('trellis.index');
+    Route::get('/avatars/trellis/live',[\App\Http\Controllers\TrellisGenerationController::class,'live'])->name('trellis.live');
+    Route::get('/avatars/trellis/avatar/{avatar}',[\App\Http\Controllers\TrellisGenerationController::class,'avatarStatus'])->name('trellis.avatar');
+    Route::post('/avatars/trellis/reference',[\App\Http\Controllers\TrellisGenerationController::class,'upload'])->middleware('throttle:10,1')->name('trellis.upload');
+    Route::get('/avatars/trellis/reference/{avatar}/{digest}',[\App\Http\Controllers\TrellisGenerationController::class,'reference'])->name('trellis.reference');
+    Route::post('/avatars/trellis',[\App\Http\Controllers\TrellisGenerationController::class,'start'])->middleware('throttle:3,1')->name('trellis.start');
+    Route::delete('/avatars/trellis/{generation}/model',[\App\Http\Controllers\TrellisGenerationController::class,'destroyModel'])->withTrashed()->whereUuid('generation')->name('trellis.destroy-model');
+    Route::get('/avatars/trellis/{generation}/report',[\App\Http\Controllers\TrellisGenerationController::class,'report'])->whereUuid('generation')->name('trellis.report');
+    Route::get('/avatars/trellis/{generation}/asset',[\App\Http\Controllers\TrellisGenerationController::class,'asset'])->whereUuid('generation')->name('trellis.asset');
+    Route::get('/avatars/trellis/{generation}/preview',[\App\Http\Controllers\TrellisGenerationController::class,'preview'])->whereUuid('generation')->name('trellis.preview');
     Route::get('/avatars', [\App\Http\Controllers\AvatarEvolutionController::class,'index'])->name('avatars.index');
     Route::get('/avatars/reports', [\App\Http\Controllers\AvatarEvolutionController::class,'reports'])->name('avatars.reports');
     Route::post('/avatars/settings', [\App\Http\Controllers\AvatarEvolutionController::class,'settings'])->name('avatars.settings');
@@ -20,7 +55,6 @@ Route::middleware(['auth', EnsureEvolutionOwner::class])->prefix('evolution')->g
     Route::get('/avatars/files/{id}/{file}', [\App\Http\Controllers\AvatarEvolutionController::class,'file'])->name('avatars.file');
     Route::get('/avatars/{run}', [\App\Http\Controllers\AvatarEvolutionController::class,'show'])->whereUuid('run')->name('avatars.show');
     Route::get('/avatars/{run}/download', [\App\Http\Controllers\AvatarEvolutionController::class,'download'])->whereUuid('run')->name('avatars.download');
-    Route::post('/avatars/{run}/decide', [\App\Http\Controllers\AvatarEvolutionController::class,'decide'])->whereUuid('run')->name('avatars.decide');
     Route::post('/avatars/{run}/regenerate', [\App\Http\Controllers\AvatarEvolutionController::class,'regenerate'])->whereUuid('run')->middleware('throttle:6,1')->name('avatars.regenerate');
     Route::get('/', [EvolutionDashboardController::class, 'index'])->name('dashboard');
     Route::get('/ml/reports', [EvolutionDashboardController::class, 'archive'])->name('evolution.reports');

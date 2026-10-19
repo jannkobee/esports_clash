@@ -1,5 +1,7 @@
 # Autonomous Avatar Evolution Engine
 
+**Latest owner steering (2026-10-18):** TRELLIS.2 work and the Arsenaldo visual-generation schedule are paused while using the [supplied static Arsenaldo GLB](arsenaldo-supplied-model.md). Avatar/VFX manual approvals were superseded by [problem-driven automatic publication](autonomous-art-evolution.md), which published V3/V4 before this pause. Gameplay balance approvals are unchanged. First-cycle/manual-review sections below describe historical checkpoints.
+
 Owner priority, 2026-10-18: defer the remaining ML validation work and implement Part 6 first, including animation and ability visuals. The ML Docker study/schedule remain independent. The supplied autonomy proposal is retained verbatim in [avatar-evolution-autonomy-specification.md](avatar-evolution-autonomy-specification.md).
 
 Model reports now have their own owner archive at **http://localhost:8089/evolution/avatars/reports**, with model JSON downloads separate from ML reports. See [docker-development.md](docker-development.md) for report separation and the active Docker development hot reload setup.

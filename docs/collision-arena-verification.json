@@ -1,0 +1,2452 @@
+{
+  "date": "2026-10-18",
+  "seed": 47,
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 1000,
+      "view": "3d",
+      "renderer": "three",
+      "actors": 68,
+      "aligned": true,
+      "overflow": false,
+      "calls": 775,
+      "triangles": 523217
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "view": "3d",
+      "renderer": "three",
+      "actors": 68,
+      "aligned": true,
+      "overflow": false,
+      "calls": 750,
+      "triangles": 520357
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "view": "3d",
+      "renderer": "three",
+      "actors": 68,
+      "aligned": true,
+      "overflow": false,
+      "calls": 660,
+      "triangles": 480361
+    }
+  ],
+  "exactStateAndRngAtSeconds": [
+    30.00000000000065,
+    59.999999999999154,
+    89.99999999999746
+  ],
+  "three": [
+    {
+      "second": 30.00000000000065,
+      "fingerprint": "424083:45575880:605e8040",
+      "randomState": 3808582758,
+      "finished": false,
+      "executionAudit": {
+        "counts": {
+          "push:push": 4981,
+          "wave:minion": 168,
+          "fight:champion": 2504,
+          "fight:hold": 5,
+          "push:minion": 3
+        },
+        "regroupPaths": {},
+        "samples": [
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_thespicy",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_p1mple",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_flaker",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.09999999999996,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.133333333333294,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.16666666666663,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_craps",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333271,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_ouzi",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.8333333333333623,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_neko",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333323,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_daft",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0.23636363636366442,
+            "cdUlt": 999,
+            "damageDealt": 338
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5454545454545596,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.20000000000061,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5121212121212262,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.86666666666731,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.845454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.900000000000645,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.8121212121212247,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.966666666667315,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0.745454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          }
+        ],
+        "pushPlans": {
+          "total": 4984,
+          "mismatches": 0,
+          "examples": []
+        }
+      },
+      "opportunityAudit": {
+        "total": 7702,
+        "firstGates": {
+          "legal-pair": 370,
+          "commitment": 5801,
+          "defense": 1402,
+          "health": 129
+        },
+        "allGates": {
+          "legal-pair": 7702,
+          "commitment": 7240,
+          "defense": 1414,
+          "health": 129
+        },
+        "safeExceptGap": {},
+        "examples": []
+      }
+    },
+    {
+      "second": 59.999999999999154,
+      "fingerprint": "449317:4bb616c4:bcaf1770",
+      "randomState": 3401291970,
+      "finished": false,
+      "executionAudit": {
+        "counts": {
+          "push:push": 6816,
+          "wave:minion": 836,
+          "fight:champion": 4499,
+          "fight:hold": 107,
+          "push:minion": 52,
+          "regroup:regroup": 105,
+          "push:hold": 5,
+          "farm:camp": 385
+        },
+        "regroupPaths": {
+          "igl-regroup": 33,
+          "fight-regroup": 72
+        },
+        "samples": [
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_thespicy",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_p1mple",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_flaker",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.09999999999996,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.133333333333294,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.16666666666663,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_craps",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333271,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_ouzi",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.8333333333333623,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_neko",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333323,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_daft",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0.23636363636366442,
+            "cdUlt": 999,
+            "damageDealt": 338
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5454545454545596,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.20000000000061,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5121212121212262,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.86666666666731,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.845454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.900000000000645,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.8121212121212247,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.966666666667315,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0.745454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 35.666666666667204,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1399999999999775,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.145454545454552,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 35.700000000000536,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1400000000000765,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.1121212121212185,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 35.73333333333387,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1399999999998305,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.078787878787885,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 46.53333333333325,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 46.76666666666657,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 46.8999999999999,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.19999999999988,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.23333333333321,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.266666666666545,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          }
+        ],
+        "pushPlans": {
+          "total": 6873,
+          "mismatches": 0,
+          "examples": []
+        }
+      },
+      "opportunityAudit": {
+        "total": 13462,
+        "firstGates": {
+          "legal-pair": 549,
+          "commitment": 8360,
+          "defense": 2340,
+          "health": 2192,
+          "eligible": 1,
+          "utility-gap": 19,
+          "influence": 1
+        },
+        "allGates": {
+          "legal-pair": 13037,
+          "commitment": 12585,
+          "defense": 3511,
+          "health": 2192,
+          "danger": 128,
+          "utility-gap": 402,
+          "influence": 29,
+          "survival": 29,
+          "tower": 2
+        },
+        "safeExceptGap": {
+          "p_bigtail:farm-push": {
+            "count": 19,
+            "minGap": 0.10425784122313622,
+            "maxGap": 0.25179999999999997
+          }
+        },
+        "examples": [
+          {
+            "second": 47.86666666666651,
+            "actorId": "blue_p_bigtail",
+            "cardId": "p_bigtail",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.10425784122313622,
+            "healthFraction": 1,
+            "previousIntent": "camp",
+            "actor": {
+              "x": 490.6214948829115,
+              "y": 295.0029413569973
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.3024215877686374,
+                  "learned": 0
+                },
+                "utility": 0.20325784122313623,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.030242158776863745,
+                  "learned": 0
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:12:10",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "utility": 0.099,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": 0,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_blue_buff",
+              "x": 640,
+              "y": 145,
+              "distance": 211.6951114380462
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 487.93448952603825,
+                  "y": 340
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 487.93448952603825,
+              "laneY": 340,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 1062.782817457113,
+                "outlook": {
+                  "travelSeconds": 9.216979213877266,
+                  "survival": 0.37338250869202766,
+                  "support": 0.6856903223014115,
+                  "pressure": 0
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "second": 89.99999999999746,
+      "fingerprint": "457795:dd25d6cd:d15de035",
+      "randomState": 1737906142,
+      "finished": false,
+      "executionAudit": {
+        "counts": {
+          "push:push": 8871,
+          "wave:minion": 2009,
+          "fight:champion": 5888,
+          "fight:hold": 146,
+          "push:minion": 132,
+          "regroup:regroup": 167,
+          "push:hold": 31,
+          "farm:camp": 840
+        },
+        "regroupPaths": {
+          "igl-regroup": 33,
+          "fight-regroup": 134
+        },
+        "samples": [
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_thespicy",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_p1mple",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_flaker",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.09999999999996,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.133333333333294,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.16666666666663,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_craps",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333271,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_ouzi",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.8333333333333623,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_neko",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333323,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_daft",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0.23636363636366442,
+            "cdUlt": 999,
+            "damageDealt": 338
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5454545454545596,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.20000000000061,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5121212121212262,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.86666666666731,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.845454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.900000000000645,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.8121212121212247,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.966666666667315,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0.745454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 35.666666666667204,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1399999999999775,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.145454545454552,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 35.700000000000536,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1400000000000765,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.1121212121212185,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 35.73333333333387,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1399999999998305,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.078787878787885,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 46.53333333333325,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 46.76666666666657,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 46.8999999999999,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.19999999999988,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.23333333333321,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.266666666666545,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          }
+        ],
+        "pushPlans": {
+          "total": 9034,
+          "mismatches": 0,
+          "examples": []
+        }
+      },
+      "opportunityAudit": {
+        "total": 19575,
+        "firstGates": {
+          "legal-pair": 746,
+          "commitment": 10675,
+          "defense": 3157,
+          "health": 4951,
+          "eligible": 2,
+          "utility-gap": 43,
+          "influence": 1
+        },
+        "allGates": {
+          "legal-pair": 18665,
+          "commitment": 18148,
+          "defense": 5260,
+          "health": 4951,
+          "danger": 269,
+          "utility-gap": 864,
+          "influence": 29,
+          "survival": 29,
+          "tower": 128
+        },
+        "safeExceptGap": {
+          "p_bigtail:farm-push": {
+            "count": 35,
+            "minGap": 0.10026951052592722,
+            "maxGap": 0.25179999999999997
+          },
+          "p_craps:farm-push": {
+            "count": 8,
+            "minGap": 0.20682689891304837,
+            "maxGap": 0.29501324537348494
+          }
+        },
+        "examples": [
+          {
+            "second": 47.86666666666651,
+            "actorId": "blue_p_bigtail",
+            "cardId": "p_bigtail",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.10425784122313622,
+            "healthFraction": 1,
+            "previousIntent": "camp",
+            "actor": {
+              "x": 490.6214948829115,
+              "y": 295.0029413569973
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.3024215877686374,
+                  "learned": 0
+                },
+                "utility": 0.20325784122313623,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.030242158776863745,
+                  "learned": 0
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:12:10",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "utility": 0.099,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": 0,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_blue_buff",
+              "x": 640,
+              "y": 145,
+              "distance": 211.6951114380462
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 487.93448952603825,
+                  "y": 340
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 487.93448952603825,
+              "laneY": 340,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 1062.782817457113,
+                "outlook": {
+                  "travelSeconds": 9.216979213877266,
+                  "survival": 0.37338250869202766,
+                  "support": 0.6856903223014115,
+                  "pressure": 0
+                }
+              }
+            }
+          },
+          {
+            "second": 60.76666666666578,
+            "actorId": "red_p_craps",
+            "cardId": "p_craps",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.2139028972546336,
+            "healthFraction": 1,
+            "previousIntent": "push",
+            "actor": {
+              "x": 2391,
+              "y": 419.66666666666634
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_red_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.7301143016158743,
+                  "learned": 0
+                },
+                "utility": 0.16048856983841253,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.07301143016158744,
+                  "learned": 0
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:red:30:12",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.43546950690348885,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "utility": -0.05341432741622107,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.15241432741622107,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_red_blue_buff",
+              "x": 1960,
+              "y": 145,
+              "distance": 511.08001113111203
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:red",
+                  "x": 1213,
+                  "y": 420
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1213,
+              "laneY": 420,
+              "localThreat": 0,
+              "structure": {
+                "id": "b_t1",
+                "x": 1050,
+                "y": 380,
+                "distance": 1341.5865400504154,
+                "outlook": {
+                  "travelSeconds": 12.300824190956337,
+                  "survival": 0.37844596161770067,
+                  "support": 0.6489510074612925,
+                  "pressure": 0
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "two": [
+    {
+      "second": 30.00000000000065,
+      "fingerprint": "424083:45575880:605e8040",
+      "randomState": 3808582758,
+      "finished": false,
+      "executionAudit": {
+        "counts": {
+          "push:push": 4981,
+          "wave:minion": 168,
+          "fight:champion": 2504,
+          "fight:hold": 5,
+          "push:minion": 3
+        },
+        "regroupPaths": {},
+        "samples": [
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_thespicy",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_p1mple",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_flaker",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.09999999999996,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.133333333333294,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.16666666666663,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_craps",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333271,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_ouzi",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.8333333333333623,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_neko",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333323,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_daft",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0.23636363636366442,
+            "cdUlt": 999,
+            "damageDealt": 338
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5454545454545596,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.20000000000061,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5121212121212262,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.86666666666731,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.845454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.900000000000645,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.8121212121212247,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.966666666667315,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0.745454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          }
+        ],
+        "pushPlans": {
+          "total": 4984,
+          "mismatches": 0,
+          "examples": []
+        }
+      },
+      "opportunityAudit": {
+        "total": 7702,
+        "firstGates": {
+          "legal-pair": 370,
+          "commitment": 5801,
+          "defense": 1402,
+          "health": 129
+        },
+        "allGates": {
+          "legal-pair": 7702,
+          "commitment": 7240,
+          "defense": 1414,
+          "health": 129
+        },
+        "safeExceptGap": {},
+        "examples": []
+      }
+    },
+    {
+      "second": 59.999999999999154,
+      "fingerprint": "449317:4bb616c4:bcaf1770",
+      "randomState": 3401291970,
+      "finished": false,
+      "executionAudit": {
+        "counts": {
+          "push:push": 6816,
+          "wave:minion": 836,
+          "fight:champion": 4499,
+          "fight:hold": 107,
+          "push:minion": 52,
+          "regroup:regroup": 105,
+          "push:hold": 5,
+          "farm:camp": 385
+        },
+        "regroupPaths": {
+          "igl-regroup": 33,
+          "fight-regroup": 72
+        },
+        "samples": [
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_thespicy",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_p1mple",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_flaker",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.09999999999996,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.133333333333294,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.16666666666663,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_craps",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333271,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_ouzi",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.8333333333333623,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_neko",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333323,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_daft",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0.23636363636366442,
+            "cdUlt": 999,
+            "damageDealt": 338
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5454545454545596,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.20000000000061,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5121212121212262,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.86666666666731,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.845454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.900000000000645,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.8121212121212247,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.966666666667315,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0.745454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 35.666666666667204,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1399999999999775,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.145454545454552,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 35.700000000000536,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1400000000000765,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.1121212121212185,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 35.73333333333387,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1399999999998305,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.078787878787885,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 46.53333333333325,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 46.76666666666657,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 46.8999999999999,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.19999999999988,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.23333333333321,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.266666666666545,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          }
+        ],
+        "pushPlans": {
+          "total": 6873,
+          "mismatches": 0,
+          "examples": []
+        }
+      },
+      "opportunityAudit": {
+        "total": 13462,
+        "firstGates": {
+          "legal-pair": 549,
+          "commitment": 8360,
+          "defense": 2340,
+          "health": 2192,
+          "eligible": 1,
+          "utility-gap": 19,
+          "influence": 1
+        },
+        "allGates": {
+          "legal-pair": 13037,
+          "commitment": 12585,
+          "defense": 3511,
+          "health": 2192,
+          "danger": 128,
+          "utility-gap": 402,
+          "influence": 29,
+          "survival": 29,
+          "tower": 2
+        },
+        "safeExceptGap": {
+          "p_bigtail:farm-push": {
+            "count": 19,
+            "minGap": 0.10425784122313622,
+            "maxGap": 0.25179999999999997
+          }
+        },
+        "examples": [
+          {
+            "second": 47.86666666666651,
+            "actorId": "blue_p_bigtail",
+            "cardId": "p_bigtail",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.10425784122313622,
+            "healthFraction": 1,
+            "previousIntent": "camp",
+            "actor": {
+              "x": 490.6214948829115,
+              "y": 295.0029413569973
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.3024215877686374,
+                  "learned": 0
+                },
+                "utility": 0.20325784122313623,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.030242158776863745,
+                  "learned": 0
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:12:10",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "utility": 0.099,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": 0,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_blue_buff",
+              "x": 640,
+              "y": 145,
+              "distance": 211.6951114380462
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 487.93448952603825,
+                  "y": 340
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 487.93448952603825,
+              "laneY": 340,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 1062.782817457113,
+                "outlook": {
+                  "travelSeconds": 9.216979213877266,
+                  "survival": 0.37338250869202766,
+                  "support": 0.6856903223014115,
+                  "pressure": 0
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "second": 89.99999999999746,
+      "fingerprint": "457795:dd25d6cd:d15de035",
+      "randomState": 1737906142,
+      "finished": false,
+      "executionAudit": {
+        "counts": {
+          "push:push": 8871,
+          "wave:minion": 2009,
+          "fight:champion": 5888,
+          "fight:hold": 146,
+          "push:minion": 132,
+          "regroup:regroup": 167,
+          "push:hold": 31,
+          "farm:camp": 840
+        },
+        "regroupPaths": {
+          "igl-regroup": 33,
+          "fight-regroup": 134
+        },
+        "samples": [
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_thespicy",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_p1mple",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 0.03333333333333333,
+            "actorId": "blue_p_flaker",
+            "selected": "push",
+            "intent": "push",
+            "distanceMoved": 2.3333333333333286,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.09999999999996,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.133333333333294,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.16666666666663,
+            "actorId": "blue_p_thespicy",
+            "selected": "wave",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 0,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_craps",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333271,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_ouzi",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.8333333333333623,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 16.199999999999964,
+            "actorId": "red_p_neko",
+            "selected": "fight",
+            "intent": "champion",
+            "distanceMoved": 2.833333333333323,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 0
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_daft",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0.23636363636366442,
+            "cdUlt": 999,
+            "damageDealt": 338
+          },
+          {
+            "second": 29.166666666667275,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5454545454545596,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.20000000000061,
+            "actorId": "blue_p_bigtail",
+            "selected": "fight",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 1.5121212121212262,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.86666666666731,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.845454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.900000000000645,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "attack",
+            "cd1": 0.8121212121212247,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 29.966666666667315,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "minion",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0.745454545454558,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 35.666666666667204,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1399999999999775,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.145454545454552,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 35.700000000000536,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1400000000000765,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.1121212121212185,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 35.73333333333387,
+            "actorId": "red_p_neko",
+            "selected": "regroup",
+            "intent": "regroup",
+            "distanceMoved": 3.1399999999998305,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 7.078787878787885,
+            "cdUlt": 999,
+            "damageDealt": 437
+          },
+          {
+            "second": 46.53333333333325,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 46.76666666666657,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 46.8999999999999,
+            "actorId": "blue_p_bigtail",
+            "selected": "push",
+            "intent": "hold",
+            "distanceMoved": 0,
+            "animState": "idle",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.19999999999988,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.23333333333321,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          },
+          {
+            "second": 47.266666666666545,
+            "actorId": "blue_p_bigtail",
+            "selected": "farm",
+            "intent": "camp",
+            "distanceMoved": 3.4999999999999742,
+            "animState": "walk",
+            "cd1": 0,
+            "cd2": 0,
+            "cdUlt": 999,
+            "damageDealt": 1041
+          }
+        ],
+        "pushPlans": {
+          "total": 9034,
+          "mismatches": 0,
+          "examples": []
+        }
+      },
+      "opportunityAudit": {
+        "total": 19575,
+        "firstGates": {
+          "legal-pair": 746,
+          "commitment": 10675,
+          "defense": 3157,
+          "health": 4951,
+          "eligible": 2,
+          "utility-gap": 43,
+          "influence": 1
+        },
+        "allGates": {
+          "legal-pair": 18665,
+          "commitment": 18148,
+          "defense": 5260,
+          "health": 4951,
+          "danger": 269,
+          "utility-gap": 864,
+          "influence": 29,
+          "survival": 29,
+          "tower": 128
+        },
+        "safeExceptGap": {
+          "p_bigtail:farm-push": {
+            "count": 35,
+            "minGap": 0.10026951052592722,
+            "maxGap": 0.25179999999999997
+          },
+          "p_craps:farm-push": {
+            "count": 8,
+            "minGap": 0.20682689891304837,
+            "maxGap": 0.29501324537348494
+          }
+        },
+        "examples": [
+          {
+            "second": 47.86666666666651,
+            "actorId": "blue_p_bigtail",
+            "cardId": "p_bigtail",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.10425784122313622,
+            "healthFraction": 1,
+            "previousIntent": "camp",
+            "actor": {
+              "x": 490.6214948829115,
+              "y": 295.0029413569973
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_blue_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.3024215877686374,
+                  "learned": 0
+                },
+                "utility": 0.20325784122313623,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.030242158776863745,
+                  "learned": 0
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:blue:12:10",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "utility": 0.099,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": 0,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_blue_blue_buff",
+              "x": 640,
+              "y": 145,
+              "distance": 211.6951114380462
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:blue",
+                  "x": 487.93448952603825,
+                  "y": 340
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 487.93448952603825,
+              "laneY": 340,
+              "localThreat": 0,
+              "structure": {
+                "id": "r_t1",
+                "x": 1550,
+                "y": 380,
+                "distance": 1062.782817457113,
+                "outlook": {
+                  "travelSeconds": 9.216979213877266,
+                  "survival": 0.37338250869202766,
+                  "support": 0.6856903223014115,
+                  "pressure": 0
+                }
+              }
+            }
+          },
+          {
+            "second": 60.76666666666578,
+            "actorId": "red_p_craps",
+            "cardId": "p_craps",
+            "incumbent": "farm",
+            "alternate": "push",
+            "utilityGap": 0.2139028972546336,
+            "healthFraction": 1,
+            "previousIntent": "push",
+            "actor": {
+              "x": 2391,
+              "y": 419.66666666666634
+            },
+            "candidates": [
+              {
+                "action": "farm",
+                "contextKey": "farm:j_red_blue_buff",
+                "factors": {
+                  "strategic": 0.42,
+                  "tactical": 0.36,
+                  "personality": 0.35,
+                  "travel": 0.7301143016158743,
+                  "learned": 0
+                },
+                "utility": 0.16048856983841253,
+                "contributions": {
+                  "strategic": 0.126,
+                  "tactical": 0.09,
+                  "personality": 0.017499999999999998,
+                  "travel": -0.07301143016158744,
+                  "learned": 0
+                },
+                "valid": true
+              },
+              {
+                "action": "push",
+                "contextKey": "push:advance:lane-advance:red:30:12",
+                "factors": {
+                  "strategic": 0.18,
+                  "tactical": 0.18,
+                  "coordination": 0,
+                  "danger": 0.43546950690348885,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "utility": -0.05341432741622107,
+                "contributions": {
+                  "strategic": 0.054,
+                  "tactical": 0.045,
+                  "coordination": 0,
+                  "danger": -0.15241432741622107,
+                  "personality": 0,
+                  "learned": 0
+                },
+                "valid": true
+              }
+            ],
+            "farm": {
+              "id": "j_red_blue_buff",
+              "x": 1960,
+              "y": 145,
+              "distance": 511.08001113111203
+            },
+            "push": {
+              "plan": {
+                "kind": "advance",
+                "target": {
+                  "id": "lane-advance:red",
+                  "x": 1213,
+                  "y": 420
+                }
+              },
+              "structureInRange": false,
+              "minionInRange": false,
+              "advanceLimit": 1213,
+              "laneY": 420,
+              "localThreat": 0,
+              "structure": {
+                "id": "b_t1",
+                "x": 1050,
+                "y": 380,
+                "distance": 1341.5865400504154,
+                "outlook": {
+                  "travelSeconds": 12.300824190956337,
+                  "survival": 0.37844596161770067,
+                  "support": 0.6489510074612925,
+                  "pressure": 0
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "mousePan": true,
+  "touchPan": true,
+  "minimapNavigation": true,
+  "contextLossAndRestoration": true,
+  "glbModelsRequired": true,
+  "resources": {
+    "geometries": 852,
+    "materials": 306,
+    "textures": 10
+  },
+  "errors": [],
+  "limits": "Controlled 90-second fixture; no full-match, mobile-device or frame-time performance claim."
+}

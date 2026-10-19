@@ -1,0 +1,37 @@
+# Explicit optional self-hosted rigging overlay. No automatic job admission.
+services:
+  unirig-worker:
+    image: teamfight-unirig:local
+    build:
+      context: .
+      dockerfile: infrastructure/unirig/Dockerfile
+    environment:
+      EVOLUTION_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN:?Missing private worker token}
+      UNIRIG_DATA: /unirig-data
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility,graphics
+      UNIRIG_IMAGE_ID: ${UNIRIG_IMAGE_ID:-not-recorded}
+    volumes:
+      - ./.local-tools/unirig/data:/unirig-data
+      - ./.local-tools/unirig/data/jobs:/opt/UniRig/work
+      - ./.local-tools/trellis2/data/output:/trellis-sources:ro
+      - visual-gpu-lease:/gpu-lease
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    mem_limit: 8192m
+    memswap_limit: 8192m
+    cpus: 2
+    pids_limit: 256
+    stop_grace_period: 20s
+    healthcheck:
+      test: [CMD, python, -c, "import os,urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8098/operations',headers={'Authorization':'Bearer '+os.environ['EVOLUTION_WORKER_TOKEN']}),timeout=8)"]
+      interval: 20s
+      timeout: 10s
+      retries: 20
+volumes:
+  visual-gpu-lease:

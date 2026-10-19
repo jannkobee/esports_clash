@@ -54,14 +54,14 @@ test('import playback preserves submitted clip transforms through pause, crossfa
  model.animate({motionState:'death',motionTime:4},4);assert.deepEqual(transforms(model.body),death,'death must hold its endpoint');
  model.dispose();mixer.stopAllAction();mixer.uncacheRoot(raw);library.close();disposeArenaTerrainResources(file.scene);disposeArenaTerrainResources(resources.owner);
 });
-test('Arsenaldo model preference persists and defaults to submitted animation when storage is unavailable',()=>{
+test('Arsenaldo model preference persists and defaults to the latest supplied appearance when storage is unavailable',()=>{
  const previous=Object.getOwnPropertyDescriptor(globalThis,'localStorage'),values=new Map();
  try{
   Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)}});
-  assert.equal(getArsenaldoModelVariant(),'claude');saveArsenaldoModelVariant('current');assert.equal(getArsenaldoModelVariant(),'current');
+  assert.equal(getArsenaldoModelVariant(),'submitted');saveArsenaldoModelVariant('current');assert.equal(getArsenaldoModelVariant(),'current');
   saveArsenaldoModelVariant('claude');assert.equal(getArsenaldoModelVariant(),'claude');
   Object.defineProperty(globalThis,'localStorage',{configurable:true,get(){throw Error('blocked');}});
-  assert.equal(getArsenaldoModelVariant(),'claude');assert.doesNotThrow(()=>saveArsenaldoModelVariant('current'));
+  assert.equal(getArsenaldoModelVariant(),'submitted');assert.doesNotThrow(()=>saveArsenaldoModelVariant('current'));
  }finally{if(previous)Object.defineProperty(globalThis,'localStorage',previous);else delete globalThis.localStorage;}
 });
 

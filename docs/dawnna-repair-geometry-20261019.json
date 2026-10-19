@@ -1,0 +1,200 @@
+{
+  "passed": false,
+  "problems": [
+    "Sampled self-clipping increases during Attack",
+    "Sampled self-clipping increases during Cast",
+    "Sampled self-clipping increases during Death",
+    "Sampled self-clipping increases during Hit",
+    "Sampled self-clipping increases during Run",
+    "Sampled self-clipping increases during Walk"
+  ],
+  "bind": {
+    "finite": true,
+    "sampled_self_intersections": 17
+  },
+  "frames": [
+    {
+      "clip": "Attack",
+      "phase": 0,
+      "finite": true,
+      "sampled_self_intersections": 76
+    },
+    {
+      "clip": "Attack",
+      "phase": 0.15,
+      "finite": true,
+      "sampled_self_intersections": 73
+    },
+    {
+      "clip": "Attack",
+      "phase": 0.42,
+      "finite": true,
+      "sampled_self_intersections": 98
+    },
+    {
+      "clip": "Attack",
+      "phase": 0.7,
+      "finite": true,
+      "sampled_self_intersections": 70
+    },
+    {
+      "clip": "Attack",
+      "phase": 1,
+      "finite": true,
+      "sampled_self_intersections": 69
+    },
+    {
+      "clip": "Cast",
+      "phase": 0,
+      "finite": true,
+      "sampled_self_intersections": 76
+    },
+    {
+      "clip": "Cast",
+      "phase": 0.15,
+      "finite": true,
+      "sampled_self_intersections": 70
+    },
+    {
+      "clip": "Cast",
+      "phase": 0.42,
+      "finite": true,
+      "sampled_self_intersections": 68
+    },
+    {
+      "clip": "Cast",
+      "phase": 0.7,
+      "finite": true,
+      "sampled_self_intersections": 65
+    },
+    {
+      "clip": "Cast",
+      "phase": 1,
+      "finite": true,
+      "sampled_self_intersections": 71
+    },
+    {
+      "clip": "Death",
+      "phase": 0,
+      "finite": true,
+      "sampled_self_intersections": 41
+    },
+    {
+      "clip": "Death",
+      "phase": 0.15,
+      "finite": true,
+      "sampled_self_intersections": 41
+    },
+    {
+      "clip": "Death",
+      "phase": 0.42,
+      "finite": true,
+      "sampled_self_intersections": 107
+    },
+    {
+      "clip": "Death",
+      "phase": 0.7,
+      "finite": true,
+      "sampled_self_intersections": 130
+    },
+    {
+      "clip": "Death",
+      "phase": 1,
+      "finite": true,
+      "sampled_self_intersections": 134
+    },
+    {
+      "clip": "Hit",
+      "phase": 0,
+      "finite": true,
+      "sampled_self_intersections": 76
+    },
+    {
+      "clip": "Hit",
+      "phase": 0.15,
+      "finite": true,
+      "sampled_self_intersections": 58
+    },
+    {
+      "clip": "Hit",
+      "phase": 0.42,
+      "finite": true,
+      "sampled_self_intersections": 69
+    },
+    {
+      "clip": "Hit",
+      "phase": 0.7,
+      "finite": true,
+      "sampled_self_intersections": 62
+    },
+    {
+      "clip": "Hit",
+      "phase": 1,
+      "finite": true,
+      "sampled_self_intersections": 71
+    },
+    {
+      "clip": "Run",
+      "phase": 0,
+      "finite": true,
+      "sampled_self_intersections": 65
+    },
+    {
+      "clip": "Run",
+      "phase": 0.15,
+      "finite": true,
+      "sampled_self_intersections": 79
+    },
+    {
+      "clip": "Run",
+      "phase": 0.42,
+      "finite": true,
+      "sampled_self_intersections": 87
+    },
+    {
+      "clip": "Run",
+      "phase": 0.7,
+      "finite": true,
+      "sampled_self_intersections": 101
+    },
+    {
+      "clip": "Run",
+      "phase": 1,
+      "finite": true,
+      "sampled_self_intersections": 61
+    },
+    {
+      "clip": "Walk",
+      "phase": 0,
+      "finite": true,
+      "sampled_self_intersections": 57
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.15,
+      "finite": true,
+      "sampled_self_intersections": 58
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.42,
+      "finite": true,
+      "sampled_self_intersections": 77
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.7,
+      "finite": true,
+      "sampled_self_intersections": 74
+    },
+    {
+      "clip": "Walk",
+      "phase": 1,
+      "finite": true,
+      "sampled_self_intersections": 55
+    }
+  ],
+  "unweighted_vertices": 0,
+  "invalid_weight_sums": 0,
+  "scope": "Deterministic sampled nonadjacent self-intersections and posed finite geometry. Layered clothing can cause false positives; sampling can miss clipping. Equipment/identity review is still required."
+}

@@ -1,0 +1,20 @@
+{
+  "owner_login": true,
+  "avatar_import": {
+    "cards": 18,
+    "total": true,
+    "next": true
+  },
+  "item_import": 49,
+  "three_skill_animation_prompts": true,
+  "imported_special_kit_form_valid": true,
+  "mobile": {
+    "viewport": 390,
+    "content": 390,
+    "stats": 15,
+    "roles": 6
+  },
+  "unsaved_review_blocked": true,
+  "no_design_writes": true,
+  "verified_at": "2026-10-19T05:06:05.398Z"
+}

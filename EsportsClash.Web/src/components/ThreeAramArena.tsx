@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { ChampionKit, CoachCard, ItemDef, PlayerCard } from '../types';
 import { getRecommendedItem } from '../itemsData';
-import { shouldSeparateUnitsByTeam } from '../arenaRules';
+import { resolveCrowdMovement } from '../unitCollision';
 import { sound } from '../audio';
 import confetti from 'canvas-confetti';
 import { 
@@ -1154,6 +1154,7 @@ export const ThreeAramArena: React.FC<ThreeAramArenaProps> = ({
   // =========================================================================
 
   const update3LaneSimulation = (dt: number, time: number, scene: THREE.Scene) => {
+    const starts = new Map([...unitsRef.current, ...minionsRef.current].map(u => [u.id, { x: u.x, y: u.z }]));
     // 1. Minion Wave Spawning on ALL 3 LANES (Every 24s)
     waveTimerRef.current -= dt;
     if (waveTimerRef.current <= 0) {
@@ -1275,32 +1276,6 @@ export const ThreeAramArena: React.FC<ThreeAramArenaProps> = ({
       }
       return true;
     });
-
-    // 3. ANTI-CLUMPING SEPARATION PHYSICS (No standing inside each other!)
-    for (let i = 0; i < unitsRef.current.length; i++) {
-      const u1 = unitsRef.current[i];
-      if (!u1.isAlive) continue;
-
-      for (let j = i + 1; j < unitsRef.current.length; j++) {
-        const u2 = unitsRef.current[j];
-        if (!u2.isAlive || !shouldSeparateUnitsByTeam(u1.team, u2.team)) continue;
-
-        const dx = u2.x - u1.x;
-        const dz = u2.z - u1.z;
-        const dist = Math.hypot(dx, dz);
-        const minDist = 3.2; // Minimum spacing buffer
-
-        if (dist < minDist && dist > 0.01) {
-          const overlap = (minDist - dist) * 0.5;
-          const nx = dx / dist;
-          const nz = dz / dist;
-          u1.x -= nx * overlap;
-          u1.z -= nz * overlap;
-          u2.x += nx * overlap;
-          u2.z += nz * overlap;
-        }
-      }
-    }
 
     // 4. CHAMPIONS MICRO & KITING AI (Picture Perfect Spacing!)
     unitsRef.current.forEach((u) => {
@@ -1443,6 +1418,19 @@ export const ThreeAramArena: React.FC<ThreeAramArenaProps> = ({
 
       // Overhead Billboard update
       updateOverheadBillboard(u);
+    });
+
+    const crowd = [...unitsRef.current.filter(u => u.isAlive).map(u => ({ unit: u, radius: 1.6 })),
+      ...minionsRef.current.filter(u => u.isAlive).map(u => ({ unit: u, radius: .65 }))];
+    const contactPositions = resolveCrowdMovement(crowd.map(({unit, radius}) => ({
+      id: unit.id, from: starts.get(unit.id) ?? { x: unit.x, y: unit.z },
+      to: { x: unit.x, y: unit.z }, radius,
+      locked: Math.hypot(unit.x - (starts.get(unit.id)?.x ?? unit.x), unit.z - (starts.get(unit.id)?.y ?? unit.z)) > 12,
+    })), dt);
+    crowd.forEach(({unit}) => {
+      const position = contactPositions.get(unit.id)!;
+      unit.x = position.x; unit.z = position.y; unit.y = getTerrainElevation(unit.x, unit.z);
+      unit.rootMesh.position.set(unit.x, unit.y, unit.z);
     });
 
     // 5. Towers Firing

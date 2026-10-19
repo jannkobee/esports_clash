@@ -31,3 +31,7 @@
 
 # Vercel
 .vercel
+
+# Python worker bytecode
+__pycache__/
+*.py[cod]

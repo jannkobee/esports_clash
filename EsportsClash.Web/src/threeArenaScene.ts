@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import type { AramChampionUnit, LaneMinion, LaneStructure } from './types.ts';
 import { AvatarModelResources, buildAvatarModel, type AvatarModel } from './threeAvatarModels.ts';
 import { AvatarAssetLibrary } from './avatarModelAssets.ts';
+import type { VisualRelease } from './avatarVisualRelease.ts';
 import { ArenaAbilityEffects, type AbilityProjectile, type AbilitySpell, type WeaponImpact } from './threeAbilityEffects.ts';
 import {motionTimeline,type MotionTimeline} from './avatarMotionTimeline.ts';
 import {avatarDesign} from './avatarDesigns.ts';
@@ -96,7 +97,7 @@ export class ArenaScene {
   private readonly shadowMaterial = new THREE.MeshBasicMaterial({ color: '#071314', transparent: true, opacity: 0.32, depthWrite: false });
   private readonly poolOwner = new THREE.Group();
   private readonly avatarResources = new AvatarModelResources();
-  private readonly avatarAssets = new AvatarAssetLibrary(this.avatarResources);
+  private readonly avatarAssets:AvatarAssetLibrary;
   private readonly arsenaldoVariant=getArsenaldoModelVariant();
   private readonly abilityEffects = new ArenaAbilityEffects(arenaGroundHeight);
   private readonly projection = new THREE.Vector3();
@@ -104,7 +105,8 @@ export class ArenaScene {
   private readonly scenery:ArenaScenery;
   private readonly ground:THREE.Mesh;
 
-  constructor(ground: THREE.Mesh, worldWidth: number, worldHeight: number) {
+  constructor(ground: THREE.Mesh, worldWidth: number, worldHeight: number,visualSnapshot?:Promise<ReadonlyMap<string,VisualRelease>>) {
+    this.avatarAssets=new AvatarAssetLibrary(this.avatarResources,undefined,visualSnapshot);
     this.ground=ground;
     this.scene.background = new THREE.Color('#0c1b21');
     this.scene.add(new THREE.HemisphereLight(ARENA_LIGHTING.sky, ARENA_LIGHTING.earth, ARENA_LIGHTING.ambient));

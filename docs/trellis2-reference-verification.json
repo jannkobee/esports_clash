@@ -1,0 +1,159 @@
+﻿{
+  "kind": "reference-image-technical-properties",
+  "records": [
+    {
+      "avatar_id": "c_invoker",
+      "file": "arsenaldo-v1.png",
+      "provider": "imagegen",
+      "bytes": 1566656,
+      "sha256": "593305bf8957a19b041e939133b4d26807257e638714fea638e518ce0f36e39b",
+      "width": 1024,
+      "height": 1536,
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "fully_transparent_fraction": 0.6537825266520182,
+      "alpha_over_204_fraction": 0.3224627176920573,
+      "alpha_bounds": [
+        0,
+        15,
+        1018,
+        1518
+      ],
+      "identity_and_art_quality_qualified": false
+    },
+    {
+      "avatar_id": "c_solana",
+      "file": "dawnna-v1.png",
+      "provider": "imagegen",
+      "bytes": 1485879,
+      "sha256": "1b810f31de582a2e3acc79c5717de8746e499aad43fdd4d78cbf67faf8bad79b",
+      "width": 1145,
+      "height": 1374,
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.5533755394951787,
+      "alpha_over_204_fraction": 0.40976843818132125,
+      "alpha_bounds": [
+        0,
+        0,
+        1131,
+        1374
+      ],
+      "identity_and_art_quality_qualified": false
+    },
+    {
+      "avatar_id": "c_astra",
+      "file": "aiselle-v1.png",
+      "provider": "imagegen",
+      "bytes": 2397176,
+      "sha256": "0ac6eef7cef652ce77309746f9361efd53b8b8e9734378a898079f1cfaec86a1",
+      "width": 1024,
+      "height": 1536,
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "fully_transparent_fraction": 0.5351842244466146,
+      "alpha_over_204_fraction": 0.41539955139160156,
+      "alpha_bounds": [
+        29,
+        0,
+        1014,
+        1504
+      ],
+      "identity_and_art_quality_qualified": false
+    },
+    {
+      "avatar_id": "c_kyumi",
+      "file": "vixelle-v1.png",
+      "provider": "imagegen",
+      "bytes": 2436456,
+      "sha256": "76e2f6a8ffc5b07299351171ed32e1242f225f648f0bc6e62b46cfdfa7b6192e",
+      "width": 1024,
+      "height": 1536,
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "fully_transparent_fraction": 0.4755414326985677,
+      "alpha_over_204_fraction": 0.4734376271565755,
+      "alpha_bounds": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "identity_and_art_quality_qualified": false
+    },
+    {
+      "avatar_id": "c_buck",
+      "file": "gritlock-v1.png",
+      "provider": "imagegen",
+      "bytes": 2326872,
+      "sha256": "d2e5d6780914c57c26ced42c054ac4f63cf777788c641520cd4df437ed5c1d47",
+      "width": 1024,
+      "height": 1536,
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "fully_transparent_fraction": 0.4995543162027995,
+      "alpha_over_204_fraction": 0.4757073720296224,
+      "alpha_bounds": [
+        0,
+        17,
+        1008,
+        1536
+      ],
+      "identity_and_art_quality_qualified": false
+    },
+    {
+      "avatar_id": "c_kage",
+      "file": "vanta-v1.png",
+      "provider": "imagegen",
+      "bytes": 1903397,
+      "sha256": "4e9adba66ca7b7e2f1b8062cb45db56ee14f7a28b20c17a2490d30709d6aacab",
+      "width": 1024,
+      "height": 1536,
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "fully_transparent_fraction": 0.6955858866373698,
+      "alpha_over_204_fraction": 0.2736956278483073,
+      "alpha_bounds": [
+        29,
+        0,
+        1000,
+        1504
+      ],
+      "identity_and_art_quality_qualified": false
+    },
+    {
+      "avatar_id": "c_monkeyking_dota",
+      "file": "primate-minister-v1.png",
+      "provider": "imagegen",
+      "bytes": 2522175,
+      "sha256": "5dabed334daa6624d8c4619a0b6439b7b1e9d9b089fe37b1bcdd54461f30676b",
+      "width": 1024,
+      "height": 1536,
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "fully_transparent_fraction": 0.5679791768391927,
+      "alpha_over_204_fraction": 0.37843577067057294,
+      "alpha_bounds": [
+        23,
+        0,
+        1010,
+        1536
+      ],
+      "identity_and_art_quality_qualified": false
+    }
+  ]
+}

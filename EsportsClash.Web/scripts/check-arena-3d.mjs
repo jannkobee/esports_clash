@@ -24,9 +24,10 @@ const evaluate = async expression => {
   return r.result.value;
 };
 const delay = ms => new Promise(done => setTimeout(done, ms));
-const waitFor = async expression => {
-  for (let i = 0; i < 100; i++) { if (await evaluate(expression)) return; await delay(100); }
-  throw Error(`Timed out: ${expression}`);
+const waitFor = async (expression,timeoutMs=10000) => {
+  for (let i = 0; i < Math.ceil(timeoutMs/100); i++) { if (await evaluate(expression)) return; await delay(100); }
+  const diagnostic=await evaluate(`(()=>{const arena=window.arenaRenderer?.()?.arena;return arena?{actors:[...arena.actors.values()].filter(a=>a.avatar).map(a=>({key:a.key,format:a.body.userData.assetFormat,variant:a.body.userData.modelVariant})),loaded:[...arena.avatarAssets.files.keys()],sources:[...arena.avatarAssets.resolvedURLs.entries()],failures:window.assetLoadFailures}:null})()`);
+  throw Error(`Timed out: ${expression}\n${JSON.stringify(diagnostic)}`);
 };
 const click = text => evaluate(`[...document.querySelectorAll('.spectator-toolbar button')].find(b => b.textContent.trim() === ${JSON.stringify(text)})?.click()`);
 const inspect = () => evaluate('window.__esportsPairedInspect()');
@@ -57,6 +58,14 @@ try {
     const createRoot = clientModule.createRoot ?? clientModule.default.createRoot;
     const {AramMatchView} = await import('/src/components/AramMatchView.tsx');
     const {INITIAL_PLAYERS,CHAMPIONS,INITIAL_COACHES} = await import('/src/mockData.ts');
+    const {AvatarAssetLibrary}=await import('/src/avatarModelAssets.ts');
+    window.assetLoadFailures=[];
+    const requestAsset=AvatarAssetLibrary.prototype.request;
+    AvatarAssetLibrary.prototype.request=function(...args){
+      if(!this.loader.fixtureAudit){this.loader.fixtureAudit=true;const load=this.loader.loadAsync.bind(this.loader);
+        this.loader.loadAsync=async path=>{try{return await load(path);}catch(error){window.assetLoadFailures.push({path,error:String(error)});throw error;}};}
+      return requestAsset.apply(this,args);
+    };
     document.querySelector('#root').style.display = 'none';
     // Hold only this disposable page's RAF until the real Pause control commits.
     // This gives each mount the exact same zero-tick start without a production debug prop.
@@ -93,7 +102,7 @@ try {
   if (process.env.REQUIRE_GLB === '1') await waitFor(`(() => {
     const actors = [...window.arenaRenderer().arena.actors.values()].filter(actor => actor.avatar);
     return actors.length === 10 && actors.every(actor => actor.body.userData.assetFormat === 'glb');
-  })()`);
+  })()`,60000);
   const three = [];
   for (let i = 0; i < 3; i++) {
     assert.equal(await evaluate('window.__esportsPairedStep(900)'), true);

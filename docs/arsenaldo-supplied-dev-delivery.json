@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-18",
+  "concurrent": 3,
+  "result": [
+    {
+      "path": "/models/avatars-v9/c_solana.glb?art=9",
+      "status": 200,
+      "bytes": 2964356,
+      "declaredBytes": 2964356,
+      "sha256": "4a4f6865b296093759fbfb4c32502bb4d919ffaff98ec77817d820ab5cb43b68",
+      "seconds": 0.4270906,
+      "cache": "no-cache"
+    },
+    {
+      "path": "/models/avatars-v9/c_kage.glb?art=9",
+      "status": 200,
+      "bytes": 4976284,
+      "declaredBytes": 4976284,
+      "sha256": "b67f7cb2935d227bbf5fa4b859315638bd66d7b8bb0c2248bd5c20626a7e080c",
+      "seconds": 0.3229205,
+      "cache": "no-cache"
+    },
+    {
+      "path": "/models/imports/arsenaldo-submitted-20261018.glb?rev=29661d60",
+      "status": 200,
+      "bytes": 33281216,
+      "declaredBytes": 33281216,
+      "sha256": "29661d603b85a3c9227331a5d3b1b930ce23ed241e01f866e1563581c613a4d4",
+      "seconds": 1.6730311999999998,
+      "cache": "no-cache"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-18",
+  "trellis": "paused; no inference performed",
+  "visualSchedule": "paused; owner audit retained",
+  "sourceSHA256": "29661d603b85a3c9227331a5d3b1b930ce23ed241e01f866e1563581c613a4d4",
+  "sourceBytes": 33281216,
+  "originalClaudeSHA256": "f26c855ff883f9d697513cdf1285a27e80297b881e0b8cfab241f62a15204476",
+  "gameTests": 450,
+  "additionalSimulations": 3,
+  "backendTests": 45,
+  "backendAssertions": 340,
+  "typeScriptAndBuild": "passed",
+  "browser": "actual desktop/mobile model, maps, selector and exact download passed",
+  "liveArena": "GLB-required 3D/2D state/RNG, controls, context recovery and disposal passed",
+  "rulesVersion": "8eaad81b95071b0d4f5c7aeb22800f8fdce755f2a351a22fa746be218d58eb0f",
+  "ml": "original runner and image preserved; independently running",
+  "limitations": [
+    "Source contains no rig or animation clips",
+    "4K textures; no physical-mobile performance guarantee"
+  ]
+}
