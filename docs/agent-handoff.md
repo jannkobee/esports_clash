@@ -1,5 +1,19 @@
 # Conversation handoff for the next agent
 
+## Latest: Machine Learning Upgrades Implemented (2026-10-20)
+
+- **Applied SOTA Machine Learning Optimizations:**
+  - **Huber Loss (Smooth L1) in Policy Fitting:** In `infrastructure/evolution/runner/training.py`, replaced pure squared-error loss in the Adam optimizer loop with Smooth L1 / Huber loss ($\delta = 0.30$). This bounds gradients from background team death outliers, preventing the optimizer from swinging into extreme weights.
+  - **Balanced Ridge Regularization:** Raised `task_penalty` from $1.0$ to $2.0$ and `shared_penalty` from $4.0$ to $6.0$ in `CONFIG`. Expanded cross-validation shrinkage trials to `(1.0, 2.0, 4.0, 8.0, 16.0)`. This prevents co-occurring features from generating blown-up $+0.83$ predictions on neutral worlds (the exact cause of Seed 1058's massive overprediction spike).
+  - **Multi-Horizon Scouting Across All Splits:** In `infrastructure/evolution/runner/pipeline.py`, updated `afterSeconds` selection so that all splits (`fit`, `calibration`, `heldout`) sample across diverse early-game lane timestamps ($120\text{s}$, $150\text{s}$, $180\text{s}$) when `PLAN['version'] >= 2`, rather than locking calibration and evaluation to the initial $120\text{s}$ wave crash where towers have full plate fortification.
+- **Verification:**
+  - `npm run check:game`: 455 tests passed, 0 failures.
+  - `npm run build`: built in 1.41s.
+  - `php artisan test`: 95 passed (982 assertions) in 15.97s.
+  - ML unit tests (`taskConfidencePolicy.test.mjs`, `taskContextPolicy.test.mjs`, `rewardMacroDecision.test.mjs`, `teamTaskOutcome.test.mjs`): 14 passed in 195ms.
+  - `dev-doctor.sh`: 23 PASS, 0 WARN, 0 FAIL.
+  - All protected invariants (Cardrel parody aliases, 10-second turret attribution, tower dive risk rules, anti-spin deadbands) strictly preserved.
+
 ## Latest: Backoffice UI Controls & Machine Learning Pipeline Analysis (2026-10-20)
 
 - **Checkbox Alignment & Spacing Overhaul:**

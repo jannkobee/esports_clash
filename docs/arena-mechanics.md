@@ -1,5 +1,19 @@
 # Arena mechanics and regression rules
 
+## Latest: Machine Learning Upgrades Implemented (2026-10-20)
+
+- **Machine Learning Fitting & Optimization Upgrades:**
+  - **Huber Loss in Policy Optimizer:** In `infrastructure/evolution/runner/training.py`, transitioned the Adam optimizer loss from pure squared error to Smooth L1 / Huber loss ($\delta = 0.30$). This prevents background deaths from dominating the gradient updates, keeping the weight vector well-conditioned.
+  - **Balanced Ridge Regularization:** Raised `task_penalty` to $2.0$ and `shared_penalty` to $6.0$ in `CONFIG`. Expanded cross-validation shrinkage trials to `(1.0, 2.0, 4.0, 8.0, 16.0)`, preventing co-occurring features from generating unconstrained $+0.83$ overpredictions on neutral worlds.
+  - **Multi-Horizon Scouting Across All Splits:** In `infrastructure/evolution/runner/pipeline.py`, broadened `afterSeconds` selection across all splits (`fit`, `calibration`, `heldout`) to sample diverse early-game lane timestamps ($120\text{s}$, $150\text{s}$, $180\text{s}$) when `PLAN['version'] >= 2`.
+- **Verification:**
+  - `npm run check:game`: 455 tests passed, 0 failures.
+  - `npm run build`: built in 1.41s.
+  - `php artisan test`: 95 passed (982 assertions) in 15.97s.
+  - ML unit tests: 14 passed in 195ms.
+  - `dev-doctor.sh`: 23 PASS, 0 WARN, 0 FAIL.
+  - All protected invariants (Cardrel parody aliases, 10s turret execution attribution, risk-based tower diving, anti-spin deadbands) strictly preserved.
+
 ## Latest: Backoffice UI Controls & Machine Learning Pipeline Diagnostics (2026-10-20)
 
 - **Backoffice Form & Checkbox Alignment:**

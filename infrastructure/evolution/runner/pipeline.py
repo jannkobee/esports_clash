@@ -213,7 +213,7 @@ def main():
             for i in range(count):
                 cases.append({'seed': PLAN['seed_start'] + len(cases), 'split': split,
                               'draft': 2 + i % 8, 'swapped': bool((i // 8) % 2),
-                              'afterSeconds': min(120 + 30 * (i // 8 % 3), PLAN.get('operations', {}).get('scout_seconds', 360) - 30) if PLAN['version'] >= 2 and split == 'fit' else 120,
+                              'afterSeconds': min(120 + 30 * (i // 8 % 3), PLAN.get('operations', {}).get('scout_seconds', 360) - 30) if PLAN['version'] >= 2 else 120,
                               'scoutSeconds': PLAN.get('operations', {}).get('scout_seconds', 360)})
         execution = {**manifest, 'cases': cases, 'started_unix': START, 'training': CONFIG,
                      'acceptance': {'minimum_valid': 18, 'minimum_changes': 4, 'coverage': 0.9,

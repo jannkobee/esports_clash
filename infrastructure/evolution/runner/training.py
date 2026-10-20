@@ -2,8 +2,8 @@
 import math
 
 
-CONFIG = {'epochs': 400, 'learning_rate': 0.03, 'task_penalty': 1.0,
-          'shared_penalty': 4.0, 'minimum_fit': 16, 'minimum_informative': 4,
+CONFIG = {'epochs': 400, 'learning_rate': 0.03, 'task_penalty': 2.0,
+          'shared_penalty': 6.0, 'minimum_fit': 16, 'minimum_informative': 4,
           'minimum_calibration': 16, 'confidence': 0.9, 'margin': 0.02,
           'selection': 'fitting-only-leave-draft-out-ridge-v1'}
 
@@ -35,8 +35,8 @@ def fit(examples, folder, batch_size=64):
         keys = [item for item in all_keys if family == 'all' or not item[1].startswith('card:')]
         design = torch.tensor([[e['taskContext']['actions'][action].get(key, 0) * (1 if action == 'push' else -1)
                                 for action, key in keys] for e in data], dtype=torch.float64)
-        for shrinkage in (1.0, 4.0, 16.0):
-            penalty = torch.tensor([shrinkage * (1 if key.startswith('task:') else 4) for _, key in keys], dtype=torch.float64)
+        for shrinkage in (1.0, 2.0, 4.0, 8.0, 16.0):
+            penalty = torch.tensor([shrinkage * (CONFIG['task_penalty'] if key.startswith('task:') else CONFIG['shared_penalty']) for _, key in keys], dtype=torch.float64)
             losses = []
             for group in groups:
                 train = torch.tensor([e['draft'] != group for e in data])
@@ -58,7 +58,11 @@ def fit(examples, folder, batch_size=64):
         optimizer.zero_grad()
         objective = 0.0
         for offset in range(0, len(data), batch_size):
-            loss = ((x[offset:offset+batch_size] @ weights - y[offset:offset+batch_size]) ** 2).sum() / len(data)
+            pred = x[offset:offset+batch_size] @ weights
+            diff = pred - y[offset:offset+batch_size]
+            abs_diff = torch.abs(diff)
+            huber = torch.where(abs_diff <= 0.30, 0.5 * diff.square(), 0.30 * (abs_diff - 0.15))
+            loss = huber.sum() / len(data)
             loss.backward()
             objective += loss.item()
         regularization = (penalties * weights.square()).sum() / len(data)
