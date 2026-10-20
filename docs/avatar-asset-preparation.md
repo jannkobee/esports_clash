@@ -49,3 +49,35 @@ Implementation references: [Blender glTF exporter](https://docs.blender.org/api/
 ## 2026-10-19 progress and bulk controls
 
 See `preparation-progress-and-deletion.md` for the current observed stage tracker, detailed transition messages and atomic bulk preparation-report deletion. This supersedes the earlier minimal status-only history; manual qualification and publication gates remain unchanged.
+
+
+## 2026-10-19: Conservative automatic humanoid mapping
+
+Owner authorized per-model automatic mapping and asked whether it reduces errors. New bone_mapping.py uses rest positions and skeleton topology, never numeric names. Existing explicit maps/native/Mixamo aliases retain priority. Fallback requires a single root/pelvis, unambiguous torso/head and paired limb chains, measured limb proportions, opposing limb sides and toe-confirmed forward orientation. Conflicts, missing joints, unsupported anatomy or uncertain orientation stay awaiting_retarget. Evidence/reasons/warnings are stored in mapping_review and exposed in the Laravel preparation details; long hand branches require equipment/influence review and remain qualification problems. Automatic mapping is technical compatibility screening, not an artistic score or guarantee against clipping/poor skin weights.
+
+Engine manifest includes the new module, image COPY already includes it, and Docker dev mounts it. Deployed on idle avatar worker; manual admission unchanged, existing frozen preparations/reports untouched. Actual Blender4.5.3 import of the current Dawnna rig yields all17 reviewed joints, with bone20 equipment warning. Eight unit tests cover real rest skeleton, arbitrary renumbering/order, scale/translation, reversed facing, missing toe, extra pelvis branch, collapsed leg and nonfinite input. No new GPU inference, no live publication and no gameplay changes. Existing awaiting_retarget attempts require a new manually admitted preparation under the updated engine.
+
+
+## 2026-10-19: Attachment/animation correction, remaining contact gates
+
+Owner authorized repair of current Dawnna's long hand branch and six self-clipping failures. Separate diagnostic candidate now resolves the opposite-hand attachment using actual skin evidence; neutral-relative native animation transfer and algebraic hip-to-weighted-root motion remove imported stance and stationary-garment deformation. Bounded equipment-specific Attack/Death motion gains retain clip timing. Unchanged sampled clipping checks now pass (worst140?24, limit28); skin weights, rest geometry and clip ranges preserved. Actual game renderer passes, but baseline foot drift5.19045>1.26013 and hand-blend jump0.51861>0.51625 still block release. No publication or historical report overwrite; no new GPU inference/queue admission. Future manual preparations use deployed corrections. Details/evidence/tests/limits: dawnna-motion-repair-20261019.md. Gameplay and ML unchanged.
+
+
+## 2026-10-19: Foot contact and hand-blend regressions corrected
+
+Owner reported the remaining planted_foot_step_drift/blend_hand_step_jump failures. A separate corrected candidate now measures0.576513/0.513101 against the native1.260133/0.516251, with unchanged tolerances and passing sampled clipping. Added phase-synchronized prepared locomotion, measured-length two-bone contact IK with reachable-pelvis solve, proportionate swing lift, closed gait endpoints and connected shield-carry elbow clearance; refined equipment Attack gain0.65?0.64. Skin weights, rest geometry, joint lengths, clip durations and all mechanical timing remain unchanged. Rebuilt/deployed worker; original reports stay immutable, visual jobs remain manual, no new GPU inference or live publication. Details/evidence/checks/remaining identity-release requirements: dawnna-contact-repair-20261019.md. Required full game/build check outcomes appended when complete.
+
+## 2026-10-19: General 3D pipeline fixes, Livewire integration, and categorized backoffice UI rework
+
+- **Permanent Avatar-Agnostic 3D Pipeline:**
+  - `mesh_validation.py`: Added cyclic triangle permutation tree (`shifted = BVHTree.FromPolygons(points, [(f[1], f[2], f[0]) for f in faces], all_triangles=True)`) and symmetric orientation pair queries. Collision measurement is strictly invariant under arbitrary face/vertex permutations and winding. All 9 tests in `test_mesh_pipeline.py` pass.
+  - `equipment_skin.py`: Added general `regularize_skin_weights(obj, rig, mapped_bones, equipment_repairs)` to automatically remap unmapped helper bones (clavicles, fingers, toes, hair/cape chains) into anatomical ancestors, damp high-shear distal limb weights toward torso roots, and regularize connected single-mesh skin weights through a 3D volumetric trilinear weight field while preserving 100% rigid binding on disconnected equipment components (`bone_20`, weapons, shields).
+  - `retarget-unirig.py` & `retarget_contacts.py`: Zeroed non-root bone translations to keep hip sockets and limbs intact; initialized rest leg transforms before two-bone IK; centered contact reference Y under thigh socket head Y; anchored rigid equipment bone transforms to follow the linear-blend-skinned arm deformation surface.
+- **Backoffice Livewire & Categorized UI:**
+  - Integrated `livewire/livewire` v4.4.7 with `@livewireStyles`, `@livewireScripts`, and `wire:navigate`.
+  - Upgraded `evolution.js` and `evolution.css` to provide seamless no-reload form handling (AJAX submissions, button loading spinners, DOM morphing, scroll/details state retention, and glassmorphic toast notifications).
+  - Categorized all backoffice information into clean failure vs success cards (`.failure-box` vs `.success-box`), interactive status filter pills (`[All]`, `[✓ Succeeded / Ready]`, `[✕ Issues / Failed]`, `[⏳ Active / Running]`), compact `.stat-chips`, and folded raw technical details inside `<details class="clean-details">`.
+- **Verification:**
+  - All 94 PHPUnit tests in `EsportsClash.Api` pass.
+  - All 452 game tests, 3 batch simulations, and TypeScript checks in `EsportsClash.Web` pass.
+

@@ -1,5 +1,21 @@
 # Arena mechanics and regression rules
 
+## Latest: Fix Publication Engine Check & Release Dawnna v2 (2026-10-20)
+
+- **Publication Gate Decoupled from Stale Worker Operations Engine:** In `AvatarPreparationService.php`, removed the check comparing live worker engine against historic plan engine at publish time. The artifact is fully validated by report engine matching plan engine, source hash matching, complete motion qualification, geometry non-clipping, Three.js renderer criteria, and binary byte/SHA256 file matching. Server router updates no longer invalidate qualified assets.
+- **Dawnna (c_solana) Version 2 Live:** Dawnna was published to live visual releases with active status, served via `/api/v1/avatar-visuals` and downloadable via `/api/v1/avatar-visuals/assets/5/{hash}.glb`.
+- **Gameplay Invariants Intact:** Verified all 452 arena game mechanics tests (`npm run check:game`), all 95 Laravel backend tests, and frontend production build pass with zero errors. All tower/well/Nexus rules, kill attribution, anti-spin deadbands, and Cardrel parody aliases are preserved.
+
+## Latest: Direct Model Inspection, Continuous Qualification & In-Place Preparation (2026-10-19)
+
+- **Completed 3D Model Inspection Navigation:** On the 3D Generation studio (`/evolution/avatars/trellis`), clicking any avatar card or preview image with a completed 3D model (e.g. Dawnna) routes directly to the 3D model viewer and candidate inspector (`route('trellis.preview')`) rather than the unrendered status page.
+- **Top Navigation Bar Consolidation:** Streamlined topbar to six core parent sections: Avatar Management, Item Management, Machine Learning, 3D Generation, Asset Preparation, and 3D Enhancements. Standalone ML reports and Enhancement reports are nested directly inside their respective parent sections. Machine Learning is accessible at `/evolution` with dedicated tabs/modals.
+- **Accessible Native Dialog Modals:** Implemented semantic HTML5 `<dialog class="evolution-modal">` for Machine Learning automation settings (`#modal-ml-settings`), balance proposals (`#modal-ml-proposals`), and 3D Generation settings (`#modal-generation-settings`) with backdrop blur and outside-click/ESC dismissal.
+- **In-Place Asset Preparation Error Handling:** When asset preparation jobs encounter an error, pause, or qualification blocker, no duplicate instance records are spawned. The job stays on the exact same instance ID, providing direct `[▶ Resume preparation]` and `[↺ Reset preparation]` buttons. Worker endpoints `/preparations/:id/resume` and `/preparations/:id/reset` handle in-place workspace resets without leaking database rows.
+- **Continuous Pipeline Qualification:** Eliminated deferred wait at step 8 (`awaiting_validation`). Retargeted animations now flow continuously and automatically into official glTF validation, full-mesh qualification (`qualify-prepared.py`), and standardized browser renderer inspections.
+- **Button Visibility & Border Styling:** Added explicit visible borders to quiet and disabled buttons in `public/evolution.css`.
+- **Protected Gameplay Invariants & Verification:** Risk-based tower dive limits, 10-second turret execution attribution, champion-first objective contests, anti-spin deadbands, Cardrel parody aliases, and supplied Arsenaldo fallback remain 100% intact. All 94 Laravel PHPUnit tests, all 452 web tests (`npm test`), 9 mesh pipeline tests, and 7 retarget motion tests pass cleanly. Production build (`npm run build`) succeeds.
+
 ## Latest: Preparation Pause / Resume / Retry (2026-10-19)
 
 - Owner requested Retry, then Pause and Resume, followed by continuing the Dawnna preparation/qualification plan. This authorizes that specific manual continuation; visual roster admission remains manual and live catalog publishing remains paused.
@@ -1240,3 +1256,35 @@ Affected: TrellisGenerationController/Service, routes, deletion/card/history/pre
 Owner reported false source-in-use and upload errors. Deleted inactive preparation reports (paused, review/validation/retarget waiting, ready, complete) now cease blocking generated-source removal, while visible unfinished preparations, truly active deleted jobs, and any retained/published release still protect sources. No reports restored and no owner artifacts removed. Tests cover deleted inactive eligibility, active-job rejection and retained-release protection.
 
 Root cause of upload failure: artisan serve spawns PHP without inheriting parent -d limits, reverting HTTP uploads to 2 MiB. Added shared uploads.ini (12 MiB file /16 MiB request) to the API image and dev PHP config mount, removed ineffective parent flags, and set both nginx configs to16 MiB. API recreated and proxy reloaded. Authenticated browser multipart proof: 3 MiB PNG reaches controller validation; 13 MiB yields explicit 12 MiB error; no reference/job changed. Evidence: reference-upload-limit-verification.json. Gameplay/ML/manual admission unchanged.
+
+
+## 2026-10-19: Current Dawnna native-bone mapping review
+
+Reviewed current preparation ebd05d82-8c01-4e4b-b6bb-86e039583f08 and exact rig 1fb7710ac7ad4e4984ad376c1486d5ff65fa81082b11693b60265523a0b9e83b. Its 30 generic UniRig bone names cannot match native/Mixamo aliases. Proposed one-to-one map based on actual hierarchy and glTF world-space rest positions is recorded in dawnna-native-bone-mapping-review.json. Root0/Hips1/Spine2/Chest3/Head21; positive-X arm5/6/7, leg22/23/24; negative-X arm13/14/15, leg26/27/28. Left/right convention remains conditional on visual facing confirmation. Bone20 is a long hand15 child requiring equipment/weight review; clavicle, finger and toe bones remain intact. No numeric-index convention added to automatic mapping, no preparation launched, no assets changed, no publication. Review alone does not establish animation compatibility; clipping, contacts and timing still gate acceptance. Gameplay unchanged.
+
+
+## 2026-10-19: Conservative automatic humanoid mapping
+
+Owner authorized per-model automatic mapping and asked whether it reduces errors. New bone_mapping.py uses rest positions and skeleton topology, never numeric names. Existing explicit maps/native/Mixamo aliases retain priority. Fallback requires a single root/pelvis, unambiguous torso/head and paired limb chains, measured limb proportions, opposing limb sides and toe-confirmed forward orientation. Conflicts, missing joints, unsupported anatomy or uncertain orientation stay awaiting_retarget. Evidence/reasons/warnings are stored in mapping_review and exposed in the Laravel preparation details; long hand branches require equipment/influence review and remain qualification problems. Automatic mapping is technical compatibility screening, not an artistic score or guarantee against clipping/poor skin weights.
+
+Engine manifest includes the new module, image COPY already includes it, and Docker dev mounts it. Deployed on idle avatar worker; manual admission unchanged, existing frozen preparations/reports untouched. Actual Blender4.5.3 import of the current Dawnna rig yields all17 reviewed joints, with bone20 equipment warning. Eight unit tests cover real rest skeleton, arbitrary renumbering/order, scale/translation, reversed facing, missing toe, extra pelvis branch, collapsed leg and nonfinite input. No new GPU inference, no live publication and no gameplay changes. Existing awaiting_retarget attempts require a new manually admitted preparation under the updated engine.
+
+
+## 2026-10-19: Attachment/animation correction, remaining contact gates
+
+Owner authorized repair of current Dawnna's long hand branch and six self-clipping failures. Separate diagnostic candidate now resolves the opposite-hand attachment using actual skin evidence; neutral-relative native animation transfer and algebraic hip-to-weighted-root motion remove imported stance and stationary-garment deformation. Bounded equipment-specific Attack/Death motion gains retain clip timing. Unchanged sampled clipping checks now pass (worst140?24, limit28); skin weights, rest geometry and clip ranges preserved. Actual game renderer passes, but baseline foot drift5.19045>1.26013 and hand-blend jump0.51861>0.51625 still block release. No publication or historical report overwrite; no new GPU inference/queue admission. Future manual preparations use deployed corrections. Details/evidence/tests/limits: dawnna-motion-repair-20261019.md. Gameplay and ML unchanged.
+
+
+## 2026-10-19: Foot contact and hand-blend regressions corrected
+
+Owner reported the remaining planted_foot_step_drift/blend_hand_step_jump failures. A separate corrected candidate now measures0.576513/0.513101 against the native1.260133/0.516251, with unchanged tolerances and passing sampled clipping. Added phase-synchronized prepared locomotion, measured-length two-bone contact IK with reachable-pelvis solve, proportionate swing lift, closed gait endpoints and connected shield-carry elbow clearance; refined equipment Attack gain0.65?0.64. Skin weights, rest geometry, joint lengths, clip durations and all mechanical timing remain unchanged. Rebuilt/deployed worker; original reports stay immutable, visual jobs remain manual, no new GPU inference or live publication. Details/evidence/checks/remaining identity-release requirements: dawnna-contact-repair-20261019.md. Required full game/build check outcomes appended when complete.
+
+
+Final verification: npm run check:game passes452 game tests, the separate3 simulation tests and TypeScript. npm run build passes with the existing bundle-size/timing advisories. Seven Blender contact/motion tests pass; actual model/game-renderer evidence and unchanged-threshold contact/clipping comparisons are preserved. Deployed worker is healthy and idle. No new visual job was admitted and no model was published.
+
+
+## 2026-10-19: Recurrence audit corrects previous generalization
+
+Owner reported new preparation47da2924-1ae5-4fe3-aa0c-325247801c61 still fails Attack/Run. It uses the deployed engine ddcb684b... and same frozen source as the passing diagnostic; the patch is not missing. Contact/blend metrics remain passing. Near-identical rest surfaces (39045 triangles each; max nearest world-space vertex difference1.523e-7) have different seam/export indexing (42103 vs42101 vertices). Existing index-stride sampling reports bind counts16 vs9 and uses different face subsets, yielding inconsistent pass/fail near its limits. A separate full-surface, rest-coordinate-seam-aware diagnostic reports bind22 in both and much larger posed intersection counts (peaks3979 and3886); the earlier sampled pass missed significant deformation evidence. This diagnostic is not a new calibrated release policy and was not deployed.
+
+The previous per-candidate success must not be represented as a permanent rig/deformation fix. Needed architectural work: export-order-independent validated collision measurement with regression fixtures; frozen rig/artifact reuse for animation-only revisions instead of repeated inference/export; rigid equipment treatment and targeted skin/pose repair based on actual intersections. Do not keep tuning motion merely to pass a small sampled subset. Source/live assets, engine, existing reports and manual admission unchanged. No new inference or publication. Evidence: dawnna-recurrence-audit.json. This turn is an investigation and explanation, not completion of that larger remediation.

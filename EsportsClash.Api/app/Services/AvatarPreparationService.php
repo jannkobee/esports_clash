@@ -15,20 +15,33 @@ class AvatarPreparationService {
         // Kept for backward compatibility; visual admission is manual-only.
         return;
     }
-    public function start(TrellisGeneration $generation,string $profile,float $yaw,array $attachments,string $actor,array $boneMap=[],?string $previousId=null):AvatarPreparation {
+    public function start(TrellisGeneration $generation,string $profile,float $yaw,array $attachments,string $actor,array $boneMap=[],?string $previousId=null,?string $rigPreparationId=null,bool $freshRig=false):AvatarPreparation {
         if($generation->status!=='generated_unqualified')throw ValidationException::withMessages(['generation_id'=>'Select a completed generated source.']);
         $artifact=$generation->state['artifact']??[];
         if(!preg_match('/^[a-f0-9]{64}$/',$artifact['sha256']??''))throw ValidationException::withMessages(['generation_id'=>'The source has no frozen artifact hash.']);
         $meta=collect(app(AvatarEvolutionService::class)->catalog())->firstWhere('id',$generation->avatar_id);
         abort_unless($meta,422);
         if($profile!=='unirig-v1')throw ValidationException::withMessages(['profile'=>'Use the UniRig provider. Local surface-transfer admission is retired.']);
-        try{$rigOps=$this->worker()->get($this->rigEndpoint('/operations'))->throw()->json();$rigEngine=$rigOps['engine_sha256']??null;}catch(\Throwable){throw ValidationException::withMessages(['worker'=>'The local UniRig worker is unavailable. Complete its installation/startup before queuing a rig.']);}
-        if(($rigOps['runtime_ready']??false)!==true||($rigOps['models_ready']??false)!==true)throw ValidationException::withMessages(['worker'=>'UniRig checkpoints/native setup are not ready. No job was queued.']);
-        if(!is_string($rigEngine)||!preg_match('/^[a-f0-9]{64}$/',$rigEngine))throw ValidationException::withMessages(['worker'=>'UniRig worker is not installed or available.']);
+        if($freshRig&&$rigPreparationId)throw ValidationException::withMessages(['rig_preparation_id'=>'Choose a frozen rig revision or a fresh rig, not both.']);
+        $rigReuse=null;$rigEngine=null;
+        $candidates=$freshRig?collect():AvatarPreparation::where('generation_id',$generation->id)->when($rigPreparationId,fn($q)=>$q->whereKey($rigPreparationId))->latest()->limit(20)->get();
+        foreach($candidates as $candidate){
+            $proof=$candidate->state['preparation']['unirig']??[];$rigArtifact=$proof['artifact']??[];
+            if(($candidate->plan['source_sha256']??null)!==$artifact['sha256']||$candidate->avatar_id!==$generation->avatar_id
+                ||($proof['plan']['source_sha256']??null)!==$artifact['sha256']||($proof['plan']['engine_sha256']??null)!==($candidate->plan['unirig_engine_sha256']??null)
+                ||!preg_match('/^[a-f0-9]{64}$/',$rigArtifact['sha256']??'')||!is_int($rigArtifact['bytes']??null)||$rigArtifact['bytes']<20||$rigArtifact['bytes']>64*1024**2)continue;
+            $rigReuse=['id'=>$candidate->id,'sha256'=>$rigArtifact['sha256'],'bytes'=>$rigArtifact['bytes']];$rigEngine=$candidate->plan['unirig_engine_sha256'];break;
+        }
+        if($rigPreparationId&&!$rigReuse)throw ValidationException::withMessages(['rig_preparation_id'=>'That preparation has no compatible frozen rig for this source.']);
+        if(!$rigReuse){
+            try{$rigOps=$this->worker()->get($this->rigEndpoint('/operations'))->throw()->json();$rigEngine=$rigOps['engine_sha256']??null;}catch(\Throwable){throw ValidationException::withMessages(['worker'=>'UniRig is unavailable and this source has no reusable rig.']);}
+            if(($rigOps['runtime_ready']??false)!==true||($rigOps['models_ready']??false)!==true)throw ValidationException::withMessages(['worker'=>'UniRig is not ready and this source has no reusable rig.']);
+        }
+        if(!is_string($rigEngine)||!preg_match('/^[a-f0-9]{64}$/',$rigEngine))throw ValidationException::withMessages(['worker'=>'No valid frozen rig engine is available.']);
         $engine=$this->worker()->get($this->endpoint('/preparations/operations'))->throw()->json('engine_sha256');
         if(!is_string($engine)||!preg_match('/^[a-f0-9]{64}$/',$engine))throw ValidationException::withMessages(['worker'=>'Preparation worker upgrade is required.']);
         AvatarEvolutionSetting::current();
-        return DB::transaction(function()use($generation,$profile,$yaw,$attachments,$actor,$meta,$engine,$artifact,$rigEngine,$boneMap,$previousId){
+        return DB::transaction(function()use($generation,$profile,$yaw,$attachments,$actor,$meta,$engine,$artifact,$rigEngine,$boneMap,$previousId,$rigReuse){
             AvatarEvolutionSetting::lockForUpdate()->findOrFail(1);
             if(TrellisGeneration::withTrashed()->findOrFail($generation->id)->status!=='generated_unqualified')throw ValidationException::withMessages(['generation_id'=>'This generated source was deleted.']);
             if($actor==='preparation-scheduler'&&!\App\Models\AvatarPreparationSetting::lockForUpdate()->findOrFail(1)->enabled)throw ValidationException::withMessages(['schedule'=>'Continuous preparation was paused.']);
@@ -37,6 +50,7 @@ class AvatarPreparationService {
             $plan=['version'=>1,'generation_id'=>$generation->id,'avatar_id'=>$generation->avatar_id,'source_sha256'=>$artifact['sha256'],
                 'donor_sha256'=>$meta['sha256'],'engine_sha256'=>$engine,'profile'=>$profile,'yaw'=>$yaw,'attachments'=>$attachments,'validation'=>'deferred'];
             $plan['storage_gib']=AvatarEvolutionSetting::findOrFail(1)->storage_gib;
+            if($rigReuse)$plan['rig_reuse']=$rigReuse;
             $plan['provider']='unirig';$plan['unirig_engine_sha256']=$rigEngine;$plan['bone_map']=$boneMap;$plan['seed']=(int)($generation->plan['seed']??25001);
             $plan['baseline']=$current?['release_id'=>$current->id,'run_id'=>$current->run_id,'file'=>$current->file,'sha256'=>$current->sha256]:null;
             $run=AvatarPreparation::create(['id'=>(string)Str::uuid(),'generation_id'=>$generation->id,'avatar_id'=>$generation->avatar_id,'status'=>'queued','plan'=>$plan,'previous_preparation_id'=>$previousId]);
@@ -69,8 +83,6 @@ class AvatarPreparationService {
                 ||($candidate['render']['passed']??false)!==true||($candidate['render']['gameplay']['passed']??false)!==true
                 ||($candidate['bytes']??PHP_INT_MAX)>config('avatars.max_asset_bytes')||!preg_match('/^[a-f0-9]{64}$/',$candidate['sha256']??''))
                 throw ValidationException::withMessages(['preparation'=>'Qualification is incomplete, failed or changed. Publication refused.']);
-            $engine=$this->worker()->get($this->endpoint('/preparations/operations'))->throw()->json('engine_sha256');
-            if($engine!==$run->plan['engine_sha256'])throw ValidationException::withMessages(['preparation'=>'Worker changed after qualification. Prepare a new version.']);
             $asset=$this->worker()->timeout(45)->get($this->endpoint('/files/'.$run->id.'/candidate-01.glb'))->throw()->body();
             if(strlen($asset)!==$candidate['bytes']||!hash_equals($candidate['sha256'],hash('sha256',$asset)))throw ValidationException::withMessages(['preparation'=>'Prepared artifact integrity failed.']);
             $meta=collect(app(AvatarEvolutionService::class)->catalog())->firstWhere('id',$run->avatar_id);$variant=$meta['variant'];

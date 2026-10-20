@@ -23,7 +23,7 @@ class AvatarPreparationController extends Controller {
     }
     public function start(Request $request,AvatarPreparationService $service){
         $data=$request->validate(['generation_id'=>['required','uuid'],'profile'=>['required','in:unirig-v1'],
-            'yaw'=>['required','numeric','min:-180','max:180'],'attachments'=>['nullable','string','max:16000'],'bone_map'=>['nullable','string','max:16000']]);
+            'yaw'=>['required','numeric','min:-180','max:180'],'attachments'=>['nullable','string','max:16000'],'bone_map'=>['nullable','string','max:16000'],'rig_preparation_id'=>['nullable','uuid'],'fresh_rig'=>['nullable','boolean']]);
         try{$boneMap=json_decode(($data['bone_map']??null)?:'{}',true,flags:JSON_THROW_ON_ERROR);}catch(\Throwable){throw ValidationException::withMessages(['bone_map'=>'Use a JSON object mapping native bone names to UniRig bone names.']);}
         $native=['Root','Hips','Spine','Chest','Head','UpperArmL','ForearmL','HandL','UpperArmR','ForearmR','HandR','ThighL','CalfL','FootL','ThighR','CalfR','FootR'];
         if(!is_array($boneMap)||count($boneMap)>17||array_diff(array_keys($boneMap),$native)||collect($boneMap)->contains(fn($name)=>!is_string($name)||!preg_match('/^[A-Za-z0-9_.:\/-]{1,100}$/',$name)))throw ValidationException::withMessages(['bone_map'=>'Map only the native 17 bones to existing UniRig bone names.']);
@@ -36,13 +36,13 @@ class AvatarPreparationController extends Controller {
         }
         $attachments=array_map(fn($item)=>['bone'=>$item['bone'],'min'=>array_map('floatval',$item['min']),'max'=>array_map('floatval',$item['max'])],$attachments);
         if($attachments)throw ValidationException::withMessages(['attachments'=>'UniRig supplies skin weights. Legacy surface-transfer attachment regions are not applied; leave these empty.']);
-        $service->start(TrellisGeneration::findOrFail($data['generation_id']),$data['profile'],(float)$data['yaw'],$attachments,'user:'.$request->user()->id,$boneMap);
+        $service->start(TrellisGeneration::findOrFail($data['generation_id']),$data['profile'],(float)$data['yaw'],$attachments,'user:'.$request->user()->id,$boneMap,null,$data['rig_preparation_id']??null,(bool)($data['fresh_rig']??false));
         return redirect()->route('preparations.index')->with('status','Asset preparation queued. Qualification remains deferred until you request it.');
     }
     public function control(Request $request,AvatarPreparation $preparation,\App\Services\AvatarPreparationControlService $service){
-        $data=$request->validate(['operation'=>'required|in:pause,resume,retry,cancel_pending']);
+        $data=$request->validate(['operation'=>'required|in:pause,resume,resume_in_place,retry,reset,cancel_pending']);
         $service->request($preparation,$data['operation'],'user:'.$request->user()->id);
-        return back()->with('status','Preparation '.$data['operation'].' requested. Pause/retry waits for both workers to stop; resume/retry uses a linked attempt and may repeat unfinished work.');
+        return back()->with('status','Preparation '.$data['operation'].' requested.');
     }
     public function validateAsset(Request $request,AvatarPreparation $preparation,AvatarPreparationService $service){
         $service->validate($preparation,'user:'.$request->user()->id);

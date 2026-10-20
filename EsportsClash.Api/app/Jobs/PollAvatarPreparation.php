@@ -13,7 +13,7 @@ class PollAvatarPreparation implements ShouldQueue,ShouldBeUniqueUntilProcessing
     public function backoff():array{return [15,30,60];}
     public function handle(AvatarPreparationService $service):void {
         $run=AvatarPreparation::find($this->runId);if(!$run||!in_array($run->status,$service::ACTIVE,true))return;
-        if(($run->plan['provider']??null)==='unirig'){
+        if(($run->plan['provider']??null)==='unirig'&&empty($run->plan['rig_reuse'])){
             $rigPlan=['version'=>1,'generation_id'=>$run->generation_id,'avatar_id'=>$run->avatar_id,'source_sha256'=>$run->plan['source_sha256'],'engine_sha256'=>$run->plan['unirig_engine_sha256'],'seed'=>$run->plan['seed']];
             $rig=$service->worker()->get($service->rigEndpoint('/jobs/'.$run->id));
             if($rig->status()===404)$rig=$service->worker()->post($service->rigEndpoint('/jobs/'.$run->id),$rigPlan);

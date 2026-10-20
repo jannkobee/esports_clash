@@ -1,10 +1,10 @@
-import {readFile,writeFile,mkdir,lstat,readdir} from 'node:fs/promises';
+import {readFile,writeFile,mkdir,lstat,readdir,unlink} from 'node:fs/promises';
 import {join} from 'node:path';
 import {spawn} from 'node:child_process';
 import {sha} from './glb.mjs';
 
 export async function preparationEngine(){
-  const files=['prepare-avatar.py','retarget-unirig.py','qualify-prepared.py','preparation-job.mjs','preparation-server.mjs','browser.mjs','glb.mjs','package-lock.json'];
+  const files=['mesh_validation.py','equipment_skin.py','retarget_contacts.py','retarget_motion.py','bone_mapping.py','prepare-avatar.py','retarget-unirig.py','qualify-prepared.py','preparation-job.mjs','browser.mjs','glb.mjs','package-lock.json'];
   const manifest=await Promise.all(files.map(async name=>[name,sha(await readFile(join(import.meta.dirname,name)))]));
   const assets='/workspace/EsportsClash.Web/avatar-review-dist/assets';
   for(const name of (await readdir(assets)).sort())manifest.push([name,sha(await readFile(join(assets,name)))]);
@@ -13,9 +13,9 @@ export async function preparationEngine(){
 export async function preparationRequest(path,request,response,ctx){
   const {root,children,reply,json,uuid,atomic,stopOwnedJob,catalog}=ctx;
   if(path==='/preparations/operations'){
-    reply(response,200,{engine_sha256:await preparationEngine(),profiles:['humanoid-template-v1','custom-template-v1'],validation_default:'deferred',active:[...children.keys()]});return true;
+    reply(response,200,{engine_sha256:await preparationEngine(),profiles:['humanoid-template-v1','custom-template-v1'],validation_default:'immediate',active:[...children.keys()]});return true;
   }
-  const match=path.match(/^\/preparations\/([a-f0-9-]+)(?:\/(cancel|validate))?$/);
+  const match=path.match(/^\/preparations\/([a-f0-9-]+)(?:\/(cancel|validate|resume|reset))?$/);
   if(!match)return false;if(!uuid.test(match[1]))throw Error('Invalid preparation identifier');
   const id=match[1],folder=join(root,id),file=join(folder,'state.json');
   if(match[2]==='cancel'&&request.method==='POST'){
@@ -23,6 +23,19 @@ export async function preparationRequest(path,request,response,ctx){
     const child=children.get(id);if(child){await stopOwnedJob(child.pid);await new Promise(resolve=>child.exitCode!==null||child.signalCode!==null?resolve():child.once('exit',resolve));children.delete(id);}
     let state={};try{state=JSON.parse(await readFile(file,'utf8'));}catch{}
     state={...state,id,status:'cancelled',stage:'cancelled',publication_eligible:false};await atomic(file,state);reply(response,200,state);return true;
+  }
+  if(match[2]==='resume'&&request.method==='POST'){
+    try{await unlink(join(folder,'cancelled.json'));}catch{}
+    let state={};try{state=JSON.parse(await readFile(file,'utf8'));}catch{}
+    try{await writeFile(join(folder,'preparation-starts.json'),JSON.stringify({count:0}));}catch{}
+    state={...state,id,status:'queued',stage:'preparing',error:null};await atomic(file,state);reply(response,200,state);return true;
+  }
+  if(match[2]==='reset'&&request.method==='POST'){
+    try{await unlink(join(folder,'cancelled.json'));}catch{}
+    try{await unlink(join(folder,'validate.json'));}catch{}
+    try{await writeFile(join(folder,'preparation-starts.json'),JSON.stringify({count:0}));}catch{}
+    const state={id,status:'queued',stage:'preparing',publication_eligible:false};
+    await atomic(file,state);reply(response,200,state);return true;
   }
   if(request.method==='GET'){reply(response,200,JSON.parse(await readFile(file,'utf8')));return true;}
   if(request.method!=='POST'){reply(response,405,{error:'POST required'});return true;}
@@ -37,6 +50,7 @@ export async function preparationRequest(path,request,response,ctx){
   if(plan.version!==1||!meta||!uuid.test(plan.generation_id)||!/^[a-f0-9]{64}$/.test(plan.source_sha256)||plan.engine_sha256!==await preparationEngine()
     ||plan.donor_sha256!==meta.sha256||plan.provider!=='unirig'||plan.profile!=='unirig-v1'||!/^[a-f0-9]{64}$/.test(plan.unirig_engine_sha256)||!Number.isFinite(plan.yaw)||Math.abs(plan.yaw)>180
     ||!Number.isInteger(plan.storage_gib)||plan.storage_gib<1||plan.storage_gib>20||!Array.isArray(plan.attachments)||plan.attachments.length>32)throw Error('Unsupported frozen asset preparation plan');
+  if(plan.rig_reuse&&(!uuid.test(plan.rig_reuse.id)||!/^[a-f0-9]{64}$/.test(plan.rig_reuse.sha256)||!Number.isInteger(plan.rig_reuse.bytes)||plan.rig_reuse.bytes<20||plan.rig_reuse.bytes>64*1024**2))throw Error('Invalid frozen reusable rig');
   if(plan.baseline&&(!uuid.test(plan.baseline.run_id)||!/^candidate-\d{2}\.glb$/.test(plan.baseline.file)||!/^[a-f0-9]{64}$/.test(plan.baseline.sha256)))throw Error('Invalid frozen baseline');
   if(!plan.bone_map||typeof plan.bone_map!=='object'||Array.isArray(plan.bone_map)&&plan.bone_map.length||Object.keys(plan.bone_map).length>17||Object.values(plan.bone_map).some(name=>typeof name!=='string'||!name.match(/^[A-Za-z0-9_.:\/-]{1,100}$/)))throw Error('Invalid reviewed retarget mapping');
   for(const a of plan.attachments)if(!a||!/^[A-Za-z][A-Za-z0-9_.-]{0,79}$/.test(a.bone)||!['min','max'].every(k=>Array.isArray(a[k])&&a[k].length===3&&a[k].every(v=>typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=1))||a.min.some((v,i)=>v>=a.max[i]))throw Error('Invalid rigid attachment region');

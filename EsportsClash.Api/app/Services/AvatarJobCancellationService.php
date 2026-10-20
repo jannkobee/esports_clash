@@ -23,7 +23,7 @@ class AvatarJobCancellationService {
         $service=app($type==='generation'?TrellisGenerationService::class:AvatarEvolutionService::class);
         $path=match($type){'generation'=>'/jobs/','preparation'=>'/preparations/',default=>'/runs/'};
         $rigError=null;
-        if($type==='preparation'&&($run->plan['provider']??null)==='unirig'){
+        if($type==='preparation'&&($run->plan['provider']??null)==='unirig'&&empty($run->plan['rig_reuse'])){
             try{$rig=$service->worker()->post(rtrim(config('avatars.unirig_url'),'/').'/jobs/'.$id.'/cancel')->throw()->json();if(($rig['status']??null)!=='cancelled')throw new \RuntimeException('UniRig stop pending');}catch(\Throwable $error){$rigError=$error;}
         }
         $response=$service->worker()->post($service->endpoint($path.$id.'/cancel'));

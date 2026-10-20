@@ -10,25 +10,24 @@
     @if(app()->environment('local') && config('app.dev_vite_url'))
     <script type="module" src="{{ rtrim(config('app.dev_vite_url'), '/') }}/@@vite/client"></script>
     @endif
+    @livewireStyles
 </head>
 <body>
 <header class="topbar">
-    <a class="brand" href="{{ route('dashboard') }}"><span class="brand-mark">EC</span><span>ESPORTS CLASH<small>ML and avatar model operations</small></span></a>
+    <a class="brand" href="{{ route('dashboard') }}" wire:navigate><span class="brand-mark">EC</span><span>ESPORTS CLASH<small>ML and avatar model operations</small></span></a>
     @auth
-    <div class="account"><span>{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="quiet">Sign out</button></form></div>
+    <div class="account"><span>{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}" data-no-ajax>@csrf<button class="quiet">Sign out</button></form></div>
     @endauth
 </header>
-<main>
+<main id="main-content">
     @auth
     <nav class="report-nav" aria-label="Evolution sections">
-        <a href="{{ route('management.index', 'avatar') }}" @if(request()->routeIs('management.*') && request()->route('kind') === 'avatar') aria-current="page" @endif>Avatar management</a>
-        <a href="{{ route('management.index', 'item') }}" @if(request()->routeIs('management.*') && request()->route('kind') === 'item') aria-current="page" @endif>Item management</a>
-        <a href="{{ route('dashboard') }}" @if(request()->routeIs('dashboard')) aria-current="page" @endif>ML controls</a>
-        <a href="{{ route('evolution.reports') }}" @if(request()->routeIs('evolution.reports', 'evolution.report')) aria-current="page" @endif>ML reports</a>
-        <a href="{{ route('trellis.index') }}" @if(request()->routeIs('trellis.*')) aria-current="page" @endif>3D Generation</a>
-        <a href="{{ route('preparations.index') }}" @if(request()->routeIs('preparations.*')) aria-current="page" @endif>Asset Preparation</a>
-        <a href="{{ route('avatars.index') }}" @if(request()->routeIs('avatars.index')) aria-current="page" @endif>3D Enhancements</a>
-        <a href="{{ route('avatars.reports') }}" @if(request()->routeIs('avatars.reports', 'avatars.show')) aria-current="page" @endif>Enhancement reports</a>
+        <a wire:navigate href="{{ route('management.index', 'avatar') }}" @if(request()->routeIs('management.*') && request()->route('kind') === 'avatar') aria-current="page" @endif>Avatar management</a>
+        <a wire:navigate href="{{ route('management.index', 'item') }}" @if(request()->routeIs('management.*') && request()->route('kind') === 'item') aria-current="page" @endif>Item management</a>
+        <a wire:navigate href="{{ route('dashboard') }}" @if(request()->routeIs('dashboard', 'evolution.reports', 'evolution.report')) aria-current="page" @endif>Machine Learning</a>
+        <a wire:navigate href="{{ route('trellis.index') }}" @if(request()->routeIs('trellis.*')) aria-current="page" @endif>3D Generation</a>
+        <a wire:navigate href="{{ route('preparations.index') }}" @if(request()->routeIs('preparations.*')) aria-current="page" @endif>Asset Preparation</a>
+        <a wire:navigate href="{{ route('avatars.index') }}" @if(request()->routeIs('avatars.*')) aria-current="page" @endif>3D Enhancements</a>
     </nav>
     @endauth
     @if(session('status'))<div class="notice success" role="status">{{ session('status') }}</div>@endif
@@ -36,5 +35,7 @@
     @yield('content')
 </main>
 <footer>Laravel control panel · All times Asia/Manila · Experimental models stay offline until qualified.</footer>
+<div id="toast-container" aria-live="polite"></div>
+@livewireScripts
 </body>
 </html>

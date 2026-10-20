@@ -22,18 +22,30 @@ try{
     if(plan.provider!=='unirig')throw Error('Local surface-transfer admission retired; create a UniRig preparation.');
     await save({status:'animating',stage:'download_unirig_and_retarget_native_clips',publication_eligible:false});
     const base=process.env.UNIRIG_WORKER_URL??'http://unirig-worker:8098',headers={Authorization:'Bearer '+process.env.EVOLUTION_WORKER_TOKEN},id=folder.split('/').at(-1);
-    const response=await fetch(base+'/jobs/'+id,{headers,signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('UniRig result unavailable');const result=await response.json();
+    let result,rig;
+    if(plan.rig_reuse){
+      const sourceFolder=join(process.env.AVATAR_DATA??'/avatar-data',plan.rig_reuse.id);
+      const sourcePlan=JSON.parse(await readFile(join(sourceFolder,'preparation-plan.json'),'utf8'));
+      if(sourcePlan.source_sha256!==plan.source_sha256||sourcePlan.avatar_id!==plan.avatar_id||sourcePlan.unirig_engine_sha256!==plan.unirig_engine_sha256)throw Error('Reusable rig source identity mismatch');
+      const info=await lstat(join(sourceFolder,'unirig-rigged.glb'));if(!info.isFile()||info.isSymbolicLink()||info.size!==plan.rig_reuse.bytes)throw Error('Reusable rig is unavailable or unsafe; inference was not started');
+      rig=await readFile(join(sourceFolder,'unirig-rigged.glb'));
+      if(sha(rig)!==plan.rig_reuse.sha256)throw Error('Reusable rig hash mismatch; inference was not started');
+      result=JSON.parse(await readFile(join(sourceFolder,'unirig-result.json'),'utf8'));
+      result={...result,reused_from:plan.rig_reuse.id};
+    }else{
+      const response=await fetch(base+'/jobs/'+id,{headers,signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('UniRig result unavailable');result=await response.json();
+      const download=await fetch(base+'/jobs/'+id+'/artifact',{headers,signal:AbortSignal.timeout(45000)});if(!download.ok)throw Error('UniRig artifact unavailable');rig=Buffer.from(await download.arrayBuffer());
+    }
     if(result.status!=='rigged_unqualified'||result.plan.engine_sha256!==plan.unirig_engine_sha256||result.plan.source_sha256!==plan.source_sha256)throw Error('UniRig frozen result mismatch');
-    const download=await fetch(base+'/jobs/'+id+'/artifact',{headers,signal:AbortSignal.timeout(45000)});if(!download.ok)throw Error('UniRig artifact unavailable');
-    const rig=Buffer.from(await download.arrayBuffer());if(rig.length>64*1024**2||rig.length!==result.artifact.bytes||sha(rig)!==result.artifact.sha256)throw Error('UniRig exported artifact integrity failed');
+    if(rig.length>64*1024**2||rig.length!==result.artifact.bytes||sha(rig)!==result.artifact.sha256)throw Error('UniRig exported artifact integrity failed');
     await writeFile(join(folder,'unirig-rigged.glb'),rig);await writeFile(join(folder,'unirig-result.json'),JSON.stringify(result,null,2));
     await new Promise((resolve,reject)=>{const child=spawn('blender',['--background','--threads','1','--factory-startup','--disable-autoexec','--python-exit-code','1','--python',join(import.meta.dirname,'retarget-unirig.py'),'--',folder,join(folder,'unirig-rigged.glb'),donor],{stdio:['ignore','ignore','pipe']});let errors='';child.stderr.on('data',b=>errors=(errors+b).slice(-2000));child.once('error',reject);child.once('exit',code=>code===0?resolve():reject(Error(errors||'UniRig native animation retargeting failed')));});
     prepared=JSON.parse(await readFile(join(folder,'preparation.json'),'utf8'));
   }
   if(await cancelled())process.exit(0);
   if(prepared.runtime_compatible!==true){await save({status:'awaiting_retarget',stage:'review_unirig_bone_mapping',preparation:prepared,publication_eligible:false});process.exit(0);}
-  let validate=false;try{await lstat(join(folder,'validate.json'));validate=true;}catch{}
-  if(!validate){await save({status:'awaiting_validation',stage:'rig_and_clips_exported_validation_deferred',preparation:prepared,publication_eligible:false});process.exit(0);}
+  let validate=true;try{await lstat(join(folder,'validate.json'));validate=true;}catch{}
+  if(plan.validation==='deferred_manual'&&!validate){await save({status:'awaiting_validation',stage:'rig_and_clips_exported_validation_deferred',preparation:prepared,publication_eligible:false});process.exit(0);}
   await save({status:'validating',stage:'gltf_and_actual_game_renderer',preparation:prepared,publication_eligible:false});
   const bytes=await readFile(join(folder,'candidate-01.glb')),file=new AvatarGLB(bytes);
   const gltf=await validator.validateBytes(new Uint8Array(bytes),{uri:'candidate-01.glb',maxIssues:100});

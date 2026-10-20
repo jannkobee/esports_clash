@@ -1,7 +1,7 @@
 <?php
 namespace App\Jobs;
 
-use App\Models\{AvatarEvolutionRun,AvatarVisualRelease};
+use App\Models\{AvatarEvolutionRun,AvatarVisualRelease,AvatarPreparation};
 use App\Services\{AvatarEvolutionService,EvolutionService};
 use Illuminate\Contracts\Queue\{ShouldQueue,ShouldBeUnique};
 use Illuminate\Foundation\Queue\Queueable;
@@ -18,6 +18,7 @@ class MaintainAvatarArtifacts implements ShouldQueue,ShouldBeUnique
         $keep=AvatarVisualRelease::pluck('run_id')->merge(AvatarEvolutionRun::whereIn('status',[...$service::ACTIVE,'complete'])->pluck('id'))
             ->merge(AvatarEvolutionRun::latest()->limit(5)->pluck('id'));
         foreach(AvatarEvolutionRun::cursor()as $run)if($run->plan['parent']['run_id']??null)$keep->push($run->plan['parent']['run_id']);
+        foreach(AvatarPreparation::whereIn('status',[...\App\Services\AvatarPreparationService::ACTIVE,'paused','pausing','cancelling'])->cursor() as $preparation)if($preparation->plan['rig_reuse']['id']??null)$keep->push($preparation->plan['rig_reuse']['id']);
         $keep=$keep->unique()->values()->all();
         $delete=AvatarEvolutionRun::whereIn('status',['failed','unchanged'])->where('created_at','<',now()->subDays(7))
             ->whereNull('artifacts_deleted_at')->whereNotIn('id',$keep)->limit(100)->pluck('id')->all();

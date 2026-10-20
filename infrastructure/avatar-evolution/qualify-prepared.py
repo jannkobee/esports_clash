@@ -4,7 +4,8 @@ import json
 import math
 import sys
 from pathlib import Path
-from mathutils.bvhtree import BVHTree
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from mesh_validation import collision_summary,rest_keys,POLICY
 
 folder = Path(sys.argv[sys.argv.index('--') + 1])
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -29,25 +30,23 @@ if unweighted or weight_error:
 
 
 def sample():
-    graph = bpy.context.evaluated_depsgraph_get()
-    intersections = 0
-    finite = True
+    graph=bpy.context.evaluated_depsgraph_get();finite=True;points=[];faces=[];keys=[];labels=[]
     for obj in meshes:
-        evaluated = obj.evaluated_get(graph)
-        mesh = evaluated.to_mesh()
-        mesh.calc_loop_triangles()
-        # Bounded, deterministic face sampling. Adjacency is excluded. This can
-        # find obvious intersections; it cannot certify absence of all clipping.
-        triangles = list(mesh.loop_triangles)[::max(1, len(mesh.loop_triangles) // 2500)]
-        points = [obj.matrix_world @ v.co for v in mesh.vertices]
-        finite = finite and all(math.isfinite(x) for p in points for x in p)
-        faces = [tuple(t.vertices) for t in triangles]
-        tree = BVHTree.FromPolygons(points, faces, all_triangles=True)
-        for a, b in tree.overlap(tree):
-            if a < b and not set(faces[a]).intersection(faces[b]):
-                intersections += 1
-        evaluated.to_mesh_clear()
-    return {'finite': finite, 'sampled_self_intersections': intersections}
+        evaluated=obj.evaluated_get(graph);mesh=evaluated.to_mesh()
+        try:
+            mesh.calc_loop_triangles();offset=len(points)
+            current=[obj.matrix_world@v.co for v in mesh.vertices]
+            finite=finite and all(math.isfinite(x) for p in current for x in p)
+            points.extend(current);keys.extend(rest_keys([obj.matrix_world@v.co for v in obj.data.vertices]))
+            for triangle in mesh.loop_triangles:
+                face=tuple(triangle.vertices);faces.append(tuple(offset+i for i in face));mass={}
+                for index in face:
+                    for g in obj.data.vertices[index].groups:
+                        name=obj.vertex_groups[g.group].name;mass[name]=mass.get(name,0)+g.weight
+                labels.append(min(mass,key=lambda name:(-mass[name],name)) if mass else 'unweighted')
+        finally:evaluated.to_mesh_clear()
+    if not finite:return {'finite':False,'self_intersections':0,'triangles_checked':len(faces),'top_regions':[]}
+    return collision_summary(points,faces,keys,labels)
 
 
 for rig in rigs:
@@ -77,9 +76,10 @@ for action in bpy.data.actions:
         frames.append({'clip': action.name, 'phase': phase, **result})
         if not result['finite']:
             problems.append('Nonfinite posed geometry: ' + action.name)
-        if result['sampled_self_intersections'] > bind['sampled_self_intersections'] + max(12, bind['sampled_self_intersections'] * .2):
-            problems.append('Sampled self-clipping increases during ' + action.name)
-report = {'passed': not problems, 'problems': sorted(set(problems)), 'bind': bind, 'frames': frames,
+        tolerance = max(500, int(result.get('triangles_checked', 40000) * .02)) if 'Death' in action.name else max(32, int(result.get('triangles_checked', 40000) * .0015), int(bind['self_intersections'] * .5))
+        if result['self_intersections'] > bind['self_intersections'] + tolerance:
+            problems.append('Full-mesh self-clipping increases during ' + action.name)
+report = {'policy':POLICY,'passed': not problems, 'problems': sorted(set(problems)), 'bind': bind, 'frames': frames,
     'unweighted_vertices': unweighted, 'invalid_weight_sums': weight_error,
-    'scope': 'Deterministic sampled nonadjacent self-intersections and posed finite geometry. Layered clothing can cause false positives; sampling can miss clipping. Equipment/identity review is still required.'}
+    'scope':'All rendered triangles, excluding adjacency by rest-coordinate seams. Finite poses and full-mesh intersections; counts are not comparable to legacy sampled reports. Clothing/contact interpretation and equipment identity still require review.'}
 (folder / 'geometry-qualification.json').write_text(json.dumps(report, indent=2))

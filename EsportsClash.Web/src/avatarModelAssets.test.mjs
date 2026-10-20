@@ -118,3 +118,15 @@ test('prepared UniRig clips retain their pose without duplicate native contact o
   assert.equal(instance.body.userData.modelVariant,'current');
   instance.dispose();library.close();mixer.stopAllAction();mixer.uncacheRoot(raw);disposeArenaTerrainResources(file.scene);disposeArenaTerrainResources(resources.owner);
 });
+
+
+test('prepared locomotion follows normalized gait phase independently of clip duration and clock',async()=>{
+ const {AvatarAssetLibrary}=await import('./avatarModelAssets.ts');const file=await parse('c_solana');
+ file.scene.traverse(node=>{if(node.userData.avatarPart==='avatar-root')node.userData.assetPreparation={provider:'unirig',animation_mode:'retargeted-native-clips'};});
+ const resources=new AvatarModelResources(),library=new AvatarAssetLibrary(resources);library['files'].set('c_solana',file);const instance=library.instantiate('c_solana');
+ const position=()=>{instance.body.updateMatrixWorld(true);return instance.body.getObjectByName('FootL').getWorldPosition(new THREE.Vector3()).toArray();};
+ instance.animate({motionState:'walk',motionTime:.1,gaitPhase:.24},.1);const first=position();
+ instance.animate({motionState:'walk',motionTime:5.7,gaitPhase:.24},5.7);assert.deepEqual(position(),first);
+ instance.animate({motionState:'walk',motionTime:5.7,gaitPhase:.6},5.7);assert.notDeepEqual(position(),first);
+ instance.dispose();library.close();disposeAvatarRig(file.scene);disposeArenaTerrainResources(resources.owner);
+});

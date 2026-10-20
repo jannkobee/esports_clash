@@ -7,6 +7,14 @@ use Illuminate\Validation\ValidationException;
 class AvatarPreparationControlService {
     public const RETRYABLE=['queued','preparing','rigging','animating','validating','waiting_models','waiting_resources','waiting_worker','failed','cancelled','paused'];
     public function request(AvatarPreparation $preparation,string $operation,string $actor):void {
+        if ($operation === 'resume_in_place') {
+            $this->resumeInPlace($preparation, $actor);
+            return;
+        }
+        if ($operation === 'reset') {
+            $this->resetInPlace($preparation, $actor);
+            return;
+        }
         DB::transaction(function()use($preparation,$operation,$actor){
             $run=AvatarPreparation::lockForUpdate()->findOrFail($preparation->id);$control=$run->control??[];
             if($operation==='cancel_pending') {
@@ -51,6 +59,49 @@ class AvatarPreparationControlService {
     public function failedRestart(string $id):void {
         DB::transaction(function()use($id){$run=AvatarPreparation::lockForUpdate()->find($id);if(!$run||!in_array($run->control['intent']??null,['resume','retry'],true)||!empty($run->control['replacement_id']))return;
             $run->update(['control'=>[...$run->control,'intent'=>null,'restart_error'=>'The linked attempt could not be admitted. Check source availability, worker readiness and other active attempts, then try again.']]);
+        });
+    }
+
+    public function resumeInPlace(AvatarPreparation $preparation, string $actor): void {
+        DB::transaction(function() use ($preparation, $actor) {
+            $run = AvatarPreparation::lockForUpdate()->findOrFail($preparation->id);
+            if (in_array($run->status, AvatarPreparationService::ACTIVE, true)) return;
+            $run->update([
+                'status' => 'queued',
+                'error' => null,
+                'control' => array_merge($run->control ?? [], ['intent' => null, 'restart_error' => null]),
+            ]);
+            app(PreparationProgressService::class)->record($run, ['status' => 'queued', 'stage' => 'resumed_in_place']);
+            try {
+                app(AvatarPreparationService::class)->worker()->post(
+                    app(AvatarPreparationService::class)->endpoint('/preparations/' . $run->id . '/resume')
+                );
+            } catch (\Throwable $e) {}
+            app(EvolutionService::class)->audit($run->id, 'avatar.preparation-resumed-in-place', $actor);
+            DB::afterCommit(fn() => \App\Jobs\PollAvatarPreparation::dispatch($run->id));
+        });
+    }
+
+    public function resetInPlace(AvatarPreparation $preparation, string $actor): void {
+        DB::transaction(function() use ($preparation, $actor) {
+            $run = AvatarPreparation::lockForUpdate()->findOrFail($preparation->id);
+            $cleanState = $run->state ?? [];
+            unset($cleanState['report'], $cleanState['geometry'], $cleanState['unirig']);
+            $run->update([
+                'status' => 'queued',
+                'error' => null,
+                'state' => $cleanState,
+                'progress' => ['step' => 1, 'stage' => 'manual_admission'],
+                'control' => array_merge($run->control ?? [], ['intent' => null, 'restart_error' => null]),
+            ]);
+            app(PreparationProgressService::class)->record($run, ['status' => 'queued', 'stage' => 'reset_in_place']);
+            try {
+                app(AvatarPreparationService::class)->worker()->post(
+                    app(AvatarPreparationService::class)->endpoint('/preparations/' . $run->id . '/reset')
+                );
+            } catch (\Throwable $e) {}
+            app(EvolutionService::class)->audit($run->id, 'avatar.preparation-reset-in-place', $actor);
+            DB::afterCommit(fn() => \App\Jobs\PollAvatarPreparation::dispatch($run->id));
         });
     }
 }

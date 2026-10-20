@@ -73,10 +73,18 @@ export class AvatarAssetLibrary {
     scene.traverse(node => { if (node.userData.avatarPart === 'avatar-root') root = node as THREE.Group; });
     if (!root) return;
     const hasAnimations = file.animations && file.animations.length > 0;
-    const preserveNativeMotion=this.nativeImports.has(file)||
-      (root.userData.assetPreparation?.provider==='unirig'&&root.userData.assetPreparation?.animation_mode==='retargeted-native-clips');
+    const retargetedNativeMotion=root.userData.assetPreparation?.provider==='unirig'&&root.userData.assetPreparation?.animation_mode==='retargeted-native-clips';
+    const preserveNativeMotion=this.nativeImports.has(file)||retargetedNativeMotion;
     const binding = bindAvatarModel(root, this.resources, { drivenByMixer: hasAnimations,preserveNativeMotion });
-    const body = new THREE.Group(); body.scale.setScalar(40); body.add(scene);
+    scene.updateMatrixWorld(true);
+    const sceneBounds = new THREE.Box3().setFromObject(scene);
+    const rawHeight = sceneBounds.max.y - sceneBounds.min.y;
+    const targetHeight = avatarDesign(id)?.height ?? 70;
+    const scaleFactor = rawHeight > 0.1 ? targetHeight / rawHeight : 40;
+    if (sceneBounds.min.y < -0.05) {
+      scene.position.y = -sceneBounds.min.y;
+    }
+    const body = new THREE.Group(); body.scale.setScalar(scaleFactor); body.add(scene);
     body.userData = { designId: id, assetFormat: 'glb',modelVariant:this.nativeImports.has(file)?'claude':'current', clips: file.animations.map(clip => clip.name),visualEvolution:root.userData.avatarEvolution?.visual };
     const release=this.selectedReleases.get(this.key(id,variant));
     if(release&&this.sourceUrl(id,variant)===visualReleaseUrl(release))body.userData.visualRelease={...release};
@@ -133,7 +141,8 @@ export class AvatarAssetLibrary {
 
       if (currAction) {
         const duration = currAction.getClip().duration;
-        const currPhase = preserveNativeMotion&&state==='death'?Math.min(Math.max(0,time),duration):((time % duration) + duration) % duration;
+        const gaitPhase=retargetedNativeMotion&&['walk','run','strafe'].includes(state)&&Number.isFinite(pose.gaitPhase)?(((pose.gaitPhase!%1)+1)%1)*duration:undefined;
+        const currPhase = gaitPhase ?? (preserveNativeMotion&&state==='death'?Math.min(Math.max(0,time),duration):((time % duration) + duration) % duration);
 
         const prevAction = pose.previousMotion ? findAction(pose.previousMotion) : undefined;
         if (prevAction && prevAction !== currAction && pose.motionBlend !== undefined && pose.motionBlend < 1) {
