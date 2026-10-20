@@ -17,7 +17,7 @@ type Shape = 'box' | 'ball' | 'gem' | 'cone' | 'rod' | 'torus' | 'robe' | 'leaf'
 type V = [number, number, number];
 export type AvatarPose = { animState?: string; animTimer?: number; trueFormTimer?: number;
   motionState?: string; motionTime?: number; previousMotion?: string; previousMotionTime?: number; motionBlend?: number; recoil?: number; clipPhase?:number;
-  gaitPhase?:number; plantFeet?:boolean; moveX?:number; moveZ?:number;
+  gaitPhase?:number; previousGaitPhase?:number; plantFeet?:boolean; moveX?:number; moveZ?:number; motionYaw?:number;
   dash?:{readonly kind:string;readonly remaining:number};
   voltaireOverloadTimer?:number;
   kaelenOrbs?: readonly ('ice' | 'wind' | 'fire')[]; propellaRotorStacks?: number;

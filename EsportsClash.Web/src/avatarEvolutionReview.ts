@@ -65,7 +65,11 @@ async function evaluate() {
   playing=false;const clips=[],issues:string[]=[],samplePhases=[0,.12,.24,.36,.48,.6,.72,.84,.96];let maxFootDrift=0,maxTransitionJump=0;
   for(const name of ['Idle','Walk','Run','Strafe','Attack','Cast','Hit','Death','TurnLeft','TurnRight']){
     model!.body.position.set(0,0,0);let previous:THREE.Vector3|undefined;const frames=[];
-    for(const phase of samplePhases){if(['Walk','Run','Strafe'].includes(name))model!.body.position.z=phase*contactGait(name.toLowerCase()).span/contactGait(name.toLowerCase()).stance;
+    for(const phase of samplePhases){if(['Walk','Run','Strafe'].includes(name)){
+      const state=name.toLowerCase(),gait=contactGait(state);
+      const distance=phase*(model!.body.userData.strideDistances?.[state]??gait.span/gait.stance);
+      model!.body.position.set(name==='Strafe'?distance:0,0,name==='Strafe'?0:distance);
+    }
       draw(phase,0,name);const box=bounds();if(!box.finite)issues.push(`${name}: nonfinite skinned vertex`);
       const foot=joint('FootL')?.getWorldPosition(new THREE.Vector3());if(foot&&previous&&phase<contactGait(name.toLowerCase()).stance&&['Walk','Run','Strafe'].includes(name))maxFootDrift=Math.max(maxFootDrift,foot.distanceTo(previous));
       previous=foot;frames.push({phase,...box});

@@ -27,6 +27,7 @@ services:
       - ./infrastructure/avatar-evolution/prepare-avatar.py:/workspace/infrastructure/avatar-evolution/prepare-avatar.py:ro
       - ./infrastructure/avatar-evolution/qualify-prepared.py:/workspace/infrastructure/avatar-evolution/qualify-prepared.py:ro
       - ./infrastructure/avatar-evolution/mesh_validation.py:/workspace/infrastructure/avatar-evolution/mesh_validation.py:ro
+      - ./infrastructure/avatar-evolution/mesh_cleanup.py:/workspace/infrastructure/avatar-evolution/mesh_cleanup.py:ro
       - ./infrastructure/avatar-evolution/equipment_skin.py:/workspace/infrastructure/avatar-evolution/equipment_skin.py:ro
       - ./infrastructure/avatar-evolution/retarget_contacts.py:/workspace/infrastructure/avatar-evolution/retarget_contacts.py:ro
       - ./infrastructure/avatar-evolution/retarget_motion.py:/workspace/infrastructure/avatar-evolution/retarget_motion.py:ro

@@ -1,0 +1,307 @@
+{
+  "before": {
+    "afterLogin": {
+      "account": false,
+      "csrfMatches": false
+    },
+    "preparationViaNav": {
+      "disabled": false,
+      "ready": false
+    },
+    "search": {
+      "total": 45,
+      "visible": 45,
+      "hidden": 44
+    },
+    "mobileOverflow": [
+      {
+        "path": "/evolution/management/avatar",
+        "viewport": 375,
+        "content": 432
+      },
+      {
+        "path": "/evolution/management/item/create",
+        "viewport": 375,
+        "content": 432
+      },
+      {
+        "path": "/evolution",
+        "viewport": 375,
+        "content": 432
+      },
+      {
+        "path": "/evolution/avatars/trellis",
+        "viewport": 375,
+        "content": 432
+      },
+      {
+        "path": "/evolution/avatars/preparation",
+        "viewport": 375,
+        "content": 432
+      },
+      {
+        "path": "/evolution/avatars",
+        "viewport": 375,
+        "content": 432
+      }
+    ]
+  },
+  "after": {
+    "afterLogin": {
+      "account": true,
+      "csrfMatches": true
+    },
+    "preparationViaNav": {
+      "disabled": true,
+      "confirmed": false
+    },
+    "liveFiltersPreserved": true,
+    "combinedSearchAndCategory": true,
+    "toastDismissal": true,
+    "cancelledFormsRespected": true,
+    "unsavedReviewGuard": true,
+    "smallScreenDialogs": true,
+    "enhancementFilters": true,
+    "pages": [
+      {
+        "path": "/evolution/management/avatar",
+        "title": "Avatar management",
+        "viewport": 1425,
+        "content": 1425,
+        "header": 65.5
+      },
+      {
+        "path": "/evolution/management/avatar",
+        "title": "Avatar management",
+        "viewport": 753,
+        "content": 753,
+        "header": 151.9375
+      },
+      {
+        "path": "/evolution/management/avatar",
+        "title": "Avatar management",
+        "viewport": 375,
+        "content": 375,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/management/avatar",
+        "title": "Avatar management",
+        "viewport": 305,
+        "content": 305,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/management/item/create",
+        "title": "Create item",
+        "viewport": 1425,
+        "content": 1425,
+        "header": 65.5
+      },
+      {
+        "path": "/evolution/management/item/create",
+        "title": "Create item",
+        "viewport": 753,
+        "content": 753,
+        "header": 151.9375
+      },
+      {
+        "path": "/evolution/management/item/create",
+        "title": "Create item",
+        "viewport": 375,
+        "content": 375,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/management/item/create",
+        "title": "Create item",
+        "viewport": 305,
+        "content": 305,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution",
+        "title": "Machine Learning",
+        "viewport": 1425,
+        "content": 1425,
+        "header": 65.5
+      },
+      {
+        "path": "/evolution",
+        "title": "Machine Learning",
+        "viewport": 753,
+        "content": 753,
+        "header": 151.9375
+      },
+      {
+        "path": "/evolution",
+        "title": "Machine Learning",
+        "viewport": 375,
+        "content": 375,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution",
+        "title": "Machine Learning",
+        "viewport": 305,
+        "content": 305,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/avatars/trellis",
+        "title": "3D Generation",
+        "viewport": 1425,
+        "content": 1425,
+        "header": 65.5
+      },
+      {
+        "path": "/evolution/avatars/trellis",
+        "title": "3D Generation",
+        "viewport": 753,
+        "content": 753,
+        "header": 151.9375
+      },
+      {
+        "path": "/evolution/avatars/trellis",
+        "title": "3D Generation",
+        "viewport": 375,
+        "content": 375,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/avatars/trellis",
+        "title": "3D Generation",
+        "viewport": 305,
+        "content": 305,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/avatars/preparation",
+        "title": "Asset Preparation",
+        "viewport": 1425,
+        "content": 1425,
+        "header": 65.5
+      },
+      {
+        "path": "/evolution/avatars/preparation",
+        "title": "Asset Preparation",
+        "viewport": 753,
+        "content": 753,
+        "header": 151.9375
+      },
+      {
+        "path": "/evolution/avatars/preparation",
+        "title": "Asset Preparation",
+        "viewport": 375,
+        "content": 375,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/avatars/preparation",
+        "title": "Asset Preparation",
+        "viewport": 305,
+        "content": 305,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/avatars",
+        "title": "3D Enhancements",
+        "viewport": 1425,
+        "content": 1425,
+        "header": 65.5
+      },
+      {
+        "path": "/evolution/avatars",
+        "title": "3D Enhancements",
+        "viewport": 753,
+        "content": 753,
+        "header": 151.9375
+      },
+      {
+        "path": "/evolution/avatars",
+        "title": "3D Enhancements",
+        "viewport": 375,
+        "content": 375,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/avatars",
+        "title": "3D Enhancements",
+        "viewport": 305,
+        "content": 305,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/ml/reports",
+        "title": "ML reports",
+        "viewport": 1425,
+        "content": 1425,
+        "header": 65.5
+      },
+      {
+        "path": "/evolution/ml/reports",
+        "title": "ML reports",
+        "viewport": 753,
+        "content": 753,
+        "header": 151.9375
+      },
+      {
+        "path": "/evolution/ml/reports",
+        "title": "ML reports",
+        "viewport": 375,
+        "content": 375,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/ml/reports",
+        "title": "ML reports",
+        "viewport": 305,
+        "content": 305,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/avatars/reports",
+        "title": "Model reports",
+        "viewport": 1425,
+        "content": 1425,
+        "header": 65.5
+      },
+      {
+        "path": "/evolution/avatars/reports",
+        "title": "Model reports",
+        "viewport": 753,
+        "content": 753,
+        "header": 151.9375
+      },
+      {
+        "path": "/evolution/avatars/reports",
+        "title": "Model reports",
+        "viewport": 375,
+        "content": 375,
+        "header": 193.25
+      },
+      {
+        "path": "/evolution/avatars/reports",
+        "title": "Model reports",
+        "viewport": 305,
+        "content": 305,
+        "header": 193.25
+      }
+    ],
+    "preview": {
+      "ready": true,
+      "height": 478,
+      "canvasHeight": 478,
+      "triangles": 39045
+    },
+    "errors": [],
+    "noJobsOrDeletesSubmitted": true,
+    "verifiedAt": "2026-10-20T13:02:05.730Z"
+  },
+  "backend": {
+    "tests": 95,
+    "assertions": 982,
+    "status": "passed"
+  },
+  "limits": "Isolated Chrome desktop and emulated narrow viewports. No live jobs, deletions, settings or design saves submitted; no physical-device or all-state claim."
+}

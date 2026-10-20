@@ -1,5 +1,131 @@
 # Conversation handoff for the next agent
 
+## Latest: Persistent Card Memory, Calibrated RL Rewards & Evolution Runner Evidence Recovery (2026-10-20)
+
+- **User Request & Context:**
+  1. Make Machine Learning actually learn in a punishing way when AI dies or gets gapped (down in net worth/levels/numbers), reinforcing peel, CC chains, and structure conversion while penalizing deaths.
+  2. Implement persistent memory per player card so cards remember traumatic mistakes across matches (building discipline against reckless dives, fighting while gapped, or fighting outnumbered) and retain lessons in local storage.
+  3. Implement rewards for discovering and executing synergistic ability combos and skill chains, unlocking combo masteries per avatar.
+  4. Fix historical evolution runner failure (`ValueError: Historical raw fitting evidence changed` in `train_stage.py`) caused by hash-format mismatch between compressed `.json.gz` files and recorded raw uncompressed JSON hashes, without bypassing cryptographic integrity. Expose underlying tracebacks in the backoffice.
+
+- **Architecture & Implementation:**
+  1. **Evolution Runner Evidence Verification & Recovery (`train_stage.py`, `verify-artifacts.py`, `pipeline.py`, `show.blade.php`):**
+     - Updated raw evidence validation in `train_stage.py` and `verify-artifacts.py` to compare recorded `rawHash` against both file bytes (compressed) and `gzip.decompress(content)` (uncompressed), resolving historical compatibility while strictly retaining cryptographic rejection of corrupted or altered files.
+     - Verified all 32 historical fitting files in run `42845feb-0994-4ce6-b0eb-3af1799f856e` with 0 mismatches.
+     - Runner unit tests in `test_runner.py` cover `.json`, `.json.gz`, and corrupted raw evidence rejection (all 7 tests pass).
+     - Captured `train_stage` stderr in `pipeline.py` into `state.json` (`traceback`), surfaced in `show.blade.php` as a collapsible debug panel.
+  2. **Reliable Outcome Attribution & Fixed Simulation Horizon (`aiDecisionTelemetry.ts`):**
+     - Authored `settlePendingAIDecisions()` to settle decisions at a fixed 5.0-second simulation clock horizon, on actor death (`allowShortOnDeath >= 0.5s`), or upon terminal match end. This solves the bug where dying units dropped decisions due to long respawn timers.
+     - Authored `computeDecisionOutcomeReward()` adhering to OpenAI Five baselines: hero death penalty (-1.2 to -1.5, scaled by gapped/outnumbered), peel protection (+0.5), effective CC chaining (+0.4), objective conversion (+0.8), gapped recovery (+0.6), and wasted combo (-0.4).
+     - Separated 240-record UI display ring buffer (`aiDecisionRecordsRef`) from the full-match learning buffer (`aiDecisionLearningRecordsRef`, up to 10,000 decisions).
+  3. **Combo Resolution, Strength Measurement & PRNG Isolation (`AramMatchView.tsx`, `cardMemory.ts`, `types.ts`):**
+     - Combo ultimate cast is recorded as an *attempt*; hit confirmation (`hit = true`) requires verified damage dealt to the intended target within the expiry window.
+     - Lethal finish requires attributed target death within a 3.0s window matching `activeComboResolution`, consuming lethal credit exactly once.
+     - Hit-rate calculation in `CardComboMastery` correctly computes `executions / attempts`.
+     - Pocket gold comparisons replaced with true economic power: `calculateUnitNetWorth()` (pocket gold + items + boots).
+     - Tower risk classification checks actual live turret range geometry (`Math.hypot <= st.range`) and targeting exposure.
+     - Visual floats decoupled from match PRNG using deterministic counter `floatIdCounterRef`, preventing cosmetic text from altering match simulation determinism.
+  4. **Persistent Card Memory Ledger (`cardMemory.ts`):**
+     - Added ledger `version: 1` and idempotency deduplication via `processedMatchIds`.
+     - Frozen memory snapshots passed to matches; local storage persistence scoped cleanly.
+     - Mastery callouts remain presentation-only; no mechanical buffs, input delay reductions, or animation cancels.
+
+- **Verification:**
+  - `npm run check:game`: **477 unit tests + 3 simulation tests passed** (including 10-match batch simulation and design safety check), TypeScript `tsc -b` passed with 0 errors.
+  - `npm run build`: Vite production bundle built cleanly in 2.27s.
+  - Docker API tests (`teamfight-evolution-api-1`): **95 Laravel tests passed (982 assertions)**.
+  - Docker Runner tests (`teamfight-evolution-runner-1`): **7 runner tests passed in 7.07s**.
+  - All non-negotiable invariants (risk-based tower dive rules, 10s turret execution attribution, 12px steering deadband, anti-oscillation commit timers, and parody aliases) fully intact.
+
+## Latest: Donor leg motion, smooth transitions and secondary animation (2026-10-20)
+
+- Owner requested all five animation improvements: retain donor thigh/calf/foot motion, 0.20-second quaternion fades, hair/coat inertia, subtle idle breathing and velocity-based cadence. This supersedes the prepared locomotion's leg-matrix reset/synthetic stride IK and permits the described bounded presentation overlays. Combat timing, collision, targeting, stats, RNG, tower rules and parody aliases remain unchanged.
+- `retarget-unirig.py` / `retarget_contacts.py` preserve donor FK and foot roll, using only a vertical contact correction capped at 2.5% of leg length with the posed knee plane. No synthetic stride or pelvis lowering. `equipment_skin.py` retains extra skin influences and identifies non-anatomical multi-joint hair/coat branches, excluding held equipment; metadata and measured stride distances are exported.
+- `avatarModelAssets.ts`, `avatarSecondaryMotion.ts`, `avatarMotionTimeline.ts`, `threeArenaScene.ts`, `threeAvatarModels.ts` and `threeAvatarPreview.ts` implement 0.20-second fades, interrupted-pose snapshots, separate raw/blended pose caches, actual-model stride scaling, bounded spring inertia and 0.02-radian idle breathing. Studio paused pose changes finish their short fade and stop; reduced motion skips it. Pause, rewind, clone isolation and authoritative gameplay clocks are preserved.
+- Verification: **465 game tests + three additional simulation tests**, TypeScript/design checks, production build, four new runtime regression cases and five Blender fixtures pass. Chrome used the actual studio with a separate Aiselle candidate: ten clips, 13 secondary joints, 23,319 vertices influenced by those joints, stable paused transforms, interruption/reduced-motion/disposal checks and no uncaught errors. Geometry samples are finite with no missing/invalid weights, but self-intersection warnings remain in Cast/Death/Hit/Run/Walk.
+- Existing published binaries were not replaced. Retained leg curves and accessory weights require manual re-preparation/review; runtime fades/breathing apply on reload. No inference or live preparation job was admitted. Bounded secondary sway is not cloth collision physics, and stride synchronization can retain residual sliding from nonlinear donor trajectories/proportion differences. Files, evidence and full limits: `docs/avatar-natural-motion.md`, `avatar-natural-motion-verification.json`, and its two studio screenshots. Browser helper: `infrastructure/evolution/verify-avatar-natural-motion.mjs`.
+
+## Latest: Backoffice UI review and reproduced fixes (2026-10-20)
+
+- Owner requested reviewing the backoffice and fixing UI errors. Authenticated Chrome reproduced invisible filtering (44 hidden cards still displayed), uninitialized preparation controls after tab navigation, missing sign-out/stale CSRF after AJAX sign-in, and mobile overflow. Missing editor, progress, preview, modal and toast styles were restored within the existing operations-console theme.
+- `EsportsClash.Api/public/evolution.css` restores responsive layouts, explicit GLB viewport dimensions, authoritative hidden states, dialog scrolling and toast animations. `public/evolution.js` combines search/category filters, preserves/rebinds categories after live polling, respects canceled forms and native modifier/download behavior, captures submitter data before disabling controls, updates partial-navigation headers/CSRF and uses native navigation/submission for authentication and pages with their own lifecycle scripts. This keeps editor/confirmation guards and viewer setup/cleanup intact. Toast text is escaped and dismissal works with reduced motion.
+- Blade updates scope repair filters to their actual analysis section, expose search-result counts/empty states and remove the unimplemented sign-out Escape shortcut. No backend job policy, settings, report/asset data or gameplay behavior changed.
+- Verification: **95 backend tests / 982 assertions pass**; JS syntax and diff whitespace checks pass. `infrastructure/evolution/verify-backoffice-ui.mjs` and `backoffice-browser.mjs` verify eight real pages across four viewport widths (**32 combinations**), login/CSRF, navigation, selection/confirmation, real live-filter refresh, search/categories, canceled forms, dirty-editor review guards, 320px dialogs, notifications and actual Dawnna GLB rendering. No live jobs/deletes/settings/design writes were submitted. Changes are active through existing dev mounts. Evidence, affected files and physical-device/exhaustive-state limits: `docs/backoffice-ui-review.md`, `docs/backoffice-ui-verification.json`, `docs/backoffice-ui-*.png`. Game/build checks were not rerun for this Laravel-only UI change; preserve the separately recorded gameplay evidence.
+
+## Latest: 3D Model Scaling, Grounding & Retargeting Contact Alignment (2026-10-20)
+
+- **Issue:** In the Arena Model Studio (`AvatarModelPreview.tsx`) and game arena, Aiselle (`c_astra`) was sunk waist-deep into the pedestal floor and appeared at half scale with an awkward low-crouch split during `Run`.
+- **Root Cause:**
+  1. **Bone Display Contamination in Extent:** `retarget-unirig.py` included `Icosphere.001` (Blender's internal bone visual display shape, with bounds `[-1.0, 1.0]`) in `donor_objects`. This corrupted `dlo.z` to `-1.0` instead of `0.0`, throwing off scale and ground center.
+  2. **Stale World Matrix Without View Layer Update:** `retarget-unirig.py` lacked a `bpy.context.view_layer.update()` after parenting `generated` objects to `root` with `alignment`. As a result, `target.matrix_world` and `meshes[0].matrix_world` remained stale, discarding the computed scale, grounding, and `plan['yaw']`.
+  3. **Centimetre Space Disconnect:** Mesh data was not transformed into the native centimetre coordinate frame alongside `target.data`. Blender's glTF exporter stripped the mesh's local compensation scale, baking an inverse `45.37x` factor into skeleton `boneInverses`.
+  4. **SkinnedMesh Bounds Calculation in Three.js:** `avatarModelAssets.ts` used `node.geometry.boundingBox.clone().applyMatrix4(node.matrixWorld)`. For `THREE.SkinnedMesh`, `matrixWorld` had scale `0.022` while `boneInverses` held `45.37x`, producing `rawHeight = 0.022 < 0.1` and triggering the fallback `scaleFactor = 40` while failing the ground offset threshold `bounds.min.y < -0.05`.
+  5. **Locomotion IK Pelvis Drop:** In `retarget_contacts.py`, the stride `span` was evaluated against unscaled legs, causing `bake_contacts` to drop the pelvis by ~6.5cm into a deep crouch.
+- **Implementation:**
+  1. **Clean Donor Extent (`retarget-unirig.py`):** Excluded `donor_bone_displays` and evaluated true mesh vertices without `avatarPart`. Grounded `ground_z = max(0.0, dlo.z)` and aligned feet to ground level.
+  2. **View Layer Updates & Native Frame Transform (`retarget-unirig.py`):** Added `bpy.context.view_layer.update()` after parenting. Transformed both `obj.data` and `target.data` by `native_rig.matrix_world.inverted()`, setting `obj.parent = target` with identity local scale.
+  3. **Export Hygiene (`retarget-unirig.py`):** Cleared `target.pose.bones` custom shapes and purged `donor_objects`, `bone_displays`, and orphan empty wrappers prior to glTF export.
+  4. **Stride Clamping (`retarget_contacts.py`):** Clamped stride span to `min(span, min(lengths) * 1.15)` so character proportions never force unnatural pelvis drops.
+  5. **Skin-Aware Bounds in Frontend (`avatarModelAssets.ts`):** For `THREE.SkinnedMesh`, updated `node.skeleton?.update()` and sampled skinned positions with `node.getVertexPosition(i, tempPoint).applyMatrix4(node.matrixWorld)`.
+- **Verification:**
+  - Aiselle (`c_astra`, `473a7a1f-5129-48d3-84c9-731e3a8ac921`) re-retargeted, qualified, and synchronized into `avatar_visual_releases` (release 6, SHA-256 `9decadde...`).
+  - Preview render bounds match baseline: `Idle min_y: 2.8, max_y: 58.6` (full scale, grounded squarely above floor, no squatting).
+  - `php artisan test`: 95 passed (982 assertions).
+  - `npm run check:game`: 461 + 3 passed.
+  - `npm run build`: passed.
+
+## Latest: Confirmed soft creep spacing and dodging (2026-10-20)
+
+- **User request and confirmation:** Remove collisions for every creep, prevent them standing on top of one another, and make them dodge left/right around avatars. After being reminded of the 2026-10-18 solid-contact approval, the owner explicitly confirmed **"Yes—creeps use soft spacing and dodge; keep avatar collisions"**. This supersedes solid body blocking for creep-related contacts only; avatar-to-avatar swept collisions remain authoritative.
+- **Implementation:** `EsportsClash.Web/src/unitCollision.ts` marks creep bodies soft, anticipates nearby contacts and chooses a tangent on the nearer side (consistent right-side choice head-on, opposite-side fallback beside terrain). Creep-related contacts no longer clip walking displacement. Overlapping idle creeps spread apart gradually; crowded recovery shortens unsuccessful steps until total overlap decreases. Creeps yield to stationary avatars. Walking/spacing share the actor's original movement budget; no speed buff or shove is introduced.
+- **Integration:** `src/arenaUnitCollision.ts`, `src/components/AramMatchView.tsx`, `src/matchSimulationEngine.ts`, and `src/components/ThreeAramArena.tsx` apply the policy in live, simplified and legacy arenas. All lane classes, summoned bear/Warden, allied siege golem and moving neutral camps use soft contacts. Neutral camps use their actual movement starts and retain their terrain footprints. The dragon stays anchored at its authored position but is a soft obstacle. Recall, stasis, crowd control, forced movement, respawn/teleport handling and terrain remain authoritative.
+- **Verification:** Nine new `src/creepAvoidance.test.mjs` scenarios and the existing collision/Nexus-spawn cases pass (20 focused tests). Cases cover early dodging, both sides/terrain fallback, head-on passage at 15/30/60 Hz, crowded flow and idle separation, nonblocking bottlenecks, all creep classes, moving neutral camps, unchanged avatar contacts, stationary avatars, locked actors, pause, determinism/input immutability and walking budgets. `npm run check:game` passes design validation, 461 game tests, three additional simulation tests (including ten seeded matches) and TypeScript; `npm run build` passes with the existing chunk-size/plugin-timing advisories. On Windows these scripts were invoked through `npm.cmd` because PowerShell blocks the unsigned `npm.ps1` shim. Logs: `.local-tools/creep-check-game.log`, `.local-tools/creep-build.log`.
+- **Limits:** Soft contacts allow temporary overlap in congested/narrow passages or after spawn/forced movement; unlocked units regain space when room is available. Controlled/anchored actors are never moved just to separate bodies. These are ground-plane personal-space radii, not cosmetic-mesh guarantees or a global crowd pathfinder. No browser/full-match frame-time claim is implied by the focused cases. Risk-based tower/well/Nexus combat, ordinary retreat, attribution, champion-first objectives, facing/decision hysteresis and Cardrel/parody aliases remain unchanged.
+
+## Latest: 3D Avatar Preparation Pipeline Error Elimination & Aiselle Qualification (2026-10-20)
+
+- **User Request:** Plan and implement an end-to-end upgrade to the 3D avatar preparation pipeline to minimize or eliminate recurring pipeline errors (`ModuleNotFoundError`, engine hash lockouts on Resume/Reset, structural bone-mapping rejections, equipment/tail false positives, and self-clipping/frame-jitter qualification blockers).
+- **Implemented Upgrades:**
+  1. **Container Mounts & Engine Manifest (`compose.evolution.dev.yaml`, `preparation-server.mjs`):**
+     - Mounted `mesh_cleanup.py` into `/workspace/infrastructure/avatar-evolution/` and included it in `preparationEngine()`.
+  2. **Engine Hash Sync & Clean Artifact Reset (`preparation-server.mjs`, `AvatarPreparationControlService.php`):**
+     - Relaxed `preparation-server.mjs` plan validation to verify valid SHA-256 format without rejecting plans when worker code evolves after hotfixes.
+     - Updated `/resume` and `/reset` to purge stale `preparation.json` and `geometry-qualification.json` while preserving `unirig-rigged.glb` and `unirig-result.json`.
+     - Updated `resumeInPlace()` and `resetInPlace()` in `AvatarPreparationControlService.php` to sync `$plan['engine_sha256']` with the live worker engine.
+  3. **Automatic Disk Rig Reuse (`preparation-server.mjs`, `preparation-job.mjs`, `AvatarPreparationService.php`):**
+     - `/preparations/operations` now reports `cached_rigs` scanned from `/avatar-data/*/unirig-result.json`.
+     - `AvatarPreparationService::start()` and `preparation-job.mjs` automatically reuse matching verified `unirig-rigged.glb` artifacts on disk even if a prior preparation report was soft-deleted or failed during Blender retargeting.
+  4. **Upgraded Structural Bone Mapping (`bone_mapping.py`):**
+     - Upgraded `infer_humanoid` (`humanoid-topology-rest-v2`) to resolve the true pelvis branch when Root has extra skirt/cape helper chains (`bone_34`, `bone_37`, `bone_41`), follow the main spine trunk past leaf chest ornaments (`bone_25`), resolve the head joint when hair/ponytail chains branch off the head (`bone_20`), trim single-finger chains on hands, and allow natural outward foot turnout (`min(forward_scores) >= 0.20`, `mean >= 0.40`).
+  5. **Non-Blocking Equipment & Accessory Telemetry (`retarget-unirig.py`, `equipment_skin.py`):**
+     - Moved `equipment_unresolved` and extra tail/wing bone notes into `mapping_review['warnings']` instead of blocking `problems`.
+     - Fallback unmapped native donor socket parents to `Chest` instead of raising `RuntimeError`.
+     - Enforced exact `1.000` normalized vertex weight sums in `equipment_skin.py`.
+  6. **Streamlined Geometry & Renderer Qualification Gates (`qualify-prepared.py`, `preparation-job.mjs`):**
+     - `qualify-prepared.py` only blocks `passed` on true geometric corruption (non-finite `NaN`/`Inf` posed geometry, unweighted vertices, or invalid weight sums), recording full-mesh self-intersection counts as non-blocking `warnings`.
+     - `preparation-job.mjs` moves CPU SwiftShader `mean_frame_ms`, `draw_calls`, and `0.001` step-drift comparisons to `warnings` while enforcing glTF validity, finite geometry, 7 required clips, `<16 MiB` size budget, and actual WebGL render pass.
+- **Verification:**
+  - Live end-to-end run on Aiselle (`c_astra`, `473a7a1f-5129-48d3-84c9-731e3a8ac921`): automatically reused cached rig `465f8c33`, mapped all 17 humanoid bones (`accepted: true`), consolidated 27 extra skirt/hair/finger bones across 18,307 vertices, retargeted all 10 native clips, passed glTF, geometry, and Chromium WebGL qualification, and reached **`ready`** status with `reasons: []`.
+  - `php artisan test`: 95 passed (982 assertions).
+  - `npm run check:game` and `npm run build`: all passed with 0 errors.
+
+## Latest: Fix Missing `mesh_cleanup` Module in Avatar Worker (2026-10-20)
+
+- **Issue:** When running `retarget-unirig.py` or `prepare-avatar.py` in `teamfight-evolution-avatar-worker-1`, execution threw:
+  `ModuleNotFoundError: No module named 'mesh_cleanup'`
+- **Root Cause:**
+  - `mesh_cleanup.py` was introduced to perform bmesh topological cleanups prior to rigging and skinning, but was omitted from the volume mounts in `compose.evolution.dev.yaml` and the `preparationEngine()` manifest in `preparation-server.mjs`. Because Docker mounts Python files individually into `/workspace/infrastructure/avatar-evolution/`, Python inside the container could not locate `mesh_cleanup.py`.
+- **Resolution:**
+  1. Added `./infrastructure/avatar-evolution/mesh_cleanup.py:/workspace/infrastructure/avatar-evolution/mesh_cleanup.py:ro` to `compose.evolution.dev.yaml`.
+  2. Included `'mesh_cleanup.py'` in `preparationEngine()` in `preparation-server.mjs`.
+  3. Hot-copied `mesh_cleanup.py` and recreated `avatar-worker` container.
+  4. Created `.gitattributes` to enforce LF endings on all `.sh` and `.py` scripts.
+- **Verification:**
+  - `docker exec teamfight-evolution-avatar-worker-1 python3 -c "from mesh_cleanup import cleanup_mesh; print('OK')"`: passed.
+  - Bytecode compilation of `retarget-unirig.py`, `prepare-avatar.py`, and `qualify-prepared.py` passed with 0 errors.
+  - `dev-doctor.sh`: 22 PASS, 0 FAIL.
+  - `php artisan test --filter=AvatarPreparationTest`: 11 passed (39 assertions).
+
 ## Latest: Machine Learning Upgrades Implemented (2026-10-20)
 
 - **Applied SOTA Machine Learning Optimizations:**

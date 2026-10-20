@@ -103,15 +103,16 @@ test('prepared UniRig clips retain their pose without duplicate native contact o
   let rawRoot;raw.traverse(node=>{if(node.userData.avatarPart==='avatar-root')rawRoot=node;});
   bindAvatarModel(rawRoot,resources,{drivenByMixer:true,preserveNativeMotion:true});
   const mixer=new THREE.AnimationMixer(raw);
-  const transforms=scene=>{const values=[];scene.traverse(node=>{if(node.isBone||node.userData.avatarPart)values.push(...node.position.toArray(),...node.quaternion.toArray(),...node.scale.toArray());});return values;};
+  const transforms=(scene,excludeBreathing=false)=>{const values=[];scene.traverse(node=>{if((node.isBone||node.userData.avatarPart)&&!(excludeBreathing&&['Chest','Spine'].includes(node.name)))values.push(...node.position.toArray(),...node.quaternion.toArray(),...node.scale.toArray());});return values;};
   for(const name of ['Idle','Walk','Attack','Cast']) {
     mixer.stopAllAction();const action=mixer.clipAction(file.animations.find(clip=>clip.name===name));action.play();action.time=.23;mixer.update(0);
     const pose=Object.freeze({motionState:name.toLowerCase(),motionTime:.23,plantFeet:true,recoil:.9});
     instance.animate(pose,.23);
-    const expected=transforms(raw),actual=transforms(instance.body);
+    const expected=transforms(raw,name==='Idle'),actual=transforms(instance.body,name==='Idle');
     assert.equal(actual.length,expected.length);
     assert.ok(actual.every((value,i)=>Math.abs(value-expected[i])<1e-7),name+' changed by native rig overlays');
-    instance.animate(pose,.23);assert.deepEqual(transforms(instance.body),actual,name+' paused drift');
+    const paused=transforms(instance.body);
+    instance.animate(pose,.23);assert.deepEqual(transforms(instance.body),paused,name+' paused drift');
   }
   instance.animate({motionState:'attack',motionTime:.3,previousMotion:'walk',previousMotionTime:.2,motionBlend:.5},1);
   assert.ok(transforms(instance.body).every(Number.isFinite));

@@ -33,13 +33,25 @@ class AvatarPreparationService {
             $rigReuse=['id'=>$candidate->id,'sha256'=>$rigArtifact['sha256'],'bytes'=>$rigArtifact['bytes']];$rigEngine=$candidate->plan['unirig_engine_sha256'];break;
         }
         if($rigPreparationId&&!$rigReuse)throw ValidationException::withMessages(['rig_preparation_id'=>'That preparation has no compatible frozen rig for this source.']);
+        $prepOps=$this->worker()->get($this->endpoint('/preparations/operations'))->throw()->json();
+        $engine=$prepOps['engine_sha256']??null;
+        if(!is_string($engine)||!preg_match('/^[a-f0-9]{64}$/',$engine))throw ValidationException::withMessages(['worker'=>'Preparation worker upgrade is required.']);
+        if(!$rigReuse&&!$freshRig){
+            foreach(($prepOps['cached_rigs']??[]) as $cached){
+                if(($cached['source_sha256']??null)===$artifact['sha256']&&($cached['avatar_id']??null)===$generation->avatar_id
+                    &&preg_match('/^[a-f0-9]{64}$/',$cached['sha256']??'')&&preg_match('/^[a-f0-9]{64}$/',$cached['engine_sha256']??'')
+                    &&is_int($cached['bytes']??null)&&$cached['bytes']>=20&&$cached['bytes']<=64*1024**2){
+                    $rigReuse=['id'=>$cached['id'],'sha256'=>$cached['sha256'],'bytes'=>$cached['bytes']];
+                    $rigEngine=$cached['engine_sha256'];
+                    break;
+                }
+            }
+        }
         if(!$rigReuse){
             try{$rigOps=$this->worker()->get($this->rigEndpoint('/operations'))->throw()->json();$rigEngine=$rigOps['engine_sha256']??null;}catch(\Throwable){throw ValidationException::withMessages(['worker'=>'UniRig is unavailable and this source has no reusable rig.']);}
             if(($rigOps['runtime_ready']??false)!==true||($rigOps['models_ready']??false)!==true)throw ValidationException::withMessages(['worker'=>'UniRig is not ready and this source has no reusable rig.']);
         }
         if(!is_string($rigEngine)||!preg_match('/^[a-f0-9]{64}$/',$rigEngine))throw ValidationException::withMessages(['worker'=>'No valid frozen rig engine is available.']);
-        $engine=$this->worker()->get($this->endpoint('/preparations/operations'))->throw()->json('engine_sha256');
-        if(!is_string($engine)||!preg_match('/^[a-f0-9]{64}$/',$engine))throw ValidationException::withMessages(['worker'=>'Preparation worker upgrade is required.']);
         AvatarEvolutionSetting::current();
         return DB::transaction(function()use($generation,$profile,$yaw,$attachments,$actor,$meta,$engine,$artifact,$rigEngine,$boneMap,$previousId,$rigReuse){
             AvatarEvolutionSetting::lockForUpdate()->findOrFail(1);

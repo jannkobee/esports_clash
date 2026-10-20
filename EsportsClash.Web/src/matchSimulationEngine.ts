@@ -529,7 +529,7 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     });
   }
 
-  const crowdStarts = captureUnitCollisionStarts([...sim.champions, ...sim.minions]);
+  const crowdStarts = captureUnitCollisionStarts([...sim.champions, ...sim.minions, ...sim.jungleCamps, sim.dragon]);
 
   // 2. Boss & Jungle Spawns
   if (shouldAwakenGolem(now, sim.golemAwakened)) {
@@ -1036,8 +1036,8 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     }
   }
   resolveArenaUnitCollisions(sim.champions, sim.minions, [
-    ...sim.jungleCamps.map(unit => ({ ...unit, radius: unit.type === 'siege_golem' ? 32 : 23 })),
-    { ...sim.dragon, id: 'dragon:collision', radius: 32 },
+    ...sim.jungleCamps.map(unit => ({ unit, radius: unit.type === 'siege_golem' ? 32 : 23 })),
+    { unit: sim.dragon, radius: 32, locked: true },
   ], crowdStarts, dt);
 
 }

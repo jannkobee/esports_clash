@@ -1,0 +1,132 @@
+{
+  "date": "2026-10-20",
+  "source_preparation": "473a7a1f-5129-48d3-84c9-731e3a8ac921",
+  "candidate_sha256": "41a8c5c6c9fa39e17011cd41334782c4f8193c6deab898155919894cb506350a",
+  "native_clips": [
+    "Attack",
+    "Cast",
+    "Death",
+    "Hit",
+    "Idle",
+    "Run",
+    "Strafe",
+    "TurnLeft",
+    "TurnRight",
+    "Walk"
+  ],
+  "stride_metres": {
+    "run": 1.4785500280559063,
+    "strafe": 0.839823286867503,
+    "walk": 1.001458452834237
+  },
+  "browser": {
+    "clips": [
+      "Attack",
+      "Cast",
+      "Death",
+      "Hit",
+      "Idle",
+      "Run",
+      "Strafe",
+      "TurnLeft",
+      "TurnRight",
+      "Walk"
+    ],
+    "strides": {
+      "walk": 55.25866284144177,
+      "run": 81.5837114992819,
+      "strafe": 46.33992725715625
+    },
+    "secondaryVertices": 23319,
+    "secondary": {
+      "bone_21": {
+        "kind": "hair",
+        "depth": 0
+      },
+      "bone_22": {
+        "kind": "hair",
+        "depth": 1
+      },
+      "bone_23": {
+        "kind": "hair",
+        "depth": 2
+      },
+      "bone_34": {
+        "kind": "coat",
+        "depth": 0
+      },
+      "bone_35": {
+        "kind": "coat",
+        "depth": 1
+      },
+      "bone_36": {
+        "kind": "coat",
+        "depth": 2
+      },
+      "bone_37": {
+        "kind": "coat",
+        "depth": 0
+      },
+      "bone_38": {
+        "kind": "coat",
+        "depth": 1
+      },
+      "bone_39": {
+        "kind": "coat",
+        "depth": 2
+      },
+      "bone_40": {
+        "kind": "coat",
+        "depth": 3
+      },
+      "bone_41": {
+        "kind": "coat",
+        "depth": 0
+      },
+      "bone_42": {
+        "kind": "coat",
+        "depth": 1
+      },
+      "bone_43": {
+        "kind": "coat",
+        "depth": 2
+      }
+    },
+    "height": 83.75,
+    "pausedPoseTransition": true,
+    "pausedTransformsStable": true,
+    "interruptedStatesFinite": true,
+    "reducedMotion": true,
+    "disposed": true,
+    "errors": [],
+    "publication": false
+  },
+  "geometry": {
+    "passed": true,
+    "problems": [],
+    "warnings": [
+      "Self-intersection telemetry elevated during Cast",
+      "Self-intersection telemetry elevated during Death",
+      "Self-intersection telemetry elevated during Hit",
+      "Self-intersection telemetry elevated during Run",
+      "Self-intersection telemetry elevated during Walk"
+    ],
+    "unweighted_vertices": 0,
+    "invalid_weight_sums": 0,
+    "sampled_frames": 30,
+    "all_finite": true
+  },
+  "verification": {
+    "game_tests": 465,
+    "additional_simulation_tests": 3,
+    "blender_tests": 5,
+    "typescript": true,
+    "build": true
+  },
+  "limits": [
+    "Published GLBs require manual re-preparation/review for donor FK and retained secondary weights.",
+    "No cloth collisions; self-intersection warnings remain.",
+    "Average travel synchronization cannot guarantee zero foot sliding for every donor/proportion.",
+    "No inference, live job admission, or publication."
+  ]
+}

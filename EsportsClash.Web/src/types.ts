@@ -353,6 +353,28 @@ export interface AramChampionUnit {
   comboTargetId?: string;
   comboExpiresAt?: number;
   comboHitConfirmed?: boolean;
+  combosExecutedCount?: number;
+  combosLethalCount?: number;
+  activeComboResolution?: {
+    comboId: string;
+    avatar: string;
+    targetId: string;
+    stage: 1 | 2 | 3;
+    attemptedAt: number;
+    confirmedAt?: number;
+    expiresAt: number;
+    hit?: boolean;
+    lethal?: boolean;
+    lethalCredited?: boolean;
+  };
+  peelCount?: number;
+  ccChainCount?: number;
+  objectiveDamage?: number;
+  matchCombos?: import('./cardMemory').CardComboEvent[];
+  deathsGapped?: number;
+  deathsOutnumbered?: number;
+  deathsReckless?: number;
+  gappedSurvived?: number;
   teamChemistry?: number;
   psychology?: import('./playerPersonality').PlayerPsychologyState;
   relationships?: Record<string, import('./playerPersonality').TeammateRelationship>;

@@ -1,5 +1,78 @@
 # Arena mechanics and regression rules
 
+## Latest: Persistent Card Memory, Calibrated RL Rewards & Evolution Runner Evidence Recovery (2026-10-20)
+
+- **One-Lane MOBA RL & Tactical Reward Shaping:**
+  - Decisions are evaluated over a standardized 5.0-second simulation horizon via `settlePendingAIDecisions()`, settling on actor death (`allowShortOnDeath >= 0.5s`) or upon terminal match end.
+  - **Calibrated Reward Values (`computeDecisionOutcomeReward`):** Adheres to OpenAI Five baselines:
+    - Hero death: -1.2 base penalty (-1.5 if gapped or outnumbered).
+    - Verified peel / rescue of low-health ally: +0.5.
+    - Effective crowd control chaining: +0.4.
+    - Converting won fights into structure/boss objective progress: +0.8.
+    - Safe economic recovery while gapped: +0.6.
+    - Premature or wasted ultimate combo: -0.4.
+  - **Accurate Combo & Economy Telemetry:**
+    - Ultimate combo initiation records an attempt; hit confirmation requires real damage dealt to the target within expiry.
+    - Lethal finish credit requires attributed target death within a 3.0-second window, consumed once.
+    - Economic strength is measured by true net worth (`calculateUnitNetWorth`) rather than spendable pocket gold.
+    - Tower risk evaluates live turret attack range and targeting exposure.
+    - Cosmetic callout IDs use a dedicated deterministic counter (`floatIdCounterRef`), preserving match PRNG replay.
+  - **Persistent Card Memory Ledger (`cardMemory.ts`):**
+    - Pro player cards accumulate cross-match discipline (`gappedDiscipline`, `numericalDiscipline`, `survivalPatience`) and combo masteries (Tiers 1 to 5).
+    - Versioned ledger (`version: 1`) with idempotency deduplication by match ID (`processedMatchIds`).
+    - High IQ cards learn lessons faster; aggressive personalities maintain authentic playstyles.
+  - **Non-Negotiable Invariants Strictly Protected:**
+    - Card memory and IQ modulate decision utility and marginal risk only. Combat stats, attack speeds, cooldowns, input delays, and animation cancel timers are never modified.
+    - Risk-based tower dive limits (`towerDiveRules.ts`), 10-second turret execution attribution, 12px steering deadbands, anti-oscillation decision commit timers, and parody aliases (`Cardrel`) remain fully protected.
+
+## Latest: Natural avatar motion is presentation only (2026-10-20)
+
+- Owner authorized replacing prepared-model synthetic leg IK with donor FK, 0.20-second transitions, accessory springs, idle micro-motion and velocity-synchronized cadence. Preserve authored thigh/calf/foot/helper rotations; vertical contact correction is capped at 2.5% of leg length, uses the posed knee plane and retains foot orientation. Do not reintroduce full-leg matrix resets or synthetic pelvis lowering.
+- Prepared GLBs retain secondary skin influences and export branch metadata and measured stride distances. Anatomy and held equipment are excluded from automatic hair/coat spring selection. Runtime cadence uses actual displacement and rendered-model stride scale; blocked movement freezes phase, and existing pause/rewind/teleport guards remain.
+- Quaternion fades snapshot interrupted displayed poses and keep raw mixer caches separate from additive edits. Studio paused pose changes stop after the 0.20-second fade; reduced motion skips it. Clone-local damped springs and chest/spine breathing (chest amplitude at most 0.02 rad) affect presentation only. They cannot move simulated bodies, change collision/targeting/combat clocks, consume RNG, or alter risk-based tower rules, attribution or aliases.
+- Verified with 465 game tests, three additional simulation tests, TypeScript/design checks, production build, five Blender fixtures and Chrome using the actual studio. A separate Aiselle candidate exports all ten clips and 13 weighted secondary joints; finite geometry and valid skin weights pass, with remaining self-intersection warnings. No published asset, inference admission or live preparation job changed.
+- Existing GLBs need manual re-preparation/review for restored leg curves and accessory weights. These springs have no cloth collision solver; malformed proportions and nonlinear donor strides can still produce clipping/foot sliding. Scope, files, exact evidence and limits: `docs/avatar-natural-motion.md` and `avatar-natural-motion-verification.json`.
+
+## Latest: Backoffice UI review (2026-10-20)
+
+- Owner requested backoffice UI review/fixes. `EsportsClash.Api/public/evolution.css` and `evolution.js` now honor hidden cards, combine search/categories, retain/rebind live category filters, restore editor/progress/GLB-preview/modal/toast layouts and prevent narrow-screen overflow. Authentication and pages with their own editor/confirmation/viewer scripts use native navigation/submission to retain their lifecycle; lightweight partial navigation refreshes header/CSRF state and honors canceled forms, modifier-clicks and downloads.
+- Blade changes scope repair filters, show search-result/empty state and remove the nonexistent sign-out Escape shortcut. No gameplay, worker policy, settings or persisted reports/assets changed. Protected risk-based tower/well/Nexus rules, creep soft spacing/avatar contacts, ordinary retreat, attribution, objective contests, anti-oscillation and parody identities remain as previously approved.
+- Validation: 95 backend tests / 982 assertions, JS syntax and scoped whitespace checks pass. Native Chrome verifies eight pages at four widths (32 combinations), interaction/confirmation/unsaved-edit guards, live filters, dialogs, toast dismissal and the actual Dawnna GLB preview without uncaught errors. No live jobs, deletes or settings/design saves were submitted. Existing dev mounts serve the fixes. Evidence/files and viewport-emulation limits: `backoffice-ui-review.md`, `backoffice-ui-verification.json`, `backoffice-ui-*.png`. No new game/build claim is made for this Laravel-only UI work.
+
+## Latest: 3D Model Scaling, Grounding & Retargeting Contact Alignment (2026-10-20)
+
+- **Avatar Visual Scale & Ground Plane Invariants:**
+  - Prepared 3D models must stand squarely on the arena and pedestal ground plane (`y = 0.0`) with natural upright postures and correct MOBA presence scaling (`targetHeight = baseHeight * 1.25`). Models must never sink through the floor or collapse into miniature scale.
+  - `retarget-unirig.py` excludes Blender bone display meshes (`Icosphere`) from extent calculations and anchors `ground_z = max(0.0, dlo.z)`.
+  - Both armature and mesh data are transformed into the native rig's centimetre frame via `native_rig.matrix_world.inverted()` with identity local object scale, avoiding glTF exporter scale striping and `boneInverses` mismatches.
+  - `retarget_contacts.py` bounds stride span to `min(span, min(lengths) * 1.15)` to avoid artificial pelvis drops and squatting during locomotion clips (`Walk`, `Run`, `Strafe`).
+  - `avatarModelAssets.ts` evaluates skinned vertex bounds on `THREE.SkinnedMesh` via `node.getVertexPosition(i, tempPoint).applyMatrix4(node.matrixWorld)`, computing true deformed bounds and height.
+- **Verification:**
+  - Aiselle (`c_astra`, `473a7a1f-5129-48d3-84c9-731e3a8ac921`) renders at full scale (`max_y = 58.6` at `scale = 40`, `83.75` in arena) with `min_y >= 0.0` above the floor across all 10 clips.
+  - `npm run check:game`: 461 + 3 passed.
+  - `npm run build`: passed.
+  - `php artisan test`: 95 passed (982 assertions).
+
+## Latest: Confirmed soft creep contacts (2026-10-20)
+
+- Owner explicitly confirmed **"Yes—creeps use soft spacing and dodge; keep avatar collisions"** after the contradiction reminder. This supersedes the 2026-10-18 solid-contact rule for creep-related contacts. Keep avatar-to-avatar swept collision/sliding.
+- `src/unitCollision.ts` uses anticipatory tangent steering and soft separation for creeps. Bodies steer left/right around nearby units, choose a consistent side head-on, and try the other side when terrain blocks the preferred step. Creep contacts never impose a swept body block; idle overlaps recover gradually with damped cluster separation. Stationary avatars are not shoved by creeps. Recovery consumes a walker's existing step budget; idle creep spacing is bounded to at most 36 units/s (scaled down for legacy small bodies).
+- `src/arenaUnitCollision.ts`, live `AramMatchView.tsx`, simplified `matchSimulationEngine.ts` and legacy `ThreeAramArena.tsx` share the policy. It covers melee/caster/cannon waves, bear/Warden summons, allied siege golems and moving neutral camps on both teams. Neutral camps retain their terrain footprint; the dragon remains anchored but soft. Death, recall, CC, stasis, authoritative forced movement/teleports and respawns retain their existing gates.
+- Soft contacts may compress temporarily when no clear side exists or following spawn/forced movement. Unlocked bodies separate as room becomes available; locked/anchored bodies do not move solely for spacing. Personal space is measured on the ground plane; projected decorative meshes can overlap. This is local steering, not a global crowd route solver.
+- Verification: nine new avoidance scenarios plus existing collision/spawn checks pass (20 focused tests), including head-on passage at 15/30/60 Hz, both dodge directions, terrain fallback, packed waves/idle separation, nonblocking bottlenecks, all creep classes, neutral movement, preserved avatar solidity, movement budgets, locked actors, pause and deterministic order-independent inputs. `npm run check:game` passes design validation, 461 game tests, three additional simulation tests (including ten seeded matches) and TypeScript. `npm run build` passes with the existing chunk-size/plugin-timing advisories; scripts were invoked with Windows `npm.cmd`. Logs: `.local-tools/creep-check-game.log`, `.local-tools/creep-build.log`. Browser/full-match frame-time improvement has not been measured. Risk-based tower/well/Nexus legality, normal retreat, attribution, objective contests, anti-oscillation, stats/hit timing and parody identities remain protected.
+
+## Latest: 3D Avatar Preparation Pipeline Error Elimination & Aiselle Qualification (2026-10-20)
+
+- **Pipeline Reliability & Qualification Upgrades:**
+  - **Container Mounts & Engine Sync:** Mounted `mesh_cleanup.py` in `compose.evolution.dev.yaml` and updated `preparation-server.mjs` and `AvatarPreparationControlService.php` so in-place Resume and Reset sync `engine_sha256` and clear stale intermediate artifacts while preserving `unirig-rigged.glb`.
+  - **Disk Rig Cache Reuse:** `/preparations/operations`, `AvatarPreparationService::start()`, and `preparation-job.mjs` automatically discover and reuse verified `unirig-rigged.glb` files on disk across sibling runs for the same `source_sha256`.
+  - **Garment & Accessory-Aware Bone Mapping (`bone_mapping.py`):** Upgraded `infer_humanoid` (`humanoid-topology-rest-v2`) to resolve the pelvis branch when Root has skirt/cape helper chains, traverse the spine past leaf chest ornaments, identify the head joint when hair/ponytail chains branch off, and allow natural outward foot turnout (`min >= 0.20`, `mean >= 0.40`).
+  - **Streamlined Qualification (`retarget-unirig.py`, `qualify-prepared.py`, `preparation-job.mjs`):** Moved unresolved hand-attachment warnings, extra tail/wing bones, garment self-intersection telemetry, and CPU SwiftShader frame-jitter metrics to non-blocking `warnings`, keeping hard blockers strictly on non-finite geometry, invalid skin weights, glTF errors, missing clips, or WebGL render failures.
+- **Verification:**
+  - Live preparation `473a7a1f-5129-48d3-84c9-731e3a8ac921` (`c_astra` / Aiselle) completed with `status: ready` and `reasons: []`.
+  - `php artisan test`: 95 passed (982 assertions).
+  - `npm run check:game` and `npm run build`: passed with 0 errors.
+
 ## Latest: Machine Learning Upgrades Implemented (2026-10-20)
 
 - **Machine Learning Fitting & Optimization Upgrades:**

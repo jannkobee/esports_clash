@@ -8,6 +8,7 @@ import { AvatarAssetLibrary } from './avatarModelAssets.ts';
 import type { VisualRelease } from './avatarVisualRelease.ts';
 import { ArenaAbilityEffects, type AbilityProjectile, type AbilitySpell, type WeaponImpact } from './threeAbilityEffects.ts';
 import {motionTimeline,type MotionTimeline} from './avatarMotionTimeline.ts';
+import {AVATAR_CROSSFADE_SECONDS} from './avatarSecondaryMotion.ts';
 import {avatarDesign} from './avatarDesigns.ts';
 import {combatDuration} from './avatarCombatMotion.ts';
 import {bindWeaponSocket} from './avatarWeaponSockets.ts';
@@ -362,7 +363,10 @@ export class ArenaScene {
           corpse.motion=motionTimeline(corpse.motion,unit,frame.second,corpse.motion.yaw);
           if(frame.second-corpse.motion.death<1.25){
             present.add(unit.id);corpse.group.children.forEach(child=>{if(child!==corpse.body)child.visible=false;});
-            corpse.avatar.animate({motionState:'death',motionTime:frame.second-corpse.motion.death},frame.second);
+            const transition=frame.second-corpse.motion.changed;
+            corpse.avatar.animate({motionState:'death',motionTime:frame.second-corpse.motion.death,
+              previousMotion:corpse.motion.from,previousMotionTime:corpse.motion.fromTime+transition,
+              previousGaitPhase:corpse.motion.gaitPhase,motionBlend:Math.min(1,transition/AVATAR_CROSSFADE_SECONDS)},frame.second);
           }
         }
         continue;
@@ -384,12 +388,13 @@ export class ArenaScene {
       // Locomotion follows travel direction; stationary attacks/casts still face their target.
       const targetYaw=moving?Math.atan2(unit.vx,unit.vy):strikeActive&&strikeX!==undefined&&strikeY!==undefined?Math.atan2(strikeX-unit.x,strikeY-unit.y):aiming&&aimX!==undefined&&aimY!==undefined&&Math.hypot(aimX-unit.x,aimY-unit.y)>1?Math.atan2(aimX-unit.x,aimY-unit.y):
         unit.facing==='right'?Math.PI/2:-Math.PI/2;
-      actor.motion=motionTimeline(actor.motion,unit,frame.second,targetYaw,(avatarDesign(unit.champion.id)?.height??76)/76);
+      actor.motion=motionTimeline(actor.motion,unit,frame.second,targetYaw,(avatarDesign(unit.champion.id)?.height??76)/76,actor.avatar?.body.userData.strideDistances);
       actor.body.rotation.y=actor.motion.yaw;
       const elapsed=frame.second-actor.motion.started,transition=frame.second-actor.motion.changed;
       actor.avatar?.animate({...unit,motionState:actor.motion.state,motionTime:elapsed+(actor.motion.state==='attack'?combatDuration(unit.champion.id,'attack')*.42:0),
-        previousMotion:actor.motion.from,previousMotionTime:actor.motion.fromTime+transition,motionBlend:Math.min(1,transition/.12),
+        previousMotion:actor.motion.from,previousMotionTime:actor.motion.fromTime+transition,motionBlend:Math.min(1,transition/AVATAR_CROSSFADE_SECONDS),
         recoil:Math.max(0,1-(frame.second-actor.motion.hit)/.32),gaitPhase:actor.motion.gaitPhase,
+        previousGaitPhase:actor.motion.gaitPhase,motionYaw:actor.motion.yaw,
         plantFeet:moving&&!((unit.knockupTimer??0)>0)&&!unit.dash,moveX:unit.vx,moveZ:unit.vy},frame.second);
       if(strikeActive&&actualStrike.melee&&!unit.dash&&strikeX!==undefined&&strikeY!==undefined){
         const dx=strikeX-unit.x,dz=strikeY-unit.y,distance=Math.hypot(dx,dz)||1;

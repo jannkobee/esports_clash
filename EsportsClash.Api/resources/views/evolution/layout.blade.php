@@ -32,7 +32,7 @@
         <span class="operator-badge">OPERATOR: <strong>{{ auth()->user()->name }}</strong></span>
         <form method="post" action="{{ route('logout') }}" data-no-ajax>
             @csrf
-            <button class="button-tactile button-danger-subtle btn-sm">Sign Out [Esc]</button>
+            <button class="button-tactile button-danger-subtle btn-sm">Sign out</button>
         </form>
     </div>
     @endauth

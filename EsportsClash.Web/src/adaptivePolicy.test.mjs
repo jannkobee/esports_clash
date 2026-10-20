@@ -126,3 +126,94 @@ test('rapid follow-up is not misread as an outcome; learning cannot tip a surviv
   assert.equal(chooseMacroAction({ actorAvailable: true, now: 1, candidates: candidates(.106) }).selected?.value, 'regroup');
   assert.equal(chooseMacroAction({ actorAvailable: true, now: 1, candidates: candidates(.52) }).selected?.value, 'fight');
 });
+
+test('adaptiveFeatures extracts relative gapped features and card discipline memory', () => {
+  const cardObj = card('player-1', { iq: 85, tf: 75, lan: 70, flx: 65 });
+  const memory = {
+    cardId: 'player-1',
+    matchesPlayed: 3,
+    lessons: { gappedDiscipline: 0.6, numericalDiscipline: 0.8, survivalPatience: 0.5 },
+    comboMasteries: {
+      Solana: { executions: 12, hitRate: 0.8, lethalFinishes: 4, masteryLevel: 1 },
+    },
+  };
+  const featuresGapped = adaptiveFeatures(cardObj, { name: 'Solana', primaryRole: 'Mage' }, 0.4, 0.8, {
+    goldGap: -1600,
+    levelGap: -2,
+    outnumbered: true,
+    isFeeding: true,
+    cardMemory: memory,
+  });
+
+  assert.equal(featuresGapped.goldGap, -0.8);
+  assert.equal(featuresGapped.levelGap, -2 / 3);
+  assert.equal(featuresGapped.outnumbered, 1);
+  assert.equal(featuresGapped.isFeeding, 1);
+  assert.equal(featuresGapped['cardMemory:gappedDiscipline'], 0.6);
+  assert.equal(featuresGapped['cardMemory:numericalDiscipline'], 0.8);
+  assert.equal(featuresGapped['cardMemory:survivalPatience'], 0.5);
+  assert.equal(featuresGapped['cardMemory:comboMastery'], 0.2); // 1 / 5
+
+  // When ahead in gold and not outnumbered, discipline features remain inactive
+  const featuresAhead = adaptiveFeatures(cardObj, { name: 'Solana', primaryRole: 'Mage' }, 0.9, 0.8, {
+    goldGap: 1000,
+    levelGap: 1,
+    outnumbered: false,
+    cardMemory: memory,
+  });
+  assert.equal(featuresAhead['cardMemory:gappedDiscipline'], undefined);
+  assert.equal(featuresAhead['cardMemory:numericalDiscipline'], undefined);
+  assert.equal(featuresAhead['cardMemory:survivalPatience'], undefined);
+});
+
+test('asymmetric death penalty punishes suicidal decisions even if team wins the match', () => {
+  const cardObj = card('diver', { iq: 70, tf: 70, lan: 70, flx: 70 });
+  const features = adaptiveFeatures(cardObj, mage, 0.5, 0.5);
+  const decision = {
+    ...choice('diver', 'blue', 'fight', features, 1),
+    outcome: {
+      horizonSeconds: 3,
+      healthChange: -0.5,
+      goldGain: 0,
+      csGain: 0,
+      killGain: 0,
+      deathGain: 1, // Died!
+      damageGain: 50,
+      progress: -0.7,
+      wasGapped: true,
+      wasOutnumbered: true,
+    },
+  };
+
+  // Team won ('blue'), but this actor died while gapped & outnumbered
+  const trained = trainAdaptivePolicy(createAdaptivePolicy(), [decision], 'blue');
+  // fight score should decrease sharply
+  assert.ok(adaptivePolicyScore(trained, 'fight', features) < 0, 'decision leading to death must be penalized despite team win');
+  // wave score (alternative) should increase
+  assert.ok(adaptivePolicyScore(trained, 'wave', features) > 0, 'alternative action receives positive contrastive credit');
+});
+
+test('combo executions provide dense reward spikes and strengthen fight confidence', () => {
+  const cardObj = card('combo-master', { iq: 90, tf: 90, lan: 80, flx: 80 });
+  const features = adaptiveFeatures(cardObj, mage, 0.8, 0.8);
+  const comboDecision = {
+    ...choice('combo-master', 'blue', 'fight', features, 1),
+    outcome: {
+      horizonSeconds: 3,
+      healthChange: 0,
+      goldGain: 300,
+      csGain: 0,
+      killGain: 1,
+      deathGain: 0,
+      damageGain: 450,
+      progress: 0.8,
+      comboExecuted: true,
+      comboLethal: true,
+      shapedReward: 4.0,
+    },
+  };
+
+  const trained = trainAdaptivePolicy(createAdaptivePolicy(), [comboDecision], 'blue');
+  assert.ok(adaptivePolicyScore(trained, 'fight', features) > 0.05, 'lethal combo provides substantial positive reward');
+});
+

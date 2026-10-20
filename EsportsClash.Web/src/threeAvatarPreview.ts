@@ -6,6 +6,7 @@ import { disposeArenaTerrainResources } from './threeArenaTerrain.ts';
 import {combatDuration} from './avatarCombatMotion.ts';
 import {ArenaAbilityEffects} from './threeAbilityEffects.ts';
 import type {AvatarModelVariant} from './avatarModelUrl.ts';
+import {AVATAR_CROSSFADE_SECONDS} from './avatarSecondaryMotion.ts';
 
 export class AvatarPreview {
   private readonly renderer: THREE.WebGLRenderer;
@@ -28,6 +29,10 @@ export class AvatarPreview {
   private disposed = false;
   private frame = 0;
   private second = .35;
+  private presentationSecond = .35;
+  private previousPose = 'idle';
+  private previousTime = .35;
+  private transition = AVATAR_CROSSFADE_SECONDS;
   private lastTime = 0;
   private width = 0;
   private height = 0;
@@ -75,6 +80,8 @@ export class AvatarPreview {
   }
   setView(yaw: number, pose: string, motion: boolean) {
     if(pose!==this.pose||motion!==this.motion){
+      this.previousPose=this.pose;this.previousTime=this.second;
+      this.transition=window.matchMedia('(prefers-reduced-motion: reduce)').matches?AVATAR_CROSSFADE_SECONDS:0;
       const phase=pose==='cast'?.55:pose==='death'?.85:pose==='hit'?.4:pose.startsWith('turn')?.5:.42;
       this.second=motion?0:pose.startsWith('ability-')?.45:combatDuration(this.kit?.id??'',pose)*phase;
     }
@@ -93,13 +100,18 @@ export class AvatarPreview {
       this.width = width; this.height = height; this.pixelRatio = ratio;
       this.renderer.setPixelRatio(ratio); this.renderer.setSize(width, height, false);
     }
-    if (this.motion && this.lastTime) this.second += Math.min(.05, (now - this.lastTime) / 1000);
+    const dt=this.lastTime?Math.min(.05,(now-this.lastTime)/1000):0;
+    if(this.motion)this.second+=dt;
+    if(this.motion||this.transition<AVATAR_CROSSFADE_SECONDS)this.presentationSecond+=dt;
+    this.transition=Math.min(AVATAR_CROSSFADE_SECONDS,this.transition+dt);
+    if(this.motion)this.previousTime+=dt;
     this.lastTime = now;
     const ability=this.kit?.id==='c_raijin'&&this.pose.startsWith('ability-'),time=this.second%2;
     const ball=ability&&this.pose==='ability-r'&&time<.75;
     this.model.animate({ animState:ability?(ball?'walk':'cast'):this.pose,animTimer:this.second,
+      previousMotion:this.previousPose,previousMotionTime:this.previousTime,motionBlend:this.transition/AVATAR_CROSSFADE_SECONDS,
       voltaireOverloadTimer:ability&&this.pose==='ability-passive'?6:0,
-      dash:ball?{kind:'raijin_bolt',remaining:.75-time}:undefined },this.second);
+      dash:ball?{kind:'raijin_bolt',remaining:.75-time}:undefined },this.presentationSecond);
     const type=this.pose==='ability-q'?'static_remnant':this.pose==='ability-w'?'electric_vortex':undefined;
     this.abilityEffects.update([],ability&&type?[{id:'studio-ability',type,x:type==='electric_vortex'?48:-30,y:0,radius:type==='electric_vortex'?18:65,
       duration:type==='static_remnant'?4-time:1.4-Math.min(1.39,time),maxDuration:type==='static_remnant'?4:1.4,color:'#83efff',sourceX:0,sourceY:0,sourceUnitId:'studio',targetUnitId:type==='electric_vortex'?'victim':undefined}]:[],this.second,
@@ -113,7 +125,7 @@ export class AvatarPreview {
     try {
       this.renderer.render(this.scene, this.camera);
       this.host.dataset.drawCalls = String(this.renderer.info.render.calls);
-      if (this.motion) this.requestFrame();
+      if (this.motion||this.transition<AVATAR_CROSSFADE_SECONDS) this.requestFrame();
     } catch { this.available = false; this.status(false); }
   };
 

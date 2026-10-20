@@ -51,8 +51,31 @@ def rigid_equipment(obj,bone_names,repairs,rig=None):
     return decisions
 
 
+def secondary_chains(rig,mapped_bones,equipment_repairs=()):
+    """Find side branches, never the spine/limb path or held equipment.
+
+    Generic UniRig names carry no semantics: only multi-joint branches from the
+    head or torso qualify automatically. Other extra bones retain skin but do
+    not receive a procedural controller.
+    """
+    mapped=set(mapped_bones)
+    equipment={r['bone'] for r in equipment_repairs}
+    result={}
+    def contains_anatomy(bone):
+        return bone.name in mapped or any(contains_anatomy(c) for c in bone.children)
+    def visit(bone,kind,depth):
+        if bone.name in equipment or contains_anatomy(bone):return
+        result[bone.name]={'kind':kind,'depth':depth}
+        for child in bone.children:visit(child,kind,depth+1)
+    for bone in rig.data.bones:
+        if bone.name in mapped or not bone.parent or bone.parent.name not in {'Head','Root','Hips','Spine','Chest'}:
+            continue
+        if not bone.children or contains_anatomy(bone):continue
+        visit(bone,'hair' if bone.parent.name=='Head' else 'coat',0)
+    return result
+
 def regularize_skin_weights(obj,rig,mapped_bones,equipment_repairs=()):
-    """Consolidate unmapped helper bones into anatomical ancestors and regularize
+    """Preserve secondary skin influences and regularize
     connected single-mesh skin weights using topological surface-graph Laplacian smoothing.
     Preserves 100% anatomical limb mobility without cross-boundary Euclidean bleeding.
     Rigid equipment components remain 100% bound to their equipment bone.
@@ -61,23 +84,25 @@ def regularize_skin_weights(obj,rig,mapped_bones,equipment_repairs=()):
         return None
     mapped_set=set(mapped_bones)
     equip_bones={r['bone'] for r in equipment_repairs}
-    keep_bones=mapped_set|equip_bones
+    # Extra bones carry actual hair, garment, finger and toe influences. Keeping
+    # their weights is necessary for later secondary articulation.
+    keep_bones=set(rig.data.bones.keys())
     bones=rig.data.bones
     # Map unmapped bones (clavicles, fingers, toes, hair/cape helpers) to anatomical targets
     clavicle_map={}
     for side in ('L','R'):
         ua=bones.get('UpperArm'+side)
-        if ua and ua.parent and ua.parent.name not in keep_bones and ua.parent.parent and ua.parent.parent.name=='Chest':
+        if ua and ua.parent and ua.parent.name not in mapped_set|equip_bones and ua.parent.parent and ua.parent.parent.name=='Chest':
             clavicle_map[ua.parent.name]='UpperArm'+side
     remap={}
     bone_items = bones.values() if hasattr(bones, 'values') else bones
     for b in bone_items:
         b_name = b.name if hasattr(b, 'name') else str(b)
         b_obj = b if hasattr(b, 'parent') else (bones.get(b_name) if hasattr(bones, 'get') else None)
-        if b_name in keep_bones:
-            remap[b_name]=b_name
-        elif b_name in clavicle_map:
+        if b_name in clavicle_map:
             remap[b_name]=clavicle_map[b_name]
+        elif b_name in keep_bones:
+            remap[b_name]=b_name
         else:
             curr=b_obj.parent if b_obj else None
             while curr and curr.name not in keep_bones:
@@ -145,10 +170,16 @@ def regularize_skin_weights(obj,rig,mapped_bones,equipment_repairs=()):
         if i in rigid_verts:
             final_weights.append(raw_weights[i])
             continue
-        top=sorted(w.items(),key=lambda x:-x[1])[:4]
+        top=[(k,val) for k,val in sorted(w.items(),key=lambda x:-x[1])[:4] if val>1e-5]
         tot=sum(val for _,val in top)
         if tot>0:
-            final_weights.append({k:val/tot for k,val in top if val/tot>=.005})
+            norm=[(k,round(val/tot,3)) for k,val in top if val/tot>=.005]
+            if not norm:
+                norm=[('Hips',1.0)]
+            else:
+                diff=round(1.0-sum(v for _,v in norm),3)
+                norm[0]=(norm[0][0],round(norm[0][1]+diff,3))
+            final_weights.append(dict(norm))
         else:
             final_weights.append({'Hips':1.0})
 
@@ -165,5 +196,5 @@ def regularize_skin_weights(obj,rig,mapped_bones,equipment_repairs=()):
         vg=obj.vertex_groups.get(k) or obj.vertex_groups.new(name=k)
         for q,indices in qmap.items():
             vg.add(indices,q,'REPLACE')
-    return {'method':'topological-laplacian-regularized-v2','vertices_regularized':len(obj.data.vertices)-len(rigid_verts),'rigid_equipment_vertices_preserved':len(rigid_verts),'unmapped_bones_consolidated':len(bones)-len(keep_bones)}
+    return {'method':'topological-laplacian-secondary-preserved-v3','vertices_regularized':len(obj.data.vertices)-len(rigid_verts),'rigid_equipment_vertices_preserved':len(rigid_verts),'unmapped_bones_consolidated':len(clavicle_map),'extra_bones_preserved':len(keep_bones-mapped_set-equip_bones-set(clavicle_map))}
 

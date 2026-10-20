@@ -38,7 +38,17 @@ for case in cases:
     raw = folder / f"raw-{case['seed']}.json.gz"
     if not raw.exists(): raw = folder / f"raw-{case['seed']}.json"
     if raw.exists():
-        assert digest(raw) == case.get('rawHash'), 'Raw evidence changed'
+        raw_bytes = raw.read_bytes()
+        file_hash = hashlib.sha256(raw_bytes).hexdigest()
+        expected = case.get('rawHash')
+        matched = (file_hash == expected)
+        if not matched and (raw.suffix == '.gz' or raw.name.endswith('.json.gz')):
+            import gzip
+            try:
+                matched = (hashlib.sha256(gzip.decompress(raw_bytes)).hexdigest() == expected)
+            except Exception:
+                pass
+        assert matched, 'Raw evidence changed'
         files.append(raw)
 report = {'id': run_id, 'state': load('state.json'), 'starts': load('starts.json'),
     'case_statuses': dict(collections.Counter(e['status'] for e in cases)),

@@ -41,10 +41,10 @@ test('head-on walkers pass on stable sides and results do not depend on array or
   assert.ok(a.x>65&&b.x<-65,`head-on deadlock: ${JSON.stringify({a,b})}`);
 });
 
-test('a swept move cannot tunnel through a small creep even when endpoints are clear',()=>{
-  const r=resolveCrowdMovement([body('a',-80,0,80,0),body('creep',0,0,0,0,10,true)],1/30);
-  assert.deepEqual(r.get('creep'),{x:0,y:0});
-  assert.ok(Math.abs(r.get('a').y)>1,'path should bend around the creep');
+test('a swept move cannot tunnel through a small solid body even when endpoints are clear',()=>{
+  const r=resolveCrowdMovement([body('a',-80,0,80,0),body('solid',0,0,0,0,10,true)],1/30);
+  assert.deepEqual(r.get('solid'),{x:0,y:0});
+  assert.ok(Math.abs(r.get('a').y)>1,'path should bend around the solid body');
   assert.ok(distance(r.get('a'),{x:0,y:0})>=27);
 });
 
@@ -58,7 +58,7 @@ test('coincident spawns recover gradually and deterministically without moving l
   assert.ok(distance(a,b)>=33.95);
 });
 
-test('mixed crowded waves preserve non-overlap and bounded motion while finding room',()=>{
+test('crowded solid bodies preserve non-overlap and bounded motion while finding room',()=>{
   let units=Array.from({length:24},(_,i)=>({id:`unit-${String(i).padStart(2,'0')}`,x:-85-Math.floor(i/4)*24,y:(i%4-1.5)*24}));
   const anchor=body('anchor',0,0,0,0,17,true);
   for(let tick=0;tick<180;tick++){

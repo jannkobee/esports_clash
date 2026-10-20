@@ -30,7 +30,19 @@ for previous in sorted(folder.parent.iterdir(), key=lambda p: (p / 'result.json'
         # Retain only validated fitting examples, never past calibration/evaluation outcomes.
         raw = previous / f"raw-{example['seed']}.json.gz"
         if not raw.exists(): raw = previous / f"raw-{example['seed']}.json"
-        if not raw.exists() or hashlib.sha256(raw.read_bytes()).hexdigest() != example.get('rawHash'):
+        if not raw.exists():
+            raise ValueError('Historical raw fitting evidence changed')
+        raw_bytes = raw.read_bytes()
+        file_hash = hashlib.sha256(raw_bytes).hexdigest()
+        expected_hash = example.get('rawHash')
+        matched = (file_hash == expected_hash)
+        if not matched and (raw.suffix == '.gz' or raw.name.endswith('.json.gz')):
+            import gzip
+            try:
+                matched = (hashlib.sha256(gzip.decompress(raw_bytes)).hexdigest() == expected_hash)
+            except Exception:
+                pass
+        if not matched:
             raise ValueError('Historical raw fitting evidence changed')
         bank.append(example); seen.add(example['seed'])
     sources.append(previous.name)

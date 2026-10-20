@@ -22,7 +22,13 @@
 @if($run->error)
     <div class="failure-box">
         <div class="failure-box-title">✕ Run Diagnostic Error</div>
-        <p class="error-text">{{ $run->error }}</p>
+        <p class="error-text" style="white-space:pre-wrap;">{{ $run->error }}</p>
+        @if(!empty($run->progress['traceback']) || !empty($run->result['traceback']))
+            <details style="margin-top:8px;">
+                <summary style="cursor:pointer;font-size:0.85rem;color:var(--text-muted, #94a3b8);">View Underlying Traceback</summary>
+                <pre class="code-block" style="margin-top:6px;max-height:300px;overflow-y:auto;font-size:0.8rem;white-space:pre-wrap;">{{ $run->progress['traceback'] ?? $run->result['traceback'] }}</pre>
+            </details>
+        @endif
     </div>
 @endif
 

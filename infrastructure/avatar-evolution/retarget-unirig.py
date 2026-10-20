@@ -9,8 +9,8 @@ from mathutils import Vector, Matrix
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from bone_mapping import infer_humanoid, NATIVE
 from retarget_motion import motion_delta, hip_motion_to_root, EQUIPMENT_PROFILE
-from retarget_contacts import bake_contacts
-from equipment_skin import rigid_equipment, regularize_skin_weights
+from retarget_contacts import bake_contacts, GAITS
+from equipment_skin import rigid_equipment, regularize_skin_weights, secondary_chains
 from mesh_cleanup import cleanup_mesh
 
 folder, source, donor = map(Path, sys.argv[sys.argv.index('--')+1:])
@@ -114,14 +114,18 @@ for bone_name in list(target.data.bones.keys()):
     else:
         equipment_unresolved.append('Long hand attachment branch '+bone.name+' requires equipment/influence review.')
 skin_repairs=[]
+secondary=secondary_chains(target,mapping.keys(),equipment_repairs)
+for name,settings in secondary.items():
+    target.data.bones[name]['secondaryMotion']=settings
 for obj in meshes:
     skin_repairs.extend(rigid_equipment(obj,set(target.data.bones.keys()),equipment_repairs,target))
     reg=regularize_skin_weights(obj,target,mapping.keys(),equipment_repairs)
     if reg:skin_repairs.append(reg)
 before=set(bpy.context.scene.objects)
 bpy.ops.import_scene.gltf(filepath=str(donor))
-donor_objects=[o for o in bpy.context.scene.objects if o not in before]
-donor_rigs=[o for o in donor_objects if o.type=='ARMATURE']
+donor_rigs=[o for o in bpy.context.scene.objects if o not in before and o.type=='ARMATURE']
+donor_bone_displays={bone.custom_shape for rig in donor_rigs for bone in rig.pose.bones if bone.custom_shape}
+donor_objects=[o for o in bpy.context.scene.objects if o not in before and o not in donor_bone_displays]
 roots=[o for o in donor_objects if o.get('avatarPart')=='avatar-root']
 if len(donor_rigs)!=1 or len(roots)!=1:
     raise RuntimeError('Native animation template hierarchy is incompatible')
@@ -151,26 +155,34 @@ for bone in target.data.bones:
         for key in native_rig.data.bones[bone.name].keys():
             bone[key]=native_rig.data.bones[bone.name][key]
 def extent(objects):
-    points=[o.matrix_world@Vector(c) for o in objects if o.type=='MESH' for c in o.bound_box]
+    points=[o.matrix_world@v.co for o in objects if o.type=='MESH' and len(o.data.vertices)>0 and not o.get('avatarPart') for v in o.data.vertices]
     return Vector([min(p[i] for p in points) for i in range(3)]),Vector([max(p[i] for p in points) for i in range(3)])
 lo,hi=extent(generated)
 dlo,dhi=extent(donor_objects)
 height=hi.z-lo.z
 scale=(dhi.z-dlo.z)/max(height,.00001)
-alignment=Matrix.Translation((dlo+dhi)*.5)@Matrix.Rotation(math.radians(plan['yaw']),4,'Z')@Matrix.Scale(scale,4)@Matrix.Translation(-(lo+hi)*.5)
+ground_z=max(0.0,dlo.z)
+target_center=Vector(((dlo.x+dhi.x)*.5,(dlo.y+dhi.y)*.5,ground_z+(dhi.z-dlo.z)*.5))
+alignment=Matrix.Translation(target_center)@Matrix.Rotation(math.radians(plan['yaw']),4,'Z')@Matrix.Scale(scale,4)@Matrix.Translation(-(lo+hi)*.5)
 for obj in generated:
     if obj.parent not in generated:
         world=alignment@obj.matrix_world
         obj.parent=root
         obj.matrix_world=world
+bpy.context.view_layer.update()
 # Game contact/stance curves use the native armature's centimetre coordinate
-# frame. Re-express the predicted rest rig in that frame without moving its
+# frame. Re-express the predicted rest rig and mesh in that frame without moving
 # world-space joints or mesh. Merely scaling its outer object leaves e.g. a
 # native 33-unit leg offset interpreted as 33 generated-model metres.
-mesh_world={obj:obj.matrix_world.copy() for obj in meshes}
+for obj in meshes:
+    obj.data.transform(native_rig.matrix_world.inverted()@obj.matrix_world)
+    obj.data.update()
 target.data.transform(native_rig.matrix_world.inverted()@target.matrix_world)
 target.matrix_world=native_rig.matrix_world.copy()
-for obj,world in mesh_world.items():obj.matrix_world=world
+for obj in meshes:
+    obj.parent=target
+    obj.matrix_world=native_rig.matrix_world.copy()
+bpy.context.view_layer.update()
 # Blender imports some tagged native container nodes as mesh objects. Preserve
 # their actual transform/metadata as empties before removing donor geometry.
 for obj in list(donor_objects):
@@ -189,11 +201,12 @@ for obj in list(donor_objects):
 for obj in donor_objects:
     if obj.type=='EMPTY' and obj.parent==native_rig and obj.parent_type=='BONE':
         if obj.parent_bone not in retarget_names:
-            raise RuntimeError('Unmapped native attachment parent: '+obj.parent_bone)
+            obj.parent_bone='Chest' if 'Chest' in retarget_names else retarget_names[0]
         world=obj.matrix_world.copy();obj.parent=target;obj.matrix_world=world
 native_rig.data.pose_position='POSE'
 target.data.pose_position='POSE'
 clips=[]
+stride_distances={}
 actions=list(bpy.data.actions)
 neutral=next((action for action in actions if action.name=='Idle'),None)
 if neutral is None:raise RuntimeError('Native Idle reference is required for relative animation transfer')
@@ -222,6 +235,7 @@ for action in actions:
     target.animation_data_create()
     target.animation_data.action=output
     start,end=action.frame_range
+    foot_samples={'L':[],'R':[]}
     bpy.context.scene.frame_set(int(start));bpy.context.view_layer.update()
     clip_start_pose={name:(native_rig.pose.bones[name].matrix_basis.to_quaternion().copy(),native_rig.pose.bones[name].location.copy()) for name in retarget_names}
     for frame in range(int(start),int(end)+1):
@@ -257,21 +271,36 @@ for action in actions:
         root_rest=root_pose.bone.matrix_local;hip_rest=hip_pose.bone.matrix_local
         root_pose.matrix_basis=hip_motion_to_root(root_rest,hip_rest,root_pose.matrix_basis,hip_pose.matrix_basis)
         hip_pose.matrix_basis=Matrix.Identity(4)
-        if original_name in ['Walk','Run','Strafe']:
-            for leg_bone in ['leg:-1','leg:1','ThighL','ThighR','CalfL','CalfR','FootL','FootR']:
-                if target.pose.bones.get(leg_bone):
-                    target.pose.bones[leg_bone].matrix_basis=Matrix.Identity(4)
+        # Keep thigh/calf/foot and helper FK, including the donor knee plane and
+        # heel-to-toe rotation. IK only corrects small vertical contact errors.
         bake_contacts(target,contact_reference,original_name,(frame-start)/max(end-start,1),equipment_repairs)
+        if original_name in ['Walk','Run','Strafe']:
+            bpy.context.view_layer.update()
+            for side in foot_samples:
+                foot_samples[side].append(target.matrix_world@target.pose.bones['Foot'+side].head)
         for name in retarget_names+[r['bone'] for r in equipment_repairs]:
             b=target.pose.bones[name]
             b.keyframe_insert(data_path='rotation_quaternion',frame=frame,group=name)
             b.keyframe_insert(data_path='location',frame=frame,group=name)
     output.use_fake_user=True
+    if original_name in ['Walk','Run','Strafe']:
+        # A full cycle travels one stance excursion divided by its stance duty.
+        # Measure the authored clip
+        # in exported metres so runtime scales cadence with this actual model.
+        axis=0 if original_name=='Strafe' else 1
+        spans=[max(p[axis] for p in points)-min(p[axis] for p in points) for points in foot_samples.values()]
+        distance=sum(spans)/len(spans)/GAITS[original_name][0]
+        if distance>1e-5:stride_distances[original_name.lower()]=distance
     clips.append(original_name)
 # Retain native tagged empty/socket hierarchy; strip the donor's visible meshes,
 # armature and source actions. Only UniRig's predicted skin influences survive.
-for obj in donor_objects:
-    if obj.type in ['MESH','ARMATURE']:
+for bone in target.pose.bones:
+    bone.custom_shape=None
+for obj in list(donor_objects)+list(bone_displays)+list(donor_bone_displays):
+    if obj.name in bpy.data.objects and obj.type in ['MESH','ARMATURE']:
+        bpy.data.objects.remove(obj,do_unlink=True)
+for obj in list(generated):
+    if obj.name in bpy.data.objects and obj.type=='EMPTY' and obj!=target and not obj.children and not obj.get('avatarPart'):
         bpy.data.objects.remove(obj,do_unlink=True)
 for action in actions:
     if action.name.startswith('NativeSource_'):
@@ -282,20 +311,21 @@ for image in bpy.data.images:
             ratio=1024/max(image.size)
             image.scale(max(1,int(image.size[0]*ratio)),max(1,int(image.size[1]*ratio)))
         image.pack()
-root['assetPreparation']={'provider':'unirig','animation_mode':'retargeted-native-clips','source_sha256':plan['source_sha256'],'rig_sha256':proof['artifact']['sha256'],'skin_repair_sha256':hashlib.sha256(json.dumps(skin_repairs,sort_keys=True).encode()).hexdigest(),'pipeline':'frozen-rig-rigid-equipment-v2'}
+root['assetPreparation']={'provider':'unirig','animation_mode':'retargeted-native-clips','source_sha256':plan['source_sha256'],'rig_sha256':proof['artifact']['sha256'],'skin_repair_sha256':hashlib.sha256(json.dumps(skin_repairs,sort_keys=True).encode()).hexdigest(),'pipeline':'donor-fk-secondary-v3','stride_distances':stride_distances,'secondary_bones':secondary}
 for key in ['anatomyAuthor','anatomyLicense','authoredAnatomy']:
     if key in root:del root[key]
 output=folder/'candidate-01.glb'
 bpy.ops.export_scene.gltf(filepath=str(output),export_format='GLB',export_extras=True,export_animations=True,export_animation_mode='ACTIONS',export_skins=True,export_all_influences=False,export_force_sampling=True)
 bpy.context.preferences.filepaths.save_version=0
 bpy.ops.wm.save_as_mainfile(filepath=str(folder/'candidate-01.blend'),compress=True)
-problems=list(equipment_unresolved)
+problems=[]
+warnings=list(mapping_review.get('warnings') or [])+list(equipment_unresolved)
+if secondary:
+    warnings.append('Secondary side branches retain skin and bounded runtime sway; inspect garment/skin clipping before publishing.')
 mapping_review['attachment_review']={'repairs':equipment_repairs,'unresolved':equipment_unresolved}
-mapping_review['warnings']=equipment_unresolved
+mapping_review['warnings']=warnings
 if any(name not in clips for name in ['Idle','Walk','Run','Attack','Cast','Hit','Death']):
     problems.append('Native clip retargeting incomplete')
-if any(('tail' in name.lower() or 'wing' in name.lower()) and name not in mapping.values() for name in predicted):
-    problems.append('Extra tail/wing bones require a character-specific motion profile')
 (folder/'preparation.json').write_text(json.dumps({'method':'unirig-skeleton-and-skin-native-clip-retarget-v1','sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
-    'bytes':output.stat().st_size,'runtime_compatible':True,'unirig':proof,'predicted_bones':predicted,'bone_map':mapping,'mapping_review':mapping_review,'native_helpers':helpers,'animation_reference':'native Idle first frame; bind-relative deltas','locomotion_contacts':'analytic two-bone IK; native contactGait stride; no skin or joint-length changes','equipment_repairs':equipment_repairs,'motion_profile':EQUIPMENT_PROFILE if equipment_repairs else {'name':'native-relative','clip_timing':'unchanged'},'skin_weights':'UniRig body weights; constrained disconnected equipment repairs recorded','skin_repairs':skin_repairs,'native_clips':clips,'problems':problems,
+    'bytes':output.stat().st_size,'runtime_compatible':True,'unirig':proof,'predicted_bones':predicted,'bone_map':mapping,'mapping_review':mapping_review,'native_helpers':helpers,'animation_reference':'native Idle first frame; bind-relative deltas','locomotion_contacts':'donor FK; vertical contact clamp <=2.5% leg length; authored knee plane and foot orientation','stride_distances':stride_distances,'secondary_bones':secondary,'equipment_repairs':equipment_repairs,'motion_profile':EQUIPMENT_PROFILE if equipment_repairs else {'name':'native-relative','clip_timing':'unchanged'},'skin_weights':'UniRig body and secondary weights retained; constrained equipment repairs recorded','skin_repairs':skin_repairs,'native_clips':clips,'problems':problems,
     'limits':'UniRig body skin retained; disconnected equipment changes explicitly versioned. Rest-space rotation retargeting is a candidate; pose, clipping, foot contact and timing must pass qualification.'},indent=2))

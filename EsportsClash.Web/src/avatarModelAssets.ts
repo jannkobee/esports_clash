@@ -7,6 +7,8 @@ import { avatarModelUrl,type AvatarModelVariant } from './avatarModelUrl.ts';
 import { disposeArenaTerrainResources } from './threeArenaTerrain.ts';
 import {loadVisualReleases,visualReleaseUrl,reportVisualHealth,type VisualRelease} from './avatarVisualRelease.ts';
 import {bindSubmittedArsenaldo} from './submittedArsenaldo.ts';
+import {avatarSecondaryMotion} from './avatarSecondaryMotion.ts';
+import {contactGait} from './avatarContactProfiles.ts';
 
 export { avatarModelUrl } from './avatarModelUrl.ts';
 
@@ -78,8 +80,22 @@ export class AvatarAssetLibrary {
     scene.updateMatrixWorld(true);
     const meshBounds = new THREE.Box3();
     let hasMesh = false;
+    const tempPoint = new THREE.Vector3();
     scene.traverse(node => {
-      if ((node instanceof THREE.Mesh || node instanceof THREE.SkinnedMesh) && node.geometry) {
+      if (node instanceof THREE.SkinnedMesh && node.geometry) {
+        node.skeleton?.update();
+        const pos = node.geometry.attributes.position;
+        if (pos && pos.count > 0) {
+          const step = Math.max(1, Math.floor(pos.count / 500));
+          for (let i = 0; i < pos.count; i += step) {
+            node.getVertexPosition(i, tempPoint).applyMatrix4(node.matrixWorld);
+            if (Number.isFinite(tempPoint.x) && Number.isFinite(tempPoint.y) && Number.isFinite(tempPoint.z)) {
+              meshBounds.expandByPoint(tempPoint);
+              hasMesh = true;
+            }
+          }
+        }
+      } else if (node instanceof THREE.Mesh && node.geometry) {
         if (!node.geometry.boundingBox) node.geometry.computeBoundingBox();
         const box = node.geometry.boundingBox;
         if (box) {
@@ -98,6 +114,12 @@ export class AvatarAssetLibrary {
     const mobaPresenceMultiplier = 1.25;
     const targetHeight = baseHeight * mobaPresenceMultiplier;
     const scaleFactor = rawHeight > 0.1 ? targetHeight / rawHeight : 40;
+    const strideDistances:Record<string,number>={};
+    for(const state of ['walk','run','strafe']){
+      const authored=Number(root.userData.assetPreparation?.stride_distances?.[state]);
+      const gait=contactGait(state);
+      strideDistances[state]=Number.isFinite(authored)&&authored>0?authored*scaleFactor:gait.span/gait.stance*scaleFactor/40;
+    }
     if (bounds.min.y < -0.05 || bounds.min.y > 0.05) {
       scene.position.y = -bounds.min.y;
     }
@@ -106,6 +128,7 @@ export class AvatarAssetLibrary {
     const binding = bindAvatarModel(root, this.resources, { drivenByMixer: hasAnimations, preserveNativeMotion });
     const body = new THREE.Group(); body.scale.setScalar(scaleFactor); body.add(scene);
     body.userData = { designId: id, hudHeight: targetHeight, assetFormat: 'glb', modelVariant: this.nativeImports.has(file) ? 'claude' : 'current', clips: file.animations.map(clip => clip.name), visualEvolution: root.userData.avatarEvolution?.visual };
+    body.userData.strideDistances=strideDistances;
     const release = this.selectedReleases.get(this.key(id, variant));
     if (release && this.sourceUrl(id, variant) === visualReleaseUrl(release)) body.userData.visualRelease = { ...release };
 
@@ -114,6 +137,7 @@ export class AvatarAssetLibrary {
     }
 
     const mixer = new THREE.AnimationMixer(scene);
+    const secondary=this.nativeImports.has(file)?undefined:avatarSecondaryMotion(root);
     const actions = new Map<string, THREE.AnimationAction>();
     for (const clip of file.animations) {
       const action = mixer.clipAction(clip);
@@ -131,6 +155,9 @@ export class AvatarAssetLibrary {
         clipPose.push({node, position: node.position.clone(), quaternion: node.quaternion.clone(), scale: node.scale.clone()});
       }
     });
+    const transitionPose=clipPose.map(frame=>({position:frame.position.clone(),quaternion:frame.quaternion.clone(),scale:frame.scale.clone()}));
+    const displayedPose=clipPose.map(frame=>({position:frame.position.clone(),quaternion:frame.quaternion.clone(),scale:frame.scale.clone()}));
+    let lastState='',lastBlend=1,hasTransition=false,lastSecond=-Infinity;
 
     // Map simulation animation states to the GLB's native Blender clip names.
     // Every avatar GLB ships with dedicated TurnLeft/TurnRight, Hit and Death clips;
@@ -156,23 +183,31 @@ export class AvatarAssetLibrary {
         frame.node.scale.copy(frame.scale);
       }
       const state = (pose.motionState ?? (pose.animState === 'dead' ? 'death' : pose.animState ?? 'idle')).toLowerCase();
+      const fade=pose.motionBlend??1;
+      if(second<lastSecond){hasTransition=false;lastState='';}
+      if(lastState&&fade<.15&&(state!==lastState||fade<lastBlend)){
+        displayedPose.forEach((frame,i)=>{transitionPose[i].position.copy(frame.position);transitionPose[i].quaternion.copy(frame.quaternion);transitionPose[i].scale.copy(frame.scale);});
+        hasTransition=true;
+      }
+      if(fade>=1)hasTransition=false;
       const currAction = findAction(state);
       const time = pose.motionTime ?? pose.animTimer ?? second;
 
       if (currAction) {
         const duration = currAction.getClip().duration;
-        const gaitPhase=retargetedNativeMotion&&['walk','run','strafe'].includes(state)&&Number.isFinite(pose.gaitPhase)?(((pose.gaitPhase!%1)+1)%1)*duration:undefined;
+        const gaitPhase=!this.nativeImports.has(file)&&['walk','run','strafe'].includes(state)&&Number.isFinite(pose.gaitPhase)?(((pose.gaitPhase!%1)+1)%1)*duration:undefined;
         const currPhase = gaitPhase ?? (preserveNativeMotion&&state==='death'?Math.min(Math.max(0,time),duration):((time % duration) + duration) % duration);
 
         const prevAction = pose.previousMotion ? findAction(pose.previousMotion) : undefined;
-        if (prevAction && prevAction !== currAction && pose.motionBlend !== undefined && pose.motionBlend < 1) {
+        if (!hasTransition&&prevAction && prevAction !== currAction && pose.motionBlend !== undefined && pose.motionBlend < 1) {
           // Crossfade from the previous clip to the current clip.
           const blend = Math.max(0, Math.min(1, pose.motionBlend));
           const t = easeBlend(blend);
 
           const pDur = prevAction ? prevAction.getClip().duration : duration;
           const pTime = pose.previousMotionTime ?? 0;
-          const prevPhase = ((pTime % pDur) + pDur) % pDur;
+          const prevPhase = !this.nativeImports.has(file)&&['walk','run','strafe'].includes(pose.previousMotion??'')&&Number.isFinite(pose.previousGaitPhase)
+            ?((pose.previousGaitPhase!%1)+1)%1*pDur:((pTime % pDur) + pDur) % pDur;
 
           for (const act of actions.values()) {
             if (act === currAction) {
@@ -203,8 +238,19 @@ export class AvatarAssetLibrary {
         frame.quaternion.copy(frame.node.quaternion);
         frame.scale.copy(frame.node.scale);
       }
+      if(hasTransition){
+        const t=easeBlend(fade);
+        clipPose.forEach((frame,i)=>{
+          frame.node.position.lerpVectors(transitionPose[i].position,frame.position,t);
+          frame.node.quaternion.slerpQuaternions(transitionPose[i].quaternion,frame.quaternion,t);
+          frame.node.scale.lerpVectors(transitionPose[i].scale,frame.scale,t);
+        });
+      }
+      clipPose.forEach((frame,i)=>{displayedPose[i].position.copy(frame.node.position);displayedPose[i].quaternion.copy(frame.node.quaternion);displayedPose[i].scale.copy(frame.node.scale);});
       // Additive overlays (aiming, recoil, contacts) run on top of the clip base.
       binding.animate(pose, second);
+      secondary?.(pose,second);
+      lastState=state;lastBlend=fade;lastSecond=second;
     };
 
     return {

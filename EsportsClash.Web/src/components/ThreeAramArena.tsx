@@ -1420,11 +1420,11 @@ export const ThreeAramArena: React.FC<ThreeAramArenaProps> = ({
       updateOverheadBillboard(u);
     });
 
-    const crowd = [...unitsRef.current.filter(u => u.isAlive).map(u => ({ unit: u, radius: 1.6 })),
-      ...minionsRef.current.filter(u => u.isAlive).map(u => ({ unit: u, radius: .65 }))];
-    const contactPositions = resolveCrowdMovement(crowd.map(({unit, radius}) => ({
+    const crowd = [...unitsRef.current.filter(u => u.isAlive).map(u => ({ unit: u, radius: 1.6, soft: false })),
+      ...minionsRef.current.filter(u => u.isAlive).map(u => ({ unit: u, radius: .65, soft: true }))];
+    const contactPositions = resolveCrowdMovement(crowd.map(({unit, radius, soft}) => ({
       id: unit.id, from: starts.get(unit.id) ?? { x: unit.x, y: unit.z },
-      to: { x: unit.x, y: unit.z }, radius,
+      to: { x: unit.x, y: unit.z }, radius, soft,
       locked: Math.hypot(unit.x - (starts.get(unit.id)?.x ?? unit.x), unit.z - (starts.get(unit.id)?.y ?? unit.z)) > 12,
     })), dt);
     crowd.forEach(({unit}) => {

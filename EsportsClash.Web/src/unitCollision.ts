@@ -6,6 +6,8 @@ export type CollisionBody = {
   to: CollisionPoint;
   radius: number;
   terrainRadius?: number;
+  /** Creeps keep personal space through steering, but never form a solid wall. */
+  soft?: boolean;
   /** Recall/control/ability movement is authoritative; other walkers go around it. */
   locked?: boolean;
 };
@@ -27,6 +29,8 @@ function coincidentNormal(a: string, b: string): CollisionPoint {
 /**
  * Resolve each walker's own swept displacement, never push its collision target.
  * Sorted IDs and a shared spatial grid make replay independent of input order.
+ * Soft creep contacts steer ahead of contact and separate at rest, without
+ * clipping walking movement against a creep. Avatar contacts remain swept.
  * Already-invalid overlaps (spawn/blink) recover gradually, bounded by dt.
  */
 export function resolveCrowdMovement(
@@ -64,9 +68,9 @@ export function resolveCrowdMovement(
     const walkable = (point: CollisionPoint) => isWalkable(point, body.terrainRadius ?? body.radius);
     const oldCell = cell(body.x, body.y);
     let p = { x: body.x, y: body.y };
-    // No recovery ever moves a previously clear stationary target. In particular,
-    // walking into an attacking/recalling teammate cannot knock them aside.
-    const neighbours = nearby(body, p, 4);
+    // Solid walking contacts do not displace their targets. Soft creeps restore
+    // their own space and yield to stationary avatars, rather than nudging them.
+    const neighbours = nearby(body, p, 4).filter(other => body.soft || !other.soft || other.locked);
     let rx = 0, ry = 0;
     for (const other of neighbours) {
       const d = distance(p, other), penetration = body.radius + other.radius - d;
@@ -76,12 +80,21 @@ export function resolveCrowdMovement(
     }
     const repairLength = Math.hypot(rx, ry);
     if (repairLength > .00001) {
-      const length = Math.min(repairLength, 36 * Math.min(dt, 1 / 15));
-      const repaired = { x: p.x + rx / repairLength * length, y: p.y + ry / repairLength * length };
+      const intendedLength = distance(body.from, body.to);
+      const recoverySpeed = body.soft ? Math.min(36, body.radius * 3.6) : 36;
+      const length = Math.min(repairLength, recoverySpeed * Math.min(dt, 1 / 15),
+        intendedLength > .00001 ? intendedLength : Infinity);
       const penalty = (point: CollisionPoint) => neighbours.reduce((sum, other) => sum + Math.max(0, body.radius + other.radius - distance(point, other)) ** 2, 0);
-      const createsOverlap = neighbours.some(other => distance(p, other) >= body.radius + other.radius - SKIN
-        && distance(repaired, other) < body.radius + other.radius - SKIN);
-      if (!createsOverlap && walkable(repaired) && penalty(repaired) < penalty(p)) p = repaired;
+      const beforePenalty = penalty(p);
+      // A full separation step can overshoot between several close neighbours.
+      // Shorten it until the whole cluster gains space instead of freezing.
+      for (let attempt = 0; attempt < (body.soft ? 6 : 1); attempt++) {
+        const step = length / 2 ** attempt;
+        const repaired = { x: p.x + rx / repairLength * step, y: p.y + ry / repairLength * step };
+        const createsOverlap = neighbours.some(other => !body.soft && !other.soft && distance(p, other) >= body.radius + other.radius - SKIN
+          && distance(repaired, other) < body.radius + other.radius - SKIN);
+        if (!createsOverlap && walkable(repaired) && penalty(repaired) < beforePenalty) { p = repaired; break; }
+      }
     }
 
     const intendedX = body.to.x - body.from.x, intendedY = body.to.y - body.from.y;
@@ -89,7 +102,39 @@ export function resolveCrowdMovement(
     // Recovery spends the moving actor's existing step budget; it cannot grant a
     // speed boost to a freshly spawned creep or a walker emerging from a blink.
     const scale = intendedLength > .00001 ? Math.max(0, intendedLength - repairDistance) / intendedLength : 0;
-    const dx = intendedX * scale, dy = intendedY * scale;
+    let dx = intendedX * scale, dy = intendedY * scale;
+    const movementLength = Math.hypot(dx, dy);
+    if (movementLength > .00001) {
+      const heading = { x: dx / movementLength, y: dy / movementLength };
+      const lookAhead = Math.max(body.radius * 2, movementLength / dt * .35);
+      let threat: PositionedBody | undefined, firstContact = lookAhead;
+      for (const other of nearby(body, p, lookAhead)) {
+        if (!body.soft && !other.soft) continue;
+        const ox = other.x - p.x, oy = other.y - p.y;
+        const along = ox * heading.x + oy * heading.y;
+        const across = ox * -heading.y + oy * heading.x;
+        const clearance = body.radius + other.radius + Math.min(body.radius, other.radius) * .15;
+        if (along <= 0 || Math.abs(across) >= clearance) continue;
+        const contact = along - Math.sqrt(clearance * clearance - across * across);
+        if (contact < firstContact) { threat = other; firstContact = contact; }
+      }
+      if (threat) {
+        const ox = threat.x - p.x, oy = threat.y - p.y, d = Math.hypot(ox, oy);
+        const clearance = body.radius + threat.radius + Math.min(body.radius, threat.radius) * .15;
+        const angle = Math.asin(Math.min(1, clearance / d));
+        const across = ox * -heading.y + oy * heading.x;
+        // Choose the nearer side; exact head-on traffic consistently keeps right.
+        const side = Math.abs(across) > Math.min(body.radius, threat.radius) * .05 ? -Math.sign(across) : 1;
+        for (const sign of [side, -side]) {
+          const cosine = Math.cos(angle), sine = Math.sin(angle) * sign;
+          const sx = (ox * cosine - oy * sine) / d * movementLength;
+          const sy = (ox * sine + oy * cosine) / d * movementLength;
+          if (!walkable({ x: p.x + sx, y: p.y + sy })) continue;
+          dx = sx; dy = sy;
+          break;
+        }
+      }
+    }
     const length = Math.hypot(dx, dy), steps = Math.max(1, Math.ceil(length / 4));
     for (let step = 0; step < steps && length > .00001; step++) {
       let vx = dx / steps, vy = dy / steps;
@@ -98,6 +143,9 @@ export function resolveCrowdMovement(
         if (speed < .00001) break;
         let hit: PositionedBody | undefined, fraction = 1;
         for (const other of nearby(body, p, speed)) {
+          // Soft contacts may compress while passing through a bottleneck;
+          // steering and bounded separation restore space instead of blocking.
+          if (body.soft || other.soft) continue;
           const ox = p.x - other.x, oy = p.y - other.y, radius = body.radius + other.radius + SKIN;
           const dot = ox * vx + oy * vy, c = ox * ox + oy * oy - radius * radius;
           // Existing overlaps may move outward, but cannot deepen while walking.

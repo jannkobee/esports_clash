@@ -54,7 +54,7 @@
 </section>
 
 {{-- Art Analysis Cycles List --}}
-<section class="panel">
+<section class="panel" id="analysis-cycles">
     <div class="section-heading">
         <div>
             <h2>Art analysis cycles</h2>
@@ -72,7 +72,7 @@
         $cyclesActive = $runs->filter(fn($r) => in_array($r->status, ['queued', 'running', 'analyzing']))->count();
     @endphp
 
-    <div class="category-filter-bar" data-target=".panel">
+    <div class="category-filter-bar" data-target="#analysis-cycles">
         <button type="button" class="category-pill active" data-category="all">All Cycles ({{ count($runs) }})</button>
         <button type="button" class="category-pill pill-success" data-category="valid">✓ Has Valid Repairs ({{ $cyclesValid }})</button>
         <button type="button" class="category-pill pill-failed" data-category="failed">✕ Has Issues / Errors ({{ $cyclesFailed }})</button>

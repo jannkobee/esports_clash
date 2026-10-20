@@ -37,7 +37,7 @@
 
         const bodyDiv = document.createElement('div');
         bodyDiv.className = 'toast-body';
-        bodyDiv.innerHTML = message;
+        bodyDiv.textContent = message;
 
         const closeBtn = document.createElement('button');
         closeBtn.type = 'button';
@@ -56,15 +56,27 @@
         toast.appendChild(progress);
         container.appendChild(toast);
 
-        // Auto dismiss
-        const timer = setTimeout(() => dismissToast(toast), duration);
-        toast.addEventListener('mouseenter', () => progress.style.animationPlayState = 'paused');
-        toast.addEventListener('mouseleave', () => progress.style.animationPlayState = 'running');
+        let remaining = duration, started = performance.now();
+        let timer = setTimeout(() => dismissToast(toast), remaining);
+        toast.addEventListener('mouseenter', () => {
+            clearTimeout(timer);
+            remaining = Math.max(0, remaining - (performance.now() - started));
+            progress.style.animationPlayState = 'paused';
+        });
+        toast.addEventListener('mouseleave', () => {
+            started = performance.now();
+            timer = setTimeout(() => dismissToast(toast), remaining);
+            progress.style.animationPlayState = 'running';
+        });
 
         function dismissToast(el) {
+            if (el.dataset.dismissing) return;
+            el.dataset.dismissing = 'true';
             clearTimeout(timer);
+            el.classList.remove('toast-enter');
             el.classList.add('toast-exit');
-            el.addEventListener('animationend', () => el.remove(), { once: true });
+            // Removal also works with reduced motion or interrupted animations.
+            setTimeout(() => el.remove(), 200);
         }
     }
 
@@ -113,12 +125,20 @@
                 }
                 if (!response.ok) throw new Error('Refresh unavailable');
                 const markup = await response.text();
+                if (!reports.isConnected) return;
                 const latestSelected = new Set([...reports.querySelectorAll('.preparation-select:checked')].map(input => input.value));
                 const latestOpen = new Set([...reports.querySelectorAll('details[id][open]')].map(detail => detail.id));
+                const latestCategories = new Map([...reports.querySelectorAll('.category-filter-bar')].map(bar =>
+                    [bar.dataset.target, bar.querySelector('.category-pill.active')?.dataset.category ?? 'all']));
                 
                 reports.innerHTML = markup;
                 reports.querySelectorAll('.preparation-select:not(:disabled)').forEach(input => { input.checked = latestSelected.has(input.value); });
                 reports.querySelectorAll('details[id]').forEach(detail => { detail.open = latestOpen.has(detail.id); });
+                reports.querySelectorAll('.category-filter-bar').forEach(bar => {
+                    const category = latestCategories.get(bar.dataset.target) ?? 'all';
+                    bar.querySelectorAll('.category-pill').forEach(pill => pill.classList.toggle('active', pill.dataset.category === category));
+                });
+                initCategoryFilters();
                 reports.dispatchEvent(new Event('reports:refreshed'));
                 if (status) status.textContent = 'Live reports · refreshed every 10 seconds';
             } catch {
@@ -139,12 +159,27 @@
         if (!generationSearch || generationSearch.dataset.bound) return;
         generationSearch.dataset.bound = 'true';
 
-        generationSearch.addEventListener('input', () => {
-            const term = generationSearch.value.trim().toLocaleLowerCase();
-            document.querySelectorAll('.generation-card').forEach(card => {
-                const match = !term || (card.dataset.search && card.dataset.search.includes(term));
-                card.hidden = !match;
+        generationSearch.addEventListener('input', applyFilters);
+        applyFilters();
+    }
+
+    function applyFilters() {
+        document.querySelectorAll('.category-filter-bar').forEach(bar => {
+            const target = document.querySelector(bar.dataset.target || '#live-reports');
+            if (!target) return;
+            const category = bar.querySelector('.category-pill.active')?.dataset.category ?? 'all';
+            bar.querySelectorAll('.category-pill').forEach(pill => pill.setAttribute('aria-pressed', String(pill.dataset.category === category)));
+            const term = (document.getElementById('generation-search')?.value ?? '').trim().toLocaleLowerCase();
+            const items = [...target.querySelectorAll('[data-status-category]')];
+            items.forEach(item => {
+                const matchesSearch = !item.matches('.generation-card') || !term || (item.dataset.search ?? '').includes(term);
+                item.hidden = !matchesSearch || category !== 'all' && item.dataset.statusCategory !== category;
             });
+            if (target.id === 'generation-roster') {
+                const status = document.getElementById('generation-filter-status');
+                const visible = items.filter(item => !item.hidden).length;
+                if (status) status.textContent = visible ? `${visible} of ${items.length} avatars shown` : 'No avatars match. Try another name, role or category.';
+            }
         });
     }
 
@@ -164,18 +199,11 @@
                     e.preventDefault();
                     pills.forEach(p => p.classList.remove('active'));
                     pill.classList.add('active');
-                    const category = pill.dataset.category;
-                    const items = targetContainer.querySelectorAll('[data-status-category]');
-                    items.forEach(item => {
-                        if (category === 'all' || item.dataset.statusCategory === category) {
-                            item.hidden = false;
-                        } else {
-                            item.hidden = true;
-                        }
-                    });
+                    applyFilters();
                 });
             });
         });
+        applyFilters();
     }
 
     // -------------------------------------------------------------
@@ -184,19 +212,24 @@
     function setupFormInterception() {
         document.addEventListener('submit', async (e) => {
             const form = e.target;
-            if (!form || form.tagName !== 'FORM') return;
+            if (e.defaultPrevented || !form || form.tagName !== 'FORM') return;
 
-            // Skip forms with data-no-ajax, downloads, or target="_blank"
-            if (form.hasAttribute('data-no-ajax') || form.target === '_blank') return;
+            // Page-specific scripts own editor/confirmation state and must run
+            // on each document load. Native submission preserves their guards,
+            // Laravel's validation redirects and authentication/CSRF lifecycle.
+            if (form.hasAttribute('data-no-ajax') || form.target || form.matches('.login-form') || document.querySelector('main script')) return;
             const action = form.getAttribute('action') || window.location.href;
             const actionUrl = new URL(action, window.location.origin);
             if (actionUrl.origin !== window.location.origin) return;
             if (actionUrl.pathname.includes('/download') || actionUrl.pathname.includes('/asset') || actionUrl.pathname.endsWith('/logout')) return;
 
             e.preventDefault();
+            if (form.dataset.submitting) return;
+            form.dataset.submitting = 'true';
 
             // Find submitter button
             const submitter = e.submitter || form.querySelector('button[type="submit"]') || form.querySelector('button:not([type])');
+            const formData = new FormData(form, e.submitter ?? undefined);
             let originalButtonHtml = '';
             if (submitter) {
                 originalButtonHtml = submitter.innerHTML;
@@ -206,12 +239,7 @@
             }
 
             try {
-                const formData = new FormData(form);
-                if (e.submitter && e.submitter.name && !formData.has(e.submitter.name)) {
-                    formData.append(e.submitter.name, e.submitter.value);
-                }
-
-                const method = (form.getAttribute('method') || 'POST').toUpperCase();
+                const method = (form.getAttribute('method') || 'GET').toUpperCase();
                 const fetchOptions = {
                     method: method === 'GET' ? 'GET' : 'POST',
                     headers: {
@@ -250,6 +278,7 @@
                 console.error('Form submission error:', err);
                 showToast('Network error while processing action. Please retry.', 'error');
             } finally {
+                delete form.dataset.submitting;
                 if (submitter) {
                     submitter.disabled = false;
                     submitter.classList.remove('is-loading');
@@ -263,6 +292,10 @@
     // Soft Navigation (wire:navigate and nav pills without reload)
     // -------------------------------------------------------------
     async function softNavigate(url, push = true) {
+        if (document.querySelector('main script')) {
+            window.location.assign(url);
+            return;
+        }
         try {
             document.body.classList.add('page-transitioning');
             const response = await fetch(url, {
@@ -277,6 +310,11 @@
                 return;
             }
             const html = await response.text();
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            if (doc.querySelector('main script')) {
+                window.location.assign(url);
+                return;
+            }
             if (push) {
                 window.history.pushState({ path: url }, '', url);
             }
@@ -291,8 +329,9 @@
 
     function setupLinkInterception() {
         document.addEventListener('click', (e) => {
+            if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || !(e.target instanceof Element)) return;
             const anchor = e.target.closest('a');
-            if (!anchor || anchor.hasAttribute('data-no-ajax') || anchor.target === '_blank') return;
+            if (!anchor || anchor.hasAttribute('data-no-ajax') || anchor.hasAttribute('download') || anchor.target || document.querySelector('main script')) return;
             const href = anchor.getAttribute('href');
             if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
 
@@ -324,6 +363,15 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
 
+        if (doc.querySelector('main script')) {
+            window.location.reload();
+            return;
+        }
+        const csrf = doc.querySelector('meta[name="csrf-token"]');
+        if (csrf) document.querySelector('meta[name="csrf-token"]').content = csrf.content;
+        const header = doc.querySelector('.topbar');
+        if (header) document.querySelector('.topbar')?.replaceWith(header);
+
         // Update document title
         if (doc.title) {
             document.title = doc.title;
@@ -350,7 +398,7 @@
 
             // Smooth scroll if URL had a hash
             if (window.location.hash) {
-                const target = document.querySelector(window.location.hash);
+                const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
                 if (target) target.scrollIntoView({ behavior: 'smooth' });
             }
         }

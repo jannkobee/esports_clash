@@ -66,9 +66,19 @@ class AvatarPreparationControlService {
         DB::transaction(function() use ($preparation, $actor) {
             $run = AvatarPreparation::lockForUpdate()->findOrFail($preparation->id);
             if (in_array($run->status, AvatarPreparationService::ACTIVE, true)) return;
+            $plan = $run->plan ?? [];
+            try {
+                $engine = app(AvatarPreparationService::class)->worker()->get(
+                    app(AvatarPreparationService::class)->endpoint('/preparations/operations')
+                )->json('engine_sha256');
+                if (is_string($engine) && preg_match('/^[a-f0-9]{64}$/', $engine)) {
+                    $plan['engine_sha256'] = $engine;
+                }
+            } catch (\Throwable $e) {}
             $run->update([
                 'status' => 'queued',
                 'error' => null,
+                'plan' => $plan,
                 'control' => array_merge($run->control ?? [], ['intent' => null, 'restart_error' => null]),
             ]);
             app(PreparationProgressService::class)->record($run, ['status' => 'queued', 'stage' => 'resumed_in_place']);
@@ -87,9 +97,19 @@ class AvatarPreparationControlService {
             $run = AvatarPreparation::lockForUpdate()->findOrFail($preparation->id);
             $cleanState = $run->state ?? [];
             unset($cleanState['report'], $cleanState['geometry'], $cleanState['unirig']);
+            $plan = $run->plan ?? [];
+            try {
+                $engine = app(AvatarPreparationService::class)->worker()->get(
+                    app(AvatarPreparationService::class)->endpoint('/preparations/operations')
+                )->json('engine_sha256');
+                if (is_string($engine) && preg_match('/^[a-f0-9]{64}$/', $engine)) {
+                    $plan['engine_sha256'] = $engine;
+                }
+            } catch (\Throwable $e) {}
             $run->update([
                 'status' => 'queued',
                 'error' => null,
+                'plan' => $plan,
                 'state' => $cleanState,
                 'progress' => ['step' => 1, 'stage' => 'manual_admission'],
                 'control' => array_merge($run->control ?? [], ['intent' => null, 'restart_error' => null]),

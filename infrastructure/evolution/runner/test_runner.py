@@ -80,9 +80,16 @@ class TrainingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);previous=root/'previous';current=root/'current';previous.mkdir();current.mkdir()
             old_fit=[example(i,'fit') for i in range(1,17)]
-            for e in old_fit:
-                raw=b'unit fixture only';e['rawHash']=hashlib.sha256(raw).hexdigest()
-                (previous/f"raw-{e['seed']}.json").write_bytes(raw)
+            import gzip
+            for i, e in enumerate(old_fit):
+                raw = b'unit fixture only ' + str(e['seed']).encode()
+                e['rawHash'] = hashlib.sha256(raw).hexdigest()
+                if i % 2 == 0:
+                    # Compressed .json.gz file storing the decompressed hash in rawHash
+                    (previous / f"raw-{e['seed']}.json.gz").write_bytes(gzip.compress(raw))
+                else:
+                    # Uncompressed .json file
+                    (previous / f"raw-{e['seed']}.json").write_bytes(raw)
             for e in old_fit+[example(i,'heldout') for i in range(33,49)]: (previous/f"case-{e['seed']}.json").write_text(json.dumps(e))
             (previous/'proper.json').write_text(json.dumps({'data_hash':hashlib.sha256(json.dumps(old_fit,sort_keys=True).encode()).hexdigest()}))
             (previous/'result.json').write_text('{}');(previous/'execution.json').write_text(json.dumps({'source_hash':'unit-compatible'}))
@@ -127,6 +134,29 @@ class TrainingTests(unittest.TestCase):
             self.assertTrue(calibrated['sufficient'])
             self.assertEqual(before, json.dumps(fitted['policy'], sort_keys=True))
             self.assertEqual(calibrated['policy']['calibration']['quantileRank'], 23)
+
+    def test_corrupted_raw_evidence_is_strictly_rejected(self):
+        def example(seed, split):
+            return {'seed':seed,'split':split,'draft':seed%2,'cardId':f'test-{seed%2}','status':'valid',
+                'incumbent':'farm','alternate':'push','control':{'reward':0},'alternative':{'reward':.2},
+                'taskContext':{'actions':{'farm':{'bias':1,'task:travel':0},'push':{'bias':1,'task:travel':1}}}}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); previous = root / 'previous'; current = root / 'current'
+            previous.mkdir(); current.mkdir()
+            old_fit = [example(1, 'fit')]
+            old_fit[0]['rawHash'] = 'expected_hash_that_does_not_match'
+            (previous / 'raw-1.json.gz').write_bytes(b'tampered compressed content')
+            (previous / 'case-1.json').write_text(json.dumps(old_fit[0]))
+            (previous / 'proper.json').write_text(json.dumps({'data_hash': hashlib.sha256(json.dumps(old_fit, sort_keys=True).encode()).hexdigest()}))
+            (previous / 'result.json').write_text('{}')
+            (previous / 'execution.json').write_text(json.dumps({'source_hash': 'unit-compatible'}))
+            fresh = [example(101, 'fit')]
+            (current / 'case-101.json').write_text(json.dumps(fresh[0]))
+            (current / 'execution.json').write_text(json.dumps({'source_hash': 'unit-compatible', 'cases': fresh}))
+            (current / 'plan.json').write_text(json.dumps({'operations': {'batch_size': 4}}))
+            res = subprocess.run([sys.executable, str(Path(__file__).with_name('train_stage.py')), str(current)], capture_output=True, text=True)
+            self.assertNotEqual(res.returncode, 0)
+            self.assertIn('Historical raw fitting evidence changed', res.stderr)
 
     def test_tiny_training_data_cannot_produce_a_qualified_model(self):
         with tempfile.TemporaryDirectory() as directory:

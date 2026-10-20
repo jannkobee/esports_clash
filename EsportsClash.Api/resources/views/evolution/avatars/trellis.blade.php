@@ -86,6 +86,7 @@
     <button type="button" class="category-pill pill-failed" data-category="needs_ref">⚠️ Needs Concept ({{ count($catalog) - $refCount }})</button>
 </div>
 
+<p class="fine" id="generation-filter-status" role="status">{{ count($catalog) }} avatars shown</p>
 <div class="generation-roster" id="generation-roster">
 @foreach($catalog as $avatar)
 @php

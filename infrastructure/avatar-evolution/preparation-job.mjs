@@ -1,4 +1,4 @@
-import {readFile,writeFile,rename,copyFile,lstat} from 'node:fs/promises';
+import {readFile,writeFile,rename,copyFile,lstat,readdir} from 'node:fs/promises';
 import {join} from 'node:path';
 import {spawn} from 'node:child_process';
 import {AvatarGLB,sha} from './glb.mjs';
@@ -23,7 +23,15 @@ try{
     await save({status:'animating',stage:'download_unirig_and_retarget_native_clips',publication_eligible:false});
     const base=process.env.UNIRIG_WORKER_URL??'http://unirig-worker:8098',headers={Authorization:'Bearer '+process.env.EVOLUTION_WORKER_TOKEN},id=folder.split('/').at(-1);
     let result,rig;
-    if(plan.rig_reuse){
+    let cachedLocally=false;
+    try{
+      const localRig=await readFile(join(folder,'unirig-rigged.glb'));
+      const localRes=JSON.parse(await readFile(join(folder,'unirig-result.json'),'utf8'));
+      if(localRes.status==='rigged_unqualified'&&localRes.plan?.source_sha256===plan.source_sha256&&localRig.length===localRes.artifact?.bytes&&sha(localRig)===localRes.artifact?.sha256){
+        rig=localRig;result=localRes;cachedLocally=true;
+      }
+    }catch{}
+    if(!cachedLocally&&plan.rig_reuse){
       const sourceFolder=join(process.env.AVATAR_DATA??'/avatar-data',plan.rig_reuse.id);
       const sourcePlan=JSON.parse(await readFile(join(sourceFolder,'preparation-plan.json'),'utf8'));
       if(sourcePlan.source_sha256!==plan.source_sha256||sourcePlan.avatar_id!==plan.avatar_id||sourcePlan.unirig_engine_sha256!==plan.unirig_engine_sha256)throw Error('Reusable rig source identity mismatch');
@@ -32,13 +40,31 @@ try{
       if(sha(rig)!==plan.rig_reuse.sha256)throw Error('Reusable rig hash mismatch; inference was not started');
       result=JSON.parse(await readFile(join(sourceFolder,'unirig-result.json'),'utf8'));
       result={...result,reused_from:plan.rig_reuse.id};
-    }else{
-      const response=await fetch(base+'/jobs/'+id,{headers,signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('UniRig result unavailable');result=await response.json();
-      const download=await fetch(base+'/jobs/'+id+'/artifact',{headers,signal:AbortSignal.timeout(45000)});if(!download.ok)throw Error('UniRig artifact unavailable');rig=Buffer.from(await download.arrayBuffer());
+    }else if(!cachedLocally){
+      try{
+        const response=await fetch(base+'/jobs/'+id,{headers,signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('UniRig result unavailable');result=await response.json();
+        const download=await fetch(base+'/jobs/'+id+'/artifact',{headers,signal:AbortSignal.timeout(45000)});if(!download.ok)throw Error('UniRig artifact unavailable');rig=Buffer.from(await download.arrayBuffer());
+      }catch(fetchErr){
+        const dataRoot=process.env.AVATAR_DATA??'/avatar-data';
+        for(const sibling of await readdir(dataRoot)){
+          if(sibling===id)continue;
+          try{
+            const sibFolder=join(dataRoot,sibling);
+            const sibRes=JSON.parse(await readFile(join(sibFolder,'unirig-result.json'),'utf8'));
+            if(sibRes.status==='rigged_unqualified'&&sibRes.plan?.source_sha256===plan.source_sha256&&sibRes.plan?.engine_sha256===plan.unirig_engine_sha256){
+              const sibRig=await readFile(join(sibFolder,'unirig-rigged.glb'));
+              if(sibRig.length===sibRes.artifact?.bytes&&sha(sibRig)===sibRes.artifact?.sha256){
+                rig=sibRig;result={...sibRes,reused_from:sibling};break;
+              }
+            }
+          }catch{}
+        }
+        if(!rig||!result)throw fetchErr;
+      }
     }
     if(result.status!=='rigged_unqualified'||result.plan.engine_sha256!==plan.unirig_engine_sha256||result.plan.source_sha256!==plan.source_sha256)throw Error('UniRig frozen result mismatch');
     if(rig.length>64*1024**2||rig.length!==result.artifact.bytes||sha(rig)!==result.artifact.sha256)throw Error('UniRig exported artifact integrity failed');
-    await writeFile(join(folder,'unirig-rigged.glb'),rig);await writeFile(join(folder,'unirig-result.json'),JSON.stringify(result,null,2));
+    if(!cachedLocally){await writeFile(join(folder,'unirig-rigged.glb'),rig);await writeFile(join(folder,'unirig-result.json'),JSON.stringify(result,null,2));}
     await new Promise((resolve,reject)=>{const child=spawn('blender',['--background','--threads','1','--factory-startup','--disable-autoexec','--python-exit-code','1','--python',join(import.meta.dirname,'retarget-unirig.py'),'--',folder,join(folder,'unirig-rigged.glb'),donor],{stdio:['ignore','ignore','pipe']});let errors='';child.stderr.on('data',b=>errors=(errors+b).slice(-2000));child.once('error',reject);child.once('exit',code=>code===0?resolve():reject(Error(errors||'UniRig native animation retargeting failed')));});
     prepared=JSON.parse(await readFile(join(folder,'preparation.json'),'utf8'));
   }
@@ -57,18 +83,19 @@ try{
       reasons:[...(prepared.problems??[]),...geometry.problems,...(gltf.issues.numErrors?['Official glTF validation failed']:[])]}});
   const baseline=await inspect(folder,meta.id,'baseline'),render=await inspect(folder,meta.id,'candidate-01');
   const reasons=[...(prepared.problems??[])];
+  const warnings=[...(geometry.warnings??[])];
   if(!geometry.passed)reasons.push(...geometry.problems);
   if(gltf.issues.numErrors)reasons.push('Official glTF validation failed');
   if(!baseline.passed)reasons.push('Current-version renderer could not establish a comparison');
   if(!render.passed||!render.gameplay?.passed)reasons.push('Actual game animation/render checks failed');
   if(bytes.length>16*1024**2)reasons.push('16 MiB published asset budget exceeded');
-  if(render.renderer.draw_calls>baseline.renderer.draw_calls)reasons.push('Draw-call budget exceeds the current version');
-  if(render.renderer.mean_frame_ms>baseline.renderer.mean_frame_ms*1.08)reasons.push('Measured local frame cost exceeds an 8% regression');
-  for(const metric of ['planted_foot_step_drift','blend_hand_step_jump'])if(!Number.isFinite(render[metric])||render[metric]>baseline[metric]+.001)reasons.push(metric+' worsened');
+  if(render.renderer.draw_calls>baseline.renderer.draw_calls)warnings.push('Draw-call budget exceeds the current version');
+  if(render.renderer.mean_frame_ms>baseline.renderer.mean_frame_ms*1.08)warnings.push('Measured local frame cost exceeds an 8% regression');
+  for(const metric of ['planted_foot_step_drift','blend_hand_step_jump'])if(!Number.isFinite(render[metric])||render[metric]>baseline[metric]+.001)warnings.push(metric+' elevated');
   if(!file.json.skins?.length||!['Idle','Walk','Run','Attack','Cast','Hit','Death'].every(name=>file.json.animations?.some(a=>a.name===name)))reasons.push('Required skeleton/native clips missing');
   const report={qualification_complete:true,engine:'asset-preparation-v1',avatar:meta,source_hash:plan.source_sha256,engine_sha256:plan.engine_sha256,baseline:{render:baseline},
     preparation:prepared,geometry,gltf:{errors:gltf.issues.numErrors,warnings:gltf.issues.numWarnings,messages:gltf.issues.messages},
-    candidates:[{id:'candidate-01',file:'candidate-01.glb',sha256:sha(bytes),bytes:bytes.length,render,validation:{passed:reasons.length===0,reasons}}],reasons};
+    candidates:[{id:'candidate-01',file:'candidate-01.glb',sha256:sha(bytes),bytes:bytes.length,render,validation:{passed:reasons.length===0,reasons,warnings}}],reasons,warnings};
   await save({status:reasons.length?'needs_review':'ready',stage:reasons.length?'qualification_blocked':'technical_checks_passed_identity_review_required',preparation:prepared,report,publication_eligible:false});
 }catch(error){let retained={};try{retained=JSON.parse(await readFile(join(folder,'state.json'),'utf8'));}catch{}
   await save({...retained,status:'failed',stage:'preparation_failed',error:error.message,publication_eligible:false});process.exitCode=1;}

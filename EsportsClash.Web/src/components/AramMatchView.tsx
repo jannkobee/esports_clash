@@ -26,9 +26,10 @@ import { createSpatialInfluence } from '../spatialInfluence';
 import { estimateTacticalOutlook } from '../tacticalOutlook';
 import { createOpponentTacticalMemory, observeOpponentTacticalMemory, readOpponentTacticalMemory } from '../opponentTacticalMemory';
 import { choosePostFightConversion } from '../postFightConversion';
-import { recordAIDecision, settleExperimentOutcome, shouldRecordAIDecision, type AIDecisionRecord } from '../aiDecisionTelemetry';
+import { recordAIDecision, settleExperimentOutcome, settlePendingAIDecisions, shouldRecordAIDecision, type AIDecisionRecord, type AIDecisionSnapshot } from '../aiDecisionTelemetry';
 import { scoreUtility } from '../utilityDecision';
 import { summarizeDecisionCalibration } from '../decisionCalibration';
+import { getCardMemory, loadCardMemories, saveCardMemories, recordCardMatchExperience, calculateUnitNetWorth, type CardMatchMemory } from '../cardMemory';
 import { adaptiveFeatures, adaptivePolicyScore, adaptivePreferenceAllowed, loadAdaptivePolicy, trainAdaptivePolicy,
   type AdaptiveAction, type AdaptivePolicy } from '../adaptivePolicy';
 import { runSimulationSlice, shouldPublishHud } from '../simulationPresentation';
@@ -588,6 +589,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     return seedText !== null && /^\d+$/.test(seedText) ? createExperimentRandom(Number(seedText)) : null;
   } catch { return null; } })());
   const lastMacroExperimentRef = useRef<Record<string, number>>({});
+  const cardMemoriesRef = useRef<Record<string, CardMatchMemory>>(loadCardMemories());
+  const floatIdCounterRef = useRef<number>(0);
+  const aiDecisionLearningRecordsRef = useRef<AIDecisionRecord[]>([]);
+  const lastDecisionSettleAtRef = useRef<number>(0);
   const adaptivePolicyRef = useRef<AdaptivePolicy>((() => { try {
     return loadAdaptivePolicy(JSON.parse(localStorage.getItem('esports-clash-adaptive-policy') || ''));
   } catch { return loadAdaptivePolicy(null); } })());
@@ -1054,6 +1059,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     postObjectivePlan: postObjectivePlanRef.current,
     lastMacroExperiment: lastMacroExperimentRef.current,
     aiDecisionRecords: aiDecisionRecordsRef.current,
+    aiDecisionLearningRecords: aiDecisionLearningRecordsRef.current,
     recordedEvents: recordedEventsRef.current,
     insights: insightsRef.current,
     firstBlood: firstBloodRef.current,
@@ -1099,6 +1105,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     postObjectivePlanRef.current = state.postObjectivePlan;
     lastMacroExperimentRef.current = state.lastMacroExperiment;
     aiDecisionRecordsRef.current = state.aiDecisionRecords;
+    aiDecisionLearningRecordsRef.current = state.aiDecisionLearningRecords ?? [];
     recordedEventsRef.current = state.recordedEvents;
     insightsRef.current = state.insights;
     firstBloodRef.current = state.firstBlood;
@@ -1367,6 +1374,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     cooldownMemoryRef.current = createEnemyCooldownMemory();
     opponentTacticalMemoryRef.current = createOpponentTacticalMemory();
     aiDecisionRecordsRef.current = [];
+    aiDecisionLearningRecordsRef.current = [];
     lastMacroExperimentRef.current = {};
     cooldownSnapshotsRef.current = {};
     postObjectivePlanRef.current = {};
@@ -1575,7 +1583,38 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         } else {
           castChampionUltimate(u, target, enemies);
         }
-        addEvent(`${u.player.name} executed ${recipe.name}: ${u.champion.skill1.name}, ${u.champion.skill2.name}, ${u.champion.ultimate.name}!`, 'combo');
+        const comboId = `combo-${u.id}-${Math.floor(matchTimeRef.current * 10)}`;
+        u.activeComboResolution = {
+          comboId,
+          avatar: u.champion.name,
+          targetId: target.id,
+          stage: 3,
+          attemptedAt: matchTimeRef.current,
+          expiresAt: matchTimeRef.current + 3.0,
+        };
+
+        (u.matchCombos ??= []).push({
+          avatar: u.champion.name,
+          attempt: true,
+          hit: false,
+          lethal: false,
+          targetId: target.id,
+          comboId,
+        });
+        const masteryTier = cardMemoriesRef.current[u.player.id]?.comboMasteries?.[u.champion.name]?.masteryLevel ?? 0;
+        const masteryTag = masteryTier > 0 ? ` [Mastery Lvl ${masteryTier}]` : '';
+        addEvent(`${u.player.name} executed ${recipe.name}${masteryTag}: ${u.champion.skill1.name}, ${u.champion.skill2.name}, ${u.champion.ultimate.name}!`, 'combo');
+        if (masteryTier > 0) {
+          floatsRef.current.push({
+            id: `float-mastery-${floatIdCounterRef.current++}`,
+            x: u.x,
+            y: u.y - 45,
+            text: `🔥 COMBO MASTERY (LVL ${masteryTier})!`,
+            color: '#38bdf8',
+            opacity: 1,
+            scale: 1.15,
+          });
+        }
         return true;
       }
       u.animState = 'walk';
@@ -1674,6 +1713,30 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     if (pairedMacroModeRef.current === 'scout' && matchTimeRef.current >= pairedScoutAfterRef.current
       && !(window as Window & { __esportsPairedMacro?: unknown }).__esportsPairedMacro)
       pairedCheckpointRef.current = capturePairedCheckpoint();
+    const createCurrentDecisionSnapshots = (): Map<string, AIDecisionSnapshot> => {
+      const map = new Map<string, AIDecisionSnapshot>();
+      for (const champ of championsRef.current) {
+        map.set(champ.id, {
+          healthFraction: champ.isAlive ? champ.hp / Math.max(1, champ.maxHp) : 0,
+          gold: champ.gold,
+          cs: champ.cs,
+          kills: champ.kills,
+          deaths: champ.deaths,
+          damageDealt: champ.damageDealt,
+          netWorth: calculateUnitNetWorth(champ),
+          peelCount: champ.peelCount ?? 0,
+          ccChainCount: champ.ccChainCount ?? 0,
+          objectiveDamage: champ.objectiveDamage ?? 0,
+        });
+      }
+      return map;
+    };
+    if (matchTimeRef.current - lastDecisionSettleAtRef.current >= 0.5) {
+      lastDecisionSettleAtRef.current = matchTimeRef.current;
+      const currentDecisionSnapshots = createCurrentDecisionSnapshots();
+      settlePendingAIDecisions(aiDecisionRecordsRef.current, matchTimeRef.current, currentDecisionSnapshots);
+      settlePendingAIDecisions(aiDecisionLearningRecordsRef.current, matchTimeRef.current, currentDecisionSnapshots);
+    }
     if (macroExperimentEnabledRef.current
       && aiDecisionRecordsRef.current.some(record => record.experiment && !record.outcome)) {
       for (const unit of championsRef.current) settleExperimentOutcome(aiDecisionRecordsRef.current, {
@@ -1747,7 +1810,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const relics = relicsRef.current;
     const dragon = dragonRef.current;
     const jungleCamps = jungleCampsRef.current;
-    const crowdStarts = captureUnitCollisionStarts([...champs, ...minions]);
+    const crowdStarts = captureUnitCollisionStarts([...champs, ...minions, ...jungleCamps, dragon]);
     const championStarts = new Map(champs.map(unit => [unit.id, { x: unit.x, y: unit.y }]));
     const minionStarts = new Map(minions.map(unit => [unit.id, { x: unit.x, y: unit.y }]));
     const campStarts = new Map(jungleCamps.map(unit => [unit.id, { x: unit.x, y: unit.y }]));
@@ -4715,7 +4778,30 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         until: matchTimeRef.current + .65,
       };
       const assignedTeamIntent = teamIntentRole(selectedTeamIntent, u.champion.primaryRole);
-      const learnedFeatures = adaptiveFeatures(u.player, u.champion, u.hp / u.maxHp, u.mana / maxMana(u));
+      const opposingTeamChamps = championsRef.current.filter(c => c.team !== u.team);
+      const avgOpponentGold = opposingTeamChamps.reduce((s, c) => s + c.gold, 0) / Math.max(1, opposingTeamChamps.length);
+      const avgOpponentLevel = opposingTeamChamps.reduce((s, c) => s + c.level, 0) / Math.max(1, opposingTeamChamps.length);
+      const goldGap = u.gold - avgOpponentGold;
+      const levelGap = u.level - avgOpponentLevel;
+      const unitNetWorth = calculateUnitNetWorth(u);
+      const avgOpponentNetWorth = opposingTeamChamps.reduce((s, c) => s + calculateUnitNetWorth(c), 0) / Math.max(1, opposingTeamChamps.length);
+      const netWorthGap = unitNetWorth - avgOpponentNetWorth;
+      const isFeeding = (u.deaths - u.kills) >= 3;
+      const cardMem = cardMemoriesRef.current[u.player.id];
+      const isUnderEnemyTower = structuresRef.current.some(st =>
+        st.isAlive &&
+        st.team !== u.team &&
+        st.type.includes('tower') &&
+        Math.hypot(st.x - u.x, st.y - u.y) <= st.range
+      );
+      const learnedFeatures = adaptiveFeatures(u.player, u.champion, u.hp / u.maxHp, u.mana / maxMana(u), {
+        goldGap,
+        levelGap,
+        outnumbered: isOutnumbered,
+        isFeeding,
+        cardMemory: cardMem,
+        netWorthGap,
+      });
       const learnedMacroEnabled = adaptivePreferenceAllowed(u.hp / u.maxHp, isDangerousFight);
       const learnedMacroScore = (action: AdaptiveAction) => learnedMacroEnabled
         ? adaptivePolicyScore(adaptivePolicyRef.current, action, learnedFeatures) : 0;
@@ -4947,7 +5033,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         experimentGate: macroExperimentEnabledRef.current ? experimentGate ?? 'eligible' : undefined,
         learnedSuppressedReason: learnedMacroEnabled ? undefined : u.hp / u.maxHp < .3 ? 'low-health' : 'dangerous-fight',
         snapshot: { healthFraction: u.hp / u.maxHp, gold: u.gold, cs: u.cs, kills: u.kills,
-          deaths: u.deaths, damageDealt: u.damageDealt },
+          deaths: u.deaths, damageDealt: u.damageDealt, goldGap, netWorth: unitNetWorth, netWorthGap,
+          outnumbered: isOutnumbered ? 1 : 0, isUnderTower: isUnderEnemyTower ? 1 : 0,
+          combosExecuted: u.combosExecutedCount ?? 0, combosLethal: u.combosLethalCount ?? 0,
+          peelCount: u.peelCount ?? 0, ccChainCount: u.ccChainCount ?? 0, objectiveDamage: u.objectiveDamage ?? 0 },
+
         candidates: macroCandidates.map(candidate => ({ key: candidate.action, available: candidate.available,
           priority: candidate.priority, reason: candidate.reason })),
       };
@@ -4978,6 +5068,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           }));
         }
         recordAIDecision(aiDecisionRecordsRef.current, decisionRecord);
+        recordAIDecision(aiDecisionLearningRecordsRef.current, decisionRecord, 10000);
         if (experimentAssignment && pairMode === 'replay' && pairWindow.__esportsPairedMacro?.matched)
           pairWindow.__esportsPairedMacro.assignmentRecord = decisionRecord;
       }
@@ -5507,11 +5598,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       if (start) Object.assign(unit, resolveRockTerrainMovement(start, unit, unit.type === 'siege_golem' ? 32 : 23));
     });
 
-    // Walkers slide around every living body without displacing its owner.
+    // Avatars retain solid contacts; creeps use soft spacing and side-stepping.
     // Authoritative dashes, pulls, CC, recalls and teleports retain their path.
     resolveArenaUnitCollisions(champs, minions, [
-      ...jungleCamps.map(unit => ({ ...unit, radius: unit.type === 'siege_golem' ? 32 : 23 })),
-      { ...dragon, id: 'dragon:collision', radius: 32 },
+      ...jungleCamps.map(unit => ({ unit, radius: unit.type === 'siege_golem' ? 32 : 23 })),
+      { unit: dragon, radius: 32, locked: true },
     ], crowdStarts, dt);
 
     // Check Nexus Victory
@@ -5623,6 +5714,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     dragon.aggroTeam = attacker.team;
     dragon.targetId = attacker.id;
     dragon.hp -= damage;
+    attacker.objectiveDamage = (attacker.objectiveDamage ?? 0) + damage;
     floatsRef.current.push({
       id: random().toString(),
       x: dragon.x + (random() - 0.5) * 40,
@@ -5684,6 +5776,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     camp.patience = CAMP_PATIENCE_SECONDS;
     camp.resetElapsed = 0;
     camp.hp -= damage;
+    attacker.objectiveDamage = (attacker.objectiveDamage ?? 0) + damage;
     camp.damageContributors ??= {};
     camp.damageContributors[attacker.id] = (camp.damageContributors[attacker.id] ?? 0) + damage;
     floatsRef.current.push({
@@ -5793,9 +5886,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     if (isChainStun) {
+      caster.ccChainCount = (caster.ccChainCount ?? 0) + 1;
       sound.playSpellHit();
       floatsRef.current.push({
-        id: random().toString(),
+        id: `float-chainstun-${floatIdCounterRef.current++}`,
         x: target.x,
         y: target.y - 45,
         text: `⚡ CHAIN STUN!`,
@@ -8149,6 +8243,34 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     target.damageTaken += finalDamage;
     if (attacker) attacker.damageDealt += finalDamage;
 
+    // Confirm active combo hit if attacker had an active combo targeting target
+    if (attacker && attacker.activeComboResolution && attacker.activeComboResolution.targetId === target.id
+      && matchTimeRef.current <= attacker.activeComboResolution.expiresAt) {
+      if (!attacker.activeComboResolution.hit) {
+        attacker.activeComboResolution.hit = true;
+        attacker.activeComboResolution.confirmedAt = matchTimeRef.current;
+        attacker.combosExecutedCount = (attacker.combosExecutedCount ?? 0) + 1;
+        const matchingCombo = attacker.matchCombos?.find(mc => mc.comboId === attacker.activeComboResolution?.comboId);
+        if (matchingCombo) {
+          matchingCombo.hit = true;
+        }
+      }
+    }
+
+    // Peel detection: damaging an enemy near a wounded teammate
+    if (attacker && attacker.team !== target.team && finalDamage > 0) {
+      const peeledAlly = championsRef.current.find(a =>
+        a.team === attacker.team &&
+        a.id !== attacker.id &&
+        a.isAlive &&
+        a.hp < a.maxHp * 0.35 &&
+        Math.hypot(a.x - target.x, a.y - target.y) <= 280
+      );
+      if (peeledAlly) {
+        attacker.peelCount = (attacker.peelCount ?? 0) + 1;
+      }
+    }
+
     // Suppress floating text for shared damage / Nature Link to avoid cluttering screen with repetitive labels
     if (!sharedDamage && label !== 'Forest Link' && label !== 'Nature Link') {
       floatsRef.current.push({
@@ -8175,6 +8297,23 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ? resolveNeutralKillCredit(target.lastEnemyDamage, target.team, matchTimeRef.current, championsRef.current, 10)
           : null);
       target.isAlive = false;
+      const deathSnapshots = new Map<string, AIDecisionSnapshot>();
+      for (const champ of championsRef.current) {
+        deathSnapshots.set(champ.id, {
+          healthFraction: champ.id === target.id ? 0 : champ.isAlive ? champ.hp / Math.max(1, champ.maxHp) : 0,
+          gold: champ.gold,
+          cs: champ.cs,
+          kills: champ.kills,
+          deaths: champ.id === target.id ? champ.deaths + 1 : champ.deaths,
+          damageDealt: champ.damageDealt,
+          netWorth: calculateUnitNetWorth(champ),
+          peelCount: champ.peelCount ?? 0,
+          ccChainCount: champ.ccChainCount ?? 0,
+          objectiveDamage: champ.objectiveDamage ?? 0,
+        });
+      }
+      settlePendingAIDecisions(aiDecisionRecordsRef.current, matchTimeRef.current, deathSnapshots, { actorDied: target.id });
+      settlePendingAIDecisions(aiDecisionLearningRecordsRef.current, matchTimeRef.current, deathSnapshots, { actorDied: target.id });
       target.hookPull = undefined;
       if (target.blackHole) recordBlackHoleInterrupt(insightsRef.current, target, matchTimeRef.current);
       target.blackHole = undefined;
@@ -8190,6 +8329,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       target.propellaGunshipTimer = 0;
       target.lastEnemyDamage = undefined;
       target.deaths++;
+      const opposingChampions = championsRef.current.filter(c => c.team !== target.team);
+      const avgOpponentGold = opposingChampions.reduce((s, c) => s + c.gold, 0) / Math.max(1, opposingChampions.length);
+      if (target.gold < avgOpponentGold - 1000) target.deathsGapped = (target.deathsGapped ?? 0) + 1;
+      const nearbyEnemies = opposingChampions.filter(e => e.isAlive && Math.hypot(e.x - target.x, e.y - target.y) <= 650);
+      const nearbyAllies = championsRef.current.filter(a => a.team === target.team && a.isAlive && Math.hypot(a.x - target.x, a.y - target.y) <= 650);
+      if (nearbyEnemies.length > nearbyAllies.length + 1) target.deathsOutnumbered = (target.deathsOutnumbered ?? 0) + 1;
+      if (isTurretFinish || structuresRef.current.some(s => s.isAlive && s.team !== target.team && Math.hypot(s.x - target.x, s.y - target.y) <= 520)) {
+        target.deathsReckless = (target.deathsReckless ?? 0) + 1;
+      }
       target.psychology = applyMoodEvent(ensurePsychology(target.player, target.psychology),
         `death:${target.id}:${target.deaths}`, 'death', personalityOf(target.player));
       target.respawnTimer = calculateDeathTimer(target.level, matchTimeRef.current);
@@ -8203,6 +8351,14 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       let isFirstBlood = false;
 
       if (killer) {
+        const res = killer.activeComboResolution;
+        if (res && res.targetId === target.id && !res.lethal && (matchTimeRef.current - res.attemptedAt <= 3.0)) {
+          res.lethal = true;
+          killer.combosLethalCount = (killer.combosLethalCount ?? 0) + 1;
+          const matchingCombo = killer.matchCombos?.find(mc => mc.comboId === res.comboId)
+            ?? killer.matchCombos?.[killer.matchCombos.length - 1];
+          if (matchingCombo) matchingCombo.lethal = true;
+        }
         const opposingTeam = killer.team === 'blue' ? 'red' : 'blue';
         const scoreBeforeKill = getTeamKillScore(championsRef.current);
         const goldBeforeKill = {
@@ -8357,8 +8513,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const finalDamage = Math.round(damage * crashMultiplier * dragonSiegeFactor * marksmanBonus);
     const previousHp = structure.hp;
     const appliedDamage = damageStructure(structure, finalDamage);
-    if (appliedDamage > 0) recordPairedTaskEvent(attacker.id, 'structure-damage', structure.id,
-      Math.min(previousHp, appliedDamage));
+    if (appliedDamage > 0) {
+      attacker.objectiveDamage = (attacker.objectiveDamage ?? 0) + appliedDamage;
+      recordPairedTaskEvent(attacker.id, 'structure-damage', structure.id,
+        Math.min(previousHp, appliedDamage));
+    }
 
     const isCrashBonus = crashMultiplier >= 1.2;
     floatsRef.current.push({
@@ -8451,8 +8610,46 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const mvp = [...all].sort((a, b) => b.kills * 4 + b.cs * 2 + b.damageDealt / 300 - a.kills * 4 - a.cs * 2 - a.damageDealt / 300)[0];
     const rating = (team: 'blue' | 'red') => all.filter(champion => champion.team === team)
       .reduce((sum, champion) => sum + champion.player.ovr, 0) / Math.max(1, all.filter(champion => champion.team === team).length);
-    adaptivePolicyRef.current = trainAdaptivePolicy(adaptivePolicyRef.current, aiDecisionRecordsRef.current, winner);
+    const terminalSnapshots = new Map<string, AIDecisionSnapshot>();
+    for (const champ of championsRef.current) {
+      terminalSnapshots.set(champ.id, {
+        healthFraction: champ.isAlive ? champ.hp / Math.max(1, champ.maxHp) : 0,
+        gold: champ.gold,
+        cs: champ.cs,
+        kills: champ.kills,
+        deaths: champ.deaths,
+        damageDealt: champ.damageDealt,
+        netWorth: calculateUnitNetWorth(champ),
+        peelCount: champ.peelCount ?? 0,
+        ccChainCount: champ.ccChainCount ?? 0,
+        objectiveDamage: champ.objectiveDamage ?? 0,
+      });
+    }
+    settlePendingAIDecisions(aiDecisionRecordsRef.current, matchTimeRef.current, terminalSnapshots, { forceTerminal: true });
+    settlePendingAIDecisions(aiDecisionLearningRecordsRef.current, matchTimeRef.current, terminalSnapshots, { forceTerminal: true });
+    adaptivePolicyRef.current = trainAdaptivePolicy(adaptivePolicyRef.current, aiDecisionLearningRecordsRef.current, winner);
     try { localStorage.setItem('esports-clash-adaptive-policy', JSON.stringify(adaptivePolicyRef.current)); } catch { /* Local policy remains session-only. */ }
+    for (const c of all) {
+      if (!c.player?.id) continue;
+      const currentMemory = cardMemoriesRef.current[c.player.id] ?? getCardMemory(c.player.id);
+      const opposing = all.filter(o => o.team !== c.team);
+      const avgOppNetWorth = opposing.reduce((sum, o) => sum + calculateUnitNetWorth(o), 0) / Math.max(1, opposing.length);
+      const myNetWorth = calculateUnitNetWorth(c);
+      const gappedSurvived = (myNetWorth < avgOppNetWorth - 1500 && c.deaths <= 2) ? 1 : 0;
+      const updatedMemory = recordCardMatchExperience(currentMemory, {
+        matchId: String(seed),
+        cardId: c.player.id,
+        cardIq: c.player.stats?.iq ?? 75,
+        personality: c.player.primaryPersonality,
+        deathsGapped: c.deathsGapped ?? 0,
+        deathsOutnumbered: c.deathsOutnumbered ?? 0,
+        deathsReckless: c.deathsReckless ?? 0,
+        gappedSurvived: (c.gappedSurvived ?? 0) + gappedSurvived,
+        combos: c.matchCombos ?? [],
+      });
+      cardMemoriesRef.current[c.player.id] = updatedMemory;
+    }
+    saveCardMemories(cardMemoriesRef.current);
     const report: MatchReport = {
       version: 1, seed, batchId: batchMode ? batchId : undefined,
       draft: { blue: blueLineup, red: redLineup, blueCoach, redCoach },

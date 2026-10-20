@@ -236,7 +236,12 @@ def main():
         PROGRESS['active_simulation_workers'] = 0
         state('running')
         stop_child(chrome); stop_child(WEB_SERVICE)
-        subprocess.run(['python', '/runner/train_stage.py', str(FOLDER)], check=True,
+        train_proc = subprocess.run(['python', '/runner/train_stage.py', str(FOLDER)],
+            capture_output=True, text=True,
+        if train_proc.returncode != 0:
+            err_msg = train_proc.stderr.strip() if train_proc.stderr else f"train_stage exited with code {train_proc.returncode}"
+            (FOLDER / 'train_stage.log').write_text(f"STDOUT:\n{train_proc.stdout}\n\nSTDERR:\n{train_proc.stderr}")
+            raise RuntimeError(err_msg) # train stage run
             timeout=min(180, max(1, PLAN['max_minutes'] * 60 - (time.time() - START))))
         proper = json.loads(proper_path.read_text())
     PROGRESS['checkpoint_hash'] = sha(FOLDER / 'checkpoint.pt') if (FOLDER / 'checkpoint.pt').exists() else None
@@ -316,7 +321,9 @@ except ResourceWarning as error:
 except Exception as error:
     import traceback
     traceback.print_exc()
-    state('failed', error=str(error))
+    tb = traceback.format_exc()
+    PROGRESS['traceback'] = tb
+    state('failed', error=str(error), traceback=tb)
     sys.exit(1)
 finally:
     for process in reversed(CHILDREN):
