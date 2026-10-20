@@ -24,6 +24,7 @@ import { refreshMatchReportAvatarPresentation, rerollAfterBalanceGame } from './
 import type { OnlineRoom, OnlineSession } from './onlineRooms';
 import { createOnlineRoom, getOnlineRoom, joinOnlineRoom, submitOnlineDraft } from './onlineRooms';
 import { ChampionHubView } from './components/ChampionHubView';
+import { MeshyRiggingStudio } from './components/MeshyRiggingStudio';
 import { TournamentView } from './components/TournamentView';
 import { ProCircuitView } from './components/ProCircuitView';
 import { PRO_TEAMS_DATABASE, type ProTeam } from './proTeamsDatabase';
@@ -60,7 +61,8 @@ import {
   Globe,
   FlaskConical,
   Volume2,
-  VolumeX
+  VolumeX,
+  Sparkles
 } from 'lucide-react';
 
 type ArenaChoice = 'ai' | 'equalized_ai' | 'dev_random' | 'online' | null;
@@ -149,6 +151,7 @@ export const PACK_CATALOG: PackConfig[] = [
 export function App() {
   // Navigation
   const [activeTab, setActiveTab] = useState<'squad' | 'packs' | 'evolutions' | 'arena' | 'ladder' | 'tournament' | 'champions' | 'pro_circuit' | 'online_normal'>('squad');
+  const [riggingStudioOpen, setRiggingStudioOpen] = useState<boolean>(false);
   const [musicEnabled, setMusicEnabled] = useState(() => sound.isMusicEnabled());
   const [audioMuted, setAudioMuted] = useState(() => sound.isMuted());
   const [selectedOpponentTeam, setSelectedOpponentTeam] = useState<ProTeam | null>(() => PRO_TEAMS_DATABASE[0] ?? null);
@@ -832,6 +835,13 @@ export function App() {
             }`}
           >
             <Layers className="w-4 h-4" /> Avatars & Lore
+          </button>
+
+          <button
+            onClick={() => { sound.playClick(); setRiggingStudioOpen(true); }}
+            className="px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 whitespace-nowrap bg-gradient-to-r from-teal-500 to-cyan-600 hover:brightness-110 text-white shadow-lg"
+          >
+            <Sparkles className="w-4 h-4 text-cyan-200" /> 3D Rigging Studio (Meshy AI)
           </button>
 
           <button
@@ -1595,6 +1605,18 @@ export function App() {
           balanceAfter={packModal.balanceAfter}
           onClose={() => setPackModal(null)}
         />
+      )}
+
+      {/* 3D MESHY RIGGING & GENERATION STUDIO MODAL */}
+      {riggingStudioOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-6xl max-h-[92vh] flex flex-col overflow-hidden rounded-2xl border border-teal-500/50 bg-slate-950 shadow-2xl">
+            <MeshyRiggingStudio
+              champion={CHAMPIONS[0]}
+              onClose={() => setRiggingStudioOpen(false)}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

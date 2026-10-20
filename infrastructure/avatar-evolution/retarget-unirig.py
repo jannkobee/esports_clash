@@ -5,7 +5,7 @@ import math
 import hashlib
 import sys
 from pathlib import Path
-from mathutils import Vector, Matrix
+from mathutils import Vector, Matrix, Quaternion
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from bone_mapping import infer_humanoid, NATIVE
 from retarget_motion import motion_delta, hip_motion_to_root, EQUIPMENT_PROFILE
@@ -113,6 +113,31 @@ for bone_name in list(target.data.bones.keys()):
         equipment_repairs.append({'bone':bone_name,'old_parent':parent,'new_parent':opposite,'strong_vertices':len(samples),'opposite_side_weight_fraction':side_mass/total,'distance_ratio':new_distance/old_distance,'rest_geometry_and_weights':'preserved'})
     else:
         equipment_unresolved.append('Long hand attachment branch '+bone.name+' requires equipment/influence review.')
+avatar_id = plan.get('avatar_id')
+for hand_name in ['HandL', 'HandR']:
+    hand_bone = target.data.bones.get(hand_name)
+    if not hand_bone:
+        continue
+    for child in list(hand_bone.children):
+        if child.name not in mapping.values() and child.name not in aliases:
+            if avatar_id == 'c_astra':
+                child['avatarPart'] = 'bow'
+            prop_chain = [child]
+            chain_stack = [child]
+            while chain_stack:
+                curr = chain_stack.pop()
+                for c in curr.children:
+                    prop_chain.append(c)
+                    chain_stack.append(c)
+            for prop in prop_chain:
+                if prop.name not in [r['bone'] for r in equipment_repairs]:
+                    equipment_repairs.append({
+                        'bone': prop.name,
+                        'old_parent': prop.parent.name if prop.parent else hand_name,
+                        'new_parent': hand_name,
+                        'is_held_prop': True,
+                        'rest_geometry_and_weights': 'preserved'
+                    })
 skin_repairs=[]
 secondary=secondary_chains(target,mapping.keys(),equipment_repairs)
 for name,settings in secondary.items():
@@ -138,6 +163,7 @@ helpers={'left-arm':'UpperArmL','right-arm':'UpperArmR','leg:-1':'ThighL','leg:1
 bpy.context.view_layer.objects.active=target
 target.select_set(True)
 bpy.ops.object.mode_set(mode='EDIT')
+clavicles={}
 for name,child_name in helpers.items():
     if name not in native_rig.data.bones:
         raise RuntimeError('Native template is missing its required helper: '+name)
@@ -146,7 +172,12 @@ for name,child_name in helpers.items():
     helper.head=child.head.copy();helper.tail=child.tail.copy();helper.roll=child.roll
     helper.use_deform=False
     native_parent=native_rig.data.bones[name].parent
-    helper.parent=target.data.edit_bones[native_parent.name]
+    orig_parent=child.parent
+    if orig_parent and orig_parent.parent and orig_parent.parent.name=='Chest' and orig_parent.name not in mapping.values():
+        helper.parent=orig_parent
+        clavicles[child_name]=orig_parent.name
+    else:
+        helper.parent=target.data.edit_bones[native_parent.name]
     child.parent=helper;child.use_connect=False
 bpy.ops.object.mode_set(mode='OBJECT')
 retarget_names=list(mapping)+list(helpers)
@@ -256,13 +287,21 @@ for action in actions:
             clip_rot,clip_loc=clip_start_pose[name]
             if (clip_rot@reference_rotation.inverted()).angle>.6:
                 reference_rotation=clip_rot
-            delta=motion_delta(a.matrix_basis.to_quaternion(),reference_rotation,original_name,name,bool(equipment_repairs))
+            fraction=(frame-start)/max(end-start,1)
+            delta=motion_delta(a.matrix_basis.to_quaternion(),reference_rotation,original_name,name,bool(equipment_repairs),avatar_id=avatar_id,phase=fraction)
             b.rotation_quaternion=correction.inverted()@delta@correction
             unit_ratio=native_rig.matrix_world.to_scale().length/target.matrix_world.to_scale().length
             if name in ('Root','Hips'):
                 b.location=(correction.inverted()@(a.location-reference_location))*unit_ratio
             else:
                 b.location=Vector((0,0,0))
+        for arm_name, clav_name in clavicles.items():
+            arm_pose=target.pose.bones.get(arm_name)
+            clav_pose=target.pose.bones.get(clav_name)
+            if arm_pose and clav_pose:
+                clav_pose.rotation_mode='QUATERNION'
+                clav_pose.rotation_quaternion=Quaternion((1,0,0,0)).slerp(arm_pose.rotation_quaternion,0.28)
+                clav_pose.location=Vector((0,0,0))
         for repair in equipment_repairs:target.pose.bones[repair['bone']].matrix_basis=Matrix.Identity(4)
         # UniRig's deforming root carries garment/body weights. Apply the hip
         # rigid motion to that root too, preserving all descendant transforms;
@@ -278,7 +317,7 @@ for action in actions:
             bpy.context.view_layer.update()
             for side in foot_samples:
                 foot_samples[side].append(target.matrix_world@target.pose.bones['Foot'+side].head)
-        for name in retarget_names+[r['bone'] for r in equipment_repairs]:
+        for name in list(retarget_names)+[r['bone'] for r in equipment_repairs]+list(clavicles.values()):
             b=target.pose.bones[name]
             b.keyframe_insert(data_path='rotation_quaternion',frame=frame,group=name)
             b.keyframe_insert(data_path='location',frame=frame,group=name)

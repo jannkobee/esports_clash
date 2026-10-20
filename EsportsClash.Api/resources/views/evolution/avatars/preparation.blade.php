@@ -1,42 +1,17 @@
 @extends('evolution.layout')
 @section('title','Asset Preparation')
 @section('content')
-<div class="page-heading">
-    <div>
-        <p class="eyebrow">FROM GENERATED SOURCE TO PLAYABLE CANDIDATE</p>
-        <h1>Asset Preparation</h1>
-        <p class="muted">Humanoid rigging, native animations, equipment repairs, and runtime qualification.</p>
-    </div>
-    <a class="button" href="{{ route('trellis.index') }}">Generate another source &rarr;</a>
+<div class="page-heading studio-heading"><div><p class="eyebrow">AVATAR STUDIO / PREPARATION</p><h1>Asset Preparation</h1><p class="muted">Prepare a rig, create animations, then review and qualify the result.</p></div><a class="button" href="{{ route('trellis.index') }}">Avatar studios &rarr;</a></div>
+<div class="preparation-overview">
+    <div><strong>{{ $sources->count() }}</strong><span>Generated sources</span></div>
+    <div><strong>{{ $runs->whereIn('status',[...\App\Services\AvatarPreparationService::ACTIVE,'cancelling','pausing'])->count() }}</strong><span>Jobs in progress</span></div>
+    <div><strong>{{ $runs->whereIn('status',['awaiting_retarget','awaiting_validation','needs_review','ready'])->count() }}</strong><span>Awaiting your action</span></div>
+    <div class="worker-summary"><span class="badge {{ $rigOperations && ($rigOperations['models_ready']??false) && ($rigOperations['runtime_ready']??false) ? 'good' : '' }}">{{ $rigOperations ? (($rigOperations['models_ready']??false)&&($rigOperations['runtime_ready']??false)?'Worker ready':'Worker setup pending') : 'Worker offline' }}</span><span>Local UniRig worker / Manual jobs only</span></div>
 </div>
-
-<section class="panel">
-    <div class="section-heading">
-        <div>
-            <h2>Local UniRig worker</h2>
-            <p class="muted">Manual jobs only &middot; {{ $rigOperations ? (($rigOperations['models_ready']??false)&&($rigOperations['runtime_ready']??false) ? 'Checkpoints & Runtime Ready' : 'Online (Setup Pending)') : 'Offline' }}</p>
-        </div>
-        <div class="stat-chips">
-            <span class="stat-chip">Mode: <strong>Manual Jobs Only</strong></span>
-            @if($rigOperations && ($rigOperations['active']??null))
-                <span class="stat-chip">Active Job: <code>{{ substr($rigOperations['active'], 0, 8) }}…</code></span>
-            @endif
-        </div>
-    </div>
-</section>
-
-{{-- Prepare a Generated Avatar Form --}}
-<section class="panel">
-    <div class="section-heading">
-        <div>
-            <h2>Prepare a generated avatar</h2>
-            <p class="muted">Reuses frozen rig or queues UniRig prediction and maps native animation clips.</p>
-        </div>
-    </div>
-
+<section class="panel preparation-create"><div class="section-heading"><div><h2>Prepare a model</h2><p class="muted">Choose a generated source. A saved rig is reused when available; new sources use UniRig.</p></div></div>
     <form method="post" action="{{ route('preparations.start') }}" class="settings-form">
         @csrf
-        <div class="proposal-grid">
+        <div class="preparation-source-picker">
             <label>Completed generated source
                 <select name="generation_id" required>
                     <option value="">Choose a source</option>
@@ -45,19 +20,14 @@
                     @endforeach
                 </select>
             </label>
-            <label>Preparation profile
-                <select name="profile">
-                    <option value="unirig-v1">UniRig &middot; skeleton + skin prediction</option>
-                </select>
-            </label>
-            <label>Facing correction (degrees)
-                <input type="number" name="yaw" value="0" min="-180" max="180" step="1" required>
-            </label>
         </div>
 
-        <details class="clean-details">
-            <summary>Advanced: Custom native-to-UniRig bone map</summary>
+        <input type="hidden" name="profile" value="unirig-v1">
+        <details class="clean-details preparation-advanced">
+            <summary>Advanced preparation settings</summary>
             <div class="clean-details-content">
+                <label>Facing correction (degrees)<input type="number" name="yaw" value="{{ old('yaw',0) }}" min="-180" max="180" step="1" required></label>
+                <label class="checkbox-label"><input type="checkbox" name="fresh_rig" value="1"> Force fresh rig prediction instead of reusing saved rig (GPU inference)</label>
                 <p class="fine">Optional JSON mapping, e.g. <code>{"Hips":"mixamorig:Hips"}</code>. Leave empty for conservative automatic humanoid hierarchy and foot-facing direction matching.</p>
                 <label>Native-to-UniRig bone map
                     <textarea name="bone_map" rows="4">{}</textarea>
@@ -67,29 +37,17 @@
 
         <input type="hidden" name="attachments" value="[]">
 
-        <label class="checkbox-label" style="margin: 10px 0;">
-            <input type="checkbox" name="fresh_rig" value="1"> Force fresh rig prediction instead of reusing saved rig (GPU inference)
-        </label>
-
-        <button class="primary" @disabled($sources->isEmpty())>Queue rigging and animation preparation</button>
+        <button class="primary" @disabled($sources->isEmpty())>Prepare rig &amp; animations</button>
     </form>
+
+    @if($sources->isEmpty())<p class="muted">No generated sources available yet. <a href="{{ route('trellis.index') }}">Open an avatar studio</a> to generate a body first.</p>@endif
 </section>
-
-{{-- Preparation & Deployment History --}}
-<section class="panel">
-    <div class="section-heading">
-        <div>
-            <h2>Preparation and deployment history</h2>
-            <p class="muted">Interactive candidates, full-mesh qualification outcomes, and publication gates.</p>
-        </div>
-        <form method="post" action="{{ route('avatar-jobs.cancel-all','preparation') }}">
-            @csrf
-            <button class="danger">Cancel all preparation jobs</button>
-        </form>
-    </div>
-
-    {{-- Bulk Delete Panel --}}
-    <form id="preparation-bulk-delete" method="post" action="{{ route('preparations.bulk-delete') }}" class="preparation-bulk">
+<section class="panel preparation-history">
+    <div class="section-heading"><div><h2>Preparation jobs</h2><p class="muted">Read from oldest to newest. Open a report for its full timeline and evidence.</p></div><p class="fine" id="live-status">Updates every 10 seconds</p></div>
+    @include('evolution.avatars.report-toolbar')
+    <div id="live-reports" data-url="{{ route('preparations.live') }}">@include('evolution.avatars.preparation-runs')</div>
+    <details class="report-management" id="report-management"><summary>Manage report history</summary><p class="fine">Report deletion keeps asset files. Select eligible reports above, then confirm below.</p>
+    <form id="preparation-bulk-delete" method="post" action="{{ route('preparations.bulk-delete') }}" class="preparation-bulk compact-bulk">
         @csrf @method('DELETE')
         <h3>Delete selected preparation reports</h3>
         <p class="fine">Clears database report details and progress history. Active jobs and published releases remain protected.</p>
@@ -105,8 +63,9 @@
         <button class="danger" id="preparation-delete-selected">Delete selected reports</button>
     </form>
 
-    <div id="live-reports" data-url="{{ route('preparations.live') }}">@include('evolution.avatars.preparation-runs')</div>
-</section>
 
+        <form method="post" action="{{ route('avatar-jobs.cancel-all','preparation') }}" onsubmit="return confirm('Request cancellation of all preparation jobs?');">@csrf<button class="danger">Cancel all preparation jobs</button></form>
+    </details>
+</section>
 <script src="{{ asset('preparation-controls.js') }}" defer></script>
 @endsection

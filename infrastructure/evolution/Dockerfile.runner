@@ -15,6 +15,7 @@ COPY EsportsClash.Web/index.html EsportsClash.Web/evolution.html EsportsClash.We
 RUN node node_modules/vite/bin/vite.js build --config vite.evolution.config.ts
 COPY docs/ml-live-evaluation.json /workspace/docs/ml-live-evaluation.json
 COPY infrastructure/evolution/runner/ /runner/
+RUN python -m compileall -q /runner
 COPY infrastructure/evolution/evidence.mjs /workspace/EsportsClash.Web/scripts/evolution-evidence.mjs
 ENV PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
 CMD ["python", "/runner/server.py"]

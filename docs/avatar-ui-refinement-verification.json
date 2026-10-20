@@ -1,0 +1,137 @@
+{
+  "viewports": [
+    {
+      "path": "/evolution/avatars/trellis",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "/evolution/avatars/trellis",
+      "width": 1000,
+      "content": 985
+    },
+    {
+      "path": "/evolution/avatars/trellis",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/trellis",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/trellis",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_astra",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_astra",
+      "width": 1000,
+      "content": 985
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_astra",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_astra",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_astra",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 1000,
+      "content": 985
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "model-preview",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "model-preview",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "model-preview",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "preparation",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "preparation",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "preparation",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "preparation",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "full-report",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "full-report",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "full-report",
+      "width": 320,
+      "content": 305
+    }
+  ],
+  "checks": [
+    "45 avatars; one studio action; default A-Z and Z-A sorting; combined role/equipment/search filters and reset",
+    "Three-slot editor; prompt tabs/edit/reset/clipboard fallback; file preview and size validation",
+    "Original Dawnna reference intact; cancelled removal sends no request",
+    "Actual generated GLB loads directly inside the avatar studio at desktop/mobile widths",
+    "Chronological jobs/events; one pause action; live refresh preserves sort and closed timeline; readable scoped report and JSON download"
+  ],
+  "uncaughtErrors": []
+}

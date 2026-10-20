@@ -6,6 +6,7 @@ import re
 import signal
 import subprocess
 import threading
+import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from operations import Operations, normalize
@@ -16,6 +17,27 @@ TOKEN = os.environ.get('EVOLUTION_WORKER_TOKEN', '')
 LOCK = threading.Lock()
 PROCESSES = {}
 RUN_ID = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+RUNNER_SOURCES = tuple(Path(__file__).with_name(name) for name in
+                       ('pipeline.py', 'train_stage.py', 'training.py', 'operations.py'))
+
+
+def validate_runner_sources():
+    # Compile without imports, bytecode writes, or starting any study work.
+    for path in RUNNER_SOURCES:
+        compile(path.read_bytes(), str(path), 'exec')
+
+
+def worker_failure(folder, returncode):
+    log = folder / 'worker.log'
+    if log.exists():
+        with log.open('rb') as source:
+            source.seek(max(0, log.stat().st_size - 8192))
+            detail = source.read().decode('utf-8', errors='replace').strip()
+    else:
+        detail = ''
+    summary = detail.splitlines()[-1] if detail else 'No traceback recorded; inspect worker.log and resource evidence'
+    return {'status': 'failed', 'error': f'Worker exited with code {returncode}: {summary}',
+            'traceback': detail}
 
 
 def write_json(path, value):
@@ -110,7 +132,14 @@ class Handler(BaseHTTPRequestHandler):
                 if run_id not in PROCESSES or PROCESSES[run_id].poll() is not None:
                     previous = PROCESSES.get(run_id)
                     if previous and previous.returncode not in (None, 0):
-                        state.update(status='failed', error='Worker exited unexpectedly; no automatic OOM retry or seed replacement')
+                        state.update(worker_failure(folder, previous.returncode))
+                        write_json(folder / 'state.json', state)
+                        return self.reply(200, state)
+                    try:
+                        validate_runner_sources()
+                    except (SyntaxError, OSError) as error:
+                        state.update(status='failed', error=f'Runner code preflight failed: {error}',
+                                     traceback=traceback.format_exc())
                         write_json(folder / 'state.json', state)
                         return self.reply(200, state)
                     manager = Operations(ROOT)

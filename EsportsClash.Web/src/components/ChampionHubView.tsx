@@ -4,6 +4,7 @@ import { ChampionKit, PlayerCard, AvatarRole, AvatarCombatType } from '../types'
 import { AVATAR_COMBAT_TYPES, getAvatarCombatProfile } from '../avatarCombatRoles';
 import { ChampionArtwork } from './ChampionArtwork';
 import { AvatarModelPreview } from './AvatarModelPreview';
+import { MeshyRiggingStudio } from './MeshyRiggingStudio';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
 import { getChampionLore } from '../championLore';
@@ -39,6 +40,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
   const [filterBy, setFilterBy] = useState<'Name' | 'Role' | 'Archetype' | 'HP' | 'AD' | 'Range'>('Name');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [inspectRank, setInspectRank] = useState<number>(1);
+  const [showRiggingStudio, setShowRiggingStudio] = useState<boolean>(false);
 
   // Filtered and sorted avatar list (name A-Z by default)
   const filteredChampions = [...champions]
@@ -215,6 +217,27 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
           </div>
 
           <AvatarModelPreview champion={selectedChamp} ability={activeSkillTab} />
+
+          <div className="flex justify-end mt-1">
+            <button
+              type="button"
+              onClick={() => { sound.playClick(); setShowRiggingStudio(true); }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:brightness-110 text-white text-xs font-bold shadow-lg transition"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-cyan-200" /> Open 3D Rigging Studio (Meshy AI)
+            </button>
+          </div>
+
+          {showRiggingStudio && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/80 backdrop-blur-md animate-fade-in">
+              <div className="relative w-full max-w-6xl max-h-[92vh] flex flex-col overflow-hidden rounded-2xl border border-slate-700 bg-slate-950 shadow-2xl">
+                <MeshyRiggingStudio
+                  champion={selectedChamp}
+                  onClose={() => setShowRiggingStudio(false)}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Narrative Lore Section */}
           <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-1">

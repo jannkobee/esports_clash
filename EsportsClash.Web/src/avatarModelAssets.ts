@@ -75,7 +75,7 @@ export class AvatarAssetLibrary {
     scene.traverse(node => { if (node.userData.avatarPart === 'avatar-root') root = node as THREE.Group; });
     if (!root) return;
     const hasAnimations = file.animations && file.animations.length > 0;
-    const retargetedNativeMotion=root.userData.assetPreparation?.provider==='unirig'&&root.userData.assetPreparation?.animation_mode==='retargeted-native-clips';
+    const retargetedNativeMotion=(root.userData.assetPreparation?.provider==='unirig'||root.userData.assetPreparation?.provider==='meshy-pipeline'||root.userData.assetPreparation?.provider==='automated-rigging')&&root.userData.assetPreparation?.animation_mode==='retargeted-native-clips';
     const preserveNativeMotion=this.nativeImports.has(file)||retargetedNativeMotion;
     scene.updateMatrixWorld(true);
     const meshBounds = new THREE.Box3();

@@ -14,6 +14,26 @@ class PreparationProgressTest extends TestCase {
         return AvatarPreparation::create(['id'=>(string)Str::uuid(),'generation_id'=>$source->id,'avatar_id'=>'c_solana','status'=>$status,'plan'=>['provider'=>'unirig','profile'=>'unirig-v1','source_sha256'=>str_repeat('a',64),'unirig_engine_sha256'=>str_repeat('b',64),'seed'=>1],'state'=>[]]);
     }
     private function owner():void{$this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));}
+    public function test_job_history_and_activity_are_chronological_and_report_is_scoped(): void {
+        $this->owner(); Http::fake(['*'=>Http::response([],503)]);
+        $old=$this->fixtureRun('waiting_resources'); $new=$this->fixtureRun('rigging');
+        $old->update(['created_at'=>now()->subHours(2),'progress'=>['step'=>0,'status'=>'waiting_resources','stage'=>'resource_admission','events'=>[
+            ['step'=>0,'stage'=>'resource_admission','status'=>'waiting_resources','message'=>'LATER_OBSERVATION','observed_at'=>now()->subMinutes(2)->toIso8601String()],
+            ['step'=>0,'stage'=>'manual_admission','status'=>'queued','message'=>'EARLIER_OBSERVATION','observed_at'=>now()->subMinutes(4)->toIso8601String()]
+        ]]]);
+        $new->update(['created_at'=>now()->subHour()]);
+        $this->get(route('preparations.live'))->assertOk()->assertSeeInOrder(['id="preparation-'.$old->id.'"','id="preparation-'.$new->id.'"'],false)->assertSeeInOrder(['EARLIER_OBSERVATION','LATER_OBSERVATION']);
+        $this->get(route('preparations.report',$old))->assertOk()->assertSee('Activity timeline')->assertSeeInOrder(['EARLIER_OBSERVATION','LATER_OBSERVATION'])->assertDontSee($new->id)->assertSee('preparation='.$old->id,false);
+        $this->get(route('preparations.report',[$old,'format'=>'json']))->assertOk()->assertJsonPath('preparation.id',$old->id)->assertHeader('Content-Disposition','attachment; filename="preparation-'.$old->id.'.json"');
+        $this->get(route('preparations.live',['preparation'=>$old->id]))->assertOk()->assertDontSee($new->id);
+        $this->actingAs(User::factory()->create())->get(route('preparations.report',$old))->assertForbidden();
+    }
+    public function test_geometry_pass_does_not_present_unqualified_job_as_ready(): void {
+        $this->owner(); Http::fake();
+        $run=$this->fixtureRun('needs_review');
+        $run->update(['state'=>['report'=>['geometry'=>['passed'=>true],'reasons'=>['ANIMATION_BLOCKER']]]]);
+        $this->get(route('preparations.live'))->assertOk()->assertSee('data-status-category="failed"',false)->assertSee('ANIMATION_BLOCKER')->assertDontSee('Technical checks passed / visual sign-off required');
+    }
     public function test_poll_records_real_stages_resources_and_deduplicated_messages():void {
         Queue::fake();$run=$this->fixtureRun();$phase='skeleton_prediction';
         Http::fake(function($request)use($run,&$phase){return Http::response(['id'=>$run->id,'status'=>'rigging','stage'=>$phase,'updated_unix'=>now()->timestamp,'resources'=>['gpu_free_mib'=>9000,'gpu_used_mib'=>3000,'vm_available_mib'=>8000]],200);});
@@ -22,7 +42,7 @@ class PreparationProgressTest extends TestCase {
         $this->assertSame(2,$run->progress['step']);$this->assertCount(1,$run->progress['events']);$this->assertSame(9000.0,(float)$run->progress['resources']['sample']['gpu_free_mib']);
         $this->travel(20)->seconds();$phase='skin_weight_prediction';$job->handle($service);$run->refresh();
         $this->assertSame(3,$run->progress['step']);$this->assertCount(2,$run->progress['events']);$this->assertSame('rigging',$run->status);
-        $this->owner();$this->get('/evolution/avatars/preparation/live')->assertOk()->assertSee('Workflow stage 4 of 10')->assertSee('predicting how mesh vertices deform')->assertSee('9,000 MiB')->assertSee('Detailed observed messages');
+        $this->owner();$this->get('/evolution/avatars/preparation/live')->assertOk()->assertSee('Workflow stage 4 of 10')->assertSee('predicting how mesh vertices deform')->assertSee('9,000 MiB')->assertSee('Activity timeline');
         $run->update(['status'=>'cancelling']);$sent=count(Http::recorded());$phase='merge_original_materials';$job->handle($service);
         $this->assertSame($sent,count(Http::recorded()));$this->assertSame('cancelling',$run->fresh()->status);
         $this->assertDatabaseCount('avatar_visual_releases',0);

@@ -1,0 +1,101 @@
+{
+  "viewports": [
+    {
+      "path": "/evolution/avatars/trellis",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "/evolution/avatars/trellis",
+      "width": 1000,
+      "content": 985
+    },
+    {
+      "path": "/evolution/avatars/trellis",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/trellis",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/trellis",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_astra",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_astra",
+      "width": 1000,
+      "content": 985
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_astra",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_astra",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_astra",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 1000,
+      "content": 985
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "model-preview",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "model-preview",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "model-preview",
+      "width": 320,
+      "content": 305
+    }
+  ],
+  "checks": [
+    "45 avatars; accurate category counts; search and empty results",
+    "Three-slot editor; prompt tabs/edit/reset/clipboard fallback; file preview and size validation",
+    "Original Dawnna reference intact; cancelled removal sends no request",
+    "Actual generated GLB loads; model review fits desktop and mobile"
+  ],
+  "uncaughtErrors": []
+}

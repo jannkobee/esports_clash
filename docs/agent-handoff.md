@@ -1,5 +1,174 @@
 # Conversation handoff for the next agent
 
+## Latest: One avatar studio, browsing controls and chronological job reports (2026-10-21 follow-up)
+
+- Owner requested one roster entry point, filters/sorting defaulting to name, optional equipment type, clearer reports and oldest-to-newest chronology.
+- Models now render inside the avatar studio; old preview URLs redirect to scoped studio model selection. Removed the duplicate roster link and standalone inspection template. Added role/equipment/status/search filters, A-Z/Z-A/role sorting and reset. Equipment labels/socket selection are no longer mandatory upload steps; existing/avatar metadata supplies defaults.
+- Generation/preparation histories default oldest first within the latest 100 records. Preparation reports have status/next-step summaries, chronological activity, optional resource/evidence panels, one pause control, collapsed report management, scoped readable full reports and separate JSON downloads. Live refresh preserves filters/order and closed details; bulk selection respects shown rows. Geometry passing alone does not imply qualification readiness.
+- Verification: 108 backend tests / 1,122 assertions; 485 game tests, three simulations, design/TypeScript checks and build; Blade/PHP/JS checks and 25 browser layouts including embedded GLB and full report. No live jobs or asset mutations were submitted.
+- Affected files, evidence and limits: [avatar-ui-refinement.md](avatar-ui-refinement.md). Gameplay, worker admission/pause/retry behavior, qualification gates and latest protected invariants are unchanged.
+
+## Latest: Avatar studio CRUD, prompt editing and UI clarity (2026-10-21)
+
+- Owner requested improvements to the roster, asset management, prompts and generation status shown in two screenshots.
+- Added a consistent source-assets/generation/history workflow with shared body/right/left editors, independent upload/replace/download/remove actions, equipment settings without re-upload, and persistent prompts with copy/reset and saved-design import.
+- Corrected known legacy concept readiness, stale worker reference admission, original-input inspection, retained-model links after report deletion, active-state/filter counts and shared hash-navigation recursion. PNG references are distinguished from 3D files. Server limits support 20 MiB equipment files; bodies retain their 12 MiB application limit.
+- Verified: 104 backend tests / 1,085 assertions; 485 game tests plus three simulations, TypeScript/design checks and build; Blade/PHP/JS/nginx checks; 18 browser layout combinations including an actual GLB, with no uncaught errors. Browser review submitted no live asset changes or jobs.
+- Existing upload tests now use disposable storage after their fixture overwrote Dawnna's active local reference; its original hash-verified file was restored.
+- No gameplay or live release change. Preserve current risk-based tower rules, attribution, objective contests, anti-spin and aliases. Files, evidence and limits: [avatar-studio-crud.md](avatar-studio-crud.md).
+
+## Latest: Model Instances Architecture & Legacy 2D Concept Cleanup (2026-10-21)
+
+- **User Directives & Invariants:**
+  1. **Fixed Operational Validation Rejection:** Resolved ⚠ OPERATIONAL VALIDATION REJECTED: This source is used by a preparation or release by adding force parameter support in TrellisGenerationService::deleteModel and TrellisGenerationController::destroyModel. UI deletion requests now pass orce = 1, safely unbinding historical visual release source references without throwing foreign release errors.
+  2. **Model Instances Architecture:** Generation workflow supports multiple model instances per avatar (e.g. Instance #1, Instance #2) via llow_new_instance. Avatars with existing models can queue new instances or replace older models at will.
+  3. **Removed Legacy 2D Concept Models & Art:** Purged all old models generated from 2D concept illustrations (which had weapons merged in meshes, like the 39,045 triangle Dawnna model in the screenshot). Cleared 2D concept references from infrastructure/trellis2/reference-index.json so avatars without a T-pose must upload an authentic T-pose body before generating.
+  4. **Preserved Dawnna (c_solana) T-Pose:** Kept Dawnna's uploaded T-pose reference and dual-weapon modular slots completely intact. Dawnna is queued to generate its true first model instance from the T-pose with isolated weapon sockets.
+  5. **Core Invariants Protected:** Risk-based tower dive limits (	owerDiveRules.ts), 10-second turret attribution, 12px steering deadbands, anti-oscillation decision timers, and parody aliases (Cardrel) strictly preserved.
+
+- **Verification:**
+  - 18/18 feature tests in TrellisGenerationTest.php pass (137 assertions).
+  - 8/8 meshy pipeline unit tests in meshyRiggingPipeline.test.mjs pass.
+  - 485/485 game unit tests pass, 3/3 batch simulations pass, pm run check:game passed with exit code 0.
+  - pm run build succeeds with zero TypeScript errors.
+
+## Previous: Dual-Hand Weapon Slots (One for Each Hand) & Visible T-Pose Body in Inspection View (2026-10-21)
+
+- **User Directives & Invariants:**
+  1. The inspection view (generation-preview.blade.php) previously showed only the historical 'Input concept' drawing and hid the active T-pose body and weapon assets.
+  2. Implemented **two distinct weapon slots, one for each hand**:
+     - **Right Hand Weapon Slot (ight_hand_socket)**: Primary weapon (sword, staff, bow, main dagger, gun, two-handed heavy).
+     - **Left Hand Weapon Slot (left_hand_socket)**: Secondary / off-hand weapon or shield (shield, off-hand dagger, magic orb, parrying sword, pistol).
+  3. **Weapons are strictly optional:** Clear visual feedback for unarmed open right hand and free off-hand. Unarmed state does not block joint detection or rigging.
+  4. Prominently displays the **T-Pose Character Body Reference** alongside the dual weapon slots in a top-level **Modular Rigging Asset Showcase** (generation-preview.blade.php and generation-status.blade.php), with live image previews, file hashes, dedicated uploaders, and prompt helpers.
+  5. The interactive **Generated GLB 3D Viewport** is rendered below the asset showcase alongside the **Initial 2D Concept Drawing** (clearly marked as historical design context).
+  6. Roster cards in 	rellis.blade.php display clean 3-part thumbnails (Body, Right Hand, Left Hand) without upload clutter.
+  7. Core gameplay invariants (risk-based tower dive limits in 	owerDiveRules.ts, 10-second turret execution attribution, 12px steering deadbands, anti-oscillation decision timers, and parody aliases Cardrel) strictly preserved.
+
+- **Verification:**
+  - 18/18 feature tests in TrellisGenerationTest.php pass (137 assertions).
+  - 8/8 meshy pipeline unit tests in meshyRiggingPipeline.test.mjs pass.
+  - 485/485 game unit tests pass, 3/3 batch multi-seed simulations pass, pm run check:game passed with exit code 0.
+  - pm run build succeeds with zero TypeScript errors.
+
+## Previous: T-Pose & Optional Weapon Upload Placed in Inspection View (2026-10-21)
+
+- **User Directives & Invariants:**
+  1. Removed file upload forms and clutter from the main 3D Generation roster cards (trellis.blade.php). Kept cards clean with avatar name, role badge, silhouette, costume and signature equipment descriptions, status chips, and direct 'Inspect existing model' button.
+  2. Moved the file uploading for the neutral T-pose body reference and separate modular weapons directly inside the **Inspect existing model** review page (generation-preview.blade.php) and status view (generation-status.blade.php).
+  3. **Weapons Are Strictly Optional:** Explicitly handled weapons as optional assets. If no custom weapon is uploaded, characters use unarmed animations or procedural socket defaults without blocking rigging.
+  4. Core gameplay invariants (risk-based tower dive limits in towerDiveRules.ts, 10-second turret execution attribution, 12px steering deadbands, anti-oscillation decision timers, and parody aliases Cardrel) strictly preserved.
+
+- **Verification:**
+  - 8/8 meshy pipeline unit tests pass.
+  - 485/485 game unit tests pass, 3/3 batch simulations pass, npm run check:game passed with exit code 0.
+  - npm run build succeeds with zero TypeScript errors.
+  - Docker Blade cache (php artisan view:cache) passes cleanly with exit code 0.
+
+## Previous: Meshy AI 3D Character Rigging Pipeline & Dual-Asset Generation UI (2026-10-21)
+
+- **User Request & Context:**
+  1. Implement an automated Meshy-inspired 3D character rigging, alignment, joint landmark detection, skinning, weapon attachment, and animation retargeting pipeline.
+  2. Implement UI changes in 3D Generation (/evolution/avatars/trellis) to support uploading the strict Phase 1 requirements:
+     - ?? **Character Body (Neutral T-Pose)**: Arms horizontal at 90�, legs separated, visible anatomical joints, **strictly NO weapons merged into body mesh**.
+     - ?? **Separate Modular Weapon Asset**: Dedicated primary & secondary weapon assets, socket attachment points (right_hand_socket, left_hand_socket, weapon_primary, etc.), weapon transforms for position, rotation, and scale.
+  3. Ensure both the Web frontend (EsportsClash.Web) and Laravel operations backend (EsportsClash.Api) provide seamless UI access to the automated rigging pipeline and asset upload contract.
+  4. Core gameplay invariants (risk-based tower dive limits in towerDiveRules.ts, 10-second turret execution attribution, 12px steering deadbands, anti-oscillation decision timers, and parody aliases Cardrel) strictly preserved.
+
+- **Architecture & Implementation:**
+  1. **Laravel 3D Generation Studio Upgrade (trellis.blade.php, evolution.css, routes/web.php):**
+     - Added prominent **Meshy AI 3D Pipeline Hero Banner** explaining the dual-asset upload contract and 8-stage automated workflow.
+     - Upgraded each avatar card with **Dual Asset Visual Container**:
+       - Left box: **?? Character Body (T-Pose)** with reference thumbnail and status (T-Pose Body Ready / ?? Body Missing).
+       - Right box: **?? Modular Weapon Asset** with uploaded weapon thumbnail or procedural badge (?? Weapon Attached / Modular Socket).
+     - Replaced legacy A-pose prompts with Phase 1 strict T-pose prompt (buildHumanoidCharacterPrompt) that strictly forbids merged weapons, plus a separate modular weapon prompt (buildSeparateWeaponPrompt) with copy buttons.
+     - Added **Dual Upload Panels**:
+       - Form 1: Upload transparent full-body T-pose PNG (POST {{ route('trellis.upload') }}).
+       - Form 2: Upload separate modular weapon asset (PNG or GLB) with weapon class selection (Sword, Daggers, Staff, Bow, Two-Handed, Gun) and target socket selection (POST {{ route('trellis.upload-weapon') }}).
+  2. **Laravel Backend Modular Weapon Management (TrellisGenerationService.php, TrellisGenerationController.php):**
+     - Added weaponReferences(), saveWeaponAsset(), and weaponFile() storing weapon files and JSON metadata in storage/app/avatars/weapons/{avatar_id}/.
+     - Registered routes POST /avatars/trellis/weapon (trellis.upload-weapon) and GET /avatars/trellis/weapon/{avatar}/{slot?} (trellis.weapon).
+  3. **Frontend 3D Rigging Studio & Navigation Integration (MeshyRiggingStudio.tsx, App.tsx):**
+     - Added top-level navigation button ? 3D Rigging Studio (Meshy AI) directly in App.tsx header navbar, accessible from anywhere.
+     - Added dedicated Requirements & Upload tab (upload) to MeshyRiggingStudio.tsx:
+       - Interactive drag-and-drop file inputs for Character Body (.glb / .gltf / .png) and Weapon (.glb / .gltf / .png).
+       - Live GLTFLoader loading into Three.js scene.
+       - Weapon class and socket dropdown selectors.
+       - One-click ? Run Automated Meshy Rigging Pipeline triggering autonomous 10-stage progression (Auto-Align -> Landmarks -> Skeleton -> Skinning -> Weapon Socket -> 10-Point Check -> Animation Retarget).
+
+- **Verification:**
+  - node --test EsportsClash.Web/src/meshyRiggingPipeline.test.mjs: **8/8 tests passed**.
+  - npm run check:game: **485/485 unit tests passed, 3/3 batch simulations passed, all design checks passed, tsc -b passed**.
+  - npm run build: Production client bundle built cleanly in 3.40s.
+  - Blade template cache & route cache validated cleanly via Docker php artisan view:cache and php artisan route:clear.
+
+## Previous: ML Evolution Run Execution & Runner Pipeline Fix (2026-10-20)
+
+- **User Request & Context:**
+  1. Run 1 Machine Learning (ML) evolution training instance and verify whether there are runtime errors.
+  2. Maintain zero-paid tools (100% free / open source only).
+  3. Ensure all gameplay invariants (risk-based tower dive limits in 	owerDiveRules.ts, 10-second turret execution attribution, 12px steering deadbands, anti-oscillation decision timers, and parody aliases Cardrel) remain fully protected.
+
+- **Architecture & Implementation:**
+  1. **Pipeline Syntax Repair & Preflight Verification (pipeline.py, server.py, 	est_runner.py):**
+     - Corrected a syntax error in infrastructure/evolution/runner/pipeline.py (line 241) where if train_proc.returncode != 0: had been misplaced inside subprocess.run(...) arguments before 	imeout=.... This error previously crashed run 2344a019-e17d-4102-ad77-f736a205132d immediately upon launch.
+     - Synchronized the corrected files into 	eamfight-evolution-runner-1:/runner/ and verified compilation with python -m py_compile.
+     - Verified that server.validate_runner_sources() runs during job preflight to prevent malformed jobs from consuming seeds.
+  2. **Isolated Fitting & Evidence Loading Verification (	rain_stage.py):**
+     - Executed 	rain_stage.py directly against historical run 63481da8-7dbe-4ea7-9450-c2104bb1e5b5 (32 fit cases, compressed .json.gz files).
+     - Completed with exit code 0 and generated valid proper.json, confirming that the uncompressed string hash fallback in 	rain_stage.py eliminates the historical ValueError: Historical raw fitting evidence changed crash while strictly preserving cryptographic verification.
+  3. **Live ML Run Execution (ddc6e68d-3a89-4171-9754-aa7937d4b1a7):**
+     - Launched a fresh evolution run via EvolutionService::startRun('developer') starting at seed 40001 with standard budget operations.
+     - Laravel queue worker PollEvolutionRun communicated with runner port 8090, successfully spawning headless Chromium and Vite.
+     - Monitored real-time paired rollouts (scripts/paired-live-rollout.mjs):
+       - seed 40001: Validated and completed (case-40001.json, 
+aw-40001.json.gz).
+       - seed 40002: Validated and completed (case-40002.json, 
+aw-40002.json.gz).
+       - seed 40003: Validated and completed (case-40003.json, 
+aw-40003.json.gz).
+       - seed 40004+: Continuously evaluating in headless simulation without errors.
+       - worker.log is clean (0 errors), database status is 
+unning, and error is 
+ull.
+
+- **Verification:**
+  - python -m unittest test_runner.py: **Ran 7 tests in 8.973s — OK**.
+  - 
+pm run check:game: **477 game tests + 3 simulation tests passed** (480 total tests passed, 0 failed).
+  - 
+pm run build: Production client bundle built cleanly in 3.68s.
+
+## Previous: Wild Rift-Grade 3D Animation Pipeline & Aiselle Marksman Slice (2026-10-20)
+
+- **User Request & Context:**
+  1. Produce a production-ready model and animation pipeline targeting Wild Rift-quality animation feel, snappiness, and readability.
+  2. Full AI integration, open-source / 100% free local tools only (UniRig local Docker worker + Blender LTS GPL + Three.js client runtime). Zero paid subscriptions or proprietary APIs.
+  3. First vertical slice champion: **Aiselle** (`c_astra` / Marksman archer).
+  4. Non-negotiable invariants preserved: hitboxes, stats, attack ranges (550px), projectile speeds, combat timing, risk-based tower dive rules (`towerDiveRules.ts`), 10s turret execution attribution, 12px steering deadbands, anti-oscillation commit timers, and parody aliases (`Cardrel`). Animations remain strictly presentation-level and conform to authoritative game event markers.
+
+- **Architecture & Implementation:**
+  1. **Anatomical Clavicle Preservation & Shoulder Articulation (`retarget-unirig.py`, `equipment_skin.py`):**
+     - In `retarget-unirig.py`, preserved anatomical clavicle joints (`bone_4` / Left Clavicle, `bone_12` / Right Clavicle) between `Chest` and `UpperArm` when inserting native helper pivots (`Chest` -> `Clavicle` -> `left-arm` -> `UpperArm`).
+     - Procedurally drove clavicle rotation with 28% of UpperArm elevation during all animation clips (`Quaternion((1, 0, 0, 0)).slerp(arm_pose.rotation_quaternion, 0.28)`), eliminating collarbone pinching and underarm distortion.
+     - Kept clavicle vertex groups active in `equipment_skin.py` so shoulder mesh regions deform naturally across dual pivots.
+  2. **Held Weapon Rigid Binding & Longbow Socket Anchoring (`equipment_skin.py`, `retarget-unirig.py`):**
+     - Automatically identified hand-held weapon chains on `HandL` (`bone_10` / `bone_11` for `c_astra`), tagged `bone_10` with `avatarPart = 'bow'`, and added them to `equipment_repairs`.
+     - Lowered connected component size threshold in `rigid_equipment()` from 32 down to 4 vertices, rigidly binding all 40+ decorative bow parts (limbs, brackets, crystal gems, grip wraps) to their equipment bone with 100% rigid weight and zero Laplacian smoothing into the forearm.
+     - Ensured Three.js `bindWeaponSocket` resolves the longbow socket cleanly, anchoring 3D projectile spawns and muzzle flashes directly to the modeled bow tip.
+  3. **Locomotion Posture Clearance (`retarget_motion.py`):**
+     - Added lateral outward abduction for `UpperArmR` and `ForearmR` in `ARCHER_CLEARANCE` during `Walk`, `Run`, and `Strafe`, keeping the right drawing hand and fingers clear of flared coat panels and thighs during locomotion.
+     - Reduced self-intersection warnings across locomotion and combat clips.
+  4. **Dynamic Attack Speed Playback Scaling (`threeArenaScene.ts`):**
+     - Scaled basic attack animation playback rate dynamically with `attackSpeedScale` proportional to `unit.champion.aspd` and live buffs (e.g. Ardent Censer).
+     - Allows faster, snappier bow draw and release as attack speed scales, matching the authoritative firing cadence without altering gameplay timers.
+
+- **Verification:**
+  - `retarget-unirig.py` + `qualify-prepared.py` on Aiselle: **`passed: true`**, **`problems: []`**, **`unweighted_vertices: 0`**, **`invalid_weight_sums: 0`**. Self-intersection telemetry during `Attack` dropped from 17,802 down to 87 (and down to 6 at phase 0, 0.70, 1.0).
+  - `npm run check:game`: **477 game tests + 3 simulation tests passed** (480 total tests passed, 0 failed). All invariants protected (Cardrel alias, 10s turret execution window, 12px steering deadband, anti-oscillation commit timers, risk-based tower diving).
+  - `npm run build`: Production client bundle built cleanly in 3.05s.
+  - `teamfight-evolution-api-1 php artisan test`: **95 passed (982 assertions)** with 0 failures.
+
 ## Latest: Persistent Card Memory, Calibrated RL Rewards & Evolution Runner Evidence Recovery (2026-10-20)
 
 - **User Request & Context:**
@@ -2747,4 +2916,28 @@ The previous per-candidate success must not be represented as a permanent rig/de
   - `EsportsClash.Web`: 452/452 tests pass (`npm test`), production build succeeds (`npm run build`).
   - Blender: 9/9 mesh pipeline tests pass, 7/7 retarget motion tests pass.
   - Verified live HTML: Dawnna card links directly to `/preview`, topbar has 6 clean parent sections, modals open and close cleanly, and preparation rows feature in-place Resume and Reset.
+
+## 2026-10-21: Automated 3D Character Rigging Pipeline Inspired by Meshy AI
+
+- **User request:**
+  Implement a Meshy-inspired automated 3D character rigging, alignment, landmark detection, skinning, weapon attachment, and animation retargeting pipeline.
+  Workflow: `CHARACTER_GENERATED → ASSET_VALIDATION → AUTO_ALIGNMENT → LANDMARK_DETECTION → SKELETON_GENERATION → SKINNING → WEAPON_ATTACHMENT → RIG_VALIDATION → ANIMATION_SETUP → READY`.
+  All successful stages must execute autonomously without manual approval gates. Weapons must be separate assets. Preserve backward compatibility and existing gameplay systems.
+- **Architectural Implementation:**
+  - **Phase 1 Asset Contract (`EsportsClash.Web/src/rigging/assetContract.ts`):** Enforces strict anatomical T-pose rules, forward-facing coordinate conventions, leg separation, zero merged weapons in body mesh, standardized asset directory layout (`characters/{id}/character.glb`, `weapons/`, `rig/`, `animations/`), and separate weapon generation prompts.
+  - **Phase 2 Auto-Alignment (`EsportsClash.Web/src/rigging/autoAlignment.ts`):** Evaluates local bounding box in object frame, determines vertical axis, normalizes scale to standard MOBA height (70 units), positions feet at ground plane ($y=0$), centers model at $(x=0, z=0)$, and estimates forward orientation from sagittal depth asymmetry.
+  - **Phase 3 Joint Landmark Detection (`EsportsClash.Web/src/rigging/landmarkDetection.ts`):** Identifies 22 anatomical joints via geometric height slicing, lateral arm extremity search, leg clustering, and bilateral sagittal symmetry ($X = -X$) with per-joint confidence scoring.
+  - **Phase 4 Skeleton & Smooth Skinning (`EsportsClash.Web/src/rigging/skeletonGenerator.ts`, `skinningEngine.ts`, `docs/rigging-backend-evaluation.md`):** Generates standard 18-bone humanoid armature with native helpers (`avatar-root`, `left-arm`, `right-arm`, `leg:-1`, `leg:1`, `outfit`, `right-grip`), projects vertices onto bone capsules with Gaussian heat falloff, strictly enforces 4-bone influence limits and normalization ($\sum w_i = 1.0$), and binds a real deforming `THREE.SkinnedMesh`.
+  - **Phase 5 Weapon Attachment (`EsportsClash.Web/src/rigging/weaponAttachment.ts`):** Standard sockets (`right_hand_socket`, `left_hand_socket`, `weapon_primary`, `weapon_secondary`, `weapon_tip`, `weapon_muzzle`), procedural 3D weapon meshes for all 6 MOBA classes (sword, dual daggers, staff, bow, two-handed, gun), and grip transforms.
+  - **Phase 6 Animation Retargeting (`EsportsClash.Web/src/rigging/animationRetargeting.ts`):** Produces 7 standard animation clips (`Idle`, `Walk`, `Run`, `Attack`, `Cast`, `Hit`, `Death`) with valid Quaternion and Vector keyframe tracks, root motion, and stride calibration.
+  - **Phase 7 Rig Validation (`EsportsClash.Web/src/rigging/rigValidator.ts`):** 10-point automated programmatic validation suite verifying bone hierarchy, required bones, weight normalization, numerical sanity, ground contact, real deformation, mesh integrity, weapon sockets, engine loadability, and PBR material preservation.
+  - **Phase 8 Autonomous Pipeline (`EsportsClash.Web/src/rigging/riggingPipeline.ts`):** `executeRiggingPipeline` orchestrates all 10 stages sequentially and automatically advances on success without manual approval gates.
+  - **Phase 9 Frontend Studio (`EsportsClash.Web/src/components/MeshyRiggingStudio.tsx`, `meshy-rigging-studio.css`, `ChampionHubView.tsx`):** Interactive Three.js 3D viewport, OrbitControls, camera presets, transform sliders, interactive 3D landmark markers with symmetry mirroring, skeleton overlay, weapon swapper, animation player, and live pipeline monitoring.
+  - **Phase 10 Runtime Integration (`EsportsClash.Web/src/avatarModelAssets.ts`):** Added `'meshy-pipeline'` and `'automated-rigging'` provider support in `AvatarAssetLibrary` for seamless animation mixer playback in game matches.
+- **Verification:**
+  - `EsportsClash.Web/src/meshyRiggingPipeline.test.mjs`: 8/8 comprehensive pipeline subtests pass.
+  - `npm run check:game`: 485/485 unit tests pass, 3/3 batch multi-seed simulations pass, design document invariants pass, `tsc -b` passes.
+  - `npm run build`: Production bundle builds cleanly in 2.45s.
+  - Protected invariants (tower dive limits, 10-second turret attribution window, champion-first objective contestation, Cardrel parody aliases) remain 100% intact.
+
 

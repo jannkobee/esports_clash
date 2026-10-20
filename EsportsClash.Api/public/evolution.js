@@ -4,6 +4,7 @@
  * toast notifications, live telemetry polling, and instant micro-interactions.
  */
 (() => {
+    let displayedPath = window.location.pathname + window.location.search;
     // -------------------------------------------------------------
     // Toast Notification System
     // -------------------------------------------------------------
@@ -127,13 +128,13 @@
                 const markup = await response.text();
                 if (!reports.isConnected) return;
                 const latestSelected = new Set([...reports.querySelectorAll('.preparation-select:checked')].map(input => input.value));
-                const latestOpen = new Set([...reports.querySelectorAll('details[id][open]')].map(detail => detail.id));
+                const latestOpen = new Map([...reports.querySelectorAll('details[id]')].map(detail => [detail.id, detail.open]));
                 const latestCategories = new Map([...reports.querySelectorAll('.category-filter-bar')].map(bar =>
                     [bar.dataset.target, bar.querySelector('.category-pill.active')?.dataset.category ?? 'all']));
                 
                 reports.innerHTML = markup;
                 reports.querySelectorAll('.preparation-select:not(:disabled)').forEach(input => { input.checked = latestSelected.has(input.value); });
-                reports.querySelectorAll('details[id]').forEach(detail => { detail.open = latestOpen.has(detail.id); });
+                reports.querySelectorAll('details[id]').forEach(detail => { if (latestOpen.has(detail.id)) detail.open = latestOpen.get(detail.id); });
                 reports.querySelectorAll('.category-filter-bar').forEach(bar => {
                     const category = latestCategories.get(bar.dataset.target) ?? 'all';
                     bar.querySelectorAll('.category-pill').forEach(pill => pill.classList.toggle('active', pill.dataset.category === category));
@@ -155,31 +156,55 @@
     // Generation Search Filter
     // -------------------------------------------------------------
     function initGenerationSearch() {
-        const generationSearch = document.getElementById('generation-search');
-        if (!generationSearch || generationSearch.dataset.bound) return;
-        generationSearch.dataset.bound = 'true';
-
-        generationSearch.addEventListener('input', applyFilters);
+        document.querySelectorAll('[data-list-controls]').forEach(toolbar => {
+            if (toolbar.dataset.bound) return;
+            toolbar.dataset.bound = 'true';
+            toolbar.querySelectorAll('input,select').forEach(control => control.addEventListener(control.type === 'search' ? 'input' : 'change', applyFilters));
+            toolbar.querySelector('[data-list-reset]')?.addEventListener('click', () => {
+                toolbar.querySelectorAll('input').forEach(input => { input.value = ''; });
+                toolbar.querySelectorAll('select').forEach(select => { select.selectedIndex = 0; });
+                document.querySelectorAll('.category-filter-bar').forEach(bar => {
+                    if (bar.dataset.target !== toolbar.dataset.listControls) return;
+                    bar.querySelectorAll('[data-category]').forEach(button => button.classList.toggle('active', button.dataset.category === 'all'));
+                });
+                applyFilters();
+            });
+        });
         applyFilters();
     }
 
+    const listCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
     function applyFilters() {
         document.querySelectorAll('.category-filter-bar').forEach(bar => {
             const target = document.querySelector(bar.dataset.target || '#live-reports');
             if (!target) return;
+            const toolbar = [...document.querySelectorAll('[data-list-controls]')].find(control => control.dataset.listControls === '#' + target.id);
             const category = bar.querySelector('.category-pill.active')?.dataset.category ?? 'all';
             bar.querySelectorAll('.category-pill').forEach(pill => pill.setAttribute('aria-pressed', String(pill.dataset.category === category)));
-            const term = (document.getElementById('generation-search')?.value ?? '').trim().toLocaleLowerCase();
+            const term = (toolbar?.querySelector('[data-list-search]')?.value ?? '').trim().toLocaleLowerCase();
+            const filters = [...(toolbar?.querySelectorAll('[data-list-filter]') ?? [])];
             const items = [...target.querySelectorAll('[data-status-category]')];
             items.forEach(item => {
-                const matchesSearch = !item.matches('.generation-card') || !term || (item.dataset.search ?? '').includes(term);
-                item.hidden = !matchesSearch || category !== 'all' && item.dataset.statusCategory !== category;
+                const matchesSearch = !term || (item.dataset.search ?? '').toLocaleLowerCase().includes(term);
+                const matchesFields = filters.every(filter => !filter.value || item.dataset[filter.dataset.listFilter] === filter.value);
+                item.hidden = !matchesSearch || !matchesFields || category !== 'all' && item.dataset.statusCategory !== category;
             });
-            if (target.id === 'generation-roster') {
-                const status = document.getElementById('generation-filter-status');
-                const visible = items.filter(item => !item.hidden).length;
-                if (status) status.textContent = visible ? `${visible} of ${items.length} avatars shown` : 'No avatars match. Try another name, role or category.';
+            const order = toolbar?.querySelector('[data-list-sort]')?.value;
+            if (order) {
+                const compareName = (a, b) => listCollator.compare(a.dataset.name ?? '', b.dataset.name ?? '');
+                const sorted = items.sort((a, b) => {
+                    if (order === 'name') return compareName(a, b);
+                    if (order === 'name-desc') return compareName(b, a);
+                    if (order === 'role') return listCollator.compare(a.dataset.role ?? '', b.dataset.role ?? '') || compareName(a, b);
+                    const difference = Number(a.dataset.created ?? 0) - Number(b.dataset.created ?? 0);
+                    return (order === 'newest' ? -difference : difference) || listCollator.compare(a.dataset.jobId ?? '', b.dataset.jobId ?? '');
+                });
+                sorted.forEach(item => target.append(item));
             }
+            const visible = items.filter(item => !item.hidden).length;
+            const status = target.id === 'generation-roster' ? document.getElementById('generation-filter-status') : [...document.querySelectorAll('[data-list-results]')].find(node => node.dataset.listResults === '#' + target.id);
+            if (status) status.textContent = visible ? visible + ' of ' + items.length + (target.id === 'generation-roster' ? ' avatars shown' : ' jobs shown') : (target.id === 'generation-roster' ? 'No avatars match. Try another name, role or category.' : 'No jobs match these filters.');
+            target.dispatchEvent(new Event('collection:filtered'));
         });
     }
 
@@ -352,6 +377,13 @@
         });
 
         window.addEventListener('popstate', (e) => {
+            // Native section links also emit popstate. They do not change the
+            // rendered page, and assigning the same hash here recurses.
+            if (window.location.pathname + window.location.search === displayedPath) return;
+            if (document.querySelector('main script')) {
+                window.location.reload();
+                return;
+            }
             softNavigate(window.location.href, false);
         });
     }
@@ -367,6 +399,7 @@
             window.location.reload();
             return;
         }
+        displayedPath = window.location.pathname + window.location.search;
         const csrf = doc.querySelector('meta[name="csrf-token"]');
         if (csrf) document.querySelector('meta[name="csrf-token"]').content = csrf.content;
         const header = doc.querySelector('.topbar');

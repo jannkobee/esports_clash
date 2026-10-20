@@ -391,7 +391,9 @@ export class ArenaScene {
       actor.motion=motionTimeline(actor.motion,unit,frame.second,targetYaw,(avatarDesign(unit.champion.id)?.height??76)/76,actor.avatar?.body.userData.strideDistances);
       actor.body.rotation.y=actor.motion.yaw;
       const elapsed=frame.second-actor.motion.started,transition=frame.second-actor.motion.changed;
-      actor.avatar?.animate({...unit,motionState:actor.motion.state,motionTime:elapsed+(actor.motion.state==='attack'?combatDuration(unit.champion.id,'attack')*.42:0),
+      const attackSpeedScale = actor.motion.state === 'attack' ? Math.max(0.5, (unit.champion.aspd + (((unit as {censerBuffTimer?: number}).censerBuffTimer ?? 0) > 0 ? 0.25 : 0)) / Math.max(0.1, unit.champion.aspd)) : 1;
+      const attackMotionTime = actor.motion.state === 'attack' ? elapsed * attackSpeedScale + combatDuration(unit.champion.id, 'attack') * .42 : elapsed;
+      actor.avatar?.animate({...unit,motionState:actor.motion.state,motionTime:attackMotionTime,
         previousMotion:actor.motion.from,previousMotionTime:actor.motion.fromTime+transition,motionBlend:Math.min(1,transition/AVATAR_CROSSFADE_SECONDS),
         recoil:Math.max(0,1-(frame.second-actor.motion.hit)/.32),gaitPhase:actor.motion.gaitPhase,
         previousGaitPhase:actor.motion.gaitPhase,motionYaw:actor.motion.yaw,

@@ -8,7 +8,7 @@ import unittest
 import urllib.error
 import urllib.request
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import server
 from training import fit, calibrate, score
@@ -69,6 +69,44 @@ class RunnerTests(unittest.TestCase):
         with patch.object(server.subprocess, 'Popen') as spawn:
             self.assertEqual(self.request('POST', self.plan)[1]['status'], 'cancelled')
             spawn.assert_not_called()
+
+    def test_runner_sources_compile_before_any_job_is_admitted(self):
+        server.validate_runner_sources()
+
+    def test_invalid_pipeline_fails_preflight_without_launching_or_consuming_attempt(self):
+        broken = Path(self.temporary.name) / 'broken-pipeline.py'
+        broken.write_text('run(\nif failed:\n    pass\n')
+        with patch.object(server, 'RUNNER_SOURCES', (broken,)), patch.object(server.subprocess, 'Popen') as spawn:
+            code, state = self.request('POST', self.plan)
+            self.assertEqual(code, 200)
+            self.assertEqual(state['status'], 'failed')
+            self.assertIn('preflight failed', state['error'])
+            self.assertIn('SyntaxError', state['traceback'])
+            folder = server.ROOT / self.url.rsplit('/', 1)[1]
+            self.assertFalse((folder / 'starts.json').exists())
+            spawn.assert_not_called()
+
+    def test_unexpected_worker_exit_reports_traceback_without_retry(self):
+        run_id = self.url.rsplit('/', 1)[1]
+        folder = server.ROOT / run_id
+        folder.mkdir()
+        server.write_json(folder / 'plan.json', self.plan)
+        server.write_json(folder / 'state.json', {'status': 'running', 'progress': {}})
+        (folder / 'worker.log').write_text('  File "/runner/pipeline.py", line 241\nSyntaxError: invalid syntax\n')
+        process = Mock(returncode=1)
+        process.poll.return_value = 1
+        with patch.dict(server.PROCESSES, {run_id: process}, clear=True), patch.object(server.subprocess, 'Popen') as spawn:
+            code, state = self.request('POST', self.plan)
+            self.assertEqual(code, 200)
+            self.assertIn('SyntaxError: invalid syntax', state['error'])
+            self.assertIn('line 241', state['traceback'])
+            self.assertEqual(state['status'], 'failed')
+            spawn.assert_not_called()
+
+    def test_worker_exit_without_log_does_not_claim_an_oom(self):
+        state = server.worker_failure(Path(self.temporary.name), -9)
+        self.assertIn('code -9', state['error'])
+        self.assertEqual(state['traceback'], '')
 
 
 class TrainingTests(unittest.TestCase):

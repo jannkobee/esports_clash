@@ -1,104 +1,70 @@
 @php
-    $readyCount = $runs->filter(fn($r) => in_array($r->status, ['ready', 'published']))->count();
-    $failedCount = $runs->filter(fn($r) => $r->error || !empty($r->state['report']['reasons'] ?? $r->state['preparation']['problems'] ?? []) || in_array($r->status, ['failed', 'cancelled']))->count();
-    $activeCount = $runs->filter(fn($r) => in_array($r->status, [...\App\Services\AvatarPreparationService::ACTIVE, 'cancelling', 'pausing']))->count();
-    $reviewCount = $runs->filter(fn($r) => in_array($r->status, ['awaiting_retarget', 'awaiting_validation', 'needs_review']))->count();
+    $categoryFor=function($run) {
+        if(in_array($run->status,[...\App\Services\AvatarPreparationService::ACTIVE,'cancelling','pausing'],true)) return 'active';
+        if(in_array($run->status,['ready','published'],true)) return 'ready';
+        if(in_array($run->status,['paused','cancelled'],true)) return 'stopped';
+        if($run->status==='failed'||$run->error||!empty($run->state['report']['reasons']??$run->state['preparation']['problems']??[])) return 'failed';
+        return in_array($run->status,['awaiting_retarget','awaiting_validation','needs_review'],true) ? 'review' : 'stopped';
+    };
+    $statusLabels=['queued'=>'Queued','preparing'=>'Preparing','rigging'=>'Building rig','animating'=>'Preparing animation','validating'=>'Checking qualification','waiting_models'=>'Waiting for checkpoints','waiting_resources'=>'Waiting for capacity','waiting_worker'=>'Worker disconnected','cancelling'=>'Stopping','pausing'=>'Pausing','paused'=>'Paused','cancelled'=>'Cancelled','failed'=>'Failed','awaiting_retarget'=>'Mapping needs review','awaiting_validation'=>'Awaiting qualification','needs_review'=>'Needs review','ready'=>'Ready for sign-off','published'=>'Published'];
 @endphp
-
+@unless($singleReport??false)
 <div class="category-filter-bar" data-target="#live-reports">
-    <button type="button" class="category-pill active" data-category="all">All Preparations <span class="category-count">{{ count($runs) }}</span></button>
-    <button type="button" class="category-pill pill-success" data-category="ready">✓ Ready / Published <span class="category-count">{{ $readyCount }}</span></button>
-    <button type="button" class="category-pill pill-failed" data-category="failed">✕ Issues / Failed <span class="category-count">{{ $failedCount }}</span></button>
-    <button type="button" class="category-pill pill-running" data-category="active">⏳ In Progress <span class="category-count">{{ $activeCount }}</span></button>
-    <button type="button" class="category-pill" data-category="review">📋 Awaiting Review <span class="category-count">{{ $reviewCount }}</span></button>
+@foreach(['all'=>'All jobs','active'=>'In progress','review'=>'Needs review','ready'=>'Ready / Published','failed'=>'Issues / Failed','stopped'=>'Paused / Cancelled'] as $key=>$label)
+    <button type="button" class="category-pill {{ $key==='all'?'active':'' }}" data-category="{{ $key }}">{{ $label }} <span class="category-count">{{ $key==='all'?$runs->count():$runs->filter(fn($entry)=>$categoryFor($entry)===$key)->count() }}</span></button>
+@endforeach
 </div>
-
+@endunless
 @forelse($runs as $run)
 @php
-    $deletable = app(\App\Services\ReportDeletionService::class)->canDelete('preparation', $run->status, $run->control);
-    $reasons = $run->state['report']['reasons'] ?? $run->state['preparation']['problems'] ?? [];
-    $geometry = $run->state['report']['geometry'] ?? null;
-    $hasErrors = (bool) $run->error || !empty($reasons) || in_array($run->status, ['failed', 'cancelled']);
-    $isReady = in_array($run->status, ['ready', 'published']) || ($geometry['passed'] ?? false);
-    $isActive = in_array($run->status, [...\App\Services\AvatarPreparationService::ACTIVE, 'cancelling', 'pausing']);
-    $isReview = in_array($run->status, ['awaiting_retarget', 'awaiting_validation', 'needs_review']);
-
-    $category = $isReady ? 'ready' : ($hasErrors ? 'failed' : ($isActive ? 'active' : ($isReview ? 'review' : 'all')));
+    $deletable=app(\App\Services\ReportDeletionService::class)->canDelete('preparation',$run->status,$run->control);
+    $reasons=$run->state['report']['reasons']??$run->state['preparation']['problems']??[];
+    $geometry=$run->state['report']['geometry']??null;
+    $category=$categoryFor($run);
+    $isReady=in_array($run->status,['ready','published'],true);
+    $avatarName=$catalog[$run->avatar_id]['name']??$run->avatar_id;
 @endphp
-<article class="run-row" id="preparation-{{ $run->id }}" data-preparation-id="{{ $run->id }}" data-status-category="{{ $category }}">
-    <div class="run-title">
-        <label class="preparation-selection checkbox-label">
-            <input type="checkbox" class="preparation-select" name="ids[]" value="{{ $run->id }}" form="preparation-bulk-delete" @disabled(!$deletable) aria-label="Select {{ $catalog[$run->avatar_id]['name']??$run->avatar_id }} report {{ substr($run->id,0,8) }} for deletion">
-            <strong>{{ $catalog[$run->avatar_id]['name']??$run->avatar_id }}</strong>
-        </label>
-        <span class="badge {{ $isReady ? 'good' : ($hasErrors ? 'danger' : '') }}">{{ str_replace('_',' ',$run->status) }}</span>
+<article class="run-row preparation-job" id="preparation-{{ $run->id }}" data-preparation-id="{{ $run->id }}" data-name="{{ $avatarName }}" data-job-id="{{ $run->id }}" data-created="{{ $run->created_at->getTimestampMs() }}" data-search="{{ $avatarName.' '.$run->status.' '.($statusLabels[$run->status]??'').' '.$run->id }}" data-status-category="{{ $category }}">
+    <div class="job-header">
+        <div class="job-identity">
+            @unless($singleReport??false)<input type="checkbox" class="preparation-select" name="ids[]" value="{{ $run->id }}" form="preparation-bulk-delete" @disabled(!$deletable) aria-label="Select {{ $avatarName }} report {{ substr($run->id,0,8) }} for deletion">@endunless
+            <div><h3><a href="{{ route('trellis.avatar',$run->avatar_id) }}">{{ $avatarName }}</a></h3><p class="fine">Started {{ $run->created_at->timezone('Asia/Manila')->format('M j, g:i A') }} &middot; Job {{ substr($run->id,0,8) }}</p></div>
+        </div>
+        <span class="badge {{ $isReady?'good':($category==='failed'?'danger':'') }}">{{ $statusLabels[$run->status]??ucfirst(str_replace('_',' ',$run->status)) }}</span>
     </div>
-
     @include('evolution.avatars.preparation-progress')
-
-    {{-- Categorized What Failed Box --}}
     @if($run->error || !empty($reasons))
-        <div class="failure-box">
-            <div class="failure-box-title">✕ Identified Issues &amp; Unmet Criteria ({{ count($reasons) + ($run->error ? 1 : 0) }})</div>
-            @if($run->error)<p class="error-text" style="margin-bottom:6px;">{{ $run->error }}</p>@endif
-            @if(!empty($reasons))
-                <ul class="failure-list">
-                    @foreach($reasons as $reason)
-                        <li>{{ $reason }}</li>
-                    @endforeach
-                </ul>
-            @endif
+        <div class="failure-box"><strong>What needs attention</strong>@if($run->error)<p class="error-text">{{ $run->error }}</p>@endif
+            @if($reasons)<ul class="failure-list">@foreach($reasons as $reason)<li>{{ $reason }}</li>@endforeach</ul>@endif
         </div>
     @endif
-
-    {{-- Categorized What Succeeded Box --}}
-    @if($isReady)
-        <div class="success-box">
-            <div class="success-box-title">✓ Verified Verification Gates</div>
-            <ul class="success-list">
-                @if($geometry['passed'] ?? false)<li>Full-mesh collision &amp; deformation policy passed without severe intersections.</li>@endif
-                @if(isset($run->state['preparation']['sha256']))<li>Native clip retargeting and bone map verified.</li>@endif
-                @if($run->status === 'ready')<li>Ready for owner visual sign-off and publication.</li>@endif
-                @if($run->status === 'published')<li>Published for runtime matches.</li>@endif
-            </ul>
-        </div>
+    @if($isReady)<div class="success-box"><strong>{{ $run->status==='published'?'Published for new scenes':'Technical checks passed / visual sign-off required' }}</strong>
+        @if($geometry['passed']??false)<p class="fine">Recorded geometry qualification passed.</p>@endif
+    </div>@endif
+    <div class="job-main-actions">
+        @if(isset($run->state['preparation']['sha256']))<a class="button" href="{{ route('preparations.preview',$run) }}">Review model &amp; animations &rarr;</a>@endif
+        @unless($singleReport??false)<a href="{{ route('preparations.report',$run) }}">Open full report &rarr;</a>@endunless
+    </div>
+    @if(in_array($run->status,['awaiting_validation','needs_review']))
+        <form method="post" action="{{ route('preparations.validate',$run) }}">@csrf<button class="primary">Run runtime qualification</button></form>
     @endif
-
-    {{-- Stat Chips --}}
-    <div class="stat-chips">
-        <span class="stat-chip">Created: <strong>{{ $run->created_at->timezone('Asia/Manila')->format('M j, Y, g:i A') }}</strong></span>
-        <span class="stat-chip">Profile: <strong>{{ $run->plan['profile']??'unirig-v1' }}</strong></span>
-        @if(isset($run->plan['rig_reuse']))
-            <span class="stat-chip">Rig Reused: <strong>{{ substr($run->plan['rig_reuse']['id'], 0, 8) }}…</strong></span>
-        @endif
-        @if(isset($geometry['policy']))
-            <span class="stat-chip">Policy: <strong>{{ $geometry['policy'] }}</strong></span>
-        @endif
-    </div>
-
-    {{-- In-Place Job Controls (No New Instance) --}}
-    <div class="actions" style="margin: 14px 0 8px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-        @if(in_array($run->status, ['paused', 'failed', 'needs_review', 'cancelled']))
-            <form method="post" action="{{ route('preparations.control', $run) }}" style="display:inline;">
-                @csrf
-                <input type="hidden" name="operation" value="resume_in_place">
-                <button class="primary">▶ Resume preparation</button>
-            </form>
-            <form method="post" action="{{ route('preparations.control', $run) }}" style="display:inline;">
-                @csrf
-                <input type="hidden" name="operation" value="reset">
-                <button class="danger">↺ Reset preparation</button>
-            </form>
-        @endif
-        @if(in_array($run->status, \App\Services\AvatarPreparationService::ACTIVE))
-            <form method="post" action="{{ route('preparations.control', $run) }}" style="display:inline;">
-                @csrf
-                <input type="hidden" name="operation" value="pause">
-                <button class="danger">⏸ Pause</button>
-            </form>
-        @endif
-    </div>
-
+    @if($run->status==='ready')
+        <form method="post" action="{{ route('preparations.publish',$run) }}" class="job-signoff">@csrf
+            <label class="checkbox-label"><input type="checkbox" name="identity_review" value="1" required> I reviewed identity, equipment, team readability, deformation and ability attachments in the previews.</label>
+            <button class="primary">Publish qualified visual version</button>
+        </form>
+    @endif
+    @include('evolution.avatars.preparation-controls')
+    <details class="job-detail job-technical" id="preparation-technical-{{ $run->id }}"><summary>Files, evidence &amp; advanced actions</summary>
+        <dl class="job-facts"><div><dt>Job ID</dt><dd><code>{{ $run->id }}</code></dd></div><div><dt>Source</dt><dd><a href="{{ route('trellis.avatar',[$run->avatar_id,'model'=>$run->generation_id]) }}#models">{{ $run->generation_id }}</a></dd></div><div><dt>Profile</dt><dd>{{ $run->plan['profile']??'unirig-v1' }}</dd></div>
+        @if(isset($run->plan['rig_reuse']))<div><dt>Saved rig</dt><dd>{{ $run->plan['rig_reuse']['id'] }}</dd></div>@endif
+        @if(isset($geometry['policy']))<div><dt>Geometry policy</dt><dd>{{ $geometry['policy'] }}</dd></div>@endif</dl>
+        <div class="run-links"><a href="{{ route('preparations.report',[$run,'format'=>'json']) }}">Download JSON report</a>
+        @if(isset($run->state['preparation']['sha256']))
+            <a href="{{ route('preparations.file',[$run,'candidate-01.glb']) }}">Prepared GLB</a>
+            @if(($run->plan['provider']??'')==='unirig')<a href="{{ route('preparations.file',[$run,'unirig-rigged.glb']) }}">Original UniRig rig</a>@endif
+            <a href="{{ route('preparations.file',[$run,'candidate-01.blend']) }}">Editable Blender scene</a>
+        @endif</div>
     @if(\App\Models\TrellisGeneration::whereKey($run->generation_id)->where('status','generated_unqualified')->exists()&&isset($run->state['preparation']['unirig']['artifact']['sha256'])&&!in_array($run->status,[...\App\Services\AvatarPreparationService::ACTIVE,'cancelling','pausing','paused','published'],true))
         <details class="clean-details" style="margin: 8px 0;">
             <summary>Advanced: Branch revision with saved rig</summary>
@@ -144,45 +110,14 @@
         </details>
     @endif
 
-    <div class="run-links">
-        <a href="{{ route('preparations.report',$run) }}">Preparation report</a>
-        @if(isset($run->state['preparation']['sha256']))
-            <a href="{{ route('preparations.preview',$run) }}">Inspect model and animations</a>
-            <a href="{{ route('preparations.file',[$run,'candidate-01.glb']) }}">Prepared GLB</a>
-            @if(($run->plan['provider']??'')==='unirig')
-                <a href="{{ route('preparations.file',[$run,'unirig-rigged.glb']) }}">Original UniRig rig</a>
-            @endif
-            <a href="{{ route('preparations.file',[$run,'candidate-01.blend']) }}">Editable Blender scene</a>
+
+        @if(in_array($run->status,['paused','failed','needs_review','cancelled']))
+            <div class="actions"><form method="post" action="{{ route('preparations.control',$run) }}">@csrf<input type="hidden" name="operation" value="resume_in_place"><button>Resume same attempt</button></form>
+            <form method="post" action="{{ route('preparations.control',$run) }}" onsubmit="return confirm('Reset this preparation attempt and discard its current qualification results?');">@csrf<input type="hidden" name="operation" value="reset"><button class="danger">Reset same attempt</button></form></div>
         @endif
-        <code>{{ $run->id }}</code>
-    </div>
-
-    @if(in_array($run->status,['awaiting_validation','needs_review']))
-        <form method="post" action="{{ route('preparations.validate',$run) }}" style="margin: 10px 0;">
-            @csrf
-            <button class="primary">Run runtime qualification</button>
-        </form>
-    @endif
-
-    @if($run->status==='ready')
-        <form method="post" action="{{ route('preparations.publish',$run) }}" style="margin: 12px 0;">
-            @csrf
-            <label class="checkbox-label" style="margin-bottom:8px;"><input type="checkbox" name="identity_review" value="1" required> I reviewed identity, equipment, team readability, deformation and ability attachments in the previews.</label>
-            <button class="primary">Publish qualified visual version</button>
-        </form>
-    @endif
-
-    @include('evolution.avatars.preparation-controls')
-    @include('evolution.avatars.cancel',['type'=>'preparation'])
-
-    @if($run->status==='published')
-        <p class="fine">Published for new scenes. Use <a href="{{ route('avatars.index') }}">visual history and rollback</a> to restore a previous version.</p>
-    @endif
-    @if(!$deletable)
-        <p class="fine">This job must finish or acknowledge cancellation before its report can be selected for deletion.</p>
-    @endif
-    @include('evolution.delete-report',['type'=>'preparation'])
+        @include('evolution.avatars.cancel',['type'=>'preparation'])
+        @if(!$deletable)<p class="fine">This job must finish or acknowledge cancellation before its report can be selected for deletion.</p>@endif
+        @include('evolution.delete-report',['type'=>'preparation'])
+    </details>
 </article>
-@empty
-    <p class="muted">No preparation jobs yet. Choose a completed generation above.</p>
-@endforelse
+@empty<div class="job-empty"><h3>No preparation jobs yet</h3><p class="muted">Choose a generated source above to prepare its rig and animations.</p></div>@endforelse

@@ -238,11 +238,11 @@ def main():
         stop_child(chrome); stop_child(WEB_SERVICE)
         train_proc = subprocess.run(['python', '/runner/train_stage.py', str(FOLDER)],
             capture_output=True, text=True,
+            timeout=min(180, max(1, PLAN['max_minutes'] * 60 - (time.time() - START))))
         if train_proc.returncode != 0:
             err_msg = train_proc.stderr.strip() if train_proc.stderr else f"train_stage exited with code {train_proc.returncode}"
             (FOLDER / 'train_stage.log').write_text(f"STDOUT:\n{train_proc.stdout}\n\nSTDERR:\n{train_proc.stderr}")
-            raise RuntimeError(err_msg) # train stage run
-            timeout=min(180, max(1, PLAN['max_minutes'] * 60 - (time.time() - START))))
+            raise RuntimeError(err_msg)
         proper = json.loads(proper_path.read_text())
     PROGRESS['checkpoint_hash'] = sha(FOLDER / 'checkpoint.pt') if (FOLDER / 'checkpoint.pt').exists() else None
     evaluation = {'passes_exploratory_gate': False, 'reason': 'Insufficient independent fitting contexts', 'production_eligible': False}

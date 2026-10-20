@@ -20,11 +20,13 @@ def rigid_equipment(obj,bone_names,repairs,rig=None):
     components=defaultdict(list)
     for v in obj.data.vertices:components[find(v.index)].append(v)
     decisions=[]
+    equip_bone_set={r['bone'] for r in repairs}
     for repair in repairs:
         bone=repair['bone'];side=repair['new_parent'][-1]
-        allowed={bone,'Hand'+side,'Forearm'+side,'UpperArm'+side}
+        allowed={bone,'Hand'+side,'Forearm'+side,'UpperArm'+side} | {r['bone'] for r in repairs if r.get('new_parent')==repair.get('new_parent')}
         for vertices in components.values():
-            if not 32<=len(vertices)<=len(obj.data.vertices)*.2:continue
+            # Allow smaller equipment decorations (crystals, grip wraps, brackets >= 4 vertices)
+            if not 4<=len(vertices)<=len(obj.data.vertices)*.2:continue
             mass=Counter()
             for vertex in vertices:
                 for g in vertex.groups:
@@ -38,16 +40,16 @@ def rigid_equipment(obj,bone_names,repairs,rig=None):
                 hand=(rig.matrix_world@rig.data.bones[repair['new_parent']].head_local).x
                 sign=1 if hand>center else -1
                 side_fraction=sum((obj.matrix_world@v.co).x*sign>center*sign for v in vertices)/len(vertices)
-            # Some equipment has erroneous body weights: require independent
-            # geometric side evidence before allowing up to15% foreign mass.
-            threshold=.85 if side_fraction is not None and side_fraction>=.95 else .95
-            if total<=0 or mass[bone]/total<.5 or chain_fraction<threshold:continue
-            group=obj.vertex_groups.get(bone) or obj.vertex_groups.new(name=bone)
+            threshold=.80 if side_fraction is not None and side_fraction>=.90 else .90
+            equip_mass=sum(mass[b] for b in equip_bone_set if b in allowed)
+            if total<=0 or (mass[bone]/total<.4 and equip_mass/total<.5) or chain_fraction<threshold:continue
+            target_bone=bone if mass[bone]>=equip_mass*.5 else max(equip_bone_set&allowed,key=lambda b:mass[b])
+            group=obj.vertex_groups.get(target_bone) or obj.vertex_groups.new(name=target_bone)
             indices=[v.index for v in vertices]
             for other in obj.vertex_groups:
                 if other.name in bone_names:other.remove(indices)
             group.add(indices,1,'REPLACE')
-            decisions.append({'bone':bone,'vertices':len(indices),'attachment_weight_fraction_before':mass[bone]/total,'hand_chain_fraction_before':sum(mass[n] for n in allowed)/total,'geometric_side_fraction':side_fraction,'method':'disconnected-equipment-rigid-skin-v1','weights_after':{bone:1}})
+            decisions.append({'bone':target_bone,'vertices':len(indices),'attachment_weight_fraction_before':mass[target_bone]/total,'hand_chain_fraction_before':sum(mass[n] for n in allowed)/total,'geometric_side_fraction':side_fraction,'method':'disconnected-equipment-rigid-skin-v1','weights_after':{target_bone:1}})
     return decisions
 
 

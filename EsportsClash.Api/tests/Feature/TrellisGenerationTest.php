@@ -11,6 +11,202 @@ use Tests\TestCase;
 class TrellisGenerationTest extends TestCase
 {
     use RefreshDatabase;
+    private string $assetTestRoot;
+    private string $originalStorage;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->originalStorage = storage_path();
+        $this->assetTestRoot = sys_get_temp_dir().'/trellis-assets-'.Str::uuid();
+        \Illuminate\Support\Facades\File::ensureDirectoryExists($this->assetTestRoot.'/framework/views');
+        $this->app->useStoragePath($this->assetTestRoot);
+    }
+    protected function tearDown(): void
+    {
+        $this->app->useStoragePath($this->originalStorage);
+        \Illuminate\Support\Facades\File::deleteDirectory($this->assetTestRoot);
+        parent::tearDown();
+    }
+    private function pngUpload(): \Illuminate\Http\UploadedFile
+    {
+        return \Illuminate\Http\UploadedFile::fake()->createWithContent('equipment.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg=='));
+    }
+    private function weaponInput(string $slot='primary'): array
+    {
+        return ['avatar_id'=>'c_solana','weapon_slot'=>$slot,'weapon_type'=>$slot==='primary'?'one_handed_sword':'shield',
+            'socket_name'=>$slot==='primary'?'right_hand_socket':'left_hand_socket','weapon_file'=>$this->pngUpload()];
+    }
+    public function test_roster_defaults_to_name_order_and_offers_one_studio_entry_point(): void
+    {
+        Http::fake(['*'=>Http::response([],503)]);
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $response=$this->get(route('trellis.index'))->assertOk()->assertSee('Name: A to Z')->assertSee('data-list-filter="role"',false)->assertSee('data-list-filter="equipment"',false)->assertDontSee('Inspect existing model');
+        preg_match_all('/class="panel generation-card[^"]*" data-name="([^"]+)"/',$response->getContent(),$matches);
+        $this->assertCount(45,$matches[1]);
+        $sorted=$matches[1]; natcasesort($sorted);
+        $this->assertSame(array_values($sorted),$matches[1]);
+    }
+    public function test_equipment_upload_uses_avatar_defaults_without_manual_type_or_socket(): void
+    {
+        Http::fake();
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $input=$this->weaponInput(); unset($input['weapon_type'],$input['socket_name']);
+        $this->post(route('trellis.upload-weapon'),$input)->assertSessionHasNoErrors();
+        $file=app(TrellisGenerationService::class)->weaponFile('c_solana');
+        $this->assertSame('right_hand_socket',$file['meta']['socket_name']);
+        $this->assertSame('one_handed_sword',$file['meta']['weapon_type']);
+        $input=$this->weaponInput('secondary'); $input['avatar_id']='c_astra'; unset($input['weapon_type'],$input['socket_name']);
+        $this->post(route('trellis.upload-weapon'),$input)->assertSessionHasNoErrors();
+        $file=app(TrellisGenerationService::class)->weaponFile('c_astra','secondary');
+        $this->assertSame('left_hand_socket',$file['meta']['socket_name']);
+        $this->assertSame('generic',$file['meta']['weapon_type']);
+        $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('Optional equipment settings');
+    }
+    public function test_asset_prompts_are_owner_only_validated_and_persist_per_avatar_without_queueing(): void
+    {
+        Http::fake(['*'=>Http::response([],503)]); Queue::fake();
+        $url=route('trellis.prompts','c_solana');
+        $this->patch($url)->assertRedirect('/login');
+        $this->actingAs(User::factory()->create())->patch($url)->assertForbidden();
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $this->patch($url,['body'=>''])->assertSessionHasErrors(['body','primary','secondary']);
+        $this->patch($url,['body'=>'Custom body brief','primary'=>'Custom sword brief','secondary'=>'Custom shield brief'])->assertSessionHasNoErrors();
+        $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('Custom body brief')->assertSee('Custom sword brief')->assertSee('Custom shield brief');
+        $this->get(route('trellis.avatar','c_astra'))->assertOk()->assertDontSee('Custom body brief');
+        $this->patch(route('trellis.prompts','unknown'),['body'=>'a','primary'=>'b','secondary'=>'c'])->assertNotFound();
+        $this->assertSame(0,TrellisGeneration::count()); Queue::assertNothingPushed();
+    }
+    public function test_saved_design_context_imports_once_and_requires_matching_avatar(): void
+    {
+        Http::fake(['*'=>Http::response([],503)]); Queue::fake();
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $design=\App\Models\ManagedContent::create(['kind'=>'avatar','source_id'=>'c_solana','name'=>'Dawnna draft','payload'=>['designBrief'=>['appearancePrompt'=>'Amber armor with a sun crest']]]);
+        $url=route('trellis.avatar',['c_solana','design'=>$design->id]);
+        $response=$this->get($url)->assertOk()->assertSee('Amber armor with a sun crest')->assertSee('data-imported-brief',false);
+        preg_match_all('/<textarea[^>]*name="(body|primary|secondary)"[^>]*>(.*?)<\/textarea>/s',$response->getContent(),$matches,PREG_SET_ORDER);
+        $prompts=[];
+        foreach ($matches as $match) $prompts[$match[1]]=html_entity_decode($match[2],ENT_QUOTES|ENT_HTML5,'UTF-8');
+        $this->assertCount(3,$prompts);
+        $this->patch(route('trellis.prompts','c_solana'),$prompts)->assertSessionHasNoErrors();
+        $this->get($url)->assertOk()->assertDontSee('data-imported-brief',false);
+        $this->get(route('trellis.avatar',['c_astra','design'=>$design->id]))->assertNotFound();
+        $this->assertSame(0,TrellisGeneration::count()); Queue::assertNothingPushed();
+    }
+    public function test_both_weapon_slots_support_upload_edit_replace_and_confirmed_removal(): void
+    {
+        Http::fake(['*'=>Http::response([],503)]);
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $service=app(TrellisGenerationService::class);
+        $this->post(route('trellis.upload-weapon'),$this->weaponInput())->assertSessionHasNoErrors();
+        $this->post(route('trellis.upload-weapon'),$this->weaponInput('secondary'))->assertSessionHasNoErrors();
+        $hash=$service->weaponFile('c_solana')['sha256'];
+        $this->post(route('trellis.upload-weapon'),['avatar_id'=>'c_solana','weapon_slot'=>'primary','weapon_type'=>'bow','socket_name'=>'right_hand_socket'])->assertSessionHasNoErrors();
+        $this->assertSame($hash,$service->weaponFile('c_solana')['sha256']);
+        $this->assertSame('bow',$service->weaponReferences()['c_solana']['primary']['weapon_type']);
+        $this->get(route('trellis.weapon',['c_solana','primary']))->assertOk()->assertHeader('Content-Type','image/png');
+        $gltf='{"asset":{"version":"2.0"},"buffers":[{"uri":"data:application/octet-stream;base64,AAAA"}]}';
+        $input=$this->weaponInput(); $input['weapon_file']=\Illuminate\Http\UploadedFile::fake()->createWithContent('sword.gltf',$gltf);
+        $this->post(route('trellis.upload-weapon'),$input)->assertSessionHasNoErrors();
+        $this->assertFileDoesNotExist($service->weaponStoragePath('c_solana').'/primary.png');
+        $this->get(route('trellis.weapon',['c_solana','primary']))->assertHeader('Content-Type','model/gltf+json');
+        $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('3D file')->assertSee('PNG reference');
+        $url=route('trellis.destroy-weapon',['c_solana','primary']);
+        $this->delete($url)->assertSessionHasErrors('confirm_delete');
+        $this->assertNotNull($service->weaponFile('c_solana'));
+        $this->delete($url,['confirm_delete'=>1])->assertSessionHasNoErrors();
+        $this->assertNull($service->weaponFile('c_solana'));
+        $this->assertFalse($service->weaponReferences()['c_solana']['primary']['has_custom_asset']);
+        $this->assertNotNull($service->weaponFile('c_solana','secondary'));
+        $this->get(route('trellis.weapon',['c_solana','primary']))->assertNotFound();
+        $this->delete($url,['confirm_delete'=>1])->assertSessionHasNoErrors();
+    }
+    public function test_weapon_upload_rejects_spoofed_formats_external_resources_and_mismatched_sockets(): void
+    {
+        Http::fake(); $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        foreach (['fake.png'=>'not an image','fake.glb'=>'not a model','external.gltf'=>'{"asset":{"version":"2.0"},"buffers":[{"uri":"../private.bin"}]}','malformed.gltf'=>'{"asset":{"version":"2.0"},"buffers":"invalid"}'] as $name=>$bytes) {
+            $input=$this->weaponInput(); $input['weapon_file']=\Illuminate\Http\UploadedFile::fake()->createWithContent($name,$bytes);
+            $this->post(route('trellis.upload-weapon'),$input)->assertSessionHasErrors('weapon_file');
+        }
+        $input=$this->weaponInput(); $input['socket_name']='left_hand_socket';
+        $this->post(route('trellis.upload-weapon'),$input)->assertSessionHasErrors('socket_name');
+        $input=$this->weaponInput(); $input['weapon_slot']='../../private';
+        $this->post(route('trellis.upload-weapon'),$input)->assertSessionHasErrors('weapon_slot');
+        $this->get('/evolution/avatars/trellis/weapon/c_solana/not-a-slot')->assertNotFound();
+        $this->patch(route('trellis.update-weapon',['c_solana','primary']),['weapon_type'=>'staff'])->assertSessionHasErrors('weapon_file');
+        $this->assertNull(app(TrellisGenerationService::class)->weaponFile('c_solana')); Http::assertNothingSent();
+    }
+    public function test_removing_active_body_preserves_frozen_input_and_blocks_stale_worker_generation(): void
+    {
+        Queue::fake();
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $service=app(TrellisGenerationService::class);
+        $upload=$this->pngUpload(); $hash=hash_file('sha256',$upload->getRealPath());
+        $ops=$this->operations(); $ops['references']['c_solana']['sha256']=$hash;
+        Http::fake(['*/operations'=>Http::response($ops),'*/references/c_solana'=>Http::response(['sha256'=>$hash])]);
+        $meta=$service->saveReferenceAsset('c_solana',$upload,'Body prompt','test');
+        $url=route('trellis.destroy-reference','c_solana');
+        $this->delete($url)->assertSessionHasErrors('confirm_delete');
+        $this->delete($url,['confirm_delete'=>1])->assertSessionHasNoErrors();
+        $this->assertNull($service->currentReference('c_solana'));
+        $this->assertArrayNotHasKey('c_solana',$service->references($ops));
+        $this->assertFileExists($service->localReference('c_solana',$meta['sha256']));
+        $this->post(route('trellis.start'),['avatar_id'=>'c_solana','seed'=>1])->assertSessionHasErrors('avatar_id');
+        $this->assertSame(0,TrellisGeneration::count());
+        $this->post(route('trellis.upload'),['avatar_id'=>'c_solana','reference'=>$this->pngUpload()])->assertSessionHasNoErrors();
+        $this->post(route('trellis.start'),['avatar_id'=>'c_solana','seed'=>1])->assertSessionHasNoErrors();
+        $this->assertSame($meta['sha256'],TrellisGeneration::firstOrFail()->plan['reference_sha256']);
+    }
+    public function test_offline_body_is_synced_before_generation_instead_of_using_old_worker_reference(): void
+    {
+        Queue::fake();
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $service=app(TrellisGenerationService::class);
+        $upload=$this->pngUpload(); $hash=hash_file('sha256',$upload->getRealPath()); $synced=false;
+        Http::fake(function($request) use (&$synced,$hash) {
+            if (str_ends_with($request->url(),'/operations')) return Http::response($this->operations());
+            return $synced ? Http::response(['sha256'=>$hash]) : Http::response([],503);
+        });
+        $meta=$service->saveReferenceAsset('c_solana',$upload,null,'test');
+        $this->post(route('trellis.start'),['avatar_id'=>'c_solana','seed'=>2])->assertSessionHasErrors('reference');
+        $this->assertSame(0,TrellisGeneration::count());
+        $synced=true;
+        $this->post(route('trellis.start'),['avatar_id'=>'c_solana','seed'=>2])->assertSessionHasNoErrors();
+        $this->assertSame($meta['sha256'],TrellisGeneration::firstOrFail()->plan['reference_sha256']);
+    }
+    public function test_inspection_keeps_original_input_after_body_replacement_and_report_deletion(): void
+    {
+        Http::fake(['*'=>Http::response([],503)]);
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        app(TrellisGenerationService::class)->saveReferenceAsset('c_solana',$this->pngUpload(),null,'test');
+        $oldHash=str_repeat('d',64);
+        $run=TrellisGeneration::create(['id'=>(string)Str::uuid(),'avatar_id'=>'c_solana','status'=>'generated_unqualified','plan'=>['seed'=>7,'reference_sha256'=>$oldHash],'state'=>['artifact'=>['sha256'=>str_repeat('a',64)]]]);
+        $run->delete();
+        $this->get(route('trellis.preview',$run))->assertRedirect(route('trellis.avatar',[$run->avatar_id,'model'=>$run->id]).'#models');
+        $this->get(route('trellis.avatar',[$run->avatar_id,'model'=>$run->id]))->assertOk()->assertSee(route('trellis.reference',['c_solana',$oldHash]),false)->assertSee('Original generation input')->assertSee('current body reference');
+    }
+    public function test_known_legacy_concepts_do_not_count_as_ready_body_references(): void
+    {
+        Queue::fake(); $ops=$this->operations();
+        $ops['references']['c_solana']['prompt']='Clearly attached equipment, relaxed A stance, near-frontal view';
+        Http::fake(['*/operations'=>Http::response($ops)]);
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $service=app(TrellisGenerationService::class);
+        $this->assertArrayNotHasKey('c_solana',$service->references($ops));
+        $this->assertTrue($service->currentReference('c_solana')['is_legacy']);
+        $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('Legacy concept')->assertSee('Replace it with a clean T-pose body');
+        $this->post(route('trellis.start'),['avatar_id'=>'c_solana','seed'=>1])->assertSessionHasErrors('avatar_id');
+        Queue::assertNothingPushed();
+    }
+    public function test_live_history_recognizes_all_active_states_and_keeps_deleted_models_out_of_failed_filter(): void
+    {
+        Http::fake(); $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        foreach ([...TrellisGenerationService::ACTIVE,'cancelling','model_deleted','cancelled'] as $status) {
+            TrellisGeneration::create(['id'=>(string)Str::uuid(),'avatar_id'=>'c_solana','status'=>$status,'plan'=>[],'state'=>[]]);
+        }
+        $this->get(route('trellis.live'))->assertOk()->assertSee('Waiting for worker')->assertSee('Generating')
+            ->assertSee('Model deleted')->assertSee('data-category="active">In progress <span class="category-count">6</span>',false)
+            ->assertSee('data-category="failed">Failed <span class="category-count">0</span>',false);
+    }
     public function test_confirmed_model_deletion_releases_the_generation_guard_and_keeps_report():void
     {
         Queue::fake();Http::fake(['*/operations'=>Http::response($this->operations()),'*/artifact'=>Http::response(['status'=>'model_deleted'])]);
@@ -40,7 +236,7 @@ class TrellisGenerationTest extends TestCase
         Http::fake();
         $this->delete($url,['confirm_delete'=>1])->assertSessionHasErrors('model');Http::assertNothingSent();
         $run->delete();
-        $this->get(route('trellis.index'))->assertOk()->assertSee(route('trellis.destroy-model',$run),false);
+        $this->get(route('trellis.index'))->assertOk()->assertSee(route('trellis.avatar',$run->avatar_id),false);
     }
     public function test_deleted_inactive_preparation_reports_do_not_block_source_deletion():void
     {
@@ -130,7 +326,7 @@ class TrellisGenerationTest extends TestCase
     {
         Http::fake(['*'=>Http::response([],503)]);
         $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
-        $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('The GPU worker is offline.');
+        $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('Local worker offline');
         // User-managed concept files may be removed; this test owns its fixture.
         $path=tempnam(sys_get_temp_dir(),'trellis-test-');
         file_put_contents($path,base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg=='));
@@ -184,7 +380,7 @@ class TrellisGenerationTest extends TestCase
         $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
         $existing=TrellisGeneration::create(['id'=>(string)Str::uuid(),'avatar_id'=>'c_solana','status'=>'generated_unqualified','plan'=>[]]);
         $this->post('/evolution/avatars/trellis',['seed'=>1,'avatar_id'=>'c_solana'])->assertSessionHasErrors('avatar_id');
-        $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('3D model already generated')->assertSee('Inspect existing model');
+        $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('3D source available')->assertSee('Open avatar studio')->assertDontSee('Inspect existing model');
         $existing->delete();
         $this->post('/evolution/avatars/trellis',['seed'=>2,'avatar_id'=>'c_solana'])->assertSessionHasErrors('avatar_id');
         $this->assertSame(1,TrellisGeneration::withTrashed()->count());Queue::assertNothingPushed();

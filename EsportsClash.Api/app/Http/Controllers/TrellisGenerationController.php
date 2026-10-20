@@ -9,24 +9,59 @@ class TrellisGenerationController extends Controller
     {
         $request->validate(['design'=>'nullable|uuid']);
         $selectedDesign=$request->filled('design') ? \App\Models\ManagedContent::where('kind','avatar')->whereNotNull('source_id')->where('status','<>','archived')->findOrFail($request->query('design')) : null;
-        return response()->view('evolution.avatars.trellis',['selectedDesign'=>$selectedDesign,'operations'=>$service->operations(),'localReferences'=>$service->localReferences(),'catalog'=>$service->catalog(),'runs'=>TrellisGeneration::latest()->limit(100)->get(),'completedModels'=>TrellisGeneration::withTrashed()->where('status','generated_unqualified')->latest()->get()->unique('avatar_id')->keyBy('avatar_id')])->header('Cache-Control','no-store');
+        $operations=$service->operations();
+        return response()->view('evolution.avatars.trellis',[
+            'selectedDesign'=>$selectedDesign,
+            'operations'=>$operations,
+            'assetReferences'=>$service->references($operations),
+            'localReferences'=>$service->localReferences(),
+            'weaponReferences'=>$service->weaponReferences(),
+            'activeRuns'=>TrellisGeneration::whereIn('status',[...TrellisGenerationService::ACTIVE,'cancelling'])->get(),
+            'catalog'=>collect($service->catalog())->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)->values()->all(),
+            'runs'=>TrellisGeneration::latest()->limit(100)->get()->sortBy('created_at')->values(),
+            'completedModels'=>TrellisGeneration::withTrashed()->where('status','generated_unqualified')->latest()->get()->unique('avatar_id')->keyBy('avatar_id')
+        ])->header('Cache-Control','no-store');
     }
-    public function avatarStatus(string $avatar,TrellisGenerationService $service)
+    public function avatarStatus(Request $request,string $avatar,TrellisGenerationService $service)
     {
+        $request->validate(['design'=>'nullable|uuid','model'=>'nullable|uuid']);
+        $selectedDesign=$request->filled('design') ? \App\Models\ManagedContent::where('kind','avatar')->where('source_id',$avatar)->where('status','<>','archived')->findOrFail($request->query('design')) : null;
         $meta=collect($service->catalog())->firstWhere('id',$avatar);abort_unless($meta,404);
-        return response()->view('evolution.avatars.generation-status',['avatar'=>$meta,'runs'=>TrellisGeneration::where('avatar_id',$avatar)->latest()->limit(100)->get(),'names'=>collect($service->catalog())->pluck('name','id'),'retainedModel'=>TrellisGeneration::withTrashed()->where('avatar_id',$avatar)->where('status','generated_unqualified')->exists()])->header('Cache-Control','no-store');
+        $weapon=$service->weaponReferences()[$avatar]??null;
+        $operations=$service->operations();
+        $currentReference=$service->currentReference($avatar,$operations??[]);
+        $models=TrellisGeneration::withTrashed()->where('avatar_id',$avatar)->where('status','generated_unqualified')->oldest()->get();
+        $completedModel=$request->filled('model') ? $models->firstWhere('id',$request->query('model')) : $models->last();
+        if ($request->filled('model')) abort_unless($completedModel,404);
+        return response()->view('evolution.avatars.generation-status',[
+            'avatar'=>$meta,
+            'selectedDesign'=>$selectedDesign,
+            'runs'=>TrellisGeneration::where('avatar_id',$avatar)->latest()->limit(100)->get()->sortBy('created_at')->values(),
+            'names'=>collect($service->catalog())->pluck('name','id'),
+            'retainedModel'=>TrellisGeneration::withTrashed()->where('avatar_id',$avatar)->where('status','generated_unqualified')->exists(),
+            'completedModel'=>$completedModel,
+            'models'=>$models,
+            'weapon'=>$weapon,
+            'currentReference'=>$currentReference,
+            'operations'=>$operations
+        ])->header('Cache-Control','no-store');
     }
     public function live(Request $request,TrellisGenerationService $service)
     {
         $request->validate(['avatar_id'=>'nullable|string|max:80']);
         if($request->filled('avatar_id'))abort_unless(collect($service->catalog())->contains('id',$request->query('avatar_id')),404);
-        return response()->view('evolution.avatars.generation-runs',['runs'=>TrellisGeneration::when($request->filled('avatar_id'),fn($query)=>$query->where('avatar_id',$request->query('avatar_id')))->latest()->limit(100)->get(),'names'=>collect($service->catalog())->pluck('name','id')])->header('Cache-Control','no-store');
+        return response()->view('evolution.avatars.generation-runs',['runs'=>TrellisGeneration::when($request->filled('avatar_id'),fn($query)=>$query->where('avatar_id',$request->query('avatar_id')))->latest()->limit(100)->get()->sortBy('created_at')->values(),'names'=>collect($service->catalog())->pluck('name','id')])->header('Cache-Control','no-store');
     }
     public function start(Request $request,TrellisGenerationService $service)
     {
-        $input=$request->validate(['seed'=>['required','integer','min:0','max:2147483647'],'avatar_id'=>['required','string','max:80']]);
-        $service->start('user:'.$request->user()->id,(int)$input['seed'],$input['avatar_id']);
-        return redirect()->route('trellis.index')->with('status','Real TRELLIS.2 generation queued. The active game appearance is preserved.');
+        $input=$request->validate([
+            'seed'=>['required','integer','min:0','max:2147483647'],
+            'avatar_id'=>['required','string','max:80'],
+            'allow_new_instance'=>['nullable','boolean'],
+        ]);
+        $allowNewInstance = $request->boolean('allow_new_instance');
+        $service->start('user:'.$request->user()->id,(int)$input['seed'],$input['avatar_id'],$allowNewInstance);
+        return redirect()->back(fallback: route('trellis.index'))->with('status','Real TRELLIS.2 generation queued. The active game appearance is preserved.');
     }
     public function reference(Request $request,string $avatar,string $digest,TrellisGenerationService $service)
     {
@@ -40,16 +75,91 @@ class TrellisGenerationController extends Controller
     {
         $input=$request->validate(['avatar_id'=>['required','string','max:80'],'reference'=>['required','file','mimes:png','max:12288'],'prompt'=>['nullable','string','max:8000']],['reference.uploaded'=>'The upload exceeded the server limit or was interrupted. Choose a PNG up to 12 MiB and try again.','reference.max'=>'The reference PNG must be no larger than 12 MiB.']);
         abort_unless(collect($service->catalog())->contains('id',$input['avatar_id']),422);
-        $response=$service->worker()->timeout(45)->post($service->endpoint('/references/'.$input['avatar_id']),[
-            'png_base64'=>base64_encode(file_get_contents($request->file('reference')->getRealPath())),'provider'=>'owner-upload','prompt'=>$input['prompt']??'']);
-        if(!$response->successful())throw \Illuminate\Validation\ValidationException::withMessages(['reference'=>'Reference rejected. Use a transparent full-body RGBA PNG, at least 256 × 512, up to 12 MiB.']);
-        app(\App\Services\EvolutionService::class)->audit($input['avatar_id'],'trellis.reference-uploaded','user:'.$request->user()->id,['avatar_id'=>$input['avatar_id'],'sha256'=>$response->json('sha256')]);
-        return redirect()->route('trellis.index')->with('status','Versioned reference image saved. Existing generations retain their original image.');
+        $service->saveReferenceAsset($input['avatar_id'], $request->file('reference'), $input['prompt'] ?? null, 'user:'.$request->user()->id);
+        return redirect()->back(fallback: route('trellis.index'))->with('status','Neutral T-pose reference image saved. Ready for mesh reconstruction and skeletal joint detection.');
+    }
+    public function uploadWeapon(Request $request,TrellisGenerationService $service)
+    {
+        $input=$request->validate([
+            'avatar_id'=>['required','string','max:80'],
+            'weapon_file'=>['nullable','file','max:20480'],
+            'weapon_slot'=>['required','string','in:primary,secondary'],
+            'weapon_type'=>['nullable','string','in:generic,one_handed_sword,dual_daggers,staff,bow,two_handed,gun,shield,orb'],
+            'socket_name'=>['nullable','string','in:right_hand_socket,left_hand_socket,weapon_primary,weapon_secondary,weapon_muzzle,weapon_tip,projectile_origin'],
+        ]);
+        $expectedSocket = $input['weapon_slot'] === 'primary' ? 'right_hand_socket' : 'left_hand_socket';
+        if (isset($input['socket_name']) && $input['socket_name'] !== $expectedSocket) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['socket_name' => 'Choose the matching hand socket for this weapon slot.']);
+        }
+        $existing = $service->weaponReferences()[$input['avatar_id']][$input['weapon_slot']] ?? [];
+        $input['weapon_type'] = $input['weapon_type'] ?? (($existing['weapon_type']??'none') !== 'none' ? $existing['weapon_type'] : 'generic');
+        $input['socket_name'] = $expectedSocket;
+        if (!$request->hasFile('weapon_file')) {
+            abort_unless(collect($service->catalog())->contains('id', $input['avatar_id']), 422);
+            $service->updateWeapon($input['avatar_id'], $input['weapon_slot'], $input['weapon_type'], 'user:'.$request->user()->id);
+            return back()->with('status', 'Weapon settings saved.');
+        }
+        $ext=strtolower($request->file('weapon_file')->getClientOriginalExtension());
+        if(!in_array($ext,['png','glb','gltf'])){
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'weapon_file'=>'Weapon asset must be a transparent PNG concept image or a 3D GLB/glTF model (up to 20 MiB).'
+            ]);
+        }
+        $meta=$service->saveWeaponAsset(
+            $input['avatar_id'],
+            $request->file('weapon_file'),
+            $input['weapon_slot'],
+            $input['weapon_type'],
+            $input['socket_name'],
+            'user:'.$request->user()->id
+        );
+        $name=collect($service->catalog())->firstWhere('id',$input['avatar_id'])['name']??$input['avatar_id'];
+        return redirect()->back(fallback: route('trellis.index'))
+            ->with('status',($input['weapon_slot']==='primary'?'Right':'Left')." hand equipment saved for {$name}.");
+    }
+    public function weaponAsset(Request $request,string $avatar,TrellisGenerationService $service,string $slot='primary')
+    {
+        $info=$service->weaponFile($avatar,$slot);
+        abort_unless($info&&is_file($info['path']),404,'No separate weapon asset found for this avatar.');
+        return response()->file($info['path'],[
+            'Content-Type'=>$info['mime'],
+            'Cache-Control'=>'no-cache, no-store',
+            'X-Content-Type-Options'=>'nosniff',
+        ]);
+    }
+    public function savePrompts(Request $request, string $avatar, TrellisGenerationService $service, \App\Services\AvatarAssetPromptService $prompts)
+    {
+        abort_unless(collect($service->catalog())->contains('id', $avatar), 404);
+        $input = $request->validate(['body' => 'required|string|max:8000', 'primary' => 'required|string|max:8000', 'secondary' => 'required|string|max:8000']);
+        $prompts->save($avatar, $input, 'user:'.$request->user()->id);
+        return back()->with('status', 'Asset prompts saved. Use them in your image tool, then upload the resulting files.');
+    }
+    public function destroyReference(Request $request, string $avatar, TrellisGenerationService $service)
+    {
+        abort_unless(collect($service->catalog())->contains('id', $avatar), 404);
+        $request->validate(['confirm_delete' => 'required|accepted']);
+        $service->removeReference($avatar, 'user:'.$request->user()->id);
+        return back()->with('status', 'Active body reference removed. Historical generation inputs are retained. Upload a body before generating again.');
+    }
+    public function updateWeapon(Request $request, string $avatar, string $slot, TrellisGenerationService $service)
+    {
+        abort_unless(collect($service->catalog())->contains('id', $avatar), 404);
+        $input = $request->validate(['weapon_type' => 'required|in:generic,one_handed_sword,dual_daggers,staff,bow,two_handed,gun,shield,orb']);
+        $service->updateWeapon($avatar, $slot, $input['weapon_type'], 'user:'.$request->user()->id);
+        return back()->with('status', 'Weapon settings saved.');
+    }
+    public function destroyWeapon(Request $request, string $avatar, string $slot, TrellisGenerationService $service)
+    {
+        abort_unless(collect($service->catalog())->contains('id', $avatar), 404);
+        $request->validate(['confirm_delete' => 'required|accepted']);
+        $service->removeWeapon($avatar, $slot, 'user:'.$request->user()->id);
+        return back()->with('status', 'Custom weapon removed. This hand will use its default equipment or unarmed presentation.');
     }
     public function destroyModel(Request $request,TrellisGeneration $generation,TrellisGenerationService $service)
     {
         $request->validate(['confirm_delete'=>'required|accepted']);
-        $service->deleteModel($generation,'user:'.$request->user()->id);
+        $force = $request->has('force') ? $request->boolean('force') : false;
+        $service->deleteModel($generation,'user:'.$request->user()->id, $force);
         return redirect()->route('trellis.index')->with('status','Generated model deleted. You can manually queue a new generation.');
     }
     public function report(TrellisGeneration $generation)
@@ -59,8 +169,7 @@ class TrellisGenerationController extends Controller
     public function preview(TrellisGeneration $generation,TrellisGenerationService $service)
     {
         abort_unless($generation->status==='generated_unqualified'&&isset($generation->state['artifact']['sha256']),409,'No generated source is ready to inspect.');
-        $name=collect($service->catalog())->firstWhere('id',$generation->avatar_id)['name']??$generation->avatar_id;
-        return response()->view('evolution.avatars.generation-preview',['generation'=>$generation,'name'=>$name])->header('Cache-Control','no-store');
+        return redirect()->route('trellis.avatar',[$generation->avatar_id,'model'=>$generation->id])->withFragment('models');
     }
     public function asset(TrellisGeneration $generation,TrellisGenerationService $service)
     {
