@@ -94,7 +94,8 @@ export class ArenaScene {
     ring: new THREE.RingGeometry(0.88, 1, 40), disc: new THREE.CircleGeometry(1, 24),
   };
   private readonly effectMaterial: THREE.MeshBasicMaterial;
-  private readonly shadowMaterial = new THREE.MeshBasicMaterial({ color: '#071314', transparent: true, opacity: 0.32, depthWrite: false });
+  private readonly shadowMaterial = new THREE.MeshBasicMaterial({ color: '#071314', transparent: true, opacity: 0.28, depthWrite: false });
+  private readonly contactOcclusionMaterial = new THREE.MeshBasicMaterial({ color: '#020608', transparent: true, opacity: 0.48, depthWrite: false });
   private readonly poolOwner = new THREE.Group();
   private readonly avatarResources = new AvatarModelResources();
   private readonly avatarAssets:AvatarAssetLibrary;
@@ -210,6 +211,8 @@ export class ArenaScene {
     group.add(avatar.body);
     const shadow = new THREE.Mesh(this.shapes.disc, this.shadowMaterial);
     shadow.rotation.x = -Math.PI / 2; shadow.scale.set(24, 16, 1); shadow.position.y = .1; group.add(shadow);
+    const contactAO = new THREE.Mesh(this.shapes.disc, this.contactOcclusionMaterial);
+    contactAO.rotation.x = -Math.PI / 2; contactAO.scale.set(13, 8.5, 1); contactAO.position.y = .12; group.add(contactAO);
     this.flat(group, 'ring', TEAM[unit.team], 22);
     const recall = this.flat(group, 'ring', '#a5f3fc', 31, 0, 0, 1); recall.visible = false;
     return { group, body: avatar.body, avatar, recall, height: avatar.height, key: '', weaponSocket:bindWeaponSocket(avatar.body,unit.champion.id),meleeContact:bindMeleeContact(avatar.body,unit.champion.id) };
@@ -385,7 +388,7 @@ export class ArenaScene {
       actor.body.rotation.y=actor.motion.yaw;
       const elapsed=frame.second-actor.motion.started,transition=frame.second-actor.motion.changed;
       actor.avatar?.animate({...unit,motionState:actor.motion.state,motionTime:elapsed+(actor.motion.state==='attack'?combatDuration(unit.champion.id,'attack')*.42:0),
-        previousMotion:actor.motion.from,previousMotionTime:actor.motion.fromTime+transition,motionBlend:actor.motion.state==='attack'?1:Math.min(1,transition/.16),
+        previousMotion:actor.motion.from,previousMotionTime:actor.motion.fromTime+transition,motionBlend:Math.min(1,transition/.12),
         recoil:Math.max(0,1-(frame.second-actor.motion.hit)/.32),gaitPhase:actor.motion.gaitPhase,
         plantFeet:moving&&!((unit.knockupTimer??0)>0)&&!unit.dash,moveX:unit.vx,moveZ:unit.vy},frame.second);
       if(strikeActive&&actualStrike.melee&&!unit.dash&&strikeX!==undefined&&strikeY!==undefined){

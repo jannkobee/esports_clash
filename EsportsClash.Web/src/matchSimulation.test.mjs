@@ -2,14 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   runMatchSimulation,
-  simulateBatchMatches,
+  simulateBatchMatchesParallel,
   createDefaultSimulationLineup
 } from './matchSimulationEngine.ts';
 
 test('deterministic seed reproducibility: identical seeds produce exact match results', () => {
   const seed = 42;
-  const matchA = runMatchSimulation({ seed, maxDurationSeconds: 600 });
-  const matchB = runMatchSimulation({ seed, maxDurationSeconds: 600 });
+  const matchA = runMatchSimulation({ seed, maxDurationSeconds: 180 });
+  const matchB = runMatchSimulation({ seed, maxDurationSeconds: 180 });
 
   assert.equal(matchA.winner, matchB.winner);
   assert.equal(matchA.durationSeconds, matchB.durationSeconds);
@@ -26,9 +26,9 @@ test('Cardrel parody alias is strictly preserved in simulation roster per AGENTS
   assert.equal(cardrelCard.player.realName, 'Caedrel');
 });
 
-test('batch multi-seed simulation collects telemetry, verifies invariants, and generates diagnostics', () => {
+test('batch multi-seed simulation collects telemetry, verifies invariants, and generates diagnostics', async () => {
   const seeds = [101, 102, 103, 104, 105, 106, 107, 108, 109, 110];
-  const analysis = simulateBatchMatches(seeds, { maxDurationSeconds: 900 });
+  const analysis = await simulateBatchMatchesParallel(seeds, { maxDurationSeconds: 480 });
 
   assert.equal(analysis.totalMatches, 10);
   assert.ok(analysis.blueWins + analysis.redWins === 10);

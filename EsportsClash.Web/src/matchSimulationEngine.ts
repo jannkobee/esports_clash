@@ -629,13 +629,43 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     }
   });
 
-  // 6. Minion Movement & Combat
+  // 6. Partition alive units once per frame for fast lookups
+  const blueMinions: LaneMinion[] = [];
+  const redMinions: LaneMinion[] = [];
+  for (let i = 0; i < sim.minions.length; i++) {
+    const m = sim.minions[i];
+    if (m.isAlive) {
+      if (m.team === 'blue') blueMinions.push(m);
+      else redMinions.push(m);
+    }
+  }
+
+  const blueChamps: AramChampionUnit[] = [];
+  const redChamps: AramChampionUnit[] = [];
+  for (let i = 0; i < sim.champions.length; i++) {
+    const c = sim.champions[i];
+    if (c.isAlive) {
+      if (c.team === 'blue') blueChamps.push(c);
+      else redChamps.push(c);
+    }
+  }
+
+  const blueStructures: LaneStructure[] = [];
+  const redStructures: LaneStructure[] = [];
+  for (let i = 0; i < sim.structures.length; i++) {
+    const s = sim.structures[i];
+    if (s.isAlive) {
+      if (s.team === 'blue') blueStructures.push(s);
+      else redStructures.push(s);
+    }
+  }
+
+  // Minion Movement & Combat
   sim.minions.forEach(m => {
     if (!m.isAlive) return;
-    const oppTeam = m.team === 'blue' ? 'red' : 'blue';
-    const oppMinions = sim.minions.filter(o => o.team === oppTeam && o.isAlive);
-    const oppStructures = sim.structures.filter(s => s.team === oppTeam && s.isAlive);
-    const oppChamps = sim.champions.filter(c => c.team === oppTeam && c.isAlive);
+    const oppMinions = m.team === 'blue' ? redMinions : blueMinions;
+    const oppStructures = m.team === 'blue' ? redStructures : blueStructures;
+    const oppChamps = m.team === 'blue' ? redChamps : blueChamps;
 
     const closeMinion = oppMinions.find(o => Math.hypot(o.x - m.x, o.y - m.y) <= m.range + 20);
     const closeStructure = oppStructures.find(s => Math.hypot(s.x - m.x, s.y - m.y) <= m.range + 35);
@@ -672,9 +702,10 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
   sim.structures.forEach(st => {
     if (!st.isAlive || st.ad === 0) return;
     st.attackTimer = Math.max(0, st.attackTimer - dt);
-    const enemyTeam = st.team === 'blue' ? 'red' : 'blue';
-    const attackers = sim.champions.filter(c => c.team === enemyTeam && c.isAlive && Math.hypot(c.x - st.x, c.y - st.y) <= st.range);
-    const waveMinions = sim.minions.filter(m => m.team === enemyTeam && m.isAlive && Math.hypot(m.x - st.x, m.y - st.y) <= st.range);
+    const enemyChamps = st.team === 'blue' ? redChamps : blueChamps;
+    const enemyMinions = st.team === 'blue' ? redMinions : blueMinions;
+    const attackers = enemyChamps.filter(c => Math.hypot(c.x - st.x, c.y - st.y) <= st.range);
+    const waveMinions = enemyMinions.filter(m => Math.hypot(m.x - st.x, m.y - st.y) <= st.range);
 
     const inRange = [...waveMinions, ...attackers];
     const target = selectTurretTarget(inRange, st.targetId, st.diveAggressorId);
@@ -697,10 +728,10 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
   sim.champions.forEach(u => {
     if (!u.isAlive || u.stunTimer > 0) return;
 
-    const oppTeam = u.team === 'blue' ? 'red' : 'blue';
-    const allies = sim.champions.filter(a => a.team === u.team && a.isAlive && a.id !== u.id);
-    const enemies = sim.champions.filter(e => e.team === oppTeam && e.isAlive);
-    const enemyStructures = sim.structures.filter(s => s.team === oppTeam && s.isAlive);
+    const myChamps = u.team === 'blue' ? blueChamps : redChamps;
+    const enemies = u.team === 'blue' ? redChamps : blueChamps;
+    const enemyStructures = u.team === 'blue' ? redStructures : blueStructures;
+    const allies = myChamps.filter(a => a.id !== u.id);
     const enemyLiveTurrets = enemyStructures.filter(s => s.type.includes('tower'));
     const closestEnemyTower = enemyLiveTurrets.sort((a, b) => Math.abs(a.x - u.x) - Math.abs(b.x - u.x))[0];
 
@@ -712,7 +743,8 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     if (closestEnemyTower) {
       const isInsideTower = Math.hypot(u.x - closestEnemyTower.x, u.y - closestEnemyTower.y) <= closestEnemyTower.range;
       const underTowerEnemies = enemies.filter(e => Math.hypot(e.x - closestEnemyTower.x, e.y - closestEnemyTower.y) <= closestEnemyTower.range);
-      const alliedWaveUnderTower = sim.minions.filter(m => m.team === u.team && m.isAlive && Math.hypot(m.x - closestEnemyTower.x, m.y - closestEnemyTower.y) <= closestEnemyTower.range);
+      const myMinions = u.team === 'blue' ? blueMinions : redMinions;
+      const alliedWaveUnderTower = myMinions.filter(m => Math.hypot(m.x - closestEnemyTower.x, m.y - closestEnemyTower.y) <= closestEnemyTower.range);
 
       if (underTowerEnemies.length > 0) {
         const targetUnderTower = underTowerEnemies[0];
@@ -736,9 +768,10 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     }
 
     // Target Selection
+    const myMinions = u.team === 'blue' ? blueMinions : redMinions;
     const target = chooseTeamfightTarget(u, enemies, allies, attackRange, {
       enemyStructures: closestEnemyTower ? [closestEnemyTower] : undefined,
-      alliedMinions: sim.minions.filter(m => m.team === u.team && m.isAlive),
+      alliedMinions: myMinions,
     });
 
     if (target) {
@@ -1162,9 +1195,7 @@ export function runMatchSimulation(options: SimulationOptions): MatchSimulationR
   };
 }
 
-export function simulateBatchMatches(seeds: number[], options?: Omit<SimulationOptions, 'seed'>): BatchSimulationAnalysis {
-  const results: MatchSimulationResult[] = seeds.map(seed => runMatchSimulation({ seed, ...options }));
-
+export function analyzeMatchResults(results: MatchSimulationResult[]): BatchSimulationAnalysis {
   const totalMatches = results.length;
   const blueWins = results.filter(r => r.winner === 'blue').length;
   const redWins = results.filter(r => r.winner === 'red').length;
@@ -1276,4 +1307,43 @@ export function simulateBatchMatches(seeds: number[], options?: Omit<SimulationO
     avatarWinRates,
     diagnostics
   };
+}
+
+export function simulateBatchMatches(seeds: number[], options?: Omit<SimulationOptions, 'seed'>): BatchSimulationAnalysis {
+  const results: MatchSimulationResult[] = seeds.map(seed => runMatchSimulation({ seed, ...options }));
+  return analyzeMatchResults(results);
+}
+
+export async function simulateBatchMatchesParallel(
+  seeds: number[],
+  options?: Omit<SimulationOptions, 'seed'>
+): Promise<BatchSimulationAnalysis> {
+  const isNode = typeof window === 'undefined' && typeof (globalThis as Record<string, any>).process !== 'undefined';
+  if (!isNode) {
+    return simulateBatchMatches(seeds, options);
+  }
+
+  try {
+    const workerModule = 'node:worker_threads';
+    const { Worker } = await import(/* @vite-ignore */ workerModule);
+    const currentUrl = import.meta.url;
+
+    const workerScript = `
+      import { parentPort, workerData } from 'node:worker_threads';
+      import { runMatchSimulation } from ${JSON.stringify(currentUrl)};
+      const res = runMatchSimulation({ seed: workerData.seed, ...workerData.options });
+      parentPort.postMessage(res);
+    `;
+
+    const results = await Promise.all(seeds.map(seed => new Promise<MatchSimulationResult>((resolve, reject) => {
+      const worker = new Worker(workerScript, { eval: true, workerData: { seed, options } });
+      worker.on('message', resolve);
+      worker.on('error', reject);
+    })));
+
+    return analyzeMatchResults(results);
+  } catch (err) {
+    console.error('Parallel simulation failed, falling back to sequential:', err);
+    return simulateBatchMatches(seeds, options);
+  }
 }

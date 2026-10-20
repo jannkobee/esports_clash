@@ -27,7 +27,7 @@
 @endphp
 <article class="run-row" id="preparation-{{ $run->id }}" data-preparation-id="{{ $run->id }}" data-status-category="{{ $category }}">
     <div class="run-title">
-        <label class="preparation-selection">
+        <label class="preparation-selection checkbox-label">
             <input type="checkbox" class="preparation-select" name="ids[]" value="{{ $run->id }}" form="preparation-bulk-delete" @disabled(!$deletable) aria-label="Select {{ $catalog[$run->avatar_id]['name']??$run->avatar_id }} report {{ substr($run->id,0,8) }} for deletion">
             <strong>{{ $catalog[$run->avatar_id]['name']??$run->avatar_id }}</strong>
         </label>
@@ -87,14 +87,14 @@
             <form method="post" action="{{ route('preparations.control', $run) }}" style="display:inline;">
                 @csrf
                 <input type="hidden" name="operation" value="reset">
-                <button class="quiet danger">↺ Reset preparation</button>
+                <button class="danger">↺ Reset preparation</button>
             </form>
         @endif
         @if(in_array($run->status, \App\Services\AvatarPreparationService::ACTIVE))
             <form method="post" action="{{ route('preparations.control', $run) }}" style="display:inline;">
                 @csrf
                 <input type="hidden" name="operation" value="pause">
-                <button class="quiet">⏸ Pause</button>
+                <button class="danger">⏸ Pause</button>
             </form>
         @endif
     </div>
@@ -167,7 +167,7 @@
     @if($run->status==='ready')
         <form method="post" action="{{ route('preparations.publish',$run) }}" style="margin: 12px 0;">
             @csrf
-            <label style="margin-bottom:8px;"><input type="checkbox" name="identity_review" value="1" required> I reviewed identity, equipment, team readability, deformation and ability attachments in the previews.</label>
+            <label class="checkbox-label" style="margin-bottom:8px;"><input type="checkbox" name="identity_review" value="1" required> I reviewed identity, equipment, team readability, deformation and ability attachments in the previews.</label>
             <button class="primary">Publish qualified visual version</button>
         </form>
     @endif

@@ -62,7 +62,7 @@
         </div>
         <div style="display:flex;gap:12px;align-items:center;">
             <a href="{{ route('avatars.reports') }}">All model reports</a>
-            <form method="post" action="{{ route('avatar-jobs.cancel-all','enhancement') }}">@csrf<button class="quiet danger">Cancel all</button></form>
+            <form method="post" action="{{ route('avatar-jobs.cancel-all','enhancement') }}">@csrf<button class="danger">Cancel all</button></form>
         </div>
     </div>
 
@@ -135,7 +135,7 @@
                 @csrf
                 <input type="hidden" name="avatar_id" value="{{ $release->avatar_id }}">
                 <input type="hidden" name="release_id" value="{{ $release->id }}">
-                <button @disabled($release->active || $release->quarantined_at)>Roll back to this version</button>
+                <button class="danger" @disabled($release->active || $release->quarantined_at)>Roll back to this version</button>
             </form>
         </div>
     @empty

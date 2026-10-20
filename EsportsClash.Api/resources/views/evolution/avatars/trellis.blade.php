@@ -96,9 +96,9 @@
 
     $category = $completed ? 'generated' : ($pending ? 'queued' : ($reference ? 'has_ref' : 'needs_ref'));
 
-    $brief='Create one original full-body '.$avatar['role'].' character named '.$avatar['name'].'. '.($avatar['design']['silhouette']??'').'. Costume: '.($avatar['design']['costume']??'').'. Equipment: '.($avatar['design']['signature']??'').'. Skin '.($avatar['design']['skin']??'').', hair '.($avatar['design']['hair']??'').'. Polished stylized MOBA concept, coherent anatomy, clearly attached equipment, relaxed A stance, near-frontal view, entire figure visible with generous margins. Transparent RGBA background, no text, no scene, no detached particles. Preserve identity, weapon type and archetype. Single-image TRELLIS.2 reconstruction reference.';
+    $brief='Create one original full-body '.$avatar['role'].' character named '.$avatar['name'].'. '.($avatar['design']['silhouette']??'').'. Costume: '.($avatar['design']['costume']??'').'. Equipment: '.($avatar['design']['signature']??'').'. Skin '.($avatar['design']['skin']??'').', hair '.($avatar['design']['hair']??'').'. Canonical symmetrical A-pose, arms angled downward at 45 degrees away from torso, hands open with fingers separated, feet shoulder-width apart, upright standing posture, near-frontal eye-level view, entire figure visible from head to toe with generous margins. Polished stylized MOBA character art, clean silhouette, coherent anatomy, attached equipment and weapons resting in hand or sheathed. Plain transparent RGBA background, no floor, no scenery, no detached VFX, no motion blur, no dynamic action pose. Single-image TRELLIS.2 3D mesh reconstruction reference.';
     if (($selectedDesign->source_id ?? null) === $avatar['id'] && !empty($selectedDesign->payload['designBrief']['appearancePrompt'])) {
-        $brief=$selectedDesign->payload['designBrief']['appearancePrompt']."\nFull-body concept reference, relaxed A stance, coherent anatomy and attached equipment. Entire figure visible with generous margins, transparent RGBA background, no text, scenery or detached VFX. Preserve identity and primary weapon type. This is a static reconstruction reference, not a skill animation.";
+        $brief=$selectedDesign->payload['designBrief']['appearancePrompt']."\nCanonical symmetrical A-pose, arms angled downward at 45 degrees away from torso, hands open with fingers separated, feet shoulder-width apart, upright standing posture, near-frontal eye-level view, entire figure visible from head to toe with generous margins. Clean silhouette, coherent anatomy and attached equipment. Plain transparent RGBA background, no floor, no scenery, no detached VFX. Preserve identity and primary weapon type. This is a static 3D reconstruction reference, not a skill animation.";
     }
 @endphp
 @php
@@ -168,7 +168,7 @@
             <h2>3D generation history</h2>
             <p class="muted">Generated source GLBs awaiting rigging and compatibility qualification.</p>
         </div>
-        <form method="post" action="{{ route('avatar-jobs.cancel-all','generation') }}">@csrf<button class="quiet danger">Cancel all generation jobs</button></form>
+        <form method="post" action="{{ route('avatar-jobs.cancel-all','generation') }}">@csrf<button class="danger">Cancel all generation jobs</button></form>
     </div>
     <div id="live-reports" data-url="{{ route('trellis.live') }}">@include('evolution.avatars.generation-runs')</div>
 </section>

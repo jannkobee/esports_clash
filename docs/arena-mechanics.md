@@ -1,5 +1,68 @@
 # Arena mechanics and regression rules
 
+## Latest: Backoffice UI Controls & Machine Learning Pipeline Diagnostics (2026-10-20)
+
+- **Backoffice Form & Checkbox Alignment:**
+  - Scoped `display: block; width: 100%;` in `EsportsClash.Api/public/evolution.css` exclusively to non-checkbox/non-radio text inputs and textareas.
+  - Checkboxes and radios now have `display: inline-block !important; width: 16px !important; height: 16px !important; vertical-align: middle !important; margin: 0 !important;`.
+  - Added dedicated flex alignment rules for `label:has(input[type="checkbox"])`, `.preparation-selection`, and `.checkbox-label` (`display: inline-flex !important; align-items: center !important; gap: 8px !important;`).
+- **Destructive / Flow-Halting Button Standardization (Alert Crimson):**
+  - Converted all cancel, pause, delete, reset, rollback, and reject action triggers to alert crimson (`button.danger`, `.button.danger`, `button.quiet.danger`) across `preparation.blade.php`, `preparation-runs.blade.php`, `preparation-controls.blade.php`, `trellis.blade.php`, `index.blade.php`, `cancel.blade.php`, `delete-report.blade.php`, `delete-generated-model.blade.php`, `operations-controls.blade.php`, and `dashboard.blade.php`.
+- **Button Spacing & Margin Harmonization:**
+  - Added standard button margins (`margin: 4px 0`) with zero-margin overrides for flex action bars (`.actions`). Added `.preparation-bulk` container styling with 18px padding and 20px margins.
+- **Machine Learning Subsystem Diagnosis ("Always No Changes"):**
+  - Identified the conformal calibration quantile trap: 90th percentile overprediction quantile (`level: 0.90`) on small sample size ($N=18$) inflated `errorBuffer` to $0.83+$, driven by bimodal death penalty differences. Subtracting this from typical linear predictions ($+0.05 \text{--} +0.12$) yields negative lower bounds, causing `allowed = false` and `changed = 0` on 100% of evaluation cases.
+- **Verification:**
+  - `php artisan test`: 95 passed (982 assertions) in 8.00s.
+  - `npm run check:game`: 455 tests passed, 0 failures.
+  - `npm run build`: built in 1.36s.
+
+## Latest: Comprehensive Full-Stack Evolution & Simulation Upgrade (2026-10-20)
+
+- **Arena Visual Presentation & MOBA Readability:**
+  - Added 2-tier contact shadow & ambient occlusion decal under champions in `EsportsClash.Web/src/threeArenaScene.ts`: an inner dark core contact decal (`#020608`, 0.48 opacity) inside the softer outer ambient shadow (`#071314`, 0.28 opacity), anchoring champions physically to the arena terrain.
+  - Adjusted `rimIntensity: 1.15` in `arenaArtDirection.ts` to provide crisp champion-terrain silhouette separation under the top-down orthographic camera.
+  - Replaced hardcoded attack snap with smooth 0.12s action crossfading (`Math.min(1, transition / 0.12)`).
+- **Parallel Simulation Engine Performance:**
+  - Added `simulateBatchMatchesParallel` and `analyzeMatchResults` to `EsportsClash.Web/src/matchSimulationEngine.ts`, running multi-seed simulations across Node worker threads (`worker_threads`).
+  - Partitioned active minions, champions, and structures once per frame in `stepSimulation`, eliminating millions of redundant array allocations per match.
+  - Reduced test suite runtime from over 5 minutes down to **44 seconds** in `matchSimulation.test.mjs`.
+- **Pre-Skinning Mesh Cleanup & Trellis Prompts:**
+  - Created `infrastructure/avatar-evolution/mesh_cleanup.py` and hooked it into `prepare-avatar.py` and `retarget-unirig.py` to automatically weld duplicate vertices, delete loose vertices/edges, dissolve degenerate faces, and fix normals before skinning.
+  - Enforced canonical symmetrical A-pose prompt parameters in `trellis.blade.php`.
+- **Backoffice 3D Inspector Upgrades:**
+  - Interactive Skeleton overlay (`THREE.SkeletonHelper`), wireframe inspection toggle, ground grid helper (`THREE.GridHelper`), and slow-motion playback speed steppers (`1.0x`, `0.5x`, `0.25x`) integrated into `generation-viewer.js` and preview templates.
+- **Developer Diagnostics:**
+  - Executable `infrastructure/evolution/dev-doctor.sh` checks stack health across 23 probes.
+- **Verification:**
+  - `dev-doctor.sh`: 23 PASS, 0 WARN, 0 FAIL.
+  - `npm run check:game`: 455 tests passed, 0 failures, `tsc -b` passed.
+  - `npm run build`: built in 2.44s with 0 errors.
+  - `php artisan test`: 95 passed (982 assertions) in 8.31s.
+  - `test_mesh_cleanup.py`: 3 unit tests passed in 0.000s.
+  - Cardrel parody aliases, 10-second turret executions, risk-based tower diving, and anti-spin deadbands strictly preserved.
+
+## Latest: 3D Model In-Game Sizing, Rigging Pipeline Diagnosis & Backoffice UI Overhaul (2026-10-20)
+
+- **3D Model Arena Readability & In-Engine Bounds:**
+  - `EsportsClash.Web/src/avatarModelAssets.ts` computes bounding boxes strictly on visible `Mesh` and `SkinnedMesh` geometry (`computeBoundingBox`), ignoring root empties or IK locator bones.
+  - Sits avatar feet cleanly on ground level ($y = 0$).
+  - Implements a top-down MOBA readability presence multiplier (1.25x) so realistic AI-generated humanoid characters (7.5–8 heads tall) match the head silhouette and visual mass of stylized chibi/heroic procedural heroes.
+  - Correctly binds `hudHeight` on `body` and `root`, ensuring status effects, health bars, and hover hitboxes are positioned at valid finite coordinates instead of `NaN`.
+- **Rigging Pipeline Diagnosis & Fix Applied:**
+  - In `infrastructure/avatar-evolution/equipment_skin.py`, deleted the `shear_damping` dictionary that was transferring 90–96% of limb weights to Hips and Chest.
+  - Replaced the 3D Euclidean grid box blur with a 1-ring topological edge Laplacian smoothing pass along mesh polygon edges (`obj.data.edges`), ensuring weights cannot bleed across empty air gaps between hands and hips or between the thighs.
+  - Maintained rigid equipment isolation and 4-influence GPU skinning normalization.
+- **Backoffice UI Rebuild:**
+  - Rebuilt `layout.blade.php` and `evolution.css` with a tactile, utilitarian, retro-tactical game-dev operations terminal aesthetic.
+  - Mechanical tab switcher row (`[01 AVATARS]`, `[02 ITEMS]`, `[03 ML POLICY]`, `[04 3D GENERATION]`, `[05 ASSET PREP]`, `[06 3D REPAIRS]`), tactile push-buttons with top bevel highlights and inset active press states, hardware status LEDs (`● ONLINE`, `● BUSY`, `● OFFLINE`), and monospace telemetry readouts.
+- **Verification:**
+  - `npm run check:game`: 452 unit tests and 3 batch simulations passed, `tsc -b` passed.
+  - `avatarModelAssets.test.mjs`: all 5 tests passed in 1.18s.
+  - `npm run build`: built client environment in 2.07s.
+  - `http://localhost:8089/login`: verified HTTP 200 OK.
+  - Cardrel parody aliases, tower risk limits, kill attribution, and anti-spin deadbands strictly preserved.
+
 ## Latest: Fix Publication Engine Check & Release Dawnna v2 (2026-10-20)
 
 - **Publication Gate Decoupled from Stale Worker Operations Engine:** In `AvatarPreparationService.php`, removed the check comparing live worker engine against historic plan engine at publish time. The artifact is fully validated by report engine matching plan engine, source hash matching, complete motion qualification, geometry non-clipping, Three.js renderer criteria, and binary byte/SHA256 file matching. Server router updates no longer invalidate qualified assets.

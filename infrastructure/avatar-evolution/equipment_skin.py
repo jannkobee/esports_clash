@@ -53,7 +53,8 @@ def rigid_equipment(obj,bone_names,repairs,rig=None):
 
 def regularize_skin_weights(obj,rig,mapped_bones,equipment_repairs=()):
     """Consolidate unmapped helper bones into anatomical ancestors and regularize
-    connected single-mesh skin weights with a 3D trilinear spatial weight field.
+    connected single-mesh skin weights using topological surface-graph Laplacian smoothing.
+    Preserves 100% anatomical limb mobility without cross-boundary Euclidean bleeding.
     Rigid equipment components remain 100% bound to their equipment bone.
     """
     if not rig or not obj.data.vertices:
@@ -69,18 +70,21 @@ def regularize_skin_weights(obj,rig,mapped_bones,equipment_repairs=()):
         if ua and ua.parent and ua.parent.name not in keep_bones and ua.parent.parent and ua.parent.parent.name=='Chest':
             clavicle_map[ua.parent.name]='UpperArm'+side
     remap={}
-    for b in bones:
-        if b.name in keep_bones:
-            remap[b.name]=b.name
-        elif b.name in clavicle_map:
-            remap[b.name]=clavicle_map[b.name]
+    bone_items = bones.values() if hasattr(bones, 'values') else bones
+    for b in bone_items:
+        b_name = b.name if hasattr(b, 'name') else str(b)
+        b_obj = b if hasattr(b, 'parent') else (bones.get(b_name) if hasattr(bones, 'get') else None)
+        if b_name in keep_bones:
+            remap[b_name]=b_name
+        elif b_name in clavicle_map:
+            remap[b_name]=clavicle_map[b_name]
         else:
-            curr=b.parent
+            curr=b_obj.parent if b_obj else None
             while curr and curr.name not in keep_bones:
                 curr=curr.parent
-            remap[b.name]=curr.name if curr else 'Root'
+            remap[b_name]=curr.name if curr else 'Root'
     vg_names={g.index:g.name for g in obj.vertex_groups}
-    equip_group_ids={obj.vertex_groups[b].index for b in equip_bones if obj.vertex_groups.get(b)}
+    equip_group_ids={obj.vertex_groups.get(b).index for b in equip_bones if obj.vertex_groups.get(b) is not None}
     rigid_verts=set()
     raw_weights=[]
     for v in obj.data.vertices:
@@ -99,88 +103,56 @@ def regularize_skin_weights(obj,rig,mapped_bones,equipment_repairs=()):
         else:
             w['Hips']=1.0
         raw_weights.append(dict(w))
-    # Shear damping on distal limb chains to prevent connected single-mesh folds
-    shear_damping={
-        'FootL':('Hips',.04),'FootR':('Hips',.04),
-        'CalfL':('Hips',.05),'CalfR':('Hips',.05),
-        'ThighL':('Hips',.10),'ThighR':('Hips',.10),
-        'HandL':('Chest',.20),'HandR':('Chest',.20),
-        'ForearmL':('Chest',.30),'ForearmR':('Chest',.30),
-        'UpperArmL':('Chest',.50),'UpperArmR':('Chest',.50),
-        'Spine':('Chest',.60),
-    }
-    for i,w in enumerate(raw_weights):
-        if i in rigid_verts:continue
-        nw=defaultdict(float)
-        for k,val in w.items():
-            if k in shear_damping:
-                target_root,retain=shear_damping[k]
-                nw[k]+=val*retain
-                nw[target_root]+=val*(1.0-retain)
-            else:
-                nw[k]+=val
-        raw_weights[i]=dict(nw)
-    # 3D trilinear spatial weight field regularization
-    coords=[v.co for v in obj.data.vertices]
-    min_z=min(c.z for c in coords);max_z=max(c.z for c in coords)
-    cell=max((max_z-min_z)*.035,1e-4);inv_cell=1.0/cell
-    grid=defaultdict(lambda:defaultdict(float));grid_count=defaultdict(float)
-    for i,c in enumerate(coords):
-        if i in rigid_verts:continue
-        gx,gy,gz=c.x*inv_cell,c.y*inv_cell,c.z*inv_cell
-        ix,iy,iz=int(gx//1),int(gy//1),int(gz//1)
-        fx,fy,fz=gx-ix,gy-iy,gz-iz
-        w=raw_weights[i]
-        for dx,wx in ((0,1.0-fx),(1,fx)):
-            for dy,wy in ((0,1.0-fy),(1,fy)):
-                for dz,wz in ((0,1.0-fz),(1,fz)):
-                    wt=wx*wy*wz
-                    if wt<1e-5:continue
-                    key=(ix+dx,iy+dy,iz+dz)
-                    grid_count[key]+=wt
-                    cell_w=grid[key]
-                    for k,val in w.items():cell_w[k]+=val*wt
-    for key,cnt in grid_count.items():
-        if cnt>0:
-            cell_w=grid[key]
-            for k in list(cell_w.keys()):cell_w[k]/=cnt
-    offsets=[(dx,dy,dz,4.0 if dx==0 and dy==0 and dz==0 else 2.0 if abs(dx)+abs(dy)+abs(dz)==1 else 1.0)
-             for dx in (-1,0,1) for dy in (-1,0,1) for dz in (-1,0,1)]
-    for _ in range(3):
-        next_grid={}
-        for key in grid:
-            kx,ky,kz=key;acc=defaultdict(float);tw=0.0
-            for dx,dy,dz,ow in offsets:
-                nk=(kx+dx,ky+dy,kz+dz)
-                if nk in grid:
-                    tw+=ow
-                    for k,val in grid[nk].items():acc[k]+=val*ow
-            if tw>0:
-                for k in list(acc.keys()):acc[k]/=tw
-            next_grid[key]=acc
-        grid=next_grid
+
+    # Build 1-ring topological adjacency from mesh edges:
+    # Edges only exist across solid polygons along the surface.
+    # Smoothing along edges can NEVER cross empty air between arms and torso or between the legs.
+    adj=defaultdict(list)
+    for e in obj.data.edges:
+        adj[e.vertices[0]].append(e.vertices[1])
+        adj[e.vertices[1]].append(e.vertices[0])
+
+    # Topological Laplacian smoothing (2 iterations, conservative alpha 0.25)
+    current_weights=[dict(w) for w in raw_weights]
+    for _ in range(2):
+        next_weights=[]
+        for i,w in enumerate(current_weights):
+            if i in rigid_verts:
+                next_weights.append(w)
+                continue
+            neighbors=adj.get(i)
+            if not neighbors:
+                next_weights.append(w)
+                continue
+            # Accumulate neighbor weights along surface graph
+            avg_w=defaultdict(float)
+            for n in neighbors:
+                for bone,wt in current_weights[n].items():
+                    avg_w[bone]+=wt
+            inv_len=1.0/len(neighbors)
+            alpha=0.25
+            blended=defaultdict(float)
+            for bone,wt in w.items():
+                blended[bone]+=(1.0-alpha)*wt
+            for bone,tot_wt in avg_w.items():
+                blended[bone]+=alpha*(tot_wt*inv_len)
+            next_weights.append(dict(blended))
+        current_weights=next_weights
+
+    # Normalize to top 4 bone influences with 1.0 total sum (GPU skinning standard)
     final_weights=[]
-    for i,c in enumerate(coords):
+    for i,w in enumerate(current_weights):
         if i in rigid_verts:
             final_weights.append(raw_weights[i])
             continue
-        gx,gy,gz=c.x*inv_cell,c.y*inv_cell,c.z*inv_cell
-        ix,iy,iz=int(gx//1),int(gy//1),int(gz//1)
-        fx,fy,fz=gx-ix,gy-iy,gz-iz
-        vw=defaultdict(float)
-        for dx,wx in ((0,1.0-fx),(1,fx)):
-            for dy,wy in ((0,1.0-fy),(1,fy)):
-                for dz,wz in ((0,1.0-fz),(1,fz)):
-                    wt=wx*wy*wz
-                    key=(ix+dx,iy+dy,iz+dz)
-                    if key in grid:
-                        for k,val in grid[key].items():vw[k]+=val*wt
-        top=sorted(vw.items(),key=lambda x:-x[1])[:4]
+        top=sorted(w.items(),key=lambda x:-x[1])[:4]
         tot=sum(val for _,val in top)
         if tot>0:
             final_weights.append({k:val/tot for k,val in top if val/tot>=.005})
         else:
             final_weights.append({'Hips':1.0})
+
+    # Clear previous vertex group assignments and batch assign regularized weights
     all_idx=list(range(len(obj.data.vertices)))
     for vg in obj.vertex_groups:
         vg.remove(all_idx)
@@ -193,5 +165,5 @@ def regularize_skin_weights(obj,rig,mapped_bones,equipment_repairs=()):
         vg=obj.vertex_groups.get(k) or obj.vertex_groups.new(name=k)
         for q,indices in qmap.items():
             vg.add(indices,q,'REPLACE')
-    return {'method':'trilinear-field-shear-regularized-v1','vertices_regularized':len(coords)-len(rigid_verts),'rigid_equipment_vertices_preserved':len(rigid_verts),'unmapped_bones_consolidated':len(bones)-len(keep_bones)}
+    return {'method':'topological-laplacian-regularized-v2','vertices_regularized':len(obj.data.vertices)-len(rigid_verts),'rigid_equipment_vertices_preserved':len(rigid_verts),'unmapped_bones_consolidated':len(bones)-len(keep_bones)}
 

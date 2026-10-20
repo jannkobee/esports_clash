@@ -41,7 +41,7 @@
     <form method="post" action="{{ route('evolution.settings') }}" class="actions" style="margin-top: 14px;">
         @csrf
         <input type="hidden" name="enabled" value="{{ $settings->enabled ? '0' : '1' }}">
-        <button>{{ $settings->enabled ? 'Pause automatic cycles' : 'Resume automatic cycles' }}</button>
+        <button class="{{ $settings->enabled ? 'danger' : 'primary' }}">{{ $settings->enabled ? 'Pause automatic cycles' : 'Resume automatic cycles' }}</button>
     </form>
     <p class="fine" style="margin-top: 10px;">Pausing the schedule does not stop an active study. After a review deadline, the conservative substitute retains an intact eligible keep-current option or declines.</p>
 </section>
@@ -108,7 +108,7 @@
                             @csrf
                             <input type="hidden" name="action" value="reject">
                             <input type="hidden" name="proposal_id" value="{{ $proposal->id }}">
-                            <button>Reject</button>
+                            <button class="danger">Reject</button>
                         </form>
                     </div>
                 @endif
@@ -229,7 +229,7 @@
                                     @csrf
                                     <input type="hidden" name="action" value="reject">
                                     <input type="hidden" name="proposal_id" value="{{ $proposal->id }}">
-                                    <button>Reject</button>
+                                    <button class="danger">Reject</button>
                                 </form>
                             </div>
                             @endif

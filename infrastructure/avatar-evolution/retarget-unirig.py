@@ -11,6 +11,7 @@ from bone_mapping import infer_humanoid, NATIVE
 from retarget_motion import motion_delta, hip_motion_to_root, EQUIPMENT_PROFILE
 from retarget_contacts import bake_contacts
 from equipment_skin import rigid_equipment, regularize_skin_weights
+from mesh_cleanup import cleanup_mesh
 
 folder, source, donor = map(Path, sys.argv[sys.argv.index('--')+1:])
 plan=json.loads((folder/'preparation-plan.json').read_text())
@@ -60,6 +61,8 @@ if not mapping_review.get('accepted'):
 bone_displays={bone.custom_shape for rig in rigs for bone in rig.pose.bones if bone.custom_shape}
 generated=[o for o in bpy.context.scene.objects if o not in bone_displays]
 meshes=[o for o in generated if o.type=='MESH']
+for obj in meshes:
+    cleanup_mesh(obj)
 
 target.data.pose_position='REST'
 for native, old in mapping.items():

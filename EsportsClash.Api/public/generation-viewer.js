@@ -1,5 +1,5 @@
 const host=document.getElementById('generation-stage'),status=document.getElementById('generation-view-status');
-let renderer,controls,scene,observer,model,mixer,animationFrame;
+let renderer,controls,scene,observer,model,mixer,animationFrame,skeletonHelper,gridHelper;
 try{
     const [THREE,{GLTFLoader},{OrbitControls}]=await Promise.all([
         import('./evolution-vendor/three/three.module.js'),
@@ -31,13 +31,88 @@ try{
     const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
     if(bounds.isEmpty()||![...size,...center].every(Number.isFinite))throw Error('Generated mesh bounds are invalid');
     model.position.sub(center);scene.add(model);
+
+    // Skeleton helper inspection
+    let hasBones=false;
+    model.traverse(object=>{if(object.isBone||object.isSkinnedMesh)hasBones=true;});
+    let skeletonVisible=false;
+    if(hasBones){
+        skeletonHelper=new THREE.SkeletonHelper(model);
+        skeletonHelper.visible=false;
+        scene.add(skeletonHelper);
+    }
+    const skeletonBtn=document.getElementById('generation-skeleton');
+    if(skeletonBtn){
+        if(!hasBones){
+            skeletonBtn.disabled=true;
+            skeletonBtn.title='No skeleton or bones detected';
+        }else{
+            skeletonBtn.addEventListener('click',()=>{
+                skeletonVisible=!skeletonVisible;
+                if(skeletonHelper){
+                    skeletonHelper.visible=skeletonVisible;
+                    if(skeletonVisible)skeletonHelper.update();
+                }
+                skeletonBtn.setAttribute('aria-pressed',String(skeletonVisible));
+                skeletonBtn.classList.toggle('is-active',skeletonVisible);
+                render();
+            });
+        }
+    }
+
+    // Wireframe inspection
+    let wireframeVisible=false;
+    const wireframeBtn=document.getElementById('generation-wireframe');
+    if(wireframeBtn){
+        wireframeBtn.addEventListener('click',()=>{
+            wireframeVisible=!wireframeVisible;
+            model.traverse(object=>{
+                if(object.isMesh&&object.material){
+                    const mats=Array.isArray(object.material)?object.material:[object.material];
+                    mats.forEach(m=>{m.wireframe=wireframeVisible;m.needsUpdate=true;});
+                }
+            });
+            wireframeBtn.setAttribute('aria-pressed',String(wireframeVisible));
+            wireframeBtn.classList.toggle('is-active',wireframeVisible);
+            render();
+        });
+    }
+
+    // Grid floor helper
+    let gridVisible=false;
+    const gridBtn=document.getElementById('generation-grid');
+    if(gridBtn){
+        const groundY=-size.y/2;
+        const gridSpan=Math.max(size.x,size.z,size.y)*2;
+        gridHelper=new THREE.GridHelper(gridSpan,20,0x38bdf8,0x223249);
+        gridHelper.position.y=groundY;
+        gridHelper.visible=false;
+        scene.add(gridHelper);
+        gridBtn.addEventListener('click',()=>{
+            gridVisible=!gridVisible;
+            gridHelper.visible=gridVisible;
+            gridBtn.setAttribute('aria-pressed',String(gridVisible));
+            gridBtn.classList.toggle('is-active',gridVisible);
+            render();
+        });
+    }
+
+    // Animation & Playback Speed
     const selector=document.getElementById('generation-animation');
+    let playing=false;
     if(selector){
-        mixer=new THREE.AnimationMixer(model);let playing=false,last=performance.now();
+        mixer=new THREE.AnimationMixer(model);let last=performance.now();
         loaded.animations.forEach((clip,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=clip.name;selector.append(option);});
         selector.addEventListener('change',()=>{mixer.stopAllAction();if(selector.value!==''){mixer.clipAction(loaded.animations[Number(selector.value)]).reset().play();playing=true;}else playing=false;render();});
         document.getElementById('generation-play')?.addEventListener('click',()=>{playing=!playing;});
-        const tick=now=>{const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;if(playing){mixer.update(dt);render();}animationFrame=requestAnimationFrame(tick);};animationFrame=requestAnimationFrame(tick);
+        const speedSelector=document.getElementById('generation-speed');
+        if(speedSelector){
+            speedSelector.addEventListener('change',()=>{
+                const spd=parseFloat(speedSelector.value)||1.0;
+                mixer.timeScale=spd;
+            });
+        }
+        const tick=now=>{const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;if(playing){mixer.update(dt);if(skeletonHelper&&skeletonVisible)skeletonHelper.update();render();}animationFrame=requestAnimationFrame(tick);};animationFrame=requestAnimationFrame(tick);
     }
     radius=size.length()/2;fitDistance();
     camera.near=Math.max(.0001,distance/10000);camera.far=distance*30;controls.minDistance=distance*.12;controls.maxDistance=distance*8;camera.updateProjectionMatrix();
@@ -49,4 +124,18 @@ try{
     window.__trellisPreview={ready:true,...metrics};
     document.querySelectorAll('[data-model-view]').forEach(button=>button.addEventListener('click',()=>view(button.dataset.modelView)));
 }catch(error){status.textContent='Unable to display the generated source: '+error.message;window.__trellisPreview={ready:false,error:error.message};}
-window.addEventListener('pagehide',()=>{cancelAnimationFrame(animationFrame);mixer?.stopAllAction();if(model)mixer?.uncacheRoot(model);observer?.disconnect();controls?.dispose();const materials=new Set(),textures=new Set();model?.traverse(object=>{object.geometry?.dispose();for(const material of object.material?(Array.isArray(object.material)?object.material:[object.material]):[]){materials.add(material);for(const value of Object.values(material))if(value?.isTexture)textures.add(value);}});for(const texture of textures)texture.dispose();for(const material of materials)material.dispose();renderer?.dispose();renderer?.forceContextLoss();});
+window.addEventListener('pagehide',()=>{
+    cancelAnimationFrame(animationFrame);
+    mixer?.stopAllAction();
+    if(model)mixer?.uncacheRoot(model);
+    if(skeletonHelper){scene?.remove(skeletonHelper);skeletonHelper.dispose();}
+    if(gridHelper){scene?.remove(gridHelper);gridHelper.geometry?.dispose();gridHelper.material?.dispose();}
+    observer?.disconnect();
+    controls?.dispose();
+    const materials=new Set(),textures=new Set();
+    model?.traverse(object=>{object.geometry?.dispose();for(const material of object.material?(Array.isArray(object.material)?object.material:[object.material]):[]){materials.add(material);for(const value of Object.values(material))if(value?.isTexture)textures.add(value);}});
+    for(const texture of textures)texture.dispose();
+    for(const material of materials)material.dispose();
+    renderer?.dispose();
+    renderer?.forceContextLoss();
+});

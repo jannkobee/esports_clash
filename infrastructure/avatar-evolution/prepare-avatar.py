@@ -11,6 +11,8 @@ import hashlib
 from pathlib import Path
 from mathutils import Vector, Matrix
 from mathutils.kdtree import KDTree
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from mesh_cleanup import cleanup_mesh
 
 folder, source, donor = map(Path, sys.argv[sys.argv.index('--') + 1:])
 plan = json.loads((folder / 'preparation-plan.json').read_text())
@@ -77,6 +79,8 @@ generated = [o for o in bpy.context.scene.objects if o not in before and o.type 
 if not generated:
     raise RuntimeError('Generated source has no mesh')
 stage('preparing')
+for obj in generated:
+    cleanup_mesh(obj)
 glo, ghi = bounds(generated)
 height = ghi.z - glo.z
 if height <= .00001:

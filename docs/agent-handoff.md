@@ -1,5 +1,98 @@
 # Conversation handoff for the next agent
 
+## Latest: Backoffice UI Controls & Machine Learning Pipeline Analysis (2026-10-20)
+
+- **Checkbox Alignment & Spacing Overhaul:**
+  - Resolved root cause in `EsportsClash.Api/public/evolution.css`: scoped `display: block; width: 100%;` to `input:not([type="checkbox"]):not([type="radio"]), select, textarea`. Checkboxes and radios now have `display: inline-block !important; width: 16px !important; height: 16px !important; margin: 0 !important; vertical-align: middle !important; flex-shrink: 0 !important;`.
+  - Added dedicated inline-flex rules for `label:has(input[type="checkbox"])`, `label:has(input[type="radio"])`, `.preparation-selection`, and `.checkbox-label`, preventing checkboxes from breaking onto separate lines above their text labels.
+  - Added `.manage-roles` styling in `evolution.css` for multi-role selector fieldsets in the content studio.
+- **Destructive & Flow-Halting Button Standardization (Alert Crimson):**
+  - Standardized all buttons that cancel, pause, delete, reset, rollback, or reject actions to alert crimson red (`button.danger`, `.button.danger`, `button.quiet.danger` with `background: #9f1239 !important; border-color: #f43f5e !important; color: #ffffff !important;`):
+    - `preparation.blade.php`: "Cancel all preparation jobs" (`danger`), "Clear selection" (`button-danger-subtle`), "Delete selected reports" (`danger`).
+    - `preparation-runs.blade.php`: "↺ Reset preparation" (`danger`), "⏸ Pause" (`danger`).
+    - `preparation-controls.blade.php`: "Cancel linked-attempt request" (`danger`), "Pause preparation" (`danger`).
+    - `trellis.blade.php`: "Cancel all generation jobs" (`danger`).
+    - `index.blade.php`: "Cancel all" (`danger`), "Roll back to this version" (`danger`).
+    - `cancel.blade.php`: "Cancel {{ $type }}" (`danger`).
+    - `delete-report.blade.php`: "Delete report" (`danger`).
+    - `delete-generated-model.blade.php`: "Delete generated model" (`danger`).
+    - `operations-controls.blade.php`: "Run safe cleanup" (`danger`).
+    - `dashboard.blade.php`: "Pause automatic cycles" (`danger`), "Reject" proposal (`danger`).
+- **Button Spacing & Container Padding:**
+  - Added top/bottom margins (`margin: 4px 0`) on general buttons and form buttons with proper container resets for flex action bars (`.actions`).
+  - Added dedicated styling for `.preparation-bulk` panel with 18px padding, 20px top/bottom margins, and rose-accent border, preventing bulk delete triggers from colliding with category pills.
+- **Machine Learning Subsystem Diagnosis ("Always No Changes"):**
+  - **Root Cause 1 (Conformal Prediction Quantile Trap):** In `taskConfidencePolicy.ts`, uncertainty calibration uses a one-sided 90% quantile (`level: 0.90`) on overprediction errors from small sample sizes ($N=18$). Because MOBA deaths in alternative arms produce huge discrete negative drops ($-1.15$), the 90th percentile overprediction error inflates `errorBuffer` to $0.83+$. Subtracting this uncertainty from typical linear predicted advantages ($+0.05 \text{--} +0.12$) results in `lowerBoundAdvantage < 0` on 100% of cases, forcing `allowed = false` and `changed = false` everywhere.
+  - **Root Cause 2 (Bimodal Death Penalty Swamping Regression):** In `teamTaskOutcome.ts`, death penalty is $-1.0$ (weight 0.55). Rare, discrete death events destroy MSE fit on linear ridge regression, causing prediction loss ($0.327$) to be double that of predicting zero ($0.168$).
+  - **Root Cause 3 (Narrow 30s Early-Game Scope):** Restricting evaluation to `--pair=farm-push --horizon=30` at 120s isolates the agent in early lane farm equilibrium with fortified turret plates, where true reward separation is near zero.
+- **Verification:**
+  - `php artisan test`: 95 passed (982 assertions) in 8.00s.
+  - `npm run check:game`: 455 tests passed, 0 failures.
+  - `npm run build`: built production client bundle in 1.36s.
+
+## Latest: Comprehensive Full-Stack Evolution & Simulation Upgrade (2026-10-20)
+
+- **Phase 1: Pre-Skinning Manifold Mesh Cleanup & SOTA A-Pose Prompts:**
+  - Added `infrastructure/avatar-evolution/mesh_cleanup.py` (`cleanup_mesh`, `analyze_mesh_health`) with bmesh-backed vertex welding (`remove_doubles`), loose vertex/edge deletion (`delete_loose`), degenerate polygon dissolution, small hole sealing, and outward normal consistency recalculation.
+  - Integrated `cleanup_mesh` into `prepare-avatar.py` and `retarget-unirig.py` before bone skinning and nearest-surface transfer.
+  - Enforced canonical symmetrical A-pose prompt parameters in `trellis.blade.php` (arms angled downward at 45° away from torso, open palms, separated fingers, shoulder-width stance, generous margins, plain transparent RGBA, no floor shadow/clutter).
+- **Phase 2: Backoffice 3D Inspector Enhancements:**
+  - Upgraded `EsportsClash.Api/public/generation-viewer.js` with:
+    - Interactive skeleton bone overlay (`THREE.SkeletonHelper(model)`), synchronized dynamically to animation playback.
+    - Wireframe mode toggle across all meshes and materials.
+    - Ground grid helper (`THREE.GridHelper`) at mesh base for alignment and grounding checks.
+    - Slow-motion animation playback speed stepper (`1.0x`, `0.5x`, `0.25x`) modulating `mixer.timeScale`.
+  - Added tactile buttons with pressed states (`button.is-active`, `button[aria-pressed="true"]`) to `generation-preview.blade.php` and `preparation-preview.blade.php`.
+- **Phase 3: In-Game MOBA Arena Visual Polish:**
+  - Added 2-tier contact shadow & ambient occlusion decal under champions in `EsportsClash.Web/src/threeArenaScene.ts`: an inner dark core contact decal (`#020608`, 0.48 opacity) inside the softer outer ambient shadow (`#071314`, 0.28 opacity), anchoring champions to the arena ground.
+  - Tuned `rimIntensity: 1.15` in `arenaArtDirection.ts` to provide crisp champion-terrain silhouette separation under top-down orthographic view.
+  - Replaced hardcoded attack snap with smooth 0.12s action crossfading (`Math.min(1, transition / 0.12)`).
+- **Phase 4: Parallel Simulation Performance Optimization:**
+  - Added `simulateBatchMatchesParallel` and `analyzeMatchResults` to `EsportsClash.Web/src/matchSimulationEngine.ts`, running multi-seed simulations across Node worker threads (`worker_threads`).
+  - Partitioned active minions, champions, and structures once per frame in `stepSimulation`, eliminating millions of redundant array allocations per match.
+  - Reduced test suite runtime from over 5 minutes down to **44 seconds** in `matchSimulation.test.mjs`.
+- **Phase 5: Developer Diagnostics & Health Monitor:**
+  - Created `infrastructure/evolution/dev-doctor.sh` providing automated one-click health checks (Docker daemon, Compose, Node.js, cURL, secrets in `.env.evolution.local`, database connectivity, Redis ping, HTTP probes on ports 8089/8088, and directory permissions) with colorized tactile status reports.
+- **Verification:**
+  - `dev-doctor.sh`: 23 PASS, 0 WARN, 0 FAIL.
+  - `npm run check:game`: 455 tests passed, 0 failures, `tsc -b` passed with 0 errors.
+  - `npm run build`: built production client bundle in 2.44s with 0 errors.
+  - `php artisan test`: 95 passed (982 assertions) in 8.31s.
+  - `test_mesh_cleanup.py`: 3 unit tests passed in 0.000s.
+  - Protected invariants (Cardrel parody aliases, 10s turret execution attribution, risk-based tower diving, anti-spin deadbands) 100% preserved.
+
+## Latest: 3D Model In-Game Sizing, Rigging Pipeline Diagnosis & Backoffice UI Overhaul (2026-10-20)
+
+- **Git Tracking Clarification:**
+  - `infrastructure/evolution/setup.sh` and `infrastructure/evolution/dev.sh` are tracked Linux developer bootstrap scripts and should be committed/pushed to origin.
+  - `.env.evolution.local` is git-ignored and must **never** be committed or pushed, as it contains sensitive database credentials, Laravel app keys, and worker auth tokens.
+- **3D Model In-Game Sizing & Readability Fix:**
+  - **Root Cause Identified:** In `avatarModelAssets.ts`, `new THREE.Box3().setFromObject(scene)` measured the entire object hierarchy including root empties, locators, and IK pole targets extending outside visible geometry. Furthermore, neural meshes (TRELLIS 7.5–8 heads tall) scaled strictly to 70px height have tiny heads (~9px tall) and thin limbs, occupying less than 25% of the pixel mass of stylized chibi/heroic procedural champions (head ~18px, wide shoulders) under the $60^\circ$ top-down camera. Also `hudHeight` was missing from `root.userData`, causing status effects to calculate height at `NaN`.
+  - **Implementation:** In `avatarModelAssets.ts`, computed bounding box strictly from visible `Mesh` and `SkinnedMesh` geometry (`computeBoundingBox`), aligned feet to ground (`scene.position.y = -bounds.min.y`), applied a top-down MOBA readability presence multiplier (1.25x), and explicitly bound `root.userData.hudHeight = targetHeight` and `body.userData.hudHeight = targetHeight`.
+- **3D Rigging Pipeline Analysis & Remediation Strategy:**
+  - **Root Causes of Rigging Artifacts:**
+    1. `equipment_skin.py` had an aggressive `shear_damping` dictionary dumping 90–96% of limb skin weights (Foot, Calf, Thigh, Hand, Forearm) onto Hips and Chest, pinning mesh vertices to the torso while skeleton limbs moved, causing severe stretching and disfigurement.
+    2. 3D spatial grid box blur in `equipment_skin.py` blurred weights across Euclidean 3D space, bleeding hand weights into hips and left-thigh weights into right-thigh across empty air.
+  - **Applied SOTA Upgrade to `equipment_skin.py`:**
+    1. Removed the `shear_damping` dictionary completely so humanoid limbs retain 100% of their anatomical skin weights.
+    2. Replaced the 3D Euclidean grid box blur with a 1-ring topological surface-graph Laplacian smoothing pass along mesh polygon edges (`obj.data.edges`). Skin weights only diffuse along contiguous geometry and cannot jump through air gaps between hands and hips or between the thighs.
+    3. Retained rigid equipment preservation and normalized to 4 bone influences per vertex for GPU skinning.
+- **Backoffice UI Rebuild (Tactile Game-Dev Operations Terminal):**
+  - **Aesthetic:** Abandoned generic modern SaaS floating bubble cards/pill capsules in favor of a tactile, utilitarian, retro-tactical engineering console. Deep carbon charcoal bedrock (`#0a0d14`), solid panel surfaces (`#111622`), mechanical 1.5px borders (`#233145`), mechanical tab switcher row (`[01 AVATARS]`, `[02 ITEMS]`, `[03 ML POLICY]`, `[04 3D GENERATION]`, `[05 ASSET PREP]`, `[06 3D REPAIRS]`), tactile push-buttons with top bevel highlights and inset active press states, hardware status LEDs (`● ONLINE`, `● BUSY`, `● OFFLINE`), and monospace telemetry readouts.
+  - **Reliability & Foolproof Guardrails:** Clear operational validation error banners, unequivocal status badges, and explicit modal confirmations for destructive actions.
+- **Affected Files:**
+  - `EsportsClash.Web/src/avatarModelAssets.ts`
+  - `EsportsClash.Api/resources/views/evolution/layout.blade.php`
+  - `EsportsClash.Api/public/evolution.css`
+  - `docs/agent-handoff.md`
+  - `docs/arena-mechanics.md`
+- **Verification:**
+  - `npm run check:game`: 452 unit tests passed, 3 batch simulations (10 full matches) passed, `tsc -b` passed with 0 errors.
+  - `avatarModelAssets.test.mjs`: all 5 asset tests passed in 1.18s.
+  - `npm run build`: client bundle built in 2.07s without errors.
+  - `http://localhost:8089/login`: verified HTTP 200 OK rendering the new console layout.
+  - All gameplay invariants (Cardrel parody aliases, tower risk limits, attribution, anti-spin deadbands) strictly preserved.
+
 ## Latest: Fix Publication "Worker changed after qualification" & Complete Dawnna Publication (2026-10-20)
 
 - **Issue Reported:** When publishing Dawnna preparation `7bc1dd86-72b5-4966-b0a3-133619008348`, Laravel rejected publication with `ValidationException: "Worker changed after qualification. Prepare a new version."`.

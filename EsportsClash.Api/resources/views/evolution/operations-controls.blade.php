@@ -20,7 +20,7 @@
     </form>
     <div class="actions">
         <form method="post" action="{{ route('evolution.operations') }}">@csrf<input type="hidden" name="action" value="preview"><button>Preview cleanup</button></form>
-        <form method="post" action="{{ route('evolution.operations') }}">@csrf<input type="hidden" name="action" value="cleanup"><button>Run safe cleanup</button></form>
+        <form method="post" action="{{ route('evolution.operations') }}">@csrf<input type="hidden" name="action" value="cleanup"><button class="danger">Run safe cleanup</button></form>
     </div>
     <p class="fine">Only registered, expired, unreferenced artifacts can enter quarantine. References are checked again before deletion. Current studies, model/match/rollback pins and required evidence remain protected. No production model is deployed. GPU memory limits are unavailable with the CPU-only image; 8× and multiple simulators require qualification.</p>
     @if(isset($settings->preferences['cleanup_preview']))<pre>{{ json_encode($settings->preferences['cleanup_preview'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>@endif

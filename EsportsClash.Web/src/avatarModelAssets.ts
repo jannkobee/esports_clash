@@ -75,22 +75,42 @@ export class AvatarAssetLibrary {
     const hasAnimations = file.animations && file.animations.length > 0;
     const retargetedNativeMotion=root.userData.assetPreparation?.provider==='unirig'&&root.userData.assetPreparation?.animation_mode==='retargeted-native-clips';
     const preserveNativeMotion=this.nativeImports.has(file)||retargetedNativeMotion;
-    const binding = bindAvatarModel(root, this.resources, { drivenByMixer: hasAnimations,preserveNativeMotion });
     scene.updateMatrixWorld(true);
-    const sceneBounds = new THREE.Box3().setFromObject(scene);
-    const rawHeight = sceneBounds.max.y - sceneBounds.min.y;
-    const targetHeight = avatarDesign(id)?.height ?? 70;
+    const meshBounds = new THREE.Box3();
+    let hasMesh = false;
+    scene.traverse(node => {
+      if ((node instanceof THREE.Mesh || node instanceof THREE.SkinnedMesh) && node.geometry) {
+        if (!node.geometry.boundingBox) node.geometry.computeBoundingBox();
+        const box = node.geometry.boundingBox;
+        if (box) {
+          const transformed = box.clone().applyMatrix4(node.matrixWorld);
+          meshBounds.union(transformed);
+          hasMesh = true;
+        }
+      }
+    });
+    const bounds = hasMesh ? meshBounds : new THREE.Box3().setFromObject(scene);
+    const rawHeight = bounds.max.y - bounds.min.y;
+    const baseHeight = avatarDesign(id)?.height ?? 70;
+    // Procedural champions feature stylized chunky/heroic MOBA silhouettes.
+    // Neural AI meshes (e.g. TRELLIS 7.5-8 heads tall) need a top-down readability presence
+    // multiplier (1.25x) so their screen volume and head silhouette match top-down orthographic view.
+    const mobaPresenceMultiplier = 1.25;
+    const targetHeight = baseHeight * mobaPresenceMultiplier;
     const scaleFactor = rawHeight > 0.1 ? targetHeight / rawHeight : 40;
-    if (sceneBounds.min.y < -0.05) {
-      scene.position.y = -sceneBounds.min.y;
+    if (bounds.min.y < -0.05 || bounds.min.y > 0.05) {
+      scene.position.y = -bounds.min.y;
     }
+    root.userData.hudHeight = targetHeight;
+    root.userData.designId = id;
+    const binding = bindAvatarModel(root, this.resources, { drivenByMixer: hasAnimations, preserveNativeMotion });
     const body = new THREE.Group(); body.scale.setScalar(scaleFactor); body.add(scene);
-    body.userData = { designId: id, assetFormat: 'glb',modelVariant:this.nativeImports.has(file)?'claude':'current', clips: file.animations.map(clip => clip.name),visualEvolution:root.userData.avatarEvolution?.visual };
-    const release=this.selectedReleases.get(this.key(id,variant));
-    if(release&&this.sourceUrl(id,variant)===visualReleaseUrl(release))body.userData.visualRelease={...release};
+    body.userData = { designId: id, hudHeight: targetHeight, assetFormat: 'glb', modelVariant: this.nativeImports.has(file) ? 'claude' : 'current', clips: file.animations.map(clip => clip.name), visualEvolution: root.userData.avatarEvolution?.visual };
+    const release = this.selectedReleases.get(this.key(id, variant));
+    if (release && this.sourceUrl(id, variant) === visualReleaseUrl(release)) body.userData.visualRelease = { ...release };
 
     if (!hasAnimations) {
-      return { body, height: binding.height, animate: binding.animate, dispose: () => disposeAvatarRig(body) };
+      return { body, height: targetHeight, animate: binding.animate, dispose: () => disposeAvatarRig(body) };
     }
 
     const mixer = new THREE.AnimationMixer(scene);
@@ -189,7 +209,7 @@ export class AvatarAssetLibrary {
 
     return {
       body,
-      height: binding.height,
+      height: targetHeight || binding.height || 70,
       animate,
       dispose: () => {
         mixer.stopAllAction();

@@ -4,12 +4,12 @@
 <p class="notice">This attempt was continued as <a href="#preparation-{{ $run->control['replacement_id'] }}">{{ $run->control['replacement_id'] }}</a>. Use that linked attempt for progress and controls.</p>
 @elseif($run->control['intent']??null)
 <p class="notice" role="status">{{ ucfirst($run->control['intent']) }} requested. {{ $run->status==='pausing'?'Waiting for both workers to acknowledge the stop.':($run->status==='cancelling'?'Stopping both workers before admitting a linked retry.':'The stopped job is waiting for linked-attempt admission.') }} No parallel attempt will be created.</p>
-@if(in_array($run->control['intent'],['resume','retry'],true))<form method="post" action="{{ route('preparations.control',$run) }}">@csrf<input type="hidden" name="operation" value="cancel_pending"><button class="quiet">Cancel linked-attempt request</button></form>@endif
+@if(in_array($run->control['intent'],['resume','retry'],true))<form method="post" action="{{ route('preparations.control',$run) }}">@csrf<input type="hidden" name="operation" value="cancel_pending"><button class="danger">Cancel linked-attempt request</button></form>@endif
 @else
 @if($run->control['restart_error']??null)<p class="error-text">{{ $run->control['restart_error'] }}</p>@endif
 <div class="actions">
 @if(in_array($run->status,\App\Services\AvatarPreparationService::ACTIVE,true))
-<form method="post" action="{{ route('preparations.control',$run) }}">@csrf<input type="hidden" name="operation" value="pause"><button>Pause preparation</button></form>
+<form method="post" action="{{ route('preparations.control',$run) }}">@csrf<input type="hidden" name="operation" value="pause"><button class="danger">Pause preparation</button></form>
 @endif
 @if($run->status==='paused')
 <form method="post" action="{{ route('preparations.control',$run) }}">@csrf<input type="hidden" name="operation" value="resume"><button class="primary">Resume preparation</button></form>

@@ -67,7 +67,7 @@
 
         <input type="hidden" name="attachments" value="[]">
 
-        <label style="margin: 8px 0;">
+        <label class="checkbox-label" style="margin: 10px 0;">
             <input type="checkbox" name="fresh_rig" value="1"> Force fresh rig prediction instead of reusing saved rig (GPU inference)
         </label>
 
@@ -84,7 +84,7 @@
         </div>
         <form method="post" action="{{ route('avatar-jobs.cancel-all','preparation') }}">
             @csrf
-            <button class="quiet danger">Cancel all preparation jobs</button>
+            <button class="danger">Cancel all preparation jobs</button>
         </form>
     </div>
 
@@ -94,11 +94,11 @@
         <h3>Delete selected preparation reports</h3>
         <p class="fine">Clears database report details and progress history. Active jobs and published releases remain protected.</p>
         <div class="actions">
-            <label class="preparation-selection"><input type="checkbox" id="preparation-select-all"> Select all eligible shown reports</label>
+            <label class="preparation-selection checkbox-label"><input type="checkbox" id="preparation-select-all"> Select all eligible shown reports</label>
             <strong id="preparation-selected-count" role="status">0 selected</strong>
-            <button type="button" id="preparation-clear-selection" class="quiet">Clear selection</button>
+            <button type="button" id="preparation-clear-selection" class="button-danger-subtle">Clear selection</button>
         </div>
-        <label class="preparation-selection" style="margin-top: 10px;">
+        <label class="preparation-selection checkbox-label" style="margin-top: 10px;">
             <input type="checkbox" name="confirm" value="1" id="preparation-delete-confirm" required>
             I understand that the selected report details and progress history will be cleared.
         </label>

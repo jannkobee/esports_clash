@@ -2,7 +2,7 @@
 export const ARENA_LIGHTING = {
   sky: '#dce8d7', earth: '#35433e', ambient: 1.35,
   sun: '#fff0d3', sunIntensity: 2.35, sunDirection: [-.48, .82, .31],
-  rim: '#a4c9dc', rimIntensity: .65,
+  rim: '#a4c9dc', rimIntensity: 1.15,
 } as const;
 
 type CampFamily = 'azure' | 'frost' | 'ember' | 'shadow' | 'hollow' | 'siege' | 'dragon';

@@ -46,7 +46,7 @@
 @endforeach
 </div>
 @if($kind==='item')
-<input type="hidden" name="data[suitableRoles]" value=""><fieldset class="manage-roles"><legend>Suitable roles * (choose at least one)</legend>@foreach($roles as $role)<label><input type="checkbox" name="data[suitableRoles][]" value="{{ $role }}" @checked(in_array($role,$selectedRoles,true))>{{ $role }}</label>@endforeach</fieldset>
+<input type="hidden" name="data[suitableRoles]" value=""><fieldset class="manage-roles"><legend>Suitable roles * (choose at least one)</legend>@foreach($roles as $role)<label class="checkbox-label"><input type="checkbox" name="data[suitableRoles][]" value="{{ $role }}" @checked(in_array($role,$selectedRoles,true))>{{ $role }}</label>@endforeach</fieldset>
 @endif
 </section>
 @if($kind==='avatar')
