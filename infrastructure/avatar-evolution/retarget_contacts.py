@@ -22,8 +22,8 @@ def bake_contacts(rig,reference,clip,phase,equipment_repairs=()):
     bpy.context.view_layer.update()
     # Flex the carrying elbow slightly forward, keeping the grip and shoulder
     # connected while moving held equipment clear of the swing knee.
-    for repair in equipment_repairs:
-        forearm=rig.pose.bones['Forearm'+repair['new_parent'][-1]]
+    for hand in sorted({repair['new_parent'] for repair in equipment_repairs if repair['new_parent'] in {'HandL','HandR'}}):
+        forearm=rig.pose.bones['Forearm'+hand[-1]]
         location,rotation,scale=forearm.matrix.decompose()
         axis=rig.matrix_world.inverted().to_3x3()@Vector((1,0,0));axis.normalize()
         forearm.matrix=Matrix.LocRotScale(location,Quaternion(axis,-.4)@rotation,scale)

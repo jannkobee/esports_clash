@@ -5,5 +5,5 @@ return ['worker_url'=>env('AVATAR_WORKER_URL','http://avatar-worker:8094'),
     'worker_token'=>env('EVOLUTION_WORKER_TOKEN',''), 'max_asset_bytes'=>16*1024*1024,
     'queue_connection'=>env('AVATAR_QUEUE_CONNECTION','database'), 'queue'=>'avatars',
     'engine_ready'=>env('ART_ENGINE_READY',false),
-    'profiles_path'=>resource_path('avatars/art-profiles.json'),
+    'profiles_path'=>resource_path('avatars/art-profiles.json'),'weapon_path'=>null,
     'external_budget_usd'=>0, 'health_failure_limit'=>2];

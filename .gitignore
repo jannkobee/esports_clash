@@ -4,6 +4,7 @@
 **/node_modules/
 **/dist/
 **/dist-ssr/
+EsportsClash.Web/avatar-review-dist/
 
 # Local configuration and credentials
 .env

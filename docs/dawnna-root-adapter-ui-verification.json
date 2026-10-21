@@ -1,0 +1,13 @@
+{
+  "previous_report": {
+    "misleading": false,
+    "historical": true,
+    "reason": true
+  },
+  "current_report": {
+    "ready": true,
+    "mappingHold": false,
+    "publishReview": true
+  },
+  "uncaught_errors": []
+}

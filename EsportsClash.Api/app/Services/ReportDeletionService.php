@@ -1,6 +1,6 @@
 <?php
 namespace App\Services;
-use App\Models\{EvolutionRun,TrellisGeneration,AvatarPreparation,AvatarEvolutionRun,BalanceReview};
+use App\Models\{EvolutionRun,TrellisGeneration,AvatarPreparation,AvatarEvolutionRun,AvatarEvolutionSetting,BalanceReview};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -15,6 +15,15 @@ class ReportDeletionService {
         abort_unless(isset(self::MODELS[$type]),404);
         $model=self::MODELS[$type];sort($ids);
         DB::transaction(function()use($type,$ids,$model){
+            if($type==='preparation') {
+                // Serialize against admission: a new retry cannot appear halfway
+                // through clearing its report and make an older row reappear.
+                AvatarEvolutionSetting::current();
+                AvatarEvolutionSetting::lockForUpdate()->findOrFail(1);
+                $selected=AvatarPreparation::whereKey($ids)->get();
+                if($selected->count()!==count(array_unique($ids)))throw (new \Illuminate\Database\Eloquent\ModelNotFoundException)->setModel(AvatarPreparation::class,$ids);
+                $ids=AvatarPreparation::whereIn('generation_id',$selected->pluck('generation_id'))->orderBy('id')->pluck('id')->all();
+            }
             // Validate every locked row before changing any row. Mixed active/finished
             // selections fail atomically, including status races after page rendering.
             $runs=[];

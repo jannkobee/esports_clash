@@ -1,0 +1,105 @@
+{
+  "reports": [
+    {
+      "id": "34c3afcc-b10e-4a8f-9da1-000de495b0a8",
+      "name": "Dawnna",
+      "status": "Published",
+      "attempts": 3,
+      "events": [
+        1792519640000,
+        1792519662000,
+        1792519783000,
+        1792519847000,
+        1792519868000,
+        1792519912000,
+        1792519936000,
+        1792519938000,
+        1792519966000,
+        1792520611000,
+        1792520613000,
+        1792520689000,
+        1792520690000,
+        1792520690000,
+        1792520690000,
+        1792520714000,
+        1792521067000,
+        1792521068000,
+        1792521090000,
+        1792521240000,
+        1792521497000
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "path": "/evolution/avatars/preparation",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "/evolution/avatars/preparation",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/preparation",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/preparation",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "/evolution/avatars/preparation/34c3afcc-b10e-4a8f-9da1-000de495b0a8/report",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "/evolution/avatars/preparation/34c3afcc-b10e-4a8f-9da1-000de495b0a8/report",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/preparation/34c3afcc-b10e-4a8f-9da1-000de495b0a8/report",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/preparation/34c3afcc-b10e-4a8f-9da1-000de495b0a8/report",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 1440,
+      "content": 1425
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 320,
+      "content": 305
+    }
+  ],
+  "hoverChecks": 110,
+  "checkbox": {
+    "width": "20px",
+    "height": "20px",
+    "appearance": "none",
+    "disabled": false,
+    "keyboardToggle": true,
+    "checkedMark": "visible"
+  },
+  "uncaughtErrors": []
+}

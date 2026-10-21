@@ -14,6 +14,20 @@ class PreparationProgressTest extends TestCase {
         return AvatarPreparation::create(['id'=>(string)Str::uuid(),'generation_id'=>$source->id,'avatar_id'=>'c_solana','status'=>$status,'plan'=>['provider'=>'unirig','profile'=>'unirig-v1','source_sha256'=>str_repeat('a',64),'unirig_engine_sha256'=>str_repeat('b',64),'seed'=>1],'state'=>[]]);
     }
     private function owner():void{$this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));}
+    public function test_mapping_hold_shows_detection_reason_instead_of_claiming_all_bones_are_missing(): void {
+        $this->owner(); Http::fake();
+        $run=$this->fixtureRun('awaiting_retarget');
+        $run->update(['state'=>['preparation'=>['mapping_review'=>['accepted'=>false,'reasons'=>['Root must have one unambiguous pelvis branch; extra roots need review.']],
+            'problems'=>['Review native animation mapping for: Root, Hips, Spine, Chest']]]]);
+        $this->get(route('preparations.live'))->assertOk()->assertSee('Native mapping needs review')
+            ->assertSee('Root must have one unambiguous pelvis branch')
+            ->assertSee('data-status-category="review"',false)
+            ->assertDontSee('Review native animation mapping for: Root, Hips, Spine, Chest')
+            ->assertSee('without a fresh UniRig prediction');
+        $run->update(['status'=>'cancelled']);
+        $this->get(route('preparations.live'))->assertOk()->assertSee('Previous attempt / mapping review')
+            ->assertDontSee('Review native animation mapping for: Root, Hips, Spine, Chest');
+    }
     public function test_job_history_and_activity_are_chronological_and_report_is_scoped(): void {
         $this->owner(); Http::fake(['*'=>Http::response([],503)]);
         $old=$this->fixtureRun('waiting_resources'); $new=$this->fixtureRun('rigging');

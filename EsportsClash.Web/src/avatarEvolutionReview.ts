@@ -35,10 +35,17 @@ function draw(phase=0,angle=yaw,state=pose,gameplay=false) {
   effects.update([],ability?[{id:'review-ability',x:0,y:0,radius:30,color:kit!.accentColor,avatarName:kit!.name,
     duration:1-p,maxDuration:1,sourceUnitId:'review',sourceX:0,sourceY:0}]:[],phase,
     [{id:'review',x:0,y:0,isAlive:true,champion:{name:kit!.name},visualEvolution:model!.body.userData.visualEvolution}]);
-  const span=gameplay?700:Math.max(110,model!.height*1.42),aspect=w/h,half=span/(2*Math.min(1,aspect));
-  Object.assign(camera,{left:-half*aspect,right:half*aspect,top:half,bottom:-half});
-  camera.position.set(Math.sin(angle)*220,gameplay?340:115,Math.cos(angle)*220);camera.lookAt(0,model!.height*.43,0);camera.updateProjectionMatrix();
   model!.body.updateMatrixWorld(true);for(const m of meshes)if(m instanceof THREE.SkinnedMesh)m.skeleton.update();
+  // Studio views must contain the actual equipped pose. Keep the standardized
+  // gameplay camera unchanged so readability/performance checks stay comparable.
+  const box=gameplay?undefined:bounds();
+  const center=box?.finite?new THREE.Vector3(...box.min).add(new THREE.Vector3(...box.max)).multiplyScalar(.5):new THREE.Vector3(0,model!.height*.43,0);
+  const radius=box?.finite?new THREE.Vector3(...box.max).sub(new THREE.Vector3(...box.min)).length()*.5:0;
+  const span=gameplay?700:Math.max(110,radius*2.3),aspect=w/h,half=span/(2*Math.min(1,aspect));
+  Object.assign(camera,{left:-half*aspect,right:half*aspect,top:half,bottom:-half});
+  if(gameplay){camera.position.set(Math.sin(angle)*220,340,Math.cos(angle)*220);camera.lookAt(0,model!.height*.43,0);}
+  else {camera.position.copy(center).add(new THREE.Vector3(Math.sin(angle)*220,80,Math.cos(angle)*220));camera.lookAt(center);}
+  camera.updateProjectionMatrix();
   renderer.render(scene,camera);
 }
 function bounds() {
@@ -83,6 +90,7 @@ async function evaluate() {
     if(hand){const lastPoint=(evaluate as unknown as {lastPoint?:THREE.Vector3}).lastPoint;if(lastPoint&&blend>0)maxTransitionJump=Math.max(maxTransitionJump,hand.distanceTo(lastPoint));(evaluate as unknown as {lastPoint?:THREE.Vector3}).lastPoint=hand;}
   }
   const views=[];for(const [name,angle]of[['front',0],['side',Math.PI/2],['back',Math.PI]] as const){draw(.2,angle,'Idle');views.push({name,silhouette:silhouette(),triangles:renderer.info.render.triangles,draw_calls:renderer.info.render.calls});}
+  for(const view of views)if(view.silhouette.clipped)issues.push(`Studio ${view.name} view clips the equipped model`);
   const gameplayViews=[];for(const [name,state]of[['idle','Idle'],['attack','Attack'],['ability','Ability']] as const){draw(.42,.25,state,true);gameplayViews.push({name,silhouette:silhouette()});}
   let detailedMaterials=0,missingDetailMaps=0;
   const materials=new Set<THREE.Material>();for(const mesh of meshes)for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material])materials.add(material);

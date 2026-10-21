@@ -1,0 +1,88 @@
+{
+  "preparation_id": "34c3afcc-b10e-4a8f-9da1-000de495b0a8",
+  "artifact_sha256": "a673787f1c86bd259f7a6d548b9dc81629b9cc2af3ee604c56920f6b9a06dd39",
+  "real_bone_count": 52,
+  "original_rejection": {
+    "method": "humanoid-topology-rest-v2",
+    "accepted": false,
+    "reasons": [
+      "Root must have one unambiguous pelvis branch; extra roots need review."
+    ],
+    "warnings": []
+  },
+  "root_only_diagnostic": {
+    "method": "humanoid-topology-rest-v2",
+    "accepted": false,
+    "reasons": [
+      "Chest has no unambiguous head and arm branches."
+    ],
+    "warnings": []
+  },
+  "root_and_branch_diagnostic": {
+    "method": "humanoid-topology-rest-v2",
+    "accepted": true,
+    "reasons": [],
+    "warnings": [],
+    "checks": [
+      "single root and pelvis",
+      "distinct torso/head/arm branches",
+      "opposite limb sides",
+      "leg proportions",
+      "toe-confirmed facing",
+      "17 unique joints"
+    ],
+    "bone_map": {
+      "Root": "review_virtual_root",
+      "Hips": "bone_0",
+      "Spine": "bone_1",
+      "Chest": "bone_3",
+      "Head": "bone_5",
+      "UpperArmL": "bone_7",
+      "ForearmL": "bone_8",
+      "HandL": "bone_9",
+      "UpperArmR": "bone_26",
+      "ForearmR": "bone_27",
+      "HandR": "bone_28",
+      "ThighL": "bone_44",
+      "CalfL": "bone_45",
+      "FootL": "bone_46",
+      "ThighR": "bone_48",
+      "CalfR": "bone_49",
+      "FootR": "bone_50"
+    }
+  },
+  "proposed_map": {
+    "Root": "review_virtual_root",
+    "Hips": "bone_0",
+    "Spine": "bone_1",
+    "Chest": "bone_3",
+    "Head": "bone_5",
+    "UpperArmL": "bone_7",
+    "ForearmL": "bone_8",
+    "HandL": "bone_9",
+    "UpperArmR": "bone_26",
+    "ForearmR": "bone_27",
+    "HandR": "bone_28",
+    "ThighL": "bone_44",
+    "CalfL": "bone_45",
+    "FootL": "bone_46",
+    "ThighR": "bone_48",
+    "CalfR": "bone_49",
+    "FootR": "bone_50"
+  },
+  "segment_ratios": {
+    "UpperArmL_segment_over_height": 0.12084072628599424,
+    "ForearmL_segment_over_height": 0.13528416937598428,
+    "ThighL_segment_over_height": 0.28874681199427255,
+    "CalfL_segment_over_height": 0.25330697840275596,
+    "UpperArmR_segment_over_height": 0.12084067501200683,
+    "ForearmR_segment_over_height": 0.13528421456351536,
+    "ThighR_segment_over_height": 0.2887468128547528,
+    "CalfR_segment_over_height": 0.2540744068855896
+  },
+  "limits": [
+    "The added root exists only in this diagnostic topology, not in the saved rig.",
+    "No asset, preparation status, production matcher or release was changed.",
+    "This demonstrates a mapping detection limitation, not animation, skin or geometry qualification."
+  ]
+}

@@ -1,10 +1,11 @@
 <div class="generation-comparison" id="models">
     <section class="panel">
         <div class="run-title">
-            <h2>Actual generated GLB</h2>
-            <a href="{{ route('trellis.asset',$generation) }}">Download</a>
+            <h2>{{ ($preparedModel??null) ? 'Animated model' : 'Source body / unrigged' }}</h2>
+            <a href="{{ ($preparedModel??null) ? route('preparations.file',[$preparedModel,'candidate-01.glb']) : route('trellis.asset',$generation) }}">Download</a>
         </div>
-        <div id="generation-stage" data-asset="{{ route('trellis.asset',$generation) }}" aria-label="Interactive generated model"></div>
+        @if($preparedModel??null)<p class="fine">Latest preparation &middot; {{ str_replace('_',' ',$preparedModel->status) }}. <a href="{{ route('preparations.report',$preparedModel) }}">Open report</a> &middot; <a href="{{ route('trellis.asset',$generation) }}">Download unrigged source</a></p>@endif
+        <div id="generation-stage" data-asset="{{ ($preparedModel??null) ? route('preparations.file',[$preparedModel,'candidate-01.glb']) : route('trellis.asset',$generation) }}" aria-label="Interactive generated model"></div>
         <div class="actions">
             <button type="button" data-model-view="front">Front</button>
             <button type="button" data-model-view="side">Side</button>
@@ -13,9 +14,13 @@
             <button type="button" id="generation-wireframe" aria-pressed="false" title="Toggle wireframe rendering">🕸️ Wireframe</button>
             <button type="button" id="generation-skeleton" aria-pressed="false" title="Toggle skeleton bones overlay">🦴 Skeleton</button>
             <button type="button" id="generation-grid" aria-pressed="false" title="Toggle ground grid">📐 Grid</button>
+            @if($preparedModel??null)
+                <label>Animation<select id="generation-animation"><option value="">Rest pose (rig inspection)</option></select></label><button type="button" id="generation-play">Pause</button>
+                <label>Speed<select id="generation-speed"><option value="1">1.0x</option><option value="0.5">0.5x</option><option value="0.25">0.25x</option></select></label>
+            @endif
         </div>
         <p class="fine" id="generation-view-status" role="status">Loading the actual generated file…</p>
-        <p class="fine">Drag to orbit &middot; Scroll or pinch to zoom. This is a generated source; skeletons, sockets and animation require preparation.</p>
+        <p class="fine">Drag to orbit &middot; Scroll or pinch to zoom. {{ ($preparedModel??null) ? 'Idle plays by default. Review the complete animation cycle and equipment before publishing.' : 'T-pose is the source used for rigging. Equipment and animation are added during preparation.' }}</p>
     </section>
 
     <section class="panel">

@@ -2,6 +2,7 @@
 **/node_modules
 **/vendor
 **/dist
+EsportsClash.Web/avatar-review-dist
 **/.env
 **/.env.*
 **/*.log

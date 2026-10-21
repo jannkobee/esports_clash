@@ -1,0 +1,297 @@
+{
+  "description": "Saved 30-joint rest-pose fixture with a separate root, in Blender Z-up coordinates.",
+  "bones": [
+    {
+      "name": "bone_0",
+      "parent": "Armature",
+      "position": [
+        0.005193,
+        -0.006623,
+        0.04513
+      ]
+    },
+    {
+      "name": "bone_1",
+      "parent": "bone_0",
+      "position": [
+        0.001384,
+        -0.014242,
+        0.102273
+      ]
+    },
+    {
+      "name": "bone_2",
+      "parent": "bone_1",
+      "position": [
+        -0.002426,
+        -0.010433,
+        0.189892
+      ]
+    },
+    {
+      "name": "bone_3",
+      "parent": "bone_2",
+      "position": [
+        0.009003,
+        0.027662,
+        0.300368
+      ]
+    },
+    {
+      "name": "bone_4",
+      "parent": "bone_3",
+      "position": [
+        0.024241,
+        0.020043,
+        0.262272
+      ]
+    },
+    {
+      "name": "bone_5",
+      "parent": "bone_4",
+      "position": [
+        0.092812,
+        -0.025671,
+        0.258463
+      ]
+    },
+    {
+      "name": "bone_6",
+      "parent": "bone_5",
+      "position": [
+        0.146146,
+        -0.056147,
+        0.147987
+      ]
+    },
+    {
+      "name": "bone_7",
+      "parent": "bone_6",
+      "position": [
+        0.184241,
+        -0.10948,
+        0.026082
+      ]
+    },
+    {
+      "name": "bone_8",
+      "parent": "bone_7",
+      "position": [
+        0.169003,
+        -0.120909,
+        -0.000584
+      ]
+    },
+    {
+      "name": "bone_9",
+      "parent": "bone_8",
+      "position": [
+        0.157574,
+        -0.1171,
+        -0.015823
+      ]
+    },
+    {
+      "name": "bone_10",
+      "parent": "bone_7",
+      "position": [
+        0.19186,
+        -0.124719,
+        -0.031061
+      ]
+    },
+    {
+      "name": "bone_11",
+      "parent": "bone_10",
+      "position": [
+        0.188051,
+        -0.128528,
+        -0.053918
+      ]
+    },
+    {
+      "name": "bone_12",
+      "parent": "bone_3",
+      "position": [
+        -0.006235,
+        0.031472,
+        0.262273
+      ]
+    },
+    {
+      "name": "bone_13",
+      "parent": "bone_12",
+      "position": [
+        -0.082426,
+        0.065757,
+        0.250844
+      ]
+    },
+    {
+      "name": "bone_14",
+      "parent": "bone_13",
+      "position": [
+        -0.131949,
+        0.080995,
+        0.140368
+      ]
+    },
+    {
+      "name": "bone_15",
+      "parent": "bone_14",
+      "position": [
+        -0.189092,
+        0.054329,
+        0.022273
+      ]
+    },
+    {
+      "name": "bone_16",
+      "parent": "bone_15",
+      "position": [
+        -0.181473,
+        0.0429,
+        -0.008203
+      ]
+    },
+    {
+      "name": "bone_17",
+      "parent": "bone_16",
+      "position": [
+        -0.173854,
+        0.039091,
+        -0.023441
+      ]
+    },
+    {
+      "name": "bone_18",
+      "parent": "bone_15",
+      "position": [
+        -0.20814,
+        0.04671,
+        -0.03487
+      ]
+    },
+    {
+      "name": "bone_19",
+      "parent": "bone_18",
+      "position": [
+        -0.20433,
+        0.0429,
+        -0.057727
+      ]
+    },
+    {
+      "name": "bone_20",
+      "parent": "bone_15",
+      "position": [
+        0.370908,
+        -0.048528,
+        -0.099632
+      ]
+    },
+    {
+      "name": "bone_21",
+      "parent": "bone_3",
+      "position": [
+        0.009003,
+        0.016234,
+        0.327034
+      ]
+    },
+    {
+      "name": "bone_22",
+      "parent": "bone_1",
+      "position": [
+        0.050908,
+        -0.0371,
+        0.04132
+      ]
+    },
+    {
+      "name": "bone_23",
+      "parent": "bone_22",
+      "position": [
+        0.096622,
+        -0.052337,
+        -0.19106
+      ]
+    },
+    {
+      "name": "bone_24",
+      "parent": "bone_23",
+      "position": [
+        0.142336,
+        -0.067575,
+        -0.419631
+      ]
+    },
+    {
+      "name": "bone_25",
+      "parent": "bone_24",
+      "position": [
+        0.149956,
+        -0.136146,
+        -0.499631
+      ]
+    },
+    {
+      "name": "bone_26",
+      "parent": "bone_1",
+      "position": [
+        -0.059568,
+        0.012424,
+        0.04513
+      ]
+    },
+    {
+      "name": "bone_27",
+      "parent": "bone_26",
+      "position": [
+        -0.078616,
+        0.061948,
+        -0.183441
+      ]
+    },
+    {
+      "name": "bone_28",
+      "parent": "bone_27",
+      "position": [
+        -0.101473,
+        0.111472,
+        -0.412012
+      ]
+    },
+    {
+      "name": "bone_29",
+      "parent": "bone_28",
+      "position": [
+        -0.154806,
+        0.073377,
+        -0.495822
+      ]
+    }
+  ],
+  "expected_map": {
+    "Root": "bone_0",
+    "Hips": "bone_1",
+    "Spine": "bone_2",
+    "Chest": "bone_3",
+    "Head": "bone_21",
+    "UpperArmL": "bone_5",
+    "ForearmL": "bone_6",
+    "HandL": "bone_7",
+    "UpperArmR": "bone_13",
+    "ForearmR": "bone_14",
+    "HandR": "bone_15",
+    "ThighL": "bone_22",
+    "CalfL": "bone_23",
+    "FootL": "bone_24",
+    "ThighR": "bone_26",
+    "CalfR": "bone_27",
+    "FootR": "bone_28"
+  },
+  "expected_warnings": [
+    "Long hand attachment branch bone_20 requires equipment/influence review."
+  ]
+}

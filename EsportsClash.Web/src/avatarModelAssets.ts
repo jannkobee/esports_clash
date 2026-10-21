@@ -82,6 +82,10 @@ export class AvatarAssetLibrary {
     let hasMesh = false;
     const tempPoint = new THREE.Vector3();
     scene.traverse(node => {
+      // Hand props must not shrink the body or move its ground/HUD origin.
+      // Size the character from its anatomical mesh, then retain the fitted
+      // weapon-to-body proportions already frozen in the prepared GLB.
+      if(node.userData.modularEquipment)return;
       if (node instanceof THREE.SkinnedMesh && node.geometry) {
         node.skeleton?.update();
         const pos = node.geometry.attributes.position;

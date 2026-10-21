@@ -1,0 +1,140 @@
+{
+  "preparation": "36d03e9e-a0e5-4981-b525-23f82f139242",
+  "pages": [
+    {
+      "path": "/evolution/avatars/preparation/36d03e9e-a0e5-4981-b525-23f82f139242/preview",
+      "metrics": {
+        "ready": true,
+        "meshes": 3,
+        "vertices": 49862,
+        "triangles": 47613,
+        "skinned_meshes": 3,
+        "animation_clips": 10,
+        "shader_errors": [],
+        "equipment_slots": [
+          "primary",
+          "secondary"
+        ],
+        "initial_pose": {
+          "UpperArmL": [
+            -0.17063059463097127,
+            0.37545508612880735,
+            -0.06016857983369618
+          ],
+          "UpperArmR": [
+            0.21036856748463287,
+            0.3754554364234969,
+            -0.06016876749136084
+          ],
+          "HandL": [
+            -0.32037333377875965,
+            0.16459540941354595,
+            0.208661468227774
+          ],
+          "HandR": [
+            0.3623499515237369,
+            0.10987563042069304,
+            0.15289125172122942
+          ]
+        },
+        "draw_calls": 3
+      },
+      "clips": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "metrics": {
+        "ready": true,
+        "meshes": 3,
+        "vertices": 49862,
+        "triangles": 47613,
+        "skinned_meshes": 3,
+        "animation_clips": 10,
+        "shader_errors": [],
+        "equipment_slots": [
+          "primary",
+          "secondary"
+        ],
+        "initial_pose": {
+          "UpperArmL": [
+            -0.17063059463097127,
+            0.37545508612880735,
+            -0.06016857983369618
+          ],
+          "UpperArmR": [
+            0.21036856748463287,
+            0.3754554364234969,
+            -0.06016876749136084
+          ],
+          "HandL": [
+            -0.32037333377875965,
+            0.16459540941354595,
+            0.208661468227774
+          ],
+          "HandR": [
+            0.3623499515237369,
+            0.10987563042069304,
+            0.15289125172122942
+          ]
+        },
+        "draw_calls": 3
+      },
+      "clips": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "path": "/evolution/avatars/preparation/36d03e9e-a0e5-4981-b525-23f82f139242/preview",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/preparation/36d03e9e-a0e5-4981-b525-23f82f139242/preview",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/preparation/36d03e9e-a0e5-4981-b525-23f82f139242/preview",
+      "width": 320,
+      "content": 305
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 768,
+      "content": 753
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 390,
+      "content": 375
+    },
+    {
+      "path": "/evolution/avatars/trellis/avatar/c_solana",
+      "width": 320,
+      "content": 305
+    }
+  ],
+  "errors": []
+}

@@ -1,6 +1,7 @@
 """Conservative rigid skin repair for disconnected hand-held equipment only.
 Never infer rigidity for a connected body/garment region from color or a name.
 """
+import math
 from collections import defaultdict,Counter
 
 def rigid_equipment(obj,bone_names,repairs,rig=None):
@@ -199,4 +200,111 @@ def regularize_skin_weights(obj,rig,mapped_bones,equipment_repairs=()):
         for q,indices in qmap.items():
             vg.add(indices,q,'REPLACE')
     return {'method':'topological-laplacian-secondary-preserved-v3','vertices_regularized':len(obj.data.vertices)-len(rigid_verts),'rigid_equipment_vertices_preserved':len(rigid_verts),'unmapped_bones_consolidated':len(clavicle_map),'extra_bones_preserved':len(keep_bones-mapped_set-equip_bones-set(clavicle_map))}
+
+
+def validate_skin_weights(obj, rig=None, mapped_bones=None):
+    """Inspect skinning weights for every deforming vertex.
+    Returns a structured health and compliance report.
+    Supports both Blender MESH objects and pure-Python weight data for unit testing.
+    """
+    issues = []
+    stats = {
+        'vertex_count': 0,
+        'unweighted_vertices': 0,
+        'unnormalized_vertices': 0,
+        'vertices_exceeding_four_influences': 0,
+        'max_influences': 0,
+        'non_finite_weights': 0,
+        'negative_weights': 0,
+        'unreferenced_groups': [],
+        'cross_limb_anomalies': 0,
+    }
+
+    if hasattr(obj, 'data') and hasattr(obj.data, 'vertices'):
+        vertices = obj.data.vertices
+        vg_names = {g.index: g.name for g in obj.vertex_groups}
+        rig_bones = set(rig.data.bones.keys()) if (rig and hasattr(rig, 'data') and hasattr(rig.data, 'bones')) else set(vg_names.values())
+        raw_weights = []
+        for v in vertices:
+            w = {}
+            for g in v.groups:
+                if g.group in vg_names:
+                    w[vg_names[g.group]] = g.weight
+            raw_weights.append(w)
+    elif isinstance(obj, list):
+        raw_weights = obj
+        rig_bones = set(mapped_bones or [])
+    else:
+        return {'valid': True, 'issues': [], 'stats': stats}
+
+    stats['vertex_count'] = len(raw_weights)
+    for i, w in enumerate(raw_weights):
+        influences = len(w)
+        if influences > stats['max_influences']:
+            stats['max_influences'] = influences
+        if influences > 4:
+            stats['vertices_exceeding_four_influences'] += 1
+
+        total = 0.0
+        for bone, wt in w.items():
+            if not math.isfinite(wt):
+                stats['non_finite_weights'] += 1
+            if wt < 0:
+                stats['negative_weights'] += 1
+            if rig_bones and bone not in rig_bones:
+                if bone not in stats['unreferenced_groups']:
+                    stats['unreferenced_groups'].append(bone)
+            total += wt
+
+        if influences == 0 or total <= 1e-6:
+            stats['unweighted_vertices'] += 1
+        elif abs(total - 1.0) > 0.005:
+            stats['unnormalized_vertices'] += 1
+
+        has_left = any('L' in b and any(b.startswith(p) for p in ('UpperArm', 'Forearm', 'Hand', 'Thigh', 'Calf', 'Foot')) for b in w)
+        has_right = any('R' in b and any(b.startswith(p) for p in ('UpperArm', 'Forearm', 'Hand', 'Thigh', 'Calf', 'Foot')) for b in w)
+        if has_left and has_right:
+            left_sum = sum(v for b, v in w.items() if 'L' in b)
+            right_sum = sum(v for b, v in w.items() if 'R' in b)
+            if min(left_sum, right_sum) > 0.10:
+                stats['cross_limb_anomalies'] += 1
+
+    if stats['unweighted_vertices'] > 0:
+        issues.append(f"{stats['unweighted_vertices']} unweighted vertices found")
+    if stats['vertices_exceeding_four_influences'] > 0:
+        issues.append(f"{stats['vertices_exceeding_four_influences']} vertices exceed 4 bone influences limit")
+    if stats['unnormalized_vertices'] > 0:
+        issues.append(f"{stats['unnormalized_vertices']} vertices have unnormalized weights")
+    if stats['non_finite_weights'] > 0:
+        issues.append(f"{stats['non_finite_weights']} non-finite weight values")
+    if stats['negative_weights'] > 0:
+        issues.append(f"{stats['negative_weights']} negative weight values")
+    if stats['unreferenced_groups']:
+        issues.append(f"Unreferenced bone groups: {', '.join(stats['unreferenced_groups'])}")
+
+    valid = len(issues) == 0 and stats['non_finite_weights'] == 0 and stats['negative_weights'] == 0
+    return {'valid': valid, 'issues': issues, 'stats': stats}
+
+
+def repair_skin_weights(obj, rig, mapped_bones, equipment_repairs=()):
+    """Execute complete deformation repair pass:
+    1. Rigid equipment isolation and locking.
+    2. Topological Laplacian surface smoothing.
+    3. Top-4 GPU influence limit enforcement and exact normalization.
+    4. Post-repair validation check.
+    """
+    repairs = []
+    # 1. Rigid equipment binding
+    if hasattr(obj, 'data') and hasattr(obj.data, 'vertices'):
+        equip_repairs = rigid_equipment(obj, set(rig.data.bones.keys()), equipment_repairs, rig)
+        if equip_repairs:
+            repairs.extend(equip_repairs)
+    # 2. Topological Laplacian regularization & top-4 normalization
+    reg = regularize_skin_weights(obj, rig, mapped_bones, equipment_repairs)
+    if reg:
+        repairs.append(reg)
+    # 3. Post-repair validation
+    val = validate_skin_weights(obj, rig, mapped_bones)
+    return {'repairs': repairs, 'validation': val, 'status': 'repaired' if val['valid'] else 'needs_review'}
+
 

@@ -63,4 +63,48 @@ class PreparationControlsTest extends TestCase {
         $this->assertNull($controls->restart($old->id));$this->assertNull($old->fresh()->control['intent']);$this->assertSame('paused',$old->fresh()->status);$this->assertSame(1,AvatarPreparation::count());Http::assertNothingSent();
     }
 
+    public function test_retry_from_mapping_review_keeps_one_stable_report_and_chronological_attempt_history():void {
+        $this->fakes();$this->owner();$old=$this->fixture('awaiting_retarget');
+        $old->update(['progress'=>['events'=>[['stage'=>'automatic_mapping','status'=>'awaiting_retarget','message'=>'FIRST_ATTEMPT_EVIDENCE','observed_at'=>now()->subMinute()->toIso8601String()]]]]);
+        $controls=app(AvatarPreparationControlService::class);
+        $this->post(route('preparations.control',$old),['operation'=>'retry'])->assertRedirect(route('preparations.report',$old));
+        app(AvatarJobCancellationService::class)->synchronize('preparation',$old->id);
+        $new=$controls->restart($old->id);
+        $this->assertSame($new->id,$controls->restart($old->id)->id);
+        $new->update(['status'=>'failed','error'=>'CURRENT_ATTEMPT_ISSUE','progress'=>['events'=>[['stage'=>'retarget','status'=>'failed','message'=>'SECOND_ATTEMPT_EVIDENCE','observed_at'=>now()->toIso8601String()]]]]);
+        $live=$this->get(route('preparations.live'))->assertOk()->assertSee('2 attempts')->assertSee('CURRENT_ATTEMPT_ISSUE')
+            ->assertSeeInOrder(['FIRST_ATTEMPT_EVIDENCE','SECOND_ATTEMPT_EVIDENCE']);
+        $this->assertSame(1,substr_count($live->getContent(),'class="run-row preparation-job"'));
+        $live->assertSee('id="preparation-'.$old->id.'"',false)->assertDontSee('id="preparation-'.$new->id.'"',false)
+            ->assertSee('action="'.route('preparations.control',$new).'"',false);
+        foreach([$old,$new] as $attempt) {
+            $this->get(route('preparations.report',$attempt))->assertOk()->assertSee('2 attempts')->assertSee('preparation='.$old->id,false)->assertSee('CURRENT_ATTEMPT_ISSUE');
+        }
+        $this->get(route('preparations.report',[$old,'format'=>'json']))->assertOk()->assertJsonPath('report_id',$old->id)->assertJsonCount(2,'attempts');
+        $this->assertSame('FIRST_ATTEMPT_EVIDENCE',$old->fresh()->progress['events'][0]['message']);
+        $this->assertDatabaseCount('avatar_visual_releases',0);
+    }
+
+    public function test_report_group_deletion_is_atomic_and_does_not_resurrect_older_attempts():void {
+        $this->fakes();$this->owner();$old=$this->fixture('failed');$other=$this->fixture('failed');
+        $new=AvatarPreparation::create(['id'=>(string)Str::uuid(),'generation_id'=>$old->generation_id,'avatar_id'=>$old->avatar_id,
+            'status'=>'rigging','plan'=>$old->plan,'previous_preparation_id'=>$old->id]);
+        $this->delete(route('reports.delete',['preparation',$old->id]))->assertSessionHasErrors('report');
+        $this->assertNotNull($old->fresh());$this->assertNotNull($new->fresh());
+        $new->update(['status'=>'failed']);
+        $this->delete(route('preparations.bulk-delete'),['ids'=>[$old->id],'confirm'=>'1'])->assertSessionHasNoErrors();
+        $this->assertNull(AvatarPreparation::find($old->id));$this->assertNull(AvatarPreparation::find($new->id));
+        $this->assertNotNull(AvatarPreparation::find($other->id));
+        $this->get(route('preparations.live'))->assertOk()->assertDontSee($old->id)->assertDontSee($new->id)->assertSee($other->id);
+    }
+
+    public function test_legacy_reset_controls_require_stop_acknowledgement_and_preserve_evidence():void {
+        $this->fakes();$old=$this->fixture('needs_review');$before=$old->state;
+        app(AvatarPreparationControlService::class)->request($old,'reset','owner:test');
+        $this->assertSame('cancelling',$old->fresh()->status);
+        $this->assertSame($before,$old->fresh()->state);
+        $this->assertNull(app(AvatarPreparationControlService::class)->restart($old->id));
+        Queue::assertPushed(CancelAvatarJob::class);Http::assertNothingSent();
+    }
+
 }

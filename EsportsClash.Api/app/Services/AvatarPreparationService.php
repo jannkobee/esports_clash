@@ -23,6 +23,7 @@ class AvatarPreparationService {
         abort_unless($meta,422);
         if($profile!=='unirig-v1')throw ValidationException::withMessages(['profile'=>'Use the UniRig provider. Local surface-transfer admission is retired.']);
         if($freshRig&&$rigPreparationId)throw ValidationException::withMessages(['rig_preparation_id'=>'Choose a frozen rig revision or a fresh rig, not both.']);
+        $equipment=app(AvatarEquipmentService::class)->freeze($generation->avatar_id);
         $rigReuse=null;$rigEngine=null;
         $candidates=$freshRig?collect():AvatarPreparation::where('generation_id',$generation->id)->when($rigPreparationId,fn($q)=>$q->whereKey($rigPreparationId))->latest()->limit(20)->get();
         foreach($candidates as $candidate){
@@ -53,17 +54,20 @@ class AvatarPreparationService {
         }
         if(!is_string($rigEngine)||!preg_match('/^[a-f0-9]{64}$/',$rigEngine))throw ValidationException::withMessages(['worker'=>'No valid frozen rig engine is available.']);
         AvatarEvolutionSetting::current();
-        return DB::transaction(function()use($generation,$profile,$yaw,$attachments,$actor,$meta,$engine,$artifact,$rigEngine,$boneMap,$previousId,$rigReuse){
+        return DB::transaction(function()use($generation,$profile,$yaw,$attachments,$actor,$meta,$engine,$artifact,$rigEngine,$boneMap,$previousId,$rigReuse,$equipment){
             AvatarEvolutionSetting::lockForUpdate()->findOrFail(1);
             if(TrellisGeneration::withTrashed()->findOrFail($generation->id)->status!=='generated_unqualified')throw ValidationException::withMessages(['generation_id'=>'This generated source was deleted.']);
             if($actor==='preparation-scheduler'&&!\App\Models\AvatarPreparationSetting::lockForUpdate()->findOrFail(1)->enabled)throw ValidationException::withMessages(['schedule'=>'Continuous preparation was paused.']);
             if(AvatarPreparation::where('avatar_id',$generation->avatar_id)->whereIn('status',[...self::ACTIVE,'cancelling','pausing'])->exists())throw ValidationException::withMessages(['generation_id'=>'This avatar already has an active preparation.']);
+            // Revisions of the same source belong to its existing report.
+            $previousId??=AvatarPreparation::where('generation_id',$generation->id)->latest()->value('id');
             $current=AvatarVisualRelease::where('avatar_id',$generation->avatar_id)->where('variant',$meta['variant'])->where('active',true)->first();
             $plan=['version'=>1,'generation_id'=>$generation->id,'avatar_id'=>$generation->avatar_id,'source_sha256'=>$artifact['sha256'],
                 'donor_sha256'=>$meta['sha256'],'engine_sha256'=>$engine,'profile'=>$profile,'yaw'=>$yaw,'attachments'=>$attachments,'validation'=>'deferred'];
             $plan['storage_gib']=AvatarEvolutionSetting::findOrFail(1)->storage_gib;
             if($rigReuse)$plan['rig_reuse']=$rigReuse;
             $plan['provider']='unirig';$plan['unirig_engine_sha256']=$rigEngine;$plan['bone_map']=$boneMap;$plan['seed']=(int)($generation->plan['seed']??25001);
+            $plan=[...$plan,...$equipment];
             $plan['baseline']=$current?['release_id'=>$current->id,'run_id'=>$current->run_id,'file'=>$current->file,'sha256'=>$current->sha256]:null;
             $run=AvatarPreparation::create(['id'=>(string)Str::uuid(),'generation_id'=>$generation->id,'avatar_id'=>$generation->avatar_id,'status'=>'queued','plan'=>$plan,'previous_preparation_id'=>$previousId]);
             app(PreparationProgressService::class)->record($run,['status'=>'queued','stage'=>'manual_admission']);

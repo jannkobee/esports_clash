@@ -7,14 +7,15 @@ import sys
 from pathlib import Path
 from mathutils import Vector, Matrix, Quaternion
 sys.path.insert(0,str(Path(__file__).resolve().parent))
-from bone_mapping import infer_humanoid, NATIVE
-from retarget_motion import motion_delta, hip_motion_to_root, EQUIPMENT_PROFILE
+from bone_mapping import infer_humanoid, materialize_root_adapter, NATIVE, resolve_character_profile
+from retarget_motion import motion_delta, hip_motion_to_root, EQUIPMENT_PROFILE, calibrate_arms, apply_calibrated_arms, grip_pose, mount_equipment
 from retarget_contacts import bake_contacts, GAITS
-from equipment_skin import rigid_equipment, regularize_skin_weights, secondary_chains
+from equipment_skin import rigid_equipment, regularize_skin_weights, secondary_chains, validate_skin_weights
 from mesh_cleanup import cleanup_mesh
 
 folder, source, donor = map(Path, sys.argv[sys.argv.index('--')+1:])
 plan=json.loads((folder/'preparation-plan.json').read_text())
+profile_name=plan.get('character_profile') or resolve_character_profile(equipment_plan=plan.get('equipment',[]))
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=str(source))
 rigs=[o for o in bpy.context.scene.objects if o.type=='ARMATURE']
@@ -29,7 +30,7 @@ aliases={
     'ThighL':['LeftUpLeg','ThighL'], 'CalfL':['LeftLeg','CalfL'], 'FootL':['LeftFoot','FootL'],
     'ThighR':['RightUpLeg','ThighR'], 'CalfR':['RightLeg','CalfR'], 'FootR':['RightFoot','FootR']}
 mapping=dict(plan.get('bone_map') or {})
-mapping_review={'method':'explicit-or-native-alias','accepted':False}
+mapping_review={'method':'explicit-or-native-alias','accepted':False,'profile':profile_name}
 for native, options in aliases.items():
     if native in mapping:
         continue
@@ -37,12 +38,14 @@ for native, options in aliases.items():
     if len(matches)==1:
         mapping[native]=matches[0]
 if not plan.get('bone_map') and len(mapping)<17:
-    structural, mapping_review=infer_humanoid([{'name':b.name,'parent':b.parent.name if b.parent else None,'position':list(target.matrix_world@b.head_local)} for b in target.data.bones])
+    structural, mapping_review=infer_humanoid([{'name':b.name,'parent':b.parent.name if b.parent else None,'position':list(target.matrix_world@b.head_local)} for b in target.data.bones],profile_name=profile_name)
     if structural and all(structural.get(name)==value for name,value in mapping.items()):
+        materialize_root_adapter(target,mapping_review)
         mapping.update(structural)
     elif structural:
         mapping_review.update(accepted=False,reasons=['Structural proposal conflicts with named bone aliases.'])
-missing=[name for name in mapping if name not in NATIVE]+[name for name in aliases if name not in mapping or mapping[name] not in predicted]
+available=set(target.data.bones.keys())
+missing=[name for name in mapping if name not in NATIVE]+[name for name in aliases if name not in mapping or mapping[name] not in available]
 if len(set(mapping.values()))!=len(mapping):
     missing.append('Bone mapping must be one-to-one')
 proof=json.loads((folder/'unirig-result.json').read_text())
@@ -52,9 +55,11 @@ if missing:
     output=folder/'candidate-01.glb'
     output.write_bytes(source.read_bytes())
     bpy.ops.wm.save_as_mainfile(filepath=str(folder/'candidate-01.blend'),compress=True)
+    reasons=mapping_review.get('reasons') or ['The supplied map does not resolve all required native joints.']
     (folder/'preparation.json').write_text(json.dumps({'method':'unirig-skeleton-and-skin','sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
         'bytes':output.stat().st_size,'runtime_compatible':False,'unirig':proof,'predicted_bones':predicted,'bone_map':mapping,'mapping_review':mapping_review,
-        'problems':['Review native animation mapping for: '+', '.join(missing)],'native_clips':[]},indent=2))
+        'unresolved_native_joints':missing,
+        'problems':['Automatic bone mapping needs review: '+reason for reason in reasons],'native_clips':[]},indent=2))
     sys.exit(0)
 if not mapping_review.get('accepted'):
     mapping_review={'method':'explicit-or-native-alias','accepted':True,'bone_map':mapping}
@@ -120,8 +125,11 @@ for hand_name in ['HandL', 'HandR']:
         continue
     for child in list(hand_bone.children):
         if child.name not in mapping.values() and child.name not in aliases:
-            if avatar_id == 'c_astra':
-                child['avatarPart'] = 'bow'
+            # Extra hand branches are normally fingers. Only an explicitly
+            # identified prop is rigid equipment; never classify every digit as
+            # a weapon or apply carrying corrections once per finger joint.
+            if child.get('avatarPart') not in ['bow','weapon','shield','sword','held-prop','staff','gun'] and child.get('heldProp') is not True:
+                continue
             prop_chain = [child]
             chain_stack = [child]
             while chain_stack:
@@ -142,10 +150,13 @@ skin_repairs=[]
 secondary=secondary_chains(target,mapping.keys(),equipment_repairs)
 for name,settings in secondary.items():
     target.data.bones[name]['secondaryMotion']=settings
+skin_validations=[]
 for obj in meshes:
     skin_repairs.extend(rigid_equipment(obj,set(target.data.bones.keys()),equipment_repairs,target))
     reg=regularize_skin_weights(obj,target,mapping.keys(),equipment_repairs)
     if reg:skin_repairs.append(reg)
+    val=validate_skin_weights(obj,target,mapping.keys())
+    skin_validations.append(val)
 before=set(bpy.context.scene.objects)
 bpy.ops.import_scene.gltf(filepath=str(donor))
 donor_rigs=[o for o in bpy.context.scene.objects if o not in before and o.type=='ARMATURE']
@@ -251,6 +262,8 @@ for side in ['L','R']:
     thigh_pt=target.matrix_world@target.data.bones['Thigh'+side].head_local
     contact_reference[side]=Vector((foot_pt.x,thigh_pt.y,foot_pt.z))
 neutral_pose={name:(native_rig.pose.bones[name].matrix_basis.to_quaternion().copy(),native_rig.pose.bones[name].location.copy()) for name in retarget_names}
+arm_calibration=calibrate_arms(native_rig,target,15 if plan.get('equipment') else 0)
+finger_grips=grip_pose(target,[asset['slot'] for asset in plan.get('equipment',[])])
 
 for action in actions:
     if action.name not in ['Idle','Walk','Run','Strafe','Attack','Cast','Hit','Death','TurnLeft','TurnRight']:
@@ -269,13 +282,16 @@ for action in actions:
     foot_samples={'L':[],'R':[]}
     bpy.context.scene.frame_set(int(start));bpy.context.view_layer.update()
     clip_start_pose={name:(native_rig.pose.bones[name].matrix_basis.to_quaternion().copy(),native_rig.pose.bones[name].location.copy()) for name in retarget_names}
-    for frame in range(int(start),int(end)+1):
+    # glTF durations commonly end between Blender frames (e.g. 1.10s at
+    # 24fps). Retain those endpoints instead of truncating combat/loop timing.
+    sample_frames=sorted(set([float(start),float(end),*range(math.ceil(start),math.floor(end)+1)]))
+    for frame in sample_frames:
         if (folder/'cancelled.json').exists():
             raise RuntimeError('Cancelled')
         # Locomotion is cyclic: make the final authored sample equal the first
         # without changing clip duration or the phase-based contact trajectory.
-        source_frame=int(start) if original_name in ['Walk','Run','Strafe'] and frame==int(end) else frame
-        bpy.context.scene.frame_set(source_frame)
+        source_frame=start if original_name in ['Walk','Run','Strafe'] and frame==end else frame
+        bpy.context.scene.frame_set(int(source_frame),subframe=source_frame%1)
         for name in retarget_names:
             a=native_rig.pose.bones.get(name)
             b=target.pose.bones.get(name)
@@ -289,6 +305,11 @@ for action in actions:
                 reference_rotation=clip_rot
             fraction=(frame-start)/max(end-start,1)
             delta=motion_delta(a.matrix_basis.to_quaternion(),reference_rotation,original_name,name,bool(equipment_repairs),avatar_id=avatar_id,phase=fraction)
+            if original_name in ['Idle', 'Walk', 'Run', 'Strafe'] and fraction > 0.90:
+                loop_t = (fraction - 0.90) / 0.10
+                ease_loop = loop_t * loop_t * (3.0 - 2.0 * loop_t)
+                start_delta = motion_delta(clip_start_pose[name][0], reference_rotation, original_name, name, bool(equipment_repairs), avatar_id=avatar_id, phase=0.0)
+                delta = delta.slerp(start_delta, ease_loop)
             b.rotation_quaternion=correction.inverted()@delta@correction
             unit_ratio=native_rig.matrix_world.to_scale().length/target.matrix_world.to_scale().length
             if name in ('Root','Hips'):
@@ -310,14 +331,18 @@ for action in actions:
         root_rest=root_pose.bone.matrix_local;hip_rest=hip_pose.bone.matrix_local
         root_pose.matrix_basis=hip_motion_to_root(root_rest,hip_rest,root_pose.matrix_basis,hip_pose.matrix_basis)
         hip_pose.matrix_basis=Matrix.Identity(4)
+        bpy.context.view_layer.update()
+        apply_calibrated_arms(native_rig,target,arm_calibration)
         # Keep thigh/calf/foot and helper FK, including the donor knee plane and
         # heel-to-toe rotation. IK only corrects small vertical contact errors.
         bake_contacts(target,contact_reference,original_name,(frame-start)/max(end-start,1),equipment_repairs)
+        for name,rotation in finger_grips.items():
+            target.pose.bones[name].rotation_mode='QUATERNION';target.pose.bones[name].rotation_quaternion=rotation
         if original_name in ['Walk','Run','Strafe']:
             bpy.context.view_layer.update()
             for side in foot_samples:
                 foot_samples[side].append(target.matrix_world@target.pose.bones['Foot'+side].head)
-        for name in list(retarget_names)+[r['bone'] for r in equipment_repairs]+list(clavicles.values()):
+        for name in list(retarget_names)+[r['bone'] for r in equipment_repairs]+list(clavicles.values())+list(finger_grips):
             b=target.pose.bones[name]
             b.keyframe_insert(data_path='rotation_quaternion',frame=frame,group=name)
             b.keyframe_insert(data_path='location',frame=frame,group=name)
@@ -344,17 +369,24 @@ for obj in list(generated):
 for action in actions:
     if action.name.startswith('NativeSource_'):
         bpy.data.actions.remove(action)
+idle=bpy.data.actions.get('Idle')
+target.animation_data.action=idle
+slots=list(target.animation_data.action_suitable_slots)
+if len(slots)==1:target.animation_data.action_slot=slots[0]
+bpy.context.scene.frame_set(int(idle.frame_range[0]));bpy.context.view_layer.update()
+mounted_equipment=mount_equipment(target,folder,plan.get('equipment',[]))
 for image in bpy.data.images:
     if image.has_data:
         if max(image.size)>1024:
             ratio=1024/max(image.size)
             image.scale(max(1,int(image.size[0]*ratio)),max(1,int(image.size[1]*ratio)))
         image.pack()
-root['assetPreparation']={'provider':'unirig','animation_mode':'retargeted-native-clips','source_sha256':plan['source_sha256'],'rig_sha256':proof['artifact']['sha256'],'skin_repair_sha256':hashlib.sha256(json.dumps(skin_repairs,sort_keys=True).encode()).hexdigest(),'pipeline':'donor-fk-secondary-v3','stride_distances':stride_distances,'secondary_bones':secondary}
+root['assetPreparation']={'provider':'unirig','character_profile':profile_name,'animation_mode':'retargeted-native-clips','source_sha256':plan['source_sha256'],'rig_sha256':proof['artifact']['sha256'],'skin_repair_sha256':hashlib.sha256(json.dumps(skin_repairs,sort_keys=True).encode()).hexdigest(),'pipeline':'calibrated-equipment-v4','stride_distances':stride_distances,'secondary_bones':secondary}
+root['assetPreparation']['equipment']=mounted_equipment
 for key in ['anatomyAuthor','anatomyLicense','authoredAnatomy']:
     if key in root:del root[key]
 output=folder/'candidate-01.glb'
-bpy.ops.export_scene.gltf(filepath=str(output),export_format='GLB',export_extras=True,export_animations=True,export_animation_mode='ACTIONS',export_skins=True,export_all_influences=False,export_force_sampling=True)
+bpy.ops.export_scene.gltf(filepath=str(output),export_format='GLB',export_extras=True,export_animations=True,export_animation_mode='ACTIONS',export_skins=True,export_all_influences=False,export_force_sampling=False)
 bpy.context.preferences.filepaths.save_version=0
 bpy.ops.wm.save_as_mainfile(filepath=str(folder/'candidate-01.blend'),compress=True)
 problems=[]
@@ -366,5 +398,6 @@ mapping_review['warnings']=warnings
 if any(name not in clips for name in ['Idle','Walk','Run','Attack','Cast','Hit','Death']):
     problems.append('Native clip retargeting incomplete')
 (folder/'preparation.json').write_text(json.dumps({'method':'unirig-skeleton-and-skin-native-clip-retarget-v1','sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
-    'bytes':output.stat().st_size,'runtime_compatible':True,'unirig':proof,'predicted_bones':predicted,'bone_map':mapping,'mapping_review':mapping_review,'native_helpers':helpers,'animation_reference':'native Idle first frame; bind-relative deltas','locomotion_contacts':'donor FK; vertical contact clamp <=2.5% leg length; authored knee plane and foot orientation','stride_distances':stride_distances,'secondary_bones':secondary,'equipment_repairs':equipment_repairs,'motion_profile':EQUIPMENT_PROFILE if equipment_repairs else {'name':'native-relative','clip_timing':'unchanged'},'skin_weights':'UniRig body and secondary weights retained; constrained equipment repairs recorded','skin_repairs':skin_repairs,'native_clips':clips,'problems':problems,
-    'limits':'UniRig body skin retained; disconnected equipment changes explicitly versioned. Rest-space rotation retargeting is a candidate; pose, clipping, foot contact and timing must pass qualification.'},indent=2))
+    'bytes':output.stat().st_size,'runtime_compatible':True,'unirig':proof,'predicted_bones':predicted,'bone_map':mapping,'mapping_review':mapping_review,'native_helpers':helpers,'character_profile':profile_name,'animation_reference':'anatomically calibrated Idle arm stance; complete donor world-space arm motion; bind-relative torso/legs','locomotion_contacts':'donor FK; vertical contact clamp <=2.5% leg length; authored knee plane and foot orientation','stride_distances':stride_distances,'secondary_bones':secondary,'equipment_repairs':equipment_repairs,'motion_profile':EQUIPMENT_PROFILE if equipment_repairs else {'name':'calibrated-arm-stance-v1','clip_timing':'unchanged'},'skin_weights':'UniRig body and secondary weights retained; constrained equipment repairs recorded','skin_repairs':skin_repairs,'skin_validation':skin_validations,'native_clips':clips,'problems':problems,
+    'equipment':mounted_equipment,'grip_bones':list(finger_grips),
+    'limits':'UniRig body skin retained; separate equipment is rigid-bound to real hands. Calibrated motion and automatic grip fitting remain candidates; identity, clipping, contact and timing require qualification and visual review.'},indent=2))

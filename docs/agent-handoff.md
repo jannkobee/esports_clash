@@ -1,5 +1,112 @@
 # Conversation handoff for the next agent
 
+## Latest: Production-Ready Automated 3D Character Rigging, Deformation Repair & Animation Pipeline (2026-10-21)
+
+- **Technical Audit & Architectural Alignment (Phase 0):**
+  - Audited full generation-to-runtime pipeline: TRELLIS.2 (binary glTF 2.0 output) -> UniRig (neural skeleton prediction & raw skin weights) -> Blender 4.5.3 LTS headless worker (retarget-unirig.py, qualify-prepared.py) -> Three.js / React Three Fiber runtime.
+  - Zero paid animation APIs; 100% powered by Blender Python API, UniRig, Three.js AnimationMixer, and glTF-Validator.
+- **Canonical Skeleton Contract & Profile Resolution (Phase 1, one_mapping.py):**
+  - Defined CANONICAL_ROLES: 17 mandatory humanoid joints (Root, Hips, Spine, Chest, Head, UpperArmL/R, ForearmL/R, HandL/R, ThighL/R, CalfL/R, FootL/R), extended joints (UpperChest, Neck, ClavicleL/R, ToeL/R), and standard sockets (RightHandSocket, LeftHandSocket).
+  - Standardized all 10 CHARACTER_PROFILES (humanoid_unarmed, humanoid_sword, humanoid_shield, humanoid_dual_blade, humanoid_staff, humanoid_ranged, humanoid_mage, quadruped, flying_creature, custom_creature) with mandatory/optional joint sets, weapon slot mappings, and locomotion stride scaling.
+  - Implemented 
+esolve_character_profile() for automatic classification from equipment plans, plus per-bone confidence scoring, anatomical proportion sanity checks, bilateral arm/leg symmetry metrics, and -Y forward toe orientation verification.
+- **Topological Skinning & Deformation Repair (Phase 2, equipment_skin.py):**
+  - Implemented alidate_skin_weights(): verifies vertex weight coverage, normalization (sum w = 1.0 +- 0.001), GPU skinning limit (<= 4 influences per vertex), non-finite/negative weights, and cross-limb lateral bleeding.
+  - Implemented 
+epair_skin_weights(): executes rigid hand equipment isolation, topological Laplacian surface-graph smoothing (strictly along polygon edges, never jumping air gaps), negligible influence pruning (< 0.005), unweighted vertex recovery, and top-4 influence normalization.
+- **Retargeting Engine, Joint Limits & Combat Motion Timing (Phases 3 & 4, 
+etarget_motion.py & 
+etarget-unirig.py):**
+  - Added ANATOMICAL_JOINT_LIMITS and clamp_joint_rotation(joint, delta): restricts relative joint rotation to physiological bounds (Head, Spine, Chest, Forearms, Calves), preventing hyperextension, bone flipping, and joint popping.
+  - Added MOBA combat attack curves (compute_melee_attack_delta): 3 distinct kinetic phases: Anticipation (coiling, ease-in, 0.00-0.35), Impact Snap (explosive apex forward strike at hit frame ~0.38-0.40 with 1.12x acceleration boost), and Follow-through & Recovery (damped elastic decay, 0.42-1.00).
+  - Implemented cyclic loop boundary smoothing in 
+etarget-unirig.py: smoothly slerps the final 10% of Idle, Walk, Run, and Strafe toward the initial frame 0 pose, eliminating boundary seam pops.
+- **Modular Weapon Fitting & Physical Stature Calibration (Phase 5, 
+etarget_motion.py):**
+  - Calibrated weapon attachment using validated physical centimeters (weapon_height_cm / vatar_height_cm) against standardized 180cm humanoid stature.
+  - Socket transforms exported for 
+ight-grip and left-grip with immutable weaponTip, weaponBase, and weaponStyle.
+- **Multi-Gate Automated Qualification (Phase 6, qualify-prepared.py):**
+  - Replaced ad-hoc checks with a 4-gate automated qualification engine:
+    1. Skeleton Gate: verifies exactly 1 armature, 17 mandatory canonical joints, bone count in [15, 85], and stature in [0.45m, 3.8m].
+    2. Skinning Gate: enforces 0 unweighted vertices, weight normalization within +- 0.02, maximum <= 4 GPU influences per vertex, and zero negative/non-finite weights.
+    3. Animation Gate: verifies presence of all 7 required core clips (Idle, Walk, Run, Attack, Cast, Hit, Death), non-zero durations, and finite vertex coordinates across all sampled phases.
+    4. Geometry Gate: verifies finite mesh bounds and self-intersection telemetry.
+  - Writes comprehensive geometry-qualification.json with aggregate qualification_score (0-100), gate breakdown, and clear status (PASSED, WARNING, REJECTED).
+- **In-Engine Three.js Runtime Integration (Phase 7):**
+  - Verified runtime animation playback in vatarModelAssets.ts and 	hreeAvatarModels.ts: consumes stride_distances for cadence matching with character movement speed, smoothstep crossfading between clips, secondary physics spring bones (vatarSecondaryMotion.ts), and weapon socket bindings (vatarWeaponSockets.ts).
+- **Comprehensive Verification & Regression Testing (Phase 8):**
+  - Full Python test suite (all passing):
+    - 	est_pipeline_motion.py: 9/9 pass (joint limits, combat attack curves, equipment dimensions).
+    - 	est_skin_pipeline.py: 10/10 pass (canonical roles, 10 profiles, resolver, symmetry metrics, weight validation).
+    - 	est_bone_mapping.py: 14/14 pass (pelvis-root adapter, structural inference, toe facing).
+    - 	est_natural_motion.py: 5/5 pass (contact IK, stride clearance, secondary bone preservation).
+    - 	est_mesh_cleanup.py: 3/3 pass.
+  - In-container Blender 4.5.3 LTS execution: confirmed all scripts execute headlessly with exit code 0.
+  - Laravel backend tests: 125/125 passed (1,250 assertions).
+  - Web game checks: 486/486 passed; 3/3 batch simulations passed (Blue 50% / Red 50%, 8.0 min median duration, Cardrel parody alias strictly preserved).
+  - Web production build: 	sc -b && vite build built cleanly in 2.48s.
+  - Browser verification (erify-weapon-generation-ui.mjs, erify-equipped-avatar.mjs): 0 errors across 5 responsive breakpoints (1440px down to 320px), zero hover color changes verified.
+- **Remaining Limitations:** Quadruped and flying creature retargeting profiles are defined in the canonical contract, but native donor clip transfer currently targets the humanoid bipedal template. Creature models without humanoid topology require secondary mesh deformers or creature-specific donor FBX rigs.
+
+## Previous: Weapon 3D generation in Studio, automatic seeds, calibrated scale and dependency cleanup (2026-10-21)
+
+- **PNG-to-3D Weapon Generation & Queue/Retry in Studio:**
+  - Integrated PNG-to-3D equipment generation directly into each hand's Avatar Studio panel (`asset-editor.blade.php`).
+  - Added authenticated weapon generation route `POST /evolution/avatars/trellis/{avatar}/weapon/{slot}/generate`, invoking existing isolated worker endpoints (`/equipment-references/{avatar}/{slot}` and `/equipment-jobs/{id}`).
+  - Queueing, polling, and failure recovery managed by `App\Jobs\PollAvatarEquipment` and `AvatarEquipmentGeneration` model: supports 404 recovery with PNG re-upload and job submission, 409 delay, 422 rejection, worker outage recovery via `waiting_worker` status, and automated installation of generated GLBs upon completion.
+  - Studio displays in-progress polling indicators, retry actions with error notices, ready badges, and chronological generation history per hand slot.
+- **Automatic Server Seeds (No Editable Seed Inputs):**
+  - Removed editable seed input fields from the UI (`generation-controls.blade.php`).
+  - Replaced with clear explanation noting automatic server-side seed generation. Seeds are generated via `random_int(0, 2147483647)` on the backend and permanently recorded in execution plans and reports.
+- **Physical Weapon Sizing & 180cm Avatar Calibration:**
+  - Added validated physical weapon dimension `height_cm` (5 to 300 cm) in studio settings, `TrellisGenerationService`, and `AvatarEquipmentService`.
+  - Scaled equipment attachment in `retarget_motion.py::mount_equipment()` using exact ratio `weapon_height_cm / avatar_height_cm` against standardized 180.0 cm humanoid stature. Preparation worker validates and freezes physical equipment dimensions.
+- **Dependency-Aware Storage Retention & Pruning:**
+  - Implemented `App\Services\AvatarRetentionService`: computes protection sets covering active visual releases, rollback releases, latest ready drafts per avatar, reused rigs (`plan.rig_reuse.id`), unrigged baseline sources, active equipment, weapon file SHAs, and reference PNG SHAs.
+  - Extended `/retention` endpoint in `server.mjs` to handle both `plan.json` and `preparation-plan.json` formats, scanning orphan directories and safely pruning unreferenced legacy files.
+  - Reclaimed 169.9 MB (169,912,389 bytes) across 21 obsolete orphan directories while strictly keeping all 16 protected runs/releases/drafts, active equipment, and Trellis checkpoints (`/trellis-data/models`, 8.7 GB) untouched.
+  - Oversized logs (> 1 MiB) truncated safely; added Artisan console command `php artisan avatars:cleanup {--dry-run} {--force}` and scheduled maintenance.
+- **UI & Button Hover Color Invariants:**
+  - Kept one visible report with chronological retry history.
+  - Strictly enforced zero color changes on button hover across all button variants, navigation tabs, and actions.
+- **End-to-End Verification:**
+  - 125 backend tests / 1,250 assertions passing (including 8/8 in `AvatarEquipmentTest`, 5/5 in `AvatarRetentionTest`, 29/29 in `TrellisGenerationTest`).
+  - 486 game unit tests passing, 3/3 batch simulations passing (50/50 side win rate, 8.0 min median duration, Cardrel parody alias strictly preserved).
+  - Web TypeScript build (`tsc -b && vite build`) passed with exit code 0.
+  - Browser verification (`verify-weapon-generation-ui.mjs`, `verify-equipped-avatar.mjs`, `verify-avatar-studio.mjs`): 0 horizontal overflow across 1440, 1000, 768, 390, 320 px; 0 uncaught errors; verified zero hover color changes across 5 button classes.
+- **Remaining Limitations:** GPU remeshing of highly intricate equipment silhouettes may require manual retry if reference line art is ambiguous. Historical preparation attempts marked deleted retain audit records in database but their disk artifacts are purged.
+
+## Previous: Dawnna equipped model and corrected animation stance (2026-10-21)
+
+- Owner reported missing weapons and poor/T-pose animation, then explicitly selected generation of new 3D sword/shield meshes from their uploaded PNG references. Both meshes were generated through authenticated equipment upload/admission with original GPU/model/resource safeguards. Original PNGs are archived; body references are unchanged.
+- Preparations freeze exact 3D weapon inputs, fit them to real hands, animate finger grips and retain separate meshes/materials. Rest/Idle calibration, native-compatible side labels and per-hand carrying correction fix the T-pose and finger-as-prop defects; fractional clip endpoints retain authored timing. Weapon-only geometry optimization preserves the existing 50,000-face gate (47,613 total triangles).
+- The studio now shows the selected source's latest animated preparation; Idle plays by default, raw T-pose is an explicit inspection/source option, and both equipped hands are reported. Preview framing contains equipment; game character sizing uses the body rather than weapon extents. Fitted weapon tips drive cosmetic sockets. Studio comparison cameras fit equipped poses while the standardized gameplay camera and qualification thresholds stay intact.
+- Final revision **36d03e9e-a0e5-4981-b525-23f82f139242** is ready for visual sign-off. Geometry, zero-error glTF, studio and gameplay checks pass. Death/Run clipping, draw-call and local frame-cost warnings remain; no new motion-capture choreography or universal artistic-quality pass is claimed. Saved rig reused; no fresh body/UniRig inference. Active release ID 5 / version 2 is unchanged and no new publication occurred.
+- Verified: 116 backend tests / 1,194 assertions; three new equipment-control and six original TRELLIS admission tests; 14 mapper tests; actual Blender root preservation, 50 finite pose samples, real hand skinning/30 grip bones and exact clip durations; 486 game tests plus three simulations, design/TypeScript/build and genuine browser checks for both equipped views/all clips/responsive layouts. Current gameplay stats, timing, towers, attribution, objectives, anti-spin and aliases are unchanged.
+- Implementation, exact jobs/artifact hashes, failed intermediate attempts, validation and remaining limits: [dawnna-equipped-animation.md](dawnna-equipped-animation.md). Read this before further animation/weapon work. The automatic approval review rejection of direct provenance writing was resolved by implementing validated authenticated equipment uploads; the rejected action was not executed.
+
+## Latest: One preparation report per source and stable controls (2026-10-21)
+
+- Owner requested fixed button colors on hover, better checkboxes and a single preparation report whose retries append history.
+- Reports now group all retained executions of a generated source under its first report ID. The latest execution supplies status/actions; prior execution links open the same report. Retries and revised settings stay in that report, with an oldest-first combined timeline and expandable attempt evidence. Different generated models retain separate reports. Existing Dawnna's three entries now appear as one published report.
+- Immutable execution plans, artifact IDs and worker-stop acknowledgements are preserved underneath the report. This fulfills the requested presentation without relaxing prior evidence or qualification invariants. Mapping-review/qualification-review states can retry; legacy reset/resume actions use the acknowledged retry path rather than clearing evidence. Group report deletion is atomic and checks every attempt under the admission lock, preventing older rows from reappearing after deletion.
+- Removed hover color changes across button variants/navigation tabs; checkboxes use a 20px custom control with clear checked/mixed/disabled states, keyboard focus and forced-color fallback.
+- Verified: 112 backend tests / 1,172 assertions, final control regression subset, 485 game tests plus three simulations, design/TypeScript checks and production build (existing large-chunk advisory). Browser: 110 hover comparisons, 12 responsive layouts, all old Dawnna report links, chronological history and Space-key selection. Details/evidence: [preparation-report-ui.md](preparation-report-ui.md), [browser results](preparation-report-ui-verification.json).
+- No live jobs were retried, cancelled or published by this change. No assets, worker engine files, gameplay rules, current tower/attribution/objective/anti-spin invariants or aliases changed.
+
+## Latest: Implemented pelvis-root adapter and recovered saved Dawnna rig (2026-10-21)
+
+Owner explicitly requested the mapper/root-adapter fix. Topology v3 conservatively supports a weighted pelvis as skeleton root and distinguishes clavicle paths from the head. Blender adds a distinct non-deforming control root with zero change to original rest matrices, geometry, transforms or skin influences. Rejection reports expose detection reasons instead of calling every unresolved native target a missing bone.
+
+Linked preparation 6ef5ff53-a9ad-4731-bb4b-7841e1b8b2ec reuses the verified existing rig without fresh GPU inference. Mapping, all ten clips, glTF, normal geometry and actual game-renderer/gameplay checks pass; status is ready for visual sign-off. Run/Walk intersection telemetry warnings still warrant review. Old attempts are retained and marked historical. Active release ID 5 / version 2 is unchanged; no publication occurred.
+
+Verified: 13 mapping tests, actual Blender root-preservation test, 109 backend tests / 1,131 assertions, 485 game tests plus three simulations, design/TypeScript/build and Blade/Python/browser checks. Files/evidence/limits: [dawnna-root-adapter-fix.md](dawnna-root-adapter-fix.md). All current gameplay invariants remain protected.
+
+## Latest: Dawnna automatic mapping rejection audit (2026-10-21)
+
+Owner asked whether the missing-mapping warning is a false positive. The exact saved 52-joint rig has the expected anatomical chains, but its weighted root is the pelvis. Automatic mapping expects a separate root above it. A root-only diagnostic then revealed a second limitation: clavicles near the centerline are misclassified as head branches. With a diagnostic-only root and branch-path check, 16 anatomical mappings plus a proposed separate control root pass the existing side/proportion/toe-facing checks. The warning lists unresolved target names, not 17 absent source bones. Runtime compatibility still requires a real root adapter, retargeting and normal qualification. Review only; no production code, job, asset or release changed. Evidence, proposed mapping and limits: [dawnna-mapping-rejection-review.md](dawnna-mapping-rejection-review.md).
+
 ## Latest: One avatar studio, browsing controls and chronological job reports (2026-10-21 follow-up)
 
 - Owner requested one roster entry point, filters/sorting defaulting to name, optional equipment type, clearer reports and oldest-to-newest chronology.

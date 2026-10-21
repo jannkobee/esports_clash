@@ -10,8 +10,8 @@
     @else
         <form method="post" action="{{ route('trellis.start') }}" class="generation-action" data-no-ajax>
             @csrf<input type="hidden" name="avatar_id" value="{{ $avatar['id'] }}"><input type="hidden" name="allow_new_instance" value="1">
-            <div class="generation-queue-row"><label>Generation seed<input type="number" name="seed" min="0" max="2147483647" value="{{ old('seed',25001) }}" required aria-describedby="seed-help"></label><button type="submit" class="primary" @disabled(!$workerConnected || !$bodyReady)>{{ empty($completedModel) ? 'Generate 3D source' : 'Generate new model' }} &rarr;</button></div>
-            <p class="fine" id="seed-help">The seed controls variation. Reuse it with the same reference and worker settings to compare results.</p>
+            <div class="generation-queue-row"><button type="submit" class="primary" @disabled(!$workerConnected || !$bodyReady)>{{ empty($completedModel) ? 'Generate 3D source' : 'Generate new model' }} &rarr;</button></div>
+            <p class="fine" id="seed-help">Seeds are generated automatically on the server to ensure fresh variation. Each model's seed is recorded in its report.</p>
         </form>
         @if(!$bodyReady)<p class="generation-blocker">Add a clean T-pose body reference above to enable generation. Older equipped concept art is retained for reference only.</p>@elseif(!$workerConnected)<p class="generation-blocker">Your assets are saved. Reconnect the local worker to generate a model.</p>@endif
     @endif

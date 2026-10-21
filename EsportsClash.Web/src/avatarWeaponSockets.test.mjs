@@ -8,6 +8,14 @@ import {AvatarProjectilePresentation} from './avatarProjectilePresentation.ts';
 import {ArenaAbilityEffects} from './threeAbilityEffects.ts';
 import {disposeArenaTerrainResources} from './threeArenaTerrain.ts';
 
+test('fitted equipment supplies its actual posed tip without changing combat geometry',()=>{
+ const root=new THREE.Group(),grip=new THREE.Group();root.add(grip);grip.userData.avatarPart='right-grip';
+ grip.userData.weaponTip=[0,60,0];grip.userData.weaponBase=[0,-4,0];grip.position.set(2,3,4);grip.scale.setScalar(.02);
+ const sample=bindWeaponSocket(root,'c_solana');
+ assert.deepEqual(sample().tip,[2,4.2,4]);assert.deepEqual(sample().base,[2,2.92,4]);
+ grip.userData.weaponTip=[NaN,1,2];assert.ok(sample().tip.every(Number.isFinite),'Invalid fitting must retain the authored fallback');
+});
+
 test('all 45 modeled weapon mounts follow animation, world scale, yaw and knock-up',()=>{
  assert.deepEqual(Object.keys(AVATAR_WEAPON_SOCKETS).sort(),CHAMPIONS.map(c=>c.id).sort());
  const resources=new AvatarModelResources();

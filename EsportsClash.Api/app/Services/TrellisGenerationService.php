@@ -232,7 +232,7 @@ class TrellisGenerationService
 
     public function weaponStoragePath(?string $avatarId = null): string
     {
-        $base = storage_path('app/avatars/weapons');
+        $base = config('avatars.weapon_path') ?? storage_path('app/avatars/weapons');
         return $avatarId ? $base . '/' . $avatarId : $base;
     }
 
@@ -282,6 +282,8 @@ class TrellisGenerationService
                 'filename' => $primaryFile ? basename($primaryFile['path']) : null,
                 'sha256' => $primaryData['sha256'] ?? null,
                 'updated_at' => $primaryData['updated_at'] ?? null,
+                'height_cm' => $primaryData['height_cm'] ?? (($primaryData['weapon_type']??$defaultPrimaryType)==='shield' ? 90 : 120),
+                'reference_sha256' => $primaryData['reference_sha256'] ?? null,
             ];
 
             // Secondary slot
@@ -296,6 +298,8 @@ class TrellisGenerationService
                 'filename' => $secondaryFile ? basename($secondaryFile['path']) : null,
                 'sha256' => $secondaryData['sha256'] ?? null,
                 'updated_at' => $secondaryData['updated_at'] ?? null,
+                'height_cm' => $secondaryData['height_cm'] ?? (($secondaryData['weapon_type']??$defaultSecondaryType)==='shield' ? 90 : 120),
+                'reference_sha256' => $secondaryData['reference_sha256'] ?? null,
             ];
 
             $results[$id] = [
@@ -315,6 +319,24 @@ class TrellisGenerationService
     public function saveWeaponAsset(string $avatarId, \Illuminate\Http\UploadedFile $file, string $slot, string $type, string $socket, string $actor): array
     {
         return $this->withWeaponLock($avatarId, fn() => $this->storeWeaponAsset($avatarId, $file, $slot, $type, $socket, $actor));
+    }
+    public function saveGeneratedWeapon(string $avatar,\Illuminate\Http\UploadedFile $file,string $slot,string $reference,string $generation,string $actor):array
+    {
+        return $this->withWeaponLock($avatar,function()use($avatar,$file,$slot,$reference,$generation,$actor){
+            $current=$this->weaponFile($avatar,$slot);
+            $expected=$current['meta']['reference_sha256']??($current&&$current['mime']==='image/png'?$current['sha256']:null);
+            if(!$current||$expected!==$reference)throw ValidationException::withMessages(['equipment'=>'The equipment reference changed during generation. Review this result before replacing the newer upload.']);
+            $directory=$this->weaponStoragePath($avatar);$referenceName=$slot.'-reference-'.$reference.'.png';
+            if($current['mime']==='image/png') {
+                if(!hash_equals($reference,hash_file('sha256',$current['path'])))throw ValidationException::withMessages(['equipment'=>'Uploaded reference integrity failed.']);
+                if(!is_file($directory.'/'.$referenceName))copy($current['path'],$directory.'/'.$referenceName);
+            }
+            $this->storeWeaponAsset($avatar,$file,$slot,$current['meta']['weapon_type']??'generic',$slot==='primary'?'right_hand_socket':'left_hand_socket',$actor);
+            $path=$directory.'/metadata.json';$meta=json_decode(file_get_contents($path),true,flags:JSON_THROW_ON_ERROR);
+            $meta[$slot]=[...$meta[$slot],'reference_sha256'=>$reference,'reference_filename'=>$referenceName,'generation_id'=>$generation,'generation_provider'=>'trellis2-equipment','height_cm'=>$current['meta']['height_cm']??(($current['meta']['weapon_type']??'')==='shield'?90:120)];
+            \Illuminate\Support\Facades\File::replace($path,json_encode($meta,JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR));
+            return $meta[$slot];
+        });
     }
     private function withWeaponLock(string $avatar, callable $callback): mixed
     {
@@ -440,11 +462,12 @@ class TrellisGenerationService
         app(EvolutionService::class)->audit($avatar, 'trellis.reference-removed', $actor, []);
     }
 
-    public function updateWeapon(string $avatar, string $slot, string $type, string $actor): void
+    public function updateWeapon(string $avatar, string $slot, string $type, string $actor, ?float $heightCm=null): void
     {
-        $this->withWeaponLock($avatar, fn() => $this->storeWeaponSettings($avatar, $slot, $type, $actor));
+        if($heightCm!==null&&(!is_finite($heightCm)||$heightCm<5||$heightCm>300))throw ValidationException::withMessages(['height_cm'=>'Use a weapon height between 5 and 300 cm.']);
+        $this->withWeaponLock($avatar, fn() => $this->storeWeaponSettings($avatar, $slot, $type, $actor, $heightCm));
     }
-    private function storeWeaponSettings(string $avatar, string $slot, string $type, string $actor): void
+    private function storeWeaponSettings(string $avatar, string $slot, string $type, string $actor, ?float $heightCm=null): void
     {
         $file = $this->weaponFile($avatar, $slot);
         if (!$file) throw ValidationException::withMessages(['weapon_file' => 'Upload a weapon file before editing its settings.']);
@@ -453,6 +476,7 @@ class TrellisGenerationService
         $data = [...$file['meta'], 'filename' => basename($file['path']), 'weapon_type' => $type,
             'weapon_slot' => $slot, 'socket_name' => $slot === 'primary' ? 'right_hand_socket' : 'left_hand_socket',
             'has_custom_asset' => true, 'sha256' => $file['sha256'], 'updated_at' => now()->toIso8601String()];
+        $data['height_cm']=$heightCm??($file['meta']['height_cm']??($type==='shield'?90:120));
         $meta[$slot] = $data;
         if ($slot === 'primary') $meta = array_replace($meta, $data);
         \Illuminate\Support\Facades\File::replace($path, json_encode($meta, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));

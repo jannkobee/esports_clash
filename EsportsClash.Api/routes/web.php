@@ -42,6 +42,7 @@ Route::middleware(['auth', EnsureEvolutionOwner::class])->prefix('evolution')->g
     Route::post('/avatars/trellis/reference',[\App\Http\Controllers\TrellisGenerationController::class,'upload'])->middleware('throttle:10,1')->name('trellis.upload');
     Route::get('/avatars/trellis/reference/{avatar}/{digest}',[\App\Http\Controllers\TrellisGenerationController::class,'reference'])->name('trellis.reference');
     Route::post('/avatars/trellis/weapon',[\App\Http\Controllers\TrellisGenerationController::class,'uploadWeapon'])->middleware('throttle:10,1')->name('trellis.upload-weapon');
+    Route::post('/avatars/trellis/weapon/{avatar}/{slot}/generate',[\App\Http\Controllers\TrellisGenerationController::class,'generateWeapon'])->whereIn('slot',['primary','secondary'])->middleware('throttle:3,1')->name('trellis.generate-weapon');
     Route::get('/avatars/trellis/weapon/{avatar}/{slot?}',[\App\Http\Controllers\TrellisGenerationController::class,'weaponAsset'])->name('trellis.weapon');
     Route::patch('/avatars/trellis/avatar/{avatar}/prompts',[\App\Http\Controllers\TrellisGenerationController::class,'savePrompts'])->name('trellis.prompts');
     Route::delete('/avatars/trellis/avatar/{avatar}/reference',[\App\Http\Controllers\TrellisGenerationController::class,'destroyReference'])->name('trellis.destroy-reference');

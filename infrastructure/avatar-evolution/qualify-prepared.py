@@ -15,18 +15,80 @@ bone_displays = {bone.custom_shape for rig in rigs for bone in rig.pose.bones if
 meshes = [o for o in bpy.context.scene.objects if o.type == 'MESH' and o not in bone_displays and not o.hide_render]
 if not meshes:
     raise RuntimeError('Candidate contains no rendered avatar geometry')
+# Multi-gate automated character validation: Skeleton, Skinning, Animations, and Geometry.
 problems = []
+warnings = []
+
+# Gate 1: Skeleton Integrity & Canonical Hierarchy
+skeleton_gate = {'passed': True, 'checks': {}}
+if len(rigs) != 1:
+    problems.append(f'Expected exactly 1 armature, found {len(rigs)}')
+    skeleton_gate['passed'] = False
+else:
+    main_rig = rigs[0]
+    bone_names = set(main_rig.data.bones.keys())
+    bone_count = len(bone_names)
+    skeleton_gate['bone_count'] = bone_count
+    if not (15 <= bone_count <= 85):
+        warnings.append(f'Bone count {bone_count} outside typical range [15, 85]')
+
+    MANDATORY_HUMANOID = {
+        'Hips', 'Spine', 'Chest', 'Head',
+        'UpperArmL', 'UpperArmR', 'ForearmL', 'ForearmR', 'HandL', 'HandR',
+        'ThighL', 'ThighR', 'CalfL', 'CalfR', 'FootL', 'FootR'
+    }
+    missing_bones = sorted(MANDATORY_HUMANOID - bone_names)
+    skeleton_gate['missing_mandatory_bones'] = missing_bones
+    if missing_bones:
+        problems.append(f'Mandatory humanoid bones missing from candidate rig: {missing_bones}')
+        skeleton_gate['passed'] = False
+
+    # Stature sanity
+    if 'Head' in bone_names and ('FootL' in bone_names or 'FootR' in bone_names):
+        foot_name = 'FootL' if 'FootL' in bone_names else 'FootR'
+        head_pt = main_rig.matrix_world @ main_rig.data.bones['Head'].head_local
+        foot_pt = main_rig.matrix_world @ main_rig.data.bones[foot_name].head_local
+        stature = abs(head_pt.z - foot_pt.z)
+        skeleton_gate['stature_m'] = round(stature, 3)
+        if not (0.45 <= stature <= 3.8):
+            warnings.append(f'Stature {stature:.2f}m outside standard humanoid bounds [0.45m, 3.8m]')
+
+# Gate 2: Skinning Coverage, GPU Limits & Normalization
+skinning_gate = {'passed': True, 'checks': {}}
 unweighted = 0
 weight_error = 0
+max_gpu_influences = 0
+negative_or_nan = 0
+rig_bone_set = {b.name for rig in rigs for b in rig.data.bones}
+
 for obj in meshes:
     for vertex in obj.data.vertices:
-        weights = [g.weight for g in vertex.groups if obj.vertex_groups[g.group].name in {b.name for rig in rigs for b in rig.data.bones}]
-        if not weights:
+        active_weights = [g.weight for g in vertex.groups if obj.vertex_groups[g.group].name in rig_bone_set and g.weight > 0.001]
+        max_gpu_influences = max(max_gpu_influences, len(active_weights))
+        if any(w < 0 or not math.isfinite(w) for w in active_weights):
+            negative_or_nan += 1
+        if not active_weights:
             unweighted += 1
-        elif abs(sum(weights) - 1) > .02:
+        elif abs(sum(active_weights) - 1.0) > 0.02:
             weight_error += 1
-if unweighted or weight_error:
-    problems.append('Skin coverage or normalized weight checks failed')
+
+skinning_gate['unweighted_vertices'] = unweighted
+skinning_gate['invalid_weight_sums'] = weight_error
+skinning_gate['max_gpu_influences'] = max_gpu_influences
+skinning_gate['negative_or_nan_weights'] = negative_or_nan
+
+if unweighted > 0:
+    problems.append(f'Skin coverage failed: {unweighted} unweighted vertices detected')
+    skinning_gate['passed'] = False
+if weight_error > 0:
+    problems.append(f'Skin weight normalization failed: {weight_error} vertices exceed 0.02 tolerance')
+    skinning_gate['passed'] = False
+if max_gpu_influences > 4:
+    problems.append(f'GPU skinning limit exceeded: {max_gpu_influences} influences per vertex (>4 limit)')
+    skinning_gate['passed'] = False
+if negative_or_nan > 0:
+    problems.append(f'Invalid non-finite or negative weights: {negative_or_nan} occurrences')
+    skinning_gate['passed'] = False
 
 
 def sample():
@@ -56,9 +118,19 @@ bind = sample()
 for rig in rigs:
     rig.data.pose_position = 'POSE'
 frames = []
-warnings = []
+animation_gate = {'passed': True, 'checks': {}}
+action_names = {action.name for action in bpy.data.actions}
+REQUIRED_CLIPS = {'Idle', 'Walk', 'Run', 'Attack', 'Cast', 'Hit', 'Death'}
+missing_clips = sorted(REQUIRED_CLIPS - action_names)
+animation_gate['actions_present'] = sorted(action_names)
+animation_gate['missing_required_clips'] = missing_clips
+
+if missing_clips:
+    problems.append(f'Required animation clips missing: {missing_clips}')
+    animation_gate['passed'] = False
+
 for action in bpy.data.actions:
-    if not any(name in action.name for name in ['Walk', 'Run', 'Attack', 'Cast', 'Hit', 'Death']):
+    if not any(name in action.name for name in ['Idle', 'Walk', 'Run', 'Attack', 'Cast', 'Hit', 'Death']):
         continue
     for rig in rigs:
         rig.animation_data_create()
@@ -77,10 +149,48 @@ for action in bpy.data.actions:
         frames.append({'clip': action.name, 'phase': phase, **result})
         if not result['finite']:
             problems.append('Nonfinite posed geometry: ' + action.name)
+            animation_gate['passed'] = False
         tolerance = max(500, int(result.get('triangles_checked', 40000) * .02)) if 'Death' in action.name else max(150, int(result.get('triangles_checked', 40000) * .01), int(bind['self_intersections'] * .75))
         if result['self_intersections'] > bind['self_intersections'] + tolerance:
             warnings.append('Self-intersection telemetry elevated during ' + action.name)
-report = {'policy':POLICY,'passed': not problems, 'problems': sorted(set(problems)), 'warnings': sorted(set(warnings)), 'bind': bind, 'frames': frames,
-    'unweighted_vertices': unweighted, 'invalid_weight_sums': weight_error,
-    'scope':'All rendered triangles, excluding adjacency by rest-coordinate seams. Finite poses and full-mesh intersections; counts are not comparable to legacy sampled reports. Clothing/contact interpretation and equipment identity still require review.'}
+
+# Gate 4: Geometry & Collision Integrity
+geometry_gate = {
+    'passed': not any('Nonfinite' in p for p in problems),
+    'bind_self_intersections': bind.get('self_intersections', 0),
+    'triangles_checked': bind.get('triangles_checked', 0)
+}
+
+# Aggregate Qualification Scoring
+score = 100
+if not skeleton_gate['passed']: score -= 30
+if not skinning_gate['passed']: score -= 30
+if not animation_gate['passed']: score -= 25
+if not geometry_gate['passed']: score -= 15
+score = max(0, score - min(20, len(warnings) * 4))
+
+status = 'PASSED' if not problems else 'REJECTED'
+if status == 'PASSED' and warnings:
+    status = 'WARNING'
+
+report = {
+    'policy': POLICY,
+    'status': status,
+    'passed': not problems,
+    'qualification_score': score,
+    'gates': {
+        'skeleton': skeleton_gate,
+        'skinning': skinning_gate,
+        'animations': animation_gate,
+        'geometry': geometry_gate,
+    },
+    'problems': sorted(set(problems)),
+    'warnings': sorted(set(warnings)),
+    'bind': bind,
+    'frames': frames,
+    'unweighted_vertices': unweighted,
+    'invalid_weight_sums': weight_error,
+    'max_gpu_influences': max_gpu_influences,
+    'scope': 'All rendered triangles, multi-gate automated qualification (skeleton, skinning <=4 influences, required clips, finite deformation).'
+}
 (folder / 'geometry-qualification.json').write_text(json.dumps(report, indent=2))

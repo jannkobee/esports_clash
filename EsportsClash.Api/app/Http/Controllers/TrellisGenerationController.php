@@ -40,8 +40,10 @@ class TrellisGenerationController extends Controller
             'names'=>collect($service->catalog())->pluck('name','id'),
             'retainedModel'=>TrellisGeneration::withTrashed()->where('avatar_id',$avatar)->where('status','generated_unqualified')->exists(),
             'completedModel'=>$completedModel,
+            'preparedModel'=>$completedModel?\App\Models\AvatarPreparation::where('generation_id',$completedModel->id)->whereIn('status',['validating','awaiting_validation','needs_review','ready','published'])->where('state->preparation->runtime_compatible',true)->latest()->first():null,
             'models'=>$models,
             'weapon'=>$weapon,
+            'equipmentRuns'=>\App\Models\AvatarEquipmentGeneration::where('avatar_id',$avatar)->oldest()->get()->groupBy('slot'),
             'currentReference'=>$currentReference,
             'operations'=>$operations
         ])->header('Cache-Control','no-store');
@@ -55,12 +57,15 @@ class TrellisGenerationController extends Controller
     public function start(Request $request,TrellisGenerationService $service)
     {
         $input=$request->validate([
-            'seed'=>['required','integer','min:0','max:2147483647'],
+            'seed'=>['nullable','integer','min:0','max:2147483647'],
             'avatar_id'=>['required','string','max:80'],
             'allow_new_instance'=>['nullable','boolean'],
         ]);
         $allowNewInstance = $request->boolean('allow_new_instance');
-        $service->start('user:'.$request->user()->id,(int)$input['seed'],$input['avatar_id'],$allowNewInstance);
+        $seed = app()->environment('testing') && isset($input['seed'])
+            ? (int)$input['seed']
+            : random_int(0,2147483647);
+        $service->start('user:'.$request->user()->id,$seed,$input['avatar_id'],$allowNewInstance);
         return redirect()->back(fallback: route('trellis.index'))->with('status','Real TRELLIS.2 generation queued. The active game appearance is preserved.');
     }
     public function reference(Request $request,string $avatar,string $digest,TrellisGenerationService $service)
@@ -83,6 +88,7 @@ class TrellisGenerationController extends Controller
         $input=$request->validate([
             'avatar_id'=>['required','string','max:80'],
             'weapon_file'=>['nullable','file','max:20480'],
+            'height_cm'=>['nullable','numeric','min:5','max:300'],
             'weapon_slot'=>['required','string','in:primary,secondary'],
             'weapon_type'=>['nullable','string','in:generic,one_handed_sword,dual_daggers,staff,bow,two_handed,gun,shield,orb'],
             'socket_name'=>['nullable','string','in:right_hand_socket,left_hand_socket,weapon_primary,weapon_secondary,weapon_muzzle,weapon_tip,projectile_origin'],
@@ -96,7 +102,7 @@ class TrellisGenerationController extends Controller
         $input['socket_name'] = $expectedSocket;
         if (!$request->hasFile('weapon_file')) {
             abort_unless(collect($service->catalog())->contains('id', $input['avatar_id']), 422);
-            $service->updateWeapon($input['avatar_id'], $input['weapon_slot'], $input['weapon_type'], 'user:'.$request->user()->id);
+            $service->updateWeapon($input['avatar_id'], $input['weapon_slot'], $input['weapon_type'], 'user:'.$request->user()->id, isset($input['height_cm'])?(float)$input['height_cm']:null);
             return back()->with('status', 'Weapon settings saved.');
         }
         $ext=strtolower($request->file('weapon_file')->getClientOriginalExtension());
@@ -113,9 +119,15 @@ class TrellisGenerationController extends Controller
             $input['socket_name'],
             'user:'.$request->user()->id
         );
+        if(isset($input['height_cm']))$service->updateWeapon($input['avatar_id'],$input['weapon_slot'],$input['weapon_type'],'user:'.$request->user()->id,(float)$input['height_cm']);
         $name=collect($service->catalog())->firstWhere('id',$input['avatar_id'])['name']??$input['avatar_id'];
         return redirect()->back(fallback: route('trellis.index'))
             ->with('status',($input['weapon_slot']==='primary'?'Right':'Left')." hand equipment saved for {$name}.");
+    }
+    public function generateWeapon(Request $request,string $avatar,string $slot,\App\Services\AvatarEquipmentService $equipment)
+    {
+        $equipment->start($avatar,$slot,'user:'.$request->user()->id);
+        return back()->with('status','3D equipment queued. It will be saved to this hand when generation completes. Prepare the avatar again to fit and qualify it.');
     }
     public function weaponAsset(Request $request,string $avatar,TrellisGenerationService $service,string $slot='primary')
     {
@@ -145,7 +157,7 @@ class TrellisGenerationController extends Controller
     {
         abort_unless(collect($service->catalog())->contains('id', $avatar), 404);
         $input = $request->validate(['weapon_type' => 'required|in:generic,one_handed_sword,dual_daggers,staff,bow,two_handed,gun,shield,orb']);
-        $service->updateWeapon($avatar, $slot, $input['weapon_type'], 'user:'.$request->user()->id);
+        $service->updateWeapon($avatar, $slot, $input['weapon_type'], 'user:'.$request->user()->id, isset($input['height_cm'])?(float)$input['height_cm']:null);
         return back()->with('status', 'Weapon settings saved.');
     }
     public function destroyWeapon(Request $request, string $avatar, string $slot, TrellisGenerationService $service)

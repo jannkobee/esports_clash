@@ -152,3 +152,26 @@ Artisan::command('avatars:preparation-control {id} {operation}',function(\App\Se
     else $controls->request($run,$this->argument('operation'),'owner:server-cli');
     $this->info('Explicit owner control requested: '.$this->argument('operation').' for '.$run->id);
 })->purpose('Explicit manual preparation control; no automatic avatar admission');
+
+Artisan::command('avatars:recover-equipment',function(){
+    if(!\Illuminate\Support\Facades\Schema::hasTable('avatar_equipment_generations'))return;
+    foreach(\App\Models\AvatarEquipmentGeneration::whereIn('status',[...\App\Services\TrellisGenerationService::ACTIVE,'installing'])->where('updated_at','<',now()->subMinute())->pluck('id')as $id)\App\Jobs\PollAvatarEquipment::dispatch($id);
+})->purpose('Recover requested weapon generations without admitting new designs');
+\Illuminate\Support\Facades\Schedule::command('avatars:recover-equipment')->everyMinute()->withoutOverlapping(2);
+
+Artisan::command('avatars:cleanup {--dry-run : Report protected and deletable items without deleting} {--force : Apply deletion without confirmation}', function (\App\Services\AvatarRetentionService $retention) {
+    $dryRun = $this->option('dry-run') || !$this->option('force');
+    $result = $retention->maintain(dryRun: $dryRun, actor: 'owner:console-cleanup');
+    if ($dryRun) {
+        $this->info("Dry-run storage cleanup report:");
+        $this->info("Protected assets: " . $result['protected_count']);
+        $this->info("Deletable preparation artifacts: " . count($result['deletable_preparations']));
+        $this->info("Deletable enhancement artifacts: " . count($result['deletable_enhancements']));
+        $this->line("To execute real cleanup, run with --force.");
+    } else {
+        $this->info("Storage cleanup applied successfully:");
+        $this->info("Protected assets: " . $result['protected_count']);
+        $this->info("Deleted artifact runs: " . count($result['deleted']));
+        $this->info("Reclaimed bytes: " . number_format($result['reclaimed_bytes'] ?? 0) . " bytes");
+    }
+})->purpose('Dependency-aware cleanup of obsolete visual preparations and enhancement artifacts');

@@ -1,0 +1,98 @@
+{
+  "provider": "TRELLIS.2 local offline",
+  "purpose": "modular-equipment",
+  "jobs": [
+    {
+      "id": "572724ab-9024-49ba-8fe1-cf03b604de5f",
+      "avatar_id": "c_solana",
+      "purpose": "modular-equipment",
+      "equipment_slot": "primary",
+      "status": "generated_unqualified",
+      "reference_sha256": "279bd9547799412c2f671ccca90bef079127ec6051702ee6e0ab4ba91e9b7a73",
+      "reference_source": {
+        "sha256": "279bd9547799412c2f671ccca90bef079127ec6051702ee6e0ab4ba91e9b7a73",
+        "provider": "authenticated-equipment-upload",
+        "avatar_id": "c_solana",
+        "slot": "primary",
+        "created_unix": 1792522929.2022529,
+        "control_sha256": "2ead8f9092e43f28bc09a739f7a76429cda708f4c404451af6a64423720a00b2"
+      },
+      "artifact": {
+        "file": "572724ab-9024-49ba-8fe1-cf03b604de5f.glb",
+        "sha256": "1a46645ec849bc59965ddcd039294f1408b3a8219429d36605d9aef8d813934c",
+        "bytes": 4010992,
+        "meshes": 1,
+        "materials": 1,
+        "images": 2,
+        "skins": 0,
+        "animations": 0,
+        "publication_eligible": false,
+        "qualification": "Generated source only. Blender binding, identity, animations and real-browser performance qualification are still required."
+      },
+      "duration_seconds": 237.09387731552124,
+      "sampled_peaks": {
+        "gpu_used_mib": 3566,
+        "comfy_tree_rss_mib": 4679.58984375,
+        "worker_anonymous_mib": 4239.35546875
+      },
+      "frozen_plan": {
+        "version": 1,
+        "avatar_id": "c_solana",
+        "seed": 25011,
+        "reference_sha256": "279bd9547799412c2f671ccca90bef079127ec6051702ee6e0ab4ba91e9b7a73",
+        "workflow_sha256": "7694161fa4a8e78644b749ed3191e7e5e220cce64fb1dbf2e71da2f5a4947675",
+        "pins_sha256": "cd832d8bc88ddda3d2db2054a8924f0f38d0dd333a064d1fde64b22a897fcf0e",
+        "limits_sha256": "b4aaddd048aedc29ee2d99ec44353218e7b42e1fc263cbfc9a76abb15aefa9a4",
+        "engine_sha256": "158f5ad09c6e965545f3ded44a06f43b208f0fa3859cbce65cffc2cc8680a30a",
+        "purpose": "modular-equipment",
+        "equipment_slot": "primary"
+      }
+    },
+    {
+      "id": "48aef7c1-bb65-4452-ac11-f94281d5dcfa",
+      "avatar_id": "c_solana",
+      "purpose": "modular-equipment",
+      "equipment_slot": "secondary",
+      "status": "generated_unqualified",
+      "reference_sha256": "f1a0cbbc63dc5d56e4790f8c46deb6e240d8448ad6e86a80ae97f9649a1a0409",
+      "reference_source": {
+        "sha256": "f1a0cbbc63dc5d56e4790f8c46deb6e240d8448ad6e86a80ae97f9649a1a0409",
+        "provider": "authenticated-equipment-upload",
+        "avatar_id": "c_solana",
+        "slot": "secondary",
+        "created_unix": 1792523322.9530656,
+        "control_sha256": "2ead8f9092e43f28bc09a739f7a76429cda708f4c404451af6a64423720a00b2"
+      },
+      "artifact": {
+        "file": "48aef7c1-bb65-4452-ac11-f94281d5dcfa.glb",
+        "sha256": "0b1ad74e6e85d43252623319cd25d1370ae7648f1fde64a58329a6287667331a",
+        "bytes": 4614016,
+        "meshes": 1,
+        "materials": 1,
+        "images": 2,
+        "skins": 0,
+        "animations": 0,
+        "publication_eligible": false,
+        "qualification": "Generated source only. Blender binding, identity, animations and real-browser performance qualification are still required."
+      },
+      "duration_seconds": 208.99164748191833,
+      "sampled_peaks": {
+        "gpu_used_mib": 3329,
+        "comfy_tree_rss_mib": 4814.296875,
+        "worker_anonymous_mib": 4293.17578125
+      },
+      "frozen_plan": {
+        "version": 1,
+        "avatar_id": "c_solana",
+        "seed": 25012,
+        "reference_sha256": "f1a0cbbc63dc5d56e4790f8c46deb6e240d8448ad6e86a80ae97f9649a1a0409",
+        "workflow_sha256": "7694161fa4a8e78644b749ed3191e7e5e220cce64fb1dbf2e71da2f5a4947675",
+        "pins_sha256": "cd832d8bc88ddda3d2db2054a8924f0f38d0dd333a064d1fde64b22a897fcf0e",
+        "limits_sha256": "b4aaddd048aedc29ee2d99ec44353218e7b42e1fc263cbfc9a76abb15aefa9a4",
+        "engine_sha256": "158f5ad09c6e965545f3ded44a06f43b208f0fa3859cbce65cffc2cc8680a30a",
+        "purpose": "modular-equipment",
+        "equipment_slot": "secondary"
+      }
+    }
+  ]
+}

@@ -47,8 +47,11 @@ export function bindWeaponSocket(root: THREE.Object3D, id: string) {
   if(!part)return;
   for(let node: THREE.Object3D | null=part;node;node=node.parent)if(!node.visible)return;
   part.updateWorldMatrix(true,false);
-  tip.set(...fitting.tip).applyMatrix4(part.matrixWorld);
-  base.set(...(fitting.base??fitting.tip)).applyMatrix4(part.matrixWorld);
+  const valid=(value:unknown):value is [number,number,number]=>Array.isArray(value)&&value.length===3&&value.every(v=>typeof v==='number'&&Number.isFinite(v));
+  const fittedTip=valid(part.userData.weaponTip)?part.userData.weaponTip:fitting.tip;
+  const fittedBase=valid(part.userData.weaponBase)?part.userData.weaponBase:(fitting.base??fitting.tip);
+  tip.set(...fittedTip).applyMatrix4(part.matrixWorld);
+  base.set(...fittedBase).applyMatrix4(part.matrixWorld);
   return {tip:tip.toArray(),base:base.toArray(),style:fitting.style,avatarId:id};
  };
 }

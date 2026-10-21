@@ -102,9 +102,25 @@ try{
     let playing=false;
     if(selector){
         mixer=new THREE.AnimationMixer(model);let last=performance.now();
+        const playButton=document.getElementById('generation-play');
+        const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const updatePlayback=()=>{
+            host.dataset.animation=selector.value===''?'rest':loaded.animations[Number(selector.value)].name;
+            host.dataset.playing=String(playing);
+            if(playButton){playButton.disabled=selector.value==='';playButton.textContent=playing?'Pause':'Play';playButton.setAttribute('aria-pressed',String(playing));}
+        };
         loaded.animations.forEach((clip,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=clip.name;selector.append(option);});
-        selector.addEventListener('change',()=>{mixer.stopAllAction();if(selector.value!==''){mixer.clipAction(loaded.animations[Number(selector.value)]).reset().play();playing=true;}else playing=false;render();});
-        document.getElementById('generation-play')?.addEventListener('click',()=>{playing=!playing;});
+        const selectClip=()=>{
+            mixer.stopAllAction();
+            if(selector.value!==''){mixer.clipAction(loaded.animations[Number(selector.value)]).reset().play();playing=!reducedMotion;}else playing=false;
+            // Evaluate the selected pose immediately, including when motion is paused.
+            mixer.update(0);updatePlayback();render();
+        };
+        selector.addEventListener('change',selectClip);
+        playButton?.addEventListener('click',()=>{if(selector.value==='')return;playing=!playing;updatePlayback();});
+        const idleIndex=loaded.animations.findIndex(clip=>clip.name.toLowerCase()==='idle');
+        if(idleIndex>=0)selector.value=String(idleIndex);
+        selectClip();
         const speedSelector=document.getElementById('generation-speed');
         if(speedSelector){
             speedSelector.addEventListener('change',()=>{
@@ -114,13 +130,24 @@ try{
         }
         const tick=now=>{const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;if(playing){mixer.update(dt);if(skeletonHelper&&skeletonVisible)skeletonHelper.update();render();}animationFrame=requestAnimationFrame(tick);};animationFrame=requestAnimationFrame(tick);
     }
+    // Fit the displayed Idle pose, including its equipment, rather than the
+    // wider bind pose used by the skeleton before mixer evaluation.
+    model.updateMatrixWorld(true);
+    model.traverse(object=>{if(object.isSkinnedMesh){object.skeleton.update();object.computeBoundingBox();}});
+    const displayBounds=new THREE.Box3().setFromObject(model),displayCenter=displayBounds.getCenter(new THREE.Vector3());
+    displayBounds.getSize(size);model.position.sub(displayCenter);model.updateMatrixWorld(true);
+    if(gridHelper)gridHelper.position.y=displayBounds.min.y-displayCenter.y;
     radius=size.length()/2;fitDistance();
     camera.near=Math.max(.0001,distance/10000);camera.far=distance*30;controls.minDistance=distance*.12;controls.maxDistance=distance*8;camera.updateProjectionMatrix();
-    const metrics={meshes:0,vertices:0,triangles:0,skinned_meshes:0,animation_clips:loaded.animations.length,shader_errors:shaderErrors};
-    model.traverse(object=>{if(!object.isMesh)return;metrics.meshes++;metrics.vertices+=object.geometry.attributes.position?.count??0;metrics.triangles+=(object.geometry.index?.count??object.geometry.attributes.position?.count??0)/3;if(object.isSkinnedMesh)metrics.skinned_meshes++;});
+    const metrics={meshes:0,vertices:0,triangles:0,skinned_meshes:0,animation_clips:loaded.animations.length,shader_errors:shaderErrors,equipment_slots:[]};
+    model.traverse(object=>{if(!object.isMesh)return;metrics.meshes++;metrics.vertices+=object.geometry.attributes.position?.count??0;metrics.triangles+=(object.geometry.index?.count??object.geometry.attributes.position?.count??0)/3;if(object.isSkinnedMesh)metrics.skinned_meshes++;const slot=object.userData.modularEquipment?.slot;if(['primary','secondary'].includes(slot)&&!metrics.equipment_slots.includes(slot))metrics.equipment_slots.push(slot);});
+    metrics.equipment_slots.sort();
+    model.updateMatrixWorld(true);
+    metrics.initial_pose={};
+    for(const name of ['UpperArmL','UpperArmR','HandL','HandR']){const bone=model.getObjectByName(name);if(bone)metrics.initial_pose[name]=bone.getWorldPosition(new THREE.Vector3()).toArray();}
     view('fit');metrics.draw_calls=renderer.info.render.calls;
     if(!metrics.meshes||shaderErrors.length)throw Error('Generated model did not render correctly');
-    status.textContent=`${metrics.triangles.toLocaleString()} triangles · ${metrics.meshes} meshes · ${metrics.skinned_meshes} skinned meshes · ${metrics.animation_clips} native animation clips`;
+    status.textContent=`${metrics.triangles.toLocaleString()} triangles · ${metrics.meshes} meshes · ${metrics.skinned_meshes} skinned meshes · ${metrics.animation_clips} native animation clips${metrics.equipment_slots.length?' · '+metrics.equipment_slots.length+' equipped hands':''}`;
     window.__trellisPreview={ready:true,...metrics};
     document.querySelectorAll('[data-model-view]').forEach(button=>button.addEventListener('click',()=>view(button.dataset.modelView)));
 }catch(error){status.textContent='Unable to display the generated source: '+error.message;window.__trellisPreview={ready:false,error:error.message};}

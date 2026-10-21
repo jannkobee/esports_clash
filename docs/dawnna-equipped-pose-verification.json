@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "idle": [
+    {
+      "side": "L",
+      "hand_below_shoulder": 0.2108597755432129,
+      "hand_forward": 0.2688298523426056
+    },
+    {
+      "side": "R",
+      "hand_below_shoulder": 0.2655799388885498,
+      "hand_forward": 0.21305975317955017
+    }
+  ],
+  "equipment": [
+    {
+      "slot": "primary",
+      "bone": "HandR",
+      "vertices": 5837
+    },
+    {
+      "slot": "secondary",
+      "bone": "HandL",
+      "vertices": 7132
+    }
+  ],
+  "finite_pose_samples": 50,
+  "carrying_duplicate_maximum_delta": 0.0,
+  "clip_durations_unchanged": true,
+  "grip_bones": 30,
+  "scope": "Pose, rigid attachment and timing checks; artistic quality, contacts, clipping and runtime qualification remain separate."
+}

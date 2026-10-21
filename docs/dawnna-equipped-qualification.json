@@ -1,0 +1,70 @@
+{
+    "preparation_id": "36d03e9e-a0e5-4981-b525-23f82f139242",
+    "status": "ready",
+    "source_generation_id": "3e5bb0be-5095-4bc3-87aa-a32425c2c66f",
+    "source_sha256": "08f2c11ad74ef042a7841c3d9e70522430f5e9f9f9bbfbfe648dbc8e8d0ff21e",
+    "engine_sha256": "3e1bb2bc1dbc78133e57103a1b7d1fe93598d1815b0890d386e3f4a257cc73f0",
+    "rig_reuse": {
+        "id": "6ef5ff53-a9ad-4731-bb4b-7841e1b8b2ec",
+        "sha256": "a673787f1c86bd259f7a6d548b9dc81629b9cc2af3ee604c56920f6b9a06dd39",
+        "bytes": 4845148
+    },
+    "candidate_sha256": "fb2d7a754a1ca06badbd453487fdac8813459742ec3a41bddc4be2ed8e472549",
+    "candidate_bytes": 12588112,
+    "equipment": [
+        {
+            "slot": "primary",
+            "sha256": "1a46645ec849bc59965ddcd039294f1408b3a8219429d36605d9aef8d813934c",
+            "bytes": 4010992,
+            "format": "glb",
+            "weapon_type": "one_handed_sword",
+            "bone": "HandR",
+            "socket": "right-grip",
+            "height_ratio": 0.8,
+            "fit": "idle-palm-relative rigid skin",
+            "grip_fraction": 0.17,
+            "geometry_budget": {
+                "source_triangles": 39522,
+                "fitted_triangles": 5000,
+                "target_triangles": 5000,
+                "body_geometry": "unchanged"
+            }
+        },
+        {
+            "slot": "secondary",
+            "sha256": "0b1ad74e6e85d43252623319cd25d1370ae7648f1fde64a58329a6287667331a",
+            "bytes": 4614016,
+            "format": "glb",
+            "weapon_type": "shield",
+            "bone": "HandL",
+            "socket": "left-grip",
+            "height_ratio": 0.56,
+            "fit": "idle-palm-relative rigid skin",
+            "grip_fraction": 0.5,
+            "geometry_budget": {
+                "source_triangles": 39756,
+                "fitted_triangles": 4999,
+                "target_triangles": 5000,
+                "body_geometry": "unchanged"
+            }
+        }
+    ],
+    "geometry_passed": true,
+    "triangle_count": 47613,
+    "gltf_errors": 0,
+    "renderer_passed": true,
+    "gameplay_passed": true,
+    "qualification_reasons": [],
+    "warnings": [
+        "Self-intersection telemetry elevated during Death",
+        "Self-intersection telemetry elevated during Run",
+        "Draw-call budget exceeds the current version",
+        "Measured local frame cost exceeds an 8% regression"
+    ],
+    "active_release": {
+        "id": 5,
+        "version": 2,
+        "sha256": "5ec16b2bcc616e70d6f7648439028c4e134244d3261bf53144836f3e4b962c19"
+    },
+    "active_release_unchanged": true
+}

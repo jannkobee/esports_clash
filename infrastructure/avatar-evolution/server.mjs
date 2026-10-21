@@ -8,6 +8,7 @@ import { sha } from './glb.mjs';
 import { inspect } from './browser.mjs';
 import { profiles } from './art.mjs';
 import {preparationRequest} from './preparation-server.mjs';
+import {AvatarGLB} from './glb.mjs';
 
 export const root=resolve(process.env.AVATAR_DATA??'/avatar-data');await mkdir(root,{recursive:true});
 const token=process.env.EVOLUTION_WORKER_TOKEN??'',catalog=JSON.parse(await readFile('/workspace/catalog.json','utf8'));
@@ -44,6 +45,17 @@ const server=http.createServer(async(request,response)=>{
     const path=new URL(request.url,'http://avatar-worker').pathname;
     if(path==='/health')return reply(response,200,{status:'ok',active:[...children.keys()]});
     if(!authorized(request))return reply(response,401,{error:'Avatar worker authentication required'});
+    const equipment=path.match(/^\/equipment\/([a-f0-9]{64})\.(glb|gltf)$/);
+    if(equipment&&request.method==='PUT'){
+      const chunks=[];let length=0;
+      for await(const chunk of request){length+=chunk.length;if(length>20*1024**2)throw Error('Equipment exceeds 20 MiB');chunks.push(chunk);}
+      const body=Buffer.concat(chunks);if(sha(body)!==equipment[1])throw Error('Equipment content hash mismatch');
+      const data=equipment[2]==='glb'?new AvatarGLB(body).json:JSON.parse(body.toString('utf8'));
+      if(data.asset?.version!=='2.0'||!data.meshes?.length||data.skins?.length||data.animations?.length||[...(data.buffers??[]),...(data.images??[])].some(item=>item.uri&&!item.uri.startsWith('data:')))throw Error('Equipment must contain self-contained static glTF 2.0 geometry');
+      const directory=join(root,'equipment');await mkdir(directory,{recursive:true});const destination=join(directory,equipment[1]+'.'+equipment[2]);
+      try{await writeFile(destination,body,{flag:'wx'});}catch(error){if(error.code!=='EEXIST')throw error;if((await lstat(destination)).isSymbolicLink()||sha(await readFile(destination))!==equipment[1])throw Error('Immutable equipment changed');}
+      return reply(response,200,{sha256:equipment[1],bytes:length,format:equipment[2]});
+    }
     if(await preparationRequest(path,request,response,{root,children,reply,json,uuid,atomic,stopOwnedJob,catalog,resource,storageBytes:()=>bytes(root),
       claim:()=>{if(launching||probing||children.size)return false;launching=true;return true;},release:()=>{launching=false;}}))return;
     const cancel=path.match(/^\/runs\/([a-f0-9-]+)\/cancel$/);
@@ -88,18 +100,46 @@ const server=http.createServer(async(request,response)=>{
       const keep=new Set([...input.keep,...children.keys()]),deleted=[],skipped=[];
       if(children.size||launching||probing)return reply(response,409,{error:'Asset processing is busy'});
       for(const entry of await readdir(root,{withFileTypes:true}))if(entry.isDirectory()&&uuid.test(entry.name)){
-        try{const plan=JSON.parse(await readFile(join(root,entry.name,'plan.json'),'utf8'));if(plan.parent)keep.add(plan.parent.run_id);}catch{}
+        try{const plan=JSON.parse(await readFile(join(root,entry.name,'plan.json'),'utf8'));if(plan.parent?.run_id)keep.add(plan.parent.run_id);}catch{}
+        try{const prepPlan=JSON.parse(await readFile(join(root,entry.name,'preparation-plan.json'),'utf8'));if(prepPlan.rig_reuse?.id)keep.add(prepPlan.rig_reuse.id);if(prepPlan.baseline?.run_id)keep.add(prepPlan.baseline.run_id);}catch{}
       }
-      for(const id of input.delete){const folder=resolve(root,id);
+      if(input.scan_orphans===true){
+        for(const entry of await readdir(root,{withFileTypes:true})){
+          if(entry.isDirectory()&&uuid.test(entry.name)&&!keep.has(entry.name)){
+            if(!input.delete.includes(entry.name))input.delete.push(entry.name);
+          }
+        }
+      }
+      let reclaimedBytes=0;
+      for(const id of input.delete){
+        const folder=resolve(root,id);
         if(!folder.startsWith(root+'/')||folder===root||keep.has(id)){skipped.push(id);continue;}
         let info;try{info=await lstat(folder);}catch(error){if(error.code!=='ENOENT')throw error;skipped.push(id);continue;}
-        if(info.isSymbolicLink()||!info.isDirectory()||Date.now()-info.mtimeMs<7*86400000){skipped.push(id);continue;}
-        const plan=JSON.parse(await readFile(join(folder,'plan.json'),'utf8')),state=JSON.parse(await readFile(join(folder,'state.json'),'utf8'));
-        if(plan.version!==2||!['complete','failed'].includes(state.status)){skipped.push(id);continue;}
-        if(input.apply===true){await rm(folder,{recursive:true,force:false});deleted.push(id);}else skipped.push(id);
+        if(info.isSymbolicLink()||!info.isDirectory()){skipped.push(id);continue;}
+        let plan=null,prepPlan=null,state=null;
+        try{plan=JSON.parse(await readFile(join(folder,'plan.json'),'utf8'));}catch{}
+        try{prepPlan=JSON.parse(await readFile(join(folder,'preparation-plan.json'),'utf8'));}catch{}
+        try{state=JSON.parse(await readFile(join(folder,'state.json'),'utf8'));}catch{}
+        const isCancelled=await lstat(join(folder,'cancelled.json')).then(()=>true).catch(()=>false);
+        const ageMs=Date.now()-info.mtimeMs;
+        if(plan&&(plan.version!==2||!['complete','failed','cancelled'].includes(state?.status)||(ageMs<7*86400000&&!isCancelled))){skipped.push(id);continue;}
+        if(prepPlan&&(!['failed','cancelled','awaiting_retarget','awaiting_validation'].includes(state?.status)||(ageMs<24*3600*1000&&!isCancelled))){skipped.push(id);continue;}
+        if(!plan&&!prepPlan&&!isCancelled&&ageMs<24*3600*1000){skipped.push(id);continue;}
+        let folderSize=0;try{folderSize=await bytes(folder);}catch{}
+        if(input.apply===true){await rm(folder,{recursive:true,force:false});deleted.push(id);reclaimedBytes+=folderSize;}else skipped.push(id);
       }
-      await atomic(join(root,'retention-last.json'),{at:new Date().toISOString(),deleted,skipped});
-      return reply(response,200,{deleted,skipped});
+      if(Array.isArray(input.keep_equipment)){
+        const equipDir=join(root,'equipment'),kept=new Set(input.keep_equipment);
+        try{for(const item of await readdir(equipDir)){
+          const match=item.match(/^([a-f0-9]{64})\.(glb|gltf)$/);
+          if(match&&!kept.has(match[1])){
+            const p=join(equipDir,item);const s=(await stat(p)).size;
+            if(input.apply===true){await unlink(p);reclaimedBytes+=s;}
+          }
+        }}catch{}
+      }
+      await atomic(join(root,'retention-last.json'),{at:new Date().toISOString(),deleted,skipped,reclaimed_bytes:reclaimedBytes});
+      return reply(response,200,{deleted,skipped,reclaimed_bytes:reclaimedBytes});
     }
     if(path.startsWith('/viewer/')&&request.method==='GET') {
       const relative=decodeURIComponent(path.slice(8));if(relative.includes('..')||!/^[A-Za-z0-9_./-]+$/.test(relative))throw Error('Invalid viewer path');

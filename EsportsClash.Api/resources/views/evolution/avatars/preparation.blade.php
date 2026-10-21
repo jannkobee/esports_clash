@@ -43,14 +43,14 @@
     @if($sources->isEmpty())<p class="muted">No generated sources available yet. <a href="{{ route('trellis.index') }}">Open an avatar studio</a> to generate a body first.</p>@endif
 </section>
 <section class="panel preparation-history">
-    <div class="section-heading"><div><h2>Preparation jobs</h2><p class="muted">Read from oldest to newest. Open a report for its full timeline and evidence.</p></div><p class="fine" id="live-status">Updates every 10 seconds</p></div>
+    <div class="section-heading"><div><h2>Preparation reports</h2><p class="muted">One report per source model. Retries add to the same timeline, oldest to newest.</p></div><p class="fine" id="live-status">Updates every 10 seconds</p></div>
     @include('evolution.avatars.report-toolbar')
     <div id="live-reports" data-url="{{ route('preparations.live') }}">@include('evolution.avatars.preparation-runs')</div>
     <details class="report-management" id="report-management"><summary>Manage report history</summary><p class="fine">Report deletion keeps asset files. Select eligible reports above, then confirm below.</p>
     <form id="preparation-bulk-delete" method="post" action="{{ route('preparations.bulk-delete') }}" class="preparation-bulk compact-bulk">
         @csrf @method('DELETE')
         <h3>Delete selected preparation reports</h3>
-        <p class="fine">Clears database report details and progress history. Active jobs and published releases remain protected.</p>
+        <p class="fine">Clears each selected report and all its attempt history. Stop active jobs first. Published model files and release records are retained.</p>
         <div class="actions">
             <label class="preparation-selection checkbox-label"><input type="checkbox" id="preparation-select-all"> Select all eligible shown reports</label>
             <strong id="preparation-selected-count" role="status">0 selected</strong>

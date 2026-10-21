@@ -65,6 +65,12 @@ try{
     if(result.status!=='rigged_unqualified'||result.plan.engine_sha256!==plan.unirig_engine_sha256||result.plan.source_sha256!==plan.source_sha256)throw Error('UniRig frozen result mismatch');
     if(rig.length>64*1024**2||rig.length!==result.artifact.bytes||sha(rig)!==result.artifact.sha256)throw Error('UniRig exported artifact integrity failed');
     if(!cachedLocally){await writeFile(join(folder,'unirig-rigged.glb'),rig);await writeFile(join(folder,'unirig-result.json'),JSON.stringify(result,null,2));}
+    for(const equipment of plan.equipment??[]){
+      const path=join(process.env.AVATAR_DATA??'/avatar-data','equipment',equipment.sha256+'.'+equipment.format),info=await lstat(path);
+      if(!info.isFile()||info.isSymbolicLink()||info.size!==equipment.bytes)throw Error('Frozen equipment is unavailable');
+      const bytes=await readFile(path);if(sha(bytes)!==equipment.sha256)throw Error('Frozen equipment integrity mismatch');
+      await writeFile(join(folder,'equipment-'+equipment.slot+'.'+equipment.format),bytes,{flag:'wx'}).catch(async error=>{if(error.code!=='EEXIST'||sha(await readFile(join(folder,'equipment-'+equipment.slot+'.'+equipment.format)))!==equipment.sha256)throw error;});
+    }
     await new Promise((resolve,reject)=>{const child=spawn('blender',['--background','--threads','1','--factory-startup','--disable-autoexec','--python-exit-code','1','--python',join(import.meta.dirname,'retarget-unirig.py'),'--',folder,join(folder,'unirig-rigged.glb'),donor],{stdio:['ignore','ignore','pipe']});let errors='';child.stderr.on('data',b=>errors=(errors+b).slice(-2000));child.once('error',reject);child.once('exit',code=>code===0?resolve():reject(Error(errors||'UniRig native animation retargeting failed')));});
     prepared=JSON.parse(await readFile(join(folder,'preparation.json'),'utf8'));
   }

@@ -12,17 +12,18 @@ class AvatarPreparationController extends Controller {
     }
     public function live(Request $request,AvatarEvolutionService $avatars){
         $request->validate(['preparation'=>'nullable|uuid']);
-        if($request->filled('preparation')) AvatarPreparation::findOrFail($request->query('preparation'));
+        $reports=app(\App\Services\PreparationReportService::class);
+        $runs=$request->filled('preparation')?collect([$reports->forAttempt(AvatarPreparation::findOrFail($request->query('preparation')))]):$reports->recent();
         return response()->view('evolution.avatars.preparation-runs',['catalog'=>collect($avatars->catalog())->keyBy('id'),
             'singleReport'=>$request->filled('preparation'),
-            'runs'=>AvatarPreparation::when($request->filled('preparation'),fn($query)=>$query->whereKey($request->query('preparation')))->latest()->limit(100)->get()->sortBy('created_at')->values()])->header('Cache-Control','no-store');
+            'runs'=>$runs])->header('Cache-Control','no-store');
     }
     public function index(AvatarEvolutionService $avatars){
         try{$rigOperations=$avatars->worker()->timeout(3)->get(rtrim(config('avatars.unirig_url'),'/').'/operations')->throw()->json();}catch(\Throwable){$rigOperations=null;}
         return response()->view('evolution.avatars.preparation',[
             'catalog'=>collect($avatars->catalog())->keyBy('id'),
             'sources'=>TrellisGeneration::where('status','generated_unqualified')->latest()->limit(200)->get(),
-            'runs'=>AvatarPreparation::latest()->limit(100)->get()->sortBy('created_at')->values(),
+            'runs'=>app(\App\Services\PreparationReportService::class)->recent(),
             'settings'=>\App\Models\AvatarPreparationSetting::current(),
             'rigOperations'=>$rigOperations,
         ])->header('Cache-Control','no-store');
@@ -48,7 +49,8 @@ class AvatarPreparationController extends Controller {
     public function control(Request $request,AvatarPreparation $preparation,\App\Services\AvatarPreparationControlService $service){
         $data=$request->validate(['operation'=>'required|in:pause,resume,resume_in_place,retry,reset,cancel_pending']);
         $service->request($preparation,$data['operation'],'user:'.$request->user()->id);
-        return back()->with('status','Preparation '.$data['operation'].' requested.');
+        $report=app(\App\Services\PreparationReportService::class)->forAttempt($preparation);
+        return redirect()->route('preparations.report',$report->report_id)->with('status','Preparation '.$data['operation'].' requested. Updates stay in this report.');
     }
     public function validateAsset(Request $request,AvatarPreparation $preparation,AvatarPreparationService $service){
         $service->validate($preparation,'user:'.$request->user()->id);
@@ -59,9 +61,10 @@ class AvatarPreparationController extends Controller {
         return back()->with('status','Qualified visual version published for new scenes. Previous assets are retained for rollback.');
     }
     public function report(Request $request,AvatarPreparation $preparation,AvatarEvolutionService $avatars){
-        if($request->query('format')==='json'||$request->wantsJson()) return response()->json(['type'=>'asset-preparation','preparation'=>$preparation],headers:['Cache-Control'=>'no-store','Content-Disposition'=>'attachment; filename="preparation-'.$preparation->id.'.json"']);
+        $report=app(\App\Services\PreparationReportService::class)->forAttempt($preparation);
+        if($request->query('format')==='json'||$request->wantsJson()) return response()->json(['type'=>'asset-preparation','report_id'=>$report->report_id,'preparation'=>$preparation,'attempts'=>$report->reportAttempts],headers:['Cache-Control'=>'no-store','Content-Disposition'=>'attachment; filename="preparation-'.$preparation->id.'.json"']);
         $catalog=collect($avatars->catalog())->keyBy('id');
-        return response()->view('evolution.avatars.preparation-report',['preparation'=>$preparation,'catalog'=>$catalog,'name'=>$catalog[$preparation->avatar_id]['name']??$preparation->avatar_id,'runs'=>collect([$preparation]),'singleReport'=>true])->header('Cache-Control','no-store');
+        return response()->view('evolution.avatars.preparation-report',['preparation'=>$report,'catalog'=>$catalog,'name'=>$catalog[$preparation->avatar_id]['name']??$preparation->avatar_id,'runs'=>collect([$report]),'singleReport'=>true])->header('Cache-Control','no-store');
     }
     public function file(AvatarPreparation $preparation,string $file,AvatarPreparationService $service){
         abort_unless(in_array($file,['unirig-rigged.glb','candidate-01.glb','candidate-01.blend','baseline.glb','candidate-01-front.png','candidate-01-side.png','candidate-01-back.png','candidate-01-strike.png','candidate-01-ability.png'],true),404);

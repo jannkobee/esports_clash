@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "source_sha256": "a673787f1c86bd259f7a6d548b9dc81629b9cc2af3ee604c56920f6b9a06dd39",
+  "original_joints": 52,
+  "adapted_joints": 53,
+  "helper": "avatar_control_root",
+  "non_deforming": true,
+  "maximum_original_rest_matrix_delta": 0,
+  "geometry_and_skin_digest_unchanged": true,
+  "bone_map": {
+    "Root": "avatar_control_root",
+    "Hips": "bone_0",
+    "Spine": "bone_1",
+    "Chest": "bone_3",
+    "Head": "bone_5",
+    "UpperArmL": "bone_7",
+    "ForearmL": "bone_8",
+    "HandL": "bone_9",
+    "UpperArmR": "bone_26",
+    "ForearmR": "bone_27",
+    "HandR": "bone_28",
+    "ThighL": "bone_44",
+    "CalfL": "bone_45",
+    "FootL": "bone_46",
+    "ThighR": "bone_48",
+    "CalfR": "bone_49",
+    "FootR": "bone_50"
+  },
+  "mapping_review": {
+    "method": "humanoid-topology-rest-v3",
+    "accepted": true,
+    "reasons": [],
+    "warnings": [],
+    "checks": [
+      "single root and pelvis",
+      "distinct torso/head/arm branches",
+      "opposite limb sides",
+      "leg proportions",
+      "toe-confirmed facing",
+      "17 unique joints"
+    ],
+    "bone_map": {
+      "Root": "avatar_control_root",
+      "Hips": "bone_0",
+      "Spine": "bone_1",
+      "Chest": "bone_3",
+      "Head": "bone_5",
+      "UpperArmL": "bone_7",
+      "ForearmL": "bone_8",
+      "HandL": "bone_9",
+      "UpperArmR": "bone_26",
+      "ForearmR": "bone_27",
+      "HandR": "bone_28",
+      "ThighL": "bone_44",
+      "CalfL": "bone_45",
+      "FootL": "bone_46",
+      "ThighR": "bone_48",
+      "CalfR": "bone_49",
+      "FootR": "bone_50"
+    },
+    "root_adapter": {
+      "name": "avatar_control_root",
+      "pelvis": "bone_0",
+      "native": "Root",
+      "use_deform": false
+    }
+  }
+}

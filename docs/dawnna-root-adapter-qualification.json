@@ -1,0 +1,293 @@
+{
+  "preparation_id": "6ef5ff53-a9ad-4731-bb4b-7841e1b8b2ec",
+  "previous_preparation_id": "821ca1f8-538c-4671-bcac-9cfe66070b3f",
+  "status": "ready",
+  "engine_sha256": "243308c0f1e1052b0a39171b2fd2aebb6f2715970ad23e30d23e4cb4568cd1d5",
+  "rig_reuse": {
+    "id": "821ca1f8-538c-4671-bcac-9cfe66070b3f",
+    "sha256": "a673787f1c86bd259f7a6d548b9dc81629b9cc2af3ee604c56920f6b9a06dd39",
+    "bytes": 4845148
+  },
+  "prepared_sha256": "b4395c870f617a706731fb8ae103d6ec284773ba4b280db1a8b70d63973d8580",
+  "runtime_compatible": true,
+  "mapping_review": {
+    "method": "humanoid-topology-rest-v3",
+    "accepted": true,
+    "reasons": [],
+    "warnings": [],
+    "checks": [
+      "single root and pelvis",
+      "distinct torso/head/arm branches",
+      "opposite limb sides",
+      "leg proportions",
+      "toe-confirmed facing",
+      "17 unique joints"
+    ],
+    "bone_map": {
+      "Root": "avatar_control_root",
+      "Hips": "bone_0",
+      "Spine": "bone_1",
+      "Chest": "bone_3",
+      "Head": "bone_5",
+      "UpperArmL": "bone_7",
+      "ForearmL": "bone_8",
+      "HandL": "bone_9",
+      "UpperArmR": "bone_26",
+      "ForearmR": "bone_27",
+      "HandR": "bone_28",
+      "ThighL": "bone_44",
+      "CalfL": "bone_45",
+      "FootL": "bone_46",
+      "ThighR": "bone_48",
+      "CalfR": "bone_49",
+      "FootR": "bone_50"
+    },
+    "root_adapter": {
+      "name": "avatar_control_root",
+      "pelvis": "bone_0",
+      "native": "Root",
+      "use_deform": false
+    },
+    "attachment_review": {
+      "repairs": [
+        {
+          "bone": "bone_10",
+          "old_parent": "HandL",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_11",
+          "old_parent": "bone_10",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_12",
+          "old_parent": "bone_11",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_13",
+          "old_parent": "HandL",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_14",
+          "old_parent": "bone_13",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_15",
+          "old_parent": "bone_14",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_16",
+          "old_parent": "HandL",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_17",
+          "old_parent": "bone_16",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_18",
+          "old_parent": "bone_17",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_19",
+          "old_parent": "HandL",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_20",
+          "old_parent": "bone_19",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_21",
+          "old_parent": "bone_20",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_22",
+          "old_parent": "HandL",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_23",
+          "old_parent": "bone_22",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_24",
+          "old_parent": "bone_23",
+          "new_parent": "HandL",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_29",
+          "old_parent": "HandR",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_30",
+          "old_parent": "bone_29",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_31",
+          "old_parent": "bone_30",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_32",
+          "old_parent": "HandR",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_33",
+          "old_parent": "bone_32",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_34",
+          "old_parent": "bone_33",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_35",
+          "old_parent": "HandR",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_36",
+          "old_parent": "bone_35",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_37",
+          "old_parent": "bone_36",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_38",
+          "old_parent": "HandR",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_39",
+          "old_parent": "bone_38",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_40",
+          "old_parent": "bone_39",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_41",
+          "old_parent": "HandR",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_42",
+          "old_parent": "bone_41",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        },
+        {
+          "bone": "bone_43",
+          "old_parent": "bone_42",
+          "new_parent": "HandR",
+          "is_held_prop": true,
+          "rest_geometry_and_weights": "preserved"
+        }
+      ],
+      "unresolved": []
+    }
+  },
+  "native_clips": [
+    "Attack",
+    "Cast",
+    "Death",
+    "Hit",
+    "Idle",
+    "Run",
+    "Strafe",
+    "TurnLeft",
+    "TurnRight",
+    "Walk"
+  ],
+  "geometry_passed": true,
+  "geometry_warnings": [
+    "Self-intersection telemetry elevated during Run",
+    "Self-intersection telemetry elevated during Walk"
+  ],
+  "gltf_errors": 0,
+  "renderer_passed": true,
+  "gameplay_renderer_passed": true,
+  "qualification_reasons": [],
+  "active_release": {
+    "id": 5,
+    "version": 2,
+    "sha256": "5ec16b2bcc616e70d6f7648439028c4e134244d3261bf53144836f3e4b962c19"
+  }
+}
