@@ -9,8 +9,10 @@ import { inspect } from './browser.mjs';
 import { profiles } from './art.mjs';
 import {preparationRequest} from './preparation-server.mjs';
 import {AvatarGLB} from './glb.mjs';
+import {startIntelligence,intelligenceStatus} from './intelligence.mjs';
 
 export const root=resolve(process.env.AVATAR_DATA??'/avatar-data');await mkdir(root,{recursive:true});
+const stopIntelligence=startIntelligence(root);
 const token=process.env.EVOLUTION_WORKER_TOKEN??'',catalog=JSON.parse(await readFile('/workspace/catalog.json','utf8'));
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const children=new Map(),viewer='/workspace/EsportsClash.Web/avatar-review-dist';
@@ -66,7 +68,8 @@ const server=http.createServer(async(request,response)=>{
       let state={};try{state=JSON.parse(await readFile(join(folder,'state.json'),'utf8'));}catch{}
       state={...state,status:'cancelled',publication_eligible:false};await atomic(join(folder,'state.json'),state);return reply(response,200,state);
     }
-    if(path==='/operations')return reply(response,200,{active:[...children.keys()],probing,resources:await resource(),storage_bytes:await bytes(root),external_ai:false,
+    if(path==='/asset-intelligence'&&request.method==='GET')return reply(response,200,await intelligenceStatus(root));
+    if(path==='/operations')return reply(response,200,{active:[...children.keys()],probing,resources:await resource(),storage_bytes:await bytes(root),asset_intelligence:await intelligenceStatus(root),external_ai:false,
       provider:'local-procedural-material-and-mesh-finishing',external_budget_usd:0,pilot:profiles.pilot});
     if(path==='/probes'&&request.method==='POST') {
       const input=await json(request);
@@ -188,3 +191,4 @@ const server=http.createServer(async(request,response)=>{
   finally{if(ownsLaunch)launching=false;}
 });
 server.listen(8094,'0.0.0.0');
+server.once('close',stopIntelligence);

@@ -33,10 +33,13 @@ services:
       - ./infrastructure/avatar-evolution/retarget_motion.py:/workspace/infrastructure/avatar-evolution/retarget_motion.py:ro
       - ./infrastructure/avatar-evolution/bone_mapping.py:/workspace/infrastructure/avatar-evolution/bone_mapping.py:ro
       - ./infrastructure/avatar-evolution/retarget-unirig.py:/workspace/infrastructure/avatar-evolution/retarget-unirig.py:ro
+      - ./infrastructure/avatar-evolution/motion_intelligence.py:/workspace/infrastructure/avatar-evolution/motion_intelligence.py:ro
+      - ./infrastructure/avatar-evolution/intelligence.mjs:/workspace/infrastructure/avatar-evolution/intelligence.mjs:ro
+      - ./infrastructure/avatar-evolution/asset_pipeline:/workspace/infrastructure/avatar-evolution/asset_pipeline:ro
 
   api:
     <<: *dev-api
-    command: [php, artisan, serve, --no-reload, --host=0.0.0.0, --port=8000]
+    command: [sh, -c, "php artisan migrate --force && exec php artisan serve --no-reload --host=0.0.0.0 --port=8000"]
     # PHP source reloads on every request. --no-reload avoids .env restarts;
     # Blade/browser reloads are driven by Vite, never APP_DEBUG trace output.
 

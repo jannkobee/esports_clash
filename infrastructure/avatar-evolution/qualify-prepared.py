@@ -63,9 +63,10 @@ rig_bone_set = {b.name for rig in rigs for b in rig.data.bones}
 
 for obj in meshes:
     for vertex in obj.data.vertices:
-        active_weights = [g.weight for g in vertex.groups if obj.vertex_groups[g.group].name in rig_bone_set and g.weight > 0.001]
+        raw_weights = [g.weight for g in vertex.groups if obj.vertex_groups[g.group].name in rig_bone_set]
+        active_weights = [w for w in raw_weights if math.isfinite(w) and w > 0.001]
         max_gpu_influences = max(max_gpu_influences, len(active_weights))
-        if any(w < 0 or not math.isfinite(w) for w in active_weights):
+        if any(w < 0 or not math.isfinite(w) for w in raw_weights):
             negative_or_nan += 1
         if not active_weights:
             unweighted += 1
@@ -142,6 +143,10 @@ for action in bpy.data.actions:
             if len(slots) == 1:
                 rig.animation_data.action_slot = slots[0]
     start, end = action.frame_range
+    if not math.isfinite(start) or not math.isfinite(end) or end <= start:
+        problems.append('Nonpositive or nonfinite clip duration: ' + action.name)
+        animation_gate['passed'] = False
+        continue
     for phase in [0, .15, .42, .7, 1]:
         frame = start + (end - start) * phase
         bpy.context.scene.frame_set(int(frame), subframe=frame % 1)

@@ -12,10 +12,14 @@ from retarget_motion import motion_delta, hip_motion_to_root, EQUIPMENT_PROFILE,
 from retarget_contacts import bake_contacts, GAITS
 from equipment_skin import rigid_equipment, regularize_skin_weights, secondary_chains, validate_skin_weights
 from mesh_cleanup import cleanup_mesh
+from motion_intelligence import select_motion_profile, combat_events
+from asset_pipeline.deformation import DeformationCorrectionEngine
 
 folder, source, donor = map(Path, sys.argv[sys.argv.index('--')+1:])
 plan=json.loads((folder/'preparation-plan.json').read_text())
 profile_name=plan.get('character_profile') or resolve_character_profile(equipment_plan=plan.get('equipment',[]))
+if profile_name in {'quadruped','flying_creature','custom_creature'}:
+    raise RuntimeError('Creature profile needs a compatible creature motion donor; humanoid transfer refused')
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=str(source))
 rigs=[o for o in bpy.context.scene.objects if o.type=='ARMATURE']
@@ -152,11 +156,9 @@ for name,settings in secondary.items():
     target.data.bones[name]['secondaryMotion']=settings
 skin_validations=[]
 for obj in meshes:
-    skin_repairs.extend(rigid_equipment(obj,set(target.data.bones.keys()),equipment_repairs,target))
-    reg=regularize_skin_weights(obj,target,mapping.keys(),equipment_repairs)
-    if reg:skin_repairs.append(reg)
-    val=validate_skin_weights(obj,target,mapping.keys())
-    skin_validations.append(val)
+    corrected=DeformationCorrectionEngine().correct(obj,target,mapping.keys(),equipment_repairs)
+    skin_repairs.append(corrected)
+    skin_validations.append(corrected['after'])
 before=set(bpy.context.scene.objects)
 bpy.ops.import_scene.gltf(filepath=str(donor))
 donor_rigs=[o for o in bpy.context.scene.objects if o not in before and o.type=='ARMATURE']
@@ -264,6 +266,10 @@ for side in ['L','R']:
 neutral_pose={name:(native_rig.pose.bones[name].matrix_basis.to_quaternion().copy(),native_rig.pose.bones[name].location.copy()) for name in retarget_names}
 arm_calibration=calibrate_arms(native_rig,target,15 if plan.get('equipment') else 0)
 finger_grips=grip_pose(target,[asset['slot'] for asset in plan.get('equipment',[])])
+measured_height=(target.matrix_world@target.data.bones['Head'].head_local-target.matrix_world@target.data.bones['FootR'].head_local).length
+arm_length=sum((target.matrix_world.to_3x3()@(target.data.bones[name].tail_local-target.data.bones[name].head_local)).length for name in ['UpperArmR','ForearmR'])
+shoulder_width=(target.matrix_world@target.data.bones['UpperArmL'].head_local-target.matrix_world@target.data.bones['UpperArmR'].head_local).length
+character_motion=select_motion_profile(plan.get('equipment',[]),{'arm_to_height':arm_length/max(.001,measured_height),'shoulder_to_height':shoulder_width/max(.001,measured_height)})
 
 for action in actions:
     if action.name not in ['Idle','Walk','Run','Strafe','Attack','Cast','Hit','Death','TurnLeft','TurnRight']:
@@ -304,7 +310,7 @@ for action in actions:
             if (clip_rot@reference_rotation.inverted()).angle>.6:
                 reference_rotation=clip_rot
             fraction=(frame-start)/max(end-start,1)
-            delta=motion_delta(a.matrix_basis.to_quaternion(),reference_rotation,original_name,name,bool(equipment_repairs),avatar_id=avatar_id,phase=fraction)
+            delta=motion_delta(a.matrix_basis.to_quaternion(),reference_rotation,original_name,name,bool(equipment_repairs),avatar_id=avatar_id,phase=fraction,character_motion=character_motion)
             if original_name in ['Idle', 'Walk', 'Run', 'Strafe'] and fraction > 0.90:
                 loop_t = (fraction - 0.90) / 0.10
                 ease_loop = loop_t * loop_t * (3.0 - 2.0 * loop_t)
@@ -332,7 +338,7 @@ for action in actions:
         root_pose.matrix_basis=hip_motion_to_root(root_rest,hip_rest,root_pose.matrix_basis,hip_pose.matrix_basis)
         hip_pose.matrix_basis=Matrix.Identity(4)
         bpy.context.view_layer.update()
-        apply_calibrated_arms(native_rig,target,arm_calibration)
+        apply_calibrated_arms(native_rig,target,arm_calibration,character_motion,(frame-start)/max(end-start,1),original_name)
         # Keep thigh/calf/foot and helper FK, including the donor knee plane and
         # heel-to-toe rotation. IK only corrects small vertical contact errors.
         bake_contacts(target,contact_reference,original_name,(frame-start)/max(end-start,1),equipment_repairs)
@@ -383,6 +389,8 @@ for image in bpy.data.images:
         image.pack()
 root['assetPreparation']={'provider':'unirig','character_profile':profile_name,'animation_mode':'retargeted-native-clips','source_sha256':plan['source_sha256'],'rig_sha256':proof['artifact']['sha256'],'skin_repair_sha256':hashlib.sha256(json.dumps(skin_repairs,sort_keys=True).encode()).hexdigest(),'pipeline':'calibrated-equipment-v4','stride_distances':stride_distances,'secondary_bones':secondary}
 root['assetPreparation']['equipment']=mounted_equipment
+root['assetPreparation']['character_motion']=character_motion
+root['assetPreparation']['combat_events']=combat_events(.5 if avatar_id=='c_astra' else .42)
 for key in ['anatomyAuthor','anatomyLicense','authoredAnatomy']:
     if key in root:del root[key]
 output=folder/'candidate-01.glb'
@@ -397,7 +405,7 @@ mapping_review['attachment_review']={'repairs':equipment_repairs,'unresolved':eq
 mapping_review['warnings']=warnings
 if any(name not in clips for name in ['Idle','Walk','Run','Attack','Cast','Hit','Death']):
     problems.append('Native clip retargeting incomplete')
-(folder/'preparation.json').write_text(json.dumps({'method':'unirig-skeleton-and-skin-native-clip-retarget-v1','sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
+(folder/'preparation.json').write_text(json.dumps({'character_motion':character_motion,'combat_events':combat_events(.5 if avatar_id=='c_astra' else .42),'method':'unirig-skeleton-and-skin-native-clip-retarget-v1','sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
     'bytes':output.stat().st_size,'runtime_compatible':True,'unirig':proof,'predicted_bones':predicted,'bone_map':mapping,'mapping_review':mapping_review,'native_helpers':helpers,'character_profile':profile_name,'animation_reference':'anatomically calibrated Idle arm stance; complete donor world-space arm motion; bind-relative torso/legs','locomotion_contacts':'donor FK; vertical contact clamp <=2.5% leg length; authored knee plane and foot orientation','stride_distances':stride_distances,'secondary_bones':secondary,'equipment_repairs':equipment_repairs,'motion_profile':EQUIPMENT_PROFILE if equipment_repairs else {'name':'calibrated-arm-stance-v1','clip_timing':'unchanged'},'skin_weights':'UniRig body and secondary weights retained; constrained equipment repairs recorded','skin_repairs':skin_repairs,'skin_validation':skin_validations,'native_clips':clips,'problems':problems,
     'equipment':mounted_equipment,'grip_bones':list(finger_grips),
     'limits':'UniRig body skin retained; separate equipment is rigid-bound to real hands. Calibrated motion and automatic grip fitting remain candidates; identity, clipping, contact and timing require qualification and visual review.'},indent=2))

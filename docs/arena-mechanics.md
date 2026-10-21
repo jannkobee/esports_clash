@@ -1,5 +1,18 @@
 # Arena mechanics and regression rules
 
+## Latest: Avatar Studio accessibility fix & database migration synchronization (2026-10-21)
+
+- Diagnosed and fixed accessibility to Avatar Studio (`/evolution/avatars/trellis/avatar/{id}`) across all 45 roster champions. Unmigrated database table `avatar_equipment_generations` was migrated via `php artisan migrate --force` and container startup configured to automatically run pending migrations.
+- Roster and Studio access verified across all 45 champions via automated HTTP authentication testing (`c_largo`, `c_solana`, `c_astra`, etc.).
+- Protected Gameplay Invariants: Risk-based tower dive limits (`towerDiveRules.ts`), 10-second turret execution attribution, opponent objective contestation (`objectiveRules.ts`), 12px steering deadbands, anti-oscillation commit timers, and parody aliases (`Cardrel`) remain strictly intact.
+
+## Latest: Asset intelligence V3 foundation (2026-10-21)
+
+- Owner requested cloud-first asset infrastructure, measured quality learning and character-specific motion upgrades. New worker-side `asset_pipeline/` and `intelligence.mjs` collect terminal preparation evidence, schedule compatible bounded quality training, support optional resumable Drive backups/recovery and MLflow mirroring, and retain previous quality models with measured promotion/rollback. Learned ranking affects compatible cached-rig outage recovery; selected rigs still requalify.
+- `motion_intelligence.py` and Blender retarget scripts adapt donor attacks using equipment/proportions and export nominal presentation-event phases. `DeformationCorrectionEngine` bounds existing skin repair and restores weights when validation worsens. Raw invalid weights and zero/nonfinite durations are diagnosed. Presentation metadata applies no damage, changes no clip/game timing, creates no hit events and consumes no gameplay RNG. Creatures require compatible donors.
+- Laravel's enhancement dashboard shows quality/queue/cloud/model status. Owner generation/publication controls, risk-based tower/well/Nexus legality, natural retreat, turret attribution, objective contests, anti-oscillation, stats and parody aliases remain unchanged.
+- Verification: 55 Python tests, coordinator/syntax checks, game checks, production build and Blade compilation pass; focused Laravel avatar suite 10/10. Full backend suite: 124 pass / one environment-sensitive reference test failed contacting unavailable TRELLIS. No avatar-worker image, host Blender/GPU tools or cloud credentials were available; no model was generated, visually accepted or published. Scope and outstanding GPU/visual/learning work: [asset-intelligence-v3.md](asset-intelligence-v3.md).
+
 ## Latest: Automated 3D Character Rigging, Deformation Repair & Animation Pipeline (2026-10-21)
 
 A complete automated character animation and deformation repair pipeline has been established across UniRig, Blender Python (headless worker), and Three.js runtime. Canonical skeleton contract defines 17 core humanoid joints (CANONICAL_ROLES) with 10 standardized CHARACTER_PROFILES, per-bone confidence scoring, proportion metrics, bilateral symmetry ratios, and -Y forward toe orientation verification.

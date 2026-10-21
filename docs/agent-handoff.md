@@ -1,5 +1,35 @@
 # Conversation handoff for the next agent
 
+## Latest: Avatar Studio accessibility fix and database migration synchronization (2026-10-21)
+
+- **Issue & Diagnosis:** Owner reported failure when accessing Avatar Studio at `http://localhost:8089/evolution/avatars/trellis/avatar/c_largo` (and for all other avatars across the catalog).
+  - Inspection of Docker logs revealed a PostgreSQL 500 error: `SQLSTATE[42P01]: Undefined table: 7 ERROR: relation "avatar_equipment_generations" does not exist` occurring during `TrellisGenerationController::avatarStatus()` at `\App\Models\AvatarEquipmentGeneration::where('avatar_id',$avatar)->oldest()->get()->groupBy('slot')`.
+  - The migration `2026_10_21_200000_add_equipment_generations_and_retention.php` was created earlier today but was pending in the live Docker PostgreSQL database because the `api` container runs `php artisan serve` in dev mode without re-running pending migrations.
+- **Resolution:**
+  - Ran `php artisan migrate --force` inside `teamfight-evolution-api-1`, creating `avatar_equipment_generations` table and adding `artifacts_deleted_at` column to `avatar_preparations`.
+  - Updated `compose.evolution.dev.yaml` so that the `api` container runs `sh -c "php artisan migrate --force && exec php artisan serve --no-reload --host=0.0.0.0 --port=8000"`, guaranteeing database schema synchronization on container startup.
+- **Affected Files:**
+  - `compose.evolution.dev.yaml`: Automated migration execution prior to starting Laravel dev server.
+  - `docs/agent-handoff.md`, `docs/arena-mechanics.md`: Updated with incident analysis, remediation, and verification.
+- **Verification:**
+  - Automated Python HTTP check with authenticated session confirmed HTTP 200 and complete page rendering for `c_largo` ("Basso Croak | Avatar studio") and all 45 avatars in the catalog (`Failed count: 0`).
+  - Laravel backend test suite: 125 passed (1,250 assertions) via `docker exec teamfight-evolution-api-1 php artisan test`.
+  - Frontend test suite: `npm run check:game` passed all 486 unit tests, 3 batch multi-seed simulations, and TypeScript checks. Production build `npm run build` succeeded cleanly.
+  - Core gameplay invariants (risk-based tower dives, 10s turret execution attribution, objective contestation, Cardrel parody aliases) remain 100% intact.
+- **Remaining Limits:**
+  - Avatars with older equipped concept art still prompt for a clean T-pose body reference before triggering live 3D reconstruction.
+  - 3D model generation requires an active TRELLIS worker connection (`trellis2-gguf`).
+
+## Latest: Asset pipeline V3 foundation and verified quality learning (2026-10-21)
+
+- Owner supplied the V3 cloud-first implementation prompt and proposed character motion intelligence, an ML quality evaluator, deformation correction, rig competition, MLflow and VFX evaluation. Implemented an incremental integration in the existing avatar worker; this does not claim all master-prompt phases complete.
+- `infrastructure/avatar-evolution/asset_pipeline/`, `intelligence.mjs`, `preparation-job.mjs`, `server.mjs`: durable compute jobs/leases/retries; official Colab CLI adapter and CPU/GPU compatibility paths; optional resumable Drive storage/recovery; technical and multi-view silhouette evidence; provenance/rights-gated source-family datasets; supervised ridge training, locked test comparison, promotion and rollback; optional MLflow mirror. Collection runs while the avatar worker is operating. Only quality training uses the new scheduler; existing GPU generation dispatch remains intact.
+- Learned quality predictions rank compatible cached rigs during existing outage recovery; every selected asset still requalifies. No real roster quality model was trained. Synthetic fixtures prove lifecycle behavior, not roster-quality improvement.
+- `motion_intelligence.py`, `retarget_motion.py`, `retarget-unirig.py`: bounded donor-preserving attack adaptation using equipment and measured proportions; presentation-only combat phase metadata; incompatible creature donor refusal. `asset_pipeline/deformation.py` wraps existing skin repairs with before/after evidence and rollback of worsening weight defects. Qualification checks raw invalid weights and nonpositive durations. New motion requires real Blender/renderer qualification before release.
+- Existing Laravel enhancement page displays quality-data, queue, cloud and model status. Compose settings/mounts and preparation engine hashing include new files. No avatar worker image was available to rebuild, no cloud credentials/session were supplied, and no character was generated/published or gameplay module edited.
+- Verification: 55 Python tests (new pipeline + mapping/skinning); syntax/coordinator smoke checks; `npm run check:game` (115 file subtests plus separate simulation file), `npm run build`, and Blade compilation pass. Focused Laravel avatar tests: 10 passed / 71 assertions. Full Laravel suite: 124 passed / one existing environment-sensitive `c_kyumi` reference test failed contacting unavailable `trellis-worker`.
+- Setup and remaining limits: [asset-intelligence-v3.md](asset-intelligence-v3.md). Live Colab/Drive/MLflow, installed SkinTokens competition, licensed MDM motions, gradient checkpoint training, trained image/deformation/VFX models, near-duplicate source grouping, and new asset visual acceptance remain outstanding. Owner admission/publication controls, current risk-based towers, natural retreat, attribution, objective contestation, anti-oscillation, Cardrel and all gameplay stats/timing/RNG remain intact.
+
 ## Latest: Production-Ready Automated 3D Character Rigging, Deformation Repair & Animation Pipeline (2026-10-21)
 
 - **Technical Audit & Architectural Alignment (Phase 0):**

@@ -2,9 +2,11 @@ import {readFile,writeFile,mkdir,lstat,readdir,unlink} from 'node:fs/promises';
 import {join} from 'node:path';
 import {spawn} from 'node:child_process';
 import {sha} from './glb.mjs';
+import {intelligenceManifest} from './intelligence.mjs';
 
 export async function preparationEngine(){
   const files=['mesh_validation.py','mesh_cleanup.py','equipment_skin.py','retarget_contacts.py','retarget_motion.py','bone_mapping.py','prepare-avatar.py','retarget-unirig.py','qualify-prepared.py','preparation-job.mjs','browser.mjs','glb.mjs','package-lock.json'];
+  files.push('motion_intelligence.py',...await intelligenceManifest());
   const manifest=await Promise.all(files.map(async name=>[name,sha(await readFile(join(import.meta.dirname,name)))]));
   const assets='/workspace/EsportsClash.Web/avatar-review-dist/assets';
   for(const name of (await readdir(assets)).sort())manifest.push([name,sha(await readFile(join(assets,name)))]);

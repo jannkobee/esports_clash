@@ -354,7 +354,13 @@ class TrellisGenerationTest extends TestCase
     }
     public function test_missing_or_unknown_avatar_reference_cannot_generate():void
     {
-        Queue::fake();Http::fake(['*/operations'=>Http::response($this->operations())]);
+        Queue::fake();Http::preventStrayRequests();Http::fake(['*/operations'=>Http::response($this->operations())]);
+        // This scenario must not depend on whether a shipped reference was added
+        // for Kyumi. A removal tombstone in this test's private storage makes
+        // reference absence explicit without changing bundled or owner assets.
+        $directory=storage_path('app/avatars/references/c_kyumi');
+        \Illuminate\Support\Facades\File::ensureDirectoryExists($directory);
+        \Illuminate\Support\Facades\File::put($directory.'/current.json',json_encode(['removed'=>true]));
         $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
         $this->post('/evolution/avatars/trellis',['seed'=>1,'avatar_id'=>'c_kyumi'])->assertSessionHasErrors('avatar_id');
         $this->post('/evolution/avatars/trellis',['seed'=>1,'avatar_id'=>'../../private'])->assertSessionHasErrors('avatar_id');

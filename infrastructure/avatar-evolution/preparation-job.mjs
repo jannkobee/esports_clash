@@ -1,9 +1,10 @@
-import {readFile,writeFile,rename,copyFile,lstat,readdir} from 'node:fs/promises';
+import {readFile,writeFile,rename,lstat,readdir} from 'node:fs/promises';
 import {join} from 'node:path';
 import {spawn} from 'node:child_process';
 import {AvatarGLB,sha} from './glb.mjs';
 import {inspect} from './browser.mjs';
 import validator from 'gltf-validator';
+import {intelligence,recoverPreparedArtifact} from './intelligence.mjs';
 const folder=process.argv[2],plan=JSON.parse(await readFile(join(folder,'preparation-plan.json'),'utf8'));
 const cancelled=async()=>{try{await lstat(join(folder,'cancelled.json'));return true;}catch{return false;}};
 const save=async state=>{if(await cancelled())return;const temp=join(folder,'state.json.tmp-job');await writeFile(temp,JSON.stringify({id:folder.split('/').at(-1),...state},null,2));await rename(temp,join(folder,'state.json'));};
@@ -13,11 +14,11 @@ try{
   if(!meta||meta.sha256!==plan.donor_sha256)throw Error('Character donor identity mismatch');
   const source=join('/trellis-sources',plan.generation_id+'.glb'),donor=join('/workspace/EsportsClash.Web/public/models',meta.file);
   if((await lstat(source)).isSymbolicLink()||(await lstat(source)).size>32*1024**2||sha(await readFile(source))!==plan.source_sha256||sha(await readFile(donor))!==plan.donor_sha256)throw Error('Immutable source/donor hash mismatch');
-  const baselinePath=plan.baseline?join(process.env.AVATAR_DATA??'/avatar-data',plan.baseline.run_id,plan.baseline.file):donor;
-  if(sha(await readFile(baselinePath))!==(plan.baseline?.sha256??plan.donor_sha256))throw Error('Frozen live baseline hash mismatch');
-  await copyFile(baselinePath,join(folder,'baseline.glb'));
+  const baselineBytes=plan.baseline?await recoverPreparedArtifact(join(process.env.AVATAR_DATA??'/avatar-data',plan.baseline.run_id),plan.baseline.file,plan.baseline.sha256):await readFile(donor);
+  if(sha(baselineBytes)!==(plan.baseline?.sha256??plan.donor_sha256))throw Error('Frozen live baseline hash mismatch');
+  await writeFile(join(folder,'baseline.glb'),baselineBytes);
   let prepared;
-  try{prepared=JSON.parse(await readFile(join(folder,'preparation.json'),'utf8'));if(sha(await readFile(join(folder,'candidate-01.glb')))!==prepared.sha256)throw Error('Prepared asset changed');}
+  try{prepared=JSON.parse(await readFile(join(folder,'preparation.json'),'utf8'));const cached=await recoverPreparedArtifact(folder,'candidate-01.glb',prepared.sha256);if(sha(cached)!==prepared.sha256)throw Error('Prepared asset changed');await writeFile(join(folder,'candidate-01.glb'),cached);}
   catch(e){if(e.code!=='ENOENT')throw e;
     if(plan.provider!=='unirig')throw Error('Local surface-transfer admission retired; create a UniRig preparation.');
     await save({status:'animating',stage:'download_unirig_and_retarget_native_clips',publication_eligible:false});
@@ -25,10 +26,10 @@ try{
     let result,rig;
     let cachedLocally=false;
     try{
-      const localRig=await readFile(join(folder,'unirig-rigged.glb'));
       const localRes=JSON.parse(await readFile(join(folder,'unirig-result.json'),'utf8'));
+      const localRig=await recoverPreparedArtifact(folder,'unirig-rigged.glb',localRes.artifact.sha256);
       if(localRes.status==='rigged_unqualified'&&localRes.plan?.source_sha256===plan.source_sha256&&localRig.length===localRes.artifact?.bytes&&sha(localRig)===localRes.artifact?.sha256){
-        rig=localRig;result=localRes;cachedLocally=true;
+        rig=localRig;result=localRes;cachedLocally=true;await writeFile(join(folder,'unirig-rigged.glb'),localRig);
       }
     }catch{}
     if(!cachedLocally&&plan.rig_reuse){
@@ -46,7 +47,10 @@ try{
         const download=await fetch(base+'/jobs/'+id+'/artifact',{headers,signal:AbortSignal.timeout(45000)});if(!download.ok)throw Error('UniRig artifact unavailable');rig=Buffer.from(await download.arrayBuffer());
       }catch(fetchErr){
         const dataRoot=process.env.AVATAR_DATA??'/avatar-data';
-        for(const sibling of await readdir(dataRoot)){
+        let siblings=await readdir(dataRoot);
+        try{const ranked=await intelligence(['rank-rigs',dataRoot,plan.source_sha256,plan.unirig_engine_sha256,plan.avatar_id]);siblings=ranked.candidates.map(item=>item.id);}
+        catch{console.error('Learned rig ranking unavailable; retained-rig integrity checks still apply.');}
+        for(const sibling of siblings){
           if(sibling===id)continue;
           try{
             const sibFolder=join(dataRoot,sibling);
@@ -105,3 +109,9 @@ try{
   await save({status:reasons.length?'needs_review':'ready',stage:reasons.length?'qualification_blocked':'technical_checks_passed_identity_review_required',preparation:prepared,report,publication_eligible:false});
 }catch(error){let retained={};try{retained=JSON.parse(await readFile(join(folder,'state.json'),'utf8'));}catch{}
   await save({...retained,status:'failed',stage:'preparation_failed',error:error.message,publication_eligible:false});process.exitCode=1;}
+finally{
+  if(!await cancelled()){
+    try{await intelligence(['collect',folder]);}
+    catch{console.error('Asset quality collection pending; coordinator will retry from retained evidence.');}
+  }
+}

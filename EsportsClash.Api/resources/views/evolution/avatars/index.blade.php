@@ -32,6 +32,8 @@
     <article class="metric"><span>Avatar storage</span><strong>{{ $operations?number_format($operations['storage_bytes']/1073741824,2):'—' }} <em>GiB</em></strong><small>{{ $settings->storage_gib }} GiB budget</small></article>
 </div>
 
+@include('evolution.avatars.intelligence', ['intelligence' => $operations['asset_intelligence'] ?? null])
+
 <section class="panel">
     <div class="section-heading">
         <div>

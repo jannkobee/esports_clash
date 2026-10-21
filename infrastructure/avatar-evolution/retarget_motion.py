@@ -46,12 +46,18 @@ def calibrate_arms(source,target,outward_degrees=0):
                       'stance':stance@(target.matrix_world@b.matrix_local).to_quaternion()}
     return result
 
-def apply_calibrated_arms(source,target,calibration):
+def apply_calibrated_arms(source,target,calibration,character_motion=None,phase=0.,clip=None):
     import bpy
     for name,reference in calibration.items():
         a=source.pose.bones[name];b=target.pose.bones[name]
         alignment=reference['alignment']
         delta=alignment@(source.matrix_world@a.matrix).to_quaternion()@reference['reference'].inverted()@alignment.inverted()
+        if character_motion and clip=='Attack':
+            from motion_intelligence import attack_adjustment
+            gain,angles=attack_adjustment(character_motion,phase,name)
+            delta=Quaternion((1,0,0,0)).slerp(delta,gain)
+            # Constrain around the calibrated carrying pose, not around T-pose.
+            delta=delta@Euler(angles).to_quaternion()
         rotation=target.matrix_world.to_quaternion().inverted()@delta@reference['stance']
         b.matrix=Matrix.LocRotScale(b.head.copy(),rotation,b.matrix.to_scale())
         bpy.context.view_layer.update()
@@ -319,7 +325,7 @@ def compute_melee_attack_delta(joint, phase, base_delta):
         recovery = math.pow(max(0.0, 1.0 - u), 1.5)
         return Quaternion((1, 0, 0, 0)).slerp(base_delta, 0.75 + 0.25 * recovery)
 
-def motion_delta(current, neutral, clip, joint, equipment_clearance, avatar_id=None, phase=0.0):
+def motion_delta(current, neutral, clip, joint, equipment_clearance, avatar_id=None, phase=0.0, character_motion=None):
     delta = current @ neutral.inverted()
     if equipment_clearance:
         if clip == 'Attack' and joint in ATTACK_JOINTS:
@@ -343,6 +349,11 @@ def motion_delta(current, neutral, clip, joint, equipment_clearance, avatar_id=N
             delta = compute_archer_attack_delta(joint, phase, delta)
     elif clip == 'Attack':
         delta = compute_melee_attack_delta(joint, phase, delta)
+
+    if clip == 'Attack' and character_motion:
+        from motion_intelligence import attack_adjustment
+        gain, angles = attack_adjustment(character_motion, phase, joint)
+        delta = Quaternion((1, 0, 0, 0)).slerp(delta, gain) @ Euler(angles).to_quaternion()
 
     # Physiological joint limit enforcement
     delta = clamp_joint_rotation(joint, delta)
