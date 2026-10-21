@@ -1,0 +1,9 @@
+# Optional overlay, after evolution and development compose files. The existing
+# authenticated host session is shared only with this private worker.
+services:
+  avatar-worker:
+    image: teamfight-avatar-worker-cloud:local
+    build:
+      target: cloud-worker
+    volumes:
+      - ${ASSET_COLAB_CONFIG_DIR:-${HOME}/.config/colab-cli}:/root/.config/colab-cli

@@ -1,0 +1,36 @@
+{
+  "local": {
+    "preference": "local",
+    "text": "Generation compute\nGoogle Colab\nLocal\nSave compute preference\nRefresh status\n\nApplies to new body-generation jobs across all avatars. Google automatically falls back to Local if it disconnects or generation fails. Existing jobs keep their saved choice.\n\nNew jobs: Local\n\nLocal currently reuses saved avatar geometry. It does not reconstruct a new body from your PNG."
+  },
+  "google": {
+    "preference": "google",
+    "text": "Generation compute\nGoogle Colab\nLocal\nSave compute preference\nRefresh status\n\nApplies to new body-generation jobs across all avatars. Google automatically falls back to Local if it disconnects or generation fails. Existing jobs keep their saved choice.\n\nNew jobs: Google Colab\n\nGoogle currently uses experimental Shap-E. Review anatomy and reference similarity before preparing a rig."
+  },
+  "layouts": [
+    {
+      "viewport": 1425,
+      "content": 1425,
+      "controlWidth": 280
+    },
+    {
+      "viewport": 753,
+      "content": 753,
+      "controlWidth": 267.484375
+    },
+    {
+      "viewport": 390,
+      "content": 390,
+      "controlWidth": 324
+    },
+    {
+      "viewport": 320,
+      "content": 320,
+      "controlWidth": 254
+    }
+  ],
+  "csrf": 419,
+  "history_unchanged": true,
+  "original_preference": "google",
+  "verified_at": "2026-10-21T07:22:54.680Z"
+}

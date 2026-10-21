@@ -55,10 +55,15 @@ try{
   summary.technical_pass=summary.gltf.errors===0&&summary.geometry.passed&&summary.candidate.passed&&summary.candidate.gameplay.passed;
   summary.contact_regressions=Object.fromEntries(['planted_foot_step_drift','blend_hand_step_jump'].map(key=>[key,
     summary.candidate[key]>summary.baseline[key]+.001]));
+  summary.performance_regression=summary.candidate.renderer.draw_calls>summary.baseline.renderer.draw_calls
+    ||summary.candidate.renderer.mean_frame_ms>summary.baseline.renderer.mean_frame_ms*1.08;
+  summary.qualified_without_regression=summary.technical_pass&&summary.baseline.passed
+    &&!Object.values(summary.contact_regressions).some(Boolean)&&!summary.performance_regression;
+  summary.status=summary.qualified_without_regression?'integration_passed':'needs_improvement';
 }catch(error){summary.error=error.message;process.exitCode=1;}
 finally{
   server?.kill('SIGTERM');
   summary.original_unchanged=before===sha(await readFile(donor));
   await writeFile(join(root,'trial-summary.json'),JSON.stringify(summary,null,2));
-  console.log(JSON.stringify({folder,technical_pass:summary.technical_pass,error:summary.error,original_unchanged:summary.original_unchanged}));
+  console.log(JSON.stringify({folder,technical_pass:summary.technical_pass,qualified_without_regression:summary.qualified_without_regression,status:summary.status,error:summary.error,original_unchanged:summary.original_unchanged}));
 }

@@ -3,9 +3,10 @@
 Does not modify weights, sampler parameters, generated code, or live assets.
 """
 import hashlib
+import os
 from pathlib import Path
 
-path = Path('/opt/ComfyUI/custom_nodes/ComfyUI-Trellis2-GGUF/trellis2_gguf/pipelines/trellis2_image_to_3d.py')
+path = Path(os.environ.get('TRELLIS_COMFY', '/opt/ComfyUI')) / 'custom_nodes/ComfyUI-Trellis2-GGUF/trellis2_gguf/pipelines/trellis2_image_to_3d.py'
 source = path.read_text()
 # Filled with the upstream LF-normalized source digest below; fail closed when
 # upgrading nodes so the patch must be reviewed against the new implementation.

@@ -24,7 +24,7 @@ from PIL import Image, UnidentifiedImageError
 
 HERE = Path(__file__).parent
 ROOT = Path(os.environ.get('TRELLIS_DATA', '/trellis-data'))
-COMFY = Path('/opt/ComfyUI')
+COMFY = Path(os.environ.get('TRELLIS_COMFY', '/opt/ComfyUI'))
 LIMITS = json.loads((HERE / 'limits.json').read_text())
 WORKFLOW = json.loads((HERE / 'workflow-v1.json').read_text())
 PINS = json.loads((HERE / 'model-pins.json').read_text())
@@ -46,9 +46,10 @@ def canonical(data):
 
 
 def engine_manifest():
-    files = {name: sha((HERE / name).read_bytes()) for name in ['service.py','diagnose.py','export_node.py','workflow-v1.json','model-pins.json','limits.json','Dockerfile','catalog.json','reference-index.json','patch_nodes.py']}
+    files = {name: sha((HERE / name).read_bytes()) for name in ['service.py','diagnose.py','export_node.py','workflow-v1.json','model-pins.json','limits.json','Dockerfile.native','catalog.json','reference-index.json','patch_nodes.py']}
     packages = HERE / 'installed-packages.txt'
-    return {'image_id': os.environ.get('TRELLIS_IMAGE_ID','not-recorded'), 'python': platform.python_version(),
+    return {'image_id': os.environ.get('TRELLIS_IMAGE_ID','not-recorded'),
+            'environment_id': os.environ.get('TRELLIS_ENVIRONMENT_ID'), 'python': platform.python_version(),
             'source_hashes': files, 'installed_packages_sha256': sha(packages.read_bytes()) if packages.exists() else None}
 
 
@@ -56,9 +57,10 @@ def gpu_validated():
     try:
         report = json.loads((ROOT / 'diagnostics.json').read_text())
         engine = engine_manifest()
-        image_id = engine['image_id']
-        return (isinstance(image_id,str) and image_id.startswith('sha256:') and len(image_id)==71
-                and report.get('engine_image_id')==image_id and report.get('status') == 'passed'
+        identity = engine.get('environment_id') or engine['image_id']
+        recorded = report.get('engine_environment_id') or report.get('engine_image_id')
+        return (isinstance(identity,str) and identity.startswith('sha256:') and len(identity)==71
+                and recorded==identity and report.get('status') == 'passed'
                 and report.get('engine_source_hashes') == engine['source_hashes'])
     except (OSError, ValueError):
         return False
@@ -162,7 +164,7 @@ def references():
         if metadata.is_file():
             result[avatar_id] = json.loads(metadata.read_text())
     for avatar_id, item in BUILTIN_REFERENCES.items():
-        if avatar_id not in result:
+        if avatar_id not in result and (HERE / 'references' / item['file']).is_file():
             result[avatar_id] = {**item, 'sha256': sha((HERE / 'references' / item['file']).read_bytes())}
     return result
 
@@ -173,7 +175,7 @@ def reference_path(avatar_id, digest):
     item = BUILTIN_REFERENCES.get(avatar_id)
     if item:
         builtin = HERE / 'references' / item['file']
-        if sha(builtin.read_bytes()) == digest:
+        if builtin.is_file() and sha(builtin.read_bytes()) == digest:
             return builtin
     path = ROOT / 'references' / avatar_id / (digest + '.png')
     if not path.is_file() or path.is_symlink() or sha(path.read_bytes()) != digest:
@@ -455,7 +457,7 @@ async def operations(request):
     return web.json_response({'provider': 'trellis2-gguf', 'active': ACTIVE, 'models': model_status(), 'limits': LIMITS, 'limits_sha256': sha(canonical(LIMITS)),
         'gpu_validated': gpu_validated(),
         'engine_sha256': sha(canonical(engine_manifest())), 'engine': engine_manifest(),
-        'hardware': hardware, 'workflow_sha256': sha(canonical(WORKFLOW)), 'reference_sha256': sha(reference.read_bytes()), 'references': references(),
+        'hardware': hardware, 'workflow_sha256': sha(canonical(WORKFLOW)), 'reference_sha256': sha(reference.read_bytes()) if reference.is_file() else None, 'references': references(),
         'pins_sha256': sha((HERE / 'model-pins.json').read_bytes()), 'last_error': LAST_ERROR,
         'publication': 'Generated sources require separate asset qualification; static meshes cannot publish as animated avatars.'})
 
@@ -484,7 +486,7 @@ async def submit(request):
     (staging / 'plan.json').write_text(json.dumps(plan, indent=2))
     (staging / 'workflow.json').write_text(json.dumps(build_workflow(job_id, plan['seed']), indent=2))
     (ROOT / 'input' / (job_id + '.png')).write_bytes(reference.read_bytes())
-    state = {'id': job_id, 'status': 'queued', 'stage': 'admission', 'created_unix': time.time(), 'plan_sha256': sha(canonical(plan)),
+    state = {'id': job_id, 'seed': plan['seed'], 'status': 'queued', 'stage': 'admission', 'created_unix': time.time(), 'plan_sha256': sha(canonical(plan)),
              'limits': copy.deepcopy(LIMITS), 'engine': engine_manifest(), 'avatar_id': plan['avatar_id'],
              'reference_sha256': plan['reference_sha256'], 'reference_source': provenance}
     save(staging, state)

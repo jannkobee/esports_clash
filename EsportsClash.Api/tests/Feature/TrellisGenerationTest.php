@@ -260,7 +260,7 @@ class TrellisGenerationTest extends TestCase
         AvatarVisualRelease::create(['avatar_id'=>'c_invoker','variant'=>'default','version'=>2,'run_id'=>$prep->id,'candidate_id'=>'candidate-01','file'=>'candidate-01.glb','sha256'=>str_repeat('a',64),'source_sha256'=>str_repeat('b',64),'approved_by'=>'test','active'=>false,'validation'=>[]]);
         $this->delete(route('trellis.destroy-model',$run),['confirm_delete'=>1])->assertSessionHasErrors('model');Http::assertNothingSent();
     }
-    private function operations():array{return ['provider'=>'trellis2-gguf','active'=>null,'models'=>['ready'=>true],
+    private function operations():array{return ['provider'=>'trellis2-gguf','generation_model'=>'TRELLIS.2-4B','active'=>null,'models'=>['ready'=>true],
         'hardware'=>['gpu'=>'Fixture GPU','gpu_free_mib'=>9000],'references'=>['c_invoker'=>['sha256'=>str_repeat('a',64),'provider'=>'imagegen'],'c_solana'=>['sha256'=>str_repeat('b',64),'provider'=>'imagegen']],...array_fill_keys(['reference_sha256','workflow_sha256','pins_sha256','limits_sha256','engine_sha256'],str_repeat('a',64))];}
     public function test_generation_routes_require_owner_access():void
     {
@@ -268,6 +268,44 @@ class TrellisGenerationTest extends TestCase
         foreach(['/evolution/avatars/trellis','/evolution/avatars/trellis/live','/evolution/avatars/trellis/'.$run->id.'/report','/evolution/avatars/trellis/'.$run->id.'/asset','/evolution/avatars/trellis/'.$run->id.'/preview']as $path)$this->get($path)->assertRedirect('/login');
         $this->actingAs(User::factory()->create());
         $this->get('/evolution/avatars/trellis')->assertForbidden();$this->post('/evolution/avatars/trellis',['seed'=>1,'avatar_id'=>'c_invoker'])->assertForbidden();
+    }
+    public function test_compute_preference_is_owner_only_validated_and_saved_without_queueing(): void
+    {
+        Queue::fake(); Http::fake(['*'=>Http::response([],503)]);
+        $url=route('trellis.compute');
+        $this->patch($url,['compute_preference'=>'local'])->assertRedirect('/login');
+        $this->actingAs(User::factory()->create())->patch($url,['compute_preference'=>'local'])->assertForbidden();
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $this->patch($url,['compute_preference'=>'remote-code'])->assertSessionHasErrors('compute_preference');
+        $service=app(TrellisGenerationService::class);
+        $this->assertSame('google',$service->computePreference());
+        $this->patch($url,['compute_preference'=>'local'])->assertSessionHasNoErrors();
+        $this->assertSame('local',$service->computePreference());
+        $this->get(route('trellis.index'))->assertOk()->assertSee('Save compute preference')->assertSee('value="local" selected',false);
+        $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('Generation compute');
+        $this->patch($url,['compute_preference'=>'google'])->assertSessionHasNoErrors();
+        $this->assertSame('google',$service->computePreference());
+        $this->assertSame(0,TrellisGeneration::count()); Queue::assertNothingPushed();
+    }
+    public function test_hybrid_jobs_freeze_compute_and_report_actual_fallback(): void
+    {
+        Queue::fake();
+        $ops=$this->operations();
+        $ops['provider']='trellis2-gguf';
+        $ops['compute']=['switching_supported'=>true,'ready'=>true,'selected'=>'local','preferred'=>'google','fallback_reason'=>'Google unavailable; using Local.'];
+        Http::fake(['*/operations'=>Http::response($ops)]);
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $this->post(route('trellis.start'),['avatar_id'=>'c_invoker'])->assertSessionHasNoErrors();
+        $first=TrellisGeneration::firstOrFail();
+        $this->assertSame('google',$first->plan['compute_preference']);
+        Http::assertSent(fn($request)=>$request->hasHeader('X-Asset-Compute-Preference','google'));
+        $this->patch(route('trellis.compute'),['compute_preference'=>'local'])->assertSessionHasNoErrors();
+        $this->post(route('trellis.start'),['avatar_id'=>'c_solana'])->assertSessionHasNoErrors();
+        $this->assertSame('local',TrellisGeneration::where('avatar_id','c_solana')->firstOrFail()->plan['compute_preference']);
+        $this->assertSame('google',$first->fresh()->plan['compute_preference']);
+        $first->update(['status'=>'generated_unqualified','state'=>['provider'=>'trellis2-gguf','compute'=>$ops['compute']]]);
+        $this->get(route('trellis.live'))->assertOk()->assertSee('Google unavailable; using Local.')->assertSee('Used:');
+        $this->assertSame(0,AvatarVisualRelease::count());
     }
     public function test_owner_queue_freezes_real_worker_configuration_and_preserves_visual_versions():void
     {
@@ -279,6 +317,49 @@ class TrellisGenerationTest extends TestCase
         $this->post('/evolution/avatars/trellis',['seed'=>48,'avatar_id'=>'c_invoker'])->assertSessionHasErrors('provider');$this->assertSame(1,TrellisGeneration::count());
         $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('3D Generation')->assertSee('Not submitted yet');
         $this->get('/evolution/ml/reports')->assertOk()->assertDontSee('generation-card');
+    }
+    public function test_owner_queue_admits_google_and_local_native_trellis_providers():void
+    {
+        Queue::fake();
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+
+        // Google Colab
+        $colabOps = array_merge($this->operations(), ['provider' => 'google-colab', 'provider_label' => 'Google Colab (Tesla T4)']);
+        Http::fake(['*/operations'=>Http::response($colabOps)]);
+        $this->post('/evolution/avatars/trellis',['seed'=>51,'avatar_id'=>'c_solana'])->assertRedirect(route('trellis.index'));
+        $run=TrellisGeneration::where('avatar_id','c_solana')->firstOrFail();
+        $this->assertSame('queued',$run->status);
+
+        // Native Local fallback
+        $localOps = array_merge($this->operations(), ['provider' => 'trellis2-gguf', 'provider_label' => 'Local / TRELLIS.2']);
+        Http::fake(['*/operations'=>Http::response($localOps)]);
+        $this->post('/evolution/avatars/trellis',['seed'=>52,'avatar_id'=>'c_invoker'])->assertRedirect(route('trellis.index'));
+        $run2=TrellisGeneration::where('avatar_id','c_invoker')->firstOrFail();
+        $this->assertSame('queued',$run2->status);
+    }
+    public function test_unready_or_substitute_generators_cannot_queue_a_new_source(): void
+    {
+        Queue::fake();
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        foreach ([['provider'=>'local-procedural'],['provider'=>'google-colab','generation_model'=>'openai/shap-e-img2img'],
+            ['provider'=>'trellis2-router','compute'=>['switching_supported'=>true,'ready'=>false,'selected'=>'local','blocked_reason'=>'Native TRELLIS.2 checkpoints are missing.']]] as $override) {
+            $ops=array_replace($this->operations(),$override);
+            Http::fake(['*/operations'=>Http::response($ops)]);
+            $this->post(route('trellis.start'),['avatar_id'=>'c_solana'])->assertSessionHasErrors('provider');
+        }
+        $this->assertSame(0,TrellisGeneration::count()); Queue::assertNothingPushed();
+        $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('TRELLIS.2 setup needed')->assertSee('Download TRELLIS.2 Colab setup notebook');
+    }
+    public function test_colab_setup_download_is_owner_only_and_contains_a_notebook(): void
+    {
+        $url=route('trellis.colab-setup');
+        $this->get($url)->assertRedirect('/login');
+        $this->actingAs(User::factory()->create())->get($url)->assertForbidden();
+        $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        $this->get($url)->assertOk()->assertDownload('EsportsClash-TRELLIS2-Colab.ipynb');
+        $book=json_decode(file_get_contents(resource_path('avatars/trellis2-colab.ipynb')),true);
+        $this->assertSame(4,$book['nbformat']);
+        $this->assertNotEmpty($book['cells']);
     }
     public function test_idempotent_polls_store_actual_execution_and_do_not_reopen_terminal_runs():void
     {

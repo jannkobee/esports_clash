@@ -20,10 +20,11 @@
 @endif
 <div class="studio-overview">
     <div><span class="eyebrow">THE WORKFLOW</span><h2>Body first. Equipment optional.</h2><p class="muted">Upload a neutral T-pose PNG with empty hands. Add separate equipment for either hand, generate a 3D source, then prepare its rig and animations.</p></div>
-    <ol class="studio-workflow"><li><span>01</span><div><strong>Prepare assets</strong><p>Prompts, body &amp; optional weapons</p></div></li><li><span>02</span><div><strong>Generate a source</strong><p>Local TRELLIS.2 reconstruction</p></div></li><li><span>03</span><div><strong>Rig &amp; review</strong><p>Qualify before live use</p></div></li></ol>
+    <ol class="studio-workflow"><li><span>01</span><div><strong>Prepare assets</strong><p>Prompts, body &amp; optional weapons</p></div></li><li><span>02</span><div><strong>Generate a source</strong><p>Google or Local compute</p></div></li><li><span>03</span><div><strong>Rig &amp; review</strong><p>Qualify before live use</p></div></li></ol>
 </div>
-<div class="studio-stats"><div><strong>{{ count($catalog) }}</strong><span>Avatars</span></div><div><strong>{{ count($references) }}</strong><span>Body references</span></div><div><strong>{{ $completedModels->count() }}</strong><span>Avatars with models</span></div><div><strong>{{ $active->count() }}</strong><span>Active jobs</span></div><div class="studio-worker"><span class="status-led {{ $operations ? 'green' : '' }}"></span><span>{{ $operations ? 'Local worker connected' : 'Local worker offline' }}<small>{{ $operations['hardware']['gpu'] ?? 'You can still manage source assets' }}</small></span></div></div>
+<div class="studio-stats"><div><strong>{{ count($catalog) }}</strong><span>Avatars</span></div><div><strong>{{ count($references) }}</strong><span>Body references</span></div><div><strong>{{ $completedModels->count() }}</strong><span>Avatars with models</span></div><div><strong>{{ $active->count() }}</strong><span>Active jobs</span></div><div class="studio-worker"><span class="status-led {{ ($operations['models']['ready'] ?? false) ? 'green' : '' }}"></span><span>{{ ($operations['models']['ready']??false) ? (($operations['provider']??null)==='google-colab' ? 'Google TRELLIS.2 ready' : 'Local TRELLIS.2 ready') : 'TRELLIS.2 setup needed' }}<small>{{ $operations['hardware']['gpu'] ?? 'You can still manage source assets' }}</small></span></div></div>
 @if($operations['last_error'] ?? null)<div class="notice error" role="alert">Worker: {{ $operations['last_error'] }}</div>@endif
+<section class="panel generation-controls" id="generate"><div class="section-heading"><div><h2>Generation compute</h2><p class="muted">Choose where new body-generation jobs run.</p></div></div>@include('evolution.avatars.compute-controls')</section>
 <div class="page-heading roster-heading"><div><h2>Choose an avatar</h2><p class="muted">One studio for its models, assets, prompts and jobs.</p></div></div>
 <div class="collection-toolbar" data-list-controls="#generation-roster">
     <label class="collection-search">Search avatars<input type="search" id="generation-search" data-list-search placeholder="Name or role" autocomplete="off"></label>
@@ -77,12 +78,12 @@
         </div>
         <div class="modal-body">
             <section class="panel" style="margin-bottom:16px;">
-                <p class="eyebrow">GPU WORKER TELEMETRY</p>
+                <p class="eyebrow">WORKER &amp; ACCELERATION TELEMETRY</p>
                 <div class="stat-chips">
-                    <span class="stat-chip">GPU: <strong>{{ $operations['hardware']['gpu'] ?? 'Available' }}</strong></span>
+                    <span class="stat-chip">Provider: <strong>{{ $operations['provider_label'] ?? ($operations['provider'] ?? 'Offline') }}</strong></span>
+                    <span class="stat-chip">Hardware: <strong>{{ $operations['hardware']['gpu'] ?? 'Available' }}</strong></span>
                     <span class="stat-chip">VRAM Free: <strong>{{ number_format($operations['hardware']['gpu_free_mib'] ?? 0) }} MiB</strong></span>
                     <span class="stat-chip">Checkpoints: <strong>{{ ($operations['models']['ready'] ?? false) ? 'Ready' : 'Unavailable' }}</strong></span>
-                    <span class="stat-chip">Quantization: <strong>{{ $operations['limits']['quantization'] ?? 'Q4_K_M' }}</strong></span>
                 </div>
                 <p class="fine" style="margin-top:10px;">
                     GPU memory offload and quantization parameters are managed by the container profile. When checkpoints or hardware are offline, jobs remain safely queued without loss of assets or reports.

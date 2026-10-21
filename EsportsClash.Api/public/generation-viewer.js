@@ -6,7 +6,20 @@ try{
         import('./evolution-vendor/three/addons/loaders/GLTFLoader.js'),
         import('./evolution-vendor/three/addons/controls/OrbitControls.js'),
     ]);
-    renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+    function initRenderer(THREE) {
+        const configs = [
+            { antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'default' },
+            { antialias: false, alpha: true, failIfMajorPerformanceCaveat: false },
+            { antialias: false, alpha: false, failIfMajorPerformanceCaveat: false },
+        ];
+        for (const cfg of configs) {
+            try {
+                return new THREE.WebGLRenderer(cfg);
+            } catch (e) {}
+        }
+        throw new Error('WebGL context could not be created. Please enable "Use graphics acceleration when available" in browser settings (chrome://settings/system) or download the model to inspect.');
+    }
+    renderer = initRenderer(THREE);
     renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;
     host.append(renderer.domElement);scene=new THREE.Scene();
     const camera=new THREE.PerspectiveCamera(35,1,.001,1000);
@@ -150,7 +163,7 @@ try{
     status.textContent=`${metrics.triangles.toLocaleString()} triangles · ${metrics.meshes} meshes · ${metrics.skinned_meshes} skinned meshes · ${metrics.animation_clips} native animation clips${metrics.equipment_slots.length?' · '+metrics.equipment_slots.length+' equipped hands':''}`;
     window.__trellisPreview={ready:true,...metrics};
     document.querySelectorAll('[data-model-view]').forEach(button=>button.addEventListener('click',()=>view(button.dataset.modelView)));
-}catch(error){status.textContent='Unable to display the generated source: '+error.message;window.__trellisPreview={ready:false,error:error.message};}
+}catch(error){status.innerHTML='Unable to display 3D preview in browser: '+error.message+' &middot; <a href="'+(host?.dataset?.asset||'#')+'" download>Download the GLB source file</a> to inspect it in a 3D viewer.';window.__trellisPreview={ready:false,error:error.message};}
 window.addEventListener('pagehide',()=>{
     cancelAnimationFrame(animationFrame);
     mixer?.stopAllAction();

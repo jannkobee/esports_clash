@@ -12,6 +12,7 @@ import fcntl
 import base64
 import copy
 import uuid
+import os
 from pathlib import Path
 import service
 from aiohttp import web
@@ -33,8 +34,9 @@ def save(folder, state):
 async def generate(folder):
     if (folder / 'cancelled.json').exists():
         return
-    Path('/gpu-lease').mkdir(exist_ok=True)
-    lock=open('/gpu-lease/inference.lock','a+')
+    lease = Path(os.environ.get('TRELLIS_GPU_LEASE', '/gpu-lease'))
+    lease.mkdir(parents=True, exist_ok=True)
+    lock=open(lease / 'inference.lock','a+')
     try:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     except BlockingIOError:
@@ -194,4 +196,4 @@ application.router.add_post('/equipment-jobs/{id}',submit_equipment)
 if __name__ == '__main__':
     if len(service.TOKEN) < 32:
         raise SystemExit('Private worker token required')
-    web.run_app(application, host='0.0.0.0', port=8096, access_log=None)
+    web.run_app(application, host=os.environ.get('TRELLIS_BIND', '0.0.0.0'), port=8096, access_log=None)

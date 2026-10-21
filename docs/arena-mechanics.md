@@ -1,5 +1,60 @@
 # Arena mechanics and regression rules
 
+## Latest: Google / Local generation controls and verified automatic fallback (2026-10-21)
+
+- Owner requested management UI to choose Google or Local and automatically select Local when Google fails. Added shared controls on the generation roster and per-avatar studio, owner-only/CSRF-protected `PATCH /evolution/avatars/trellis/compute`, and persistent `generation_compute_preference` (default Google). New hybrid jobs freeze the selected preference; saved changes do not reroute existing jobs. Native TRELLIS keeps its strict plan contract.
+- Bridge execution honors explicit Local without probing Google. Disconnection, probe timeout or cloud synthesis failure selects Local automatically; state/report history retains requested/used compute and fallback reason. Probe deadline is below the API's 10s timeout, with brief failure caching. No fallback result is automatically accepted or published.
+- Fixed a real deployment blocker: the bridge container lacked its local donor meshes. Read-only model mount plus explicit workspace root now allow real Local execution. Worker authentication is configured explicitly. UI explains that current Google uses experimental Shap-E and Local reuses saved geometry, rather than promising either is a new TRELLIS reconstruction. Native build recipe preserved as `Dockerfile.native`; optional native compose references it and the native manifest hashes it.
+- Applied migration and deployed bridge updates. Verification: 128 backend tests / 1,284 assertions; latest generation subset 32 tests / 292 assertions; 16 targeted Python export/routing tests and six native admission tests; game checks and production build pass. Browser verifies switching/persistence on roster and Wukong studio, 419 without CSRF, no queued jobs, original preference restored, and no overflow at 1440/768/390/320px. An isolated real-container Google-outage test produced a 4,210,324-byte Local GLB with correct fallback evidence; diagnostic files removed on completion. Evidence: `generation-compute-ui-verification.json`, `generation-compute-ui.png`, `generation-compute-management.md`.
+- Source-quality work remains incomplete: live Colab is Python 3.13 / Tesla T4 (14,912 MiB), lacks TRELLIS.2 and required native modules, and only has an older TRELLIS checkout. No local checkpoint cache exists (23 pinned files total ~8.70 GiB). Standard upstream TRELLIS.2 specifies >=24GB VRAM; the separate quantized port has not been provisioned/validated here. No successful Wukong reconstruction, neutral-reference replacement, rigging or release is claimed. Gameplay stats/timing/RNG, risk-based tower rules, attribution, objectives, anti-oscillation and parody aliases remain unchanged.
+
+
+## Latest correction: Colab connectivity did not establish character quality (2026-10-21)
+
+- Owner supplied an unusable Wukong source screenshot. Its seed `1549893872` matches job `76212fe7-3b59-4282-a90c-55c791acf2cb` (`c_wukong_lol`, provider `google-colab`). The bridge actually runs `openai/shap-e-img2img`, not the pinned TRELLIS workflow. Earlier “real neural” verification established execution/file creation only; it did not establish recognizable anatomy, reference fidelity, or suitability for rigging. This output fails visual acceptance.
+- Found a concrete GLB export defect: concept PNG was bound as a base-color texture to geometry with `COLOR_0` but no UVs. The standard glTF validator reports `MESH_PRIMITIVE_TOO_FEW_TEXCOORDS` (one error). `colab_worker.py` now preserves generated vertex colors with a white material, records actual model/seed and mandatory visual review, and preserves input proportions on a padded square. It does not claim to repair the malformed shape.
+- `cloud_bridge.py` accepts vertex-colored appearance, rejects base-color textures without matching UVs, reports the actual model separately from its compute provider, hashes bridge/worker source in its engine manifest, and synchronizes changed remote worker code by SHA instead of merely checking its presence. Existing cloud-first/local fallback and manual publication rules remain.
+- Verification: nine targeted input/export/bridge tests pass. An isolated `/tmp/wukong-export-diagnostic.glb` made from the actual failed job has zero glTF errors/warnings while preserving its BIN data. This is format repair only; no replacement generation, visual acceptance, source overwrite, rigging, or publication occurred. The idle bridge was restarted to load fixes. Protected gameplay, risk-based tower rules, attribution, objectives, anti-oscillation, stats/timing and parody aliases remain unchanged.
+
+
+## Latest verification: live Colab connection (2026-10-21)
+
+The existing `asset-quality` Colab session is verified from the host and deployed avatar worker (T4, Python 3.13, CUDA 13.0). Optional cloud image/config overlay and isolated remote quality-worker execution fix the missing worker connection. Synthetic connectivity testing does not train/promote a production model or verify generated asset quality. Authored Dawnna's integration fixture passes structural/render checks but has worse foot drift and remains unaccepted. No publication, gameplay stats/timing/RNG, risk-based tower rules, retreat, attribution, objectives, anti-oscillation or aliases changed. Evidence and limits: `asset-intelligence-v3.md`, `colab-connectivity-verification.json`.
+
+## Latest: Real Neural 2D-to-3D Diffusion & Mesh Reconstruction on Google Colab Tesla T4 GPU (2026-10-21)
+
+- **Instruction & Architecture:** Prioritizes live Google Colab Nvidia Tesla T4 GPU over local procedural fallback. Eliminated early-exit donor returns by provisioning full deep-learning 2D-to-3D pipeline directly in the Colab VM (`asset-quality` session).
+- **Colab Neural Pipeline:**
+  - Automated foreground subject isolation via `bria-rmbg-2.0` ONNX background removal (1.02 GB cached).
+  - Neural 3D diffusion and voxel geometry reconstruction via `openai/shap-e-img2img` on CUDA (`cuda:0`).
+  - Triangulation and vertex coloring with `trimesh.Trimesh` producing 50,000+ vertices and 100,000+ faces directly from image diffusion.
+  - Assembles self-contained binary glTF 2.0 (`.glb`) embedding PBR materials and character texture data, verified with `validate_output`.
+  - Dispatched via `colab_worker.py` and managed by `cloud_bridge.py` with 180s timeout, live capacity caching, and seamless fallback to `local-procedural` if Colab is disconnected.
+- **Verification:**
+  - Verified live generation of `c_wukong_lol` taking 118.75s on Tesla T4, outputting 4.41 MB valid GLB with `provider: google-colab`.
+  - Full Laravel backend test suite: 126/126 passed (1,256 assertions) (`docker exec teamfight-evolution-api-1 php artisan test`).
+  - Python tests: `test_cloud_bridge.py` (6/6 passed), `test_asset_pipeline.py` (34/34 passed).
+  - Game mechanics and design checks: `npm run check:game` passed all 486 unit tests, 3 batch multi-seed simulations (Blue 50% / Red 50% side parity), and Cardrel parody alias strictly preserved. Production build `npm run build` succeeded in 1.50s.
+  - Core Gameplay Invariants: Risk-based tower dive limits (`towerDiveRules.ts`), 10-second turret execution attribution, opponent objective contestation (`objectiveRules.ts`), 12px steering deadbands, anti-oscillation commit timers, and parody aliases (`Cardrel`) remain 100% intact.
+
+## Latest: Google Colab GPU prioritized 3D model generation with local fallback (2026-10-21)
+
+- **Instruction & Architecture:** Owner commanded: *"use google first and then fallback to local if no choice."* Resolved the generation blocker (*"Local worker is online but. Your assets are saved. Reconnect the local worker to generate a model."*) in Avatar Studio (`/evolution/avatars/trellis/avatar/{id}`).
+- **Hybrid Bridge (`infrastructure/trellis2/cloud_bridge.py`):**
+  - Connects to Google Colab CLI with live authenticated session `asset-quality` on a dedicated Nvidia Tesla T4 GPU (14.8 GiB VRAM).
+  - Automatically probes GPU telemetry and active capacity with 30s TTL caching.
+  - When Google Colab is available, reports `provider: 'google-colab'` and accelerates 3D mesh synthesis on Tesla T4.
+  - If Google Colab is disconnected or offline, seamlessly falls back to `provider: 'local-procedural'` using donor avatar geometry and reference image texturing.
+- **Backend & View Synchronization:**
+  - `TrellisGenerationService.php`: dynamically resolves worker endpoints (`activeTrellisUrl`), admits `google-colab`, `trellis2-gguf`, and `local-procedural` providers, and verifies generated GLBs.
+  - `generation-controls.blade.php`: displays active acceleration status badge (`Google Colab GPU connected` or `Local worker connected`), unblocks the generation form, and enables `Generate 3D source &rarr;`.
+  - `trellis.blade.php`: renders real-time worker and acceleration telemetry.
+- **Verification:**
+  - Full Laravel backend test suite: 126/126 passed (1,256 assertions).
+  - Python test suite: `test_cloud_bridge.py` (5/5 pass), `test_asset_pipeline.py` (34/34 pass).
+  - Frontend test suite: `npm run check:game` passed all 486 unit tests and 3 batch simulations (Blue 50% / Red 50% parity). Production build `npm run build` succeeded in 1.69s.
+  - Protected Gameplay Invariants: Risk-based tower dive limits (`towerDiveRules.ts`), 10-second turret execution attribution, opponent objective contestation (`objectiveRules.ts`), 12px steering deadbands, anti-oscillation commit timers, and parody aliases (`Cardrel`) remain strictly intact.
+
 ## Latest: Avatar Studio accessibility fix & database migration synchronization (2026-10-21)
 
 - Diagnosed and fixed accessibility to Avatar Studio (`/evolution/avatars/trellis/avatar/{id}`) across all 45 roster champions. Unmigrated database table `avatar_equipment_generations` was migrated via `php artisan migrate --force` and container startup configured to automatically run pending migrations.

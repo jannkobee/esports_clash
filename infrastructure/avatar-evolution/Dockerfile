@@ -23,3 +23,13 @@ RUN npm ci --ignore-scripts --no-audit --no-fund
 WORKDIR /workspace/EsportsClash.Web
 ENV AVATAR_DATA=/avatar-data NODE_ENV=production OMP_NUM_THREADS=1
 CMD ["node","/workspace/infrastructure/avatar-evolution/server.mjs"]
+
+# Optional supported Colab runtime. Keep its Python >=3.12 dependency isolated
+# from the GPU model engines and Blender's embedded Python 3.11.
+FROM python:3.12-slim-bookworm AS colab-dependencies
+COPY infrastructure/avatar-evolution/requirements-colab.txt /tmp/requirements-colab.txt
+RUN pip install --no-cache-dir -r /tmp/requirements-colab.txt
+
+FROM worker AS cloud-worker
+COPY --from=colab-dependencies /usr/local/ /usr/local/
+RUN ldconfig && colab version

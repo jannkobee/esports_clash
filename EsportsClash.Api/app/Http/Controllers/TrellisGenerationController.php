@@ -13,6 +13,7 @@ class TrellisGenerationController extends Controller
         return response()->view('evolution.avatars.trellis',[
             'selectedDesign'=>$selectedDesign,
             'operations'=>$operations,
+            'computePreference'=>$service->computePreference(),
             'assetReferences'=>$service->references($operations),
             'localReferences'=>$service->localReferences(),
             'weaponReferences'=>$service->weaponReferences(),
@@ -45,7 +46,8 @@ class TrellisGenerationController extends Controller
             'weapon'=>$weapon,
             'equipmentRuns'=>\App\Models\AvatarEquipmentGeneration::where('avatar_id',$avatar)->oldest()->get()->groupBy('slot'),
             'currentReference'=>$currentReference,
-            'operations'=>$operations
+            'operations'=>$operations,
+            'computePreference'=>$service->computePreference()
         ])->header('Cache-Control','no-store');
     }
     public function live(Request $request,TrellisGenerationService $service)
@@ -66,7 +68,19 @@ class TrellisGenerationController extends Controller
             ? (int)$input['seed']
             : random_int(0,2147483647);
         $service->start('user:'.$request->user()->id,$seed,$input['avatar_id'],$allowNewInstance);
-        return redirect()->back(fallback: route('trellis.index'))->with('status','Real TRELLIS.2 generation queued. The active game appearance is preserved.');
+        return redirect()->back(fallback: route('trellis.index'))->with('status','3D source job queued. Review the generated source before rigging and live use.');
+    }
+    public function compute(Request $request, TrellisGenerationService $service)
+    {
+        $input = $request->validate(['compute_preference'=>['required','in:google,local']]);
+        $service->saveComputePreference($input['compute_preference'], 'user:'.$request->user()->id);
+        return redirect()->back(fallback: route('trellis.index'))->with('status', 'Generation compute saved for new jobs. Google failures automatically use Local.');
+    }
+    public function colabSetup()
+    {
+        $path = resource_path('avatars/trellis2-colab.ipynb');
+        abort_unless(is_file($path), 503, 'The reviewed Colab setup notebook is unavailable.');
+        return response()->download($path, 'EsportsClash-TRELLIS2-Colab.ipynb', ['Cache-Control'=>'private, no-store']);
     }
     public function reference(Request $request,string $avatar,string $digest,TrellisGenerationService $service)
     {

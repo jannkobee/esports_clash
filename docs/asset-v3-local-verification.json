@@ -1,0 +1,37 @@
+{
+  "scope": "Authored Dawnna integration trial; no generated UniRig result or live release",
+  "original_unchanged": true,
+  "source_sha256": "d65cd3eb34ff7d503d3426e3cb35bc8857018ac1680c1abe06732a64acee8920",
+  "fixture_only": true,
+  "gltf_errors": 0,
+  "gltf_warnings": 46,
+  "geometry_passed": true,
+  "runtime_passed": true,
+  "gameplay_preview_passed": true,
+  "clips": [
+    "Attack",
+    "Cast",
+    "Death",
+    "Hit",
+    "Idle",
+    "Run",
+    "Strafe",
+    "TurnLeft",
+    "TurnRight",
+    "Walk"
+  ],
+  "status": "needs_improvement",
+  "published": false,
+  "baseline": {
+    "planted_foot_step_drift": 2.7683496884073446,
+    "blend_hand_step_jump": 1.3437733497856872,
+    "draw_calls": 42,
+    "local_frame_ms": 6.341666666169961
+  },
+  "candidate": {
+    "planted_foot_step_drift": 4.9615258572334815,
+    "blend_hand_step_jump": 1.1895107921341634,
+    "draw_calls": 42,
+    "local_frame_ms": 7.333333333333333
+  }
+}

@@ -1783,6 +1783,8 @@ dialog.evolution-modal { padding: 0; max-height: 90dvh; }
 .generation-queue-row { display: flex; gap: 16px; align-items: end; margin-top: 20px; }
 .generation-queue-row label { width: min(280px,100%); }
 .generation-queue-row input { width: 100%; }
+.compute-controls select { width: 100%; margin-top: 7px; padding: 10px; border-radius: 6px; font: 14px/1.5 var(--font-sans); }
+.compute-controls { margin-bottom: 20px; }
 .generation-blocker { color: #f1c989; font-size: 13px; }
 #generation-history { margin-top: 28px; border-radius: 10px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }

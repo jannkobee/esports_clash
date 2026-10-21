@@ -166,6 +166,7 @@ services:
     build:
       context: .
       dockerfile: infrastructure/avatar-evolution/Dockerfile
+      target: worker
     environment:
       EVOLUTION_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN}
       AVATAR_DATA: /avatar-data

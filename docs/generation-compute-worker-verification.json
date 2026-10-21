@@ -1,0 +1,48 @@
+{
+  "scope": "compute management and isolated routing verification; no accepted reconstruction",
+  "backend": {
+    "passed": 128,
+    "assertions": 1284,
+    "generation_subset_passed": 32,
+    "generation_subset_assertions": 292
+  },
+  "bridge_export_tests_passed": 16,
+  "native_admission_tests_passed": 6,
+  "game_checks_passed": true,
+  "production_build_passed": true,
+  "isolated_google_outage": {
+    "actual_provider": "local-procedural",
+    "artifact_bytes": 4210324,
+    "publication_eligible": false,
+    "uses_saved_geometry": true,
+    "production_records_created": false
+  },
+  "deployed_worker": {
+    "healthy": true,
+    "unauthenticated_operations_status": 401,
+    "local_selection_verified": true
+  },
+  "colab_audit": {
+    "python": "3.13.15",
+    "gpu": "Tesla T4",
+    "vram_mib": 14912,
+    "missing_modules": [
+      "trellis2",
+      "comfy",
+      "flex_gemm",
+      "nvdiffrast",
+      "cumesh",
+      "o_voxel"
+    ],
+    "older_trellis_checkout_present": true,
+    "trellis2_provisioned": false
+  },
+  "native_models": {
+    "local_cache_present": false,
+    "pinned_files": 23,
+    "total_gib": 8.697327619418502
+  },
+  "new_reconstruction_accepted": false,
+  "live_asset_published": false,
+  "browser_evidence": "generation-compute-ui-verification.json"
+}

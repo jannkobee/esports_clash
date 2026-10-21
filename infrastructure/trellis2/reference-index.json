@@ -1,1 +1,10 @@
-{}
+{
+  "c_invoker": {"file": "arsenaldo-v1.png", "name": "Arsenaldo"},
+  "c_solana": {"file": "dawnna-v1.png", "name": "Dawnna"},
+  "c_astra": {"file": "aiselle-v1.png", "name": "Aiselle"},
+  "c_kyumi": {"file": "vixelle-v1.png", "name": "Vixelle"},
+  "c_buck": {"file": "gritlock-v1.png", "name": "Gritlock"},
+  "c_kage": {"file": "vanta-v1.png", "name": "Vanta"},
+  "c_monkeyking_dota": {"file": "primate-minister-v1.png", "name": "Primate Minister"},
+  "c_wukong_lol": {"file": "primate-minister-v1.png", "name": "Stafford"}
+}

@@ -110,7 +110,7 @@ class AdmissionTests(unittest.IsolatedAsyncioTestCase):
         response = await self.client.post('/jobs/' + str(uuid.uuid4()), json=plan, headers=self.headers)
         self.assertEqual(response.status, 202)
         state = await response.json()
-        self.assertEqual(state['reference_source']['provider'], 'imagegen')
+        self.assertEqual(state['reference_source'], reference)
         self.assertEqual(state['limits'], service.LIMITS)
         with patch.dict(service.BUILTIN_REFERENCES, {}, clear=True):
             old = await self.client.get('/references/c_solana/' + reference['sha256'], headers=self.headers)

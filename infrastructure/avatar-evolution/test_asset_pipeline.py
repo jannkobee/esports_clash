@@ -202,7 +202,9 @@ class ComputeTests(Base):
             self.assertEqual(command.call_args.args, ('exec', '-s', 'owned-session'))
         # Exercise the transmitted program as a real interpreter, not just a stub.
         def execute(*args, input=None, **kwargs):
-            return subprocess.run([sys.executable, '-c', input], text=True, capture_output=True, check=True).stdout
+            guarded = ('import sys\n_original_stdin=sys.stdin\n_sentinel=object()\ntrain=_sentinel\n' + input
+                       + '\nassert sys.stdin is _original_stdin\nassert train is _sentinel\nassert "_run_asset_quality_worker" not in globals()\n')
+            return subprocess.run([sys.executable, '-c', guarded], text=True, capture_output=True, check=True).stdout
         with patch.object(provider, 'command', side_effect=execute):
             result = provider.run(job(payload=training_payload()))
             self.assertEqual(result['snapshot'], 'fixture')

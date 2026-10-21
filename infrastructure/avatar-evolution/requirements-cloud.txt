@@ -1,4 +1,4 @@
 # Optional coordinator extras, isolated from TRELLIS/UniRig environments.
 # Colab CLI requires Python >=3.12. Neither is needed for local collection/training.
-google-colab-cli==0.7.2
+-r requirements-colab.txt
 mlflow-skinny==3.5.1

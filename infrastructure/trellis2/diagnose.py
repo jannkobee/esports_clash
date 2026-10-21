@@ -71,6 +71,7 @@ async def main():
     result['status'] = 'passed'
     result['engine_source_hashes'] = service.engine_manifest()['source_hashes']
     result['engine_image_id'] = service.engine_manifest()['image_id']
+    result['engine_environment_id'] = service.engine_manifest().get('environment_id')
     (service.ROOT / 'diagnostics.json').write_text(json.dumps(result,indent=2))
     print(json.dumps(result,indent=2))
 

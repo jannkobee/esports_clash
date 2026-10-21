@@ -1,0 +1,2 @@
+# Matches the CLI verified against the existing authenticated Colab session.
+google-colab-cli==0.7.5

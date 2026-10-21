@@ -2,6 +2,9 @@
 x-dev-api: &dev-api
   environment:
     DEV_VITE_URL: http://localhost:8088
+    TRELLIS_WORKER_URL: http://trellis-worker:8096
+  extra_hosts:
+    - "trellis-worker:host-gateway"
   volumes:
     - ./infrastructure/evolution/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
     - ./EsportsClash.Api/app:/app/app:ro
@@ -13,11 +16,37 @@ x-dev-api: &dev-api
     - ./EsportsClash.Api/resources/game/management-items.json:/app/resources/game/management-items.json:ro
     - ./infrastructure/trellis2/references:/app/resources/avatars/generation-references:ro
     - ./infrastructure/trellis2/reference-index.json:/app/resources/avatars/generation-reference-index.json:ro
-    - ./.local-tools/trellis2/data/output:/app/storage/trellis-sources:ro
+    - ./EsportsClash.Api/resources/avatars/trellis2-colab.ipynb:/app/resources/avatars/trellis2-colab.ipynb:ro
+    - ./.local-tools/trellis2/data/output:/app/storage/trellis-sources:rw
     - ./EsportsClash.Api/public:/app/public:ro
     - ./EsportsClash.Api/tests:/app/tests:ro
 
 services:
+  trellis-worker:
+    image: teamfight-trellis-worker:local
+    build:
+      context: ./infrastructure/trellis2
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8096:8096"
+    volumes:
+      - /home/wskdev18/.config/colab-cli:/root/.config/colab-cli:rw
+      - ./infrastructure/trellis2:/app:ro
+      - ./.local-tools/trellis2/data:/workspace/data:rw
+      - ./EsportsClash.Api/storage:/workspace/storage:ro
+    environment:
+      TRELLIS_DATA: /workspace/data
+      ASSET_WORKSPACE: /workspace
+      TRELLIS_LOCAL_URL: http://trellis-native:8096
+      TRELLIS_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN:?Missing private worker token}
+      COLAB_CLI: colab
+    healthcheck:
+      test: [CMD, python3, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8096/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
   avatar-worker:
     volumes:
       - ./infrastructure/avatar-evolution/browser.mjs:/workspace/infrastructure/avatar-evolution/browser.mjs:ro
@@ -36,6 +65,7 @@ services:
       - ./infrastructure/avatar-evolution/motion_intelligence.py:/workspace/infrastructure/avatar-evolution/motion_intelligence.py:ro
       - ./infrastructure/avatar-evolution/intelligence.mjs:/workspace/infrastructure/avatar-evolution/intelligence.mjs:ro
       - ./infrastructure/avatar-evolution/asset_pipeline:/workspace/infrastructure/avatar-evolution/asset_pipeline:ro
+      - ./infrastructure/avatar-evolution/local_trial_source.py:/workspace/infrastructure/avatar-evolution/local_trial_source.py:ro
 
   api:
     <<: *dev-api

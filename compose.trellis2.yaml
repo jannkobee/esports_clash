@@ -1,11 +1,11 @@
 # Optional isolated GPU worker. Never included by the normal dev startup.
-# Explicit use: add -f compose.trellis2.yaml and start trellis-worker.
+# Explicit use: add -f compose.trellis2.yaml and start trellis-native.
 services:
-  trellis-worker:
+  trellis-native:
     image: teamfight-trellis2:pilot
     build:
       context: .
-      dockerfile: infrastructure/trellis2/Dockerfile
+      dockerfile: infrastructure/trellis2/Dockerfile.native
     environment:
       TRELLIS_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN:?Missing private worker token}
       TRELLIS_DATA: /trellis-data
@@ -16,7 +16,7 @@ services:
       MALLOC_ARENA_MAX: "2"
       MALLOC_TRIM_THRESHOLD_: "131072"
     volumes:
-      - ./.local-tools/trellis2/data:/trellis-data
+      - ./.local-tools/trellis2/native-data:/trellis-data
       - ./infrastructure/trellis2/control.py:/opt/trellis/control.py:ro
       - visual-gpu-lease:/gpu-lease
     command: [python, /opt/trellis/control.py]

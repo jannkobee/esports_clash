@@ -146,15 +146,59 @@ class TrellisGenerationService
         return $meta;
     }
     public function worker() { return Http::withToken(config('avatars.worker_token'))->timeout(10)->connectTimeout(3); }
-    public function endpoint(string $path): string { return rtrim(config('avatars.trellis_url'),'/').$path; }
-    public function operations(): ?array
+    public function activeTrellisUrl(): string
     {
-        try{return $this->worker()->get($this->endpoint('/operations'))->throw()->json();}catch(\Throwable){return null;}
+        if (app()->runningUnitTests()) {
+            return config('avatars.trellis_url') ?? 'http://trellis-worker:8096';
+        }
+        $urls = array_unique(array_filter([
+            config('avatars.trellis_url'),
+            'http://172.25.0.1:8096',
+            'http://172.17.0.1:8096',
+            'http://host.docker.internal:8096',
+            'http://127.0.0.1:8096',
+        ]));
+        static $resolved = null;
+        if ($resolved !== null) return $resolved;
+        foreach ($urls as $url) {
+            try {
+                $res = $this->worker()->timeout(2)->connectTimeout(1)->get(rtrim($url, '/').'/health');
+                if ($res->successful()) {
+                    return $resolved = $url;
+                }
+            } catch (\Throwable) {}
+        }
+        return $resolved = config('avatars.trellis_url') ?? 'http://trellis-worker:8096';
+    }
+    public function endpoint(string $path): string { return rtrim($this->activeTrellisUrl(),'/').$path; }
+    public function computePreference(): string
+    {
+        $preference = AvatarEvolutionSetting::current()->generation_compute_preference;
+        return in_array($preference, ['google', 'local'], true) ? $preference : 'google';
+    }
+    public function saveComputePreference(string $preference, string $actor): void
+    {
+        if (!in_array($preference, ['google', 'local'], true)) {
+            throw ValidationException::withMessages(['compute_preference' => 'Choose Google Colab or Local.']);
+        }
+        AvatarEvolutionSetting::current()->update(['generation_compute_preference' => $preference]);
+        app(EvolutionService::class)->audit('generation-compute', 'trellis.compute-updated', $actor, ['preference' => $preference]);
+    }
+    public function operations(?string $preference = null): ?array
+    {
+        try{return $this->worker()->withHeaders(['X-Asset-Compute-Preference'=>$preference ?? $this->computePreference()])->get($this->endpoint('/operations'))->throw()->json();}catch(\Throwable){return null;}
     }
     public function start(string $actor,int $seed=25001,string $avatarId='c_invoker',bool $allowNewInstance=false): TrellisGeneration
     {
-        $operations=$this->operations();
-        if(!$operations||($operations['provider']??null)!=='trellis2-gguf')throw ValidationException::withMessages(['provider'=>'The isolated TRELLIS.2 worker is unavailable.']);
+        $computePreference=$this->computePreference();
+        $operations=$this->operations($computePreference);
+        if(!$operations||!in_array($operations['provider']??null,['google-colab','trellis2-gguf','trellis2-router'],true))throw ValidationException::withMessages(['provider'=>'A native TRELLIS.2 generation worker is required.']);
+        if (($operations['provider'] ?? null) === 'google-colab' && ($operations['generation_model'] ?? null) !== 'TRELLIS.2-4B') {
+            throw ValidationException::withMessages(['provider'=>'Google must run native TRELLIS.2 before body generation can start.']);
+        }
+        if (($operations['compute']['switching_supported'] ?? false) && !($operations['compute']['ready'] ?? false)) {
+            throw ValidationException::withMessages(['provider'=>$operations['compute']['blocked_reason'] ?? 'Native TRELLIS.2 is not ready. Reconnect or provision a Google or Local backend.']);
+        }
         if(!collect($this->catalog())->contains('id',$avatarId))throw ValidationException::withMessages(['avatar_id'=>'Unknown avatar.']);
         $reference=$this->references($operations)[$avatarId]??null;
         if(!$reference)throw ValidationException::withMessages(['avatar_id'=>'Prepare a reference image for this avatar first.']);
@@ -169,6 +213,9 @@ class TrellisGenerationService
         }
         $operations['reference_sha256']=$reference['sha256'];
         $plan=['version'=>1,'avatar_id'=>$avatarId,'seed'=>$seed];
+        // The hybrid bridge advertises routing support. Native TRELLIS workers
+        // retain their strict existing plan contract.
+        if ($operations['compute']['switching_supported'] ?? false) $plan['compute_preference'] = $computePreference;
         foreach(['reference_sha256','workflow_sha256','pins_sha256','limits_sha256','engine_sha256']as $key){
             if(!preg_match('/^[a-f0-9]{64}$/',$operations[$key]??''))throw ValidationException::withMessages(['provider'=>'The worker configuration has no valid frozen hash.']);
             $plan[$key]=$operations[$key];

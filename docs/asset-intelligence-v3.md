@@ -1,5 +1,52 @@
 # Asset pipeline V3 foundation — 2026-10-21
 
+
+## Failed source quality follow-up (2026-10-21)
+
+The owner's Wukong screenshot (seed 1549893872) is a failed character reconstruction, despite successful Colab execution. The hybrid bridge's neural generator is Shap-E, not TRELLIS. Earlier connectivity and container checks must not be read as visual acceptance.
+
+Fixed an invalid concept-image texture assignment without UV coordinates, aspect-distorting input resize, and stale remote worker synchronization. New exports use their actual generated vertex colors and carry model/seed/visual-review provenance; bridge validation rejects the original texture defect. Nine targeted tests pass. The actual failed source has one standard glTF error; an isolated export-only diagnostic has zero errors/warnings. The diagnostic preserves the geometry and is still visually unacceptable. No source replacement, publication or successful regeneration is claimed. A working generator must demonstrate recognizable anatomy and reference fidelity before rigging this character.
+
+## Live Colab verification follow-up
+
+The existing `asset-quality` session now executes successfully from the host and
+the deployed avatar worker. Live capacity reports Tesla T4, 14,807 MiB free VRAM,
+Python 3.13 and torch CUDA 13.0. The repository quality-training adapter completed
+a synthetic connectivity test without promoting a model or adding training labels.
+See `colab-connectivity-verification.json` for the scoped results.
+
+The optional `compose.avatar-cloud.yaml` overlay adds the verified Colab CLI
+0.7.5 and Python 3.12 to the avatar worker and shares the existing authenticated
+host Colab config directory. Its default path can be overridden with
+`ASSET_COLAB_CONFIG_DIR`. Existing GPU engines and Blender's embedded Python are
+unchanged. Build/start only the idle avatar worker:
+
+```bash
+docker compose --env-file .env.evolution.local -f compose.evolution.yaml \
+  -f compose.evolution.dev.yaml -f compose.avatar-cloud.yaml build avatar-worker
+docker compose --env-file .env.evolution.local -f compose.evolution.yaml \
+  -f compose.evolution.dev.yaml -f compose.avatar-cloud.yaml up -d --no-deps avatar-worker
+```
+
+The adapter now isolates its worker definitions and restores stdin after each
+remote call, so it can share the kernel with other work. The dedicated generation
+bridge was inspected independently; this connectivity check did not generate a
+new 3D asset or verify the artistic quality of neural output.
+
+Local follow-up also built/started the pinned Blender worker and tested restart
+persistence. An authored Dawnna-derived fixture passed geometry, skin, animation,
+glTF-error and actual Three.js playback checks, but foot-contact drift regressed
+from 2.76835 to 4.96153. It therefore remains `needs_improvement`; it was not
+published or accepted as improved generated-character evidence. The actual
+generated Dawnna sources were absent from this host. Diagnostic fixtures are
+explicitly excluded from training collection.
+
+The previous environment-sensitive Laravel reference test now has an explicit
+temporary missing-reference fixture. All 125 backend tests passed before the
+independent generation-bridge changes appearing concurrently in the workspace.
+The pinned Blender's 18 contact/joint/mesh tests and the worker's 31 asset-pipeline
+tests passed. Historical limitations below describe the initial foundation state.
+
 This increment upgrades the existing avatar worker. It implements persistent
 compute scheduling, optional Drive storage, technical/visual-feature evaluation,
 verified-data training, model comparison/rollback and motion adaptation. It is

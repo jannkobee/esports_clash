@@ -75,8 +75,18 @@ def digest(path, item):
 def provision():
     token_file = Path(os.environ.get('HF_TOKEN_FILE', '/run/secrets/hf_token'))
     token = token_file.read_text().strip() if token_file.is_file() else ''
+    if not token:
+        fallback_file = Path(__file__).resolve().parent.parent.parent / '.local-tools/trellis2/hf-token.txt'
+        if fallback_file.is_file():
+            token = fallback_file.read_text().strip()
+    if not token:
+        colab_token = Path('/content/esports-trellis2/hf-token.txt')
+        if colab_token.is_file():
+            token = colab_token.read_text().strip()
+    if not token:
+        token = os.environ.get('HF_TOKEN') or os.environ.get('HUGGING_FACE_HUB_TOKEN', '')
     # Check licensed access before downloading several gigabytes of public files.
-    dino = next(f for f in PINS['files'] if f['repo'].startswith('facebook/'))
+    dino = next(f for f in PINS['files'] if f['repo'].startswith('facebook/') and f['remote'].endswith('.safetensors'))
     headers = {'Authorization': 'Bearer ' + token} if token else {}
     try:
         with OPENER.open(urllib.request.Request(url(dino), headers=headers, method='HEAD'), timeout=30):

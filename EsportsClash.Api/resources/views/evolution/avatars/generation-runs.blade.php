@@ -23,8 +23,11 @@
 @endphp
 <article class="run-row studio-run" data-name="{{ $names[$run->avatar_id]??$run->avatar_id }}" data-job-id="{{ $run->id }}" data-created="{{ $run->created_at->getTimestampMs() }}" data-search="{{ ($names[$run->avatar_id]??$run->avatar_id).' '.$run->status.' '.$run->id }}" data-status-category="{{ $category }}">
     <div class="run-title"><div><strong>{{ $names[$run->avatar_id]??$run->avatar_id }}</strong><span class="fine"> &middot; {{ $run->created_at->timezone('Asia/Manila')->format('M j, g:i A') }} &middot; Seed {{ $run->plan['seed']??'?' }}</span></div><span class="badge {{ $isSuccess?'good':($isFailed?'danger':'') }}">{{ $statusLabels[$run->status]??str_replace('_',' ',$run->status) }}</span></div>
+    @if(isset($run->plan['compute_preference']))<p class="fine">Requested: <strong>{{ $run->plan['compute_preference'] === 'google' ? 'Google Colab' : 'Local' }}</strong>@if(isset($run->state['provider'])) &middot; Used: <strong>{{ $run->state['provider'] === 'google-colab' ? 'Google Colab' : 'Local' }}</strong>@endif</p>@endif
+    @if($run->state['compute']['fallback_reason'] ?? null)<p class="notice" role="status">{{ $run->state['compute']['fallback_reason'] }}</p>@endif
+    @if(($run->state['artifact']['generation']['model'] ?? null) === 'existing-avatar-donor')<p class="fine">Saved local geometry was reused. This source is not a new reconstruction of the reference image.</p>@endif
     @if($run->error)<div class="failure-box"><strong>Generation could not finish</strong><p class="error-text">{{ \Illuminate\Support\Str::limit($run->error,2000) }}</p><a href="{{ route('trellis.avatar',$run->avatar_id) }}#generate">Review assets &amp; try again &rarr;</a></div>
-    @elseif($isSuccess)<p class="muted">Textured 3D source saved. Prepare and qualify its rig and animations before live use.</p>
+    @elseif($isSuccess)<p class="muted">3D source saved. Review its anatomy and reference similarity before preparing its rig and animations.</p>
     @elseif($run->status==='model_deleted')<p class="muted">The generated model was deleted. This report and its original input are retained.</p>
     @elseif($run->status==='cancelled')<p class="muted">Generation was cancelled. Your source assets are retained.</p>
     @else<p class="fine"><strong>Stage:</strong> {{ $run->state['stage']??'Waiting in GPU queue' }} @if(isset($progress['value']))&middot; Node progress {{ $progress['value'] }}/{{ $progress['max']??'?' }}@endif</p>

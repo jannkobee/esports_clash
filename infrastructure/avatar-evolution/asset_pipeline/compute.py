@@ -156,9 +156,21 @@ print('ASSET_CAPACITY=' + json.dumps(dict(accelerator='cuda' if gpu else 'cpu',
     def run(self, job):
         # Single self-contained, versioned worker. No daemon, tunnel, or server.
         # Payload contains a frozen dataset, never OAuth tokens or application secrets.
-        code = ('import sys, io\nsys.stdin=io.StringIO(' + repr(canonical(asdict(job))) + ')\n'
-                + self.script.read_text() + "\nprint('ASSET_RESULT=' + json.dumps(result))\n")
-        output = self.command('exec', '-s', self.session, input=code, timeout=job.max_runtime_s)
+        # Colab kernels persist across calls and may also run the generation
+        # bridge. Keep worker definitions in their own namespace and restore stdin.
+        code = ('def _run_asset_quality_worker():\n'
+                ' import sys, io, json\n'
+                ' previous_stdin = sys.stdin\n'
+                ' try:\n'
+                '  sys.stdin = io.StringIO(' + repr(canonical(asdict(job))) + ')\n'
+                '  scope = {"__name__": "__main__", "__file__": "asset_quality_train_worker.py"}\n'
+                '  exec(compile(' + repr(self.script.read_text()) + ', "asset_quality_train_worker.py", "exec"), scope)\n'
+                '  print("ASSET_RESULT=" + json.dumps(scope["result"]))\n'
+                ' finally:\n'
+                '  sys.stdin = previous_stdin\n'
+                '_run_asset_quality_worker()\n'
+                'del _run_asset_quality_worker\n')
+        output = self.command('exec', '-s', self.session, '--timeout', str(job.max_runtime_s), input=code, timeout=job.max_runtime_s)
         return json.loads(next(line.split('ASSET_RESULT=', 1)[1] for line in output.splitlines()
                                if line.startswith('ASSET_RESULT=')))
 

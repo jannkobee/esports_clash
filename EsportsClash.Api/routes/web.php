@@ -38,6 +38,8 @@ Route::middleware(['auth', EnsureEvolutionOwner::class])->prefix('evolution')->g
     Route::get('/avatars/preparation/{preparation}/files/{file}',[\App\Http\Controllers\AvatarPreparationController::class,'file'])->whereUuid('preparation')->name('preparations.file');
     Route::get('/avatars/trellis',[\App\Http\Controllers\TrellisGenerationController::class,'index'])->name('trellis.index');
     Route::get('/avatars/trellis/live',[\App\Http\Controllers\TrellisGenerationController::class,'live'])->name('trellis.live');
+    Route::patch('/avatars/trellis/compute',[\App\Http\Controllers\TrellisGenerationController::class,'compute'])->name('trellis.compute');
+    Route::get('/avatars/trellis/setup/colab',[\App\Http\Controllers\TrellisGenerationController::class,'colabSetup'])->name('trellis.colab-setup');
     Route::get('/avatars/trellis/avatar/{avatar}',[\App\Http\Controllers\TrellisGenerationController::class,'avatarStatus'])->name('trellis.avatar');
     Route::post('/avatars/trellis/reference',[\App\Http\Controllers\TrellisGenerationController::class,'upload'])->middleware('throttle:10,1')->name('trellis.upload');
     Route::get('/avatars/trellis/reference/{avatar}/{digest}',[\App\Http\Controllers\TrellisGenerationController::class,'reference'])->name('trellis.reference');
