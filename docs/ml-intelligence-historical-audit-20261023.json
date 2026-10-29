@@ -1,0 +1,4900 @@
+{
+  "version": 2,
+  "scope": "Read-only historical reanalysis; exposed seeds cannot be fresh evaluation.",
+  "studies": [
+    {
+      "id": "05ecc69b-3de1-4156-8c3a-89ad7fe04ff3",
+      "status": "completed",
+      "error": null,
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 19,
+          "drafts": 8,
+          "informative": 19
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 16,
+          "drafts": 8,
+          "informative": 12
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 16
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "6cc83757d1f99f05299f85b7a363c411b3933a22c6d92c6c5451d675a587367c",
+        "execution.json": "09da509af8dd5892457b615e3448b03c84c23b6f875755ce3abcf0c2fc1475bd",
+        "proper.json": "843ca85826e9b5bfeccfb1f6fade725761961262959415a3ef98e7ada8d482da",
+        "candidate.json": "cb41f59c5b0a9e77475909888473350a8e1c84696a888f4bc691314ad959fb47",
+        "checkpoint.pt": "7bb33a356b014b3f0fc9fe2f3681b2824ef729d40fdb51111572984e6e120155",
+        "freeze.json": "4e2166eea530c7b5e082ebb7c0bd19097ffec99dbf4bd1840e25d28f398a393b",
+        "result.json": "4be1a01bbb2bbf1adcdfcf8793b381a397251f175673b91f2d49d813a8953960"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "c2c3a4dc13861e7484b2bf142aba0b013254dae525622350048661c18ff44ce9",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 1.0,
+        "prediction_loss": 0.13976812545450892,
+        "zero_prediction_loss": 0.11856833811187718,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 24
+        },
+        "valid": 24,
+        "measured": 24,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 1.3877787807814457e-17,
+          "upper": 0.13797620467498017,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.108885244154978,
+          "upper": 1.108885244154978,
+          "independent_seeds": 24,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 1.0,
+          "lower": 0.8620237953250198,
+          "upper": 1,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "training_objective_start": 0.13400928370808965,
+        "training_objective_end": 0.1203381126087933,
+        "fitted_loss": 0.1106982205902428,
+        "prediction_mse": 0.13976812545450895,
+        "zero_contrast_mse": 0.1185683381118772,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 61,
+        "informativeEpisodes": 35,
+        "fittedLoss": 0.1106982205902428
+      },
+      "confidence_buffer": 0.7253278072566812,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "0e2872a6-a03e-468e-a495-248facf3f988",
+      "status": "failed",
+      "error": "Training time budget reached; checkpoints retained",
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 19,
+          "drafts": 8,
+          "informative": 21
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 7,
+          "statuses": {
+            "valid": 7
+          },
+          "cards": 7,
+          "drafts": 7,
+          "informative": 4
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "e288568de5b71ba05d60cb048b2ce55f01e8fd84033fbc841e9ea0e3016ddec5",
+        "execution.json": "b28a2c916c6c80b6726b87d95305364d762c7e52670f0112fc0e20d9b22ff5be",
+        "proper.json": "8edeab13f2f58da410c0a59719e721d13a876e84296763f34335587e52398237",
+        "checkpoint.pt": "f921ce741992b239790a5207463ac39028ba3d640362ba33ddd1d1ee4eb47fbb"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 39,
+        "hash_bases": {
+          "stored-bytes": 39
+        },
+        "raw_manifest_sha256": "086b724eef85feef2fb793fe0e8bf95e9246ceb93d70e89897c7963de29f47bf",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": 0.1329136537222137,
+        "training_objective_end": 0.11952992244868695,
+        "fitted_loss": 0.11226434118990039,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 156,
+        "informativeEpisodes": 89,
+        "fittedLoss": 0.11226434118990039
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "1398d7c4-387e-41bc-8d49-6bdeda149bdb",
+      "status": "completed",
+      "error": null,
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 31,
+            "no-target": 1
+          },
+          "cards": 22,
+          "drafts": 8,
+          "informative": 16
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 10
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 23,
+            "no-target": 1
+          },
+          "cards": 20,
+          "drafts": 8,
+          "informative": 16
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "bc3856f2d24c1b50aef7be92d88c5b9441dfa64d10d0d0cec0ef662084f517d2",
+        "execution.json": "248e8a565f70dae70ed32649c329312b30e46a253c79338f82ba51aac9c0ab54",
+        "proper.json": "57036b433ba0fc4baf1eafdce073be45339859cd4b51d91400ce859c22f28622",
+        "candidate.json": "8428221532e29199c13b39bea95406533dd2125eb107714b6f1d75456bf8207c",
+        "checkpoint.pt": "a9f02578cb8cb071dde64339162a7929afd3045c47ec643a848023cd8aebe6c7",
+        "freeze.json": "1b0a81ff47e60e46fc32e78a614a4b50b9fc152bea53bfe42b5f36a63553d02a",
+        "result.json": "3d471dc111a61ba0012b06e36c30465da948ba6003745dedfffe2b73ec4c4704"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "b087e8969affbaab8fc66cd3046887d4604a0abd3d50eef24d6b2ea08a85d14f",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 23,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 23,
+        "coverage": 0.9130434782608695,
+        "prediction_loss": 0.18853816136091597,
+        "zero_prediction_loss": 0.19778800070640745,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 23,
+          "no-target": 1
+        },
+        "valid": 23,
+        "measured": 23,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 0,
+          "upper": 0.14311661845042686,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.1327349671387215,
+          "upper": 1.1327349671387215,
+          "independent_seeds": 23,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 15,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.9130434782608695,
+          "lower": 0.7320401892425634,
+          "upper": 0.9758199955157796,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "training_objective_start": 0.13295972050243646,
+        "training_objective_end": 0.12390352515650543,
+        "fitted_loss": 0.1180540828843032,
+        "prediction_mse": 0.18853816136091597,
+        "zero_contrast_mse": 0.19778800070640748,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "behavioral-stagnation",
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 92,
+        "informativeEpisodes": 51,
+        "fittedLoss": 0.1180540828843032
+      },
+      "confidence_buffer": 0.6971685026766182,
+      "decision_reasons": {
+        "uncertain-task-advantage": 23
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "15c465b0-20f6-40f3-bd9c-0ccb2f69f2a3",
+      "status": "failed",
+      "error": "Training time budget reached; checkpoints retained",
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 16,
+          "drafts": 8,
+          "informative": 13
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 5,
+          "statuses": {
+            "valid": 5
+          },
+          "cards": 5,
+          "drafts": 5,
+          "informative": 3
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "74b0a8b550847f03e222fcc532435e7a0e7219c164a16b87fa5ca911626e9a80",
+        "execution.json": "4a691830a1c588aeeb5bcee9dbd288869d48d268210cd8c60485ad08a9dd4830",
+        "proper.json": "f46cc198dc42202701391d3e748ce833093fefb336348192c33c868def20f971",
+        "checkpoint.pt": "d5654d515e467a8e3909a12a0e758edbd12643dc6beaa2bdf513275d578b7e42"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 37,
+        "hash_bases": {
+          "stored-bytes": 37
+        },
+        "raw_manifest_sha256": "8de09ef9328bbebb28b17c5fe7a75b8d556d44619948829b229d66ec2e100c22",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": 0.04779683934856333,
+        "training_objective_end": 0.04694363891180746,
+        "fitted_loss": 0.13866213477423528,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 220,
+        "informativeEpisodes": 127,
+        "fittedLoss": 0.13866213477423528
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "1ebdb836-6803-42bd-9fdd-ad92f2aeeb5b",
+      "status": "completed",
+      "error": null,
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 29,
+            "incomplete": 1,
+            "no-target": 2
+          },
+          "cards": 19,
+          "drafts": 8,
+          "informative": 16
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 16
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 13,
+          "drafts": 8,
+          "informative": 12
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "7144c2e17096e535cb0cce42a0d6b6e2b18d5ac4d9c9640bebdec721eadd6322",
+        "execution.json": "e6d5b111cdff4652b91e6f3391e900055068d172483aa6d8789d5ab0fedfae36",
+        "proper.json": "acac36b44c014b9242cb031827cf951e48ea27e5559ef76c5835187cdbb0c65d",
+        "candidate.json": "dbc175b94ee93af0882b9e6de264568100b78e99b68335885e689b0d67deb09e",
+        "checkpoint.pt": "20d3ebcfc983689445a0c1e215f4da131fc78313cb55b6c8555fd493bea84579",
+        "freeze.json": "cae82c97164dca1d12912e2599d298dd05836961e73bf8f1ef10effdfb8a7455",
+        "result.json": "ed499fd4133b96170ebde08147357a991e480d5b15749919d1a6cfb5c8928dd4"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 79,
+        "hash_bases": {
+          "stored-bytes": 79
+        },
+        "raw_manifest_sha256": "1000d3629e09109f8a8842382fa068c325203766b9b54f37760454e5b30812c1",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 1.0,
+        "prediction_loss": 0.2401008742950683,
+        "zero_prediction_loss": 0.2404896699866018,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 24
+        },
+        "valid": 24,
+        "measured": 24,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 1.3877787807814457e-17,
+          "upper": 0.13797620467498017,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.108885244154978,
+          "upper": 1.108885244154978,
+          "independent_seeds": 24,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 1.0,
+          "lower": 0.8620237953250198,
+          "upper": 1,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "training_objective_start": 0.13970003099066225,
+        "training_objective_end": 0.12212860505512455,
+        "fitted_loss": 0.1096889204633812,
+        "prediction_mse": 0.2401008742950683,
+        "zero_contrast_mse": 0.24048966998660176,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "behavioral-stagnation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 29,
+        "informativeEpisodes": 16,
+        "fittedLoss": 0.1096889204633812
+      },
+      "confidence_buffer": 0.7258136475358452,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "2344a019-e17d-4102-ad77-f736a205132d",
+      "status": "failed",
+      "error": "Worker exited unexpectedly; no automatic OOM retry or seed replacement",
+      "source_hash": null,
+      "splits": {
+        "fit": {
+          "planned": 0,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "calibration": {
+          "planned": 0,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 0,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "f7a6ea9c4455a01c7192fb4a9602bc4f0a58976e7323eebe5592023b808f0210"
+      },
+      "integrity": {
+        "passed": false,
+        "errors": [
+          "Execution allocation unavailable or inconsistent: 'cases'"
+        ],
+        "raw_files_verified": 0,
+        "hash_bases": {},
+        "raw_manifest_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": null,
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "25071c38-302b-436f-96ef-9c34c01e72c0",
+      "status": "cancelled",
+      "error": null,
+      "source_hash": "3bd423d45f685ff8c2089bb304702b8e887347fc299c35fc1f156d4e37a8b9b7",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "e9685e94e82464dd6d1b14a3354fb6b47946bc4d692a4c28fce30d49d2e4707c",
+        "execution.json": "2171f4f0d227d7f109448afb0eb60b9f5e7b01170cc7aa15b5a4972f1b3649d0"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 0,
+        "hash_bases": {},
+        "raw_manifest_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "26102ff3-9932-4ad7-96f0-e1e1f9b21e34",
+      "status": "cancelled",
+      "error": "Run stopped; checkpoints retained",
+      "source_hash": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 1,
+          "statuses": {
+            "valid": 1
+          },
+          "cards": 1,
+          "drafts": 1,
+          "informative": 1
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "e9685e94e82464dd6d1b14a3354fb6b47946bc4d692a4c28fce30d49d2e4707c",
+        "execution.json": "2541c9ed149a03af07db53515fe790948ff018de59a75081b5e36e3b02044f41"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 1,
+        "hash_bases": {
+          "stored-bytes": 1
+        },
+        "raw_manifest_sha256": "73e5cacdbe11fdd8a0571522b7c534fe662a6b53e868c97bfbc04ca4a946a7fa",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "27c826ae-117f-4fd6-b5e4-4002199dc877",
+      "status": "cancelled",
+      "error": "Run stopped; checkpoints retained",
+      "source_hash": "3bd423d45f685ff8c2089bb304702b8e887347fc299c35fc1f156d4e37a8b9b7",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "e9685e94e82464dd6d1b14a3354fb6b47946bc4d692a4c28fce30d49d2e4707c",
+        "execution.json": "abce25a3d33da4a3828455b2964ab1d28a6e9f1968f89ee211f4fb563588578c"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 0,
+        "hash_bases": {},
+        "raw_manifest_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "2b9429e0-332d-4d61-8d10-90325decdc82",
+      "status": "failed",
+      "error": "Training time budget reached; checkpoints retained",
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 10,
+          "statuses": {
+            "valid": 10
+          },
+          "cards": 9,
+          "drafts": 8,
+          "informative": 7
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "7e6f2c16baf733986d1e5f4a2f3c919048bc91a6bf61f886891b2445797831ab",
+        "execution.json": "4eb49a2649e475d20fb21ee8c983eddd765b1dee9052bc89c8a38fd7b7944044"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 10,
+        "hash_bases": {
+          "stored-bytes": 10
+        },
+        "raw_manifest_sha256": "3e91e0bfc2ed0ad3fdfcb93e779d07c0d62d1e7833f807422809d15c3436d6c0",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "42845feb-0994-4ce6-b0eb-3af1799f856e",
+      "status": "completed",
+      "error": null,
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 20,
+          "drafts": 8,
+          "informative": 22
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 23,
+            "no-target": 1
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 15
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 9
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "295f79a96372b8b499b1493926b46cbd9d27ea91b46315427fa325db3264fa7a",
+        "execution.json": "264c65db99d65cfbe77b09101f7b0c6b2f41866d558a2d78065e3300ec7b17c9",
+        "proper.json": "0b8bf7092600c6e557e48e306ee67e012aaf9596cca19835baaf3f6fd06bded7",
+        "candidate.json": "a3cd5f94b3dd111203fdcf6af991a19ece9fddb3f1e64d0dca76e79dc18a4e20",
+        "checkpoint.pt": "c8d7bf81add688c4d201fec34c26e5d68381fa714e91f084c13bf1f2da20b838",
+        "freeze.json": "902aecd2102e2973cf5f95baa42672959ad6ef2b2e44dc96e66963230d512d0c",
+        "result.json": "6fe832b95136de2a00a099281d191b4bef8bb05c019d8568d4a8b94cedd773d6"
+      },
+      "integrity": {
+        "passed": false,
+        "errors": [
+          "Seed 32027: Ambiguous raw evidence for seed 32027"
+        ],
+        "raw_files_verified": 79,
+        "hash_bases": {
+          "stored-bytes": 79
+        },
+        "raw_manifest_sha256": "f507e5ff750ef7c421bae11d03054618dc2f4596864c30ae3b711c6ded62e088",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 0.9583333333333334,
+        "prediction_loss": 0.10170310746320689,
+        "zero_prediction_loss": 0.09413548903338802,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": null,
+      "fit": {
+        "trainingEpisodes": 156,
+        "informativeEpisodes": 90,
+        "fittedLoss": 0.120887046190885
+      },
+      "confidence_buffer": 0.2225392672110944,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "42bf0df1-a148-4175-aadc-8e78dc0ae221",
+      "status": "completed",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 19,
+          "drafts": 8,
+          "informative": 20
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 13
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 20,
+          "drafts": 8,
+          "informative": 15
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "0d0bde622615fe80ddfa29f6d5727ce81aa78c725244cfdd59d0e9d3e8bf5b75",
+        "execution.json": "fff200c956b6de9e21b8a088f547b3f9f66d630e0a4f54f653dde061ad869662",
+        "proper.json": "bf935d8db96223ad8ffdecc1f1f1c7a266691534c1200c426c71f5ceea4fa7d7",
+        "candidate.json": "f75c6dc5a3acc0e1ec08bf1b3874b3f3a3e4c7bb11b742f861c12d8b3f86a797",
+        "checkpoint.pt": "e169964372cf921aa1a37a57dbf9bdad5934bc417275f482e87a77832b08e037",
+        "freeze.json": "14c892c874354bf7c74ba2d12e1685b5ad91d95967d52d087b95feca90e85519",
+        "result.json": "63093bea0d66ffb2eb713813f88380ab1d3e4d6808f890461d5164237d24684e"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "de83d8a65b090a0b1e65a99f254b26e370000e72f59ef88c15d9fe4e6629f2f6",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 1.0,
+        "prediction_loss": 0.08961561774272048,
+        "zero_prediction_loss": 0.08865157177554901,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 24
+        },
+        "valid": 24,
+        "measured": 24,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 1.3877787807814457e-17,
+          "upper": 0.13797620467498017,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.108885244154978,
+          "upper": 1.108885244154978,
+          "independent_seeds": 24,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 1.0,
+          "lower": 0.8620237953250198,
+          "upper": 1,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "training_objective_start": 0.04620331066512978,
+        "training_objective_end": 0.045680323172493174,
+        "fitted_loss": 0.13174601638833336,
+        "prediction_mse": 0.08961561774272048,
+        "zero_contrast_mse": 0.08865157177554901,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 126,
+        "informativeEpisodes": 69,
+        "fittedLoss": 0.13174601638833336
+      },
+      "confidence_buffer": 0.7492163375942543,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "45da2336-6d1e-48d8-b251-3d95ca831eeb",
+      "status": "completed",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 31,
+            "no-target": 1
+          },
+          "cards": 19,
+          "drafts": 8,
+          "informative": 17
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 15,
+          "drafts": 8,
+          "informative": 13
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 23,
+            "no-target": 1
+          },
+          "cards": 15,
+          "drafts": 8,
+          "informative": 10
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "e147791a390862be730e30739cf25c66a77491a7aab561ee4faf9b430591039d",
+        "execution.json": "c8017347df40114859242e67aba870b80968ee966f132fc2594b510ce1349ad1",
+        "proper.json": "9827282e7178fc515599b8bdcd6e3749289726827590261782881ca7bfdfbb71",
+        "candidate.json": "382c9079711ae9e3709abd709c405202eb27c1db928c88a2cbfb0cd179828b14",
+        "checkpoint.pt": "12f02a75e8357fcb2835a908ab67aa3e5511d88c4695a4533160786be11966d3",
+        "freeze.json": "add7a2de0c5d34eb34df4f35200ae53c359671ccdd8dce1e70ff927242f8ee47",
+        "result.json": "468ee229e5b73ae7980afecef61e59985f6dc6b264b7d19b259bfd7f77854c95"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "f881319628b02b14832da818c951e017ecd17c1fdaf46af8affb4df33ddfcfb4",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 23,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 23,
+        "coverage": 0.9565217391304348,
+        "prediction_loss": 0.22034563393435194,
+        "zero_prediction_loss": 0.21406776067387173,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 23,
+          "no-target": 1
+        },
+        "valid": 23,
+        "measured": 23,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 0,
+          "upper": 0.14311661845042686,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.1327349671387215,
+          "upper": 1.1327349671387215,
+          "independent_seeds": 23,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 15,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.9565217391304348,
+          "lower": 0.7900884492974114,
+          "upper": 0.9922833338565469,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "training_objective_start": 0.047687827693550205,
+        "training_objective_end": 0.04681429999083037,
+        "fitted_loss": 0.1323958038904926,
+        "prediction_mse": 0.22034563393435194,
+        "zero_contrast_mse": 0.2140677606738717,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 62,
+        "informativeEpisodes": 30,
+        "fittedLoss": 0.1323958038904926
+      },
+      "confidence_buffer": 0.6269970436551485,
+      "decision_reasons": {
+        "uncertain-task-advantage": 23
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "4e52f431-5afd-4856-af13-93b2338f2a23",
+      "status": "failed",
+      "error": "Source changed since this run was locked; start a fresh run",
+      "source_hash": "2c2cd8d8b45e0713546efcbeabfd9b4b59c8f755efe82600e2214dca720da41e",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 12,
+          "statuses": {
+            "valid": 11,
+            "invalid-controls": 1
+          },
+          "cards": 7,
+          "drafts": 8,
+          "informative": 6
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "9b1e1357b21f56f2229c190e97dfa656cc76ce9c63d25591649a232ee6f6b19d",
+        "execution.json": "c4b49fd786c8adc5584d746f0d50f6f68c7afc5210e5de040a991afdd97b96a7"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 12,
+        "hash_bases": {
+          "stored-bytes": 12
+        },
+        "raw_manifest_sha256": "2d24170b74eec67fd494af51f23219168d45a4cfb89d4749fb64bf906fbc79e8",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "53dfea00-3ecf-4c87-bf85-2d2a8912519a",
+      "status": "completed",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 19
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 16
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 23,
+            "no-target": 1
+          },
+          "cards": 16,
+          "drafts": 8,
+          "informative": 15
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "221c8dd695633edf6eb2702a9cb5a643c355aa385cca1464df8cae6c51957850",
+        "execution.json": "3316228b46d42b76a69a72ee860df4794570be2b794873d423beecf3657f753f",
+        "proper.json": "f589b1530dcf2a22c4a5cf739e371e5b518d5eeba29452c5f8c09c2fc8aa4e8e",
+        "candidate.json": "9c0c8b1a511125f51022b122d08b65ef377f6aa5af3cc4e0f5b70090a5f6c1d1",
+        "checkpoint.pt": "d5022a4ce00de8276acf04fa17d040a5b7f66519fad95d28d5d43f6c20cd3fd3",
+        "freeze.json": "aee7f24069a0343fd36e8f9d887ed8de3d17b31447150bc010dd13d0ea1ec5ea",
+        "result.json": "2d45cda1e48bedd27fa26b39444131c8926b4101fc9b3e054b4623353e4ebd93"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "e48800fb3843229b98b309ed6d5a9f1d88737911ad3932a23f20a2c4cd9cd740",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 23,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 23,
+        "coverage": 0.9565217391304348,
+        "prediction_loss": 0.32738037860573205,
+        "zero_prediction_loss": 0.325319874962293,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 23,
+          "no-target": 1
+        },
+        "valid": 23,
+        "measured": 23,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 0,
+          "upper": 0.14311661845042686,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.1327349671387215,
+          "upper": 1.1327349671387215,
+          "independent_seeds": 23,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 15,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.9565217391304348,
+          "lower": 0.7900884492974114,
+          "upper": 0.9922833338565469,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "training_objective_start": 0.04621346629393721,
+        "training_objective_end": 0.04569703132014687,
+        "fitted_loss": 0.13088599712508517,
+        "prediction_mse": 0.32738037860573205,
+        "zero_contrast_mse": 0.325319874962293,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 94,
+        "informativeEpisodes": 49,
+        "fittedLoss": 0.13088599712508517
+      },
+      "confidence_buffer": 1.1421337583299171,
+      "decision_reasons": {
+        "uncertain-task-advantage": 23
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "5902d31b-ed2a-49e4-b183-0947bd0336c4",
+      "status": "failed",
+      "error": "Command '['python', '/runner/train_stage.py', '/data/5902d31b-ed2a-49e4-b183-0947bd0336c4']' returned non-zero exit status 1.",
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 21,
+          "drafts": 8,
+          "informative": 18
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "1b1971e9feeae03aa552ee9e25ff9a918fa8ae0ef7c85597bd3c8eea43de87d7",
+        "execution.json": "95a96cd9ea5dee5c958a9fd76bbbe3cf779584d0737e73ecee443c635e7d1972"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 32,
+        "hash_bases": {
+          "stored-bytes": 32
+        },
+        "raw_manifest_sha256": "26e338a3832532019000b1aaefc8b3c256147ac05ed772dcc9b5bdae57bd4d1d",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "63481da8-7dbe-4ea7-9450-c2104bb1e5b5",
+      "status": "failed",
+      "error": "Command '['python', '/runner/train_stage.py', '/data/63481da8-7dbe-4ea7-9450-c2104bb1e5b5']' returned non-zero exit status 1.",
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 16
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "90b0e59b1f2eec6bc5098d1e04bba4d460fcbd38341709e3b4b7b9a8b20a5881",
+        "execution.json": "e9ffdfec70e65baaf4b2f49c950ad31c5604181f68473a896c0c58a03e192fd4",
+        "proper.json": "c0faa1279ac9a3b09ebae16aa17b868eff0bc81f1d59be84e4a6c72eed1a49cc",
+        "checkpoint.pt": "16c4207b31a416a2cd9c238cec35a5be66adbdaec2701e730657ffc4274ab764"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 32,
+        "hash_bases": {
+          "stored-bytes": 32
+        },
+        "raw_manifest_sha256": "afc97f595dca33ce33a2a776affc4b0780484c1c82d9bd79a247ea2c7d8615c2",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": 0.04533328946648887,
+        "training_objective_end": 0.04480326465889667,
+        "fitted_loss": 0.12948945032292286,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 188,
+        "informativeEpisodes": 106,
+        "fittedLoss": 0.12948945032292286
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "656d3d29-21c3-49c6-9f59-e34f25e09a2d",
+      "status": "completed",
+      "error": null,
+      "source_hash": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 31,
+            "no-target": 1
+          },
+          "cards": 19,
+          "drafts": 8,
+          "informative": 20
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 14,
+          "drafts": 8,
+          "informative": 15
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 12
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "da877b689a4b36d12c0f829c484996fa78b44297092961071e55809b72fd9146",
+        "execution.json": "c37672f0528cc2d13df298d41ea9c37d4e1e342e3b9d195e1858e24d5d451b12",
+        "proper.json": "c1dbd1ad21996deb7d81b3f038717c9ecb2a9269338facaa4b471d8e491690e6",
+        "candidate.json": "c2807c0ef40d87f623cb9279246e683f66efb5b22944f70d49a159d455291b4e",
+        "checkpoint.pt": "26fd89da677065cec19971b422acf6676dda2a5a5b9da4144833e15b04571261",
+        "freeze.json": "13b6a4dbb21af48d9ccc547435ce31d79b0b674d280738d57337fe6d61ec49eb",
+        "result.json": "a94e47dfe355a52f04ce2f2fd4432e7d3ec764a384d58ff5718bd5fe95f8524a"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "0a814f276b0aefc5fd073e51afa2cfcf3c041f363d6cad9c275051ab19681b0b",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 1.0,
+        "prediction_loss": 0.24628460783554415,
+        "zero_prediction_loss": 0.12829366764725897,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 24
+        },
+        "valid": 24,
+        "measured": 24,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 1.3877787807814457e-17,
+          "upper": 0.13797620467498017,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.108885244154978,
+          "upper": 1.108885244154978,
+          "independent_seeds": 24,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 1.0,
+          "lower": 0.8620237953250198,
+          "upper": 1,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "training_objective_start": 0.18851127521960503,
+        "training_objective_end": 0.09959637622332951,
+        "fitted_loss": 0.06884635167769348,
+        "prediction_mse": 0.24628460783554415,
+        "zero_contrast_mse": 0.12829366764725897,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 31,
+        "informativeEpisodes": 20,
+        "fittedLoss": 0.06884635167769348
+      },
+      "confidence_buffer": 1.0805205618150104,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "6e1523e6-15dc-4924-9d51-4c1a74ac794c",
+      "status": "completed",
+      "error": null,
+      "source_hash": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 30,
+            "incomplete": 2
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 17
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 20,
+          "drafts": 8,
+          "informative": 12
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 16,
+          "drafts": 8,
+          "informative": 11
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "9ec373afca4eac3575fbeb3ac0dc78784bfcbe09886a9ebcf088c61d6c498a4a",
+        "execution.json": "ce8ace030fa5760d69cff64de12fa69fd4d0122d6cc663caf6e28045862dd865",
+        "proper.json": "7aa2fbc23d022e2194b31a2d2fd253826bf09b2841dbb7f7a9cf4b8da246cf47",
+        "candidate.json": "61d2ced4dc0ec2e8618c6b60a968d9b48d72ff66a0e33f8e3d2e39061ae03c69",
+        "checkpoint.pt": "172f8e9f80207c549246ca50d6ad80e2bdb34153f4d26c29435aa89559036cf4",
+        "freeze.json": "c797fb3d131dd45dabd490ab2c9525173abc59683808c863445b718477bd8a35",
+        "result.json": "82b407d953271bfe954b84d2dd56bfd5828a7012e67b939d34b9bca30204f236"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 78,
+        "hash_bases": {
+          "stored-bytes": 78
+        },
+        "raw_manifest_sha256": "208b263324241323ce348c6335dcfeb814864d279271ffa4a53e1239adaf4740",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 1.0,
+        "prediction_loss": 0.18327489001844421,
+        "zero_prediction_loss": 0.15186185124505616,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 24
+        },
+        "valid": 24,
+        "measured": 24,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 1.3877787807814457e-17,
+          "upper": 0.13797620467498017,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.108885244154978,
+          "upper": 1.108885244154978,
+          "independent_seeds": 24,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 1.0,
+          "lower": 0.8620237953250198,
+          "upper": 1,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "training_objective_start": 0.16201003626607707,
+        "training_objective_end": 0.05805285637640663,
+        "fitted_loss": 0.03387918445280187,
+        "prediction_mse": 0.18327489001844421,
+        "zero_contrast_mse": 0.1518618512450562,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 30,
+        "informativeEpisodes": 17,
+        "fittedLoss": 0.03387918445280187
+      },
+      "confidence_buffer": 0.9242085147385293,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "76b277c1-6b95-46fe-a2f3-589273bf2d10",
+      "status": "completed",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 30,
+            "no-target": 2
+          },
+          "cards": 21,
+          "drafts": 8,
+          "informative": 11
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 15
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 13,
+          "drafts": 8,
+          "informative": 12
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "6cb9bcb08e963d965eae0cc85967cd115cdc6e9ec5a6c0e492e1c960cd0f805b",
+        "execution.json": "34e0e011c42444281c77c660a0123787689e195c7bcc8b913e87ae249be579d0",
+        "proper.json": "29fd9c0c8a75258038f1832f7e1e214ff4268ef8ac97328fb0cefb1b9ad3ea0a",
+        "candidate.json": "75db2876842a6363b19422b5ad5943b7f21b187af13a24641c6440effb9ee450",
+        "checkpoint.pt": "f3bb575249048d46f32d4d7ec1d82053f47adace85d0d9c023cf24a3bcaba1e1",
+        "freeze.json": "953e5383877296572927be4e6523dd85bb93486945c25f71bd1f34508695d2c8",
+        "result.json": "c1e9e621d49f71f7a4bf1d0838bc15f44a9476ec83b66ce94f52f79291df3040"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "001d8e77ac0f2d8973447edcf8eaa6cc1f4a9c6db61c68cd74a0357610ffb951",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 0.9583333333333334,
+        "prediction_loss": 0.17741243919119595,
+        "zero_prediction_loss": 0.17464113125366285,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 24
+        },
+        "valid": 24,
+        "measured": 24,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 1.3877787807814457e-17,
+          "upper": 0.13797620467498017,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.108885244154978,
+          "upper": 1.108885244154978,
+          "independent_seeds": 24,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.9583333333333334,
+          "lower": 0.7975819352134406,
+          "upper": 0.9926065438344942,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "training_objective_start": 0.04819994992644736,
+        "training_objective_end": 0.047577224881501276,
+        "fitted_loss": 0.139547137733943,
+        "prediction_mse": 0.17741243919119595,
+        "zero_contrast_mse": 0.17464113125366285,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 281,
+        "informativeEpisodes": 166,
+        "fittedLoss": 0.139547137733943
+      },
+      "confidence_buffer": 0.6488701329834741,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "7f76615b-2847-43a4-bb52-c9481cb528b5",
+      "status": "running",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 23
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 23,
+            "incomplete": 1
+          },
+          "cards": 16,
+          "drafts": 8,
+          "informative": 16
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 1,
+          "statuses": {
+            "valid": 1
+          },
+          "cards": 1,
+          "drafts": 1,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "5fdc399dc332b59c0eff61243c33d6f350a4d1581ab1dddf52d1446ae07f2989",
+        "execution.json": "93185c6c1dd3975884a8f25e0480ef621cf1665e85810e3be6a5a8e089b988ee",
+        "proper.json": "42ab5c6ed8ace0c61bd1aafee89f33ff60bd46b630730861d78b6aedd3e003b1",
+        "candidate.json": "fcbceb2303c5ed5db7e1a337d809a0c407559755d4f3920b01fd2be091b2afa5",
+        "checkpoint.pt": "3d32dd7e74a53675f43db5bbc3d48e3f3136ad61d3dbd73116e69db1fbecbfc3",
+        "freeze.json": "50a110e57b79aa3d3453d496af3b53e916f0ab6f78a921442b3d5607fe203169"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 56,
+        "hash_bases": {
+          "stored-bytes": 56
+        },
+        "raw_manifest_sha256": "d9c8f4943ed4b49d6a5062583be1a5552ea3d8941855b869d1074961f763862b",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 1,
+        "statuses": {
+          "valid": 1
+        },
+        "valid": 1,
+        "measured": 1,
+        "invalid_metrics": 0,
+        "missing": 23,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 0,
+          "upper": 0.7934506856227626,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 1
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -2,
+          "upper": 2,
+          "independent_seeds": 1,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 1,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 1.0,
+          "lower": 0.20654931437723745,
+          "upper": 1,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 1
+        },
+        "training_objective_start": 0.0491926555101661,
+        "training_objective_end": 0.048532145758820144,
+        "fitted_loss": 0.1420188873815796,
+        "prediction_mse": 0.00044298424890003155,
+        "zero_contrast_mse": 2.547025806987781e-05,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 345,
+        "informativeEpisodes": 212,
+        "fittedLoss": 0.1420188873815796
+      },
+      "confidence_buffer": 1.2061386421216835,
+      "decision_reasons": {
+        "uncertain-task-advantage": 1
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "81b8767f-b4ee-4bf2-bf45-04574945aa2d",
+      "status": "failed",
+      "error": "Command '['python', '/runner/train_stage.py', '/data/81b8767f-b4ee-4bf2-bf45-04574945aa2d']' returned non-zero exit status 1.",
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 31,
+            "no-target": 1
+          },
+          "cards": 15,
+          "drafts": 8,
+          "informative": 14
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "acf3df8397d931013c61dc91f15dc4bc4afd336844765c0dd750e1699d414694",
+        "execution.json": "124586dd9b365898cd8bc9176b9b6392107bba52c8d50a813583bacd8e6418c7"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 32,
+        "hash_bases": {
+          "stored-bytes": 32
+        },
+        "raw_manifest_sha256": "a24e0f6b5275a1ba26f430233fb586b556f4828a988ef4f2c70a92f3d58e5a2f",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "8726a55e-cddd-47c4-a2f0-e3588bb43060",
+      "status": "completed",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 31,
+            "no-target": 1
+          },
+          "cards": 22,
+          "drafts": 8,
+          "informative": 21
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 12
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 23,
+            "incomplete": 1
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 15
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "8d007af80f79a21341e9cd6869798ca48d7b42ad24ea191005d30acf3164ad0f",
+        "execution.json": "0b9d39351bbf3f62f6c81ad81fa43e071438591b947cfdc376131d1c77c34b1d",
+        "proper.json": "aa3d07d183d898360ea8a68227b8e0df4377664e695b4b89b42552d9c1d38ccc",
+        "candidate.json": "e2b5a0e314b31375689482f2b67b9d68355544c7868d03477fa8abdda28d3d49",
+        "checkpoint.pt": "bb703badd3ddf47762a7c3a60252169d0779db42c1b2b18ce48308a9003965bd",
+        "freeze.json": "a6cc39c5efc235858dc5c1b1ac5c84b8a9b455146271ebf12143951392e3d098",
+        "result.json": "7fbd09c3e2082a6a770c51ea2d0b2918d31a884c99cac89f40423ca5955cac6e"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 79,
+        "hash_bases": {
+          "stored-bytes": 79
+        },
+        "raw_manifest_sha256": "a8a0b18fb8692bb9c58246908b5e5b04f07519758dce4bb87ae37e35e9385f03",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 23,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 23,
+        "coverage": 0.8695652173913043,
+        "prediction_loss": 0.3878120521057151,
+        "zero_prediction_loss": 0.38458721559240294,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 23,
+          "incomplete": 1
+        },
+        "valid": 23,
+        "measured": 23,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 0,
+          "upper": 0.14311661845042686,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.1327349671387215,
+          "upper": 1.1327349671387215,
+          "independent_seeds": 23,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 7,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.8695652173913043,
+          "lower": 0.6787251772990404,
+          "upper": 0.9546234090636876,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "training_objective_start": 0.052350077755014233,
+        "training_objective_end": 0.050514267642094234,
+        "fitted_loss": 0.14382279716924942,
+        "prediction_mse": 0.38781205210571507,
+        "zero_contrast_mse": 0.38458721559240294,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 157,
+        "informativeEpisodes": 90,
+        "fittedLoss": 0.14382279716924942
+      },
+      "confidence_buffer": 0.7187303914013291,
+      "decision_reasons": {
+        "uncertain-task-advantage": 23
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "87d2e915-12ce-4e95-a451-a9b93e6a4741",
+      "status": "failed",
+      "error": "Training time budget reached; checkpoints retained",
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 29,
+          "statuses": {
+            "valid": 29
+          },
+          "cards": 20,
+          "drafts": 8,
+          "informative": 13
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "8b738e5eeae0d2955628c1ce192bdda78f0326a1915b06f9e5bcce67cc00818d",
+        "execution.json": "e980d1bb33f4fc2fd074804894a60080ed98185e7e8fe3f02a5532530f663d49"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 29,
+        "hash_bases": {
+          "stored-bytes": 29
+        },
+        "raw_manifest_sha256": "25b8200e948eb1f254a78e8eb190b8c0529656f241d3284b454d49f5aea5c02f",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "8bb6a1c4-2d65-4802-84d8-7f4cf2259971",
+      "status": "completed",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 22,
+          "drafts": 8,
+          "informative": 19
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 16,
+          "drafts": 8,
+          "informative": 11
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 16,
+          "drafts": 8,
+          "informative": 15
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "d93fbc31729bee3ae575ac4401e8b55d3dca909f17eb3d9b855d43c59c04a9e5",
+        "execution.json": "96344e852e0b392ccffe2c01ec41422ede3c5b817125f4229f5e3bc40b743380",
+        "proper.json": "b369dcd3d383c9a8ecf4bb46121fe9a4fd7c0d4ce3abb4a0508d76e084b24423",
+        "candidate.json": "b0dc006101baf26015c894e7f5f641b6e90c62669826763fd8679c0e174056ad",
+        "checkpoint.pt": "398998415cc48284387a7d664c9654c1730ba9dd59f18c7f8133fd9a489f2476",
+        "freeze.json": "fb8e4190616ffb95858e7de52b72fad636cdf44fbfd76372ba969134db0d781c",
+        "result.json": "94baeae8efbe6dd426fce7bd289dc758e6f8c47e59b400505eada8f469849982"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "756cdd3ab179a0c6229027e3c332c3e35792ef3ac0361fdb3bc835913420b96a",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 0.9166666666666666,
+        "prediction_loss": 0.2279322266028128,
+        "zero_prediction_loss": 0.2476340557232922,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 24
+        },
+        "valid": 24,
+        "measured": 24,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 1.3877787807814457e-17,
+          "upper": 0.13797620467498017,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.108885244154978,
+          "upper": 1.108885244154978,
+          "independent_seeds": 24,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.9166666666666666,
+          "lower": 0.741511978067893,
+          "upper": 0.9768411847029567,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "training_objective_start": 0.05041678448585131,
+        "training_objective_end": 0.049040704007091276,
+        "fitted_loss": 0.14033961145952353,
+        "prediction_mse": 0.2279322266028128,
+        "zero_contrast_mse": 0.24763405572329217,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "behavioral-stagnation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 220,
+        "informativeEpisodes": 133,
+        "fittedLoss": 0.14033961145952353
+      },
+      "confidence_buffer": 0.5840331557331142,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "a5579be7-5c3b-41aa-a290-16a8b70562a0",
+      "status": "failed",
+      "error": "Worker exited unexpectedly; no automatic OOM retry or seed replacement",
+      "source_hash": null,
+      "splits": {
+        "fit": {
+          "planned": 0,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "calibration": {
+          "planned": 0,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 0,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "b5722d5b2488e36ebae9f26c571573e28720c8ce8abf542d383646bf00f9c339"
+      },
+      "integrity": {
+        "passed": false,
+        "errors": [
+          "Execution allocation unavailable or inconsistent: 'cases'"
+        ],
+        "raw_files_verified": 0,
+        "hash_bases": {},
+        "raw_manifest_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": null,
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "aa7aa642-9bd5-4670-80db-8cff003d9c7d",
+      "status": "failed",
+      "error": "Training time budget reached; checkpoints retained",
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 15
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 13,
+          "drafts": 8,
+          "informative": 12
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 23,
+            "incomplete": 1
+          },
+          "cards": 15,
+          "drafts": 8,
+          "informative": 14
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "3925afdfbbc8eaa98d6a4f237318e4b6586e2d59a29dc17b74f233198f5dfb18",
+        "execution.json": "545a59af83c1a09ced7d3b923fb99d372bbf210702578070f048a1cff4d50c4c",
+        "proper.json": "07f87eb67459d486e066cf6ff6611acc50c129d67c5e271bb1000ebdc46cf2d7",
+        "candidate.json": "f57446916cb1d56d4511667b77958e9c776f9684266a0c051adabd205cfc3348",
+        "checkpoint.pt": "16ee6525e4886d6f2bce2b82e5a950643d88329043055f4ac17f83f2743cc5a1",
+        "freeze.json": "a99ac0e3e8edc58e83dde78c81119c13302210b622c03060f6a8b4362d4c63aa"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 79,
+        "hash_bases": {
+          "stored-bytes": 79
+        },
+        "raw_manifest_sha256": "bf2d01e3ed06f491978e5a2e3525907c27d5bae329a846f866bb769736ffb92f",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 23,
+          "incomplete": 1
+        },
+        "valid": 23,
+        "measured": 23,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 0,
+          "upper": 0.14311661845042686,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.1327349671387215,
+          "upper": 1.1327349671387215,
+          "independent_seeds": 23,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 15,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.9565217391304348,
+          "lower": 0.7900884492974114,
+          "upper": 0.9922833338565469,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "training_objective_start": 0.13757326217629623,
+        "training_objective_end": 0.12589250566269847,
+        "fitted_loss": 0.11907184511329938,
+        "prediction_mse": 0.26481725632198255,
+        "zero_contrast_mse": 0.2483050915522186,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 124,
+        "informativeEpisodes": 66,
+        "fittedLoss": 0.11907184511329938
+      },
+      "confidence_buffer": 0.7076869647477748,
+      "decision_reasons": {
+        "uncertain-task-advantage": 23
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "ab211f51-7044-4f32-9b42-ff81e3993728",
+      "status": "completed",
+      "error": null,
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 17
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 16,
+          "drafts": 8,
+          "informative": 9
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 23,
+            "no-target": 1
+          },
+          "cards": 16,
+          "drafts": 8,
+          "informative": 13
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "3ac3e2866c797c624c52456bfafa89fffae8e176fc66ea032c65df838eba4118",
+        "execution.json": "e7382ab22fdd4c9403bfdee141c8bd5311f722fc31baab421a5453d5a809f248",
+        "proper.json": "f0423c00ac4ec903224fe8b490b81ef90ffb1b830b040e3e2653f7126de9e585",
+        "candidate.json": "7abeae4b025c1c0fb9ae8ceafa4d091244b2c54489b0a7bc249a37a01f9e405c",
+        "checkpoint.pt": "7b4a2011a3d2cd848d29a4fb6c1bc165c211af3818100ca0ac81ea0c652e8f92",
+        "freeze.json": "79f04bd128f922c81f77f7360cd6cadf8758f9480a90389d3b5a1e7db2583f2b",
+        "result.json": "74e8fb4bee8e9c2bdcf2342bf409d4eac3503c9f370f1207bcdbc2d72a77d0c7"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "5602f12ed15e26910f436f21eae02dc8f850782f403c4dc88ee21fa4754c96c6",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 23,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 23,
+        "coverage": 0.8695652173913043,
+        "prediction_loss": 0.17382036536379408,
+        "zero_prediction_loss": 0.18343013860850613,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 23,
+          "no-target": 1
+        },
+        "valid": 23,
+        "measured": 23,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 0,
+          "upper": 0.14311661845042686,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.1327349671387215,
+          "upper": 1.1327349671387215,
+          "independent_seeds": 23,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 15,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.8695652173913043,
+          "lower": 0.6787251772990404,
+          "upper": 0.9546234090636876,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "training_objective_start": 0.12661902425209337,
+        "training_objective_end": 0.1150608167077665,
+        "fitted_loss": 0.10806494930470834,
+        "prediction_mse": 0.17382036536379408,
+        "zero_contrast_mse": 0.18343013860850613,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "behavioral-stagnation",
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 124,
+        "informativeEpisodes": 68,
+        "fittedLoss": 0.10806494930470834
+      },
+      "confidence_buffer": 0.6437049991744556,
+      "decision_reasons": {
+        "uncertain-task-advantage": 23
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "b55a1017-870c-45a7-8653-43757303d892",
+      "status": "completed",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 31,
+            "no-target": 1
+          },
+          "cards": 19,
+          "drafts": 8,
+          "informative": 22
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 20,
+          "drafts": 8,
+          "informative": 13
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 22,
+            "no-target": 2
+          },
+          "cards": 14,
+          "drafts": 8,
+          "informative": 12
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "09c358201529fb25a25fdae2c4a9b91d17802d30420496e8e6c6d2197f43b9a4",
+        "execution.json": "297d93312a36cfd8ff30ede96b0835bd7aa0174b1bce7a5615ad56156b21ebe8",
+        "proper.json": "3d77fdb06b399b1a246f57f510a7312959a3f6f54203bcb7f9100b40b7132a5b",
+        "candidate.json": "2a46af1295565ff65c5c275ce51e3b6e923a9568b258c4ddbb8947f8fd1fb4ce",
+        "checkpoint.pt": "56e0ce558c9073674a71103132857b1b14819ecc824ad042fda005d13f170a6e",
+        "freeze.json": "84b24e43d44da9769a63d6007d6020c15d0ee6ea06da21bf908ca90788d7431b",
+        "result.json": "7b5ad423a83662fcf3a95387133c6f2c25b76da6176b48be9aea372f67bd56a5"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "c6b66bed175b4ad27141e1071976dc18db7b75175334a592ec5b74c3dad8c362",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 22,
+        "changed": 1,
+        "improved": 0,
+        "worsened": 1,
+        "reward_delta": -0.10355470710420185,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 22,
+        "coverage": 0.5909090909090909,
+        "prediction_loss": 0.0981524101595514,
+        "zero_prediction_loss": 0.10981733611261135,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 22,
+          "no-target": 2
+        },
+        "valid": 22,
+        "measured": 22,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 1,
+        "decision_change_rate": {
+          "estimate": 0.045454545454545456,
+          "lower": 0.00806942762126385,
+          "upper": 0.21798045838657332,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 22
+        },
+        "change_fraction_of_planned": 0.041666666666666664,
+        "reward_delta_interval": {
+          "estimate": -0.004707032141100084,
+          "lower": -1.1628998962992616,
+          "upper": 1.1534858320170616,
+          "independent_seeds": 22,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 15,
+            "changed": 1,
+            "reward_mean": -0.006903647140280123
+          },
+          "swapped": {
+            "measured": 7,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.5909090909090909,
+          "lower": 0.3873481847631513,
+          "upper": 0.7674418380352814,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 22
+        },
+        "training_objective_start": 0.05123130814964399,
+        "training_objective_end": 0.04998806594000629,
+        "fitted_loss": 0.14384730006395624,
+        "prediction_mse": 0.0981524101595514,
+        "zero_contrast_mse": 0.10981733611261134,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "gameplay-regression",
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 251,
+        "informativeEpisodes": 155,
+        "fittedLoss": 0.14384730006395624
+      },
+      "confidence_buffer": 0.034460368800018626,
+      "decision_reasons": {
+        "uncertainty-cleared": 1,
+        "uncertain-task-advantage": 21
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "bf66055e-095a-4bb4-a2ea-e690c304c684",
+      "status": "failed",
+      "error": "Training time budget reached; checkpoints retained",
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 23,
+          "statuses": {
+            "valid": 23
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 12
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "17fd5100d339314ff0ac5533627d1ea8cd6e7fdf573daa67be2e6688883e65ec",
+        "execution.json": "27c782fb6ab3887e7befc0769a234fcbe1ae148356478144ca8c8c70f71805f3"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 23,
+        "hash_bases": {
+          "stored-bytes": 23
+        },
+        "raw_manifest_sha256": "1a2d4c61c3986b08af7ae50f269c217fe67ad53d77b42f3b42a5a856857fbcd9",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "d1c037f5-927f-4819-983a-78eeb2388584",
+      "status": "failed",
+      "error": "Command '['python', '/runner/train_stage.py', '/data/d1c037f5-927f-4819-983a-78eeb2388584']' returned non-zero exit status 1.",
+      "source_hash": "c70329c0b756bc62a4e5362f7f77437e741f4879ad613f53ee81dfb6bef8804f",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 29,
+            "no-target": 2,
+            "incomplete": 1
+          },
+          "cards": 20,
+          "drafts": 8,
+          "informative": 17
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "b9d6253f9446f4dfdefab4eab562d80e0d4c7e36b3f31741fd9d690b4efc67a2",
+        "execution.json": "87e20f063221bf091eaecd2ae01f5a3c15bda792bc35495b9f55be6ce9d697f3"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 31,
+        "hash_bases": {
+          "stored-bytes": 31
+        },
+        "raw_manifest_sha256": "39e1bac6d30e1c19bd36b70abc6823d8bf3ca9ee78a2e53b198b683637762fc0",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "ddc6e68d-3a89-4171-9754-aa7937d4b1a7",
+      "status": "completed",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 31,
+            "no-target": 1
+          },
+          "cards": 20,
+          "drafts": 8,
+          "informative": 13
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 15
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 23,
+            "no-target": 1
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 14
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "c657cef59840b4382da1dedea430bcd7c66e2e8771896bbb5dad3733349b263d",
+        "execution.json": "49f1160c3d4edf774b75280ae6746cb2dbfa0d4d5aa1dbf2578faec10128d6c5",
+        "proper.json": "8f7979c5b45413a00d44d81cf1d385eb24574a1e8e95bb11dfa72e3cb04e57bc",
+        "candidate.json": "c7b3452db63863fddd74fdd0ddec45f015960ca73a91694e89c5df599f55d51d",
+        "checkpoint.pt": "e5374a64407e956ee5aefb3ba8ddb78b65b0ee35602902f109079c49a40fad17",
+        "freeze.json": "c35e2e63ed8f349fa8e01aa65e7598d7a4c84bd7124b0f0c3ced5e7db298fb17",
+        "result.json": "784c8c57b977497261b6728579c7a32f5a5bb798f351d9efb0223aa572493626"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "9d2ca9d2e04b9e302fac79e990fa992c7fa89b48541b99dbec54b28a3d7afd59",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 23,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 23,
+        "coverage": 0.9130434782608695,
+        "prediction_loss": 0.1778869352367762,
+        "zero_prediction_loss": 0.17476050036689825,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 23,
+          "no-target": 1
+        },
+        "valid": 23,
+        "measured": 23,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 0,
+          "upper": 0.14311661845042686,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.1327349671387215,
+          "upper": 1.1327349671387215,
+          "independent_seeds": 23,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 7,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.9130434782608695,
+          "lower": 0.7320401892425634,
+          "upper": 0.9758199955157796,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 23
+        },
+        "training_objective_start": 0.040261196650352236,
+        "training_objective_end": 0.039057803506311,
+        "fitted_loss": 0.10773370233047198,
+        "prediction_mse": 0.1778869352367762,
+        "zero_contrast_mse": 0.17476050036689825,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 31,
+        "informativeEpisodes": 13,
+        "fittedLoss": 0.10773370233047198
+      },
+      "confidence_buffer": 0.5056644190631115,
+      "decision_reasons": {
+        "uncertain-task-advantage": 23
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "ded35667-acdf-47db-9cf7-7a67550ce78d",
+      "status": "failed",
+      "error": "Browser or Vite stopped during startup",
+      "source_hash": "91c5ad5694cc2a97b83f5873c87ece2aeb6cb7e2a237f900fda7aeb1ef597a95",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "e9685e94e82464dd6d1b14a3354fb6b47946bc4d692a4c28fce30d49d2e4707c",
+        "execution.json": "6394785dc3f2f535ae3caa7e97a407cfb60733da0a546177413d7467c1c5dd6a"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 0,
+        "hash_bases": {},
+        "raw_manifest_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 0,
+        "statuses": {},
+        "valid": 0,
+        "measured": 0,
+        "invalid_metrics": 0,
+        "missing": 24,
+        "changed": 0,
+        "decision_change_rate": null,
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": null,
+        "by_side": {
+          "original": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          },
+          "swapped": {
+            "measured": 0,
+            "changed": 0,
+            "reward_mean": null
+          }
+        },
+        "calibration_coverage": null,
+        "training_objective_start": null,
+        "training_objective_end": null,
+        "fitted_loss": null,
+        "prediction_mse": null,
+        "zero_contrast_mse": null,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "incomplete-evaluation",
+          "benefit-not-established"
+        ],
+        "assessment": "inconclusive",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "ecd799cb-ad11-47df-9010-31fef02c6c05",
+      "status": "failed",
+      "error": "Worker exited unexpectedly; no automatic OOM retry or seed replacement",
+      "source_hash": null,
+      "splits": {
+        "fit": {
+          "planned": 0,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "calibration": {
+          "planned": 0,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        },
+        "heldout": {
+          "planned": 0,
+          "attempted": 0,
+          "statuses": {},
+          "cards": 0,
+          "drafts": 0,
+          "informative": 0
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "94fbd06203018ad11223b206b8baf02199a2ef9923b12e740ae92b26b3bf1827"
+      },
+      "integrity": {
+        "passed": false,
+        "errors": [
+          "Execution allocation unavailable or inconsistent: 'cases'"
+        ],
+        "raw_files_verified": 0,
+        "hash_bases": {},
+        "raw_manifest_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": null,
+      "diagnostics": null,
+      "fit": {
+        "trainingEpisodes": null,
+        "informativeEpisodes": null,
+        "fittedLoss": null
+      },
+      "confidence_buffer": null,
+      "decision_reasons": {},
+      "production_eligible": false
+    },
+    {
+      "id": "ef89ba31-b3ff-46e6-b277-0e5df92cd57c",
+      "status": "completed",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 32
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 23
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 20,
+          "drafts": 8,
+          "informative": 14
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 19
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "288227bb5e86b3a397a3b135c389c07aa13da2fe0689eae2e15eda85eb47f998",
+        "execution.json": "9a74fe44f9c432a6a12778152916751776755add2981d248837fb71c7e6535ad",
+        "proper.json": "56ad1a9e11866a428c1b766cbde2900471338aa9480ae3e8e256fce3650041e7",
+        "candidate.json": "cd226a8638fc24e85badc69ded0b0652e49099661373f1f36e72afee664cce14",
+        "checkpoint.pt": "e5538629ceffa62e14d48688759e48c3e512bfa81965c383a52a1ae8b40e34bd",
+        "freeze.json": "f6488de4df0b9e59640ca8a5614d27648f8c6400c15543e3da87c84e409ad13b",
+        "result.json": "39745e3a7b6f4e7dd00112dd9c92f2ad52d692dba1209087663aaba0a05918ee"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "c158b67f836c8483ffacc700b6c5f49d24dd3a615063c7ce82a65a53cef44efd",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 0.7916666666666666,
+        "prediction_loss": 0.17476954819681115,
+        "zero_prediction_loss": 0.17331796872373129,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 24
+        },
+        "valid": 24,
+        "measured": 24,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 1.3877787807814457e-17,
+          "upper": 0.13797620467498017,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.108885244154978,
+          "upper": 1.108885244154978,
+          "independent_seeds": 24,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.7916666666666666,
+          "lower": 0.5952954674681133,
+          "upper": 0.9075517464714814,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "training_objective_start": 0.047637592382114166,
+        "training_objective_end": 0.04702412971281226,
+        "fitted_loss": 0.13740407336366475,
+        "prediction_mse": 0.17476954819681115,
+        "zero_contrast_mse": 0.17331796872373129,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 313,
+        "informativeEpisodes": 189,
+        "fittedLoss": 0.13740407336366475
+      },
+      "confidence_buffer": 0.5548212958303229,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "f28ce15f-c7d3-4349-ad2f-35439d2a8d3d",
+      "status": "completed",
+      "error": null,
+      "source_hash": "0487b8ec9d197caa85a90dc9794aa5bd95c0730c7b228b3f3227067f0a3edb77",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 31,
+            "incomplete": 1
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 24
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 14,
+          "drafts": 8,
+          "informative": 12
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 14
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "818da36db15ecb3c4b4724d45d1bc595149bff9b68acbebca05bbb6747871d35",
+        "execution.json": "41f1256378aa2d53f07f58b9c96ecb8f9159d349c2985a3df4cf06a97b2170ca",
+        "proper.json": "fe27b68acc1c072a5989b754cecab0fd3861920a8170ccd6f1841034586b5be3",
+        "candidate.json": "5dc7250479d8affe724ff0aa91e0bc15be7d280d27a164d912dc1d6d6bdf1261",
+        "checkpoint.pt": "77ff47716a9172e1e42ecefdb49db69b1b106289c4eb3f0e2d2629d51fa1c8de",
+        "freeze.json": "997782c1799c19a57b08efb4a4b006699ad1bf50b22211e3aff71d5a875bf472",
+        "result.json": "543b0eae72bfbdb08061a1e7a409a1ebff650a3a674632ba8b151611710f44b1"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 79,
+        "hash_bases": {
+          "stored-bytes": 79
+        },
+        "raw_manifest_sha256": "6ce9e092a3eb9ffaa37a79cff6c26f3176b8ef42492c3408c405bb18fd952dae",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 0.8333333333333334,
+        "prediction_loss": 0.19466712750981685,
+        "zero_prediction_loss": 0.18493079290592848,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 24
+        },
+        "valid": 24,
+        "measured": 24,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 1.3877787807814457e-17,
+          "upper": 0.13797620467498017,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.108885244154978,
+          "upper": 1.108885244154978,
+          "independent_seeds": 24,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.8333333333333334,
+          "lower": 0.6414692935030095,
+          "upper": 0.9332132367136705,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "training_objective_start": 0.05002608895633739,
+        "training_objective_end": 0.04903808002824995,
+        "fitted_loss": 0.14276210885346421,
+        "prediction_mse": 0.19466712750981685,
+        "zero_contrast_mse": 0.18493079290592848,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 188,
+        "informativeEpisodes": 114,
+        "fittedLoss": 0.14276210885346421
+      },
+      "confidence_buffer": 0.6269061016606259,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    },
+    {
+      "id": "f717fd4b-dabb-4fd6-b4f7-c5b1b2ab0e03",
+      "status": "completed",
+      "error": null,
+      "source_hash": "8c8b696667a02a0c2c64d3c2f436b9ce8ef8bed6c4317dc696376f10c531bbe9",
+      "splits": {
+        "fit": {
+          "planned": 32,
+          "attempted": 32,
+          "statuses": {
+            "valid": 31,
+            "no-target": 1
+          },
+          "cards": 21,
+          "drafts": 8,
+          "informative": 18
+        },
+        "calibration": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 23,
+            "no-target": 1
+          },
+          "cards": 17,
+          "drafts": 8,
+          "informative": 15
+        },
+        "heldout": {
+          "planned": 24,
+          "attempted": 24,
+          "statuses": {
+            "valid": 24
+          },
+          "cards": 18,
+          "drafts": 8,
+          "informative": 10
+        }
+      },
+      "artifact_hashes": {
+        "plan.json": "12ea1258aa00833de63efeba303a769ca9846a312dfed52847d8d29016778499",
+        "execution.json": "65fe3da54ea75786be43294bebbb8624b381dd42c95ef4664ae105560110bd1c",
+        "proper.json": "3604f9797b3f15bff1ea3b7f4b17dd7566c19b8a6aaed669f876cdc94b87b94f",
+        "candidate.json": "c09c50befa60956a0599798d268e59d179f463e3ae3c753988ed97459fc43482",
+        "checkpoint.pt": "8f3c84360ce1dcf300c8844b35349c272c316fec14c621e238a23a16824591bd",
+        "freeze.json": "e024c2b57dde21e46964c1e211ab7547e7624c4bad41b9c411b86ac91e05ff60",
+        "result.json": "d9aca012d9783b425d6961c7af3dd22c0dc9726356fa63439b4fcee2d76f348f"
+      },
+      "integrity": {
+        "passed": true,
+        "errors": [],
+        "raw_files_verified": 80,
+        "hash_bases": {
+          "stored-bytes": 80
+        },
+        "raw_manifest_sha256": "a9d449f9f2539ad0835a3d22dad587a826c44e783da57061551a0a851c27d345",
+        "scope": "Stored hashes, allocations and repeated recorded baseline; no historical source reexecution"
+      },
+      "historical_evaluation": {
+        "planned": 24,
+        "attempted": 24,
+        "valid": 24,
+        "changed": 0,
+        "improved": 0,
+        "worsened": 0,
+        "reward_delta": 0,
+        "extra_death_cases": 0,
+        "extra_team_death_cases": 0,
+        "broader_worse": 0,
+        "supported": 24,
+        "coverage": 0.9166666666666666,
+        "prediction_loss": 0.18435446776489536,
+        "zero_prediction_loss": 0.08772350280201059,
+        "passes_exploratory_gate": false,
+        "production_eligible": false,
+        "scope": "Thirty-second safe farm/push contexts only; full-match benefit unestablished"
+      },
+      "diagnostics": {
+        "configuration": {
+          "version": 1,
+          "confidence": 0.95,
+          "reward_bounds": [
+            -2,
+            2
+          ],
+          "interval": "seed-cluster-hoeffding",
+          "stagnation_changes": 0
+        },
+        "planned": 24,
+        "attempted": 24,
+        "statuses": {
+          "valid": 24
+        },
+        "valid": 24,
+        "measured": 24,
+        "invalid_metrics": 0,
+        "missing": 0,
+        "changed": 0,
+        "decision_change_rate": {
+          "estimate": 0.0,
+          "lower": 1.3877787807814457e-17,
+          "upper": 0.13797620467498017,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "change_fraction_of_planned": 0.0,
+        "reward_delta_interval": {
+          "estimate": 0,
+          "lower": -1.108885244154978,
+          "upper": 1.108885244154978,
+          "independent_seeds": 24,
+          "confidence": 0.95,
+          "method": "seed-cluster-hoeffding",
+          "assumption": "Independent seeds; equal weight per seed; bounded team reward contrasts"
+        },
+        "by_side": {
+          "original": {
+            "measured": 16,
+            "changed": 0,
+            "reward_mean": 0
+          },
+          "swapped": {
+            "measured": 8,
+            "changed": 0,
+            "reward_mean": 0
+          }
+        },
+        "calibration_coverage": {
+          "estimate": 0.9166666666666666,
+          "lower": 0.741511978067893,
+          "upper": 0.9768411847029567,
+          "confidence": 0.95,
+          "method": "wilson",
+          "denominator": 24
+        },
+        "training_objective_start": 0.24427153673306765,
+        "training_objective_end": 0.10427380760235291,
+        "fitted_loss": 0.05509835787976959,
+        "prediction_mse": 0.18435446776489536,
+        "zero_contrast_mse": 0.0877235028020106,
+        "extra_death_cases": 0,
+        "broader_worse": 0,
+        "signals": [
+          "generalization-regression",
+          "behavioral-stagnation",
+          "benefit-not-established"
+        ],
+        "assessment": "reject",
+        "production_eligible": false,
+        "win_rate": null,
+        "full_match_evaluated": false,
+        "scope": "Thirty-second farm/push diagnostics; exploratory, never a promotion authorization. Wilson intervals describe measured cases only; missing cases are not imputed. Invalid controls can reflect executor or artifact failures and require investigation."
+      },
+      "fit": {
+        "trainingEpisodes": 31,
+        "informativeEpisodes": 18,
+        "fittedLoss": 0.05509835787976959
+      },
+      "confidence_buffer": 0.6722477403139642,
+      "decision_reasons": {
+        "uncertain-task-advantage": 24
+      },
+      "production_eligible": false
+    }
+  ],
+  "summary": {
+    "studies": 37,
+    "integrity_failures": 4,
+    "statuses": {
+      "completed": 18,
+      "failed": 15,
+      "cancelled": 3,
+      "running": 1
+    },
+    "signals": {
+      "generalization-regression": 14,
+      "behavioral-stagnation": 18,
+      "benefit-not-established": 33,
+      "incomplete-evaluation": 23,
+      "gameplay-regression": 1
+    }
+  }
+}

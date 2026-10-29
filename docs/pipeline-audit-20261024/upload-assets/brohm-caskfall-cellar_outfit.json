@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_brewmaw",
+  "component_id": "cellar_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Cellar mechanic outfit and stopper boots",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Brohm Caskfall. Attached illustration is design reference only. Only the empty cellar mechanic outfit: leather apron, cream cloth panels, red sash, green trousers, work gloves, and stout stopper boots. No skin, person, beard, head, fermentation tanks or pressure tools. Garments are visibly empty on invisible support in a neutral symmetrical wide A pose. Hollow neck and joint openings, no mannequin. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "brohm-caskfall",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/brohm-caskfall.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/brohm-caskfall-cellar_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-80e61d28-981d-4658-8837-f94b4de16eb2.png"
+}

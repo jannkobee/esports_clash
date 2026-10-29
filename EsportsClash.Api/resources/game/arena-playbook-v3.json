@@ -1,0 +1,76 @@
+{
+  "version": 3,
+  "title": "How to play Clash Arena",
+  "scope": "Starting lessons for a learned command controller. Strategic advice can be revised by experience; mechanical rules remain enforced.",
+  "mechanics": [
+    "Destroy the opposing outer turret, inner turret and Nexus turret in that order. Deeper structures are protected until their preceding turrets are destroyed.",
+    "After the Nexus turret falls, destroy all three barracks: melee, ranged and catapult. The Nexus remains protected until all three are destroyed.",
+    "Destroy the exposed opposing Nexus to win. Kills, damage, gold and a long match are not substitutes for winning.",
+    "Attacks and spells obey their actual range, mana, cooldown, level, targeting and crowd-control rules. Terrain stays solid. Avatars use soft spacing.",
+    "Use information available to your team. Do not read invisible enemy positions, hidden camp health or private opponent economy."
+  ],
+  "lessons": [
+    {"id":"structures","title":"Advance through the correct objectives","directions":[
+      "Identify the next attackable structure rather than wasting attacks on a protected building. You may move anywhere legal, but protection prevents damage.",
+      "Pressure structures when enemies cannot punish you effectively. A nearby enemy, an incoming wave, health and available allies change the value of pushing.",
+      "A destroyed barracks empowers its corresponding allied minion class. Once all three fall and the Nexus opens, turn a safe advantage into a finish."
+    ]},
+    {"id":"farming","title":"Farm and use minion waves","directions":[
+      "Secure valuable last hits when the target is within reach and your hit can finish it. Use farming to gain levels and resources for later fights.",
+      "Avoid abandoning every wave to chase an enemy. Compare a reliable last hit or structure hit with the time and risk of a chase.",
+      "Carry roles usually need more farm; supports can spend more time helping allies. These are starting priorities, not restrictions on who may farm.",
+      "A friendly wave can absorb structure fire and help a siege. A wave is an opportunity, not a mandatory permission slip for every attack."
+    ]},
+    {"id":"targets","title":"Choose useful fights and targets","directions":[
+      "Compare health, nearby team numbers, distance and the damage you can actually deliver. An accessible low-health enemy may be worth finishing.",
+      "Do not attack a target merely because it exists. Consider whether a minion, structure, objective or regrouping move offers more value.",
+      "Coordinate pressure on reachable opponents. Trading a death can be worthwhile if it helps win the game; deaths are measured rather than universally forbidden."
+    ]},
+    {"id":"resources","title":"Manage health, mana and cooldowns","directions":[
+      "Use damage spells when they have a useful target or useful area effect. Avoid spending mana on an empty fight just because a cooldown is ready.",
+      "A costly spell is less attractive when mana is scarce. A finishing hit, protection for an ally or a decisive fight can justify the cost.",
+      "Compare continued fighting with moving toward a healing relic, the fountain or a recall. Low health is evidence to consider, not an automatic retreat command."
+    ]},
+    {"id":"positioning","title":"Move with a purpose and avoid incoming damage","directions":[
+      "Choose destinations that improve your next action: attack range, an objective, an ally, recovery or a safer firing position.",
+      "Notice visible incoming projectiles and their projected paths. Moving away from an imminent impact can be more valuable than another attack.",
+      "Ranged avatars can use reach; melee avatars need a practical approach. Terrain and crowds affect routes. Walking and attack orders can be changed as the situation develops."
+    ]},
+    {"id":"teamwork","title":"Support allies and protect damage dealers","directions":[
+      "Move toward allies when joining them creates a useful local advantage. Nearby allies and enemies matter more than assuming the whole team is present.",
+      "Use targeted shields and protection on an appropriate ally, including yourself when the spell permits it. A damaged ally under pressure may benefit more than a healthy one.",
+      "Tanks and fighters can create space; assassins can seek accessible threats; mages and marksmen can deliver damage; supports can protect and enable. Roles are context for learning, not fixed scripts."
+    ]},
+    {"id":"towers","title":"Understand turret and Nexus danger","directions":[
+      "Enemy defensive structures deal real damage and can punish you while you attack. Consider exposure, health, allies and what the attack could gain.",
+      "Tower dives are permitted strategic choices. Experience should determine when the expected gain is worth the risk.",
+      "Moving away from danger can be a good choice. There is no compulsory dive abort, forced sprint or strategic tower-risk veto in this controller."
+    ]},
+    {"id":"objectives","title":"Use camps and contest major objectives","directions":[
+      "Ordinary camps provide resources but cost time and health. Compare them with a nearby wave, a structure opportunity or helping the team.",
+      "Embermaw and Gravemarch are major objectives. Consider the boss's visible health, your resources and nearby allies and opponents before committing.",
+      "During a contest, decide between fighting opponents, protecting allies, disengaging and finishing the boss. There is no fixed boss-health threshold forcing that decision."
+    ]},
+    {"id":"vision","title":"Use available information and wards","directions":[
+      "Known map locations can guide movement without revealing whether a hidden camp is alive or how much health it has.",
+      "Place a ward when information could help a fight, approach or objective contest. The current interface places it at your location, so movement helps determine placement.",
+      "Reconsider a target that disappears. Moving to its last known location is different from tracking its hidden current position."
+    ]},
+    {"id":"recall","title":"Recover and complete useful recalls","directions":[
+      "Recall channels for 2.5 seconds and can return you to the healing fountain. Compare this with walking, taking a relic or staying for a valuable action.",
+      "Once a useful recall has started, allow it to finish when circumstances remain favorable. Movement can cancel it when the situation changes.",
+      "Damage and control effects still interrupt according to game mechanics. Recovery is valuable because it enables later play, not because staying in base is a goal."
+    ]},
+    {"id":"spells","title":"Use individual abilities and Kaelen's spell system","directions":[
+      "Choose among legal skill, ultimate and target commands. Healing, shielding, control, damage and movement effects are defined by each avatar's actual kit.",
+      "For Kaelen, choose ice, wind or fire orbs, invoke a three-orb recipe, and choose an available invoked spell. Orb sequence and invoked spell identity are distinct model inputs.",
+      "Explore different sequences and timing. The former authored combo planner does not choose the sequence for this learned controller."
+    ]},
+    {"id":"conversion","title":"Turn advantages into a win and learn from results","directions":[
+      "After a favorable exchange, compare pushing, taking a major objective, farming and recovering. Avoid treating kills as the end of the task.",
+      "Protect your own progress while creating pressure on the enemy base. Which trade is best depends on the state and what the team can accomplish next.",
+      "Learning updates may become weaker or stronger. Use independent complete matches, both sides and uncertainty to judge improvement; training loss and changed choices alone do not establish it."
+    ]}
+  ],
+  "example_weights": {"attack":1.45,"last_hit":0.35,"spell_target":1.1,"ally_protection":0.8,"protected_structure":1.8,"tower_risk":0.7,"recall_need":2.7,"finish_recall":1.8,"dodge":0.8,"objective_finish":0.45,"group":0.35}
+}

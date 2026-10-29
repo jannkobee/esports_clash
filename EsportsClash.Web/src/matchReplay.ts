@@ -2,6 +2,10 @@ import type { ChampionKit, CoachCard, PlayerCard } from './types';
 import type { MatchInsights } from './matchInspector';
 import type { AIDecisionRecord } from './aiDecisionTelemetry';
 import type { summarizeDecisionCalibration } from './decisionCalibration';
+import type {ArenaActor} from './arenaLearning';
+import type {GameplayController} from './gameplayController';
+import type {GameplayEvidence} from './gameplayEvidence';
+import type {V3ManualInput} from './v3Combat';
 import { refreshAvatarPresentation } from './avatarIdentity.ts';
 
 export const SIMULATION_STEP = 1 / 30;
@@ -43,6 +47,10 @@ export interface RecordedMatchEvent {
 }
 
 export interface MatchReport {
+  abilityRuleset?:'original-v3-preview-1'|'original-v3-preview-2';
+  v3Counters?:Record<string,number>;
+  v3InputJournal?:(V3ManualInput&{tick:number})[];
+  contentCatalog?: import('./gameContent').GameContentSnapshot;
   version: 1;
   seed: number;
   batchId?: number;
@@ -66,6 +74,10 @@ export interface MatchReport {
   insights?: MatchInsights;
   aiDecisionRecords?: AIDecisionRecord[];
   decisionCalibration?: ReturnType<typeof summarizeDecisionCalibration>;
+  gameplayControllers?: Record<'blue'|'red',GameplayController>;
+  gameplayEvidence?: ReturnType<GameplayEvidence['snapshot']>;
+  intelligence?:{controller:string;policyId:string;qualification:'foundation'|'learning'|'qualified';runId?:string;generation?:number;sourceHash?:string;policy?:ArenaActor;
+    counters:{decisions:number;executed:number;byAction:Record<string,number>;legacyDecisions:number}};
 }
 
 export function refreshMatchReportAvatarPresentation(report: MatchReport, catalog: readonly ChampionKit[]): MatchReport {

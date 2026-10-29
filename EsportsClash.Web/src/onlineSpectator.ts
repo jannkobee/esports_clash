@@ -1,4 +1,4 @@
-import type { ArenaSceneFrame } from './threeArenaScene.ts';
+import type { ArenaSceneFrame } from './match-viewer/ArenaFrame.ts';
 
 export interface OnlineSnapshot {
   type: 'snapshot'; schema: 1; match_id: string; sequence: number; plan_hash: string;

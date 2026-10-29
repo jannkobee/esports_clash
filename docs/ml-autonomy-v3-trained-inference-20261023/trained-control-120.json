@@ -1,0 +1,43 @@
+{
+  "item": {
+    "seed": 47,
+    "draft": 2,
+    "swapped": false,
+    "maxSeconds": 120,
+    "wallSeconds": 900,
+    "policies": {}
+  },
+  "episode": {
+    "status": "censored",
+    "states": [
+      {
+        "second": 0,
+        "fingerprint": "37923:84192aca:e347c262",
+        "randomState": 47,
+        "finished": false
+      },
+      {
+        "second": 30.00000000000065,
+        "fingerprint": "1192909:8acd5c1e:de8ab8c6",
+        "randomState": 664557008,
+        "finished": false
+      },
+      {
+        "second": 119.99999999999575,
+        "fingerprint": "3302940:7d5cc407:f7653043",
+        "randomState": 210893714,
+        "finished": false
+      }
+    ],
+    "result": null,
+    "second": 119.99999999999575,
+    "learning": {
+      "eligible": 0,
+      "changed": 0,
+      "executed": 0,
+      "blocked": {}
+    },
+    "wall_seconds": 23.557
+  },
+  "rows": []
+}

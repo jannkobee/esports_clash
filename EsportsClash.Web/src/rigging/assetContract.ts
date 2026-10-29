@@ -8,8 +8,9 @@
 import type { WeaponAssetConfig, CharacterAssetBundle } from './types.ts';
 
 export const HUMANOID_GENERATION_CONTRACT = {
-  pose: 'neutral_t_pose',
-  armOrientation: 'horizontal_extended_90_deg',
+  pose: 'neutral_a_pose',
+  armOrientation: 'straight_45_deg_down_and_out',
+  promptContract: 'base-first-a-pose-v1',
   legSeparation: 'spaced_feet_shoulder_width',
   jointVisibility: ['head', 'neck', 'shoulders', 'elbows', 'wrists', 'hands', 'hips', 'knees', 'ankles', 'feet'],
   prohibitedFeatures: [
@@ -31,8 +32,8 @@ export const HUMANOID_GENERATION_CONTRACT = {
 } as const;
 
 /**
- * Standardized AI generation prompt template requesting a pure humanoid body in T-pose
- * without attached weapons, guaranteeing clean joint detection and rigging.
+ * Anatomy-only base prompt; appearance fields are intentionally excluded.
+ * Joint separation is an input requirement, not a guarantee of deformation quality.
  */
 export function buildHumanoidCharacterPrompt(hero: {
   name: string;
@@ -41,14 +42,16 @@ export function buildHumanoidCharacterPrompt(hero: {
   costume: string;
   skinColor: string;
   hairColor: string;
+  anatomy: string;
 }): string {
+  if (!hero.anatomy.trim()) throw new Error('Explicit biped anatomy is required for a base prompt');
   return [
-    `Full-body 3D humanoid character model of ${hero.name}, a stylized MOBA ${hero.role}.`,
-    `STRICT ANATOMICAL T-POSE: Character must stand upright in a symmetrical neutral T-pose with both arms extended horizontally sideways at 90 degrees, palms facing downward.`,
+    `Full-body clean adult base mannequin of ${hero.anatomy}. Preserve the specified species anatomy and body proportions.`,
+    `STRICT ANATOMICAL A-POSE: Upright, static, wide symmetrical rest pose, both arms straight at 45 degrees down and outward from the vertical torso, palms down, fingers individually visible and separated. Clear air gaps at underarms and between hands and thighs.`,
     `LEGS SEPARATED: Legs must be clearly separated and straight, feet shoulder-width apart, standing flat on the ground plane.`,
     `NO MERGED WEAPONS: Absolutely no weapons, swords, shields, staffs, bows, guns, or handheld items attached or merged into the hands or body mesh. Bare hands with fingers visible. Weapons are created as separate assets.`,
     `VISIBILITY: Ensure clear, unobstructed views of the neck, elbows, wrists, hips, knees, and ankles.`,
-    `VISUAL IDENTITY: ${hero.silhouette}. Costume: ${hero.costume}. Skin tone: ${hero.skinColor}, Hair: ${hero.hairColor}. Clean stylized textures, heroic MOBA proportions.`,
+    `Neutral matte surface and smooth close-fitting modesty layer. No outfit, armor, sleeves, cape, decorative hair, accessories, held objects or action pose. Preserve necessary anatomical appendages with clear separation. Fit final appearance only after the base rig passes deformation review.`,
     `Output as a single clean humanoid GLB model with intact materials and textures, facing forward along +Z axis with Y-up orientation.`,
   ].join(' ');
 }

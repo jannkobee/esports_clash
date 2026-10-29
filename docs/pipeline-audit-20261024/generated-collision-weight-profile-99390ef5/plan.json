@@ -1,0 +1,20 @@
+{
+  "id": "99390ef5-7d0a-469a-8fdc-b0787958140a",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "parent_candidate_id": "a3352d37-91cb-4757-b403-da09f5ac0017",
+  "parent_candidate_sha256": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4",
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "files": {
+    "candidate.glb": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4",
+    "candidate-report.json": "e6bd8e9a3a66be39c0c291ebe785dee88540dd3437451ff812655333789994a6",
+    "baseline-report.json": "fabe0de8f9b5e5f183bdf92a54bf0a2b739818ead9a86bb47fb2ceafc0518429",
+    "tools/diagnose_collision_influences.py": "f27752bfee69d3d23781c10191d58ffaefc8eef7ed854f6207bf0a62963981e1",
+    "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+    "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+    "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02"
+  }
+}

@@ -573,7 +573,7 @@ export const BOOTS: ItemDef = {
 };
 
 // Helper: Recommend next item to buy given a champion's role and existing items
-export function getRecommendedItem(role: CombatRole, existingItemIds: string[], gold: number, champName?: string): ItemDef | null {
+export function getRecommendedItem(role: CombatRole, existingItemIds: string[], gold: number, champName?: string, catalog: readonly ItemDef[] = ALL_ITEMS): ItemDef | null {
   const existingSet = new Set(existingItemIds);
 
   // Derive target archetype from champName if provided
@@ -589,13 +589,13 @@ export function getRecommendedItem(role: CombatRole, existingItemIds: string[], 
 
   // 1. If no items yet, pick suitable starting item
   if (existingItemIds.length === 0) {
-    const starter = ALL_ITEMS.find((it) => it.tier === 'Starting' && (it.suitableRoles.includes(effectiveRole) || it.suitableRoles.includes(role)) && it.cost <= gold)
-      || ALL_ITEMS.find((it) => it.tier === 'Starting' && it.cost <= gold);
+    const starter = catalog.find((it) => it.tier === 'Starting' && (it.suitableRoles.includes(effectiveRole) || it.suitableRoles.includes(role)) && it.cost <= gold)
+      || catalog.find((it) => it.tier === 'Starting' && it.cost <= gold);
     if (starter) return starter;
   }
 
   // 2. Filter affordable unowned items matching role/champ
-  let candidates = ALL_ITEMS.filter((it) => 
+  let candidates = catalog.filter((it) =>
     !existingSet.has(it.id) &&
     it.tier !== 'Starting' &&
     (it.suitableRoles.includes(effectiveRole) || it.suitableRoles.includes(role)) &&
@@ -604,7 +604,7 @@ export function getRecommendedItem(role: CombatRole, existingItemIds: string[], 
 
   // 3. Robust Fallback: If no role-specific candidates affordable, pick ANY affordable unowned non-starter item
   if (candidates.length === 0) {
-    candidates = ALL_ITEMS.filter((it) => 
+    candidates = catalog.filter((it) =>
       !existingSet.has(it.id) &&
       it.tier !== 'Starting' &&
       it.cost <= gold

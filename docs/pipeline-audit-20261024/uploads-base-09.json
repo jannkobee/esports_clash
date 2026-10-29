@@ -1,0 +1,37 @@
+[
+    {
+        "kind":  "body",
+        "avatar_id":  "c_wukong_lol",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/koro-cloudtail.png",
+        "prompt":  "Technical neutral adult base for Koro Cloudtail. Reference is identity only. Lean adult male simian, monkey face ears hands feet and one long tail separated from legs; no topknot. Fully covered plain opaque matte gray seamless compression unitard neck to wrists and ankles, bare hands/feet, bald no beard. No decorative costume, hair, armor, jewelry, equipment, companion, vehicle, weapon. Front full body symmetrical static wide A-pose straight arms 45 degrees down/out, hands/fingers separate, legs slightly apart straight. Preserve intrinsic species anatomy, no fused armpits, tail separate. Entire silhouette with generous transparent padding on all sides. No floor, shadows, text, halo. Neutral gray sculpt with readable joints.",
+        "sha256":  "a1383352a8d708eb155eb1e8691facb6f12bc26443ef689037d45e491597b57a"
+    },
+    {
+        "kind":  "body",
+        "avatar_id":  "c_locke",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/ashkar-veilhand.png",
+        "prompt":  "Technical neutral adult base for Ashkar Veilhand. Reference is identity only. Adult human male, preserve depicted adult proportions. Fully covered plain opaque matte gray seamless compression unitard neck to wrists and ankles, bare hands/feet, bald no beard. No decorative costume, hair, armor, jewelry, equipment, companion, vehicle, weapon. Front full body symmetrical static wide A-pose straight arms 45 degrees down/out, hands/fingers separate, legs slightly apart straight. Preserve intrinsic species anatomy, no fused armpits, tail separate. Entire silhouette with generous transparent padding on all sides. No floor, shadows, text, halo. Neutral gray sculpt with readable joints.",
+        "sha256":  "01189f55d3138e3c423bd3455569fb3adfc4444073451593add26218455fd530"
+    },
+    {
+        "kind":  "body",
+        "avatar_id":  "c_bristleback",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/murdle-ridgehide.png",
+        "prompt":  "Technical neutral adult base for Murdle Ridgehide. Reference is identity only. Stocky adult pangolin biped with natural dorsal keratin scales, long snout, three claws each hand and foot, one thick tail visibly separated from legs; no metal plates. Fully covered plain opaque matte gray seamless compression unitard neck to wrists and ankles, bare hands/feet, bald no beard. No decorative costume, hair, armor, jewelry, equipment, companion, vehicle, weapon. Front full body symmetrical static wide A-pose straight arms 45 degrees down/out, hands/fingers separate, legs slightly apart straight. Preserve intrinsic species anatomy, no fused armpits, tail separate. Entire silhouette with generous transparent padding on all sides. No floor, shadows, text, halo. Neutral gray sculpt with readable joints.",
+        "sha256":  "8abd6ab5fc40f705b13c47e454b302430c4a6e9d1d1cec5e1e75ea8f2c60b0fd"
+    },
+    {
+        "kind":  "body",
+        "avatar_id":  "c_lulu",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/thimble-briarwish.png",
+        "prompt":  "Technical neutral adult base for Thimble Briarwish. Reference is identity only. Tiny elderly adult female fae gardener, mature wrinkled face and pointed anatomical ears. Fully covered plain opaque matte gray seamless compression unitard neck to wrists and ankles, bare hands/feet, bald no beard. No decorative costume, hair, armor, jewelry, equipment, companion, vehicle, weapon. Front full body symmetrical static wide A-pose straight arms 45 degrees down/out, hands/fingers separate, legs slightly apart straight. Preserve intrinsic species anatomy, no fused armpits, tail separate. Entire silhouette with generous transparent padding on all sides. No floor, shadows, text, halo. Neutral gray sculpt with readable joints.",
+        "sha256":  "58784f6f320d06365140f3b67a06da7504402998d3a9efe83dbd3945ee1a1678"
+    },
+    {
+        "kind":  "body",
+        "avatar_id":  "c_senna",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/maris-solquill.png",
+        "prompt":  "Technical neutral adult base for Maris Solquill. Reference is identity only. Adult human female, preserve depicted adult proportions. Fully covered plain opaque matte gray seamless compression unitard neck to wrists and ankles, bare hands/feet, bald no beard. No decorative costume, hair, armor, jewelry, equipment, companion, vehicle, weapon. Front full body symmetrical static wide A-pose straight arms 45 degrees down/out, hands/fingers separate, legs slightly apart straight. Preserve intrinsic species anatomy, no fused armpits, tail separate. Entire silhouette with generous transparent padding on all sides. No floor, shadows, text, halo. Neutral gray sculpt with readable joints.",
+        "sha256":  "bf2ec32c6e3862c3439799b8fa005b351e38339ea2110dfea8f8f0f606bd5599"
+    }
+]

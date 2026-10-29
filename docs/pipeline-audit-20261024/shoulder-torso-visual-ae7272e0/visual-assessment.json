@@ -1,0 +1,48 @@
+{
+  "review_id": "ae7272e0-6a2f-420c-aecb-2853a50e7c6a",
+  "status": "rejected_regression",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Limited manual comparison of the torso-side return experiment with the preserved taper. No game-animation or appearance qualification.",
+  "observations": [
+    "Shoulder intersections regress from 131/81 to 149/88 at 90 degrees. All non-shoulder bend counts remain unchanged; all 16 poses have zero severe-stretch edges.",
+    "Paired left/right shoulder oblique views retain the compressed shoulder transition without a convincing shape improvement. The selected right-hip close view retains the deep flexion crease.",
+    "The selected front bind-rest view preserves the overall silhouette and foot placement. This limited view does not qualify the rest surface or full motion.",
+    "All 517 signed contact records were verified. Only bone_2, bone_26 and bone_7 weights changed, on 102 left and 58 right vertices. Rest-surface and weight-structure checks pass.",
+    "Both diagnostic exports reproduce all 16 stored counts; 68 screenshots rendered without browser errors. Diagnostic clips are not qualified game animations."
+  ],
+  "decision": "Reject this replacement and preserve the tapered comparator. Both tested 12% signed transfer directions regress; next isolate shoulder socket placement with weights fixed rather than tune transfer percentages.",
+  "candidate_disposition": {
+    "id": "7a692c3c-3afb-49f9-ad6e-b4cf4b9ffb62",
+    "selection": "rejected",
+    "preferred_comparator": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046"
+  },
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "ab2ef17b032635636218a344e33784e50d2d78f7e431860a191ef16dcff7aca6"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "b867938b88832147391286d2f6813db0f194cbb09e1691a410dda4c1d44fea11"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "bbd2f5ef6300bb45f365ab3c538eae9edf58155fd1fb05786dbe74313fe66b25"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "5fb29e4626bf1460d2ef501d07e2b79eef80247920f4d1589b1feb2c922849c0"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front.png",
+      "sha256": "d62e080b86a0dabd3a260cfd9f4caa44769c8f3d60bcb371ba46149f20a55abb"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "96dbabee969d598904b7bec437bc2d0ef11496370350cf01128327021b607b64"
+    }
+  ],
+  "rendered_views": 68,
+  "report_sha256": "c11fab195ac9c56c5fdffc0f88655a0f0360808b6128e90eb9d6a2d5b52727d7"
+}

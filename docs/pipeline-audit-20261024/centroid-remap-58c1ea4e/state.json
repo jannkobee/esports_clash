@@ -1,0 +1,14 @@
+{
+  "id": "58c1ea4e-1733-45db-954b-8d69bfc4e88f",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "centroid-target-remap",
+  "runtime_id": "ddb07188977acba2b815846c5f2ead92802114fe87200f49fa9f665e7d698e10",
+  "environment_sha256": "160e42e63b84d075df53fca9c416775671584a1ed926a9ea81ad71691ab2ebab",
+  "started_unix": 1793109063.201704,
+  "exit_code": 0,
+  "report_sha256": "5fcdef25d33caa81e6f56c48314c9eb689a910040aacf12b814d0420bcccabb2",
+  "completed_unix": 1793109069.3922312
+}

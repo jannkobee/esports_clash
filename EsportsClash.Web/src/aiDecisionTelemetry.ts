@@ -49,17 +49,23 @@ export interface AIDecisionRecord {
   contextKey?: string;
   /** Snapshot of the card and live context used by the learned preference. */
   features?: Readonly<Record<string, number>>;
+  /** Visible-state macro actor input for offline expert demonstrations. */
+  observation?: number[];
   snapshot?: AIDecisionSnapshot;
   outcome?: AIDecisionOutcome;
   /** The zero-learned-factor selection using this exact candidate set and commitment. */
   zeroPolicySelected?: string;
+  /** Actual proposal before arbitration; descriptive, not a causal improvement. */
+  mlCandidateSelected?: string;
+  selectedLegal?: boolean;
+  baselineLegal?: boolean;
   /** Optional offline incumbent selection from the same candidates and commitment. */
   referencePolicySelected?: string;
   experiment?: { incumbent: string; alternate: string;
     pair: string; arm: 'incumbent' | 'alternate';
     propensity: .5; utilityGap: number };
   experimentGate?: string;
-  learnedSuppressedReason?: 'low-health' | 'dangerous-fight';
+  learnedSuppressedReason?: 'low-health' | 'dangerous-fight' | 'ml-disabled';
   selectionReason?: string;
   zeroPolicyReason?: string;
   heldAction?: string;

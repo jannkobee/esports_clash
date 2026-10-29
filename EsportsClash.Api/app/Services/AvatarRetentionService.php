@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use App\Models\{AvatarEvolutionRun,AvatarPreparation,AvatarVisualRelease,AvatarEquipmentGeneration,TrellisGeneration};
+use App\Models\{AvatarEvolutionRun,AvatarPreparation,AvatarVisualRelease,AvatarEquipmentGeneration,AvatarBaseCandidate,TrellisGeneration};
 use Illuminate\Support\Facades\{DB,Log};
 
 class AvatarRetentionService
@@ -15,6 +15,12 @@ class AvatarRetentionService
             $keep->push($id);
             $reasons[$id][] = $reason;
         };
+
+        // Base and failed deformation evidence has its own registry. These
+        // folders are not orphaned merely because they are never published.
+        foreach (AvatarBaseCandidate::pluck('id') as $id) {
+            $protect($id, 'base_candidate_evidence');
+        }
 
         // 1. All releases in AvatarVisualRelease (active, rollback, and historical)
         foreach (AvatarVisualRelease::all() as $release) {

@@ -1,0 +1,323 @@
+{
+  "base": "http://127.0.0.1:8788",
+  "images": [
+    {
+      "src": "solenne-vaelor.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.4850323994954427,
+      "solidFraction": 0.4972298940022786
+    },
+    {
+      "src": "ivera-frostwhistle.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.566565195719401,
+      "solidFraction": 0.4039421081542969
+    },
+    {
+      "src": "mireth-lune.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.5188795725504557,
+      "solidFraction": 0.4660561879475911
+    },
+    {
+      "src": "bramm-coil.png",
+      "width": 1145,
+      "height": 1374,
+      "clearFraction": 0.5108254991323583,
+      "solidFraction": 0.4793037254565448
+    },
+    {
+      "src": "kael-vespera.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.5058129628499349,
+      "solidFraction": 0.4751504262288411
+    },
+    {
+      "src": "nyxara-vale.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.6612637837727865,
+      "solidFraction": 0.3151709238688151
+    },
+    {
+      "src": "serrin-galecrest.png",
+      "width": 1165,
+      "height": 1350,
+      "clearFraction": 0.5566135749483389,
+      "solidFraction": 0.42370116038785566
+    },
+    {
+      "src": "orin-and-fen.png",
+      "width": 1536,
+      "height": 1024,
+      "clearFraction": 0.5489285786946615,
+      "solidFraction": 0.4140942891438802
+    },
+    {
+      "src": "quillene-rook.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.5837752024332682,
+      "solidFraction": 0.3825365702311198
+    },
+    {
+      "src": "aurelio-vane.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.5582052866617838,
+      "solidFraction": 0.42507298787434894
+    },
+    {
+      "src": "droven-bearmantle.png",
+      "width": 1230,
+      "height": 1278,
+      "clearFraction": 0.4121556802422484,
+      "solidFraction": 0.5694778426657506
+    },
+    {
+      "src": "thalara-rootwright.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.4903875986735026,
+      "solidFraction": 0.4942970275878906
+    },
+    {
+      "src": "vesper-loom.png",
+      "width": 1145,
+      "height": 1374,
+      "clearFraction": 0.5118450576203099,
+      "solidFraction": 0.4561964874811693
+    },
+    {
+      "src": "rux-emberchain.png",
+      "width": 1223,
+      "height": 1286,
+      "clearFraction": 0.565671696831975,
+      "solidFraction": 0.4178968678351299
+    },
+    {
+      "src": "teslan-veyr.png",
+      "width": 1145,
+      "height": 1374,
+      "clearFraction": 0.6131195057302492,
+      "solidFraction": 0.3730452635660393
+    },
+    {
+      "src": "joruun-jadecoil.png",
+      "width": 1213,
+      "height": 1296,
+      "clearFraction": 0.3526100984193867,
+      "solidFraction": 0.6380867505317904
+    },
+    {
+      "src": "astrax-mire.png",
+      "width": 1145,
+      "height": 1374,
+      "clearFraction": 0.5753621530227621,
+      "solidFraction": 0.3965268905373022
+    },
+    {
+      "src": "prismelle-cade.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.5098616282145182,
+      "solidFraction": 0.46821339925130206
+    },
+    {
+      "src": "ashkar-veilhand.png",
+      "width": 1151,
+      "height": 1367,
+      "clearFraction": 0.5471956893817723,
+      "solidFraction": 0.4300601811217242
+    },
+    {
+      "src": "maris-solquill.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.5690180460611979,
+      "solidFraction": 0.4173882802327474
+    },
+    {
+      "src": "odo-bogsong.png",
+      "width": 1227,
+      "height": 1282,
+      "clearFraction": 0.48666191146423365,
+      "solidFraction": 0.4907286267000802
+    },
+    {
+      "src": "mourn-ashwake.png",
+      "width": 1207,
+      "height": 1303,
+      "clearFraction": 0.5027204443763389,
+      "solidFraction": 0.48072735087787344
+    },
+    {
+      "src": "dolm-runesunder.png",
+      "width": 1214,
+      "height": 1295,
+      "clearFraction": 0.45341670218111735,
+      "solidFraction": 0.5358647185665307
+    },
+    {
+      "src": "garruk-mawsuture.png",
+      "width": 1222,
+      "height": 1287,
+      "clearFraction": 0.44746724452125436,
+      "solidFraction": 0.5408332347775883
+    },
+    {
+      "src": "vesper-nullcode.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.5505828857421875,
+      "solidFraction": 0.42610422770182294
+    },
+    {
+      "src": "coiljack-ampfist.png",
+      "width": 1223,
+      "height": 1286,
+      "clearFraction": 0.5149442578672896,
+      "solidFraction": 0.4758357505000706
+    },
+    {
+      "src": "talan-slipshot.png",
+      "width": 1246,
+      "height": 1263,
+      "clearFraction": 0.589100958379562,
+      "solidFraction": 0.39347829126045786
+    },
+    {
+      "src": "calixa-broadwake.png",
+      "width": 1312,
+      "height": 1199,
+      "clearFraction": 0.5681754612583657,
+      "solidFraction": 0.4084240678207449
+    },
+    {
+      "src": "brohm-caskfall.png",
+      "width": 1223,
+      "height": 1286,
+      "clearFraction": 0.39446126535340653,
+      "solidFraction": 0.5934931694110676
+    },
+    {
+      "src": "mora-fenhook.png",
+      "width": 1145,
+      "height": 1374,
+      "clearFraction": 0.5394271657672431,
+      "solidFraction": 0.427033555169937
+    },
+    {
+      "src": "mirelle-vane.png",
+      "width": 1199,
+      "height": 1312,
+      "clearFraction": 0.6028842633088549,
+      "solidFraction": 0.38083565572936795
+    },
+    {
+      "src": "maelis-chromabloom.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.42931556701660156,
+      "solidFraction": 0.5581487019856771
+    },
+    {
+      "src": "axiom-rail.png",
+      "width": 1151,
+      "height": 1367,
+      "clearFraction": 0.5476431232152696,
+      "solidFraction": 0.4420372984402736
+    },
+    {
+      "src": "brakka-fenn.png",
+      "width": 1145,
+      "height": 1374,
+      "clearFraction": 0.4541707188395848,
+      "solidFraction": 0.5371884594115292
+    },
+    {
+      "src": "pippa-fuseburst.png",
+      "width": 1214,
+      "height": 1295,
+      "clearFraction": 0.6379593290631181,
+      "solidFraction": 0.3484139352343636
+    },
+    {
+      "src": "lulla-faespring.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.4169495900472005,
+      "solidFraction": 0.5592702229817709
+    },
+    {
+      "src": "bryx-emberkite.png",
+      "width": 1230,
+      "height": 1278,
+      "clearFraction": 0.496469330890492,
+      "solidFraction": 0.4818771708843849
+    },
+    {
+      "src": "murdle-ridgehide.png",
+      "width": 1312,
+      "height": 1199,
+      "clearFraction": 0.4157968276409203,
+      "solidFraction": 0.5750561952033199
+    },
+    {
+      "src": "nemea-halolink.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.6170469919840494,
+      "solidFraction": 0.3693065643310547
+    },
+    {
+      "src": "thimble-briarwish.png",
+      "width": 1312,
+      "height": 1199,
+      "clearFraction": 0.3892255233019386,
+      "solidFraction": 0.5823958990215423
+    },
+    {
+      "src": "sevrin-inkseal.png",
+      "width": 1159,
+      "height": 1357,
+      "clearFraction": 0.4996900359431141,
+      "solidFraction": 0.48640386377349926
+    },
+    {
+      "src": "koro-cloudtail.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.7015965779622396,
+      "solidFraction": 0.28008460998535156
+    },
+    {
+      "src": "bram-stonebranch.png",
+      "width": 1024,
+      "height": 1536,
+      "clearFraction": 0.353057861328125,
+      "solidFraction": 0.6308987935384115
+    },
+    {
+      "src": "toma-bellbreak.png",
+      "width": 1213,
+      "height": 1297,
+      "clearFraction": 0.537463268968086,
+      "solidFraction": 0.4406954726520266
+    },
+    {
+      "src": "ravelle-skyrake.png",
+      "width": 1312,
+      "height": 1199,
+      "clearFraction": 0.46692556296914095,
+      "solidFraction": 0.499734916292032
+    }
+  ],
+  "search": 1,
+  "mobile": true,
+  "errors": []
+}

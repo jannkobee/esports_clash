@@ -1,0 +1,25 @@
+{
+  "id": "b89a083d-6ed1-497c-be5b-c9130b7e7674",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "method": "linear-versus-preserve-volume-v1",
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "parent_candidate_id": "f6283980-c4dd-5f34-bcf4-09c08e9e6346",
+  "parent_candidate_sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+  "files": {
+    "candidate.glb": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+    "candidate-report.json": "c436a252171795f54b31201e1c014813894042e818e24da3d570bc745f8234be",
+    "baseline-report.json": "f653cff75831fb9200d8f143a6a3bcb56af2c653626a60475977f400ec26568c",
+    "backoffice-proof.json": "4a127a53b895a9a3d3cd50777d37f2c713976225bca8d3d11633b86298b1fac3",
+    "tools/diagnose_collision_influences.py": "a2519c2c2cb1bdd2edf759de15f1e319e4d6b3cd6b66798a1600395bc01e0932",
+    "tools/diagnose_skinning_modes.py": "5e76e80a8b6852838abd09d8931b1ca540444dc58de1d91f23b16699f2b6b03d",
+    "tools/review_collision_weight_candidate.py": "ed72e89f1f9d6314f1c5e90d52b787f700b787139ba5c95401426712c0f96d3c",
+    "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+    "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+    "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+    "supervisor.py": "18e74fc66bd73ff59c346cbde238b0c661a6ed4980c122c85a399fce5a39e6e8"
+  }
+}

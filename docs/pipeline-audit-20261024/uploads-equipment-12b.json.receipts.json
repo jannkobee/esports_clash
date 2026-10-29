@@ -1,0 +1,83 @@
+[
+  {
+    "avatar_id": "c_jayce",
+    "id": "railcart_cannon",
+    "sha256": "0e83c0b6994e272992ab4b9c11e2e756348007b3ce77dd9d4f23c219d0d69cd7",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "2e18dfc10b090491db185fa75a8caf89adf656160ef4508ca2f71557689796a7",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_jayce",
+    "id": "mechanic_outfit",
+    "sha256": "c6702b1443b854c9134fc852551b7250526c2f7bae431c20f656962d498b46ee",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "f90c777a4a51d948ca58b8620e8aeac7cdac31238cb7ff6c6411fe0eacceea37",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_jinx",
+    "id": "rigger_outfit",
+    "sha256": "7887a270ec9e34ac0f087436e5c17fe18261096d301b1d6dc2a45f4abdfc8d9d",
+    "status": "reference_uploaded",
+    "version": 8,
+    "inventory_hash": "1f054f6497e37fe42f40cace34c6821730ff6a704022a677a14d2a226395505e",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_monkeyking_dota",
+    "id": "jade_scepter",
+    "sha256": "8922c26454cd7dbddbaf551b61514421710971f13e955c09fd358276e452bda6",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "bc54c6fce624c7e960dc4faa0b9c6d9ce9bf5bdcc14013810e565c292d511dcf",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_stepstone",
+    "id": "wrist_bells",
+    "sha256": "42cf47fce9b7764aa17187011b40c65f3fd46a9c54a8e6a4b6559f7dbc6ef0bd",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "fd6e4f3b9c9a4d63efc74f9147a2e5622f7f63be312a0cba892747cee645103c",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_stepstone",
+    "id": "martial_outfit",
+    "sha256": "6ef63da7d419a20d5f10ac658e56338eab1df280dae6d267f89e8662e51dfc40",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "06cf2e4797dc02a72342eeb647e7f9b5e00b71f5b6eb6f7c3f527cd50385af0f",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_skybreaker",
+    "id": "pilot_outfit",
+    "sha256": "5b313e5030fb0f789201e879d432ec2d795773bb845d026454360445adcc7183",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "436dc6d09aee3869e29ea92b79c67a2af9e10aa2fd09d985a116f0954f87f314",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_silencer",
+    "id": "law_stamp",
+    "sha256": "5ff92a025f842749927ab17636834ad286c48912d3dfb4356d111f300fbead11",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "db581285659b1d201b549ae5d2687634f7d4072f448ee8f8ee457db6c74d5e80",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_wukong_lol",
+    "id": "pole_stilts",
+    "sha256": "c4e5704e81721091fa82796bb5bce3dcfd5506cf896a10c7e415b7f4f0185c5b",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "69d6b60bf16f413ae6c678507952e336afee1368a2dc64a2ad0e12996d616309",
+    "http": 200
+  }
+]

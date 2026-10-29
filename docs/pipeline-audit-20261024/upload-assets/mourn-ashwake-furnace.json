@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_shadowfiend",
+  "component_id": "furnace",
+  "category": "back",
+  "binding": "rigid",
+  "label": "Mortician back furnace",
+  "attachment": "back",
+  "prompt": "Use case: stylized-concept. One isolated physical reconstruction reference for Mourn Ashwake. Attached character image is design reference only. One complete standalone blackened brass mortician backpack furnace with its vents, support straps and warm orange glass window interiors. No wearer, body, clothes, casket, chains, fire plume or smoke. Preserve pictured construction and materials. Whole asset SMALL in frame, centered at only60% of image height and width, with clear transparent border on every side. Product-render clarity, neutral even lighting, three-quarter view or requested rest view. Genuine transparent background. No floor, cast shadows, glow backdrop, text, labels, frames, logo or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "mourn-ashwake",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/mourn-ashwake.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/mourn-ashwake-furnace.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-524d3a58-3b9b-418f-9ef0-c05ad72242af.png"
+}

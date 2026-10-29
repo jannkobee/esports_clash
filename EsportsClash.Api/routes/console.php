@@ -25,6 +25,7 @@ Artisan::command('evolution:bootstrap-owner', function () {
 
 Artisan::command('evolution:tick', function (\App\Services\EvolutionService $service) {
     \App\Models\EvolutionSetting::current();
+    app(\App\Services\IntelligenceService::class)->monitor();
     foreach (\App\Models\BalanceReview::where('status', 'open')->where('deadline_at', '<=', now())->pluck('id') as $id) {
         try { $service->decide($id, 'select', null, 'substitute'); }
         catch (\Illuminate\Validation\ValidationException) { /* Another owner/worker already decided. */ }
@@ -33,8 +34,32 @@ Artisan::command('evolution:tick', function (\App\Services\EvolutionService $ser
         ->where('updated_at', '<', now()->subMinutes(2))->pluck('id') as $id) {
         \App\Jobs\PollEvolutionRun::dispatch($id);
     }
-    $service->startRun('scheduler', scheduled: true);
+    if(array_key_exists('intelligence',\App\Models\EvolutionSetting::current()->preferences??[]))
+        app(\App\Services\IntelligenceService::class)->tick();
+    else $service->startRun('scheduler', scheduled: true);
 })->purpose('Recover training jobs, resolve expired reviews, and schedule the next training cycle');
+
+Artisan::command('intelligence:status',function(){
+    $this->line(json_encode(['active'=>\App\Models\EvolutionRun::whereIn('status',['queued','running','stopping','paused_resource','paused_budget'])->get(['id','status','plan'])->map(fn($r)=>['id'=>$r->id,'status'=>$r->status,'version'=>$r->plan['version']??null])->all(),
+        'policy'=>app(\App\Services\IntelligenceService::class)->manifest()['id'],'next_seed'=>\App\Models\EvolutionSetting::current()->next_seed],JSON_THROW_ON_ERROR));
+})->purpose('Show non-secret intelligence job and policy status');
+
+Artisan::command('intelligence:stop {id}',function(\App\Services\EvolutionService $service){
+    $run=$service->stopRun($this->argument('id'),'local-cli');$this->line($run->status);
+})->purpose('Request normal cancellation while preserving all study artifacts');
+
+Artisan::command('intelligence:automation {domain=parameter} {--pause} {--all}',function(\App\Services\IntelligenceService $service){
+    $domain=$this->argument('domain');if(!in_array($domain,$service::SCOPES,true))throw new \InvalidArgumentException('Unknown domain');
+    $service->configure(['enabled'=>!$this->option('pause'),'domain'=>$domain,'cycle_domains'=>(bool)$this->option('all'),'max_minutes'=>30,'total_minutes'=>1440,'generations'=>2,'training_matches'=>4],'local-cli');
+    $this->line($this->option('pause')?'Intelligence automation paused.':'Bounded intelligence automation enabled.');
+})->purpose('Configure local continuous experiments; game activation remains separate');
+
+Artisan::command('intelligence:queue {domain=parameter} {--minutes=30} {--total=1440}',function(\App\Services\IntelligenceService $service){
+    $domain=$this->argument('domain');$minutes=(int)$this->option('minutes');$total=(int)$this->option('total');
+    if(!in_array($domain,$service::SCOPES,true)||$minutes<16||$minutes>90||$total<$minutes||$total>10080)throw new \InvalidArgumentException('Choose parameter/marl/source, invocation16–90minutes and total<=10080minutes.');
+    $run=$service->start(['request_id'=>(string)\Illuminate\Support\Str::uuid(),'domain'=>$domain,'max_minutes'=>$minutes,'total_minutes'=>$total],'local-cli');
+    $this->line($run->id);
+})->purpose('Queue an offline intelligence experiment with atomic seed reservation');
 
 Artisan::command('evolution:recover', function (\App\Services\EvolutionService $service) {
     $records = \Illuminate\Support\Facades\Http::withToken(config('evolution.worker_token'))->timeout(15)
@@ -60,24 +85,31 @@ Artisan::command('evolution:recover', function (\App\Services\EvolutionService $
 \Illuminate\Support\Facades\Schedule::command('evolution:tick')->everyMinute()->withoutOverlapping(2);
 \Illuminate\Support\Facades\Schedule::job(new \App\Jobs\MaintainEvolutionArtifacts)->everyMinute()->withoutOverlapping(2);
 
-Artisan::command('online:install-catalog', function () {
+Artisan::command('online:install-catalog {--original-roster}', function () {
     $bytes = file_get_contents(resource_path('game/catalog.json'));
     $manifest = json_decode(file_get_contents(resource_path('game/manifest.json')), true, flags: JSON_THROW_ON_ERROR);
     if (! hash_equals($manifest['catalog_version'], hash('sha256', $bytes))) throw new \RuntimeException('Catalog hash mismatch');
     $payload = json_decode($bytes, true, flags: JSON_THROW_ON_ERROR);
-    \Illuminate\Support\Facades\DB::transaction(function () use ($manifest, $payload) {
+    $originalRoster=(bool)$this->option('original-roster');
+    \Illuminate\Support\Facades\DB::transaction(function () use ($manifest, $payload, $originalRoster) {
         $active = \App\Models\OnlineCatalog::where('active', true)->lockForUpdate()->first();
         if ($active && ($active->id !== $manifest['catalog_version'] || $active->manifest !== $manifest)
             && \App\Models\OnlineMatch::whereIn('status', ['allocated', 'running'])->exists()) {
             throw new \RuntimeException('Finish active matches before switching the single-worker catalog/rules version.');
         }
         if ($active && $active->id !== $manifest['catalog_version'] && \App\Models\OwnedPlayerCard::exists()) {
-            throw new \RuntimeException('A reviewed owned-card migration is required before replacing catalog definitions.');
+            if(!$originalRoster)throw new \RuntimeException('A reviewed owned-card migration is required before replacing catalog definitions.');
+            \App\Services\OriginalRosterUpgrade::validate($active->payload,$payload);
         }
         $catalog = \App\Models\OnlineCatalog::firstOrCreate(['id' => $manifest['catalog_version']], ['manifest' => $manifest, 'payload' => $payload]);
         if ($catalog->manifest !== $manifest) {
             if (\App\Models\OnlineMatch::whereIn('status', ['allocated', 'running'])->exists()) throw new \RuntimeException('Finish active matches before switching the single-worker rules version.');
             $catalog->update(['manifest' => $manifest]);
+        }
+        if($originalRoster&&$active&&$active->id!==$catalog->id){
+            \App\Services\OriginalRosterUpgrade::validate($active->payload,$payload);
+            \App\Models\OwnedPlayerCard::where('catalog_id',$active->id)->update(['catalog_id'=>$catalog->id]);
+            \App\Models\NormalQueueTicket::where('catalog_id',$active->id)->where('status','queued')->update(['catalog_id'=>$catalog->id]);
         }
         \App\Models\OnlineCatalog::where('id', '<>', $catalog->id)->update(['active' => false]);
         $catalog->update(['active' => true]);

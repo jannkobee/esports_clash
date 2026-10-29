@@ -1,0 +1,1122 @@
+{
+  "version": 6,
+  "title": "Clash Arena: factual kit learning with outcome-based rewards",
+  "scope": "Factual reference for a shared learned controller. There are no authored per-avatar playstyles or role-specific reward weights. Strategies must be learned from match experience.",
+  "mechanics": [
+    "Destroy the opposing outer turret, inner turret and Nexus turret in that order. Deeper structures are protected until their preceding turrets are destroyed.",
+    "After the Nexus turret falls, destroy all three barracks: melee, ranged and catapult. The Nexus remains protected until all three are destroyed.",
+    "Destroy the exposed opposing Nexus to win. Kills, damage, gold and a long match are not substitutes for winning.",
+    "Attacks and spells obey their actual range, mana, cooldown, level, targeting and crowd-control rules. Terrain stays solid. Avatars use soft spacing.",
+    "Use information available to your team. Do not read invisible enemy positions, hidden camp health or private opponent economy."
+  ],
+  "lessons": [
+    {
+      "id": "kit-facts",
+      "title": "Understand the information supplied to the learner",
+      "directions": [
+        "Your own health, mana, level, cooldowns, shields, attack reach and legal commands are observations. They describe what is possible, not which action to select.",
+        "Each own or visible target kit is represented by base stats, roles, and ability damage, cooldown, scaling, damage type and described control, protection, mobility and channel properties.",
+        "These kit features are derived automatically from the playable catalog. A new avatar does not require a handwritten strategy entry. The engine must still implement its mechanics correctly.",
+        "Capability flags currently summarize catalog descriptions; they are not a full simulation of every passive, combo, travel path or spell interaction. Missing observations can limit what the policy learns."
+      ]
+    },
+    {
+      "id": "discovery",
+      "title": "Discover strategy through actual matches",
+      "directions": [
+        "The policy may explore any mechanically legal choice. No role script forces a tank to engage, a support to protect or an assassin to chase.",
+        "All avatars share the team win/loss objective and the same team-progress potential. There is no bonus for acting like an authored avatar guide, casting often or taking damage.",
+        "Shared kit features allow experience with one ability pattern to help another. A new kit still needs exploration and evaluation; transfer is not guaranteed.",
+        "The starting model retains basic generic command preferences from an earlier foundation. Extra kit and card inputs begin with zero weights and learn from self-play; this is not a from-scratch experiment.",
+        "Training duration, changed decisions and optimization loss cannot establish professional skill. Independent complete matches against capable opponents must establish improvement."
+      ]
+    }
+  ],
+  "player_identity": [
+    "A player card and an avatar are separate identities. The card supplies its stable ID, six attributes, preferred-role fit, signatures, morale, fatigue and both personality categories.",
+    "Identities and attributes are observations, not extra damage, range, immunity or a mandatory personality script. Fictional card aliases remain presentation only.",
+    "Avatar names and IDs identify reports; the current actor uses transferable kit facts instead of a fixed 45-avatar one-hot table. Identical kits have identical kit inputs even with a new ID.",
+    "A shared policy can develop different decisions for different kits and card contexts. Per-card or per-avatar mastery must be measured rather than inferred from seeing that identity in training."
+  ],
+  "knowledge_only": true,
+  "roles": [],
+  "avatars": [
+    {
+      "id": "c_solana",
+      "name": "Dawnna",
+      "role": "Tank",
+      "archetype": "Vanguard Tank",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Solar Shieldbash",
+          "description": "Stuns target for 1.2s & grants 180 HP solar shield (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Zenith Lance",
+          "description": "Stuns the target for 1.1s after Solana visibly dashes into lance range (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Daybreak Flare",
+          "description": "Giant solar beam! Stuns the struck cluster for 1.8s (+5% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_astra",
+      "name": "Aiselle",
+      "role": "Marksman",
+      "archetype": "Utility Marksman",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Volley Cone",
+          "description": "Fires 5 frost arrows in a wide forward cone; each arrow deals 90 physical damage and slows targets (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Frost Flurry",
+          "description": "+50% Attack speed & 5-arrow flurry barrage for 4s (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Enchanted Crystal Comet",
+          "description": "Global lane ice arrow! Stuns primary target for 2.5s (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_kyumi",
+      "name": "Vixelle",
+      "role": "Mage",
+      "archetype": "Burst Mage",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Orb of Illusion",
+          "description": "Throws a 155-damage magic orb forward, returning with pure TRUE DAMAGE (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Charm of Longing",
+          "description": "Charms enemy for 1.4s, forcing them to walk harmlessly toward Kyumi (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Spirit Rush",
+          "description": "Fires homing spirit bolts at a low-health enemy and charms them for 1.6s (+5% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_buck",
+      "name": "Gritlock",
+      "role": "Marksman",
+      "archetype": "Skirmish Bruiser",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Powder Keg Blast",
+          "description": "160-damage explosive shell detonating in an explosive T-shape AOE (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Smoke Screen",
+          "description": "Deals 60 base magic damage in a 55-radius cloud for 2.5s. Enemies inside have basic-attack range capped at 55 (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Collateral Blast",
+          "description": "Devastating recoil shell blasting front cone and propelling Buck back (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_valkira",
+      "name": "Bessara",
+      "role": "Fighter",
+      "archetype": "Skirmisher Bruiser",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Crescent Cleave",
+          "description": "Sweeps twin blades for 150 damage. Outer edge hit deals double damage & deep bleed (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Iron Will Slam",
+          "description": "Slams blades into the ground for a 200 HP shield and shockwave (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Executioner's Descent",
+          "description": "Slams the selected low-health enemy for a lethal execute (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_kage",
+      "name": "Vanta",
+      "role": "Assassin",
+      "archetype": "Shadow Assassin",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Shadow Shuriken",
+          "description": "Hurls spinning crimson shurikens in a line dealing heavy physical damage (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Shadow Projection",
+          "description": "Summons a shadow clone that mimics abilities and allows instant swapping (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Eclipse Mark",
+          "description": "Teleports behind victim with crimson death marks, detonating for massive mirror execute after 3s (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_kazemaru",
+      "name": "Galejandro",
+      "role": "Fighter",
+      "archetype": "Wind Skirmisher",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Tempest Thrust & Gale",
+          "description": "Thrusts katana forward; launches a howling blue tornado that knocks up enemies for 1.5s (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Zephyr Barrier",
+          "description": "Erects a shimmering wall of gusting wind that disintegrates incoming enemy projectiles for 3.5s."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Airborne Sever",
+          "description": "Blinks to airborne enemies, suspending them mid-air for 5 golden blade slashes and 50% armor shred (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_kindra",
+      "name": "Lambent",
+      "role": "Marksman",
+      "archetype": "Spectral Marksman",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Ghoststep Volley",
+          "description": "Fires 3 spectral purple arrows for 90 damage each at the 3 closest enemies (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Shadow Pounce",
+          "description": "Claims a spirit territory where shadowy Wolf furiously lunges and bites enemies (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Sanctuary of Eternity",
+          "description": "Creates a 65-radius sanctuary for 4s: no unit inside can fall below 10% HP. On expiry, allies still inside heal for 450 base HP (rank-scaled)."
+        }
+      ]
+    },
+    {
+      "id": "c_cora",
+      "name": "Plumeira",
+      "role": "Marksman",
+      "archetype": "Feather Marksman",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Twin Plumage",
+          "description": "Flings two 75-damage penetrating quill feathers in a line that plant in the ground (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Feather Recall",
+          "description": "Recalls all ground feathers back to her hands; hitting enemies with 3+ feathers roots them for 1.3s! (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Skyward Plumes",
+          "description": "Leaps untargetable into the air and rains down 5 piercing quills in a crescent fan (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_renn",
+      "name": "Gildan",
+      "role": "Support",
+      "archetype": "Initiator Support",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Gilded Vault",
+          "description": "Dashes forward and leaps into the air, knocking up all enemies in a 75px radius for 1.2s (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Harmonic Waltz",
+          "description": "Dashes to an allied champion, granting both a 220 HP golden feathered shield."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Dazzling Rush",
+          "description": "Cloaks in hypnotic golden light with +80% speed, charming all enemies he touches for 1.5s! (+5% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_sylla",
+      "name": "Sylvan Solo",
+      "role": "Fighter",
+      "archetype": "Summoner Bruiser",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Summon Spirit Bear",
+          "description": "Summons an armored Spirit Bear companion (1800 HP) that charges and brawls alongside him (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Savage Roar",
+          "description": "Sylla and his bear unleash an emerald sonic roar, terrifying nearby enemies to flee for 1.3s (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "True Form",
+          "description": "Transforms into a gargantuan Ironclaw Bear, gaining +450 Shield, +20 Armor, and cleaving melee sweeps for 12s (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_tequoia",
+      "name": "Fernanda",
+      "role": "Mage",
+      "archetype": "Zone Control Mage",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Verdant Cage",
+          "description": "Encircles the target champion in a ring of 8 living oak trees, trapping them inside for 2.8s! (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Nature Link",
+          "description": "Link enemy champions in a zone for 4 seconds. When one takes health damage, each other linked enemy takes 10% of it as true damage."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Nature's Wrath",
+          "description": "Releases a bouncing green solar lightning sphere that leaps up to 10 times with escalating damage! (+5% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_zal",
+      "name": "Glimmerick",
+      "role": "Support",
+      "archetype": "Lifebinder Support",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Venom Hex",
+          "description": "Spits deep violet venom in a cone that poisons targets and slows them by up to 50% (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Shadow Surge",
+          "description": "Chains vibrant pink healing lightning through allies (+180 HP) that zaps adjacent enemies! (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Soul Sanctuary",
+          "description": "Projects a luminous pink cross over lowest-HP ally: they cannot die and cannot fall below 1 HP for 4.5s!"
+        }
+      ]
+    },
+    {
+      "id": "c_xin",
+      "name": "Cindergent",
+      "role": "Fighter",
+      "archetype": "Flame Skirmisher",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Blazing Bolas",
+          "description": "Flings flaming bolas that wrap around 2 nearby enemies, burning and rooting them for 1.8s (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Flash Flurry",
+          "description": "Strikes enemies clustered around the target with rapid fiery slashes (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Flame Remnant Charge",
+          "description": "Drops blazing remnant statues and detonates their fiery shockwaves around the target area (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_raijin",
+      "name": "Voltaire",
+      "role": "Mage",
+      "archetype": "Lightning Burst Mage",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Static Remnant",
+          "description": "Plants a stationary electrical double at his current position. It arms after 0.3 seconds and lasts up to 4 seconds. An enemy avatar entering 65 units triggers one explosion, hitting eligible enemy avatars within 80 units for 140 base magic damage (+5% AD, +10% AP). Enemies outside the blast are not struck; it deals no damage when first placed."
+        },
+        {
+          "slot": "skill2",
+          "name": "Electric Vortex",
+          "description": "Targets one enemy avatar within 120 units. A bright lightning tether and rotating electrical coils hold the victim for 1.4 seconds, pulling them toward Voltaire at 175 units per second until they are 36 units apart. Deals 75 base magic damage on cast (+5% AD, +10% AP). The pull moves the victim over time rather than teleporting them."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Ball Lightning",
+          "description": "Voltaire transforms into a luminous lightning ball and flies along a chosen ground direction for up to 320 units at 540 units per second, for at most 0.75 seconds. He reforms at his actual stopping point. Enemies touched within 28 units, or within 55 units of arrival, take 420 base magic damage once per cast (+5% AD, +10% AP). Rocks and hard control can interrupt travel. No unit target is required; he can use it to engage or escape. The lightning form does not grant immunity or bypass terrain and tower rules."
+        }
+      ]
+    },
+    {
+      "id": "c_kaolin",
+      "name": "TerraByte",
+      "role": "Tank",
+      "archetype": "Earth Brawler Tank",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Boulder Smash",
+          "description": "Kicks a giant jade boulder across 220px, shattering and stunning all struck enemies for 1.5s (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Rolling Boulder",
+          "description": "Curls into a rolling jade stone ball, crashing into enemies for knockback and gaining a 160 HP shield (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Magnetize",
+          "description": "Infects nearby enemies with jade magnetic resonance, pulsing continuous shockwaves for 6s! (+5% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_inai",
+      "name": "Nulliver",
+      "role": "Assassin",
+      "archetype": "Void Infiltrator",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Aether Remnant",
+          "description": "Deploys a purple void spirit watcher that pulls enemies across its gaze toward it for 1.4s (+10% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Dissimilate",
+          "description": "Disappears into 7 void portals and crashes down at target portal location in an astral explosion (+10% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Astral Step",
+          "description": "Instantly teleports and slashes through enemies in a line, marking them with an astral rift that detonates for heavy execute! (+10% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_qiyana",
+      "name": "Crownfetti",
+      "role": "Assassin",
+      "archetype": "Elemental Assassin",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Prism Hurl",
+          "description": "Hurl an elemental blade that wounds and briefly roots (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Facet Dash",
+          "description": "Dash and gain a fresh element, striking the target (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Crownfall Surge",
+          "description": "A sweeping shockwave erupts around clustered enemies (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_locke",
+      "name": "Sootcase",
+      "role": "Assassin",
+      "archetype": "Ash Blade Exorcist",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Cinder Sequence",
+          "description": "Lunge to a target with ash blades, ignite on the second cast, then critically strike in close melee combat (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Ash Veil",
+          "description": "Become invisible for a few seconds and gain swift movement until striking from shadows or taking damage."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Cinder Verdict",
+          "description": "Detonate a great ashen exorcism around the target (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_senna",
+      "name": "Sennova",
+      "role": "Support",
+      "archetype": "Relic Cannon Support",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Dusk Lance",
+          "description": "A light beam damages a foe and heals nearby allies (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Mistbind",
+          "description": "Dark mist snares the target and nearby enemies (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Daybreak Veil",
+          "description": "A wide beam damages enemies and shields allies (+5% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_largo",
+      "name": "Basso Croak",
+      "role": "Support",
+      "archetype": "Rhythm Support",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Ribbon Lash",
+          "description": "Pull and disrupt a foe with a long tongue (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Bogbeat",
+          "description": "Froglings stomp an area, interrupting enemies (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Marsh Anthem",
+          "description": "A luminous song heals and empowers the entire team (+5% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_shadowfiend",
+      "name": "Razeberry",
+      "role": "Mage",
+      "archetype": "Soul Nuker",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Gloom Raze",
+          "description": "Raze the earth in front of him with dark fire (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Soul Draw",
+          "description": "Gather nearby souls for a surge of damage (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Dirge Wave",
+          "description": "Release concentric soul waves that terrify nearby enemies (+5% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_earthshaker",
+      "name": "Quakewell",
+      "role": "Tank",
+      "archetype": "Seismic Initiator",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Faultline",
+          "description": "Split the ground with a long stunning ridge (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Runic Maul",
+          "description": "Empower the next blow and stun a nearby enemy (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Quake Chorus",
+          "description": "A giant quake echoes through every enemy in the cluster (+5% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_mirehook",
+      "name": "Rotisserie",
+      "role": "Tank",
+      "archetype": "Pick Initiator",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Barbed Chain",
+          "description": "A dodgeable hook drags the first target closer (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Rot Cloud",
+          "description": "Poison nearby foes and endure the counterattack (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Feast Lock",
+          "description": "Pin and drain one nearby target (+5% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_nullweaver",
+      "name": "Midnight Equation",
+      "role": "Mage",
+      "archetype": "Zone Control",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Gravitic Pin",
+          "description": "A dodgeable orb pins a target in place (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Dark Filament",
+          "description": "Lay a damaging field under clustered foes (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Singularity Well",
+          "description": "Channel a compact black hole for 3.2 seconds, pulling enemies within 105 range. Crowd control interrupts the channel (+5% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_voltgrip",
+      "name": "Plugsy",
+      "role": "Support",
+      "archetype": "Catch Support",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Arc Grapple",
+          "description": "A narrow dodgeable grapple pulls an enemy (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Charged Fist",
+          "description": "Knock up the caught target (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Thunder Dome",
+          "description": "A close electrical burst stuns nearby foes (+5% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_aetherbolt",
+      "name": "Relic Rick",
+      "role": "Marksman",
+      "archetype": "Mobile Poke",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Relic Bolt",
+          "description": "A fast dodgeable shot through the lane (+10% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Phase Skip",
+          "description": "Blink to the side and mark an enemy (+10% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Horizon Lance",
+          "description": "A wide piercing beam crosses the fight (+10% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_corsara",
+      "name": "Bounty Belle",
+      "role": "Marksman",
+      "archetype": "Area Barrage",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Ricochet Round",
+          "description": "A dodgeable round bursts into nearby foes (+10% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Saltstorm",
+          "description": "Rain shot over an area and slow foes (+10% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Broadside Waltz",
+          "description": "Channel a fixed cone of cannon fire in six waves over three seconds. Crowd control interrupts the channel (+10% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_brewmaw",
+      "name": "Kegory",
+      "role": "Tank",
+      "archetype": "Disruptive Frontline",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Bursting Cask",
+          "description": "A dodgeable cask explodes among clustered foes (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Barrel Rush",
+          "description": "Dashes into a target, knocks them up for 0.8s, and restores 90 health on impact (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Grand Vintage",
+          "description": "A huge cask scatters the enemy formation (+5% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_wraithhook",
+      "name": "Hooklyn",
+      "role": "Support",
+      "archetype": "Chain Control",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Spectral Harpoon",
+          "description": "A dodgeable spectral hook pulls a foe (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Guiding Lantern",
+          "description": "Shield nearby allies and push a foe away (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Lantern Prison",
+          "description": "Enclose nearby enemies in a slowing spirit cage (+5% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_invoker",
+      "name": "Arsenaldo",
+      "role": "Mage",
+      "archetype": "Arsenal Mage",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Orb of Ice",
+          "description": "Gather an Ice orb into the three-orb FIFO. Each held Ice orb grants 0.2 health regeneration per second at rank 1, scaling by 25% each rank; its bonus ends when it leaves the FIFO."
+        },
+        {
+          "slot": "skill2",
+          "name": "Orb of Wind",
+          "description": "Gather a Wind orb into the three-orb FIFO. Each held Wind orb grants 1 movement speed at rank 1, scaling by 25% each rank; its bonus ends when it leaves the FIFO."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Orb of Fire",
+          "description": "Gather a Fire orb into the three-orb FIFO. Each held Fire orb grants 1% spell amp and damage amp at rank 1, scaling by 25% each rank; its bonus ends when it leaves the FIFO."
+        }
+      ]
+    },
+    {
+      "id": "c_hwei",
+      "name": "Inkognito",
+      "role": "Mage",
+      "archetype": "Artistic Painter",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Molten Splatter",
+          "description": "Flings an arc of fiery paint that erupts on impact (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Gleaming Wash",
+          "description": "Paints an energizing river giving movement speed and shields to allies (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Vortex of Torment",
+          "description": "Expands a tragic bloom of spreading paint that grips and detonates (+5% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_jayce",
+      "name": "Hexley",
+      "role": "Fighter",
+      "archetype": "Stance Skirmisher",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Shock Blast Plasma",
+          "description": "Fires an accelerated plasma orb through an acceleration field (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Thundering Leap",
+          "description": "Leaps into the fray, dealing impact damage and rooting the struck target for 0.7s (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Mercury Overdrive",
+          "description": "Swaps into cannon mode unleashing rapid fire bursts and shredding defenses (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_vi",
+      "name": "Knuckleberry",
+      "role": "Fighter",
+      "archetype": "Heavy Bruiser",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Vault Breaker Punch",
+          "description": "Charges forward delivering an armor-shattering heavy punch (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Denting Impact",
+          "description": "Successive blows crack enemy armor and grant bonus attack speed (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Cease and Desist Slam",
+          "description": "Locks onto a priority enemy target and slams them downward (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_jinx",
+      "name": "Boomie",
+      "role": "Marksman",
+      "archetype": "Hypercarry Marksman",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Fishbones Rockets",
+          "description": "Swaps to rocket launcher firing explosive long-range area damage (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Shock Pistols Zap",
+          "description": "Fires an electric zapper beam that damages and heavily slows the first enemy (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Super Mega Rocket",
+          "description": "Fires a colossal global missile that executes enemies based on missing health (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_puck",
+      "name": "Fizzlewing",
+      "role": "Mage",
+      "archetype": "Elusive Playmaker",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Illusory Orb Jaunt",
+          "description": "Launches an orb toward the selected position or facing direction; Paxi can jaunt to its current position (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Waning Rift Silence",
+          "description": "Blasts a wave of fairy dust silencing nearby enemies in a circle (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Dream Coil Tether",
+          "description": "Tethers enemy champions to an astral spring, stunning and tearing them if broken (+5% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_batrider",
+      "name": "Wickety",
+      "role": "Fighter",
+      "archetype": "Aerial Initiator",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Firefly Scorched Path",
+          "description": "Takes flight over terrain leaving a deadly burning fire path (+10% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Flamebreak Grenade",
+          "description": "Hurls an explosive cocktail knocking back enemies in the area (+10% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Flaming Lasso Drag",
+          "description": "Snag an enemy champion with a blazing lasso and drags them into the team (+10% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_bristleback",
+      "name": "Hedgehoggin",
+      "role": "Tank",
+      "archetype": "Frontline Sponge",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Viscous Nasal Slime",
+          "description": "Covers enemy in sticky goo, slowing and reducing their armor (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Quill Spray Nova",
+          "description": "Shoots a circle of poisonous quills dealing stacking damage (+5% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Warpath Stampede",
+          "description": "Each spell cast increases movement speed and attack damage dramatically (+5% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_io",
+      "name": "Orbiton",
+      "role": "Support",
+      "archetype": "Tether Enhancer",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Spirits Orbit Array",
+          "description": "Summons five bright spirits that orbit Aetheris. Each shot launches a spirit; it bursts on an enemy avatar hit and splashes nearby foes (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Overcharge Surge",
+          "description": "Tethers the nearest nearby ally in a bright aura, granting a shield and increased attack damage for 5 seconds."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Resonant Convergence",
+          "description": "Tethers every living allied avatar within 260 arena units for 5 seconds at rank 1, increasing by 1 second per rank up to 8 seconds at rank 4. Grants each tethered ally an immediate heal and shield."
+        }
+      ]
+    },
+    {
+      "id": "c_lulu",
+      "name": "Pixabelle",
+      "role": "Support",
+      "archetype": "Enchanter Disabler",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Glimmerthorn",
+          "description": "Fire a dodgeable slowing thorn through a target (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Mothspell",
+          "description": "Turn a threatening enemy into a harmless moth briefly and shield a nearby ally."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Wildheart Bloom",
+          "description": "Grow and shield the lowest-health ally, knocking up enemies around them (+5% AD, +10% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_silencer",
+      "name": "Muffleton",
+      "role": "Mage",
+      "archetype": "Silence Disabler",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Inkblight",
+          "description": "A dodgeable ink bolt damages a target and nearby enemies (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Last Edict",
+          "description": "Silence one nearby enemy, preventing ability casts and channels (+5% AD, +10% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Stillness Decree",
+          "description": "Briefly silence all living enemies; it can interrupt channeled abilities."
+        }
+      ]
+    },
+    {
+      "id": "c_wukong_lol",
+      "name": "Stafford",
+      "role": "Fighter",
+      "archetype": "Trickster Initiator",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Longstaff Crack",
+          "description": "Strike with an extended staff and crack armor (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Mist Double",
+          "description": "Leave a visible decoy and slip sideways under a brief veil."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Cyclone Dance",
+          "description": "Spin for two seconds, repeatedly hitting and briefly knocking up nearby enemies (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "name": "Primate Minister",
+      "role": "Fighter",
+      "archetype": "Canopy Carry",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Skyroot Strike",
+          "description": "Slam an extended staff through a short line and stun enemies it crosses (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Canopy Bound",
+          "description": "Leap through the trees toward an enemy and land with an area strike (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Court of Branches",
+          "description": "Summon a stationary circle of staff-wielding echoes that strike enemies entering it (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_stepstone",
+      "name": "Kickswitch",
+      "role": "Fighter",
+      "archetype": "Mobile Martial Vanguard",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Quarry Rush",
+          "description": "Strike a nearby foe with a driving palm blow (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Crosswind Guard",
+          "description": "Brace behind a turning guard and strike enemies crowding nearby allies (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Bellbreak Kick",
+          "description": "Deliver a focused turning kick that sends one enemy toward nearby allies, dealing heavy damage and briefly lifting them (+10% AD, +6% AP)."
+        }
+      ]
+    },
+    {
+      "id": "c_skybreaker",
+      "name": "Propella",
+      "role": "Marksman",
+      "archetype": "Open-Cockpit Flak Skiff Hypercarry",
+      "abilities": [
+        {
+          "slot": "skill1",
+          "name": "Flakburst Cannon",
+          "description": "Fire a high-velocity flak shell that bursts across a wide enemy cluster (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "skill2",
+          "name": "Rotor Overdrive",
+          "description": "Push the flak skiff past redline for 5 seconds of heavy attack speed, then rake the target with crossfire (+10% AD, +6% AP)."
+        },
+        {
+          "slot": "ultimate",
+          "name": "Air Superiority",
+          "description": "Enter full gunship mode, bombard the target formation, and greatly amplify attack speed and flak splash for up to 11 seconds (+10% AD, +6% AP)."
+        }
+      ]
+    }
+  ],
+  "rewards": {
+    "version": "terminal-potential-outcomes-v2",
+    "configuration": {
+      "version": "terminal-potential-outcomes-v2",
+      "gamma_second": 0.9998,
+      "gae_lambda_second": 0.98,
+      "terminal_win": 5,
+      "critic_inputs": 7,
+      "potential_weights": {
+        "structures": 0.5,
+        "economy": 0.15,
+        "trades": 0.15,
+        "health": 0.1,
+        "dragon": 0.04,
+        "siege": 0.04,
+        "mana": 0.02
+      },
+      "structure_weights": {
+        "outer_tower": 1,
+        "inner_tower": 1.5,
+        "nexus_tower": 2,
+        "barracks": 1.2,
+        "nexus": 3
+      },
+      "economy_scale": 10000,
+      "death_scale": 10,
+      "objective_scale": 3
+    },
+    "directions": [
+      "Winning by destroying the enemy Nexus earns a terminal outcome of +5 before time discount; losing earns -5. The previous reward was +1/-1. Censored matches never receive a win or loss.",
+      "The per-second discount is 0.9998. A win at 1,200 seconds retains about 79% of its terminal value; the previous 0.999 discount retained about 30%. Longer-term outcomes can influence learning more.",
+      "The bounded team-progress potential weights actual structure progress at 50%, economy advantage at 15%, favorable team trades at 15%, living team health at 10%, Dragon captures at 4%, Siege Golem captures at 4% and mana readiness at 2%. These percentages describe shaping weights, not win probabilities or guaranteed strategy.",
+      "Actual fractional damage to the real structure roster counts as progress, including deeper objectives. Overkill and repeated commands to a protected building do not increase that progress. Losing your own structures decreases the same signal.",
+      "Economy includes held gold and purchased items, so buying an item does not erase earned resources. Team deaths, lost health and spent mana can reduce progress; a decisive trade or protective spell can still be worthwhile because winning remains the objective.",
+      "Objective captures are counted when the real boss is secured. Consuming the captured siege unit successfully does not erase the capture count. Counts are bounded in the potential and cannot replace a terminal win.",
+      "No direct reward is granted for clicking the enemy base, walking distance, casting, missing, overkill, raw damage dealt or raw damage taken. All avatars use the same team formula; supports and tanks are not scored by a personal damage quota.",
+      "The shaping reward is a discounted difference in bounded state potential, closed to zero at real termination. Repeating a damage/heal, mana recovery or movement cycle cannot add a separate cumulative bonus. This is a training aid, not a guarantee that a finite neural learner will discover good play.",
+      "The critic carries the seven actual outcome features and uses a longer 0.98-per-second advantage trace. The Python learner independently checks discounts, component totals and terminal outcomes before updating.",
+      "Reward changes affect subsequent optimization. The starting model bytes are unchanged and retain the known forward/structure preference; there is no claim that base clicking disappears immediately or that more wins have already been measured.",
+      "Internal ML scores do not mint club coins, card XP or prizes. New checkpoints remain experimental until independent complete matched games establish improvement."
+    ]
+  }
+}

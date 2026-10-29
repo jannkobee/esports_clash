@@ -1,0 +1,65 @@
+[
+  {
+    "avatar_id": "c_zal",
+    "id": "surgeon_outfit",
+    "sha256": "10e7370c508b24469ece66ae930e28a65a7435aa144c90e640973f712febf5bf",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "725c6410941d449f762779fbb496e00f0b359256ef15c3676114cca4e6a05873",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_xin",
+    "id": "mail_satchel",
+    "sha256": "a9c81440313e5301f53f96154e59e4ea170cb27af8a49ee2e318c3d6ebd4b620",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "9d9e62aadeac3f14f13d1a03051e139c8787badb02a417377e520291a8fcc950",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_xin",
+    "id": "skate_boots",
+    "sha256": "2500ac74f7391fe2e19ab03067272c6c4b74721c80cb6913bc54a5b541e4b646",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "d1ece2c0097a2971055ac517f3c14a27d384eb882dd69d89dced3fac74271d3d",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_xin",
+    "id": "courier_outfit",
+    "sha256": "93f8aeb8b3af3755357e3658fada74fdbac05e31569f06f85032c2ce5afcc9f2",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "a9e04f48c937d8ae4905aec978f52d2f24b0e51a395f690395c474e454064464",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_raijin",
+    "id": "ground_rods",
+    "sha256": "e6ccb172e1438e986dd5e9f9b55729bb89514c25283b2c049fa8d40ac9a063cb",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "5ea71202c64faad309a4abd849908b1be691db41dbd5373bfdf48c574674cecd",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_raijin",
+    "id": "scientist_outfit",
+    "sha256": "a74f923af32a41c773faa1763b5407bd309e0956c4659c70f31c4d6a3119a78b",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "210a1a1a2c49605b57b4cc322acf4f94f317617759c7a55d33f727ddfeb176ae",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kaolin",
+    "id": "stone_shutters",
+    "sha256": "49b742cc60ed03f7e179879d4a2feaacfd4eb7a015b23c9b7fe087180cec1be2",
+    "status": "reference_uploaded",
+    "version": 3,
+    "inventory_hash": "4937774d42921ed42fb9cb7da423cd32b68e20c849762bf3113b2744bada5cf9",
+    "http": 200
+  }
+]

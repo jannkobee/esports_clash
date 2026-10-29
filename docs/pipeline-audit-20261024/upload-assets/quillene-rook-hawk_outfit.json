@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_cora",
+  "component_id": "hawk_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Masked archer outfit with hawk shoulder fins",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical reconstruction reference for Quillene Rook. Attached illustration is design reference only. ONLY the empty masked archer's blue-ivory outfit with hood, face mask and hawk-shaped shoulder fins, leather armor, trousers and boots. No bow, arrows, quiver, person, hair or skin. Garments are empty and supported invisibly in a neutral symmetrical wide A pose, with empty neck and joint openings. Even neutral studio lighting, crisp physical geometry. Three-quarter view unless rest pose specified. Complete named asset inside central 70 percent of frame, generous clear TRANSPARENT margin on all sides. Genuine transparent background. No floor, cast shadows, glow backdrop, text, frames, labels, logo, unrelated equipment or extra subjects.",
+  "reference_purpose": "reconstruction",
+  "slug": "quillene-rook",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/quillene-rook.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/quillene-rook-hawk_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-12552bf2-2369-4f0f-96c8-342aa6d68dbb.png"
+}

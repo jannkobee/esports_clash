@@ -1,0 +1,56 @@
+{
+  "id": "b8f13722-4e26-4d3b-846d-69a29d35b76b",
+  "archive_sha256": "ee69b53e07452e1026082fc6f548cbf5536c09f52f4dcd67d253ac9e45887a98",
+  "status": "completed",
+  "report_sha256": "1dcd8a731c6bebe06b86072b086d7a871fad31fdd1db60d1dd402994ec13e231",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "error": null,
+  "arap": {
+    "joint": "UpperArmL",
+    "degrees": 90,
+    "eligible_pairs": 31,
+    "seed_vertices": 31,
+    "falloff_vertices": 153,
+    "height_m": 1.0029360055923462,
+    "max_unclamped_delta_m": 0.006232936172675502,
+    "clamp_scale": 0.16090907684713765,
+    "max_added_delta_m": 0.0010029360055923465,
+    "before_intersections": 31,
+    "after_intersections": 31,
+    "top_regions": [
+      {
+        "regions": [
+          "bone_2",
+          "bone_26"
+        ],
+        "intersections": 31
+      }
+    ],
+    "rigid_energy_before": 0.7412098191483701,
+    "rigid_energy_after": 0.701826245042447,
+    "edge_strain_before": 0.4136084087397738,
+    "edge_strain_after": 0.39257255314130013,
+    "seam_spread_m": 0.0,
+    "edge_deformation": {
+      "policy": "deformation-edge-stretch-v1",
+      "passed": true,
+      "finite": true,
+      "edges_checked": 56332,
+      "severely_stretched_edges": 0,
+      "maximum_length_ratio": 4.033889105456021,
+      "largest_extension_to_height": 0.018747231794950622,
+      "limits": {
+        "length_ratio": 4,
+        "extension_to_height": 0.05
+      },
+      "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+    }
+  },
+  "posed_target_artifact": {
+    "sha256": "fb35920f53b5dfe09790bc798a34eb96ff3076d2440d71b0a67862021a0a5457",
+    "bytes": 244824,
+    "vertex_count": 23832,
+    "space": "Blender world; signed primary import correspondence"
+  }
+}

@@ -1,0 +1,93 @@
+# Add last to the existing local/native stack. Keeps its GPU worker intact.
+x-colab-api: &colab-api
+  environment:
+    TRELLIS_WORKER_URL: http://trellis-router:8096
+  volumes:
+    - ./EsportsClash.Api/resources/avatars/trellis2-colab.ipynb:/app/resources/avatars/trellis2-colab.ipynb:ro
+
+services:
+  # Override the dev bridge definition when retaining the original native
+  # trellis-worker service. Updated files and the reviewed patch survive recreation.
+  trellis-worker:
+    image: teamfight-trellis2:pilot
+    build:
+      context: .
+      dockerfile: infrastructure/trellis2/Dockerfile.native
+    command: [sh, -c, "python /opt/trellis/patch_nodes.py --mesh-only && exec python /opt/trellis/control.py"]
+    ports: !reset []
+    environment:
+      TRELLIS_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN:?Missing private worker token}
+      TRELLIS_DATA: /trellis-data
+      TRELLIS_IMAGE_ID: ${TRELLIS_IMAGE_ID:-not-recorded}
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+      OPENBLAS_NUM_THREADS: "2"
+      MALLOC_ARENA_MAX: "2"
+      MALLOC_TRIM_THRESHOLD_: "131072"
+    volumes: !override
+      - ./.local-tools/trellis2/data:/trellis-data
+      - ./infrastructure/trellis2/control.py:/opt/trellis/control.py:ro
+      - ./infrastructure/trellis2/service.py:/opt/trellis/service.py:ro
+      - ./infrastructure/trellis2/diagnose.py:/opt/trellis/diagnose.py:ro
+      - ./infrastructure/trellis2/patch_nodes.py:/opt/trellis/patch_nodes.py:ro
+      - ./infrastructure/trellis2/workflow-v1.json:/opt/trellis/workflow-v1.json:ro
+      - ./infrastructure/trellis2/Dockerfile.native:/opt/trellis/Dockerfile.native:ro
+      - visual-gpu-lease:/gpu-lease
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    mem_limit: 5120m
+    memswap_limit: 5120m
+    cpus: 2
+    pids_limit: 256
+    shm_size: 256m
+    stop_grace_period: 20s
+    healthcheck:
+      test: [CMD, python, -c, "import os,urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8096/operations',headers={'Authorization':'Bearer '+os.environ['TRELLIS_WORKER_TOKEN']}),timeout=8)"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+
+  trellis-router:
+    image: teamfight-trellis-router:local
+    build:
+      context: ./infrastructure/trellis2
+      dockerfile: Dockerfile
+    environment:
+      TRELLIS_DATA: /router-data
+      ASSET_WORKSPACE: /workspace
+      TRELLIS_LOCAL_URL: http://trellis-worker:8096
+      TRELLIS_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN:?Missing private worker token}
+      COLAB_CLI: colab
+      ASSET_COLAB_SESSION: ${ASSET_COLAB_SESSION:-asset-quality-rpc}
+    volumes:
+      - ./infrastructure/trellis2:/app:ro
+      - ./.local-tools/trellis2/router-data:/router-data
+      - ./.local-tools/trellis2/data/output:/router-data/output
+      - ${ASSET_COLAB_CONFIG_DIR:-./.local-tools/colab-cli}:/root/.config/colab-cli
+    ports:
+      - "127.0.0.1:8096:8096"
+    healthcheck:
+      test: [CMD, python3, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8096/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    mem_limit: 384m
+    cpus: 2
+
+  api:
+    <<: *colab-api
+  worker:
+    <<: *colab-api
+  scheduler:
+    <<: *colab-api
+  avatar-queue-worker:
+    <<: *colab-api
+
+volumes:
+  visual-gpu-lease:

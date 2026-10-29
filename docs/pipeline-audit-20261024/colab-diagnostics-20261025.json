@@ -1,0 +1,57 @@
+{
+  "kind": "GPU-and-node-diagnostics-only",
+  "python": "3.12.12",
+  "torch": "2.9.1+cu128",
+  "cuda": "12.8",
+  "numpy": "1.26.4",
+  "gpu": "Tesla T4",
+  "gpu_bfloat16_matmul": true,
+  "nvdiffrast_cuda_rasterize": true,
+  "cumesh_cuda_normals": true,
+  "ovoxel_cuda_roundtrip": true,
+  "fdg_int64_input_direct_and_tiled_cuda_extraction": true,
+  "t4_bounded_sparse_launch_profile": true,
+  "flexgemm_cuda_sparse_convolution": true,
+  "workflow_nodes": [
+    "Trellis2LoadImageWithTransparency_GGUF",
+    "Trellis2PreProcessImage_GGUF",
+    "Trellis2LoadModel_GGUF",
+    "Trellis2MeshWithVoxelGenerator_GGUF",
+    "Trellis2OvoxelExportToGLB_GGUF",
+    "EsportsTrellisExport"
+  ],
+  "node_count": 592,
+  "models": {
+    "ready": true,
+    "quantization": "Q4_K_M",
+    "manifest_sha256": "4cafb4dfc8ed6c14cd3dbc8e644db2fe6e63aabe62dd06e0a3529d846d309e0e"
+  },
+  "resources": {
+    "gpu": "Tesla T4",
+    "gpu_total_mib": 15360,
+    "gpu_used_mib": 153,
+    "gpu_free_mib": 14760,
+    "driver": "580.82.07",
+    "vm_available_mib": 10935.09375,
+    "comfy_tree_rss_mib": 0,
+    "worker_anonymous_mib": 287.8671875,
+    "scope": "Docker Linux VM RAM; sampled whole-device VRAM includes other applications."
+  },
+  "status": "passed",
+  "engine_source_hashes": {
+    "service.py": "f95ded31d8b4448eb41afc8da4f1c9739a1da4832d0c2d5146ce0df1c6a52f68",
+    "diagnose.py": "bf235870639d994f85b580d51b6770a3f83b958b54b7bcaf486925bc64cec675",
+    "export_node.py": "41568ab48506cc5b06da4b494502bd9cae8a89a7b0192986a69b28a3cf6daf91",
+    "workflow-v1.json": "a9b6bffa4adf93c691a464f3110b35b959fa439f10ced4d24f93e1399d8e59ac",
+    "model-pins.json": "cd832d8bc88ddda3d2db2054a8924f0f38d0dd333a064d1fde64b22a897fcf0e",
+    "limits.json": "147c3c140aa30a23fbb3f46f4ef66acd569608eedec859fd8e884f4ddcef89a3",
+    "Dockerfile.native": "d129edd309e57455821d6278d58487530809711342a1ca68c4ede645140dccee",
+    "catalog.json": "1004d9f10c44002fd098c3df03ed86bc0863a573384edf750fd7f9e0aac6c6d7",
+    "reference-index.json": "3941e3a5217b7363ad4bff03dedd4a5d98415680ca51e40bb752ca92f9cb5c23",
+    "patch_nodes.py": "c88141ac0d7ebd5021f0ee5d4f50de63fa7cca78caf7e2a8d78f7263f503c061",
+    "runtime/fdg_vae.py": "600abb902f4ae6330fbff1d4a9d7a7256c6bb97238c09916c79748cbe9e0969d",
+    "runtime/sparse_conv_config.py": "d6d9a0b4c82587ec03c4591c83bb1fde19437edf69b36fbb44c41e3f78a6bfc1"
+  },
+  "engine_image_id": "not-recorded",
+  "engine_environment_id": "sha256:9fe535ca0087fb1df1f7de1cfa0e7d5554320301e046c197a527ac5350a5342f"
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_qiyana",
+  "component_id": "glass_circlet",
+  "category": "accessory",
+  "binding": "independent",
+  "label": "Floating glass-shield circlet",
+  "attachment": "independent floating assembly",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Prismelle Cade. Attached image is design reference only. Only the floating glass-shield circlet: a complete brass halo-like ring supporting spaced faceted iridescent crystal shield shards. No head, crown wearer, person, body, cape or cleaver. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "prismelle-cade",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/prismelle-cade.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/prismelle-cade-glass_circlet.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-c1c9ef19-975a-438b-a727-58db8dd0fcd4.png"
+}

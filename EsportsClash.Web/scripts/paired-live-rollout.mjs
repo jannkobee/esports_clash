@@ -75,6 +75,7 @@ async function episode(label, mode, target) {
     await delay(100);
   }
   await evaluate(`(async () => {
+    localStorage.removeItem('esports-clash-card-memories');
     localStorage.setItem('esports-clash-adaptive-policy', ${JSON.stringify(JSON.stringify(policy))});
     localStorage.removeItem('esports-clash-evaluation-reference-policy');
     sessionStorage.setItem('esports-clash-macro-experiment', '1');

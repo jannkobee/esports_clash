@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_kindra",
+  "component_id": "fen",
+  "category": "companion",
+  "binding": "independent",
+  "label": "Fen dusk-hound",
+  "attachment": "independent companion",
+  "prompt": "Use case: stylized-concept. Isolated physical reconstruction reference for Orin and Fen. Attached illustration is design reference only. ONLY the clean anatomical base of one adult blind horned dusk-hound, neutral symmetrical quadruped rest stance, four straight legs separately visible with air gaps, paws on same plane, closed uninjured eyes and horns preserved, tail clearly separated. Matte neutral gray skin with very short readable fur, no decorative flame fur, long hair, ember effects, harness, blindfold, clothing, rider or human. This is an independent clean rigging-base reference, not the dressed companion. Even neutral studio lighting, crisp physical geometry. Three-quarter view unless rest pose specified. Complete named asset inside central 70 percent of frame, generous clear TRANSPARENT margin on all sides. Genuine transparent background. No floor, cast shadows, glow backdrop, text, frames, labels, logo, unrelated equipment or extra subjects.",
+  "reference_purpose": "reconstruction",
+  "slug": "orin-and-fen",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/orin-and-fen.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/orin-and-fen-fen-v3.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-f4cb5de0-e60e-4172-ad2d-6013d389d6a8.png"
+}

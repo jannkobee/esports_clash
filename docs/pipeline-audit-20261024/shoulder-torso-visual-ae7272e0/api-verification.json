@@ -1,0 +1,37 @@
+{
+    "verification_method": "API state/artifact readback and shared Web controller render",
+    "candidate_id": "7a692c3c-3afb-49f9-ad6e-b4cf4b9ffb62",
+    "visual_review_id": "ae7272e0-6a2f-420c-aecb-2853a50e7c6a",
+    "controller_status": 200,
+    "candidate_sha256": "7babc116f979aab8a291911f4a20c5dc73b3d064c8af492e7440ab21ceba787d",
+    "report_sha256": "eba3b48fc210cff2493a912670a0c9a9c4719f8d517d9eedfbcc62442ad6423e",
+    "bend_playback_sha256": "5cdb9eab96cb6d00492de782c63a954e3b36005d988eed4dc01bab51a548e6ba",
+    "preview_uses_exact_bend_file": true,
+    "assessment_status": "rejected_regression",
+    "assessment_visible": true,
+    "contact_verification": {
+        "id": "0ba81d69-3c9a-4e1c-b3dc-703e998fa143",
+        "source_sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+        "input_report_sha256": "a8c9762a600abed15421a1f7417fd647de9037d453efe10aaee7493863d3b1a6",
+        "verified_vertices": 517,
+        "source_correspondence_verified": true
+    },
+    "non_shoulder_bends_unchanged": true,
+    "regressions": [
+        {
+            "joint": "UpperArmL",
+            "degrees": 90,
+            "delta": 18
+        },
+        {
+            "joint": "UpperArmR",
+            "degrees": 90,
+            "delta": 7
+        }
+    ],
+    "publication_eligible": false,
+    "qualification_complete": false,
+    "preparation_status": "needs_review",
+    "preserved_taper_sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+    "inspector_sha256": "b53cdbbf1a7ee8cae29c18696ad56eb13e07acc2349f6e41d94e8a0adc9ccb02"
+}

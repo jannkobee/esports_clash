@@ -1,0 +1,1311 @@
+{
+  "schemaVersion": 1,
+  "mappingStatus": "provisional: supplied ability manifest; standalone identity manifest missing",
+  "heroes": [
+    {
+      "key": "c_solana",
+      "internalName": "Solana",
+      "legacyId": "Dawnna",
+      "canonicalId": "solenne-vaelor",
+      "displayName": "Solenne Vaelor",
+      "title": "The Sunwall Oath",
+      "role": "protector / angular defense",
+      "assetKey": "solenne-vaelor",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "solenne-vaelor:p",
+          "name": "Earned Daylight"
+        },
+        "S1": {
+          "id": "solenne-vaelor:s1",
+          "name": "Sun Dial"
+        },
+        "S2": {
+          "id": "solenne-vaelor:s2",
+          "name": "Pivot Order"
+        },
+        "R": {
+          "id": "solenne-vaelor:r",
+          "name": "Noon Divide"
+        }
+      }
+    },
+    {
+      "key": "c_astra",
+      "internalName": "Astra",
+      "legacyId": "Aiselle",
+      "canonicalId": "ivera-frostwhistle",
+      "displayName": "Ivera Frostwhistle",
+      "title": "The Frost Resonant",
+      "role": "marksman / echo geometry",
+      "assetKey": "ivera-frostwhistle",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "ivera-frostwhistle:p",
+          "name": "Overtone"
+        },
+        "S1": {
+          "id": "ivera-frostwhistle:s1",
+          "name": "Tuning Shot"
+        },
+        "S2": {
+          "id": "ivera-frostwhistle:s2",
+          "name": "Singing Ice"
+        },
+        "R": {
+          "id": "ivera-frostwhistle:r",
+          "name": "Glass Rapture"
+        }
+      }
+    },
+    {
+      "key": "c_kyumi",
+      "internalName": "Kyumi",
+      "legacyId": "Vixelle",
+      "canonicalId": "mireth-lune",
+      "displayName": "Mireth Lune",
+      "title": "The Witness of False Roads",
+      "role": "route deception mage",
+      "assetKey": "mireth-lune",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "mireth-lune:p",
+          "name": "Witness Marks"
+        },
+        "S1": {
+          "id": "mireth-lune:s1",
+          "name": "Counterpath"
+        },
+        "S2": {
+          "id": "mireth-lune:s2",
+          "name": "False Exit"
+        },
+        "R": {
+          "id": "mireth-lune:r",
+          "name": "Map of Might-Have-Beens"
+        }
+      }
+    },
+    {
+      "key": "c_buck",
+      "internalName": "Buck",
+      "legacyId": "Gritlock",
+      "canonicalId": "bramm-coil",
+      "displayName": "Bramm Coil",
+      "title": "The Breach Marshal",
+      "role": "anti-cover artillery / knockline specialist",
+      "assetKey": "bramm-coil",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "bramm-coil:p",
+          "name": "Structural Survey"
+        },
+        "S1": {
+          "id": "bramm-coil:s1",
+          "name": "Anchor Ram"
+        },
+        "S2": {
+          "id": "bramm-coil:s2",
+          "name": "Brace Exchange"
+        },
+        "R": {
+          "id": "bramm-coil:r",
+          "name": "Tunnel Cut"
+        }
+      }
+    },
+    {
+      "key": "c_valkira",
+      "internalName": "Valkira",
+      "legacyId": "Bessara",
+      "canonicalId": "kael-vespera",
+      "displayName": "Kael Vespera",
+      "title": "The Oath Ledger",
+      "role": "anti-save fighter / wager duelist",
+      "assetKey": "kael-vespera",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "kael-vespera:p",
+          "name": "Outstanding Balance"
+        },
+        "S1": {
+          "id": "kael-vespera:s1",
+          "name": "Collection Line"
+        },
+        "S2": {
+          "id": "kael-vespera:s2",
+          "name": "Witness Required"
+        },
+        "R": {
+          "id": "kael-vespera:r",
+          "name": "Terms of Mercy"
+        }
+      }
+    },
+    {
+      "key": "c_kage",
+      "internalName": "Kage",
+      "legacyId": "Vanta",
+      "canonicalId": "nyxara-vale",
+      "displayName": "Nyxara Vale",
+      "title": "The Silhouette Thief",
+      "role": "vision-pressure assassin",
+      "assetKey": "nyxara-vale",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "nyxara-vale:p",
+          "name": "Blind Side"
+        },
+        "S1": {
+          "id": "nyxara-vale:s1",
+          "name": "Shadow Pin"
+        },
+        "S2": {
+          "id": "nyxara-vale:s2",
+          "name": "Light Theft"
+        },
+        "R": {
+          "id": "nyxara-vale:r",
+          "name": "Total Eclipse, Partial Truth"
+        }
+      }
+    },
+    {
+      "key": "c_kazemaru",
+      "internalName": "Kazemaru",
+      "legacyId": "Galejandro",
+      "canonicalId": "serrin-galecrest",
+      "displayName": "Serrin Galecrest",
+      "title": "The Crosswind Cartographer",
+      "role": "projectile-lane engineer / duelist",
+      "assetKey": "serrin-galecrest",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "serrin-galecrest:p",
+          "name": "Weather Reading"
+        },
+        "S1": {
+          "id": "serrin-galecrest:s1",
+          "name": "Compass Slash"
+        },
+        "S2": {
+          "id": "serrin-galecrest:s2",
+          "name": "Tack Change"
+        },
+        "R": {
+          "id": "serrin-galecrest:r",
+          "name": "Eye of the Crosswind"
+        }
+      }
+    },
+    {
+      "key": "c_kindra",
+      "internalName": "Kindra",
+      "legacyId": "Lambent",
+      "canonicalId": "orin-and-fen",
+      "displayName": "Orin and Fen",
+      "title": "Keepers of the Last Lantern",
+      "role": "scouting marksman / extraction support",
+      "assetKey": "orin-and-fen",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "orin-and-fen:p",
+          "name": "Scent of Trouble"
+        },
+        "S1": {
+          "id": "orin-and-fen:s1",
+          "name": "Track Lantern"
+        },
+        "S2": {
+          "id": "orin-and-fen:s2",
+          "name": "Fen, Guard"
+        },
+        "R": {
+          "id": "orin-and-fen:r",
+          "name": "Road Home"
+        }
+      }
+    },
+    {
+      "key": "c_cora",
+      "internalName": "Cora",
+      "legacyId": "Plumeira",
+      "canonicalId": "quillene-rook",
+      "displayName": "Quillene Rook",
+      "title": "The Sky Loom Fletcher",
+      "role": "ranged interception carry",
+      "assetKey": "quillene-rook",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "quillene-rook:p",
+          "name": "Airborne Fletching"
+        },
+        "S1": {
+          "id": "quillene-rook:s1",
+          "name": "Tetherbolt"
+        },
+        "S2": {
+          "id": "quillene-rook:s2",
+          "name": "Crosswind Stitch"
+        },
+        "R": {
+          "id": "quillene-rook:r",
+          "name": "Harrier Net"
+        }
+      }
+    },
+    {
+      "key": "c_renn",
+      "internalName": "Renn",
+      "legacyId": "Gildan",
+      "canonicalId": "aurelio-vane",
+      "displayName": "Aurelio Vane",
+      "title": "The Masquerade Marshal",
+      "role": "formation choreographer / rescue",
+      "assetKey": "aurelio-vane",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "aurelio-vane:p",
+          "name": "Perfect Partner"
+        },
+        "S1": {
+          "id": "aurelio-vane:s1",
+          "name": "Mark the Floor"
+        },
+        "S2": {
+          "id": "aurelio-vane:s2",
+          "name": "Change Partners"
+        },
+        "R": {
+          "id": "aurelio-vane:r",
+          "name": "The Grand Procession"
+        }
+      }
+    },
+    {
+      "key": "c_sylla",
+      "internalName": "Sylla",
+      "legacyId": "Sylvan Solo",
+      "canonicalId": "droven-bearmantle",
+      "displayName": "Droven Bearmantle",
+      "title": "The Keeper of the Second Heart",
+      "role": "two-body defender / attrition",
+      "assetKey": "droven-bearmantle",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "droven-bearmantle:p",
+          "name": "Shared Heartbeat"
+        },
+        "S1": {
+          "id": "droven-bearmantle:s1",
+          "name": "Hark, Settle"
+        },
+        "S2": {
+          "id": "droven-bearmantle:s2",
+          "name": "Shelter Under Shell"
+        },
+        "R": {
+          "id": "droven-bearmantle:r",
+          "name": "Carry the Line"
+        }
+      }
+    },
+    {
+      "key": "c_tequoia",
+      "internalName": "Tequoia",
+      "legacyId": "Fernanda",
+      "canonicalId": "thalara-rootwright",
+      "displayName": "Thalara Rootwright",
+      "title": "The Mycelial Architect",
+      "role": "ground economy / area control",
+      "assetKey": "thalara-rootwright",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "thalara-rootwright:p",
+          "name": "Spores in Soil"
+        },
+        "S1": {
+          "id": "thalara-rootwright:s1",
+          "name": "Root Survey"
+        },
+        "S2": {
+          "id": "thalara-rootwright:s2",
+          "name": "Transplant"
+        },
+        "R": {
+          "id": "thalara-rootwright:r",
+          "name": "The Living Understory"
+        }
+      }
+    },
+    {
+      "key": "c_zal",
+      "internalName": "Zal",
+      "legacyId": "Glimmerick",
+      "canonicalId": "vesper-loom",
+      "displayName": "Vesper Loom",
+      "title": "The Gossamer Chirurgeon",
+      "role": "triage support / risk redistribution",
+      "assetKey": "vesper-loom",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "vesper-loom:p",
+          "name": "Recorded Injury"
+        },
+        "S1": {
+          "id": "vesper-loom:s1",
+          "name": "Suture Tag"
+        },
+        "S2": {
+          "id": "vesper-loom:s2",
+          "name": "Stitch Circuit"
+        },
+        "R": {
+          "id": "vesper-loom:r",
+          "name": "Emergency Triage"
+        }
+      }
+    },
+    {
+      "key": "c_xin",
+      "internalName": "Xin",
+      "legacyId": "Cindergent",
+      "canonicalId": "rux-emberchain",
+      "displayName": "Rux Emberchain",
+      "title": "The Cinder Postmaster",
+      "role": "timed-route brawler",
+      "assetKey": "rux-emberchain",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "rux-emberchain:p",
+          "name": "Return Address"
+        },
+        "S1": {
+          "id": "rux-emberchain:s1",
+          "name": "Express Mail"
+        },
+        "S2": {
+          "id": "rux-emberchain:s2",
+          "name": "Courier's Crossing"
+        },
+        "R": {
+          "id": "rux-emberchain:r",
+          "name": "Dead Letter Office"
+        }
+      }
+    },
+    {
+      "key": "c_raijin",
+      "internalName": "Raijin",
+      "legacyId": "Voltaire",
+      "canonicalId": "teslan-veyr",
+      "displayName": "Teslan Veyr",
+      "title": "The Storm Circuit",
+      "role": "electrical trap architect",
+      "assetKey": "teslan-veyr",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "teslan-veyr:p",
+          "name": "Closed Circuit"
+        },
+        "S1": {
+          "id": "teslan-veyr:s1",
+          "name": "Drive Rod"
+        },
+        "S2": {
+          "id": "teslan-veyr:s2",
+          "name": "Reverse Current"
+        },
+        "R": {
+          "id": "teslan-veyr:r",
+          "name": "Brownout Protocol"
+        }
+      }
+    },
+    {
+      "key": "c_kaolin",
+      "internalName": "Kaolin",
+      "legacyId": "TerraByte",
+      "canonicalId": "joruun-jadecoil",
+      "displayName": "Joruun Jadecoil",
+      "title": "The Hinge Colossus",
+      "role": "movable cover architect",
+      "assetKey": "joruun-jadecoil",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "joruun-jadecoil:p",
+          "name": "Counterweight"
+        },
+        "S1": {
+          "id": "joruun-jadecoil:s1",
+          "name": "Raise Slab"
+        },
+        "S2": {
+          "id": "joruun-jadecoil:s2",
+          "name": "Hinge Swing"
+        },
+        "R": {
+          "id": "joruun-jadecoil:r",
+          "name": "The Great Door"
+        }
+      }
+    },
+    {
+      "key": "c_inai",
+      "internalName": "Inai",
+      "legacyId": "Nulliver",
+      "canonicalId": "astrax-mire",
+      "displayName": "Astrax Mire",
+      "title": "The Distance Pilgrim",
+      "role": "anti-mobility mage / movement tax",
+      "assetKey": "astrax-mire",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "astrax-mire:p",
+          "name": "Footfall Record"
+        },
+        "S1": {
+          "id": "astrax-mire:s1",
+          "name": "Measure Out"
+        },
+        "S2": {
+          "id": "astrax-mire:s2",
+          "name": "Mile Marker"
+        },
+        "R": {
+          "id": "astrax-mire:r",
+          "name": "Reckoning of Roads"
+        }
+      }
+    },
+    {
+      "key": "c_qiyana",
+      "internalName": "Veyara",
+      "legacyId": "Crownfetti",
+      "canonicalId": "prismelle-cade",
+      "displayName": "Prismelle Cade",
+      "title": "The Shard Regent",
+      "role": "reflective blade defender",
+      "assetKey": "prismelle-cade",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "prismelle-cade:p",
+          "name": "Royal Refraction"
+        },
+        "S1": {
+          "id": "prismelle-cade:s1",
+          "name": "Facet Screen"
+        },
+        "S2": {
+          "id": "prismelle-cade:s2",
+          "name": "Claim the Angle"
+        },
+        "R": {
+          "id": "prismelle-cade:r",
+          "name": "Coronation in Glass"
+        }
+      }
+    },
+    {
+      "key": "c_locke",
+      "internalName": "Cinderbloom",
+      "legacyId": "Sootcase",
+      "canonicalId": "ashkar-veilhand",
+      "displayName": "Ashkar Veilhand",
+      "title": "The Penitent Ember",
+      "role": "retribution diver / enemy-aggression punisher",
+      "assetKey": "ashkar-veilhand",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "ashkar-veilhand:p",
+          "name": "Witness the Hurt"
+        },
+        "S1": {
+          "id": "ashkar-veilhand:s1",
+          "name": "Ember Brand"
+        },
+        "S2": {
+          "id": "ashkar-veilhand:s2",
+          "name": "Ash Intercession"
+        },
+        "R": {
+          "id": "ashkar-veilhand:r",
+          "name": "Public Penance"
+        }
+      }
+    },
+    {
+      "key": "c_senna",
+      "internalName": "Solenne",
+      "legacyId": "Sennova",
+      "canonicalId": "maris-solquill",
+      "displayName": "Maris Solquill",
+      "title": "The Reliquary Surveyor",
+      "role": "route support marksman",
+      "assetKey": "maris-solquill",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "maris-solquill:p",
+          "name": "Borrowed Sunlight"
+        },
+        "S1": {
+          "id": "maris-solquill:s1",
+          "name": "Waypoint Lantern"
+        },
+        "S2": {
+          "id": "maris-solquill:s2",
+          "name": "Twilight Survey"
+        },
+        "R": {
+          "id": "maris-solquill:r",
+          "name": "The People's Atlas"
+        }
+      }
+    },
+    {
+      "key": "c_largo",
+      "internalName": "Croakwell",
+      "legacyId": "Basso Croak",
+      "canonicalId": "odo-bogsong",
+      "displayName": "Odo Bogsong",
+      "title": "The Reed Timekeeper",
+      "role": "tempo support / telegraph manipulator",
+      "assetKey": "odo-bogsong",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "odo-bogsong:p",
+          "name": "The Beat Goes On"
+        },
+        "S1": {
+          "id": "odo-bogsong:s1",
+          "name": "Offbeat Drum"
+        },
+        "S2": {
+          "id": "odo-bogsong:s2",
+          "name": "Syncopation"
+        },
+        "R": {
+          "id": "odo-bogsong:r",
+          "name": "The Long Measure"
+        }
+      }
+    },
+    {
+      "key": "c_shadowfiend",
+      "internalName": "Soulscourge",
+      "legacyId": "Razeberry",
+      "canonicalId": "mourn-ashwake",
+      "displayName": "Mourn Ashwake",
+      "title": "The Furnace Mourner",
+      "role": "reactive inferno mage",
+      "assetKey": "mourn-ashwake",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "mourn-ashwake:p",
+          "name": "Ash Residue"
+        },
+        "S1": {
+          "id": "mourn-ashwake:s1",
+          "name": "Ember Tongs"
+        },
+        "S2": {
+          "id": "mourn-ashwake:s2",
+          "name": "Draft Open"
+        },
+        "R": {
+          "id": "mourn-ashwake:r",
+          "name": "Second Combustion"
+        }
+      }
+    },
+    {
+      "key": "c_earthshaker",
+      "internalName": "Stonewake",
+      "legacyId": "Quakewell",
+      "canonicalId": "dolm-runesunder",
+      "displayName": "Dolm Runesunder",
+      "title": "The Seismic Surveyor",
+      "role": "turning-path punisher / terrain tilt",
+      "assetKey": "dolm-runesunder",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "dolm-runesunder:p",
+          "name": "Strain Lines"
+        },
+        "S1": {
+          "id": "dolm-runesunder:s1",
+          "name": "Tilt Plate"
+        },
+        "S2": {
+          "id": "dolm-runesunder:s2",
+          "name": "Pendulum Strike"
+        },
+        "R": {
+          "id": "dolm-runesunder:r",
+          "name": "Continental Drift"
+        }
+      }
+    },
+    {
+      "key": "c_mirehook",
+      "internalName": "Mirehook",
+      "legacyId": "Rotisserie",
+      "canonicalId": "garruk-mawsuture",
+      "displayName": "Garruk Mawsuture",
+      "title": "The Jaw Foundry",
+      "role": "trap engineer / containment tank",
+      "assetKey": "garruk-mawsuture",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "garruk-mawsuture:p",
+          "name": "Scrap Appetite"
+        },
+        "S1": {
+          "id": "garruk-mawsuture:s1",
+          "name": "Set Jaws"
+        },
+        "S2": {
+          "id": "garruk-mawsuture:s2",
+          "name": "Forge Drag"
+        },
+        "R": {
+          "id": "garruk-mawsuture:r",
+          "name": "Factory Floor"
+        }
+      }
+    },
+    {
+      "key": "c_nullweaver",
+      "internalName": "Nullweaver",
+      "legacyId": "Midnight Equation",
+      "canonicalId": "vesper-nullcode",
+      "displayName": "Vesper Nullcode",
+      "title": "The Inertia Heretic",
+      "role": "mobility-rewriting control mage",
+      "assetKey": "vesper-nullcode",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "vesper-nullcode:p",
+          "name": "Unspent Momentum"
+        },
+        "S1": {
+          "id": "vesper-nullcode:s1",
+          "name": "Tangent Fault"
+        },
+        "S2": {
+          "id": "vesper-nullcode:s2",
+          "name": "Mass Argument"
+        },
+        "R": {
+          "id": "vesper-nullcode:r",
+          "name": "Borrowed Orbit"
+        }
+      }
+    },
+    {
+      "key": "c_voltgrip",
+      "internalName": "Voltgrip",
+      "legacyId": "Plugsy",
+      "canonicalId": "coiljack-ampfist",
+      "displayName": "Coiljack Ampfist",
+      "title": "The Livewire Turnstile",
+      "role": "anti-dive engineer",
+      "assetKey": "coiljack-ampfist",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "coiljack-ampfist:p",
+          "name": "Impact Audit"
+        },
+        "S1": {
+          "id": "coiljack-ampfist:s1",
+          "name": "Turnstile Bar"
+        },
+        "S2": {
+          "id": "coiljack-ampfist:s2",
+          "name": "Earth Clip"
+        },
+        "R": {
+          "id": "coiljack-ampfist:r",
+          "name": "Inspection Grid"
+        }
+      }
+    },
+    {
+      "key": "c_aetherbolt",
+      "internalName": "Aetherbolt",
+      "legacyId": "Relic Rick",
+      "canonicalId": "talan-slipshot",
+      "displayName": "Talan Slipshot",
+      "title": "The Archive Ballistician",
+      "role": "trick-shot ranged carry",
+      "assetKey": "talan-slipshot",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "talan-slipshot:p",
+          "name": "Proof Mark"
+        },
+        "S1": {
+          "id": "talan-slipshot:s1",
+          "name": "Set Mirror"
+        },
+        "S2": {
+          "id": "talan-slipshot:s2",
+          "name": "Evidence Shot"
+        },
+        "R": {
+          "id": "talan-slipshot:r",
+          "name": "Closed Case"
+        }
+      }
+    },
+    {
+      "key": "c_corsara",
+      "internalName": "Corsara",
+      "legacyId": "Bounty Belle",
+      "canonicalId": "calixa-broadwake",
+      "displayName": "Calixa Broadwake",
+      "title": "The Tidebound Privateer",
+      "role": "mobile broadside area carry",
+      "assetKey": "calixa-broadwake",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "calixa-broadwake:p",
+          "name": "Hold the Weather"
+        },
+        "S1": {
+          "id": "calixa-broadwake:s1",
+          "name": "Signal Buoy"
+        },
+        "S2": {
+          "id": "calixa-broadwake:s2",
+          "name": "Tack Across"
+        },
+        "R": {
+          "id": "calixa-broadwake:r",
+          "name": "Port Authority"
+        }
+      }
+    },
+    {
+      "key": "c_brewmaw",
+      "internalName": "Brewmaw",
+      "legacyId": "Kegory",
+      "canonicalId": "brohm-caskfall",
+      "displayName": "Brohm Caskfall",
+      "title": "The Fermentation King",
+      "role": "terrain-flow tank / pressure shaper",
+      "assetKey": "brohm-caskfall",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "brohm-caskfall:p",
+          "name": "Pressure Reserve"
+        },
+        "S1": {
+          "id": "brohm-caskfall:s1",
+          "name": "Lay the Head"
+        },
+        "S2": {
+          "id": "brohm-caskfall:s2",
+          "name": "Repressurize"
+        },
+        "R": {
+          "id": "brohm-caskfall:r",
+          "name": "Cellar Breach"
+        }
+      }
+    },
+    {
+      "key": "c_wraithhook",
+      "internalName": "Wraithhook",
+      "legacyId": "Hooklyn",
+      "canonicalId": "mora-fenhook",
+      "displayName": "Mora Fenhook",
+      "title": "The Lantern Ferrier",
+      "role": "tactical extraction support",
+      "assetKey": "mora-fenhook",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "mora-fenhook:p",
+          "name": "Crossing Fees"
+        },
+        "S1": {
+          "id": "mora-fenhook:s1",
+          "name": "Mooring Post"
+        },
+        "S2": {
+          "id": "mora-fenhook:s2",
+          "name": "Departing Bell"
+        },
+        "R": {
+          "id": "mora-fenhook:r",
+          "name": "The Last Crossing"
+        }
+      }
+    },
+    {
+      "key": "c_invoker",
+      "internalName": "Kaelen",
+      "legacyId": "Arsenaldo",
+      "canonicalId": "mirelle-vane",
+      "displayName": "Mirelle Vane",
+      "title": "The Atelier Prodigy",
+      "role": "geometry-based tactical mage with ten authored fabric patterns",
+      "assetKey": "mirelle-vane",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "mirelle-vane:p",
+          "name": "Pattern Memory"
+        },
+        "S1": {
+          "id": "mirelle-vane:s1",
+          "name": "Pin the Hem"
+        },
+        "S2": {
+          "id": "mirelle-vane:s2",
+          "name": "Recut"
+        },
+        "R": {
+          "id": "mirelle-vane:r",
+          "name": "Pattern Book"
+        }
+      }
+    },
+    {
+      "key": "c_hwei",
+      "internalName": "Hweilin",
+      "legacyId": "Inkognito",
+      "canonicalId": "maelis-chromabloom",
+      "displayName": "Maelis Chromabloom",
+      "title": "The Conservationist of Ruin",
+      "role": "mutable canvas terrain mage",
+      "assetKey": "maelis-chromabloom",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "maelis-chromabloom:p",
+          "name": "Surface Memory"
+        },
+        "S1": {
+          "id": "maelis-chromabloom:s1",
+          "name": "Unroll the Canvas"
+        },
+        "S2": {
+          "id": "maelis-chromabloom:s2",
+          "name": "Restore the Missing"
+        },
+        "R": {
+          "id": "maelis-chromabloom:r",
+          "name": "Private Exhibition"
+        }
+      }
+    },
+    {
+      "key": "c_jayce",
+      "internalName": "Jaxon",
+      "legacyId": "Hexley",
+      "canonicalId": "axiom-rail",
+      "displayName": "Axiom Rail",
+      "title": "The Scrapline Engineer",
+      "role": "deployable rail-gunner / engineering carry",
+      "assetKey": "axiom-rail",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "axiom-rail:p",
+          "name": "Gauge Check"
+        },
+        "S1": {
+          "id": "axiom-rail:s1",
+          "name": "Lay Track"
+        },
+        "S2": {
+          "id": "axiom-rail:s2",
+          "name": "Switch Engine"
+        },
+        "R": {
+          "id": "axiom-rail:r",
+          "name": "Terminal Delivery"
+        }
+      }
+    },
+    {
+      "key": "c_vi",
+      "internalName": "Valerie",
+      "legacyId": "Knuckleberry",
+      "canonicalId": "brakka-fenn",
+      "displayName": "Brakka Fenn",
+      "title": "The Civic Enforcer",
+      "role": "anti-aggression brawler / custody control",
+      "assetKey": "brakka-fenn",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "brakka-fenn:p",
+          "name": "Repeat Offender"
+        },
+        "S1": {
+          "id": "brakka-fenn:s1",
+          "name": "File Complaint"
+        },
+        "S2": {
+          "id": "brakka-fenn:s2",
+          "name": "Right of Way"
+        },
+        "R": {
+          "id": "brakka-fenn:r",
+          "name": "Writ Served"
+        }
+      }
+    },
+    {
+      "key": "c_jinx",
+      "internalName": "Jinxy",
+      "legacyId": "Boomie",
+      "canonicalId": "pippa-fuseburst",
+      "displayName": "Pippa Fuseburst",
+      "title": "The Firework Stagehand",
+      "role": "explosive showrunner / wave-clear carry",
+      "assetKey": "pippa-fuseburst",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "pippa-fuseburst:p",
+          "name": "Cue Card"
+        },
+        "S1": {
+          "id": "pippa-fuseburst:s1",
+          "name": "Rack and Spark"
+        },
+        "S2": {
+          "id": "pippa-fuseburst:s2",
+          "name": "Move the Spotlight"
+        },
+        "R": {
+          "id": "pippa-fuseburst:r",
+          "name": "Opening Night"
+        }
+      }
+    },
+    {
+      "key": "c_puck",
+      "internalName": "Paxi",
+      "legacyId": "Fizzlewing",
+      "canonicalId": "lulla-faespring",
+      "displayName": "Lulla Faespring",
+      "title": "The Keeper of Unfinished Dreams",
+      "role": "spell-recovery controller / anti-combo mage",
+      "assetKey": "lulla-faespring",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "lulla-faespring:p",
+          "name": "Drowse Ledger"
+        },
+        "S1": {
+          "id": "lulla-faespring:s1",
+          "name": "Hang the Chime"
+        },
+        "S2": {
+          "id": "lulla-faespring:s2",
+          "name": "Borrowed Yawn"
+        },
+        "R": {
+          "id": "lulla-faespring:r",
+          "name": "Intermission Theater"
+        }
+      }
+    },
+    {
+      "key": "c_batrider",
+      "internalName": "Batrix",
+      "legacyId": "Wickety",
+      "canonicalId": "bryx-emberkite",
+      "displayName": "Bryx Emberkite",
+      "title": "The Thermal Sailor",
+      "role": "zone mobility / current shaping",
+      "assetKey": "bryx-emberkite",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "bryx-emberkite:p",
+          "name": "Read the Updraft"
+        },
+        "S1": {
+          "id": "bryx-emberkite:s1",
+          "name": "Plant Thermal"
+        },
+        "S2": {
+          "id": "bryx-emberkite:s2",
+          "name": "Trim Sail"
+        },
+        "R": {
+          "id": "bryx-emberkite:r",
+          "name": "Thermocline Crossing"
+        }
+      }
+    },
+    {
+      "key": "c_bristleback",
+      "internalName": "Quillback",
+      "legacyId": "Hedgehoggin",
+      "canonicalId": "murdle-ridgehide",
+      "displayName": "Murdle Ridgehide",
+      "title": "The Living Palisade",
+      "role": "mobile fortification tank",
+      "assetKey": "murdle-ridgehide",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "murdle-ridgehide:p",
+          "name": "Plate Accounting"
+        },
+        "S1": {
+          "id": "murdle-ridgehide:s1",
+          "name": "Shed a Wall"
+        },
+        "S2": {
+          "id": "murdle-ridgehide:s2",
+          "name": "Recall Shell"
+        },
+        "R": {
+          "id": "murdle-ridgehide:r",
+          "name": "Fortress Migration"
+        }
+      }
+    },
+    {
+      "key": "c_io",
+      "internalName": "Aetheris",
+      "legacyId": "Orbiton",
+      "canonicalId": "nemea-halolink",
+      "displayName": "Nemea Halolink",
+      "title": "The Choir Conductor",
+      "role": "spacing / synchronized casting support",
+      "assetKey": "nemea-halolink",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "nemea-halolink:p",
+          "name": "Audible Interval"
+        },
+        "S1": {
+          "id": "nemea-halolink:s1",
+          "name": "First Note"
+        },
+        "S2": {
+          "id": "nemea-halolink:s2",
+          "name": "Second Note"
+        },
+        "R": {
+          "id": "nemea-halolink:r",
+          "name": "Chorus Arrival"
+        }
+      }
+    },
+    {
+      "key": "c_lulu",
+      "internalName": "Faelith",
+      "legacyId": "Pixabelle",
+      "canonicalId": "thimble-briarwish",
+      "displayName": "Thimble Briarwish",
+      "title": "The Walking Gardener",
+      "role": "portable cover / botanical support",
+      "assetKey": "thimble-briarwish",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "thimble-briarwish:p",
+          "name": "Seedbank"
+        },
+        "S1": {
+          "id": "thimble-briarwish:s1",
+          "name": "Plant Shelter"
+        },
+        "S2": {
+          "id": "thimble-briarwish:s2",
+          "name": "Wheelbarrow Walk"
+        },
+        "R": {
+          "id": "thimble-briarwish:r",
+          "name": "Traveling Orchard"
+        }
+      }
+    },
+    {
+      "key": "c_silencer",
+      "internalName": "Oathmute",
+      "legacyId": "Muffleton",
+      "canonicalId": "sevrin-inkseal",
+      "displayName": "Sevrin Inkseal",
+      "title": "The Magistrate of Repetition",
+      "role": "anti-pattern controller / decision tax",
+      "assetKey": "sevrin-inkseal",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "sevrin-inkseal:p",
+          "name": "Case Law"
+        },
+        "S1": {
+          "id": "sevrin-inkseal:s1",
+          "name": "Mark Jurisdiction"
+        },
+        "S2": {
+          "id": "sevrin-inkseal:s2",
+          "name": "Appeal Granted"
+        },
+        "R": {
+          "id": "sevrin-inkseal:r",
+          "name": "Precedent Review"
+        }
+      }
+    },
+    {
+      "key": "c_wukong_lol",
+      "internalName": "Cloudtail",
+      "legacyId": "Stafford",
+      "canonicalId": "koro-cloudtail",
+      "displayName": "Koro Cloudtail",
+      "title": "The Aerial Polewright",
+      "role": "agile route fighter / temporary team mobility",
+      "assetKey": "koro-cloudtail",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "koro-cloudtail:p",
+          "name": "Measured Landing"
+        },
+        "S1": {
+          "id": "koro-cloudtail:s1",
+          "name": "Plant Vault"
+        },
+        "S2": {
+          "id": "koro-cloudtail:s2",
+          "name": "Pole Transfer"
+        },
+        "R": {
+          "id": "koro-cloudtail:r",
+          "name": "Scaffold Crossing"
+        }
+      }
+    },
+    {
+      "key": "c_monkeyking_dota",
+      "internalName": "Stonebranch",
+      "legacyId": "Primate Minister",
+      "canonicalId": "bram-stonebranch",
+      "displayName": "Bram Stonebranch",
+      "title": "The Canopy Regent",
+      "role": "canopy guardian / overhead protection",
+      "assetKey": "bram-stonebranch",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "bram-stonebranch:p",
+          "name": "Old Growth"
+        },
+        "S1": {
+          "id": "bram-stonebranch:s1",
+          "name": "Root Column"
+        },
+        "S2": {
+          "id": "bram-stonebranch:s2",
+          "name": "Leaf Intercept"
+        },
+        "R": {
+          "id": "bram-stonebranch:r",
+          "name": "Kingdom of Shade"
+        }
+      }
+    },
+    {
+      "key": "c_stepstone",
+      "internalName": "Stepstone",
+      "legacyId": "Kickswitch",
+      "canonicalId": "toma-bellbreak",
+      "displayName": "Toma Bellbreak",
+      "title": "The Thirteenth Bell",
+      "role": "cast-window counterfighter",
+      "assetKey": "toma-bellbreak",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "toma-bellbreak:p",
+          "name": "Listen for the Stroke"
+        },
+        "S1": {
+          "id": "toma-bellbreak:s1",
+          "name": "Open Palm"
+        },
+        "S2": {
+          "id": "toma-bellbreak:s2",
+          "name": "Return Stroke"
+        },
+        "R": {
+          "id": "toma-bellbreak:r",
+          "name": "Thirteenth Bell"
+        }
+      }
+    },
+    {
+      "key": "c_skybreaker",
+      "internalName": "Skybreaker",
+      "legacyId": "Propella",
+      "canonicalId": "ravelle-skyrake",
+      "displayName": "Ravelle Skyrake",
+      "title": "The Airspace Duchess",
+      "role": "airborne surveillance / conditional bombardment",
+      "assetKey": "ravelle-skyrake",
+      "productionAssetStatus": "not started",
+      "abilities": {
+        "P": {
+          "id": "ravelle-skyrake:p",
+          "name": "Surveyed Grid"
+        },
+        "S1": {
+          "id": "ravelle-skyrake:s1",
+          "name": "Spotting Flare"
+        },
+        "S2": {
+          "id": "ravelle-skyrake:s2",
+          "name": "Reposition Skiff"
+        },
+        "R": {
+          "id": "ravelle-skyrake:r",
+          "name": "Designated Airspace"
+        }
+      }
+    }
+  ]
+}

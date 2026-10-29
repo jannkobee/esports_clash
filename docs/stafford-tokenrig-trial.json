@@ -1,0 +1,92 @@
+{
+  "status": "cloud_rig_trial_succeeded_combat_visual_review_failed",
+  "provider": "tokenrig",
+  "production_provider_deployed": false,
+  "publication_eligible": false,
+  "source_generation_id": "c0c86ecb-ee38-4ca4-8325-406a4e39e83a",
+  "source_sha256": "2022cf8b1d1a8cdee66f84a514f921d451b693e25fa51e59b85499eefc3196ee",
+  "seed": 25001,
+  "cloud": {
+    "session": "asset-quality",
+    "runtime": "existing Tesla T4; no new runtime allocated",
+    "profile": "tokenrig-t4-fp32-sdpa-trial-v1",
+    "inference_supervisor_seconds": 99.00861835479736,
+    "runner_seconds_after_imports": 64.80361433500002,
+    "peak_torch_allocated_gpu_mib": 4499.466796875,
+    "published_vram_minimum_gb": 14,
+    "memory_limit_note": "Single measured mesh/settings result, not a general memory guarantee."
+  },
+  "raw_rig": {
+    "artifact_sha256": "26bd2f5d7322561bcdf27817f699422248e5c8181987c958a569d8324ca27dab",
+    "bytes": 4423320,
+    "triangles": 39865,
+    "joints": 34,
+    "weights": [
+      {
+        "mesh": "geometry_0",
+        "vertices": 37205,
+        "max_influences": 4,
+        "unweighted": 0,
+        "max_normalization_error": 1.4748366083949804e-07,
+        "finite_nonnegative": true
+      }
+    ],
+    "humanoid_map_accepted": true,
+    "humanoid_map_confidence": 0.943,
+    "gltf_errors": 0,
+    "gltf_warnings": 1,
+    "rendered_views": [
+      "rest-front",
+      "rest-side",
+      "rest-rear",
+      "rest-perspective",
+      "stress-front",
+      "stress-perspective"
+    ],
+    "visual_review": "No obvious major limb collapse or tail spikes in inspected rest and controlled elbow/knee stress poses. Limited stress-pose review, not combat qualification."
+  },
+  "combat_trial": {
+    "worker_folder": "/avatar-data/ebe1d269-1ab8-4caf-a333-ad2dd974057c",
+    "api_preparation_id": null,
+    "algorithm": "Existing repair/retarget algorithm with provider labels/proof filenames substituted in memory; deployed source unchanged",
+    "artifact_sha256": "856acbcd5c7a58c2a246e997336934f23770408aa5a3af4daa77d940ca87cda9",
+    "clips": [
+      "Attack",
+      "Cast",
+      "Death",
+      "Hit",
+      "Idle",
+      "Run",
+      "Strafe",
+      "TurnLeft",
+      "TurnRight",
+      "Walk"
+    ],
+    "gltf_errors": 0,
+    "browser_technical_pass": true,
+    "visual_accepted": false,
+    "reasons": [
+      "Both arms fold into the torso in actual Idle and Attack previews; substantial clothing deformation remains."
+    ],
+    "interpretation": "TokenRig can generate a usable raw candidate on this T4. The shared post-rig pipeline reintroduces deformation, so changing the rig generator alone is insufficient. Exact failing transformation or repair has not been isolated."
+  },
+  "verification": {
+    "real_t4_attention_cases": 2,
+    "max_attention_error": 4.76837158203125e-07,
+    "local_rtx3060_attention_cases": 2,
+    "source_patch_guards": "Repeated and late-mismatch inputs reject without partial writes",
+    "python_compile": "pass",
+    "runtime": "Python 3.11.16, torch 2.7.0+cu128, bpy 4.5.3, transformers 4.57.6, diffusers 0.35.1, lightning 2.6.1",
+    "application_regressions": "Not rerun in this trial; no production application/gameplay code changed."
+  },
+  "remaining": [
+    "Isolate and fix post-rig deformation using raw versus repaired versus retargeted poses.",
+    "Add a distinct TokenRig provider/engine/cache namespace to the API after usable combat motion is established.",
+    "Retain manual visual qualification; technical validator/browser passes did not catch this failure."
+  ],
+  "unchanged": [
+    "UniRig service and immutable preparation evidence",
+    "Live roster and publication state",
+    "All protected gameplay invariants"
+  ]
+}

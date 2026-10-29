@@ -12,8 +12,8 @@
     </div>@endunless
 
     @php
-        $passedCount = $runs->filter(fn($r) => ($r->result['evaluation']['passes_exploratory_gate'] ?? false))->count();
-        $failedCount = $runs->filter(fn($r) => $r->error || ($r->status === 'completed' && !($r->result['evaluation']['passes_exploratory_gate'] ?? false)))->count();
+        $passedCount = $runs->filter(fn($r) => ($r->result['evaluation']['passes_exploratory_gate'] ?? false)||($r->result['assessment']['status']??'')==='promote')->count();
+        $failedCount = $runs->filter(fn($r) => $r->error || ($r->status === 'completed' && !($r->result['evaluation']['passes_exploratory_gate'] ?? false)&&($r->result['assessment']['status']??'')!=='promote'))->count();
         $runningCount = $runs->filter(fn($r) => in_array($r->status, ['running', 'collecting', 'training']))->count();
     @endphp
 
@@ -25,6 +25,13 @@
     </div>
 
     @forelse($runs as $run)
+        @if(in_array($run->plan['version']??0,[3,4],true))
+            <article class="run-row"><div class="run-title"><a href="{{ route('evolution.report',$run) }}">{{ $run->plan['domain'] }} intelligence study</a><span class="badge">{{ $run->status }}</span></div>
+            <p>{{ $run->progress['stage']??'Waiting' }}@if(isset($run->progress['planned'])) · {{ $run->progress['complete']??0 }} / {{ $run->progress['planned'] }}@endif</p>
+            @if($a=$run->result['assessment']??null)<p>{{ $a['status'] }} · {{ implode(', ',$a['reasons']??[]) }}</p>@endif
+            @if($run->error)<p class="error-text">{{ $run->error }}</p>@endif</article>
+            @continue
+        @endif
         @php
             $done = (int) ($run->progress['completed'] ?? 0);
             $planned = max(1, (int) ($run->progress['planned'] ?? 80));

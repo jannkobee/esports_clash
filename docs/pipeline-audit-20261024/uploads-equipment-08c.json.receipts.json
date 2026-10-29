@@ -1,0 +1,29 @@
+[
+  {
+    "avatar_id": "c_inai",
+    "id": "pilgrim_outfit",
+    "sha256": "4bd110abaa0fa001139890ce28346432f9e7fe659eddbfff3eba8eeb571a3f90",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "01299bea43eb412b8303f7fb0e20619ff99d5e78bafaff2c97cd92cadfd33e8b",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_qiyana",
+    "id": "cleaver",
+    "sha256": "f1a81ebf5006b437fe899fe9521facf5edb27de509f7fcf8bd67bcce1ff206b3",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "9562acfb7ce6d930b421bb8f1f5afaf00974df4cc312563afab1d06cc7a20b37",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kindra",
+    "id": "fen",
+    "sha256": "d12c1e4b84222b3f7937527818feb0707c1efa700a50bcd5357c8756b99b0e5b",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "d4587273ffa76d0deb45b7fdda27b522c0a5bf7de1403301180b0509f397096b",
+    "http": 200
+  }
+]

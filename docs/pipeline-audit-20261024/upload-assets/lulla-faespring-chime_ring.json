@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_puck",
+  "component_id": "chime_ring",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Large glass chime ring",
+  "attachment": "hand",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Lulla Faespring. Attached character art is design reference only. One complete large brass ring with suspended clear glass chimes holding small celestial motifs, slim handle and chains. No hand, person, clocks or cloak. Preserve pictured design, colors, materials and proportions. For clothing only: garments visibly empty on invisible support in a static symmetrical wide A pose; hollow openings, no mannequin. Show the entire asset at SMALL size occupying central 55 percent of frame with wide transparent margins on ALL sides. No cropping. Neutral even product lighting, readable physical geometry, three-quarter view. Genuine transparent background, no floor, shadow, background glow, text, labels, logo, frames or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "lulla-faespring",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/lulla-faespring.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/lulla-faespring-chime_ring.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-27a46853-6059-4d5f-b027-0196c6de5e42.png"
+}

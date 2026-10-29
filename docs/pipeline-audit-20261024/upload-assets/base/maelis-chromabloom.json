@@ -1,0 +1,9 @@
+{
+  "id": "c_hwei",
+  "name": "Maelis Chromabloom",
+  "slug": "maelis-chromabloom",
+  "prompt": "Technical game character modeling reference: Maelis Chromabloom. Use the attached drawing only for adult identity, species and proportions. Older adult HUMAN museum conservator, preserve depicted gender and natural aged proportions; no frames. One adult character wearing a plain opaque seamless matte gray FULL BODY COMPRESSION UNITARD with high neck, long sleeves and full length legs, covering the entire torso and pelvis completely. The body surface follows the limb contours so joints are readable. Bare hands and feet; bald head, no beard or hair. Neutral gray sculpt treatment. No armor, decorative costume, capes, boots, jewelry, tools, weapons, straps, companions or vehicles. Front orthographic view, entire head to feet centered with 10% margins. Neutral static symmetrical WIDE A-pose: arms straight angled 45 degrees downward/outward, palms down, fingers individually separated, hands clear of hips, legs straight slightly apart, feet level. No action, no twist, no fused limbs or armpits. Preserve intrinsic species appendages separated and visible. Transparent background, no halo, shadows, floor, text or labels. Clean fully covered neutral adult rigging reference, appearance components added separately later.",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-8296ff3d-e402-44f7-8ab1-cd24bb72c37c.png",
+  "destination": "docs/pipeline-audit-20261024/upload-assets/base/maelis-chromabloom.png",
+  "status": "awaiting_visual_review"
+}

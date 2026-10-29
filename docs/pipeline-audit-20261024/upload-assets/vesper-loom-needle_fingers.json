@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_zal",
+  "component_id": "needle_fingers",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Mechanical needle-finger tools",
+  "attachment": "hands",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Vesper Loom. Attached image is design reference only. A matched pair of articulated brass mechanical needle-finger tool gloves, completely mechanical hollow wrist cuffs and long fine tool digits. No flesh, bones, injury, patient, hands or person. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "vesper-loom",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/vesper-loom.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/vesper-loom-needle_fingers.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-85aa12f9-902e-4084-bf92-aa120eb31b33.png"
+}

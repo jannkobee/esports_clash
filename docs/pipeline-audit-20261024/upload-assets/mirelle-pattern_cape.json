@@ -1,0 +1,13 @@
+{
+  "id": "pattern_cape",
+  "label": "Folded-paper pattern cape",
+  "category": "outfit",
+  "binding": "skinned",
+  "attachment": "shoulders / upper back; deforming cape",
+  "description": "One isolated giant folded-paper sewing-pattern cape from the drawing: layered ivory triangular paper-pattern folds, fine tailoring diagram marks, brass hinges/clasps, oxblood reverse lining. Present as a clearly shaped single cape hanging in a neutral open configuration, empty inside. No body, mannequin, head, hair, other clothes or hands.",
+  "avatar_id": "c_invoker",
+  "prompt": "Create a NEW isolated game prop reconstruction reference from the supplied character drawing. One isolated giant folded-paper sewing-pattern cape from the drawing: layered ivory triangular paper-pattern folds, fine tailoring diagram marks, brass hinges/clasps, oxblood reverse lining. Present as a clearly shaped single cape hanging in a neutral open configuration, empty inside. No body, mannequin, head, hair, other clothes or hands. Full object centered, three-quarter product view that shows depth, with transparent margins on every edge. Preserve the illustrated ivory/oxblood/brass material language. Crisp readable physical shapes, neutral even studio lighting, true transparent alpha background, no floor, cast shadow, text labels, frames or cutout character. One separate asset only.",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b98fdc08-9536-4468-9243-2d9c08929f6c.png",
+  "destination": "docs/pipeline-audit-20261024/upload-assets/mirelle-pattern_cape.png",
+  "status": "awaiting_visual_review"
+}

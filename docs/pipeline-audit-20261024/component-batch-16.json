@@ -1,0 +1,30 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_silencer",
+    "component_id": "law_stamp",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Multi-headed law stamp",
+    "attachment": "hand",
+    "prompt": "Edit attached image. Remove the entire outfit, all robes, shoulder armor, fabric, belts and accessories belonging to the central clothing. Keep ONLY the standalone three-headed brass law stamp with its long handle at the left. Preserve that complete object exactly, all three red seal faces and decorated brass housings. Center this one static ceremonial inventory prop with generous transparent margin on every side. No clothing, body, mannequin, action, floor, shadow, backdrop glow or text. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "slug": "sevrin-inkseal",
+    "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/sevrin-inkseal-law_stamp.png",
+    "path": "docs/pipeline-audit-20261024/upload-assets/sevrin-inkseal-law_stamp-v2.png"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_wukong_lol",
+    "component_id": "pole_stilts",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Bamboo-jointed pole stilts",
+    "attachment": "hands and feet",
+    "prompt": "Edit attached image. Remove the entire central outfit and all clothes, scarf, shirt, pants, belt and satchels. Keep ONLY the two complete bamboo-jointed pole stilts at the left and right, including their metal joints, leather foot rests and straps. Arrange both complete isolated stilts side by side, full length, ample transparent margins all sides. No wearer, body, mannequin, clothes, floor, shadow, glow or text. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "slug": "koro-cloudtail",
+    "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/koro-cloudtail-pole_stilts.png",
+    "path": "docs/pipeline-audit-20261024/upload-assets/koro-cloudtail-pole_stilts-v2.png"
+  }
+]

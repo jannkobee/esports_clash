@@ -1,0 +1,13 @@
+{
+  "id": "0ba81d69-3c9a-4e1c-b3dc-703e998fa143",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "runtime_id": "9d6d63438ea2f910c5b7039d4a6ed77596c6dbf1843f3f1590afe1b6b86aa4f7",
+  "environment_sha256": "73928306c86dae9ce21c8fe672abffcebdbb4ee2a654fa3a194a6f466ee8d105",
+  "started_unix": 1793025860.7393646,
+  "exit_code": 0,
+  "report_sha256": "adfe3b3a12acd788523d447ca82e185f9f083765d1b67da56e15e404d558cf03",
+  "completed_unix": 1793025871.5166783
+}

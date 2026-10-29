@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { ConfluxSpellbook } from './ConfluxSpellbook';
+import { AvatarComponentInventory } from './AvatarComponentInventory';
+import { MirellePatternBook } from './MirellePatternBook';
+import { ContentImage } from './ContentImage';
 import { ChampionKit, PlayerCard, AvatarRole, AvatarCombatType } from '../types';
 import { AVATAR_COMBAT_TYPES, getAvatarCombatProfile } from '../avatarCombatRoles';
 import { ChampionArtwork } from './ChampionArtwork';
@@ -8,8 +10,6 @@ import { MeshyRiggingStudio } from './MeshyRiggingStudio';
 import { ChibiAvatar } from './ChibiAvatar';
 import { sound } from '../audio';
 import { getChampionLore } from '../championLore';
-import { KAELEN_INVOKED_SPELLS, kaelenOrbRankAtLevel, kaelenOrbStatBonuses } from '../kaelenAbilities';
-import { abilityTargetingDetails } from '../aetherisAbilities';
 import { getAbilityPresentation } from '../abilityPresentation';
 import { 
   Shield, 
@@ -33,13 +33,13 @@ interface ChampionHubViewProps {
 }
 
 export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, allPlayers }) => {
-  const [selectedChamp, setSelectedChamp] = useState<ChampionKit>(champions[0]);
+  const [selection, setSelectedChamp] = useState<ChampionKit>(champions[0]);
+  const selectedChamp=champions.find(champion=>champion.id===selection.id)??champions[0];
   const [activeSkillTab, setActiveSkillTab] = useState<'passive' | 'skill1' | 'skill2' | 'ultimate'>('ultimate');
   const [roleFilter, setRoleFilter] = useState<AvatarRole | 'All'>('All');
   const [combatTypeFilter, setCombatTypeFilter] = useState<AvatarCombatType | 'All'>('All');
   const [filterBy, setFilterBy] = useState<'Name' | 'Role' | 'Archetype' | 'HP' | 'AD' | 'Range'>('Name');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [inspectRank, setInspectRank] = useState<number>(1);
   const [showRiggingStudio, setShowRiggingStudio] = useState<boolean>(false);
 
   // Filtered and sorted avatar list (name A-Z by default)
@@ -69,13 +69,9 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
     sound.playAvatarSkill(selectedChamp.name, type === 'ult' ? 'ultimate' : type === 's1' ? 'skill1' : 'skill2');
   };
 
-  const lore = getChampionLore(selectedChamp.id);
+  const lore = selectedChamp.lore ?? getChampionLore(selectedChamp.id);
 
-  const isKaelen = selectedChamp.name === 'Kaelen';
-  const currentMaxRank = isKaelen ? 1 : activeSkillTab === 'ultimate' ? 4 : activeSkillTab === 'passive' ? 1 : 7;
-  const clampedRank = Math.min(currentMaxRank, Math.max(1, inspectRank));
-  const activePresentation = !isKaelen && activeSkillTab !== 'passive'
-    ? getAbilityPresentation(selectedChamp, activeSkillTab, clampedRank) : undefined;
+  const activePresentation=activeSkillTab==='passive'?undefined:getAbilityPresentation(selectedChamp,activeSkillTab);
 
   return (
     <div className="min-h-[calc(100vh-8rem)] w-full min-w-0 px-3 xl:px-6 py-4 animate-fade-in">
@@ -186,6 +182,7 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
         {/* Selected avatar details */}
         <section className="min-w-0 bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4">
         {/* Selected avatar profile */}
+        <AvatarComponentInventory avatarId={selectedChamp.id} />
         <div className="space-y-3">
           <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
             <div
@@ -314,295 +311,20 @@ export const ChampionHubView: React.FC<ChampionHubViewProps> = ({ champions, all
           </div>
         </div>
 
-        {/* Ability breakdown, SFX preview, and level progression */}
         <div className="border-t border-slate-800 pt-4 space-y-4">
-          <div className="border-b border-slate-800 pb-3 flex flex-wrap justify-between items-center gap-2">
-            <div>
-              <h4 className="text-sm font-black text-amber-300 uppercase tracking-wide">
-                Complete Ability Kit & Level Progression
-              </h4>
-              <p className="text-xs text-slate-400 mt-0.5">
-                {isKaelen
-                  ? 'Arsenaldo: cooldown-free Q/W/E orbs cost 5 mana and grant stats while held · Conflux occupies R · D/F are FIFO loadout slots · adaptive multi-spell plans.'
-                  : 'Cap 18: Innate Passive Always Active · Q & W reach Rank 7 · Ultimate reaches Rank 4!'}
-              </p>
-            </div>
-          </div>
-
-          {/* Skill Selector Tabs */}
-          <div className="grid grid-cols-4 gap-2">
-            <button
-              onClick={() => { sound.playClick(); setActiveSkillTab('passive'); setInspectRank(1); }}
-              className={`p-2.5 rounded-xl text-xs font-black transition flex flex-col items-center gap-0.5 ${
-                activeSkillTab === 'passive'
-                  ? 'bg-amber-400 text-slate-950 shadow-lg'
-                  : 'bg-slate-950 text-slate-400 hover:text-white'
-              }`}
-            >
-              <span>{isKaelen ? 'ORB OF ICE (Q)' : 'PASSIVE'}</span>
-              <span className="text-[9px] font-normal truncate">{isKaelen ? 'Stat Stack · No CD' : 'Innate (Always)'}</span>
-            </button>
-
-            <button
-              onClick={() => { sound.playClick(); setActiveSkillTab('skill1'); }}
-              className={`p-2.5 rounded-xl text-xs font-black transition flex flex-col items-center gap-0.5 ${
-                activeSkillTab === 'skill1'
-                  ? 'bg-cyan-400 text-slate-950 shadow-lg'
-                  : 'bg-slate-950 text-slate-400 hover:text-white'
-              }`}
-            >
-              <span>{isKaelen ? 'ORB OF WIND (W)' : 'SKILL 1 (Q)'}</span>
-              <span className="text-[9px] font-normal truncate">{isKaelen ? 'Stat Stack · No CD' : 'Rank 1-7 (7 Levels)'}</span>
-            </button>
-
-            <button
-              onClick={() => { sound.playClick(); setActiveSkillTab('skill2'); }}
-              className={`p-2.5 rounded-xl text-xs font-black transition flex flex-col items-center gap-0.5 ${
-                activeSkillTab === 'skill2'
-                  ? 'bg-purple-400 text-slate-950 shadow-lg'
-                  : 'bg-slate-950 text-slate-400 hover:text-white'
-              }`}
-            >
-              <span>{isKaelen ? 'ORB OF FIRE (E)' : 'SKILL 2 (W)'}</span>
-              <span className="text-[9px] font-normal truncate">{isKaelen ? 'Stat Stack · No CD' : 'Rank 1-7 (7 Levels)'}</span>
-            </button>
-
-            <button
-              onClick={() => { sound.playClick(); setActiveSkillTab('ultimate'); }}
-              className={`p-2.5 rounded-xl text-xs font-black transition flex flex-col items-center gap-0.5 ${
-                activeSkillTab === 'ultimate'
-                  ? 'bg-rose-500 text-white shadow-lg animate-pulse'
-                  : 'bg-slate-950 text-slate-400 hover:text-white'
-              }`}
-            >
-              <span>{isKaelen ? 'CONFLUX (R)' : 'ULTIMATE (R)'}</span>
-              <span className="text-[9px] font-normal truncate">{isKaelen ? 'Active Innate · 10 Spells' : 'Rank 1-4 (4 Levels)'}</span>
-            </button>
-          </div>
-
-          {/* Interactive Rank Selector Slider / Buttons */}
-          {activeSkillTab !== 'passive' && !isKaelen && (
-            <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 flex items-center justify-between gap-2">
-              <span className="text-xs font-bold text-slate-300">
-                Inspect Rank Level:
-              </span>
-              <div className="flex gap-1.5">
-                {Array.from({ length: currentMaxRank }).map((_, idx) => {
-                  const rankNum = idx + 1;
-                  const isCurrent = clampedRank === rankNum;
-                  return (
-                    <button
-                      key={rankNum}
-                      onClick={() => { sound.playClick(); setInspectRank(rankNum); }}
-                      className={`w-7 h-7 rounded-lg text-xs font-black transition flex items-center justify-center ${
-                        isCurrent
-                          ? activeSkillTab === 'ultimate'
-                            ? 'bg-rose-500 text-white shadow-md'
-                            : 'bg-cyan-400 text-slate-950 shadow-md'
-                          : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'
-                      }`}
-                    >
-                      {rankNum}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Active Skill Details Display */}
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-4">
-            {activePresentation && (
-              <div className="rounded-xl border border-cyan-500/25 bg-cyan-950/20 p-3 space-y-2">
-                <div className="flex flex-wrap gap-1.5 text-[10px] font-black uppercase">
-                  <span className="rounded bg-cyan-400/15 px-2 py-1 text-cyan-200">{activePresentation.castType}</span>
-                  <span className="rounded bg-slate-900 px-2 py-1 text-slate-300">{activePresentation.range} RANGE</span>
-                  <span className="rounded bg-slate-900 px-2 py-1 text-slate-300">{activePresentation.manaCost} MANA</span>
-                  <span className="rounded bg-slate-900 px-2 py-1 text-slate-300">{activePresentation.cooldown}s CD</span>
-                  {activePresentation.movement && <span className="rounded bg-amber-400/15 px-2 py-1 text-amber-200">{activePresentation.movement.kind.toUpperCase()}</span>}
-                  {activePresentation.crowdControl && <span className="rounded bg-purple-400/15 px-2 py-1 text-purple-200">CC {activePresentation.crowdControl.duration.toFixed(1)}s</span>}
-                </div>
-                <p className="text-xs leading-relaxed text-slate-300">{activePresentation.detailedDescription}</p>
-                {activePresentation.visualDescription&&<p className="text-xs leading-relaxed text-cyan-200"><strong>What you see: </strong>{activePresentation.visualDescription}</p>}
-                {activePresentation.counterplay&&<p className="text-xs leading-relaxed text-amber-200"><strong>Play around it: </strong>{activePresentation.counterplay}</p>}
-                <p className="text-[10px] leading-relaxed text-cyan-200">Geometry: {activePresentation.geometry}{activePresentation.movement ? ` Movement: ${activePresentation.movement.distance || 'authored'} units${activePresentation.movement.duration ? ` over ${activePresentation.movement.duration}s` : ''}.` : ''}</p>
-              </div>
-            )}
-            {activeSkillTab === 'passive' && (
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <h5 className="text-base font-black text-amber-300">{isKaelen ? 'Q: ORB OF ICE' : 'PASSIVE: Innate Combat Trait'}</h5>
-                  <span className="text-xs bg-amber-950 text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-500/30 font-bold">
-                    {isKaelen ? 'No cooldown · +0.2 HP regen/s per orb at rank 1' : 'Innate (Always Available)'}
-                  </span>
-                </div>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  {isKaelen ? selectedChamp.skill1.desc : selectedChamp.passiveDesc}
-                </p>
-                <div className="text-xs text-slate-400 bg-slate-900/60 p-2.5 rounded-xl border border-white/5">
-                  {isKaelen
-                    ? `Each held Ice orb adds health regeneration while it remains in the three-orb FIFO. Per-orb value scales 25% each rank: +0.2 at rank 1 to +${kaelenOrbStatBonuses(18, { ice: 1, wind: 0, fire: 0 }).healthRegen.toFixed(1)} HP regen/s at rank ${kaelenOrbRankAtLevel(18)}.`
-                    : selectedChamp.name === 'Aetheris'
-                    ? 'Targeting: automatically links to the nearest living ally within 280 arena units; the link is visible for as long as they remain in range.'
-                    : 'Innate traits do not require skill points and are active across all Levels 1 through 18.'}
-                </div>
-                {isKaelen && (
-                  <div className="text-xs text-cyan-200 bg-cyan-950/30 p-2.5 rounded-xl border border-cyan-500/20">
-                    {abilityTargetingDetails(selectedChamp.skill1)}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeSkillTab === 'skill1' && (
-              <div className="space-y-3">
-                <div className="flex flex-wrap justify-between items-center gap-2">
-                  <h5 className="text-base font-black text-cyan-300">
-                    {isKaelen ? `W: ${selectedChamp.skill2.name}` : `Q: ${selectedChamp.skill1.name}`}{!isKaelen && <span className="text-xs text-amber-300 font-bold">(Rank {clampedRank}/7)</span>}
-                  </h5>
-                  <div className="flex gap-2">
-                    <span className="text-xs bg-slate-900 text-cyan-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                      {isKaelen ? 'No cooldown' : `CD: ${activePresentation?.cooldown ?? selectedChamp.skill1.cooldown}s`}
-                    </span>
-                    <span className="text-xs bg-slate-900 text-amber-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                      {isKaelen ? '+1.0 movement speed/orb at rank 1' : activePresentation?.damage ? `${activePresentation.damage.type} Dmg: ${activePresentation.damage.atRank}` : 'Utility ability'}
-                    </span>
-                    {!isKaelen && activePresentation?.damage && (
-                      <span className="text-xs bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                        <span className="text-amber-400">+{activePresentation.damage.adPercent}% AD</span>
-                        {' · '}
-                        <span className="text-cyan-400">+{activePresentation.damage.apPercent}% AP</span>
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  {isKaelen ? selectedChamp.skill2.desc : selectedChamp.skill1.desc}
-                </p>
-                <div className="text-xs text-slate-400 bg-slate-900/60 p-2.5 rounded-xl border border-white/5">
-                  {isKaelen
-                    ? `Each held Wind orb adds movement speed while it remains in the three-orb FIFO, scaling 25% each rank from +1 at rank 1 to +${kaelenOrbStatBonuses(18, { ice: 0, wind: 1, fire: 0 }).moveSpeed.toFixed(1)} at rank ${kaelenOrbRankAtLevel(18)}.`
-                    : `⭐ Basic Skill 1 upgrades across 7 milestones up to Level 18. Base Damage: ${selectedChamp.skill1.damage} | Base CD: ${selectedChamp.skill1.cooldown}s.`}
-                </div>
-                <div className="text-xs text-cyan-200 bg-cyan-950/30 p-2.5 rounded-xl border border-cyan-500/20">
-                  {abilityTargetingDetails(isKaelen ? selectedChamp.skill2 : selectedChamp.skill1)}
-                </div>
-                <button
-                  onClick={() => handleTestSkill(isKaelen ? 's2' : 's1')}
-                  className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black rounded-xl transition flex items-center gap-1.5 shadow"
-                >
-                  <Volume2 className="w-4 h-4" /> {isKaelen ? 'Preview Orb of Wind SFX' : 'Preview Skill 1 SFX'}
-                </button>
-              </div>
-            )}
-
-            {activeSkillTab === 'skill2' && (
-              <div className="space-y-3">
-                <div className="flex flex-wrap justify-between items-center gap-2">
-                  <h5 className="text-base font-black text-purple-300">
-                    {isKaelen ? `E: ${selectedChamp.ultimate.name}` : `W: ${selectedChamp.skill2.name}`}{!isKaelen && <span className="text-xs text-amber-300 font-bold">(Rank {clampedRank}/7)</span>}
-                  </h5>
-                  <div className="flex gap-2">
-                    <span className="text-xs bg-slate-900 text-purple-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                      {isKaelen ? 'No cooldown' : `CD: ${activePresentation?.cooldown ?? selectedChamp.skill2.cooldown}s`}
-                    </span>
-                    <span className="text-xs bg-slate-900 text-amber-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                      {isKaelen ? '+1% spell + damage amp/orb at rank 1'
-                        : selectedChamp.name === 'Aetheris' ? '100 shield · +15% attack damage · 5s'
-                          : activePresentation?.damage ? `${activePresentation.damage.type} Dmg: ${activePresentation.damage.atRank}` : 'Utility ability'}
-                    </span>
-                    {!isKaelen && activePresentation?.damage && (
-                      <span className="text-xs bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                        <span className="text-amber-400">+{activePresentation.damage.adPercent}% AD</span>
-                        {' · '}
-                        <span className="text-cyan-400">+{activePresentation.damage.apPercent}% AP</span>
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  {isKaelen ? selectedChamp.ultimate.desc : selectedChamp.skill2.desc}
-                </p>
-                <div className="text-xs text-slate-400 bg-slate-900/60 p-2.5 rounded-xl border border-white/5">
-                  {isKaelen
-                    ? `Each held Fire orb adds spell amp and damage amp while it remains in the three-orb FIFO, scaling 25% each rank from +1% of each at rank 1 to +${(kaelenOrbStatBonuses(18, { ice: 0, wind: 0, fire: 1 }).spellAmp * 100).toFixed(1)}% at rank ${kaelenOrbRankAtLevel(18)}.`
-                    : `⭐ Basic Skill 2 upgrades across 7 milestones up to Level 18. Base Damage: ${selectedChamp.skill2.damage} | Base CD: ${selectedChamp.skill2.cooldown}s.`}
-                </div>
-                <div className="text-xs text-cyan-200 bg-cyan-950/30 p-2.5 rounded-xl border border-cyan-500/20">
-                  {abilityTargetingDetails(isKaelen ? selectedChamp.ultimate : selectedChamp.skill2)}
-                </div>
-                <button
-                  onClick={() => handleTestSkill('ult')}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-black rounded-xl transition flex items-center gap-1.5 shadow"
-                >
-                  <Volume2 className="w-4 h-4" /> {isKaelen ? 'Preview Orb of Fire SFX' : 'Preview Skill 2 SFX'}
-                </button>
-              </div>
-            )}
-
-            {activeSkillTab === 'ultimate' && isKaelen && (
-              <div className="space-y-3">
-                <div className="flex flex-wrap justify-between items-center gap-2">
-                  <h5 className="text-base font-black text-rose-300">R: CONFLUX</h5>
-                  <span className="text-xs bg-slate-900 text-rose-200 px-2 py-0.5 rounded border border-rose-400/20 font-bold">
-                    Active innate · CD: 3 / 2 / 1 / 0s by level
-                  </span>
-                </div>
-                <p className="text-sm text-slate-200 leading-relaxed font-medium">{selectedChamp.passiveDesc}</p>
-                <div className="rounded-xl border border-cyan-500/20 bg-slate-900/60 p-2.5 text-xs text-slate-300">
-                  <strong className="text-cyan-200">D</strong> holds the oldest invocation and <strong className="text-orange-200">F</strong> the newest. A new Conflux result shifts the previous F spell to D and drops the old D spell (FIFO).
-                </div>
-                <ConfluxSpellbook champion={selectedChamp} />
-                <button
-                  onClick={() => handleTestSkill('ult')}
-                  className="px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:brightness-110 text-white text-xs font-black rounded-xl transition flex items-center gap-1.5 shadow-lg"
-                >
-                  <Zap className="w-4 h-4" /> Preview Conflux SFX
-                </button>
-              </div>
-            )}
-
-            {activeSkillTab === 'ultimate' && !isKaelen && (
-              <div className="space-y-3">
-                <div className="flex flex-wrap justify-between items-center gap-2">
-                  <h5 className="text-base font-black text-rose-400">
-                    R (ULTIMATE): {selectedChamp.ultimate.name} <span className="text-xs text-amber-300 font-bold">(Rank {clampedRank}/4)</span>
-                  </h5>
-                  <div className="flex gap-2">
-                    <span className="text-xs bg-slate-900 text-rose-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                      CD: {activePresentation?.cooldown ?? selectedChamp.ultimate.cooldown}s ({activePresentation?.manaCost ?? 100} Mana)
-                    </span>
-                    <span className="text-xs bg-rose-950 text-rose-200 px-2 py-0.5 rounded border border-rose-500/40 font-bold">
-                      {selectedChamp.name === 'Aetheris'
-                        ? `Nearby allies linked for ${clampedRank + 4}s`
-                        : activePresentation?.damage ? `${activePresentation.damage.type} Dmg: ${activePresentation.damage.atRank}` : 'Utility ultimate'}
-                    </span>
-                    {activePresentation?.damage && (
-                      <span className="text-xs bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-white/10 font-bold">
-                        <span className="text-amber-400">+{activePresentation.damage.adPercent}% AD</span>
-                        {' · '}
-                        <span className="text-cyan-400">+{activePresentation.damage.apPercent}% AP</span>
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <p className="text-sm text-slate-200 leading-relaxed font-medium">{selectedChamp.ultimate.desc}</p>
-                <div className="text-xs text-slate-400 bg-slate-900/60 p-2.5 rounded-xl border border-white/5">
-                  {selectedChamp.name === 'Aetheris'
-                    ? `👑 Rank ${clampedRank} links nearby allies for ${clampedRank + 4} seconds. Duration increases at ultimate ranks 1-4 (5 / 6 / 7 / 8 seconds).`
-                    : '👑 Ultimate unlocks at Level 6 (Rank 1), ranks up at Level 11 (Rank 2), Level 16 (Rank 3), and hits maximum power at Level 18 (Rank 4)!'}
-                </div>
-                <div className="text-xs text-cyan-200 bg-cyan-950/30 p-2.5 rounded-xl border border-cyan-500/20">
-                  {abilityTargetingDetails(selectedChamp.ultimate)}
-                </div>
-                <button
-                  onClick={() => handleTestSkill('ult')}
-                  className="px-4 py-2 bg-gradient-to-r from-rose-600 to-pink-600 hover:brightness-110 text-white text-xs font-black rounded-xl transition flex items-center gap-1.5 shadow-lg"
-                >
-                  <Zap className="w-4 h-4" /> Preview Ultimate Explosive SFX!
-                </button>
-              </div>
-            )}
+          <h4 className="text-sm font-black text-amber-300 uppercase">Original ability kit</h4>
+          <p className="text-xs text-slate-400">Authored effects are active. Artwork and complete gameplay qualification are still pending.</p>
+          <div className="grid grid-cols-4 gap-2">{(['passive','skill1','skill2','ultimate'] as const).map((slot,index)=><button key={slot} onClick={()=>setActiveSkillTab(slot)} aria-pressed={activeSkillTab===slot}
+            className={`rounded-lg border p-2 text-xs font-black ${activeSkillTab===slot?'border-cyan-300 bg-cyan-950 text-white':'border-slate-700 text-slate-400'}`}>
+            {['Passive','Q ? Skill 1','W ? Skill 2','R ? Ultimate'][index]}</button>)}</div>
+          <div className="rounded-xl border border-slate-700 bg-slate-950 p-4 space-y-3">
+            <ContentImage image={activeSkillTab==='passive'?selectedChamp.passiveImage:selectedChamp[activeSkillTab].image} name={activeSkillTab==='passive'?selectedChamp.passiveName??'Passive':selectedChamp[activeSkillTab].name}/>
+            <h5 className="font-black text-cyan-200">{activeSkillTab==='passive'?selectedChamp.passiveName??'Passive':selectedChamp[activeSkillTab].name}</h5>
+            <p className="text-sm text-slate-200">{activeSkillTab==='passive'?selectedChamp.passiveDesc:selectedChamp[activeSkillTab].desc}</p>
+            {activePresentation&&<p className="text-xs text-amber-200">{activePresentation.cooldown}s base cooldown ? {activePresentation.manaCost} mana ? geometry and setup as described above</p>}
+            {activeSkillTab!=='passive'&&selectedChamp[activeSkillTab].disabled&&<p className="text-amber-300">This slot is disabled in the current catalog.</p>}
+            {activeSkillTab==='ultimate'&&selectedChamp.id==='c_invoker'&&<MirellePatternBook/>}
+            {activeSkillTab!=='passive'&&<button className="rounded border border-cyan-700 px-3 py-2 text-xs" onClick={()=>handleTestSkill(activeSkillTab==='ultimate'?'ult':activeSkillTab==='skill1'?'s1':'s2')}>Preview sound</button>}
           </div>
         </div>
         </section>

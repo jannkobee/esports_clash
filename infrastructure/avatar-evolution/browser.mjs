@@ -5,7 +5,7 @@ import {join} from 'node:path';
 import assert from 'node:assert/strict';
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
-export async function inspect(folder,avatarId,candidate,{writePreviews=true}={}) {
+export async function inspect(folder,avatarId,candidate,{writePreviews=true,motionReview=false}={}) {
   const profile=await mkdtemp(join(tmpdir(),'avatar-review-'));
   const chrome=spawn('chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader',
     '--enable-unsafe-swiftshader','--no-first-run','--remote-debugging-port=9227',`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',detached:true});
@@ -32,7 +32,11 @@ export async function inspect(folder,avatarId,candidate,{writePreviews=true}={})
     assert.ok(ready,'Actual GLB review renderer did not become ready'+(pageErrors.length?': '+pageErrors.join('; '):''));
     const metrics=await evaluate('window.__avatarEvolution.evaluate()');
     const previews=[];
-    for(const [name,angle,pose,phase] of (writePreviews?[['front',0,'Idle',.2],['side',Math.PI/2,'Idle',.2],['back',Math.PI,'Idle',.2],['anticipation',.6,'Attack',.15],['strike',.6,'Attack',.42],['recovery',.6,'Attack',.82],['ability',.6,'Ability',.45],['gameplay',.25,'Idle',.2]]:[])) {
+    const views=writePreviews?[['front',0,'Idle',.2],['side',Math.PI/2,'Idle',.2],['back',Math.PI,'Idle',.2],['anticipation',.6,'Attack',.15],['strike',.6,'Attack',.42],['recovery',.6,'Attack',.82],['ability',.6,'Ability',.45],['gameplay',.25,'Idle',.2]]:[];
+    if(motionReview)for(const pose of ['Idle','Walk','Run','Attack','Cast','Hit','Death','Strafe','TurnLeft','TurnRight'])
+      for(const phase of [.15,.42,.82])for(const [view,angle] of [['front',0],['side',Math.PI/2]])
+        views.push([`motion-${pose.toLowerCase()}-${Math.round(phase*100)}-${view}`,angle,pose,phase]);
+    for(const [name,angle,pose,phase] of views) {
       await evaluate(`window.__avatarEvolution.draw(${phase},${angle},${JSON.stringify(pose)},${JSON.stringify(name==='gameplay'?'gameplay':'studio')})`);
       const data=await evaluate('window.__avatarEvolution.screenshot()'),file=`${candidate}-${name}.png`;
       await writeFile(join(folder,file),Buffer.from(data.split(',')[1],'base64'));previews.push({name,file,pose,phase,angle});

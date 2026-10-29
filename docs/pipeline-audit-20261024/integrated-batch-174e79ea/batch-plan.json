@@ -1,0 +1,27 @@
+{
+  "id": "174e79ea-4839-4f91-8733-5b2253065645",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "jobs": [
+    {
+      "id": "e44d4c06-f826-4a97-bcf7-b912845094fd",
+      "method": "rest-and-posed-contact-map-v2",
+      "input_sha256": "77bef9dd514d50db635da73277803ce1c39b760da9f802e3c5e7ad972f0fc6f6",
+      "launch_sha256": "a3b8b9bcaf018c337829dd4f6f77cd2f71648ff9e3002821ca029ef6d24027d8"
+    },
+    {
+      "id": "b89a083d-6ed1-497c-be5b-c9130b7e7674",
+      "method": "linear-versus-preserve-volume-v1",
+      "input_sha256": "9b569f4b45832bf00bdb4458d728250435395ccbde4d57d05171a29a45e924f0",
+      "launch_sha256": "bccbe904295e07a0443542922978a3d1dcb7b29e2f4fb778893bcee88892d1f6"
+    },
+    {
+      "id": "90c5282c-c89b-4d56-8614-82d7c0c11406",
+      "method": "exact-api-candidates-babylon-visual-comparison-v1",
+      "input_sha256": "abcb41b2e0d8767dfc916c053040f41cbe0772b54e65d7f2439a3eac464b75e1",
+      "launch_sha256": "760df88a8fdeb1571ac36c05d211c22b983d36781a4eb043a65ec8f14c910d09"
+    }
+  ],
+  "runner_sha256": "8e2a41d208ff64faa17d293d0d8e2b70e40357b979c9fbb97e2e4dc81662c20c"
+}

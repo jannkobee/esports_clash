@@ -1,0 +1,68 @@
+{
+  "review_id": "1ef0fbe2-090d-4263-9342-089c906f8c74",
+  "status": "visible_deformation_unresolved",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Manual assessment of 12 named views out of 48 Colab Babylon captures; controlled single-joint bends only. Same raw body and joint rest transforms.",
+  "observations": [
+    "The fitted candidate introduces a sharper outer left-hip notch in the inspected 45-degree view.",
+    "Deep inner-hip compression remains in both inspected 90-degree hip views.",
+    "Shoulder-root shape is visibly redistributed and flatter in the inspected view, while convincing anatomical deformation is not established.",
+    "The low fit errors demonstrate preservation of the dense BBW target field over the tested motions, not a corrected target shape or game-animation qualification."
+  ],
+  "decision": "Reject this fitted candidate for production. Keep it as a reproducible weight-field comparison. Revisit anatomical boundary conditions and field shape; do not spend further passes preserving the same dense field.",
+  "candidate_disposition": {
+    "id": "1f59dbc4-b1a1-4955-ba5f-9db35f36fc5d",
+    "selection": "diagnostic_only_rejected_for_production"
+  },
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/raw-ThighL-90-orbit1.png",
+      "sha256": "36cbf6acb9d72644b0284a21bf2193be3d782ede093f68fe6e998f252f095503"
+    },
+    {
+      "file": "screenshots/raw-ThighR-90-orbit3.png",
+      "sha256": "b39e474cd9fa556dc1174d204a9aafebd8ddc9145df68c20a5ba0d62cc94ce79"
+    },
+    {
+      "file": "screenshots/raw-UpperArmL-90-orbit3.png",
+      "sha256": "f1e3aa1d434192df3ca8fe942a068fe3851dc85b5fca3ff23b25b15ce8a17e2f"
+    },
+    {
+      "file": "screenshots/raw-UpperArmR-90-orbit1.png",
+      "sha256": "3fc0707900edaeec4d5053c79ba5d129727c76aeeafe58ea807fa5188e457126"
+    },
+    {
+      "file": "screenshots/raw-ThighL-45-orbit1.png",
+      "sha256": "97d1fa6ea04315f18bdb42357a297b10c8a5bbc1b4f15ea378018e6ec1ee72ef"
+    },
+    {
+      "file": "screenshots/raw-UpperArmL-90-orbit0.png",
+      "sha256": "4f6b8bd36794c0c2119a92174e519661561c5cb2262df35f02cbf5ce08b9f805"
+    },
+    {
+      "file": "screenshots/fitted-ThighL-90-orbit1.png",
+      "sha256": "59734a5402fb5ba1c8acc73101c88389f1f27b33ea06c13052350eaace62a508"
+    },
+    {
+      "file": "screenshots/fitted-ThighR-90-orbit3.png",
+      "sha256": "7ddf1873bd5f33d5da620c4cb26d80f6372d5443900464d0a7419a1f41666634"
+    },
+    {
+      "file": "screenshots/fitted-UpperArmL-90-orbit3.png",
+      "sha256": "d1c6a7f622f4a8444b89339a76f425b25aa41d9b61f4ce3fa96cb265bd1f8220"
+    },
+    {
+      "file": "screenshots/fitted-UpperArmR-90-orbit1.png",
+      "sha256": "cc41800f78838c517a5494bcdd83528d678bc437c1053dbf21bf1c62d2c30288"
+    },
+    {
+      "file": "screenshots/fitted-ThighL-45-orbit1.png",
+      "sha256": "9a5fb2557c41f2828500dc56ab2ffa2a88de5804a995d7a9c478c9e20f01224b"
+    },
+    {
+      "file": "screenshots/fitted-UpperArmL-90-orbit0.png",
+      "sha256": "bb68d3696ee38920c61f07757d9b1d86b1c740e89d11f02101cd07e5c3f1b2c1"
+    }
+  ]
+}

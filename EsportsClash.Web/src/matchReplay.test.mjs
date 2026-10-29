@@ -39,8 +39,8 @@ test('old reports refresh display identity by stable id without renaming mechani
   const avatar = refreshed.draft.blue[0].champion;
   assert.equal(avatar.id, paxi.id);
   assert.equal(avatar.name, 'Paxi');
-  assert.equal(avatar.displayName, 'Fizzlewing');
-  assert.equal(avatar.title, 'The Dreamrift Trickster');
+  assert.equal(avatar.displayName, 'Lulla Faespring');
+  assert.equal(avatar.title, 'The Keeper of Unfinished Dreams');
   assert.equal(refreshed.draft.blue[0].player.name, INITIAL_PLAYERS[0].name);
   assert.equal(report.draft.blue[0].champion.displayName, 'Old Display', 'report import must not mutate saved data');
 });

@@ -1,3 +1,4 @@
+import {retiredAvatarAssetTest} from './testFixtures/retiredAvatarAssets.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
@@ -68,7 +69,7 @@ test('refined heavy weapons fit readable proportions and firearms have an open m
  disposeArenaTerrainResources(resources.owner);
 });
 
-test('v8 Blender scenes retain all shipped actions and all licensed grip shapes',async()=>{
+retiredAvatarAssetTest('v8 Blender scenes retain all shipped actions and all licensed grip shapes',async()=>{
  const folder=new URL('../../art/avatars-v8/',import.meta.url),manifest=JSON.parse(await readFile(new URL('manifest.json',folder),'utf8'));
  assert.deepEqual(manifest.models.map(m=>m.id).sort(),CHAMPIONS.map(c=>c.id).sort());
  let shapes=0;
@@ -79,7 +80,7 @@ test('v8 Blender scenes retain all shipped actions and all licensed grip shapes'
  assert.equal(shapes,68);
 });
 
-test('every v8 GLB has a single-parent node tree for strict importers and retains the runtime joint set',async()=>{
+retiredAvatarAssetTest('every v8 GLB has a single-parent node tree for strict importers and retains the runtime joint set',async()=>{
  for(const kit of CHAMPIONS){
   const bytes=await readFile(new URL(`../public/models/avatars-v8/${kit.id}.glb`,import.meta.url)),json=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12))),parents=new Set();
   for(const node of json.nodes)for(const child of node.children??[]){assert.ok(!parents.has(child),kit.id+' multiple node parents');parents.add(child);}

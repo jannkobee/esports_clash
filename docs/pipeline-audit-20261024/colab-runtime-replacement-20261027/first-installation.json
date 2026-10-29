@@ -1,0 +1,11 @@
+{
+  "provider": "tokenrig",
+  "compute": "google",
+  "status": "failed",
+  "publication_eligible": false,
+  "started_unix": 1793107434.5337574,
+  "source_commit": "273b691d35989d71cd17ff2895fdc735097b92d1",
+  "model_revision": "79736cad0fd84de384d5eede659b4ebd24effe33",
+  "error": "CalledProcessError: Command '['/usr/bin/python3', '-m', 'uv', 'pip', 'install', '--python', '/content/teamfight-preparation/venv/bin/python', 'torch==2.7.0', 'torchvision==0.22.0', 'torchaudio==2.7.0', '--index-url', 'https://download.pytorch.org/whl/cu128']' returned non-zero exit status 1.",
+  "completed_unix": 1793107473.61015
+}

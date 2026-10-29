@@ -19,7 +19,8 @@ if (command === 'manifest') {
     ...(await readdir('evolution-dist', { recursive: true })).filter(file => /\.(js|html|css)$/.test(file)).map(file => `evolution-dist/${file}`),
     'scripts/paired-live-rollout.mjs', 'scripts/evolution-evidence.mjs', 'scripts/broad-study-evidence.mjs',
     'scripts/paired-behavior.mjs', 'scripts/paired-outcome-rubric.mjs', 'package-lock.json', 'evolution.html', 'evolution-compiled.html', 'vite.evolution.config.ts',
-    '../docs/ml-live-evaluation.json', '/runner/pipeline.py', '/runner/training.py', '/runner/train_stage.py', '/runner/operations.py', '/runner/server.py'].sort();
+    '../docs/ml-live-evaluation.json', '/runner/pipeline.py', '/runner/training.py', '/runner/train_stage.py', '/runner/operations.py', '/runner/server.py',
+    '/runner/evidence_io.py', '/runner/regression.py'].sort();
   const manifest = await Promise.all(files.map(async path => [path, hash(await readFile(path))]));
   const drafts = Object.fromEntries(Array.from({ length: 8 }, (_, i) => [String(i + 2),
     buildPairedStudyDraft(INITIAL_PLAYERS, CHAMPIONS, i + 2).map(({ player, champion }) => ({ playerId: player.id, championId: champion.id }))]));

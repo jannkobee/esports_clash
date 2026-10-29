@@ -1,0 +1,265 @@
+{
+  "scope": "Known-seed engineering; not independent promotion or professional gameplay evidence",
+  "sourceHash": "c76441a0d471dcaaac634eeb3e99aed4e8279f417f125c615e32bd671839468a",
+  "checks": {
+    "gameTests": 534,
+    "additionalSimulationTests": 3,
+    "design": true,
+    "typescript": true,
+    "productionBuild": true,
+    "apiOnlineAndIntelligenceTests": 21,
+    "apiAssertions": 159,
+    "additionalQualificationTestAssertions": 16,
+    "promotionGateTests": 5,
+    "runtimeExceptions": [],
+    "exactFullWorldRepeat": true
+  },
+  "runs": [
+    {
+      "seed": 71001,
+      "draft": 0,
+      "mode": "baseline",
+      "repeat": null,
+      "swapped": null,
+      "status": "terminal",
+      "second": 725.9666666666637,
+      "winner": "blue",
+      "fingerprint": "21842714:ef78d297:89b0ba7",
+      "controllers": {
+        "blue": "baseline",
+        "red": "baseline"
+      },
+      "kills": 68,
+      "deaths": 69,
+      "cs": 233,
+      "damage": 229458,
+      "structuresDestroyed": 9,
+      "sampledMacroRecords": 7468,
+      "sampledIllegalSelections": 0,
+      "baselineDisagreements": 0,
+      "localAdaptiveUpdates": 0,
+      "executionEvidence": {
+        "samples": 13950,
+        "intentChanges": 3434,
+        "targetChanges": 3513,
+        "recallStarts": 62,
+        "stalledSeconds": 659.366666666692,
+        "retreatsSurvived": 697
+      },
+      "sampledIntents": {
+        "recover": 380,
+        "push": 2328,
+        "minion": 947,
+        "champion": 2701,
+        "regroup": 357,
+        "idle": 235,
+        "walk": 659,
+        "dead": 2324,
+        "retreat": 1721,
+        "hold": 87,
+        "recall": 295,
+        "defend": 864,
+        "relic": 14,
+        "structure": 234,
+        "camp": 584,
+        "stage": 14,
+        "objective": 206
+      },
+      "sampledNoResidualMacroChoice": 342
+    },
+    {
+      "seed": 71001,
+      "draft": 0,
+      "mode": "baseline",
+      "repeat": true,
+      "swapped": null,
+      "status": "terminal",
+      "second": 725.9666666666637,
+      "winner": "blue",
+      "fingerprint": "21842714:ef78d297:89b0ba7",
+      "controllers": {
+        "blue": "baseline",
+        "red": "baseline"
+      },
+      "kills": 68,
+      "deaths": 69,
+      "cs": 233,
+      "damage": 229458,
+      "structuresDestroyed": 9,
+      "sampledMacroRecords": 7468,
+      "sampledIllegalSelections": 0,
+      "baselineDisagreements": 0,
+      "localAdaptiveUpdates": 0,
+      "executionEvidence": {
+        "samples": 13950,
+        "intentChanges": 3434,
+        "targetChanges": 3513,
+        "recallStarts": 62,
+        "stalledSeconds": 659.366666666692,
+        "retreatsSurvived": 697
+      },
+      "sampledIntents": {
+        "recover": 380,
+        "push": 2328,
+        "minion": 947,
+        "champion": 2701,
+        "regroup": 357,
+        "idle": 235,
+        "walk": 659,
+        "dead": 2324,
+        "retreat": 1721,
+        "hold": 87,
+        "recall": 295,
+        "defend": 864,
+        "relic": 14,
+        "structure": 234,
+        "camp": 584,
+        "stage": 14,
+        "objective": 206
+      },
+      "sampledNoResidualMacroChoice": 342
+    },
+    {
+      "seed": 71002,
+      "draft": 1,
+      "mode": "baseline",
+      "repeat": null,
+      "swapped": true,
+      "status": "terminal",
+      "second": 878.3666666665251,
+      "winner": "blue",
+      "fingerprint": "24604013:817abe0b:c870e53f",
+      "controllers": {
+        "blue": "baseline",
+        "red": "baseline"
+      },
+      "kills": 78,
+      "deaths": 80,
+      "cs": 273,
+      "damage": 346100,
+      "structuresDestroyed": 9,
+      "sampledMacroRecords": 8410,
+      "sampledIllegalSelections": 0,
+      "baselineDisagreements": 0,
+      "localAdaptiveUpdates": 0,
+      "executionEvidence": {
+        "samples": 16810,
+        "intentChanges": 3725,
+        "targetChanges": 3889,
+        "recallStarts": 72,
+        "stalledSeconds": 921.2999999998995,
+        "retreatsSurvived": 614
+      },
+      "sampledIntents": {
+        "recover": 482,
+        "push": 2263,
+        "regroup": 772,
+        "champion": 3299,
+        "idle": 477,
+        "walk": 788,
+        "minion": 1286,
+        "retreat": 1535,
+        "defend": 854,
+        "dead": 2885,
+        "recall": 363,
+        "camp": 1158,
+        "hold": 59,
+        "relic": 16,
+        "structure": 174,
+        "objective": 316,
+        "stage": 83
+      },
+      "sampledNoResidualMacroChoice": 337
+    },
+    {
+      "seed": 71001,
+      "draft": 0,
+      "mode": "hybrid",
+      "repeat": null,
+      "swapped": null,
+      "status": "terminal",
+      "second": 725.9666666666637,
+      "winner": "blue",
+      "fingerprint": "21751190:82b7354:773e0ca0",
+      "controllers": {
+        "blue": "hybrid",
+        "red": "hybrid"
+      },
+      "kills": 68,
+      "deaths": 69,
+      "cs": 233,
+      "damage": 229458,
+      "structuresDestroyed": 9,
+      "sampledMacroRecords": 7468,
+      "sampledIllegalSelections": 0,
+      "baselineDisagreements": 0,
+      "localAdaptiveUpdates": 1,
+      "executionEvidence": {
+        "samples": 13950,
+        "intentChanges": 3434,
+        "targetChanges": 3513,
+        "recallStarts": 62,
+        "stalledSeconds": 659.366666666692,
+        "retreatsSurvived": 697
+      },
+      "sampledIntents": {
+        "recover": 380,
+        "push": 2328,
+        "minion": 947,
+        "champion": 2701,
+        "regroup": 357,
+        "idle": 235,
+        "walk": 659,
+        "dead": 2324,
+        "retreat": 1721,
+        "hold": 87,
+        "recall": 295,
+        "defend": 864,
+        "relic": 14,
+        "structure": 234,
+        "camp": 584,
+        "stage": 14,
+        "objective": 206
+      },
+      "sampledNoResidualMacroChoice": 342
+    }
+  ],
+  "imitation": {
+    "training": {
+      "samples": 420,
+      "accuracy": 0.8690476190476191,
+      "loss": 0.320601483174668,
+      "actions": [
+        "fight",
+        "wave",
+        "regroup",
+        "farm",
+        "push"
+      ]
+    },
+    "heldout": {
+      "samples": 525,
+      "accuracy": 0.8247619047619048,
+      "loss": 0.4580427113510244,
+      "actions": [
+        "fight",
+        "wave",
+        "regroup",
+        "farm",
+        "push"
+      ]
+    },
+    "qualified": false
+  },
+  "evidence": {
+    "gzip_sha256": "365b4bd580c67d1760e86993f25b413cc09e6ed7ec68f30bd088848dbba68d9f",
+    "decompressed_sha256": "aa15aad3f2eed962722476791e7313f735d2d1a9ff7ba5e6de5533368aaeb18b"
+  },
+  "deployment": "Source changes only. Installed online catalog/worker and frozen studies unchanged.",
+  "limits": [
+    "Two independent baseline seed/draft worlds, plus repeat and empty-preference hybrid; no competitive win-rate estimate.",
+    "Sampled stall/retreat counters are diagnostic, not independent safety or quality labels.",
+    "Macro imitation candidate is offline; no new PPO campaign or global promotion was started.",
+    "No residual macro choice is reported separately from an illegal selected action; earlier nonresidual/emergency execution and fallback movement are outside that selection field."
+  ]
+}

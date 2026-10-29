@@ -1,0 +1,14 @@
+{
+  "id": "3b135ec1-f4c3-4674-9f57-bb0127032995",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "socket-study",
+  "runtime_id": "9d6d63438ea2f910c5b7039d4a6ed77596c6dbf1843f3f1590afe1b6b86aa4f7",
+  "environment_sha256": "73928306c86dae9ce21c8fe672abffcebdbb4ee2a654fa3a194a6f466ee8d105",
+  "started_unix": 1793037292.5881927,
+  "exit_code": 0,
+  "report_sha256": "76f2c03cc2d22a70adfcf649aa7ed1901cb75a859d7930968bd1944edcb141d7",
+  "completed_unix": 1793037420.281761
+}

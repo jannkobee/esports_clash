@@ -8,12 +8,34 @@ CONFIG = {'epochs': 400, 'learning_rate': 0.03, 'task_penalty': 2.0,
           'selection': 'fitting-only-leave-draft-out-ridge-v1'}
 
 
+def independent_examples(examples, expected_split):
+    seen = set()
+    for example in examples:
+        seed = example.get('seed')
+        if type(seed) is not int or seed < 1 or seed in seen:
+            raise ValueError('Duplicate or invalid training/calibration seed')
+        if example.get('split', expected_split) != expected_split:
+            raise ValueError('Training/calibration split contamination')
+        seen.add(seed)
+        if example.get('status') == 'valid':
+            for key in ('control', 'alternative'):
+                reward = example.get(key, {}).get('reward')
+                if type(reward) not in (int, float) or not math.isfinite(reward) or abs(reward) > 1:
+                    raise ValueError('Invalid outcome contrast')
+            for action in ('farm', 'push'):
+                values = example.get('taskContext', {}).get('actions', {}).get(action)
+                if not isinstance(values, dict) or values.get('bias') != 1 or not all(
+                    type(value) in (int, float) and math.isfinite(value) and 0 <= value <= 1 for value in values.values()):
+                    raise ValueError('Invalid predecision feature snapshot')
+
+
 def score(policy, action, context):
     return max(-1.0, min(1.0, sum(policy['weights'][action].get(key, 0) * value
                                 for key, value in context['actions'][action].items())))
 
 
 def fit(examples, folder, batch_size=64):
+    independent_examples(examples, 'fit')
     import torch
     data = [e for e in examples if e['status'] == 'valid' and e['incumbent'] == 'farm' and e['alternate'] == 'push']
     informative = sum(abs(e['alternative']['reward'] - e['control']['reward']) >= 0.02 for e in data)
@@ -90,6 +112,7 @@ def fit(examples, folder, batch_size=64):
 
 
 def calibrate(fitted, examples):
+    independent_examples(examples, 'calibration')
     policy = fitted['policy']
     data = [e for e in examples if e['status'] == 'valid' and e['incumbent'] == 'farm' and e['alternate'] == 'push']
     if len(data) < CONFIG['minimum_calibration'] or len({e['draft'] for e in data}) < 2 or len({e['cardId'] for e in data}) < 2:

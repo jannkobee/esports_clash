@@ -1,0 +1,47 @@
+{
+  "review_id": "fd4cd36c-cfa5-4890-bd19-7767345e8346",
+  "status": "rejected_regression",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Limited manual inspection of the signed bone_2-to-arm experiment against the preserved taper; no game-animation or appearance qualification.",
+  "observations": [
+    "The arm-favoring transfer regresses left shoulder intersections from 131 to 137 at 90 degrees; the right remains 81. All other recorded bend counts remain unchanged and all 16 poses have zero severe-stretch edges.",
+    "Selected close and oblique views do not show a useful shape correction. The compressed shoulder transition remains, so this experiment is rejected as a replacement for the taper.",
+    "All 517 source-bound contact signatures were verified before editing. Only bone_2, bone_26 and bone_7 weights changed; 140 left and 26 right vertices were modified. Rest geometry, weight normalization and maximum four influences pass the recorded checks.",
+    "The diagnostic exports reproduce every stored 45/90-degree count; 68 views rendered without browser errors. These are inspection clips, not qualified game animations."
+  ],
+  "decision": "Do not select this experiment as an improvement. Preserve the tapered parent and test torso-side upper-arm leakage as a separate frozen trial.",
+  "candidate_disposition": {
+    "id": "8db702c3-0015-4535-a4b1-f2dd44541ed4",
+    "selection": "rejected",
+    "preferred_comparator": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046"
+  },
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "f514b6eb0ec223b1b3a58512fb61b14fcda50df06ad4e02711e4f664d188ca9f"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "b867938b88832147391286d2f6813db0f194cbb09e1691a410dda4c1d44fea11"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-side-detail.png",
+      "sha256": "102384edb13efedb109ace8f036f5eb5c523fc19edff82a10aad5f5f0d8082d5"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "ba973a95141c23094e71a8e6bab62baa086e64e0b6154d90981822a635cb7da9"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "779df36a8c41cc64052200c68628105f46a8f45872267879b29d6cf257c902ee"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front.png",
+      "sha256": "d62e080b86a0dabd3a260cfd9f4caa44769c8f3d60bcb371ba46149f20a55abb"
+    }
+  ],
+  "rendered_views": 68,
+  "report_sha256": "b0b18ad86cc7e22a8156616820d9efa324c2a30164725314702fbfd3f71d16c4"
+}

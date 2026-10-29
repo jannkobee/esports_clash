@@ -1,0 +1,54 @@
+{
+  "id": "7a692c3c-3afb-49f9-ad6e-b4cf4b9ffb62",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "method": "signed-contact-shoulder-torso-return-v1",
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "parent_candidate_id": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046",
+  "parent_candidate_sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+  "reference_candidate_id": "59efceaf-d39e-414e-94af-36f7ccbae738",
+  "reference_candidate_sha256": "8416076e0ecb7b1592aafc1b4b9402ba028f21bb89c381c646f78501ce281838",
+  "contact_map_id": "0ba81d69-3c9a-4e1c-b3dc-703e998fa143",
+  "registered_contact_report_sha256": "adfe3b3a12acd788523d447ca82e185f9f083765d1b67da56e15e404d558cf03",
+  "repair_config": {
+    "donor": "mapped_upper_arm",
+    "target": "bone_2",
+    "roles": [
+      "UpperArmL",
+      "UpperArmR"
+    ],
+    "maximum_donor_fraction": 0.12,
+    "falloff_rings": 3,
+    "torso_weight_gate": [
+      0.5,
+      0.75
+    ],
+    "torso_groups": [
+      "Spine",
+      "bone_2",
+      "Chest"
+    ],
+    "seed_pair_policy": "only-donor-target-contact-pair"
+  },
+  "files": {
+    "candidate.glb": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+    "reference.glb": "8416076e0ecb7b1592aafc1b4b9402ba028f21bb89c381c646f78501ce281838",
+    "candidate-report.json": "80755b33dff1b0f674acf0e8f2474cd9453b39bc96028a490f962d9c807e36a6",
+    "reference-report.json": "5af1c0c1a9f22f8afa79798469de4b357c0fb5538d421f64f4ad6cb967cf74fe",
+    "baseline-report.json": "f653cff75831fb9200d8f143a6a3bcb56af2c653626a60475977f400ec26568c",
+    "contact-map.json": "a8c9762a600abed15421a1f7417fd647de9037d453efe10aaee7493863d3b1a6",
+    "backoffice-proof.json": "fa687a222b0e228ce64edf655727c5a047ca9bcf82292f0e5f1a33f941a232e7",
+    "tools/review_shoulder_contact_candidate.py": "de579f6982b1f2b6a8d3d1cfdc2d30c97db08f2cfc73bc71c14cf2d82bc11a7b",
+    "tools/contact_patch_mask.py": "11a07bd0e2e1b5a17caeb59a587a7cae4e26c95f0ea3ee074657d8410068c9a8",
+    "tools/test_contact_patch_mask.py": "35e7d089ec5335ee56c2088f007dd423f2cc71c6ccb3c98461831ec65e292db8",
+    "tools/review_collision_weight_candidate.py": "ed72e89f1f9d6314f1c5e90d52b787f700b787139ba5c95401426712c0f96d3c",
+    "tools/review_tapered_weight_candidate.py": "66a76c9304aa0cbacdbc82b8eabc9b84fd333f900350d74fc0ad9a6826b39233",
+    "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+    "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+    "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+    "supervisor.py": "cc8a6d359c992bb0856aa16e22306a951287e1567b6cd362a9ac978768692409"
+  }
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "avatar_id": "c_nullweaver",
+    "id": "base",
+    "sha256": "2f8ab47f321d9955ec303e19facd2d571fbe10d5034e74659fa057bb996c96f7",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "00827fde30d94facd575a7a0bdee647cf130c6d495e76a7ab3839d04e885655c",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_voltgrip",
+    "id": "base",
+    "sha256": "48d3bb78cd3c43ff6866b2885411eaff658895be2d9ab9ef036e50f008f01703",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "3aad4755462b96faa1316e3a657a6f9d79f35afe9a25965dee667773a7539bc8",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_aetherbolt",
+    "id": "base",
+    "sha256": "997fd51a6e9aa0ecb1bc186505d431c4db2a1ec79c192a53fca497b5be8252ca",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "432d558f352c88a4b7da8025ae465f18bd39a01db08625e00bf22be3e4bfbe13",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_corsara",
+    "id": "base",
+    "sha256": "5dec95ede60446774704032e1caeb6d1adf095190d4c669de2fad54d6e456c78",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "d7673580e5e13a6d6920765367232f5b34ef4a0f7dbed044e3df7fbdb8631dbd",
+    "http": 200
+  }
+]

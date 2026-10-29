@@ -1,11 +1,30 @@
 import { createServer } from 'node:http';
-import { randomBytes } from 'node:crypto';
+import { randomBytes,createHash } from 'node:crypto';
 import { readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, extname, join, resolve, sep } from 'node:path';
 import { CHAMPIONS } from './src/mockData.ts';
+import {loadArenaActor} from './src/arenaLearning.ts';
+import { validateGameContent } from './src/gameContent.ts';
+import {intelligenceSourceHash} from './scripts/intelligence-source-hash.mjs';
 
 const root = dirname(fileURLToPath(import.meta.url));
+const foundationBytes=await readFile(join(root,'src/data/arena-v6/arenaFoundation.json'));
+const foundation=loadArenaActor(JSON.parse(foundationBytes));
+if(!foundation)throw Error('Invalid room foundation');
+const engineHash=intelligenceSourceHash();
+const roomFoundation={id:createHash('sha256').update(foundationBytes).digest('hex'),policy:foundation,qualification:'foundation',source_hash:engineHash};
+let roomIntelligence=structuredClone(roomFoundation);
+async function refreshRoomIntelligence(){
+  if(!process.env.INTELLIGENCE_POLICY_URL)return;
+  try{
+    const response=await fetch(process.env.INTELLIGENCE_POLICY_URL,{cache:'no-store',signal:AbortSignal.timeout(3000)});
+    if(!response.ok)return;const raw=await response.json(),policy=loadArenaActor(raw.policy);
+    if(raw.engine==='arena-command-v1'&&raw.source_hash===engineHash&&policy&&/^[a-f0-9]{64}$/.test(raw.id))
+      roomIntelligence={id:raw.id,policy,qualification:raw.qualification,source_hash:engineHash,run_id:raw.run_id,generation:raw.generation};
+    else roomIntelligence=structuredClone(roomFoundation);
+  }catch{/* A room still freezes the last verified compatible model. */}
+}
 const rooms = new Map();
 const championIds = new Set(CHAMPIONS.map(champion => champion.id));
 const turns = [
@@ -52,7 +71,7 @@ function publicRoom(room) {
   };
 }
 
-export function createRoom(roster, coach, matchType = 'ranked', rating = 300) {
+export function createRoom(roster, coach, matchType = 'ranked', rating = 300, contentCatalog) {
   const blueRoster = safeRoster(roster);
   const blueCoach = safeCoach(coach);
   if (!blueRoster || !blueCoach) throw new Error('Select a valid five player roster and coach.');
@@ -64,6 +83,8 @@ export function createRoom(roster, coach, matchType = 'ranked', rating = 300) {
     matchType: matchType === 'normal' ? 'normal' : 'ranked',
     blueRating: Number.isFinite(rating) ? Math.round(rating) : 300,
     redRating: 300,
+    intelligence:structuredClone(roomIntelligence),
+    contentCatalog:structuredClone(contentCatalog),
     turnIndex: 0, 
     bans: {}, 
     picks: { blue: [], red: [] },
@@ -155,7 +176,14 @@ export function makeServer() {
       const segments = pathname.split('/').filter(Boolean);
       if (req.method === 'POST' && pathname === '/api/rooms') {
         const data = await body(req);
-        return json(res, 201, createRoom(data.roster, data.coach, data.matchType, data.rating));
+        await refreshRoomIntelligence();
+        let contentCatalog;
+        const contentUrl=process.env.GAME_CONTENT_URL??(process.env.INTELLIGENCE_POLICY_URL?.replace(/intelligence-policy$/, 'game-content'));
+        if(contentUrl) {
+          const response=await fetch(contentUrl,{cache:'no-store',signal:AbortSignal.timeout(4000)});
+          if(!response.ok || !(contentCatalog=validateGameContent(await response.json()))) throw Error('The shared game catalog is unavailable. Try again before creating a room.');
+        }
+        return json(res, 201, createRoom(data.roster, data.coach, data.matchType, data.rating,contentCatalog));
       }
       const code = segments[2];
       if (!/^[A-F0-9]{6}$/i.test(code || '')) return json(res, 404, { error: 'Room not found.' });

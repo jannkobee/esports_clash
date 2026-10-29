@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CHAMPIONS, INITIAL_PLAYERS } from './mockData.ts';
+import {CHAMPIONS} from './testFixtures/historicalCatalog.mjs';
+import {INITIAL_PLAYERS} from './mockData.ts';
 import { createRatedAvatar, playerCardCombatPower } from './playerCardPower.ts';
 
 const fighter = CHAMPIONS.find(avatar => avatar.primaryRole === 'Fighter');

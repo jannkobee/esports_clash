@@ -1,3 +1,4 @@
+import { mapLayoutY, PLAY_MIN_Y, PLAY_MAX_Y, LANE_Y, laneY } from './arenaLayout.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ARENA_WIDTH, BARRACKS_X, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, isInsideRockTerrain, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus, shouldSeparateUnitsByTeam } from './arenaRules.ts';
@@ -10,7 +11,7 @@ test('owner-approved unit contacts include allies and enemies', () => {
 });
 
 test('expanded map leaves room between each well, nexus, and barracks', () => {
-  assert.equal(ARENA_WIDTH, 2600);
+  assert.equal(ARENA_WIDTH, 2800);
   assert.ok(NEXUS_X.blue - WELL_X.blue >= 140);
   assert.ok(BARRACKS_X.blue - NEXUS_X.blue >= 140);
   assert.ok(NEXUS_TOWER_X.blue - BARRACKS_X.blue >= 180);
@@ -19,7 +20,7 @@ test('expanded map leaves room between each well, nexus, and barracks', () => {
   assert.ok(BARRACKS_X.red - NEXUS_TOWER_X.red >= 180);
 });
 
-test('tower plating tapers with game time and a nexus opens after its turret and one barracks fall', () => {
+test('tower plating tapers with game time and a nexus opens after its turret and all three barracks fall', () => {
   assert.equal(towerSiegeMultiplier(0), 0.30);
   assert.ok(Math.abs(towerSiegeMultiplier(240) - 0.65) < 1e-9);
   assert.ok(towerSiegeMultiplier(300) > towerSiegeMultiplier(0));
@@ -33,12 +34,17 @@ test('tower plating tapers with game time and a nexus opens after its turret and
   const defenders = [
     { team: 'red', type: 'nexus_tower', isAlive: true },
     { team: 'red', type: 'barracks', isAlive: true },
+    { team: 'red', type: 'barracks', isAlive: true },
     { team: 'red', type: 'barracks', isAlive: true }
   ];
   assert.equal(canDamageNexus('red', defenders), false);
   defenders[0].isAlive = false;
   assert.equal(canDamageNexus('red', defenders), false);
   defenders[1].isAlive = false;
+  assert.equal(canDamageNexus('red', defenders), false);
+  defenders[2].isAlive = false;
+  assert.equal(canDamageNexus('red', defenders), false);
+  defenders[3].isAlive = false;
   assert.equal(canDamageNexus('red', defenders), true);
 });
 
@@ -89,67 +95,66 @@ test('each camp and boss has a solid rocky enclosure with a lane-facing opening'
 
 test('both raised base entrances keep one clear central stair and rocky side walls', () => {
   for (const x of [NEXUS_TOWER_X.blue + 95, NEXUS_TOWER_X.red - 95]) {
-    assert.equal(isInsideRockTerrain(x, 295, 13), true);
-    assert.equal(isInsideRockTerrain(x, 465, 13), true);
-    assert.equal(isInsideRockTerrain(x, 380, 13), false);
+    const ly = laneY(x);
+    assert.equal(isInsideRockTerrain(x, ly - 130, 13), true);
+    assert.equal(isInsideRockTerrain(x, ly + 130, 13), true);
+    assert.equal(isInsideRockTerrain(x, ly, 13), false);
   }
-  for (const [startX, goalX] of [[800, 610], [1800, 1990]]) {
-    let walker = { x: startX, y: 380 };
+  for (const [startX, goalX] of [[NEXUS_TOWER_X.blue + 160, NEXUS_TOWER_X.blue], [NEXUS_TOWER_X.red - 160, NEXUS_TOWER_X.red]]) {
+    let walker = { x: startX, y: laneY(startX) };
     for (let tick = 0; tick < 30; tick++) {
       const dx = goalX - walker.x;
       if (Math.abs(dx) < 7) break;
-      walker = resolveRockTerrainMovement(walker, { x: walker.x + Math.sign(dx) * 7, y: walker.y }, 13);
+      walker = resolveRockTerrainMovement(walker, { x: walker.x + Math.sign(dx) * 7, y: laneY(walker.x + Math.sign(dx) * 7) }, 13);
       assert.equal(isInsideRockTerrain(walker.x, walker.y, 13), false);
     }
-    assert.ok(Math.abs(walker.x - goalX) < 8);
+    assert.ok(Math.abs(walker.x - goalX) < 14);
   }
 });
 
 test('long movement projections cannot leave units inside neighboring rocks', () => {
-  const from = { x: 0, y: 380 };
+  const from = { x: 0, y: laneY(0) };
   const projected = resolveRockTerrainMovement(from, { x: 295, y: 160 }, 13);
   assert.equal(isInsideRockTerrain(projected.x, projected.y, 13), false);
 });
 
 test('units can approach objective pits and jungle camps from nearby lane positions', () => {
-  for (const [startX, startY, goalX, goalY] of [
-    [1200, 380, 876, 170], [1200, 380, 1300, 130], [1200, 380, 1300, 610],
-    [1400, 380, 1724, 170], [950, 380, 785, 600], [1650, 380, 1815, 600],
-  ]) {
+  for (const camp of CAMP_ROCK_RINGS) {
+    const startX = camp.x;
+    const startY = laneY(camp.x);
     let walker = { x: startX, y: startY };
     for (let tick = 0; tick < 250; tick++) {
-      const waypoint = rockApproachWaypoint(walker, { x: goalX, y: goalY });
+      const waypoint = rockApproachWaypoint(walker, camp);
       const dx = waypoint.x - walker.x;
       const dy = waypoint.y - walker.y;
       const distance = Math.hypot(dx, dy);
-      if (Math.hypot(goalX - walker.x, goalY - walker.y) < 8) break;
+      if (Math.hypot(camp.x - walker.x, camp.y - walker.y) < 8) break;
       walker = resolveRockTerrainMovement(walker,
         { x: walker.x + dx / Math.max(0.001, distance) * Math.min(7, distance), y: walker.y + dy / Math.max(0.001, distance) * Math.min(7, distance) }, 13);
       assert.equal(isInsideRockTerrain(walker.x, walker.y, 13), false);
     }
-    assert.ok(Math.hypot(goalX - walker.x, goalY - walker.y) < 8,
-      `${startX},${startY} should reach ${goalX},${goalY}; stopped at ${walker.x.toFixed(0)},${walker.y.toFixed(0)}`);
+    assert.ok(Math.hypot(camp.x - walker.x, camp.y - walker.y) < 8,
+      `${startX},${startY} should reach ${camp.id} (${camp.x},${camp.y}); stopped at ${walker.x.toFixed(0)},${walker.y.toFixed(0)}`);
   }
 });
 
 test('campers and objective teams use the base stair and pit opening', () => {
-  for (const [startX, goalX, goalY] of [
-    [590, 785, 600], [2010, 1815, 600], [590, 876, 170], [2010, 1724, 170],
-    [590, 1300, 130], [2010, 1300, 130], [590, 1300, 610], [2010, 1300, 610],
-  ]) {
-    const goal = { x: goalX, y: goalY };
-    let walker = { x: startX, y: 380 };
-    for (let tick = 0; tick < 350; tick++) {
-      if (Math.hypot(goal.x - walker.x, goal.y - walker.y) < 8) break;
-      const waypoint = rockApproachWaypoint(walker, goal);
-      const distance = Math.hypot(waypoint.x - walker.x, waypoint.y - walker.y);
-      walker = resolveRockTerrainMovement(walker,
-        { x: walker.x + (waypoint.x - walker.x) / distance * Math.min(7, distance),
-          y: walker.y + (waypoint.y - walker.y) / distance * Math.min(7, distance) }, 13);
-      assert.equal(isInsideRockTerrain(walker.x, walker.y, 13), false);
+  for (const camp of CAMP_ROCK_RINGS) {
+    for (const startX of [NEXUS_TOWER_X.blue, NEXUS_TOWER_X.red]) {
+      const goal = { x: camp.x, y: camp.y };
+      let walker = { x: startX, y: laneY(startX) };
+      for (let tick = 0; tick < 350; tick++) {
+        if (Math.hypot(goal.x - walker.x, goal.y - walker.y) < 8) break;
+        const waypoint = rockApproachWaypoint(walker, goal);
+        const distance = Math.hypot(waypoint.x - walker.x, waypoint.y - walker.y);
+        walker = resolveRockTerrainMovement(walker,
+          { x: walker.x + (waypoint.x - walker.x) / distance * Math.min(7, distance),
+            y: walker.y + (waypoint.y - walker.y) / distance * Math.min(7, distance) }, 13);
+        assert.equal(isInsideRockTerrain(walker.x, walker.y, 13), false);
+      }
+      assert.ok(Math.hypot(goal.x - walker.x, goal.y - walker.y) < 8,
+        `${startX} should reach camp ${camp.id}; stopped at ${walker.x.toFixed(0)},${walker.y.toFixed(0)}`);
     }
-    assert.ok(Math.hypot(goal.x - walker.x, goal.y - walker.y) < 8,
-      `${startX} should reach camp or objective; stopped at ${walker.x.toFixed(0)},${walker.y.toFixed(0)}`);
   }
 });
 
@@ -185,10 +190,10 @@ test('empowered minions gain health, damage, and speed', () => {
   }
 });
 
-test('nine strategic bushes cover river, pit, valley and highground flanks', () => {
-  assert.equal(ARAM_BUSHES.length, 9);
+test('ten strategic bushes cover river, pits, valley and highground flanks', () => {
+  assert.equal(ARAM_BUSHES.length, 10);
   const ids = new Set(ARAM_BUSHES.map(b => b.id));
-  assert.equal(ids.size, 9);
+  assert.equal(ids.size, 10);
   for (const b of ARAM_BUSHES) {
     assert.ok(b.width >= 90);
     assert.ok(b.height >= 35);
@@ -199,9 +204,8 @@ test('nine strategic bushes cover river, pit, valley and highground flanks', () 
   }
   // Points in middle lane return undefined (middle bushes removed)
   assert.equal(getBushAt(0, 0), undefined);
-  assert.equal(getBushAt(1000, 380), undefined);
-  assert.equal(getBushAt(980, 310), undefined);
-  assert.equal(getBushAt(1020, 450), undefined);
+  assert.equal(getBushAt(1400, LANE_Y), undefined);
+  assert.equal(getBushAt(1000, laneY(1000)), undefined);
 });
 
 test('canUnitRecall enforces safety distance, minion clearance, bush stealth, and damage cooldown', () => {

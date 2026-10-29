@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_wraithhook",
+  "component_id": "segmented_oar",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Segmented oar",
+  "attachment": "hands",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Mora Fenhook. Attached illustration is design reference only. One complete long segmented wooden oar with aged teal paint and brass couplings, full paddle and handle visible. No hands, boatwoman, clothing, boat, magic fog or water. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "mora-fenhook",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/mora-fenhook.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/mora-fenhook-segmented_oar.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-fa5e9c01-f994-4ef8-b225-8a65a613df3a.png"
+}

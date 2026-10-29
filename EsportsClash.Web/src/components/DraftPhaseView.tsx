@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ConfluxSpellbook } from './ConfluxSpellbook';
+import { MirellePatternBook } from './MirellePatternBook';
 import type { ChampionKit, CoachCard, PlayerCard, AvatarRole } from '../types';
 import type { DraftSide, DraftSnapshot } from '../draftRules';
 import { chooseCoachBan, chooseCoachPick, chooseCoachTeamPick, DRAFT_TURNS, draftLineups } from '../draftRules';
@@ -398,68 +398,13 @@ export const DraftPhaseView: React.FC<Props> = ({ startingFive, allChampions, us
               </div>
             )}
             <div className="space-y-2 border-t border-slate-800 pt-3">
-              <div className="text-xs font-black text-amber-300 uppercase tracking-wide">
-                Ability Kit & Mechanics
-              </div>
-
-              {/* Passive */}
-              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
-                <div className="text-amber-300 font-bold text-[11px] mb-0.5">
-                  {inspected.name === 'Kaelen' ? 'R: CONFLUX (ACTIVE)' : 'PASSIVE: Innate Combat Trait'}
-                </div>
-                <div className="text-slate-300 text-[11px] leading-tight">{inspected.passiveDesc}</div>
-                {inspected.name === 'Kaelen' && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-2">
-                    {KAELEN_INVOKED_SPELLS.map(spell => (
-                      <div key={spell.id} className="flex justify-between gap-2 rounded border border-slate-800 bg-slate-900 px-2 py-1 text-[10px]">
-                        <span className="font-bold text-slate-200">{spell.name}</span>
-                        <span className="shrink-0 text-slate-400">{spell.recipe.map(element => element === 'ice' ? 'Q' : element === 'wind' ? 'W' : 'E').join(' ')} · {spell.cooldown}s</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Skill 1 */}
-              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
-                <div className="flex justify-between items-baseline mb-0.5">
-                  <span className="text-cyan-300 font-bold text-[11px]">Q: {inspected.skill1.name}</span>
-                  <span className="text-slate-400 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +0.2 HP regen/s per held orb' : inspectedAbilities ? abilityCompactSummary(inspectedAbilities.skill1) : 'Mechanics unavailable'}</span>
-                </div>
-                <div className="text-slate-300 text-[11px] leading-tight">{inspected.skill1.desc}</div>
-                <div className="text-cyan-200 text-[10px] leading-tight">{abilityTargetingDetails(inspected.skill1)}</div>
-              </div>
-
-              {/* Skill 2 */}
-              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
-                <div className="flex justify-between items-baseline mb-0.5">
-                  <span className="text-purple-300 font-bold text-[11px]">W: {inspected.skill2.name}</span>
-                  <span className="text-slate-400 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +1 movement speed per held orb' : inspectedAbilities ? abilityCompactSummary(inspectedAbilities.skill2) : 'Mechanics unavailable'}</span>
-                </div>
-                <div className="text-slate-300 text-[11px] leading-tight">{inspected.skill2.desc}</div>
-                <div className="text-cyan-200 text-[10px] leading-tight">{abilityTargetingDetails(inspected.skill2)}</div>
-              </div>
-
-              {/* Ultimate */}
-              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
-                <div className="flex justify-between items-baseline mb-0.5">
-                  <span className="text-rose-400 font-bold text-[11px]">{inspected.name === 'Kaelen' ? 'E: ' : 'R: '}{inspected.ultimate.name}</span>
-                  <span className="text-rose-300 text-[10px]">{inspected.name === 'Kaelen' ? 'No cooldown · +1% spell/damage amp per held orb' : inspectedAbilities ? abilityCompactSummary(inspectedAbilities.ultimate) : 'Mechanics unavailable'}</span>
-                </div>
-                <div className="text-slate-300 text-[11px] leading-tight">{inspected.ultimate.desc}</div>
-                <div className="text-cyan-200 text-[10px] leading-tight">{abilityTargetingDetails(inspected.ultimate)}</div>
-              </div>
-              {inspected.name === 'Kaelen' && (
-                <div className="rounded-lg border border-cyan-500/20 bg-cyan-950/20 p-2 text-[11px] text-cyan-100">
-                  <strong>Conflux (R):</strong> Invoke the current three Ice/Wind/Fire orbs into one of ten spells. Orb stat bonuses last only while those orbs remain held. Keep the two newest invocations in FIFO order on D/F; Conflux cooldown falls from 3s to 0s at levels 1/7/13/18.
-                </div>
-              )}
-              {inspected.name === 'Aetheris' && (
-                <div className="rounded-lg border border-cyan-500/20 bg-cyan-950/20 p-2 text-[11px] text-cyan-100">
-                  <strong>Resonant Convergence:</strong> Tethers nearby allies for 5/6/7/8 seconds at ultimate ranks 1/2/3/4.
-                </div>
-              )}
-              {inspected.name === 'Kaelen' && <ConfluxSpellbook champion={inspected} />}
+              <h4 className="text-xs font-black text-amber-300">Original ability kit</h4>
+              <div className="rounded-lg border border-slate-800 bg-slate-950 p-2 text-xs"><b className="text-amber-300">{inspected.passiveName??'Passive'}</b><p>{inspected.passiveDesc}</p></div>
+              {(['skill1','skill2','ultimate'] as const).map((slot,index)=><div key={slot} className="rounded-lg border border-slate-800 bg-slate-950 p-2 text-xs">
+                <b className="text-cyan-200">{['Q','W','R'][index]}: {inspected[slot].name}</b><p>{inspected[slot].desc}</p>
+                <small className="text-amber-200">{inspected[slot].cooldown}s base cooldown ? authored effect geometry</small>
+              </div>)}
+              {inspected.id==='c_invoker'&&<MirellePatternBook/>}
             </div>
 
             {/* Signature Athlete Synergy Notification */}

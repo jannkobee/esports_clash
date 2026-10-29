@@ -8,7 +8,7 @@ class ReportDeletionService {
     public const MODELS=['ml'=>EvolutionRun::class,'generation'=>TrellisGeneration::class,'preparation'=>AvatarPreparation::class,'enhancement'=>AvatarEvolutionRun::class];
     public function canDelete(string $type, string $status,?array $control=null): bool {
         if($type==='preparation'&&!empty($control['intent']))return false;
-        $busy=$type==='ml'?['queued','running','stopping','paused_resource']:array_diff(AvatarJobCancellationService::CANCELLABLE,['ready','needs_review','awaiting_retarget','awaiting_validation','complete']);
+        $busy=$type==='ml'?['queued','running','stopping','paused_resource','paused_budget']:array_diff(AvatarJobCancellationService::CANCELLABLE,['ready','needs_review','awaiting_retarget','awaiting_validation','complete']);
         return !in_array($status,$busy,true)&&!($type==='enhancement'&&$status==='complete');
     }
     public function delete(string $type, array $ids): void {
@@ -31,7 +31,7 @@ class ReportDeletionService {
                 $run=$model::lockForUpdate()->findOrFail($id);
                 if(!$this->canDelete($type,$run->status,$type==='preparation'?$run->control:null)) throw ValidationException::withMessages(['report'=>'Stop or cancel active jobs before deleting reports. Nothing in this selection was deleted.']);
                 if($type==='ml'&&BalanceReview::where('run_id',$id)->where('status','open')->exists())throw ValidationException::withMessages(['report'=>'Resolve this study\'s open balance review before deleting its report.']);
-                if($type==='ml'&&$run->status==='completed'&&!BalanceReview::where('run_id',$id)->exists())throw ValidationException::withMessages(['report'=>'The completed study is still creating its review. Wait for that review before deleting its report.']);
+                if($type==='ml'&&!in_array($run->plan['version']??0,[3,4],true)&&$run->status==='completed'&&!BalanceReview::where('run_id',$id)->exists())throw ValidationException::withMessages(['report'=>'The completed study is still creating its review. Wait for that review before deleting its report.']);
                 $runs[]=$run;
             }
             foreach($runs as $run) {

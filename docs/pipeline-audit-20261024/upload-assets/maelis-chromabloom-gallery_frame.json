@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_hwei",
+  "component_id": "gallery_frame",
+  "category": "accessory",
+  "binding": "independent",
+  "label": "Collapsible gallery frame",
+  "attachment": "independent deployable",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Maelis Chromabloom. Attached illustration is design reference only. One complete collapsible gilt gallery frame and folding transport supports with attached rolled canvas, teal repaired insets and leather straps. No conservator, person, body, ceramic mask or handheld caddy. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "maelis-chromabloom",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/maelis-chromabloom.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/maelis-chromabloom-gallery_frame.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-e8b69649-bed4-4771-8fe4-b4e2966c5b52.png"
+}

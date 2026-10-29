@@ -1,0 +1,1746 @@
+{
+  "scope": "Legacy avatar review-build, diagnostic and reference copies; excludes new Mirelle artifacts and tool files",
+  "files": [
+    {
+      "path": ".local-tools/backoffice-review/dawnna-calibrated-attack.png",
+      "bytes": 363972,
+      "sha256": "c34e58c98b881560393faf2b9fdaf220879d67e23dc9460baaad5f7f4ecef838"
+    },
+    {
+      "path": ".local-tools/backoffice-review/dawnna-calibrated-idle.png",
+      "bytes": 368327,
+      "sha256": "05baa22c7f97225cc214fedb68f6ad62c93ad31a7881b37d79d44e3b4c445ed4"
+    },
+    {
+      "path": ".local-tools/backoffice-review/dawnna-calibrated-walk.png",
+      "bytes": 366963,
+      "sha256": "ea72e9f1597644cad890386bb963c8cf2cffe265244a92cdecb4cab06f5a9ccc"
+    },
+    {
+      "path": ".local-tools/backoffice-review/equipped-dawnna-prepared.png",
+      "bytes": 340286,
+      "sha256": "d15b89e30ae64f353fa3b8ffbe91089f4c9237d979258b2882f6120c98cc7fc6"
+    },
+    {
+      "path": ".local-tools/backoffice-review/equipped-dawnna-studio.png",
+      "bytes": 477578,
+      "sha256": "8c0011792f0d500f9c5c459cf44ec10ea9e41b8a0e0a5a30612ecfb18ddb060f"
+    },
+    {
+      "path": ".local-tools/dawnna-stance-candidate.glb",
+      "bytes": 15635612,
+      "sha256": "23092d4d1e2a8109ad21d646898d4d554c1c532070bb05c6c3290a0b09425a25"
+    },
+    {
+      "path": ".local-tools/maintenance/dawnna-contact-candidate.glb",
+      "bytes": 5454488,
+      "sha256": "51d662adab5c1528fde37df85a94631a1045a7c31df6b01a58e44023acd773d9"
+    },
+    {
+      "path": ".local-tools/maintenance/dawnna-motion-repair/attack.png",
+      "bytes": 343695,
+      "sha256": "e0c8502c9c7816c61592c753b04d8d3f84a45afd578ce47bd34c9688fa341724"
+    },
+    {
+      "path": ".local-tools/maintenance/dawnna-motion-repair/candidate-01-final.glb",
+      "bytes": 5453764,
+      "sha256": "b99009513f39b31a087da87b6357ce3fe6c7400fa9c754c248eb3c1cc0742d1a"
+    },
+    {
+      "path": ".local-tools/maintenance/dawnna-motion-repair/candidate-01.blend",
+      "bytes": 6594380,
+      "sha256": "2eb9fdcefec6b6850ecba3c9a4cee5c4eaad8ed50b8c1c73c6d8cf871b1d0e11"
+    },
+    {
+      "path": ".local-tools/maintenance/dawnna-motion-repair/candidate-01.glb",
+      "bytes": 5453764,
+      "sha256": "b99009513f39b31a087da87b6357ce3fe6c7400fa9c754c248eb3c1cc0742d1a"
+    },
+    {
+      "path": ".local-tools/maintenance/dawnna-motion-repair/death.png",
+      "bytes": 222335,
+      "sha256": "ac43d12875046b49e60510b3f54c0b3ac16787be325f7817dae46c12331e6533"
+    },
+    {
+      "path": ".local-tools/maintenance/dawnna-motion-repair/idle.png",
+      "bytes": 332803,
+      "sha256": "4382c5e62052115a558dbe7cafd93e5125c909d78fb4a40841bb3bedcf912a19"
+    },
+    {
+      "path": ".local-tools/maintenance/dawnna-motion-repair/unirig-rigged.glb",
+      "bytes": 5176372,
+      "sha256": "191d389a7ee5a6fccbc57ccb9ac673eeb3d8682ab8f57ad3c1b91dbbf5a38df9"
+    },
+    {
+      "path": ".local-tools/roundtrip.glb",
+      "bytes": 1009744,
+      "sha256": "76eb46ccb1363146749515db30a684464aedc72c954a976808c58476e8832ace"
+    },
+    {
+      "path": ".local-tools/trellis2/data/diagnostics/bde8c561-963b-4e75-b319-45d93ab730dc/candidate.glb",
+      "bytes": 4626208,
+      "sha256": "7d1d4aa259b83db8a1f45e6fee138b7008da90720c8fa5ab9c05dc65ecad7a4d"
+    },
+    {
+      "path": ".local-tools/trellis2/router-data/input/0aa7ff15-9cc1-474f-800f-1225901d611c.png",
+      "bytes": 837862,
+      "sha256": "c783279b423ac4853d96421445716256c04eeccc80434b9e644fe2dd9870d2dc"
+    },
+    {
+      "path": ".local-tools/trellis2/router-data/input/0cd98a1d-ee14-4f97-82cd-75bb04e3d2cd.png",
+      "bytes": 1566656,
+      "sha256": "593305bf8957a19b041e939133b4d26807257e638714fea638e518ce0f36e39b"
+    },
+    {
+      "path": ".local-tools/trellis2/router-data/input/c0c86ecb-ee38-4ca4-8325-406a4e39e83a.png",
+      "bytes": 837862,
+      "sha256": "c783279b423ac4853d96421445716256c04eeccc80434b9e644fe2dd9870d2dc"
+    },
+    {
+      "path": ".local-tools/trellis2/router-data/input/c1601db1-ff27-40ad-b727-eabbca89d663.png",
+      "bytes": 837862,
+      "sha256": "c783279b423ac4853d96421445716256c04eeccc80434b9e644fe2dd9870d2dc"
+    },
+    {
+      "path": ".local-tools/trellis2/router-data/input/d0ba4c6c-f06e-4047-90ab-5f29de0cb11d.png",
+      "bytes": 613393,
+      "sha256": "43c2464d7af854a76e703d40e0bdd3783b5aa4b533335ca899ce2f87a34581a4"
+    },
+    {
+      "path": ".local-tools/trellis2/router-data/references/c_wukong_lol/43c2464d7af854a76e703d40e0bdd3783b5aa4b533335ca899ce2f87a34581a4.png",
+      "bytes": 613393,
+      "sha256": "43c2464d7af854a76e703d40e0bdd3783b5aa4b533335ca899ce2f87a34581a4"
+    },
+    {
+      "path": ".local-tools/trellis2/router-data/references/c_wukong_lol/c783279b423ac4853d96421445716256c04eeccc80434b9e644fe2dd9870d2dc.png",
+      "bytes": 837862,
+      "sha256": "c783279b423ac4853d96421445716256c04eeccc80434b9e644fe2dd9870d2dc"
+    },
+    {
+      "path": ".local-tools/trellis2/router-data/references/c_wukong_lol/current.png",
+      "bytes": 613393,
+      "sha256": "43c2464d7af854a76e703d40e0bdd3783b5aa4b533335ca899ce2f87a34581a4"
+    },
+    {
+      "path": ".local-tools/trellis2/router-data/stafford-base-apose-tokenrig.glb",
+      "bytes": 2509740,
+      "sha256": "bffc47c8cf223c82f4c2644138f146fdef6f7c9934e2a14c12755eacad4c1f0b"
+    },
+    {
+      "path": ".local-tools/trellis2/router-data/stafford-tokenrig.glb",
+      "bytes": 4423320,
+      "sha256": "26bd2f5d7322561bcdf27817f699422248e5c8181987c958a569d8324ca27dab"
+    },
+    {
+      "path": ".local-tools/trellis2/stafford-prepared.glb",
+      "bytes": 4906236,
+      "sha256": "b001aebfd0e4cdfee88fcd7df21bb22e63dfc92142b37f52d2522a1b8e476097"
+    },
+    {
+      "path": "docs/arsenaldo-art-arsenaldo-turnaround.png",
+      "bytes": 661429,
+      "sha256": "de974fb0994deebc9e6888ddc5c05d8431707fa6a78d3934ae3670994447618e"
+    },
+    {
+      "path": "docs/arsenaldo-art-roster.png",
+      "bytes": 1168623,
+      "sha256": "affbeff2d6463a84adf71c4dea596764b38604f97731388b379f1648a1489a40"
+    },
+    {
+      "path": "docs/arsenaldo-art-studio-mobile.png",
+      "bytes": 130077,
+      "sha256": "a3655c641987cf689a52319aab23382bfb0ba822e2cc13a01f154efd79d38ee0"
+    },
+    {
+      "path": "docs/arsenaldo-art-studio.png",
+      "bytes": 330633,
+      "sha256": "05a52ef85f5cdde66dba11f62d760941d30679c364ab796f1c5a356a2bcf6dfa"
+    },
+    {
+      "path": "docs/arsenaldo-claude-arena-desktop.png",
+      "bytes": 363320,
+      "sha256": "0ffa95014bf64a30d968413d4a99a9cbf9a8c6a22fcff800f53fc8018cd2f53a"
+    },
+    {
+      "path": "docs/arsenaldo-claude-arena-laptop.png",
+      "bytes": 289700,
+      "sha256": "9a64eea8771fd253d8c7d5ee1fd5e90feb0012d7d901f63e803ce51b92724651"
+    },
+    {
+      "path": "docs/arsenaldo-claude-arena-mobile.png",
+      "bytes": 155642,
+      "sha256": "dd7a1b908bd334022fbd4ab90872736aee2aef26cb03e4e4f06e00c4b20290c0"
+    },
+    {
+      "path": "docs/arsenaldo-claude-comparison.png",
+      "bytes": 495443,
+      "sha256": "4a9430fbb113588b847dad81417ef596ae077394ba581c7ce29367bcfc6c0e96"
+    },
+    {
+      "path": "docs/arsenaldo-claude-reactions.png",
+      "bytes": 471424,
+      "sha256": "771499d75c653901f12b05479130eead1fa7fd798f458b6b391829b786a88441"
+    },
+    {
+      "path": "docs/arsenaldo-claude-studio.png",
+      "bytes": 358188,
+      "sha256": "a8e28d0f3c249c07258ce696d5d898c19f53660d7cc333ac48b266f41ff062a4"
+    },
+    {
+      "path": "docs/arsenaldo-claude-video-frame-1.png",
+      "bytes": 838695,
+      "sha256": "4a11818c711709a534f39bb3bba1ce059f32bc701c78aa628f6f6cfda30f191e"
+    },
+    {
+      "path": "docs/arsenaldo-claude-video-frame-2.png",
+      "bytes": 839063,
+      "sha256": "bebb1c42a8a51925bbb8c5cedde2e0ff6249e8c81c4961bd137aae8adc6f63d4"
+    },
+    {
+      "path": "docs/arsenaldo-claude-video-frame-3.png",
+      "bytes": 766945,
+      "sha256": "5bf41e3933c4825c1ec329c58c39704519167dc4fb381172b3fc5f4ecaaf60c5"
+    },
+    {
+      "path": "docs/arsenaldo-supplied-mobile.png",
+      "bytes": 105386,
+      "sha256": "bb912e279f5d7e8f7eabb12ee9c6de944474844d8b0c29f95647ee46edde6e71"
+    },
+    {
+      "path": "docs/arsenaldo-supplied-studio.png",
+      "bytes": 181600,
+      "sha256": "eb2f98cb089f240092fbdc08aead27f1e234f99306933bde4973aa48d6c068fc"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_aetherbolt.glb",
+      "bytes": 835688,
+      "sha256": "8cd559c34652b0e95fe2e1692271fe43812506cc8484b3676243798389ac6726"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_astra.glb",
+      "bytes": 1005616,
+      "sha256": "d608d269ad1caad6bd835159674e12c8efdbfdba19555dbc8df2b6cf798a2508"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_batrider.glb",
+      "bytes": 190216,
+      "sha256": "a691c380ce78d4b7681715912c1ccbdb9350eded6115b504106fc54d47202189"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_brewmaw.glb",
+      "bytes": 875224,
+      "sha256": "2b801c342743c2fd391990e3d6ef4b65e84c0b38b6c9110eb877b37115d17448"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_bristleback.glb",
+      "bytes": 125620,
+      "sha256": "00b6eee68a0bce483042b772de87f27344722573c7e89f7428f24ffa2968955b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_buck.glb",
+      "bytes": 935080,
+      "sha256": "4cb4b1a42caa5028c320e0ff31f9fee62de1de44391eb8e1399b3cd369d26ce3"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_cora.glb",
+      "bytes": 903580,
+      "sha256": "1a172f0c4ddef460b0fa3d087e89fd30f10afee962236da49a853e9f838b65a3"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_corsara.glb",
+      "bytes": 882964,
+      "sha256": "be7b9580cf34ea7df69339111bccb24c2223db28934d3f3e4704cfa117d4f891"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_earthshaker.glb",
+      "bytes": 941060,
+      "sha256": "99fbbad1828f0fd1084bee761a39fbcfae6032e003fc28686208fa1b31047af5"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_hwei.glb",
+      "bytes": 865440,
+      "sha256": "7981099967a1eceb53e662496f662d1f9a4b645b2391e0836c8b7d27c3d69884"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_inai.glb",
+      "bytes": 860132,
+      "sha256": "2e54ae96e7f9d676a1d62863885daf26abd3274528701afb84a113533e512f60"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_invoker.glb",
+      "bytes": 3619068,
+      "sha256": "85d77baf909441f2e7aa084c84d2766deb8b2f4f6a7ac398c4211a8af24c3f4c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_io.glb",
+      "bytes": 67424,
+      "sha256": "8a09ca5fc72f3f5eece61698d97c20b3fa8dc5b7af5a78b8073a47c8b9a052d6"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_jayce.glb",
+      "bytes": 846104,
+      "sha256": "18dd17d0093f6b117ab3dddf6a3d67905ad291c9e1f8442879c888d120cec323"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_jinx.glb",
+      "bytes": 1184720,
+      "sha256": "049dd00ea0e8975956471ecb687d5103e8a37aa552656b336703f02bb2a42916"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_kage.glb",
+      "bytes": 823572,
+      "sha256": "e8c7be1b43613e90bdd46bbb5b929d0cfde96d8f3ddbfb02e7b6477765326502"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_kaolin.glb",
+      "bytes": 848108,
+      "sha256": "797edcbd19e9e5aa32a294e8398fd4613bf0057942b9f97294d0c449e24b536b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_kazemaru.glb",
+      "bytes": 842292,
+      "sha256": "099a1d2c7a992dc3af0ae18eb29020f6d96b55017948c0717d4355aec3ddd91e"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_kindra.glb",
+      "bytes": 908964,
+      "sha256": "fd24dbf3305f1b4b1ad59dbf82cbdc4640f2f2590532a88f974281ffb658fc01"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_kyumi.glb",
+      "bytes": 922872,
+      "sha256": "9fbf2c6d6509b2604d8ab5dc6a7b6daebc336e8230ed5bb504f508f5ebe64db8"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_largo.glb",
+      "bytes": 329992,
+      "sha256": "2c8fdd236196ec5f94aa4622f2892366bb1eef7ffee4568d7bb5664e106d5850"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_locke.glb",
+      "bytes": 853264,
+      "sha256": "abd996b18fff16666fcfa2d55e240d929b0c39290e99505e607b007df0cd6952"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_lulu.glb",
+      "bytes": 912468,
+      "sha256": "23c1556e4081ce2e5e36f117571033b856bd675b72cebd76899e50803ae9c024"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_mirehook.glb",
+      "bytes": 988964,
+      "sha256": "d86e6403b21633560346f2bdcfe3fa430fcf204bc4460dc423568f22d1454942"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_monkeyking_dota.glb",
+      "bytes": 958700,
+      "sha256": "f87a54c7b28305837b003c196122fa917d6fbac5444c4c5c34f5fd1d88321108"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_nullweaver.glb",
+      "bytes": 73992,
+      "sha256": "c7b0c8bd6137db9ea201df80700c59bc68d8d63e284e0812fdd1128060b1860a"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_puck.glb",
+      "bytes": 177208,
+      "sha256": "0b288c6e91f7630d088d5836e9a45791f637d3515a1808a5c5287aa13ac0406b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_qiyana.glb",
+      "bytes": 854424,
+      "sha256": "c964023ea827396ce6a0651c3cbf0e2d130ed9f2beb9c1a49e1502a1ba3d151d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_raijin.glb",
+      "bytes": 873976,
+      "sha256": "48ef3ec5c92c61ae7f7c4afd4bd2e31feef9a8bcb780102b63e9906d52aa23a9"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_renn.glb",
+      "bytes": 953316,
+      "sha256": "7911ca8d91ccbfec33cff2abf0c0c2fc24083bb965459b98dc0e761ef0a7f099"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_senna.glb",
+      "bytes": 857288,
+      "sha256": "8e5235158727e927f8036e62123aa15cd2db098f80165329026b185fd0e5a290"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_shadowfiend.glb",
+      "bytes": 67072,
+      "sha256": "179b11f87a6530bb931e28972ef41c52f5886f00a68b5b498b604ff22446da26"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_silencer.glb",
+      "bytes": 870616,
+      "sha256": "0ff8c2ec5cb2cea8ec7d40b206ce810bd51e09ebdc80dc910222acb4feed0ceb"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_skybreaker.glb",
+      "bytes": 200632,
+      "sha256": "081bc4c2ac45352bb5359232ad2a60f70f4e63cb14cc5991718ba2d6c27a3bcc"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_solana.glb",
+      "bytes": 896496,
+      "sha256": "5bd7596e63d5d4d6e730855aefa418f39825839ea2c09b0908cdb7fa7e1a062b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_stepstone.glb",
+      "bytes": 826696,
+      "sha256": "eb0d066053fbaf396c8d7927520a8ea4fcda204ce0abaf7364914e53202acc6b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_sylla.glb",
+      "bytes": 1102024,
+      "sha256": "67443f50ded844cbe03e246e7838bfa60d622c575a5bc46f4504109cf687ee61"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_tequoia.glb",
+      "bytes": 918008,
+      "sha256": "8e5234f3ff0748fc0713443fdc6a30c9454c4c2fd09bd346112c8013fb739335"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_valkira.glb",
+      "bytes": 870808,
+      "sha256": "9d790e77136e172e54391cd413f0cec8e3b56b9c009a104117417d1147ac865f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_vi.glb",
+      "bytes": 824208,
+      "sha256": "12bf4ce37b18719f45f0290b1cd087d972c197f61f4773c3d321e1ad24caabe9"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_voltgrip.glb",
+      "bytes": 156908,
+      "sha256": "b85391936326ce5973d482f7e608052e3c678b7c742eb315ae3e89eb45901a02"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_wraithhook.glb",
+      "bytes": 875948,
+      "sha256": "85047526a158e095e801a2d83e73c74f6af89d0e3ad8e1b523f7825a232eeca7"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_wukong_lol.glb",
+      "bytes": 915280,
+      "sha256": "9158f0454b9e3a599aeb327048d8549eadfb6cf1f91cdf72aecf9825f86c8285"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_xin.glb",
+      "bytes": 884056,
+      "sha256": "c98d73ac1d231b3b54f7bda287d44335da109fdc8efd478379ae50f772466294"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v2/c_zal.glb",
+      "bytes": 852340,
+      "sha256": "b1ea8efbed3ad349db51c21349628a016ead0d32b3b0027a398b47c78804ce64"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_aetherbolt.glb",
+      "bytes": 5579412,
+      "sha256": "d5517229082e418fa62307584f31493846fe8bfbd80099b2a95e90a64c2cbad6"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_astra.glb",
+      "bytes": 5627800,
+      "sha256": "9e6bb04c34bff0976bcd399e8dab9aa6e344a0c690d8db8ed3b6f2a139d9517f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_brewmaw.glb",
+      "bytes": 2320284,
+      "sha256": "0dd0987c1482a98536329b036e7d814fcb05bbb5ef589eb4c21c807164808b39"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_buck.glb",
+      "bytes": 2285352,
+      "sha256": "b7574ae06ddbe3ee50e15df08153d5af5b576f2bbdb5682447451a37e8317f51"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_cora.glb",
+      "bytes": 5672048,
+      "sha256": "320884a8bd7def6ac5777bf0ead8eb7afeb3b6f1c2c36e2dcd1bc4698fc8dc49"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_corsara.glb",
+      "bytes": 5668576,
+      "sha256": "a38ee2184adac9228b0bd25be806ad31accf7ddc83c3185c841514cd5a6c32c8"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_earthshaker.glb",
+      "bytes": 2330052,
+      "sha256": "bcea38c114280ffc98edffdec1a925b26a932e77c1c28cb7258912c483f7e157"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_hwei.glb",
+      "bytes": 2462108,
+      "sha256": "8a97092ebc505725b454765470473e27713b57f8a6f6c79d7be9b6c56860a5bd"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_inai.glb",
+      "bytes": 2254720,
+      "sha256": "1fbcc6d8c704bca0ced0ca6e21f487579b39079c7b8d99a060898d588316ba20"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_invoker.glb",
+      "bytes": 3876868,
+      "sha256": "0fbfaf0f108e191aedff5ba1bccaeb086817d5cf71dc7d04961d6285a1ff2d9b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_jayce.glb",
+      "bytes": 2249896,
+      "sha256": "5e1ac8032eec5c84c59275b8e333f4022dce47b06c40b83755fee52700f34ede"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_jinx.glb",
+      "bytes": 5623316,
+      "sha256": "686ff44b26ccbeb191d2f8a5d997dae1a37bcf614a635d406d83c364e387e4fa"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_kage.glb",
+      "bytes": 5551832,
+      "sha256": "643c0b68dd9fce3755b369466065b5973d084de0b0500bf527ee4d568a12a645"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_kaolin.glb",
+      "bytes": 2219900,
+      "sha256": "0b8e6a387d541d2094a73a7c0bddaf53431278147886004436f9a1aa0d7bab47"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_kazemaru.glb",
+      "bytes": 5597200,
+      "sha256": "cf36c7134798cf9496415374ca226483881ccaaf7adbe90bf99ab08449f89125"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_kindra.glb",
+      "bytes": 5660212,
+      "sha256": "0c85c18289feacf6bd34457082e0e9ac251b879aef9640bcd3aea75628df82c4"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_kyumi.glb",
+      "bytes": 2158648,
+      "sha256": "3ef5c5776cecc2d5a65a7b37da9e8cda132c38485a3db4058a5e445c1e5777a0"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_locke.glb",
+      "bytes": 5536756,
+      "sha256": "5994335617ebf0bf8edd761beb4dc5fd1d214ea19ff5745dc48e04de32c4a9a9"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_lulu.glb",
+      "bytes": 2141280,
+      "sha256": "45a4f165ce40fd2e35ef6fe2b28bb4953c68de7d7781e22464f0ec618bcc3375"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_mirehook.glb",
+      "bytes": 2334964,
+      "sha256": "236054fe9fa123ddfab4327a32140925a988446e1c29814ccf4d373f5a4d465e"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_qiyana.glb",
+      "bytes": 5622564,
+      "sha256": "c961ef8f3eb602439265e0e8fdab843a51d339f09b4fb3cd0e9c8f1f9d17e616"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_raijin.glb",
+      "bytes": 2240136,
+      "sha256": "5bac35303c0dbbabcbd9e12b31fa713a4e598029d56fc7a389135db909f42b9c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_renn.glb",
+      "bytes": 5679088,
+      "sha256": "a59890ac2f6c913623ec5e0a86b4d037f8c0b4a6e16bd9ef7513448ed9f7fa61"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_senna.glb",
+      "bytes": 5651388,
+      "sha256": "1317366bab83a958f9089223cffe21bf1a6f22f1aa6b1473b59a8b36e2c42f0c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_silencer.glb",
+      "bytes": 2239052,
+      "sha256": "2e989bebc9acb2217ca17af733b642063b0205dbd93895b806354113e1443cc4"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_solana.glb",
+      "bytes": 2131692,
+      "sha256": "01dd7e59553a4743f73ca924f8040640a62416a72c8f8ac5bde3dd087355e0e3"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_stepstone.glb",
+      "bytes": 5583732,
+      "sha256": "87ae7efdb9b8e1de9b404747c69a16c5b4af7b7170b49ba4bc2424ab48fd1958"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_sylla.glb",
+      "bytes": 2536512,
+      "sha256": "61bde23c3289359d60f173013c6b5cddf8156fc3f0d3ebf03e09daf77ed5961d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_tequoia.glb",
+      "bytes": 2159944,
+      "sha256": "908c66d51ef3289530e8e212d357c10b3ebeac4a5fa5ec0569304b9cb3474180"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_valkira.glb",
+      "bytes": 2084340,
+      "sha256": "e4f3b2f2ba23d1e61cbe860b1b302a0fcbf108f3ed7eb827675068e4a8598f22"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_vi.glb",
+      "bytes": 2325332,
+      "sha256": "acbf2479479948377794b814a3b1510b1ea78777276a919af6f14cfbd76bc9ba"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_wraithhook.glb",
+      "bytes": 2246380,
+      "sha256": "2f1b15990c9ba3d485091adbce1519285f67e5388a866c4d3b7392402bfa1d5e"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_xin.glb",
+      "bytes": 5631792,
+      "sha256": "66c495f4b42e6aa886d9f4d40b2dddcb4c289d723757b33a23c7dc805100c9cd"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v4/c_zal.glb",
+      "bytes": 2258900,
+      "sha256": "81654952e7bfa4d7e3c518e610f229404409c8109d7341cbdcbeccc33de8eb15"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_aetherbolt.glb",
+      "bytes": 5718356,
+      "sha256": "154972a4340802ef8ae9955245163d5c44c1495536da7e58446963e0048d6382"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_astra.glb",
+      "bytes": 5767056,
+      "sha256": "ec538027d51e25fb399c8836ebf0a2f8768a2d45254313a073f1d67ea2c9fd43"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_batrider.glb",
+      "bytes": 322308,
+      "sha256": "91aaf7a666297442a1b680b496964c9e5628599a920c2bba1d579129ab4610ee"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_brewmaw.glb",
+      "bytes": 2459844,
+      "sha256": "612c333f386405482735d6e5c61ecee8e2eb245b3f0f87ef47b4226a06428c58"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_bristleback.glb",
+      "bytes": 257720,
+      "sha256": "9437efffe4dbc6d00ad269eec12459d2178c27dd3fcc52541d7f6bca104bab40"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_buck.glb",
+      "bytes": 2425160,
+      "sha256": "f057e1241b4ae082eab82a31567a03ead844fd88b51d99539b48a8bfdf7dfa97"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_cora.glb",
+      "bytes": 5803692,
+      "sha256": "80cddf9bb46ad88bed5dd0e4b24dd8d3dcbd34b8ea8adde317f1ce8c83cb1370"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_corsara.glb",
+      "bytes": 5807880,
+      "sha256": "dfe4f98396d06a30fe8fe1a9db1dd09d76aeb6095912985185b662279bfa8005"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_earthshaker.glb",
+      "bytes": 2469184,
+      "sha256": "6de1eea455627fd530b848edc4c16ffb8b90cafd94b046e84bdb3bba97a52349"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_hwei.glb",
+      "bytes": 2601516,
+      "sha256": "821f702ffb90ab2e9aae67b6cf109701141e719dea4fc6ac832fa1250c0a4a41"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_inai.glb",
+      "bytes": 2394152,
+      "sha256": "4623dfe27783719797cf26d4025f5c210c0bc8293074a111faa74c55b814ef47"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_invoker.glb",
+      "bytes": 4016016,
+      "sha256": "19ced4d685f473733689d20f0ca7ecb0850f1a6f9f2082ac0b4efee76da0601e"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_io.glb",
+      "bytes": 199268,
+      "sha256": "805f1877c341ac5d2db52082344bb03645ebf295fcdbed4e3bf6fbe4c90de734"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_jayce.glb",
+      "bytes": 2389120,
+      "sha256": "4d2315370065409f0df361e69f0900db03e66ee8663435eac1f80c99cf03186f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_jinx.glb",
+      "bytes": 5762556,
+      "sha256": "60cc91d69998a0a9dc8263262d5157bb5c6ac98c767d26df286d85987cfb5f88"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_kage.glb",
+      "bytes": 5691084,
+      "sha256": "19981bc0e1e735a2c4a19aa0e422190fe7a364f9db47daf2c755194727aeb605"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_kaolin.glb",
+      "bytes": 2346364,
+      "sha256": "18abc2effe983c537fe1f6e0a4730342c7758daa9b612c5455a4765175a3b241"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_kazemaru.glb",
+      "bytes": 5736328,
+      "sha256": "3dcc36aca8719616bcf6548a272632e9b647f2bd8e2fe4b7b469b8a1eee21093"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_kindra.glb",
+      "bytes": 5799420,
+      "sha256": "6247d55a791a9b35805d6c89e76e644345e980d6a5a5d04e8597545f2dab1e4d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_kyumi.glb",
+      "bytes": 2298976,
+      "sha256": "fb2658fecd34818202a361f10e3288d16f9c048bc0ac773eb9923b9bcf669247"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_largo.glb",
+      "bytes": 462032,
+      "sha256": "2352687477baf4b2d7cbacfb9af0be8bca9826bc561abca8ec7134cac012ec09"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_locke.glb",
+      "bytes": 5675960,
+      "sha256": "841d6a8c07f4e7fb959f078ffe0d35cd7c55cf28132df102552dbda6d71ff761"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_lulu.glb",
+      "bytes": 2281664,
+      "sha256": "6acff02a00b212d57ecc6179c887990c1125c9e22211d975f990dba22c46f816"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_mirehook.glb",
+      "bytes": 2473796,
+      "sha256": "4bfbce424bad231690467ae7a3fc36adab6ec2871c1627b072ae958570afd579"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_monkeyking_dota.glb",
+      "bytes": 1098536,
+      "sha256": "8ff2491994348ac29d9ee90e202974d0d63519c994210079bfbfec0e472b1bde"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_nullweaver.glb",
+      "bytes": 205856,
+      "sha256": "6146f58f0592e620c21772786283890ec00a6e3c9bc45db04617880898cd5284"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_puck.glb",
+      "bytes": 309272,
+      "sha256": "126a86ef3f895d9f5bd5921e362cb7c8ba1a56e743f7b78c97b386df06dcce7f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_qiyana.glb",
+      "bytes": 5761872,
+      "sha256": "8c2e45a44c78716d94b2b93522d117298802ab88655023b8518688fbaae91769"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_raijin.glb",
+      "bytes": 2379600,
+      "sha256": "8f334ac9bb6bc624877bcfe20ffa16d7fbedf3deca7d8f7d3966d7f5b6fa7ee7"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_renn.glb",
+      "bytes": 5820196,
+      "sha256": "a13e71eb375637a63961154e3d9aa4d51e318b31f8a2cbc208ea6d2b3b1fc452"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_senna.glb",
+      "bytes": 5790588,
+      "sha256": "da9f289840b5411c2b4fa201345e5ee2399c6b6e034d54d79a0f3f01d0a43a26"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_shadowfiend.glb",
+      "bytes": 198868,
+      "sha256": "34b7d1e5f48cfd457d3713091db28007fe5ef5a13c614c39e3d8acdc36c1d173"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_silencer.glb",
+      "bytes": 2378472,
+      "sha256": "23c81018b319286403ffc83d943a3d95f58819097caf2e38c3debd7d98bde5bb"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_skybreaker.glb",
+      "bytes": 332728,
+      "sha256": "8e5143f0fc663b4f38842f9f00655cba78e23824aac0ebfda235af4240370730"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_solana.glb",
+      "bytes": 2270960,
+      "sha256": "6bba7df619839ef3e60ca0cf75c0119af99ca515cc3fcd89fd5dd10566a1ac31"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_stepstone.glb",
+      "bytes": 5722812,
+      "sha256": "660bc7839f637d548002a485e65bfc2f7a710aa98adeec1e2254157bff821a14"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_sylla.glb",
+      "bytes": 2676076,
+      "sha256": "6592c340717028dd4e85f7c49c2b08a05af956a6739304a8f14d1845adf751c0"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_tequoia.glb",
+      "bytes": 2299392,
+      "sha256": "5e70f1375bc065ed4800e1c113f5b5bcf78282a766ff285e92aed1548851ef3d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_valkira.glb",
+      "bytes": 2223788,
+      "sha256": "8f5dc31b7d402f8bcdf5f6153ff6ee04cd98596ed85595a8724a8fe4a0ae0650"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_vi.glb",
+      "bytes": 2464768,
+      "sha256": "e627b447d13fbeb9ccce1e394704b259aac163754ff7e1633c139f975675e7b8"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_voltgrip.glb",
+      "bytes": 288992,
+      "sha256": "47a82f3898f03e35d8ca003cbb603206ee3e6a0e3808104b297d24ce50e4cfd5"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_wraithhook.glb",
+      "bytes": 2385816,
+      "sha256": "9642edee1bfd00a0b3d9439170a067a489597d8f90d33bea5cf964f567f92313"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_wukong_lol.glb",
+      "bytes": 1055108,
+      "sha256": "9d37d21426d12c9552cd2b32ced8c7264e18f7016020364234d461bf8c49216f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_xin.glb",
+      "bytes": 5771104,
+      "sha256": "32732e8241bf7d3ff0e15af5b2fa1c3c62f1c01fa146abf2a2945f68c244d99a"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v5/c_zal.glb",
+      "bytes": 2399080,
+      "sha256": "72d00f2957f0939120396a73ccfe1ac243eb622a963791d803dd932f372bef38"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_aetherbolt.glb",
+      "bytes": 5954856,
+      "sha256": "c024cab186100400abe000fb77c7a10ec40563705ed4e5f8e32e26333014ce83"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_astra.glb",
+      "bytes": 6004248,
+      "sha256": "7a8c14655e173aab17afa38b37b22ec5d8e74425aeb71415a02a5997fa0a7acb"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_batrider.glb",
+      "bytes": 577280,
+      "sha256": "7dd2f5a106f516ae1b8de3ce58a2f982a8a5cab0cfe6b5079f10d1bc9986f157"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_brewmaw.glb",
+      "bytes": 2696684,
+      "sha256": "9f13561e1e65d3d438de76db6373ca90b1d15130c7b715ecc8e3b7217642569f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_bristleback.glb",
+      "bytes": 500864,
+      "sha256": "1c693da3a231703fdeca74cf15d9a3db9e2f144070134f54a4becb7d96865917"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_buck.glb",
+      "bytes": 2661756,
+      "sha256": "2e3c68494773c13a075c757f6a870497fd587021540085cb7e991b6a3b24b15a"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_cora.glb",
+      "bytes": 6040164,
+      "sha256": "06247a77f74ff1fd0012dede8f8d0d79f1e6fcb536b7ff85f9f8fc2992657f2e"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_corsara.glb",
+      "bytes": 6044512,
+      "sha256": "4c781e45a93be377c5eef8cf6a7ef6182b22dbf60f19cc9ba8bf8677771aed21"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_earthshaker.glb",
+      "bytes": 2705628,
+      "sha256": "9b9dc8c3e63a2d8c119ef0099530e2349b52d41e20ff9719907a15712f83a547"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_hwei.glb",
+      "bytes": 2837900,
+      "sha256": "4aec39b8d1aace9aa46d500424c959399580c43a11c4e49b7b5a5360436178b4"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_inai.glb",
+      "bytes": 2631076,
+      "sha256": "f5d3819083fbad1502e254152c07164ac8718a7995e3045ce8653177224a9de5"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_invoker.glb",
+      "bytes": 4286032,
+      "sha256": "7b64796df4c29c55d55d95a95df2a99424576cc85930451135a24c7c5bdaef1a"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_io.glb",
+      "bytes": 469256,
+      "sha256": "ac62c35d61943a403e5379397c73e50c525c1948c20d1c82f391458ee7b0d027"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_jayce.glb",
+      "bytes": 2625576,
+      "sha256": "3966c54f4cbf5d92b490f4ffefdaf95384f27a28e09631596181ecdcd8555c2b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_jinx.glb",
+      "bytes": 5999196,
+      "sha256": "8832a6be1fbd0e0de5fefc65fa2d262877019f7226137bd40a4195db724eceb2"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_kage.glb",
+      "bytes": 5927832,
+      "sha256": "c57d894689ecd8bf8b49db527cb58fae322c660048e511c92ad0a2c5888bab27"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_kaolin.glb",
+      "bytes": 2583104,
+      "sha256": "155a986079e2f09ad5b230368c1ae76d01dcb4dd9b0b22d01371e37b0f730f2c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_kazemaru.glb",
+      "bytes": 5973156,
+      "sha256": "f79141561e4811e49dd0b54b43233a52da78625d6e4bb56dd4f8905e11c665b5"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_kindra.glb",
+      "bytes": 6036596,
+      "sha256": "9a08942f625836823b4afba44970b654c1eb5a715c1d4614076d7b6fd3eff26a"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_kyumi.glb",
+      "bytes": 2535556,
+      "sha256": "c3d32a3d07838999d7587036643e9e81b5dcb6ce545b9985a77a50447c3ecf4c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_largo.glb",
+      "bytes": 705168,
+      "sha256": "3d290e1647ca895419b9e1120b4efd1f237c52066fabb175a50f0971ad9b3925"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_locke.glb",
+      "bytes": 5912740,
+      "sha256": "af052f12a0eaf5f775db196b83329fa167a8bc1aa2903036beefa7cdebd7e8de"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_lulu.glb",
+      "bytes": 2518468,
+      "sha256": "5e1db8b965be9c0e889baf55bed29e9f261bd67b4c6952c9771fe8898dc9346e"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_mirehook.glb",
+      "bytes": 2710572,
+      "sha256": "53328d0cdd39329d0fc88ff848ca1cfc3e9bf90c91155b7f294d1ef60fcf82f1"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_monkeyking_dota.glb",
+      "bytes": 1335568,
+      "sha256": "d398ce56e3bb51d9b25fc58352a47ef20f38a90fd5bf5a94c6e41f497ddf8789"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_nullweaver.glb",
+      "bytes": 467904,
+      "sha256": "aeca02b4570ed58e9bfcf65b571b709dcd77bacd6994606a731ae0110c1bc48e"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_puck.glb",
+      "bytes": 564244,
+      "sha256": "4f05261ab04d8058b521a3b3f92b7389d564bbd212a8b06beae32c44d8ba7026"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_qiyana.glb",
+      "bytes": 5998648,
+      "sha256": "32a7f10731e6a4d105ebbe66d400445cf28049c2a400be983b45d27de11983c9"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_raijin.glb",
+      "bytes": 2630396,
+      "sha256": "d33c08a2dde4d44074ab4ade3c184ee7a9ad30133d17adc4e461eff7d0947a02"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_renn.glb",
+      "bytes": 6056928,
+      "sha256": "954835c6fb3fd340c320d91f1e1ec9945f51fd9e69571f40f79590a371f9d50c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_senna.glb",
+      "bytes": 6027240,
+      "sha256": "88d5efa33fae2600223e5d72d62ad5da0ec924241651158485fa701c3642b0c1"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_shadowfiend.glb",
+      "bytes": 442356,
+      "sha256": "da49c7f39e0ace69748264867e12838a52952428762b47f4b1ab60612bac80b2"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_silencer.glb",
+      "bytes": 2615304,
+      "sha256": "75cb84faed95f12287d9de0f5f30636d2beebca048db1a881875661133f9aac6"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_skybreaker.glb",
+      "bytes": 586688,
+      "sha256": "c1b4f6cec414281abb8be5cf2387632089d13f7df8f1819f0e687d8b4d475868"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_solana.glb",
+      "bytes": 2507476,
+      "sha256": "3694a502237ac8525ca400e98571d1c05583faaeeed390ba1205e7e1a570f143"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_stepstone.glb",
+      "bytes": 5959528,
+      "sha256": "2a7083415aab5f82c9836fbddc6a52edbd9743684f11f7bf47e30e99e06df74d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_sylla.glb",
+      "bytes": 2912896,
+      "sha256": "67d88a39780b9234f34ac6726774d8eb38ec717c53ea2b5a36df677e20546d3b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_tequoia.glb",
+      "bytes": 2536108,
+      "sha256": "9f7d51da9caed16180066dc1663567d6b3400c0f54ef79e2ef6f3a2a2d98f832"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_valkira.glb",
+      "bytes": 2460616,
+      "sha256": "94608ee1c0e4aabae216866a6229e23c04fd3f95c4ea56b2b22513b522b976ed"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_vi.glb",
+      "bytes": 2701576,
+      "sha256": "836d21d82ddfe3cd6fcc12dcc42db994bf3cbfcfab986093b94948d37367a02d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_voltgrip.glb",
+      "bytes": 532136,
+      "sha256": "a127a1d495553a231735822c0e4f1bdfc6482c70f9b2d98d41f5d59add2b1611"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_wraithhook.glb",
+      "bytes": 2622488,
+      "sha256": "f91bab022d8c9003e363b724d0024ad582fad610ac4c6accc5c5e2a7ce097be8"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_wukong_lol.glb",
+      "bytes": 1291964,
+      "sha256": "10995c118ca39b8de896d63494c8a1b01774e5eea5b99738ec2e1bec6a08066c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_xin.glb",
+      "bytes": 6007892,
+      "sha256": "08c752ca29e2af9b5a5bab9e6e7d5c8ff92cf115e21fb9c6414ead432bf45fb8"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v6/c_zal.glb",
+      "bytes": 2635748,
+      "sha256": "b6a3f424555a63d78ea51a0d339d32e97568663af90fa0d3ff9f606611c9bf8c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_aetherbolt.glb",
+      "bytes": 6021320,
+      "sha256": "378acaf8dec6629cb57f621820d336a629e26898e456f1b45cb0b36eb09076ce"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_astra.glb",
+      "bytes": 6089464,
+      "sha256": "c366ed59af6819761c90c6477db5d14d0eeedc472df1956fc078459125d12f07"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_batrider.glb",
+      "bytes": 577324,
+      "sha256": "e0127db447976cfab9a063f78e2d34078b442c94a09bd5967b06c0b622751196"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_brewmaw.glb",
+      "bytes": 2756140,
+      "sha256": "e202122a97208c52c014bc7623214b06b0a7871667ab137f15407983c0b8317b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_bristleback.glb",
+      "bytes": 508524,
+      "sha256": "4bf72cb6f31ddee69930eca14dfaefd8c374719e0daca7911c528fe36339e389"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_buck.glb",
+      "bytes": 2731656,
+      "sha256": "32883f70c438180efac3c014bbeab84b944d37d966f6258650d5473ee6ffef08"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_cora.glb",
+      "bytes": 6091204,
+      "sha256": "fed09b75531443db2abb832594cbbfd8f4f70ab8f3801e55182f80e4969032fb"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_corsara.glb",
+      "bytes": 6106256,
+      "sha256": "1099ed8f6300c1ff577ab75f79b0a56e73b95b8ae53067510593edefa787d38c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_earthshaker.glb",
+      "bytes": 2757772,
+      "sha256": "d93add527adaaa905f11ac7a4f293ec4c35fe93d04a759b1bd1933451c74b03c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_hwei.glb",
+      "bytes": 2904452,
+      "sha256": "02fc0618822cc2c591ee9c21e04d6e2aadd8f1f6dbffe7ba2a2c507469e2d129"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_inai.glb",
+      "bytes": 2700988,
+      "sha256": "feb75e30b0c6c31a2a6eb9cca4877bb75c86b293d16ab9bb61b6f2184fde621b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_invoker.glb",
+      "bytes": 4341856,
+      "sha256": "6be5ae91651b4f6aaafdb8bacb012047d9726f6b2b908d9b6c22c8171cc1d2bf"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_io.glb",
+      "bytes": 469300,
+      "sha256": "e4ee622cee0905e8be26c6314c3d1b516be31dd31f673602b2130305a841673f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_jayce.glb",
+      "bytes": 2695344,
+      "sha256": "60d6610ad85fb98e607291c66bfd809c821820679f9997b3cedbb3b1bb44a6a7"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_jinx.glb",
+      "bytes": 6053668,
+      "sha256": "05d618f0cce628cb46224856580c05c1607f922803ab92fa344b91c1db7399a9"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_kage.glb",
+      "bytes": 5983556,
+      "sha256": "012fcfa3c005d919793333d662c4afa6dddbef9519f749f0b206eb6ec3a40059"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_kaolin.glb",
+      "bytes": 2642076,
+      "sha256": "9b05bf1df7748ce9fee12516bdbf53afe706cb3562d358a73dd43ed815af287f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_kazemaru.glb",
+      "bytes": 6028868,
+      "sha256": "ba5ddb74babc25f2f987a33313ecb8d26c63514be3270aec10187fa247cfa691"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_kindra.glb",
+      "bytes": 6121800,
+      "sha256": "f0d0d8a13872017c5b3a6b93f7491b1c4b6b1f84bbbd13f4510f3074f6725e60"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_kyumi.glb",
+      "bytes": 2586492,
+      "sha256": "ff2a092e77559e38e9c3b517a9477fa49e0c8c19f9abcc1fdb30723fe630b01e"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_largo.glb",
+      "bytes": 705212,
+      "sha256": "f7b5ce9028ea0aef42b21abac062ea01f716997d298b8c16167be1add2fea8b8"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_locke.glb",
+      "bytes": 5979136,
+      "sha256": "9d794c0c14e614b4fd7312180a8c6d86a6a5b186932daee5c7bdf69d996da1ce"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_lulu.glb",
+      "bytes": 2569500,
+      "sha256": "7aab3142efdfd023646d641d0a8583d5ec552b69470604bc2a6530a84c04d0a6"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_mirehook.glb",
+      "bytes": 2766304,
+      "sha256": "99a74ccc44e6f5eaabf1c3f5e60911d4b80f23bdb8e4017fc925a214182886fc"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_monkeyking_dota.glb",
+      "bytes": 1353320,
+      "sha256": "8ea5bbf3360b7628c2034acac0519a437b0c38ce3b74fad32bbe990b28b455ed"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_nullweaver.glb",
+      "bytes": 467948,
+      "sha256": "fbc4d891721f2a8cd85ed070c66c62510a74d20e060bb6ca49be4018e342f34c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_puck.glb",
+      "bytes": 564288,
+      "sha256": "6cbb1b016b0029443cb85ded6a53eb8879225986f7403f84940a80aa83f28944"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_qiyana.glb",
+      "bytes": 6049656,
+      "sha256": "48f207477d133180b5c8b7fb30a2343a36b9a56356f037b4b9b466ae057dc09d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_raijin.glb",
+      "bytes": 2686120,
+      "sha256": "054ad513d6315e40d101531ff351e3d1e296e0415d097c1fdb28985ce5fdcf61"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_renn.glb",
+      "bytes": 6112716,
+      "sha256": "7f1c8e0cb45be0f8cdb6d363540d4928b363caeae7e0e54b2354316f66ace031"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_senna.glb",
+      "bytes": 6092472,
+      "sha256": "2e50a48c2483843ad2c07f5f6ec60f3ddb3b28ed80448e21a021c80bbb38ad4c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_shadowfiend.glb",
+      "bytes": 442400,
+      "sha256": "bf2264f6809a73e1e4db13ab0b27a48c1e6ffffb23be9298475662f05bab3a3a"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_silencer.glb",
+      "bytes": 2681672,
+      "sha256": "20bf38d6a17bb428b3240b133003f9c6d50d15e0331744c6b46e599551a66423"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_skybreaker.glb",
+      "bytes": 586728,
+      "sha256": "33b2e59c66da33727420817cbd8956305bce2713cdedd7ba7722a26fac297610"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_solana.glb",
+      "bytes": 2569200,
+      "sha256": "47f00bc0adbfa55c710114cc9390847fe4a0b488242a8f1ad0c1450c8b4059ad"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_stepstone.glb",
+      "bytes": 6015316,
+      "sha256": "0c17500b84eb7d6fd0bf29ee279501dbfbc2ddd997f4627040569e590926b103"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_sylla.glb",
+      "bytes": 2979380,
+      "sha256": "8756288d7797243fb0d64f225a40d69af6271c4cb350560ee1992ec89c7cade6"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_tequoia.glb",
+      "bytes": 2597844,
+      "sha256": "b8eb57a3969ede4a07b8cab2df42bec278cec6037bc62a7bd19ff7ea6ef7e188"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_valkira.glb",
+      "bytes": 2522268,
+      "sha256": "af6766121c4e5aed220a856ef823bd58246912a1ed61a726bb759406994bc4cb"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_vi.glb",
+      "bytes": 2752520,
+      "sha256": "651fe62b45620a1e8e3d474f4cc0ba1f514260704dbe53e925911bca6d148e69"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_voltgrip.glb",
+      "bytes": 539684,
+      "sha256": "87e2bd949c3ddcec49c67e97beed68a69988e92ce1244bdcf1fab6083aeb5070"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_wraithhook.glb",
+      "bytes": 2712112,
+      "sha256": "607f714f0aed0c5e50ca7e79b1bd051886dc9be832c3bf3392503c7e5d8d3850"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_wukong_lol.glb",
+      "bytes": 1298932,
+      "sha256": "8515d94fd83aa1570ac1e102412b7384e0036b037e0ce4ed60152ceb2e46aa9f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_xin.glb",
+      "bytes": 6074320,
+      "sha256": "120098535b3c52cc414bb0bc090f4e486f518bfd37a1c344853384579e27751b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v7/c_zal.glb",
+      "bytes": 2691416,
+      "sha256": "ac5bda36ffcde05a81e47a5c784e425d33bf8ad525485be88c7dfe394f42bdaa"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_aetherbolt.glb",
+      "bytes": 5233864,
+      "sha256": "20129373e7858a7109f6b24b63dfa14ae70eef86bc037a3949203ddee92b148d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_astra.glb",
+      "bytes": 5048512,
+      "sha256": "2c48306484bd32b5a72809c2b806088ac9d69bfc540dcf4c2ab08bf1b627e5a2"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_batrider.glb",
+      "bytes": 637996,
+      "sha256": "150563db821eed9444d9c51b56bcf66a1f672a93f79c0ec82b8d52a2f422d1de"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_brewmaw.glb",
+      "bytes": 3277136,
+      "sha256": "30e5a087b7152379cefdd5d5d2bb929d70fc727656dede5154dd438fe9830c0c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_bristleback.glb",
+      "bytes": 757984,
+      "sha256": "9e72b1a1e7ef6b00ae8b186f6a6ccd3e97d33ea937b82a59837c64d229e0e051"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_buck.glb",
+      "bytes": 3088236,
+      "sha256": "6a51e104d78ebb5293eb37f8453137e730f9f51c058f5a51e5e57433cfb1827e"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_cora.glb",
+      "bytes": 4986952,
+      "sha256": "c6a408ad302c858ee67557a3f023d4c335cc1fbf2ed9ccc13ee137e1dad82ef8"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_corsara.glb",
+      "bytes": 5371516,
+      "sha256": "0ac2d13acba83a3cae502775f7fd3a140599d7d75cbc43c76308d31fcf0d35ae"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_earthshaker.glb",
+      "bytes": 3006944,
+      "sha256": "bbd34d91c414aa8306e68ba5f4caf5dfd8468a7c2067ffa87e0ed21b397c4478"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_hwei.glb",
+      "bytes": 3326380,
+      "sha256": "a2ebf029dd981f9a7ab457772da514226c999e5d392c61dfbe846e47c5f88f22"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_inai.glb",
+      "bytes": 3110484,
+      "sha256": "047ac8266c1bed26d0969a583000258f8cc9016b36b99e9626106d538953c25b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_invoker.glb",
+      "bytes": 4376024,
+      "sha256": "14f7a7706a59618fd9970a9a1888f698e742a5856f6dce77ac2228814333337f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_io.glb",
+      "bytes": 655224,
+      "sha256": "89251722d6d2ca43020b4ed2707dfe2525d58aaf767c57a176c5d1fd9a0b96b6"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_jayce.glb",
+      "bytes": 3152768,
+      "sha256": "17d7a47a90032997fa9e8fe3647b4d2418e596c99f86aa0353600fe5de40d8d3"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_jinx.glb",
+      "bytes": 5146456,
+      "sha256": "a55417da3039f603f46eabfce78fc13e2f5d6889e0d703ae48e51c2ff0f06c56"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_kage.glb",
+      "bytes": 4976384,
+      "sha256": "9afd031fef7ddf35c61aaf6710fc8bdc1e0c0b0455a5e5b5e62f938968f38c6f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_kaolin.glb",
+      "bytes": 3124900,
+      "sha256": "8ca1e96647254e2b1f02663464019f6d7b12dc37922b87eb612444d06a3087a8"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_kazemaru.glb",
+      "bytes": 5196876,
+      "sha256": "899be5e5e82226aeaf4da77dd642a5ff5910f1bfcc12180a31bfe06992eca964"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_kindra.glb",
+      "bytes": 5081100,
+      "sha256": "70421d943f15c1bf0019e789a69e03c3e32666eedbf63e2f5bd4768ce51fbeb2"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_kyumi.glb",
+      "bytes": 2725360,
+      "sha256": "edb74c8f2e9bc974137fdeca2060fb6857cb726ba1fdbe78bc2cc7241e5ed75f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_largo.glb",
+      "bytes": 1082440,
+      "sha256": "7264c900b9bde8d542f909c81a389bc8ddbf1163be2fa8cb2754e3239dfeb404"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_locke.glb",
+      "bytes": 5183488,
+      "sha256": "8be2125e8f6ffb0791be11225d890c8e10075e16f10676d1c6bcd74c7580b690"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_lulu.glb",
+      "bytes": 2980160,
+      "sha256": "ea9ee869ff6f68177ff23e961f90ed09928eb4a7911058e5bdd51e9f09ef7792"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_mirehook.glb",
+      "bytes": 2936108,
+      "sha256": "8715b77cf46efebed2f9b430eb98d2917a522872b5e90a176042559e9a476502"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_monkeyking_dota.glb",
+      "bytes": 1771576,
+      "sha256": "822e4d222341ef7af3feed98fcbff26f1b5a1821f82b9502faa3cdb9bdfb919f"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_nullweaver.glb",
+      "bytes": 653864,
+      "sha256": "c072c891169b933cdd7951d7985cba9caee55a23d3820fcaf820f50b5dd61cb8"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_puck.glb",
+      "bytes": 643284,
+      "sha256": "ed8817c475a4b5bb42df779518345a55961416325bd82f2980c1084f35f14a10"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_qiyana.glb",
+      "bytes": 4986864,
+      "sha256": "2c2c05942d53064b419f2083f0088c3d69d5ecbcbc638421de4ea8383cc3acb4"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_raijin.glb",
+      "bytes": 2814124,
+      "sha256": "dc09e914af699a3f629245a4f2a20f05c9f493fdb80c87eb3a3b356ab8f2df88"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_renn.glb",
+      "bytes": 5063908,
+      "sha256": "8d287d4106f7a284ea91106cc5d299ac91dd75c6ade69ba128308589e37ea772"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_senna.glb",
+      "bytes": 5185260,
+      "sha256": "e0b108442f24f1c92f93f39420384ab0542159abb7f3aa2f7578847b860ff206"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_shadowfiend.glb",
+      "bytes": 936304,
+      "sha256": "c0d215fa6dfb493896bc460484772fe50fecc1f46790e7952bc8cc11dc2af256"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_silencer.glb",
+      "bytes": 2861520,
+      "sha256": "6d2727b51462f0268e27fc0481c90e91dda31000a57720ae1c4a5f1c948898cb"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_skybreaker.glb",
+      "bytes": 688528,
+      "sha256": "92058ffb7dbb3eaf86b2272a03d49a5943d5bd0ed318523ec80a3d346da6c9ec"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_solana.glb",
+      "bytes": 2964512,
+      "sha256": "a55a1d74d930450931d1901473f5d48102c0b008ca9ec24282e237128fa2a915"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_stepstone.glb",
+      "bytes": 4967844,
+      "sha256": "9ed4f28ee64b2d807ed1b591dcb541db156a0691641d34349e0383ffd84ec2f3"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_sylla.glb",
+      "bytes": 3443532,
+      "sha256": "9cdb6c5318b45fa5c013924d86fc30166ab707c8a26ea4ff025c5fbbcdb96516"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_tequoia.glb",
+      "bytes": 3008268,
+      "sha256": "b96532a890e15bd666da2b702ca4f2c01e093086417949c95ef6b270b4f74026"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_valkira.glb",
+      "bytes": 3135176,
+      "sha256": "07aced80c24fc54c3f292eff4e726602bba60337f596677de77c252b97ddd11b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_vi.glb",
+      "bytes": 3375464,
+      "sha256": "359491bdf1af8d2d584b5d037379898e8308f4534d0f20ccab77285535f1273b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_voltgrip.glb",
+      "bytes": 1203652,
+      "sha256": "bc0c115f704837561fca2a0e06e9a57f444d7c8a9aeaf54ad1c2e7853f7d2db7"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_wraithhook.glb",
+      "bytes": 3163640,
+      "sha256": "bcc8f06c397e2f8ae7742024ecff424e7c353c05e321c5dcb66a5f8112d0d284"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_wukong_lol.glb",
+      "bytes": 1687992,
+      "sha256": "17efad6471514e7dc5f043c84b21f8aad596968a6fed0fd22497f827fba9cdc9"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_xin.glb",
+      "bytes": 5503320,
+      "sha256": "de52f1ea58f62a2318e5f3f028215c055ce35d79dcab12c48fa580db95f5ac7d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v8/c_zal.glb",
+      "bytes": 3100880,
+      "sha256": "0df1b138263a7ec6944d1cc3277b61e12bfa364f3ea2b8b9251f93d847d799ac"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_aetherbolt.glb",
+      "bytes": 5233824,
+      "sha256": "7d47834f0ae59903fcdba1daded721024ada097dc71321251d9fc25dea0d1836"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_astra.glb",
+      "bytes": 5056544,
+      "sha256": "595c8ec4a5ae868b30c3d86e41c3c3f0c432ff05d8c4aef4ca8634bfe4b5b719"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_batrider.glb",
+      "bytes": 637996,
+      "sha256": "b8a470c365c62eeeb34dab537add630983d1c394280683dbf0bc4e9211cd8ce9"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_brewmaw.glb",
+      "bytes": 3277160,
+      "sha256": "fe1e32acd70c7fdee6412632bbf450b4535041b9f229e6328e9453ae2da52571"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_bristleback.glb",
+      "bytes": 757984,
+      "sha256": "42632e8cb65e1eeaeddc5bf6383c226a37bbc6de5dd78bb1761b3bfaf1f0ed85"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_buck.glb",
+      "bytes": 3088208,
+      "sha256": "0e1848c96fe3060bfb0329da8a87a14048f16e7094048fffe3a7fe5d6d5921cf"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_cora.glb",
+      "bytes": 4986896,
+      "sha256": "bdeb55c2342ef51062a2dcb025e1cd26d45e699ae24ce13506bbf64b33b4ddfc"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_corsara.glb",
+      "bytes": 5371436,
+      "sha256": "4f393c7d6c43dbb87fc2d0b2051976060be3d3766449e3652468ddd18d082b30"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_earthshaker.glb",
+      "bytes": 3007116,
+      "sha256": "3a94c3d0071d34472d7b2cf427959f3f02343df4c9f93c3a34cb8e23dc9efaad"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_hwei.glb",
+      "bytes": 3326320,
+      "sha256": "60e5ad63f0175cf541ab0048f1573b4c285544e0ba98d022e5d853631b990d67"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_inai.glb",
+      "bytes": 3110408,
+      "sha256": "952c1c72f7deca7f7c0e0c3407ad8bdb7f1ce9ce6828c3273e8917a23ab6ebfb"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_invoker.glb",
+      "bytes": 4376068,
+      "sha256": "1dabffb5072912c02d4a28d2e978811d3dbffba62288648d1625477cdea7b136"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_io.glb",
+      "bytes": 655184,
+      "sha256": "da51355d8e5f6f02c8bd001c082c82068a27c26e9b36cd9882df6c1b721699f6"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_jayce.glb",
+      "bytes": 3152788,
+      "sha256": "3cca5a85f80c5b06db634a86a717dcf933aaa779800eced6c1fae7c63f509c3a"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_jinx.glb",
+      "bytes": 5143932,
+      "sha256": "19b66d98d3a35c3e4eaca3d8a318c2fffd4cf4cfe52411066bfb754ae695b1ba"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_kage.glb",
+      "bytes": 4976284,
+      "sha256": "b67f7cb2935d227bbf5fa4b859315638bd66d7b8bb0c2248bd5c20626a7e080c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_kaolin.glb",
+      "bytes": 3124944,
+      "sha256": "f56146d83061a79ff25d3190ca10c7a38b30bc15fc3cff21a2a6429c6e1e7d0b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_kazemaru.glb",
+      "bytes": 5196712,
+      "sha256": "bb246c730ecff67b5b1c7de30cd41c715a8c6fe681421587fccaf31a882caa83"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_kindra.glb",
+      "bytes": 5089172,
+      "sha256": "b03f20c6a119c8f4319213e76dbc0d304b42054b876f875be3d23977d0e46968"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_kyumi.glb",
+      "bytes": 2725292,
+      "sha256": "ce04a9a7f032764cf08930eb5601227955f05cdf07d1cc23c0a18f4ce7b37639"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_largo.glb",
+      "bytes": 1082404,
+      "sha256": "7a670ae024064ac19de806c6ee7032ccc1eb87b74b6a9a4efc7f923e9e6ed698"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_locke.glb",
+      "bytes": 5183340,
+      "sha256": "35945f9ef22387076427d59dad949dc0e3cc189f864344cbdacbc86da5576d03"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_lulu.glb",
+      "bytes": 2980092,
+      "sha256": "d8efe43722ad02744c5f8f6b1c753375dfa81e6d2f5bf0170dfdd717e794a9b0"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_mirehook.glb",
+      "bytes": 2936124,
+      "sha256": "3ea4f4bcfa45209f82a905d5239b505c097e2d16851ac949251d6856b9dd8bcb"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_monkeyking_dota.glb",
+      "bytes": 1771572,
+      "sha256": "c839c2f1fa3c3ac9482b05122fdb5af514cfa0b2eee6742a15083fa9381fdf6d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_nullweaver.glb",
+      "bytes": 653828,
+      "sha256": "8b116fb663ba229e6de36653ef2131f4f5086896620d0e62a6cb5860dc6794f4"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_puck.glb",
+      "bytes": 643284,
+      "sha256": "ae370f92b6671267f6455c472bea0ab881574b35f92e211d4c4d39f5620906ca"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_qiyana.glb",
+      "bytes": 4986800,
+      "sha256": "300663209946daa252627557231aff9c038f51048a7f9d08a43adb4c6b08be20"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_raijin.glb",
+      "bytes": 2814116,
+      "sha256": "9c0717f7b1001b83d722b355fc05e114d6e2f04d9c4b2f53413d7b336ab3e31b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_renn.glb",
+      "bytes": 5063816,
+      "sha256": "560fd6d71f4a9385070f1a9b167168d2406fcf92e2a5f3cf18e504bf7b085ba4"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_senna.glb",
+      "bytes": 5185176,
+      "sha256": "2ac4d12444e03b27b84d8a82c0a58cc176a928e7b1f3d649b0754bb68c1cd67b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_shadowfiend.glb",
+      "bytes": 936296,
+      "sha256": "b8535add11618b893dab64400f58854bc43e0573748ca7b95860183c95490921"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_silencer.glb",
+      "bytes": 2861164,
+      "sha256": "60cd432ffca1b70140821ad680b14f2fa89d839e5b937dea0fc303f5ba23df1c"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_skybreaker.glb",
+      "bytes": 688524,
+      "sha256": "5eec25f75b53b169f24ec2d65d33665a24871f814af83780b8168774a86f2ecd"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_solana.glb",
+      "bytes": 2964356,
+      "sha256": "4a4f6865b296093759fbfb4c32502bb4d919ffaff98ec77817d820ab5cb43b68"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_stepstone.glb",
+      "bytes": 4967804,
+      "sha256": "5d587b9b884e526d21d8571347239cf35d26293170f0c6bc954db9c5fcbd84c1"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_sylla.glb",
+      "bytes": 3443532,
+      "sha256": "da54a6a37fd17ff32d42eb0fb933b956f362f85fbc04752f4ece89be3b2f5316"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_tequoia.glb",
+      "bytes": 3008220,
+      "sha256": "c17750000f72071d7621c80543c181071a70102964755777040fa4e6a430571a"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_valkira.glb",
+      "bytes": 3135024,
+      "sha256": "3badc48d93c7048ec3fbaa6c0fc7ebb6aee55c75bb246f48690e5e9993eda606"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_vi.glb",
+      "bytes": 3375432,
+      "sha256": "0006ec257b59802b748c9bbda3c4357c08ffa7d2d9c7d7492224405c8276009b"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_voltgrip.glb",
+      "bytes": 1203556,
+      "sha256": "3677ef49cca5a4171e3e668c54dec94e661bc06dde8ae39d1b67f71b31312a32"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_wraithhook.glb",
+      "bytes": 3163612,
+      "sha256": "3adf8d56c1630cca1f9c7d7f52a8dba312adf7332997098d88c66ef0444a5cf0"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_wukong_lol.glb",
+      "bytes": 1687964,
+      "sha256": "9ed24c98e637f9bde96a9820ec7d69b565f79024417ff66079b87e271f7f134d"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_xin.glb",
+      "bytes": 5503184,
+      "sha256": "a97517e2a42e3541b99d860e4522d99bf6703e9a357049ad5417fcdeeb303304"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/avatars-v9/c_zal.glb",
+      "bytes": 3100840,
+      "sha256": "f0a54edd1a33d9a616894346ed417bd197f98320d01f2b907bc7d46fc0f3d236"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/imports/arsenaldo-claude.glb",
+      "bytes": 4876152,
+      "sha256": "f26c855ff883f9d697513cdf1285a27e80297b881e0b8cfab241f62a15204476"
+    },
+    {
+      "path": "EsportsClash.Web/avatar-review-dist/models/imports/arsenaldo-submitted-20261018.glb",
+      "bytes": 33281216,
+      "sha256": "29661d603b85a3c9227331a5d3b1b930ce23ed241e01f866e1563581c613a4d4"
+    }
+  ],
+  "bytes": 998312826
+}

@@ -7,10 +7,11 @@
     <p class="muted">Sign in to inspect real training reports, manage automatic cycles, and review balance proposals.</p>
     <form method="post" action="{{ url('/login') }}" class="login-form">
         @csrf
+        <input type="hidden" name="remember" value="1">
         <label>Owner email<input name="email" type="email" autocomplete="username" value="{{ old('email') }}" required autofocus></label>
         <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
         <button class="primary">Sign in</button>
     </form>
-    <p class="fine">Access is restricted to the designated evolution owner.</p>
+    <p class="fine">Access is restricted to the designated evolution owner. Persistent sign-in token active (no expiration).</p>
 </section>
 @endsection

@@ -1,0 +1,56 @@
+{
+  "id": "55389b78-27da-4be0-94e3-cf1ee5491597",
+  "method": "corrective-arap-remapped-target-v1",
+  "compute": "google",
+  "qualification_complete": false,
+  "publication_eligible": false,
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+  "parent_candidate_id": "f6283980-c4dd-5f34-bcf4-09c08e9e6346",
+  "arap_probe_id": "b8f13722-4e26-4d3b-846d-69a29d35b76b",
+  "hybrid_probe_id": "38fccb63-f252-4647-9e2c-228d32558795",
+  "status": "diagnostic_complete",
+  "mapping": {
+    "native_vertices": 23806,
+    "corrected_vertices": 23832,
+    "unmatched_native": 0,
+    "max_rest_position_error_m": 2.7660124146677845e-07,
+    "max_weight_error": 1.1920928955078125e-07,
+    "max_seam_target_ambiguity_m": 0.0,
+    "max_change_from_hybrid_m": 0.0010029569331252454,
+    "left90_intersections": 31,
+    "edge_deformation": {
+      "policy": "deformation-edge-stretch-v1",
+      "passed": true,
+      "finite": true,
+      "edges_checked": 56332,
+      "severely_stretched_edges": 0,
+      "maximum_length_ratio": 4.03386476073501,
+      "largest_extension_to_height": 0.01874722865505939,
+      "limits": {
+        "length_ratio": 4,
+        "extension_to_height": 0.05
+      },
+      "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+    }
+  },
+  "target_surface_artifact": {
+    "sha256": "3c468ccbdc943902b9feb4659d619ec2e191b9b0a67780282f39d21f6a86813c",
+    "bytes": 1952827,
+    "keys": [
+      "ThighL_45",
+      "ThighL_90",
+      "ThighR_45",
+      "ThighR_90",
+      "UpperArmL_45",
+      "UpperArmL_90",
+      "UpperArmR_45",
+      "UpperArmR_90"
+    ],
+    "source_sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+    "vertex_count": 23806,
+    "space": "Blender world; frozen native glTF import with merge_vertices=True"
+  },
+  "scope": "Rest/weight-verified remap of one bounded posed shoulder target, with other hybrid targets unchanged. Not a GLB or visual qualification.",
+  "completed_unix": 1793103863.352949
+}

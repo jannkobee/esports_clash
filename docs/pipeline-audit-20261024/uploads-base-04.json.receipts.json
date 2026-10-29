@@ -1,0 +1,56 @@
+[
+  {
+    "avatar_id": "c_kindra",
+    "id": "base",
+    "sha256": "039cf68bd3e89cfad866e3cbea24d0415c36d9072d906fda85deab330c0ebfed",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "867b1a2e11142ebe76ee414f82627c4426e029b6dcec1344882deda30746609d",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_sylla",
+    "id": "base",
+    "sha256": "64fb912cc5eed5bf06ac733b1d39ffd030c922359756b30c582e7d1ba1f78a2f",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "ddefc6a201138f5b56ebd39139c3086d41635706fbb4a73e78ee693119bbd6f9",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_tequoia",
+    "id": "base",
+    "sha256": "2c8d55bb688b116ab069ce0f4bb6adbca8a810df2a2f12bff0637dbc3c5dd79f",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "c9f6f8c9caa0fe5867a9c4903a157a59d6b823f97f9c5585d381864db27f0ca5",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_zal",
+    "id": "base",
+    "sha256": "f95fa5c3e1039dce68c6a3c247314ec9e90bd491623d53312725e02e9058227d",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "32d04895a64119c35ec0338628ecf01fd3abf58a69429867c072211deeae43da",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_xin",
+    "id": "base",
+    "sha256": "852926dbd4aea38021bcb3e70d63267a514d552a2da4ad3c17bf25521078c6a9",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "d58ef7c72f0c9fa73cf82c6b1f4bc3f38ef254a789d109a7ddbe340a7add5e6f",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_raijin",
+    "id": "base",
+    "sha256": "f82d16e298757083ca074b07a0191ecbd1d7a00b4580c9dfbc0caef859461b4e",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "c82fcf5447301266f4da51702c84bf1717363ab80a83676bc26f5137c3453de8",
+    "http": 200
+  }
+]

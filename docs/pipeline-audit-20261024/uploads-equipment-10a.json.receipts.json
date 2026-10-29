@@ -1,0 +1,83 @@
+[
+  {
+    "avatar_id": "c_earthshaker",
+    "id": "survey_compass",
+    "sha256": "a0784ddd3d8788780f7e3c2447a3fe4aacd649365add261cf95e7329852a7694",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "6c4de26f40bbbfb24a8e66b2ce59902f83148eaa2006e29db7bd2683528fec1f",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_earthshaker",
+    "id": "seismologist_outfit",
+    "sha256": "b87e9818dd5052a51814752cd25ed2a8cdb7304595787d01705f82a42a829b96",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "4048ee2d1bb03f1cfd5689547d8c395c2d56222fa2cf5dfa5efa4ba16a692ea0",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_mirehook",
+    "id": "cage_forge",
+    "sha256": "fda9675a0de72a2aea42e79e3a106f136f5293e58f0e53a7cdfda697d298d898",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "84ae9045f4c8e1b44e108bcd3eba7f654100bab14548436e1a2a9524120d38a9",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_mirehook",
+    "id": "trap_anvil",
+    "sha256": "9d141403036a2dbdfb572c1a4872f628558d7d1e6f3e1f5e4eef5e632afcbd59",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "dd4cbf052a21cc17ea5c1ece3149b2b4515076ffbcac1126a9912595d896c0cd",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_mirehook",
+    "id": "riveted_gauntlets",
+    "sha256": "e3cfd014a9c5f80b90837f97e9ff1f106d5d5be80277b4728a4088d617924f4e",
+    "status": "reference_uploaded",
+    "version": 8,
+    "inventory_hash": "531d0a436c58e7daf63cc486806d1de34406145e1d6c0186500dc4837b4ab7f7",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_mirehook",
+    "id": "smith_outfit",
+    "sha256": "ea448673bb4d19ac4aec14c02a16a633a9ec67580dcbfc1064a3d9aed103a661",
+    "status": "reference_uploaded",
+    "version": 9,
+    "inventory_hash": "4eadce0f0b7aafad426700dd1dd3a5ad87f412ad831f955552949fd3004a2fc1",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_nullweaver",
+    "id": "gyroscope",
+    "sha256": "46675481c8163b517456f4d79c41c7a2ecba3941b38c5976a281b1ea3aa04864",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "f96e3e95f2a57b739aefb6b304fe7ee2356839dfd7979b6a4c84eb57a62bd1ea",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_voltgrip",
+    "id": "traffic_gauntlets",
+    "sha256": "08f6c52fbfc2e02f3f1e2ea6d4a2ad764bccac9f1c457755207ada5e643eec2f",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "a8da929bb42f987f996b0a284742ca65f7b728befee9dca7a1b83d3cbddeec22",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_voltgrip",
+    "id": "spring_cable",
+    "sha256": "fc8783d47c71aee90f799d5144156573286f740e4a410c330176f1973c36b960",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "355eae7d82d4e2dfbc6990bc90c798ec6f5d64675259da5bff0c5532cc0ebe5e",
+    "http": 200
+  }
+]

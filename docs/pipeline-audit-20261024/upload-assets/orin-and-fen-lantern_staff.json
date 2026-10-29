@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_kindra",
+  "component_id": "lantern_staff",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Lantern scout staff",
+  "attachment": "hand",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Orin and Fen. Attached drawing is design reference only. One complete wooden lantern scout staff with hooked top and hanging brass lantern, orange glass panels, wrapped handle and small red tassel. Entire staff and lantern visible. No human, animal, body, flame plume or clothing. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+  "reference_purpose": "reconstruction",
+  "slug": "orin-and-fen",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/orin-and-fen.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/orin-and-fen-lantern_staff.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-05e57093-4208-4e80-8953-cbeef27eeebb.png"
+}

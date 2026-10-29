@@ -1,0 +1,100 @@
+{
+  "source_sha256": "2022cf8b1d1a8cdee66f84a514f921d451b693e25fa51e59b85499eefc3196ee",
+  "bytes": 3906312,
+  "triangles": 39865,
+  "primitives": [
+    {
+      "vertices": 37146,
+      "triangles": 39865,
+      "finitePositions": true,
+      "validIndices": true,
+      "validUvs": true,
+      "uvMin": [
+        0,
+        0
+      ],
+      "uvMax": [
+        0.9995840191841125,
+        0.999585747718811
+      ]
+    }
+  ],
+  "images": [
+    {
+      "mimeType": "image/png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "bytes": 1767660,
+      "sha256": "654674141dec3a9fd9ec4ad26beee3e50ec5e705ca923cf84bbc732615f0b287"
+    },
+    {
+      "mimeType": "image/png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "bytes": 469904,
+      "sha256": "57d69b864c08867693c31adfba3d320b38e936ab2703d55630bc75b5064bacdc"
+    }
+  ],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "roughnessFactor": 1,
+        "metallicFactor": 1,
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      },
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "gltf": {
+    "validator": "2.0.0-dev.3.10",
+    "errors": 0,
+    "warnings": 0,
+    "messages": [
+      {
+        "code": "BUFFER_VIEW_TARGET_MISSING",
+        "message": "bufferView.target should be set for vertex or index data.",
+        "severity": 3,
+        "pointer": "/meshes/0/primitives/0/attributes/POSITION"
+      },
+      {
+        "code": "BUFFER_VIEW_TARGET_MISSING",
+        "message": "bufferView.target should be set for vertex or index data.",
+        "severity": 3,
+        "pointer": "/meshes/0/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "BUFFER_VIEW_TARGET_MISSING",
+        "message": "bufferView.target should be set for vertex or index data.",
+        "severity": 3,
+        "pointer": "/meshes/0/primitives/0/attributes/NORMAL"
+      },
+      {
+        "code": "BUFFER_VIEW_TARGET_MISSING",
+        "message": "bufferView.target should be set for vertex or index data.",
+        "severity": 3,
+        "pointer": "/meshes/0/primitives/0/indices"
+      }
+    ]
+  },
+  "structural_pass": true,
+  "problems": [],
+  "publication_eligible": false,
+  "visual_review_required": true,
+  "limitation": "Anatomy, distinct limbs, T-pose, identity, skinning and motion require separate review."
+}

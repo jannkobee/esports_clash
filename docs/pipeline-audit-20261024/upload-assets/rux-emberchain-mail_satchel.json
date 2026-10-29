@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_xin",
+  "component_id": "mail_satchel",
+  "category": "back",
+  "binding": "rigid",
+  "label": "Glowing-envelope shoulder mail-satchel",
+  "attachment": "shoulder",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Rux Emberchain. Attached image is design reference only. Only the large leather shoulder mail-satchel with cream envelopes, orange wax seals, scrolls and its straps. Subtle warm seal glow is contained to the seals, no flames. No person, body, clothes, boots or hands. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "rux-emberchain",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/rux-emberchain.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/rux-emberchain-mail_satchel.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-479f3311-c183-4155-b6eb-86d8840c2e29.png"
+}

@@ -4,10 +4,11 @@ import { planResidualPush, evaluateResidualPush } from './residualPushRules.ts';
 import { createSpatialInfluence } from './spatialInfluence.ts';
 import { estimateTacticalOutlook } from './tacticalOutlook.ts';
 import { laneAdvanceLimit } from './teamTempoRules.ts';
+import { ARENA_WIDTH } from './arenaLayout.ts';
 
 test('safe lane advancement evaluates its bounded route rather than a distant turret attack', () => {
   for (const team of ['blue', 'red']) {
-    const mirror = x => team === 'blue' ? x : 2600 - x;
+    const mirror = x => team === 'blue' ? x : ARENA_WIDTH - x;
     const actor = { id: 'a', team, x: mirror(630), y: 380, hp: 1000, maxHp: 1000, isAlive: true };
     const tower = { id: 'tower', team: team === 'blue' ? 'red' : 'blue', x: mirror(1550), y: 380,
       hp: 4000, maxHp: 4000, range: 135, type: 'outer_tower', isAlive: true };

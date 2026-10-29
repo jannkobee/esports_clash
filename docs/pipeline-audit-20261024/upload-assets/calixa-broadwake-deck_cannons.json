@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_corsara",
+  "component_id": "deck_cannons",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Two mismatched deck cannons",
+  "attachment": "vehicle deck",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Calixa Broadwake. Attached illustration is design reference only. Only the matched set of two mismatched miniature fantasy deck cannons from the pictured skiff, one black-and-brass and one patinated green-bronze, each with complete carriage and mounting hardware, arranged apart. Static museum props, no crew, hands, firing, projectiles, ship or person. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "calixa-broadwake",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/calixa-broadwake.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/calixa-broadwake-deck_cannons.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-fd1b958c-2a4f-402d-a7dc-c18eeaa7cf7f.png"
+}

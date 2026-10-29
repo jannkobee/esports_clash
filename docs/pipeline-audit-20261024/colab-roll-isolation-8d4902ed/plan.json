@@ -1,0 +1,20 @@
+{
+  "schema": "failed-rig-roll-isolation-v1",
+  "id": "8d4902ed-9eb8-4d17-9c44-33481fef2a48",
+  "avatar_id": "c_invoker",
+  "source_candidate_id": "1bb641cd-ce80-4e12-9018-e67de0ff6dc3",
+  "source_file": "mirelle-base-animated.glb",
+  "source_sha256": "d75c61014fb21f8fbe3e80e490eda4aba099546dda8e7b201062630afc2bc78e",
+  "source_role": "failed_candidate_diagnostic_only",
+  "compute": "google",
+  "publication_eligible": false,
+  "status": "started",
+  "tools": {
+    "analyze_bind_twist.py": "c52ec7e2b14afdaad82f51e37810e6783803ce7fa0f1bcf4936a599b55566721",
+    "mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+    "supervise.py": "3906ada334e14a84d4f80b28916aceb0f4bfde27e7727c3766003721d810ce6e"
+  },
+  "hypothesis": "Upper-arm roll added by the authored IK aim frame causes shoulder intersections independently of joint positions."
+}

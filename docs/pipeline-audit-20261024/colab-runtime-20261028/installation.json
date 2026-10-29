@@ -1,0 +1,28 @@
+{
+  "provider": "tokenrig",
+  "compute": "google",
+  "status": "installed_unqualified",
+  "publication_eligible": false,
+  "started_unix": 1793187995.7808306,
+  "source_commit": "273b691d35989d71cd17ff2895fdc735097b92d1",
+  "model_revision": "79736cad0fd84de384d5eede659b4ebd24effe33",
+  "completed_unix": 1793188123.9321303,
+  "profile": "t4-fp32",
+  "hardware": {
+    "name": "Tesla T4",
+    "major": 7,
+    "bf16": true,
+    "free_mib": 14805
+  },
+  "environment_sha256": "f706010e83a63d36766b0a14b0bc12dce2ff2859a8a45aaec5b765296aa7e365",
+  "runtime_id": "6e1278f427958d83715851a16946b047ce0be97f803d9c5c5fba8e4fbb5b4caa",
+  "tools": {
+    "provision_colab.py": "2d12a4c6fbf5f6d52edb5b03fa105e91645b27ae9f149f87c2b7ae0606e728e2",
+    "model-pins.json": "f1e46c85e430d561c07b07c9cabb77c727fc7a1a193723e745042606af5b8735",
+    "prepare_t4_trial.py": "cefbd2c1f2396d81cbb23609c6f1a9a55d70cbb6ad7fc9a539b5eebaa500a85c",
+    "verify_attention.py": "33b4fce7c7b929d033a14a7560cdacb00bcf5b28d08ed5053aa2fe14af514f91",
+    "download_models.py": "af3c61366eaa21c77babbc44954b8df193212972479d7124519a6e468c994f0f",
+    "run_trial.py": "fe4773a4bf3561b6228680ec17e73ea6b3f1d867aa2509b056abe772eccf8856"
+  },
+  "scope": "Pinned tool/model installation and attention diagnostics only. No avatar job or deformation qualification."
+}

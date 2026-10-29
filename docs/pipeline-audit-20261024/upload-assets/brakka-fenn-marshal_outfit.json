@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_vi",
+  "component_id": "marshal_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Battered city uniform, eyepatch and warrants",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Brakka Fenn. Attached illustration is design reference only. Only the empty battered navy city uniform, cream shirt, leather belts, trousers, boots, separate eyepatch and attached rolled paper warrants. No gauntlets, hands, body, skin, person, face or hair. Garments are visibly empty on invisible support in a neutral symmetrical wide A pose. Hollow neck and joint openings, no mannequin. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "brakka-fenn",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/brakka-fenn.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/brakka-fenn-marshal_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-bf4cc69a-b059-444b-9327-c765c52b73f5.png"
+}

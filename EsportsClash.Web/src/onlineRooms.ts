@@ -1,5 +1,6 @@
 import type { CoachCard, PlayerCard } from './types';
 import type { DraftSide, DraftSnapshot } from './draftRules';
+import type {IntelligenceRelease} from './intelligenceRelease';
 
 export interface OnlineSession { 
   code: string; 
@@ -9,6 +10,8 @@ export interface OnlineSession {
 }
 
 export interface OnlineRoom extends DraftSnapshot { 
+  contentCatalog?: import('./gameContent').GameContentSnapshot;
+  intelligence?:IntelligenceRelease;
   ready: boolean;
   matchType?: 'ranked' | 'normal';
   blueRating?: number;

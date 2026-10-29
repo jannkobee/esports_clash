@@ -16,9 +16,9 @@ const WORLD_WIDTH = 2600;
 
 test('Three terrain camera preserves Canvas world coordinates at supported zooms', () => {
   const fit = clampArenaCamera(200, 100, 1, WORLD_WIDTH, ARENA_RENDER_HEIGHT);
-  assert.deepEqual(fit, { x: 1300, y: 380, halfW: 1300, halfH: 380 });
+  assert.deepEqual(fit, { x: 1300, y: ARENA_RENDER_HEIGHT/2, halfW: 1300, halfH: ARENA_RENDER_HEIGHT/2 });
   assert.deepEqual(arenaWorldToNdc(0, 0, fit), { x: -1, y: 1 });
-  assert.deepEqual(arenaWorldToNdc(2600, 760, fit), { x: 1, y: -1 });
+  assert.deepEqual(arenaWorldToNdc(2600, ARENA_RENDER_HEIGHT, fit), { x: 1, y: -1 });
 
   for (const zoom of [1, 1.45, 2.5]) {
     const view = clampArenaCamera(1300, 380, zoom, WORLD_WIDTH, ARENA_RENDER_HEIGHT);
@@ -29,7 +29,7 @@ test('Three terrain camera preserves Canvas world coordinates at supported zooms
 
   const closeLeft = clampArenaCamera(-100, -100, 2.5, WORLD_WIDTH, ARENA_RENDER_HEIGHT);
   assert.equal(closeLeft.x, 520);
-  assert.equal(closeLeft.y, 152);
+  assert.equal(closeLeft.y, ARENA_RENDER_HEIGHT/5);
 });
 
 test('orthographic camera uses the same downward screen axis as Canvas', () => {

@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_qiyana",
+  "component_id": "cleaver",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Single asymmetrical cleaver",
+  "attachment": "hand",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Prismelle Cade. Attached image is design reference only. Only the single complete asymmetrical broad fantasy cleaver with fractured iridescent mineral panels and gold metal frame, no wielder, hand, body, clothing or floating circlet. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "prismelle-cade",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/prismelle-cade.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/prismelle-cade-cleaver.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-bdcd28d5-3d0e-434a-a6ad-ddb87b417366.png"
+}

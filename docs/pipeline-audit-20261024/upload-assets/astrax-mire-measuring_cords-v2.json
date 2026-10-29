@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_inai",
+  "component_id": "measuring_cords",
+  "category": "back",
+  "binding": "skinned",
+  "label": "Long measuring cords",
+  "attachment": "back",
+  "prompt": "Edit this isolated set of measuring cords: zoom out considerably and restore the cut-off right-hand cord tip and brass orb weight. Preserve all pictured design and materials. Arrange the COMPLETE set well inside central60% of a wide canvas with20% transparent margin on all four sides. No new objects, body, hands, floor, background, glow, text or labels. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "astrax-mire",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/astrax-mire-measuring_cords.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/astrax-mire-measuring_cords-v2.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-a0de5a48-ffe1-4529-9c11-27c5a49b5bec.png"
+}

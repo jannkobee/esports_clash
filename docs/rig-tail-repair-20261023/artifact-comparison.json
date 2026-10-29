@@ -1,0 +1,14 @@
+[
+  {
+    "folder": "rig-tail-arms-stafford-v4-20261023",
+    "sha256": "df9a99d818acf561d9c915cceb5295ca2dad33b5f87483639fc606d5a35bdf39",
+    "bin_sha256": "76a9707b0b5fa457e48952bae3d29def5afb4b8b29c80fc7842c6335a8b01716",
+    "scene_sha256": "a3644ca95acdb6823d6fd0795eb9894e83ae3761d08df14e7a355acac1131909"
+  },
+  {
+    "folder": "rig-tail-arms-stafford-final-20261023",
+    "sha256": "fd9ba0b04e7d4d0da31b8f6ec59e9515b461479bdc2eb8c67e37e1fc80edd11e",
+    "bin_sha256": "76a9707b0b5fa457e48952bae3d29def5afb4b8b29c80fc7842c6335a8b01716",
+    "scene_sha256": "a3644ca95acdb6823d6fd0795eb9894e83ae3761d08df14e7a355acac1131909"
+  }
+]

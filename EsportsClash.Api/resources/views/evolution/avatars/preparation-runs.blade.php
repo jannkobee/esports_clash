@@ -56,7 +56,8 @@
         @if(isset($run->state['preparation']['sha256']))<a class="button" href="{{ route('preparations.preview',$run) }}">Review model &amp; animations &rarr;</a>@endif
         @unless($singleReport??false)<a href="{{ route('preparations.report',$reportId) }}">Open full report &rarr;</a>@endunless
     </div>
-    @if(in_array($run->status,['awaiting_validation','needs_review']))
+    @if(($run->plan['provider']??null)==='tokenrig')<p class="notice">This attempt contains a raw Colab rig of source {{ substr($run->generation_id,0,8) }}. Animation, appearance and publication remain gated by deformation review.</p>@endif
+    @if(in_array($run->status,['awaiting_validation','needs_review'])&&($run->plan['provider']??null)!=='tokenrig')
         <form method="post" action="{{ route('preparations.validate',$run) }}">@csrf<button class="primary">Run runtime qualification</button></form>
     @endif
     @if($run->status==='ready')
@@ -73,9 +74,13 @@
         @if(isset($geometry['policy']))<div><dt>Geometry policy</dt><dd>{{ $geometry['policy'] }}</dd></div>@endif</dl>
         <div class="run-links"><a href="{{ route('preparations.report',[$run,'format'=>'json']) }}">Download JSON report</a>
         @if(isset($run->state['preparation']['sha256']))
+            @if(($run->plan['provider']??null)==='tokenrig')
+            <a href="{{ route('preparations.file',[$run,'raw-rig.glb']) }}">Exact raw Colab rig</a>
+            @else
             <a href="{{ route('preparations.file',[$run,'candidate-01.glb']) }}">Prepared GLB</a>
             @if(($run->plan['provider']??'')==='unirig')<a href="{{ route('preparations.file',[$run,'unirig-rigged.glb']) }}">Original UniRig rig</a>@endif
             <a href="{{ route('preparations.file',[$run,'candidate-01.blend']) }}">Editable Blender scene</a>
+            @endif
         @endif</div>
     @if(\App\Models\TrellisGeneration::whereKey($run->generation_id)->where('status','generated_unqualified')->exists()&&isset($run->state['preparation']['unirig']['artifact']['sha256'])&&!in_array($run->status,[...\App\Services\AvatarPreparationService::ACTIVE,'cancelling','pausing','paused','published'],true))
         <details class="clean-details" style="margin: 8px 0;">
@@ -115,7 +120,7 @@
 
     @if(isset($run->state['preparation']['predicted_bones']))
         <details class="clean-details" id="preparation-bones-{{ $run->id }}">
-            <summary>UniRig bones and native clip mapping</summary>
+            <summary>Predicted bones and native clip mapping</summary>
             <div class="clean-details-content">
                 <pre>{{ json_encode(['predicted_bones'=>$run->state['preparation']['predicted_bones'],'bone_map'=>$run->state['preparation']['bone_map']??[],'mapping_review'=>$run->state['preparation']['mapping_review']??null],JSON_PRETTY_PRINT) }}</pre>
             </div>

@@ -1,0 +1,3429 @@
+{
+  "schemaVersion": 1,
+  "owner": "/root",
+  "tool": "built-in image_gen",
+  "stage": "ability-token-illustration-and-live-presentation",
+  "sourceSha256": "7596ce609e59fa5f74e0714feba42a09595514b9a77ca6552783d7b069f9fda9",
+  "atlases": [
+    {
+      "avatarId": "c_solana",
+      "canonicalId": "solenne-vaelor",
+      "name": "Solenne Vaelor",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Solenne Vaelor. Character visual motifs: battle-scarred sun knight with a tall hinged heliograph shield; ivory-bronze armor, burnt-red sash, mechanical iris on the shield.\nTOP LEFT: Earned Daylight. Ability concept: blocking hostile damage with the front 110\u00c2\u00b0 of her shield stocks up to 3 Radiance (1 stack / 3 s). No free stacks for standing still.\nTOP RIGHT: Sun Dial. Ability concept: stakes a 70-GU-wide oriented shield panel for 3.5 s. Intercepts the first two hostile projectiles that cross its front; melee units pass. Opponents may walk around it.\nBOTTOM LEFT: Pivot Order. Ability concept: rotates an existing panel up to 100\u00c2\u00b0 or, if none exists, rotates Solenne's personal guard and advances 38 GU; Radiance spent gives adjacent allies a 1.5 s directional damage reduction against attacks coming from the chosen side.\nBOTTOM RIGHT: Noon Divide. Ability concept: from her current panel, projects two slowly separating sunbeams for 4 s, creating a wide **protected wedge**. Allies inside gain 18% damage mitigation from outside; enemies inside can still fight. Spending 3 Radiance gives 1 brief shove at initial expansion (not a mass stun).",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Earned Daylight",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Sun Dial",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Pivot Order",
+          "cell": 2
+        },
+        "R": {
+          "name": "Noon Divide",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/solenne-vaelor.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-00c1d3a4-f4d4-4994-9f69-577591b5066e.png",
+      "sha256": "857f907c853cb23cd17df22542e878acbaf5485474ce887b08605632ce1806d8",
+      "promptSha256": "f61e8efa78ab935189b2edf0ba40b70f0d7cd11c247bd7cd744579d6c67f70c9",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Earned Daylight",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Sun Dial",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Pivot Order",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Noon Divide",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_astra",
+      "canonicalId": "ivera-frostwhistle",
+      "name": "Ivera Frostwhistle",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Ivera Frostwhistle. Character visual motifs: tall northern bow engineer wearing permafrost string gauges and layered ice-tuning plates; asymmetric longbow bearing vibrating crystal forks.\nTOP LEFT: Overtone. Ability concept: landing a aimed shot temporarily tunes a visible location, maximum 2, each persisting 5 s. Shots do not globally slow.\nTOP RIGHT: Tuning Shot. Ability concept: fires a narrow bolt that installs a crystal fork at its endpoint (terrain or ground); fork has 2 hit points. Can be fired through a champion for light damage, but ends behind them.\nBOTTOM LEFT: Singing Ice. Ability concept: activates a frost vibration along the line between the two newest forks for 3 s. Enemies *crossing* the line suffer 28% slow for 1.1 s and take one burst; allies firing **parallel** to the line gain a small projectile-speed bonus.\nBOTTOM RIGHT: Glass Rapture. Ability concept: resonates all active forks in a broad triangular sound field. Over 1.2 s the field forms three visible safe gaps; enemies still on the sounding lines take high damage and a 0.55 s stagger. Consumes forks.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Overtone",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Tuning Shot",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Singing Ice",
+          "cell": 2
+        },
+        "R": {
+          "name": "Glass Rapture",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/ivera-frostwhistle.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-a981f07d-da33-4ffc-b58c-88628e9e52ec.png",
+      "sha256": "fc77ba6a86cd9cf6c9183a3ebfdd1d7ba5921ccb43ef8890291f5c74c16bf35e",
+      "promptSha256": "48eab9739b5a0c06ba1c1e554aa235510613d062c2e84da7377dbcb3585fbe07",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Overtone",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Tuning Shot",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Singing Ice",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Glass Rapture",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_kyumi",
+      "canonicalId": "mireth-lune",
+      "name": "Mireth Lune",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Mireth Lune. Character visual motifs: austere one-tailed fox archivist in deep blue-gray traveling robes with glass route tablets; no alluring charm trope.\nTOP LEFT: Witness Marks. Ability concept: after an enemy moves 70 GU while visible to Mireth, records its heading as a glowing arrow for 3 s, once per enemy / 6 s.\nTOP RIGHT: Counterpath. Ability concept: draws a short luminous road across an observed heading. Crossing it in the recorded direction costs 25% move speed for 1 s; crossing opposite grants no penalty. Can be skirted.\nBOTTOM LEFT: False Exit. Ability concept: places a glass doorway that visually points to safety but openly projects its **actual** exit 75 GU to one side. The first enemy who voluntarily enters is displaced to that endpoint after 0.35 s. Enemy sees both endpoints before entering; no forced input manipulation.\nBOTTOM RIGHT: Map of Might-Have-Beens. Ability concept: shows up to three recorded headings as public spectral roads for 4 s; allies gain speed while traversing them opposite the recorded direction, and foes crossing in the old direction receive a short revealed/exposed mark. No auto charm, orb return, or dash chain.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Witness Marks",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Counterpath",
+          "cell": 1
+        },
+        "S2": {
+          "name": "False Exit",
+          "cell": 2
+        },
+        "R": {
+          "name": "Map of Might-Have-Beens",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/mireth-lune.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-514390ee-ca59-474e-ba39-5daac1eacf08.png",
+      "sha256": "31807ab3481974c7ddc48bf923be162df7f224c80d51f4d9cd1a6712d70d1ed2",
+      "promptSha256": "bd8633243abc9f93d216e6957d5fdbfa86e5a3d00c25c221a34c4cded1c52920",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Witness Marks",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Counterpath",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: False Exit",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Map of Might-Have-Beens",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_buck",
+      "canonicalId": "bramm-coil",
+      "name": "Bramm Coil",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Bramm Coil. Character visual motifs: industrial tunnel-breaker with rotary ram-gun mounted to a back brace, orange work stripes and one reinforced leg.\nTOP LEFT: Structural Survey. Ability concept: repeated hits on the same piece of deployable cover mark it as weakened (maximum one mark).\nTOP RIGHT: Anchor Ram. Ability concept: shoots a riveted anchor 140 GU to a ground point. After 0.6 s the anchor pushes a rectangular 45\u00c3\u201490-GU blast **away from its own facing**; hits one time, moves enemies 24 GU, dislodges deployable barriers.\nBOTTOM LEFT: Brace Exchange. Ability concept: Bramm exchanges mobility for steadiness for 3 s. He slows by 25%; each shot fired from the brace creates a short **safe opening** in allied cover that closes after 0.7 s, permitting planned fire without permanently destroying shields.\nBOTTOM RIGHT: Tunnel Cut. Ability concept: slowly draws a huge visible straight cutting lane for 1.1 s. It then advances a mechanical ram through the lane over 1.4 s, collapsing temporary structures and forcing units sideways to the nearest free side; never passes world walls.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Structural Survey",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Anchor Ram",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Brace Exchange",
+          "cell": 2
+        },
+        "R": {
+          "name": "Tunnel Cut",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/bramm-coil.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-14bc18df-2983-453d-b3aa-d08314ca4878.png",
+      "sha256": "8dc2a608a74a2d97a10a947f7baeed0c3b98df9b709c3c8612bdc492d097c687",
+      "promptSha256": "33cd3392f12066111175b68ec993061498871d9f40bab2dfd8fbe1a46ce34f46",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Structural Survey",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Anchor Ram",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Brace Exchange",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Tunnel Cut",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_valkira",
+      "canonicalId": "kael-vespera",
+      "name": "Kael Vespera",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Kael Vespera. Character visual motifs: weathered oath collector with paired crescent ledgers as blades, stitched gray cape and ink-red wrist seals.\nTOP LEFT: Outstanding Balance. Ability concept: first melee contact with a hero issues a visible 4 s Contract: target receives a 4% damage discount from Kael, but each shield granted during the Contract accumulates *Debt* (capped at 160). Only Kael may collect; no denial of healing.\nTOP RIGHT: Collection Line. Ability concept: short sweeping arc which draws a red boundary on the ground for 2 s. Contracted targets crossing it pay a fraction of Debt as magic damage; staying put avoids payment.\nBOTTOM LEFT: Witness Required. Ability concept: Kael braces for 0.8 s. If the contracted enemy or a defender hits her during the brace, she gains a dashless counter slash and a 1 s damage reduction; otherwise she is vulnerable after bracing.\nBOTTOM RIGHT: Terms of Mercy. Ability concept: challenges a contracted target for 4 s. Their team can clear the Contract by landing two attacks on Kael, or ignore it and let Kael cash out accrued Debt as a single capped hit. Does not suppress, force 1v1, or execute automatically.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Outstanding Balance",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Collection Line",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Witness Required",
+          "cell": 2
+        },
+        "R": {
+          "name": "Terms of Mercy",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/kael-vespera.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b3dbd175-3a8b-4bbb-81ce-e3b6fa7b5d12.png",
+      "sha256": "0b7fdd443f50464d5d042f9fd6694cfaa158b2ad90034e7f8bafd45b5263fda5",
+      "promptSha256": "b5168b37393dc9eac00643d18c3ec490be00fe0591b97a85b003765dcf5c6104",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Outstanding Balance",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Collection Line",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Witness Required",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Terms of Mercy",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_kage",
+      "canonicalId": "nyxara-vale",
+      "name": "Nyxara Vale",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Nyxara Vale. Character visual motifs: angular thief wearing articulated matte-black lacquer strips that cast sharp, oversized silhouettes on the ground; no shadow clones.\nTOP LEFT: Blind Side. Ability concept: Nyxara gains a small first-hit bonus when striking from outside the target's *forward* vision cone, once / target / 7 s. Visible directional marker informs defenders when exposed.\nTOP RIGHT: Shadow Pin. Ability concept: projects a dark triangular plane from a chosen wall or her own location for 4 s. It blocks **line of sight for basic attack acquisition**, not projectiles, and is transparent to all after a unit steps through.\nBOTTOM LEFT: Light Theft. Ability concept: steals illumination from one existing Shadow Pin for 2 s, collapsing that plane into a mobile veil around Nyxara. She remains targetable at close range and leaves bright footsteps; while veiled, her next attack briefly reduces the victim's turn speed.\nBOTTOM RIGHT: Total Eclipse, Partial Truth. Ability concept: places three visible *false target silhouettes* along an 80-GU arc. They do not attack, teleport, or explode; enemy targeting systems briefly need fresh line-of-sight confirmation when Nyxara crosses the arc. Her next hit against an isolated foe deals bonus damage, capped.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Blind Side",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Shadow Pin",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Light Theft",
+          "cell": 2
+        },
+        "R": {
+          "name": "Total Eclipse, Partial Truth",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/nyxara-vale.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-e2f29ef8-cc70-458f-8bb4-46bab93422f2.png",
+      "sha256": "407810131010ecbf49d3b5d3b7127a36a7e2177a657964750153e020cd639961",
+      "promptSha256": "d83a7406d2804ca83e9a5f2b25a72e7a4984ae08054fdd72207ad1d9876ff796",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Blind Side",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Shadow Pin",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Light Theft",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Total Eclipse, Partial Truth",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_kazemaru",
+      "canonicalId": "serrin-galecrest",
+      "name": "Serrin Galecrest",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Serrin Galecrest. Character visual motifs: white-haired sailor swordsman with a collapsible wind vane shield and narrow curved blade; weather-map tapes attached to armor.\nTOP LEFT: Weather Reading. Ability concept: Serrin sees recent incoming projectile headings as faint arrows; after narrowly dodging one, gains one Wind Notch (max 2).\nTOP RIGHT: Compass Slash. Ability concept: cuts a 65-GU directional current across a target corridor for 2.2 s. Enemy **non-homing** projectiles crossing it are deflected up to 15\u00c2\u00b0; allied shots get a 10% speed boost.\nBOTTOM LEFT: Tack Change. Ability concept: spends a Wind Notch to rotate a current or quickly sidestep 28 GU perpendicular to its path. Cannot pass hard terrain.\nBOTTOM RIGHT: Eye of the Crosswind. Ability concept: maps a 140-GU radius ring with four public directional wind channels for 4 s. Enemy projectile lanes become less reliable; walking normally still works. No blanket projectile deletion, knockup, or blink slashes.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Weather Reading",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Compass Slash",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Tack Change",
+          "cell": 2
+        },
+        "R": {
+          "name": "Eye of the Crosswind",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/serrin-galecrest.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-01f3c934-2822-4951-a2f4-561695bebc3f.png",
+      "sha256": "44bb6c3a04ab6d245c96140cdd6ab0d1ce825fcc45d9a0d42f2c0918dd8fb754",
+      "promptSha256": "3e91b37697d01f2bdf7a42499f141212b08bbfb923b54bcc5735a500b8f141fe",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Weather Reading",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Compass Slash",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Tack Change",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Eye of the Crosswind",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_kindra",
+      "canonicalId": "orin-and-fen",
+      "name": "Orin and Fen",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Orin and Fen. Character visual motifs: scarred human lantern scout followed by a blind, horned dusk-hound made of moving ember fur; **not** a wolf plus death-immunity circle.\nTOP LEFT: Scent of Trouble. Ability concept: Fen marks heroes who recently damaged Orin's allies, revealing their direction for 3 s (not through fog beyond a short final ping).\nTOP RIGHT: Track Lantern. Ability concept: Orin drops a lantern that records the next enemy who passes within 55 GU, pinging their direction; can be destroyed in 2 hits.\nBOTTOM LEFT: Fen, Guard. Ability concept: sends Fen to a chosen ally or lantern for 3 s. Fen absorbs the next **one** eligible hostile projectile and then withdraws, with a clearly visible charge indicator.\nBOTTOM RIGHT: Road Home. Ability concept: paints a luminous curved **retreat path** from Orin to one low-HP ally for 4 s. The selected ally may voluntarily follow it for 30% speed and 18% damage reduction while moving toward Orin; leaving the path cancels protection. No HP floor or mass invulnerability.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Scent of Trouble",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Track Lantern",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Fen, Guard",
+          "cell": 2
+        },
+        "R": {
+          "name": "Road Home",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/orin-and-fen.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-39d71634-b831-4f5f-8090-59b9d16fbec6.png",
+      "sha256": "7ee786628f9da9fb4d0cadb67969ae613d48967aed22581f781b10fc89526438",
+      "promptSha256": "79b03f9a1cfaae19b405ef0cb136e65d3a17ff21126eb03bd27cc9c6b2389efb",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Scent of Trouble",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Track Lantern",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Fen, Guard",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Road Home",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_cora",
+      "canonicalId": "quillene-rook",
+      "name": "Quillene Rook",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Quillene Rook. Character visual motifs: masked archer with hawk-inspired shoulder fins and bow strung with miniature kite rigging; feathers are **air anchors**, not returning blade traps.\nTOP LEFT: Airborne Fletching. Ability concept: every third aimed attack releases a tiny kite that hangs for 3 s at the shot's endpoint (max 3). Kites are visible and destroyable.\nTOP RIGHT: Tetherbolt. Ability concept: shoots a kite anchor 150 GU into the air; anchors do not damage when planted.\nBOTTOM LEFT: Crosswind Stitch. Ability concept: ties her two nearest kites into an aerial span for 3 s. Her next two arrows passing through it split into two shallow angled shots at 60% damage each (one-hit cap per target); enemy units may shoot down either kite.\nBOTTOM RIGHT: Harrier Net. Ability concept: all active kites fan into a broad descending mesh. Enemies inside may move out but have ranged attack windups increased for 2.5 s; meanwhile allied projectiles from outside the mesh get a slight side-angle adjustment. No untargetable leap, ground feather recall, or root-on-three-feathers.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Airborne Fletching",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Tetherbolt",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Crosswind Stitch",
+          "cell": 2
+        },
+        "R": {
+          "name": "Harrier Net",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/quillene-rook.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-1e27f3d9-c377-4486-b2c7-4864ba63a7b2.png",
+      "sha256": "142ae5e12040e23b9aa5a49524e4114a40641b11da4767469d4322686ed392ff",
+      "promptSha256": "7486fd4fef4f54cdf97f2455f9248229c5f464d6b1a861acbd6ee47524e302cf",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Airborne Fletching",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Tetherbolt",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Crosswind Stitch",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Harrier Net",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_renn",
+      "canonicalId": "aurelio-vane",
+      "name": "Aurelio Vane",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Aurelio Vane. Character visual motifs: masked fencing host in ceremonial midnight tux-armor with luminous floorwork slippers and half-moon fan shield.\nTOP LEFT: Perfect Partner. Ability concept: an ally who follows an Aurelio-created floor arrow gains brief tenacity, once / ally / 6 s.\nTOP RIGHT: Mark the Floor. Ability concept: lays two 30-GU glowing steps; an ally crossing them in order gains 22% movement speed for 1.5 s. Enemies see the steps and can deny the route.\nBOTTOM LEFT: Change Partners. Ability concept: selects an allied hero in 120 GU; for 1.2 s both can voluntarily trade their places by pressing an interaction or by an AI commitment. Cannot trade into walls or out of hard CC.\nBOTTOM RIGHT: The Grand Procession. Ability concept: reveals a three-turn floor route for 4 s. Allies following it earn a small shield at each turn; enemies who stand on the route are pushed sideways 18 GU once when the procession advances. No AoE charm or automatic ally dash.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Perfect Partner",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Mark the Floor",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Change Partners",
+          "cell": 2
+        },
+        "R": {
+          "name": "The Grand Procession",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/aurelio-vane.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-996069fe-aee4-4efd-8ee7-0b56a6416783.png",
+      "sha256": "7c75effdea6b609d0224c79c4da419b748608288240166c77a2cd54d63d46c76",
+      "promptSha256": "d3b6c43dc9c4f5c6f4f6a76dab7d753ea293ce5d48690ce06ddbce01ca24a25c",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Perfect Partner",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Mark the Floor",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Change Partners",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: The Grand Procession",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_sylla",
+      "canonicalId": "droven-bearmantle",
+      "name": "Droven Bearmantle",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Droven Bearmantle. Character visual motifs: rugged warden in patched antlered mantle accompanied by a massive **moss-backed pack tortoise**, not a spirit bear or shapeshifter.\nTOP LEFT: Shared Heartbeat. Ability concept: Droven and the tortoise Hark have a shared reserve of 220 guard energy; damage absorbed by Hark drains guard. Hark does not respawn instantly after destruction.\nTOP RIGHT: Hark, Settle. Ability concept: directs Hark to a nearby point where he plants as a 55-GU-wide **walk-around obstacle** for 4 s. Hark can be attacked; allies may pass through slowly.\nBOTTOM LEFT: Shelter Under Shell. Ability concept: Hark opens his shell to cover one nearby ally with 20% incoming-damage redirection to guard energy for 2.5 s. Droven temporarily loses part of his own armor while energy is transferred.\nBOTTOM RIGHT: Carry the Line. Ability concept: Hark slowly advances 100 GU over 4 s as moving cover. Allies behind his shell gain limited projectile protection; opponents can flank Hark or destroy the shell's guard energy.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Shared Heartbeat",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Hark, Settle",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Shelter Under Shell",
+          "cell": 2
+        },
+        "R": {
+          "name": "Carry the Line",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/droven-bearmantle.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-8a5ab63d-ed46-4efc-b0f5-d2616eb1464f.png",
+      "sha256": "ac84198b3dcf5b58a274897a5853ee13e08967b2c445b6dea51ed4ae77133f93",
+      "promptSha256": "0068997ac73aac0a29741e2bbb67305552d777ad4ced29720f531b2099e9a130",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Shared Heartbeat",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Hark, Settle",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Shelter Under Shell",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Carry the Line",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_tequoia",
+      "canonicalId": "thalara-rootwright",
+      "name": "Thalara Rootwright",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Thalara Rootwright. Character visual motifs: elderly fungus architect with ceramic seed jars, branching mycelium sleeves and mushroom-coral parasol; no tree-ring prison.\nTOP LEFT: Spores in Soil. Ability concept: ability hits leave a nutrient node for 6 s (max 4). Nodes are visible small mushrooms with 2 hit points.\nTOP RIGHT: Root Survey. Ability concept: grows a narrow mycelial line between Thalara and one node. Allies moving along it gain minor speed; enemies crossing it suffer an initial short slow. One line per node.\nBOTTOM LEFT: Transplant. Ability concept: moves a single active nutrient node up to 60 GU with 0.5 s tell; enemies standing on the displaced line are gently redirected to nearest free space, no stun.\nBOTTOM RIGHT: The Living Understory. Ability concept: activates the node network for 5 s: allies touching a connected line regenerate modest HP over time; enemy AoE detonations on the web burn one node but trigger a one-time small burst. Opponents can cut the network one node at a time.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Spores in Soil",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Root Survey",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Transplant",
+          "cell": 2
+        },
+        "R": {
+          "name": "The Living Understory",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/thalara-rootwright.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-114cc217-8308-4739-abe4-3c84a696414a.png",
+      "sha256": "a250b4ac4e18256a406d3cd7b26196f4d86e43ec35e4226eea54f282f6150b14",
+      "promptSha256": "6d4b3fa6923f5055d740caf5df16d91068349fccdea27415999a4b7349b4fbc0",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Spores in Soil",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Root Survey",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Transplant",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: The Living Understory",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_zal",
+      "canonicalId": "vesper-loom",
+      "name": "Vesper Loom",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Vesper Loom. Character visual motifs: elderly spider-silk surgeon with mechanical needle-fingers, a cracked porcelain medical mask and lilac thread reservoirs.\nTOP LEFT: Recorded Injury. Ability concept: 16% of damage suffered by a nearby marked ally is logged as Care Debt for 3 s, capped at 180 per ally. This does not reduce damage by itself.\nTOP RIGHT: Suture Tag. Ability concept: marks an ally for 4 s; the next qualifying damaging hit is reduced by 15%, and the prevented amount becomes Care Debt (not immediate HP).\nBOTTOM LEFT: Stitch Circuit. Ability concept: links two allies in range for 2.5 s; healing applied to either is split 70/30 with the other. Link breaks beyond 180 GU. No death prevention.\nBOTTOM RIGHT: Emergency Triage. Ability concept: converts up to 200 total Care Debt among nearby allies into a 4 s heal-over-time. Vesper suffers 15% of the converted amount as **nonlethal self-damage** over 4 s. Saves require setup and expose the healer.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Recorded Injury",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Suture Tag",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Stitch Circuit",
+          "cell": 2
+        },
+        "R": {
+          "name": "Emergency Triage",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/vesper-loom.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b99eeb8e-1ee5-4016-b58c-c2ce182f6adb.png",
+      "sha256": "b7e1f68c701afea28d0e023a1dbb91b719da085a69f322137c767378f236424f",
+      "promptSha256": "31fd5923e9bb562a56fb2c13556f08d0dbf502ce21e7709025c63adeda534f51",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Recorded Injury",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Suture Tag",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Stitch Circuit",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Emergency Triage",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_xin",
+      "canonicalId": "rux-emberchain",
+      "name": "Rux Emberchain",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Rux Emberchain. Character visual motifs: scarred courier with a giant shoulder mail-satchel of glowing sealed envelopes and iron skate-boots; not a fire-remnant sword ninja.\nTOP LEFT: Return Address. Ability concept: attacks place a stamp on enemy champions (1 stamp / enemy / 6 s). Stamps reveal Rux's intended target for 4 s.\nTOP RIGHT: Express Mail. Ability concept: throws a volatile letter to an ally, enemy, or ground point. A carrier retains it for up to 3 s; enemies may hand it off to another enemy with a movement interaction to avoid the later blast.\nBOTTOM LEFT: Courier's Crossing. Ability concept: draws a short path between Rux and a stamped point. Rux can run it at boosted speed but not dash through collision; crossing a carried letter collects it and produces a radial spark burst.\nBOTTOM RIGHT: Dead Letter Office. Ability concept: simultaneously recalls all placed letters **along visible straight routes** toward a central postal seal. Each letter can hit a champion once; safe gaps exist between routes. Enemies can relocate before recall.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Return Address",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Express Mail",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Courier's Crossing",
+          "cell": 2
+        },
+        "R": {
+          "name": "Dead Letter Office",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/rux-emberchain.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-bb3fac62-c57b-49d4-9077-49d477e9cced.png",
+      "sha256": "80dbd8b92826c75c61f95d43c1071467de25f60f6a01e256baee3c454d949b55",
+      "promptSha256": "aa5d29cf96607c888b1526f1c098bfd81f24aa53028c37cc2999eb99081ee51e",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Return Address",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Express Mail",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Courier's Crossing",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Dead Letter Office",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_raijin",
+      "canonicalId": "teslan-veyr",
+      "name": "Teslan Veyr",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Teslan Veyr. Character visual motifs: coil scientist with portable ground rods, insulated coat with hazard seams, copper articulated monocle.\nTOP LEFT: Closed Circuit. Ability concept: a successful link between two Teslan rods grants a stored Capacitor charge, maximum 2.\nTOP RIGHT: Drive Rod. Ability concept: place a destructible rod at a ground point, 140 GU range, 3 s lifetime after the second rod. Two rods generate a clearly drawn current beam between them; crossing once damages lightly.\nBOTTOM LEFT: Reverse Current. Ability concept: flips the circuit to **Repel** or **Conduct** for 2.5 s. Repel deflects enemy projectiles crossing the beam slightly; Conduct increases allied attack speed when standing adjacent to the line. Each hero may benefit once per cast.\nBOTTOM RIGHT: Brownout Protocol. Ability concept: consumes Capacitors to briefly shut down **deployables** and delay the next cast windup of enemies who remain on the circuit line (up to 0.5 s); opponents can walk away before the 0.75 s charge finishes. It does not silence globally or auto-pull.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Closed Circuit",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Drive Rod",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Reverse Current",
+          "cell": 2
+        },
+        "R": {
+          "name": "Brownout Protocol",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/teslan-veyr.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-d61b60ae-23b8-4b0d-8a0d-dbce9db07763.png",
+      "sha256": "113453625682cec2a04ecaf0a3f23254050b5ba74259eed10e0998220e4bb187",
+      "promptSha256": "579f671de49907d1fb2aac704fe14a949c6a59b65ec9044c98f489f88e16ab6f",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Closed Circuit",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Drive Rod",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Reverse Current",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Brownout Protocol",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_kaolin",
+      "canonicalId": "joruun-jadecoil",
+      "name": "Joruun Jadecoil",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Joruun Jadecoil. Character visual motifs: stout jade-mechanical titan with hinged stone shutters and a visible counterweight core; never rolls as a ball.\nTOP LEFT: Counterweight. Ability concept: damage taken fills a limited counterweight bar, up to 100, used only to strengthen hinges.\nTOP RIGHT: Raise Slab. Ability concept: raises one breakable 60-GU jade slab on a ground edge for 4 s. Slab blocks movement and shots, but can be walked around. Max one slab.\nBOTTOM LEFT: Hinge Swing. Ability concept: rotates the active slab 90\u00c2\u00b0 over 0.65 s, nudging units out of occupied space by at most 24 GU; without slab, Joruun gains a short self-shield but no knockup.\nBOTTOM RIGHT: The Great Door. Ability concept: plants two hinged slabs 90 GU apart for 5 s, forming a **temporary gate** with an openable middle. Joruun can spend Counterweight to close it once (0.7 s telegraph); units caught in the closing zone are moved to closest free side, never trapped without exit.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Counterweight",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Raise Slab",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Hinge Swing",
+          "cell": 2
+        },
+        "R": {
+          "name": "The Great Door",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/joruun-jadecoil.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-8368eecd-a117-494a-b190-1f49cf17be92.png",
+      "sha256": "087f899374c947714bbd172a5d1d59e3dca54dff0a6cf6f7ceca4d25cc3c242f",
+      "promptSha256": "31b0d494c8eb6ee84a8f43d9bdf2d7ff3b5b93d1e7f27145cad7e3978bab5055",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Counterweight",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Raise Slab",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Hinge Swing",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: The Great Door",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_inai",
+      "canonicalId": "astrax-mire",
+      "name": "Astrax Mire",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Astrax Mire. Character visual motifs: veiled pilgrim whose long measuring cords float behind a star-map walking staff; no portal-clone mobility burst.\nTOP LEFT: Footfall Record. Ability concept: within sight, tracks enemy travel distance over rolling 3 s windows (max 160 GU) with public meter marks.\nTOP RIGHT: Measure Out. Ability concept: tags one visible enemy for 3 s. Each 35 GU it voluntarily moves adds one Distance Seal (max 3); stationary targets remain safe.\nBOTTOM LEFT: Mile Marker. Ability concept: sets a small stone marker on terrain. Tagged enemies moving **toward** it are slowed lightly; moving away consumes one Distance Seal harmlessly.\nBOTTOM RIGHT: Reckoning of Roads. Ability concept: within 140 GU, all tagged enemies receive a visible 1 s verdict countdown. It converts accumulated seals into a capped nonlethal magical burst and movement-speed reduction; seals can be shed by walking away from markers before verdict. Does not teleport, leap, or create rift damage explosions.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Footfall Record",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Measure Out",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Mile Marker",
+          "cell": 2
+        },
+        "R": {
+          "name": "Reckoning of Roads",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/astrax-mire.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-c6440233-40c1-4708-97ce-e8f834e9eb20.png",
+      "sha256": "ee02789b3a30e3aa09047412da305d0644ba79dab05435f2c2cefa92022c04d3",
+      "promptSha256": "320fd50dd74c6419f59f67b71083a4c528a93cb4c4c0017068288332f87cb798",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Footfall Record",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Measure Out",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Mile Marker",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Reckoning of Roads",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_qiyana",
+      "canonicalId": "prismelle-cade",
+      "name": "Prismelle Cade",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Prismelle Cade. Character visual motifs: mineral queen with a floating circlet of glass shields, single asymmetrical cleaver and fractured reflective cape.\nTOP LEFT: Royal Refraction. Ability concept: once / 5 s, landing a blade hit charges her nearest crystal pane with one optical charge.\nTOP RIGHT: Facet Screen. Ability concept: places a 55-GU one-way prismatic pane with 2 HP. Enemy shots that hit it lose 25% damage; allied shots fired through at specific visible angles bend 18\u00c2\u00b0.\nBOTTOM LEFT: Claim the Angle. Ability concept: moves to the edge of her existing pane by up to 35 GU and rotates it. It is a **short pathing move**, not free-target dash, and cannot move through walls.\nBOTTOM RIGHT: Coronation in Glass. Ability concept: creates three panes arranged as a shallow open fan; over 4 s each pane can redirect **one** allied projectile into a separate lane. Enemy champions can smash panes or engage inside the fan.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Royal Refraction",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Facet Screen",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Claim the Angle",
+          "cell": 2
+        },
+        "R": {
+          "name": "Coronation in Glass",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/prismelle-cade.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-bd8100d3-bc2d-4262-9fe2-7955a39df6f3.png",
+      "sha256": "e1a4f7b06a2324acfacf4c89978bccc7f5bd547ff415a1c394adc13e17057818",
+      "promptSha256": "92368aa792fbed22efce3f450c1f035abbe1624c4ff9b547677299bf9354bda7",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Royal Refraction",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Facet Screen",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Claim the Angle",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Coronation in Glass",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_locke",
+      "canonicalId": "ashkar-veilhand",
+      "name": "Ashkar Veilhand",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Ashkar Veilhand. Character visual motifs: masked ash monk wearing charred prayer banners and iron ash bells; no invisible assassin smoke.\nTOP LEFT: Witness the Hurt. Ability concept: every 50 damage one chosen nearby ally takes from an enemy creates one Ember Count on that attacker (max 3); counts expire in 5 s.\nTOP RIGHT: Ember Brand. Ability concept: marks one attacker with a burn that grows with Ember Count; if they stop attacking the protected ally, the burn ends early.\nBOTTOM LEFT: Ash Intercession. Ability concept: Ashkar dashes **only to his sworn ally**, landing at a legal adjacent location and briefly blocking the next targeted basic attack for them. No stealth or enemy-target jump.\nBOTTOM RIGHT: Public Penance. Ability concept: announces the top Ember Count attacker for 0.8 s, then creates a circular duel hazard around **that enemy's current position**. Damage ramps only while the accused continues attacking Ashkar's protected ally; they can switch targets or exit. No guaranteed execution.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Witness the Hurt",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Ember Brand",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Ash Intercession",
+          "cell": 2
+        },
+        "R": {
+          "name": "Public Penance",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/ashkar-veilhand.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-75176226-955d-4d08-a70b-27bb004819b2.png",
+      "sha256": "f83c3c4a569fa8a54252264c35b090ce33398931f72444d2c3533fa2e7a7b9a3",
+      "promptSha256": "9f1c0dde34e572579ff6a11913bfdfac3c9d5df3ca2c67f9c62883b497b79a6e",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Witness the Hurt",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Ember Brand",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Ash Intercession",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Public Penance",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_senna",
+      "canonicalId": "maris-solquill",
+      "name": "Maris Solquill",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Maris Solquill. Character visual motifs: armored pilgrim carrying a brass sextant crossbow and foldout field-map shrine; no giant Senna-like healing beam.\nTOP LEFT: Borrowed Sunlight. Ability concept: damage that Maris sees nearby leaves one Waylight mote at its ground position (max 3), pickup grants small shield charge.\nTOP RIGHT: Waypoint Lantern. Ability concept: shoots a lantern onto the ground. It projects a 50-GU-long path; allies walking its length gain a small burst of healing at the far endpoint (once each).\nBOTTOM LEFT: Twilight Survey. Ability concept: rotates a placed lantern's path or aligns it toward an ally, granting that ally 1.5 s of vision through nearby obstacles (not global vision) as the line turns.\nBOTTOM RIGHT: The People's Atlas. Ability concept: connects up to three Waylight positions into a visible zig-zag safe trail for 5 s. Allies traversing the **entire route** receive a capped shield and 20% speed; enemies can destroy waypoints or ambush turns. No global damaging beam.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Borrowed Sunlight",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Waypoint Lantern",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Twilight Survey",
+          "cell": 2
+        },
+        "R": {
+          "name": "The People's Atlas",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/maris-solquill.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b8e46329-375d-438e-86f7-667ad5ad765c.png",
+      "sha256": "32e01443ec459725e90630d95cde72ade5045b1306325630124028d63f961fea",
+      "promptSha256": "a8dee318a37a42145275a5af6c86d15b6e186237a30de235ed3025bfdea20e0f",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Borrowed Sunlight",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Waypoint Lantern",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Twilight Survey",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: The People's Atlas",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_largo",
+      "canonicalId": "odo-bogsong",
+      "name": "Odo Bogsong",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Odo Bogsong. Character visual motifs: stout moss-green amphibian clockmaker with hollow reed drums, pedal metronome and tiny percussion frogs.\nTOP LEFT: The Beat Goes On. Ability concept: Odo displays a repeating 3-beat indicator (1.2 s/beat). Allies who begin a spell within a 0.18 s Good Beat window get 8% shorter cast recovery, once / ability / 6 s.\nTOP RIGHT: Offbeat Drum. Ability concept: places a 3-beat drum pad; each beat makes a visible 40-GU ripple for light damage, never stunning automatically.\nBOTTOM LEFT: Syncopation. Ability concept: moves the next pad beat earlier by 0.25 s and provides a small shield pulse to nearby allies on the adjusted beat. Enemies can see the revised countdown.\nBOTTOM RIGHT: The Long Measure. Ability concept: for 4 beats, allies on Odo's rhythm gain move speed after completing casts; enemies casting exactly while a ripple touches them incur 0.4 s additional **recovery after the cast**, never a denied cast. No global heal/tenacity aura.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "The Beat Goes On",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Offbeat Drum",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Syncopation",
+          "cell": 2
+        },
+        "R": {
+          "name": "The Long Measure",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/odo-bogsong.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-89aa6a98-d05d-4355-8692-f49c44cf3a05.png",
+      "sha256": "33ec2ec727079b5f8968c94e48b014f263b7e2cbb8cbe906d19c57f933ea20ea",
+      "promptSha256": "4a492e176d30361e1b09da9236518e8ed72539131eb681ce328cd3a471982c79",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: The Beat Goes On",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Offbeat Drum",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Syncopation",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: The Long Measure",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_shadowfiend",
+      "canonicalId": "mourn-ashwake",
+      "name": "Mourn Ashwake",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Mourn Ashwake. Character visual motifs: furnace-backed mortician pulling ember caskets on chains, black glass face shield; no Shadow-Fiend-style line razes/soul-stack requiem.\nTOP LEFT: Ash Residue. Ability concept: any completed damaging spell cast within 125 GU leaves an Ash Patch where it ended (once / owner / 4 s, max 4 patches). Mourn sees both teams' visible patches.\nTOP RIGHT: Ember Tongs. Ability concept: drags one patch slowly 45 GU, scorching enemies it passes once, or makes a small patch at his own feet if none exist.\nBOTTOM LEFT: Draft Open. Ability concept: opens a furnace vent toward one patch, creating a visibly directional heated current for 3 s that burns enemies walking **against** it.\nBOTTOM RIGHT: Second Combustion. Ability concept: ignites every active patch in a 140-GU field after 1.0 s, turning them into low moving walls of ember for 3 s. Patches consumed; no large instant fear wave.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Ash Residue",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Ember Tongs",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Draft Open",
+          "cell": 2
+        },
+        "R": {
+          "name": "Second Combustion",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/mourn-ashwake.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-020e25b5-80d5-41d9-b35e-1350f60ec524.png",
+      "sha256": "be8cd7b8a4d2b455f36db9c35acfb3f5cc3aedb8ec0a79e662e2f02be72110e1",
+      "promptSha256": "f2a65c46c4ad124d4bb6748b3469ff44aeccac9f351fa70c42ba18752666865c",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Ash Residue",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Ember Tongs",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Draft Open",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Second Combustion",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_earthshaker",
+      "canonicalId": "dolm-runesunder",
+      "name": "Dolm Runesunder",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Dolm Runesunder. Character visual motifs: squat seismologist titan with two immense pendulum hammers and a floor-level surveying compass; no Fissure/Echo Slam analogue.\nTOP LEFT: Strain Lines. Ability concept: moving enemy champions that make sharp turns (more than 70\u00c2\u00b0/0.4 s) generate a strain point; max 2 on the ground.\nTOP RIGHT: Tilt Plate. Ability concept: raises one 65\u00c3\u201465-GU shallow sloping tile. Units crossing it slide an extra 12 GU in their travel direction; exits always remain open, slide has one-hit cooldown.\nBOTTOM LEFT: Pendulum Strike. Ability concept: swings a huge weighted maul across an arc. Enemies on tilted ground are shoved a modest 18 GU; other enemies take normal damage.\nBOTTOM RIGHT: Continental Drift. Ability concept: lays three **successive** tilted plates over 2.7 s, visibly changing safe movement vectors, with a final 0.55 s stagger for opponents who fail to leave the last tile. No full-screen slam based on nearby unit count.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Strain Lines",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Tilt Plate",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Pendulum Strike",
+          "cell": 2
+        },
+        "R": {
+          "name": "Continental Drift",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/dolm-runesunder.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-3eaebbfb-6977-496f-8f52-86e0add851aa.png",
+      "sha256": "f67e99275e3bb29d7a8cce213218a491ff0127ead4425b1c756932dd902759ed",
+      "promptSha256": "305a2e00c8f4b57604bc9bb5b1acd6cc849969ad63cc65fd2deea94288c080bd",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Strain Lines",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Tilt Plate",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Pendulum Strike",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Continental Drift",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_mirehook",
+      "canonicalId": "garruk-mawsuture",
+      "name": "Garruk Mawsuture",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Garruk Mawsuture. Character visual motifs: hunched iron-jawed smith operating a strapped cage forge, rotating trap anvils and huge riveted gauntlets; no hook/rot/dismember.\nTOP LEFT: Scrap Appetite. Ability concept: destroyed enemy deployables or spent jaw traps grant Scrap, maximum 3, each increasing next jaw width by 6 GU.\nTOP RIGHT: Set Jaws. Ability concept: plants two hinged iron teeth on ground 50 GU apart, 2 HP each. After 0.55 s, crossing the gap closes them for a 0.5 s root **only once**, then they jam open. Units can attack or skirt them.\nBOTTOM LEFT: Forge Drag. Ability concept: drags one installed tooth 45 GU along a visible chain, scraping a narrow damage lane and reopening a previously triggered jaw with half strength.\nBOTTOM RIGHT: Factory Floor. Ability concept: lays three staggered **jaw lanes** around Garruk for 5 s. Their timing is sequential (audible clacks), leaving safe corridors; no suppression, unit grab, or poison aura.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Scrap Appetite",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Set Jaws",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Forge Drag",
+          "cell": 2
+        },
+        "R": {
+          "name": "Factory Floor",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/garruk-mawsuture.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-47c85ae3-98c5-4eb2-8046-696d3e98aa46.png",
+      "sha256": "57c310f3a443e775fcd15122fe7d76cf5c13013257a319e06b2e89e6837b7c1a",
+      "promptSha256": "e32c597d36b54c04999f0a9d9b1d5883ad9d7b6520d5b7ba4b1e96312a4c2a49",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Scrap Appetite",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Set Jaws",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Forge Drag",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Factory Floor",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_nullweaver",
+      "canonicalId": "vesper-nullcode",
+      "name": "Vesper Nullcode",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Vesper Nullcode. Character visual motifs: androgynous angular physicist with a suspended broken gyroscope, indigo measurement robe and luminous chalk-rings; **not** a black-hole channeler.\nTOP LEFT: Unspent Momentum. Ability concept: enemies traveling 45 GU in a straight line nearby contribute one Momentum sample (max 4, visible).\nTOP RIGHT: Tangent Fault. Ability concept: lays a 60-GU vector tile; a non-unstoppable enemy crossing is gently redirected 20\u00c2\u00b0 clockwise or counterclockwise (chosen on cast), maintaining speed. No teleport/stun.\nBOTTOM LEFT: Mass Argument. Ability concept: declares a public high-friction disk for 3 s. Enemy dashes passing through are shortened by at most 20%; ordinary walking is slowed 10%. Does not cancel the dash outright.\nBOTTOM RIGHT: Borrowed Orbit. Ability concept: consumes Momentum to construct a rotating 145-GU field lasting 4 s. Within it, movement inputs are smoothly biased into an arc of at most 25\u00c2\u00b0/second, telegraphed by floor arrows. Stationary enemies or those who deliberately countersteer can hold position. No forced center pull or AoE wipe.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Unspent Momentum",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Tangent Fault",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Mass Argument",
+          "cell": 2
+        },
+        "R": {
+          "name": "Borrowed Orbit",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/vesper-nullcode.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-4a9d6159-cee4-4ae7-aa7f-1b53cad84d40.png",
+      "sha256": "ce5656e6f2c8563e631394c1106587a1119b49b3edb65bc3f3e8f49634272692",
+      "promptSha256": "d7f7331ca3a09f73204276abca0408c1dcec376aef6ac5d4066cbc2ed633aed3",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Unspent Momentum",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Tangent Fault",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Mass Argument",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Borrowed Orbit",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_voltgrip",
+      "canonicalId": "coiljack-ampfist",
+      "name": "Coiljack Ampfist",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Coiljack Ampfist. Character visual motifs: stocky utility electrician with two folding traffic-bar gauntlets, spooled spring cable and safety visor; not an extending hook robot.\nTOP LEFT: Impact Audit. Ability concept: when an enemy ends a dash within 110 GU, Coiljack gets one Inspection charge (max 2, 4 s lockout per enemy).\nTOP RIGHT: Turnstile Bar. Ability concept: plants a 55-GU breakable spring bar for 3.5 s, showing one open half and one closed half. Walking enemies pass; the first **dash through the closed side** is diverted 20 GU to its safe edge and consumes the bar.\nBOTTOM LEFT: Earth Clip. Ability concept: attaches a grounding clip to an ally for 2.5 s. The next displacement inflicted on that ally is reduced by 40% and the attacker is briefly revealed; no stun/knockup.\nBOTTOM RIGHT: Inspection Grid. Ability concept: builds two intersecting turnstiles for 5 s. Enemies may walk around or smash either gate, but repeated aggressive dashes spend their movement on detours and trigger a 0.45 s disarm after the second interception.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Impact Audit",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Turnstile Bar",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Earth Clip",
+          "cell": 2
+        },
+        "R": {
+          "name": "Inspection Grid",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/coiljack-ampfist.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-efd208ab-721f-4b61-843f-cf2ec3a550c9.png",
+      "sha256": "a598e7528d0bed70601e36452e743e78dc56d6c5fe903d3e8b80f18ad18a07e0",
+      "promptSha256": "ed021e7083b35649e442d867b93365fda3944177980c38fbb06add65a816b5fe",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Impact Audit",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Turnstile Bar",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Earth Clip",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Inspection Grid",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_aetherbolt",
+      "canonicalId": "talan-slipshot",
+      "name": "Talan Slipshot",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Talan Slipshot. Character visual motifs: rugged surveyor with mechanical ricochet bow-rifle, rangefinder eyepieces and foldable brass mirror drones; no blink and giant piercing beam.\nTOP LEFT: Proof Mark. Ability concept: a direct skillshot hit stamps the target with one Proof Mark for 4 s; marks improve the next reflected shot slightly, one proc per target.\nTOP RIGHT: Set Mirror. Ability concept: places one thin 2-HP projectile reflector at a selected ground point; at most 2 mirrors exist, facing fixed direction.\nBOTTOM LEFT: Evidence Shot. Ability concept: fires a single bolt that may ricochet **once** from one mirror at the previewed angle. Direct and reflected hits deal different capped damage; walls stop shots.\nBOTTOM RIGHT: Closed Case. Ability concept: chooses one visible target and displays three **public** predicted lines from existing mirrors for 0.8 s. Fires along the selected legal line for high damage; remaining lines are decoys clearly labeled as possible routes. No global shot or aimless auto-hit.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Proof Mark",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Set Mirror",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Evidence Shot",
+          "cell": 2
+        },
+        "R": {
+          "name": "Closed Case",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/talan-slipshot.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-c715a9cb-7c43-4eab-9c3c-3a1f605b5cc6.png",
+      "sha256": "db7fd653844ab081929e2f4f39b139fb4bc23a4686b56c133bf3183850d0f386",
+      "promptSha256": "3c4feaebce7a29cd11ef74f36bed97f151c3484b2345f369383eddf949b40c10",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Proof Mark",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Set Mirror",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Evidence Shot",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Closed Case",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_corsara",
+      "canonicalId": "calixa-broadwake",
+      "name": "Calixa Broadwake",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Calixa Broadwake. Character visual motifs: salt-worn privateer captain with a rectangular bicorne hat and a knee-high clockwork skiff that follows her; two mismatched deck cannons, no spinning gun barrage.\nTOP LEFT: Hold the Weather. Ability concept: after Calixa moves 45 GU along one heading, her skiff stores one Windward charge (max 2); reversing direction spends the accumulated aim. Visible wake trails announce her broadside side.\nTOP RIGHT: Signal Buoy. Ability concept: tosses a floating 2-HP buoy within 140 GU. The buoy marks a 60-GU sea-lane and reveals enemy movement through that lane for 4 s; Calixa's next basic attack passing the buoy gains a small splash. Max two buoys.\nBOTTOM LEFT: Tack Across. Ability concept: Calixa and skiff turn 90\u00c2\u00b0 and slide 38 GU *along an unobstructed legal path*. While turning, the skiff fires **one** short range shot from the outward-facing broadside, consuming a Windward charge for extra shove. No dash through obstacles.\nBOTTOM RIGHT: Port Authority. Ability concept: selects port or starboard and projects **three staggered 85\u00c3\u201435-GU broadside lanes** over 3 s. Every 0.8 s the skiff fires into the next visible lane; each hero can be damaged at most once per volley. The lanes follow Calixa's facing **at cast start**, and remain readable even if she walks; do not auto-track fleeing champions.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Hold the Weather",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Signal Buoy",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Tack Across",
+          "cell": 2
+        },
+        "R": {
+          "name": "Port Authority",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/calixa-broadwake.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-c6524a90-5a21-4419-846c-85a0f40879bc.png",
+      "sha256": "9680bf354851cc7d0c1918d47f679a6c0d0fab7ff3b51b5406befaa99266beec",
+      "promptSha256": "52d7cabf51de142b45d6f191e464011d00fcf777088aa857e2dd80dc3ea0f3ff",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Hold the Weather",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Signal Buoy",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Tack Across",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Port Authority",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_brewmaw",
+      "canonicalId": "brohm-caskfall",
+      "name": "Brohm Caskfall",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Brohm Caskfall. Character visual motifs: colossal cellar mechanic with transparent brass fermentation tanks, pressure-wheel forearms and rubber-stopper boots; no body-slam-and-exploding-barrel combo.\nTOP LEFT: Pressure Reserve. Ability concept: damage soaked while standing on his own foam builds Pressure (0\u00e2\u20ac\u201c100). Pressure decays outside foam; visibly displays on a back-mounted dial. Reserve cannot grow from damage that Brohm himself creates.\nTOP RIGHT: Lay the Head. Ability concept: opens a directional spigot to spill a 90\u00c3\u201428-GU **foam strip** for 4 s. Units on the strip retain normal basic movement but slide up to 9 GU along the marked direction after each voluntary movement step; repeated movement resolution caps total drift.\nBOTTOM LEFT: Repressurize. Ability concept: reverses the direction of one active foam strip and gives Brohm a brief damage barrier proportional to Pressure consumed (capped). The reversal is warned by flashing arrows for 0.45 s; opponents may step off it.\nBOTTOM RIGHT: Cellar Breach. Ability concept: plants a large cask at the junction of up to two foam strips. After 1 s the cask vents in **three sequential directional surges**, each traveling along existing foam channels and displacing enemies modestly perpendicular to the stream. Surges do not stack displacement against the same target inside 0.8 s. Without strips, it creates one weak short surge only.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Pressure Reserve",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Lay the Head",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Repressurize",
+          "cell": 2
+        },
+        "R": {
+          "name": "Cellar Breach",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/brohm-caskfall.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-54da44ad-0bf1-4caa-b699-e8962d69d3c1.png",
+      "sha256": "75987e0b4d9d65ea57f6e2f0b6ec7b410a79d4f10d9849271ac7d0e498126f38",
+      "promptSha256": "25561b89518c94b7cdb3e1b253f610ff4438da77575607b165fe7d19cd5adce1",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Pressure Reserve",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Lay the Head",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Repressurize",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Cellar Breach",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_wraithhook",
+      "canonicalId": "mora-fenhook",
+      "name": "Mora Fenhook",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Mora Fenhook. Character visual motifs: elderly marsh boatwoman beneath a wide oilcloth hood, a segmented oar and a floating narrow spirit skiff; completely remove hooked chains and warden cage.\nTOP LEFT: Crossing Fees. Ability concept: when an allied hero safely finishes a Mora-established route, Mora accrues Fare (max 2), each reducing the next route setup delay by 0.15 s. There is no reward for trapping or dragging enemies.\nTOP RIGHT: Mooring Post. Ability concept: plants a small lit mooring within 115 GU. Posts have 2 HP, last 7 s, and are legal only on traversable ground. First post is the departure; second is the arrival. Max one linked pair.\nBOTTOM LEFT: Departing Bell. Ability concept: if two posts exist and a collision-valid traversable path joins them, summons a 2.3 s ferry that follows that path at fixed speed. Allies and enemies **voluntarily board** within 20 GU using a public interaction or AI accepted decision; a boarded unit cannot attack for the trip but may disembark at legal path checkpoints. No forced motion from hard CC.\nBOTTOM RIGHT: The Last Crossing. Ability concept: temporarily creates two public **emergency moorings** at legal points near Mora, then dispatches a second larger ferry allowing up to two passengers for one journey. It gives passengers a small shield **on arrival**, not invulnerability while traveling; destroying arrival post stops the ferry at its nearest legal earlier dock.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Crossing Fees",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Mooring Post",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Departing Bell",
+          "cell": 2
+        },
+        "R": {
+          "name": "The Last Crossing",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/mora-fenhook.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-300d471b-8a34-4153-b2b1-14222f166481.png",
+      "sha256": "fd7dd0d45bdfbdd936078c5d7c91606b98c5abda0b68d9d7ee0b5196054f7f81",
+      "promptSha256": "8a46e46733cee9cf658ad51447e6e7ad2e8217200f7f7d21c8172cef64a23f5d",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Crossing Fees",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Mooring Post",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Departing Bell",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: The Last Crossing",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_invoker",
+      "canonicalId": "mirelle-vane",
+      "name": "Mirelle Vane",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Mirelle Vane. Character visual motifs: sharp-eyed **adult mage girl (early twenties)**, needle-hair comb, short asymmetrical ink-black sleeve, ivory structured waistcoat, oxblood petal-skirt over practical shorts, flat boots, giant folded-paper pattern cape. Her floating helper is a brass bobbin, **not three elemental spheres**.\nTOP LEFT: Pattern Memory. Ability concept: Mirelle can maintain **three visible 2-HP tailor pins** at once, each lasting 6 s and anchored to traversable ground; new pins replace the oldest. Two or three pins establish a line/triangle with clear world-projected stitch geometry. Valid layouts must leave legal passage and cannot cross impassable world walls.\nTOP RIGHT: Pin the Hem. Ability concept: tosses a pin within 125 GU, causing a small impact sting only if it hits a target; the pin stays on the ground. At least one pin is required for most pages. Pins are marked for **both** teams and can be broken by 2 basic attacks.\nBOTTOM LEFT: Recut. Ability concept: chooses one existing pin and slides it along a visible, collision-valid 40-GU path after a 0.4 s warning. Enemies crossed by the moving thread take one light hit; recasting on empty ground fails without consuming the cooldown. Also cycles the selected **page group** when no pin is targeted, with no cast or mana cost.\nBOTTOM RIGHT: Pattern Book. Ability concept: hold/activate a **radial palette** of ten named patterns; choosing a page is input selection, then releasing R makes **one authoritative cast**. Each page has its own cooldown, cost and geometry requirement. The global weave lockout is a post-cast throttle, **not an 80-second ultimate imposed on all ten pages**. Major pages have longer personal cooldowns. A single chosen page cannot be released if its pin geometry or cooldown is invalid; show the reason before committing. Each successfully cast page consumes **exactly its declared pins**.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Pattern Memory",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Pin the Hem",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Recut",
+          "cell": 2
+        },
+        "R": {
+          "name": "Pattern Book",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/mirelle-vane.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-bf3fdad9-859c-47c1-a34c-2bd2888f0899.png",
+      "sha256": "65fa573d1d3ee3b4f84a5ddf5806c6076b64e408a5f7080b7c02023833585942",
+      "promptSha256": "8c75531ec95dce642cdf668a278427b7956513afd58fadc52d3bd4b441bac2f4",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Pattern Memory",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Pin the Hem",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Recut",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Pattern Book",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_hwei",
+      "canonicalId": "maelis-chromabloom",
+      "name": "Maelis Chromabloom",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Maelis Chromabloom. Character visual motifs: older museum conservator, square terracotta paint smock with elaborate ceramic mask repair, enormous collapsible gallery frames; paint is a **structural medium**, not a stream of colored blasts.\nTOP LEFT: Surface Memory. Ability concept: when a projectile strikes a Maelis canvas, the canvas stores one imprinted property of that projectile (physical/magic/utility; never copies the ability or exact damage), one property per frame.\nTOP RIGHT: Unroll the Canvas. Ability concept: erects a 55-GU-wide 2-HP translucent canvas for 3.5 s. It blocks ordinary projectiles from **both** teams but permits walking through with a 15% brief movement penalty. No invisible walls.\nBOTTOM LEFT: Restore the Missing. Ability concept: repaints a damaged canvas, restoring one HP and changing its surface into a **one-way reveal window** for 2 s; projectiles still obey the same obstruction rules. If no frame exists, instead creates a 30-GU reveal brush stroke (lower power).\nBOTTOM RIGHT: Private Exhibition. Ability concept: joins up to three frames into an open-sided gallery for 4 s. Frames rotate one after another every 1.1 s, opening new shooting angles while closing others. Each rotation briefly releases a burst based on the stored property (capped damage or shield pulse, not copied spells). Public arrows preview next positions.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Surface Memory",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Unroll the Canvas",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Restore the Missing",
+          "cell": 2
+        },
+        "R": {
+          "name": "Private Exhibition",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/maelis-chromabloom.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-81bb5ed5-9ca9-42a2-ab25-66d7e6116ba9.png",
+      "sha256": "e2c3044d85aee9114d84aaf2f228f96901e3542541a426d5fc539e9324455316",
+      "promptSha256": "601c54f02d6cf5e97cb378c53964b5f07ae7e28ea201d8a582b9eb98e43a95a3",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Surface Memory",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Unroll the Canvas",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Restore the Missing",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Private Exhibition",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_jayce",
+      "canonicalId": "axiom-rail",
+      "name": "Axiom Rail",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Axiom Rail. Character visual motifs: compact mechanic with one offset railcart cannon on the shoulder and a hydraulic knee, not a shapeshifting hammer/rifle.\nTOP LEFT: Gauge Check. Ability concept: when Axiom's attack travels within 12 GU of one of his rails it accrues a Gauge token (max 3). Rails are visible to enemies and may be dismantled.\nTOP RIGHT: Lay Track. Ability concept: draws one 65-GU segment on legal ground, with open endpoints and a 2-HP switching junction. Max two segments active for 5 s; rail cannot bisect spawn or an objective collision.\nBOTTOM LEFT: Switch Engine. Ability concept: sends a small unmanned rail cart along connected track for up to 2.5 s. It fires light suppressive bolts **only at targets with direct LOS from the cart**; enemies can destroy it or stand away from the rail.\nBOTTOM RIGHT: Terminal Delivery. Ability concept: charges a heavy shell on the **furthest linked cart/rail endpoint** for 0.9 s, then fires one broad, telegraphed 95-GU shot aligned to the track. Consumes Gauge for range **not** lethal damage. If no rail survives, R refuses cast and preserves cooldown.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Gauge Check",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Lay Track",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Switch Engine",
+          "cell": 2
+        },
+        "R": {
+          "name": "Terminal Delivery",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/axiom-rail.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b63482d0-5ab7-4b33-939f-b57b3bb488e9.png",
+      "sha256": "8188c2f1503310808895a5fc71d6bf005413799167ba93f0b14507ce3329b660",
+      "promptSha256": "d1af876a9ee76a9b6d89fba79ad8cc0273de6ec0402774fd99b1a5bb6ff26c83",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Gauge Check",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Lay Track",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Switch Engine",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Terminal Delivery",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_vi",
+      "canonicalId": "brakka-fenn",
+      "name": "Brakka Fenn",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Brakka Fenn. Character visual motifs: heavyset one-eyed town marshal whose gauntlets are giant document stamps, wearing battered city uniform and public warrants.\nTOP LEFT: Repeat Offender. Ability concept: an enemy that damages the same ally twice within 3 s gains a public Offender tag for 4 s (once per enemy / 8 s), giving Brakka 10% faster movement when approaching that enemy.\nTOP RIGHT: File Complaint. Ability concept: stamps a 45-GU-wide circle on the ground, warning for 0.5 s. Offenders within receive a 0.4 s stagger and ordinary enemies take light damage; nobody is automatically grabbed.\nBOTTOM LEFT: Right of Way. Ability concept: Brakka forms a 55-GU escort path **to one protected ally**, briefly body-blocking incoming basic attacks when physically between attacker and ally. If he leaves the path he loses the guard.\nBOTTOM RIGHT: Writ Served. Ability concept: targets one Offender in 110 GU and projects a **public 75-GU exclusion disk** around that enemy for 3 s. The tagged enemy is free to walk **out** at any time; if they remain and attack the previously targeted ally, Brakka's counterstamp inflicts one 0.55 s disarm and moderate damage. Not an automatic targeted slam or suppression.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Repeat Offender",
+          "cell": 0
+        },
+        "S1": {
+          "name": "File Complaint",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Right of Way",
+          "cell": 2
+        },
+        "R": {
+          "name": "Writ Served",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/brakka-fenn.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-fa057240-24b4-407e-ba76-119238666017.png",
+      "sha256": "dd038043c76ee859cd28953fde5c73b34c178f209ed936324714a501bcd9315c",
+      "promptSha256": "963c9ba2dfa1901dd231e867f836c3f7c50cd7ac94b9d5a0e1c3c5032e3dd57d",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Repeat Offender",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: File Complaint",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Right of Way",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Writ Served",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_jinx",
+      "canonicalId": "pippa-fuseburst",
+      "name": "Pippa Fuseburst",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Pippa Fuseburst. Character visual motifs: short, scarred **adult** stage rigger in fireproof powder-blue jumpsuit, lighting tools, collapsible firing racks and confetti wheels; no Jinx-like weapon swap, zap slow or global rocket execute.\nTOP LEFT: Cue Card. Ability concept: Pippa stores one Showstopper token when a **scheduled** explosion catches at least one enemy champion; max 2; one token per cast, no kill-triggered speed frenzy.\nTOP RIGHT: Rack and Spark. Ability concept: installs a waist-high fireworks rack for 4 s (2 HP); its indicator previews a thin 45-GU blast lane. After 0.9 s it fires once along that lane, then burns out.\nBOTTOM LEFT: Move the Spotlight. Ability concept: rotates an **unfired** rack 90\u00c2\u00b0 after a 0.45 s warning or, with no rack, drops a small no-damage distraction flare that reveals an area for 2 s.\nBOTTOM RIGHT: Opening Night. Ability concept: lays a 120-GU-wide stage grid with **four sequential firing squares**, each warned 0.75 s before ignition. The final square is chosen from three legal candidates at cast start; consumes Showstopper for an additional shield-break pulse (not more raw burst). At every tick at least one contiguous walkable escape cell must remain.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Cue Card",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Rack and Spark",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Move the Spotlight",
+          "cell": 2
+        },
+        "R": {
+          "name": "Opening Night",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/pippa-fuseburst.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-67d4c908-73dc-4e73-b195-08d3ed6cb693.png",
+      "sha256": "7540064f60ee4c938ded079014ffd4dd82cb50edbedc35a731cd64315d51e203",
+      "promptSha256": "2a63b93d7124649830078b69818210d8ae8bdff3eb4958dedc7126ee14c2561b",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Cue Card",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Rack and Spark",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Move the Spotlight",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Opening Night",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_puck",
+      "canonicalId": "lulla-faespring",
+      "name": "Lulla Faespring",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Lulla Faespring. Character visual motifs: unnervingly calm adult moth archivist with a quilted cloak, waist-hung mechanical bedside clocks and large glass chime ring.\nTOP LEFT: Drowse Ledger. Ability concept: an enemy champion completing a **non-basic-attack ability** within 95 GU of an active Lulla chime accumulates one Drowse note (max 2, 4 s duration). Each unique cast can add at most one note. Notes do not affect the cast that just finished.\nTOP RIGHT: Hang the Chime. Ability concept: places a 2-HP wind chime on legal ground within 125 GU, lasting 5 s. It projects a public 95-GU listening radius. Max two chimes; destroying a chime ends its aura but does not retroactively cancel completed spells.\nBOTTOM LEFT: Borrowed Yawn. Ability concept: consumes one Drowse note on an enemy in 130 GU. On that enemy's **next successfully completed non-basic spell** within 3 s, adds **0.35 s post-cast recovery** after the spell's effect already resolves; if no valid cast happens, the tax expires harmlessly. No silence, disable, cast failure or stealth.\nBOTTOM RIGHT: Intermission Theater. Ability concept: opens an 135-GU circular dream stage for 4 s, with **three announced chime beats** at 1, 2, and 3 s. Enemy casts which *complete inside* a beat window pay 0.25 s post-cast recovery (subject to the global recovery cap), while allied casts completed during beats gain 12% shorter recovery (never faster windup). Enemy spell results and damage still occur normally.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Drowse Ledger",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Hang the Chime",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Borrowed Yawn",
+          "cell": 2
+        },
+        "R": {
+          "name": "Intermission Theater",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/lulla-faespring.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-2f437999-3d4e-4caf-9049-986003870948.png",
+      "sha256": "0cd037c35484aadd6e124673a3b52a84c992b69ebf608572edb6aa753c1017c9",
+      "promptSha256": "a2e3eb525986cc9b35201d8b12c3a15f9407fb9666e8b00bd3519aabb8c0af4d",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Drowse Ledger",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Hang the Chime",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Borrowed Yawn",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Intermission Theater",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_batrider",
+      "canonicalId": "bryx-emberkite",
+      "name": "Bryx Emberkite",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Bryx Emberkite. Character visual motifs: sun-battered wind sailor with a damaged one-sided glider board, patched cream sails and bright coral thermal vents; no Sticky Napalm, Flamebreak, Firefly flight path or lasso drag.\nTOP LEFT: Read the Updraft. Ability concept: Bryx sees public warm-air flows left by his vents; traveling **with** a current for at least 40 GU gives him one Sailspeed charge (max 2), consumed by next ordinary attack for bonus range.\nTOP RIGHT: Plant Thermal. Ability concept: plants a 2-HP 3-s hot-air vent, generating a visible 80\u00c3\u201435-GU directional ground current. Walkers keep control; movement in arrow direction receives 15% speed, against it receives 10% slow. Does not lift units over hard walls.\nBOTTOM LEFT: Trim Sail. Ability concept: rotates one active vent by up to 90\u00c2\u00b0 after 0.5 s tell. Nearby willing allies may accept one **short airflow boost** along the new direction, capped at 22 GU with full world-collision checks. Enemies get no forced flight.\nBOTTOM RIGHT: Thermocline Crossing. Ability concept: connects two vents into a broad angled airflow corridor for 4 s; allies crossing end-to-end gain a small evasion-of-next-basic-attack buff, enemies fighting into the current lose some projectile range. Opponents can destroy a vent to end the corridor.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Read the Updraft",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Plant Thermal",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Trim Sail",
+          "cell": 2
+        },
+        "R": {
+          "name": "Thermocline Crossing",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/bryx-emberkite.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-33ecbcb9-0e73-4561-ad0c-aa3d616c5299.png",
+      "sha256": "c4dae9607a506e03a10a1a544d8124eaae8a01a78ea68e8ec189ac2385690da1",
+      "promptSha256": "fc01e066f24f8194a9855f99fc7a80f330c8dfae7ecf5674e182f7094ec78115",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Read the Updraft",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Plant Thermal",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Trim Sail",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Thermocline Crossing",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_bristleback",
+      "canonicalId": "murdle-ridgehide",
+      "name": "Murdle Ridgehide",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Murdle Ridgehide. Character visual motifs: squat scarred **pangolin-like** creature with detachable armored dorsal segments, clay talons and patchwork iron saddle; no Bristleback-like rear damage reduction, sticky goo or warpath attack stacks.\nTOP LEFT: Plate Accounting. Ability concept: Murdle begins with 4 dorsal plates, each providing 4% damage reduction from any direction. Each deployed plate removes its personal reduction until recovered after expiration or collected. Plate inventory shown openly.\nTOP RIGHT: Shed a Wall. Ability concept: detaches one plate and props it as a 40-GU breakable low wall for 4 s. It blocks one ordinary projectile from **either** team, never closes a chokepoint fully. Max two active walls.\nBOTTOM LEFT: Recall Shell. Ability concept: reels one deployed plate along a visible 60-GU path back toward Murdle; units crossed are lightly nudged to nearest free ground but never stunned. Recovered plate re-enters passive armor only upon reaching Murdle; destroyer removes it until its natural recovery timer.\nBOTTOM RIGHT: Fortress Migration. Ability concept: for 5 s, Murdle can redeploy up to three plates as a **moving staggered palisade** advancing 60 GU. Each plate remains individually destroyable, with gaps at least two hero diameters wide. His own armor drops dramatically while the wall travels.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Plate Accounting",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Shed a Wall",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Recall Shell",
+          "cell": 2
+        },
+        "R": {
+          "name": "Fortress Migration",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/murdle-ridgehide.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-0b520ff3-58ef-4b0a-99ed-e6ee114c8867.png",
+      "sha256": "0aab89340295d2bed744553292bf14bd9c86d96d6f59abfa644d1afc2db8b312",
+      "promptSha256": "292546aa02e769667e0935e50287d6efeaec59bb554fee5bd34de5fdcabe8985",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Plate Accounting",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Shed a Wall",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Recall Shell",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Fortress Migration",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_io",
+      "canonicalId": "nemea-halolink",
+      "name": "Nemea Halolink",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Nemea Halolink. Character visual motifs: severe middle-aged maestro holding two tuning forks, no glowing permanent nearest-ally tether; performers are heard as positional *notes*.\nTOP LEFT: Audible Interval. Ability concept: whenever two distinct allies finish spells **within 0.6\u00e2\u20ac\u201c1.4 s of each other**, Nemea gains one Harmony note (max 3; one per pair / 8 s). No reward for simultaneous spam; notes are visibly displayed.\nTOP RIGHT: First Note. Ability concept: creates a small 35-GU score circle lasting 3 s; the first ally entering receives one **shield-on-next-damage** token valid 2 s. Max two circles; a given ally benefits once per cast.\nBOTTOM LEFT: Second Note. Ability concept: links **two separate score circles** with a luminous 130-GU-max segment. Allies *crossing the segment in either direction* gain 10% movement speed for 1.5 s, once per hero. Enemies can attack circles; the segment is not a tether on bodies.\nBOTTOM RIGHT: Chorus Arrival. Ability concept: consumes Harmony to lay three successive public beat circles around the team over 3 s. Allies who voluntarily reach their assigned **different circles** on the announced beat receive a capped shield and brief recovery reduction, while clumping in one circle gives only minimal healing. Does not automatically shield the entire team in place.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Audible Interval",
+          "cell": 0
+        },
+        "S1": {
+          "name": "First Note",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Second Note",
+          "cell": 2
+        },
+        "R": {
+          "name": "Chorus Arrival",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/nemea-halolink.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-32f3585a-f4fe-4158-a626-039c2e216852.png",
+      "sha256": "888d72db2a19e657e0bd9b8fea831f8a9645e26fdd76abcb98f3b6d362fa02cf",
+      "promptSha256": "6c247b7ad87163ce7a9842bc3e1da56de965cdd46418be463ac93b3741ed69b4",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Audible Interval",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: First Note",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Second Note",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Chorus Arrival",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_lulu",
+      "canonicalId": "thimble-briarwish",
+      "name": "Thimble Briarwish",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Thimble Briarwish. Character visual motifs: tiny elderly fae gardener hauling a giant squeaking terrarium barrow, patched mittens, roots growing through ceramic pots; no polymorph/massive-grow knockup kit.\nTOP LEFT: Seedbank. Ability concept: after an ally uses cover Thimble created to block a projectile, she collects one Seed (max 2; one per source shot). Seeds improve next planter's hit points; never grant permanent ability amp.\nTOP RIGHT: Plant Shelter. Ability concept: places a 40-GU dome planter lasting 4 s. It blocks **one arcing/lobbed enemy projectile**, not direct-fire bullets; ally and enemy walkers pass underneath freely. 2 HP baseline.\nBOTTOM LEFT: Wheelbarrow Walk. Ability concept: pushes a planted shelter along a valid 55-GU ground segment for 2.5 s. Allies who stay in its moving shade gain minor HP regeneration; the caster is slowed while pushing. Cannot move through walls.\nBOTTOM RIGHT: Traveling Orchard. Ability concept: sends **three** small low-roof planters along separate, explicitly visible 70-GU routes for 5 s. Each blocks one overhead attack then crumbles. The gaps remain traversable; Thimble cannot be in three places at once and is vulnerable while directing them.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Seedbank",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Plant Shelter",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Wheelbarrow Walk",
+          "cell": 2
+        },
+        "R": {
+          "name": "Traveling Orchard",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/thimble-briarwish.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-ef6eb520-4384-41bc-abd4-cfc19e525ff2.png",
+      "sha256": "202a362c1d218e6ccc9497e13a2244c146f2c65c9345b750ec3502cec47cae89",
+      "promptSha256": "062eb0666df4533b58cd26155ab1060fa4b973c5570c598b57914400ebf58796",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Seedbank",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Plant Shelter",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Wheelbarrow Walk",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Traveling Orchard",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_silencer",
+      "canonicalId": "sevrin-inkseal",
+      "name": "Sevrin Inkseal",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Sevrin Inkseal. Character visual motifs: exhausted court magistrate in layered burgundy robes and a huge tablet pauldron, carrying a multi-headed law stamp; no Death Prophet or Silencer-style global silence.\nTOP LEFT: Case Law. Ability concept: observes completed enemy skills within 120 GU and records their declared **server-side category** (`mobility`, `attack`, `protection`, `control`). Only one last category per target, lasting 4 s; does not read hidden cooldowns or private abilities.\nTOP RIGHT: Mark Jurisdiction. Ability concept: stamps a 70-GU public court disk around a visible 2-HP breakable ink pillar for 3.5 s. Opponents may enter and cast normally. A champion's **second completed skill of the same category** inside the disk receives 0.25 s post-cast recovery, once / target / disk. A different category resets its local repeat count.\nBOTTOM LEFT: Appeal Granted. Ability concept: relocates an existing court center up to 45 GU after a 0.45 s warning, or if targeting an ally inside, erases **one** pending cast-recovery tax on that ally. Does not silence or imprison anyone.\nBOTTOM RIGHT: Precedent Review. Ability concept: for 4.5 s expands one active court to 125 GU and publishes the current recorded category above every participating enemy. If an enemy repeats the same category a third time, they take one **small shield-stripping hit** and 0.35 s post-cast recovery (subject to global cap). Switching categories avoids penalty; no global affecting enemies elsewhere.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Case Law",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Mark Jurisdiction",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Appeal Granted",
+          "cell": 2
+        },
+        "R": {
+          "name": "Precedent Review",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/sevrin-inkseal.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-07a68789-f131-4bc0-b185-e08e6a3c3247.png",
+      "sha256": "9fd7e10a91c8d802cfe15152fd95e0f62963e6291a5f3784c66227e254c791a2",
+      "promptSha256": "a4fe4c24844e08f806d289394ce7291be15a26b4a701cd57c3f815ec53b8b50c",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Case Law",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Mark Jurisdiction",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Appeal Granted",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Precedent Review",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_wukong_lol",
+      "canonicalId": "koro-cloudtail",
+      "name": "Koro Cloudtail",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Koro Cloudtail. Character visual motifs: nimble simian scaffold builder with bamboo-jointed pole stilts, chalk measuring rope and light tool satchels; no monkey clone, spinning staff ultimate or extended auto-lock hits.\nTOP LEFT: Measured Landing. Ability concept: landing on legal ground after his own vault grants Koro a 2 s balanced stance; next basic attack has a small shield break bonus. No stacking knockups.\nTOP RIGHT: Plant Vault. Ability concept: plants a 2-HP pole at a legal ground point within 110 GU. It stands 5 s, visibly previews a 60-GU landing arc with a collision-tested endpoint. Max two poles.\nBOTTOM LEFT: Pole Transfer. Ability concept: Koro or a **voluntarily consenting nearby ally** vaults from one pole to the previewed legal landing point after a 0.45 s windup. Cannot cross hard walls or tower-blocked zones, cannot initiate in hard CC, landing causes only a small radial shove (no full AoE knockup).\nBOTTOM RIGHT: Scaffold Crossing. Ability concept: connects two poles with a visible elevated bamboo runway for 4 s. Eligible allies may **individually choose** to take one fast 65-GU arc between the poles. The crossing is not global teleportation; any pole destruction cancels later crossings, passengers already in flight resolve to nearest safe landing.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Measured Landing",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Plant Vault",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Pole Transfer",
+          "cell": 2
+        },
+        "R": {
+          "name": "Scaffold Crossing",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/koro-cloudtail.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-5083ddad-6807-4af2-83de-4dfd97db6d71.png",
+      "sha256": "3b59e12228be783a7de022485bfa11b76f8eca28000406a63aa29e0c048daedc",
+      "promptSha256": "84587defa783f90e2a7176ea59d4007c51ad27fb63f2e9ea0b545a028cc79482",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Measured Landing",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Plant Vault",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Pole Transfer",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Scaffold Crossing",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_monkeyking_dota",
+      "canonicalId": "bram-stonebranch",
+      "name": "Bram Stonebranch",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Bram Stonebranch. Character visual motifs: hulking aging simian monarch with a living leaf crown, wide moss-gold shoulder armor and a **short broad jade scepter**; no staff clone army or circle of striking monkey echoes.\nTOP LEFT: Old Growth. Ability concept: when Bram blocks a *lobbed* projectile with canopy cover, he gains one Sap (max 2), empowering his next small shield. Direct low shots are unaffected by canopy.\nTOP RIGHT: Root Column. Ability concept: plants a 2-HP vertical trunk column for 5 s at a legal position, 45-GU radius. Walkers pass around; two columns can support a canopy.\nBOTTOM LEFT: Leaf Intercept. Ability concept: grows a **short overhead roof** between two active columns for 3 s. The roof can absorb up to two **lobbed** enemy projectiles; arching artillery is intercepted, low trajectories pass under. If only one column exists, Bram grants that column a small self-shield instead.\nBOTTOM RIGHT: Kingdom of Shade. Ability concept: raises three additional short-lived columns forming a 130-GU **open canopy grove** for 5 s. Within it allies take reduced area-splash damage from above, but enemies can walk in, attack the exposed columns, or aim direct projectiles underneath. Canopy doesn't cancel ground hazards.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Old Growth",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Root Column",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Leaf Intercept",
+          "cell": 2
+        },
+        "R": {
+          "name": "Kingdom of Shade",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/bram-stonebranch.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-95dde274-12b7-44ea-ba2a-4b0f5af6fce2.png",
+      "sha256": "d2ce13ea907c6bcfb05a9fe298a0f8288d2c9396fcfb6767424f763200c29989",
+      "promptSha256": "6cd91cdc56d2b7bdf38a5b50b290f6e9c3344ff2fb5f6698d5971995adaf7b0f",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Old Growth",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Root Column",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Leaf Intercept",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Kingdom of Shade",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_stepstone",
+      "canonicalId": "toma-bellbreak",
+      "name": "Toma Bellbreak",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Toma Bellbreak. Character visual motifs: compact older bell-trained martial artist with heavy bronze wrist bells, battered red canvas and a rooted deliberate stance; no point-click allyward kick ultimate.\nTOP LEFT: Listen for the Stroke. Ability concept: an enemy in 105 GU starting a cast with visible windup grants Toma a public Bell Window until commit (max one tracked per enemy). His next basic attack within 1.2 s after that cast's completion restores 5% missing HP, once / enemy / 6 s.\nTOP RIGHT: Open Palm. Ability concept: a short 60-GU palm strike that deals modest damage; if it hits during a visible enemy windup, it **does not interrupt**, but grants Toma a parry charge valid 3 s.\nBOTTOM LEFT: Return Stroke. Ability concept: consumes parry charge (or performs a weak dry guard) to create a 0.6 s frontal reaction stance. One incoming targeted non-ultimate hit from that frontal arc is partially reduced; after it lands Toma counterstrikes the attacker for moderate damage. Guard is ineffective from behind and against untargeted AoE.\nBOTTOM RIGHT: Thirteenth Bell. Ability concept: sets a 1.2 s public dueling rhythm centered on Toma; opponents hear two false chimes then one genuine **final** counter window. If an enemy finishes a damaging cast against Toma during the final 0.25 s, that damage is reduced 35% (not negated) and he sends a non-stunning shockwave outward. Casting earlier or attacking someone else avoids the counter.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Listen for the Stroke",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Open Palm",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Return Stroke",
+          "cell": 2
+        },
+        "R": {
+          "name": "Thirteenth Bell",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/toma-bellbreak.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-63527e86-cd40-41ad-8007-cff976892f09.png",
+      "sha256": "c8d0594e6ce1da0de963c23700512778d6ff9df20c503cfae23bb0c1b32ea45e",
+      "promptSha256": "7080ccaba2feb71bbf9bbd256bd9c14b01df946159421e38ea0eaa7b881c8757",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Listen for the Stroke",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Open Palm",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Return Stroke",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Thirteenth Bell",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_skybreaker",
+      "canonicalId": "ravelle-skyrake",
+      "name": "Ravelle Skyrake",
+      "prompt": "Use case: stylized-concept. Asset type: one game ability VFX token atlas, 1024x1024 square RGBA with a truly transparent background. Exactly FOUR isolated hand-painted fantasy effect emblems in an exact evenly spaced 2 by 2 cell grid. Cell centers at 25% and 75% of image width/height. Keep each emblem entirely within the central 65% of its cell, with transparent gutters and no crossing between cells. No text, labels, frames, circles around icons, UI buttons, background, full characters, numbers, decorative borders, shadows or scenery. These are small rendered effect tokens and HUD icons; actual range shapes are rendered separately by the game. Strong distinct silhouette, detailed painted material, restrained glow, readable at 32px. Avoid large opaque panels. Depict characteristic tools/energy/material symbols, not a screenshot or miniature scene. Cell order: TOP LEFT passive, TOP RIGHT skill1, BOTTOM LEFT skill2, BOTTOM RIGHT ultimate. Original avatar: Ravelle Skyrake. Character visual motifs: battle-worn aristocratic skiff pilot on a fragile fan-powered observation platform, with optical rangefinder, stripy wing-cloth and small survey markers; not a high-attack-speed hovering flak ADC.\nTOP LEFT: Surveyed Grid. Ability concept: Ravelle's basic attacks or visible direct observation mark 1 of 4 public **map sectors** around her for 5 s. Only sectors she has actually seen can be assigned for artillery. Max two marked sectors active.\nTOP RIGHT: Spotting Flare. Ability concept: fires a revealing flare into one 60-GU sector for 3.5 s. Does small damage and exposes enemy units who remain in it; does not pierce fog to reveal unrelated sectors.\nBOTTOM LEFT: Reposition Skiff. Ability concept: moves the skiff laterally 50 GU along traversable ground projection, with collision at world walls and towers. During travel, Ravelle cannot basic attack; her previously marked sectors remain but are not auto-updated into fog.\nBOTTOM RIGHT: Designated Airspace. Ability concept: selects an already-surveyed **2\u00c3\u20142 ground grid** totaling 130\u00c3\u2014130 GU. After a 0.8 s warning, four separate bombardment cells fire sequentially over 3 s **in the declared order**; each cell is shown 0.6 s before it lands, and one guaranteed traversable escape lane remains. Damage is moderate per cell; staying through consecutive cells is costly. All shots use public authoritative sector coordinates, not hidden enemy prediction.",
+      "status": "drawn-live-token-trial",
+      "slots": {
+        "P": {
+          "name": "Surveyed Grid",
+          "cell": 0
+        },
+        "S1": {
+          "name": "Spotting Flare",
+          "cell": 1
+        },
+        "S2": {
+          "name": "Reposition Skiff",
+          "cell": 2
+        },
+        "R": {
+          "name": "Designated Airspace",
+          "cell": 3
+        }
+      },
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/ravelle-skyrake.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b380de24-ecd9-4315-a7c9-89983f315d83.png",
+      "sha256": "eae2c4ac2bdf87d97c62b126de4de4f74d284435c84ca491a8fc04ea5fb4e5f4",
+      "promptSha256": "b19eaab01c9b03db1e266c2becc7aa3aae3c883ef859ba04992c1ad52678c43d",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "columns": 2,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "P: Surveyed Grid",
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ]
+        },
+        {
+          "name": "S1: Spotting Flare",
+          "rect": [
+            627,
+            0,
+            1254,
+            627
+          ]
+        },
+        {
+          "name": "S2: Reposition Skiff",
+          "rect": [
+            0,
+            627,
+            627,
+            1254
+          ]
+        },
+        {
+          "name": "R: Designated Airspace",
+          "rect": [
+            627,
+            627,
+            1254,
+            1254
+          ]
+        }
+      ]
+    },
+    {
+      "avatarId": "c_invoker",
+      "canonicalId": "mirelle-pages",
+      "name": "Mirelle ten patterns",
+      "prompt": "Use case: stylized-concept. Draw one transparent square fantasy game effect atlas: exactly TEN isolated emblems in a precise 5 columns by 2 rows grid, read row-major. Each cell has generous transparent margins: motif inside central 65% width/height. Detailed ivory cloth, oxblood threads, brass pins and folded-paper pattern aesthetic matching Mirelle Vane. No characters, lettering, numbers, frames, UI, background, ground shadows or effect boundaries; no cell overlap. These motifs decorate real game geometry, never depict fabricated danger zones. Each isolated emblem illustrates its named sewing pattern: 1. **Baste Line** \u00e2\u20ac\u201d crossing tax: 2 pins; creates a temporary stitch seam between them for 3 s. First enemy crossing is slowed 20% for 1 s, taking minor damage. Consumes 2 pins.\n2. **Pocket Shelter** \u00e2\u20ac\u201d single-ally save: 1 pin within 60 GU of a visible ally; projects a directional cloth flap for 2 s that intercepts **one** incoming projectile from the pin-facing side, then tears. Consumes 1.\n3. **Held Breath** \u00e2\u20ac\u201d projectile scheduling: 2 pins; establishes a 2.2 s fabric pocket. An **allied consenting** non-ultimate projectile crossing the seam is held for up to 0.7 s then released along its **original heading** at its original team ownership and capped damage. Can hold only one projectile. Consumes 2.\n4. **Ladder Stitch** \u00e2\u20ac\u201d traversable ground hazard bridge: 2 pins spanning an enemy *temporary ground hazard* up to 80 GU. For 3 s the seam permits allies to cross that specific hazard with reduced tick damage; it never bridges hard world walls, pits or spawn exclusion. Consumes 2.\n5. **Pleat Fold** \u00e2\u20ac\u201d cover angle: 3 pins; a triangular drape folds outward from its longest edge for 2.5 s, creating a one-hit projectile obstruction with an openly marked weak vertex. Consumes 3.\n6. **Serrated Seam** \u00e2\u20ac\u201d damage route: 2 pins; a thin serrated thread between them vibrates 3 times over 2.4 s. Enemies crossing get one damaging cut per thread pulse **max once per target across the entire spell**; enemies staying still are not repeatedly hit. Consumes 2.\n7. **Wrong-Side Hem** \u00e2\u20ac\u201d reposition pressure: 2 pins; for 2.5 s allies entering one side of the seam gain a brief 15% speed burst **toward its far endpoint** once. Enemies see the arrow but are unaffected. Consumes 2.\n8. **Tacking Waltz** \u00e2\u20ac\u201d formation cue: 3 pins; over 3 s, projects three **ordered** steps. Allies who intentionally pass steps 1\u00e2\u2020\u20192\u00e2\u2020\u20193 receive a shield upon finishing; skipping a step gives no reward. Consumes 3.\n9. **Silhouette Dress** \u00e2\u20ac\u201d false threat / information: 1 pin; raises a life-size garment cutout for 3.5 s that **visibly advertises** one fake ability windup on Mirelle's next R selection but causes no damage. The fake always has different stitching from a real cast for skilled readers. Consumes 1.\n10. **Grand Atelier** \u00e2\u20ac\u201d teamfight ultimate finish: 3 pins spanning a valid triangle, all within 150 GU. After a 1.0 s telegraph, a fabric canopy unfolds for 4 s. Allied units inside gain **direction-dependent** 15% incoming damage reduction and 10% faster recovery from *future* non-ultimate casts. Enemies may move freely; seams can be destroyed to collapse the canopy. Consumes 3.",
+      "status": "drawn-live-token-trial",
+      "pages": [
+        {
+          "page": 1,
+          "patternRole": "**Baste Line** \u00e2\u20ac\u201d crossing tax",
+          "requirementsAndEffect": "2 pins; creates a temporary stitch seam between them for 3 s. First enemy crossing is slowed 20% for 1 s, taking minor damage. Consumes 2 pins.",
+          "draftCooldown": "16 s",
+          "counterplay": "Cut either pin or walk around the open-ended seam"
+        },
+        {
+          "page": 2,
+          "patternRole": "**Pocket Shelter** \u00e2\u20ac\u201d single-ally save",
+          "requirementsAndEffect": "1 pin within 60 GU of a visible ally; projects a directional cloth flap for 2 s that intercepts **one** incoming projectile from the pin-facing side, then tears. Consumes 1.",
+          "draftCooldown": "22 s",
+          "counterplay": "Flank the cloth or bait the single catch"
+        },
+        {
+          "page": 3,
+          "patternRole": "**Held Breath** \u00e2\u20ac\u201d projectile scheduling",
+          "requirementsAndEffect": "2 pins; establishes a 2.2 s fabric pocket. An **allied consenting** non-ultimate projectile crossing the seam is held for up to 0.7 s then released along its **original heading** at its original team ownership and capped damage. Can hold only one projectile. Consumes 2.",
+          "draftCooldown": "28 s",
+          "counterplay": "Move while the shot is parked or sever seam; no instant redirect"
+        },
+        {
+          "page": 4,
+          "patternRole": "**Ladder Stitch** \u00e2\u20ac\u201d traversable ground hazard bridge",
+          "requirementsAndEffect": "2 pins spanning an enemy *temporary ground hazard* up to 80 GU. For 3 s the seam permits allies to cross that specific hazard with reduced tick damage; it never bridges hard world walls, pits or spawn exclusion. Consumes 2.",
+          "draftCooldown": "32 s",
+          "counterplay": "Destroy one pin or contest bridge exit"
+        },
+        {
+          "page": 5,
+          "patternRole": "**Pleat Fold** \u00e2\u20ac\u201d cover angle",
+          "requirementsAndEffect": "3 pins; a triangular drape folds outward from its longest edge for 2.5 s, creating a one-hit projectile obstruction with an openly marked weak vertex. Consumes 3.",
+          "draftCooldown": "38 s",
+          "counterplay": "Fire at the weak vertex or attack from behind"
+        },
+        {
+          "page": 6,
+          "patternRole": "**Serrated Seam** \u00e2\u20ac\u201d damage route",
+          "requirementsAndEffect": "2 pins; a thin serrated thread between them vibrates 3 times over 2.4 s. Enemies crossing get one damaging cut per thread pulse **max once per target across the entire spell**; enemies staying still are not repeatedly hit. Consumes 2.",
+          "draftCooldown": "24 s",
+          "counterplay": "Stop crossing or walk around endpoints"
+        },
+        {
+          "page": 7,
+          "patternRole": "**Wrong-Side Hem** \u00e2\u20ac\u201d reposition pressure",
+          "requirementsAndEffect": "2 pins; for 2.5 s allies entering one side of the seam gain a brief 15% speed burst **toward its far endpoint** once. Enemies see the arrow but are unaffected. Consumes 2.",
+          "draftCooldown": "26 s",
+          "counterplay": "Hold the destination endpoint / destroy pins"
+        },
+        {
+          "page": 8,
+          "patternRole": "**Tacking Waltz** \u00e2\u20ac\u201d formation cue",
+          "requirementsAndEffect": "3 pins; over 3 s, projects three **ordered** steps. Allies who intentionally pass steps 1\u00e2\u2020\u20192\u00e2\u2020\u20193 receive a shield upon finishing; skipping a step gives no reward. Consumes 3.",
+          "draftCooldown": "40 s",
+          "counterplay": "Deny a step; the route can be read and contested"
+        },
+        {
+          "page": 9,
+          "patternRole": "**Silhouette Dress** \u00e2\u20ac\u201d false threat / information",
+          "requirementsAndEffect": "1 pin; raises a life-size garment cutout for 3.5 s that **visibly advertises** one fake ability windup on Mirelle's next R selection but causes no damage. The fake always has different stitching from a real cast for skilled readers. Consumes 1.",
+          "draftCooldown": "35 s",
+          "counterplay": "Recognize the dotted stitching or destroy the cutout"
+        },
+        {
+          "page": 10,
+          "patternRole": "**Grand Atelier** \u00e2\u20ac\u201d teamfight ultimate finish",
+          "requirementsAndEffect": "3 pins spanning a valid triangle, all within 150 GU. After a 1.0 s telegraph, a fabric canopy unfolds for 4 s. Allied units inside gain **direction-dependent** 15% incoming damage reduction and 10% faster recovery from *future* non-ultimate casts. Enemies may move freely; seams can be destroyed to collapse the canopy. Consumes 3.",
+          "draftCooldown": "90 s",
+          "counterplay": "Break a support seam, fight from outside, bait the final layout"
+        }
+      ],
+      "file": "EsportsClash.Web/public/art/ability-drawings-v1/mirelle-pages.png",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b4090b18-9293-44d8-875e-f585978f6b33.png",
+      "sha256": "b0e2774ddc70fb767527b912d99caa0200dab84734f54e009c494cbcde38727c",
+      "promptSha256": "2b7555c139ac323cb8429de04bd4e954c764febd4effc8cb66ea20b16ed015a5",
+      "width": 1983,
+      "height": 793,
+      "alpha": true,
+      "columns": 5,
+      "rows": 2,
+      "cells": [
+        {
+          "name": "Baste Line \u00e2\u20ac\u201d crossing tax",
+          "rect": [
+            0,
+            0,
+            396,
+            396
+          ]
+        },
+        {
+          "name": "Pocket Shelter \u00e2\u20ac\u201d single-ally save",
+          "rect": [
+            396,
+            0,
+            793,
+            396
+          ]
+        },
+        {
+          "name": "Held Breath \u00e2\u20ac\u201d projectile scheduling",
+          "rect": [
+            793,
+            0,
+            1189,
+            396
+          ]
+        },
+        {
+          "name": "Ladder Stitch \u00e2\u20ac\u201d traversable ground hazard bridge",
+          "rect": [
+            1189,
+            0,
+            1586,
+            396
+          ]
+        },
+        {
+          "name": "Pleat Fold \u00e2\u20ac\u201d cover angle",
+          "rect": [
+            1586,
+            0,
+            1983,
+            396
+          ]
+        },
+        {
+          "name": "Serrated Seam \u00e2\u20ac\u201d damage route",
+          "rect": [
+            0,
+            396,
+            396,
+            793
+          ]
+        },
+        {
+          "name": "Wrong-Side Hem \u00e2\u20ac\u201d reposition pressure",
+          "rect": [
+            396,
+            396,
+            793,
+            793
+          ]
+        },
+        {
+          "name": "Tacking Waltz \u00e2\u20ac\u201d formation cue",
+          "rect": [
+            793,
+            396,
+            1189,
+            793
+          ]
+        },
+        {
+          "name": "Silhouette Dress \u00e2\u20ac\u201d false threat / information",
+          "rect": [
+            1189,
+            396,
+            1586,
+            793
+          ]
+        },
+        {
+          "name": "Grand Atelier \u00e2\u20ac\u201d teamfight ultimate finish",
+          "rect": [
+            1586,
+            396,
+            1983,
+            793
+          ]
+        }
+      ]
+    }
+  ]
+}

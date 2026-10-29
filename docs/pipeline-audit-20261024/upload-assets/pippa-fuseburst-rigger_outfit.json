@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_jinx",
+  "component_id": "rigger_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Powder-blue fireproof jumpsuit",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Pippa Fuseburst. Attached character art is design reference only. Empty powder-blue fireproof stage rigger jumpsuit with leather tool belt, gloves and boots. No person, hair, lighting devices, rack or confetti wheel. Preserve pictured design, colors, materials and proportions. For clothing only: garments visibly empty on invisible support in a static symmetrical wide A pose; hollow openings, no mannequin. Show the entire asset at SMALL size occupying central 55 percent of frame with wide transparent margins on ALL sides. No cropping. Neutral even product lighting, readable physical geometry, three-quarter view. Genuine transparent background, no floor, shadow, background glow, text, labels, logo, frames or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "pippa-fuseburst",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/pippa-fuseburst.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/pippa-fuseburst-rigger_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-3193ddf8-284c-4743-80d1-1e4785343273.png"
+}

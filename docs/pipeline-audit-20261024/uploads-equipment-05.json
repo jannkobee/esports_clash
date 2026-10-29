@@ -1,0 +1,93 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_solana",
+    "component_id": "heliograph_shield",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Hinged heliograph shield",
+    "attachment": "left hand",
+    "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Solenne Vaelor. Attached image is DESIGN REFERENCE ONLY. One tall hinged ivory-bronze heliograph shield only, including its mechanical iris and red inset. No sword, wearer, arm or hand. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/solenne-vaelor-heliograph_shield.png",
+    "sha256": "3c1b242b831abdf34873719417102d53b205a79c144df59a24804d9ab9a38f54"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_solana",
+    "component_id": "sun_armor",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Ivory-bronze armor and burnt-red sash",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Solenne Vaelor. Attached image is DESIGN REFERENCE ONLY. Only the empty ivory-bronze articulated armor outfit with burnt-red sash: cuirass, pauldrons, arm guards, hip plates, greaves and boots, coherently arranged on invisible support in a neutral symmetrical wide A pose. Open neck and joints visibly empty. No shield, sword, head, hair, skin, body or mannequin. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/solenne-vaelor-sun_armor.png",
+    "sha256": "ecc51095274558f8d5144ef986c0ec0dce8c4afadc597c608ea107cf401087cd"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_astra",
+    "component_id": "crystal_longbow",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Asymmetric longbow with crystal forks",
+    "attachment": "hands",
+    "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Ivera Frostwhistle. Attached image is DESIGN REFERENCE ONLY. One complete asymmetric longbow bearing vibrating blue crystal forks, brown metal/wood limbs and bowstring. No quiver, arrows, hands, wearer or other gear. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/ivera-frostwhistle-crystal_longbow.png",
+    "sha256": "7f2612b6d0bb47e2edeb051d4b5231d9327bfbc7b659d92701d6f014c80a3605"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_astra",
+    "component_id": "ice_plates",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Ice-tuning plates and northern outfit",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Ivera Frostwhistle. Attached image is DESIGN REFERENCE ONLY. Only the empty northern engineer outfit: blue-gray layered ice-tuning plates, fur-edged shoulder garment, leather harness, trousers and boots on invisible support, neutral symmetrical wide A pose. No bow, quiver, arrow, hair, skin, head, body or mannequin. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/ivera-frostwhistle-ice_plates.png",
+    "sha256": "565ca8716486d0660e00410e5577be22da8d08dc1d4e817e660e1debc56cf659"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_kyumi",
+    "component_id": "route_tablets",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Glass route tablets",
+    "attachment": "hands",
+    "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Mireth Lune. Attached image is DESIGN REFERENCE ONLY. A coherent small set of three glass route tablets with brass frames and blue-gray tassels, separated clearly with space between tablets. No book, quill, hands, robes, body or fox. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/mireth-lune-route_tablets.png",
+    "sha256": "24fad1a9029aebb706579ef94aceddeff3764ae54100fcffa92f18a03c23aacf"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_kyumi",
+    "component_id": "travel_robes",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Blue-gray traveling robes",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Mireth Lune. Attached image is DESIGN REFERENCE ONLY. Only the empty deep blue-gray and ivory traveling robe garment and belt, with gold route embroidery and attached scroll pockets on invisible support. Sleeves held out in a symmetrical wide A pose. No tablets, jewelry, book, quill, fur, tail, head, body or mannequin. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/mireth-lune-travel_robes.png",
+    "sha256": "827432b637de4a74b1c97018ba34059bc5f60c208cbaf49853564474501b9708"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_buck",
+    "component_id": "workwear",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Orange-striped industrial workwear",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Bramm Coil. Attached image is DESIGN REFERENCE ONLY. Only the empty industrial workwear outfit: orange-striped leather/metal harness and rugged trousers, gloves, work boots and knee armor on invisible support, neutral symmetrical wide A pose. No rotary ram-gun, back-mounted machine, body, head, beard, skin or mannequin. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/bramm-coil-workwear.png",
+    "sha256": "269b21cd681684c2d0c573f3f11e78559f643015fe771bc4117d7c740ada0eaa"
+  }
+]

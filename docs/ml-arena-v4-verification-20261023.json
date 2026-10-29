@@ -1,0 +1,122 @@
+{
+  "known_fixture": true,
+  "fresh_benefit_evidence": false,
+  "repeated_controls_match": true,
+  "full_match_terminal": false,
+  "full_match_status": "censored",
+  "full_match_second": 1199.999999999566,
+  "checkpoint_restored": true,
+  "metrics": {
+    "updated": true,
+    "transitions": 7959,
+    "actor_loss": -0.19869327545166016,
+    "value_loss": 0.0007138823275454342,
+    "entropy": 3.761306047439575,
+    "updates": 1,
+    "unrolls": 1,
+    "competitive_improvement_measured": false
+  },
+  "trained_greedy_world_changed": true,
+  "control_commands": {
+    "decisions": 1653,
+    "executed": 1653,
+    "byAction": {
+      "move": 1346,
+      "attack": 241,
+      "skill1": 29,
+      "skill2": 31,
+      "ultimate": 6
+    },
+    "legacyDecisions": 0
+  },
+  "trained_commands": {
+    "decisions": 1734,
+    "executed": 1734,
+    "byAction": {
+      "move": 1422,
+      "attack": 222,
+      "skill1": 40,
+      "skill2": 40,
+      "recall": 2,
+      "ultimate": 4,
+      "hold": 4
+    },
+    "legacyDecisions": 0
+  },
+  "source_hash_recorded_after_engine_run": "12f36061bd2b9c6e610c8dd79d7e4f39d81573b3c9d4e7c0afa2fc16a9dd89be",
+  "artifacts": {
+    "checkpoint.pt": {
+      "bytes": 36066,
+      "sha256": "5c4539801d03fe419fd6d1ac4b395238c643fe4003334c0faa74030e991c44cf"
+    },
+    "control.json": {
+      "bytes": 110521,
+      "sha256": "c895d233f15ba96b5375534fe716d3b8eea3acdc1daeff9b866d5dd8dc39ad77"
+    },
+    "control.request.json": {
+      "bytes": 69821,
+      "sha256": "43a87ab122eda291cd473cd768a2ab490cc197e8c1c600857c24316d3d883f13"
+    },
+    "full-control.json": {
+      "bytes": 110737,
+      "sha256": "7844977dd20cda49e63b857daacbf505b8e41fdd413e1afb53e43bf4d3bbdced"
+    },
+    "full-control.request.json": {
+      "bytes": 69822,
+      "sha256": "e83b6c753159f3542e362400018f46b4041b477349bd208a55bfa6d240e620f1"
+    },
+    "repeat.json": {
+      "bytes": 110521,
+      "sha256": "90fe79f4e93d43fb7c8e62734807594177094c861254fe35ff2f0e29f61e4471"
+    },
+    "repeat.request.json": {
+      "bytes": 69821,
+      "sha256": "43a87ab122eda291cd473cd768a2ab490cc197e8c1c600857c24316d3d883f13"
+    },
+    "self-play.json": {
+      "bytes": 107627060,
+      "sha256": "f1f95bf0fac5d814a92f4565f57b2cff4714cd3da4919847e6bdc8dde82fffef"
+    },
+    "self-play.request.json": {
+      "bytes": 69893,
+      "sha256": "ec2a50cebdbd6ab4a0b41bb3bcc68da5ae2a8ab836746032285c82846f5a52f1"
+    },
+    "trained-inference.json": {
+      "bytes": 110499,
+      "sha256": "9505a5882ecf36bec28437c32b22618dccb673459e029f019ad605d1e2848b33"
+    },
+    "trained-inference.request.json": {
+      "bytes": 69759,
+      "sha256": "2a371e468985cb729214ecbb0aef4c84fa9bf64c503154ed2488beedce39a95b"
+    },
+    "verification.json": {
+      "bytes": 1026,
+      "sha256": "082d51da1a4a88b1edf14cd8a1fda4001f1646788be5070a7defcdc857fd693f"
+    }
+  },
+  "checks": {
+    "game_tests": 506,
+    "additional_simulation_tests": 3,
+    "typescript": true,
+    "build": true,
+    "backend_tests": 54,
+    "backend_assertions": 431,
+    "worker_tests": 42,
+    "strategy_gate_tests": 5
+  },
+  "release": {
+    "scope": "local-development",
+    "runner_image": "sha256:663c27b2545a5f4511714fec6ba1a6f7861d6e4c6c061c94f174b1ad33b9cabb",
+    "online_image": "sha256:0e01587aff5b9467fce600e04dbc8f6480aceb1c9ab88095a0d0dd6524dc2aba",
+    "study": "47b8f1ff-0517-48f1-8371-5c3583b3ab8a",
+    "seed_block": [
+      61001,
+      62000
+    ],
+    "heldout_seeds": [
+      61257,
+      61288
+    ],
+    "first_observed_stage": "software-checks"
+  }
+}

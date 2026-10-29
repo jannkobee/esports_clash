@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_aetherbolt",
+  "component_id": "mirror_drone",
+  "category": "accessory",
+  "binding": "independent",
+  "label": "Foldable brass mirror drone",
+  "attachment": "independent drone",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Talan Slipshot. Attached illustration is design reference only. One complete foldable brass mirror survey drone with four blue-silver mirror panels and its small optical center, no person, weapon, hand or clothes. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "talan-slipshot",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/talan-slipshot.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/talan-slipshot-mirror_drone.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-49162828-23a2-425f-88b6-eac49e634aa3.png"
+}

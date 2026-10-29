@@ -1,0 +1,16 @@
+[
+  {
+    "kind": "body",
+    "avatar_id": "c_solana",
+    "path": "docs/pipeline-audit-20261024/upload-assets/base/solenne-vaelor-v2.png",
+    "sha256": "1e4072908f562638d51b84096a58c79afbd163bec51f815179a44f9b1bca16fb",
+    "prompt": "Edit this technical base mannequin. Remove ALL scalp hair completely: completely BALD smooth head, no braids or strands. No facial hair, no jewelry, no accessories. Keep the adult female face, same body proportions, same wide symmetrical straight-arm A-pose, full head-to-feet framing and hand/leg separation. Make the ENTIRE figure a uniform neutral matte gray clay anatomical mannequin, including face and all skin. Keep opaque close-fitting smooth chest/pelvis modesty coverage with no seams, trim or clothing detail. No outfit. Preserve fingers individually separated. Remove the entire background INCLUDING gray halo, shadow, glow and floor; true clear transparent alpha everywhere outside the figure. Only one clean isolated neutral gray mannequin, no labels."
+  },
+  {
+    "kind": "body",
+    "avatar_id": "c_astra",
+    "path": "docs/pipeline-audit-20261024/upload-assets/base/ivera-frostwhistle-v2.png",
+    "sha256": "0951bdcb1c0a2587ecbc68e792bde840a7ecdc9aee8c9b46840ac0d5e3f3ab51",
+    "prompt": "Edit this technical base mannequin. Remove ALL scalp hair completely: completely BALD smooth head, no braids or strands. No facial hair, no jewelry, no accessories. Keep the adult female face, same body proportions, same wide symmetrical straight-arm A-pose, full head-to-feet framing and hand/leg separation. Make the ENTIRE figure a uniform neutral matte gray clay anatomical mannequin, including face and all skin. Keep opaque close-fitting smooth chest/pelvis modesty coverage with no seams, trim or clothing detail. No outfit. Preserve fingers individually separated. Remove the entire background INCLUDING gray halo, shadow, glow and floor; true clear transparent alpha everywhere outside the figure. Only one clean isolated neutral gray mannequin, no labels."
+  }
+]

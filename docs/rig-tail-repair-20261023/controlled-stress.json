@@ -1,0 +1,11 @@
+{
+  "source_sha256": "3fb7c8e1e62442048592e89b87fbaebb6468f933d14cdbc43f4078c7b2603aff",
+  "output_sha256": "f5a0897d8b193d2ea9ea446b11abad37c61d79fc5bcd80aec6ea70360fadb024",
+  "angles_radians": {
+    "ThighL": 0.7,
+    "ThighR": -0.7,
+    "AnatomicalTail_04": 0.3
+  },
+  "publication_eligible": false,
+  "scope": "Controlled thigh separation plus tail bend only; not combat qualification"
+}

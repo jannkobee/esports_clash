@@ -1,0 +1,103 @@
+{
+  "review_id": "0a4e25c9-23ad-4c5a-a58d-db4d4588bd9d",
+  "status": "portable_correction_verified_shape_unresolved",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Limited manual assessment of 20 named/hash-verified images from 68 Babylon captures. Actual Babylon morph weights match the retained native diagnostic clips. No full-motion, compound-bend, appearance or production qualification.",
+  "observations": [
+    "The four corrective targets survive standard GLB export/reimport and are active in the shipped Babylon inspector. Its recorded morph weights match the verified native clips at each captured bend; primary bind influences are zero. Both candidates reproduce all 16 recorded collision counts. All 68 views complete without browser errors.",
+    "At 90 degrees the portable correction changes native shoulder contacts 44/35 to 31/0 and hips 51/47 to 40/27, without count regressions, seam opening, severe-stretch edges or skeletal differences from the exact exported native control. All 45-degree cases remain zero. Elbows remain 0/0 and calves 0/2.",
+    "Selected front/back/side/skeleton rest views preserve the source silhouette, supported feet and bone layout. Selected 45-degree front views show intended independent limb movement without gross collapse.",
+    "Paired deep shoulder oblique views show a fuller shoulder cap, particularly on the right, but the broad rounded/root transition remains insufficiently anatomical. A contact-free right shoulder is not by itself a visual deformation pass. Current rear views confirm the broad shoulder-root shape remains.",
+    "Paired deep hip oblique views show a small change in the groin/root crease. Residual folds and abrupt shape transitions remain; current side views are partly occluded by the hand/arm, and front-facing raised thighs occlude parts of the hip. No seam separation is apparent in the inspected images, consistent with the numerical seam check.",
+    "These are single-axis diagnostic motions, not game clips. Intermediate angles, repeated cycles, compound/multi-axis poses and the production repair/retarget chain still need their own retained evidence. Only the 20 listed images were manually assessed."
+  ],
+  "decision": "Retain the portable correction as a useful pipeline capability and unqualified diagnostic candidate. Keep the native and taper baselines immutable. Do not fit appearance, publish, or treat the numerical reduction as a finished anatomical repair. Next validate the baked interpolation and isolate the remaining shoulder/hip surface shape before production motion.",
+  "candidate_disposition": {
+    "id": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97",
+    "selection": "diagnostic_only",
+    "native_control": "f6283980-c4dd-5f34-bcf4-09c08e9e6346"
+  },
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "72546e053156e003f2140b9289a218d285acf4158a98098478b555f1f1c96e48"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "5ce6a68a63ee20b2e9ddcd07b5415f815ff199036ead941353b02a3d3c2c2a1b"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "7dad4d431c4d92ff455587b933546c60c54edc8074b7e29e08ba561ef9876cd8"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "592537cd03b60614a1bd27ac03af927dfc1903979fd4846cf1871e18e28e7667"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "bcc7b547cb20fa4ca109a397927469158970158f1a8f6d27e513dcd0262b2749"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "3ef39a3f7a0afad8f2562a8950c55f9d140da80520baac7a61689cd117a23def"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "68fa37a5119c8d85c984db33e01ec8bdf7f0646ebffef59f5810ec02fba6cb04"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "f61ad11db05391fb926ac5a3a0b0a90f21ce0ceb22bdb324a76d77a027855710"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-side-detail.png",
+      "sha256": "f8aac5e5d912241b14135e517f99c0b8a7c619b8934a22dcf09a410a3a740d04"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-side-detail.png",
+      "sha256": "8e8aff643f95fc3214f0fa57910099a25c094ede56d94f1a7990302544f62d18"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front.png",
+      "sha256": "6e2843b6cbe98af8506c376b19471751c85a6b2e9ef89ef576264f208703e20f"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-back.png",
+      "sha256": "7ff96bb2a4346d3699da7babf13e118dfd57bf291c9c70ab33baec9f1a153ba4"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-side.png",
+      "sha256": "eb63610038e36050732c03c95b23f0fcaf1a4a28e8889685e8121d659c48e68d"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front-skeleton.png",
+      "sha256": "4c0694027d14fda781bbb280bb710ae97a3133e5d0bf734f2a555dbd7eb80527"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-45-front.png",
+      "sha256": "7d5d2ea889fc91d6a94ace3721eb18f04216067b7ca18bc18afa54766f9aeb70"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-45-front.png",
+      "sha256": "388a91de1cf55b4649bbafb25e5a4e2616097fe26c2214bcb79772efd0ed1040"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-45-front.png",
+      "sha256": "6d77190178a5a9393d68147130670c59c55cdf19ad169c29cfa55e7d4a7e75d7"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-45-front.png",
+      "sha256": "518a96cbb235305ef47a9c1df7a088a7105373ab5ea4b572fece663fc0ade6a1"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-back.png",
+      "sha256": "391c9d85867b40c411c14bfdbad073dea940187d3360d271b5bf74737b128a19"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-back.png",
+      "sha256": "78a4b4d444f5cdc7a0f7a791eeaaca72371a482ef25fc8a50983e486d354e6b1"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+    "preparation_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+    "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+    "raw_rig_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+    "publication_eligible": false,
+    "candidates": {
+        "parent": {
+            "id": "a3352d37-91cb-4757-b403-da09f5ac0017",
+            "artifact_sha256": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4",
+            "bytes": 3375724,
+            "report_sha256": "e6bd8e9a3a66be39c0c291ebe785dee88540dd3437451ff812655333789994a6",
+            "candidate_available": true
+        },
+        "current": {
+            "id": "59efceaf-d39e-414e-94af-36f7ccbae738",
+            "artifact_sha256": "8416076e0ecb7b1592aafc1b4b9402ba028f21bb89c381c646f78501ce281838",
+            "bytes": 3375716,
+            "report_sha256": "d82d37c0461457f1b356768efe7be37e6bc2b6abd088f85bb5f7d7969001f00c",
+            "candidate_available": true
+        }
+    }
+}

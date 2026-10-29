@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_nullweaver",
+  "component_id": "measurement_robe",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Indigo measurement robe",
+  "attachment": "body",
+  "prompt": "Edit the attached equipment reference only. Zoom out substantially to show the entire complete empty garment set including both sleeve edges and both boot soles with generous transparent margin all four sides. Restore cropped fabric/boot edges. Keep same exact design and materials, visibly empty hollow garments, no wearer or mannequin. Asset occupies central 65 percent of frame. Remove soft background haze. Genuine transparent background, no floor, shadow, glow or text.",
+  "reference_purpose": "reconstruction",
+  "slug": "vesper-nullcode",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/vesper-nullcode-measurement_robe.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/vesper-nullcode-measurement_robe-v2.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-47b4d7c6-7f3f-4d2c-a75f-df2922e86ddb.png"
+}

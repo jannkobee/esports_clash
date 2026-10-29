@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_valkira",
+  "component_id": "oath_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Oath collector outfit, gray cape and wrist seals",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Kael Vespera. Attached drawing is design reference only. Only the empty oath-collector clothing set: dark leather waistcoat and shirt, red layered waist cloth, trousers and boots, stitched gray cape. Symmetrical neutral wide A pose on invisible support; open neck and joints are empty. No blades, hair, skin, body or mannequin. Wrist seals are surface markings, do not invent a body or new cuffs. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+  "reference_purpose": "reconstruction",
+  "slug": "kael-vespera",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/kael-vespera.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/kael-vespera-oath_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-73e133f9-ba66-402f-a3dc-0085f7cd3946.png"
+}

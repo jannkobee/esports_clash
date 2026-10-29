@@ -1,0 +1,109 @@
+{
+  "review_id": "34a96f56-b86c-46f9-9f85-1d1a432497ee",
+  "status": "alternative_shape_not_convincing",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Limited manual review of 22 named/hash-verified views from 68 captures. Both assets use exact separately retained diagnostic clips and actual Babylon morph weights. No production motion or appearance qualification.",
+  "observations": [
+    "At the deep shoulder poses the half-strength target yields 34/17 intersections versus 31/0 for the full corrective, while hips remain 40/27. Both are improvements over the native source shoulder counts 44/35. Both clips reproduce all 16 saved measurements; no browser errors.",
+    "Paired oblique and side views show a subtle reduction in shoulder fullness with the half-strength target, but a broad rounded transition and compressed underside remain. The change is not a convincing anatomical improvement sufficient to offset the additional counted contacts. The front detail views are substantially occluded by the raised hands and forearms.",
+    "Selected paired 45-degree front views remain broadly similar. Front bind and skeleton views preserve the source silhouette and supported feet. Paired hip oblique views remain similar and still have crease/occlusion limits.",
+    "Both GLB exports passed the same validator and preservation checks, and Babylon influence values matched their baked clips. A visually adequate shoulder, residual hip folds, compound/multi-axis movement and real game clips remain unresolved."
+  ],
+  "decision": "Retain the half-strength result as an unqualified comparison; do not promote it or replace the full-corrective diagnostic. Continue evidence-guided shape repair rather than repeatedly tuning this blend by collision count.",
+  "candidate_disposition": {
+    "id": "51e2aadf-5c46-4f86-b0d0-a317e2e9e864",
+    "selection": "diagnostic_only",
+    "comparison": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97"
+  },
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "5ce6a68a63ee20b2e9ddcd07b5415f815ff199036ead941353b02a3d3c2c2a1b"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "f5a6ce872de8e10a80e3032d4268ceac3842672407882093a221cc3afbee65ea"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-side-detail.png",
+      "sha256": "04f7215a2fcb18e63929f017437537cd5f23d9575e60ea2b727216504b261e10"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-side-detail.png",
+      "sha256": "8ed5995230a190d9be6e1b56a7cf0832730342cdd7f2e7fa967ca51cb2f177a8"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-front-detail.png",
+      "sha256": "361f644d34f7c1aaf2af146f87a1451d6296ecc96052bae5edfd62aefb225712"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-front-detail.png",
+      "sha256": "f05d9ca350930fcf1fe09b32f77aa77383f1adbb7bec9b4dc1ee074005af987f"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "592537cd03b60614a1bd27ac03af927dfc1903979fd4846cf1871e18e28e7667"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "826b0ccdb9ded7aa34501d0164d03b88b13d117d38b70abff958a5542407540c"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-side-detail.png",
+      "sha256": "7893373762f20c4a83fac3c18e41378cf3295408d853e39390a1af633172718c"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-side-detail.png",
+      "sha256": "efa9ec50d90f85c99308744ab5e25aba65546e582c8173cdf27da370d1800af1"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-front-detail.png",
+      "sha256": "a429734dfffe502ba95f32c82b4602c3d4551da518d55e54151eb2f961775bf0"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-front-detail.png",
+      "sha256": "23966f99ab9f40abb96f1001a9016641443846d4c7ada53a07c39572b4d9264a"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-45-front.png",
+      "sha256": "7d5d2ea889fc91d6a94ace3721eb18f04216067b7ca18bc18afa54766f9aeb70"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-45-front.png",
+      "sha256": "2b23410cccc5c7fc745ae75e7a7d9c4fda9ecc07d1368d42419d51b63f3d9bb6"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-45-front.png",
+      "sha256": "388a91de1cf55b4649bbafb25e5a4e2616097fe26c2214bcb79772efd0ed1040"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-45-front.png",
+      "sha256": "7de5ca93feb684f21bd1482f739fb69b99cb5743e5a826575d91194f3cf8661d"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front.png",
+      "sha256": "6e2843b6cbe98af8506c376b19471751c85a6b2e9ef89ef576264f208703e20f"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front-skeleton.png",
+      "sha256": "4c0694027d14fda781bbb280bb710ae97a3133e5d0bf734f2a555dbd7eb80527"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "3ef39a3f7a0afad8f2562a8950c55f9d140da80520baac7a61689cd117a23def"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "3ef39a3f7a0afad8f2562a8950c55f9d140da80520baac7a61689cd117a23def"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "f61ad11db05391fb926ac5a3a0b0a90f21ce0ceb22bdb324a76d77a027855710"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "f61ad11db05391fb926ac5a3a0b0a90f21ce0ceb22bdb324a76d77a027855710"
+    }
+  ]
+}

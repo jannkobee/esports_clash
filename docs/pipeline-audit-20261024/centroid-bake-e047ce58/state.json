@@ -1,0 +1,14 @@
+{
+  "id": "e047ce58-9193-49c7-87db-790a0f29dbbf",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "portable-corrective-bake",
+  "runtime_id": "ddb07188977acba2b815846c5f2ead92802114fe87200f49fa9f665e7d698e10",
+  "environment_sha256": "160e42e63b84d075df53fca9c416775671584a1ed926a9ea81ad71691ab2ebab",
+  "started_unix": 1793109219.6763594,
+  "exit_code": 0,
+  "report_sha256": "da69e0a68b33e63885ba1e6e9c82733283b03772bda002c3abb6ad63857e8188",
+  "completed_unix": 1793109389.1490812
+}

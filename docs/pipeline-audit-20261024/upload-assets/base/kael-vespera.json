@@ -1,0 +1,9 @@
+{
+  "id": "c_valkira",
+  "name": "Kael Vespera",
+  "slug": "kael-vespera",
+  "prompt": "Create a NEW clean technical anatomical base mannequin for Kael Vespera. The attached character drawing is identity/proportion reference only. CRITICAL: completely BALD smooth head, NO scalp hair, beard, braids, loose fur shell, jewelry or clothing. Entire figure uniform neutral MATTE GRAY clay, not skin-colored. Preserve depicted adult gender, age, proportions and species; adult humanoid anatomy, both complete bare arms/hands and legs/feet, no equipment. Smooth opaque close-fitting modesty layer across chest/pelvis, no intimate details. One figure, full head to feet, centered front orthographic view with padding. Static symmetrical WIDE A-POSE: both arms straight 45 degrees down/out from torso, elbows straight, palms DOWN, all fingers individually separated. Hands clear of hips. Legs straight slightly apart, feet on same level. Unobstructed joints, clear underarm/leg gaps. No twist/action, no outfit, boots, cape, armor, weapons, tools, straps, pet, mount or vehicle. No texts, labels, floor or shadows. TRUE TRANSPARENT alpha background. Only intrinsic anatomy and modesty surface. This is a base to rig BEFORE clothing/hair/gear.",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-978ec750-886d-442e-9c67-d1ca21971008.png",
+  "destination": "docs/pipeline-audit-20261024/upload-assets/base/kael-vespera.png",
+  "status": "awaiting_visual_review"
+}

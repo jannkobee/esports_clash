@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_kazemaru",
+  "component_id": "sailor_armor",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Sailor armor and weather-map tapes",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Serrin Galecrest. Attached drawing is design reference only. Only the empty sailor armor/clothing set with blue coat, ivory shirt, brown leather straps, gray trousers, boots and attached weather-map tapes. Neutral wide A pose on invisible support. No sword, shield, person, skin, hair or mannequin. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+  "reference_purpose": "reconstruction",
+  "slug": "serrin-galecrest",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/serrin-galecrest.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/serrin-galecrest-sailor_armor.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-04d3884c-7ac8-4bbb-b2d9-ad5dc9a87966.png"
+}

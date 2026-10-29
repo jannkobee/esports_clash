@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_zal",
+  "component_id": "surgeon_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Surgeon outfit and cracked porcelain mask",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Vesper Loom. Attached image is design reference only. Only the empty ivory and muted-lilac layered artisan's coat and clothing, boots and the cracked porcelain face mask displayed separately above its empty collar. No flesh, body, head, hair, needle-finger gloves, reservoirs or person. Clothing is empty and held by invisible support in a neutral wide A pose. Every opening is visibly empty. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "vesper-loom",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/vesper-loom.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/vesper-loom-surgeon_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-971c3681-1e86-4b6d-bb1d-f240aeb04a9a.png"
+}

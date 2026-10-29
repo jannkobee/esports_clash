@@ -11,11 +11,33 @@ class AvatarPreparationService {
     public function endpoint(string $path):string{return app(AvatarEvolutionService::class)->endpoint($path);}
     public function rigEndpoint(string $path):string{return rtrim(config('avatars.unirig_url'),'/').$path;}
     public function profileFor(array $meta):string{return 'unirig-v1';}
+    public static function requireCloudStage(array $operations,string $stage):void {
+        if (!self::cloudStageReady($operations,$stage)) {
+            throw ValidationException::withMessages(['worker'=>"Connect and verify the Google Colab {$stage} stage. Local processing is disabled."]);
+        }
+    }
+    public static function cloudStageReady(?array $operations,string $stage):bool {
+        return ($operations['compute']['selected']??null)==='google'
+            && ($operations['compute']['automatic_fallback']??true)===false
+            && ($operations['compute']['ready']??true)===true
+            && ($operations['runtime_ready']??false)===true
+            && ($operations['models_ready']??false)===true
+            && in_array($stage,$operations['stages']??[],true)
+            && preg_match('/^[a-f0-9]{64}$/',$operations['engine_sha256']??'')===1;
+    }
+    public function checkCloudProcessing(bool $rig=true,string $stage='animation'):void {
+        self::requireCloudStage($this->worker()->get($this->endpoint('/preparations/operations'))->throw()->json(),$stage);
+        if($rig)self::requireCloudStage($this->worker()->get($this->rigEndpoint('/operations'))->throw()->json(),'rigging');
+    }
     public function tick():void {
         // Kept for backward compatibility; visual admission is manual-only.
         return;
     }
     public function start(TrellisGeneration $generation,string $profile,float $yaw,array $attachments,string $actor,array $boneMap=[],?string $previousId=null,?string $rigPreparationId=null,bool $freshRig=false):AvatarPreparation {
+        if($profile===AvatarCloudRawRigService::PROFILE){
+            if($yaw!=0||$attachments||$boneMap||$rigPreparationId)throw ValidationException::withMessages(['profile'=>'Raw cloud rigging preserves the generated source. Mapping and fitting are later reviewed stages.']);
+            return app(AvatarCloudRawRigService::class)->start($generation,$actor,$previousId);
+        }
         if($generation->status!=='generated_unqualified')throw ValidationException::withMessages(['generation_id'=>'Select a completed generated source.']);
         $artifact=$generation->state['artifact']??[];
         if(!preg_match('/^[a-f0-9]{64}$/',$artifact['sha256']??''))throw ValidationException::withMessages(['generation_id'=>'The source has no frozen artifact hash.']);
@@ -23,7 +45,6 @@ class AvatarPreparationService {
         abort_unless($meta,422);
         if($profile!=='unirig-v1')throw ValidationException::withMessages(['profile'=>'Use the UniRig provider. Local surface-transfer admission is retired.']);
         if($freshRig&&$rigPreparationId)throw ValidationException::withMessages(['rig_preparation_id'=>'Choose a frozen rig revision or a fresh rig, not both.']);
-        $equipment=app(AvatarEquipmentService::class)->freeze($generation->avatar_id);
         $rigReuse=null;$rigEngine=null;
         $candidates=$freshRig?collect():AvatarPreparation::where('generation_id',$generation->id)->when($rigPreparationId,fn($q)=>$q->whereKey($rigPreparationId))->latest()->limit(20)->get();
         foreach($candidates as $candidate){
@@ -35,6 +56,7 @@ class AvatarPreparationService {
         }
         if($rigPreparationId&&!$rigReuse)throw ValidationException::withMessages(['rig_preparation_id'=>'That preparation has no compatible frozen rig for this source.']);
         $prepOps=$this->worker()->get($this->endpoint('/preparations/operations'))->throw()->json();
+        self::requireCloudStage($prepOps,'animation');
         $engine=$prepOps['engine_sha256']??null;
         if(!is_string($engine)||!preg_match('/^[a-f0-9]{64}$/',$engine))throw ValidationException::withMessages(['worker'=>'Preparation worker upgrade is required.']);
         if(!$rigReuse&&!$freshRig){
@@ -50,9 +72,11 @@ class AvatarPreparationService {
         }
         if(!$rigReuse){
             try{$rigOps=$this->worker()->get($this->rigEndpoint('/operations'))->throw()->json();$rigEngine=$rigOps['engine_sha256']??null;}catch(\Throwable){throw ValidationException::withMessages(['worker'=>'UniRig is unavailable and this source has no reusable rig.']);}
+            self::requireCloudStage($rigOps,'rigging');
             if(($rigOps['runtime_ready']??false)!==true||($rigOps['models_ready']??false)!==true)throw ValidationException::withMessages(['worker'=>'UniRig is not ready and this source has no reusable rig.']);
         }
         if(!is_string($rigEngine)||!preg_match('/^[a-f0-9]{64}$/',$rigEngine))throw ValidationException::withMessages(['worker'=>'No valid frozen rig engine is available.']);
+        $equipment=app(AvatarEquipmentService::class)->freeze($generation->avatar_id);
         AvatarEvolutionSetting::current();
         return DB::transaction(function()use($generation,$profile,$yaw,$attachments,$actor,$meta,$engine,$artifact,$rigEngine,$boneMap,$previousId,$rigReuse,$equipment){
             AvatarEvolutionSetting::lockForUpdate()->findOrFail(1);
@@ -76,9 +100,11 @@ class AvatarPreparationService {
         });
     }
     public function validate(AvatarPreparation $run,string $actor):void {
+        if(($run->plan['profile']??null)===AvatarCloudRawRigService::PROFILE)throw ValidationException::withMessages(['preparation'=>'Review raw-rig deformation before creating a separate animation preparation. A raw rig cannot qualify for publication.']);
         DB::transaction(function()use($run,$actor){
             $run=AvatarPreparation::lockForUpdate()->findOrFail($run->id);
             if(!in_array($run->status,['awaiting_validation','needs_review'],true))throw ValidationException::withMessages(['preparation'=>'This job is not awaiting qualification.']);
+            $this->checkCloudProcessing(false,'qualification');
             // Serialize this request with cancellation so it cannot reopen a cancelled run.
             $this->worker()->post($this->endpoint('/preparations/'.$run->id.'/validate'))->throw();
             $run->update(['status'=>'queued']);app(PreparationProgressService::class)->record($run,['status'=>'queued','stage'=>'validation_requested']);app(EvolutionService::class)->audit($run->id,'avatar.qualification-requested',$actor);
@@ -86,6 +112,7 @@ class AvatarPreparationService {
         });
     }
     public function publish(AvatarPreparation $preparation,string $actor):void {
+        if(($preparation->plan['profile']??null)===AvatarCloudRawRigService::PROFILE)throw ValidationException::withMessages(['preparation'=>'A raw rig has no qualified animation or appearance and cannot be published.']);
         AvatarEvolutionSetting::current();
         $remote=$this->worker()->get($this->endpoint('/preparations/'.$preparation->id))->throw()->json();
         DB::transaction(function()use($preparation,$actor,$remote){

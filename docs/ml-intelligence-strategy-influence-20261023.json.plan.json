@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "scope": "Known seed 47/draft 2 software influence check, excluded from fresh evaluation",
+  "config": {
+    "kind": "macro-strategy",
+    "version": 1,
+    "farmStrategic": 0.32,
+    "farmTactical": 0.26,
+    "farmConversionTactical": 0.55,
+    "pushStrategic": 0.28,
+    "pushTempoStrategic": 0.72
+  },
+  "configHash": "3251f9298fa2359f204eb7696374062740a4982aa8746d6f07cdfa87f0a370bc",
+  "sourceHash": "9b63e76f06a9f9679eb0b2b2f351964f4f4a6ce10d2c93d578284b18df8ed3b4",
+  "baselineHash": "3099ccfd2e499158d761f7e493a193faf26bf180450e23e5ea30a209c86d46ac",
+  "judgeManifest": [
+    [
+      "live-executor.mjs",
+      "cca1446fef72989a464b1e6c98e08e6296e28af0e575206f5e1aa6bd5cab5107"
+    ],
+    [
+      "verify-strategy-influence.mjs",
+      "3a85ac20b99a4b966b550977693a3cf92534cad6d7f6e3a570aec2aac8e4bf3a"
+    ]
+  ],
+  "seed": 47,
+  "draft": 2,
+  "swapped": false,
+  "maxSeconds": 1200,
+  "wallSeconds": 900
+}

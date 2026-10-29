@@ -1,0 +1,79 @@
+{
+  "candidate_id": "1bb641cd-ce80-4e12-9018-e67de0ff6dc3",
+  "status": "animated_base_unqualified",
+  "asset_epoch": "fresh-20261024",
+  "verified": [
+    {
+      "file": "motion-death.png",
+      "sha256": "b0d67fb57b4aa72f07ad16bba809c49a53e543013b2b760c0660f68a10f4a737",
+      "bytes": 92269
+    },
+    {
+      "file": "base-audit.json",
+      "sha256": "da496db41d99319512c937d883db805c1e903dfc4061c656a3bbe2eb5eea184f",
+      "bytes": 6700
+    },
+    {
+      "file": "motion-idle.png",
+      "sha256": "9da9dcf062de93d0570c93466e936a2d46d5927c3494df3617ee22eb64c98a18",
+      "bytes": 158120
+    },
+    {
+      "file": "mirelle-base-unrigged.blend",
+      "sha256": "48b62630878c998a03d052567fc13f204fbb988cabdf2522d3e9465586ab5df6",
+      "bytes": 1919143
+    },
+    {
+      "file": "mirelle-base-unrigged.glb",
+      "sha256": "c68113bcab08f1c8e2b17a31068a85384a00a7a33bf01e7bc25761fb2654aff9",
+      "bytes": 514524
+    },
+    {
+      "file": "motion-attack.png",
+      "sha256": "109ac1c8af5e4bf43e7dc57ac60ad59b7c855b68e05c166d53fde4a28c4ecbca",
+      "bytes": 151881
+    },
+    {
+      "file": "mirelle-raw-rig.blend",
+      "sha256": "54bf958e48ecbcec2b2b07bc0ce0432b7a65b7ea63431d7ca56cca9d87e79821",
+      "bytes": 2524442
+    },
+    {
+      "file": "motion-run.png",
+      "sha256": "503416ac353d45071f492cd47fc89e71cde2960c3987f6f34a2550c4fb77d175",
+      "bytes": 160113
+    },
+    {
+      "file": "independent-audit.json",
+      "sha256": "0adaed2c25a7e195c2e4ebddff459569734011a8993bbacd824bf279420c9586",
+      "bytes": 42633
+    },
+    {
+      "file": "mirelle-raw-rig.glb",
+      "sha256": "72aafc6946a7f440ae90de4f2d925e7fd5b32a488358f9f97a37b63d089281d8",
+      "bytes": 778128
+    },
+    {
+      "file": "motion-cast.png",
+      "sha256": "9bedc6c6ec01f6dbfec8e49800bd74ccd1172df3788dc2d98e2a4e8a08db8d6d",
+      "bytes": 151536
+    },
+    {
+      "file": "mirelle-base-animated.glb",
+      "sha256": "d75c61014fb21f8fbe3e80e490eda4aba099546dda8e7b201062630afc2bc78e",
+      "bytes": 1046292
+    },
+    {
+      "file": "mirelle-base-animated.blend",
+      "sha256": "7ccfa661192d7e850cec398d59c12db96164068499e8e41a5de7911897ee411f",
+      "bytes": 7706775
+    },
+    {
+      "file": "rig-motion-report.json",
+      "sha256": "cc49ec63459d304805160df1db395cfc6c2bc66fac5758f2bb2a2b601986c4bb",
+      "bytes": 4368
+    }
+  ],
+  "publication_eligible": false,
+  "scope": "Hash-only storage verification of retained failed fresh candidate evidence. No avatar processing."
+}

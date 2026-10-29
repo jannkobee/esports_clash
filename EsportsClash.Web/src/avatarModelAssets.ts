@@ -42,8 +42,9 @@ export class AvatarAssetLibrary {
         return release?visualReleaseUrl(release)??avatarModelUrl(id,variant):avatarModelUrl(id,variant);
       });
       promise = url.then(async path=>{
+        if(!path)throw Error('Previous avatar assets were deleted by the owner');
         try{const file=await this.loader.loadAsync(path);this.resolvedURLs.set(key,path);return file;}
-        catch(error){if(path!==avatarModelUrl(id,variant)){
+        catch(error){if(avatarModelUrl(id,variant)&&path!==avatarModelUrl(id,variant)){
           const release=this.selectedReleases.get(key);if(release)reportVisualHealth(release,'load');
           const file=await this.loader.loadAsync(avatarModelUrl(id,variant));this.resolvedURLs.set(key,avatarModelUrl(id,variant));return file;}throw error;}
       }).then(file => {
@@ -75,7 +76,7 @@ export class AvatarAssetLibrary {
     scene.traverse(node => { if (node.userData.avatarPart === 'avatar-root') root = node as THREE.Group; });
     if (!root) return;
     const hasAnimations = file.animations && file.animations.length > 0;
-    const retargetedNativeMotion=(root.userData.assetPreparation?.provider==='unirig'||root.userData.assetPreparation?.provider==='meshy-pipeline'||root.userData.assetPreparation?.provider==='automated-rigging')&&root.userData.assetPreparation?.animation_mode==='retargeted-native-clips';
+    const retargetedNativeMotion=['unirig','tokenrig','meshy-pipeline','automated-rigging'].includes(root.userData.assetPreparation?.provider)&&root.userData.assetPreparation?.animation_mode==='retargeted-native-clips';
     const preserveNativeMotion=this.nativeImports.has(file)||retargetedNativeMotion;
     scene.updateMatrixWorld(true);
     const meshBounds = new THREE.Box3();

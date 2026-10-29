@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_mirehook",
+  "component_id": "smith_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Smith outfit",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Garruk Mawsuture. Attached drawing is design reference only. Only the empty smith clothing: red-brown leather apron and harness, dark trousers, knee plates and work boots. No body, skin, head, beard, gauntlets, cage forge, anvils or tools. All garments visibly empty on invisible support in neutral symmetrical wide A pose; neck and joints are hollow, no mannequin. Preserve pictured design, palette, materials and proportions. Complete subject fits well inside central60% of frame with generous transparent margin every side. Neutral product lighting, crisp physical geometry, three-quarter view unless rest view specified. Genuine transparent background. No floor, cast shadows, backdrop glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "garruk-mawsuture",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/garruk-mawsuture.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/garruk-mawsuture-smith_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-7dfe158a-f142-409a-8287-3bc025fa6edb.png"
+}

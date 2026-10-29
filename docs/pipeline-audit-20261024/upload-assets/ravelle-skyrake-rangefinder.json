@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_skybreaker",
+  "component_id": "rangefinder",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Optical rangefinder",
+  "attachment": "hand",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Ravelle Skyrake. Attached character art is design reference only. One complete brass-and-dark-leather telescopic optical rangefinder with circular lenses and adjustment rings, retracted resting state. No hand, person, platform or clothing. Preserve pictured design, colors, materials and proportions. For clothing only: garments visibly empty on invisible support in a static symmetrical wide A pose; hollow openings, no mannequin. Show the entire asset at SMALL size occupying central 55 percent of frame with wide transparent margins on ALL sides. No cropping. Neutral even product lighting, readable physical geometry, three-quarter view. Genuine transparent background, no floor, shadow, background glow, text, labels, logo, frames or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "ravelle-skyrake",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/ravelle-skyrake.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/ravelle-skyrake-rangefinder.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-c82aaa7b-cdd7-4013-8cca-f03fbcebb152.png"
+}

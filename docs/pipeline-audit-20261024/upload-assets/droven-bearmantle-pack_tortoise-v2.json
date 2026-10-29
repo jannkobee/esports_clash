@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_sylla",
+  "component_id": "pack_tortoise",
+  "category": "companion",
+  "binding": "independent",
+  "label": "Moss-backed pack tortoise",
+  "attachment": "independent companion",
+  "prompt": "Use case: stylized-concept. Isolated physical reconstruction reference for Droven Bearmantle. Attached illustration is design reference only. ONLY the clean anatomical base of one large pack tortoise, neutral quadruped rest stance, complete head, natural carapace, four legs and feet separately visible with air gaps. Matte neutral gray anatomical surface; no moss, vegetation, cargo, saddle, harness, ornaments, rider or human. Independent clean rigging-base reference. Even neutral studio lighting, crisp physical geometry. Three-quarter view unless rest pose specified. Complete named asset inside central 70 percent of frame, generous clear TRANSPARENT margin on all sides. Genuine transparent background. No floor, cast shadows, glow backdrop, text, frames, labels, logo, unrelated equipment or extra subjects.",
+  "reference_purpose": "reconstruction",
+  "slug": "droven-bearmantle",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/droven-bearmantle.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/droven-bearmantle-pack_tortoise-v2.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b5465c85-3b51-40bd-ac2c-18aa3f9e9e00.png"
+}

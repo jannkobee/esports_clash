@@ -1,0 +1,184 @@
+{
+  "status": "clean_base_source_and_raw_rig_succeeded_shared_retarget_visually_failed",
+  "contract": "base-first-a-pose-v1",
+  "publication_eligible": false,
+  "production_provider_changed": false,
+  "reference": {
+    "path": "infrastructure/trellis2/references/stafford-base-apose-v1.png",
+    "sha256": "43c2464d7af854a76e703d40e0bdd3783b5aa4b533335ca899ce2f87a34581a4",
+    "format": "RGBA 1254x1254; actual alpha range 0..255",
+    "generator": "built-in imagegen skill",
+    "appearance": "neutral matte-gray anatomy; smooth modesty layer; no outfit/hair/weapons; anatomical monkey tail retained",
+    "visual_review": "Symmetrical wide A-pose, straight down/out arms and visible arm/torso gaps; whole body and tail visible."
+  },
+  "source": {
+    "generation_id": "d0ba4c6c-f06e-4047-90ab-5f29de0cb11d",
+    "provider": "google-colab",
+    "sha256": "7606b5c57b562457ee616875267315751a33a34d74dbf74f07ab59d708230e8d",
+    "bytes": 2180856,
+    "triangles": 37474,
+    "gltf_errors": 0,
+    "gltf_warnings": 0,
+    "texture_dimensions": [
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ]
+    ],
+    "visual_review": "Front/side/rear/perspective confirm uncluttered anatomy, arm/torso gaps and separated tail. Fingers need closer review; dark texture shading is retained in previews. Not identity/outfit qualification."
+  },
+  "raw_rig": {
+    "provider": "tokenrig",
+    "profile": "tokenrig-t4-fp32-sdpa-trial-v1",
+    "sha256": "bffc47c8cf223c82f4c2644138f146fdef6f7c9934e2a14c12755eacad4c1f0b",
+    "bytes": 2509740,
+    "supervised_seconds_including_imports": 121.38049745559692,
+    "runner_seconds": 91.20393825799692,
+    "peak_torch_allocated_gpu_mib": 4499.466796875,
+    "joints": 52,
+    "weights": [
+      {
+        "mesh": "geometry_0",
+        "vertices": 26844,
+        "max_influences": 4,
+        "unweighted": 0,
+        "max_normalization_error": 1.3737007975578308e-07,
+        "finite_nonnegative": true
+      }
+    ],
+    "mapping_accepted": true,
+    "mapping_confidence": 0.943,
+    "views": [
+      "rest-front",
+      "rest-side",
+      "rest-rear",
+      "rest-perspective",
+      "stress-front",
+      "stress-perspective"
+    ],
+    "visual_review": "Inspected rest and controlled arm/knee stress poses retain coherent separated limbs and a stable tail. Limited stress review, not full combat qualification."
+  },
+  "retarget": {
+    "worker_trial_folder": "/avatar-data/61d04a2e-a5b1-421a-9048-06e31e754ea6",
+    "api_preparation_id": null,
+    "artifact_sha256": "696b59dd15bab4f619dfc43154cfe475dddc7431446804a62ca4d9a7154718a7",
+    "native_clips": [
+      "Attack",
+      "Cast",
+      "Death",
+      "Hit",
+      "Idle",
+      "Run",
+      "Strafe",
+      "TurnLeft",
+      "TurnRight",
+      "Walk"
+    ],
+    "gltf_errors": 0,
+    "browser_technical_pass": true,
+    "visual_accepted": false,
+    "visual_issues": [
+      "Arms and shoulders fold/twist behind or into the torso in Idle and Attack.",
+      "Feet and lower legs are distorted after motion transfer."
+    ],
+    "interpretation": "Removing costume geometry and using an A-pose does not fix the shared post-rig chain. Exact failing cleanup, weight repair, calibration or transform remains unisolated.",
+    "outfit_fitting_started": false
+  },
+  "prompt_rollout": {
+    "avatars": 45,
+    "export": "docs/avatar-base-first-prompts.json",
+    "fields": [
+      "body",
+      "outfit",
+      "primary",
+      "secondary"
+    ],
+    "body_design_context_imported": false,
+    "legacy_body_overrides": "Preserved as appearance reference, excluded until explicitly saved under the new contract.",
+    "anatomy_exceptions": "Explicit species/chassis data; custom creature rest poses; rider/mount and pilot/vehicle separation."
+  },
+  "verification": {
+    "laravel": {
+      "tests": 132,
+      "assertions": 1589,
+      "status": "passed"
+    },
+    "check_game": "passed",
+    "build": "passed; existing chunk-size/timing advisories",
+    "browser_ui": {
+      "tabs": [
+        {
+          "key": "body",
+          "selected": "true",
+          "visible": true
+        },
+        {
+          "key": "outfit",
+          "selected": "true",
+          "visible": true
+        },
+        {
+          "key": "primary",
+          "selected": "true",
+          "visible": true
+        },
+        {
+          "key": "secondary",
+          "selected": "true",
+          "visible": true
+        }
+      ],
+      "layouts": [
+        {
+          "width": 1440,
+          "scroll": 1425,
+          "client": 1425
+        },
+        {
+          "width": 768,
+          "scroll": 753,
+          "client": 753
+        },
+        {
+          "width": 390,
+          "scroll": 375,
+          "client": 375
+        },
+        {
+          "width": 320,
+          "scroll": 305,
+          "client": 305
+        }
+      ],
+      "saves_performed": false,
+      "page_errors": []
+    },
+    "git_diff_check": "passed"
+  },
+  "agent_coordination": {
+    "documentation_agent": "document_base_mesh_workflow",
+    "review_agent": "review_anatomy_prompt_contract",
+    "resolved_findings": [
+      "Costume context redirected away from body.",
+      "Legacy saved body text cannot silently override new defaults.",
+      "Missing anatomy fails explicitly.",
+      "Older three-field clients retain a saved outfit brief."
+    ],
+    "instructions": "AGENTS.md and docs/character-asset-pipeline.md"
+  },
+  "remaining": [
+    "Isolate and fix the first destructive post-rig operation before fitting outfits.",
+    "Validate all required combat poses after correction.",
+    "Implement and verify clothing/hair fitting and skinning as a later stage.",
+    "Integrate a separately identified TokenRig production provider after qualification."
+  ],
+  "unchanged": [
+    "Historical references, generated sources and rejected preparations",
+    "Live roster/publications",
+    "All protected gameplay invariants"
+  ]
+}

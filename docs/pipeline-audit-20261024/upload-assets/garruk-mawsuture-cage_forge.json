@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_mirehook",
+  "component_id": "cage_forge",
+  "category": "back",
+  "binding": "rigid",
+  "label": "Strapped cage forge",
+  "attachment": "back",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Garruk Mawsuture. Attached drawing is design reference only. One complete strapped cage forge backpack, dark riveted iron cylinder with grate, chimney, orange hot-glass interior and mounting straps. No person, body, skin, anvil, gauntlets, clothes, flame plume or smoke. Preserve pictured design, palette, materials and proportions. Complete subject fits well inside central60% of frame with generous transparent margin every side. Neutral product lighting, crisp physical geometry, three-quarter view unless rest view specified. Genuine transparent background. No floor, cast shadows, backdrop glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "garruk-mawsuture",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/garruk-mawsuture.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/garruk-mawsuture-cage_forge.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-e619360e-8b96-4a4e-85f7-00f1e4a50c89.png"
+}

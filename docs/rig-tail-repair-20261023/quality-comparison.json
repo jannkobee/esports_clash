@@ -1,0 +1,37 @@
+{
+  "version": "technical-quality-v1",
+  "features": {
+    "skeleton_failure": 0.0,
+    "unweighted": 0.0,
+    "weight_errors": 0.0,
+    "gltf_errors": 0.0,
+    "intersection_growth": 0.764,
+    "foot_drift": 0.636515084641652,
+    "hand_jump": 0.6543927791580874,
+    "render_regression": 0.18181818200510613,
+    "silhouette_clipping": 0.0,
+    "silhouette_readability": 0.0
+  },
+  "hard_pass": false,
+  "missing_measurements": [],
+  "failure_classes": [
+    "intersection_growth",
+    "foot_drift",
+    "hand_jump",
+    "render_regression"
+  ],
+  "reasons": [],
+  "visual_critic": {
+    "status": "measured",
+    "views": 3,
+    "critical_poses": 3,
+    "clipped_fraction": 0.0,
+    "unreadable_fraction": 0.0,
+    "missing": [],
+    "artistic_assessment": "requires_curated_rating"
+  },
+  "technical_score": 88.816,
+  "artistic_quality": "unrated",
+  "correction_priority": "contact_or_socket_parameter_review",
+  "scope": "Offline comparison of retained measurements; not an API preparation or release decision."
+}

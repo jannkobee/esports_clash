@@ -1,0 +1,73 @@
+{
+  "config": "2aa091450cb6dd0ab842e8a18b9f6bed487a4d97710877739e51a135e3ad0efa",
+  "stages": [
+    "uv",
+    "python312",
+    "git-ComfyUI",
+    "git-nodes",
+    "git-utils3d",
+    "git-nvdiffrast",
+    "git-FlexGEMM",
+    "git-TrellisNative",
+    "git-CuMesh",
+    "git-ComfyUI-GGUF",
+    "torch",
+    "python-dependencies",
+    "utils3d",
+    "nvdiffrec",
+    "submodules-nvdiffrast",
+    "build-nvdiffrast",
+    "submodules-FlexGEMM",
+    "build-FlexGEMM",
+    "submodules-CuMesh",
+    "build-CuMesh",
+    "eigen",
+    "build-o-voxel",
+    "reviewed-pipeline-patch",
+    "verified-checkpoints"
+  ],
+  "stage": "complete",
+  "status": "installed_unvalidated",
+  "updated_unix": 1792932433.3475063,
+  "gpu": {
+    "available": true,
+    "name": "Tesla T4",
+    "architecture": "7.5",
+    "native_bf16_test": true
+  },
+  "sources": {
+    "ComfyUI": [
+      "comfyanonymous/ComfyUI",
+      "30c259cac8c08ff8d015f9aff3151cb525c9b702"
+    ],
+    "nodes": [
+      "Aero-Ex/ComfyUI-Trellis2-GGUF",
+      "b3b9e951874c5fb5c936566c93b908299be08b2c"
+    ],
+    "utils3d": [
+      "EasternJournalist/utils3d",
+      "35a17ba705d921c7a559ec6067c8eaa5c03ddb37"
+    ],
+    "nvdiffrast": [
+      "NVlabs/nvdiffrast",
+      "253ac4fcea7de5f396371124af597e6cc957bfae"
+    ],
+    "FlexGEMM": [
+      "JeffreyXiang/FlexGEMM",
+      "6dd94a859c26ee8246888502eada3dd8ad85532e"
+    ],
+    "TrellisNative": [
+      "visualbruno/TRELLIS.2",
+      "65d1e13b4a92296036044df0633242bb9e95abf6"
+    ],
+    "CuMesh": [
+      "visualbruno/CuMesh",
+      "d10e54c30ddd03d11472c1431693f985501c7966"
+    ],
+    "ComfyUI-GGUF": [
+      "city96/ComfyUI-GGUF",
+      "6ea2651e7df66d7585f6ffee804b20e92fb38b8a"
+    ]
+  },
+  "environment_id": "sha256:9fe535ca0087fb1df1f7de1cfa0e7d5554320301e046c197a527ac5350a5342f"
+}

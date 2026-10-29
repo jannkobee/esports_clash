@@ -1,4 +1,4 @@
-"""Durable Google/Local router for native TRELLIS.2 reconstruction only."""
+"""Durable Colab-only router for native TRELLIS.2 reconstruction."""
 import base64
 import copy
 import hashlib
@@ -16,6 +16,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 from trellis_backends import MODEL, LocalClient, ColabClient, backend_status, generate, BackendError
+from trellis_backends import ColabPreparationClient
+from preparation_gateway import PreparationGateway
 
 HERE = Path(__file__).parent.resolve()
 WORKSPACE = Path(os.environ.get('ASSET_WORKSPACE', str(HERE.parent.parent)))
@@ -56,6 +58,11 @@ def clients():
     return {'google': ColabClient(COLAB_CLI, COLAB_SESSION), 'local': LocalClient(LOCAL_URL, TOKEN)}
 
 
+def preparation_gateway():
+    return PreparationGateway(ColabPreparationClient(COLAB_CLI, COLAB_SESSION),
+                              ROOT / 'preparation', ROOT / 'output')
+
+
 def expected_native():
     return {'pins_sha256': sha((HERE / 'model-pins.json').read_bytes()),
             'workflow_sha256': sha(canonical(WORKFLOW))}
@@ -71,18 +78,14 @@ def probe_backend(name):
 
 
 def compute_route(preference):
-    if preference not in {'google', 'local'}:
-        raise ValueError('Choose google or local compute')
-    names = ['google', 'local'] if preference == 'google' else ['local']
-    with ThreadPoolExecutor(max_workers=2) as pool:
-        statuses = dict(zip(names, pool.map(probe_backend, names)))
-    selected = 'google' if preference == 'google' and statuses['google']['available'] else 'local'
-    available = statuses[selected]['available']
-    fallback = 'Google TRELLIS.2 is unavailable; Local was selected automatically.' if preference == 'google' and selected == 'local' else None
+    if preference != 'google':
+        raise ValueError('Google Colab is required. Local asset processing is disabled.')
+    statuses = {'google': probe_backend('google')}
+    available = statuses['google']['available']
     public = {name: {key: value for key, value in status.items() if key != 'operations'} for name, status in statuses.items()}
     reason = None if available else '; '.join(name.title() + ': ' + str(status.get('reason')) for name, status in statuses.items())
-    return statuses, {'switching_supported': True, 'preferred': preference, 'selected': selected,
-        'ready': available, 'automatic_fallback': True, 'fallback_reason': fallback,
+    return statuses, {'switching_supported': True, 'preferred': 'google', 'selected': 'google',
+        'policy': 'colab-only-v1', 'ready': available, 'automatic_fallback': False, 'fallback_reason': None,
         'blocked_reason': reason, 'backends': public}
 
 
@@ -98,18 +101,17 @@ def canonical(data):
 
 def engine_manifest():
     files = {}
-    for name in ['cloud_bridge.py', 'trellis_backends.py', 'colab_worker.py', 'service.py', 'diagnose.py', 'export_node.py', 'workflow-v1.json', 'model-pins.json', 'limits.json', 'catalog.json']:
+    for name in ['cloud_bridge.py', 'trellis_backends.py', 'colab_transport.py', 'colab_worker.py', 'service.py', 'diagnose.py', 'export_node.py', 'patch_nodes.py', 'workflow-v1.json', 'model-pins.json', 'limits.json', 'catalog.json']:
         p = HERE / name
         if p.is_file():
             files[name] = sha(p.read_bytes())
     return {
-        'image_id': 'trellis2-router-v2',
+        'image_id': 'trellis2-router-colab-only-v3',
         'python': sys.version.split()[0],
         'source_hashes': files,
         'cloud_colab': True,
         'cloud_model': MODEL,
-        'local_model': MODEL,
-        'local_fallback': True
+        'local_fallback': False
     }
 
 
@@ -223,7 +225,7 @@ def execute_generation_job(job_id, plan):
             raise ValueError('Frozen body input changed.')
         statuses, compute = compute_route(plan.get('compute_preference', 'google'))
         state.update(compute=compute, attempts=state.get('attempts', []))
-        order = ['google', 'local'] if compute['preferred'] == 'google' else ['local']
+        order = ['google']
         for name in order:
             if not statuses[name]['available']:
                 continue
@@ -259,9 +261,7 @@ def execute_generation_job(job_id, plan):
                     return
                 if name == 'google':
                     state['cloud_error'] = str(error)[:1000]
-                    compute.update(selected='local', fallback_reason='Google TRELLIS.2 failed; Local was selected automatically.')
-                    # Local may have become ready while Google was generating.
-                    statuses['local'] = probe_backend('local')
+                    compute.update(ready=False, blocked_reason='Google Colab failed. Reconnect and inspect the same cloud job before retrying; local fallback is disabled.')
                 else:
                     raise
         state.update(status='waiting_worker', stage='waiting_for_trellis2', reason=compute.get('blocked_reason') or 'Waiting for a verified native TRELLIS.2 backend.')
@@ -334,6 +334,18 @@ class BridgeHandler(http.server.BaseHTTPRequestHandler):
 
         if not self.check_auth():
             return self.send_error_json(401, 'Private TRELLIS worker authentication required')
+
+        if path.startswith(('/rigging/', '/animation/')):
+            status, value = preparation_gateway().request('GET', path)
+            if isinstance(value, bytes):
+                self.send_response(status)
+                self.send_header('Content-Type', 'model/gltf-binary')
+                self.send_header('Content-Length', str(len(value)))
+                self.send_header('Cache-Control', 'private, no-store')
+                self.end_headers()
+                self.wfile.write(value)
+                return
+            return self.send_json(status, value)
 
         if path == '/operations':
             try:
@@ -412,6 +424,15 @@ class BridgeHandler(http.server.BaseHTTPRequestHandler):
             return self.send_error_json(401, 'Private TRELLIS worker authentication required')
 
         content_length = int(self.headers.get('Content-Length', 0))
+        if path.startswith(('/rigging/', '/animation/')):
+            if not 0 <= content_length <= 65536:
+                return self.send_error_json(413, 'Cloud preparation plan exceeds 64 KiB')
+            try:
+                payload = json.loads(self.rfile.read(content_length) or b'{}')
+                status, value = preparation_gateway().request('POST', path, payload)
+                return self.send_json(status, value)
+            except (ValueError, TypeError) as error:
+                return self.send_error_json(422, str(error))
         body = self.rfile.read(content_length) if content_length > 0 else b''
 
         # Reference upload: /references/{avatar_id}
@@ -530,7 +551,7 @@ class BridgeHandler(http.server.BaseHTTPRequestHandler):
 def run_bridge(port=8096):
     threading.Thread(target=recover_jobs, daemon=True).start()
     server = http.server.ThreadingHTTPServer(('0.0.0.0', port), BridgeHandler)
-    print(f'[CloudBridge] Listening on 0.0.0.0:{port} (TRELLIS.2: Google first -> native Local fallback)')
+    print(f'[CloudBridge] Listening on 0.0.0.0:{port} (Google Colab only; local fallback disabled)')
     server.serve_forever()
 
 

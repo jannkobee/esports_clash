@@ -1,0 +1,85 @@
+{
+  "date_local": "2026-10-23",
+  "owner": "/root",
+  "source_hashes": {
+    "infrastructure/avatar-evolution/asset_pipeline/tail_repair.py": "ddb73718d622139618c707ee824538fe7e003e7a26e96724b81713cbd47760ca",
+    "infrastructure/avatar-evolution/retarget_motion.py": "4980e8b548daa34c06919922e91d40c04a0e0a3f719abe31a28763bd103958b1",
+    "infrastructure/avatar-evolution/retarget-unirig.py": "03d3c8a2eddd49d851c0a4b4dcda8091ea0573ecf6fda1c947dca67dc510ed7b",
+    "infrastructure/avatar-evolution/qualify-prepared.py": "0769a43f37a92019ef657b8eb79ae2b10b187700c3c23e02b36fa4d15939e30d",
+    "infrastructure/avatar-evolution/test_tail_repair.py": "fa2d48d900e2725035e05c73bfec5bf91a0d3f09025dda6dd3723e61bef5c250",
+    "infrastructure/avatar-evolution/review-retained-candidate.mjs": "730ce14ae641058b1aea2e00bde135216642edd0fb28f4021ce0f6543a0487a7",
+    "infrastructure/tokenrig/diagnose_retarget.py": "4c1c37f09373112b163a9ea798195671abb42ae582ecd2a7d3ca3f8e59bcd554"
+  },
+  "anatomy": {
+    "description": "slender athletic adult-proportioned monkey humanoid biped with slightly simian ears and one long curved anatomical monkey tail clearly separated from the torso and legs",
+    "manifest_sha256": "8b1584c5b5d8c3fa080864d4ab932b4099932cad7c97bface2a5a28a5e094ce2"
+  },
+  "candidate": {
+    "path": "repaired-base.glb",
+    "sha256": "fd9ba0b04e7d4d0da31b8f6ec59e9515b461479bdc2eb8c67e37e1fc80edd11e",
+    "qualified": false,
+    "publication_eligible": false,
+    "production_default_changed": false,
+    "gpu_inference_started": false
+  },
+  "checks": {
+    "new_blender_tests_passed": 9,
+    "existing_blender_rig_tests_passed": 4,
+    "existing_natural_motion_tests_passed": 5,
+    "existing_pipeline_motion_tests_passed": 9,
+    "linux_asset_tests_passed": 65,
+    "linux_asset_tests_skipped": 1,
+    "syntax": "passed",
+    "diff_check": "passed",
+    "game_build": "not repeated; no web/gameplay source changed",
+    "browser_technical_passed": true,
+    "browser_gameplay_passed": true,
+    "views": 68,
+    "gltf_errors": 0,
+    "gltf_warnings": 1
+  },
+  "deformation": {
+    "frames": 50,
+    "sampling_policy": "ten-clips-five-phases-v1",
+    "severely_stretched_edges": 0,
+    "peak_intersections": {
+      "Attack": 764,
+      "Cast": 0,
+      "Death": 0,
+      "Hit": 0,
+      "Idle": 0,
+      "Run": 65,
+      "Strafe": 423,
+      "TurnLeft": 447,
+      "TurnRight": 40,
+      "Walk": 172
+    },
+    "status": "WARNING",
+    "warnings": [
+      "Self-intersection telemetry elevated during Attack",
+      "Self-intersection telemetry elevated during Strafe",
+      "Self-intersection telemetry elevated during TurnLeft"
+    ]
+  },
+  "quality": {
+    "hard_pass": false,
+    "failure_classes": [
+      "intersection_growth",
+      "foot_drift",
+      "hand_jump",
+      "render_regression"
+    ],
+    "missing_measurements": [],
+    "candidate_foot_drift": 4.509921522455015,
+    "baseline_foot_drift": 2.755808097816925,
+    "candidate_hand_jump": 1.6221256550654877,
+    "baseline_hand_jump": 0.9804960922828615
+  },
+  "limits": [
+    "Sampled motion, not exhaustive qualification",
+    "Single clear pelvic tail only; no automatic arbitrary-creature support",
+    "Tail follows pelvis without expressive animation",
+    "Death still ends upright; shoulder/contact/blend quality remains unresolved",
+    "No outfit fitting, API preparation, inference provider deployment or publication"
+  ]
+}

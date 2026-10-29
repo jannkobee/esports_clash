@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_earthshaker",
+  "component_id": "survey_compass",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Floor-level surveying compass",
+  "attachment": "ground device",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Dolm Runesunder. Attached drawing is design reference only. One complete floor-level surveying compass, broad brass dial, circular frame and pointed pendulum beneath. No titan, hands, body, clothing, hammers or floor. Preserve pictured design, palette, materials and proportions. Complete subject fits well inside central60% of frame with generous transparent margin every side. Neutral product lighting, crisp physical geometry, three-quarter view unless rest view specified. Genuine transparent background. No floor, cast shadows, backdrop glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "dolm-runesunder",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/dolm-runesunder.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/dolm-runesunder-survey_compass.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-bbdc7ada-5dba-4401-a28d-6c8e2e3cce35.png"
+}

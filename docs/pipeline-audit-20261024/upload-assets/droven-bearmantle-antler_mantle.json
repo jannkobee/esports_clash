@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_sylla",
+  "component_id": "antler_mantle",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Patched antlered mantle and warden outfit",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical reconstruction reference for Droven Bearmantle. Attached illustration is design reference only. ONLY the empty green-brown patched antlered mantle and warden clothing set, belt, trousers and boots, including the mantle's mounted antler ornaments. No body, skin, hair, beard, staff, tortoise, cargo or living animal anatomy. Garments are empty and supported invisibly in a neutral symmetrical wide A pose, with empty neck and joint openings. Even neutral studio lighting, crisp physical geometry. Three-quarter view unless rest pose specified. Complete named asset inside central 70 percent of frame, generous clear TRANSPARENT margin on all sides. Genuine transparent background. No floor, cast shadows, glow backdrop, text, frames, labels, logo, unrelated equipment or extra subjects.",
+  "reference_purpose": "reconstruction",
+  "slug": "droven-bearmantle",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/droven-bearmantle.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/droven-bearmantle-antler_mantle.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-1ddbf9e2-ab3c-4ee6-a7ed-4e8d56b86f58.png"
+}

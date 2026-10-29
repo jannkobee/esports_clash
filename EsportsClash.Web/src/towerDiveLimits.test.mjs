@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { NEXUS_X, WELL_X } from './arenaLayout.ts';
 import { assessTowerDiveRisk, getTurretPerimeterHoldPoint, isBushSafeFromTowers } from './towerDiveRules.ts';
 
 const champion = (role = 'Fighter') => ({ name: 'Valen', primaryRole: role, ad: 160, aspd: 1,
@@ -30,11 +31,11 @@ test('normal terrain-aware retreat helpers still reject turret death-trap bushes
 });
 
 test('Nexus multishot risk is not divided among five attackers or hidden behind minions', () => {
-  const nexus = { ...tower, id: 'r_nexus', type: 'nexus', x: 2365, range: 190, ad: 85 };
-  const input = { diver: unit({ x: 2300 }), target: unit({ team: 'red', x: 2370 }), tower: nexus,
+  const nexus = { ...tower, id: 'r_nexus', type: 'nexus', x: NEXUS_X.red, range: 190, ad: 85 };
+  const input = { diver: unit({ x: NEXUS_X.red - 65 }), target: unit({ team: 'red', x: NEXUS_X.red + 5 }), tower: nexus,
     alliedMinionsUnderTower: 0, defendersUnderTower: 1, attackersUnderTower: 5, takingTurretFire: false };
   const a = assessTowerDiveRisk(input);
   const b = assessTowerDiveRisk({ ...input, alliedMinionsUnderTower: 20 });
   assert.equal(a.expectedSurvivalSeconds, b.expectedSurvivalSeconds);
-  assert.equal(assessTowerDiveRisk({ ...input, target: unit({ team: 'red', x: 2520 }) }).shouldCommit, false);
+  assert.equal(assessTowerDiveRisk({ ...input, target: unit({ team: 'red', x: WELL_X.red - 20 }) }).shouldCommit, false);
 });

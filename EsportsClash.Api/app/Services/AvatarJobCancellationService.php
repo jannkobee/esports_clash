@@ -26,7 +26,11 @@ class AvatarJobCancellationService {
         if($type==='preparation'&&($run->plan['provider']??null)==='unirig'&&empty($run->plan['rig_reuse'])){
             try{$rig=$service->worker()->post(rtrim(config('avatars.unirig_url'),'/').'/jobs/'.$id.'/cancel')->throw()->json();if(($rig['status']??null)!=='cancelled')throw new \RuntimeException('UniRig stop pending');}catch(\Throwable $error){$rigError=$error;}
         }
-        $response=$service->worker()->post($service->endpoint($path.$id.'/cancel'));
+        if($type==='preparation'&&($run->plan['profile']??null)===AvatarCloudRawRigService::PROFILE){
+            $cloud=app(AvatarCloudRawRigService::class);
+            $response=$cloud->worker()->post($cloud->endpoint('/jobs/'.$id.'/cancel'));
+            if($response->json('id')!==$id)throw new \RuntimeException('Cloud cancellation execution identity mismatch.');
+        }else $response=$service->worker()->post($service->endpoint($path.$id.'/cancel'));
         // 404 is NOT an acknowledgement: a stale worker may lack cancellation.
         $state=$response->throw()->json();
         if(($state['status']??null)!=='cancelled')throw new \RuntimeException('Worker has not acknowledged cancellation.');

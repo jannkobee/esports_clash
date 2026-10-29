@@ -1,0 +1,1621 @@
+{
+  "id": "11332025-b597-42fd-a97f-3fb950d20219",
+  "compute": "google",
+  "source_generation_id": "26713b59-ef49-4f50-9271-35ff929c3e0d",
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "rig_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "policy": "full-surface-rest-seams-v2",
+  "started_unix": 1792947371.445673,
+  "poses": [
+    {
+      "joint": "UpperArmL",
+      "bone": "bone_26",
+      "degrees": 15,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.3857177891860102,
+        "largest_extension_to_height": 0.001932590942462515,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmL",
+      "bone": "bone_26",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.313019243271038,
+        "largest_extension_to_height": 0.006561898633861539,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmL",
+      "bone": "bone_26",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 384,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_26",
+            "bone_26"
+          ],
+          "intersections": 135
+        },
+        {
+          "regions": [
+            "bone_26",
+            "bone_3"
+          ],
+          "intersections": 106
+        },
+        {
+          "regions": [
+            "bone_25",
+            "bone_26"
+          ],
+          "intersections": 81
+        },
+        {
+          "regions": [
+            "bone_2",
+            "bone_26"
+          ],
+          "intersections": 62
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 3.9640143699960704,
+        "largest_extension_to_height": 0.016944708458946856,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmR",
+      "bone": "bone_7",
+      "degrees": 15,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.1572515060233353,
+        "largest_extension_to_height": 0.0019875011793248254,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmR",
+      "bone": "bone_7",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.6111619237955845,
+        "largest_extension_to_height": 0.006435768728579749,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmR",
+      "bone": "bone_7",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 368,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_3",
+            "bone_7"
+          ],
+          "intersections": 282
+        },
+        {
+          "regions": [
+            "bone_7",
+            "bone_7"
+          ],
+          "intersections": 31
+        },
+        {
+          "regions": [
+            "bone_6",
+            "bone_7"
+          ],
+          "intersections": 30
+        },
+        {
+          "regions": [
+            "bone_2",
+            "bone_7"
+          ],
+          "intersections": 23
+        },
+        {
+          "regions": [
+            "bone_3",
+            "bone_3"
+          ],
+          "intersections": 2
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.3975357602487306,
+        "largest_extension_to_height": 0.012796830342794743,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmL",
+      "bone": "bone_27",
+      "degrees": 15,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.1175081694705478,
+        "largest_extension_to_height": 0.0010883658760821417,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmL",
+      "bone": "bone_27",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.3245173567084811,
+        "largest_extension_to_height": 0.003018592246434753,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmL",
+      "bone": "bone_27",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.5117502393814635,
+        "largest_extension_to_height": 0.004676502782392299,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmR",
+      "bone": "bone_8",
+      "degrees": 15,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.0891545354882513,
+        "largest_extension_to_height": 0.0008476468578251016,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmR",
+      "bone": "bone_8",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.2275814990756135,
+        "largest_extension_to_height": 0.0021950945344367057,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmR",
+      "bone": "bone_8",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.3081843771464825,
+        "largest_extension_to_height": 0.004006331216327113,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighL",
+      "bone": "bone_48",
+      "degrees": 15,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.5409800104834956,
+        "largest_extension_to_height": 0.004191697652307191,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighL",
+      "bone": "bone_48",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.796881638987849,
+        "largest_extension_to_height": 0.013144083222740013,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighL",
+      "bone": "bone_48",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 516,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_0",
+            "bone_48"
+          ],
+          "intersections": 338
+        },
+        {
+          "regions": [
+            "bone_48",
+            "bone_48"
+          ],
+          "intersections": 74
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_0"
+          ],
+          "intersections": 59
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 20
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_48"
+          ],
+          "intersections": 17
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_44"
+          ],
+          "intersections": 8
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.528348350525708,
+        "largest_extension_to_height": 0.025829116961775173,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighR",
+      "bone": "bone_44",
+      "degrees": 15,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.4698143467107896,
+        "largest_extension_to_height": 0.0028683835753879334,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighR",
+      "bone": "bone_44",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.5489118365386774,
+        "largest_extension_to_height": 0.009704021086726076,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighR",
+      "bone": "bone_44",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 555,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_0",
+            "bone_44"
+          ],
+          "intersections": 418
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 83
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_0"
+          ],
+          "intersections": 52
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_48"
+          ],
+          "intersections": 1
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_48"
+          ],
+          "intersections": 1
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.2749865331295895,
+        "largest_extension_to_height": 0.02108597008432907,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfL",
+      "bone": "bone_49",
+      "degrees": 15,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.2750506910975603,
+        "largest_extension_to_height": 0.002232056474328164,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfL",
+      "bone": "bone_49",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.7743060221872808,
+        "largest_extension_to_height": 0.006129066837127739,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfL",
+      "bone": "bone_49",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 94,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_48",
+            "bone_49"
+          ],
+          "intersections": 81
+        },
+        {
+          "regions": [
+            "bone_49",
+            "bone_49"
+          ],
+          "intersections": 10
+        },
+        {
+          "regions": [
+            "bone_48",
+            "bone_48"
+          ],
+          "intersections": 3
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.3073370879606028,
+        "largest_extension_to_height": 0.010047217962295496,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfR",
+      "bone": "bone_45",
+      "degrees": 15,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.308295106240814,
+        "largest_extension_to_height": 0.0031552117890746275,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfR",
+      "bone": "bone_45",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.8598707120893896,
+        "largest_extension_to_height": 0.008394762435634692,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfR",
+      "bone": "bone_45",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 188,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_44",
+            "bone_45"
+          ],
+          "intersections": 147
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 26
+        },
+        {
+          "regions": [
+            "bone_45",
+            "bone_45"
+          ],
+          "intersections": 15
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.4468889983753415,
+        "largest_extension_to_height": 0.012818786834715665,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    }
+  ],
+  "source": {
+    "meshes": 1,
+    "rigs": 0,
+    "vertices": 18749,
+    "bounds": [
+      [
+        -0.325433611869812,
+        -0.09182623028755188,
+        -0.5012686848640442
+      ],
+      [
+        0.3254195749759674,
+        0.09004136174917221,
+        0.501666784286499
+      ]
+    ],
+    "finite": true,
+    "self_intersections": 0,
+    "triangles_checked": 37576,
+    "top_regions": []
+  },
+  "bones": [
+    {
+      "name": "bone_0",
+      "parent": null,
+      "position": [
+        0.0019518398912623525,
+        0.01673729158937931,
+        0.10401853919029236
+      ],
+      "tail": [
+        0.0019518398912623525,
+        0.01673729345202446,
+        0.15119411051273346
+      ]
+    },
+    {
+      "name": "bone_1",
+      "parent": "bone_0",
+      "position": [
+        0.0019518400076776743,
+        0.020655011758208275,
+        0.15103115141391754
+      ],
+      "tail": [
+        0.0019518400076776743,
+        0.025221502408385277,
+        0.20582900941371918
+      ]
+    },
+    {
+      "name": "bone_2",
+      "parent": "bone_1",
+      "position": [
+        0.0019518398912623525,
+        0.02457273006439209,
+        0.20587919652462006
+      ],
+      "tail": [
+        0.0019518398912623525,
+        0.029047450050711632,
+        0.2685253620147705
+      ]
+    },
+    {
+      "name": "bone_3",
+      "parent": "bone_2",
+      "position": [
+        0.0019518396584317088,
+        0.02849043905735016,
+        0.2685626447200775
+      ],
+      "tail": [
+        0.0019518396584317088,
+        0.03254302963614464,
+        0.3334041237831116
+      ]
+    },
+    {
+      "name": "bone_4",
+      "parent": "bone_3",
+      "position": [
+        0.0019518397748470306,
+        0.032408155500888824,
+        0.3390815556049347
+      ],
+      "tail": [
+        0.0019518397748470306,
+        0.034837815910577774,
+        0.38281553983688354
+      ]
+    },
+    {
+      "name": "bone_5",
+      "parent": "bone_4",
+      "position": [
+        0.0019518397748470306,
+        0.024572715163230896,
+        0.3821764588356018
+      ],
+      "tail": [
+        0.0019518397748470306,
+        0.01673726737499237,
+        0.42527133226394653
+      ]
+    },
+    {
+      "name": "bone_6",
+      "parent": "bone_3",
+      "position": [
+        0.029375853016972542,
+        0.03240816295146942,
+        0.3273284137248993
+      ],
+      "tail": [
+        0.05396033078432083,
+        0.03592022880911827,
+        0.38000941276550293
+      ]
+    },
+    {
+      "name": "bone_7",
+      "parent": "bone_6",
+      "position": [
+        0.08422389626502991,
+        0.03240816295146942,
+        0.30773982405662537
+      ],
+      "tail": [
+        0.21953271329402924,
+        0.03240816667675972,
+        0.25941532850265503
+      ]
+    },
+    {
+      "name": "bone_8",
+      "parent": "bone_7",
+      "position": [
+        0.1664959192276001,
+        0.024572724476456642,
+        0.1902083307504654
+      ],
+      "tail": [
+        0.2584720253944397,
+        0.015813104808330536,
+        0.0588139146566391
+      ]
+    },
+    {
+      "name": "bone_9",
+      "parent": "bone_8",
+      "position": [
+        0.2605210840702057,
+        -0.022439830005168915,
+        0.06875912845134735
+      ],
+      "tail": [
+        0.27369508147239685,
+        -0.029026823118329048,
+        0.051742710173130035
+      ]
+    },
+    {
+      "name": "bone_10",
+      "parent": "bone_9",
+      "position": [
+        0.26443883776664734,
+        -0.03811071440577507,
+        0.05308828130364418
+      ],
+      "tail": [
+        0.26784878969192505,
+        -0.051750458776950836,
+        0.03944854438304901
+      ]
+    },
+    {
+      "name": "bone_11",
+      "parent": "bone_10",
+      "position": [
+        0.2644388973712921,
+        -0.04986386001110077,
+        0.03741740435361862
+      ],
+      "tail": [
+        0.2644388973712921,
+        -0.06184975057840347,
+        0.021436216309666634
+      ]
+    },
+    {
+      "name": "bone_12",
+      "parent": "bone_11",
+      "position": [
+        0.2683565616607666,
+        -0.06161698326468468,
+        0.021746547892689705
+      ],
+      "tail": [
+        0.2722742557525635,
+        -0.07337012141942978,
+        0.006075700744986534
+      ]
+    },
+    {
+      "name": "bone_13",
+      "parent": "bone_9",
+      "position": [
+        0.2918627858161926,
+        -0.05378155782818794,
+        0.02958196960389614
+      ],
+      "tail": [
+        0.29962918162345886,
+        -0.061547957360744476,
+        0.01987396739423275
+      ]
+    },
+    {
+      "name": "bone_14",
+      "parent": "bone_13",
+      "position": [
+        0.29969826340675354,
+        -0.05769927054643631,
+        0.017828840762376785
+      ],
+      "tail": [
+        0.30753371119499207,
+        -0.06161697953939438,
+        0.006075700744986534
+      ]
+    },
+    {
+      "name": "bone_15",
+      "parent": "bone_14",
+      "position": [
+        0.3075336515903473,
+        -0.06161697208881378,
+        0.0060756755992770195
+      ],
+      "tail": [
+        0.3153690695762634,
+        -0.06553468108177185,
+        -0.005677474662661552
+      ]
+    },
+    {
+      "name": "bone_16",
+      "parent": "bone_9",
+      "position": [
+        0.2957805097103119,
+        -0.04202836751937866,
+        0.029581980779767036
+      ],
+      "tail": [
+        0.3064887821674347,
+        -0.04797740280628204,
+        0.017683908343315125
+      ]
+    },
+    {
+      "name": "bone_17",
+      "parent": "bone_16",
+      "position": [
+        0.3075336515903473,
+        -0.04594613239169121,
+        0.017828810960054398
+      ],
+      "tail": [
+        0.31762248277664185,
+        -0.049309078603982925,
+        0.00773996114730835
+      ]
+    },
+    {
+      "name": "bone_18",
+      "parent": "bone_17",
+      "position": [
+        0.3153691291809082,
+        -0.04986383393406868,
+        0.006075678858906031
+      ],
+      "tail": [
+        0.32320457696914673,
+        -0.05378154665231705,
+        -0.005677467677742243
+      ]
+    },
+    {
+      "name": "bone_19",
+      "parent": "bone_9",
+      "position": [
+        0.29969826340675354,
+        -0.03027527406811714,
+        0.029581986367702484
+      ],
+      "tail": [
+        0.3099614381790161,
+        -0.032327909022569656,
+        0.019318807870149612
+      ]
+    },
+    {
+      "name": "bone_20",
+      "parent": "bone_19",
+      "position": [
+        0.3075336813926697,
+        -0.03419297933578491,
+        0.01782883331179619
+      ],
+      "tail": [
+        0.3153690993785858,
+        -0.03811069577932358,
+        0.006075688637793064
+      ]
+    },
+    {
+      "name": "bone_21",
+      "parent": "bone_20",
+      "position": [
+        0.3153691291809082,
+        -0.03811066225171089,
+        0.0060756937600672245
+      ],
+      "tail": [
+        0.32320457696914673,
+        -0.04202837124466896,
+        -0.005677441600710154
+      ]
+    },
+    {
+      "name": "bone_22",
+      "parent": "bone_9",
+      "position": [
+        0.29969826340675354,
+        -0.018522104248404503,
+        0.029581991955637932
+      ],
+      "tail": [
+        0.310037761926651,
+        -0.017488151788711548,
+        0.01924249157309532
+      ]
+    },
+    {
+      "name": "bone_23",
+      "parent": "bone_22",
+      "position": [
+        0.3075336515903473,
+        -0.0224398635327816,
+        0.0178288072347641
+      ],
+      "tail": [
+        0.312216192483902,
+        -0.024781139567494392,
+        0.010804973542690277
+      ]
+    },
+    {
+      "name": "bone_24",
+      "parent": "bone_23",
+      "position": [
+        0.31145134568214417,
+        -0.022439822554588318,
+        0.009993397630751133
+      ],
+      "tail": [
+        0.3153690695762634,
+        -0.022439822554588318,
+        0.0021579889580607414
+      ]
+    },
+    {
+      "name": "bone_25",
+      "parent": "bone_3",
+      "position": [
+        -0.02547217346727848,
+        0.03240816295146942,
+        0.3273283839225769
+      ],
+      "tail": [
+        -0.05005665868520737,
+        0.03592022880911827,
+        0.38000941276550293
+      ]
+    },
+    {
+      "name": "bone_26",
+      "parent": "bone_25",
+      "position": [
+        -0.08032021671533585,
+        0.03240816667675972,
+        0.307739794254303
+      ],
+      "tail": [
+        -0.21562901139259338,
+        0.03240817040205002,
+        0.25941529870033264
+      ]
+    },
+    {
+      "name": "bone_27",
+      "parent": "bone_26",
+      "position": [
+        -0.16259223222732544,
+        0.024572743102908134,
+        0.1902083456516266
+      ],
+      "tail": [
+        -0.2545683681964874,
+        0.015813108533620834,
+        0.05881395936012268
+      ]
+    },
+    {
+      "name": "bone_28",
+      "parent": "bone_27",
+      "position": [
+        -0.25661736726760864,
+        -0.022439852356910706,
+        0.06875916570425034
+      ],
+      "tail": [
+        -0.26959019899368286,
+        -0.028926273807883263,
+        0.05200255662202835
+      ]
+    },
+    {
+      "name": "bone_29",
+      "parent": "bone_28",
+      "position": [
+        -0.2566174268722534,
+        -0.03811071440577507,
+        0.053088296204805374
+      ],
+      "tail": [
+        -0.2566174268722534,
+        -0.05223623290657997,
+        0.03896277770400047
+      ]
+    },
+    {
+      "name": "bone_30",
+      "parent": "bone_29",
+      "position": [
+        -0.26053518056869507,
+        -0.04986385628581047,
+        0.0374174490571022
+      ],
+      "tail": [
+        -0.26445290446281433,
+        -0.06161700561642647,
+        0.02174658142030239
+      ]
+    },
+    {
+      "name": "bone_31",
+      "parent": "bone_30",
+      "position": [
+        -0.26445290446281433,
+        -0.061617009341716766,
+        0.02174658700823784
+      ],
+      "tail": [
+        -0.2683706283569336,
+        -0.07337015867233276,
+        0.006075719371438026
+      ]
+    },
+    {
+      "name": "bone_32",
+      "parent": "bone_28",
+      "position": [
+        -0.28795912861824036,
+        -0.05378159135580063,
+        0.02958199568092823
+      ],
+      "tail": [
+        -0.295725554227829,
+        -0.06154799833893776,
+        0.019873984158039093
+      ]
+    },
+    {
+      "name": "bone_33",
+      "parent": "bone_32",
+      "position": [
+        -0.2957945764064789,
+        -0.0576992928981781,
+        0.017828820273280144
+      ],
+      "tail": [
+        -0.3036300241947174,
+        -0.061617013067007065,
+        0.006075665354728699
+      ]
+    },
+    {
+      "name": "bone_34",
+      "parent": "bone_33",
+      "position": [
+        -0.3036300241947174,
+        -0.06161705031991005,
+        0.0060756816528737545
+      ],
+      "tail": [
+        -0.31146544218063354,
+        -0.06553477048873901,
+        -0.005677483510226011
+      ]
+    },
+    {
+      "name": "bone_35",
+      "parent": "bone_28",
+      "position": [
+        -0.291876882314682,
+        -0.042028430849313736,
+        0.029581988230347633
+      ],
+      "tail": [
+        -0.3025851547718048,
+        -0.04797746241092682,
+        0.017683930695056915
+      ]
+    },
+    {
+      "name": "bone_36",
+      "parent": "bone_35",
+      "position": [
+        -0.3036300539970398,
+        -0.04594613239169121,
+        0.01782885193824768
+      ],
+      "tail": [
+        -0.31371888518333435,
+        -0.049309082329273224,
+        0.007740006782114506
+      ]
+    },
+    {
+      "name": "bone_37",
+      "parent": "bone_36",
+      "position": [
+        -0.31146547198295593,
+        -0.049863867461681366,
+        0.006075706798583269
+      ],
+      "tail": [
+        -0.31930091977119446,
+        -0.05378158017992973,
+        -0.005677433218806982
+      ]
+    },
+    {
+      "name": "bone_38",
+      "parent": "bone_28",
+      "position": [
+        -0.2957945168018341,
+        -0.030275283381342888,
+        0.02958201989531517
+      ],
+      "tail": [
+        -0.3060576915740967,
+        -0.03232792392373085,
+        0.019318832084536552
+      ]
+    },
+    {
+      "name": "bone_39",
+      "parent": "bone_38",
+      "position": [
+        -0.30362996459007263,
+        -0.034193024039268494,
+        0.01782887801527977
+      ],
+      "tail": [
+        -0.31146538257598877,
+        -0.038110747933387756,
+        0.006075713783502579
+      ]
+    },
+    {
+      "name": "bone_40",
+      "parent": "bone_39",
+      "position": [
+        -0.31146544218063354,
+        -0.03811071440577507,
+        0.006075725890696049
+      ],
+      "tail": [
+        -0.31930088996887207,
+        -0.042028430849313736,
+        -0.0056774308905005455
+      ]
+    },
+    {
+      "name": "bone_41",
+      "parent": "bone_28",
+      "position": [
+        -0.2957945466041565,
+        -0.018522154539823532,
+        0.029581988230347633
+      ],
+      "tail": [
+        -0.30613401532173157,
+        -0.017488211393356323,
+        0.01924252323806286
+      ]
+    },
+    {
+      "name": "bone_42",
+      "parent": "bone_41",
+      "position": [
+        -0.30362996459007263,
+        -0.022439846768975258,
+        0.01782885007560253
+      ],
+      "tail": [
+        -0.3083125352859497,
+        -0.024781137704849243,
+        0.010804983787238598
+      ]
+    },
+    {
+      "name": "bone_43",
+      "parent": "bone_42",
+      "position": [
+        -0.30754759907722473,
+        -0.022439854219555855,
+        0.009993361309170723
+      ],
+      "tail": [
+        -0.311465322971344,
+        -0.022439857944846153,
+        0.002157915383577347
+      ]
+    },
+    {
+      "name": "bone_44",
+      "parent": "bone_0",
+      "position": [
+        0.06071758642792702,
+        0.01673729158937931,
+        0.07659453898668289
+      ],
+      "tail": [
+        0.2990288734436035,
+        0.016737284138798714,
+        -0.034617453813552856
+      ]
+    },
+    {
+      "name": "bone_45",
+      "parent": "bone_44",
+      "position": [
+        0.07638844847679138,
+        0.012819556519389153,
+        -0.1858924925327301
+      ],
+      "tail": [
+        0.09172356128692627,
+        0.008985841646790504,
+        -0.44275614619255066
+      ]
+    },
+    {
+      "name": "bone_46",
+      "parent": "bone_45",
+      "position": [
+        0.11164789646863937,
+        0.024572694674134254,
+        -0.440544068813324
+      ],
+      "tail": [
+        0.1243274062871933,
+        0.02879919297993183,
+        -0.5321183204650879
+      ]
+    },
+    {
+      "name": "bone_47",
+      "parent": "bone_46",
+      "position": [
+        0.10773017257452011,
+        -0.04986392334103584,
+        -0.49539220333099365
+      ],
+      "tail": [
+        0.10381240397691727,
+        -0.12430055439472198,
+        -0.5502403378486633
+      ]
+    },
+    {
+      "name": "bone_48",
+      "parent": "bone_0",
+      "position": [
+        -0.05681389942765236,
+        0.01673729345202446,
+        0.0765945240855217
+      ],
+      "tail": [
+        -0.29512521624565125,
+        0.016737326979637146,
+        -0.03461739420890808
+      ]
+    },
+    {
+      "name": "bone_49",
+      "parent": "bone_48",
+      "position": [
+        -0.07248474657535553,
+        0.012819630093872547,
+        -0.18589243292808533
+      ],
+      "tail": [
+        -0.08778972178697586,
+        0.008993552066385746,
+        -0.44224977493286133
+      ]
+    },
+    {
+      "name": "bone_50",
+      "parent": "bone_49",
+      "position": [
+        -0.10382656008005142,
+        0.024572864174842834,
+        -0.4405440390110016
+      ],
+      "tail": [
+        -0.11511950939893723,
+        0.028807736933231354,
+        -0.5322991013526917
+      ]
+    },
+    {
+      "name": "bone_51",
+      "parent": "bone_50",
+      "position": [
+        -0.09990882873535156,
+        -0.049863673746585846,
+        -0.4953920245170593
+      ],
+      "tail": [
+        -0.09599113464355469,
+        -0.12430021911859512,
+        -0.5502400994300842
+      ]
+    }
+  ],
+  "bone_map": {
+    "Root": "avatar_control_root",
+    "Hips": "bone_0",
+    "Spine": "bone_1",
+    "Chest": "bone_3",
+    "Head": "bone_5",
+    "UpperArmR": "bone_7",
+    "ForearmR": "bone_8",
+    "HandR": "bone_9",
+    "UpperArmL": "bone_26",
+    "ForearmL": "bone_27",
+    "HandL": "bone_28",
+    "ThighR": "bone_44",
+    "CalfR": "bone_45",
+    "FootR": "bone_46",
+    "ThighL": "bone_48",
+    "CalfL": "bone_49",
+    "FootL": "bone_50"
+  },
+  "mapping_review": {
+    "method": "humanoid-topology-rest-v4",
+    "accepted": true,
+    "reasons": [],
+    "warnings": [],
+    "profile": "humanoid_unarmed",
+    "confidence": 0.943,
+    "per_bone_confidence": {
+      "Root": 0.98,
+      "Hips": 0.98,
+      "Spine": 0.95,
+      "Chest": 0.95,
+      "Head": 0.95,
+      "UpperArmR": 0.93,
+      "ForearmR": 0.93,
+      "HandR": 0.93,
+      "UpperArmL": 0.93,
+      "ForearmL": 0.93,
+      "HandL": 0.93,
+      "ThighR": 0.94,
+      "CalfR": 0.94,
+      "FootR": 0.94,
+      "ThighL": 0.94,
+      "CalfL": 0.94,
+      "FootL": 0.94
+    },
+    "symmetry": {
+      "arm_symmetry": 1.0,
+      "leg_symmetry": 0.999
+    },
+    "proportions": {
+      "arm_R_upper": 0.1637,
+      "arm_R_fore": 0.183,
+      "arm_L_upper": 0.1637,
+      "arm_L_fore": 0.183,
+      "leg_R_thigh": 0.2997,
+      "leg_R_calf": 0.2933,
+      "leg_L_thigh": 0.2997,
+      "leg_L_calf": 0.2927
+    },
+    "checks": [
+      "single root and pelvis",
+      "distinct torso/head/arm branches",
+      "opposite limb sides",
+      "leg proportions",
+      "toe-confirmed facing",
+      "17 unique joints"
+    ],
+    "bone_map": {
+      "Root": "avatar_control_root",
+      "Hips": "bone_0",
+      "Spine": "bone_1",
+      "Chest": "bone_3",
+      "Head": "bone_5",
+      "UpperArmR": "bone_7",
+      "ForearmR": "bone_8",
+      "HandR": "bone_9",
+      "UpperArmL": "bone_26",
+      "ForearmL": "bone_27",
+      "HandL": "bone_28",
+      "ThighR": "bone_44",
+      "CalfR": "bone_45",
+      "FootR": "bone_46",
+      "ThighL": "bone_48",
+      "CalfL": "bone_49",
+      "FootL": "bone_50"
+    },
+    "root_adapter": {
+      "name": "avatar_control_root",
+      "pelvis": "bone_0",
+      "native": "Root",
+      "use_deform": false
+    }
+  },
+  "weights": [
+    {
+      "mesh": "geometry_0",
+      "vertices": 23399,
+      "unweighted": 0,
+      "max_influences": 4,
+      "max_normalization_error": 1.3237877283245325e-07,
+      "finite_nonnegative": true
+    }
+  ],
+  "raw_rest": {
+    "finite": true,
+    "self_intersections": 0,
+    "triangles_checked": 37578,
+    "top_regions": []
+  },
+  "stress_artifact": {
+    "sha256": "29be129bb11edbebe72b7d0fe7ee264700bfd8cd1c72458d0e943ad8708ae5c2",
+    "bytes": 3531864
+  },
+  "status": "review_required",
+  "scope": "Controlled raw-rig bends only. No repair, retargeting, game motion or appearance qualification.",
+  "completed_unix": 1792947437.096601
+}

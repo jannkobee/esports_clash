@@ -105,7 +105,7 @@ function createTestHumanoidMesh() {
 }
 
 test('Phase 1: Humanoid character asset generation contract and prompt builders', () => {
-  assert.equal(HUMANOID_GENERATION_CONTRACT.pose, 'neutral_t_pose');
+  assert.equal(HUMANOID_GENERATION_CONTRACT.pose, 'neutral_a_pose');
   assert.ok(HUMANOID_GENERATION_CONTRACT.prohibitedFeatures.includes('merged_weapons_in_body_mesh'));
 
   const prompt = buildHumanoidCharacterPrompt({
@@ -115,8 +115,12 @@ test('Phase 1: Humanoid character asset generation contract and prompt builders'
     costume: 'Amber battle robes',
     skinColor: '#b9805d',
     hairColor: '#8f4b2c',
+    anatomy: 'broad athletic adult humanoid biped',
   });
-  assert.ok(prompt.includes('STRICT ANATOMICAL T-POSE'));
+  assert.ok(prompt.includes('STRICT ANATOMICAL A-POSE'));
+  assert.ok(!prompt.includes('Solar crest plate'));
+  assert.ok(!prompt.includes('Amber battle robes'));
+  assert.ok(!prompt.includes('#b9805d'));
   assert.ok(prompt.includes('NO MERGED WEAPONS'));
   assert.ok(prompt.includes('LEGS SEPARATED'));
 
@@ -133,6 +137,23 @@ test('Phase 1: Humanoid character asset generation contract and prompt builders'
   assert.ok(paths.characterGlbUri.includes('c_solana/character.glb'));
   assert.ok(paths.weapons.primaryGlbUri.includes('weapons/primary.glb'));
   assert.ok(paths.rig.riggedGlbUri.includes('rig/rigged-character.glb'));
+});
+
+test('A-pose arm landmarks follow lowered geometry rather than the torso slice', () => {
+  const root=createTestHumanoidMesh();
+  for(const [name,sign] of [['left_arm',1],['right_arm',-1]]) {
+    const arm=root.getObjectByName(name);
+    const pivot=new THREE.Vector3(sign*6,50,0);
+    const rotation=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),-sign*Math.PI/4);
+    arm.position.sub(pivot).applyQuaternion(rotation).add(pivot);
+    arm.quaternion.premultiply(rotation);
+  }
+  const landmarks=detectLandmarksFromGeometry(root);
+  for(const side of ['left','right']) {
+    assert.ok(landmarks[side+'_shoulder'].position[1]>landmarks[side+'_elbow'].position[1]);
+    assert.ok(landmarks[side+'_elbow'].position[1]>landmarks[side+'_wrist'].position[1]);
+    assert.ok(landmarks[side+'_wrist'].position[1]>landmarks[side+'_hand'].position[1]);
+  }
 });
 
 test('Phase 2: Auto-alignment calculates bounding box, centers, grounds feet, and estimates orientation', () => {

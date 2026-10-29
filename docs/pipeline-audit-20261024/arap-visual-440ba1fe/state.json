@@ -1,0 +1,15 @@
+{
+  "id": "440ba1fe-52c6-41a2-b21b-9b01a75ba8fd",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "inspector_installation_sha256": "9d33d91a2ec3db96f0b280f135df2cd3efdde7bb92dac02f9503abfc3792e03c",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "started_unix": 1793104159.1769838,
+  "stage": "babylon-render",
+  "exit_code": 0,
+  "report_sha256": "9c14769792ba289fe0bb719b78ed0e5733a90fb866663847f59829a28d59211e",
+  "completed_unix": 1793104303.5486505
+}

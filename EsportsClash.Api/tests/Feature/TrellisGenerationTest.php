@@ -70,8 +70,8 @@ class TrellisGenerationTest extends TestCase
         $this->actingAs(User::factory()->create())->patch($url)->assertForbidden();
         $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
         $this->patch($url,['body'=>''])->assertSessionHasErrors(['body','primary','secondary']);
-        $this->patch($url,['body'=>'Custom body brief','primary'=>'Custom sword brief','secondary'=>'Custom shield brief'])->assertSessionHasNoErrors();
-        $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('Custom body brief')->assertSee('Custom sword brief')->assertSee('Custom shield brief');
+        $this->patch($url,['body'=>'Custom body brief','outfit'=>'Custom later outfit brief','primary'=>'Custom sword brief','secondary'=>'Custom shield brief'])->assertSessionHasNoErrors();
+        $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('Custom body brief')->assertSee('Custom later outfit brief')->assertSee('Custom sword brief')->assertSee('Custom shield brief');
         $this->get(route('trellis.avatar','c_astra'))->assertOk()->assertDontSee('Custom body brief');
         $this->patch(route('trellis.prompts','unknown'),['body'=>'a','primary'=>'b','secondary'=>'c'])->assertNotFound();
         $this->assertSame(0,TrellisGeneration::count()); Queue::assertNothingPushed();
@@ -83,14 +83,62 @@ class TrellisGenerationTest extends TestCase
         $design=\App\Models\ManagedContent::create(['kind'=>'avatar','source_id'=>'c_solana','name'=>'Dawnna draft','payload'=>['designBrief'=>['appearancePrompt'=>'Amber armor with a sun crest']]]);
         $url=route('trellis.avatar',['c_solana','design'=>$design->id]);
         $response=$this->get($url)->assertOk()->assertSee('Amber armor with a sun crest')->assertSee('data-imported-brief',false);
-        preg_match_all('/<textarea[^>]*name="(body|primary|secondary)"[^>]*>(.*?)<\/textarea>/s',$response->getContent(),$matches,PREG_SET_ORDER);
+        preg_match_all('/<textarea[^>]*name="(body|outfit|primary|secondary)"[^>]*>(.*?)<\/textarea>/s',$response->getContent(),$matches,PREG_SET_ORDER);
         $prompts=[];
         foreach ($matches as $match) $prompts[$match[1]]=html_entity_decode($match[2],ENT_QUOTES|ENT_HTML5,'UTF-8');
-        $this->assertCount(3,$prompts);
+        $this->assertCount(4,$prompts);
+        $this->assertStringNotContainsString('Amber armor with a sun crest',$prompts['body']);
+        $this->assertStringContainsString('Amber armor with a sun crest',$prompts['outfit']);
         $this->patch(route('trellis.prompts','c_solana'),$prompts)->assertSessionHasNoErrors();
         $this->get($url)->assertOk()->assertDontSee('data-imported-brief',false);
         $this->get(route('trellis.avatar',['c_astra','design'=>$design->id]))->assertNotFound();
         $this->assertSame(0,TrellisGeneration::count()); Queue::assertNothingPushed();
+    }
+    public function test_all_roster_base_prompts_keep_costume_and_identity_in_the_later_appearance_stage(): void
+    {
+        $service=app(\App\Services\AvatarAssetPromptService::class);
+        $catalog=app(TrellisGenerationService::class)->catalog();
+        $anatomy=json_decode(file_get_contents(resource_path('avatars/base-anatomy.json')),true,flags:JSON_THROW_ON_ERROR);
+        $this->assertCount(45,$catalog);
+        $this->assertEqualsCanonicalizing(array_column($catalog,'id'),array_keys($anatomy));
+        foreach($catalog as $avatar){
+            $avatar['name']='COSTUME_MARKER';
+            foreach(['silhouette','costume','hair','skin','signature']as $key)$avatar['design'][$key]='COSTUME_MARKER';
+            $prompts=$service->defaults($avatar,[]);
+            $this->assertCount(4,$prompts);
+            $this->assertStringNotContainsString('COSTUME_MARKER',$prompts['body']);
+            $this->assertStringContainsString('COSTUME_MARKER',$prompts['outfit']);
+            $this->assertStringContainsString('Neutral matte light-gray',$prompts['body']);
+            if(($anatomy[$avatar['id']]['pose']??'biped')==='biped'){
+                $this->assertStringContainsString('45 degrees down and outward',$prompts['body']);
+                $this->assertStringContainsString('palms facing down',$prompts['body']);
+            }else{
+                $this->assertStringContainsString('Do not invent human limbs',$prompts['body']);
+                $this->assertStringNotContainsString('Straight legs slightly apart',$prompts['body']);
+            }
+        }
+        foreach(['c_wukong_lol','c_monkeyking_dota']as $id)$this->assertStringContainsString('tail',$anatomy[$id]['description']);
+        $this->assertStringContainsString('nine separate',$anatomy['c_kyumi']['description']);
+        $this->assertStringContainsString('four anatomical',$anatomy['c_puck']['description']);
+        $this->assertStringContainsString('separate anatomical candidate',$anatomy['c_batrider']['component_note']);
+        $this->assertStringContainsString('separate mechanical asset',$anatomy['c_skybreaker']['component_note']);
+    }
+    public function test_legacy_body_briefs_are_retained_without_overriding_the_base_contract_and_old_clients_keep_outfits(): void
+    {
+        $service=app(\App\Services\AvatarAssetPromptService::class);
+        $avatar=collect(app(TrellisGenerationService::class)->catalog())->firstWhere('id','c_wukong_lol');
+        $dir=storage_path('app/avatars/prompts');\Illuminate\Support\Facades\File::ensureDirectoryExists($dir);
+        file_put_contents($dir.'/c_wukong_lol.json',json_encode(['body'=>'Legacy armored T-pose','primary'=>'Old staff','secondary'=>'Old offhand']));
+        $before=$service->prompts($avatar,[]);
+        $this->assertStringContainsString('45 degrees down and outward',$before['values']['body']);
+        $this->assertSame('Legacy armored T-pose',$before['legacy_body']);
+        $this->assertSame('Old staff',$before['values']['primary']);
+        $service->save($avatar['id'],['body'=>'New base','outfit'=>'Later fitted costume','primary'=>'Staff','secondary'=>'None'],'test');
+        $service->save($avatar['id'],['body'=>'Updated base','primary'=>'Updated staff','secondary'=>'None'],'test');
+        $after=$service->prompts($avatar,[]);
+        $this->assertSame('Updated base',$after['values']['body']);
+        $this->assertSame('Later fitted costume',$after['values']['outfit']);
+        $this->assertSame('Legacy armored T-pose',$after['legacy_body']);
     }
     public function test_both_weapon_slots_support_upload_edit_replace_and_confirmed_removal(): void
     {
@@ -193,7 +241,7 @@ class TrellisGenerationTest extends TestCase
         $service=app(TrellisGenerationService::class);
         $this->assertArrayNotHasKey('c_solana',$service->references($ops));
         $this->assertTrue($service->currentReference('c_solana')['is_legacy']);
-        $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('Legacy concept')->assertSee('Replace it with a clean T-pose body');
+        $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('Legacy concept')->assertSee('Replace it with a clean A-pose base body');
         $this->post(route('trellis.start'),['avatar_id'=>'c_solana','seed'=>1])->assertSessionHasErrors('avatar_id');
         Queue::assertNothingPushed();
     }
@@ -260,7 +308,7 @@ class TrellisGenerationTest extends TestCase
         AvatarVisualRelease::create(['avatar_id'=>'c_invoker','variant'=>'default','version'=>2,'run_id'=>$prep->id,'candidate_id'=>'candidate-01','file'=>'candidate-01.glb','sha256'=>str_repeat('a',64),'source_sha256'=>str_repeat('b',64),'approved_by'=>'test','active'=>false,'validation'=>[]]);
         $this->delete(route('trellis.destroy-model',$run),['confirm_delete'=>1])->assertSessionHasErrors('model');Http::assertNothingSent();
     }
-    private function operations():array{return ['provider'=>'trellis2-gguf','generation_model'=>'TRELLIS.2-4B','active'=>null,'models'=>['ready'=>true],
+    private function operations():array{return ['provider'=>'google-colab','generation_model'=>'TRELLIS.2-4B','active'=>null,'models'=>['ready'=>true],
         'hardware'=>['gpu'=>'Fixture GPU','gpu_free_mib'=>9000],'references'=>['c_invoker'=>['sha256'=>str_repeat('a',64),'provider'=>'imagegen'],'c_solana'=>['sha256'=>str_repeat('b',64),'provider'=>'imagegen']],...array_fill_keys(['reference_sha256','workflow_sha256','pins_sha256','limits_sha256','engine_sha256'],str_repeat('a',64))];}
     public function test_generation_routes_require_owner_access():void
     {
@@ -279,15 +327,15 @@ class TrellisGenerationTest extends TestCase
         $this->patch($url,['compute_preference'=>'remote-code'])->assertSessionHasErrors('compute_preference');
         $service=app(TrellisGenerationService::class);
         $this->assertSame('google',$service->computePreference());
-        $this->patch($url,['compute_preference'=>'local'])->assertSessionHasNoErrors();
-        $this->assertSame('local',$service->computePreference());
-        $this->get(route('trellis.index'))->assertOk()->assertSee('Save compute preference')->assertSee('value="local" selected',false);
+        $this->patch($url,['compute_preference'=>'local'])->assertSessionHasErrors('compute_preference');
+        $this->assertSame('google',$service->computePreference());
+        $this->get(route('trellis.index'))->assertOk()->assertSee('Save compute preference')->assertDontSee('value="local"',false);
         $this->get(route('trellis.avatar','c_solana'))->assertOk()->assertSee('Generation compute');
         $this->patch($url,['compute_preference'=>'google'])->assertSessionHasNoErrors();
         $this->assertSame('google',$service->computePreference());
         $this->assertSame(0,TrellisGeneration::count()); Queue::assertNothingPushed();
     }
-    public function test_hybrid_jobs_freeze_compute_and_report_actual_fallback(): void
+    public function test_colab_jobs_reject_fallback_but_preserve_historical_evidence(): void
     {
         Queue::fake();
         $ops=$this->operations();
@@ -295,15 +343,11 @@ class TrellisGenerationTest extends TestCase
         $ops['compute']=['switching_supported'=>true,'ready'=>true,'selected'=>'local','preferred'=>'google','fallback_reason'=>'Google unavailable; using Local.'];
         Http::fake(['*/operations'=>Http::response($ops)]);
         $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
-        $this->post(route('trellis.start'),['avatar_id'=>'c_invoker'])->assertSessionHasNoErrors();
-        $first=TrellisGeneration::firstOrFail();
-        $this->assertSame('google',$first->plan['compute_preference']);
+        $this->post(route('trellis.start'),['avatar_id'=>'c_invoker'])->assertSessionHasErrors('provider');
+        $this->assertSame(0,TrellisGeneration::count());
         Http::assertSent(fn($request)=>$request->hasHeader('X-Asset-Compute-Preference','google'));
-        $this->patch(route('trellis.compute'),['compute_preference'=>'local'])->assertSessionHasNoErrors();
-        $this->post(route('trellis.start'),['avatar_id'=>'c_solana'])->assertSessionHasNoErrors();
-        $this->assertSame('local',TrellisGeneration::where('avatar_id','c_solana')->firstOrFail()->plan['compute_preference']);
-        $this->assertSame('google',$first->fresh()->plan['compute_preference']);
-        $first->update(['status'=>'generated_unqualified','state'=>['provider'=>'trellis2-gguf','compute'=>$ops['compute']]]);
+        Queue::assertNothingPushed();
+        TrellisGeneration::create(['id'=>(string)Str::uuid(),'avatar_id'=>'c_invoker','plan'=>['compute_preference'=>'google'],'status'=>'generated_unqualified','state'=>['provider'=>'trellis2-gguf','compute'=>$ops['compute']]]);
         $this->get(route('trellis.live'))->assertOk()->assertSee('Google unavailable; using Local.')->assertSee('Used:');
         $this->assertSame(0,AvatarVisualRelease::count());
     }
@@ -318,33 +362,35 @@ class TrellisGenerationTest extends TestCase
         $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('3D Generation')->assertSee('Not submitted yet');
         $this->get('/evolution/ml/reports')->assertOk()->assertDontSee('generation-card');
     }
-    public function test_owner_queue_admits_google_and_local_native_trellis_providers():void
+    public function test_owner_queue_admits_google_and_rejects_local_native_trellis():void
     {
         Queue::fake();
         $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
 
         // Google Colab
         $colabOps = array_merge($this->operations(), ['provider' => 'google-colab', 'provider_label' => 'Google Colab (Tesla T4)']);
-        Http::fake(['*/operations'=>Http::response($colabOps)]);
+        Http::fake(['*/operations'=>function()use(&$colabOps){return Http::response($colabOps);}]);
         $this->post('/evolution/avatars/trellis',['seed'=>51,'avatar_id'=>'c_solana'])->assertRedirect(route('trellis.index'));
         $run=TrellisGeneration::where('avatar_id','c_solana')->firstOrFail();
         $this->assertSame('queued',$run->status);
 
         // Native Local fallback
         $localOps = array_merge($this->operations(), ['provider' => 'trellis2-gguf', 'provider_label' => 'Local / TRELLIS.2']);
-        Http::fake(['*/operations'=>Http::response($localOps)]);
-        $this->post('/evolution/avatars/trellis',['seed'=>52,'avatar_id'=>'c_invoker'])->assertRedirect(route('trellis.index'));
-        $run2=TrellisGeneration::where('avatar_id','c_invoker')->firstOrFail();
-        $this->assertSame('queued',$run2->status);
+        $colabOps=$localOps;
+        $this->post('/evolution/avatars/trellis',['seed'=>52,'avatar_id'=>'c_invoker'])->assertSessionHasErrors('provider');
+        $this->assertFalse(TrellisGeneration::where('avatar_id','c_invoker')->exists());
     }
     public function test_unready_or_substitute_generators_cannot_queue_a_new_source(): void
     {
         Queue::fake();
         $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
+        // Http::fake merges URL callbacks; keep one callback so each loop
+        // iteration and the final status page see the current backend state.
+        $ops=[];
+        Http::fake(['*/operations'=>function()use(&$ops){return Http::response($ops);}]);
         foreach ([['provider'=>'local-procedural'],['provider'=>'google-colab','generation_model'=>'openai/shap-e-img2img'],
             ['provider'=>'trellis2-router','compute'=>['switching_supported'=>true,'ready'=>false,'selected'=>'local','blocked_reason'=>'Native TRELLIS.2 checkpoints are missing.']]] as $override) {
             $ops=array_replace($this->operations(),$override);
-            Http::fake(['*/operations'=>Http::response($ops)]);
             $this->post(route('trellis.start'),['avatar_id'=>'c_solana'])->assertSessionHasErrors('provider');
         }
         $this->assertSame(0,TrellisGeneration::count()); Queue::assertNothingPushed();
@@ -407,7 +453,7 @@ class TrellisGenerationTest extends TestCase
     {
         Http::fake(['*'=>Http::response([],503)]);
         $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
-        $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('Local worker offline');
+        $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('Generation worker offline');
         // User-managed concept files may be removed; this test owns its fixture.
         $path=tempnam(sys_get_temp_dir(),'trellis-test-');
         file_put_contents($path,base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg=='));
@@ -446,7 +492,7 @@ class TrellisGenerationTest extends TestCase
         $this->post('/evolution/avatars/trellis',['seed'=>1,'avatar_id'=>'c_kyumi'])->assertSessionHasErrors('avatar_id');
         $this->post('/evolution/avatars/trellis',['seed'=>1,'avatar_id'=>'../../private'])->assertSessionHasErrors('avatar_id');
         $this->assertSame(0,TrellisGeneration::count());
-        $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('Dawnna')->assertSee('Aiselle')->assertSee('Vixelle')->assertSee('3D Enhancements');
+        $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('Solenne Vaelor')->assertSee('Ivera Frostwhistle')->assertSee('Mireth Lune')->assertSee('3D Enhancements');
     }
     public function test_reference_upload_and_preview_require_owner_and_preserve_provenance():void
     {
@@ -483,9 +529,9 @@ class TrellisGenerationTest extends TestCase
         $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
         TrellisGeneration::create(['id'=>(string)Str::uuid(),'avatar_id'=>'c_solana','status'=>'running','plan'=>[],'state'=>['stage'=>'DAWNNA_ONLY_STAGE']]);
         TrellisGeneration::create(['id'=>(string)Str::uuid(),'avatar_id'=>'c_invoker','status'=>'running','plan'=>[],'state'=>['stage'=>'OTHER_AVATAR_STAGE']]);
-        $this->get($path)->assertOk()->assertSee('Dawnna')->assertSee('DAWNNA_ONLY_STAGE')->assertDontSee('OTHER_AVATAR_STAGE')->assertSee('avatar_id=c_solana');
+        $this->get($path)->assertOk()->assertSee('Solenne Vaelor')->assertSee('DAWNNA_ONLY_STAGE')->assertDontSee('OTHER_AVATAR_STAGE')->assertSee('avatar_id=c_solana');
         $this->get(route('trellis.live',['avatar_id'=>'c_solana'],false))->assertOk()->assertSee('DAWNNA_ONLY_STAGE')->assertDontSee('OTHER_AVATAR_STAGE');
-        $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('View Dawnna 3D status')->assertSee(route('trellis.avatar','c_solana'));
+        $this->get('/evolution/avatars/trellis')->assertOk()->assertSee('View Solenne Vaelor 3D status')->assertSee(route('trellis.avatar','c_solana'));
         $this->get(route('trellis.avatar','not-an-avatar',false))->assertNotFound();Queue::assertNothingPushed();
     }
 

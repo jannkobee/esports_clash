@@ -1,0 +1,41 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_inai",
+    "component_id": "pilgrim_outfit",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Veiled pilgrim robes",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Astrax Mire. Attached image is design reference only. Only the empty blue-ivory veiled pilgrim robes, hood, veil, belts, trousers and boots with gold star-map embroidery. No body, skin, face, head, hands, staff, floating cords or orbs. Clothing is empty and held by invisible support in a neutral wide A pose. Every opening is visibly empty. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/astrax-mire-pilgrim_outfit.png",
+    "sha256": "4bd110abaa0fa001139890ce28346432f9e7fe659eddbfff3eba8eeb571a3f90"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_qiyana",
+    "component_id": "cleaver",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Single asymmetrical cleaver",
+    "attachment": "hand",
+    "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Prismelle Cade. Attached image is design reference only. Only the single complete asymmetrical broad fantasy cleaver with fractured iridescent mineral panels and gold metal frame, no wielder, hand, body, clothing or floating circlet. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/prismelle-cade-cleaver.png",
+    "sha256": "f1a81ebf5006b437fe899fe9521facf5edb27de509f7fcf8bd67bcce1ff206b3"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_kindra",
+    "component_id": "fen",
+    "category": "companion",
+    "binding": "independent",
+    "label": "Fen dusk-hound",
+    "attachment": "independent companion",
+    "prompt": "Edit the attached horned hound reference into a clean rigging-base mannequin. Preserve canine body proportions, horns, closed eyes, four separated legs, paws and separated tail. REMOVE ALL long fur, mane, feathering, hair strands and fluffy tail hair. Smooth hairless neutral matte-gray clay anatomical quadruped mannequin with readable shoulder, elbow, hip and knee joints. No gear, blindfold, clothing, flames, decorative shells, person or extra subject. Complete animal including horns and tail occupies only65% of frame with generous margins. Genuine transparent background, even lighting, no floor, glow, shadows, text or labels.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/orin-and-fen-fen-v4.png",
+    "sha256": "d12c1e4b84222b3f7937527818feb0707c1efa700a50bcd5357c8756b99b0e5b"
+  }
+]

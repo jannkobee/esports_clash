@@ -1,0 +1,2629 @@
+{
+  "errors": [],
+  "video": {
+    "width": 1434,
+    "height": 900,
+    "time": 0.3
+  },
+  "world": {
+    "tokens": 6,
+    "visible": 6,
+    "materials": 5,
+    "failed": [],
+    "worldMeshes": 15,
+    "worldMaterials": 6
+  },
+  "paused": true,
+  "before": {
+    "actors": [
+      {
+        "id": "blue_p_thespicy",
+        "x": 1256.3284956443044,
+        "y": 671.9062938327403,
+        "alive": true,
+        "hero": "c_puck"
+      },
+      {
+        "id": "blue_p_p1mple",
+        "x": 1260.7360119807743,
+        "y": 705.2255955740593,
+        "alive": true,
+        "hero": "c_invoker"
+      },
+      {
+        "id": "blue_p_flaker",
+        "x": 1272.6836770250884,
+        "y": 737.5384923799612,
+        "alive": true,
+        "hero": "c_wraithhook"
+      },
+      {
+        "id": "blue_p_daft",
+        "x": 1228.360608952071,
+        "y": 749.2349276057554,
+        "alive": true,
+        "hero": "c_nullweaver"
+      },
+      {
+        "id": "blue_p_bigtail",
+        "x": 1232.0396071409662,
+        "y": 783.0352970168448,
+        "alive": true,
+        "hero": "c_raijin"
+      },
+      {
+        "id": "red_p_craps",
+        "x": 1346.396811812181,
+        "y": 684.3542684950171,
+        "alive": true,
+        "hero": "c_puck"
+      },
+      {
+        "id": "red_p_ouzi",
+        "x": 1359.8998386747116,
+        "y": 715.7309660644104,
+        "alive": true,
+        "hero": "c_invoker"
+      },
+      {
+        "id": "red_p_neko",
+        "x": 1331.8422689184054,
+        "y": 734.9344235491968,
+        "alive": true,
+        "hero": "c_wraithhook"
+      },
+      {
+        "id": "red_p_woozy",
+        "x": 1375.4202456896046,
+        "y": 746.2048362062847,
+        "alive": true,
+        "hero": "c_nullweaver"
+      },
+      {
+        "id": "red_p_mirecle",
+        "x": 1369.876312581684,
+        "y": 779.7498031267469,
+        "alive": true,
+        "hero": "c_raijin"
+      }
+    ],
+    "world": {
+      "version": 1,
+      "tick": 75,
+      "serial": 165,
+      "constructs": [
+        {
+          "id": "v3-object:30",
+          "owner": "blue_p_daft",
+          "team": "blue",
+          "kind": "tangent",
+          "x": 1330,
+          "y": 740,
+          "created": 12,
+          "expires": 102,
+          "hp": 2,
+          "maxHp": 2,
+          "radius": 30,
+          "points": [],
+          "supports": [],
+          "angle": 0.3490658503988659,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [
+            "red_p_neko"
+          ],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": false,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:37",
+          "owner": "red_p_woozy",
+          "team": "red",
+          "kind": "tangent",
+          "x": 1270.820325519199,
+          "y": 726.5910969775181,
+          "created": 12,
+          "expires": 102,
+          "hp": 2,
+          "maxHp": 2,
+          "radius": 30,
+          "points": [],
+          "supports": [],
+          "angle": -0.3490658503988659,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [
+            "blue_p_flaker",
+            "blue_p_p1mple"
+          ],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": false,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:92",
+          "owner": "blue_p_daft",
+          "team": "blue",
+          "kind": "friction",
+          "x": 1337.1944628574695,
+          "y": 731.7968046537738,
+          "created": 31,
+          "expires": 121,
+          "hp": 2,
+          "maxHp": 2,
+          "radius": 65,
+          "points": [],
+          "supports": [],
+          "angle": 0,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": false,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:96",
+          "owner": "blue_p_bigtail",
+          "team": "blue",
+          "kind": "rod",
+          "x": 1337.1944628574695,
+          "y": 771.7968046537738,
+          "created": 31,
+          "expires": 241,
+          "hp": 1,
+          "maxHp": 2,
+          "radius": 12,
+          "points": [],
+          "supports": [],
+          "angle": 0,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": true,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:99",
+          "owner": "red_p_woozy",
+          "team": "red",
+          "kind": "friction",
+          "x": 1262.8560271612541,
+          "y": 731.6367252825996,
+          "created": 31,
+          "expires": 121,
+          "hp": 2,
+          "maxHp": 2,
+          "radius": 65,
+          "points": [],
+          "supports": [],
+          "angle": 0,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": false,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:103",
+          "owner": "red_p_mirecle",
+          "team": "red",
+          "kind": "rod",
+          "x": 1262.8560271612541,
+          "y": 771.6367252825996,
+          "created": 31,
+          "expires": 241,
+          "hp": 1,
+          "maxHp": 2,
+          "radius": 12,
+          "points": [],
+          "supports": [],
+          "angle": 0,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": true,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:113",
+          "owner": "red_p_craps",
+          "team": "red",
+          "kind": "chime",
+          "x": 1274.1652853535782,
+          "y": 725.4798310385045,
+          "created": 35,
+          "expires": 185,
+          "hp": 2,
+          "maxHp": 2,
+          "radius": 95,
+          "points": [],
+          "supports": [],
+          "angle": 0,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": true,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:120",
+          "owner": "blue_p_p1mple",
+          "team": "blue",
+          "kind": "pin",
+          "x": 1332.1947240184727,
+          "y": 769.0090841919593,
+          "created": 43,
+          "expires": 223,
+          "hp": 2,
+          "maxHp": 2,
+          "radius": 12,
+          "points": [],
+          "supports": [],
+          "angle": 0,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": true,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:125",
+          "owner": "red_p_ouzi",
+          "team": "red",
+          "kind": "pin",
+          "x": 1268.2491838999051,
+          "y": 770.5330933056032,
+          "created": 43,
+          "expires": 223,
+          "hp": 2,
+          "maxHp": 2,
+          "radius": 12,
+          "points": [],
+          "supports": [],
+          "angle": 0,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": true,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:140",
+          "owner": "blue_p_thespicy",
+          "team": "blue",
+          "kind": "chime",
+          "x": 1335.2658424425567,
+          "y": 732.6277217947583,
+          "created": 54,
+          "expires": 174,
+          "hp": 2,
+          "maxHp": 2,
+          "radius": 12,
+          "points": [],
+          "supports": [],
+          "angle": 0,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": true,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:142",
+          "owner": "blue_p_thespicy",
+          "team": "blue",
+          "kind": "theater",
+          "x": 1335.2658424425567,
+          "y": 732.6277217947583,
+          "created": 54,
+          "expires": 174,
+          "hp": 2,
+          "maxHp": 2,
+          "radius": 135,
+          "points": [],
+          "supports": [
+            "v3-object:140"
+          ],
+          "angle": 0,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": false,
+          "roster": {}
+        },
+        {
+          "id": "v3-object:162",
+          "owner": "blue_p_p1mple",
+          "team": "blue",
+          "kind": "pin",
+          "x": 1331.8422689184054,
+          "y": 774.9344235491968,
+          "created": 69,
+          "expires": 249,
+          "hp": 2,
+          "maxHp": 2,
+          "radius": 12,
+          "points": [],
+          "supports": [],
+          "angle": 0,
+          "charges": 1,
+          "disabledUntil": 0,
+          "hit": [],
+          "progress": {},
+          "passengers": [],
+          "capacity": 0,
+          "arrivalShield": 0,
+          "attackable": true,
+          "roster": {}
+        }
+      ],
+      "casts": [
+        {
+          "id": "v3-cast:159",
+          "request": {
+            "actor": "red_p_ouzi",
+            "slot": "skill1",
+            "point": {
+              "x": 1272.6836770250884,
+              "y": 777.5384923799612
+            }
+          },
+          "start": 66,
+          "commit": 77,
+          "recovery": 8,
+          "cost": 30
+        }
+      ],
+      "actors": {
+        "blue_p_thespicy": {
+          "cooldowns": {
+            "skill1": 0,
+            "skill2": 0,
+            "ultimate": 2754
+          },
+          "charges": 0,
+          "nextCharge": 252,
+          "page": 1,
+          "pageCooldowns": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaveUntil": 0,
+          "recoveryUntil": 62,
+          "windupTaxUntil": 0,
+          "notes": {
+            "red_p_woozy": {
+              "count": 2,
+              "expires": 151
+            },
+            "red_p_mirecle": {
+              "count": 1,
+              "expires": 151
+            },
+            "red_p_craps": {
+              "count": 2,
+              "expires": 174
+            },
+            "red_p_ouzi": {
+              "count": 1,
+              "expires": 163
+            }
+          },
+          "taxHistory": [],
+          "momentum": 0,
+          "capacitors": 0,
+          "fare": 0,
+          "observed": {
+            "red_p_craps": {
+              "point": {
+                "x": 1346.396811812181,
+                "y": 684.3542684950171
+              },
+              "heading": -2.311294962490032,
+              "distance": 0.3301090644000913,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_ouzi": {
+              "point": {
+                "x": 1359.8998386747116,
+                "y": 715.7309660644104
+              },
+              "heading": -0.6002000531467444,
+              "distance": 1.2000000000000386,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_neko": {
+              "point": {
+                "x": 1331.8422689184054,
+                "y": 734.9344235491968
+              },
+              "heading": 2.541392600443016,
+              "distance": 4.128255413132241,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_woozy": {
+              "point": {
+                "x": 1375.4202456896046,
+                "y": 746.2048362062847
+              },
+              "heading": 1.1264803091876006,
+              "distance": 12.289729177422496,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_mirecle": {
+              "point": {
+                "x": 1369.876312581684,
+                "y": 779.7498031267469
+              },
+              "heading": 1.7345845138153118,
+              "distance": 9.315387007784192,
+              "vx": 0,
+              "vy": 0
+            }
+          },
+          "hero": "lulla-faespring",
+          "roster": {
+            "resource": 0,
+            "secondResource": 0,
+            "timers": {
+              "castStarted": 39,
+              "lastMoved": 75
+            },
+            "marks": {},
+            "travel": 0,
+            "lastPoint": {
+              "x": 1256.4858621991789,
+              "y": 673.0959306543825
+            },
+            "lastHeading": -1.6412909401316529,
+            "lastCast": {
+              "tick": 54,
+              "slot": "ultimate",
+              "category": "control"
+            }
+          }
+        },
+        "blue_p_p1mple": {
+          "cooldowns": {
+            "skill1": 0,
+            "skill2": 0,
+            "ultimate": 0
+          },
+          "charges": 0,
+          "nextCharge": 174,
+          "page": 1,
+          "pageCooldowns": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaveUntil": 0,
+          "recoveryUntil": 87,
+          "windupTaxUntil": 0,
+          "notes": {},
+          "taxHistory": [
+            {
+              "tick": 43,
+              "seconds": 0.25
+            },
+            {
+              "tick": 69,
+              "seconds": 0.35
+            }
+          ],
+          "momentum": 0,
+          "capacitors": 0,
+          "fare": 0,
+          "observed": {
+            "red_p_craps": {
+              "point": {
+                "x": 1346.396811812181,
+                "y": 684.3542684950171
+              },
+              "heading": -2.311294962490032,
+              "distance": 0.3301090644000913,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_ouzi": {
+              "point": {
+                "x": 1359.8998386747116,
+                "y": 715.7309660644104
+              },
+              "heading": -0.6002000531467444,
+              "distance": 1.2000000000000386,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_neko": {
+              "point": {
+                "x": 1331.8422689184054,
+                "y": 734.9344235491968
+              },
+              "heading": 2.541392600443016,
+              "distance": 4.128255413132241,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_woozy": {
+              "point": {
+                "x": 1375.4202456896046,
+                "y": 746.2048362062847
+              },
+              "heading": 1.1264803091876006,
+              "distance": 12.289729177422496,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_mirecle": {
+              "point": {
+                "x": 1369.876312581684,
+                "y": 779.7498031267469
+              },
+              "heading": 1.7345845138153118,
+              "distance": 9.315387007784192,
+              "vx": 0,
+              "vy": 0
+            }
+          },
+          "hero": "mirelle-vane",
+          "roster": {
+            "resource": 0,
+            "secondResource": 0,
+            "timers": {
+              "castStarted": 58,
+              "lastMoved": 75
+            },
+            "marks": {},
+            "travel": 0,
+            "lastPoint": {
+              "x": 1258.8143974583436,
+              "y": 706.0725888604455
+            },
+            "lastHeading": -0.47626097942356627,
+            "lastCast": {
+              "tick": 69,
+              "slot": "skill1",
+              "category": "attack"
+            }
+          }
+        },
+        "blue_p_flaker": {
+          "cooldowns": {
+            "skill1": 0,
+            "skill2": 0,
+            "ultimate": 0
+          },
+          "charges": 2,
+          "nextCharge": 0,
+          "page": 1,
+          "pageCooldowns": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaveUntil": 0,
+          "recoveryUntil": 0,
+          "windupTaxUntil": 0,
+          "notes": {},
+          "taxHistory": [],
+          "momentum": 0,
+          "capacitors": 0,
+          "fare": 0,
+          "observed": {
+            "red_p_craps": {
+              "point": {
+                "x": 1346.396811812181,
+                "y": 684.3542684950171
+              },
+              "heading": -2.311294962490032,
+              "distance": 0.3301090644000913,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_ouzi": {
+              "point": {
+                "x": 1359.8998386747116,
+                "y": 715.7309660644104
+              },
+              "heading": -0.6002000531467444,
+              "distance": 1.2000000000000386,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_neko": {
+              "point": {
+                "x": 1331.8422689184054,
+                "y": 734.9344235491968
+              },
+              "heading": 2.541392600443016,
+              "distance": 4.128255413132241,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_woozy": {
+              "point": {
+                "x": 1375.4202456896046,
+                "y": 746.2048362062847
+              },
+              "heading": 1.1264803091876006,
+              "distance": 12.289729177422496,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_mirecle": {
+              "point": {
+                "x": 1369.876312581684,
+                "y": 779.7498031267469
+              },
+              "heading": 1.7345845138153118,
+              "distance": 9.315387007784192,
+              "vx": 0,
+              "vy": 0
+            }
+          },
+          "hero": "mora-fenhook",
+          "roster": {
+            "resource": 0,
+            "secondResource": 0,
+            "timers": {
+              "lastMoved": 61
+            },
+            "marks": {},
+            "travel": 0,
+            "lastPoint": {
+              "x": 1272.6836770250884,
+              "y": 737.5384923799612
+            },
+            "lastHeading": 0.7872673332120018
+          }
+        },
+        "blue_p_daft": {
+          "cooldowns": {
+            "skill1": 252,
+            "skill2": 421,
+            "ultimate": 0
+          },
+          "charges": 2,
+          "nextCharge": 0,
+          "page": 1,
+          "pageCooldowns": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaveUntil": 0,
+          "recoveryUntil": 39,
+          "windupTaxUntil": 0,
+          "notes": {},
+          "taxHistory": [],
+          "momentum": 0,
+          "capacitors": 0,
+          "fare": 0,
+          "observed": {
+            "red_p_ouzi": {
+              "point": {
+                "x": 1359.8998386747116,
+                "y": 715.7309660644104
+              },
+              "heading": -0.6002000531467444,
+              "distance": 1.2000000000000386,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_neko": {
+              "point": {
+                "x": 1331.8422689184054,
+                "y": 734.9344235491968
+              },
+              "heading": 2.541392600443016,
+              "distance": 4.128255413132241,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_woozy": {
+              "point": {
+                "x": 1375.4202456896046,
+                "y": 746.2048362062847
+              },
+              "heading": 1.1264803091876006,
+              "distance": 12.289729177422496,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_mirecle": {
+              "point": {
+                "x": 1369.876312581684,
+                "y": 779.7498031267469
+              },
+              "heading": 1.7345845138153118,
+              "distance": 9.315387007784192,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_craps": {
+              "point": {
+                "x": 1346.396811812181,
+                "y": 684.3542684950171
+              },
+              "heading": -2.311294962490032,
+              "distance": 0.3301090644000913,
+              "vx": 0,
+              "vy": 0
+            }
+          },
+          "hero": "vesper-nullcode",
+          "roster": {
+            "resource": 0,
+            "secondResource": 0,
+            "timers": {
+              "castStarted": 20,
+              "lastMoved": 52
+            },
+            "marks": {},
+            "travel": 0,
+            "lastPoint": {
+              "x": 1228.360608952071,
+              "y": 749.2349276057554
+            },
+            "lastHeading": 1.948373930155258,
+            "lastCast": {
+              "tick": 31,
+              "slot": "skill2",
+              "category": "control"
+            }
+          }
+        },
+        "blue_p_bigtail": {
+          "cooldowns": {
+            "skill1": 0,
+            "skill2": 0,
+            "ultimate": 0
+          },
+          "charges": 0,
+          "nextCharge": 252,
+          "page": 1,
+          "pageCooldowns": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaveUntil": 0,
+          "recoveryUntil": 39,
+          "windupTaxUntil": 0,
+          "notes": {},
+          "taxHistory": [],
+          "momentum": 0,
+          "capacitors": 0,
+          "fare": 0,
+          "observed": {
+            "red_p_ouzi": {
+              "point": {
+                "x": 1359.8998386747116,
+                "y": 715.7309660644104
+              },
+              "heading": -0.6002000531467444,
+              "distance": 1.2000000000000386,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_neko": {
+              "point": {
+                "x": 1331.8422689184054,
+                "y": 734.9344235491968
+              },
+              "heading": 2.541392600443016,
+              "distance": 4.128255413132241,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_woozy": {
+              "point": {
+                "x": 1375.4202456896046,
+                "y": 746.2048362062847
+              },
+              "heading": 1.1264803091876006,
+              "distance": 12.289729177422496,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_mirecle": {
+              "point": {
+                "x": 1369.876312581684,
+                "y": 779.7498031267469
+              },
+              "heading": 1.7345845138153118,
+              "distance": 9.315387007784192,
+              "vx": 0,
+              "vy": 0
+            },
+            "red_p_craps": {
+              "point": {
+                "x": 1346.396811812181,
+                "y": 684.3542684950171
+              },
+              "heading": -2.311294962490032,
+              "distance": 0.3301090644000913,
+              "vx": 0,
+              "vy": 0
+            }
+          },
+          "hero": "teslan-veyr",
+          "roster": {
+            "resource": 0,
+            "secondResource": 0,
+            "timers": {
+              "castStarted": 20,
+              "lastMoved": 53
+            },
+            "marks": {},
+            "travel": 0,
+            "lastPoint": {
+              "x": 1232.0396071409662,
+              "y": 783.0352970168448
+            },
+            "lastHeading": 1.4623782226722581,
+            "lastCast": {
+              "tick": 31,
+              "slot": "skill1",
+              "category": "control"
+            }
+          }
+        },
+        "red_p_craps": {
+          "cooldowns": {
+            "skill1": 0,
+            "skill2": 444,
+            "ultimate": 2716
+          },
+          "charges": 1,
+          "nextCharge": 275,
+          "page": 1,
+          "pageCooldowns": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaveUntil": 0,
+          "recoveryUntil": 62,
+          "windupTaxUntil": 0,
+          "notes": {
+            "blue_p_p1mple": {
+              "count": 2,
+              "expires": 189
+            },
+            "blue_p_thespicy": {
+              "count": 2,
+              "expires": 174
+            },
+            "blue_p_daft": {
+              "count": 1,
+              "expires": 151
+            }
+          },
+          "taxHistory": [],
+          "momentum": 0,
+          "capacitors": 0,
+          "fare": 0,
+          "observed": {
+            "blue_p_thespicy": {
+              "point": {
+                "x": 1256.4858621991789,
+                "y": 673.0959306543825
+              },
+              "heading": -1.6412909401316529,
+              "distance": 13.200000000000115,
+              "vx": -2.5357046684666784,
+              "vy": -35.91058620844592
+            },
+            "blue_p_p1mple": {
+              "point": {
+                "x": 1258.8143974583436,
+                "y": 706.0725888604455
+              },
+              "heading": -0.47626097942356627,
+              "distance": 12.599999999999831,
+              "vx": 55.98906518432841,
+              "vy": -28.882946175643838
+            },
+            "blue_p_flaker": {
+              "point": {
+                "x": 1272.6836770250884,
+                "y": 737.5384923799612
+              },
+              "heading": 0.7872673332120018,
+              "distance": 9.20589160175163,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_daft": {
+              "point": {
+                "x": 1228.360608952071,
+                "y": 749.2349276057554
+              },
+              "heading": 1.948373930155258,
+              "distance": 14.764870993504045,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_bigtail": {
+              "point": {
+                "x": 1232.0396071409662,
+                "y": 783.0352970168448
+              },
+              "heading": 1.4623782226722581,
+              "distance": 11.88082257860986,
+              "vx": 0,
+              "vy": 0
+            }
+          },
+          "hero": "lulla-faespring",
+          "roster": {
+            "resource": 0,
+            "secondResource": 0,
+            "timers": {
+              "castStarted": 43,
+              "lastMoved": 45
+            },
+            "marks": {},
+            "travel": 0,
+            "lastPoint": {
+              "x": 1346.396811812181,
+              "y": 684.3542684950171
+            },
+            "lastHeading": -2.311294962490032,
+            "lastCast": {
+              "tick": 54,
+              "slot": "skill2",
+              "category": "control"
+            }
+          }
+        },
+        "red_p_ouzi": {
+          "cooldowns": {
+            "skill1": 0,
+            "skill2": 0,
+            "ultimate": 0
+          },
+          "charges": 1,
+          "nextCharge": 174,
+          "page": 6,
+          "pageCooldowns": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaveUntil": 0,
+          "recoveryUntil": 50,
+          "windupTaxUntil": 0,
+          "notes": {},
+          "taxHistory": [],
+          "momentum": 0,
+          "capacitors": 0,
+          "fare": 0,
+          "observed": {
+            "blue_p_thespicy": {
+              "point": {
+                "x": 1256.4858621991789,
+                "y": 673.0959306543825
+              },
+              "heading": -1.6412909401316529,
+              "distance": 13.200000000000115,
+              "vx": -2.5357046684666784,
+              "vy": -35.91058620844592
+            },
+            "blue_p_p1mple": {
+              "point": {
+                "x": 1258.8143974583436,
+                "y": 706.0725888604455
+              },
+              "heading": -0.47626097942356627,
+              "distance": 12.599999999999831,
+              "vx": 55.98906518432841,
+              "vy": -28.882946175643838
+            },
+            "blue_p_flaker": {
+              "point": {
+                "x": 1272.6836770250884,
+                "y": 737.5384923799612
+              },
+              "heading": 0.7872673332120018,
+              "distance": 9.20589160175163,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_daft": {
+              "point": {
+                "x": 1228.360608952071,
+                "y": 749.2349276057554
+              },
+              "heading": 1.948373930155258,
+              "distance": 14.764870993504045,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_bigtail": {
+              "point": {
+                "x": 1232.0396071409662,
+                "y": 783.0352970168448
+              },
+              "heading": 1.4623782226722581,
+              "distance": 11.88082257860986,
+              "vx": 0,
+              "vy": 0
+            }
+          },
+          "hero": "mirelle-vane",
+          "roster": {
+            "resource": 0,
+            "secondResource": 0,
+            "timers": {
+              "castStarted": 66,
+              "lastMoved": 51
+            },
+            "marks": {},
+            "travel": 0,
+            "lastPoint": {
+              "x": 1359.8998386747116,
+              "y": 715.7309660644104
+            },
+            "lastHeading": -0.6002000531467444,
+            "lastCast": {
+              "tick": 43,
+              "slot": "skill1",
+              "category": "attack"
+            }
+          }
+        },
+        "red_p_neko": {
+          "cooldowns": {
+            "skill1": 0,
+            "skill2": 0,
+            "ultimate": 0
+          },
+          "charges": 2,
+          "nextCharge": 0,
+          "page": 1,
+          "pageCooldowns": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaveUntil": 0,
+          "recoveryUntil": 0,
+          "windupTaxUntil": 0,
+          "notes": {},
+          "taxHistory": [],
+          "momentum": 0,
+          "capacitors": 0,
+          "fare": 0,
+          "observed": {
+            "blue_p_thespicy": {
+              "point": {
+                "x": 1256.4858621991789,
+                "y": 673.0959306543825
+              },
+              "heading": -1.6412909401316529,
+              "distance": 13.200000000000115,
+              "vx": -2.5357046684666784,
+              "vy": -35.91058620844592
+            },
+            "blue_p_p1mple": {
+              "point": {
+                "x": 1258.8143974583436,
+                "y": 706.0725888604455
+              },
+              "heading": -0.47626097942356627,
+              "distance": 12.599999999999831,
+              "vx": 55.98906518432841,
+              "vy": -28.882946175643838
+            },
+            "blue_p_flaker": {
+              "point": {
+                "x": 1272.6836770250884,
+                "y": 737.5384923799612
+              },
+              "heading": 0.7872673332120018,
+              "distance": 9.20589160175163,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_daft": {
+              "point": {
+                "x": 1228.360608952071,
+                "y": 749.2349276057554
+              },
+              "heading": 1.948373930155258,
+              "distance": 14.764870993504045,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_bigtail": {
+              "point": {
+                "x": 1232.0396071409662,
+                "y": 783.0352970168448
+              },
+              "heading": 1.4623782226722581,
+              "distance": 11.88082257860986,
+              "vx": 0,
+              "vy": 0
+            }
+          },
+          "hero": "mora-fenhook",
+          "roster": {
+            "resource": 0,
+            "secondResource": 0,
+            "timers": {
+              "lastMoved": 52
+            },
+            "marks": {},
+            "travel": 0,
+            "lastPoint": {
+              "x": 1331.8422689184054,
+              "y": 734.9344235491968
+            },
+            "lastHeading": 2.541392600443016
+          }
+        },
+        "red_p_woozy": {
+          "cooldowns": {
+            "skill1": 252,
+            "skill2": 421,
+            "ultimate": 0
+          },
+          "charges": 2,
+          "nextCharge": 0,
+          "page": 1,
+          "pageCooldowns": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaveUntil": 0,
+          "recoveryUntil": 39,
+          "windupTaxUntil": 0,
+          "notes": {},
+          "taxHistory": [],
+          "momentum": 0,
+          "capacitors": 0,
+          "fare": 0,
+          "observed": {
+            "blue_p_p1mple": {
+              "point": {
+                "x": 1258.8143974583436,
+                "y": 706.0725888604455
+              },
+              "heading": -0.47626097942356627,
+              "distance": 12.599999999999831,
+              "vx": 55.98906518432841,
+              "vy": -28.882946175643838
+            },
+            "blue_p_flaker": {
+              "point": {
+                "x": 1272.6836770250884,
+                "y": 737.5384923799612
+              },
+              "heading": 0.7872673332120018,
+              "distance": 9.20589160175163,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_daft": {
+              "point": {
+                "x": 1228.360608952071,
+                "y": 749.2349276057554
+              },
+              "heading": 1.948373930155258,
+              "distance": 14.764870993504045,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_bigtail": {
+              "point": {
+                "x": 1232.0396071409662,
+                "y": 783.0352970168448
+              },
+              "heading": 1.4623782226722581,
+              "distance": 11.88082257860986,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_thespicy": {
+              "point": {
+                "x": 1256.4858621991789,
+                "y": 673.0959306543825
+              },
+              "heading": -1.6412909401316529,
+              "distance": 13.200000000000115,
+              "vx": -2.5357046684666784,
+              "vy": -35.91058620844592
+            }
+          },
+          "hero": "vesper-nullcode",
+          "roster": {
+            "resource": 0,
+            "secondResource": 0,
+            "timers": {
+              "castStarted": 20,
+              "lastMoved": 49
+            },
+            "marks": {},
+            "travel": 0,
+            "lastPoint": {
+              "x": 1375.4202456896046,
+              "y": 746.2048362062847
+            },
+            "lastHeading": 1.1264803091876006,
+            "lastCast": {
+              "tick": 31,
+              "slot": "skill2",
+              "category": "control"
+            }
+          }
+        },
+        "red_p_mirecle": {
+          "cooldowns": {
+            "skill1": 0,
+            "skill2": 0,
+            "ultimate": 0
+          },
+          "charges": 0,
+          "nextCharge": 252,
+          "page": 1,
+          "pageCooldowns": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaveUntil": 0,
+          "recoveryUntil": 39,
+          "windupTaxUntil": 0,
+          "notes": {},
+          "taxHistory": [],
+          "momentum": 0,
+          "capacitors": 0,
+          "fare": 0,
+          "observed": {
+            "blue_p_p1mple": {
+              "point": {
+                "x": 1258.8143974583436,
+                "y": 706.0725888604455
+              },
+              "heading": -0.47626097942356627,
+              "distance": 12.599999999999831,
+              "vx": 55.98906518432841,
+              "vy": -28.882946175643838
+            },
+            "blue_p_flaker": {
+              "point": {
+                "x": 1272.6836770250884,
+                "y": 737.5384923799612
+              },
+              "heading": 0.7872673332120018,
+              "distance": 9.20589160175163,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_daft": {
+              "point": {
+                "x": 1228.360608952071,
+                "y": 749.2349276057554
+              },
+              "heading": 1.948373930155258,
+              "distance": 14.764870993504045,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_bigtail": {
+              "point": {
+                "x": 1232.0396071409662,
+                "y": 783.0352970168448
+              },
+              "heading": 1.4623782226722581,
+              "distance": 11.88082257860986,
+              "vx": 0,
+              "vy": 0
+            },
+            "blue_p_thespicy": {
+              "point": {
+                "x": 1256.4858621991789,
+                "y": 673.0959306543825
+              },
+              "heading": -1.6412909401316529,
+              "distance": 13.200000000000115,
+              "vx": -2.5357046684666784,
+              "vy": -35.91058620844592
+            }
+          },
+          "hero": "teslan-veyr",
+          "roster": {
+            "resource": 0,
+            "secondResource": 0,
+            "timers": {
+              "castStarted": 20,
+              "lastMoved": 50
+            },
+            "marks": {},
+            "travel": 0,
+            "lastPoint": {
+              "x": 1369.876312581684,
+              "y": 779.7498031267469
+            },
+            "lastHeading": 1.7345845138153118,
+            "lastCast": {
+              "tick": 31,
+              "slot": "skill1",
+              "category": "control"
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "id": "v3-event:1",
+          "tick": 1,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_thespicy",
+          "reason": "prepare-visible-casting-corridor",
+          "value": 0.65
+        },
+        {
+          "id": "v3-event:3",
+          "tick": 1,
+          "type": "ability_started",
+          "actor": "blue_p_thespicy",
+          "object": "v3-cast:2",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:4",
+          "tick": 1,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_p1mple",
+          "reason": "prepare-open-readable-pin-geometry",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:6",
+          "tick": 1,
+          "type": "ability_started",
+          "actor": "blue_p_p1mple",
+          "object": "v3-cast:5",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:7",
+          "tick": 1,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_daft",
+          "reason": "bend-visible-approach",
+          "value": 0.6
+        },
+        {
+          "id": "v3-event:9",
+          "tick": 1,
+          "type": "ability_started",
+          "actor": "blue_p_daft",
+          "object": "v3-cast:8",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:10",
+          "tick": 1,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_bigtail",
+          "reason": "span-visible-crossing-with-breakable-rods",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:12",
+          "tick": 1,
+          "type": "ability_started",
+          "actor": "blue_p_bigtail",
+          "object": "v3-cast:11",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:13",
+          "tick": 1,
+          "type": "ai_choice_explained",
+          "actor": "red_p_craps",
+          "reason": "multiple-observed-cast-chains-near-announced-beats",
+          "value": 0.75
+        },
+        {
+          "id": "v3-event:15",
+          "tick": 1,
+          "type": "ability_started",
+          "actor": "red_p_craps",
+          "object": "v3-cast:14",
+          "reason": "ultimate"
+        },
+        {
+          "id": "v3-event:16",
+          "tick": 1,
+          "type": "ai_choice_explained",
+          "actor": "red_p_ouzi",
+          "reason": "prepare-open-readable-pin-geometry",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:18",
+          "tick": 1,
+          "type": "ability_started",
+          "actor": "red_p_ouzi",
+          "object": "v3-cast:17",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:19",
+          "tick": 1,
+          "type": "ai_choice_explained",
+          "actor": "red_p_woozy",
+          "reason": "bend-visible-approach",
+          "value": 0.6
+        },
+        {
+          "id": "v3-event:21",
+          "tick": 1,
+          "type": "ability_started",
+          "actor": "red_p_woozy",
+          "object": "v3-cast:20",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:22",
+          "tick": 1,
+          "type": "ai_choice_explained",
+          "actor": "red_p_mirecle",
+          "reason": "span-visible-crossing-with-breakable-rods",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:24",
+          "tick": 1,
+          "type": "ability_started",
+          "actor": "red_p_mirecle",
+          "object": "v3-cast:23",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:25",
+          "tick": 12,
+          "type": "ability_committed",
+          "actor": "blue_p_thespicy",
+          "object": "v3-cast:2",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:27",
+          "tick": 12,
+          "type": "construct_placed",
+          "actor": "blue_p_thespicy",
+          "object": "v3-object:26",
+          "reason": "chime"
+        },
+        {
+          "id": "v3-event:28",
+          "tick": 12,
+          "type": "ability_failed",
+          "actor": "blue_p_p1mple",
+          "object": "v3-cast:5",
+          "reason": "out-of-range"
+        },
+        {
+          "id": "v3-event:29",
+          "tick": 12,
+          "type": "ability_committed",
+          "actor": "blue_p_daft",
+          "object": "v3-cast:8",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:31",
+          "tick": 12,
+          "type": "construct_placed",
+          "actor": "blue_p_daft",
+          "object": "v3-object:30",
+          "reason": "tangent"
+        },
+        {
+          "id": "v3-event:32",
+          "tick": 12,
+          "type": "ability_committed",
+          "actor": "blue_p_bigtail",
+          "object": "v3-cast:11",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:34",
+          "tick": 12,
+          "type": "construct_placed",
+          "actor": "blue_p_bigtail",
+          "object": "v3-object:33",
+          "reason": "rod"
+        },
+        {
+          "id": "v3-event:35",
+          "tick": 12,
+          "type": "ability_failed",
+          "actor": "red_p_ouzi",
+          "object": "v3-cast:17",
+          "reason": "out-of-range"
+        },
+        {
+          "id": "v3-event:36",
+          "tick": 12,
+          "type": "ability_committed",
+          "actor": "red_p_woozy",
+          "object": "v3-cast:20",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:38",
+          "tick": 12,
+          "type": "construct_placed",
+          "actor": "red_p_woozy",
+          "object": "v3-object:37",
+          "reason": "tangent"
+        },
+        {
+          "id": "v3-event:39",
+          "tick": 12,
+          "type": "drowse_added",
+          "actor": "blue_p_thespicy",
+          "target": "red_p_woozy",
+          "value": 1
+        },
+        {
+          "id": "v3-event:40",
+          "tick": 12,
+          "type": "ability_committed",
+          "actor": "red_p_mirecle",
+          "object": "v3-cast:23",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:42",
+          "tick": 12,
+          "type": "construct_placed",
+          "actor": "red_p_mirecle",
+          "object": "v3-object:41",
+          "reason": "rod"
+        },
+        {
+          "id": "v3-event:43",
+          "tick": 12,
+          "type": "construct_damaged",
+          "actor": "blue_p_thespicy",
+          "object": "v3-object:41",
+          "value": 1
+        },
+        {
+          "id": "v3-event:44",
+          "tick": 12,
+          "type": "construct_destroyed",
+          "actor": "blue_p_p1mple",
+          "object": "v3-object:41",
+          "value": 0
+        },
+        {
+          "id": "v3-event:45",
+          "tick": 12,
+          "type": "construct_damaged",
+          "actor": "red_p_ouzi",
+          "object": "v3-object:26",
+          "value": 1
+        },
+        {
+          "id": "v3-event:46",
+          "tick": 12,
+          "type": "construct_destroyed",
+          "actor": "red_p_woozy",
+          "object": "v3-object:26",
+          "value": 0
+        },
+        {
+          "id": "v3-event:47",
+          "tick": 12,
+          "type": "construct_damaged",
+          "actor": "red_p_mirecle",
+          "object": "v3-object:33",
+          "value": 1
+        },
+        {
+          "id": "v3-event:48",
+          "tick": 12,
+          "type": "movement_modified",
+          "actor": "blue_p_flaker",
+          "object": "v3-object:37",
+          "value": -0.3490658503988659
+        },
+        {
+          "id": "v3-event:49",
+          "tick": 12,
+          "type": "movement_modified",
+          "actor": "red_p_neko",
+          "object": "v3-object:30",
+          "value": 0.3490658503988659
+        },
+        {
+          "id": "v3-event:50",
+          "tick": 13,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_p1mple",
+          "reason": "prepare-open-readable-pin-geometry",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:52",
+          "tick": 13,
+          "type": "ability_started",
+          "actor": "blue_p_p1mple",
+          "object": "v3-cast:51",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:53",
+          "tick": 13,
+          "type": "ai_choice_explained",
+          "actor": "red_p_ouzi",
+          "reason": "prepare-open-readable-pin-geometry",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:55",
+          "tick": 13,
+          "type": "ability_started",
+          "actor": "red_p_ouzi",
+          "object": "v3-cast:54",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:56",
+          "tick": 16,
+          "type": "ability_committed",
+          "actor": "red_p_craps",
+          "object": "v3-cast:14",
+          "reason": "ultimate"
+        },
+        {
+          "id": "v3-event:58",
+          "tick": 16,
+          "type": "construct_placed",
+          "actor": "red_p_craps",
+          "object": "v3-object:57",
+          "reason": "chime"
+        },
+        {
+          "id": "v3-event:60",
+          "tick": 16,
+          "type": "construct_placed",
+          "actor": "red_p_craps",
+          "object": "v3-object:59",
+          "reason": "theater"
+        },
+        {
+          "id": "v3-event:61",
+          "tick": 16,
+          "type": "construct_destroyed",
+          "actor": "red_p_craps",
+          "object": "v3-object:33",
+          "value": 0
+        },
+        {
+          "id": "v3-event:62",
+          "tick": 20,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_thespicy",
+          "reason": "prepare-visible-casting-corridor",
+          "value": 0.65
+        },
+        {
+          "id": "v3-event:64",
+          "tick": 20,
+          "type": "ability_started",
+          "actor": "blue_p_thespicy",
+          "object": "v3-cast:63",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:65",
+          "tick": 20,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_daft",
+          "reason": "public-friction-before-approach",
+          "value": 0.5
+        },
+        {
+          "id": "v3-event:67",
+          "tick": 20,
+          "type": "ability_started",
+          "actor": "blue_p_daft",
+          "object": "v3-cast:66",
+          "reason": "skill2"
+        },
+        {
+          "id": "v3-event:68",
+          "tick": 20,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_bigtail",
+          "reason": "span-visible-crossing-with-breakable-rods",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:70",
+          "tick": 20,
+          "type": "ability_started",
+          "actor": "blue_p_bigtail",
+          "object": "v3-cast:69",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:71",
+          "tick": 20,
+          "type": "ai_choice_explained",
+          "actor": "red_p_woozy",
+          "reason": "public-friction-before-approach",
+          "value": 0.5
+        },
+        {
+          "id": "v3-event:73",
+          "tick": 20,
+          "type": "ability_started",
+          "actor": "red_p_woozy",
+          "object": "v3-cast:72",
+          "reason": "skill2"
+        },
+        {
+          "id": "v3-event:74",
+          "tick": 20,
+          "type": "ai_choice_explained",
+          "actor": "red_p_mirecle",
+          "reason": "span-visible-crossing-with-breakable-rods",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:76",
+          "tick": 20,
+          "type": "ability_started",
+          "actor": "red_p_mirecle",
+          "object": "v3-cast:75",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:77",
+          "tick": 24,
+          "type": "ability_committed",
+          "actor": "blue_p_p1mple",
+          "object": "v3-cast:51",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:79",
+          "tick": 24,
+          "type": "construct_placed",
+          "actor": "blue_p_p1mple",
+          "object": "v3-object:78",
+          "reason": "pin"
+        },
+        {
+          "id": "v3-event:80",
+          "tick": 24,
+          "type": "drowse_added",
+          "actor": "red_p_craps",
+          "target": "blue_p_p1mple",
+          "value": 1
+        },
+        {
+          "id": "v3-event:81",
+          "tick": 24,
+          "type": "ability_committed",
+          "actor": "red_p_ouzi",
+          "object": "v3-cast:54",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:83",
+          "tick": 24,
+          "type": "construct_placed",
+          "actor": "red_p_ouzi",
+          "object": "v3-object:82",
+          "reason": "pin"
+        },
+        {
+          "id": "v3-event:84",
+          "tick": 24,
+          "type": "ai_choice_explained",
+          "actor": "red_p_craps",
+          "reason": "prepare-visible-casting-corridor",
+          "value": 0.65
+        },
+        {
+          "id": "v3-event:86",
+          "tick": 24,
+          "type": "ability_started",
+          "actor": "red_p_craps",
+          "object": "v3-cast:85",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:87",
+          "tick": 31,
+          "type": "ability_committed",
+          "actor": "blue_p_thespicy",
+          "object": "v3-cast:63",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:89",
+          "tick": 31,
+          "type": "construct_placed",
+          "actor": "blue_p_thespicy",
+          "object": "v3-object:88",
+          "reason": "chime"
+        },
+        {
+          "id": "v3-event:90",
+          "tick": 31,
+          "type": "drowse_added",
+          "actor": "red_p_craps",
+          "target": "blue_p_thespicy",
+          "value": 1
+        },
+        {
+          "id": "v3-event:91",
+          "tick": 31,
+          "type": "ability_committed",
+          "actor": "blue_p_daft",
+          "object": "v3-cast:66",
+          "reason": "skill2"
+        },
+        {
+          "id": "v3-event:93",
+          "tick": 31,
+          "type": "construct_placed",
+          "actor": "blue_p_daft",
+          "object": "v3-object:92",
+          "reason": "friction"
+        },
+        {
+          "id": "v3-event:94",
+          "tick": 31,
+          "type": "drowse_added",
+          "actor": "red_p_craps",
+          "target": "blue_p_daft",
+          "value": 1
+        },
+        {
+          "id": "v3-event:95",
+          "tick": 31,
+          "type": "ability_committed",
+          "actor": "blue_p_bigtail",
+          "object": "v3-cast:69",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:97",
+          "tick": 31,
+          "type": "construct_placed",
+          "actor": "blue_p_bigtail",
+          "object": "v3-object:96",
+          "reason": "rod"
+        },
+        {
+          "id": "v3-event:98",
+          "tick": 31,
+          "type": "ability_committed",
+          "actor": "red_p_woozy",
+          "object": "v3-cast:72",
+          "reason": "skill2"
+        },
+        {
+          "id": "v3-event:100",
+          "tick": 31,
+          "type": "construct_placed",
+          "actor": "red_p_woozy",
+          "object": "v3-object:99",
+          "reason": "friction"
+        },
+        {
+          "id": "v3-event:101",
+          "tick": 31,
+          "type": "drowse_added",
+          "actor": "blue_p_thespicy",
+          "target": "red_p_woozy",
+          "value": 2
+        },
+        {
+          "id": "v3-event:102",
+          "tick": 31,
+          "type": "ability_committed",
+          "actor": "red_p_mirecle",
+          "object": "v3-cast:75",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:104",
+          "tick": 31,
+          "type": "construct_placed",
+          "actor": "red_p_mirecle",
+          "object": "v3-object:103",
+          "reason": "rod"
+        },
+        {
+          "id": "v3-event:105",
+          "tick": 31,
+          "type": "drowse_added",
+          "actor": "blue_p_thespicy",
+          "target": "red_p_mirecle",
+          "value": 1
+        },
+        {
+          "id": "v3-event:106",
+          "tick": 32,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_p1mple",
+          "reason": "prepare-open-readable-pin-geometry",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:108",
+          "tick": 32,
+          "type": "ability_started",
+          "actor": "blue_p_p1mple",
+          "object": "v3-cast:107",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:109",
+          "tick": 32,
+          "type": "ai_choice_explained",
+          "actor": "red_p_ouzi",
+          "reason": "prepare-open-readable-pin-geometry",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:111",
+          "tick": 32,
+          "type": "ability_started",
+          "actor": "red_p_ouzi",
+          "object": "v3-cast:110",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:112",
+          "tick": 35,
+          "type": "ability_committed",
+          "actor": "red_p_craps",
+          "object": "v3-cast:85",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:114",
+          "tick": 35,
+          "type": "construct_placed",
+          "actor": "red_p_craps",
+          "object": "v3-object:113",
+          "reason": "chime"
+        },
+        {
+          "id": "v3-event:115",
+          "tick": 35,
+          "type": "drowse_added",
+          "actor": "blue_p_thespicy",
+          "target": "red_p_craps",
+          "value": 1
+        },
+        {
+          "id": "v3-event:116",
+          "tick": 39,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_thespicy",
+          "reason": "multiple-observed-cast-chains-near-announced-beats",
+          "value": 0.75
+        },
+        {
+          "id": "v3-event:118",
+          "tick": 39,
+          "type": "ability_started",
+          "actor": "blue_p_thespicy",
+          "object": "v3-cast:117",
+          "reason": "ultimate"
+        },
+        {
+          "id": "v3-event:119",
+          "tick": 43,
+          "type": "ability_committed",
+          "actor": "blue_p_p1mple",
+          "object": "v3-cast:107",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:121",
+          "tick": 43,
+          "type": "construct_placed",
+          "actor": "blue_p_p1mple",
+          "object": "v3-object:120",
+          "reason": "pin"
+        },
+        {
+          "id": "v3-event:122",
+          "tick": 43,
+          "type": "drowse_added",
+          "actor": "red_p_craps",
+          "target": "blue_p_p1mple",
+          "value": 2
+        },
+        {
+          "id": "v3-event:123",
+          "tick": 43,
+          "type": "cast_recovery_added",
+          "actor": "blue_p_p1mple",
+          "value": 0.25,
+          "object": "v3-cast:107"
+        },
+        {
+          "id": "v3-event:124",
+          "tick": 43,
+          "type": "ability_committed",
+          "actor": "red_p_ouzi",
+          "object": "v3-cast:110",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:126",
+          "tick": 43,
+          "type": "construct_placed",
+          "actor": "red_p_ouzi",
+          "object": "v3-object:125",
+          "reason": "pin"
+        },
+        {
+          "id": "v3-event:127",
+          "tick": 43,
+          "type": "drowse_added",
+          "actor": "blue_p_thespicy",
+          "target": "red_p_ouzi",
+          "value": 1
+        },
+        {
+          "id": "v3-event:128",
+          "tick": 43,
+          "type": "ai_choice_explained",
+          "actor": "red_p_craps",
+          "reason": "punish-observed-completed-combo",
+          "value": 0.85
+        },
+        {
+          "id": "v3-event:130",
+          "tick": 43,
+          "type": "ability_started",
+          "actor": "red_p_craps",
+          "object": "v3-cast:129",
+          "reason": "skill2"
+        },
+        {
+          "id": "v3-event:131",
+          "tick": 50,
+          "type": "ai_choice_explained",
+          "actor": "red_p_ouzi",
+          "reason": "punish-observed-moving-crossing-once",
+          "value": 0.72
+        },
+        {
+          "id": "v3-event:132",
+          "tick": 50,
+          "type": "pattern_selected",
+          "actor": "red_p_ouzi",
+          "value": 6
+        },
+        {
+          "id": "v3-event:134",
+          "tick": 50,
+          "type": "ability_started",
+          "actor": "red_p_ouzi",
+          "object": "v3-cast:133",
+          "reason": "ultimate"
+        },
+        {
+          "id": "v3-event:135",
+          "tick": 50,
+          "type": "construct_damaged",
+          "actor": "red_p_mirecle",
+          "object": "v3-object:78",
+          "value": 1
+        },
+        {
+          "id": "v3-event:136",
+          "tick": 51,
+          "type": "construct_damaged",
+          "actor": "blue_p_bigtail",
+          "object": "v3-object:57",
+          "value": 1
+        },
+        {
+          "id": "v3-event:137",
+          "tick": 52,
+          "type": "movement_modified",
+          "actor": "blue_p_p1mple",
+          "object": "v3-object:37",
+          "value": -0.3490658503988659
+        },
+        {
+          "id": "v3-event:138",
+          "tick": 53,
+          "type": "construct_destroyed",
+          "actor": "blue_p_p1mple",
+          "object": "v3-object:57",
+          "value": 0
+        },
+        {
+          "id": "v3-event:139",
+          "tick": 54,
+          "type": "ability_committed",
+          "actor": "blue_p_thespicy",
+          "object": "v3-cast:117",
+          "reason": "ultimate"
+        },
+        {
+          "id": "v3-event:141",
+          "tick": 54,
+          "type": "construct_placed",
+          "actor": "blue_p_thespicy",
+          "object": "v3-object:140",
+          "reason": "chime"
+        },
+        {
+          "id": "v3-event:143",
+          "tick": 54,
+          "type": "construct_placed",
+          "actor": "blue_p_thespicy",
+          "object": "v3-object:142",
+          "reason": "theater"
+        },
+        {
+          "id": "v3-event:144",
+          "tick": 54,
+          "type": "drowse_added",
+          "actor": "red_p_craps",
+          "target": "blue_p_thespicy",
+          "value": 2
+        },
+        {
+          "id": "v3-event:145",
+          "tick": 54,
+          "type": "ability_committed",
+          "actor": "red_p_craps",
+          "object": "v3-cast:129",
+          "reason": "skill2"
+        },
+        {
+          "id": "v3-event:146",
+          "tick": 54,
+          "type": "drowse_added",
+          "actor": "blue_p_thespicy",
+          "target": "red_p_craps",
+          "value": 2
+        },
+        {
+          "id": "v3-event:147",
+          "tick": 54,
+          "type": "construct_damaged",
+          "actor": "blue_p_thespicy",
+          "object": "v3-object:82",
+          "value": 1
+        },
+        {
+          "id": "v3-event:148",
+          "tick": 55,
+          "type": "construct_destroyed",
+          "actor": "blue_p_flaker",
+          "object": "v3-object:82",
+          "value": 0
+        },
+        {
+          "id": "v3-event:149",
+          "tick": 55,
+          "type": "construct_destroyed",
+          "actor": "red_p_craps",
+          "object": "v3-object:78",
+          "value": 0
+        },
+        {
+          "id": "v3-event:150",
+          "tick": 55,
+          "type": "construct_damaged",
+          "actor": "red_p_neko",
+          "object": "v3-object:88",
+          "value": 1
+        },
+        {
+          "id": "v3-event:151",
+          "tick": 56,
+          "type": "construct_destroyed",
+          "actor": "red_p_woozy",
+          "object": "v3-object:88",
+          "value": 0
+        },
+        {
+          "id": "v3-event:152",
+          "tick": 57,
+          "type": "construct_damaged",
+          "actor": "blue_p_daft",
+          "object": "v3-object:103",
+          "value": 1
+        },
+        {
+          "id": "v3-event:153",
+          "tick": 58,
+          "type": "ai_choice_explained",
+          "actor": "blue_p_p1mple",
+          "reason": "prepare-open-readable-pin-geometry",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:155",
+          "tick": 58,
+          "type": "ability_started",
+          "actor": "blue_p_p1mple",
+          "object": "v3-cast:154",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:156",
+          "tick": 65,
+          "type": "ability_failed",
+          "actor": "red_p_ouzi",
+          "object": "v3-cast:133",
+          "reason": "pin-count"
+        },
+        {
+          "id": "v3-event:157",
+          "tick": 65,
+          "type": "construct_damaged",
+          "actor": "red_p_ouzi",
+          "object": "v3-object:96",
+          "value": 1
+        },
+        {
+          "id": "v3-event:158",
+          "tick": 66,
+          "type": "ai_choice_explained",
+          "actor": "red_p_ouzi",
+          "reason": "prepare-open-readable-pin-geometry",
+          "value": 0.7
+        },
+        {
+          "id": "v3-event:160",
+          "tick": 66,
+          "type": "ability_started",
+          "actor": "red_p_ouzi",
+          "object": "v3-cast:159",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:161",
+          "tick": 69,
+          "type": "ability_committed",
+          "actor": "blue_p_p1mple",
+          "object": "v3-cast:154",
+          "reason": "skill1"
+        },
+        {
+          "id": "v3-event:163",
+          "tick": 69,
+          "type": "construct_placed",
+          "actor": "blue_p_p1mple",
+          "object": "v3-object:162",
+          "reason": "pin"
+        },
+        {
+          "id": "v3-event:164",
+          "tick": 69,
+          "type": "drowse_added",
+          "actor": "red_p_craps",
+          "target": "blue_p_p1mple",
+          "value": 2
+        },
+        {
+          "id": "v3-event:165",
+          "tick": 69,
+          "type": "cast_recovery_added",
+          "actor": "blue_p_p1mple",
+          "value": 0.35,
+          "object": "v3-cast:154"
+        }
+      ],
+      "completed": [
+        "v3-cast:2",
+        "v3-cast:8",
+        "v3-cast:11",
+        "v3-cast:20",
+        "v3-cast:23",
+        "v3-cast:14",
+        "v3-cast:51",
+        "v3-cast:54",
+        "v3-cast:63",
+        "v3-cast:66",
+        "v3-cast:69",
+        "v3-cast:72",
+        "v3-cast:75",
+        "v3-cast:85",
+        "v3-cast:107",
+        "v3-cast:110",
+        "v3-cast:117",
+        "v3-cast:129",
+        "v3-cast:154"
+      ],
+      "counters": {
+        "ai_choice_explained": 23,
+        "ability_started": 23,
+        "ability_committed": 19,
+        "construct_placed": 20,
+        "ability_failed": 3,
+        "drowse_added": 12,
+        "construct_damaged": 9,
+        "construct_destroyed": 7,
+        "movement_modified": 3,
+        "cast_recovery_added": 2,
+        "pattern_selected": 1
+      }
+    }
+  },
+  "hitWaitSteps": 27,
+  "hits": [
+    {
+      "id": "ability-hit:1",
+      "x": 1329.4197001078942,
+      "y": 737.3903765236024,
+      "heroId": "c_invoker",
+      "slot": "skill2",
+      "second": 3.8333333333333295,
+      "originX": 1273.0128598805604,
+      "originY": 702.7071611012454
+    }
+  ],
+  "events": [
+    {
+      "id": "v3-event:186",
+      "tick": 100,
+      "type": "pin_consumed",
+      "actor": "red_p_ouzi",
+      "object": "v3-object:125"
+    },
+    {
+      "id": "v3-event:187",
+      "tick": 100,
+      "type": "pin_consumed",
+      "actor": "red_p_ouzi",
+      "object": "v3-object:167"
+    },
+    {
+      "id": "v3-event:188",
+      "tick": 100,
+      "type": "drowse_added",
+      "actor": "blue_p_thespicy",
+      "target": "red_p_ouzi",
+      "value": 2
+    },
+    {
+      "id": "v3-event:189",
+      "tick": 100,
+      "type": "construct_damaged",
+      "actor": "red_p_woozy",
+      "object": "v3-object:140",
+      "value": 1
+    },
+    {
+      "id": "v3-event:190",
+      "tick": 101,
+      "type": "construct_damaged",
+      "actor": "blue_p_daft",
+      "object": "v3-object:125",
+      "value": 1
+    },
+    {
+      "id": "v3-event:191",
+      "tick": 102,
+      "type": "ability_failed",
+      "actor": "blue_p_p1mple",
+      "object": "v3-cast:175",
+      "reason": "pin-count"
+    },
+    {
+      "id": "v3-event:192",
+      "tick": 102,
+      "type": "construct_destroyed",
+      "actor": "blue_p_p1mple",
+      "object": "v3-object:125",
+      "value": 0
+    },
+    {
+      "id": "v3-event:193",
+      "tick": 103,
+      "type": "ai_choice_explained",
+      "actor": "blue_p_p1mple",
+      "reason": "recut-one-pin-toward-observed-route",
+      "value": 0.42
+    },
+    {
+      "id": "v3-event:195",
+      "tick": 103,
+      "type": "ability_started",
+      "actor": "blue_p_p1mple",
+      "object": "v3-cast:194",
+      "reason": "skill2"
+    },
+    {
+      "id": "v3-event:196",
+      "tick": 106,
+      "type": "construct_destroyed",
+      "actor": "red_p_ouzi",
+      "object": "v3-object:140",
+      "value": 0
+    },
+    {
+      "id": "v3-event:197",
+      "tick": 115,
+      "type": "ability_committed",
+      "actor": "blue_p_p1mple",
+      "object": "v3-cast:194",
+      "reason": "skill2"
+    },
+    {
+      "id": "v3-event:198",
+      "tick": 115,
+      "type": "construct_repositioned",
+      "actor": "blue_p_p1mple",
+      "object": "v3-object:162"
+    }
+  ],
+  "live": {
+    "renderer": "babylon",
+    "viewerStatus": "painted-2d-live-trial",
+    "backend": "webgl",
+    "actors": "44",
+    "models": "0",
+    "sprites": "10",
+    "paintedArena": "valley-ready",
+    "assetWarnings": "0",
+    "abilityTokens": "7",
+    "abilityWorldMeshes": "29",
+    "tick": "117",
+    "fps": "157.0"
+  },
+  "fingerprint": "219252:fd84a186:8f0117a2",
+  "focusedReplay": {
+    "identical": true,
+    "hits": 1,
+    "world": {
+      "tokens": 7,
+      "visible": 7,
+      "materials": 4,
+      "failed": [],
+      "worldMeshes": 29,
+      "worldMaterials": 4
+    }
+  },
+  "contextRestored": true,
+  "disposed": true
+}

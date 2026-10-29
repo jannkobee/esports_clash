@@ -1,0 +1,56 @@
+[
+  {
+    "avatar_id": "c_kage",
+    "id": "lacquer_outfit",
+    "sha256": "c1ec69926363fc62b58b7ea244d69f42dfe8d3701db2ce4a9f2a05cc7200823e",
+    "status": "reference_uploaded",
+    "version": 3,
+    "inventory_hash": "d9cc0a7be4b7d56dc4f4cbbc272d589733573f5925dae7674fb136e3a082d095",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kazemaru",
+    "id": "curved_blade",
+    "sha256": "8f1f6b08d07bcff981fecf47ff95d456b323fdc6beb3c65761022721058180cc",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "c744d61f6761e94503c324aece425123e7d9c49785ef775e5554005bf4b36ade",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kazemaru",
+    "id": "sailor_armor",
+    "sha256": "c843fd661d800c557e1b16d6750ac95e3a1bd8217b4a25ca0a3a9e2c51f5046b",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "99b75639e5509379305a6fc6e2ace702b8d0884ed45fc9d13f46f36a9303fcfd",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kindra",
+    "id": "lantern_staff",
+    "sha256": "04e8d4daf95eb664cf8078e820065f6ac4441479c2eab157ebf2218961f4a912",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "7cde4968a752ac0da4e621eef0c0112e50ac414268696836501b200d89610408",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kindra",
+    "id": "scout_outfit",
+    "sha256": "78e53430cb88513a0211c3523821ab2562ba92237b997f4ecc202f2b102fe35e",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "53cd24a6792f741eee072fc4dff68a3a59cb4b1e2a3da213155c5a3847ebd0e9",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_buck",
+    "id": "rotary_ram",
+    "sha256": "e372f3f8a8240ba5e7388a24fa181374e654ea53f038a57b21484a3abeff7296",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "25d43bb78d8ea6c157dcbbabb3e1cea9ba3edae5afcd03f18bf3533205764f67",
+    "http": 200
+  }
+]

@@ -15,6 +15,21 @@ class AvatarRetentionTest extends TestCase
     private string $temporaryStorage;
     private string $originalStorage;
 
+    public function test_clean_base_and_failed_deformation_evidence_is_never_an_orphan(): void
+    {
+        $id=(string)Str::uuid();
+        \App\Models\AvatarBaseCandidate::create(['id'=>$id,'avatar_id'=>'c_invoker','asset_epoch'=>'test-reset',
+            'status'=>'animated_base_unqualified','report'=>['qualification'=>'failed'],
+            'artifacts'=>['mirelle-base-animated.glb'=>['sha256'=>str_repeat('a',64),'bytes'=>1024]]]);
+        Http::fake(['*'=>Http::response(['deleted'=>[],'skipped'=>[],'reclaimed_bytes'=>0])]);
+        $protected=app(AvatarRetentionService::class)->computeProtected();
+        $this->assertContains($id,$protected['keep']);
+        $this->assertContains('base_candidate_evidence',$protected['reasons'][$id]);
+        app(AvatarRetentionService::class)->maintain(dryRun:true);
+        Http::assertSent(fn($request)=>$request->url()===app(AvatarEvolutionService::class)->endpoint('/retention')
+            &&in_array($id,$request['keep'],true)&&!in_array($id,$request['delete'],true));
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

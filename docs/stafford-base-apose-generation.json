@@ -1,0 +1,148 @@
+{
+    "id": "d0ba4c6c-f06e-4047-90ab-5f29de0cb11d",
+    "status": "generated_unqualified",
+    "plan": {
+        "version": 1,
+        "avatar_id": "c_wukong_lol",
+        "seed": 25001,
+        "compute_preference": "google",
+        "reference_sha256": "43c2464d7af854a76e703d40e0bdd3783b5aa4b533335ca899ce2f87a34581a4",
+        "workflow_sha256": "aa778e22da47e357008759f4b64dc8bbbc372cf604dda318218d323f78a09f8b",
+        "pins_sha256": "cd832d8bc88ddda3d2db2054a8924f0f38d0dd333a064d1fde64b22a897fcf0e",
+        "limits_sha256": "b4aaddd048aedc29ee2d99ec44353218e7b42e1fc263cbfc9a76abb15aefa9a4",
+        "engine_sha256": "830bd6e9838e66c3351236c9295389b76ed2ca5575ad52f33d1c46e04bfa431b"
+    },
+    "state": {
+        "id": "d0ba4c6c-f06e-4047-90ab-5f29de0cb11d",
+        "status": "generated_unqualified",
+        "stage": "awaiting_asset_qualification",
+        "created_unix": 1792590153.968323,
+        "plan": {
+            "version": 1,
+            "avatar_id": "c_wukong_lol",
+            "seed": 25001,
+            "compute_preference": "google",
+            "reference_sha256": "43c2464d7af854a76e703d40e0bdd3783b5aa4b533335ca899ce2f87a34581a4",
+            "workflow_sha256": "aa778e22da47e357008759f4b64dc8bbbc372cf604dda318218d323f78a09f8b",
+            "pins_sha256": "cd832d8bc88ddda3d2db2054a8924f0f38d0dd333a064d1fde64b22a897fcf0e",
+            "limits_sha256": "b4aaddd048aedc29ee2d99ec44353218e7b42e1fc263cbfc9a76abb15aefa9a4",
+            "engine_sha256": "830bd6e9838e66c3351236c9295389b76ed2ca5575ad52f33d1c46e04bfa431b"
+        },
+        "compute": {
+            "switching_supported": true,
+            "preferred": "google",
+            "selected": "google",
+            "ready": true,
+            "automatic_fallback": true,
+            "fallback_reason": null,
+            "blocked_reason": null,
+            "backends": {
+                "google": {
+                    "available": true,
+                    "model": "TRELLIS.2-4B",
+                    "reason": null,
+                    "hardware": {
+                        "gpu": "Tesla T4",
+                        "gpu_total_mib": 15360,
+                        "gpu_used_mib": 3,
+                        "gpu_free_mib": 14910,
+                        "driver": "580.82.07",
+                        "vm_available_mib": 11081.984375,
+                        "comfy_tree_rss_mib": 0,
+                        "worker_anonymous_mib": 440.3828125,
+                        "scope": "Docker Linux VM RAM; sampled whole-device VRAM includes other applications."
+                    }
+                },
+                "local": {
+                    "available": true,
+                    "model": "TRELLIS.2-4B",
+                    "reason": null,
+                    "hardware": {
+                        "gpu": "NVIDIA GeForce RTX 3060",
+                        "gpu_total_mib": 12288,
+                        "gpu_used_mib": 1211,
+                        "gpu_free_mib": 10905,
+                        "driver": "617.42",
+                        "vm_available_mib": 7318.46875,
+                        "comfy_tree_rss_mib": 0,
+                        "worker_anonymous_mib": 25.3046875,
+                        "scope": "Docker Linux VM RAM; sampled whole-device VRAM includes other applications."
+                    }
+                }
+            }
+        },
+        "attempts": [
+            {
+                "compute": "google",
+                "started_unix": 1792590154.0704663,
+                "model": "TRELLIS.2-4B"
+            }
+        ],
+        "provider": "google-colab",
+        "prompt_id": "d0ba4c6c-f06e-4047-90ab-5f29de0cb11d",
+        "sampled_peaks": {
+            "gpu_used_mib": 2329,
+            "comfy_tree_rss_mib": 5545.3359375,
+            "worker_anonymous_mib": 466.15625
+        },
+        "resources": {
+            "gpu": "Tesla T4",
+            "gpu_total_mib": 15360,
+            "gpu_used_mib": 437,
+            "gpu_free_mib": 14476,
+            "driver": "580.82.07",
+            "vm_available_mib": 9223.8046875,
+            "comfy_tree_rss_mib": 2269.6640625,
+            "worker_anonymous_mib": 445.7265625,
+            "scope": "Docker Linux VM RAM; sampled whole-device VRAM includes other applications."
+        },
+        "node_progress": {
+            "value": 5,
+            "max": 5,
+            "prompt_id": "d0ba4c6c-f06e-4047-90ab-5f29de0cb11d",
+            "node": "4"
+        },
+        "artifact": {
+            "file": "d0ba4c6c-f06e-4047-90ab-5f29de0cb11d.glb",
+            "sha256": "7606b5c57b562457ee616875267315751a33a34d74dbf74f07ab59d708230e8d",
+            "bytes": 2180856,
+            "meshes": 1,
+            "materials": 1,
+            "images": 2,
+            "skins": 0,
+            "animations": 0,
+            "publication_eligible": false,
+            "visual_review_required": true,
+            "identity_verified": false,
+            "generation": {
+                "model": "TRELLIS.2-4B",
+                "native_job_id": "d0ba4c6c-f06e-4047-90ab-5f29de0cb11d",
+                "native_engine": {
+                    "image_id": "not-recorded",
+                    "environment_id": "sha256:329cf150b758b77b627093eb4e35ba08a6602185001f6dd22030da6ee820a3b2",
+                    "python": "3.12.12",
+                    "source_hashes": {
+                        "service.py": "f95ded31d8b4448eb41afc8da4f1c9739a1da4832d0c2d5146ce0df1c6a52f68",
+                        "diagnose.py": "bf235870639d994f85b580d51b6770a3f83b958b54b7bcaf486925bc64cec675",
+                        "export_node.py": "41568ab48506cc5b06da4b494502bd9cae8a89a7b0192986a69b28a3cf6daf91",
+                        "workflow-v1.json": "a9b6bffa4adf93c691a464f3110b35b959fa439f10ced4d24f93e1399d8e59ac",
+                        "model-pins.json": "cd832d8bc88ddda3d2db2054a8924f0f38d0dd333a064d1fde64b22a897fcf0e",
+                        "limits.json": "147c3c140aa30a23fbb3f46f4ef66acd569608eedec859fd8e884f4ddcef89a3",
+                        "Dockerfile.native": "d129edd309e57455821d6278d58487530809711342a1ca68c4ede645140dccee",
+                        "catalog.json": "1004d9f10c44002fd098c3df03ed86bc0863a573384edf750fd7f9e0aac6c6d7",
+                        "reference-index.json": "3941e3a5217b7363ad4bff03dedd4a5d98415680ca51e40bb752ca92f9cb5c23",
+                        "patch_nodes.py": "c88141ac0d7ebd5021f0ee5d4f50de63fa7cca78caf7e2a8d78f7263f503c061",
+                        "runtime\/fdg_vae.py": "600abb902f4ae6330fbff1d4a9d7a7256c6bb97238c09916c79748cbe9e0969d",
+                        "runtime\/sparse_conv_config.py": "d6d9a0b4c82587ec03c4591c83bb1fde19437edf69b36fbb44c41e3f78a6bfc1"
+                    },
+                    "installed_packages_sha256": "8dae42fa4fcf63a0b2786c8866c9431e3097f776bda88115cb5cb3073a05081f"
+                },
+                "reference_sha256": "43c2464d7af854a76e703d40e0bdd3783b5aa4b533335ca899ce2f87a34581a4",
+                "publication_eligible": false
+            },
+            "qualification": "Generated source only. Blender binding, identity, animations and real-browser performance qualification are still required."
+        },
+        "completed_unix": 1792590546.725269
+    },
+    "error": null
+}

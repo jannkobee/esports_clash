@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_raijin",
+  "component_id": "scientist_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Insulated hazard-seam coat and monocle",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Teslan Veyr. Attached image is design reference only. Only the empty insulated midnight-blue coat with gold hazard seams, ivory shirt, trousers, boots, gloves and a separate brass-blue monocle above the collar. No person, head, face, hair, hands, grounding rods or back reservoirs. Clothing is empty and held by invisible support in a neutral wide A pose. Every opening is visibly empty. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "teslan-veyr",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/teslan-veyr.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/teslan-veyr-scientist_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-8f8b88c1-dbc0-465c-878e-9d8a584d82f6.png"
+}

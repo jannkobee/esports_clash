@@ -1,0 +1,161 @@
+{
+  "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+  "status": "limited_visual_review_unqualified",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Selected bind/skeleton and 90-degree shoulder/hip views of the exact generated Mirelle candidates, including focused joint screenshots; no full game-animation/contact qualification.",
+  "observations": [
+    "The inspected exact bind-pose silhouettes and foot positions remain consistent between the combined-pivot parent and the 12% weight-transfer candidate.",
+    "Deep flexion still pinches shoulder/hip contact regions. The right hip transition has an angular crease in the close side view, and the shoulder-to-chest junction retains a visible notch/compression. Lower intersection counts do not establish a passing shape-quality gate.",
+    "The separate diagnostic clip exports reproduce all 16 saved 45/90-degree bend counts for both candidates when sampled at normalized clip times. They are not game animation clips.",
+    "Close-view rendering exposed a camera near-plane defect. The shipped Babylon inspector was repaired and the focused views repeated. The earlier blank-image run is rejected as visual evidence.",
+    "Proceed with a 4mm spatial taper using the same 12% maximum transfer, donors, targets and parent. Preserve both existing candidates and record improvements and regressions before selection."
+  ],
+  "inspected_screenshots": [
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/parent-exact-bind-rest-0-front.png",
+      "sha256": "813f55228d3f0dd7ee08a3647b5d5f30d9d0bf2da96de373fa1db1cf0e2fa543"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-side.png",
+      "sha256": "ae06104b5726367905ad9be7576be1be3308b8d269307f2a3c189e47a8c23187"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/parent-verified-bend-ThighL-90-front.png",
+      "sha256": "8288a6e1c290acbf710aefd0b09842feee116c2dec12dbb013e8e385bd6053db"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/parent-verified-bend-ThighL-90-side.png",
+      "sha256": "60f60f2038f6e17740643ed8125bcfa8ed67b0f6fdd1b50fdb53ac17d2e72394"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-exact-bind-rest-0-front-skeleton.png",
+      "sha256": "d75907b1780775325b84e5991d51f009ab65eaa4b85090163cc86d5a25e56ff2"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-exact-bind-rest-0-side.png",
+      "sha256": "6485d68765147ab9b4681f00765fe15e3b1cb19716efb7b193c62fabddfa5249"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-exact-bind-rest-0-back.png",
+      "sha256": "46dedcf2c13f8adb70f36dfbc97242094f912619a669f60193eaa95880f0814a"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-verified-bend-UpperArmL-90-front.png",
+      "sha256": "fd5d7774625944f06253dec7d06946a4f0372ecc0c81b63f9a2ff253bdd42b4e"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-verified-bend-UpperArmL-90-side.png",
+      "sha256": "816a5f53e96189b91c1b9187e6833bd551c580a6f1f62de3df9ddc3d5dcca0f9"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-verified-bend-UpperArmR-90-front.png",
+      "sha256": "ef8f42bb017fc1558db0cc208ffc6c93a2368b25d334abbde2932c3a1f532693"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-verified-bend-UpperArmR-90-side.png",
+      "sha256": "381434d18499020b653dd0ff7762e795d985b99e4bc0d81094047a548fc1074e"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-verified-bend-UpperArmR-90-back.png",
+      "sha256": "dc60de8a80404391d1d1ded8cc91ff72e99a90a98acdd91757a177356babc46a"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-verified-bend-ThighL-90-front.png",
+      "sha256": "817a2024569719b832004178eb1c5dcf3068ce1210bc32022c301f3b323d5b47"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-verified-bend-ThighL-90-side.png",
+      "sha256": "0fc04bd1d09a373ae4677c588a541479ab471155514db32d0180427f612eded2"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-verified-bend-ThighR-90-front.png",
+      "sha256": "0c45c32a6d9d22425bfd3854608f43e499736a3d872fdbfb0f21617dd4aa81b3"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/current-verified-bend-ThighR-90-side.png",
+      "sha256": "9dbd7498e6c4045fab42f15fe07e78e0ef2bc3514ecc065f20468bd808dda51d"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-front.png",
+      "sha256": "faf5ebc4cfe0382af4c9785b440756af578490abc7bc0d645c3ee7ccfc3f52c5"
+    },
+    {
+      "review_id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+      "file": "screenshots/parent-verified-bend-ThighR-90-front.png",
+      "sha256": "bc98d00b7efe7ec7a46b52c4252bd98552e9fc9217df1e79133a75cd157714dd"
+    },
+    {
+      "review_id": "640258b6-72bb-47a9-a6ea-593a48220ad2",
+      "file": "screenshots/current-verified-bend-UpperArmL-90-front-detail.png",
+      "sha256": "5a3d85c1bbb079c63200a729a6f9ff5e0c7a066ac898d06450dc524059aa32c0"
+    },
+    {
+      "review_id": "640258b6-72bb-47a9-a6ea-593a48220ad2",
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-front-detail.png",
+      "sha256": "85321535fad0f19eb3aa91f002d8bc00ef8f8dced7406974cf7777b6f1fe743a"
+    },
+    {
+      "review_id": "640258b6-72bb-47a9-a6ea-593a48220ad2",
+      "file": "screenshots/current-verified-bend-ThighL-90-front-detail.png",
+      "sha256": "8e183de4bad390b7e0aee0365e580097b22e3e7a19a3dbfb227dfbdacc1d83a6"
+    },
+    {
+      "review_id": "640258b6-72bb-47a9-a6ea-593a48220ad2",
+      "file": "screenshots/current-verified-bend-ThighR-90-side-detail.png",
+      "sha256": "2da59e26faf4cf1e6bd0a496f43045ee5b362240d400d21e5db92f68414fd389"
+    },
+    {
+      "review_id": "640258b6-72bb-47a9-a6ea-593a48220ad2",
+      "file": "screenshots/current-verified-bend-UpperArmL-90-side-detail.png",
+      "sha256": "a2771ab2a1e59d5e46e7e3afb051c6fceea545acd8778b398e84edd8c539ea08"
+    },
+    {
+      "review_id": "640258b6-72bb-47a9-a6ea-593a48220ad2",
+      "file": "screenshots/current-verified-bend-UpperArmR-90-side-detail.png",
+      "sha256": "a037c96d9341f9102176d926e8c75b64f7de44468d2901eac90ec0ec7a4cbd53"
+    },
+    {
+      "review_id": "640258b6-72bb-47a9-a6ea-593a48220ad2",
+      "file": "screenshots/parent-verified-bend-ThighR-90-side-detail.png",
+      "sha256": "319eeb7bd7ce77d799dc40b21dc4e30b6cef6a8eadbd29c0cd1ab80807d0383d"
+    },
+    {
+      "review_id": "640258b6-72bb-47a9-a6ea-593a48220ad2",
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-side-detail.png",
+      "sha256": "cf2d355a652fe724fbc195583a2419ed19b43786b199c49fe03c5002d27fed54"
+    }
+  ],
+  "whole_body_review": {
+    "id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+    "report_sha256": "8f96408ac2191a079f8322eb9d62912cdcc8d1f79e5cac9f91ab0281a79345d0",
+    "rendered_views": 44,
+    "browser_errors": [],
+    "inspector_sha256": "3f97df6e4ef4701f91eb5a5b0a749daef6db05c4833391bca98e1cd49111c2af"
+  },
+  "focused_review": {
+    "id": "640258b6-72bb-47a9-a6ea-593a48220ad2",
+    "report_sha256": "3189b698118e2c5a7a3e0e801cf44db6bbb7922707d86d7b841fa40eb4fb40c4",
+    "rendered_views": 16,
+    "browser_errors": [],
+    "inspector_sha256": "b53cdbbf1a7ee8cae29c18696ad56eb13e07acc2349f6e41d94e8a0adc9ccb02"
+  },
+  "rejected_visual_evidence_id": "058d633c-5fa4-44f3-a225-4b0da722bd74"
+}

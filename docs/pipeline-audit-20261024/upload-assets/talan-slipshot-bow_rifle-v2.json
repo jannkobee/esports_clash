@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_aetherbolt",
+  "component_id": "bow_rifle",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Mechanical ricochet bow-rifle",
+  "attachment": "hands",
+  "prompt": "Use case: stylized-concept. A static fantasy game equipment reference. Extract only the complete ornate brass-and-wood bow-rifle prop held by the surveyor in the attached design reference. Show its scope, wood stock, narrow bow limbs, strings and brass frame as a neutral unheld inventory object. No character, hands, ammunition, action or effects. Preserve the illustrated object shape and proportions. Three-quarter product view, small centered object occupying 55 percent of frame with wide transparent margins, all tips visible. Genuine transparent background, no floor, shadow, background glow, text or labels.",
+  "reference_purpose": "reconstruction",
+  "slug": "talan-slipshot",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/talan-slipshot.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/talan-slipshot-bow_rifle-v2.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-c430b007-dddb-4ca8-93e8-6d5c8cb55f68.png"
+}

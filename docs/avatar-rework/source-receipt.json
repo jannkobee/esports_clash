@@ -1,0 +1,63 @@
+{
+  "files": [
+    {
+      "path": "inputs/ESPORTSCLASH_CODEX_IMPLEMENTATION_MASTER_PROMPT_V3.md",
+      "sha256": "55fb25c53db284c06f77d891f4e6e7ca2e2d13bfc41e1d73aec13ddef8c54680",
+      "role": "user-supplied design specification; not executable runtime"
+    },
+    {
+      "path": "inputs/ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "sha256": "08415f473082aa521500dfefb548acdaf97fa29c123b4dd80810010a8eda9fa5",
+      "role": "user-supplied design specification; not executable runtime"
+    },
+    {
+      "path": "inputs/ESPORTSCLASH_V3_ENGINE_AI_BALANCE.md",
+      "sha256": "b3f9e875e6fb8893fabf091f5b43d35e288c12a75465cd56824879b3dbb97e17",
+      "role": "user-supplied design specification; not executable runtime"
+    },
+    {
+      "path": "inputs/ESPORTSCLASH_V3_CHARACTER_ART_BIBLE.md",
+      "sha256": "ee61b3d626bb103dbd40d19622b75c4f0ea6948c89603fd9e8f72e88d36f13bb",
+      "role": "user-supplied design specification; not executable runtime"
+    },
+    {
+      "path": "inputs/ESPORTSCLASH_V3_ABILITY_DESIGN_MANIFEST.json",
+      "sha256": "f6ee34460ca9a44de5ce66ac0b29edc206ef75687ae641061017433e97839b0f",
+      "role": "user-supplied design specification; not executable runtime"
+    },
+    {
+      "path": "baseline/mockData.ts",
+      "sha256": "3254c6d6f1bfe6f3fc76f8f16bc8eaffb732fc98621877eef2ae5852f68918dc",
+      "role": "pre-V3 current workspace snapshot, includes earlier uncommitted work"
+    },
+    {
+      "path": "baseline/additionalChampions.ts",
+      "sha256": "8aa28da1067477f007d5629c8ce05704203339ef84c2a4d6fb2decc281961809",
+      "role": "pre-V3 current workspace snapshot, includes earlier uncommitted work"
+    },
+    {
+      "path": "baseline/avatarIdentity.ts",
+      "sha256": "6f6c96f0a6a8c7c62809f9c1dfb7d4b8c9e205cfba9280d9106f3a9c6023c30f",
+      "role": "pre-V3 current workspace snapshot, includes earlier uncommitted work"
+    },
+    {
+      "path": "baseline/components_AramMatchView.tsx",
+      "sha256": "fe5ed91a3cf88e2f6052c77dd40cfefc4c51c068dcb5ef74b35414e1a34d0e87",
+      "role": "pre-V3 current workspace snapshot, includes earlier uncommitted work"
+    },
+    {
+      "path": "baseline/combatDecision.ts",
+      "sha256": "760d5deca0358af8d75642cbb1b40d15390c51bbce706c7d102c75bd1f41cf25",
+      "role": "pre-V3 current workspace snapshot, includes earlier uncommitted work"
+    },
+    {
+      "path": "baseline/types.ts",
+      "sha256": "437588e1c8ef7949b57413a21abaa6830f7914201b18aa87bb06286a2d270cf9",
+      "role": "pre-V3 current workspace snapshot, includes earlier uncommitted work"
+    }
+  ],
+  "missing": [
+    "ESPORTSCLASH_V3_IDENTITY_MANIFEST.json"
+  ],
+  "identityResolution": "provisionally derived from matching identity fields in supplied ability manifest; not presented as supplied identity file"
+}

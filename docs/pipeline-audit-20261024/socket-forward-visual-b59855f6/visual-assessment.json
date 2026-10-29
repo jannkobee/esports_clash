@@ -1,0 +1,88 @@
+{
+  "review_id": "b59855f6-eab7-4263-89f0-dd53b49ead24",
+  "status": "improved_counts_deformation_unresolved",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Limited manual inspection of 16 named views from the forward 0.5% body-height socket trial against the preserved taper. No actual game-animation or dressed qualification.",
+  "observations": [
+    "The forward socket shift lowers 90-degree shoulder intersections from 131/81 to 63/42 with the same skin weights. All non-shoulder bend counts remain unchanged, and all 16 poses retain zero severe-stretch edges.",
+    "Paired oblique and selected side views show no gross detached or separated shoulder. The rounded/compressed shoulder transition remains; these views do not establish acceptable deep-flexion shape.",
+    "Selected front, side, back and skeleton bind views preserve the overall silhouette and supported feet. Selected 45-degree front views show the intended bent arm. The 90-degree front close views are partially occluded by the forearm/hand, so they cannot independently clear the armpit.",
+    "Both inspected 90-degree hip close views retain the deep flexion crease. Hip contacts remain 255/133; this shoulder-only study does not repair them.",
+    "Both exact diagnostic exports reproduce all 16 stored counts; 68 screenshots rendered without browser errors. Only the 16 listed images were manually assessed, and the clips are diagnostics rather than qualified game animations."
+  ],
+  "decision": "Retain as a promising numerical diagnostic, without replacing the immutable taper baseline or clearing the deformation gate. Next test a separately frozen combined outward/forward placement within the same 1% displacement cap, with weights and axes fixed; map residual contacts before any targeted surface correction.",
+  "candidate_disposition": {
+    "id": "268fd5d7-71a7-5671-9a24-2836cfaf6d84",
+    "selection": "diagnostic_only",
+    "immutable_comparator": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046"
+  },
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "2ab38cc34be4cc7ffd7dfef1b7a365528ae53fa08b87723f6dbf450155a74ce8"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "b867938b88832147391286d2f6813db0f194cbb09e1691a410dda4c1d44fea11"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-side-detail.png",
+      "sha256": "634cb821edf61f7eaccc69205de9a5de357ad0ee603f2a2b59008a6436e2c2b6"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-side-detail.png",
+      "sha256": "ce05353268b94581c65cacc6306d07db984627d2a6a8e08739d582bf65d8125d"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "e8466a34eccfd195e43596eebe33d492a6e7e4fa9fb3aa39551c382ecd40abfc"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "5fb29e4626bf1460d2ef501d07e2b79eef80247920f4d1589b1feb2c922849c0"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front.png",
+      "sha256": "20a7b2e65baa70d5470945622fa0d2d12914bf2eb2a5b5e5a70655852a952949"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-back.png",
+      "sha256": "17e8950aa5cb8560f9f99bc83361a77d0a122e5c4d15a3d8cd8322d80d3f4a5d"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-side.png",
+      "sha256": "fe464d064527bed867ed186524c76e6255fd8230a82ce873f8ad89e879fce99e"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front-skeleton.png",
+      "sha256": "2176c1dd006abf3e9dba4ad50ac2958f0e395c97dd9470191c3c239ca4c7a873"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-45-front.png",
+      "sha256": "fc4b70ebd0a91c31024c925f4be1acf9affd6fcc6db96715babca8d1928d9941"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-45-front.png",
+      "sha256": "a43ec1c0f81efb13536ccbaa4148ac309b77c4c4831f534c5bb48ae6a3933f49"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-front-detail.png",
+      "sha256": "00cbbd49516e9a28ec5149eade21085d33de32e84b557f17a36afb2b76e462ce"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-front-detail.png",
+      "sha256": "a437ab1e34c2b3bbaf22853db96c844f3f285b11cd70698dda6aabf717348a6a"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "66ceb396f29aeedf9a20fdb7bebbeab5861ff625bfba20f691101f64c166fc7c"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "9025a086a29b43ac9eea0c1a20d95d760e45044750a60ff03af998a214b46a4f"
+    }
+  ],
+  "rendered_views": 68,
+  "report_sha256": "97fb2b0c50a6c7e7de8947333f9b6a27d0268e36787418a8fab91aea51e802ac"
+}

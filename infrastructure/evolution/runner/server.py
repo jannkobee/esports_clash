@@ -10,6 +10,7 @@ import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from operations import Operations, normalize
+from intelligence import validate_plan, qualify
 
 ROOT = Path(os.environ.get('EVOLUTION_DATA', '/data'))
 ROOT.mkdir(parents=True, exist_ok=True)
@@ -18,7 +19,7 @@ LOCK = threading.Lock()
 PROCESSES = {}
 RUN_ID = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
 RUNNER_SOURCES = tuple(Path(__file__).with_name(name) for name in
-                       ('pipeline.py', 'train_stage.py', 'training.py', 'operations.py'))
+                       ('pipeline.py', 'train_stage.py', 'training.py', 'operations.py', 'evidence_io.py', 'regression.py', 'intelligence.py', 'marl.py', 'arena_marl.py'))
 
 
 def validate_runner_sources():
@@ -86,6 +87,26 @@ class Handler(BaseHTTPRequestHandler):
                 finally:
                     manager.db.close()
         parts = self.path.split('/')
+        if len(parts)==4 and parts[1]=='runs' and RUN_ID.fullmatch(parts[2]) and parts[3]=='checkpoint' and method=='GET':
+            folder=ROOT/parts[2]
+            try:
+                from intelligence import read,sha,canonical,arena_mode
+                import base64
+                plan=read(folder/'plan.json');validate_plan(plan,parts[2],TOKEN)
+                if not arena_mode(plan):raise ValueError('Not an arena study')
+                candidate=read(folder/'live-checkpoint.json')
+                if candidate!=read(folder/'checkpoints'/('candidate-'+str(candidate['generation'])+'.json')):raise ValueError('Checkpoint changed')
+                if sha(candidate['policy'])!=candidate['hash'] or candidate['source_hash']!=read(folder/'execution.json')['sourceHash']:
+                    raise ValueError('Checkpoint integrity failed')
+                return self.reply(200,{**candidate,'policy_bytes':base64.b64encode(canonical(candidate['policy'])).decode()})
+            except (OSError,ValueError,KeyError,TypeError) as error:return self.reply(422,{'error':str(error)})
+        if len(parts)==4 and parts[1]=='runs' and RUN_ID.fullmatch(parts[2]) and parts[3]=='qualification' and method=='GET':
+            folder=ROOT/parts[2]
+            try:
+                validate_plan(json.loads((folder/'plan.json').read_text()),parts[2],TOKEN)
+                if json.loads((folder/'state.json').read_text())['status']!='completed':raise ValueError('Study is not complete')
+                return self.reply(200,qualify(folder))
+            except (OSError,ValueError,KeyError,TypeError) as error:return self.reply(422,{'error':str(error)})
         if len(parts) != 3 or parts[1] != 'runs' or not RUN_ID.fullmatch(parts[2]):
             return self.reply(404, {'error': 'Unknown run'})
         run_id = parts[2]
@@ -93,27 +114,18 @@ class Handler(BaseHTTPRequestHandler):
         with LOCK:
             if method == 'POST':
                 length = int(self.headers.get('Content-Length', 0))
-                if length < 1 or length > 8192:
+                if length < 1 or length > 1048576:
                     return self.reply(413, {'error': 'Invalid plan size'})
                 try:
                     plan = json.loads(self.rfile.read(length))
                     assert isinstance(plan, dict)
-                    expected = {'version', 'seed_start', 'fit_cases', 'calibration_cases', 'evaluation_cases',
-                                'horizon_seconds', 'after_seconds', 'max_minutes', 'policy_scope',
-                                'minimum_evaluation_cases', 'automatic_promotion'}
-                    modern = plan.get('version') == 2
-                    assert set(plan) == expected | ({'operations'} if modern else set())
-                    assert plan['version'] in (1, 2) and plan['policy_scope'] == 'offline-live-macro'
-                    assert plan['automatic_promotion'] is False and plan['horizon_seconds'] == 30 and plan['after_seconds'] == 120
-                    if modern:
-                        settings = normalize(plan['operations'])
-                        assert all(plan[key] == settings[key] for key in ('fit_cases', 'calibration_cases', 'evaluation_cases', 'max_minutes'))
+                    intelligence = plan.get('version') in (3,4)
+                    if intelligence:
+                        validate_plan(plan,run_id,TOKEN)
                     else:
-                        assert plan['fit_cases'] == 32 and plan['calibration_cases'] == 24 and plan['evaluation_cases'] == 24
-                    assert type(plan['seed_start']) is int and 20001 <= plan['seed_start'] <= 2147482000
-                    assert type(plan['max_minutes']) is int and 1 <= plan['max_minutes'] <= 180
-                    assert plan['minimum_evaluation_cases'] == 18
-                except (ValueError, TypeError, AssertionError):
+                        self.validate_legacy(plan)
+                    modern = plan.get('version') == 2
+                except (ValueError, TypeError, AssertionError, KeyError):
                     return self.reply(422, {'error': 'Unsupported immutable training plan'})
                 if folder.exists() and (folder / 'plan.json').exists():
                     if json.loads((folder / 'plan.json').read_text()) != plan:
@@ -127,6 +139,8 @@ class Handler(BaseHTTPRequestHandler):
                 state = json.loads((folder / 'state.json').read_text())
                 if state['status'] in ('completed', 'failed', 'cancelled'):
                     return self.reply(200, state)
+                if intelligence and state['status']=='paused_budget' and self.headers.get('X-Evolution-Resume')!='1':
+                    return self.reply(200,state)
                 if any(p.poll() is None for key, p in PROCESSES.items() if key != run_id):
                     return self.reply(409, {'error': 'Only one resource-bounded run may execute'})
                 if run_id not in PROCESSES or PROCESSES[run_id].poll() is not None:
@@ -138,31 +152,27 @@ class Handler(BaseHTTPRequestHandler):
                     try:
                         validate_runner_sources()
                     except (SyntaxError, OSError) as error:
-                        state.update(status='failed', error=f'Runner code preflight failed: {error}',
-                                     traceback=traceback.format_exc())
+                        state.update(status='failed', error=f'Runner code preflight failed: {error}',traceback=traceback.format_exc())
                         write_json(folder / 'state.json', state)
                         return self.reply(200, state)
                     manager = Operations(ROOT)
                     if modern and state['status'] == 'queued': manager.configure(plan['operations'])
-                    pressure = manager.pressure()
-                    manager.db.close()
+                    pressure = manager.pressure();manager.db.close()
                     if pressure:
-                        state.update(status='paused_resource', error=pressure)
-                        write_json(folder / 'state.json', state)
+                        state.update(status='paused_resource', error=pressure);write_json(folder / 'state.json', state)
                         return self.reply(200, state)
                     starts_file = folder / 'starts.json'
                     starts = json.loads(starts_file.read_text())['count'] if starts_file.exists() else 0
-                    if starts >= 3:
+                    # Budget checkpoints are expected; they do not consume crash recovery attempts.
+                    if starts >= 3 and not intelligence:
                         state.update(status='failed', error='Three recovery launches exhausted; inspect memory/crash evidence before a new study')
-                        write_json(folder / 'state.json', state)
-                        return self.reply(200, state)
+                        write_json(folder / 'state.json', state);return self.reply(200, state)
                     write_json(starts_file, {'count': starts + 1})
                     log = open(folder / 'worker.log', 'ab', buffering=0)
                     try:
-                        PROCESSES[run_id] = subprocess.Popen(['python', '/runner/pipeline.py', str(folder)],
+                        PROCESSES[run_id] = subprocess.Popen(['python', '/runner/intelligence.py' if intelligence else '/runner/pipeline.py', str(folder)],
                             stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-                    finally:
-                        log.close()
+                    finally:log.close()
                 return self.reply(202, state)
             if not (folder / 'state.json').exists():
                 if method == 'DELETE':
@@ -185,6 +195,24 @@ class Handler(BaseHTTPRequestHandler):
                     state['status'] = 'cancelled'
                     write_json(folder / 'state.json', state)
             return self.reply(200, json.loads((folder / 'state.json').read_text()))
+
+    @staticmethod
+    def validate_legacy(plan):
+        expected = {'version', 'seed_start', 'fit_cases', 'calibration_cases', 'evaluation_cases',
+                    'horizon_seconds', 'after_seconds', 'max_minutes', 'policy_scope',
+                    'minimum_evaluation_cases', 'automatic_promotion'}
+        modern = plan.get('version') == 2
+        assert set(plan) == expected | ({'operations'} if modern else set())
+        assert plan['version'] in (1, 2) and plan['policy_scope'] == 'offline-live-macro'
+        assert plan['automatic_promotion'] is False and plan['horizon_seconds'] == 30 and plan['after_seconds'] == 120
+        if modern:
+            settings = normalize(plan['operations'])
+            assert all(plan[key] == settings[key] for key in ('fit_cases', 'calibration_cases', 'evaluation_cases', 'max_minutes'))
+        else:
+            assert plan['fit_cases'] == 32 and plan['calibration_cases'] == 24 and plan['evaluation_cases'] == 24
+        assert type(plan['seed_start']) is int and 20001 <= plan['seed_start'] <= 2147482000
+        assert type(plan['max_minutes']) is int and 1 <= plan['max_minutes'] <= 180
+        assert plan['minimum_evaluation_cases'] == 18
 
     def do_GET(self):
         if self.path == '/health':

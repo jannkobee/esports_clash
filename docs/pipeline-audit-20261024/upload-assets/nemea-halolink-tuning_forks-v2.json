@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_io",
+  "component_id": "tuning_forks",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Paired tuning forks",
+  "attachment": "hands",
+  "prompt": "Edit attached image. Remove the entire central outfit and all clothing, boots, fabric, shoulder armor, sleeves and tassels. Keep ONLY the two standalone golden tuning forks at the left and right, preserving their designs exactly. Arrange both complete forks side by side as isolated musical instrument inventory objects, centrally with ample transparent margin all four sides. No wearer, mannequin, clothing, hand, floor, shadow, glow, text or other object. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "nemea-halolink",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/nemea-halolink-tuning_forks.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/nemea-halolink-tuning_forks-v2.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-8556ce71-3fb0-45ef-956c-d80338c96703.png"
+}

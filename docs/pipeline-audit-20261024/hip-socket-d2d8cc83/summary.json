@@ -1,0 +1,115 @@
+{
+  "study_id": "d2d8cc83-a767-4e77-baa6-47d409888d0a",
+  "report_sha256": "ee1408d6a8b3bc0edc791e959e08b691d8b420d6bf140eaa5a10e0bd60d8762b",
+  "variants": [
+    {
+      "variant": "lateral_0p5pct",
+      "id": "5705203f-c43f-58bc-961a-8c34a4608e61",
+      "sha256": "2b976fd0665ab1baf37f8c4c14af4d05722779c3cf725e289656c0be6d224489",
+      "hips_90": [
+        243,
+        125
+      ],
+      "rest_max_m": 2.057339116845469e-07,
+      "weight_error_max": 1.7881393432617188e-07
+    },
+    {
+      "variant": "medial_0p5pct",
+      "id": "90c7c429-5554-5be0-a704-b35bd294091a",
+      "sha256": "b164a0a96a7866245f9be584872d452cc4ec5472665c199dd0032c9a047678ed",
+      "hips_90": [
+        254,
+        118
+      ],
+      "rest_max_m": 2.8817473207709554e-07,
+      "weight_error_max": 1.7881393432617188e-07
+    },
+    {
+      "variant": "anterior_0p5pct",
+      "id": "16314881-4f25-5933-a4ab-0c6e4cb4f8f4",
+      "sha256": "98e63d074abba0b086f09fc222b22425d3f0d2c3a8b6ada31c1e12bd05dca742",
+      "hips_90": [
+        130,
+        82
+      ],
+      "rest_max_m": 2.0914775689107046e-07,
+      "weight_error_max": 1.7881393432617188e-07
+    },
+    {
+      "variant": "posterior_0p5pct",
+      "id": "2c5adde9-9f84-5915-bf22-a08a903489bd",
+      "sha256": "b23b3104c3717a4177aa8433764ea3de51d31f313daad57df2ce4f9e07f48059",
+      "hips_90": [
+        381,
+        312
+      ],
+      "rest_max_m": 2.936133682851505e-07,
+      "weight_error_max": 1.7881393432617188e-07
+    },
+    {
+      "variant": "superior_0p5pct",
+      "status": "rejected_by_frozen_bounds",
+      "rejection_details": {
+        "joint": "ThighL",
+        "proposed_xyz": [
+          -0.056813888251781464,
+          0.0067079258151352406,
+          0.08160919696092606
+        ],
+        "source_section_bounds_xyz": [
+          [
+            -0.09485005587339401,
+            -0.04082227870821953,
+            0.07153835147619247
+          ],
+          [
+            -0.02511182799935341,
+            0.0605560764670372,
+            0.08148735761642456
+          ]
+        ],
+        "displacement_to_height": 0.005000001824179337,
+        "maximum_displacement_to_height": 0.01,
+        "inside_section_bounds": false
+      }
+    },
+    {
+      "variant": "inferior_0p5pct",
+      "status": "rejected_by_frozen_bounds",
+      "rejection_details": {
+        "joint": "ThighR",
+        "proposed_xyz": [
+          0.06071757897734642,
+          0.006707946304231882,
+          0.07157986611127853
+        ],
+        "source_section_bounds_xyz": [
+          [
+            0.02943296544253826,
+            -0.040915604680776596,
+            0.07161889970302582
+          ],
+          [
+            0.09489209204912186,
+            0.05748705938458443,
+            0.08133192360401154
+          ]
+        ],
+        "displacement_to_height": 0.005000001824179337,
+        "maximum_displacement_to_height": 0.01,
+        "inside_section_bounds": false
+      }
+    },
+    {
+      "variant": "section_bounds_center",
+      "id": "eea54e6e-a627-5500-9fe6-ada11e35b72a",
+      "sha256": "98192e170d82ebba8f59c2c9fb279c8a7f22c026d8473baafb02255fa14602ff",
+      "hips_90": [
+        351,
+        152
+      ],
+      "rest_max_m": 2.377190639890614e-07,
+      "weight_error_max": 1.7881393432617188e-07
+    }
+  ]
+}

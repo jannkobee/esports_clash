@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_aetherbolt",
+  "component_id": "surveyor_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Surveyor outfit and rangefinder eyepieces",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Talan Slipshot. Attached illustration is design reference only. Only the empty ivory-blue surveyor clothing, leather straps, trousers, gloves, boots and separate rangefinder eyepieces above the empty collar. No person, skin, hair, bow-rifle, mirror drones, backpack or rolled maps. Garments are visibly empty on invisible support in a neutral symmetrical wide A pose. Hollow neck and joint openings, no mannequin. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "talan-slipshot",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/talan-slipshot.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/talan-slipshot-surveyor_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-eade595a-7c34-438e-9723-ded11a7e01d1.png"
+}

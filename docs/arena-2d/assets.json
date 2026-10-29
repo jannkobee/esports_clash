@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-24",
+  "owner": "/root",
+  "workflow": "owner-approved painted-sprite trial",
+  "qualification": "unqualified",
+  "provider": "built-in image_gen",
+  "assets": [
+    {
+      "path": "public/art/arena-2d/ruins-v1.png",
+      "sha256": "47162f40fae85e15053f17fe8320a7affff5e530bbecdb3ba64feac1a904b086"
+    },
+    {
+      "path": "public/art/arena-2d/mirelle-motion-v1.png",
+      "sha256": "89b6f4cb24a41bc60562c4c289f83f3c7b5c7489cbc388224bc3edcdfa806b8b"
+    }
+  ],
+  "motion": {
+    "avatarId": "c_invoker",
+    "canonicalId": "mirelle-vane",
+    "width": 1402,
+    "height": 1122,
+    "alpha": true,
+    "columns": 4,
+    "rows": 4,
+    "direction": "screen-right three-quarter",
+    "pivot": "approximate cell center; per-frame feet not yet calibrated",
+    "states": [
+      {
+        "name": "Idle",
+        "row": 0,
+        "frames": 4,
+        "fps": 3,
+        "loop": true
+      },
+      {
+        "name": "Run",
+        "row": 1,
+        "frames": 4,
+        "fps": 7,
+        "loop": true
+      },
+      {
+        "name": "Cast",
+        "row": 2,
+        "frames": 4,
+        "fps": 7,
+        "loop": true,
+        "scope": "review loop only; production casts non-looping"
+      },
+      {
+        "name": "Death",
+        "row": 3,
+        "frames": 4,
+        "fps": 5,
+        "loop": false
+      }
+    ]
+  },
+  "limits": [
+    "One direction only",
+    "Fractional cell boundaries; padding audit pending",
+    "Generated gait/costume drift",
+    "Not production or live match assets"
+  ]
+}

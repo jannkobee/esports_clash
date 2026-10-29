@@ -16,6 +16,11 @@ try {
   for (const [file, hash] of manifest.sources) assert.equal(sha(await readFile(`src/${file}`)), hash, `Worker source changed: ${file}`);
   assert.deepEqual(plan.versions, Object.fromEntries(['catalog_version', 'rules_version', 'policy_version', 'observation_version'].map(key => [key, manifest[key]])));
   assert.equal(sha(await readFile('/online/catalog.json')), manifest.catalog_version);
+  if (plan.content_catalog) {
+    assert.equal(plan.content_catalog.schema,1);
+    assert.equal(sha(plan.content_catalog.canonical_records),plan.content_catalog.hash,'Allocated content snapshot changed');
+    assert.deepEqual(JSON.parse(plan.content_catalog.canonical_records),plan.content_catalog.records);
+  }
   const profile = `/tmp/online-browser-${plan.match_id}-${process.pid}`;
   chrome = spawn('chromium', ['--headless', '--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu',
     '--remote-debugging-port=9226', `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
@@ -51,7 +56,13 @@ try {
     const roots = await import('/node_modules/.vite/deps/react-dom_client.js');
     const { AramMatchView } = await import('/src/components/AramMatchView.tsx');
     const { INITIAL_PLAYERS, CHAMPIONS, INITIAL_COACHES } = await import('/src/mockData.ts');
+    const { validateGameContent } = await import('/src/gameContent.ts');
     const plan = ${JSON.stringify(plan)};
+    if(plan.content_catalog&&!validateGameContent(plan.content_catalog))throw Error('Invalid allocated content catalog');
+    const arena=plan.versions.policy_version==='arena-command-v1';
+    const hybrid=['baseline-hybrid-v1','original-v3-hybrid-v2'].includes(plan.versions.policy_version);
+    if(arena&&plan.intelligence?.controller!=='arena')throw Error('Missing pinned arena controller');
+    if(hybrid&&plan.intelligence?.controller!=='hybrid')throw Error('Missing pinned hybrid controller');
     const lineup = side => plan[side].map(slot => {
       const player = INITIAL_PLAYERS.find(card => card.id === slot.card_id);
       const champion = CHAMPIONS.find(avatar => avatar.id === slot.avatar_id);
@@ -62,7 +73,11 @@ try {
     const node = document.createElement('div'); document.body.append(node);
     window.onlineRoot = (roots.createRoot ?? roots.default.createRoot)(node);
     window.onlineRoot.render(React.createElement(AramMatchView, { seed: plan.seed,
+      contentCatalog:plan.content_catalog??null,
       evaluationRenderless: true, evaluationStartPaused: true, trustedServer: true,
+      evaluationController:arena?'arena':hybrid?'hybrid':'legacy',
+      evaluationPolicies:(arena||hybrid)&&plan.intelligence.release?{blue:plan.intelligence.release.policy,red:plan.intelligence.release.policy}:undefined,
+      intelligenceRelease:(arena||hybrid)?plan.intelligence.release:undefined,
       blueLineup: lineup('blue'), redLineup: lineup('red'),
       blueCoach: INITIAL_COACHES.find(coach => coach.id === plan.coach_id),
       redCoach: INITIAL_COACHES.find(coach => coach.id === plan.coach_id),
@@ -84,7 +99,8 @@ try {
   const started = Date.now();
   const speed = Math.max(1, Math.min(4, Number(process.env.ONLINE_SPEED ?? 1)));
   let didFinish = false;
-  while (Date.now() - started < 45 * 60 * 1000) {
+  const smoke=process.argv.includes('--smoke');
+  while (!smoke && Date.now() - started < 45 * 60 * 1000) {
     const tickStart = Date.now();
     if (sequence) await evaluate('window.__esportsTrusted.step(15)');
     const snapshot = await evaluate('window.__esportsTrusted.snapshot()');
@@ -107,7 +123,11 @@ try {
     if (result) { didFinish = true; console.log(JSON.stringify({ completed: plan.match_id, sequence, winner: result.winner })); break; }
     await wait(Math.max(0, 500 / speed - (Date.now() - tickStart)));
   }
-  if (!didFinish) throw Error('Match worker time budget exceeded; no result awarded');
+  if(smoke) {
+    const snapshot=await evaluate('window.__esportsTrusted.snapshot()');
+    await atomic('smoke.json',{schema:1,content_hash:plan.content_catalog?.hash,versions:plan.versions,snapshot});
+    console.log(JSON.stringify({smoke:true,second:snapshot.second,content_hash:plan.content_catalog?.hash}));
+  } else if (!didFinish) throw Error('Match worker time budget exceeded; no result awarded');
 } catch (error) {
   await atomic('state.json', { status: 'failed', error: error.message });
   console.error(error.stack);

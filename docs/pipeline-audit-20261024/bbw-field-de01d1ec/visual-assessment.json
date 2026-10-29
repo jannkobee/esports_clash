@@ -1,0 +1,135 @@
+{
+  "review_id": "de01d1ec-3a14-4291-b04e-b9810fb31c40",
+  "assessed_on": "2026-10-29",
+  "status": "regional_blend_defect_isolated",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "The regional blend introduces a sharp outer-left-hip notch at 45 degrees that is absent in the raw and full BBW comparison. Full BBW still has abrupt hip creasing at 90 degrees and compressed shoulder/chest shape. No production candidate is approved.",
+  "findings": [
+    {
+      "poses": [
+        "ThighL/45/orbit1"
+      ],
+      "observation": "Regional field shows a sharp outer silhouette notch. Full BBW has a continuous outer silhouette here, as does raw.",
+      "interpretation": "Controlled weight-only evidence implicates the spherical transition for this specific added notch; not a general claim about all deformation."
+    },
+    {
+      "poses": [
+        "ThighL/90/orbit1",
+        "ThighR/90/orbit3"
+      ],
+      "observation": "Full BBW changes a broader thigh area and reduces the prominent upper-thigh protrusion visible in raw/regional, but forms a narrow crease and stretched transition into the groin.",
+      "interpretation": "Do not promote the complete dense field based on the 45-degree improvement."
+    },
+    {
+      "poses": [
+        "UpperArmL/90/orbit1",
+        "UpperArmL/90/orbit3"
+      ],
+      "observation": "Both BBW variants compress the shoulder. Full BBW also changes the breast/chest silhouette noticeably, outside the original regional support.",
+      "interpretation": "Global adoption requires torso influence control and shoulder-shape review."
+    },
+    {
+      "poses": [
+        "ThighL/45/orbit0",
+        "ThighL/90/orbit0"
+      ],
+      "observation": "Foreground arm obscures much of the joint.",
+      "interpretation": "These side views cannot independently verify the inner joint contour."
+    }
+  ],
+  "limitations": [
+    "21 of 36 screenshots inspected.",
+    "Static diagnostic snapshots only; no game motion, finger articulation or four-influence runtime qualification.",
+    "Pose normals recomputed consistently for all three fields.",
+    "No independent anatomical target or anatomical quality metric is available.",
+    "No conclusion that source topology or pivot placement is the remaining cause."
+  ],
+  "next_action": "Replace the spherical adoption strategy with an anatomically bounded weight transition that preserves existing hand/finger weights and constrains torso influence. Verify the 45-degree hip notch is removed before sparse fitting; retain the 90-degree hip and shoulder failures as separate gates.",
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/raw-UpperArmL-90-orbit1.png",
+      "sha256": "6febb43dafeb5fbfb39257f1e713dfcba770a73497659516861a63217bc938ca"
+    },
+    {
+      "file": "screenshots/raw-UpperArmL-90-orbit3.png",
+      "sha256": "70f6d2639eb75863f78dc0b4c88ef06f6de100753820a9a9d72ae31f90629a7c"
+    },
+    {
+      "file": "screenshots/regional-UpperArmL-90-orbit1.png",
+      "sha256": "56c4cd3a2da46c1abe8382c6f78ccec81839a34aeb8130a6aa749119de98fd6f"
+    },
+    {
+      "file": "screenshots/regional-UpperArmL-90-orbit3.png",
+      "sha256": "5d4ada8f03ed44654f460b6bd445897a1f12b9180ff2ab3a900977dc1e88032f"
+    },
+    {
+      "file": "screenshots/full-UpperArmL-90-orbit1.png",
+      "sha256": "f3ff24781a023c06482b2ed35db801e0b39926d2216a2ceccbb49490a5ce3cd1"
+    },
+    {
+      "file": "screenshots/full-UpperArmL-90-orbit3.png",
+      "sha256": "bca9f90bda6e4bfbcbc4165e93a8ac55be0e9312d79beac8cc6222a270edca96"
+    },
+    {
+      "file": "screenshots/raw-ThighL-45-orbit0.png",
+      "sha256": "9151badcd6347c2c6cc3c543398eadb6535106cf8887d7b02942078f218fbda0"
+    },
+    {
+      "file": "screenshots/raw-ThighL-45-orbit1.png",
+      "sha256": "13dc2244891e9a4c1a307df386bf4a7a89843227b35ff06b62c40863f210272c"
+    },
+    {
+      "file": "screenshots/regional-ThighL-45-orbit0.png",
+      "sha256": "275096b38149dcf23e609c29090f9521692035ca6b2004751df8897d98a2be2e"
+    },
+    {
+      "file": "screenshots/regional-ThighL-45-orbit1.png",
+      "sha256": "df14a7548597c4a15c0f284c9014e8852fafa64cf130dbfb0ed70b56c81be242"
+    },
+    {
+      "file": "screenshots/full-ThighL-45-orbit0.png",
+      "sha256": "64aa812c24785be98a946c66de2cad96eaa679c9667f10ab478eeedca3e35a84"
+    },
+    {
+      "file": "screenshots/full-ThighL-45-orbit1.png",
+      "sha256": "873744d3b3e349ca5677d507facd57a1fdbdb190dbbe7f8ad3e1c8dd11ca2282"
+    },
+    {
+      "file": "screenshots/raw-ThighL-90-orbit0.png",
+      "sha256": "c250c157c18e60f8e984c16cf266b1550d78c834cffe4c772ce6277722b4a2d0"
+    },
+    {
+      "file": "screenshots/raw-ThighL-90-orbit1.png",
+      "sha256": "15f8e2655a23e3673a5bec680d9ecf62aaf8537f2d66af8a07cf96c172c0c183"
+    },
+    {
+      "file": "screenshots/regional-ThighL-90-orbit0.png",
+      "sha256": "d2748e1b3ac3694724f174b97946eec20ce6b9f5bf202ec47b1d3760e738b48f"
+    },
+    {
+      "file": "screenshots/regional-ThighL-90-orbit1.png",
+      "sha256": "f1a1c3ba183d5bb8d2807661ff0534e16490193f69850270509e17670c2e4189"
+    },
+    {
+      "file": "screenshots/full-ThighL-90-orbit0.png",
+      "sha256": "15619b7c43cf3bfe3edbb9372e039771e326890d09a42223f62001ca9f8bf4af"
+    },
+    {
+      "file": "screenshots/full-ThighL-90-orbit1.png",
+      "sha256": "3ec39684b303e9074d927d25c0dd990e6b24a517dcd92db666acef7f672639ae"
+    },
+    {
+      "file": "screenshots/raw-ThighR-90-orbit3.png",
+      "sha256": "e72598fdb7fb5523412ba574e152fbd624fd044e220ca51ad05c3082f889ff3b"
+    },
+    {
+      "file": "screenshots/regional-ThighR-90-orbit3.png",
+      "sha256": "e2789d15438035e5605259a49c954b3e952a7664168bd1ac4870ba15e4358c3c"
+    },
+    {
+      "file": "screenshots/full-ThighR-90-orbit3.png",
+      "sha256": "593a070b6a7dbf70e018c0bfbb26b3b5a71540a2435593d3e178c7c8fbd9c35f"
+    }
+  ]
+}

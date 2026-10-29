@@ -72,6 +72,8 @@ except Exception as e: print(json.dumps({"available":False,"reason":type(e).__na
         gpu = json.loads(result.stdout.strip().splitlines()[-1])
     except (ValueError, IndexError):
         gpu = {'available': False, 'reason': 'Unable to test native CUDA support.'}
+    # Colab may ship a newer default toolkit. Prefer the pinned CUDA 12.x
+    # toolkit when present; never compile this cu128 environment with CUDA 13.
     cuda = next((path for path in [os.environ.get('CUDA_HOME'), '/usr/local/cuda-12.8', '/usr/local/cuda']
                  if path and (Path(path) / 'bin/nvcc').is_file()), None)
     cuda_ok = False
@@ -153,6 +155,19 @@ def install(root, report):
     stage('nvdiffrec', lambda: command([python,'-m','pip','install','--no-deps',*sorted(wheels.glob('nvdiffrec_render*.whl'))]))
     for name in ['nvdiffrast','FlexGEMM','CuMesh']:
         stage('submodules-' + name, lambda name=name: command(['git','-C',paths[name],'submodule','update','--init','--recursive','--depth','1']))
+        if name == 'CuMesh':
+            def prepare_cumesh_eigen():
+                # CuMesh vendors cubvh as a subtree, so cubvh's nested
+                # .gitmodules file is not reached by the outer recursive
+                # update. Supply the distro-pinned headers at its expected path.
+                command(['apt-get','install','-y','libeigen3-dev'])
+                target = paths['CuMesh'] / 'third_party/cubvh/third_party/eigen'
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if not target.exists():
+                    target.symlink_to('/usr/include/eigen3', target_is_directory=True)
+                if not (target / 'Eigen/Dense').is_file():
+                    raise RuntimeError('CuMesh Eigen headers are unavailable.')
+            stage('cumesh-eigen', prepare_cumesh_eigen)
         stage('build-' + name, lambda name=name: command([python,'-m','pip','install','--no-build-isolation','--no-deps',paths[name]]))
     stage('eigen', lambda: command(['git','-C',paths['TrellisNative'],'submodule','update','--init','--depth','1','o-voxel/third_party/eigen']))
     stage('build-o-voxel', lambda: command([python,'-m','pip','install','--no-build-isolation','--no-deps',paths['TrellisNative'] / 'o-voxel']))
@@ -215,6 +230,7 @@ def main():
     if args.start:
         environment = runtime_environment(args.root)
         python = args.root / 'env/bin/python'
+        subprocess.run([str(python), str(args.root / 'src/patch_nodes.py'), '--mesh-only'], env=environment, check=True, timeout=30)
         # Diagnostics must pass before an authenticated native service is ready.
         subprocess.run([str(python), str(args.root / 'src/diagnose.py')], env=environment, check=True, timeout=600)
         with (args.root / 'native.log').open('ab') as log:

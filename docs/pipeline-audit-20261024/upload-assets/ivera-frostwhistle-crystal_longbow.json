@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_astra",
+  "component_id": "crystal_longbow",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Asymmetric longbow with crystal forks",
+  "attachment": "hands",
+  "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Ivera Frostwhistle. Attached image is DESIGN REFERENCE ONLY. One complete asymmetric longbow bearing vibrating blue crystal forks, brown metal/wood limbs and bowstring. No quiver, arrows, hands, wearer or other gear. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+  "reference_purpose": "reconstruction",
+  "slug": "ivera-frostwhistle",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/ivera-frostwhistle.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/ivera-frostwhistle-crystal_longbow.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b3980e67-5a04-4d90-bbcd-42d063a09f5d.png"
+}

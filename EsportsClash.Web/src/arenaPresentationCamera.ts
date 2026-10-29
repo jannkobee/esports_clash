@@ -1,4 +1,5 @@
-export const ARENA_RENDER_HEIGHT = 760;
+import {ARENA_HEIGHT} from './arenaLayout.ts';
+export const ARENA_RENDER_HEIGHT = ARENA_HEIGHT;
 
 export type ArenaCameraViewport = {
   x: number;

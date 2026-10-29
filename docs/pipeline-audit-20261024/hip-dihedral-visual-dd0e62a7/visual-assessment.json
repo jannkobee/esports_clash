@@ -1,0 +1,117 @@
+{
+  "review_id": "dd0e62a7-c514-4172-9e82-a7158179724b",
+  "status": "fold_proxy_improved_shape_unresolved",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Limited manual assessment of 24 named hash-verified views from 40 captures. Hip 90-degree single-axis diagnostic poses only; full geometry remains visible.",
+  "observations": [
+    "Eight fixed camera azimuths were captured per hip for each exact candidate with the verified corrective morph weights active.",
+    "Paired inner-hip views (left orbit 1 and right orbit 3) still show pinched, abrupt transitions; no convincing visible improvement is evident at the captured scale despite lower measured contacts and a better selected-edge fold proxy.",
+    "Outer/rear paired views likewise show no clear shape improvement. Some views are blocked by the arms or legs, and current right orbit 4 is completely obscured.",
+    "The objective was optimized on only 12 measured edges per hip and is not independent proof of broader anatomical improvement. These captures do not qualify game animations or appearance."
+  ],
+  "decision": "Retain the candidate and target as unqualified diagnostic evidence, with no selection or publication. Investigate broader surface shape and independent visual metrics; do not treat optimized fold proxy or contact count as an anatomy pass.",
+  "candidate_disposition": {
+    "id": "bb3dc329-4287-4bed-8932-7658f949f214",
+    "selection": "diagnostic_only",
+    "comparison": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97"
+  },
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/parent-verified-bend-ThighL-90-hiporbit-1-detail.png",
+      "sha256": "6f9242b13d40143d7220d9d61c3d8761b3b0eb0fada4bff996324b4b11ee5141"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-hiporbit-1-detail.png",
+      "sha256": "0b60261e368aa3945e4abdfc08b6a97476bdccd5790280fa87f80a313ccd477e"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighL-90-hiporbit-3-detail.png",
+      "sha256": "8492ccc1593963aa8d451c969df07f8bcc86baaea8a49572f7e080324ea94d72"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-hiporbit-3-detail.png",
+      "sha256": "a4257676a1ec55b434f09dc18c8c596b836d24882b985a80062c83e4ff959419"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighL-90-hiporbit-5-detail.png",
+      "sha256": "3cd2bf25f7396d9ac7c8e4d0c8b3c267b50fab5da0d064deeec363ff1bf59abc"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-hiporbit-5-detail.png",
+      "sha256": "abd3e62745bd67178a9e033dfd487c7650f3720430145ba5cb831c59850ba1d7"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighL-90-hiporbit-7-detail.png",
+      "sha256": "93ac419242a40b23a11ce51427d456797fa7a0c28f0bcc2ee046ec33b609baaf"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-hiporbit-7-detail.png",
+      "sha256": "2882b1bbdd6c8d167cd81ad7c77e6ad6c87d2ca0d8a024b7a8e2fd1d6f7384a6"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-hiporbit-0-detail.png",
+      "sha256": "2758db67b061c39aea072072b7fca0d16b445b03258185e45f7424c9ea1d06ec"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-hiporbit-2-detail.png",
+      "sha256": "01c7817c0f0d84270ac0977654c57e4cc4b24972aaeb54f1f5d3bb021ec2deb4"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-hiporbit-4-detail.png",
+      "sha256": "ff8737cf82f16715339ae27dfd49ec52215bba3dbc60ebddfca60d33d40f6e79"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-hiporbit-6-detail.png",
+      "sha256": "242dce404459bd7db2b90e19a4aaad11b4469197e7a4011e338467805795a320"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighR-90-hiporbit-1-detail.png",
+      "sha256": "b55b30c5ffdcb86f7ffd82a7a9df2ea44cd1cc16fcfe7f9ec5da4ba53272ee4b"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-hiporbit-1-detail.png",
+      "sha256": "afdd33edb7bb10a7c5d33b6c1f54fcb3dfde4567653da8f9fae3e794acda6faf"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighR-90-hiporbit-3-detail.png",
+      "sha256": "dc6b18d033cf69b714f527b1ca60710fad4a7d18eded8171136fc860d45d9644"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-hiporbit-3-detail.png",
+      "sha256": "d6f85000017bb34bbf4ce6cd385f7098bb8e8cb9ce31999cfaf9ab6d8a70f4a0"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighR-90-hiporbit-5-detail.png",
+      "sha256": "80c2109f502de8fb3fce6321e12e4608b4de61ac3f9a0f60c376463b938f1890"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-hiporbit-5-detail.png",
+      "sha256": "b6d4ebc094688d47eea240c41e5639fe553674359bdcc9286e41dbce39e770e1"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighR-90-hiporbit-7-detail.png",
+      "sha256": "b664c5eeea7e923ef5c22d3d694b1373886800656216d75469a658d21b3141d8"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-hiporbit-7-detail.png",
+      "sha256": "834072f680b2e80e456c70a22eac807c2bc7476bff01f6143d6048f99288965c"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-hiporbit-0-detail.png",
+      "sha256": "8db794c1e88c36a000cd7fb4fd01fb8db445f190b036835af1d0509688ee9796"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-hiporbit-2-detail.png",
+      "sha256": "7308102a201718af67d5d5aa9a8124a52b072e53ac160052f17a2bd43a8aef74"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-hiporbit-4-detail.png",
+      "sha256": "c5b9a19eed5a613273aa4c997ff61dd0e28c2bb9776506cc43c113e5a22e67b7"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-hiporbit-6-detail.png",
+      "sha256": "4d245bfa526a788088708a76a4eab81eb65470916afc5eda9a5992c225c53a11"
+    }
+  ]
+}

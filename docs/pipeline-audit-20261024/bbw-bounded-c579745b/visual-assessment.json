@@ -1,0 +1,128 @@
+{
+  "review_id": "c579745b-47e3-470f-91b1-0764cf9b5a9c",
+  "assessed_on": "2026-10-29",
+  "status": "partial_improvement_revision_required",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "export_admitted": false,
+  "scope": "Influence-based adoption removes the 45-degree outer-left-hip notch and preserves protected hand/core-torso weights. Deep hip poses show new angular torso/inner-thigh transitions; shoulder compression remains. Hold this version back from four-influence export.",
+  "findings": [
+    "The left-hip45 orbit1 contour is continuous; the rejected spherical notch is absent.",
+    "Core chest silhouette stays closer to raw than full BBW in UpperArmL90 orbit3. Shoulder compression is still present.",
+    "ThighR90 orbit1/3 reveals angular torso and inner-thigh creases; ThighL90 orbit3 retains deep creasing.",
+    "The existing per-owner donor mask has discontinuous argmax selection and original-support thresholding. A continuous donor mixture is one justified revision, not a claim of an already-proven cause."
+  ],
+  "next_action": "Test one continuous mixture of fixed limb/child/ancestor donor fields using original limb mass; keep the adoption curve and protected regions fixed. Reject if the remaining shape gate does not improve.",
+  "limitations": [
+    "Static snapshots, no production rig or game-motion qualification.",
+    "Existing influences approximate anatomy; they are not a manually labelled segmentation.",
+    "Hand weights preserved does not prove good finger animation.",
+    "Some joint regions remain occluded by the arm."
+  ],
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/raw-UpperArmL-90-orbit3.png",
+      "sha256": "70f6d2639eb75863f78dc0b4c88ef06f6de100753820a9a9d72ae31f90629a7c"
+    },
+    {
+      "file": "screenshots/regional-UpperArmL-90-orbit3.png",
+      "sha256": "5d4ada8f03ed44654f460b6bd445897a1f12b9180ff2ab3a900977dc1e88032f"
+    },
+    {
+      "file": "screenshots/full-UpperArmL-90-orbit3.png",
+      "sha256": "bca9f90bda6e4bfbcbc4165e93a8ac55be0e9312d79beac8cc6222a270edca96"
+    },
+    {
+      "file": "screenshots/bounded-UpperArmL-90-orbit0.png",
+      "sha256": "c89588e63b0421cb507637d0f0b83b89f47c3160ae46c49b621e23078ab4337f"
+    },
+    {
+      "file": "screenshots/bounded-UpperArmL-90-orbit1.png",
+      "sha256": "6c82be435639958d9a52c553c8ed4d6a3aa7ecd2bd3c39eb1e6d5fd6537971c9"
+    },
+    {
+      "file": "screenshots/bounded-UpperArmL-90-orbit3.png",
+      "sha256": "ad18f55bdbc23f688e58ed65c18a82e35f7a9d46242accc3072d31b1828e552a"
+    },
+    {
+      "file": "screenshots/raw-ThighL-45-orbit1.png",
+      "sha256": "13dc2244891e9a4c1a307df386bf4a7a89843227b35ff06b62c40863f210272c"
+    },
+    {
+      "file": "screenshots/regional-ThighL-45-orbit1.png",
+      "sha256": "df14a7548597c4a15c0f284c9014e8852fafa64cf130dbfb0ed70b56c81be242"
+    },
+    {
+      "file": "screenshots/full-ThighL-45-orbit1.png",
+      "sha256": "873744d3b3e349ca5677d507facd57a1fdbdb190dbbe7f8ad3e1c8dd11ca2282"
+    },
+    {
+      "file": "screenshots/bounded-ThighL-45-orbit0.png",
+      "sha256": "edb4fdf69c681309baf2292f151e9b26f189cf2028131ae0f1d4242664ad1c03"
+    },
+    {
+      "file": "screenshots/bounded-ThighL-45-orbit1.png",
+      "sha256": "239d3731f3026cbc4738d4a137f4242fa44f9b5e2ff37243adbf03baf5a0f179"
+    },
+    {
+      "file": "screenshots/bounded-ThighL-45-orbit3.png",
+      "sha256": "0a40767342e064e085d02d5a1670d82147fad93118bdb3e96abdaac15aa37f0c"
+    },
+    {
+      "file": "screenshots/raw-ThighL-90-orbit3.png",
+      "sha256": "44dab0965bd8aff149f45d8b869eabcb128696d8648130a1804cdb9eb35d60b7"
+    },
+    {
+      "file": "screenshots/full-ThighL-90-orbit3.png",
+      "sha256": "6b09e6dbb9135bfba8438a00259e1c27b7957b6a56feaaaa8e2879e0fbaec69c"
+    },
+    {
+      "file": "screenshots/bounded-ThighL-90-orbit0.png",
+      "sha256": "92839cfe97e5fdedbf4b13d085e24136f1deeefa2c635b792492a71e1daa9ba6"
+    },
+    {
+      "file": "screenshots/bounded-ThighL-90-orbit1.png",
+      "sha256": "d14c119352dbb9507b9944d07d68957dc89f8aeb96c3b863481825595dd65632"
+    },
+    {
+      "file": "screenshots/bounded-ThighL-90-orbit3.png",
+      "sha256": "e9370157f3454473b8b4dc89a1709f0439edae3f821bc1f9148e2b706172aa4e"
+    },
+    {
+      "file": "screenshots/raw-ThighR-90-orbit0.png",
+      "sha256": "bc74b7e33fd158ace1fc9dcde1eae8e8b936ffbdca2b0d862a156df62a8a2c04"
+    },
+    {
+      "file": "screenshots/raw-ThighR-90-orbit1.png",
+      "sha256": "b561c4d47769528dea0a4ad7fb63f97b6caae1ac80ecec8fef5775b076345942"
+    },
+    {
+      "file": "screenshots/raw-ThighR-90-orbit3.png",
+      "sha256": "e72598fdb7fb5523412ba574e152fbd624fd044e220ca51ad05c3082f889ff3b"
+    },
+    {
+      "file": "screenshots/full-ThighR-90-orbit0.png",
+      "sha256": "55d3026bc98494291d6991f309134ce6aa7081d94fb8727d41171be84a9cd6d7"
+    },
+    {
+      "file": "screenshots/full-ThighR-90-orbit1.png",
+      "sha256": "b612d34faaa6a12bf884a3c833729bf29ee0c29106ccd4c152029bd2f4afed4b"
+    },
+    {
+      "file": "screenshots/full-ThighR-90-orbit3.png",
+      "sha256": "593a070b6a7dbf70e018c0bfbb26b3b5a71540a2435593d3e178c7c8fbd9c35f"
+    },
+    {
+      "file": "screenshots/bounded-ThighR-90-orbit0.png",
+      "sha256": "e67e04c4221ae1b1d1acd983ca9d3c0dd464af0705ec57ff75a18240eaa29751"
+    },
+    {
+      "file": "screenshots/bounded-ThighR-90-orbit1.png",
+      "sha256": "93738944093d3b85f371e0430297b0059d2920aa29b8a22b6ae691901ac782d9"
+    },
+    {
+      "file": "screenshots/bounded-ThighR-90-orbit3.png",
+      "sha256": "9dbb6296ca2e9bf55b6cc4e0df366703c4aa0fc7986524b70518e05f315d98ab"
+    }
+  ]
+}

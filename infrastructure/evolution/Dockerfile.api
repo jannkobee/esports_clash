@@ -1,3 +1,11 @@
+FROM node:24-bookworm-slim AS base-inspector
+WORKDIR /build/EsportsClash.Web
+COPY EsportsClash.Web/package.json EsportsClash.Web/package-lock.json ./
+RUN npm ci
+COPY EsportsClash.Web/src/baseInspection.ts ./src/baseInspection.ts
+COPY EsportsClash.Web/vite.base-inspection.config.ts ./
+RUN npm run build:base-inspector
+
 FROM php:8.3-cli-bookworm
 RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev libonig-dev libxml2-dev libsqlite3-dev unzip git libzip-dev \
     && docker-php-ext-install pdo_pgsql pdo_sqlite mbstring dom xml xmlwriter zip pcntl \
@@ -9,6 +17,7 @@ WORKDIR /app
 COPY EsportsClash.Api/composer.json EsportsClash.Api/composer.lock ./
 RUN composer install --no-scripts --prefer-dist --no-interaction
 COPY EsportsClash.Api/ ./
+COPY --from=base-inspector /build/EsportsClash.Api/public/base-inspector/ ./public/base-inspector/
 COPY infrastructure/trellis2/references/ /app/resources/avatars/generation-references/
 COPY infrastructure/trellis2/reference-index.json /app/resources/avatars/generation-reference-index.json
 RUN touch .env && composer dump-autoload --optimize --no-scripts

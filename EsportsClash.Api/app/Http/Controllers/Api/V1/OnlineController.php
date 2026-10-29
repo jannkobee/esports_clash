@@ -20,7 +20,8 @@ class OnlineController extends Controller
             unset($definition['realName']);
             return ['id' => $owned->id, 'definition' => $definition, 'catalog_version' => $owned->catalog_id];
         });
-        $avatars = array_map(function ($avatar) { unset($avatar['realName']); return $avatar; }, $catalog->payload['avatars']);
+        $content=app(\App\Services\GameContentService::class);$snapshot=$content->snapshot();
+        $avatars = array_map(function ($avatar)use($content,$snapshot) { unset($avatar['realName']); return $content->avatar($avatar,$snapshot); }, $catalog->payload['avatars']);
         return response()->json(['data' => ['club' => $club, 'cards' => $cards, 'avatars' => $avatars,
             'ticket' => NormalQueueTicket::where('user_id', $request->user()->id)->first(),
             'matches' => OnlineMatch::where(fn ($query) => $query->where('blue_user_id', $request->user()->id)->orWhere('red_user_id', $request->user()->id))->latest()->limit(20)->get(),

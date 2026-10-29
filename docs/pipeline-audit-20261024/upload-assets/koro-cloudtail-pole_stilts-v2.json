@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_wukong_lol",
+  "component_id": "pole_stilts",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Bamboo-jointed pole stilts",
+  "attachment": "hands and feet",
+  "prompt": "Edit attached image. Remove the entire central outfit and all clothes, scarf, shirt, pants, belt and satchels. Keep ONLY the two complete bamboo-jointed pole stilts at the left and right, including their metal joints, leather foot rests and straps. Arrange both complete isolated stilts side by side, full length, ample transparent margins all sides. No wearer, body, mannequin, clothes, floor, shadow, glow or text. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "koro-cloudtail",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/koro-cloudtail-pole_stilts.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/koro-cloudtail-pole_stilts-v2.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b0c8c6da-3af7-4f09-b19a-404913621c88.png"
+}

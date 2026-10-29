@@ -52,7 +52,7 @@ class Handler(BaseHTTPRequestHandler):
         with LOCK:
             if method == 'POST':
                 length = int(self.headers.get('Content-Length', 0))
-                if not 0 < length <= 32768:
+                if not 0 < length <= 2 * 1024 * 1024:
                     return self.reply(413, {'error': 'Allocation exceeds size limit'})
                 try:
                     allocation = json.loads(self.rfile.read(length))
@@ -98,7 +98,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == '/health':
-            return self.reply(200, {'status': 'ok'})
+            return self.reply(200, {'status': 'ok', 'content_catalog_schema': 1, 'rules_version': MANIFEST['rules_version']})
         self.handle_match('GET')
 
     def do_POST(self):

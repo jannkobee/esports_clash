@@ -1,0 +1,47 @@
+{
+  "blender": "4.5.3 LTS",
+  "source": "/trellis-sources/c0c86ecb-ee38-4ca4-8325-406a4e39e83a.glb",
+  "bounds": {
+    "min": [
+      -0.456670343875885,
+      -0.18814946711063385,
+      -0.5019352436065674
+    ],
+    "max": [
+      0.4562334418296814,
+      0.19276276230812073,
+      0.500956118106842
+    ]
+  },
+  "views": [
+    "front",
+    "side",
+    "rear",
+    "perspective"
+  ],
+  "meshes": [
+    {
+      "name": "geometry_0",
+      "vertices": 37146,
+      "faces": 39865,
+      "uv_layers": 1
+    }
+  ],
+  "textures": [
+    {
+      "name": "Image_0",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Image_1",
+      "size": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "scope": "Actual imported GLB, studio texture rendering; no artistic or rig qualification implied."
+}

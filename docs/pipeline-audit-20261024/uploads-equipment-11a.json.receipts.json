@@ -1,0 +1,173 @@
+[
+  {
+    "avatar_id": "c_aetherbolt",
+    "id": "mirror_drone",
+    "sha256": "7912040ee5054bd5147c2fbbcb360af201be04eb4f499dbe21cfaf9b440894f1",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "3c0cb66feb7c00860f8c5f3064359e599456d74875463b4a15b5eb22c42748ce",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_aetherbolt",
+    "id": "surveyor_outfit",
+    "sha256": "d5b6813bd4f077e7ef40f7c1831a39b566e9bb8fb77c8eca6e4cf38712935dcd",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "be82e0d827f1115e3cdefdd3ca8a338ca26d4a1e3a757057a0509650d86eaff8",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_corsara",
+    "id": "clockwork_skiff",
+    "sha256": "fa8667819450cdf70c88ce50e848e38af96343b1e4022ba8adeca7938056c8c9",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "4d1a2149e0019ad52b2dccee4c172ed893ea5341bafab74c1ba9a4775aebb99a",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_corsara",
+    "id": "deck_cannons",
+    "sha256": "0b92c895a9173d086a92c9c91989ab3a6acda1373557e1d43b86da8e526c5d47",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "1d031ad68fed9bd831674a111bea80139d91c9e884ff9713b6a2998deabc59e4",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_corsara",
+    "id": "privateer_outfit",
+    "sha256": "0b6f4768b4363d808de76e5ba74e1c7314621b923e63fbc88aff51a1a25702f0",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "77848ff7464b0ce942d502606e9f2db276d27df1b21da4ef5cfded3d2cc584cd",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_brewmaw",
+    "id": "fermentation_tanks",
+    "sha256": "74764a9dce0b497b753b614e855cd1491272f9333edce868056ba9123d8cb07a",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "61e8f4a193fe44e0ec29eb0ef0eb21c8a3899314ce126ea04c8ed254a15b1a16",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_brewmaw",
+    "id": "pressure_wheels",
+    "sha256": "99341c50b7156d7fee1cc99db898147b97159f5bcd2c8f4b75cb7946ca6f3a14",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "d80f7e11b49bd29c1203e11b3411a3914fe68632997b810a9fd1d7f327597883",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_brewmaw",
+    "id": "cellar_outfit",
+    "sha256": "160a06671f27446e3f9a27f5be8d649575805a8bad9974bc833a969725d0f1f6",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "1fb9712dfade3d8e542b50489f26d3ce28808383bd725ba0eea99e621e85faa5",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_wraithhook",
+    "id": "segmented_oar",
+    "sha256": "d497a8b60cd66360a61bb201b51e4c780dfee07a05c50c3a762fe560e3db2763",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "5cb008a3504094aa5a32da3d6bd16a925ed79a2affab153d792cc20e02d983b7",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_wraithhook",
+    "id": "spirit_skiff",
+    "sha256": "fadbc6abe17f97065cb547310439e0341180330222b41dea871c3c9a5c958bc2",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "51adff4827496603713075396fbe8328cc043350c97d6f189d6f1e1f6a601a99",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_wraithhook",
+    "id": "boatwoman_outfit",
+    "sha256": "6244cea7eb93898d63e0c496c88d905ef827f9837399075826068e8a91ef312b",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "a3ad9be3213a4561f744d7e727232633ae015c76598ca3e2c748bf0e4b4a7f31",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_hwei",
+    "id": "gallery_frame",
+    "sha256": "48ab428727a792133960d0fd28155e7e9863151e73195099249e062fec41cdce",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "794ee3fd4fb741a9223123f92b1973b9b2dfc7379776528bf637b5aedb17c18a",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_hwei",
+    "id": "conservator_outfit",
+    "sha256": "1fa3dc75e594bf08b1259af641e9686c46c34adc120a8284a07c5a01d5ea2bcc",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "865bf983ec33edf0467a6affbfba0c8ad4e568ae00d70ef2deb6977fffa03b03",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_vi",
+    "id": "stamp_gauntlets",
+    "sha256": "b1b5ff9cb3d1096bb4e8b51a6c447236c021113e7b949c4e1aaa1f77fa908684",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "281d802886f9c971ced86c83c09c998a7df138a7900bcf5eba7c60eb7b1a94b8",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_vi",
+    "id": "marshal_outfit",
+    "sha256": "ea0d8bf44839c93af0073c608b7f5488a421b06f2722029dbd7edc197dc2d4e6",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "367c685ad8ea667af36fd0b5add7e477ef69a9d9e19c280a4905033d5fceda63",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_jinx",
+    "id": "lighting_tools",
+    "sha256": "2f4657d8124ffbab161f9cac1da7ff746a56894b34638dcad43ffdd995101a28",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "7a389bd751acb636d3f045c2b00bc386a79aee1525d8ae45c894ea99153d58f9",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_jinx",
+    "id": "confetti_wheel",
+    "sha256": "9566ed78b8bffeba5c7769195852b9447dab9e7d06dec1e0bc623ec1b2aaf61a",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "5629519efcfd6b3c81f19c67b7c7343be8ddb5e51ae47a4419cf838bc038e222",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_inai",
+    "id": "measuring_cords",
+    "sha256": "6fd0ec82c328d6384e44100ab88a080021ee09f1357a139ca2326ed7cb1f9ede",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "e5f8c21f50109ad5485f35802ef8c32738c3cc3c80e9ae390d922e8860b8c15a",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_valkira",
+    "id": "crescent_ledgers",
+    "sha256": "2e01f6b409f7feec6b70fd7ebaf80eb61583db01c75b9c1e6abde60412f756d6",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "292c6ec05298e7e2d5dc95d0282301aae75a7bef73b6afae1da9615ae58fcd65",
+    "http": 200
+  }
+]

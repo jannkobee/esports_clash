@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_zal",
+  "component_id": "thread_reservoirs",
+  "category": "back",
+  "binding": "rigid",
+  "label": "Lilac thread reservoirs",
+  "attachment": "back",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Vesper Loom. Attached image is design reference only. Only the matched set of lilac-thread reservoir spools in brass and glass canisters, with their pictured mounting frame. No person, body, gloves or clothes. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "vesper-loom",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/vesper-loom.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/vesper-loom-thread_reservoirs.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-ae045f33-9fe7-440a-b869-9bbaa830fe7a.png"
+}

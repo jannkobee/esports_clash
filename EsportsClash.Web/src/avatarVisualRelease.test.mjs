@@ -13,18 +13,17 @@ test('approved visual URLs require a numeric release and complete content hash',
   assert.equal(visualReleaseUrl({id:-1,sha256:'a'.repeat(64)}),undefined);
   assert.equal(visualReleaseUrl({id:2,sha256:'../unreviewed'}),undefined);
 });
-test('one release snapshot is retained for a renderer and a failed approved asset falls back to its original',async()=>{
+test('one release snapshot is retained and a failed release never resurrects owner-deleted original assets',async()=>{
   const oldFetch=globalThis.fetch,oldWindow=globalThis.window,resources=new AvatarModelResources();
   try{
     globalThis.window={};let requests=0;
     globalThis.fetch=async()=>{requests++;return {ok:true,json:async()=>({releases:[{id:7,avatar_id:'c_astra',variant:'current',sha256:'a'.repeat(64)}]})};};
     const library=new AvatarAssetLibrary(resources),loaded=[];
     library.loader.loadAsync=async url=>{loaded.push(url);if(url.includes('/avatar-visuals/'))throw Error('Offline release');return {scene:new THREE.Group(),animations:[]};};
-    assert.equal(await library.request('c_astra'),true);
-    assert.equal(library.sourceUrl('c_astra'),avatarModelUrl('c_astra'));
+    assert.equal(await library.request('c_astra'),false);
     globalThis.fetch=async()=>{throw Error('An active scene must not refresh releases');};
-    assert.equal(await library.request('c_kyumi'),true);
-    assert.equal(requests,1);assert.equal(loaded.length,3);library.close();
+    assert.equal(await library.request('c_kyumi'),false);
+    assert.equal(requests,1);assert.equal(loaded.length,1);assert.equal(avatarModelUrl('c_astra'),'');library.close();
   }finally{globalThis.fetch=oldFetch;if(oldWindow===undefined)delete globalThis.window;else globalThis.window=oldWindow;disposeArenaTerrainResources(resources.owner);}
 });
 test('a match-pinned snapshot survives renderer recreation without fetching the current global manifest',async()=>{

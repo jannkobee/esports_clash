@@ -8,6 +8,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from colab_transport import execute as colab_execute, ColabTransportError
 
 MODEL = 'TRELLIS.2-4B'
 HASH_KEYS = ('workflow_sha256', 'pins_sha256', 'limits_sha256', 'engine_sha256')
@@ -46,11 +47,13 @@ class LocalClient:
 
 
 class ColabClient:
+    adapter = 'colab_worker.py'
+    max_bytes = MAX_BYTES
     def __init__(self, cli, session):
         self.cli, self.session = cli, session
 
     def request(self, method, path, payload=None, timeout=25):
-        source = Path(__file__).with_name('colab_worker.py').read_text()
+        source = Path(__file__).with_name(self.adapter).read_text()
         args = json.dumps({'method': method, 'path': path, 'payload': payload, 'timeout': timeout})
         # Private namespace: keep a shared Colab notebook's globals untouched.
         code = f'''def _esports_trellis_rpc():
@@ -63,11 +66,10 @@ _esports_trellis_rpc()
 del _esports_trellis_rpc
 '''
         try:
-            result = subprocess.run([self.cli, 'exec', '-s', self.session, '--timeout', str(timeout + 5)],
-                input=code, text=True, capture_output=True, timeout=timeout + 10)
-        except (OSError, subprocess.TimeoutExpired):
+            output = colab_execute(self.cli, self.session, code, timeout=timeout + 5)
+        except ColabTransportError:
             raise BackendError('Google Colab is disconnected or its TRELLIS.2 service did not respond.') from None
-        for line in result.stdout.splitlines():
+        for line in output.splitlines():
             if line.startswith('TRELLIS_RESPONSE='):
                 record = json.loads(line.split('=', 1)[1])
                 if record.get('transport_error'):
@@ -75,10 +77,15 @@ del _esports_trellis_rpc
                 value = record['data']
                 if record.get('binary'):
                     value = base64.b64decode(value, validate=True)
-                    if len(value) > MAX_BYTES:
+                    if len(value) > self.max_bytes:
                         raise BackendError('Colab artifact exceeds the size limit.')
                 return record['status'], value
         raise BackendError('Google Colab session is unavailable. Reconnect it and provision native TRELLIS.2.')
+
+
+class ColabPreparationClient(ColabClient):
+    adapter = 'preparation_rpc.py'
+    max_bytes = 64 * 1024**2
 
 
 def backend_status(client, expected):

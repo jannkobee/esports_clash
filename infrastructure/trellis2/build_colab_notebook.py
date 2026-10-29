@@ -32,15 +32,17 @@ isolated Python 3.12 environment. It does not use Shap-E or saved donor geometry
    must pass; a T4 is not assumed compatible. No paid runtime is selected here.
 2. Obtain official access to `facebook/dinov3-vitl16-pretrain-lvd1689m` and add an
    approved Hugging Face token to **Colab Secrets** as `HF_TOKEN`.
-3. Run the cells in order. Installation may download several GB and compile CUDA
-   extensions. Diagnostics and model hashes must pass before the UI reports ready.
-4. Reconnect this runtime to the application's `asset-quality` Colab CLI session.
+3. Run the cells in order. The notebook installs the CUDA 12.8 toolkit required
+   by the pinned cu128 build, then installs CUDA extensions and model checkpoints.
+   Diagnostics and model hashes must pass before the UI reports ready.
+4. Reconnect this runtime to the application's `asset-quality-rpc` Colab CLI session.
    Keep the private worker token and session credentials out of chat/source control.
 
 The native worker binds only to loopback. Generated sources still require visual,
 rigging and game-runtime qualification before publication.
 '''),code(f'''import base64, io, json, os, pathlib, subprocess, sys, zipfile
 root = pathlib.Path('/content/esports-trellis2')
+root.mkdir(parents=True, exist_ok=True)
 if (root / 'native.pid').exists():
     try:
         os.kill(int((root / 'native.pid').read_text()), 0)
@@ -55,17 +57,39 @@ with zipfile.ZipFile(io.BytesIO(base64.b64decode('{encoded}'))) as bundle:
         destination = (source / entry.filename).resolve()
         if not destination.is_relative_to(source.resolve()):
             raise ValueError('Unexpected setup path')
+        destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(bundle.read(entry))
 print('Reviewed TRELLIS.2 setup files are ready.')
-'''),code('''from google.colab import userdata
-try:
-    os.environ['HF_TOKEN'] = userdata.get('HF_TOKEN')
-    subprocess.run([sys.executable, str(source / 'provision_native.py'), '--root', str(root), '--install'], check=True)
-finally:
-    os.environ.pop('HF_TOKEN', None)
-'''),code('''subprocess.run([sys.executable, str(source / 'provision_native.py'), '--root', str(root), '--start'], check=True)
-'''),code('''import time, urllib.request
+'''),code('''import subprocess
+subprocess.run(['apt-get','install','-y','cuda-toolkit-12-8'], check=True)
+print('Pinned CUDA 12.8 toolkit is ready.')
+'''),code('''import os, pathlib, subprocess, sys
+from huggingface_hub import get_token
+root = pathlib.Path('/content/esports-trellis2')
+source = root / 'src'
+source.mkdir(parents=True, exist_ok=True)
+if not (source / 'provision_native.py').is_file():
+    raise RuntimeError('Setup files are missing. Re-run the setup-files cell above, or restore the bundle and try again.')
+subprocess.run(
+    [sys.executable, str(source / 'provision_native.py'), '--root', str(root), '--install'],
+    check=True, env={**os.environ, 'HF_TOKEN': get_token()})
+'''),code('''import json, pathlib, subprocess, sys
+root = pathlib.Path('/content/esports-trellis2')
+source = root / 'src'
+if not (source / 'provision_native.py').is_file():
+    raise RuntimeError('Run the setup-files cell and installation cell above first.')
+receipt = root / 'installation.json'
+if not receipt.is_file() or json.loads(receipt.read_text()).get('status') != 'installed_unvalidated':
+    raise RuntimeError('The pinned native installation did not complete. Resolve its recorded failure before starting a worker.')
+subprocess.run([sys.executable, str(source / 'provision_native.py'), '--root', str(root), '--start'], check=True)
+'''),code('''import json, pathlib, time, urllib.request
+root = pathlib.Path('/content/esports-trellis2')
+if not (root / '.worker-token').is_file():
+    raise RuntimeError('Run the installation and start-worker cells above first.')
 for attempt in range(20):
+    diagnostic = root / 'data/diagnostics.json'
+    if not diagnostic.is_file() or json.loads(diagnostic.read_text()).get('status') != 'passed':
+        raise RuntimeError('Worker GPU and workflow diagnostics have not passed. Inspect native.log privately.')
     try:
         request = urllib.request.Request('http://127.0.0.1:8096/operations', headers={
             'Authorization': 'Bearer ' + (root / '.worker-token').read_text().strip()})

@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_monkeyking_dota",
+  "component_id": "monarch_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Moss-gold shoulder armor and living leaf crown",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Bram Stonebranch. Attached character art is design reference only. Empty ivory-green monarch robes, moss-gold leaf shoulder armor with carved ape-face ornaments, leather belt, bracers, shin armor and separate living leaf crown with jade centerpiece. No ape, fur, beard, body, hands, feet or scepter. Preserve pictured design, colors, materials and proportions. For clothing only: garments visibly empty on invisible support in a static symmetrical wide A pose; hollow openings, no mannequin. Show the entire asset at SMALL size occupying central 55 percent of frame with wide transparent margins on ALL sides. No cropping. Neutral even product lighting, readable physical geometry, three-quarter view. Genuine transparent background, no floor, shadow, background glow, text, labels, logo, frames or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "bram-stonebranch",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/bram-stonebranch.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/bram-stonebranch-monarch_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-503219fa-359a-4ff5-aaaa-6f0bed0ed7ff.png"
+}

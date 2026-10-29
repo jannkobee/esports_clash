@@ -1,0 +1,26 @@
+{
+  "verified": true,
+  "scope": "Known compatibility seed, excluded from held-out benefit",
+  "baselineBothSidesTerminal": true,
+  "repeatedControls": true,
+  "transitions": 29,
+  "learning": {
+    "eligible": 29,
+    "changed": 20,
+    "executed": 29,
+    "blocked": {
+      "legal-pair": 91944,
+      "commitment": 92237,
+      "defense": 28375,
+      "health": 37306,
+      "influence": 430,
+      "survival": 685,
+      "utility-gap": 8408,
+      "tower": 4753,
+      "danger": 1190,
+      "cooldown": 3195
+    }
+  },
+  "actorInfluencesWorld": true,
+  "productionPromoted": false
+}

@@ -1,0 +1,80 @@
+{
+  "id": "50f9091c-1e47-45c4-ae14-2ca272b690cb",
+  "method": "corrective-hip-contact-remapped-target-v1",
+  "compute": "google",
+  "qualification_complete": false,
+  "publication_eligible": false,
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+  "parent_candidate_id": "f6283980-c4dd-5f34-bcf4-09c08e9e6346",
+  "hip_probe_id": "327f8a4b-1b31-4d30-9559-66173d5a2af9",
+  "hybrid_probe_id": "38fccb63-f252-4647-9e2c-228d32558795",
+  "status": "diagnostic_complete",
+  "mapping": {
+    "native_vertices": 23806,
+    "corrected_vertices": 23832,
+    "unmatched_native": 0,
+    "max_rest_position_error_m": 2.7660124146677845e-07,
+    "max_weight_error": 1.1920928955078125e-07,
+    "max_seam_target_ambiguity_m": 0.0,
+    "hip_targets": [
+      {
+        "joint": "ThighL",
+        "max_change_from_hybrid_m": 0.0008234429265380466,
+        "intersections": 38,
+        "edge_deformation": {
+          "policy": "deformation-edge-stretch-v1",
+          "passed": true,
+          "finite": true,
+          "edges_checked": 56332,
+          "severely_stretched_edges": 0,
+          "maximum_length_ratio": 6.051300769564281,
+          "largest_extension_to_height": 0.022708020871563848,
+          "limits": {
+            "length_ratio": 4,
+            "extension_to_height": 0.05
+          },
+          "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+        }
+      },
+      {
+        "joint": "ThighR",
+        "max_change_from_hybrid_m": 0.0004311822763804428,
+        "intersections": 26,
+        "edge_deformation": {
+          "policy": "deformation-edge-stretch-v1",
+          "passed": true,
+          "finite": true,
+          "edges_checked": 56332,
+          "severely_stretched_edges": 0,
+          "maximum_length_ratio": 5.383571139290805,
+          "largest_extension_to_height": 0.018280722650090404,
+          "limits": {
+            "length_ratio": 4,
+            "extension_to_height": 0.05
+          },
+          "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+        }
+      }
+    ]
+  },
+  "target_surface_artifact": {
+    "sha256": "57166e79665e454b56ccb343301fe4876fe86f8ae146141d5131b8dead3f72c7",
+    "bytes": 1951503,
+    "keys": [
+      "ThighL_45",
+      "ThighL_90",
+      "ThighR_45",
+      "ThighR_90",
+      "UpperArmL_45",
+      "UpperArmL_90",
+      "UpperArmR_45",
+      "UpperArmR_90"
+    ],
+    "source_sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+    "vertex_count": 23806,
+    "space": "Blender world; frozen native glTF import with merge_vertices=True"
+  },
+  "scope": "Rest/weight-verified two-hip target remap, other hybrid targets unchanged; not a GLB or visual qualification.",
+  "completed_unix": 1793111251.8366234
+}

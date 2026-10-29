@@ -1,0 +1,8 @@
+{
+  "status": "installed",
+  "compute": "google",
+  "started_unix": 1793023213.9558809,
+  "scope": "Browser tools only; no avatar qualification or publication.",
+  "completed_unix": 1793023244.5827131,
+  "playwright": "1.55.0"
+}

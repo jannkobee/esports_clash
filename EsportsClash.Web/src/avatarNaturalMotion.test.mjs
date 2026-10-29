@@ -1,3 +1,4 @@
+import {retiredAvatarAssetTest} from './testFixtures/retiredAvatarAssets.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
@@ -49,7 +50,7 @@ test('stride cadence follows actual displacement and model stride at different r
  assert.equal(motionTimeline(t,unit,0,0).gaitPhase,0);
 });
 
-test('real GLB transitions retain the displayed pose when interrupted and never accumulate while paused',async()=>{
+retiredAvatarAssetTest('real GLB transitions retain the displayed pose when interrupted and never accumulate while paused',async()=>{
  const bytes=await readFile(new URL('../public/models/avatars-v2/c_solana.glb',import.meta.url));
  const file=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
  file.scene.traverse(n=>{if(n.userData.avatarPart==='avatar-root')n.userData.assetPreparation={provider:'unirig',animation_mode:'retargeted-native-clips'};});

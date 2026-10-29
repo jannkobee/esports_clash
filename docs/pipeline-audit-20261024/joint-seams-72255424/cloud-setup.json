@@ -1,0 +1,20 @@
+{
+  "compute": "google-colab",
+  "cuda": {
+    "package": "cuda-toolkit-12-8",
+    "dpkg_status": "install ok installed",
+    "nvcc": "cuda_12.8.r12.8/compiler.35583870_0"
+  },
+  "unirig": {
+    "commit": "6793c6640ff01c8fb389f3993434124bb43d2933",
+    "checkpoint_verification": "see unirig-model-provision.json",
+    "runtime_ready": false
+  },
+  "generator": {
+    "complete": false,
+    "huggingface_cached_token_available": false,
+    "colab_secret_lookup": "TimeoutException"
+  },
+  "qualification_complete": false,
+  "publication_eligible": false
+}

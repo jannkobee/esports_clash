@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_kyumi",
+  "component_id": "travel_robes",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Blue-gray traveling robes",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Mireth Lune. Attached image is DESIGN REFERENCE ONLY. Only the empty deep blue-gray and ivory traveling robe garment and belt, with gold route embroidery and attached scroll pockets on invisible support. Sleeves held out in a symmetrical wide A pose. No tablets, jewelry, book, quill, fur, tail, head, body or mannequin. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+  "reference_purpose": "reconstruction",
+  "slug": "mireth-lune",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/mireth-lune.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/mireth-lune-travel_robes.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-c6c89c19-65b0-430e-8a8e-726c7441d107.png"
+}

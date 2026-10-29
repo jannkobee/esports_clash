@@ -1,0 +1,73 @@
+{
+  "source_sha256": "696b59dd15bab4f619dfc43154cfe475dddc7431446804a62ca4d9a7154718a7",
+  "bytes": 3109696,
+  "triangles": 37469,
+  "primitives": [
+    {
+      "vertices": 26815,
+      "triangles": 37469,
+      "finitePositions": true,
+      "validIndices": true,
+      "validUvs": true,
+      "uvMin": [
+        0.0003782148123718798,
+        0.000377655029296875
+      ],
+      "uvMax": [
+        0.9996218085289001,
+        0.9996223449707031
+      ]
+    }
+  ],
+  "images": [
+    {
+      "mimeType": "image/png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "bytes": 641296,
+      "sha256": "4f632932c131bf50bbcea3647c81461be2b1fefc10c445c78fd3bc5520aadaff"
+    },
+    {
+      "mimeType": "image/png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "bytes": 229704,
+      "sha256": "86c5f88efbba033a07fcf485d6e1c5d8b4f8198307baf437a5a272e453858c8c"
+    }
+  ],
+  "materials": [
+    {
+      "name": "Material_0",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "gltf": {
+    "validator": "2.0.0-dev.3.10",
+    "errors": 0,
+    "warnings": 1,
+    "messages": [
+      {
+        "code": "NODE_SKINNED_MESH_NON_ROOT",
+        "message": "Node with a skinned mesh is not root. Parent transforms will not affect a skinned mesh.",
+        "severity": 1,
+        "pointer": "/nodes/60"
+      }
+    ]
+  },
+  "structural_pass": true,
+  "problems": [],
+  "publication_eligible": false,
+  "visual_review_required": true,
+  "limitation": "Anatomy, distinct limbs, T-pose, identity, skinning and motion require separate review."
+}

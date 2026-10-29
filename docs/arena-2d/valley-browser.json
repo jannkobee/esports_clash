@@ -1,0 +1,292 @@
+{
+  "state": {
+    "backend": "webgl",
+    "paintedBackdrop": "ready",
+    "paintedArena": "valley-ready",
+    "models": "0",
+    "sprites": [
+      {
+        "id": "hero0",
+        "row": 0,
+        "frame": 2,
+        "facing": "right",
+        "clip": "idle",
+        "ready": true
+      },
+      {
+        "id": "hero5",
+        "row": 0,
+        "frame": 2,
+        "facing": "left",
+        "clip": "idle",
+        "ready": true
+      }
+    ],
+    "warnings": [
+      [
+        "c_solana",
+        [
+          "No character asset: owner requested a fresh asset pipeline"
+        ]
+      ]
+    ],
+    "animations": [],
+    "tick": 300
+  },
+  "errors": [],
+  "scope": "Live Babylon renderer fixture; authoritative combat component check follows separately",
+  "sprites": [
+    {
+      "id": "hero0",
+      "row": 0,
+      "frame": 2,
+      "facing": "right",
+      "clip": "idle",
+      "ready": true
+    },
+    {
+      "id": "hero5",
+      "row": 0,
+      "frame": 2,
+      "facing": "left",
+      "clip": "idle",
+      "ready": true
+    }
+  ],
+  "phases": [
+    [
+      {
+        "id": "hero0",
+        "row": 1,
+        "frame": 1,
+        "facing": "right",
+        "clip": "walk",
+        "ready": true
+      },
+      {
+        "id": "hero5",
+        "row": 1,
+        "frame": 1,
+        "facing": "left",
+        "clip": "walk",
+        "ready": true
+      }
+    ],
+    [
+      {
+        "id": "hero0",
+        "row": 2,
+        "frame": 3,
+        "facing": "right",
+        "clip": "cast",
+        "ready": true
+      },
+      {
+        "id": "hero5",
+        "row": 2,
+        "frame": 3,
+        "facing": "left",
+        "clip": "cast",
+        "ready": true
+      }
+    ],
+    [
+      {
+        "id": "hero0",
+        "row": 3,
+        "frame": 3,
+        "facing": "right",
+        "clip": "death",
+        "ready": true
+      },
+      {
+        "id": "hero5",
+        "row": 3,
+        "frame": 3,
+        "facing": "left",
+        "clip": "death",
+        "ready": true
+      }
+    ],
+    [
+      {
+        "id": "hero0",
+        "row": 0,
+        "frame": 2,
+        "facing": "right",
+        "clip": "idle",
+        "ready": true
+      },
+      {
+        "id": "hero5",
+        "row": 0,
+        "frame": 2,
+        "facing": "left",
+        "clip": "idle",
+        "ready": true
+      }
+    ]
+  ],
+  "contextRestored": true,
+  "live": {
+    "sprites": 2,
+    "terrain": "valley-ready",
+    "second": 3.9999999999999956,
+    "canvases": 1
+  },
+  "map": {
+    "height": 1440,
+    "laneY": 720,
+    "sites": [
+      {
+        "id": "j_blue_golem",
+        "y": 322.10526315789474,
+        "expected": 322.10526315789474
+      },
+      {
+        "id": "j_red_wolves",
+        "y": 322.10526315789474,
+        "expected": 322.10526315789474
+      },
+      {
+        "id": "j_blue_behemoth",
+        "y": 1089.4736842105262,
+        "expected": 1089.4736842105262
+      },
+      {
+        "id": "j_red_drakes",
+        "y": 1089.4736842105262,
+        "expected": 1089.4736842105262
+      },
+      {
+        "id": "j_blue_blue_buff",
+        "y": 274.7368421052632,
+        "expected": 274.7368421052632
+      },
+      {
+        "id": "j_blue_red_buff",
+        "y": 1136.842105263158,
+        "expected": 1136.842105263158
+      },
+      {
+        "id": "j_red_blue_buff",
+        "y": 274.7368421052632,
+        "expected": 274.7368421052632
+      },
+      {
+        "id": "j_red_red_buff",
+        "y": 1136.842105263158,
+        "expected": 1136.842105263158
+      },
+      {
+        "id": "j_siege_golem",
+        "y": 1155.7894736842106,
+        "expected": 1155.7894736842106
+      },
+      {
+        "id": "dragon_boss",
+        "y": 246.31578947368422,
+        "expected": 246.31578947368422
+      }
+    ]
+  },
+  "south": {
+    "y": 1102.8621671615003,
+    "pins": 1
+  },
+  "layouts": [
+    {
+      "width": 1920,
+      "height": 1080,
+      "stage": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "dock": {
+        "x": 229,
+        "y": 812,
+        "right": 1429,
+        "bottom": 1068
+      },
+      "score": {
+        "x": 510,
+        "right": 1410
+      },
+      "units": 10,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "stage": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 900
+      },
+      "dock": {
+        "x": 18,
+        "y": 652,
+        "right": 1160,
+        "bottom": 888
+      },
+      "score": {
+        "x": 270,
+        "right": 1170
+      },
+      "units": 10,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "stage": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844
+      },
+      "dock": {
+        "x": 6,
+        "y": 623,
+        "right": 384,
+        "bottom": 838
+      },
+      "score": {
+        "x": 12,
+        "right": 378
+      },
+      "units": 10,
+      "overflow": false
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "stage": {
+        "x": 0,
+        "y": 0,
+        "width": 844,
+        "height": 390
+      },
+      "dock": {
+        "x": 8,
+        "y": 212,
+        "right": 634,
+        "bottom": 384
+      },
+      "score": {
+        "x": 12,
+        "right": 832
+      },
+      "units": 10,
+      "overflow": false
+    }
+  ],
+  "focusAndHudToggle": true,
+  "replay": {
+    "sprites": 2,
+    "duration": 4.999999999999992
+  }
+}

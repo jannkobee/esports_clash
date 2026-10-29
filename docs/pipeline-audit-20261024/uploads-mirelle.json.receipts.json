@@ -1,0 +1,11 @@
+[
+  {
+    "avatar_id": "c_invoker",
+    "id": "base",
+    "sha256": "2358eaf3dae034785e982cd82132e8b27e226222565141bde7bd79f2aab7b380",
+    "status": "reference_uploaded",
+    "version": 0,
+    "inventory_hash": "b2f06efbfd24ecf8e0b2d9c4a4fd9b5d2ed3b0b481d018da3fe7434a97a73d35",
+    "http": 200
+  }
+]

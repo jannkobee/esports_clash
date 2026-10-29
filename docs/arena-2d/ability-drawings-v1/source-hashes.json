@@ -1,0 +1,19 @@
+{
+  "EsportsClash.Web/src/match-viewer/PaintedAbilities.ts": "cd06bb16a450c99bbcfecad432b3cac6ac8354e5970a162f717d8f15be147faf",
+  "EsportsClash.Web/src/match-viewer/PaintedArena.ts": "011725ed4dbd051c3fdb455c1bcd79e441ccd4b94ca6dda21e071525eb251184",
+  "EsportsClash.Web/src/match-viewer/PaintedArenaProcedural.ts": "61f4d5eee7d06c634a66bef218aa29128d1d9cbb1c6345e86c5881d93cf1df4e",
+  "EsportsClash.Web/src/match-viewer/PaintedBackdrop.ts": "79f22434005f4019a0e6477784e23072196a3763150d91ade8987dc966de33cf",
+  "EsportsClash.Web/src/match-viewer/PaintedMirelle.ts": "5d98301e0afb5dad6651c613345e08a1b7cc4a04ce1b42559dce152163d8648f",
+  "EsportsClash.Web/src/match-viewer/PaintedRoster.ts": "37abad9e0e6416b369de867bef3882d963fdee6dc6a5a00ef5340b1353247882",
+  "EsportsClash.Web/src/match-viewer/paintedRosterArt.ts": "f6a54421aa54cd89c134e2cb024e943238d009b6c1576234b067769b9f0e33f0",
+  "EsportsClash.Web/src/match-viewer/PaintedScenery.ts": "ee1ef39e6da2fe46cd85812ffc1fc9051f940fbfe4acf86690c2778bb9b4d9d1",
+  "EsportsClash.Web/src/match-viewer/paintedSpriteMotion.ts": "b63570113f09dc7fb3150d2d289f22752c8db8829f1d7ddc2e91906dd54867e2",
+  "EsportsClash.Web/src/match-viewer/MatchViewer.ts": "6ec64d0f5df0c9effea62c58f2cfb486bb656a5a24f20fb6ea82963ce996409e",
+  "EsportsClash.Web/src/match-viewer/ViewerReplay.ts": "cc354f863bf18983f4570a01908178fa03f22e0f3a4da48683b1c7302ae2da3b",
+  "EsportsClash.Web/src/match-viewer/BabylonEffects.ts": "e5c5beb5898f5ac98369f8260cd31ae4d3e537f4d799022c3e751f00fb993238",
+  "EsportsClash.Web/src/match-viewer/BabylonMatchViewer.ts": "78cfaa7429025f6ef8a8c3ddc51e9e645651ac1f9b8ecc476bc089468db8510d",
+  "EsportsClash.Web/src/match-viewer/illustrationMotion.ts": "c5c9f8e945db25364809cdd976d3a4f9e3fb97832aa9595b0385d5a0bbbeabd5",
+  "EsportsClash.Web/src/match-viewer/abilityArt.ts": "35cc11bca3be92d9f798c501b2c3374180d0e3c5011bc2e758480d7a77af3ec4",
+  "EsportsClash.Web/src/components/SpectatorRoster.tsx": "58f48c79ae706080dc2c6e57968c4ea7b28b1c1ccf07f7a1d81ad8d9a0ac9729",
+  "EsportsClash.Web/src/components/PaintedAbilityIcon.tsx": "254115796746304ecfb5320796b24adc574361bcebbee9eaffee5d82a08b44d2"
+}

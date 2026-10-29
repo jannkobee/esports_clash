@@ -20,7 +20,7 @@
             @endif
         </div>
         <p class="fine" id="generation-view-status" role="status">Loading the actual generated file…</p>
-        <p class="fine">Drag to orbit &middot; Scroll or pinch to zoom. {{ ($preparedModel??null) ? 'Idle plays by default. Review the complete animation cycle and equipment before publishing.' : 'T-pose is the source used for rigging. Equipment and animation are added during preparation.' }}</p>
+        <p class="fine">Drag to orbit &middot; Scroll or pinch to zoom. {{ ($preparedModel??null) ? 'Idle plays by default. Review the complete animation cycle and equipment before publishing.' : 'Review the original source anatomy and rest pose before rigging. Outfit fitting and deformation review follow base-rig validation.' }}</p>
     </section>
 
     <section class="panel">
@@ -29,7 +29,7 @@
             <span class="badge good">Frozen input</span>
         </div>
         <div class="generation-reference-large">
-            <img src="{{ route('trellis.reference', [$generation->avatar_id, $generation->plan['reference_sha256']]) }}" alt="{{ $name }} anatomical T-pose reference">
+            <img src="{{ route('trellis.reference', [$generation->avatar_id, $generation->plan['reference_sha256']]) }}" alt="{{ $name }} original anatomical reference">
         </div>
         <div class="stat-chips" style="margin-top: 10px;">
             <span class="stat-chip">Instance Seed: <strong>{{ $generation->plan['seed'] }}</strong></span>

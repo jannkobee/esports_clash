@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_io",
+  "component_id": "maestro_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Maestro formal outfit",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Nemea Halolink. Attached character art is design reference only. Empty formal navy-white-gold maestro outfit: high collar tailcoat, puff white sleeves, ruffled jabot, gold shoulder plates, belt, trousers and long boots. No person, hair, tuning forks or anatomy. Preserve pictured design, colors, materials and proportions. For clothing only: garments visibly empty on invisible support in a static symmetrical wide A pose; hollow openings, no mannequin. Show the entire asset at SMALL size occupying central 55 percent of frame with wide transparent margins on ALL sides. No cropping. Neutral even product lighting, readable physical geometry, three-quarter view. Genuine transparent background, no floor, shadow, background glow, text, labels, logo, frames or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "nemea-halolink",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/nemea-halolink.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/nemea-halolink-maestro_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-e730abfb-1b46-4dbd-9d1f-1754e7448643.png"
+}

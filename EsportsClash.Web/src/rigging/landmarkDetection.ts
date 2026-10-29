@@ -135,10 +135,11 @@ export function detectLandmarksFromGeometry(
   const spineSlice = sliceCentroid(0.53, 0.63);
   const pelvisSlice = sliceCentroid(0.44, 0.52);
 
-  // 2. Arm Detection (Lateral extremities in upper torso region: Y between 0.65 and 0.82)
-  const armVertices = vertices.filter((v) => v.y >= minY + height * 0.65 && v.y <= minY + height * 0.82);
-  let minArmX = centerX - height * 0.35;
-  let maxArmX = centerX + height * 0.35;
+  // Include lowered A-pose hands; the historical upper-torso slice loses them.
+  const armVertices = vertices.filter((v) => v.y >= minY + height * 0.30 && v.y <= minY + height * 0.82
+    && Math.abs(v.x - centerX) > height * 0.13);
+  let minArmX = centerX;
+  let maxArmX = centerX;
 
   for (const v of armVertices) {
     if (v.x < minArmX) minArmX = v.x;
@@ -148,7 +149,7 @@ export function detectLandmarksFromGeometry(
   // Arms extend along X: left is +X, right is -X (or standard mirrored convention)
   const leftArmReach = Math.abs(maxArmX - centerX);
   const rightArmReach = Math.abs(centerX - minArmX);
-  const armReach = (leftArmReach + rightArmReach) * 0.5;
+  const armReach = Math.max(height * 0.20, (leftArmReach + rightArmReach) * 0.5);
 
   // Shoulders, Elbows, Wrists, Hands
   const shoulderX = armReach * 0.28;
@@ -156,6 +157,11 @@ export function detectLandmarksFromGeometry(
   const wristX = armReach * 0.84;
   const handX = armReach * 0.98;
   const armY = minY + height * 0.72;
+  const tipVertices = armVertices.filter((v) => Math.abs(v.x-centerX) >= armReach * 0.90);
+  const tipY = tipVertices.length ? tipVertices.reduce((sum,v) => sum+v.y,0)/tipVertices.length : armY;
+  const shoulderY = armY + 2;
+  const armHeight = (x: number) => THREE.MathUtils.lerp(shoulderY, tipY,
+    THREE.MathUtils.clamp((x-shoulderX)/(handX-shoulderX),0,1));
 
   // 3. Leg Detection (Clusters for left (X > centerX) and right (X < centerX) in lower body)
   const hipX = Math.max(height * 0.11, Math.min(height * 0.16, armReach * 0.20));
@@ -200,10 +206,10 @@ export function detectLandmarksFromGeometry(
   addLandmark('head', [centerX, headSlice.centroid.y, centerZ], scoreConfidence(headSlice.count), false);
 
   // Left side (+X)
-  addLandmark('left_shoulder', [centerX + shoulderX, armY + 2, centerZ], 0.92, true);
-  addLandmark('left_elbow', [centerX + elbowX, armY, centerZ], 0.88, true);
-  addLandmark('left_wrist', [centerX + wristX, armY, centerZ], 0.85, true);
-  addLandmark('left_hand', [centerX + handX, armY, centerZ], 0.82, true);
+  addLandmark('left_shoulder', [centerX + shoulderX, shoulderY, centerZ], 0.92, true);
+  addLandmark('left_elbow', [centerX + elbowX, armHeight(elbowX), centerZ], 0.88, true);
+  addLandmark('left_wrist', [centerX + wristX, armHeight(wristX), centerZ], 0.85, true);
+  addLandmark('left_hand', [centerX + handX, armHeight(handX), centerZ], 0.82, true);
 
   addLandmark('left_hip', [centerX + hipX, hipY, centerZ], 0.90, true);
   addLandmark('left_knee', [centerX + (leftKneeSlice.count > 5 ? leftKneeSlice.centroid.x : hipX), kneeY, centerZ + 1], 0.87, true);
@@ -211,10 +217,10 @@ export function detectLandmarksFromGeometry(
   addLandmark('left_foot', [centerX + hipX, footY, centerZ + 3.5], 0.86, true);
 
   // Right side (-X)
-  addLandmark('right_shoulder', [centerX - shoulderX, armY + 2, centerZ], 0.92, true);
-  addLandmark('right_elbow', [centerX - elbowX, armY, centerZ], 0.88, true);
-  addLandmark('right_wrist', [centerX - wristX, armY, centerZ], 0.85, true);
-  addLandmark('right_hand', [centerX - handX, armY, centerZ], 0.82, true);
+  addLandmark('right_shoulder', [centerX - shoulderX, shoulderY, centerZ], 0.92, true);
+  addLandmark('right_elbow', [centerX - elbowX, armHeight(elbowX), centerZ], 0.88, true);
+  addLandmark('right_wrist', [centerX - wristX, armHeight(wristX), centerZ], 0.85, true);
+  addLandmark('right_hand', [centerX - handX, armHeight(handX), centerZ], 0.82, true);
 
   addLandmark('right_hip', [centerX - hipX, hipY, centerZ], 0.90, true);
   addLandmark('right_knee', [centerX - (rightKneeSlice.count > 5 ? Math.abs(rightKneeSlice.centroid.x) : hipX), kneeY, centerZ + 1], 0.87, true);

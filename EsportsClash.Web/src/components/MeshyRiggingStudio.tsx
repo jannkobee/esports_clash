@@ -235,16 +235,16 @@ export const MeshyRiggingStudio: React.FC<MeshyRiggingStudioProps> = ({
     updateCameraPosition();
   };
 
-  // Build clean procedural humanoid character model in neutral T-pose
+  // Procedural base demonstration; generated species anatomy comes from its own source.
   function buildBaseHumanoidMesh(root: THREE.Group) {
     // Clear children
     while (root.children.length > 0) {
       root.remove(root.children[0]);
     }
 
-    const skinMat = new THREE.MeshStandardMaterial({ color: '#c99a7d', roughness: 0.5 });
-    const clothMat = new THREE.MeshStandardMaterial({ color: '#1e3a8a', roughness: 0.6 });
-    const armorMat = new THREE.MeshStandardMaterial({ color: '#e2e8f0', metalness: 0.7, roughness: 0.3 });
+    const skinMat = new THREE.MeshStandardMaterial({ color: '#999999', roughness: 0.8 });
+    const clothMat = skinMat;
+    const armorMat = skinMat;
 
     // Torso / Chest
     const torso = new THREE.Mesh(new THREE.CylinderGeometry(5.2, 4.4, 18, 12), clothMat);
@@ -294,6 +294,16 @@ export const MeshyRiggingStudio: React.FC<MeshyRiggingStudioProps> = ({
     const handR = new THREE.Mesh(new THREE.BoxGeometry(3.5, 1.5, 3.0), skinMat);
     handR.position.set(-34, 50, 0);
     root.add(handR);
+
+    // Rotate actual base geometry around each shoulder into the static A-pose.
+    for (const [sign, parts] of [[1, [upperArmL, foreArmL, handL]], [-1, [upperArmR, foreArmR, handR]]] as const) {
+      const pivot = new THREE.Vector3(sign * 5, 50, 0);
+      const rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), -sign * Math.PI / 4);
+      for (const part of parts) {
+        part.position.sub(pivot).applyQuaternion(rotation).add(pivot);
+        part.quaternion.premultiply(rotation);
+      }
+    }
 
     // Left Leg
     const thighL = new THREE.Mesh(new THREE.CylinderGeometry(2.8, 2.3, 16, 8), clothMat);
@@ -627,7 +637,7 @@ export const MeshyRiggingStudio: React.FC<MeshyRiggingStudioProps> = ({
             <div className="meshy-panel">
               <h3 className="meshy-panel__title">Dual Asset Requirements (Phase 1)</h3>
               <p className="meshy-panel__desc">
-                Clean asset separation is mandatory. Humanoid characters must stand in neutral T-pose with zero merged weapons. Weapons are attached separately via sockets.
+                Start with a clean adult base in a wide, symmetrical A-pose. Validate its deformation before fitting clothing, hair and separate equipment. Preserve species anatomy; other body types need a compatible rig.
               </p>
 
               <div className="meshy-contract-spec" style={{ borderLeft: '3px solid #10b981' }}>
@@ -652,7 +662,7 @@ export const MeshyRiggingStudio: React.FC<MeshyRiggingStudioProps> = ({
               <div style={{ marginTop: '0.75rem' }}>
                 <label className="meshy-upload-zone" style={{ display: 'block' }}>
                   <div className="zone-title">🧍 Upload Character Body Asset (.glb / .gltf / .png)</div>
-                  <p>Must be in neutral T-pose with bare hands and no merged handheld weapons</p>
+                  <p>Clean base in a static A-pose, straight arms 45° down and out, clear joint gaps, no outfit or held objects</p>
                   <input
                     type="file"
                     accept=".glb,.gltf,image/png"

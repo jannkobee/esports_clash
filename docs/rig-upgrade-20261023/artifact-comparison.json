@@ -1,0 +1,12 @@
+[
+  {
+    "folder": "rig-upgrade-stafford-corrected-20261023",
+    "glb_sha256": "e82cf253a94b4c130b530e6b7552fa0592b128292e220b76e08cb7cd838c3cbc",
+    "bin_sha256": "ae86d1f2faf5396373ceb797189e756f83e1dee027c79816daa3eec1cc54ef25"
+  },
+  {
+    "folder": "rig-upgrade-stafford-final-20261023",
+    "glb_sha256": "1ea011c9465e26f911c75ecec967f9f3c997612cb3fea575a3460433d0fba168",
+    "bin_sha256": "ae86d1f2faf5396373ceb797189e756f83e1dee027c79816daa3eec1cc54ef25"
+  }
+]

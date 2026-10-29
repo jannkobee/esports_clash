@@ -94,9 +94,21 @@ class OnlineService
                 'versions' => array_intersect_key($catalog->manifest, array_flip(['catalog_version', 'rules_version', 'policy_version', 'observation_version'])),
                 'blue' => $opponent->lineup, 'red' => $ticket->lineup,
                 'clubs' => ['blue' => $opponent->club_name, 'red' => $ticket->club_name],
+                'content_catalog' => app(GameContentService::class)->snapshot(),
                 'visual_releases' => \App\Models\AvatarVisualRelease::where('active',true)
                     ->get(['id','avatar_id','variant','version','sha256'])->toArray(),
                 'coach_id' => $catalog->payload['coaches'][0]['id']];
+            if(($catalog->manifest['policy_version']??'')==='arena-command-v1'){
+                $release=app(IntelligenceService::class)->manifest();
+                $plan['intelligence']=['controller'=>'arena','release'=>($release['engine']==='arena-command-v1'
+                    &&$release['source_hash']===($catalog->manifest['arena_source_hash']??null))?$release:null];
+            }
+            if(in_array($catalog->manifest['policy_version']??'',['baseline-hybrid-v1','original-v3-hybrid-v2'],true)){
+                $release=app(IntelligenceService::class)->manifest();
+                $plan['intelligence']=['controller'=>'hybrid','release'=>($release['engine']==='safe-macro-v1'
+                    &&($release['qualification']??null)==='qualified'
+                    &&$release['source_hash']===($catalog->manifest['arena_source_hash']??null))?$release:null];
+            }
             $match = OnlineMatch::create(['id' => $id, 'blue_user_id' => $opponent->user_id, 'red_user_id' => $user->id,
                 'plan' => $plan, 'plan_hash' => hash('sha256', json_encode($plan, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES))]);
             $opponent->update(['status' => 'matched', 'match_id' => $id]);
@@ -152,3 +164,4 @@ class OnlineService
         });
     }
 }
+

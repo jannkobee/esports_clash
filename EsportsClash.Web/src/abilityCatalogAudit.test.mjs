@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CHAMPIONS } from './mockData.ts';
+import {CHAMPIONS} from './testFixtures/historicalCatalog.mjs';
 import { auditAbilityCatalog, buildAbilityAuditMatrix } from './abilityCatalogAudit.ts';
 
-test('ability catalog accounts for every champion, standard slot, passive, invoked spell, and declared movement state', () => {
+test('historical fixture: ability catalog accounts for every champion, standard slot, passive, invoked spell, and declared movement state', () => {
   const audit = auditAbilityCatalog(CHAMPIONS);
   assert.equal(audit.avatars, 45);
   assert.equal(audit.standardActives, 135);
@@ -21,7 +21,7 @@ test('ability catalog accounts for every champion, standard slot, passive, invok
   assert.ok(audit.movementAbilities.some(ability => ability.champion === 'Paxi' && ability.kind === 'Teleport'));
 });
 
-test('ability audit matrix inventories standard, passive, and invoked executors without duplicating combat data', () => {
+test('historical fixture: ability audit matrix inventories standard, passive, and invoked executors without duplicating combat data', () => {
   const matrix = buildAbilityAuditMatrix(CHAMPIONS);
   assert.equal(matrix.length, 190);
   assert.equal(matrix.filter(entry => entry.kind === 'standard-active').length, 135);

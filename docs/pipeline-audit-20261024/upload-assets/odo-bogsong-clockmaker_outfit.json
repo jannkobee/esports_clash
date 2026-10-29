@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_largo",
+  "component_id": "clockmaker_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Amphibian clockmaker outfit",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. One isolated physical reconstruction reference for Odo Bogsong. Attached character image is design reference only. Only the empty frog clockmaker's green-ivory coat, scarf, belts, dark trousers and open foot straps, sized to the squat pictured amphibian silhouette. No frog body, eyes, skin, fingers, toes, drums, staff, metronome or companions. All garments are visibly empty on invisible support in a neutral symmetrical wide A pose. Neck and joint openings are hollow; no mannequin. Preserve pictured construction and materials. Whole asset SMALL in frame, centered at only60% of image height and width, with clear transparent border on every side. Product-render clarity, neutral even lighting, three-quarter view or requested rest view. Genuine transparent background. No floor, cast shadows, glow backdrop, text, labels, frames, logo or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "odo-bogsong",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/odo-bogsong.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/odo-bogsong-clockmaker_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-a884d953-d520-4c3a-a288-73853209a47e.png"
+}

@@ -1,0 +1,1314 @@
+{
+    "version":  2,
+    "ruleset":  "original-v3-preview-2",
+    "identityManifestSupplied":  false,
+    "heroes":  [
+                   {
+                       "key":  "c_solana",
+                       "canonicalId":  "solenne-vaelor",
+                       "displayName":  "Solenne Vaelor",
+                       "title":  "The Sunwall Oath",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_astra",
+                       "canonicalId":  "ivera-frostwhistle",
+                       "displayName":  "Ivera Frostwhistle",
+                       "title":  "The Frost Resonant",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_kyumi",
+                       "canonicalId":  "mireth-lune",
+                       "displayName":  "Mireth Lune",
+                       "title":  "The Witness of False Roads",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_buck",
+                       "canonicalId":  "bramm-coil",
+                       "displayName":  "Bramm Coil",
+                       "title":  "The Breach Marshal",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_valkira",
+                       "canonicalId":  "kael-vespera",
+                       "displayName":  "Kael Vespera",
+                       "title":  "The Oath Ledger",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_kage",
+                       "canonicalId":  "nyxara-vale",
+                       "displayName":  "Nyxara Vale",
+                       "title":  "The Silhouette Thief",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_kazemaru",
+                       "canonicalId":  "serrin-galecrest",
+                       "displayName":  "Serrin Galecrest",
+                       "title":  "The Crosswind Cartographer",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_kindra",
+                       "canonicalId":  "orin-and-fen",
+                       "displayName":  "Orin and Fen",
+                       "title":  "Keepers of the Last Lantern",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_cora",
+                       "canonicalId":  "quillene-rook",
+                       "displayName":  "Quillene Rook",
+                       "title":  "The Sky Loom Fletcher",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_renn",
+                       "canonicalId":  "aurelio-vane",
+                       "displayName":  "Aurelio Vane",
+                       "title":  "The Masquerade Marshal",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_sylla",
+                       "canonicalId":  "droven-bearmantle",
+                       "displayName":  "Droven Bearmantle",
+                       "title":  "The Keeper of the Second Heart",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_tequoia",
+                       "canonicalId":  "thalara-rootwright",
+                       "displayName":  "Thalara Rootwright",
+                       "title":  "The Mycelial Architect",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_zal",
+                       "canonicalId":  "vesper-loom",
+                       "displayName":  "Vesper Loom",
+                       "title":  "The Gossamer Chirurgeon",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_xin",
+                       "canonicalId":  "rux-emberchain",
+                       "displayName":  "Rux Emberchain",
+                       "title":  "The Cinder Postmaster",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_raijin",
+                       "canonicalId":  "teslan-veyr",
+                       "displayName":  "Teslan Veyr",
+                       "title":  "The Storm Circuit",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Combat.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_kaolin",
+                       "canonicalId":  "joruun-jadecoil",
+                       "displayName":  "Joruun Jadecoil",
+                       "title":  "The Hinge Colossus",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_inai",
+                       "canonicalId":  "astrax-mire",
+                       "displayName":  "Astrax Mire",
+                       "title":  "The Distance Pilgrim",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_qiyana",
+                       "canonicalId":  "prismelle-cade",
+                       "displayName":  "Prismelle Cade",
+                       "title":  "The Shard Regent",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_locke",
+                       "canonicalId":  "ashkar-veilhand",
+                       "displayName":  "Ashkar Veilhand",
+                       "title":  "The Penitent Ember",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_senna",
+                       "canonicalId":  "maris-solquill",
+                       "displayName":  "Maris Solquill",
+                       "title":  "The Reliquary Surveyor",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_largo",
+                       "canonicalId":  "odo-bogsong",
+                       "displayName":  "Odo Bogsong",
+                       "title":  "The Reed Timekeeper",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_shadowfiend",
+                       "canonicalId":  "mourn-ashwake",
+                       "displayName":  "Mourn Ashwake",
+                       "title":  "The Furnace Mourner",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_earthshaker",
+                       "canonicalId":  "dolm-runesunder",
+                       "displayName":  "Dolm Runesunder",
+                       "title":  "The Seismic Surveyor",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_mirehook",
+                       "canonicalId":  "garruk-mawsuture",
+                       "displayName":  "Garruk Mawsuture",
+                       "title":  "The Jaw Foundry",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_nullweaver",
+                       "canonicalId":  "vesper-nullcode",
+                       "displayName":  "Vesper Nullcode",
+                       "title":  "The Inertia Heretic",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Combat.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_voltgrip",
+                       "canonicalId":  "coiljack-ampfist",
+                       "displayName":  "Coiljack Ampfist",
+                       "title":  "The Livewire Turnstile",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_aetherbolt",
+                       "canonicalId":  "talan-slipshot",
+                       "displayName":  "Talan Slipshot",
+                       "title":  "The Archive Ballistician",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_corsara",
+                       "canonicalId":  "calixa-broadwake",
+                       "displayName":  "Calixa Broadwake",
+                       "title":  "The Tidebound Privateer",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_brewmaw",
+                       "canonicalId":  "brohm-caskfall",
+                       "displayName":  "Brohm Caskfall",
+                       "title":  "The Fermentation King",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_wraithhook",
+                       "canonicalId":  "mora-fenhook",
+                       "displayName":  "Mora Fenhook",
+                       "title":  "The Lantern Ferrier",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Combat.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_invoker",
+                       "canonicalId":  "mirelle-vane",
+                       "displayName":  "Mirelle Vane",
+                       "title":  "The Atelier Prodigy",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Combat.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_hwei",
+                       "canonicalId":  "maelis-chromabloom",
+                       "displayName":  "Maelis Chromabloom",
+                       "title":  "The Conservationist of Ruin",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_jayce",
+                       "canonicalId":  "axiom-rail",
+                       "displayName":  "Axiom Rail",
+                       "title":  "The Scrapline Engineer",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_vi",
+                       "canonicalId":  "brakka-fenn",
+                       "displayName":  "Brakka Fenn",
+                       "title":  "The Civic Enforcer",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_jinx",
+                       "canonicalId":  "pippa-fuseburst",
+                       "displayName":  "Pippa Fuseburst",
+                       "title":  "The Firework Stagehand",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_puck",
+                       "canonicalId":  "lulla-faespring",
+                       "displayName":  "Lulla Faespring",
+                       "title":  "The Keeper of Unfinished Dreams",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Combat.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_batrider",
+                       "canonicalId":  "bryx-emberkite",
+                       "displayName":  "Bryx Emberkite",
+                       "title":  "The Thermal Sailor",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_bristleback",
+                       "canonicalId":  "murdle-ridgehide",
+                       "displayName":  "Murdle Ridgehide",
+                       "title":  "The Living Palisade",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_io",
+                       "canonicalId":  "nemea-halolink",
+                       "displayName":  "Nemea Halolink",
+                       "title":  "The Choir Conductor",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_lulu",
+                       "canonicalId":  "thimble-briarwish",
+                       "displayName":  "Thimble Briarwish",
+                       "title":  "The Walking Gardener",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_silencer",
+                       "canonicalId":  "sevrin-inkseal",
+                       "displayName":  "Sevrin Inkseal",
+                       "title":  "The Magistrate of Repetition",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_wukong_lol",
+                       "canonicalId":  "koro-cloudtail",
+                       "displayName":  "Koro Cloudtail",
+                       "title":  "The Aerial Polewright",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_monkeyking_dota",
+                       "canonicalId":  "bram-stonebranch",
+                       "displayName":  "Bram Stonebranch",
+                       "title":  "The Canopy Regent",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_stepstone",
+                       "canonicalId":  "toma-bellbreak",
+                       "displayName":  "Toma Bellbreak",
+                       "title":  "The Thirteenth Bell",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   },
+                   {
+                       "key":  "c_skybreaker",
+                       "canonicalId":  "ravelle-skyrake",
+                       "displayName":  "Ravelle Skyrake",
+                       "title":  "The Airspace Duchess",
+                       "stages":  {
+                                      "passive":  "partial",
+                                      "skill1":  "partial",
+                                      "skill2":  "partial",
+                                      "ultimate":  "partial",
+                                      "ai":  "partial",
+                                      "vfx":  "partial",
+                                      "tests":  "partial shared kernel/catalog coverage; individual acceptance incomplete",
+                                      "identity":  "partial"
+                                  },
+                       "productionArt":  "not started",
+                       "qualified":  false,
+                       "placeholderLabel":  true,
+                       "runtimeSource":  "EsportsClash.Web/src/v3Roster.ts",
+                       "verificationStatus":  "Catalog/identity binding checked; per-mechanic, AI, animation and balance qualification incomplete",
+                       "rendererIntegration":  {
+                                                   "backend":  "babylon",
+                                                   "bundledLegacyGlb":  true,
+                                                   "assetEvidence":  "docs/babylon-migration/asset-inventory.json",
+                                                   "originalV3ArtQualified":  false,
+                                                   "allKitRuntimeQualified":  false
+                                               },
+                       "activation":  "default local and newly allocated online matches"
+                   }
+               ],
+    "implementationPassDate":  "2026-10-24",
+    "verificationStatus":  "Activation checks pass; all 45 remain partial and unqualified. See ACTIVATION_20261024.md"
+}

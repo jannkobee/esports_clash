@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_silencer",
+  "component_id": "tablet_pauldron",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Large tablet pauldron",
+  "attachment": "shoulder",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Sevrin Inkseal. Attached character art is design reference only. One complete broad brass tablet shoulder pauldron with stacked rectangular engraved plates and hanging parchment strips. Empty underside, no shoulder, body, robes or stamp. Preserve pictured design, colors, materials and proportions. For clothing only: garments visibly empty on invisible support in a static symmetrical wide A pose; hollow openings, no mannequin. Show the entire asset at SMALL size occupying central 55 percent of frame with wide transparent margins on ALL sides. No cropping. Neutral even product lighting, readable physical geometry, three-quarter view. Genuine transparent background, no floor, shadow, background glow, text, labels, logo, frames or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "sevrin-inkseal",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/sevrin-inkseal.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/sevrin-inkseal-tablet_pauldron.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-08b6d5ff-85dd-4667-ba37-b96065ab6742.png"
+}

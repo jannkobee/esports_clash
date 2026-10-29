@@ -1,0 +1,13 @@
+{
+    "false_bound_rejection_rejected": true,
+    "changed_skin_baseline_rejected": true,
+    "state_unchanged": true,
+    "audit_counts_before": {
+        "d2d8cc83-a767-4e77-baa6-47d409888d0a": 1,
+        "b89a083d-6ed1-497c-be5b-c9130b7e7674": 1
+    },
+    "audit_counts_after": {
+        "d2d8cc83-a767-4e77-baa6-47d409888d0a": 1,
+        "b89a083d-6ed1-497c-be5b-c9130b7e7674": 1
+    }
+}

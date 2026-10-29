@@ -5,7 +5,8 @@ import { OnlineMatchViewer } from './OnlineMatchViewer';
 import type { VisualRelease } from '../avatarVisualRelease';
 
 interface Match { id: string; status: string; sequence: number; error?: string;
-  plan: { clubs: { blue: string; red: string }; versions: Record<string, string>;visual_releases?:VisualRelease[] }; result?: { winner: string } }
+  plan: { clubs: { blue: string; red: string }; versions: Record<string, string>;visual_releases?:VisualRelease[];
+    intelligence?:{controller:string;release?:{id:string;qualification?:string;generation?:number}|null} }; result?: { winner: string } }
 interface Dashboard {
   club: { name: string; revision: number; lineup: { instance_id: string; avatar_id: string }[] };
   cards: { id: string; definition: { name: string; preferredRole?: string; role?: string; ovr: number } }[];
@@ -137,6 +138,8 @@ export function OnlineNormalView() {
     </section>}
     {selected && <section className="space-y-3 rounded-2xl border border-slate-800 bg-slate-900 p-4">
       <h3 className="font-black">{selected.plan.clubs.blue} vs {selected.plan.clubs.red}</h3>
+      {selected.plan.intelligence?.controller==='hybrid'&&<p className="text-xs text-cyan-200">Coordinated gameplay baseline with learning. The server freezes the controller for this match; experimental command models cannot replace its baseline.</p>}
+      {selected.plan.intelligence?.controller==='arena'&&<p className="text-xs text-cyan-200">Learning AI: {selected.plan.intelligence.release?.qualification==='qualified'?'qualified policy':selected.plan.intelligence.release?'experimental checkpoint':'instructional foundation'}{selected.plan.intelligence.release?.generation!==undefined?` · update ${selected.plan.intelligence.release.generation}`:''}. The server keeps this version fixed for the match. Experimental updates have no established competitive improvement.</p>}
       <p className="text-xs text-slate-300">{connection} · server sequence {frame?.sequence ?? 0} · {Math.floor(frame?.snapshot.second ?? 0)}s {selected.result && `· ${selected.result.winner} wins`}</p>
       {selected.error && <p className="text-sm text-red-300">{selected.error}</p>}
       <OnlineMatchViewer message={frame} matchId={selected.id} visuals={selected.plan.visual_releases} />

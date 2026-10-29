@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_vi",
+  "component_id": "stamp_gauntlets",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Document-stamp gauntlets",
+  "attachment": "hands",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Brakka Fenn. Attached illustration is design reference only. Only the matched pair of document-stamp gauntlets, broad brass cuffs and red rubber circular stamp faces with city-seal designs. Hollow empty cuffs, no hands, arms, body, skin, person or uniform. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "brakka-fenn",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/brakka-fenn.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/brakka-fenn-stamp_gauntlets.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-84694472-5aa8-4a8a-9017-5a0d2699ac0e.png"
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_tequoia",
+  "component_id": "parasol",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Mushroom-coral parasol",
+  "attachment": "hand",
+  "prompt": "Use case: stylized-concept. Isolated physical reconstruction reference for Thalara Rootwright. Attached illustration is design reference only. ONLY one complete mushroom-coral parasol with branching pale mycelium stem, warm peach and ivory mushroom canopy and attached small shelf fungi. No person, hand, body, jars or clothes. Even neutral studio lighting, crisp physical geometry. Three-quarter view unless rest pose specified. Complete named asset inside central 70 percent of frame, generous clear TRANSPARENT margin on all sides. Genuine transparent background. No floor, cast shadows, glow backdrop, text, frames, labels, logo, unrelated equipment or extra subjects.",
+  "reference_purpose": "reconstruction",
+  "slug": "thalara-rootwright",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/thalara-rootwright.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/thalara-rootwright-parasol.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-62fc8014-1426-47e8-8502-ed0f64fb9f60.png"
+}

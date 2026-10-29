@@ -1,0 +1,101 @@
+[
+  {
+    "avatar_id": "c_cora",
+    "id": "kite_bow",
+    "sha256": "8bdfb8d5bfbe6f8a9ecb7506c2ea0d81b2256c9a7200d2c6e59c1f51fa32a136",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "74bab9cabbbca67565241beeb113a7194adf027d963c635841fc106217f6682e",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_cora",
+    "id": "hawk_outfit",
+    "sha256": "13e50ee1fdc0f8cff23f2c622353dc61da2743945084a362fb693504b1c7794d",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "75dc932153aad8b97c65ffa5ec0cb63ca1cc88c03539a53eeca91d175745f9fd",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_renn",
+    "id": "fan_shield",
+    "sha256": "7e1eb9d2fddf3cdacd2a6dc10b9389c65eb74b12af35c7f84ad0a7fba3c60139",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "4c52aceb2f2b53b596e1a86c64e68ac1b4296cec85e811a3f5b9465e704931f5",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_renn",
+    "id": "tux_armor",
+    "sha256": "bbd691b2cd718c93905a8bb2fe5c1d4781be657c1a88765fecde34cb9648df5a",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "3aa71f314edfd149c0aa2c192c69b9d12eaed8e1f80fb3c5ee762936c3da44a9",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_sylla",
+    "id": "warden_staff",
+    "sha256": "99e885bd57260b2077e7059c35f502f0cc37689cf1155d255218248b511369bf",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "53928f836893f2e8a6eb676b6780f0f7da10c6952d5c260ccaf3fcc9a2c51fe5",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_sylla",
+    "id": "antler_mantle",
+    "sha256": "80666b44e72fcc2be6cc5f96f31cf00ec20a2b06f7bba33d7b4dc97741cca2cf",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "685c25c046ae1f4f9112642e9c9338f08124bba4a7d594db99f5a303ee572346",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_sylla",
+    "id": "pack_tortoise",
+    "sha256": "940ec4ad7dfd8207328c8cad8a1732186ecf84ca93d87fba6b3c926772679ee9",
+    "status": "reference_uploaded",
+    "version": 8,
+    "inventory_hash": "3d550c880c0c144bac7332dcb8e6950cfd907f494a77cbfea02266ba0bd32595",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_sylla",
+    "id": "tortoise_cargo",
+    "sha256": "78a88213204c439f6404afe06818b923322d2b8eb81713414153372579ed79ee",
+    "status": "reference_uploaded",
+    "version": 9,
+    "inventory_hash": "3d964d99c6c76a500f2285b6722ad377ee36dc00e288a8842aba56bea98b158b",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_tequoia",
+    "id": "parasol",
+    "sha256": "8fa9e856f0cec8fe43d4de76adce0661843181373dc5d5668794d482953bf4b8",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "d8c9b1f4da7705b7afc36a01998f186ff9d572574f1f49bd65e8d7b46dad0e56",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_tequoia",
+    "id": "seed_jars",
+    "sha256": "b0a87761bda133c3496a4bc9a130869a8f61dd163c13e88b3c3e955a334adec4",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "e32d358422ca1b6af5001a528cced04ae9c8ebe76ae21c5d611b18207096ac28",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_tequoia",
+    "id": "mycelium_outfit",
+    "sha256": "79a8c57050af4af0c2513cefb6624f702d25390a7a511ce265082b79f772ef00",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "75f9f3580691aadfa2321321f3b51d86bcc5d8d8964a65f87250e64a1f626b1b",
+    "http": 200
+  }
+]

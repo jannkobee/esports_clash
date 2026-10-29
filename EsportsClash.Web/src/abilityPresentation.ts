@@ -92,6 +92,13 @@ const previewLevelFor = (slot: AbilityDisplaySlot, rank: number) => {
  * instead of maintaining a second set of tooltip numbers.
  */
 export function getAbilityPresentation(champion: ChampionKit, slot: AbilityDisplaySlot, rank = 1): AbilityPresentation {
+  if(champion.abilityRuleset){
+    const skill=champion[slot];
+    return {slot,key:`${champion.id}:${slot}`,name:skill.name,shortDescription:skill.desc,detailedDescription:skill.desc,
+      castType:'Authored geometry',castTypeDetail:'Validated by the original effect handler; resources, setup and counterplay are described below.',
+      range:150,geometry:'See ability geometry and setup requirements',cooldown:skill.cooldown,
+      manaCost:slot==='skill1'?30:slot==='skill2'?35:80,rank:1,maxRank:1};
+  }
   const maxRank = slot === 'ultimate' ? 4 : 7;
   const safeRank = Math.max(1, Math.min(maxRank, rank));
   const cacheKey = `${champion.id}:${slot}:${safeRank}`;

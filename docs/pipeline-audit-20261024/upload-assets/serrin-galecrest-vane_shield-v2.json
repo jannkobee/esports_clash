@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_kazemaru",
+  "component_id": "vane_shield",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Collapsible wind-vane shield",
+  "attachment": "left hand",
+  "prompt": "Edit this isolated Collapsible wind-vane shield reference: zoom out substantially, restore any cropped extremities, preserve its exact design and materials. Entire object must fit within the central60% of the image with at least20% clear transparent margin around every side. No body, extra equipment, floor, backdrop, text, labels or glow. Transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "serrin-galecrest",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/serrin-galecrest-vane_shield.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/serrin-galecrest-vane_shield-v2.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-63e1049c-737b-4a4b-81dd-3f39e8c3c730.png"
+}

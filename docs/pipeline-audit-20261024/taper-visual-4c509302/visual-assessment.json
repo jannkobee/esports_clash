@@ -1,0 +1,173 @@
+{
+  "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+  "status": "limited_visual_review_unqualified",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Exact 3fe2b0ca tapered candidate versus 59efceaf 12% reference, with selected bind/skeleton, 45/90-degree, focused and oblique joint views. No game motion, dressed appearance or final contact qualification.",
+  "observations": [
+    "The inspected rest silhouette, skeleton placement and foot positions are preserved. Selected 45-degree poses do not show a new gross collapse.",
+    "The taper reduces the measured intersection counts, but the paired close and oblique views do not establish a convincing visual correction of the compressed shoulder and hip/groin transitions. The base/rig deformation gate remains failed; do not advance to final game clips or appearance fitting.",
+    "Both diagnostic clip exports reproduce every saved 45/90-degree intersection count. The whole-body/detail run has 60 views and the matching oblique supplement has eight, both with zero browser errors.",
+    "The prior static repair windows were derived from posed contact bounds while weight selection occurred on the rest mesh. The new contact map records distinct rest/posed bounds and 517 source-bound vertex records; further repair must consume exact rest-space correspondence instead of treating posed bounds as a rest mask.",
+    "Residual shoulder contacts are now led by bone_2/upper-arm pairs (68 left and 39 right). The old Spine donor role maps to bone_1, so bone_2 was not included in that recipe. Hip contacts remain led by Hips/thigh pairs (157 left and 71 right), with additional thigh self-folds."
+  ],
+  "decision": "Another isolated joint repair is required before full animation processing; do not qualify or publish the tapered candidate.",
+  "next_repair_plan": [
+    "Use exact tapered GLB 3fe2b0ca and verify contact-map source hash, per-mesh vertex index, rest position and weight signature before editing any mapped vertex.",
+    "Isolate an additional intermediate torso bone_2-to-upper-arm transfer on the verified shoulder contact patches with smooth mesh-neighbor falloff; record its fraction and mask explicitly. Keep hip changes in a separate experiment.",
+    "Reproduce both frozen comparisons, preserve rest geometry, export/reimport, and repeat all 16 arm/leg bends, normalized/influence checks and visual comparison. Reject regressions and retain prior candidates.",
+    "Then investigate remaining hip Hips/thigh weighting or topology on its own mapped contact patches. Connect the full cloud repair/retarget/animation path only after controlled shape quality passes."
+  ],
+  "inspected_screenshots": [
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-exact-bind-rest-0-front.png",
+      "sha256": "bd2881db5417643033eb39df0dcae9a1670f44f2a9e23f22d920a274e801105d"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-exact-bind-rest-0-front-skeleton.png",
+      "sha256": "ca792d16bf23b15c722be9e5ebb2c95ea551a1aef60330244d8b1720eb095d10"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-exact-bind-rest-0-side.png",
+      "sha256": "2e4d58425673ccc5dbdb9f78382b04c380c3d66bd8a36af83a0297572d447aa3"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-exact-bind-rest-0-back.png",
+      "sha256": "46dedcf2c13f8adb70f36dfbc97242094f912619a669f60193eaa95880f0814a"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-verified-bend-UpperArmR-90-side-detail.png",
+      "sha256": "9086a2c2c08617c32648b1010b4bde9e7c5ae59c8473dcc665bc77fd42d39ed9"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-side-detail.png",
+      "sha256": "8d19bb35bb2443fb1b834cd08c4d02a3cc16b290649bf87ebc6c314826fb06e6"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-verified-bend-ThighR-90-side-detail.png",
+      "sha256": "24d1c0618055c8021809858ed77a7aa3398f08d5720cbaf721f4560cbbb86c9a"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/parent-verified-bend-ThighR-90-side-detail.png",
+      "sha256": "225e6a520540bcf0f5787dc3c3e3fe405b9406532e06d21f1900368ada3b3909"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-verified-bend-ThighL-90-front-detail.png",
+      "sha256": "bb974231e170721354a5b038b5333a66c74508c3b5dffbc28bbd2060b3a559c0"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/parent-verified-bend-ThighL-90-front-detail.png",
+      "sha256": "17b384d51a75f4fb590bd668c517adf334fe5cd541ace7064fea3ad432b13b96"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-verified-bend-ThighR-90-front-detail.png",
+      "sha256": "5399759ef090bdac19ffd0a245c6b7228623f5603e420efe696a6309465b58f4"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/parent-verified-bend-ThighR-90-front-detail.png",
+      "sha256": "6039abcdd9a26d7823c4de34453b249299122addcec9c375acd83d7eadc4b9e3"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-verified-bend-UpperArmL-90-front-detail.png",
+      "sha256": "ccd5f9a219e2f995bde9817450fb32516a6e85c8d61bd82a5642986cd4f5d8ac"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-front-detail.png",
+      "sha256": "479a82f6fd73c7d6c998e70dc6ead335a18a772b78e9ae5aa46aa18210fca616"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-verified-bend-UpperArmL-45-front.png",
+      "sha256": "90c7a42a60714bc06c5422892765a9a643b82a908ef3109631875dadbe34f84b"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-verified-bend-UpperArmR-45-side.png",
+      "sha256": "4864c8c1da09f269febd953b9f32d28bdf402fa25225b22d6be24ca810aca493"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-verified-bend-ThighL-45-side.png",
+      "sha256": "f62d1d35f64db0e8cc68580902f7a635c01c62c297574524c41c387dab1f74de"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-verified-bend-ThighR-45-front.png",
+      "sha256": "7e53cdc128656da29dd0ee33c0d9767f1f93fb4466af897ccafb08a61e6c15d0"
+    },
+    {
+      "review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+      "file": "screenshots/current-verified-bend-UpperArmR-90-back.png",
+      "sha256": "c9628f4b8988fb9eb7b2b1c50317e911e88885faab28bc658ae1668bc080d043"
+    },
+    {
+      "review_id": "3a1c463c-7fa5-4d0c-bbde-e6d2792e6ff2",
+      "file": "screenshots/current-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "7d731a45a9b351348e482ea2d521f8b0d645cfa6d39013e71765db19cd753424"
+    },
+    {
+      "review_id": "3a1c463c-7fa5-4d0c-bbde-e6d2792e6ff2",
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "a842d1b7262362e1d8a895caa09c10a39187ee27e6659acbda0323cf4a19366b"
+    },
+    {
+      "review_id": "3a1c463c-7fa5-4d0c-bbde-e6d2792e6ff2",
+      "file": "screenshots/current-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "dd40520bcba273672da8d99e08b9e131731bb4bad020da5bb0f0f0fe341e5665"
+    },
+    {
+      "review_id": "3a1c463c-7fa5-4d0c-bbde-e6d2792e6ff2",
+      "file": "screenshots/current-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "487d602610a07cecd97f26ec3eed6c3d5ad862bd89816759cf8f6b509acb31d5"
+    },
+    {
+      "review_id": "3a1c463c-7fa5-4d0c-bbde-e6d2792e6ff2",
+      "file": "screenshots/parent-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "b82aed589447b617c7453f5335a405727eb722787c82d367d4d4fb5915418ddd"
+    },
+    {
+      "review_id": "3a1c463c-7fa5-4d0c-bbde-e6d2792e6ff2",
+      "file": "screenshots/current-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "b44c2f4f33f20da1e01a961a8f07b19c4a053eed3a7c291998e7e35166e5c016"
+    },
+    {
+      "review_id": "3a1c463c-7fa5-4d0c-bbde-e6d2792e6ff2",
+      "file": "screenshots/parent-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "864bb43603f76fc50a2248fb072f6b56c92a3263fb798c1a55e655f84bd867cd"
+    }
+  ],
+  "whole_body_and_detail_review": {
+    "id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+    "report_sha256": "a5fdd1c531f1e0fa593b9a6b704de51c79e12ea22eccae974c2f4d8b64f7ef7f",
+    "rendered_views": 60,
+    "errors": []
+  },
+  "oblique_review": {
+    "id": "3a1c463c-7fa5-4d0c-bbde-e6d2792e6ff2",
+    "report_sha256": "52ab703db49576aa15ed91c64499342a912766702a2fe05395ac579d5455d1ff",
+    "rendered_views": 8,
+    "errors": []
+  },
+  "contact_map": {
+    "id": "0ba81d69-3c9a-4e1c-b3dc-703e998fa143",
+    "report_sha256": "adfe3b3a12acd788523d447ca82e185f9f083765d1b67da56e15e404d558cf03",
+    "source_candidate_id": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046",
+    "source_sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+    "contact_vertices": 517
+  },
+  "inspector_sha256": "b53cdbbf1a7ee8cae29c18696ad56eb13e07acc2349f6e41d94e8a0adc9ccb02"
+}

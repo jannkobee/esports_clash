@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useGameContent, useGameContentConnection } from './GameContentContext';
+import { contentChampion, validateGameContent, type GameContentSnapshot } from './gameContent';
+import { GameCatalogView } from './components/GameCatalogView';
+import { refreshIntelligenceRelease, intelligenceReleaseSnapshot,type IntelligenceRelease } from './intelligenceRelease';
+import {loadArenaActor} from './arenaLearning';
 import { 
-  CHAMPIONS, 
+  CHAMPIONS as BUNDLED_CHAMPIONS,
   INITIAL_COACHES, 
   INITIAL_EVOLUTIONS, 
   INITIAL_FACILITIES, 
@@ -15,9 +20,6 @@ import { SquadView } from './components/SquadView';
 import { CloudSavePanel } from './components/CloudSavePanel';
 import { OnlineNormalView } from './components/OnlineNormalView';
 import { DraftPhaseView } from './components/DraftPhaseView';
-import { ArenaMatchView } from './components/ArenaMatchView';
-import { ThreeAramArena } from './components/ThreeAramArena';
-import { TeamfightArenaView } from './components/TeamfightArenaView';
 import { AramMatchView } from './components/AramMatchView';
 import type { MatchReport } from './matchReplay';
 import { refreshMatchReportAvatarPresentation, rerollAfterBalanceGame } from './matchReplay';
@@ -47,6 +49,8 @@ import {
 } from './equalizedMode';
 import { PlayerDraftPhaseView } from './components/PlayerDraftPhaseView';
 import { createDevRandomMatch } from './devRandomMode';
+import {V3_PREVIEW_KEYS} from './v3Combat';
+import {V3_RULESET,HERO_IDENTITIES_V3} from './heroIdentityV3';
 import { sound } from './audio';
 import { settlePackPurchase } from './packEconomy';
 import { 
@@ -149,8 +153,13 @@ export const PACK_CATALOG: PackConfig[] = [
 ];
 
 export function App() {
+  const gameContent = useGameContent();
+  const catalogConnection=useGameContentConnection();
+  const CHAMPIONS = useMemo(() => BUNDLED_CHAMPIONS.map(champion => contentChampion(champion,gameContent)),[gameContent]);
+  useEffect(()=>{void refreshIntelligenceRelease();const timer=setInterval(()=>void refreshIntelligenceRelease(),15000);
+    return()=>clearInterval(timer);},[]);
   // Navigation
-  const [activeTab, setActiveTab] = useState<'squad' | 'packs' | 'evolutions' | 'arena' | 'ladder' | 'tournament' | 'champions' | 'pro_circuit' | 'online_normal'>('squad');
+  const [activeTab, setActiveTab] = useState<'squad' | 'packs' | 'evolutions' | 'arena' | 'ladder' | 'tournament' | 'champions' | 'catalog' | 'pro_circuit' | 'online_normal'>('squad');
   const [riggingStudioOpen, setRiggingStudioOpen] = useState<boolean>(false);
   const [musicEnabled, setMusicEnabled] = useState(() => sound.isMusicEnabled());
   const [audioMuted, setAudioMuted] = useState(() => sound.isMuted());
@@ -227,6 +236,8 @@ export function App() {
   const [balanceRunsLeft, setBalanceRunsLeft] = useState(0);
   const [balanceBatchId, setBalanceBatchId] = useState(0);
   const [replayDraft, setReplayDraft] = useState<MatchReport['draft'] | null>(null);
+  const [replayContent, setReplayContent] = useState<GameContentSnapshot | null>();
+  const [replayIntelligence,setReplayIntelligence]=useState<IntelligenceRelease>();
   const savedReports = (() => {
     try { return JSON.parse(localStorage.getItem('esports-clash-match-reports') || '[]') as MatchReport[]; }
     catch { return []; }
@@ -234,10 +245,17 @@ export function App() {
   const balanceSwapped = balanceRunsLeft > 0 && balanceRunsLeft % 2 === 0;
   const openRecordedMatch = (report: MatchReport) => {
     if (report.version !== 1 || !Number.isInteger(report.seed) || report.draft?.blue?.length !== 5 || report.draft?.red?.length !== 5) return;
+    const frozen=report.intelligence;
+    if(frozen?.policy&&(!loadArenaActor(frozen.policy)||frozen.sourceHash!==import.meta.env.INTELLIGENCE_SOURCE_HASH)){
+      alert('This report uses a different game version or an invalid model. Its saved results remain available; an exact replay requires its original version.');return;
+    }
+    setReplayIntelligence(frozen?.policy?{id:frozen.policyId,policy:frozen.policy,qualification:frozen.qualification,run_id:frozen.runId,generation:frozen.generation}:undefined);
     const refreshedReport = refreshMatchReportAvatarPresentation(report, CHAMPIONS);
     setDraftedBlue(refreshedReport.draft.blue);
     setDraftedRed(refreshedReport.draft.red);
+    if (report.contentCatalog && !validateGameContent(report.contentCatalog)) { alert('The saved catalog is invalid.'); return; }
     setReplayDraft(refreshedReport.draft);
+    setReplayContent(report.contentCatalog ?? null);
     setMatchSeed(report.seed);
     setReplayNumber(1);
     setBalanceRunsLeft(0);
@@ -606,9 +624,14 @@ export function App() {
     blue: { player: PlayerCard; champion: ChampionKit }[],
     red: { player: PlayerCard; champion: ChampionKit }[], seed: number
   ) => {
+    if(arenaChoice==='online'&&onlineRoom?.intelligence?.source_hash!==import.meta.env.INTELLIGENCE_SOURCE_HASH){
+      setOnlineError('The room uses a different game version. Reload both clients and create a new room.');return;
+    }
     setDraftedBlue(blue);
     setDraftedRed(red);
     setReplayDraft(null);
+    setReplayContent(undefined);
+    setReplayIntelligence(undefined);
     setMatchSeed(seed);
     setReplayNumber(0);
     setBalanceRunsLeft(0);
@@ -621,6 +644,15 @@ export function App() {
     const matchup = createDevRandomMatch(INITIAL_PLAYERS, CHAMPIONS, seed);
     setArenaChoice('dev_random');
     handleDraftComplete(matchup.blue, matchup.red, seed);
+  };
+  const [v3RosterChoices,setV3RosterChoices]=useState<Record<string,string>>({});
+  const launchV3PrototypeMatch=()=>{
+    const seed=crypto.getRandomValues(new Uint32Array(1))[0];
+    const matchup=createDevRandomMatch(INITIAL_PLAYERS,CHAMPIONS,seed);
+    setArenaChoice('dev_random');
+    // The existing seeded developer draft now samples the entire original roster.
+    const choose=(side:'blue'|'red',lineup:typeof matchup.blue)=>lineup.map((entry,index)=>({...entry,champion:CHAMPIONS.find(c=>c.id===v3RosterChoices[`${side}:${index}`])??entry.champion}));
+    handleDraftComplete(choose('blue',matchup.blue),choose('red',matchup.red),seed);
   };
 
   // Queue Ranked Ladder Match against specific ladder rival
@@ -768,6 +800,12 @@ export function App() {
         </div>
       </header>
 
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 pt-2 text-xs text-slate-400" role="status" aria-label="Backoffice catalog connection">
+        <span>{catalogConnection.status==='connected'?'Backoffice connected':catalogConnection.status==='stale'?'Backoffice disconnected · retaining last catalog':'Backoffice offline · bundled catalog'}</span>
+        {catalogConnection.hash&&<span title={catalogConnection.hash}>Catalog {catalogConnection.hash.slice(0,12)}</span>}
+        <button onClick={catalogConnection.refresh} className="rounded border border-slate-600 px-2 py-1 text-cyan-200">Refresh catalog</button>
+      </div>
+
       {/* MAIN NAVIGATION TABS */}
       <nav className="max-w-7xl mx-auto px-4 mt-4">
         <div className="flex gap-2 overflow-x-auto bg-slate-900/60 p-1.5 rounded-2xl border border-slate-800">
@@ -836,6 +874,7 @@ export function App() {
           >
             <Layers className="w-4 h-4" /> Avatars & Lore
           </button>
+          <button type="button" onClick={() => { sound.playClick(); setActiveTab('catalog'); setInBattle(false); }} className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 whitespace-nowrap ${activeTab==='catalog'?'bg-cyan-500 text-slate-950':'text-slate-400 hover:text-white hover:bg-slate-800'}`}><Package className="w-4 h-4" /> Items & Skills</button>
 
           <button
             onClick={() => { sound.playClick(); setRiggingStudioOpen(true); }}
@@ -904,6 +943,7 @@ export function App() {
 
       {/* VIEW CONTENT */}
       <main className={`w-full min-w-0 ${activeTab === 'arena' ? 'max-w-[1600px]' : 'max-w-7xl'} mx-auto px-4 mt-6`}>
+        {activeTab === 'catalog' && <GameCatalogView />}
         {activeTab === 'online_normal' && <OnlineNormalView />}
         {activeTab === 'squad' && (
           <div className="space-y-4">
@@ -945,6 +985,7 @@ export function App() {
               </label>
               {arenaChoice === null ? (
                 <div className="max-w-4xl mx-auto mt-6 space-y-5">
+                  <p className="rounded-xl border border-cyan-900 bg-slate-900 p-3 text-xs leading-relaxed text-slate-300"><strong className="text-cyan-300">Learning AI in your arena matches.</strong> Movement, combat targets, spells and strategic choices now come from a learned controller. New local simulations use the latest compatible learning checkpoint, or its instructional foundation while training is pending. Open the AI panel in the spectator to see the version and its current choices. Experimental updates may play better or worse; the ML report explains the measured results.</p>
                   {/* Opponent Selection Card */}
                   <div className="bg-gradient-to-r from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-5 shadow-xl flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-3.5">
@@ -1054,7 +1095,15 @@ export function App() {
                   <FlaskConical className="w-10 h-10 text-fuchsia-300 mx-auto mb-3" />
                   <h2 className="text-xl font-black text-white">Developer Random 5v5</h2>
                   <p className="text-xs text-slate-400 mt-2">Generate a fresh equalized matchup with ten unique random avatars. Developer matches do not award progression or affect standings.</p>
+                  <details className="mt-4 text-left text-xs text-cyan-100"><summary>Choose V3 lineups by original name</summary>
+                    <div className="mt-3 grid grid-cols-2 gap-3">{(['blue','red'] as const).map(side=><div key={side}><strong>{side} squad</strong>{Array.from({length:5},(_,index)=><label key={index} className="mt-2 block">Slot {index+1}
+                      <select className="mt-1 w-full rounded border border-slate-600 bg-slate-950 p-2" aria-label={`V3 ${side} slot ${index+1}`} value={v3RosterChoices[`${side}:${index}`]??''} onChange={event=>setV3RosterChoices(old=>({...old,[`${side}:${index}`]:event.target.value}))}>
+                        <option value="">Seeded random</option>{HERO_IDENTITIES_V3.map(hero=><option key={hero.key} value={hero.key}>{hero.displayName} — {hero.title}</option>)}
+                      </select></label>)}</div>)}</div>
+                    <p className="mt-2 text-slate-400">V3 only. Mirror picks are allowed for controlled scenarios. Mechanics are untested; art remains labeled placeholders.</p>
+                  </details>
                   <div className="mt-5 flex flex-wrap justify-center gap-3">
+                    <button type="button" onClick={launchV3PrototypeMatch} className="rounded-xl border border-cyan-300 bg-cyan-950 px-5 py-2 text-xs font-black text-cyan-100">V3 full-roster 5v5 · untested</button>
                     <button type="button" onClick={() => { sound.playClick(); launchDeveloperRandomMatch(); }} className="rounded-xl bg-fuchsia-500 hover:bg-fuchsia-400 px-5 py-2 text-xs font-black text-white transition">Launch New Random 5v5</button>
                     <button type="button" onClick={() => setArenaChoice(null)} className="rounded-xl border border-slate-600 px-5 py-2 text-xs font-bold text-slate-300 hover:text-white transition">Back to modes</button>
                   </div>
@@ -1295,6 +1344,9 @@ export function App() {
               <>
               {arenaChoice === 'online' && onlineSession && !replayDraft && <div className="mb-3 flex justify-between text-xs text-slate-300"><span>Online room {onlineSession.code} · You are {onlineSession.side.toUpperCase()}</span><button type="button" onClick={leaveOnline} className="text-rose-300 hover:text-white font-bold">Leave room</button></div>}
               <AramMatchView
+                abilityRuleset={V3_RULESET}
+                contentCatalog={replayDraft?replayContent:arenaChoice==='online'?(onlineRoom?.contentCatalog??null):undefined}
+                intelligenceRelease={replayDraft?replayIntelligence:arenaChoice==='online'?onlineRoom?.intelligence:intelligenceReleaseSnapshot()}
                 onExit={() => { if (arenaChoice === 'online' && onlineSession && !replayDraft) leaveOnline(); setInBattle(false); setBalanceRunsLeft(0); }}
                 key={`${matchSeed}:${replayNumber}`}
                 seed={matchSeed}

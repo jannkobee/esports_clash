@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_raijin",
+  "component_id": "ground_rods",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Portable grounding rods",
+  "attachment": "hands",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Teslan Veyr. Attached image is design reference only. Only the matching pair of long copper portable grounding rods with blue-glass coil sections and attached flexible cables. Entire pointed tips and tops visible, clearly separated, no hands, person, clothing or reservoir backpack. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "teslan-veyr",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/teslan-veyr.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/teslan-veyr-ground_rods.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-286609d2-aeb3-45a2-b50c-230e9ed3f771.png"
+}

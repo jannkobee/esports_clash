@@ -1,3 +1,6 @@
+import {CAMP_ROCK_RINGS} from './arenaRules.ts';
+import { chooseBarracksSiegeTarget, barracksApproachPoint, approachPoint } from './barracksSiege.ts';
+import {canDamageStructure} from './structureProtection.ts';
 import { captureUnitCollisionStarts, resolveArenaUnitCollisions } from './arenaUnitCollision.ts';
 import { isInsideHealingWell } from './baseSafetyRules.ts';
 import { barracksPosition, minionSpawnPosition, advanceLaneMinion } from './arenaLandform.ts';
@@ -56,6 +59,7 @@ import {
   DRAGON_SPAWN_SECOND,
   DRAGON_X,
   LANE_Y,
+  laneY,
   NEXUS_X,
   NEXUS_TOWER_X,
   WELL_X,
@@ -254,23 +258,7 @@ export interface BatchSimulationAnalysis {
   diagnostics: string[];
 }
 
-export function canDamageStructure(structure: LaneStructure, structures: readonly LaneStructure[]): boolean {
-  if (!structure.isAlive) return false;
-  const defenders = structures.filter(s => s.team === structure.team);
-  if (structure.type === 'inner_tower') {
-    return !defenders.some(s => s.type === 'outer_tower' && s.isAlive);
-  }
-  if (structure.type === 'nexus_tower') {
-    return !defenders.some(s => (s.type === 'outer_tower' || s.type === 'inner_tower') && s.isAlive);
-  }
-  if (structure.type === 'barracks') {
-    return !defenders.some(s => s.type.includes('tower') && s.isAlive);
-  }
-  if (structure.type === 'nexus') {
-    return canDamageNexus(structure.team, structures);
-  }
-  return true;
-}
+export {canDamageStructure} from './structureProtection.ts';
 
 export function setUnitFacing(unit: AramChampionUnit, targetX: number, deadband = 12): void {
   const dx = targetX - unit.x;
@@ -322,21 +310,21 @@ export function createSimulationState(options: SimulationOptions): SimulationSta
     }));
 
   const structures: LaneStructure[] = [
-    { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: OUTER_TOWER_X.blue, y: LANE_Y, hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
-    { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: INNER_TOWER_X.blue, y: LANE_Y, hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
-    { id: 'b_t3', team: 'blue', type: 'nexus_tower', name: 'Blue Nexus Turret', x: NEXUS_TOWER_X.blue, y: LANE_Y, hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
+    { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: OUTER_TOWER_X.blue, y: laneY(OUTER_TOWER_X.blue), hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+    { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: INNER_TOWER_X.blue, y: laneY(INNER_TOWER_X.blue), hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+    { id: 'b_t3', team: 'blue', type: 'nexus_tower', name: 'Blue Nexus Turret', x: NEXUS_TOWER_X.blue, y: laneY(NEXUS_TOWER_X.blue), hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
     ...makeBarracks('blue'),
-    { id: 'b_nexus', team: 'blue', type: 'nexus', name: 'Blue Nexus', x: NEXUS_X.blue, y: LANE_Y, hp: STRUCTURE_HP.nexus, maxHp: STRUCTURE_HP.nexus, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
-    { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: OUTER_TOWER_X.red, y: LANE_Y, hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
-    { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: INNER_TOWER_X.red, y: LANE_Y, hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
-    { id: 'r_t3', team: 'red', type: 'nexus_tower', name: 'Red Nexus Turret', x: NEXUS_TOWER_X.red, y: LANE_Y, hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
+    { id: 'b_nexus', team: 'blue', type: 'nexus', name: 'Blue Nexus', x: NEXUS_X.blue, y: laneY(NEXUS_X.blue), hp: STRUCTURE_HP.nexus, maxHp: STRUCTURE_HP.nexus, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
+    { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: OUTER_TOWER_X.red, y: laneY(OUTER_TOWER_X.red), hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+    { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: INNER_TOWER_X.red, y: laneY(INNER_TOWER_X.red), hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+    { id: 'r_t3', team: 'red', type: 'nexus_tower', name: 'Red Nexus Turret', x: NEXUS_TOWER_X.red, y: laneY(NEXUS_TOWER_X.red), hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
     ...makeBarracks('red'),
-    { id: 'r_nexus', team: 'red', type: 'nexus', name: 'Red Nexus', x: NEXUS_X.red, y: LANE_Y, hp: STRUCTURE_HP.nexus, maxHp: STRUCTURE_HP.nexus, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 }
+    { id: 'r_nexus', team: 'red', type: 'nexus', name: 'Red Nexus', x: NEXUS_X.red, y: laneY(NEXUS_X.red), hp: STRUCTURE_HP.nexus, maxHp: STRUCTURE_HP.nexus, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 }
   ];
 
   const relics: HealthRelic[] = [
-    { id: 'relic_top', x: 1095, y: 295, respawnTimer: 0, healAmount: 260 },
-    { id: 'relic_bot', x: 1505, y: 465, respawnTimer: 0, healAmount: 260 }
+    { id: 'relic_top', x: 1150, y: laneY(1150) - 130, respawnTimer: 0, healAmount: 260 },
+    { id: 'relic_bot', x: 1650, y: laneY(1650) + 130, respawnTimer: 0, healAmount: 260 }
   ];
 
   const jungleCamps: JungleCamp[] = [
@@ -349,13 +337,13 @@ export function createSimulationState(options: SimulationOptions): SimulationSta
     { id: 'j_red_blue_buff', name: 'Azure Crest', type: 'blue_buff', x: 1960, y: 145, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
     { id: 'j_red_red_buff', name: 'Crimson Crest', type: 'red_buff', x: 1815, y: 600, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
     { id: 'j_siege_golem', name: 'Gravemarch Colossus', type: 'siege_golem', x: 1300, y: 610, hp: 6200, maxHp: 6200, ad: 135, range: 230, goldReward: 250, xpReward: 300, respawnTimer: 0, isAlive: false, attackTimer: 0, color: '#d4a764' }
-  ];
+  ].map(c=>{const site=CAMP_ROCK_RINGS.find(r=>r.id===c.id)!;return {...c,type:c.type as JungleCamp['type'],x:site.x,y:site.y};});
 
   const dragon: DragonBoss = {
     id: 'dragon_boss',
     name: 'Embermaw, the Ancient Dragon',
     x: DRAGON_X,
-    y: 130,
+    y: CAMP_ROCK_RINGS.find(r=>r.id==='dragon_boss')!.y,
     hp: 5200,
     maxHp: 5200,
     ad: 120,
@@ -400,7 +388,7 @@ export function createSimulationState(options: SimulationOptions): SimulationSta
         team: side,
         teamChemistry: coach?.chemistryBonus ?? 10,
         x: WELL_X[side] + (idx % 2) * 20,
-        y: LANE_Y - 60 + idx * 30,
+        y: laneY(WELL_X[side]) - 60 + idx * 30,
         vx: 0,
         vy: 0,
         hp: champCopy.hp + bonusHp,
@@ -519,7 +507,7 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
         sim.minions.push({
           id: `siege_golem_${team}_${sim.waveCount}`,
           team, type: 'melee', siegeGolem: true,
-          x: spawnX, y: LANE_Y,
+          x: spawnX, y: laneY(spawnX),
           hp: 3200, maxHp: 3200, ad: 110, range: 75, speed: 86,
           attackTimer: 0, goldReward: 110, xpReward: 130, isAlive: true,
           siegeChargeCooldown: 2.5, siegeChargeWindup: 0
@@ -569,7 +557,7 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
         c.hp = c.maxHp;
         c.mana = 100;
         c.x = WELL_X[c.team];
-        c.y = LANE_Y;
+        c.y = laneY(WELL_X[c.team]);
       }
       return;
     }
@@ -668,7 +656,7 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
     const oppChamps = m.team === 'blue' ? redChamps : blueChamps;
 
     const closeMinion = oppMinions.find(o => Math.hypot(o.x - m.x, o.y - m.y) <= m.range + 20);
-    const closeStructure = oppStructures.find(s => Math.hypot(s.x - m.x, s.y - m.y) <= m.range + 35);
+    const closeStructure = oppStructures.find(s => canDamageStructure(s,sim.structures)&&Math.hypot(s.x - m.x, s.y - m.y) <= m.range + 35);
     const closeChamp = oppChamps.find(c => Math.hypot(c.x - m.x, c.y - m.y) <= m.range + 10);
 
     const target = closeMinion || closeStructure || closeChamp;
@@ -693,7 +681,9 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
       }
     } else {
       // March down lane
-      advanceLaneMinion(m, dt);
+      const barracks=chooseBarracksSiegeTarget(m,sim.structures);
+      if(barracks)Object.assign(m,approachPoint(m,rockApproachWaypoint(m,barracksApproachPoint(m,barracks,Math.max(0,m.range-5))),m.speed,dt));
+      else advanceLaneMinion(m, dt);
     }
   });
   sim.minions = sim.minions.filter(m => m.isAlive);
@@ -885,6 +875,8 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
           damageStructure(sim, targetStructure, Math.round(u.champion.ad * crashMul * marksmanMul * dragonSiegeMul));
         }
       } else {
+        const barracks=chooseBarracksSiegeTarget(u,sim.structures);
+        if(barracks){const waypoint=rockApproachWaypoint(u,barracksApproachPoint(u,barracks,attackRange));Object.assign(u,resolveRockTerrainMovement(u,approachPoint(u,waypoint,75,dt)));return;}
         const dir = u.team === 'blue' ? 1 : -1;
         const alliedWave = sim.minions.filter(m => m.team === u.team && m.isAlive);
         const oppWave = sim.minions.filter(m => m.team !== u.team && m.isAlive);
@@ -975,7 +967,7 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
         });
         const nextX = u.x + dir * 75 * dt;
         if (!wouldOverstep(u.team, nextX, advanceLimit)) {
-          const nextPos = resolveRockTerrainMovement({ x: u.x, y: u.y }, { x: nextX, y: LANE_Y });
+          const nextPos = resolveRockTerrainMovement({ x: u.x, y: u.y }, { x: nextX, y: laneY(nextX) });
           u.x = nextPos.x;
           u.y = nextPos.y;
         }
@@ -1038,7 +1030,8 @@ export function stepSimulation(sim: SimulationState, dt: number): void {
   resolveArenaUnitCollisions(sim.champions, sim.minions, [
     ...sim.jungleCamps.map(unit => ({ unit, radius: unit.type === 'siege_golem' ? 32 : 23 })),
     { unit: sim.dragon, radius: 32, locked: true },
-  ], crowdStarts, dt);
+  ], crowdStarts, dt,
+  sim.structures.map(s => ({ unit: s, radius: s.type === 'nexus' ? 38 : s.type === 'barracks' ? 26 : 24, locked: true })));
 
 }
 

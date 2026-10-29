@@ -52,9 +52,9 @@ export const STRUCTURE_HIT_RADIUS: Readonly<Record<StructureType, number>> = {
  * authored world-space override. Card ratings never enter physical reach.
  */
 export function getChampionBasicAttackRange(
-  champion: Pick<ChampionKit, 'name' | 'range'>
+  champion: Pick<ChampionKit, 'name' | 'range'> & {legacyInternalName?:string}
 ): number {
-  const authored = AUTHORED_ATTACK_RANGES[champion.name];
+  const authored = AUTHORED_ATTACK_RANGES[champion.legacyInternalName??champion.name];
   if (authored !== undefined) return authored;
   const kitRange = Number.isFinite(champion.range) ? Math.max(1, champion.range) : 1.5;
   const worldRange = kitRange >= 4 ? kitRange * 35 : kitRange * 30;

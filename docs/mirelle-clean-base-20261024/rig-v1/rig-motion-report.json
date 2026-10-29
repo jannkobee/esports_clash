@@ -1,0 +1,124 @@
+{
+  "avatar_id": "c_invoker",
+  "canonical_id": "mirelle-vane",
+  "status": "animated_base_unqualified",
+  "provider": "blender-authored-anatomy-v1",
+  "source_sha256": "b9bae7b7a221136d0fa5647349a168be82731a7a1305ad78acbaedc703c05606",
+  "bones": 48,
+  "vertices": 10167,
+  "checks": {
+    "geometry_unchanged": true,
+    "unweighted_vertices": 0,
+    "normalized_weights": true,
+    "death_ends_low": true,
+    "finite_dense_motion": true
+  },
+  "clips": {
+    "Idle": {
+      "frames": 61,
+      "duration_seconds": 2.0,
+      "lowest_vertex_m": 0.01799974963068962,
+      "maximum_edge_stretch_ratio": 2.0823240536787506,
+      "maximum_planted_ankle_step_m": 0.00015646264131651536,
+      "final_head_joint_height_m": 1.5750000476837158
+    },
+    "Walk": {
+      "frames": 31,
+      "duration_seconds": 1.0,
+      "lowest_vertex_m": 0.017999790608882904,
+      "maximum_edge_stretch_ratio": 1.8319288506747076,
+      "maximum_planted_ankle_step_m": 0,
+      "final_head_joint_height_m": 1.5670000314712524
+    },
+    "Run": {
+      "frames": 21,
+      "duration_seconds": 0.6666666666666666,
+      "lowest_vertex_m": 0.01799977757036686,
+      "maximum_edge_stretch_ratio": 1.8319290199512506,
+      "maximum_planted_ankle_step_m": 0,
+      "final_head_joint_height_m": 1.540000081062317
+    },
+    "Attack": {
+      "frames": 27,
+      "duration_seconds": 0.8666666666666667,
+      "lowest_vertex_m": 0.017999883741140366,
+      "maximum_edge_stretch_ratio": 2.1457556409833023,
+      "maximum_planted_ankle_step_m": 0,
+      "final_head_joint_height_m": 1.5750000476837158
+    },
+    "Cast": {
+      "frames": 37,
+      "duration_seconds": 1.2,
+      "lowest_vertex_m": 0.017999883741140366,
+      "maximum_edge_stretch_ratio": 2.1416484492445216,
+      "maximum_planted_ankle_step_m": 0,
+      "final_head_joint_height_m": 1.5750000476837158
+    },
+    "Hit": {
+      "frames": 16,
+      "duration_seconds": 0.5,
+      "lowest_vertex_m": 0.017999781295657158,
+      "maximum_edge_stretch_ratio": 2.0823143693901875,
+      "maximum_planted_ankle_step_m": 8.807594266565469e-08,
+      "final_head_joint_height_m": 1.5750000476837158
+    },
+    "Death": {
+      "frames": 55,
+      "duration_seconds": 1.8,
+      "lowest_vertex_m": -0.15750539302825928,
+      "maximum_edge_stretch_ratio": 2.0835551590641246,
+      "maximum_planted_ankle_step_m": 0,
+      "final_head_joint_height_m": 0.11999979615211487
+    },
+    "Strafe": {
+      "frames": 31,
+      "duration_seconds": 1.0,
+      "lowest_vertex_m": 0.01799951121211052,
+      "maximum_edge_stretch_ratio": 1.8319288506747076,
+      "maximum_planted_ankle_step_m": 0,
+      "final_head_joint_height_m": 1.5670000314712524
+    },
+    "TurnLeft": {
+      "frames": 25,
+      "duration_seconds": 0.8,
+      "lowest_vertex_m": 0.017999768257141113,
+      "maximum_edge_stretch_ratio": 2.0877986614000967,
+      "maximum_planted_ankle_step_m": 2.717711158395411e-05,
+      "final_head_joint_height_m": 1.5750000476837158
+    },
+    "TurnRight": {
+      "frames": 25,
+      "duration_seconds": 0.8,
+      "lowest_vertex_m": 0.017999781295657158,
+      "maximum_edge_stretch_ratio": 2.087733563500337,
+      "maximum_planted_ankle_step_m": 2.717711158395411e-05,
+      "final_head_joint_height_m": 1.5750000476837158
+    }
+  },
+  "method": "New final-target anatomy rig, Blender heat weights and bounded four-influence normalization; ten motions authored directly with two-bone contact solves. No legacy donor or shared retarget repair applied.",
+  "remaining_gates": [
+    "independent collision/deformation audit",
+    "multi-view visual review",
+    "actual Babylon GLB import and clip sampling",
+    "loop and transition checks",
+    "runtime locomotion contact and device budget"
+  ],
+  "files": {
+    "mirelle-raw-rig.blend": {
+      "bytes": 2145044,
+      "sha256": "f70475b33db42544ef98a7b8eb0e4e16b6c047e29c594f4c0c281878f77a3057"
+    },
+    "mirelle-raw-rig.glb": {
+      "bytes": 836732,
+      "sha256": "34d35290cb4f107ab66b77c08c63b65a153092cb6961a01f604dd5d1f3b7e3ca"
+    },
+    "mirelle-base-animated.glb": {
+      "bytes": 1106496,
+      "sha256": "eeb8f12eab64af8e15d982ce41a1e8e28f29e29c35c65c78ace2eb1b2d4109b7"
+    },
+    "mirelle-base-animated.blend": {
+      "bytes": 7327377,
+      "sha256": "51a37c42187f96da3a7005ecdcb413e84ad4bbd08d253bb9b95b6b8f12a14867"
+    }
+  }
+}

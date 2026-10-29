@@ -10,18 +10,34 @@ use Tests\TestCase;
 
 class AvatarPreparationTest extends TestCase {
     use RefreshDatabase;
+    private function cloudOps(string $hash='b'):array{return ['engine_sha256'=>str_repeat($hash,64),'runtime_ready'=>true,'models_ready'=>true,'compute'=>['selected'=>'google','automatic_fallback'=>false],'stages'=>['rigging','animation','qualification']];}
     private function source(string $status='generated_unqualified'):TrellisGeneration{return TrellisGeneration::create(['id'=>(string)Str::uuid(),'avatar_id'=>'c_solana','status'=>$status,'plan'=>[], 'state'=>['artifact'=>['sha256'=>str_repeat('a',64)]]]);}
+    public function test_local_stages_cannot_admit_or_retry_preparation():void {
+        Queue::fake();Http::fake(['*'=>Http::response(['engine_sha256'=>str_repeat('b',64),'runtime_ready'=>true,'models_ready'=>true])]);
+        $source=$this->source();
+        try{app(AvatarPreparationService::class)->start($source,'unirig-v1',0,[],'test-owner');$this->fail('Local stage admitted');}
+        catch(\Illuminate\Validation\ValidationException $e){$this->assertArrayHasKey('worker',$e->errors());}
+        $this->assertSame(0,AvatarPreparation::count());Queue::assertNothingPushed();
+        $run=AvatarPreparation::create(['id'=>(string)Str::uuid(),'generation_id'=>$source->id,'avatar_id'=>'c_solana','status'=>'queued','plan'=>['provider'=>'unirig']]);
+        (new \App\Jobs\PollAvatarPreparation($run->id))->handle(app(AvatarPreparationService::class));
+        $this->assertSame('waiting_worker',$run->fresh()->status);
+        Http::assertNotSent(fn($request)=>$request->method()!=='GET');
+        $run->update(['status'=>'awaiting_validation']);
+        try{app(AvatarPreparationService::class)->validate($run,'test-owner');$this->fail('Local qualification admitted');}
+        catch(\Illuminate\Validation\ValidationException $e){$this->assertArrayHasKey('worker',$e->errors());}
+        Http::assertNotSent(fn($request)=>$request->method()!=='GET');
+    }
     public function test_saved_rig_revision_freezes_artifact_and_never_admits_gpu_work():void {
         Queue::fake();$source=$this->source();$old=AvatarPreparation::create(['id'=>(string)Str::uuid(),'generation_id'=>$source->id,'avatar_id'=>'c_solana','status'=>'needs_review',
             'plan'=>['source_sha256'=>str_repeat('a',64),'unirig_engine_sha256'=>str_repeat('b',64)],
             'state'=>['preparation'=>['unirig'=>['plan'=>['source_sha256'=>str_repeat('a',64),'engine_sha256'=>str_repeat('b',64)],'artifact'=>['sha256'=>str_repeat('c',64),'bytes'=>64]]]]]);
-        Http::fake(['*/preparations/operations'=>Http::response(['engine_sha256'=>str_repeat('d',64)])]);
+        Http::fake(['*/preparations/operations'=>Http::response($this->cloudOps('d'))]);
         $run=app(AvatarPreparationService::class)->start($source,'unirig-v1',0,[],'test-owner',[],null,$old->id);
         $this->assertSame(['id'=>$old->id,'sha256'=>str_repeat('c',64),'bytes'=>64],$run->plan['rig_reuse']);
         Http::assertSentCount(1);
         Http::fake(['*/preparations/'.$run->id=>Http::response(['id'=>$run->id,'status'=>'awaiting_validation'])]);
         (new \App\Jobs\PollAvatarPreparation($run->id))->handle(app(AvatarPreparationService::class));
-        Http::assertSentCount(1);Http::assertNotSent(fn($request)=>str_contains($request->url(),'/jobs/'));
+        Http::assertSentCount(2);Http::assertNotSent(fn($request)=>str_contains($request->url(),'/jobs/'));
         $this->assertSame('awaiting_validation',$run->fresh()->status);$this->assertSame('needs_review',$old->fresh()->status);
     }
     public function test_wrong_source_cannot_supply_a_frozen_rig():void {
@@ -44,7 +60,7 @@ class AvatarPreparationTest extends TestCase {
     public function test_owner_studio_renders_unirig_readiness_without_admitting_a_job():void {
         Queue::fake();Http::fake(['*/operations'=>Http::response(['models_ready'=>true,'runtime_ready'=>true,'commit'=>'pinned-fixture'])]);
         $this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));
-        $this->get('/evolution/avatars/preparation')->assertOk()->assertSee('Local UniRig worker')->assertSee('Manual jobs only')->assertDontSee('Automatically prepare');
+        $this->get('/evolution/avatars/preparation')->assertOk()->assertSee('Google Colab required')->assertSee('Colab rig stage not verified')->assertSee('Manual jobs only')->assertDontSee('Automatically prepare');
         $this->assertSame(0,AvatarPreparation::count());Queue::assertNothingPushed();
     }
     public function test_cancellation_requires_worker_acknowledgement_and_blocks_late_poll_completion():void {
@@ -63,7 +79,7 @@ class AvatarPreparationTest extends TestCase {
         $this->assertSame('cancelling',$run->fresh()->status);
     }
     public function test_new_preparation_freezes_character_donor_and_defers_qualification():void {
-        Queue::fake();Http::fake(['*/operations'=>Http::response(['engine_sha256'=>str_repeat('b',64),'runtime_ready'=>true,'models_ready'=>true])]);$source=$this->source();
+        Queue::fake();Http::fake(['*/operations'=>Http::response($this->cloudOps())]);$source=$this->source();
         $run=app(AvatarPreparationService::class)->start($source,'unirig-v1',0,[],'test-owner');
         $this->assertSame($source->id,$run->generation_id);$this->assertSame('deferred',$run->plan['validation']);
         $this->assertSame(str_repeat('a',64),$run->plan['source_sha256']);$this->assertNotEmpty($run->plan['donor_sha256']);$this->assertSame(0,AvatarVisualRelease::count());

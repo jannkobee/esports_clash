@@ -11,10 +11,17 @@ COPY EsportsClash.Web/package.json EsportsClash.Web/package-lock.json ./
 RUN npm ci
 COPY EsportsClash.Web/src/ ./src/
 COPY EsportsClash.Web/scripts/ ./scripts/
+COPY EsportsClash.Web/public/ ./public/
+COPY art/avatars-v7/ /workspace/art/avatars-v7/
+COPY art/avatars-v8/ /workspace/art/avatars-v8/
+COPY art/avatars-v9/ /workspace/art/avatars-v9/
+COPY EsportsClash.Web/server.mjs ./server.mjs
 COPY EsportsClash.Web/index.html EsportsClash.Web/evolution.html EsportsClash.Web/evolution-compiled.html EsportsClash.Web/vite.config.ts EsportsClash.Web/vite.evolution.config.ts EsportsClash.Web/tsconfig.json EsportsClash.Web/tsconfig.app.json EsportsClash.Web/tsconfig.node.json EsportsClash.Web/tailwind.config.js ./
 RUN node node_modules/vite/bin/vite.js build --config vite.evolution.config.ts
 COPY docs/ml-live-evaluation.json /workspace/docs/ml-live-evaluation.json
+COPY docs/ai-ability-sound-generation-prompt.md /workspace/docs/ai-ability-sound-generation-prompt.md
 COPY infrastructure/evolution/runner/ /runner/
+COPY infrastructure/evolution/*.mjs /workspace/infrastructure/evolution/
 RUN python -m compileall -q /runner
 COPY infrastructure/evolution/evidence.mjs /workspace/EsportsClash.Web/scripts/evolution-evidence.mjs
 ENV PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1

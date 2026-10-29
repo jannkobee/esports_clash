@@ -10,7 +10,7 @@ use Illuminate\Validation\ValidationException;
 class AvatarEvolutionService
 {
     public const ACTIVE = ['queued','running','paused_resource'];
-    public function catalog(): array { return json_decode(file_get_contents(resource_path('avatars/catalog.json')),true,flags:JSON_THROW_ON_ERROR)['avatars']; }
+    public function catalog(): array { return app(AvatarRegistryService::class)->catalog(); }
     public function worker() { return Http::withToken(config('avatars.worker_token'))->connectTimeout(3)->timeout(15); }
     public function endpoint(string $path): string { return rtrim(config('avatars.worker_url'),'/').$path; }
     public function profiles(): array

@@ -1,4 +1,4 @@
-import { ARENA_WIDTH } from './arenaLayout.ts';
+import { ARENA_WIDTH,PLAY_MIN_Y,PLAY_MAX_Y } from './arenaLayout.ts';
 type Point = { x: number; y: number };
 type Rock = Point & { radius: number };
 type Node = Point & { edges: { index: number; cost: number }[] };
@@ -13,8 +13,8 @@ export type TerrainRouter = ((from: Point, requestedGoal: Point, radius?: number
 const CELL = 20;
 const MIN_X = 40;
 const MAX_X = ARENA_WIDTH - 40;
-const MIN_Y = 80;
-const MAX_Y = 620;
+const MIN_Y = PLAY_MIN_Y;
+const MAX_Y = PLAY_MAX_Y;
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 
 /** Static, body-expanded terrain graph. Only route planning uses the grid;

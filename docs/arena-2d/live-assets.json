@@ -1,0 +1,25 @@
+{
+    "assets":  [
+                   {
+                       "sha256":  "f5e78a8780bd283156a6e95d54064034d5133ef3192e0bd1953da8644d799b08",
+                       "path":  "EsportsClash.Web/public/art/arena-2d/terrain-v1.png"
+                   },
+                   {
+                       "sha256":  "3045cf3bdc6b8b5df00773b4eefef600b61e4f7b3651b057e8cacbbcded7d5b3",
+                       "path":  "EsportsClash.Web/public/art/arena-2d/scenery-v1.png"
+                   },
+                   {
+                       "sha256":  "89b6f4cb24a41bc60562c4c289f83f3c7b5c7489cbc388224bc3edcdfa806b8b",
+                       "path":  "EsportsClash.Web/public/art/arena-2d/mirelle-motion-v1.png"
+                   },
+                   {
+                       "sha256":  "1d108df2a205c5d4de8ab567aa26aacbb91a93e0ce3eaa86711da241575cea5e",
+                       "path":  "EsportsClash.Web/public/art/arena-2d/mirelle-left-v1.png"
+                   }
+               ],
+    "owner":  "/root",
+    "authorization":  "make it live, first arena then Mirelle",
+    "date":  "2026-10-24",
+    "fullAnimationQualification":  false,
+    "status":  "limited-live-sprite-trial"
+}

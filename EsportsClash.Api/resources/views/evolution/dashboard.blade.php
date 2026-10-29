@@ -22,6 +22,7 @@
 </details>
 
 <div id="live-reports" data-url="{{ route('evolution.live') }}">@include('evolution.reports')</div>
+@include('evolution.intelligence-controls')
 @include('evolution.operations-controls')
 
 <div class="columns">

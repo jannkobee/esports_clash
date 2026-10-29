@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_hwei",
+  "component_id": "conservator_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Terracotta smock and repaired ceramic mask",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Maelis Chromabloom. Attached illustration is design reference only. Only the empty terracotta conservation smock over ivory shirt, green trousers and leather boots, belt tool pockets, glasses and repaired ceramic mask displayed separately above the collar. No person, face, hair, skin, gallery frame, backpack or handheld caddy. Garments are visibly empty on invisible support in a neutral symmetrical wide A pose. Hollow neck and joint openings, no mannequin. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "maelis-chromabloom",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/maelis-chromabloom.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/maelis-chromabloom-conservator_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-49559f33-5b25-445b-b57d-c1ae2e8723c5.png"
+}

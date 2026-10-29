@@ -28,7 +28,7 @@ class EvolutionService
     {
         return DB::transaction(function () use ($id, $actor) {
             $run = EvolutionRun::lockForUpdate()->findOrFail($id);
-            if (in_array($run->status, ['queued', 'running', 'paused_resource'], true)) {
+            if (in_array($run->status, ['queued', 'running', 'paused_resource', 'paused_budget'], true)) {
                 $run->update(['status' => 'stopping']);
                 $this->audit($id, 'training.stop-requested', $actor);
                 // Acquire the database-backed unique queue lock after the SQL
@@ -54,7 +54,7 @@ class EvolutionService
             if ($scheduled && (! $settings->enabled || ($settings->next_training_at?->isFuture() ?? false))) {
                 return null;
             }
-            if (EvolutionRun::whereIn('status', ['queued', 'running', 'stopping', 'paused_resource'])->exists()) {
+            if (EvolutionRun::whereIn('status', ['queued', 'running', 'stopping', 'paused_resource', 'paused_budget'])->exists()) {
                 if ($scheduled) return null;
                 throw ValidationException::withMessages(['run' => 'A training run is already active.']);
             }

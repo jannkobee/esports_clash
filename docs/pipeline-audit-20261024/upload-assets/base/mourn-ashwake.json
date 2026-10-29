@@ -1,0 +1,9 @@
+{
+  "id": "c_shadowfiend",
+  "name": "Mourn Ashwake",
+  "slug": "mourn-ashwake",
+  "prompt": "Create a NEW clean technical anatomical base mannequin for Mourn Ashwake. The attached character drawing is identity/proportion reference only. CRITICAL: completely BALD smooth head, NO scalp hair, beard, braids, loose fur shell, jewelry or clothing. Entire figure uniform neutral MATTE GRAY clay, not skin-colored. Preserve depicted adult gender, age, proportions and species; Adult humanoid mortician as depicted, preserve gaunt body proportions; furnace backpack and chains are separate equipment absent here. A smooth completely opaque plain gray unitard covers the entire torso, shoulders, pelvis and legs to the ankles; it follows the limb contours without seams or folds. No intimate details. One figure, full head to feet, centered front orthographic view with padding. Static symmetrical WIDE A-POSE: both arms straight 45 degrees down/out from torso, elbows straight, palms DOWN, all fingers individually separated. Hands clear of hips. Legs straight slightly apart, feet on same level. Unobstructed joints, clear underarm/leg gaps. No twist/action, no outfit, boots, cape, armor, weapons, tools, straps, pet, mount or vehicle. No texts, labels, floor or shadows. TRUE TRANSPARENT alpha background. Only intrinsic anatomy and modesty surface. This is a base to rig BEFORE clothing/hair/gear. Leave at least 10 percent clear transparent margin all around, especially hands and feet; do not crop anything.",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-1b18ecbd-d979-42d0-b183-392734efd8e0.png",
+  "destination": "docs/pipeline-audit-20261024/upload-assets/base/mourn-ashwake.png",
+  "status": "awaiting_visual_review"
+}

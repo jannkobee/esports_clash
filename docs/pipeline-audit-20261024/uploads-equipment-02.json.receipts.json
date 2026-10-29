@@ -1,0 +1,20 @@
+[
+  {
+    "avatar_id": "c_invoker",
+    "id": "brass_bobbin",
+    "sha256": "666ba5f2acfd34f8804c7acd63770caf22bb2a3b194fdefae042fe4fd8e61044",
+    "status": "reference_uploaded",
+    "version": 3,
+    "inventory_hash": "d3438c0f96c73a04ad146d3a9284502921a38234313ae0215daec25a133d38c6",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_invoker",
+    "id": "pattern_cape",
+    "sha256": "2ea420a4bd38d9da33fd35ca6fc29fe6ebf35b033c71187e9b59e2873af2137a",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "6e2b5c27e117f2f2723c052c550ca3f6931aec37d9e865936da9c5356ad2f4b6",
+    "http": 200
+  }
+]

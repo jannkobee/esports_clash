@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_silencer",
+  "component_id": "law_stamp",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Multi-headed law stamp",
+  "attachment": "hand",
+  "prompt": "Edit attached image. Remove the entire outfit, all robes, shoulder armor, fabric, belts and accessories belonging to the central clothing. Keep ONLY the standalone three-headed brass law stamp with its long handle at the left. Preserve that complete object exactly, all three red seal faces and decorated brass housings. Center this one static ceremonial inventory prop with generous transparent margin on every side. No clothing, body, mannequin, action, floor, shadow, backdrop glow or text. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "sevrin-inkseal",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/sevrin-inkseal-law_stamp.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/sevrin-inkseal-law_stamp-v2.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-0e15a32f-68f5-494d-a2ec-ff6c40acd463.png"
+}

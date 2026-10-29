@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_jinx",
+  "component_id": "lighting_tools",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Stage lighting tools",
+  "attachment": "hands",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Pippa Fuseburst. Attached illustration is design reference only. Only the pictured stage-rigger lighting tools as a small clearly separated set: a brass hand lamp and enclosed stage spotlight, cold unlit props with wires and handles. No person, hand, rocket rack, fireworks, clothing, fire or sparks. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "pippa-fuseburst",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/pippa-fuseburst.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/pippa-fuseburst-lighting_tools.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-b07c6507-dc27-4000-bc2e-12164e932df6.png"
+}

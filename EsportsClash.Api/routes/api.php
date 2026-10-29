@@ -11,6 +11,10 @@ use App\Http\Controllers\Api\V1\OnlineController;
 Route::post('/internal/online/authorize-stream', [OnlineController::class, 'authorizeStream'])->middleware('throttle:120,1');
 
 Route::prefix('v1')->group(function (): void {
+    Route::get('/avatars/{avatar}/components', [\App\Http\Controllers\AvatarComponentController::class,'summary']);
+    Route::get('/game-content', [\App\Http\Controllers\GameContentController::class,'manifest']);
+    Route::get('/game-content/images/{file}', [\App\Http\Controllers\GameContentController::class,'imageFile'])->name('catalog.image');
+    Route::get('/intelligence-policy', [\App\Http\Controllers\IntelligenceController::class,'manifest']);
     Route::get('/avatar-visuals',[\App\Http\Controllers\AvatarEvolutionController::class,'manifest']);
     Route::post('/avatar-visuals/health',[\App\Http\Controllers\AvatarEvolutionController::class,'signal'])->middleware('throttle:10,1');
     Route::get('/avatar-visuals/assets/{release}/{hash}.glb',[\App\Http\Controllers\AvatarEvolutionController::class,'published'])->whereNumber('release')->where('hash','[a-f0-9]{64}')->middleware('throttle:120,1');
@@ -26,6 +30,12 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/online/matches/{id}/replay', [OnlineController::class, 'replay'])->middleware('throttle:120,1');
         Route::post('/online/matches/{id}/stream', [OnlineController::class, 'grant'])->middleware('throttle:30,1');
         Route::get('/evolution', [EvolutionController::class, 'index']);
+        Route::get('/evolution/avatar-pipeline', \App\Http\Controllers\AvatarPipelineStatusController::class)->middleware('throttle:20,1');
+        Route::post('/evolution/intelligence', [\App\Http\Controllers\IntelligenceController::class,'start'])->middleware('throttle:5,1');
+        Route::put('/evolution/intelligence/settings', [\App\Http\Controllers\IntelligenceController::class,'configure']);
+        Route::post('/evolution/intelligence/{id}/resume', [\App\Http\Controllers\IntelligenceController::class,'resume']);
+        Route::post('/evolution/intelligence/{id}/activate', [\App\Http\Controllers\IntelligenceController::class,'activate']);
+        Route::post('/evolution/intelligence/rollback', [\App\Http\Controllers\IntelligenceController::class,'rollback']);
         Route::put('/evolution/settings', [EvolutionController::class, 'settings']);
         Route::post('/evolution/runs', [EvolutionController::class, 'start'])->middleware('throttle:5,1');
         Route::delete('/evolution/runs/{id}', [EvolutionController::class, 'stop']);

@@ -40,12 +40,13 @@
 <main id="main-content">
     @auth
     <nav class="report-nav mechanical-tabs" aria-label="Control sections">
-        <a wire:navigate href="{{ route('management.index', 'avatar') }}" @if(request()->routeIs('management.*') && request()->route('kind') === 'avatar') aria-current="page" @endif>
+        <a wire:navigate href="{{ route('registry.index') }}" @if(request()->routeIs('registry.*') || (request()->routeIs('management.*') && request()->route('kind') === 'avatar')) aria-current="page" @endif>
             <span class="tab-idx">01</span><span class="tab-label">AVATARS</span>
         </a>
-        <a wire:navigate href="{{ route('management.index', 'item') }}" @if(request()->routeIs('management.*') && request()->route('kind') === 'item') aria-current="page" @endif>
+        <a wire:navigate href="{{ route('catalog.index', 'item') }}" @if((request()->routeIs('catalog.*') || request()->routeIs('management.*')) && request()->route('kind') === 'item') aria-current="page" @endif>
             <span class="tab-idx">02</span><span class="tab-label">ITEMS</span>
         </a>
+        <a wire:navigate href="{{ route('catalog.index', 'skill') }}" @if(request()->routeIs('catalog.*') && request()->route('kind') === 'skill') aria-current="page" @endif><span class="tab-label">SKILLS</span></a>
         <a wire:navigate href="{{ route('dashboard') }}" @if(request()->routeIs('dashboard', 'evolution.reports', 'evolution.report')) aria-current="page" @endif>
             <span class="tab-idx">03</span><span class="tab-label">ML BALANCE</span>
         </a>
@@ -57,6 +58,9 @@
         </a>
         <a wire:navigate href="{{ route('avatars.index') }}" @if(request()->routeIs('avatars.*')) aria-current="page" @endif>
             <span class="tab-idx">06</span><span class="tab-label">3D REPAIRS</span>
+        </a>
+        <a wire:navigate href="{{ route('battlefield.index') }}" @if(request()->routeIs('battlefield.*')) aria-current="page" @endif>
+            <span class="tab-idx">07</span><span class="tab-label">BATTLEFIELD 3D</span>
         </a>
     </nav>
     @endauth

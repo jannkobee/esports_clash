@@ -1,0 +1,16 @@
+{
+  "scope": "Input reference review only, never 3D qualification",
+  "rejected_drafts": [
+    {"avatar_id":"c_solana","file":"upload-assets/base/solenne-vaelor.png","reason":"Long hair retained; replaced with reviewed bald v2"},
+    {"avatar_id":"c_astra","file":"upload-assets/base/ivera-frostwhistle.png","reason":"Long hair and colored surface retained; replaced with reviewed bald gray v2"},
+    {"avatar_id":"c_kyumi","file":"upload-assets/base/mireth-lune.png","reason":"Scalp hair and decorative fur shell retained; correction pending"},
+    {"avatar_id":"c_buck","file":"upload-assets/base/bramm-coil.png","reason":"Long beard/accessories retained; correction pending"},
+    {"avatar_id":"c_kaolin","file":"upload-assets/base/joruun-jadecoil.png","reason":"Hands too close to/cropped at image edges; correction pending"}
+  ],
+  "service_failures": [
+    {"avatar_id":"c_kindra","stage":"image_generation_output","reason":"Service safety rejection; no image returned","resolution":"Later fully covered reference returned, reviewed and uploaded"},
+    {"avatar_id":"c_locke","stage":"image_generation_output","reason":"Service safety rejection; no image returned","resolution":"Pending fully covered neutral reference"},
+    {"avatar_id":"c_senna","stage":"image_generation_output","reason":"Service safety rejection; no image returned","resolution":"Pending fully covered neutral reference"}
+  ],
+  "reviewed_uploads": "uploads-*.json and their receipts identify visually reviewed exact artifacts. These are unrigged input PNGs; source geometry, rigs, motion and appearance remain unqualified."
+}

@@ -18,9 +18,9 @@ class TrellisGenerationController extends Controller
             'localReferences'=>$service->localReferences(),
             'weaponReferences'=>$service->weaponReferences(),
             'activeRuns'=>TrellisGeneration::whereIn('status',[...TrellisGenerationService::ACTIVE,'cancelling'])->get(),
-            'catalog'=>collect($service->catalog())->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)->values()->all(),
+            'catalog'=>collect($service->catalog($request->query('category', 'avatar')))->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)->values()->all(),
             'runs'=>TrellisGeneration::latest()->limit(100)->get()->sortBy('created_at')->values(),
-            'completedModels'=>TrellisGeneration::withTrashed()->where('status','generated_unqualified')->latest()->get()->unique('avatar_id')->keyBy('avatar_id')
+            'completedModels'=>TrellisGeneration::withTrashed()->currentAssets()->where('status','generated_unqualified')->latest()->get()->unique('avatar_id')->keyBy('avatar_id')
         ])->header('Cache-Control','no-store');
     }
     public function avatarStatus(Request $request,string $avatar,TrellisGenerationService $service)
@@ -31,7 +31,7 @@ class TrellisGenerationController extends Controller
         $weapon=$service->weaponReferences()[$avatar]??null;
         $operations=$service->operations();
         $currentReference=$service->currentReference($avatar,$operations??[]);
-        $models=TrellisGeneration::withTrashed()->where('avatar_id',$avatar)->where('status','generated_unqualified')->oldest()->get();
+        $models=TrellisGeneration::withTrashed()->currentAssets()->where('avatar_id',$avatar)->where('status','generated_unqualified')->oldest()->get();
         $completedModel=$request->filled('model') ? $models->firstWhere('id',$request->query('model')) : $models->last();
         if ($request->filled('model')) abort_unless($completedModel,404);
         return response()->view('evolution.avatars.generation-status',[
@@ -39,7 +39,7 @@ class TrellisGenerationController extends Controller
             'selectedDesign'=>$selectedDesign,
             'runs'=>TrellisGeneration::where('avatar_id',$avatar)->latest()->limit(100)->get()->sortBy('created_at')->values(),
             'names'=>collect($service->catalog())->pluck('name','id'),
-            'retainedModel'=>TrellisGeneration::withTrashed()->where('avatar_id',$avatar)->where('status','generated_unqualified')->exists(),
+            'retainedModel'=>TrellisGeneration::withTrashed()->currentAssets()->where('avatar_id',$avatar)->where('status','generated_unqualified')->exists(),
             'completedModel'=>$completedModel,
             'preparedModel'=>$completedModel?\App\Models\AvatarPreparation::where('generation_id',$completedModel->id)->whereIn('status',['validating','awaiting_validation','needs_review','ready','published'])->where('state->preparation->runtime_compatible',true)->latest()->first():null,
             'models'=>$models,
@@ -94,8 +94,9 @@ class TrellisGenerationController extends Controller
     {
         $input=$request->validate(['avatar_id'=>['required','string','max:80'],'reference'=>['required','file','mimes:png','max:12288'],'prompt'=>['nullable','string','max:8000']],['reference.uploaded'=>'The upload exceeded the server limit or was interrupted. Choose a PNG up to 12 MiB and try again.','reference.max'=>'The reference PNG must be no larger than 12 MiB.']);
         abort_unless(collect($service->catalog())->contains('id',$input['avatar_id']),422);
-        $service->saveReferenceAsset($input['avatar_id'], $request->file('reference'), $input['prompt'] ?? null, 'user:'.$request->user()->id);
-        return redirect()->back(fallback: route('trellis.index'))->with('status','Neutral T-pose reference image saved. Ready for mesh reconstruction and skeletal joint detection.');
+        $reference=$service->saveReferenceAsset($input['avatar_id'], $request->file('reference'), $input['prompt'] ?? null, 'user:'.$request->user()->id);
+        if($request->expectsJson())return response()->json($reference)->header('Cache-Control','no-store');
+        return redirect()->back(fallback: route('trellis.index'))->with('status','Body reference image saved. Review its anatomy and rest pose before mesh reconstruction.');
     }
     public function uploadWeapon(Request $request,TrellisGenerationService $service)
     {
@@ -156,7 +157,7 @@ class TrellisGenerationController extends Controller
     public function savePrompts(Request $request, string $avatar, TrellisGenerationService $service, \App\Services\AvatarAssetPromptService $prompts)
     {
         abort_unless(collect($service->catalog())->contains('id', $avatar), 404);
-        $input = $request->validate(['body' => 'required|string|max:8000', 'primary' => 'required|string|max:8000', 'secondary' => 'required|string|max:8000']);
+        $input = $request->validate(['body' => 'required|string|max:8000', 'outfit' => 'sometimes|required|string|max:8000', 'primary' => 'nullable|string|max:8000', 'secondary' => 'nullable|string|max:8000']);
         $prompts->save($avatar, $input, 'user:'.$request->user()->id);
         return back()->with('status', 'Asset prompts saved. Use them in your image tool, then upload the resulting files.');
     }

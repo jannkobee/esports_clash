@@ -1,0 +1,140 @@
+{
+  "state": {
+    "backend": "webgl",
+    "paintedArena": "ready",
+    "models": "0",
+    "sprites": [
+      {
+        "id": "hero0",
+        "row": 0,
+        "frame": 2,
+        "facing": "right",
+        "clip": "idle",
+        "ready": true
+      },
+      {
+        "id": "hero5",
+        "row": 0,
+        "frame": 2,
+        "facing": "left",
+        "clip": "idle",
+        "ready": true
+      }
+    ],
+    "warnings": [
+      [
+        "c_solana",
+        [
+          "No character asset: owner requested a fresh asset pipeline"
+        ]
+      ]
+    ],
+    "animations": [],
+    "tick": 300
+  },
+  "errors": [],
+  "scope": "Live Babylon renderer fixture; authoritative combat component check follows separately",
+  "sprites": [
+    {
+      "id": "hero0",
+      "row": 0,
+      "frame": 2,
+      "facing": "right",
+      "clip": "idle",
+      "ready": true
+    },
+    {
+      "id": "hero5",
+      "row": 0,
+      "frame": 2,
+      "facing": "left",
+      "clip": "idle",
+      "ready": true
+    }
+  ],
+  "phases": [
+    [
+      {
+        "id": "hero0",
+        "row": 1,
+        "frame": 1,
+        "facing": "right",
+        "clip": "walk",
+        "ready": true
+      },
+      {
+        "id": "hero5",
+        "row": 1,
+        "frame": 1,
+        "facing": "left",
+        "clip": "walk",
+        "ready": true
+      }
+    ],
+    [
+      {
+        "id": "hero0",
+        "row": 2,
+        "frame": 3,
+        "facing": "right",
+        "clip": "cast",
+        "ready": true
+      },
+      {
+        "id": "hero5",
+        "row": 2,
+        "frame": 3,
+        "facing": "left",
+        "clip": "cast",
+        "ready": true
+      }
+    ],
+    [
+      {
+        "id": "hero0",
+        "row": 3,
+        "frame": 3,
+        "facing": "right",
+        "clip": "death",
+        "ready": true
+      },
+      {
+        "id": "hero5",
+        "row": 3,
+        "frame": 3,
+        "facing": "left",
+        "clip": "death",
+        "ready": true
+      }
+    ],
+    [
+      {
+        "id": "hero0",
+        "row": 0,
+        "frame": 2,
+        "facing": "right",
+        "clip": "idle",
+        "ready": true
+      },
+      {
+        "id": "hero5",
+        "row": 0,
+        "frame": 2,
+        "facing": "left",
+        "clip": "idle",
+        "ready": true
+      }
+    ]
+  ],
+  "contextRestored": true,
+  "live": {
+    "sprites": 2,
+    "terrain": "ready",
+    "second": 3.9999999999999956,
+    "canvases": 1
+  },
+  "replay": {
+    "sprites": 2,
+    "duration": 3.9999999999999956
+  }
+}

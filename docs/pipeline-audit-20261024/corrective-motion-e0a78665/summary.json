@@ -1,0 +1,20 @@
+{
+  "id": "e0a78665-172e-45c9-9f8f-ffd852d5ca81",
+  "archive_sha256": "348f2796381475c6fc1840528099fd4071975ae8ae54c2e76878aa91a441170e",
+  "report_sha256": "880ac6d454c9c68a2151da9cc33d3c4c5db674081391eb220a1d1dc6120f3984",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "samples": {
+    "parent": 52,
+    "current": 52
+  },
+  "regressions": [],
+  "max_seam_spread_m": 0.0,
+  "max_skeleton_error": 0.0,
+  "max_morph_curve_error": 6.063796270383559e-07,
+  "max_end_rest_m": 4.133897423321329e-07,
+  "max_return_path_m": 2.5981062314156735e-07,
+  "severe_stretch_edges": 0,
+  "qualification_complete": false,
+  "publication_eligible": false
+}

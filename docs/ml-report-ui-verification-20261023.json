@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "date": "2026-10-23",
+  "scope": "Local ML Balance report presentation only",
+  "owner_request": "Bulleted TL;DR instead of long default explanations, with a more readable UI",
+  "files": [
+    "EsportsClash.Api/app/Services/LearningReportSummary.php",
+    "EsportsClash.Api/resources/views/evolution/learning-report-summary.blade.php",
+    "EsportsClash.Api/resources/views/evolution/report.blade.php",
+    "EsportsClash.Api/public/evolution.css",
+    "EsportsClash.Api/tests/Feature/LearningReportSummaryTest.php"
+  ],
+  "php_tests": {
+    "command": "php artisan test --filter='LearningReportSummaryTest|IntelligenceNarrativeTest|EvolutionDashboardTest|IntelligenceTest'",
+    "environment": "API container; isolated in-memory SQLite test database",
+    "passed": 25,
+    "assertions": 235
+  },
+  "browser": {
+    "checked_at": "2026-10-23T07:30:08.362Z",
+    "command": "node .local-tools/backoffice-review/ml-report.mjs",
+    "report": "37558d32-548a-4cd2-95b8-fb985bafdc4d",
+    "failed_historical_report": "df636984-d7f1-412f-b60c-4e8308e4fb46",
+    "viewport_widths": [1440, 768, 390, 320],
+    "summary_bullets": 3,
+    "result_cards": 4,
+    "visible_report_words": 155,
+    "report_font_desktop_px": 16,
+    "report_font_phone_px": 15,
+    "horizontal_overflow": false,
+    "clipped_cards": false,
+    "analysis_initially_closed": true,
+    "raw_evidence_initially_hidden": true,
+    "disclosure_controls_pass": true,
+    "original_json_download_pass": true,
+    "browser_exceptions": [],
+    "screenshots_visually_reviewed": [
+      ".local-tools/backoffice-review/ml-report-1440.png",
+      ".local-tools/backoffice-review/ml-report-390.png"
+    ],
+    "detailed_record": ".local-tools/backoffice-review/ml-report-verification.json"
+  },
+  "missing_history": {
+    "historical_api_record_has_no_progress_or_result": true,
+    "ui_value": "Not recorded",
+    "retained_worker_checkpoints": 3,
+    "historical_record_rewritten": false
+  },
+  "game_source_hash_unchanged": "02b2cc09a2cde19a2d5bd34bd0f9b2c0f58796d47a610a1a75a8c6e670f9b73d",
+  "game_or_squad_sources_changed": false,
+  "learning_settings_changed": false,
+  "frozen_studies_changed": false,
+  "services_restarted": false,
+  "game_checks_repeated": false,
+  "gameplay_improvement_established": false
+}

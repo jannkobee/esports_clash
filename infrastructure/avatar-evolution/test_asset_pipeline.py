@@ -279,7 +279,7 @@ class QualityTests(Base):
     def test_deformation_correction_restores_weights_after_regression(self):
         from types import SimpleNamespace
         from asset_pipeline.deformation import DeformationCorrectionEngine
-        vertex = SimpleNamespace(index=0, groups=[SimpleNamespace(group=0, weight=1.)])
+        vertex = SimpleNamespace(index=0, groups=[SimpleNamespace(group=0, weight=.9)])
         class Group:
             name = 'HandR'
             def remove(self, indices):
@@ -290,7 +290,7 @@ class QualityTests(Base):
             def get(self, name):
                 return self[0]
         obj = SimpleNamespace(data=SimpleNamespace(vertices=[vertex]), vertex_groups=Groups([Group()]))
-        before = {'valid': True, 'stats': {'unweighted_vertices': 0}}
+        before = {'valid': False, 'stats': {'unweighted_vertices': 0, 'unnormalized_vertices': 1}}
         after = {'valid': False, 'stats': {'unweighted_vertices': 1}}
         def bad_repair(*args):
             vertex.groups[0].weight = .1
@@ -299,7 +299,7 @@ class QualityTests(Base):
             result = DeformationCorrectionEngine().correct(obj, None, ['HandR'])
         self.assertFalse(result['accepted'])
         self.assertEqual(result['repairs'], [])
-        self.assertEqual(vertex.groups[0].weight, 1.)
+        self.assertEqual(vertex.groups[0].weight, .9)
 
     def test_clipped_and_missing_multi_angle_views_are_detected(self):
         state = report()

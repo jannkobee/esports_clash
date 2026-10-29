@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_inai",
+  "component_id": "star_staff",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Star-map walking staff",
+  "attachment": "hand",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Astrax Mire. Attached image is design reference only. Only one complete star-map walking staff with brass armillary-sphere head and dark blue shaft, pictured small pendants and cloth wrap. No hand, person, robes or floating measuring cords. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "astrax-mire",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/astrax-mire.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/astrax-mire-star_staff.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-8fca6c97-a71b-4c11-8d00-a5e5ced2d5c9.png"
+}

@@ -2,13 +2,21 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { resolve, sep } from 'node:path';
+import { readdirSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+const intelligenceSourceHash = () => {
+  const hash=(value:string|Buffer)=>createHash('sha256').update(value).digest('hex');
+  return hash(JSON.stringify(readdirSync('src',{recursive:true}).filter(f=>/\.(tsx?|css|json)$/.test(String(f)))
+    .map(f=>'src/'+String(f).replaceAll('\\','/')).sort().map(file=>[file,hash(readFileSync(file))])));
+};
 
 const dockerDev = process.env.DOCKER_DEV === '1';
 
 // https://vite.dev/config/
 export default defineConfig({
+  define: { 'import.meta.env.INTELLIGENCE_SOURCE_HASH': JSON.stringify(intelligenceSourceHash()) },
   server: {
-    proxy: { '/api': 'http://127.0.0.1:4174' },
+    proxy: { '/api': dockerDev?'http://rooms:4174':'http://127.0.0.1:4174' },
     ...(dockerDev ? {
       origin: 'http://localhost:8088',
       cors: { origin: ['http://localhost:8089', 'http://127.0.0.1:8089'] },

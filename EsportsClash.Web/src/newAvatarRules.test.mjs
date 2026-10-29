@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CHAMPIONS } from './mockData.ts';
+import {CHAMPIONS} from './testFixtures/historicalCatalog.mjs';
 import { ADDITIONAL_CHAMPIONS } from './additionalChampions.ts';
 import { BLACK_HOLE_RADIUS } from './blackHoleCounterplay.ts';
 import { getSkillCastRange } from './skillRangeRules.ts';
@@ -15,7 +15,7 @@ const fighter = (name, id, x, hp = 900, iq = 90) => ({
   player: { stats: { iq, tf: 85, clu: 85, lan: 85, flx: 85 } },
 });
 
-test('six original avatars have distinct themes, complete kits, and tactical roles', () => {
+test('historical fixture: six original avatars have distinct themes, complete kits, and tactical roles', () => {
   const additions = ADDITIONAL_CHAMPIONS.slice(-6);
   assert.deepEqual(additions.map(champion => champion.name),
     ['Faelith', 'Oathmute', 'Cloudtail', 'Stonebranch', 'Stepstone', 'Skybreaker']);
@@ -32,12 +32,12 @@ test('six original avatars have distinct themes, complete kits, and tactical rol
   assert.ok(kit('Skybreaker').displayName);
 });
 
-test('compact Singularity Well has a reachable cast but a smaller danger area', () => {
+test('historical fixture: compact Singularity Well has a reachable cast but a smaller danger area', () => {
   assert.equal(BLACK_HOLE_RADIUS, 105);
   assert.equal(getSkillCastRange('Nullweaver', 'ultimate', 175), 175);
 });
 
-test('Corsara waits for a lined-up teamfight and Oathmute interrupts channels', () => {
+test('historical fixture: Corsara waits for a lined-up teamfight and Oathmute interrupts channels', () => {
   const corsara = fighter('Corsara', 'corsara', 100);
   const enemy = fighter('Cloudtail', 'enemy', 245);
   const nearby = fighter('Stonebranch', 'nearby', 260);
@@ -52,7 +52,7 @@ test('Corsara waits for a lined-up teamfight and Oathmute interrupts channels', 
   assert.equal(shouldUseUltimate(oathmute, enemy, [enemy], [oathmute], 9999), true);
 });
 
-test('Faelith protects a threatened ally while a card retreats from an unwinnable fight', () => {
+test('historical fixture: Faelith protects a threatened ally while a card retreats from an unwinnable fight', () => {
   const faelith = fighter('Faelith', 'faelith', 100);
   const ally = fighter('Oathmute', 'ally', 130, 300);
   const enemy = fighter('Stonebranch', 'enemy', 180);

@@ -66,3 +66,6 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #64748b;
 }
+
+.content-image{width:56px;height:56px;flex-shrink:0;object-fit:cover;border-radius:12px;border:1px solid #365464}.content-image-fallback{display:inline-grid;place-items:center;background:linear-gradient(135deg,#123b43,#24213f);color:#77e8dc;font-size:24px;font-weight:800}.spectator-roster .content-image{width:100%;height:100%;border-radius:4px;font-size:14px}
+

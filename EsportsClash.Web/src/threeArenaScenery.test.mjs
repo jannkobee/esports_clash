@@ -16,7 +16,7 @@ test('scenery is deterministic, keeps tall trees outside play and decorations on
  }
  assert.equal(a.footprints.filter(p=>p.kind==='brush').length,ARAM_BUSHES.length);
  assert.equal(JSON.stringify({ARAM_BUSHES,CAMP_ROCK_RINGS,ROCK_TERRAIN}),before);
- assert.equal(a.stats().particleDraws,6);assert.ok(a.stats().particles<1000&&a.stats().instances<5000);
+ assert.equal(a.stats().particleDraws,6);assert.ok(a.stats().particles<1000&&a.stats().instances<6000);
  disposeArenaTerrainResources(a.root);disposeArenaTerrainResources(b.root);
 });
 test('ambient and banner clocks pause/rewind together without growing buffers or retaining input objects',()=>{

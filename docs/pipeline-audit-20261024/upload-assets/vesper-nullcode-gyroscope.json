@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_nullweaver",
+  "component_id": "gyroscope",
+  "category": "accessory",
+  "binding": "independent",
+  "label": "Suspended broken gyroscope",
+  "attachment": "independent floating prop",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Vesper Nullcode. Attached drawing is design reference only. Only one suspended broken gyroscope assembly, aged brass rings, dark-indigo fragments and central spherical pivot, complete floating parts clearly separated. No person, hand, robes, book or body. Preserve pictured design, palette, materials and proportions. Complete subject fits well inside central60% of frame with generous transparent margin every side. Neutral product lighting, crisp physical geometry, three-quarter view unless rest view specified. Genuine transparent background. No floor, cast shadows, backdrop glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "vesper-nullcode",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/vesper-nullcode.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/vesper-nullcode-gyroscope.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-e05791f8-1640-4429-b633-0b246be2488f.png"
+}

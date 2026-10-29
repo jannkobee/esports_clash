@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_inai",
+  "component_id": "measuring_cords",
+  "category": "back",
+  "binding": "skinned",
+  "label": "Long measuring cords",
+  "attachment": "back",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Astrax Mire. Attached image is design reference only. Only the long dark-blue measuring cords with brass fittings and small star-map orb weights, arranged in a clearly separated loose looped set. No staff, person, robes, hands or body. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "astrax-mire",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/astrax-mire.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/astrax-mire-measuring_cords.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-3daea8c7-c17c-43af-bfc0-eae80ccb5d83.png"
+}

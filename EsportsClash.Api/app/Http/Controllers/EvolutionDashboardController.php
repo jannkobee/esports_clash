@@ -18,7 +18,10 @@ class EvolutionDashboardController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate(['email' => ['required', 'email'], 'password' => ['required', 'string']]);
-        $attempted = Auth::attempt([...$credentials, 'is_evolution_admin' => true]);
+        if (Auth::guard() instanceof \Illuminate\Auth\SessionGuard) {
+            Auth::guard()->setRememberDuration(52560000);
+        }
+        $attempted = Auth::attempt([...$credentials, 'is_evolution_admin' => true], true);
         \Log::debug('login attempt', ['email' => $credentials['email'], 'result' => var_export($attempted, true)]);
         if (! $attempted) {
             throw ValidationException::withMessages(['email' => 'The owner email or password is incorrect.']);
@@ -39,7 +42,7 @@ class EvolutionDashboardController extends Controller
     private function reports(bool $archive = false): array
     {
         return ['runs' => $archive ? EvolutionRun::latest()->paginate(20) : EvolutionRun::latest()->limit(20)->get(),
-            'active' => EvolutionRun::whereIn('status', ['queued', 'running', 'stopping', 'paused_resource'])->latest()->first(),
+            'active' => EvolutionRun::whereIn('status', ['queued', 'running', 'stopping', 'paused_resource','paused_budget'])->latest()->first(),
             'runCount' => EvolutionRun::count(), 'completedCount' => EvolutionRun::where('status', 'completed')->count(),
             'openReviews' => BalanceReview::where('status', 'open')->count(),
             'settings' => EvolutionSetting::current()];

@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_renn",
+  "component_id": "fan_shield",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Half-moon fan shield",
+  "attachment": "hand",
+  "prompt": "Use case: stylized-concept. Isolated physical reconstruction reference for Aurelio Vane. Attached illustration is design reference only. ONLY one complete half-moon fan shield, open fan panels in midnight blue, ivory and gold, including its grip, no arm, hand, person, sword or clothing. Even neutral studio lighting, crisp physical geometry. Three-quarter view unless rest pose specified. Complete named asset inside central 70 percent of frame, generous clear TRANSPARENT margin on all sides. Genuine transparent background. No floor, cast shadows, glow backdrop, text, frames, labels, logo, unrelated equipment or extra subjects.",
+  "reference_purpose": "reconstruction",
+  "slug": "aurelio-vane",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/aurelio-vane.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/aurelio-vane-fan_shield.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-f6a1caba-83a5-4764-ad71-57340e9ddb7b.png"
+}

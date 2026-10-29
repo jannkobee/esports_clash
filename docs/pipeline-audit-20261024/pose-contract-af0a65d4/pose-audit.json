@@ -1,0 +1,245 @@
+{
+  "compute": "google",
+  "method": "legacy-pose-direction-audit-v1",
+  "raw_rig_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "frame": "Blender world: Z up, -Y intended forward; directions are head-to-child-head, not display tails.",
+  "scope": "Measures legacy isolated bone poses. Does not establish correct anatomy or define game motion.",
+  "joints": [
+    {
+      "joint": "UpperArmL",
+      "bone": "bone_26",
+      "parent": "bone_25",
+      "head": [
+        -0.08032021671533585,
+        0.03240816667675972,
+        0.307739794254303
+      ],
+      "child_head": [
+        -0.16259223222732544,
+        0.024572743102908134,
+        0.1902083456516266
+      ],
+      "rest_direction": [
+        -0.5726089477539062,
+        -0.05453414097428322,
+        -0.8180127739906311
+      ],
+      "rest_angle_from_down_degrees": 35.11364327002766,
+      "rest_angle_to_forward_degrees": 86.87387307254981,
+      "poses": [
+        {
+          "legacy_rotation_degrees": 45,
+          "actual_direction": [
+            -0.3827822208404541,
+            -0.7446160316467285,
+            -0.5468316078186035
+          ],
+          "angle_from_down_degrees": 56.85008161796259,
+          "error_to_sagittal_target_degrees": 24.049830919893367,
+          "joint_center": [
+            -0.08032022416591644,
+            0.03240816667675972,
+            0.307739794254303
+          ],
+          "center_delta_from_rest": 7.450580596923828e-09,
+          "parent_basis_identity": true
+        },
+        {
+          "legacy_rotation_degrees": 90,
+          "actual_direction": [
+            0.03127311170101166,
+            -0.9985119700431824,
+            0.04467613995075226
+          ],
+          "angle_from_down_degrees": 92.56060655662766,
+          "error_to_sagittal_target_degrees": 3.12606018985997,
+          "joint_center": [
+            -0.08032022416591644,
+            0.03240816667675972,
+            0.307739794254303
+          ],
+          "center_delta_from_rest": 7.450580596923828e-09,
+          "parent_basis_identity": true
+        }
+      ]
+    },
+    {
+      "joint": "UpperArmR",
+      "bone": "bone_7",
+      "parent": "bone_6",
+      "head": [
+        0.08422389626502991,
+        0.03240816295146942,
+        0.30773982405662537
+      ],
+      "child_head": [
+        0.1664959192276001,
+        0.024572724476456642,
+        0.1902083307504654
+      ],
+      "rest_direction": [
+        0.5726088881492615,
+        -0.05453423410654068,
+        -0.8180128931999207
+      ],
+      "rest_angle_from_down_degrees": 35.1136313955674,
+      "rest_angle_to_forward_degrees": 86.87386772851208,
+      "poses": [
+        {
+          "legacy_rotation_degrees": 45,
+          "actual_direction": [
+            0.3827820420265198,
+            -0.7446159720420837,
+            -0.5468317866325378
+          ],
+          "angle_from_down_degrees": 56.85006938102635,
+          "error_to_sagittal_target_degrees": 24.049819068834253,
+          "joint_center": [
+            0.08422389626502991,
+            0.03240815922617912,
+            0.30773982405662537
+          ],
+          "center_delta_from_rest": 3.725290298461914e-09,
+          "parent_basis_identity": true
+        },
+        {
+          "legacy_rotation_degrees": 90,
+          "actual_direction": [
+            -0.031273163855075836,
+            -0.9985119700431824,
+            0.04467593505978584
+          ],
+          "angle_from_down_degrees": 92.56059480550685,
+          "error_to_sagittal_target_degrees": 3.12606018985997,
+          "joint_center": [
+            0.08422389626502991,
+            0.03240815922617912,
+            0.30773982405662537
+          ],
+          "center_delta_from_rest": 3.725290298461914e-09,
+          "parent_basis_identity": true
+        }
+      ]
+    },
+    {
+      "joint": "ThighL",
+      "bone": "bone_48",
+      "parent": "bone_0",
+      "head": [
+        -0.05681389942765236,
+        0.01673729345202446,
+        0.0765945240855217
+      ],
+      "child_head": [
+        -0.07248474657535553,
+        0.012819630093872547,
+        -0.18589243292808533
+      ],
+      "rest_direction": [
+        -0.059588704258203506,
+        -0.014896991662681103,
+        -0.9981118440628052
+      ],
+      "rest_angle_from_down_degrees": 3.521477499564065,
+      "rest_angle_to_forward_degrees": 89.14643367767715,
+      "poses": [
+        {
+          "legacy_rotation_degrees": 45,
+          "actual_direction": [
+            -0.041507817804813385,
+            -0.717562198638916,
+            -0.6952565312385559
+          ],
+          "angle_from_down_degrees": 45.95233704077332,
+          "error_to_sagittal_target_degrees": 2.5449580391396873,
+          "joint_center": [
+            -0.05681389942765236,
+            0.01673729345202446,
+            0.0765945240855217
+          ],
+          "center_delta_from_rest": 0.0,
+          "parent_basis_identity": true
+        },
+        {
+          "legacy_rotation_degrees": 90,
+          "actual_direction": [
+            0.0008880344103090465,
+            -0.999889075756073,
+            0.014870702289044857
+          ],
+          "angle_from_down_degrees": 90.8520598852985,
+          "error_to_sagittal_target_degrees": 0.8534044112580036,
+          "joint_center": [
+            -0.05681389942765236,
+            0.01673729345202446,
+            0.0765945240855217
+          ],
+          "center_delta_from_rest": 0.0,
+          "parent_basis_identity": true
+        }
+      ]
+    },
+    {
+      "joint": "ThighR",
+      "bone": "bone_44",
+      "parent": "bone_0",
+      "head": [
+        0.06071758642792702,
+        0.01673729158937931,
+        0.07659453898668289
+      ],
+      "child_head": [
+        0.07638844847679138,
+        0.012819556519389153,
+        -0.1858924925327301
+      ],
+      "rest_direction": [
+        0.05958874523639679,
+        -0.014897260814905167,
+        -0.9981117844581604
+      ],
+      "rest_angle_from_down_degrees": 3.5215330990128506,
+      "rest_angle_to_forward_degrees": 89.1464182546792,
+      "poses": [
+        {
+          "legacy_rotation_degrees": 45,
+          "actual_direction": [
+            0.041507747024297714,
+            -0.7175623178482056,
+            -0.6952564120292664
+          ],
+          "angle_from_down_degrees": 45.95234654348999,
+          "error_to_sagittal_target_degrees": 2.5449580391396873,
+          "joint_center": [
+            0.06071758642792702,
+            0.01673729158937931,
+            0.07659453898668289
+          ],
+          "center_delta_from_rest": 0.0,
+          "parent_basis_identity": true
+        },
+        {
+          "legacy_rotation_degrees": 90,
+          "actual_direction": [
+            -0.0008877793443389237,
+            -0.999889075756073,
+            0.01487075723707676
+          ],
+          "angle_from_down_degrees": 90.85206303393697,
+          "error_to_sagittal_target_degrees": 0.8534044112580036,
+          "joint_center": [
+            0.06071758642792702,
+            0.01673729158937931,
+            0.07659453898668289
+          ],
+          "center_delta_from_rest": 0.0,
+          "parent_basis_identity": true
+        }
+      ]
+    }
+  ],
+  "status": "measured"
+}

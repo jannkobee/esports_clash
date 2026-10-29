@@ -1,0 +1,70 @@
+{
+  "screenshots": [
+    "game-content-20261023/catalog-items-desktop.png",
+    "game-content-20261023/catalog-item-editor.png",
+    "game-content-20261023/catalog-web-item.png",
+    "game-content-20261023/catalog-web-skill.png",
+    "game-content-20261023/catalog-web-mobile.png"
+  ],
+  "ids": [
+    "item_custom_rru1hcwsgnecxd9c",
+    "skill_custom_aagkg1fepkdcihgw"
+  ],
+  "checks": [
+    "Real multipart item/skill image uploads and CRUD forms",
+    "Backoffice records and uploaded images visible in web item/skill catalog; mobile has no horizontal overflow",
+    "Real engine uses edited item stats and skill damage/cooldown, disables deleted active skill, and freezes the catalog at mount",
+    "Both verification entries deleted after review"
+  ],
+  "engine": {
+    "fixture": "private renderless real engine; live definitions untouched",
+    "expectedDamage": 1045.632735,
+    "before": {
+      "damage": 1045.632735,
+      "cooldown": 1.25,
+      "disabled": true,
+      "disabledTimer": 999999999.9666667,
+      "item": "item_custom_rru1hcwsgnecxd9c",
+      "itemAd": 777
+    },
+    "frozenAfterPropMutation": true
+  },
+  "browserErrors": [],
+  "authoritativeWorker": {
+    "passed": true,
+    "second": 0,
+    "versions": {
+      "catalog_version": "79f8710120bea9194262c257763a3f9e481caf9626a09551caf4e6023755a3c9",
+      "rules_version": "9d279cc43833b693e2306a03d8aeb77481df171322cb7249e3f2b8f33786729c",
+      "policy_version": "arena-command-v1",
+      "observation_version": "live-spectator-v1"
+    },
+    "sourceHash": "19c698a6af73da91fb2572873fd3200f39c03432131bc312fc36adc7e6e877d4",
+    "image": "sha256:7ac7fd14f9fc35190127fea4c7b2fb472e45781989427aca7f07f36c70ae8e22",
+    "expected": {
+      "itemId": "item_guardians_blade",
+      "itemAd": 777,
+      "damage": 960.8382,
+      "cooldown": 1.5,
+      "hash": "e52fea28de8a7765a59b7c295505e18e9e0b71447f1e4ab2444fe585e6d82aa1"
+    },
+    "observed": {
+      "damage": 960.8382,
+      "cooldown": 1.5,
+      "item": "item_guardians_blade",
+      "itemAd": 777
+    },
+    "resultAwarded": false
+  },
+  "validation": {
+    "gameUnitTests": 529,
+    "simulations": 3,
+    "apiTests": 160,
+    "apiAssertions": 1829,
+    "build": true
+  },
+  "cleanup": {
+    "temporaryEntriesRemoved": true,
+    "liveRecords": 239
+  }
+}

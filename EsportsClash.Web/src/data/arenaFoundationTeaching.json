@@ -1,0 +1,17 @@
+{
+  "kind": "instructional-initialization",
+  "seed": 73147,
+  "synthetic_examples": 21952,
+  "heldout_examples": 2048,
+  "imitation_mse": 0.003275431925430894,
+  "gameplay_improvement_measured": false,
+  "live_teacher_used": false,
+  "brief": [
+    "Win as a team by destroying the opposing Nexus.",
+    "Observe only information available to your team.",
+    "Move, attack, cast, recall and place wards through the legal command interface.",
+    "Use nearby farming and structures to make progress; use spells when they offer value.",
+    "Notice health, mana and tower danger; experience may teach exceptions to the starting advice.",
+    "Winning matches matters more than accumulating damage or gold without finishing."
+  ]
+}

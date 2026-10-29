@@ -6,8 +6,10 @@ export type CollisionBody = {
   to: CollisionPoint;
   radius: number;
   terrainRadius?: number;
-  /** Creeps keep personal space through steering, but never form a solid wall. */
+  /** Keep personal space through steering, allowing compression in crowds. */
   soft?: boolean;
+  /** Lower-priority bodies yield their resting space to higher-priority ones. */
+  spacingPriority?: number;
   /** Recall/control/ability movement is authoritative; other walkers go around it. */
   locked?: boolean;
 };
@@ -29,8 +31,8 @@ function coincidentNormal(a: string, b: string): CollisionPoint {
 /**
  * Resolve each walker's own swept displacement, never push its collision target.
  * Sorted IDs and a shared spatial grid make replay independent of input order.
- * Soft creep contacts steer ahead of contact and separate at rest, without
- * clipping walking movement against a creep. Avatar contacts remain swept.
+ * Soft contacts steer ahead of contact and separate at rest without blocking
+ * walking. Explicit hard bodies retain swept contact resolution.
  * Already-invalid overlaps (spawn/blink) recover gradually, bounded by dt.
  */
 export function resolveCrowdMovement(
@@ -68,9 +70,10 @@ export function resolveCrowdMovement(
     const walkable = (point: CollisionPoint) => isWalkable(point, body.terrainRadius ?? body.radius);
     const oldCell = cell(body.x, body.y);
     let p = { x: body.x, y: body.y };
-    // Solid walking contacts do not displace their targets. Soft creeps restore
-    // their own space and yield to stationary avatars, rather than nudging them.
-    const neighbours = nearby(body, p, 4).filter(other => body.soft || !other.soft || other.locked);
+    // Avatars restore space among peers; lower-priority creeps yield to them
+    // instead of nudging stationary avatars. Locked actors remain authoritative.
+    const neighbours = nearby(body, p, 4).filter(other => other.locked
+      || (body.soft || !other.soft) && (body.spacingPriority ?? 0) <= (other.spacingPriority ?? 0));
     let rx = 0, ry = 0;
     for (const other of neighbours) {
       const d = distance(p, other), penetration = body.radius + other.radius - d;
@@ -79,7 +82,10 @@ export function resolveCrowdMovement(
       rx += normal.x * penetration; ry += normal.y * penetration;
     }
     const repairLength = Math.hypot(rx, ry);
-    if (repairLength > .00001) {
+    // Positional repair against a soft obstacle can cancel the same forward
+    // step every tick in a narrow passage. Walking soft bodies steer instead;
+    // temporary compression settles once they stop and room becomes available.
+    if (repairLength > .00001 && (!body.soft || distance(body.from, body.to) <= .00001)) {
       const intendedLength = distance(body.from, body.to);
       const recoverySpeed = body.soft ? Math.min(36, body.radius * 3.6) : 36;
       const length = Math.min(repairLength, recoverySpeed * Math.min(dt, 1 / 15),

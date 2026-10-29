@@ -1,0 +1,249 @@
+{
+  "errors": [],
+  "initial": {
+    "time": 0,
+    "clip": "Rest pose",
+    "joints": {
+      "Neck": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left shoulder": {
+        "x": 0,
+        "y": 0,
+        "z": -0.7853981633974483
+      },
+      "Left elbow": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left wrist": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left hip": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left knee": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left ankle": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right shoulder": {
+        "x": 0,
+        "y": 0,
+        "z": 0.7853981633974483
+      },
+      "Right elbow": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right wrist": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right hip": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right knee": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right ankle": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    "meshes": 42,
+    "triangles": 15728,
+    "imageTextures": 0,
+    "ground": 32,
+    "disposed": false,
+    "halfHeight": 81.32907348242811
+  },
+  "reference": true,
+  "bent": {
+    "time": 1,
+    "clip": "Elbow bend",
+    "joints": {
+      "Neck": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left shoulder": {
+        "x": 0,
+        "y": 0,
+        "z": -0.7853981633974483
+      },
+      "Left elbow": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left wrist": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left hip": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left knee": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left ankle": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right shoulder": {
+        "x": 0,
+        "y": 0,
+        "z": 0.7853981633974483
+      },
+      "Right elbow": {
+        "x": -1.5707963267948966,
+        "y": 0,
+        "z": 0
+      },
+      "Right wrist": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right hip": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right knee": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right ankle": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    "meshes": 42,
+    "triangles": 15728,
+    "imageTextures": 0,
+    "ground": 32,
+    "disposed": false,
+    "halfHeight": 81.32907348242811
+  },
+  "rewind": {
+    "time": 0,
+    "clip": "Elbow bend",
+    "joints": {
+      "Neck": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left shoulder": {
+        "x": 0,
+        "y": 0,
+        "z": -0.7853981633974483
+      },
+      "Left elbow": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left wrist": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left hip": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left knee": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Left ankle": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right shoulder": {
+        "x": 0,
+        "y": 0,
+        "z": 0.7853981633974483
+      },
+      "Right elbow": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right wrist": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right hip": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right knee": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "Right ankle": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    "meshes": 42,
+    "triangles": 15728,
+    "imageTextures": 0,
+    "ground": 32,
+    "disposed": false,
+    "halfHeight": 81.32907348242811
+  },
+  "match": 270.80357142857144,
+  "playPause": true,
+  "contextRestored": true,
+  "mobile": {
+    "fits": true,
+    "canvasWidth": 390,
+    "canvasHeight": 620
+  },
+  "measurements": "15,728 study triangles\n42 meshes\n6 materials\n151836 draw calls\n4.2 ms frame\nANGLE (NVIDIA, NVIDIA GeForce RTX 3060 (0x00002504) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "disposal": {
+    "scene": true,
+    "loops": 0,
+    "geometries": 0
+  }
+}

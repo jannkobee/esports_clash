@@ -1,0 +1,12 @@
+{
+    "verified_on": "2026-10-29",
+    "id": "af0a65d4-25d0-4715-9ad1-8a35dfa743b5",
+    "report_sha256": "cf8e49df8564921540f1a1a34eb1968b2e9b8a4018da503e0ae1df5161294c71",
+    "assessment_sha256": "eec8ab6c6385e99625a33de52236650da7cd68d5c8361e803fe4f1b1856124fa",
+    "legacy_audit_sha256": "870e9804aa693ac6b11c15b688518240ed9804b18f4d6864b85c3aeece8f09b9",
+    "artifacts_read_back": 48,
+    "preview_status": 200,
+    "api_matches": true,
+    "publication_eligible": false,
+    "scope": "Canonical service readback and shared controller rendering, not authenticated browser E2E."
+}

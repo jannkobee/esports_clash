@@ -1,0 +1,54 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_invoker",
+    "component_id": "hair",
+    "label": "Ink-black hair",
+    "category": "hair",
+    "binding": "skinned",
+    "attachment": "head",
+    "prompt": "Create an isolated 3D reconstruction reference using attached character drawing only for design and materials. Only the character's ink-black hairstyle as a standalone wig on invisible support, no head face comb jewelry. Preserve current illustrated design. Single named asset only. Neutral even lighting, crisp physical geometry, three-quarter product view unless a rest pose is specified. Entire object inside central 70% of image, generous clear transparent border ALL sides. No text, floor, cast shadows, halo, frames, extra objects, body mannequin or hands.",
+    "path": "docs/pipeline-audit-20261024/upload-assets/mirelle-vane-hair.png",
+    "sha256": "216a9dafae1edcd0e5823f13967216f3a6674d98814284a2cb126292b247711c",
+    "reference_purpose": "reconstruction"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_invoker",
+    "component_id": "petal_skirt",
+    "label": "Oxblood petal skirt and shorts",
+    "category": "outfit",
+    "binding": "skinned",
+    "attachment": "pelvis",
+    "prompt": "Create an isolated 3D reconstruction reference using attached character drawing only for design and materials. Oxblood petal skirt over practical shorts only, empty garment, no body legs boots or other garments. Preserve current illustrated design. Single named asset only. Neutral even lighting, crisp physical geometry, three-quarter product view unless a rest pose is specified. Entire object inside central 70% of image, generous clear transparent border ALL sides. No text, floor, cast shadows, halo, frames, extra objects, body mannequin or hands.",
+    "path": "docs/pipeline-audit-20261024/upload-assets/mirelle-vane-petal_skirt.png",
+    "sha256": "1a75cced937b6b2131c83818f5205e8abf4fc9b2d9f2bd4fcbf19a4fffcc01c6",
+    "reference_purpose": "reconstruction"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_invoker",
+    "component_id": "sleeve",
+    "label": "Asymmetrical ink-black sleeve",
+    "category": "outfit",
+    "binding": "skinned",
+    "attachment": "arm",
+    "prompt": "Create an isolated 3D reconstruction reference using attached character drawing only for design and materials. One short asymmetrical ink-black sleeve garment, empty, no arm hand body or waistcoat. Preserve current illustrated design. Single named asset only. Neutral even lighting, crisp physical geometry, three-quarter product view unless a rest pose is specified. Entire object inside central 70% of image, generous clear transparent border ALL sides. No text, floor, cast shadows, halo, frames, extra objects, body mannequin or hands.",
+    "path": "docs/pipeline-audit-20261024/upload-assets/mirelle-vane-sleeve.png",
+    "sha256": "327a10cc1385c22d6b395aff83dba1358f3d54514957fb2f0b3fadd513ea4f85",
+    "reference_purpose": "reconstruction"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_invoker",
+    "component_id": "waistcoat",
+    "label": "Ivory structured waistcoat",
+    "category": "outfit",
+    "binding": "skinned",
+    "attachment": "torso",
+    "prompt": "Create an isolated 3D reconstruction reference using attached character drawing only for design and materials. One empty ivory structured waistcoat only, no shirt sleeve, body, cape or skirt. Preserve current illustrated design. Single named asset only. Neutral even lighting, crisp physical geometry, three-quarter product view unless a rest pose is specified. Entire object inside central 70% of image, generous clear transparent border ALL sides. No text, floor, cast shadows, halo, frames, extra objects, body mannequin or hands.",
+    "path": "docs/pipeline-audit-20261024/upload-assets/mirelle-vane-waistcoat.png",
+    "sha256": "59bdfea57e5267c95e89be993767a44c5b7180718aed9786d832def09994b07c",
+    "reference_purpose": "reconstruction"
+  }
+]

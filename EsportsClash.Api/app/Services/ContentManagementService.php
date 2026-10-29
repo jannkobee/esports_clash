@@ -19,6 +19,16 @@ class ContentManagementService {
         return $data;
     }
     public function sources(string $kind): array {
+        if($kind==='avatar') {
+            $snapshot=app(GameContentService::class)->snapshot();
+            $skills=collect($snapshot['records'])->where('kind','skill')->keyBy('id');
+            return app(AvatarRegistryService::class)->records()->map(function($entry)use($skills){
+                $p=$entry->payload;$p['id']=$entry->id;$p['name']=$p['internalName'];
+                $p['passiveDesc']=$skills->get($entry->id.':passive')['data']['desc']??'';
+                foreach(self::SLOTS as $slot=>$label)$p[$slot]=$skills->get($entry->id.':'.$slot)['data']??[];
+                return $p;
+            })->all();
+        }
         return json_decode(file_get_contents(resource_path($kind==='avatar'?'game/catalog.json':'game/management-items.json')), true, 512, JSON_THROW_ON_ERROR)[$kind==='avatar'?'avatars':'items'];
     }
     public function import(string $kind, int $actor): int {

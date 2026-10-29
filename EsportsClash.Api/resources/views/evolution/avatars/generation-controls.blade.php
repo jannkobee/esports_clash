@@ -2,7 +2,7 @@
     $pendingRun = ($runs ?? collect())->first(fn($run)=>in_array($run->status,[...\App\Services\TrellisGenerationService::ACTIVE,'cancelling']));
     $provider = $operations['provider'] ?? null;
     $workerConnected = in_array($provider, ['google-colab', 'trellis2-gguf', 'trellis2-router'], true);
-    $backendReady = $workerConnected && (($operations['compute']['switching_supported'] ?? false) ? ($operations['compute']['ready'] ?? false) : ($operations['models']['ready'] ?? false));
+    $backendReady = \App\Services\TrellisGenerationService::cloudGenerationReady($operations);
     $providerBadge = match($provider) {
         'google-colab' => 'Google TRELLIS.2 ready',
         'trellis2-gguf' => 'TRELLIS.2 worker connected',
@@ -22,7 +22,7 @@
             <div class="generation-queue-row"><button type="submit" class="primary" @disabled(!$backendReady || !$bodyReady)>{{ empty($completedModel) ? 'Generate 3D source' : 'Generate new model' }} &rarr;</button></div>
             <p class="fine" id="seed-help">Seeds are generated automatically on the server to ensure fresh variation. Each model's seed is recorded in its report.</p>
         </form>
-        @if(!$bodyReady)<p class="generation-blocker">Add a clean T-pose body reference above to enable generation. Older equipped concept art is retained for reference only.</p>@elseif(!$backendReady)<p class="generation-blocker">Your assets are saved. A verified TRELLIS.2 backend must be ready before generation can start.</p>@endif
+        @if(!$bodyReady)<p class="generation-blocker">{{ ($avatar['category'] ?? 'avatar') === 'avatar' ? 'Add a clean base body reference above to enable generation. Use a wide A-pose for humanoids. Older equipped concept art is retained for reference only.' : 'Add or select a concept reference image above to enable 3D mesh generation.' }}</p>@elseif(!$backendReady)<p class="generation-blocker">Your assets are saved. A verified TRELLIS.2 backend must be ready before generation can start.</p>@endif
     @endif
     @if(!empty($completedModel))<p class="fine">New generations keep your existing models. Review them in the 3D models section above.</p>@endif
 </section>

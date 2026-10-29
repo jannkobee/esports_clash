@@ -1,0 +1,14 @@
+{
+  "id": "473def27-624e-493d-bedb-6c7c6861e8ce",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "failed",
+  "stage": "contact-separation",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "started_unix": 1793103067.734213,
+  "exit_code": 1,
+  "error": "RuntimeError: Contact map exited 1",
+  "completed_unix": 1793103118.4884045
+}

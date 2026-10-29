@@ -6,8 +6,8 @@ use Illuminate\Support\Collection;
 
 class PreparationReportService {
     /** One stable report per generated model, with immutable executions underneath. */
-    public function recent(): Collection {
-        $sources=AvatarPreparation::select('generation_id')->groupBy('generation_id')
+    public function recent(?string $avatarId=null): Collection {
+        $sources=AvatarPreparation::when($avatarId,fn($query)=>$query->where('avatar_id',$avatarId))->select('generation_id')->groupBy('generation_id')
             ->orderByRaw('MAX(created_at) desc')->limit(100)->pluck('generation_id');
         return $this->group(AvatarPreparation::whereIn('generation_id',$sources)->get());
     }

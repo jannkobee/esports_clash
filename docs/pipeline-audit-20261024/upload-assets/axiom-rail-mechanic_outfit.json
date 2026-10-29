@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_jayce",
+  "component_id": "mechanic_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Compact mechanic outfit",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Axiom Rail. Attached illustration is design reference only. Only the empty compact mechanic outfit, brown leather apron and harness, ivory shirt, red scarf, green trousers, gloves, sturdy boots and goggles. No person, skin, head, beard, prosthetic limb, wrench or shoulder machine. Garments are visibly empty on invisible support in a neutral symmetrical wide A pose. Hollow neck and joint openings, no mannequin. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "axiom-rail",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/axiom-rail.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/axiom-rail-mechanic_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-80b8a967-3556-4d53-a21e-b49582c5a9ad.png"
+}

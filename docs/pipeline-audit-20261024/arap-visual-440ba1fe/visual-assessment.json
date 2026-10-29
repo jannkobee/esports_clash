@@ -1,0 +1,111 @@
+{
+  "review_id": "440ba1fe-52c6-41a2-b21b-9b01a75ba8fd",
+  "status": "shape_improvement_unproven",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Limited manual assessment of 22 named, hash-verified images from 68 Babylon captures of the exact diagnostic clips. This is not a full-motion, compound-pose, appearance or production qualification.",
+  "observations": [
+    "All 68 views completed without browser errors; the recorded Babylon corrective morph influences were checked against the diagnostic clips.",
+    "The left shoulder 90-degree paired oblique and side views show no convincing shape improvement at the available scale; the rounded shoulder root remains. Front detail is partly occluded by the raised hand.",
+    "The right shoulder remains broadly rounded with a fold at its root; the right shoulder and hips were not the localized repair target. Paired hip views retain abrupt creases.",
+    "The 45-degree front pairs and current bind and skeleton views show no obvious gross change, but they are insufficient to qualify animation. Controlled intersection counts remain 31/0 at shoulders and 40/27 at hips, identical to the comparator.",
+    "The added patch improves the reported local rigid energy and edge strain without reducing contacts; that numerical result alone does not establish visual quality."
+  ],
+  "decision": "Retain the candidate as unqualified diagnostic evidence only. Do not select it, fit appearance or publish. Diagnose joint structure and skinning/topology or create a new bounded, evidence-based repair rather than sweeping patch strength.",
+  "candidate_disposition": {
+    "id": "2ca48df4-a8d9-428a-bff6-3af822965124",
+    "selection": "diagnostic_only",
+    "comparison": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97",
+    "native_parent": "f6283980-c4dd-5f34-bcf4-09c08e9e6346"
+  },
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "5ce6a68a63ee20b2e9ddcd07b5415f815ff199036ead941353b02a3d3c2c2a1b"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "832abf578f3d511d235170823e266b3daad828c996820e9d3441a5fedec33582"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-side-detail.png",
+      "sha256": "04f7215a2fcb18e63929f017437537cd5f23d9575e60ea2b727216504b261e10"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-side-detail.png",
+      "sha256": "bc4573bf96ce64674ace45afc8184044ea7c0adc19f8770baa8e350cb68e2df4"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-front-detail.png",
+      "sha256": "361f644d34f7c1aaf2af146f87a1451d6296ecc96052bae5edfd62aefb225712"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-front-detail.png",
+      "sha256": "fdca54ced88a28896dd6801acc2b72dc82c9056e946fc1829e1f9cf76b03be55"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-45-front.png",
+      "sha256": "7d5d2ea889fc91d6a94ace3721eb18f04216067b7ca18bc18afa54766f9aeb70"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-45-front.png",
+      "sha256": "e1122d586569f4b6ec69db57510abb8f48dbdfb50eb697d872eb589c2a4543a1"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "592537cd03b60614a1bd27ac03af927dfc1903979fd4846cf1871e18e28e7667"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "592537cd03b60614a1bd27ac03af927dfc1903979fd4846cf1871e18e28e7667"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-side-detail.png",
+      "sha256": "7893373762f20c4a83fac3c18e41378cf3295408d853e39390a1af633172718c"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-side-detail.png",
+      "sha256": "7893373762f20c4a83fac3c18e41378cf3295408d853e39390a1af633172718c"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-front-detail.png",
+      "sha256": "a429734dfffe502ba95f32c82b4602c3d4551da518d55e54151eb2f961775bf0"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-front-detail.png",
+      "sha256": "a429734dfffe502ba95f32c82b4602c3d4551da518d55e54151eb2f961775bf0"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-45-front.png",
+      "sha256": "388a91de1cf55b4649bbafb25e5a4e2616097fe26c2214bcb79772efd0ed1040"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-45-front.png",
+      "sha256": "388a91de1cf55b4649bbafb25e5a4e2616097fe26c2214bcb79772efd0ed1040"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "3ef39a3f7a0afad8f2562a8950c55f9d140da80520baac7a61689cd117a23def"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "3ef39a3f7a0afad8f2562a8950c55f9d140da80520baac7a61689cd117a23def"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "f61ad11db05391fb926ac5a3a0b0a90f21ce0ceb22bdb324a76d77a027855710"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "f61ad11db05391fb926ac5a3a0b0a90f21ce0ceb22bdb324a76d77a027855710"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front.png",
+      "sha256": "6e2843b6cbe98af8506c376b19471751c85a6b2e9ef89ef576264f208703e20f"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front-skeleton.png",
+      "sha256": "4c0694027d14fda781bbb280bb710ae97a3133e5d0bf734f2a555dbd7eb80527"
+    }
+  ]
+}

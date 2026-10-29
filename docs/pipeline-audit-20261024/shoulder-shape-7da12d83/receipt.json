@@ -1,0 +1,33 @@
+{
+  "id": "7da12d83-c675-4299-9457-f7fcdeb9f1e2",
+  "archive_sha256": "874f0efa01563424b666e975aabb01c68541c089e7a33c34e4a13b1601b366ec",
+  "report_sha256": "547970fc47112eedff73428b2d5d51844096e1bb39e440e44d618f9dab43b595",
+  "target_sha256": "e48289cff6583172b7e5abe3bc5766cd3fcbc1387f58c762fccd08ca9c08a397",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "regressions": [],
+  "counts_90": {
+    "native_baseline": {
+      "UpperArmL": 44,
+      "UpperArmR": 35,
+      "ForearmL": 0,
+      "ForearmR": 0,
+      "ThighL": 51,
+      "ThighR": 47,
+      "CalfL": 0,
+      "CalfR": 2
+    },
+    "original_hybrid_targets": {
+      "UpperArmL": 31,
+      "UpperArmR": 0,
+      "ThighL": 40,
+      "ThighR": 27
+    },
+    "half_shoulder_full_hip": {
+      "UpperArmL": 34,
+      "UpperArmR": 17,
+      "ThighL": 40,
+      "ThighR": 27
+    }
+  }
+}

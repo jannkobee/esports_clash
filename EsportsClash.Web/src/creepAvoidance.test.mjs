@@ -67,7 +67,7 @@ test('head-on creeps pass each other at different tick rates without flipping si
   }
 });
 
-test('soft creep contacts cannot body-block a narrow passage, while avatar contacts stay solid', () => {
+test('soft creep contacts cannot body-block a narrow passage; explicit hard bodies retain swept contact', () => {
   for (const softMover of [false, true]) {
     const r = resolveCrowdMovement([body('walker', { x: -80, y: 0 }, { x: 80, y: 0 }, 17, softMover),
       body('creep', { x: 0, y: 0 }, undefined, 10, true, true)], 1 / 30, p => Math.abs(p.y) < .001);
@@ -75,7 +75,7 @@ test('soft creep contacts cannot body-block a narrow passage, while avatar conta
   }
   const r = resolveCrowdMovement([body('walker', { x: -80, y: 0 }, { x: 80, y: 0 }, 17, false),
     body('avatar', { x: 0, y: 0 }, undefined, 17, false, true)], 1 / 30, p => Math.abs(p.y) < .001);
-  assert.ok(r.get('walker').x < -34, 'avatars must retain swept solid contact');
+  assert.ok(r.get('walker').x < -34, 'explicit hard bodies must retain swept solid contact');
 });
 
 test('coincident idle creeps spread apart without displacing a stationary avatar', () => {

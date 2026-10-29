@@ -27,6 +27,7 @@ class EvolutionController extends Controller
             'reviews' => BalanceReview::with('proposals')->latest()->limit(20)->get(),
             'audit' => DB::table('evolution_audits')->latest('id')->limit(50)->get(),
             'capabilities' => ['live_macro_training' => true, 'production_promotion' => false,
+                'intelligence_domains' => ['parameter','marl','source'], 'qualified_policy_activation' => true,
                 'mechanical_patch_release' => false, 'avatar_evolution' => false]]]);
     }
 

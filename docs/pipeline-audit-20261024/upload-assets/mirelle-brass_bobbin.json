@@ -1,0 +1,13 @@
+{
+  "id": "brass_bobbin",
+  "label": "Floating brass bobbin",
+  "category": "accessory",
+  "binding": "independent",
+  "attachment": "floating helper beside avatar; separate transform",
+  "description": "One isolated floating brass sewing bobbin helper: cylindrical oxblood thread spool between ornate brass circular end plates, small brass articulated fittings and folded ivory paper-pattern fins, as seen above her hand. No character, hand, hair, body, pedestal, elemental spheres or glow.",
+  "avatar_id": "c_invoker",
+  "prompt": "Create a NEW isolated game prop reconstruction reference from the supplied character drawing. One isolated floating brass sewing bobbin helper: cylindrical oxblood thread spool between ornate brass circular end plates, small brass articulated fittings and folded ivory paper-pattern fins, as seen above her hand. No character, hand, hair, body, pedestal, elemental spheres or glow. Full object centered, three-quarter product view that shows depth, with transparent margins on every edge. Preserve the illustrated ivory/oxblood/brass material language. Crisp readable physical shapes, neutral even studio lighting, true transparent alpha background, no floor, cast shadow, text labels, frames or cutout character. One separate asset only.",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-dca25eee-8a05-4f99-a6fb-8fdbf3b9d202.png",
+  "destination": "docs/pipeline-audit-20261024/upload-assets/mirelle-brass_bobbin.png",
+  "status": "awaiting_visual_review"
+}

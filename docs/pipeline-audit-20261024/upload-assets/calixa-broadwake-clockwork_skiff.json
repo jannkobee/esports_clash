@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_corsara",
+  "component_id": "clockwork_skiff",
+  "category": "vehicle",
+  "binding": "independent",
+  "label": "Knee-high clockwork skiff",
+  "attachment": "independent follower",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Calixa Broadwake. Attached illustration is design reference only. One complete empty knee-high clockwork skiff with wooden blue-ivory hull, articulated brass walking legs, small mast, sail, ropes and lanterns. Remove the two deck cannons for separate reconstruction. No captain, crew, person, human or cargo. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "calixa-broadwake",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/calixa-broadwake.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/calixa-broadwake-clockwork_skiff.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-e483698c-0e77-4753-a820-51d1fe1116a9.png"
+}

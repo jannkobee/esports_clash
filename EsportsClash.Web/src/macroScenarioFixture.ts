@@ -1,3 +1,4 @@
+import {LANE_Y} from './arenaLayout.ts';
 /** Disposable browser-evaluation fixture; absent from ordinary matches. */
 export interface MacroScenarioFixture {
   gap: number;
@@ -27,5 +28,5 @@ export function macroScenarioPosition(team: 'blue' | 'red', teamIndex: number,
   const direction = team === 'blue' ? -1 : 1;
   return { x: 1300 + direction * (fixture.gap / 2
     + (teamIndex < fixture.frontCount ? 0 : fixture.rearOffset)),
-  y: 380 + (teamIndex - 2) * fixture.spread };
+  y: LANE_Y + (teamIndex - 2) * fixture.spread };
 }

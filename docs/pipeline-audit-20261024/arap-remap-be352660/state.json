@@ -1,0 +1,14 @@
+{
+  "id": "be352660-ca87-49b6-908f-b5fa43b9907d",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "failed",
+  "stage": "arap-target-remap",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "started_unix": 1793103824.031594,
+  "exit_code": 1,
+  "error": "RuntimeError: Contact map exited 1",
+  "completed_unix": 1793103824.196459
+}

@@ -1,0 +1,9 @@
+{
+  "id": "c_vi",
+  "name": "Brakka Fenn",
+  "slug": "brakka-fenn",
+  "prompt": "Technical game character modeling reference: Brakka Fenn. Use the attached drawing only for adult identity, species and proportions. Heavyset adult HUMAN female marshal, one-eyed scarred face, no gauntlets or documents. One adult character wearing a plain opaque seamless matte gray FULL BODY COMPRESSION UNITARD with high neck, long sleeves and full length legs, covering the entire torso and pelvis completely. The body surface follows the limb contours so joints are readable. Bare hands and feet; bald head, no beard or hair. Neutral gray sculpt treatment. No armor, decorative costume, capes, boots, jewelry, tools, weapons, straps, companions or vehicles. Front orthographic view, entire head to feet centered with 10% margins. Neutral static symmetrical WIDE A-pose: arms straight angled 45 degrees downward/outward, palms down, fingers individually separated, hands clear of hips, legs straight slightly apart, feet level. No action, no twist, no fused limbs or armpits. Preserve intrinsic species appendages separated and visible. Transparent background, no halo, shadows, floor, text or labels. Clean fully covered neutral adult rigging reference, appearance components added separately later.",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-344befa0-833c-4172-9224-80aef5486703.png",
+  "destination": "docs/pipeline-audit-20261024/upload-assets/base/brakka-fenn.png",
+  "status": "awaiting_visual_review"
+}

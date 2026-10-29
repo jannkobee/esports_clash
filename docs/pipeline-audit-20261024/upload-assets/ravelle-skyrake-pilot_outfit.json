@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_skybreaker",
+  "component_id": "pilot_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Aristocratic skiff pilot outfit",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Ravelle Skyrake. Attached character art is design reference only. Empty aristocratic skiff pilot outfit: navy-white coat with gold embroidery, white ruffled blouse, brown corset and belts, white trousers, tall brown leather boots, gloves and separate feather-trimmed navy hat. No person, hair, platform, telescope or rangefinder. Preserve pictured design, colors, materials and proportions. For clothing only: garments visibly empty on invisible support in a static symmetrical wide A pose; hollow openings, no mannequin. Show the entire asset at SMALL size occupying central 55 percent of frame with wide transparent margins on ALL sides. No cropping. Neutral even product lighting, readable physical geometry, three-quarter view. Genuine transparent background, no floor, shadow, background glow, text, labels, logo, frames or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "ravelle-skyrake",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/ravelle-skyrake.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/ravelle-skyrake-pilot_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-f638d5b6-51eb-4114-99be-9abe87547a53.png"
+}

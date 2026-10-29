@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_brewmaw",
+  "component_id": "fermentation_tanks",
+  "category": "back",
+  "binding": "rigid",
+  "label": "Transparent brass fermentation tanks",
+  "attachment": "back",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Brohm Caskfall. Attached illustration is design reference only. Only the full brass-and-glass fermentation-tank backpack assembly with amber liquid, gauges, tubes, mounting frame and straps. No wearer, body, clothing, forearm tools or hands. Preserve illustrated materials, palette, proportions and construction. Complete named asset centered at a SMALL size within central60% of image, generous transparent margin all sides. Neutral even product lighting, crisp readable physical geometry, three-quarter view unless pose specified. Genuine transparent background. No floor, cast shadows, background glow, text, labels, frames, logos or unrelated objects.",
+  "reference_purpose": "reconstruction",
+  "slug": "brohm-caskfall",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/brohm-caskfall.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/brohm-caskfall-fermentation_tanks.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-dc5b2665-4758-40a2-bc03-042b8ca7a619.png"
+}

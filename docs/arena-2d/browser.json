@@ -1,0 +1,14 @@
+{
+  "states": [
+    "Mirelle Vane · Idle · frame 1/4 · 1× · paused",
+    "Mirelle Vane · Run · frame 1/4 · 1× · paused",
+    "Mirelle Vane · Cast · frame 1/4 · 1× · paused",
+    "Mirelle Vane · Death · frame 1/4 · 1× · paused"
+  ],
+  "pause": true,
+  "step": true,
+  "roster": 45,
+  "mobileOverflow": false,
+  "errors": [],
+  "scope": "Isolated art preview; no live match qualification"
+}

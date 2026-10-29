@@ -1,0 +1,108 @@
+{
+    "verification_method": "Canonical API artifact readback and shared Web controller render",
+    "preparation_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+    "candidate_id": "f6283980-c4dd-5f34-bcf4-09c08e9e6346",
+    "candidate_sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+    "candidate_report_sha256": "c436a252171795f54b31201e1c014813894042e818e24da3d570bc745f8234be",
+    "candidate_source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+    "visual_review_id": "90c5282c-c89b-4d56-8614-82d7c0c11406",
+    "visual_report_sha256": "0a680b54147fae435ce52c5dcefe2359b7d432feb6c146fc3a9395851ce84ddc",
+    "assessment_status": "improved_counts_deformation_unresolved",
+    "playback_sha256": "726f7f1758defe33ca7c8abe45c90a996c1ccc37f84456182b0a19d2d73d3bfe",
+    "ancestor_artifacts": [
+        {
+            "id": "f6283980-c4dd-5f34-bcf4-09c08e9e6346",
+            "sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7"
+        },
+        {
+            "id": "d38b680b-3f40-5331-8bdf-992a6ec4f272",
+            "sha256": "9a4a5efd95f5687020797402b9dcf591e3813f0b092526357793387b88b005ab"
+        },
+        {
+            "id": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046",
+            "sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f"
+        },
+        {
+            "id": "a3352d37-91cb-4757-b403-da09f5ac0017",
+            "sha256": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4"
+        }
+    ],
+    "diagnostics": [
+        {
+            "id": "e44d4c06-f826-4a97-bcf7-b912845094fd",
+            "method": "rest-and-posed-contact-map-v2",
+            "report_sha256": "c6437651fb9c392edc733cb5ce2eedfa4eb33d925e97ac6f1823f803c79e5c96",
+            "contact_vertices": 208
+        },
+        {
+            "id": "b89a083d-6ed1-497c-be5b-c9130b7e7674",
+            "method": "linear-versus-preserve-volume-v1",
+            "report_sha256": "642005e229c67b87ffcfb6ec242eefafefa2674257d481b3e3915dae6aa786f1",
+            "contact_vertices": 0
+        }
+    ],
+    "controller_status": 200,
+    "preview_uses_exact_bend_file": true,
+    "assessment_visible": true,
+    "candidate_label_visible": true,
+    "hip_study_visible": true,
+    "bound_rejections_visible": true,
+    "skinning_mode_diagnostic_visible": true,
+    "counts_90": [
+        {
+            "joint": "UpperArmL",
+            "intersections": 44
+        },
+        {
+            "joint": "UpperArmR",
+            "intersections": 35
+        },
+        {
+            "joint": "ForearmL",
+            "intersections": 0
+        },
+        {
+            "joint": "ForearmR",
+            "intersections": 0
+        },
+        {
+            "joint": "ThighL",
+            "intersections": 51
+        },
+        {
+            "joint": "ThighR",
+            "intersections": 47
+        },
+        {
+            "joint": "CalfL",
+            "intersections": 0
+        },
+        {
+            "joint": "CalfR",
+            "intersections": 2
+        }
+    ],
+    "severe_stretch_edges": 0,
+    "weight_correspondence": {
+        "before_to_after": {
+            "unmatched_vertices": 0,
+            "max_matching_weight_error": 1.7881393432617188e-7
+        },
+        "after_to_before": {
+            "unmatched_vertices": 0,
+            "max_matching_weight_error": 1.7881393432617188e-7
+        },
+        "verified": true
+    },
+    "rest_surface_roundtrip": {
+        "before_vertices": 23779,
+        "after_vertices": 23806,
+        "max_nearest_distance_m": 2.504824863081012e-7,
+        "rms_nearest_distance_m": 7.40672884473549e-8
+    },
+    "unaffected_bends_unchanged": true,
+    "preparation_status": "needs_review",
+    "qualification_complete": false,
+    "publication_eligible": false,
+    "inspector_sha256": "b53cdbbf1a7ee8cae29c18696ad56eb13e07acc2349f6e41d94e8a0adc9ccb02"
+}

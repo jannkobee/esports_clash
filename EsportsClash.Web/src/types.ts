@@ -55,6 +55,10 @@ export interface CoachCard {
 }
 
 export interface ChampionSkill {
+  image?: string;
+  disabled?: boolean;
+  catalogCooldownOverride?: number;
+  catalogCooldownBase?: number;
   name: string;
   desc: string;
   cooldown: number;
@@ -72,6 +76,10 @@ export type AvatarCombatType = 'Carry' | 'Support' | 'Nuker' | 'Disabler' | 'Jun
 export type AvatarCombatTypeStrength = 0 | 1 | 2 | 3;
 
 export interface ChampionKit {
+  abilityRuleset?: 'original-v3-preview-1' | 'original-v3-preview-2';
+  legacyInternalName?: string;
+  passiveImage?: string;
+  passiveName?: string;
   id: string;
   name: string;
   displayName: string;
@@ -147,6 +155,7 @@ export interface TournamentTeam {
 // ARAM ITEMS & WAVE SIMULATION ENGINE TYPES
 // ==========================================
 export interface ItemDef {
+  image?: string;
   id: string;
   name: string;
   cost: number;
@@ -230,6 +239,11 @@ export interface LaneStructure {
 }
 
 export interface AramChampionUnit {
+  v3RecoveryRemaining?: number;
+  v3AttackSpeedMultiplier?: number;
+  v3Transport?: boolean;
+  v3DisarmRemaining?: number;
+  v3TurnDampingRemaining?: number;
   basicAttackVisual?:{targetId:string;x:number;y:number;releasedAt:number;melee:boolean};
   voltaireOverloadTimer?:number;
   creepAttack?: import('./creepAttackTiming').CreepAttackState;

@@ -1,10 +1,13 @@
 import type { AramChampionUnit, ItemDef } from '../types';
 import { ChampionArtwork } from './ChampionArtwork';
+import { ContentImage } from './ContentImage';
 import { maxMana } from '../abilityRules';
 import { KAELEN_INVOKED_SPELLS } from '../kaelenAbilities';
 import { deriveTeamPsychology } from '../playerPersonality';
 import { abilityCompactSummary, getAbilityPresentation } from '../abilityPresentation';
 import { abilityRank } from '../skillProgression';
+import { PaintedAbilityIcon } from './PaintedAbilityIcon';
+import { PAINTED_ROSTER_ART } from '../match-viewer/paintedRosterArt';
 
 const signed = (value: number) => `${value >= 0 ? '+' : ''}${value.toFixed(1)}`;
 const decisionDetail = (unit: AramChampionUnit) => {
@@ -20,7 +23,8 @@ const abilityMechanicsSummary = (unit: AramChampionUnit) => unit.champion.name =
     return `${['Q', 'W', 'R'][index]} ${ability.name}: ${abilityCompactSummary(ability)}${ability.movement ? ` · ${ability.movement.kind.toUpperCase()}` : ''}`;
   }).join('\n');
 
-export function SpectatorRoster({ units, team, onItem, onFocus, xpProgress, second }: {
+export function SpectatorRoster({ units, team, onItem, onFocus, xpProgress, second, invokedSpells=KAELEN_INVOKED_SPELLS }: {
+  invokedSpells?: readonly import('../kaelenAbilities').KaelenInvokedSpell[];
   units: AramChampionUnit[]; team: 'blue' | 'red'; onItem: (item: ItemDef) => void;
   onFocus: (unit: AramChampionUnit) => void;
   xpProgress: (unit: AramChampionUnit) => number; second: number;
@@ -33,39 +37,79 @@ export function SpectatorRoster({ units, team, onItem, onFocus, xpProgress, seco
     </div>
     {units.map(unit => <div className={`spectator-unit ${unit.isAlive ? '' : 'fallen'}`} key={unit.id}>
       <button className="spectator-portrait" onClick={() => onFocus(unit)} title={`Follow ${unit.player.name} / ${unit.champion.displayName}, ${unit.champion.title}`}>
-        <ChampionArtwork championId={unit.champion.id} size={29} className="h-full w-full" />
-        <span>{unit.isAlive ? unit.level : `${Math.ceil(unit.respawnTimer)}s`}</span>
+        <ChampionArtwork championId={unit.champion.id} size={34} className="h-full w-full" />
+        {PAINTED_ROSTER_ART[unit.champion.id] && (
+          <img className="painted-roster-portrait" alt="" src={`${import.meta.env.BASE_URL}art/avatar-drawings-v1/${PAINTED_ROSTER_ART[unit.champion.id].slug}.png`} onError={event => { event.currentTarget.style.display = 'none'; }} />
+        )}
+        <span className={unit.isAlive ? 'level-badge' : 'dead-badge'}>{unit.isAlive ? unit.level : `${Math.ceil(unit.respawnTimer)}s`}</span>
       </button>
+
       <div className="spectator-vitals">
-        <div className="spectator-name"><b>{unit.player.name}</b><span title={`${unit.champion.displayName} — ${unit.champion.title}`}>{unit.champion.displayName}</span></div>
-        {unit.psychology && <div className="spectator-psychology" title={`Confidence ${Math.round(unit.psychology.mood.confidence)} · Tilt ${Math.round(unit.psychology.mood.frustration)} · Trust ${Math.round(unit.psychology.mood.trust)}${unit.decisionTelemetry ? ` · ${decisionDetail(unit)}` : ''}`}>
-          {unit.psychology.mood.frustration >= 65 ? 'TILTED' : unit.psychology.mood.confidence >= 70 ? 'CONFIDENT' : 'COMPOSED'}{unit.decisionTelemetry ? ` · ${unit.decisionTelemetry.action.toUpperCase()}` : ''}
-        </div>}
-        <div className="spectator-health" role="meter" aria-label={`${unit.player.name} health`} aria-valuenow={Math.round(unit.hp)} aria-valuemin={0} aria-valuemax={Math.round(unit.maxHp)}
-          title={`${Math.ceil(unit.hp)}/${Math.ceil(unit.maxHp)} HP · ${Math.ceil(unit.shield)} shield`}>
-          <i style={{ width: `${Math.max(0, Math.min(100, unit.hp / unit.maxHp * 100))}%` }} />
-          {unit.shield > 0 && <em style={{ width: `${Math.min(100, unit.shield / unit.maxHp * 100)}%` }} />}
+        <div className="spectator-name-row">
+          <b className="player-handle" title={unit.player.name}>{unit.player.name}</b>
+          <span className="champ-title" title={`${unit.champion.displayName} — ${unit.champion.title}`}>{unit.champion.displayName}</span>
+          {unit.psychology && (
+            <span
+              className={`psychology-chip ${unit.psychology.mood.frustration >= 65 ? 'tilted' : unit.psychology.mood.confidence >= 70 ? 'confident' : 'composed'}`}
+              title={`Confidence ${Math.round(unit.psychology.mood.confidence)} · Tilt ${Math.round(unit.psychology.mood.frustration)} · Action: ${unit.decisionTelemetry?.action ?? 'HOLD'}${unit.decisionTelemetry ? ` · ${decisionDetail(unit)}` : ''}`}
+            >
+              {unit.psychology.mood.frustration >= 65 ? 'TILT' : unit.psychology.mood.confidence >= 70 ? 'CONF' : 'CALM'}
+              {unit.decisionTelemetry ? ` · ${unit.decisionTelemetry.action.toUpperCase()}` : ''}
+            </span>
+          )}
         </div>
-        <div className="spectator-mana" title={`${Math.ceil(unit.mana)}/${maxMana(unit)} mana`}><i style={{ width: `${Math.max(0, Math.min(100, unit.mana / maxMana(unit) * 100))}%` }} /></div>
-        <div className="spectator-xp" title={`Level ${unit.level} · ${Math.round(xpProgress(unit) * 100)}% to next level`}><i style={{ width: `${xpProgress(unit) * 100}%` }} /></div>
+        <div className="spectator-bar-stack">
+          <div className="spectator-health" role="meter" aria-label={`${unit.player.name} health`} aria-valuenow={Math.round(unit.hp)} aria-valuemin={0} aria-valuemax={Math.round(unit.maxHp)}
+            title={`${Math.ceil(unit.hp)}/${Math.ceil(unit.maxHp)} HP · ${Math.ceil(unit.shield)} shield`}>
+            <i style={{ width: `${Math.max(0, Math.min(100, unit.hp / unit.maxHp * 100))}%` }} />
+            {unit.shield > 0 && <em style={{ width: `${Math.min(100, unit.shield / unit.maxHp * 100)}%` }} />}
+          </div>
+          <div className="spectator-mana" title={`${Math.ceil(unit.mana)}/${maxMana(unit)} mana`}>
+            <i style={{ width: `${Math.max(0, Math.min(100, unit.mana / maxMana(unit) * 100))}%` }} />
+          </div>
+          <div className="spectator-xp" title={`Level ${unit.level} · ${Math.round(xpProgress(unit) * 100)}% to next level`}>
+            <i style={{ width: `${xpProgress(unit) * 100}%` }} />
+          </div>
+        </div>
       </div>
+
       <div className="spectator-kda" title={`${unit.kills} kills / ${unit.deaths} deaths / ${unit.assists} assists · ${unit.cs} CS · ${Math.floor(unit.gold)} gold`}>
-        <b>{unit.kills}/{unit.deaths}/{unit.assists}</b><span>{unit.cs} CS · {Math.floor(unit.gold)}g</span>
+        <b>{unit.kills}/{unit.deaths}/{unit.assists}</b>
+        <span>{unit.cs} CS · {(unit.gold / 1000).toFixed(1)}k</span>
       </div>
+
       <div className="spectator-skills" aria-label={`${unit.player.name} ability cooldowns`} title={abilityMechanicsSummary(unit)}>
+        {PAINTED_ROSTER_ART[unit.champion.id] && (
+          <span className="painted-ability-slot ready" title={`Passive: ${unit.champion.passiveName ?? 'Passive'}`}>
+            <PaintedAbilityIcon heroId={unit.champion.id} slot="passive" />
+            <b>P</b>
+          </span>
+        )}
         {unit.champion.name === 'Kaelen' ? ['D', 'F'].map((slot, index) => {
-          const spell = KAELEN_INVOKED_SPELLS.find(s => s.id === unit.kaelenInvokedSlots?.[index]);
+          const spell = invokedSpells.find(s => s.id === unit.kaelenInvokedSlots?.[index]);
           const cd = spell ? unit.kaelenSpellCooldowns?.[spell.id] ?? 0 : -1;
           return <span key={slot} className={cd === 0 ? 'ready' : ''} title={`${slot}: ${spell?.name ?? 'Empty invocation'}${spell ? ` · ${Math.ceil(cd)}s` : ''}`}>{cd > 0 ? Math.ceil(cd) : slot}</span>;
-        }) : [unit.cd1, unit.cd2, unit.cdUlt].map((cd, index) => <span key={index} className={cd <= 0 && (index < 2 || unit.level >= 6) ? 'ready' : ''}
-          title={`${['Q', 'W', 'R'][index]}: ${index === 2 && unit.level < 6 ? 'locked' : `${Math.ceil(cd)}s cooldown`}`}>{index === 2 && unit.level < 6 ? '–' : cd > 0 ? Math.ceil(cd) : ['Q', 'W', 'R'][index]}</span>)}
+        }) : [unit.cd1, unit.cd2, unit.cdUlt].map((cd, index) => (
+          <span key={index} className={`painted-ability-slot ${cd <= 0 && (index < 2 || unit.level >= 6) ? 'ready' : ''}`}
+            title={`${['Q', 'W', 'R'][index]} ${unit.champion[index === 0 ? 'skill1' : index === 1 ? 'skill2' : 'ultimate'].name}: ${index === 2 && unit.level < 6 ? 'locked' : `${Math.ceil(cd)}s cooldown`}`}>
+            <PaintedAbilityIcon heroId={unit.champion.id} slot={index === 0 ? 'skill1' : index === 1 ? 'skill2' : 'ultimate'} />
+            <b>{index === 2 && unit.level < 6 ? '–' : cd > 0 ? Math.ceil(cd) : ['Q', 'W', 'R'][index]}</b>
+          </span>
+        ))}
       </div>
+
       <div className="spectator-items">
         {Array.from({ length: 6 }, (_, index) => {
           const item = unit.items[index];
-          return <button key={index} disabled={!item} onClick={() => item && onItem(item)} aria-label={item ? `Inspect ${item.name}` : `Empty item slot ${index + 1}`} title={item?.name ?? 'Empty item slot'}>{item?.icon ?? '·'}</button>;
+          return (
+            <button key={index} disabled={!item} onClick={() => item && onItem(item)} aria-label={item ? `Inspect ${item.name}` : `Empty item slot ${index + 1}`} title={item?.name ?? 'Empty item slot'}>
+              {item ? <ContentImage image={item.image} name={item.name} fallback={item.icon} /> : '·'}
+            </button>
+          );
         })}
-        <button disabled={!unit.boots} onClick={() => unit.boots && onItem(unit.boots)} title={unit.boots?.name ?? 'Boots slot'} aria-label={unit.boots ? `Inspect ${unit.boots.name}` : 'Empty boots slot'}>{unit.boots?.icon ?? '♧'}</button>
+        <button disabled={!unit.boots} onClick={() => unit.boots && onItem(unit.boots)} title={unit.boots?.name ?? 'Boots slot'} aria-label={unit.boots ? `Inspect ${unit.boots.name}` : 'Empty boots slot'}>
+          {unit.boots ? <ContentImage image={unit.boots.image} name={unit.boots.name} fallback={unit.boots.icon} /> : '♧'}
+        </button>
         <span className={second >= (unit.wardReadyAt ?? 0) ? 'ward-ready' : ''} title={second >= (unit.wardReadyAt ?? 0) ? 'Ward ready' : `Ward in ${Math.ceil((unit.wardReadyAt ?? 0) - second)}s`}>◉</span>
       </div>
     </div>)}

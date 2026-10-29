@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_solana",
+  "component_id": "sun_armor",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Ivory-bronze armor and burnt-red sash",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Solenne Vaelor. Attached image is DESIGN REFERENCE ONLY. Only the empty ivory-bronze articulated armor outfit with burnt-red sash: cuirass, pauldrons, arm guards, hip plates, greaves and boots, coherently arranged on invisible support in a neutral symmetrical wide A pose. Open neck and joints visibly empty. No shield, sword, head, hair, skin, body or mannequin. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+  "reference_purpose": "reconstruction",
+  "slug": "solenne-vaelor",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/solenne-vaelor.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/solenne-vaelor-sun_armor.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-5598b457-c347-4b48-a3e4-bca39ba76aae.png"
+}

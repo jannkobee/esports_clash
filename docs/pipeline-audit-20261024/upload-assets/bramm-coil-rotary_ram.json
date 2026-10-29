@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_buck",
+  "component_id": "rotary_ram",
+  "category": "back",
+  "binding": "rigid",
+  "label": "Rotary ram-gun and back brace",
+  "attachment": "back",
+  "prompt": "Use case: stylized-concept. One isolated fantasy industrial power-tool assembly from the attached character design reference: the complete rotary rock-drilling machine with spiral drill head, its shoulder pivot, mechanical back brace and hoses. Worn black steel with orange hazard panels and brass joints. No operator, person, hands, body, clothing or weapon firing effects. Static catalog view, neutral lighting, full assembly within central 65% of frame and generous transparent margins. Transparent background, no floor, shadows, text, labels or backdrop.",
+  "reference_purpose": "reconstruction",
+  "slug": "bramm-coil",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/bramm-coil.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/bramm-coil-rotary_ram.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-ab0d7c67-58c6-4472-9d28-05909dc15bd5.png"
+}

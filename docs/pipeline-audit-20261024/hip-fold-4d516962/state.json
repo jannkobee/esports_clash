@@ -1,0 +1,14 @@
+{
+  "id": "4d516962-da1e-41cf-88e7-1120a7d17663",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "hip-fold-profile",
+  "runtime_id": "ddb07188977acba2b815846c5f2ead92802114fe87200f49fa9f665e7d698e10",
+  "environment_sha256": "160e42e63b84d075df53fca9c416775671584a1ed926a9ea81ad71691ab2ebab",
+  "started_unix": 1793110093.761103,
+  "exit_code": 0,
+  "report_sha256": "a8c3f9013d53d054ed306215ec1a3eafe2aa3f9b4042a8d6ff497c9c65a4eab4",
+  "completed_unix": 1793110103.5683436
+}

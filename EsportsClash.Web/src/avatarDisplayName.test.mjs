@@ -4,7 +4,7 @@ import { avatarDisplayName } from './avatarDisplayName.ts';
 import { AVATAR_IDENTITIES, getAvatarIdentity } from './avatarIdentity.ts';
 import { CHAMPIONS, INITIAL_PLAYERS } from './mockData.ts';
 
-test('every avatar has a distinct parody display name without changing internal identifiers', () => {
+test('every avatar has a distinct original display name without changing internal identifiers', () => {
   const displayNames = CHAMPIONS.map(avatar => avatar.displayName);
 
   assert.ok(CHAMPIONS.length > 0);
@@ -23,10 +23,10 @@ test('every avatar has a distinct parody display name without changing internal 
 });
 
 test('display-name lookup updates avatar signatures but preserves player-card identities', () => {
-  assert.equal(avatarDisplayName('Kaelen', CHAMPIONS), 'Arsenaldo');
-  assert.equal(avatarDisplayName('Paxi', CHAMPIONS), 'Fizzlewing');
-  assert.equal(getAvatarIdentity('Kaelen')?.title, 'The Conflux Savant');
-  assert.equal(getAvatarIdentity('Skybreaker')?.title, 'The Flakwing Ace');
+  assert.equal(avatarDisplayName('Kaelen', CHAMPIONS), 'Mirelle Vane');
+  assert.equal(avatarDisplayName('Paxi', CHAMPIONS), 'Lulla Faespring');
+  assert.equal(getAvatarIdentity('Kaelen')?.title, 'The Atelier Prodigy');
+  assert.equal(getAvatarIdentity('Skybreaker')?.title, 'The Airspace Duchess');
   assert.equal(avatarDisplayName('unlisted-avatar', CHAMPIONS), 'unlisted-avatar');
   assert.ok(INITIAL_PLAYERS.some(player => player.name === 'Cardrel'));
   for (const alias of ['Zypoo', 'd4nk', 'p1mple', 'M0cke', 'flopz', 'Spl1t', 'SneakBro', 'Fisha'])

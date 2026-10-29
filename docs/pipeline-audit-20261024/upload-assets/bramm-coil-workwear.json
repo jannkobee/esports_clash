@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_buck",
+  "component_id": "workwear",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Orange-striped industrial workwear",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Create an isolated physical equipment reconstruction reference for the existing avatar Bramm Coil. Attached image is DESIGN REFERENCE ONLY. Only the empty industrial workwear outfit: orange-striped leather/metal harness and rugged trousers, gloves, work boots and knee armor on invisible support, neutral symmetrical wide A pose. No rotary ram-gun, back-mounted machine, body, head, beard, skin or mannequin. Preserve the pictured design, materials, proportions and palette. Product-render clarity, even neutral lighting, three-quarter view unless a neutral outfit pose is specified. Entire named asset within the central 70 percent of frame with generous transparent margin on ALL sides. Genuine transparent background. No floor, shadow plane, text, labels, frame, logo, magic effects or unrelated objects. This is an equipment reference for later 3D reconstruction.",
+  "reference_purpose": "reconstruction",
+  "slug": "bramm-coil",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/bramm-coil.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/bramm-coil-workwear.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-e6be1413-07c5-4ef3-84e5-a669c04e8afd.png"
+}

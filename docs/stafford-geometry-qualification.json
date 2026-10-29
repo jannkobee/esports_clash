@@ -1,0 +1,3330 @@
+{
+  "policy": "full-surface-rest-seams-v2",
+  "status": "WARNING",
+  "passed": true,
+  "qualification_score": 80,
+  "gates": {
+    "skeleton": {
+      "passed": true,
+      "checks": {},
+      "bone_count": 57,
+      "missing_mandatory_bones": [],
+      "stature_m": 1.541
+    },
+    "skinning": {
+      "passed": true,
+      "checks": {},
+      "unweighted_vertices": 0,
+      "invalid_weight_sums": 0,
+      "max_gpu_influences": 4,
+      "negative_or_nan_weights": 0
+    },
+    "animations": {
+      "passed": true,
+      "checks": {},
+      "actions_present": [
+        "Attack",
+        "Cast",
+        "Death",
+        "Hit",
+        "Idle",
+        "Run",
+        "Strafe",
+        "TurnLeft",
+        "TurnRight",
+        "Walk"
+      ],
+      "missing_required_clips": []
+    },
+    "geometry": {
+      "passed": true,
+      "bind_self_intersections": 2,
+      "triangles_checked": 38300
+    }
+  },
+  "problems": [],
+  "warnings": [
+    "Self-intersection telemetry elevated during Attack",
+    "Self-intersection telemetry elevated during Cast",
+    "Self-intersection telemetry elevated during Death",
+    "Self-intersection telemetry elevated during Hit",
+    "Self-intersection telemetry elevated during Idle",
+    "Self-intersection telemetry elevated during Run",
+    "Self-intersection telemetry elevated during Walk"
+  ],
+  "bind": {
+    "finite": true,
+    "self_intersections": 2,
+    "triangles_checked": 38300,
+    "top_regions": [
+      {
+        "regions": [
+          "Hips",
+          "Hips"
+        ],
+        "intersections": 2
+      }
+    ]
+  },
+  "frames": [
+    {
+      "clip": "Attack",
+      "phase": 0,
+      "finite": true,
+      "self_intersections": 8501,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 570
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 385
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    },
+    {
+      "clip": "Attack",
+      "phase": 0.15,
+      "finite": true,
+      "self_intersections": 8516,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 1254
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 1156
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 901
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 865
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 669
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 669
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 450
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 362
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 343
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 303
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 235
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "ForearmL"
+          ],
+          "intersections": 219
+        }
+      ]
+    },
+    {
+      "clip": "Attack",
+      "phase": 0.42,
+      "finite": true,
+      "self_intersections": 15882,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 2272
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 2208
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 1748
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 1577
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 1262
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 906
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 837
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 700
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 573
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmR"
+          ],
+          "intersections": 513
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 501
+        },
+        {
+          "regions": [
+            "HandL",
+            "Head"
+          ],
+          "intersections": 397
+        }
+      ]
+    },
+    {
+      "clip": "Attack",
+      "phase": 0.7,
+      "finite": true,
+      "self_intersections": 8780,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 1189
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 895
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 833
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 740
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 674
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 667
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 533
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 428
+        },
+        {
+          "regions": [
+            "HandR",
+            "UpperArmL"
+          ],
+          "intersections": 419
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 400
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmR"
+          ],
+          "intersections": 302
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 267
+        }
+      ]
+    },
+    {
+      "clip": "Attack",
+      "phase": 1,
+      "finite": true,
+      "self_intersections": 8545,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 1012
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 946
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 938
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 903
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 729
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 568
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 384
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 355
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 353
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 271
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 246
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 191
+        }
+      ]
+    },
+    {
+      "clip": "Cast",
+      "phase": 0,
+      "finite": true,
+      "self_intersections": 8501,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 570
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 385
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    },
+    {
+      "clip": "Cast",
+      "phase": 0.15,
+      "finite": true,
+      "self_intersections": 8074,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 1231
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 996
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 990
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 867
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 730
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 578
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 434
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 327
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 317
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 309
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 235
+        },
+        {
+          "regions": [
+            "Head",
+            "UpperArmR"
+          ],
+          "intersections": 182
+        }
+      ]
+    },
+    {
+      "clip": "Cast",
+      "phase": 0.42,
+      "finite": true,
+      "self_intersections": 7592,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 1201
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 908
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 771
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 685
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 439
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 387
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 334
+        },
+        {
+          "regions": [
+            "Spine",
+            "UpperArmL"
+          ],
+          "intersections": 315
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 220
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 188
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "Spine"
+          ],
+          "intersections": 177
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 175
+        }
+      ]
+    },
+    {
+      "clip": "Cast",
+      "phase": 0.7,
+      "finite": true,
+      "self_intersections": 7656,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 1189
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 839
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 731
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 630
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 424
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 333
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 315
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 309
+        },
+        {
+          "regions": [
+            "HandR",
+            "UpperArmL"
+          ],
+          "intersections": 246
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "HandR"
+          ],
+          "intersections": 181
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 179
+        }
+      ]
+    },
+    {
+      "clip": "Cast",
+      "phase": 1,
+      "finite": true,
+      "self_intersections": 8501,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 570
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 385
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 0,
+      "finite": true,
+      "self_intersections": 6109,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 1163
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 1065
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 759
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 626
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 375
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 300
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 276
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "HandL"
+          ],
+          "intersections": 185
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "ForearmL"
+          ],
+          "intersections": 168
+        },
+        {
+          "regions": [
+            "HandR",
+            "HandR"
+          ],
+          "intersections": 161
+        },
+        {
+          "regions": [
+            "Head",
+            "UpperArmR"
+          ],
+          "intersections": 154
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 114
+        }
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 0.15,
+      "finite": true,
+      "self_intersections": 6059,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 1191
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 1056
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 751
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 632
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 392
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 305
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 249
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "HandL"
+          ],
+          "intersections": 185
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "ForearmL"
+          ],
+          "intersections": 177
+        },
+        {
+          "regions": [
+            "Head",
+            "UpperArmR"
+          ],
+          "intersections": 166
+        },
+        {
+          "regions": [
+            "HandR",
+            "HandR"
+          ],
+          "intersections": 163
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 110
+        }
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 0.42,
+      "finite": true,
+      "self_intersections": 6452,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 1154
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 1046
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 816
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 801
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 745
+        },
+        {
+          "regions": [
+            "Head",
+            "UpperArmR"
+          ],
+          "intersections": 197
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 197
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "HandL"
+          ],
+          "intersections": 185
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 180
+        },
+        {
+          "regions": [
+            "HandR",
+            "HandR"
+          ],
+          "intersections": 178
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 149
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "ForearmL"
+          ],
+          "intersections": 133
+        }
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 0.7,
+      "finite": true,
+      "self_intersections": 6823,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 1193
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 1138
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 1025
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 997
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 746
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "HandL"
+          ],
+          "intersections": 185
+        },
+        {
+          "regions": [
+            "Head",
+            "UpperArmR"
+          ],
+          "intersections": 181
+        },
+        {
+          "regions": [
+            "HandR",
+            "HandR"
+          ],
+          "intersections": 179
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 153
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 122
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 117
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "ForearmL"
+          ],
+          "intersections": 104
+        }
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 1,
+      "finite": true,
+      "self_intersections": 7267,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 1529
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 1117
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 1078
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 972
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 771
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "HandL"
+          ],
+          "intersections": 185
+        },
+        {
+          "regions": [
+            "HandR",
+            "HandR"
+          ],
+          "intersections": 176
+        },
+        {
+          "regions": [
+            "Hips",
+            "ThighR"
+          ],
+          "intersections": 160
+        },
+        {
+          "regions": [
+            "Head",
+            "UpperArmR"
+          ],
+          "intersections": 159
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 131
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmR"
+          ],
+          "intersections": 111
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "ForearmL"
+          ],
+          "intersections": 106
+        }
+      ]
+    },
+    {
+      "clip": "Hit",
+      "phase": 0,
+      "finite": true,
+      "self_intersections": 8501,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 570
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 385
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    },
+    {
+      "clip": "Hit",
+      "phase": 0.15,
+      "finite": true,
+      "self_intersections": 9672,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 1117
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 1093
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 929
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 920
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 918
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 754
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 705
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 623
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 394
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 389
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 258
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandL"
+          ],
+          "intersections": 197
+        }
+      ]
+    },
+    {
+      "clip": "Hit",
+      "phase": 0.42,
+      "finite": true,
+      "self_intersections": 9430,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 1038
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 1038
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 934
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 927
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 913
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 744
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 670
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 619
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 391
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 383
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 257
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandL"
+          ],
+          "intersections": 191
+        }
+      ]
+    },
+    {
+      "clip": "Hit",
+      "phase": 0.7,
+      "finite": true,
+      "self_intersections": 8548,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 928
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 919
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 888
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 881
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 813
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 654
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 569
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 393
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 380
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 372
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 257
+        },
+        {
+          "regions": [
+            "Head",
+            "UpperArmR"
+          ],
+          "intersections": 173
+        }
+      ]
+    },
+    {
+      "clip": "Hit",
+      "phase": 1,
+      "finite": true,
+      "self_intersections": 8501,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 570
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 385
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    },
+    {
+      "clip": "Idle",
+      "phase": 0,
+      "finite": true,
+      "self_intersections": 8501,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 570
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 385
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    },
+    {
+      "clip": "Idle",
+      "phase": 0.15,
+      "finite": true,
+      "self_intersections": 8498,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 1026
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 917
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 906
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 686
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 564
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 392
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 354
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 350
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 271
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 246
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 214
+        }
+      ]
+    },
+    {
+      "clip": "Idle",
+      "phase": 0.42,
+      "finite": true,
+      "self_intersections": 8479,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 1003
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 944
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 923
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 900
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 685
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 565
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 387
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 355
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 345
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 268
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 246
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 218
+        }
+      ]
+    },
+    {
+      "clip": "Idle",
+      "phase": 0.7,
+      "finite": true,
+      "self_intersections": 8401,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 938
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 929
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 915
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 886
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 696
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 574
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 390
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 357
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 335
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 244
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 244
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 241
+        }
+      ]
+    },
+    {
+      "clip": "Idle",
+      "phase": 1,
+      "finite": true,
+      "self_intersections": 8501,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 570
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 385
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 0,
+      "finite": true,
+      "self_intersections": 8526,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 562
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 453
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 0.15,
+      "finite": true,
+      "self_intersections": 8362,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 958
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 898
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 859
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 834
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 753
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 602
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 593
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 348
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 272
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 260
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 227
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 195
+        }
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 0.42,
+      "finite": true,
+      "self_intersections": 11405,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 1973
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 993
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 992
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 866
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 801
+        },
+        {
+          "regions": [
+            "Hips",
+            "ThighR"
+          ],
+          "intersections": 792
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 672
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 602
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 469
+        },
+        {
+          "regions": [
+            "ThighR",
+            "ThighR"
+          ],
+          "intersections": 453
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 350
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 290
+        }
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 0.7,
+      "finite": true,
+      "self_intersections": 11976,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 1742
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 1293
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 1069
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 930
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 748
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 633
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 628
+        },
+        {
+          "regions": [
+            "Hips",
+            "ThighR"
+          ],
+          "intersections": 618
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 511
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 387
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 379
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 325
+        }
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 1,
+      "finite": true,
+      "self_intersections": 8526,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 562
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 453
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 0,
+      "finite": true,
+      "self_intersections": 8527,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 580
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 365
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.15,
+      "finite": true,
+      "self_intersections": 8574,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 1022
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 999
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 869
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 815
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 623
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 597
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 464
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 351
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 307
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 287
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 234
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 201
+        }
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.42,
+      "finite": true,
+      "self_intersections": 9189,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 976
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 946
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 921
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 902
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 855
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 660
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 622
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 364
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 305
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 300
+        },
+        {
+          "regions": [
+            "Chest",
+            "Hips"
+          ],
+          "intersections": 249
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 243
+        }
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.7,
+      "finite": true,
+      "self_intersections": 9329,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 1154
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 956
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 932
+        },
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 678
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 639
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 626
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 606
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 417
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 411
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 394
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 220
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 212
+        }
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 1,
+      "finite": true,
+      "self_intersections": 8527,
+      "triangles_checked": 38300,
+      "top_regions": [
+        {
+          "regions": [
+            "Chest",
+            "UpperArmL"
+          ],
+          "intersections": 994
+        },
+        {
+          "regions": [
+            "UpperArmR",
+            "UpperArmR"
+          ],
+          "intersections": 940
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "UpperArmR"
+          ],
+          "intersections": 924
+        },
+        {
+          "regions": [
+            "UpperArmL",
+            "UpperArmL"
+          ],
+          "intersections": 897
+        },
+        {
+          "regions": [
+            "Chest",
+            "ForearmL"
+          ],
+          "intersections": 692
+        },
+        {
+          "regions": [
+            "Chest",
+            "Chest"
+          ],
+          "intersections": 580
+        },
+        {
+          "regions": [
+            "Hips",
+            "Hips"
+          ],
+          "intersections": 365
+        },
+        {
+          "regions": [
+            "ForearmR",
+            "ForearmR"
+          ],
+          "intersections": 358
+        },
+        {
+          "regions": [
+            "ForearmL",
+            "UpperArmL"
+          ],
+          "intersections": 339
+        },
+        {
+          "regions": [
+            "Chest",
+            "HandR"
+          ],
+          "intersections": 265
+        },
+        {
+          "regions": [
+            "Head",
+            "Head"
+          ],
+          "intersections": 247
+        },
+        {
+          "regions": [
+            "HandL",
+            "UpperArmR"
+          ],
+          "intersections": 228
+        }
+      ]
+    }
+  ],
+  "unweighted_vertices": 0,
+  "invalid_weight_sums": 0,
+  "max_gpu_influences": 4,
+  "scope": "All rendered triangles, multi-gate automated qualification (skeleton, skinning <=4 influences, required clips, finite deformation)."
+}

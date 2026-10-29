@@ -1,0 +1,411 @@
+{
+  "id": "3184f35b-889c-4697-9371-046ea3c89dd1",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "assets": [
+    {
+      "label": "parent",
+      "source_sha256": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4",
+      "stress_sha256": "dc92bf8ef0c3e3cb997bb7be34e45e3fa0984eefe2b7ed387e6c81a0a0489b26",
+      "stress_bytes": 3531632,
+      "poses": [
+        {
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 215,
+          "expected": 215
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 137,
+          "expected": 137
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 429,
+          "expected": 429
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 445,
+          "expected": 445
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 2,
+          "expected": 2
+        }
+      ],
+      "baseline_reproduced": true
+    },
+    {
+      "label": "current",
+      "source_sha256": "8416076e0ecb7b1592aafc1b4b9402ba028f21bb89c381c646f78501ce281838",
+      "stress_sha256": "7957316f4ce02ad10d56c36c06c26565f669973977475c4463937776761a94ba",
+      "stress_bytes": 3531788,
+      "poses": [
+        {
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 144,
+          "expected": 144
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 85,
+          "expected": 85
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 4,
+          "expected": 4
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 258,
+          "expected": 258
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 162,
+          "expected": 162
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 2,
+          "expected": 2
+        }
+      ],
+      "baseline_reproduced": true
+    }
+  ],
+  "status": "diagnostic_clips_exported"
+}

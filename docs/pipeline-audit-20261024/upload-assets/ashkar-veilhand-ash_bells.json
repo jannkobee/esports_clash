@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_locke",
+  "component_id": "ash_bells",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Iron ash bells",
+  "attachment": "waist",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Ashkar Veilhand. Attached image is design reference only. Only a clearly spaced set of dark iron ash bells with brass rims, red tying cords and pictured engraved details, no staff, person, hands, clothing, fire or smoke. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "ashkar-veilhand",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/ashkar-veilhand.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/ashkar-veilhand-ash_bells.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-1636c6bf-9b92-4843-b3c3-85ba35d59e03.png"
+}

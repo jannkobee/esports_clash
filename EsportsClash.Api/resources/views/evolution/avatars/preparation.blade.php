@@ -6,8 +6,19 @@
     <div><strong>{{ $sources->count() }}</strong><span>Generated sources</span></div>
     <div><strong>{{ $runs->whereIn('status',[...\App\Services\AvatarPreparationService::ACTIVE,'cancelling','pausing'])->count() }}</strong><span>Jobs in progress</span></div>
     <div><strong>{{ $runs->whereIn('status',['awaiting_retarget','awaiting_validation','needs_review','ready'])->count() }}</strong><span>Awaiting your action</span></div>
-    <div class="worker-summary"><span class="badge {{ $rigOperations && ($rigOperations['models_ready']??false) && ($rigOperations['runtime_ready']??false) ? 'good' : '' }}">{{ $rigOperations ? (($rigOperations['models_ready']??false)&&($rigOperations['runtime_ready']??false)?'Worker ready':'Worker setup pending') : 'Worker offline' }}</span><span>Local UniRig worker / Manual jobs only</span></div>
+    <div class="worker-summary"><span class="badge {{ \App\Services\AvatarPreparationService::cloudStageReady($rigOperations,'rigging') ? 'good' : '' }}">{{ \App\Services\AvatarPreparationService::cloudStageReady($rigOperations,'rigging') ? 'Colab rig stage ready' : 'Colab rig stage not verified' }}</span><span>Google Colab required / Manual jobs only</span></div>
 </div>
+@include('evolution.avatars.pipeline-readiness')
+<section class="panel preparation-create"><h2>Rig the generated body in Colab</h2>
+    <p class="muted">Start with an unchanged generated body. TokenRig predicts its skeleton and skin weights; deformation review comes before animation and appearance.</p>
+    <form method="post" action="{{ route('preparations.start') }}" class="settings-form">@csrf
+        <label>Generated source<select name="generation_id" required><option value="">Choose a source</option>
+        @foreach($sources as $source)<option value="{{ $source->id }}" @selected(request('generation')===$source->id)>{{ $catalog[$source->avatar_id]['name']??$source->avatar_id }} / {{ substr($source->id,0,8) }} / source generated on {{ $source->state['compute']['selected']??'unrecorded compute' }}</option>@endforeach
+        </select></label>
+        <input type="hidden" name="profile" value="tokenrig-colab-raw-v1"><input type="hidden" name="yaw" value="0">
+        <input type="hidden" name="attachments" value="[]"><button class="primary" @disabled($sources->isEmpty())>Create raw rig in Colab</button>
+    </form>
+</section>
 <section class="panel preparation-create"><div class="section-heading"><div><h2>Prepare a model</h2><p class="muted">Choose a generated source. A saved rig is reused when available; new sources use UniRig.</p></div></div>
     <form method="post" action="{{ route('preparations.start') }}" class="settings-form">
         @csrf
@@ -45,7 +56,7 @@
 <section class="panel preparation-history">
     <div class="section-heading"><div><h2>Preparation reports</h2><p class="muted">One report per source model. Retries add to the same timeline, oldest to newest.</p></div><p class="fine" id="live-status">Updates every 10 seconds</p></div>
     @include('evolution.avatars.report-toolbar')
-    <div id="live-reports" data-url="{{ route('preparations.live') }}">@include('evolution.avatars.preparation-runs')</div>
+    <div id="live-reports" data-url="{{ route('preparations.live',array_filter(['avatar_id'=>request('avatar_id')])) }}">@include('evolution.avatars.preparation-runs')</div>
     <details class="report-management" id="report-management"><summary>Manage report history</summary><p class="fine">Report deletion keeps asset files. Select eligible reports above, then confirm below.</p>
     <form id="preparation-bulk-delete" method="post" action="{{ route('preparations.bulk-delete') }}" class="preparation-bulk compact-bulk">
         @csrf @method('DELETE')

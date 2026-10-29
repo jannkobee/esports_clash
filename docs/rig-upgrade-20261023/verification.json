@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-23",
+  "owner": "/root",
+  "source_hashes": {
+    "EsportsClash.Web/src/avatarModelAssets.ts": "e69cb9cdb0d91e5635f60bd652a2432400845c4a0a8b2207471fd53d64b0190a",
+    "EsportsClash.Web/src/threeAvatarModels.ts": "5693f9facf965b7755be73e5625febdf03381be8b8412de41d5c47fc3d1a1591",
+    "EsportsClash.Web/src/rigging/assetContract.ts": "89037bbbbd49815f21b83008322f626e2ac6fdd0ea1b15aa1bad1aed4c3eb6fe",
+    "EsportsClash.Web/src/rigging/landmarkDetection.ts": "901907e433251c5eba9bcc53f965e9408cac7ce47f3c63350a3283758865f19d",
+    "infrastructure/avatar-evolution/retarget-unirig.py": "dbdbdb7cf56ac70699d7094fa17ab31100cdd308771ee81f7b3c5b57a188344d",
+    "infrastructure/avatar-evolution/retarget_motion.py": "a58e3ecbcfb41486bb04cc9be245eb1a6eed0afa19ad739b9734d229391e8194",
+    "infrastructure/avatar-evolution/asset_pipeline/deformation.py": "81b0bf320e4d2bbf3819bae2322a91052a62132e0626bbb06ad1510928765777",
+    "infrastructure/avatar-evolution/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+    "infrastructure/avatar-evolution/qualify-prepared.py": "2e2c48646f315717105db5209f3cb4fd6f63ddb667451120f0cba54fff7599b8",
+    "infrastructure/avatar-evolution/browser.mjs": "d04a9e7ee17fa8f93253442ef457ff4d0dd81a683c60f09d8949ebd06038c883",
+    "infrastructure/tokenrig/tokenrig_colab.ipynb": "013360417963efa8107ac11912971571a5b3e1de64f3fb9e60b763c33956fb6f"
+  },
+  "checks": {
+    "game_tests": 524,
+    "simulation_tests": 3,
+    "typescript": "passed",
+    "production_build_exit_code": 0,
+    "asset_linux_passed": 65,
+    "asset_linux_skipped": 1,
+    "blender_rig_regressions": 4,
+    "blender_natural_motion": 5,
+    "blender_pipeline_motion": 9,
+    "browser_technical": "passed",
+    "browser_gameplay": "passed",
+    "browser_captured_views": 68,
+    "notebook_python_cells": "compiled; no fresh Colab execution"
+  },
+  "candidate": {
+    "qualified": false,
+    "publication_eligible": false,
+    "provider_deployed": false,
+    "geometry": "rejected: gross surface stretching in Run and Walk",
+    "remaining": [
+      "tail chain/skin coverage",
+      "Attack collisions",
+      "Death wrist pinching and unsatisfactory fall"
+    ]
+  },
+  "limits": "Sampled motion review. No full dressed-character qualification, GPU inference or publication."
+}

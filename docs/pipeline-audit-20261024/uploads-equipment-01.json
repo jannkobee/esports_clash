@@ -1,0 +1,15 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_invoker",
+    "component_id": "needle_comb",
+    "label": "Needle-hair comb",
+    "category": "accessory",
+    "binding": "rigid",
+    "attachment": "head / hair mount",
+    "prompt": "Create a NEW isolated game prop reconstruction reference from the supplied character drawing. One isolated intricate brass needle-hair comb: a narrow arched brass spine and a row of slender straight tailoring needles, refined sewing-tool ornament, inspired by the character's hair comb. No hair, head, hands, body, cloth or extra objects. Full object centered, three-quarter product view that shows depth, with transparent margins on every edge. Preserve the illustrated ivory/oxblood/brass material language. Crisp readable physical shapes, neutral even studio lighting, true transparent alpha background, no floor, cast shadow, text labels, frames or cutout character. One separate asset only.",
+    "path": "docs/pipeline-audit-20261024/upload-assets/mirelle-needle_comb.png",
+    "sha256": "51e20a3f7be6dd38e723204fdba662de60bc3cd853b9082f5986eb5022c8a9e0",
+    "reference_purpose": "reconstruction"
+  }
+]

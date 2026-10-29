@@ -19,7 +19,7 @@ export function playerCardCombatPower(player: PlayerCard, avatar: ChampionKit): 
   const roleFit = isPlayablePrimary ? 0.025
     : isPlayableSecondary ? 0.01
       : -0.05 * (1 - clamp(flx, 1, 99) / 200);
-  const signatureFit = player.signatureChampions.includes(avatar.name) ? 0.025 : 0;
+  const signatureFit = player.signatureChampions.includes(avatar.legacyInternalName??avatar.name) ? 0.025 : 0;
   return clamp(score / 100 + roleFit + signatureFit, 0.25, 1.05);
 }
 

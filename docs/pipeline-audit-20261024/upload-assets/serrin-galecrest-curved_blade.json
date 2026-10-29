@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_kazemaru",
+  "component_id": "curved_blade",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Narrow curved blade",
+  "attachment": "right hand",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Serrin Galecrest. Attached drawing is design reference only. One complete narrow gently curved sword with bronze compass-inspired hilt and dark etched blade, isolated diagonally with entire tip and pommel in frame. No hands, body, clothing or shield. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+  "reference_purpose": "reconstruction",
+  "slug": "serrin-galecrest",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/serrin-galecrest.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/serrin-galecrest-curved_blade.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-a77fd501-c416-4b9e-9866-ea63b2127563.png"
+}

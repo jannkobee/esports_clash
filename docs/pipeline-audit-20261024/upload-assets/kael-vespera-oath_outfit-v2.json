@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_valkira",
+  "component_id": "oath_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Oath collector outfit, gray cape and wrist seals",
+  "attachment": "body",
+  "prompt": "Edit this isolated Oath collector outfit, gray cape and wrist seals reference: zoom out substantially, restore any cropped extremities, preserve its exact design and materials. Entire object must fit within the central60% of the image with at least20% clear transparent margin around every side. No body, extra equipment, floor, backdrop, text, labels or glow. Transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "kael-vespera",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/kael-vespera-oath_outfit.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/kael-vespera-oath_outfit-v2.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-faa78bb1-9f8b-49ec-bec2-90217cbedd79.png"
+}

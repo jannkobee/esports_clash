@@ -1,0 +1,1998 @@
+{
+  "id": "1bb641cd-ce80-4e12-9018-e67de0ff6dc3",
+  "avatar_id": "c_invoker",
+  "status": "animated_base_unqualified",
+  "report": {
+    "avatar_id": "c_invoker",
+    "canonical_id": "mirelle-vane",
+    "status": "animated_base_unqualified",
+    "provider": "blender-authored-anatomy-v1",
+    "source_sha256": "c68113bcab08f1c8e2b17a31068a85384a00a7a33bf01e7bc25761fb2654aff9",
+    "bones": 48,
+    "vertices": 9502,
+    "checks": {
+      "geometry_unchanged": true,
+      "unweighted_vertices": 0,
+      "normalized_weights": true,
+      "death_ends_low": true,
+      "finite_dense_motion": true,
+      "ground_clearance": true
+    },
+    "clips": {
+      "Idle": {
+        "frames": 61,
+        "duration_seconds": 2.0,
+        "lowest_vertex_m": 0.018019791692495346,
+        "maximum_edge_stretch_ratio": 2.280016885088902,
+        "maximum_planted_ankle_step_m": 0.00015637263347679814,
+        "final_head_joint_height_m": 1.5750000476837158
+      },
+      "Walk": {
+        "frames": 31,
+        "duration_seconds": 1.0,
+        "lowest_vertex_m": 0.018019799143075943,
+        "maximum_edge_stretch_ratio": 2.2583527239812,
+        "maximum_planted_ankle_step_m": 0,
+        "final_head_joint_height_m": 1.5670000314712524
+      },
+      "Run": {
+        "frames": 21,
+        "duration_seconds": 0.6666666666666666,
+        "lowest_vertex_m": 0.018019748851656914,
+        "maximum_edge_stretch_ratio": 2.258438219404891,
+        "maximum_planted_ankle_step_m": 0,
+        "final_head_joint_height_m": 1.540000081062317
+      },
+      "Attack": {
+        "frames": 27,
+        "duration_seconds": 0.8666666666666667,
+        "lowest_vertex_m": 0.01801990158855915,
+        "maximum_edge_stretch_ratio": 2.305026626081494,
+        "maximum_planted_ankle_step_m": 0,
+        "final_head_joint_height_m": 1.5750000476837158
+      },
+      "Cast": {
+        "frames": 37,
+        "duration_seconds": 1.2,
+        "lowest_vertex_m": 0.01801990158855915,
+        "maximum_edge_stretch_ratio": 2.299177442832956,
+        "maximum_planted_ankle_step_m": 0,
+        "final_head_joint_height_m": 1.5750000476837158
+      },
+      "Hit": {
+        "frames": 16,
+        "duration_seconds": 0.5,
+        "lowest_vertex_m": 0.018019765615463257,
+        "maximum_edge_stretch_ratio": 2.2800115497104856,
+        "maximum_planted_ankle_step_m": 9.854541521020987e-08,
+        "final_head_joint_height_m": 1.5750000476837158
+      },
+      "Death": {
+        "frames": 55,
+        "duration_seconds": 1.8,
+        "lowest_vertex_m": 0.014762863516807556,
+        "maximum_edge_stretch_ratio": 2.295767431073411,
+        "maximum_planted_ankle_step_m": 0,
+        "final_head_joint_height_m": 0.11999979615211487
+      },
+      "Strafe": {
+        "frames": 31,
+        "duration_seconds": 1.0,
+        "lowest_vertex_m": 0.0180197823792696,
+        "maximum_edge_stretch_ratio": 2.2583527239812,
+        "maximum_planted_ankle_step_m": 0,
+        "final_head_joint_height_m": 1.5670000314712524
+      },
+      "TurnLeft": {
+        "frames": 25,
+        "duration_seconds": 0.8,
+        "lowest_vertex_m": 0.01801981031894684,
+        "maximum_edge_stretch_ratio": 2.2817891795462195,
+        "maximum_planted_ankle_step_m": 2.7056746011050585e-05,
+        "final_head_joint_height_m": 1.5750000476837158
+      },
+      "TurnRight": {
+        "frames": 25,
+        "duration_seconds": 0.8,
+        "lowest_vertex_m": 0.018019841983914375,
+        "maximum_edge_stretch_ratio": 2.2817838987254913,
+        "maximum_planted_ankle_step_m": 2.7056746011050585e-05,
+        "final_head_joint_height_m": 1.5750000476837158
+      }
+    },
+    "method": "New final-target anatomy rig, Blender heat weights and bounded four-influence normalization; ten motions authored directly with two-bone contact solves. No legacy donor or shared retarget repair applied.",
+    "remaining_gates": [
+      "Attack: self-intersections exceed rest",
+      "Cast: self-intersections exceed rest",
+      "Death: self-intersections exceed rest",
+      "Hit: self-intersections exceed rest",
+      "Idle: self-intersections exceed rest",
+      "Run: self-intersections exceed rest",
+      "Strafe: self-intersections exceed rest",
+      "TurnLeft: self-intersections exceed rest",
+      "TurnRight: self-intersections exceed rest",
+      "Walk: self-intersections exceed rest",
+      "independent collision/deformation audit",
+      "multi-view visual review",
+      "actual Babylon GLB import and clip sampling",
+      "loop and transition checks",
+      "runtime locomotion contact and device budget"
+    ],
+    "files": {
+      "mirelle-raw-rig.blend": {
+        "bytes": 2524442,
+        "sha256": "54bf958e48ecbcec2b2b07bc0ce0432b7a65b7ea63431d7ca56cca9d87e79821"
+      },
+      "mirelle-raw-rig.glb": {
+        "bytes": 778128,
+        "sha256": "72aafc6946a7f440ae90de4f2d925e7fd5b32a488358f9f97a37b63d089281d8"
+      },
+      "mirelle-base-animated.glb": {
+        "bytes": 1046292,
+        "sha256": "d75c61014fb21f8fbe3e80e490eda4aba099546dda8e7b201062630afc2bc78e"
+      },
+      "mirelle-base-animated.blend": {
+        "bytes": 7706775,
+        "sha256": "7ccfa661192d7e850cec398d59c12db96164068499e8e41a5de7911897ee411f"
+      }
+    },
+    "independent_audit": {
+      "file": "/avatar-data/mirelle-rig-motion-v4-20261024/mirelle-base-animated.glb",
+      "sha256": "d75c61014fb21f8fbe3e80e490eda4aba099546dda8e7b201062630afc2bc78e",
+      "collision_policy": "full-surface-rest-seams-v2",
+      "vertices": 9502,
+      "triangles": 19000,
+      "bones": 48,
+      "topology": {
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "loose_vertices": 0
+      },
+      "weights": {
+        "unweighted": 0,
+        "maximum_influences": 4,
+        "maximum_sum_error": 1.1734664440155029e-07
+      },
+      "rest": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 19000,
+        "top_regions": []
+      },
+      "clips": {
+        "Attack": {
+          "frames_checked": 5,
+          "sampling": "five-phase-precheck",
+          "lowest_vertex_m": 0.01801980473101139,
+          "maximum_edge_ratio": 2.3050217966335538,
+          "severely_stretched_edges": 0,
+          "collision_samples": [
+            {
+              "phase": 0,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.15,
+              "finite": true,
+              "self_intersections": 66,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 56
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 5
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 3
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 2
+                }
+              ]
+            },
+            {
+              "phase": 0.42,
+              "finite": true,
+              "self_intersections": 78,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 39
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 34
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 5
+                }
+              ]
+            },
+            {
+              "phase": 0.7,
+              "finite": true,
+              "self_intersections": 66,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 56
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 5
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 3
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 2
+                }
+              ]
+            },
+            {
+              "phase": 1,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            }
+          ],
+          "peak_intersections": 78
+        },
+        "Cast": {
+          "frames_checked": 5,
+          "sampling": "five-phase-precheck",
+          "lowest_vertex_m": 0.01801980473101139,
+          "maximum_edge_ratio": 2.2963655747229734,
+          "severely_stretched_edges": 0,
+          "collision_samples": [
+            {
+              "phase": 0,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.15,
+              "finite": true,
+              "self_intersections": 52,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 40
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 6
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 5
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.42,
+              "finite": true,
+              "self_intersections": 26,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 17
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 5
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 4
+                }
+              ]
+            },
+            {
+              "phase": 0.7,
+              "finite": true,
+              "self_intersections": 34,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 22
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 7
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 5
+                }
+              ]
+            },
+            {
+              "phase": 1,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            }
+          ],
+          "peak_intersections": 59
+        },
+        "Death": {
+          "frames_checked": 5,
+          "sampling": "five-phase-precheck",
+          "lowest_vertex_m": 0.01531749963760376,
+          "maximum_edge_ratio": 2.285318406890279,
+          "severely_stretched_edges": 0,
+          "collision_samples": [
+            {
+              "phase": 0,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.15,
+              "finite": true,
+              "self_intersections": 62,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 50
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 5
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 5
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 2
+                }
+              ]
+            },
+            {
+              "phase": 0.42,
+              "finite": true,
+              "self_intersections": 137,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 91
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 24
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 20
+                },
+                {
+                  "regions": [
+                    "ShinL",
+                    "ThighL"
+                  ],
+                  "intersections": 1
+                },
+                {
+                  "regions": [
+                    "ThighL",
+                    "ThighL"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.7,
+              "finite": true,
+              "self_intersections": 95,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 68
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 14
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 13
+                }
+              ]
+            },
+            {
+              "phase": 1,
+              "finite": true,
+              "self_intersections": 95,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 68
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 14
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 13
+                }
+              ]
+            }
+          ],
+          "peak_intersections": 137
+        },
+        "Hit": {
+          "frames_checked": 5,
+          "sampling": "five-phase-precheck",
+          "lowest_vertex_m": 0.018019650131464005,
+          "maximum_edge_ratio": 2.280017684306873,
+          "severely_stretched_edges": 0,
+          "collision_samples": [
+            {
+              "phase": 0,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.15,
+              "finite": true,
+              "self_intersections": 63,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 60
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 2
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.42,
+              "finite": true,
+              "self_intersections": 63,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 59
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 2
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 2
+                }
+              ]
+            },
+            {
+              "phase": 0.7,
+              "finite": true,
+              "self_intersections": 62,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 59
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 2
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 1,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            }
+          ],
+          "peak_intersections": 63
+        },
+        "Idle": {
+          "frames_checked": 5,
+          "sampling": "five-phase-precheck",
+          "lowest_vertex_m": 0.01801980473101139,
+          "maximum_edge_ratio": 2.280017684306873,
+          "severely_stretched_edges": 0,
+          "collision_samples": [
+            {
+              "phase": 0,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.15,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.42,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.7,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 1,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            }
+          ],
+          "peak_intersections": 59
+        },
+        "Run": {
+          "frames_checked": 5,
+          "sampling": "five-phase-precheck",
+          "lowest_vertex_m": 0.018019456416368484,
+          "maximum_edge_ratio": 2.2576100683446105,
+          "severely_stretched_edges": 0,
+          "collision_samples": [
+            {
+              "phase": 0,
+              "finite": true,
+              "self_intersections": 137,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 78
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 20
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 19
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "ForearmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 9
+                }
+              ]
+            },
+            {
+              "phase": 0.15,
+              "finite": true,
+              "self_intersections": 91,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 63
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 6
+                }
+              ]
+            },
+            {
+              "phase": 0.42,
+              "finite": true,
+              "self_intersections": 103,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 58
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 19
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 12
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 8
+                },
+                {
+                  "regions": [
+                    "ForearmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 6
+                }
+              ]
+            },
+            {
+              "phase": 0.7,
+              "finite": true,
+              "self_intersections": 97,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 69
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 10
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 10
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 8
+                }
+              ]
+            },
+            {
+              "phase": 1,
+              "finite": true,
+              "self_intersections": 137,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 78
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 20
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 19
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "ForearmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 9
+                }
+              ]
+            }
+          ],
+          "peak_intersections": 137
+        },
+        "Strafe": {
+          "frames_checked": 5,
+          "sampling": "five-phase-precheck",
+          "lowest_vertex_m": 0.01801968738436699,
+          "maximum_edge_ratio": 2.2576100683446105,
+          "severely_stretched_edges": 0,
+          "collision_samples": [
+            {
+              "phase": 0,
+              "finite": true,
+              "self_intersections": 137,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 78
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 20
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 19
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "ForearmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 9
+                }
+              ]
+            },
+            {
+              "phase": 0.15,
+              "finite": true,
+              "self_intersections": 91,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 63
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 6
+                }
+              ]
+            },
+            {
+              "phase": 0.42,
+              "finite": true,
+              "self_intersections": 103,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 58
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 19
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 12
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 8
+                },
+                {
+                  "regions": [
+                    "ForearmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 6
+                }
+              ]
+            },
+            {
+              "phase": 0.7,
+              "finite": true,
+              "self_intersections": 97,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 69
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 10
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 10
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 8
+                }
+              ]
+            },
+            {
+              "phase": 1,
+              "finite": true,
+              "self_intersections": 137,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 78
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 20
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 19
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "ForearmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 9
+                }
+              ]
+            }
+          ],
+          "peak_intersections": 137
+        },
+        "TurnLeft": {
+          "frames_checked": 5,
+          "sampling": "five-phase-precheck",
+          "lowest_vertex_m": 0.01801973208785057,
+          "maximum_edge_ratio": 2.2817288775485585,
+          "severely_stretched_edges": 0,
+          "collision_samples": [
+            {
+              "phase": 0,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.15,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.42,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 53
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 5
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.7,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 53
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 5
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 1,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            }
+          ],
+          "peak_intersections": 59
+        },
+        "TurnRight": {
+          "frames_checked": 5,
+          "sampling": "five-phase-precheck",
+          "lowest_vertex_m": 0.01801971346139908,
+          "maximum_edge_ratio": 2.281722039937664,
+          "severely_stretched_edges": 0,
+          "collision_samples": [
+            {
+              "phase": 0,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.15,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.42,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 53
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 5
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 0.7,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 53
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 5
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            },
+            {
+              "phase": 1,
+              "finite": true,
+              "self_intersections": 59,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 54
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 4
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 1
+                }
+              ]
+            }
+          ],
+          "peak_intersections": 59
+        },
+        "Walk": {
+          "frames_checked": 5,
+          "sampling": "five-phase-precheck",
+          "lowest_vertex_m": 0.018027223646640778,
+          "maximum_edge_ratio": 2.2576100683446105,
+          "severely_stretched_edges": 0,
+          "collision_samples": [
+            {
+              "phase": 0,
+              "finite": true,
+              "self_intersections": 137,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 78
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 20
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 19
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "ForearmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 9
+                }
+              ]
+            },
+            {
+              "phase": 0.15,
+              "finite": true,
+              "self_intersections": 91,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 63
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 6
+                }
+              ]
+            },
+            {
+              "phase": 0.42,
+              "finite": true,
+              "self_intersections": 103,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 58
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 19
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 12
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 8
+                },
+                {
+                  "regions": [
+                    "ForearmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 6
+                }
+              ]
+            },
+            {
+              "phase": 0.7,
+              "finite": true,
+              "self_intersections": 97,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 69
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 10
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 10
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 8
+                }
+              ]
+            },
+            {
+              "phase": 1,
+              "finite": true,
+              "self_intersections": 137,
+              "triangles_checked": 19000,
+              "top_regions": [
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 78
+                },
+                {
+                  "regions": [
+                    "UpperArmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 20
+                },
+                {
+                  "regions": [
+                    "ForearmL",
+                    "UpperArmL"
+                  ],
+                  "intersections": 19
+                },
+                {
+                  "regions": [
+                    "ClavicleR",
+                    "ClavicleR"
+                  ],
+                  "intersections": 11
+                },
+                {
+                  "regions": [
+                    "ForearmR",
+                    "UpperArmR"
+                  ],
+                  "intersections": 9
+                }
+              ]
+            }
+          ],
+          "peak_intersections": 137
+        }
+      },
+      "problems": [
+        "Attack: self-intersections exceed rest",
+        "Cast: self-intersections exceed rest",
+        "Death: self-intersections exceed rest",
+        "Hit: self-intersections exceed rest",
+        "Idle: self-intersections exceed rest",
+        "Run: self-intersections exceed rest",
+        "Strafe: self-intersections exceed rest",
+        "TurnLeft: self-intersections exceed rest",
+        "TurnRight: self-intersections exceed rest",
+        "Walk: self-intersections exceed rest"
+      ],
+      "structural_passed": false,
+      "qualification": "pending Babylon, transition, contact and artistic review"
+    }
+  },
+  "artifacts": {
+    "motion-death.png": {
+      "sha256": "b0d67fb57b4aa72f07ad16bba809c49a53e543013b2b760c0660f68a10f4a737",
+      "bytes": 92269
+    },
+    "base-audit.json": {
+      "sha256": "da496db41d99319512c937d883db805c1e903dfc4061c656a3bbe2eb5eea184f",
+      "bytes": 6700
+    },
+    "motion-idle.png": {
+      "sha256": "9da9dcf062de93d0570c93466e936a2d46d5927c3494df3617ee22eb64c98a18",
+      "bytes": 158120
+    },
+    "mirelle-base-unrigged.blend": {
+      "sha256": "48b62630878c998a03d052567fc13f204fbb988cabdf2522d3e9465586ab5df6",
+      "bytes": 1919143
+    },
+    "mirelle-base-unrigged.glb": {
+      "sha256": "c68113bcab08f1c8e2b17a31068a85384a00a7a33bf01e7bc25761fb2654aff9",
+      "bytes": 514524
+    },
+    "motion-attack.png": {
+      "sha256": "109ac1c8af5e4bf43e7dc57ac60ad59b7c855b68e05c166d53fde4a28c4ecbca",
+      "bytes": 151881
+    },
+    "mirelle-raw-rig.blend": {
+      "sha256": "54bf958e48ecbcec2b2b07bc0ce0432b7a65b7ea63431d7ca56cca9d87e79821",
+      "bytes": 2524442
+    },
+    "motion-run.png": {
+      "sha256": "503416ac353d45071f492cd47fc89e71cde2960c3987f6f34a2550c4fb77d175",
+      "bytes": 160113
+    },
+    "independent-audit.json": {
+      "sha256": "0adaed2c25a7e195c2e4ebddff459569734011a8993bbacd824bf279420c9586",
+      "bytes": 42633
+    },
+    "mirelle-raw-rig.glb": {
+      "sha256": "72aafc6946a7f440ae90de4f2d925e7fd5b32a488358f9f97a37b63d089281d8",
+      "bytes": 778128
+    },
+    "motion-cast.png": {
+      "sha256": "9bedc6c6ec01f6dbfec8e49800bd74ccd1172df3788dc2d98e2a4e8a08db8d6d",
+      "bytes": 151536
+    },
+    "mirelle-base-animated.glb": {
+      "sha256": "d75c61014fb21f8fbe3e80e490eda4aba099546dda8e7b201062630afc2bc78e",
+      "bytes": 1046292
+    },
+    "mirelle-base-animated.blend": {
+      "sha256": "7ccfa661192d7e850cec398d59c12db96164068499e8e41a5de7911897ee411f",
+      "bytes": 7706775
+    },
+    "rig-motion-report.json": {
+      "sha256": "cc49ec63459d304805160df1db395cfc6c2bc66fac5758f2bb2a2b601986c4bb",
+      "bytes": 4368
+    }
+  }
+}

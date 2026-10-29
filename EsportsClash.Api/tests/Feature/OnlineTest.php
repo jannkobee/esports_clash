@@ -35,6 +35,46 @@ class OnlineTest extends TestCase
         return $service->queue($this->account())['match'];
     }
 
+    public function test_hybrid_allocation_pins_baseline_and_does_not_load_an_unqualified_command_model():void {
+        $catalog=OnlineCatalog::firstOrFail();$manifest=$catalog->manifest;
+        $manifest['policy_version']='baseline-hybrid-v1';$catalog->update(['manifest'=>$manifest]);
+        $match=$this->allocated();
+        $this->assertSame('baseline-hybrid-v1',$match->plan['versions']['policy_version']);
+        $this->assertSame(['controller'=>'hybrid','release'=>null],$match->plan['intelligence']);
+    }
+
+    public function test_original_roster_allocation_uses_hybrid_with_a_pinned_compatible_release_only():void {
+        $match=$this->allocated();
+        $this->assertSame('original-v3-hybrid-v2',$match->plan['versions']['policy_version']);
+        $this->assertSame(['controller'=>'hybrid','release'=>null],$match->plan['intelligence']);
+    }
+
+    public function test_reviewed_roster_upgrade_preserves_owned_instances_lineup_and_queue():void {
+        $current=OnlineCatalog::firstOrFail();$previous=$current->payload;
+        foreach($previous['avatars'] as &$kit){unset($kit['abilityRuleset']);$kit['skill1']['name']='Historical skill';}unset($kit);
+        $oldId=hash('sha256',json_encode($previous));$manifest=$current->manifest;$manifest['catalog_version']=$oldId;
+        $current->update(['active'=>false]);
+        OnlineCatalog::create(['id'=>$oldId,'active'=>true,'manifest'=>$manifest,'payload'=>$previous]);
+        $user=$this->account();$service=app(OnlineService::class);$service->queue($user);
+        $club=\App\Models\OnlineClub::where('user_id',$user->id)->firstOrFail();$lineup=$club->lineup;
+        $owned=OwnedPlayerCard::orderBy('id')->get(['id','user_id','definition_id','grant_key'])->toArray();
+        $this->artisan('online:install-catalog',['--original-roster'=>true])->assertSuccessful();
+        $this->assertSame($owned,OwnedPlayerCard::orderBy('id')->get(['id','user_id','definition_id','grant_key'])->toArray());
+        $this->assertSame($lineup,$club->fresh()->lineup);
+        $this->assertCount(5,$service->validatedLineup($user->id,$lineup,$service->activeCatalog()));
+        $this->assertSame($current->id,\App\Models\NormalQueueTicket::where('user_id',$user->id)->value('catalog_id'));
+        $this->assertFalse(OnlineCatalog::findOrFail($oldId)->active);
+    }
+
+    public function test_allocation_freezes_content_catalog_even_after_backoffice_edits():void {
+        $match=$this->allocated();$snapshot=$match->plan['content_catalog'];
+        $this->assertCount(284,$snapshot['records']);
+        $entry=\App\Models\GameContent::where('kind','item')->firstOrFail();
+        $payload=$entry->payload;$payload['cost']=123;
+        app(\App\Services\GameContentService::class)->mutate($entry,1,$match->blue_user_id,'save',$payload);
+        $this->assertSame($snapshot,$match->fresh()->plan['content_catalog']);
+        $this->assertNotSame($snapshot['hash'],app(\App\Services\GameContentService::class)->snapshot()['hash']);
+    }
     private function workerResult(OnlineMatch $match): array
     {
         $draft = [];

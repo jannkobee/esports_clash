@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_kage",
+  "component_id": "lacquer_outfit",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Articulated matte-black lacquer outfit",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Nyxara Vale. Attached drawing is design reference only. Only the empty articulated matte-black lacquer clothing and armor set, angular strips, black scarf and draped split cloth, gloves and boots. Neutral wide A pose on invisible support, open gaps remain empty. No person, skin, head, hair, mannequin, daggers, weapons or shadows. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+  "reference_purpose": "reconstruction",
+  "slug": "nyxara-vale",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/nyxara-vale.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/nyxara-vale-lacquer_outfit.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-16714456-ecb8-4b96-be65-27d8685cfe60.png"
+}

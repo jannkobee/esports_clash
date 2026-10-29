@@ -1,0 +1,27 @@
+{
+  "compute": "google",
+  "parent_sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+  "candidate_sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+  "rest_surface_comparison": {
+    "before_vertices": 23734,
+    "after_vertices": 23806,
+    "max_nearest_distance_m": 4.6026559630263364e-07,
+    "rms_nearest_distance_m": 1.2531712396316747e-07
+  },
+  "weights": {
+    "before_to_after": {
+      "unmatched_vertices": 0,
+      "max_matching_weight_error": 5.960464477539063e-08
+    },
+    "after_to_before": {
+      "unmatched_vertices": 0,
+      "max_matching_weight_error": 5.960464477539063e-08
+    },
+    "verified": true
+  },
+  "parent_triangles": 37578,
+  "candidate_triangles": 37578,
+  "qualification_complete": false,
+  "publication_eligible": false,
+  "preservation_verified": true
+}

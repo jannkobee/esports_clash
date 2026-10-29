@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_renn",
+  "component_id": "tux_armor",
+  "category": "outfit",
+  "binding": "skinned",
+  "label": "Midnight tux-armor, mask and floorwork slippers",
+  "attachment": "body",
+  "prompt": "Use case: stylized-concept. Isolated physical reconstruction reference for Aurelio Vane. Attached illustration is design reference only. ONLY the empty midnight tux-armor outfit, shoulder plates, white ruffled shirt, trousers, gloves, practical flat floorwork slippers and one empty decorative eye mask displayed above the collar. No rapier, fan shield, skin, face, hair or person. Garments are empty and supported invisibly in a neutral symmetrical wide A pose, with empty neck and joint openings. Even neutral studio lighting, crisp physical geometry. Three-quarter view unless rest pose specified. Complete named asset inside central 70 percent of frame, generous clear TRANSPARENT margin on all sides. Genuine transparent background. No floor, cast shadows, glow backdrop, text, frames, labels, logo, unrelated equipment or extra subjects.",
+  "reference_purpose": "reconstruction",
+  "slug": "aurelio-vane",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/aurelio-vane.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/aurelio-vane-tux_armor.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-fe757d24-988f-4b45-bc11-d4816b0017f2.png"
+}

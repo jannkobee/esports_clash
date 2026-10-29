@@ -1,0 +1,28 @@
+[
+  {
+    "avatar_id": "c_invoker",
+    "component_id": "boots",
+    "label": "Flat boots",
+    "category": "outfit",
+    "binding": "rigid",
+    "attachment": "feet",
+    "kind": "component",
+    "path": "docs/pipeline-audit-20261024/upload-assets/mirelle-vane-boots-v2.png",
+    "sha256": "5b14675ba8a66d307219ff4b7dfe9752fca0afb95544f42378a6c1b6d67dca2d",
+    "prompt": "Edit reference: Remove high heels. Make both soles truly flat, continuous low walking soles with at most 1 cm heel. Preserve the boot shafts, materials and ornament. Both complete boots separate with padding. Transparent background, no halo, floor, shadows or text.",
+    "reference_purpose": "reconstruction"
+  },
+  {
+    "avatar_id": "c_skybreaker",
+    "component_id": "observation_platform",
+    "label": "Fan-powered observation platform",
+    "category": "vehicle",
+    "binding": "independent",
+    "attachment": "independent vehicle",
+    "kind": "component",
+    "path": "docs/pipeline-audit-20261024/upload-assets/ravelle-skyrake-observation_platform-v2.png",
+    "sha256": "1af3b32270fb41a42bc396700a16051c0f92b5395daa4031989dfc0578ac5c0a",
+    "prompt": "Edit reference: Zoom out to complete the RIGHT edge of platform and both right-side flags, none may touch frame. Entire vehicle within central 70% of canvas with 15% transparent margins ALL sides. No pilot. Transparent background, no halo, floor, shadows or text.",
+    "reference_purpose": "reconstruction"
+  }
+]

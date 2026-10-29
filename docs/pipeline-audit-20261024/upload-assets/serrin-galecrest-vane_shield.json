@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_kazemaru",
+  "component_id": "vane_shield",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Collapsible wind-vane shield",
+  "attachment": "left hand",
+  "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Serrin Galecrest. Attached drawing is design reference only. One complete collapsible wind-vane shield with ivory panels, bronze compass-like central star, blue map lines and small weather pennants. No sword, hands, person or clothing. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+  "reference_purpose": "reconstruction",
+  "slug": "serrin-galecrest",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/serrin-galecrest.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/serrin-galecrest-vane_shield.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-ae4e04aa-c1ee-49aa-ae6b-b43dae81d16f.png"
+}

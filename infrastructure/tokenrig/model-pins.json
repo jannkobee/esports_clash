@@ -1,0 +1,31 @@
+{
+  "repository": "https://github.com/VAST-AI-Research/SkinTokens.git",
+  "commit": "273b691d35989d71cd17ff2895fdc735097b92d1",
+  "license": "MIT",
+  "huggingface": {
+    "repository": "VAST-AI/SkinTokens",
+    "revision": "79736cad0fd84de384d5eede659b4ebd24effe33",
+    "files": [
+      {
+        "path": "experiments/articulation_xl_quantization_256_token_4/grpo_1400.ckpt",
+        "bytes": 1131603979,
+        "sha256": "f4e4706a11cfb520cdde65156a0358545e4fbf8f36237aca01ea5e79d5cb5692"
+      },
+      {
+        "path": "experiments/skin_vae_2_10_32768/last.ckpt",
+        "bytes": 487311745,
+        "sha256": "4843f49e58afff88345806b94ca82e6cc9d8def6e7432e2853c677b154de0ed4"
+      }
+    ]
+  },
+  "qwen_config": {
+    "repository": "Qwen/Qwen3-0.6B",
+    "revision": "c1899de289a04d12100db370d81485cdf75e47ca"
+  },
+  "upstream_sha256": {
+    "src/model/tokenrig.py": "bf27b72201c5fb23028a9f8a8e63b568462abfa2b4e4b15e50529cdbfc15a222",
+    "src/model/skin_vae_model.py": "0d7e3d031bfbad8b4f61493424a7c4538175f30646c7db76564c6412586f3001",
+    "src/model/skin_vae/autoencoders/miche_transformer_blocks.py": "ca2c2ac8885914910e2e7c3297a6f8f31629de41969e552db542325d6a4853bf",
+    "src/server/bpy_server.py": "41071f3e355bab015c0b5a608b52eebc9e223c7e8dc484692a1d0d917c525dd4"
+  }
+}

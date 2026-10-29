@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_kindra",
+  "component_id": "fen",
+  "category": "companion",
+  "binding": "independent",
+  "label": "Fen dusk-hound",
+  "attachment": "independent companion",
+  "prompt": "Edit the attached horned hound reference into a clean rigging-base mannequin. Preserve canine body proportions, horns, closed eyes, four separated legs, paws and separated tail. REMOVE ALL long fur, mane, feathering, hair strands and fluffy tail hair. Smooth hairless neutral matte-gray clay anatomical quadruped mannequin with readable shoulder, elbow, hip and knee joints. No gear, blindfold, clothing, flames, decorative shells, person or extra subject. Complete animal including horns and tail occupies only65% of frame with generous margins. Genuine transparent background, even lighting, no floor, glow, shadows, text or labels.",
+  "reference_purpose": "reconstruction",
+  "slug": "orin-and-fen",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/orin-and-fen-fen-v3.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/orin-and-fen-fen-v4.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-5ee37c5e-3506-4020-ac12-c4f028ac4e1e.png"
+}

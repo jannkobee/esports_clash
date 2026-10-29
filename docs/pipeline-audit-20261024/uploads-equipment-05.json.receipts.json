@@ -1,0 +1,65 @@
+[
+  {
+    "avatar_id": "c_solana",
+    "id": "heliograph_shield",
+    "sha256": "3c1b242b831abdf34873719417102d53b205a79c144df59a24804d9ab9a38f54",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "2d87b0d6bd9cfd0840002ad0c57f735669e3167d4091a106042449ebc1fc7322",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_solana",
+    "id": "sun_armor",
+    "sha256": "ecc51095274558f8d5144ef986c0ec0dce8c4afadc597c608ea107cf401087cd",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "4b64a62a85c1f11e681699000115b3387983e0997f1384781625f47db8732c0f",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_astra",
+    "id": "crystal_longbow",
+    "sha256": "7f2612b6d0bb47e2edeb051d4b5231d9327bfbc7b659d92701d6f014c80a3605",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "fa55632284f48a9c7c96fb4b439f285fe6fe4cdaf4bc89fe0db5365d9c8dce95",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_astra",
+    "id": "ice_plates",
+    "sha256": "565ca8716486d0660e00410e5577be22da8d08dc1d4e817e660e1debc56cf659",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "27d67284f8425c52cb0dec91363c38b976d9f7ea1e659978aa05329c48e71155",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kyumi",
+    "id": "route_tablets",
+    "sha256": "24fad1a9029aebb706579ef94aceddeff3764ae54100fcffa92f18a03c23aacf",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "8ccb30a1df697387736b0b2d70932229b5a7793e13e14215350149aa84a46add",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kyumi",
+    "id": "travel_robes",
+    "sha256": "827432b637de4a74b1c97018ba34059bc5f60c208cbaf49853564474501b9708",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "3f16589930afd7f334f6bfec5b4031be2275eea680c5bdc4d4e9a1f46accfb63",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_buck",
+    "id": "workwear",
+    "sha256": "269b21cd681684c2d0c573f3f11e78559f643015fe771bc4117d7c740ada0eaa",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "e48cc1004835f5d21316a2571852916a327603bbe9c08b2827e6ed301fb32b14",
+    "http": 200
+  }
+]

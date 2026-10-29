@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_valkira",
+  "component_id": "crescent_ledgers",
+  "category": "accessory",
+  "binding": "rigid",
+  "label": "Paired crescent ledger blades",
+  "attachment": "hands",
+  "prompt": "Create a static fantasy-game prop reference using the attached character illustration only for design: isolate the complete matching pair of decorative crescent-shaped ledger blades he is holding. Dark aged metal, gold celestial etching, grip handles, paper ledger tags and red tassels. Arrange the two props clearly separated side by side as a catalog render. No person, hands, body, clothing, action, blood, injury or scene. Entire pair occupies only60% of the frame with generous transparent margins. Even studio lighting, genuine transparent background, no floor, cast shadow, glow backdrop, text, frames or labels.",
+  "reference_purpose": "reconstruction",
+  "slug": "kael-vespera",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/kael-vespera.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/kael-vespera-crescent_ledgers-v2.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-297dc73c-d312-4bec-a4b7-9626236a46a5.png"
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "avatar_id": "c_xin",
+  "component_id": "skate_boots",
+  "category": "outfit",
+  "binding": "rigid",
+  "label": "Iron skate-boots",
+  "attachment": "feet",
+  "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Rux Emberchain. Attached image is design reference only. Only the matching pair of iron skate-boots with mechanical wheels and leather uppers. Clearly separated, complete soles and tops visible. No legs, wearer, mail bag or clothing. Clothing is empty and held by invisible support in a neutral wide A pose. Every opening is visibly empty. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+  "reference_purpose": "reconstruction",
+  "slug": "rux-emberchain",
+  "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/rux-emberchain.png",
+  "path": "docs/pipeline-audit-20261024/upload-assets/rux-emberchain-skate_boots.png",
+  "generated_source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-27454aec-5c85-4cc9-9d87-8edc2a1296ec.png"
+}

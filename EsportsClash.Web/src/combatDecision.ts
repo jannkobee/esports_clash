@@ -201,6 +201,7 @@ export function chooseTeamfightTarget(
 }
 
 export function shouldUseUltimate(unit: Fighter, target: Fighter, enemies: Fighter[], allies: Fighter[], ultRange: number = 320): boolean {
+  if(unit.champion.abilityRuleset||(unit.v3RecoveryRemaining??0)>0)return false;
   if (unit.level < 6 || unit.mana < ultimateManaCost(unit) || unit.cdUlt > 0) return false;
   if (distance(unit, target) > ultRange) return false;
   if (unit.champion.name === 'Faelith') return allies.some(ally => ally.isAlive && distance(unit, ally) <= 215
@@ -248,6 +249,7 @@ export function shouldUseUltimate(unit: Fighter, target: Fighter, enemies: Fight
 }
 
 export function shouldUseSkill(unit: Fighter, target: Fighter, enemies: Fighter[], range: number): boolean {
+  if(unit.champion.abilityRuleset||(unit.v3RecoveryRemaining??0)>0)return false;
   if ((unit.cd1 > 0 && !(['Cinderlock', 'Cinderbloom'].includes(unit.champion.name) && unit.cinderQStage)) || unit.mana < skill1ManaCost(unit) || distance(unit, target) > range) return false;
   if (['Cinderlock', 'Cinderbloom'].includes(unit.champion.name) && unit.cinderQStage) return distance(unit, target) <= 125;
   if (isCrowdControlSkill(unit.champion.name, 'skill1') && health(target) > 0.35
@@ -272,6 +274,7 @@ export function shouldUseSkill(unit: Fighter, target: Fighter, enemies: Fighter[
 }
 
 export function shouldUseSecondSkill(unit: Fighter, target: Fighter, enemies: Fighter[], allies: Fighter[], range: number): boolean {
+  if(unit.champion.abilityRuleset||(unit.v3RecoveryRemaining??0)>0)return false;
   if (unit.cd2 > 0 || unit.mana < 35) return false;
   const utilityCast = isSelfOrAllySecondSkill(unit.champion.name);
   if ((!utilityCast || unit.champion.name === 'Tequoia') && distance(unit, target) > range) return false;

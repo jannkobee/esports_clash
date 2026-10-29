@@ -1,0 +1,57 @@
+{
+  "scope": "Styled private paused fixture, 2D fallback; wall-HUD remains paused while authoritative time is stepped",
+  "sourceHash": "14ac826de0d1ec4132100c2f611ff37b6ba2fbced19ae0049499c64d815e52a8",
+  "second": 4,
+  "constructs": [
+    {
+      "id": "v3-object:93",
+      "kind": "friction",
+      "hp": 2,
+      "points": []
+    },
+    {
+      "id": "v3-object:100",
+      "kind": "friction",
+      "hp": 2,
+      "points": []
+    },
+    {
+      "id": "v3-object:163",
+      "kind": "pin",
+      "hp": 1,
+      "points": []
+    },
+    {
+      "id": "v3-object:168",
+      "kind": "support",
+      "hp": 2,
+      "points": []
+    }
+  ],
+  "counters": {
+    "ai_choice_explained": 27,
+    "ability_started": 27,
+    "ability_committed": 21,
+    "construct_placed": 22,
+    "ability_failed": 4,
+    "drowse_added": 14,
+    "construct_damaged": 14,
+    "construct_destroyed": 13,
+    "movement_modified": 3,
+    "cast_recovery_added": 2,
+    "pattern_selected": 2,
+    "pin_consumed": 2,
+    "momentum_observed": 1
+  },
+  "selectors": [
+    {
+      "label": "Mirelle page blue",
+      "pages": 10
+    },
+    {
+      "label": "Mirelle page red",
+      "pages": 10
+    }
+  ],
+  "previewLabel": true
+}

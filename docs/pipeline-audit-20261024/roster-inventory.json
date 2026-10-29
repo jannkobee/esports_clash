@@ -1,0 +1,1409 @@
+[
+  {
+    "id": "c_solana",
+    "name": "Solenne Vaelor",
+    "slug": "solenne-vaelor",
+    "anatomy": {
+      "description": "broad athletic adult-proportioned humanoid with two bare arms and two legs"
+    },
+    "design": "battle-scarred sun knight with a tall hinged heliograph shield; ivory-bronze armor, burnt-red sash, mechanical iris on the shield",
+    "abilities": {
+      "P": {
+        "name": "Earned Daylight",
+        "cooldownNote": null,
+        "designText": "blocking hostile damage with the front 110° of her shield stocks up to 3 Radiance (1 stack / 3 s). No free stacks for standing still."
+      },
+      "S1": {
+        "name": "Sun Dial",
+        "cooldownNote": "9 s",
+        "designText": "stakes a 70-GU-wide oriented shield panel for 3.5 s. Intercepts the first two hostile projectiles that cross its front; melee units pass. Opponents may walk around it."
+      },
+      "S2": {
+        "name": "Pivot Order",
+        "cooldownNote": "12 s",
+        "designText": "rotates an existing panel up to 100° or, if none exists, rotates Solenne's personal guard and advances 38 GU; Radiance spent gives adjacent allies a 1.5 s directional damage reduction against attacks coming from the chosen side."
+      },
+      "R": {
+        "name": "Noon Divide",
+        "cooldownNote": "85 s",
+        "designText": "from her current panel, projects two slowly separating sunbeams for 4 s, creating a wide **protected wedge**. Allies inside gain 18% damage mitigation from outside; enemies inside can still fight. Spending 3 Radiance gives 1 brief shove at initial expansion (not a mass stun)."
+      }
+    }
+  },
+  {
+    "id": "c_astra",
+    "name": "Ivera Frostwhistle",
+    "slug": "ivera-frostwhistle",
+    "anatomy": {
+      "description": "slender adult-proportioned humanoid with two bare arms and two legs"
+    },
+    "design": "tall northern bow engineer wearing permafrost string gauges and layered ice-tuning plates; asymmetric longbow bearing vibrating crystal forks",
+    "abilities": {
+      "P": {
+        "name": "Overtone",
+        "cooldownNote": null,
+        "designText": "landing a aimed shot temporarily tunes a visible location, maximum 2, each persisting 5 s. Shots do not globally slow."
+      },
+      "S1": {
+        "name": "Tuning Shot",
+        "cooldownNote": "8 s, two charges",
+        "designText": "fires a narrow bolt that installs a crystal fork at its endpoint (terrain or ground); fork has 2 hit points. Can be fired through a champion for light damage, but ends behind them."
+      },
+      "S2": {
+        "name": "Singing Ice",
+        "cooldownNote": "14 s",
+        "designText": "activates a frost vibration along the line between the two newest forks for 3 s. Enemies *crossing* the line suffer 28% slow for 1.1 s and take one burst; allies firing **parallel** to the line gain a small projectile-speed bonus."
+      },
+      "R": {
+        "name": "Glass Rapture",
+        "cooldownNote": "80 s",
+        "designText": "resonates all active forks in a broad triangular sound field. Over 1.2 s the field forms three visible safe gaps; enemies still on the sounding lines take high damage and a 0.55 s stagger. Consumes forks."
+      }
+    }
+  },
+  {
+    "id": "c_kyumi",
+    "name": "Mireth Lune",
+    "slug": "mireth-lune",
+    "anatomy": {
+      "description": "slender adult-proportioned fox humanoid, pointed anatomical ears and nine separate visible fox tails with clear gaps between them"
+    },
+    "design": "austere one-tailed fox archivist in deep blue-gray traveling robes with glass route tablets; no alluring charm trope",
+    "abilities": {
+      "P": {
+        "name": "Witness Marks",
+        "cooldownNote": null,
+        "designText": "after an enemy moves 70 GU while visible to Mireth, records its heading as a glowing arrow for 3 s, once per enemy / 6 s."
+      },
+      "S1": {
+        "name": "Counterpath",
+        "cooldownNote": "8 s",
+        "designText": "draws a short luminous road across an observed heading. Crossing it in the recorded direction costs 25% move speed for 1 s; crossing opposite grants no penalty. Can be skirted."
+      },
+      "S2": {
+        "name": "False Exit",
+        "cooldownNote": "13 s",
+        "designText": "places a glass doorway that visually points to safety but openly projects its **actual** exit 75 GU to one side. The first enemy who voluntarily enters is displaced to that endpoint after 0.35 s. Enemy sees both endpoints before entering; no forced input manipulation."
+      },
+      "R": {
+        "name": "Map of Might-Have-Beens",
+        "cooldownNote": "83 s",
+        "designText": "shows up to three recorded headings as public spectral roads for 4 s; allies gain speed while traversing them opposite the recorded direction, and foes crossing in the old direction receive a short revealed/exposed mark. No auto charm, orb return, or dash chain."
+      }
+    }
+  },
+  {
+    "id": "c_buck",
+    "name": "Bramm Coil",
+    "slug": "bramm-coil",
+    "anatomy": {
+      "description": "broad stocky adult-proportioned humanoid with a strong torso, two bare arms and two legs"
+    },
+    "design": "industrial tunnel-breaker with rotary ram-gun mounted to a back brace, orange work stripes and one reinforced leg",
+    "abilities": {
+      "P": {
+        "name": "Structural Survey",
+        "cooldownNote": null,
+        "designText": "repeated hits on the same piece of deployable cover mark it as weakened (maximum one mark)."
+      },
+      "S1": {
+        "name": "Anchor Ram",
+        "cooldownNote": "9 s",
+        "designText": "shoots a riveted anchor 140 GU to a ground point. After 0.6 s the anchor pushes a rectangular 45×90-GU blast **away from its own facing**; hits one time, moves enemies 24 GU, dislodges deployable barriers."
+      },
+      "S2": {
+        "name": "Brace Exchange",
+        "cooldownNote": "13 s",
+        "designText": "Bramm exchanges mobility for steadiness for 3 s. He slows by 25%; each shot fired from the brace creates a short **safe opening** in allied cover that closes after 0.7 s, permitting planned fire without permanently destroying shields."
+      },
+      "R": {
+        "name": "Tunnel Cut",
+        "cooldownNote": "76 s",
+        "designText": "slowly draws a huge visible straight cutting lane for 1.1 s. It then advances a mechanical ram through the lane over 1.4 s, collapsing temporary structures and forcing units sideways to the nearest free side; never passes world walls."
+      }
+    }
+  },
+  {
+    "id": "c_valkira",
+    "name": "Kael Vespera",
+    "slug": "kael-vespera",
+    "anatomy": {
+      "description": "strong athletic adult-proportioned humanoid with two bare arms and two legs"
+    },
+    "design": "weathered oath collector with paired crescent ledgers as blades, stitched gray cape and ink-red wrist seals",
+    "abilities": {
+      "P": {
+        "name": "Outstanding Balance",
+        "cooldownNote": null,
+        "designText": "first melee contact with a hero issues a visible 4 s Contract: target receives a 4% damage discount from Kael, but each shield granted during the Contract accumulates *Debt* (capped at 160). Only Kael may collect; no denial of healing."
+      },
+      "S1": {
+        "name": "Collection Line",
+        "cooldownNote": "7 s",
+        "designText": "short sweeping arc which draws a red boundary on the ground for 2 s. Contracted targets crossing it pay a fraction of Debt as magic damage; staying put avoids payment."
+      },
+      "S2": {
+        "name": "Witness Required",
+        "cooldownNote": "13 s",
+        "designText": "Kael braces for 0.8 s. If the contracted enemy or a defender hits her during the brace, she gains a dashless counter slash and a 1 s damage reduction; otherwise she is vulnerable after bracing."
+      },
+      "R": {
+        "name": "Terms of Mercy",
+        "cooldownNote": "80 s",
+        "designText": "challenges a contracted target for 4 s. Their team can clear the Contract by landing two attacks on Kael, or ignore it and let Kael cash out accrued Debt as a single capped hit. Does not suppress, force 1v1, or execute automatically."
+      }
+    }
+  },
+  {
+    "id": "c_kage",
+    "name": "Nyxara Vale",
+    "slug": "nyxara-vale",
+    "anatomy": {
+      "description": "lean adult-proportioned humanoid with two bare arms, complete hands and two legs"
+    },
+    "design": "angular thief wearing articulated matte-black lacquer strips that cast sharp, oversized silhouettes on the ground; no shadow clones",
+    "abilities": {
+      "P": {
+        "name": "Blind Side",
+        "cooldownNote": null,
+        "designText": "Nyxara gains a small first-hit bonus when striking from outside the target's *forward* vision cone, once / target / 7 s. Visible directional marker informs defenders when exposed."
+      },
+      "S1": {
+        "name": "Shadow Pin",
+        "cooldownNote": "8 s",
+        "designText": "projects a dark triangular plane from a chosen wall or her own location for 4 s. It blocks **line of sight for basic attack acquisition**, not projectiles, and is transparent to all after a unit steps through."
+      },
+      "S2": {
+        "name": "Light Theft",
+        "cooldownNote": "13 s",
+        "designText": "steals illumination from one existing Shadow Pin for 2 s, collapsing that plane into a mobile veil around Nyxara. She remains targetable at close range and leaves bright footsteps; while veiled, her next attack briefly reduces the victim's turn speed."
+      },
+      "R": {
+        "name": "Total Eclipse, Partial Truth",
+        "cooldownNote": "85 s",
+        "designText": "places three visible *false target silhouettes* along an 80-GU arc. They do not attack, teleport, or explode; enemy targeting systems briefly need fresh line-of-sight confirmation when Nyxara crosses the arc. Her next hit against an isolated foe deals bonus damage, capped."
+      }
+    }
+  },
+  {
+    "id": "c_kazemaru",
+    "name": "Serrin Galecrest",
+    "slug": "serrin-galecrest",
+    "anatomy": {
+      "description": "tall lean adult-proportioned humanoid with two bare arms and two legs"
+    },
+    "design": "white-haired sailor swordsman with a collapsible wind vane shield and narrow curved blade; weather-map tapes attached to armor",
+    "abilities": {
+      "P": {
+        "name": "Weather Reading",
+        "cooldownNote": null,
+        "designText": "Serrin sees recent incoming projectile headings as faint arrows; after narrowly dodging one, gains one Wind Notch (max 2)."
+      },
+      "S1": {
+        "name": "Compass Slash",
+        "cooldownNote": "7 s",
+        "designText": "cuts a 65-GU directional current across a target corridor for 2.2 s. Enemy **non-homing** projectiles crossing it are deflected up to 15°; allied shots get a 10% speed boost."
+      },
+      "S2": {
+        "name": "Tack Change",
+        "cooldownNote": "12 s",
+        "designText": "spends a Wind Notch to rotate a current or quickly sidestep 28 GU perpendicular to its path. Cannot pass hard terrain."
+      },
+      "R": {
+        "name": "Eye of the Crosswind",
+        "cooldownNote": "88 s",
+        "designText": "maps a 140-GU radius ring with four public directional wind channels for 4 s. Enemy projectile lanes become less reliable; walking normally still works. No blanket projectile deletion, knockup, or blink slashes."
+      }
+    }
+  },
+  {
+    "id": "c_kindra",
+    "name": "Orin and Fen",
+    "slug": "orin-and-fen",
+    "anatomy": {
+      "description": "slender adult-proportioned humanoid biped; undecorated head and clear hands and feet"
+    },
+    "design": "scarred human lantern scout followed by a blind, horned dusk-hound made of moving ember fur; **not** a wolf plus death-immunity circle",
+    "abilities": {
+      "P": {
+        "name": "Scent of Trouble",
+        "cooldownNote": null,
+        "designText": "Fen marks heroes who recently damaged Orin's allies, revealing their direction for 3 s (not through fog beyond a short final ping)."
+      },
+      "S1": {
+        "name": "Track Lantern",
+        "cooldownNote": "9 s",
+        "designText": "Orin drops a lantern that records the next enemy who passes within 55 GU, pinging their direction; can be destroyed in 2 hits."
+      },
+      "S2": {
+        "name": "Fen, Guard",
+        "cooldownNote": "14 s",
+        "designText": "sends Fen to a chosen ally or lantern for 3 s. Fen absorbs the next **one** eligible hostile projectile and then withdraws, with a clearly visible charge indicator."
+      },
+      "R": {
+        "name": "Road Home",
+        "cooldownNote": "90 s",
+        "designText": "paints a luminous curved **retreat path** from Orin to one low-HP ally for 4 s. The selected ally may voluntarily follow it for 30% speed and 18% damage reduction while moving toward Orin; leaving the path cancels protection. No HP floor or mass invulnerability."
+      }
+    }
+  },
+  {
+    "id": "c_cora",
+    "name": "Quillene Rook",
+    "slug": "quillene-rook",
+    "anatomy": {
+      "description": "slender adult-proportioned humanoid biped with clear bare hands and feet"
+    },
+    "design": "masked archer with hawk-inspired shoulder fins and bow strung with miniature kite rigging; feathers are **air anchors**, not returning blade traps",
+    "abilities": {
+      "P": {
+        "name": "Airborne Fletching",
+        "cooldownNote": null,
+        "designText": "every third aimed attack releases a tiny kite that hangs for 3 s at the shot's endpoint (max 3). Kites are visible and destroyable."
+      },
+      "S1": {
+        "name": "Tetherbolt",
+        "cooldownNote": "8 s",
+        "designText": "shoots a kite anchor 150 GU into the air; anchors do not damage when planted."
+      },
+      "S2": {
+        "name": "Crosswind Stitch",
+        "cooldownNote": "13 s",
+        "designText": "ties her two nearest kites into an aerial span for 3 s. Her next two arrows passing through it split into two shallow angled shots at 60% damage each (one-hit cap per target); enemy units may shoot down either kite."
+      },
+      "R": {
+        "name": "Harrier Net",
+        "cooldownNote": "85 s",
+        "designText": "all active kites fan into a broad descending mesh. Enemies inside may move out but have ranged attack windups increased for 2.5 s; meanwhile allied projectiles from outside the mesh get a slight side-angle adjustment. No untargetable leap, ground feather recall, or root-on-three-feathers."
+      }
+    }
+  },
+  {
+    "id": "c_renn",
+    "name": "Aurelio Vane",
+    "slug": "aurelio-vane",
+    "anatomy": {
+      "description": "adult-proportioned winged humanoid biped with two separate anatomical feather wings, wing roots visible and wings spread clear of arms and torso"
+    },
+    "design": "masked fencing host in ceremonial midnight tux-armor with luminous floorwork slippers and half-moon fan shield",
+    "abilities": {
+      "P": {
+        "name": "Perfect Partner",
+        "cooldownNote": null,
+        "designText": "an ally who follows an Aurelio-created floor arrow gains brief tenacity, once / ally / 6 s."
+      },
+      "S1": {
+        "name": "Mark the Floor",
+        "cooldownNote": "8 s",
+        "designText": "lays two 30-GU glowing steps; an ally crossing them in order gains 22% movement speed for 1.5 s. Enemies see the steps and can deny the route."
+      },
+      "S2": {
+        "name": "Change Partners",
+        "cooldownNote": "13 s",
+        "designText": "selects an allied hero in 120 GU; for 1.2 s both can voluntarily trade their places by pressing an interaction or by an AI commitment. Cannot trade into walls or out of hard CC."
+      },
+      "R": {
+        "name": "The Grand Procession",
+        "cooldownNote": "78 s",
+        "designText": "reveals a three-turn floor route for 4 s. Allies following it earn a small shield at each turn; enemies who stand on the route are pushed sideways 18 GU once when the procession advances. No AoE charm or automatic ally dash."
+      }
+    }
+  },
+  {
+    "id": "c_sylla",
+    "name": "Droven Bearmantle",
+    "slug": "droven-bearmantle",
+    "anatomy": {
+      "description": "broad stocky adult-proportioned humanoid biped",
+      "component_note": "A bear transformation is a separate anatomy and rig candidate, not attached clothing."
+    },
+    "design": "rugged warden in patched antlered mantle accompanied by a massive **moss-backed pack tortoise**, not a spirit bear or shapeshifter",
+    "abilities": {
+      "P": {
+        "name": "Shared Heartbeat",
+        "cooldownNote": null,
+        "designText": "Droven and the tortoise Hark have a shared reserve of 220 guard energy; damage absorbed by Hark drains guard. Hark does not respawn instantly after destruction."
+      },
+      "S1": {
+        "name": "Hark, Settle",
+        "cooldownNote": "12 s",
+        "designText": "directs Hark to a nearby point where he plants as a 55-GU-wide **walk-around obstacle** for 4 s. Hark can be attacked; allies may pass through slowly."
+      },
+      "S2": {
+        "name": "Shelter Under Shell",
+        "cooldownNote": "14 s",
+        "designText": "Hark opens his shell to cover one nearby ally with 20% incoming-damage redirection to guard energy for 2.5 s. Droven temporarily loses part of his own armor while energy is transferred."
+      },
+      "R": {
+        "name": "Carry the Line",
+        "cooldownNote": "92 s",
+        "designText": "Hark slowly advances 100 GU over 4 s as moving cover. Allies behind his shell gain limited projectile protection; opponents can flank Hark or destroy the shell's guard energy."
+      }
+    }
+  },
+  {
+    "id": "c_tequoia",
+    "name": "Thalara Rootwright",
+    "slug": "thalara-rootwright",
+    "anatomy": {
+      "description": "slender adult-proportioned humanoid biped; undecorated head and exposed joint silhouettes"
+    },
+    "design": "elderly fungus architect with ceramic seed jars, branching mycelium sleeves and mushroom-coral parasol; no tree-ring prison",
+    "abilities": {
+      "P": {
+        "name": "Spores in Soil",
+        "cooldownNote": null,
+        "designText": "ability hits leave a nutrient node for 6 s (max 4). Nodes are visible small mushrooms with 2 hit points."
+      },
+      "S1": {
+        "name": "Root Survey",
+        "cooldownNote": "8 s",
+        "designText": "grows a narrow mycelial line between Thalara and one node. Allies moving along it gain minor speed; enemies crossing it suffer an initial short slow. One line per node."
+      },
+      "S2": {
+        "name": "Transplant",
+        "cooldownNote": "14 s",
+        "designText": "moves a single active nutrient node up to 60 GU with 0.5 s tell; enemies standing on the displaced line are gently redirected to nearest free space, no stun."
+      },
+      "R": {
+        "name": "The Living Understory",
+        "cooldownNote": "90 s",
+        "designText": "activates the node network for 5 s: allies touching a connected line regenerate modest HP over time; enemy AoE detonations on the web burn one node but trigger a one-time small burst. Opponents can cut the network one node at a time."
+      }
+    }
+  },
+  {
+    "id": "c_zal",
+    "name": "Vesper Loom",
+    "slug": "vesper-loom",
+    "anatomy": {
+      "description": "slender adult-proportioned humanoid biped with an undecorated head and complete bare hands"
+    },
+    "design": "elderly spider-silk surgeon with mechanical needle-fingers, a cracked porcelain medical mask and lilac thread reservoirs",
+    "abilities": {
+      "P": {
+        "name": "Recorded Injury",
+        "cooldownNote": null,
+        "designText": "16% of damage suffered by a nearby marked ally is logged as Care Debt for 3 s, capped at 180 per ally. This does not reduce damage by itself."
+      },
+      "S1": {
+        "name": "Suture Tag",
+        "cooldownNote": "8 s",
+        "designText": "marks an ally for 4 s; the next qualifying damaging hit is reduced by 15%, and the prevented amount becomes Care Debt (not immediate HP)."
+      },
+      "S2": {
+        "name": "Stitch Circuit",
+        "cooldownNote": "12 s",
+        "designText": "links two allies in range for 2.5 s; healing applied to either is split 70/30 with the other. Link breaks beyond 180 GU. No death prevention."
+      },
+      "R": {
+        "name": "Emergency Triage",
+        "cooldownNote": "88 s",
+        "designText": "converts up to 200 total Care Debt among nearby allies into a 4 s heal-over-time. Vesper suffers 15% of the converted amount as **nonlethal self-damage** over 4 s. Saves require setup and expose the healer."
+      }
+    }
+  },
+  {
+    "id": "c_xin",
+    "name": "Rux Emberchain",
+    "slug": "rux-emberchain",
+    "anatomy": {
+      "description": "athletic adult-proportioned humanoid biped with two complete bare arms and two legs"
+    },
+    "design": "scarred courier with a giant shoulder mail-satchel of glowing sealed envelopes and iron skate-boots; not a fire-remnant sword ninja",
+    "abilities": {
+      "P": {
+        "name": "Return Address",
+        "cooldownNote": null,
+        "designText": "attacks place a stamp on enemy champions (1 stamp / enemy / 6 s). Stamps reveal Rux's intended target for 4 s."
+      },
+      "S1": {
+        "name": "Express Mail",
+        "cooldownNote": "8 s",
+        "designText": "throws a volatile letter to an ally, enemy, or ground point. A carrier retains it for up to 3 s; enemies may hand it off to another enemy with a movement interaction to avoid the later blast."
+      },
+      "S2": {
+        "name": "Courier's Crossing",
+        "cooldownNote": "12 s",
+        "designText": "draws a short path between Rux and a stamped point. Rux can run it at boosted speed but not dash through collision; crossing a carried letter collects it and produces a radial spark burst."
+      },
+      "R": {
+        "name": "Dead Letter Office",
+        "cooldownNote": "82 s",
+        "designText": "simultaneously recalls all placed letters **along visible straight routes** toward a central postal seal. Each letter can hit a champion once; safe gaps exist between routes. Enemies can relocate before recall."
+      }
+    }
+  },
+  {
+    "id": "c_raijin",
+    "name": "Teslan Veyr",
+    "slug": "teslan-veyr",
+    "anatomy": {
+      "description": "round-bodied spirit humanoid biped, broad belly, two clear arms and two legs, no floating external pieces"
+    },
+    "design": "coil scientist with portable ground rods, insulated coat with hazard seams, copper articulated monocle",
+    "abilities": {
+      "P": {
+        "name": "Closed Circuit",
+        "cooldownNote": null,
+        "designText": "a successful link between two Teslan rods grants a stored Capacitor charge, maximum 2."
+      },
+      "S1": {
+        "name": "Drive Rod",
+        "cooldownNote": "8 s, two charges",
+        "designText": "place a destructible rod at a ground point, 140 GU range, 3 s lifetime after the second rod. Two rods generate a clearly drawn current beam between them; crossing once damages lightly."
+      },
+      "S2": {
+        "name": "Reverse Current",
+        "cooldownNote": "12 s",
+        "designText": "flips the circuit to **Repel** or **Conduct** for 2.5 s. Repel deflects enemy projectiles crossing the beam slightly; Conduct increases allied attack speed when standing adjacent to the line. Each hero may benefit once per cast."
+      },
+      "R": {
+        "name": "Brownout Protocol",
+        "cooldownNote": "80 s",
+        "designText": "consumes Capacitors to briefly shut down **deployables** and delay the next cast windup of enemies who remain on the circuit line (up to 0.5 s); opponents can walk away before the 0.75 s charge finishes. It does not silence globally or auto-pull."
+      }
+    }
+  },
+  {
+    "id": "c_kaolin",
+    "name": "Joruun Jadecoil",
+    "slug": "joruun-jadecoil",
+    "anatomy": {
+      "description": "articulated stone-golem biped with intrinsic body segments, two arms, two legs and unobstructed joint gaps; retain its structural stone anatomy without decorative inlays"
+    },
+    "design": "stout jade-mechanical titan with hinged stone shutters and a visible counterweight core; never rolls as a ball",
+    "abilities": {
+      "P": {
+        "name": "Counterweight",
+        "cooldownNote": null,
+        "designText": "damage taken fills a limited counterweight bar, up to 100, used only to strengthen hinges."
+      },
+      "S1": {
+        "name": "Raise Slab",
+        "cooldownNote": "10 s",
+        "designText": "raises one breakable 60-GU jade slab on a ground edge for 4 s. Slab blocks movement and shots, but can be walked around. Max one slab."
+      },
+      "S2": {
+        "name": "Hinge Swing",
+        "cooldownNote": "13 s",
+        "designText": "rotates the active slab 90° over 0.65 s, nudging units out of occupied space by at most 24 GU; without slab, Joruun gains a short self-shield but no knockup."
+      },
+      "R": {
+        "name": "The Great Door",
+        "cooldownNote": "95 s",
+        "designText": "plants two hinged slabs 90 GU apart for 5 s, forming a **temporary gate** with an openable middle. Joruun can spend Counterweight to close it once (0.7 s telegraph); units caught in the closing zone are moved to closest free side, never trapped without exit."
+      }
+    }
+  },
+  {
+    "id": "c_inai",
+    "name": "Astrax Mire",
+    "slug": "astrax-mire",
+    "anatomy": {
+      "description": "elongated slender spirit humanoid biped with complete visible arms, legs, hands and feet"
+    },
+    "design": "veiled pilgrim whose long measuring cords float behind a star-map walking staff; no portal-clone mobility burst",
+    "abilities": {
+      "P": {
+        "name": "Footfall Record",
+        "cooldownNote": null,
+        "designText": "within sight, tracks enemy travel distance over rolling 3 s windows (max 160 GU) with public meter marks."
+      },
+      "S1": {
+        "name": "Measure Out",
+        "cooldownNote": "8 s",
+        "designText": "tags one visible enemy for 3 s. Each 35 GU it voluntarily moves adds one Distance Seal (max 3); stationary targets remain safe."
+      },
+      "S2": {
+        "name": "Mile Marker",
+        "cooldownNote": "12 s",
+        "designText": "sets a small stone marker on terrain. Tagged enemies moving **toward** it are slowed lightly; moving away consumes one Distance Seal harmlessly."
+      },
+      "R": {
+        "name": "Reckoning of Roads",
+        "cooldownNote": "82 s",
+        "designText": "within 140 GU, all tagged enemies receive a visible 1 s verdict countdown. It converts accumulated seals into a capped nonlethal magical burst and movement-speed reduction; seals can be shed by walking away from markers before verdict. Does not teleport, leap, or create rift damage explosions."
+      }
+    }
+  },
+  {
+    "id": "c_qiyana",
+    "name": "Prismelle Cade",
+    "slug": "prismelle-cade",
+    "anatomy": {
+      "description": "athletic adult-proportioned humanoid biped with two bare arms and two legs"
+    },
+    "design": "mineral queen with a floating circlet of glass shields, single asymmetrical cleaver and fractured reflective cape",
+    "abilities": {
+      "P": {
+        "name": "Royal Refraction",
+        "cooldownNote": null,
+        "designText": "once / 5 s, landing a blade hit charges her nearest crystal pane with one optical charge."
+      },
+      "S1": {
+        "name": "Facet Screen",
+        "cooldownNote": "9 s",
+        "designText": "places a 55-GU one-way prismatic pane with 2 HP. Enemy shots that hit it lose 25% damage; allied shots fired through at specific visible angles bend 18°."
+      },
+      "S2": {
+        "name": "Claim the Angle",
+        "cooldownNote": "12 s",
+        "designText": "moves to the edge of her existing pane by up to 35 GU and rotates it. It is a **short pathing move**, not free-target dash, and cannot move through walls."
+      },
+      "R": {
+        "name": "Coronation in Glass",
+        "cooldownNote": "86 s",
+        "designText": "creates three panes arranged as a shallow open fan; over 4 s each pane can redirect **one** allied projectile into a separate lane. Enemy champions can smash panes or engage inside the fan."
+      }
+    }
+  },
+  {
+    "id": "c_locke",
+    "name": "Ashkar Veilhand",
+    "slug": "ashkar-veilhand",
+    "anatomy": {
+      "description": "tall lean adult-proportioned humanoid biped with two bare arms and two legs"
+    },
+    "design": "masked ash monk wearing charred prayer banners and iron ash bells; no invisible assassin smoke",
+    "abilities": {
+      "P": {
+        "name": "Witness the Hurt",
+        "cooldownNote": null,
+        "designText": "every 50 damage one chosen nearby ally takes from an enemy creates one Ember Count on that attacker (max 3); counts expire in 5 s."
+      },
+      "S1": {
+        "name": "Ember Brand",
+        "cooldownNote": "7 s",
+        "designText": "marks one attacker with a burn that grows with Ember Count; if they stop attacking the protected ally, the burn ends early."
+      },
+      "S2": {
+        "name": "Ash Intercession",
+        "cooldownNote": "14 s",
+        "designText": "Ashkar dashes **only to his sworn ally**, landing at a legal adjacent location and briefly blocking the next targeted basic attack for them. No stealth or enemy-target jump."
+      },
+      "R": {
+        "name": "Public Penance",
+        "cooldownNote": "86 s",
+        "designText": "announces the top Ember Count attacker for 0.8 s, then creates a circular duel hazard around **that enemy's current position**. Damage ramps only while the accused continues attacking Ashkar's protected ally; they can switch targets or exit. No guaranteed execution."
+      }
+    }
+  },
+  {
+    "id": "c_senna",
+    "name": "Maris Solquill",
+    "slug": "maris-solquill",
+    "anatomy": {
+      "description": "tall slender adult-proportioned humanoid biped with two bare arms and two legs"
+    },
+    "design": "armored pilgrim carrying a brass sextant crossbow and foldout field-map shrine; no giant Senna-like healing beam",
+    "abilities": {
+      "P": {
+        "name": "Borrowed Sunlight",
+        "cooldownNote": null,
+        "designText": "damage that Maris sees nearby leaves one Waylight mote at its ground position (max 3), pickup grants small shield charge."
+      },
+      "S1": {
+        "name": "Waypoint Lantern",
+        "cooldownNote": "8 s",
+        "designText": "shoots a lantern onto the ground. It projects a 50-GU-long path; allies walking its length gain a small burst of healing at the far endpoint (once each)."
+      },
+      "S2": {
+        "name": "Twilight Survey",
+        "cooldownNote": "13 s",
+        "designText": "rotates a placed lantern's path or aligns it toward an ally, granting that ally 1.5 s of vision through nearby obstacles (not global vision) as the line turns."
+      },
+      "R": {
+        "name": "The People's Atlas",
+        "cooldownNote": "87 s",
+        "designText": "connects up to three Waylight positions into a visible zig-zag safe trail for 5 s. Allies traversing the **entire route** receive a capped shield and 20% speed; enemies can destroy waypoints or ambush turns. No global damaging beam."
+      }
+    }
+  },
+  {
+    "id": "c_largo",
+    "name": "Odo Bogsong",
+    "slug": "odo-bogsong",
+    "anatomy": {
+      "description": "squat broad frog humanoid biped, wide anatomical mouth, throat pouch and separated webbed hand and foot digits"
+    },
+    "design": "stout moss-green amphibian clockmaker with hollow reed drums, pedal metronome and tiny percussion frogs",
+    "abilities": {
+      "P": {
+        "name": "The Beat Goes On",
+        "cooldownNote": null,
+        "designText": "Odo displays a repeating 3-beat indicator (1.2 s/beat). Allies who begin a spell within a 0.18 s Good Beat window get 8% shorter cast recovery, once / ability / 6 s."
+      },
+      "S1": {
+        "name": "Offbeat Drum",
+        "cooldownNote": "8 s",
+        "designText": "places a 3-beat drum pad; each beat makes a visible 40-GU ripple for light damage, never stunning automatically."
+      },
+      "S2": {
+        "name": "Syncopation",
+        "cooldownNote": "13 s",
+        "designText": "moves the next pad beat earlier by 0.25 s and provides a small shield pulse to nearby allies on the adjusted beat. Enemies can see the revised countdown."
+      },
+      "R": {
+        "name": "The Long Measure",
+        "cooldownNote": "85 s",
+        "designText": "for 4 beats, allies on Odo's rhythm gain move speed after completing casts; enemies casting exactly while a ripple touches them incur 0.4 s additional **recovery after the cast**, never a denied cast. No global heal/tenacity aura."
+      }
+    }
+  },
+  {
+    "id": "c_shadowfiend",
+    "name": "Mourn Ashwake",
+    "slug": "mourn-ashwake",
+    "anatomy": {
+      "description": "broad horned demon humanoid biped with natural anatomical claws and clear limb roots; no flame or smoke effects"
+    },
+    "design": "furnace-backed mortician pulling ember caskets on chains, black glass face shield; no Shadow-Fiend-style line razes/soul-stack requiem",
+    "abilities": {
+      "P": {
+        "name": "Ash Residue",
+        "cooldownNote": null,
+        "designText": "any completed damaging spell cast within 125 GU leaves an Ash Patch where it ended (once / owner / 4 s, max 4 patches). Mourn sees both teams' visible patches."
+      },
+      "S1": {
+        "name": "Ember Tongs",
+        "cooldownNote": "8 s",
+        "designText": "drags one patch slowly 45 GU, scorching enemies it passes once, or makes a small patch at his own feet if none exist."
+      },
+      "S2": {
+        "name": "Draft Open",
+        "cooldownNote": "12 s",
+        "designText": "opens a furnace vent toward one patch, creating a visibly directional heated current for 3 s that burns enemies walking **against** it."
+      },
+      "R": {
+        "name": "Second Combustion",
+        "cooldownNote": "90 s",
+        "designText": "ignites every active patch in a 140-GU field after 1.0 s, turning them into low moving walls of ember for 3 s. Patches consumed; no large instant fear wave."
+      }
+    }
+  },
+  {
+    "id": "c_earthshaker",
+    "name": "Dolm Runesunder",
+    "slug": "dolm-runesunder",
+    "anatomy": {
+      "description": "massive heavy beast humanoid biped with a broad torso and thick anatomical limbs, complete bare hands and feet"
+    },
+    "design": "squat seismologist titan with two immense pendulum hammers and a floor-level surveying compass; no Fissure/Echo Slam analogue",
+    "abilities": {
+      "P": {
+        "name": "Strain Lines",
+        "cooldownNote": null,
+        "designText": "moving enemy champions that make sharp turns (more than 70°/0.4 s) generate a strain point; max 2 on the ground."
+      },
+      "S1": {
+        "name": "Tilt Plate",
+        "cooldownNote": "9 s",
+        "designText": "raises one 65×65-GU shallow sloping tile. Units crossing it slide an extra 12 GU in their travel direction; exits always remain open, slide has one-hit cooldown."
+      },
+      "S2": {
+        "name": "Pendulum Strike",
+        "cooldownNote": "13 s",
+        "designText": "swings a huge weighted maul across an arc. Enemies on tilted ground are shoved a modest 18 GU; other enemies take normal damage."
+      },
+      "R": {
+        "name": "Continental Drift",
+        "cooldownNote": "95 s",
+        "designText": "lays three **successive** tilted plates over 2.7 s, visibly changing safe movement vectors, with a final 0.55 s stagger for opponents who fail to leave the last tile. No full-screen slam based on nearby unit count."
+      }
+    }
+  },
+  {
+    "id": "c_mirehook",
+    "name": "Garruk Mawsuture",
+    "slug": "garruk-mawsuture",
+    "anatomy": {
+      "description": "very broad heavy adult-proportioned humanoid biped with complete anatomical hands on both arms; hook equipment is separate"
+    },
+    "design": "hunched iron-jawed smith operating a strapped cage forge, rotating trap anvils and huge riveted gauntlets; no hook/rot/dismember",
+    "abilities": {
+      "P": {
+        "name": "Scrap Appetite",
+        "cooldownNote": null,
+        "designText": "destroyed enemy deployables or spent jaw traps grant Scrap, maximum 3, each increasing next jaw width by 6 GU."
+      },
+      "S1": {
+        "name": "Set Jaws",
+        "cooldownNote": "9 s",
+        "designText": "plants two hinged iron teeth on ground 50 GU apart, 2 HP each. After 0.55 s, crossing the gap closes them for a 0.5 s root **only once**, then they jam open. Units can attack or skirt them."
+      },
+      "S2": {
+        "name": "Forge Drag",
+        "cooldownNote": "12 s",
+        "designText": "drags one installed tooth 45 GU along a visible chain, scraping a narrow damage lane and reopening a previously triggered jaw with half strength."
+      },
+      "R": {
+        "name": "Factory Floor",
+        "cooldownNote": "90 s",
+        "designText": "lays three staggered **jaw lanes** around Garruk for 5 s. Their timing is sequential (audible clacks), leaving safe corridors; no suppression, unit grab, or poison aura."
+      }
+    }
+  },
+  {
+    "id": "c_nullweaver",
+    "name": "Vesper Nullcode",
+    "slug": "vesper-nullcode",
+    "anatomy": {
+      "description": "faceless floating void creature consisting of its intrinsic shell and core only",
+      "pose": "custom",
+      "rest_pose": "Centered symmetrical neutral floating rest configuration, with intrinsic shell sections clearly separated and no satellites",
+      "component_note": "Requires a reviewed creature rig and compatible motion; humanoid animation transfer is not supported."
+    },
+    "design": "androgynous angular physicist with a suspended broken gyroscope, indigo measurement robe and luminous chalk-rings; **not** a black-hole channeler",
+    "abilities": {
+      "P": {
+        "name": "Unspent Momentum",
+        "cooldownNote": null,
+        "designText": "enemies traveling 45 GU in a straight line nearby contribute one Momentum sample (max 4, visible)."
+      },
+      "S1": {
+        "name": "Tangent Fault",
+        "cooldownNote": "8 s",
+        "designText": "lays a 60-GU vector tile; a non-unstoppable enemy crossing is gently redirected 20° clockwise or counterclockwise (chosen on cast), maintaining speed. No teleport/stun."
+      },
+      "S2": {
+        "name": "Mass Argument",
+        "cooldownNote": "13 s",
+        "designText": "declares a public high-friction disk for 3 s. Enemy dashes passing through are shortened by at most 20%; ordinary walking is slowed 10%. Does not cancel the dash outright."
+      },
+      "R": {
+        "name": "Borrowed Orbit",
+        "cooldownNote": "93 s",
+        "designText": "consumes Momentum to construct a rotating 145-GU field lasting 4 s. Within it, movement inputs are smoothly biased into an arc of at most 25°/second, telegraphed by floor arrows. Stationary enemies or those who deliberately countersteer can hold position. No forced center pull or AoE wipe."
+      }
+    }
+  },
+  {
+    "id": "c_voltgrip",
+    "name": "Coiljack Ampfist",
+    "slug": "coiljack-ampfist",
+    "anatomy": {
+      "description": "mechanical biped with a simple intrinsic round chassis, two articulated arms, two legs and separated mechanical digits; expose structural joint gaps and omit cosmetic casing"
+    },
+    "design": "stocky utility electrician with two folding traffic-bar gauntlets, spooled spring cable and safety visor; not an extending hook robot",
+    "abilities": {
+      "P": {
+        "name": "Impact Audit",
+        "cooldownNote": null,
+        "designText": "when an enemy ends a dash within 110 GU, Coiljack gets one Inspection charge (max 2, 4 s lockout per enemy)."
+      },
+      "S1": {
+        "name": "Turnstile Bar",
+        "cooldownNote": "9 s",
+        "designText": "plants a 55-GU breakable spring bar for 3.5 s, showing one open half and one closed half. Walking enemies pass; the first **dash through the closed side** is diverted 20 GU to its safe edge and consumes the bar."
+      },
+      "S2": {
+        "name": "Earth Clip",
+        "cooldownNote": "12 s",
+        "designText": "attaches a grounding clip to an ally for 2.5 s. The next displacement inflicted on that ally is reduced by 40% and the attacker is briefly revealed; no stun/knockup."
+      },
+      "R": {
+        "name": "Inspection Grid",
+        "cooldownNote": "88 s",
+        "designText": "builds two intersecting turnstiles for 5 s. Enemies may walk around or smash either gate, but repeated aggressive dashes spend their movement on detours and trigger a 0.45 s disarm after the second interception."
+      }
+    }
+  },
+  {
+    "id": "c_aetherbolt",
+    "name": "Talan Slipshot",
+    "slug": "talan-slipshot",
+    "anatomy": {
+      "description": "slender adult-proportioned humanoid biped with complete bare hands and feet"
+    },
+    "design": "rugged surveyor with mechanical ricochet bow-rifle, rangefinder eyepieces and foldable brass mirror drones; no blink and giant piercing beam",
+    "abilities": {
+      "P": {
+        "name": "Proof Mark",
+        "cooldownNote": null,
+        "designText": "a direct skillshot hit stamps the target with one Proof Mark for 4 s; marks improve the next reflected shot slightly, one proc per target."
+      },
+      "S1": {
+        "name": "Set Mirror",
+        "cooldownNote": "8 s, two charges",
+        "designText": "places one thin 2-HP projectile reflector at a selected ground point; at most 2 mirrors exist, facing fixed direction."
+      },
+      "S2": {
+        "name": "Evidence Shot",
+        "cooldownNote": "7 s",
+        "designText": "fires a single bolt that may ricochet **once** from one mirror at the previewed angle. Direct and reflected hits deal different capped damage; walls stop shots."
+      },
+      "R": {
+        "name": "Closed Case",
+        "cooldownNote": "78 s",
+        "designText": "chooses one visible target and displays three **public** predicted lines from existing mirrors for 0.8 s. Fires along the selected legal line for high damage; remaining lines are decoys clearly labeled as possible routes. No global shot or aimless auto-hit."
+      }
+    }
+  },
+  {
+    "id": "c_corsara",
+    "name": "Calixa Broadwake",
+    "slug": "calixa-broadwake",
+    "anatomy": {
+      "description": "lean adult-proportioned humanoid biped with complete bare hands and feet"
+    },
+    "design": "salt-worn privateer captain with a rectangular bicorne hat and a knee-high clockwork skiff that follows her; two mismatched deck cannons, no spinning gun barrage",
+    "abilities": {
+      "P": {
+        "name": "Hold the Weather",
+        "cooldownNote": null,
+        "designText": "after Calixa moves 45 GU along one heading, her skiff stores one Windward charge (max 2); reversing direction spends the accumulated aim. Visible wake trails announce her broadside side."
+      },
+      "S1": {
+        "name": "Signal Buoy",
+        "cooldownNote": "8 s",
+        "designText": "tosses a floating 2-HP buoy within 140 GU. The buoy marks a 60-GU sea-lane and reveals enemy movement through that lane for 4 s; Calixa's next basic attack passing the buoy gains a small splash. Max two buoys."
+      },
+      "S2": {
+        "name": "Tack Across",
+        "cooldownNote": "12 s",
+        "designText": "Calixa and skiff turn 90° and slide 38 GU *along an unobstructed legal path*. While turning, the skiff fires **one** short range shot from the outward-facing broadside, consuming a Windward charge for extra shove. No dash through obstacles."
+      },
+      "R": {
+        "name": "Port Authority",
+        "cooldownNote": "88 s",
+        "designText": "selects port or starboard and projects **three staggered 85×35-GU broadside lanes** over 3 s. Every 0.8 s the skiff fires into the next visible lane; each hero can be damaged at most once per volley. The lanes follow Calixa's facing **at cast start**, and remain readable even if she walks; do not auto-track fleeing champions."
+      }
+    }
+  },
+  {
+    "id": "c_brewmaw",
+    "name": "Brohm Caskfall",
+    "slug": "brohm-caskfall",
+    "anatomy": {
+      "description": "broad round-bellied adult-proportioned humanoid biped with distinct arms, hands and legs"
+    },
+    "design": "colossal cellar mechanic with transparent brass fermentation tanks, pressure-wheel forearms and rubber-stopper boots; no body-slam-and-exploding-barrel combo",
+    "abilities": {
+      "P": {
+        "name": "Pressure Reserve",
+        "cooldownNote": null,
+        "designText": "damage soaked while standing on his own foam builds Pressure (0–100). Pressure decays outside foam; visibly displays on a back-mounted dial. Reserve cannot grow from damage that Brohm himself creates."
+      },
+      "S1": {
+        "name": "Lay the Head",
+        "cooldownNote": "9 s",
+        "designText": "opens a directional spigot to spill a 90×28-GU **foam strip** for 4 s. Units on the strip retain normal basic movement but slide up to 9 GU along the marked direction after each voluntary movement step; repeated movement resolution caps total drift."
+      },
+      "S2": {
+        "name": "Repressurize",
+        "cooldownNote": "13 s",
+        "designText": "reverses the direction of one active foam strip and gives Brohm a brief damage barrier proportional to Pressure consumed (capped). The reversal is warned by flashing arrows for 0.45 s; opponents may step off it."
+      },
+      "R": {
+        "name": "Cellar Breach",
+        "cooldownNote": "95 s",
+        "designText": "plants a large cask at the junction of up to two foam strips. After 1 s the cask vents in **three sequential directional surges**, each traveling along existing foam channels and displacing enemies modestly perpendicular to the stream. Surges do not stack displacement against the same target inside 0.8 s. Without strips, it creates one weak short surge only."
+      }
+    }
+  },
+  {
+    "id": "c_wraithhook",
+    "name": "Mora Fenhook",
+    "slug": "mora-fenhook",
+    "anatomy": {
+      "description": "lean skeletal undead humanoid biped, complete hands and clearly separated limb joints"
+    },
+    "design": "elderly marsh boatwoman beneath a wide oilcloth hood, a segmented oar and a floating narrow spirit skiff; completely remove hooked chains and warden cage",
+    "abilities": {
+      "P": {
+        "name": "Crossing Fees",
+        "cooldownNote": null,
+        "designText": "when an allied hero safely finishes a Mora-established route, Mora accrues Fare (max 2), each reducing the next route setup delay by 0.15 s. There is no reward for trapping or dragging enemies."
+      },
+      "S1": {
+        "name": "Mooring Post",
+        "cooldownNote": "8 s, 2 charges",
+        "designText": "plants a small lit mooring within 115 GU. Posts have 2 HP, last 7 s, and are legal only on traversable ground. First post is the departure; second is the arrival. Max one linked pair."
+      },
+      "S2": {
+        "name": "Departing Bell",
+        "cooldownNote": "13 s",
+        "designText": "if two posts exist and a collision-valid traversable path joins them, summons a 2.3 s ferry that follows that path at fixed speed. Allies and enemies **voluntarily board** within 20 GU using a public interaction or AI accepted decision; a boarded unit cannot attack for the trip but may disembark at legal path checkpoints. No forced motion from hard CC."
+      },
+      "R": {
+        "name": "The Last Crossing",
+        "cooldownNote": "86 s",
+        "designText": "temporarily creates two public **emergency moorings** at legal points near Mora, then dispatches a second larger ferry allowing up to two passengers for one journey. It gives passengers a small shield **on arrival**, not invulnerability while traveling; destroying arrival post stops the ferry at its nearest legal earlier dock."
+      }
+    }
+  },
+  {
+    "id": "c_invoker",
+    "name": "Mirelle Vane",
+    "slug": "mirelle-vane",
+    "anatomy": {
+      "description": "average athletic adult-proportioned humanoid biped with two bare arms and two legs"
+    },
+    "design": "sharp-eyed **adult mage girl (early twenties)**, needle-hair comb, short asymmetrical ink-black sleeve, ivory structured waistcoat, oxblood petal-skirt over practical shorts, flat boots, giant folded-paper pattern cape. Her floating helper is a brass bobbin, **not three elemental spheres**",
+    "abilities": {
+      "P": {
+        "name": "Pattern Memory",
+        "cooldownNote": null,
+        "designText": "Mirelle can maintain **three visible 2-HP tailor pins** at once, each lasting 6 s and anchored to traversable ground; new pins replace the oldest. Two or three pins establish a line/triangle with clear world-projected stitch geometry. Valid layouts must leave legal passage and cannot cross impassable world walls."
+      },
+      "S1": {
+        "name": "Pin the Hem",
+        "cooldownNote": "5 s, max 3 stored pin charges with staggered recharge",
+        "designText": "tosses a pin within 125 GU, causing a small impact sting only if it hits a target; the pin stays on the ground. At least one pin is required for most pages. Pins are marked for **both** teams and can be broken by 2 basic attacks."
+      },
+      "S2": {
+        "name": "Recut",
+        "cooldownNote": "10 s",
+        "designText": "chooses one existing pin and slides it along a visible, collision-valid 40-GU path after a 0.4 s warning. Enemies crossed by the moving thread take one light hit; recasting on empty ground fails without consuming the cooldown. Also cycles the selected **page group** when no pin is targeted, with no cast or mana cost."
+      },
+      "R": {
+        "name": "Pattern Book",
+        "cooldownNote": "global weave lockout 7 s",
+        "designText": "hold/activate a **radial palette** of ten named patterns; choosing a page is input selection, then releasing R makes **one authoritative cast**. Each page has its own cooldown, cost and geometry requirement. The global weave lockout is a post-cast throttle, **not an 80-second ultimate imposed on all ten pages**. Major pages have longer personal cooldowns. A single chosen page cannot be released if its pin geometry or cooldown is invalid; show the reason before committing. Each successfully cast page consumes **exactly its declared pins**."
+      }
+    }
+  },
+  {
+    "id": "c_hwei",
+    "name": "Maelis Chromabloom",
+    "slug": "maelis-chromabloom",
+    "anatomy": {
+      "description": "tall slender adult-proportioned humanoid biped with complete bare hands and feet"
+    },
+    "design": "older museum conservator, square terracotta paint smock with elaborate ceramic mask repair, enormous collapsible gallery frames; paint is a **structural medium**, not a stream of colored blasts",
+    "abilities": {
+      "P": {
+        "name": "Surface Memory",
+        "cooldownNote": null,
+        "designText": "when a projectile strikes a Maelis canvas, the canvas stores one imprinted property of that projectile (physical/magic/utility; never copies the ability or exact damage), one property per frame."
+      },
+      "S1": {
+        "name": "Unroll the Canvas",
+        "cooldownNote": "9 s, 2 charges",
+        "designText": "erects a 55-GU-wide 2-HP translucent canvas for 3.5 s. It blocks ordinary projectiles from **both** teams but permits walking through with a 15% brief movement penalty. No invisible walls."
+      },
+      "S2": {
+        "name": "Restore the Missing",
+        "cooldownNote": "13 s",
+        "designText": "repaints a damaged canvas, restoring one HP and changing its surface into a **one-way reveal window** for 2 s; projectiles still obey the same obstruction rules. If no frame exists, instead creates a 30-GU reveal brush stroke (lower power)."
+      },
+      "R": {
+        "name": "Private Exhibition",
+        "cooldownNote": "90 s",
+        "designText": "joins up to three frames into an open-sided gallery for 4 s. Frames rotate one after another every 1.1 s, opening new shooting angles while closing others. Each rotation briefly releases a burst based on the stored property (capped damage or shield pulse, not copied spells). Public arrows preview next positions."
+      }
+    }
+  },
+  {
+    "id": "c_jayce",
+    "name": "Axiom Rail",
+    "slug": "axiom-rail",
+    "anatomy": {
+      "description": "broad athletic adult-proportioned humanoid biped with complete bare hands and feet"
+    },
+    "design": "compact mechanic with one offset railcart cannon on the shoulder and a hydraulic knee, not a shapeshifting hammer/rifle",
+    "abilities": {
+      "P": {
+        "name": "Gauge Check",
+        "cooldownNote": null,
+        "designText": "when Axiom's attack travels within 12 GU of one of his rails it accrues a Gauge token (max 3). Rails are visible to enemies and may be dismantled."
+      },
+      "S1": {
+        "name": "Lay Track",
+        "cooldownNote": "8 s, two charges",
+        "designText": "draws one 65-GU segment on legal ground, with open endpoints and a 2-HP switching junction. Max two segments active for 5 s; rail cannot bisect spawn or an objective collision."
+      },
+      "S2": {
+        "name": "Switch Engine",
+        "cooldownNote": "12 s",
+        "designText": "sends a small unmanned rail cart along connected track for up to 2.5 s. It fires light suppressive bolts **only at targets with direct LOS from the cart**; enemies can destroy it or stand away from the rail."
+      },
+      "R": {
+        "name": "Terminal Delivery",
+        "cooldownNote": "80 s",
+        "designText": "charges a heavy shell on the **furthest linked cart/rail endpoint** for 0.9 s, then fires one broad, telegraphed 95-GU shot aligned to the track. Consumes Gauge for range **not** lethal damage. If no rail survives, R refuses cast and preserves cooldown."
+      }
+    }
+  },
+  {
+    "id": "c_vi",
+    "name": "Brakka Fenn",
+    "slug": "brakka-fenn",
+    "anatomy": {
+      "description": "muscular athletic adult-proportioned humanoid biped with normal bare hands and visible wrists"
+    },
+    "design": "heavyset one-eyed town marshal whose gauntlets are giant document stamps, wearing battered city uniform and public warrants",
+    "abilities": {
+      "P": {
+        "name": "Repeat Offender",
+        "cooldownNote": null,
+        "designText": "an enemy that damages the same ally twice within 3 s gains a public Offender tag for 4 s (once per enemy / 8 s), giving Brakka 10% faster movement when approaching that enemy."
+      },
+      "S1": {
+        "name": "File Complaint",
+        "cooldownNote": "8 s",
+        "designText": "stamps a 45-GU-wide circle on the ground, warning for 0.5 s. Offenders within receive a 0.4 s stagger and ordinary enemies take light damage; nobody is automatically grabbed."
+      },
+      "S2": {
+        "name": "Right of Way",
+        "cooldownNote": "12 s",
+        "designText": "Brakka forms a 55-GU escort path **to one protected ally**, briefly body-blocking incoming basic attacks when physically between attacker and ally. If he leaves the path he loses the guard."
+      },
+      "R": {
+        "name": "Writ Served",
+        "cooldownNote": "84 s",
+        "designText": "targets one Offender in 110 GU and projects a **public 75-GU exclusion disk** around that enemy for 3 s. The tagged enemy is free to walk **out** at any time; if they remain and attack the previously targeted ally, Brakka's counterstamp inflicts one 0.55 s disarm and moderate damage. Not an automatic targeted slam or suppression."
+      }
+    }
+  },
+  {
+    "id": "c_jinx",
+    "name": "Pippa Fuseburst",
+    "slug": "pippa-fuseburst",
+    "anatomy": {
+      "description": "slender adult-proportioned humanoid biped with complete bare hands and feet"
+    },
+    "design": "short, scarred **adult** stage rigger in fireproof powder-blue jumpsuit, lighting tools, collapsible firing racks and confetti wheels; no Jinx-like weapon swap, zap slow or global rocket execute",
+    "abilities": {
+      "P": {
+        "name": "Cue Card",
+        "cooldownNote": null,
+        "designText": "Pippa stores one Showstopper token when a **scheduled** explosion catches at least one enemy champion; max 2; one token per cast, no kill-triggered speed frenzy."
+      },
+      "S1": {
+        "name": "Rack and Spark",
+        "cooldownNote": "8 s",
+        "designText": "installs a waist-high fireworks rack for 4 s (2 HP); its indicator previews a thin 45-GU blast lane. After 0.9 s it fires once along that lane, then burns out."
+      },
+      "S2": {
+        "name": "Move the Spotlight",
+        "cooldownNote": "12 s",
+        "designText": "rotates an **unfired** rack 90° after a 0.45 s warning or, with no rack, drops a small no-damage distraction flare that reveals an area for 2 s."
+      },
+      "R": {
+        "name": "Opening Night",
+        "cooldownNote": "88 s",
+        "designText": "lays a 120-GU-wide stage grid with **four sequential firing squares**, each warned 0.75 s before ignition. The final square is chosen from three legal candidates at cast start; consumes Showstopper for an additional shield-break pulse (not more raw burst). At every tick at least one contiguous walkable escape cell must remain."
+      }
+    }
+  },
+  {
+    "id": "c_puck",
+    "name": "Lulla Faespring",
+    "slug": "lulla-faespring",
+    "anatomy": {
+      "description": "small faerie dragon with four anatomical petal-shaped wings and a curled anatomical tail; preserve actual dragon proportions and appendages",
+      "pose": "creature",
+      "rest_pose": "Symmetrical species-appropriate neutral dragon rest pose, four wings spread apart with clear wing-root gaps and tail separated from limbs",
+      "component_note": "Requires a reviewed creature rig and compatible flight motion; humanoid animation transfer is not supported."
+    },
+    "design": "unnervingly calm adult moth archivist with a quilted cloak, waist-hung mechanical bedside clocks and large glass chime ring",
+    "abilities": {
+      "P": {
+        "name": "Drowse Ledger",
+        "cooldownNote": null,
+        "designText": "an enemy champion completing a **non-basic-attack ability** within 95 GU of an active Lulla chime accumulates one Drowse note (max 2, 4 s duration). Each unique cast can add at most one note. Notes do not affect the cast that just finished."
+      },
+      "S1": {
+        "name": "Hang the Chime",
+        "cooldownNote": "8 s, two charges",
+        "designText": "places a 2-HP wind chime on legal ground within 125 GU, lasting 5 s. It projects a public 95-GU listening radius. Max two chimes; destroying a chime ends its aura but does not retroactively cancel completed spells."
+      },
+      "S2": {
+        "name": "Borrowed Yawn",
+        "cooldownNote": "13 s",
+        "designText": "consumes one Drowse note on an enemy in 130 GU. On that enemy's **next successfully completed non-basic spell** within 3 s, adds **0.35 s post-cast recovery** after the spell's effect already resolves; if no valid cast happens, the tax expires harmlessly. No silence, disable, cast failure or stealth."
+      },
+      "R": {
+        "name": "Intermission Theater",
+        "cooldownNote": "90 s",
+        "designText": "opens an 135-GU circular dream stage for 4 s, with **three announced chime beats** at 1, 2, and 3 s. Enemy casts which *complete inside* a beat window pay 0.25 s post-cast recovery (subject to the global recovery cap), while allied casts completed during beats gain 12% shorter recovery (never faster windup). Enemy spell results and damage still occur normally."
+      }
+    }
+  },
+  {
+    "id": "c_batrider",
+    "name": "Bryx Emberkite",
+    "slug": "bryx-emberkite",
+    "anatomy": {
+      "description": "adult-proportioned humanoid rider biped only, with two bare arms and two legs",
+      "component_note": "Exclude the bat mount, saddle and harness from this base. The bat is a separate anatomical candidate with its own rig; combine only after both rigs are validated."
+    },
+    "design": "sun-battered wind sailor with a damaged one-sided glider board, patched cream sails and bright coral thermal vents; no Sticky Napalm, Flamebreak, Firefly flight path or lasso drag",
+    "abilities": {
+      "P": {
+        "name": "Read the Updraft",
+        "cooldownNote": null,
+        "designText": "Bryx sees public warm-air flows left by his vents; traveling **with** a current for at least 40 GU gives him one Sailspeed charge (max 2), consumed by next ordinary attack for bonus range."
+      },
+      "S1": {
+        "name": "Plant Thermal",
+        "cooldownNote": "9 s",
+        "designText": "plants a 2-HP 3-s hot-air vent, generating a visible 80×35-GU directional ground current. Walkers keep control; movement in arrow direction receives 15% speed, against it receives 10% slow. Does not lift units over hard walls."
+      },
+      "S2": {
+        "name": "Trim Sail",
+        "cooldownNote": "13 s",
+        "designText": "rotates one active vent by up to 90° after 0.5 s tell. Nearby willing allies may accept one **short airflow boost** along the new direction, capped at 22 GU with full world-collision checks. Enemies get no forced flight."
+      },
+      "R": {
+        "name": "Thermocline Crossing",
+        "cooldownNote": "87 s",
+        "designText": "connects two vents into a broad angled airflow corridor for 4 s; allies crossing end-to-end gain a small evasion-of-next-basic-attack buff, enemies fighting into the current lose some projectile range. Opponents can destroy a vent to end the corridor."
+      }
+    }
+  },
+  {
+    "id": "c_bristleback",
+    "name": "Murdle Ridgehide",
+    "slug": "murdle-ridgehide",
+    "anatomy": {
+      "description": "broad-backed hunched beast humanoid biped with intrinsic anatomical back quills and tusks, clear limb gaps and visible quill roots"
+    },
+    "design": "squat scarred **pangolin-like** creature with detachable armored dorsal segments, clay talons and patchwork iron saddle; no Bristleback-like rear damage reduction, sticky goo or warpath attack stacks",
+    "abilities": {
+      "P": {
+        "name": "Plate Accounting",
+        "cooldownNote": null,
+        "designText": "Murdle begins with 4 dorsal plates, each providing 4% damage reduction from any direction. Each deployed plate removes its personal reduction until recovered after expiration or collected. Plate inventory shown openly."
+      },
+      "S1": {
+        "name": "Shed a Wall",
+        "cooldownNote": "8 s",
+        "designText": "detaches one plate and props it as a 40-GU breakable low wall for 4 s. It blocks one ordinary projectile from **either** team, never closes a chokepoint fully. Max two active walls."
+      },
+      "S2": {
+        "name": "Recall Shell",
+        "cooldownNote": "12 s",
+        "designText": "reels one deployed plate along a visible 60-GU path back toward Murdle; units crossed are lightly nudged to nearest free ground but never stunned. Recovered plate re-enters passive armor only upon reaching Murdle; destroyer removes it until its natural recovery timer."
+      },
+      "R": {
+        "name": "Fortress Migration",
+        "cooldownNote": "92 s",
+        "designText": "for 5 s, Murdle can redeploy up to three plates as a **moving staggered palisade** advancing 60 GU. Each plate remains individually destroyable, with gaps at least two hero diameters wide. His own armor drops dramatically while the wall travels."
+      }
+    }
+  },
+  {
+    "id": "c_io",
+    "name": "Nemea Halolink",
+    "slug": "nemea-halolink",
+    "anatomy": {
+      "description": "single smooth floating wisp core with no anatomical arms or legs",
+      "pose": "custom",
+      "rest_pose": "Centered neutral floating core configuration, no orbiting rings, satellites or invented limbs",
+      "component_note": "Requires a reviewed non-humanoid animation setup; humanoid skeletal transfer is not supported."
+    },
+    "design": "severe middle-aged maestro holding two tuning forks, no glowing permanent nearest-ally tether; performers are heard as positional *notes*",
+    "abilities": {
+      "P": {
+        "name": "Audible Interval",
+        "cooldownNote": null,
+        "designText": "whenever two distinct allies finish spells **within 0.6–1.4 s of each other**, Nemea gains one Harmony note (max 3; one per pair / 8 s). No reward for simultaneous spam; notes are visibly displayed."
+      },
+      "S1": {
+        "name": "First Note",
+        "cooldownNote": "8 s",
+        "designText": "creates a small 35-GU score circle lasting 3 s; the first ally entering receives one **shield-on-next-damage** token valid 2 s. Max two circles; a given ally benefits once per cast."
+      },
+      "S2": {
+        "name": "Second Note",
+        "cooldownNote": "13 s",
+        "designText": "links **two separate score circles** with a luminous 130-GU-max segment. Allies *crossing the segment in either direction* gain 10% movement speed for 1.5 s, once per hero. Enemies can attack circles; the segment is not a tether on bodies."
+      },
+      "R": {
+        "name": "Chorus Arrival",
+        "cooldownNote": "92 s",
+        "designText": "consumes Harmony to lay three successive public beat circles around the team over 3 s. Allies who voluntarily reach their assigned **different circles** on the announced beat receive a capped shield and brief recovery reduction, while clumping in one circle gives only minimal healing. Does not automatically shield the entire team in place."
+      }
+    }
+  },
+  {
+    "id": "c_lulu",
+    "name": "Thimble Briarwish",
+    "slug": "thimble-briarwish",
+    "anatomy": {
+      "description": "compact short stylized adult-proportioned humanoid biped with complete bare hands and feet"
+    },
+    "design": "tiny elderly fae gardener hauling a giant squeaking terrarium barrow, patched mittens, roots growing through ceramic pots; no polymorph/massive-grow knockup kit",
+    "abilities": {
+      "P": {
+        "name": "Seedbank",
+        "cooldownNote": null,
+        "designText": "after an ally uses cover Thimble created to block a projectile, she collects one Seed (max 2; one per source shot). Seeds improve next planter's hit points; never grant permanent ability amp."
+      },
+      "S1": {
+        "name": "Plant Shelter",
+        "cooldownNote": "9 s",
+        "designText": "places a 40-GU dome planter lasting 4 s. It blocks **one arcing/lobbed enemy projectile**, not direct-fire bullets; ally and enemy walkers pass underneath freely. 2 HP baseline."
+      },
+      "S2": {
+        "name": "Wheelbarrow Walk",
+        "cooldownNote": "12 s",
+        "designText": "pushes a planted shelter along a valid 55-GU ground segment for 2.5 s. Allies who stay in its moving shade gain minor HP regeneration; the caster is slowed while pushing. Cannot move through walls."
+      },
+      "R": {
+        "name": "Traveling Orchard",
+        "cooldownNote": "90 s",
+        "designText": "sends **three** small low-roof planters along separate, explicitly visible 70-GU routes for 5 s. Each blocks one overhead attack then crumbles. The gaps remain traversable; Thimble cannot be in three places at once and is vulnerable while directing them."
+      }
+    }
+  },
+  {
+    "id": "c_silencer",
+    "name": "Sevrin Inkseal",
+    "slug": "sevrin-inkseal",
+    "anatomy": {
+      "description": "athletic adult-proportioned humanoid biped with complete bare hands and feet"
+    },
+    "design": "exhausted court magistrate in layered burgundy robes and a huge tablet pauldron, carrying a multi-headed law stamp; no Death Prophet or Silencer-style global silence",
+    "abilities": {
+      "P": {
+        "name": "Case Law",
+        "cooldownNote": null,
+        "designText": "observes completed enemy skills within 120 GU and records their declared **server-side category** (`mobility`, `attack`, `protection`, `control`). Only one last category per target, lasting 4 s; does not read hidden cooldowns or private abilities."
+      },
+      "S1": {
+        "name": "Mark Jurisdiction",
+        "cooldownNote": "9 s",
+        "designText": "stamps a 70-GU public court disk around a visible 2-HP breakable ink pillar for 3.5 s. Opponents may enter and cast normally. A champion's **second completed skill of the same category** inside the disk receives 0.25 s post-cast recovery, once / target / disk. A different category resets its local repeat count."
+      },
+      "S2": {
+        "name": "Appeal Granted",
+        "cooldownNote": "13 s",
+        "designText": "relocates an existing court center up to 45 GU after a 0.45 s warning, or if targeting an ally inside, erases **one** pending cast-recovery tax on that ally. Does not silence or imprison anyone."
+      },
+      "R": {
+        "name": "Precedent Review",
+        "cooldownNote": "95 s",
+        "designText": "for 4.5 s expands one active court to 125 GU and publishes the current recorded category above every participating enemy. If an enemy repeats the same category a third time, they take one **small shield-stripping hit** and 0.35 s post-cast recovery (subject to global cap). Switching categories avoids penalty; no global affecting enemies elsewhere."
+      }
+    }
+  },
+  {
+    "id": "c_wukong_lol",
+    "name": "Koro Cloudtail",
+    "slug": "koro-cloudtail",
+    "anatomy": {
+      "description": "slender athletic adult-proportioned monkey humanoid biped with slightly simian ears and one long curved anatomical monkey tail clearly separated from the torso and legs"
+    },
+    "design": "nimble simian scaffold builder with bamboo-jointed pole stilts, chalk measuring rope and light tool satchels; no monkey clone, spinning staff ultimate or extended auto-lock hits",
+    "abilities": {
+      "P": {
+        "name": "Measured Landing",
+        "cooldownNote": null,
+        "designText": "landing on legal ground after his own vault grants Koro a 2 s balanced stance; next basic attack has a small shield break bonus. No stacking knockups."
+      },
+      "S1": {
+        "name": "Plant Vault",
+        "cooldownNote": "8 s, 2 charges",
+        "designText": "plants a 2-HP pole at a legal ground point within 110 GU. It stands 5 s, visibly previews a 60-GU landing arc with a collision-tested endpoint. Max two poles."
+      },
+      "S2": {
+        "name": "Pole Transfer",
+        "cooldownNote": "12 s",
+        "designText": "Koro or a **voluntarily consenting nearby ally** vaults from one pole to the previewed legal landing point after a 0.45 s windup. Cannot cross hard walls or tower-blocked zones, cannot initiate in hard CC, landing causes only a small radial shove (no full AoE knockup)."
+      },
+      "R": {
+        "name": "Scaffold Crossing",
+        "cooldownNote": "87 s",
+        "designText": "connects two poles with a visible elevated bamboo runway for 4 s. Eligible allies may **individually choose** to take one fast 65-GU arc between the poles. The crossing is not global teleportation; any pole destruction cancels later crossings, passengers already in flight resolve to nearest safe landing."
+      }
+    }
+  },
+  {
+    "id": "c_monkeyking_dota",
+    "name": "Bram Stonebranch",
+    "slug": "bram-stonebranch",
+    "anatomy": {
+      "description": "robust adult-proportioned monkey humanoid biped with simian ears and one long anatomical tail clearly separated from the torso and legs"
+    },
+    "design": "hulking aging simian monarch with a living leaf crown, wide moss-gold shoulder armor and a **short broad jade scepter**; no staff clone army or circle of striking monkey echoes",
+    "abilities": {
+      "P": {
+        "name": "Old Growth",
+        "cooldownNote": null,
+        "designText": "when Bram blocks a *lobbed* projectile with canopy cover, he gains one Sap (max 2), empowering his next small shield. Direct low shots are unaffected by canopy."
+      },
+      "S1": {
+        "name": "Root Column",
+        "cooldownNote": "9 s, 2 charges",
+        "designText": "plants a 2-HP vertical trunk column for 5 s at a legal position, 45-GU radius. Walkers pass around; two columns can support a canopy."
+      },
+      "S2": {
+        "name": "Leaf Intercept",
+        "cooldownNote": "12 s",
+        "designText": "grows a **short overhead roof** between two active columns for 3 s. The roof can absorb up to two **lobbed** enemy projectiles; arching artillery is intercepted, low trajectories pass under. If only one column exists, Bram grants that column a small self-shield instead."
+      },
+      "R": {
+        "name": "Kingdom of Shade",
+        "cooldownNote": "92 s",
+        "designText": "raises three additional short-lived columns forming a 130-GU **open canopy grove** for 5 s. Within it allies take reduced area-splash damage from above, but enemies can walk in, attack the exposed columns, or aim direct projectiles underneath. Canopy doesn't cancel ground hazards."
+      }
+    }
+  },
+  {
+    "id": "c_stepstone",
+    "name": "Toma Bellbreak",
+    "slug": "toma-bellbreak",
+    "anatomy": {
+      "description": "lean athletic adult-proportioned humanoid biped with complete bare hands and feet"
+    },
+    "design": "compact older bell-trained martial artist with heavy bronze wrist bells, battered red canvas and a rooted deliberate stance; no point-click allyward kick ultimate",
+    "abilities": {
+      "P": {
+        "name": "Listen for the Stroke",
+        "cooldownNote": null,
+        "designText": "an enemy in 105 GU starting a cast with visible windup grants Toma a public Bell Window until commit (max one tracked per enemy). His next basic attack within 1.2 s after that cast's completion restores 5% missing HP, once / enemy / 6 s."
+      },
+      "S1": {
+        "name": "Open Palm",
+        "cooldownNote": "8 s",
+        "designText": "a short 60-GU palm strike that deals modest damage; if it hits during a visible enemy windup, it **does not interrupt**, but grants Toma a parry charge valid 3 s."
+      },
+      "S2": {
+        "name": "Return Stroke",
+        "cooldownNote": "12 s",
+        "designText": "consumes parry charge (or performs a weak dry guard) to create a 0.6 s frontal reaction stance. One incoming targeted non-ultimate hit from that frontal arc is partially reduced; after it lands Toma counterstrikes the attacker for moderate damage. Guard is ineffective from behind and against untargeted AoE."
+      },
+      "R": {
+        "name": "Thirteenth Bell",
+        "cooldownNote": "84 s",
+        "designText": "sets a 1.2 s public dueling rhythm centered on Toma; opponents hear two false chimes then one genuine **final** counter window. If an enemy finishes a damaging cast against Toma during the final 0.25 s, that damage is reduced 35% (not negated) and he sends a non-stunning shockwave outward. Casting earlier or attacking someone else avoids the counter."
+      }
+    }
+  },
+  {
+    "id": "c_skybreaker",
+    "name": "Ravelle Skyrake",
+    "slug": "ravelle-skyrake",
+    "anatomy": {
+      "description": "adult-proportioned humanoid pilot biped only, with two bare arms and two legs",
+      "component_note": "Exclude the vehicle, cockpit, seat and fans from this base. The skiff is a separate mechanical asset and must not be fused into the pilot anatomy."
+    },
+    "design": "battle-worn aristocratic skiff pilot on a fragile fan-powered observation platform, with optical rangefinder, stripy wing-cloth and small survey markers; not a high-attack-speed hovering flak ADC",
+    "abilities": {
+      "P": {
+        "name": "Surveyed Grid",
+        "cooldownNote": null,
+        "designText": "Ravelle's basic attacks or visible direct observation mark 1 of 4 public **map sectors** around her for 5 s. Only sectors she has actually seen can be assigned for artillery. Max two marked sectors active."
+      },
+      "S1": {
+        "name": "Spotting Flare",
+        "cooldownNote": "8 s",
+        "designText": "fires a revealing flare into one 60-GU sector for 3.5 s. Does small damage and exposes enemy units who remain in it; does not pierce fog to reveal unrelated sectors."
+      },
+      "S2": {
+        "name": "Reposition Skiff",
+        "cooldownNote": "13 s",
+        "designText": "moves the skiff laterally 50 GU along traversable ground projection, with collision at world walls and towers. During travel, Ravelle cannot basic attack; her previously marked sectors remain but are not auto-updated into fog."
+      },
+      "R": {
+        "name": "Designated Airspace",
+        "cooldownNote": "92 s",
+        "designText": "selects an already-surveyed **2×2 ground grid** totaling 130×130 GU. After a 0.8 s warning, four separate bombardment cells fire sequentially over 3 s **in the declared order**; each cell is shown 0.6 s before it lands, and one guaranteed traversable escape lane remains. Damage is moderate per cell; staying through consecutive cells is costly. All shots use public authoritative sector coordinates, not hidden enemy prediction."
+      }
+    }
+  }
+]
