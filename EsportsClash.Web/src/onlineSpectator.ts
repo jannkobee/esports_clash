@@ -1,10 +1,12 @@
 import type { ArenaSceneFrame } from './match-viewer/ArenaFrame.ts';
+import type { RecordedMatchEvent } from './matchReplay.ts';
 
 export interface OnlineSnapshot {
   type: 'snapshot'; schema: 1; match_id: string; sequence: number; plan_hash: string;
   versions: Record<string, string>; speed: number;
+  execution?:{mode:string;from_second?:number;notice?:string};
   snapshot: { schema: 1; second: number; finished: boolean; fingerprint: string;
-    frame: ArenaSceneFrame; events: { second: number; type: string; text: string }[] };
+    frame: ArenaSceneFrame; events: RecordedMatchEvent[] };
 }
 
 export function acceptOnlineSnapshot(raw: unknown, matchId: string, versions: Record<string, string>, lastSequence: number): raw is OnlineSnapshot {
@@ -24,10 +26,16 @@ export function acceptOnlineSnapshot(raw: unknown, matchId: string, versions: Re
 /** Interpolate received positions only. No extrapolation, game clock or combat resolution. */
 export function interpolateSpectatorFrame(previous: ArenaSceneFrame, current: ArenaSceneFrame, fraction: number): ArenaSceneFrame {
   const t = Math.max(0, Math.min(1, fraction));
-  const positions = new Map(previous.champions.map(actor => [actor.id, actor]));
+  const blend = <T extends {readonly id:string;readonly x:number;readonly y:number;readonly isAlive?:boolean}>(before:readonly T[],after:readonly T[]):T[] => {
+    const positions=new Map(before.map(actor=>[actor.id,actor]));
+    return after.map(actor=>{
+      const prior=positions.get(actor.id);
+      return prior&&prior.isAlive!==false&&actor.isAlive!==false
+        ? {...actor,x:prior.x+(actor.x-prior.x)*t,y:prior.y+(actor.y-prior.y)*t}:actor;
+    });
+  };
   return { ...current, second: previous.second + (current.second - previous.second) * t,
-    champions: current.champions.map(actor => {
-      const before = positions.get(actor.id);
-      return before?.isAlive && actor.isAlive ? { ...actor, x: before.x + (actor.x - before.x) * t, y: before.y + (actor.y - before.y) * t } : actor;
-    }) };
+    champions:blend(previous.champions,current.champions),
+    minions:blend(previous.minions,current.minions),
+    projectiles:blend(previous.projectiles,current.projectiles) };
 }

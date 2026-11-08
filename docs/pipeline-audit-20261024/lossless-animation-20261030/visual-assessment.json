@@ -1,0 +1,33 @@
+{
+  "status": "diagnostic_playback_verified_not_production",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "reviewed_on": "2026-10-30",
+  "scope": "Six of eighteen exact Babylon images inspected. Rest return, intermediate lift and peak lift visible; no obvious whole-body export distortion in these views. Not close-up anatomical acceptance, continuous collision proof, target-device performance or gameplay qualification.",
+  "inspected": [
+    {
+      "file": "animation-screenshots/phase-0-front.png",
+      "sha256": "b18490e2b25f2f12d9832dc7900257c40bf15566028838b7852aaf68e990c3cf"
+    },
+    {
+      "file": "animation-screenshots/phase-0.5-front.png",
+      "sha256": "c62f7a4a81077f8294d5b71c3a0706b62223059721cb3c51eb1c7d1163bbca79"
+    },
+    {
+      "file": "animation-screenshots/phase-0.5-side.png",
+      "sha256": "c725acddba3e7502bdd0a565bce3c7615862b52ad584a2bbf038b61e54e26838"
+    },
+    {
+      "file": "animation-screenshots/phase-0.25-side.png",
+      "sha256": "34da3b57990189fd3081863a67a4338d3040ab5b7c9c435facee62d9ce1d68e3"
+    },
+    {
+      "file": "animation-screenshots/phase-0.75-front.png",
+      "sha256": "888ad4009c29a91874cfec25cbe9bff39ec891592d44345a93554840a422f94d"
+    },
+    {
+      "file": "animation-screenshots/phase-1-front.png",
+      "sha256": "b18490e2b25f2f12d9832dc7900257c40bf15566028838b7852aaf68e990c3cf"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "status": "retained_unqualified_left_shoulder_diagnostic",
+  "reviewed_on": "2026-11-07",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "summary": "Retain combined-left-section-handles-v6 (61a07eaa-8371-4a72-81cf-c46239175a45) as an unqualified left-shoulder diagnostic only. Whole proximal-arm cross-section translation (0.01805H) plus coherent chest compression (0.00349H at 60 degrees, 0 at 90 degrees) within the frozen 0.02H shoulder cap eliminates the flat vertical inner-arm notch produced by sheet-side handles v5 (f89461c3) and reduces measured left-shoulder self-intersections from 348 to 0 (60 degrees straight), 93 to 0 (90 degrees straight), 363 to 0 (60/elbow60/twist-20), 364 to 16 (60/elbow60/twist0), 396 to 63 (60/elbow60/twist+20), and 107 to 0 (90/elbow90/twist0) with zero contact regressions across all 25 poses and zero severely stretched edges. However, Babylon visual review still finds a compressed anterior axillary crease at 60 degrees and a horizontal deltoid-biceps transition dent/undulation where the axial section envelope ([0, 0.25, 0.7, 1.0]) fades out at 60 and 90 degrees, while right shoulder (390/166 straight, 443/414/386/178 compound) and left-hip compound twist (42 at 90/knee90/twist+20; 17 at twist+10) remain at baseline.",
+  "inspected": [
+    {
+      "file": "repair-screenshots/00-Rest-0-child0-twist0-candidate-front.png",
+      "sha256": "848321bb683882a6d8a931c8ac4c9372a385a52c9b499032a2024be6ec153bc7"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-front.png",
+      "sha256": "b8480cfdd07e7b33ad32362d47b514894d70c8c90cea0c0ed206eb94303f7f79"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-front.png",
+      "sha256": "373780b1acdcebdf9159edec32215b1cfbadf0b2faf54bc6a2b98f7044729533"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-oblique.png",
+      "sha256": "3409685bfe492494b5c878f838a57b9f3e9887745976e82c846ba2ea4a7eaad5"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-oblique.png",
+      "sha256": "799a5624d7a2f3ce256b7f66caea5d78dcaeb872a625e21dd43b7314fc50445e"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-side.png",
+      "sha256": "fb14257a17b2d1fe09a442f65f8d715b0d9e90dfb05b0aabe41020dc03e733ca"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-playback-oblique.png",
+      "sha256": "503f0d1abbc2fdf14ce874b25c2943fcb848adbc793e783e9b94f34133e71dd6"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-oblique.png",
+      "sha256": "e549742bd3cd2fd61470b43e8a016385f797dc716f4253d1f5d4b54be08e60a1"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-oblique.png",
+      "sha256": "a17fb5c0f15e0759c0a77d3113dd2ad095a8ea875be5204b41149625af02dddf"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-side.png",
+      "sha256": "12c1cd20c849a221431d6b622a09b69aadc75db4e54dd7335b367c2740ff4e1e"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-playback-oblique.png",
+      "sha256": "fe480aba51fc11c3f66119bd8f6c7d0e19fde8e78ab6439a39a871b07202fa42"
+    },
+    {
+      "file": "repair-screenshots/14-UpperArmL-60-child60-twist-20-playback-oblique.png",
+      "sha256": "1fef9e912e9174ccca87eb884794df61bbab0ab68bef439899b4bbb4fcf9be92"
+    },
+    {
+      "file": "repair-screenshots/15-UpperArmL-60-child60-twist0-playback-oblique.png",
+      "sha256": "767ba7ee78dd449145b939ebfc608f69f41635c5cba0888694b6bed412ec5dcb"
+    },
+    {
+      "file": "repair-screenshots/16-UpperArmL-60-child60-twist20-playback-oblique.png",
+      "sha256": "2c71c3ee5331297e924f2e023b5f4cc2efdcd39dceaac1530c002d862349e7cb"
+    },
+    {
+      "file": "repair-screenshots/20-UpperArmL-90-child90-twist0-playback-oblique.png",
+      "sha256": "ebf2c240a9f3f1a8996a69ad9cfb09f8d3f8809ba27d2d3b010281110e1f439c"
+    }
+  ],
+  "companion_normal_transport": {
+    "directory": "docs/pipeline-audit-20261024/shoulder-normal-transport-61a07eaa",
+    "method": "left-shoulder-morph-normal-preservation-v1",
+    "normal_corrected_glb_sha256": "fcff07df9c8168d4c98d365522370f4b7195fe4da8e6a1cf27b6d345890844e4",
+    "report_sha256": "e6b553fca48fc00af7abaa1f2a87ada4f5e71917cec65f1c8b12f1de1c01db1d",
+    "gltf_validation_sha256": "0135660c481a70310750b49b54c9fdc7f03732d360c97c7033ab4996f5bd7305",
+    "render_report_sha256": "17ee66e77a17734870df814549902f8ec6549eca3181ee162cfa73b971441c72",
+    "summary": "Pre-skin morph normal delta transport reduces active support normal divergence on training poses from max 58.53 deg to 5.73e-6 deg (UpperArmL 60, 1359 vertices) and max 64.01 deg to 1.88e-6 deg (UpperArmL 90, 957 vertices) with 0 support vertices worse over 1 deg, and reduces >30 deg normal errors on compound left-shoulder poses (67->0, 71->2, 79->6, 134->28) while passing gltf-validator 2.0.0-dev.3.10 with 0 errors."
+  },
+  "limitations": [
+    "Fifteen contour captures and six normal-corrected captures inspected directly, not all 175+15 captures.",
+    "Front camera at UpperArmL 90 degrees looks down the forward-raised forearm and partially occludes the anterior shoulder root; oblique and side views expose the deltoid-biceps transition.",
+    "Left shoulder still exhibits a compressed anterior axillary crease at 60 degrees and a horizontal transition dent/undulation where the axial section handle envelope ([0, 0.25, 0.7, 1.0]) terminates.",
+    "Right shoulder (UpperArmR) and left-hip twist (ThighL 90/knee90/twist+20 and +10) were held at baseline as controls in this isolated left-shoulder trial.",
+    "Khronos gltf-validator reports 0 errors and 1 NODE_SKINNED_MESH_NON_ROOT warning on contour-diagnostic.glb (plus 2 BUFFER_VIEW_TARGET_MISSING hints and 2 UNUSED_OBJECT infos on normal-corrected.glb).",
+    "No game clips, outfit fitting, production 8-influence admission, or avatar publication is claimed."
+  ]
+}

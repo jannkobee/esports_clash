@@ -13,6 +13,7 @@ export function chooseKnownJungleCamp<T extends {
   teamObjective?: boolean;
   currentCampId?: string;
   alliedFight?: boolean;
+  maxRoute?: number;
 }): T | undefined {
   if (actor.gameSeconds < 45 || actor.hpFraction < 0.62 || actor.iq < 52
     || actor.nearbyEnemyCount > 0 || actor.nearestLaneEnemyDistance < 230
@@ -26,8 +27,8 @@ export function chooseKnownJungleCamp<T extends {
   if (!actor.teamObjective && actor.jungleStrength === 0
     && (actor.iq < 76 || actor.nearestLaneEnemyDistance < 320)) return undefined;
 
-  const maxRoute = actor.teamObjective ? 720
-    : actor.jungleStrength >= 2 ? 560 : actor.jungleStrength >= 1 ? 420 : 300;
+  const maxRoute = actor.maxRoute ?? (actor.teamObjective ? 720
+    : actor.jungleStrength >= 2 ? 560 : actor.jungleStrength >= 1 ? 420 : 300);
   return camps.filter(camp => camp.isAlive && camp.type !== 'siege_golem')
     .map(camp => {
       const homeX = camp.homeX ?? camp.x;
@@ -60,7 +61,7 @@ export function shouldStartPostRecallCampObjective(input: {
 
 export function choosePostRecallTeamCamp<T extends {
   id: string; type: string; isAlive: boolean; x: number; y: number; homeX?: number; homeY?: number;
-}>(camps: readonly T[], team: 'blue' | 'red', members: readonly { x: number; y: number }[]): T | undefined {
+}>(camps: readonly T[], team: 'blue' | 'red', members: readonly { x: number; y: number }[], maxRoute = 720): T | undefined {
   if (members.length < 2) return undefined;
 
   return camps.filter(camp => {
@@ -76,7 +77,7 @@ export function choosePostRecallTeamCamp<T extends {
       longestRoute: Math.max(...routes),
       averageRoute: routes.reduce((sum, route) => sum + route, 0) / routes.length,
     };
-  }).filter(candidate => candidate.longestRoute <= 720)
+  }).filter(candidate => candidate.longestRoute <= maxRoute)
     .sort((a, b) => a.averageRoute - b.averageRoute || a.camp.id.localeCompare(b.camp.id))[0]?.camp;
 }
 

@@ -206,5 +206,5 @@ export function makeServer() {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const port = Number(process.env.PORT || 4174);
-  makeServer().listen(port, '0.0.0.0', () => console.log(`Esports Clash rooms on port ${port}`));
+  makeServer().listen(port, '0.0.0.0', () => console.log(`Hexatrick rooms on port ${port}`));
 }

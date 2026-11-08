@@ -67,11 +67,14 @@ test('simulation preserves six barracks and spawns all three creep classes at th
   sim.waveCount = 2; sim.waveTimer = 0; stepSimulation(sim, 1 / 30);
   for (const team of ['blue', 'red']) for (const type of ['melee', 'caster', 'cannon']) {
     const creeps = sim.minions.filter(m => m.team === team && m.type === type);
-    assert.equal(creeps.length, type === 'cannon' ? 1 : 3);
-    creeps.forEach((m, index) => {
-      const p = minionSpawnPosition(team, type, index);
-      assert.ok(Math.hypot(p.x - NEXUS_X[team], p.y - laneY(NEXUS_X[team])) < 100);
-      assert.ok(Math.hypot(m.x - p.x, m.y - p.y) <= m.speed / 30 + .001);
-    });
+    assert.equal(creeps.length, type === 'cannon' ? 2 : 6);
+    for (const lane of ['top', 'bot']) {
+      const laneCreeps = creeps.filter(m => m.lane === lane);
+      laneCreeps.forEach((m, i) => {
+        const p = minionSpawnPosition(team, type, i, lane);
+        assert.ok(Math.hypot(p.x - NEXUS_X[team], p.y - laneY(NEXUS_X[team])) < 100);
+        assert.ok(Math.hypot(m.x - p.x, m.y - p.y) <= m.speed / 30 + .001);
+      });
+    }
   }
 });

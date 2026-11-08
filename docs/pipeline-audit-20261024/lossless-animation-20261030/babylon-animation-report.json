@@ -1,0 +1,246 @@
+{
+  "compute": "google",
+  "asset_sha256": "42ac17a5740ab76878ca88d49e4b03cbb2d5998e7483acce91160bc0dc6ee597",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "errors": [],
+  "samples": [
+    {
+      "phase": 0,
+      "morphs": [
+        [
+          0,
+          0
+        ]
+      ],
+      "view": "front",
+      "file": "animation-screenshots/phase-0-front.png",
+      "sha256": "b18490e2b25f2f12d9832dc7900257c40bf15566028838b7852aaf68e990c3cf"
+    },
+    {
+      "phase": 0,
+      "morphs": [
+        [
+          0,
+          0
+        ]
+      ],
+      "view": "side",
+      "file": "animation-screenshots/phase-0-side.png",
+      "sha256": "ae5fde030ef96e7d24a82b3381ae965e682d9c551521fb9eaf47bad33835efea"
+    },
+    {
+      "phase": 0.125,
+      "morphs": [
+        [
+          0.2071067839860916,
+          0
+        ]
+      ],
+      "view": "front",
+      "file": "animation-screenshots/phase-0.125-front.png",
+      "sha256": "1fada3a0ceed5c2dfe02964b36c3a2bd2a2042a0b2710a476cad4b6c23a69ef6"
+    },
+    {
+      "phase": 0.125,
+      "morphs": [
+        [
+          0.2071067839860916,
+          0
+        ]
+      ],
+      "view": "side",
+      "file": "animation-screenshots/phase-0.125-side.png",
+      "sha256": "020e7bd226f97e5a9115c04438df40001d67bc2465e0e038f0dd7966f74e18fb"
+    },
+    {
+      "phase": 0.25,
+      "morphs": [
+        [
+          1,
+          0
+        ]
+      ],
+      "view": "front",
+      "file": "animation-screenshots/phase-0.25-front.png",
+      "sha256": "888ad4009c29a91874cfec25cbe9bff39ec891592d44345a93554840a422f94d"
+    },
+    {
+      "phase": 0.25,
+      "morphs": [
+        [
+          1,
+          0
+        ]
+      ],
+      "view": "side",
+      "file": "animation-screenshots/phase-0.25-side.png",
+      "sha256": "34da3b57990189fd3081863a67a4338d3040ab5b7c9c435facee62d9ce1d68e3"
+    },
+    {
+      "phase": 0.375,
+      "morphs": [
+        [
+          0.2071067839860916,
+          0.7928932309150696
+        ]
+      ],
+      "view": "front",
+      "file": "animation-screenshots/phase-0.375-front.png",
+      "sha256": "dbf6cacfa030021f830674336567d6599f392aed33a96b411a9004afcf9ef8f6"
+    },
+    {
+      "phase": 0.375,
+      "morphs": [
+        [
+          0.2071067839860916,
+          0.7928932309150696
+        ]
+      ],
+      "view": "side",
+      "file": "animation-screenshots/phase-0.375-side.png",
+      "sha256": "c0b82d9085960597cd86fd62dce0ecf2ce0e6c17e159955db62f59d315846b5c"
+    },
+    {
+      "phase": 0.5,
+      "morphs": [
+        [
+          0,
+          1
+        ]
+      ],
+      "view": "front",
+      "file": "animation-screenshots/phase-0.5-front.png",
+      "sha256": "c62f7a4a81077f8294d5b71c3a0706b62223059721cb3c51eb1c7d1163bbca79"
+    },
+    {
+      "phase": 0.5,
+      "morphs": [
+        [
+          0,
+          1
+        ]
+      ],
+      "view": "side",
+      "file": "animation-screenshots/phase-0.5-side.png",
+      "sha256": "c725acddba3e7502bdd0a565bce3c7615862b52ad584a2bbf038b61e54e26838"
+    },
+    {
+      "phase": 0.625,
+      "morphs": [
+        [
+          0.2071067839860916,
+          0.7928932309150696
+        ]
+      ],
+      "view": "front",
+      "file": "animation-screenshots/phase-0.625-front.png",
+      "sha256": "dbf6cacfa030021f830674336567d6599f392aed33a96b411a9004afcf9ef8f6"
+    },
+    {
+      "phase": 0.625,
+      "morphs": [
+        [
+          0.2071067839860916,
+          0.7928932309150696
+        ]
+      ],
+      "view": "side",
+      "file": "animation-screenshots/phase-0.625-side.png",
+      "sha256": "c0b82d9085960597cd86fd62dce0ecf2ce0e6c17e159955db62f59d315846b5c"
+    },
+    {
+      "phase": 0.75,
+      "morphs": [
+        [
+          1,
+          1.4791141972893971e-31
+        ]
+      ],
+      "view": "front",
+      "file": "animation-screenshots/phase-0.75-front.png",
+      "sha256": "888ad4009c29a91874cfec25cbe9bff39ec891592d44345a93554840a422f94d"
+    },
+    {
+      "phase": 0.75,
+      "morphs": [
+        [
+          1,
+          1.4791141972893971e-31
+        ]
+      ],
+      "view": "side",
+      "file": "animation-screenshots/phase-0.75-side.png",
+      "sha256": "34da3b57990189fd3081863a67a4338d3040ab5b7c9c435facee62d9ce1d68e3"
+    },
+    {
+      "phase": 0.875,
+      "morphs": [
+        [
+          0.2071067839860916,
+          0
+        ]
+      ],
+      "view": "front",
+      "file": "animation-screenshots/phase-0.875-front.png",
+      "sha256": "1fada3a0ceed5c2dfe02964b36c3a2bd2a2042a0b2710a476cad4b6c23a69ef6"
+    },
+    {
+      "phase": 0.875,
+      "morphs": [
+        [
+          0.2071067839860916,
+          0
+        ]
+      ],
+      "view": "side",
+      "file": "animation-screenshots/phase-0.875-side.png",
+      "sha256": "020e7bd226f97e5a9115c04438df40001d67bc2465e0e038f0dd7966f74e18fb"
+    },
+    {
+      "phase": 1,
+      "morphs": [
+        [
+          0,
+          0
+        ]
+      ],
+      "view": "front",
+      "file": "animation-screenshots/phase-1-front.png",
+      "sha256": "b18490e2b25f2f12d9832dc7900257c40bf15566028838b7852aaf68e990c3cf"
+    },
+    {
+      "phase": 1,
+      "morphs": [
+        [
+          0,
+          0
+        ]
+      ],
+      "view": "side",
+      "file": "animation-screenshots/phase-1-side.png",
+      "sha256": "ae5fde030ef96e7d24a82b3381ae965e682d9c551521fb9eaf47bad33835efea"
+    }
+  ],
+  "loaded": {
+    "clips": [
+      "Mirelle_HipDiagnostic"
+    ],
+    "meshes": [
+      {
+        "name": "geometry_0",
+        "influences": 8,
+        "bones": 52,
+        "extraWeights": true,
+        "morphs": 2
+      }
+    ]
+  },
+  "playback": {
+    "from": 0,
+    "to": 240,
+    "frame": 67.03799999998883,
+    "advanced": true
+  },
+  "status": "rendered_for_visual_review"
+}

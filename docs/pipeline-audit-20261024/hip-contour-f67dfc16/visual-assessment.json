@@ -1,0 +1,41 @@
+{
+  "review_id": "f67dfc16-7e53-499a-a8ac-f82c061ed531",
+  "reviewed_on": "2026-10-30",
+  "reviewer": "/root",
+  "status": "rejected_jagged_fold",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "admit_animation_bake": false,
+  "scope": "6 of24 exact Babylon views inspected. Rejected contour experiment; no animated avatar qualification.",
+  "observations": [
+    "Pinning the upper pelvis preserves the observed waist contour, but the normal-restricted edit introduces an uneven inner hip fold at45 and67.5 in orbit3.",
+    "At90 the crease persists with small jagged highlights. No visual or animation pass is claimed.",
+    "Revise by keeping the pelvis pins and removing the normal projection, which can vary sharply along the folded surface."
+  ],
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/baseline-ThighL-45-orbit3.png",
+      "sha256": "71878a0b9186103ccb3ef3940b8c325f11fc7246f1e41e03d883161f762eb413"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit3.png",
+      "sha256": "c7b1a7add32efdd827ba3a2099660270871935cfe6d81da420d06d5938d819f7"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-67.5-orbit3.png",
+      "sha256": "5c959f8db87b8264993a37937a2ba3e4e8cbd75b848f69b47326f98639347223"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-67.5-orbit3.png",
+      "sha256": "f1ef94cf1b58f87c96424102825b24025caeb3bd8b55ac0d34e6d90c83246cc7"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit3.png",
+      "sha256": "2477ce27c151e2d52a39b35074e25dc45ee30dffcd3e2609be1b642b3ad17d73"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit3.png",
+      "sha256": "c651ce34619734097bbd87914886f5c087fd138e194cf81aca32fb77a8ed2d0c"
+    }
+  ]
+}

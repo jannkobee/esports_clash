@@ -41,12 +41,17 @@ export function rerollAfterBalanceGame(runsLeftBeforeCompletion: number): boolea
 }
 
 export interface RecordedMatchEvent {
+  tick?: number;
+  sequence?: number;
+  subject?: { actorId?: string; targetId: string; team?: 'blue' | 'red' };
   second: number;
   type: string;
   text: string;
 }
 
 export interface MatchReport {
+  mapVersion?: string;
+  rulesetVersion?: string;
   abilityRuleset?:'original-v3-preview-1'|'original-v3-preview-2';
   v3Counters?:Record<string,number>;
   v3InputJournal?:(V3ManualInput&{tick:number})[];

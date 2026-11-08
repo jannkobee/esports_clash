@@ -110,3 +110,25 @@ test('a won fight sends healthy survivors to structures before shopping or farmi
   assert.equal(shouldPressWonFight({ ...opportunity, iq: 45, coachMacro: 5,
     healthFraction: 0.42 }), false);
 });
+
+test('custom maxRoute enables farming and post-recall calls on expanded Howling Abyss map', () => {
+  const distantCamp = { id: 'blue_buff_distant', type: 'blue_buff', x: 480, y: 540, isAlive: true };
+  const actorInLane = {
+    x: 480, y: 996, team: 'blue', hpFraction: 0.9, iq: 85,
+    jungleStrength: 1, gameSeconds: 90, nearbyEnemyCount: 0,
+    nearestLaneEnemyDistance: 500, urgentStructurePush: false,
+  };
+  // Default maxRoute for tier-1 jungler is 420px. Distance is 456px => undefined
+  assert.equal(chooseKnownJungleCamp([distantCamp], actorInLane), undefined);
+  // Custom maxRoute 680px reaches the 456px distance
+  assert.equal(chooseKnownJungleCamp([distantCamp], { ...actorInLane, maxRoute: 680 })?.id, 'blue_buff_distant');
+
+  // Post-recall team camp from fountain well with maxRoute 1300
+  const wellMembers = [{ x: 80, y: 1116 }, { x: 100, y: 1116 }];
+  // Distance to (480, 540) is ~701px, within 720px
+  assert.equal(choosePostRecallTeamCamp([distantCamp], 'blue', wellMembers, 1300)?.id, 'blue_buff_distant');
+  // Further camp at (950, 1140): distance from (80, 1116) is ~870px, exceeds default 720 but within 1300
+  const farCamp = { id: 'blue_behemoth_far', type: 'behemoth', x: 950, y: 1140, isAlive: true };
+  assert.equal(choosePostRecallTeamCamp([farCamp], 'blue', wellMembers), undefined);
+  assert.equal(choosePostRecallTeamCamp([farCamp], 'blue', wellMembers, 1300)?.id, 'blue_behemoth_far');
+});

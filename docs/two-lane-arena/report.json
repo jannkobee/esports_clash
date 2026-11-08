@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-03T13:07:57.148Z",
+  "views": [
+    {
+      "name": "two-lane-overview",
+      "available": true
+    },
+    {
+      "name": "two-lane-top-bridge-dragon",
+      "available": true
+    },
+    {
+      "name": "two-lane-bot-bridge-golem",
+      "available": true
+    },
+    {
+      "name": "two-lane-center-island-altar",
+      "available": true
+    },
+    {
+      "name": "two-lane-blue-sanctum",
+      "available": true
+    },
+    {
+      "name": "two-lane-red-sanctum",
+      "available": true
+    }
+  ],
+  "errors": []
+}

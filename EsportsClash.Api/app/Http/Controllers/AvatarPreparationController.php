@@ -71,6 +71,22 @@ class AvatarPreparationController extends Controller {
     }
     public function file(AvatarPreparation $preparation,string $file,AvatarPreparationService $service){
         if(($preparation->plan['profile']??null)===\App\Services\AvatarCloudRawRigService::PROFILE){
+            if(preg_match('/^contour-proof-([a-f0-9]{64})-([a-f0-9]{64})\.(png|glb|npz|json|log)$/D',$file,$match)){
+                $body=app(\App\Services\AvatarCombinedContourReviewService::class)->file($preparation,$match[1],$match[2],$match[3]);
+                return response($body,200,['Content-Type'=>match($match[3]){'png'=>'image/png','glb'=>'model/gltf-binary','json'=>'application/json','log'=>'text/plain',default=>'application/octet-stream'},'Cache-Control'=>'private, no-store','X-Content-Type-Options'=>'nosniff']);
+            }
+            if(preg_match('/^combined-proof-([a-f0-9]{64})-([a-f0-9]{64})\.png$/D',$file,$match)){
+                $body=app(\App\Services\AvatarCombinedMotionReviewService::class)->file($preparation,$match[1],$match[2]);
+                return response($body,200,['Content-Type'=>'image/png','Cache-Control'=>'private, no-store','X-Content-Type-Options'=>'nosniff']);
+            }
+            if(preg_match('/^animation-proof-([a-f0-9]{64})-([a-f0-9]{64})\.(png|glb)$/D',$file,$match)){
+                $body=app(\App\Services\AvatarAnimationPlaybackReviewService::class)->file($preparation,$match[1],$match[2],$match[3]);
+                return response($body,200,['Content-Type'=>$match[3]==='png'?'image/png':'model/gltf-binary','Cache-Control'=>'private, no-store','X-Content-Type-Options'=>'nosniff']);
+            }
+            if(preg_match('/^local-shape-([0-9a-f-]{36})-([a-f0-9]{64})\.(png|glb|npz)$/D',$file,$match)){
+                $body=app(\App\Services\AvatarLocalizedShapeReviewService::class)->file($preparation,$match[1],$match[2],$match[3]);
+                return response($body,200,['Content-Type'=>match($match[3]){'png'=>'image/png','glb'=>'model/gltf-binary',default=>'application/octet-stream'},'Cache-Control'=>'private, no-store','X-Content-Type-Options'=>'nosniff']);
+            }
             if(preg_match('/^pose-contract-([0-9a-f-]{36})-([a-f0-9]{64})\.(png|glb)$/D',$file,$match)){
                 $body=app(\App\Services\AvatarPoseContractReviewService::class)->file($preparation,$match[1],$match[2],$match[3]);
                 return response($body,200,['Content-Type'=>$match[3]==='png'?'image/png':'model/gltf-binary','Cache-Control'=>'private, no-store','X-Content-Type-Options'=>'nosniff']);

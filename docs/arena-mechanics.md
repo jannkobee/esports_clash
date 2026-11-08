@@ -1,3 +1,396 @@
+## Crimson UI, finances, form and Hexa Weeklies (8 November 2026)
+
+Owner requested a crimson Liquipedia-inspired original interface, a social Wire, a simpler Match Centre, better squad management/form/staff pricing, a full finance desk and tournament logos. The subsequent request added optional weekly tier-based community cups with no attribute/training effects, scaling toward 50,000 managers, and asked for monetization proposals. See [UI, finance and form implementation](hexatrick-crimson-finances-form-20261108.md) and [weekly-cup/scaling/business record](hexatrick-weeklies-and-business-20261108.md).
+
+The Wire is now a compact social feed with actual replies, thread permalinks and share links; the previous journal treatment is superseded. A final crimson/charcoal theme fixes controls/table contrast. Match Centre has one navigation row and compact filtered fixtures; practice tools are accessible through Settings. Hexapedia has one masthead and original SVG tournament/organization marks. SquadRoster provides compact starter selection and a searchable comparison table; existing owned-player, revision, queue and trade guards remain.
+
+ClubFinances and its authenticated controller expose actual monthly income/expenses, capital, escrow, payroll budgeting, ledger pagination and page CSV. Refundable holds are not revenue/expenses; settled auction purchases and trade offers are counted once. Staff offers use versioned nonlinear quality pricing; no existing contract/founding terms are repriced. PlayerForm uses ten recent verified appearances, a 56-day window, 21-day half-life, appearance decay and two neutral prior samples. Unrated players show Unrated. Form is a read projection, not a combat-stat modifier. Raw historical rating rows remain unchanged.
+
+Hexa Weeklies use 2/4/8-club tier pods, human accept/decline invitations, scheduled verified Arena brackets and separate cosmetic champion/finalist trophies. Wednesday 18:00 Manila closes invitations; Friday 18:00 opens the first-round window. LockClubFixture pins a trusted community_fun progression policy. OnlineService settlement retains actual performance evidence but posts no training or individual-rating rows for this family; draft meta excludes it. CompetitionRankings excludes its unranked accreditation, and circuit points/cash prizes are zero. Audit expectations recognize the intentional absence of training/ratings. Regular allocated plans retain prior behavior. Real Nexus finishes, official calendar/recovery restrictions, ownership, learned-controller, mechanics and Colab asset gates are unchanged. Interrupted competition games go to review. No fabricated results or generic statistical fallback was added.
+
+Migration 2026_11_09_000006 applied after retaining .local-tools/hexatrick-before-community-weeklies.dump (8,861,899 bytes). Initial future week is November 9: seven human invites, zero auto-acceptances, zero community fixtures; reply deadline November 11 at 18:00 Manila, first-round window November 13 at 18:00. Bounded jobs run via world:community-cups every five minutes. Development cap is 128 pods/week; invitations/acceptance do not promise capacity or a legal fixture. 50,000 clubs imply 6,250 pods and 43,750 games weekly, not a demonstrated deployment capacity. Existing Arena stalls and worker provisioning still block a guaranteed weekly completion claim. Current automatic cups are platform-hosted; user-owned recurring community series and real-money payments are not implemented.
+
+Build/PHP syntax and read-only finance reconciliation, candidate/news reads and future-cycle database inspection pass. The real database has no individual rating samples yet; no live form-history or full cup-settlement proof is claimed. Automated suites remain skipped per owner. Windows Computer Use native pipe was unavailable, so rendered UI/interaction acceptance remains unverified. The monetization document proposes fair supporter/cosmetic/sponsor revenue with illustrative economics and current primary-source payment constraints; it enables no checkout, cash prize, subscription charge or external communication. Preserve all prior matches, interrupted exhibition, unrelated dirty work and frozen ML/visual evidence.
+
+## Transfer Exchange, Wire and Hexapedia interface rework (8 November 2026)
+
+The owner supplied UI screenshots and requested improved reserve listing, bidding/filtering, The Wire, Hexapedia fixes, a dedicated expanded guide, removal of Sparring opponents and integration of laboratory/catalog resources inside Hexapedia. See the [UI rework record](hexatrick-ui-reference-rework-20261108.md) for changes and limits.
+
+The Exchange has a focused sell desk, compact auction rows with a single open bid panel, complete skill-band/nationality/sort filters and trade/academy tabs. The Wire uses a journal layout, compact composer, contextual recording links and a desk/moderation sidebar. Missing activity/summary styles and the activity/event-log class collision are fixed. Hexapedia is the only outer reference destination; guide/laboratory/catalog live inside it. Sparring opponents is no longer linked. Main component/style: Hexapedia.tsx / hexapedia.css; API/helper names remain compatible.
+
+Canonical nested routing, tournament capacity/format/dates, date safety, actual contents anchors, sponsor associations and league-table scope were corrected. Rehearsal results remain intact but are not presented as a regional league. The standalone 14-chapter guide follows current documents and actual skill/XP/staff rules.
+
+Production build and touched PHP syntax pass. Read-only HTTP checks loaded all ten reference directories and sample articles, the Wire and homepage. Suites remain deferred. Browser/native access was unavailable; rendered desktop/mobile and signed-in interaction acceptance are not claimed. No financial/social/fixture/engine/ML/asset records were mutated. Preserve the prior interrupted/statistical exhibition and frozen gameplay/Colab boundaries.
+
+## Approved statistical exhibition completed; streaming release active (8 November 2026)
+
+The owner explicitly answered **Yes, use an exhibition simulation** after being reminded that the established Arena rule requires Nexus destruction. This is a narrow exception for this launch exhibition, not a change to verified Arena settlement or normal scheduled play. `LaunchExhibitionResolution` and the owner-flagged `launch:resolve-exhibition` command froze an original, documented strength/draw model from pinned skills/coach tactics and observed kills/structure progress. No fictional final KDA, combat events or duration were generated.
+
+Match `157691b0-c281-407d-8771-1d53dff55ed8` is now **interrupted**, sequence 3,472, observed Arena time 1,735.5 seconds. Its result/result hash remain unset. All 2,769 retained original/accelerated frame files remain, with a preserved pre-interruption state. Only its two paused Node runners and original Chromium were stopped. Do not resume/re-settle this match. Launch game 30 has an immutable `statistical_exhibition` report: club 16, **Hexa IWLFYSD**, advances. No player ratings, training, official competition results or matching money rewards were posted (all four read counts zero). Final fixture 4 is scheduled for **14 November 2026, 18:00 Manila**; no future result was simulated.
+
+The launch archive/public report/news label the statistical result explicitly. Interrupted recording access remains available through calendar/archive/broadcast replay views, while verified-match reports still require an actual completed Arena. The normal UI has no Simulate action. Backup retained: `.local-tools/matchday-rehearsal/hexatrick-before-statistical-exhibition.dump` (8,066,556 bytes).
+
+After confirming zero active matches, the prepared streaming worker was deployed: `teamfight-online-worker:lifecycle-stream-20261108`, digest `sha256:96d35aaaf98e11b23cdfaa9a3edce9109a9351a76ae6f22db4cfe2c0022d88c2`; running server SHA-256 `6d6af68982afc89f1a85ae0af27188975e54c5ddc5638c5ceaee5bed4d281536` matches source. It is healthy, recognizes interrupted terminal states and shares exact recorded JSON across viewers. Read-only inspection confirmed cached payload equality and preserved recordings; local API exposed the statistical report and interrupted broadcast. Final TypeScript/Vite build and touched PHP/Python/module syntax checks pass; automated suites remain deferred, and browser UI acceptance is unavailable. No recent failed jobs or active games were observed.
+
+An optional allocation-POST verification was rejected by automatic approval review as a possible restart risk. It was not executed or retried indirectly; strictly read-only file/cache/database/HTTP checks were used instead. Full real-time match settlement remains unqualified, and the gameplay stall (remaining barracks not being finished) plus snapshot/fingerprint cost still need separate engine work. The owner requested skipping that unfinished gameplay work for this exhibition; do not fabricate a live acceptance pass. See [the lifecycle record](hexatrick-lifecycle-repairs-20261108.md).
+
+## Owner-requested interruption and fast-forward (8 November 2026)
+
+After asking about lag, the owner explicitly requested interrupting the current game and simulating its finish because gameplay is unfinished and a full live run would take too long. This supersedes the earlier instruction to keep this particular run in real time. The live Node runner was paused at sequence 2,731, preserving its existing browser; `finish-existing-match.mjs` attaches to that same private browser and calls the existing fixed-step hook in batches, with no sleep or allocation/controller/actor edits. It requires an explicit owner flag, checks the paused runner/recording, retains original live frames and appends sampled accelerated frames at their actual half-second timeline indices. It still requires an actual Nexus finish and records execution provenance. Do not call it a completed real-time acceptance run.
+
+The frontend/public report/news/archive projections distinguish owner-requested simulated completion from real-time coverage. All event timestamps remain recorded; later Arena frames are sampled. `online:match-audit` separates settlement integrity from real-time qualification. There is no manager-facing Simulate button or automatic acceleration policy for ordinary scheduled games. The finisher is still running at the time of this entry; confirm its terminal state and API settlement before claiming an outcome. Preserve all original/failure evidence and protected gameplay/ML/3D boundaries.
+
+## Live-view lag follow-up (8 November 2026)
+
+The owner asked whether games use WebSockets. They do: authenticated live streams use WebSocket; management/status/replay use HTTP. Measured worker capture/serialization exceeded stepping time and the simulated clock trailed wall time. `OnlineMatchViewer` now uses observed arrival cadence, avoids per-frame canvas dimension resets and keeps replay seeks static; `onlineSpectator` also interpolates minions/projectiles between authoritative frames. `OnlineNormalView` paginates commentary to 100 events, preserving all exact report/replay links. Production build passes; suites remain deferred and browser access remains unavailable. This is presentation-only and does not advance or resolve gameplay in the client.
+
+A bounded shared raw-frame cache is prepared in `infrastructure/online/server.py` for a separate streaming image. Do not restart the active semifinal worker to apply it. At the last observation, the game was around 20 Arena minutes, with two blue structures/five red remaining and no recorded worker error. See the [repair record](hexatrick-lifecycle-repairs-20261108.md) for actual timing and limits; do not claim the whole lag issue fixed from these client changes.
+
+## Lifecycle repairs and scheduled-match observation (8 November 2026, Manila)
+
+The owner authorized implementing the codebase audit. The [repair and rollout record](hexatrick-lifecycle-repairs-20261108.md) is the current checklist. Exact person-stat binding, retained invitation attempts/stale-answer protection, annual qualification source binding, pinned staff XP, bounded report recovery, paid staff contracts/bot appointments, lazy report loading/deep links, organizer slot/history UX and factual media/report-review controls are implemented. Hexapedia's guide now describes connected staff drafting; old fixed-roster and missing-draft prose is superseded.
+
+Local migrations through `2026_11_09_000005` are applied after retained backups. The lifecycle worker image/source hashes are recorded in the release note. It was deployed before allocation, with the frozen engine intact; history worker was not restarted. During the actual Crown semifinal, memory-limit pressure was observed (610 limit hits, no OOM kill); the active worker limit was raised without restart from 1.5 to 3 GiB, with 4 GiB total memory/swap, and persisted only in the local dev override. No further limit hits appeared at the next observation. Initial pacing was about 300 Arena seconds / 310 wall seconds, not evidence for a whole match.
+
+Crown launch semifinal fixture 3 started at 18:00:12 Manila on 8 November. Match `157691b0-c281-407d-8771-1d53dff55ed8` is running with ten unique people, both staff snapshots and public recording. Do not restart its worker or invent a timeout winner. `php artisan online:match-audit <id>` provides read-only checks for Nexus finish, exact ratings, pinned XP and exhibition ranking exclusion. The completed-live gate remains pending until its actual result is observed. The prior failed match is retained. No future editions or backdated verified results were created.
+
+The first subsequent bot cycle signed 30 eight-week staff contracts and posted 30 matching signing fees, total 1,003,000 centavos; zero human paid appointments. Future salary posting/expiry remains unqualified. PHP/module syntax and TypeScript/production builds pass; automated suites remain deferred. Browser UI acceptance could not run because the browser host/native pipe were unavailable. Annual/Nations operation, concurrent match capacity, regional currencies/economy balance and broader social controls remain explicit follow-ups. Preserve unrelated dirty work and all Arena/ML/Colab/3D invariants.
+
+## Management/worker audit boundary (2026-11-08 client date)
+
+The [current codebase audit](hexatrick-codebase-audit-20261108.md) records unresolved management/worker integration gaps. In particular, final-stat mapping currently uses a non-unique catalog archetype instead of an exact owned-player binding, and training settlement reads current staff despite pinned allocation snapshots. These are findings to correct while preserving protected combat, learned policies and immutable match history. The audit changed no mechanics or records; its fresh check was the production build, with automated suites deferred. The latest local observation has 29 completed simulated launch-history games, separate from verified results, and no completed new staff-drafted rating pipeline acceptance. Use the [continuation prompt](hexatrick-continuation-prompt.md) with the latest handoff.
+
+## Squad attributes and roster presentation
+
+The Squad lineup and reserve cards expose each owned player's LAN (mechanics), TF (teamfights), IQ (game sense), LDR (leadership), CLU (clutch), STA (stamina), and FLX (flexibility) ratings on the existing 1–10 presentation scale. These are the player attributes returned by the existing club roster definition; absent values display as unavailable rather than being inferred. This is a manager-facing presentation change only: attribute values and all Arena, draft, training, and match rules are unchanged.
+
+## Normal matchmaking and bot fallback
+
+The normal queue matches a waiting human manager with another queued human first. After 15 seconds, a background job may match the still-queued manager to an eligible bot; bot opponents must have no queued ticket, active normal match, upcoming fixture, or pending fixture snapshot and must have a valid saved lineup. If no bot qualifies, the human ticket remains queued and cancellable while the job retries. Bot matches use the same validated lineup, staff-led draft, and normal match settlement as other normal matches. The bot marker is presentation metadata only. The rating-tier scrimmage queue remains separate and never falls back into normal matchmaking.
+
+The Squad scrimmage screen labels the queue as human-club-only and displays the server-computed rating and fixed tier. Its link to normal matchmaking leaves the scrimmage queue before navigating; this does not change either queue's matching rules.
+
+## Staff-led team preparation (2026-11-09)
+
+Managers choose the five owned players for their club lineup and fixture orders. In manager-facing APIs, avatar selection is not accepted. The club's persistent coach, assistant, analyst, performance coach, and psychologist records prepare each online allocation; the server role-checks and pins the resulting avatar draft, staff ratings, and coach profiles before the Arena worker starts. Meta signals use only verified completed normal matches that have per-player performance records, with a minimum of three picks per avatar.
+
+Coach and staff values feed the existing draft and coach mechanics; they do not bypass gameplay legality or rewrite an allocated match. The performance coach adds a bounded 0–15% XP bonus for each starter in scheduled-match training settlement. Unscheduled matches still grant no training XP. Historical allocations and the legacy lineup field remain untouched. The local schema migration is applied, and the rebuilt match-worker is healthy with a source hash matching the workspace. A fresh staff-drafted live match is still needed to qualify end-to-end deployment. See the latest [staff rollout status](./agent-handoff.md).
+
+## Squad-management continuation (2026-11-09)
+
+- Squad drag/drop only reorders the five submitted slots; player/avatar ownership, distinctness, role checks, revisions, order deadlines and server lineup validation remain authoritative. Touch/keyboard users have explicit up/down controls.
+- Scrimmage quick-match is a separate server queue, never a fallback into or widening of normal matchmaking. Tier is computed as a 10-point band of the five-player average overall; the closest available club is selected within that band. Pairing creates a scheduled fixture and still passes the existing recovery/conflict checks.
+- New verified final Arena performance records are presentation/manager data only: per-player rating/form does not alter combat stats, competition ratings, matchmaking, rewards or outcomes. The documented estimate uses team result and final K/D/A, CS, damage and gold; old results without those source stats are not reconstructed.
+- Transfer Exchange trades remain manager-approved. Starting-five, queued/matched, auctioned, reserved, and upcoming-order players cannot be transferred through the new trade flow. Cash offers are held/refunded through the money ledger; the overall-based fairness comparison is advisory only.
+- Academy opening cost remains ₱3,000 pending owner approval; the displayed ₱10,000 value is a recommendation, not an applied economic change. Player portraits remain SVG illustration, with no change to Avatar generation/rigging gates.
+
+## Club Office UI continuation (2026-11-08)
+
+The Club Home and Office presentation now uses the Hexatrick graphite/petrol/copper visual language, a geometric masthead, responsive directory links and more icon-led labels, including the saved-lineup headings. This is presentation-only: Arena mechanics, fixture eligibility, records, settlement, training and ML behavior are unchanged. The production web build passed; automated tests remain deferred as requested.
+
+## Real calendar, launch archive and world media (2026-11-08)
+
+Owner selected the second/third week of January and actual calendar years, with League regional/international cadence as reference, and explicitly approved labeled simulated launch history separate from verified matches/rankings. The third Monday in January is now the opening rule (18 January 2027 next); annual official programs freeze definitions/rules/windows, and independent organizers can announce overlapping events during the year subject to per-club recovery. Original regional Dawn/Zenith/Dusk and Vanguard/Summit/Crown/Nations identities remain. See [the calendar/media implementation and rollout record](hexatrick-calendar-media.md).
+
+The new launch exhibition has separate immutable allocations/results and a dedicated historical worker using the frozen headless kernel in explicitly selected historical baseline mode. Only actual Nexus finishes settle archive games, with no official ranking, money or training rewards. Future rounds use the existing scheduled live Arena pipeline. At the latest observation, ten requested archive games had finished and generation was continuing; do not claim the backfill or future championship complete. Three existing completed online matches remained intact. Frozen engine/catalog, learned-policy/ML artifacts and Colab-only Avatar work were preserved.
+
+Scrimmages replace friendly UI wording; bots accept available scheduled invitations server-side. Original transparent UUID-based illustrated player portraits return to Squad/Home/Avatarpedia. Paginated team game histories and verified detailed reports use authoritative records. The Wire publishes explicitly fictional automated coverage and supports manager updates/replies. Hexacast discovers actual scheduled live/replay coverage with expiring real viewer presence and the shared Arena/text renderer. Independent organizer cycles have explicit sponsor grants/prize escrow; Harbor Open edition 4 is announced, with an audited pre-lock cadence correction and no played result changes.
+
+Migrations 000013-000014 were backed up and applied locally. Production build and syntax checks passed; public read endpoints and the running archive queue were observed. Tests and browser acceptance remain deferred by the owner's current request. Full-year competition operation, overlapping live capacity, later prize settlement and social moderation UX are not qualified. The next recommendation from this checkpoint has since been implemented; see the Club Office UI continuation above.
+
+## Rookie world, original IGNs and bot club management (2026-11-08)
+
+The owner extended the competition task: improve bot management, generate proper IGNs, remove direct prospect signing, retire legacy elite players, start everyone weak and give every active player a nationality. This supersedes keeping the original identities in active rosters; their historical aliases and IDs remain unchanged as retired records. See [the rookie-world rollout](hexatrick-rookie-world.md) for affected services, safety gates, operational proof and limits.
+
+WorldPlayerProfiles/PlayerIgnGenerator now supply unique original people with 18-36 starting attributes, adult birth dates, explicit fictional birth nationality, wages and earned development. Scheduled plans pin these attributes, consumed by the validated worldPlayerProfile adapter. The Arena engine/catalog, protected source parody aliases, combat rules, frozen ML/Colab/avatar artifacts and historical allocations/results are preserved. Direct prospect signing is removed in the UI/API; auctions and a paid optional academy remain. Official Squad/Training/Home/Avatarpedia use actual people. Bot reviews use actual skill, four-week payroll cover, bounded escrow bids, funded academy decisions, legal lineups and durable management plans. Human takeovers queue bounded bot-population replenishment.
+
+Migration 000012, the profile-aware worker and the approved roster reset were activated after backup with no active matches. Six legacy people were retired and replaced; 222 fictional people received rookie profiles. The live API verified 228 active unique IGNs, zero missing nationalities, nine countries, zero active legacy people and skills in 18-36. All 33 stale auctions closed with no held bids to refund. The first real post-reset window completed 32 bot plans, 32 paid academies, 32 auctions and five escrow-backed bid events, with no pending default jobs or recent failures observed. Original match and money histories remain intact.
+
+Verification: 54 local isolated backend tests / 15,620 assertions passed; game checks passed 615 tests with 22 existing skips, three simulation checks and TypeScript; production build passed. This qualifies the tested data/adapter paths, not a completed live rookie match, full-year balance or million-club worker capacity. An initial automatic-review usage failure was resolved via a later normal approved request; no approval bypass was used.
+
+## Global competitions and unique world players (2026-11-08)
+
+The owner supplied a global competition brief and explicitly confirmed keeping the existing five-player Arena game. The owner also requested unique world players and bot clubs that humans replace, approving earliest-human ownership of original identities and new identities for duplicate copies. See [the implementation/rollout record](hexatrick-global-competitions.md) for the audit, schema, contracts, verification and unresolved product/capacity limits.
+
+Competition definitions, versioned editions/stages, real UTC years, geographic qualifiers, invitation snapshots, Glicko-2 HGR/HNR, separate HCC points, national eligibility/management/squads and shared Arena fixtures now have server persistence and queued processing. `CompetitionHub` provides operational views; Avatarpedia shares the edition/national sources and owned-player identities. Official Squad now opens the server roster. Existing legacy cups and immutable match allocations/results remain intact.
+
+Additive migrations 000008-000011 were backed up and applied locally. The approved identity migration retained 6 original identities and gave 48 copies new identities without deleting contracts or changing history. Population reached 32 bot clubs. A later live check observed 228 distinct named players, zero unnamed, 39 clubs and 9 national associations. Competition processing is enabled with inaugural year 2027; no missed 2026 championships or future-year results were fabricated. Identity-only worker image `world-identities-20261108` inherits the pilot engine and replaces its name adapter; it was activated with zero active matches. ML/Colab/avatar qualification and combat mechanics are unchanged.
+
+The combined SQLite competition/online suite passed 41 tests and 477 assertions. The production build passed; full game and PostgreSQL checks are recorded in the implementation report when finalized. A complete live year/Nations Cup, autonomous geographic slot policy, horizontal match capacity and every advanced management/award flow are not qualified or complete. Do not claim million-club production readiness from partition tests.
+
+## Hexatrick management-world boundary (2026-11-08)
+
+The owner requested the Hexatrick name, classic management/wiki styling, fixed-context Avatarpedia navigation and actual bot/human market interaction. Shared reference routing, branding/icons, `classic-manager.css`, `ClubHome` and `WorldActivity` implement the UI/read side. Home now shows account-owned club data. Public reference information shares authoritative underlying records; private account details and orders retain their access boundaries.
+
+The new prompt explicitly supersedes the historical bot bidding/listing ban. `BotClubManager` and queued reviews use existing legal-lineup, weekly recruitment, escrow/transfer and tournament services. Reviews have a unique club/window receipt, wage reserve, bounded bids and reserve-only listings. They do not decide Arena combat or alter stats. `club_world_events` records actual actions and results after the existing immutable settlement validation. Historical allocations remain unchanged.
+
+The world migration was backed up/applied and the idle default worker refreshed. First real activation completed three reviews, three auctions and two tournament entries with zero pending default jobs/recent failures observed. Production build and PHP syntax checks pass; suites and browser interaction/visual checks remain deferred by owner request. Arena worker images, ML/Colab processing, asset qualification, mechanical legality and frozen artifacts are unchanged. See the [world plan](hexatrick-world-phase-plan.md) for limits and the next career/staff/inbox phase.
+
+## Avatarpedia reference boundary (2026-11-08)
+
+The owner renamed Clashbook to Avatarpedia and requested linked tournament/player/team information using supplied Liquipedia screenshots as reference. `AvatarpediaService` and `AvatarpediaController` expose public read projections for the new encyclopedia. The frontend is `components/Avatarpedia.tsx` with shared types/routes in `avatarpedia.ts`, and application/public links now use the new name. Current club contracts, published event records, active catalogs and completed scheduled results supply the articles and statistics. Article pages refresh their data; countdowns do not dispatch kickoff. Historical replay links keep their match allocation.
+
+Public pages omit real source names, private account/money/order/seed records and unreleased model assets. Player/Avatar appearances count only verified completed scheduled matches. A catalog player may appear on both sides or multiple club rosters; no fictitious KDA, biography or transfer history is generated. Current roster cards are explicitly distinguished from historical match orders. Avatar content is projected using the existing content service without relaxing model/rig/appearance qualification gates or altering combat mechanics.
+
+TypeScript/production build and PHP syntax checks pass. Automated gameplay/API suites and browser runtime/visual checks were deferred under the owner's build-first instruction. The [implementation record](avatarpedia.md) lists source contracts and limits. No game engine, match worker, schema or frozen artifact changed.
+
+## Public entry and account boundary (2026-11-08)
+
+The owner requested building a landing page and moving authentication out of Matchday/backup components, with tests explicitly deferred for this pass. `AppRouter.tsx` and `AccountContext.tsx` now separate public introduction/Clashbook/account routes from the authenticated workspace. `AuthenticationPage.tsx` is the only login/register form. Matchday, Market, Clashbook and backup settings share the account context; sign-out lives in the workspace header. Return destinations allow existing workspace routes and a constrained scheduled replay ID. Existing server authentication, match authorization and kickoff/settlement remain authoritative.
+
+The landing uses original code-native branding and a public fixture feed, without avatar asset processing or Arena changes. No timing, combat, legal lineup, replay tick, progression or economy rule changed. `npm run build` passed; automated suites and browser runtime/visual checks were intentionally not run at the owner's request. These account/routing changes are implemented but have not received the earlier UI pass's browser verification. The next build direction is onboarding and an actual club-data dashboard, recorded in the [phase plan](club-management-phase-plan.md#public-entry-and-next-build-sequence-8-november-2026).
+
+## Club UI polish verification (2026-11-08)
+
+The owner requested polishing the current management UI. Changes cover the shell/page hierarchy, squad card layout, practice training labels, Matchday tools and coverage presentation, identity previews, PHP market sections, and Clashbook navigation/search. Shared styles are in `components/club-management.css`; the main affected components are `App`, `SquadView`, `TrainingCenterView`, `OnlineNormalView`, `ClubIdentityEditor`, `ClubMarketView` and `ClashbookDirectory`, plus `index.css` and `player-card.css`. Official kickoff, lineup legality, event ticks, replay mapping, settlement and training formulas are unchanged. Sign out uses the existing backend token-revocation endpoint. Practice records are explicitly labeled.
+
+Game checks passed with 611 passing tests, 22 existing skips, three separate simulation checks and TypeScript; production build passed. Browser verification exercised responsive signed-out/signed-in pages, unchanged lineup saving, identity preview, directory search/profile links, completed Babylon replay, commentary seeking, final-frame return and token revocation. Checked widths were 1440, 390 and 320 pixels, with no document overflow or runtime exceptions. No worker rebuild or rules/catalog reinstallation was needed. Capacity and precise wall-clock playback performance remain unqualified; this was a UI change. Full scope is in the [phase plan](club-management-phase-plan.md#ui-polish-pass-8-november-2026).
+
+## Scheduled fixture end-to-end verification (2026-11-08)
+
+Rehearsal fixture 2 completed through the real scheduler, queue, Arena worker and settlement path while both manager sessions were revoked before kickoff. Match `bafa247c-648e-41c8-8d56-0dc7c5d10c5e` started nine seconds after its published time and ended with the red Nexus destroyed at Arena clock 25:11. The final persisted sequence is 3,023. An unrelated spectator verified same-frame kill totals, reconnect and tick-stamped commentary seeking; a fresh browser opened the completed final frame and report. Duplicate settlement and a repeated polling handler preserved one result and ten pending participation records. No gameplay source changed for this rehearsal. See the [verification record](club-management-phase-plan.md#completed-two-manager-matchday-rehearsal) for measured wall time and capacity limits. This run does not qualify exact real-time playback speed, concurrent matches or a full live tournament.
+
+## Scheduled Arena fixtures (2026-11-07)
+
+Official fixtures run through the same trusted Arena worker as Online Normal. The Laravel fixture lock freezes eligible lineups, catalog versions, rules, seed and club identity. The worker publishes tick-stamped events and persisted snapshots. Text and Arena viewers consume the same frames, and completed official results require a verified terminal Nexus. The scheduled match worker redacts source real names before making a replay available to authenticated spectators. Training XP uses verified participation and stays on the owned player instance. See the [pilot operating guide](club-management-phase-plan.md) for verification and rollout details.
+
+The Arena rehearsal exposed repeated lane reassignment between defense and Embermaw. `twoLaneStrategyRules.ts` now checks the threatened structure even when the unit is already assigned to its lane. The existing defense priority holds until that structure no longer meets the threat rule. The regression test covers moving to defend, holding the same lane, and resuming the objective rotation after the tower falls.
+
+## Latest: Cartoon Portraits, Modern Sleek Dark-Slate UI, Riot Annual Global Circuit (First Stand / MSI / Worlds + DreamLeague), Coach Attributes + Real-Match Training & Friends Challenge Hub (2026-11-07)
+
+- **Cartoon Portraits & Macro-Regions (`ChibiAvatar.tsx`, `CardComponent.tsx`, `SquadView.tsx`, `PlayerDraftPhaseView.tsx`, `ProCircuitView.tsx`)**:
+  - Replaced real-world photo faces with custom SVG cartoon pro gamer portraits (`<ChibiAvatar>`).
+  - Removed all user-facing `"LoL"`, `"CS"`, `"Dota"`, `"Dota2"`, `"Valorant"` badges and filters, replacing them with the 4 real-world Macro-Regions: **`ASIA`**, **`EUROPE`**, **`AFRICA`**, and **`AMERICAS`**.
+- **Modern Dark-Slate & Glass UI (`index.css`, `player-card.css`)**:
+  - Upgraded the application to a sleek modern dark-slate esports aesthetic (`#0b0f19` canvas, `#131b2e` `14px` rounded panels, emerald/blue gradients, and pill tabs).
+- **Riot Annual Global Circuit, Million-Player Scaling & Third-Party Cups (`TournamentView.tsx`)**:
+  - Real-life annual calendar progression (`Season 2026` $\rightarrow$ `2027`+) featuring 3 official Splits per year:
+    1. **Opening Regionals $\rightarrow$ First Stand International**
+    2. **Spring Regionals $\rightarrow$ MSI International**
+    3. **Summer Regionals $\rightarrow$ Worlds International** (most prestigious annual championship)
+  - Horizontal & vertical Hattrick shard scaling across `ASIA`, `EUROPE`, `AFRICA`, and `AMERICAS` (`Tier 1 Premier`, `Tier 2 Challengers`, `Tier 3 Contenders`, `Tier 4+ Auto-Spawning Open Shards` supporting 1,000,000+ clubs).
+  - Independent Third-Party Cups (*DreamLeague Season 26*, *BLAST Arena Grand Slam*, *Savannah Masters Invitational*, *Red Bull Pan-American Gauntlet*) awarding Club Treasury prize pools and in-game rewards.
+- **Hattrick Team Training + Coach Attributes + Real-Match Impact (`TrainingCenterView.tsx`, `marketBatchEngine.ts`, `App.tsx`)**:
+  - Players pick from 7 team training programs (`LAN`, `TF`, `IQ`, `LDR`, `CLU`, `STA`, `FLX`).
+  - Coaches have 5 **1–10 Coaching Attributes** (`tactical`, `mechanical`, `conditioning`, `youthDevelopment`, `motivation`) that multiply training speed (`+30%` to `+75%`).
+  - Playing real matches (`matchesPlayedThisWeek >= 1`) unlocks `115%–135%` full match training speed and grants live post-match training progress (`applyRealMatchTrainingImpact`), whereas bench players with `0` real matches receive only `25%` passive drill speed.
+- **Friends & Direct Challenges Hub (`FriendsChallengeView.tsx`)**:
+  - Add friends by Club Tag across `ASIA`, `EUROPE`, `AFRICA`, `AMERICAS`, accept incoming challenges, or send Friendly Scrimmages and Showmatch Wagers that count as real matches for training.
+
+## Previous: Chess.com × Hattrick UI/UX Overhaul, 1–10 Skill Scale, Real Transfer Market & Training System (2026-11-07)
+
+- **Chess.com × Hattrick Visual Hybrid System (`index.css`, `player-card.css`, `App.tsx`)**:
+  - Blended **Chess.com** (dark walnut sidebar `#262421`, tactile 3D green primary CTA buttons `#81b64c` with 3px `#537133` lip, hover `#95bb4a`) with **Hattrick** (pitch-green headers `#1e5631`, warm stone canvas `#e4e7df`, clean paper dossiers, and 10-pip skill rating bars).
+- **1–10 Attribute Scale & Verbal Tiers (`marketBatchEngine.ts`, `CardComponent.tsx`, `SquadView.tsx`)**:
+  - Replaced user-facing 1–99 ratings with intuitive **1–10** scale (e.g., 8/10 *Formidable*, 10/10 *Divine (GOAT)*).
+  - Added **IQ** and **Leadership (`LDR`)** to player attributes (`LAN`, `TF`, `IQ`, `LDR`, `CLU`, `STA`, `FLX`).
+  - Implemented `canBecomeCoach(player)`: veteran players with `Age >= 23, IQ >= 7/10, LDR >= 6/10` qualify to retire and become Club Head Coach in the Training Center.
+- **Hattrick Training Center & Coaching Academy (`TrainingCenterView.tsx`)**:
+  - Features 6 primary training foci (Laning, Teamfight, Macro IQ, Leadership, Clutch, Conditioning), Intensity (50–100%) and Stamina (10–30%) sliders, role slot multipliers, and weekly training progression ticks.
+  - Coaching Academy panel allows 1-click appointment of eligible veteran players as Club Head Coach.
+- **Hattrick Series Tournament Pyramid & Clash Knockout Cup (`TournamentView.tsx`)**:
+  - Replaced chess Elo ladder with a 4-tier league pyramid (Series I–IV) with 8 clubs per division playing a 14-round double round-robin schedule with promotion/relegation zones.
+  - Added Clash Knockout Cup: 16 clubs in single-elimination tournament running alongside the league split.
+- **Real-World Transfer Market & Scouting Network (`TransferMarketView.tsx`, `marketBatchEngine.ts`)**:
+  - Live auctions with minimum 5% bid increments, 100% escrow balance holding, and +3 min anti-sniping extension on late bids.
+  - Instant buyout of release clauses and listing club reserve players for sale.
+  - Scouting Agency with 3 scouts rated on 6 attributes generating youth prospects.
+  - Batch Player Generator Job implemented in both backend Laravel queued job (`GenerateTransferMarketBatchJob.php`) and frontend engine (`generateMarketBatch`).
+  - Removed ads (`Daily Supply Drop`) and gacha mechanics (`PACK_CATALOG`, `PackOpeningModal`). Reduced P2W via Financial Fair Play (FFP) division caps and split-capped board grants.
+- **Invariants & Verification**:
+  - Combat simulation physics and protected gameplay invariants (`AGENTS.md`) preserved: parody aliases (e.g. `Cardrel`), 10s turret execution attribution, all-three-barracks Nexus unlock, and Colab-only 3D processing.
+  - `node scripts/validate-design.js`: PASSED.
+  - `npm run check:game`: PASSED (608 unit tests + 3 batch simulation tests + `tsc -b`).
+  - `npm run build`: PASSED (0 errors).
+
+## Latest: Manager '02 UI/UX Redesign, 6-Section Navigation & Spectator HUD Declutter (2026-11-07)
+
+- **Manager '02 Design System & 6-Section Navigation (`index.css`, `player-card.css`, `App.tsx`)**:
+  - Re-skinned the entire web application to the **Manager '02** aesthetic (Championship Manager / Football Manager 2005 navy sidebar `#0b1f44`, bevelled light-grey panels `#eef1f5` on `#c9ced6` canvas, high-contrast 13px Tahoma/Verdana tables, and gold primary action buttons `#f2c14e`).
+  - Consolidated the 11 top tabs into 6 fixed sidebar sections (`#home`, `#squad`, `#play`, `#market`, `#codex`, `#settings`) with a **Club Home** command center featuring one clear primary CTA (`Play Next Match ▸`), Daily Club Schedule actions, Starting Five Tactical Sheet table, and Gaming House Facilities.
+  - Removed the legacy 3D Rigging Studio (`MeshyRiggingStudio` and `src/rigging/`) completely per owner instruction.
+  - Gated the unfinished `OnlineNormalView` inside **Settings → Developer Diagnostics** so main player navigation stays focused on completed modes.
+- **Spectator HUD Declutter (`AramMatchView.tsx`, `spectator.css`)**:
+  - Defaulted `hudMode` to `'hidden'` on match start so the 3D arena has an unobstructed viewport; players can toggle the bottom roster/insights drawer anytime via `📊 Scoreboard (Tab)` in `.broadcast-playback` or the `Tab` key.
+  - Compacted `.spectator-top`, centered `.broadcast-playback` below the scoreboard bar, and lowered `.spectator-feed` to `bottom: 48px` when the bottom dock is hidden.
+- **Invariants & Verification**:
+  - All gameplay invariants (risk-based tower combat, 10s turret execution attribution, all-three-barracks Nexus unlock, anti-oscillation deadbands, learned controller v6, and parody aliases including `Cardrel`) remain untouched and verified via `validate-design.js` and `npm run build`.
+
+## Previous: League of Legends Organic Two-Lane Grassy Field, Sculpted Rock Ridges, 14 Jungle Camps & Live Lane Turret/Creep Fix (2026-11-03)
+
+- **Live Match Lane Turrets & Dual-Wave Creep Spawning Fixed (`AramMatchView.tsx`, `arenaLandform.ts`, `matchSimulationEngine.ts`)**:
+  - Replaced the 6 middle-axis (`y = 720`) towers in `AramMatchView.tsx` (`initialStructures`) with the **12 Top & Bottom Lane Turrets** (`b_top_t1..t3`, `b_bot_t1..t3`, `r_top_t1..t3`, `r_bot_t1..t3`) positioned directly on `topLaneY(x)` and `botLaneY(x)`.
+  - Updated `spawnMinionWave()` in `AramMatchView.tsx` to spawn **both `'top'` and `'bot'` creep waves** simultaneously (`for (const lane of ['top', 'bot'] as const)`) and invoke `spawnMinionWave()` at match initialization so creeps immediately spawn and march along both lanes.
+  - Updated `minionSpawnPosition` and `advanceLaneMinion` (`arenaLandform.ts`) so `'top'` and `'bot'` waves spawn inside the Nexus courtyard facing their respective lane and smoothly track `topLaneY(x)` and `botLaneY(x)`.
+- **Flush Organic Grassy Field & Removal of Artificial Stadium Platform (`arenaElevation.ts`, `PaintedArenaProcedural.ts`, `BabylonBattlefield.ts`)**:
+  - Removed the 38-unit vertical platform drop between the lanes/bases and the grassy field in `arenaElevation.ts` so the lanes, base sanctuaries, and 4 jungle quadrants sit flush on the same natural ground level (`RIDGE_HEIGHT = 38` with gentle organic terrain undulation), while the central winding river carves naturally down to `-12`.
+  - Removed all artificial platform meshes (`curb-tube:*`, `cliff-tube:*`, `center-island-pad`, `lane-stair:*`, `bridge-landing:*`, `bridge-post:*`, `bridge-rail:*`, `river-water-ribbon:*`) from `BabylonBattlefield.ts`.
+  - Replaced the straight beige brick road and white curbs in `PaintedArenaProcedural.ts` with League of Legends Summoner's Rift organic ground painting: non-straight weathered earthen & cracked-flagstone Top/Bottom lanes with grass-feathered edges, winding S-curve dirt jungle footpaths, dark-teal winding river with natural rocky stepping-stone fords, and sunken fractured-slate Boss Coves with glowing purple arcane and molten fissures.
+- **Expanded 14-Camp League of Legends Jungle Quadrants & Sculpted 3D Rock Ridges (`arenaLayout.ts`, `BabylonBattlefield.ts`, `matchSimulationEngine.ts`, `AramMatchView.tsx`)**:
+  - Expanded from 8 to **12 regular jungle camps + 2 Epic Boss Coves = 14 total camps** across the 4 jungle quadrants:
+    - **North-West Quadrant**: `j_blue_behemoth` (Gromp, $500, 455$), `j_blue_blue_buff` (Blue Sentinel, $740, 435$), `j_blue_wolves` (Murk Wolves, $1055, 445$).
+    - **North-East Quadrant**: `j_red_wolves` ($1745, 445$), `j_red_blue_buff` ($2060, 435$), `j_red_behemoth` ($2300, 455$).
+    - **South-West Quadrant**: `j_blue_golem` (Krugs, $500, 985$), `j_blue_red_buff` (Red Brambleback, $740, 1005$), `j_blue_drakes` (Crimson Raptors, $1055, 995$).
+    - **South-East Quadrant**: `j_red_drakes` ($1745, 995$), `j_red_red_buff` ($2060, 1005$), `j_red_golem` ($2300, 985$).
+    - **Epic Boss Coves**: Top Dragon Cove (`dragon_boss`, $1400, 95$) and Bottom Baron/Siege Golem Cove (`j_siege_golem`, $1400, 1345$).
+  - Added multi-faceted 3D League of Legends rock ridges with slate/mossy boulders, glowing purple arcane crystal fissures, gnarled tree roots, dense 4-quadrant woodland canopy, and flickering orange fire torches at camp/river entrances.
+
+## Previous: Two-Lane-V5 Stadium Geometry, Elevation & 3D Landmark Polish (2026-11-03)
+
+- **True-Normal Curved Stadium Roadways (`arenaLayout.ts`, `PaintedArenaProcedural.ts`, `BabylonBattlefield.ts`)**:
+  - `topLaneY(x)` and `botLaneY(x)` trace smooth stadium curves from the circular Sanctums ($X=300, Y=610 / 830$) into the horizontal straightaways ($X \in [600, 2200], Y=270 / 1170$).
+  - Both the 2D painted road deck and 3D continuous `MeshBuilder.CreateTube` curbs offset perpendicular to the curve tangent vector (`nx, ny`), preserving a uniform $160\text{px}$ road width around every turn.
+- **Circular Base Sanctums & Minion Courtyard Spawns (`arenaLayout.ts`, `arenaElevation.ts`, `arenaLandform.ts`, `BabylonBattlefield.ts`)**:
+  - Circular Blue ($X=260, Y=720$) and Red ($X=2540, Y=720$) Sanctums (`radius: 168`) feature smooth circular elevation plateaus, 3D glowing cyan/red energy pools, concentric stone rings, 4 outer team banner standards, and an inner crystal gate.
+  - Top and Bottom minion waves spawn inside the Nexus courtyard ($Y = 720 \pm 10$) within $100\text{px}$ of `(NEXUS_X[team], 720)` and march out along the Top and Bottom stadium curves.
+- **North & South Epic Boss Pits (`arenaLayout.ts`, `PaintedArenaProcedural.ts`, `BabylonBattlefield.ts`)**:
+  - **Dragon Embermaw (Top Golden Pit)**: Centered at $(1400, 95)$ (`radius: 72, stoneRadius: 15, stones: 16, entrance: Math.PI / 2` facing South toward the Top Bridge) with golden double-diamond rune floor and twin crimson brazier pads.
+  - **Siege Golem Gravemarch (Bottom Cyan Pit)**: Centered at $(1400, 1345)$ (`radius: 72, stoneRadius: 15, stones: 16, entrance: -Math.PI / 2` facing North toward the Bottom Bridge) with cyan double-diamond rune floor and twin crimson brazier pads.
+- **Center River Island & Interior Jungle Island (`arenaLayout.ts`, `arenaElevation.ts`, `BabylonBattlefield.ts`)**:
+  - **Center River Island Sanctuary**: Centered at $(1400, 720)$ with smooth Hermite river-to-island elevation blending, sandy-stone pad, crescent rim boulders, conifer trees, and a 3D Ancient Rock Sentinel with glowing blue crystals.
+  - **8 Mirrored Interior Jungle Camps**: Positioned at $X \in \{555, 980, 1820, 2245\}$, $Y \in \{475, 965\}$ (`radius: 64–68`) with full clearance from lane curbs and `HIGHGROUND_ROCKS`, linked by golden-earth footpaths, recessed lane stairs ($X=800, 2000$), timber bridge landings ($X=1300, 1500$), 10 strategic bushes, and 3D conifer/oak foliage.
+
+## Previous: 2-Lane Strategy Architecture, Dynamic Rotation & Live Visual Verification (2026-10-31)
+
+- **2-Lane Tactical Squad Strategies (`twoLaneStrategyRules.ts`)**:
+  - `standard_2_3`: Solo Tank + Roam Top; Mage + Marksman + Support Bot push.
+  - `heavy_top_3_2`: Aggressive 3-man pressure Top toward Dragon pit; Duo Marksman/Support Bot.
+  - `flex_roam_2_2_1`: Duo Top + Duo Bot + 1 dedicated Roamer floating between river objectives and outer towers.
+- **Formation & Lane Pathing (`getTwoLaneFormationY`)**:
+  - Assigns dynamic formation coordinates along curved stone lanes rather than the center river axis, maintaining distinct team spreads.
+- **Dynamic Rotation Evaluator (`evaluateDynamicLaneRotation`)**:
+  - Roaming champions and high-IQ (> 82) avatars assess:
+    1. Dragon Embermaw (Top Pit, $Y=115$) and Siege Golem (Bot Pit, $Y=1325$) live or imminent ($\le 15$s) status to stage river collapses.
+    2. Cross-lane outer turret breach opportunities: rotating across to breach the remaining enemy outer tower when their lane is already won.
+    3. Emergency structure defense override for low-HP allied towers/barracks.
+- **Spectator UI Controls (`AramMatchView.tsx`)**:
+  - 1-click **2-Lane Strategy Selector** button in the spectator toolbar cycles formations on the fly, immediately reassigning champion roles and emitting tactical events to the feed.
+
+## Latest: Canonical Two-Lane-V5 Stadium MOBA Arena Integration (2026-10-30)
+
+- **Two-Lane Stadium Map Architecture (`two-lane-v5`)**:
+  - Direct integration matching the racetrack stadium reference design (`media_1793336837412_511747c8.jpg`):
+    - **Top Curved Stone Lane**: `TOP_LANE_Y = 270`, lane edges $Y \in [190, 350]$.
+    - **Bottom Curved Stone Lane**: `BOT_LANE_Y = 1170`, lane edges $Y \in [1090, 1250]$.
+    - **Nexus Sanctums**: Circular Blue (West, $X=235$) and Red (East, $X=2565$) sanctums with concentric stone platforms and glowing energy spheres.
+    - **Dual Arched River Bridges**: Roadway bridges at $X=1400$ across Top ($Y=270$) and Bottom ($Y=1170$) lanes with 3D stone curbs and balustrades.
+    - **Center River Island Sanctuary**: Located at $(1400, 720)$ for the Ancient Sentinel (Elite Buff Camp), surrounded by the tranquil central river.
+    - **Epic Boss Pits**: Top Golden Boss Pit at $(1400, 115)$ for Dragon Embermaw; Bottom Cyan Boss Pit at $(1400, 1325)$ for Siege Golem Gravemarch.
+    - **Interior Jungle Camps**: 8 mirrored regular jungle camps with stone enclosures and pine trees.
+- **Structure Progression & Invariants**:
+  - **12 Lane Turrets**: 6 Blue (3 Top, 3 Bot) and 6 Red (3 Top, 3 Bot).
+  - **Single-Lane Breach**: Destroying all 3 lane turrets in EITHER Top or Bottom unlocks the base's 3 Barracks.
+  - **Protected Nexus Invariant (`AGENTS.md`)**: All 3 Barracks must be destroyed before the Nexus can be damaged (`barracks.length >= 3 && barracks.every(s => !s.isAlive)`).
+  - **Simultaneous Dual Waves**: Top and Bottom minion waves spawn together every 22s and march along curved lane perimeters.
+- **Simulation Engine & Fairness**:
+  - Enhanced headless simulator with lane-aware minion tracking, 2D Euclidean tower distance selection (`Math.hypot`), vulnerable structure target gating, and lane-specific advance limits.
+  - Paired 32-match mirror benchmark verifies 0.0% map side bias (50% Blue / 50% Red on swapped mirror drafts).
+
+## Latest: Tracks 1 & 2 Complete — 3D Babylon Battlefield Meshes, Dynamic Atmosphere & 32-Match Paired Mirror Benchmark (0.0% Map Bias) (2026-10-30)
+
+- **3D Babylon Battlefield Entity Meshes & Dynamic Atmosphere (Track 1)**:
+  - Interactive Phase 5–10 objects promoted from 2D overlay to full 3D procedural Babylon.js meshes:
+    - **River Scuttler Crabs**: Chitinous teal/emerald carapace sphere, 6 articulated legs with walking animation, core, claws, and gentle water bobbing.
+    - **Speed Shrines**: Stone dais, rotating team-glow torus ring scaling dynamically by remaining life duration, and levitating rotating team-colored energy crystal.
+    - **Interactive Jungle Plants**: Blast Cones (crimson spiky pod with emissive orange core that scales down during dormancy), Scryer's Blooms (green stem with rotating cyan petal array and pulsing core), and Honeyfruit (stem with 5 emerald fruit orbs and golden honey center).
+    - **Post-Boss Hexgates**: Twin rotating Hextech torus portal rings with central energy spark.
+    - **Celestial Supply Drops**: Octagonal landing dais, golden crystal prism, and expanding team capture-progress indicator torus.
+  - **Dynamic Atmosphere & Lighting Presets**: Supported presets (`daylight`, `dusk`, `overcast`) adjust hemispheric sky and directional sun intensities/colors; elemental dragon takedowns dynamically tint the directional rim lighting (`infernal`, `mountain`, `ocean`, `cloud`).
+- **ML Policy Benchmark & Map Symmetry Verification (Track 2)**:
+  - **Paired 32-Match Mirror Benchmark (`benchmark-straight-v4.mjs`)**:
+    - Evaluated 16 seeds across swapped lineups to separate map bias from draft advantage.
+    - **Map Win Rate**: Exactly `16 / 16` (`50.0%` Blue / `50.0%` Red), proving **0.0% map bias** on `straight-v4`.
+    - **Average Duration**: `9.93` minutes (range `7.9m - 12.0m`, median `12.0m`).
+    - **Spatial Influence Heatmap**: 7x3 grid confirms balanced territorial progression and 0 dead zones.
+    - **Transferable Waypoints**: Waypoint descriptors build cleanly without mutating the frozen 224-input actor v3 schema.
+
+## Latest: Catalogue Roadmap Phases 0–12 Complete — Full 89-Feature Battlefield Catalogue & Clean Straight Arena (`straight-v4`) (2026-10-30)
+
+- **Canonical Default Map (`straight-v4`) (`arenaLayout.ts`, `arenaRules.ts`, `arenaElevation.ts`, `arenaLandform.ts`)**:
+  - `straight-v4` is now the default map (`ARENA_MAP_VERSION = 'straight-v4'`), while `howling-abyss-v3` remains selectable via `?map=howling-abyss-v3` or `ARENA_MAP_PROFILE`:
+    - **Straight horizontal lane** (`laneSlope: 0` at `LANE_Y = 720`).
+    - **Wider 340px lane (`laneHalfWidth: 170`)** expanding smoothly to a **`~420px` central mid arena plaza (`midPlazaRadius: 210`)** paved with **2× larger sandstone bricks (`110×80`)**.
+    - **Closer mirrored regular jungle camps** (`y = 410, 430` North; `y = 1010, 1030` South, `290–310px` from lane center) with expanded enclosures (`radius: 86`) and flared openings (`>= 132px` clear mouth).
+    - **Larger epic boss pits** at $(1400, 240)$ (Dragon Embermaw North) and $(1400, 1200)$ (Siege Golem Gravemarch South) (`480px` from lane center) facing the mid plaza with expanded enclosures (`radius: 136`) and wide flared openings (`>= 190px` clear mouth).
+    - **10 symmetric bushes** aligned to the straight lane, river pits, and base highground flanks.
+    - **Mathematical East-West Mirror Symmetry (`auditArenaSymmetryAndBalance`)**: `0px` asymmetry across all fountains, Nexuses, barracks, turrets, and mirrored jungle camps.
+- **Close Camera Framing & Broadcast Presets (`AramMatchView.tsx`, `BabylonMatchViewer.ts`)**:
+  - Default spectator/gameplay `zoom` increased to `2.65` and `SPECTATOR_TILT` set to `53.5°`, framing ~1,050 world units horizontally so champions read at League of Legends / Wild Rift scale (~85–95px tall).
+  - 1-click Broadcast Camera Presets (`Broadcast 2.65×`, `Tactical 1.85×`, `Close 3.25×`) and `computeTeamfightAutoZoom` (Catalogue Item 73) dynamically widen framing during wide 5v5 engagements.
+- **Clean Battlefield Visual Hierarchy (Phase 2 — Catalogue Items 1, 2, 3, 4, 10, 14, 47, 48, 49, 50, 63)**:
+  - Unified emerald turf palette (`#2d4a3a` to `#3a5d48`), tranquil teal river channels with shoreline foam & water ripples, continuous beveled stone curbs, sculpted slate rock walls (`#4e5d63`), and perimeter-only evergreen forest walls.
+  - Bush grass sway & alpha/height fade on unit/ward entry, 3D base shop range ring, Nexus crystal health urgency pulse, wave spawn portal rings, distinct minion silhouettes, and 3D champion recall charge circle & rising energy motes.
+- **Tactical & Spectator Readability (Phase 3 — Catalogue Items 13, 19, 25, 36, 39, 41, 42, 51, 53, 54, 59, 64, 72, 73, 75, 76)**:
+  - `phase3SpectatorReadability.ts` renders selected champion vision circle, tactical ping badges, camp respawn timer clocks, objective spawn countdown ring, turret targeting laser telegraph, turret range ring indicator, lane wave-front indicator, and dead champion corpse countdown markers.
+  - Decluttered 3D nameplates: protected structures show a compact `'🛡'` icon (unless `Debug overlay` is toggled on), full-HP unengaged camp bars are hidden until engaged, and last-hittable minions highlight in gold (`#facc15`).
+  - Top HUD includes a Team-Gold Advantage Bar, an active Boss HP Meter with the `32%` execute threshold line, a Live Kill Feed ribbon, Player Focus indicator/release control, Next-Item Gold Progress Bar in `SpectatorRoster.tsx`, and a Gold-Lead & Objective Summary in Match Insights.
+- **Vision, Brush & Fog-of-War System (Phase 4 — Catalogue Items 12, 15, 16, 17, 18, 20)**:
+  - `visionRules.ts` implements line-of-sight wall/pit occlusion (`isVisionBlockedByWall`, `isUnitVisibleToTeam`), 3 ward types (`stealth`, `control`, `farsight`) with distinct 3D models and hit-based clearing (`+30g`), Oracle Lens sweeper (`isRevealedBySweeper`), last-seen ghost markers (`LastSeenGhost[]`), and spectator Fog-of-War perspective switching (`All` / `Blue` / `Red`).
+- **Jungle Ecosystem & Camp Depth (Phase 5 — Catalogue Items 21, 22, 23, 24, 26, 27, 28, 29, 30)**:
+  - `jungleEcosystemRules.ts` provides multi-creep camp packs (`getCampPackMinions`), distinct under-foot buff aura rings, buff transfer on champion takedown (`transferJungleBuffsOnTakedown`), roaming River Scuttler Crabs & Speed Shrines (`createInitialRiverScuttlers`, `stepRiverScuttlers`), interactive jungle plants (`Blast Cone`, `Scryer's Bloom`, `Honeyfruit`), camp minute scaling (`scaleCampStatsByMinute`), Primal Smite (`getPrimalSmiteDamage`), and counter-jungling alerts (`checkCounterJungleSteal`).
+- **Epic Objectives & Stalemate Breakers (Phase 6 — Catalogue Items 31, 32, 33, 34, 35, 37, 38)**:
+  - `epicObjectivesRules.ts` implements 4-element dragon rotation (`infernal`, `mountain`, `ocean`, `cloud`), Dragon Soul at 4 stacks, arena elemental accents after 2nd dragon, Elder Dragon Sovereign (`14:00+` or after Soul) with `< 15%` HP Elder Execute (`shouldTriggerElderExecute`), 3-phase Dragon boss combat (`getDragonCombatPhase`), Siege Golem rear crystal core (`+22%` bonus damage from behind), summoned Siege Golem Banner Aura (`-25%` nearby minion damage taken), and pit pull-out reset rule (`isBossPulledOutsidePit`).
+- **Terrain Mechanics, Structures/Waves & Economy/Comeback (Phases 7, 8 & 9 — Catalogue Items 5–9, 40, 60–62, 43–46, 52, 55–58)**:
+  - `terrainStructureEconomyRules.ts` implements highground ramp `-15%` uphill glancing penalty, thin vs. thick wall dash passability, wall-slam stun/damage on knockbacks, chokepoint & alcove definitions, post-boss hex-portals, team base gates, Homeguard fountain speed boost (`+65%` decaying over `5s`), turret bulwark plating (5 plates before `8:00`, `125g` each), backdoor protection (`-66%` without minions), progressive structure damage states (`pristine`/`cracked`/`critical`/`rubble`), minion aggro call-for-help (`2.5s`), kill-streak shutdown bounties (`+150g` to `+600g`), trailing-team objective bounties (`> 2.5k` gold deficit), assist/proximity XP sharing, and enhanced 4s HoT Health Relic zones.
+- **Dynamic Events, Atmosphere/Audio & ML/Balance/Release (Phases 10, 11 & 12 — Catalogue Items 67–71, 74, 11, 65, 66, 77, 79–84, 85, 86, 88, 89)**:
+  - `dynamicEventsAtmosphereRelease.ts` implements First Blood mid-plaza trophy insignia, multi-kill escalation tracker, team Ace detector, `18:00+` Overtime Convergence, `6:00`/`11:00` Celestial Supply Drop at mid-plaza, off-camera Objective PiP alert, lighting presets (`daylight`/`dusk`/`overcast`), persistent ultimate scorch decals, river footstep water ripples, frustum culling helper, dynamic combat audio ducking & crowd excitement mix, DEV spatial influence heatmap overlay, and transferable waypoint observation descriptors.
+- **Verification**:
+  - `phase0Foundations.test.mjs` (10/10 phase suites), `arenaRules.test.mjs`, `arenaLandform.test.mjs`, `terrainRouting.test.mjs`, `babylonViewer.test.mjs`, `tacticalMinimapRadar.test.mjs`, `phase5MatchVerification.test.mjs`, and `node scripts/validate-design.js`: **ALL PASSED**.
+  - `npm run build`: clean TypeScript compilation and Vite production bundle.
+
+## Previous: Catalogue Roadmap Phase 0 — Map Profiles, Version Tags & Debug Overlay Toggle (2026-10-30)
+
+- Map Profiles & Feature-Flag Registry (`arenaLayout.ts`, `arenaRules.ts`, `arenaElevation.ts`):
+  - `MAP_PROFILES` preserves `'howling-abyss-v3'` (slanted $m = -0.30$ roadway, 10 camps, 10 bushes, stepped ramps) and defines `'straight-v4'` ($m = 0$ horizontal roadway at $Y = 720$, wider 170px half-width lane, 210px mid plaza radius, $110 \times 80$ bricks, and closer mirrored camps).
+  - `resolveArenaMapProfileId` resolves `?map=`, `localStorage`, or `ARENA_MAP_PROFILE` env overrides while keeping `'howling-abyss-v3'` as the baseline fallback for historical regression parity.
+  - `ArenaFeatureFlags` and `computeArenaRulesetVersion` provide deterministic ruleset version tags (`arena-ruleset-v3` when all mechanical flags are off; `arena-ruleset-v4+<sorted-flags>` when enabled).
+- Replay, Telemetry & Training Version Attribution (Catalogue Item 87):
+  - `ViewerReplay`, `AIDecisionRecord`, `ArenaTrajectory`, and `MatchReport` stamp `mapVersion` and `rulesetVersion` on every recording, decision sample, settled training row, and match report.
+- Debug Overlay Toggle (Catalogue Item 78):
+  - `drawV3Telegraphs` suppresses raw debug text (`Resource N`, marks, recovery timers, construct countdowns) by default (`showDebugLabels: false`) while preserving geometric construct telegraphs.
+  - Observer Controls toolbar in `AramMatchView.tsx` provides a `Debug overlay` toggle button to inspect those labels on demand.
+- Verification:
+  - `phase0Foundations.test.mjs`: 4/4 tests passed alongside the full test suite and production build.
+
+## Latest: Phase 3 — Spectator Camera & Minimap Controls (2026-10-29)
+
+- Spectator Camera Dynamics & Slanted Axis Tracking (`AramMatchView.tsx`):
+  - Upgraded `computeActionCenter` to follow teamfights along the slanted roadway $m = -0.30$ without legacy horizontal dampening.
+  - Active objective weighting automatically draws spectator camera to Dragon Embermaw $(1400, 240)$ and Siege Golem Gravemarch $(1400, 1200)$ when engaged by champions.
+  - Added smooth keyboard flight controls (WASD & Arrow keys) with inertia damping for broadcast-grade manual camera panning across the $2800\text{px} \times 1440\text{px}$ arena.
+- Interactive Radar Minimap Controls (`TacticalMinimapRadar.ts` & `AramMatchView.tsx`):
+  - Click-to-focus on champion tokens: clicking within 130px world space of an alive hero locks spectator focus onto that champion with visual/sound feedback.
+  - Clicking elsewhere initiates smooth camera glide to target coordinates; dragging provides 1:1 real-time viewport manipulation.
+  - Global mouseup handler ensures dragging state cleans up reliably even when releasing outside canvas bounds.
+  - Full touch gesture parity for mobile spectator devices.
+- Verification:
+  - `npm test`: 609/609 tests passed (587 passed, 0 failed, 22 skipped).
+  - `npm run build`: Production bundle built cleanly with all 5,395 modules transformed.
+
+## Latest: Phase 2 — Jungle Macro AI & Objective Contestation (2026-10-29)
+
+- Slanted Map Jungle Routing & Macro Farm Rules (`macroFarmRules.ts` & `AramMatchView.tsx`):
+  - Calibrated jungle routing distances for the $2800\text{px} \times 1440\text{px}$ Howling Abyss slanted map ($m = -0.30$):
+    - Dedicated Junglers (jungleStrength $\ge 2$): `maxRoute = 850px`
+    - Secondary Junglers (jungleStrength $\ge 1$): `maxRoute = 680px`
+    - Primary Carries / Marksmen / Mages: `maxRoute = 540px`
+    - Post-Recall Coordinated Team Objective: `maxRoute = 1300px` (longestRoute) and `1200px` (individual route)
+  - Enables champions across all roles to legally path to and farm all 8 rotational quadrant camps ($245\text{--}456\text{px}$ from the slanted roadway).
+- Slanted Trajectory Coherence & Precision Anchor Corrections (`AramMatchView.tsx`):
+  - Replaced legacy horizontal `LANE_Y = 720` assumptions with dynamic $\text{laneY}(x) = 720 - 0.30 \times (x - 1400)$:
+    - Summoned Siege Golem Gravemarch spawns at `laneY(spawnX)` along the team's highground lane corridor.
+    - Fountain recall arrival coordinates calibrated to `laneY(WELL_X[u.team]) + (uIdx - 2) * 24` using `getChampionFormationY`.
+    - Minion wave tracking matches the slanted lane: `|m.y - laneY(m.x)| < 150px` and `|m.y - laneY(waveFrontX)| < 210px`.
+    - Base defense, retreat anchors, highground ramp wards, post-objective regroups, and push camp exits all adhere to the slanted roadway.
+- Epic Pit Scouting & Vision Radii (`objectiveRules.ts`):
+  - Increased `allyVisionRadius` from `440px` to `520px` in `hasObjectiveVision`, enabling champions positioned at the central river entrance ($480\text{px}$ from pit center at $Y = 240$ or $Y = 1200$) to scout and contest Dragon Embermaw and Siege Golem Gravemarch.
+  - Increased `wardVisionRadius` to `350px` and pit warding range to `550px`.
+- Bush Stealth & Opposing Ward Detection:
+  - Concealed champions inside bushes warded by the opposing team are revealed (`revealedTimer = 0.25s`), exposing them to legal targeting in `isUnitVisibleTo`.
+- Verification:
+  - `npm test`: 608/608 tests passed (586 passed, 0 failed, 22 skipped).
+  - `npm run build`: Production bundle transformed all 5,395 modules with zero TypeScript errors.
+
 ## Latest: Phase 1 — Howling Abyss 3D Visual & Atmospheric Polish (2026-10-29)
 
 - 3D Environment & Atmospheric Architecture in `BabylonBattlefield.ts`:
@@ -2181,3 +2574,17 @@ Implemented an automated 3D character rigging, alignment, joint landmark detecti
   - `src/spectatorCameraControls.test.mjs`: 3/3 passed (key mapping, follow camera offset & death unlock, inertia damping decay).
   - Full Web Test Suite: 20/20 passed across all 5 test files.
   - TypeScript typecheck (`npx tsc --noEmit`): 0 errors.
+
+
+## 2026-11-07: Browser rigging studio retired (UI only)
+
+- `MeshyRiggingStudio.tsx`, its CSS, `src/rigging/*` and `meshyRiggingPipeline.test.mjs` were removed at owner request; the 2026-10-21 entry above is historical. Navigation in `App.tsx` and `ChampionHubView.tsx` no longer offers the studio.
+- **Invariants protected:** no gameplay, simulation, tower, attribution, objective, steering, ML or alias code changed.
+- **Verification:** `npm run build` passes; `check:game` has one unrelated pre-existing failure in `threeArenaScenery.test.mjs` tied to in-flight terrain edits (see handoff).
+
+## 2026-11-07: Hattrick Player Profile Rows, Caricature Portraits, Role-as-Position, Scheduled Tournaments & Match Orders
+
+- Replaced vertical trading cards and chibi portraits with Hattrick horizontal player profile blocks (`CardComponent.tsx`, `player-card.css`) and Hattrick comic caricature SVG portraits (`ChibiAvatar.tsx`) with sky-blue sunburst backgrounds, narrative experience/leadership/loyalty sentences, TSI/Wage/Speciality/Form/Stamina, and 1–10 horizontal green skill bars with verbal descriptors and yellow key-skill highlights.
+- Replaced `TOP/JGL/MID/BOT/SUP` lane labels across `App.tsx`, `SquadView.tsx`, `ProCircuitView.tsx`, `PlayerDraftPhaseView.tsx`, and `equalizedMode.ts` with **Role as Position** (`Tank`, `Fighter`, `Assassin`, `Mage`, `Marksman`, `Support`).
+- Removed Gaming House Facilities (`PC Scrim Battle-Station`, etc.), daily schedule buttons, and on-demand `"Play Next Match"` for tournaments; added scheduled tournament kickoffs and Hattrick **Match Orders** (`MatchOrdersModal.tsx`) for every match/series (`Play It Cool`, `Normal`, `Match of the Season`, Tactical Doctrine, Role Position assignments, Individual Orders, and Bo3/Bo5 conditional adjustments), while keeping `Play` as a Friendly & Tactical Scrimmage Arranger.
+- **Invariants protected:** all-3-barracks Nexus unlock, risk-based tower combat, 10s turret execution attribution, champion-first objective contestation, 12px steering deadband, and `Cardrel` parody aliases remain unchanged.

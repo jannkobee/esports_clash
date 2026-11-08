@@ -215,3 +215,41 @@ test('drawTacticalMinimapRadar renders minion waves and champion tokens with HP 
   const standardMinionArcs = ctx.operations.filter(op => op.op === 'arc' && op.r === 1.4);
   assert.equal(standardMinionArcs.length, 2, 'Should draw 2 standard minion pips');
 });
+
+test('drawTacticalMinimapRadar renders spectator camera viewfinder frustum correctly on Howling Abyss', () => {
+  const ctx = createMockContext();
+  const rect = { Mw: 280, Mh: 144, mx: 10, my: 10 };
+  const viewport = { camX: 1400, camY: 720, halfW: 700, halfH: 360 };
+
+  drawTacticalMinimapRadar({
+    ctx,
+    rect,
+    viewport,
+    structures: [],
+    champions: [],
+    minions: [],
+    camps: [],
+    dragon: { x: 1400, y: 240, isAlive: true },
+    matchTime: 90.0,
+  });
+
+  // Check that the camera viewport box was rendered
+  const strokeOps = ctx.operations.filter(op => op.op === 'stroke');
+  assert.ok(strokeOps.length > 0, 'Should stroke viewport box');
+
+  // Verify world-to-minimap coordinate mapping for clicking
+  const minimapClick = (canvasX, canvasY) => ({
+    worldX: ((canvasX - rect.mx) / rect.Mw) * ARENA_WIDTH,
+    worldY: ((canvasY - rect.my) / rect.Mh) * ARENA_HEIGHT,
+  });
+
+  // Clicking center of minimap maps to center of arena (1400, 720)
+  const centerClick = minimapClick(10 + 140, 10 + 72);
+  assert.equal(centerClick.worldX, 1400);
+  assert.equal(centerClick.worldY, 720);
+
+  // Clicking dragon caldera pit on minimap maps to (1400, 240)
+  const dragonClick = minimapClick(10 + 140, 10 + 24);
+  assert.equal(dragonClick.worldX, 1400);
+  assert.equal(dragonClick.worldY, 240);
+});

@@ -14,7 +14,7 @@ export interface MatchViewer {
 
 export type ViewerActor = Readonly<{ id: string; heroId: string; label: string; x: number; y: number;
   hp: number; maxHp: number; alive: boolean; facing: number; team: string;
-  kind: 'champion' | 'minion' | 'structure' | 'neutral' | 'ward'; subtype?:string;
+  kind: 'champion' | 'minion' | 'structure' | 'neutral' | 'ward' | 'feature'; subtype?:string; progress?:number;
   assetVariant?:'current'; motion?: ViewerMotion; shield?:number; controlled?:boolean; recalling?:boolean }>;
 export type ViewerMotion = Readonly<{ state:string; stateSince?:number; vx:number; vy:number; attackTimer:number; attackReleased?:number;
   castStart?:number; castCommit?:number; castEnd?:number; hitAt?:number; knockup?:number }>;
@@ -25,7 +25,7 @@ export type ViewerConstruct = Readonly<{id:string;kind:string;x:number;y:number;
 export type ViewerEffect = Readonly<{ id:string;x:number;y:number;radius:number;color:string;kind:'projectile'|'zone'|'impact';
   angle?:number;halfWidth?:number;halfHeight?:number;sourceX?:number;sourceY?:number;originX?:number;originY?:number;age?:number;heroId?:string;slot?:ViewerArtSlot }>;
 export type ViewerCue=Readonly<{id:string;actor:string;heroId:string;slot:ViewerArtSlot;tick:number}>;
-export type ViewerSnapshot = Readonly<{ tick: number; second: number; actors: readonly ViewerActor[]; effects: readonly ViewerEffect[]; constructs?:readonly ViewerConstruct[];cues?:readonly ViewerCue[] }>;
+export type ViewerSnapshot = Readonly<{ tick: number; second: number; actors: readonly ViewerActor[]; effects: readonly ViewerEffect[]; constructs?:readonly ViewerConstruct[];cues?:readonly ViewerCue[]; atmosphere?:Readonly<{lighting:string;element:string|null}> }>;
 
 /** Copy primitives only: meshes cannot retain or mutate authoritative objects. */
 export function captureViewerSnapshot(frame: ArenaSceneFrame, previous?:ViewerSnapshot): ViewerSnapshot {
@@ -56,8 +56,11 @@ export function captureViewerSnapshot(frame: ArenaSceneFrame, previous?:ViewerSn
       alive:u.isAlive,facing:('facingX' in u && u.facingX!==undefined)?Math.sign(u.facingX):1,team:'team' in u ? String(u.team) : 'neutral',kind,subtype:u.type??('siegeGolem' in u&&u.siegeGolem?'siege':''),
       motion:Object.freeze({state:u.isAlive?'idle':'dead',vx:0,vy:0,attackTimer:u.attackTimer??0})});
   }
-  for(const u of frame.wards) actors.push({id:u.id,heroId:'',label:'',x:u.x,y:u.y,hp:1,maxHp:1,alive:true,facing:1,team:u.team,kind:'ward'});
+  for(const u of frame.wards) actors.push({id:u.id,heroId:'',label:'',x:u.x,y:u.y,hp:u.hp??1,maxHp:u.maxHp??1,alive:(u.hp??1)>0,facing:1,team:u.team,kind:'ward',subtype:u.kind??'stealth'});
+  for(const f of frame.features??[]) actors.push({id:f.id,heroId:'',label:'',x:f.x,y:f.y,hp:f.hp,maxHp:f.maxHp,alive:true,facing:1,team:f.team,kind:'feature',subtype:f.kind,progress:f.progress,
+    motion:Object.freeze({state:f.active?'idle':'dormant',vx:0,vy:0,attackTimer:0})});
   return Object.freeze({tick:Math.round(frame.second*30),second:frame.second,
+    ...(frame.atmosphere?{atmosphere:Object.freeze({lighting:frame.atmosphere.lighting,element:frame.atmosphere.element})}:{}),
     actors:Object.freeze(actors.map(a=>Object.freeze(a))),
     cues:Object.freeze(committed.filter(e=>e.tick<=Math.round(frame.second*30)&&Math.round(frame.second*30)-e.tick<20&&heroByUnit.has(e.actor)&&slot(e.reason)).map(e=>Object.freeze({id:e.id,actor:e.actor,heroId:heroByUnit.get(e.actor)!,slot:slot(e.reason)!,tick:e.tick}))),
     constructs:Object.freeze((frame.v3?.constructs??[]).filter(c=>c.hp>0&&c.expires>(frame.v3?.tick??0)).map(c=>Object.freeze({

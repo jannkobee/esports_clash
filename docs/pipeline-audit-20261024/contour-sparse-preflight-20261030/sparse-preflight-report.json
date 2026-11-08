@@ -1,0 +1,284 @@
+{
+  "method": "current-contour-four-influence-preflight-v1",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "candidate_available": false,
+  "started_unix": 1793363847.8423133,
+  "parent_review_id": "e96c7db2-69b0-4030-9e97-00d4db16a49f",
+  "raw_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+  "weight_sha256": "e42afed24f19eefef5e715f5378b10b805e4994523e6d63a4c931bd12eac7438",
+  "corrective_sha256": "81e465df4054e9d4268d101d858950d68e637cda24bbb6877be0d64aa8451709",
+  "fitted_vertices": 3352,
+  "bones": 52,
+  "vertices": 23399,
+  "training": [
+    [
+      15,
+      "world_target"
+    ],
+    [
+      30,
+      "world_target"
+    ],
+    [
+      45,
+      "world_target"
+    ],
+    [
+      60,
+      "world_target"
+    ],
+    [
+      75,
+      "world_target"
+    ],
+    [
+      90,
+      "world_target"
+    ],
+    [
+      30,
+      "coordinated"
+    ],
+    [
+      60,
+      "coordinated"
+    ],
+    [
+      90,
+      "coordinated"
+    ]
+  ],
+  "heldout": [
+    [
+      11.25,
+      "world_target"
+    ],
+    [
+      22.5,
+      "world_target"
+    ],
+    [
+      33.75,
+      "world_target"
+    ],
+    [
+      56.25,
+      "world_target"
+    ],
+    [
+      67.5,
+      "world_target"
+    ],
+    [
+      78.75,
+      "world_target"
+    ],
+    [
+      22.5,
+      "coordinated"
+    ],
+    [
+      45,
+      "coordinated"
+    ],
+    [
+      67.5,
+      "coordinated"
+    ]
+  ],
+  "checks": [
+    {
+      "degrees": 15,
+      "mode": "world_target",
+      "heldout": false,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006331163434956e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 30,
+      "mode": "world_target",
+      "heldout": false,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006376957324643e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 45,
+      "mode": "world_target",
+      "heldout": false,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006452092360825e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 60,
+      "mode": "world_target",
+      "heldout": false,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006550966277397e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 75,
+      "mode": "world_target",
+      "heldout": false,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006669690346539e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 90,
+      "mode": "world_target",
+      "heldout": false,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006797367714853e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 30,
+      "mode": "coordinated",
+      "heldout": false,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1010582977607592e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 60,
+      "mode": "coordinated",
+      "heldout": false,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1009857449140513e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 90,
+      "mode": "coordinated",
+      "heldout": false,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1009047299940287e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 11.25,
+      "mode": "world_target",
+      "heldout": true,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006324701623598e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 22.5,
+      "mode": "world_target",
+      "heldout": true,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006350086301566e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 33.75,
+      "mode": "world_target",
+      "heldout": true,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.100639325525335e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 56.25,
+      "mode": "world_target",
+      "heldout": true,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006524098779414e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 67.5,
+      "mode": "world_target",
+      "heldout": true,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006608376102114e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 78.75,
+      "mode": "world_target",
+      "heldout": true,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1006701342206174e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 22.5,
+      "mode": "coordinated",
+      "heldout": true,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.101074100979715e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 45,
+      "mode": "coordinated",
+      "heldout": true,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.101023190375716e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    },
+    {
+      "degrees": 67.5,
+      "mode": "coordinated",
+      "heldout": true,
+      "max_error": 1.6041453346634067e-09,
+      "rms_error": 1.1009661315433819e-10,
+      "max_relative_error": 1.5994501028938733e-07,
+      "dense_intersections": 0,
+      "fitted_intersections": 0
+    }
+  ],
+  "limits": {
+    "max_error_height": 0.002,
+    "rms_error_height": 0.0005,
+    "max_relative_error": 0.05,
+    "max_influences": 4
+  },
+  "status": "ready_for_export_experiment",
+  "artifact_sha256": "713a8fb6144c9b0b0c3e9dfd7614bfa837e005c4e60367baf7988efedb2ea880",
+  "max_influences": 4,
+  "scope": "Left-hip diagnostic only; no twist, full-body, exported animation or visual qualification.",
+  "completed_unix": 1793363885.4096706
+}

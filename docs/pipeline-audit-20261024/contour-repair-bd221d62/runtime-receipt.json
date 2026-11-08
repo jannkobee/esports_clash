@@ -1,0 +1,13 @@
+{
+  "compute": "google",
+  "id": "bd221d62-d85c-4da4-b409-f1805b0a3e52",
+  "release": "release-colab-external-images_20261106-060046_RC00",
+  "kernel_boot_sha256": "5ad43e71406ee0fc3005e23391ef720ed9cee1c6b04dbc090025a02cc23f7c44",
+  "gpu": "Tesla T4, GPU-9f34c30f-91ab-8ddd-a3c6-e514f7373762, 580.82.07",
+  "environment": {
+    "python": "3.11.14 (main, Oct 14 2025, 21:26:53) [Clang 20.1.4 ]",
+    "bpy": "4.5.3 LTS",
+    "numpy": "1.26.4",
+    "scipy": "1.15.2"
+  }
+}

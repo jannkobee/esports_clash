@@ -1,0 +1,22 @@
+.game-guide{padding:24px;min-width:0}
+.guide-intro{display:flex;align-items:center;gap:16px;padding:4px 0 24px;border-bottom:1px solid #3b5159;margin-bottom:24px}
+.guide-intro>svg{color:#9bcdc5;flex-shrink:0}.guide-intro h1{font-size:30px;line-height:1.25;color:#edf0e9;margin:3px 0 8px}.guide-intro p{color:#a9bdc3}
+.guide-layout{display:grid;grid-template-columns:235px minmax(0,800px);gap:36px;align-items:start;justify-content:center}
+.guide-contents{position:sticky;top:80px;min-width:0}.guide-contents>label{display:flex;align-items:center;gap:8px;border:1px solid #455e67;background:#111e24;padding:9px 10px}
+.guide-contents input{width:100%;min-width:0;outline:none;background:transparent;color:#e0ecea}.guide-contents nav{display:grid;gap:2px;margin:12px 0}
+.guide-contents nav>a{display:flex;align-items:center;padding:7px 9px;font-size:12px;color:#b6ced5;border-left:2px solid transparent}
+.guide-contents nav>a:hover{background:#24383e;border-left-color:#89c7be;text-decoration:none}.guide-contents small{display:block;font-size:11px;line-height:1.6;color:#8fa5ad;padding:12px 9px;border-top:1px solid #364b53}
+.guide-body{min-width:0;max-width:800px}.guide-chapter{scroll-margin-top:85px;border-bottom:1px solid #344a52;padding:0 0 28px;margin:0 0 28px;line-height:1.8;font-size:14px}
+.guide-chapter h2{display:flex;align-items:center;gap:7px;font-size:21px;font-weight:600;color:#e6eee8;margin:0 0 14px}.guide-chapter h2 svg{color:#8fc7bd}
+.guide-chapter p{margin:12px 0;color:#c1d0d2;max-width:75ch}.guide-chapter strong{color:#e2ece5}.guide-chapter>ol:not(.guide-rating-scale){list-style:decimal;padding-left:23px;margin:12px 0}.guide-chapter>ol>li{padding:3px 0}
+.guide-chapter table{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0}.guide-chapter th,.guide-chapter td{text-align:left;padding:9px 12px;border-bottom:1px solid #3b5159}
+.guide-chapter thead{background:#263b42;color:#d7e5e2}.guide-chapter tbody tr:nth-child(even){background:#1e3037}
+.guide-role-list{display:grid;gap:0}.guide-role-list>div{display:grid;grid-template-columns:160px 1fr;gap:16px;padding:10px 0;border-bottom:1px solid #334950}.guide-role-list dt{font-weight:bold;color:#dce9e5}.guide-role-list dd{margin:0;color:#adbec3}
+.guide-links{display:flex;gap:10px 20px;flex-wrap:wrap;margin-top:16px}.guide-next{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:bold}
+.guide-rating-scale{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 25px;list-style:none;padding:0;margin:15px 0;border-top:1px solid #3a5057}
+.guide-rating-scale li{display:flex;gap:15px;padding:8px 0;border-bottom:1px solid #344a52}.guide-rating-scale strong{font-variant-numeric:tabular-nums;color:#d5b381;width:22px}
+.pedia-tool-page{padding:24px}.pedia-tool-page>header{margin-bottom:22px;border-bottom:1px solid #3b5159;padding-bottom:18px}.pedia-tool-page h1{font-size:26px;display:flex;align-items:center;gap:8px;margin-bottom:8px}.pedia-tool-page>header p{color:#9fb4bc}
+.pedia-utilities{display:flex;gap:4px;padding:0 16px 14px;border-bottom:1px solid #364b54;flex-wrap:wrap}.pedia-utilities a{display:flex;align-items:center;gap:5px;padding:8px 12px;font-size:12px;border-bottom:2px solid transparent}.pedia-utilities a[aria-current=page]{background:#263e46;border-bottom-color:#8ccac1;color:#eff9f4}
+.pedia-guide-link>div{padding:16px}.pedia-guide-link p{margin:0 0 12px;color:#b4c7cb}.pedia-guide-link a{display:inline-flex;align-items:center;gap:8px;font-weight:bold}
+@media(max-width:850px){.guide-layout{grid-template-columns:1fr;gap:24px}.guide-contents{position:static}.guide-contents nav{grid-template-columns:repeat(2,minmax(0,1fr))}.guide-contents small{display:none}.game-guide{padding:18px}.guide-intro h1{font-size:26px}.guide-chapter{scroll-margin-top:20px}}
+@media(max-width:480px){.guide-contents nav{grid-template-columns:1fr}.guide-rating-scale{grid-template-columns:1fr}.guide-role-list>div{grid-template-columns:1fr;gap:0}.pedia-utilities{padding:4px 8px 12px}.pedia-utilities a{padding:8px}}

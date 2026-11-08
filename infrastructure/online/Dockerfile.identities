@@ -1,0 +1,10 @@
+# Keep the previously qualified Arena sources/catalog intact. This layer consumes
+# server-owned player skills/nationality pinned in each allocation, with legacy-plan compatibility.
+ARG ONLINE_BASE=teamfight-online-worker:club-pilot-20261107
+FROM ${ONLINE_BASE}
+COPY infrastructure/online/browser-worker.mjs /online/browser-worker.mjs
+COPY infrastructure/online/final-performance.mjs /online/final-performance.mjs
+COPY infrastructure/online/finish-existing-match.mjs /online/finish-existing-match.mjs
+COPY infrastructure/online/server.py /online/server.py
+COPY EsportsClash.Web/src/worldPlayerProfile.ts /workspace/EsportsClash.Web/src/worldPlayerProfile.ts
+COPY infrastructure/online/history-match.mjs infrastructure/online/history_handler.py infrastructure/online/history_server.py /online/

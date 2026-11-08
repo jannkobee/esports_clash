@@ -1,0 +1,998 @@
+{
+  "baseline-report.json": {
+    "sha256": "fabe0de8f9b5e5f183bdf92a54bf0a2b739818ead9a86bb47fb2ceafc0518429",
+    "bytes": 39666
+  },
+  "bounded-weights.npz": {
+    "sha256": "e42afed24f19eefef5e715f5378b10b805e4994523e6d63a4c931bd12eac7438",
+    "bytes": 857029
+  },
+  "contour-diagnostic.glb": {
+    "sha256": "09c12c8a1b3a9d77fc0bd9da735a339a721459f46361650d104d7884f95da9ae",
+    "bytes": 5245800
+  },
+  "contour-targets.npz": {
+    "sha256": "f161502e594db58d8eb0e0ed6fb73e5ef12488c2bd782ec80aebdd434d38d870",
+    "bytes": 294478
+  },
+  "current-hip-animation.glb": {
+    "sha256": "42ac17a5740ab76878ca88d49e4b03cbb2d5998e7483acce91160bc0dc6ee597",
+    "bytes": 4759584
+  },
+  "execution-receipt.json": {
+    "sha256": "b853f2240ffc1351bc30721d9aee26616a34cdbf9b87a737d4cd4fc6c1bd8e0f",
+    "bytes": 330
+  },
+  "export-report.json": {
+    "sha256": "8c965eff44e445ec8f41de3b8b2fb6778a3dded911708dd61a2ecbd00fc180a7",
+    "bytes": 29596
+  },
+  "export_contour_trial.py.log": {
+    "sha256": "7199ec703a88fb63081dd3e5b0abd25e78668450e6ba22bc92b1c829c9d61750",
+    "bytes": 812
+  },
+  "followon-progress.json": {
+    "sha256": "38be352b3879a56bfd1b0ef6132258cee7807e37fd102c296cada56033492189",
+    "bytes": 170
+  },
+  "followon-state.json": {
+    "sha256": "8c14657dc820a422c32f19ba140ddd70d8f7f6afb646f4c41ed3bbcc51d4fbe2",
+    "bytes": 257
+  },
+  "gltf-validation.json": {
+    "sha256": "1a117ca30eadb9ced3292272e37c847c17d7f289403da3be5272e854d508f517",
+    "bytes": 2083
+  },
+  "plan.json": {
+    "sha256": "8c5b45e4de02178054ffcab7cf218df1d1c0fbb6a447b3b1e99d1c9291bdb92e",
+    "bytes": 39399
+  },
+  "raw.glb": {
+    "sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+    "bytes": 3375228
+  },
+  "reimport-geometry-report.json": {
+    "sha256": "d36d9b64cb23922cd5c551d998afe8b68e4b9fd4768cc2bf426ff6e69d6b8f2a",
+    "bytes": 22577
+  },
+  "render_contour_trial.py.log": {
+    "sha256": "22ace5faa7be721a1b837635306b9559ca7c5b1e3bfe37306eccb4ca20a062ae",
+    "bytes": 15374
+  },
+  "repair-assessment.json": {
+    "sha256": "85e006e05c75b91ccec4b7a47e9c937ce1d56299bc8941c24455df0297eedbad",
+    "bytes": 6160
+  },
+  "repair-progress.json": {
+    "sha256": "5273f8f5984efdf753b90c9e854c4bbbc3bcb935d953801a766051e4510d5369",
+    "bytes": 30
+  },
+  "repair-render-progress.json": {
+    "sha256": "7bcd1f429f6bc369faadbcee813e7dc496de6a5917852075195f78a08f37bdfd",
+    "bytes": 32
+  },
+  "repair-report.json": {
+    "sha256": "9efb3404b9b2f06568f27dd6786c8844659c5e1249fcb5dbd037ea8fec9ac272",
+    "bytes": 118807
+  },
+  "repair-screenshots/00-Rest-0-child0-twist0-baseline-front.png": {
+    "sha256": "848321bb683882a6d8a931c8ac4c9372a385a52c9b499032a2024be6ec153bc7",
+    "bytes": 72538
+  },
+  "repair-screenshots/00-Rest-0-child0-twist0-baseline-oblique.png": {
+    "sha256": "c35ade3533ec2fb7557e8b8e2c4907be8396c9cba2c9ce564fd284c4515591ec",
+    "bytes": 73349
+  },
+  "repair-screenshots/00-Rest-0-child0-twist0-baseline-side.png": {
+    "sha256": "4c30480c87efdecf79eac6b5149ff0ac9ecfa4ceec7e60df7212543aba0bcf96",
+    "bytes": 42362
+  },
+  "repair-screenshots/00-Rest-0-child0-twist0-candidate-front.png": {
+    "sha256": "848321bb683882a6d8a931c8ac4c9372a385a52c9b499032a2024be6ec153bc7",
+    "bytes": 72538
+  },
+  "repair-screenshots/00-Rest-0-child0-twist0-candidate-oblique.png": {
+    "sha256": "c35ade3533ec2fb7557e8b8e2c4907be8396c9cba2c9ce564fd284c4515591ec",
+    "bytes": 73349
+  },
+  "repair-screenshots/00-Rest-0-child0-twist0-candidate-side.png": {
+    "sha256": "4c30480c87efdecf79eac6b5149ff0ac9ecfa4ceec7e60df7212543aba0bcf96",
+    "bytes": 42362
+  },
+  "repair-screenshots/00-Rest-0-child0-twist0-playback-oblique.png": {
+    "sha256": "ada4fbdabbb028a8f478eeec917b2d9ad77b5532071dad3740c5fac62ab941f2",
+    "bytes": 73364
+  },
+  "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-front.png": {
+    "sha256": "b8480cfdd07e7b33ad32362d47b514894d70c8c90cea0c0ed206eb94303f7f79",
+    "bytes": 141912
+  },
+  "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-oblique.png": {
+    "sha256": "3409685bfe492494b5c878f838a57b9f3e9887745976e82c846ba2ea4a7eaad5",
+    "bytes": 105572
+  },
+  "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-side.png": {
+    "sha256": "65303e5e34a288d03f94affd53fbe156c8c25e50b2db338bc02a5cea47319530",
+    "bytes": 91058
+  },
+  "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-front.png": {
+    "sha256": "373780b1acdcebdf9159edec32215b1cfbadf0b2faf54bc6a2b98f7044729533",
+    "bytes": 144931
+  },
+  "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-oblique.png": {
+    "sha256": "799a5624d7a2f3ce256b7f66caea5d78dcaeb872a625e21dd43b7314fc50445e",
+    "bytes": 108881
+  },
+  "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-side.png": {
+    "sha256": "fb14257a17b2d1fe09a442f65f8d715b0d9e90dfb05b0aabe41020dc03e733ca",
+    "bytes": 92140
+  },
+  "repair-screenshots/01-UpperArmL-60-child0-twist0-playback-oblique.png": {
+    "sha256": "503f0d1abbc2fdf14ce874b25c2943fcb848adbc793e783e9b94f34133e71dd6",
+    "bytes": 107321
+  },
+  "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-front.png": {
+    "sha256": "78ceb8f62a2a9f48dd163b1fd961378f2000b07388c0ee3ccefb2eaec9dbd8f1",
+    "bytes": 134013
+  },
+  "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-oblique.png": {
+    "sha256": "e549742bd3cd2fd61470b43e8a016385f797dc716f4253d1f5d4b54be08e60a1",
+    "bytes": 118351
+  },
+  "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-side.png": {
+    "sha256": "8c51cd141f32c7ac127fbdb38bc323570c6dac2acbcff4fdb50340391819130e",
+    "bytes": 90523
+  },
+  "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-front.png": {
+    "sha256": "c3a9f12354fb1cf697db1589289e5668b459fd2b32c020973b5b691f6c13468a",
+    "bytes": 138206
+  },
+  "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-oblique.png": {
+    "sha256": "a17fb5c0f15e0759c0a77d3113dd2ad095a8ea875be5204b41149625af02dddf",
+    "bytes": 120497
+  },
+  "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-side.png": {
+    "sha256": "12c1cd20c849a221431d6b622a09b69aadc75db4e54dd7335b367c2740ff4e1e",
+    "bytes": 93256
+  },
+  "repair-screenshots/02-UpperArmL-90-child0-twist0-playback-oblique.png": {
+    "sha256": "fe480aba51fc11c3f66119bd8f6c7d0e19fde8e78ab6439a39a871b07202fa42",
+    "bytes": 119036
+  },
+  "repair-screenshots/03-UpperArmR-60-child0-twist0-baseline-front.png": {
+    "sha256": "f67f246305fb3cee907c69dcfdb881074ffdac6430ff0bbb285afcc2a0cb462d",
+    "bytes": 141144
+  },
+  "repair-screenshots/03-UpperArmR-60-child0-twist0-baseline-oblique.png": {
+    "sha256": "32510e6d5362236368a3592c1ab6787331639f4bda2008bc3851f0dec72916e6",
+    "bytes": 98635
+  },
+  "repair-screenshots/03-UpperArmR-60-child0-twist0-baseline-side.png": {
+    "sha256": "1a01bbe969d0220368e93eba1e7d2314729653a9c7f6f5cf192a87c3703e0da7",
+    "bytes": 84246
+  },
+  "repair-screenshots/03-UpperArmR-60-child0-twist0-candidate-front.png": {
+    "sha256": "f67f246305fb3cee907c69dcfdb881074ffdac6430ff0bbb285afcc2a0cb462d",
+    "bytes": 141144
+  },
+  "repair-screenshots/03-UpperArmR-60-child0-twist0-candidate-oblique.png": {
+    "sha256": "32510e6d5362236368a3592c1ab6787331639f4bda2008bc3851f0dec72916e6",
+    "bytes": 98635
+  },
+  "repair-screenshots/03-UpperArmR-60-child0-twist0-candidate-side.png": {
+    "sha256": "1a01bbe969d0220368e93eba1e7d2314729653a9c7f6f5cf192a87c3703e0da7",
+    "bytes": 84246
+  },
+  "repair-screenshots/03-UpperArmR-60-child0-twist0-playback-oblique.png": {
+    "sha256": "25736e815c16ed7e3aca7f2fce62c76effea5ecdf8fa9b1f16dcb599275c8b2a",
+    "bytes": 97598
+  },
+  "repair-screenshots/04-UpperArmR-90-child0-twist0-baseline-front.png": {
+    "sha256": "076bb8cc92cfa5852ab13d9862ccf60dd14ce570f9829175ba603df0689ba9a0",
+    "bytes": 136621
+  },
+  "repair-screenshots/04-UpperArmR-90-child0-twist0-baseline-oblique.png": {
+    "sha256": "b6495e000ed9b57b99bd4667ea9a8bf52769814ed7b8b36973bf32ff370dc80f",
+    "bytes": 112134
+  },
+  "repair-screenshots/04-UpperArmR-90-child0-twist0-baseline-side.png": {
+    "sha256": "705bb6c8711cea7f863b538959310b54e37d9db64a7cb9ae2cb7ad4770805ebb",
+    "bytes": 88502
+  },
+  "repair-screenshots/04-UpperArmR-90-child0-twist0-candidate-front.png": {
+    "sha256": "076bb8cc92cfa5852ab13d9862ccf60dd14ce570f9829175ba603df0689ba9a0",
+    "bytes": 136621
+  },
+  "repair-screenshots/04-UpperArmR-90-child0-twist0-candidate-oblique.png": {
+    "sha256": "b6495e000ed9b57b99bd4667ea9a8bf52769814ed7b8b36973bf32ff370dc80f",
+    "bytes": 112134
+  },
+  "repair-screenshots/04-UpperArmR-90-child0-twist0-candidate-side.png": {
+    "sha256": "705bb6c8711cea7f863b538959310b54e37d9db64a7cb9ae2cb7ad4770805ebb",
+    "bytes": 88502
+  },
+  "repair-screenshots/04-UpperArmR-90-child0-twist0-playback-oblique.png": {
+    "sha256": "3b2cb64baceae5b592abbfa90c33aeedf4136b9bb21553767f01befcc818f837",
+    "bytes": 112194
+  },
+  "repair-screenshots/05-ThighL-60-child60-twist-20-baseline-front.png": {
+    "sha256": "7691b56b442dcf8bf160bfa9177801d7c89ecfe85fe1cce4b2e7bb078b0bbcf4",
+    "bytes": 154368
+  },
+  "repair-screenshots/05-ThighL-60-child60-twist-20-baseline-oblique.png": {
+    "sha256": "07855e689319a0be20dd98a863bd4d68395caa533e59249ea43806968bc48a04",
+    "bytes": 159418
+  },
+  "repair-screenshots/05-ThighL-60-child60-twist-20-baseline-side.png": {
+    "sha256": "6a03dc7322613f9ed051697590e38882187b7f1892a7f1f5488c00545f1f9cd7",
+    "bytes": 93295
+  },
+  "repair-screenshots/05-ThighL-60-child60-twist-20-candidate-front.png": {
+    "sha256": "7691b56b442dcf8bf160bfa9177801d7c89ecfe85fe1cce4b2e7bb078b0bbcf4",
+    "bytes": 154368
+  },
+  "repair-screenshots/05-ThighL-60-child60-twist-20-candidate-oblique.png": {
+    "sha256": "07855e689319a0be20dd98a863bd4d68395caa533e59249ea43806968bc48a04",
+    "bytes": 159418
+  },
+  "repair-screenshots/05-ThighL-60-child60-twist-20-candidate-side.png": {
+    "sha256": "6a03dc7322613f9ed051697590e38882187b7f1892a7f1f5488c00545f1f9cd7",
+    "bytes": 93295
+  },
+  "repair-screenshots/05-ThighL-60-child60-twist-20-playback-oblique.png": {
+    "sha256": "1f19702f051217672420204fa679a2b906a8b94b0377485aa4c3babca6c42e35",
+    "bytes": 149335
+  },
+  "repair-screenshots/06-ThighL-60-child60-twist0-baseline-front.png": {
+    "sha256": "b2d825a35b5327d6b0fd60fe41ab696e5b635b101abf1eb5ac3c559f6a93e7a1",
+    "bytes": 154411
+  },
+  "repair-screenshots/06-ThighL-60-child60-twist0-baseline-oblique.png": {
+    "sha256": "9cefcfd07b6c59956eadbd0804f7ba6b2f8eccc88b2fbc1dbe73c089830f2863",
+    "bytes": 159902
+  },
+  "repair-screenshots/06-ThighL-60-child60-twist0-baseline-side.png": {
+    "sha256": "92f6dc4d63dbd88f22abe193739e1d2de1e6f1d5a0d7d0dfd208576b3a96cc1c",
+    "bytes": 93945
+  },
+  "repair-screenshots/06-ThighL-60-child60-twist0-candidate-front.png": {
+    "sha256": "b2d825a35b5327d6b0fd60fe41ab696e5b635b101abf1eb5ac3c559f6a93e7a1",
+    "bytes": 154411
+  },
+  "repair-screenshots/06-ThighL-60-child60-twist0-candidate-oblique.png": {
+    "sha256": "9cefcfd07b6c59956eadbd0804f7ba6b2f8eccc88b2fbc1dbe73c089830f2863",
+    "bytes": 159902
+  },
+  "repair-screenshots/06-ThighL-60-child60-twist0-candidate-side.png": {
+    "sha256": "92f6dc4d63dbd88f22abe193739e1d2de1e6f1d5a0d7d0dfd208576b3a96cc1c",
+    "bytes": 93945
+  },
+  "repair-screenshots/06-ThighL-60-child60-twist0-playback-oblique.png": {
+    "sha256": "c2970b14e1d15dd6e536fb0ea0e285691f46ad76c9b9096f0b9807695e71bacf",
+    "bytes": 150196
+  },
+  "repair-screenshots/07-ThighL-60-child60-twist20-baseline-front.png": {
+    "sha256": "4a47eec77fed0e9705a7c0858fcc058d9246260263cd9746de7e829283b2c3d4",
+    "bytes": 155678
+  },
+  "repair-screenshots/07-ThighL-60-child60-twist20-baseline-oblique.png": {
+    "sha256": "d3bd5cb5d08842f171afadc36009b7d93e61d9d0578f4c22f1a8903a339b696f",
+    "bytes": 157533
+  },
+  "repair-screenshots/07-ThighL-60-child60-twist20-baseline-side.png": {
+    "sha256": "de8c827d325cbbf5cfad6ffac0b067b99097f1a5d99732a061df11950e8b6a77",
+    "bytes": 93761
+  },
+  "repair-screenshots/07-ThighL-60-child60-twist20-candidate-front.png": {
+    "sha256": "4a47eec77fed0e9705a7c0858fcc058d9246260263cd9746de7e829283b2c3d4",
+    "bytes": 155678
+  },
+  "repair-screenshots/07-ThighL-60-child60-twist20-candidate-oblique.png": {
+    "sha256": "d3bd5cb5d08842f171afadc36009b7d93e61d9d0578f4c22f1a8903a339b696f",
+    "bytes": 157533
+  },
+  "repair-screenshots/07-ThighL-60-child60-twist20-candidate-side.png": {
+    "sha256": "de8c827d325cbbf5cfad6ffac0b067b99097f1a5d99732a061df11950e8b6a77",
+    "bytes": 93761
+  },
+  "repair-screenshots/07-ThighL-60-child60-twist20-playback-oblique.png": {
+    "sha256": "75ab2b157c1652f1ffc8701151132237718163cc973edb3bdca9c2aaad117a84",
+    "bytes": 151435
+  },
+  "repair-screenshots/08-ThighL-90-child90-twist-20-baseline-front.png": {
+    "sha256": "50a14bcbc25c0ee36de083ddb77534be201750ffe34a3b67da6438f177ba0a39",
+    "bytes": 144609
+  },
+  "repair-screenshots/08-ThighL-90-child90-twist-20-baseline-oblique.png": {
+    "sha256": "27127f68173ec4139be177a57d05a425ddec4acb81b65a7ead1ef929a9224968",
+    "bytes": 146298
+  },
+  "repair-screenshots/08-ThighL-90-child90-twist-20-baseline-side.png": {
+    "sha256": "2558dcb0de6c4c8e7efd021294e078584c1dd9f2232f1dff5082ca95984455f8",
+    "bytes": 116017
+  },
+  "repair-screenshots/08-ThighL-90-child90-twist-20-candidate-front.png": {
+    "sha256": "50a14bcbc25c0ee36de083ddb77534be201750ffe34a3b67da6438f177ba0a39",
+    "bytes": 144609
+  },
+  "repair-screenshots/08-ThighL-90-child90-twist-20-candidate-oblique.png": {
+    "sha256": "27127f68173ec4139be177a57d05a425ddec4acb81b65a7ead1ef929a9224968",
+    "bytes": 146298
+  },
+  "repair-screenshots/08-ThighL-90-child90-twist-20-candidate-side.png": {
+    "sha256": "2558dcb0de6c4c8e7efd021294e078584c1dd9f2232f1dff5082ca95984455f8",
+    "bytes": 116017
+  },
+  "repair-screenshots/08-ThighL-90-child90-twist-20-playback-oblique.png": {
+    "sha256": "209b85cd54c1ed352539fa64edb36fbb9865ae77b0a059cf151177f3856095b4",
+    "bytes": 141948
+  },
+  "repair-screenshots/09-ThighL-90-child90-twist0-baseline-front.png": {
+    "sha256": "079365cf87fb26713da6b3878db6baf14209841fc9fb573b84849facf7426810",
+    "bytes": 139279
+  },
+  "repair-screenshots/09-ThighL-90-child90-twist0-baseline-oblique.png": {
+    "sha256": "b37dad501424c475260846a18b298213bc3fb297b9b8dbb5364a901b804a786d",
+    "bytes": 147662
+  },
+  "repair-screenshots/09-ThighL-90-child90-twist0-baseline-side.png": {
+    "sha256": "d1a9b3ca50876913ef0d42e89de79696668a7a40eeb1dac353dc1df91730a423",
+    "bytes": 117707
+  },
+  "repair-screenshots/09-ThighL-90-child90-twist0-candidate-front.png": {
+    "sha256": "079365cf87fb26713da6b3878db6baf14209841fc9fb573b84849facf7426810",
+    "bytes": 139279
+  },
+  "repair-screenshots/09-ThighL-90-child90-twist0-candidate-oblique.png": {
+    "sha256": "b37dad501424c475260846a18b298213bc3fb297b9b8dbb5364a901b804a786d",
+    "bytes": 147662
+  },
+  "repair-screenshots/09-ThighL-90-child90-twist0-candidate-side.png": {
+    "sha256": "d1a9b3ca50876913ef0d42e89de79696668a7a40eeb1dac353dc1df91730a423",
+    "bytes": 117707
+  },
+  "repair-screenshots/09-ThighL-90-child90-twist0-playback-oblique.png": {
+    "sha256": "f741fa3fa7e0723b00fd3320d47e579dadfc5500e6aac6ac83be429588223b43",
+    "bytes": 141545
+  },
+  "repair-screenshots/10-ThighL-90-child90-twist20-baseline-front.png": {
+    "sha256": "816cdf634a5fd8b2b02c38240edc6fc5397cf2d14b8d81a226479eb9e7214f51",
+    "bytes": 136418
+  },
+  "repair-screenshots/10-ThighL-90-child90-twist20-baseline-oblique.png": {
+    "sha256": "c995b8d82d41663e1375d17f86c20fc12546d902ca11e32c4c2501a5b536ea66",
+    "bytes": 146184
+  },
+  "repair-screenshots/10-ThighL-90-child90-twist20-baseline-side.png": {
+    "sha256": "74a28cfdff1c9c7f1d048fdd7f91a3603439cba0650e3af1d3b0c6cb05d00e8f",
+    "bytes": 121441
+  },
+  "repair-screenshots/10-ThighL-90-child90-twist20-candidate-front.png": {
+    "sha256": "816cdf634a5fd8b2b02c38240edc6fc5397cf2d14b8d81a226479eb9e7214f51",
+    "bytes": 136418
+  },
+  "repair-screenshots/10-ThighL-90-child90-twist20-candidate-oblique.png": {
+    "sha256": "c995b8d82d41663e1375d17f86c20fc12546d902ca11e32c4c2501a5b536ea66",
+    "bytes": 146184
+  },
+  "repair-screenshots/10-ThighL-90-child90-twist20-candidate-side.png": {
+    "sha256": "74a28cfdff1c9c7f1d048fdd7f91a3603439cba0650e3af1d3b0c6cb05d00e8f",
+    "bytes": 121441
+  },
+  "repair-screenshots/10-ThighL-90-child90-twist20-playback-oblique.png": {
+    "sha256": "50c04fc8d2e59f812d847d9feaa54e9d5b625255bb3935e3889dde860b911947",
+    "bytes": 140690
+  },
+  "repair-screenshots/11-ThighR-60-child60-twist-20-baseline-front.png": {
+    "sha256": "881275519dfb7fbb159daca6308409f82a0fa60bf3680026c122f5aa78b17df8",
+    "bytes": 155363
+  },
+  "repair-screenshots/11-ThighR-60-child60-twist-20-baseline-oblique.png": {
+    "sha256": "f6d738010733aef20fce4ddb166c48a511e07da3f49409bdf844d67e08d135d1",
+    "bytes": 153499
+  },
+  "repair-screenshots/11-ThighR-60-child60-twist-20-baseline-side.png": {
+    "sha256": "c3d9409c78a34390391103eb1a0bb74733e0c81aa158e988e7b598e42a5756f2",
+    "bytes": 101567
+  },
+  "repair-screenshots/11-ThighR-60-child60-twist-20-candidate-front.png": {
+    "sha256": "881275519dfb7fbb159daca6308409f82a0fa60bf3680026c122f5aa78b17df8",
+    "bytes": 155363
+  },
+  "repair-screenshots/11-ThighR-60-child60-twist-20-candidate-oblique.png": {
+    "sha256": "f6d738010733aef20fce4ddb166c48a511e07da3f49409bdf844d67e08d135d1",
+    "bytes": 153499
+  },
+  "repair-screenshots/11-ThighR-60-child60-twist-20-candidate-side.png": {
+    "sha256": "c3d9409c78a34390391103eb1a0bb74733e0c81aa158e988e7b598e42a5756f2",
+    "bytes": 101567
+  },
+  "repair-screenshots/11-ThighR-60-child60-twist-20-playback-oblique.png": {
+    "sha256": "565628bf715de14648dd4d98e39128bc4118d3d121d6e136cd9bbe8d15ccda68",
+    "bytes": 146565
+  },
+  "repair-screenshots/12-ThighR-60-child60-twist0-baseline-front.png": {
+    "sha256": "241def20bf5bbbb3918e137807829ea90b280379dbb281b8f448b4486fbe310a",
+    "bytes": 155307
+  },
+  "repair-screenshots/12-ThighR-60-child60-twist0-baseline-oblique.png": {
+    "sha256": "6fe1dd70c2f5237d06750182bfadc8431e40f10717cbbb06b740a155a685ef21",
+    "bytes": 153750
+  },
+  "repair-screenshots/12-ThighR-60-child60-twist0-baseline-side.png": {
+    "sha256": "1f8b31aef970c8c0d21e007b3cca4179fb0ddacd63b603ddcaaab04e4f04a2e2",
+    "bytes": 101039
+  },
+  "repair-screenshots/12-ThighR-60-child60-twist0-candidate-front.png": {
+    "sha256": "241def20bf5bbbb3918e137807829ea90b280379dbb281b8f448b4486fbe310a",
+    "bytes": 155307
+  },
+  "repair-screenshots/12-ThighR-60-child60-twist0-candidate-oblique.png": {
+    "sha256": "6fe1dd70c2f5237d06750182bfadc8431e40f10717cbbb06b740a155a685ef21",
+    "bytes": 153750
+  },
+  "repair-screenshots/12-ThighR-60-child60-twist0-candidate-side.png": {
+    "sha256": "1f8b31aef970c8c0d21e007b3cca4179fb0ddacd63b603ddcaaab04e4f04a2e2",
+    "bytes": 101039
+  },
+  "repair-screenshots/12-ThighR-60-child60-twist0-playback-oblique.png": {
+    "sha256": "e9bb1c72cec6c472999d51082dc1ff69d1e551c8d18161932c355cd0dacda27f",
+    "bytes": 146595
+  },
+  "repair-screenshots/13-ThighR-60-child60-twist20-baseline-front.png": {
+    "sha256": "f5c2012254fc69772bf504785e3277ab95dc24f149e8c6521f27228751c4d031",
+    "bytes": 155110
+  },
+  "repair-screenshots/13-ThighR-60-child60-twist20-baseline-oblique.png": {
+    "sha256": "0d2548462ccafa9a0be2503995f36cc32ccdeffd189d6b8cf7dace11e5fa5798",
+    "bytes": 153015
+  },
+  "repair-screenshots/13-ThighR-60-child60-twist20-baseline-side.png": {
+    "sha256": "0860fd829207e8f99c1fef9d9bc629ff9be841af9094107337d82791418144b0",
+    "bytes": 101154
+  },
+  "repair-screenshots/13-ThighR-60-child60-twist20-candidate-front.png": {
+    "sha256": "f5c2012254fc69772bf504785e3277ab95dc24f149e8c6521f27228751c4d031",
+    "bytes": 155110
+  },
+  "repair-screenshots/13-ThighR-60-child60-twist20-candidate-oblique.png": {
+    "sha256": "0d2548462ccafa9a0be2503995f36cc32ccdeffd189d6b8cf7dace11e5fa5798",
+    "bytes": 153015
+  },
+  "repair-screenshots/13-ThighR-60-child60-twist20-candidate-side.png": {
+    "sha256": "0860fd829207e8f99c1fef9d9bc629ff9be841af9094107337d82791418144b0",
+    "bytes": 101154
+  },
+  "repair-screenshots/13-ThighR-60-child60-twist20-playback-oblique.png": {
+    "sha256": "d843758163b5620b60e3bc1c6fd693f65ef81bee595bfffe79f4304b873dedb5",
+    "bytes": 147251
+  },
+  "repair-screenshots/14-UpperArmL-60-child60-twist-20-baseline-front.png": {
+    "sha256": "776280d1f3765c6f386856e0a886bf57e23e52894e7863922bd2ecd93d77dbb5",
+    "bytes": 145844
+  },
+  "repair-screenshots/14-UpperArmL-60-child60-twist-20-baseline-oblique.png": {
+    "sha256": "0f25a7e352a1432e21d0aedac41535de13168a1ce95d0252d419dee5090c5060",
+    "bytes": 105534
+  },
+  "repair-screenshots/14-UpperArmL-60-child60-twist-20-baseline-side.png": {
+    "sha256": "f8b969502fb6bea0f8490fdc815f1da026f1efcd8172057685fba8e039c4c9e6",
+    "bytes": 90133
+  },
+  "repair-screenshots/14-UpperArmL-60-child60-twist-20-candidate-front.png": {
+    "sha256": "81eab8c3dbe4ea2a5ee55d2387918d89e3c31a4944e1f67dbba8572f001fd736",
+    "bytes": 149268
+  },
+  "repair-screenshots/14-UpperArmL-60-child60-twist-20-candidate-oblique.png": {
+    "sha256": "1b1b8afa63348baea54811672652d30672d46ebf99cb986beebca0069abaad11",
+    "bytes": 108041
+  },
+  "repair-screenshots/14-UpperArmL-60-child60-twist-20-candidate-side.png": {
+    "sha256": "44314e1efc5186ccc5ad168aff862422daf3fe2b2975f08672299beaad7f8285",
+    "bytes": 91956
+  },
+  "repair-screenshots/14-UpperArmL-60-child60-twist-20-playback-oblique.png": {
+    "sha256": "1fef9e912e9174ccca87eb884794df61bbab0ab68bef439899b4bbb4fcf9be92",
+    "bytes": 104484
+  },
+  "repair-screenshots/15-UpperArmL-60-child60-twist0-baseline-front.png": {
+    "sha256": "dc3ee1d2a94f330208a4c3416199b5f5d086dc20955de61db594602872eff0fb",
+    "bytes": 142551
+  },
+  "repair-screenshots/15-UpperArmL-60-child60-twist0-baseline-oblique.png": {
+    "sha256": "63689faf71085e3aead485765b49eb07de579ca417337da58d67306baea49156",
+    "bytes": 107143
+  },
+  "repair-screenshots/15-UpperArmL-60-child60-twist0-baseline-side.png": {
+    "sha256": "3c48bfeef27bb4622a046a580577f818329842cba2ba58ec2209f8adec771671",
+    "bytes": 87404
+  },
+  "repair-screenshots/15-UpperArmL-60-child60-twist0-candidate-front.png": {
+    "sha256": "45213c23ab8d2b9d30b886a546a2495b8ce3df39205436bd0bed97cb02eea785",
+    "bytes": 147080
+  },
+  "repair-screenshots/15-UpperArmL-60-child60-twist0-candidate-oblique.png": {
+    "sha256": "e42c7f915e58d5e9bd5b6b1037f97c744dbf326b71c072e99b2995695f3b26d8",
+    "bytes": 110205
+  },
+  "repair-screenshots/15-UpperArmL-60-child60-twist0-candidate-side.png": {
+    "sha256": "7a924bad387dc15ff1fd797f998916b0005cfd6c15bde0ce4486e1c1fd59701a",
+    "bytes": 88274
+  },
+  "repair-screenshots/15-UpperArmL-60-child60-twist0-playback-oblique.png": {
+    "sha256": "767ba7ee78dd449145b939ebfc608f69f41635c5cba0888694b6bed412ec5dcb",
+    "bytes": 107094
+  },
+  "repair-screenshots/16-UpperArmL-60-child60-twist20-baseline-front.png": {
+    "sha256": "bce06e26835b854607be5687c25afb62a193d20a3332762819eb7549072e3b91",
+    "bytes": 141552
+  },
+  "repair-screenshots/16-UpperArmL-60-child60-twist20-baseline-oblique.png": {
+    "sha256": "104877817e36546dd1a41198170b65b172fa6c04a1500db66eaa3828ce1f58da",
+    "bytes": 106643
+  },
+  "repair-screenshots/16-UpperArmL-60-child60-twist20-baseline-side.png": {
+    "sha256": "faa31ae44d1e525f0d4c03567ead00e686823997ac2375032b4d0533caa5fa11",
+    "bytes": 86161
+  },
+  "repair-screenshots/16-UpperArmL-60-child60-twist20-candidate-front.png": {
+    "sha256": "43c552c6279bfbb62dbd966819401a0deb5f979d09d9bcd7e83c37bdbacfc26a",
+    "bytes": 145738
+  },
+  "repair-screenshots/16-UpperArmL-60-child60-twist20-candidate-oblique.png": {
+    "sha256": "a4aabcd0869c9ebdf27f06a36a9bf32fc1e560f9ccbccdd911889d57530c0c1e",
+    "bytes": 110428
+  },
+  "repair-screenshots/16-UpperArmL-60-child60-twist20-candidate-side.png": {
+    "sha256": "760d4e269b0d053030e77a666548cc7db51e892db1771c29606f3ecd81657e75",
+    "bytes": 86726
+  },
+  "repair-screenshots/16-UpperArmL-60-child60-twist20-playback-oblique.png": {
+    "sha256": "2c71c3ee5331297e924f2e023b5f4cc2efdcd39dceaac1530c002d862349e7cb",
+    "bytes": 107806
+  },
+  "repair-screenshots/17-UpperArmR-60-child60-twist-20-baseline-front.png": {
+    "sha256": "83e878c3da1b80a342adb8a1be83ac177256eb474cba0b7b2bda370b1efed536",
+    "bytes": 143714
+  },
+  "repair-screenshots/17-UpperArmR-60-child60-twist-20-baseline-oblique.png": {
+    "sha256": "45dedd83c42ad99852dcf65851c2cbf15aa71fecb3d5a6e6a57bac655d373bf8",
+    "bytes": 98594
+  },
+  "repair-screenshots/17-UpperArmR-60-child60-twist-20-baseline-side.png": {
+    "sha256": "0211d93a0ecd9452c6283c07b31c7ad0876cfa774b0d5e96af62f5ecdae567ce",
+    "bytes": 83462
+  },
+  "repair-screenshots/17-UpperArmR-60-child60-twist-20-candidate-front.png": {
+    "sha256": "83e878c3da1b80a342adb8a1be83ac177256eb474cba0b7b2bda370b1efed536",
+    "bytes": 143714
+  },
+  "repair-screenshots/17-UpperArmR-60-child60-twist-20-candidate-oblique.png": {
+    "sha256": "45dedd83c42ad99852dcf65851c2cbf15aa71fecb3d5a6e6a57bac655d373bf8",
+    "bytes": 98594
+  },
+  "repair-screenshots/17-UpperArmR-60-child60-twist-20-candidate-side.png": {
+    "sha256": "0211d93a0ecd9452c6283c07b31c7ad0876cfa774b0d5e96af62f5ecdae567ce",
+    "bytes": 83462
+  },
+  "repair-screenshots/17-UpperArmR-60-child60-twist-20-playback-oblique.png": {
+    "sha256": "4f0ab0e98760422ca18c9447d1f7f7840981fa029d16c0a7d8d1ee55c00bc084",
+    "bytes": 96449
+  },
+  "repair-screenshots/18-UpperArmR-60-child60-twist0-baseline-front.png": {
+    "sha256": "23fad0d4196c9e40b5cacdb749fbe110dfecc50c544bc90a813d0a7771afd3cb",
+    "bytes": 144493
+  },
+  "repair-screenshots/18-UpperArmR-60-child60-twist0-baseline-oblique.png": {
+    "sha256": "c2c09391e2a79132b0a06d4c153c8a231e57f8b4eb93c2d19a239af3f18ea355",
+    "bytes": 98040
+  },
+  "repair-screenshots/18-UpperArmR-60-child60-twist0-baseline-side.png": {
+    "sha256": "92a30ed316255bb6730623365c72c61e1e4426d76cdfe25c5af6212bfaa5c27b",
+    "bytes": 85738
+  },
+  "repair-screenshots/18-UpperArmR-60-child60-twist0-candidate-front.png": {
+    "sha256": "23fad0d4196c9e40b5cacdb749fbe110dfecc50c544bc90a813d0a7771afd3cb",
+    "bytes": 144493
+  },
+  "repair-screenshots/18-UpperArmR-60-child60-twist0-candidate-oblique.png": {
+    "sha256": "c2c09391e2a79132b0a06d4c153c8a231e57f8b4eb93c2d19a239af3f18ea355",
+    "bytes": 98040
+  },
+  "repair-screenshots/18-UpperArmR-60-child60-twist0-candidate-side.png": {
+    "sha256": "92a30ed316255bb6730623365c72c61e1e4426d76cdfe25c5af6212bfaa5c27b",
+    "bytes": 85738
+  },
+  "repair-screenshots/18-UpperArmR-60-child60-twist0-playback-oblique.png": {
+    "sha256": "d8b014accd97df397763059a35ab60073c906dd9fe9f8e2481756ffadc7e538e",
+    "bytes": 96564
+  },
+  "repair-screenshots/19-UpperArmR-60-child60-twist20-baseline-front.png": {
+    "sha256": "6ce8200d742cf83906152826b8365cbc7e309991dc45c980099a127743ca36fb",
+    "bytes": 145720
+  },
+  "repair-screenshots/19-UpperArmR-60-child60-twist20-baseline-oblique.png": {
+    "sha256": "7e4b7eadb772961874d999ce97fda9f2b03c5f6f8676b8a2f704e7670a1b1221",
+    "bytes": 97032
+  },
+  "repair-screenshots/19-UpperArmR-60-child60-twist20-baseline-side.png": {
+    "sha256": "269dbcb78830171a82e61051a13f365cdb7886124d71da570bbde72f91fa7681",
+    "bytes": 87111
+  },
+  "repair-screenshots/19-UpperArmR-60-child60-twist20-candidate-front.png": {
+    "sha256": "6ce8200d742cf83906152826b8365cbc7e309991dc45c980099a127743ca36fb",
+    "bytes": 145720
+  },
+  "repair-screenshots/19-UpperArmR-60-child60-twist20-candidate-oblique.png": {
+    "sha256": "7e4b7eadb772961874d999ce97fda9f2b03c5f6f8676b8a2f704e7670a1b1221",
+    "bytes": 97032
+  },
+  "repair-screenshots/19-UpperArmR-60-child60-twist20-candidate-side.png": {
+    "sha256": "269dbcb78830171a82e61051a13f365cdb7886124d71da570bbde72f91fa7681",
+    "bytes": 87111
+  },
+  "repair-screenshots/19-UpperArmR-60-child60-twist20-playback-oblique.png": {
+    "sha256": "9017157f90ed84b28064efd515247d63c5ff8fe3331c1a3b1c8aaca2b8f4e33e",
+    "bytes": 95623
+  },
+  "repair-screenshots/20-UpperArmL-90-child90-twist0-baseline-front.png": {
+    "sha256": "07dfe8be7b857d479b011e12863ba97c07e90dbd6e576778ac7307eb86a77e35",
+    "bytes": 154676
+  },
+  "repair-screenshots/20-UpperArmL-90-child90-twist0-baseline-oblique.png": {
+    "sha256": "33718e4340cb06b39b4615bd7b2f89766bfa9e3555c13b6303c3d0898a27d34d",
+    "bytes": 111883
+  },
+  "repair-screenshots/20-UpperArmL-90-child90-twist0-baseline-side.png": {
+    "sha256": "7d06e8eb1e15f6d51db14fb7e0b322851a1a5bbee75253d0fe8bb6692830cdc8",
+    "bytes": 97410
+  },
+  "repair-screenshots/20-UpperArmL-90-child90-twist0-candidate-front.png": {
+    "sha256": "b74f91ffb2f6075cd2e7bbc4fb1e5383be61bb1a5219c478d1cdc5cd6a979603",
+    "bytes": 155597
+  },
+  "repair-screenshots/20-UpperArmL-90-child90-twist0-candidate-oblique.png": {
+    "sha256": "07e1b602fcdb93b87da4eafb968aca12c19ff8de63bd92e5d144d55c63cf3048",
+    "bytes": 112102
+  },
+  "repair-screenshots/20-UpperArmL-90-child90-twist0-candidate-side.png": {
+    "sha256": "537861e9ef7c5a7df77f7efb631aecd93c656a2911d6e9295947fa4181175ccc",
+    "bytes": 99122
+  },
+  "repair-screenshots/20-UpperArmL-90-child90-twist0-playback-oblique.png": {
+    "sha256": "ebf2c240a9f3f1a8996a69ad9cfb09f8d3f8809ba27d2d3b010281110e1f439c",
+    "bytes": 111373
+  },
+  "repair-screenshots/21-UpperArmR-90-child90-twist0-baseline-front.png": {
+    "sha256": "c90e881b00829c0ce31e6fb95266aa36e21ce88d4d8a9b47bb3082928465ee10",
+    "bytes": 157481
+  },
+  "repair-screenshots/21-UpperArmR-90-child90-twist0-baseline-oblique.png": {
+    "sha256": "be4bfebee6219135687ec9807f610973aeee7bcaadbff1fb2ed308dbcf03c9d9",
+    "bytes": 103463
+  },
+  "repair-screenshots/21-UpperArmR-90-child90-twist0-baseline-side.png": {
+    "sha256": "537839019ca783e8c6755aba68aa922b9202c930ce5d0752f3465eafcbd3f6d9",
+    "bytes": 90823
+  },
+  "repair-screenshots/21-UpperArmR-90-child90-twist0-candidate-front.png": {
+    "sha256": "c90e881b00829c0ce31e6fb95266aa36e21ce88d4d8a9b47bb3082928465ee10",
+    "bytes": 157481
+  },
+  "repair-screenshots/21-UpperArmR-90-child90-twist0-candidate-oblique.png": {
+    "sha256": "be4bfebee6219135687ec9807f610973aeee7bcaadbff1fb2ed308dbcf03c9d9",
+    "bytes": 103463
+  },
+  "repair-screenshots/21-UpperArmR-90-child90-twist0-candidate-side.png": {
+    "sha256": "537839019ca783e8c6755aba68aa922b9202c930ce5d0752f3465eafcbd3f6d9",
+    "bytes": 90823
+  },
+  "repair-screenshots/21-UpperArmR-90-child90-twist0-playback-oblique.png": {
+    "sha256": "fc82b6a29ce45200b5673379f1d9b56b5a1f52d288f6170d66c7db5d490848fd",
+    "bytes": 103301
+  },
+  "repair-screenshots/22-ThighL-90-child90-twist10-baseline-front.png": {
+    "sha256": "e304bcf8059c74489a33f22dd516d4b3171cd394f5b721d054052e98817142c0",
+    "bytes": 135052
+  },
+  "repair-screenshots/22-ThighL-90-child90-twist10-baseline-oblique.png": {
+    "sha256": "bb9d7a30779217d618aeaab19b775c5d87a73d8239258faf91471f4a2fa0683c",
+    "bytes": 147208
+  },
+  "repair-screenshots/22-ThighL-90-child90-twist10-baseline-side.png": {
+    "sha256": "d587f91d2bd5ff48e1d7545a62c0849ac831afe60aecec22854212de94208b48",
+    "bytes": 120257
+  },
+  "repair-screenshots/22-ThighL-90-child90-twist10-candidate-front.png": {
+    "sha256": "e304bcf8059c74489a33f22dd516d4b3171cd394f5b721d054052e98817142c0",
+    "bytes": 135052
+  },
+  "repair-screenshots/22-ThighL-90-child90-twist10-candidate-oblique.png": {
+    "sha256": "bb9d7a30779217d618aeaab19b775c5d87a73d8239258faf91471f4a2fa0683c",
+    "bytes": 147208
+  },
+  "repair-screenshots/22-ThighL-90-child90-twist10-candidate-side.png": {
+    "sha256": "d587f91d2bd5ff48e1d7545a62c0849ac831afe60aecec22854212de94208b48",
+    "bytes": 120257
+  },
+  "repair-screenshots/22-ThighL-90-child90-twist10-playback-oblique.png": {
+    "sha256": "545ec388bfaebab5dbeb4dfc1900dcc6fe74872746b319d5ef9778b12f46d05f",
+    "bytes": 141199
+  },
+  "repair-screenshots/23-ThighL-90-child0-twist20-baseline-front.png": {
+    "sha256": "310fbdf91d27d5c3d59adcf68d5950360bc818990c2b0c07bea13142e0809814",
+    "bytes": 137714
+  },
+  "repair-screenshots/23-ThighL-90-child0-twist20-baseline-oblique.png": {
+    "sha256": "d29e369a382ebd42c271f3a9b1f6e74cd6c0daa9748c1040c3a9e738c009d7dc",
+    "bytes": 141002
+  },
+  "repair-screenshots/23-ThighL-90-child0-twist20-baseline-side.png": {
+    "sha256": "d1115b03ec4be45585db33f4af316c6eb68f5e05dadb5a680ff0f2121787c9a6",
+    "bytes": 107493
+  },
+  "repair-screenshots/23-ThighL-90-child0-twist20-candidate-front.png": {
+    "sha256": "310fbdf91d27d5c3d59adcf68d5950360bc818990c2b0c07bea13142e0809814",
+    "bytes": 137714
+  },
+  "repair-screenshots/23-ThighL-90-child0-twist20-candidate-oblique.png": {
+    "sha256": "d29e369a382ebd42c271f3a9b1f6e74cd6c0daa9748c1040c3a9e738c009d7dc",
+    "bytes": 141002
+  },
+  "repair-screenshots/23-ThighL-90-child0-twist20-candidate-side.png": {
+    "sha256": "d1115b03ec4be45585db33f4af316c6eb68f5e05dadb5a680ff0f2121787c9a6",
+    "bytes": 107493
+  },
+  "repair-screenshots/23-ThighL-90-child0-twist20-playback-oblique.png": {
+    "sha256": "9b18e3730aafbf904c9cf24f0eb5a7f2056fc2d99e278fff2c9dad662dbb8ccb",
+    "bytes": 137371
+  },
+  "repair-screenshots/24-ThighL-75-child60-twist20-baseline-front.png": {
+    "sha256": "b32975f7efecc08d6493b82a36aa2f0e88e767dda5b3446675f5bb5a8426397d",
+    "bytes": 145050
+  },
+  "repair-screenshots/24-ThighL-75-child60-twist20-baseline-oblique.png": {
+    "sha256": "305da1f5ed7bc07e112bdf875f24bf81a5741de0d8d2c3be75d46c7526b7ad9a",
+    "bytes": 151349
+  },
+  "repair-screenshots/24-ThighL-75-child60-twist20-baseline-side.png": {
+    "sha256": "81550e9221fbee8cd3ee6327886f893848e653ff57f8d5cf2ee0903b163137cd",
+    "bytes": 107725
+  },
+  "repair-screenshots/24-ThighL-75-child60-twist20-candidate-front.png": {
+    "sha256": "b32975f7efecc08d6493b82a36aa2f0e88e767dda5b3446675f5bb5a8426397d",
+    "bytes": 145050
+  },
+  "repair-screenshots/24-ThighL-75-child60-twist20-candidate-oblique.png": {
+    "sha256": "305da1f5ed7bc07e112bdf875f24bf81a5741de0d8d2c3be75d46c7526b7ad9a",
+    "bytes": 151349
+  },
+  "repair-screenshots/24-ThighL-75-child60-twist20-candidate-side.png": {
+    "sha256": "81550e9221fbee8cd3ee6327886f893848e653ff57f8d5cf2ee0903b163137cd",
+    "bytes": 107725
+  },
+  "repair-screenshots/24-ThighL-75-child60-twist20-playback-oblique.png": {
+    "sha256": "b086b753a7b5c212dd1536e987064f16eddfb03ac921c9fdbad515d3d6c0f076",
+    "bytes": 142292
+  },
+  "repair-visual-report.json": {
+    "sha256": "cdb38bd8d8f3e2f14181f269dc62fba354500dd940d4b6c3e6b800add1a736ea",
+    "bytes": 120047
+  },
+  "repair.log": {
+    "sha256": "b97df8779a1eb88eec2b0d0ce4146210e9182532687ee3fd37644edbec72177c",
+    "bytes": 19063
+  },
+  "runtime-receipt.json": {
+    "sha256": "c289a8d8ac01b30c08e84d7be4b3efefcb4f5e08ea52f20533628dbdc209ee61",
+    "bytes": 470
+  },
+  "site/repair/00-Rest-0-child0-twist0-baseline.glb": {
+    "sha256": "bd279d39ddd4aeacd8791fde7bcbe3f629acb55b57a6fa2c6ed125193691263b",
+    "bytes": 2831656
+  },
+  "site/repair/00-Rest-0-child0-twist0-candidate.glb": {
+    "sha256": "f02e55b5d9438b8102d5ea4d8aef27c14ab60edb5c0e0efcb1874b593eda0f91",
+    "bytes": 2831656
+  },
+  "site/repair/01-UpperArmL-60-child0-twist0-baseline.glb": {
+    "sha256": "8d113fb2729c69a50255227b536b40c9620b9d1f6c69b27a6004a3ab86092a29",
+    "bytes": 2831620
+  },
+  "site/repair/01-UpperArmL-60-child0-twist0-candidate.glb": {
+    "sha256": "ddcc61b596df9ab5178f4dc457193c003382592eab7595143c5f6be4b0150431",
+    "bytes": 2831624
+  },
+  "site/repair/02-UpperArmL-90-child0-twist0-baseline.glb": {
+    "sha256": "f0d35fd54bd9ce8507adec79599218c03944e82528b57c8c6b16ccaecbbacf23",
+    "bytes": 2831656
+  },
+  "site/repair/02-UpperArmL-90-child0-twist0-candidate.glb": {
+    "sha256": "6b97078fd3d032c8a7af4f9fab9420995f3098c5f9e586bde77c5c304a026d2f",
+    "bytes": 2831656
+  },
+  "site/repair/03-UpperArmR-60-child0-twist0-baseline.glb": {
+    "sha256": "6627fecc33fb0c5f9d79a39ffa6ee298f39482cea54cc9b1a3ed48537acc37f7",
+    "bytes": 2831656
+  },
+  "site/repair/03-UpperArmR-60-child0-twist0-candidate.glb": {
+    "sha256": "c6a39bc48a19c60ff403ffe5b41a72ad08c1a3bff7b8698876f6759c23292660",
+    "bytes": 2831656
+  },
+  "site/repair/04-UpperArmR-90-child0-twist0-baseline.glb": {
+    "sha256": "f8ad8d7f79d0f0689dcb44929364eab49a4e694457cfad440aa029b760bbb657",
+    "bytes": 2831656
+  },
+  "site/repair/04-UpperArmR-90-child0-twist0-candidate.glb": {
+    "sha256": "6a5fcf326979c5ff5fa0c2b0c8ff7d060aeae63e2910aafabe3f96d935074b8a",
+    "bytes": 2831656
+  },
+  "site/repair/05-ThighL-60-child60-twist-20-baseline.glb": {
+    "sha256": "bd7548bc80fdd090ef6e466fdfc7c2272465abb151de160e4f136fcab683de56",
+    "bytes": 2831688
+  },
+  "site/repair/05-ThighL-60-child60-twist-20-candidate.glb": {
+    "sha256": "cfe6352dbbdee350a64341ad07f76b8fbfe8a53c56d4addbadc5e0c1bc8f7d88",
+    "bytes": 2831688
+  },
+  "site/repair/06-ThighL-60-child60-twist0-baseline.glb": {
+    "sha256": "54eb990deebffacadb24ac4fc85a6b6741adceacf6a38abc722ac8a477eb36a7",
+    "bytes": 2831688
+  },
+  "site/repair/06-ThighL-60-child60-twist0-candidate.glb": {
+    "sha256": "624f9f9e074933b8dd5134cd4487a6aca61a5c58af649c88aa1e1b9a1597bf6f",
+    "bytes": 2831688
+  },
+  "site/repair/07-ThighL-60-child60-twist20-baseline.glb": {
+    "sha256": "191dd6a1e829d9c803538aa148730510e335cef5c158914d49090f76ca921dc7",
+    "bytes": 2831688
+  },
+  "site/repair/07-ThighL-60-child60-twist20-candidate.glb": {
+    "sha256": "b6083d24eececd4f28961d54760ed4ac8badc5b0e2ed522e861af60e29f98435",
+    "bytes": 2831688
+  },
+  "site/repair/08-ThighL-90-child90-twist-20-baseline.glb": {
+    "sha256": "965b329eebfcb3b2eb28ad9a431bb2e385694eda37375be12d3a153b6a7c77f6",
+    "bytes": 2831684
+  },
+  "site/repair/08-ThighL-90-child90-twist-20-candidate.glb": {
+    "sha256": "fc2ecf1e8ad3653dfb5e4aeed96cb758288a742848b30526b9780aae01912fe9",
+    "bytes": 2831688
+  },
+  "site/repair/09-ThighL-90-child90-twist0-baseline.glb": {
+    "sha256": "845a50d87a4b0ade4fb869de978d87d32b84e257f7024b34ed0d5ac50bd04b6c",
+    "bytes": 2831684
+  },
+  "site/repair/09-ThighL-90-child90-twist0-candidate.glb": {
+    "sha256": "98de08db1b8738d78431b2c22805302b20e3a497828c003c6ba175c4481e8338",
+    "bytes": 2831688
+  },
+  "site/repair/10-ThighL-90-child90-twist20-baseline.glb": {
+    "sha256": "9b392278958a89864d85dfbd5f4bf17f6200606cc76ad5f008f28f76573dfeaa",
+    "bytes": 2831688
+  },
+  "site/repair/10-ThighL-90-child90-twist20-candidate.glb": {
+    "sha256": "82eceda0fa64e1d9312382a24f39d8374519d7b3dfbd660466a7d626f89e44f0",
+    "bytes": 2831688
+  },
+  "site/repair/11-ThighR-60-child60-twist-20-baseline.glb": {
+    "sha256": "9404fea332554bb601b515bf896c1cf168f85af927de5f363e14e932ac35b76f",
+    "bytes": 2831720
+  },
+  "site/repair/11-ThighR-60-child60-twist-20-candidate.glb": {
+    "sha256": "f3a64e78920d3bf2808d697a78957ce6967197da1aa2d61c535f1e9e250f991d",
+    "bytes": 2831720
+  },
+  "site/repair/12-ThighR-60-child60-twist0-baseline.glb": {
+    "sha256": "cdf5abab8ce423cf959462270758509aaf50d39eda03c1e26de9feb36af9e613",
+    "bytes": 2831716
+  },
+  "site/repair/12-ThighR-60-child60-twist0-candidate.glb": {
+    "sha256": "61e5f17d5b0d20b513549ce6d3a492af0dcbb546f2e5fb4c5445862a648038b4",
+    "bytes": 2831720
+  },
+  "site/repair/13-ThighR-60-child60-twist20-baseline.glb": {
+    "sha256": "9704f7c2b8e4091d02be33d19b4249a4eb1ce1703bc7b83749a614f66a85ccc2",
+    "bytes": 2831720
+  },
+  "site/repair/13-ThighR-60-child60-twist20-candidate.glb": {
+    "sha256": "cc6fca16759411ed9ae68cd8a57e410be25c296e520b518fbd366fa1407d7cd7",
+    "bytes": 2831720
+  },
+  "site/repair/14-UpperArmL-60-child60-twist-20-baseline.glb": {
+    "sha256": "f342b34cfe12e00d4e224449f64e3d6f25a8f34e1b2104181b3c811a3cd7756e",
+    "bytes": 2831624
+  },
+  "site/repair/14-UpperArmL-60-child60-twist-20-candidate.glb": {
+    "sha256": "757ba9b04f0d665dd80aa5c7d8334a3f4581843e28a75401eed3247dfddccf9e",
+    "bytes": 2831624
+  },
+  "site/repair/15-UpperArmL-60-child60-twist0-baseline.glb": {
+    "sha256": "f285dc29c3a8141fe4e39bc5606f333516194c3b3ee7ae97126d78b635b9fb2b",
+    "bytes": 2831656
+  },
+  "site/repair/15-UpperArmL-60-child60-twist0-candidate.glb": {
+    "sha256": "b1f379801ccbc794dcb0f479ebc348108695067d4b30488fca40ab3f29a1f629",
+    "bytes": 2831656
+  },
+  "site/repair/16-UpperArmL-60-child60-twist20-baseline.glb": {
+    "sha256": "288f5619069f6ea33e20b9e0f760003a7a45e35751f2bc3f3129fe27a349b21e",
+    "bytes": 2831624
+  },
+  "site/repair/16-UpperArmL-60-child60-twist20-candidate.glb": {
+    "sha256": "1b1dcb5cf445ad5bf200a195ede9945fa36e691eb16d5c063b00f169bf5755e6",
+    "bytes": 2831624
+  },
+  "site/repair/17-UpperArmR-60-child60-twist-20-baseline.glb": {
+    "sha256": "a133d54f1cf8704a7fd1ee59087c00e37bb16742674e8669a50de3e1a750c86b",
+    "bytes": 2831656
+  },
+  "site/repair/17-UpperArmR-60-child60-twist-20-candidate.glb": {
+    "sha256": "7c74305e7debc71858f8951672513c9aa6949945c4365fa3e285b06982c70c1f",
+    "bytes": 2831656
+  },
+  "site/repair/18-UpperArmR-60-child60-twist0-baseline.glb": {
+    "sha256": "d5a781e62f19fcdeac7bba0147075f9b46c803751c7325a0240818d58b09680b",
+    "bytes": 2831656
+  },
+  "site/repair/18-UpperArmR-60-child60-twist0-candidate.glb": {
+    "sha256": "8dff3e4e3791dd8cc8ff76277ff311f241bbac4922601ae697c2f549268fffd9",
+    "bytes": 2831656
+  },
+  "site/repair/19-UpperArmR-60-child60-twist20-baseline.glb": {
+    "sha256": "fce064369f7eb3114e0ad9cc300890cccfd65546608fd153009d4dee0d5d8622",
+    "bytes": 2831656
+  },
+  "site/repair/19-UpperArmR-60-child60-twist20-candidate.glb": {
+    "sha256": "e7938e73ea0cfe8ae098e9733504dbab5495b0a9d2a058c4996ccc4bd10f1374",
+    "bytes": 2831656
+  },
+  "site/repair/20-UpperArmL-90-child90-twist0-baseline.glb": {
+    "sha256": "d58e5761c1827a014e63f73b4368e410bded144c1b8e85934ee7539792b09ea8",
+    "bytes": 2831656
+  },
+  "site/repair/20-UpperArmL-90-child90-twist0-candidate.glb": {
+    "sha256": "675bfe6d4ee41c0182b7f822e111a33c4d38312b42203fadd1cf4f8095dae27e",
+    "bytes": 2831656
+  },
+  "site/repair/21-UpperArmR-90-child90-twist0-baseline.glb": {
+    "sha256": "6f6dd3dd4506262d6bd9e9f20002910a4a303821aed35f3ff6dfb3f4a56c8137",
+    "bytes": 2831656
+  },
+  "site/repair/21-UpperArmR-90-child90-twist0-candidate.glb": {
+    "sha256": "ad3c7f20244cb107e54f20c65ed2da276db4af119d9d740fe9064571bc75a984",
+    "bytes": 2831656
+  },
+  "site/repair/22-ThighL-90-child90-twist10-baseline.glb": {
+    "sha256": "15740d311173c02cc9d3822b17e2f0d4531c48c0eeb7e7c35a99eca20a2d5a24",
+    "bytes": 2831688
+  },
+  "site/repair/22-ThighL-90-child90-twist10-candidate.glb": {
+    "sha256": "5194823c41f58596e1c696dba1060829e5f9995d5414f6e697a854bf1e64129f",
+    "bytes": 2831688
+  },
+  "site/repair/23-ThighL-90-child0-twist20-baseline.glb": {
+    "sha256": "045f343c52bb4966e8d9e5541711b7cf175d458ed92e76dd3846bb48c0e5eb11",
+    "bytes": 2831684
+  },
+  "site/repair/23-ThighL-90-child0-twist20-candidate.glb": {
+    "sha256": "f393f5bfa5515780a3bb55c1e81e28be7a12687aeb3076b1fba6e9e1236b466a",
+    "bytes": 2831688
+  },
+  "site/repair/24-ThighL-75-child60-twist20-baseline.glb": {
+    "sha256": "b512dbcd9a73592a2865ac92be07482f74586e6f73deb14ac25f04ba5479895a",
+    "bytes": 2831684
+  },
+  "site/repair/24-ThighL-75-child60-twist20-candidate.glb": {
+    "sha256": "eb4043b2841aad101cccb33137a247696e4d172e104b6c7f2fd3e05010876a28",
+    "bytes": 2831684
+  },
+  "validate_contour_trial.mjs.log": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "verify_contour_reimport.py.log": {
+    "sha256": "595c3d2ee09b42a1e926e4ad9cd90b02e2106b20324eed091930f9ffd97cedc1",
+    "bytes": 1351
+  }
+}

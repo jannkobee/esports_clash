@@ -79,6 +79,17 @@ try {
   assert.equal(match.status, 'completed', `Match settlement failed: ${match.error}`);
   const second = (await api(`/online/matches/${matchId}`, sessions[1])).data.data;
   assert.equal(match.result_hash, second.result_hash);
+  assert.equal(match.result.player_performance.length, 10, 'A complete player performance payload is required');
+  assert.ok(match.result.player_performance.every(player =>
+    ['kills', 'deaths', 'assists', 'cs', 'gold', 'damage'].every(stat => Number.isFinite(player[stat]) && player[stat] >= 0)));
+  const dashboard = await api('/online', sessions[0]);
+  assert.equal(dashboard.status, 200);
+  const side = match.blue_user_id === sessions[0].user.id ? 'blue' : 'red';
+  const playerCards = new Map(dashboard.data.data.cards.map(card => [card.id, card]));
+  const persistedRatings = match.plan[side].map(slot => playerCards.get(slot.instance_id)?.recent_rating);
+  assert.equal(persistedRatings.length, 5);
+  assert.ok(persistedRatings.every(rating => Number.isFinite(rating) && rating >= 1 && rating <= 10),
+    'All five starting players must show their persisted match rating');
   assert.equal((await api(`/online/matches/${matchId}`, sessions[0], 'POST', { winner: 'red' })).status, 405);
   const first = await api(`/online/matches/${matchId}/replay?after=0&limit=1`, sessions[0]);
   const last = await api(`/online/matches/${matchId}/replay?after=${match.sequence - 1}&limit=1`, sessions[1]);
@@ -93,7 +104,8 @@ try {
       result_hash: match.result_hash, versions: match.plan.versions, winner: match.result.winner,
       duration_seconds: match.result.report.durationSeconds, terminal_nexus: match.result.terminal_nexus },
     replay_first_sequence: first.data.data.frames[0].sequence, replay_terminal_sequence: last.data.data.frames[0].sequence,
-    owned_cards_per_account: 5, ranked_rating_or_currency_grants: false };
+    owned_cards_per_account: 5,     player_performance_records: match.result.player_performance.length,
+    persisted_player_ratings: persistedRatings.length, ranked_rating_or_currency_grants: false };
   await writeFile('docs/online-normal-verification.json', JSON.stringify(evidence, null, 2) + '\n');
   console.log(JSON.stringify(evidence, null, 2));
 } finally {

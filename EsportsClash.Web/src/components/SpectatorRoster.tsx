@@ -73,9 +73,14 @@ export function SpectatorRoster({ units, team, onItem, onFocus, xpProgress, seco
         </div>
       </div>
 
-      <div className="spectator-kda" title={`${unit.kills} kills / ${unit.deaths} deaths / ${unit.assists} assists · ${unit.cs} CS · ${Math.floor(unit.gold)} gold`}>
+      <div className="spectator-kda" title={`${unit.kills} kills / ${unit.deaths} deaths / ${unit.assists} assists · ${unit.cs} CS · ${Math.floor(unit.gold)} gold (${unit.items.length >= 6 ? 'Full build' : `${Math.min(100, Math.round((unit.gold / 2800) * 100))}% toward next item`})`}>
         <b>{unit.kills}/{unit.deaths}/{unit.assists}</b>
         <span>{unit.cs} CS · {(unit.gold / 1000).toFixed(1)}k</span>
+        {unit.items.length < 6 && (
+          <div className="h-1 w-full overflow-hidden rounded-full bg-slate-900/90 mt-0.5" aria-label={`${unit.player.name} next item gold progress`}>
+            <div className="h-full bg-amber-400/90 transition-all" style={{ width: `${Math.min(100, Math.round((unit.gold / 2800) * 100))}%` }} />
+          </div>
+        )}
       </div>
 
       <div className="spectator-skills" aria-label={`${unit.player.name} ability cooldowns`} title={abilityMechanicsSummary(unit)}>
@@ -110,7 +115,12 @@ export function SpectatorRoster({ units, team, onItem, onFocus, xpProgress, seco
         <button disabled={!unit.boots} onClick={() => unit.boots && onItem(unit.boots)} title={unit.boots?.name ?? 'Boots slot'} aria-label={unit.boots ? `Inspect ${unit.boots.name}` : 'Empty boots slot'}>
           {unit.boots ? <ContentImage image={unit.boots.image} name={unit.boots.name} fallback={unit.boots.icon} /> : '♧'}
         </button>
-        <span className={second >= (unit.wardReadyAt ?? 0) ? 'ward-ready' : ''} title={second >= (unit.wardReadyAt ?? 0) ? 'Ward ready' : `Ward in ${Math.ceil((unit.wardReadyAt ?? 0) - second)}s`}>◉</span>
+        <span
+          className={second >= (unit.wardReadyAt ?? 0) ? 'ward-ready' : ''}
+          title={`${(unit.sweeperTimer ?? 0) > 0 ? 'Oracle Lens Active · ' : ''}Ward charges: ${unit.wardCharges ?? 1}/2 · Vision score: ${Math.round(unit.visionScore ?? 0)} · ${second >= (unit.wardReadyAt ?? 0) ? 'Ward ready' : `Next ward in ${Math.ceil((unit.wardReadyAt ?? 0) - second)}s`}`}
+        >
+          {(unit.sweeperTimer ?? 0) > 0 ? '◎' : `◉${(unit.wardCharges ?? 1) > 1 ? '²' : ''}`}
+        </span>
       </div>
     </div>)}
   </div>;

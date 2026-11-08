@@ -3,7 +3,7 @@ import type { PlayerCard } from './types';
 
 export interface ApiSession {
   token: string;
-  user: { id: number; name: string; email: string };
+  user: { id: number; name: string; email: string; supporter?:{active:boolean;kind:string;ends_at:string|null;features:{custom_logo:boolean;custom_jerseys:boolean}} };
 }
 
 export interface ClubSnapshot {
@@ -14,6 +14,7 @@ export interface ClubSnapshot {
 }
 
 const API_SESSION_KEY = 'esports-clash-api-session-v1';
+export const API_SESSION_CHANGED = 'esports-clash-account-changed';
 const apiBaseUrl = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
 
 export function isCloudPersistenceConfigured(): boolean {
@@ -32,25 +33,31 @@ export function loadApiSession(): ApiSession | null {
 export function persistApiSession(session: ApiSession | null): void {
   if (session) localStorage.setItem(API_SESSION_KEY, JSON.stringify(session));
   else localStorage.removeItem(API_SESSION_KEY);
+  window.dispatchEvent(new Event(API_SESSION_CHANGED));
 }
 
+const publicReads=new Map<string,{expires:number;data:unknown}>();
+if(typeof window!=='undefined')window.addEventListener('hexatrick-world-updated',()=>publicReads.clear());
 export async function request<T>(path: string, session: ApiSession | null, init: RequestInit = {}): Promise<T> {
   if (!isCloudPersistenceConfigured()) throw new Error('Cloud persistence is not configured.');
+  const cacheable=!session&&(!init.method||init.method==='GET')&&/^\/(avatarpedia|world\/(news|broadcasts)|competitions)(?:[/?]|$)/.test(path);
+  const cached=cacheable?publicReads.get(path):null;if(cached&&cached.expires>Date.now())return structuredClone(cached.data) as T;
   const response = await fetch(`${apiBaseUrl}${path}`, {
-    ...init,
+    ...init,cache:'no-store',
     headers: {
       Accept: 'application/json',
-      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(init.body && !(init.body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
       ...(session ? { Authorization: `Bearer ${session.token}` } : {}),
       ...init.headers,
     },
   });
   if (!response.ok) {
+    if (response.status === 401 && session && loadApiSession()?.token === session.token) persistApiSession(null);
     const problem = await response.json().catch(() => null) as { message?: string } | null;
     throw new Error(problem?.message ?? `API request failed (${response.status}).`);
   }
   if (response.status === 204) return undefined as T;
-  return response.json() as Promise<T>;
+  const data=await response.json() as T;if(cacheable){if(publicReads.size>120)publicReads.clear();publicReads.set(path,{expires:Date.now()+5000,data:structuredClone(data)});}return data;
 }
 
 export async function registerCloudAccount(input: {
@@ -87,3 +94,5 @@ export async function saveCloudMatchReport(session: ApiSession, report: MatchRep
   });
   return response.data;
 }
+
+export const publicApiAsset=(path:string)=>path.startsWith('/club-media/')?apiBaseUrl+path:'';

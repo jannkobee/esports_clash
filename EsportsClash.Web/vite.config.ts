@@ -16,9 +16,18 @@ const dockerDev = process.env.DOCKER_DEV === '1';
 export default defineConfig({
   define: { 'import.meta.env.INTELLIGENCE_SOURCE_HASH': JSON.stringify(intelligenceSourceHash()) },
   server: {
-    proxy: { '/api': dockerDev?'http://rooms:4174':'http://127.0.0.1:4174' },
+    proxy: {
+      '/world-live': {target:dockerDev?'ws://world-live:4176':'ws://127.0.0.1:4176',ws:true},
+      '/api': dockerDev?'http://rooms:4174':'http://127.0.0.1:4174',
+      '/backend': {
+        target: dockerDev?'http://api:8000':'http://127.0.0.1:8089',
+        changeOrigin: true,
+        rewrite: path=>path.replace(/^\/backend/, ''),
+      },
+    },
     ...(dockerDev ? {
       origin: 'http://localhost:8088',
+      allowedHosts: ['web'],
       cors: { origin: ['http://localhost:8089', 'http://127.0.0.1:8089'] },
       hmr: { clientPort: 8088 },
       watch: { usePolling: true, interval: 500 },

@@ -3,6 +3,7 @@ import type { TeamTaskSnapshot } from './teamTaskOutcome.ts';
 import type { ArenaCommand,ArenaActor } from './arenaLearning.ts';
 import {ArenaMasteryLedger} from './arenaIdentity.ts';
 import {ARENA_OUTCOME_REWARD_VERSION,arenaOutcomeReward,arenaOutcomeCriticState} from './arenaOutcomeReward.ts';
+import { ARENA_MAP_VERSION, computeArenaRulesetVersion } from './arenaLayout.ts';
 export class ArenaTrajectory {
   mastery=new ArenaMasteryLedger();
   secures={blue:{dragon:0,siege:0},red:{dragon:0,siege:0}};
@@ -17,9 +18,12 @@ export class ArenaTrajectory {
   policies:Partial<Record<'blue'|'red',ArenaActor>>;
   training:boolean;
   rewardVersion:string;
-  constructor(policies:Partial<Record<'blue'|'red',ArenaActor>>,training:boolean,rewardVersion='terminal-potential-v1'){
+  mapVersion:string;
+  rulesetVersion:string;
+  constructor(policies:Partial<Record<'blue'|'red',ArenaActor>>,training:boolean,rewardVersion='terminal-potential-v1',mapVersion:string=ARENA_MAP_VERSION,rulesetVersion:string=computeArenaRulesetVersion()){
     if(!['terminal-potential-v1',ARENA_OUTCOME_REWARD_VERSION].includes(rewardVersion))throw Error('Unsupported arena reward version');
     this.policies=policies;this.training=training;this.rewardVersion=rewardVersion;
+    this.mapVersion=mapVersion;this.rulesetVersion=rulesetVersion;
   }
   usesOutcomeReward(team:'blue'|'red'){return this.rewardVersion===ARENA_OUTCOME_REWARD_VERSION&&this.policies[team]?.version===3;}
   critic(s:TeamTaskSnapshot,team:'blue'|'red'){return this.usesOutcomeReward(team)?arenaOutcomeCriticState(s):criticState(s);}
@@ -31,9 +35,9 @@ export class ArenaTrajectory {
     if(this.training&&(end.second>previous.second||(terminal&&end.second===previous.second))){
       const reward=this.usesOutcomeReward(previous.team)?arenaOutcomeReward(previous.start,end,terminal,winner):transitionReward(previous.start,end,terminal,winner);
       const mastery=previous.masteryPotential===undefined?0:reward.discount*(terminal?0:masteryPotential)-previous.masteryPotential;
-      this.rows.push({...previous,nextState:previous.masteryPotential===undefined?this.critic(end,previous.team):[...criticState(end),terminal?0:masteryPotential/.08],terminal,
+      this.rows.push({...previous,mapVersion:this.mapVersion,rulesetVersion:this.rulesetVersion,nextState:previous.masteryPotential===undefined?this.critic(end,previous.team):[...criticState(end),terminal?0:masteryPotential/.08],terminal,
         ...reward,reward:reward.reward+mastery,components:{...reward.components,mastery},elapsed:end.second-previous.second});
     }
   }
-  drain(){const rows=this.rows;this.rows=[];return {rows,counters:structuredClone(this.counters)};}
+  drain(){const rows=this.rows;this.rows=[];return {rows,counters:structuredClone(this.counters),mapVersion:this.mapVersion,rulesetVersion:this.rulesetVersion};}
 }

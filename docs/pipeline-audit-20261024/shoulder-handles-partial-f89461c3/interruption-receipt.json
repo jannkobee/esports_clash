@@ -1,0 +1,11 @@
+{
+  "id": "f89461c3-a167-4590-80dc-49911a51f863",
+  "method": "combined-left-shoulder-handles-v5",
+  "compute": "google",
+  "status": "interrupted_after_early_views_rejected_shape",
+  "input_zip_sha256": "8c113fc9d873c785b6e453cef74e0e7a5a81e3d398497524c42ffdff183250f7",
+  "early_views_zip_sha256": "17c5637b5964cfe792a85c945f510c6d653b4bdf8651094df3d436c5596a7361",
+  "summary": "Early 60/90-degree left-shoulder views retrieved before the Colab T4 runtime expired. Projecting arm/chest contact seeds to a sheet plane flattened and pinched the medial upper arm. Full 25-pose followon bundle was not retrieved before runtime expiration; superseded by proximal cross-section translation v6.",
+  "publication_eligible": false,
+  "qualification_complete": false
+}

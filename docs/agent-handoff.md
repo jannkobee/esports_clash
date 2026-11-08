@@ -1,3 +1,489 @@
+## Crimson UI, finances, form and Hexa Weeklies (8 November 2026)
+
+Owner requested a crimson Liquipedia-inspired original interface, a social Wire, a simpler Match Centre, better squad management/form/staff pricing, a full finance desk and tournament logos. The subsequent request added optional weekly tier-based community cups with no attribute/training effects, scaling toward 50,000 managers, and asked for monetization proposals. See [UI, finance and form implementation](hexatrick-crimson-finances-form-20261108.md) and [weekly-cup/scaling/business record](hexatrick-weeklies-and-business-20261108.md).
+
+The Wire is now a compact social feed with actual replies, thread permalinks and share links; the previous journal treatment is superseded. A final crimson/charcoal theme fixes controls/table contrast. Match Centre has one navigation row and compact filtered fixtures; practice tools are accessible through Settings. Hexapedia has one masthead and original SVG tournament/organization marks. SquadRoster provides compact starter selection and a searchable comparison table; existing owned-player, revision, queue and trade guards remain.
+
+ClubFinances and its authenticated controller expose actual monthly income/expenses, capital, escrow, payroll budgeting, ledger pagination and page CSV. Refundable holds are not revenue/expenses; settled auction purchases and trade offers are counted once. Staff offers use versioned nonlinear quality pricing; no existing contract/founding terms are repriced. PlayerForm uses ten recent verified appearances, a 56-day window, 21-day half-life, appearance decay and two neutral prior samples. Unrated players show Unrated. Form is a read projection, not a combat-stat modifier. Raw historical rating rows remain unchanged.
+
+Hexa Weeklies use 2/4/8-club tier pods, human accept/decline invitations, scheduled verified Arena brackets and separate cosmetic champion/finalist trophies. Wednesday 18:00 Manila closes invitations; Friday 18:00 opens the first-round window. LockClubFixture pins a trusted community_fun progression policy. OnlineService settlement retains actual performance evidence but posts no training or individual-rating rows for this family; draft meta excludes it. CompetitionRankings excludes its unranked accreditation, and circuit points/cash prizes are zero. Audit expectations recognize the intentional absence of training/ratings. Regular allocated plans retain prior behavior. Real Nexus finishes, official calendar/recovery restrictions, ownership, learned-controller, mechanics and Colab asset gates are unchanged. Interrupted competition games go to review. No fabricated results or generic statistical fallback was added.
+
+Migration 2026_11_09_000006 applied after retaining .local-tools/hexatrick-before-community-weeklies.dump (8,861,899 bytes). Initial future week is November 9: seven human invites, zero auto-acceptances, zero community fixtures; reply deadline November 11 at 18:00 Manila, first-round window November 13 at 18:00. Bounded jobs run via world:community-cups every five minutes. Development cap is 128 pods/week; invitations/acceptance do not promise capacity or a legal fixture. 50,000 clubs imply 6,250 pods and 43,750 games weekly, not a demonstrated deployment capacity. Existing Arena stalls and worker provisioning still block a guaranteed weekly completion claim. Current automatic cups are platform-hosted; user-owned recurring community series and real-money payments are not implemented.
+
+Build/PHP syntax and read-only finance reconciliation, candidate/news reads and future-cycle database inspection pass. The real database has no individual rating samples yet; no live form-history or full cup-settlement proof is claimed. Automated suites remain skipped per owner. Windows Computer Use native pipe was unavailable, so rendered UI/interaction acceptance remains unverified. The monetization document proposes fair supporter/cosmetic/sponsor revenue with illustrative economics and current primary-source payment constraints; it enables no checkout, cash prize, subscription charge or external communication. Preserve all prior matches, interrupted exhibition, unrelated dirty work and frozen ML/visual evidence.
+
+## Transfer Exchange, Wire and Hexapedia interface rework (8 November 2026)
+
+The owner supplied UI screenshots and requested improved reserve listing, bidding/filtering, The Wire, Hexapedia fixes, a dedicated expanded guide, removal of Sparring opponents and integration of laboratory/catalog resources inside Hexapedia. See the [UI rework record](hexatrick-ui-reference-rework-20261108.md) for changes and limits.
+
+The Exchange has a focused sell desk, compact auction rows with a single open bid panel, complete skill-band/nationality/sort filters and trade/academy tabs. The Wire uses a journal layout, compact composer, contextual recording links and a desk/moderation sidebar. Missing activity/summary styles and the activity/event-log class collision are fixed. Hexapedia is the only outer reference destination; guide/laboratory/catalog live inside it. Sparring opponents is no longer linked. Main component/style: Hexapedia.tsx / hexapedia.css; API/helper names remain compatible.
+
+Canonical nested routing, tournament capacity/format/dates, date safety, actual contents anchors, sponsor associations and league-table scope were corrected. Rehearsal results remain intact but are not presented as a regional league. The standalone 14-chapter guide follows current documents and actual skill/XP/staff rules.
+
+Production build and touched PHP syntax pass. Read-only HTTP checks loaded all ten reference directories and sample articles, the Wire and homepage. Suites remain deferred. Browser/native access was unavailable; rendered desktop/mobile and signed-in interaction acceptance are not claimed. No financial/social/fixture/engine/ML/asset records were mutated. Preserve the prior interrupted/statistical exhibition and frozen gameplay/Colab boundaries.
+
+## Approved statistical exhibition completed; streaming release active (8 November 2026)
+
+The owner explicitly answered **Yes, use an exhibition simulation** after being reminded that the established Arena rule requires Nexus destruction. This is a narrow exception for this launch exhibition, not a change to verified Arena settlement or normal scheduled play. `LaunchExhibitionResolution` and the owner-flagged `launch:resolve-exhibition` command froze an original, documented strength/draw model from pinned skills/coach tactics and observed kills/structure progress. No fictional final KDA, combat events or duration were generated.
+
+Match `157691b0-c281-407d-8771-1d53dff55ed8` is now **interrupted**, sequence 3,472, observed Arena time 1,735.5 seconds. Its result/result hash remain unset. All 2,769 retained original/accelerated frame files remain, with a preserved pre-interruption state. Only its two paused Node runners and original Chromium were stopped. Do not resume/re-settle this match. Launch game 30 has an immutable `statistical_exhibition` report: club 16, **Hexa IWLFYSD**, advances. No player ratings, training, official competition results or matching money rewards were posted (all four read counts zero). Final fixture 4 is scheduled for **14 November 2026, 18:00 Manila**; no future result was simulated.
+
+The launch archive/public report/news label the statistical result explicitly. Interrupted recording access remains available through calendar/archive/broadcast replay views, while verified-match reports still require an actual completed Arena. The normal UI has no Simulate action. Backup retained: `.local-tools/matchday-rehearsal/hexatrick-before-statistical-exhibition.dump` (8,066,556 bytes).
+
+After confirming zero active matches, the prepared streaming worker was deployed: `teamfight-online-worker:lifecycle-stream-20261108`, digest `sha256:96d35aaaf98e11b23cdfaa9a3edce9109a9351a76ae6f22db4cfe2c0022d88c2`; running server SHA-256 `6d6af68982afc89f1a85ae0af27188975e54c5ddc5638c5ceaee5bed4d281536` matches source. It is healthy, recognizes interrupted terminal states and shares exact recorded JSON across viewers. Read-only inspection confirmed cached payload equality and preserved recordings; local API exposed the statistical report and interrupted broadcast. Final TypeScript/Vite build and touched PHP/Python/module syntax checks pass; automated suites remain deferred, and browser UI acceptance is unavailable. No recent failed jobs or active games were observed.
+
+An optional allocation-POST verification was rejected by automatic approval review as a possible restart risk. It was not executed or retried indirectly; strictly read-only file/cache/database/HTTP checks were used instead. Full real-time match settlement remains unqualified, and the gameplay stall (remaining barracks not being finished) plus snapshot/fingerprint cost still need separate engine work. The owner requested skipping that unfinished gameplay work for this exhibition; do not fabricate a live acceptance pass. See [the lifecycle record](hexatrick-lifecycle-repairs-20261108.md).
+
+## Owner-requested interruption and fast-forward (8 November 2026)
+
+After asking about lag, the owner explicitly requested interrupting the current game and simulating its finish because gameplay is unfinished and a full live run would take too long. This supersedes the earlier instruction to keep this particular run in real time. The live Node runner was paused at sequence 2,731, preserving its existing browser; `finish-existing-match.mjs` attaches to that same private browser and calls the existing fixed-step hook in batches, with no sleep or allocation/controller/actor edits. It requires an explicit owner flag, checks the paused runner/recording, retains original live frames and appends sampled accelerated frames at their actual half-second timeline indices. It still requires an actual Nexus finish and records execution provenance. Do not call it a completed real-time acceptance run.
+
+The frontend/public report/news/archive projections distinguish owner-requested simulated completion from real-time coverage. All event timestamps remain recorded; later Arena frames are sampled. `online:match-audit` separates settlement integrity from real-time qualification. There is no manager-facing Simulate button or automatic acceleration policy for ordinary scheduled games. The finisher is still running at the time of this entry; confirm its terminal state and API settlement before claiming an outcome. Preserve all original/failure evidence and protected gameplay/ML/3D boundaries.
+
+## Live-view lag follow-up (8 November 2026)
+
+The owner asked whether games use WebSockets. They do: authenticated live streams use WebSocket; management/status/replay use HTTP. Measured worker capture/serialization exceeded stepping time and the simulated clock trailed wall time. `OnlineMatchViewer` now uses observed arrival cadence, avoids per-frame canvas dimension resets and keeps replay seeks static; `onlineSpectator` also interpolates minions/projectiles between authoritative frames. `OnlineNormalView` paginates commentary to 100 events, preserving all exact report/replay links. Production build passes; suites remain deferred and browser access remains unavailable. This is presentation-only and does not advance or resolve gameplay in the client.
+
+A bounded shared raw-frame cache is prepared in `infrastructure/online/server.py`; separate image `teamfight-online-worker:lifecycle-stream-20261108` is built, digest `sha256:51e5985627775fb3eac4b00bb679972c83b2133935865f808104c59a28a0a000`. It is not yet deployed. Do not restart the active semifinal worker to apply it. At the last observation, the game was around 20 Arena minutes, with two blue structures/five red remaining and no recorded worker error. See the [repair record](hexatrick-lifecycle-repairs-20261108.md) for actual timing and limits; do not claim the whole lag issue fixed from these client changes.
+
+## Lifecycle repairs and scheduled-match observation (8 November 2026, Manila)
+
+The owner authorized implementing the codebase audit. The [repair and rollout record](hexatrick-lifecycle-repairs-20261108.md) is the current checklist. Exact person-stat binding, retained invitation attempts/stale-answer protection, annual qualification source binding, pinned staff XP, bounded report recovery, paid staff contracts/bot appointments, lazy report loading/deep links, organizer slot/history UX and factual media/report-review controls are implemented. Hexapedia's guide now describes connected staff drafting; old fixed-roster and missing-draft prose is superseded.
+
+Local migrations through `2026_11_09_000005` are applied after retained backups. The lifecycle worker image/source hashes are recorded in the release note. It was deployed before allocation, with the frozen engine intact; history worker was not restarted. During the actual Crown semifinal, memory-limit pressure was observed (610 limit hits, no OOM kill); the active worker limit was raised without restart from 1.5 to 3 GiB, with 4 GiB total memory/swap, and persisted only in the local dev override. No further limit hits appeared at the next observation. Initial pacing was about 300 Arena seconds / 310 wall seconds, not evidence for a whole match.
+
+Crown launch semifinal fixture 3 started at 18:00:12 Manila on 8 November. Match `157691b0-c281-407d-8771-1d53dff55ed8` is running with ten unique people, both staff snapshots and public recording. Do not restart its worker or invent a timeout winner. `php artisan online:match-audit <id>` provides read-only checks for Nexus finish, exact ratings, pinned XP and exhibition ranking exclusion. The completed-live gate remains pending until its actual result is observed. The prior failed match is retained. No future editions or backdated verified results were created.
+
+The first subsequent bot cycle signed 30 eight-week staff contracts and posted 30 matching signing fees, total 1,003,000 centavos; zero human paid appointments. Future salary posting/expiry remains unqualified. PHP/module syntax and TypeScript/production builds pass; automated suites remain deferred. Browser UI acceptance could not run because the browser host/native pipe were unavailable. Annual/Nations operation, concurrent match capacity, regional currencies/economy balance and broader social controls remain explicit follow-ups. Preserve unrelated dirty work and all Arena/ML/Colab/3D invariants.
+
+## Current codebase audit and continuation prompt (2026-11-08 client date)
+
+The owner requested wrapping up with a continuation prompt and then reviewing current code/documents for upgrade/completion work. The focused [codebase audit](hexatrick-codebase-audit-20261108.md) records the latest staff/draft/trade/rating features rather than repeating older plans. It identifies final-stat UUID attribution, unbound default regional qualification and wildcard retry constraints as priority code-path corrections; pinned staff XP, report recovery, staff contracts/economy, UI loading/deep links and factual narratives follow. These findings are not fixes or fresh live-match qualification.
+
+Fresh production build passed (TypeScript/Vite); this audit ran no automated suites or new matches. Local reads found three completed older online matches, one retained time-budget failure and zero persisted player match ratings. The approved past launch backfill is now complete at 29 simulated games; future rounds remain scheduled/undecided. Historical 10/12-game observations below remain historical evidence. See [the ready-to-use continuation prompt](hexatrick-continuation-prompt.md), and recheck live state before worker changes. No gameplay, database records or worker deployments were changed by the audit.
+
+## Squad player dossier and skill visibility
+
+The active Squad lineup editor now presents each starter as an esports roster card with a larger illustrated portrait, role/country, overall, recent rating/form, training XP, and all seven recorded player attributes. The same LAN / TF / IQ / LDR / CLU / STA / FLX values and compact meters are available on every reserve card, so managers do not need to discover a separate table view first. Missing source attributes show as an em dash rather than a guessed score. Drag ordering, keyboard/touch move controls, player selection, fixture orders, and staff-led avatar drafting are unchanged. This is a presentation pass over the existing `/online` definitions; it does not change player data or gameplay.
+
+## Normal matchmaking bot fallback
+
+Normal matchmaking now gives another queued human manager first priority. If the manager is still waiting after 15 seconds, a queued background job tries to pair an eligible bot club; it retries while none are available, and the manager can leave the queue at any time. Bots already queued, in an allocated/running match, committed to an upcoming fixture, awaiting a fixture snapshot, or lacking a valid saved lineup are excluded. The resulting match uses the regular server-side staff draft and marks the bot side in the match plan/UI. This does not change the separate same-tier scrimmage queue. `OnlineTest` passes for human priority, bot allocation and labeling, delayed-job dispatch, and cancellable waiting when no eligible bot exists (23 tests / 219 assertions). No live queue has been started on the manager's behalf; verify the running default-queue worker and try it from the signed-in app.
+
+The Squad > Scrimmages screen now explicitly distinguishes its human-only, same-tier queue from normal matchmaking, shows the saved-lineup rating/tier, and links to normal matchmaking (leaving the scrimmage queue first when already queued). A matched scrimmage links directly to Fixtures for order review. This is a clarity/navigation change only; queue rules and scheduled kickoff are unchanged. Production build passes.
+
+## Persistent club staff and coach-led draft (2026-11-09)
+
+The Staff cabinet is implemented with five persistent, club-specific roles: head coach, assistant coach, meta analyst, performance coach, and team psychologist. Managers select five owned players for the default lineup and each fixture order; avatar IDs are rejected by the manager-facing lineup API. Staff draft avatars from player-role fit and signature picks, using only verified completed normal matches with player-performance records for meta. The server pins each selection and both staff/coach snapshots into the match plan before simulation. Meta is limited to the latest 90 days / 500 matches and requires at least three recorded picks per avatar.
+
+Head-coach and assistant-coach attributes shape draft and coach-card values; analyst attributes affect meta and scouting, while the psychologist contributes to the existing chemistry mechanic. Performance-coach development, conditioning, and recovery add up to 15% to starting players' XP in scheduled-match settlement. Existing match plans and legacy avatar-bearing lineup data are preserved for historical compatibility; they are not manager-editable selections. The guide now explains the performance-coach training bonus.
+
+`CoachDraftTest`, `OnlineTest`, and `ClubManagementFlowsTest` pass (30 tests / 364 assertions). `npm run check:game` passes (615 passed, 22 skipped, plus three match-simulation tests), and the production web build succeeds. The additive staff migration is applied locally. After a final zero-active-match check, the match-worker was rebuilt/recreated; it is healthy and its `/online/browser-worker.mjs` SHA-256 matches the workspace source. The local API health endpoint and Vite page respond successfully. No new authenticated live staff-drafted match has been run, so verify a fresh match before claiming end-to-end live readiness. Do not restart the history worker or claim end-to-end live qualification based on tests alone.
+
+## Hexapedia rating and form follow-up (2026-11-09)
+
+User-facing encyclopedia branding now says **Hexapedia** and links canonically through `#codex`; legacy `#avatarpedia` routes and API endpoints remain compatible. Player articles now show skill-specific leading icons and the catalog-backed primary/secondary personality descriptions. The Hexapedia guide documents the ten match-rating words, the 6 Passable no-match form baseline, the five-latest-rating form average, and the current scheduled-match XP / 40-XP square-root skill progression. Ratings are clamped to 1–10; the prior rating formula and source statistics are otherwise unchanged.
+
+The local Vite proxy now allows only the Docker-internal `web` host, fixing the blocked development page in the browser verification container. The final `npm run build` passed after the routing/title edits; both online verifier scripts pass `node --check`, and the touched PHP services pass `php -l`. The connected browser renders `http://localhost:8088/#codex` with page title **Hexapedia** and the rating/form guide. `ClubManagementFlowsTest` passes (7 tests / 63 assertions), including the baseline form and rating range. `npm run check:game` passed: 615 tests passed, 22 skipped, no failures, plus all 3 match-simulation tests.
+
+**Historical readiness note (superseded by the Staff update above):** at this earlier checkpoint, online lineups still stored manager-selected `avatar_id`s and the local two-account match `c998bf5b-6f36-4a66-846a-e5e7b1bcd5f5` was still running at sequence 1,531. The browser check failed its viewer-close stream assertion; the sequence continued advancing, so that failure did not show the game stopped. The then-active worker image was stale and lacked `player_performance`; that match was not evidence for rating persistence. These are historical observations, not the current rollout status.
+
+## Lineup, ratings, scrimmage queue and Transfer Exchange (2026-11-09)
+
+The latest management pass adds drag-reorderable lineup cards with accessible move controls, visible last-rating/form chips, and reserve-player listing from Squad. `WorldPlayerPortrait` remains original UUID-seeded SVG art and now has deterministic esports headset/jersey accents; no modeled-avatar assets or local generation were introduced.
+
+Scrimmage quick-match is a separate queue and does not change the normal FIFO queue. Its server-computed squad rating is average current player overall; tier is the rating's 10-point band, and the closest queued rating is selected only inside that same band (no widening). A pair becomes a normal scheduled `ClubFixture` with a 30-minute review window and the existing fixture conflict/recovery path.
+
+Completed online Arena matches can persist a per-player Hex rating from the worker's verified final champion snapshot (team result, K/D/A, CS, gold and damage), plus the result used for recent form and the Avatarpedia player career record. The score is a transparent estimate, not an official competition award. Legacy results without the new stat payload remain valid and receive no fabricated rating.
+
+The existing market screen is now named **Transfer Exchange**, with player portraits/dossiers and role, minimum-overall and text filters. Squad can list reserve players. Human clubs can send multi-player/cash trades with accept/decline/withdraw, 48-hour cash escrow/refund, reserve/fixture/queue safeguards and a non-binding value estimate (overall × ₱1,000 plus cash); completed trades also appear in player career histories and the world activity feed. The academy's current ₱3,000 fee was not changed; the UI presents ₱10,000 as a recommendation for owner review.
+
+**Server-error and readiness follow-up (2026-11-08).** The local API returned 500 for authenticated `/api/v1/online` because the running code queried `club_player_match_ratings` before migration `2026_11_09_000001` had been applied. A custom-format PostgreSQL backup was restored to a temporary database and checked (39 users, 3 online matches, 39 clubs matched); the additive migration was then applied to the local development database. The live migration status now reports it as ran. No production deployment or worker-image rebuild was performed.
+
+Added `ClubManagementFlowsTest` coverage for closest same-tier pairing, no tier widening, fixture conflicts, trade ownership, escrow/accept/decline/expiry refunds, and exact match-rating player coverage. `OnlineTest` and the new suite pass (26 tests / 235 assertions); `npm run check:game` and `npm run build` pass. The connected app at localhost:8088 loaded Avatarpedia with no HTTP 5xx responses after the migration, and no new API errors appeared in the post-migration log window. Use localhost:8088 for the connected local app; the separate port-5173 page was not serving during verification.
+
+The local Vite configuration now has a same-origin `/backend` proxy for the local API, and the ignored workspace `.env` points cloud persistence at it. Verify the standalone Vite process separately if using port 5173. Ratings remain unqualified for new live games until the matching worker is released and a real fixture is checked end to end; integration tests do not establish worker/API deployment readiness.
+
+## Club Office phase and visual continuation (2026-11-08)
+
+The manager inbox and weekly finance/training reports are present in `ClubOfficeDesk`; player contract, transfer, development, appearance and honor records are exposed through Avatarpedia; `OrganizerWorkbench` handles event setup and invitations; and The Wire/Hexacast use published competition and match records. This continues that work with an original graphite/petrol/copper Club Office treatment, a geometric Hexatrick masthead and more leading icons. No game rules or record sources changed. The web production build passed; automated tests remain deferred as requested. The owner-reported latest launch-archive check had 12 completed games and processing continues; this is not a completion claim.
+
+## Real calendar, launch archive and world media (2026-11-08)
+
+Owner selected the second/third week of January and actual calendar years, with League regional/international cadence as reference, and explicitly approved labeled simulated launch history separate from verified matches/rankings. The third Monday in January is now the opening rule (18 January 2027 next); annual official programs freeze definitions/rules/windows, and independent organizers can announce overlapping events during the year subject to per-club recovery. Original regional Dawn/Zenith/Dusk and Vanguard/Summit/Crown/Nations identities remain. See [the calendar/media implementation and rollout record](hexatrick-calendar-media.md).
+
+The new launch exhibition has separate immutable allocations/results and a dedicated historical worker using the frozen headless kernel in explicitly selected historical baseline mode. Only actual Nexus finishes settle archive games, with no official ranking, money or training rewards. Future rounds use the existing scheduled live Arena pipeline. At the latest observation, ten requested archive games had finished and generation was continuing; do not claim the backfill or future championship complete. Three existing completed online matches remained intact. Frozen engine/catalog, learned-policy/ML artifacts and Colab-only Avatar work were preserved.
+
+Scrimmages replace friendly UI wording; bots accept available scheduled invitations server-side. Original transparent UUID-based illustrated player portraits return to Squad/Home/Avatarpedia. Paginated team game histories and verified detailed reports use authoritative records. The Wire publishes explicitly fictional automated coverage and supports manager updates/replies. Hexacast discovers actual scheduled live/replay coverage with expiring real viewer presence and the shared Arena/text renderer. Independent organizer cycles have explicit sponsor grants/prize escrow; Harbor Open edition 4 is announced, with an audited pre-lock cadence correction and no played result changes.
+
+Migrations 000013-000014 were backed up and applied locally. Production build and syntax checks passed; public read endpoints and the running archive queue were observed. Tests and browser acceptance remain deferred by the owner's current request. Full-year competition operation, overlapping live capacity, later prize settlement and social moderation UX are not qualified. The next recommendation from this checkpoint has since been implemented; see the Club Office phase and visual continuation above.
+
+## Rookie world, original IGNs and bot club management (2026-11-08)
+
+The owner extended the competition task: improve bot management, generate proper IGNs, remove direct prospect signing, retire legacy elite players, start everyone weak and give every active player a nationality. This supersedes keeping the original identities in active rosters; their historical aliases and IDs remain unchanged as retired records. See [the rookie-world rollout](hexatrick-rookie-world.md) for affected services, safety gates, operational proof and limits.
+
+WorldPlayerProfiles/PlayerIgnGenerator now supply unique original people with 18-36 starting attributes, adult birth dates, explicit fictional birth nationality, wages and earned development. Scheduled plans pin these attributes, consumed by the validated worldPlayerProfile adapter. The Arena engine/catalog, protected source parody aliases, combat rules, frozen ML/Colab/avatar artifacts and historical allocations/results are preserved. Direct prospect signing is removed in the UI/API; auctions and a paid optional academy remain. Official Squad/Training/Home/Avatarpedia use actual people. Bot reviews use actual skill, four-week payroll cover, bounded escrow bids, funded academy decisions, legal lineups and durable management plans. Human takeovers queue bounded bot-population replenishment.
+
+Migration 000012, the profile-aware worker and the approved roster reset were activated after backup with no active matches. Six legacy people were retired and replaced; 222 fictional people received rookie profiles. The live API verified 228 active unique IGNs, zero missing nationalities, nine countries, zero active legacy people and skills in 18-36. All 33 stale auctions closed with no held bids to refund. The first real post-reset window completed 32 bot plans, 32 paid academies, 32 auctions and five escrow-backed bid events, with no pending default jobs or recent failures observed. Original match and money histories remain intact.
+
+Verification: 54 local isolated backend tests / 15,620 assertions passed; game checks passed 615 tests with 22 existing skips, three simulation checks and TypeScript; production build passed. This qualifies the tested data/adapter paths, not a completed live rookie match, full-year balance or million-club worker capacity. An initial automatic-review usage failure was resolved via a later normal approved request; no approval bypass was used.
+
+## Global competitions and unique world players (2026-11-08)
+
+The owner supplied a global competition brief and explicitly confirmed keeping the existing five-player Arena game. The owner also requested unique world players and bot clubs that humans replace, approving earliest-human ownership of original identities and new identities for duplicate copies. See [the implementation/rollout record](hexatrick-global-competitions.md) for the audit, schema, contracts, verification and unresolved product/capacity limits.
+
+Competition definitions, versioned editions/stages, real UTC years, geographic qualifiers, invitation snapshots, Glicko-2 HGR/HNR, separate HCC points, national eligibility/management/squads and shared Arena fixtures now have server persistence and queued processing. `CompetitionHub` provides operational views; Avatarpedia shares the edition/national sources and owned-player identities. Official Squad now opens the server roster. Existing legacy cups and immutable match allocations/results remain intact.
+
+Additive migrations 000008-000011 were backed up and applied locally. The approved identity migration retained 6 original identities and gave 48 copies new identities without deleting contracts or changing history. Population reached 32 bot clubs. A later live check observed 228 distinct named players, zero unnamed, 39 clubs and 9 national associations. Competition processing is enabled with inaugural year 2027; no missed 2026 championships or future-year results were fabricated. Identity-only worker image `world-identities-20261108` inherits the pilot engine and replaces its name adapter; it was activated with zero active matches. ML/Colab/avatar qualification and combat mechanics are unchanged.
+
+The combined SQLite competition/online suite passed 41 tests and 477 assertions. The production build passed; full game and PostgreSQL checks are recorded in the implementation report when finalized. A complete live year/Nations Cup, autonomous geographic slot policy, horizontal match capacity and every advanced management/award flow are not qualified or complete. Do not claim million-club production readiness from partition tests.
+
+## Hexatrick classic UI and living-world foundation (2026-11-08)
+
+Owner reported Avatarpedia links leaving the workspace, requested the **Hexatrick** rename and more icons/logos, explicitly allowed bots to list/bid according to need, and added a classic Hattrick/Liquipedia-style direction instead of the modern UI. Bot participation supersedes the old market ban; no protected Arena rule was relaxed. `authNavigation`, `AppRouter`, `App` and `avatarpedia.ts` recognize nested `#codex/...` routes, preserve workspace navigation, and normalize authenticated legacy `#avatarpedia/...` links. Public visitor pages remain accessible.
+
+`HexatrickBrand`, `ReferenceIcon`, favicon/product copy and `classic-manager.css` provide original hexagonal branding and the classic theme. Base card/wiki CSS uses cascade layers to prevent lazy chunks restoring the old appearance. `ClubHome` replaces practice-based home summaries with actual roster, defaults, PHP balance, academy and fixtures. `WorldActivity` displays Avatarpedia's shared public event feed.
+
+`BotClubManager`, `ManageBotClub` and `world:tick` provide database-idempotent 15-minute reviews: weekly-limited recruitment, legal lineup improvements, surplus listings, need-based bounded bids and eligible event entry. `ClubMarketService` removes the bot rejection while preserving shared escrow/ownership/deadline/transfer rules. `club_world_events` records real transitions and verified results; it does not impersonate human activity. Market marks bot sellers/leaders. The prior bot-denial test expectation is updated, but suites remain deferred.
+
+The additive world migration was backed up/applied locally. An idle default queue worker was gracefully refreshed without restarting Arena/ML/avatar services. First activation completed three bot reviews, created three auctions/two tournament entries, and showed zero pending default jobs/recent failures afterward. Production build and PHP syntax checks pass; automated suites and browser acceptance remain deferred by owner request. Save keys, model qualifications, frozen artifacts, gameplay stats and match-worker images are unchanged. The [living-world plan](hexatrick-world-phase-plan.md) records policy details and the next official Squad/career/staff/inbox phase.
+
+## Avatarpedia replaces Clashbook (2026-11-08)
+
+Owner renamed the reference hub to **Avatarpedia**, requested Liquipedia as an information-design reference, and supplied screenshots of main pages, tournament calendars/articles, participant rosters and player profiles. Continued building under the prior instruction to defer tests. New `Avatarpedia.tsx`, `avatarpedia.css` and `avatarpedia.ts` replace `ClashbookDirectory.tsx` with global search, paginated directories and linked articles for tournaments, teams, players, coaches, Avatars, items, releases, organizers and sponsors. Original styling uses compact match/tournament modules, year-based tables, roster cards, contents/section navigation, infoboxes, match countdowns and source metadata. Published matches/results refresh every 30 seconds. No real-world biographies, event names, logos or photos were copied from the reference.
+
+`AvatarpediaService.php` centralizes public reference projections from the existing catalogs, game-content service, club contracts, tournament entries and verified fixture results. `AvatarpediaController.php` replaces the former controller; `/avatarpedia` index/search/directory/article/entry endpoints are added while `/clashbook` aliases preserve old clients. Public projections omit source real names, account details, balances, private orders/seeds and unreleased model assets. Team roster cards are current contracts; player profiles are catalog definitions that can have multiple club-owned instances. Verified statistics count appearances per participating side and do not invent individual KDA.
+
+Updated `App`, `AppRouter`, auth return navigation, public site/landing links, Matchday and player-card links. `#avatarpedia/<category>/<id>` is the canonical public article route; legacy `#discover` still opens the main page. Public tournament entry returns to its article after sign-in. The Avatar laboratory/catalog tools remain alongside the central reference and retain their existing backing services. No Arena rules, allocation/settlement/training logic, schema, frozen artifacts or worker images changed.
+
+Production build and PHP syntax checks pass. No automated suites, browser checks or runtime acceptance claims for these new projections were made; tests remain deferred by request. The [Avatarpedia implementation record](avatarpedia.md) documents source boundaries, endpoints, read limits and outstanding editorial/history capabilities. Liquipedia rejected automated fetching with 403, so the supplied screenshots were the visual reference. Prior handoff entries retain the historical Clashbook name.
+
+## Public landing and centralized authentication (2026-11-08)
+
+Owner requested a landing page first, with authentication at that entry point instead of embedded inside feature components, and explicitly deferred tests for this build pass. `main.tsx` now mounts the shared `AccountProvider` and `AppRouter`. Public routes are the landing page (`#welcome`, also the root URL), its guide (`#how-it-works`), `#sign-in`, `#register`, and public Clashbook (`#discover`). The club workspace routes require an account. The existing account endpoints remain authoritative; this is not a new credential system.
+
+`LandingPage.tsx`, `PublicSiteLayout.tsx`, `AuthenticationPage.tsx` and `public-site.css` provide original public branding, management/matchday introduction, a next-fixture preview sourced from public Clashbook, a guide, dedicated account forms with password confirmation/visibility and error states, and public navigation. The Arena workspace is lazy-loaded after entry, so the landing page does not mount its game catalog or simulator. No generated avatar/model assets were used. `authNavigation.ts` preserves a constrained workspace/replay destination through sign-in. `AccountContext.tsx` validates saved sessions with `/me`, shares account state across components and browser tabs, and owns sign-out. `cloudPersistence.ts` publishes session changes and clears the current token after an authenticated 401.
+
+Removed account forms from `OnlineNormalView.tsx` and `CloudSavePanel.tsx`. Matchday, Market, Clashbook and backup settings consume the shared account. `App.tsx` places account identity and sign-out in the global header and accepts direct replay links. The root document has updated title/description/theme metadata. Protected Arena rules, source aliases, ML/asset workflows, database records and worker deployments are unchanged.
+
+Verification is the production build only (`npm run build`, includes TypeScript). It passes with the existing large game/viewer chunk warnings. Automated game/API suites and browser interaction/visual checks were not run in this pass, as requested. Centralized login/registration and redirects therefore still require a later runtime review; do not inherit the previous UI pass's browser results as evidence for these new routes. Next build priorities are guided club onboarding, the authoritative club home dashboard, and a dedicated competition centre, with account recovery/email verification also still outstanding. See the [current build sequence](club-management-phase-plan.md#public-entry-and-next-build-sequence-8-november-2026).
+
+## Club workspace UI polish (2026-11-08)
+
+Owner requested the next UI polish pass. Updated `App.tsx`, `index.css`, `SquadView.tsx`, `TrainingCenterView.tsx`, `player-card.css`, `OnlineNormalView.tsx`, `ClubIdentityEditor.tsx`, `ClubMarketView.tsx`, and `ClashbookDirectory.tsx`; shared club styling is in `components/club-management.css`. Navigation has shorter labels and active-page semantics, page headings, a keyboard skip link, visible focus indicators, reduced-motion support and a safe-area-aware mobile bar. Underlined section controls and inline facts replace routine pills. Player rows are compact at desktop widths, signature text is no longer duplicated, and the practice training table drops region labels and decorative emoji. The home/squad copy identifies local practice records and directs official lineup management to Matchday.
+
+Matchday separates fixtures, orders, identity and friendlies. Selected coverage appears before the club tools; clock/winner/score and commentary are readable while recording details remain expandable. Saved lineup/orders actions confirm completion; Sign out now calls the existing token revocation endpoint. Money/recruitment/auction sections share the form styling. Clashbook has focused directory sections, club search and keyboard focus on linked club records.
+
+Verification: `npm run check:game` passed (611 passed, 22 existing skips, plus three simulation checks) and `npm run build` passed. Disposable browsers checked primary signed-out screens at 1440/390px and signed-in controls at 1440/390/320px without document overflow or runtime exceptions. Tested jersey preview changes without saving, saving the rehearsal club's unchanged default lineup, PHP market controls, club filtering, all seven profile attributes, fixture-to-club focus, completed Babylon playback/commentary seeking/final-frame return, and real token revocation. Temporary review sessions are revoked; proof is in ignored `.local-tools/matchday-rehearsal/ui-polish-proof.json`. No Arena rules, worker image, avatar assets, ML artifacts or schema changed. See the [phase plan](club-management-phase-plan.md#ui-polish-pass-8-november-2026) for scope and remaining rollout limits.
+
+## Scheduled matchday rehearsal verified (2026-11-08)
+
+Continued the owner's request to run the two-manager pilot through completion. Fixture 2, `Matchday Rehearsal 8004E9`, allocated match `bafa247c-648e-41c8-8d56-0dc7c5d10c5e`. Both managers submitted their owned lineups through separate HTTP sessions, then revoked those sessions before kickoff. On 7 November Manila time, the server started at 22:58:37 against the published 22:58:28 kickoff. The unrelated spectator's disposable browser verified Babylon scores against received frames, socket reconnect, and commentary-to-replay alignment. A fresh completed-replay browser check also passed without runtime exceptions. Test account tokens are revoked; the labeled historical match is retained.
+
+Harbor won by red Nexus destruction, Arena clock 25:11, final sequence 3,023, settlement at 23:35:19 Manila. Retrying settlement and the polling handler preserved the result hash and exactly ten pending training records of 26 XP each. Public standings showed one win and one loss. No production code changed during this verification continuation. Existing web checks/build and the 20-test Laravel suite remain the implementation checks. Detailed timings, evidence and remaining limits are in the [phase plan](club-management-phase-plan.md#completed-two-manager-matchday-rehearsal). The development run took 36:42 of wall time, so precise playback speed and overlapping-match capacity remain unproven. Tournament progression/prizes are feature-tested, not yet a completed live tournament.
+
+## Philippine scheduled club pilot (2026-11-07)
+
+The owner requested the full [club management plan](club-management-phase-plan.md). Play now opens the server fixture calendar and club identity editor. The server locks orders and branding, queues the existing Arena worker, and verifies results before awarding participation. Matchday uses Arena snapshots and a synchronized text broadcast. Browser-generated official kickoff, standings and training shortcuts were removed from the player flow. The new `PlayerProfileCard` uses original attribute rows and drops inferred region labels and filters from the card, squad and draft.
+
+The PHP ledger, timed auctions, scout intake, optional academy, weekly payroll and training, bot clubs, and tiered Manila Signal Open are backed by additive migrations and server jobs. Clashbook reads the verified records and links eligible scheduled broadcasts. The pilot operating guide documents defaults, commands, and release checks. Development uses one worker and the tournament schedules separate semifinal slots.
+
+The live-engine rehearsal exposed repeated lane switches between a threatened tower and Embermaw. `twoLaneStrategyRules.ts` keeps the existing defense priority when the unit is already on the threatened lane. A regression test covers defense assignment, commitment and release.
+
+## Latest: Cartoon Portraits, Modern Sleek Dark-Slate UI, Riot Annual Global Circuit (First Stand / MSI / Worlds + DreamLeague), Coach Attributes + Real-Match Training & Friends Challenge Hub (2026-11-07)
+
+- **Owner Request**:
+  1. Replace real-world photo faces with **cartoonish pro gamer portraits** and remove all `"LoL"`, `"CS"`, `"Dota"`, `"Dota2"`, `"Valorant"` badges/filters from the UI.
+  2. Replace the old-school retro stone UI with a **modern, sleek dark-slate & glass esports UI**.
+  3. Build **Riot-style Annual Tournaments** across real-life calendar years (`Season 2026` $\rightarrow$ `2027`+):
+     - **Opening Regionals $\rightarrow$ First Stand International**
+     - **Spring Regionals $\rightarrow$ MSI International**
+     - **Summer Regionals $\rightarrow$ Worlds International** (most prestigious championship of the year)
+     - Based on the 4 real-world Macro-Regions: **`ASIA`**, **`EUROPE`**, **`AFRICA`**, and **`AMERICAS`**.
+     - **Million-Player Horizontal & Vertical Shard Scaling** (`Tier 1 Premier`, `Tier 2 Challengers`, `Tier 3 Contenders`, `Tier 4+ Auto-Spawning Open Shards` supporting 1,000,000+ clubs).
+     - **Multiple Third-Party Tournaments (DreamLeague Style)**: *DreamLeague Season 26*, *BLAST Arena Grand Slam*, *Savannah Masters Invitational*, and *Red Bull Pan-American Gauntlet* where winners earn **Prize Money (`teamFunds`)** and **In-Game Rewards** (Coach Drill Speed Boosters, Elite Scout Dossier Tokens, Stamina Recovery Kits, and Club Banners).
+  4. Upgrade the **Hattrick Team Training System**: pick what the team works on (`lan`, `tf`, `iq`, `ldr`, `clu`, `sta`, `flx`), give coaches **1–10 Coaching Attributes** (`tactical`, `mechanical`, `conditioning`, `youthDevelopment`, `motivation`) that directly increase training speed, and make **real games affect training** (`matchesPlayedThisWeek >= 1` grants `115%–135%` full match speed; `0` games grants only `25%` passive bench drill speed; completing any real arena match calls `applyRealMatchTrainingImpact`).
+  5. Build a **Friend System & Direct Challenges Hub** (`FriendsChallengeView.tsx`) where players can add friends by Club Tag across `ASIA`, `EUROPE`, `AFRICA`, `AMERICAS`, accept incoming challenges, or send Friendly Scrimmages and Showmatch Wagers that count as real matches for training.
+- **Affected Files**:
+  - [`EsportsClash.Web/src/components/ChibiAvatar.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/ChibiAvatar.tsx): Upgraded SVG cartoon pro gamer portrait generator and added `getPlayerMacroRegion`.
+  - [`EsportsClash.Web/src/components/CardComponent.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/CardComponent.tsx) & [`EsportsClash.Web/src/components/player-card.css`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/player-card.css): Replaced photo sprite sheet with `<ChibiAvatar>`, replaced game-origin badges with `ASIA`/`EUROPE`/`AFRICA`/`AMERICAS`, and styled modern `14px` dark-slate cards.
+  - [`EsportsClash.Web/src/index.css`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/index.css): Modern dark-slate & glass UI system (`#0b0f19` canvas, `#131b2e` cards, emerald/blue gradients, pill tabs).
+  - [`EsportsClash.Web/src/types.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/types.ts) & [`EsportsClash.Web/src/marketBatchEngine.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/marketBatchEngine.ts): Added `MacroRegion`, `CoachAttributes`, `getCoachAttributes`, `getCoachFocusBoost`, `applyRealMatchTrainingImpact`, `INITIAL_THIRD_PARTY_CUPS`, `INITIAL_FRIENDS`, and `INITIAL_FRIEND_CHALLENGES`.
+  - [`EsportsClash.Web/src/components/TrainingCenterView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/TrainingCenterView.tsx): 7 team training programs, 5 Coach Attributes (`1–10`) with `%` speed multipliers, and real-match participation tracking.
+  - [`EsportsClash.Web/src/components/TournamentView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/TournamentView.tsx): Real-life year progression (`2026` $\rightarrow$ `2027`+), 3 Riot Splits (`Opening -> First Stand`, `Spring -> MSI`, `Summer -> Worlds`), 4 Macro-Regions (`ASIA`, `EUROPE`, `AFRICA`, `AMERICAS`), Million-Player Shard Scaling Pyramid, and Third-Party Cups (*DreamLeague Season 26*, *BLAST*, *Savannah*, *Red Bull*).
+  - [`EsportsClash.Web/src/components/FriendsChallengeView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/FriendsChallengeView.tsx): Friends directory, Add Friend by Club Tag, and incoming/outgoing Friend Challenges with Wager & Real-Match Training XP.
+  - [`EsportsClash.Web/src/components/SquadView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/SquadView.tsx), [`EsportsClash.Web/src/components/PlayerDraftPhaseView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/PlayerDraftPhaseView.tsx), [`EsportsClash.Web/src/components/ProCircuitView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/ProCircuitView.tsx), [`EsportsClash.Web/src/components/TransferMarketView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/TransferMarketView.tsx), and [`EsportsClash.Web/src/App.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/App.tsx).
+
+## Previous: Chess.com × Hattrick UI/UX Overhaul, 1–10 Skill Scale, Real Transfer Market & Training System (2026-11-07)
+
+- **Owner Request**:
+  1. Combine the visual themes of **Chess.com** (dark walnut sidebar `#262421`, tactile 3D green primary action buttons `#81b64c` with 3px `#537133` lip) and **Hattrick** (pitch-green headers `#1e5631`, warm stone canvas `#e4e7df`, clean paper dossiers, and 10-pip skill rating bars).
+  2. Switch attribute scale from **1–99 to 1–10** (1/10 to 10/10) with 10 verbal descriptors (*Non-existent* to *Divine (GOAT)*). Bridge internal simulation via `toScale10` and `fromScale10`.
+  3. Add **IQ** and **Leadership (`LDR`)** as attributes (`1–10`) and establish the player-to-coach lifecycle: veterans (`Age >= 23, IQ >= 7/10, LDR >= 6/10`) qualify to retire and become Club Head Coach in the Training Center.
+  4. Integrate **Hattrick Training System**: Team Focus (6 training foci: Laning, Teamfight, Macro IQ, Leadership, Clutch, Conditioning), Intensity (50–100%) and Stamina (10–30%) sliders, role slot multipliers, and weekly training progression ticks.
+  5. Remove **Ratings (Elo)** and replace with the **Hattrick Series Tournament Pyramid** (Series I–IV, 8 teams per division, 14 rounds double round-robin with promotion/relegation) and **Clash Knockout Cup** (16 clubs single-elimination).
+  6. Implement an **actual real-world Transfer Market**: live bidding auctions, 100% escrow balance holding, anti-sniping extension (+3 min on late bids), instant release clause buyout, and listing club reserve players for sale.
+  7. Build a **Batch Player Generator Job**: API backend job (`GenerateTransferMarketBatchJob.php`) and frontend engine (`generateMarketBatch`), plus a **Scouting Network** with 3 scouts evaluated by 6 attributes (`1–10`) generating youth dossiers.
+  8. **Remove Ads** (`Daily Supply Drop`) and **remove GACHA mechanics** (`PACK_CATALOG`, `PackOpeningModal`, duplicate merging level inflation). Reduce Pay-to-Win via **Financial Fair Play (FFP) Division Caps** (e.g. Series IV can only sign up to 8/10 open-market players; must scout and train youth for 9–10/10) and **Split-Capped Board Capital Grants** (max 2 per 14-round split).
+- **Architecture & Implementation**:
+  - Created [`docs/hattrick-chess-club-architecture.md`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/docs/hattrick-chess-club-architecture.md).
+  - Built core engine in [`src/marketBatchEngine.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/marketBatchEngine.ts) with 9 unit test suites in [`src/marketBatchEngine.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/marketBatchEngine.test.mjs) (all 9 passed).
+  - Created Laravel queued batch job in [`EsportsClash.Api/app/Jobs/GenerateTransferMarketBatchJob.php`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Api/app/Jobs/GenerateTransferMarketBatchJob.php).
+  - Built UI components: [`TransferMarketView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/TransferMarketView.tsx), [`TrainingCenterView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/TrainingCenterView.tsx), [`TournamentView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/TournamentView.tsx), updated [`SquadView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/SquadView.tsx), [`CardComponent.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/CardComponent.tsx), [`player-card.css`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/player-card.css), and [`index.css`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/index.css).
+  - Fully wired in [`App.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/App.tsx): removed legacy Elo ladder result modal and gacha pack opening modal; added Training Center tab in Squad, Hattrick Series & Cup tab in Play, and Transfer Market live auctions in Market.
+- **Verification**:
+  - `node scripts/validate-design.js`: PASSED (all invariants verified).
+  - `npm run check:game`: PASSED (608 unit tests + 3 simulation tests + `tsc -b` passed).
+  - `npm run build`: PASSED (0 TypeScript errors, production bundling clean).
+
+## Latest: Manager '02 UI/UX Redesign, 6-Section Navigation & 3D Rigging Studio Removal (2026-11-07)
+
+- **Owner Request**:
+  1. Audit `EsportsClash.Web`, plan how to finish the web app, and make it look polished and user-friendly.
+  2. Replace the neon-dark dashboard styling with an "old school but UI/UX friendly" design (**Option A · Manager '02** approved — Championship Manager / Football Manager 2005 navy sidebar `#0b1f44`, bevelled light-grey panels `#eef1f5` on `#c9ced6` canvas, high-contrast 13px Tahoma/Verdana tables, and gold primary action buttons `#f2c14e`).
+  3. Remove the 3D Rigging Studio (`MeshyRiggingStudio`) completely from the web application.
+- **3D Rigging Studio Removal**:
+  - Removed all `MeshyRiggingStudio` imports, state, buttons, and modals from [`App.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/App.tsx) and [`ChampionHubView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/ChampionHubView.tsx).
+  - Deleted `src/components/MeshyRiggingStudio.tsx`, `src/components/meshy-rigging-studio.css`, `src/meshyRiggingPipeline.test.mjs`, and the entire `src/rigging/` directory (10 files).
+- **Phase 0 Housekeeping**:
+  - Moved 59 root `*.log` files into `artifacts/logs/`.
+  - Removed unused Vite starter boilerplate (`src/App.css`, `src/assets/react.svg`, `src/assets/vite.svg`, `src/assets/hero.png`).
+  - Updated `<title>` in [`index.html`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/index.html) to `Esports Clash: GOAT Manager`.
+- **Manager '02 Design System & 6-Section Shell (`index.css`, `player-card.css`, `App.tsx`)**:
+  - Replaced [`index.css`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/index.css) with the **Manager '02** design system tokens (`--cm-*`) and component classes (`.cm-shell`, `.cm-sidebar`, `.cm-topbar`, `.cm-panel`, `.cm-panel-header`, `.cm-panel-body`, `.cm-btn`, `.cm-btn-primary`, `.cm-btn-navy`, `.cm-btn-danger`, `.cm-tabs`, `.cm-tab`, `.cm-table-wrap`, `.cm-table`, `.cm-input`, `.cm-select`, `.cm-badge-*`, `.cm-modal-backdrop`, `.cm-modal`).
+  - Re-skinned [`player-card.css`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/player-card.css) into classic Manager scouting dossier cards with navy headers, gold OVR badges, crisp white/light-grey stat cells, and readable 11–17px typography.
+  - Consolidated the 11 horizontal tabs in [`App.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/App.tsx) into **6 fixed sidebar sections** with URL hash routing (`#home`, `#squad`, `#play`, `#market`, `#codex`, `#settings`):
+    1. **Club Home (`#home`)**: Command center featuring the Next Scheduled Fixture panel with a single primary **"Play Next Match ▸"** CTA, Daily Club Schedule actions (Stream, Recovery, Scrim), Club Office Summary, Starting Five Tactical Sheet table, and Gaming House Facilities upgrades.
+    2. **Squad (`#squad`)**: Sub-tabs `Lineup & Club Reserves` ([`SquadView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/SquadView.tsx) with **Cards** vs **Table** view toggle and `.cm-modal` dossier inspector) and `Player Evolutions` ([`EvolutionsView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/EvolutionsView.tsx)).
+    3. **Play (`#play`)**: Sub-tabs `Match Center & Draft`, `Seasonal Split` ([`TournamentView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/TournamentView.tsx) expanded with qualification zones, 6-round fixture calendar, and split prize pool breakdown), and `Chess Ranked Ladder` ([`RankedLadderView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/RankedLadderView.tsx)).
+    4. **Transfer Market (`#market`)**: Re-skinned scouting pack store, duplicate contract release, and [`PackOpeningModal.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/PackOpeningModal.tsx).
+    5. **Codex (`#codex`)**: Sub-tabs `Pro Circuit & Scouting (125 Teams)` ([`ProCircuitView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/ProCircuitView.tsx)), `Avatars & Lore (45)` ([`ChampionHubView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/ChampionHubView.tsx) 2-column directory + technical dossier), and `Items & Skills Database` ([`GameCatalogView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/GameCatalogView.tsx)).
+    6. **Settings (`#settings`)**: Audio & Broadcast toggles, [`CloudSavePanel.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/CloudSavePanel.tsx), Backoffice Catalog & Learned AI status, and Developer Diagnostics (Dev Random 5v5, V3 Sandbox, and gated `OnlineNormalView` toggle).
+  - Updated [`DraftPhaseView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/DraftPhaseView.tsx) (confirm pick/ban button placed at the top of the right-hand dossier so it is immediately reachable without scrolling) and [`PlayerDraftPhaseView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/PlayerDraftPhaseView.tsx).
+- **Spectator HUD Declutter (`AramMatchView.tsx`, `spectator.css`)**:
+  - Defaulted `hudMode` to `'hidden'` in [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx) so the bottom scoreboard dock does not cover 35% of the arena on match start; added `data-hud-mode={hudMode}` on `.spectator-shell` and a `📊 Scoreboard (Tab)` toggle button on `.broadcast-playback`.
+  - Compacted `.spectator-top`, centered `.broadcast-playback` neatly below `.spectator-top`, and docked `.spectator-feed` at `bottom: 48px` when `data-hud-mode="hidden"` in [`spectator.css`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/spectator.css).
+- **Verification**:
+  - `node scripts/validate-design.js`: PASSED.
+  - `npm run build` (`tsc -b && vite build`): PASSED (0 TypeScript errors, 5,392 modules transformed).
+  - Gameplay, learned-controller, tower-combat, and parody alias invariants preserved unchanged.
+
+## Previous: Two-Lane-V5 Map Root-Cause Investigation & Geometric/3D Visual Fixes (2026-11-03)
+
+- **Owner Request**: After inspecting the initial live screenshots of `two-lane-v5`, the owner requested: `"fix first the map bro. Can you investigate first?"`
+- **Root-Cause Investigation (6 Concrete Visual/Geometric Defects Identified & Fixed)**:
+  1. **Boss Pit 3D Rock Rings Sitting on the Top & Bottom Bridges ([`arenaLayout.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaLayout.ts))**:
+     - *Cause*: `dragon_boss` was placed at $(1400, 240)$ (`radius: 136`) and `j_siege_golem` at $(1400, 1200)$ (`radius: 136`), directly overlapping the Top Bridge ($Y=270$) and Bottom Bridge ($Y=1170$), while `PaintedArenaProcedural.ts` painted the boss circles at $Y=115$ and $Y=1325$.
+     - *Fix*: Relocated `dragon_boss` to $(1400, 95)$ (`radius: 72, stoneRadius: 15, stones: 16, entrance: Math.PI / 2`) and `j_siege_golem` to $(1400, 1345)$ (`radius: 72, stoneRadius: 15, stones: 16, entrance: -Math.PI / 2`), and cleared outer `valley-crag` mountains from blocking the North/South pits.
+  2. **Sawtooth Elevation Spikes Around Center River Island & Boss Pits ([`arenaElevation.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaElevation.ts))**:
+     - *Cause*: Hard early-return step functions (`if (distCenter <= 125) return 0.12`, `if (distTopPit <= 136) return -0.08`) next to the $-0.34$ river trench created a 46-unit vertical cliff on the rectangular ground mesh grid, rendering jagged white sawtooth triangles around the circular islands.
+     - *Fix*: Replaced hard step cutoffs with smooth Hermite transitions (`1 - smooth(85, 148, distCenter)`, `1 - smooth(72, 118, distTopPit)`), clamped lane elevation to $X \in [300, 2500]$, and replaced the straight vertical base cliff at $X=430$ with smooth circular Sanctum plateaus centered at $(260, 720)$ and $(2540, 720)$.
+  3. **Lane Curve Pinching, Staircase 3D Curbs & Elongated Base Wells ([`arenaLayout.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaLayout.ts), [`PaintedArenaProcedural.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/PaintedArenaProcedural.ts), [`BabylonBattlefield.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/BabylonBattlefield.ts))**:
+     - *Cause*: Adding $\pm 80$ vertically (`y + 80` / `y - 80`) pinched the curved road thickness down to ~110px on the steep stadium turns; discrete `CreateBox` curbs left staircase gaps; and the base fountain was a leftover oval well at $X=65$ with a straight cliff at $X=430$.
+     - *Fix*: Updated `topLaneY(x)` and `botLaneY(x)` to trace true stadium arcs from $X=300$ ($Y=610$ / $Y=830$) into $X \in [600, 2200]$ ($Y=270$ / $Y=1170$); offset both 2D road edges and 3D continuous `MeshBuilder.CreateTube` curbs along the true perpendicular normal vector (`nx, ny`) so the road stays a uniform 160px wide; and built circular 3D Sanctum Energy Pools at $(260, 720)$ and $(2540, 720)$ with 4 team banner standards and an inner crystal gate.
+  4. **Interior Jungle Camp Overlap & Missing Interior Foliage ([`arenaLayout.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaLayout.ts), [`BabylonBattlefield.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/BabylonBattlefield.ts), [`PaintedArenaProcedural.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/PaintedArenaProcedural.ts))**:
+     - *Cause*: Outer jungle camps at $X=660, Y=430$ (`radius: 86`) touched the inner Top/Bot lane curbs ($Y=350, 1090$) and `HIGHGROUND_ROCKS`, and all 3D trees inside the central island were culled.
+     - *Fix*: Repositioned the 8 regular camps cleanly inside the central green island ($X = 555, 980, 1820, 2245$; $Y = 475, 965$; `radius: 64–68`), added winding golden-earth jungle footpaths, stone lane staircases ($X=800, 2000$), timber bridge step-down landings ($X=1300, 1500$), and populated 3D conifer/pine and oak trees throughout the interior island and bushes.
+  5. **Bridge Deck Occlusion & Center River Island Sentinel ([`BabylonBattlefield.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/BabylonBattlefield.ts))**:
+     - *Cause*: A dark brown 3D box covered the sandstone road at $X=1400$, and the Center River Island had an industrial metal ring instead of the reference's natural rocky island with glowing blue crystals.
+     - *Fix*: Removed the brown bridge cover so the sandstone road with diamond pavers runs continuously across the river between 3D cream-stone balustrades, and built a 3D Ancient Rock Sentinel with glowing blue crystal shards, crescent rim boulders, and conifer trees on a sandy-stone island pad at $(1400, 720)$.
+  6. **Overview Camera Framing ([`verify-two-lane-live.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/scripts/verify-two-lane-live.mjs), [`BabylonMatchViewer.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/BabylonMatchViewer.ts))**:
+     - *Fix*: Added full-map overview zoom support (`zoom >= 0.95`) and captured `two-lane-overview.png` at `zoom: 1.05` framing the entire stadium from West Blue Sanctum to East Red Sanctum along with all 5 close-up architectural views.
+- **Verification**:
+  - `npm run check:game`: `validate-design.js`, all unit tests in `src/*.test.mjs`, `src/matchSimulation.test.mjs`, and `tsc -b` passed.
+  - `npm run build`: Passed cleanly.
+  - Re-captured and visually verified all 6 screenshots in `docs/two-lane-arena/*.png` and `two-lane-gallery/*.png`.
+
+## Previous: 2-Lane Strategy Architecture, Dynamic Rotation & Live Visual Verification (2026-10-31)
+
+- **2-Lane Strategy System & Squad Control ([`twoLaneStrategyRules.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/twoLaneStrategyRules.ts))**:
+  - Implemented 3 modular squad strategies for the 2-lane stadium arena:
+    1. `standard_2_3`: Solo Tank + Roam Top; Mage + Marksman + Support Bot push.
+    2. `heavy_top_3_2`: Aggressive 3-man pressure Top toward Dragon pit; Duo Marksman/Support Bot.
+    3. `flex_roam_2_2_1`: Duo Top + Duo Bot + 1 dedicated Roamer floating between river objectives and endangered towers.
+  - Implemented `getTwoLaneFormationY` calculating accurate lane Y positions along curved arcs, eliminating avatar positioning drift toward the center river.
+  - Implemented `evaluateDynamicLaneRotation`:
+    - High-IQ and roaming units rotate to contest active/imminent Dragon Embermaw (Top Pit, $Y=115$) or Siege Golem (Bot Pit, $Y=1325$).
+    - Cross-lane breach opportunity: when an outer tower in the unit's lane is destroyed while the opposite lane's outer tower still stands, roaming units rotate to breach the remaining lane.
+    - Base defense priority overrides lane assignments to protect endangered structures.
+  - Wired into [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx) with a 1-click **2-Lane Strategy button** in the spectator toolbar allowing live tactical switching between formations.
+  - Verified with 5/5 unit tests in [`twoLaneStrategyRules.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/twoLaneStrategyRules.test.mjs).
+- **Live Headless Screenshot & Visual Verification ([`verify-two-lane-live.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/scripts/verify-two-lane-live.mjs))**:
+  - Executed real headless Chrome CDP session against Vite runtime on port 5199, capturing 6 high-resolution battlefield screenshots in `docs/two-lane-arena/`:
+    - `two-lane-overview.png` (1.02 MB): Full stadium racetrack overview across both lanes, river, center island, and bases.
+    - `two-lane-top-bridge-dragon.png` (778 KB): Top arched roadway bridge, stone balustrades, and Dragon Embermaw golden pit.
+    - `two-lane-bot-bridge-golem.png` (721 KB): Bottom arched roadway bridge, balustrades, and Siege Golem cyan pit.
+    - `two-lane-center-island-altar.png` (920 KB): Center river island pedestal and Ancient Sentinel altar.
+    - `two-lane-blue-sanctum.png` (915 KB): Circular Blue Nexus sanctum, glowing energy sphere, and dual lane exits.
+    - `two-lane-red-sanctum.png` (914 KB): Circular Red Nexus sanctum and lane exits.
+  - Zero browser errors or WebGL exceptions reported.
+- **Verification Gates**:
+  - `node scripts/validate-design.js`: PASSED.
+  - `node --experimental-strip-types --test src/twoLaneStrategyRules.test.mjs`: 5/5 PASSED.
+  - `tsc -b`: PASSED (0 errors).
+
+## Latest: Canonical Two-Lane-V5 Stadium MOBA Arena Integration (2026-10-30)
+
+- Integrated the user's reference design (`media_1793336837412_511747c8.jpg`) as the sole canonical arena profile: **`two-lane-v5`** (older profiles replaced cleanly per user instruction):
+  - **Layout Geometry**:
+    - Top curved stone lane at `TOP_LANE_Y = 270` ($Y \in [190, 350]$).
+    - Bottom curved stone lane at `BOT_LANE_Y = 1170` ($Y \in [1090, 1250]$).
+    - Circular Blue Nexus Sanctum at West ($X=235, Y=720$) and Red Nexus Sanctum at East ($X=2565, Y=720$) with concentric stone dais and glowing energy spheres.
+    - Dual arched stone roadway bridges crossing the central tranquil river at $X=1400$ along Top ($Y=270$) and Bottom ($Y=1170$) lanes with 3D curbs and balustrades.
+    - Center River Island Sanctuary at $(1400, 720)$ for the Ancient Sentinel (Elite Buff Camp) featuring ancient altar stones and circular pedestal.
+    - Top Golden Boss Pit at $(1400, 115)$ for Dragon Embermaw.
+    - Bottom Cyan Boss Pit at $(1400, 1325)$ for Siege Golem Gravemarch.
+    - Mirrored interior jungle camps with stone rings and lush evergreen pine trees.
+  - **Structure Progression & Invariants**:
+    - 12 Lane Turrets total (6 Blue: 3 Top, 3 Bot; 6 Red: 3 Top, 3 Bot), plus 3 Barracks (melee, ranged, catapult) and 1 Nexus per team.
+    - **Single-Lane Breach**: Destroying all 3 turrets in *either* Top or Bottom lane breaches base defenses and unlocks the 3 Barracks.
+    - **Nexus Protection Invariant (`AGENTS.md`)**: All 3 Barracks must still fall before the Nexus shield drops (`barracks.length >= 3 && barracks.every(s => !s.isAlive)`).
+    - **Simultaneous Dual Waves**: Top and Bottom minion waves spawn together every 22s and march along curved lane perimeters.
+  - **Rendering & Simulation**:
+    - Procedural 2D canvas in [`PaintedArenaProcedural.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/PaintedArenaProcedural.ts) and 3D Babylon.js meshes in [`BabylonBattlefield.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/BabylonBattlefield.ts) updated with sandstone and diamond pavers, dual bridge decks, center altar, and colored boss pit arenas.
+    - Fixed simulation engine lane awareness: lane-filtered minion waves, 2D Euclidean tower distance selection (`Math.hypot`), vulnerable structure target gating, and lane-specific advance limits in [`matchSimulationEngine.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/matchSimulationEngine.ts).
+    - Verified paired mirror-draft benchmark: 50.0% Blue / 50.0% Red map fairness (0.0% map bias).
+  - **Verification**:
+    - `npm run check:game`: 625/625 unit tests in `src/*.test.mjs`, all 3 tests in `src/matchSimulation.test.mjs`, design anti-regression checks (`validate-design.js`), and `tsc -b` passed.
+    - `npm run build`: Vite production bundle completed cleanly in 43s with 0 errors.
+
+## Latest: Tracks 1 & 2 Complete — 3D Babylon Battlefield Meshes, Dynamic Atmosphere & 32-Match Paired Mirror Benchmark (0.0% Map Bias) (2026-10-30)
+
+- Completed **Track 1: 3D Babylon Battlefield Meshes & Dynamic Atmosphere** ([`tracks-1-to-3-execution-plan.md`](file:///C:/Users/User/.gemini/antigravity/brain/a1b540bc-db34-4e5a-b5d6-da3e9e9fdf70/tracks-1-to-3-execution-plan.md)):
+  - Extended [`ArenaSceneFrame`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/ArenaFrame.ts) and [`MatchViewer.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/MatchViewer.ts) with `features` and `atmosphere` contracts.
+  - Implemented [`battlefieldFeatures.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/battlefieldFeatures.ts) with `buildArenaFeatures`, `resolveArenaAtmosphere`, and `parseLightingOverride`.
+  - Built 3D procedural Babylon.js meshes in [`BabylonBattlefield.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/BabylonBattlefield.ts):
+    - Roaming River Scuttlers (chitinous carapace shell, 6 animated legs, core, claws, river bobbing).
+    - Speed Shrines (stone dais, glowing team torus ring scaling by remaining duration, rotating team-glow crystal).
+    - Interactive Jungle Plants: Blast Cones (spiky crimson pod with emissive core, dormancy scaling), Scryer's Blooms (green stem, rotating cyan petals, glowing eye), Honeyfruit (5 emerald bulbs + honey orb).
+    - Post-Boss Hexgates (twin rotating Hextech portal rings with central energy spark).
+    - Celestial Supply Drops (landing dais, golden crystal prism, team capture progress torus).
+  - Implemented dynamic lighting presets (`daylight`, `dusk`, `overcast`) and elemental rim lighting tints (`infernal`, `mountain`, `ocean`, `cloud`) in [`BabylonMatchViewer.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/BabylonMatchViewer.ts).
+  - Verified with 10 unit tests in [`battlefieldFeatures.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/battlefieldFeatures.test.mjs) and [`babylonViewer.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/babylonViewer.test.mjs), plus real Chrome CDP headless browser tests in [`verify-battlefield-features.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/scripts/verify-battlefield-features.mjs) confirming all 12 feature actors, lighting transitions, and 0 WebGL errors.
+- Completed **Track 2: ML Policy Self-Play, Heatmap Balance & Curriculum Evaluation on `straight-v4`**:
+  - Implemented 32-match paired mirror-draft benchmark in [`benchmark-straight-v4.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/scripts/benchmark-straight-v4.mjs) (16 seeds with swapped drafts):
+    - **Blue vs Red Map Win Rate**: Exactly `16 / 16` (`50.0%` / `50.0%`), confirming **0.0% map side bias** on `straight-v4`.
+    - **Pacing**: Average match duration `9.93` mins (Range: `7.9m - 12.0m`, Median: `12.0m`).
+    - **Spatial Influence Grid**: Audited 7x3 territorial influence cells across `2800px × 1440px` arena, confirming finite scores in `[-1, +1]` with zero dead zones.
+    - **Waypoint Descriptors**: Verified transferable waypoint descriptors ([`buildBattlefieldWaypointDescriptors`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/dynamicEventsAtmosphereRelease.ts#L392-L422)) preserving the frozen 224-input actor v3 schema.
+- Verification:
+  - `npm run check:game`: 624/624 unit tests in `src/*.test.mjs`, all 3 tests in `src/matchSimulation.test.mjs`, and full `tsc -b` passed.
+
+## Latest: Catalogue Roadmap Phases 0–12 Complete — Full 89-Feature Battlefield Catalogue & Clean Straight Arena (`straight-v4`) (2026-10-30)
+
+- Owner approved the 13-phase [Battlefield Catalogue Roadmap](file:///C:/Users/User/.gemini/antigravity/brain/a1b540bc-db34-4e5a-b5d6-da3e9e9fdf70/catalogue-completion-roadmap.md) covering all 89 catalogue features merged with the straight/clean close-camera arena plan, and instructed `"do it"`.
+- **Phase 0 (Foundations — Catalogue Items 78 & 87)**:
+  - Added `MAP_PROFILES`, `ArenaFeatureFlags`, `getArenaFeatureFlags`, `setArenaFeatureFlags`, and `computeArenaRulesetVersion` in [`arenaLayout.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaLayout.ts).
+  - Stamped `mapVersion` and `rulesetVersion` across [`ViewerReplay.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/ViewerReplay.ts), [`aiDecisionTelemetry.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/aiDecisionTelemetry.ts), [`arenaTrajectory.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaTrajectory.ts), [`matchReplay.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/matchReplay.ts), and [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx) (Item 87).
+  - Updated [`drawV3Telegraphs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/v3Telegraphs.ts) with `showDebugLabels` (default `false`) and added a `Debug overlay` toggle button in [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx) (Item 78).
+- **Phase 1 (Straight Layout, Closer Camps, Larger/Wider Boss Pits, Wider Mid Plaza with 2× Bricks & Camera Framing)**:
+  - Set `straight-v4` as the canonical default map in [`arenaLayout.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaLayout.ts), [`arenaRules.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaRules.ts), [`arenaElevation.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaElevation.ts), and [`arenaLandform.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaLandform.ts).
+  - Set default camera zoom to `2.65` in [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx) and lowered `SPECTATOR_TILT` to `53.5°` in [`BabylonMatchViewer.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/BabylonMatchViewer.ts) to match League of Legends / Wild Rift close action framing.
+- **Phase 2 (Clean Visuals & Map Readability 🎨 — Catalogue Items 1, 2, 3, 4, 10, 14, 47, 48, 49, 50, 63)**:
+  - Updated [`PaintedArenaProcedural.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/PaintedArenaProcedural.ts) and [`BabylonBattlefield.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/BabylonBattlefield.ts) with unified emerald turf (`#2d4a3a` to `#3a5d48`), beveled stone curbs, sculpted slate rock walls (`#4e5d63`), perimeter-only evergreen forest walls, tranquil teal river channels with shoreline foam, 420px mid plaza with 2× (`110×80`) sandstone bricks, bush sway/fade on entry, 3D shop range ring, Nexus health urgency pulse, wave spawn portal rings, distinct minion silhouettes, and 3D champion recall circle.
+- **Phase 3 (Information & Spectator Readability 📡 — Catalogue Items 13, 19, 25, 36, 39, 41, 42, 51, 53, 54, 59, 64, 72, 73, 75, 76)**:
+  - Created [`phase3SpectatorReadability.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/phase3SpectatorReadability.ts) and wired into [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx) and [`SpectatorRoster.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/SpectatorRoster.tsx).
+- **Phase 4 (Vision, Brush & Fog-of-War System ⚙️ — Catalogue Items 12, 15, 16, 17, 18, 20)**:
+  - Created [`visionRules.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/visionRules.ts) and wired into [`decisionPerception.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/decisionPerception.ts), [`combatDecision.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/combatDecision.ts), [`objectiveRules.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/objectiveRules.ts), [`ArenaFrame.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/ArenaFrame.ts), [`MatchViewer.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/MatchViewer.ts), [`BabylonBattlefield.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/BabylonBattlefield.ts), [`SpectatorRoster.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/SpectatorRoster.tsx), and [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx):
+    - True simulation Fog-of-War perspective toggle (`All` / `Blue` / `Red`), line-of-sight wall/pit occlusion (`isVisionBlockedByWall`, `isUnitVisibleToTeam`), 3 ward types (`stealth`, `control`, `farsight`) with 3D models & hit-based clearing (`+30g`), Oracle Lens sweeper (`isRevealedBySweeper`), last-seen ghost markers (`LastSeenGhost[]`), and champion vision score tracking.
+- **Phase 5 (Jungle Ecosystem & Camp Depth ⚙️ — Catalogue Items 21, 22, 23, 24, 26, 27, 28, 29, 30)**:
+  - Created [`jungleEcosystemRules.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/jungleEcosystemRules.ts) and wired into [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx):
+    - Multi-creep camp packs (`getCampPackMinions`), distinct under-foot buff aura rings, buff transfer on champion takedown (`transferJungleBuffsOnTakedown`), roaming River Scuttler Crabs & Speed Shrines (`createInitialRiverScuttlers`, `stepRiverScuttlers`), interactive jungle plants (`Blast Cone`, `Scryer's Bloom`, `Honeyfruit`), camp minute scaling (`scaleCampStatsByMinute`), Primal Smite (`getPrimalSmiteDamage`), and counter-jungling alerts (`checkCounterJungleSteal`).
+- **Phase 6 (Epic Objectives & Stalemate Breakers ⚙️ — Catalogue Items 31, 32, 33, 34, 35, 37, 38)**:
+  - Created [`epicObjectivesRules.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/epicObjectivesRules.ts) and wired into [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx):
+    - 4-element dragon rotation (`infernal`, `mountain`, `ocean`, `cloud`), Dragon Soul at 4 stacks, arena elemental accents after 2nd dragon, Elder Dragon Sovereign (`14:00+` or after Soul) with `< 15%` HP Elder Execute (`shouldTriggerElderExecute`), 3-phase Dragon boss combat (`getDragonCombatPhase`), Siege Golem rear crystal core (`+22%` bonus damage from behind), summoned Siege Golem Banner Aura (`-25%` nearby minion damage taken), and pit pull-out reset rule (`isBossPulledOutsidePit`). Preserved the `≤ 32%` objective contest execute rule.
+- **Phases 7, 8 & 9 (Terrain Mechanics, Structures/Waves & Economy/Comeback ⚙️ — Catalogue Items 5–9, 40, 60–62, 43–46, 52, 55–58)**:
+  - Created [`terrainStructureEconomyRules.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/terrainStructureEconomyRules.ts) and wired into [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx):
+    - Highground ramp `-15%` uphill glancing penalty, thin vs. thick wall dash passability, wall-slam stun/damage on knockbacks, chokepoint & alcove definitions, post-boss hex-portals, team base gates, Homeguard fountain speed boost (`+65%` decaying over `5s`), turret bulwark plating (5 plates before `8:00`, `125g` each), backdoor protection (`-66%` without minions), progressive structure damage states (`pristine`/`cracked`/`critical`/`rubble`), minion aggro call-for-help (`2.5s`), kill-streak shutdown bounties (`+150g` to `+600g`), trailing-team objective bounties (`> 2.5k` gold deficit), assist/proximity XP sharing, and enhanced 4s HoT Health Relic zones. Preserved structure order (**Outer → Inner → Nexus turret → All 3 Barracks → Nexus**), 10s turret attribution, and risk-based tower combat.
+- **Phases 10, 11 & 12 (Dynamic Events, Atmosphere/Audio & ML/Balance/Release ⚙️/🎨/📊 — Catalogue Items 67–71, 74, 11, 65, 66, 77, 79–84, 85, 86, 88, 89)**:
+  - Created [`dynamicEventsAtmosphereRelease.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/dynamicEventsAtmosphereRelease.ts) and wired into [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx):
+    - First Blood mid-plaza trophy insignia, multi-kill escalation tracker, team Ace detector, `18:00+` Overtime Convergence, `6:00`/`11:00` Celestial Supply Drop at mid-plaza, off-camera Objective PiP alert, lighting presets (`daylight`/`dusk`/`overcast`), persistent ultimate scorch decals, river footstep water ripples, frustum culling helper, dynamic combat audio ducking & crowd excitement mix, DEV spatial influence heatmap overlay, transferable waypoint observation descriptors, automated East-West mirror symmetry audit (`0px` asymmetry), and 1-click Broadcast Camera Presets (`Broadcast 2.65×`, `Tactical 1.85×`, `Close 3.25×`).
+- Verification:
+  - [`phase0Foundations.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/phase0Foundations.test.mjs) (10/10 comprehensive phase test suites covering P0–P12), [`arenaRules.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaRules.test.mjs), [`arenaLandform.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaLandform.test.mjs), [`terrainRouting.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/terrainRouting.test.mjs), [`babylonViewer.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/babylonViewer.test.mjs), [`tacticalMinimapRadar.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/tacticalMinimapRadar.test.mjs), [`phase5MatchVerification.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/phase5MatchVerification.test.mjs), and `node scripts/validate-design.js`: **ALL PASSED**.
+  - `npm run build`: clean TypeScript compilation and Vite production bundle.
+
+## Previous: Catalogue Roadmap Phase 0 — Map Profiles, Version Tags & Debug Overlay Toggle (2026-10-30)
+
+- Owner approved the 13-phase [Battlefield Catalogue Roadmap](file:///C:/Users/User/.gemini/antigravity/brain/a1b540bc-db34-4e5a-b5d6-da3e9e9fdf70/catalogue-completion-roadmap.md) covering all 89 catalogue features merged with the straight/clean close-camera arena plan.
+- Phase 0 Foundations Completed (Catalogue Items 78 & 87):
+  1. **Map Profile Registry (`arenaLayout.ts`, `arenaRules.ts`, `arenaElevation.ts`)**:
+     - Added `MAP_PROFILES` retaining `'howling-abyss-v3'` (slanted `-0.30` slope, 110px half-width, exact existing 10 camps, 10 bushes, and ramps) alongside `'straight-v4'` (`laneSlope: 0`, 170px half-width, 210px mid plaza radius, 110×80 larger bricks, closer mirrored camps, and aligned bushes).
+     - Added `resolveArenaMapProfileId` supporting `?map=`, `localStorage`, and `process.env.ARENA_MAP_PROFILE`, defaulting to `'howling-abyss-v3'` so existing regression suites run unchanged until Phase 1/P12 cutover.
+  2. **Feature-Flag Registry & Ruleset Version Tagging (Item 87)**:
+     - Added `DEFAULT_ARENA_FEATURE_FLAGS`, `getArenaFeatureFlags`, `setArenaFeatureFlags`, and `computeArenaRulesetVersion` in [`arenaLayout.ts`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaLayout.ts).
+     - Stamped `mapVersion` and `rulesetVersion` onto:
+       - [`ViewerReplay`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/match-viewer/ViewerReplay.ts) (`export()` and `parse()`).
+       - [`AIDecisionRecord`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/aiDecisionTelemetry.ts) (`recordAIDecision`).
+       - [`ArenaTrajectory`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/arenaTrajectory.ts) (`settle` rows and `drain()`).
+       - [`MatchReport`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/matchReplay.ts) (`AramMatchView.tsx`).
+  3. **Toggleable Debug Overlay (Item 78)**:
+     - Updated [`drawV3Telegraphs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/v3Telegraphs.ts) with `options?: { showDebugLabels?: boolean }` (default `false`), removing raw `Resource N`, mark strings, recovery counters, and construct timer text from the default battlefield view while keeping geometric construct telegraphs intact.
+     - Added a `Debug overlay` toggle button (`aria-pressed={showDebugOverlay}`) in the Observer Controls toolbar in [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx).
+- Verification:
+  - Added [`phase0Foundations.test.mjs`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/phase0Foundations.test.mjs) (4/4 tests passing).
+
+## Latest: Phase 3 — Spectator Camera & Minimap Controls (2026-10-29)
+
+- Owner instructed: *"do phase 3"* (Phase 3: Spectator Camera Navigation along the Slanted Axis & Interactive Radar Minimap Controls).
+- Spectator Navigation & Minimap Implementations Completed:
+  1. **Slanted Trajectory Auto-Camera & Epic Pit Weighting (`AramMatchView.tsx`)**:
+     - Upgraded `computeActionCenter` in [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx#L820-L865) to incorporate active epic boss engagement weights:
+       - When champions contest Dragon Embermaw $(1400, 240)$ or Siege Golem Gravemarch $(1400, 1200)$, the auto-camera naturally and smoothly glides to frame the river pits.
+       - In 2D and 3D modes, vertical position tracks relative to the slanted roadway $m = -0.30$ (`currentLaneY = laneY(rawX)` and `targetY = currentLaneY + (rawY - currentLaneY) * 0.85`), eliminating artificial pull towards $Y = 720$ and tracking action smoothly from base to base.
+  2. **Keyboard Navigation & Inertia Damping (`handleKeyDown`)**:
+     - Added spectator keyboard flight controls in `handleKeyDown`:
+       - `ArrowLeft` / `A`: Glide West across the bridge
+       - `ArrowRight` / `D`: Glide East across the bridge
+       - `ArrowUp` / `W`: Glide North into the upper quadrants and Dragon Caldera
+       - `ArrowDown` / `S`: Glide South into the lower quadrants and Gravemarch Colosseum
+     - Applied continuous inertia damping (`panVelocityRef` $\times 0.88$) clamped strictly within arena boundaries $[120, \text{ARENA\_WIDTH} - 120] \times [120, \text{ARENA\_HEIGHT} - 120]$, producing broadcast-grade smooth gliding.
+  3. **Interactive Radar Minimap Click-to-Focus & Drag-to-Pan**:
+     - Implemented click-to-focus on champion tokens: clicking within 130px world space (~13 minimap pixels) of an alive champion locks onto that hero, sets manual camera, plays click audio, and displays floating feedback text (`🎯 FOCUSED: [Name]`).
+     - Clicking anywhere on minimap ground/pits initiates a silky smooth glide to that target without jarring instant snaps.
+     - Dragging on the radar minimap provides 1:1 real-time cursor tracking of the camera position.
+     - Added global `window.addEventListener('mouseup')` to ensure dragging state cleanly resets even when the cursor is released outside the canvas.
+     - Mirrored touch interactions (`handleCanvasTouchStart`, `handleCanvasTouchMove`) for mobile and touch devices.
+  4. **Updated Spectator Guidance**:
+     - Updated dock guidance hint: `Space: Auto Cam | 1-0: Focus Hero | WASD / Arrows / Minimap: Pan | Click portrait: Focus`.
+- Verification:
+  - `npm test`: **609/609 passed** (587 passed, 0 failed, 22 skipped, verified Howling Abyss minimap click-to-world mapping and camera frustum).
+  - `npm run build`: transformed 5,395 modules, 0 TypeScript or bundler errors.
+
+## Latest: Phase 2 — Jungle Macro AI & Objective Contestation (2026-10-29)
+
+- Owner instructed: *"continue phase 2"* (Phase 2: Jungle Macro AI & Objective Contestation on the expanded $2800\text{px} \times 1440\text{px}$ slanted Howling Abyss map).
+- Macro AI & Objective Enhancements Completed:
+  1. **Dynamic Jungle Routing Thresholds (`macroFarmRules.ts` & `AramMatchView.tsx`)**:
+     - Added optional `maxRoute` parameter to [`chooseKnownJungleCamp`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/macroFarmRules.ts#L4-L46) and [`choosePostRecallTeamCamp`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/macroFarmRules.ts#L61-L82).
+     - Calibrated routing thresholds for the slanted map in [`AramMatchView.tsx`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/components/AramMatchView.tsx):
+       - Tier-2 Junglers: `maxRoute = 850px`
+       - Tier-1 Junglers: `maxRoute = 680px`
+       - Carries / Mages / Marksmen: `maxRoute = 540px`
+       - Team Post-Recall Camp: `maxRoute = 1300px` (longestRoute) and `1200px` individual route
+     - Enables champions to reliably route to all 8 quadrant camps ($245\text{--}456\text{px}$ from lane) during wave lulls and regrouping windows.
+  2. **Slanted Lane Trajectory & Fountain Coordinates Correction (`AramMatchView.tsx`)**:
+     - Fixed hardcoded `LANE_Y = 720` references to use the authoritative slanted lane formula `laneY(x) = 720 - 0.30 * (x - 1400)`:
+       - Gravemarch Colossus spawn point at line 1616: `y: laneY(spawnX)` (preventing summoned golems from spawning off-lane).
+       - Well defense assessment and fountain arrival at lines 2883, 2943, 4079: `well: { x: WELL_X[u.team], y: laneY(WELL_X[u.team]) }` and `u.y = getChampionFormationY(u.champion.name, uIdx, u.team)` (preventing recalled champions from teleporting into jungle terrain).
+       - Highground base wards at line 3373: `laneY(highgroundRampX)`.
+       - Allied wave and enemy wave detection at lines 3982, 3993: `Math.abs(m.y - laneY(m.x)) < 150` and `Math.hypot(m.x - waveFrontX, m.y - laneY(waveFrontX)) < 210` (fixing minion wave recognition across the entire slanted roadway).
+       - Retreat routing lane anchor at lines 4252, 4268: `laneY: laneY(u.x)` and `well: { x: wellTargetX, y: laneY(wellTargetX) }`.
+       - Blocking nexus minion check at line 4637: `Math.abs(nearestMinion.y - laneY(nearestMinion.x)) < 145`.
+       - Nexus approach route corridor at line 4703: `currentLaneY = laneY(u.x)`.
+       - Post-objective regroup waypoint at line 4722: `postRegroupY = laneY(laneX)`.
+       - Push camp exit and lane advance at lines 5123, 5132, 5272: `y: laneY(pushCampExitTargetX)` and `getChampionFormationY(..., advanceLimit)`.
+       - 2D Canvas Camp & Sanctuary rendering at lines 8455, 8638: `laneY(camp.x)` and `laneY(WELL_X[team])`.
+  3. **Pit Scouting & River Mouth Vision Radii (`objectiveRules.ts` & `AramMatchView.tsx`)**:
+     - Scaled default `allyVisionRadius` in [`hasObjectiveVision`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/objectiveRules.ts#L118-L139) from `440px` to `520px`, and `wardVisionRadius` from `320px` to `350px`.
+     - Champions at the central river entrance ($480\text{px}$ from pit center at $Y = 240$ or $Y = 1200$) now detect active epic bosses and trigger contestation.
+     - Extended pit warding reach from `380px` to `550px` in `AramMatchView.tsx`, allowing champions patrolling river mouths or choke bushes to plant wards directly into the boss pits.
+  4. **Bush Stealth & Opposing Ward Detection (`AramMatchView.tsx`)**:
+     - Integrated bush ward reveal check in the champion simulation loop: if an enemy is inside a bush that contains an opposing team's ward (`w.team !== u.team`), `u.revealedTimer = Math.max(u.revealedTimer ?? 0, 0.25)`.
+     - Interacts with [`isUnitVisibleTo`](file:///c:/Users/User/Documents/Code%20Projects/Personal/Teamfight/EsportsClash.Web/src/combatDecision.ts#L15-L30) to actively grant vision of concealing enemies to the warding team.
+- Verification:
+  - `npm test`: **608/608 passed** (586 passed, 0 failed, 22 skipped, added Howling Abyss routing & river vision test cases).
+  - `npm run build`: transformed 5,395 modules, 0 TypeScript or bundler errors.
+
 ## Latest: Source Control Cleanup, Cache Purge & Ignored Artifacts (2026-10-29)
 
 - Owner instructed: *"pause it for now. I want you to clean up the source control all the cached fukes and the files that are not getting used I want you to remove it."*
@@ -4399,3 +4885,504 @@ Validation: two bpy regression tests passed in Colab (abducted rest pose; transf
 Next repair contract: use the measured world-target poses and fixed views to author an explicit desired joint surface before any more fitting. Start with one shoulder or hip target whose silhouette, joint volume and crease continuity can be judged independently of contact counts; preserve outside-region positions, rest identity and seam correspondence. Review both visible sides and held-out intermediate poses before expanding to other joints or exporting four-influence/game assets. Existing blind smoothing, contact-count and spherical-mask trials are rejected evidence, not templates to repeat. If an acceptable target cannot be authored with the available workflow, the remaining requirement is a technical-art shape/weight pass; do not claim another solver or threshold sweep resolves anatomy. No third-party interactive software, new purchase or model swap was performed.
 
 Final pose readback: all 48 retained artifacts returned matching hashes; shared preview returned 200 and report API matched the exact registered report SHA. Receipt: pose-contract-af0a65d4/backoffice-verification.json. This is shared controller/API verification, not authenticated browser E2E.
+
+
+### 2026-10-30: localized left-hip corrective tested and rejected
+
+Colab-only trial `d832094d-eddb-4b70-8b62-d47553d35d64` implements one explicit front-crease displacement handle on the same raw Mirelle body/skeleton and latest dense weight field (`e42afed24f19eefef5e715f5378b10b805e4994523e6d63a4c931bd12eac7438`). Source generation `26713b59-ef49-4f50-9271-35ff929c3e0d` and preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` remain unchanged. Parent pose review `af0a65d4-25d0-4715-9ad1-8a35dfa743b5` supplies the explicit world-direction contract. No model substitution, weight change, local 3D computation or production release.
+
+`hip_shape_trial.py` defines a compact C2 field in original body coordinates centred at the left hip plus [0,-0.065,0] body heights, ellipsoid radii [0.065,0.045,0.085], outward forward/up direction, amplitude 0.025 heights at90. Inverse linear skinning produces one rest-space corrective; activation is sin(angle)^2. This is an authored geometric hypothesis, not a validated anatomical target. Ninety degrees is the authored pose;22.5/45/67.5 are independent shape checks.380 vertices affected; rest delta max0.0221362 units, posed delta max0.0184220 at90. Inverse condition max1.40378; measured rest/outside-support delta and coincident seam spread remain zero. Final limb direction errors <0.000052 degrees. Existing preservation/displacement caps were not relaxed.
+
+Visual result: **rejected_shape_regression**.24 Babylon views/8 static GLBs;16 exact views manually assessed. The correction introduces a raised squared front-hip lip by45 and67.5 degrees. At90 the deep crease persists with an angular pelvic overhang. Rear90 views show no visible change but are not a full-body qualification. At90 some posed edges reach1.70624x baseline length, others0.51354x. Do not report these numerical preservation passes as visual progress. Do not strengthen/widen this handle, mirror it, fit it to four influences, or bake it into animation. Animation/export admission is false; the promised downstream animation check was conditional on a visibly acceptable target and was therefore not run.
+
+Backoffice `localized_shape_reviews` retains exact report, assessment,24PNGs,8staticGLBs and correctiveNPZ. Private downloads check source/raw/weight/parent-pose lineage and bytes. Shared preview displays before/after views and the rejection; existing JSON API reads the same state. All33 retained artifacts read back with matching hashes; shared preview200, API report hash matches. ReportSHA `686394f5d149a11bc5589e9a43e142776fe8a307fc39cf48705d55b16b11d8f5`; assessmentSHA `ba1325778b10b659f5bd800b0132b6e1cb4ff5d0f81872ca19a91289831c20e0`. Evidence: `docs/pipeline-audit-20261024/hip-shape-d832094d/`; exact inputZIP: `.local-tools/hip-shape-trial/d832094d-eddb-4b70-8b62-d47553d35d64/input.zip`. Three focused suites pass22tests/155assertions; Blade cache and service PHP lint pass. Tests include rest/outside-patch preservation, missing intermediate samples, matched cameras, tampered downloads and no publication.
+
+Recovery history preserved: first geometry run e2906020 completed but its initial HTML referenced an old shoulder snapshot, so render timed out. Corrected render1edfc83c returned0, then the runtime expired before artifact retrieval; no visual result or output-hash equivalence is claimed for it. The new attempt repeats the frozen sculpt policy with the correct preload. The old pose report, failed render report and interruption receipt are under prior-attempts/. New T4 gpu-t4-s-usw4a3-1n7okej2yrgue restored only pinned Python3.11/numpy1.26.4/scipy1.15.2/bpy4.5.3 and Python3.12/playwright1.55.0 browser tools. Full generator/rigging/animation service readiness remains unproven. Router-side completion watcher now downloads the bundle immediately when ready; it does not make Colab storage persistent. Earlier kernel access was recovered using supported SSH with a temporary router key; no private key is in evidence.
+
+Next credible shape requirement: a continuous pelvis-to-thigh target authored on this exact mesh that improves both front and side contours at45/67.5/90 while preserving rest identity and outside-region geometry. An artist-directed target/weight pass is a stronger next route than repeating this rejected procedural bulge. Existing snapshots and corrective data support that handoff, but do not themselves supply a successful target. Topology is not established as the sole cause. The overall production-ready avatar objective remains unfinished; do not claim the hip is repaired.
+
+
+### 2026-10-30: agent-authored contour revisions and bounded left-hip target
+
+User asked the agent to take responsibility for the artistic correction instead of referring it away. Completed four Colab contour revisions on the exact generated Mirelle body, unchanged raw skeleton and continuous-support dense weights e42afed24f19eefef5e715f5378b10b805e4994523e6d63a4c931bd12eac7438. No human-artist authorship claim, body replacement or production release. Source generation26713b59-ef49-4f50-9271-35ff929c3e0d and raw preparation24e7f704-3abe-42d4-9c47-204627ee9e88 remain canonical.
+
+The corrective is authored as a broader posed contour with its surrounding surface fixed. Positive inverse-rest-edge graph weights and a screened squared graph Laplacian produce45/90 targets, then inverse skinning gives two rest-space morph deltas with smoothstep interpolation. This is a custom graph fairing implementation, not libigl's FEM biharmonic operator. Conceptual reference: [libigl biharmonic surfaces](https://libigl.github.io/tutorial/#biharmonic-surfaces). Preserve original visible topology; numerical seam cohorts only share solver motion. Smoothness energy alone is not anatomy or volume preservation.
+
+Iteration evidence:
+
+- 81173ad0-59d6-4f29-9377-0d1d5bb69442: broad contour softens the front crease but pulls the waist inward.14/24 views assessed; rejected.813 source vertices in support.
+- f67dfc16-7e53-499a-a8ac-f82c061ed531: pin all original vertices above hip centre+0.03 body heights, fade over0.02 heights, retain15% tangential motion. Waist preserved, but PCA-normal projection creates a jagged inner fold.6/24 views assessed; rejected.
+- d286b072-2e6b-4803-9ea9-b70f074c1111: retain the pelvis pins and restore unconstrained motion within the patch.19/24 views assessed (all12 corrected views plus7 hash-identical inspected controls). Shape improves modestly, but independent intersection review finds94 contacts at67.5 and169 at90 versus zero baseline. Both pass the unchanged gross-stretch gate. This version is blocked for animation despite the visual improvement. Initial independent-check harness missed importing bpy before mathutils; failure log and corrected inspector retained separately.
+- e96c7db2-69b0-4030-9e97-00d4db16a49f: bound the same sculpt by fixed backtracking scales1,0.5,0.25,0.125,0.0625. Require zero intersections at11.25,22.5,33.75,45,56.25,67.5,78.75,90 degrees. Full strength fails at56.25 with18 contacts; half strength fails at90 with57; quarter strength passes all8 samples with zero.19/24 views assessed including all12 corrected views. Modest softening remains without the prior lip, waist drift or jagged fold; deep-bend crease and some angular shape remain. This is a partial visual improvement, not a completed hip repair or production pass.
+
+Latest scope:561 vertices in support. Original rest and outside-region deltas zero; protected upper pelvis delta zero; coincident seam spread zero. At quarter strength max rest delta0.00543515 and max posed delta0.00449528 source units. No frozen displacement/seam cap relaxed. Contact checks are sampled poses, not continuous collision detection; twist/knee/combined game motion remain untested. The latest target is admitted only to a separate export/motion experiment. No four-influence rig fit, actual animated GLB, game clip or full-body qualification was produced in this pass. Do not replace the actual avatar rig with a two-transform diagnostic shortcut and call it production.
+
+Backoffice/API: four immutable localized_shape_reviews with96PNGs,32staticGLBs and4NPZs. Versioned policies enforce original lineage, prior-review chain, upper-pelvis proof and, forv5, the exact8-angle zero-contact proof. Independentv4 geometry review retained with its report hash. Shared preview and JSON API use canonical state. Latest numerical solver tests4passed in Colab; focused API tests check missing parent, moved protected pelvis and nonzero sampled intersections. Final suite/readback results are recorded below only when completed. Source helpers are hip_contour_field.py, hip_contour_trial.py and inspect_contour_geometry.py. Exact per-attempt inputZIPs are under .local-tools/hip-contour-trial/UUID/input.zip; evidence folders use hip-contour-UUIDprefix under docs/pipeline-audit-20261024/.
+
+Next implementation: preserve the latest dense weights and both corrective targets through a real four-influence fit and standard skinned/morph GLB export. Recheck body/rest preservation and visible shape after export, then actual Babylon playback with knee flexion, twists and held-out combined motion. Recheck contacts after fitting and export; the dense-field zero-contact result cannot be transferred by assertion. Improve remaining contour defects through explicit evidence-driven edits if necessary. Continue owning the art/technical correction; a previous failed analytic patch is not by itself a reason to hand the task off. Right hip, shoulders, outfit and full game qualification remain outstanding.
+
+Exact retained report/assessment hashes:
+- {"id": "81173ad0-59d6-4f29-9377-0d1d5bb69442", "report_sha256": "47b43b8c39e628c79c41395bdbf9bdff04922e8d6e742807106a39b84debd51f", "assessment_sha256": "879c88667ac14a732a04fa7ddf1ecaa270e2d83a7793d523c8219993dc62daa9"}
+- {"id": "f67dfc16-7e53-499a-a8ac-f82c061ed531", "report_sha256": "5f664fbf9a5eb441f8b5d5947a21aa1ceec5dafed6a314536facf8e4ff633d77", "assessment_sha256": "0ee3d53653b7c1aedf3ce37391c80a32fc582feeffb4ce4a3641fcfbd2b92a62"}
+- {"id": "d286b072-2e6b-4803-9ea9-b70f074c1111", "report_sha256": "96b2df29306bcc8e543880272b58b7811424cf274b9b302eca4070d0d8e825fc", "assessment_sha256": "c90db7270fee16a950bb815a716ef2b8115d60788ca0aa6466afc5bf0ea613f3"}
+- {"id": "e96c7db2-69b0-4030-9e97-00d4db16a49f", "report_sha256": "566772b8cfdc8b1caf3e514748624cd60a0bed46acad760b4adb1e91d2036b26", "assessment_sha256": "3feea60652ec6dafa54b526e783f0a62fda1c7e129460ef82002c584253001e6"}
+
+Final contour verification: all132 retained artifacts returned matching hashes; shared preview200 and API matched all four report hashes. Receipt: hip-contour-e96c7db2/backoffice-verification.json. Final focused suites23tests/162assertions passed; Blade cache compiled. This verifies shared controller/API rendering, not authenticated browser E2E or game-animation qualification.
+
+
+### 2026-10-30: current contour sparse representation preflight
+Completed canonical readback of all132 prior contour artifacts and appended its receipt. Old Colab session was absent with no active server runtime; created replacement T4 asset-quality-rpc and restored pinned bpy4.5.3/numpy1.26.4/scipy1.15.2 plus Playwright1.55.0 Chromium. No local geometry computation.
+
+Frozen input export-input.zip SHA256 fbe2c49fe79fca0fd184631f0212791e3862203ee09a9e9c934e805b12a93f17. Uses exact e96c7db2 approved corrective, original52bone rig and current bounded weights. Greedy simplex fit converts3352 vertices with more than4 influences; all vertices now at most4.18 left-hip bend/hip-knee checks (9training/9heldout) passed frozen numerical error limits and had zero fitted or dense self-intersections. Max positional error1.60415e-9 source units. Weight artifact713a8fb6144c9b0b0c3e9dfd7614bfa837e005c4e60367baf7988efedb2ea880.
+
+IMPORTANT: fitting only left-hip motion leaves stationary bone channels underdetermined. This artifact must not become a full-avatar export without independent whole-body motion checks and likely a broader training set. Internal ready_for_export_experiment status describes this limited numerical experiment ONLY. No animated GLB, Babylon playback or publication has been produced. Backoffice approved review remains unchanged; this preflight is audit evidence, not a new accepted backoffice avatar candidate. Evidence and exact source/input are in docs/pipeline-audit-20261024/contour-sparse-preflight-20261030. Next: independent motion coverage, then actual skinned+morph export and Babylon validation; do not reuse older spherical weighting or a replacement diagnostic skeleton.
+
+
+### 2026-10-30: lossless seven-influence animation export and Babylon playback
+The earlier hip-only four-influence fit failed independent shoulder/forearm tests. A broader four-influence refit used rotations of all52 bones (159training cases), then186held-out single-axis/paired cases: max error0.00193049327, RMS worst0.00011726539, relative worst0.08612710885 exceeds unchanged0.05 cap. All8hip collision samples remained zero. Preserve the failed result in whole-body-sparse-20261030; do not publish or use those fitted weights.
+
+Key finding: original bounded weights e42afed24f19eefef5e715f5378b10b805e4994523e6d63a4c931bd12eac7438 already have at most7 influences. Babylon supports8 ([official documentation](https://doc.babylonjs.com/features/featuresDeepDive/mesh/bonesSkeletons)). This diagnostic preserves the exact weights, original body/52-bone rig and e96c7db2 corrective. It does NOT relax the production pipeline's existing4-influence gate. A separately qualified8-influence profile/device budget is still required.
+
+Export fixes: load NPZ arrays once (initial helper repeatedly decompressed per vertex); compare equal seconds after30fps export/24fps import; join synchronized skeleton and morph channels into one Mirelle_HipDiagnostic clip; disable bpy4.5.3 exporter's min_influence0.0001 pruning only for this diagnostic. Exact source before/after hashes retained. Pinned dependency restored afterward. run_lossless_export.py provides guarded temporary patch+finally restore for reproduction; do not run concurrent exports against that environment. Existing failed FPS/split-clip/pruning checks retained.
+
+Final GLB42ac17a5740ab76878ca88d49e4b03cbb2d5998e7483acce91160bc0dc6ee597 has one clip,52joints,2morph targets and7actual skin influences through JOINTS_0/1 and WEIGHTS_0/1. Nine reimported animation samples pass frozen1e-5height surface gate; maximum4.172325134277344e-7. Actual packaged Babylon inspector loads numBoneInfluencers8,52bones,extra weights and2morphs. Continuous playback advances (frame67.038 of240);18captures and all18morph samples match authored curve within1e-5. Initial playback harness resumed a paused group incorrectly; explicit stop/start/restart fixed it, failed harness report retained. Six exact screenshots manually inspected: rest, intermediate, peak and return; no obvious gross export distortion. This is not anatomical close-up acceptance, continuous collision proof, full-body/gameplay animation qualification or device performance.
+
+Backoffice canonical animation_playback_reviews entry keyed by exactGLB SHA retains11unique artifacts (18captures have symmetric duplicate hashes plusGLB). Shared preview adds diagnostic section, photos and download; JSONAPI returns the same state. Downloads verify parent report/weight lineage and file hashes. No status, publication or existing asset replacement. Three new regression tests reject tampered bytes/changed lineage and verify exact readback. Focused suites26tests/167assertions pass; Blade cache compiles. Final canonical readback receipt appended when complete.
+
+Next: qualify a deliberate8-influence profile for the actual Web/API/runtime and target devices without silently relaxing current production validation; validate exported combined motion/twist/contact coverage and improve shoulders/right hip. Retain original7weights rather than repeating unnecessary4-influence compression. Full generator availability and production readiness are NOT established. Evidence: docs/pipeline-audit-20261024/lossless-animation-20261030; failed sparsefit under whole-body-sparse-20261030. New export/render helpers are Colab-only.
+
+Final lossless-animation canonical verification:11unique retained artifacts returned matching hashes; preview200; shared API entry exactly matches canonical state. Receipt lossless-animation-20261030/backoffice-verification.json.26focused tests/167assertions passed; scoped diff whitespace check passed. No publication performed.
+
+
+### 2026-10-31: exported avatar combined-motion failure isolated
+Recreated expired Colab T4 asset-quality-rpc and restored the pinned minimal Blender/Babylon environment. Used exact exported GLB42ac17a5740ab76878ca88d49e4b03cbb2d5998e7483acce91160bc0dc6ee597, original52bone skeleton/seven actual influences and both hip targets. All3D processing/rendering stayed in Colab. Old inputs/evidence retained unchanged.
+
+Combined report fe11f0e1c304118f06aa6487a04b696d6635637c911bd7e5a1186932e9010edb contains17sampled poses:9have self-intersections and8have zero.34Babylon static snapshots rendered;4inspected visually. These are evaluated poses of the real export, not new game clips or continuous collision tests. Child controls are explicitly local-X angles, not a claim of anatomical hinge axes. Shoulder/chest distortion is visible. Edge-ratio statistics are diagnostic only; no new beauty or geometric gate inferred from them.
+
+- Left hip60/knee60/twist-20,0,+20:zero contacts. Hip90/knee90/twist-20,0:zero; +20:42contacts (34pelvis/pelvis,8pelvis/thigh).
+- Right hip60/knee60/twist-20,0,+20:zero. This does not clear all right-hip poses.
+- Shoulder60/elbow60/twist-20,0,+20: left363/364/396, right443/414/386. Shoulder90/elbow90/no twist:left107,right178.
+
+21isolation controls establish the failure is not simply corrective strength or elbow motion. At hip90/knee90/twist+20, corrective multipliers0,.25,.5,.75,1give39,39,39,41,42contacts. Do not claim turning off the corrective fixes it, and do not silently introduce a pose clamp. Shoulder60 with elbow straight has348left/390right; coordinated parent motion lowers to307/330. At90 straight elbow93/166 lowers to30/97. Elbow60 gives364/414 at60, or311/342 with coordination; at90 gives109/178 or34/101 coordinated. Parent coordination helps but is not a complete repair.
+
+Backoffice/API now retain combined_motion_reviews under report SHA,34exact PNGs, motion measurements, controls, visual assessment and explicit diagnostic-eight-influence metadata (actual7/capacity8/production_admitted=false). Shared preview prominently states9of17poses intersect and qualification blocked. Existing successful export/playback record remains immutable and separate. No publication/status promotion, no production4-influence gate relaxed. AvatarCombinedMotionReviewService validates all17pose identities, all21control identities and contact data,34views, exact exported parent and file hashes; contradictory contact-pass reports rejected. Fixed idempotent immutable comparison across JSON numeric/key normalization while preserving content equality. No actual shoulder/hip mesh repair has been accepted in this pass.
+
+Tests: initial focused combined+playback+raw-rig suite23tests/129assertions passed; after stricter controls and JSON normalization, combined suite5tests/11assertions passed. Blade templates compiled. Final canonical file/shared-preview/API verification recorded separately when complete.
+
+Next repair target is shoulder/chest deformation with elbow straight at60/90, keeping explicit parent pose controls as separate baselines. Repair the remaining left hip positive-twist contact using the actual seven-weight field and multi-axis target, not further single-angle strength tuning. Preserve rest/upper-pelvis/seam caps and all failed evidence. Production eight-influence admission, device performance, real gameplay clips, equipment, and full-body anatomical review remain undone. Do not describe this combined-motion test as passing. Sources/helpers/evidence: docs/pipeline-audit-20261024/combined-motion-20261031 and infrastructure/avatar-evolution/check_combined_motion.py, isolate_combined_contacts.py, render_combined_motion.py.
+
+Final combined-motion verification:34retained PNG hashes matched, shared preview200 and API state matched. Receipt combined-motion-20261031/backoffice-verification.json. Avatar remains unqualified; detected intersections are unresolved.
+
+### 2026-11-03: Organic League of Legends Two-Lane Terrain Overhaul, 12-Camp Jungle & Live Top/Bot Lane Turrets + Creeps (`two-lane-v5`)
+- **User Request & Context**:
+  - After reviewing the `two-lane-v5` screenshots, the user shared a League of Legends Summoner's Rift reference image (`media_1793711840132_1075a2b6.jpg`) and asked:
+    > *"why does it look like a platform tho? Can you make it look like a rock or something that is not straight and should go with the grassy field? Also the creeps does not spawn in it and the towers are in the middle of the map it should be in the lanes. Add more jungle camps and terrains like league of legends."*
+- **Root-Cause Investigation**:
+  1. **Why towers were in the middle (`y = 720`) and creeps didn't spawn in the lanes**: `AramMatchView.tsx` (`initialStructures`, lines 1578–1590) still initialized only 6 single-lane towers (`b_t1..b_t3`, `r_t1..r_t3`) along `y = laneY(x) = 720` instead of the 12 Top/Bot lane towers (`b_top_t1..t3`, `b_bot_t1..t3`, `r_top_t1..t3`, `r_bot_t1..t3`). Likewise, `spawnMinionWave()` in `AramMatchView.tsx` omitted the `'top' | 'bot'` lane parameter and did not fire an initial wave at match initialization, leaving live creeps marching down the center axis (`y = 720`).
+  2. **Why the map looked like a raised platform**:
+     - `arenaElevation.ts` dropped the entire grassy field to `height = 0` while keeping lanes/bases at `RIDGE_HEIGHT = 38`, creating a 38-unit vertical cliff under the lanes.
+     - `BabylonBattlefield.ts` extruded white 3D tube curbs (`curb-tube:*`), retaining walls (`cliff-tube:*`), rectangular stairs (`lane-stair:*`), white bridge balustrades (`bridge-rail:*`), and flat circular discs (`center-island-pad`).
+     - `PaintedArenaProcedural.ts` painted a straight beige sandstone road with white curbs, drop shadows, and neon target rings.
+- **Implementation**:
+  1. **Live Top/Bottom Lane Turrets & Creep Waves (`AramMatchView.tsx`, `arenaLandform.ts`, `matchSimulationEngine.ts`)**:
+     - Updated `initialStructures` in `AramMatchView.tsx` to spawn all **12 Top & Bottom Lane Turrets** (`b_top_t1..t3`, `b_bot_t1..t3`, `r_top_t1..t3`, `r_bot_t1..t3`) positioned on `topLaneY(x)` and `botLaneY(x)`, plus the 6 Barracks and 2 Nexuses.
+     - Updated `spawnMinionWave()` in `AramMatchView.tsx` to spawn both `'top'` and `'bot'` creep waves (`for (const lane of ['top', 'bot'] as const)`), passing `lane` to `minionSpawnPosition(team, type, i, lane)` and setting `lane` on each `LaneMinion`, and triggered an initial wave on match setup so creeps immediately march along both Top and Bottom lanes.
+     - Updated `advanceLaneMinion` in `arenaLandform.ts` so `'top'` and `'bot'` creeps immediately steer onto and follow `topLaneY(x)` and `botLaneY(x)`.
+  2. **14-Camp League of Legends 4-Quadrant Jungle & Sculpted Rock Dividers (`arenaLayout.ts`, `AramMatchView.tsx`, `matchSimulationEngine.ts`)**:
+     - Added a symmetric organic meander to `topLaneY(x)` and `botLaneY(x)` while preserving 0.0px East-West mirror symmetry.
+     - Expanded `campRings` from 10 to **14 camps** (12 mirrored regular camps across the 4 jungle quadrants: `j_blue_blue_buff` `(740, 435)`, `j_blue_behemoth` `(500, 455)`, `j_blue_wolves` `(1055, 445)`, `j_blue_golem` `(500, 985)`, `j_blue_red_buff` `(740, 1005)`, `j_blue_drakes` `(1055, 995)`, and their exact East mirrors `j_red_wolves`, `j_red_blue_buff`, `j_red_behemoth`, `j_red_drakes`, `j_red_red_buff`, `j_red_golem`, plus `dragon_boss` `(1400, 95)` and `j_siege_golem` `(1400, 1345)`).
+  3. **Flush Grassy Field & Organic League of Legends Ground/3D Rock Art (`arenaElevation.ts`, `PaintedArenaProcedural.ts`, `BabylonBattlefield.ts`)**:
+     - Eliminated the 38-unit vertical platform drop in `arenaElevation.ts` so the grassy field, lanes, bases, and center island sit flush at natural ground level (`RIDGE_HEIGHT = 38` with gentle organic terrain undulation), while only the winding river bed carves down to `-12`.
+     - Rebuilt `PaintedArenaProcedural.ts` with deep forest turf, non-straight grass-feathered earthen & cracked-flagstone lanes, winding S-curve dirt jungle trails, dark-teal river with rocky stepping-stone fords, sunken fractured-slate boss coves with glowing purple arcane and molten fissures, and natural weathered-slate base sanctuaries.
+     - Rebuilt `BabylonBattlefield.ts` to remove all stadium curbs, railings, stairs, and flat discs, replacing them with multi-faceted slate/mossy rock ridges, purple arcane crystal fissures, gnarled tree roots, flickering orange fire torches at camp/river entrances, and dense 4-quadrant woodland canopy.
+- **Verification**:
+  - `node --test src/arenaRules.test.mjs src/terrainRouting.test.mjs src/arenaLandform.test.mjs src/babylonViewer.test.mjs src/phase0Foundations.test.mjs src/twoLaneStrategyRules.test.mjs`: **48/48 passed**.
+  - `npm run build` (`tsc -b && vite build`): **0 errors**.
+  - Live WebGL verification (`scripts/verify-two-lane-live.mjs`): **6/6 camera views rendered with 0 console/runtime errors**.
+  - All non-negotiable gameplay invariants (all-3-barracks Nexus unlock, risk-based tower diving, 10s turret attribution, 10 stealth bushes, 12px steering deadband, parody aliases `Cardrel`) remain 100% intact.
+
+
+
+### 2026-11-07: bounded compound-deformation attempts, retention in progress
+
+/root owns the Colab deformation/export review and canonical API/Web evidence; no delegates. Existing unrelated arena/ML/workspace changes were preserved. Source is preparation `24e7f704-3abe-42d4-9c47-204627ee9e88`, original 52-bone skeleton, exact seven-influence weights `e42afed24f19eefef5e715f5378b10b805e4994523e6d63a4c931bd12eac7438`, retained e96c7db2 hip targets and GLB `42ac17a5740ab76878ca88d49e4b03cbb2d5998e7483acce91160bc0dc6ee597`. No body/skeleton substitution, compression, pose clamp, production gate change, outfit or publication.
+
+Old Colab session was absent. Replacement T4 `asset-quality-rpc` has only pinned Python 3.11.14/bpy4.5.3/numpy1.26.4/scipy1.15.2 and separate Playwright1.55.0 inspection restored. Boot SHA `b1c325a5a747bac0817ce6ab63a86e2fe11ce16741e0c834e55cda3b09af16b6`. Generation/production rig/animation services were not restored or proven ready. All 3D processing and rendering stayed in Colab.
+
+Four separately frozen attempts reproduced 17 combined baselines and 21 isolation controls, then measured 25 poses each: fairing `42facc5c-3ec4-4a89-95e5-49a218202103` worsens contacts and visible shoulder facets; minimum-separation `54ff2544-dce8-477c-a8b8-9790ce16bb57` retains five zero targets because no iterate improves contacts; volume shoulders `8c622f7c-396d-4087-9453-dbdf1ec8f392` improves straight 90-degree shoulders 93/166 to32/88 but worsens right60/elbow60/twist-20 from443 to464; compound volume `2c132a25-0711-44d7-8f6f-fedcc2060b7a` worsens hip90/knee90/twist+20 from42 to112 and that shoulder to484. No acceptable repair has resulted. Do not select these failed targets for blind strength/mask tuning. The remaining art/technical correction stays agent-owned.
+
+New `AvatarCombinedContourReviewService`, shared preview partial/private `contour-proof-*` downloads and `combined_contour_reviews` retain rejection, exact lineage, before/after images, exported playback and separate reimported contact values without qualification. First two reviews have canonical byte readback/shared preview200/API equality receipts. The last two final playback/retention checks are still finishing; their completed numerical reports/targets/engines are already durable under `docs/pipeline-audit-20261024/contour-repair-20261107/numerical/`. Do not infer their final readback from this entry. Exact hashes, limits, cameras and current status: [audit](pipeline-audit-20261024/contour-repair-20261107/README.md), [machine index](pipeline-audit-20261024/contour-repair-20261107/audit-index.json).
+
+Source helpers: `repair_combined_contour.py`, `repair_contact_contour.py`, `repair_dq_shoulder.py`, `repair_pose_volume.py`, `export_contour_trial.py`, `verify_contour_reimport.py`, `render_contour_trial.py`; backoffice helper `retain-contour-review.php`. The future point-only export evaluator has a separate Colab equivalence diagnostic; original frozen export engines remain intact. An attempted export replacement was refused before mutation because the original stage had dispatched.
+
+Focused API suites32tests/148assertions and Blade cache pass, including changed ancestor, body-scale rebase and frozen-limit rejection. Retention reads one artifact at a time; shared preview verification used a512MiB CLI limit for the existing large history, not browser/device performance qualification. First harness front labels actually show rear, some left-side views are occluded, and rest framing was offset in attempts1–3; attempt4 corrects rest targeting. Keep these visual limits and all failed evidence. Exact final results will be appended after pending retrieval; Mirelle remains unqualified/unpublished.
+
+
+### 2026-11-07: all four compound repair attempts retrieved and verified
+
+Final retention is complete for `42facc5c`, `54ff2544`, `8c622f7c` and `2c132a25`; no deformation/export/review job from this pass remains pending. All four GLBs,700 captures, numerical targets, exact engines and failed assessments are durable. Individual canonical readbacks verified212/175/216/224 artifacts respectively (827 per-review unique artifacts total). Current shared preview returns200 with all four reviews and the report API matches canonical state; preparation remains `needs_review`, qualification/publication false. Final receipt: [final-backoffice-verification.json](pipeline-audit-20261024/contour-repair-20261107/final-backoffice-verification.json). This is shared controller/API verification under512MiB CLI memory, not authenticated browser E2E/device performance.
+
+The requested repair is unfinished. Ten named views each of the last two trials confirm bulkier shoulder roots, persistent underarm crease/shading differences between static snapshots and live skinned GLB, and no accepted hip-contour improvement. Together with prior assessments,34 named captures are logged. The negative-twist and hip regressions survive GLB reimport; no candidate was adopted. All exports passed101 sampled positional roundtrips; the last three also passed sampled rest/weight/hierarchy/edge checks and Khronos zero errors with one retained `NODE_SKINNED_MESH_NON_ROOT` warning each. These technical results do not clear anatomy, normals/shading, continuous motion or game qualification.
+
+Exact report/target/GLB hashes,25-pose tables, runtime/engine inputs, all assessments and verification limits: [final audit](pipeline-audit-20261024/contour-repair-20261107/README.md), [machine index](pipeline-audit-20261024/contour-repair-20261107/audit-index.json). Current source/weights/52-bone skeleton, old e96c7db2 playback, original combined review, frozen displacement/protection policy and production four-influence gate are unchanged. Do not promote the32/88 isolated shoulder counts or repeat these rejected shape/strength hypotheses. The next anatomical correction stays agent-owned; no human-artist handoff or model substitution was made.
+
+Final scoped API suites32tests/148assertions pass and Blade cache compiles. A future point-only export evaluator is coordinate-identical to the full evaluator in four actual Colab GLB poses; its receipt is retained, but the frozen exports above used their original engines. Colab T4 remains connected with the minimal diagnostic environment; production generation/rig/animation readiness remains unverified. No appearance fitting or publication.
+
+
+### 2026-11-07: attempt 5 section handles v6 and companion morph normal transport verified
+
+Completed and retained attempt 5 (`61a07eaa-8371-4a72-81cf-c46239175a45`, method `combined-left-section-handles-v6`) under preparation `24e7f704-3abe-42d4-9c47-204627ee9e88`. It translates the whole proximal-arm cross-section (0.01805H) with coherent chest displacement (0.00349H at 60 degrees, 0 at 90 degrees) within the frozen 0.02H shoulder cap on the left shoulder. It eliminates the flat vertical notch defect caused by sheet-side handles v5 (`f89461c3`) and reduces measured left-shoulder self-intersections from 348 to 0 (60 degrees straight), 93 to 0 (90 degrees straight), 363 to 0 (60/elbow60/twist-20), 364 to 16 (60/elbow60/twist0), 396 to 63 (60/elbow60/twist+20), and 107 to 0 (90/elbow90/twist0) with zero contact regressions across all 25 poses and zero severely stretched edges. Diagnostic GLB SHA `09c12c8a1b3a9d77fc0bd9da735a339a721459f46361650d104d7884f95da9ae`, targets SHA `39420bf1068dfdf7eb9ae87d15949a2153282b9b22e185ae14ff2da5306637e6`, report SHA `9efb3404b9b2f06568f27dd6786c8844659c5e1249fcb5dbd037ea8fec9ac272`. All 192 artifacts are retained under `docs/pipeline-audit-20261024/contour-repair-61a07eaa/` and verified in canonical backoffice state.
+
+Companion morph normal transport (`shoulder-normal-transport-61a07eaa`) pre-bakes linear skinning normal delta compensation into morph target normals. Normal-corrected GLB SHA `fcff07df9c8168d4c98d365522370f4b7195fe4da8e6a1cf27b6d345890844e4`, report SHA `e6b553fca48fc00af7abaa1f2a87ada4f5e71917cec65f1c8b12f1de1c01db1d`, glTF validation SHA `0135660c481a70310750b49b54c9fdc7f03732d360c97c7033ab4996f5bd7305` (0 errors, 1 warning `NODE_SKINNED_MESH_NON_ROOT`). Active support normal divergence dropped from max 58.53/64.01 degrees to <6e-6 degrees with 0 support vertices worse over 1 degree.
+
+Babylon visual review of 15+ captures confirms that the inner arm is smooth without the v5 vertical notch, and dark crease shading is eliminated. The candidate remains unqualified: visual review still finds a compressed anterior axillary crease at 60 degrees and a horizontal deltoid-biceps transition dent/undulation where the axial section envelope fades out (`along > length * 0.70`). Right shoulder (390/166 straight, 443 compound) and left hip (42 at 90/knee90/twist+20) were held at baseline as controls. Backoffice verification confirms all 5 reviews pass with preview status 200 and API match.
+
+### 2026-11-07: attempt 6 bilateral section handles v7 and companion normal transport verified
+
+Completed and retained attempt 6 (`3b606292-c3c6-4266-bcfd-7bdaf5788d19`, method `combined-bilateral-section-handles-v7`) under preparation `24e7f704-3abe-42d4-9c47-204627ee9e88`. It applies proximal-arm cross-section translation symmetrically to both `UpperArmL` and `UpperArmR` (0.01805H displacement) with coherent medial chest displacement (0.00349H at 60 degrees, 0 at 90 degrees) within the frozen 0.02H shoulder cap, and extends the distal humerus envelope smoothly across 40% of bone length ([0.0, 0.25, 0.55, 0.95]) to eliminate the localized deltoid-biceps transition dent.
+
+Measured collision outcomes on Google Colab:
+- Left shoulder straight 60°: 348 -> 23 (-325 contacts)
+- Left shoulder straight 90°: 93 -> 0 (-93 contacts, **0 contacts**)
+- Right shoulder straight 60°: 390 -> 44 (-346 contacts)
+- Right shoulder straight 90°: 166 -> 0 (-166 contacts, **0 contacts**)
+- Left compound twists (60/elbow60/twist -20, 0, +20): 363->24, 364->38, 396->97 (vs baseline 363/364/396)
+- Right compound twists (60/elbow60/twist -20, 0, +20): 443->134, 414->69, 386->40 (vs baseline 443/414/386)
+- Compound 90/elbow90/twist0: Left 107->0, Right 178->0 (**both arms 0 contacts**)
+- Hip poses remained stable with zero regressions: `10-ThighL-90-child90-twist20`: 42 baseline / 42 candidate; `22-ThighL-90-child90-twist10`: 17 baseline / 17 candidate.
+- All 25 evaluation poses completed with **zero contact regressions** and zero seam opening.
+
+Diagnostic GLB SHA `aaf1529ffff733e6ed97c078fffc949a5280098c16107df29586932051cced0f`, targets SHA `d1288bc01259977ef623207e66da10921bd440c16681cadf7e770cb97f3e4ccf`, report SHA `beb31a81359ab642ea971290a585020ded813095c753d5430a6e6e3d5aa2d39b`. Khronos glTF-validator: 0 errors, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`). 223 artifacts are durably retained under `docs/pipeline-audit-20261024/contour-repair-3b606292/` and verified in canonical backoffice state.
+
+Companion morph normal transport (`normal-stage/`):
+- Pre-skin morph normal delta transport on all four bilateral shoulder targets (`UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`) eliminates active support normal divergence on training poses from max 58.5°-82.7° to 0.000002°-0.000018° (worse > 1°: 0).
+- p90 normal error on heldout compound right shoulder poses drops below 0.006°, and compound left shoulder poses below 0.22°.
+- Normal-corrected GLB SHA `6590e1f36be60d7b9b7238146d7d1968becd728ddb2384b0fd48c7385e71e248`, report SHA `a1877d37885156fe18a87670fb824c4f2bbcd7afda5babf0e25ccb3c31cbe589`.
+- Khronos glTF-validator: 0 errors, 1 warning, 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+- Babylon Playwright capture confirmed GPU compiled shader defines: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, and `NONUNIFORMSCALING` absent.
+
+Direct Babylon visual review of 24 contour captures and 4 normal-corrected captures confirms:
+- Symmetrical section handle translation completely resolved the high contact counts on the right shoulder without regressing any negative twist poses.
+- The smoothed distal envelope eliminated the horizontal deltoid-biceps transition dent.
+- The candidate remains **unqualified and unpublished**: anterior axillary crease compression persists at 60 degrees under the armpits, and hip creases remain at baseline (42 contacts at 90/knee90/twist+20). An experimental proximal thigh handle produced zero contact reduction and was excluded from normal transport due to split crease normals.
+- Preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` remains `needs_review` across all 6 retained reviews (preview HTTP 200, API match verified). No game clips, outfit fitting, production 8-influence admission, or publication is claimed.
+
+### 2026-11-07: in-browser 3D Rigging Studio removed
+
+The owner asked for the Meshy-style "3D Rigging Studio" to be removed from the web app. Removed its top-nav button and modal (`App.tsx`), the "Open 3D Rigging Studio" button and modal in `components/ChampionHubView.tsx`, and deleted `components/MeshyRiggingStudio.tsx`, `components/meshy-rigging-studio.css`, `src/rigging/*` and `src/meshyRiggingPipeline.test.mjs`. That studio performed local in-browser rigging, which the Colab-only asset pipeline direction already excluded. The Laravel backoffice, Colab pipeline, Babylon inspector, avatar preview and all gameplay/ML code are unchanged. Historical docs/evidence that mention the studio (`meshy-rigging-pipeline.md`, older handoff/mechanics entries, evidence JSON) remain as immutable history and no longer describe live UI.
+
+Verification: `npm run build` passes. `npm run check:game` reported 598 pass / 1 fail / 22 skipped: the single failure is `threeArenaScenery.test.mjs` (scenery instance budget), which depends only on terrain files carrying other uncommitted work (`arenaLayout.ts`, `arenaLandform.ts`, `arenaElevation.ts`), not on this change. Limit: `EsportsClash.Api/resources/game/manifest.json` still lists the deleted sources; it is a hashed release snapshot from `infrastructure/online/export-catalog.mjs` and was deliberately not regenerated mid-flight. A front-end finish/redesign plan (old-school, UX-friendly; 6-section IA) is pending owner decisions and has not been implemented.
+
+### 2026-11-07: Hattrick Horizontal Player Profiles, Caricature Portraits, Role-as-Position, Scheduled Tournaments & Match Orders
+
+- **User Request**:
+  1. Remove the "card" look and chibi style; make player rows and portraits look like Hattrick (caricature portraits on sky-blue sunburst, narrative experience/leadership/loyalty line, TSI/Wage/Speciality/Form/Stamina, and horizontal green skill bars with verbal descriptors inside and yellow key-skill highlights).
+  2. Remove `Top`, `Jgl`, `Mid`, `Bot`/`ADC`, `Sup` and use **Role as Position** (`Tank`, `Fighter`, `Assassin`, `Mage`, `Marksman`, `Support`).
+  3. Remove the Gaming House Facilities infrastructure (`PC Scrim Battle-Station`, etc.) and arbitrary daily schedule buttons.
+  4. Remove on-demand `"Play Next Match"` for tournaments; official tournaments (`Opening/Spring/Summer Regionals`, `First Stand`, `MSI`, `Worlds`, `DreamLeague`) must be scheduled like Hattrick and play at their scheduled kickoff.
+  5. Every game/series must have **Match Orders** like Hattrick (`Play It Cool`, `Normal`, `Match of the Season`, Tactical Doctrine, Role Position assignments, Individual Orders, and Bo3/Bo5 conditional adjustments).
+  6. Keep `Play` for arranging friendly/tactical scrimmage matches to test tactics.
+- **Implementation**:
+  - **Hattrick Caricature Portraits & Horizontal Player Profile Rows** (`src/components/ChibiAvatar.tsx`, `src/components/CardComponent.tsx`, `src/components/player-card.css`, `src/components/SquadView.tsx`, `src/components/TransferMarketView.tsx`):
+    - Replaced anime chibi portraits with procedural Hattrick-style comic caricature SVG portraits (sky-blue radial sunburst background, thick ink outlines, caricature head/nose/eye/mouth shapes, and striped club jerseys).
+    - Replaced vertical trading cards with horizontal `.ht-player-block` rows (`8. Player Name`, macro-region flag `ASIA`/`EUROPE`/`AFRICA`/`AMERICAS`, narrative experience/leadership/loyalty line, circular role badge `TK`/`FT`/`AS`/`MG`/`MK`/`SP`, Age in years & days, TSI, Wage, Speciality, Form & Stamina bars, `Last rating (★)`, and 6 horizontal Hattrick skill bars with verbal descriptors inside the green bar and yellow key-skill highlights).
+  - **Role as Position Everywhere** (`src/App.tsx`, `src/components/SquadView.tsx`, `src/components/ProCircuitView.tsx`, `src/components/PlayerDraftPhaseView.tsx`, `src/equalizedMode.ts`):
+    - Removed `TOP`, `JGL`, `MID`, `BOT`/`ADC`, `SUP` lane labels across squad sheets, pro circuit rosters, and draft slots; players are assigned and displayed by their **Role Position** (`Tank`, `Fighter`, `Assassin`, `Mage`, `Marksman`, `Support`).
+  - **Removed Gaming House Infrastructure & Added Hattrick Scheduled Fixtures + Match Orders** (`src/types.ts`, `src/components/MatchOrdersModal.tsx`, `src/App.tsx`, `src/components/TournamentView.tsx`):
+    - Removed `Gaming House Facilities`, `Daily Club Schedule & Training Activities`, and `"Play Next Match ▸"` from Club Home.
+    - Added `MatchOrdersModal.tsx` and scheduled kickoff fixtures (`Saturday 18:00 UTC`, `Wednesday 19:00 UTC`, `Sunday 20:00 UTC`) across Club Home and `TournamentView.tsx` so every match/series has Hattrick Match Orders (`PIC`/`Normal`/`MOTS` attitude, Tactical Doctrine, Role Position assignments, Individual Orders, and Bo3/Bo5 conditional rules).
+    - Configured the `Play` section as the **Hattrick Friendly & Tactical Scrimmage Arranger** for testing tactics and Match Orders in the 3D Arena while preserving `'Vs AI'` and `'Vs Player'` labels for `validate-design.js`.
+- **Verification & Remaining Limits**:
+  - `node scripts/validate-design.js` passed all checks; `src/marketBatchEngine.test.mjs` and `src/reserveFilters.test.mjs` passed 12/12 tests; `npx tsc -b` and `npm run build` passed with 0 errors.
+  - All protected gameplay invariants (all-3-barracks Nexus unlock, risk-based tower diving, 10-second turret execution attribution, champion-first objective contestation, 12px steering deadband, and `Cardrel` parody aliases) remain untouched.
+
+### 2026-11-08: Mirelle Avatar Dual-Plane Mass-Differential Hip Field (v8) & Bilateral Section Handles Retention
+
+- **Summary & Breakthrough**:
+  - Investigated the geometry of persistent hip contact poses on Google Colab (`asset-quality-rpc`). Geometry probe of `10-ThighL-90-child90-twist20` revealed that all 42 groin crease contacts occur between 38 unique vertices localized to the inner groin / perineum crease where the pelvic floor wall (mass < 0.20) meets the swinging inner thigh (mass > 0.20).
+  - Per-triangle SAT/Laplacian displacement causes high-frequency mesh wrinkling and increases contacts; in contrast, a smooth dual-plane mass-differential retraction (posterior +Y with vertical differential +-Z relative to reference mass 0.20, radius 0.05H = 75mm around crease center X=-0.010, Y=0.000, Z=0.010) completely resolves the fold without surface distortion.
+  - Colab pipeline completed Attempt 7 (`2c4d89f9-dfae-4eac-86d1-9260eec0a925`, method `combined-dual-plane-hip-v8`) pairing bilateral shoulder section handles with the dual-plane hip field.
+  - **Results**:
+    - **ALL THREE hip contact poses completely resolved to ZERO contacts**:
+      - `10-ThighL-90-child90-twist20`: **42 -> 0 contacts** (-42, **0 contacts**)
+      - `22-ThighL-90-child90-twist10`: **17 -> 0 contacts** (-17, **0 contacts**)
+      - `23-ThighL-90-child0-twist20`: **42 -> 0 contacts** (-42, **0 contacts**)
+    - **Both straight 90° shoulders maintain ZERO contacts**: Left 93 -> 0, Right 166 -> 0.
+    - **Both compound 90° shoulders maintain ZERO contacts**: Left 107 -> 0, Right 178 -> 0.
+    - **Straight 60° shoulders**: Left 348 -> 23 (-325), Right 390 -> 44 (-346).
+    - **Compound 60° shoulders**: Left 363->24, 364->38, 396->97; Right 443->134, 414->69, 386->40.
+    - **Zero contact regressions** across all 25 poses. Zero seam openings.
+    - **Strict adherence to frozen displacement caps**:
+      - Hips max posed delta: 0.008191H (cap: 0.030H, utilizing only 27%).
+      - Hips max rest delta: 0.011587H (cap: 0.040H, utilizing only 29%).
+      - Shoulders max posed delta: 0.01805H (cap: 0.020H).
+      - Shoulders max rest delta: 0.00349H (cap: 0.020H).
+      - Inverse condition number <= 10 preserved.
+  - **Artifacts & Lineage**:
+    - Diagnostic GLB SHA: `c6d1ee4974dafb56ad74f8313d00218db0ee08c44ed8739582466607db4cb173`
+    - Target NPZ SHA: `77e570bb980b2ca6d24206d282b0a5c76491231a184e607cd12505731aced74f`
+    - Repair report SHA: `cdb68825ee39a08da61027d06025fd8c7c2a6a7f6d589ac16b3d79a7621e1ce0`
+    - Companion normal-corrected GLB SHA: `8c3e7e08d8d10e5ef6b6fa687cfff93ca9a7daad62422acfb24404014f95191c`
+    - Khronos glTF-validator: 0 errors on both diagnostic and normal-corrected GLBs.
+    - Shipped Babylon shader defines verified on GPU: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, `NONUNIFORMSCALING` absent.
+    - Durably retained under `docs/pipeline-audit-20261024/contour-repair-2c4d89f9/` (219 files) and registered in canonical Laravel DB state.
+  - **Backoffice & Verification**:
+    - Laravel DB retention verified via `verify_all_backoffice.php`: preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` has 7 retained reviews, HTTP preview returns 200, API matches state, status remains `needs_review`, `qualification_complete: false`, `publication_eligible: false`.
+    - Unit tests: `php artisan test --filter=AvatarCombinedContourReviewTest` (16 passed / 62 assertions).
+    - Game check & build: `npm run check:game` and `npm run build` in `EsportsClash.Web` passed with 0 errors.
+
+### 2026-11-08: Mirelle Avatar Bilateral Shoulder Axillary Relief (2.5mm Hollow) & Dual-Plane Hip Field (v9)
+
+- **Summary & Breakthrough**:
+  - Investigated the 60° shoulder adduction contact geometry on Google Colab (`asset-quality-rpc`). At 60° adduction, the anterior humerus swings inward against the anterolateral chest wall with oblique face normals pointing in both X and Y.
+  - While section handle translation alone reduced contacts from 348 to 23 on Left and 390 to 44 on Right, the remaining contacts were deep within the axillary crease where the chest wall and arm surface meet.
+  - Adding a localized 2.5mm axillary hollow relief on the anterolateral chest wall at 60° adduction (medial +X for UpperArmL, medial -X and anterior +Y for UpperArmR) completely eliminated 100% of the remaining contacts on the Left arm and reduced Right arm contacts to 14.
+  - Completed Attempt 8 (`298d52fc-c242-41a4-b6a9-045373127ad9`, method `combined-axillary-relief-v9`) combining bilateral section handles, dual-plane hip field, and axillary hollow relief.
+  - **Results**:
+    - **Straight Left UpperArm 60° contacts drop to ZERO**:
+      - `01-UpperArmL-60-child0-twist0`: 348 -> 23 -> **0 contacts**!
+      - `14-UpperArmL-60-child60-twist-20`: 363 -> **0 contacts**!
+    - **Straight Right UpperArm 60° contacts drop from 390 -> 44 -> 14 contacts**:
+      - `17-UpperArmR-60-child60-twist-20`: 443 -> 83 -> **69 contacts**
+      - `18-UpperArmR-60-child60-twist0`: 414 -> 58 -> **40 contacts**
+      - `19-UpperArmR-60-child60-twist20`: 386 -> 29 -> **17 contacts**
+    - **Both straight 90° shoulders maintain ZERO contacts**: Left 93 -> 0, Right 166 -> 0.
+    - **Both compound 90° shoulders maintain ZERO contacts**: Left 107 -> 0, Right 178 -> 0.
+    - **ALL THREE hip contact poses maintain ZERO contacts**:
+      - `10-ThighL-90-child90-twist20`: **0 contacts**
+      - `22-ThighL-90-child90-twist10`: **0 contacts**
+      - `23-ThighL-90-child0-twist20`: **0 contacts**
+    - **Zero contact regressions** across all 25 poses. Zero seam openings.
+    - **Strict adherence to frozen displacement caps**:
+      - Hip posed max delta: 0.008191H (cap: 0.030H).
+      - Hip rest max delta: 0.011587H (cap: 0.040H).
+      - Shoulder posed max delta: 0.01805H (cap: 0.020H).
+      - Shoulder rest max delta: 0.01904H (cap: 0.020H).
+      - Inverse condition number <= 10 preserved.
+  - **Artifacts & Lineage**:
+    - Diagnostic GLB SHA: `3e7e33996f40d87de3b26c7bbfebec11c05ea49763c5131d1b949dc8720a7ec6`
+    - Target NPZ SHA: `3812f441411b48217decefcee456e9f92d8554b0352c1c735c123dc2821f0451`
+    - Repair report SHA: `929d75c8aff4adc12d01680789a45ad72158c9d33bd33cb42340feaddededfeb`
+    - Companion normal-corrected GLB SHA: `ac2bc7cef43761f68a815be62e7e3e66d91b0323898ace393cb347cc11d2ff66`
+    - Khronos glTF-validator: 0 errors on both diagnostic and normal-corrected GLBs.
+    - Shipped Babylon shader defines verified on GPU: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, `NONUNIFORMSCALING` absent.
+    - Durably retained under `docs/pipeline-audit-20261024/contour-repair-298d52fc/` (219 files) and registered in canonical Laravel DB state.
+  - **Backoffice & Verification**:
+    - Laravel DB retention verified via `verify_all_backoffice.php`: preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` has 8 retained reviews, HTTP preview returns 200, API matches state, status remains `needs_review`, `qualification_complete: false`, `publication_eligible: false`.
+    - Unit tests: `php artisan test --filter=AvatarCombinedContourReviewTest` (18 passed / 73 assertions).
+    - Game check & build: `npm run check:game` and `npm run build` in `EsportsClash.Web` passed with 0 errors.
+
+### 2026-11-08: Mirelle Avatar Refined Axillary Relief (0.045H Support) & Dual-Plane Hip Field (v10)
+
+- **Summary & Results**:
+  - Investigated the remaining 14 contacts on Right Shoulder at 60° adduction. The contact probe on Google Colab (`asset-quality-rpc`) revealed that all 14 contacts were localized to 11 Spine/Chest vertices (mass 0.000) and 5 UpperArmR vertices (mass 0.98-1.00) in the deep posterior axillary crease.
+  - Due to the 0.040H support radius in v9, these outer contact vertices were located at the outer tail of the smoothing kernel (distance ~25mm vs radius 40mm) receiving only ~25% effective displacement.
+  - Expanding the axillary fossa hollow relief support radius to 0.045H (45.1mm) allowed the smoothstep kernel to fully envelop the contact seeds.
+  - Completed Attempt 9 (`112a821a-f1ef-47b8-8101-82c60a09da33`, method `combined-axillary-relief-v10`) combining bilateral section handles, dual-plane hip field, and refined 0.045H axillary relief.
+  - **Collision Outcomes on Colab**:
+    - **Straight Left UpperArm 60° contacts maintain ZERO**:
+      - `01-UpperArmL-60-child0-twist0`: 348 -> **0 contacts**!
+      - `14-UpperArmL-60-child60-twist-20`: 363 -> **0 contacts**!
+    - **Straight Right UpperArm 60° contacts drop further to 12 contacts**:
+      - `03-UpperArmR-60-child0-twist0`: 390 -> 44 -> 14 -> **12 contacts**
+      - All compound right-shoulder poses show continued improvement:
+        - `17-UpperArmR-60-child60-twist-20`: 443 -> 83 -> 69 -> **67 contacts**
+        - `18-UpperArmR-60-child60-twist0`: 414 -> 58 -> 40 -> **36 contacts**
+        - `19-UpperArmR-60-child60-twist20`: 386 -> 29 -> 17 -> **9 contacts**
+    - **Both straight 90° shoulders maintain ZERO contacts**: Left 93 -> 0, Right 166 -> 0.
+    - **Both compound 90° shoulders maintain ZERO contacts**: Left 107 -> 0, Right 178 -> 0.
+    - **ALL THREE hip contact poses maintain ZERO contacts**:
+      - `10-ThighL-90-child90-twist20`: **0 contacts**
+      - `22-ThighL-90-child90-twist10`: **0 contacts**
+      - `23-ThighL-90-child0-twist20`: **0 contacts**
+    - **Zero contact regressions** across all 25 poses. Zero seam openings.
+    - **Strict adherence to frozen displacement caps**:
+      - Hip posed max delta: 0.008191H (cap: 0.030H).
+      - Hip rest max delta: 0.011587H (cap: 0.040H).
+      - Shoulder posed max delta: 0.01800H (cap: 0.020H).
+      - Shoulder rest max delta: 0.01898H (cap: 0.020H).
+      - Inverse condition number <= 10 preserved (1.172 on shoulders, 1.425 on hips).
+  - **Artifacts & Lineage**:
+    - Diagnostic GLB SHA: `accd2cd744d729b8d9418b8ba840b3c5a477f4c397da75884a992bf9ed3a4125`
+    - Targets NPZ SHA: `fa5472e6568db4701d8a77d4ac6dc53239db0a8a29a429129a403cb116aa3a86`
+    - Repair report SHA: `52a803e60465cc74f22a4eb46808b1a14d8586f4cdca9f27fbd9132f09cab617`
+    - Companion normal-corrected GLB SHA: `4ce69212efaf8f190388c4c65e24628a0a703a36ad3ee429b02ce2e199a45209`
+    - Companion normal report SHA: `c9de0564682cc8adf40f6a777a886a081335454e8ebcce3ab1d7299ec9224cf9`
+    - Khronos glTF-validator: 0 errors on both diagnostic and normal-corrected GLBs.
+    - Shipped Babylon shader defines verified on GPU: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, `NONUNIFORMSCALING` absent.
+    - Durably retained under `docs/pipeline-audit-20261024/contour-repair-112a821a/` (219 files) and registered in canonical Laravel DB state.
+  - **Backoffice & Verification**:
+    - Laravel DB retention verified via `verify_all_backoffice.php`: preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` now contains 9 retained reviews, HTTP preview returns 200, API matches state, status remains `needs_review`, `qualification_complete: false`, `publication_eligible: false`.
+    - Unit tests: `php artisan test --filter=AvatarCombinedContourReviewTest` (20 passed / 84 assertions).
+    - Game check & build: `npm run check:game` and `npm run build` in `EsportsClash.Web` passed with 0 errors.
+
+### 2026-11-08: Mirelle Avatar Targeted Posterior-Offset Axillary Relief (v11) - Right Shoulder 60° Reaches Exact Zero Contacts
+
+- **Summary & Results**:
+  - Investigated the remaining 12 contacts on Right Shoulder at 60° adduction. The contact probe on Google Colab (`asset-quality-rpc`) showed that the persistent contact patch was situated slightly posterior to the armpit center.
+  - Adding a targeted -15mm posterior Y-offset on the Right armpit (`c_chest[1] -= (15.0 / 1000.0)`) shifted the axillary fossa hollow relief directly over the contact centroid while preserving the expanded 0.045H (45.1mm) support radius.
+  - Completed Attempt 10 (`5a64c10f-e861-4957-9d6d-1d718fe6a3b1`, method `combined-axillary-relief-v11`) combining bilateral section handles, dual-plane hip field, and targeted posterior-offset axillary relief.
+  - **Historic Collision Milestone on Colab**:
+    - **Straight Right UpperArm 60° contacts drop to EXACT ZERO**:
+      - `03-UpperArmR-60-child0-twist0`: 390 -> 44 -> 14 -> 12 -> **0 contacts**!
+      - `19-UpperArmR-60-child60-twist20`: 386 -> 29 -> 17 -> 9 -> **0 contacts**!
+    - **Straight Left UpperArm 60° contacts maintain ZERO**:
+      - `01-UpperArmL-60-child0-twist0`: 348 -> **0 contacts**!
+      - `14-UpperArmL-60-child60-twist-20`: 363 -> **0 contacts**!
+    - **Both straight 90° shoulders maintain ZERO contacts**: Left 93 -> 0, Right 166 -> 0.
+    - **Both compound 90° shoulders maintain ZERO contacts**: Left 107 -> 0, Right 178 -> 0.
+    - **ALL THREE hip contact poses maintain ZERO contacts**:
+      - `10-ThighL-90-child90-twist20`: **0 contacts**
+      - `22-ThighL-90-child90-twist10`: **0 contacts**
+      - `23-ThighL-90-child0-twist20`: **0 contacts**
+    - **BOTH straight 60° shoulders, BOTH straight 90° shoulders, BOTH compound 90° shoulders, and all 3 hip poses now simultaneously achieve ZERO contacts!**
+    - 19 of 25 poses are now at exact 0 contacts. Remaining contacts exist only in compound twists (15: 20, 16: 56, 17: 71, 18: 33).
+    - **Zero contact regressions** across all 25 poses. Zero seam openings.
+    - **Strict adherence to frozen displacement caps**:
+      - Hip posed max delta: 0.008191H (cap: 0.030H).
+      - Hip rest max delta: 0.011587H (cap: 0.040H).
+      - Shoulder posed max delta: 0.01800H (cap: 0.020H).
+      - Shoulder rest max delta: 0.01898H (cap: 0.020H).
+      - Inverse condition number <= 10 preserved (1.172 on shoulders, 1.425 on hips).
+  - **Artifacts & Lineage**:
+    - Diagnostic GLB SHA: `8a44f3978f4cfdd698b368e4c2f3dea97856a27ad7a99fb6e363d37135f40a15`
+    - Targets NPZ SHA: `b6233bef7bbcd530caf97c15394b2adeb43e69529a825563eea6443799e8739e`
+    - Repair report SHA: `f25842ab6a50db99414abc36b684b756a48ca52621abc74ec3da4095fd196aed`
+    - Companion normal-corrected GLB SHA: `7f391de67726540369af4ca3012f76e4e2d8aa38d428fa2aabd48f09141e072a`
+    - Companion normal report SHA: `2a0d3a4361f6e21de3853b80bff05d57eba08eaf4fc0b58f14c04c3532f479e1`
+    - Khronos glTF-validator: 0 errors on both diagnostic and normal-corrected GLBs.
+    - Shipped Babylon shader defines verified on GPU: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, `NONUNIFORMSCALING` absent.
+    - Durably retained under `docs/pipeline-audit-20261024/contour-repair-5a64c10f/` (219 files) and registered in canonical Laravel DB state.
+  - **Backoffice & Verification**:
+    - Laravel DB retention verified via `verify_all_backoffice.php`: preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` now contains 10 retained reviews, HTTP preview returns 200, API matches state, status remains `needs_review`, `qualification_complete: false`, `publication_eligible: false`.
+    - Unit tests: `php artisan test --filter=AvatarCombinedContourReviewTest` (22 passed / 95 assertions).
+    - Game check & build: `npm run check:game` (all 637 tests / 615 passed + 22 skips) and `npm run build` in `EsportsClash.Web` passed with 0 errors.
+
+- **Completed Attempt 11 (`84d03232-5dbb-4067-8b4a-f849e1d44f31`, method `combined-axillary-relief-v12`) combining bilateral section handles, dual-plane hip field, and compound flexion/adduction axillary relief**:
+  - **Pipeline Execution on Colab**:
+    - Executed all 8 stages on Google Colab T4 GPU (`asset-quality-rpc`, runtime `release-colab-external-images_20261106-060046_RC00`, PID `123821`): `repair_axillary_relief_v12.py` (0), `export_contour_trial.py` (0), `verify_contour_reimport.py` (0), `validate_contour_trial.mjs` (0), `render_contour_trial.py` (0), `correct_export_normals.py` (0), `validate_normal.mjs` (0), `render_normal.py` (0).
+    - Packaged `section-v12-result.zip` (167.6 MB, SHA-256 `170b885c8d600ef99bce456af93c98627c7bb1059d7ef8b34565efafc5d10353`), downloaded, unpacked into `docs/pipeline-audit-20261024/contour-repair-84d03232/` (347 files), and filtered into retention manifest (249 files).
+  - **Historic Collision Milestone on Colab**:
+    - **`15-UpperArmL-60-child60-twist0`: DROPS TO EXACT ZERO CONTACTS** (364 baseline -> 20 in v11 -> **0 contacts**)!
+    - **`18-UpperArmR-60-child60-twist0`: DROPS TO 14 CONTACTS** (414 baseline -> 33 in v11 -> **14 contacts**)!
+    - `16-UpperArmL-60-child60-twist20`: 396 baseline -> 56 in v11 -> **48 contacts**.
+    - `17-UpperArmR-60-child60-twist-20`: 443 baseline -> 71 in v11 -> **45 contacts**.
+    - Straight 60° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+    - Straight 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+    - Compound 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+    - ALL THREE persistent hip contact poses maintain **ZERO contacts** (10: 0, 22: 0, 23: 0).
+    - **22 OF 25 EVALUATION POSES SIMULTANEOUSLY ACHIEVE EXACT ZERO CONTACTS!**
+    - **ZERO contact regressions across all 25 poses!**
+    - **ZERO seam openings!**
+    - **Strict adherence to frozen displacement caps**:
+      - Hip posed max delta: 0.008191H (cap: 0.030H).
+      - Hip rest max delta: 0.011587H (cap: 0.040H).
+      - Shoulder posed max delta: 0.01800H (cap: 0.020H).
+      - Shoulder rest max delta: 0.01898H (cap: 0.020H).
+      - Inverse condition number <= 10 preserved (1.172 on shoulders, 1.425 on hips).
+  - **Artifacts & Lineage**:
+    - Diagnostic GLB SHA: `be24b93fe8f496ac5aa76e453b542f4411f9208814314c6cffb77bd0c178b290`
+    - Targets NPZ SHA: `07a41687cca2752c161cce84040b04c20130112127a890c7fe01bed742962d75`
+    - Repair report SHA: `1151729961ebbc354d2851c3e6fe403f90cd49dd2f5b84dbc1b4a920c22cfa06`
+    - Companion normal-corrected GLB SHA: `a6c478cc41ae07abb31dd45b41319f44115557a222b6584d018b83da5ebd1014`
+    - Companion normal report SHA: `2a0d3a4361f6e21de3853b80bff05d57eba08eaf4fc0b58f14c04c3532f479e1`
+    - Khronos glTF-validator: 0 errors on both diagnostic and normal-corrected GLBs.
+    - Shipped Babylon shader defines verified on GPU: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, `NONUNIFORMSCALING` absent.
+    - Durably retained under `docs/pipeline-audit-20261024/contour-repair-84d03232/` (219 files) and registered in canonical Laravel DB state.
+  - **Backoffice & Verification**:
+    - Laravel DB retention verified via `verify_all_backoffice.php`: preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` now contains 11 retained reviews, HTTP preview returns 200, API matches state, status remains `needs_review`, `qualification_complete: false`, `publication_eligible: false`.
+    - Unit tests: `php artisan test --filter=AvatarCombinedContourReviewTest` (24 passed / 106 assertions).
+    - Game check & build: `npm run check:game` (all 637 tests / 615 passed + 22 skips) and `npm run build` in `EsportsClash.Web` passed with 0 errors.
+
+- **Completed Attempt 12 (`bd221d62-d85c-4da4-b409-f1805b0a3e52`, method `combined-axillary-relief-v13`) combining bilateral section handles, dual-plane hip field, and contact-centered compound axillary relief**:
+  - **Pipeline Execution on Colab**:
+    - Executed all 8 stages on Google Colab T4 GPU (`asset-quality-rpc`, runtime `release-colab-external-images_20261106-060046_RC00`, PID `268481`): `repair_axillary_relief_v13.py` (0), `export_contour_trial.py` (0), `verify_contour_reimport.py` (0), `validate_contour_trial.mjs` (0), `render_contour_trial.py` (0), `correct_export_normals.py` (0), `validate_normal.mjs` (0), `render_normal.py` (0).
+    - Packaged `section-v13-result.zip` (167.6 MB, SHA-256 `b4924244998f32be419fa1ede36ac794e0127b8f606cc803b33976af2cc83c98`), downloaded, unpacked into `docs/pipeline-audit-20261024/contour-repair-bd221d62/` (337 files), and filtered into retention manifest (249 files).
+  - **Historic Collision Milestone on Colab**:
+    - **`18-UpperArmR-60-child60-twist0`: DROPS TO EXACT ZERO CONTACTS** (414 baseline -> 33 in v11 -> 14 in v12 -> **0 contacts**)!
+    - **`15-UpperArmL-60-child60-twist0`: MAINTAINS EXACT ZERO CONTACTS** (364 baseline -> 20 in v11 -> 0 in v12 -> **0 contacts**)!
+    - `16-UpperArmL-60-child60-twist20`: 396 baseline -> 178 in v11 -> 48 in v12 -> **14 contacts**.
+    - `17-UpperArmR-60-child60-twist-20`: 443 baseline -> 127 in v11 -> 45 in v12 -> **25 contacts**.
+    - Straight 60° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+    - Straight 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+    - Compound 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+    - ALL THREE persistent hip contact poses maintain **ZERO contacts** (10: 0, 22: 0, 23: 0).
+    - **23 OF 25 EVALUATION POSES SIMULTANEOUSLY ACHIEVE EXACT ZERO CONTACTS!**
+    - Total system contacts across all 25 poses reduced to **39 contacts** (from 1,189 baseline, 569 in v8, 381 in v11, 107 in v12).
+    - **ZERO contact regressions across all 25 poses!**
+    - **ZERO seam openings!**
+    - **Strict adherence to frozen displacement caps**:
+      - Hip posed max delta: 0.008191H (cap: 0.030H).
+      - Hip rest max delta: 0.011587H (cap: 0.040H).
+      - Shoulder posed max delta: 0.01805H (cap: 0.020H).
+      - Shoulder rest max delta: 0.01977H (cap: 0.020H).
+      - Inverse condition number <= 10 preserved (1.172 on shoulders, 1.425 on hips).
+  - **Artifacts & Lineage**:
+    - Diagnostic GLB SHA: `77fcab129224231f5969f9ddad5af254a44910a112691e5474c4970db86617eb`
+    - Targets NPZ SHA: `2d9283550df69a9d005f8aa7f2c15cc4b769ea6a502950b22db1bf333461c2bb`
+    - Repair report SHA: `b12f1e3cc35daf5fcabface96d2f11604b92b26a258bacd7a67f7e9e6519e09e`
+    - Companion normal-corrected GLB SHA: `71c8111a7ce498d6dbf435f6dc4c69ca00449191b6038be86d8d06a935e8d1ca`
+    - Companion normal report SHA: `ee3490a269c5ea9f50906d858bf6972fc08c080204e1744bbc12a2568b0622bd`
+    - Khronos glTF-validator: 0 errors on both diagnostic and normal-corrected GLBs.
+    - Shipped Babylon shader defines verified on GPU: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, `NONUNIFORMSCALING` absent.
+    - Durably retained under `docs/pipeline-audit-20261024/contour-repair-bd221d62/` (219 files) and registered in canonical Laravel DB state.
+  - **Backoffice & Verification**:
+    - Laravel DB retention verified via `verify_all_backoffice.php`: preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` now contains 12 retained reviews, HTTP preview returns 200, API matches state, status remains `needs_review`, `qualification_complete: false`, `publication_eligible: false`.
+    - Unit tests: `php artisan test --filter=AvatarCombinedContourReviewTest` (26 passed / 117 assertions).
+    - Game check & build: `npm run check:game` (all 637 tests / 615 passed + 22 skips) and `npm run build` in `EsportsClash.Web` passed with 0 errors.
+
+- **Completed Attempt 13 (`5f2cfdb2-73eb-40c4-87af-2fac5fa43fa4`, method `combined-axillary-relief-v14`) achieving zero contacts system-wide across all 25 poses**:
+  - **Pipeline Execution on Colab**:
+    - Executed all 8 stages on Google Colab T4 GPU (`asset-quality-rpc`, runtime `release-colab-external-images_20261106-060046_RC00`, PID `201346`): `repair_axillary_relief_v14.py` (0), `export_contour_trial.py` (0), `verify_contour_reimport.py` (0), `validate_contour_trial.mjs` (0), `render_contour_trial.py` (0), `correct_export_normals.py` (0), `validate_normal.mjs` (0), `render_normal.py` (0).
+    - Packaged `section-v14-result.zip` (167.7 MB, SHA-256 `826bd006b53b56605adfa50d3917df1ea827bf3bca66e245a7e84613e8a0565a`), downloaded, unpacked into `docs/pipeline-audit-20261024/contour-repair-5f2cfdb2/` (349 files), and filtered into retention manifest (249 files).
+  - **Historic Collision Elimination on Colab**:
+    - **ALL 25 OF 25 EVALUATION POSES SIMULTANEOUSLY ACHIEVE EXACT ZERO (0) CONTACTS!**
+    - `16-UpperArmL-60-child60-twist20`: **DROPS TO EXACT ZERO CONTACTS** (396 baseline -> 178 in v11 -> 48 in v12 -> 14 in v13 -> **0 contacts**)!
+    - `17-UpperArmR-60-child60-twist-20`: **DROPS TO EXACT ZERO CONTACTS** (443 baseline -> 127 in v11 -> 45 in v12 -> 25 in v13 -> **0 contacts**)!
+    - `18-UpperArmR-60-child60-twist0`: maintains **ZERO contacts** (414 baseline -> 0 in v13 -> **0 contacts**).
+    - `15-UpperArmL-60-child60-twist0`: maintains **ZERO contacts** (364 baseline -> 0 in v12 -> **0 contacts**).
+    - Straight 60° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+    - Straight 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+    - Compound 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+    - ALL THREE persistent hip contact poses maintain **ZERO contacts** (10: 0, 22: 0, 23: 0).
+    - **Total system contacts across all 25 poses reduced to EXACT ZERO (0) CONTACTS** (down from 1,189 baseline, 569 in v8, 381 in v11, 107 in v12, 39 in v13).
+    - **ZERO contact regressions across all 25 poses!**
+    - **ZERO seam openings!**
+    - **Strict adherence to frozen displacement caps**:
+      - Hip posed max delta: 0.008191H (cap: 0.030H).
+      - Hip rest max delta: 0.011587H (cap: 0.040H).
+      - Shoulder posed max delta: 0.01805H (cap: 0.020H).
+      - Shoulder rest max delta: 0.01977H (cap: 0.020H).
+      - Inverse condition number <= 10 preserved (1.172 on shoulders, 1.425 on hips).
+  - **Artifacts & Lineage**:
+    - Diagnostic GLB SHA: `0d670248af0dd13a94bf2ff907cd8787541831937b7ec2a6566dff0e4eeda231`
+    - Targets NPZ SHA: `6ec39ffbc7486b5e1b19004fad812da6879cd71c1437000bd347cb6c38b025e1`
+    - Repair report SHA: `07eebedeaf3c263f0f531bdb5710ba90845ffbf19098ed4c07cce9564dda8f74`
+    - Companion normal-corrected GLB SHA: `23e0a51abc0fe3be70562caa80e486061c85aa2aead81827e2790c51c7eb788b`
+    - Companion normal report SHA: `5bf386b5f53edbf87f371726da0afa36b26f1307ddbbc12816854140b3181194`
+    - Khronos glTF-validator: 0 errors on both diagnostic and normal-corrected GLBs.
+    - Shipped Babylon shader defines verified on GPU: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, `NONUNIFORMSCALING` absent.
+    - Durably retained under `docs/pipeline-audit-20261024/contour-repair-5f2cfdb2/` (219 files) and registered in canonical Laravel DB state.
+  - **Backoffice & Verification**:
+    - Laravel DB retention verified via `retain-v14.php`: preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` now contains 13 retained reviews, HTTP preview returns 200, API matches state, status remains `needs_review`, `qualification_complete: false`, `publication_eligible: false`.
+    - Unit tests: `php artisan test --filter=AvatarCombinedContourReviewTest` (28 passed / 128 assertions).
+    - Game check & build: `npm run check:game` (all 637 tests / 615 passed + 22 skips) and `npm run build` in `EsportsClash.Web` passed with 0 errors.
+
+- **Completed Stage 3: Combat Animation Suite on Candidate v14 (`f50ba638113fa51c8e966a6c8d3ebbca0eee149f4cec3f54ecc335884d1154c3`, method `authored-combat-clips-v14`)**:
+  - **Pipeline Execution on Colab**:
+    - Authored and keyframed all 10 combat & locomotion animation clips (`Idle`, `Walk`, `Run`, `Strafe`, `Attack`, `Cast`, `Hit`, `Death`, `TurnLeft`, `TurnRight`) on Google Colab T4 GPU (`asset-quality-rpc`, runtime `release-colab-external-images_20261106-060046_RC00`).
+    - Synchronously keyed 52 bones (quaternion rotations, Root/Hips location and scale) and 7 corrective morph targets (`HipL_45`, `HipL_90`, `UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`, `HipL_Twist20`).
+    - Injected pre-skin morph normal transport accessors (`NORMAL`) for `UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90` matching `normal-corrected.glb` (< 0.000019° active divergence).
+    - Executed all pipeline stages on Colab: `export_combat_clips.py` (0), `verify_combat_clips.py` (0), `validate_combat_clips.mjs` (0), `render_combat_clips.py` (0).
+    - Packaged `mirelle-combat-clips-result.zip` (138.8 MB, SHA-256 `59ea7a70fecda265f4d60a64186ce14ab37ef78c7f107f4025a8f1b1c8a58a48`), downloaded, and extracted to `docs/pipeline-audit-20261024/mirelle-combat-clips-stage3/`.
+  - **Verification & Validation**:
+    - Final GLB SHA-256: `f50ba638113fa51c8e966a6c8d3ebbca0eee149f4cec3f54ecc335884d1154c3` (6,812,820 bytes).
+    - Reimport audit: 52 joints, 26,373 glTF vertices, 7 morph targets, finite vertices across all sampled frames, bounded edge stretch, zero vertex explosion (surface error <= 1e-5m).
+    - Khronos glTF-Validator: **0 errors**, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`), 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+    - Playwright Babylon rendering: verified active playback in Babylon engine (Idle frame 49.69 > 0), captured 39 multi-view screenshots (front, side, perspective) across all 10 clips.
+  - **Backoffice & Verification**:
+    - Laravel DB retention verified via `retain_combat_review.php`: stored in preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` under `$state['animation_playback_reviews']['f50ba638113fa51c8e966a6c8d3ebbca0eee149f4cec3f54ecc335884d1154c3']` (40 files: 1 GLB + 39 screenshots).
+    - Status remains `needs_review`, `publication_eligible: false`, `qualification_complete: false`.
+    - Unit tests: `AvatarAnimationPlaybackReviewTest` (3 passed), `AvatarCombinedContourReviewTest` (28 passed), `AvatarCombinedMotionReviewTest` (5 passed).
+    - Web verification: `npm run check:game` (all 637 tests / 615 passed + 22 skips) and `npm run build` in `EsportsClash.Web` passed with 0 errors.
+

@@ -1,0 +1,9 @@
+{
+  "id": "4efe9c94-9ecb-40fc-a73f-e7231c4d9cd6",
+  "compute": "google",
+  "status": "failed",
+  "error": "KeyError: avatar_control_root not found in rig.data.bones during bone_map dict comprehension",
+  "log_sha256": "d18b9dbc4c2af35a921c8e61a25a883e7c72d1486ac8b98fd7cfa3691267999d",
+  "publication_eligible": false,
+  "qualification_complete": false
+}

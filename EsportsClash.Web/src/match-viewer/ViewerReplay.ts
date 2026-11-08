@@ -1,6 +1,7 @@
 import { captureViewerSnapshot } from './MatchViewer.ts';
 import type { ArenaSceneFrame } from './ArenaFrame';
 import type { ViewerSnapshot, ViewerActor, ViewerEffect, ViewerConstruct, ViewerMotion, ViewerCue } from './MatchViewer';
+import { ARENA_MAP_VERSION, computeArenaRulesetVersion } from '../arenaLayout.ts';
 
 /** Presentation recording, not a replacement for authoritative action-log replay. */
 export class ViewerReplay {
@@ -9,7 +10,13 @@ export class ViewerReplay {
   private rate: 1 | 2 | 4 = 1;
   paused = true;
   readonly capacity: number;
-  constructor(capacity = 18000) { this.capacity = capacity; }
+  mapVersion: string;
+  rulesetVersion: string;
+  constructor(capacity = 18000, mapVersion: string = ARENA_MAP_VERSION, rulesetVersion: string = computeArenaRulesetVersion()) {
+    this.capacity = capacity;
+    this.mapVersion = mapVersion;
+    this.rulesetVersion = rulesetVersion;
+  }
   record(snapshot: ViewerSnapshot) {
     const last=this.frames.at(-1);
     if(last && snapshot.tick<=last.tick)return;
@@ -21,17 +28,20 @@ export class ViewerReplay {
   seek(second:number){this.cursor=Math.max(this.frames[0]?.second??0,Math.min(this.frames.at(-1)?.second??0,second));return this.sample();}
   advance(seconds:number){if(!this.paused)this.seek(this.cursor+Math.max(0,seconds)*this.rate);return this.sample();}
   sample(){let lo=0,hi=this.frames.length-1;while(lo<hi){const mid=Math.ceil((lo+hi)/2);if(this.frames[mid].second<=this.cursor)lo=mid;else hi=mid-1;}return this.frames[lo];}
-  export(){return JSON.stringify({version:2,kind:'presentation-only',frames:this.frames});}
+  export(){return JSON.stringify({version:2,kind:'presentation-only',mapVersion:this.mapVersion,rulesetVersion:this.rulesetVersion,frames:this.frames});}
   static parse(text:string){
     const value:unknown=JSON.parse(text);
     if(!value||typeof value!=='object'||!('version' in value)||(value.version!==1&&value.version!==2)||!('kind' in value)||value.kind!=='presentation-only'||!('frames' in value)||!Array.isArray(value.frames))throw new Error('Unsupported viewer recording');
     if(value.frames.length>18000)throw new Error('Recording exceeds 18,000 snapshots');
-    const replay=new ViewerReplay();let last=-1;
+    const parsedMapVersion = ('mapVersion' in value && typeof value.mapVersion === 'string') ? value.mapVersion : ARENA_MAP_VERSION;
+    const parsedRulesetVersion = ('rulesetVersion' in value && typeof value.rulesetVersion === 'string') ? value.rulesetVersion : computeArenaRulesetVersion();
+    const replay=new ViewerReplay(18000, parsedMapVersion, parsedRulesetVersion);let last=-1;
     for(const frame of value.frames){
       if(!frame||!Number.isInteger(frame.tick)||frame.tick<=last||!Number.isFinite(frame.second)||frame.second<0||Math.abs(frame.second*30-frame.tick)>.01||
         !Array.isArray(frame.actors)||frame.actors.length>2048||!Array.isArray(frame.effects)||frame.effects.length>4096)throw new Error('Invalid snapshot');
       for(const a of frame.actors)if(!a||typeof a.id!=='string'||typeof a.heroId!=='string'||typeof a.label!=='string'||typeof a.team!=='string'||typeof a.alive!=='boolean'||a.assetVariant!==undefined&&a.assetVariant!=='current'||
-        !['champion','minion','structure','neutral','ward'].includes(a.kind)||![a.x,a.y,a.hp,a.maxHp,a.facing].every(Number.isFinite))throw new Error('Invalid actor');
+        !['champion','minion','structure','neutral','ward','feature'].includes(a.kind)||![a.x,a.y,a.hp,a.maxHp,a.facing].every(Number.isFinite)||a.progress!==undefined&&!Number.isFinite(a.progress))throw new Error('Invalid actor');
+      if(frame.atmosphere!==undefined&&(typeof frame.atmosphere!=='object'||!['daylight','dusk','overcast'].includes(frame.atmosphere.lighting)||frame.atmosphere.element!==null&&!['infernal','mountain','ocean','cloud'].includes(frame.atmosphere.element)))throw new Error('Invalid atmosphere');
       for(const e of frame.effects)if(!e||typeof e.id!=='string'||typeof e.color!=='string'||!['projectile','zone','impact'].includes(e.kind)||![e.x,e.y,e.radius].every(Number.isFinite))throw new Error('Invalid effect');
       for(const e of frame.effects)for(const key of ['angle','halfWidth','halfHeight','sourceX','sourceY','originX','originY','age'])if(e[key]!==undefined&&!Number.isFinite(e[key]))throw new Error('Invalid effect geometry');
       const artFields=(item:{heroId?:unknown;slot?:unknown;owner?:unknown})=>{

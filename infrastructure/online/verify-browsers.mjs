@@ -30,11 +30,21 @@ async function cdp(url) {
 }
 let browser;
 try {
+  const matchStatus = async matchId => {
+    const response = await fetch(`http://web/backend/api/v1/online/matches/${matchId}`, {
+      headers: { Accept: 'application/json', Authorization: `Bearer ${verificationSessions[0].token}` },
+    });
+    assert.equal(response.status, 200, `Authenticated match status failed (${response.status})`);
+    return (await response.json()).data;
+  };
   let version;
   for (let i = 0; i < 100; i++) { try { version = await (await fetch('http://127.0.0.1:9227/json/version')).json(); break; } catch { await wait(200); } }
   browser = await cdp(version.webSocketDebuggerUrl);
   const pages = [];
-  const capture = `window.__onlineObserved={frames:{},connections:0}; const NativeSocket=window.WebSocket;
+  const capture = `window.__onlineObserved={frames:{},connections:0}; window.__onlineErrors=[];
+    addEventListener('error',event=>window.__onlineErrors.push(event.message));
+    addEventListener('unhandledrejection',event=>window.__onlineErrors.push(String(event.reason)));
+    const NativeSocket=window.WebSocket;
     window.WebSocket=class extends NativeSocket { constructor(...args){super(...args);window.__onlineObserved.connections++;
       this.addEventListener('message',event=>{try{const data=JSON.parse(event.data);if(data.type==='snapshot'){
         window.__onlineObserved.matchId=data.match_id;window.__onlineObserved.last=data;
@@ -53,10 +63,19 @@ try {
     await page.send('Page.addScriptToEvaluateOnNewDocument', { source: capture });
     await page.send('Page.navigate', { url: 'http://web/' });
     for (let i = 0; i < 100; i++) { if (await page.evaluate('!!document.querySelector("main")')) break; await wait(150); }
-    await page.evaluate(`localStorage.setItem('esports-clash-api-session-v1', ${JSON.stringify(JSON.stringify(session))})`);
-    await page.evaluate(`(() => { const button=[...document.querySelectorAll('button')].find(button=>button.textContent.trim()==='Online Normal'); if(!button)throw Error('Online tab missing');button.click(); })()`);
-    for (let i = 0; i < 120; i++) { if (await page.evaluate('document.body.innerText.includes("Your trusted lineup")')) break; await wait(200); }
-    assert.equal(await page.evaluate('document.body.innerText.includes("Your trusted lineup")'), true, 'Trusted roster failed to load');
+    await page.evaluate(`(() => { localStorage.setItem('esports-clash-api-session-v1', ${JSON.stringify(JSON.stringify(session))}); window.dispatchEvent(new Event('esports-clash-account-changed')); window.location.hash='squad'; })()`);
+    for (let i = 0; i < 100; i++) {
+      if (await page.evaluate('[...document.querySelectorAll("button")].some(button=>button.textContent.trim()==="Settings")')) break;
+      await wait(100);
+    }
+    await page.evaluate(`(() => { const buttons=[...document.querySelectorAll('button')]; const button=buttons.find(button=>button.textContent.trim()==='Settings'); if(!button)throw Error('Settings navigation missing; buttons='+buttons.map(button=>button.textContent.trim()).filter(Boolean).slice(0,30).join('|')+'; text='+document.body.innerText.slice(0,300)+'; errors='+window.__onlineErrors.join('|'));button.click(); })()`);
+    for (let i = 0; i < 50; i++) {
+      if (await page.evaluate('[...document.querySelectorAll("button")].some(button=>button.textContent.trim()==="Open Online Normal Sandbox")')) break;
+      await wait(100);
+    }
+    await page.evaluate(`(() => { const button=[...document.querySelectorAll('button')].find(button=>button.textContent.trim()==='Open Online Normal Sandbox'); if(!button)throw Error('Online Normal sandbox control missing');button.click(); })()`);
+    for (let i = 0; i < 120; i++) { if (await page.evaluate('document.body.innerText.includes("Your default lineup")')) break; await wait(200); }
+    assert.equal(await page.evaluate('document.body.innerText.includes("Your default lineup")'), true, 'Trusted roster failed to load');
     return { ...page, targetId, context };
   }
   for (const session of verificationSessions) {
@@ -78,18 +97,19 @@ try {
   const initial = await pages[0].evaluate('window.__onlineObserved');
   assert.ok(initial.last?.sequence > 5, 'Server did not stream an active match');
   const matchId = initial.matchId;
-  const before = await pages[0].evaluate('window.__onlineObserved.last.sequence');
+  const before = (await matchStatus(matchId)).sequence;
   await browser.send('Target.closeTarget', { targetId: pages[1].targetId });
-  let advancing = before;
-  for (let i = 0; i < 60 && advancing <= before; i++) {
-    await wait(1000); advancing = await pages[0].evaluate('window.__onlineObserved.last.sequence');
+  let serverSequence = before;
+  for (let i = 0; i < 60 && serverSequence <= before; i++) {
+    await wait(1000);
+    serverSequence = (await matchStatus(matchId)).sequence;
   }
-  assert.ok(advancing > before, 'Server stopped when another browser closed');
+  assert.ok(serverSequence > before, 'Server stopped when another browser closed');
   pages[1] = await open(verificationSessions[1], pages[1].context);
-  for (let i = 0; i < 90; i++) { if ((await pages[1].evaluate('window.__onlineObserved.last?.sequence??0')) >= advancing) break; await wait(500); }
+  for (let i = 0; i < 90; i++) { if ((await pages[1].evaluate('window.__onlineObserved.last?.sequence??0')) >= serverSequence) break; await wait(500); }
   assert.equal(await pages[1].evaluate('window.__onlineObserved.matchId'), matchId);
-  assert.ok((await pages[1].evaluate('window.__onlineObserved.last.sequence')) >= advancing);
-  console.error(`Both viewers connected to ${matchId}; sequence advanced ${before} -> ${advancing} while the other browser was closed.`);
+  assert.ok((await pages[1].evaluate('window.__onlineObserved.last.sequence')) >= serverSequence);
+  console.error(`Both viewers connected to ${matchId}; server sequence advanced ${before} -> ${serverSequence} while the other browser was closed.`);
   let compared = [];
   let lastProgress = 0;
   const deadline = Date.now() + 25 * 60 * 1000;
@@ -122,5 +142,5 @@ try {
   for (const connection of connections) connection.close();
   chrome.kill('SIGTERM');
   await new Promise(resolve => { if (chrome.exitCode !== null) resolve(); else chrome.once('exit', resolve); });
-  await rm(profile, { recursive: true, force: true });
+  await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 }

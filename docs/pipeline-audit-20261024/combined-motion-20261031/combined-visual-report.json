@@ -1,0 +1,214 @@
+{
+  "compute": "google",
+  "source_sha256": "42ac17a5740ab76878ca88d49e4b03cbb2d5998e7483acce91160bc0dc6ee597",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "views": [
+    {
+      "case": "00-ThighL-60-child60-twist-20",
+      "view": "front",
+      "file": "combined-screenshots/00-ThighL-60-child60-twist-20-front.png",
+      "sha256": "f1d5fbe736c7ea1f2c37da0b959ca03d3ab5d76dabddd95fa183f4a99f3a48d5"
+    },
+    {
+      "case": "00-ThighL-60-child60-twist-20",
+      "view": "side",
+      "file": "combined-screenshots/00-ThighL-60-child60-twist-20-side.png",
+      "sha256": "1ebbe2695bd1ac38ea39cc0d340ee0a5fa7013e734bb6cc6b3d033573c2ce81b"
+    },
+    {
+      "case": "01-ThighL-60-child60-twist0",
+      "view": "front",
+      "file": "combined-screenshots/01-ThighL-60-child60-twist0-front.png",
+      "sha256": "96ad6ea987e5f71fe8ca4ae4e9a29702a9a9f7c8de29d2441e89eaf1e9c43e03"
+    },
+    {
+      "case": "01-ThighL-60-child60-twist0",
+      "view": "side",
+      "file": "combined-screenshots/01-ThighL-60-child60-twist0-side.png",
+      "sha256": "51dd967f711a8db60290c693e973b902a42d5cf56c3446527e7fd1127dd74fbf"
+    },
+    {
+      "case": "02-ThighL-60-child60-twist20",
+      "view": "front",
+      "file": "combined-screenshots/02-ThighL-60-child60-twist20-front.png",
+      "sha256": "ca71d6fdf2b7ffc8b8d65b487d37531b48f8d4a5b5b322951003be24b1452105"
+    },
+    {
+      "case": "02-ThighL-60-child60-twist20",
+      "view": "side",
+      "file": "combined-screenshots/02-ThighL-60-child60-twist20-side.png",
+      "sha256": "fcad2372f147ee011c655036b6af48ffd2399982243d97163253648a7d5cfd41"
+    },
+    {
+      "case": "03-ThighL-90-child90-twist-20",
+      "view": "front",
+      "file": "combined-screenshots/03-ThighL-90-child90-twist-20-front.png",
+      "sha256": "33d9c789b1e3c09b4916a1b8508b4db8e6a28701f886b6508bf4d6428ecc1d62"
+    },
+    {
+      "case": "03-ThighL-90-child90-twist-20",
+      "view": "side",
+      "file": "combined-screenshots/03-ThighL-90-child90-twist-20-side.png",
+      "sha256": "3508482e98c2ab0ae3f117651aab3b9dca1da11100a1a48d47ca7c3aeb8d8228"
+    },
+    {
+      "case": "04-ThighL-90-child90-twist0",
+      "view": "front",
+      "file": "combined-screenshots/04-ThighL-90-child90-twist0-front.png",
+      "sha256": "89e94de89a29869e459836da62579ff90dc3ac3f23264833b094c3070207fbbd"
+    },
+    {
+      "case": "04-ThighL-90-child90-twist0",
+      "view": "side",
+      "file": "combined-screenshots/04-ThighL-90-child90-twist0-side.png",
+      "sha256": "3077a0e85cb70f45f20aa706089a4b161ad503475530a2f48b76c7dcd28de7e4"
+    },
+    {
+      "case": "05-ThighL-90-child90-twist20",
+      "view": "front",
+      "file": "combined-screenshots/05-ThighL-90-child90-twist20-front.png",
+      "sha256": "885684fb69f9a29a41772a45a59ea3a51ff0e4806ad901de868ebd16e66b9079"
+    },
+    {
+      "case": "05-ThighL-90-child90-twist20",
+      "view": "side",
+      "file": "combined-screenshots/05-ThighL-90-child90-twist20-side.png",
+      "sha256": "d315c04bf24db65a4e13211543919e72b7060a30c71339857fbd375d7f4b2114"
+    },
+    {
+      "case": "06-ThighR-60-child60-twist-20",
+      "view": "front",
+      "file": "combined-screenshots/06-ThighR-60-child60-twist-20-front.png",
+      "sha256": "49b1f3730037d3b350c110f37a6b05fca9ba4a18f64ae5820dd0428eac536d68"
+    },
+    {
+      "case": "06-ThighR-60-child60-twist-20",
+      "view": "side",
+      "file": "combined-screenshots/06-ThighR-60-child60-twist-20-side.png",
+      "sha256": "6302fa6bfb4b0c971eda6e7e313586cfc50b38b3d747bc07f5a3e9c03a0e95b1"
+    },
+    {
+      "case": "07-ThighR-60-child60-twist0",
+      "view": "front",
+      "file": "combined-screenshots/07-ThighR-60-child60-twist0-front.png",
+      "sha256": "e2586e8305157d0a3f1c52319294c1df9bc88e2ebce7de95e8bac852f5fb9a51"
+    },
+    {
+      "case": "07-ThighR-60-child60-twist0",
+      "view": "side",
+      "file": "combined-screenshots/07-ThighR-60-child60-twist0-side.png",
+      "sha256": "988a97a72a894b7937e05a6b27d22a93d7c6a055671121efd736913e7c316902"
+    },
+    {
+      "case": "08-ThighR-60-child60-twist20",
+      "view": "front",
+      "file": "combined-screenshots/08-ThighR-60-child60-twist20-front.png",
+      "sha256": "d46534b1e7d9571af083470b0bb84a63be9e208406fdd463653ffe34adbf47f2"
+    },
+    {
+      "case": "08-ThighR-60-child60-twist20",
+      "view": "side",
+      "file": "combined-screenshots/08-ThighR-60-child60-twist20-side.png",
+      "sha256": "1f2397af6c0ab2860c6441503e944c6999219839b02c4e821de5200b85d1ede9"
+    },
+    {
+      "case": "09-UpperArmL-60-child60-twist-20",
+      "view": "front",
+      "file": "combined-screenshots/09-UpperArmL-60-child60-twist-20-front.png",
+      "sha256": "f5bff7dc516780d0a5e8d3437f4d888a36cb2f0c7d6e0cbcd03ecd4c793547e6"
+    },
+    {
+      "case": "09-UpperArmL-60-child60-twist-20",
+      "view": "side",
+      "file": "combined-screenshots/09-UpperArmL-60-child60-twist-20-side.png",
+      "sha256": "1e593845d86b632084ed8b07cf4c7eb1974a3c936580d7d8a3bb1e84487c7c86"
+    },
+    {
+      "case": "10-UpperArmL-60-child60-twist0",
+      "view": "front",
+      "file": "combined-screenshots/10-UpperArmL-60-child60-twist0-front.png",
+      "sha256": "85dd49feb6527e32340649d75b1545446899130e77d2e8d8a088e0adba58b91c"
+    },
+    {
+      "case": "10-UpperArmL-60-child60-twist0",
+      "view": "side",
+      "file": "combined-screenshots/10-UpperArmL-60-child60-twist0-side.png",
+      "sha256": "92c4a6492a831342b11cfe25af11b0fbf99d794db8ab2e8541334a546ca138b6"
+    },
+    {
+      "case": "11-UpperArmL-60-child60-twist20",
+      "view": "front",
+      "file": "combined-screenshots/11-UpperArmL-60-child60-twist20-front.png",
+      "sha256": "0da36e6b4aac9adc1f8c0c2ddd66f7172118fbdcf4ba38f07ab74970cd5b00ed"
+    },
+    {
+      "case": "11-UpperArmL-60-child60-twist20",
+      "view": "side",
+      "file": "combined-screenshots/11-UpperArmL-60-child60-twist20-side.png",
+      "sha256": "eebc8f447e0feb697fcd3e46a5b35f7412656d058cc67ba2362333dca074cc99"
+    },
+    {
+      "case": "12-UpperArmR-60-child60-twist-20",
+      "view": "front",
+      "file": "combined-screenshots/12-UpperArmR-60-child60-twist-20-front.png",
+      "sha256": "fb9c613edbf826f29a631d963516b5eb149b351f8f73bf0a183766f7a5aaf007"
+    },
+    {
+      "case": "12-UpperArmR-60-child60-twist-20",
+      "view": "side",
+      "file": "combined-screenshots/12-UpperArmR-60-child60-twist-20-side.png",
+      "sha256": "93408f8f542d7632d451ec71b17f0ed37a51c5ee5ab6612e237c361a679a8724"
+    },
+    {
+      "case": "13-UpperArmR-60-child60-twist0",
+      "view": "front",
+      "file": "combined-screenshots/13-UpperArmR-60-child60-twist0-front.png",
+      "sha256": "58baf23cd0e01d642f571a0da9e8bb52a7749f775bfe6a2a8418b2d79520fc9a"
+    },
+    {
+      "case": "13-UpperArmR-60-child60-twist0",
+      "view": "side",
+      "file": "combined-screenshots/13-UpperArmR-60-child60-twist0-side.png",
+      "sha256": "494136004619e45325aea1cb443c908b007234737c0b078af112c23c27930ee9"
+    },
+    {
+      "case": "14-UpperArmR-60-child60-twist20",
+      "view": "front",
+      "file": "combined-screenshots/14-UpperArmR-60-child60-twist20-front.png",
+      "sha256": "a794bd9d710369f0dfc02d252d02db3078704d9c63e38cf91bfb921b87855ce6"
+    },
+    {
+      "case": "14-UpperArmR-60-child60-twist20",
+      "view": "side",
+      "file": "combined-screenshots/14-UpperArmR-60-child60-twist20-side.png",
+      "sha256": "85aed388daa97b100aeb05f01fa75b8641156502552f1b69dfee8510f72f3c02"
+    },
+    {
+      "case": "15-UpperArmL-90-child90-twist0",
+      "view": "front",
+      "file": "combined-screenshots/15-UpperArmL-90-child90-twist0-front.png",
+      "sha256": "63f5ad033a75456b124d15c4cad007d2f5510719657c38fc8abe47aef767e00e"
+    },
+    {
+      "case": "15-UpperArmL-90-child90-twist0",
+      "view": "side",
+      "file": "combined-screenshots/15-UpperArmL-90-child90-twist0-side.png",
+      "sha256": "019ae96a3ac266e62cf68a55a0e4b89b90d13f32f2d497f09f838332ff0e24de"
+    },
+    {
+      "case": "16-UpperArmR-90-child90-twist0",
+      "view": "front",
+      "file": "combined-screenshots/16-UpperArmR-90-child90-twist0-front.png",
+      "sha256": "896471ecd4523b0992d78a4370f23ec803afd08b1952b671aaa2eaf95c01e7d7"
+    },
+    {
+      "case": "16-UpperArmR-90-child90-twist0",
+      "view": "side",
+      "file": "combined-screenshots/16-UpperArmR-90-child90-twist0-side.png",
+      "sha256": "13f9eb9a712f7ca3735665167e59dd22554c0c54c2444258e6ee6fd6a22fedec"
+    }
+  ],
+  "errors": [],
+  "status": "rendered_for_review"
+}

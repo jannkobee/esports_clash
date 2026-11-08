@@ -1,0 +1,10 @@
+{
+  "id": "ec52918a-8a46-4be9-b7d2-9e35cf16141e",
+  "method": "combined-left-section-handles-v6",
+  "compute": "google",
+  "status": "unknown_runtime_expired",
+  "input_zip_sha256": "17b2fe26081de6c1bba850bcc10c78dd29942a2a3675a02525aa54ea2d35012b",
+  "summary": "Launched on the previous Colab T4 runtime shortly before session expiration; completion status unknown and no output retrieved. Replacement run 61a07eaa-8371-4a72-81cf-c46239175a45 has separate provenance.",
+  "publication_eligible": false,
+  "qualification_complete": false
+}

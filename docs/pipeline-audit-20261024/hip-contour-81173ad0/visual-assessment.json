@@ -1,0 +1,73 @@
+{
+  "review_id": "81173ad0-59d6-4f29-9377-0d1d5bb69442",
+  "reviewed_on": "2026-10-30",
+  "reviewer": "/root",
+  "status": "rejected_waist_drift",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "admit_animation_bake": false,
+  "scope": "14 of24 exact Babylon views inspected. Rejected contour experiment; no animated avatar qualification.",
+  "observations": [
+    "The front hip crease softens at67.5/90 in orbit3, but the waist and pelvis are pulled inward in both front views. This loses the original body contour.",
+    "The altered pelvis/waist contour is also visible at22.5/45. The90 rear view shows a changed upper-hip silhouette. The smoothness objective has no volume/identity guarantee.",
+    "Do not export this target. Revision pins the upper pelvis and evaluates control of tangential movement."
+  ],
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/baseline-ThighL-22.5-orbit3.png",
+      "sha256": "3f1dc3acca6bd2a79ac77619123cf9bd1681c5e753031538bbeff452a86e3a26"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-22.5-orbit3.png",
+      "sha256": "be7e257b866d8d1d416da760e8a13df4d72cecf812b3b3e283cf8d1cb3e036d9"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-45-orbit1.png",
+      "sha256": "853570f442e9f3bdae19249e76c0dcd6caf86d547e8b100c16af7b100b71dccc"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-45-orbit3.png",
+      "sha256": "71878a0b9186103ccb3ef3940b8c325f11fc7246f1e41e03d883161f762eb413"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit1.png",
+      "sha256": "4f853f93f68fcf9981f4677f58ca2263bcde85f47d565b3103811bd9226af861"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit3.png",
+      "sha256": "58cd72c201746733f60df9db8a524544b5d1c5455a5a31df5a70ac5c65866041"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-67.5-orbit3.png",
+      "sha256": "5c959f8db87b8264993a37937a2ba3e4e8cbd75b848f69b47326f98639347223"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-67.5-orbit3.png",
+      "sha256": "09f2ca0dc469b1bab181cf76500f6eaa4cbc2c5e1680da3da12250d2bd6787d6"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit1.png",
+      "sha256": "aa5c966d839a1036b23d9072a4a7914494fa8199af89d1a55bccab4acd7c7aa5"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit3.png",
+      "sha256": "2477ce27c151e2d52a39b35074e25dc45ee30dffcd3e2609be1b642b3ad17d73"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit5.png",
+      "sha256": "046dd73c434b96590d41102495b140c99790fdd9ac3d367c708ae98fb1fbd541"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit1.png",
+      "sha256": "be443e791e988a8a51f4489076e0466254e063f27a729289fb09c2afdb9370a7"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit3.png",
+      "sha256": "2e20a4be1d997c580dab140b2b8df3275cf033a281b24a5b49669dab944c3745"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit5.png",
+      "sha256": "f7f13597457e9887bf44a176942633b770e02fb08160e659a7c49fe792b104c5"
+    }
+  ]
+}

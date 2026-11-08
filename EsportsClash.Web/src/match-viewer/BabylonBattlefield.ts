@@ -1,11 +1,11 @@
-import { MeshBuilder, TransformNode, DynamicTexture, StandardMaterial, Color3, VertexBuffer, VertexData, type Scene, type Mesh, type InstancedMesh } from '@babylonjs/core';
+import { MeshBuilder, TransformNode, DynamicTexture, StandardMaterial, Color3, Vector3, Mesh, VertexBuffer, VertexData, type Scene, type InstancedMesh } from '@babylonjs/core';
 import { arenaGroundHeight, RIDGE_HEIGHT, RIDGE_RAMPS, chasmCenterX } from '../arenaElevation';
 import { drawNaturalArena, stoneLaneEdges, LANDSCAPE } from '../arenaLandform';
 import { ROCK_TERRAIN, ARAM_BUSHES, CAMP_ROCK_RINGS } from '../arenaRules';
 import { arenaCampArt } from '../arenaArtDirection';
 import type { ViewerActor } from './MatchViewer';
 import { paintProceduralArena } from './PaintedArenaProcedural';
-import { ARENA_HEIGHT, LANE_SLOPE } from '../arenaLayout';
+import { ARENA_HEIGHT, LANE_SLOPE, laneY, topLaneY, botLaneY, LANE_HALF_WIDTH } from '../arenaLayout';
 
 type Material = (color: string) => StandardMaterial;
 const noise = (n: number) => {
@@ -13,19 +13,22 @@ const noise = (n: number) => {
   return v - Math.floor(v);
 };
 
-/** All scenery follows the existing terrain facts; it never adds colliders. */
+/**
+ * Clean Summoner's Rift / Wild Rift inspired 3D battlefield builder (`straight-v4`).
+ * All scenery follows authoritative terrain facts; it never adds colliders.
+ */
 export function buildBabylonBattlefield(scene: Scene, width: number, height: number, material: Material) {
-  // 3D atmospheric canyon backdrop surrounding the arena
+  // 3D atmospheric woodland valley backdrop surrounding the arena
   const valleyMat = new StandardMaterial('decorative-valley-mat', scene);
-  valleyMat.diffuseColor = new Color3(0.08, 0.12, 0.10);
+  valleyMat.diffuseColor = new Color3(0.09, 0.16, 0.13);
   valleyMat.specularColor = Color3.Black();
-  valleyMat.emissiveColor = new Color3(0.04, 0.06, 0.05);
+  valleyMat.emissiveColor = new Color3(0.04, 0.08, 0.06);
   const backdrop = MeshBuilder.CreateGround('decorative-valley', { width: width + 2400, height: height + 2800 }, scene);
   backdrop.position.set(width / 2, -45, height / 2);
   backdrop.material = valleyMat;
   backdrop.isPickable = false;
 
-  // 1. High-resolution 3D sculpted terrain mesh with true normal lighting.
+  // 1. High-resolution 3D sculpted terrain mesh with smooth normal lighting.
   const ground = MeshBuilder.CreateGround('arena', { width, height, subdivisions: 200, updatable: true }, scene);
   ground.position.set(width / 2, 0, height / 2);
   const p = ground.getVerticesData(VertexBuffer.PositionKind)!,
@@ -33,7 +36,7 @@ export function buildBabylonBattlefield(scene: Scene, width: number, height: num
   for (let i = 0; i < p.length; i += 3) {
     const wx = p[i] + width / 2,
       wz = p[i + 2] + height / 2;
-    const micro = (noise(wx * 0.07 + wz * 0.11) - 0.5) * 1.5;
+    const micro = (noise(wx * 0.05 + wz * 0.08) - 0.5) * 0.8;
     p[i + 1] = arenaGroundHeight(wx, wz) - 1 + micro;
   }
   const normals: number[] = [];
@@ -50,15 +53,15 @@ export function buildBabylonBattlefield(scene: Scene, width: number, height: num
 
   const paving = new StandardMaterial('arena-surface', scene);
   paving.diffuseTexture = texture;
-  paving.specularColor = new Color3(0.15, 0.15, 0.12);
-  paving.specularPower = 36;
-  paving.diffuseColor = new Color3(0.96, 0.96, 0.94);
-  paving.emissiveColor = new Color3(0.25, 0.26, 0.24);
+  paving.specularColor = new Color3(0.12, 0.13, 0.11);
+  paving.specularPower = 42;
+  paving.diffuseColor = new Color3(0.97, 0.97, 0.95);
+  paving.emissiveColor = new Color3(0.24, 0.26, 0.24);
   ground.material = paving;
 
   scene.metadata = { ...scene.metadata, paintedArena: 'ready', paintedBackdrop: 'ready' };
 
-  // Emissive glowing materials for cinematic bloom highlights
+  // Emissive glowing materials for clean MOBA accents
   const makeGlowMat = (name: string, diffuseHex: string, emissiveHex: string) => {
     const m = new StandardMaterial(name, scene);
     m.diffuseColor = Color3.FromHexString(diffuseHex);
@@ -68,647 +71,488 @@ export function buildBabylonBattlefield(scene: Scene, width: number, height: num
     return m;
   };
   const flameRadMat = makeGlowMat('flame-rad-mat', '#6bf0ff', '#2cb8d9');
-  const flameDireMat = makeGlowMat('flame-dire-mat', '#ff7b3a', '#d93f18');
+  const flameDireMat = makeGlowMat('flame-dire-mat', '#ff7b52', '#d94426');
   const goldGlowMat = makeGlowMat('gold-glow-mat', '#ffe699', '#c99738');
   const jadeGlowMat = makeGlowMat('jade-glow-mat', '#7effd4', '#26a685');
+  const purpleVoidMat = makeGlowMat('purple-void-mat', '#d8b4fe', '#9333ea');
+  const torchFlameMat = makeGlowMat('torch-flame-mat', '#ffd166', '#ff6b00');
 
-  // 2. 3D Cliff Retaining Walls, Bastions & Stepped Stone Ramps.
-  const cliffRadProto = MeshBuilder.CreateBox('cliff-rad-proto', { width: 38, height: RIDGE_HEIGHT, depth: 20 }, scene);
-  cliffRadProto.material = material('#6b6e5e');
-  cliffRadProto.isVisible = false;
-
-  const cliffDireProto = MeshBuilder.CreateBox('cliff-dire-proto', { width: 38, height: RIDGE_HEIGHT, depth: 20 }, scene);
-  cliffDireProto.material = material('#4c4542');
-  cliffDireProto.isVisible = false;
-
-  const curbRadProto = MeshBuilder.CreateBox('curb-rad-proto', { width: 36, height: 7, depth: 10 }, scene);
-  curbRadProto.material = material('#b8ae94');
-  curbRadProto.isVisible = false;
-
-  const curbDireProto = MeshBuilder.CreateBox('curb-dire-proto', { width: 36, height: 7, depth: 10 }, scene);
-  curbDireProto.material = material('#7b726b');
-  curbDireProto.isVisible = false;
-
-  const pillarRadProto = MeshBuilder.CreateCylinder('pillar-rad-proto', { height: RIDGE_HEIGHT + 16, diameterTop: 14, diameterBottom: 18, tessellation: 8 }, scene);
-  pillarRadProto.material = material('#8f8872');
-  pillarRadProto.isVisible = false;
-
-  const pillarDireProto = MeshBuilder.CreateCylinder('pillar-dire-proto', { height: RIDGE_HEIGHT + 16, diameterTop: 14, diameterBottom: 18, tessellation: 8 }, scene);
-  pillarDireProto.material = material('#5c524d');
-  pillarDireProto.isVisible = false;
-
-  const isNearRamp = (x: number, north: boolean) =>
-    (north ? RIDGE_RAMPS.north : RIDGE_RAMPS.south).some(rx => Math.abs(x - rx) < 42);
-
-  for (let x = LANDSCAPE.left + 18; x <= LANDSCAPE.right - 18; x += 34) {
-    const e = stoneLaneEdges(x);
-    const isDire = x > width / 2;
-    for (const north of [true, false]) {
-      if (isNearRamp(x, north)) continue;
-      const edgeY = north ? e.top : e.bottom;
-      const sign = north ? -1 : 1;
-      const cliff = (isDire ? cliffDireProto : cliffRadProto).createInstance(`lane-cliff:${north ? 'n' : 's'}:${x}`);
-      cliff.position.set(x, RIDGE_HEIGHT * 0.45, edgeY + sign * 11);
-      cliff.rotation.y = Math.atan(LANE_SLOPE);
-
-      const curb = (isDire ? curbDireProto : curbRadProto).createInstance(`lane-curb:${north ? 'n' : 's'}:${x}`);
-      curb.position.set(x, RIDGE_HEIGHT + 2.2, edgeY + sign * 2);
-      curb.rotation.y = Math.atan(LANE_SLOPE);
-
-      if (Math.abs(x - width / 2) < 90 || x % 136 === 0) {
-        const pil = (isDire ? pillarDireProto : pillarRadProto).createInstance(`lane-pillar:${north ? 'n' : 's'}:${x}`);
-        pil.position.set(x, (RIDGE_HEIGHT + 14) * 0.5, edgeY + sign * 6);
-      }
-    }
-  }
-
-  // Highground Base Cliff Walls (Radiant West & Dire East plateaus outside the lane)
-  for (const [side, baseX, isDire] of [
-    ['blue', LANDSCAPE.left, false],
-    ['red', LANDSCAPE.right, true],
-  ] as const) {
-    const laneEdge = stoneLaneEdges(baseX);
-    const dir = isDire ? -1 : 1;
-    for (let y = 36; y <= height - 36; y += 36) {
-      if (y > laneEdge.top - 12 && y < laneEdge.bottom + 12) continue;
-      const wall = (isDire ? cliffDireProto : cliffRadProto).createInstance(`base-cliff:${side}:${y}`);
-      wall.position.set(baseX + dir * 10, RIDGE_HEIGHT * 0.46, y);
-      wall.rotation.y = Math.PI / 2;
-
-      const trim = (isDire ? curbDireProto : curbRadProto).createInstance(`base-curb:${side}:${y}`);
-      trim.position.set(baseX + dir * 2, RIDGE_HEIGHT + 2.2, y);
-      trim.rotation.y = Math.PI / 2;
-
-      if (y % 144 === 0) {
-        const bastion = (isDire ? pillarDireProto : pillarRadProto).createInstance(`base-bastion:${side}:${y}`);
-        bastion.position.set(baseX + dir * 5, (RIDGE_HEIGHT + 18) * 0.5, y);
-      }
-    }
-  }
-
-  // 2b. 3D Stepped Stone Staircases & Flaming Braziers at all 8 Ramps.
-  const stairRadProto = MeshBuilder.CreateBox('stair-rad-proto', { width: 48, height: 6, depth: 11 }, scene);
-  stairRadProto.material = material('#7d776a');
-  stairRadProto.isVisible = false;
-
-  const stairDireProto = MeshBuilder.CreateBox('stair-dire-proto', { width: 48, height: 6, depth: 11 }, scene);
-  stairDireProto.material = material('#4a4440');
-  stairDireProto.isVisible = false;
-
-  const brazierPostProto = MeshBuilder.CreateCylinder('brazier-post-proto', { height: 22, diameterTop: 6, diameterBottom: 9, tessellation: 8 }, scene);
-  brazierPostProto.material = material('#4d4943');
-  brazierPostProto.isVisible = false;
-
-  const flameRadProto = MeshBuilder.CreatePolyhedron('flame-rad-proto', { type: 1, size: 4.8 }, scene);
-  flameRadProto.material = flameRadMat;
-  flameRadProto.isVisible = false;
-
-  const flameDireProto = MeshBuilder.CreatePolyhedron('flame-dire-proto', { type: 1, size: 4.8 }, scene);
-  flameDireProto.material = flameDireMat;
-  flameDireProto.isVisible = false;
-
-  for (const north of [true, false]) {
-    const sign = north ? -1 : 1;
-    for (const rx of north ? RIDGE_RAMPS.north : RIDGE_RAMPS.south) {
-      const e = stoneLaneEdges(rx);
-      const edgeY = north ? e.top : e.bottom;
-      const isDire = rx > width / 2;
-      for (let step = 0; step < 6; step++) {
-        const sy = edgeY + sign * (step * 11 + 4);
-        const sh = RIDGE_HEIGHT * (1 - step / 6);
-        const tread = (isDire ? stairDireProto : stairRadProto).createInstance(`ramp-step:${north ? 'n' : 's'}:${rx}:${step}`);
-        tread.position.set(rx, sh - 2, sy);
-      }
-      for (const side of [-1, 1]) {
-        const postX = rx + side * 27;
-        const postY = edgeY + sign * 6;
-        const post = brazierPostProto.createInstance(`ramp-post:${north ? 'n' : 's'}:${rx}:${side}`);
-        post.position.set(postX, RIDGE_HEIGHT + 10, postY);
-        const flame = (isDire ? flameDireProto : flameRadProto).createInstance(`ramp-flame:${north ? 'n' : 's'}:${rx}:${side}`);
-        flame.position.set(postX, RIDGE_HEIGHT + 24, postY);
-      }
-    }
-  }
-
-  // 3. Central Sunken Canyon Chasm Architecture & Causeway Bridge Piers.
-  const chasmCragProto = MeshBuilder.CreatePolyhedron('chasm-crag-proto', { type: 1, size: 1 }, scene);
-  chasmCragProto.material = material('#3d3735');
-  chasmCragProto.isVisible = false;
-
-  const bridgeArchProto = MeshBuilder.CreateBox('bridge-arch-proto', { width: 34, height: 42, depth: 24 }, scene);
-  bridgeArchProto.material = material('#625b52');
-  bridgeArchProto.isVisible = false;
-
-  // Bridge piers under the stone causeway spanning the canyon chasm
-  const laneMid = stoneLaneEdges(width / 2);
-  for (const north of [true, false]) {
-    const edgeY = north ? laneMid.top : laneMid.bottom;
-    const sign = north ? -1 : 1;
-    for (const px of [width / 2 - 42, width / 2 + 42]) {
-      const pier = bridgeArchProto.createInstance(`chasm-pier:${north ? 'n' : 's'}:${px}`);
-      pier.position.set(px, (RIDGE_HEIGHT - 12) * 0.5, edgeY + sign * 8);
-      pier.scaling.set(1.15, 1.25, 0.95);
-    }
-  }
-
-  // Jagged canyon walls & rocky gorge formations along the chasm divide
-  for (let y = 32; y <= height - 32; y += 38) {
-    if (y > laneMid.top - 24 && y < laneMid.bottom + 24) continue;
-    const cx = chasmCenterX(y);
-    const gorgeH = arenaGroundHeight(cx, y);
-    // Crags on Radiant West and Dire East rims of the chasm
-    for (const side of [-1, 1]) {
-      const cragX = cx + side * (52 + noise(y + side) * 16);
-      const crag = chasmCragProto.createInstance(`chasm-rim-crag:${y}:${side}`);
-      const cragSize = 22 + (y % 4) * 5;
-      crag.position.set(cragX, arenaGroundHeight(cragX, y) + cragSize * 0.45, y);
-      crag.scaling.set(cragSize * 1.1, cragSize * 1.35, cragSize * 0.95);
-      crag.rotation.set(0.18 * side, (y + side) * 0.4, 0.1);
-    }
-    // Boulder formations in the canyon floor
-    if (y % 76 === 0) {
-      const bedStone = chasmCragProto.createInstance(`chasm-bed-stone:${y}`);
-      bedStone.position.set(cx + (noise(y) - 0.5) * 24, gorgeH + 4, y);
-      bedStone.scaling.set(16, 12, 18);
-      bedStone.rotation.y = noise(y) * Math.PI;
-    }
-  }
-
-  // 3b. Central Celestial Astrolabe Spire Setpieces on the causeway bridge.
   const animatedRings: { mesh: Mesh; speed: number; baseY: number; amp: number }[] = [];
-  for (const [north, edgeY] of [
-    [true, laneMid.top],
-    [false, laneMid.bottom],
-  ] as const) {
-    const sign = north ? -1 : 1;
-    const spireY = edgeY + sign * 18;
-    const spire = MeshBuilder.CreateCylinder(`mid-gate-spire:${north}`, { height: 74, diameterTop: 10, diameterBottom: 22, tessellation: 8 }, scene);
-    spire.position.set(width / 2, RIDGE_HEIGHT + 34, spireY);
-    spire.material = material('#8f856e');
 
-    const crown = MeshBuilder.CreateTorus(`mid-gate-halo:${north}`, { diameter: 34, thickness: 2.4, tessellation: 24 }, scene);
-    crown.position.set(width / 2, RIDGE_HEIGHT + 76, spireY);
-    crown.rotation.x = 0.35 * sign;
-    crown.material = goldGlowMat;
-    animatedRings.push({ mesh: crown, speed: north ? 0.9 : -0.9, baseY: RIDGE_HEIGHT + 76, amp: 2.5 });
+  // 2. Sculpted League of Legends Rock Prototypes (Dark Slate Base, Weathered Mid Crag, Mossy Cap & Gnarled Roots)
+  const rockDarkProto = MeshBuilder.CreatePolyhedron('rock-dark-proto', { type: 1, size: 1 }, scene);
+  rockDarkProto.material = material('#3a454a');
+  rockDarkProto.isVisible = false;
 
-    const star = MeshBuilder.CreatePolyhedron(`mid-gate-star:${north}`, { type: 1, size: 7.5 }, scene);
-    star.position.set(width / 2, RIDGE_HEIGHT + 76, spireY);
-    star.material = goldGlowMat;
-    animatedRings.push({ mesh: star, speed: north ? -1.4 : 1.4, baseY: RIDGE_HEIGHT + 76, amp: 3.2 });
+  const rockMainProto = MeshBuilder.CreatePolyhedron('rock-main-proto', { type: 1, size: 1 }, scene);
+  rockMainProto.material = material('#4f5c61');
+  rockMainProto.isVisible = false;
+
+  const rockWarmProto = MeshBuilder.CreatePolyhedron('rock-warm-proto', { type: 3, size: 1 }, scene);
+  rockWarmProto.material = material('#5c584f');
+  rockWarmProto.isVisible = false;
+
+  const rockCapProto = MeshBuilder.CreatePolyhedron('rock-cap-proto', { type: 2, size: 1 }, scene);
+  rockCapProto.material = material('#3d5e37');
+  rockCapProto.isVisible = false;
+
+  const rootTendrilProto = MeshBuilder.CreateCylinder('root-tendril-proto', { height: 1, diameterTop: 0.25, diameterBottom: 0.9, tessellation: 6 }, scene);
+  rootTendrilProto.material = material('#543d28');
+  rootTendrilProto.isVisible = false;
+
+  const purpleShardProto = MeshBuilder.CreateCylinder('purple-shard-proto', { height: 1, diameterTop: 0.12, diameterBottom: 0.85, tessellation: 5 }, scene);
+  purpleShardProto.material = purpleVoidMat;
+  purpleShardProto.isVisible = false;
+
+  // Natural Non-Straight Boulder Clusters & Weathered Ruins along the Outer/Inner Lane Edges
+  // (Replaces the straight white stadium curbs and artificial staircases with organic rock & mossy stone)
+  const sanctumR = 168;
+  const isNearSanctumOrEntrance = (px: number, py: number) =>
+    Math.hypot(px - 260, py - 720) < sanctumR + 28 ||
+    Math.hypot(px - (width - 260), py - 720) < sanctumR + 28 ||
+    Math.abs(px - 620) < 62 ||
+    Math.abs(px - 920) < 62 ||
+    Math.abs(px - 1400) < 125 ||
+    Math.abs(px - (width - 620)) < 62 ||
+    Math.abs(px - (width - 920)) < 62;
+
+  let borderBoulderIdx = 0;
+  for (const isTop of [true, false]) {
+    const laneYFunc = isTop ? topLaneY : botLaneY;
+    for (const sign of [-1, 1]) {
+      for (let x = 350; x <= width - 350; x += 46) {
+        const cy = laneYFunc(x);
+        const dy = (laneYFunc(x + 4) - laneYFunc(x - 4)) / 8;
+        const len = Math.hypot(1, dy);
+        const nx = -dy / len;
+        const ny = 1 / len;
+        // Organic non-straight offset outside the lane corridor
+        const wiggle = Math.sin(x * 0.041 + sign) * 10 + Math.cos(x * 0.093) * 6;
+        const dist = LANE_HALF_WIDTH + 18 + wiggle;
+        const bx = x + nx * sign * dist;
+        const bz = cy + ny * sign * dist;
+        if (isNearSanctumOrEntrance(bx, bz)) continue;
+        // Skip inner lane edge where camp rings already form the natural rock wall
+        const nearCampRock = ROCK_TERRAIN.some(r => Math.hypot(r.x - bx, r.y - bz) < r.radius + 26);
+        if (nearCampRock) continue;
+
+        borderBoulderIdx++;
+        const gh = arenaGroundHeight(bx, bz);
+        const proto = borderBoulderIdx % 3 === 0 ? rockWarmProto : rockMainProto;
+        const b = proto.createInstance(`lane-verge-boulder:${borderBoulderIdx}`);
+        const rx = 10 + (borderBoulderIdx % 4) * 3.5;
+        const ry = 7 + (borderBoulderIdx % 3) * 3;
+        const rz = 9 + ((borderBoulderIdx + 1) % 4) * 3;
+        b.position.set(bx, gh + ry * 0.32, bz);
+        b.scaling.set(rx, ry, rz);
+        b.rotation.set(0.12, borderBoulderIdx * 1.3, -0.08);
+
+        if (borderBoulderIdx % 2 === 0) {
+          const moss = rockCapProto.createInstance(`lane-verge-moss:${borderBoulderIdx}`);
+          moss.position.set(bx + 2, gh + ry * 0.68, bz - 1);
+          moss.scaling.set(rx * 0.72, ry * 0.36, rz * 0.7);
+          moss.rotation.y = borderBoulderIdx * 0.9;
+        }
+      }
+    }
   }
 
-  // 3c. Howling Abyss Atmospheric Chasm Fog & Rising Frost Mist
-  const frostMistMat = new StandardMaterial('frost-mist-mat', scene);
-  frostMistMat.diffuseColor = Color3.FromHexString('#8fd6f2');
-  frostMistMat.emissiveColor = Color3.FromHexString('#3a7594');
-  frostMistMat.alpha = 0.28;
-  frostMistMat.backFaceCulling = false;
-  frostMistMat.specularColor = Color3.Black();
+  // Ancient Weathered Runic Monoliths & Team Standards around West (Blue) & East (Red) Base Sanctuaries
+  const monolithProto = MeshBuilder.CreatePolyhedron('sanctum-monolith-proto', { type: 1, size: 1 }, scene);
+  monolithProto.material = material('#4a5459');
+  monolithProto.isVisible = false;
 
-  const abyssVoidMat = new StandardMaterial('abyss-void-mat', scene);
-  abyssVoidMat.diffuseColor = Color3.FromHexString('#04090f');
-  abyssVoidMat.emissiveColor = Color3.FromHexString('#020508');
-  abyssVoidMat.alpha = 0.62;
-  abyssVoidMat.backFaceCulling = false;
+  for (const [side, sx, isRed] of [
+    ['blue', 260, false],
+    ['red', width - 260, true],
+  ] as const) {
+    const rockAngles = isRed
+      ? [-0.78, -0.56, -0.36, 0.36, 0.56, 0.78, Math.PI - 0.34, Math.PI + 0.34]
+      : [Math.PI - 0.78, Math.PI - 0.56, Math.PI - 0.36, Math.PI + 0.36, Math.PI + 0.56, Math.PI + 0.78, -0.34, 0.34];
+    for (const [mIdx, ang] of rockAngles.entries()) {
+      const mx = sx + Math.cos(ang) * (sanctumR + 6 + (mIdx % 2) * 8);
+      const mz = 720 + Math.sin(ang) * (sanctumR + 6 + (mIdx % 2) * 8);
+      const gh = arenaGroundHeight(mx, mz);
+      const mono = monolithProto.createInstance(`sanctum-monolith:${side}:${mIdx}`);
+      const mh = 22 + (mIdx % 3) * 7;
+      mono.position.set(mx, gh + mh * 0.38, mz);
+      mono.scaling.set(16, mh, 14);
+      mono.rotation.set(0.08, ang + 0.4, -0.06);
+
+      const mossCap = rockCapProto.createInstance(`sanctum-moss:${side}:${mIdx}`);
+      mossCap.position.set(mx, gh + mh * 0.74, mz);
+      mossCap.scaling.set(12, mh * 0.32, 11);
+    }
+
+    // Glowing Arcane Waystone at the Inner Jungle Gate (X = 425 for Blue, X = 2375 for Red)
+    const gateX = isRed ? sx - sanctumR + 4 : sx + sanctumR - 4;
+    for (const zOff of [-38, 38]) {
+      const gh = arenaGroundHeight(gateX, 720 + zOff);
+      const gateStone = rockDarkProto.createInstance(`sanctum-gate-stone:${side}:${zOff}`);
+      gateStone.position.set(gateX, gh + 10, 720 + zOff);
+      gateStone.scaling.set(13, 18, 12);
+
+      const gateCrystal = MeshBuilder.CreateCylinder(`sanctum-gate-crystal:${side}:${zOff}`, { height: 18, diameterTop: 1.5, diameterBottom: 7, tessellation: 6 }, scene);
+      gateCrystal.position.set(gateX, gh + 18, 720 + zOff);
+      gateCrystal.rotation.z = isRed ? 0.22 : -0.22;
+      gateCrystal.material = isRed ? flameDireMat : flameRadMat;
+    }
+  }
+
+  // Natural River Ford Boulders flanking the Top (Y=270) & Bottom (Y=1170) River Crossings
+  for (const [fIdx, fordY] of [
+    [0, 270],
+    [1, 1170],
+  ] as const) {
+    const fordX = chasmCenterX(fordY);
+    for (const sign of [-1, 1]) {
+      for (const [bIdx, dx] of [-56, -24, 24, 56].entries()) {
+        const bx = fordX + dx;
+        const bz = fordY + sign * (LANE_HALF_WIDTH + 12 + (bIdx % 2) * 6);
+        const gh = arenaGroundHeight(bx, bz);
+        const fordRock = rockDarkProto.createInstance(`ford-boulder:${fIdx}:${sign}:${bIdx}`);
+        fordRock.position.set(bx, gh + 5, bz);
+        fordRock.scaling.set(14 + (bIdx % 2) * 4, 9 + (bIdx % 2) * 3, 12);
+        fordRock.rotation.y = bIdx * 1.1;
+      }
+    }
+  }
+
+  // 3. Organic River Shimmer Rings (replaces rectangular water planes so the river has zero boxy edges).
+  const riverFoamMat = new StandardMaterial('river-foam-mat', scene);
+  riverFoamMat.diffuseColor = Color3.FromHexString('#4ea8b8');
+  riverFoamMat.emissiveColor = Color3.FromHexString('#1d5663');
+  riverFoamMat.alpha = 0.16;
+  riverFoamMat.backFaceCulling = false;
 
   const abyssFogPlanes: { mesh: Mesh; speed: number; baseOffset: number }[] = [];
-  for (let m = 0; m < 3; m++) {
-    const mistPlane = MeshBuilder.CreatePlane(`abyss-frost-mist:${m}`, { width: 340 + m * 50, height: height * 0.96 }, scene);
-    mistPlane.rotation.x = Math.PI / 2;
-    mistPlane.position.set(width / 2, -26 - m * 5, height / 2);
-    mistPlane.material = m === 2 ? abyssVoidMat : frostMistMat;
-    mistPlane.isPickable = false;
-    abyssFogPlanes.push({ mesh: mistPlane, speed: (m % 2 === 0 ? 1 : -1) * (0.015 + m * 0.008), baseOffset: -26 - m * 5 });
+  for (const [chanIdx, chanZ] of [
+    [0, 415],
+    [1, 495],
+    [2, 945],
+    [3, 1025],
+  ] as const) {
+    const waterDisc = MeshBuilder.CreateDisc(`river-shimmer-disc:${chanIdx}`, { radius: 42, tessellation: 24 }, scene);
+    waterDisc.rotation.x = Math.PI / 2;
+    const baseH = arenaGroundHeight(width / 2, chanZ) + 0.6;
+    waterDisc.position.set(width / 2, baseH, chanZ);
+    waterDisc.material = riverFoamMat;
+    waterDisc.isPickable = false;
+    abyssFogPlanes.push({ mesh: waterDisc, speed: (chanIdx % 2 === 0 ? 1 : -1) * 0.012, baseOffset: baseH });
   }
 
-  // 3d. Hanging Giant Iron Chains & Under-Bridge Stone Buttress Arches
-  const ironChainMat = new StandardMaterial('iron-chain-mat', scene);
-  ironChainMat.diffuseColor = Color3.FromHexString('#25272a');
-  ironChainMat.specularColor = new Color3(0.18, 0.18, 0.18);
-  ironChainMat.specularPower = 24;
+  // 4. Multi-Faceted League of Legends Rock Ridges (`ROCK_TERRAIN`), Center River Outcrop & Boss Coves (`CAMP_ROCK_RINGS`).
+  // Center River Island (1400, 720): Natural Mossy Rock Outcrop & Ancient Crystal Sentinel (NO flat cylinder pad!)
+  const sentinelMain = rockDarkProto.createInstance('island-sentinel-main');
+  sentinelMain.position.set(1400, RIDGE_HEIGHT + 15, 720);
+  sentinelMain.scaling.set(25, 28, 23);
+  sentinelMain.rotation.set(0.08, 0.6, -0.05);
 
-  const chainLinkProto = MeshBuilder.CreateTorus('chain-link-proto', { diameter: 14, thickness: 3.2, tessellation: 12 }, scene);
-  chainLinkProto.material = ironChainMat;
-  chainLinkProto.isVisible = false;
+  const sentinelMoss = rockCapProto.createInstance('island-sentinel-moss');
+  sentinelMoss.position.set(1400, RIDGE_HEIGHT + 27, 720);
+  sentinelMoss.scaling.set(18, 10, 17);
 
-  const underArchProto = MeshBuilder.CreateBox('under-arch-proto', { width: 44, height: 56, depth: 32 }, scene);
-  underArchProto.material = material('#48423c');
-  underArchProto.isVisible = false;
+  for (const [sIdx, ox, oz, sx, sy, hasCrystal] of [
+    [0, -22, 7, 16, 17, true],
+    [1, 21, 9, 15, 16, true],
+    [2, -14, -17, 14, 15, true],
+    [3, 16, -15, 16, 15, false],
+    [4, 5, 21, 13, 12, true],
+  ] as const) {
+    const subRock = rockMainProto.createInstance(`island-sentinel-sub:${sIdx}`);
+    subRock.position.set(1400 + ox, RIDGE_HEIGHT + sy * 0.42, 720 + oz);
+    subRock.scaling.set(sx, sy, sx * 0.9);
+    subRock.rotation.y = sIdx * 1.1;
 
-  for (const north of [true, false]) {
-    const edgeY = north ? laneMid.top : laneMid.bottom;
-    const sign = north ? -1 : 1;
-    for (const [offsetPx, tilt] of [[-68, 0.22], [68, -0.22]] as const) {
-      const arch = underArchProto.createInstance(`chasm-buttress:${north ? 'n' : 's'}:${offsetPx}`);
-      arch.position.set(width / 2 + offsetPx, RIDGE_HEIGHT * 0.2, edgeY + sign * 14);
-      arch.rotation.z = tilt;
-      arch.rotation.y = Math.atan(LANE_SLOPE);
-    }
-    for (const cx of [width / 2 - 58, width / 2 - 22, width / 2 + 22, width / 2 + 58]) {
-      const startY = RIDGE_HEIGHT - 6;
-      for (let link = 0; link < 7; link++) {
-        const cl = chainLinkProto.createInstance(`abyss-chain:${north ? 'n' : 's'}:${cx}:${link}`);
-        const sag = Math.sin((link / 6) * Math.PI) * 5;
-        cl.position.set(cx + (link % 2 === 0 ? 0 : 1.2), startY - link * 7.5, edgeY + sign * (12 + sag));
-        cl.rotation.x = link % 2 === 0 ? 0 : Math.PI / 2;
-        cl.rotation.y = Math.atan(LANE_SLOPE);
-        cl.scaling.setAll(1 - link * 0.04);
-      }
-    }
-  }
-
-  // 3e. Stone Balustrades with Broken Crenellations & Guardian Runic Obelisks
-  const balustradeProto = MeshBuilder.CreateBox('balustrade-proto', { width: 30, height: 13, depth: 7 }, scene);
-  balustradeProto.material = material('#635e54');
-  balustradeProto.isVisible = false;
-
-  const balustradeDireProto = MeshBuilder.CreateBox('balustrade-dire-proto', { width: 30, height: 13, depth: 7 }, scene);
-  balustradeDireProto.material = material('#48423e');
-  balustradeDireProto.isVisible = false;
-
-  const rubbleProto = MeshBuilder.CreatePolyhedron('rubble-proto', { type: 1, size: 3.5 }, scene);
-  rubbleProto.material = material('#524c44');
-  rubbleProto.isVisible = false;
-
-  const runeFrostMat = makeGlowMat('rune-frost-mat', '#80e5ff', '#32b8e8');
-  const runeEmberMat = makeGlowMat('rune-ember-mat', '#ff8442', '#e04a12');
-
-  const runeObeliskProto = MeshBuilder.CreateCylinder('rune-obelisk-proto', { height: 38, diameterTop: 7, diameterBottom: 12, tessellation: 6 }, scene);
-  runeObeliskProto.material = material('#55524b');
-  runeObeliskProto.isVisible = false;
-
-  // Stone Balustrades along the slanted bridge edges
-  for (let x = LANDSCAPE.left + 24; x <= LANDSCAPE.right - 24; x += 32) {
-    const e = stoneLaneEdges(x);
-    const isDire = x > width / 2;
-    for (const north of [true, false]) {
-      if (isNearRamp(x, north)) continue;
-      const edgeY = north ? e.top : e.bottom;
-      const sign = north ? -1 : 1;
-      const broken = (x % 160 === 0);
-      if (broken) {
-        for (let r = 0; r < 2; r++) {
-          const rub = rubbleProto.createInstance(`balustrade-rubble:${north ? 'n' : 's'}:${x}:${r}`);
-          rub.position.set(x + (r - 0.5) * 12, RIDGE_HEIGHT + 3.2, edgeY + sign * (6 + r * 3));
-          rub.rotation.set(r * 0.4, x * 0.1, r * 0.2);
-        }
-        continue;
-      }
-      const parapet = (isDire ? balustradeDireProto : balustradeProto).createInstance(`balustrade:${north ? 'n' : 's'}:${x}`);
-      parapet.position.set(x, RIDGE_HEIGHT + 6.5, edgeY + sign * 5);
-      parapet.rotation.y = Math.atan(LANE_SLOPE);
+    if (hasCrystal) {
+      const shard = MeshBuilder.CreateCylinder(`island-crystal:${sIdx}`, { height: 21, diameterTop: 1.4, diameterBottom: 8, tessellation: 6 }, scene);
+      shard.position.set(1400 + ox * 1.22, RIDGE_HEIGHT + 13, 720 + oz * 1.22);
+      shard.rotation.z = ox < 0 ? 0.32 : -0.32;
+      shard.rotation.x = oz < 0 ? -0.22 : 0.22;
+      shard.material = flameRadMat;
     }
   }
 
-  // Guardian Runic Obelisks at bridge ramp gateways
-  for (const north of [true, false]) {
-    for (const rx of north ? RIDGE_RAMPS.north : RIDGE_RAMPS.south) {
-      const e = stoneLaneEdges(rx);
-      const edgeY = north ? e.top : e.bottom;
-      const sign = north ? -1 : 1;
-      const isDire = rx > width / 2;
-      const obelisk = runeObeliskProto.createInstance(`gate-obelisk:${north ? 'n' : 's'}:${rx}`);
-      obelisk.position.set(rx + 34, RIDGE_HEIGHT + 18, edgeY + sign * 14);
-      obelisk.rotation.y = Math.atan(LANE_SLOPE) + (sign > 0 ? 0.1 : -0.1);
-
-      const runeGem = MeshBuilder.CreatePolyhedron(`gate-obelisk-gem:${north ? 'n' : 's'}:${rx}`, { type: 1, size: 5.5 }, scene);
-      runeGem.position.set(rx + 34, RIDGE_HEIGHT + 39, edgeY + sign * 14);
-      runeGem.material = isDire ? runeEmberMat : runeFrostMat;
-      animatedRings.push({ mesh: runeGem, speed: isDire ? 1.4 : -1.4, baseY: RIDGE_HEIGHT + 39, amp: 2.2 });
-    }
+  // Irregular mossy river boulders framing the North and South banks of the Center River Island
+  for (let b = 0; b < 14; b++) {
+    const ang = (b * Math.PI * 2) / 14;
+    if (Math.abs(Math.sin(ang)) < 0.44) continue;
+    const rad = 88 + (b % 3) * 6;
+    const bx = 1400 + Math.cos(ang) * rad;
+    const bz = 720 + Math.sin(ang) * rad;
+    const gh = arenaGroundHeight(bx, bz);
+    const boulder = (b % 2 === 0 ? rockDarkProto : rockMainProto).createInstance(`island-rim-boulder:${b}`);
+    boulder.position.set(bx, gh + 6, bz);
+    boulder.scaling.set(15 + (b % 3) * 3, 14 + (b % 3) * 4, 14);
+    boulder.rotation.set(0.1, b * 0.85, -0.07);
   }
 
-  // 4. 3D Multi-Part Rock Crags (ROCK_TERRAIN) & Boss/Camp Architecture (CAMP_ROCK_RINGS).
-  const rockRadProto = MeshBuilder.CreatePolyhedron('rock-rad-proto', { type: 1, size: 1 }, scene);
-  rockRadProto.material = material('#5d6b5c');
-  rockRadProto.isVisible = false;
-
-  const rockDireProto = MeshBuilder.CreatePolyhedron('rock-dire-proto', { type: 1, size: 1 }, scene);
-  rockDireProto.material = material('#4a4341');
-  rockDireProto.isVisible = false;
-
-  const rockCapRadProto = MeshBuilder.CreatePolyhedron('rock-cap-rad-proto', { type: 2, size: 1 }, scene);
-  rockCapRadProto.material = material('#4e7548');
-  rockCapRadProto.isVisible = false;
-
-  const rockCapDireProto = MeshBuilder.CreatePolyhedron('rock-cap-dire-proto', { type: 2, size: 1 }, scene);
-  rockCapDireProto.material = material('#634138');
-  rockCapDireProto.isVisible = false;
-
+  // Sculpted Multi-Tiered Rock Formations for Every Authoritative `ROCK_TERRAIN` Collider
   for (const [i, rock] of ROCK_TERRAIN.entries()) {
-    const isDire = rock.x > width / 2;
     const baseH = arenaGroundHeight(rock.x, rock.y);
-    const main = (isDire ? rockDireProto : rockRadProto).createInstance(`collision-rock:${i}`);
-    const tall = rock.radius * (1.28 + noise(i) * 0.78);
-    main.position.set(rock.x, baseH + tall * 0.42, rock.y);
-    main.scaling.set(rock.radius * 1.06, tall, rock.radius * 0.96);
-    main.rotation.set(noise(i) * 0.35, noise(i + 10) * 6.2, 0.12);
+    const tall = rock.radius * (0.98 + noise(i) * 0.42);
 
-    const cap = (isDire ? rockCapDireProto : rockCapRadProto).createInstance(`collision-rock-cap:${i}`);
-    cap.position.set(
-      rock.x + (noise(i + 3) - 0.5) * rock.radius * 0.35,
-      baseH + tall * 0.82,
-      rock.y + (noise(i + 7) - 0.5) * rock.radius * 0.35,
+    // Primary jagged slate crag
+    const mainProto = i % 3 === 0 ? rockDarkProto : i % 3 === 1 ? rockMainProto : rockWarmProto;
+    const main = mainProto.createInstance(`collision-rock:${i}`);
+    main.position.set(rock.x, baseH + tall * 0.36, rock.y);
+    main.scaling.set(rock.radius * 1.12, tall, rock.radius * 1.02);
+    main.rotation.set((noise(i) - 0.5) * 0.28, noise(i + 10) * 6.2, (noise(i + 4) - 0.5) * 0.24);
+
+    // Secondary interlocking side shoulder boulder so the ridge looks sculpted and non-straight
+    const sideAngle = noise(i + 19) * Math.PI * 2;
+    const sideDist = rock.radius * 0.48;
+    const side = rockDarkProto.createInstance(`collision-rock-side:${i}`);
+    side.position.set(
+      rock.x + Math.cos(sideAngle) * sideDist,
+      baseH + tall * 0.25,
+      rock.y + Math.sin(sideAngle) * sideDist,
     );
-    cap.scaling.set(rock.radius * 0.68, tall * 0.55, rock.radius * 0.62);
-    cap.rotation.set(0.2, noise(i + 22) * 5, -0.15);
+    side.scaling.set(rock.radius * 0.78, tall * 0.66, rock.radius * 0.74);
+    side.rotation.set(0.18, sideAngle, -0.14);
+
+    // Lush mossy turf cap on top of the rock formation
+    const cap = rockCapProto.createInstance(`collision-rock-cap:${i}`);
+    cap.position.set(
+      rock.x + (noise(i + 3) - 0.5) * rock.radius * 0.22,
+      baseH + tall * 0.74,
+      rock.y + (noise(i + 7) - 0.5) * rock.radius * 0.22,
+    );
+    cap.scaling.set(rock.radius * 0.76, tall * 0.36, rock.radius * 0.72);
+    cap.rotation.set(0.08, noise(i + 22) * 5, -0.06);
+
+    // Glowing Purple Arcane Crystal Fissures & Gnarled Roots on River-Facing & Boss Cove Rocks
+    // (Matches the Summoner's Rift Baron Pit reference image!)
+    const isRiverOrCoveRock = Math.abs(rock.x - width / 2) < 350 || i % 6 === 0;
+    if (isRiverOrCoveRock && i % 2 === 0) {
+      const shard = purpleShardProto.createInstance(`rock-purple-fissure:${i}`);
+      const shardAng = Math.atan2(720 - rock.y, width / 2 - rock.x);
+      shard.position.set(
+        rock.x + Math.cos(shardAng) * rock.radius * 0.55,
+        baseH + tall * 0.32,
+        rock.y + Math.sin(shardAng) * rock.radius * 0.55,
+      );
+      shard.scaling.set(5.5, tall * 0.58, 5.5);
+      shard.rotation.set(Math.sin(shardAng) * 0.42, shardAng, -Math.cos(shardAng) * 0.42);
+    }
+
+    if (i % 3 === 0) {
+      const rootMesh = rootTendrilProto.createInstance(`rock-gnarled-root:${i}`);
+      const rAng = noise(i + 41) * Math.PI * 2;
+      rootMesh.position.set(
+        rock.x + Math.cos(rAng) * rock.radius * 0.68,
+        baseH + tall * 0.24,
+        rock.y + Math.sin(rAng) * rock.radius * 0.68,
+      );
+      rootMesh.scaling.set(4.8, tall * 0.65, 4.8);
+      rootMesh.rotation.set(Math.sin(rAng) * 0.55, rAng, -Math.cos(rAng) * 0.55);
+    }
   }
 
-  let dragonMagmaMesh: Mesh | null = null;
-  const floatingGolemStones: { mesh: InstancedMesh; orbitR: number; speed: number; baseAngle: number; baseY: number; center: { x: number; z: number } }[] = [];
+  // Boss Cove Runic Fissure Shards & Flickering Jungle Camp Entrance Torches
+  const torchFlames: { mesh: Mesh; baseY: number; phase: number }[] = [];
+  const spawnTorchBrazier = (id: string, tx: number, tz: number) => {
+    const gh = arenaGroundHeight(tx, tz);
+    const post = MeshBuilder.CreateCylinder(`torch-post:${id}`, { height: 15, diameterTop: 3.6, diameterBottom: 5.2, tessellation: 7 }, scene);
+    post.position.set(tx, gh + 7.5, tz);
+    post.material = material('#38322e');
+
+    const bowl = MeshBuilder.CreateCylinder(`torch-bowl:${id}`, { height: 4.5, diameterTop: 8.5, diameterBottom: 4.2, tessellation: 8 }, scene);
+    bowl.position.set(tx, gh + 15.5, tz);
+    bowl.material = material('#4f4339');
+
+    const flame = MeshBuilder.CreatePolyhedron(`torch-flame:${id}`, { type: 1, size: 3.6 }, scene);
+    flame.position.set(tx, gh + 19.5, tz);
+    flame.scaling.set(0.9, 1.45, 0.9);
+    flame.material = torchFlameMat;
+    torchFlames.push({ mesh: flame, baseY: gh + 19.5, phase: tx * 0.03 + tz * 0.05 });
+  };
 
   for (const ring of CAMP_ROCK_RINGS) {
-    const art = arenaCampArt(ring.id);
     const isBoss = ring.stones === 16;
     const isDragon = ring.id === 'dragon_boss';
     const baseH = arenaGroundHeight(ring.x, ring.y);
-    const altar = MeshBuilder.CreateTorus(
-      `camp-altar:${ring.id}`,
-      { diameter: ring.radius * (isBoss ? 1.18 : 0.86), thickness: isBoss ? 3.4 : 2, tessellation: 28 },
-      scene,
-    );
-    altar.position.set(ring.x, baseH + 0.9, ring.y);
-    altar.material = isBoss ? (isDragon ? flameDireMat : jadeGlowMat) : material(art.accent);
 
-    for (const side of [-1, 1]) {
-      const gateAngle = ring.entrance + side * (isBoss ? 0.54 : 0.66);
-      const gx = ring.x + Math.cos(gateAngle) * (ring.radius + 4);
-      const gy = ring.y + Math.sin(gateAngle) * (ring.radius + 4);
-      const gh = arenaGroundHeight(gx, gy);
-      const totem = brazierPostProto.createInstance(`camp-totem:${ring.id}:${side}`);
-      totem.position.set(gx, gh + (isBoss ? 20 : 12), gy);
-      totem.scaling.set(isBoss ? 1.6 : 1.1, isBoss ? 1.85 : 1.1, isBoss ? 1.6 : 1.1);
-      const crystal = MeshBuilder.CreatePolyhedron(`camp-gem:${ring.id}:${side}`, { type: 1, size: isBoss ? 7 : 4.2 }, scene);
-      crystal.position.set(gx, gh + (isBoss ? 42 : 26), gy);
-      crystal.material = isBoss ? (isDragon ? flameDireMat : jadeGlowMat) : material(art.accent);
-      if (isBoss) animatedRings.push({ mesh: crystal, speed: side * 1.2, baseY: gh + 42, amp: 2.8 });
-    }
-
-    // Boss Pit Grand Architecture (Dragon Volcanic Ribs vs Siege Golem Colosseum Pillars)
     if (isBoss) {
-      for (let k = 0; k < 7; k++) {
-        const arc = ring.entrance + Math.PI + (k - 3) * 0.36;
-        const px = ring.x + Math.cos(arc) * (ring.radius + 14);
-        const pz = ring.y + Math.sin(arc) * (ring.radius + 14);
-        const ph = arenaGroundHeight(px, pz);
-        if (isDragon) {
-          const rib = MeshBuilder.CreateCylinder(
-            `dragon-rib:${k}`,
-            { height: 64, diameterTop: 3, diameterBottom: 15, tessellation: 6 },
-            scene,
-          );
-          rib.position.set(px, ph + 28, pz);
-          rib.rotation.y = -arc + Math.PI / 2;
-          rib.rotation.z = 0.38;
-          rib.material = material('#3c2d2a');
-        } else {
-          const col = MeshBuilder.CreateCylinder(
-            `golem-col:${k}`,
-            { height: 58, diameterTop: 12, diameterBottom: 15, tessellation: 8 },
-            scene,
-          );
-          col.position.set(px, ph + 27, pz);
-          col.material = material('#707a72');
-          if (k % 2 === 0) {
-            const capGem = MeshBuilder.CreatePolyhedron(`golem-cap:${k}`, { type: 1, size: 5 }, scene);
-            capGem.position.set(px, ph + 61, pz);
-            capGem.material = jadeGlowMat;
-          }
-        }
+      // Sunken Fractured Crystal Shards around the Boss Cove rim (matching Baron Pit in reference image)
+      for (let s = 0; s < 8; s++) {
+        const ang = ring.entrance + 0.65 + (s * (Math.PI * 2 - 1.3)) / 7;
+        const sr = ring.radius - 12;
+        const sx = ring.x + Math.cos(ang) * sr;
+        const sz = ring.y + Math.sin(ang) * sr;
+        const shard = MeshBuilder.CreateCylinder(`boss-cove-shard:${ring.id}:${s}`, { height: 18 + (s % 3) * 5, diameterTop: 1.2, diameterBottom: 7.5, tessellation: 5 }, scene);
+        shard.position.set(sx, baseH + 8, sz);
+        shard.rotation.z = Math.cos(ang) * 0.38;
+        shard.rotation.x = -Math.sin(ang) * 0.38;
+        shard.material = isDragon ? flameDireMat : purpleVoidMat;
       }
 
-      if (isDragon) {
-        // Dragon Molten Magma Pool
-        const magmaMat = new StandardMaterial('dragon-magma-mat', scene);
-        magmaMat.diffuseColor = Color3.FromHexString('#ff4400');
-        magmaMat.emissiveColor = Color3.FromHexString('#e63600');
-        magmaMat.specularColor = Color3.White();
-        magmaMat.specularPower = 64;
-        const magmaPool = MeshBuilder.CreateDisc('dragon-magma-pool', { radius: 48, tessellation: 32 }, scene);
-        magmaPool.rotation.x = Math.PI / 2;
-        magmaPool.position.set(ring.x, baseH + 1.2, ring.y);
-        magmaPool.material = magmaMat;
-        dragonMagmaMesh = magmaPool;
-      } else {
-        // Siege Golem Runic Seal Floor & Levitating Orbit Stones
-        const golemSealMat = new StandardMaterial('golem-seal-mat', scene);
-        golemSealMat.diffuseColor = Color3.FromHexString('#25483e');
-        golemSealMat.emissiveColor = Color3.FromHexString('#148762');
-        golemSealMat.specularColor = Color3.Black();
-        const golemSeal = MeshBuilder.CreateDisc('golem-runic-seal', { radius: 52, tessellation: 32 }, scene);
-        golemSeal.rotation.x = Math.PI / 2;
-        golemSeal.position.set(ring.x, baseH + 1.2, ring.y);
-        golemSeal.material = golemSealMat;
-
-        const floatStoneProto = MeshBuilder.CreatePolyhedron('float-stone-proto', { type: 1, size: 7.5 }, scene);
-        floatStoneProto.material = material('#626b64');
-        floatStoneProto.isVisible = false;
-        for (let s = 0; s < 4; s++) {
-          const fs = floatStoneProto.createInstance(`golem-float-stone:${s}`);
-          const ang = (s * Math.PI) / 2;
-          fs.position.set(ring.x + Math.cos(ang) * 44, baseH + 22, ring.y + Math.sin(ang) * 44);
-          floatingGolemStones.push({ mesh: fs, orbitR: 44, speed: 0.7, baseAngle: ang, baseY: baseH + 22, center: { x: ring.x, z: ring.y } });
-        }
+      // Flanking Fire Torch Braziers at the Boss Cove entrance
+      for (const side of [-1, 1]) {
+        const entAng = ring.entrance + side * 0.52;
+        const tx = ring.x + Math.cos(entAng) * (ring.radius + 6);
+        const tz = ring.y + Math.sin(entAng) * (ring.radius + 6);
+        spawnTorchBrazier(`${ring.id}:${side}`, tx, tz);
       }
+    } else {
+      // Place a warm flickering fire torch at one side of each Buff & Major Camp entrance (like Summoner's Rift!)
+      const torchAng = ring.entrance + 0.58;
+      const tx = ring.x + Math.cos(torchAng) * (ring.radius + 4);
+      const tz = ring.y + Math.sin(torchAng) * (ring.radius + 4);
+      spawnTorchBrazier(ring.id, tx, tz);
     }
   }
 
-  // 5. Dense, Creative Multi-Species 3D Forest (~640 Trees + Woodland Undergrowth).
-  const crownRad1 = MeshBuilder.CreateCylinder('crown-rad-1', { height: 1, diameterTop: 0.06, diameterBottom: 1, tessellation: 7 }, scene);
-  crownRad1.material = material('#224934');
-  crownRad1.isVisible = false;
+  // Additional River-Entrance & Bush-Corner Fire Torches (matching left side of Summoner's Rift reference image)
+  for (const [tIdx, tx, tz] of [
+    [0, 1255, 355],
+    [1, 1545, 355],
+    [2, 1255, 1085],
+    [3, 1545, 1085],
+  ] as const) {
+    spawnTorchBrazier(`river-corner:${tIdx}`, tx, tz);
+  }
 
-  const crownRad2 = MeshBuilder.CreateCylinder('crown-rad-2', { height: 1, diameterTop: 0.08, diameterBottom: 1, tessellation: 7 }, scene);
-  crownRad2.material = material('#346a44');
-  crownRad2.isVisible = false;
+  // 5. Stylized Evergreen & Woodland Canopy (Perimeter + Lush 4-Quadrant Jungle Forest).
+  const crownPine1 = MeshBuilder.CreateCylinder('crown-pine-1', { height: 1, diameterTop: 0.08, diameterBottom: 1, tessellation: 7 }, scene);
+  crownPine1.material = material('#1f4d30');
+  crownPine1.isVisible = false;
 
-  const crownOakRad = MeshBuilder.CreatePolyhedron('crown-oak-rad', { type: 2, size: 0.58 }, scene);
-  crownOakRad.material = material('#447c48');
-  crownOakRad.isVisible = false;
+  const crownPine2 = MeshBuilder.CreateCylinder('crown-pine-2', { height: 1, diameterTop: 0.1, diameterBottom: 1, tessellation: 7 }, scene);
+  crownPine2.material = material('#2f663e');
+  crownPine2.isVisible = false;
 
-  const crownGoldRad = MeshBuilder.CreatePolyhedron('crown-gold-rad', { type: 2, size: 0.56 }, scene);
-  crownGoldRad.material = material('#8f8842');
-  crownGoldRad.isVisible = false;
+  const crownOak = MeshBuilder.CreatePolyhedron('crown-oak-rad', { type: 2, size: 0.58 }, scene);
+  crownOak.material = material('#3f783e');
+  crownOak.isVisible = false;
 
-  const crownCrystalWillow = MeshBuilder.CreatePolyhedron('crown-willow', { type: 1, size: 0.54 }, scene);
-  crownCrystalWillow.material = jadeGlowMat;
-  crownCrystalWillow.isVisible = false;
+  const trunkProto = MeshBuilder.CreateCylinder('trunk-proto', { height: 1, diameterTop: 0.7, diameterBottom: 1.15, tessellation: 6 }, scene);
+  trunkProto.material = material('#4a3b2c');
+  trunkProto.isVisible = false;
 
-  const crownDire1 = MeshBuilder.CreateCylinder('crown-dire-1', { height: 1, diameterTop: 0.04, diameterBottom: 0.92, tessellation: 6 }, scene);
-  crownDire1.material = material('#2a2529');
-  crownDire1.isVisible = false;
-
-  const crownDire2 = MeshBuilder.CreateCylinder('crown-dire-2', { height: 1, diameterTop: 0.05, diameterBottom: 0.88, tessellation: 6 }, scene);
-  crownDire2.material = material('#453130');
-  crownDire2.isVisible = false;
-
-  const crownDireAsh = MeshBuilder.CreatePolyhedron('crown-dire-ash', { type: 2, size: 0.55 }, scene);
-  crownDireAsh.material = material('#5c3933');
-  crownDireAsh.isVisible = false;
-
-  const trunkRad = MeshBuilder.CreateCylinder('trunk-rad-proto', { height: 1, diameterTop: 0.7, diameterBottom: 1.18, tessellation: 6 }, scene);
-  trunkRad.material = material('#52422f');
-  trunkRad.isVisible = false;
-
-  const trunkDire = MeshBuilder.CreateCylinder('trunk-dire-proto', { height: 1, diameterTop: 0.65, diameterBottom: 1.22, tessellation: 6 }, scene);
-  trunkDire.material = material('#322724');
-  trunkDire.isVisible = false;
-
-  const logProto = MeshBuilder.CreateCylinder('fallen-log-proto', { height: 28, diameter: 6.5, tessellation: 6 }, scene);
-  logProto.material = material('#4a3b2a');
-  logProto.isVisible = false;
-
-  const shroomProto = MeshBuilder.CreatePolyhedron('forest-shroom-proto', { type: 1, size: 3.2 }, scene);
-  shroomProto.material = jadeGlowMat;
+  const shroomProto = MeshBuilder.CreatePolyhedron('forest-shroom-proto', { type: 1, size: 2.8 }, scene);
+  shroomProto.material = purpleVoidMat;
   shroomProto.isVisible = false;
 
-  const emberShardProto = MeshBuilder.CreatePolyhedron('forest-ember-proto', { type: 1, size: 3.2 }, scene);
-  emberShardProto.material = flameDireMat;
-  emberShardProto.isVisible = false;
-
   const foliage: (Mesh | InstancedMesh)[] = [];
-  const spawnTree = (i: number, x: number, y: number, isExterior: boolean) => {
-    const isDire = x > width / 2;
-    const species = i % 9;
-    const h = (isExterior ? 68 : 52) + noise(i + 40) * 42;
-    const r = (isExterior ? 23 : 18) + noise(i + 100) * 12;
+  const spawnTree = (i: number, x: number, y: number, scaleBoost = 1) => {
+    const h = (54 + noise(i + 40) * 28) * scaleBoost;
+    const r = (20 + noise(i + 100) * 9) * scaleBoost;
     const base = arenaGroundHeight(x, y);
 
-    const t = (isDire ? trunkDire : trunkRad).createInstance(`trunk:${i}`);
-    t.position.set(x, base + h * 0.28, y);
-    t.scaling.set(6.5, h * 0.56, 6.5);
-    t.rotation.z = (noise(i + 5) - 0.5) * 0.08;
+    const t = trunkProto.createInstance(`trunk:${i}`);
+    t.position.set(x, base + h * 0.26, y);
+    t.scaling.set(6.0, h * 0.52, 6.0);
 
-    if (!isDire && (species === 0 || species === 4)) {
-      const mainDome = (species === 0 ? crownGoldRad : crownOakRad).createInstance(`oak-main:${i}`);
-      mainDome.position.set(x, base + h * 0.68, y);
-      mainDome.scaling.set(r * 1.15, h * 0.45, r * 1.15);
-      mainDome.rotation.y = i * 0.9;
-      foliage.push(mainDome);
-      for (const side of [-1, 1]) {
-        const sub = crownOakRad.createInstance(`oak-sub:${i}:${side}`);
-        sub.position.set(x + side * r * 0.42, base + h * 0.56, y + (side > 0 ? 1 : -1) * r * 0.28);
-        sub.scaling.set(r * 0.82, h * 0.34, r * 0.82);
-        foliage.push(sub);
-      }
-    } else if (!isDire && species === 8) {
-      const core = crownRad2.createInstance(`willow-base:${i}`);
-      core.position.set(x, base + h * 0.55, y);
-      core.scaling.set(r, h * 0.5, r);
-      foliage.push(core);
-      const glow = crownCrystalWillow.createInstance(`willow-glow:${i}`);
-      glow.position.set(x, base + h * 0.78, y);
-      glow.scaling.set(r * 0.65, h * 0.32, r * 0.65);
-      foliage.push(glow);
-    } else if (isDire && species === 3) {
-      const ash = crownDireAsh.createInstance(`dire-ash:${i}`);
-      ash.position.set(x, base + h * 0.66, y);
-      ash.scaling.set(r * 1.08, h * 0.44, r * 1.08);
-      ash.rotation.set(0.1, i * 1.3, -0.08);
-      foliage.push(ash);
+    if (i % 3 === 0) {
+      const dome = crownOak.createInstance(`oak-main:${i}`);
+      dome.position.set(x, base + h * 0.65, y);
+      dome.scaling.set(r * 1.15, h * 0.44, r * 1.15);
+      dome.rotation.y = i * 0.9;
+      foliage.push(dome);
     } else {
       for (let level = 0; level < 3; level++) {
-        const proto = isDire ? (level % 2 === 0 ? crownDire1 : crownDire2) : level % 2 === 0 ? crownRad1 : crownRad2;
+        const proto = level % 2 === 0 ? crownPine1 : crownPine2;
         const c = proto.createInstance(`pine:${i}:${level}`);
-        c.position.set(x, base + h * (0.48 + level * 0.22), y);
-        const scaleR = r * (1 - level * 0.23);
-        c.scaling.set(scaleR, h * 0.52, scaleR);
+        c.position.set(x, base + h * (0.46 + level * 0.21), y);
+        const scaleR = r * (1 - level * 0.22);
+        c.scaling.set(scaleR, h * 0.5, scaleR);
         c.rotation.y = (i + level) * 1.1;
         foliage.push(c);
       }
     }
-
-    if (i % 11 === 0) {
-      const log = logProto.createInstance(`undergrowth-log:${i}`);
-      log.position.set(x + 14, base + 2.5, y + 8);
-      log.rotation.z = Math.PI / 2;
-      log.rotation.y = noise(i) * Math.PI;
-    }
-    if (i % 7 === 0) {
-      const gem = (isDire ? emberShardProto : shroomProto).createInstance(`undergrowth-gem:${i}`);
-      gem.position.set(x - 10, base + 3.2, y - 9);
-    }
   };
 
-  // Playable jungle trees (dense coverage across North & South jungles while keeping camps/bushes/lane and central chasm clear)
-  for (let i = 0; i < 520; i++) {
-    const x = 395 + noise(i + 15) * 1810,
-      y = 18 + noise(i + 800) * (height - 36),
-      lane = stoneLaneEdges(x);
-    if (y > lane.top - 68 && y < lane.bottom + 68) continue;
-    if (Math.abs(x - chasmCenterX(y)) < 42) continue; // Keep the canyon gorge bed clear of trunks
-    if (
-      CAMP_ROCK_RINGS.some(c => Math.hypot(c.x - x, c.y - y) < c.radius + 28) ||
-      ARAM_BUSHES.some(b => Math.abs(b.x - x) < b.width / 2 + 18 && Math.abs(b.y - y) < b.height / 2 + 18) ||
-      ROCK_TERRAIN.some(r => Math.hypot(r.x - x, r.y - y) < r.radius + 14)
-    )
-      continue;
-    spawnTree(i, x, y, false);
-  }
-
-  // Exterior 3D Forest Canopy & Mountain Crags framing the entire valley perimeter
+  // Perimeter forest wall & outer crags (leaving North & South Boss Coves wide open)
   for (let i = 0; i < 68; i++) {
-    const x = -140 + (i * 2880) / 67;
-    const isDire = x > width / 2;
+    const x = -140 + (i * (width + 280)) / 67;
+    if (Math.abs(x - width / 2) < 185) continue;
     for (const south of [false, true]) {
-      const y = south ? ARENA_HEIGHT + 42 + Math.sin(i * 2.1) * 24 : -42 + Math.sin(i * 1.7) * 24;
-      const crag = (isDire ? rockDireProto : rockRadProto).createInstance(`valley-crag:${south}:${i}`);
-      const cragR = 36 + (i % 5) * 11;
-      const cragH = 56 + (i % 4) * 24;
-      crag.position.set(x, cragH * 0.35 - 8, y);
-      crag.scaling.set(cragR * 1.3, cragH, cragR);
-      crag.rotation.set(0.15, i * 0.9, 0.08);
+      const y = south ? ARENA_HEIGHT + 58 + Math.sin(i * 2.1) * 14 : -58 + Math.sin(i * 1.7) * 14;
+      const crag = rockDarkProto.createInstance(`valley-crag:${south}:${i}`);
+      const cragR = 24 + (i % 5) * 6;
+      const cragH = 38 + (i % 4) * 12;
+      crag.position.set(x, cragH * 0.35 - 6, y);
+      crag.scaling.set(cragR * 1.25, cragH, cragR);
+      crag.rotation.set(0.12, i * 0.9, 0.06);
 
-      spawnTree(1000 + i * 2 + (south ? 1 : 0), x + (i % 2 ? 22 : -22), y + (south ? 18 : -18), true);
+      spawnTree(1000 + i * 2 + (south ? 1 : 0), x + (i % 2 ? 14 : -14), y + (south ? -16 : 16), 1.05);
     }
   }
 
-  // Floating Celestial Monoliths along the valley horizon
-  for (const [idx, mx, mz, isDire] of [
-    [0, 620, -65, false],
-    [1, 1980, -65, true],
-    [2, 620, ARENA_HEIGHT + 65, false],
-    [3, 1980, ARENA_HEIGHT + 65, true],
-  ] as const) {
-    const monolith = MeshBuilder.CreatePolyhedron(`horizon-monolith:${idx}`, { type: 1, size: 16 }, scene);
-    monolith.position.set(mx, 68, mz);
-    monolith.scaling.set(0.75, 2.2, 0.75);
-    monolith.material = material(isDire ? '#4a3d3b' : '#6c7566');
-    animatedRings.push({ mesh: monolith, speed: 0.45 * (isDire ? -1 : 1), baseY: 68, amp: 5.5 });
-
-    const ring = MeshBuilder.CreateTorus(`horizon-ring:${idx}`, { diameter: 36, thickness: 1.8, tessellation: 24 }, scene);
-    ring.position.set(mx, 68, mz);
-    ring.rotation.x = 0.4;
-    ring.material = isDire ? flameDireMat : jadeGlowMat;
-    animatedRings.push({ mesh: ring, speed: 1.1 * (isDire ? 1 : -1), baseY: 68, amp: 5.5 });
+  // Outer North/South woodland trees outside the Top & Bottom Lanes
+  for (let i = 0; i < 48; i++) {
+    const x = 320 + (i * (width - 640)) / 47;
+    if (Math.abs(x - width / 2) < 175) continue;
+    for (const south of [false, true]) {
+      const y = south ? height - 62 - (i % 3) * 22 : 62 + (i % 3) * 22;
+      if (Math.abs(y - topLaneY(x)) < LANE_HALF_WIDTH + 34 || Math.abs(y - botLaneY(x)) < LANE_HALF_WIDTH + 34) continue;
+      spawnTree(2000 + i * 2 + (south ? 1 : 0), x, y, 0.9);
+    }
   }
 
-  // Atmospheric Drifting Fireflies & Canyon Motes
+  // Lush Interior 4-Quadrant Jungle Trees (hugging rock ridges & camp backs while keeping all 12 camp clearings open)
+  const interiorTreeSpots: [number, number, number][] = [
+    // Center River Island conifer ring (North & South arcs)
+    [1330, 625, 0.85], [1370, 608, 0.92], [1430, 608, 0.90], [1470, 625, 0.85],
+    [1330, 815, 0.85], [1370, 832, 0.92], [1430, 832, 0.90], [1470, 815, 0.85],
+  ];
+  for (const mirror of [false, true]) {
+    const mx = (x: number) => (mirror ? width - x : x);
+    for (const [tx, ty, sc] of [
+      // Behind Gromp & Krugs outer rock arcs (X ~ 420..560)
+      [425, 395, 0.86], [565, 385, 0.82],
+      [425, 1045, 0.86], [565, 1055, 0.82],
+      // Behind Blue Buff & Red Buff rock arcs (X ~ 680..800)
+      [685, 365, 0.88], [795, 365, 0.85],
+      [685, 1075, 0.88], [795, 1075, 0.85],
+      // Behind Wolves & Raptors rock arcs (X ~ 995..1120)
+      [995, 375, 0.84], [1115, 380, 0.86],
+      [995, 1065, 0.84], [1115, 1060, 0.86],
+      // Forested central divider ridges between Top & Bottom quadrants (Y = 585..855)
+      [515, 645, 0.85], [515, 795, 0.85],
+      [685, 585, 0.92], [725, 600, 0.95], [765, 585, 0.88],
+      [685, 855, 0.92], [725, 840, 0.95], [765, 855, 0.88],
+      [1015, 600, 0.90], [1055, 585, 0.94], [1095, 600, 0.86],
+      [1015, 840, 0.90], [1055, 855, 0.94], [1095, 840, 0.86],
+      // River bluff trees flanking the river entrances
+      [1235, 485, 0.88], [1235, 955, 0.88],
+    ] as const) {
+      interiorTreeSpots.push([mx(tx), ty, sc]);
+    }
+  }
+  interiorTreeSpots.forEach(([tx, ty, sc], idx) => {
+    spawnTree(3000 + idx, tx, ty, sc);
+  });
+
+  // Subtle Drifting Woodland & Arcane Spores
   const fireflies: { mesh: InstancedMesh; baseX: number; baseY: number; baseZ: number; phase: number }[] = [];
-  for (let i = 0; i < 90; i++) {
-    const fx = 420 + noise(i + 300) * 1760;
-    const fz = 35 + noise(i + 600) * (height - 70);
-    const e = stoneLaneEdges(fx);
-    if (fz > e.top - 40 && fz < e.bottom + 40) continue;
-    const isDire = fx > width / 2;
-    const fy = arenaGroundHeight(fx, fz) + 18 + noise(i + 900) * 34;
-    const mote = (isDire ? emberShardProto : shroomProto).createInstance(`atmosphere-mote:${i}`);
+  for (let i = 0; i < 40; i++) {
+    const fx = 440 + noise(i + 300) * (width - 880);
+    const fz = 360 + noise(i + 600) * (height - 720);
+    const fy = arenaGroundHeight(fx, fz) + 18 + noise(i + 900) * 28;
+    const mote = shroomProto.createInstance(`atmosphere-mote:${i}`);
     mote.position.set(fx, fy, fz);
-    mote.scaling.setAll(0.55 + (i % 3) * 0.2);
+    mote.scaling.setAll(0.45 + (i % 3) * 0.15);
     fireflies.push({ mesh: mote, baseX: fx, baseY: fy, baseZ: fz, phase: i * 0.73 });
   }
 
-  // 6. 3D Layered Brush (ARAM_BUSHES) with proximity crouch.
+  // 6. 3D Layered Stealth Brush (`ARAM_BUSHES`) with Wind Sway & Fade on Entry (Catalogue Item 14).
+  const shrubDarkMat = new StandardMaterial('shrub-dark-mat', scene);
+  shrubDarkMat.diffuseColor = Color3.FromHexString('#224d2c');
+  shrubDarkMat.specularColor = new Color3(0.08, 0.12, 0.08);
   const shrubDarkProto = MeshBuilder.CreateSphere('brush-dark-proto', { diameter: 1, segments: 6 }, scene);
-  shrubDarkProto.material = material('#2c5938');
+  shrubDarkProto.material = shrubDarkMat;
   shrubDarkProto.isVisible = false;
 
+  const shrubLightMat = new StandardMaterial('shrub-light-mat', scene);
+  shrubLightMat.diffuseColor = Color3.FromHexString('#4a803f');
+  shrubLightMat.specularColor = new Color3(0.1, 0.14, 0.09);
   const shrubLightProto = MeshBuilder.CreateSphere('brush-light-proto', { diameter: 1, segments: 6 }, scene);
-  shrubLightProto.material = material('#5d8c47');
+  shrubLightProto.material = shrubLightMat;
   shrubLightProto.isVisible = false;
 
-  const bushClusters: { mesh: InstancedMesh; x: number; y: number; baseH: number }[] = [];
+  const bushClusters: { mesh: InstancedMesh; x: number; y: number; baseH: number; phase: number }[] = [];
   for (const b of ARAM_BUSHES) {
     const gh = arenaGroundHeight(b.x, b.y);
     for (let i = 0; i < 12; i++) {
@@ -716,54 +560,37 @@ export function buildBabylonBattlefield(scene: Scene, width: number, height: num
       const m = proto.createInstance(`${b.id}:${i}`);
       const bx = b.x + (noise(i + 1) - 0.5) * b.width * 0.86;
       const by = b.y + (noise(i + 90) - 0.5) * b.height * 0.82;
-      const sh = 16 + (i % 3) * 5;
+      const sh = 15 + (i % 3) * 4.5;
       m.position.set(bx, gh + sh * 0.45, by);
-      m.scaling.set(b.width * 0.26, sh, b.height * 0.48);
-      bushClusters.push({ mesh: m, x: b.x, y: b.y, baseH: sh });
+      m.scaling.set(b.width * 0.25, sh, b.height * 0.46);
+      bushClusters.push({ mesh: m, x: b.x, y: b.y, baseH: sh, phase: i * 0.65 + b.x * 0.01 });
     }
   }
 
-  // 7. 3D Sanctuary Fountains, Obelisks & Glowing Rings at Blue and Red Bases.
-  for (const [team, x] of [
-    ['blue', 65],
-    ['red', width - 65],
+  // 7. 3D Natural Sunken Slate Base Sanctum Wells (centered at 260,720 & 2540,720 — flush with forest floor).
+  for (const [team, sanctumX] of [
+    ['blue', 260],
+    ['red', width - 260],
   ] as const) {
     const isBlue = team === 'blue';
-    const accent = isBlue ? '#45bfd5' : '#d9536f';
+    const accent = isBlue ? '#38c9ed' : '#f16b84';
     const glowMat = isBlue ? flameRadMat : flameDireMat;
-    const stoneCol = isBlue ? '#8c8976' : '#574d49';
-    const wellBase = MeshBuilder.CreateCylinder(`well-plinth:${team}`, { height: 10, diameterTop: 152, diameterBottom: 168, tessellation: 24 }, scene);
-    wellBase.position.set(x, RIDGE_HEIGHT + 4, height / 2);
-    wellBase.scaling.z = 1.85;
-    wellBase.material = material(stoneCol);
 
-    const pool = MeshBuilder.CreateCylinder(`well-pool:${team}`, { height: 11, diameter: 126, tessellation: 24 }, scene);
-    pool.position.set(x, RIDGE_HEIGHT + 4.8, height / 2);
-    pool.scaling.z = 1.85;
+    const wellBase = MeshBuilder.CreateCylinder(`well-plinth:${team}`, { height: 2.5, diameterTop: 124, diameterBottom: 134, tessellation: 32 }, scene);
+    wellBase.position.set(sanctumX, RIDGE_HEIGHT + 0.2, height / 2);
+    wellBase.material = material('#454f54');
+
+    const pool = MeshBuilder.CreateCylinder(`well-pool:${team}`, { height: 3, diameter: 108, tessellation: 32 }, scene);
+    pool.position.set(sanctumX, RIDGE_HEIGHT + 0.8, height / 2);
     pool.material = glowMat;
 
-    const ring = MeshBuilder.CreateTorus(`well:${team}`, { diameter: 180, thickness: 3.5, tessellation: 64 }, scene);
-    ring.scaling.z = 2.3;
-    ring.position.set(x, RIDGE_HEIGHT + 6, height / 2);
-    ring.material = material(accent);
-
-    for (const [ox, oz] of [
-      [-45, -135],
-      [45, -135],
-      [-45, 135],
-      [45, 135],
-    ] as const) {
-      const obelisk = MeshBuilder.CreateCylinder(`well-obelisk:${team}:${ox}:${oz}`, { height: 52, diameterTop: 6, diameterBottom: 14, tessellation: 6 }, scene);
-      obelisk.position.set(x + ox, RIDGE_HEIGHT + 26, height / 2 + oz);
-      obelisk.material = material(stoneCol);
-      const gem = MeshBuilder.CreatePolyhedron(`well-gem:${team}:${ox}:${oz}`, { type: 1, size: 6.5 }, scene);
-      gem.position.set(x + ox, RIDGE_HEIGHT + 58, height / 2 + oz);
-      gem.material = glowMat;
-      animatedRings.push({ mesh: gem, speed: isBlue ? 1.0 : -1.0, baseY: RIDGE_HEIGHT + 58, amp: 2.5 });
-    }
+    const innerRing = MeshBuilder.CreateTorus(`well-inner-ring:${team}`, { diameter: 96, thickness: 2.2, tessellation: 36 }, scene);
+    innerRing.position.set(sanctumX, RIDGE_HEIGHT + 2.6, height / 2);
+    innerRing.material = material(accent);
+    animatedRings.push({ mesh: innerRing, speed: isBlue ? 0.8 : -0.8, baseY: RIDGE_HEIGHT + 2.6, amp: 0.3 });
   }
 
-  // 8. 3D River Wildlife: River Amber Frogs, Iridescent Dragonflies, and Pebble Crabs.
+  // 8. 3D River Wildlife & Flickering Torch Animation.
   const amberGlowMat = makeGlowMat('amber-glow-mat', '#ffaa22', '#e68a00');
   const frogSkinMat = material('#3d592b');
   const frogBellyMat = material('#c2ab4c');
@@ -772,85 +599,77 @@ export function buildBabylonBattlefield(scene: Scene, width: number, height: num
   dragonflyWingMat.diffuseColor = new Color3(0.8, 0.95, 1.0);
   dragonflyWingMat.alpha = 0.55;
 
-  const animatedCritters: { update: (phase: number) => void }[] = [];
+  const animatedCritters: { update: (phase: number) => void }[] = [
+    {
+      update: (phase: number) => {
+        for (const tf of torchFlames) {
+          const flicker = 1 + Math.sin(phase * 7.5 + tf.phase) * 0.16;
+          tf.mesh.scaling.set(0.9 * flicker, 1.45 * flicker, 0.9 * flicker);
+          tf.mesh.position.y = tf.baseY + Math.sin(phase * 9 + tf.phase) * 0.6;
+        }
+      },
+    },
+  ];
 
-  // Spawn River Amber Frogs resting on boulders in the central chasm riverbed
   for (const [frogIdx, frogY, frogSide] of [
-    [0, height / 2 - 95, 1],
-    [1, height / 2 + 95, -1],
+    [0, height / 2 - 220, 1],
+    [1, height / 2 + 220, -1],
   ] as const) {
-    const cx = chasmCenterX(frogY) + frogSide * 26;
+    const cx = chasmCenterX(frogY) + frogSide * 48;
     const ch = arenaGroundHeight(cx, frogY);
 
-    const perch = MeshBuilder.CreatePolyhedron(`frog-perch:${frogIdx}`, { type: 1, size: 14 }, scene);
-    perch.position.set(cx, ch + 5, frogY);
-    perch.scaling.set(1.4, 0.7, 1.3);
-    perch.material = material('#4d4b47');
+    const perch = MeshBuilder.CreatePolyhedron(`frog-perch:${frogIdx}`, { type: 1, size: 12 }, scene);
+    perch.position.set(cx, ch + 4, frogY);
+    perch.scaling.set(1.3, 0.65, 1.2);
+    perch.material = material('#556368');
 
     const frogRoot = new TransformNode(`river-frog:${frogIdx}`, scene);
-    frogRoot.position.set(cx, ch + 10, frogY);
+    frogRoot.position.set(cx, ch + 8, frogY);
     frogRoot.rotation.y = frogSide > 0 ? -Math.PI / 3 : (2 * Math.PI) / 3;
 
-    const frogBody = MeshBuilder.CreateSphere(`frog-body:${frogIdx}`, { diameterX: 13, diameterY: 8, diameterZ: 14, segments: 8 }, scene);
+    const frogBody = MeshBuilder.CreateSphere(`frog-body:${frogIdx}`, { diameterX: 11, diameterY: 7, diameterZ: 12, segments: 8 }, scene);
     frogBody.parent = frogRoot;
-    frogBody.position.set(0, 4, 0);
+    frogBody.position.set(0, 3.5, 0);
     frogBody.material = frogSkinMat;
 
-    const frogThroat = MeshBuilder.CreateSphere(`frog-throat:${frogIdx}`, { diameterX: 8, diameterY: 6, diameterZ: 7, segments: 6 }, scene);
+    const frogThroat = MeshBuilder.CreateSphere(`frog-throat:${frogIdx}`, { diameterX: 7, diameterY: 5, diameterZ: 6, segments: 6 }, scene);
     frogThroat.parent = frogRoot;
-    frogThroat.position.set(0, 3, 5.5);
+    frogThroat.position.set(0, 2.5, 4.8);
     frogThroat.material = frogBellyMat;
 
     for (const eyeSide of [-1, 1]) {
-      const eye = MeshBuilder.CreateSphere(`frog-eye:${frogIdx}:${eyeSide}`, { diameter: 3.4, segments: 6 }, scene);
+      const eye = MeshBuilder.CreateSphere(`frog-eye:${frogIdx}:${eyeSide}`, { diameter: 2.8, segments: 6 }, scene);
       eye.parent = frogRoot;
-      eye.position.set(eyeSide * 3.5, 7.5, 4.2);
+      eye.position.set(eyeSide * 3, 6.5, 3.6);
       eye.material = amberGlowMat;
-
-      const hindLeg = MeshBuilder.CreateBox(`frog-hind:${frogIdx}:${eyeSide}`, { width: 4.5, height: 5.5, depth: 8 }, scene);
-      hindLeg.parent = frogRoot;
-      hindLeg.position.set(eyeSide * 6.5, 3.2, -2.5);
-      hindLeg.rotation.z = eyeSide * 0.35;
-      hindLeg.material = frogSkinMat;
-
-      const frontFoot = MeshBuilder.CreateBox(`frog-front:${frogIdx}:${eyeSide}`, { width: 3, height: 1.2, depth: 4.5 }, scene);
-      frontFoot.parent = frogRoot;
-      frontFoot.position.set(eyeSide * 4.2, 0.6, 5.8);
-      frontFoot.material = frogSkinMat;
     }
 
     animatedCritters.push({
       update: (phase: number) => {
-        const pulse = 1 + Math.sin(phase * 3.2 + frogIdx) * 0.22;
+        const pulse = 1 + Math.sin(phase * 3.2 + frogIdx) * 0.2;
         frogThroat.scaling.set(pulse, pulse * 1.15, pulse);
       },
     });
   }
 
-  // Spawn Iridescent River Dragonflies hovering above the river pools
-  for (let df = 0; df < 3; df++) {
-    const dfY = height / 2 - 120 + df * 120;
+  for (let df = 0; df < 2; df++) {
+    const dfY = height / 2 - 260 + df * 520;
     const dfX = chasmCenterX(dfY);
     const dfRoot = new TransformNode(`river-dragonfly:${df}`, scene);
     const dfH = arenaGroundHeight(dfX, dfY) + 18;
     dfRoot.position.set(dfX, dfH, dfY);
 
-    const body = MeshBuilder.CreateCylinder(`df-body:${df}`, { height: 10, diameterTop: 1.2, diameterBottom: 0.6, tessellation: 6 }, scene);
+    const body = MeshBuilder.CreateCylinder(`df-body:${df}`, { height: 9, diameterTop: 1.1, diameterBottom: 0.5, tessellation: 6 }, scene);
     body.parent = dfRoot;
     body.rotation.x = Math.PI / 2;
     body.material = dragonflyBodyMat;
 
-    const head = MeshBuilder.CreateSphere(`df-head:${df}`, { diameter: 2.2, segments: 6 }, scene);
-    head.parent = dfRoot;
-    head.position.set(0, 0, 5.5);
-    head.material = goldGlowMat;
-
     const wings: Mesh[] = [];
     for (const wSide of [-1, 1]) {
-      for (const wTier of [-1.5, 1.5]) {
-        const wing = MeshBuilder.CreateBox(`df-wing:${df}:${wSide}:${wTier}`, { width: 8.5, height: 0.2, depth: 2.8 }, scene);
+      for (const wTier of [-1.4, 1.4]) {
+        const wing = MeshBuilder.CreateBox(`df-wing:${df}:${wSide}:${wTier}`, { width: 7.5, height: 0.2, depth: 2.4 }, scene);
         wing.parent = dfRoot;
-        wing.position.set(wSide * 4.5, 0.8, wTier);
+        wing.position.set(wSide * 4, 0.7, wTier);
         wing.material = dragonflyWingMat;
         wings.push(wing);
       }
@@ -877,42 +696,39 @@ export function buildBabylonBattlefield(scene: Scene, width: number, height: num
         item.mesh.rotation.y += item.speed * 0.025;
         item.mesh.position.y = item.baseY + Math.sin(animPhase + item.speed) * item.amp;
       }
-      if (dragonMagmaMesh) {
-        dragonMagmaMesh.scaling.setAll(1 + Math.sin(animPhase * 1.8) * 0.045);
-      }
-      for (const st of floatingGolemStones) {
-        const curAng = st.baseAngle + animPhase * st.speed * 0.4;
-        st.mesh.position.x = st.center.x + Math.cos(curAng) * st.orbitR;
-        st.mesh.position.z = st.center.z + Math.sin(curAng) * st.orbitR;
-        st.mesh.position.y = st.baseY + Math.sin(animPhase * 1.5 + st.baseAngle) * 3.5;
-        st.mesh.rotation.y += 0.02;
-      }
       for (const p of abyssFogPlanes) {
-        p.mesh.position.x = width / 2 + Math.sin(animPhase * 0.35 + p.speed) * 16;
-        p.mesh.position.y = p.baseOffset + Math.sin(animPhase * 0.5) * 1.8;
+        p.mesh.position.x = width / 2 + Math.sin(animPhase * 0.35 + p.speed) * 6;
+        p.mesh.position.y = p.baseOffset + Math.sin(animPhase * 0.5) * 0.8;
       }
       for (const critter of animatedCritters) {
         critter.update(animPhase);
       }
       for (const f of fireflies) {
-        f.mesh.position.x = f.baseX + Math.sin(animPhase * 0.8 + f.phase) * 9;
-        f.mesh.position.y = f.baseY + Math.cos(animPhase * 1.1 + f.phase) * 5;
-        f.mesh.position.z = f.baseZ + Math.sin(animPhase * 0.6 + f.phase * 1.7) * 9;
+        f.mesh.position.x = f.baseX + Math.sin(animPhase * 0.8 + f.phase) * 8;
+        f.mesh.position.y = f.baseY + Math.cos(animPhase * 1.1 + f.phase) * 4;
+        f.mesh.position.z = f.baseZ + Math.sin(animPhase * 0.6 + f.phase * 1.7) * 8;
       }
       for (const mesh of foliage) {
         mesh.isVisible = !actors.some(
           a => a.kind === 'champion' && a.alive && Math.hypot(a.x - mesh.position.x, a.y - mesh.position.z) < 65,
         );
       }
+      // Bush grass sway & fade on entry (Catalogue Item 14)
+      let anyBushOccupied = false;
       for (const b of bushClusters) {
         const occupied = actors.some(
-          a => a.kind === 'champion' && a.alive && Math.hypot(a.x - b.x, a.y - b.y) < 65,
+          a => (a.kind === 'champion' || a.kind === 'ward') && a.alive && Math.hypot(a.x - b.x, a.y - b.y) < 65,
         );
+        if (occupied) anyBushOccupied = true;
         b.mesh.scaling.y = occupied ? b.baseH * 0.42 : b.baseH;
+        b.mesh.rotation.z = Math.sin(animPhase * 1.6 + b.phase) * (occupied ? 0.14 : 0.05);
       }
+      shrubDarkMat.alpha = anyBushOccupied ? 0.52 : 1.0;
+      shrubLightMat.alpha = anyBushOccupied ? 0.52 : 1.0;
     },
   };
 }
+
 
 export type BattlefieldActorView = {
   root: TransformNode;
@@ -990,11 +806,18 @@ export function buildBattlefieldActor(actor: ViewerActor, scene: Scene, material
           body.position.y = -2;
           return;
         }
-        halo.rotation.y += dt * 1.2;
-        core.position.y = 84 + Math.sin(sec * 2.4) * 4;
-        core.rotation.y += dt * 1.5;
+        // Nexus Crystal Health Pulse (Catalogue Item 48): faster pulse & scale throb as HP drops
+        const hpRatio = Math.max(0.05, Math.min(1, a.hp / Math.max(1, a.maxHp)));
+        const urgency = 1 - hpRatio;
+        const pulseRate = 2.4 + urgency * 7.2;
+        const pulseScale = 1 + Math.sin(sec * pulseRate) * (0.05 + urgency * 0.15);
+        halo.rotation.y += dt * (1.2 + urgency * 2.4);
+        halo.scaling.setAll(1 + Math.sin(sec * pulseRate * 0.8) * (0.03 + urgency * 0.08));
+        core.position.y = 84 + Math.sin(sec * pulseRate) * (4 + urgency * 3);
+        core.rotation.y += dt * (1.5 + urgency * 2.5);
+        core.scaling.setAll(pulseScale);
         pylonShards.forEach((p, idx) => {
-          p.position.y = 68 + Math.sin(sec * 3.5 + idx * 1.4) * 2.5;
+          p.position.y = 68 + Math.sin(sec * (3.5 + urgency * 4) + idx * 1.4) * (2.5 + urgency * 2);
         });
       };
     } else if (isBarracks) {
@@ -1263,7 +1086,43 @@ export function buildBattlefieldActor(actor: ViewerActor, scene: Scene, material
     for (const side of [-1, 1]) {
       fallbackLegs.push(box('fallback-leg', 7, 22, 7, side * 5, 11, 0, stone));
     }
-    animate = (a, sec) => {
+
+    // Recall Charge Circle & Rising Trail (Catalogue Item 63) attached to root so it works with GLB models too
+    const recallRing = MeshBuilder.CreateTorus(`recall-ring:${actor.id}`, { diameter: 44, thickness: 2.2, tessellation: 32 }, scene);
+    recallRing.parent = root;
+    recallRing.position.y = 2.2;
+    recallRing.material = material('#45bfd5');
+    recallRing.isVisible = false;
+
+    const recallMotes: import('@babylonjs/core').Mesh[] = [];
+    for (let rm = 0; rm < 3; rm++) {
+      const mote = MeshBuilder.CreatePolyhedron(`recall-mote:${actor.id}:${rm}`, { type: 1, size: 3.2 }, scene);
+      mote.parent = root;
+      mote.material = material('#5fe2ff');
+      mote.isVisible = false;
+      recallMotes.push(mote);
+    }
+
+    animate = (a, sec, dt) => {
+      const isRecalling = Boolean(a.alive && a.recalling);
+      recallRing.isVisible = isRecalling;
+      if (isRecalling) {
+        recallRing.rotation.y += dt * 3.2;
+        const pulse = 0.85 + Math.sin(sec * 6) * 0.15;
+        recallRing.scaling.set(pulse, 1, pulse);
+      }
+      for (let rm = 0; rm < recallMotes.length; rm++) {
+        const mote = recallMotes[rm];
+        mote.isVisible = isRecalling;
+        if (isRecalling) {
+          const cycle = (sec * 1.6 + rm * 0.33) % 1;
+          const ang = sec * 4.5 + (rm * Math.PI * 2) / 3;
+          mote.position.set(Math.cos(ang) * 18 * (1 - cycle * 0.35), 4 + cycle * 56, Math.sin(ang) * 18 * (1 - cycle * 0.35));
+          mote.scaling.setAll(1 - cycle * 0.5);
+        }
+      }
+
+      if (!body.isEnabled()) return;
       if (!a.alive) {
         body.rotation.z = Math.PI / 2;
         return;
@@ -1278,14 +1137,166 @@ export function buildBattlefieldActor(actor: ViewerActor, scene: Scene, material
       }
     };
   } else if (actor.kind === 'ward') {
-    height = 26;
-    cylinder('ward-base', 10, 6, 3, stone, 7);
-    cylinder('ward-stalk', 6, 16, 12, metal, 4);
-    const eye = orb('eye', 5.5, 0, 24, 0, glow);
-    animate = (a, sec) => {
-      if (!a.alive) { body.scaling.y = 0.2; return; }
-      eye.scaling.setAll(1 + Math.sin(sec * 4) * 0.15);
-    };
+    const wardKind = actor.subtype ?? 'stealth';
+    if (wardKind === 'control') {
+      height = 30;
+      cylinder('ward-base', 12, 6, 3, stone, 8);
+      cylinder('ward-obelisk', 7.5, 19, 13, '#9f1239', 4.5);
+      const radarRing = MeshBuilder.CreateTorus(`ward-radar:${actor.id}`, { diameter: 18, thickness: 1.6, tessellation: 24 }, scene);
+      radarRing.parent = body;
+      radarRing.position.y = 18;
+      radarRing.material = material('#f43f5e');
+      const eye = orb('eye', 6.2, 0, 27, 0, '#fb7185');
+      animate = (a, sec, dt) => {
+        if (!a.alive) { body.scaling.y = 0.2; return; }
+        radarRing.rotation.y += dt * 2.8;
+        eye.scaling.setAll(1 + Math.sin(sec * 5) * 0.18);
+      };
+    } else if (wardKind === 'farsight') {
+      height = 28;
+      cylinder('ward-base', 9, 4, 2, stone, 6);
+      const crystal = orb('farsight-orb', 6.8, 0, 22, 0, '#22d3ee');
+      const halo = MeshBuilder.CreateTorus(`ward-halo:${actor.id}`, { diameter: 16, thickness: 1.2, tessellation: 24 }, scene);
+      halo.parent = body;
+      halo.position.y = 22;
+      halo.material = material('#67e8f9');
+      animate = (a, sec, dt) => {
+        if (!a.alive) { body.scaling.y = 0.2; return; }
+        crystal.position.y = 22 + Math.sin(sec * 3.8) * 2.5;
+        halo.rotation.x = Math.sin(sec * 2.4) * 0.45;
+        halo.rotation.y += dt * 3.2;
+      };
+    } else {
+      height = 26;
+      cylinder('ward-base', 10, 6, 3, stone, 7);
+      cylinder('ward-stalk', 6, 16, 12, metal, 4);
+      const eye = orb('eye', 5.5, 0, 24, 0, '#4ade80');
+      animate = (a, sec) => {
+        if (!a.alive) { body.scaling.y = 0.2; return; }
+        eye.scaling.setAll(1 + Math.sin(sec * 4) * 0.15);
+      };
+    }
+  } else if (actor.kind === 'feature') {
+    // Interactive battlefield props (River Scuttler, Speed Shrine, Jungle Plants, Hexgates, Supply Drop).
+    const teamGlow = actor.team === 'blue' ? '#5fe2ff' : actor.team === 'red' ? '#ff6b84' : '#e0b86b';
+    const dormant = (a: ViewerActor) => a.hp <= 0 || a.motion?.state === 'dormant';
+    const kind = actor.subtype ?? '';
+    if (kind === 'scuttler') {
+      height = 20;
+      const shell = MeshBuilder.CreateSphere('scuttler-shell', { diameter: 22, segments: 8 }, scene);
+      shell.parent = body; shell.position.y = 9; shell.scaling.set(1.25, 0.62, 1); shell.material = material('#2f9e8f');
+      orb('scuttler-core', 5, 0, 13, 0, '#8be9d4');
+      const legs: import('@babylonjs/core').Mesh[] = [];
+      for (const side of [-1, 1]) {
+        for (const off of [-7, 0, 7]) {
+          const leg = box('scuttler-leg', 11, 1.8, 1.8, side * 14, 4, off, '#1f6f66');
+          leg.rotation.z = side * 0.45;
+          legs.push(leg);
+        }
+        box('scuttler-claw', 5, 4, 7, side * 12, 8, 15, '#d9f99d');
+      }
+      animate = (a, sec) => {
+        const base = legs.length;
+        for (let i = 0; i < base; i++) legs[i].rotation.y = Math.sin(sec * 7 + i * 1.7) * 0.28;
+        body.position.y = Math.abs(Math.sin(sec * 3.2 + a.x * 0.01)) * 1.4;
+      };
+    } else if (kind === 'speed_shrine') {
+      height = 40;
+      cylinder('shrine-dais', 40, 3, 1.5, stone, 36, 24);
+      const ring = MeshBuilder.CreateTorus(`shrine-ring:${actor.id}`, { diameter: 104, thickness: 2.2, tessellation: 48 }, scene);
+      ring.parent = body; ring.position.y = 1.6; ring.material = material(teamGlow);
+      const crystal = orb('shrine-crystal', 9, 0, 20, 0, teamGlow);
+      cylinder('shrine-pylon', 10, 14, 8, metal, 5, 8);
+      animate = (a, sec) => {
+        const life = Math.max(0.05, a.progress ?? 1);
+        const s = 0.45 + 0.55 * life;
+        ring.scaling.set(s, 1, s);
+        ring.scaling.y = 1 + Math.sin(sec * 4) * 0.3;
+        crystal.rotation.y = sec * 1.8;
+        crystal.position.y = 20 + Math.sin(sec * 2.6) * 2.4;
+      };
+    } else if (kind === 'blast_cone') {
+      height = 28;
+      cylinder('cone-base', 20, 4, 2, stone, 16, 8);
+      const pod = cylinder('cone-pod', 15, 20, 14, '#b91c1c', 3, 7);
+      const spikes: import('@babylonjs/core').Mesh[] = [];
+      for (let i = 0; i < 6; i++) {
+        const ang = (i / 6) * Math.PI * 2;
+        const spike = box('cone-spike', 2, 8, 2, Math.cos(ang) * 7, 12, Math.sin(ang) * 7, '#ef4444');
+        spike.rotation.set(Math.sin(ang) * 0.6, 0, -Math.cos(ang) * 0.6);
+        spikes.push(spike);
+      }
+      const core = orb('cone-core', 3.4, 0, 26, 0, '#fb923c');
+      animate = (a, sec) => {
+        body.scaling.y = dormant(a) ? 0.3 : 1;
+        core.scaling.setAll(dormant(a) ? 0.01 : 1 + Math.sin(sec * 5) * 0.2);
+        pod.rotation.y = Math.sin(sec * 0.8) * 0.06;
+        spikes.forEach(s => (s.isVisible = !dormant(a)));
+      };
+    } else if (kind === 'scryer_bloom') {
+      height = 30;
+      cylinder('bloom-stem', 3, 18, 9, '#166534', 2.4, 6);
+      const petals = new TransformNode('bloom-petals', scene);
+      petals.parent = body; petals.position.y = 20;
+      for (let i = 0; i < 6; i++) {
+        const ang = (i / 6) * Math.PI * 2;
+        const petal = MeshBuilder.CreateBox('bloom-petal', { width: 4, height: 0.8, depth: 12 }, scene);
+        petal.parent = petals; petal.material = material('#38bdf8');
+        petal.position.set(Math.cos(ang) * 6, 0, Math.sin(ang) * 6);
+        petal.rotation.y = -ang; petal.rotation.z = 0.0; petal.rotation.x = 0.35;
+      }
+      const eye = orb('bloom-eye', 3.8, 0, 22, 0, '#e0f2fe');
+      animate = (a, sec) => {
+        const asleep = dormant(a);
+        petals.rotation.y = sec * (asleep ? 0.1 : 0.9);
+        petals.scaling.setAll(asleep ? 0.45 : 1);
+        eye.scaling.setAll(asleep ? 0.3 : 1 + Math.sin(sec * 3.1) * 0.12);
+      };
+    } else if (kind === 'honeyfruit') {
+      height = 24;
+      cylinder('fruit-stem', 3.4, 12, 6, '#14532d', 2, 6);
+      const bulbs: import('@babylonjs/core').Mesh[] = [];
+      for (let i = 0; i < 5; i++) {
+        const ang = (i / 5) * Math.PI * 2;
+        bulbs.push(orb('fruit-bulb', 4.4, Math.cos(ang) * 5.2, 15 + (i % 2) * 2.6, Math.sin(ang) * 5.2, '#22c55e'));
+      }
+      const honey = orb('fruit-honey', 3.6, 0, 18, 0, '#fbbf24');
+      animate = (a, sec) => {
+        const asleep = dormant(a);
+        bulbs.forEach((b, i) => b.scaling.setAll(asleep ? 0.35 : 1 + Math.sin(sec * 2 + i) * 0.08));
+        honey.scaling.setAll(asleep ? 0.01 : 1 + Math.sin(sec * 3) * 0.15);
+      };
+    } else if (kind === 'hexgate') {
+      height = 46;
+      cylinder('gate-base', 30, 4, 2, stone, 26, 6);
+      const outer = MeshBuilder.CreateTorus(`gate-outer:${actor.id}`, { diameter: 34, thickness: 3, tessellation: 6 }, scene);
+      outer.parent = body; outer.position.y = 24; outer.rotation.x = Math.PI / 2; outer.material = material(teamGlow);
+      const inner = MeshBuilder.CreateTorus(`gate-inner:${actor.id}`, { diameter: 22, thickness: 1.8, tessellation: 6 }, scene);
+      inner.parent = body; inner.position.y = 24; inner.rotation.x = Math.PI / 2; inner.material = material(teamGlow);
+      const spark = orb('gate-spark', 3.6, 0, 24, 0, '#ffffff');
+      animate = (_a, sec) => {
+        outer.rotation.z = sec * 0.9;
+        inner.rotation.z = -sec * 1.6;
+        spark.scaling.setAll(1 + Math.sin(sec * 6) * 0.3);
+      };
+    } else if (kind === 'supply_drop') {
+      height = 62;
+      cylinder('drop-pad', 58, 3, 1.5, stone, 54, 8);
+      const ring = MeshBuilder.CreateTorus(`drop-ring:${actor.id}`, { diameter: 70, thickness: 2.6, tessellation: 40 }, scene);
+      ring.parent = body; ring.position.y = 2; ring.material = material('#e0b86b');
+      const capture = MeshBuilder.CreateTorus(`drop-capture:${actor.id}`, { diameter: 54, thickness: 3.2, tessellation: 40 }, scene);
+      capture.parent = body; capture.position.y = 3; capture.material = material(teamGlow);
+      const crystal = MeshBuilder.CreatePolyhedron('drop-crystal', { type: 1, size: 15 }, scene);
+      crystal.parent = body; crystal.scaling.y = 1.7; crystal.material = material('#e0b86b');
+      animate = (a, sec) => {
+        crystal.position.y = 34 + Math.sin(sec * 2.2) * 3.5;
+        crystal.rotation.y = sec * 1.4;
+        const p = Math.max(0.02, Math.min(1, a.progress ?? 0));
+        capture.scaling.set(p, 1, p);
+        capture.isVisible = (a.progress ?? 0) > 0.01;
+        ring.rotation.y = -sec * 0.7;
+      };
+    }
   } else {
     // Neutral Camps & Bosses
     const dragon = actor.id.includes('dragon'),

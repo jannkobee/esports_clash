@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-30T04:33:12.414Z",
+  "views": [
+    {
+      "name": "river-north",
+      "actors": 12,
+      "lighting": "daylight",
+      "element": "",
+      "available": true
+    },
+    {
+      "name": "mid-plaza",
+      "actors": 12,
+      "lighting": "daylight",
+      "element": "",
+      "available": true
+    },
+    {
+      "name": "river-south",
+      "actors": 12,
+      "lighting": "daylight",
+      "element": "",
+      "available": true
+    },
+    {
+      "name": "dusk-ocean",
+      "actors": 12,
+      "lighting": "dusk",
+      "element": "ocean",
+      "available": true
+    },
+    {
+      "name": "overcast-infernal",
+      "actors": 12,
+      "lighting": "overcast",
+      "element": "infernal",
+      "available": true
+    }
+  ],
+  "cleared": 0,
+  "errors": []
+}

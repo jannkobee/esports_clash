@@ -1,0 +1,1186 @@
+{
+  "compute": "google",
+  "source_sha256": "42ac17a5740ab76878ca88d49e4b03cbb2d5998e7483acce91160bc0dc6ee597",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "controls": [
+    {
+      "role": "ThighL",
+      "angle": 90,
+      "child_local_x": 90,
+      "twist": 20,
+      "mode": "world_target",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 39,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_0",
+              "bone_0"
+            ],
+            "intersections": 31
+          },
+          {
+            "regions": [
+              "bone_0",
+              "bone_48"
+            ],
+            "intersections": 8
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.5497885758341e-07,
+          -1.0,
+          3.116408322512143e-07
+        ],
+        "target_error_degrees": 2.3070658334564236e-05,
+        "angle_from_down_degrees": 90.00001785570441,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "ThighL",
+      "angle": 90,
+      "child_local_x": 90,
+      "twist": 20,
+      "mode": "world_target",
+      "corrective_strength": 0.25,
+      "collision": {
+        "finite": true,
+        "self_intersections": 39,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_0",
+              "bone_0"
+            ],
+            "intersections": 31
+          },
+          {
+            "regions": [
+              "bone_0",
+              "bone_48"
+            ],
+            "intersections": 8
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.5497885758341e-07,
+          -1.0,
+          3.116408322512143e-07
+        ],
+        "target_error_degrees": 2.3070658334564236e-05,
+        "angle_from_down_degrees": 90.00001785570441,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "ThighL",
+      "angle": 90,
+      "child_local_x": 90,
+      "twist": 20,
+      "mode": "world_target",
+      "corrective_strength": 0.5,
+      "collision": {
+        "finite": true,
+        "self_intersections": 39,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_0",
+              "bone_0"
+            ],
+            "intersections": 31
+          },
+          {
+            "regions": [
+              "bone_0",
+              "bone_48"
+            ],
+            "intersections": 8
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.5497885758341e-07,
+          -1.0,
+          3.116408322512143e-07
+        ],
+        "target_error_degrees": 2.3070658334564236e-05,
+        "angle_from_down_degrees": 90.00001785570441,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "ThighL",
+      "angle": 90,
+      "child_local_x": 90,
+      "twist": 20,
+      "mode": "world_target",
+      "corrective_strength": 0.75,
+      "collision": {
+        "finite": true,
+        "self_intersections": 41,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_0",
+              "bone_0"
+            ],
+            "intersections": 33
+          },
+          {
+            "regions": [
+              "bone_0",
+              "bone_48"
+            ],
+            "intersections": 8
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.5497885758341e-07,
+          -1.0,
+          3.116408322512143e-07
+        ],
+        "target_error_degrees": 2.3070658334564236e-05,
+        "angle_from_down_degrees": 90.00001785570441,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "ThighL",
+      "angle": 90,
+      "child_local_x": 90,
+      "twist": 20,
+      "mode": "world_target",
+      "corrective_strength": 1,
+      "collision": {
+        "finite": true,
+        "self_intersections": 42,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_0",
+              "bone_0"
+            ],
+            "intersections": 34
+          },
+          {
+            "regions": [
+              "bone_0",
+              "bone_48"
+            ],
+            "intersections": 8
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.5497885758341e-07,
+          -1.0,
+          3.116408322512143e-07
+        ],
+        "target_error_degrees": 2.3070658334564236e-05,
+        "angle_from_down_degrees": 90.00001785570441,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmL",
+      "angle": 60,
+      "child_local_x": 0,
+      "twist": 0,
+      "mode": "world_target",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 348,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 320
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 28
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          5.185567530929802e-08,
+          -0.8660253286361694,
+          -0.5
+        ],
+        "target_error_degrees": 3.4268384493856736e-06,
+        "angle_from_down_degrees": 59.999998028294364,
+        "joint_center": [
+          -0.08032020926475525,
+          0.03240817040205002,
+          0.3077397644519806
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmL",
+      "angle": 60,
+      "child_local_x": 0,
+      "twist": 0,
+      "mode": "coordinated",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 307,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 286
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 21
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          -2.592784085209132e-07,
+          -0.8660251498222351,
+          -0.5000003576278687
+        ],
+        "target_error_degrees": 2.8145482715526567e-05,
+        "angle_from_down_degrees": 59.99997535368078,
+        "joint_center": [
+          -0.07845131307840347,
+          0.017334286123514175,
+          0.3084072172641754
+        ],
+        "center_delta_from_rest": 0.01520395515965896,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 14.999978219298225,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmL",
+      "angle": 60,
+      "child_local_x": 60,
+      "twist": 0,
+      "mode": "world_target",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 364,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 323
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 41
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          5.185567530929802e-08,
+          -0.8660253286361694,
+          -0.5
+        ],
+        "target_error_degrees": 3.4268384493856736e-06,
+        "angle_from_down_degrees": 59.999998028294364,
+        "joint_center": [
+          -0.08032020926475525,
+          0.03240817040205002,
+          0.3077397644519806
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmL",
+      "angle": 60,
+      "child_local_x": 60,
+      "twist": 0,
+      "mode": "coordinated",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 311,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 285
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 26
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          -2.592784085209132e-07,
+          -0.8660251498222351,
+          -0.5000003576278687
+        ],
+        "target_error_degrees": 2.8145482715526567e-05,
+        "angle_from_down_degrees": 59.99997535368078,
+        "joint_center": [
+          -0.07845131307840347,
+          0.017334286123514175,
+          0.3084072172641754
+        ],
+        "center_delta_from_rest": 0.01520395515965896,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 14.999978219298225,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmL",
+      "angle": 90,
+      "child_local_x": 0,
+      "twist": 0,
+      "mode": "world_target",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 93,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 68
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 25
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          1.5556705079688982e-07,
+          -1.0,
+          2.0742274386975623e-07
+        ],
+        "target_error_degrees": 1.4855559485115552e-05,
+        "angle_from_down_degrees": 90.0000118844478,
+        "joint_center": [
+          -0.08032020926475525,
+          0.03240817040205002,
+          0.3077397644519806
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmL",
+      "angle": 90,
+      "child_local_x": 0,
+      "twist": 0,
+      "mode": "coordinated",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 30,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 25
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 5
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.5927843694262265e-07,
+          -1.0,
+          4.1484548773951246e-07
+        ],
+        "target_error_degrees": 2.802941418884329e-05,
+        "angle_from_down_degrees": 90.0000237688956,
+        "joint_center": [
+          -0.07845131307840347,
+          0.017334286123514175,
+          0.3084072172641754
+        ],
+        "center_delta_from_rest": 0.01520395515965896,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 14.999978219298225,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmL",
+      "angle": 90,
+      "child_local_x": 60,
+      "twist": 0,
+      "mode": "world_target",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 109,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 79
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 30
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          1.5556705079688982e-07,
+          -1.0,
+          2.0742274386975623e-07
+        ],
+        "target_error_degrees": 1.4855559485115552e-05,
+        "angle_from_down_degrees": 90.0000118844478,
+        "joint_center": [
+          -0.08032020926475525,
+          0.03240817040205002,
+          0.3077397644519806
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmL",
+      "angle": 90,
+      "child_local_x": 60,
+      "twist": 0,
+      "mode": "coordinated",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 34,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 30
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 4
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.5927843694262265e-07,
+          -1.0,
+          4.1484548773951246e-07
+        ],
+        "target_error_degrees": 2.802941418884329e-05,
+        "angle_from_down_degrees": 90.0000237688956,
+        "joint_center": [
+          -0.07845131307840347,
+          0.017334286123514175,
+          0.3084072172641754
+        ],
+        "center_delta_from_rest": 0.01520395515965896,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 14.999978219298225,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmR",
+      "angle": 60,
+      "child_local_x": 0,
+      "twist": 0,
+      "mode": "world_target",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 390,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 289
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 92
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 9
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.0371134351316869e-07,
+          -0.8660253286361694,
+          -0.5000000596046448
+        ],
+        "target_error_degrees": 6.853676187371101e-06,
+        "angle_from_down_degrees": 59.99999507073616,
+        "joint_center": [
+          0.08422388136386871,
+          0.032408155500888824,
+          0.30773985385894775
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmR",
+      "angle": 60,
+      "child_local_x": 0,
+      "twist": 0,
+      "mode": "coordinated",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 330,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 241
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 86
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 3
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          -1.0371134351316869e-07,
+          -0.8660253286361694,
+          -0.5000001788139343
+        ],
+        "target_error_degrees": 1.1843810106973006e-05,
+        "angle_from_down_degrees": 59.99998915561865,
+        "joint_center": [
+          0.08235497772693634,
+          0.017334267497062683,
+          0.3084073066711426
+        ],
+        "center_delta_from_rest": 0.015203959900362489,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 14.999978219298225,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmR",
+      "angle": 60,
+      "child_local_x": 60,
+      "twist": 0,
+      "mode": "world_target",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 414,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 305
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 100
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 9
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.0371134351316869e-07,
+          -0.8660253286361694,
+          -0.5000000596046448
+        ],
+        "target_error_degrees": 6.853676187371101e-06,
+        "angle_from_down_degrees": 59.99999507073616,
+        "joint_center": [
+          0.08422388136386871,
+          0.032408155500888824,
+          0.30773985385894775
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmR",
+      "angle": 60,
+      "child_local_x": 60,
+      "twist": 0,
+      "mode": "coordinated",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 342,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 251
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 88
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 3
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          -1.0371134351316869e-07,
+          -0.8660253286361694,
+          -0.5000001788139343
+        ],
+        "target_error_degrees": 1.1843810106973006e-05,
+        "angle_from_down_degrees": 59.99998915561865,
+        "joint_center": [
+          0.08235497772693634,
+          0.017334267497062683,
+          0.3084073066711426
+        ],
+        "center_delta_from_rest": 0.015203959900362489,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 14.999978219298225,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmR",
+      "angle": 90,
+      "child_local_x": 0,
+      "twist": 0,
+      "mode": "world_target",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 166,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 136
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 29
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 1
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          -1.5556705079688982e-07,
+          -1.0,
+          4.1484545931780303e-07
+        ],
+        "target_error_degrees": 2.5385189765071314e-05,
+        "angle_from_down_degrees": 90.00002376889397,
+        "joint_center": [
+          0.08422388136386871,
+          0.032408155500888824,
+          0.30773985385894775
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmR",
+      "angle": 90,
+      "child_local_x": 0,
+      "twist": 0,
+      "mode": "coordinated",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 97,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 70
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 19
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_6"
+            ],
+            "intersections": 4
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_2"
+            ],
+            "intersections": 3
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 1
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.0742270123719209e-07,
+          -1.0,
+          -4.1484540247438417e-07
+        ],
+        "target_error_degrees": 2.657442799430888e-05,
+        "angle_from_down_degrees": 89.99997623110929,
+        "joint_center": [
+          0.08235497772693634,
+          0.017334267497062683,
+          0.3084073066711426
+        ],
+        "center_delta_from_rest": 0.015203959900362489,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 14.999978219298225,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmR",
+      "angle": 90,
+      "child_local_x": 60,
+      "twist": 0,
+      "mode": "world_target",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 178,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 146
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 31
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 1
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          -1.5556705079688982e-07,
+          -1.0,
+          4.1484545931780303e-07
+        ],
+        "target_error_degrees": 2.5385189765071314e-05,
+        "angle_from_down_degrees": 90.00002376889397,
+        "joint_center": [
+          0.08422388136386871,
+          0.032408155500888824,
+          0.30773985385894775
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      }
+    },
+    {
+      "role": "UpperArmR",
+      "angle": 90,
+      "child_local_x": 60,
+      "twist": 0,
+      "mode": "coordinated",
+      "corrective_strength": 0,
+      "collision": {
+        "finite": true,
+        "self_intersections": 101,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 73
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 20
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_6"
+            ],
+            "intersections": 4
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_2"
+            ],
+            "intersections": 3
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 1
+          }
+        ]
+      },
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.0742270123719209e-07,
+          -1.0,
+          -4.1484540247438417e-07
+        ],
+        "target_error_degrees": 2.657442799430888e-05,
+        "angle_from_down_degrees": 89.99997623110929,
+        "joint_center": [
+          0.08235497772693634,
+          0.017334267497062683,
+          0.3084073066711426
+        ],
+        "center_delta_from_rest": 0.015203959900362489,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 14.999978219298225,
+        "child_rotation_degrees": 0.0
+      }
+    }
+  ],
+  "scope": "Isolation controls only; changing correction activation is not an accepted replacement or adaptive runtime fix.",
+  "status": "controls_complete"
+}

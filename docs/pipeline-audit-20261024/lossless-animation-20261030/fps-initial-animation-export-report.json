@@ -1,0 +1,10 @@
+{
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Diagnostic left-hip animation; not game clip or full-body visual qualification.",
+  "weight_sha256": "e42afed24f19eefef5e715f5378b10b805e4994523e6d63a4c931bd12eac7438",
+  "max_influences": 7,
+  "status": "failed",
+  "error": "Animated roundtrip changed surface"
+}

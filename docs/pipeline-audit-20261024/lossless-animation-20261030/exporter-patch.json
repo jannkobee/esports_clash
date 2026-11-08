@@ -1,0 +1,7 @@
+{
+  "path": "/content/teamfight-preparation/venv/lib/python3.11/site-packages/bpy/4.5/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_extract.py",
+  "before_sha256": "884ba7f2691f1c69874c148a3058791b0621740dc5c7123799f6785fc3c87fa7",
+  "after_sha256": "38daf2e9163501fa69b5d2136eedd036cdfaa07e5ff2a1252771a92d6cc978a9",
+  "change": "Preserve positive skin weights; min_influence 0.0001 to 0.0",
+  "bpy_version": "4.5.3"
+}

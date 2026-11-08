@@ -1,0 +1,9 @@
+{
+  "observed_on": "2026-10-30",
+  "id": "1edfc83c-96f8-4ca1-8203-2b81ff478664",
+  "status": "render_completed_artifacts_unretrieved",
+  "observed_returncode": 0,
+  "reason": "Colab session expired before screenshot/artifact download; no visual assessment or shape pass exists for this attempt.",
+  "reproduced_by": "d832094d-eddb-4b70-8b62-d47553d35d64",
+  "reproduction_scope": "Same frozen body, weights and authored sculpt policy; new runtime and corrected renderer initial asset. Do not claim hash equivalence to the unretrieved render."
+}

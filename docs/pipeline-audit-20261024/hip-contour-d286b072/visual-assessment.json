@@ -1,0 +1,94 @@
+{
+  "review_id": "d286b072-2e6b-4803-9ea9-b70f074c1111",
+  "reviewed_on": "2026-10-30",
+  "reviewer": "/root",
+  "status": "visual_improvement_blocked_by_intersections",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "admit_animation_bake": false,
+  "scope": "19 exact views assessed, including all12 corrected views and hash-identical previously inspected controls. Partial visual improvement; independent intersection check blocks animation admission.",
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/baseline-ThighL-22.5-orbit3.png",
+      "sha256": "3f1dc3acca6bd2a79ac77619123cf9bd1681c5e753031538bbeff452a86e3a26"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-22.5-orbit1.png",
+      "sha256": "171358de86840bde99d22999fd8409ffe15d78e9bdc32d03b116b552cd42922a"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-22.5-orbit3.png",
+      "sha256": "8552bd67f9904a4706371ccc2d7f093ba6361322babfe5c25c95076b3cbc5c1f"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-22.5-orbit5.png",
+      "sha256": "b4afd7d5cfd6e7f19d952513ca4f269da0c9fa0f265f27785ddc237e589a76ac"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-45-orbit1.png",
+      "sha256": "853570f442e9f3bdae19249e76c0dcd6caf86d547e8b100c16af7b100b71dccc"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-45-orbit3.png",
+      "sha256": "71878a0b9186103ccb3ef3940b8c325f11fc7246f1e41e03d883161f762eb413"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit1.png",
+      "sha256": "54dbe79c3785a7919c993c058a814511b5c1683a5111b4f79de4db65bbc3b785"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit3.png",
+      "sha256": "362d6e1a605c8c67d67539dd4cafa71b4272d589b48b1872c744e85fddb69198"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit5.png",
+      "sha256": "23217d18ea1d01ab5c5cbcd8ad177ed610e1196a5e00bcd3097bb1eba0d493bb"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-67.5-orbit3.png",
+      "sha256": "5c959f8db87b8264993a37937a2ba3e4e8cbd75b848f69b47326f98639347223"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-67.5-orbit1.png",
+      "sha256": "2cb129c74d69ef8ee9231908b143794f83e4058ab5f2397ee97d30f624eba1f0"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-67.5-orbit3.png",
+      "sha256": "fbe73a891bf0173970224a4ee80927b02dd57b074aec638080c162fe57bb265f"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-67.5-orbit5.png",
+      "sha256": "8aa4c4d15a76d788c5365df1789c2917b345b87f2549329e169270ff75780636"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit1.png",
+      "sha256": "aa5c966d839a1036b23d9072a4a7914494fa8199af89d1a55bccab4acd7c7aa5"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit3.png",
+      "sha256": "2477ce27c151e2d52a39b35074e25dc45ee30dffcd3e2609be1b642b3ad17d73"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit5.png",
+      "sha256": "046dd73c434b96590d41102495b140c99790fdd9ac3d367c708ae98fb1fbd541"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit1.png",
+      "sha256": "458e0c6eafb046c724d68b1f9ce05b506ad732fed23d224e6a0e275b505d2caf"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit3.png",
+      "sha256": "ec1436861170f6afdc0710ef0b400c758dbcb42fb63fb6b27a41da2b30022650"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit5.png",
+      "sha256": "66eafa82c77f818f8b9193a356dae3339e91edba0d7526185274c83496632f1c"
+    }
+  ],
+  "observations": [
+    "The pinned unrestricted contour softens the front crease at67.5/90 and removes the v3 jagged fold, while preserving the upper-pelvis contour.",
+    "The body still has residual angular hip/waist features; this is not an anatomy or full-body pass.",
+    "Independent check: baseline zero contacts at all four samples; corrected67.5 has94 contacts and90 has169. Both fields have zero gross-stretch failures under the unchanged existing policy.",
+    "Reject animation admission despite visible improvement. Next revision bounds this same target with a zero-contact requirement across eight sampled angles; visual review is still required afterward."
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "status": "rejected_regression",
+  "reviewed_on": "2026-11-07",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "summary": "Reject current-field volume shoulders. Straight90 contacts fall93/166 to32/88, but the shoulder roots look bulkier and the underarm transition remains abrupt. Right60/elbow60/twist-20 regresses443 to464. Hip geometry/contacts are unchanged. The animated close-up shows a sharper dark underarm crease than the static snapshot; positional export preservation does not prove shading equivalence.",
+  "inspected": [
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-oblique.png",
+      "sha256": "e549742bd3cd2fd61470b43e8a016385f797dc716f4253d1f5d4b54be08e60a1"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-oblique.png",
+      "sha256": "83dd4055357fd007339d64b578bf7d339980015d1072e5f3bb478e9667ee7848"
+    },
+    {
+      "file": "repair-screenshots/04-UpperArmR-90-child0-twist0-baseline-oblique.png",
+      "sha256": "b6495e000ed9b57b99bd4667ea9a8bf52769814ed7b8b36973bf32ff370dc80f"
+    },
+    {
+      "file": "repair-screenshots/04-UpperArmR-90-child0-twist0-candidate-oblique.png",
+      "sha256": "884e0cc83560b3ec53b6eed0393cdc01ba620bf87859aef2a5909e704930cd97"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-baseline-oblique.png",
+      "sha256": "c995b8d82d41663e1375d17f86c20fc12546d902ca11e32c4c2501a5b536ea66"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-candidate-oblique.png",
+      "sha256": "c995b8d82d41663e1375d17f86c20fc12546d902ca11e32c4c2501a5b536ea66"
+    },
+    {
+      "file": "repair-screenshots/17-UpperArmR-60-child60-twist-20-baseline-oblique.png",
+      "sha256": "45dedd83c42ad99852dcf65851c2cbf15aa71fecb3d5a6e6a57bac655d373bf8"
+    },
+    {
+      "file": "repair-screenshots/17-UpperArmR-60-child60-twist-20-candidate-oblique.png",
+      "sha256": "84273f6da7f7f95c3479ed94929b9f241c346b71a0a062fac3a3439bb16f8fc8"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-playback-oblique.png",
+      "sha256": "08d24704d597522922704a3c1142773f34ddeefe861444f46560ef0c04bea346"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-playback-oblique.png",
+      "sha256": "50c04fc8d2e59f812d847d9feaa54e9d5b625255bb3935e3889dde860b911947"
+    }
+  ],
+  "limitations": [
+    "Ten named views inspected, not all175captures.",
+    "Hip frontal view is thigh-occluded and side partly arm-occluded; oblique reveals only part of the crease.",
+    "Khronos validator reports zero errors and one NODE_SKINNED_MESH_NON_ROOT warning, retained without normalization.",
+    "Positional roundtrip checks do not establish normal/shading equivalence or continuous collision freedom.",
+    "No game clips, anatomical hinge-axis qualification, target-device performance or production admission.",
+    "Rest framing is offset in this harness; no rest visual acceptance."
+  ]
+}

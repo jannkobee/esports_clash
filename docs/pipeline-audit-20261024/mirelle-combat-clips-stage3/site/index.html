@@ -1,0 +1,7 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href="data:,"><style>body{background:#101722;color:#dce8ef;font:14px sans-serif}button,select,input{margin:5px;padding:6px}.actions{display:flex;flex-wrap:wrap;align-items:center}</style></head><body><section class="panel"><div id="base-inspection" style="height:560px;max-height:65vh" data-asset="/snapshots/baseline-ThighL-22.5.glb"></div>
+<div class="actions">
+<button type="button" data-base-view="front">Front</button><button type="button" data-base-view="side">Side</button><button type="button" data-base-view="back">Back</button><button type="button" data-base-view="fit">Fit</button>
+<label>Clip<select id="base-clip"><option value="">Bind pose</option></select></label><button type="button" id="base-play">Play</button><button type="button" id="base-skeleton" aria-pressed="false">Skeleton</button><button type="button" id="base-wireframe" aria-pressed="false">Wireframe</button>
+<label>Phase<input id="base-phase" type="range" min="0" max="1" step="0.001" value="0"></label><label>Time (seconds)<input id="base-time" type="number" min="0" step="0.001" value="0"></label>
+<label>Speed<select id="base-speed"><option>1</option><option>0.25</option><option>0.5</option><option>2</option><option>4</option></select></label>
+</div><p id="base-status" role="status">Loading exact raw rig</p></section><script type="module" src="/base-inspector/base-inspector.js"></script></body></html>

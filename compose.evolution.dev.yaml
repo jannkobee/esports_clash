@@ -84,6 +84,9 @@ services:
   scheduler:
     <<: *dev-api
 
+  competition-rankings:
+    <<: *dev-api
+
   avatar-queue-worker:
     <<: *dev-api
     command: [php, artisan, 'queue:listen', redis, '--queue=avatars', '--sleep=3', '--timeout=120', '--tries=4']
@@ -130,7 +133,12 @@ services:
     cpus: 1
 
   match-worker:
-    image: teamfight-online-worker:painted-valley-v2
+    image: teamfight-online-worker:lifecycle-stream-20261108
+    mem_limit: 3g
+    memswap_limit: 4g
+    build:
+      context: .
+      dockerfile: infrastructure/online/Dockerfile.identities
 
   web:
     volumes:

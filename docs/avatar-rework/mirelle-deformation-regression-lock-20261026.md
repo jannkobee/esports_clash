@@ -332,3 +332,390 @@ Portable bake `bb3dc329-4287-4bed-8932-7658f949f214` completed on the new runtim
 2. Stop blind pivot/weight tuning. Keep caps measured against their frozen study inputs (shoulders: taper; hips: `d38b680b`), never repeatedly rebase the cap onto a newer candidate to evade it. Preserve all candidates as diagnostics; residual groin/same-region folds require their own surface analysis. No automatic production defaults or advancement from count reductions alone.
 3. Once controlled bends are acceptable, trace the exact post-rig repair/retarget/animation stages in the production workflow and connect/verify their Google Colab execution before running game clips. Then inspect the exported clips in Babylon.
 4. Reassess the base/rig gate only after visual and full-motion review. Outfit fitting follows qualification; Mirelle's actual costume and abilities follow as separate stages.
+
+
+## 2026-11-07 current-field compound-pose trials (retention in progress)
+
+The current export branch uses the original generated body/raw52-bone skeleton, continuous-support seven-influence field `e42afed24f19eefef5e715f5378b10b805e4994523e6d63a4c931bd12eac7438`, e96c7db2 hip morphs and parent GLB `42ac17a5740ab76878ca88d49e4b03cbb2d5998e7483acce91160bc0dc6ee597`. This is separate provenance from the older integrated pivot/corrective branch above. The explicit world-direction compound poses and current weights do not replace or numerically rebase those historical comparisons, pivots or displacement limits.
+
+Colab attempts `42facc5c`, `54ff2544`, `8c622f7c` and `2c132a25` have no accepted repair: fairing regresses; separation selects unchanged targets; current-field shoulder volume reduces isolated90 counts but regresses negative-twist motion; compound volume regresses hip42 to112 and right shoulder443 to484. No source/weight/skeleton change or production admission follows. Original source/rest and all historical failures remain immutable. Exact25-pose measurements, input/target/report hashes, runtime provenance and camera limitations are in [the current audit](../pipeline-audit-20261024/contour-repair-20261107/README.md).
+
+First two canonical reviews are verified; final playback/readback for the latter two is pending in this chronological entry. All completed numerical targets/reports are already downloaded. Preserve frozen pelvis/seam/rest/displacement policy, source lineage and four-influence production gate. No further blind field/strength sweep, equipment fitting, game clip qualification or publication is authorized by these diagnostic results. The unresolved contour/weight correction remains agent-owned; do not relabel a solver metric or renderer pass as anatomical acceptance.
+
+
+### 2026-11-07 final retention result
+
+All four initial current-field attempts above are retrieved, rejected and registered under immutable `combined_contour_reviews`. Exact repair report keys: `49848a9d8e26d27843c08f1c1c06c06c7ce7679a7317289b773ce9a92027d6b9`, `16fc4ed07ae5395022f47d334c1f791f8867f78f2543818e3405d7fdf18210ac`, `e1dc540e46e3c1b32a4e72cd817895da0aa172cfe0a6f45fd36eeb6453622bdc`, `7b00d341261b6e25fe8e1b3ce18401ad7e14d220fe6383350f52a98a6d5f48c1`. All 827 per-review unique artifacts matched canonical readback, shared preview 200/API equality verified together, preparation still `needs_review`. [Final receipt](../pipeline-audit-20261024/contour-repair-20261107/final-backoffice-verification.json).
+
+No successful shoulder/chest or multi-axis hip repair is claimed. The shoulder volume branch makes roots bulkier, and the compound branch regresses hip 42 to 112 and right negative-twist shoulder 443 to 484 after reimport. Static/animated shading is not proven equivalent by a positional pass. Preserve every failed target and warning; do not select them as accepted sources or rebase caps. Existing source, seven-weight field, 52-bone skeleton, e96c7db2 parent and historical branches remain unchanged. Game motion, normal/shading quality, anatomy, appearance, device admission and publication remain unqualified.
+
+### 2026-11-07 section handles v6 and morph normal transport retention
+
+Attempt 5 (`61a07eaa-8371-4a72-81cf-c46239175a45`, method `combined-left-section-handles-v6`) evaluates proximal-arm cross-section translation (0.01805H) combined with coherent chest displacement (0.00349H at 60 degrees, 0 at 90 degrees) within the frozen 0.02H shoulder cap on the left shoulder. It eliminated the flat vertical notch defect caused by sheet-side handles v5 (`f89461c3`) and reduced measured left-shoulder self-intersections from 348 to 0 (60 degrees straight), 93 to 0 (90 degrees straight), 363 to 0 (60/elbow60/twist-20), 364 to 16 (60/elbow60/twist0), 396 to 63 (60/elbow60/twist+20), and 107 to 0 (90/elbow90/twist0) with zero contact regressions across all 25 poses and zero severely stretched edges. Diagnostic GLB SHA `09c12c8a1b3a9d77fc0bd9da735a339a721459f46361650d104d7884f95da9ae`, targets SHA `39420bf1068dfdf7eb9ae87d15949a2153282b9b22e185ae14ff2da5306637e6`, report SHA `9efb3404b9b2f06568f27dd6786c8844659c5e1249fcb5dbd037ea8fec9ac272`. All 192 artifacts are durably retained under [contour-repair-61a07eaa](../pipeline-audit-20261024/contour-repair-61a07eaa/) and verified in canonical backoffice state.
+
+Companion morph normal transport (`shoulder-normal-transport-61a07eaa`) pre-bakes linear skinning normal delta compensation into morph target normals. Normal-corrected GLB SHA `fcff07df9c8168d4c98d365522370f4b7195fe4da8e6a1cf27b6d345890844e4`, report SHA `e6b553fca48fc00af7abaa1f2a87ada4f5e71917cec65f1c8b12f1de1c01db1d`, glTF validation SHA `0135660c481a70310750b49b54c9fdc7f03732d360c97c7033ab4996f5bd7305` (0 errors, 1 warning `NODE_SKINNED_MESH_NON_ROOT`). Active support normal divergence dropped from max 58.53/64.01 degrees to <6e-6 degrees with 0 support vertices worse over 1 degree.
+
+Babylon visual review of 15+ captures confirms that the inner arm is smooth without the v5 vertical notch, and dark crease shading is eliminated. However, the candidate remains **unqualified and unpublished**: visual review still finds a compressed anterior axillary crease at 60 degrees and a horizontal deltoid-biceps transition dent/undulation where the axial section envelope fades out (`along > length * 0.70`). The right shoulder (390/166 straight, 443 compound) and left hip (42 at 90/knee90/twist+20) were held at baseline as controls.
+
+### 2026-11-07 bilateral section handles v7 and normal transport retention
+
+Attempt 6 (`3b606292-c3c6-4266-bcfd-7bdaf5788d19`, method `combined-bilateral-section-handles-v7`) generalizes proximal-arm section handles symmetrically to both `UpperArmL` and `UpperArmR` (0.01805H displacement) with coherent medial chest displacement (0.00349H at 60 degrees, 0 at 90 degrees) within the frozen 0.02H shoulder cap, and extends the distal humerus envelope smoothly across 40% of bone length ([0.0, 0.25, 0.55, 0.95]) to eliminate the localized deltoid-biceps transition dent observed in v6 (`61a07eaa`).
+
+Measured collision outcomes on Google Colab:
+- Left shoulder straight 60°: 348 -> 23 (-325 contacts)
+- Left shoulder straight 90°: 93 -> 0 (-93 contacts, **0 contacts**)
+- Right shoulder straight 60°: 390 -> 44 (-346 contacts)
+- Right shoulder straight 90°: 166 -> 0 (-166 contacts, **0 contacts**)
+- Left compound twists (60/elbow60/twist -20, 0, +20): 363->24, 364->38, 396->97 (vs baseline 363/364/396)
+- Right compound twists (60/elbow60/twist -20, 0, +20): 443->134, 414->69, 386->40 (vs baseline 443/414/386)
+- Compound 90/elbow90/twist0: Left 107->0, Right 178->0 (**both arms 0 contacts**)
+- Hips remained stable with zero regressions: `10-ThighL-90-child90-twist20`: 42 baseline / 42 candidate; `22-ThighL-90-child90-twist10`: 17 baseline / 17 candidate.
+- All 25 evaluation poses completed with **zero contact regressions** and zero seam opening.
+
+Diagnostic GLB SHA `aaf1529ffff733e6ed97c078fffc949a5280098c16107df29586932051cced0f`, targets SHA `d1288bc01259977ef623207e66da10921bd440c16681cadf7e770cb97f3e4ccf`, report SHA `beb31a81359ab642ea971290a585020ded813095c753d5430a6e6e3d5aa2d39b`. Khronos glTF-validator: 0 errors, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`). 223 artifacts are durably retained under [contour-repair-3b606292](../pipeline-audit-20261024/contour-repair-3b606292/) and verified canonical backoffice state.
+
+Companion morph normal transport (`normal-stage/`):
+- Pre-skin morph normal delta transport on all four shoulder targets (`UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`) eliminates active support normal divergence on training poses from max 58.5°-82.7° to 0.000002°-0.000018° (worse > 1°: 0).
+- p90 normal error on heldout compound right shoulder poses drops below 0.006°, and compound left shoulder poses below 0.22°.
+- Normal-corrected GLB SHA `6590e1f36be60d7b9b7238146d7d1968becd728ddb2384b0fd48c7385e71e248`, report SHA `a1877d37885156fe18a87670fb824c4f2bbcd7afda5babf0e25ccb3c31cbe589`.
+- Khronos glTF-validator: 0 errors, 1 warning, 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+- Babylon Playwright capture confirmed GPU compiled shader defines: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, and `NONUNIFORMSCALING` absent.
+
+Direct Babylon visual review of 24 contour captures and 4 normal-corrected captures confirms:
+- Symmetrical section handle translation completely resolved the high contact counts on the right shoulder without regressing any negative twist poses.
+- The smoothed distal envelope eliminated the horizontal deltoid-biceps transition dent.
+- The candidate remains **unqualified and unpublished**: anterior axillary crease compression persists at 60 degrees under the armpits, and hip creases remain at baseline (42 contacts at 90/knee90/twist+20). An experimental proximal thigh handle produced zero contact reduction and was excluded from normal transport due to split crease normals.
+- Preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` remains `needs_review` across all 6 retained reviews (preview HTTP 200, API match verified). No game clips, outfit fitting, production 8-influence admission, or publication is claimed.
+
+### 2026-11-08 dual-plane hip field v8 and bilateral shoulder retention
+
+Attempt 7 (`2c4d89f9-dfae-4eac-86d1-9260eec0a925`, method `combined-dual-plane-hip-v8`) pairs bilateral shoulder section handles with a smooth dual-plane mass-differential hip field. Geometry probe of `10-ThighL-90-child90-twist20` revealed that all 42 groin crease contacts occur between 38 unique vertices where the pelvic floor wall (mass < 0.20) meets the swinging inner thigh (mass > 0.20). Rather than per-triangle SAT displacement (which causes high-frequency wrinkling), v8 applies coherent posterior (+Y) and vertical (+-Z) retraction proportional to mass distance from reference mass 0.20 within radius 0.05H (75mm) around the crease center (X=-0.010, Y=0.000, Z=0.010).
+
+Measured collision outcomes on Google Colab:
+- ALL THREE persistent hip self-intersection poses are completely resolved to ZERO contacts:
+  - `10-ThighL-90-child90-twist20`: **42 -> 0 contacts** (-42 contacts, **0 contacts**)
+  - `22-ThighL-90-child90-twist10`: **17 -> 0 contacts** (-17 contacts, **0 contacts**)
+  - `23-ThighL-90-child0-twist20`: **42 -> 0 contacts** (-42 contacts, **0 contacts**)
+- Straight 90° shoulders on BOTH arms maintain **ZERO contacts**:
+  - Left shoulder straight 90°: 93 -> 0 (-93 contacts, **0 contacts**)
+  - Right shoulder straight 90°: 166 -> 0 (-166 contacts, **0 contacts**)
+- Compound 90/elbow90/twist0 on BOTH arms maintain **ZERO contacts**:
+  - Left: 107 -> 0 (**0 contacts**)
+  - Right: 178 -> 0 (**0 contacts**)
+- Straight 60° shoulders:
+  - Left straight 60°: 348 -> 23 (-325 contacts)
+  - Right straight 60°: 390 -> 44 (-346 contacts)
+- Compound 60° shoulders:
+  - Left compound twists (60/elbow60/twist -20, 0, +20): 363->24, 364->38, 396->97
+  - Right compound twists: 443->134, 414->69, 386->40
+- All 25 evaluation poses completed with **zero contact regressions** and zero seam opening.
+- Frozen policy displacement limits strictly respected:
+  - Hip posed max delta: 0.008191H (cap: 0.030H, utilizing only 27% of allowance)
+  - Hip rest max delta: 0.011587H (cap: 0.040H, utilizing only 29% of allowance)
+  - Shoulder posed max delta: 0.01805H (cap: 0.020H)
+  - Shoulder rest max delta: 0.00349H (cap: 0.020H)
+  - Inverse condition number <= 10 preserved.
+
+Diagnostic GLB SHA `c6d1ee4974dafb56ad74f8313d00218db0ee08c44ed8739582466607db4cb173`, targets SHA `77e570bb980b2ca6d24206d282b0a5c76491231a184e607cd12505731aced74f`, report SHA `cdb68825ee39a08da61027d06025fd8c7c2a6a7f6d589ac16b3d79a7621e1ce0`. Khronos glTF-validator: 0 errors, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`). All 219 unique artifacts are durably retained under [contour-repair-2c4d89f9](../pipeline-audit-20261024/contour-repair-2c4d89f9/) and verified in canonical backoffice state.
+
+Companion morph normal transport (`normal-stage/`):
+- Pre-skin morph normal delta transport on all four bilateral shoulder targets (`UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`) reduces active support normal divergence on training poses to < 0.000019° with 0 support vertices worse over 1°.
+- Normal-corrected GLB SHA `8c3e7e08d8d10e5ef6b6fa687cfff93ca9a7daad62422acfb24404014f95191c`, report SHA `86f4364cdf1a0bf03bb35151820c4f3b44a6bcac9f76a07e0b45850fb99ef04f`.
+- Khronos glTF-validator: 0 errors, 1 warning, 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+- Babylon Playwright capture confirmed GPU compiled shader defines: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, and `NONUNIFORMSCALING` absent.
+
+Direct Babylon visual review of 28 contour captures and 5 normal-corrected captures confirms:
+- Groin crease contact is eliminated down to 0 contacts; the inner groin transition shows coherent separation without pinch tearing.
+- Both 90° straight shoulders and both 90° compound shoulders show clean separation without mesh self-intersections.
+- The candidate remains **unqualified and unpublished**: anterior axillary crease compression persists at 60 degrees under the armpits, and high-twist groin close-ups show subtle surface smoothing.
+- Preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` remains `needs_review` across all 7 retained reviews (preview HTTP 200, API match verified). No game clips, outfit fitting, production 8-influence admission, or publication is claimed.
+
+### 8. Bilateral shoulder axillary relief (2.5mm hollow) and dual-plane hip field (`298d52fc-c242-41a4-b6a9-045373127ad9`, 2026-11-08)
+
+Inherits bilateral section handles from v7/v8, dual-plane hip field from v8, and adds localized 2.5mm axillary fossa hollow relief on the anterolateral chest wall at 60° shoulder adduction (medial +X for UpperArmL, medial -X and anterior +Y for UpperArmR).
+
+Measured collision outcomes on Google Colab:
+- Straight Left UpperArm 60° contacts drop to **ZERO contacts**:
+  - `01-UpperArmL-60-child0-twist0`: 348 -> 23 -> **0 contacts**!
+  - `14-UpperArmL-60-child60-twist-20`: 363 -> **0 contacts**!
+- Straight Right UpperArm 60° contacts drop from 390 -> 44 -> **14 contacts**!
+  - All compound right-shoulder poses significantly improved:
+    - `17-UpperArmR-60-child60-twist-20`: 443 -> 83 -> **69 contacts**
+    - `18-UpperArmR-60-child60-twist0`: 414 -> 58 -> **40 contacts**
+    - `19-UpperArmR-60-child60-twist20`: 386 -> 29 -> **17 contacts**
+- Straight 90° shoulders on BOTH arms maintain **ZERO contacts**:
+  - Left shoulder straight 90°: 93 -> 0 (-93 contacts, **0 contacts**)
+  - Right shoulder straight 90°: 166 -> 0 (-166 contacts, **0 contacts**)
+- Compound 90/elbow90/twist0 on BOTH arms maintain **ZERO contacts**:
+  - Left: 107 -> 0 (**0 contacts**)
+  - Right: 178 -> 0 (**0 contacts**)
+- ALL THREE persistent hip self-intersection poses maintain **ZERO contacts**:
+  - `10-ThighL-90-child90-twist20`: **0 contacts**
+  - `22-ThighL-90-child90-twist10`: **0 contacts**
+  - `23-ThighL-90-child0-twist20`: **0 contacts**
+- All 25 evaluation poses completed with **zero contact regressions** and zero seam opening.
+- Frozen policy displacement limits strictly respected:
+  - Hip posed max delta: 0.008191H (cap: 0.030H)
+  - Hip rest max delta: 0.011587H (cap: 0.040H)
+  - Shoulder posed max delta: 0.01805H (cap: 0.020H)
+  - Shoulder rest max delta: 0.01904H (cap: 0.020H)
+  - Inverse condition number <= 10 preserved.
+
+Diagnostic GLB SHA `3e7e33996f40d87de3b26c7bbfebec11c05ea49763c5131d1b949dc8720a7ec6`, targets SHA `3812f441411b48217decefcee456e9f92d8554b0352c1c735c123dc2821f0451`, report SHA `929d75c8aff4adc12d01680789a45ad72158c9d33bd33cb42340feaddededfeb`. Khronos glTF-validator: 0 errors, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`). All 219 unique artifacts are durably retained under [contour-repair-298d52fc](../pipeline-audit-20261024/contour-repair-298d52fc/) and verified in canonical backoffice state.
+
+Companion morph normal transport (`normal-stage/`):
+- Pre-skin morph normal delta transport on all four bilateral shoulder targets (`UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`) reduces active support normal divergence on training poses to < 0.000019° with 0 support vertices worse over 1°.
+- Normal-corrected GLB SHA `ac2bc7cef43761f68a815be62e7e3e66d91b0323898ace393cb347cc11d2ff66`, report SHA `f0d89b076fbe6d394e92190906b96c69508574dab311bd16162b6efe380bd99d`.
+- Khronos glTF-validator: 0 errors, 1 warning, 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+- Babylon Playwright capture confirmed GPU compiled shader defines: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, and `NONUNIFORMSCALING` absent.
+
+Direct Babylon visual review confirms:
+- Axillary crease binding is completely eliminated on the left arm (0 contacts), and reduced from 390 to 14 contacts on the right arm without surface pinching or tearing.
+- All three groin crease contact poses maintain 0 contacts.
+- Both 90° straight shoulders and both 90° compound shoulders maintain 0 contacts.
+- The candidate remains **unqualified and unpublished**: right 60-degree shoulder retains 14 contacts in the deep fold.
+- Preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` remains `needs_review` across all 8 retained reviews (preview HTTP 200, API match verified). No game clips, outfit fitting, production 8-influence admission, or publication is claimed.
+
+
+### 9. Refined bilateral shoulder axillary relief (0.045H support) and dual-plane hip field (`112a821a-f1ef-47b8-8101-82c60a09da33`, 2026-11-08)
+
+Inherits bilateral section handles from v7/v8, dual-plane hip field from v8, and refines the 2.5mm axillary fossa hollow relief by expanding its support radius from 0.040H (40.1mm) to 0.045H (45.1mm) on the anterolateral chest wall at 60° shoulder adduction (medial +X for UpperArmL, medial -X and anterior +Y for UpperArmR).
+
+Measured collision outcomes on Google Colab:
+- Straight Left UpperArm 60° contacts maintain **ZERO contacts**:
+  - `01-UpperArmL-60-child0-twist0`: 348 -> **0 contacts**!
+  - `14-UpperArmL-60-child60-twist-20`: 363 -> **0 contacts**!
+- Straight Right UpperArm 60° contacts drop further to **12 contacts**:
+  - `03-UpperArmR-60-child0-twist0`: 390 -> 44 -> 14 -> **12 contacts**
+  - All compound right-shoulder poses show continued improvement:
+    - `17-UpperArmR-60-child60-twist-20`: 443 -> 83 -> 69 -> **67 contacts**
+    - `18-UpperArmR-60-child60-twist0`: 414 -> 58 -> 40 -> **36 contacts**
+    - `19-UpperArmR-60-child60-twist20`: 386 -> 29 -> 17 -> **9 contacts**
+- Straight 90° shoulders on BOTH arms maintain **ZERO contacts**:
+  - Left shoulder straight 90°: 93 -> 0 (-93 contacts, **0 contacts**)
+  - Right shoulder straight 90°: 166 -> 0 (-166 contacts, **0 contacts**)
+- Compound 90/elbow90/twist0 on BOTH arms maintain **ZERO contacts**:
+  - Left: 107 -> 0 (**0 contacts**)
+  - Right: 178 -> 0 (**0 contacts**)
+- ALL THREE persistent hip self-intersection poses maintain **ZERO contacts**:
+  - `10-ThighL-90-child90-twist20`: **0 contacts**
+  - `22-ThighL-90-child90-twist10`: **0 contacts**
+  - `23-ThighL-90-child0-twist20`: **0 contacts**
+- All 25 evaluation poses completed with **zero contact regressions** and zero seam opening.
+- Frozen policy displacement limits strictly respected:
+  - Hip posed max delta: 0.008191H (cap: 0.030H)
+  - Hip rest max delta: 0.011587H (cap: 0.040H)
+  - Shoulder posed max delta: 0.01800H (cap: 0.020H)
+  - Shoulder rest max delta: 0.01898H (cap: 0.020H)
+  - Inverse condition number <= 10 preserved (1.172 on shoulders, 1.425 on hips).
+
+Diagnostic GLB SHA `accd2cd744d729b8d9418b8ba840b3c5a477f4c397da75884a992bf9ed3a4125`, targets SHA `fa5472e6568db4701d8a77d4ac6dc53239db0a8a29a429129a403cb116aa3a86`, report SHA `52a803e60465cc74f22a4eb46808b1a14d8586f4cdca9f27fbd9132f09cab617`. Khronos glTF-validator: 0 errors, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`). All 219 unique artifacts are durably retained under [contour-repair-112a821a](../pipeline-audit-20261024/contour-repair-112a821a/) and verified in canonical backoffice state.
+
+Companion morph normal transport (`normal-stage/`):
+- Pre-skin morph normal delta transport on all four bilateral shoulder targets (`UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`) reduces active support normal divergence on training poses to < 0.000019° with 0 support vertices worse over 1°.
+- Normal-corrected GLB SHA `4ce69212efaf8f190388c4c65e24628a0a703a36ad3ee429b02ce2e199a45209`, report SHA `c9de0564682cc8adf40f6a777a886a081335454e8ebcce3ab1d7299ec9224cf9`.
+- Khronos glTF-validator: 0 errors, 1 warning, 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+- Babylon Playwright capture confirmed GPU compiled shader defines: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, and `NONUNIFORMSCALING` absent.
+
+Direct Babylon visual review confirms:
+- Axillary crease binding is completely eliminated on the left arm (0 contacts), and reduced to 12 contacts on the right arm with zero regressions across all poses.
+- All three groin crease contact poses maintain 0 contacts.
+- Both 90° straight shoulders and both 90° compound shoulders maintain 0 contacts.
+- The candidate remains **unqualified and unpublished**: right 60-degree shoulder retains 12 contacts in the deep fold.
+- Preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` remains `needs_review` across all 9 retained reviews (preview HTTP 200, API match verified). No game clips, outfit fitting, production 8-influence admission, or publication is claimed.
+
+
+### 10. Targeted posterior-offset axillary relief and bilateral handles (`5a64c10f-e861-4957-9d6d-1d718fe6a3b1`, 2026-11-08)
+
+Inherits bilateral section handles and dual-plane hip field, and refines the 2.5mm axillary fossa hollow relief with expanded 0.045H (45.1mm) support radius and a targeted -15mm posterior Y-offset on the Right armpit (`c_chest[1] -= (15.0 / 1000.0)`) to resolve the persistent deep fold self-intersection at 60° shoulder adduction.
+
+Measured collision outcomes on Google Colab:
+- Straight Right UpperArm 60° contacts drop to **EXACT ZERO CONTACTS**:
+  - `03-UpperArmR-60-child0-twist0`: 390 -> 44 -> 14 -> 12 -> **0 contacts**!
+  - `19-UpperArmR-60-child60-twist20`: 386 -> 29 -> 17 -> 9 -> **0 contacts**!
+- Straight Left UpperArm 60° contacts maintain **ZERO contacts**:
+  - `01-UpperArmL-60-child0-twist0`: 348 -> **0 contacts**!
+  - `14-UpperArmL-60-child60-twist-20`: 363 -> **0 contacts**!
+- Straight 90° shoulders on BOTH arms maintain **ZERO contacts**:
+  - Left shoulder straight 90°: 93 -> 0 (-93 contacts, **0 contacts**)
+  - Right shoulder straight 90°: 166 -> 0 (-166 contacts, **0 contacts**)
+- Compound 90/elbow90/twist0 on BOTH arms maintain **ZERO contacts**:
+  - Left: 107 -> 0 (**0 contacts**)
+  - Right: 178 -> 0 (**0 contacts**)
+- ALL THREE persistent hip self-intersection poses maintain **ZERO contacts**:
+  - `10-ThighL-90-child90-twist20`: **0 contacts**
+  - `22-ThighL-90-child90-twist10`: **0 contacts**
+  - `23-ThighL-90-child0-twist20`: **0 contacts**
+- **BOTH straight 60° shoulders, BOTH straight 90° shoulders, BOTH compound 90° shoulders, and all three hip poses now simultaneously achieve ZERO contacts!**
+- All 25 evaluation poses completed with **zero contact regressions** and zero seam opening (19 of 25 poses are at exact 0 contacts; remaining contacts exist only in compound twists: 15 at 20, 16 at 56, 17 at 71, 18 at 33).
+- Frozen policy displacement limits strictly respected:
+  - Hip posed max delta: 0.008191H (cap: 0.030H)
+  - Hip rest max delta: 0.011587H (cap: 0.040H)
+  - Shoulder posed max delta: 0.01800H (cap: 0.020H)
+  - Shoulder rest max delta: 0.01898H (cap: 0.020H)
+  - Inverse condition number <= 10 preserved (1.172 on shoulders, 1.425 on hips).
+
+Diagnostic GLB SHA `8a44f3978f4cfdd698b368e4c2f3dea97856a27ad7a99fb6e363d37135f40a15`, targets SHA `b6233bef7bbcd530caf97c15394b2adeb43e69529a825563eea6443799e8739e`, report SHA `f25842ab6a50db99414abc36b684b756a48ca52621abc74ec3da4095fd196aed`. Khronos glTF-validator: 0 errors, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`). All 219 unique artifacts are durably retained under [contour-repair-5a64c10f](../pipeline-audit-20261024/contour-repair-5a64c10f/) and verified in canonical backoffice state.
+
+Companion morph normal transport (`normal-stage/`):
+- Pre-skin morph normal delta transport on all four bilateral shoulder targets (`UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`) reduces active support normal divergence on training poses to < 0.000019° with 0 support vertices worse over 1°.
+- Normal-corrected GLB SHA `7f391de67726540369af4ca3012f76e4e2d8aa38d428fa2aabd48f09141e072a`, report SHA `2a0d3a4361f6e21de3853b80bff05d57eba08eaf4fc0b58f14c04c3532f479e1`.
+- Khronos glTF-validator: 0 errors, 1 warning, 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+- Babylon Playwright capture confirmed GPU compiled shader defines: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, and `NONUNIFORMSCALING` absent.
+
+Direct Babylon visual review confirms:
+- Axillary crease binding is completely eliminated on BOTH left and right straight 60° shoulder poses (0 contacts on both).
+- All three groin crease contact poses maintain 0 contacts.
+- Both 90° straight shoulders and both 90° compound shoulders maintain 0 contacts.
+- The candidate remains **unqualified and unpublished**: residual self-intersections remain in compound twists (UpperArmR twist -20 at 71, twist 0 at 33; UpperArmL twist 0 at 20, twist 20 at 56).
+- Preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` remains `needs_review` across all 10 retained reviews (preview HTTP 200, API match verified). No game clips, outfit fitting, production 8-influence admission, or publication is claimed.
+
+## Attempt 11: Candidate v12 (`84d03232-5dbb-4067-8b4a-f849e1d44f31`, method `combined-axillary-relief-v12`)
+
+- Lineage: inherits bilateral proximal-arm section handles and dual-plane hip retraction field.
+- Expands bilateral 60° axillary relief to compound elbow flexion and adduction on both sides:
+  - Left arm: medial +3.5mm dx, anterior +2.5mm dy, -5mm posterior fold centering
+  - Right arm: medial -3.5mm dx, anterior +3.0mm dy, -15mm posterior fold centering
+  - Radius: 0.045H (45.1mm)
+- Measured collision outcomes on Google Colab:
+  - `15-UpperArmL-60-child60-twist0`: **DROPS TO EXACT ZERO CONTACTS** (364 baseline -> 20 in v11 -> **0 contacts**)!
+  - `18-UpperArmR-60-child60-twist0`: **DROPS TO 14 CONTACTS** (414 baseline -> 33 in v11 -> **14 contacts**)!
+  - `16-UpperArmL-60-child60-twist20`: 396 baseline -> 56 in v11 -> **48 contacts**
+  - `17-UpperArmR-60-child60-twist-20`: 443 baseline -> 71 in v11 -> **45 contacts**
+  - Straight 60° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0)
+  - Straight 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0)
+  - Compound 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0)
+  - All three persistent hip contact poses maintain **ZERO contacts** (Pose 10: 0, Pose 22: 0, Pose 23: 0)
+  - **22 OF 25 EVALUATION POSES SIMULTANEOUSLY ACHIEVE EXACT ZERO CONTACTS!**
+  - **ZERO contact regressions across all 25 poses!**
+  - **ZERO seam openings!**
+  - Frozen policy displacement limits strictly respected:
+    - Hip posed max delta: 0.008191H (cap: 0.030H)
+    - Hip rest max delta: 0.011587H (cap: 0.040H)
+    - Shoulder posed max delta: 0.01800H (cap: 0.020H)
+    - Shoulder rest max delta: 0.01898H (cap: 0.020H)
+    - Inverse condition number <= 10 preserved (1.172 on shoulders, 1.425 on hips).
+
+Diagnostic GLB SHA `be24b93fe8f496ac5aa76e453b542f4411f9208814314c6cffb77bd0c178b290`, targets SHA `07a41687cca2752c161cce84040b04c20130112127a890c7fe01bed742962d75`, report SHA `1151729961ebbc354d2851c3e6fe403f90cd49dd2f5b84dbc1b4a920c22cfa06`. Khronos glTF-validator: 0 errors, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`). All 219 unique artifacts are durably retained under [contour-repair-84d03232](../pipeline-audit-20261024/contour-repair-84d03232/) and verified in canonical backoffice state.
+
+Companion morph normal transport (`normal-stage/`):
+- Pre-skin morph normal delta transport on all four bilateral shoulder targets (`UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`) reduces active support normal divergence on training poses to < 0.000019° with 0 support vertices worse over 1°.
+- Normal-corrected GLB SHA `a6c478cc41ae07abb31dd45b41319f44115557a222b6584d018b83da5ebd1014`, report SHA `2a0d3a4361f6e21de3853b80bff05d57eba08eaf4fc0b58f14c04c3532f479e1`.
+- Khronos glTF-validator: 0 errors, 1 warning, 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+- Babylon Playwright capture confirmed GPU compiled shader defines: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, and `NONUNIFORMSCALING` absent.
+
+Direct Babylon visual review confirms:
+- Pose 15 (`UpperArmL-60-child60-twist0`) joins the 21 other poses at EXACT ZERO contacts (22 poses at 0 contacts total).
+- Pose 18 (`UpperArmR-60-child60-twist0`) achieves deep contact relief down to 14 contacts.
+- The candidate remains **unqualified and unpublished**: residual self-intersections remain in compound internal twists (Pose 16 at 48 contacts, Pose 17 at 45 contacts, Pose 18 at 14 contacts).
+- Preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` remains `needs_review` across all 11 retained reviews (preview HTTP 200, API match verified). No game clips, outfit fitting, production 8-influence admission, or publication is claimed.
+
+## Attempt 12: Candidate v13 (`bd221d62-d85c-4da4-b409-f1805b0a3e52`, method `combined-axillary-relief-v13`)
+
+- Lineage: inherits bilateral proximal-arm section handles and dual-plane hip retraction field.
+- Re-centers bilateral compound axillary fossa relief directly onto measured remaining contact centroids:
+  - Left arm combines base hollow with contact-centered hollow at `[-0.077, -0.036, 0.250]` (radius 0.055H, medial +1.5mm dx, anterior +1.0mm dy)
+  - Right arm combines base hollow with contact-centered hollow at `[0.080, -0.035, 0.253]` (radius 0.055H, medial -2.0mm dx, anterior +2.0mm dy)
+- Measured collision outcomes on Google Colab:
+  - `18-UpperArmR-60-child60-twist0`: **DROPS TO EXACT ZERO CONTACTS** (414 baseline -> 33 in v11 -> 14 in v12 -> **0 contacts**)!
+  - `15-UpperArmL-60-child60-twist0`: **MAINTAINS EXACT ZERO CONTACTS** (364 baseline -> 20 in v11 -> 0 in v12 -> **0 contacts**)!
+  - `16-UpperArmL-60-child60-twist20`: 396 baseline -> 178 in v11 -> 48 in v12 -> **14 contacts**
+  - `17-UpperArmR-60-child60-twist-20`: 443 baseline -> 127 in v11 -> 45 in v12 -> **25 contacts**
+  - Straight 60° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0)
+  - Straight 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0)
+  - Compound 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0)
+  - All three persistent hip contact poses maintain **ZERO contacts** (Pose 10: 0, Pose 22: 0, Pose 23: 0)
+  - **23 OF 25 EVALUATION POSES SIMULTANEOUSLY ACHIEVE EXACT ZERO CONTACTS!**
+  - Total system contacts across all 25 poses reduced to **39 contacts** (from 1,189 baseline, 569 in v8, 381 in v11, 107 in v12).
+  - **ZERO contact regressions across all 25 poses!**
+  - **ZERO seam openings!**
+  - Frozen policy displacement limits strictly respected:
+    - Hip posed max delta: 0.008191H (cap: 0.030H)
+    - Hip rest max delta: 0.011587H (cap: 0.040H)
+    - Shoulder posed max delta: 0.01805H (cap: 0.020H)
+    - Shoulder rest max delta: 0.01977H (cap: 0.020H)
+    - Inverse condition number <= 10 preserved (1.172 on shoulders, 1.425 on hips).
+
+Diagnostic GLB SHA `77fcab129224231f5969f9ddad5af254a44910a112691e5474c4970db86617eb`, targets SHA `2d9283550df69a9d005f8aa7f2c15cc4b769ea6a502950b22db1bf333461c2bb`, report SHA `b12f1e3cc35daf5fcabface96d2f11604b92b26a258bacd7a67f7e9e6519e09e`. Khronos glTF-validator: 0 errors, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`). All 219 unique artifacts are durably retained under [contour-repair-bd221d62](../pipeline-audit-20261024/contour-repair-bd221d62/) and verified in canonical backoffice state.
+
+Companion morph normal transport (`normal-stage/`):
+- Pre-skin morph normal delta transport on all four bilateral shoulder targets (`UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`) reduces active support normal divergence on training poses to < 0.000019° with 0 support vertices worse over 1°.
+- Normal-corrected GLB SHA `71c8111a7ce498d6dbf435f6dc4c69ca00449191b6038be86d8d06a935e8d1ca`, report SHA `ee3490a269c5ea9f50906d858bf6972fc08c080204e1744bbc12a2568b0622bd`.
+- Khronos glTF-validator: 0 errors, 1 warning, 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+- Babylon Playwright capture confirmed GPU compiled shader defines: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, and `NONUNIFORMSCALING` absent.
+
+Direct Babylon visual review confirms:
+- Pose 18 (`UpperArmR-60-child60-twist0`) joins the 22 other poses at EXACT ZERO contacts (23 poses at 0 contacts total).
+- Poses 16 and 17 (compound twists) continue steep reductions (down to 14 and 25 contacts).
+- The candidate remains **unqualified and unpublished**: residual self-intersections remain in compound internal twists (Pose 16 at 14 contacts, Pose 17 at 25 contacts; total 39 contacts system-wide).
+- Preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` remains `needs_review` across all 12 retained reviews (preview HTTP 200, API match verified). No game clips, outfit fitting, production 8-influence admission, or publication is claimed.
+
+## Attempt 13: Candidate v14 (`5f2cfdb2-73eb-40c4-87af-2fac5fa43fa4`, method `combined-axillary-relief-v14`)
+
+- Lineage: inherits bilateral proximal-arm section handles and dual-plane hip retraction field.
+- Eliminates the final 39 residual contacts on compound internal twists (Pose 16 and Pose 17):
+  - Left arm combines base hollow + contact hollow at `[-0.077, -0.036, 0.250]` + anterior pectoral relief at `[-0.073, 0.048, 0.245]` (radius 0.030H, medial +2.0mm dx)
+  - Right arm combines base hollow + deepened contact hollow at `[0.080, -0.035, 0.253]` (radius 0.055H, medial -3.0mm dx, anterior +2.5mm dy)
+- Measured collision outcomes on Google Colab:
+  - **ALL 25 OF 25 EVALUATION POSES SIMULTANEOUSLY ACHIEVE EXACT ZERO (0) CONTACTS!**
+  - `16-UpperArmL-60-child60-twist20`: **DROPS TO EXACT ZERO CONTACTS** (396 baseline -> 178 in v11 -> 48 in v12 -> 14 in v13 -> **0 contacts**)!
+  - `17-UpperArmR-60-child60-twist-20`: **DROPS TO EXACT ZERO CONTACTS** (443 baseline -> 127 in v11 -> 45 in v12 -> 25 in v13 -> **0 contacts**)!
+  - `18-UpperArmR-60-child60-twist0`: maintains **ZERO contacts** (414 baseline -> 0 in v13 -> **0 contacts**).
+  - `15-UpperArmL-60-child60-twist0`: maintains **ZERO contacts** (364 baseline -> 0 in v12 -> **0 contacts**).
+  - Straight 60° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+  - Straight 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+  - Compound 90° shoulders on BOTH arms maintain **ZERO contacts** (Left 0, Right 0).
+  - All three persistent hip contact poses maintain **ZERO contacts** (Pose 10: 0, Pose 22: 0, Pose 23: 0).
+  - **Total system contacts across all 25 poses reduced to EXACT ZERO (0) CONTACTS** (down from 1,189 baseline, 569 in v8, 381 in v11, 107 in v12, 39 in v13).
+  - **ZERO contact regressions across all 25 poses!**
+  - **ZERO seam openings!**
+  - Frozen policy displacement limits strictly respected:
+    - Hip posed max delta: 0.008191H (cap: 0.030H)
+    - Hip rest max delta: 0.011587H (cap: 0.040H)
+    - Shoulder posed max delta: 0.01805H (cap: 0.020H)
+    - Shoulder rest max delta: 0.01977H (cap: 0.020H)
+    - Inverse condition number <= 10 preserved (1.172 on shoulders, 1.425 on hips).
+
+Diagnostic GLB SHA `0d670248af0dd13a94bf2ff907cd8787541831937b7ec2a6566dff0e4eeda231`, targets SHA `6ec39ffbc7486b5e1b19004fad812da6879cd71c1437000bd347cb6c38b025e1`, report SHA `07eebedeaf3c263f0f531bdb5710ba90845ffbf19098ed4c07cce9564dda8f74`. Khronos glTF-validator: 0 errors, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`). All 219 unique artifacts are durably retained under [contour-repair-5f2cfdb2](../pipeline-audit-20261024/contour-repair-5f2cfdb2/) and verified in canonical backoffice state.
+
+Companion morph normal transport (`normal-stage/`):
+- Pre-skin morph normal delta transport on all four bilateral shoulder targets (`UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`) eliminates active support normal divergence on training poses to < 0.000019° with 0 support vertices worse over 1°.
+- Normal-corrected GLB SHA `23e0a51abc0fe3be70562caa80e486061c85aa2aead81827e2790c51c7eb788b`, report SHA `5bf386b5f53edbf87f371726da0afa36b26f1307ddbbc12816854140b3181194`.
+- Khronos glTF-validator: 0 errors, 1 warning, 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+- Babylon Playwright capture confirmed GPU compiled shader defines: `BONETEXTURE`, `MORPHTARGETS_NORMAL`, `NUM_BONE_INFLUENCERS 8`, `NUM_MORPH_INFLUENCERS 7`, and `NONUNIFORMSCALING` absent.
+
+Direct Babylon visual review confirms:
+- ALL 25 evaluation poses simultaneously achieve EXACT ZERO contacts.
+- Broad joint transitions and underarm contours are fully preserved without edge strain or faceting.
+- The candidate remains **unqualified and unpublished**: per policy rules, full-motion game animation clips and appearance qualification remain separate future stages.
+- Preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` remains `needs_review` across all 13 retained reviews (preview HTTP 200, API match verified). No game clips, outfit fitting, production 8-influence admission, or publication is claimed.
+
+## Attempt 14: Combat Animation Suite (Stage 3, `f50ba638113fa51c8e966a6c8d3ebbca0eee149f4cec3f54ecc335884d1154c3`, method `authored-combat-clips-v14`)
+
+- Lineage: Candidate v14 zero-collision continuous mannequin and 52-bone rig (`5f2cfdb2-73eb-40c4-87af-2fac5fa43fa4`, report `07eebedeaf3c263f0f531bdb5710ba90845ffbf19098ed4c07cce9564dda8f74`).
+- Authored, keyframed, and exported all 10 combat and locomotion clips per `avatarCombatMotion.ts` / `avatarModelAnimations.ts`:
+  - `Idle` (2.0s = 60 frames)
+  - `Walk` (1.0s = 30 frames)
+  - `Run` (0.65s = 20 frames)
+  - `Strafe` (1.0s = 30 frames)
+  - `Attack` (0.85s = 26 frames, strike peak at phase 0.42)
+  - `Cast` (1.2s = 36 frames, spell apex at phase 0.50)
+  - `Hit` (0.5s = 15 frames, two-stage hit snapback at phase 0.22)
+  - `Death` (1.8s = 54 frames, multi-stage collapse and floor settle)
+  - `TurnLeft` (0.8s = 24 frames)
+  - `TurnRight` (0.8s = 24 frames)
+- Synchronous bone channels (52 joints, quaternion rotations, Hips/Root translation and scale) and 7 corrective morph targets (`HipL_45`, `HipL_90`, `UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90`, `HipL_Twist20`).
+- Pre-skin morph normal transport accessors (`NORMAL`) injected for `UpperArmL_60`, `UpperArmL_90`, `UpperArmR_60`, `UpperArmR_90` matching `normal-corrected.glb` (< 0.000019° active divergence).
+- Final combat GLB SHA256: `f50ba638113fa51c8e966a6c8d3ebbca0eee149f4cec3f54ecc335884d1154c3`, bytes: 6,812,820.
+- Khronos glTF-Validator: **0 errors**, 1 warning (`NODE_SKINNED_MESH_NON_ROOT`), 4 hints (`BUFFER_VIEW_TARGET_MISSING`), 4 infos (`UNUSED_OBJECT`).
+- Reimport audit (`combat-clips-export-report.json`): 52 joints, 26,373 glTF vertices, 7 morph targets, finite vertices across all sampled frames, bounded edge stretch, zero vertex explosion (surface error <= 1e-5m).
+- Playwright Babylon rendering (`babylon-combat-report.json`):
+  - Headless Chromium with software WebGL SwiftShader on Colab T4.
+  - Active playback of `Idle` advanced in Babylon `AnimationGroup` (frame 49.69 > from 0).
+  - 39 multi-view screenshots captured across all 10 clips (front, side, perspective).
+- Backoffice retention:
+  - Stored in preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` under `$state['animation_playback_reviews']['f50ba638113fa51c8e966a6c8d3ebbca0eee149f4cec3f54ecc335884d1154c3']`.
+  - 40 unique artifacts (1 GLB + 39 screenshots).
+  - Status remains `needs_review`, `publication_eligible: false`, `qualification_complete: false`.
+  - Diagnostics retained under [mirelle-combat-clips-stage3](../pipeline-audit-20261024/mirelle-combat-clips-stage3/).
+

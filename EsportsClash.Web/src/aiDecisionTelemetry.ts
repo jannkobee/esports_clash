@@ -1,3 +1,5 @@
+import { ARENA_MAP_VERSION, computeArenaRulesetVersion } from './arenaLayout.ts';
+
 export interface AIDecisionSnapshot {
   healthFraction: number;
   gold: number;
@@ -45,6 +47,8 @@ export interface AIDecisionRecord {
   second: number;
   actorId: string;
   team: 'blue' | 'red';
+  mapVersion?: string;
+  rulesetVersion?: string;
   selected?: string;
   contextKey?: string;
   /** Snapshot of the card and live context used by the learned preference. */
@@ -192,6 +196,8 @@ export function shouldRecordAIDecision(records: readonly AIDecisionRecord[], rec
 
 export function recordAIDecision(records: AIDecisionRecord[], record: AIDecisionRecord, limit = 240) {
   if (!shouldRecordAIDecision(records, record)) return;
+  if (!record.mapVersion) record.mapVersion = ARENA_MAP_VERSION;
+  if (!record.rulesetVersion) record.rulesetVersion = computeArenaRulesetVersion();
   for (let index = records.length - 1; index >= 0; index--) {
     const prior = records[index];
     if (record.second - prior.second > 6) break;

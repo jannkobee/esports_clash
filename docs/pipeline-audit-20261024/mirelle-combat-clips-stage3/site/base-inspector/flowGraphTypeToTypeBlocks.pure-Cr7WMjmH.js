@@ -1,0 +1,42 @@
+import { n as e } from "./typeStore-pENEWnX2.js";
+import { t } from "./flowGraphInteger.pure-DqL1vt3x.js";
+import { c as n, i as r, r as i } from "./flowGraphRichTypes.pure-BpKU4EZT.js";
+import { t as a } from "./flowGraphUnaryOperationBlock-CzhraRE5.js";
+//#region node_modules/@babylonjs/core/FlowGraph/Blocks/Data/Transformers/flowGraphTypeToTypeBlocks.pure.js
+var o = class extends a {
+	constructor(e) {
+		super(i, n, (e) => +e, "FlowGraphBooleanToFloat", e);
+	}
+}, s = class extends a {
+	constructor(e) {
+		super(i, r, (e) => t.FromValue(+e), "FlowGraphBooleanToInt", e);
+	}
+}, c = class extends a {
+	constructor(e) {
+		super(n, i, (e) => !!e, "FlowGraphFloatToBoolean", e);
+	}
+}, l = class extends a {
+	constructor(e) {
+		super(r, i, (e) => !!e.value, "FlowGraphIntToBoolean", e);
+	}
+}, u = class extends a {
+	constructor(e) {
+		super(r, n, (e) => e.value, "FlowGraphIntToFloat", e);
+	}
+}, d = class extends a {
+	constructor(e) {
+		super(n, r, (n) => {
+			switch (e?.roundingMode) {
+				case "floor": return t.FromValue(Math.floor(n));
+				case "ceil": return t.FromValue(Math.ceil(n));
+				case "round": return t.FromValue(Math.round(n));
+				default: return t.FromValue(n);
+			}
+		}, "FlowGraphFloatToInt", e);
+	}
+}, f = !1;
+function p() {
+	f || (f = !0, e("FlowGraphBooleanToFloat", o), e("FlowGraphBooleanToInt", s), e("FlowGraphFloatToBoolean", c), e("FlowGraphIntToBoolean", l), e("FlowGraphIntToFloat", u), e("FlowGraphFloatToInt", d));
+}
+//#endregion
+export { o as FlowGraphBooleanToFloat, s as FlowGraphBooleanToInt, c as FlowGraphFloatToBoolean, d as FlowGraphFloatToInt, l as FlowGraphIntToBoolean, u as FlowGraphIntToFloat, p as RegisterFlowGraphTypeToTypeBlocks };

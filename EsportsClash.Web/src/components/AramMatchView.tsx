@@ -8,6 +8,69 @@ import { loadVisualReleases } from '../avatarVisualRelease';
 import { barracksPosition, minionSpawnPosition, advanceLaneMinion, drawNaturalArena, HEALING_SHRINE_Y } from '../arenaLandform.ts';
 import { arenaCampArt } from '../arenaArtDirection.ts';
 import { placeArenaNameplates, type NameplateAnchor, type OverlayBox } from '../arenaNameplates.ts';
+import {
+  computeActiveBossMeter,
+  computeTeamfightAutoZoom,
+  drawArena3dTacticalReadability,
+  formatStructurePlateLabel,
+  isMinionLastHittable,
+  shouldShowNeutralCampBar,
+} from '../phase3SpectatorReadability';
+import {
+  BUSH_ATTACK_REVEAL_SECONDS,
+  MAX_WARD_CHARGES,
+  SWEEPER_COOLDOWN_SECONDS,
+  SWEEPER_DURATION_SECONDS,
+  SWEEPER_RADIUS,
+  WARD_RECHARGE_SECONDS,
+  chooseWardKindForChampion,
+  drawVisionTacticalOverlay,
+  getWardSpec,
+  updateLastSeenEnemies,
+  updateWardDetectionStates,
+  type ArenaWard,
+  type LastSeenEnemyMarker,
+  type WardRubbleMarker,
+} from '../visionRules';
+import {
+  createInitialJunglePlants,
+  createInitialRiverScuttlers,
+  drawJungleEcosystemOverlay,
+  stepRiverScuttlers,
+  transferJungleBuffsOnTakedown,
+  type ChampionJungleBuffState,
+  type JunglePlant,
+  type RiverScuttler,
+  type StolenCampMarker,
+} from '../jungleEcosystemRules';
+import {
+  drawEpicObjectivesOverlay,
+  getActiveArenaElementalAccent,
+  getDragonElementForIndex,
+  shouldSpawnElderDragon,
+  type DragonElement,
+  type TeamDragonSoulState,
+} from '../epicObjectivesRules';
+import {
+  drawTerrainStructureEconomyOverlay,
+  type ActiveRelicHealingZone,
+  type BossPortalGate,
+} from '../terrainStructureEconomyRules';
+import {
+  BROADCAST_CAMERA_PRESETS,
+  drawDynamicEventsAtmosphereOverlay,
+  isWalkingInRiverWater,
+  recordChampionKillForMultiKill,
+  stepCelestialSupplyDrop,
+  SUPPLY_DROP_CAPTURE_SECONDS,
+  type BroadcastCameraPresetId,
+  type CelestialSupplyDrop,
+  type FirstBloodRecord,
+  type MultiKillTracker,
+  type ScorchDecal,
+  type WaterRippleRing,
+} from '../dynamicEventsAtmosphereRelease';
+import { buildArenaFeatures, parseLightingOverride, resolveArenaAtmosphere } from '../match-viewer/battlefieldFeatures';
 import React, { useEffect, useRef, useState } from 'react';
 import { perceiveChampions } from '../decisionPerception';
 import { resolveFightCommitment } from '../decisionCommitment';
@@ -121,7 +184,7 @@ import { sound } from '../audio';
 import { chooseTeamfightTarget, isChannelingAbility, isEnemyCaughtInAlliedChannel, isUnitVisibleTo, shouldUseSecondSkill, shouldUseSkill, shouldUseUltimate } from '../combatDecision';
 import { createEnemyCooldownMemory, isObservedCooling, observeCooldownRise, type CooldownSnapshot } from '../cooldownKnowledge';
 import { getSkillCastRange, isCrowdControlSkill, applyChainStun, HEX_SIZE } from '../skillRangeRules';
-import { ARENA_HEIGHT,PLAY_MIN_Y,PLAY_MAX_Y,mapLayoutY, ARENA_WIDTH, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, laneY, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, rockRouteDistance, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from '../arenaRules';
+import { ARENA_HEIGHT,PLAY_MIN_Y,PLAY_MAX_Y,mapLayoutY, ARENA_WIDTH, ARENA_MAP_VERSION, computeArenaRulesetVersion, CAMP_ROCK_RINGS, DRAGON_SPAWN_SECOND, DRAGON_X, LANE_Y, laneY, NEXUS_X, NEXUS_TOWER_X, ROCK_TERRAIN, WELL_X, STRUCTURE_HP, nextNexusVolleyShot, selectNexusTargets, selectTurretTarget, turretShotDamage, resolveRockTerrainMovement, rockApproachWaypoint, rockRouteDistance, isMinionEmpowered, waveStats, ARAM_BUSHES, getBushAt, canUnitRecall, towerSiegeMultiplier, canDamageNexus } from '../arenaRules';
 import { getMinionCrashMultiplier, getMinionStructureDamage, getWaveClearProfile, isInsideWaveClear, shouldPrioritizeWaveClear, shouldCastWaveClearSkill } from '../waveClearRules';
 import { structureBasicAttackDamage } from '../structureSiegeRules';
 import { evaluateNexusFinish } from '../nexusFinishRules';
@@ -142,7 +205,14 @@ import { BUCK_SMOKE_DURATION, BUCK_SMOKE_RADIUS, getAbilityAdjustedBasicAttackRa
 import { advanceCreepAttack, advanceTargetedProjectile, creepAttackPose, startCreepAttack } from '../creepAttackTiming';
 import { isInsideRockTerrain } from '../arenaRules';
 import { chooseNearbyFightingAlly, shouldKeepRecallPlan } from '../actionDecisionRules';
-import { INNER_TOWER_X, OUTER_TOWER_X } from '../arenaLayout';
+import { INNER_TOWER_X, OUTER_TOWER_X, topLaneY, botLaneY } from '../arenaLayout';
+import {
+  TWO_LANE_STRATEGIES,
+  assignSquadTwoLaneRoles,
+  getTwoLaneFormationY,
+  evaluateDynamicLaneRotation,
+  type TwoLaneSquadStrategy
+} from '../twoLaneStrategyRules';
 import { campWallPoint } from '../arenaRules';
 import { shouldCastNoTargetMobilityUltimate } from '../abilityCastTypes';
 import { chooseBaseDefense, shouldChaseDefenseTarget, shouldStandAndDefendBase, shouldLeaveWellToDefend,
@@ -458,9 +528,8 @@ const PROJECTILE_SKILL1_CHAMPIONS = new Set([
   'Kaelen', 'Hweilin', 'Jaxon', 'Valerie', 'Jinxy', 'Paxi', 'Batrix', 'Quillback', 'Aetheris'
 ]);
 
-function getChampionFormationY(_name: string, index: number, team: 'blue' | 'red' = 'blue', x?: number): number {
-  const targetX = x ?? WELL_X[team];
-  return laneY(targetX) + (index - 2) * 24;
+function getChampionFormationY(_name: string, index: number, team: 'blue' | 'red' = 'blue', x?: number, lane?: 'top' | 'bot'): number {
+  return getTwoLaneFormationY(index, team, x, lane);
 }
 function legacyChampionFormationY(champName: string, idx: number): number {
   switch (champName) {
@@ -596,6 +665,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenError, setFullscreenError] = useState(false);
   const [speed, setSpeed] = useState<number>(1);
+  const [twoLaneStrategy, setTwoLaneStrategy] = useState<TwoLaneSquadStrategy>('standard_2_3');
   const [paused, setPaused] = useState<boolean>(import.meta.env.DEV && evaluationStartPaused);
   const [dockTab, setDockTab] = useState<'squads' | 'events' | 'items'>('squads');
   const [recordPage, setRecordPage] = useState(0);
@@ -662,18 +732,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     };
   }, [renderlessEvaluation, blueLineup, redLineup]);
 
-  // Camera Zoom & Spectator Tracking
-  const [zoom, setZoom] = useState<number>(1.65);
+  // Camera Zoom & Spectator Tracking (Default 2.65 frames ~1050 units horizontally like League/Wild Rift)
+  const [zoom, setZoom] = useState<number>(2.65);
   const [cameraMode, setCameraMode] = useState<'auto' | 'manual'>('auto');
   const [showMinimap, setShowMinimap] = useState<boolean>(true);
+  const [showDebugOverlay, setShowDebugOverlay] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const zoomRef = useRef(1.65);
+  const zoomRef = useRef(2.65);
   zoomRef.current = zoom;
   const cameraModeRef = useRef<'auto' | 'manual'>('auto');
   cameraModeRef.current = cameraMode;
   const showMinimapRef = useRef<boolean>(true);
   showMinimapRef.current = showMinimap;
+  const showDebugOverlayRef = useRef<boolean>(false);
+  showDebugOverlayRef.current = showDebugOverlay;
   const lockedChampionIdRef = useRef<string | null>(null);
   const panVelocityRef = useRef<{ vx: number; vy: number }>({ vx: 0, vy: 0 });
   const lastDragTimeRef = useRef<number>(0);
@@ -815,7 +888,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const [champions, setChampions] = useState<AramChampionUnit[]>([]);
 
   // In-Game Squad HUD view mode: 'expanded' (tactical overlay) | 'compact' (broadcast strip) | 'docked' (docked in arena) | 'hidden' (minimized)
-  const [hudMode, setHudMode] = useState<'docked' | 'hidden'>('docked');
+  const [hudMode, setHudMode] = useState<'docked' | 'hidden'>('hidden');
 
   const computeActionCenter = (
     champs: AramChampionUnit[],
@@ -849,15 +922,40 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       sumY += c.y * w;
     }
 
+    // Include active epic boss fight weighting (Dragon Embermaw Caldera or Siege Golem Colosseum)
+    const dragon = dragonRef.current;
+    if (dragon && dragon.isAlive && (dragon.hp < dragon.maxHp || dragon.claimTeam)) {
+      const champsAtDragon = aliveChamps.filter(c => Math.hypot(c.x - dragon.x, c.y - dragon.y) <= 480);
+      if (champsAtDragon.length > 0) {
+        const objWeight = 3.5 * champsAtDragon.length;
+        totalWeight += objWeight;
+        sumX += dragon.x * objWeight;
+        sumY += dragon.y * objWeight;
+      }
+    }
+    const golem = jungleCampsRef.current.find(c => c.type === 'siege_golem');
+    if (golem && golem.isAlive && (golem.hp < golem.maxHp || golem.claimTeam)) {
+      const champsAtGolem = aliveChamps.filter(c => Math.hypot(c.x - golem.x, c.y - golem.y) <= 480);
+      if (champsAtGolem.length > 0) {
+        const objWeight = 3.5 * champsAtGolem.length;
+        totalWeight += objWeight;
+        sumX += golem.x * objWeight;
+        sumY += golem.y * objWeight;
+      }
+    }
+
     const rawX = sumX / Math.max(0.001, totalWeight);
     const rawY = sumY / Math.max(0.001, totalWeight);
-    // In 3D, follow actual jungle fights and leave room above the raised bodies.
-    const targetY = arenaViewRef.current==='3d' ? rawY+60 : LANE_Y + (rawY - LANE_Y) * 0.45;
+    // In 3D, follow actual jungle fights and leave room above the raised bodies. In 2D, track along slanted roadway.
+    const currentLaneY = laneY(rawX);
+    const targetY = arenaViewRef.current === '3d'
+      ? rawY + 60
+      : currentLaneY + (rawY - currentLaneY) * 0.85;
 
     return { x: rawX, y: targetY };
   };
 
-  // Universal hotkeys: Tab toggles HUD; Space recenters auto cam; +/- zooms; 0 fits arena; M toggles minimap
+  // Universal hotkeys: Tab toggles HUD; Space recenters auto cam; WASD/Arrows pan; +/- zooms; 0 fits arena; M toggles minimap
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
@@ -871,6 +969,30 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         lockedChampionIdRef.current = null;
         setCameraMode('auto');
         targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, ARENA_HEIGHT);
+      } else if (e.key === 'ArrowLeft' || e.code === 'KeyA') {
+        e.preventDefault();
+        lockedChampionIdRef.current = null;
+        setCameraMode('manual');
+        panVelocityRef.current.vx = -450;
+        targetCameraPosRef.current.x = Math.max(120, targetCameraPosRef.current.x - 90 / zoomRef.current);
+      } else if (e.key === 'ArrowRight' || e.code === 'KeyD') {
+        e.preventDefault();
+        lockedChampionIdRef.current = null;
+        setCameraMode('manual');
+        panVelocityRef.current.vx = 450;
+        targetCameraPosRef.current.x = Math.min(ARENA_WIDTH - 120, targetCameraPosRef.current.x + 90 / zoomRef.current);
+      } else if (e.key === 'ArrowUp' || e.code === 'KeyW') {
+        e.preventDefault();
+        lockedChampionIdRef.current = null;
+        setCameraMode('manual');
+        panVelocityRef.current.vy = -350;
+        targetCameraPosRef.current.y = Math.max(120, targetCameraPosRef.current.y - 75 / zoomRef.current);
+      } else if (e.key === 'ArrowDown' || e.code === 'KeyS') {
+        e.preventDefault();
+        lockedChampionIdRef.current = null;
+        setCameraMode('manual');
+        panVelocityRef.current.vy = 350;
+        targetCameraPosRef.current.y = Math.min(ARENA_HEIGHT - 120, targetCameraPosRef.current.y + 75 / zoomRef.current);
       } else if (e.key >= '1' && e.key <= '5') {
         e.preventDefault();
         const blueChamps = championsRef.current.filter((c) => c.team === 'blue');
@@ -916,8 +1038,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         setShowMinimap((prev) => !prev);
       }
     };
+
+    const handleWindowMouseUp = () => {
+      isDraggingRef.current = false;
+      isDraggingMinimapRef.current = false;
+      setIsDragging(false);
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('mouseup', handleWindowMouseUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('mouseup', handleWindowMouseUp);
+    };
   }, []);
 
   const minimapRect = (width: number, height: number) => {
@@ -944,13 +1077,30 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const { Mw, Mh, mx, my } = minimapRect(canvas.width, canvas.height);
       if (canvasX >= mx && canvasX <= mx + Mw && canvasY >= my && canvasY <= my + Mh) {
         isDraggingMinimapRef.current = true;
-        lockedChampionIdRef.current = null;
         panVelocityRef.current = { vx: 0, vy: 0 };
         setCameraMode('manual');
         const worldX = ((canvasX - mx) / Mw) * ARENA_WIDTH;
         const worldY = ((canvasY - my) / Mh) * ARENA_HEIGHT;
-        targetCameraPosRef.current = { x: worldX, y: worldY };
-        cameraPosRef.current = { x: worldX, y: worldY };
+
+        // Check if user clicked on or near any alive champion on the minimap
+        const clickedChamp = championsRef.current.find(c => c.isAlive && Math.hypot(c.x - worldX, c.y - worldY) <= 130);
+        if (clickedChamp) {
+          lockedChampionIdRef.current = clickedChamp.id;
+          targetCameraPosRef.current = { x: clickedChamp.x, y: arenaViewRef.current === '3d' ? clickedChamp.y + 60 : clickedChamp.y };
+          sound.playClick();
+          floatsRef.current.push({
+            id: random().toString(),
+            x: clickedChamp.x,
+            y: clickedChamp.y - 35,
+            text: `🎯 FOCUSED: ${clickedChamp.player.name}`,
+            color: clickedChamp.team === 'blue' ? '#38bdf8' : '#f43f5e',
+            opacity: 1,
+            scale: 1.15
+          });
+        } else {
+          lockedChampionIdRef.current = null;
+          targetCameraPosRef.current = { x: worldX, y: arenaViewRef.current === '3d' ? worldY + 30 : worldY };
+        }
         return;
       }
     }
@@ -1043,11 +1193,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const { Mw, Mh, mx, my } = minimapRect(canvas.width, canvas.height);
         if (canvasX >= mx && canvasX <= mx + Mw && canvasY >= my && canvasY <= my + Mh) {
           isDraggingMinimapRef.current = true;
+          panVelocityRef.current = { vx: 0, vy: 0 };
           setCameraMode('manual');
           const worldX = ((canvasX - mx) / Mw) * ARENA_WIDTH;
           const worldY = ((canvasY - my) / Mh) * ARENA_HEIGHT;
-          targetCameraPosRef.current = { x: worldX, y: worldY };
-          cameraPosRef.current = { x: worldX, y: worldY };
+          const clickedChamp = championsRef.current.find(c => c.isAlive && Math.hypot(c.x - worldX, c.y - worldY) <= 130);
+          if (clickedChamp) {
+            lockedChampionIdRef.current = clickedChamp.id;
+            targetCameraPosRef.current = { x: clickedChamp.x, y: arenaViewRef.current === '3d' ? clickedChamp.y + 60 : clickedChamp.y };
+            sound.playClick();
+          } else {
+            lockedChampionIdRef.current = null;
+            targetCameraPosRef.current = { x: worldX, y: arenaViewRef.current === '3d' ? worldY + 30 : worldY };
+          }
           return;
         }
       }
@@ -1151,7 +1309,32 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const engagementTrackerRef = useRef<EngagementSnapshot | undefined>(undefined);
   const nextEngagementIdRef = useRef(1);
   const engagementOutcomeCooldownRef = useRef(0);
-  const wardsRef = useRef<{ id: string; team: 'blue' | 'red'; bushId: string; x: number; y: number; expiresAt: number }[]>([]);
+  const wardsRef = useRef<ArenaWard[]>([]);
+  const wardRubbleRef = useRef<WardRubbleMarker[]>([]);
+  const lastSeenEnemiesRef = useRef<Map<string, LastSeenEnemyMarker>>(new Map());
+  const prevVisibleEnemyIdsRef = useRef<Set<string>>(new Set());
+  const championJungleBuffsRef = useRef<Record<string, ChampionJungleBuffState>>({});
+  const riverScuttlersRef = useRef<RiverScuttler[]>(createInitialRiverScuttlers());
+  const junglePlantsRef = useRef<JunglePlant[]>(createInitialJunglePlants());
+  const stolenCampMarkersRef = useRef<StolenCampMarker[]>([]);
+  const totalDragonsSlainRef = useRef(0);
+  const currentDragonElementRef = useRef<DragonElement>('infernal');
+  const isElderDragonRef = useRef(false);
+  const teamDragonStatesRef = useRef<{ blue: TeamDragonSoulState; red: TeamDragonSoulState }>({
+    blue: { stacks: [] },
+    red: { stacks: [] },
+  });
+  const streakMapRef = useRef<Record<string, number>>({});
+  const bossPortalsRef = useRef<BossPortalGate[]>([]);
+  const relicZonesRef = useRef<ActiveRelicHealingZone[]>([]);
+  const firstBloodRecordRef = useRef<FirstBloodRecord | null>(null);
+  const multiKillMapRef = useRef<Record<string, MultiKillTracker>>({});
+  const supplyDropRef = useRef<CelestialSupplyDrop | null>(null);
+  const supplyDropSpawnedRef = useRef<Set<number>>(new Set());
+  const scorchDecalsRef = useRef<ScorchDecal[]>([]);
+  const waterRipplesRef = useRef<WaterRippleRing[]>([]);
+  const lastRippleAtRef = useRef<Record<string, number>>({});
+  const [cameraPreset, setCameraPreset] = useState<BroadcastCameraPresetId>('broadcast');
   const jungleBuffsRef = useRef<{ blue: { blue: number; red: number }; red: { blue: number; red: number } }>({
     blue: { blue: 0, red: 0 }, red: { blue: 0, red: 0 }
   });
@@ -1193,17 +1376,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     slainCount: 0
   });
 
-  // 4 Neutral Jungle Camps across the map
+  // 12 Neutral Jungle Camps + 1 Siege Golem Boss across the 4 jungle quadrants
   const jungleCampsRef = useRef<JungleCamp[]>([
-    { id: 'j_blue_golem', name: 'Frost Sentinel', type: 'golem', x: 876, y: 170, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
-    { id: 'j_red_wolves', name: 'Shadow Stalkers', type: 'wolves', x: 1724, y: 170, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#a855f7' },
-    { id: 'j_blue_behemoth', name: 'Murk Behemoth', type: 'behemoth', x: 967, y: 575, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#10b981' },
-    { id: 'j_red_drakes', name: 'Crimson Drakes', type: 'drakes', x: 1633, y: 575, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#ef4444' },
-    { id: 'j_blue_blue_buff', name: 'Azure Crest', type: 'blue_buff', x: 640, y: 145, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
-    { id: 'j_blue_red_buff', name: 'Crimson Crest', type: 'red_buff', x: 785, y: 600, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
-    { id: 'j_red_blue_buff', name: 'Azure Crest', type: 'blue_buff', x: 1960, y: 145, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
-    { id: 'j_red_red_buff', name: 'Crimson Crest', type: 'red_buff', x: 1815, y: 600, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
-    { id: 'j_siege_golem', name: 'Gravemarch Colossus', type: 'siege_golem', x: 1300, y: 610,
+    { id: 'j_blue_blue_buff', name: 'Azure Sentinel', type: 'blue_buff', x: 740, y: 435, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
+    { id: 'j_blue_behemoth', name: 'Elder Gromp', type: 'behemoth', x: 500, y: 455, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#10b981' },
+    { id: 'j_blue_wolves', name: 'Murk Wolves', type: 'wolves', x: 1055, y: 445, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#a855f7' },
+    { id: 'j_blue_golem', name: 'Ancient Krugs', type: 'golem', x: 500, y: 985, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
+    { id: 'j_blue_red_buff', name: 'Crimson Brambleback', type: 'red_buff', x: 740, y: 1005, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
+    { id: 'j_blue_drakes', name: 'Razorbeak Flock', type: 'drakes', x: 1055, y: 995, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#ef4444' },
+    { id: 'j_red_wolves', name: 'Shadow Wolves', type: 'wolves', x: 1745, y: 445, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#a855f7' },
+    { id: 'j_red_blue_buff', name: 'Azure Sentinel', type: 'blue_buff', x: 2060, y: 435, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
+    { id: 'j_red_behemoth', name: 'Elder Gromp', type: 'behemoth', x: 2300, y: 455, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#10b981' },
+    { id: 'j_red_drakes', name: 'Crimson Raptors', type: 'drakes', x: 1745, y: 995, hp: 1350, maxHp: 1350, ad: 46, range: 230, goldReward: 85, xpReward: 110, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#ef4444' },
+    { id: 'j_red_red_buff', name: 'Crimson Brambleback', type: 'red_buff', x: 2060, y: 1005, hp: 1550, maxHp: 1550, ad: 50, range: 230, goldReward: 100, xpReward: 120, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#fb7185' },
+    { id: 'j_red_golem', name: 'Ancient Krugs', type: 'golem', x: 2300, y: 985, hp: 1250, maxHp: 1250, ad: 42, range: 230, goldReward: 75, xpReward: 95, respawnTimer: 0, isAlive: true, attackTimer: 0, color: '#38bdf8' },
+    { id: 'j_siege_golem', name: 'Gravemarch Colossus', type: 'siege_golem', x: 1400, y: 1345,
       hp: 6200, maxHp: 6200, ad: 135, range: 230, goldReward: 250, xpReward: 300,
       respawnTimer: 0, isAlive: false, attackTimer: 0, color: '#d4a764' }
   ].map(c=>{const site=CAMP_ROCK_RINGS.find(r=>r.id===c.id)!;return {...c,type:c.type as JungleCamp['type'],x:site.x,y:site.y};}));
@@ -1315,10 +1502,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }, 4500);
   };
 
-  const addEvent = (text: string, type: MatchEvent['type']) => {
+  const addEvent = (text: string, type: MatchEvent['type'], subject?: RecordedMatchEvent['subject']) => {
     const mins = Math.floor(matchTimeRef.current / 60);
     const secs = (Math.floor(matchTimeRef.current % 60)).toString().padStart(2, '0');
-    recordedEventsRef.current.push({ second: Math.round(matchTimeRef.current * 100) / 100, type, text });
+    recordedEventsRef.current.push({
+      second: Math.round(matchTimeRef.current * 100) / 100,
+      tick: Math.round(matchTimeRef.current / SIMULATION_STEP),
+      sequence: recordedEventsRef.current.length + 1,
+      type, text, ...(subject ? { subject } : {}),
+    });
     if ((type === 'dragon' || type === 'jungle') && /called|committed|chose|focus|regroup/i.test(text)) {
       addInsightEvent(insightsRef.current, { second: matchTimeRef.current, kind: 'decision', text });
     }
@@ -1393,23 +1585,29 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         isAlive: true, targetId: null, armor: 20
       }));
     const initialStructures: LaneStructure[] = [
-      { id: 'b_t1', team: 'blue', type: 'outer_tower', name: 'Blue Outer Turret', x: OUTER_TOWER_X.blue, y: laneY(OUTER_TOWER_X.blue), hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
-      { id: 'b_t2', team: 'blue', type: 'inner_tower', name: 'Blue Inner Turret', x: INNER_TOWER_X.blue, y: laneY(INNER_TOWER_X.blue), hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
-      { id: 'b_t3', team: 'blue', type: 'nexus_tower', name: 'Blue Nexus Turret', x: NEXUS_TOWER_X.blue, y: laneY(NEXUS_TOWER_X.blue), hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
+      { id: 'b_top_t1', team: 'blue', lane: 'top', type: 'outer_tower', name: 'Blue Top Outer Turret', x: OUTER_TOWER_X.blue, y: topLaneY(OUTER_TOWER_X.blue), hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+      { id: 'b_top_t2', team: 'blue', lane: 'top', type: 'inner_tower', name: 'Blue Top Inner Turret', x: INNER_TOWER_X.blue, y: topLaneY(INNER_TOWER_X.blue), hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+      { id: 'b_top_t3', team: 'blue', lane: 'top', type: 'nexus_tower', name: 'Blue Top Base Turret', x: NEXUS_TOWER_X.blue, y: topLaneY(NEXUS_TOWER_X.blue), hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
+      { id: 'b_bot_t1', team: 'blue', lane: 'bot', type: 'outer_tower', name: 'Blue Bot Outer Turret', x: OUTER_TOWER_X.blue, y: botLaneY(OUTER_TOWER_X.blue), hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+      { id: 'b_bot_t2', team: 'blue', lane: 'bot', type: 'inner_tower', name: 'Blue Bot Inner Turret', x: INNER_TOWER_X.blue, y: botLaneY(INNER_TOWER_X.blue), hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+      { id: 'b_bot_t3', team: 'blue', lane: 'bot', type: 'nexus_tower', name: 'Blue Bot Base Turret', x: NEXUS_TOWER_X.blue, y: botLaneY(NEXUS_TOWER_X.blue), hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
       ...makeBarracks('blue'),
       { id: 'b_nexus', team: 'blue', type: 'nexus', name: 'Blue Nexus', x: NEXUS_X.blue, y: laneY(NEXUS_X.blue), hp: STRUCTURE_HP.nexus, maxHp: STRUCTURE_HP.nexus, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 },
-      { id: 'r_t1', team: 'red', type: 'outer_tower', name: 'Red Outer Turret', x: OUTER_TOWER_X.red, y: laneY(OUTER_TOWER_X.red), hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
-      { id: 'r_t2', team: 'red', type: 'inner_tower', name: 'Red Inner Turret', x: INNER_TOWER_X.red, y: laneY(INNER_TOWER_X.red), hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
-      { id: 'r_t3', team: 'red', type: 'nexus_tower', name: 'Red Nexus Turret', x: NEXUS_TOWER_X.red, y: laneY(NEXUS_TOWER_X.red), hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
+      { id: 'r_top_t1', team: 'red', lane: 'top', type: 'outer_tower', name: 'Red Top Outer Turret', x: OUTER_TOWER_X.red, y: topLaneY(OUTER_TOWER_X.red), hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+      { id: 'r_top_t2', team: 'red', lane: 'top', type: 'inner_tower', name: 'Red Top Inner Turret', x: INNER_TOWER_X.red, y: topLaneY(INNER_TOWER_X.red), hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+      { id: 'r_top_t3', team: 'red', lane: 'top', type: 'nexus_tower', name: 'Red Top Base Turret', x: NEXUS_TOWER_X.red, y: topLaneY(NEXUS_TOWER_X.red), hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
+      { id: 'r_bot_t1', team: 'red', lane: 'bot', type: 'outer_tower', name: 'Red Bot Outer Turret', x: OUTER_TOWER_X.red, y: botLaneY(OUTER_TOWER_X.red), hp: STRUCTURE_HP.outer_tower, maxHp: STRUCTURE_HP.outer_tower, ad: 160, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 25 },
+      { id: 'r_bot_t2', team: 'red', lane: 'bot', type: 'inner_tower', name: 'Red Bot Inner Turret', x: INNER_TOWER_X.red, y: botLaneY(INNER_TOWER_X.red), hp: STRUCTURE_HP.inner_tower, maxHp: STRUCTURE_HP.inner_tower, ad: 190, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 30 },
+      { id: 'r_bot_t3', team: 'red', lane: 'bot', type: 'nexus_tower', name: 'Red Bot Base Turret', x: NEXUS_TOWER_X.red, y: botLaneY(NEXUS_TOWER_X.red), hp: STRUCTURE_HP.nexus_tower, maxHp: STRUCTURE_HP.nexus_tower, ad: 220, range: 135, attackTimer: 0, isAlive: true, targetId: null, armor: 35 },
       ...makeBarracks('red'),
       { id: 'r_nexus', team: 'red', type: 'nexus', name: 'Red Nexus', x: NEXUS_X.red, y: laneY(NEXUS_X.red), hp: STRUCTURE_HP.nexus, maxHp: STRUCTURE_HP.nexus, ad: 85, range: 190, attackTimer: 0, isAlive: true, targetId: null, armor: 40 }
     ];
     structuresRef.current = initialStructures;
 
-    // 2. Health & Mana Relics on the lane and lower jungle
+    // 2. Health & Mana Relics on the top and bottom lanes
     relicsRef.current = [
-      { id: 'relic_top', x: 1150, y: laneY(1150) - 130, respawnTimer: 0, healAmount: 260 },
-      { id: 'relic_bot', x: 1650, y: laneY(1650) + 130, respawnTimer: 0, healAmount: 260 }
+      { id: 'relic_top', x: 1060, y: topLaneY(1060), respawnTimer: 0, healAmount: 260 },
+      { id: 'relic_bot', x: 1740, y: botLaneY(1740), respawnTimer: 0, healAmount: 260 }
     ];
 
     // 3. Champions Initial Setup
@@ -1429,14 +1627,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (it.stats.aspd) champCopy.aspd += it.stats.aspd;
       });
 
+      const uLane: 'top' | 'bot' = idx < 2 ? 'top' : 'bot';
       initChamps.push({
         id: `blue_${player.id}`,
         player,
         champion: champCopy,
         team: 'blue',
+        assignedLane: uLane,
+        tacticalRole: idx === 0 ? 'solo' : idx === 1 ? 'roam' : 'duo',
         teamChemistry: blueCoach?.chemistryBonus ?? 10,
         x: WELL_X.blue + (idx % 2) * 20,
-        y: getChampionFormationY(item.champion.name, idx),
+        y: getChampionFormationY(item.champion.name, idx, 'blue', undefined, uLane),
         vx: 0,
         vy: 0,
         hp: champCopy.hp + bonusHp,
@@ -1494,14 +1695,17 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if (it.stats.aspd) champCopy.aspd += it.stats.aspd;
       });
 
+      const uLaneRed: 'top' | 'bot' = idx < 2 ? 'top' : 'bot';
       initChamps.push({
         id: `red_${player.id}`,
         player,
         champion: champCopy,
         team: 'red',
+        assignedLane: uLaneRed,
+        tacticalRole: idx === 0 ? 'solo' : idx === 1 ? 'roam' : 'duo',
         teamChemistry: redCoach?.chemistryBonus ?? 10,
         x: WELL_X.red - (idx % 2) * 20,
-        y: getChampionFormationY(item.champion.name, idx, 'red'),
+        y: getChampionFormationY(item.champion.name, idx, 'red', undefined, uLaneRed),
         vx: 0,
         vy: 0,
         hp: champCopy.hp + bonusHp,
@@ -1578,6 +1782,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const matchChamps = [...blueLineup.map(i => i.champion.name), ...redLineup.map(i => i.champion.name)];
     sound.preloadAvatarSkills(matchChamps);
     setChampions(initChamps);
+    if (minionsRef.current.length === 0) {
+      spawnMinionWave();
+      waveTimerRef.current = 22.0;
+    }
   }, [blueLineup, redLineup]);
 
   // Destroying an enemy barracks upgrades the matching class in future waves.
@@ -1588,12 +1796,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const direction = team === 'blue' ? 1 : -1;
       const prefix = team === 'blue' ? 'b' : 'r';
       const spawnX = NEXUS_X[team] + direction * 68;
-      const addMinion = (type: LaneMinion['type'], index: number, x: number, y: number) => {
+      const addMinion = (type: LaneMinion['type'], index: number, x: number, y: number, lane: 'top' | 'bot') => {
         const empowered = isMinionEmpowered(team, type, structuresRef.current);
         const stats = waveStats(type, empowered);
         newMinions.push({
-          id: `${prefix}_${type}_${waveCountRef.current}_${index}`,
-          team, type, x, y,
+          id: `${prefix}_${lane}_${type}_${waveCountRef.current}_${index}`,
+          team, type, lane, x, y,
           ...stats,
           maxHp: stats.hp,
           attackTimer: 0,
@@ -1601,19 +1809,21 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           empowered
         });
       };
-      for (let i = 0; i < 3; i++) {
-        const melee = minionSpawnPosition(team, 'melee', i), caster = minionSpawnPosition(team, 'caster', i);
-        addMinion('melee', i, melee.x, melee.y);
-        addMinion('caster', i, caster.x, caster.y);
-      }
-      if (waveCountRef.current % 3 === 0 || isMinionEmpowered(team, 'cannon', structuresRef.current)) {
-        const cannon = minionSpawnPosition(team, 'cannon', 0);
-        addMinion('cannon', 0, cannon.x, cannon.y);
+      for (const lane of ['top', 'bot'] as const) {
+        for (let i = 0; i < 3; i++) {
+          const melee = minionSpawnPosition(team, 'melee', i, lane), caster = minionSpawnPosition(team, 'caster', i, lane);
+          addMinion('melee', i, melee.x, melee.y, lane);
+          addMinion('caster', i, caster.x, caster.y, lane);
+        }
+        if (waveCountRef.current % 3 === 0 || isMinionEmpowered(team, 'cannon', structuresRef.current)) {
+          const cannon = minionSpawnPosition(team, 'cannon', 0, lane);
+          addMinion('cannon', 0, cannon.x, cannon.y, lane);
+        }
       }
       if (pendingSiegeGolemRef.current[team]) {
         newMinions.push({
-          id: `siege_golem_${team}_${waveCountRef.current}`, team, type: 'melee', siegeGolem: true,
-          x: spawnX, y: LANE_Y,
+          id: `siege_golem_${team}_${waveCountRef.current}`, team, type: 'melee', lane: 'bot', siegeGolem: true,
+          x: spawnX, y: botLaneY(spawnX),
           hp: 3200, maxHp: 3200, ad: 110, range: 75, speed: 86,
           attackTimer: 0, goldReward: 110, xpReward: 130, isAlive: true,
           siegeChargeCooldown: 2.5, siegeChargeWindup: 0
@@ -2067,7 +2277,44 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     const championStarts = new Map(champs.map(unit => [unit.id, { x: unit.x, y: unit.y }]));
     const minionStarts = new Map(minions.map(unit => [unit.id, { x: unit.x, y: unit.y }]));
     const campStarts = new Map(jungleCamps.map(unit => [unit.id, { x: unit.x, y: unit.y }]));
-    wardsRef.current = wardsRef.current.filter(w => w.expiresAt > matchTimeRef.current);
+    wardsRef.current = wardsRef.current.filter(w => w.expiresAt > matchTimeRef.current && (w.hp ?? 1) > 0);
+    wardRubbleRef.current = wardRubbleRef.current.filter(r => r.expiresAt > matchTimeRef.current);
+    updateWardDetectionStates(wardsRef.current, champs);
+    updateLastSeenEnemies(prevVisibleEnemyIdsRef.current, lastSeenEnemiesRef.current, champs, wardsRef.current, matchTimeRef.current);
+
+    // Phase 5–11 simulation maintenance (River Scuttlers, Supply Drops, Ripples, Decals, Portals)
+    stepRiverScuttlers(riverScuttlersRef.current, champs, matchTimeRef.current, dt);
+    const supplyStep = stepCelestialSupplyDrop(
+      supplyDropRef.current,
+      supplyDropSpawnedRef.current,
+      champs,
+      matchTimeRef.current,
+      dt,
+    );
+    supplyDropRef.current = supplyStep.next;
+    bossPortalsRef.current = bossPortalsRef.current.filter(p => p.expiresAt > matchTimeRef.current);
+    relicZonesRef.current = relicZonesRef.current.filter(z => z.expiresAt > matchTimeRef.current);
+    scorchDecalsRef.current = scorchDecalsRef.current.filter(d => d.expiresAt > matchTimeRef.current);
+    waterRipplesRef.current = waterRipplesRef.current.filter(r => r.expiresAt > matchTimeRef.current);
+    currentDragonElementRef.current = getDragonElementForIndex(totalDragonsSlainRef.current);
+    isElderDragonRef.current = shouldSpawnElderDragon(
+      matchTimeRef.current,
+      teamDragonStatesRef.current.blue.stacks.length,
+      teamDragonStatesRef.current.red.stacks.length,
+    );
+    for (const c of champs) {
+      if (c.isAlive && isWalkingInRiverWater(c) && matchTimeRef.current - (lastRippleAtRef.current[c.id] ?? 0) >= 0.45) {
+        lastRippleAtRef.current[c.id] = matchTimeRef.current;
+        waterRipplesRef.current.push({
+          id: `ripple_${c.id}_${Math.round(matchTimeRef.current * 10)}`,
+          x: c.x,
+          y: c.y,
+          createdAt: matchTimeRef.current,
+          expiresAt: matchTimeRef.current + 0.9,
+        });
+      }
+      streakMapRef.current[c.id] = killStreaksRef.current[c.id]?.count ?? 0;
+    }
 
     if (shouldAwakenGolem(matchTimeRef.current, golemAwakenedRef.current)) {
       const colossus = jungleCamps.find(camp => camp.type === 'siege_golem');
@@ -2880,7 +3127,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const defenseSpeed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u);
         // Do not cancel a nearly finished recall when it is the quicker way home.
         if (nearbyDefense && shouldInterruptRecallForDefense(nearbyDefense, {
-          position: u, rally: nearbyDefense.rally, well: { x: WELL_X[u.team], y: LANE_Y },
+          position: u, rally: nearbyDefense.rally, well: { x: WELL_X[u.team], y: laneY(WELL_X[u.team]) },
           movementSpeed: defenseSpeed, channelRemaining: u.recallTimer ?? 2.5,
           healthy: u.hp / u.maxHp >= 0.6 && u.mana / maxMana(u) >= 0.25,
         })) {
@@ -2940,7 +3187,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           u.recallIntent = false;
           u.farmTargetId = undefined;
           u.x = WELL_X[u.team];
-          u.y = LANE_Y;
+          u.y = getChampionFormationY(u.champion.name, uIdx, u.team);
           u.hp = u.maxHp;
           u.mana = maxMana(u);
           evaluateAndBuyItems(u);
@@ -3289,35 +3536,109 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const bush = getBushAt(u.x, u.y);
       u.isInBush = !!bush;
       u.currentBushId = bush?.id;
+      if (bush) {
+        const opposingWardInBush = wardsRef.current.some(w => w.team !== u.team && !w.disabled && (w.hp ?? 1) > 0 && (w.bushId === bush.id || Math.hypot(w.x - u.x, w.y - u.y) <= 160));
+        if (opposingWardInBush) {
+          u.revealedTimer = Math.max(u.revealedTimer ?? 0, 0.25);
+        }
+      }
+
+      // Phase 4: Ward Charges, Oracle Lens Sweeper, & Ward Clearing (Items 15, 16, 17)
+      u.wardCharges ??= 1;
+      u.wardRechargeTimer ??= WARD_RECHARGE_SECONDS;
+      u.visionScore ??= 0;
+      if ((u.sweeperTimer ?? 0) > 0) u.sweeperTimer = Math.max(0, u.sweeperTimer! - dt);
+      if ((u.sweeperCooldown ?? 0) > 0) u.sweeperCooldown = Math.max(0, u.sweeperCooldown! - dt);
+      if (u.wardCharges < MAX_WARD_CHARGES) {
+        u.wardRechargeTimer -= dt;
+        if (u.wardRechargeTimer <= 0) {
+          u.wardCharges = Math.min(MAX_WARD_CHARGES, u.wardCharges + 1);
+          u.wardRechargeTimer = WARD_RECHARGE_SECONDS;
+        }
+      }
+
+      // Activate Oracle Lens Sweeper when near an enemy stealth ward
+      if ((u.sweeperCooldown ?? 0) <= 0 && (u.sweeperTimer ?? 0) <= 0 && matchTimeRef.current >= 35) {
+        const hiddenEnemyWardNearby = wardsRef.current.some(
+          w => w.team !== u.team && w.kind === 'stealth' && !w.revealed && (w.hp ?? 1) > 0 && Math.hypot(w.x - u.x, w.y - u.y) <= SWEEPER_RADIUS
+        );
+        if (hiddenEnemyWardNearby) {
+          u.sweeperTimer = SWEEPER_DURATION_SECONDS;
+          u.sweeperCooldown = SWEEPER_COOLDOWN_SECONDS;
+          u.visionScore = (u.visionScore ?? 0) + 1.0;
+          updateWardDetectionStates(wardsRef.current, champs);
+        }
+      }
+
+      // Clear revealed/visible enemy wards when out of champion combat
+      const nearbyRevealedEnemyWard = wardsRef.current.find(
+        w => w.team !== u.team && (w.hp ?? 1) > 0 && (w.revealed || w.kind === 'control' || w.kind === 'farsight') && Math.hypot(w.x - u.x, w.y - u.y) <= 155
+      );
+      if (nearbyRevealedEnemyWard && !champs.some(e => e.team !== u.team && e.isAlive && Math.hypot(e.x - u.x, e.y - u.y) <= 270)) {
+        nearbyRevealedEnemyWard.hp = Math.max(0, (nearbyRevealedEnemyWard.hp ?? 1) - dt * 1.35);
+        if (nearbyRevealedEnemyWard.hp <= 0) {
+          const spec = getWardSpec(nearbyRevealedEnemyWard.kind);
+          u.visionScore = (u.visionScore ?? 0) + 2.5;
+          wardRubbleRef.current.push({
+            id: `rubble_${nearbyRevealedEnemyWard.id}`,
+            team: nearbyRevealedEnemyWard.team,
+            kind: nearbyRevealedEnemyWard.kind,
+            x: nearbyRevealedEnemyWard.x,
+            y: nearbyRevealedEnemyWard.y,
+            destroyedAt: matchTimeRef.current,
+            expiresAt: matchTimeRef.current + 12,
+          });
+          floatsRef.current.push({
+            id: `float-ward-clear-${floatIdCounterRef.current++}`,
+            x: nearbyRevealedEnemyWard.x,
+            y: nearbyRevealedEnemyWard.y - 22,
+            text: `🔍 ${spec.label.toUpperCase()} CLEARED!`,
+            color: '#f43f5e',
+            opacity: 1,
+            scale: 1.0,
+          });
+        }
+      }
 
       // Vision Master & Strategic Warding
       if(!arenaRef.current.policies[u.team]){
       const isVisionMaster = personalityOf(u.player).some(id => id === 'bush_stalker' || id === 'objective_zealot');
       const wardCooldown = 50;
+      const buildWard = (id: string, bushId: string, x: number, y: number, isObjective: boolean, bonusDuration = 0): ArenaWard => {
+        const kind = chooseWardKindForChampion(u, matchTimeRef.current, isObjective);
+        const spec = getWardSpec(kind);
+        u.visionScore = (u.visionScore ?? 0) + spec.visionScoreReward;
+        if ((u.wardCharges ?? 0) > 0) u.wardCharges!--;
+        return {
+          id,
+          team: u.team,
+          kind,
+          bushId,
+          x,
+          y,
+          hp: spec.maxHp,
+          maxHp: spec.maxHp,
+          placedAt: matchTimeRef.current,
+          expiresAt: matchTimeRef.current + spec.duration + bonusDuration,
+          ownerId: u.id,
+        };
+      };
 
       // Deep pit warding for Vision Master
       if (isVisionMaster && matchTimeRef.current >= (u.wardReadyAt ?? 0) && matchTimeRef.current > 25) {
         const dragonPitDist = Math.hypot(dragon.x - u.x, dragon.y - u.y);
         const hasDragonPitWard = wardsRef.current.some(w => w.team === u.team && Math.hypot(w.x - dragon.x, w.y - dragon.y) < 260);
-        if (dragon.isAlive && dragonPitDist <= 380 && !hasDragonPitWard) {
-          wardsRef.current.push({
-            id: `pit_${u.id}_${matchTimeRef.current}`,
-            team: u.team,
-            bushId: 'pit_dragon',
-            x: dragon.x,
-            y: dragon.y,
-            expiresAt: matchTimeRef.current + 85
-          });
+        if (dragon.isAlive && dragonPitDist <= 550 && !hasDragonPitWard) {
+          wardsRef.current.push(buildWard(`pit_${u.id}_${matchTimeRef.current}`, 'pit_dragon', dragon.x, dragon.y, true, 10));
           u.wardReadyAt = matchTimeRef.current + wardCooldown;
           floatsRef.current.push({ id: random().toString(), x: dragon.x, y: dragon.y - 25,
             text: '👁️ PIT WARD PLACED', color: '#10b981', opacity: 1, scale: 1.0 });
         }
         const golem = jungleCamps.find(c => c.type === 'siege_golem' && c.isAlive);
         if (golem && matchTimeRef.current >= (u.wardReadyAt ?? 0)
-          && Math.hypot(golem.x - u.x, golem.y - u.y) <= 380
+          && Math.hypot(golem.x - u.x, golem.y - u.y) <= 550
           && !wardsRef.current.some(w => w.team === u.team && Math.hypot(w.x - golem.x, w.y - golem.y) < 260)) {
-          wardsRef.current.push({ id: `pit_${u.id}_${matchTimeRef.current}`, team: u.team,
-            bushId: 'pit_golem', x: golem.x, y: golem.y, expiresAt: matchTimeRef.current + 85 });
+          wardsRef.current.push(buildWard(`pit_${u.id}_${matchTimeRef.current}`, 'pit_golem', golem.x, golem.y, true, 10));
           u.wardReadyAt = matchTimeRef.current + wardCooldown;
         }
       }
@@ -3325,8 +3646,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const nearbyBush = ARAM_BUSHES.find(b => Math.hypot(b.x - u.x, b.y - u.y) < 155
         && !wardsRef.current.some(w => w.team === u.team && w.bushId === b.id));
       if (nearbyBush && matchTimeRef.current >= (u.wardReadyAt ?? 0) && matchTimeRef.current > 30) {
-        wardsRef.current.push({ id: `${u.id}_${matchTimeRef.current}`, team: u.team, bushId: nearbyBush.id,
-          x: nearbyBush.x, y: nearbyBush.y, expiresAt: matchTimeRef.current + 75 });
+        wardsRef.current.push(buildWard(`${u.id}_${matchTimeRef.current}`, nearbyBush.id, nearbyBush.x, nearbyBush.y, false));
         u.wardReadyAt = matchTimeRef.current + wardCooldown;
         floatsRef.current.push({ id: random().toString(), x: nearbyBush.x, y: nearbyBush.y - 20,
           text: isVisionMaster ? '👁️ MASTER WARD' : 'WARD PLACED', color: isVisionMaster ? '#10b981' : '#a3e635', opacity: 1, scale: 0.95 });
@@ -3341,14 +3661,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && !wardsRef.current.some(w => w.team === u.team && w.bushId === b.id));
 
       if (unwardedHighgroundBush && matchTimeRef.current >= (u.wardReadyAt ?? 0) && matchTimeRef.current > 30) {
-        wardsRef.current.push({
-          id: `hg_${u.id}_${matchTimeRef.current}`,
-          team: u.team,
-          bushId: unwardedHighgroundBush.id,
-          x: unwardedHighgroundBush.x,
-          y: unwardedHighgroundBush.y,
-          expiresAt: matchTimeRef.current + 85
-        });
+        wardsRef.current.push(buildWard(`hg_${u.id}_${matchTimeRef.current}`, unwardedHighgroundBush.id, unwardedHighgroundBush.x, unwardedHighgroundBush.y, false, 10));
         u.wardReadyAt = matchTimeRef.current + wardCooldown;
         floatsRef.current.push({
           id: random().toString(),
@@ -3364,22 +3677,15 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       const highgroundRampX = NEXUS_TOWER_X[u.team === 'blue' ? 'red' : 'blue'] + (u.team === 'blue' ? -60 : 60);
       const isApproachingHighground = Math.abs(u.x - highgroundRampX) <= 240;
-      const hasRampWard = wardsRef.current.some(w => w.team === u.team && Math.hypot(w.x - highgroundRampX, w.y - LANE_Y) < 220);
+      const hasRampWard = wardsRef.current.some(w => w.team === u.team && Math.hypot(w.x - highgroundRampX, w.y - laneY(highgroundRampX)) < 220);
       if (!unwardedHighgroundBush && isApproachingHighground && !hasRampWard
         && matchTimeRef.current >= (u.wardReadyAt ?? 0) && matchTimeRef.current > 30) {
-        wardsRef.current.push({
-          id: `hg_ramp_${u.id}_${matchTimeRef.current}`,
-          team: u.team,
-          bushId: 'highground_ramp',
-          x: highgroundRampX,
-          y: LANE_Y,
-          expiresAt: matchTimeRef.current + 85
-        });
+        wardsRef.current.push(buildWard(`hg_ramp_${u.id}_${matchTimeRef.current}`, 'highground_ramp', highgroundRampX, laneY(highgroundRampX), false, 10));
         u.wardReadyAt = matchTimeRef.current + wardCooldown;
         floatsRef.current.push({
           id: random().toString(),
           x: highgroundRampX,
-          y: LANE_Y - 20,
+          y: laneY(highgroundRampX) - 20,
           text: isVisionMaster ? '👁️ MASTER HIGHGROUND WARD' : '👁️ HIGHGROUND WARD',
           color: isVisionMaster ? '#10b981' : '#38bdf8',
           opacity: 1,
@@ -3973,8 +4279,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           || (localEnemies.length > 0 && isDangerousFight),
       });
       const laneDirection = u.team === 'blue' ? 1 : -1;
+      const uLane: 'top' | 'bot' = u.assignedLane ?? (u.y < 720 ? 'top' : 'bot');
+      const targetLaneY = uLane === 'top' ? topLaneY(u.x) : botLaneY(u.x);
       const alliedLaneWave = minions.filter(m => m.team === u.team && m.isAlive
-        && Math.abs(m.y - LANE_Y) < 150 && laneDirection * (m.x - u.x) > -800
+        && (m.lane ? m.lane === uLane : Math.abs(m.y - targetLaneY) < 160)
+        && laneDirection * (m.x - u.x) > -800
         && laneDirection * (m.x - u.x) < 400);
       const waveFrontX = alliedLaneWave.length > 0
         ? (laneDirection > 0 ? Math.max(...alliedLaneWave.map(m => m.x)) : Math.min(...alliedLaneWave.map(m => m.x)))
@@ -3984,7 +4293,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         coachMacro: (u.team === 'blue' ? blueCoach : redCoach)?.playbookBonus ?? 8,
         alliedWaveCount: alliedLaneWave.length,
         enemyWaveCount: enemyMinions.filter(m => waveFrontX !== undefined
-          && Math.hypot(m.x - waveFrontX, m.y - LANE_Y) < 210).length,
+          && Math.hypot(m.x - waveFrontX, m.y - targetLaneY) < 210).length,
         waveFrontDistance: waveFrontX === undefined ? Infinity : Math.abs(waveFrontX - u.x),
         structureDistance: nearestPushDistance, nearbyAllies: localAllies.length,
         nearbyEnemies: localEnemies.length, winningFightWindow: pressWonFight,
@@ -3999,6 +4308,19 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       // The pair can only reinforce an already-earned, safe conversion window;
       // the existing wave, tower, and structure-vulnerability gates still choose execution.
       const tempoPush = pressWonFight || wavePushCall || personalitySiegeConversion;
+      if (Math.floor(matchTimeRef.current) % 2 === 0 && (u.tacticalRole === 'roam' || u.player.stats.iq >= 82)) {
+        const rot = evaluateDynamicLaneRotation({
+          unit: u,
+          structures: structuresRef.current,
+          dragon: dragonRef.current,
+          siegeGolem: jungleCampsRef.current.find(c => c.type === 'siege_golem'),
+          gameSecond: matchTimeRef.current,
+        });
+        if (rot.shouldRotate && rot.targetLane !== u.assignedLane) {
+          u.assignedLane = rot.targetLane;
+          addEvent(`LANE_ROTATION: ${u.player.name} rotated to ${rot.targetLane.toUpperCase()} lane (${rot.reason.replaceAll('_', ' ')}).`, 'micro');
+        }
+      }
       const teamHasActiveThreat = allies.some(ally => {
         const recentChampionDamage = ally.lastEnemyDamage
           && matchTimeRef.current - ally.lastEnemyDamage.second <= 3;
@@ -4070,7 +4392,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       const canChannelRecall = canUnitRecall(nearestEnemyDist, nearestMinionDist,
         nearestStructureDist, u.recallCooldown ?? 0, !!u.isInBush);
       const recallToDefend = !!defenseCall && shouldRecallToDefendBase(defenseCall, {
-        position: u, rally: defenseCall.rally, well: { x: WELL_X[u.team], y: LANE_Y },
+        position: u, rally: defenseCall.rally, well: { x: WELL_X[u.team], y: laneY(WELL_X[u.team]) },
         movementSpeed: 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenOrbBonuses(u).moveSpeed,
         channelSeconds: 2.5, canChannel: canChannelRecall && !isInsideWell && defendNow,
       });
@@ -4243,7 +4565,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         // Rank safe homeward ground, allied cover, teammates, fountain and bushes.
         // A bush is only one scored cover option, never the default retreat target.
         let targetX: number = wellTargetX;
-        let targetY: number = LANE_Y;
+        let targetY: number = laneY(wellTargetX);
 
         {
           const retreatInput = {
@@ -4259,8 +4581,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
                 || (u.champion.name === 'Raijin' && u.level >= 6 && u.cdUlt <= 0 && u.mana >= ultimateManaCost(u)),
             },
             now: matchTimeRef.current,
-            laneY: LANE_Y,
-            well: { x: wellTargetX, y: LANE_Y },
+            laneY: laneY(u.x),
+            well: { x: wellTargetX, y: laneY(wellTargetX) },
             enemies: enemies.map(enemy => ({ id: enemy.id, team: enemy.team, x: enemy.x, y: enemy.y,
               healthFraction: enemy.hp / Math.max(1, enemy.maxHp), isAlive: enemy.isAlive })),
             allies: allies.map(ally => ({ id: ally.id, team: ally.team, x: ally.x, y: ally.y,
@@ -4589,8 +4911,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && (enemyNexus.hp / enemyNexus.maxHp <= 0.40);
       const focusNexus = nexusFinishCommit && !defenseCall && !!enemyNexus && (shouldFocusExposedNexus(enemyNexus,
         canDamageNexus(enemyNexus.team, structures), iq, coach?.playbookBonus ?? 8) || isNexusLow);
+      const laneEnemyStructures = attackableEnemyStructures.filter(s => !s.lane || s.lane === uLane || s.type === 'nexus' || s.type === 'barracks');
       const preferredStructure = focusNexus ? enemyNexus
-        : attackableEnemyStructures.sort((a, b) => Math.hypot(a.x-u.x,a.y-u.y)-Math.hypot(b.x-u.x,b.y-u.y)||a.id.localeCompare(b.id))[0];
+        : (laneEnemyStructures.length > 0 ? laneEnemyStructures : attackableEnemyStructures)
+            .sort((a, b) => Math.hypot(a.x-u.x,a.y-u.y)-Math.hypot(b.x-u.x,b.y-u.y)||a.id.localeCompare(b.id))[0];
       const pushOutlook = preferredStructure ? estimateTacticalOutlook({
         actor: u, target: preferredStructure,
         travelSpeed: 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u),
@@ -4628,7 +4952,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         : false;
       const blockingNexusMinion = focusNexus && enemyNexus && nearestMinion && minionInRange
         && Math.sign(enemyNexus.x - u.x) * (nearestMinion.x - u.x) >= -20
-        && Math.abs(nearestMinion.y - LANE_Y) < 145;
+        && Math.abs(nearestMinion.y - laneY(nearestMinion.x)) < 145;
       const clearWaveFirst = defenseCall
         ? !!defenseMinion && minionInRange && (!defenseTarget
           || Math.hypot(defenseTarget.x - u.x, defenseTarget.y - u.y) > attackRange + 40)
@@ -4694,7 +5018,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           }
         } else {
           // Direct route toward nexus along the central lane corridor
-          const targetRouteY = Math.abs(u.y - LANE_Y) > 40 ? (u.y * 0.6 + LANE_Y * 0.4) : enemyNexus.y;
+          const currentLaneY = laneY(u.x);
+          const targetRouteY = Math.abs(u.y - currentLaneY) > 40 ? (u.y * 0.6 + currentLaneY * 0.4) : enemyNexus.y;
           const angle = Math.atan2(targetRouteY - u.y, enemyNexus.x - u.x);
           const speed = 85 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           u.vx = Math.cos(angle) * speed;
@@ -4713,12 +5038,12 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         && matchTimeRef.current - u.lastEnemyDamage.second <= 2.5;
       if (!defenseCall && activePostPlan?.action === 'regroup' && !focusNexus && !selectedTeamfightPriority && !tempoPush && !coordinatedEngage && !wasJustAttacked && dragonAction === 'none' && golemAction === 'none') {
         const laneX = activePostPlan.x + (u.team === 'blue' ? -90 : 90);
-        const laneY = LANE_Y;
-        const distance = Math.hypot(laneX - u.x, laneY - u.y);
-        setActionIntent('regroup', { id: `post-objective:${u.team}`, x: laneX, y: laneY },
+        const postRegroupY = laneY(laneX);
+        const distance = Math.hypot(laneX - u.x, postRegroupY - u.y);
+        setActionIntent('regroup', { id: `post-objective:${u.team}`, x: laneX, y: postRegroupY },
           distance > 20 ? 'move' : 'hold', `post-objective:${u.team}:${Number(wasJustAttacked)}`, 1.0);
         if (distance > 20) {
-          const angle = Math.atan2(laneY - u.y, laneX - u.x);
+          const angle = Math.atan2(postRegroupY - u.y, laneX - u.x);
           const speed = 90 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u) + ((u.stealthTimer ?? 0) > 0 ? 60 : 0);
           u.vx = Math.cos(angle) * speed;
           u.vy = Math.sin(angle) * speed;
@@ -4953,7 +5278,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
       if (!teamCampPlan && canStartTeamCampObjective && !isObjectiveFight
         && dragonAction === 'none' && golemAction === 'none') {
-        const selectedCamp = choosePostRecallTeamCamp(availableJungleCamps, u.team, recentlyRecalledAllies);
+        const selectedCamp = choosePostRecallTeamCamp(availableJungleCamps, u.team, recentlyRecalledAllies, 1300);
         if (selectedCamp) {
           teamCampPlan = {
             campId: selectedCamp.id,
@@ -4998,7 +5323,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             iq, jungleStrength: getAvatarCombatProfile(u.champion).Jungler,
             gameSeconds: matchTimeRef.current, nearbyEnemyCount: localEnemies.length,
             nearestLaneEnemyDistance: nearestMinion ? Math.hypot(nearestMinion.x - u.x, nearestMinion.y - u.y) : Infinity,
-            urgentStructurePush: false, teamObjective: true,
+            urgentStructurePush: false, teamObjective: true, maxRoute: 1200,
           })
           : !isSupportAvatar ? chooseKnownJungleCamp(retryableJungleCamps, {
           x: u.x, y: u.y, team: u.team, hpFraction: u.hp / u.maxHp,
@@ -5010,6 +5335,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           role: u.champion.primaryRole,
           supportStrength: getAvatarCombatProfile(u.champion).Support,
           currentCampId: u.farmTargetId,
+          maxRoute: getAvatarCombatProfile(u.champion).Jungler >= 2 ? 850 : getAvatarCombatProfile(u.champion).Jungler >= 1 ? 680 : 540,
         }) : undefined
         : undefined;
       u.farmTargetId = nearestJungleCamp?.id;
@@ -5110,9 +5436,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         ? adaptivePolicyScore(adaptivePolicyRef.current, action, learnedFeatures) : 0;
       const enclosingPushCamp = CAMP_ROCK_RINGS.find(ring => Math.hypot(u.x - ring.x, u.y - ring.y)
         < ring.radius + ring.stoneRadius + 45);
+      const pushCampExitTargetX = u.team === 'blue' ? Math.min(enclosingPushCamp?.x ?? advanceLimit, advanceLimit) : Math.max(enclosingPushCamp?.x ?? advanceLimit, advanceLimit);
       const pushCampExit = enclosingPushCamp ? rockApproachWaypoint(u, {
-        x: u.team === 'blue' ? Math.min(enclosingPushCamp.x, advanceLimit) : Math.max(enclosingPushCamp.x, advanceLimit),
-        y: LANE_Y,
+        x: pushCampExitTargetX,
+        y: laneY(pushCampExitTargetX),
       }) : undefined;
       const sideBarracksApproach=nearestStructure?.type==='barracks'&&!structureInRange ? barracksApproachPoint(u,nearestStructure,attackRange) : undefined;
       const residualPushPlan = planResidualPush({
@@ -5121,7 +5448,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           ? nearestMinion : undefined,
         campExit: pushCampExit && enclosingPushCamp ? { id: `camp-exit:${enclosingPushCamp.id}`, ...pushCampExit } : undefined,
         laneDestination: sideBarracksApproach ?? { id: `lane-advance:${u.team}`, x: advanceLimit,
-          y: getChampionFormationY(u.champion.name, uIdx) },
+          y: getChampionFormationY(u.champion.name, uIdx, u.team, advanceLimit, uLane) },
       });
       const residualPushOutlook = evaluateResidualPush({ plan: residualPushPlan, actor: u,
         attackRange, travelSpeed: 70 + (u.boots?.stats.moveSpeed ?? 0) + getKaelenMovementAdjustment(u),
@@ -5260,7 +5587,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
             engaged: !!taskCamp.targetId,
             leashFraction: Math.hypot(taskCamp.x - taskCampHome!.x, taskCamp.y - taskCampHome!.y) / 220,
           } : undefined, campWaypoint: taskCampWaypoint,
-          push: residualPushPlan, laneDestination: { x: advanceLimit, y: getChampionFormationY(u.champion.name, uIdx) },
+          push: residualPushPlan, laneDestination: { x: advanceLimit, y: getChampionFormationY(u.champion.name, uIdx, u.team, advanceLimit) },
           structure: nearestStructure, waveCrash: alliedCrash, influence: spatialInfluence,
         }) : undefined;
         const rewardDecision = pairAtTarget && pairTarget?.arm === 'reward' ? chooseRewardGuidedMacro({
@@ -6113,7 +6440,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         `Dragon Slayer Aspect! +45 AD, +50 AP, 1.5x Tower Siege Damage, and True Damage Burn!`,
         '🐉'
       );
-      addEvent(`🐉 DRAGON SLAIN: ${attacker.player.name} secured Embermaw! Team claimed Dragon Slayer Aspect!`, 'dragon');
+      addEvent(`🐉 DRAGON SLAIN: ${attacker.player.name} secured Embermaw! Team claimed Dragon Slayer Aspect!`, 'dragon',
+        { actorId: attacker.id, targetId: 'embermaw', team: attacker.team });
     }
   };
 
@@ -6196,7 +6524,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         scale: 1.2
       });
 
-      addEvent(`🌲 JUNGLE: ${attacker.player.name} secured ${camp.name}; ${rewardShares.length} contributor${rewardShares.length === 1 ? '' : 's'} shared ${camp.goldReward}g and ${camp.xpReward} XP.`, 'jungle');
+      addEvent(`🌲 JUNGLE: ${attacker.player.name} secured ${camp.name}; ${rewardShares.length} contributor${rewardShares.length === 1 ? '' : 's'} shared ${camp.goldReward}g and ${camp.xpReward} XP.`, 'jungle',
+        { actorId: attacker.id, targetId: camp.id, team: attacker.team });
     }
   };
 
@@ -6606,7 +6935,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       wardReady:matchTimeRef.current>30&&matchTimeRef.current>=(u.wardReadyAt??0),kaelen,
       orbReady:noSilence&&u.mana>=KAELEN_ORB_MANA&&(u.kaelenActionTimer??0)<=0,
       invokeReady:noSilence&&(u.kaelenOrbs?.length??0)>=3&&(u.kaelenInvokeCooldown??0)<=0,orbs:u.kaelenOrbs,invoked,skills},
-      direction:u.team==='blue'?1:-1,second:matchTimeRef.current,targets,home:{x:WELL_X[u.team],y:LANE_Y},width:ARENA_WIDTH,
+      direction:u.team==='blue'?1:-1,second:matchTimeRef.current,targets,home:{x:WELL_X[u.team],y:laneY(WELL_X[u.team])},width:ARENA_WIDTH,
       structures:structuresRef.current.map(s=>({x:s.x,y:s.y,range:s.range,alive:s.isAlive,enemy:s.team!==u.team&&(s.type.includes('tower')||s.type==='nexus')})),
       ownNexus:(structuresRef.current.find(s=>s.team===u.team&&s.type==='nexus')?.hp??0)/Math.max(1,structuresRef.current.find(s=>s.team===u.team&&s.type==='nexus')?.maxHp??1),
       enemyNexus:(structuresRef.current.find(s=>s.team!==u.team&&s.type==='nexus')?.hp??0)/Math.max(1,structuresRef.current.find(s=>s.team!==u.team&&s.type==='nexus')?.maxHp??1),
@@ -6645,7 +6974,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }else if(command.kind==='recall'){
       if(!u.isRecalling&&(u.recallCooldown??0)<=0){u.isRecalling=true;u.recallTimer=2.5;}u.animState='idle';executed=true;
     }else if(command.kind==='hold'){u.animState='idle';executed=true;
-    }else if(command.kind==='ward'&&current){wardsRef.current.push({id:`learned:${u.id}:${now}`,team:u.team,bushId:getBushAt(u.x,u.y)?.id??'learned-ground',x:u.x,y:u.y,expiresAt:now+75});u.wardReadyAt=now+50;executed=true;
+    }else if(command.kind==='ward'&&current){
+      const wKind=chooseWardKindForChampion(u,now,now>=95);
+      const wSpec=getWardSpec(wKind);
+      u.visionScore=(u.visionScore??0)+wSpec.visionScoreReward;
+      if((u.wardCharges??0)>0)u.wardCharges!--;
+      wardsRef.current.push({id:`learned:${u.id}:${now}`,team:u.team,kind:wKind,bushId:getBushAt(u.x,u.y)?.id??'learned-ground',x:u.x,y:u.y,hp:wSpec.maxHp,maxHp:wSpec.maxHp,placedAt:now,expiresAt:now+wSpec.duration,ownerId:u.id});
+      u.wardReadyAt=now+50;executed=true;
     }else if(command.kind==='orb'&&current&&command.element){executed=castKaelenOrb(u,command.element);u.kaelenActionTimer=.25;
     }else if(command.kind==='invoke'&&current){executed=castKaelenConflux(u);
     }else if(command.invokedIndex!==undefined&&target&&current){
@@ -7159,6 +7494,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     }
 
     if (attacker?.isInBush && !sharedDamage) {
+      attacker.revealedTimer = Math.max(attacker.revealedTimer ?? 0, BUSH_ATTACK_REVEAL_SECONDS);
       effective *= 1.35;
       showBanner('🌿 BRUSH AMBUSH TRAP!', `${attacker.player.name} leaped from brush with an ambush crit!`, '🌿');
       addEvent(`🌿 AMBUSH: ${attacker.player.name} caught ${target.player.name} from brush with an ambush crit!`, 'combo');
@@ -7458,7 +7794,18 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           firstBloodRef.current = true;
           isFirstBlood = true;
           killer.gold += 150;
+          firstBloodRecordRef.current = {
+            killerId: killer.id,
+            killerName: killer.player.name,
+            victimName: target.player.name,
+            team: killer.team,
+            second: matchTimeRef.current,
+            x: target.x,
+            y: target.y,
+          };
         }
+        transferJungleBuffsOnTakedown(championJungleBuffsRef.current, target.id, killer.id, matchTimeRef.current);
+        recordChampionKillForMultiKill(multiKillMapRef.current, killer.id, matchTimeRef.current);
 
         // Grant assists and assist gold/XP to nearby living teammates
         championsRef.current
@@ -7579,7 +7926,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           : isTurretFinish
             ? `⚡ ${target.player.name} (${target.champion.displayName}) was EXECUTED by Defense Turret!${turretReward && turretReward.splitGoldPerAlly > 0 ? ` (+${turretReward.splitGoldPerAlly}g split to ${turretReward.turretTeam.toUpperCase()})` : ''}`
             : `⚡ ${target.player.name} (${target.champion.displayName}) was EXECUTED by ${killerName}!`;
-      addEvent(killEventText, killer ? 'kill' : 'execution');
+      addEvent(killEventText, killer ? 'kill' : 'execution', { actorId: killer?.id, targetId: target.id, team: killer?.team });
     }
   };
 
@@ -7634,7 +7981,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     sound.playUltimateExplosion();
 
     if (structure.type === 'nexus') {
-      addEvent(`NEXUS_FINISH_COMPLETED: ${structure.name} was destroyed through normal structure damage.`, 'tower');
+      addEvent(`NEXUS_FINISH_COMPLETED: ${structure.name} was destroyed through normal structure damage.`, 'tower', { targetId: structure.id });
       return;
     }
     const isTower = structure.type !== 'barracks';
@@ -7652,7 +7999,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
     const bonus = structure.barracksKind ? `${structure.barracksKind.toUpperCase()} creeps upgraded from the next wave!` : 'Base defenses breached!';
     showBanner(`🏰 ${structure.name} DESTROYED!`, `+${bounty}g Team Bounty. ${bonus}`, '🏰');
-    addEvent(`🏰 ${structure.name} destroyed! ${bonus}`, 'tower');
+    addEvent(`🏰 ${structure.name} destroyed! ${bonus}`, 'tower', { targetId: structure.id, team: enemyTeam });
   };
 
   const applyDamageToMinion = (attacker: AramChampionUnit, minion: LaneMinion, damage: number) => {
@@ -7740,6 +8087,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     saveCardMemories(cardMemoriesRef.current);
     const report: MatchReport = {
       version: 1, seed, batchId: batchMode ? batchId : undefined,
+      mapVersion: ARENA_MAP_VERSION,
+      rulesetVersion: computeArenaRulesetVersion(),
       contentCatalog,
       draft: { blue: blueLineup, red: redLineup, blueCoach, redCoach },
       winner, durationSeconds: matchTimeRef.current,
@@ -8443,7 +8792,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       }
       ctx.closePath();ctx.fill();
       ctx.strokeStyle='rgba(124,133,91,.5)';ctx.lineWidth=3;ctx.stroke();
-      const back = camp.y < LANE_Y ? -33 : 33;
+      const back = camp.y < laneY(camp.x) ? -33 : 33;
       if (camp.type === 'drakes' || camp.type === 'red_buff') {
         ctx.strokeStyle='#8b7953';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,back,15,10,0,0,Math.PI*2);ctx.stroke();
         for (const x of [-6,0,6]) {ctx.fillStyle='#a7a582';ctx.beginPath();ctx.ellipse(x,back,3,4,-.2,0,Math.PI*2);ctx.fill();}
@@ -8626,7 +8975,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     // Cozy sanctuary courtyards with cabins and a small healing lantern.
     for (const team of ['blue', 'red'] as const) {
       const color = team === 'blue' ? '#78d4d5' : '#e39aa9', dir = team === 'blue' ? 1 : -1;
-      ctx.save(); ctx.translate(WELL_X[team], LANE_Y);
+      ctx.save(); ctx.translate(WELL_X[team], laneY(WELL_X[team]));
       for (const side of [-1,1]) {
         const x=dir*16,y=side*193;
         ctx.fillStyle='#403f35';ctx.beginPath();ctx.ellipse(x,y+16,35,17,0,0,Math.PI*2);ctx.fill();
@@ -10545,7 +10894,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       ctx.restore();
     });
 
-    if(v3Enabled)drawV3Telegraphs(ctx,v3WorldRef.current,p=>p,championsRef.current);
+    if(v3Enabled)drawV3Telegraphs(ctx,v3WorldRef.current,p=>p,championsRef.current,{showDebugLabels:showDebugOverlayRef.current});
     // Restore camera transformation back to screen space
     ctx.restore();
 
@@ -10561,6 +10910,13 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           spells: spellsRef.current, wards: wardsRef.current, second: matchTimeRef.current,
           v3: v3Enabled ? v3WorldRef.current : undefined,
           abilityHits: abilityHitsRef.current,
+          features: buildArenaFeatures({
+            second: matchTimeRef.current, scuttlers: riverScuttlersRef.current, plants: junglePlantsRef.current,
+            portals: bossPortalsRef.current, supplyDrop: supplyDropRef.current, supplyCaptureSeconds: SUPPLY_DROP_CAPTURE_SECONDS,
+          }),
+          atmosphere: resolveArenaAtmosphere(matchTimeRef.current,
+            getActiveArenaElementalAccent(totalDragonsSlainRef.current, teamDragonStatesRef.current.blue.stacks, teamDragonStatesRef.current.red.stacks)?.element ?? null,
+            parseLightingOverride(typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('lighting') : null)),
           impacts: floatsRef.current.flatMap(f=>f.weaponImpact?[{...f.weaponImpact,id:f.id,color:f.color,age:Math.max(0,((f.weaponImpact.kind==='melee'?.9:.85)-f.opacity)/1.1)}]:[]),
         });
 
@@ -10574,7 +10930,80 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     ctx.save();
     ctx.scale(canvas.width / rect.width, canvas.height / rect.height);
     const project = (x: number, y: number, height: number) => renderer.project(x, y, height, rect.width, rect.height);
-    if(v3Enabled)drawV3Telegraphs(ctx,v3WorldRef.current,p=>project(p.x,p.y,2),championsRef.current);
+    drawArena3dTacticalReadability({
+      ctx,
+      project,
+      actorHeight: id => renderer.actorHeight(id),
+      matchTime: matchTimeRef.current,
+      lockedChampionId: lockedChampionIdRef.current,
+      champions: championsRef.current,
+      minions: minionsRef.current,
+      structures: structuresRef.current,
+      camps: jungleCampsRef.current,
+      dragon: dragonRef.current,
+      golemAwakened: golemAwakenedRef.current,
+      golemSpawnSecond: GOLEM_SPAWN_SECOND,
+    });
+    drawVisionTacticalOverlay(
+      ctx,
+      project,
+      zoomRef.current,
+      matchTimeRef.current,
+      championsRef.current,
+      wardsRef.current,
+      wardRubbleRef.current,
+      lastSeenEnemiesRef.current.values(),
+    );
+    drawJungleEcosystemOverlay(
+      ctx,
+      project,
+      zoomRef.current,
+      matchTimeRef.current,
+      championsRef.current,
+      jungleCampsRef.current,
+      championJungleBuffsRef.current,
+      riverScuttlersRef.current,
+      junglePlantsRef.current,
+      stolenCampMarkersRef.current,
+    );
+    drawEpicObjectivesOverlay(
+      ctx,
+      project,
+      zoomRef.current,
+      matchTimeRef.current,
+      dragonRef.current,
+      currentDragonElementRef.current,
+      isElderDragonRef.current,
+      minionsRef.current,
+      championsRef.current,
+      teamDragonStatesRef.current,
+    );
+    drawTerrainStructureEconomyOverlay(
+      ctx,
+      project,
+      zoomRef.current,
+      matchTimeRef.current,
+      structuresRef.current,
+      minionsRef.current,
+      championsRef.current,
+      streakMapRef.current,
+      bossPortalsRef.current,
+      relicZonesRef.current,
+    );
+    drawDynamicEventsAtmosphereOverlay(
+      ctx,
+      project,
+      zoomRef.current,
+      matchTimeRef.current,
+      firstBloodRecordRef.current,
+      supplyDropRef.current,
+      scorchDecalsRef.current,
+      waterRipplesRef.current,
+      showDebugOverlayRef.current,
+      championsRef.current,
+      structuresRef.current,
+    );
+    if(v3Enabled)drawV3Telegraphs(ctx,v3WorldRef.current,p=>project(p.x,p.y,2),championsRef.current,{showDebugLabels:showDebugOverlayRef.current});
     type Plate = NameplateAnchor & { anchorX:number; anchorY:number; color:string; label:string; barWidth:number; health:number; mana?:number };
     const plates:Plate[]=[];
     ctx.font='600 10px system-ui';
@@ -10587,9 +11016,9 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         health:Math.max(0,Math.min(1,entity.hp/Math.max(1,entity.maxHp))),mana});
     };
     structuresRef.current.filter(st => st.isAlive).forEach(st => {const protection=structureProtectionReason(st,structuresRef.current);
-      bar(st,protection?'#94a3b8':st.team==='blue'?'#38c9ed':'#f16b84',protection??'',42);});
-    minionsRef.current.filter(m => m.isAlive && m.hp < m.maxHp).forEach(m => bar(m, m.team === 'blue' ? '#38c9ed' : '#f16b84', '', 19,undefined,0));
-    [...jungleCampsRef.current, dragonRef.current].filter(c => c.isAlive).forEach(c => bar(c, '#e1b86e', c.name, 44,undefined,2));
+      bar(st,protection?'#94a3b8':st.team==='blue'?'#38c9ed':'#f16b84',formatStructurePlateLabel(protection,showDebugOverlayRef.current),42);});
+    minionsRef.current.filter(m => m.isAlive && m.hp < m.maxHp).forEach(m => bar(m, isMinionLastHittable(m.hp, m.maxHp) ? '#facc15' : m.team === 'blue' ? '#38c9ed' : '#f16b84', '', 19,undefined,0));
+    [...jungleCampsRef.current, dragonRef.current].filter(c => shouldShowNeutralCampBar(c, showDebugOverlayRef.current)).forEach(c => bar(c, '#e1b86e', c.name, 44,undefined,2));
     championsRef.current.filter(c => c.isAlive).forEach(c => bar(c, c.team === 'blue' ? '#38c9ed' : '#f16b84',
       `${c.level}  ${c.player.name}`, 48, c.mana / Math.max(1, maxMana(c)),3));
     const reserved:OverlayBox[]=[];
@@ -10676,16 +11105,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         if(!evaluationStartPaused||matchTimeRef.current!==0)return false;
         const enemy=team==='blue'?'red':'blue',target=structuresRef.current.find(st=>st.team===enemy&&st.type==='barracks'&&st.barracksKind==='ranged')!;
         for(const st of structuresRef.current)if(st.type.includes('tower')||st.type==='barracks'&&st.barracksKind==='ranged'){st.hp=0;st.isAlive=false;}
-        for(const c of championsRef.current){c.isAlive=c.team===team;c.respawnTimer=c.team===team?0:1000;c.hp=c.maxHp;c.x=target.x+(team==='blue'?-110:110);c.y=LANE_Y;c.mana=maxMana(c);}
+        for(const c of championsRef.current){c.isAlive=c.team===team;c.respawnTimer=c.team===team?0:1000;c.hp=c.maxHp;c.x=target.x+(team==='blue'?-110:110);c.y=laneY(c.x);c.mana=maxMana(c);}
         waveTimerRef.current=1000;
         if(mode==='combined')for(let i=0;i<8;i++)spawnMinionWave();
         minionsRef.current=minionsRef.current.filter(m=>m.team===team);
-        minionsRef.current.forEach((m,i)=>{m.x=target.x+(team==='blue'?-100:100)+(i%5)*3;m.y=LANE_Y-30+(i%8)*8;});
+        minionsRef.current.forEach((m,i)=>{m.x=target.x+(team==='blue'?-100:100)+(i%5)*3;m.y=laneY(m.x)-30+(i%8)*8;});
         return true;
       },
       v3Fixture:()=>{
         if(!v3Enabled||!evaluationStartPaused||matchTimeRef.current!==0)return false;
-        championsRef.current.forEach((c,i)=>{c.x=c.team==='blue'?1220:1380;c.y=LANE_Y-40+(i%5)*20;c.level=10;c.hp=c.maxHp;c.mana=maxMana(c);c.cd1=0;c.cd2=0;c.cdUlt=0;});
+        championsRef.current.forEach((c,i)=>{c.x=c.team==='blue'?1220:1380;c.y=laneY(c.x)-40+(i%5)*20;c.level=10;c.hp=c.maxHp;c.mana=maxMana(c);c.cd1=0;c.cd2=0;c.cdUlt=0;});
         return true;
       },
       valleyFixture:()=>{
@@ -10781,8 +11210,8 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
       } else if (!isDraggingRef.current && !isDraggingMinimapRef.current) {
         // Apply smooth drag inertia damping
         if (Math.abs(panVelocityRef.current.vx) > 0.5 || Math.abs(panVelocityRef.current.vy) > 0.5) {
-          targetCameraPosRef.current.x += panVelocityRef.current.vx * Math.min(0.04, dt);
-          targetCameraPosRef.current.y += panVelocityRef.current.vy * Math.min(0.04, dt);
+          targetCameraPosRef.current.x = Math.max(120, Math.min(ARENA_WIDTH - 120, targetCameraPosRef.current.x + panVelocityRef.current.vx * Math.min(0.04, dt)));
+          targetCameraPosRef.current.y = Math.max(120, Math.min(ARENA_HEIGHT - 120, targetCameraPosRef.current.y + panVelocityRef.current.vy * Math.min(0.04, dt)));
           panVelocityRef.current.vx *= 0.88;
           panVelocityRef.current.vy *= 0.88;
         }
@@ -10794,10 +11223,11 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
 
       const canvas = canvasRef.current;
       if (canvas) {
-        const viewport = matchViewerRef.current?.viewport(cameraPosRef.current.x, cameraPosRef.current.y, zoomRef.current) ?? clampArenaCamera(
+        const effectiveZoom = computeTeamfightAutoZoom(zoomRef.current, championsRef.current, cameraModeRef.current);
+        const viewport = matchViewerRef.current?.viewport(cameraPosRef.current.x, cameraPosRef.current.y, effectiveZoom) ?? clampArenaCamera(
           cameraPosRef.current.x,
           cameraPosRef.current.y,
-          zoomRef.current,
+          effectiveZoom,
           canvas.width,
           canvas.height,
         );
@@ -10806,7 +11236,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         const ctx = canvas.getContext('2d');
         const presentationFrame = currentViewerFrame();
         if (matchViewerRef.current && matchViewerRef.current.isAvailable()) {
-          matchViewerRef.current.renderArena(presentationFrame, viewport.x, viewport.y, zoomRef.current);
+          matchViewerRef.current.renderArena(presentationFrame, viewport.x, viewport.y, effectiveZoom);
           if (ctx) drawArena3dOverlay(ctx, canvas);
         } else if (ctx) {
           drawAramBattleground(ctx, canvas.width, canvas.height, matchTimeRef.current);
@@ -10826,6 +11256,10 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
   const { blue: blueKills, red: redKills } = getTeamKillScore(champions);
   const blueGold = getTeamTotalGold(champions, 'blue');
   const redGold = getTeamTotalGold(champions, 'red');
+  const totalTeamGold = Math.max(1, blueGold + redGold);
+  const blueGoldShare = Math.max(18, Math.min(82, Math.round((blueGold / totalTeamGold) * 100)));
+  const activeBossMeter = computeActiveBossMeter(dragonRef.current, jungleCampsRef.current);
+  const lockedChampion = lockedChampionIdRef.current ? champions.find(c => c.id === lockedChampionIdRef.current) ?? null : null;
   const blueTowersAlive = getTowersAliveCount(structuresRef.current, 'blue');
   const redTowersAlive = getTowersAliveCount(structuresRef.current, 'red');
   const teamNames = getTeamNames({ blueTeamName, redTeamName, opponentName });
@@ -10861,7 +11295,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
     <button onClick={() => setSpeed(4)}>4x</button>
   </div>;
   return (
-    <div ref={matchRootRef} className="spectator-shell" aria-label="Clash Arena spectator">
+    <div ref={matchRootRef} className="spectator-shell" data-hud-mode={hudMode} aria-label="Clash Arena spectator">
       {matchLoading && (
         <MatchLoadingScreen
           blueLineup={blueLineup}
@@ -10879,11 +11313,28 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         <div className="spectator-team"><b>{teamNames.blue}</b><div className="broadcast-team-stats"><strong>{(blueGold/1000).toFixed(1)}K <span>GOLD</span></strong>{blueGold - redGold >= 400 && <span className="broadcast-lead-pill blue">+{((blueGold - redGold)/1000).toFixed(1)}k LEAD</span>}<strong>{blueTowersAlive} <span>TOWERS</span></strong><small>Lv {blueAvgLevel}</small></div>
           <div className="broadcast-barracks-hud">{barracksKinds.map(kind => <span key={kind} className={`barracks-chip ${barracksIntact('blue', kind) ? 'intact' : 'destroyed'}`} title={`Blue ${kind} Barracks: ${barracksIntact('blue', kind) ? 'Intact' : 'Destroyed'}`}><i>{kind === 'melee' ? '⚔' : kind === 'ranged' ? '🏹' : '🛡'}</i><span>{kind}</span></span>)}</div></div>
         <div className="spectator-score"><strong className="text-cyan-300">{blueKills}</strong><div><time>{Math.floor(matchTime / 60)}:{String(Math.floor(matchTime % 60)).padStart(2, '0')}</time>
-          <small>{matchOver ? 'Final' : paused ? 'Paused' : matchEconomyPhase(matchTime)}</small></div><strong className="text-rose-300">{redKills}</strong></div>
+          <small>{matchOver ? 'Final' : paused ? 'Paused' : matchEconomyPhase(matchTime)}</small>
+          <div className="mt-1 flex h-1.5 w-28 overflow-hidden rounded-full bg-slate-900/90 border border-slate-700/60" title={`Team Gold Share · Blue ${blueGoldShare}% (${blueGold.toLocaleString()}g) vs Red ${100 - blueGoldShare}% (${redGold.toLocaleString()}g)`} aria-label="Team gold advantage bar">
+            <div className="h-full bg-cyan-400 transition-all" style={{ width: `${blueGoldShare}%` }} />
+            <div className="h-full bg-rose-400 transition-all" style={{ width: `${100 - blueGoldShare}%` }} />
+          </div></div><strong className="text-rose-300">{redKills}</strong></div>
         <div className="spectator-team red"><b>{teamNames.red}</b><div className="broadcast-team-stats"><strong>{(redGold/1000).toFixed(1)}K <span>GOLD</span></strong>{redGold - blueGold >= 400 && <span className="broadcast-lead-pill red">+{((redGold - blueGold)/1000).toFixed(1)}k LEAD</span>}<strong>{redTowersAlive} <span>TOWERS</span></strong><small>Lv {redAvgLevel}</small></div>
           <div className="broadcast-barracks-hud red">{barracksKinds.map(kind => <span key={kind} className={`barracks-chip ${barracksIntact('red', kind) ? 'intact' : 'destroyed'}`} title={`Red ${kind} Barracks: ${barracksIntact('red', kind) ? 'Intact' : 'Destroyed'}`}><i>{kind === 'melee' ? '⚔' : kind === 'ranged' ? '🏹' : '🛡'}</i><span>{kind}</span></span>)}</div></div>
       </header>
-      <div className="broadcast-objectives" aria-label="Objective timers"><span><i>✦</i><b>{dragonRef.current.isAlive?'LIVE':`${Math.floor(dragonRef.current.spawnTimer/60)}:${String(Math.ceil(dragonRef.current.spawnTimer)%60).padStart(2,'0')}`}</b><small>EMBERMAW</small></span><span><i>◆</i><b>{jungleCampsRef.current.find(c=>c.type==='siege_golem')?.isAlive?'LIVE':'WAITING'}</b><small>GRAVEMARCH</small></span></div>
+      <div className="broadcast-objectives" aria-label="Objective timers">
+        <span><i>✦</i><b>{dragonRef.current.isAlive?'LIVE':`${Math.floor(dragonRef.current.spawnTimer/60)}:${String(Math.ceil(dragonRef.current.spawnTimer)%60).padStart(2,'0')}`}</b><small>EMBERMAW</small></span>
+        <span><i>◆</i><b>{jungleCampsRef.current.find(c=>c.type==='siege_golem')?.isAlive?'LIVE':'WAITING'}</b><small>GRAVEMARCH</small></span>
+        {activeBossMeter && (
+          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-950/90 border border-amber-400/50 text-[10px]" aria-label="Active boss health meter">
+            <strong className={activeBossMeter.inExecuteZone ? 'text-amber-300 animate-pulse' : 'text-slate-100'}>{activeBossMeter.name}</strong>
+            <span className="relative inline-block h-2 w-24 overflow-hidden rounded bg-slate-800">
+              <i className={`block h-full ${activeBossMeter.kind === 'dragon' ? 'bg-orange-500' : 'bg-cyan-400'}`} style={{ width: `${Math.round((activeBossMeter.hp / Math.max(1, activeBossMeter.maxHp)) * 100)}%` }} />
+              <em className="absolute top-0 bottom-0 w-0.5 bg-yellow-300" style={{ left: '32%' }} title="32% Execute threshold" />
+            </span>
+            <small className="font-mono text-amber-200">{activeBossMeter.hp}/{activeBossMeter.maxHp}{activeBossMeter.inExecuteZone ? ' ⚡EXEC' : ''}</small>
+          </span>
+        )}
+      </div>
       <details className="broadcast-match-tools"><summary>Match details</summary><div className="broadcast-tools-content">
       {v3Enabled&&<details className="border-b border-amber-500 bg-slate-900 px-4 py-2 text-xs text-amber-100">
         <summary>Original V3 gameplay preview · all 45 kits · implementation untested</summary>
@@ -10938,7 +11389,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           {[1, 2, 4].map(value => <button key={value} aria-pressed={speed === value} onClick={() => setSpeed(value)}>{value}x</button>)}
           <button aria-pressed={cameraMode === 'auto'} onClick={() => { setCameraMode(cameraMode === 'auto' ? 'manual' : 'auto'); targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, ARENA_HEIGHT); }}>{cameraMode === 'auto' ? 'Auto cam' : 'Free pan'}</button>
           <button onClick={() => setZoom(z => Math.max(1, z - 0.15))} aria-label="Zoom out">-</button>
-          <button onClick={() => setZoom(zoom === 1 ? 1.65 : 1)} title="Toggle fit / action zoom">{Math.round(zoom * 100)}%</button>
+          <button onClick={() => setZoom(zoom === 1 ? 2.65 : 1)} title="Toggle fit / action zoom">{Math.round(zoom * 100)}%</button>
           <button onClick={() => setZoom(z => Math.min(4, z + 0.15))} aria-label="Zoom in">+</button>
           <button aria-pressed={showMinimap} onClick={() => setShowMinimap(!showMinimap)}>Map</button>
           <button onClick={() => {
@@ -10960,6 +11411,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           <span className="text-[11px] text-cyan-400 font-bold px-2 py-1 bg-cyan-950/60 rounded border border-cyan-800/40">3D Match View</span>
         </div>
         <div className="spectator-control-group">
+          <button aria-pressed={showDebugOverlay} onClick={() => setShowDebugOverlay(!showDebugOverlay)} title="Toggle debug labels (Resource, marks, AI state)">Debug overlay</button>
           <button aria-expanded={showInsights} onClick={() => setShowInsights(!showInsights)}>Insights</button>
           <button onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}>{isFullscreen ? 'Window' : 'Fullscreen'}</button>
           <details className="spectator-menu"><summary>More</summary><div>
@@ -10986,19 +11438,65 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         <button onClick={()=>{
           const next = cameraMode === 'auto' ? 'manual' : 'auto';
           setCameraMode(next);
-          if (next === 'auto') targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, ARENA_HEIGHT);
+          if (next === 'auto') {
+            lockedChampionIdRef.current = null;
+            targetCameraPosRef.current = computeActionCenter(championsRef.current, ARENA_WIDTH, ARENA_HEIGHT);
+          }
         }} className={`playback-btn ${cameraMode==='auto'?'active':''}`}>{cameraMode==='auto'?'🎥 Auto Cam':'🖐 Free Cam'}</button>
+        {lockedChampion && (
+          <button onClick={() => { lockedChampionIdRef.current = null; setCameraMode('auto'); }} className="playback-btn active" title="Release locked hero camera (Item 76)">
+            🎯 {lockedChampion.player.name} ×
+          </button>
+        )}
         <div className="zoom-pill-group">
           <button onClick={() => setZoom(z => Math.max(1, z - 0.15))} title="Zoom out" className="zoom-btn">-</button>
-          <button onClick={() => setZoom(zoom === 1 ? 1.65 : 1)} title="Toggle zoom" className="zoom-btn text-[10px]">{Math.round(zoom * 100)}%</button>
+          <button onClick={() => setZoom(zoom === 1 ? 2.65 : 1)} title="Toggle zoom" className="zoom-btn text-[10px]">{Math.round(zoom * 100)}%</button>
           <button onClick={() => setZoom(z => Math.min(4, z + 0.15))} title="Zoom in" className="zoom-btn">+</button>
         </div>
+        <button
+          onClick={() => {
+            const order: BroadcastCameraPresetId[] = ['broadcast', 'tactical_high', 'action_close'];
+            const nextPreset = order[(order.indexOf(cameraPreset) + 1) % order.length];
+            setCameraPreset(nextPreset);
+            setZoom(BROADCAST_CAMERA_PRESETS[nextPreset].zoom);
+          }}
+          className="playback-btn"
+          title={`Camera preset: ${BROADCAST_CAMERA_PRESETS[cameraPreset].label} (Item 89)`}
+        >
+          🎬 {cameraPreset === 'broadcast' ? 'Broadcast' : cameraPreset === 'tactical_high' ? 'Tactical' : 'Close'}
+        </button>
+        <button
+          onClick={() => {
+            const next: TwoLaneSquadStrategy = twoLaneStrategy === 'standard_2_3'
+              ? 'heavy_top_3_2'
+              : twoLaneStrategy === 'heavy_top_3_2'
+              ? 'flex_roam_2_2_1'
+              : 'standard_2_3';
+            setTwoLaneStrategy(next);
+            assignSquadTwoLaneRoles(championsRef.current.filter(c => c.team === 'blue'), next);
+            addEvent(`SQUAD_TACTIC: Blue coach set strategy to ${TWO_LANE_STRATEGIES[next].label}.`, 'micro');
+          }}
+          className="playback-btn"
+          title={`2-Lane Strategy: ${TWO_LANE_STRATEGIES[twoLaneStrategy].description}`}
+        >
+          ⚔️ {twoLaneStrategy === 'standard_2_3' ? '2 Top / 3 Bot' : twoLaneStrategy === 'heavy_top_3_2' ? '3 Top / 2 Bot' : '2-2-1 Roam'}
+        </button>
         <button onClick={()=>setShowMinimap(!showMinimap)} className={`playback-btn ${showMinimap?'active':''}`} title="Toggle minimap radar overlay">🗺 Minimap</button>
+        <button onClick={()=>setHudMode(hudMode==='hidden'?'docked':'hidden')} className={`playback-btn ${hudMode!=='hidden'?'active':''}`} title="Toggle Squads & Items Scoreboard (Tab)">📊 Scoreboard (Tab)</button>
         <span className="playback-btn active" title="Babylon 3D Match Viewer">🧊 3D View</span>
       </div>
       <div className="spectator-feed" aria-live="polite">
         <span className="shrink-0 text-cyan-300">LIVE</span>
-        <strong>{activeBanner ? activeBanner.text + ' | ' + activeBanner.subtext : killCallout ? killCallout.killerName + ' | ' + killCallout.victimName + (killCallout.multiKill ? ' | ' + killCallout.multiKill : '') : 'Clash of the Wilds'}</strong>
+        <strong>{activeBanner ? activeBanner.text + ' | ' + activeBanner.subtext : killCallout ? killCallout.killerName + ' ⚔ ' + killCallout.victimName + (killCallout.multiKill ? ' | ' + killCallout.multiKill : '') : 'Clash of the Wilds'}</strong>
+        {recentKills.length > 0 && (
+          <span className="hidden sm:inline-flex items-center gap-1.5 ml-2 text-[10px]" aria-label="Live kill feed">
+            {recentKills.slice(-2).map(k => (
+              <span key={k.id} className={`px-1.5 py-0.5 rounded border ${k.killerTeam === 'blue' ? 'border-cyan-500/40 bg-cyan-950/60 text-cyan-200' : 'border-rose-500/40 bg-rose-950/60 text-rose-200'}`}>
+                {k.killerName} → {k.victimName}{k.multiKill ? ` (${k.multiKill})` : ''}
+              </span>
+            ))}
+          </span>
+        )}
         <span className="ml-auto truncate">{dragonRef.current.isAlive ? 'Embermaw alive' : 'Embermaw ' + Math.ceil(dragonRef.current.spawnTimer) + 's'} | {jungleCampsRef.current.find(c => c.type === 'siege_golem')?.isAlive ? 'Gravemarch alive' : 'Gravemarch waiting'}</span>
         {fullscreenError && <span>Fullscreen unavailable; viewport mode active.</span>}
       </div>
@@ -11028,7 +11526,7 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
         <div className="spectator-tabs" role="group" aria-label="Broadcast panels">
           {(['squads', 'events', 'items'] as const).map(tab => <button key={tab} aria-pressed={dockTab === tab && hudMode !== 'hidden'} onClick={() => { setDockTab(tab); setRecordPage(0); setHudMode('docked'); }}>{tab === 'squads' ? 'Squads & items' : tab === 'events' ? 'Event log' : 'Power spikes'}</button>)}
           <button onClick={() => setHudMode(hudMode === 'hidden' ? 'docked' : 'hidden')}>{hudMode === 'hidden' ? 'Show' : 'Hide'} panel</button>
-          <small>Click a portrait to focus | Items open their details | HP / mana / cooldowns</small>
+          <small>Space: Auto Cam | 1-0: Focus Hero | WASD / Arrows / Minimap: Pan | Click portrait: Focus</small>
         </div>
         {hudMode !== 'hidden' && (dockTab === 'squads' ? <div className="spectator-squads">
           <SpectatorRoster units={blueChamps} team="blue" onItem={setInspectedItem} onFocus={focusUnit} xpProgress={hudXpProgress} second={matchTime} invokedSpells={KAELEN_INVOKED_SPELLS} />
@@ -11061,6 +11559,16 @@ export const AramMatchView: React.FC<AramMatchViewProps> = ({
           {insightPlayers.length === 0 && <p className="py-2 text-[10px] text-slate-400">No abilities cast yet.</p>}
         </div>
         <div className="mt-3 border-t border-slate-700 pt-2">
+          <div className="mb-2 flex items-center justify-between gap-2 rounded bg-slate-900/90 px-2.5 py-1.5 text-[10px]" aria-label="Gold lead and objective summary">
+            <span className={blueGold >= redGold ? 'font-bold text-cyan-300' : 'font-bold text-rose-300'}>
+              {blueGold >= redGold ? `${teamNames.blue} +${(blueGold - redGold).toLocaleString()}g` : `${teamNames.red} +${(redGold - blueGold).toLocaleString()}g`}
+            </span>
+            <div className="flex h-2 w-40 overflow-hidden rounded-full bg-slate-800">
+              <div className="h-full bg-cyan-400" style={{ width: `${blueGoldShare}%` }} />
+              <div className="h-full bg-rose-400" style={{ width: `${100 - blueGoldShare}%` }} />
+            </div>
+            <span className="text-slate-300">Towers {blueTowersAlive}–{redTowersAlive} · Kills {blueKills}–{redKills}</span>
+          </div>
           <div className="flex items-center justify-between gap-2 text-[10px]">
             <strong className="text-emerald-300">Event timeline · {Math.floor(insightWindowEnd / 60)}:{String(Math.floor(insightWindowEnd % 60)).padStart(2, '0')}</strong>
             <button onClick={() => setInsightAt(null)} className="rounded border border-slate-600 px-2 py-0.5 hover:border-emerald-400">Live</button>

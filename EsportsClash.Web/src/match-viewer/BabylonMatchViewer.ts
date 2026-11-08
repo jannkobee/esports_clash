@@ -9,7 +9,13 @@ import { BabylonEffects } from './BabylonEffects';
 import type { VisualRelease } from '../avatarVisualRelease';
 
 type ActorView={root:TransformNode;body:TransformNode;height:number;actor:ViewerActor;model?:AvatarAssetInstance;loading?:boolean;animate?:(actor:ViewerActor,second:number,dt:number)=>void};
-const SPECTATOR_TILT=56.5*Math.PI/180;
+const SPECTATOR_TILT=53.5*Math.PI/180;
+const ATMOSPHERE_LIGHTING:Record<string,{sky:number;skyColor:string;sun:number;sunColor:string;rim:number;rimColor:string}>={
+  daylight:{sky:.65,skyColor:'#e0eee0',sun:.92,sunColor:'#fff6e0',rim:.45,rimColor:'#98cce6'},
+  dusk:{sky:.55,skyColor:'#ffd9b0',sun:.85,sunColor:'#ffb070',rim:.5,rimColor:'#b07ad0'},
+  overcast:{sky:.8,skyColor:'#c8d8e4',sun:.55,sunColor:'#b8c8d6',rim:.3,rimColor:'#a0b4c8'},
+};
+const ELEMENT_RIM:Record<string,string>={infernal:'#ff8a50',mountain:'#c9b08a',ocean:'#4fc3f7',cloud:'#e0f2fe'};
 /** Read-only presentation. Scene has no gameplay physics, RNG, callbacks or command writer. */
 export class BabylonMatchViewer implements MatchViewer {
   private canvas:HTMLCanvasElement;
@@ -25,6 +31,7 @@ export class BabylonMatchViewer implements MatchViewer {
   private battlefield:ReturnType<typeof buildBabylonBattlefield>;
   private current?:ViewerSnapshot;private previous?:ViewerSnapshot;private received=0;
   private lastTick=-1;private lastSecond=-1;
+  private sky!:HemisphericLight;private sun!:DirectionalLight;private rim!:DirectionalLight;private atmosphereKey='';
   private center={x:0,y:0,zoom:1};
   private lost=(event:Event)=>{event.preventDefault();this.available=false;this.onAvailability(false);};
   private restored=()=>{if(!this.disposed){this.available=true;this.onAvailability(true);}};
@@ -54,9 +61,9 @@ export class BabylonMatchViewer implements MatchViewer {
       this.scene.imageProcessingConfiguration.exposure=1.0;
       this.camera=new FreeCamera('spectator',new Vector3(width/2,Math.sin(SPECTATOR_TILT)*3000,height/2+Math.cos(SPECTATOR_TILT)*3000),this.scene);
       this.camera.mode=Camera.ORTHOGRAPHIC_CAMERA;this.camera.minZ=1;this.camera.maxZ=7000;this.scene.activeCamera=this.camera;
-      const sky=new HemisphericLight('sky',Vector3.Up(),this.scene);sky.intensity=.65;sky.diffuse=Color3.FromHexString('#e0eee0');sky.groundColor=Color3.FromHexString('#202a24');
-      const sun=new DirectionalLight('sun',new Vector3(-.54,-.86,.38),this.scene);sun.intensity=.92;sun.diffuse=Color3.FromHexString('#fff6e0');sun.specular=Color3.FromHexString('#332e26');
-      const rim=new DirectionalLight('rim',new Vector3(.58,-.68,-.44),this.scene);rim.intensity=.45;rim.diffuse=Color3.FromHexString('#98cce6');
+      const sky=this.sky=new HemisphericLight('sky',Vector3.Up(),this.scene);sky.intensity=.65;sky.diffuse=Color3.FromHexString('#e0eee0');sky.groundColor=Color3.FromHexString('#202a24');
+      const sun=this.sun=new DirectionalLight('sun',new Vector3(-.54,-.86,.38),this.scene);sun.intensity=.92;sun.diffuse=Color3.FromHexString('#fff6e0');sun.specular=Color3.FromHexString('#332e26');
+      const rim=this.rim=new DirectionalLight('rim',new Vector3(.58,-.68,-.44),this.scene);rim.intensity=.45;rim.diffuse=Color3.FromHexString('#98cce6');
       try{
         const glow=new GlowLayer('arena-cinema-glow',this.scene,{mainTextureFixedSize:512,blurKernelSize:24});
         glow.intensity=.30;
@@ -130,6 +137,16 @@ export class BabylonMatchViewer implements MatchViewer {
     }
     return view;
   }
+  /** Presentation-only: lighting preset and elemental rim tint from the read-only snapshot. */
+  private applyAtmosphere(atmosphere?:ViewerSnapshot['atmosphere']){
+    const key=atmosphere?`${atmosphere.lighting}|${atmosphere.element??''}`:'daylight|';
+    if(key===this.atmosphereKey)return;this.atmosphereKey=key;
+    const preset=ATMOSPHERE_LIGHTING[atmosphere?.lighting??'daylight']??ATMOSPHERE_LIGHTING.daylight;
+    this.sky.intensity=preset.sky;this.sky.diffuse=Color3.FromHexString(preset.skyColor);
+    this.sun.intensity=preset.sun;this.sun.diffuse=Color3.FromHexString(preset.sunColor);
+    this.rim.intensity=preset.rim;this.rim.diffuse=Color3.FromHexString(ELEMENT_RIM[atmosphere?.element??'']??preset.rimColor);
+    this.host.dataset.lighting=atmosphere?.lighting??'daylight';this.host.dataset.arenaElement=atmosphere?.element??'';
+  }
   private update(){
     const snapshot=this.current;if(!snapshot)return;
     const prior=new Map(this.previous?.actors.map(a=>[a.id,a]));
@@ -150,11 +167,12 @@ export class BabylonMatchViewer implements MatchViewer {
         view.model?.animation.sample(actor,snapshot.second);
         if(!view.model)view.body.rotation.z=actor.alive?0:Math.PI/2;
       }
-      if(!view.model&&view.animate)view.animate(actor,snapshot.second,span);
+      if(view.animate&&(actor.kind==='champion'||!view.model))view.animate(actor,snapshot.second,span);
       view.actor=actor;
     }
     for(const [id,view] of this.actors)if(!seen.has(id)){view.model?.dispose();view.root.dispose();this.actors.delete(id);}
     if(this.lastTick!==snapshot.tick||this.lastSecond!==snapshot.second){this.effects.update(snapshot);this.battlefield.update(snapshot.actors);this.lastTick=snapshot.tick;this.lastSecond=snapshot.second;}
+    this.applyAtmosphere(snapshot.atmosphere);
     this.host.dataset.actors=String(this.actors.size);this.host.dataset.models=String([...this.actors.values()].filter(a=>!!a.model).length);
     this.host.dataset.paintedArena=this.scene.metadata?.paintedArena??'ready';
     this.host.dataset.assetWarnings=String([...this.assets.diagnostics.values()].filter(w=>w.length>1).length);

@@ -1,9 +1,9 @@
 import type { BushPatch, LaneStructure, MinionType } from './types';
 import { createTerrainRouter } from './terrainRouting.ts';
 
-import { ARENA_WIDTH, DRAGON_X, NEXUS_TOWER_X, laneY, mapLayoutY, PLAY_MIN_Y, PLAY_MAX_Y } from './arenaLayout.ts';
-export { ARENA_HEIGHT, PLAY_MIN_Y, PLAY_MAX_Y, mapLayoutY, ARENA_MAP_VERSION } from './arenaLayout.ts';
-export { ARENA_WIDTH, LANE_Y, LANE_SLOPE, laneY, WELL_X, NEXUS_X, BARRACKS_X, NEXUS_TOWER_X, INNER_TOWER_X, OUTER_TOWER_X, DRAGON_X } from './arenaLayout.ts';
+import { ARENA_WIDTH, DRAGON_X, NEXUS_TOWER_X, laneY, mapLayoutY, PLAY_MIN_Y, PLAY_MAX_Y, ACTIVE_MAP_PROFILE } from './arenaLayout.ts';
+export { ARENA_HEIGHT, PLAY_MIN_Y, PLAY_MAX_Y, mapLayoutY, ARENA_MAP_VERSION, ARENA_RULESET_VERSION, MAP_PROFILES, ACTIVE_MAP_PROFILE, ACTIVE_MAP_PROFILE_ID, getArenaMapProfile, resolveArenaMapProfileId, getArenaFeatureFlags, setArenaFeatureFlags, computeArenaRulesetVersion } from './arenaLayout.ts';
+export { ARENA_WIDTH, LANE_Y, LANE_SLOPE, laneY, laneYForProfile, WELL_X, NEXUS_X, BARRACKS_X, NEXUS_TOWER_X, INNER_TOWER_X, OUTER_TOWER_X, DRAGON_X } from './arenaLayout.ts';
 export const DRAGON_SPAWN_SECOND = 4 * 60;
 
 export function shouldSeparateUnitsByTeam(_teamA: 'blue' | 'red', _teamB: 'blue' | 'red'): boolean {
@@ -13,21 +13,7 @@ export function shouldSeparateUnitsByTeam(_teamA: 'blue' | 'red', _teamB: 'blue'
 
 // Each camp has one rocky enclosure with a lane-facing entrance. The boss
 // pits use larger stones. These centers also match the neutral spawn points.
-export const CAMP_ROCK_RINGS = [
-  // North Camps (Y < 720, entrance facing South towards the lane)
-  { id: 'j_blue_blue_buff', x: 480, y: 540, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
-  { id: 'j_blue_golem', x: 850, y: 460, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
-  { id: 'dragon_boss', x: 1400, y: 240, radius: 122, stoneRadius: 22, stones: 16, entrance: Math.PI / 2 },
-  { id: 'j_red_wolves', x: 1850, y: 300, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
-  { id: 'j_red_blue_buff', x: 2250, y: 220, radius: 76, stoneRadius: 18, stones: 12, entrance: Math.PI / 2 },
-
-  // South Camps (Y > 720, entrance facing North towards the lane)
-  { id: 'j_blue_red_buff', x: 550, y: 1220, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
-  { id: 'j_blue_behemoth', x: 950, y: 1140, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
-  { id: 'j_siege_golem', x: 1400, y: 1200, radius: 115, stoneRadius: 21, stones: 16, entrance: -Math.PI / 2 },
-  { id: 'j_red_drakes', x: 1950, y: 980, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
-  { id: 'j_red_red_buff', x: 2320, y: 900, radius: 76, stoneRadius: 18, stones: 12, entrance: -Math.PI / 2 },
-];
+export const CAMP_ROCK_RINGS = [...ACTIVE_MAP_PROFILE.campRings];
 
 const HIGHGROUND_ROCKS = [35, 75, 115].map(offset => NEXUS_TOWER_X.blue + offset).flatMap(x => {
   const rx = ARENA_WIDTH - x;
@@ -62,8 +48,11 @@ export const ROCK_TERRAIN = [
 
     // Gently flare stones near the opening edges so the entrance is wide, flared, and never steep
     const isOpeningEdge = absGap < gapThreshold + 0.50;
-    const stoneRadius = isOpeningEdge ? Math.round(ring.stoneRadius * 0.88) : ring.stoneRadius;
-    const point = campWallPoint(ring, angle, isOpeningEdge ? 3 : 0);
+    const stoneRadius = isOpeningEdge ? Math.round(ring.stoneRadius * 0.85) : ring.stoneRadius;
+    const effectiveAngle = isOpeningEdge
+      ? angle + Math.sign(gapAngle) * (isBoss ? 0.33 : 0.22)
+      : angle;
+    const point = campWallPoint(ring, effectiveAngle, isOpeningEdge ? 3 : 0);
 
     return {
       x: point.x,
@@ -257,28 +246,7 @@ export { canDamageNexus } from './structureProtection.ts';
 
 export type BarracksKind = 'melee' | 'ranged' | 'catapult';
 
-export const ARAM_BUSHES: BushPatch[] = [
-  // 1. Dragon Caldera Chokepoint Brush (North River)
-  { id: 'bush_dragon_choke', name: 'Dragon Pit Brush', x: 1400, y: 390, width: 120, height: 40 },
-  // 2. Siege Golem Chokepoint Brush (South River)
-  { id: 'bush_golem_choke', name: 'Golem Pit Brush', x: 1400, y: 1050, width: 120, height: 40 },
-  // 3. Upper Blue River Brush (Guards Blue Jungle & Dragon Pit Approach)
-  { id: 'bush_blue_river', name: 'Blue River Brush', x: 1200, y: 450, width: 100, height: 44 },
-  // 4. Lower Red River Brush (Guards Red Jungle & Golem Pit Approach)
-  { id: 'bush_red_river', name: 'Red River Brush', x: 1600, y: 990, width: 100, height: 44 },
-  // 5. Blue Lane Flank Brush (Valley Ambush)
-  { id: 'bush_blue_lower', name: 'Blue Valley Brush', x: 1150, y: 620, width: 110, height: 44 },
-  // 6. Red Lane Flank Brush (Valley Ambush)
-  { id: 'bush_red_lower', name: 'Red Valley Brush', x: 1650, y: 820, width: 110, height: 44 },
-  // 7. Flanking brush immediately outside Blue base ramp (North)
-  { id: 'bush_blue_high_north', name: 'Blue Ramp North Brush', x: 750, y: 780, width: 94, height: 42 },
-  // 8. Flanking brush immediately outside Blue base ramp (South)
-  { id: 'bush_blue_high_south', name: 'Blue Ramp South Brush', x: 750, y: 1120, width: 94, height: 42 },
-  // 9. Flanking brush immediately outside Red base ramp (North)
-  { id: 'bush_red_high_north', name: 'Red Ramp North Brush', x: 2050, y: 320, width: 94, height: 42 },
-  // 10. Flanking brush immediately outside Red base ramp (South)
-  { id: 'bush_red_high_south', name: 'Red Ramp South Brush', x: 2050, y: 660, width: 94, height: 42 },
-];
+export const ARAM_BUSHES: BushPatch[] = ACTIVE_MAP_PROFILE.bushes.map(b => ({ ...b }));
 
 export function getBushAt(x: number, y: number): BushPatch | undefined {
   return ARAM_BUSHES.find((b) => {

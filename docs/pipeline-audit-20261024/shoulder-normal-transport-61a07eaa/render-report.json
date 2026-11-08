@@ -1,0 +1,281 @@
+{
+  "compute": "google",
+  "source_glb_sha256": "09c12c8a1b3a9d77fc0bd9da735a339a721459f46361650d104d7884f95da9ae",
+  "normal_corrected_glb_sha256": "fcff07df9c8168d4c98d365522370f4b7195fe4da8e6a1cf27b6d345890844e4",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "views": [
+    {
+      "case": "00-Rest-0-child0-twist0",
+      "view": "front",
+      "file": "screenshots/00-Rest-0-child0-twist0-normal-corrected-front.png",
+      "sha256": "a0cc5c73a2a42a134b3c0b5aa452b50e94f554d1be9fff37c726e253578ddc58",
+      "camera": {
+        "target": [
+          0,
+          0.5014678239822388,
+          0
+        ],
+        "radius": 1.203522777557373,
+        "alpha": 1.5707963267948966,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "00-Rest-0-child0-twist0",
+      "view": "side",
+      "file": "screenshots/00-Rest-0-child0-twist0-normal-corrected-side.png",
+      "sha256": "4b6a03be233831eb26a2d9b78bb3c55adaf07cd0bcdd35b8c785fbdc87255cb1",
+      "camera": {
+        "target": [
+          0,
+          0.5014678239822388,
+          0
+        ],
+        "radius": 1.203522777557373,
+        "alpha": 0,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "00-Rest-0-child0-twist0",
+      "view": "oblique",
+      "file": "screenshots/00-Rest-0-child0-twist0-normal-corrected-oblique.png",
+      "sha256": "9db8001e1575ea625a84801d82b7beb42e80bd1b6a6650b9e22cccce459136ff",
+      "camera": {
+        "target": [
+          0,
+          0.5014678239822388,
+          0
+        ],
+        "radius": 1.203522777557373,
+        "alpha": 0.7853981633974483,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "view": "front",
+      "file": "screenshots/01-UpperArmL-60-child0-twist0-normal-corrected-front.png",
+      "sha256": "1340ada965a7cdbce2619b0ef2a839bc2f9623be0975b1c3e0845a918982689d",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 1.5707963267948966,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "view": "side",
+      "file": "screenshots/01-UpperArmL-60-child0-twist0-normal-corrected-side.png",
+      "sha256": "dc9d455c28ae4ecc878d6f5178130531fbc856f3e43d84190b4a2a5150945051",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 3.141592653589793,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "view": "oblique",
+      "file": "screenshots/01-UpperArmL-60-child0-twist0-normal-corrected-oblique.png",
+      "sha256": "1409e91a163230bef8384b1fff1fb2e3fc2b62bfb0918fcfae7565906fb8936b",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 2.356194490192345,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "view": "front",
+      "file": "screenshots/02-UpperArmL-90-child0-twist0-normal-corrected-front.png",
+      "sha256": "996eb2a8e790fa8538030e370912d70bf98f2b27ba2aa7a3b499f33d4ee316ee",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 1.5707963267948966,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "view": "side",
+      "file": "screenshots/02-UpperArmL-90-child0-twist0-normal-corrected-side.png",
+      "sha256": "e950b331f4256a8f7de95d69c19b4176c03a455919d65168ba1fb9d7f2d066bc",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 3.141592653589793,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "view": "oblique",
+      "file": "screenshots/02-UpperArmL-90-child0-twist0-normal-corrected-oblique.png",
+      "sha256": "57fab5192d434364a497b211168d34d2528c2896b60df0d1b355e2acca9f4f32",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 2.356194490192345,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "03-UpperArmR-60-child0-twist0",
+      "view": "front",
+      "file": "screenshots/03-UpperArmR-60-child0-twist0-normal-corrected-front.png",
+      "sha256": "4b534918bb0851285d65b8abc3b72e3c837e1a24a88b4f6c52e1535a280dbfdf",
+      "camera": {
+        "target": [
+          0.08422388136386871,
+          0.30773985385894775,
+          -0.032408155500888824
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 1.5707963267948966,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "03-UpperArmR-60-child0-twist0",
+      "view": "side",
+      "file": "screenshots/03-UpperArmR-60-child0-twist0-normal-corrected-side.png",
+      "sha256": "9fc662cbd5b3468d70032b6c931c9f42cef227b40fefa920eaefc679dcd51cb2",
+      "camera": {
+        "target": [
+          0.08422388136386871,
+          0.30773985385894775,
+          -0.032408155500888824
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 0,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "03-UpperArmR-60-child0-twist0",
+      "view": "oblique",
+      "file": "screenshots/03-UpperArmR-60-child0-twist0-normal-corrected-oblique.png",
+      "sha256": "25736e815c16ed7e3aca7f2fce62c76effea5ecdf8fa9b1f16dcb599275c8b2a",
+      "camera": {
+        "target": [
+          0.08422388136386871,
+          0.30773985385894775,
+          -0.032408155500888824
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 0.7853981633974483,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "04-UpperArmR-90-child0-twist0",
+      "view": "front",
+      "file": "screenshots/04-UpperArmR-90-child0-twist0-normal-corrected-front.png",
+      "sha256": "c3a1650883f81f2845f1c9b1859b2e258db56c0e4df487bd6182b6d54b64e378",
+      "camera": {
+        "target": [
+          0.08422388136386871,
+          0.30773985385894775,
+          -0.032408155500888824
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 1.5707963267948966,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "04-UpperArmR-90-child0-twist0",
+      "view": "side",
+      "file": "screenshots/04-UpperArmR-90-child0-twist0-normal-corrected-side.png",
+      "sha256": "c8bcb8393197c6ff5031f473e9a746a2524c6771dcd1d848619269cb08367d5d",
+      "camera": {
+        "target": [
+          0.08422388136386871,
+          0.30773985385894775,
+          -0.032408155500888824
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 0,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    },
+    {
+      "case": "04-UpperArmR-90-child0-twist0",
+      "view": "oblique",
+      "file": "screenshots/04-UpperArmR-90-child0-twist0-normal-corrected-oblique.png",
+      "sha256": "3b2cb64baceae5b592abbfa90c33aeedf4136b9bb21553767f01befcc818f837",
+      "camera": {
+        "target": [
+          0.08422388136386871,
+          0.30773985385894775,
+          -0.032408155500888824
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 0.7853981633974483,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001
+      }
+    }
+  ],
+  "errors": [],
+  "loaded": {
+    "clips": [
+      "Mirelle_ContourTrial"
+    ],
+    "meshes": [
+      {
+        "influences": 8,
+        "bones": 52,
+        "extraWeights": true,
+        "morphs": 7,
+        "supportsNormals": true,
+        "defines": "#define MATERIALPLUGIN_1\n#define BRDF_V_HEIGHT_CORRELATED\n#define MS_BRDF_ENERGY_CONSERVATION\n#define SPHERICAL_HARMONICS\n#define SPECULAR_GLOSSINESS_ENERGY_CONSERVATION\n#define MIX_IBL_RADIANCE_WITH_IRRADIANCE\n#define LEGACY_SPECULAR_ENERGY_CONSERVATION\n#define BASE_DIFFUSE_MODEL 0\n#define DIELECTRIC_SPECULAR_MODEL 0\n#define CONDUCTOR_SPECULAR_MODEL 0\n#define CLEARCOAT_TEXTUREDIRECTUV 0\n#define CLEARCOAT_TEXTURE_ROUGHNESSDIRECTUV 0\n#define CLEARCOAT_BUMPDIRECTUV 0\n#define CLEARCOAT_TINT_TEXTUREDIRECTUV 0\n#define IRIDESCENCE_TEXTUREDIRECTUV 0\n#define IRIDESCENCE_THICKNESS_TEXTUREDIRECTUV 0\n#define ANISOTROPIC_TEXTUREDIRECTUV 0\n#define MAINUV1\n#define SHEEN_TEXTUREDIRECTUV 0\n#define SHEEN_TEXTURE_ROUGHNESSDIRECTUV 0\n#define SS_THICKNESSANDMASK_TEXTUREDIRECTUV 0\n#define SS_REFRACTIONINTENSITY_TEXTUREDIRECTUV 0\n#define SS_TRANSLUCENCYINTENSITY_TEXTUREDIRECTUV 0\n#define SS_TRANSLUCENCYCOLOR_TEXTUREDIRECTUV 0\n#define DETAILDIRECTUV 0\n#define DETAIL_NORMALBLENDMETHOD 0\n#define UV1\n#define PREPASS_COLOR_INDEX -1\n#define PREPASS_IRRADIANCE_LEGACY_INDEX -1\n#define PREPASS_IRRADIANCE_INDEX -1\n#define PREPASS_ALBEDO_INDEX -1\n#define PREPASS_ALBEDO_SQRT_INDEX -1\n#define PREPASS_DEPTH_INDEX -1\n#define PREPASS_SCREENSPACE_DEPTH_INDEX -1\n#define PREPASS_NORMALIZED_VIEW_DEPTH_INDEX -1\n#define PREPASS_NORMAL_INDEX -1\n#define PREPASS_WORLD_NORMAL_INDEX -1\n#define PREPASS_POSITION_INDEX -1\n#define PREPASS_LOCAL_POSITION_INDEX -1\n#define PREPASS_VELOCITY_INDEX -1\n#define PREPASS_VELOCITY_LINEAR_INDEX -1\n#define PREPASS_REFLECTIVITY_INDEX -1\n#define PREPASS_OBJECT_ID_INDEX -1\n#define PREPASS_MESH_BLEND_TAG_INDEX -1\n#define SCENE_MRT_COUNT 0\n#define VIGNETTEBLENDMODEMULTIPLY\n#define TONEMAPPING 0\n#define SAMPLER3DGREENDEPTH\n#define SAMPLER3DBGRMAP\n#define PBR\n#define NUM_SAMPLES 0\n#define ALBEDO\n#define ALBEDODIRECTUV 1\n#define BASE_WEIGHTDIRECTUV 0\n#define BASE_DIFFUSE_ROUGHNESSDIRECTUV 0\n#define AMBIENTDIRECTUV 0\n#define OPACITYDIRECTUV 0\n#define ALPHATESTVALUE 0.4\n#define SPECULAROVERALPHA\n#define RADIANCEOVERALPHA\n#define EMISSIVEDIRECTUV 0\n#define REFLECTIVITY\n#define REFLECTIVITYDIRECTUV 1\n#define SPECULARTERM\n#define LODBASEDMICROSFURACE\n#define MICROSURFACEMAPDIRECTUV 0\n#define METALLICWORKFLOW\n#define ROUGHNESSSTOREINMETALMAPGREEN\n#define METALLNESSSTOREINMETALMAPBLUE\n#define METALLIC_REFLECTANCEDIRECTUV 0\n#define REFLECTANCEDIRECTUV 0\n#define ENVIRONMENTBRDF\n#define NORMAL\n#define BUMPDIRECTUV 0\n#define NORMALXYSCALE\n#define LIGHTMAPDIRECTUV 0\n#define RADIANCEOCCLUSION\n#define HORIZONOCCLUSION\n#define NUM_BONE_INFLUENCERS 8\n#define BonesPerMesh 0\n#define BONETEXTURE\n#define MORPHTARGETS\n#define MORPHTARGETS_POSITION\n#define MORPHTARGETS_NORMAL\n#define MORPHTARGETTEXTURE_HASPOSITIONS\n#define MORPHTARGETTEXTURE_HASNORMALS\n#define NUM_MORPH_INFLUENCERS 7\n#define MORPHTARGETS_TEXTURE\n#define USEPHYSICALLIGHTFALLOFF\n#define CAMERA_PERSPECTIVE\n#define AREALIGHTSUPPORTED\n#define SPECULARAA\n#define TEXTURE_REPETITION_MODE 0\n#define DEBUGMODE 0\n#define VERTEX_PULLING_USE_INDEX_BUFFER\n#define RIGHT_HANDED\n#define CLUSTLIGHT_SLICES 0\n#define CLUSTLIGHT_BATCH 0\n#define LIGHT0\n#define HEMILIGHT0\n#define LIGHTCOUNT 1\n#define MAXLIGHTCOUNT 4\n"
+      }
+    ]
+  },
+  "status": "rendered_for_review"
+}

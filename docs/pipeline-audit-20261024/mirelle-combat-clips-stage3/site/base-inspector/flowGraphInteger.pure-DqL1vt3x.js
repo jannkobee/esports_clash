@@ -1,0 +1,39 @@
+//#region node_modules/@babylonjs/core/FlowGraph/CustomTypes/flowGraphInteger.pure.js
+var e = class e {
+	constructor(e) {
+		this.value = this._toInt(e);
+	}
+	clone() {
+		return new e(this.value);
+	}
+	_toInt(e) {
+		return e | 0;
+	}
+	add(t) {
+		return new e(this.value + t.value);
+	}
+	subtract(t) {
+		return new e(this.value - t.value);
+	}
+	multiply(t) {
+		return new e(Math.imul(this.value, t.value));
+	}
+	divide(t) {
+		return new e(this.value / t.value);
+	}
+	getClassName() {
+		return e.ClassName;
+	}
+	equals(e) {
+		return this.value === e.value;
+	}
+	static FromValue(t) {
+		return new e(t);
+	}
+	toString() {
+		return this.value.toString();
+	}
+};
+e.ClassName = "FlowGraphInteger";
+//#endregion
+export { e as t };

@@ -14,12 +14,14 @@ const health = (unit: Fighter) => unit.hp / unit.maxHp;
 
 export function isUnitVisibleTo(target: Fighter, observer: Fighter): boolean {
   if (!target.isAlive) return false;
-  if ((target.stealthTimer ?? 0) > 0 && distance(target, observer) > 48) return false;
+  const dist = distance(target, observer);
+  const sweeperReveal = (observer.sweeperTimer ?? 0) > 0 && dist <= 190;
+  if ((target.stealthTimer ?? 0) > 0 && dist > 48 && !sweeperReveal && (target.revealedTimer ?? 0) <= 0) return false;
   if (target.isInBush) {
     if (observer.isInBush && observer.currentBushId && observer.currentBushId === target.currentBushId) {
       return true;
     }
-    if (distance(target, observer) <= 55) {
+    if (dist <= 55 || sweeperReveal) {
       return true;
     }
     if ((target.revealedTimer ?? 0) > 0) {

@@ -94,6 +94,9 @@
 @endforeach
 <details><summary>All recorded views and capture metadata</summary><pre>{{ json_encode($visual['views'],JSON_PRETTY_PRINT) }}</pre></details></section>
 @endforeach
+@include('evolution.avatars.localized-shape-reviews')
+@include('evolution.avatars.combined-motion-reviews')
+@include('evolution.avatars.animation-playback-reviews')
 @include('evolution.avatars.pose-contract-reviews')
 @foreach(($preparation->state['weight_field_comparisons']??[]) as $comparison)
 @php($fieldReport=$comparison['report'])

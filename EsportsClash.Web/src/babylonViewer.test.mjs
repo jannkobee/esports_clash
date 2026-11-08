@@ -42,8 +42,8 @@ test('animation release phase follows authoritative times and survives a seek',(
 test('3D battlefield elevation preserves raised lane and base plateaus above the sunken canyon chasm',()=>{
   assert.equal(arenaGroundHeight(200, 720), RIDGE_HEIGHT);
   assert.equal(arenaGroundHeight(1400, 720), RIDGE_HEIGHT);
-  const chasmBottom = arenaGroundHeight(1400, 240);
+  const chasmBottom = arenaGroundHeight(1400, 500);
   assert.ok(chasmBottom < -10, 'sunken canyon chasm dips down deep into the bedrock');
-  assert.ok(arenaGroundHeight(1000, 240) > chasmBottom, 'woodland terraces sit above the sunken canyon floor');
-  assert.ok(arenaGroundHeight(1400, 20) > chasmBottom, 'outer valley rim rises gently above the canyon');
+  assert.ok(arenaGroundHeight(1000, 500) > chasmBottom, 'woodland terraces sit above the sunken canyon floor');
+  assert.ok(arenaGroundHeight(1400, 270) > chasmBottom, 'raised bridge deck sits above the sunken canyon floor');
 });

@@ -6,13 +6,19 @@ import { ARENA_RENDER_HEIGHT } from '../arenaPresentationCamera';
 import { ARENA_WIDTH, ARENA_HEIGHT, LANE_Y, NEXUS_TOWER_X } from '../arenaLayout';
 import {validateVisualReleases,type VisualRelease} from '../avatarVisualRelease';
 
-export function OnlineMatchViewer({ message,matchId,visuals }: { message: OnlineSnapshot | null;matchId?:string;visuals?:readonly VisualRelease[] }) {
+export function OnlineMatchViewer({ message,matchId,visuals,live=true }: { message: OnlineSnapshot | null;matchId?:string;visuals?:readonly VisualRelease[];live?:boolean }) {
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const frames = useRef<{ current: OnlineSnapshot | null; previous: OnlineSnapshot | null; received: number }>({ current: null, previous: null, received: 0 });
+  const frames = useRef<{ current: OnlineSnapshot | null; previous: OnlineSnapshot | null; received: number; interval:number }>({ current: null, previous: null, received: 0, interval:500 });
   useEffect(() => {
-    frames.current = { current: message, previous: frames.current.current, received: performance.now() };
-  }, [message]);
+    const prior=frames.current,now=performance.now();
+    const gap=message&&prior.current?message.snapshot.second-prior.current.snapshot.second:0;
+    const consecutive=live&&message?.match_id===prior.current?.match_id&&gap>0&&gap<=2;
+    const elapsed=Math.max(100,Math.min(2000,now-prior.received));
+    const oldInterval=Number.isFinite(prior.interval)?prior.interval:elapsed;
+    frames.current = { current: message, previous: consecutive?prior.current:null, received:now,
+      interval:consecutive?oldInterval*.5+elapsed*.5:500/Math.max(1,message?.speed??1) };
+  }, [message,live]);
   useEffect(() => {
     let renderer: BabylonMatchViewer | null = null, closed = false, raf = 0;
     void import('../match-viewer/BabylonMatchViewer').then(async ({ BabylonMatchViewer }) => {
@@ -24,16 +30,17 @@ export function OnlineMatchViewer({ message,matchId,visuals }: { message: Online
     }).catch(()=>{/* Tactical fallback remains available on load failure. */});
     const draw = (now: number) => {
       raf = requestAnimationFrame(draw);
-      const { current, previous, received } = frames.current;
+      const { current, previous, received, interval } = frames.current;
       if (!current) return;
       const frame = previous && !current.snapshot.finished
         ? interpolateSpectatorFrame(previous.snapshot.frame, current.snapshot.frame,
-          (now - received) / Math.max(50, 500 / Math.max(1, current.speed))) : current.snapshot.frame;
+          (now - received) / Math.max(50, interval)) : current.snapshot.frame;
       const rendered = renderer?.renderArena(frame, ARENA_WIDTH / 2, LANE_Y, 1);
       const target = canvas.current, ctx = target?.getContext('2d');
       if (!target || !ctx) return;
-      target.width = target.clientWidth * devicePixelRatio;
-      target.height = target.clientHeight * devicePixelRatio;
+      const width=Math.round(target.clientWidth*devicePixelRatio),height=Math.round(target.clientHeight*devicePixelRatio);
+      if(target.width!==width)target.width=width;
+      if(target.height!==height)target.height=height;
       ctx.clearRect(0, 0, target.width, target.height);
       if (rendered && renderer) {
         ctx.save();ctx.scale(devicePixelRatio,devicePixelRatio);ctx.font='12px system-ui';ctx.textAlign='center';

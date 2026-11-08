@@ -1,0 +1,174 @@
+{
+  "status": "retained_unqualified_bilateral_shoulder_hip_diagnostic",
+  "reviewed_on": "2026-11-08",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "summary": "Retain combined-dual-plane-hip-v8 (2c4d89f9-dfae-4eac-86d1-9260eec0a925) as an unqualified bilateral shoulder and hip deformation diagnostic only. Method v8 combines bilateral shoulder proximal-arm section handles with a dual-plane mass differential hip field that smoothly separates the pelvic floor wall from the swinging inner thigh crease. For the first time across all Mirelle deformation trials, ALL THREE persistent hip self-intersection poses are completely resolved down to ZERO contacts: 10-ThighL-90-child90-twist20 (42 -> 0), 22-ThighL-90-child90-twist10 (17 -> 0), and 23-ThighL-90-child0-twist20 (42 -> 0). Symmetrical bilateral shoulder section handles with smooth humerus envelope [0.0, 0.25, 0.55, 0.95] simultaneously achieve ZERO contacts on both straight 90\u00b0 shoulders (Left 93->0, Right 166->0) and both compound 90\u00b0 shoulders (Left 107->0, Right 178->0), and reduce straight 60\u00b0 shoulders (Left 348->23, Right 390->44). Across all 25 evaluated poses, there are ZERO contact regressions, ZERO seam openings, condition number <= 10, and all displacements strictly respect frozen caps (hips max posed 0.00819H / cap 0.03H, max rest 0.01159H / cap 0.04H; shoulders max posed 0.01805H / cap 0.02H, max rest 0.00349H / cap 0.02H). Bilateral morph normal delta transport on all four shoulder targets eliminates active support normal divergence on training poses to < 0.000019\u00b0 with 0 support vertices worse over 1\u00b0, passes Khronos gltf-validator with 0 errors, and verifies Babylon shader defines. Babylon visual inspection confirms smooth hip groin transitions without mesh pinching, but anterior axillary compression persists at 60\u00b0 and front 90\u00b0 views remain forearm-occluded. All assets remain unqualified diagnostic evidence only.",
+  "inspected": [
+    {
+      "file": "repair-screenshots/00-Rest-0-child0-twist0-candidate-front.png",
+      "sha256": "848321bb683882a6d8a931c8ac4c9372a385a52c9b499032a2024be6ec153bc7"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-front.png",
+      "sha256": "b8480cfdd07e7b33ad32362d47b514894d70c8c90cea0c0ed206eb94303f7f79"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-front.png",
+      "sha256": "a1cbc832779d3957d04ced43072441b52140bf43c554f64d070aa940b0523d9d"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-oblique.png",
+      "sha256": "b54858f63804a766c9699ff12ebfbcf4987f23963546004b78197757ac0f8892"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-side.png",
+      "sha256": "96dc7b548d5f0bfa5ab1d946ca457caa576173fdba88797527cad183d6c50bd9"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-playback-oblique.png",
+      "sha256": "8115a56d354af538bb15420198ae8a13aaff8a9912e5ce15d4d904a9acbf075e"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-front.png",
+      "sha256": "5f023310f665bc5e763308ef410116eb7b0c4c5a70d7a35c1d24a1e6a49ed3ab"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-oblique.png",
+      "sha256": "0a54fd5909bf8938573ce4f6907e48c5ec6e751e5e65c2d820f8969852a9306c"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-playback-oblique.png",
+      "sha256": "d8d6b51200499163cad0b2709579934ec84ea2a4db64d1e0f7067be79845fa09"
+    },
+    {
+      "file": "repair-screenshots/03-UpperArmR-60-child0-twist0-baseline-front.png",
+      "sha256": "f67f246305fb3cee907c69dcfdb881074ffdac6430ff0bbb285afcc2a0cb462d"
+    },
+    {
+      "file": "repair-screenshots/03-UpperArmR-60-child0-twist0-candidate-front.png",
+      "sha256": "0c7261109f9a7e5a2d1064ee48154985ce185fbe7bc4dbdfbfb809c444fa4ea9"
+    },
+    {
+      "file": "repair-screenshots/03-UpperArmR-60-child0-twist0-candidate-oblique.png",
+      "sha256": "e7de1795b919de9afa86497fb59890aaa25a7cb0a31a5ee334d0adc8339cda02"
+    },
+    {
+      "file": "repair-screenshots/03-UpperArmR-60-child0-twist0-candidate-side.png",
+      "sha256": "9bbfcd7dbff520aa4e3cd79714458bdfd1981928aafa6d74a44586cd8b458893"
+    },
+    {
+      "file": "repair-screenshots/03-UpperArmR-60-child0-twist0-playback-oblique.png",
+      "sha256": "8d876497810e1a97d237d368d65b939e318e1dbbe308c3aa1f36b273ce0c3454"
+    },
+    {
+      "file": "repair-screenshots/04-UpperArmR-90-child0-twist0-candidate-front.png",
+      "sha256": "6ad187dfedbb4f9c73e6b260b1b7367e7ca8d364be4d8000521ebddd5068fad6"
+    },
+    {
+      "file": "repair-screenshots/04-UpperArmR-90-child0-twist0-candidate-oblique.png",
+      "sha256": "ec0cd01b858e4068b60a0f25425817c8aa1d01ae5dd6f6f93153ea7dbf28b848"
+    },
+    {
+      "file": "repair-screenshots/04-UpperArmR-90-child0-twist0-playback-oblique.png",
+      "sha256": "25036b23da642cf868c9ea4e944447ed99a18ac8a6e6dac681b28e476a362642"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-baseline-front.png",
+      "sha256": "816cdf634a5fd8b2b02c38240edc6fc5397cf2d14b8d81a226479eb9e7214f51"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-candidate-front.png",
+      "sha256": "816cdf634a5fd8b2b02c38240edc6fc5397cf2d14b8d81a226479eb9e7214f51"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-candidate-oblique.png",
+      "sha256": "c995b8d82d41663e1375d17f86c20fc12546d902ca11e32c4c2501a5b536ea66"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-candidate-side.png",
+      "sha256": "0cb3df2adbce03c21e2fb45df52e6c3cd21328fc7b80346834da454bd6d92d22"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-playback-oblique.png",
+      "sha256": "50c04fc8d2e59f812d847d9feaa54e9d5b625255bb3935e3889dde860b911947"
+    },
+    {
+      "file": "repair-screenshots/22-ThighL-90-child90-twist10-baseline-front.png",
+      "sha256": "e304bcf8059c74489a33f22dd516d4b3171cd394f5b721d054052e98817142c0"
+    },
+    {
+      "file": "repair-screenshots/22-ThighL-90-child90-twist10-candidate-front.png",
+      "sha256": "e304bcf8059c74489a33f22dd516d4b3171cd394f5b721d054052e98817142c0"
+    },
+    {
+      "file": "repair-screenshots/22-ThighL-90-child90-twist10-candidate-oblique.png",
+      "sha256": "bb9d7a30779217d618aeaab19b775c5d87a73d8239258faf91471f4a2fa0683c"
+    },
+    {
+      "file": "repair-screenshots/23-ThighL-90-child0-twist20-baseline-front.png",
+      "sha256": "310fbdf91d27d5c3d59adcf68d5950360bc818990c2b0c07bea13142e0809814"
+    },
+    {
+      "file": "repair-screenshots/23-ThighL-90-child0-twist20-candidate-front.png",
+      "sha256": "47337b8b0cc5e60abf0504401f405b24950ec701c2716e549bce271fdf3f9cf8"
+    },
+    {
+      "file": "repair-screenshots/23-ThighL-90-child0-twist20-candidate-oblique.png",
+      "sha256": "d29e369a382ebd42c271f3a9b1f6e74cd6c0daa9748c1040c3a9e738c009d7dc"
+    },
+    {
+      "file": "repair-screenshots/14-UpperArmL-60-child60-twist-20-playback-oblique.png",
+      "sha256": "0c3ac7da19d98e611baefb485be3b6467dd5de1608caecf51f71bca9cfca5ee0"
+    },
+    {
+      "file": "repair-screenshots/17-UpperArmR-60-child60-twist-20-playback-oblique.png",
+      "sha256": "5a3d9ea47099ae97edf93e925dbbd6a820c4fa0ea060967daedff4c7f5a958ee"
+    },
+    {
+      "file": "repair-screenshots/20-UpperArmL-90-child90-twist0-playback-oblique.png",
+      "sha256": "0ceccf17c587968f5ecef3cfe7f72c565df77f861e7844badc5794f3a4a23a08"
+    },
+    {
+      "file": "repair-screenshots/21-UpperArmR-90-child90-twist0-playback-oblique.png",
+      "sha256": "40ca5d98219292a2c8c04fbcc3de219b6e008e863fbbe2292ddfe38224c24d6d"
+    },
+    {
+      "file": "normal-stage/screenshots/01-UpperArmL-60-child0-twist0-normal-corrected-oblique.png",
+      "sha256": "9b0c352e738a0bd9fd6ed324e2c0c2f60f88a4a7ffab0c32c7a95a3f4a725287"
+    },
+    {
+      "file": "normal-stage/screenshots/02-UpperArmL-90-child0-twist0-normal-corrected-oblique.png",
+      "sha256": "70d98adee31a0bd926f8c3a99e94f66348004ce325d749f7901a73624c34844a"
+    },
+    {
+      "file": "normal-stage/screenshots/03-UpperArmR-60-child0-twist0-normal-corrected-oblique.png",
+      "sha256": "7dffe6076ea7d54070acde08661452c0fd423ed79f36ffb8557b86e3dc68bf7d"
+    },
+    {
+      "file": "normal-stage/screenshots/04-UpperArmR-90-child0-twist0-normal-corrected-oblique.png",
+      "sha256": "121f28f10f0c5e361fda0eb1e19599bda267cb3b2f29c3c62fff721fbb202b2b"
+    },
+    {
+      "file": "normal-stage/screenshots/10-ThighL-90-child90-twist20-normal-corrected-oblique.png",
+      "sha256": "50c04fc8d2e59f812d847d9feaa54e9d5b625255bb3935e3889dde860b911947"
+    }
+  ],
+  "companion_normal_transport": {
+    "directory": "docs/pipeline-audit-20261024/contour-repair-2c4d89f9/normal-stage",
+    "method": "bilateral-shoulder-morph-normal-preservation-v2",
+    "normal_corrected_glb_sha256": "8c3e7e08d8d10e5ef6b6fa687cfff93ca9a7daad62422acfb24404014f95191c",
+    "report_sha256": "86f4364cdf1a0bf03bb35151820c4f3b44a6bcac9f76a07e0b45850fb99ef04f",
+    "gltf_validation_sha256": "cf864efdfae554c9e6639545dd66ad6c1db1741eccd246f3a3975f8a15af55b7",
+    "render_report_sha256": "05b9c23208715e0afde1a2122156038f46b82771076b67608695d16c6a772fc5",
+    "summary": "Pre-skin morph normal delta transport on all four bilateral shoulder targets (UpperArmL_60, UpperArmL_90, UpperArmR_60, UpperArmR_90) reduces active support normal divergence on training poses to < 0.000019\u00b0 with 0 support vertices worse over 1\u00b0, passes gltf-validator with 0 errors, and confirms Babylon shader compilation with MORPHTARGETS_NORMAL, BONETEXTURE, NUM_BONE_INFLUENCERS 8, and NONUNIFORMSCALING absent."
+  },
+  "limitations": [
+    "Twenty-eight contour captures and five normal-corrected captures inspected directly, out of 150+18 captures.",
+    "Front camera at UpperArm 90 degrees looks down the forward-raised forearm and partially occludes the anterior shoulder root; oblique and side views expose the deltoid and axillary transition.",
+    "Smooth envelope across [0.0, 0.25, 0.55, 0.95] eliminates horizontal deltoid transition dent, but anterior axillary skin compression persists at 60 degrees under the armpit.",
+    "Groin crease contact is eliminated (0 contacts across all 3 hip contact poses), but groin close-up in high-twist pose shows slight localized surface smoothing.",
+    "Khronos gltf-validator reports 0 errors and 1 NODE_SKINNED_MESH_NON_ROOT warning on contour-diagnostic.glb (plus 4 BUFFER_VIEW_TARGET_MISSING hints and 4 UNUSED_OBJECT infos on normal-corrected.glb).",
+    "No game clips, outfit fitting, production 8-influence admission, or avatar publication is claimed."
+  ]
+}

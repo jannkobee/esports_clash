@@ -1,19 +1,15 @@
 {
   "schema": 1,
   "catalog_version": "41d18be3d22349e5bc622c37f6446dbccb8de978f3774b302e091492b1c6177f",
-  "rules_version": "f3beade210485b091bde9bcf8f3645a0e513480750103091dd028d87a9939416",
+  "rules_version": "e98fc0bd6158794c59321b2b81c39c21b33ad2cd6aa5a9d3a0a5617215d92604",
   "ability_ruleset": "original-v3-preview-2",
   "policy_version": "original-v3-hybrid-v2",
   "observation_version": "live-spectator-v1",
-  "arena_source_hash": "ca41e3fbc3cb65fdf5d0d0b0ce0655ba2d25076b1e6482ef50d72f77f72944a2",
+  "arena_source_hash": "3e77f3fd225c74e09dbfff13dcbda6994a17cc28df86db73d974adbfe7f0af9a",
   "sources": [
     [
-      "App.css",
-      "6e25a776d3e8102da5bacb3cb99f4a5fc662a2e01e6143140671a556d28c3d5c"
-    ],
-    [
       "App.tsx",
-      "ecb88ed3be7b5efe4a328cab0c5a30e7225ca167c6d5c4b4192c48ee74360f82"
+      "c4b2f8982f17f731334cae30c1e519102b3daff60b14ac923619119107108883"
     ],
     [
       "GameContentContext.tsx",
@@ -65,7 +61,7 @@
     ],
     [
       "aiDecisionTelemetry.ts",
-      "156a71eb5e2ee9ce9770ec767392bf6e4ab9f3bb977716b9059a06b233d63088"
+      "68a81e1427596d0fd245db4f0fb18fe668d858782b939d6a845de124820f961b"
     ],
     [
       "aiStrategyConfig.ts",
@@ -85,7 +81,7 @@
     ],
     [
       "arenaElevation.ts",
-      "7361f3e90839d0523e9b5ff75d45612b4b1e460ac9e55451b4581b75d44dcd47"
+      "f98d587024e34eeddc467c734d27c0952ffd1728bfbae3bf0e2dfba726f2d152"
     ],
     [
       "arenaIdentity.ts",
@@ -93,11 +89,11 @@
     ],
     [
       "arenaLandform.ts",
-      "1845382d3f364217490c2874b9de57590bc7fbb751cfbcadccc52cd4a51c546d"
+      "e0e561db4c65edd0413a82436484721c4be4b85f7da2c4b1ebf744578957ac02"
     ],
     [
       "arenaLayout.ts",
-      "037c064bde4bcb02443717f5d0d4131d0461a3de0408f1480315ac55b576a169"
+      "b40ee342d18158847ad7d76da4fd418e98ec6a61fca2a763e04b1fe8505efeaf"
     ],
     [
       "arenaLearning.ts",
@@ -117,7 +113,7 @@
     ],
     [
       "arenaRules.ts",
-      "b22c677a4dc2b5b691ca85a380d3a5d74b34a50e1bd38b1a090c0fc45fcb3c5f"
+      "6533ec4689d2b052b46197ca262dd5328172d48b9bfdb25a7c7c5757755f4adc"
     ],
     [
       "arenaSceneryVisibility.ts",
@@ -125,11 +121,11 @@
     ],
     [
       "arenaTrajectory.ts",
-      "c55a14e4053085da1bf25ab73102e4c9204bebae5c2f33215759ab4a86c8d2d8"
+      "f23fb1025588439ae349e26adb93b60e2adbf743e103b46ce4d85dceccadb8b3"
     ],
     [
       "arenaUnitCollision.ts",
-      "99e8dfe22794940955429f9f213310820eac94602dae7b4338d9c481d25c02dc"
+      "013d47c27323205b5c7c001bef899701c2a3ff1c93677c6ce7deb949894b7fbc"
     ],
     [
       "arsenaldoModel.ts",
@@ -137,7 +133,7 @@
     ],
     [
       "audio.ts",
-      "b695a62a8423df694b9574f9e7bd234d27132af4e0468b21d477ea6671398764"
+      "9e10b69ddc07792da9942a8bb0bb180f48453a2ebd493e7657fe24d052a59dcd"
     ],
     [
       "avatarArt.ts",
@@ -154,6 +150,10 @@
     [
       "avatarCombos.ts",
       "3dcf2a1df61461f4318f4e617e815ab2348f3c14d7314ef281ad1ac9c8a7c558"
+    ],
+    [
+      "avatarComponents.ts",
+      "220832f0fb575c847194e346e890581dca4a9f2f0b3bde169f534b16dabbd562"
     ],
     [
       "avatarContactProfiles.ts",
@@ -269,11 +269,11 @@
     ],
     [
       "baseInspection.ts",
-      "29895ea27b289e1086f040d9158e7d5e1d8ad02bd60bfedf1699832a76d95826"
+      "c7b4593156637a1fe20631a760b018439bec472d685da4134f171a867c64b8c3"
     ],
     [
       "baseSafetyRules.ts",
-      "044b3ffe12867914508e5d8c2a56c8da835f1436253535016c9dbc9137f33e60"
+      "64a979a1394ce6b9b9bd04d4ceb38c40abd3c1c051faa2957ac24d5f45df3507"
     ],
     [
       "baselineImitation.ts",
@@ -309,7 +309,7 @@
     ],
     [
       "combatDecision.ts",
-      "4cd41e5fbad3d026a4dc85655b9a6e229ebd1601f475e1fe6355f059846bcfa6"
+      "bd141396b19497d77e1a773221d4cc36938051d78954f62771c6cc1ab9e87340"
     ],
     [
       "combatPacingRules.ts",
@@ -317,7 +317,11 @@
     ],
     [
       "components/AramMatchView.tsx",
-      "1f456b3069c8b70e5b495c085b27ea6bf5fa787742c80a8d69db4bd68cccac14"
+      "5e27f8cbf605c6c598226bf8c85de1d05fb87eaf2fe7c2e1cd27b8868f98d006"
+    ],
+    [
+      "components/AvatarComponentInventory.tsx",
+      "fa71843200818ad124d5254ca4826d9f280024a0a415132d8329303aadda931d"
     ],
     [
       "components/AvatarModelPreview.tsx",
@@ -328,16 +332,12 @@
       "105b7dc270138cc6737713a847f4e6dfe2b062fc3be9b0b11f141721f15a9669"
     ],
     [
-      "components/CardComponent.tsx",
-      "6aaf4850d8823994286a8a3db47a5686a5253977ab2899ab027d266e6d72099b"
-    ],
-    [
       "components/ChampionArtwork.tsx",
       "7eb756ffd5b1c54cfec503de3432b716df4dd056a84cbdb00db6c9c673a73767"
     ],
     [
       "components/ChampionHubView.tsx",
-      "5f312842bbb55afefdc5c54f47505b303d8bd6ffb57c49b952b8234b6dea91a3"
+      "a1ac663b99cbe0710ecd80e4bf692df11a4247ad61713d701c63e9223fe13934"
     ],
     [
       "components/ChampionSpriteRenderer.ts",
@@ -345,11 +345,23 @@
     ],
     [
       "components/ChibiAvatar.tsx",
-      "d790a071c52269ad86166258cd4b4fd88bf86220a8857fe4e9bedbe1fb5b52c5"
+      "df7e5602e8dcd4e45361d7a9a41796fd71e008ae37f80bab1fe609ebaa6bc1b2"
+    ],
+    [
+      "components/ClashbookDirectory.tsx",
+      "5f6da4ee9d1ebac021e70fca8ede0432b9d1b329fa9b7bb873f5a34989e790a7"
     ],
     [
       "components/CloudSavePanel.tsx",
-      "3b0a96ce2254758cc26b3971abd7d51712c21a5e6c90a54276f38930717272bc"
+      "2779d70e3d9b3aa08a7d50c2f5596a89b4b29040a736c8cfec0e1ebddeb717e3"
+    ],
+    [
+      "components/ClubIdentityEditor.tsx",
+      "b070beac6bd5ac8acc35a07c493823e169c712763a7108c148ca44a4024304bb"
+    ],
+    [
+      "components/ClubMarketView.tsx",
+      "6303fa15729895269bfcba6ace8e720fbc023a7b49a4fa24e92a077e519af5ae"
     ],
     [
       "components/ContentImage.tsx",
@@ -357,23 +369,31 @@
     ],
     [
       "components/DraftPhaseView.tsx",
-      "baf8fab54b3459b87c34cc76c74542d7f4829e456f99965e9b4961c150647e8f"
+      "67fb4a37bcc7f51895345f08fb337c14b1d46af0de80a5e60c688a3010ae41ba"
     ],
     [
       "components/EvolutionsView.tsx",
-      "c5c4cde2055d034f7aa8d8d2bf65fff9df0e63a27b1bdc32ead37aa14f5b2ed0"
+      "8a4d334bb0262881e74ef440248dd2d6b5a704b7749d3a2c70909a18d99cbd6c"
+    ],
+    [
+      "components/FriendsChallengeView.tsx",
+      "e7091a9c1ebc7b5bf632fb0c2b24750bd7c1632d35437ce9009d2cb7b589c765"
     ],
     [
       "components/GameCatalogView.tsx",
-      "aab74f58943787ed02c9818a0d795ed18aaee70d1dbcc7af326922388d99d42e"
+      "24d0049e19dbf3a5fcce47e3a9145041f3c9d07b0dd380690ba21212a9345850"
     ],
     [
       "components/GamingHouseView.tsx",
       "3d22ca875e1db80cb782c8249af5398a289689b768b880982d9dd5c0c39426bf"
     ],
     [
-      "components/MeshyRiggingStudio.tsx",
-      "3940bede7a0762a144d45300998507871fb5fb16bac32f9e51fa8efef1b40986"
+      "components/MatchLoadingScreen.tsx",
+      "a59e5559ba15ce4495294d76fbb271a90feb948c9a1d0547313ac88f19102609"
+    ],
+    [
+      "components/MatchOrdersModal.tsx",
+      "53040ee95c0e9e9a61521762ce0da1acdd6e17ea63bb1b4ee68fadfffb2727e6"
     ],
     [
       "components/MirellePatternBook.tsx",
@@ -381,55 +401,67 @@
     ],
     [
       "components/OnlineMatchViewer.tsx",
-      "fc0424aaafa56686ed0256650ec2bbe733b759b496af18de3d787860eaf37011"
+      "2ab02cdd0443c6b5ef5210fc1d24731357526ce6411409de2a396869f4097402"
     ],
     [
       "components/OnlineNormalView.tsx",
-      "01da90e14a804fb45059d99cfda568de1de0c65425186015ba7884759b28c284"
+      "45aae7bd3cbe0660f53e889cb2620eae98f811e9d0b95efeedd66e3542f1a9bb"
     ],
     [
       "components/PackOpeningModal.tsx",
-      "0820f9cd823828563337e513e3936c621a44b77eeda82393d5a4cf4c5c55b830"
+      "683f7b6bbb3161626f3d62b4048f25303a7db757b2f36bbe3152368a31efd39d"
+    ],
+    [
+      "components/PaintedAbilityIcon.tsx",
+      "254115796746304ecfb5320796b24adc574361bcebbee9eaffee5d82a08b44d2"
     ],
     [
       "components/PlayerDraftPhaseView.tsx",
-      "d448cd8e6b3d81472256bcbd03fd178d489844dd38fe51fb6ab4574285cd28fb"
+      "6cbb18206c03fb91ce6c66db21d7f8c2724f7b1823fa64eced8e134e75d5f1ed"
+    ],
+    [
+      "components/PlayerProfileCard.tsx",
+      "3f79530963f488e7c8e0d8b169bcdbec77f7098e0a4501eb23a52a6aa3fda295"
     ],
     [
       "components/ProCircuitView.tsx",
-      "83fd2867ff7516f2e7cf9798d4352883026193c1873b46e78a56f571aa5eab84"
+      "d6c47f7e5cd152a854ee5d4fa8cc5ca442d230f851de5d04465618eb14a5a729"
     ],
     [
       "components/RankedLadderView.tsx",
-      "738d41525860a51ed2eb67fcdebaf062b78bb7623cbc5dd91597d2c8c09da58b"
+      "0644bbf8e42b03581ea92282778fa07a24639fe43d49ae32d0ebaf42aefd5954"
     ],
     [
       "components/SpectatorRoster.tsx",
-      "f8da0ff75507943cfb6ffeee4d46669179151abeee68d1295567beef1ace5c41"
+      "151e8d6b31092190cc91cb09bcbc557e272004a440f043a53ea333ef901c2f76"
     ],
     [
       "components/SquadView.tsx",
-      "269e0d1c9d76e645fc910df14bc85c642289e2be0485053fc28c8aade2b31b2d"
+      "790e1a8dc717a83de49b6d7f0aef02bbf0842969c001c053ec69d92a16f5eb12"
     ],
     [
       "components/TournamentView.tsx",
-      "259b790355c2a1e7b8b44bc0ca4d8565f53c7202783c469ee73f2801601b75ec"
+      "17652e6f39d515545d26771436f5cd5013dd63e527ebb6a6d64f9e29459e6018"
+    ],
+    [
+      "components/TrainingCenterView.tsx",
+      "7b7709691a56dbcfa179e92176490418bc35722e2841d004af7460ab42f13d6a"
+    ],
+    [
+      "components/TransferMarketView.tsx",
+      "68091a742a1542861539c61ca57504ebd2829de7ecbb59269d0aa7f8a17e3a40"
     ],
     [
       "components/avatar-model-preview.css",
       "f4fdea0730ea7179677ca47c5aaf96481a0654ec7f402967c572297f6e361da3"
     ],
     [
-      "components/meshy-rigging-studio.css",
-      "63b6ed60f8cab4796c34e55805c5ec480d5e23c89f180ee2b44e68288962f8b7"
-    ],
-    [
       "components/player-card.css",
-      "ec38f3ec51fcc9821a601d061f3930714dd46e2603f48422ed6b2110bbec9778"
+      "ed26595d033b001550fdf210e00421537e7d1e33f3d4964db50abf65da28904d"
     ],
     [
       "components/spectator.css",
-      "45ee553abcb4bafe213f49ee1850bb92303146ca2ae0fed6e6eb1151a177f3b4"
+      "30e448d4dddf08ab2f81ec46388f250a47dd24c7a0ad2af438f96e15ae193b2b"
     ],
     [
       "cooldownKnowledge.ts",
@@ -545,7 +577,7 @@
     ],
     [
       "decisionPerception.ts",
-      "bf7a0a5e3c7d3545103fbdfc4488b89e455aea252ec4e3e26821be06baa22207"
+      "f7f7d867fca78efde2f55d951bf54798ea89811f9740bf5d8aed90afcb558d77"
     ],
     [
       "devRandomMode.ts",
@@ -556,6 +588,10 @@
       "e445e7ad4602def7361f308e609903bdacb27777aa75b5738ab0841848f0d6ce"
     ],
     [
+      "dynamicEventsAtmosphereRelease.ts",
+      "fc1dcd58d8e1138cc08613e44c0f9cdf9ce3ccdebf1f822564136a6839fc29fe"
+    ],
+    [
       "economyRules.ts",
       "5bd4a2fe5cc6fd4d83f7cfbb701fbc33c952f15c57cf76c05a31ad065738a316"
     ],
@@ -564,8 +600,12 @@
       "c34a3004635af44ba3eb49501bf4463a52fdb655d8db3944fe51229d12114eee"
     ],
     [
+      "epicObjectivesRules.ts",
+      "47a8dc8c633f243ef3dc33e58e64376f0e8979cc3362c93de82470fabc9472e1"
+    ],
+    [
       "equalizedMode.ts",
-      "d14301180a13759b371d3cd8aa2ceb883606c07bc33f71575b40f1972f71906c"
+      "2ea19fad376fd244a03c6cad6e07c9e389f8b49a209f28717d1c4c55439a8892"
     ],
     [
       "evolutionWorker.ts",
@@ -601,7 +641,7 @@
     ],
     [
       "index.css",
-      "abd77062816259aad559e85cf398be015b311b91b7ea9994fad80d8bcd80ee1d"
+      "26e550a18b28ab994dd8b5a5b6df55d833af9afcc05bfa2f12f3f30d979f5b7a"
     ],
     [
       "intelligencePolicy.ts",
@@ -622,6 +662,10 @@
     [
       "itemsData.ts",
       "638083ff95808e08f7ae93c2a4e616fb0797eef17a332b132e9268d14d8ee533"
+    ],
+    [
+      "jungleEcosystemRules.ts",
+      "45cc3046ef56f8d144d081cd9a69bf6ad6d994da9ede4e13be21eb4cfa9c9547"
     ],
     [
       "kaelenAbilities.ts",
@@ -653,7 +697,7 @@
     ],
     [
       "macroFarmRules.ts",
-      "e3b1d1e202d1603f2664caffdbb9eb5400e4a510321eb6284d31d540fc96b2a6"
+      "59d8ab1d23dbf97f7fb04e5089518fe1a30d3b94c430010c8bd322c27825832d"
     ],
     [
       "macroScenarioFixture.ts",
@@ -661,11 +705,19 @@
     ],
     [
       "main.tsx",
-      "61632495d6968cea7cfd3811dbf0f9c840036b03f6f6e4c2e929c9c5abf064eb"
+      "bf9c980310ad7be0fa3960a5437973e0c880b37c5dae71c52380d1c75bd92c69"
+    ],
+    [
+      "marketBatchEngine.ts",
+      "ddc6c36559a163ad039b22940693d77612e09b18107d9fe8a86153e314730f45"
+    ],
+    [
+      "match-viewer/AbilityWorldEffects.ts",
+      "4d3b992e3db5bc2cfd850c3b0cf121b8639fbf88edd1ed222ef778b7c5605d77"
     ],
     [
       "match-viewer/ArenaFrame.ts",
-      "19ef00ec698d50ebe5999f635d950b22bfc04e12f02991c24d301e01a5e888c0"
+      "1118a5cfab9f36ed3595fb98a8b697b85d78bf27b6a10209c11ed80ebaf64669"
     ],
     [
       "match-viewer/AvatarAnimationController.ts",
@@ -673,19 +725,19 @@
     ],
     [
       "match-viewer/BabylonAssets.ts",
-      "5d90abc1f7a6ec37452235ec29812aca519559c9577f32974c5ca15993044870"
+      "2ba01d7dc2402e82990e43aea75696c974fbccd2e5f2d312131633b357a122a3"
     ],
     [
       "match-viewer/BabylonBattlefield.ts",
-      "4b6b31226ff81cc35535745427a461c07daf96abb9e39b6ff7b6752bbe0782fb"
+      "e067abc32f6a288098f9394a2eae10eb8e4732ce74601c2add0faa86cc36e90d"
     ],
     [
       "match-viewer/BabylonEffects.ts",
-      "fb0ebb0617268bf69a23399996eb26567b59609c07fdc9ffa04f18dbf9264847"
+      "8a500febee03f886a0500cf5077ef71604ea6f7f454736fcf74e28e511beb4ab"
     ],
     [
       "match-viewer/BabylonMatchViewer.ts",
-      "52e23086572c612eb6f5111c3b23cd175b46e12cf3bb7cd6006798cbb2fd2ac3"
+      "4ce1e9ef70d167e42a96e4d8f22c2e3dc4a120e7f92ce5aa5fe5a9243828ce6f"
     ],
     [
       "match-viewer/BabylonReplayPanel.tsx",
@@ -693,35 +745,43 @@
     ],
     [
       "match-viewer/MatchViewer.ts",
-      "f5dea03352eb68087275232e5cd8666f28e02d7c2dc6847b6e2666fcd14baf2e"
+      "7a3a6e0275e53680814836a94c3cd8b86db1ef9bded755d663e946d22043f9ae"
     ],
     [
-      "match-viewer/PaintedArena.ts",
-      "0143488fe049259007214867638f4919d3fd39c53b758c2ecb9e6687acfa622e"
+      "match-viewer/PaintedArenaProcedural.ts",
+      "df41c8f336584abbb35d28a9ac875390372417f60da0df4a478df6a428251120"
     ],
     [
-      "match-viewer/PaintedBackdrop.ts",
-      "81eaa94f6ee615344f9d1574a56fd59dfb3fd6bb45c80943ecef22be23e82b25"
-    ],
-    [
-      "match-viewer/PaintedMirelle.ts",
-      "5d98301e0afb5dad6651c613345e08a1b7cc4a04ce1b42559dce152163d8648f"
-    ],
-    [
-      "match-viewer/PaintedScenery.ts",
-      "0301af817bac474b8af13054c5e39c151fc9408e20ab37d24a218443a8be06e3"
+      "match-viewer/TacticalMinimapRadar.ts",
+      "f98d45df9bc436b41f4f55f245c85440d7e60b58d11d12936de3204d0a39d954"
     ],
     [
       "match-viewer/ViewerReplay.ts",
-      "03134897ab9115bc092fd585f267b1f958651983d07387b306d05e0f207f0b41"
+      "9aec2426c62da7e08f19ba2b71e8a21a521d75c5464983beba469f40f0769917"
+    ],
+    [
+      "match-viewer/abilityArt.ts",
+      "35cc11bca3be92d9f798c501b2c3374180d0e3c5011bc2e758480d7a77af3ec4"
+    ],
+    [
+      "match-viewer/abilityEffectPlan.ts",
+      "76a66509fd57e361e76af6d0d381d22ade918f2a287749e66fc0987a91ba4eed"
     ],
     [
       "match-viewer/avatarPresentation.ts",
       "877aa95fcc73e4d8ef7885396009dd618c91c8754a0c1c8cb57da096d1679636"
     ],
     [
-      "match-viewer/paintedSpriteMotion.ts",
-      "b63570113f09dc7fb3150d2d289f22752c8db8829f1d7ddc2e91906dd54867e2"
+      "match-viewer/battlefieldFeatures.ts",
+      "030fa23584a60376c285784cdd7eaff7dbf519aff174583beae02ec4dcdbf8cc"
+    ],
+    [
+      "match-viewer/illustrationMotion.ts",
+      "c5c9f8e945db25364809cdd976d3a4f9e3fb97832aa9595b0385d5a0bbbeabd5"
+    ],
+    [
+      "match-viewer/paintedRosterArt.ts",
+      "f6a54421aa54cd89c134e2cb024e943238d009b6c1576234b067769b9f0e33f0"
     ],
     [
       "matchInspector.ts",
@@ -729,11 +789,11 @@
     ],
     [
       "matchReplay.ts",
-      "42a0a16cd521ce6ce31ad1b15094c436b5cb780df4974e1ab6a113fe3e52afde"
+      "b0e4b72626c4b93ebe79aba7aec70765201460a5846dd0c95df2fe012f66cec1"
     ],
     [
       "matchSimulationEngine.ts",
-      "89fa2557bd1e041b0e02cc51ce86adb04f76b522819f993b83c4a360d3d77d01"
+      "41d4905c9d4e55328d0287d5294404deb454be424380a2503593a0274afffd7a"
     ],
     [
       "mockData.ts",
@@ -757,7 +817,7 @@
     ],
     [
       "objectiveRules.ts",
-      "24f1afa5f84f1a5bacccf60b772b27c7b6b8e243769d98d2e49f0ac6a3825ce3"
+      "fff8a7bd48d4c440ce0cc0b1a9233d648a1a6b6c6f6831f9fd99a87f589dfd03"
     ],
     [
       "offlineOutcomePolicy.ts",
@@ -769,7 +829,7 @@
     ],
     [
       "onlineSpectator.ts",
-      "8e0ad413f80964682629d8c3338942016973b37891956a05b29c6dfd9777ddb5"
+      "86573dd9b1e447d4a273cbfb3f7af8d1a02369e38cbf413486ada0365624d09d"
     ],
     [
       "opponentTacticalMemory.ts",
@@ -794,6 +854,10 @@
     [
       "paxiDecision.ts",
       "826d9bdfc7fcbc8d63a74b96530656f77451d8c61bdcd504898fcc51502e5fd4"
+    ],
+    [
+      "phase3SpectatorReadability.ts",
+      "972d81d124eba52c31d989b48ef0e3774e42b5c2de993d806330dae4f9e4e614"
     ],
     [
       "playerCardPower.ts",
@@ -840,46 +904,6 @@
       "7c26e4162b55e508025186f490967e6634fa159ecd92e367c038cc4c37a46ac0"
     ],
     [
-      "rigging/animationRetargeting.ts",
-      "8b491b0d29a44b5b25b732d2fdf21bb7a329410f177e25e07940a26cb045ec0a"
-    ],
-    [
-      "rigging/assetContract.ts",
-      "89037bbbbd49815f21b83008322f626e2ac6fdd0ea1b15aa1bad1aed4c3eb6fe"
-    ],
-    [
-      "rigging/autoAlignment.ts",
-      "5a075e417f0efa33833c0dc2f9a3436473a8e024f21848094aa5884a7f56ecb3"
-    ],
-    [
-      "rigging/landmarkDetection.ts",
-      "901907e433251c5eba9bcc53f965e9408cac7ce47f3c63350a3283758865f19d"
-    ],
-    [
-      "rigging/rigValidator.ts",
-      "e5826ef8d19b25dc1b36461da2c40cf9ea6d10a7cae78290064403a9b979b8d5"
-    ],
-    [
-      "rigging/riggingPipeline.ts",
-      "10418ba66d4aa14741fe5794fad60d717b26a01c71f6240851239606dc21a033"
-    ],
-    [
-      "rigging/skeletonGenerator.ts",
-      "b79dc68ffd8f4c1890dc7cb2554df4ab1bfa61790d5bcde300872e8ad2c266db"
-    ],
-    [
-      "rigging/skinningEngine.ts",
-      "81f3266fed7f226eebb31feb2c0d03d95fc11c3c10cce7afcafcc671190cb997"
-    ],
-    [
-      "rigging/types.ts",
-      "d7b0f446715d266a1617bbc5ad04f17e64f7dbfdb6c3812c35f5c58f418a54ca"
-    ],
-    [
-      "rigging/weaponAttachment.ts",
-      "e46a2138565966abbf9600cea83cde6145c90a0b6157bd4b881403d71764790a"
-    ],
-    [
       "rosterResearch.ts",
       "177b9f654196cc41025a4a54e655a5a33c59f9f0d1a4fb97b0b65c71e6f6dbaa"
     ],
@@ -921,7 +945,7 @@
     ],
     [
       "structureProtection.ts",
-      "0a31649f2aa9238f36aaeaa1bb7d858fae681756a96287af30c4eba44a7ffebc"
+      "2dbe2359311faa19e4c18322daa5359566e37344b6b0737df10f7c165ae96102"
     ],
     [
       "structureSiegeRules.ts",
@@ -968,6 +992,10 @@
       "683ee9a6187bbe0f61e7494466f6b6e2cab0216b7860f5288401f3c890e189b4"
     ],
     [
+      "terrainStructureEconomyRules.ts",
+      "b47cf76fbb63beefc21c58b19a40409e4417acafe1e872101d0db12f7cc290c1"
+    ],
+    [
       "threeAbilityDetails.ts",
       "def91ec9e78b252ea630a69482e24ada4382127c9bef7185a4235e30781bd562"
     ],
@@ -1004,8 +1032,12 @@
       "7ad999131a0d5b48104763144ccca0bb9803b14643c5e4c97812faf5f6d1c82a"
     ],
     [
+      "twoLaneStrategyRules.ts",
+      "cfbfa0bb80507be8acca44992880575362e388e75e3f74333545daf638cfe573"
+    ],
+    [
       "types.ts",
-      "0aa6b282d04bc4d91d609b7ad00904929ffea1120664e116bf6970a6842350f4"
+      "2a7a2dc9b1c4fed6a9441ee78b915c4f44b0dc45fac9dac6480e0bf8318f226b"
     ],
     [
       "unitCollision.ts",
@@ -1037,7 +1069,11 @@
     ],
     [
       "v3Telegraphs.ts",
-      "0751afb55d0eb4452af6a8ea7571baf86baddda17ca13fe37cbac653e2da71fd"
+      "24a5193032d4840d0b8d9e57ebf03a083bed9973a1bea8da3dee67bbbb011710"
+    ],
+    [
+      "visionRules.ts",
+      "1153eb8beb3f9828a1ab1dba38829dd0ddae73151699bf58689f281f53f22d9d"
     ],
     [
       "voltaireModelForm.ts",

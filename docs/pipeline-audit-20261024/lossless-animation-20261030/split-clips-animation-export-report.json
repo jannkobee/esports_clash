@@ -1,0 +1,49 @@
+{
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Diagnostic left-hip animation; not game clip or full-body visual qualification.",
+  "weight_sha256": "e42afed24f19eefef5e715f5378b10b805e4994523e6d63a4c931bd12eac7438",
+  "max_influences": 7,
+  "roundtrip": [
+    {
+      "frame": 0,
+      "surface_error": 2.863078814937972e-07
+    },
+    {
+      "frame": 15,
+      "surface_error": 0.0009833862501089407
+    },
+    {
+      "frame": 30,
+      "surface_error": 0.004273655140506719
+    },
+    {
+      "frame": 45,
+      "surface_error": 0.004337858544015541
+    },
+    {
+      "frame": 60,
+      "surface_error": 0.004227636464377489
+    },
+    {
+      "frame": 75,
+      "surface_error": 0.004337858544015541
+    },
+    {
+      "frame": 90,
+      "surface_error": 0.004273655140506719
+    },
+    {
+      "frame": 105,
+      "surface_error": 0.0009833862501089407
+    },
+    {
+      "frame": 120,
+      "surface_error": 2.863078814937972e-07
+    }
+  ],
+  "reimport_fps": 24,
+  "status": "failed",
+  "error": "Animated roundtrip changed surface"
+}

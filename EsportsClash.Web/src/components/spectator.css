@@ -66,22 +66,21 @@
 .spectator-top {
   position: absolute;
   z-index: 20;
-  top: 10px;
+  top: 8px;
   left: 50%;
   transform: translateX(-50%);
-  width: min(960px, calc(100% - 380px));
-  height: 74px;
+  width: min(920px, calc(100% - 360px));
+  height: 64px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  padding: 6px 20px;
-  gap: 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-top: 2px solid rgba(251, 191, 36, 0.7);
-  background: linear-gradient(90deg, rgba(8, 28, 48, 0.94) 0%, rgba(10, 15, 25, 0.97) 45%, rgba(10, 15, 25, 0.97) 55%, rgba(48, 16, 28, 0.94) 100%);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(16px);
+  padding: 4px 18px;
+  gap: 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-top: 2px solid #f2c14e;
+  background: linear-gradient(90deg, rgba(11, 31, 68, 0.95) 0%, rgba(9, 21, 43, 0.97) 45%, rgba(9, 21, 43, 0.97) 55%, rgba(92, 18, 32, 0.95) 100%);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7);
 }
 
 .spectator-top::before {
@@ -480,18 +479,18 @@
 
 .broadcast-playback {
   position: absolute;
-  top: 92px;
-  left: 14px;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 25;
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 6px;
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: rgba(9, 21, 43, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
 .playback-btn {
@@ -585,13 +584,17 @@
   align-items: center;
   gap: 10px;
   padding: 3px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(15, 23, 42, 0.9);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(9, 21, 43, 0.92);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
   pointer-events: none;
   font-size: 11px;
+  transition: bottom 0.2s ease;
+}
+
+.spectator-shell[data-hud-mode="hidden"] .spectator-feed {
+  bottom: 48px;
 }
 
 .spectator-feed > span:first-child {

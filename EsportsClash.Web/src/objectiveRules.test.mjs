@@ -74,6 +74,11 @@ test('hasObjectiveVision detects pit presence from nearby allies, wards, or spot
   const enemyInPit = [{ x: 1010, y: 140, isAlive: true, revealedTimer: 2.0 }];
   assert.equal(hasObjectiveVision('blue', dragon, [], enemyInPit, []), true);
 
+  // 4. Howling Abyss river entrance ally (distance 480px from pit center)
+  const abyssDragon = { x: 1400, y: 240, isAlive: true };
+  const riverMouthAlly = [{ x: 1400, y: 720, isAlive: true }];
+  assert.equal(hasObjectiveVision('blue', abyssDragon, riverMouthAlly, [], []), true);
+
   // Dead boss has no vision need
   assert.equal(hasObjectiveVision('blue', { ...dragon, isAlive: false }, allyNear, [], []), false);
 });

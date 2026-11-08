@@ -1,11 +1,14 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.tsx'
-import { GameContentProvider } from './GameContentContext.tsx'
+import AppRouter from './AppRouter.tsx'
+import { AccountProvider } from './AccountContext.tsx'
+import './hexatrick-reference.css'
+import './hexatrick-crimson.css'
+import './hexatrick-world.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <GameContentProvider><App /></GameContentProvider>
+    <AccountProvider><AppRouter /></AccountProvider>
   </StrictMode>,
 )

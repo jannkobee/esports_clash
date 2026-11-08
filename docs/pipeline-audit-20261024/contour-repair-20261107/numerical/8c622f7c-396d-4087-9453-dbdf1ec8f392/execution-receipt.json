@@ -1,0 +1,6 @@
+{
+  "compute": "google",
+  "id": "8c622f7c-396d-4087-9453-dbdf1ec8f392",
+  "runtime_release": "release-colab-external-images_20261106-060046_RC00",
+  "input_zip_sha256": "640f60e5d6ae3c9e73478d5f0ef7d84ef3cb31be63f12ab31ccd8079f65a851a"
+}
