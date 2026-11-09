@@ -1,0 +1,14 @@
+{
+  "id": "47b6145b-d5cc-4565-bcef-11bc89a297b5",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "failed",
+  "stage": "socket-study",
+  "runtime_id": "9d6d63438ea2f910c5b7039d4a6ed77596c6dbf1843f3f1590afe1b6b86aa4f7",
+  "environment_sha256": "73928306c86dae9ce21c8fe672abffcebdbb4ee2a654fa3a194a6f466ee8d105",
+  "started_unix": 1793034391.7758,
+  "exit_code": 1,
+  "error": "RuntimeError: Socket study exited 1",
+  "completed_unix": 1793034475.3706603
+}

@@ -120,19 +120,21 @@ export function hasObjectiveVision(
   objective: { x: number; y: number; isAlive: boolean },
   allies: { x: number; y: number; isAlive: boolean }[],
   enemies: { x: number; y: number; isAlive: boolean; isInBush?: boolean; revealedTimer?: number }[],
-  wards: { team: 'blue' | 'red'; x: number; y: number }[]
+  wards: { team: 'blue' | 'red'; x: number; y: number; disabled?: boolean; hp?: number }[],
+  allyVisionRadius = 520,
+  wardVisionRadius = 350
 ): boolean {
   if (!objective.isAlive) return false;
-  // 1. Any allied champion near the pit (within 440px)
-  if (allies.some(a => a.isAlive && Math.hypot(a.x - objective.x, a.y - objective.y) <= 440)) {
+  // 1. Any allied champion near the pit (within allyVisionRadius, default 520px)
+  if (allies.some(a => a.isAlive && Math.hypot(a.x - objective.x, a.y - objective.y) <= allyVisionRadius)) {
     return true;
   }
-  // 2. Any allied ward covering the pit (within 320px)
-  if (wards.some(w => w.team === team && Math.hypot(w.x - objective.x, w.y - objective.y) <= 320)) {
+  // 2. Any active allied ward covering the pit (within wardVisionRadius, default 350px)
+  if (wards.some(w => w.team === team && !w.disabled && (w.hp ?? 1) > 0 && Math.hypot(w.x - objective.x, w.y - objective.y) <= wardVisionRadius)) {
     return true;
   }
-  // 3. Any visible enemy inside the pit (within 320px of objective)
-  if (enemies.some(e => e.isAlive && Math.hypot(e.x - objective.x, e.y - objective.y) <= 320 && (!e.isInBush || (e.revealedTimer ?? 0) > 0))) {
+  // 3. Any visible enemy inside the pit (within wardVisionRadius of objective)
+  if (enemies.some(e => e.isAlive && Math.hypot(e.x - objective.x, e.y - objective.y) <= wardVisionRadius && (!e.isInBush || (e.revealedTimer ?? 0) > 0))) {
     return true;
   }
   return false;

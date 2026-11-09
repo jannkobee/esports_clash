@@ -1,0 +1,15 @@
+{
+  "id": "11332025-b597-42fd-a97f-3fb950d20219",
+  "compute": "google",
+  "status": "completed",
+  "publication_eligible": false,
+  "started_unix": 1792947370.778532,
+  "runtime_id": "4609d639a23b3236ce76f02e1db51210496e5f4491fd469b61199e97dffd9b14",
+  "environment_sha256": "73928306c86dae9ce21c8fe672abffcebdbb4ee2a654fa3a194a6f466ee8d105",
+  "process_pid": 91155,
+  "artifact": {
+    "sha256": "fabe0de8f9b5e5f183bdf92a54bf0a2b739818ead9a86bb47fb2ceafc0518429",
+    "bytes": 39666
+  },
+  "completed_unix": 1792947437.2877364
+}

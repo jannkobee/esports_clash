@@ -1,4 +1,4 @@
-import test from 'node:test';
+import {retiredAvatarAssetTest as test} from './testFixtures/retiredAvatarAssets.mjs';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
@@ -92,16 +92,15 @@ test('AvatarAssetLibrary plays and blends editable Blender clips directly via An
   disposeArenaTerrainResources(resources.owner);
 });
 
-test('prepared UniRig clips retain their pose without duplicate native contact offsets', async () => {
+for (const provider of ['unirig', 'tokenrig']) test(`prepared ${provider} clips retain their pose without duplicate native contact offsets`, async () => {
   const { AvatarAssetLibrary } = await import('./avatarModelAssets.ts');
   const file = await parse('c_solana');
   let root; file.scene.traverse(node => {if(node.userData.avatarPart==='avatar-root')root=node;});
-  root.userData.assetPreparation={provider:'unirig',animation_mode:'retargeted-native-clips'};
+  root.userData.assetPreparation={provider,animation_mode:'retargeted-native-clips'};
   const resources=new AvatarModelResources(),library=new AvatarAssetLibrary(resources);
   library['files'].set('c_solana',file);
   const instance=library.instantiate('c_solana'),raw=clone(file.scene);
   let rawRoot;raw.traverse(node=>{if(node.userData.avatarPart==='avatar-root')rawRoot=node;});
-  bindAvatarModel(rawRoot,resources,{drivenByMixer:true,preserveNativeMotion:true});
   const mixer=new THREE.AnimationMixer(raw);
   const transforms=(scene,excludeBreathing=false)=>{const values=[];scene.traverse(node=>{if((node.isBone||node.userData.avatarPart)&&!(excludeBreathing&&['Chest','Spine'].includes(node.name)))values.push(...node.position.toArray(),...node.quaternion.toArray(),...node.scale.toArray());});return values;};
   for(const name of ['Idle','Walk','Attack','Cast']) {

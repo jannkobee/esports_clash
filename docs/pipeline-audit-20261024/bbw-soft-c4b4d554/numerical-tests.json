@@ -1,0 +1,7 @@
+{
+  "compute": "google",
+  "returncode": 0,
+  "output": "test_preserves_hands_and_core_torso_with_finite_normalized_weights (__main__.BoundedFieldTests.test_preserves_hands_and_core_torso_with_finite_normalized_weights) ... ok\ntest_soft_support_is_continuous_across_bilateral_ownership_tie (__main__.BoundedFieldTests.test_soft_support_is_continuous_across_bilateral_ownership_tie) ... ok\ntest_unavailable_donor_support_fails_instead_of_creating_unweighted_vertices (__main__.BoundedFieldTests.test_unavailable_donor_support_fails_instead_of_creating_unweighted_vertices) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.041s\n\nOK\n",
+  "test_sha256": "63b8fe55054929bf8f2a9f273d1f0a85f9ee73780ff900d1362aef20e8970c69",
+  "implementation_sha256": "20c8e017496680ac2c54bef23437c6f63852303849fef7b5c0dc686ee0632cba"
+}

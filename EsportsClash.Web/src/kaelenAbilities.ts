@@ -3,6 +3,8 @@ export type KaelenSpellControl = 'stun' | 'root' | 'knockup' | 'knockback' | 'no
 export type KaelenSpellShape = 'burst' | 'line' | 'snowball' | 'meteor' | 'ally' | 'summon';
 
 export interface KaelenInvokedSpell {
+  image?: string;
+  disabled?: boolean;
   id: string; name: string; recipe: readonly [KaelenElement, KaelenElement, KaelenElement];
   cooldown: number; damage: number; radius: number; control: KaelenSpellControl; controlDuration: number;
   shape: KaelenSpellShape; range: number; mana: number; delay: number; speed: number;

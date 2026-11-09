@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-24",
+  "scope": "Actual local registry and engine browser; simulated version/outage responses only inside an isolated browser fixture. No catalog mutations or asset jobs.",
+  "roster": {
+    "count": 45,
+    "currentIdentity": true,
+    "draftLink": true
+  },
+  "detail": {
+    "name": "Solenne Vaelor",
+    "skills": 4,
+    "evidence": true
+  },
+  "mobile": {
+    "width": 390,
+    "scroll": 390
+  },
+  "app": {
+    "valid": true,
+    "avatars": 45,
+    "hash": "67a3c716164d269230c2e96bb09667eae8850067834faf0142521340bb9847df"
+  },
+  "activeMatch": {
+    "before": {
+      "fingerprint": "45356:ea05ca9a:e16554d2",
+      "randomState": 71011,
+      "championHp": 1302,
+      "maxHp": 1742
+    },
+    "after": {
+      "fingerprint": "45356:ea05ca9a:e16554d2",
+      "randomState": 71011,
+      "championHp": 1302,
+      "maxHp": 1742
+    }
+  },
+  "refresh": {
+    "before": {
+      "status": "connected",
+      "hash": "67a3c716164d269230c2e96bb09667eae8850067834faf0142521340bb9847df",
+      "frozenHash": "67a3c716164d269230c2e96bb09667eae8850067834faf0142521340bb9847df",
+      "currentHp": 1250,
+      "frozenHp": 1250
+    },
+    "after": {
+      "status": "connected",
+      "hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "frozenHash": "67a3c716164d269230c2e96bb09667eae8850067834faf0142521340bb9847df",
+      "currentHp": 1373,
+      "frozenHp": 1250
+    },
+    "outage": {
+      "status": "stale",
+      "hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "frozenHash": "67a3c716164d269230c2e96bb09667eae8850067834faf0142521340bb9847df",
+      "currentHp": 1373,
+      "frozenHp": 1250
+    },
+    "recovered": {
+      "status": "connected",
+      "hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "frozenHash": "67a3c716164d269230c2e96bb09667eae8850067834faf0142521340bb9847df",
+      "currentHp": 1373,
+      "frozenHp": 1250
+    }
+  },
+  "newMatch": {
+    "championHp": 1430,
+    "maxHp": 1870
+  },
+  "errors": []
+}

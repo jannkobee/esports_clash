@@ -1,0 +1,14 @@
+{
+  "id": "38fccb63-f252-4647-9e2c-228d32558795",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "skin-evaluation",
+  "runtime_id": "9d6d63438ea2f910c5b7039d4a6ed77596c6dbf1843f3f1590afe1b6b86aa4f7",
+  "environment_sha256": "73928306c86dae9ce21c8fe672abffcebdbb4ee2a654fa3a194a6f466ee8d105",
+  "started_unix": 1793039594.9126682,
+  "exit_code": 0,
+  "report_sha256": "0c5f34c3cb50142a3a972e57856b2cd7e0065687e26295eeffec291a927042b5",
+  "completed_unix": 1793039691.2674274
+}

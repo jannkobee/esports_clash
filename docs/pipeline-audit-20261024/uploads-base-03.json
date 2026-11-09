@@ -1,0 +1,37 @@
+[
+  {
+    "kind": "body",
+    "avatar_id": "c_valkira",
+    "path": "docs/pipeline-audit-20261024/upload-assets/base/kael-vespera.png",
+    "sha256": "4a2d56ba8713713c751bc9df3ef9558df78ad77ee8f6688757c69d406c2054fe",
+    "prompt": "Create a NEW clean technical anatomical base mannequin for Kael Vespera. The attached character drawing is identity/proportion reference only. CRITICAL: completely BALD smooth head, NO scalp hair, beard, braids, loose fur shell, jewelry or clothing. Entire figure uniform neutral MATTE GRAY clay, not skin-colored. Preserve depicted adult gender, age, proportions and species; adult humanoid anatomy, both complete bare arms/hands and legs/feet, no equipment. Smooth opaque close-fitting modesty layer across chest/pelvis, no intimate details. One figure, full head to feet, centered front orthographic view with padding. Static symmetrical WIDE A-POSE: both arms straight 45 degrees down/out from torso, elbows straight, palms DOWN, all fingers individually separated. Hands clear of hips. Legs straight slightly apart, feet on same level. Unobstructed joints, clear underarm/leg gaps. No twist/action, no outfit, boots, cape, armor, weapons, tools, straps, pet, mount or vehicle. No texts, labels, floor or shadows. TRUE TRANSPARENT alpha background. Only intrinsic anatomy and modesty surface. This is a base to rig BEFORE clothing/hair/gear."
+  },
+  {
+    "kind": "body",
+    "avatar_id": "c_kage",
+    "path": "docs/pipeline-audit-20261024/upload-assets/base/nyxara-vale.png",
+    "sha256": "3ec936de5cae23552f48b252e0ed1d8b6d70c1858a006b42e3ef0c0accb36599",
+    "prompt": "Create a NEW clean technical anatomical base mannequin for Nyxara Vale. The attached character drawing is identity/proportion reference only. CRITICAL: completely BALD smooth head, NO scalp hair, beard, braids, loose fur shell, jewelry or clothing. Entire figure uniform neutral MATTE GRAY clay, not skin-colored. Preserve depicted adult gender, age, proportions and species; adult humanoid anatomy, both complete bare arms/hands and legs/feet, no equipment. Smooth opaque close-fitting modesty layer across chest/pelvis, no intimate details. One figure, full head to feet, centered front orthographic view with padding. Static symmetrical WIDE A-POSE: both arms straight 45 degrees down/out from torso, elbows straight, palms DOWN, all fingers individually separated. Hands clear of hips. Legs straight slightly apart, feet on same level. Unobstructed joints, clear underarm/leg gaps. No twist/action, no outfit, boots, cape, armor, weapons, tools, straps, pet, mount or vehicle. No texts, labels, floor or shadows. TRUE TRANSPARENT alpha background. Only intrinsic anatomy and modesty surface. This is a base to rig BEFORE clothing/hair/gear."
+  },
+  {
+    "kind": "body",
+    "avatar_id": "c_kazemaru",
+    "path": "docs/pipeline-audit-20261024/upload-assets/base/serrin-galecrest.png",
+    "sha256": "c98a3859d135dc9df13d838c57eb6d21d9f98de8073fa0f7887acf0e42e8841a",
+    "prompt": "Create a NEW clean technical anatomical base mannequin for Serrin Galecrest. The attached character drawing is identity/proportion reference only. CRITICAL: completely BALD smooth head, NO scalp hair, beard, braids, loose fur shell, jewelry or clothing. Entire figure uniform neutral MATTE GRAY clay, not skin-colored. Preserve depicted adult gender, age, proportions and species; adult humanoid anatomy, both complete bare arms/hands and legs/feet, no equipment. Smooth opaque close-fitting modesty layer across chest/pelvis, no intimate details. One figure, full head to feet, centered front orthographic view with padding. Static symmetrical WIDE A-POSE: both arms straight 45 degrees down/out from torso, elbows straight, palms DOWN, all fingers individually separated. Hands clear of hips. Legs straight slightly apart, feet on same level. Unobstructed joints, clear underarm/leg gaps. No twist/action, no outfit, boots, cape, armor, weapons, tools, straps, pet, mount or vehicle. No texts, labels, floor or shadows. TRUE TRANSPARENT alpha background. Only intrinsic anatomy and modesty surface. This is a base to rig BEFORE clothing/hair/gear."
+  },
+  {
+    "kind": "body",
+    "avatar_id": "c_cora",
+    "path": "docs/pipeline-audit-20261024/upload-assets/base/quillene-rook.png",
+    "sha256": "57ac6ed8280df87553274063c493591f62a5a23132a6b9cd5411ac21a7dd9c93",
+    "prompt": "Create a NEW clean technical anatomical base mannequin for Quillene Rook. The attached character drawing is identity/proportion reference only. CRITICAL: completely BALD smooth head, NO scalp hair, beard, braids, loose fur shell, jewelry or clothing. Entire figure uniform neutral MATTE GRAY clay, not skin-colored. Preserve depicted adult gender, age, proportions and species; adult humanoid anatomy, both complete bare arms/hands and legs/feet, no equipment. Smooth opaque close-fitting modesty layer across chest/pelvis, no intimate details. One figure, full head to feet, centered front orthographic view with padding. Static symmetrical WIDE A-POSE: both arms straight 45 degrees down/out from torso, elbows straight, palms DOWN, all fingers individually separated. Hands clear of hips. Legs straight slightly apart, feet on same level. Unobstructed joints, clear underarm/leg gaps. No twist/action, no outfit, boots, cape, armor, weapons, tools, straps, pet, mount or vehicle. No texts, labels, floor or shadows. TRUE TRANSPARENT alpha background. Only intrinsic anatomy and modesty surface. This is a base to rig BEFORE clothing/hair/gear."
+  },
+  {
+    "kind": "body",
+    "avatar_id": "c_renn",
+    "path": "docs/pipeline-audit-20261024/upload-assets/base/aurelio-vane.png",
+    "sha256": "02331be926f7987af48bf38a9cd56345f34dd9c40d37ac086d904f7cc2532901",
+    "prompt": "Create a NEW clean technical anatomical base mannequin for Aurelio Vane. The attached character drawing is identity/proportion reference only. CRITICAL: completely BALD smooth head, NO scalp hair, beard, braids, loose fur shell, jewelry or clothing. Entire figure uniform neutral MATTE GRAY clay, not skin-colored. Preserve depicted adult gender, age, proportions and species; adult male HUMAN, no wings (his fan shield is equipment). Smooth opaque close-fitting modesty layer across chest/pelvis, no intimate details. One figure, full head to feet, centered front orthographic view with padding. Static symmetrical WIDE A-POSE: both arms straight 45 degrees down/out from torso, elbows straight, palms DOWN, all fingers individually separated. Hands clear of hips. Legs straight slightly apart, feet on same level. Unobstructed joints, clear underarm/leg gaps. No twist/action, no outfit, boots, cape, armor, weapons, tools, straps, pet, mount or vehicle. No texts, labels, floor or shadows. TRUE TRANSPARENT alpha background. Only intrinsic anatomy and modesty surface. This is a base to rig BEFORE clothing/hair/gear."
+  }
+]

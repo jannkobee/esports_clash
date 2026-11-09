@@ -1,0 +1,64 @@
+{
+  "review_id": "ea2fa038-bc63-43b0-9fd7-30a096048402",
+  "status": "visible_deformation_unresolved",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Manual review of 12 of 72 hash-verified views, single joint nominal 45/90 degrees; pivots and axes can differ across stages.",
+  "observations": [
+    "At 90 degrees both raw hips already show abrupt inner-hip compression; early and corrected stages retain a deep crease.",
+    "The left shoulder remains rounded and compressed across the three stages in the inspected view.",
+    "At 45 degrees the left hip transition is less pronounced, while 90-degree bends are visibly problematic.",
+    "The corrective ThighL morph is active in the sampled corrected 90-degree clip; these diagnostic clips do not establish game animation coverage."
+  ],
+  "decision": "Keep all candidates unqualified. Investigate rigging and skinning with an independently generated cloud rig or a suitable deformation-oriented source topology; do not claim this evidence alone isolates the cause.",
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/raw-ThighL-45-orbit1.png",
+      "sha256": "97d1fa6ea04315f18bdb42357a297b10c8a5bbc1b4f15ea378018e6ec1ee72ef"
+    },
+    {
+      "file": "screenshots/raw-ThighL-90-orbit1.png",
+      "sha256": "36cbf6acb9d72644b0284a21bf2193be3d782ede093f68fe6e998f252f095503"
+    },
+    {
+      "file": "screenshots/raw-ThighR-90-orbit3.png",
+      "sha256": "b39e474cd9fa556dc1174d204a9aafebd8ddc9145df68c20a5ba0d62cc94ce79"
+    },
+    {
+      "file": "screenshots/raw-UpperArmL-90-orbit3.png",
+      "sha256": "f1e3aa1d434192df3ca8fe942a068fe3851dc85b5fca3ff23b25b15ce8a17e2f"
+    },
+    {
+      "file": "screenshots/early-ThighL-45-orbit1.png",
+      "sha256": "bb67f86762f95bcc08842e8922a82c7c6246947e9ffdcf27cda67bbfc7d3e240"
+    },
+    {
+      "file": "screenshots/early-ThighL-90-orbit1.png",
+      "sha256": "7ff4dc0796d84870d2136579f7f35fa8df86bb1201de66d5ba6e1f581649457f"
+    },
+    {
+      "file": "screenshots/early-ThighR-90-orbit3.png",
+      "sha256": "f5b2b089f3090423393157b1ec225dd14b77bfc5222b3d7db7f53ddd2e6300ec"
+    },
+    {
+      "file": "screenshots/early-UpperArmL-90-orbit3.png",
+      "sha256": "3f4d85b4c8eac48badde9703d1b05a44c1fe99f6a000e391cdaac2ca90df4366"
+    },
+    {
+      "file": "screenshots/corrected-ThighL-45-orbit1.png",
+      "sha256": "ffa2a5b08c53f8881f4dd2640ee3ec68edba7c67a0bfac93d62175ba75045327"
+    },
+    {
+      "file": "screenshots/corrected-ThighL-90-orbit1.png",
+      "sha256": "6f9242b13d40143d7220d9d61c3d8761b3b0eb0fada4bff996324b4b11ee5141"
+    },
+    {
+      "file": "screenshots/corrected-ThighR-90-orbit3.png",
+      "sha256": "dc6b18d033cf69b714f527b1ca60710fad4a7d18eded8171136fc860d45d9644"
+    },
+    {
+      "file": "screenshots/corrected-UpperArmL-90-orbit3.png",
+      "sha256": "15b5e59f3999e7b9d36b38eb2a29ff2fa19ea3b147379086fba9907dfd72a426"
+    }
+  ]
+}

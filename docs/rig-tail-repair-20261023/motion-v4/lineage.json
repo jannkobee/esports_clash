@@ -1,0 +1,13 @@
+{
+  "parent": "/avatar-data/rig-tail-arms-stafford-v4-20261023",
+  "folder": "/avatar-data/41323ce2-25f3-49fc-b7e8-a88c3e0a6894",
+  "avatar_id": "c_wukong_lol",
+  "candidate_sha256": "df9a99d818acf561d9c915cceb5295ca2dad33b5f87483639fc606d5a35bdf39",
+  "viewer": {
+    "avatar-review-9ViuQh-b.js": "de0d0736d2d3f1555ca966a5c17d1ef62a7477f12652e691128bb2a7f1b45fb1",
+    "avatar-review-C-k_MGSR.js": "ff34937363e53865152e4eccac1957fbce1cefa0a2c2f7fc3b616daae6721ed2",
+    "avatar-review-CLlb13Fg.js": "c30978e94b3daa0bfb67598e66f0f40d62e7c6ed6b6edc62c4c6e8c87057ce26"
+  },
+  "browser_sha256": "d04a9e7ee17fa8f93253442ef457ff4d0dd81a683c60f09d8949ebd06038c883",
+  "publication_eligible": false
+}

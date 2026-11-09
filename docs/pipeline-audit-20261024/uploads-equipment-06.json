@@ -1,0 +1,80 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_kage",
+    "component_id": "lacquer_outfit",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Articulated matte-black lacquer outfit",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Nyxara Vale. Attached drawing is design reference only. Only the empty articulated matte-black lacquer clothing and armor set, angular strips, black scarf and draped split cloth, gloves and boots. Neutral wide A pose on invisible support, open gaps remain empty. No person, skin, head, hair, mannequin, daggers, weapons or shadows. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/nyxara-vale-lacquer_outfit.png",
+    "sha256": "c1ec69926363fc62b58b7ea244d69f42dfe8d3701db2ce4a9f2a05cc7200823e"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_kazemaru",
+    "component_id": "curved_blade",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Narrow curved blade",
+    "attachment": "right hand",
+    "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Serrin Galecrest. Attached drawing is design reference only. One complete narrow gently curved sword with bronze compass-inspired hilt and dark etched blade, isolated diagonally with entire tip and pommel in frame. No hands, body, clothing or shield. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/serrin-galecrest-curved_blade.png",
+    "sha256": "8f1f6b08d07bcff981fecf47ff95d456b323fdc6beb3c65761022721058180cc"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_kazemaru",
+    "component_id": "sailor_armor",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Sailor armor and weather-map tapes",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Serrin Galecrest. Attached drawing is design reference only. Only the empty sailor armor/clothing set with blue coat, ivory shirt, brown leather straps, gray trousers, boots and attached weather-map tapes. Neutral wide A pose on invisible support. No sword, shield, person, skin, hair or mannequin. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/serrin-galecrest-sailor_armor.png",
+    "sha256": "c843fd661d800c557e1b16d6750ac95e3a1bd8217b4a25ca0a3a9e2c51f5046b"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_kindra",
+    "component_id": "lantern_staff",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Lantern scout staff",
+    "attachment": "hand",
+    "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Orin and Fen. Attached drawing is design reference only. One complete wooden lantern scout staff with hooked top and hanging brass lantern, orange glass panels, wrapped handle and small red tassel. Entire staff and lantern visible. No human, animal, body, flame plume or clothing. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/orin-and-fen-lantern_staff.png",
+    "sha256": "04e8d4daf95eb664cf8078e820065f6ac4441479c2eab157ebf2218961f4a912"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_kindra",
+    "component_id": "scout_outfit",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Scout outfit and travel pack",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Isolated physical equipment reconstruction reference for Orin and Fen. Attached drawing is design reference only. Only the empty rugged lantern-scout outfit: red torn shawl, ivory shirt, brown leather straps, trousers, tall leather boots and travel pack. Neutral wide A pose on invisible support; clearly empty neck and joints. No staff, lantern, dog, human, skin, head, hair or mannequin. Preserve the pictured design, proportions, palette and materials. Even neutral studio lighting, product-render clarity, three-quarter view unless an outfit rest pose is specified. Entire asset inside the central 70% of image, ample transparent margin on all sides. Genuine transparent background. No floor, cast shadow, glow backdrop, text, labels, frames, logo or unrelated items.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/orin-and-fen-scout_outfit.png",
+    "sha256": "78e53430cb88513a0211c3523821ab2562ba92237b997f4ecc202f2b102fe35e"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_buck",
+    "component_id": "rotary_ram",
+    "category": "back",
+    "binding": "rigid",
+    "label": "Rotary ram-gun and back brace",
+    "attachment": "back",
+    "prompt": "Use case: stylized-concept. One isolated fantasy industrial power-tool assembly from the attached character design reference: the complete rotary rock-drilling machine with spiral drill head, its shoulder pivot, mechanical back brace and hoses. Worn black steel with orange hazard panels and brass joints. No operator, person, hands, body, clothing or weapon firing effects. Static catalog view, neutral lighting, full assembly within central 65% of frame and generous transparent margins. Transparent background, no floor, shadows, text, labels or backdrop.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/bramm-coil-rotary_ram.png",
+    "sha256": "e372f3f8a8240ba5e7388a24fa181374e654ea53f038a57b21484a3abeff7296"
+  }
+]

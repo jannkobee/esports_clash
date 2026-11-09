@@ -1,0 +1,40 @@
+{
+  "candidate_id": "1bb641cd-ce80-4e12-9018-e67de0ff6dc3",
+  "url": "http://localhost:8089/evolution/registry/avatars/c_invoker/base/1bb641cd-ce80-4e12-9018-e67de0ff6dc3",
+  "roster": {
+    "count": 45,
+    "missing": true
+  },
+  "loaded": {
+    "bones": 48,
+    "clips": [
+      "Attack",
+      "Cast",
+      "Death",
+      "Hit",
+      "Idle",
+      "Run",
+      "Strafe",
+      "TurnLeft",
+      "TurnRight",
+      "Walk"
+    ],
+    "meshes": 2,
+    "vertices": 12476,
+    "gpu": {
+      "vendor": "Google Inc. (NVIDIA)",
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 (0x00002504) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+    }
+  },
+  "seek": {
+    "samples": 50,
+    "finiteTransforms": true
+  },
+  "errors": [],
+  "status": "animated_base_unqualified",
+  "limits": [
+    "Browser load and seek smoke check only. Does not clear the independent collision failures.",
+    "No production match performance, mirrored-team, transition or artistic qualification."
+  ]
+}

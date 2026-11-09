@@ -1,0 +1,9 @@
+{
+  "parent_id": "7c29ff0b-7f6e-495e-87ae-b9ed54aedad6",
+  "compute": "google",
+  "publication_eligible": false,
+  "proxy_sha256": "f0627f11cbb664bae48b0f4ddf212efdc04f818d59ee197b5ae679860e15d2e6",
+  "figure_sha256": "e0ce459c18ae61b3f4db4dc511839bdf69be8688a23b5550c3958218b4c26e5d",
+  "script_sha256": "48bdce4cc757a47d9c97b6814a7caedc0a93218483f3faffe092681b9c912f2f",
+  "scope": "Four sagittal sections; not a full topology, rig or deformation qualification"
+}

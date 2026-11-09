@@ -1,0 +1,47 @@
+{
+  "status": "rejected_regression",
+  "reviewed_on": "2026-11-07",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "summary": "Reject fixed-boundary curvature fairing. It adds visible shoulder dimples/faceting and increases contacts in 16 of 25 poses. Straight-elbow shoulders at 60 degrees worsen from 348/390 to 567/580; at 90 from 93/166 to 466/412. Left hip 90/knee90/twist+20 worsens 42 to 233. Export/playback preservation is not shape acceptance.",
+  "inspected": [
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-front.png",
+      "sha256": "2b612af0125573331d3639b19685965ca8365274ab1a8b66810f17220cc2299e"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-oblique.png",
+      "sha256": "a0e323b78cfd719438148cd35300a703798f918f3a0a33dea2d7e06edb56adc3"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-front.png",
+      "sha256": "6fbe0c3341aa99f31e74ccb52f9e9cdb85dbdc3cdda07c9f9c1c69174ac294d0"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-oblique.png",
+      "sha256": "bd057d7c1e795a7b3b2b7799b7b3348e8babf1fe892c9959e41f179a9ec6b3be"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-side.png",
+      "sha256": "625771ddf88feeb0b43bde48f8006d1df396ddd24f0711289cb68e7815f06f20"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-side.png",
+      "sha256": "41446b3631c032a2e966bd3733324b6caa23131e2ada21e8ed7e93e7e607e21d"
+    },
+    {
+      "file": "repair-screenshots/03-UpperArmR-60-child0-twist0-baseline-oblique.png",
+      "sha256": "529b16b70e9db827466ce734eb6e3bfa38103b9506b16ed9ae98f4523a65ea32"
+    },
+    {
+      "file": "repair-screenshots/03-UpperArmR-60-child0-twist0-candidate-oblique.png",
+      "sha256": "e6adca9a7837c6a88bca616cfd1e4049650207229d205b649e254b0acb13853c"
+    }
+  ],
+  "limitations": [
+    "Eight named images inspected, not all 175 captures.",
+    "The first harness front label uses negative Z and shows the back; some positive-X views occlude the left shoulder. Camera alpha/target records preserve the true view.",
+    "Rest target was incorrectly offset by half height; these images do not prove full-body rest visual preservation.",
+    "No full motion/device/game qualification or glTF-validator result is claimed for this rejected first attempt."
+  ]
+}

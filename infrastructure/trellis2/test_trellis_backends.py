@@ -63,7 +63,7 @@ class NativeBackendTests(unittest.TestCase):
         self.client.request.assert_not_called()
 
     def test_missing_colab_session_is_a_blocker_not_a_generated_source(self):
-        with patch('trellis_backends.subprocess.run',return_value=MagicMock(stdout="[colab] Session not found",returncode=1)):
+        with patch('trellis_backends.colab_execute',return_value="[colab] Session not found"):
             with self.assertRaisesRegex(BackendError,'session is unavailable'):
                 ColabClient('colab','missing').request('GET','/operations')
 

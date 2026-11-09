@@ -1,0 +1,29 @@
+{
+  "scope": "Unused code only; all artwork and frozen evidence retained",
+  "removed": [
+    {
+      "path": "EsportsClash.Web/src/components/ArenaMatchView.tsx",
+      "bytes": 26190,
+      "sha256": "60009debaa04ffb6f096a42da2c5086b48103d26b0d8a6ac3dfc42fbf12d6af1",
+      "reason": "No remaining source/script imports; obsolete independent simulator or removed orb UI"
+    },
+    {
+      "path": "EsportsClash.Web/src/components/ThreeAramArena.tsx",
+      "bytes": 62740,
+      "sha256": "3352e4ff6b0c8cffb2a9484857e4f43df153aef0334669d766a5b976091eef72",
+      "reason": "No remaining source/script imports; obsolete independent simulator or removed orb UI"
+    },
+    {
+      "path": "EsportsClash.Web/src/components/TeamfightArenaView.tsx",
+      "bytes": 35705,
+      "sha256": "3b6ba46409d8dea269319e87b6b501006dfc7fe0c750426182e7ca52919ca736",
+      "reason": "No remaining source/script imports; obsolete independent simulator or removed orb UI"
+    },
+    {
+      "path": "EsportsClash.Web/src/components/ConfluxSpellbook.tsx",
+      "bytes": 5524,
+      "sha256": "c8d7ff9f53bd91a6959cde738494eb6669eac04ab18ca410e158b1188cfcd4a2",
+      "reason": "No remaining source/script imports; obsolete independent simulator or removed orb UI"
+    }
+  ]
+}

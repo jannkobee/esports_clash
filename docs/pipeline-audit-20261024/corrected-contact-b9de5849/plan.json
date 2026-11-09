@@ -1,0 +1,29 @@
+{
+  "id": "b9de5849-f645-4d9c-95e9-443747df4989",
+  "method": "corrected-morph-contact-map-v1",
+  "compute": "google",
+  "qualification_complete": false,
+  "publication_eligible": false,
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "parent_candidate_id": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97",
+  "parent_candidate_sha256": "85fba1625bd539ec28c6564a037fa02c4bfb4aa886316afc345c5f05429deace",
+  "visual_review_id": "0a4e25c9-23ad-4c5a-a58d-db4d4588bd9d",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "files": {
+    "candidate.glb": "85fba1625bd539ec28c6564a037fa02c4bfb4aa886316afc345c5f05429deace",
+    "candidate-report.json": "6471655a5554fb80697286053c967eff83649c0770ad71685ab72fb412d78a46",
+    "baseline-report.json": "f653cff75831fb9200d8f143a6a3bcb56af2c653626a60475977f400ec26568c",
+    "backoffice-proof.json": "3e603e47643009ddb2a1d9090e18be5ea79502a34959da8bb8e8eeddcec25f7c",
+    "candidate-stress.glb": "dbbc0810eb315105652188a70b21bb229fb08f14a54dee5606d635eb1138f549",
+    "installation.json": "ef5725f70121a5614ce4b5457d3ead30820c14f44433cc6746cca0577582662f",
+    "environment.txt": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+    "tools/diagnose_corrected_contacts.py": "010e98bc717b1b59dc2beedbf7b6a20dafcb6242230aa862e9c4fb3aadb64ac2",
+    "tools/diagnose_collision_influences.py": "a2519c2c2cb1bdd2edf759de15f1e319e4d6b3cd6b66798a1600395bc01e0932",
+    "tools/candidate_animation.py": "2ca31df434f746cfdcd525cb747d62691d3f1ff4c4a48456287efa13f17489f6",
+    "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+    "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+    "supervisor.py": "49d2cdd3b17a67ae1cbc20da2a35bc1fa93f85554ad67f6839afe738ba881ae7"
+  }
+}

@@ -1,3 +1,4 @@
+import {retiredAvatarAssetTest} from './testFixtures/retiredAvatarAssets.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -47,7 +48,7 @@ test('weapon impact particles require explicit confirmed cues, freeze on pause a
  assert.equal(JSON.stringify(cue),before);fx.update([],[],2,[],[{...cue,age:1}]);assert.equal(fx.stats().effects,0);disposeArenaTerrainResources(fx.root);
 });
 
-test('v9 shipped GLBs and Blender sources retain strict trees, actions, grip shapes and matching hashes',async()=>{
+retiredAvatarAssetTest('v9 shipped GLBs and Blender sources retain strict trees, actions, grip shapes and matching hashes',async()=>{
  const folder=new URL('../public/models/avatars-v9/',import.meta.url),manifest=JSON.parse(await readFile(new URL('manifest.json',folder),'utf8'));
  const sources=new URL('../../art/avatars-v9/',import.meta.url),blends=JSON.parse(await readFile(new URL('manifest.json',sources),'utf8'));
  assert.equal(manifest.avatars.length,45);assert.equal(blends.models.length,45);let shapes=0;

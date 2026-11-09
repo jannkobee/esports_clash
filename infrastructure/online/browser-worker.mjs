@@ -3,6 +3,7 @@ import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { gzipSync, gunzipSync } from 'node:zlib';
 import assert from 'node:assert/strict';
+import { finalPerformance } from './final-performance.mjs';
 
 const folder = process.argv[2];
 const { plan, plan_hash } = JSON.parse(await readFile(`${folder}/allocation.json`, 'utf8'));
@@ -10,12 +11,18 @@ const manifest = JSON.parse(await readFile('/online/manifest.json', 'utf8'));
 const catalog = JSON.parse(await readFile('/online/catalog.json', 'utf8'));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const atomic = async (name, value) => { await writeFile(`${folder}/${name}.tmp`, JSON.stringify(value)); await rename(`${folder}/${name}.tmp`, `${folder}/${name}`); };
+const atomicText = async (name, value) => { await writeFile(`${folder}/${name}.tmp`, value); await rename(`${folder}/${name}.tmp`, `${folder}/${name}`); };
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 let chrome, socket;
 try {
   for (const [file, hash] of manifest.sources) assert.equal(sha(await readFile(`src/${file}`)), hash, `Worker source changed: ${file}`);
   assert.deepEqual(plan.versions, Object.fromEntries(['catalog_version', 'rules_version', 'policy_version', 'observation_version'].map(key => [key, manifest[key]])));
   assert.equal(sha(await readFile('/online/catalog.json')), manifest.catalog_version);
+  if (plan.content_catalog) {
+    assert.equal(plan.content_catalog.schema,1);
+    assert.equal(sha(plan.content_catalog.canonical_records),plan.content_catalog.hash,'Allocated content snapshot changed');
+    assert.deepEqual(JSON.parse(plan.content_catalog.canonical_records),plan.content_catalog.records);
+  }
   const profile = `/tmp/online-browser-${plan.match_id}-${process.pid}`;
   chrome = spawn('chromium', ['--headless', '--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu',
     '--remote-debugging-port=9226', `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
@@ -51,21 +58,35 @@ try {
     const roots = await import('/node_modules/.vite/deps/react-dom_client.js');
     const { AramMatchView } = await import('/src/components/AramMatchView.tsx');
     const { INITIAL_PLAYERS, CHAMPIONS, INITIAL_COACHES } = await import('/src/mockData.ts');
+    const { applyWorldPlayerProfile } = await import('/src/worldPlayerProfile.ts');
+    const { validateGameContent } = await import('/src/gameContent.ts');
     const plan = ${JSON.stringify(plan)};
+    if(plan.content_catalog&&!validateGameContent(plan.content_catalog))throw Error('Invalid allocated content catalog');
+    const arena=plan.versions.policy_version==='arena-command-v1';
+    const hybrid=['baseline-hybrid-v1','original-v3-hybrid-v2'].includes(plan.versions.policy_version);
+    if(arena&&plan.intelligence?.controller!=='arena')throw Error('Missing pinned arena controller');
+    if(hybrid&&plan.intelligence?.controller!=='hybrid')throw Error('Missing pinned hybrid controller');
     const lineup = side => plan[side].map(slot => {
       const player = INITIAL_PLAYERS.find(card => card.id === slot.card_id);
       const champion = CHAMPIONS.find(avatar => avatar.id === slot.avatar_id);
       if (!player || !champion) throw Error('Unknown allocated card/avatar');
-      return { player, champion };
+      const identity=plan.player_identities?.[slot.instance_id];
+      const profile=plan.player_profile_schema===1?plan.player_profiles?.[slot.instance_id]:null;
+      if(plan.player_profile_schema===1&&!profile)throw Error('Missing pinned world-player profile');
+      return { player: applyWorldPlayerProfile(player,profile??undefined,identity), champion };
     });
     document.querySelector('#root').style.display = 'none';
     const node = document.createElement('div'); document.body.append(node);
     window.onlineRoot = (roots.createRoot ?? roots.default.createRoot)(node);
     window.onlineRoot.render(React.createElement(AramMatchView, { seed: plan.seed,
+      contentCatalog:plan.content_catalog??null,
       evaluationRenderless: true, evaluationStartPaused: true, trustedServer: true,
+      evaluationController:arena?'arena':hybrid?'hybrid':'legacy',
+      evaluationPolicies:(arena||hybrid)&&plan.intelligence.release?{blue:plan.intelligence.release.policy,red:plan.intelligence.release.policy}:undefined,
+      intelligenceRelease:(arena||hybrid)?plan.intelligence.release:undefined,
       blueLineup: lineup('blue'), redLineup: lineup('red'),
-      blueCoach: INITIAL_COACHES.find(coach => coach.id === plan.coach_id),
-      redCoach: INITIAL_COACHES.find(coach => coach.id === plan.coach_id),
+      blueCoach: plan.coaches?.blue ?? INITIAL_COACHES.find(coach => coach.id === plan.coach_id),
+      redCoach: plan.coaches?.red ?? INITIAL_COACHES.find(coach => coach.id === plan.coach_id),
       blueTeamName: plan.clubs.blue, redTeamName: plan.clubs.red,
       onReplay: () => {}, onBatchStart: () => {}, onBatchStop: () => {}, onExit: () => {}, onMatchComplete: () => {} }));
   })()`);
@@ -74,8 +95,12 @@ try {
   await mkdir(`${folder}/frames`, { recursive: true });
   const names = (await readdir(`${folder}/frames`)).filter(name => /^\d{6}\.json\.gz$/.test(name)).sort();
   let sequence = names.length ? Number(names.at(-1).split('.')[0]) : 0;
+  let startedAt = new Date().toISOString();
+  let publicReplay = Boolean(plan.fixture);
   if (sequence) {
     const saved = JSON.parse(gunzipSync(await readFile(`${folder}/frames/${names.at(-1)}`)).toString());
+    startedAt = saved.started_at ?? null;
+    publicReplay = publicReplay && saved.public_replay === true;
     const target = Math.round(saved.snapshot.second * 30);
     for (let steps = 0; steps < target; steps += 300) await evaluate(`window.__esportsTrusted.step(${Math.min(300, target - steps)})`);
     const restored = await evaluate('window.__esportsTrusted.snapshot()');
@@ -84,30 +109,49 @@ try {
   const started = Date.now();
   const speed = Math.max(1, Math.min(4, Number(process.env.ONLINE_SPEED ?? 1)));
   let didFinish = false;
-  while (Date.now() - started < 45 * 60 * 1000) {
+  const timing = {frames:0,step_ms:0,snapshot_ms:0,recording_ms:0,bytes:0};
+  const smoke=process.argv.includes('--smoke');
+  while (!smoke && Date.now() - started < 45 * 60 * 1000) {
     const tickStart = Date.now();
     if (sequence) await evaluate('window.__esportsTrusted.step(15)');
-    const snapshot = await evaluate('window.__esportsTrusted.snapshot()');
+    const stepEnd = Date.now();
+    // Serialize/redact once at the browser boundary, then reuse the exact JSON for recording.
+    const snapshotText = await evaluate(publicReplay
+      ? 'JSON.stringify(window.__esportsTrusted.snapshot(),(key,value)=>key==="realName"?undefined:value)'
+      : 'JSON.stringify(window.__esportsTrusted.snapshot())');
+    const snapshot = JSON.parse(snapshotText);
+    const snapshotEnd = Date.now();
     if (snapshot.second > 1800) throw Error('Match exceeded the simulation budget; no invented winner');
-    const message = { type: 'snapshot', schema: 1, match_id: plan.match_id, sequence: ++sequence,
-      plan_hash, versions: plan.versions, speed, snapshot };
+    const header = { type: 'snapshot', schema: 1, match_id: plan.match_id, sequence: ++sequence,
+      plan_hash, versions: plan.versions, speed, started_at: startedAt, public_replay: publicReplay };
+    const messageText = JSON.stringify(header).slice(0,-1)+',"snapshot":'+snapshotText+'}';
     const framePath = `${folder}/frames/${String(sequence).padStart(6, '0')}.json.gz`;
-    await writeFile(`${framePath}.tmp`, gzipSync(JSON.stringify(message)));
+    await writeFile(`${framePath}.tmp`, gzipSync(messageText,{level:1}));
     await rename(`${framePath}.tmp`, framePath);
-    await atomic('snapshot.json', message);
+    await atomicText('snapshot.json', messageText);
+    timing.frames++;timing.step_ms+=stepEnd-tickStart;timing.snapshot_ms+=snapshotEnd-stepEnd;
+    timing.recording_ms+=Date.now()-snapshotEnd;timing.bytes+=Buffer.byteLength(messageText);
+    if(timing.frames%60===0||snapshot.finished)await atomic('timing.json',{...timing,sequence,arena_seconds:snapshot.second,wall_ms:Date.now()-started});
     let result;
     if (snapshot.finished) {
       assert.ok(snapshot.report && ['blue', 'red'].includes(snapshot.report.winner));
+      const playerPerformance = finalPerformance(plan, snapshot.frame.champions);
       result = { schema: 1, match_id: plan.match_id, versions: plan.versions, seed: plan.seed,
         winner: snapshot.report.winner, report: snapshot.report,
+        player_performance: playerPerformance,
         terminal_nexus: Object.fromEntries(['blue', 'red'].map(team => [team,
           snapshot.frame.structures.find(structure => structure.team === team && structure.type === 'nexus').isAlive])) };
     }
-    await atomic('state.json', { status: result ? 'completed' : 'running', sequence, ...(result ? { result } : {}) });
+    await atomic('state.json', { status: result ? 'completed' : 'running', sequence, started_at: startedAt,
+      public_replay: publicReplay, ...(result ? { result } : {}) });
     if (result) { didFinish = true; console.log(JSON.stringify({ completed: plan.match_id, sequence, winner: result.winner })); break; }
     await wait(Math.max(0, 500 / speed - (Date.now() - tickStart)));
   }
-  if (!didFinish) throw Error('Match worker time budget exceeded; no result awarded');
+  if(smoke) {
+    const snapshot=await evaluate('window.__esportsTrusted.snapshot()');
+    await atomic('smoke.json',{schema:1,content_hash:plan.content_catalog?.hash,versions:plan.versions,snapshot});
+    console.log(JSON.stringify({smoke:true,second:snapshot.second,content_hash:plan.content_catalog?.hash}));
+  } else if (!didFinish) throw Error('Match worker time budget exceeded; no result awarded');
 } catch (error) {
   await atomic('state.json', { status: 'failed', error: error.message });
   console.error(error.stack);

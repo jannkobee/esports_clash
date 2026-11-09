@@ -2,10 +2,12 @@
 import bpy
 import json
 import math
+import hashlib
 import sys
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from mesh_validation import collision_summary,rest_keys,POLICY
+from asset_pipeline.edge_deformation import edge_deformation
 
 folder = Path(sys.argv[sys.argv.index('--') + 1])
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -93,14 +95,15 @@ if negative_or_nan > 0:
 
 
 def sample():
-    graph=bpy.context.evaluated_depsgraph_get();finite=True;points=[];faces=[];keys=[];labels=[]
+    graph=bpy.context.evaluated_depsgraph_get();finite=True;points=[];faces=[];keys=[];labels=[];rest_points=[]
     for obj in meshes:
         evaluated=obj.evaluated_get(graph);mesh=evaluated.to_mesh()
         try:
             mesh.calc_loop_triangles();offset=len(points)
             current=[obj.matrix_world@v.co for v in mesh.vertices]
             finite=finite and all(math.isfinite(x) for p in current for x in p)
-            points.extend(current);keys.extend(rest_keys([obj.matrix_world@v.co for v in obj.data.vertices]))
+            rest=[obj.matrix_world@v.co for v in obj.data.vertices]
+            points.extend(current);keys.extend(rest_keys(rest));rest_points.extend(rest)
             for triangle in mesh.loop_triangles:
                 face=tuple(triangle.vertices);faces.append(tuple(offset+i for i in face));mass={}
                 for index in face:
@@ -109,7 +112,8 @@ def sample():
                 labels.append(min(mass,key=lambda name:(-mass[name],name)) if mass else 'unweighted')
         finally:evaluated.to_mesh_clear()
     if not finite:return {'finite':False,'self_intersections':0,'triangles_checked':len(faces),'top_regions':[]}
-    return collision_summary(points,faces,keys,labels)
+    return {**collision_summary(points,faces,keys,labels),
+            'edge_deformation':edge_deformation(rest_points,points,faces)}
 
 
 for rig in rigs:
@@ -131,7 +135,7 @@ if missing_clips:
     animation_gate['passed'] = False
 
 for action in bpy.data.actions:
-    if not any(name in action.name for name in ['Idle', 'Walk', 'Run', 'Attack', 'Cast', 'Hit', 'Death']):
+    if action.name not in REQUIRED_CLIPS | {'Strafe', 'TurnLeft', 'TurnRight'}:
         continue
     for rig in rigs:
         rig.animation_data_create()
@@ -155,13 +159,16 @@ for action in bpy.data.actions:
         if not result['finite']:
             problems.append('Nonfinite posed geometry: ' + action.name)
             animation_gate['passed'] = False
+        if not result.get('edge_deformation',{}).get('passed',False):
+            problems.append('Gross surface stretching during ' + action.name)
+            animation_gate['passed'] = False
         tolerance = max(500, int(result.get('triangles_checked', 40000) * .02)) if 'Death' in action.name else max(150, int(result.get('triangles_checked', 40000) * .01), int(bind['self_intersections'] * .75))
         if result['self_intersections'] > bind['self_intersections'] + tolerance:
             warnings.append('Self-intersection telemetry elevated during ' + action.name)
 
 # Gate 4: Geometry & Collision Integrity
 geometry_gate = {
-    'passed': not any('Nonfinite' in p for p in problems),
+    'passed': not any('Nonfinite' in p or 'Gross surface stretching' in p for p in problems),
     'bind_self_intersections': bind.get('self_intersections', 0),
     'triangles_checked': bind.get('triangles_checked', 0)
 }
@@ -180,6 +187,9 @@ if status == 'PASSED' and warnings:
 
 report = {
     'policy': POLICY,
+    'sampling_policy': 'ten-clips-five-phases-v1',
+    'engine_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+    'edge_engine_sha256': hashlib.sha256(Path(sys.modules[edge_deformation.__module__].__file__).read_bytes()).hexdigest(),
     'status': status,
     'passed': not problems,
     'qualification_score': score,

@@ -76,6 +76,8 @@ export const ultimateManaCost = (unit: Pick<AramChampionUnit, 'champion' | 'leve
   unit.champion.name === 'Raijin' ? 58 + 5 * (abilityRank(unit.level, 'ultimate') - 1) : 100;
 
 export const ultimateBaseCooldown = (unit: Pick<AramChampionUnit, 'champion' | 'level'>): number => {
+  if (unit.champion.ultimate.catalogCooldownOverride !== undefined) return unit.champion.ultimate.catalogCooldownOverride;
+  if(unit.champion.abilityRuleset)return unit.champion.ultimate.cooldown;
   if (unit.champion.name === 'Raijin') return [3, 2.3, 1.6, 1][abilityRank(unit.level, 'ultimate') - 1];
   return unit.level >= 18 ? 35 : unit.level >= 16 ? 45 : unit.level >= 11 ? 60 : 75;
 };

@@ -1,0 +1,4040 @@
+{
+  "id": "8db702c3-0015-4535-a4b1-f2dd44541ed4",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+  "parent_candidate_id": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046",
+  "reference_candidate_id": "59efceaf-d39e-414e-94af-36f7ccbae738",
+  "method": "signed-contact-shoulder-bone2-transfer-v1",
+  "repair_config": {
+    "donor": "bone_2",
+    "roles": [
+      "UpperArmL",
+      "UpperArmR"
+    ],
+    "maximum_donor_fraction": 0.12,
+    "falloff_rings": 3,
+    "target_weight_gate": [
+      0.25,
+      0.5
+    ],
+    "seed_pair_policy": "only-donor-target-contact-pair"
+  },
+  "started_unix": 1793027073.5082226,
+  "baseline_reproduction": [
+    {
+      "label": "parent",
+      "reproduced": true,
+      "poses": [
+        {
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.456325369997941,
+            "largest_extension_to_height": 0.0076529889119614555,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 131,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_2",
+                "bone_26"
+              ],
+              "intersections": 68
+            },
+            {
+              "regions": [
+                "bone_26",
+                "bone_26"
+              ],
+              "intersections": 50
+            },
+            {
+              "regions": [
+                "bone_26",
+                "bone_3"
+              ],
+              "intersections": 13
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 4.165273680121746,
+            "largest_extension_to_height": 0.016124163275662847,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 131,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 1.6929922765321463,
+            "largest_extension_to_height": 0.006976825353741037,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 81,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_2",
+                "bone_7"
+              ],
+              "intersections": 39
+            },
+            {
+              "regions": [
+                "bone_3",
+                "bone_7"
+              ],
+              "intersections": 29
+            },
+            {
+              "regions": [
+                "bone_7",
+                "bone_7"
+              ],
+              "intersections": 13
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.3821064687119375,
+            "largest_extension_to_height": 0.013770569087575672,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 81,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 1.3245152338447863,
+            "largest_extension_to_height": 0.0030186254364762887,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 1.5117474392285024,
+            "largest_extension_to_height": 0.00467653266615086,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 1.2275838555941259,
+            "largest_extension_to_height": 0.002195128055223918,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 1.3081839797074202,
+            "largest_extension_to_height": 0.004006311348082396,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.7397781748027144,
+            "largest_extension_to_height": 0.014680382034211362,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 255,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_0",
+                "bone_48"
+              ],
+              "intersections": 157
+            },
+            {
+              "regions": [
+                "bone_48",
+                "bone_48"
+              ],
+              "intersections": 51
+            },
+            {
+              "regions": [
+                "bone_0",
+                "bone_0"
+              ],
+              "intersections": 27
+            },
+            {
+              "regions": [
+                "bone_44",
+                "bone_48"
+              ],
+              "intersections": 11
+            },
+            {
+              "regions": [
+                "bone_0",
+                "bone_44"
+              ],
+              "intersections": 5
+            },
+            {
+              "regions": [
+                "bone_44",
+                "bone_44"
+              ],
+              "intersections": 4
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 4.402853900672559,
+            "largest_extension_to_height": 0.028439208408573346,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 255,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.503529335214906,
+            "largest_extension_to_height": 0.009478233665508387,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 133,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_0",
+                "bone_44"
+              ],
+              "intersections": 71
+            },
+            {
+              "regions": [
+                "bone_44",
+                "bone_44"
+              ],
+              "intersections": 44
+            },
+            {
+              "regions": [
+                "bone_0",
+                "bone_0"
+              ],
+              "intersections": 10
+            },
+            {
+              "regions": [
+                "bone_48",
+                "bone_48"
+              ],
+              "intersections": 5
+            },
+            {
+              "regions": [
+                "bone_44",
+                "bone_48"
+              ],
+              "intersections": 3
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 4.114125490164867,
+            "largest_extension_to_height": 0.022027034352007174,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 133,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.074451482152883,
+            "largest_extension_to_height": 0.008532207228088264,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.8669587099708584,
+            "largest_extension_to_height": 0.014503100419093234,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.171373795014274,
+            "largest_extension_to_height": 0.011429536568510073,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 2,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_44",
+                "bone_45"
+              ],
+              "intersections": 2
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 3.031627245463325,
+            "largest_extension_to_height": 0.01826797334953123,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 2,
+          "delta_vs_parent": 0
+        }
+      ]
+    },
+    {
+      "label": "reference",
+      "reproduced": true,
+      "poses": [
+        {
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.456325369997941,
+            "largest_extension_to_height": 0.0076529889119614555,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 144,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_2",
+                "bone_26"
+              ],
+              "intersections": 68
+            },
+            {
+              "regions": [
+                "bone_26",
+                "bone_26"
+              ],
+              "intersections": 63
+            },
+            {
+              "regions": [
+                "bone_26",
+                "bone_3"
+              ],
+              "intersections": 13
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 4.165273680121746,
+            "largest_extension_to_height": 0.016124163275662847,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 131,
+          "delta_vs_parent": 13
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 1.6929922765321463,
+            "largest_extension_to_height": 0.006976825353741037,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 85,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_2",
+                "bone_7"
+              ],
+              "intersections": 39
+            },
+            {
+              "regions": [
+                "bone_3",
+                "bone_7"
+              ],
+              "intersections": 32
+            },
+            {
+              "regions": [
+                "bone_7",
+                "bone_7"
+              ],
+              "intersections": 14
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.3821064687119375,
+            "largest_extension_to_height": 0.013770569087575672,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 81,
+          "delta_vs_parent": 4
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 1.3245152338447863,
+            "largest_extension_to_height": 0.0030186254364762887,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 1.5117474392285024,
+            "largest_extension_to_height": 0.00467653266615086,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 1.2275838555941259,
+            "largest_extension_to_height": 0.002195128055223918,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 1.3081839797074202,
+            "largest_extension_to_height": 0.004006311348082396,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 4,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_0",
+                "bone_0"
+              ],
+              "intersections": 4
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.7397781748027144,
+            "largest_extension_to_height": 0.014680382034211362,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 4
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 258,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_0",
+                "bone_48"
+              ],
+              "intersections": 159
+            },
+            {
+              "regions": [
+                "bone_48",
+                "bone_48"
+              ],
+              "intersections": 52
+            },
+            {
+              "regions": [
+                "bone_0",
+                "bone_0"
+              ],
+              "intersections": 27
+            },
+            {
+              "regions": [
+                "bone_44",
+                "bone_48"
+              ],
+              "intersections": 11
+            },
+            {
+              "regions": [
+                "bone_0",
+                "bone_44"
+              ],
+              "intersections": 5
+            },
+            {
+              "regions": [
+                "bone_44",
+                "bone_44"
+              ],
+              "intersections": 4
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 4.402853900672559,
+            "largest_extension_to_height": 0.028439208408573346,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 255,
+          "delta_vs_parent": 3
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.503529335214906,
+            "largest_extension_to_height": 0.009478233665508387,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 162,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_0",
+                "bone_44"
+              ],
+              "intersections": 85
+            },
+            {
+              "regions": [
+                "bone_44",
+                "bone_44"
+              ],
+              "intersections": 44
+            },
+            {
+              "regions": [
+                "bone_0",
+                "bone_0"
+              ],
+              "intersections": 25
+            },
+            {
+              "regions": [
+                "bone_48",
+                "bone_48"
+              ],
+              "intersections": 5
+            },
+            {
+              "regions": [
+                "bone_44",
+                "bone_48"
+              ],
+              "intersections": 3
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 4.114125490164867,
+            "largest_extension_to_height": 0.022027034352007174,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 133,
+          "delta_vs_parent": 29
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.074451482152883,
+            "largest_extension_to_height": 0.008532207228088264,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.8669587099708584,
+            "largest_extension_to_height": 0.014503100419093234,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 45,
+          "finite": true,
+          "self_intersections": 0,
+          "triangles_checked": 37578,
+          "top_regions": [],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 2.171373795014274,
+            "largest_extension_to_height": 0.011429536568510073,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 0,
+          "delta_vs_parent": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 90,
+          "finite": true,
+          "self_intersections": 2,
+          "triangles_checked": 37578,
+          "top_regions": [
+            {
+              "regions": [
+                "bone_44",
+                "bone_45"
+              ],
+              "intersections": 2
+            }
+          ],
+          "edge_deformation": {
+            "policy": "deformation-edge-stretch-v1",
+            "passed": true,
+            "finite": true,
+            "edges_checked": 56332,
+            "severely_stretched_edges": 0,
+            "maximum_length_ratio": 3.031627245463325,
+            "largest_extension_to_height": 0.01826797334953123,
+            "limits": {
+              "length_ratio": 4,
+              "extension_to_height": 0.05
+            },
+            "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+          },
+          "parent_intersections": 2,
+          "delta_vs_parent": 0
+        }
+      ]
+    }
+  ],
+  "unchanged_export_roundtrip": {
+    "before_vertices": 23734,
+    "after_vertices": 23783,
+    "max_nearest_distance_m": 2.9848851568203827e-07,
+    "rms_nearest_distance_m": 8.291520269802763e-08
+  },
+  "contact_verification": {
+    "id": "0ba81d69-3c9a-4e1c-b3dc-703e998fa143",
+    "source_sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+    "input_report_sha256": "a8c9762a600abed15421a1f7417fd647de9037d453efe10aaee7493863d3b1a6",
+    "verified_vertices": 517,
+    "source_correspondence_verified": true
+  },
+  "parent_weights": [
+    {
+      "mesh": "geometry_0",
+      "vertices": 23734,
+      "unweighted_vertices": 0,
+      "max_influences": 4,
+      "max_normalization_error": 1.3237877283245325e-07,
+      "finite_nonnegative": true
+    }
+  ],
+  "weight_edits": [
+    {
+      "joint": "UpperArmL",
+      "mesh": "geometry_0",
+      "donor": "bone_2",
+      "target": "bone_26",
+      "raw_contact_vertices": 66,
+      "verified_eligible_seeds": 38,
+      "mesh_ring_vertices": 211,
+      "seam_groups": 4549,
+      "modified_vertices": 140,
+      "mean_transferred_weight": 0.00325466377485757,
+      "vertices": [
+        {
+          "mesh_vertex_index": 16990,
+          "rest_world_xyz": [
+            -0.07340225577354431,
+            -0.011927866376936436,
+            0.2879619896411896
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.14003186061093426,
+          "donor_fraction": 0.0043565467745624,
+          "transferred_weight": 0.0008972275921510039,
+          "before_donor": 0.20594926178455353,
+          "before_target": 0.3088224232196808
+        },
+        {
+          "mesh_vertex_index": 17028,
+          "rest_world_xyz": [
+            -0.0738534927368164,
+            -0.012213492766022682,
+            0.29784461855888367
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.07556042120094339,
+          "donor_fraction": 0.002350768659584906,
+          "transferred_weight": 0.000375801934666898,
+          "before_donor": 0.1598634272813797,
+          "before_target": 0.2921106815338135
+        },
+        {
+          "mesh_vertex_index": 17099,
+          "rest_world_xyz": [
+            -0.07503053545951843,
+            -0.011877292767167091,
+            0.2825360894203186
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.19471228493566764,
+          "donor_fraction": 0.017307758660948237,
+          "transferred_weight": 0.003737100556630138,
+          "before_donor": 0.21592053771018982,
+          "before_target": 0.32070392370224
+        },
+        {
+          "mesh_vertex_index": 17100,
+          "rest_world_xyz": [
+            -0.07503053545951843,
+            -0.011877292767167091,
+            0.2825360894203186
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.19471228493566764,
+          "donor_fraction": 0.017307758660948237,
+          "transferred_weight": 0.003737100556630138,
+          "before_donor": 0.21592053771018982,
+          "before_target": 0.32070392370224
+        },
+        {
+          "mesh_vertex_index": 17145,
+          "rest_world_xyz": [
+            -0.07584904134273529,
+            -0.002578497864305973,
+            0.26742684841156006
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.7396085932766835,
+          "donor_fraction": 0.02301004512416349,
+          "transferred_weight": 0.007194078837260346,
+          "before_donor": 0.3126494884490967,
+          "before_target": 0.4164545238018036
+        },
+        {
+          "mesh_vertex_index": 17148,
+          "rest_world_xyz": [
+            -0.07590270787477493,
+            -0.008533352985978127,
+            0.28535357117652893
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.39160555234846267,
+          "donor_fraction": 0.012183283850841062,
+          "transferred_weight": 0.002229033324336883,
+          "before_donor": 0.18295833468437195,
+          "before_target": 0.3568057715892792
+        },
+        {
+          "mesh_vertex_index": 17173,
+          "rest_world_xyz": [
+            -0.07619653642177582,
+            -0.015214833430945873,
+            0.28839796781539917
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.05378889423202848,
+          "donor_fraction": 0.004781235042846976,
+          "transferred_weight": 0.0010474905762724702,
+          "before_donor": 0.21908368170261383,
+          "before_target": 0.2851647138595581
+        },
+        {
+          "mesh_vertex_index": 17174,
+          "rest_world_xyz": [
+            -0.07619653642177582,
+            -0.015214833430945873,
+            0.28839796781539917
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.05378889423202848,
+          "donor_fraction": 0.004781235042846976,
+          "transferred_weight": 0.0010474905762724702,
+          "before_donor": 0.21908368170261383,
+          "before_target": 0.2851647138595581
+        },
+        {
+          "mesh_vertex_index": 17186,
+          "rest_world_xyz": [
+            -0.0764840841293335,
+            -0.013380629010498524,
+            0.2740318775177002
+          ],
+          "falloff": 1.0,
+          "target_gate": 0.23011610219230694,
+          "donor_fraction": 0.027613932263076832,
+          "transferred_weight": 0.0083077388643227,
+          "before_donor": 0.3008531630039215,
+          "before_target": 0.3277720808982849
+        },
+        {
+          "mesh_vertex_index": 17193,
+          "rest_world_xyz": [
+            -0.07655928283929825,
+            -0.007061135955154896,
+            0.2737230956554413
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.6281678474389087,
+          "donor_fraction": 0.05583714199456967,
+          "transferred_weight": 0.014163519272414405,
+          "before_donor": 0.25365766882896423,
+          "before_target": 0.39657557010650635
+        },
+        {
+          "mesh_vertex_index": 17207,
+          "rest_world_xyz": [
+            -0.07666495442390442,
+            -0.007849454879760742,
+            0.2794080078601837
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.8279138670431505,
+          "donor_fraction": 0.07359234373716894,
+          "transferred_weight": 0.013324339247327807,
+          "before_donor": 0.18105605244636536,
+          "before_target": 0.43404340744018555
+        },
+        {
+          "mesh_vertex_index": 17223,
+          "rest_world_xyz": [
+            -0.07693789899349213,
+            -0.010424628853797913,
+            0.26922667026519775
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.19511210985502947,
+          "donor_fraction": 0.017343298653780398,
+          "transferred_weight": 0.006099036636462895,
+          "before_donor": 0.35166531801223755,
+          "before_target": 0.3207860291004181
+        },
+        {
+          "mesh_vertex_index": 17241,
+          "rest_world_xyz": [
+            -0.0772780179977417,
+            0.0003761106345336884,
+            0.2754190266132355
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.005325713886155023,
+          "before_donor": 0.17118366062641144,
+          "before_target": 0.5285684466362
+        },
+        {
+          "mesh_vertex_index": 17267,
+          "rest_world_xyz": [
+            -0.07763300091028214,
+            -0.008004187606275082,
+            0.2637963593006134
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.1882178007282878,
+          "donor_fraction": 0.005855664911546732,
+          "transferred_weight": 0.002448516486374177,
+          "before_donor": 0.41814491152763367,
+          "before_target": 0.31936201453208923
+        },
+        {
+          "mesh_vertex_index": 17273,
+          "rest_world_xyz": [
+            -0.07769564539194107,
+            -0.0037251003086566925,
+            0.278849720954895
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.004014944566620721,
+          "before_donor": 0.1290517896413803,
+          "before_target": 0.5129061341285706
+        },
+        {
+          "mesh_vertex_index": 17283,
+          "rest_world_xyz": [
+            -0.07783957570791245,
+            -0.01019938662648201,
+            0.29258838295936584
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.3345446027755698,
+          "donor_fraction": 0.010408054308573283,
+          "transferred_weight": 0.0015903633508871787,
+          "before_donor": 0.15280121564865112,
+          "before_target": 0.34695345163345337
+        },
+        {
+          "mesh_vertex_index": 17284,
+          "rest_world_xyz": [
+            -0.07783957570791245,
+            -0.01019938662648201,
+            0.29258838295936584
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.3345446027755698,
+          "donor_fraction": 0.010408054308573283,
+          "transferred_weight": 0.0015903633508871787,
+          "before_donor": 0.15280121564865112,
+          "before_target": 0.34695345163345337
+        },
+        {
+          "mesh_vertex_index": 17368,
+          "rest_world_xyz": [
+            -0.07877694815397263,
+            -0.016291797161102295,
+            0.27984121441841125
+          ],
+          "falloff": 1.0,
+          "target_gate": 0.11108005641951926,
+          "donor_fraction": 0.013329606770342312,
+          "transferred_weight": 0.0035974192591670838,
+          "before_donor": 0.26988187432289124,
+          "before_target": 0.3018191456794739
+        },
+        {
+          "mesh_vertex_index": 17377,
+          "rest_world_xyz": [
+            -0.07892391830682755,
+            0.0061444491147994995,
+            0.26198816299438477
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.9653792687449348,
+          "donor_fraction": 0.030034021694286865,
+          "transferred_weight": 0.009807738882534623,
+          "before_donor": 0.3265542984008789,
+          "before_target": 0.47208449244499207
+        },
+        {
+          "mesh_vertex_index": 17393,
+          "rest_world_xyz": [
+            -0.07935550063848495,
+            0.001072322716936469,
+            0.26814043521881104
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.00622087836265564,
+          "before_donor": 0.19995680451393127,
+          "before_target": 0.540863037109375
+        },
+        {
+          "mesh_vertex_index": 17415,
+          "rest_world_xyz": [
+            -0.07972400635480881,
+            -0.009928652085363865,
+            0.28456059098243713
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.7610894935948617,
+          "donor_fraction": 0.06765239943065438,
+          "transferred_weight": 0.0099842296703874,
+          "before_donor": 0.1475813090801239,
+          "before_target": 0.4205281734466553
+        },
+        {
+          "mesh_vertex_index": 17416,
+          "rest_world_xyz": [
+            -0.07972400635480881,
+            -0.009928652085363865,
+            0.28456059098243713
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.7610894935948617,
+          "donor_fraction": 0.06765239943065438,
+          "transferred_weight": 0.0099842296703874,
+          "before_donor": 0.1475813090801239,
+          "before_target": 0.4205281734466553
+        },
+        {
+          "mesh_vertex_index": 17439,
+          "rest_world_xyz": [
+            -0.08015485852956772,
+            -0.012032990343868732,
+            0.27686432003974915
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.5339465902556333,
+          "donor_fraction": 0.047461919133834074,
+          "transferred_weight": 0.01095425279664013,
+          "before_donor": 0.23080088198184967,
+          "before_target": 0.38066163659095764
+        },
+        {
+          "mesh_vertex_index": 17443,
+          "rest_world_xyz": [
+            -0.08023339509963989,
+            -0.002138880081474781,
+            0.26553454995155334
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.9611025876836811,
+          "donor_fraction": 0.08543134112743832,
+          "transferred_weight": 0.023438698423576418,
+          "before_donor": 0.2743571400642395,
+          "before_target": 0.4703356623649597
+        },
+        {
+          "mesh_vertex_index": 17460,
+          "rest_world_xyz": [
+            -0.08038735389709473,
+            0.004562098998576403,
+            0.25933200120925903
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.8925389253290253,
+          "donor_fraction": 0.07933679336258004,
+          "transferred_weight": 0.02870647892209743,
+          "before_donor": 0.36183059215545654,
+          "before_target": 0.4491046667098999
+        },
+        {
+          "mesh_vertex_index": 17479,
+          "rest_world_xyz": [
+            -0.08062208443880081,
+            -0.007498893886804581,
+            0.27331000566482544
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.6939861035609899,
+          "donor_fraction": 0.06168765364986577,
+          "transferred_weight": 0.014919221764104634,
+          "before_donor": 0.24185101687908173,
+          "before_target": 0.4081050157546997
+        },
+        {
+          "mesh_vertex_index": 17494,
+          "rest_world_xyz": [
+            -0.08076570183038712,
+            -0.003929137717932463,
+            0.27338290214538574
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.9995413477118592,
+          "donor_fraction": 0.0310968419288134,
+          "transferred_weight": 0.005880889077885993,
+          "before_donor": 0.18911531567573547,
+          "before_target": 0.496895968914032
+        },
+        {
+          "mesh_vertex_index": 17495,
+          "rest_world_xyz": [
+            -0.08076975494623184,
+            0.0026451065205037594,
+            0.25397709012031555
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.18891238524707973,
+          "donor_fraction": 0.016792212021962644,
+          "transferred_weight": 0.00854163397244819,
+          "before_donor": 0.5086663961410522,
+          "before_target": 0.31950628757476807
+        },
+        {
+          "mesh_vertex_index": 17511,
+          "rest_world_xyz": [
+            -0.08103498071432114,
+            0.01034468598663807,
+            0.25630226731300354
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.7303763069225493,
+          "donor_fraction": 0.022722818437590424,
+          "transferred_weight": 0.009300007367714474,
+          "before_donor": 0.40928053855895996,
+          "before_target": 0.4147343635559082
+        },
+        {
+          "mesh_vertex_index": 17519,
+          "rest_world_xyz": [
+            -0.08113979548215866,
+            -0.01547098346054554,
+            0.27169689536094666
+          ],
+          "falloff": 1.0,
+          "target_gate": 0.09857234866168853,
+          "donor_fraction": 0.011828681839402623,
+          "transferred_weight": 0.00416137533133417,
+          "before_donor": 0.35180380940437317,
+          "before_target": 0.2985711395740509
+        },
+        {
+          "mesh_vertex_index": 17535,
+          "rest_world_xyz": [
+            -0.08136051148176193,
+            -0.0061932881362736225,
+            0.29075613617897034
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.0011693910095426773,
+          "before_donor": 0.037587568163871765,
+          "before_target": 0.5408960580825806
+        },
+        {
+          "mesh_vertex_index": 17541,
+          "rest_world_xyz": [
+            -0.0815579742193222,
+            0.018634669482707977,
+            0.2691459059715271
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.002815127107832167,
+          "before_donor": 0.09048622846603394,
+          "before_target": 0.6656277775764465
+        },
+        {
+          "mesh_vertex_index": 17569,
+          "rest_world_xyz": [
+            -0.08192222565412521,
+            -0.005074030254036188,
+            0.28291499614715576
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.0021016066604190404,
+          "before_donor": 0.0675516426563263,
+          "before_target": 0.5431310534477234
+        },
+        {
+          "mesh_vertex_index": 17571,
+          "rest_world_xyz": [
+            -0.08197563141584396,
+            -0.010866526514291763,
+            0.2682807445526123
+          ],
+          "falloff": 1.0,
+          "target_gate": 0.26754976867395297,
+          "donor_fraction": 0.03210597224087436,
+          "transferred_weight": 0.011082083222222063,
+          "before_donor": 0.3451720178127289,
+          "before_target": 0.3348807096481323
+        },
+        {
+          "mesh_vertex_index": 17582,
+          "rest_world_xyz": [
+            -0.08204378932714462,
+            -0.004544079303741455,
+            0.26305386424064636
+          ],
+          "falloff": 1.0,
+          "target_gate": 0.7485883914655915,
+          "donor_fraction": 0.08983060697587097,
+          "transferred_weight": 0.02973594683244474,
+          "before_donor": 0.3310224413871765,
+          "before_target": 0.41814473271369934
+        },
+        {
+          "mesh_vertex_index": 17585,
+          "rest_world_xyz": [
+            -0.08207403868436813,
+            -0.0040321191772818565,
+            0.2553313970565796
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.009404173736138012,
+          "donor_fraction": 0.0008359265543233788,
+          "transferred_weight": 0.0004478803630555015,
+          "before_donor": 0.5357891321182251,
+          "before_target": 0.2642713487148285
+        },
+        {
+          "mesh_vertex_index": 17627,
+          "rest_world_xyz": [
+            -0.08254439383745193,
+            -0.0023177629336714745,
+            0.2804569602012634
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.0017608930832809873,
+          "before_donor": 0.05660013481974602,
+          "before_target": 0.5769087672233582
+        },
+        {
+          "mesh_vertex_index": 17658,
+          "rest_world_xyz": [
+            -0.08294759690761566,
+            0.019998297095298767,
+            0.27459272742271423
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.0013783566984865402,
+          "before_donor": 0.04430432245135307,
+          "before_target": 0.6956901550292969
+        },
+        {
+          "mesh_vertex_index": 17662,
+          "rest_world_xyz": [
+            -0.08298985660076141,
+            0.021427208557724953,
+            0.2724730968475342
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.0014239427116182117,
+          "before_donor": 0.0457695871591568,
+          "before_target": 0.706365168094635
+        },
+        {
+          "mesh_vertex_index": 17663,
+          "rest_world_xyz": [
+            -0.08298985660076141,
+            0.021427208557724953,
+            0.2724730968475342
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.0014239427116182117,
+          "before_donor": 0.0457695871591568,
+          "before_target": 0.706365168094635
+        },
+        {
+          "mesh_vertex_index": 17676,
+          "rest_world_xyz": [
+            -0.0832032784819603,
+            0.022359633818268776,
+            0.2615331709384918
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.0032327597008811105,
+          "before_donor": 0.10391013324260712,
+          "before_target": 0.700454831123352
+        },
+        {
+          "mesh_vertex_index": 17734,
+          "rest_world_xyz": [
+            -0.08389905840158463,
+            0.03137173503637314,
+            0.2555167078971863
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.005594647592968412,
+          "before_donor": 0.1798279583454132,
+          "before_target": 0.6478248238563538
+        },
+        {
+          "mesh_vertex_index": 17752,
+          "rest_world_xyz": [
+            -0.08417295664548874,
+            0.024363813921809196,
+            0.2652167081832886
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.004764426085684035,
+          "before_donor": 0.05359979346394539,
+          "before_target": 0.7420357465744019
+        },
+        {
+          "mesh_vertex_index": 17753,
+          "rest_world_xyz": [
+            -0.08418986946344376,
+            0.02553940936923027,
+            0.25637614727020264
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.0056776309675640535,
+          "before_donor": 0.18249528110027313,
+          "before_target": 0.6413211822509766
+        },
+        {
+          "mesh_vertex_index": 17759,
+          "rest_world_xyz": [
+            -0.08424536138772964,
+            0.03440210968255997,
+            0.2603404223918915
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.004935970041486952,
+          "before_donor": 0.15865617990493774,
+          "before_target": 0.6508183479309082
+        },
+        {
+          "mesh_vertex_index": 17760,
+          "rest_world_xyz": [
+            -0.08424536138772964,
+            0.03440210968255997,
+            0.2603404223918915
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.004935970041486952,
+          "before_donor": 0.15865617990493774,
+          "before_target": 0.6508183479309082
+        },
+        {
+          "mesh_vertex_index": 17764,
+          "rest_world_xyz": [
+            -0.08427035063505173,
+            0.04231325536966324,
+            0.26710599660873413
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.003060206472873688,
+          "before_donor": 0.09836377948522568,
+          "before_target": 0.6846616864204407
+        },
+        {
+          "mesh_vertex_index": 17765,
+          "rest_world_xyz": [
+            -0.08427035063505173,
+            0.04231325536966324,
+            0.26710599660873413
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.003060206472873688,
+          "before_donor": 0.09836377948522568,
+          "before_target": 0.6846616864204407
+        },
+        {
+          "mesh_vertex_index": 17766,
+          "rest_world_xyz": [
+            -0.08427035063505173,
+            0.04231325536966324,
+            0.26710599660873413
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.003060206472873688,
+          "before_donor": 0.09836377948522568,
+          "before_target": 0.6846616864204407
+        },
+        {
+          "mesh_vertex_index": 17771,
+          "rest_world_xyz": [
+            -0.08434376865625381,
+            0.025876976549625397,
+            0.26114287972450256
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.007337404621971979,
+          "before_donor": 0.08254580199718475,
+          "before_target": 0.7274924516677856
+        },
+        {
+          "mesh_vertex_index": 17793,
+          "rest_world_xyz": [
+            -0.08459258079528809,
+            0.0241403728723526,
+            0.2708648443222046
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.0018262988991207547,
+          "before_donor": 0.02054586261510849,
+          "before_target": 0.7640618085861206
+        },
+        {
+          "mesh_vertex_index": 17794,
+          "rest_world_xyz": [
+            -0.08459258079528809,
+            0.0241403728723526,
+            0.2708648443222046
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.0018262988991207547,
+          "before_donor": 0.02054586261510849,
+          "before_target": 0.7640618085861206
+        },
+        {
+          "mesh_vertex_index": 17795,
+          "rest_world_xyz": [
+            -0.08460153639316559,
+            0.03704509139060974,
+            0.26278501749038696
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.003915380835533142,
+          "before_donor": 0.12585152685642242,
+          "before_target": 0.6768574118614197
+        },
+        {
+          "mesh_vertex_index": 17796,
+          "rest_world_xyz": [
+            -0.08460153639316559,
+            0.03704509139060974,
+            0.26278501749038696
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.003915380835533142,
+          "before_donor": 0.12585152685642242,
+          "before_target": 0.6768574118614197
+        },
+        {
+          "mesh_vertex_index": 17817,
+          "rest_world_xyz": [
+            -0.08487039804458618,
+            0.02811013162136078,
+            0.2601540684700012
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.009031730890274049,
+          "before_donor": 0.10160697251558304,
+          "before_target": 0.7089492082595825
+        },
+        {
+          "mesh_vertex_index": 17820,
+          "rest_world_xyz": [
+            -0.0848945751786232,
+            0.022798964753746986,
+            0.273645281791687
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.0004004555071393649,
+          "before_donor": 0.012871784158051014,
+          "before_target": 0.7573971152305603
+        },
+        {
+          "mesh_vertex_index": 17822,
+          "rest_world_xyz": [
+            -0.08493345975875854,
+            0.03143312782049179,
+            0.2597515881061554
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.007205843263202244,
+          "before_donor": 0.08106573671102524,
+          "before_target": 0.7309495806694031
+        },
+        {
+          "mesh_vertex_index": 17823,
+          "rest_world_xyz": [
+            -0.08493345975875854,
+            0.03143312782049179,
+            0.2597515881061554
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.007205843263202244,
+          "before_donor": 0.08106573671102524,
+          "before_target": 0.7309495806694031
+        },
+        {
+          "mesh_vertex_index": 17824,
+          "rest_world_xyz": [
+            -0.08493345975875854,
+            0.03143312782049179,
+            0.2597515881061554
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.007205843263202244,
+          "before_donor": 0.08106573671102524,
+          "before_target": 0.7309495806694031
+        },
+        {
+          "mesh_vertex_index": 17874,
+          "rest_world_xyz": [
+            -0.0854237899184227,
+            0.03440210595726967,
+            0.2605976462364197
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.007589740885628595,
+          "before_donor": 0.08538458496332169,
+          "before_target": 0.7277233600616455
+        },
+        {
+          "mesh_vertex_index": 17882,
+          "rest_world_xyz": [
+            -0.08551980555057526,
+            0.024502696469426155,
+            0.26721203327178955
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.0018625112043486702,
+          "before_donor": 0.02095325104892254,
+          "before_target": 0.7790082097053528
+        },
+        {
+          "mesh_vertex_index": 17883,
+          "rest_world_xyz": [
+            -0.08551980555057526,
+            0.024502696469426155,
+            0.26721203327178955
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.0018625112043486702,
+          "before_donor": 0.02095325104892254,
+          "before_target": 0.7790082097053528
+        },
+        {
+          "mesh_vertex_index": 17904,
+          "rest_world_xyz": [
+            -0.0858670100569725,
+            0.041366007179021835,
+            0.2653481960296631
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.0025269925594329835,
+          "before_donor": 0.028428666293621063,
+          "before_target": 0.7720767259597778
+        },
+        {
+          "mesh_vertex_index": 17905,
+          "rest_world_xyz": [
+            -0.0858670100569725,
+            0.041366007179021835,
+            0.2653481960296631
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.0025269925594329835,
+          "before_donor": 0.028428666293621063,
+          "before_target": 0.7720767259597778
+        },
+        {
+          "mesh_vertex_index": 17916,
+          "rest_world_xyz": [
+            -0.08594601601362228,
+            0.049039438366889954,
+            0.274096816778183
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.00019120339097248185,
+          "before_donor": 0.006145823281258345,
+          "before_target": 0.7784539461135864
+        },
+        {
+          "mesh_vertex_index": 17917,
+          "rest_world_xyz": [
+            -0.08594601601362228,
+            0.049039438366889954,
+            0.274096816778183
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.00019120339097248185,
+          "before_donor": 0.006145823281258345,
+          "before_target": 0.7784539461135864
+        },
+        {
+          "mesh_vertex_index": 17930,
+          "rest_world_xyz": [
+            -0.08605293929576874,
+            0.025573646649718285,
+            0.2631215751171112
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.004536001682281494,
+          "before_donor": 0.03780001401901245,
+          "before_target": 0.7727804780006409
+        },
+        {
+          "mesh_vertex_index": 17931,
+          "rest_world_xyz": [
+            -0.08605293929576874,
+            0.025573646649718285,
+            0.2631215751171112
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.004536001682281494,
+          "before_donor": 0.03780001401901245,
+          "before_target": 0.7727804780006409
+        },
+        {
+          "mesh_vertex_index": 17932,
+          "rest_world_xyz": [
+            -0.08605293929576874,
+            0.025573646649718285,
+            0.2631215751171112
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.004536001682281494,
+          "before_donor": 0.03780001401901245,
+          "before_target": 0.7727804780006409
+        },
+        {
+          "mesh_vertex_index": 17942,
+          "rest_world_xyz": [
+            -0.08615970611572266,
+            0.04443783313035965,
+            0.2682102918624878
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.001233427855703566,
+          "before_donor": 0.03964589536190033,
+          "before_target": 0.7605921626091003
+        },
+        {
+          "mesh_vertex_index": 17959,
+          "rest_world_xyz": [
+            -0.0863819569349289,
+            0.03741694241762161,
+            0.2611714005470276
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.004783211482895745,
+          "before_donor": 0.05381112918257713,
+          "before_target": 0.7586795687675476
+        },
+        {
+          "mesh_vertex_index": 17970,
+          "rest_world_xyz": [
+            -0.08649246394634247,
+            0.02796890400350094,
+            0.2608274817466736
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.0039014750719070434,
+          "before_donor": 0.03251229226589203,
+          "before_target": 0.7857926487922668
+        },
+        {
+          "mesh_vertex_index": 17971,
+          "rest_world_xyz": [
+            -0.08649246394634247,
+            0.02796890400350094,
+            0.2608274817466736
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.0039014750719070434,
+          "before_donor": 0.03251229226589203,
+          "before_target": 0.7857926487922668
+        },
+        {
+          "mesh_vertex_index": 17973,
+          "rest_world_xyz": [
+            -0.08650457113981247,
+            0.03290654346346855,
+            0.2596242427825928
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.004623076468706131,
+          "before_donor": 0.03852563723921776,
+          "before_target": 0.7764336466789246
+        },
+        {
+          "mesh_vertex_index": 17974,
+          "rest_world_xyz": [
+            -0.08650457113981247,
+            0.03290654346346855,
+            0.2596242427825928
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.004623076468706131,
+          "before_donor": 0.03852563723921776,
+          "before_target": 0.7764336466789246
+        },
+        {
+          "mesh_vertex_index": 17975,
+          "rest_world_xyz": [
+            -0.08650457113981247,
+            0.03290654346346855,
+            0.2596242427825928
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.004623076468706131,
+          "before_donor": 0.03852563723921776,
+          "before_target": 0.7764336466789246
+        },
+        {
+          "mesh_vertex_index": 18021,
+          "rest_world_xyz": [
+            -0.08699575811624527,
+            0.022939881309866905,
+            0.2683054506778717
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.00046366984024643894,
+          "before_donor": 0.0038639153353869915,
+          "before_target": 0.8053256869316101
+        },
+        {
+          "mesh_vertex_index": 18023,
+          "rest_world_xyz": [
+            -0.08700909465551376,
+            0.03339769318699837,
+            0.2573584318161011
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.0047311408817768096,
+          "before_donor": 0.03942617401480675,
+          "before_target": 0.7774609327316284
+        },
+        {
+          "mesh_vertex_index": 18085,
+          "rest_world_xyz": [
+            -0.08777766674757004,
+            0.03000934235751629,
+            0.2727636992931366
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 8.600959968235759e-05,
+          "before_donor": 0.0027645942755043507,
+          "before_target": 0.7991289496421814
+        },
+        {
+          "mesh_vertex_index": 18095,
+          "rest_world_xyz": [
+            -0.08784455060958862,
+            0.026098327711224556,
+            0.25775671005249023
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.003101338595151901,
+          "before_donor": 0.02584448829293251,
+          "before_target": 0.8049812912940979
+        },
+        {
+          "mesh_vertex_index": 18096,
+          "rest_world_xyz": [
+            -0.08784455060958862,
+            0.026098327711224556,
+            0.25775671005249023
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.003101338595151901,
+          "before_donor": 0.02584448829293251,
+          "before_target": 0.8049812912940979
+        },
+        {
+          "mesh_vertex_index": 18104,
+          "rest_world_xyz": [
+            -0.08792908489704132,
+            0.045747630298137665,
+            0.263900488615036
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.0015102174546983507,
+          "before_donor": 0.016989946365356445,
+          "before_target": 0.8014842867851257
+        },
+        {
+          "mesh_vertex_index": 18117,
+          "rest_world_xyz": [
+            -0.08804440498352051,
+            0.04064872860908508,
+            0.257506400346756
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.0018629803508520126,
+          "before_donor": 0.015524836257100105,
+          "before_target": 0.8019968867301941
+        },
+        {
+          "mesh_vertex_index": 18126,
+          "rest_world_xyz": [
+            -0.0881461575627327,
+            0.030328499153256416,
+            0.2541624903678894
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.0032366077601909634,
+          "before_donor": 0.026971731334924698,
+          "before_target": 0.81326824426651
+        },
+        {
+          "mesh_vertex_index": 18143,
+          "rest_world_xyz": [
+            -0.08829400688409805,
+            0.026075776666402817,
+            0.2735691964626312
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 2.263774500331945e-05,
+          "before_donor": 0.0007276418036781251,
+          "before_target": 0.8098686933517456
+        },
+        {
+          "mesh_vertex_index": 18144,
+          "rest_world_xyz": [
+            -0.08829400688409805,
+            0.026075776666402817,
+            0.2735691964626312
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 2.263774500331945e-05,
+          "before_donor": 0.0007276418036781251,
+          "before_target": 0.8098686933517456
+        },
+        {
+          "mesh_vertex_index": 18167,
+          "rest_world_xyz": [
+            -0.08844795823097229,
+            0.039541441947221756,
+            0.2728016674518585
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 0.00018651873908109138,
+          "before_donor": 0.005995245184749365,
+          "before_target": 0.7863441705703735
+        },
+        {
+          "mesh_vertex_index": 18185,
+          "rest_world_xyz": [
+            -0.0887179747223854,
+            0.014802556484937668,
+            0.2751539647579193
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 2.0745675234744948e-05,
+          "before_donor": 0.0006668252754025161,
+          "before_target": 0.7959356307983398
+        },
+        {
+          "mesh_vertex_index": 18188,
+          "rest_world_xyz": [
+            -0.08876723796129227,
+            0.0364910364151001,
+            0.2525319457054138
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.012155082821846007,
+          "before_donor": 0.10129235684871674,
+          "before_target": 0.7326918840408325
+        },
+        {
+          "mesh_vertex_index": 18238,
+          "rest_world_xyz": [
+            -0.08927399665117264,
+            0.018667425960302353,
+            0.2713010609149933
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 5.175779159698222e-05,
+          "before_donor": 0.0005822751554660499,
+          "before_target": 0.8291860222816467
+        },
+        {
+          "mesh_vertex_index": 18240,
+          "rest_world_xyz": [
+            -0.08930397033691406,
+            0.044857822358608246,
+            0.2736436128616333
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 2.7980391039616533e-05,
+          "before_donor": 0.0008993697119876742,
+          "before_target": 0.8035265207290649
+        },
+        {
+          "mesh_vertex_index": 18248,
+          "rest_world_xyz": [
+            -0.08937172591686249,
+            0.05151960998773575,
+            0.271042138338089
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 9.35936760571268e-05,
+          "before_donor": 0.0010529288556426764,
+          "before_target": 0.80562824010849
+        },
+        {
+          "mesh_vertex_index": 18252,
+          "rest_world_xyz": [
+            -0.08941864967346191,
+            0.02232942171394825,
+            0.2613377571105957
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 0.00010622522793710232,
+          "before_donor": 0.000885210232809186,
+          "before_target": 0.8273706436157227
+        },
+        {
+          "mesh_vertex_index": 18261,
+          "rest_world_xyz": [
+            -0.0896182581782341,
+            0.03550645336508751,
+            0.2652377188205719
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.0001365672176082929,
+          "before_donor": 0.001536381198093295,
+          "before_target": 0.8153202533721924
+        },
+        {
+          "mesh_vertex_index": 18297,
+          "rest_world_xyz": [
+            -0.09006106108427048,
+            0.029403984546661377,
+            0.26301199197769165
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.0004197581360737483,
+          "before_donor": 0.004722279030829668,
+          "before_target": 0.8238332867622375
+        },
+        {
+          "mesh_vertex_index": 18304,
+          "rest_world_xyz": [
+            -0.09014535695314407,
+            0.026343129575252533,
+            0.26609766483306885
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 6.976096063024469e-05,
+          "before_donor": 0.0007848108070902526,
+          "before_target": 0.8261620998382568
+        },
+        {
+          "mesh_vertex_index": 18305,
+          "rest_world_xyz": [
+            -0.09014535695314407,
+            0.026343129575252533,
+            0.26609766483306885
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 6.976096063024469e-05,
+          "before_donor": 0.0007848108070902526,
+          "before_target": 0.8261620998382568
+        },
+        {
+          "mesh_vertex_index": 18352,
+          "rest_world_xyz": [
+            -0.0907234400510788,
+            0.05477527901530266,
+            0.2767655551433563
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 5.6921445454160374e-05,
+          "before_donor": 0.001829617889598012,
+          "before_target": 0.8099272847175598
+        },
+        {
+          "mesh_vertex_index": 18360,
+          "rest_world_xyz": [
+            -0.0908186286687851,
+            0.04824911430478096,
+            0.257953405380249
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 7.79536971822381e-05,
+          "before_donor": 0.0006496141431853175,
+          "before_target": 0.8591786026954651
+        },
+        {
+          "mesh_vertex_index": 18366,
+          "rest_world_xyz": [
+            -0.09090173989534378,
+            0.03407302498817444,
+            0.24765346944332123
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 6.0143026057630774e-05,
+          "before_donor": 0.0005011918838135898,
+          "before_target": 0.8772369623184204
+        },
+        {
+          "mesh_vertex_index": 18392,
+          "rest_world_xyz": [
+            -0.09116630256175995,
+            0.03585340827703476,
+            0.2576039731502533
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 0.0001414360168079535,
+          "before_donor": 0.001591155189089477,
+          "before_target": 0.8247965574264526
+        },
+        {
+          "mesh_vertex_index": 18429,
+          "rest_world_xyz": [
+            -0.09143861383199692,
+            0.04212907329201698,
+            0.26212701201438904
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 9.09070587820477e-05,
+          "before_donor": 0.0010227044112980366,
+          "before_target": 0.8317180871963501
+        },
+        {
+          "mesh_vertex_index": 18447,
+          "rest_world_xyz": [
+            -0.09164055436849594,
+            0.029606780037283897,
+            0.2472992241382599
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 6.944549269974232e-05,
+          "before_donor": 0.0005787124391645193,
+          "before_target": 0.8705741167068481
+        },
+        {
+          "mesh_vertex_index": 18460,
+          "rest_world_xyz": [
+            -0.09177760034799576,
+            0.026027917861938477,
+            0.2490510195493698
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 5.918318638578057e-05,
+          "before_donor": 0.0004931932198815048,
+          "before_target": 0.8731719255447388
+        },
+        {
+          "mesh_vertex_index": 18461,
+          "rest_world_xyz": [
+            -0.09177760034799576,
+            0.026027917861938477,
+            0.2490510195493698
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 5.918318638578057e-05,
+          "before_donor": 0.0004931932198815048,
+          "before_target": 0.8731719255447388
+        },
+        {
+          "mesh_vertex_index": 18483,
+          "rest_world_xyz": [
+            -0.09213007241487503,
+            0.032490357756614685,
+            0.2543753981590271
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 8.60008760355413e-05,
+          "before_donor": 0.0007166739669628441,
+          "before_target": 0.8532612919807434
+        },
+        {
+          "mesh_vertex_index": 18496,
+          "rest_world_xyz": [
+            -0.09225594252347946,
+            0.027002863585948944,
+            0.2572813332080841
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 7.848861627280712e-05,
+          "before_donor": 0.0006540718022733927,
+          "before_target": 0.8536189794540405
+        },
+        {
+          "mesh_vertex_index": 18497,
+          "rest_world_xyz": [
+            -0.09225594252347946,
+            0.027002863585948944,
+            0.2572813332080841
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 7.848861627280712e-05,
+          "before_donor": 0.0006540718022733927,
+          "before_target": 0.8536189794540405
+        },
+        {
+          "mesh_vertex_index": 18500,
+          "rest_world_xyz": [
+            -0.09229759126901627,
+            0.02290288545191288,
+            0.25217822194099426
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 6.667968817055226e-05,
+          "before_donor": 0.0005556640680879354,
+          "before_target": 0.8666526675224304
+        },
+        {
+          "mesh_vertex_index": 18528,
+          "rest_world_xyz": [
+            -0.09254733473062515,
+            0.05341906100511551,
+            0.26560211181640625
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 7.334464333123631e-05,
+          "before_donor": 0.0008251272374764085,
+          "before_target": 0.8429595828056335
+        },
+        {
+          "mesh_vertex_index": 18540,
+          "rest_world_xyz": [
+            -0.09274987876415253,
+            0.007227919064462185,
+            0.2771837115287781
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 1.3830996144356001e-05,
+          "before_donor": 0.00044456773321144283,
+          "before_target": 0.8014556765556335
+        },
+        {
+          "mesh_vertex_index": 18555,
+          "rest_world_xyz": [
+            -0.09290678054094315,
+            0.0431973971426487,
+            0.24738438427448273
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 6.106609711423517e-05,
+          "before_donor": 0.0005088841426186264,
+          "before_target": 0.8784419894218445
+        },
+        {
+          "mesh_vertex_index": 18556,
+          "rest_world_xyz": [
+            -0.09290678054094315,
+            0.0431973971426487,
+            0.24738438427448273
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 6.106609711423517e-05,
+          "before_donor": 0.0005088841426186264,
+          "before_target": 0.8784419894218445
+        },
+        {
+          "mesh_vertex_index": 18582,
+          "rest_world_xyz": [
+            -0.09319446235895157,
+            0.021005941554903984,
+            0.27076849341392517
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 1.7760573989815184e-05,
+          "before_donor": 0.0005708755925297737,
+          "before_target": 0.8395735025405884
+        },
+        {
+          "mesh_vertex_index": 18589,
+          "rest_world_xyz": [
+            -0.09329644590616226,
+            0.046547576785087585,
+            0.2619837820529938
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 2.0493079339050587e-05,
+          "before_donor": 0.0006587061216123402,
+          "before_target": 0.8498867750167847
+        },
+        {
+          "mesh_vertex_index": 18601,
+          "rest_world_xyz": [
+            -0.09337938576936722,
+            0.0230578426271677,
+            0.26502785086631775
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 5.08058298793104e-05,
+          "before_donor": 0.000571565586142242,
+          "before_target": 0.8476104140281677
+        },
+        {
+          "mesh_vertex_index": 18646,
+          "rest_world_xyz": [
+            -0.09391912072896957,
+            0.05118180066347122,
+            0.25551190972328186
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 4.673587779204051e-05,
+          "before_donor": 0.0005257786251604557,
+          "before_target": 0.8727644681930542
+        },
+        {
+          "mesh_vertex_index": 18668,
+          "rest_world_xyz": [
+            -0.09410703927278519,
+            0.03825967386364937,
+            0.2509482204914093
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 5.972132552415132e-05,
+          "before_donor": 0.000497677712701261,
+          "before_target": 0.8759722709655762
+        },
+        {
+          "mesh_vertex_index": 18691,
+          "rest_world_xyz": [
+            -0.0943772941827774,
+            0.048054590821266174,
+            0.2493598461151123
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 6.496279500424862e-05,
+          "before_donor": 0.0005413566250354052,
+          "before_target": 0.8760497570037842
+        },
+        {
+          "mesh_vertex_index": 18692,
+          "rest_world_xyz": [
+            -0.0943772941827774,
+            0.048054590821266174,
+            0.2493598461151123
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 6.496279500424862e-05,
+          "before_donor": 0.0005413566250354052,
+          "before_target": 0.8760497570037842
+        },
+        {
+          "mesh_vertex_index": 18697,
+          "rest_world_xyz": [
+            -0.09439989179372787,
+            0.0318014957010746,
+            0.24979685246944427
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 4.911144264042377e-05,
+          "before_donor": 0.00040926202200353146,
+          "before_target": 0.8803716897964478
+        },
+        {
+          "mesh_vertex_index": 18721,
+          "rest_world_xyz": [
+            -0.09470977634191513,
+            0.03493252396583557,
+            0.24143768846988678
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 2.7704837266355752e-05,
+          "before_donor": 0.00023087364388629794,
+          "before_target": 0.9055129289627075
+        },
+        {
+          "mesh_vertex_index": 18745,
+          "rest_world_xyz": [
+            -0.09493865817785263,
+            0.016055844724178314,
+            0.2642495930194855
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 4.2972334194928405e-05,
+          "before_donor": 0.00035810278495773673,
+          "before_target": 0.8548943400382996
+        },
+        {
+          "mesh_vertex_index": 18751,
+          "rest_world_xyz": [
+            -0.0949767529964447,
+            0.027227303013205528,
+            0.2511295974254608
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 5.5705768754705784e-05,
+          "before_donor": 0.0004642147396225482,
+          "before_target": 0.8728068470954895
+        },
+        {
+          "mesh_vertex_index": 18758,
+          "rest_world_xyz": [
+            -0.09503410756587982,
+            0.011510475538671017,
+            0.2704242765903473
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 3.168993474294742e-05,
+          "before_donor": 0.00035651176585815847,
+          "before_target": 0.8322114944458008
+        },
+        {
+          "mesh_vertex_index": 18810,
+          "rest_world_xyz": [
+            -0.0954539030790329,
+            0.024254050105810165,
+            0.25478044152259827
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 5.5708094732835884e-05,
+          "before_donor": 0.0004642341227736324,
+          "before_target": 0.8719533681869507
+        },
+        {
+          "mesh_vertex_index": 18811,
+          "rest_world_xyz": [
+            -0.09546197950839996,
+            0.0429677851498127,
+            0.2512572109699249
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 3.9413648967941604e-05,
+          "before_donor": 0.000443403550889343,
+          "before_target": 0.8803964257240295
+        },
+        {
+          "mesh_vertex_index": 18837,
+          "rest_world_xyz": [
+            -0.09565867483615875,
+            0.05576319620013237,
+            0.26732972264289856
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 2.0274146356516417e-05,
+          "before_donor": 0.0006516689900308847,
+          "before_target": 0.8607690334320068
+        },
+        {
+          "mesh_vertex_index": 18874,
+          "rest_world_xyz": [
+            -0.09616647660732269,
+            0.05407853052020073,
+            0.258566677570343
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 1.5251728085180125e-05,
+          "before_donor": 0.0004902341170236468,
+          "before_target": 0.8753872513771057
+        },
+        {
+          "mesh_vertex_index": 19026,
+          "rest_world_xyz": [
+            -0.09770822525024414,
+            0.0465756319463253,
+            0.2432744801044464
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 2.791286911815405e-05,
+          "before_donor": 0.00023260724265128374,
+          "before_target": 0.9086018204689026
+        },
+        {
+          "mesh_vertex_index": 19027,
+          "rest_world_xyz": [
+            -0.09770822525024414,
+            0.0465756319463253,
+            0.2432744801044464
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 2.791286911815405e-05,
+          "before_donor": 0.00023260724265128374,
+          "before_target": 0.9086018204689026
+        },
+        {
+          "mesh_vertex_index": 19056,
+          "rest_world_xyz": [
+            -0.09799392521381378,
+            0.0058617000468075275,
+            0.2735440135002136
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 1.0040574577740498e-05,
+          "before_donor": 0.000322732754284516,
+          "before_target": 0.8299427628517151
+        },
+        {
+          "mesh_vertex_index": 19086,
+          "rest_world_xyz": [
+            -0.09834905713796616,
+            0.047831032425165176,
+            0.2524477541446686
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 9.579312625444598e-06,
+          "before_donor": 0.0003079064772464335,
+          "before_target": 0.891316831111908
+        },
+        {
+          "mesh_vertex_index": 19087,
+          "rest_world_xyz": [
+            -0.09834905713796616,
+            0.047831032425165176,
+            0.2524477541446686
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 9.579312625444598e-06,
+          "before_donor": 0.0003079064772464335,
+          "before_target": 0.891316831111908
+        },
+        {
+          "mesh_vertex_index": 19133,
+          "rest_world_xyz": [
+            -0.09880346804857254,
+            0.05194663256406784,
+            0.24944862723350525
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 2.7462289047737916e-05,
+          "before_donor": 0.00030895075178705156,
+          "before_target": 0.8982875943183899
+        },
+        {
+          "mesh_vertex_index": 19144,
+          "rest_world_xyz": [
+            -0.09892263263463974,
+            0.01680651679635048,
+            0.253054678440094
+          ],
+          "falloff": 1.0,
+          "target_gate": 1.0,
+          "donor_fraction": 0.12,
+          "transferred_weight": 2.328073082026094e-05,
+          "before_donor": 0.00019400609016884118,
+          "before_target": 0.8908067941665649
+        },
+        {
+          "mesh_vertex_index": 19369,
+          "rest_world_xyz": [
+            -0.1014670580625534,
+            0.007713882718235254,
+            0.2660123109817505
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 1.0,
+          "donor_fraction": 0.08888888888888889,
+          "transferred_weight": 1.4787592873391178e-05,
+          "before_donor": 0.00016636041982565075,
+          "before_target": 0.8741580247879028
+        },
+        {
+          "mesh_vertex_index": 19392,
+          "rest_world_xyz": [
+            -0.10175982862710953,
+            0.05534084886312485,
+            0.2547920346260071
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 8.113663902299272e-06,
+          "before_donor": 0.0002607963397167623,
+          "before_target": 0.9107834696769714
+        },
+        {
+          "mesh_vertex_index": 19419,
+          "rest_world_xyz": [
+            -0.10192293673753738,
+            0.0038705833721905947,
+            0.273284375667572
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 7.895678023083343e-06,
+          "before_donor": 0.0002537896507419646,
+          "before_target": 0.8470515012741089
+        },
+        {
+          "mesh_vertex_index": 19498,
+          "rest_world_xyz": [
+            -0.1027572900056839,
+            0.015231377445161343,
+            0.2613582909107208
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 1.0,
+          "donor_fraction": 0.031111111111111114,
+          "transferred_weight": 6.053694717896482e-06,
+          "before_donor": 0.00019458304450381547,
+          "before_target": 0.8852856755256653
+        }
+      ]
+    },
+    {
+      "joint": "UpperArmR",
+      "mesh": "geometry_0",
+      "donor": "bone_2",
+      "target": "bone_7",
+      "raw_contact_vertices": 41,
+      "verified_eligible_seeds": 4,
+      "mesh_ring_vertices": 45,
+      "seam_groups": 4549,
+      "modified_vertices": 26,
+      "mean_transferred_weight": 0.002150802032556937,
+      "vertices": [
+        {
+          "mesh_vertex_index": 5964,
+          "rest_world_xyz": [
+            0.08424438536167145,
+            0.024832528084516525,
+            0.2629355490207672
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.32568958282411353,
+          "donor_fraction": 0.010132564798972421,
+          "transferred_weight": 0.0010526372214525463,
+          "before_donor": 0.10388655215501785,
+          "before_target": 0.34539470076560974
+        },
+        {
+          "mesh_vertex_index": 5979,
+          "rest_world_xyz": [
+            0.08437107503414154,
+            0.032553255558013916,
+            0.2574664354324341
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.07018074121505476,
+          "donor_fraction": 0.0021834008378017037,
+          "transferred_weight": 0.0004946714816107793,
+          "before_donor": 0.2265600860118866,
+          "before_target": 0.2904852032661438
+        },
+        {
+          "mesh_vertex_index": 6000,
+          "rest_world_xyz": [
+            0.08457089215517044,
+            0.03618909418582916,
+            0.2618042826652527
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.0006521035841360252,
+          "donor_fraction": 2.0287667062009675e-05,
+          "transferred_weight": 5.05761176821164e-06,
+          "before_donor": 0.24929489195346832,
+          "before_target": 0.2537041902542114
+        },
+        {
+          "mesh_vertex_index": 6001,
+          "rest_world_xyz": [
+            0.08457089215517044,
+            0.03618909418582916,
+            0.2618042826652527
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.0006521035841360252,
+          "donor_fraction": 2.0287667062009675e-05,
+          "transferred_weight": 5.05761176821164e-06,
+          "before_donor": 0.24929489195346832,
+          "before_target": 0.2537041902542114
+        },
+        {
+          "mesh_vertex_index": 6004,
+          "rest_world_xyz": [
+            0.08458968251943588,
+            0.02601933293044567,
+            0.25858646631240845
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.1266490816782554,
+          "donor_fraction": 0.003940193652212391,
+          "transferred_weight": 0.000813357336868698,
+          "before_donor": 0.2064257264137268,
+          "before_target": 0.30566367506980896
+        },
+        {
+          "mesh_vertex_index": 6013,
+          "rest_world_xyz": [
+            0.08465131372213364,
+            0.027638103812932968,
+            0.2560057044029236
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.01439066241590298,
+          "donor_fraction": 0.00044770949738364834,
+          "transferred_weight": 0.00012583602454054773,
+          "before_donor": 0.28106623888015747,
+          "before_target": 0.26773956418037415
+        },
+        {
+          "mesh_vertex_index": 6065,
+          "rest_world_xyz": [
+            0.08536580950021744,
+            0.024373304098844528,
+            0.26776543259620667
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.6113684224405137,
+          "donor_fraction": 0.019020350920371538,
+          "transferred_weight": 0.0005371250893003658,
+          "before_donor": 0.028239494189620018,
+          "before_target": 0.3937009274959564
+        },
+        {
+          "mesh_vertex_index": 6066,
+          "rest_world_xyz": [
+            0.08536580950021744,
+            0.024373304098844528,
+            0.26776543259620667
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.6113684224405137,
+          "donor_fraction": 0.019020350920371538,
+          "transferred_weight": 0.0005371250893003658,
+          "before_donor": 0.028239494189620018,
+          "before_target": 0.3937009274959564
+        },
+        {
+          "mesh_vertex_index": 6110,
+          "rest_world_xyz": [
+            0.08582329005002975,
+            0.03208715096116066,
+            0.2582353353500366
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.10775475326465446,
+          "donor_fraction": 0.009578200290191508,
+          "transferred_weight": 0.0020301436932130693,
+          "before_donor": 0.21195460855960846,
+          "before_target": 0.30097076296806335
+        },
+        {
+          "mesh_vertex_index": 6111,
+          "rest_world_xyz": [
+            0.08582329005002975,
+            0.03208715096116066,
+            0.2582353353500366
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.10775475326465446,
+          "donor_fraction": 0.009578200290191508,
+          "transferred_weight": 0.0020301436932130693,
+          "before_donor": 0.21195460855960846,
+          "before_target": 0.30097076296806335
+        },
+        {
+          "mesh_vertex_index": 6112,
+          "rest_world_xyz": [
+            0.08582329005002975,
+            0.03208715096116066,
+            0.2582353353500366
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.10775475326465446,
+          "donor_fraction": 0.009578200290191508,
+          "transferred_weight": 0.0020301436932130693,
+          "before_donor": 0.21195460855960846,
+          "before_target": 0.30097076296806335
+        },
+        {
+          "mesh_vertex_index": 6128,
+          "rest_world_xyz": [
+            0.08607064187526703,
+            0.02549787051975727,
+            0.26261094212532043
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.519932521000344,
+          "donor_fraction": 0.04621622408891947,
+          "transferred_weight": 0.003440371300795097,
+          "before_donor": 0.07444076985120773,
+          "before_target": 0.37832286953926086
+        },
+        {
+          "mesh_vertex_index": 6129,
+          "rest_world_xyz": [
+            0.08607064187526703,
+            0.02549787051975727,
+            0.26261094212532043
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.519932521000344,
+          "donor_fraction": 0.04621622408891947,
+          "transferred_weight": 0.003440371300795097,
+          "before_donor": 0.07444076985120773,
+          "before_target": 0.37832286953926086
+        },
+        {
+          "mesh_vertex_index": 6146,
+          "rest_world_xyz": [
+            0.08623713999986649,
+            0.02819228731095791,
+            0.2587944269180298
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.3723275168473378,
+          "donor_fraction": 0.03309577927531891,
+          "transferred_weight": 0.005032518621118902,
+          "before_donor": 0.15205922722816467,
+          "before_target": 0.3535095155239105
+        },
+        {
+          "mesh_vertex_index": 6147,
+          "rest_world_xyz": [
+            0.08623713999986649,
+            0.02819228731095791,
+            0.2587944269180298
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.3723275168473378,
+          "donor_fraction": 0.03309577927531891,
+          "transferred_weight": 0.005032518621118902,
+          "before_donor": 0.15205922722816467,
+          "before_target": 0.3535095155239105
+        },
+        {
+          "mesh_vertex_index": 6155,
+          "rest_world_xyz": [
+            0.08634191006422043,
+            0.0361667238175869,
+            0.2596074938774109
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.24569567379453308,
+          "donor_fraction": 0.021839615448402943,
+          "transferred_weight": 0.0035452866432915493,
+          "before_donor": 0.16233283281326294,
+          "before_target": 0.3307700455188751
+        },
+        {
+          "mesh_vertex_index": 6156,
+          "rest_world_xyz": [
+            0.08634191006422043,
+            0.0361667238175869,
+            0.2596074938774109
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.24569567379453308,
+          "donor_fraction": 0.021839615448402943,
+          "transferred_weight": 0.0035452866432915493,
+          "before_donor": 0.16233283281326294,
+          "before_target": 0.3307700455188751
+        },
+        {
+          "mesh_vertex_index": 6194,
+          "rest_world_xyz": [
+            0.08672771602869034,
+            0.04297049716114998,
+            0.2639874219894409
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.5680528001655718,
+          "donor_fraction": 0.0176727537829289,
+          "transferred_weight": 0.0006552780124493663,
+          "before_donor": 0.037078432738780975,
+          "before_target": 0.38637351989746094
+        },
+        {
+          "mesh_vertex_index": 6215,
+          "rest_world_xyz": [
+            0.08697810769081116,
+            0.021402547135949135,
+            0.2708606421947479
+          ],
+          "falloff": 0.2592592592592593,
+          "target_gate": 0.753787330198505,
+          "donor_fraction": 0.02345116138395349,
+          "transferred_weight": 3.4567982179525654e-05,
+          "before_donor": 0.0014740413753315806,
+          "before_target": 0.41913148760795593
+        },
+        {
+          "mesh_vertex_index": 6264,
+          "rest_world_xyz": [
+            0.08755472302436829,
+            0.03609896078705788,
+            0.2551632821559906
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.704365303288589,
+          "donor_fraction": 0.06261024918120792,
+          "transferred_weight": 0.00277658577784641,
+          "before_donor": 0.04434714466333389,
+          "before_target": 0.40997347235679626
+        },
+        {
+          "mesh_vertex_index": 6265,
+          "rest_world_xyz": [
+            0.08755472302436829,
+            0.03609896078705788,
+            0.2551632821559906
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.704365303288589,
+          "donor_fraction": 0.06261024918120792,
+          "transferred_weight": 0.00277658577784641,
+          "before_donor": 0.04434714466333389,
+          "before_target": 0.40997347235679626
+        },
+        {
+          "mesh_vertex_index": 6294,
+          "rest_world_xyz": [
+            0.08783889561891556,
+            0.03174007683992386,
+            0.2535969913005829
+          ],
+          "falloff": 1.0,
+          "target_gate": 0.8108808329062549,
+          "donor_fraction": 0.09730569994875059,
+          "transferred_weight": 0.0032271881622010375,
+          "before_donor": 0.03316545858979225,
+          "before_target": 0.43045079708099365
+        },
+        {
+          "mesh_vertex_index": 6347,
+          "rest_world_xyz": [
+            0.08819372206926346,
+            0.022222885861992836,
+            0.26519155502319336
+          ],
+          "falloff": 0.7407407407407408,
+          "target_gate": 0.7642791691600015,
+          "donor_fraction": 0.0679359261475557,
+          "transferred_weight": 0.0010544134625345744,
+          "before_donor": 0.015520704910159111,
+          "before_target": 0.4211423695087433
+        },
+        {
+          "mesh_vertex_index": 6449,
+          "rest_world_xyz": [
+            0.08941332250833511,
+            0.02299332246184349,
+            0.2580984830856323
+          ],
+          "falloff": 1.0,
+          "target_gate": 0.9782882236382168,
+          "donor_fraction": 0.117394586836586,
+          "transferred_weight": 0.00020562560543569512,
+          "before_donor": 0.0017515765503048897,
+          "before_target": 0.4780817925930023
+        },
+        {
+          "mesh_vertex_index": 6464,
+          "rest_world_xyz": [
+            0.08958684653043747,
+            0.02590852417051792,
+            0.25273269414901733
+          ],
+          "falloff": 1.0,
+          "target_gate": 0.9809018589096521,
+          "donor_fraction": 0.11770822306915825,
+          "transferred_weight": 0.0057464781946636595,
+          "before_donor": 0.048819683492183685,
+          "before_target": 0.47948402166366577
+        },
+        {
+          "mesh_vertex_index": 6465,
+          "rest_world_xyz": [
+            0.08958684653043747,
+            0.02590852417051792,
+            0.25273269414901733
+          ],
+          "falloff": 1.0,
+          "target_gate": 0.9809018589096521,
+          "donor_fraction": 0.11770822306915825,
+          "transferred_weight": 0.0057464781946636595,
+          "before_donor": 0.048819683492183685,
+          "before_target": 0.47948402166366577
+        }
+      ]
+    }
+  ],
+  "changed_joint_groups": [
+    "bone_2",
+    "bone_26",
+    "bone_7"
+  ],
+  "artifact": {
+    "sha256": "d9a9982ff5ed33811d9e5c2389f7ee07611e83ddc71e122904299008b4cc6eb2",
+    "bytes": 3375872
+  },
+  "rest_surface_roundtrip": {
+    "before_vertices": 23734,
+    "after_vertices": 23783,
+    "max_nearest_distance_m": 3.011961098309257e-07,
+    "rms_nearest_distance_m": 7.877079180691974e-08
+  },
+  "candidate_weights": [
+    {
+      "mesh": "geometry_0",
+      "vertices": 23783,
+      "unweighted_vertices": 0,
+      "max_influences": 4,
+      "max_normalization_error": 1.3175304047763348e-07,
+      "finite_nonnegative": true
+    }
+  ],
+  "poses": [
+    {
+      "joint": "UpperArmL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.524516840695726,
+        "largest_extension_to_height": 0.007652981870180935,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 0,
+      "delta_vs_reference": 0
+    },
+    {
+      "joint": "UpperArmL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 137,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_2",
+            "bone_26"
+          ],
+          "intersections": 68
+        },
+        {
+          "regions": [
+            "bone_26",
+            "bone_26"
+          ],
+          "intersections": 56
+        },
+        {
+          "regions": [
+            "bone_26",
+            "bone_3"
+          ],
+          "intersections": 13
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.298885780574436,
+        "largest_extension_to_height": 0.016462083130226304,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 131,
+      "delta_vs_parent": 6,
+      "reference_intersections": 144,
+      "delta_vs_reference": -7
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.6929920675773926,
+        "largest_extension_to_height": 0.0069768272538736935,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 0,
+      "delta_vs_reference": 0
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 81,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_2",
+            "bone_7"
+          ],
+          "intersections": 39
+        },
+        {
+          "regions": [
+            "bone_3",
+            "bone_7"
+          ],
+          "intersections": 29
+        },
+        {
+          "regions": [
+            "bone_7",
+            "bone_7"
+          ],
+          "intersections": 13
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.382105119880736,
+        "largest_extension_to_height": 0.013770571871461839,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 81,
+      "delta_vs_parent": 0,
+      "reference_intersections": 85,
+      "delta_vs_reference": -4
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.3245161492950523,
+        "largest_extension_to_height": 0.003018595124706549,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 0,
+      "delta_vs_reference": 0
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.5117497798825195,
+        "largest_extension_to_height": 0.004676517078364935,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 0,
+      "delta_vs_reference": 0
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.2275863164617429,
+        "largest_extension_to_height": 0.002195126346994683,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 0,
+      "delta_vs_reference": 0
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.3081881660055827,
+        "largest_extension_to_height": 0.004006309606542511,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 0,
+      "delta_vs_reference": 0
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.7397791637715514,
+        "largest_extension_to_height": 0.014680384830087037,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 4,
+      "delta_vs_reference": -4
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 255,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_0",
+            "bone_48"
+          ],
+          "intersections": 157
+        },
+        {
+          "regions": [
+            "bone_48",
+            "bone_48"
+          ],
+          "intersections": 51
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_0"
+          ],
+          "intersections": 27
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_48"
+          ],
+          "intersections": 11
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_44"
+          ],
+          "intersections": 5
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 4
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.402857795039651,
+        "largest_extension_to_height": 0.02843920760107974,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 255,
+      "delta_vs_parent": 0,
+      "reference_intersections": 258,
+      "delta_vs_reference": -3
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.503531300698117,
+        "largest_extension_to_height": 0.009478235949175814,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 0,
+      "delta_vs_reference": 0
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 133,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_0",
+            "bone_44"
+          ],
+          "intersections": 71
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 44
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_0"
+          ],
+          "intersections": 10
+        },
+        {
+          "regions": [
+            "bone_48",
+            "bone_48"
+          ],
+          "intersections": 5
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_48"
+          ],
+          "intersections": 3
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.114125862946694,
+        "largest_extension_to_height": 0.02202704335773748,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 133,
+      "delta_vs_parent": 0,
+      "reference_intersections": 162,
+      "delta_vs_reference": -29
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.074457526168218,
+        "largest_extension_to_height": 0.008532230125943509,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 0,
+      "delta_vs_reference": 0
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.866973441403408,
+        "largest_extension_to_height": 0.014503120478578163,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 0,
+      "delta_vs_reference": 0
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.171379686150415,
+        "largest_extension_to_height": 0.011429557442349355,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 0,
+      "delta_vs_parent": 0,
+      "reference_intersections": 0,
+      "delta_vs_reference": 0
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 2,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_44",
+            "bone_45"
+          ],
+          "intersections": 2
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 3.0316355097601724,
+        "largest_extension_to_height": 0.01826800778472316,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      },
+      "parent_intersections": 2,
+      "delta_vs_parent": 0,
+      "reference_intersections": 2,
+      "delta_vs_reference": 0
+    }
+  ],
+  "non_shoulder_bends_unchanged": true,
+  "regressions": [
+    {
+      "joint": "UpperArmL",
+      "degrees": 90,
+      "delta": 6
+    }
+  ],
+  "status": "review_required",
+  "scope": "Signed rest-space shoulder contact repair, bone_2 donor only, measured after GLB reimport. Diagnostic candidate; game motion, appearance and qualification remain pending.",
+  "completed_unix": 1793027199.6021867
+}

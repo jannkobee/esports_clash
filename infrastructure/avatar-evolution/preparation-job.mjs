@@ -6,6 +6,8 @@ import {inspect} from './browser.mjs';
 import validator from 'gltf-validator';
 import {intelligence,recoverPreparedArtifact} from './intelligence.mjs';
 const folder=process.argv[2],plan=JSON.parse(await readFile(join(folder,'preparation-plan.json'),'utf8'));
+if(!process.env.COLAB_RELEASE_TAG||!folder.startsWith('/content/teamfight-preparation/')||plan.execution?.compute!=='google')
+  throw Error('Google Colab execution proof is required. Local preparation and historical-plan relabeling are disabled.');
 const cancelled=async()=>{try{await lstat(join(folder,'cancelled.json'));return true;}catch{return false;}};
 const save=async state=>{if(await cancelled())return;const temp=join(folder,'state.json.tmp-job');await writeFile(temp,JSON.stringify({id:folder.split('/').at(-1),...state},null,2));await rename(temp,join(folder,'state.json'));};
 try{

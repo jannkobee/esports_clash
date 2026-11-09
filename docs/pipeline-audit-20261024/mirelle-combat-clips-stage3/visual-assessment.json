@@ -1,0 +1,51 @@
+{
+  "status": "diagnostic_combat_clips_verified_not_production",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "reviewed_on": "2026-11-08",
+  "scope": "Ten authored combat motion clips (Idle, Walk, Run, Strafe, Attack, Cast, Hit, Death, TurnLeft, TurnRight) baked and validated on Mirelle Candidate v14 with synchronous 52-bone kinematics and 7 corrective morph targets with pre-skin normal transport accessors. Verified in Babylon headless engine with 39 multi-view screenshots across all clips. Unqualified diagnostic evidence only; outfit fitting, hair, accessories and production publication remain deferred.",
+  "inspected": [
+    {
+      "clip": "Idle",
+      "phase": 0.5,
+      "view": "front",
+      "file": "combat-screenshots/Idle-p050-front.png"
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.25,
+      "view": "side",
+      "file": "combat-screenshots/Walk-p025-side.png"
+    },
+    {
+      "clip": "Run",
+      "phase": 0.3,
+      "view": "side",
+      "file": "combat-screenshots/Run-p030-side.png"
+    },
+    {
+      "clip": "Attack",
+      "phase": 0.42,
+      "view": "front",
+      "file": "combat-screenshots/Attack-p042-front.png"
+    },
+    {
+      "clip": "Cast",
+      "phase": 0.5,
+      "view": "front",
+      "file": "combat-screenshots/Cast-p050-front.png"
+    },
+    {
+      "clip": "Hit",
+      "phase": 0.22,
+      "view": "side",
+      "file": "combat-screenshots/Hit-p022-side.png"
+    },
+    {
+      "clip": "Death",
+      "phase": 1.0,
+      "view": "side",
+      "file": "combat-screenshots/Death-p100-side.png"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "status": "rejected_no_improvement",
+  "reviewed_on": "2026-11-07",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "summary": "Reject as no improvement. None of the 32 fixed separation iterates per target beat the original contact count, so the frozen selection rule retained all five zero deltas. All 25 before/after poses are unchanged; shoulders and left-hip twist contacts remain. Successful preservation/playback does not supply a repair.",
+  "inspected": [
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-oblique.png",
+      "sha256": "3409685bfe492494b5c878f838a57b9f3e9887745976e82c846ba2ea4a7eaad5"
+    },
+    {
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-oblique.png",
+      "sha256": "3409685bfe492494b5c878f838a57b9f3e9887745976e82c846ba2ea4a7eaad5"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-oblique.png",
+      "sha256": "e549742bd3cd2fd61470b43e8a016385f797dc716f4253d1f5d4b54be08e60a1"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-oblique.png",
+      "sha256": "e549742bd3cd2fd61470b43e8a016385f797dc716f4253d1f5d4b54be08e60a1"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-baseline-oblique.png",
+      "sha256": "c995b8d82d41663e1375d17f86c20fc12546d902ca11e32c4c2501a5b536ea66"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-candidate-oblique.png",
+      "sha256": "c995b8d82d41663e1375d17f86c20fc12546d902ca11e32c4c2501a5b536ea66"
+    }
+  ],
+  "limitations": [
+    "Six named static views inspected, not all 175 captures.",
+    "The frontal hip view is thigh-occluded and side is partly arm-occluded; the oblique view exposes an abrupt root transition.",
+    "Rest framing is offset in this harness; no rest visual acceptance is claimed.",
+    "Child bends remain explicit local-X diagnostic controls, not anatomical hinge qualification."
+  ]
+}

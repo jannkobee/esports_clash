@@ -1,0 +1,981 @@
+{
+  "results": [
+    {
+      "team": "blue",
+      "mode": "combined",
+      "second": 4.999999999999992,
+      "buildings": [
+        {
+          "id": "r_t1",
+          "type": "outer_tower",
+          "x": 1550,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_t2",
+          "type": "inner_tower",
+          "x": 1770,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_t3",
+          "type": "nexus_tower",
+          "x": 1990,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_melee_barracks",
+          "type": "barracks",
+          "x": 2270,
+          "y": 140,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_ranged_barracks",
+          "type": "barracks",
+          "x": 2210,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_catapult_barracks",
+          "type": "barracks",
+          "x": 2270,
+          "y": 620,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_nexus",
+          "type": "nexus",
+          "x": 2365,
+          "y": 380,
+          "hp": 8354,
+          "alive": true
+        }
+      ],
+      "actors": [
+        {
+          "x": 2144.4550274801604,
+          "y": 350.18602633651693,
+          "alive": true,
+          "attackTimer": 0.5826773747894108,
+          "visual": {
+            "targetId": "r_melee_barracks",
+            "x": 2270,
+            "y": 140,
+            "releasedAt": 4.466666666666661,
+            "melee": false
+          },
+          "damage": 452,
+          "range": 6,
+          "legacy": "Astra",
+          "intent": {
+            "key": "push:lane-advance:blue",
+            "kind": "push",
+            "targetId": "lane-advance:blue",
+            "targetX": 2189.5,
+            "targetY": 350,
+            "contextKey": "lane:blue:54:0",
+            "committedUntil": 5.333333333333327,
+            "startedAt": 4.533333333333327,
+            "lastProgressAt": 4.999999999999992,
+            "lastX": 2144.8866374995896,
+            "lastY": 346.91454323553387,
+            "bestDistance": 44.719930199391136,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 4.533333333333327
+          },
+          "target": "lane-advance:blue",
+          "ruleset": "original-v3-preview-2",
+          "name": "Ivera Frostwhistle"
+        },
+        {
+          "x": 2178.1427525032173,
+          "y": 385.3453662032999,
+          "alive": true,
+          "attackTimer": 0.7100844109092722,
+          "visual": {
+            "targetId": "r_nexus",
+            "x": 2365,
+            "y": 380,
+            "releasedAt": 4.56666666666666,
+            "melee": false
+          },
+          "damage": 693,
+          "range": 5.5,
+          "legacy": "Cora",
+          "intent": {
+            "key": "structure:r_nexus",
+            "kind": "structure",
+            "targetId": "r_nexus",
+            "targetX": 2365,
+            "targetY": 380,
+            "contextKey": "structure|1|29|4|0|5|0|49|1|1|0",
+            "committedUntil": 5.31666666666666,
+            "startedAt": 4.56666666666666,
+            "lastProgressAt": 4.999999999999992,
+            "lastX": 2178.1427525032173,
+            "lastY": 385.3453662032999,
+            "bestDistance": 186.90091550370886,
+            "mode": "execute",
+            "switchCount": 1,
+            "switchWindowStartedAt": 4.533333333333327
+          },
+          "target": "r_nexus",
+          "ruleset": "original-v3-preview-2",
+          "name": "Quillene Rook"
+        },
+        {
+          "x": 2178.6738309678467,
+          "y": 351.37212127557007,
+          "alive": true,
+          "attackTimer": 1.1984486116996291,
+          "visual": {
+            "targetId": "r_nexus",
+            "x": 2365,
+            "y": 380,
+            "releasedAt": 4.966666666666659,
+            "melee": false
+          },
+          "damage": 774,
+          "range": 5,
+          "legacy": "Aetherbolt",
+          "intent": {
+            "key": "structure:r_nexus",
+            "kind": "structure",
+            "targetId": "r_nexus",
+            "targetX": 2365,
+            "targetY": 380,
+            "contextKey": "structure|1|29|4|0|5|0|49|1|1|0",
+            "committedUntil": 5.31666666666666,
+            "startedAt": 4.56666666666666,
+            "lastProgressAt": 4.999999999999992,
+            "lastX": 2178.6738309678467,
+            "lastY": 351.37212127557007,
+            "bestDistance": 188.5125903128468,
+            "mode": "execute",
+            "switchCount": 1,
+            "switchWindowStartedAt": 4.533333333333327
+          },
+          "target": "r_nexus",
+          "ruleset": "original-v3-preview-2",
+          "name": "Talan Slipshot"
+        },
+        {
+          "x": 2130.6595831559225,
+          "y": 382.6072399084437,
+          "alive": true,
+          "attackTimer": 0,
+          "visual": {
+            "targetId": "r_catapult_barracks",
+            "x": 2270,
+            "y": 620,
+            "releasedAt": 2.4333333333333345,
+            "melee": false
+          },
+          "damage": 372,
+          "range": 5.4,
+          "legacy": "Solenne",
+          "intent": {
+            "key": "push:lane-advance:blue",
+            "kind": "push",
+            "targetId": "lane-advance:blue",
+            "targetX": 2180.5,
+            "targetY": 410,
+            "contextKey": "lane:blue:54:0",
+            "committedUntil": 5.333333333333327,
+            "startedAt": 4.533333333333327,
+            "lastProgressAt": 4.999999999999992,
+            "lastX": 2128.6975549503245,
+            "lastY": 379.95406554377666,
+            "bestDistance": 59.88531949044205,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 4.533333333333327
+          },
+          "target": "lane-advance:blue",
+          "ruleset": "original-v3-preview-2",
+          "name": "Maris Solquill"
+        },
+        {
+          "x": 2229.058526200092,
+          "y": 446.52213365239606,
+          "alive": true,
+          "attackTimer": 1.2496753242479406,
+          "visual": {
+            "targetId": "r_nexus",
+            "x": 2365,
+            "y": 380,
+            "releasedAt": 4.933333333333326,
+            "melee": false
+          },
+          "damage": 248,
+          "range": 3.5,
+          "legacy": "Buck",
+          "intent": {
+            "key": "structure:r_nexus",
+            "kind": "structure",
+            "targetId": "r_nexus",
+            "targetX": 2365,
+            "targetY": 380,
+            "contextKey": "structure|1|29|4|0|5|0|49|1|1|0",
+            "committedUntil": 5.683333333333326,
+            "startedAt": 4.933333333333326,
+            "lastProgressAt": 4.999999999999992,
+            "lastX": 2229.058526200092,
+            "lastY": 446.52213365239606,
+            "bestDistance": 151.3448993674989,
+            "mode": "execute",
+            "switchCount": 1,
+            "switchWindowStartedAt": 4.533333333333327
+          },
+          "target": "r_nexus",
+          "ruleset": "original-v3-preview-2",
+          "name": "Bramm Coil"
+        }
+      ],
+      "fingerprint": "360527:31d48736:624db55a"
+    },
+    {
+      "team": "red",
+      "mode": "combined",
+      "second": 4.999999999999992,
+      "buildings": [
+        {
+          "id": "b_t1",
+          "type": "outer_tower",
+          "x": 1050,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_t2",
+          "type": "inner_tower",
+          "x": 830,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_t3",
+          "type": "nexus_tower",
+          "x": 610,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_melee_barracks",
+          "type": "barracks",
+          "x": 330,
+          "y": 140,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_ranged_barracks",
+          "type": "barracks",
+          "x": 390,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_catapult_barracks",
+          "type": "barracks",
+          "x": 330,
+          "y": 620,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_nexus",
+          "type": "nexus",
+          "x": 235,
+          "y": 380,
+          "hp": 8278,
+          "alive": true
+        }
+      ],
+      "actors": [
+        {
+          "x": 415.93791408441933,
+          "y": 431.4967630566704,
+          "alive": true,
+          "attackTimer": 0.8823995462686287,
+          "visual": {
+            "targetId": "b_nexus",
+            "x": 235,
+            "y": 380,
+            "releasedAt": 4.7666666666666595,
+            "melee": false
+          },
+          "damage": 678,
+          "range": 6,
+          "legacy": "Astra",
+          "intent": {
+            "key": "structure:b_nexus",
+            "kind": "structure",
+            "targetId": "b_nexus",
+            "targetX": 235,
+            "targetY": 380,
+            "contextKey": "structure|1|2|4|0|5|0|50|1|1|0",
+            "committedUntil": 5.5166666666666595,
+            "startedAt": 4.7666666666666595,
+            "lastProgressAt": 4.999999999999992,
+            "lastX": 416.09910826091857,
+            "lastY": 430.79545973941765,
+            "bestDistance": 188.08792024752336,
+            "mode": "execute",
+            "switchCount": 1,
+            "switchWindowStartedAt": 4.433333333333327
+          },
+          "target": "b_nexus",
+          "ruleset": "original-v3-preview-2",
+          "name": "Ivera Frostwhistle"
+        },
+        {
+          "x": 424.3776713770674,
+          "y": 368.50726412050517,
+          "alive": true,
+          "attackTimer": 0.5757067626412661,
+          "visual": {
+            "targetId": "b_nexus",
+            "x": 235,
+            "y": 380,
+            "releasedAt": 4.433333333333327,
+            "melee": false
+          },
+          "damage": 693,
+          "range": 5.5,
+          "legacy": "Cora",
+          "intent": {
+            "key": "push:lane-advance:red",
+            "kind": "push",
+            "targetId": "lane-advance:red",
+            "targetX": 397,
+            "targetY": 370,
+            "contextKey": "lane:red:9:0",
+            "committedUntil": 6.1499999999999915,
+            "startedAt": 4.999999999999992,
+            "lastProgressAt": 4.999999999999992,
+            "lastX": 424.74797419968183,
+            "lastY": 365.22827575388163,
+            "bestDistance": 28.155273475269293,
+            "mode": "move",
+            "switchCount": 9,
+            "switchWindowStartedAt": 4.433333333333327
+          },
+          "target": "lane-advance:red",
+          "ruleset": "original-v3-preview-2",
+          "name": "Quillene Rook"
+        },
+        {
+          "x": 458.9519739113245,
+          "y": 388.97261245855873,
+          "alive": true,
+          "attackTimer": 0,
+          "visual": {
+            "targetId": "b_melee_barracks",
+            "x": 330,
+            "y": 140,
+            "releasedAt": 3.3999999999999977,
+            "melee": false
+          },
+          "damage": 506,
+          "range": 5,
+          "legacy": "Aetherbolt",
+          "intent": {
+            "key": "push:lane-advance:red",
+            "kind": "push",
+            "targetId": "lane-advance:red",
+            "targetX": 419.5,
+            "targetY": 390,
+            "contextKey": "lane:red:10:0",
+            "committedUntil": 5.233333333333327,
+            "startedAt": 4.433333333333327,
+            "lastProgressAt": 4.933333333333326,
+            "lastX": 459.81619920140486,
+            "lastY": 390.63357952574,
+            "bestDistance": 39.839863335404864,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 4.433333333333327
+          },
+          "target": "lane-advance:red",
+          "ruleset": "original-v3-preview-2",
+          "name": "Talan Slipshot"
+        },
+        {
+          "x": 423.5211093692902,
+          "y": 399.56034100137606,
+          "alive": true,
+          "attackTimer": 0.8423511176035509,
+          "visual": {
+            "targetId": "b_nexus",
+            "x": 235,
+            "y": 380,
+            "releasedAt": 4.433333333333327,
+            "melee": false
+          },
+          "damage": 558,
+          "range": 5.4,
+          "legacy": "Solenne",
+          "intent": {
+            "key": "structure:b_nexus",
+            "kind": "structure",
+            "targetId": "b_nexus",
+            "targetX": 235,
+            "targetY": 380,
+            "contextKey": "structure|1|2|4|0|5|0|50|1|1|0",
+            "committedUntil": 5.183333333333327,
+            "startedAt": 4.433333333333327,
+            "lastProgressAt": 4.999999999999992,
+            "lastX": 423.5541973495502,
+            "lastY": 398.360797260797,
+            "bestDistance": 189.1842587266838,
+            "mode": "execute",
+            "switchCount": 0,
+            "switchWindowStartedAt": 4.433333333333327
+          },
+          "target": "b_nexus",
+          "ruleset": "original-v3-preview-2",
+          "name": "Maris Solquill"
+        },
+        {
+          "x": 400.6241492625247,
+          "y": 362.5039231586068,
+          "alive": true,
+          "attackTimer": 0,
+          "range": 3.5,
+          "legacy": "Buck",
+          "intent": {
+            "key": "push:lane-advance:red",
+            "kind": "push",
+            "targetId": "lane-advance:red",
+            "targetX": 320.5,
+            "targetY": 430,
+            "contextKey": "lane:red:8:0",
+            "committedUntil": 5.233333333333327,
+            "startedAt": 4.433333333333327,
+            "lastProgressAt": 4.966666666666659,
+            "lastX": 399.0224635268658,
+            "lastY": 356.1136071411836,
+            "bestDistance": 107.81918348798293,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 4.433333333333327
+          },
+          "target": "lane-advance:red",
+          "ruleset": "original-v3-preview-2",
+          "name": "Bramm Coil"
+        }
+      ],
+      "fingerprint": "330363:fb08dff1:46431875"
+    },
+    {
+      "team": "blue",
+      "mode": "champions",
+      "second": 46.99999999999989,
+      "buildings": [
+        {
+          "id": "r_t1",
+          "type": "outer_tower",
+          "x": 1550,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_t2",
+          "type": "inner_tower",
+          "x": 1770,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_t3",
+          "type": "nexus_tower",
+          "x": 1990,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_melee_barracks",
+          "type": "barracks",
+          "x": 2270,
+          "y": 140,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_ranged_barracks",
+          "type": "barracks",
+          "x": 2210,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_catapult_barracks",
+          "type": "barracks",
+          "x": 2270,
+          "y": 620,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "r_nexus",
+          "type": "nexus",
+          "x": 2365,
+          "y": 380,
+          "hp": 9000,
+          "alive": true
+        }
+      ],
+      "actors": [
+        {
+          "x": 609.6515406899241,
+          "y": 281.52435361758006,
+          "alive": true,
+          "attackTimer": 0.7493440414560775,
+          "visual": {
+            "targetId": "j_blue_blue_buff",
+            "x": 640,
+            "y": 145,
+            "releasedAt": 46.8999999999999,
+            "melee": false
+          },
+          "damage": 658,
+          "range": 6,
+          "legacy": "Astra",
+          "intent": {
+            "key": "camp:j_blue_blue_buff",
+            "kind": "camp",
+            "targetId": "j_blue_blue_buff",
+            "targetX": 640,
+            "targetY": 145,
+            "contextKey": "camp|1|8|1|0|1|0|0|1|1|0",
+            "committedUntil": 45.78333333333334,
+            "startedAt": 45.03333333333334,
+            "lastProgressAt": 46.99999999999989,
+            "lastX": 609.6515406899241,
+            "lastY": 281.52435361758006,
+            "bestDistance": 139.85681289516566,
+            "mode": "execute",
+            "switchCount": 1,
+            "switchWindowStartedAt": 44.90000000000001
+          },
+          "target": "j_blue_blue_buff",
+          "ruleset": "original-v3-preview-2",
+          "name": "Ivera Frostwhistle"
+        },
+        {
+          "x": 2117.422158627507,
+          "y": 273.22756114453784,
+          "alive": true,
+          "attackTimer": 0.37675107757593895,
+          "visual": {
+            "targetId": "r_melee_barracks",
+            "x": 2270,
+            "y": 140,
+            "releasedAt": 46.23333333333327,
+            "melee": false
+          },
+          "damage": 1824,
+          "range": 5.5,
+          "legacy": "Cora",
+          "intent": {
+            "key": "camp:j_red_blue_buff",
+            "kind": "camp",
+            "targetId": "j_red_blue_buff",
+            "targetX": 1960,
+            "targetY": 145,
+            "contextKey": "camp|1|24|1|0|3|0|0|1|1|0",
+            "committedUntil": 47.74999999999989,
+            "startedAt": 46.99999999999989,
+            "lastProgressAt": 46.99999999999989,
+            "lastX": 2119.164258402632,
+            "lastY": 275.4620333755776,
+            "bestDistance": 205.7999108487421,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 46.99999999999989
+          },
+          "target": "j_red_blue_buff",
+          "ruleset": "original-v3-preview-2",
+          "name": "Quillene Rook"
+        },
+        {
+          "x": 2175.7492754012637,
+          "y": 342.33979604271406,
+          "alive": true,
+          "attackTimer": 0.7651152783662953,
+          "visual": {
+            "targetId": "r_melee_barracks",
+            "x": 2270,
+            "y": 140,
+            "releasedAt": 46.53333333333325,
+            "melee": false
+          },
+          "damage": 1998,
+          "range": 5,
+          "legacy": "Aetherbolt",
+          "intent": {
+            "key": "camp:j_red_blue_buff",
+            "kind": "camp",
+            "targetId": "j_red_blue_buff",
+            "targetX": 1960,
+            "targetY": 145,
+            "contextKey": "camp|1|24|1|0|3|0|0|1|1|0",
+            "committedUntil": 47.74999999999989,
+            "startedAt": 46.99999999999989,
+            "lastProgressAt": 46.99999999999989,
+            "lastX": 2177.9774180473323,
+            "lastY": 344.0899840687695,
+            "bestDistance": 295.21344233466806,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 46.99999999999989
+          },
+          "target": "j_red_blue_buff",
+          "ruleset": "original-v3-preview-2",
+          "name": "Talan Slipshot"
+        },
+        {
+          "x": 2087.391906018989,
+          "y": 294.1543578234931,
+          "alive": true,
+          "attackTimer": 0.5729959924301967,
+          "visual": {
+            "targetId": "r_melee_barracks",
+            "x": 2270,
+            "y": 140,
+            "releasedAt": 46.16666666666661,
+            "melee": false
+          },
+          "damage": 1014,
+          "range": 5.4,
+          "legacy": "Solenne",
+          "intent": {
+            "key": "push:lane-advance:blue",
+            "kind": "push",
+            "targetId": "lane-advance:blue",
+            "targetX": 2147,
+            "targetY": 410,
+            "contextKey": "lane:blue:53:0",
+            "committedUntil": 47.79999999999989,
+            "startedAt": 46.99999999999989,
+            "lastProgressAt": 46.99999999999989,
+            "lastX": 2085.362975677469,
+            "lastY": 291.5519876426487,
+            "bestDistance": 133.52548220749298,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 46.99999999999989
+          },
+          "target": "lane-advance:blue",
+          "ruleset": "original-v3-preview-2",
+          "name": "Maris Solquill"
+        },
+        {
+          "x": 1497.4651054221017,
+          "y": 288.35837908249835,
+          "alive": true,
+          "attackTimer": 0,
+          "visual": {
+            "targetId": "r_catapult_barracks",
+            "x": 2270,
+            "y": 620,
+            "releasedAt": 15.733333333333288,
+            "melee": false
+          },
+          "damage": 561,
+          "range": 3.5,
+          "legacy": "Buck",
+          "intent": {
+            "key": "push:lane-advance:blue",
+            "kind": "push",
+            "targetId": "lane-advance:blue",
+            "targetX": 2147,
+            "targetY": 430,
+            "contextKey": "lane:blue:53:0",
+            "committedUntil": 47.79999999999989,
+            "startedAt": 46.99999999999989,
+            "lastProgressAt": 46.99999999999989,
+            "lastX": 1494.4651054221017,
+            "lastY": 286.02504574916503,
+            "bestDistance": 668.2294337226689,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 46.99999999999989
+          },
+          "target": "lane-advance:blue",
+          "ruleset": "original-v3-preview-2",
+          "name": "Bramm Coil"
+        }
+      ],
+      "fingerprint": "984441:8b728127:1b743b37"
+    },
+    {
+      "team": "red",
+      "mode": "champions",
+      "second": 65.99999999999882,
+      "buildings": [
+        {
+          "id": "b_t1",
+          "type": "outer_tower",
+          "x": 1050,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_t2",
+          "type": "inner_tower",
+          "x": 830,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_t3",
+          "type": "nexus_tower",
+          "x": 610,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_melee_barracks",
+          "type": "barracks",
+          "x": 330,
+          "y": 140,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_ranged_barracks",
+          "type": "barracks",
+          "x": 390,
+          "y": 380,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_catapult_barracks",
+          "type": "barracks",
+          "x": 330,
+          "y": 620,
+          "hp": 0,
+          "alive": false
+        },
+        {
+          "id": "b_nexus",
+          "type": "nexus",
+          "x": 235,
+          "y": 380,
+          "hp": 9000,
+          "alive": true
+        }
+      ],
+      "actors": [
+        {
+          "x": 609.5045409592238,
+          "y": 472.94376608143455,
+          "alive": true,
+          "attackTimer": 0,
+          "visual": {
+            "targetId": "b_catapult_barracks",
+            "x": 330,
+            "y": 620,
+            "releasedAt": 56.63333333333268,
+            "melee": false
+          },
+          "damage": 1227,
+          "range": 6,
+          "legacy": "Astra",
+          "intent": {
+            "key": "regroup:red_p_ouzi",
+            "kind": "regroup",
+            "targetId": "red_p_ouzi",
+            "targetX": 762.0299215594376,
+            "targetY": 462.505027332485,
+            "contextKey": "support-tether:regroup|1|9|5|0|3|0|0|1|1|0",
+            "committedUntil": 66.53333333333217,
+            "startedAt": 65.73333333333217,
+            "lastProgressAt": 65.73333333333217,
+            "lastX": 609.5045409592238,
+            "lastY": 472.94376608143455,
+            "bestDistance": 152.88217356483685,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 65.73333333333217
+          },
+          "target": "red_p_ouzi",
+          "ruleset": "original-v3-preview-2",
+          "name": "Ivera Frostwhistle"
+        },
+        {
+          "x": 762.0299215594376,
+          "y": 462.505027332485,
+          "alive": true,
+          "attackTimer": 0,
+          "visual": {
+            "targetId": "b_melee_barracks",
+            "x": 330,
+            "y": 140,
+            "releasedAt": 20.300000000000168,
+            "melee": false
+          },
+          "damage": 816,
+          "range": 5.5,
+          "legacy": "Cora",
+          "intent": {
+            "key": "push:lane-advance:red",
+            "kind": "push",
+            "targetId": "lane-advance:red",
+            "targetX": 453,
+            "targetY": 370,
+            "contextKey": "lane:red:11:0",
+            "committedUntil": 66.19999999999885,
+            "startedAt": 65.39999999999885,
+            "lastProgressAt": 65.39999999999885,
+            "lastX": 762.0299215594376,
+            "lastY": 462.505027332485,
+            "bestDistance": 322.57816494737517,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 65.39999999999885
+          },
+          "target": "lane-advance:red",
+          "ruleset": "original-v3-preview-2",
+          "name": "Quillene Rook"
+        },
+        {
+          "x": 444.83616124153036,
+          "y": 391.4843659727306,
+          "alive": true,
+          "attackTimer": 0.18150320426008648,
+          "visual": {
+            "targetId": "b_catapult_barracks",
+            "x": 330,
+            "y": 620,
+            "releasedAt": 64.93333333333221,
+            "melee": false
+          },
+          "damage": 2661,
+          "range": 5,
+          "legacy": "Aetherbolt",
+          "intent": {
+            "key": "push:lane-advance:red",
+            "kind": "push",
+            "targetId": "lane-advance:red",
+            "targetX": 453,
+            "targetY": 390,
+            "contextKey": "lane:red:11:0",
+            "committedUntil": 66.19999999999885,
+            "startedAt": 65.39999999999885,
+            "lastProgressAt": 65.8666666666655,
+            "lastX": 447.1694945748637,
+            "lastY": 393.8176993060639,
+            "bestDistance": 6.9691908787222125,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 65.39999999999885
+          },
+          "target": "lane-advance:red",
+          "ruleset": "original-v3-preview-2",
+          "name": "Talan Slipshot"
+        },
+        {
+          "x": 1996.471068136068,
+          "y": 310.42716402178803,
+          "alive": true,
+          "attackTimer": 0,
+          "visual": {
+            "targetId": "b_melee_barracks",
+            "x": 330,
+            "y": 140,
+            "releasedAt": 20.933333333333533,
+            "melee": false
+          },
+          "damage": 585,
+          "range": 5.4,
+          "legacy": "Solenne",
+          "intent": {
+            "key": "camp:j_red_blue_buff",
+            "kind": "camp",
+            "targetId": "j_red_blue_buff",
+            "targetX": 1960,
+            "targetY": 145,
+            "contextKey": "camp|1|24|1|0|2|0|0|1|1|0",
+            "committedUntil": 67.14999999999883,
+            "startedAt": 65.99999999999882,
+            "lastProgressAt": 65.99999999999882,
+            "lastX": 1997.224603581052,
+            "lastY": 313.84508507604784,
+            "bestDistance": 172.89977983243443,
+            "mode": "move",
+            "switchCount": 48,
+            "switchWindowStartedAt": 64.36666666666558
+          },
+          "target": "j_red_blue_buff",
+          "ruleset": "original-v3-preview-2",
+          "name": "Maris Solquill"
+        },
+        {
+          "x": 1980.2762083095588,
+          "y": 440.3780997758346,
+          "alive": true,
+          "attackTimer": 0,
+          "visual": {
+            "targetId": "b_melee_barracks",
+            "x": 330,
+            "y": 140,
+            "releasedAt": 21.066666666666872,
+            "melee": false
+          },
+          "damage": 780,
+          "range": 3.5,
+          "legacy": "Buck",
+          "intent": {
+            "key": "push:lane-advance:red",
+            "kind": "push",
+            "targetId": "lane-advance:red",
+            "targetX": 453,
+            "targetY": 430,
+            "contextKey": "lane:red:11:0",
+            "committedUntil": 66.66666666666549,
+            "startedAt": 65.8666666666655,
+            "lastProgressAt": 65.8666666666655,
+            "lastX": 1980.2762083095588,
+            "lastY": 440.3780997758346,
+            "bestDistance": 1527.3114683728988,
+            "mode": "move",
+            "switchCount": 0,
+            "switchWindowStartedAt": 65.8666666666655
+          },
+          "target": "lane-advance:red",
+          "ruleset": "original-v3-preview-2",
+          "name": "Bramm Coil"
+        }
+      ],
+      "fingerprint": "3581429:97788cd5:fa3327b5"
+    }
+  ],
+  "errors": []
+}

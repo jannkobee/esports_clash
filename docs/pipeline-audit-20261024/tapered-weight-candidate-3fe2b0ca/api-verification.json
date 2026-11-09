@@ -1,0 +1,15 @@
+{
+    "verification_method": "API state/artifact readback and shared controller render with Web view context",
+    "controller_status": 200,
+    "candidate_available": true,
+    "candidate_sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+    "report_sha256": "4eeb7ecf1ca22b1c0784580733f4b75a627cac0f300add49c1d28a054f317799",
+    "comparison_rows_visible": true,
+    "original_reference_sha256": "8416076e0ecb7b1592aafc1b4b9402ba028f21bb89c381c646f78501ce281838",
+    "baselines_reproduced": [
+        true,
+        true
+    ],
+    "publication_eligible": false,
+    "preparation_status": "needs_review"
+}

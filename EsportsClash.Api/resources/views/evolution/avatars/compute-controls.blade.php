@@ -10,13 +10,12 @@
             <label for="compute-preference">Generation compute
                 <select id="compute-preference" name="compute_preference" aria-describedby="compute-help">
                     <option value="google" @selected($preference === 'google')>Google Colab</option>
-                    <option value="local" @selected($preference === 'local')>Local</option>
                 </select>
             </label>
             <button type="submit">Save compute preference</button>
             <a href="{{ url()->current() }}#generate" class="button quiet">Refresh status</a>
         </div>
-        <p class="fine" id="compute-help">Applies to new body-generation jobs across all avatars. Google automatically falls back to Local if it disconnects or generation fails. Existing jobs keep their saved choice.</p>
+        <p class="fine" id="compute-help">New body and equipment generation require Google Colab. Disconnections block processing; local fallback is disabled. Historical jobs retain their recorded compute evidence.</p>
     </form>
     @if(!$operations)
         <p class="notice" role="status">Generation worker offline. You can save your preference now; generation resumes after the worker reconnects.</p>
@@ -28,6 +27,6 @@
         @if(!($operations['compute']['ready'] ?? false))<p class="notice" role="status">TRELLIS.2 setup needed. Connect a provisioned runtime with its checkpoints and passing GPU checks to enable generation.</p>@else<p class="fine">Review the generated anatomy, reference similarity and textures before preparing a rig.</p>@endif
         <p class="fine"><a href="{{ route('trellis.colab-setup') }}">Download TRELLIS.2 Colab setup notebook</a> &middot; Use your approved Hugging Face access through Colab Secrets.</p>
     @else
-        <p class="fine" role="status">This worker supports Local only. Your preference is saved for a connected Google-capable worker.</p>
+        <p class="notice" role="status">A verified Google Colab runtime is required before generation can start.</p>
     @endif
 </div>

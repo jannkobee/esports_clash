@@ -1,0 +1,265 @@
+{
+  "date": "2026-10-24",
+  "state": {
+    "models": "10",
+    "backend": "webgl",
+    "warnings": [
+      [
+        "c_solana",
+        [
+          "Legacy artwork; original V3 appearance is not qualified",
+          "No named sockets; projectile origin stays authoritative"
+        ]
+      ],
+      [
+        "c_largo",
+        [
+          "Legacy artwork; original V3 appearance is not qualified",
+          "No named sockets; projectile origin stays authoritative"
+        ]
+      ],
+      [
+        "c_invoker",
+        [
+          "Legacy artwork; original V3 appearance is not qualified",
+          "Missing clip: idle",
+          "Missing clip: run",
+          "Missing clip: attack",
+          "Missing clip: cast",
+          "Missing clip: hit",
+          "Missing clip: death",
+          "No skeleton; static fallback",
+          "No named sockets; projectile origin stays authoritative"
+        ]
+      ],
+      [
+        "c_puck",
+        [
+          "Legacy artwork; original V3 appearance is not qualified",
+          "No named sockets; projectile origin stays authoritative"
+        ]
+      ],
+      [
+        "c_raijin",
+        [
+          "Legacy artwork; original V3 appearance is not qualified",
+          "No named sockets; projectile origin stays authoritative"
+        ]
+      ],
+      [
+        "c_wraithhook",
+        [
+          "Legacy artwork; original V3 appearance is not qualified",
+          "No named sockets; projectile origin stays authoritative"
+        ]
+      ],
+      [
+        "c_nullweaver",
+        [
+          "Legacy artwork; original V3 appearance is not qualified",
+          "No named sockets; projectile origin stays authoritative"
+        ]
+      ],
+      [
+        "c_bristleback",
+        [
+          "Legacy artwork; original V3 appearance is not qualified",
+          "No named sockets; projectile origin stays authoritative"
+        ]
+      ],
+      [
+        "c_batrider",
+        [
+          "Legacy artwork; original V3 appearance is not qualified",
+          "No named sockets; projectile origin stays authoritative"
+        ]
+      ],
+      [
+        "c_skybreaker",
+        [
+          "Legacy artwork; original V3 appearance is not qualified",
+          "No named sockets; projectile origin stays authoritative"
+        ]
+      ]
+    ],
+    "animations": [
+      {
+        "id": "actor:0",
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "strafe",
+          "attack",
+          "cast",
+          "hit",
+          "death",
+          "turnleft",
+          "turnright"
+        ],
+        "active": "actor:0:Walk",
+        "second": 10
+      },
+      {
+        "id": "actor:1",
+        "clips": [],
+        "second": 10
+      },
+      {
+        "id": "actor:2",
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "strafe",
+          "attack",
+          "cast",
+          "hit",
+          "death",
+          "turnleft",
+          "turnright"
+        ],
+        "active": "actor:2:Walk",
+        "second": 10
+      },
+      {
+        "id": "actor:3",
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "strafe",
+          "attack",
+          "cast",
+          "hit",
+          "death",
+          "turnleft",
+          "turnright"
+        ],
+        "active": "actor:3:Walk",
+        "second": 10
+      },
+      {
+        "id": "actor:4",
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "strafe",
+          "attack",
+          "cast",
+          "hit",
+          "death",
+          "turnleft",
+          "turnright"
+        ],
+        "active": "actor:4:Walk",
+        "second": 10
+      },
+      {
+        "id": "actor:5",
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "strafe",
+          "attack",
+          "cast",
+          "hit",
+          "death",
+          "turnleft",
+          "turnright"
+        ],
+        "active": "actor:5:Walk",
+        "second": 10
+      },
+      {
+        "id": "actor:6",
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "strafe",
+          "attack",
+          "cast",
+          "hit",
+          "death",
+          "turnleft",
+          "turnright"
+        ],
+        "active": "actor:6:Walk",
+        "second": 10
+      },
+      {
+        "id": "actor:7",
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "strafe",
+          "attack",
+          "cast",
+          "hit",
+          "death",
+          "turnleft",
+          "turnright"
+        ],
+        "active": "actor:7:Walk",
+        "second": 10
+      },
+      {
+        "id": "actor:8",
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "strafe",
+          "attack",
+          "cast",
+          "hit",
+          "death",
+          "turnleft",
+          "turnright"
+        ],
+        "active": "actor:8:Walk",
+        "second": 10
+      },
+      {
+        "id": "actor:9",
+        "clips": [
+          "idle",
+          "walk",
+          "run",
+          "strafe",
+          "attack",
+          "cast",
+          "hit",
+          "death",
+          "turnleft",
+          "turnright"
+        ],
+        "active": "actor:9:Walk",
+        "second": 10
+      }
+    ],
+    "tick": 300
+  },
+  "phases": true,
+  "errors": [],
+  "scope": "Ten GLB instances, geometry, death/spawn states, loading and disposal; no gameplay balance qualification",
+  "contextRestored": true,
+  "disposed": true,
+  "live": {
+    "second": 3.9999999999999956,
+    "models": 10,
+    "backend": "webgl",
+    "canvases": 1,
+    "hasOldSelector": false,
+    "fingerprint": "216131:d8ec1169:1cdf37dd",
+    "constructs": 4
+  },
+  "replay": {
+    "opened": true,
+    "duration": 3.9999999999999956
+  }
+}

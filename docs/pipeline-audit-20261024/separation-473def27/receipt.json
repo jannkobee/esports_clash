@@ -1,0 +1,10 @@
+{
+  "id": "473def27-624e-493d-bedb-6c7c6861e8ce",
+  "archive_sha256": "98203f367cf87d1a47cafa4e866f601cc860896c9df9fd49433e6d8f4a03c299",
+  "status": "failed",
+  "report_sha256": "6a7a1b94b1340d55d2984aac451c9c8a1f78d9bc293ccbf498b1dc34ea2eb8ed",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "error": "ValueError: Contact import topology/count correspondence mismatch",
+  "separation": null
+}

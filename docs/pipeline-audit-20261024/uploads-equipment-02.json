@@ -1,0 +1,28 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_invoker",
+    "component_id": "brass_bobbin",
+    "label": "Floating brass bobbin",
+    "category": "accessory",
+    "binding": "independent",
+    "attachment": "floating helper beside avatar; separate transform",
+    "prompt": "Create a NEW isolated game prop reconstruction reference from the supplied character drawing. One isolated floating brass sewing bobbin helper: cylindrical oxblood thread spool between ornate brass circular end plates, small brass articulated fittings and folded ivory paper-pattern fins, as seen above her hand. No character, hand, hair, body, pedestal, elemental spheres or glow. Full object centered, three-quarter product view that shows depth, with transparent margins on every edge. Preserve the illustrated ivory/oxblood/brass material language. Crisp readable physical shapes, neutral even studio lighting, true transparent alpha background, no floor, cast shadow, text labels, frames or cutout character. One separate asset only.",
+    "path": "docs/pipeline-audit-20261024/upload-assets/mirelle-brass_bobbin-v2.png",
+    "sha256": "666ba5f2acfd34f8804c7acd63770caf22bb2a3b194fdefae042fe4fd8e61044",
+    "reference_purpose": "reconstruction"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_invoker",
+    "component_id": "pattern_cape",
+    "label": "Folded-paper pattern cape",
+    "category": "outfit",
+    "binding": "skinned",
+    "attachment": "shoulders / upper back; deforming cape",
+    "prompt": "Create a NEW isolated game prop reconstruction reference from the supplied character drawing. One isolated giant folded-paper sewing-pattern cape from the drawing: layered ivory triangular paper-pattern folds, fine tailoring diagram marks, brass hinges/clasps, oxblood reverse lining. Present as a clearly shaped single cape hanging in a neutral open configuration, empty inside. No body, mannequin, head, hair, other clothes or hands. Full object centered, three-quarter product view that shows depth, with transparent margins on every edge. Preserve the illustrated ivory/oxblood/brass material language. Crisp readable physical shapes, neutral even studio lighting, true transparent alpha background, no floor, cast shadow, text labels, frames or cutout character. One separate asset only.",
+    "path": "docs/pipeline-audit-20261024/upload-assets/mirelle-pattern_cape-v2.png",
+    "sha256": "2ea420a4bd38d9da33fd35ca6fc29fe6ebf35b033c71187e9b59e2873af2137a",
+    "reference_purpose": "reconstruction"
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "study_id": "3b135ec1-f4c3-4674-9f57-bb0127032995",
+  "report_sha256": "76f2c03cc2d22a70adfcf649aa7ed1901cb75a859d7930968bd1944edcb141d7",
+  "variants": [
+    {
+      "variant": "anterior_0p99pct",
+      "id": "f6283980-c4dd-5f34-bcf4-09c08e9e6346",
+      "sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+      "hips_90": [
+        51,
+        47
+      ],
+      "rest_max_m": 2.504824863081012e-07,
+      "weight_error_max": 1.7881393432617188e-07
+    }
+  ]
+}

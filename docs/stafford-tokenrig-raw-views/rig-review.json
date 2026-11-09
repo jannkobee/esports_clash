@@ -1,0 +1,455 @@
+{
+  "artifact_sha256": "26bd2f5d7322561bcdf27817f699422248e5c8181987c958a569d8324ca27dab",
+  "blender": "4.5.3 LTS",
+  "joint_count": 34,
+  "bones": [
+    {
+      "name": "bone_0",
+      "parent": null,
+      "position": [
+        0.0017403211677446961,
+        -0.05841528996825218,
+        0.005386753939092159
+      ]
+    },
+    {
+      "name": "bone_1",
+      "parent": "bone_0",
+      "position": [
+        0.0017403211677446961,
+        -0.06233283132314682,
+        0.0641499012708664
+      ]
+    },
+    {
+      "name": "bone_2",
+      "parent": "bone_1",
+      "position": [
+        0.0017403211677446961,
+        -0.06233282759785652,
+        0.13466569781303406
+      ]
+    },
+    {
+      "name": "bone_3",
+      "parent": "bone_2",
+      "position": [
+        0.0017403211677446961,
+        -0.06233282387256622,
+        0.2130165696144104
+      ]
+    },
+    {
+      "name": "bone_4",
+      "parent": "bone_3",
+      "position": [
+        0.0017403211677446961,
+        -0.062332820147275925,
+        0.30312010645866394
+      ]
+    },
+    {
+      "name": "bone_5",
+      "parent": "bone_4",
+      "position": [
+        0.0017403211677446961,
+        -0.05449772626161575,
+        0.3422955274581909
+      ]
+    },
+    {
+      "name": "bone_6",
+      "parent": "bone_3",
+      "position": [
+        0.04091577231884003,
+        -0.062332816421985626,
+        0.2913675010204315
+      ]
+    },
+    {
+      "name": "bone_7",
+      "parent": "bone_6",
+      "position": [
+        0.11534911394119263,
+        -0.06233282387256622,
+        0.2717798054218292
+      ]
+    },
+    {
+      "name": "bone_8",
+      "parent": "bone_7",
+      "position": [
+        0.2172052413225174,
+        -0.062332820147275925,
+        0.24043940007686615
+      ]
+    },
+    {
+      "name": "bone_9",
+      "parent": "bone_8",
+      "position": [
+        0.3621543347835541,
+        -0.08975561708211899,
+        0.2443569153547287
+      ]
+    },
+    {
+      "name": "bone_10",
+      "parent": "bone_9",
+      "position": [
+        0.36998945474624634,
+        -0.09367315471172333,
+        0.2639446556568146
+      ]
+    },
+    {
+      "name": "bone_11",
+      "parent": "bone_10",
+      "position": [
+        0.3739069998264313,
+        -0.09367313981056213,
+        0.2796148359775543
+      ]
+    },
+    {
+      "name": "bone_12",
+      "parent": "bone_11",
+      "position": [
+        0.38174208998680115,
+        -0.09367311000823975,
+        0.2992026209831238
+      ]
+    },
+    {
+      "name": "bone_13",
+      "parent": "bone_9",
+      "position": [
+        0.41308242082595825,
+        -0.09759069979190826,
+        0.2443569302558899
+      ]
+    },
+    {
+      "name": "bone_14",
+      "parent": "bone_13",
+      "position": [
+        0.428752601146698,
+        -0.1015082523226738,
+        0.24043938517570496
+      ]
+    },
+    {
+      "name": "bone_15",
+      "parent": "bone_14",
+      "position": [
+        0.4405052363872528,
+        -0.10542576760053635,
+        0.2365218549966812
+      ]
+    },
+    {
+      "name": "bone_16",
+      "parent": "bone_3",
+      "position": [
+        -0.0374351367354393,
+        -0.062332820147275925,
+        0.29136747121810913
+      ]
+    },
+    {
+      "name": "bone_17",
+      "parent": "bone_16",
+      "position": [
+        -0.11186844855546951,
+        -0.06233283504843712,
+        0.27177971601486206
+      ]
+    },
+    {
+      "name": "bone_18",
+      "parent": "bone_17",
+      "position": [
+        -0.20980703830718994,
+        -0.06233283132314682,
+        0.24043934047222137
+      ]
+    },
+    {
+      "name": "bone_19",
+      "parent": "bone_18",
+      "position": [
+        -0.35867369174957275,
+        -0.08975562453269958,
+        0.24435687065124512
+      ]
+    },
+    {
+      "name": "bone_20",
+      "parent": "bone_19",
+      "position": [
+        -0.36650875210762024,
+        -0.09367313981056213,
+        0.2639446258544922
+      ]
+    },
+    {
+      "name": "bone_21",
+      "parent": "bone_20",
+      "position": [
+        -0.3743439316749573,
+        -0.09367316961288452,
+        0.27961477637290955
+      ]
+    },
+    {
+      "name": "bone_22",
+      "parent": "bone_21",
+      "position": [
+        -0.3782614469528198,
+        -0.09367316961288452,
+        0.29920250177383423
+      ]
+    },
+    {
+      "name": "bone_23",
+      "parent": "bone_19",
+      "position": [
+        -0.4135192632675171,
+        -0.09759069979190826,
+        0.24435687065124512
+      ]
+    },
+    {
+      "name": "bone_24",
+      "parent": "bone_23",
+      "position": [
+        -0.4252719283103943,
+        -0.1015082597732544,
+        0.240439310669899
+      ]
+    },
+    {
+      "name": "bone_25",
+      "parent": "bone_24",
+      "position": [
+        -0.4370245635509491,
+        -0.10542578250169754,
+        0.23652178049087524
+      ]
+    },
+    {
+      "name": "bone_26",
+      "parent": "bone_0",
+      "position": [
+        0.07225612550973892,
+        -0.0701679214835167,
+        -0.025953590869903564
+      ]
+    },
+    {
+      "name": "bone_27",
+      "parent": "bone_26",
+      "position": [
+        0.08792632818222046,
+        -0.07408545911312103,
+        -0.24533605575561523
+      ]
+    },
+    {
+      "name": "bone_28",
+      "parent": "bone_27",
+      "position": [
+        0.10751405358314514,
+        -0.05058017745614052,
+        -0.4333781898021698
+      ]
+    },
+    {
+      "name": "bone_29",
+      "parent": "bone_28",
+      "position": [
+        0.12710177898406982,
+        -0.12893107533454895,
+        -0.49997639656066895
+      ]
+    },
+    {
+      "name": "bone_30",
+      "parent": "bone_0",
+      "position": [
+        -0.068775475025177,
+        -0.05841528996825218,
+        -0.02595359832048416
+      ]
+    },
+    {
+      "name": "bone_31",
+      "parent": "bone_30",
+      "position": [
+        -0.08444564044475555,
+        -0.07800296694040298,
+        -0.24533602595329285
+      ]
+    },
+    {
+      "name": "bone_32",
+      "parent": "bone_31",
+      "position": [
+        -0.10403338819742203,
+        -0.05058013275265694,
+        -0.4333781599998474
+      ]
+    },
+    {
+      "name": "bone_33",
+      "parent": "bone_32",
+      "position": [
+        -0.1236211284995079,
+        -0.12893101572990417,
+        -0.49997633695602417
+      ]
+    }
+  ],
+  "weights": [
+    {
+      "mesh": "geometry_0",
+      "vertices": 37205,
+      "max_influences": 4,
+      "unweighted": 0,
+      "max_normalization_error": 1.4748366083949804e-07,
+      "finite_nonnegative": true
+    }
+  ],
+  "bone_map": {
+    "Root": "avatar_control_root",
+    "Hips": "bone_0",
+    "Spine": "bone_1",
+    "Chest": "bone_3",
+    "Head": "bone_5",
+    "UpperArmR": "bone_7",
+    "ForearmR": "bone_8",
+    "HandR": "bone_9",
+    "UpperArmL": "bone_17",
+    "ForearmL": "bone_18",
+    "HandL": "bone_19",
+    "ThighR": "bone_26",
+    "CalfR": "bone_27",
+    "FootR": "bone_28",
+    "ThighL": "bone_30",
+    "CalfL": "bone_31",
+    "FootL": "bone_32"
+  },
+  "mapping_review": {
+    "method": "humanoid-topology-rest-v4",
+    "accepted": true,
+    "reasons": [],
+    "warnings": [],
+    "profile": "humanoid_unarmed",
+    "confidence": 0.943,
+    "per_bone_confidence": {
+      "Root": 0.98,
+      "Hips": 0.98,
+      "Spine": 0.95,
+      "Chest": 0.95,
+      "Head": 0.95,
+      "UpperArmR": 0.93,
+      "ForearmR": 0.93,
+      "HandR": 0.93,
+      "UpperArmL": 0.93,
+      "ForearmL": 0.93,
+      "HandL": 0.93,
+      "ThighR": 0.94,
+      "CalfR": 0.94,
+      "FootR": 0.94,
+      "ThighL": 0.94,
+      "CalfL": 0.94,
+      "FootL": 0.94
+    },
+    "symmetry": {
+      "arm_symmetry": 0.9996,
+      "leg_symmetry": 0.9967
+    },
+    "proportions": {
+      "arm_R_upper": 0.1265,
+      "arm_R_fore": 0.1752,
+      "arm_L_upper": 0.1221,
+      "arm_L_fore": 0.1798,
+      "leg_R_thigh": 0.2612,
+      "leg_R_calf": 0.2262,
+      "leg_L_thigh": 0.2622,
+      "leg_L_calf": 0.2268
+    },
+    "checks": [
+      "single root and pelvis",
+      "distinct torso/head/arm branches",
+      "opposite limb sides",
+      "leg proportions",
+      "toe-confirmed facing",
+      "17 unique joints"
+    ],
+    "bone_map": {
+      "Root": "avatar_control_root",
+      "Hips": "bone_0",
+      "Spine": "bone_1",
+      "Chest": "bone_3",
+      "Head": "bone_5",
+      "UpperArmR": "bone_7",
+      "ForearmR": "bone_8",
+      "HandR": "bone_9",
+      "UpperArmL": "bone_17",
+      "ForearmL": "bone_18",
+      "HandL": "bone_19",
+      "ThighR": "bone_26",
+      "CalfR": "bone_27",
+      "FootR": "bone_28",
+      "ThighL": "bone_30",
+      "CalfL": "bone_31",
+      "FootL": "bone_32"
+    },
+    "root_adapter": {
+      "name": "avatar_control_root",
+      "pelvis": "bone_0",
+      "native": "Root",
+      "use_deform": false
+    }
+  },
+  "excluded_bone_displays": [
+    "Icosphere"
+  ],
+  "stress_rotations": {
+    "ForearmL": {
+      "bone": "bone_18",
+      "local_z_degrees": 55
+    },
+    "ForearmR": {
+      "bone": "bone_8",
+      "local_z_degrees": -55
+    },
+    "UpperArmL": {
+      "bone": "bone_17",
+      "local_z_degrees": 20
+    },
+    "UpperArmR": {
+      "bone": "bone_7",
+      "local_z_degrees": -20
+    },
+    "CalfL": {
+      "bone": "bone_31",
+      "local_z_degrees": 25
+    },
+    "CalfR": {
+      "bone": "bone_27",
+      "local_z_degrees": -25
+    }
+  },
+  "views": [
+    "rest-front",
+    "rest-side",
+    "rest-rear",
+    "rest-perspective",
+    "stress-front",
+    "stress-perspective"
+  ],
+  "publication_eligible": false,
+  "scope": "Raw predicted rig only. No repair, donor weights or combat retargeting. Local-axis stress poses do not qualify combat animation."
+}

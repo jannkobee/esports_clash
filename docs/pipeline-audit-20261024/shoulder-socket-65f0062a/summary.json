@@ -1,0 +1,83 @@
+{
+  "study_id": "65f0062a-b1af-44bb-822e-8bf56e51c315",
+  "report_sha256": "be8b6528a8cb33400e893ca207b477ed1f9d56f8b9b53c2cca5e5525e2274163",
+  "variants": [
+    {
+      "variant": "lateral_0p5pct",
+      "id": "eb38414a-532c-5307-9899-a78ca4aacc3c",
+      "sha256": "e2e7d693df7b203b5cdcebdc699cb0c3ecddb76d4dc531b5b383049eff1ec2dc",
+      "shoulders_90": [
+        58,
+        54
+      ],
+      "rest_max_m": 3.011961098309257e-07,
+      "weight_error_max": 1.1920928955078125e-07
+    },
+    {
+      "variant": "medial_0p5pct",
+      "id": "5bc6c175-d4fd-5f8b-a4e9-3ef51b88df0b",
+      "sha256": "47f6fec66a002938e8448ee82e43ee0833b40904f81dfa0b74e4f2a8a2bf1dab",
+      "shoulders_90": [
+        190,
+        132
+      ],
+      "rest_max_m": 3.011961098309257e-07,
+      "weight_error_max": 1.1920928955078125e-07
+    },
+    {
+      "variant": "anterior_0p5pct",
+      "id": "268fd5d7-71a7-5671-9a24-2836cfaf6d84",
+      "sha256": "fd243abc51b8b0dbc4c168b597c0dd5c75171bcb3a90f666ecf3229ee784a54c",
+      "shoulders_90": [
+        63,
+        42
+      ],
+      "rest_max_m": 3.011961098309257e-07,
+      "weight_error_max": 1.1920928955078125e-07
+    },
+    {
+      "variant": "posterior_0p5pct",
+      "id": "122fb8bc-bcd6-552d-9988-0a84f95a851e",
+      "sha256": "c6bacc04c3ec2d44681faccec5c655fe692a155544ba7d1c68171d63765364ac",
+      "shoulders_90": [
+        209,
+        148
+      ],
+      "rest_max_m": 3.011961098309257e-07,
+      "weight_error_max": 1.1920928955078125e-07
+    },
+    {
+      "variant": "superior_0p5pct",
+      "id": "4c0d1ca7-6c9e-573e-9956-96f89ccfa389",
+      "sha256": "ac827ae24747d1eae4ec6b65290d22f3aafb10b6d3b665c81baa68a9a34038aa",
+      "shoulders_90": [
+        169,
+        95
+      ],
+      "rest_max_m": 3.011961098309257e-07,
+      "weight_error_max": 1.1920928955078125e-07
+    },
+    {
+      "variant": "inferior_0p5pct",
+      "id": "70b98577-207a-56f2-acaa-6de62bec1cf7",
+      "sha256": "763e6ee0cbbfeb6dc5278a522ec45ea0f4d84abbac24d3122a3e4f5ae978be74",
+      "shoulders_90": [
+        108,
+        77
+      ],
+      "rest_max_m": 3.011961098309257e-07,
+      "weight_error_max": 1.1920928955078125e-07
+    },
+    {
+      "variant": "section_bounds_center",
+      "id": "ac0a76ee-8179-5a72-b8f5-fe88eea01648",
+      "sha256": "fe64434b0e0f59d3733cdb9d9a33a4848460d714ed11094c247df570a3d03481",
+      "shoulders_90": [
+        85,
+        67
+      ],
+      "rest_max_m": 3.011961098309257e-07,
+      "weight_error_max": 1.1920928955078125e-07
+    }
+  ]
+}

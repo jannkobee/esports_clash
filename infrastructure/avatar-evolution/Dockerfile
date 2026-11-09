@@ -14,8 +14,7 @@ RUN npm ci
 COPY EsportsClash.Web/src/ ./src/
 COPY EsportsClash.Web/avatar-review.html EsportsClash.Web/vite.avatar.config.ts ./
 RUN node node_modules/vite/bin/vite.js build --config vite.avatar.config.ts
-COPY EsportsClash.Web/public/models/avatars-v9/ ./public/models/avatars-v9/
-COPY EsportsClash.Web/public/models/imports/arsenaldo-claude.glb ./public/models/imports/arsenaldo-claude.glb
+COPY EsportsClash.Web/public/models/ ./public/models/
 COPY EsportsClash.Api/resources/avatars/catalog.json /workspace/catalog.json
 COPY infrastructure/avatar-evolution/ /workspace/infrastructure/avatar-evolution/
 WORKDIR /workspace/infrastructure/avatar-evolution

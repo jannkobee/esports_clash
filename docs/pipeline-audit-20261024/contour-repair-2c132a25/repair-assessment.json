@@ -1,0 +1,56 @@
+{
+  "status": "rejected_regression",
+  "reviewed_on": "2026-11-07",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "summary": "Reject combined pose-volume trial. Hip90/knee90/twist+20 regresses42 to112, including regressions in held-out hip controls. Right60/elbow60/twist-20 regresses443 to484 despite its separately authored residual target. Rounded/bulky shoulder roots remain; the hip contour is not visibly repaired. Surface/weight/skeleton checks and playback do not clear anatomical acceptance.",
+  "inspected": [
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-oblique.png",
+      "sha256": "e549742bd3cd2fd61470b43e8a016385f797dc716f4253d1f5d4b54be08e60a1"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-oblique.png",
+      "sha256": "83dd4055357fd007339d64b578bf7d339980015d1072e5f3bb478e9667ee7848"
+    },
+    {
+      "file": "repair-screenshots/04-UpperArmR-90-child0-twist0-baseline-oblique.png",
+      "sha256": "b6495e000ed9b57b99bd4667ea9a8bf52769814ed7b8b36973bf32ff370dc80f"
+    },
+    {
+      "file": "repair-screenshots/04-UpperArmR-90-child0-twist0-candidate-oblique.png",
+      "sha256": "884e0cc83560b3ec53b6eed0393cdc01ba620bf87859aef2a5909e704930cd97"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-baseline-oblique.png",
+      "sha256": "c995b8d82d41663e1375d17f86c20fc12546d902ca11e32c4c2501a5b536ea66"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-candidate-oblique.png",
+      "sha256": "6114911e2d7ac5bf926cd501469605aea5fec0fb4972c843aebfd5e264b76452"
+    },
+    {
+      "file": "repair-screenshots/17-UpperArmR-60-child60-twist-20-baseline-oblique.png",
+      "sha256": "45dedd83c42ad99852dcf65851c2cbf15aa71fecb3d5a6e6a57bac655d373bf8"
+    },
+    {
+      "file": "repair-screenshots/17-UpperArmR-60-child60-twist-20-candidate-oblique.png",
+      "sha256": "797ea1dd6ef21178dc608e3a5cb3bda0f4be88d33c2e7ffe2daae4310f88548f"
+    },
+    {
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-playback-oblique.png",
+      "sha256": "08d24704d597522922704a3c1142773f34ddeefe861444f46560ef0c04bea346"
+    },
+    {
+      "file": "repair-screenshots/10-ThighL-90-child90-twist20-playback-oblique.png",
+      "sha256": "1ba38a7201b2bf505dc183a3e8de7c726a67451145254e74988761148ee954fc"
+    }
+  ],
+  "limitations": [
+    "Ten named views inspected, not all175captures.",
+    "Hip frontal view is thigh-occluded and side partly arm-occluded; oblique reveals only part of the crease.",
+    "Khronos validator reports zero errors and one NODE_SKINNED_MESH_NON_ROOT warning, retained without normalization.",
+    "Positional roundtrip checks do not establish normal/shading equivalence or continuous collision freedom.",
+    "No game clips, anatomical hinge-axis qualification, target-device performance or production admission."
+  ]
+}

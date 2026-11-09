@@ -51,6 +51,8 @@ test('coach draft values role and team composition and does not lock to one mark
 
 test('online server owns alternating turns and rejects stale, duplicate, and unauthorized picks', () => {
   const host = createRoom(INITIAL_PLAYERS.slice(0, 5), INITIAL_COACHES[0]);
+  assert.equal(host.room.intelligence.policy.kind,'arena-actor');
+  assert.equal(host.room.intelligence.qualification,'foundation');
   const guest = joinRoom(host.room.roomCode, INITIAL_PLAYERS.slice(5, 10), INITIAL_COACHES[1]);
   assert.equal(getRoom(host.room.roomCode, host.token).ready, true);
   assert.throws(() => getRoom(host.room.roomCode, 'invalid'));

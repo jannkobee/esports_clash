@@ -50,7 +50,8 @@ if (!matchViewContent.includes('adBonus: 45') || !matchViewContent.includes('apB
 }
 
 if (!matchViewContent.includes('towerSiegeMultiplier(matchTimeRef.current)')
-  || !matchViewContent.includes('canDamageNexus(structure.team, structuresRef.current)')) {
+  || !matchViewContent.includes('canDamageStructure(structure, structuresRef.current)')
+  || !fs.readFileSync(path.resolve('src/structureProtection.ts'),'utf8').includes('barracks.length>=3&&barracks.every')) {
   errors.push('CRITICAL: Turret plating or the barracks-gated nexus shield is missing!');
 } else {
   console.log('✅ Game Pacing: early turret plating and barracks-gated nexus shield verified');
@@ -151,26 +152,18 @@ if (rockDrawAt < 0 || championLabelAt < 0 || rockDrawAt > championLabelAt) {
   console.log('Combat Labels: raised rocks render behind avatar nameplates');
 }
 
-// Both Three views remain presentation-only, with a complete Canvas fallback.
-// They must not mount the legacy independent simulator or schedule gameplay.
-const threeTerrainPath = path.resolve('src/threeArenaTerrain.ts');
-const threeTerrainContent = fs.readFileSync(threeTerrainPath, 'utf8');
-const threeHostAt = matchViewContent.indexOf('ref={threeTerrainHostRef}');
-const canvasOverlayAt = matchViewContent.indexOf('ref={canvasRef}');
-if (!matchViewContent.includes('ThreeArenaTerrain')
-    || !matchViewContent.includes('!threeTerrainAvailableRef.current')
-    || !threeTerrainContent.includes('THREE.OrthographicCamera')
-    || threeHostAt < 0 || canvasOverlayAt < 0 || threeHostAt > canvasOverlayAt) {
-  errors.push('CRITICAL: Three.js must remain below the Canvas HUD with its fallback intact!');
-} else {
-  console.log('Rendering Migration: Three.js surface and Canvas fallback verified');
+// Babylon consumes copied state below the Canvas HUD; gameplay stays in one scheduler.
+const viewerContent=fs.readFileSync(path.resolve('src/match-viewer/BabylonMatchViewer.ts'),'utf8');
+const copierContent=fs.readFileSync(path.resolve('src/match-viewer/MatchViewer.ts'),'utf8');
+const viewerHostAt=matchViewContent.indexOf('ref={viewerHostRef}');
+const canvasOverlayAt=matchViewContent.indexOf('ref={canvasRef}');
+if(!matchViewContent.includes("import('../match-viewer/BabylonMatchViewer')")||!matchViewContent.includes('!matchViewerAvailableRef.current')
+  ||!viewerContent.includes('Camera.ORTHOGRAPHIC_CAMERA')||viewerHostAt<0||canvasOverlayAt<0||viewerHostAt>canvasOverlayAt){
+  errors.push('CRITICAL: Babylon must remain below the Canvas HUD with its fallback intact!');
 }
-const threeSceneContent = fs.readFileSync(path.resolve('src/threeArenaScene.ts'), 'utf8');
-const threeAvatarContent = fs.readFileSync(path.resolve('src/threeAvatarModels.ts'), 'utf8');
-if (!matchViewContent.includes('renderArena({') || !matchViewContent.includes('drawArena3dOverlay')
-    || ['requestAnimationFrame(', 'Math.random(', 'createMatchRandom(', 'updateAramSimulation(', 'runSimulationSlice(']
-      .some(token => threeSceneContent.includes(token) || threeTerrainContent.includes(token) || threeAvatarContent.includes(token))) {
-  errors.push('CRITICAL: The 3D arena must use live read-only inputs and the existing simulation/RAF!');
+if(!matchViewContent.includes('renderArena(presentationFrame')||!copierContent.includes('Object.freeze')
+  ||['requestAnimationFrame(', 'Math.random(', 'createMatchRandom(', 'updateAramSimulation(', 'runSimulationSlice('].some(token=>viewerContent.includes(token))){
+  errors.push('CRITICAL: Babylon must consume copied live inputs without scheduling gameplay!');
 }
 if (matchViewContent.includes('<ThreeAramArena')) {
   errors.push('CRITICAL: Legacy ThreeAramArena simulator must not replace the live fixed-step arena!');

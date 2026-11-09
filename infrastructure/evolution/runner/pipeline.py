@@ -18,6 +18,8 @@ from pathlib import Path
 from server import write_json
 from training import CONFIG, fit, calibrate
 from operations import Operations
+from evidence_io import read_raw, validate_case_allocation
+from regression import CONFIG as DIAGNOSTIC_CONFIG, diagnose
 
 FOLDER = Path(sys.argv[1]).resolve()
 PLAN = json.loads((FOLDER / 'plan.json').read_text())
@@ -115,6 +117,8 @@ def collect(split, execution, candidate=None):
         result = FOLDER / f"case-{item['seed']}.json"
         if not task.exists():
             write_json(task, item)
+        elif json.loads(task.read_text()) != item:
+            raise RuntimeError('Stored task differs from frozen allocation')
         if not raw.exists() and not result.exists():
             args = ['node', 'scripts/paired-live-rollout.mjs', '--checkpoint', '--fixed-scout', '--renderless',
                     '--pair=farm-push', '--horizon=30', f"--scout-seconds={item['scoutSeconds']}", f"--after={item['afterSeconds']}",
@@ -140,8 +144,13 @@ def collect(split, execution, candidate=None):
                 Path(str(raw)+'.tmp').replace(raw)
         if result.exists():
             example = json.loads(result.read_text())
-            if raw.exists() and example.get('rawHash') != sha(raw):
-                raise RuntimeError('Stored raw evidence changed after validation')
+            validate_case_allocation(execution, [example])
+            if example.get('status') == 'valid' or example.get('rawHash'):
+                read_raw(FOLDER, example)
+            if example.get('status') == 'valid':
+                verified = node('validate', raw, task, FOLDER / 'execution.json', *([candidate] if candidate else []))
+                if verified != example:
+                    raise RuntimeError('Cached case differs from independently revalidated raw evidence')
         else:
             try:
                 if not raw.exists():
@@ -220,7 +229,9 @@ def main():
                                     'extra_death_cases': 0, 'extra_team_death_cases': 0, 'broader_worse': 0,
                                     'positive_reward': True, 'more_gains_than_losses': True, 'beat_zero_prediction': True},
                      'production_promotion': False}
+        execution['diagnostic_configuration'] = DIAGNOSTIC_CONFIG
         write_json(execution_path, execution)
+    validate_case_allocation(execution, [])
     state('running')
     PROGRESS.update(current_batch_size=PLAN.get('operations', {}).get('batch_size', 64),
         collector='compiled fitting / trusted Vite evaluation' if PLAN['version'] >= 2 else 'trusted Vite')
@@ -283,6 +294,8 @@ def main():
             heldout = collect('heldout', execution, candidate_path)
             assert sha(candidate_path) == frozen and sha(proper_path) == proper_hash
             evaluation = summarize(heldout, PLAN['evaluation_cases'])
+            evaluation['diagnostics'] = diagnose(heldout, PLAN['evaluation_cases'], proper.get('history'),
+                proper.get('fittedLoss'), execution.get('diagnostic_configuration'))
     assert node('manifest')['source_hash'] == execution['source_hash']
     PROGRESS.update(stage='complete', completed=len(list(FOLDER.glob('case-*.json'))))
     result = {'source_hash': execution['source_hash'], 'evaluation': evaluation, 'promoted': False,

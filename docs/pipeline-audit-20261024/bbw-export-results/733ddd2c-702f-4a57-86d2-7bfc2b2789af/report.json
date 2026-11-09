@@ -1,0 +1,44 @@
+{
+  "id": "733ddd2c-702f-4a57-86d2-7bfc2b2789af",
+  "method": "regional-volume-bbw-candidate-v1",
+  "plan": {
+    "id": "733ddd2c-702f-4a57-86d2-7bfc2b2789af",
+    "method": "regional-volume-bbw-candidate-v1",
+    "compute": "google",
+    "publication_eligible": false,
+    "qualification_complete": false,
+    "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+    "weight_solve_id": "1a8d5ad6-a597-4be2-92a8-13d4ae8c8ece",
+    "files": {
+      "raw.glb": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+      "weight-report.json": "021b4175cd825c6eae5003e9a0d886fca1407a72ab2f55d4cdcc4ecbed1f7677",
+      "body-weights.npz": "f22ab18d8f69615a9957c22f598ade4b97afdfa045933c95017afd5508441fde",
+      "baseline-report.json": "fabe0de8f9b5e5f183bdf92a54bf0a2b739818ead9a86bb47fb2ceafc0518429",
+      "tools/review_bbw_candidate.py": "d47262d9f9d2d571ddefc94b27520f241cc96c62770e4a19bcdd2075cc3f990b",
+      "tools/review_combined_joint_candidate.py": "40873af6f5520957b123826e110a57f8a4f61a29c11edf1993ae89e3f6203de6",
+      "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+      "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+      "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+      "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+      "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02"
+    }
+  },
+  "compute": "google",
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+  "weight_solve_id": "1a8d5ad6-a597-4be2-92a8-13d4ae8c8ece",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "candidate_available": false,
+  "started_unix": 1793198088.816037,
+  "weight_changes": {
+    "modified_vertices": 4405,
+    "max_discarded_mass_to_four_influences": 0.09520442118193706,
+    "rms_discarded_mass": 0.021415304276698553,
+    "sphere_radius_height_fraction": 0.08,
+    "full_strength_radius_height_fraction": 0.06
+  },
+  "status": "blocked_influence_budget",
+  "next_requirement": "The solved weights exceed the fixed 5% discarded-mass budget for four influences. Review representation or constraints; no truncated candidate exported.",
+  "completed_unix": 1793198090.3010232
+}

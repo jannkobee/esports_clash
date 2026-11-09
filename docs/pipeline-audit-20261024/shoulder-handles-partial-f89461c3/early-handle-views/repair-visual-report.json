@@ -1,0 +1,239 @@
+{
+  "compute": "google",
+  "source_sha256": "42ac17a5740ab76878ca88d49e4b03cbb2d5998e7483acce91160bc0dc6ee597",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "views": [
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "mode": "baseline",
+      "view": "front",
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-front.png",
+      "sha256": "b8480cfdd07e7b33ad32362d47b514894d70c8c90cea0c0ed206eb94303f7f79",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 1.5707963267948966,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "mode": "baseline",
+      "view": "side",
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-side.png",
+      "sha256": "65303e5e34a288d03f94affd53fbe156c8c25e50b2db338bc02a5cea47319530",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 3.141592653589793,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "mode": "baseline",
+      "view": "oblique",
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-baseline-oblique.png",
+      "sha256": "3409685bfe492494b5c878f838a57b9f3e9887745976e82c846ba2ea4a7eaad5",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 2.356194490192345,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "mode": "candidate",
+      "view": "front",
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-front.png",
+      "sha256": "e1bf3fe785ec5d53f3c3b1e2910204e7f2d7201f667eb5b3f554d9d99425ff0a",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 1.5707963267948966,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "mode": "candidate",
+      "view": "side",
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-side.png",
+      "sha256": "3ef41d3173eb1d425df39bd20b5f48537ac410707e3e0ed493e06fdbf7350343",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 3.141592653589793,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "mode": "candidate",
+      "view": "oblique",
+      "file": "repair-screenshots/01-UpperArmL-60-child0-twist0-candidate-oblique.png",
+      "sha256": "bb657137d12201bc6d7436f3bb60142a6accd8dd5dca51d6df9d622a5e4f0955",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 2.356194490192345,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "mode": "baseline",
+      "view": "front",
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-front.png",
+      "sha256": "78ceb8f62a2a9f48dd163b1fd961378f2000b07388c0ee3ccefb2eaec9dbd8f1",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 1.5707963267948966,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "mode": "baseline",
+      "view": "side",
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-side.png",
+      "sha256": "8c51cd141f32c7ac127fbdb38bc323570c6dac2acbcff4fdb50340391819130e",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 3.141592653589793,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "mode": "baseline",
+      "view": "oblique",
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-baseline-oblique.png",
+      "sha256": "e549742bd3cd2fd61470b43e8a016385f797dc716f4253d1f5d4b54be08e60a1",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 2.356194490192345,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "mode": "candidate",
+      "view": "front",
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-front.png",
+      "sha256": "82da399a68759f93f4ba44c3b9e0e4138d3da476b81ea12908a52a0c9d31904e",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 1.5707963267948966,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "mode": "candidate",
+      "view": "side",
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-side.png",
+      "sha256": "333ed1be8c9fc46318bc930acc4787695b2a1c32e5ae43d4c8fcdadf83dd9fc2",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 3.141592653589793,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "mode": "candidate",
+      "view": "oblique",
+      "file": "repair-screenshots/02-UpperArmL-90-child0-twist0-candidate-oblique.png",
+      "sha256": "4b227a2af5fbce49f273a06b894423e7bbeec63179edda973e00114235665f7c",
+      "camera": {
+        "target": [
+          -0.08032020926475525,
+          0.3077397644519806,
+          -0.03240817040205002
+        ],
+        "radius": 0.34099812030792237,
+        "alpha": 2.356194490192345,
+        "beta": 1.5707963267948966,
+        "minZ": 0.0001,
+        "morphs": []
+      }
+    }
+  ],
+  "playback_samples": [],
+  "errors": [],
+  "status": "rendered_for_review"
+}

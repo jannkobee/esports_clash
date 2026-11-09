@@ -1,0 +1,74 @@
+[
+  {
+    "avatar_id": "c_zal",
+    "id": "needle_fingers",
+    "sha256": "5824ca52d9e2f4356393dec49035c184bb29140b025fcb263f56c31a543453b8",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "7e050d7684d26c37fe4d5693638503ec340a548071a38ccfd4bc443046de912e",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_zal",
+    "id": "thread_reservoirs",
+    "sha256": "abf319ab58f0e05e7b62938cee2f685f2c98ad170d7469e85299b4ca1f993db1",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "2f7711b52a32cbeb9c6c547a12c05935ab5f17032f14924b7ddb977edc559bfb",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_inai",
+    "id": "star_staff",
+    "sha256": "7283739263bdfc182154fb22fb5ac7ba168202dd681c9c8f5d22750107d9fafa",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "45bae1a451a615f2fcf3d599cfbeab0ea61f90cdfeec64b2c2e1e0d5157602c7",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_qiyana",
+    "id": "glass_circlet",
+    "sha256": "8bd8222ce37afd98309422dc77383c324654c2f9ddd5306aaacaea18c086c557",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "64e2161d7b1628bb3c7aedd34b5e746e47004f6eec157cd6c1302e4dfa59a0a4",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_qiyana",
+    "id": "reflective_outfit",
+    "sha256": "19d06007a7a6728f96dca3d6d00a97d9c98da753f2edb4bca7c4b9f76e24018f",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "cf3b0a0508d6d63fa264f8905ae8087be3c55921a79223d7f2ed0b4f1b90d749",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_locke",
+    "id": "ash_bells",
+    "sha256": "07d7156bfffccdfa49658de5d4a4f0b359888a3c0c625c4b86282ec97226f39d",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "d2633e16c86ae3c49eef9e5bc2bd654e6ba3791d3f55bfa940a5c6385faad03b",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_valkira",
+    "id": "oath_outfit",
+    "sha256": "09ba72725afb5d88fd52714f9e2cd87e70c54935a3ee825de6f7c10a35bf4b5a",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "c28e43c5bb7630cca4e469db75160a5ffd2c98122a703cb159c970e4e2264ac8",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kazemaru",
+    "id": "vane_shield",
+    "sha256": "2a2686da647629f8f6922ef5589ce6bd01c36e1d05e9583ab2448e3c6fd80d9f",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "0587cf44d0acdaf6bd78c8ad532699fed1ac0676805b9a14fd53d1a5d38ab021",
+    "http": 200
+  }
+]

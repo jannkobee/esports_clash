@@ -1,0 +1,11 @@
+{
+    "verified_on": "2026-10-30",
+    "id": "d832094d-eddb-4b70-8b62-d47553d35d64",
+    "report_sha256": "686394f5d149a11bc5589e9a43e142776fe8a307fc39cf48705d55b16b11d8f5",
+    "assessment_sha256": "ba1325778b10b659f5bd800b0132b6e1cb4ff5d0f81872ca19a91289831c20e0",
+    "artifacts_read_back": 33,
+    "preview_status": 200,
+    "api_matches": true,
+    "publication_eligible": false,
+    "scope": "Canonical service readback and shared controller rendering, not authenticated browser E2E."
+}

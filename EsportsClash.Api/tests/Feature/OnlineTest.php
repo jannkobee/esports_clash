@@ -35,6 +35,46 @@ class OnlineTest extends TestCase
         return $service->queue($this->account())['match'];
     }
 
+    public function test_hybrid_allocation_pins_baseline_and_does_not_load_an_unqualified_command_model():void {
+        $catalog=OnlineCatalog::firstOrFail();$manifest=$catalog->manifest;
+        $manifest['policy_version']='baseline-hybrid-v1';$catalog->update(['manifest'=>$manifest]);
+        $match=$this->allocated();
+        $this->assertSame('baseline-hybrid-v1',$match->plan['versions']['policy_version']);
+        $this->assertSame(['controller'=>'hybrid','release'=>null],$match->plan['intelligence']);
+    }
+
+    public function test_original_roster_allocation_uses_hybrid_with_a_pinned_compatible_release_only():void {
+        $match=$this->allocated();
+        $this->assertSame('original-v3-hybrid-v2',$match->plan['versions']['policy_version']);
+        $this->assertSame(['controller'=>'hybrid','release'=>null],$match->plan['intelligence']);
+    }
+
+    public function test_reviewed_roster_upgrade_preserves_owned_instances_lineup_and_queue():void {
+        $current=OnlineCatalog::firstOrFail();$previous=$current->payload;
+        foreach($previous['avatars'] as &$kit){unset($kit['abilityRuleset']);$kit['skill1']['name']='Historical skill';}unset($kit);
+        $oldId=hash('sha256',json_encode($previous));$manifest=$current->manifest;$manifest['catalog_version']=$oldId;
+        $current->update(['active'=>false]);
+        OnlineCatalog::create(['id'=>$oldId,'active'=>true,'manifest'=>$manifest,'payload'=>$previous]);
+        $user=$this->account();$service=app(OnlineService::class);$service->queue($user);
+        $club=\App\Models\OnlineClub::where('user_id',$user->id)->firstOrFail();$lineup=$club->lineup;
+        $owned=OwnedPlayerCard::orderBy('id')->get(['id','user_id','definition_id','grant_key'])->toArray();
+        $this->artisan('online:install-catalog',['--original-roster'=>true])->assertSuccessful();
+        $this->assertSame($owned,OwnedPlayerCard::orderBy('id')->get(['id','user_id','definition_id','grant_key'])->toArray());
+        $this->assertSame($lineup,$club->fresh()->lineup);
+        $this->assertCount(5,$service->validatedLineup($user->id,$lineup,$service->activeCatalog()));
+        $this->assertSame($current->id,\App\Models\NormalQueueTicket::where('user_id',$user->id)->value('catalog_id'));
+        $this->assertFalse(OnlineCatalog::findOrFail($oldId)->active);
+    }
+
+    public function test_allocation_freezes_content_catalog_even_after_backoffice_edits():void {
+        $match=$this->allocated();$snapshot=$match->plan['content_catalog'];
+        $this->assertCount(284,$snapshot['records']);
+        $entry=\App\Models\GameContent::where('kind','item')->firstOrFail();
+        $payload=$entry->payload;$payload['cost']=123;
+        app(\App\Services\GameContentService::class)->mutate($entry,1,$match->blue_user_id,'save',$payload);
+        $this->assertSame($snapshot,$match->fresh()->plan['content_catalog']);
+        $this->assertNotSame($snapshot['hash'],app(\App\Services\GameContentService::class)->snapshot()['hash']);
+    }
     private function workerResult(OnlineMatch $match): array
     {
         $draft = [];
@@ -69,6 +109,202 @@ class OnlineTest extends TestCase
         $this->assertDatabaseCount('online_clubs', 1);
     }
 
+    public function test_club_identity_requires_unique_tag_and_current_revision(): void
+    {
+        $first = $this->account();
+        $club = app(OnlineService::class)->provision($first);
+        $payload = ['revision' => $club->fresh()->revision, 'name' => 'Manila Five', 'tag' => 'MNL', 'identity' => [
+            'country' => 'PH', 'crest' => ['shape' => 'shield', 'mark' => 'star'],
+            'colors' => ['primary' => '#112233', 'secondary' => '#ffffff', 'accent' => '#ffcc00'],
+            'home_jersey' => ['pattern' => 'solid', 'crest_position' => 'center', 'lettering' => 'italic', 'number_style' => 'outline'],
+            'away_jersey' => ['pattern' => 'stripes'],
+        ]];
+        $bad = $payload;
+        $bad['identity']['home_jersey']['number_style'] = 'custom';
+        $this->putJson('/api/v1/online/club/identity', $bad)->assertUnprocessable()->assertJsonValidationErrors('identity.home_jersey.number_style');
+        $this->putJson('/api/v1/online/club/identity', $payload)->assertOk()->assertJsonPath('data.tag', 'MNL')
+            ->assertJsonPath('data.identity.home_jersey.number_style', 'outline');
+        $this->putJson('/api/v1/online/club/identity', $payload)->assertUnprocessable();
+        $second = $this->account();
+        app(OnlineService::class)->provision($second);
+        $this->putJson('/api/v1/online/club/identity', $payload)->assertUnprocessable()->assertJsonValidationErrors('tag');
+        $this->assertSame('Manila Five', $club->fresh()->name);
+    }
+
+    public function test_fixture_locks_owned_orders_and_kicks_off_once_without_a_browser(): void
+    {
+        $this->freezeTime();
+        $service = app(OnlineService::class);
+        $homeUser = $this->account();
+        $home = $service->provision($homeUser);
+        $away = $service->provision($this->account());
+        $kickoff = now()->addMinutes(20);
+        $this->artisan('fixtures:schedule', ['home' => $home->id, 'away' => $away->id,
+            'kickoff' => $kickoff->toIso8601String()])->assertSuccessful();
+        $fixture = \App\Models\ClubFixture::firstOrFail();
+        $ordersPath = '/api/v1/online/fixtures/'.$fixture->id.'/orders';
+        $this->putJson($ordersPath, ['lineup' => $home->lineup])->assertUnprocessable();
+        $orders = $home->starters;
+        Sanctum::actingAs($homeUser);
+        $this->putJson($ordersPath, ['lineup' => $orders])->assertNoContent();
+        $lock = new \App\Jobs\LockClubFixture($fixture->id);
+        $lock->handle($service);
+        $this->assertNull($fixture->fresh()->match_id);
+
+        $this->travelTo($kickoff->copy()->subMinutes(15));
+        $this->putJson($ordersPath, ['lineup' => $orders])->assertConflict();
+        $lock->handle($service);
+        $lock->handle($service);
+        $match = $fixture->fresh()->match;
+        $this->assertDatabaseCount('online_matches', 1);
+        $home->update(['name' => 'New identity']);
+        $this->assertSame($match->plan['clubs']['blue'], $match->fresh()->plan['fixture']['clubs']['blue']['name']);
+        $this->getJson('/api/v1/online/matches/'.$match->id)->assertNotFound();
+
+        $poll = new \App\Jobs\PollOnlineMatch($match->id);
+        $result = $this->workerResult($match);
+        Http::fake(['*' => Http::response(['status' => 'completed', 'sequence' => 1200, 'result' => $result,
+            'public_replay' => true, 'started_at' => $kickoff->toISOString()])]);
+        $poll->handle($service);
+        Http::assertNothingSent();
+        $this->travelTo($kickoff);
+        $poll->handle($service);
+        $poll->handle($service);
+        Http::assertSentCount(2);
+        $this->assertSame('completed', $match->fresh()->status);
+        $this->getJson('/api/v1/online/fixtures')->assertOk()->assertJsonPath('data.0.status', 'Completed');
+        $this->getJson('/api/v1/clashbook')->assertOk()
+            ->assertJsonPath('data.fixtures.0.winner', $match->plan['clubs']['blue'])
+            ->assertJsonPath('data.fixtures.0.watch_match_id', $match->id)
+            ->assertJsonPath('data.standings.0.clubs.0.wins', 1)
+            ->assertJsonMissingPath('data.fixtures.0.home_orders');
+        $this->account();
+        $this->getJson('/api/v1/online/matches/'.$match->id)->assertOk()
+            ->assertJsonMissingPath('data.plan.blue')->assertJsonMissingPath('data.plan.seed');
+        $this->assertDatabaseCount('club_training_sessions', 10);
+        $this->travel(8)->days();
+        $this->artisan('clubs:weekly')->assertSuccessful();
+        $this->artisan('clubs:weekly')->assertSuccessful();
+        $this->assertSame(10, OwnedPlayerCard::findOrFail($home->lineup[0]['instance_id'])->training_xp);
+        $this->assertDatabaseCount('club_money_entries', 4);
+    }
+
+    public function test_accepted_friendly_creates_one_fixture_for_the_two_clubs(): void
+    {
+        $online = app(OnlineService::class);
+        $home = $this->account();
+        $online->provision($home);
+        $away = $this->account();
+        $online->provision($away)->update(['tag' => 'AWAY']);
+        Sanctum::actingAs($home);
+        $this->postJson('/api/v1/online/fixtures/invites', ['tag' => 'AWAY', 'kickoff_at' => now()->addDay()->toIso8601String()])->assertNoContent();
+        $invite = \App\Models\ClubFriendlyInvite::firstOrFail();
+        $url = '/api/v1/online/fixtures/invites/'.$invite->id.'/accept';
+        $this->postJson($url)->assertForbidden();
+        Sanctum::actingAs($away);
+        $this->getJson('/api/v1/online/fixtures')->assertOk()->assertJsonCount(1, 'invites');
+        $this->postJson($url)->assertNoContent();
+        $this->postJson($url)->assertNoContent();
+        $this->assertDatabaseCount('club_fixtures', 1);
+    }
+
+    public function test_bot_club_uses_scouts_and_bids_in_the_shared_market(): void
+    {
+        $seller = $this->account();
+        app(OnlineService::class)->provision($seller);
+        $this->artisan('clubs:create-bot', ['tag' => 'BOTMNL', 'name' => 'Manila Relay'])->assertSuccessful();
+        $club = \App\Models\OnlineClub::where('tag', 'BOTMNL')->firstOrFail();
+        $this->assertTrue($club->is_bot);
+        $this->assertSame(5, OwnedPlayerCard::where('user_id', $club->user_id)->where('grant_key', 'like', 'bot-scout:%')->count());
+        Sanctum::actingAs($seller);
+        $this->postJson('/api/v1/online/market/scout')->assertStatus(410);
+        app(\App\Services\ClubMarketService::class)->scout(\App\Models\OnlineClub::where('user_id',$seller->id)->firstOrFail());
+        $reserve = $this->getJson('/api/v1/online/market')->json('data.reserves.0.id');
+        $this->postJson('/api/v1/online/market/auctions', ['card_id' => $reserve, 'opening_bid' => 10_000])->assertNoContent();
+        $auction = \App\Models\ClubAuction::firstOrFail();
+        Sanctum::actingAs($club->user);
+        $this->postJson('/api/v1/online/market/auctions/'.$auction->id.'/bid', ['amount' => 10_000])->assertNoContent();
+        $this->assertSame($club->id, $auction->fresh()->bidder_id);
+        $this->assertSame(\App\Services\ClubMarketService::OPENING_BALANCE - 10_000, app(\App\Services\ClubMarketService::class)->balance($club->id));
+        $this->postJson('/api/v1/online/market/auctions', ['card_id' => $club->lineup[0]['instance_id'], 'opening_bid' => 10_000])->assertUnprocessable();
+        $this->artisan('clubs:weekly')->assertSuccessful();
+        $this->artisan('clubs:weekly')->assertSuccessful();
+        $this->assertSame(6, OwnedPlayerCard::where('user_id', $club->user_id)->count());
+    }
+
+    public function test_market_reserves_and_releases_money_then_transfers_a_player_once(): void
+    {
+        $this->freezeTime();
+        $service = app(OnlineService::class);
+        $seller = $this->account();
+        $club = $service->provision($seller);
+        $this->postJson('/api/v1/online/market/scout')->assertStatus(410);
+        app(\App\Services\ClubMarketService::class)->scout($club);
+        $card = $this->getJson('/api/v1/online/market')->assertOk()->json('data.reserves.0.id');
+        $this->postJson('/api/v1/online/market/auctions', ['card_id' => $card, 'opening_bid' => 10_000])->assertNoContent();
+        $auction = \App\Models\ClubAuction::firstOrFail();
+        $bid = '/api/v1/online/market/auctions/'.$auction->id.'/bid';
+        $this->postJson($bid, ['amount' => 10_000])->assertUnprocessable();
+        $firstBidder = $this->account();
+        $firstClub = $service->provision($firstBidder);
+        $this->postJson($bid, ['amount' => 10_000])->assertNoContent();
+        $winner = $this->account();
+        $winnerClub = $service->provision($winner);
+        $this->postJson($bid, ['amount' => 10_001])->assertUnprocessable();
+        $this->postJson($bid, ['amount' => 15_000])->assertNoContent();
+        $market = app(\App\Services\ClubMarketService::class);
+        $this->assertSame(5_000_000, $market->balance($firstClub->id));
+        $this->assertSame(4_985_000, $market->balance($winnerClub->id));
+        $this->travel(24)->hours();
+        $this->artisan('market:close-due')->assertSuccessful();
+        $this->artisan('market:close-due')->assertSuccessful();
+        $this->assertSame($winner->id, OwnedPlayerCard::findOrFail($card)->user_id);
+        $this->assertSame('sold', $auction->fresh()->status);
+        $this->assertSame(4_915_000, $market->balance($club->id));
+    }
+
+    public function test_manila_event_advances_only_from_verified_matches_and_awards_placement_once(): void
+    {
+        $this->travelTo(\Illuminate\Support\Carbon::parse('2027-02-01T10:00:00+08:00'));
+        $semifinals = now()->addDays(3);
+        $this->artisan('events:publish-manila', ['tier' => 5, 'semifinals' => $semifinals->toIso8601String()])->assertSuccessful();
+        $event = \App\Models\ClubTournament::firstOrFail();
+        $online = app(OnlineService::class);
+        $clubs = [];
+        for ($slot = 1; $slot <= 4; $slot++) {
+            $club = $online->provision($this->account());
+            $club->update(['tag' => 'MNL'.$slot]);
+            $this->postJson('/api/v1/clashbook/events/'.$event->id.'/register')->assertNoContent();
+            $clubs[] = $club;
+        }
+
+        $this->travelTo($event->registration_closes_at);
+        $this->artisan('events:advance')->assertSuccessful();
+        $this->assertSame(2, $event->fixtures()->count());
+        $this->artisan('events:advance')->assertSuccessful();
+        $this->assertSame(2, $event->fixtures()->count());
+
+        foreach ($event->fixtures()->get() as $fixture) {
+            $this->travelTo($fixture->kickoff_at);
+            (new \App\Jobs\LockClubFixture($fixture->id))->handle($online);
+            $match = $fixture->fresh()->match;
+            $online->settle($match->id, $this->workerResult($match), 1200);
+        }
+        $this->artisan('events:advance')->assertSuccessful();
+        $final = $event->fixtures()->where('bracket_slot', 3)->firstOrFail();
+        $this->assertSame($clubs[0]->id, $final->home_club_id);
+        $this->assertSame($clubs[1]->id, $final->away_club_id);
+        $this->travelTo($event->final_at);
+        (new \App\Jobs\LockClubFixture($final->id))->handle($online);
+        $match = $final->fresh()->match;
+        $online->settle($match->id, $this->workerResult($match), 1200);
+        $this->artisan('events:advance')->assertSuccessful();
+        $this->artisan('events:advance')->assertSuccessful();
+        $this->assertSame('completed', $event->fresh()->status);
+        $this->assertSame(4, $clubs[0]->fresh()->tier);
+        $this->assertDatabaseCount('club_money_entries', 2);
+    }
+
     public function test_foreign_ownership_forged_attributes_and_stale_updates_are_rejected(): void
     {
         $first = $this->account();
@@ -101,6 +337,70 @@ class OnlineTest extends TestCase
         $this->postJson('/api/v1/online/queue')->assertAccepted()->assertJsonPath('data.match.id', $id);
         $this->assertDatabaseCount('online_matches', 1);
         $this->assertSame('normal', OnlineMatch::find($id)->plan['mode']);
+    }
+
+    public function test_normal_queue_prefers_a_waiting_manager_before_bot_fallback(): void
+    {
+        $online = app(OnlineService::class);
+        $bot = $online->provision(User::factory()->create(), true);
+        $first = $this->account();
+        $this->postJson('/api/v1/online/queue')->assertAccepted()->assertJsonPath('data.match', null);
+
+        $second = $this->account();
+        $match = $this->postJson('/api/v1/online/queue')->assertAccepted()->json('data.match');
+
+        $this->assertSame([$first->id, $second->id], [
+            min($match['blue_user_id'], $match['red_user_id']),
+            max($match['blue_user_id'], $match['red_user_id']),
+        ]);
+        $this->assertSame([], OnlineMatch::findOrFail($match['id'])->plan['bot_sides']);
+        $this->assertTrue($bot->fresh()->is_bot);
+    }
+
+    public function test_queued_manager_is_matched_with_available_bot_after_human_wait(): void
+    {
+        $online = app(OnlineService::class);
+        $botUser = User::factory()->create();
+        $bot = $online->provision($botUser, true);
+        $human = $this->account();
+        $this->postJson('/api/v1/online/queue')->assertAccepted()->assertJsonPath('data.match', null);
+        Queue::assertPushed(\App\Jobs\MatchQueuedBotOpponent::class, fn ($job) => $job->userId === $human->id);
+        $this->assertDatabaseHas('normal_queue_tickets', ['user_id' => $human->id, 'status' => 'queued']);
+
+        $this->assertTrue($online->matchQueuedBotOpponent($human->id));
+        $ticket = \App\Models\NormalQueueTicket::where('user_id', $human->id)->firstOrFail();
+        $match = OnlineMatch::findOrFail($ticket->match_id);
+
+        $this->assertSame('matched', $ticket->status);
+        $this->assertSame('matched', \App\Models\NormalQueueTicket::where('user_id', $botUser->id)->value('status'));
+        $this->assertSame([$bot->user_id], array_map(
+            fn (string $side) => $side === 'blue' ? $match->blue_user_id : $match->red_user_id,
+            $match->plan['bot_sides'],
+        ));
+        $botSide = $match->plan['bot_sides'][0];
+        $this->assertSame(
+            array_column($bot->starters, 'instance_id'),
+            array_column($match->plan[$botSide], 'instance_id'),
+        );
+        $this->assertArrayHasKey('staff', $match->plan);
+        $this->assertArrayHasKey('coaches', $match->plan);
+        $this->assertArrayNotHasKey('fixture', $match->plan);
+        \Illuminate\Support\Facades\Queue::assertPushed(\App\Jobs\PollOnlineMatch::class);
+    }
+
+    public function test_queued_manager_stays_cancellable_when_no_eligible_bot_exists(): void
+    {
+        $online = app(OnlineService::class);
+        $bot = $online->provision(User::factory()->create(), true);
+        $bot->update(['starters' => []]);
+        $human = $this->account();
+        $this->postJson('/api/v1/online/queue')->assertAccepted()->assertJsonPath('data.match', null);
+
+        $this->assertFalse($online->matchQueuedBotOpponent($human->id));
+        $this->assertDatabaseHas('normal_queue_tickets', ['user_id' => $human->id, 'status' => 'queued']);
+
+        $this->deleteJson('/api/v1/online/queue')->assertNoContent();
+        $this->assertDatabaseHas('normal_queue_tickets', ['user_id' => $human->id, 'status' => 'cancelled']);
     }
 
     public function test_queue_rejects_supplied_rating_seed_result_and_edits_while_waiting(): void

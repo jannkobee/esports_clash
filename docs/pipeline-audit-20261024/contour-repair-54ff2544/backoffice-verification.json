@@ -1,0 +1,11 @@
+{
+    "artifacts_read_back": 175,
+    "preview_status": 200,
+    "api_matches": true,
+    "review": "16fc4ed07ae5395022f47d334c1f791f8867f78f2543818e3405d7fdf18210ac",
+    "attempt": "54ff2544-dce8-477c-a8b8-9790ce16bb57",
+    "publication_eligible": false,
+    "qualification_complete": false,
+    "cli_memory_limit": "512M",
+    "scope": "Shared controller\/API and exact retained bytes; not authenticated browser E2E."
+}

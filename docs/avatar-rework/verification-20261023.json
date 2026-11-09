@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-23",
+  "sourceHash": "aa75732741fb47dafca9c3e665e8b8338351b8c0c13f312a59f33c2effff8f54",
+  "ruleset": "original-v3-preview-1",
+  "scope": "First five prototype foundation; not complete redesign",
+  "checks": {
+    "game": {
+      "passed": true,
+      "tests": 560,
+      "additionalSimulationTests": 3,
+      "designValidation": true,
+      "typecheck": true
+    },
+    "productionBuild": true,
+    "privateWorkerBuild": true,
+    "liveTeamfight": {
+      "path": "docs/avatar-rework/v3-ferry-fix-teamfight-20261023.json",
+      "seconds": 40,
+      "ticks": 1200,
+      "actors": 10,
+      "prototypeKits": 5,
+      "groupings": [
+        1,
+        4
+      ],
+      "renderedComparison": true,
+      "exact": true,
+      "counters": {
+        "ai_choice_explained": 73,
+        "ability_started": 73,
+        "ability_committed": 68,
+        "construct_placed": 70,
+        "ability_failed": 4,
+        "drowse_added": 15,
+        "construct_damaged": 41,
+        "construct_destroyed": 38,
+        "movement_modified": 171,
+        "cast_recovery_added": 2,
+        "pattern_selected": 3,
+        "pin_consumed": 4,
+        "momentum_observed": 14,
+        "construct_repositioned": 1,
+        "projectile_wall": 2,
+        "polarity_changed": 1,
+        "route_speed": 3
+      }
+    },
+    "normalBaseline": {
+      "path": "docs/avatar-rework/v3-ferry-fix-baseline-20261023.json",
+      "exactFingerprint": true,
+      "finished": true,
+      "second": 725.9666666666637,
+      "winner": "blue"
+    },
+    "releaseReadiness": {
+      "ready": false,
+      "expectedExitCode": 1,
+      "prototypeHandlers": 5,
+      "missingHandlers": 40,
+      "unqualifiedAvatars": 45,
+      "formalIdentityManifestSupplied": false
+    }
+  },
+  "inspectedPreview": "docs/avatar-rework/v3-styled-preview-20261023.png",
+  "visualFindings": [
+    "Explicit five-prototype and legacy-art labels visible",
+    "Both Mirelle selectors expose ten pages",
+    "Center-lane labels overlap; readability unqualified",
+    "Private paused fixture HUD is not synchronized to manual stepping; actual tick metadata is recorded"
+  ],
+  "remaining": [
+    "Forty V3 kits have no handlers",
+    "Five prototypes still need full mechanic/AI/counterplay qualification",
+    "Mirelle radial and group UI, detailed decoy animation and live Garruk bridge interaction",
+    "Saved V3 replay restoration and complete manual input journal",
+    "New production assets, rigs and animation timing",
+    "Every-hero counteraction and cross-kit/boss matrices",
+    "Full natural V3 matches and 500+/1000-match balance studies",
+    "Online rollout and compatible ML training/evaluation"
+  ],
+  "artifacts": [
+    {
+      "path": "docs/avatar-rework/v3-ferry-fix-teamfight-20261023.json",
+      "sha256": "6922cc1349e7b8fb2b26b47425877ebec0abbe8d622b2630b0dea956c6635324"
+    },
+    {
+      "path": "docs/avatar-rework/v3-ferry-fix-baseline-20261023.json",
+      "sha256": "a463af7a8309a422699e8bfff4fde10532480ddbfc8de62bfae4d1f1645fecae"
+    },
+    {
+      "path": "docs/avatar-rework/progress.json",
+      "sha256": "ee02c61017cec8b452d80bfb9ffb0e59ee3b4026152eb7255cdf198d6ec0f0f0"
+    },
+    {
+      "path": "docs/avatar-rework/v3-ferry-fix-styled-20261023.json",
+      "sha256": "fd7979b983f2d5c73ca4dca38cec37e44305ef1f27df680be8d9a5dbe92f8da8"
+    },
+    {
+      "path": "docs/avatar-rework/source-receipt.json",
+      "sha256": "6ff85018ff572b20ecabc9f0a63870973c223a822867d4d70d08254328a3e4be"
+    },
+    {
+      "path": "v3-ferry-fix-check.log",
+      "sha256": "fb9e30f75a5352461bdeb88319de690c875225cc5642e0053edcea991f5ada94"
+    },
+    {
+      "path": "v3-ferry-fix-build.log",
+      "sha256": "0ebbb27ef770592ea956eaae47160b97aff7fc6ca438aef10790892196d7afcf"
+    },
+    {
+      "path": "v3-ferry-fix-worker.log",
+      "sha256": "020bc5ed47c942fe6acb13eaa9d70ab043dbc7d7419b34f9637bcca5f01ff4b3"
+    },
+    {
+      "path": "v3-ferry-fix-readiness.log",
+      "sha256": "75e2b5ee0b5c10b0ebaa4a58939f307203b0b07d73c556f26b3908e74e301b50"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "scope": "Recorded failed known-seed compatibility attempt; no terminal metrics",
+  "status": "incomplete",
+  "reason": "Full-match wall budget exhausted",
+  "wall_budget_seconds": 360,
+  "plan_sha256": "d901a5ab9027a337aba16d5817c581737a218d188d94776436e3bb6cc41ccad0",
+  "promoted": false
+}

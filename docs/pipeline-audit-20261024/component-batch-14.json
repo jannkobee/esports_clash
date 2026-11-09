@@ -1,0 +1,30 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_puck",
+    "component_id": "chime_ring",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Large glass chime ring",
+    "attachment": "hand",
+    "prompt": "Edit attached image. Remove the entire outfit, cloak, dress, fabric, tassels and clothing. Retain ONLY the standalone brass ring instrument at the right, with all its glass hanging chimes, chain and handle. One complete isolated ring instrument, no other objects, centrally composed with 15 percent empty transparent margin on all sides. Preserve instrument design. Genuine transparent background, no floor, shadow, glow or text.",
+    "reference_purpose": "reconstruction",
+    "slug": "lulla-faespring",
+    "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/lulla-faespring-chime_ring.png",
+    "path": "docs/pipeline-audit-20261024/upload-assets/lulla-faespring-chime_ring-v2.png"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_batrider",
+    "component_id": "glider_board",
+    "category": "vehicle",
+    "binding": "independent",
+    "label": "Damaged one-sided glider board with sails and vents",
+    "attachment": "independent vehicle",
+    "prompt": "Edit attached glider-board reference. Zoom out substantially and restore the cropped far-right orange sail tip. Show the complete entire board and entire sail including every fabric tip, all inside central 65 percent of frame with generous empty transparent border every side. Preserve design and materials. No rider, body or additional objects. Genuine transparent background, no floor, shadow, glow or text.",
+    "reference_purpose": "reconstruction",
+    "slug": "bryx-emberkite",
+    "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/docs/pipeline-audit-20261024/upload-assets/bryx-emberkite-glider_board.png",
+    "path": "docs/pipeline-audit-20261024/upload-assets/bryx-emberkite-glider_board-v2.png"
+  }
+]

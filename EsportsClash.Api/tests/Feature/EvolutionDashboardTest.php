@@ -90,4 +90,22 @@ class EvolutionDashboardTest extends TestCase
         $this->assertSame('declined', $review->fresh()->status);
         $this->assertDatabaseHas('evolution_audits', ['action' => 'settings.updated']);
     }
+
+    public function test_report_distinguishes_stagnation_uncertainty_and_unmeasured_win_rate(): void
+    {
+        $run = EvolutionRun::create(['id' => (string) Str::uuid(), 'status' => 'completed', 'plan' => [],
+            'result' => ['evaluation' => ['diagnostics' => ['assessment' => 'inconclusive',
+                'measured' => 22, 'planned' => 24, 'signals' => ['behavioral-stagnation', '<script>bad()</script>'],
+                'decision_change_rate' => ['estimate' => 0, 'lower' => 0, 'upper' => .15, 'denominator' => 22],
+                'reward_delta_interval' => ['estimate' => 0, 'lower' => -.3, 'upper' => .3, 'independent_seeds' => 22],
+                'scope' => 'Measured task windows only.']]]]);
+        $this->actingAs($this->owner())->get('/evolution/runs/'.$run->id)->assertOk()
+            ->assertSee('Regression diagnosis')->assertSee('Inconclusive')->assertSee('22 measured / 24 planned')
+            ->assertSee('behavioral-stagnation')->assertSee('15.00%')->assertSee('22 independent seeds')
+            ->assertSee('Full-match win rate')->assertSee('unmeasured')
+            ->assertSee('&lt;script&gt;bad()&lt;/script&gt;', false)->assertDontSee('<script>bad()</script>', false);
+        $run->update(['result' => ['evaluation' => []]]);
+        $this->get('/evolution/runs/'.$run->id)->assertOk()
+            ->assertSee('No versioned regression diagnosis')->assertDontSee('0.00000');
+    }
 }

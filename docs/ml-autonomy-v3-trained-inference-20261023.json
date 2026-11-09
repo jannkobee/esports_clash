@@ -1,0 +1,46 @@
+{
+  "scope": "Known-seed trained-actor inference; censored120s compatibility fixture, no benefit denominator",
+  "initialStateEqual": true,
+  "worldChanged": true,
+  "learning": {
+    "eligible": 1,
+    "changed": 1,
+    "executed": 1,
+    "blocked": {
+      "legal-pair": 26079,
+      "commitment": 24180,
+      "defense": 9366,
+      "health": 11150,
+      "influence": 37,
+      "survival": 37,
+      "utility-gap": 216,
+      "tower": 431,
+      "danger": 374,
+      "cooldown": 79
+    }
+  },
+  "productionPromoted": false,
+  "artifacts": [
+    {
+      "path": "docs/ml-autonomy-v3-trained-inference-20261023/trained-actor.json",
+      "sha256": "a5f372f077197190939020378f36b9de787c6be2a1fb197c9b7be84ac721e684",
+      "bytes": 9190
+    },
+    {
+      "path": "docs/ml-autonomy-v3-trained-inference-20261023/trained-control-120.json",
+      "sha256": "e94501c3cef8cda16d83be4a906f87a23ce25f5946ae9d9690f848386d977c28",
+      "bytes": 884
+    },
+    {
+      "path": "docs/ml-autonomy-v3-trained-inference-20261023/trained-policy-120.json",
+      "sha256": "933b9e1fbf9f6833898f549f1eb66bbaca62e8e8f629399d4c88282c0193a899",
+      "bytes": 30728
+    },
+    {
+      "path": "docs/ml-autonomy-v3-trained-inference-20261023/trained-inference.json",
+      "sha256": "c4310c59c277fca0ae67bc32564477d1671ab1d18e96bb0d944cda40cdeed783",
+      "bytes": 528
+    }
+  ],
+  "source_hash": "af343e5d246bcc1adb134d020cf9a110ef4c806f19846117a80e047fb475c14e"
+}

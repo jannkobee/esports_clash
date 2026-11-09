@@ -31,6 +31,12 @@ return [
 
     'connections' => [
 
+        'competition_rankings' => [
+            'driver'=>'database', 'connection'=>env('DB_QUEUE_CONNECTION'),
+            'table'=>env('DB_QUEUE_TABLE','jobs'), 'queue'=>'competition-rankings',
+            'retry_after'=>1500, 'after_commit'=>true,
+        ],
+
         'sync' => [
             'driver' => 'sync',
         ],

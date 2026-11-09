@@ -1,0 +1,10 @@
+{
+    "artifacts_read_back": 212,
+    "preview_status": 200,
+    "api_matches": true,
+    "review": "49848a9d8e26d27843c08f1c1c06c06c7ce7679a7317289b773ce9a92027d6b9",
+    "attempt": "42facc5c-3ec4-4a89-95e5-49a218202103",
+    "publication_eligible": false,
+    "qualification_complete": false,
+    "scope": "Shared controller\/API and exact retained bytes; not authenticated browser E2E."
+}

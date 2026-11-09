@@ -2,11 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import type { ChampionKit } from '../types';
 import type { AvatarPreview } from '../threeAvatarPreview';
 import { avatarDesign } from '../avatarDesigns';
-import { avatarModelUrl,getArsenaldoModelVariant,saveArsenaldoModelVariant,type AvatarModelVariant } from '../avatarModelUrl';
+import { avatarModelUrl,getArsenaldoModelVariant,saveArsenaldoModelVariant,legacyAvatarAssetsAvailable,type AvatarModelVariant } from '../avatarModelUrl';
 import { ChampionArtwork } from './ChampionArtwork';
 import './avatar-model-preview.css';
 
 export function AvatarModelPreview({ champion,ability='ultimate' }: { champion: ChampionKit;ability?:'passive'|'skill1'|'skill2'|'ultimate' }) {
+  if(!legacyAvatarAssetsAvailable)return <section className="avatar-model-preview" aria-label={`${champion.displayName} model studio`}><div className="avatar-model-preview__details"><strong>{champion.displayName}</strong><p>Previous 3D models and reference versions were deleted. A new base, rig and animation set must be qualified before live use.</p><p>Asset stage: not started</p></div></section>;
+  return <LegacyAvatarModelPreview champion={champion} ability={ability}/>;
+}
+
+function LegacyAvatarModelPreview({ champion,ability='ultimate' }: { champion: ChampionKit;ability?:'passive'|'skill1'|'skill2'|'ultimate' }) {
   const host = useRef<HTMLDivElement>(null), renderer = useRef<AvatarPreview | null>(null);
   const latest = useRef(champion); latest.current = champion;
   const [status, setStatus] = useState<'loading' | 'ready' | 'fallback'>('loading');

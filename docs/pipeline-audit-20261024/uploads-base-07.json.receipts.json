@@ -1,0 +1,56 @@
+[
+  {
+    "avatar_id": "c_brewmaw",
+    "id": "base",
+    "sha256": "bff1802e6675682a762d383c5de6b51590edc8f212315e359be2bc9bea9358f9",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "3f88fc8e7edc5cbaa469ee7f5a9d8ffe0ad843cb120f963f12c7675f0cffb4fc",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_wraithhook",
+    "id": "base",
+    "sha256": "0869920e23a49142aaab0b1a9922d36e24fa4c87daec07fc0f5511317177227e",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "6c1bbc0ed4a1d76f910531ce9cf1fe6c66fa76967cce5ae173dfe9e197007b91",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_hwei",
+    "id": "base",
+    "sha256": "acaf2f181cfd60d8693f7e02123c93c75071bb1a3a5b2d1de757d41695ae10cd",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "2910aab90d44d4c87e4c7af87a31f9688e3915b2a173e1cee83936daacb3e8ae",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_jayce",
+    "id": "base",
+    "sha256": "d75bd3bced1e732b43d0ae9823fb4780c91ced3b05825b16cd4bf25a5b7c2ae1",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "829cb814fba22bb654db6fcb80d59c225fc87952d0b90a39b85acb199c27f597",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_jinx",
+    "id": "base",
+    "sha256": "f117ca8d0a866ea39e3cce6ac6453f506cd2c42745d2523946a7d1b1e69e1cf6",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "f6ed55499379d192e4fbd2d056ed3854d4f571b05128bee2d2a0c3c73d49235d",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_batrider",
+    "id": "base",
+    "sha256": "b1104b493f583387c83c8a230fcfbc7d469aecc002abaae3651a8a1d86211270",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "c6ad737cd57a7270a09fcecdc526f5853ec96889582a155c723847974a7e47fa",
+    "http": 200
+  }
+]

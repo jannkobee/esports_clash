@@ -1,0 +1,26 @@
+{
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "blocked_combined_deformation",
+  "reviewed_on": "2026-10-31",
+  "summary": "Left hip 90-degree bend with positive twist intersects even without the corrective (39 pairs;42with it). Shoulder/chest intersections persist with the elbow held straight. Clavicle coordination reduces contacts but does not remove them. No correction or pose-range restriction has been accepted as a fix.",
+  "inspected": [
+    {
+      "file": "combined-screenshots/05-ThighL-90-child90-twist20-side.png",
+      "sha256": "d315c04bf24db65a4e13211543919e72b7060a30c71339857fbd375d7f4b2114"
+    },
+    {
+      "file": "combined-screenshots/10-UpperArmL-60-child60-twist0-front.png",
+      "sha256": "85dd49feb6527e32340649d75b1545446899130e77d2e8d8a088e0adba58b91c"
+    },
+    {
+      "file": "combined-screenshots/10-UpperArmL-60-child60-twist0-side.png",
+      "sha256": "92c4a6492a831342b11cfe25af11b0fbf99d794db8ab2e8541334a546ca138b6"
+    },
+    {
+      "file": "combined-screenshots/13-UpperArmR-60-child60-twist0-front.png",
+      "sha256": "58baf23cd0e01d642f571a0da9e8bb52a7749f775bfe6a2a8418b2d79520fc9a"
+    }
+  ],
+  "scope": "Four of34images inspected; controls are reproducible stress poses, not game animation or anatomical acceptance."
+}

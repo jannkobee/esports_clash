@@ -1,0 +1,159 @@
+{
+  "date": "2026-10-23",
+  "kind": "factual-kit-controller-engineering",
+  "owner_correction": "Use kit facts and experience instead of handwritten avatar playstyles; support future avatars.",
+  "source_hash": "ddc059158932d9ed7474403929fa062120e79266270339c3a786ed41900cbd25",
+  "rules_version": "979e0cfdcfd306a33592926b9f88bc691b03654a71204e96eb59156ea259255e",
+  "catalog_version": "79f8710120bea9194262c257763a3f9e481caf9626a09551caf4e6023755a3c9",
+  "teaching": {
+    "version": 5,
+    "playbook_sha256": "ea12732dc10054358306695858a1b75056343b292e89f01008375250a19b8d6b",
+    "foundation_sha256": "4160600343a834925aa3d6d86f6baef6a27c3dcab2a800727d2312cdd2e67b0e"
+  },
+  "runner_image": "sha256:bb304c35446fe7318678be1fe5324330a3a30ace7114e881705c60638d838dd8",
+  "online_image": "sha256:cb905bfa2b3bcc7f6a2389a3c47c065c5654f97bd757a927505ce23c5adc73e0",
+  "checks": {
+    "game_tests": 516,
+    "simulation_tests": 3,
+    "typescript": true,
+    "production_build": true,
+    "backend_tests": 55,
+    "backend_assertions": 445,
+    "worker_tests": 45
+  },
+  "engine": {
+    "kind": "identity-engineering-only",
+    "seed": 47,
+    "fresh_benefit_evidence": false,
+    "repeated_controls_match": true,
+    "checkpoint_restored": true,
+    "observation_size": 224,
+    "critic_size": 6,
+    "avatar_specific_rewards": false,
+    "training_status": "censored",
+    "training_seconds": 119.99999999999575,
+    "metrics": {
+      "updated": true,
+      "transitions": 959,
+      "actor_loss": -0.08200438320636749,
+      "value_loss": 0.0010842230403795838,
+      "entropy": 3.782938003540039,
+      "updates": 1,
+      "unrolls": 1,
+      "competitive_improvement_measured": false,
+      "identity_experience": [
+        {
+          "avatarId": "c_valkira",
+          "cardId": "p_thespicy",
+          "cardName": "TheSpicy",
+          "transitions": 207,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 0.0
+        },
+        {
+          "avatarId": "c_kage",
+          "cardId": "p_p1mple",
+          "cardName": "p1mple",
+          "transitions": 166,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 0.0
+        },
+        {
+          "avatarId": "c_kyumi",
+          "cardId": "p_flaker",
+          "cardName": "Flaker",
+          "transitions": 225,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 0.0
+        },
+        {
+          "avatarId": "c_cora",
+          "cardId": "p_daft",
+          "cardName": "Daft",
+          "transitions": 171,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 0.0
+        },
+        {
+          "avatarId": "c_io",
+          "cardId": "p_bigtail",
+          "cardName": "BigTail",
+          "transitions": 190,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 0.0
+        }
+      ],
+      "reward_version": "terminal-potential-v1"
+    },
+    "greedy_world_changed": true,
+    "control_commands": {
+      "decisions": 905,
+      "executed": 905,
+      "byAction": {
+        "move": 742,
+        "attack": 124,
+        "skill1": 19,
+        "skill2": 19,
+        "ultimate": 1
+      },
+      "legacyDecisions": 0
+    },
+    "trained_commands": {
+      "decisions": 978,
+      "executed": 978,
+      "byAction": {
+        "move": 799,
+        "attack": 135,
+        "skill2": 16,
+        "skill1": 17,
+        "recall": 2,
+        "hold": 8,
+        "ultimate": 1
+      },
+      "legacyDecisions": 0
+    }
+  },
+  "ordinary_ui": {
+    "label": "Learning AI: instructional foundation \u00c2\u00b7 30 choices \u00c2\u00b7 30 commands started",
+    "hasDetailedBrief": true,
+    "hasAllThreeBarracks": true,
+    "hasDiscoveryLesson": true,
+    "hasNoAvatarPlaystyles": true,
+    "hasKitFacts": true,
+    "hasTenCombinations": true,
+    "ordinaryPrivateBridgeAbsent": true
+  },
+  "artifact_sha256": {
+    ".local-tools/arena-kit-facts-engine-20261023/verification.json": "7f799c7ff59579d01a7d53ad8acb76790aa8575cba698eade960ef9a79c19a59",
+    ".local-tools/arena-kit-facts-ui-20261023/ui-verification.json": "fc05a5d9c1ea4ef7f7c1de114fcbdc20df044e68f85175a28705ae4ed3e5d714",
+    ".local-tools/arena-kit-facts-ui-20261023/spectator.png": "5557c7fd045f9660559d12050b7059f065b9d87268530da90f052aa40965a014",
+    "EsportsClash.Web/src/data/arena-v5/arenaFoundation.json": "4160600343a834925aa3d6d86f6baef6a27c3dcab2a800727d2312cdd2e67b0e",
+    "EsportsClash.Web/src/data/arenaPlaybookV5.json": "ea12732dc10054358306695858a1b75056343b292e89f01008375250a19b8d6b"
+  },
+  "new_study": {
+    "id": "df636984-d7f1-412f-b60c-4e8308e4fb46",
+    "reserved_first": 63001,
+    "reserved_count": 1000,
+    "heldout_first": 63257,
+    "heldout_last": 63288,
+    "last_observed_stage": "software-checks"
+  },
+  "previous_study": {
+    "id": "a0d353cf-5ca3-4690-85e7-b9399780bead",
+    "normally_stopped": true,
+    "last_observed_comparisons": 76,
+    "planned_comparisons": 128,
+    "complete_independent_assessment": false
+  },
+  "competitive_improvement_established": false,
+  "professional_skill_established": false,
+  "new_avatar_strategy_entry_required": false,
+  "avatar_specific_reward_weights_active": false,
+  "video_examples": 0,
+  "limitations": [
+    "General initial command preferences are inherited; the new factual inputs learn from self-play.",
+    "Catalog-derived capability flags do not encode every passive, aiming choice or spell interaction.",
+    "Known-seed engineering fixtures are excluded from fresh benefit evidence.",
+    "The intermediate role-guided v4 foundation/evidence is historical and is not the active default."
+  ]
+}

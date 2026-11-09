@@ -1,0 +1,26 @@
+{
+  "trial_only": true,
+  "publication_eligible": false,
+  "raw_sha256": "bffc47c8cf223c82f4c2644138f146fdef6f7c9934e2a14c12755eacad4c1f0b",
+  "source_sha256": "7606b5c57b562457ee616875267315751a33a34d74dbf74f07ab59d708230e8d",
+  "donor_sha256": "9ed24c98e637f9bde96a9820ec7d69b565f79024417ff66079b87e271f7f134d",
+  "files": {
+    "retarget-unirig.py": "03d3c8a2eddd49d851c0a4b4dcda8091ea0573ecf6fda1c947dca67dc510ed7b",
+    "retarget_contacts.py": "ef38bbbec4eada8ea702fb4e9cee7ade6138a812269f4d5cf2c998786eb457a7",
+    "retarget_motion.py": "4980e8b548daa34c06919922e91d40c04a0e0a3f719abe31a28763bd103958b1",
+    "equipment_skin.py": "405111fd5b292aab48d97aa56c1d0376e13c864314b4d077566459ed44642490",
+    "cli.py": "5626e490955645a14a97d9410ab1c4e8542a299234d546a65bdce1b880b85706",
+    "compute.py": "30e4d7f86b468170866e87c573f4cad6456e1b288ccc9acf6945586ca4087001",
+    "deformation.py": "81b0bf320e4d2bbf3819bae2322a91052a62132e0626bbb06ad1510928765777",
+    "edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+    "gpu_probe.py": "a332aefadbe7de0e78bdb0bc32b4c949351d324624e878274eb5074fad946705",
+    "learning.py": "4a9d7b83c5dbc6244b1051c3f09da729e4cc868ff069ad96b88901a8458e0db6",
+    "quality.py": "cea6e98ec8417149149e331a372b6c884e96f7367964539a26321bd541b67346",
+    "rig_stages.py": "29a2e2719d67f4df9c1167654c352f184cb01f9e73a0752258d302d60ec0e959",
+    "storage.py": "6cede65952b6c39a2ccbdb53ef9e3e5b3a38c353859b094a3598543174609111",
+    "store.py": "574739d0f4ccbd694f5fe54e3400dde7cfa240970e5c734eab628a1faef2fc2d",
+    "tail_repair.py": "ddb73718d622139618c707ee824538fe7e003e7a26e96724b81713cbd47760ca",
+    "train_worker.py": "0367e24755fa89bb82bf2bc4b35ce1c1724d857bb75c0c9f7f5ea24ec2eb2a30",
+    "__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b"
+  }
+}

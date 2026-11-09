@@ -1,0 +1,48 @@
+{
+  "tabs": [
+    {
+      "key": "body",
+      "selected": "true",
+      "visible": true
+    },
+    {
+      "key": "outfit",
+      "selected": "true",
+      "visible": true
+    },
+    {
+      "key": "primary",
+      "selected": "true",
+      "visible": true
+    },
+    {
+      "key": "secondary",
+      "selected": "true",
+      "visible": true
+    }
+  ],
+  "layouts": [
+    {
+      "width": 1440,
+      "scroll": 1425,
+      "client": 1425
+    },
+    {
+      "width": 768,
+      "scroll": 753,
+      "client": 753
+    },
+    {
+      "width": 390,
+      "scroll": 375,
+      "client": 375
+    },
+    {
+      "width": 320,
+      "scroll": 305,
+      "client": 305
+    }
+  ],
+  "saves_performed": false,
+  "page_errors": []
+}

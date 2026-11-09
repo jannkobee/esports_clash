@@ -1,0 +1,65 @@
+{
+  "proof": {
+    "joints": [
+      {
+        "joint": "UpperArmL",
+        "bone": "bone_26",
+        "before_xyz": [
+          -0.08032021671533585,
+          0.02237883023917675,
+          0.3077397346496582
+        ],
+        "after_xyz": [
+          -0.0853348970413208,
+          0.02237883023917675,
+          0.3077397346496582
+        ],
+        "displacement_m": 0.005014680367380206,
+        "displacement_to_height": 0.005000002715632449,
+        "inside_section_bounds": true
+      },
+      {
+        "joint": "UpperArmR",
+        "bone": "bone_7",
+        "before_xyz": [
+          0.08422388881444931,
+          0.022378800436854362,
+          0.30773985385894775
+        ],
+        "after_xyz": [
+          0.08923856914043427,
+          0.022378800436854362,
+          0.30773985385894775
+        ],
+        "displacement_m": 0.005014680367380206,
+        "displacement_to_height": 0.005000002715632449,
+        "inside_section_bounds": true
+      }
+    ],
+    "unrelated_joint_max_matrix_error": 6.661338147750939e-16,
+    "target_axis_max_matrix_error": 1.1102230246251565e-16,
+    "binary_edits_only_target_inverse_binds": true,
+    "mesh_weight_accessor_bytes_unchanged": true,
+    "child_world_transforms_compensated": true,
+    "inverse_bind_matrices_updated": 2
+  },
+  "requested_pivot_max_error_m": 3.337203127736024e-08,
+  "rest_roundtrip": {
+    "before_vertices": 23734,
+    "after_vertices": 23734,
+    "max_nearest_distance_m": 8.97941774269384e-08,
+    "rms_nearest_distance_m": 1.992175336809637e-08
+  },
+  "weights": {
+    "before_to_after": {
+      "unmatched_vertices": 0,
+      "max_matching_weight_error": 0.0
+    },
+    "after_to_before": {
+      "unmatched_vertices": 0,
+      "max_matching_weight_error": 0.0
+    },
+    "verified": true
+  },
+  "rejects_weight_mutation": true
+}

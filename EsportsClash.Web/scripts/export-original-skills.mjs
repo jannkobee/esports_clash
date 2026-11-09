@@ -1,0 +1,11 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {CHAMPIONS} from '../src/mockData.ts';
+import {bundledContent} from '../src/gameContent.ts';
+const records=bundledContent(CHAMPIONS,[],[]).map(row=>({id:row.id,kind:'skill',payload:row.data,version:1}));
+await writeFile('../EsportsClash.Api/resources/game/original-v3-skills.json',JSON.stringify({schema:1,records},null,2)+'\n');
+const path='../EsportsClash.Api/resources/game/editor-catalog.json';
+const editor=JSON.parse(await readFile(path,'utf8'));
+const replacements=new Map(records.map(row=>[row.id,row]));
+editor.records=editor.records.map(row=>replacements.get(row.id)??(row.kind==='skill'&&row.payload.slot==='invoked'?{...row,deleted_at:'2026-10-24 00:00:00'}:row));
+await writeFile(path,JSON.stringify(editor,null,2)+'\n');
+console.log(`${records.length} original slot definitions exported; old invocations retired from new installations.`);

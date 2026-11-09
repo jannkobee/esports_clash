@@ -1,0 +1,33 @@
+{
+    "verified_on": "2026-10-30",
+    "reviews": [
+        {
+            "id": "81173ad0-59d6-4f29-9377-0d1d5bb69442",
+            "artifacts_read_back": 33,
+            "report_sha256": "47b43b8c39e628c79c41395bdbf9bdff04922e8d6e742807106a39b84debd51f",
+            "assessment_sha256": "879c88667ac14a732a04fa7ddf1ecaa270e2d83a7793d523c8219993dc62daa9"
+        },
+        {
+            "id": "f67dfc16-7e53-499a-a8ac-f82c061ed531",
+            "artifacts_read_back": 33,
+            "report_sha256": "5f664fbf9a5eb441f8b5d5947a21aa1ceec5dafed6a314536facf8e4ff633d77",
+            "assessment_sha256": "0ee3d53653b7c1aedf3ce37391c80a32fc582feeffb4ce4a3641fcfbd2b92a62"
+        },
+        {
+            "id": "d286b072-2e6b-4803-9ea9-b70f074c1111",
+            "artifacts_read_back": 33,
+            "report_sha256": "96b2df29306bcc8e543880272b58b7811424cf274b9b302eca4070d0d8e825fc",
+            "assessment_sha256": "c90db7270fee16a950bb815a716ef2b8115d60788ca0aa6466afc5bf0ea613f3"
+        },
+        {
+            "id": "e96c7db2-69b0-4030-9e97-00d4db16a49f",
+            "artifacts_read_back": 33,
+            "report_sha256": "566772b8cfdc8b1caf3e514748624cd60a0bed46acad760b4adb1e91d2036b26",
+            "assessment_sha256": "3feea60652ec6dafa54b526e783f0a62fda1c7e129460ef82002c584253001e6"
+        }
+    ],
+    "preview_status": 200,
+    "api_matches": true,
+    "publication_eligible": false,
+    "scope": "Canonical artifact readback and shared controller\/API rendering; not authenticated browser E2E or game animation qualification."
+}

@@ -1,0 +1,14 @@
+{
+  "id": "6ea6a15b-b7ea-4f43-8bbc-7e0946193e9a",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "hip-target-remap",
+  "runtime_id": "6e1278f427958d83715851a16946b047ce0be97f803d9c5c5fba8e4fbb5b4caa",
+  "environment_sha256": "f706010e83a63d36766b0a14b0bc12dce2ff2859a8a45aaec5b765296aa7e365",
+  "started_unix": 1793188512.8528924,
+  "exit_code": 0,
+  "report_sha256": "eee9f4482de221b43c2a94d17653d48a932cfd08798278635e9e6f803dc0cb50",
+  "completed_unix": 1793188520.696533
+}

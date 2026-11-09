@@ -1,0 +1,164 @@
+@layer avatarpedia-components {
+.avatarpedia { --pedia-bg:#111d27; --pedia-panel:#172631; --pedia-line:#31424f; --pedia-accent:#94d3c6; --pedia-link:#9dcedf; color:#dce6ed; font-size:13px; line-height:1.7; min-width:0; }
+.avatarpedia a { color:var(--pedia-link); text-decoration:none; text-underline-offset:3px; }
+.avatarpedia a:hover { text-decoration:underline; color:#ceeaf1; }
+.avatarpedia :where(a,button,input,select,summary):focus-visible { outline:2px solid #b3e2d7; outline-offset:3px; }
+.pedia-masthead { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:20px 24px; border:1px solid #527c7b55; background:linear-gradient(105deg,#203b40,#172b35); border-radius:8px 8px 0 0; }
+.pedia-brand { display:flex; align-items:center; gap:12px; color:#d5ede7!important; font-size:23px; font-weight:650; letter-spacing:-.035em; line-height:1.25; }
+.pedia-brand small { display:block; font-size:10px; font-weight:400; letter-spacing:.06em; color:#8eb6b4; margin-top:4px; }
+.pedia-brand:hover { text-decoration:none!important; }
+.pedia-navigation { display:flex; gap:0; overflow-x:auto; border:1px solid var(--pedia-line); border-top:0; padding:0 12px; background:#152731; margin-bottom:26px; }
+.pedia-navigation a { white-space:nowrap; padding:12px 13px 10px; font-size:12px; color:#aebecb; border-bottom:2px solid transparent; }
+.pedia-navigation a[aria-current=page] { color:#c0e6db; border-bottom-color:#94d3c6; }
+.pedia-search { position:relative; width:min(390px,100%); }
+.pedia-search label { display:flex; align-items:center; gap:9px; border:1px solid #76908a66; border-radius:5px; padding:0 12px; background:#10212a; color:#94b5b3; }
+.pedia-search input { width:100%; min-width:0; background:transparent; padding:11px 0; outline:none; color:#e0ece9; font-size:12px; }
+.pedia-search-results { position:absolute; z-index:50; top:calc(100% + 6px); left:0; right:0; max-height:440px; overflow:auto; padding:5px; background:#162b35; border:1px solid #4a6670; border-radius:5px; box-shadow:0 15px 40px #0007; }
+.pedia-search-results > p { padding:8px 10px; color:#96afb9; font-size:11px; }
+.pedia-search-results a { display:flex; justify-content:space-between; gap:12px; padding:10px; border-top:1px solid #31424f; font-size:12px; }
+.pedia-search-results a:hover { background:#223b46; text-decoration:none; }
+.pedia-search-results small { color:#a1bab7; white-space:nowrap; }
+.pedia-eyebrow { color:#91bfb5; font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; }
+.pedia-muted { color:#97abba; font-size:12px; }
+.pedia-welcome { display:flex; align-items:center; justify-content:space-between; gap:30px; padding:16px 0 26px; }
+.pedia-welcome > svg { color:#628f8b; flex-shrink:0; margin-right:20px; }
+.pedia-welcome h1 { font-size:clamp(24px,3vw,34px); font-weight:600; letter-spacing:-.035em; margin:6px 0 10px; line-height:1.25; }
+.pedia-welcome p:last-child { color:#a2b6c3; max-width:670px; }
+.pedia-portals { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:1px; padding:1px; background:var(--pedia-line); border-radius:6px; overflow:hidden; margin-bottom:26px; }
+.pedia-portals a { display:flex; flex-direction:column; padding:16px 20px; background:#162631; }
+.pedia-portals strong { color:#c5e6dd; font-size:24px; font-weight:600; line-height:1.3; font-variant-numeric:tabular-nums; }
+.pedia-portals span { color:#98afbd; font-size:11px; }
+.pedia-home-grid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:22px; align-items:start; }
+.pedia-home-right { display:grid; gap:22px; }
+.pedia-module { min-width:0; border:1px solid var(--pedia-line); border-radius:6px; overflow:hidden; background:#131f2a; }
+.pedia-module > header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; gap:12px; background:#233c47; border-bottom:1px solid #4b696955; }
+.pedia-module > header h2 { font-weight:600; font-size:14px; }
+.pedia-module > header > span,.pedia-module > header > a { font-size:10px; color:#a6c6ca; display:flex; align-items:center; gap:4px; }
+.pedia-segments { display:flex; margin:12px; gap:4px; border-bottom:1px solid var(--pedia-line); }
+.pedia-segments button { flex:1; border-bottom:2px solid transparent; padding:8px; color:#9bb3c1; cursor:pointer; font-size:12px; }
+.pedia-segments button[aria-pressed=true] { border-bottom-color:#94d3c6; color:#d2ece4; }
+.pedia-match-list { display:grid; gap:0; }
+.pedia-match { padding:14px 16px; border-bottom:1px solid #2c414c; min-width:0; }
+.pedia-match:last-child { border-bottom:0; }
+.pedia-match-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px 12px; font-size:10px; color:#92aeba; }
+.pedia-match-meta > span { display:flex; gap:5px; align-items:center; color:#a4c9c0; }
+.pedia-match-teams { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:14px; align-items:center; padding-block:10px; font-weight:600; }
+.pedia-match-teams a { overflow-wrap:anywhere; font-size:13px; }
+.pedia-match-teams > a:last-child { text-align:right; }
+.pedia-match-teams > span { color:#d0e3e5; font-variant-numeric:tabular-nums; font-size:13px; }
+.pedia-winner { color:#afd7c4; font-size:12px; margin-top:6px; }
+.pedia-text-button { display:inline-flex; align-items:center; gap:8px; color:#afd7e0; cursor:pointer; font-size:11px; margin-top:10px; }
+.pedia-filter { display:flex; justify-content:flex-end; padding:10px 14px; border-bottom:1px solid var(--pedia-line); }
+.pedia-filter label { display:flex; align-items:center; gap:10px; color:#99b0bc; font-size:11px; }
+.avatarpedia select,.pedia-directory-toolbar input { color-scheme:dark; color:#d9e7e9; background:#111e29; border:1px solid #4b606b; border-radius:4px; padding:7px 10px; }
+.pedia-event-summary { display:flex; gap:12px; align-items:center; padding:15px; border-bottom:1px solid var(--pedia-line); }
+.pedia-event-summary > svg { flex-shrink:0; color:#b7c5a0; }
+.pedia-event-summary a { font-size:13px; font-weight:600; }
+.pedia-event-summary p { font-size:10px; color:#93acb8; margin-top:2px; }
+.pedia-link-list { display:grid; }
+.pedia-link-list a { display:flex; justify-content:space-between; gap:14px; align-items:center; padding:11px 15px; border-bottom:1px solid #30434c; }
+.pedia-link-list a span { color:#94acb7; font-size:11px; }
+.pedia-rating-scale { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px 12px; margin:12px 0; padding:0; list-style:none; }
+.pedia-rating-scale li { display:flex; align-items:center; gap:7px; color:#c8d8dd; }
+.pedia-rating-scale li strong { width:20px; color:#e7ad69; text-align:right; }
+.pedia-rating-scale li .label-icon { color:#8ca8b0; }
+.pedia-section { min-width:0; margin:28px 0; scroll-margin-top:85px; }
+.pedia-section > h2 { font-size:20px; font-weight:500; letter-spacing:-.02em; border-bottom:1px solid #405562; padding-bottom:8px; margin-bottom:16px; line-height:1.3; }
+.pedia-section > p { margin-bottom:14px; }
+.pedia-empty { padding:22px 16px; color:#99b0bf; font-size:12px; }
+.pedia-source-note { border-top:1px solid var(--pedia-line); padding-top:20px; margin:30px 0 14px; color:#8da4b3; font-size:11px; }
+.pedia-directory h1 { font-size:30px; letter-spacing:-.03em; line-height:1.3; margin:8px 0 22px; font-weight:600; }
+.pedia-directory-toolbar { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:end; gap:16px; margin-bottom:22px; }
+.pedia-directory-toolbar label { display:grid; gap:6px; min-width:0; width:min(380px,100%); font-size:11px; color:#9cb5bf; }
+.pedia-directory-toolbar p { color:#91acb8; font-size:11px; }
+.pedia-table-scroll { overflow-x:auto; max-width:100%; border:1px solid var(--pedia-line); border-radius:5px; }
+.pedia-table { border-collapse:collapse; width:100%; font-size:12px; }
+.pedia-table thead { background:#223540; color:#b3c5cc; }
+.pedia-table th,.pedia-table td { text-align:left; padding:11px 13px; border-bottom:1px solid #2f424e; vertical-align:middle; }
+.pedia-table thead th { font-size:11px; font-weight:600; white-space:nowrap; }
+.pedia-table tbody th { font-weight:500; min-width:140px; }
+.pedia-table tbody tr:nth-child(even) { background:#1a2b3566; }
+.pedia-table tbody tr:hover { background:#24404a77; }
+.pedia-team-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(235px,100%),1fr)); gap:14px; }
+.pedia-team-card { border:1px solid var(--pedia-line); border-radius:5px; background:#172732; overflow:hidden; min-width:0; }
+.pedia-team-card header { display:flex; gap:12px; align-items:center; padding:14px; background:#20343e; }
+.pedia-team-card header > div { min-width:0; }
+.pedia-team-card header a { font-size:13px; font-weight:600; overflow-wrap:anywhere; }
+.pedia-team-card header p { font-size:10px; color:#9db5be; }
+.pedia-team-card > p { padding:12px 14px; }
+.pedia-roster-list li { display:flex; justify-content:space-between; gap:8px; padding:7px 13px; border-top:1px solid #30444e; font-size:11px; }
+.pedia-roster-list span { color:#92adb7; }
+.pedia-roster-controls { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; color:#9db8bf; font-size:11px; margin-bottom:16px; }
+.pedia-roster-controls label,.pedia-countdown { display:flex; align-items:center; gap:8px; }
+.pedia-roster-controls input,.pedia-countdown input { accent-color:#94d3c6; }
+.pedia-countdown { padding:0 16px 12px; color:#a1bac1; font-size:11px; }
+.pedia-pagination { display:flex; justify-content:center; align-items:center; gap:20px; font-size:12px; margin:24px 0; }
+.pedia-pagination button,.pedia-entry button { border:1px solid #709e9b; border-radius:4px; background:#28474b; color:#d2e7df; padding:9px 14px; cursor:pointer; }
+.pedia-pagination button:disabled { opacity:.35; cursor:default; }
+.pedia-article-heading { margin:20px 0 28px; border-bottom:1px solid var(--pedia-line); padding-bottom:14px; }
+.pedia-article-heading > p { display:flex; align-items:center; gap:8px; font-size:11px; }
+.pedia-article-heading h1 { font-size:clamp(25px,3vw,34px); font-weight:500; letter-spacing:-.035em; line-height:1.25; margin:12px 0 10px; overflow-wrap:anywhere; }
+.pedia-article-heading > span { color:#94aebb; font-size:11px; }
+.pedia-article-tabs { overflow-x:auto; border-bottom:1px solid var(--pedia-line); margin:-10px 0 24px; }
+.pedia-article-tabs nav { display:flex; gap:18px; }
+.pedia-article-tabs a { white-space:nowrap; padding:10px 0; font-size:11px; }
+.pedia-article-grid { display:grid; grid-template-columns:138px minmax(0,1fr) 248px; grid-template-areas:'toc body info'; gap:26px; align-items:start; }
+.pedia-toc { grid-area:toc; position:sticky; top:85px; padding-right:15px; border-right:1px solid var(--pedia-line); }
+.pedia-toc > h2 { color:#a6b9c3; font-size:10px; text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px; }
+.pedia-toc nav,.pedia-mobile-contents nav { display:grid; gap:4px; }
+.pedia-toc a { padding:6px 0; color:#a0b6c1; font-size:11px; }
+.pedia-article-body { grid-area:body; min-width:0; }
+.pedia-article-body > .pedia-section:first-child { margin-top:0; }
+.pedia-article-body p { line-height:1.85; }
+.pedia-article-body blockquote { margin-block:18px; padding:10px 18px; border-left:2px solid #7ebcaf; color:#b6d3cb; background:#23414455; }
+.pedia-infobox { grid-area:info; border:1px solid var(--pedia-line); background:#16252e; border-radius:5px; overflow:hidden; min-width:0; }
+.pedia-infobox > h2 { text-align:center; font-weight:600; font-size:15px; padding:14px; background:#294850; overflow-wrap:anywhere; }
+.pedia-identity { display:grid; place-items:center; min-height:135px; background:radial-gradient(ellipse,#2c4b4d,#172b34); }
+.pedia-identity > span { font-size:46px; font-weight:400; color:#8eb6b2; letter-spacing:.06em; }
+.pedia-identity svg { width:76px; height:76px; }
+.pedia-infobox > h3 { background:#223d47; font-size:12px; font-weight:600; padding:9px 13px; }
+.pedia-infobox dl > div { display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:12px; padding:9px 12px; border-bottom:1px solid #2f434d; font-size:11px; }
+.pedia-infobox dt { color:#9db4bf; text-align:right; }
+.pedia-infobox dd { color:#dae4e8; overflow-wrap:anywhere; }
+.pedia-infobox > p { color:#819ca9; padding:12px; font-size:10px; text-align:center; }
+.pedia-bracket { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.pedia-bracket article { background:#172d37; border:1px solid #3a5662; border-radius:4px; padding:14px 12px; }
+.pedia-bracket h3 { font-size:11px; color:#abc6cc; border-bottom:1px solid #3b5561; padding-bottom:7px; margin-bottom:8px; }
+.pedia-bracket p { font-size:12px; margin-top:5px; overflow-wrap:anywhere; }
+.pedia-bracket time { display:block; margin-top:12px; font-size:10px; color:#87a4b0; }
+.pedia-stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:1px; border:1px solid #344d59; background:#344d59; border-radius:4px; overflow:hidden; margin-bottom:14px; }
+.pedia-stat-grid > div { padding:14px; background:#182b35; }
+.pedia-stat-grid dt { color:#93aebc; font-size:11px; text-transform:capitalize; }
+.pedia-stat-grid dd { color:#cae3dc; font-size:22px; font-weight:500; font-variant-numeric:tabular-nums; }
+.pedia-attributes { display:grid; gap:10px; }
+.pedia-attributes > div { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:20px; }
+.pedia-attributes dt { display:flex; align-items:center; gap:7px; }
+.pedia-attributes dt .label-icon { color:#8ca8b0; }
+.pedia-attributes dd { display:flex; align-items:center; gap:12px; font-variant-numeric:tabular-nums; }
+.pedia-attributes meter { width:100%; height:8px; }
+.pedia-attributes meter::-webkit-meter-bar { background:#344852; border:0; }
+.pedia-attributes meter::-webkit-meter-optimum-value { background:#8bc4b6; }
+.pedia-attributes meter::-moz-meter-bar { background:#8bc4b6; }
+.pedia-attributes strong { min-width:3em; text-align:right; font-weight:500; }
+.pedia-personality-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:20px; }
+.pedia-personality-grid article { padding:14px; border:1px solid #30434c; border-radius:8px; background:#101f23; }
+.pedia-personality-grid h3 { display:flex; align-items:center; gap:8px; margin:0 0 8px; color:#a9c1c6; font-size:12px; }
+.pedia-personality-grid article > strong { color:#e7ad69; }
+.pedia-personality-grid p { margin:6px 0 0; color:#9cb0b6; font-size:12px; line-height:1.55; }
+.pedia-ability { border:1px solid #34505d; border-radius:5px; padding:17px; margin-bottom:14px; background:#172a35; }
+.pedia-ability > div:first-child > span { font-size:10px; color:#88b4b3; text-transform:uppercase; letter-spacing:.08em; }
+.pedia-ability h3 { font-size:16px; font-weight:500; margin:5px 0 12px; }
+.pedia-inline-facts { display:flex; flex-wrap:wrap; gap:12px 24px; font-size:11px; color:#9ab6bf; margin-top:14px; padding-top:10px; border-top:1px solid #38515b; }
+.pedia-provenance { display:grid; grid-template-columns:minmax(100px,.7fr) minmax(0,1.3fr); gap:9px 20px; margin:18px 0; font-size:11px; }
+.pedia-provenance dt { color:#90a9b6; }
+.pedia-provenance dd { overflow-wrap:anywhere; }
+.pedia-entry { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; padding:16px; margin:18px 0; border:1px solid #4a706a; border-radius:4px; background:#1e393b; }
+.pedia-entry p { font-size:12px; flex:1; min-width:200px; }
+.pedia-entry button { flex-shrink:0; font-size:12px; }
+.pedia-notice { padding:12px 16px; border-left:2px solid #94d3c6; background:#274349; margin-bottom:20px; color:#d4e4df; }
+.pedia-mobile-contents { display:none; }
+.public-avatarpedia { width:min(1480px,calc(100% - 64px)); margin:auto; padding:28px 0 60px; }
+@media(max-width:1200px) { .pedia-article-grid { grid-template-columns:minmax(0,1fr) 230px; grid-template-areas:'body info'; gap:22px; } .pedia-toc { display:none; } .pedia-mobile-contents { display:block; border:1px solid var(--pedia-line); padding:10px 14px; margin-bottom:24px; font-size:12px; } .pedia-mobile-contents summary { cursor:pointer; color:#afd4d1; } .pedia-mobile-contents nav { margin-top:10px; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; } }
+@media(max-width:760px) { .public-avatarpedia { width:calc(100% - 28px); padding-top:18px; } .pedia-masthead { flex-direction:column; align-items:stretch; gap:18px; padding:18px; } .pedia-search { width:100%; } .pedia-navigation { margin-bottom:20px; padding-inline:5px; } .pedia-navigation a { padding-inline:11px; } .pedia-welcome { padding-top:5px; } .pedia-welcome > svg { display:none; } .pedia-home-grid { grid-template-columns:minmax(0,1fr); } .pedia-portals { grid-template-columns:repeat(5,minmax(0,1fr)); } .pedia-portals a { padding:12px 6px; align-items:center; } .pedia-portals strong { font-size:20px; } .pedia-portals span { font-size:9px; } .pedia-article-grid { grid-template-columns:minmax(0,1fr); grid-template-areas:'info' 'body'; } .pedia-infobox { max-width:440px; width:100%; margin:0 auto 8px; } .pedia-identity { min-height:100px; } .pedia-identity > span { font-size:34px; } .pedia-article-body .pedia-bracket { grid-template-columns:minmax(0,1fr); } .pedia-mobile-contents nav { grid-template-columns:repeat(2,minmax(0,1fr)); } .pedia-section { scroll-margin-top:16px; } .pedia-attributes > div { gap:12px; font-size:12px; } .pedia-table th,.pedia-table td { padding:10px; } .pedia-entry p { min-width:0; flex-basis:100%; } }
+
+}

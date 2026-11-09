@@ -1,0 +1,857 @@
+{
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "glb_sha256": "f50ba638113fa51c8e966a6c8d3ebbca0eee149f4cec3f54ecc335884d1154c3",
+  "glb_bytes": 6812820,
+  "bones": 52,
+  "blender_vertices": 23732,
+  "gltf_vertices": 26373,
+  "morph_targets": 7,
+  "animations": [
+    "Idle",
+    "Walk",
+    "Run",
+    "Strafe",
+    "Attack",
+    "Cast",
+    "Hit",
+    "Death",
+    "TurnLeft",
+    "TurnRight"
+  ],
+  "clips": {
+    "Idle": {
+      "total_frames": 60,
+      "lowest_vertex_z": -0.3229900598526001,
+      "max_edge_stretch": 1.2772887483467692,
+      "severely_stretched_edges": 0,
+      "samples": [
+        {
+          "phase": 0.0,
+          "frame": 0,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.25,
+          "frame": 15,
+          "min_z": -0.31264179944992065,
+          "max_stretch_ratio": 1.2772887483467692,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.5,
+          "frame": 30,
+          "min_z": -0.3113798499107361,
+          "max_stretch_ratio": 1.2764382522578606,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.75,
+          "frame": 45,
+          "min_z": -0.31264179944992065,
+          "max_stretch_ratio": 1.2772887483467692,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 1.0,
+          "frame": 60,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        }
+      ]
+    },
+    "Walk": {
+      "total_frames": 30,
+      "lowest_vertex_z": -0.3781481087207794,
+      "max_edge_stretch": 5.519697194895686,
+      "severely_stretched_edges": 0,
+      "samples": [
+        {
+          "phase": 0.0,
+          "frame": 0,
+          "min_z": -0.3325452208518982,
+          "max_stretch_ratio": 3.690846765587989,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.25,
+          "frame": 8,
+          "min_z": -0.3781481087207794,
+          "max_stretch_ratio": 5.519697194895686,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.5,
+          "frame": 15,
+          "min_z": -0.33252739906311035,
+          "max_stretch_ratio": 4.606915049017331,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.75,
+          "frame": 22,
+          "min_z": -0.3629179000854492,
+          "max_stretch_ratio": 3.392843853773774,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 1.0,
+          "frame": 30,
+          "min_z": -0.3325452208518982,
+          "max_stretch_ratio": 3.690846765587989,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        }
+      ]
+    },
+    "Run": {
+      "total_frames": 20,
+      "lowest_vertex_z": -0.41249293088912964,
+      "max_edge_stretch": 7.094091065547227,
+      "severely_stretched_edges": 0,
+      "samples": [
+        {
+          "phase": 0.0,
+          "frame": 0,
+          "min_z": -0.3497826159000397,
+          "max_stretch_ratio": 5.7220473069058295,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.25,
+          "frame": 5,
+          "min_z": -0.4118320345878601,
+          "max_stretch_ratio": 5.525474541053169,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.5,
+          "frame": 10,
+          "min_z": -0.3499387502670288,
+          "max_stretch_ratio": 7.094091065547227,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.75,
+          "frame": 15,
+          "min_z": -0.41249293088912964,
+          "max_stretch_ratio": 4.114758306467951,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 1.0,
+          "frame": 20,
+          "min_z": -0.3497826159000397,
+          "max_stretch_ratio": 5.7220473069058295,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        }
+      ]
+    },
+    "Strafe": {
+      "total_frames": 30,
+      "lowest_vertex_z": -0.3835272192955017,
+      "max_edge_stretch": 5.519697194895686,
+      "severely_stretched_edges": 0,
+      "samples": [
+        {
+          "phase": 0.0,
+          "frame": 0,
+          "min_z": -0.3339800238609314,
+          "max_stretch_ratio": 2.0800408457863186,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.25,
+          "frame": 8,
+          "min_z": -0.38048720359802246,
+          "max_stretch_ratio": 5.519697194895686,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.5,
+          "frame": 15,
+          "min_z": -0.36571985483169556,
+          "max_stretch_ratio": 1.7992844719945342,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.75,
+          "frame": 22,
+          "min_z": -0.3835272192955017,
+          "max_stretch_ratio": 3.392843853773774,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 1.0,
+          "frame": 30,
+          "min_z": -0.3339800238609314,
+          "max_stretch_ratio": 2.0800408457863186,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        }
+      ]
+    },
+    "Attack": {
+      "total_frames": 26,
+      "lowest_vertex_z": -0.3229900598526001,
+      "max_edge_stretch": 3.620786968888977,
+      "severely_stretched_edges": 0,
+      "samples": [
+        {
+          "phase": 0.0,
+          "frame": 0,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.0071182769359635,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.25,
+          "frame": 6,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 2.266955373139098,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.5,
+          "frame": 13,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 3.620786968888977,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.75,
+          "frame": 20,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.0589120478848024,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 1.0,
+          "frame": 26,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        }
+      ]
+    },
+    "Cast": {
+      "total_frames": 36,
+      "lowest_vertex_z": -0.3229900598526001,
+      "max_edge_stretch": 3.9015777156552676,
+      "severely_stretched_edges": 0,
+      "samples": [
+        {
+          "phase": 0.0,
+          "frame": 0,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.25,
+          "frame": 9,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 3.200474887168754,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.5,
+          "frame": 18,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 3.9015777156552676,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.75,
+          "frame": 27,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 3.200474887168754,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 1.0,
+          "frame": 36,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        }
+      ]
+    },
+    "Hit": {
+      "total_frames": 15,
+      "lowest_vertex_z": -0.32500404119491577,
+      "max_edge_stretch": 1.2936751688314105,
+      "severely_stretched_edges": 0,
+      "samples": [
+        {
+          "phase": 0.0,
+          "frame": 0,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.25,
+          "frame": 4,
+          "min_z": -0.32500404119491577,
+          "max_stretch_ratio": 1.2346874915970354,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.5,
+          "frame": 8,
+          "min_z": -0.3243197202682495,
+          "max_stretch_ratio": 1.2936751688314105,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.75,
+          "frame": 11,
+          "min_z": -0.32500404119491577,
+          "max_stretch_ratio": 1.2346874915970354,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 1.0,
+          "frame": 15,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        }
+      ]
+    },
+    "Death": {
+      "total_frames": 54,
+      "lowest_vertex_z": -0.37699562311172485,
+      "max_edge_stretch": 3.9021277167399493,
+      "severely_stretched_edges": 0,
+      "samples": [
+        {
+          "phase": 0.0,
+          "frame": 0,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.25,
+          "frame": 14,
+          "min_z": -0.37699562311172485,
+          "max_stretch_ratio": 3.2923621683871285,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.5,
+          "frame": 27,
+          "min_z": -0.2538890838623047,
+          "max_stretch_ratio": 3.3117475458488856,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.75,
+          "frame": 40,
+          "min_z": 0.040262896567583084,
+          "max_stretch_ratio": 3.524553717767051,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 1.0,
+          "frame": 54,
+          "min_z": 0.047060899436473846,
+          "max_stretch_ratio": 3.9021277167399493,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        }
+      ]
+    },
+    "TurnLeft": {
+      "total_frames": 24,
+      "lowest_vertex_z": -0.3229900598526001,
+      "max_edge_stretch": 1.7378276823941572,
+      "severely_stretched_edges": 0,
+      "samples": [
+        {
+          "phase": 0.0,
+          "frame": 0,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.25,
+          "frame": 6,
+          "min_z": -0.3222076892852783,
+          "max_stretch_ratio": 1.4882221929405959,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.5,
+          "frame": 12,
+          "min_z": -0.3192824721336365,
+          "max_stretch_ratio": 1.7378276823941572,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.75,
+          "frame": 18,
+          "min_z": -0.3222076892852783,
+          "max_stretch_ratio": 1.4882221929405959,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 1.0,
+          "frame": 24,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        }
+      ]
+    },
+    "TurnRight": {
+      "total_frames": 24,
+      "lowest_vertex_z": -0.3229900598526001,
+      "max_edge_stretch": 1.8332027174966474,
+      "severely_stretched_edges": 0,
+      "samples": [
+        {
+          "phase": 0.0,
+          "frame": 0,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.25,
+          "frame": 6,
+          "min_z": -0.32108354568481445,
+          "max_stretch_ratio": 1.5815833501505692,
+          "morph_weights": {
+            "HipL_45": 0.8953361511230469,
+            "HipL_90": 0.10466381907463074,
+            "UpperArmL_60": 0.8272240161895752,
+            "UpperArmL_90": 0.1727759689092636,
+            "UpperArmR_60": 0.9760149121284485,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.5,
+          "frame": 12,
+          "min_z": -0.31775742769241333,
+          "max_stretch_ratio": 1.8332027174966474,
+          "morph_weights": {
+            "HipL_45": 0.7993226647377014,
+            "HipL_90": 0.20067733526229858,
+            "UpperArmL_60": 0.7749998569488525,
+            "UpperArmL_90": 0.22500014305114746,
+            "UpperArmR_60": 0.9955205321311951,
+            "UpperArmR_90": 0.004479486495256424,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 0.75,
+          "frame": 18,
+          "min_z": -0.32108354568481445,
+          "max_stretch_ratio": 1.5815833501505692,
+          "morph_weights": {
+            "HipL_45": 0.8953361511230469,
+            "HipL_90": 0.10466381907463074,
+            "UpperArmL_60": 0.8272240161895752,
+            "UpperArmL_90": 0.1727759689092636,
+            "UpperArmR_60": 0.9760149121284485,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        },
+        {
+          "phase": 1.0,
+          "frame": 24,
+          "min_z": -0.3229900598526001,
+          "max_stretch_ratio": 1.001208889666132,
+          "morph_weights": {
+            "HipL_45": 0.999521017074585,
+            "HipL_90": 0.0004789916274603456,
+            "UpperArmL_60": 0.9419329762458801,
+            "UpperArmL_90": 0.058067042380571365,
+            "UpperArmR_60": 0.6557801365852356,
+            "UpperArmR_90": 0.0,
+            "HipL_Twist20": 0.0
+          }
+        }
+      ]
+    }
+  },
+  "roundtrip_surface_errors": [],
+  "status": "ready_for_babylon_review"
+}

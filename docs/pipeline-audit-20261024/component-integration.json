@@ -1,0 +1,137 @@
+{
+  "owner": {
+    "heading": "Complete the character",
+    "form": "/evolution/avatars/c_invoker/components",
+    "categories": [
+      "outfit",
+      "hair",
+      "back",
+      "accessory",
+      "vehicle",
+      "companion"
+    ],
+    "version": 9
+  },
+  "api": {
+    "schema": 1,
+    "avatar_id": "c_invoker",
+    "version": 9,
+    "categories": {
+      "base": "Base body",
+      "hand": "Handheld equipment",
+      "outfit": "Clothing / armor",
+      "hair": "Hair / cosmetic fur",
+      "back": "Back-mounted gear",
+      "accessory": "Accessories / floating gear",
+      "vehicle": "Vehicles / mounts",
+      "companion": "Companions"
+    },
+    "components": [
+      {
+        "id": "base",
+        "label": "Base body",
+        "category": "base",
+        "binding": "skinned",
+        "status": "reference_uploaded",
+        "reference_sha256": "2358eaf3dae034785e982cd82132e8b27e226222565141bde7bd79f2aab7b380",
+        "model_sha256": null
+      },
+      {
+        "id": "appearance_design",
+        "label": "Mirelle Vane appearance design",
+        "category": "outfit",
+        "binding": "skinned",
+        "status": "reference_uploaded",
+        "reference_purpose": "design",
+        "reference_sha256": "bd52355b7ebf939de72c022bcde5271231711a7c08776946eb8393e036c05162",
+        "model_sha256": null
+      },
+      {
+        "id": "boots",
+        "label": "Flat boots",
+        "category": "outfit",
+        "binding": "rigid",
+        "status": "reference_uploaded",
+        "reference_purpose": "reconstruction",
+        "reference_sha256": "5b14675ba8a66d307219ff4b7dfe9752fca0afb95544f42378a6c1b6d67dca2d",
+        "model_sha256": null
+      },
+      {
+        "id": "brass_bobbin",
+        "label": "Floating brass bobbin",
+        "category": "accessory",
+        "binding": "independent",
+        "status": "reference_uploaded",
+        "reference_purpose": "reconstruction",
+        "reference_sha256": "666ba5f2acfd34f8804c7acd63770caf22bb2a3b194fdefae042fe4fd8e61044",
+        "model_sha256": null
+      },
+      {
+        "id": "hair",
+        "label": "Ink-black hair",
+        "category": "hair",
+        "binding": "skinned",
+        "status": "reference_uploaded",
+        "reference_purpose": "reconstruction",
+        "reference_sha256": "216a9dafae1edcd0e5823f13967216f3a6674d98814284a2cb126292b247711c",
+        "model_sha256": null
+      },
+      {
+        "id": "needle_comb",
+        "label": "Needle-hair comb",
+        "category": "accessory",
+        "binding": "rigid",
+        "status": "reference_uploaded",
+        "reference_purpose": "reconstruction",
+        "reference_sha256": "51e20a3f7be6dd38e723204fdba662de60bc3cd853b9082f5986eb5022c8a9e0",
+        "model_sha256": null
+      },
+      {
+        "id": "pattern_cape",
+        "label": "Folded-paper pattern cape",
+        "category": "outfit",
+        "binding": "skinned",
+        "status": "reference_uploaded",
+        "reference_purpose": "reconstruction",
+        "reference_sha256": "2ea420a4bd38d9da33fd35ca6fc29fe6ebf35b033c71187e9b59e2873af2137a",
+        "model_sha256": null
+      },
+      {
+        "id": "petal_skirt",
+        "label": "Oxblood petal skirt and shorts",
+        "category": "outfit",
+        "binding": "skinned",
+        "status": "reference_uploaded",
+        "reference_purpose": "reconstruction",
+        "reference_sha256": "1a75cced937b6b2131c83818f5205e8abf4fc9b2d9f2bd4fcbf19a4fffcc01c6",
+        "model_sha256": null
+      },
+      {
+        "id": "sleeve",
+        "label": "Asymmetrical ink-black sleeve",
+        "category": "outfit",
+        "binding": "skinned",
+        "status": "reference_uploaded",
+        "reference_purpose": "reconstruction",
+        "reference_sha256": "327a10cc1385c22d6b395aff83dba1358f3d54514957fb2f0b3fadd513ea4f85",
+        "model_sha256": null
+      },
+      {
+        "id": "waistcoat",
+        "label": "Ivory structured waistcoat",
+        "category": "outfit",
+        "binding": "skinned",
+        "status": "reference_uploaded",
+        "reference_purpose": "reconstruction",
+        "reference_sha256": "59bdfea57e5267c95e89be993767a44c5b7180718aed9786d832def09994b07c",
+        "model_sha256": null
+      }
+    ],
+    "hash": "8120c5d9579ab7e9d92be56c86718f4e6da1ba3ea0ff71670aaabaaf0981014c"
+  },
+  "web": {
+    "hash": "8120c5d9579ab7e9d92be56c86718f4e6da1ba3ea0ff71670aaabaaf0981014c",
+    "text": "Character asset inventory\n\nBackoffice revision 9. References and unqualified models are not live releases.\n\nBase body · Base body · reference uploaded\nMirelle Vane appearance design · Clothing / armor · reference uploaded · design context only\nFlat boots · Clothing / armor · reference uploaded\nFloating brass bobbin · Accessories / floating gear · reference uploaded\nInk-black hair · Hair / cosmetic fur · reference uploaded\nNeedle-hair comb · Accessories / floating gear · reference uploaded\nFolded-paper pattern cape · Clothing / armor · reference uploaded\nOxblood petal skirt and shorts · Clothing / armor · reference uploaded\nAsymmetrical ink-black sleeve · Clothing / armor · reference uploaded\nIvory structured waistcoat · Clothing / armor · reference uploaded"
+  },
+  "webText": "⚡\nESPORTS CLASH: GOAT MANAGER\nEA FC Evolutions x Clash Arena Mayhem\n♟️\n300 Rating\n(PAWN)\n🪙 3,500 Coins\nDaily Supply Drop (3/3 Free Packs)\nBackoffice connected\nCatalog 5179c04b0cb0\nRefresh catalog\nSquad Lineup\nClash Arena\nRanked Ladder\nEvolutions Hub\nPack Store\nAvatars & Lore\nItems & Skills\n3D Rigging Studio (Meshy AI)\nTournament Split\nPro Circuit & Scouting\nOnline Normal\nSound Off\nMusic Off\nSelect Avatar\nClick an avatar to inspect lore & ability kit\nAll\nAssassin\nFighter\nMage\nMarksman\nSupport\nTank\nCombat type\nAll types\nCarry\nSupport\nNuker\nDisabler\nJungler\nDurable\nEscape\nPusher\nInitiator\nSort\nName (A–Z)\nCombat Role\nArchetype\nBase HP (Highest)\nAttack Damage (Highest)\nRange (Longest)\n45 avatars\nAshkar Veilhand\nAssassin\nretribution diver / enemy-aggression punisher\nCarry · Nuker\nAstrax Mire\nAssassin\nanti-mobility mage / movement tax\nCarry · Nuker\nAurelio Vane\nSupport\nformation choreographer / rescue\nSupport · Disabler\nAxiom Rail\nFighter\ndeployable rail-gunner / engineering carry\nCarry · Jungler\nBrakka Fenn\nFighter\nanti-aggression brawler / custody control\nCarry · Jungler\nBram Stonebranch\nFighter\ncanopy guardian / overhead protection\nCarry · Jungler\nBramm Coil\nMarksman\nanti-cover artillery / knockline specialist\nCarry · Pusher\nBrohm Caskfall\nTank\nterrain-flow tank / pressure shaper\nDurable\nBryx Emberkite\nFighter\nzone mobility / current shaping\nCarry · Jungler\nCalixa Broadwake\nMarksman\nmobile broadside area carry\nCarry · Pusher\nCoiljack Ampfist\nSupport\nanti-dive engineer\nSupport · Disabler\nDolm Runesunder\nTank\nturning-path punisher / terrain tilt\nDurable\nDroven Bearmantle\nFighter\ntwo-body defender / attrition\nCarry · Jungler\nGarruk Mawsuture\nTank\ntrap engineer / containment tank\nDisabler · Durable\nIvera Frostwhistle\nMarksman\nmarksman / echo geometry\nCarry · Pusher\nJoruun Jadecoil\nTank\nmovable cover architect\nDisabler · Durable\nKael Vespera\nFighter\nanti-save fighter / wager duelist\nCarry · Jungler\nKoro Cloudtail\nFighter\nagile route fighter / temporary team mobility\nCarry · Jungler\nLulla Faespring\nMage\nspell-recovery controller / anti-combo mage\nNuker · Pusher\nMaelis Chromabloom\nMage\nmutable canvas terrain mage\nNuker · Pusher\nMaris Solquill\nSupport\nroute support marksman\nSupport\nMirelle Vane\nMage\ngeometry-based tactical mage with ten authored fabric patterns\nNuker · Pusher\nMireth Lune\nMage\nroute deception mage\nNuker · Pusher\nMora Fenhook\nSupport\ntactical extraction support\nSupport\nMourn Ashwake\nMage\nreactive inferno mage\nNuker · Pusher\nMurdle Ridgehide\nTank\nmobile fortification tank\nDisabler · Durable\nNemea Halolink\nSupport\nspacing / synchronized casting support\nSupport\nNyxara Vale\nAssassin\nvision-pressure assassin\nCarry · Nuker\nOdo Bogsong\nSupport\ntempo support / telegraph manipulator\nSupport · Disabler\nOrin and Fen\nMarksman\nscouting marksman / extraction support\nCarry · Pusher\nPippa Fuseburst\nMarksman\nexplosive showrunner / wave-clear carry\nCarry · Pusher\nPrismelle Cade\nAssassin\nreflective blade defender\nCarry · Nuker\nQuillene Rook\nMarksman\nranged interception carry\nCarry · Pusher\nRavelle Skyrake\nMarksman\nairborne surveillance / conditional bombardment\nCarry · Pusher\nRux Emberchain\nFighter\ntimed-route brawler\nCarry · Jungler\nSerrin Galecrest\nFighter\nprojectile-lane engineer / duelist\nCarry · Jungler\nSevrin Inkseal\nMage\nanti-pattern controller / decision tax\nNuker · Pusher\nSolenne Vaelor\nTank\nprotector / angular defense\nDisabler · Durable\nTalan Slipshot\nMarksman\ntrick-shot ranged carry\nCarry · Pusher\nTeslan Veyr\nMage\nelectrical trap architect\nNuker · Pusher\nThalara Rootwright\nMage\nground economy / area control\nNuker · Pusher\nThimble Briarwish\nSupport\nportable cover / botanical support\nSupport\nToma Bellbreak\nFighter\ncast-window counterfighter\nCarry · Jungler\nVesper Loom\nSupport\ntriage support / risk redistribution\nSupport\nVesper Nullcode\nMage\nmobility-rewriting control mage\nNuker · Pusher\nCharacter asset inventory\n\nBackoffice revision 9. References and unqualified models are not live releases.\n\nBase body · Base body · reference uploaded\nMirelle Vane appearance design · Clothing / armor · reference uploaded · design context only\nFlat boots · Clothing / armor · reference uploaded\nFloating brass bobbin · Accessories / floating gear · reference uploaded\nInk-black hair · Hair / cosmetic fur · reference uploaded\nNeedle-hair comb · Accessories / floating gear · reference uploaded\nFolded-paper pattern cape · Clothing / armor · reference uploaded\nOxblood petal skirt and shorts · Clothing / armor · reference uploaded\nAsymmetrical ink-black sleeve · Clothing / armor · reference uploaded\nIvory structured waistcoat · Clothing / armor · reference uploaded\nMirelle Vane\nThe Atelier Prodigy\nMage / Support · geometry-based tactical mage with ten authored fabric patterns\nSupport\nNuker\nPusher\nMirelle Vane\n\nPrevious 3D models and reference versions were deleted. A new base, rig and animation set must be qualified before live use.\n\nAsset stage: not started\n\nOpen 3D Rigging Studio (Meshy AI)\nAVATAR LORE:\n\n\"draws physical **tailoring pins and stitchwork** that temporarily change battlefield relationships. No elemental combinations, ordered orb recipe, or copy of the Invoker ability keyboard. Counterplay: focus a pin as soon as she commits to a triangle, rotate the battle outside her prepared geometry, or force spells when she holds only one pin.\"\n\nBase HP:\n910\nBase AD:\n62\nArmor:\n29\nMagic Resist:\n34\nAttack Speed:\n0.7 /s\nRange:\n5.2 units\nSIGNATURE ATHLETES (+10% MASTERY):\nNone yet\nORIGINAL ABILITY KIT\n\nAuthored effects are active. Artwork and complete gameplay qualification are still pending.\n\nPassive\nQ ? Skill 1\nW ? Skill 2\nR ? Ultimate\nP\nPattern Book\n\nhold/activate a **radial palette** of ten named patterns; choosing a page is input selection, then releasing R makes **one authoritative cast**. Each page has its own cooldown, cost and geometry requirement. The global weave lockout is a post-cast throttle, **not an 80-second ultimate imposed on all ten pages**. Major pages have longer personal cooldowns. A single chosen page cannot be released if its pin geometry or cooldown is invalid; show the reason before committing. Each successfully cast page consumes **exactly its declared pins**.\n\n7s base cooldown ? 80 mana ? geometry and setup as described above\n\nTen fabric patterns\n1. Baste Line ? 16s\n2. Pocket Shelter ? 22s\n3. Held Breath ? 28s\n4. Ladder Stitch ? 32s\n5. Pleat Fold ? 38s\n6. Serrated Seam ? 24s\n7. Wrong-Side Hem ? 26s\n8. Tacking Waltz ? 40s\n9. Silhouette Dress ? 35s\n10. Grand Atelier ? 90s\nPreview sound"
+}

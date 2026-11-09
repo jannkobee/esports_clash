@@ -1,0 +1,29 @@
+[
+  {
+    "avatar_id": "c_io",
+    "id": "base",
+    "sha256": "e5c7b716e9ab68ca6770dcad75c6b1f37c2887b6b64e71dfc509574a0917acdb",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "742c165c68e471e8fbb5444deed959d84cc310817f9922a0e87fcd02582a20c9",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_silencer",
+    "id": "base",
+    "sha256": "c0d272ed1e45a22ebc3cb3fc95c2721bc5c96cc101a5846a508b9d62f3a8c6f6",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "2029c8c67a031c69766f2c25df60ba6ca83f221143c19187d22a1fb4ac3b8b0d",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_stepstone",
+    "id": "base",
+    "sha256": "bdd5aed4e1ab6d98abea53658cde563be090a7abba2fd4c3897b41d5aa952a4e",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "ab5bab3072d5014131fba0a8626341c3f668c89433bc4e6b4589e86216501df1",
+    "http": 200
+  }
+]

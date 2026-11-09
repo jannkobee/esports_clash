@@ -1,0 +1,47 @@
+{
+  "blender": "4.5.3 LTS",
+  "source": "/tmp/stafford-base-apose.glb",
+  "bounds": {
+    "min": [
+      -0.47535669803619385,
+      -0.2704717516899109,
+      -0.5013681650161743
+    ],
+    "max": [
+      0.4768681526184082,
+      0.2677532434463501,
+      0.501675546169281
+    ]
+  },
+  "views": [
+    "front",
+    "side",
+    "rear",
+    "perspective"
+  ],
+  "meshes": [
+    {
+      "name": "geometry_0",
+      "vertices": 26825,
+      "faces": 37474,
+      "uv_layers": 1
+    }
+  ],
+  "textures": [
+    {
+      "name": "Image_0",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Image_1",
+      "size": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "scope": "Actual imported GLB, studio texture rendering; no artistic or rig qualification implied."
+}

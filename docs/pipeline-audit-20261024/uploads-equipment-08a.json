@@ -1,0 +1,93 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_zal",
+    "component_id": "surgeon_outfit",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Surgeon outfit and cracked porcelain mask",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Vesper Loom. Attached image is design reference only. Only the empty ivory and muted-lilac layered artisan's coat and clothing, boots and the cracked porcelain face mask displayed separately above its empty collar. No flesh, body, head, hair, needle-finger gloves, reservoirs or person. Clothing is empty and held by invisible support in a neutral wide A pose. Every opening is visibly empty. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/vesper-loom-surgeon_outfit.png",
+    "sha256": "10e7370c508b24469ece66ae930e28a65a7435aa144c90e640973f712febf5bf"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_xin",
+    "component_id": "mail_satchel",
+    "category": "back",
+    "binding": "rigid",
+    "label": "Glowing-envelope shoulder mail-satchel",
+    "attachment": "shoulder",
+    "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Rux Emberchain. Attached image is design reference only. Only the large leather shoulder mail-satchel with cream envelopes, orange wax seals, scrolls and its straps. Subtle warm seal glow is contained to the seals, no flames. No person, body, clothes, boots or hands. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/rux-emberchain-mail_satchel.png",
+    "sha256": "a9c81440313e5301f53f96154e59e4ea170cb27af8a49ee2e318c3d6ebd4b620"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_xin",
+    "component_id": "skate_boots",
+    "category": "outfit",
+    "binding": "rigid",
+    "label": "Iron skate-boots",
+    "attachment": "feet",
+    "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Rux Emberchain. Attached image is design reference only. Only the matching pair of iron skate-boots with mechanical wheels and leather uppers. Clearly separated, complete soles and tops visible. No legs, wearer, mail bag or clothing. Clothing is empty and held by invisible support in a neutral wide A pose. Every opening is visibly empty. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/rux-emberchain-skate_boots.png",
+    "sha256": "2500ac74f7391fe2e19ab03067272c6c4b74721c80cb6913bc54a5b541e4b646"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_xin",
+    "component_id": "courier_outfit",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Courier clothing",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Rux Emberchain. Attached image is design reference only. Only the empty courier clothing: dark vest, ivory shirt, red scarf, flowing red-black waist cloth, trousers and gloves. No skate-boots, mail satchel, envelopes, skin, hair, head or person. Clothing is empty and held by invisible support in a neutral wide A pose. Every opening is visibly empty. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/rux-emberchain-courier_outfit.png",
+    "sha256": "93f8aeb8b3af3755357e3658fada74fdbac05e31569f06f85032c2ce5afcc9f2"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_raijin",
+    "component_id": "ground_rods",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Portable grounding rods",
+    "attachment": "hands",
+    "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Teslan Veyr. Attached image is design reference only. Only the matching pair of long copper portable grounding rods with blue-glass coil sections and attached flexible cables. Entire pointed tips and tops visible, clearly separated, no hands, person, clothing or reservoir backpack. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/teslan-veyr-ground_rods.png",
+    "sha256": "e6ccb172e1438e986dd5e9f9b55729bb89514c25283b2c049fa8d40ac9a063cb"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_raijin",
+    "component_id": "scientist_outfit",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Insulated hazard-seam coat and monocle",
+    "attachment": "body",
+    "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Teslan Veyr. Attached image is design reference only. Only the empty insulated midnight-blue coat with gold hazard seams, ivory shirt, trousers, boots, gloves and a separate brass-blue monocle above the collar. No person, head, face, hair, hands, grounding rods or back reservoirs. Clothing is empty and held by invisible support in a neutral wide A pose. Every opening is visibly empty. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/teslan-veyr-scientist_outfit.png",
+    "sha256": "a74f923af32a41c773faa1763b5407bd309e0956c4659c70f31c4d6a3119a78b"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_kaolin",
+    "component_id": "stone_shutters",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Detachable hinged stone shutters",
+    "attachment": "chassis",
+    "prompt": "Use case: stylized-concept. Create one isolated physical equipment reference for Joruun Jadecoil. Attached image is design reference only. Only the detachable pair of hinged stone shutters from the chest, white weathered marble and verdigris bronze rims, open as separate complete panels with their hinge hardware. No golem, machine chassis, head, torso, limbs, jade core or person. Preserve design materials, palette and proportions. Complete asset entirely visible at a SMALLER scale occupying only 65% of the image, generous clear transparent border on ALL sides. Even neutral product lighting, three-quarter view, no floor, cast shadow, backdrop glow, text, labels, frames, logos or extra objects. Genuine transparent background.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/joruun-jadecoil-stone_shutters.png",
+    "sha256": "49b742cc60ed03f7e179879d4a2feaacfd4eb7a015b23c9b7fe087180cec1be2"
+  }
+]

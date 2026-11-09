@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "generation_id": "d0ba4c6c-f06e-4047-90ab-5f29de0cb11d",
+  "avatar_id": "c_wukong_lol",
+  "source_sha256": "7606b5c57b562457ee616875267315751a33a34d74dbf74f07ab59d708230e8d",
+  "donor_sha256": "9ed24c98e637f9bde96a9820ec7d69b565f79024417ff66079b87e271f7f134d",
+  "engine_sha256": "ef0a3a50a6b7f5d10a20e42695fbd260dc63e487f23813ccd04117c1b9045b12",
+  "profile": "tokenrig-base-apose-trial-v1",
+  "yaw": 0,
+  "attachments": [],
+  "validation": "deferred",
+  "storage_gib": 4,
+  "provider": "tokenrig",
+  "bone_map": {},
+  "seed": 25001,
+  "equipment": [],
+  "equipment_references": [],
+  "baseline": null,
+  "rig_engine_sha256": "fe798cc1873c08ecfb302d28d2d02e628c7e943dc6753ae395c76cc1c99d5c3e",
+  "rig_stage_diagnostics": true,
+  "diagnostic_parent": "/avatar-data/61d04a2e-a5b1-421a-9048-06e31e754ea6",
+  "appendage_repairs": [
+    {
+      "kind": "tail",
+      "count": 1,
+      "attachment": "pelvis"
+    }
+  ],
+  "appendage_spec_sha256": "99fae57714c7d745713df116469b7efbc08e8e86087da3d656587e4a9b5acbf0",
+  "motion_repairs": {
+    "arms": "anatomical-arms-v1"
+  },
+  "motion_repairs_sha256": "8a1ad56b71de7238381a1b243886348dd10661e731bd011050ab67f7acab45e3"
+}

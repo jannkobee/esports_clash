@@ -11,7 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->scoped(\App\Services\WorldPlayerProfiles::class);
     }
 
     /**
@@ -19,6 +19,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if ($this->app->bound('auth')) {
+            try {
+                $guard = \Illuminate\Support\Facades\Auth::guard('web');
+                if ($guard instanceof \Illuminate\Auth\SessionGuard) {
+                    $guard->setRememberDuration(52560000);
+                }
+            } catch (\Throwable) {
+            }
+        }
     }
 }

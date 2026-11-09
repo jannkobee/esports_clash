@@ -1,0 +1,1074 @@
+{
+  "id": "1f59dbc4-b1a1-4955-ba5f-9db35f36fc5d",
+  "method": "pose-fitted-four-influence-bbw-v1",
+  "plan": {
+    "id": "1f59dbc4-b1a1-4955-ba5f-9db35f36fc5d",
+    "method": "pose-fitted-four-influence-bbw-v1",
+    "compute": "google",
+    "publication_eligible": false,
+    "qualification_complete": false,
+    "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+    "weight_solve_id": "1a8d5ad6-a597-4be2-92a8-13d4ae8c8ece",
+    "files": {
+      "raw.glb": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+      "weight-report.json": "021b4175cd825c6eae5003e9a0d886fca1407a72ab2f55d4cdcc4ecbed1f7677",
+      "body-weights.npz": "f22ab18d8f69615a9957c22f598ade4b97afdfa045933c95017afd5508441fde",
+      "baseline-report.json": "fabe0de8f9b5e5f183bdf92a54bf0a2b739818ead9a86bb47fb2ceafc0518429",
+      "tools/review_bbw_candidate.py": "d47262d9f9d2d571ddefc94b27520f241cc96c62770e4a19bcdd2075cc3f990b",
+      "tools/review_combined_joint_candidate.py": "40873af6f5520957b123826e110a57f8a4f61a29c11edf1993ae89e3f6203de6",
+      "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+      "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+      "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+      "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+      "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+      "tools/fit_bbw_pose_candidate.py": "8b675fa155f223d82eb881712006a3d485db11ff9de05cedd81ff35991879377",
+      "tools/sparse_pose_fit.py": "993698831a0a6737bd500f750f1ea92e1485b4acd5d7454b936b9cebb0a4fc9c"
+    },
+    "error_contract": {
+      "absolute_max_height_fraction": 0.002,
+      "absolute_rms_height_fraction": 0.0005,
+      "relative_max": 0.05,
+      "relative_movement_floor_height_fraction": 0.01,
+      "weight_mass_truncation": "not used; direct normalized four-support fitting"
+    }
+  },
+  "compute": "google",
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+  "weight_solve_id": "1a8d5ad6-a597-4be2-92a8-13d4ae8c8ece",
+  "candidate_available": true,
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "started_unix": 1793201018.0166948,
+  "pose_contract": {
+    "training": [
+      [
+        [
+          "UpperArmL",
+          15,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmL",
+          45,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmL",
+          90,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmR",
+          15,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmR",
+          45,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmR",
+          90,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ForearmL",
+          15,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ForearmL",
+          45,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ForearmL",
+          90,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ForearmR",
+          15,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ForearmR",
+          45,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ForearmR",
+          90,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          15,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          45,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          90,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ThighR",
+          15,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ThighR",
+          45,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ThighR",
+          90,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "CalfL",
+          15,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "CalfL",
+          45,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "CalfL",
+          90,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "CalfR",
+          15,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "CalfR",
+          45,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "CalfR",
+          90,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmL",
+          -30,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "UpperArmL",
+          30,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "UpperArmR",
+          -30,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "UpperArmR",
+          30,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          -30,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          30,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "ThighR",
+          -30,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "ThighR",
+          30,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          45,
+          "bend"
+        ],
+        [
+          "ThighR",
+          45,
+          "bend"
+        ],
+        [
+          "CalfL",
+          60,
+          "bend"
+        ],
+        [
+          "CalfR",
+          60,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmL",
+          45,
+          "bend"
+        ],
+        [
+          "UpperArmR",
+          45,
+          "bend"
+        ]
+      ]
+    ],
+    "heldout": [
+      [
+        [
+          "UpperArmL",
+          22.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmL",
+          67.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmR",
+          22.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmR",
+          67.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ForearmL",
+          22.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ForearmL",
+          67.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ForearmR",
+          22.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ForearmR",
+          67.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          22.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          67.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ThighR",
+          22.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "ThighR",
+          67.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "CalfL",
+          22.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "CalfL",
+          67.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "CalfR",
+          22.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "CalfR",
+          67.5,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmL",
+          -15,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "UpperArmL",
+          15,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "UpperArmR",
+          -15,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "UpperArmR",
+          15,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          -15,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          15,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "ThighR",
+          -15,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "ThighR",
+          15,
+          "twist"
+        ]
+      ],
+      [
+        [
+          "ThighL",
+          60,
+          "bend"
+        ],
+        [
+          "ThighR",
+          60,
+          "bend"
+        ],
+        [
+          "CalfL",
+          75,
+          "bend"
+        ],
+        [
+          "CalfR",
+          75,
+          "bend"
+        ]
+      ],
+      [
+        [
+          "UpperArmL",
+          67.5,
+          "bend"
+        ],
+        [
+          "UpperArmR",
+          22.5,
+          "bend"
+        ],
+        [
+          "ThighL",
+          45,
+          "bend"
+        ]
+      ]
+    ],
+    "scope": "Controlled nominal joint bends and twists; not game animations or anatomically matched comparisons between different rigs."
+  },
+  "matrix_blender_max_error": 1.4669261282100894e-07,
+  "training_error": {
+    "max_error": 4.480604893920313e-05,
+    "rms_error": 5.018718471383888e-07,
+    "max_relative_error": 0.0044674904472488865
+  },
+  "heldout_error": {
+    "max_error": 3.520389452099358e-05,
+    "rms_error": 4.474597646107542e-07,
+    "max_relative_error": 0.0035100854951950447
+  },
+  "limits": {
+    "max_error_height_fraction": 0.002,
+    "rms_error_height_fraction": 0.0005,
+    "max_relative_error": 0.05,
+    "relative_denominator_floor_height_fraction": 0.01,
+    "max_influences": 4
+  },
+  "fit": {
+    "vertices": 4405,
+    "max_influences": 4,
+    "max_weight_l1_difference": 0.8440155745684186,
+    "max_normalization_error": 3.3306690738754696e-16,
+    "algorithm": "greedy support selection among twelve channels; active-subset simplex least squares; no global-optimum claim"
+  },
+  "rest_surface_roundtrip": {
+    "before_vertices": 23399,
+    "after_vertices": 23682,
+    "max_nearest_distance": 2.590617214082158e-07,
+    "rms_nearest_distance": 9.537467916184931e-08
+  },
+  "reloaded_poses": [
+    {
+      "joint": "UpperArmL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.7868579570562455,
+        "largest_extension_to_height": 0.010672533564690143,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 105,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_2",
+            "bone_26"
+          ],
+          "intersections": 61
+        },
+        {
+          "regions": [
+            "bone_25",
+            "bone_26"
+          ],
+          "intersections": 22
+        },
+        {
+          "regions": [
+            "bone_26",
+            "bone_3"
+          ],
+          "intersections": 22
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.6463002054835076,
+        "largest_extension_to_height": 0.022143081326514987,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.8254348350149558,
+        "largest_extension_to_height": 0.0074883384479147545,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 100,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_2",
+            "bone_7"
+          ],
+          "intersections": 46
+        },
+        {
+          "regions": [
+            "bone_3",
+            "bone_7"
+          ],
+          "intersections": 38
+        },
+        {
+          "regions": [
+            "bone_6",
+            "bone_7"
+          ],
+          "intersections": 16
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.652102899113996,
+        "largest_extension_to_height": 0.01906613088089317,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.3245175663468707,
+        "largest_extension_to_height": 0.003018597966374679,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.5117518634957676,
+        "largest_extension_to_height": 0.004676501259559028,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.2275848603002701,
+        "largest_extension_to_height": 0.002195103321798292,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.3081860065827637,
+        "largest_extension_to_height": 0.004006330499591429,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.796879681989312,
+        "largest_extension_to_height": 0.014267916084476508,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 333,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_0",
+            "bone_48"
+          ],
+          "intersections": 230
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_0"
+          ],
+          "intersections": 36
+        },
+        {
+          "regions": [
+            "bone_48",
+            "bone_48"
+          ],
+          "intersections": 22
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_48"
+          ],
+          "intersections": 19
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 18
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_44"
+          ],
+          "intersections": 8
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.52834512623295,
+        "largest_extension_to_height": 0.025829114160169777,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.548911530422171,
+        "largest_extension_to_height": 0.016814343608626357,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 421,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_0",
+            "bone_44"
+          ],
+          "intersections": 312
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_0"
+          ],
+          "intersections": 67
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 40
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_48"
+          ],
+          "intersections": 1
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_48"
+          ],
+          "intersections": 1
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.274984032456116,
+        "largest_extension_to_height": 0.030285906334494073,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.7743119496715436,
+        "largest_extension_to_height": 0.006129086995431066,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 94,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_48",
+            "bone_49"
+          ],
+          "intersections": 81
+        },
+        {
+          "regions": [
+            "bone_49",
+            "bone_49"
+          ],
+          "intersections": 10
+        },
+        {
+          "regions": [
+            "bone_48",
+            "bone_48"
+          ],
+          "intersections": 3
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.30734170359261,
+        "largest_extension_to_height": 0.010047241526597068,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.8598628334804548,
+        "largest_extension_to_height": 0.008394765246726468,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 188,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_44",
+            "bone_45"
+          ],
+          "intersections": 147
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 26
+        },
+        {
+          "regions": [
+            "bone_45",
+            "bone_45"
+          ],
+          "intersections": 15
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.446882066721366,
+        "largest_extension_to_height": 0.01281880700296295,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    }
+  ],
+  "status": "review_required",
+  "artifact": {
+    "sha256": "a8842ab894738194008007ba06af8cd268f3b150d5426810990a3bb33c2edccb",
+    "bytes": 3375792
+  },
+  "scope": "Four-support pose fit to regional BBW field on the fixed raw body and joints. Numerical representation only; visual review and game animation remain unqualified.",
+  "completed_unix": 1793201087.5529878
+}

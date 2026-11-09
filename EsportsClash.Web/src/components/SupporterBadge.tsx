@@ -1,0 +1,2 @@
+import {RadioTower,Star} from 'lucide-react';
+export function SupporterBadge({trial=false,level='signal',unlimited=false}:{trial?:boolean;level?:string;unlimited?:boolean}){return <a href="#supporter-studio" className="supporter-pill" title={unlimited?'Permanent owner membership':trial?'One-month Beacon trial':'Hexatrick Supporter'}>{level==='beacon'?<RadioTower size={12}/>:<Star size={12}/>} {level==='beacon'?'Beacon':'Signal'}{unlimited?' · Owner':trial?' · Trial':''}</a>;}

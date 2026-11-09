@@ -8,20 +8,25 @@ x-dev-api: &dev-api
   volumes:
     - ./infrastructure/evolution/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
     - ./EsportsClash.Api/app:/app/app:ro
+    - ./EsportsClash.Api/database/seeders:/app/database/seeders:ro
     - ./EsportsClash.Api/bootstrap/app.php:/app/bootstrap/app.php:ro
     - ./EsportsClash.Api/config:/app/config:ro
     - ./EsportsClash.Api/database/migrations:/app/database/migrations:ro
     - ./EsportsClash.Api/routes:/app/routes:ro
     - ./EsportsClash.Api/resources/views:/app/resources/views:ro
-    - ./EsportsClash.Api/resources/game/management-items.json:/app/resources/game/management-items.json:ro
+    - ./EsportsClash.Api/resources/game:/app/resources/game:ro
     - ./infrastructure/trellis2/references:/app/resources/avatars/generation-references:ro
     - ./infrastructure/trellis2/reference-index.json:/app/resources/avatars/generation-reference-index.json:ro
+    - ./EsportsClash.Api/resources/avatars/base-anatomy.json:/app/resources/avatars/base-anatomy.json:ro
     - ./EsportsClash.Api/resources/avatars/trellis2-colab.ipynb:/app/resources/avatars/trellis2-colab.ipynb:ro
     - ./.local-tools/trellis2/data/output:/app/storage/trellis-sources:rw
     - ./EsportsClash.Api/public:/app/public:ro
     - ./EsportsClash.Api/tests:/app/tests:ro
 
 services:
+  runner:
+    # Development intelligence implementation; frozen legacy image tags remain available.
+    image: teamfight-evolution-runner:arena-outcomes-v6
   trellis-worker:
     image: teamfight-trellis-worker:local
     build:
@@ -80,6 +85,9 @@ services:
   scheduler:
     <<: *dev-api
 
+  competition-rankings:
+    <<: *dev-api
+
   avatar-queue-worker:
     <<: *dev-api
     command: [php, artisan, 'queue:listen', redis, '--queue=avatars', '--sleep=3', '--timeout=120', '--tries=4']
@@ -112,6 +120,26 @@ services:
     restart: unless-stopped
     mem_limit: 1024m
     cpus: 1
+
+  rooms:
+    image: node:24-bookworm-slim
+    working_dir: /workspace/EsportsClash.Web
+    command: [node, --experimental-strip-types, server.mjs]
+    environment:
+      INTELLIGENCE_POLICY_URL: http://api:8000/api/v1/intelligence-policy
+    volumes:
+      - ./EsportsClash.Web:/workspace/EsportsClash.Web:ro
+    restart: unless-stopped
+    mem_limit: 256m
+    cpus: 1
+
+  match-worker:
+    image: teamfight-online-worker:lifecycle-stream-20261108
+    mem_limit: 3g
+    memswap_limit: 4g
+    build:
+      context: .
+      dockerfile: infrastructure/online/Dockerfile.identities
 
   web:
     volumes:

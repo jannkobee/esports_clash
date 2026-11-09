@@ -1,0 +1,135 @@
+{
+  "targets": [
+    {
+      "name": "01-UpperArmL-60-child0-twist0",
+      "phase": 0.06,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/01-UpperArmL-60-child0-twist0-candidate.glb",
+      "target": "UpperArmL_60"
+    },
+    {
+      "name": "02-UpperArmL-90-child0-twist0",
+      "phase": 0.1,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/02-UpperArmL-90-child0-twist0-candidate.glb",
+      "target": "UpperArmL_90"
+    },
+    {
+      "name": "03-UpperArmR-60-child0-twist0",
+      "phase": 0.14,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/03-UpperArmR-60-child0-twist0-candidate.glb",
+      "target": "UpperArmR_60"
+    },
+    {
+      "name": "04-UpperArmR-90-child0-twist0",
+      "phase": 0.18,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/04-UpperArmR-90-child0-twist0-candidate.glb",
+      "target": "UpperArmR_90"
+    }
+  ],
+  "heldouts": [
+    {
+      "name": "00-Rest-0-child0-twist0",
+      "phase": 0.02,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/00-Rest-0-child0-twist0-candidate.glb"
+    },
+    {
+      "name": "05-ThighL-60-child60-twist-20",
+      "phase": 0.22,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/05-ThighL-60-child60-twist-20-candidate.glb"
+    },
+    {
+      "name": "06-ThighL-60-child60-twist0",
+      "phase": 0.26,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/06-ThighL-60-child60-twist0-candidate.glb"
+    },
+    {
+      "name": "07-ThighL-60-child60-twist20",
+      "phase": 0.3,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/07-ThighL-60-child60-twist20-candidate.glb"
+    },
+    {
+      "name": "08-ThighL-90-child90-twist-20",
+      "phase": 0.34,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/08-ThighL-90-child90-twist-20-candidate.glb"
+    },
+    {
+      "name": "09-ThighL-90-child90-twist0",
+      "phase": 0.38,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/09-ThighL-90-child90-twist0-candidate.glb"
+    },
+    {
+      "name": "10-ThighL-90-child90-twist20",
+      "phase": 0.42,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/10-ThighL-90-child90-twist20-candidate.glb"
+    },
+    {
+      "name": "11-ThighR-60-child60-twist-20",
+      "phase": 0.46,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/11-ThighR-60-child60-twist-20-candidate.glb"
+    },
+    {
+      "name": "12-ThighR-60-child60-twist0",
+      "phase": 0.5,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/12-ThighR-60-child60-twist0-candidate.glb"
+    },
+    {
+      "name": "13-ThighR-60-child60-twist20",
+      "phase": 0.54,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/13-ThighR-60-child60-twist20-candidate.glb"
+    },
+    {
+      "name": "14-UpperArmL-60-child60-twist-20",
+      "phase": 0.58,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/14-UpperArmL-60-child60-twist-20-candidate.glb"
+    },
+    {
+      "name": "15-UpperArmL-60-child60-twist0",
+      "phase": 0.62,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/15-UpperArmL-60-child60-twist0-candidate.glb"
+    },
+    {
+      "name": "16-UpperArmL-60-child60-twist20",
+      "phase": 0.66,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/16-UpperArmL-60-child60-twist20-candidate.glb"
+    },
+    {
+      "name": "17-UpperArmR-60-child60-twist-20",
+      "phase": 0.7,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/17-UpperArmR-60-child60-twist-20-candidate.glb"
+    },
+    {
+      "name": "18-UpperArmR-60-child60-twist0",
+      "phase": 0.74,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/18-UpperArmR-60-child60-twist0-candidate.glb"
+    },
+    {
+      "name": "19-UpperArmR-60-child60-twist20",
+      "phase": 0.78,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/19-UpperArmR-60-child60-twist20-candidate.glb"
+    },
+    {
+      "name": "20-UpperArmL-90-child90-twist0",
+      "phase": 0.82,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/20-UpperArmL-90-child90-twist0-candidate.glb"
+    },
+    {
+      "name": "21-UpperArmR-90-child90-twist0",
+      "phase": 0.86,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/21-UpperArmR-90-child90-twist0-candidate.glb"
+    },
+    {
+      "name": "22-ThighL-90-child90-twist10",
+      "phase": 0.9,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/22-ThighL-90-child90-twist10-candidate.glb"
+    },
+    {
+      "name": "23-ThighL-90-child0-twist20",
+      "phase": 0.94,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/23-ThighL-90-child0-twist20-candidate.glb"
+    },
+    {
+      "name": "24-ThighL-75-child60-twist20",
+      "phase": 0.98,
+      "static": "/content/teamfight-preparation/reviews/5a64c10f-e861-4957-9d6d-1d718fe6a3b1/site/repair/24-ThighL-75-child60-twist20-candidate.glb"
+    }
+  ]
+}

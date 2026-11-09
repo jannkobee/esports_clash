@@ -1,0 +1,148 @@
+{
+  "review_id": "c4b4d554-8e14-413f-bdd8-433d8fce5580",
+  "assessed_on": "2026-10-29",
+  "status": "transition_improved_shape_unqualified",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "export_admitted": false,
+  "scope": "Continuous support removes the inspected 45-degree outer-hip notch and smooths the first bounded attempt's sharp inner-thigh transition. Protected hand and core-torso weights remain exact. Deep hip creasing, angular waist changes and shoulder compression remain; this is a partial diagnostic improvement, not a production avatar.",
+  "findings": [
+    {
+      "view": "ThighL45/orbit1",
+      "observation": "Both bounded variants remove the sharp outer notch in the spherical blend; the continuous version retains a continuous outer silhouette."
+    },
+    {
+      "view": "ThighR90/orbit3",
+      "observation": "The v1 thin angular inner-thigh ridge is absent in v2; the inner hip is smoother in this view, but its deep compressed contour is still not anatomically convincing."
+    },
+    {
+      "view": "ThighL90/orbit1/3 and ThighR90/orbit1",
+      "observation": "Deep creasing remains at the hip, with angular waist transitions outside the protected core. Continuous donor selection does not repair the entire deformation."
+    },
+    {
+      "view": "UpperArmL90/orbit1/3",
+      "observation": "The protected chest stays closer to raw than full BBW, but shoulder compression remains."
+    }
+  ],
+  "preservation": {
+    "hand_vertices": 3128,
+    "core_torso_vertices": 1651,
+    "weight_delta": 0,
+    "tested_pose_position_delta": 0
+  },
+  "numerical_test_receipt": {
+    "file": "numerical-tests.json",
+    "sha256": "108a73e31579c7376afe8a593bd5f8cc018d7b53de37bd9d8a7dfc2f6957d1f9",
+    "passed": 3,
+    "compute": "google"
+  },
+  "next_action": "Keep this target as a partial improvement and stop mask-parameter sweeps. Define explicit desired shoulder/hip shape and a coordinated pose contract (including shoulder-girdle movement) before the next targeted correction. No four-influence export until the remaining dense-target shape failures are addressed.",
+  "limitations": [
+    "25 of 60 screenshots manually inspected, including all12 continuous-support views.",
+    "No animation playback, four-influence representation, finger articulation or full range-of-motion qualification.",
+    "Existing influence support is a heuristic and protected core is not the entire torso.",
+    "No remaining deformation cause is assigned to topology or joint placement from this experiment alone."
+  ],
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/raw-UpperArmL-90-orbit3.png",
+      "sha256": "70f6d2639eb75863f78dc0b4c88ef06f6de100753820a9a9d72ae31f90629a7c"
+    },
+    {
+      "file": "screenshots/regional-UpperArmL-90-orbit3.png",
+      "sha256": "5d4ada8f03ed44654f460b6bd445897a1f12b9180ff2ab3a900977dc1e88032f"
+    },
+    {
+      "file": "screenshots/full-UpperArmL-90-orbit3.png",
+      "sha256": "bca9f90bda6e4bfbcbc4165e93a8ac55be0e9312d79beac8cc6222a270edca96"
+    },
+    {
+      "file": "screenshots/bounded-UpperArmL-90-orbit3.png",
+      "sha256": "ad18f55bdbc23f688e58ed65c18a82e35f7a9d46242accc3072d31b1828e552a"
+    },
+    {
+      "file": "screenshots/bounded_soft-UpperArmL-90-orbit0.png",
+      "sha256": "c89588e63b0421cb507637d0f0b83b89f47c3160ae46c49b621e23078ab4337f"
+    },
+    {
+      "file": "screenshots/bounded_soft-UpperArmL-90-orbit1.png",
+      "sha256": "6c82be435639958d9a52c553c8ed4d6a3aa7ecd2bd3c39eb1e6d5fd6537971c9"
+    },
+    {
+      "file": "screenshots/bounded_soft-UpperArmL-90-orbit3.png",
+      "sha256": "ad18f55bdbc23f688e58ed65c18a82e35f7a9d46242accc3072d31b1828e552a"
+    },
+    {
+      "file": "screenshots/raw-ThighL-45-orbit1.png",
+      "sha256": "13dc2244891e9a4c1a307df386bf4a7a89843227b35ff06b62c40863f210272c"
+    },
+    {
+      "file": "screenshots/regional-ThighL-45-orbit1.png",
+      "sha256": "df14a7548597c4a15c0f284c9014e8852fafa64cf130dbfb0ed70b56c81be242"
+    },
+    {
+      "file": "screenshots/full-ThighL-45-orbit1.png",
+      "sha256": "873744d3b3e349ca5677d507facd57a1fdbdb190dbbe7f8ad3e1c8dd11ca2282"
+    },
+    {
+      "file": "screenshots/bounded-ThighL-45-orbit1.png",
+      "sha256": "239d3731f3026cbc4738d4a137f4242fa44f9b5e2ff37243adbf03baf5a0f179"
+    },
+    {
+      "file": "screenshots/bounded_soft-ThighL-45-orbit0.png",
+      "sha256": "30b909bd596c486ab463cf08ceb451df37572aeefe81007628e7f7b13a5f5ad7"
+    },
+    {
+      "file": "screenshots/bounded_soft-ThighL-45-orbit1.png",
+      "sha256": "a74ffa50ed0980c59c55878bb1d6220210df577ee52e90f8dfcc9fe2ba57f44a"
+    },
+    {
+      "file": "screenshots/bounded_soft-ThighL-45-orbit3.png",
+      "sha256": "a0f8449967459af2b7cb37320a9cf0868082f7d798fcf5d5cf1a02f9456d0b8c"
+    },
+    {
+      "file": "screenshots/bounded-ThighL-90-orbit3.png",
+      "sha256": "e9370157f3454473b8b4dc89a1709f0439edae3f821bc1f9148e2b706172aa4e"
+    },
+    {
+      "file": "screenshots/bounded_soft-ThighL-90-orbit0.png",
+      "sha256": "6c846f0a37cdfc64d609c5296de103656895fafeebb49aa7aa421e57ddf5c91a"
+    },
+    {
+      "file": "screenshots/bounded_soft-ThighL-90-orbit1.png",
+      "sha256": "e9baca6b089d6ee1cbf931faaa1b327408fc7ef428efef8cc5eb27eb9d9b5bca"
+    },
+    {
+      "file": "screenshots/bounded_soft-ThighL-90-orbit3.png",
+      "sha256": "e200df96ffecdb65b07c409e444a04d717d21f93bbef1ef88d0d11ffaefada22"
+    },
+    {
+      "file": "screenshots/raw-ThighR-90-orbit3.png",
+      "sha256": "e72598fdb7fb5523412ba574e152fbd624fd044e220ca51ad05c3082f889ff3b"
+    },
+    {
+      "file": "screenshots/full-ThighR-90-orbit3.png",
+      "sha256": "593a070b6a7dbf70e018c0bfbb26b3b5a71540a2435593d3e178c7c8fbd9c35f"
+    },
+    {
+      "file": "screenshots/bounded-ThighR-90-orbit1.png",
+      "sha256": "93738944093d3b85f371e0430297b0059d2920aa29b8a22b6ae691901ac782d9"
+    },
+    {
+      "file": "screenshots/bounded-ThighR-90-orbit3.png",
+      "sha256": "9dbb6296ca2e9bf55b6cc4e0df366703c4aa0fc7986524b70518e05f315d98ab"
+    },
+    {
+      "file": "screenshots/bounded_soft-ThighR-90-orbit0.png",
+      "sha256": "f1434a5d8a75f86257b82a543601c13d02f414dcfa3b65f3a2673a3d4d202e7a"
+    },
+    {
+      "file": "screenshots/bounded_soft-ThighR-90-orbit1.png",
+      "sha256": "4f573440a8c27978d3beae790004663e70ddbdfcfdc14a37e1ed4bd34c2d95d7"
+    },
+    {
+      "file": "screenshots/bounded_soft-ThighR-90-orbit3.png",
+      "sha256": "a4c6a48cceaed0202a7d054940005d4277f5089727109419901778149d0534a7"
+    }
+  ]
+}

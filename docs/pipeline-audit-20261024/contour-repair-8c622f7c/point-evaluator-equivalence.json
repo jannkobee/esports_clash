@@ -1,0 +1,38 @@
+{
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "sha256": "f308406eca91586cc8c418b925552c89f5ed438509fbf3fc5b7b83743d837d9a",
+  "helper_sha256": "52e4c05bef3775e26bf7668d126f4c3a2906ac3cf980ec5e95b6065b142ca7fb",
+  "samples": [
+    {
+      "source_frame_30fps": 0,
+      "identical": true,
+      "maximum_error": 0.0,
+      "full_surface_seconds": 3.233992649999891,
+      "points_only_seconds": 0.24502062299961835
+    },
+    {
+      "source_frame_30fps": 30,
+      "identical": true,
+      "maximum_error": 0.0,
+      "full_surface_seconds": 5.538015060999896,
+      "points_only_seconds": 0.6846465120001994
+    },
+    {
+      "source_frame_30fps": 126,
+      "identical": true,
+      "maximum_error": 0.0,
+      "full_surface_seconds": 5.926500626999768,
+      "points_only_seconds": 0.30665557500014984
+    },
+    {
+      "source_frame_30fps": 210,
+      "identical": true,
+      "maximum_error": 0.0,
+      "full_surface_seconds": 4.097049261999928,
+      "points_only_seconds": 0.19052019099945028
+    }
+  ],
+  "scope": "Coordinate equivalence in four actual exported poses only; no new export or performance admission claimed."
+}

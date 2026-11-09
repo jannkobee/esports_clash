@@ -1,0 +1,22 @@
+{
+  "id": "59efceaf-d39e-414e-94af-36f7ccbae738",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "method": "localized-12-percent-torso-to-limb-weight-transfer-v1",
+  "parent_candidate_id": "a3352d37-91cb-4757-b403-da09f5ac0017",
+  "parent_candidate_sha256": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4",
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "files": {
+    "candidate.glb": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4",
+    "candidate-report.json": "e6bd8e9a3a66be39c0c291ebe785dee88540dd3437451ff812655333789994a6",
+    "baseline-report.json": "fabe0de8f9b5e5f183bdf92a54bf0a2b739818ead9a86bb47fb2ceafc0518429",
+    "influence-profile.json": "748eebbaf3664c6e40c6bb061dac641faa098c61051060141851789ea1c99ae8",
+    "tools/review_collision_weight_candidate.py": "ed72e89f1f9d6314f1c5e90d52b787f700b787139ba5c95401426712c0f96d3c",
+    "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+    "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+    "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02"
+  }
+}

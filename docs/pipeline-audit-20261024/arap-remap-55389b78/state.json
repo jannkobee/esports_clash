@@ -1,0 +1,14 @@
+{
+  "id": "55389b78-27da-4be0-94e3-cf1ee5491597",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "arap-target-remap",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "started_unix": 1793103857.3006105,
+  "exit_code": 0,
+  "report_sha256": "4e4697935577d3ab495c39d4a6b7c32725874bba9d3c2fad002f8520affd8b43",
+  "completed_unix": 1793103863.490422
+}

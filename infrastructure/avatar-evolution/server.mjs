@@ -159,6 +159,9 @@ const server=http.createServer(async(request,response)=>{
       return reply(response,200,state);
     }
     if(request.method!=='POST')return reply(response,405,{error:'POST required'});
+    if(!process.env.COLAB_RELEASE_TAG||!root.startsWith('/content/teamfight-preparation/'))
+      return reply(response,409,{id,status:'waiting_worker',stage:'waiting_for_colab',publication_eligible:false,
+        error:'Local avatar processing is disabled. Connect the Google Colab asset service.'});
     const plan=await json(request),meta=catalog.avatars.find(a=>a.id===plan.avatar?.id);
     const supportedPlan=plan.version===1&&plan.owner_approval_required===true&&plan.automatic_publish===false
       ||plan.version===2&&plan.owner_approval_required===false&&plan.automatic_publish===true&&meta?.id===profiles.pilot

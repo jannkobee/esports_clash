@@ -1,0 +1,20 @@
+[
+  {
+    "avatar_id": "c_solana",
+    "id": "base",
+    "sha256": "1e4072908f562638d51b84096a58c79afbd163bec51f815179a44f9b1bca16fb",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "6c50018c3f02be9e7bbf9579aee4db9d04768f17318cede7748412827f8f6fa0",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_astra",
+    "id": "base",
+    "sha256": "0951bdcb1c0a2587ecbc68e792bde840a7ecdc9aee8c9b46840ac0d5e3f3ab51",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "5f9e9cb017ec65714ec8bbd6d80f653947855013323ac3980b8841e47fa24faa",
+    "http": 200
+  }
+]

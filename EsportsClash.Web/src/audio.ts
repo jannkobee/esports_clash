@@ -1,10 +1,10 @@
-import { AVATAR_SOUND_ASSETS, getAvatarSkillSoundCue, type SoundCharacter } from './avatarSkillAudio';
-import type { SkillSlot } from './avatarSkillAnimation';
+import { AVATAR_SOUND_ASSETS, getAvatarSkillSoundCue, type SoundCharacter } from './avatarSkillAudio.ts';
+import type { SkillSlot } from './avatarSkillAnimation.ts';
 import {
   BACKGROUND_MUSIC_BPM,
   BACKGROUND_MUSIC_LOOP_STEPS,
   getBackgroundMusicStep,
-} from './backgroundMusic';
+} from './backgroundMusic.ts';
 
 // UI cues remain synthesized; avatar casts use licensed recorded sounds.
 
@@ -56,6 +56,12 @@ class SoundManager {
   private lastPreload = 0;
   private lastImpact = 0;
   private lastExplosion = 0;
+  private lastTurretShot = 0;
+  private lastStructureCollapse = 0;
+  private lastMinionAttack = 0;
+  private lastDragonBreath = 0;
+  private lastGolemSlam = 0;
+  private lastFrogCroak = 0;
   private masterGain: GainNode | null = null;
   private combatBus: GainNode | null = null;
   private impactBus: GainNode | null = null;
@@ -659,6 +665,374 @@ class SoundManager {
       gain.connect(this.impactBus ?? this.ctx.destination);
       osc.start(now);
       osc.stop(now + 0.6);
+    } catch {
+      // ignore
+    }
+  }
+
+  /**
+   * Calculates stereo panning [-0.85, 0.85] from world coordinates relative to the spectator camera.
+   */
+  calculateSpatialPan(worldX: number, cameraX: number, viewportHalfW = 400): number {
+    const delta = worldX - cameraX;
+    const normalized = delta / Math.max(100, viewportHalfW);
+    return Math.max(-0.85, Math.min(0.85, normalized * 0.75));
+  }
+
+  /**
+   * Calculates distance attenuation [0.25, 1.0] from world coordinates relative to the spectator camera.
+   */
+  calculateSpatialGain(worldX: number, worldY: number, cameraX: number, cameraY: number, maxDist = 1600): number {
+    const dist = Math.hypot(worldX - cameraX, worldY - cameraY);
+    const falloff = 1 - Math.min(1, dist / maxDist);
+    return 0.25 + 0.75 * (falloff * falloff);
+  }
+
+  private createPannerNode(pan: number): StereoPannerNode | null {
+    if (!this.ctx || typeof this.ctx.createStereoPanner !== 'function') return null;
+    const panner = this.ctx.createStereoPanner();
+    panner.pan.value = Math.max(-0.85, Math.min(0.85, pan));
+    return panner;
+  }
+
+  playTurretShot(worldX = 1300, cameraX = 1300): void {
+    try {
+      if (!this.initCtx() || !this.ctx) return;
+      const stamp = performance.now();
+      if (stamp - this.lastTurretShot < 65 || this.activeVoices >= 14) return;
+      this.lastTurretShot = stamp;
+
+      const pan = this.calculateSpatialPan(worldX, cameraX);
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const subOsc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const filter = this.ctx.createBiquadFilter();
+      const panner = this.createPannerNode(pan);
+
+      // Energy beam laser sweep: 960Hz down to 240Hz
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(960, now);
+      osc.frequency.exponentialRampToValueAtTime(240, now + 0.16);
+
+      // Resonant sub harmonic: 160Hz
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(160, now);
+      subOsc.frequency.exponentialRampToValueAtTime(70, now + 0.16);
+
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(750, now);
+      filter.frequency.exponentialRampToValueAtTime(320, now + 0.16);
+      filter.Q.value = 3.0;
+
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + 0.18);
+
+      osc.connect(filter);
+      subOsc.connect(filter);
+      filter.connect(gain);
+
+      const targetBus = this.combatBus ?? this.ctx.destination;
+      if (panner) {
+        gain.connect(panner);
+        panner.connect(targetBus);
+      } else {
+        gain.connect(targetBus);
+      }
+
+      this.activeVoices += 2;
+      osc.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 2); };
+
+      osc.start(now);
+      subOsc.start(now);
+      osc.stop(now + 0.18);
+      subOsc.stop(now + 0.18);
+    } catch {
+      // ignore
+    }
+  }
+
+  playStructureCollapse(worldX = 1300, cameraX = 1300): void {
+    try {
+      if (!this.initCtx() || !this.ctx) return;
+      const stamp = performance.now();
+      if (stamp - this.lastStructureCollapse < 150 || this.activeVoices >= 16) return;
+      this.lastStructureCollapse = stamp;
+
+      const pan = this.calculateSpatialPan(worldX, cameraX);
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const subOsc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const panner = this.createPannerNode(pan);
+
+      // Deep rumble: 110Hz falling to 28Hz
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(110, now);
+      osc.frequency.exponentialRampToValueAtTime(28, now + 0.7);
+
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(65, now);
+      subOsc.frequency.exponentialRampToValueAtTime(20, now + 0.85);
+
+      gain.gain.setValueAtTime(0.38, now);
+      gain.gain.exponentialRampToValueAtTime(0.008, now + 0.85);
+
+      osc.connect(gain);
+      subOsc.connect(gain);
+
+      const targetBus = this.impactBus ?? this.ctx.destination;
+      if (panner) {
+        gain.connect(panner);
+        panner.connect(targetBus);
+      } else {
+        gain.connect(targetBus);
+      }
+
+      this.activeVoices += 2;
+      osc.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 2); };
+
+      osc.start(now);
+      subOsc.start(now);
+      osc.stop(now + 0.85);
+      subOsc.stop(now + 0.85);
+    } catch {
+      // ignore
+    }
+  }
+
+  playDragonRoar(worldX = 1300, cameraX = 1300): void {
+    try {
+      if (!this.initCtx() || !this.ctx) return;
+      const pan = this.calculateSpatialPan(worldX, cameraX);
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const filter = this.ctx.createBiquadFilter();
+      const gain = this.ctx.createGain();
+      const panner = this.createPannerNode(pan);
+
+      // Dragon roar: 140Hz up to 260Hz then down to 75Hz
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(140, now);
+      osc.frequency.linearRampToValueAtTime(260, now + 0.25);
+      osc.frequency.exponentialRampToValueAtTime(75, now + 0.75);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1200, now);
+      filter.frequency.linearRampToValueAtTime(2200, now + 0.25);
+      filter.frequency.exponentialRampToValueAtTime(400, now + 0.75);
+
+      gain.gain.setValueAtTime(0.32, now);
+      gain.gain.exponentialRampToValueAtTime(0.008, now + 0.75);
+
+      osc.connect(filter);
+      filter.connect(gain);
+
+      const targetBus = this.impactBus ?? this.ctx.destination;
+      if (panner) {
+        gain.connect(panner);
+        panner.connect(targetBus);
+      } else {
+        gain.connect(targetBus);
+      }
+
+      this.activeVoices++;
+      osc.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 1); };
+
+      osc.start(now);
+      osc.stop(now + 0.75);
+    } catch {
+      // ignore
+    }
+  }
+
+  playDragonBreath(worldX = 1300, cameraX = 1300): void {
+    try {
+      if (!this.initCtx() || !this.ctx) return;
+      const stamp = performance.now();
+      if (stamp - this.lastDragonBreath < 180 || this.activeVoices >= 14) return;
+      this.lastDragonBreath = stamp;
+
+      const pan = this.calculateSpatialPan(worldX, cameraX);
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const filter = this.ctx.createBiquadFilter();
+      const gain = this.ctx.createGain();
+      const panner = this.createPannerNode(pan);
+
+      // Fire breath low-frequency whoosh: 280Hz down to 85Hz
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(280, now);
+      osc.frequency.exponentialRampToValueAtTime(85, now + 0.42);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1800, now);
+      filter.frequency.exponentialRampToValueAtTime(320, now + 0.42);
+
+      gain.gain.setValueAtTime(0.24, now);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + 0.45);
+
+      osc.connect(filter);
+      filter.connect(gain);
+
+      const targetBus = this.combatBus ?? this.ctx.destination;
+      if (panner) {
+        gain.connect(panner);
+        panner.connect(targetBus);
+      } else {
+        gain.connect(targetBus);
+      }
+
+      this.activeVoices++;
+      osc.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 1); };
+
+      osc.start(now);
+      osc.stop(now + 0.45);
+    } catch {
+      // ignore
+    }
+  }
+
+  playGolemSlam(worldX = 1300, cameraX = 1300): void {
+    try {
+      if (!this.initCtx() || !this.ctx) return;
+      const stamp = performance.now();
+      if (stamp - this.lastGolemSlam < 200 || this.activeVoices >= 14) return;
+      this.lastGolemSlam = stamp;
+
+      const pan = this.calculateSpatialPan(worldX, cameraX);
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const subOsc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const panner = this.createPannerNode(pan);
+
+      // Tectonic stone impact: 150Hz falling to 38Hz
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(38, now + 0.35);
+
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(80, now);
+      subOsc.frequency.exponentialRampToValueAtTime(30, now + 0.4);
+
+      gain.gain.setValueAtTime(0.34, now);
+      gain.gain.exponentialRampToValueAtTime(0.006, now + 0.42);
+
+      osc.connect(gain);
+      subOsc.connect(gain);
+
+      const targetBus = this.impactBus ?? this.ctx.destination;
+      if (panner) {
+        gain.connect(panner);
+        panner.connect(targetBus);
+      } else {
+        gain.connect(targetBus);
+      }
+
+      this.activeVoices += 2;
+      osc.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 2); };
+
+      osc.start(now);
+      subOsc.start(now);
+      osc.stop(now + 0.42);
+      subOsc.stop(now + 0.42);
+    } catch {
+      // ignore
+    }
+  }
+
+  playMinionAttack(type: 'melee' | 'caster' | 'cannon', worldX = 1300, cameraX = 1300): void {
+    try {
+      if (!this.initCtx() || !this.ctx) return;
+      const stamp = performance.now();
+      if (stamp - this.lastMinionAttack < 90 || this.activeVoices >= 12) return;
+      this.lastMinionAttack = stamp;
+
+      const pan = this.calculateSpatialPan(worldX, cameraX);
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const panner = this.createPannerNode(pan);
+
+      if (type === 'cannon') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.exponentialRampToValueAtTime(55, now + 0.12);
+        gain.gain.setValueAtTime(0.16, now);
+        gain.gain.exponentialRampToValueAtTime(0.005, now + 0.14);
+      } else if (type === 'caster') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(740, now);
+        osc.frequency.exponentialRampToValueAtTime(380, now + 0.08);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.003, now + 0.09);
+      } else {
+        // Melee sword clash
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1400, now);
+        osc.frequency.exponentialRampToValueAtTime(600, now + 0.05);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.002, now + 0.06);
+      }
+
+      osc.connect(gain);
+
+      const targetBus = this.combatBus ?? this.ctx.destination;
+      if (panner) {
+        gain.connect(panner);
+        panner.connect(targetBus);
+      } else {
+        gain.connect(targetBus);
+      }
+
+      this.activeVoices++;
+      osc.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 1); };
+
+      osc.start(now);
+      osc.stop(now + (type === 'cannon' ? 0.14 : type === 'caster' ? 0.09 : 0.06));
+    } catch {
+      // ignore
+    }
+  }
+
+  playFrogCroak(worldX = 1300, cameraX = 1300): void {
+    try {
+      if (!this.initCtx() || !this.ctx) return;
+      const stamp = performance.now();
+      if (stamp - this.lastFrogCroak < 1200 || this.activeVoices >= 10) return;
+      this.lastFrogCroak = stamp;
+
+      const pan = this.calculateSpatialPan(worldX, cameraX);
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const panner = this.createPannerNode(pan);
+
+      // Natural organic frog croak: 160Hz -> 210Hz -> 140Hz
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.linearRampToValueAtTime(210, now + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(135, now + 0.18);
+
+      gain.gain.setValueAtTime(0.045, now);
+      gain.gain.exponentialRampToValueAtTime(0.002, now + 0.18);
+
+      osc.connect(gain);
+
+      const targetBus = this.uiBus ?? this.ctx.destination;
+      if (panner) {
+        gain.connect(panner);
+        panner.connect(targetBus);
+      } else {
+        gain.connect(targetBus);
+      }
+
+      this.activeVoices++;
+      osc.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 1); };
+
+      osc.start(now);
+      osc.stop(now + 0.18);
     } catch {
       // ignore
     }

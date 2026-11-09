@@ -1,0 +1,110 @@
+[
+  {
+    "avatar_id": "c_locke",
+    "id": "monk_outfit",
+    "sha256": "93dff67c1abcae0b0b3855ee8f695aa32f754d36d25bd79d66c5db80f395a9db",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "a4704769da8771eb6c91a7f0bd8ebf4887d6bd1e32123993a91fc8de92b98890",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_senna",
+    "id": "sextant_crossbow",
+    "sha256": "865dc3aef3ce49087958b01d03d5402c9b0a0838d4e497e077a410c7d9327731",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "04f6dcca95ceb038309d996a66ea6c2ff337ec6cb78bf6b04b415707468a915c",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_senna",
+    "id": "map_shrine",
+    "sha256": "94253f6e03b68189f06da2b08bb2ef6e0b9b118c1eee2c03faea89dda0f4b528",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "460c48003f8205dd85edc93725f2a42bab4c83379a62d342f80c3493585d2d8f",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_senna",
+    "id": "pilgrim_armor",
+    "sha256": "87f686178723dd23b8a5969d6ef5051384aa6bddb93c10fc977704ff80ed54cd",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "22ff72feadf22f402bbd0c6b769e60fa0df83c9cd13053aecd539b9040f376a0",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_largo",
+    "id": "reed_drums",
+    "sha256": "ae304d2b57bcc1e352c9effbe55d4c08232486b5566e4f62b9be0009df623644",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "2275ee0fd6a633d4bdda7a42588f305cfdab103bb885c60874388a9114fa5941",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_largo",
+    "id": "metronome",
+    "sha256": "46944896c0d69982b506742136189855da35899f6f2a1ff511faa3b5b790a14f",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "99a78afe9d88bf028c2f1ea4541afa9553fd1a1de0aa46c0795b6889fe046afb",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_largo",
+    "id": "percussion_frogs",
+    "sha256": "53302e0ad03be83bd9a4a83d77eed96ce0bbfa6f0957a0cd26e470eaf265ff25",
+    "status": "reference_uploaded",
+    "version": 8,
+    "inventory_hash": "bd76400cb4198446f6b3886c2b3a192bfe227b46032b7a98418d3df6f0b03d17",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_largo",
+    "id": "clockmaker_outfit",
+    "sha256": "b40716a986d68ec1b2a9e5cfc0b316ee6defe383c449aec6d25732848e67285e",
+    "status": "reference_uploaded",
+    "version": 9,
+    "inventory_hash": "f4f3f97bdc0974375ae2d5016dc476399caa404b8f1159bee4ddcfcf725f96e9",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_shadowfiend",
+    "id": "furnace",
+    "sha256": "40e7056acd2148205936fe7680aab5cd3a71b85a0924c97d8162fad8e25c2b0c",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "2b92d5d8c2ae15cc4ed546444bedf17dfb4aebb28cddbce4aecb42d725332327",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_shadowfiend",
+    "id": "ember_casket",
+    "sha256": "a1908d9d6a4434b3fdc552779f87b927e566529f194ed0bb1fb31211eb9eb89d",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "ee73913fac835dd5c39f53bdc304068288ee9a30fd80ec34901063129579346e",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_shadowfiend",
+    "id": "mortician_outfit",
+    "sha256": "ec71b9f20957db418bdffc6df80f00dcd0ce3d77cd860e4038d04015702eb22c",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "916a133eabfda7c8f6dd3678a32531253d7b327c0948e1efbcda41135fa961b2",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_earthshaker",
+    "id": "pendulum_hammers",
+    "sha256": "8e7bfaa73251de3dafd8da75beb121359ac36bd2ba4f763334ed1c9d94ec63fc",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "3614d6db3663b9769fdaf69324cbcf945c2ad26fb8f21fb2cf2f58f71294a721",
+    "http": 200
+  }
+]

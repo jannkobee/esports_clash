@@ -1,0 +1,1845 @@
+{
+  "checked_at": "2026-10-25T14:42:48.019Z",
+  "source": "authenticated live backoffice API",
+  "declared_components": 112,
+  "declared_references_uploaded": 112,
+  "declared_missing": 0,
+  "total_isolated_references": 120,
+  "scope": "Reviewed PNG references only; no 3D qualification or publication",
+  "rows": [
+    {
+      "avatar_id": "c_solana",
+      "id": "heliograph_shield",
+      "label": "Hinged heliograph shield",
+      "status": "reference_uploaded",
+      "reference_sha256": "3c1b242b831abdf34873719417102d53b205a79c144df59a24804d9ab9a38f54",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "4b64a62a85c1f11e681699000115b3387983e0997f1384781625f47db8732c0f"
+    },
+    {
+      "avatar_id": "c_solana",
+      "id": "sun_armor",
+      "label": "Ivory-bronze armor and burnt-red sash",
+      "status": "reference_uploaded",
+      "reference_sha256": "ecc51095274558f8d5144ef986c0ec0dce8c4afadc597c608ea107cf401087cd",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "4b64a62a85c1f11e681699000115b3387983e0997f1384781625f47db8732c0f"
+    },
+    {
+      "avatar_id": "c_astra",
+      "id": "crystal_longbow",
+      "label": "Asymmetric longbow with crystal forks",
+      "status": "reference_uploaded",
+      "reference_sha256": "7f2612b6d0bb47e2edeb051d4b5231d9327bfbc7b659d92701d6f014c80a3605",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "27d67284f8425c52cb0dec91363c38b976d9f7ea1e659978aa05329c48e71155"
+    },
+    {
+      "avatar_id": "c_astra",
+      "id": "ice_plates",
+      "label": "Ice-tuning plates and northern outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "565ca8716486d0660e00410e5577be22da8d08dc1d4e817e660e1debc56cf659",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "27d67284f8425c52cb0dec91363c38b976d9f7ea1e659978aa05329c48e71155"
+    },
+    {
+      "avatar_id": "c_kyumi",
+      "id": "route_tablets",
+      "label": "Glass route tablets",
+      "status": "reference_uploaded",
+      "reference_sha256": "24fad1a9029aebb706579ef94aceddeff3764ae54100fcffa92f18a03c23aacf",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "3f16589930afd7f334f6bfec5b4031be2275eea680c5bdc4d4e9a1f46accfb63"
+    },
+    {
+      "avatar_id": "c_kyumi",
+      "id": "travel_robes",
+      "label": "Blue-gray traveling robes",
+      "status": "reference_uploaded",
+      "reference_sha256": "827432b637de4a74b1c97018ba34059bc5f60c208cbaf49853564474501b9708",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "3f16589930afd7f334f6bfec5b4031be2275eea680c5bdc4d4e9a1f46accfb63"
+    },
+    {
+      "avatar_id": "c_buck",
+      "id": "rotary_ram",
+      "label": "Rotary ram-gun and back brace",
+      "status": "reference_uploaded",
+      "reference_sha256": "e372f3f8a8240ba5e7388a24fa181374e654ea53f038a57b21484a3abeff7296",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "25d43bb78d8ea6c157dcbbabb3e1cea9ba3edae5afcd03f18bf3533205764f67"
+    },
+    {
+      "avatar_id": "c_buck",
+      "id": "workwear",
+      "label": "Orange-striped industrial workwear",
+      "status": "reference_uploaded",
+      "reference_sha256": "269b21cd681684c2d0c573f3f11e78559f643015fe771bc4117d7c740ada0eaa",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "25d43bb78d8ea6c157dcbbabb3e1cea9ba3edae5afcd03f18bf3533205764f67"
+    },
+    {
+      "avatar_id": "c_valkira",
+      "id": "crescent_ledgers",
+      "label": "Paired crescent ledger blades",
+      "status": "reference_uploaded",
+      "reference_sha256": "2e01f6b409f7feec6b70fd7ebaf80eb61583db01c75b9c1e6abde60412f756d6",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "292c6ec05298e7e2d5dc95d0282301aae75a7bef73b6afae1da9615ae58fcd65"
+    },
+    {
+      "avatar_id": "c_valkira",
+      "id": "oath_outfit",
+      "label": "Oath collector outfit, gray cape and wrist seals",
+      "status": "reference_uploaded",
+      "reference_sha256": "09ba72725afb5d88fd52714f9e2cd87e70c54935a3ee825de6f7c10a35bf4b5a",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "292c6ec05298e7e2d5dc95d0282301aae75a7bef73b6afae1da9615ae58fcd65"
+    },
+    {
+      "avatar_id": "c_kage",
+      "id": "lacquer_outfit",
+      "label": "Articulated matte-black lacquer outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "c1ec69926363fc62b58b7ea244d69f42dfe8d3701db2ce4a9f2a05cc7200823e",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 3,
+      "inventory_hash": "d9cc0a7be4b7d56dc4f4cbbc272d589733573f5925dae7674fb136e3a082d095"
+    },
+    {
+      "avatar_id": "c_kazemaru",
+      "id": "vane_shield",
+      "label": "Collapsible wind-vane shield",
+      "status": "reference_uploaded",
+      "reference_sha256": "2a2686da647629f8f6922ef5589ce6bd01c36e1d05e9583ab2448e3c6fd80d9f",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "0587cf44d0acdaf6bd78c8ad532699fed1ac0676805b9a14fd53d1a5d38ab021"
+    },
+    {
+      "avatar_id": "c_kazemaru",
+      "id": "curved_blade",
+      "label": "Narrow curved blade",
+      "status": "reference_uploaded",
+      "reference_sha256": "8f1f6b08d07bcff981fecf47ff95d456b323fdc6beb3c65761022721058180cc",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "0587cf44d0acdaf6bd78c8ad532699fed1ac0676805b9a14fd53d1a5d38ab021"
+    },
+    {
+      "avatar_id": "c_kazemaru",
+      "id": "sailor_armor",
+      "label": "Sailor armor and weather-map tapes",
+      "status": "reference_uploaded",
+      "reference_sha256": "c843fd661d800c557e1b16d6750ac95e3a1bd8217b4a25ca0a3a9e2c51f5046b",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "0587cf44d0acdaf6bd78c8ad532699fed1ac0676805b9a14fd53d1a5d38ab021"
+    },
+    {
+      "avatar_id": "c_kindra",
+      "id": "lantern_staff",
+      "label": "Lantern scout staff",
+      "status": "reference_uploaded",
+      "reference_sha256": "04e8d4daf95eb664cf8078e820065f6ac4441479c2eab157ebf2218961f4a912",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "d4587273ffa76d0deb45b7fdda27b522c0a5bf7de1403301180b0509f397096b"
+    },
+    {
+      "avatar_id": "c_kindra",
+      "id": "scout_outfit",
+      "label": "Scout outfit and travel pack",
+      "status": "reference_uploaded",
+      "reference_sha256": "78e53430cb88513a0211c3523821ab2562ba92237b997f4ecc202f2b102fe35e",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "d4587273ffa76d0deb45b7fdda27b522c0a5bf7de1403301180b0509f397096b"
+    },
+    {
+      "avatar_id": "c_kindra",
+      "id": "fen",
+      "label": "Fen dusk-hound",
+      "status": "reference_uploaded",
+      "reference_sha256": "d12c1e4b84222b3f7937527818feb0707c1efa700a50bcd5357c8756b99b0e5b",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "d4587273ffa76d0deb45b7fdda27b522c0a5bf7de1403301180b0509f397096b"
+    },
+    {
+      "avatar_id": "c_cora",
+      "id": "kite_bow",
+      "label": "Kite-rigged bow",
+      "status": "reference_uploaded",
+      "reference_sha256": "8bdfb8d5bfbe6f8a9ecb7506c2ea0d81b2256c9a7200d2c6e59c1f51fa32a136",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "75dc932153aad8b97c65ffa5ec0cb63ca1cc88c03539a53eeca91d175745f9fd"
+    },
+    {
+      "avatar_id": "c_cora",
+      "id": "hawk_outfit",
+      "label": "Masked archer outfit with hawk shoulder fins",
+      "status": "reference_uploaded",
+      "reference_sha256": "13e50ee1fdc0f8cff23f2c622353dc61da2743945084a362fb693504b1c7794d",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "75dc932153aad8b97c65ffa5ec0cb63ca1cc88c03539a53eeca91d175745f9fd"
+    },
+    {
+      "avatar_id": "c_renn",
+      "id": "fan_shield",
+      "label": "Half-moon fan shield",
+      "status": "reference_uploaded",
+      "reference_sha256": "7e1eb9d2fddf3cdacd2a6dc10b9389c65eb74b12af35c7f84ad0a7fba3c60139",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "3aa71f314edfd149c0aa2c192c69b9d12eaed8e1f80fb3c5ee762936c3da44a9"
+    },
+    {
+      "avatar_id": "c_renn",
+      "id": "tux_armor",
+      "label": "Midnight tux-armor, mask and floorwork slippers",
+      "status": "reference_uploaded",
+      "reference_sha256": "bbd691b2cd718c93905a8bb2fe5c1d4781be657c1a88765fecde34cb9648df5a",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "3aa71f314edfd149c0aa2c192c69b9d12eaed8e1f80fb3c5ee762936c3da44a9"
+    },
+    {
+      "avatar_id": "c_sylla",
+      "id": "warden_staff",
+      "label": "Warden lantern staff",
+      "status": "reference_uploaded",
+      "reference_sha256": "99e885bd57260b2077e7059c35f502f0cc37689cf1155d255218248b511369bf",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "3d964d99c6c76a500f2285b6722ad377ee36dc00e288a8842aba56bea98b158b"
+    },
+    {
+      "avatar_id": "c_sylla",
+      "id": "antler_mantle",
+      "label": "Patched antlered mantle and warden outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "80666b44e72fcc2be6cc5f96f31cf00ec20a2b06f7bba33d7b4dc97741cca2cf",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "3d964d99c6c76a500f2285b6722ad377ee36dc00e288a8842aba56bea98b158b"
+    },
+    {
+      "avatar_id": "c_sylla",
+      "id": "pack_tortoise",
+      "label": "Moss-backed pack tortoise",
+      "status": "reference_uploaded",
+      "reference_sha256": "940ec4ad7dfd8207328c8cad8a1732186ecf84ca93d87fba6b3c926772679ee9",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "3d964d99c6c76a500f2285b6722ad377ee36dc00e288a8842aba56bea98b158b"
+    },
+    {
+      "avatar_id": "c_sylla",
+      "id": "tortoise_cargo",
+      "label": "Pack tortoise cargo harness and baggage",
+      "status": "reference_uploaded",
+      "reference_sha256": "78a88213204c439f6404afe06818b923322d2b8eb81713414153372579ed79ee",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "3d964d99c6c76a500f2285b6722ad377ee36dc00e288a8842aba56bea98b158b"
+    },
+    {
+      "avatar_id": "c_tequoia",
+      "id": "parasol",
+      "label": "Mushroom-coral parasol",
+      "status": "reference_uploaded",
+      "reference_sha256": "8fa9e856f0cec8fe43d4de76adce0661843181373dc5d5668794d482953bf4b8",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "75f9f3580691aadfa2321321f3b51d86bcc5d8d8964a65f87250e64a1f626b1b"
+    },
+    {
+      "avatar_id": "c_tequoia",
+      "id": "seed_jars",
+      "label": "Ceramic seed jars",
+      "status": "reference_uploaded",
+      "reference_sha256": "b0a87761bda133c3496a4bc9a130869a8f61dd163c13e88b3c3e955a334adec4",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "75f9f3580691aadfa2321321f3b51d86bcc5d8d8964a65f87250e64a1f626b1b"
+    },
+    {
+      "avatar_id": "c_tequoia",
+      "id": "mycelium_outfit",
+      "label": "Fungus architect outfit and mycelium sleeves",
+      "status": "reference_uploaded",
+      "reference_sha256": "79a8c57050af4af0c2513cefb6624f702d25390a7a511ce265082b79f772ef00",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "75f9f3580691aadfa2321321f3b51d86bcc5d8d8964a65f87250e64a1f626b1b"
+    },
+    {
+      "avatar_id": "c_zal",
+      "id": "needle_fingers",
+      "label": "Mechanical needle-finger tools",
+      "status": "reference_uploaded",
+      "reference_sha256": "5824ca52d9e2f4356393dec49035c184bb29140b025fcb263f56c31a543453b8",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "2f7711b52a32cbeb9c6c547a12c05935ab5f17032f14924b7ddb977edc559bfb"
+    },
+    {
+      "avatar_id": "c_zal",
+      "id": "thread_reservoirs",
+      "label": "Lilac thread reservoirs",
+      "status": "reference_uploaded",
+      "reference_sha256": "abf319ab58f0e05e7b62938cee2f685f2c98ad170d7469e85299b4ca1f993db1",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "2f7711b52a32cbeb9c6c547a12c05935ab5f17032f14924b7ddb977edc559bfb"
+    },
+    {
+      "avatar_id": "c_zal",
+      "id": "surgeon_outfit",
+      "label": "Surgeon outfit and cracked porcelain mask",
+      "status": "reference_uploaded",
+      "reference_sha256": "10e7370c508b24469ece66ae930e28a65a7435aa144c90e640973f712febf5bf",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "2f7711b52a32cbeb9c6c547a12c05935ab5f17032f14924b7ddb977edc559bfb"
+    },
+    {
+      "avatar_id": "c_xin",
+      "id": "mail_satchel",
+      "label": "Glowing-envelope shoulder mail-satchel",
+      "status": "reference_uploaded",
+      "reference_sha256": "a9c81440313e5301f53f96154e59e4ea170cb27af8a49ee2e318c3d6ebd4b620",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "a9e04f48c937d8ae4905aec978f52d2f24b0e51a395f690395c474e454064464"
+    },
+    {
+      "avatar_id": "c_xin",
+      "id": "skate_boots",
+      "label": "Iron skate-boots",
+      "status": "reference_uploaded",
+      "reference_sha256": "2500ac74f7391fe2e19ab03067272c6c4b74721c80cb6913bc54a5b541e4b646",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "a9e04f48c937d8ae4905aec978f52d2f24b0e51a395f690395c474e454064464"
+    },
+    {
+      "avatar_id": "c_xin",
+      "id": "courier_outfit",
+      "label": "Courier clothing",
+      "status": "reference_uploaded",
+      "reference_sha256": "93f8aeb8b3af3755357e3658fada74fdbac05e31569f06f85032c2ce5afcc9f2",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "a9e04f48c937d8ae4905aec978f52d2f24b0e51a395f690395c474e454064464"
+    },
+    {
+      "avatar_id": "c_raijin",
+      "id": "ground_rods",
+      "label": "Portable grounding rods",
+      "status": "reference_uploaded",
+      "reference_sha256": "e6ccb172e1438e986dd5e9f9b55729bb89514c25283b2c049fa8d40ac9a063cb",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "210a1a1a2c49605b57b4cc322acf4f94f317617759c7a55d33f727ddfeb176ae"
+    },
+    {
+      "avatar_id": "c_raijin",
+      "id": "scientist_outfit",
+      "label": "Insulated hazard-seam coat and monocle",
+      "status": "reference_uploaded",
+      "reference_sha256": "a74f923af32a41c773faa1763b5407bd309e0956c4659c70f31c4d6a3119a78b",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "210a1a1a2c49605b57b4cc322acf4f94f317617759c7a55d33f727ddfeb176ae"
+    },
+    {
+      "avatar_id": "c_kaolin",
+      "id": "stone_shutters",
+      "label": "Detachable hinged stone shutters",
+      "status": "reference_uploaded",
+      "reference_sha256": "49b742cc60ed03f7e179879d4a2feaacfd4eb7a015b23c9b7fe087180cec1be2",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 3,
+      "inventory_hash": "4937774d42921ed42fb9cb7da423cd32b68e20c849762bf3113b2744bada5cf9"
+    },
+    {
+      "avatar_id": "c_inai",
+      "id": "star_staff",
+      "label": "Star-map walking staff",
+      "status": "reference_uploaded",
+      "reference_sha256": "7283739263bdfc182154fb22fb5ac7ba168202dd681c9c8f5d22750107d9fafa",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "e5f8c21f50109ad5485f35802ef8c32738c3cc3c80e9ae390d922e8860b8c15a"
+    },
+    {
+      "avatar_id": "c_inai",
+      "id": "measuring_cords",
+      "label": "Long measuring cords",
+      "status": "reference_uploaded",
+      "reference_sha256": "6fd0ec82c328d6384e44100ab88a080021ee09f1357a139ca2326ed7cb1f9ede",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "e5f8c21f50109ad5485f35802ef8c32738c3cc3c80e9ae390d922e8860b8c15a"
+    },
+    {
+      "avatar_id": "c_inai",
+      "id": "pilgrim_outfit",
+      "label": "Veiled pilgrim robes",
+      "status": "reference_uploaded",
+      "reference_sha256": "4bd110abaa0fa001139890ce28346432f9e7fe659eddbfff3eba8eeb571a3f90",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "e5f8c21f50109ad5485f35802ef8c32738c3cc3c80e9ae390d922e8860b8c15a"
+    },
+    {
+      "avatar_id": "c_qiyana",
+      "id": "cleaver",
+      "label": "Single asymmetrical cleaver",
+      "status": "reference_uploaded",
+      "reference_sha256": "f1a81ebf5006b437fe899fe9521facf5edb27de509f7fcf8bd67bcce1ff206b3",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "9562acfb7ce6d930b421bb8f1f5afaf00974df4cc312563afab1d06cc7a20b37"
+    },
+    {
+      "avatar_id": "c_qiyana",
+      "id": "glass_circlet",
+      "label": "Floating glass-shield circlet",
+      "status": "reference_uploaded",
+      "reference_sha256": "8bd8222ce37afd98309422dc77383c324654c2f9ddd5306aaacaea18c086c557",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "9562acfb7ce6d930b421bb8f1f5afaf00974df4cc312563afab1d06cc7a20b37"
+    },
+    {
+      "avatar_id": "c_qiyana",
+      "id": "reflective_outfit",
+      "label": "Mineral queen outfit and fractured reflective cape",
+      "status": "reference_uploaded",
+      "reference_sha256": "19d06007a7a6728f96dca3d6d00a97d9c98da753f2edb4bca7c4b9f76e24018f",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "9562acfb7ce6d930b421bb8f1f5afaf00974df4cc312563afab1d06cc7a20b37"
+    },
+    {
+      "avatar_id": "c_locke",
+      "id": "ash_bells",
+      "label": "Iron ash bells",
+      "status": "reference_uploaded",
+      "reference_sha256": "07d7156bfffccdfa49658de5d4a4f0b359888a3c0c625c4b86282ec97226f39d",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "a4704769da8771eb6c91a7f0bd8ebf4887d6bd1e32123993a91fc8de92b98890"
+    },
+    {
+      "avatar_id": "c_locke",
+      "id": "monk_outfit",
+      "label": "Masked monk outfit and charred prayer banners",
+      "status": "reference_uploaded",
+      "reference_sha256": "93dff67c1abcae0b0b3855ee8f695aa32f754d36d25bd79d66c5db80f395a9db",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "a4704769da8771eb6c91a7f0bd8ebf4887d6bd1e32123993a91fc8de92b98890"
+    },
+    {
+      "avatar_id": "c_senna",
+      "id": "sextant_crossbow",
+      "label": "Brass sextant crossbow",
+      "status": "reference_uploaded",
+      "reference_sha256": "865dc3aef3ce49087958b01d03d5402c9b0a0838d4e497e077a410c7d9327731",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "22ff72feadf22f402bbd0c6b769e60fa0df83c9cd13053aecd539b9040f376a0"
+    },
+    {
+      "avatar_id": "c_senna",
+      "id": "map_shrine",
+      "label": "Foldout field-map shrine",
+      "status": "reference_uploaded",
+      "reference_sha256": "94253f6e03b68189f06da2b08bb2ef6e0b9b118c1eee2c03faea89dda0f4b528",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "22ff72feadf22f402bbd0c6b769e60fa0df83c9cd13053aecd539b9040f376a0"
+    },
+    {
+      "avatar_id": "c_senna",
+      "id": "pilgrim_armor",
+      "label": "Pilgrim armor",
+      "status": "reference_uploaded",
+      "reference_sha256": "87f686178723dd23b8a5969d6ef5051384aa6bddb93c10fc977704ff80ed54cd",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "22ff72feadf22f402bbd0c6b769e60fa0df83c9cd13053aecd539b9040f376a0"
+    },
+    {
+      "avatar_id": "c_largo",
+      "id": "reed_drums",
+      "label": "Hollow reed drums",
+      "status": "reference_uploaded",
+      "reference_sha256": "ae304d2b57bcc1e352c9effbe55d4c08232486b5566e4f62b9be0009df623644",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "f4f3f97bdc0974375ae2d5016dc476399caa404b8f1159bee4ddcfcf725f96e9"
+    },
+    {
+      "avatar_id": "c_largo",
+      "id": "metronome",
+      "label": "Pedal metronome",
+      "status": "reference_uploaded",
+      "reference_sha256": "46944896c0d69982b506742136189855da35899f6f2a1ff511faa3b5b790a14f",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "f4f3f97bdc0974375ae2d5016dc476399caa404b8f1159bee4ddcfcf725f96e9"
+    },
+    {
+      "avatar_id": "c_largo",
+      "id": "percussion_frogs",
+      "label": "Percussion frog companion",
+      "status": "reference_uploaded",
+      "reference_sha256": "53302e0ad03be83bd9a4a83d77eed96ce0bbfa6f0957a0cd26e470eaf265ff25",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "f4f3f97bdc0974375ae2d5016dc476399caa404b8f1159bee4ddcfcf725f96e9"
+    },
+    {
+      "avatar_id": "c_largo",
+      "id": "clockmaker_outfit",
+      "label": "Amphibian clockmaker outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "b40716a986d68ec1b2a9e5cfc0b316ee6defe383c449aec6d25732848e67285e",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "f4f3f97bdc0974375ae2d5016dc476399caa404b8f1159bee4ddcfcf725f96e9"
+    },
+    {
+      "avatar_id": "c_shadowfiend",
+      "id": "furnace",
+      "label": "Mortician back furnace",
+      "status": "reference_uploaded",
+      "reference_sha256": "40e7056acd2148205936fe7680aab5cd3a71b85a0924c97d8162fad8e25c2b0c",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "916a133eabfda7c8f6dd3678a32531253d7b327c0948e1efbcda41135fa961b2"
+    },
+    {
+      "avatar_id": "c_shadowfiend",
+      "id": "ember_casket",
+      "label": "Ember casket and hauling chain",
+      "status": "reference_uploaded",
+      "reference_sha256": "a1908d9d6a4434b3fdc552779f87b927e566529f194ed0bb1fb31211eb9eb89d",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "916a133eabfda7c8f6dd3678a32531253d7b327c0948e1efbcda41135fa961b2"
+    },
+    {
+      "avatar_id": "c_shadowfiend",
+      "id": "mortician_outfit",
+      "label": "Mortician outfit and black glass face shield",
+      "status": "reference_uploaded",
+      "reference_sha256": "ec71b9f20957db418bdffc6df80f00dcd0ce3d77cd860e4038d04015702eb22c",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "916a133eabfda7c8f6dd3678a32531253d7b327c0948e1efbcda41135fa961b2"
+    },
+    {
+      "avatar_id": "c_earthshaker",
+      "id": "pendulum_hammers",
+      "label": "Paired pendulum hammers",
+      "status": "reference_uploaded",
+      "reference_sha256": "8e7bfaa73251de3dafd8da75beb121359ac36bd2ba4f763334ed1c9d94ec63fc",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "4048ee2d1bb03f1cfd5689547d8c395c2d56222fa2cf5dfa5efa4ba16a692ea0"
+    },
+    {
+      "avatar_id": "c_earthshaker",
+      "id": "survey_compass",
+      "label": "Floor-level surveying compass",
+      "status": "reference_uploaded",
+      "reference_sha256": "a0784ddd3d8788780f7e3c2447a3fe4aacd649365add261cf95e7329852a7694",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "4048ee2d1bb03f1cfd5689547d8c395c2d56222fa2cf5dfa5efa4ba16a692ea0"
+    },
+    {
+      "avatar_id": "c_earthshaker",
+      "id": "seismologist_outfit",
+      "label": "Seismologist titan outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "b87e9818dd5052a51814752cd25ed2a8cdb7304595787d01705f82a42a829b96",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "4048ee2d1bb03f1cfd5689547d8c395c2d56222fa2cf5dfa5efa4ba16a692ea0"
+    },
+    {
+      "avatar_id": "c_mirehook",
+      "id": "cage_forge",
+      "label": "Strapped cage forge",
+      "status": "reference_uploaded",
+      "reference_sha256": "fda9675a0de72a2aea42e79e3a106f136f5293e58f0e53a7cdfda697d298d898",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "4eadce0f0b7aafad426700dd1dd3a5ad87f412ad831f955552949fd3004a2fc1"
+    },
+    {
+      "avatar_id": "c_mirehook",
+      "id": "trap_anvil",
+      "label": "Rotating trap anvil",
+      "status": "reference_uploaded",
+      "reference_sha256": "9d141403036a2dbdfb572c1a4872f628558d7d1e6f3e1f5e4eef5e632afcbd59",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "4eadce0f0b7aafad426700dd1dd3a5ad87f412ad831f955552949fd3004a2fc1"
+    },
+    {
+      "avatar_id": "c_mirehook",
+      "id": "riveted_gauntlets",
+      "label": "Riveted smith gauntlets",
+      "status": "reference_uploaded",
+      "reference_sha256": "e3cfd014a9c5f80b90837f97e9ff1f106d5d5be80277b4728a4088d617924f4e",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "4eadce0f0b7aafad426700dd1dd3a5ad87f412ad831f955552949fd3004a2fc1"
+    },
+    {
+      "avatar_id": "c_mirehook",
+      "id": "smith_outfit",
+      "label": "Smith outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "ea448673bb4d19ac4aec14c02a16a633a9ec67580dcbfc1064a3d9aed103a661",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "4eadce0f0b7aafad426700dd1dd3a5ad87f412ad831f955552949fd3004a2fc1"
+    },
+    {
+      "avatar_id": "c_nullweaver",
+      "id": "gyroscope",
+      "label": "Suspended broken gyroscope",
+      "status": "reference_uploaded",
+      "reference_sha256": "46675481c8163b517456f4d79c41c7a2ecba3941b38c5976a281b1ea3aa04864",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "c1f9873d5e2b32a2a1e12ecf9c9470119b220a43de26b1f84fa1b33f912fdae8"
+    },
+    {
+      "avatar_id": "c_nullweaver",
+      "id": "measurement_robe",
+      "label": "Indigo measurement robe",
+      "status": "reference_uploaded",
+      "reference_sha256": "447f15617f2d7f54e87ed01c2468cb5127a274174e5626101c6b12c2c85d3d2f",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "c1f9873d5e2b32a2a1e12ecf9c9470119b220a43de26b1f84fa1b33f912fdae8"
+    },
+    {
+      "avatar_id": "c_voltgrip",
+      "id": "traffic_gauntlets",
+      "label": "Folding traffic-bar gauntlets",
+      "status": "reference_uploaded",
+      "reference_sha256": "08f6c52fbfc2e02f3f1e2ea6d4a2ad764bccac9f1c457755207ada5e643eec2f",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "9e56dbbc1cae23df32260c5ee83bc5d66176a1f69eb06a8565f5d2c588579c0d"
+    },
+    {
+      "avatar_id": "c_voltgrip",
+      "id": "spring_cable",
+      "label": "Spooled spring cable",
+      "status": "reference_uploaded",
+      "reference_sha256": "fc8783d47c71aee90f799d5144156573286f740e4a410c330176f1973c36b960",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "9e56dbbc1cae23df32260c5ee83bc5d66176a1f69eb06a8565f5d2c588579c0d"
+    },
+    {
+      "avatar_id": "c_voltgrip",
+      "id": "utility_outfit",
+      "label": "Electrician outfit and safety visor",
+      "status": "reference_uploaded",
+      "reference_sha256": "bc7815d2e11b99328c9faf03a3e4d0901fdaad21edeb39c5603b73074d97812b",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "9e56dbbc1cae23df32260c5ee83bc5d66176a1f69eb06a8565f5d2c588579c0d"
+    },
+    {
+      "avatar_id": "c_aetherbolt",
+      "id": "bow_rifle",
+      "label": "Mechanical ricochet bow-rifle",
+      "status": "reference_uploaded",
+      "reference_sha256": "7e23bb0729f08441524e3d8fba1975f0b42ecc5f54d25702bac6f20f63adcbfd",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "be82e0d827f1115e3cdefdd3ca8a338ca26d4a1e3a757057a0509650d86eaff8"
+    },
+    {
+      "avatar_id": "c_aetherbolt",
+      "id": "mirror_drone",
+      "label": "Foldable brass mirror drone",
+      "status": "reference_uploaded",
+      "reference_sha256": "7912040ee5054bd5147c2fbbcb360af201be04eb4f499dbe21cfaf9b440894f1",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "be82e0d827f1115e3cdefdd3ca8a338ca26d4a1e3a757057a0509650d86eaff8"
+    },
+    {
+      "avatar_id": "c_aetherbolt",
+      "id": "surveyor_outfit",
+      "label": "Surveyor outfit and rangefinder eyepieces",
+      "status": "reference_uploaded",
+      "reference_sha256": "d5b6813bd4f077e7ef40f7c1831a39b566e9bb8fb77c8eca6e4cf38712935dcd",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "be82e0d827f1115e3cdefdd3ca8a338ca26d4a1e3a757057a0509650d86eaff8"
+    },
+    {
+      "avatar_id": "c_corsara",
+      "id": "clockwork_skiff",
+      "label": "Knee-high clockwork skiff",
+      "status": "reference_uploaded",
+      "reference_sha256": "fa8667819450cdf70c88ce50e848e38af96343b1e4022ba8adeca7938056c8c9",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "77848ff7464b0ce942d502606e9f2db276d27df1b21da4ef5cfded3d2cc584cd"
+    },
+    {
+      "avatar_id": "c_corsara",
+      "id": "deck_cannons",
+      "label": "Two mismatched deck cannons",
+      "status": "reference_uploaded",
+      "reference_sha256": "0b92c895a9173d086a92c9c91989ab3a6acda1373557e1d43b86da8e526c5d47",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "77848ff7464b0ce942d502606e9f2db276d27df1b21da4ef5cfded3d2cc584cd"
+    },
+    {
+      "avatar_id": "c_corsara",
+      "id": "privateer_outfit",
+      "label": "Privateer outfit and rectangular bicorne",
+      "status": "reference_uploaded",
+      "reference_sha256": "0b6f4768b4363d808de76e5ba74e1c7314621b923e63fbc88aff51a1a25702f0",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "77848ff7464b0ce942d502606e9f2db276d27df1b21da4ef5cfded3d2cc584cd"
+    },
+    {
+      "avatar_id": "c_brewmaw",
+      "id": "fermentation_tanks",
+      "label": "Transparent brass fermentation tanks",
+      "status": "reference_uploaded",
+      "reference_sha256": "74764a9dce0b497b753b614e855cd1491272f9333edce868056ba9123d8cb07a",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "1fb9712dfade3d8e542b50489f26d3ce28808383bd725ba0eea99e621e85faa5"
+    },
+    {
+      "avatar_id": "c_brewmaw",
+      "id": "pressure_wheels",
+      "label": "Pressure-wheel forearm tools",
+      "status": "reference_uploaded",
+      "reference_sha256": "99341c50b7156d7fee1cc99db898147b97159f5bcd2c8f4b75cb7946ca6f3a14",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "1fb9712dfade3d8e542b50489f26d3ce28808383bd725ba0eea99e621e85faa5"
+    },
+    {
+      "avatar_id": "c_brewmaw",
+      "id": "cellar_outfit",
+      "label": "Cellar mechanic outfit and stopper boots",
+      "status": "reference_uploaded",
+      "reference_sha256": "160a06671f27446e3f9a27f5be8d649575805a8bad9974bc833a969725d0f1f6",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "1fb9712dfade3d8e542b50489f26d3ce28808383bd725ba0eea99e621e85faa5"
+    },
+    {
+      "avatar_id": "c_wraithhook",
+      "id": "segmented_oar",
+      "label": "Segmented oar",
+      "status": "reference_uploaded",
+      "reference_sha256": "d497a8b60cd66360a61bb201b51e4c780dfee07a05c50c3a762fe560e3db2763",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "a3ad9be3213a4561f744d7e727232633ae015c76598ca3e2c748bf0e4b4a7f31"
+    },
+    {
+      "avatar_id": "c_wraithhook",
+      "id": "spirit_skiff",
+      "label": "Narrow spirit skiff",
+      "status": "reference_uploaded",
+      "reference_sha256": "fadbc6abe17f97065cb547310439e0341180330222b41dea871c3c9a5c958bc2",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "a3ad9be3213a4561f744d7e727232633ae015c76598ca3e2c748bf0e4b4a7f31"
+    },
+    {
+      "avatar_id": "c_wraithhook",
+      "id": "boatwoman_outfit",
+      "label": "Boatwoman outfit and oilcloth hood",
+      "status": "reference_uploaded",
+      "reference_sha256": "6244cea7eb93898d63e0c496c88d905ef827f9837399075826068e8a91ef312b",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "a3ad9be3213a4561f744d7e727232633ae015c76598ca3e2c748bf0e4b4a7f31"
+    },
+    {
+      "avatar_id": "c_hwei",
+      "id": "gallery_frame",
+      "label": "Collapsible gallery frame",
+      "status": "reference_uploaded",
+      "reference_sha256": "48ab428727a792133960d0fd28155e7e9863151e73195099249e062fec41cdce",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "865bf983ec33edf0467a6affbfba0c8ad4e568ae00d70ef2deb6977fffa03b03"
+    },
+    {
+      "avatar_id": "c_hwei",
+      "id": "conservator_outfit",
+      "label": "Terracotta smock and repaired ceramic mask",
+      "status": "reference_uploaded",
+      "reference_sha256": "1fa3dc75e594bf08b1259af641e9686c46c34adc120a8284a07c5a01d5ea2bcc",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "865bf983ec33edf0467a6affbfba0c8ad4e568ae00d70ef2deb6977fffa03b03"
+    },
+    {
+      "avatar_id": "c_jayce",
+      "id": "railcart_cannon",
+      "label": "Offset shoulder railcart cannon",
+      "status": "reference_uploaded",
+      "reference_sha256": "0e83c0b6994e272992ab4b9c11e2e756348007b3ce77dd9d4f23c219d0d69cd7",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "f90c777a4a51d948ca58b8620e8aeac7cdac31238cb7ff6c6411fe0eacceea37"
+    },
+    {
+      "avatar_id": "c_jayce",
+      "id": "mechanic_outfit",
+      "label": "Compact mechanic outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "c6702b1443b854c9134fc852551b7250526c2f7bae431c20f656962d498b46ee",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "f90c777a4a51d948ca58b8620e8aeac7cdac31238cb7ff6c6411fe0eacceea37"
+    },
+    {
+      "avatar_id": "c_vi",
+      "id": "stamp_gauntlets",
+      "label": "Document-stamp gauntlets",
+      "status": "reference_uploaded",
+      "reference_sha256": "b1b5ff9cb3d1096bb4e8b51a6c447236c021113e7b949c4e1aaa1f77fa908684",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "367c685ad8ea667af36fd0b5add7e477ef69a9d9e19c280a4905033d5fceda63"
+    },
+    {
+      "avatar_id": "c_vi",
+      "id": "marshal_outfit",
+      "label": "Battered city uniform, eyepatch and warrants",
+      "status": "reference_uploaded",
+      "reference_sha256": "ea0d8bf44839c93af0073c608b7f5488a421b06f2722029dbd7edc197dc2d4e6",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "367c685ad8ea667af36fd0b5add7e477ef69a9d9e19c280a4905033d5fceda63"
+    },
+    {
+      "avatar_id": "c_jinx",
+      "id": "lighting_tools",
+      "label": "Stage lighting tools",
+      "status": "reference_uploaded",
+      "reference_sha256": "2f4657d8124ffbab161f9cac1da7ff746a56894b34638dcad43ffdd995101a28",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "42acbff80ee7b117fbaa5e742500d993b9b759bbd93ea6f11e8b315e3754a3c9"
+    },
+    {
+      "avatar_id": "c_jinx",
+      "id": "firing_rack",
+      "label": "Collapsible firing rack",
+      "status": "reference_uploaded",
+      "reference_sha256": "367ee501fdff8f85b1580e88311b2688fff2404da732c3be808cf08f5393f595",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "42acbff80ee7b117fbaa5e742500d993b9b759bbd93ea6f11e8b315e3754a3c9"
+    },
+    {
+      "avatar_id": "c_jinx",
+      "id": "confetti_wheel",
+      "label": "Confetti wheel",
+      "status": "reference_uploaded",
+      "reference_sha256": "9566ed78b8bffeba5c7769195852b9447dab9e7d06dec1e0bc623ec1b2aaf61a",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "42acbff80ee7b117fbaa5e742500d993b9b759bbd93ea6f11e8b315e3754a3c9"
+    },
+    {
+      "avatar_id": "c_jinx",
+      "id": "rigger_outfit",
+      "label": "Powder-blue fireproof jumpsuit",
+      "status": "reference_uploaded",
+      "reference_sha256": "7887a270ec9e34ac0f087436e5c17fe18261096d301b1d6dc2a45f4abdfc8d9d",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 9,
+      "inventory_hash": "42acbff80ee7b117fbaa5e742500d993b9b759bbd93ea6f11e8b315e3754a3c9"
+    },
+    {
+      "avatar_id": "c_puck",
+      "id": "chime_ring",
+      "label": "Large glass chime ring",
+      "status": "reference_uploaded",
+      "reference_sha256": "fab2b908f09609330bb8fe10cfee70787633ddf3c8b4e5c23c3f4783695ce6b7",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "67af7d248ce9518d918d3054f445f4340e79a839531142417b23f2203448fd0b"
+    },
+    {
+      "avatar_id": "c_puck",
+      "id": "bedside_clocks",
+      "label": "Waist-hung mechanical bedside clocks",
+      "status": "reference_uploaded",
+      "reference_sha256": "b7e0ee04f5841fe4cbff6215a72ee488414664b63cb8ce8c1359ef3baaa516d0",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "67af7d248ce9518d918d3054f445f4340e79a839531142417b23f2203448fd0b"
+    },
+    {
+      "avatar_id": "c_puck",
+      "id": "quilted_cloak",
+      "label": "Quilted moth archivist cloak",
+      "status": "reference_uploaded",
+      "reference_sha256": "c0659d4bb7fabb425115f1bea611b9eb5ec7e35e4973a9f8a2cb88e1c39ae055",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "67af7d248ce9518d918d3054f445f4340e79a839531142417b23f2203448fd0b"
+    },
+    {
+      "avatar_id": "c_batrider",
+      "id": "glider_board",
+      "label": "Damaged one-sided glider board with sails and vents",
+      "status": "reference_uploaded",
+      "reference_sha256": "014cb924628e54322537ea314bbab214eb7092a2126b53909998f6f38877904c",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "cdd2cdfea32b30938bd1ca7a3dc0db871c7c3ffbbd070d822d559e2e701040b4"
+    },
+    {
+      "avatar_id": "c_batrider",
+      "id": "wind_sailor_outfit",
+      "label": "Wind sailor outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "f06961c841fca923da663946cb9bba1bd35842e4c877910d0b338b38f52d2668",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "cdd2cdfea32b30938bd1ca7a3dc0db871c7c3ffbbd070d822d559e2e701040b4"
+    },
+    {
+      "avatar_id": "c_bristleback",
+      "id": "iron_saddle",
+      "label": "Patchwork iron saddle",
+      "status": "reference_uploaded",
+      "reference_sha256": "ac7a836710d3c4cde9a8838725110bfc4f52b5d0b84357110351e1733737ae9b",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "6643c5c9efbca5257365c681d6040be7763c486baf0e452d90c9bf8a9357f320"
+    },
+    {
+      "avatar_id": "c_bristleback",
+      "id": "dorsal_armor",
+      "label": "Detachable armored dorsal segments",
+      "status": "reference_uploaded",
+      "reference_sha256": "a2b36c17f1a6e82b24f2ba16c173a7201623a83725b6e742075f7a9c0be39b0d",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "6643c5c9efbca5257365c681d6040be7763c486baf0e452d90c9bf8a9357f320"
+    },
+    {
+      "avatar_id": "c_io",
+      "id": "tuning_forks",
+      "label": "Paired tuning forks",
+      "status": "reference_uploaded",
+      "reference_sha256": "86e17f3a8a3d6765263e2da06ccfca58e83a4960b7f9551aec99430c7a3963de",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "d3db8e5816646d17e977a62a9fb32eaf18821b55a7b107973e976a8bd9d35d7a"
+    },
+    {
+      "avatar_id": "c_io",
+      "id": "maestro_outfit",
+      "label": "Maestro formal outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "371448152616970d01f0970506bcfc257d25b48fc0bed4cd3388baff2cf8f051",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "d3db8e5816646d17e977a62a9fb32eaf18821b55a7b107973e976a8bd9d35d7a"
+    },
+    {
+      "avatar_id": "c_lulu",
+      "id": "terrarium_barrow",
+      "label": "Terrarium barrow with ceramic pots and roots",
+      "status": "reference_uploaded",
+      "reference_sha256": "530d06fe2db7d5be4dafde6f940202f96498007f9f064c7c9582b8397eb53614",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "d71aa5e95839ab9ba0d405d9a0217e6fd1bc7f4f9f904c6d2fe280bd33bb0e25"
+    },
+    {
+      "avatar_id": "c_lulu",
+      "id": "gardener_outfit",
+      "label": "Elderly gardener outfit and patched mittens",
+      "status": "reference_uploaded",
+      "reference_sha256": "444f58629a4a23ebf2040d2cab4fc398045dfe4ddc1529eb5837bba9a340803e",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "d71aa5e95839ab9ba0d405d9a0217e6fd1bc7f4f9f904c6d2fe280bd33bb0e25"
+    },
+    {
+      "avatar_id": "c_silencer",
+      "id": "law_stamp",
+      "label": "Multi-headed law stamp",
+      "status": "reference_uploaded",
+      "reference_sha256": "5ff92a025f842749927ab17636834ad286c48912d3dfb4356d111f300fbead11",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "db581285659b1d201b549ae5d2687634f7d4072f448ee8f8ee457db6c74d5e80"
+    },
+    {
+      "avatar_id": "c_silencer",
+      "id": "tablet_pauldron",
+      "label": "Large tablet pauldron",
+      "status": "reference_uploaded",
+      "reference_sha256": "a1d6252f1b8782381dccff02a212bf9366a4af41caa7c349f9c0b95ae1b41286",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "db581285659b1d201b549ae5d2687634f7d4072f448ee8f8ee457db6c74d5e80"
+    },
+    {
+      "avatar_id": "c_silencer",
+      "id": "magistrate_robes",
+      "label": "Layered burgundy magistrate robes",
+      "status": "reference_uploaded",
+      "reference_sha256": "c22ae9c837fe47089fabecc4f5d5bdfa7177295aa009056eb80fca4088dc40a4",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "db581285659b1d201b549ae5d2687634f7d4072f448ee8f8ee457db6c74d5e80"
+    },
+    {
+      "avatar_id": "c_wukong_lol",
+      "id": "pole_stilts",
+      "label": "Bamboo-jointed pole stilts",
+      "status": "reference_uploaded",
+      "reference_sha256": "c4e5704e81721091fa82796bb5bce3dcfd5506cf896a10c7e415b7f4f0185c5b",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "69d6b60bf16f413ae6c678507952e336afee1368a2dc64a2ad0e12996d616309"
+    },
+    {
+      "avatar_id": "c_wukong_lol",
+      "id": "scaffold_outfit",
+      "label": "Scaffold builder outfit, measuring rope and tool satchels",
+      "status": "reference_uploaded",
+      "reference_sha256": "199aa7ee568c455e1ba139fdc8a357f8a254d5140595cf99dc8ec59c80ce7f32",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "69d6b60bf16f413ae6c678507952e336afee1368a2dc64a2ad0e12996d616309"
+    },
+    {
+      "avatar_id": "c_monkeyking_dota",
+      "id": "jade_scepter",
+      "label": "Short broad jade scepter",
+      "status": "reference_uploaded",
+      "reference_sha256": "8922c26454cd7dbddbaf551b61514421710971f13e955c09fd358276e452bda6",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "bc54c6fce624c7e960dc4faa0b9c6d9ce9bf5bdcc14013810e565c292d511dcf"
+    },
+    {
+      "avatar_id": "c_monkeyking_dota",
+      "id": "monarch_outfit",
+      "label": "Moss-gold shoulder armor and living leaf crown",
+      "status": "reference_uploaded",
+      "reference_sha256": "4b6dbf8c58ca89ecff99deb0f12b437a31dd83ce4b0f2de2a3d1b081d80d3ca2",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "bc54c6fce624c7e960dc4faa0b9c6d9ce9bf5bdcc14013810e565c292d511dcf"
+    },
+    {
+      "avatar_id": "c_stepstone",
+      "id": "wrist_bells",
+      "label": "Heavy bronze wrist bells",
+      "status": "reference_uploaded",
+      "reference_sha256": "42cf47fce9b7764aa17187011b40c65f3fd46a9c54a8e6a4b6559f7dbc6ef0bd",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "06cf2e4797dc02a72342eeb647e7f9b5e00b71f5b6eb6f7c3f527cd50385af0f"
+    },
+    {
+      "avatar_id": "c_stepstone",
+      "id": "martial_outfit",
+      "label": "Battered red canvas martial outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "6ef63da7d419a20d5f10ac658e56338eab1df280dae6d267f89e8662e51dfc40",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 5,
+      "inventory_hash": "06cf2e4797dc02a72342eeb647e7f9b5e00b71f5b6eb6f7c3f527cd50385af0f"
+    },
+    {
+      "avatar_id": "c_skybreaker",
+      "id": "observation_platform",
+      "label": "Fan-powered observation platform",
+      "status": "reference_uploaded",
+      "reference_sha256": "1af3b32270fb41a42bc396700a16051c0f92b5395daa4031989dfc0578ac5c0a",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "436dc6d09aee3869e29ea92b79c67a2af9e10aa2fd09d985a116f0954f87f314"
+    },
+    {
+      "avatar_id": "c_skybreaker",
+      "id": "rangefinder",
+      "label": "Optical rangefinder",
+      "status": "reference_uploaded",
+      "reference_sha256": "5c8ba04919bff25114b8031bfbe4f110d5bd29b4be69ac799d950ab8983ae195",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "436dc6d09aee3869e29ea92b79c67a2af9e10aa2fd09d985a116f0954f87f314"
+    },
+    {
+      "avatar_id": "c_skybreaker",
+      "id": "pilot_outfit",
+      "label": "Aristocratic skiff pilot outfit",
+      "status": "reference_uploaded",
+      "reference_sha256": "5b313e5030fb0f789201e879d432ec2d795773bb845d026454360445adcc7183",
+      "reference_purpose": "reconstruction",
+      "reviewed": true,
+      "inventory_version": 7,
+      "inventory_hash": "436dc6d09aee3869e29ea92b79c67a2af9e10aa2fd09d985a116f0954f87f314"
+    }
+  ],
+  "isolated": [
+    {
+      "avatar_id": "c_solana",
+      "id": "heliograph_shield",
+      "sha256": "3c1b242b831abdf34873719417102d53b205a79c144df59a24804d9ab9a38f54"
+    },
+    {
+      "avatar_id": "c_solana",
+      "id": "sun_armor",
+      "sha256": "ecc51095274558f8d5144ef986c0ec0dce8c4afadc597c608ea107cf401087cd"
+    },
+    {
+      "avatar_id": "c_astra",
+      "id": "crystal_longbow",
+      "sha256": "7f2612b6d0bb47e2edeb051d4b5231d9327bfbc7b659d92701d6f014c80a3605"
+    },
+    {
+      "avatar_id": "c_astra",
+      "id": "ice_plates",
+      "sha256": "565ca8716486d0660e00410e5577be22da8d08dc1d4e817e660e1debc56cf659"
+    },
+    {
+      "avatar_id": "c_kyumi",
+      "id": "route_tablets",
+      "sha256": "24fad1a9029aebb706579ef94aceddeff3764ae54100fcffa92f18a03c23aacf"
+    },
+    {
+      "avatar_id": "c_kyumi",
+      "id": "travel_robes",
+      "sha256": "827432b637de4a74b1c97018ba34059bc5f60c208cbaf49853564474501b9708"
+    },
+    {
+      "avatar_id": "c_buck",
+      "id": "rotary_ram",
+      "sha256": "e372f3f8a8240ba5e7388a24fa181374e654ea53f038a57b21484a3abeff7296"
+    },
+    {
+      "avatar_id": "c_buck",
+      "id": "workwear",
+      "sha256": "269b21cd681684c2d0c573f3f11e78559f643015fe771bc4117d7c740ada0eaa"
+    },
+    {
+      "avatar_id": "c_valkira",
+      "id": "crescent_ledgers",
+      "sha256": "2e01f6b409f7feec6b70fd7ebaf80eb61583db01c75b9c1e6abde60412f756d6"
+    },
+    {
+      "avatar_id": "c_valkira",
+      "id": "oath_outfit",
+      "sha256": "09ba72725afb5d88fd52714f9e2cd87e70c54935a3ee825de6f7c10a35bf4b5a"
+    },
+    {
+      "avatar_id": "c_kage",
+      "id": "lacquer_outfit",
+      "sha256": "c1ec69926363fc62b58b7ea244d69f42dfe8d3701db2ce4a9f2a05cc7200823e"
+    },
+    {
+      "avatar_id": "c_kazemaru",
+      "id": "curved_blade",
+      "sha256": "8f1f6b08d07bcff981fecf47ff95d456b323fdc6beb3c65761022721058180cc"
+    },
+    {
+      "avatar_id": "c_kazemaru",
+      "id": "sailor_armor",
+      "sha256": "c843fd661d800c557e1b16d6750ac95e3a1bd8217b4a25ca0a3a9e2c51f5046b"
+    },
+    {
+      "avatar_id": "c_kazemaru",
+      "id": "vane_shield",
+      "sha256": "2a2686da647629f8f6922ef5589ce6bd01c36e1d05e9583ab2448e3c6fd80d9f"
+    },
+    {
+      "avatar_id": "c_kindra",
+      "id": "fen",
+      "sha256": "d12c1e4b84222b3f7937527818feb0707c1efa700a50bcd5357c8756b99b0e5b"
+    },
+    {
+      "avatar_id": "c_kindra",
+      "id": "lantern_staff",
+      "sha256": "04e8d4daf95eb664cf8078e820065f6ac4441479c2eab157ebf2218961f4a912"
+    },
+    {
+      "avatar_id": "c_kindra",
+      "id": "scout_outfit",
+      "sha256": "78e53430cb88513a0211c3523821ab2562ba92237b997f4ecc202f2b102fe35e"
+    },
+    {
+      "avatar_id": "c_cora",
+      "id": "hawk_outfit",
+      "sha256": "13e50ee1fdc0f8cff23f2c622353dc61da2743945084a362fb693504b1c7794d"
+    },
+    {
+      "avatar_id": "c_cora",
+      "id": "kite_bow",
+      "sha256": "8bdfb8d5bfbe6f8a9ecb7506c2ea0d81b2256c9a7200d2c6e59c1f51fa32a136"
+    },
+    {
+      "avatar_id": "c_renn",
+      "id": "fan_shield",
+      "sha256": "7e1eb9d2fddf3cdacd2a6dc10b9389c65eb74b12af35c7f84ad0a7fba3c60139"
+    },
+    {
+      "avatar_id": "c_renn",
+      "id": "tux_armor",
+      "sha256": "bbd691b2cd718c93905a8bb2fe5c1d4781be657c1a88765fecde34cb9648df5a"
+    },
+    {
+      "avatar_id": "c_sylla",
+      "id": "antler_mantle",
+      "sha256": "80666b44e72fcc2be6cc5f96f31cf00ec20a2b06f7bba33d7b4dc97741cca2cf"
+    },
+    {
+      "avatar_id": "c_sylla",
+      "id": "pack_tortoise",
+      "sha256": "940ec4ad7dfd8207328c8cad8a1732186ecf84ca93d87fba6b3c926772679ee9"
+    },
+    {
+      "avatar_id": "c_sylla",
+      "id": "tortoise_cargo",
+      "sha256": "78a88213204c439f6404afe06818b923322d2b8eb81713414153372579ed79ee"
+    },
+    {
+      "avatar_id": "c_sylla",
+      "id": "warden_staff",
+      "sha256": "99e885bd57260b2077e7059c35f502f0cc37689cf1155d255218248b511369bf"
+    },
+    {
+      "avatar_id": "c_tequoia",
+      "id": "mycelium_outfit",
+      "sha256": "79a8c57050af4af0c2513cefb6624f702d25390a7a511ce265082b79f772ef00"
+    },
+    {
+      "avatar_id": "c_tequoia",
+      "id": "parasol",
+      "sha256": "8fa9e856f0cec8fe43d4de76adce0661843181373dc5d5668794d482953bf4b8"
+    },
+    {
+      "avatar_id": "c_tequoia",
+      "id": "seed_jars",
+      "sha256": "b0a87761bda133c3496a4bc9a130869a8f61dd163c13e88b3c3e955a334adec4"
+    },
+    {
+      "avatar_id": "c_zal",
+      "id": "needle_fingers",
+      "sha256": "5824ca52d9e2f4356393dec49035c184bb29140b025fcb263f56c31a543453b8"
+    },
+    {
+      "avatar_id": "c_zal",
+      "id": "surgeon_outfit",
+      "sha256": "10e7370c508b24469ece66ae930e28a65a7435aa144c90e640973f712febf5bf"
+    },
+    {
+      "avatar_id": "c_zal",
+      "id": "thread_reservoirs",
+      "sha256": "abf319ab58f0e05e7b62938cee2f685f2c98ad170d7469e85299b4ca1f993db1"
+    },
+    {
+      "avatar_id": "c_xin",
+      "id": "courier_outfit",
+      "sha256": "93f8aeb8b3af3755357e3658fada74fdbac05e31569f06f85032c2ce5afcc9f2"
+    },
+    {
+      "avatar_id": "c_xin",
+      "id": "mail_satchel",
+      "sha256": "a9c81440313e5301f53f96154e59e4ea170cb27af8a49ee2e318c3d6ebd4b620"
+    },
+    {
+      "avatar_id": "c_xin",
+      "id": "skate_boots",
+      "sha256": "2500ac74f7391fe2e19ab03067272c6c4b74721c80cb6913bc54a5b541e4b646"
+    },
+    {
+      "avatar_id": "c_raijin",
+      "id": "ground_rods",
+      "sha256": "e6ccb172e1438e986dd5e9f9b55729bb89514c25283b2c049fa8d40ac9a063cb"
+    },
+    {
+      "avatar_id": "c_raijin",
+      "id": "scientist_outfit",
+      "sha256": "a74f923af32a41c773faa1763b5407bd309e0956c4659c70f31c4d6a3119a78b"
+    },
+    {
+      "avatar_id": "c_kaolin",
+      "id": "stone_shutters",
+      "sha256": "49b742cc60ed03f7e179879d4a2feaacfd4eb7a015b23c9b7fe087180cec1be2"
+    },
+    {
+      "avatar_id": "c_inai",
+      "id": "measuring_cords",
+      "sha256": "6fd0ec82c328d6384e44100ab88a080021ee09f1357a139ca2326ed7cb1f9ede"
+    },
+    {
+      "avatar_id": "c_inai",
+      "id": "pilgrim_outfit",
+      "sha256": "4bd110abaa0fa001139890ce28346432f9e7fe659eddbfff3eba8eeb571a3f90"
+    },
+    {
+      "avatar_id": "c_inai",
+      "id": "star_staff",
+      "sha256": "7283739263bdfc182154fb22fb5ac7ba168202dd681c9c8f5d22750107d9fafa"
+    },
+    {
+      "avatar_id": "c_qiyana",
+      "id": "cleaver",
+      "sha256": "f1a81ebf5006b437fe899fe9521facf5edb27de509f7fcf8bd67bcce1ff206b3"
+    },
+    {
+      "avatar_id": "c_qiyana",
+      "id": "glass_circlet",
+      "sha256": "8bd8222ce37afd98309422dc77383c324654c2f9ddd5306aaacaea18c086c557"
+    },
+    {
+      "avatar_id": "c_qiyana",
+      "id": "reflective_outfit",
+      "sha256": "19d06007a7a6728f96dca3d6d00a97d9c98da753f2edb4bca7c4b9f76e24018f"
+    },
+    {
+      "avatar_id": "c_locke",
+      "id": "ash_bells",
+      "sha256": "07d7156bfffccdfa49658de5d4a4f0b359888a3c0c625c4b86282ec97226f39d"
+    },
+    {
+      "avatar_id": "c_locke",
+      "id": "monk_outfit",
+      "sha256": "93dff67c1abcae0b0b3855ee8f695aa32f754d36d25bd79d66c5db80f395a9db"
+    },
+    {
+      "avatar_id": "c_senna",
+      "id": "map_shrine",
+      "sha256": "94253f6e03b68189f06da2b08bb2ef6e0b9b118c1eee2c03faea89dda0f4b528"
+    },
+    {
+      "avatar_id": "c_senna",
+      "id": "pilgrim_armor",
+      "sha256": "87f686178723dd23b8a5969d6ef5051384aa6bddb93c10fc977704ff80ed54cd"
+    },
+    {
+      "avatar_id": "c_senna",
+      "id": "sextant_crossbow",
+      "sha256": "865dc3aef3ce49087958b01d03d5402c9b0a0838d4e497e077a410c7d9327731"
+    },
+    {
+      "avatar_id": "c_largo",
+      "id": "clockmaker_outfit",
+      "sha256": "b40716a986d68ec1b2a9e5cfc0b316ee6defe383c449aec6d25732848e67285e"
+    },
+    {
+      "avatar_id": "c_largo",
+      "id": "metronome",
+      "sha256": "46944896c0d69982b506742136189855da35899f6f2a1ff511faa3b5b790a14f"
+    },
+    {
+      "avatar_id": "c_largo",
+      "id": "percussion_frogs",
+      "sha256": "53302e0ad03be83bd9a4a83d77eed96ce0bbfa6f0957a0cd26e470eaf265ff25"
+    },
+    {
+      "avatar_id": "c_largo",
+      "id": "reed_drums",
+      "sha256": "ae304d2b57bcc1e352c9effbe55d4c08232486b5566e4f62b9be0009df623644"
+    },
+    {
+      "avatar_id": "c_shadowfiend",
+      "id": "ember_casket",
+      "sha256": "a1908d9d6a4434b3fdc552779f87b927e566529f194ed0bb1fb31211eb9eb89d"
+    },
+    {
+      "avatar_id": "c_shadowfiend",
+      "id": "furnace",
+      "sha256": "40e7056acd2148205936fe7680aab5cd3a71b85a0924c97d8162fad8e25c2b0c"
+    },
+    {
+      "avatar_id": "c_shadowfiend",
+      "id": "mortician_outfit",
+      "sha256": "ec71b9f20957db418bdffc6df80f00dcd0ce3d77cd860e4038d04015702eb22c"
+    },
+    {
+      "avatar_id": "c_earthshaker",
+      "id": "pendulum_hammers",
+      "sha256": "8e7bfaa73251de3dafd8da75beb121359ac36bd2ba4f763334ed1c9d94ec63fc"
+    },
+    {
+      "avatar_id": "c_earthshaker",
+      "id": "seismologist_outfit",
+      "sha256": "b87e9818dd5052a51814752cd25ed2a8cdb7304595787d01705f82a42a829b96"
+    },
+    {
+      "avatar_id": "c_earthshaker",
+      "id": "survey_compass",
+      "sha256": "a0784ddd3d8788780f7e3c2447a3fe4aacd649365add261cf95e7329852a7694"
+    },
+    {
+      "avatar_id": "c_mirehook",
+      "id": "cage_forge",
+      "sha256": "fda9675a0de72a2aea42e79e3a106f136f5293e58f0e53a7cdfda697d298d898"
+    },
+    {
+      "avatar_id": "c_mirehook",
+      "id": "riveted_gauntlets",
+      "sha256": "e3cfd014a9c5f80b90837f97e9ff1f106d5d5be80277b4728a4088d617924f4e"
+    },
+    {
+      "avatar_id": "c_mirehook",
+      "id": "smith_outfit",
+      "sha256": "ea448673bb4d19ac4aec14c02a16a633a9ec67580dcbfc1064a3d9aed103a661"
+    },
+    {
+      "avatar_id": "c_mirehook",
+      "id": "trap_anvil",
+      "sha256": "9d141403036a2dbdfb572c1a4872f628558d7d1e6f3e1f5e4eef5e632afcbd59"
+    },
+    {
+      "avatar_id": "c_nullweaver",
+      "id": "gyroscope",
+      "sha256": "46675481c8163b517456f4d79c41c7a2ecba3941b38c5976a281b1ea3aa04864"
+    },
+    {
+      "avatar_id": "c_nullweaver",
+      "id": "measurement_robe",
+      "sha256": "447f15617f2d7f54e87ed01c2468cb5127a274174e5626101c6b12c2c85d3d2f"
+    },
+    {
+      "avatar_id": "c_voltgrip",
+      "id": "spring_cable",
+      "sha256": "fc8783d47c71aee90f799d5144156573286f740e4a410c330176f1973c36b960"
+    },
+    {
+      "avatar_id": "c_voltgrip",
+      "id": "traffic_gauntlets",
+      "sha256": "08f6c52fbfc2e02f3f1e2ea6d4a2ad764bccac9f1c457755207ada5e643eec2f"
+    },
+    {
+      "avatar_id": "c_voltgrip",
+      "id": "utility_outfit",
+      "sha256": "bc7815d2e11b99328c9faf03a3e4d0901fdaad21edeb39c5603b73074d97812b"
+    },
+    {
+      "avatar_id": "c_aetherbolt",
+      "id": "bow_rifle",
+      "sha256": "7e23bb0729f08441524e3d8fba1975f0b42ecc5f54d25702bac6f20f63adcbfd"
+    },
+    {
+      "avatar_id": "c_aetherbolt",
+      "id": "mirror_drone",
+      "sha256": "7912040ee5054bd5147c2fbbcb360af201be04eb4f499dbe21cfaf9b440894f1"
+    },
+    {
+      "avatar_id": "c_aetherbolt",
+      "id": "surveyor_outfit",
+      "sha256": "d5b6813bd4f077e7ef40f7c1831a39b566e9bb8fb77c8eca6e4cf38712935dcd"
+    },
+    {
+      "avatar_id": "c_corsara",
+      "id": "clockwork_skiff",
+      "sha256": "fa8667819450cdf70c88ce50e848e38af96343b1e4022ba8adeca7938056c8c9"
+    },
+    {
+      "avatar_id": "c_corsara",
+      "id": "deck_cannons",
+      "sha256": "0b92c895a9173d086a92c9c91989ab3a6acda1373557e1d43b86da8e526c5d47"
+    },
+    {
+      "avatar_id": "c_corsara",
+      "id": "privateer_outfit",
+      "sha256": "0b6f4768b4363d808de76e5ba74e1c7314621b923e63fbc88aff51a1a25702f0"
+    },
+    {
+      "avatar_id": "c_brewmaw",
+      "id": "cellar_outfit",
+      "sha256": "160a06671f27446e3f9a27f5be8d649575805a8bad9974bc833a969725d0f1f6"
+    },
+    {
+      "avatar_id": "c_brewmaw",
+      "id": "fermentation_tanks",
+      "sha256": "74764a9dce0b497b753b614e855cd1491272f9333edce868056ba9123d8cb07a"
+    },
+    {
+      "avatar_id": "c_brewmaw",
+      "id": "pressure_wheels",
+      "sha256": "99341c50b7156d7fee1cc99db898147b97159f5bcd2c8f4b75cb7946ca6f3a14"
+    },
+    {
+      "avatar_id": "c_wraithhook",
+      "id": "boatwoman_outfit",
+      "sha256": "6244cea7eb93898d63e0c496c88d905ef827f9837399075826068e8a91ef312b"
+    },
+    {
+      "avatar_id": "c_wraithhook",
+      "id": "segmented_oar",
+      "sha256": "d497a8b60cd66360a61bb201b51e4c780dfee07a05c50c3a762fe560e3db2763"
+    },
+    {
+      "avatar_id": "c_wraithhook",
+      "id": "spirit_skiff",
+      "sha256": "fadbc6abe17f97065cb547310439e0341180330222b41dea871c3c9a5c958bc2"
+    },
+    {
+      "avatar_id": "c_invoker",
+      "id": "boots",
+      "sha256": "5b14675ba8a66d307219ff4b7dfe9752fca0afb95544f42378a6c1b6d67dca2d"
+    },
+    {
+      "avatar_id": "c_invoker",
+      "id": "brass_bobbin",
+      "sha256": "666ba5f2acfd34f8804c7acd63770caf22bb2a3b194fdefae042fe4fd8e61044"
+    },
+    {
+      "avatar_id": "c_invoker",
+      "id": "hair",
+      "sha256": "216a9dafae1edcd0e5823f13967216f3a6674d98814284a2cb126292b247711c"
+    },
+    {
+      "avatar_id": "c_invoker",
+      "id": "needle_comb",
+      "sha256": "51e20a3f7be6dd38e723204fdba662de60bc3cd853b9082f5986eb5022c8a9e0"
+    },
+    {
+      "avatar_id": "c_invoker",
+      "id": "pattern_cape",
+      "sha256": "2ea420a4bd38d9da33fd35ca6fc29fe6ebf35b033c71187e9b59e2873af2137a"
+    },
+    {
+      "avatar_id": "c_invoker",
+      "id": "petal_skirt",
+      "sha256": "1a75cced937b6b2131c83818f5205e8abf4fc9b2d9f2bd4fcbf19a4fffcc01c6"
+    },
+    {
+      "avatar_id": "c_invoker",
+      "id": "sleeve",
+      "sha256": "327a10cc1385c22d6b395aff83dba1358f3d54514957fb2f0b3fadd513ea4f85"
+    },
+    {
+      "avatar_id": "c_invoker",
+      "id": "waistcoat",
+      "sha256": "59bdfea57e5267c95e89be993767a44c5b7180718aed9786d832def09994b07c"
+    },
+    {
+      "avatar_id": "c_hwei",
+      "id": "conservator_outfit",
+      "sha256": "1fa3dc75e594bf08b1259af641e9686c46c34adc120a8284a07c5a01d5ea2bcc"
+    },
+    {
+      "avatar_id": "c_hwei",
+      "id": "gallery_frame",
+      "sha256": "48ab428727a792133960d0fd28155e7e9863151e73195099249e062fec41cdce"
+    },
+    {
+      "avatar_id": "c_jayce",
+      "id": "mechanic_outfit",
+      "sha256": "c6702b1443b854c9134fc852551b7250526c2f7bae431c20f656962d498b46ee"
+    },
+    {
+      "avatar_id": "c_jayce",
+      "id": "railcart_cannon",
+      "sha256": "0e83c0b6994e272992ab4b9c11e2e756348007b3ce77dd9d4f23c219d0d69cd7"
+    },
+    {
+      "avatar_id": "c_vi",
+      "id": "marshal_outfit",
+      "sha256": "ea0d8bf44839c93af0073c608b7f5488a421b06f2722029dbd7edc197dc2d4e6"
+    },
+    {
+      "avatar_id": "c_vi",
+      "id": "stamp_gauntlets",
+      "sha256": "b1b5ff9cb3d1096bb4e8b51a6c447236c021113e7b949c4e1aaa1f77fa908684"
+    },
+    {
+      "avatar_id": "c_jinx",
+      "id": "confetti_wheel",
+      "sha256": "9566ed78b8bffeba5c7769195852b9447dab9e7d06dec1e0bc623ec1b2aaf61a"
+    },
+    {
+      "avatar_id": "c_jinx",
+      "id": "firing_rack",
+      "sha256": "367ee501fdff8f85b1580e88311b2688fff2404da732c3be808cf08f5393f595"
+    },
+    {
+      "avatar_id": "c_jinx",
+      "id": "lighting_tools",
+      "sha256": "2f4657d8124ffbab161f9cac1da7ff746a56894b34638dcad43ffdd995101a28"
+    },
+    {
+      "avatar_id": "c_jinx",
+      "id": "rigger_outfit",
+      "sha256": "7887a270ec9e34ac0f087436e5c17fe18261096d301b1d6dc2a45f4abdfc8d9d"
+    },
+    {
+      "avatar_id": "c_puck",
+      "id": "bedside_clocks",
+      "sha256": "b7e0ee04f5841fe4cbff6215a72ee488414664b63cb8ce8c1359ef3baaa516d0"
+    },
+    {
+      "avatar_id": "c_puck",
+      "id": "chime_ring",
+      "sha256": "fab2b908f09609330bb8fe10cfee70787633ddf3c8b4e5c23c3f4783695ce6b7"
+    },
+    {
+      "avatar_id": "c_puck",
+      "id": "quilted_cloak",
+      "sha256": "c0659d4bb7fabb425115f1bea611b9eb5ec7e35e4973a9f8a2cb88e1c39ae055"
+    },
+    {
+      "avatar_id": "c_batrider",
+      "id": "glider_board",
+      "sha256": "014cb924628e54322537ea314bbab214eb7092a2126b53909998f6f38877904c"
+    },
+    {
+      "avatar_id": "c_batrider",
+      "id": "wind_sailor_outfit",
+      "sha256": "f06961c841fca923da663946cb9bba1bd35842e4c877910d0b338b38f52d2668"
+    },
+    {
+      "avatar_id": "c_bristleback",
+      "id": "dorsal_armor",
+      "sha256": "a2b36c17f1a6e82b24f2ba16c173a7201623a83725b6e742075f7a9c0be39b0d"
+    },
+    {
+      "avatar_id": "c_bristleback",
+      "id": "iron_saddle",
+      "sha256": "ac7a836710d3c4cde9a8838725110bfc4f52b5d0b84357110351e1733737ae9b"
+    },
+    {
+      "avatar_id": "c_io",
+      "id": "maestro_outfit",
+      "sha256": "371448152616970d01f0970506bcfc257d25b48fc0bed4cd3388baff2cf8f051"
+    },
+    {
+      "avatar_id": "c_io",
+      "id": "tuning_forks",
+      "sha256": "86e17f3a8a3d6765263e2da06ccfca58e83a4960b7f9551aec99430c7a3963de"
+    },
+    {
+      "avatar_id": "c_lulu",
+      "id": "gardener_outfit",
+      "sha256": "444f58629a4a23ebf2040d2cab4fc398045dfe4ddc1529eb5837bba9a340803e"
+    },
+    {
+      "avatar_id": "c_lulu",
+      "id": "terrarium_barrow",
+      "sha256": "530d06fe2db7d5be4dafde6f940202f96498007f9f064c7c9582b8397eb53614"
+    },
+    {
+      "avatar_id": "c_silencer",
+      "id": "law_stamp",
+      "sha256": "5ff92a025f842749927ab17636834ad286c48912d3dfb4356d111f300fbead11"
+    },
+    {
+      "avatar_id": "c_silencer",
+      "id": "magistrate_robes",
+      "sha256": "c22ae9c837fe47089fabecc4f5d5bdfa7177295aa009056eb80fca4088dc40a4"
+    },
+    {
+      "avatar_id": "c_silencer",
+      "id": "tablet_pauldron",
+      "sha256": "a1d6252f1b8782381dccff02a212bf9366a4af41caa7c349f9c0b95ae1b41286"
+    },
+    {
+      "avatar_id": "c_wukong_lol",
+      "id": "pole_stilts",
+      "sha256": "c4e5704e81721091fa82796bb5bce3dcfd5506cf896a10c7e415b7f4f0185c5b"
+    },
+    {
+      "avatar_id": "c_wukong_lol",
+      "id": "scaffold_outfit",
+      "sha256": "199aa7ee568c455e1ba139fdc8a357f8a254d5140595cf99dc8ec59c80ce7f32"
+    },
+    {
+      "avatar_id": "c_monkeyking_dota",
+      "id": "jade_scepter",
+      "sha256": "8922c26454cd7dbddbaf551b61514421710971f13e955c09fd358276e452bda6"
+    },
+    {
+      "avatar_id": "c_monkeyking_dota",
+      "id": "monarch_outfit",
+      "sha256": "4b6dbf8c58ca89ecff99deb0f12b437a31dd83ce4b0f2de2a3d1b081d80d3ca2"
+    },
+    {
+      "avatar_id": "c_stepstone",
+      "id": "martial_outfit",
+      "sha256": "6ef63da7d419a20d5f10ac658e56338eab1df280dae6d267f89e8662e51dfc40"
+    },
+    {
+      "avatar_id": "c_stepstone",
+      "id": "wrist_bells",
+      "sha256": "42cf47fce9b7764aa17187011b40c65f3fd46a9c54a8e6a4b6559f7dbc6ef0bd"
+    },
+    {
+      "avatar_id": "c_skybreaker",
+      "id": "observation_platform",
+      "sha256": "1af3b32270fb41a42bc396700a16051c0f92b5395daa4031989dfc0578ac5c0a"
+    },
+    {
+      "avatar_id": "c_skybreaker",
+      "id": "pilot_outfit",
+      "sha256": "5b313e5030fb0f789201e879d432ec2d795773bb845d026454360445adcc7183"
+    },
+    {
+      "avatar_id": "c_skybreaker",
+      "id": "rangefinder",
+      "sha256": "5c8ba04919bff25114b8031bfbe4f110d5bd29b4be69ac799d950ab8983ae195"
+    }
+  ]
+}

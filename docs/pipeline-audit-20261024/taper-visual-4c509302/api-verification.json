@@ -1,0 +1,22 @@
+{
+    "verification_method": "Live API artifact/state readback and shared controller render with Web view context",
+    "controller_status": 200,
+    "candidate_id": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046",
+    "visual_review_id": "4c509302-8caf-4edb-a034-7a54bcd1ece5",
+    "candidate_sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+    "reference_sha256": "8416076e0ecb7b1592aafc1b4b9402ba028f21bb89c381c646f78501ce281838",
+    "bend_playback_available": true,
+    "bend_playback_sha256": "faadbbe72edf1ab61b2974c4e651867482bea7a79eaa4de1a90f1431df22e205",
+    "preview_uses_exact_bend_file": true,
+    "new_visual_review_visible": true,
+    "contact_map_id": "0ba81d69-3c9a-4e1c-b3dc-703e998fa143",
+    "contact_map_report_sha256": "adfe3b3a12acd788523d447ca82e185f9f083765d1b67da56e15e404d558cf03",
+    "contact_map_source_sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+    "contact_vertex_records": 517,
+    "contact_map_visible": true,
+    "assessment_status": "limited_visual_review_unqualified",
+    "publication_eligible": false,
+    "qualification_complete": false,
+    "preparation_status": "needs_review",
+    "inspector_sha256": "b53cdbbf1a7ee8cae29c18696ad56eb13e07acc2349f6e41d94e8a0adc9ccb02"
+}

@@ -1,0 +1,395 @@
+{
+  "character_motion": {
+    "version": "character-motion-v1",
+    "template": "donor_native",
+    "weapon": "unknown",
+    "source_weapon_type": "unknown",
+    "weapon_length_cm": 100,
+    "weapon_mass_kg": 1.5,
+    "mass_source": "weapon_type_heuristic",
+    "arm_to_height": 0.3332524811412163,
+    "shoulder_to_height": 0.27290139751518316,
+    "combat_style": "preserve_character_donor",
+    "amplitude_gain": 1,
+    "coil_degrees": 0.0,
+    "reach_degrees": 0.0,
+    "timing": "source_clip_unchanged",
+    "anatomy": "humanoid_only"
+  },
+  "combat_events": [
+    {
+      "event": "anticipation_start",
+      "phase": 0.0,
+      "authority": "presentation_metadata"
+    },
+    {
+      "event": "windup_start",
+      "phase": 0.15,
+      "authority": "presentation_metadata"
+    },
+    {
+      "event": "attack_release",
+      "phase": 0.42,
+      "authority": "presentation_metadata"
+    },
+    {
+      "event": "hit_frame",
+      "phase": 0.42,
+      "authority": "presentation_metadata"
+    },
+    {
+      "event": "follow_through_start",
+      "phase": 0.45999999999999996,
+      "authority": "presentation_metadata"
+    },
+    {
+      "event": "recovery_start",
+      "phase": 0.72,
+      "authority": "presentation_metadata"
+    },
+    {
+      "event": "animation_complete",
+      "phase": 1.0,
+      "authority": "presentation_metadata"
+    }
+  ],
+  "method": "unirig-skeleton-and-skin-native-clip-retarget-v1",
+  "sha256": "b001aebfd0e4cdfee88fcd7df21bb22e63dfc92142b37f52d2522a1b8e476097",
+  "bytes": 4906236,
+  "runtime_compatible": true,
+  "unirig": {
+    "id": "325e89b7-94fb-4958-817c-518fc846e247",
+    "status": "rigged_unqualified",
+    "stage": "awaiting_animation_retarget",
+    "plan": {
+      "version": 1,
+      "generation_id": "0aa7ff15-9cc1-474f-800f-1225901d611c",
+      "avatar_id": "c_wukong_lol",
+      "source_sha256": "a5239a0665fe694bd7cb45d2aca943564d15e7912cfbc84c86e5d4a89dd0ebec",
+      "engine_sha256": "378e3042a5005e0f6201342d45c512b829bedc0394ad3c66b07b30b98a4775f0",
+      "seed": 25001
+    },
+    "publication_eligible": false,
+    "updated_unix": 1792585938.3344412,
+    "resources": {
+      "vm_available_mib": 7730.03125,
+      "gpu_free_mib": 11223,
+      "gpu_used_mib": 893
+    },
+    "artifact": {
+      "sha256": "73e7b0ecab667ca4f7e17522e2fa945300e3a3876146df432f9ef2a1c40f48bd",
+      "bytes": 4317616,
+      "skins": 1,
+      "joints": [
+        "bone_0",
+        "bone_1",
+        "bone_2",
+        "bone_3",
+        "bone_4",
+        "bone_5",
+        "bone_6",
+        "bone_7",
+        "bone_8",
+        "bone_9",
+        "bone_10",
+        "bone_11",
+        "bone_12",
+        "bone_13",
+        "bone_14",
+        "bone_15",
+        "bone_16",
+        "bone_17",
+        "bone_18",
+        "bone_19",
+        "bone_20",
+        "bone_21",
+        "bone_22",
+        "bone_23",
+        "bone_24",
+        "bone_25",
+        "bone_26",
+        "bone_27",
+        "bone_28",
+        "bone_29",
+        "bone_30",
+        "bone_31",
+        "bone_32",
+        "bone_33",
+        "bone_34",
+        "bone_35",
+        "bone_36",
+        "bone_37",
+        "bone_38",
+        "bone_39",
+        "bone_40",
+        "bone_41",
+        "bone_42",
+        "bone_43",
+        "bone_44",
+        "bone_45",
+        "bone_46",
+        "bone_47",
+        "bone_48",
+        "bone_49",
+        "bone_50",
+        "bone_51"
+      ],
+      "animations": 0,
+      "publication_eligible": false
+    },
+    "reused_from": "325e89b7-94fb-4958-817c-518fc846e247"
+  },
+  "predicted_bones": [
+    "bone_0",
+    "bone_1",
+    "bone_2",
+    "bone_3",
+    "bone_4",
+    "bone_5",
+    "bone_6",
+    "bone_7",
+    "bone_8",
+    "bone_9",
+    "bone_10",
+    "bone_11",
+    "bone_12",
+    "bone_13",
+    "bone_14",
+    "bone_15",
+    "bone_16",
+    "bone_17",
+    "bone_18",
+    "bone_19",
+    "bone_20",
+    "bone_21",
+    "bone_22",
+    "bone_23",
+    "bone_24",
+    "bone_25",
+    "bone_26",
+    "bone_27",
+    "bone_28",
+    "bone_29",
+    "bone_30",
+    "bone_31",
+    "bone_32",
+    "bone_33",
+    "bone_34",
+    "bone_35",
+    "bone_36",
+    "bone_37",
+    "bone_38",
+    "bone_39",
+    "bone_40",
+    "bone_41",
+    "bone_42",
+    "bone_43",
+    "bone_44",
+    "bone_45",
+    "bone_46",
+    "bone_47",
+    "bone_48",
+    "bone_49",
+    "bone_50",
+    "bone_51"
+  ],
+  "bone_map": {
+    "Root": "avatar_control_root",
+    "Hips": "bone_0",
+    "Spine": "bone_1",
+    "Chest": "bone_3",
+    "Head": "bone_5",
+    "UpperArmR": "bone_7",
+    "ForearmR": "bone_8",
+    "HandR": "bone_9",
+    "UpperArmL": "bone_26",
+    "ForearmL": "bone_27",
+    "HandL": "bone_28",
+    "ThighR": "bone_44",
+    "CalfR": "bone_45",
+    "FootR": "bone_46",
+    "ThighL": "bone_48",
+    "CalfL": "bone_49",
+    "FootL": "bone_50"
+  },
+  "mapping_review": {
+    "method": "humanoid-topology-rest-v4",
+    "accepted": true,
+    "reasons": [],
+    "warnings": [],
+    "profile": "humanoid_unarmed",
+    "confidence": 0.943,
+    "per_bone_confidence": {
+      "Root": 0.98,
+      "Hips": 0.98,
+      "Spine": 0.95,
+      "Chest": 0.95,
+      "Head": 0.95,
+      "UpperArmR": 0.93,
+      "ForearmR": 0.93,
+      "HandR": 0.93,
+      "UpperArmL": 0.93,
+      "ForearmL": 0.93,
+      "HandL": 0.93,
+      "ThighR": 0.94,
+      "CalfR": 0.94,
+      "FootR": 0.94,
+      "ThighL": 0.94,
+      "CalfL": 0.94,
+      "FootL": 0.94
+    },
+    "symmetry": {
+      "arm_symmetry": 1.0,
+      "leg_symmetry": 0.9994
+    },
+    "proportions": {
+      "arm_R_upper": 0.1482,
+      "arm_R_fore": 0.1629,
+      "arm_L_upper": 0.1482,
+      "arm_L_fore": 0.1629,
+      "leg_R_thigh": 0.2707,
+      "leg_R_calf": 0.2471,
+      "leg_L_thigh": 0.2699,
+      "leg_L_calf": 0.2476
+    },
+    "checks": [
+      "single root and pelvis",
+      "distinct torso/head/arm branches",
+      "opposite limb sides",
+      "leg proportions",
+      "toe-confirmed facing",
+      "17 unique joints"
+    ],
+    "bone_map": {
+      "Root": "avatar_control_root",
+      "Hips": "bone_0",
+      "Spine": "bone_1",
+      "Chest": "bone_3",
+      "Head": "bone_5",
+      "UpperArmR": "bone_7",
+      "ForearmR": "bone_8",
+      "HandR": "bone_9",
+      "UpperArmL": "bone_26",
+      "ForearmL": "bone_27",
+      "HandL": "bone_28",
+      "ThighR": "bone_44",
+      "CalfR": "bone_45",
+      "FootR": "bone_46",
+      "ThighL": "bone_48",
+      "CalfL": "bone_49",
+      "FootL": "bone_50"
+    },
+    "root_adapter": {
+      "name": "avatar_control_root",
+      "pelvis": "bone_0",
+      "native": "Root",
+      "use_deform": false
+    },
+    "attachment_review": {
+      "repairs": [],
+      "unresolved": []
+    }
+  },
+  "native_helpers": {
+    "left-arm": "UpperArmL",
+    "right-arm": "UpperArmR",
+    "leg:-1": "ThighL",
+    "leg:1": "ThighR"
+  },
+  "character_profile": "humanoid_unarmed",
+  "animation_reference": "anatomically calibrated Idle arm stance; complete donor world-space arm motion; bind-relative torso/legs",
+  "locomotion_contacts": "donor FK; vertical contact clamp <=2.5% leg length; authored knee plane and foot orientation",
+  "stride_distances": {
+    "run": 1.4997013211250305,
+    "strafe": 0.9386715676748391,
+    "walk": 1.1626855980965398
+  },
+  "secondary_bones": {},
+  "equipment_repairs": [],
+  "motion_profile": {
+    "name": "calibrated-arm-stance-v1",
+    "clip_timing": "unchanged"
+  },
+  "skin_weights": "UniRig body and secondary weights retained; constrained equipment repairs recorded",
+  "skin_repairs": [
+    {
+      "engine": "bounded-skin-correction-v1",
+      "attempts": 1,
+      "accepted": true,
+      "before": {
+        "valid": true,
+        "issues": [],
+        "stats": {
+          "vertex_count": 18676,
+          "unweighted_vertices": 0,
+          "unnormalized_vertices": 0,
+          "vertices_exceeding_four_influences": 0,
+          "max_influences": 4,
+          "non_finite_weights": 0,
+          "negative_weights": 0,
+          "unreferenced_groups": [],
+          "cross_limb_anomalies": 191
+        }
+      },
+      "after": {
+        "valid": true,
+        "issues": [],
+        "stats": {
+          "vertex_count": 18676,
+          "unweighted_vertices": 0,
+          "unnormalized_vertices": 0,
+          "vertices_exceeding_four_influences": 0,
+          "max_influences": 4,
+          "non_finite_weights": 0,
+          "negative_weights": 0,
+          "unreferenced_groups": [],
+          "cross_limb_anomalies": 214
+        }
+      },
+      "repairs": [
+        {
+          "method": "topological-laplacian-secondary-preserved-v3",
+          "vertices_regularized": 18676,
+          "rigid_equipment_vertices_preserved": 0,
+          "unmapped_bones_consolidated": 2,
+          "extra_bones_preserved": 34
+        }
+      ],
+      "status": "weights_validated_pose_review_required",
+      "limits": "Weight validity only; pose deformation, clothing and clipping checked downstream"
+    }
+  ],
+  "skin_validation": [
+    {
+      "valid": true,
+      "issues": [],
+      "stats": {
+        "vertex_count": 18676,
+        "unweighted_vertices": 0,
+        "unnormalized_vertices": 0,
+        "vertices_exceeding_four_influences": 0,
+        "max_influences": 4,
+        "non_finite_weights": 0,
+        "negative_weights": 0,
+        "unreferenced_groups": [],
+        "cross_limb_anomalies": 214
+      }
+    }
+  ],
+  "native_clips": [
+    "Attack",
+    "Cast",
+    "Death",
+    "Hit",
+    "Idle",
+    "Run",
+    "Strafe",
+    "TurnLeft",
+    "TurnRight",
+    "Walk"
+  ],
+  "problems": [],
+  "equipment": [],
+  "grip_bones": [],
+  "limits": "UniRig body skin retained; separate equipment is rigid-bound to real hands. Calibrated motion and automatic grip fitting remain candidates; identity, clipping, contact and timing require qualification and visual review."
+}

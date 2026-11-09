@@ -1,0 +1,119 @@
+{
+  "poses": [
+    {
+      "joint": "UpperArmL",
+      "degrees": 45,
+      "control_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "UpperArmL",
+      "degrees": 90,
+      "control_vs_ideal": 8.344650268554688e-07,
+      "corrective_vs_ideal": 8.344650268554688e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 45,
+      "control_vs_ideal": 7.152557373046875e-07,
+      "corrective_vs_ideal": 7.152557373046875e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 90,
+      "control_vs_ideal": 1.0728836059570312e-06,
+      "corrective_vs_ideal": 1.0728836059570312e-06,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 45,
+      "control_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 90,
+      "control_vs_ideal": 1.3113021850585938e-06,
+      "corrective_vs_ideal": 1.3113021850585938e-06,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 45,
+      "control_vs_ideal": 7.301568984985352e-07,
+      "corrective_vs_ideal": 7.301568984985352e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 90,
+      "control_vs_ideal": 1.1920928955078125e-06,
+      "corrective_vs_ideal": 1.1920928955078125e-06,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 45,
+      "control_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 90,
+      "control_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 45,
+      "control_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 90,
+      "control_vs_ideal": 8.051283657550812e-07,
+      "corrective_vs_ideal": 8.051283657550812e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 45,
+      "control_vs_ideal": 8.344650268554688e-07,
+      "corrective_vs_ideal": 8.344650268554688e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 90,
+      "control_vs_ideal": 9.5367431640625e-07,
+      "corrective_vs_ideal": 9.5367431640625e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 45,
+      "control_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_control": 0.0
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 90,
+      "control_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_ideal": 7.450580596923828e-07,
+      "corrective_vs_control": 0.0
+    }
+  ],
+  "max_control_vs_ideal": 1.3113021850585938e-06,
+  "max_corrective_vs_ideal": 1.3113021850585938e-06,
+  "max_corrective_vs_control": 0.0
+}

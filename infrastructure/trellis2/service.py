@@ -47,6 +47,12 @@ def canonical(data):
 
 def engine_manifest():
     files = {name: sha((HERE / name).read_bytes()) for name in ['service.py','diagnose.py','export_node.py','workflow-v1.json','model-pins.json','limits.json','Dockerfile.native','catalog.json','reference-index.json','patch_nodes.py']}
+    decoder = COMFY / 'custom_nodes/ComfyUI-Trellis2-GGUF/trellis2_gguf/models/sc_vaes/fdg_vae.py'
+    if decoder.is_file():
+        files['runtime/fdg_vae.py'] = sha(decoder.read_bytes())
+    sparse_config = COMFY / 'custom_nodes/ComfyUI-Trellis2-GGUF/trellis2_gguf/modules/sparse/conv/config.py'
+    if sparse_config.is_file():
+        files['runtime/sparse_conv_config.py'] = sha(sparse_config.read_bytes())
     packages = HERE / 'installed-packages.txt'
     return {'image_id': os.environ.get('TRELLIS_IMAGE_ID','not-recorded'),
             'environment_id': os.environ.get('TRELLIS_ENVIRONMENT_ID'), 'python': platform.python_version(),

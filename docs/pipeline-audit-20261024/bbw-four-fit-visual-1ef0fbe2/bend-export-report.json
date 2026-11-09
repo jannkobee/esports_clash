@@ -1,0 +1,443 @@
+{
+  "id": "1ef0fbe2-090d-4263-9342-089c906f8c74",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "assets": [
+    {
+      "label": "parent",
+      "source_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+      "stress_sha256": "29be129bb11edbebe72b7d0fe7ee264700bfd8cd1c72458d0e943ad8708ae5c2",
+      "stress_bytes": 3531864,
+      "poses": [
+        {
+          "morph_weights": {},
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 384,
+          "expected": 384
+        },
+        {
+          "morph_weights": {},
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 368,
+          "expected": 368
+        },
+        {
+          "morph_weights": {},
+          "joint": "ForearmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ForearmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ForearmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ForearmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ThighL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ThighL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 516,
+          "expected": 516
+        },
+        {
+          "morph_weights": {},
+          "joint": "ThighR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ThighR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 555,
+          "expected": 555
+        },
+        {
+          "morph_weights": {},
+          "joint": "CalfL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "CalfL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 94,
+          "expected": 94
+        },
+        {
+          "morph_weights": {},
+          "joint": "CalfR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "CalfR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 188,
+          "expected": 188
+        }
+      ],
+      "baseline_reproduced": true
+    },
+    {
+      "label": "current",
+      "source_sha256": "a8842ab894738194008007ba06af8cd268f3b150d5426810990a3bb33c2edccb",
+      "stress_sha256": "8143dd718f8e33e4fa2354e452a40d81fd4308f4bc3015db500025ed170bce10",
+      "stress_bytes": 3531064,
+      "poses": [
+        {
+          "morph_weights": {},
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 105,
+          "expected": 105
+        },
+        {
+          "morph_weights": {},
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 100,
+          "expected": 100
+        },
+        {
+          "morph_weights": {},
+          "joint": "ForearmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ForearmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ForearmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ForearmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ThighL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ThighL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 333,
+          "expected": 333
+        },
+        {
+          "morph_weights": {},
+          "joint": "ThighR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "ThighR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 421,
+          "expected": 421
+        },
+        {
+          "morph_weights": {},
+          "joint": "CalfL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "CalfL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 94,
+          "expected": 94
+        },
+        {
+          "morph_weights": {},
+          "joint": "CalfR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {},
+          "joint": "CalfR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 188,
+          "expected": 188
+        }
+      ],
+      "baseline_reproduced": true
+    }
+  ],
+  "status": "diagnostic_clips_exported"
+}

@@ -1,0 +1,23 @@
+[
+    {
+        "kind":  "body",
+        "avatar_id":  "c_monkeyking_dota",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/bram-stonebranch.png",
+        "prompt":  "Technical neutral adult base for Bram Stonebranch. Reference is identity only. Hulking older adult male simian, broad build, monkey face ears hands feet and one tail separated from legs; no mane or crown. Fully covered plain opaque matte gray seamless compression unitard neck to wrists and ankles, bare hands/feet, bald no beard. No decorative costume, hair, armor, jewelry, equipment, companion, vehicle, weapon. Front full body symmetrical static wide A-pose straight arms 45 degrees down/out, hands/fingers separate, legs slightly apart straight. Preserve intrinsic species anatomy, no fused armpits, tail separate. Entire silhouette with generous transparent padding on all sides. No floor, shadows, text, halo. Neutral gray sculpt with readable joints.",
+        "sha256":  "a448576cc4851501824ad48ea5d2b63d9b2f3c0f26dd4e841e865c797b6e24bf"
+    },
+    {
+        "kind":  "body",
+        "avatar_id":  "c_skybreaker",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/ravelle-skyrake.png",
+        "prompt":  "Technical neutral adult base for Ravelle Skyrake. Reference is identity only. Adult human female pilot, ordinary natural adult build. Fully covered plain opaque matte gray seamless compression unitard neck to wrists and ankles, bare hands/feet, bald no beard. No decorative costume, hair, armor, jewelry, equipment, companion, vehicle, weapon. Front full body symmetrical static wide A-pose straight arms 45 degrees down/out, hands/fingers separate, legs slightly apart straight. Preserve intrinsic species anatomy, no fused armpits, tail separate. Entire silhouette with generous transparent padding on all sides. No floor, shadows, text, halo. Neutral gray sculpt with readable joints.",
+        "sha256":  "e239e7943513c1b3d66f964efd4c78209394f8095096bc13f8247c8ce015a2b2"
+    },
+    {
+        "kind":  "body",
+        "avatar_id":  "c_puck",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/lulla-faespring-v4.png",
+        "prompt":  "Keep exact adult character and raised wing pose. Zoom camera OUT significantly. Complete both upper wing tips, fully inside frame. Whole figure occupies only central 70 percent of canvas height and width with generous empty transparent border on ALL sides. Preserve four wings, ears, antennae, gray unitard, A-pose hands feet, proportions. No crop, no floor, no shadow, true transparent background.",
+        "sha256":  "4329cb89385294ca1878b64598a29d48b4e740460aedb6a3926d777688f26cbb"
+    }
+]

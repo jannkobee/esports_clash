@@ -1,0 +1,500 @@
+{
+  "id": "1a8d5ad6-a597-4be2-92a8-13d4ae8c8ece",
+  "method": "libigl-core-bone-volume-weights-v1",
+  "plan": {
+    "id": "1a8d5ad6-a597-4be2-92a8-13d4ae8c8ece",
+    "method": "libigl-core-bone-volume-weights-v1",
+    "compute": "google",
+    "publication_eligible": false,
+    "qualification_complete": false,
+    "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+    "proxy_id": "7c29ff0b-7f6e-495e-87ae-b9ed54aedad6",
+    "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+    "rig_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+    "files": {
+      "raw.glb": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+      "proxy-report.json": "c80ef0dec50aea28c458863bf66195e21ae23d84b17a85c6957a0b82fa5a58aa",
+      "proxy-domain.npz": "f0627f11cbb664bae48b0f4ddf212efdc04f818d59ee197b5ae679860e15d2e6",
+      "tools/solve_bbw_proxy.py": "7fff898d17910d122b217a62bb9ada26625f5df03452480dafb1271b593aaa79",
+      "tools/bbw_solver.py": "bb023ae820b218cdf4bae21bbe630ce4f973a056e62a280ebcf9eee9d4bc1215",
+      "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+      "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+      "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+      "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+      "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02"
+    }
+  },
+  "compute": "google",
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+  "proxy_id": "7c29ff0b-7f6e-495e-87ae-b9ed54aedad6",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "candidate_available": false,
+  "started_unix": 1793197495.6101236,
+  "constraints": [
+    {
+      "bone": "bone_0",
+      "node": 9508,
+      "target_world": [
+        0.0019518399494700134,
+        0.018696151673793793,
+        0.12752484530210495
+      ],
+      "node_world": [
+        0.005223622235159042,
+        0.015670866705477238,
+        0.13059055587897705
+      ],
+      "distance": 0.005408834422092815,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.0019518400076776743,
+        0.020655011758208275,
+        0.15103115141391754
+      ]
+    },
+    {
+      "bone": "bone_1",
+      "node": 9565,
+      "target_world": [
+        0.0019518399494700134,
+        0.022613870911300182,
+        0.1784551739692688
+      ],
+      "node_world": [
+        0.005223622235159042,
+        0.026118111175795405,
+        0.18282677823056792
+      ],
+      "distance": 0.006488080068376679,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.0019518398912623525,
+        0.02457273006439209,
+        0.20587919652462006
+      ]
+    },
+    {
+      "bone": "bone_2",
+      "node": 9570,
+      "target_world": [
+        0.0019518397748470306,
+        0.026531584560871124,
+        0.23722092062234879
+      ],
+      "node_world": [
+        0.005223622235159042,
+        0.026118111175795405,
+        0.23506300058215868
+      ],
+      "distance": 0.003941083557554365,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.0019518396584317088,
+        0.02849043905735016,
+        0.2685626447200775
+      ]
+    },
+    {
+      "bone": "bone_3",
+      "node": 9577,
+      "target_world": [
+        0.0019518397166393697,
+        0.03044929727911949,
+        0.3038221001625061
+      ],
+      "node_world": [
+        0.005223622235159042,
+        0.026118111175795405,
+        0.3081937118743858
+      ],
+      "distance": 0.006969556863213223,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.0019518397748470306,
+        0.032408155500888824,
+        0.3390815556049347
+      ]
+    },
+    {
+      "bone": "bone_4",
+      "node": 9582,
+      "target_world": [
+        0.0019518397748470306,
+        0.02849043533205986,
+        0.36062900722026825
+      ],
+      "node_world": [
+        0.005223622235159042,
+        0.026118111175795405,
+        0.3604299342259766
+      ],
+      "distance": 0.00404624670862485,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.0019518397748470306,
+        0.024572715163230896,
+        0.3821764588356018
+      ]
+    },
+    {
+      "bone": "bone_5",
+      "node": 9584,
+      "target_world": [
+        0.0019518397748470306,
+        0.024572715163230896,
+        0.3821764588356018
+      ],
+      "node_world": [
+        0.005223622235159042,
+        0.026118111175795405,
+        0.38132442316661286
+      ],
+      "distance": 0.0037173611721872074,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.0019518397748470306,
+        0.024572715163230896,
+        0.3821764588356018
+      ]
+    },
+    {
+      "bone": "bone_6",
+      "node": 13024,
+      "target_world": [
+        0.056799874641001225,
+        0.03240816295146942,
+        0.31753411889076233
+      ],
+      "node_world": [
+        0.0574598445867498,
+        0.036565355646113545,
+        0.3186409563447039
+      ],
+      "distance": 0.004352344262479902,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.08422389626502991,
+        0.03240816295146942,
+        0.30773982405662537
+      ]
+    },
+    {
+      "bone": "bone_7",
+      "node": 16836,
+      "target_world": [
+        0.125359907746315,
+        0.028490443713963032,
+        0.24897407740354538
+      ],
+      "node_world": [
+        0.12014331140865875,
+        0.026118111175795405,
+        0.24551024505247687
+      ],
+      "distance": 0.006696190975323679,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.1664959192276001,
+        0.024572724476456642,
+        0.1902083307504654
+      ]
+    },
+    {
+      "bone": "bone_8",
+      "node": 17816,
+      "target_world": [
+        0.2135085016489029,
+        0.0010664472356438637,
+        0.12948372960090637
+      ],
+      "node_world": [
+        0.21416851164152217,
+        0.00522362223515907,
+        0.13059055587897705
+      ],
+      "distance": 0.004352330591393462,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.2605210840702057,
+        -0.022439830005168915,
+        0.06875912845134735
+      ]
+    },
+    {
+      "bone": "bone_9",
+      "node": 18187,
+      "target_world": [
+        0.2754084080457687,
+        -0.02949171680957079,
+        0.05152118522673845
+      ],
+      "node_world": [
+        0.2768519784634311,
+        -0.026118111175795405,
+        0.047012600116431824
+      ],
+      "distance": 0.005813127404407172,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.2902957320213318,
+        -0.036543603613972665,
+        0.03428324200212955
+      ]
+    },
+    {
+      "bone": "bone_25",
+      "node": 5629,
+      "target_world": [
+        -0.05289619509130716,
+        0.03240816481411457,
+        0.31753408908843994
+      ],
+      "node_world": [
+        -0.05745984458674991,
+        0.036565355646113545,
+        0.3186409563447039
+      ],
+      "distance": 0.006271705306684975,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        -0.08032021671533585,
+        0.03240816667675972,
+        0.307739794254303
+      ]
+    },
+    {
+      "bone": "bone_26",
+      "node": 1448,
+      "target_world": [
+        -0.12145622447133064,
+        0.028490454889833927,
+        0.24897406995296478
+      ],
+      "node_world": [
+        -0.12014331140865889,
+        0.026118111175795405,
+        0.24551024505247687
+      ],
+      "distance": 0.004398845115358383,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        -0.16259223222732544,
+        0.024572743102908134,
+        0.1902083456516266
+      ]
+    },
+    {
+      "bone": "bone_27",
+      "node": 556,
+      "target_world": [
+        -0.20960479974746704,
+        0.0010664453729987144,
+        0.12948375567793846
+      ],
+      "node_world": [
+        -0.2141685116415223,
+        0.00522362223515907,
+        0.13059055587897705
+      ],
+      "distance": 0.006271729617915783,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        -0.25661736726760864,
+        -0.022439852356910706,
+        0.06875916570425034
+      ]
+    },
+    {
+      "bone": "bone_28",
+      "node": 256,
+      "target_world": [
+        -0.27111293375492096,
+        -0.02949174363166094,
+        0.05152121167629957
+      ],
+      "node_world": [
+        -0.2664047339931131,
+        -0.026118111175795405,
+        0.047012600116431824
+      ],
+      "distance": 0.007340035363820122,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        -0.2856085002422333,
+        -0.036543634906411174,
+        0.03428325764834881
+      ]
+    },
+    {
+      "bone": "bone_44",
+      "node": 13536,
+      "target_world": [
+        0.0685530174523592,
+        0.014778424054384232,
+        -0.054648976773023605
+      ],
+      "node_world": [
+        0.06790708905706799,
+        0.015670866705477238,
+        -0.0574598445867498
+      ],
+      "distance": 0.0030190487315668244,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.07638844847679138,
+        0.012819556519389153,
+        -0.1858924925327301
+      ]
+    },
+    {
+      "bone": "bone_45",
+      "node": 14956,
+      "target_world": [
+        0.09401817247271538,
+        0.018696125596761703,
+        -0.31321828067302704
+      ],
+      "node_world": [
+        0.08880157799770427,
+        0.015670866705477238,
+        -0.3081937118743856
+      ],
+      "distance": 0.007849289196372698,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.11164789646863937,
+        0.024572694674134254,
+        -0.440544068813324
+      ]
+    },
+    {
+      "bone": "bone_46",
+      "node": 16111,
+      "target_world": [
+        0.10968903452157974,
+        -0.012645614333450794,
+        -0.4679681360721588
+      ],
+      "node_world": [
+        0.10969606693834061,
+        -0.015670866705477238,
+        -0.464902378929158
+      ],
+      "distance": 0.004307095103337952,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.10773017257452011,
+        -0.04986392334103584,
+        -0.49539220333099365
+      ]
+    },
+    {
+      "bone": "bone_47",
+      "node": 16055,
+      "target_world": [
+        0.10773017257452011,
+        -0.04986392334103584,
+        -0.49539220333099365
+      ],
+      "node_world": [
+        0.10969606693834061,
+        -0.04701260011643171,
+        -0.49624411234011245
+      ],
+      "distance": 0.003566585725969007,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        0.10773017257452011,
+        -0.04986392334103584,
+        -0.49539220333099365
+      ]
+    },
+    {
+      "bone": "bone_48",
+      "node": 4732,
+      "target_world": [
+        -0.06464932300150394,
+        0.014778461772948503,
+        -0.054648954421281815
+      ],
+      "node_world": [
+        -0.0679070890570681,
+        0.015670866705477238,
+        -0.0574598445867498
+      ],
+      "distance": 0.004394374785872537,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        -0.07248474657535553,
+        0.012819630093872547,
+        -0.18589243292808533
+      ]
+    },
+    {
+      "bone": "bone_49",
+      "node": 3228,
+      "target_world": [
+        -0.08815565332770348,
+        0.01869624713435769,
+        -0.31321823596954346
+      ],
+      "node_world": [
+        -0.08880157799770438,
+        0.015670866705477238,
+        -0.3081937118743856
+      ],
+      "distance": 0.005900507418992923,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        -0.10382656008005142,
+        0.024572864174842834,
+        -0.4405440390110016
+      ]
+    },
+    {
+      "bone": "bone_50",
+      "node": 2309,
+      "target_world": [
+        -0.10186769440770149,
+        -0.012645404785871506,
+        -0.46796803176403046
+      ],
+      "node_world": [
+        -0.09924882246802258,
+        -0.015670866705477238,
+        -0.464902378929158
+      ],
+      "distance": 0.00504084688989694,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        -0.09990882873535156,
+        -0.049863673746585846,
+        -0.4953920245170593
+      ]
+    },
+    {
+      "bone": "bone_51",
+      "node": 2226,
+      "target_world": [
+        -0.09990882873535156,
+        -0.049863673746585846,
+        -0.4953920245170593
+      ],
+      "node_world": [
+        -0.09924882246802258,
+        -0.04701260011643171,
+        -0.49624411234011245
+      ],
+      "distance": 0.003047996518316453,
+      "endpoint_method": "actual child joint head; branch mean; leaf head",
+      "endpoint_world": [
+        -0.09990882873535156,
+        -0.049863673746585846,
+        -0.4953920245170593
+      ]
+    }
+  ],
+  "status": "constraints_ready"
+}

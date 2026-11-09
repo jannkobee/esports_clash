@@ -4,7 +4,17 @@
 **/node_modules/
 **/dist/
 **/dist-ssr/
+**/*-dist/
 EsportsClash.Web/avatar-review-dist/
+
+# Browser test profiles, temporary test runs, and audit directories
+.*-check/
+.*-audit/
+.tmp*/
+**/.tmp/
+*.coverage
+.pytest_cache/
+.cache/
 
 # Local configuration and credentials
 .env
@@ -36,3 +46,6 @@ EsportsClash.Web/avatar-review-dist/
 # Python worker bytecode
 __pycache__/
 *.py[cod]
+
+# Built from Web sources by the API Docker image or build:base-inspector
+EsportsClash.Api/public/base-inspector/

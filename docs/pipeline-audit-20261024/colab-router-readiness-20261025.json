@@ -1,0 +1,67 @@
+{
+  "provider": "google-colab",
+  "models": {
+    "ready": true,
+    "reason": null
+  },
+  "gpu_validated": true,
+  "compute": {
+    "switching_supported": true,
+    "preferred": "google",
+    "selected": "google",
+    "policy": "colab-only-v1",
+    "ready": true,
+    "automatic_fallback": false,
+    "fallback_reason": null,
+    "blocked_reason": null,
+    "backends": {
+      "google": {
+        "available": true,
+        "model": "TRELLIS.2-4B",
+        "reason": null,
+        "hardware": {
+          "gpu": "Tesla T4",
+          "gpu_total_mib": 15360,
+          "gpu_used_mib": 0,
+          "gpu_free_mib": 14913,
+          "driver": "580.82.07",
+          "vm_available_mib": 11673.9453125,
+          "comfy_tree_rss_mib": 0,
+          "worker_anonymous_mib": 289.2578125,
+          "scope": "Docker Linux VM RAM; sampled whole-device VRAM includes other applications."
+        }
+      }
+    }
+  },
+  "engine": {
+    "image_id": "trellis2-router-colab-only-v3",
+    "python": "3.12.15",
+    "source_hashes": {
+      "cloud_bridge.py": "69343e5705d728f64ae15e044843e4cf6d89dbde3832df3e22d69b61c2882f2e",
+      "trellis_backends.py": "b79d2ffcbdc36b02a1d2dd870b0664519ddc355caba84215c2dae31dea7c52b4",
+      "colab_worker.py": "a174da50410e6addbfb90e28e1cb7eb46f922fec1389199c0eebdd808fdec68f",
+      "service.py": "f95ded31d8b4448eb41afc8da4f1c9739a1da4832d0c2d5146ce0df1c6a52f68",
+      "diagnose.py": "bf235870639d994f85b580d51b6770a3f83b958b54b7bcaf486925bc64cec675",
+      "export_node.py": "41568ab48506cc5b06da4b494502bd9cae8a89a7b0192986a69b28a3cf6daf91",
+      "patch_nodes.py": "c88141ac0d7ebd5021f0ee5d4f50de63fa7cca78caf7e2a8d78f7263f503c061",
+      "workflow-v1.json": "a9b6bffa4adf93c691a464f3110b35b959fa439f10ced4d24f93e1399d8e59ac",
+      "model-pins.json": "cd832d8bc88ddda3d2db2054a8924f0f38d0dd333a064d1fde64b22a897fcf0e",
+      "limits.json": "147c3c140aa30a23fbb3f46f4ef66acd569608eedec859fd8e884f4ddcef89a3",
+      "catalog.json": "1004d9f10c44002fd098c3df03ed86bc0863a573384edf750fd7f9e0aac6c6d7"
+    },
+    "cloud_colab": true,
+    "cloud_model": "TRELLIS.2-4B",
+    "local_fallback": false
+  },
+  "hardware": {
+    "gpu": "Tesla T4",
+    "gpu_total_mib": 15360,
+    "gpu_used_mib": 0,
+    "gpu_free_mib": 14913,
+    "driver": "580.82.07",
+    "vm_available_mib": 11673.9453125,
+    "comfy_tree_rss_mib": 0,
+    "worker_anonymous_mib": 289.2578125,
+    "scope": "Docker Linux VM RAM; sampled whole-device VRAM includes other applications."
+  }
+}

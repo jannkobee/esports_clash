@@ -23,6 +23,8 @@ x-api: &api
     EVOLUTION_WORKER_TOKEN: ${EVOLUTION_WORKER_TOKEN:?Missing worker token}
     EVOLUTION_OWNER_EMAIL: ${EVOLUTION_OWNER_EMAIL:-owner@teamfight.local}
     EVOLUTION_OWNER_PASSWORD: ${EVOLUTION_OWNER_PASSWORD:?Missing initial owner password}
+    HEXATRICK_OWNER_EMAIL: ${HEXATRICK_OWNER_EMAIL:-}
+    HEXATRICK_OWNER_PASSWORD: ${HEXATRICK_OWNER_PASSWORD:-}
     ONLINE_WORKER_URL: http://match-worker:8092
     ONLINE_WORKER_TOKEN: ${ONLINE_WORKER_TOKEN:-}
     REDIS_HOST: avatar-redis
@@ -34,6 +36,28 @@ x-api: &api
   cpus: 0.5
 
 services:
+  world-live:
+    image: node:24-bookworm-slim
+    working_dir: /app
+    command: [node, world-live-gateway.mjs]
+    environment:
+      WORLD_REVISION_URL: http://api:8000/api/v1/world/revision
+    volumes:
+      - ./EsportsClash.Web:/app:ro
+    restart: unless-stopped
+    mem_limit: 96m
+    cpus: 0.25
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:4176/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  competition-rankings:
+    <<: *api
+    command: [php, artisan, 'queue:listen', competition_rankings, '--queue=competition-rankings', '--sleep=3', '--timeout=950', '--tries=4']
+    mem_limit: 384m
+    cpus: 0.5
+
   avatar-redis:
     image: redis:7.2-alpine
     command: [redis-server, --appendonly, "yes", --appendfsync, everysec, --maxmemory, 96mb, --maxmemory-policy, noeviction]
@@ -138,6 +162,22 @@ services:
     restart: unless-stopped
     mem_limit: 128m
     cpus: 0.5
+
+  history-worker:
+    init: true
+    image: teamfight-online-worker:world-media-20261108
+    command: [python, /online/history_server.py]
+    environment:
+      ONLINE_WORKER_TOKEN: ${ONLINE_WORKER_TOKEN:?Run infrastructure/evolution/setup.ps1}
+    volumes: [online-matches:/online-data]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8102/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+    mem_limit: 1536m
+    cpus: 1
 
   match-worker:
     init: true

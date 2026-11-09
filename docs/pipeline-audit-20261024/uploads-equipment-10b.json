@@ -1,0 +1,41 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_nullweaver",
+    "component_id": "measurement_robe",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Indigo measurement robe",
+    "attachment": "body",
+    "prompt": "Edit the attached equipment reference only. Zoom out substantially to show the entire complete empty garment set including both sleeve edges and both boot soles with generous transparent margin all four sides. Restore cropped fabric/boot edges. Keep same exact design and materials, visibly empty hollow garments, no wearer or mannequin. Asset occupies central 65 percent of frame. Remove soft background haze. Genuine transparent background, no floor, shadow, glow or text.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/vesper-nullcode-measurement_robe-v2.png",
+    "sha256": "447f15617f2d7f54e87ed01c2468cb5127a274174e5626101c6b12c2c85d3d2f"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_voltgrip",
+    "component_id": "utility_outfit",
+    "category": "outfit",
+    "binding": "skinned",
+    "label": "Electrician outfit and safety visor",
+    "attachment": "body",
+    "prompt": "Edit the attached equipment reference only. Zoom out substantially to show the entire complete empty garment set including both sleeve edges and both boot soles with generous transparent margin all four sides. Restore cropped fabric/boot edges. Keep same exact design and materials, visibly empty hollow garments, no wearer or mannequin. Asset occupies central 65 percent of frame. Remove soft background haze. Genuine transparent background, no floor, shadow, glow or text.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/coiljack-ampfist-utility_outfit-v2.png",
+    "sha256": "bc7815d2e11b99328c9faf03a3e4d0901fdaad21edeb39c5603b73074d97812b"
+  },
+  {
+    "kind": "component",
+    "avatar_id": "c_aetherbolt",
+    "component_id": "bow_rifle",
+    "category": "accessory",
+    "binding": "rigid",
+    "label": "Mechanical ricochet bow-rifle",
+    "attachment": "hands",
+    "prompt": "Use case: stylized-concept. A static fantasy game equipment reference. Extract only the complete ornate brass-and-wood bow-rifle prop held by the surveyor in the attached design reference. Show its scope, wood stock, narrow bow limbs, strings and brass frame as a neutral unheld inventory object. No character, hands, ammunition, action or effects. Preserve the illustrated object shape and proportions. Three-quarter product view, small centered object occupying 55 percent of frame with wide transparent margins, all tips visible. Genuine transparent background, no floor, shadow, background glow, text or labels.",
+    "reference_purpose": "reconstruction",
+    "path": "docs/pipeline-audit-20261024/upload-assets/talan-slipshot-bow_rifle-v2.png",
+    "sha256": "7e23bb0729f08441524e3d8fba1975f0b42ecc5f54d25702bac6f20f63adcbfd"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "id": "957a3d60-afe6-4b48-94cd-b729c7a5f0ab",
+  "compute": "google",
+  "asset_sha256": "f308406eca91586cc8c418b925552c89f5ed438509fbf3fc5b7b83743d837d9a",
+  "files": {
+    "evaluated_points.py": "52e4c05bef3775e26bf7668d126f4c3a2906ac3cf980ec5e95b6065b142ca7fb",
+    "verify_evaluated_points.py": "bb7f5d256b1882c93287902547f3669695c2b10eeee533f98c4de72f7eef70ac"
+  }
+}

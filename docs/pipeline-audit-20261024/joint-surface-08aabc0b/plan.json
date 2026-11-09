@@ -1,0 +1,31 @@
+{
+  "id": "08aabc0b-9a2e-4324-b287-d8c7ae1e4244",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "method": "contact-bound-corrective-smooth-probe-v1",
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "parent_candidate_id": "f6283980-c4dd-5f34-bcf4-09c08e9e6346",
+  "parent_candidate_sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+  "files": {
+    "candidate.glb": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7",
+    "candidate-report.json": "c436a252171795f54b31201e1c014813894042e818e24da3d570bc745f8234be",
+    "baseline-report.json": "f653cff75831fb9200d8f143a6a3bcb56af2c653626a60475977f400ec26568c",
+    "backoffice-proof.json": "2db47f7ec45044f3f200f5e84f3ce7cb80c29ed8af59839341347f0e34326c38",
+    "tools/diagnose_collision_influences.py": "a2519c2c2cb1bdd2edf759de15f1e319e4d6b3cd6b66798a1600395bc01e0932",
+    "tools/diagnose_skinning_modes.py": "6ca9b73c7f29e74d8d698e5175a8f45b85867bdc5eb85310567aa891b35a6caa",
+    "tools/contact_patch_mask.py": "11a07bd0e2e1b5a17caeb59a587a7cae4e26c95f0ea3ee074657d8410068c9a8",
+    "tools/review_shoulder_contact_candidate.py": "de579f6982b1f2b6a8d3d1cfdc2d30c97db08f2cfc73bc71c14cf2d82bc11a7b",
+    "tools/review_tapered_weight_candidate.py": "66a76c9304aa0cbacdbc82b8eabc9b84fd333f900350d74fc0ad9a6826b39233",
+    "tools/review_collision_weight_candidate.py": "ed72e89f1f9d6314f1c5e90d52b787f700b787139ba5c95401426712c0f96d3c",
+    "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+    "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+    "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+    "supervisor.py": "5582a9bd44964e172da83b986a5fd6001a15b05b24bb92ad84e8a09878c0c7d8",
+    "contact-map.json": "b0471e79718912965f85dd3d3c46113cc1cc7a7074f350393e8558ac3c5f4fb0"
+  },
+  "contact_map_id": "e44d4c06-f826-4a97-bcf7-b912845094fd",
+  "registered_contact_report_sha256": "c6437651fb9c392edc733cb5ce2eedfa4eb33d925e97ac6f1823f803c79e5c96"
+}

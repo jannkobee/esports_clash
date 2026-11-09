@@ -1,0 +1,12 @@
+{
+  "metrics": {
+    "updated": true,
+    "transitions": 29,
+    "actor_loss": -0.0027838903479278088,
+    "value_loss": 0.09786109626293182,
+    "entropy": 0.6778677701950073,
+    "updates": 1
+  },
+  "checkpointRestored": true,
+  "freshBenefitEvidence": false
+}

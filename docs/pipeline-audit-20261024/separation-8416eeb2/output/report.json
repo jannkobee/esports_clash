@@ -1,0 +1,281 @@
+{
+  "id": "8416eeb2-bb79-43fd-8d50-9ea3b564e14d",
+  "method": "rest-sign-shoulder-separation-v1",
+  "compute": "google",
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "85fba1625bd539ec28c6564a037fa02c4bfb4aa886316afc345c5f05429deace",
+  "parent_candidate_id": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97",
+  "contact_map_id": "5271850d-a635-4a23-a147-02060d866fbb",
+  "qualification_complete": false,
+  "publication_eligible": false,
+  "config": {
+    "joint": "UpperArmL",
+    "region_pair": [
+      "bone_2",
+      "bone_26"
+    ],
+    "max_added_height_fraction": 0.003,
+    "falloff_rings": 3,
+    "minimum_rest_side_height_fraction": 1e-05
+  },
+  "baseline_reproduction": [
+    {
+      "label": "native",
+      "poses": [
+        {
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "self_intersections": 44,
+          "expected": 44
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "self_intersections": 35,
+          "expected": 35
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 90,
+          "self_intersections": 51,
+          "expected": 51
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 90,
+          "self_intersections": 47,
+          "expected": 47
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 90,
+          "self_intersections": 2,
+          "expected": 2
+        }
+      ],
+      "reproduced": true
+    },
+    {
+      "label": "corrected",
+      "poses": [
+        {
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "self_intersections": 31,
+          "expected": 31
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 90,
+          "self_intersections": 40,
+          "expected": 40
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 90,
+          "self_intersections": 27,
+          "expected": 27
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 90,
+          "self_intersections": 2,
+          "expected": 2
+        }
+      ],
+      "reproduced": true
+    }
+  ],
+  "status": "diagnostic_complete",
+  "stage": "corrected_CalfR_90",
+  "separation": {
+    "joint": "UpperArmL",
+    "degrees": 90,
+    "eligible_pairs": 31,
+    "ambiguous_pairs": 0,
+    "seed_vertices": 18,
+    "falloff_vertices": 81,
+    "max_added_delta_m": 0.003008808178864982,
+    "height_m": 1.0029360055923462,
+    "before_intersections": 31,
+    "after_intersections": 50,
+    "top_regions": [
+      {
+        "regions": [
+          "bone_2",
+          "bone_26"
+        ],
+        "intersections": 41
+      },
+      {
+        "regions": [
+          "bone_26",
+          "bone_26"
+        ],
+        "intersections": 6
+      },
+      {
+        "regions": [
+          "bone_26",
+          "bone_3"
+        ],
+        "intersections": 3
+      }
+    ],
+    "seam_spread_m": 0.0,
+    "edge_deformation": {
+      "policy": "deformation-edge-stretch-v1",
+      "passed": true,
+      "finite": true,
+      "edges_checked": 56332,
+      "severely_stretched_edges": 0,
+      "maximum_length_ratio": 4.067640155671853,
+      "largest_extension_to_height": 0.018747231794950622,
+      "limits": {
+        "length_ratio": 4,
+        "extension_to_height": 0.05
+      },
+      "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+    }
+  },
+  "scope": "Single left-shoulder posed-surface hypothesis based on signed rest-side contact normals. No exported GLB, visual pass, full motion or qualification.",
+  "completed_unix": 1793103236.5532227
+}

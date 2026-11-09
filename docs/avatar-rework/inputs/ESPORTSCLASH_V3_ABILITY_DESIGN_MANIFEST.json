@@ -1,0 +1,1703 @@
+{
+  "schemaVersion": 1,
+  "contentStatus": "concept-design-only; not executable balance, not implemented",
+  "sourceDocuments": [
+    "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+    "ESPORTSCLASH_V3_ENGINE_AI_BALANCE.md",
+    "ESPORTSCLASH_V3_CHARACTER_ART_BIBLE.md"
+  ],
+  "heroes": [
+    {
+      "index": 1,
+      "legacyId": "Dawnna",
+      "canonicalId": "solenne-vaelor",
+      "displayName": "Solenne Vaelor",
+      "title": "The Sunwall Oath",
+      "role": "protector / angular defense",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "battle-scarred sun knight with a tall hinged heliograph shield; ivory-bronze armor, burnt-red sash, mechanical iris on the shield",
+      "combatSignature": "turns *facing and coverage* into a teamfight resource.",
+      "counterplay": "take side angles, destroy the panel with two projectile impacts, or force her to protect the wrong flank.",
+      "aiCue": "place panel along highest expected incoming damage vector; rotate after the opponent changes angle, not on cooldown.",
+      "abilities": {
+        "P": {
+          "name": "Earned Daylight",
+          "cooldownNote": null,
+          "designText": "blocking hostile damage with the front 110° of her shield stocks up to 3 Radiance (1 stack / 3 s). No free stacks for standing still."
+        },
+        "S1": {
+          "name": "Sun Dial",
+          "cooldownNote": "9 s",
+          "designText": "stakes a 70-GU-wide oriented shield panel for 3.5 s. Intercepts the first two hostile projectiles that cross its front; melee units pass. Opponents may walk around it."
+        },
+        "S2": {
+          "name": "Pivot Order",
+          "cooldownNote": "12 s",
+          "designText": "rotates an existing panel up to 100° or, if none exists, rotates Solenne's personal guard and advances 38 GU; Radiance spent gives adjacent allies a 1.5 s directional damage reduction against attacks coming from the chosen side."
+        },
+        "R": {
+          "name": "Noon Divide",
+          "cooldownNote": "85 s",
+          "designText": "from her current panel, projects two slowly separating sunbeams for 4 s, creating a wide **protected wedge**. Allies inside gain 18% damage mitigation from outside; enemies inside can still fight. Spending 3 Radiance gives 1 brief shove at initial expansion (not a mass stun)."
+        }
+      }
+    },
+    {
+      "index": 2,
+      "legacyId": "Aiselle",
+      "canonicalId": "ivera-frostwhistle",
+      "displayName": "Ivera Frostwhistle",
+      "title": "The Frost Resonant",
+      "role": "marksman / echo geometry",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "tall northern bow engineer wearing permafrost string gauges and layered ice-tuning plates; asymmetric longbow bearing vibrating crystal forks",
+      "combatSignature": "makes **resonant frost strings**, not auto-attack slow stacks.",
+      "counterplay": "smash one fork, enter through gaps, or attack while Ivera is placing geometry.",
+      "aiCue": "span an objective exit or enemy retreat corridor, not chase a single stunned victim.",
+      "abilities": {
+        "P": {
+          "name": "Overtone",
+          "cooldownNote": null,
+          "designText": "landing a aimed shot temporarily tunes a visible location, maximum 2, each persisting 5 s. Shots do not globally slow."
+        },
+        "S1": {
+          "name": "Tuning Shot",
+          "cooldownNote": "8 s, two charges",
+          "designText": "fires a narrow bolt that installs a crystal fork at its endpoint (terrain or ground); fork has 2 hit points. Can be fired through a champion for light damage, but ends behind them."
+        },
+        "S2": {
+          "name": "Singing Ice",
+          "cooldownNote": "14 s",
+          "designText": "activates a frost vibration along the line between the two newest forks for 3 s. Enemies *crossing* the line suffer 28% slow for 1.1 s and take one burst; allies firing **parallel** to the line gain a small projectile-speed bonus."
+        },
+        "R": {
+          "name": "Glass Rapture",
+          "cooldownNote": "80 s",
+          "designText": "resonates all active forks in a broad triangular sound field. Over 1.2 s the field forms three visible safe gaps; enemies still on the sounding lines take high damage and a 0.55 s stagger. Consumes forks."
+        }
+      }
+    },
+    {
+      "index": 3,
+      "legacyId": "Vixelle",
+      "canonicalId": "mireth-lune",
+      "displayName": "Mireth Lune",
+      "title": "The Witness of False Roads",
+      "role": "route deception mage",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "austere one-tailed fox archivist in deep blue-gray traveling robes with glass route tablets; no alluring charm trope",
+      "combatSignature": "makes an enemy's *chosen route* risky, without mind control.",
+      "counterplay": "vary approach headings, ignore the tempting doorway, destroy it with attacks.",
+      "aiCue": "exploit enemy committed routes rather than blindly placing escape doors.",
+      "abilities": {
+        "P": {
+          "name": "Witness Marks",
+          "cooldownNote": null,
+          "designText": "after an enemy moves 70 GU while visible to Mireth, records its heading as a glowing arrow for 3 s, once per enemy / 6 s."
+        },
+        "S1": {
+          "name": "Counterpath",
+          "cooldownNote": "8 s",
+          "designText": "draws a short luminous road across an observed heading. Crossing it in the recorded direction costs 25% move speed for 1 s; crossing opposite grants no penalty. Can be skirted."
+        },
+        "S2": {
+          "name": "False Exit",
+          "cooldownNote": "13 s",
+          "designText": "places a glass doorway that visually points to safety but openly projects its **actual** exit 75 GU to one side. The first enemy who voluntarily enters is displaced to that endpoint after 0.35 s. Enemy sees both endpoints before entering; no forced input manipulation."
+        },
+        "R": {
+          "name": "Map of Might-Have-Beens",
+          "cooldownNote": "83 s",
+          "designText": "shows up to three recorded headings as public spectral roads for 4 s; allies gain speed while traversing them opposite the recorded direction, and foes crossing in the old direction receive a short revealed/exposed mark. No auto charm, orb return, or dash chain."
+        }
+      }
+    },
+    {
+      "index": 4,
+      "legacyId": "Gritlock",
+      "canonicalId": "bramm-coil",
+      "displayName": "Bramm Coil",
+      "title": "The Breach Marshal",
+      "role": "anti-cover artillery / knockline specialist",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "industrial tunnel-breaker with rotary ram-gun mounted to a back brace, orange work stripes and one reinforced leg",
+      "combatSignature": "generates **controlled breach lanes**, not shotgun pellet bursts or smoke obscuration.",
+      "counterplay": "relocate laterally, interrupt his bracing, attack his exposed back.",
+      "aiCue": "use R to open a route into defended ground, not as a generic execute.",
+      "abilities": {
+        "P": {
+          "name": "Structural Survey",
+          "cooldownNote": null,
+          "designText": "repeated hits on the same piece of deployable cover mark it as weakened (maximum one mark)."
+        },
+        "S1": {
+          "name": "Anchor Ram",
+          "cooldownNote": "9 s",
+          "designText": "shoots a riveted anchor 140 GU to a ground point. After 0.6 s the anchor pushes a rectangular 45×90-GU blast **away from its own facing**; hits one time, moves enemies 24 GU, dislodges deployable barriers."
+        },
+        "S2": {
+          "name": "Brace Exchange",
+          "cooldownNote": "13 s",
+          "designText": "Bramm exchanges mobility for steadiness for 3 s. He slows by 25%; each shot fired from the brace creates a short **safe opening** in allied cover that closes after 0.7 s, permitting planned fire without permanently destroying shields."
+        },
+        "R": {
+          "name": "Tunnel Cut",
+          "cooldownNote": "76 s",
+          "designText": "slowly draws a huge visible straight cutting lane for 1.1 s. It then advances a mechanical ram through the lane over 1.4 s, collapsing temporary structures and forcing units sideways to the nearest free side; never passes world walls."
+        }
+      }
+    },
+    {
+      "index": 5,
+      "legacyId": "Bessara",
+      "canonicalId": "kael-vespera",
+      "displayName": "Kael Vespera",
+      "title": "The Oath Ledger",
+      "role": "anti-save fighter / wager duelist",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "weathered oath collector with paired crescent ledgers as blades, stitched gray cape and ink-red wrist seals",
+      "combatSignature": "enforces a transparent **risk bargain** on one enemy instead of leaping for an execute.",
+      "counterplay": "assign a defender to pressure Kael; avoid shielding into her Contract without reason.",
+      "aiCue": "prioritize high-save carries when the enemy protection budget is committed.",
+      "abilities": {
+        "P": {
+          "name": "Outstanding Balance",
+          "cooldownNote": null,
+          "designText": "first melee contact with a hero issues a visible 4 s Contract: target receives a 4% damage discount from Kael, but each shield granted during the Contract accumulates *Debt* (capped at 160). Only Kael may collect; no denial of healing."
+        },
+        "S1": {
+          "name": "Collection Line",
+          "cooldownNote": "7 s",
+          "designText": "short sweeping arc which draws a red boundary on the ground for 2 s. Contracted targets crossing it pay a fraction of Debt as magic damage; staying put avoids payment."
+        },
+        "S2": {
+          "name": "Witness Required",
+          "cooldownNote": "13 s",
+          "designText": "Kael braces for 0.8 s. If the contracted enemy or a defender hits her during the brace, she gains a dashless counter slash and a 1 s damage reduction; otherwise she is vulnerable after bracing."
+        },
+        "R": {
+          "name": "Terms of Mercy",
+          "cooldownNote": "80 s",
+          "designText": "challenges a contracted target for 4 s. Their team can clear the Contract by landing two attacks on Kael, or ignore it and let Kael cash out accrued Debt as a single capped hit. Does not suppress, force 1v1, or execute automatically."
+        }
+      }
+    },
+    {
+      "index": 6,
+      "legacyId": "Vanta",
+      "canonicalId": "nyxara-vale",
+      "displayName": "Nyxara Vale",
+      "title": "The Silhouette Thief",
+      "role": "vision-pressure assassin",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "angular thief wearing articulated matte-black lacquer strips that cast sharp, oversized silhouettes on the ground; no shadow clones",
+      "combatSignature": "manipulates **the edges of visibility**.",
+      "counterplay": "sweep close vision across the veil, stand back-to-back, shoot area spells into silhouette arcs.",
+      "aiCue": "flank a separated backliner after allies draw forward attention.",
+      "abilities": {
+        "P": {
+          "name": "Blind Side",
+          "cooldownNote": null,
+          "designText": "Nyxara gains a small first-hit bonus when striking from outside the target's *forward* vision cone, once / target / 7 s. Visible directional marker informs defenders when exposed."
+        },
+        "S1": {
+          "name": "Shadow Pin",
+          "cooldownNote": "8 s",
+          "designText": "projects a dark triangular plane from a chosen wall or her own location for 4 s. It blocks **line of sight for basic attack acquisition**, not projectiles, and is transparent to all after a unit steps through."
+        },
+        "S2": {
+          "name": "Light Theft",
+          "cooldownNote": "13 s",
+          "designText": "steals illumination from one existing Shadow Pin for 2 s, collapsing that plane into a mobile veil around Nyxara. She remains targetable at close range and leaves bright footsteps; while veiled, her next attack briefly reduces the victim's turn speed."
+        },
+        "R": {
+          "name": "Total Eclipse, Partial Truth",
+          "cooldownNote": "85 s",
+          "designText": "places three visible *false target silhouettes* along an 80-GU arc. They do not attack, teleport, or explode; enemy targeting systems briefly need fresh line-of-sight confirmation when Nyxara crosses the arc. Her next hit against an isolated foe deals bonus damage, capped."
+        }
+      }
+    },
+    {
+      "index": 7,
+      "legacyId": "Galejandro",
+      "canonicalId": "serrin-galecrest",
+      "displayName": "Serrin Galecrest",
+      "title": "The Crosswind Cartographer",
+      "role": "projectile-lane engineer / duelist",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "white-haired sailor swordsman with a collapsible wind vane shield and narrow curved blade; weather-map tapes attached to armor",
+      "combatSignature": "changes **wind vectors** rather than summoning tornadoes or airborne execution.",
+      "counterplay": "use melee pressure, homing attacks, or reposition before firing.",
+      "aiCue": "read enemy ranged threats and place currents across their probable firing lanes.",
+      "abilities": {
+        "P": {
+          "name": "Weather Reading",
+          "cooldownNote": null,
+          "designText": "Serrin sees recent incoming projectile headings as faint arrows; after narrowly dodging one, gains one Wind Notch (max 2)."
+        },
+        "S1": {
+          "name": "Compass Slash",
+          "cooldownNote": "7 s",
+          "designText": "cuts a 65-GU directional current across a target corridor for 2.2 s. Enemy **non-homing** projectiles crossing it are deflected up to 15°; allied shots get a 10% speed boost."
+        },
+        "S2": {
+          "name": "Tack Change",
+          "cooldownNote": "12 s",
+          "designText": "spends a Wind Notch to rotate a current or quickly sidestep 28 GU perpendicular to its path. Cannot pass hard terrain."
+        },
+        "R": {
+          "name": "Eye of the Crosswind",
+          "cooldownNote": "88 s",
+          "designText": "maps a 140-GU radius ring with four public directional wind channels for 4 s. Enemy projectile lanes become less reliable; walking normally still works. No blanket projectile deletion, knockup, or blink slashes."
+        }
+      }
+    },
+    {
+      "index": 8,
+      "legacyId": "Lambent",
+      "canonicalId": "orin-and-fen",
+      "displayName": "Orin and Fen",
+      "title": "Keepers of the Last Lantern",
+      "role": "scouting marksman / extraction support",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "scarred human lantern scout followed by a blind, horned dusk-hound made of moving ember fur; **not** a wolf plus death-immunity circle",
+      "combatSignature": "tracks danger and guides **one wounded ally out**.",
+      "counterplay": "attack the lantern, attack from non-projectile angles, or force the rescued ally off the route.",
+      "aiCue": "protect the true high-value exposed ally, not the nearest low-HP unit.",
+      "abilities": {
+        "P": {
+          "name": "Scent of Trouble",
+          "cooldownNote": null,
+          "designText": "Fen marks heroes who recently damaged Orin's allies, revealing their direction for 3 s (not through fog beyond a short final ping)."
+        },
+        "S1": {
+          "name": "Track Lantern",
+          "cooldownNote": "9 s",
+          "designText": "Orin drops a lantern that records the next enemy who passes within 55 GU, pinging their direction; can be destroyed in 2 hits."
+        },
+        "S2": {
+          "name": "Fen, Guard",
+          "cooldownNote": "14 s",
+          "designText": "sends Fen to a chosen ally or lantern for 3 s. Fen absorbs the next **one** eligible hostile projectile and then withdraws, with a clearly visible charge indicator."
+        },
+        "R": {
+          "name": "Road Home",
+          "cooldownNote": "90 s",
+          "designText": "paints a luminous curved **retreat path** from Orin to one low-HP ally for 4 s. The selected ally may voluntarily follow it for 30% speed and 18% damage reduction while moving toward Orin; leaving the path cancels protection. No HP floor or mass invulnerability."
+        }
+      }
+    },
+    {
+      "index": 9,
+      "legacyId": "Plumeira",
+      "canonicalId": "quillene-rook",
+      "displayName": "Quillene Rook",
+      "title": "The Sky Loom Fletcher",
+      "role": "ranged interception carry",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "masked archer with hawk-inspired shoulder fins and bow strung with miniature kite rigging; feathers are **air anchors**, not returning blade traps",
+      "combatSignature": "creates temporary **crossfire windows**.",
+      "counterplay": "pop the kites or enter close combat beneath the span.",
+      "aiCue": "prebuild crossfire above an objective approach.",
+      "abilities": {
+        "P": {
+          "name": "Airborne Fletching",
+          "cooldownNote": null,
+          "designText": "every third aimed attack releases a tiny kite that hangs for 3 s at the shot's endpoint (max 3). Kites are visible and destroyable."
+        },
+        "S1": {
+          "name": "Tetherbolt",
+          "cooldownNote": "8 s",
+          "designText": "shoots a kite anchor 150 GU into the air; anchors do not damage when planted."
+        },
+        "S2": {
+          "name": "Crosswind Stitch",
+          "cooldownNote": "13 s",
+          "designText": "ties her two nearest kites into an aerial span for 3 s. Her next two arrows passing through it split into two shallow angled shots at 60% damage each (one-hit cap per target); enemy units may shoot down either kite."
+        },
+        "R": {
+          "name": "Harrier Net",
+          "cooldownNote": "85 s",
+          "designText": "all active kites fan into a broad descending mesh. Enemies inside may move out but have ranged attack windups increased for 2.5 s; meanwhile allied projectiles from outside the mesh get a slight side-angle adjustment. No untargetable leap, ground feather recall, or root-on-three-feathers."
+        }
+      }
+    },
+    {
+      "index": 10,
+      "legacyId": "Gildan",
+      "canonicalId": "aurelio-vane",
+      "displayName": "Aurelio Vane",
+      "title": "The Masquerade Marshal",
+      "role": "formation choreographer / rescue",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "masked fencing host in ceremonial midnight tux-armor with luminous floorwork slippers and half-moon fan shield",
+      "combatSignature": "gives allies **explicit dance steps** instead of dash-and-charm engagement.",
+      "counterplay": "block a turn or attack the side where the next step ends.",
+      "aiCue": "choreograph a real extraction or coordinated flank rather than casting into an empty lane.",
+      "abilities": {
+        "P": {
+          "name": "Perfect Partner",
+          "cooldownNote": null,
+          "designText": "an ally who follows an Aurelio-created floor arrow gains brief tenacity, once / ally / 6 s."
+        },
+        "S1": {
+          "name": "Mark the Floor",
+          "cooldownNote": "8 s",
+          "designText": "lays two 30-GU glowing steps; an ally crossing them in order gains 22% movement speed for 1.5 s. Enemies see the steps and can deny the route."
+        },
+        "S2": {
+          "name": "Change Partners",
+          "cooldownNote": "13 s",
+          "designText": "selects an allied hero in 120 GU; for 1.2 s both can voluntarily trade their places by pressing an interaction or by an AI commitment. Cannot trade into walls or out of hard CC."
+        },
+        "R": {
+          "name": "The Grand Procession",
+          "cooldownNote": "78 s",
+          "designText": "reveals a three-turn floor route for 4 s. Allies following it earn a small shield at each turn; enemies who stand on the route are pushed sideways 18 GU once when the procession advances. No AoE charm or automatic ally dash."
+        }
+      }
+    },
+    {
+      "index": 11,
+      "legacyId": "Sylvan Solo",
+      "canonicalId": "droven-bearmantle",
+      "displayName": "Droven Bearmantle",
+      "title": "The Keeper of the Second Heart",
+      "role": "two-body defender / attrition",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "rugged warden in patched antlered mantle accompanied by a massive **moss-backed pack tortoise**, not a spirit bear or shapeshifter",
+      "combatSignature": "a slow second body that redistributes pressure.",
+      "counterplay": "hit Droven when guard moves away, attack shell from side, or use area damage around the tortoise.",
+      "aiCue": "anchor Hark at defendable geometry and move only for objective commitments.",
+      "abilities": {
+        "P": {
+          "name": "Shared Heartbeat",
+          "cooldownNote": null,
+          "designText": "Droven and the tortoise Hark have a shared reserve of 220 guard energy; damage absorbed by Hark drains guard. Hark does not respawn instantly after destruction."
+        },
+        "S1": {
+          "name": "Hark, Settle",
+          "cooldownNote": "12 s",
+          "designText": "directs Hark to a nearby point where he plants as a 55-GU-wide **walk-around obstacle** for 4 s. Hark can be attacked; allies may pass through slowly."
+        },
+        "S2": {
+          "name": "Shelter Under Shell",
+          "cooldownNote": "14 s",
+          "designText": "Hark opens his shell to cover one nearby ally with 20% incoming-damage redirection to guard energy for 2.5 s. Droven temporarily loses part of his own armor while energy is transferred."
+        },
+        "R": {
+          "name": "Carry the Line",
+          "cooldownNote": "92 s",
+          "designText": "Hark slowly advances 100 GU over 4 s as moving cover. Allies behind his shell gain limited projectile protection; opponents can flank Hark or destroy the shell's guard energy."
+        }
+      }
+    },
+    {
+      "index": 12,
+      "legacyId": "Fernanda",
+      "canonicalId": "thalara-rootwright",
+      "displayName": "Thalara Rootwright",
+      "title": "The Mycelial Architect",
+      "role": "ground economy / area control",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "elderly fungus architect with ceramic seed jars, branching mycelium sleeves and mushroom-coral parasol; no tree-ring prison",
+      "combatSignature": "grows **networks with limited nutrient supply**.",
+      "counterplay": "sever key nodes or force the fight beyond the nutrient network.",
+      "aiCue": "build a connected zone before a contested boss rather than spam vines on cooldown.",
+      "abilities": {
+        "P": {
+          "name": "Spores in Soil",
+          "cooldownNote": null,
+          "designText": "ability hits leave a nutrient node for 6 s (max 4). Nodes are visible small mushrooms with 2 hit points."
+        },
+        "S1": {
+          "name": "Root Survey",
+          "cooldownNote": "8 s",
+          "designText": "grows a narrow mycelial line between Thalara and one node. Allies moving along it gain minor speed; enemies crossing it suffer an initial short slow. One line per node."
+        },
+        "S2": {
+          "name": "Transplant",
+          "cooldownNote": "14 s",
+          "designText": "moves a single active nutrient node up to 60 GU with 0.5 s tell; enemies standing on the displaced line are gently redirected to nearest free space, no stun."
+        },
+        "R": {
+          "name": "The Living Understory",
+          "cooldownNote": "90 s",
+          "designText": "activates the node network for 5 s: allies touching a connected line regenerate modest HP over time; enemy AoE detonations on the web burn one node but trigger a one-time small burst. Opponents can cut the network one node at a time."
+        }
+      }
+    },
+    {
+      "index": 13,
+      "legacyId": "Glimmerick",
+      "canonicalId": "vesper-loom",
+      "displayName": "Vesper Loom",
+      "title": "The Gossamer Chirurgeon",
+      "role": "triage support / risk redistribution",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "elderly spider-silk surgeon with mechanical needle-fingers, a cracked porcelain medical mask and lilac thread reservoirs",
+      "combatSignature": "treats wounds as **bounded queues**, not no-death immunity.",
+      "counterplay": "burst before tags are set, interrupt positioning by splitting links, or pressure Vesper during repayment.",
+      "aiCue": "reserve R for accumulated real debt and a survivable self-cost.",
+      "abilities": {
+        "P": {
+          "name": "Recorded Injury",
+          "cooldownNote": null,
+          "designText": "16% of damage suffered by a nearby marked ally is logged as Care Debt for 3 s, capped at 180 per ally. This does not reduce damage by itself."
+        },
+        "S1": {
+          "name": "Suture Tag",
+          "cooldownNote": "8 s",
+          "designText": "marks an ally for 4 s; the next qualifying damaging hit is reduced by 15%, and the prevented amount becomes Care Debt (not immediate HP)."
+        },
+        "S2": {
+          "name": "Stitch Circuit",
+          "cooldownNote": "12 s",
+          "designText": "links two allies in range for 2.5 s; healing applied to either is split 70/30 with the other. Link breaks beyond 180 GU. No death prevention."
+        },
+        "R": {
+          "name": "Emergency Triage",
+          "cooldownNote": "88 s",
+          "designText": "converts up to 200 total Care Debt among nearby allies into a 4 s heal-over-time. Vesper suffers 15% of the converted amount as **nonlethal self-damage** over 4 s. Saves require setup and expose the healer."
+        }
+      }
+    },
+    {
+      "index": 14,
+      "legacyId": "Cindergent",
+      "canonicalId": "rux-emberchain",
+      "displayName": "Rux Emberchain",
+      "title": "The Cinder Postmaster",
+      "role": "timed-route brawler",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "scarred courier with a giant shoulder mail-satchel of glowing sealed envelopes and iron skate-boots; not a fire-remnant sword ninja",
+      "combatSignature": "delivers combustible **messages along declared routes**.",
+      "counterplay": "carry mail away from allies, intercept Rux on his walking route, move between recall lines.",
+      "aiCue": "seed letters across multiple opponents then time the route convergence.",
+      "abilities": {
+        "P": {
+          "name": "Return Address",
+          "cooldownNote": null,
+          "designText": "attacks place a stamp on enemy champions (1 stamp / enemy / 6 s). Stamps reveal Rux's intended target for 4 s."
+        },
+        "S1": {
+          "name": "Express Mail",
+          "cooldownNote": "8 s",
+          "designText": "throws a volatile letter to an ally, enemy, or ground point. A carrier retains it for up to 3 s; enemies may hand it off to another enemy with a movement interaction to avoid the later blast."
+        },
+        "S2": {
+          "name": "Courier's Crossing",
+          "cooldownNote": "12 s",
+          "designText": "draws a short path between Rux and a stamped point. Rux can run it at boosted speed but not dash through collision; crossing a carried letter collects it and produces a radial spark burst."
+        },
+        "R": {
+          "name": "Dead Letter Office",
+          "cooldownNote": "82 s",
+          "designText": "simultaneously recalls all placed letters **along visible straight routes** toward a central postal seal. Each letter can hit a champion once; safe gaps exist between routes. Enemies can relocate before recall."
+        }
+      }
+    },
+    {
+      "index": 15,
+      "legacyId": "Voltaire",
+      "canonicalId": "teslan-veyr",
+      "displayName": "Teslan Veyr",
+      "title": "The Storm Circuit",
+      "role": "electrical trap architect",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "coil scientist with portable ground rods, insulated coat with hazard seams, copper articulated monocle",
+      "combatSignature": "constructs **circuits and switches polarity**; no electric ball travel, remnant decoy, or unit vortex.",
+      "counterplay": "destroy a rod, cross before activation or fight outside the line.",
+      "aiCue": "straddle a choke with rods, adapt polarity based on projectile pressure versus allied DPS.",
+      "abilities": {
+        "P": {
+          "name": "Closed Circuit",
+          "cooldownNote": null,
+          "designText": "a successful link between two Teslan rods grants a stored Capacitor charge, maximum 2."
+        },
+        "S1": {
+          "name": "Drive Rod",
+          "cooldownNote": "8 s, two charges",
+          "designText": "place a destructible rod at a ground point, 140 GU range, 3 s lifetime after the second rod. Two rods generate a clearly drawn current beam between them; crossing once damages lightly."
+        },
+        "S2": {
+          "name": "Reverse Current",
+          "cooldownNote": "12 s",
+          "designText": "flips the circuit to **Repel** or **Conduct** for 2.5 s. Repel deflects enemy projectiles crossing the beam slightly; Conduct increases allied attack speed when standing adjacent to the line. Each hero may benefit once per cast."
+        },
+        "R": {
+          "name": "Brownout Protocol",
+          "cooldownNote": "80 s",
+          "designText": "consumes Capacitors to briefly shut down **deployables** and delay the next cast windup of enemies who remain on the circuit line (up to 0.5 s); opponents can walk away before the 0.75 s charge finishes. It does not silence globally or auto-pull."
+        }
+      }
+    },
+    {
+      "index": 16,
+      "legacyId": "TerraByte",
+      "canonicalId": "joruun-jadecoil",
+      "displayName": "Joruun Jadecoil",
+      "title": "The Hinge Colossus",
+      "role": "movable cover architect",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "stout jade-mechanical titan with hinged stone shutters and a visible counterweight core; never rolls as a ball",
+      "combatSignature": "builds **swinging walls** that change lane access.",
+      "counterplay": "destroy slab segments, approach from an alternate angle, bait premature gate closure.",
+      "aiCue": "build choke selectively while leaving allies a legal crossing route.",
+      "abilities": {
+        "P": {
+          "name": "Counterweight",
+          "cooldownNote": null,
+          "designText": "damage taken fills a limited counterweight bar, up to 100, used only to strengthen hinges."
+        },
+        "S1": {
+          "name": "Raise Slab",
+          "cooldownNote": "10 s",
+          "designText": "raises one breakable 60-GU jade slab on a ground edge for 4 s. Slab blocks movement and shots, but can be walked around. Max one slab."
+        },
+        "S2": {
+          "name": "Hinge Swing",
+          "cooldownNote": "13 s",
+          "designText": "rotates the active slab 90° over 0.65 s, nudging units out of occupied space by at most 24 GU; without slab, Joruun gains a short self-shield but no knockup."
+        },
+        "R": {
+          "name": "The Great Door",
+          "cooldownNote": "95 s",
+          "designText": "plants two hinged slabs 90 GU apart for 5 s, forming a **temporary gate** with an openable middle. Joruun can spend Counterweight to close it once (0.7 s telegraph); units caught in the closing zone are moved to closest free side, never trapped without exit."
+        }
+      }
+    },
+    {
+      "index": 17,
+      "legacyId": "Nulliver",
+      "canonicalId": "astrax-mire",
+      "displayName": "Astrax Mire",
+      "title": "The Distance Pilgrim",
+      "role": "anti-mobility mage / movement tax",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "veiled pilgrim whose long measuring cords float behind a star-map walking staff; no portal-clone mobility burst",
+      "combatSignature": "converts **distance travelled** into a finite debt.",
+      "counterplay": "pause, redirect, or take the safe exit even if slower strategically.",
+      "aiCue": "mark mobile flankers before they commit, not stationary enemy tanks.",
+      "abilities": {
+        "P": {
+          "name": "Footfall Record",
+          "cooldownNote": null,
+          "designText": "within sight, tracks enemy travel distance over rolling 3 s windows (max 160 GU) with public meter marks."
+        },
+        "S1": {
+          "name": "Measure Out",
+          "cooldownNote": "8 s",
+          "designText": "tags one visible enemy for 3 s. Each 35 GU it voluntarily moves adds one Distance Seal (max 3); stationary targets remain safe."
+        },
+        "S2": {
+          "name": "Mile Marker",
+          "cooldownNote": "12 s",
+          "designText": "sets a small stone marker on terrain. Tagged enemies moving **toward** it are slowed lightly; moving away consumes one Distance Seal harmlessly."
+        },
+        "R": {
+          "name": "Reckoning of Roads",
+          "cooldownNote": "82 s",
+          "designText": "within 140 GU, all tagged enemies receive a visible 1 s verdict countdown. It converts accumulated seals into a capped nonlethal magical burst and movement-speed reduction; seals can be shed by walking away from markers before verdict. Does not teleport, leap, or create rift damage explosions."
+        }
+      }
+    },
+    {
+      "index": 18,
+      "legacyId": "Crownfetti",
+      "canonicalId": "prismelle-cade",
+      "displayName": "Prismelle Cade",
+      "title": "The Shard Regent",
+      "role": "reflective blade defender",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "mineral queen with a floating circlet of glass shields, single asymmetrical cleaver and fractured reflective cape",
+      "combatSignature": "transforms **projectile direction and line-of-fire**, not elemental dash stance loops.",
+      "counterplay": "break panes, attack from rear, or force close melee.",
+      "aiCue": "angle a fan for allied skillshots when enemy frontliners shelter carries behind them.",
+      "abilities": {
+        "P": {
+          "name": "Royal Refraction",
+          "cooldownNote": null,
+          "designText": "once / 5 s, landing a blade hit charges her nearest crystal pane with one optical charge."
+        },
+        "S1": {
+          "name": "Facet Screen",
+          "cooldownNote": "9 s",
+          "designText": "places a 55-GU one-way prismatic pane with 2 HP. Enemy shots that hit it lose 25% damage; allied shots fired through at specific visible angles bend 18°."
+        },
+        "S2": {
+          "name": "Claim the Angle",
+          "cooldownNote": "12 s",
+          "designText": "moves to the edge of her existing pane by up to 35 GU and rotates it. It is a **short pathing move**, not free-target dash, and cannot move through walls."
+        },
+        "R": {
+          "name": "Coronation in Glass",
+          "cooldownNote": "86 s",
+          "designText": "creates three panes arranged as a shallow open fan; over 4 s each pane can redirect **one** allied projectile into a separate lane. Enemy champions can smash panes or engage inside the fan."
+        }
+      }
+    },
+    {
+      "index": 19,
+      "legacyId": "Sootcase",
+      "canonicalId": "ashkar-veilhand",
+      "displayName": "Ashkar Veilhand",
+      "title": "The Penitent Ember",
+      "role": "retribution diver / enemy-aggression punisher",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "masked ash monk wearing charred prayer banners and iron ash bells; no invisible assassin smoke",
+      "combatSignature": "thrives on enemies **damaging his sworn ally**.",
+      "counterplay": "change target, split Ashkar from partner, or force him to choose between two threatened allies.",
+      "aiCue": "bind to an actual high-value ally under focused fire.",
+      "abilities": {
+        "P": {
+          "name": "Witness the Hurt",
+          "cooldownNote": null,
+          "designText": "every 50 damage one chosen nearby ally takes from an enemy creates one Ember Count on that attacker (max 3); counts expire in 5 s."
+        },
+        "S1": {
+          "name": "Ember Brand",
+          "cooldownNote": "7 s",
+          "designText": "marks one attacker with a burn that grows with Ember Count; if they stop attacking the protected ally, the burn ends early."
+        },
+        "S2": {
+          "name": "Ash Intercession",
+          "cooldownNote": "14 s",
+          "designText": "Ashkar dashes **only to his sworn ally**, landing at a legal adjacent location and briefly blocking the next targeted basic attack for them. No stealth or enemy-target jump."
+        },
+        "R": {
+          "name": "Public Penance",
+          "cooldownNote": "86 s",
+          "designText": "announces the top Ember Count attacker for 0.8 s, then creates a circular duel hazard around **that enemy's current position**. Damage ramps only while the accused continues attacking Ashkar's protected ally; they can switch targets or exit. No guaranteed execution."
+        }
+      }
+    },
+    {
+      "index": 20,
+      "legacyId": "Sennova",
+      "canonicalId": "maris-solquill",
+      "displayName": "Maris Solquill",
+      "title": "The Reliquary Surveyor",
+      "role": "route support marksman",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "armored pilgrim carrying a brass sextant crossbow and foldout field-map shrine; no giant Senna-like healing beam",
+      "combatSignature": "establishes **illuminated crossing routes**.",
+      "counterplay": "cut a waypoint and deny route completion.",
+      "aiCue": "draw crossing routes from threatened carry to defensible ground.",
+      "abilities": {
+        "P": {
+          "name": "Borrowed Sunlight",
+          "cooldownNote": null,
+          "designText": "damage that Maris sees nearby leaves one Waylight mote at its ground position (max 3), pickup grants small shield charge."
+        },
+        "S1": {
+          "name": "Waypoint Lantern",
+          "cooldownNote": "8 s",
+          "designText": "shoots a lantern onto the ground. It projects a 50-GU-long path; allies walking its length gain a small burst of healing at the far endpoint (once each)."
+        },
+        "S2": {
+          "name": "Twilight Survey",
+          "cooldownNote": "13 s",
+          "designText": "rotates a placed lantern's path or aligns it toward an ally, granting that ally 1.5 s of vision through nearby obstacles (not global vision) as the line turns."
+        },
+        "R": {
+          "name": "The People's Atlas",
+          "cooldownNote": "87 s",
+          "designText": "connects up to three Waylight positions into a visible zig-zag safe trail for 5 s. Allies traversing the **entire route** receive a capped shield and 20% speed; enemies can destroy waypoints or ambush turns. No global damaging beam."
+        }
+      }
+    },
+    {
+      "index": 21,
+      "legacyId": "Basso Croak",
+      "canonicalId": "odo-bogsong",
+      "displayName": "Odo Bogsong",
+      "title": "The Reed Timekeeper",
+      "role": "tempo support / telegraph manipulator",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "stout moss-green amphibian clockmaker with hollow reed drums, pedal metronome and tiny percussion frogs",
+      "combatSignature": "**beats** reward timing, not generic tongue grab and teamwide heal.",
+      "counterplay": "break the drum, cast between ripples, or attack Odo while he tends tempo.",
+      "aiCue": "synchronize with allied initiator's actual windup, not random rhythm windows.",
+      "abilities": {
+        "P": {
+          "name": "The Beat Goes On",
+          "cooldownNote": null,
+          "designText": "Odo displays a repeating 3-beat indicator (1.2 s/beat). Allies who begin a spell within a 0.18 s Good Beat window get 8% shorter cast recovery, once / ability / 6 s."
+        },
+        "S1": {
+          "name": "Offbeat Drum",
+          "cooldownNote": "8 s",
+          "designText": "places a 3-beat drum pad; each beat makes a visible 40-GU ripple for light damage, never stunning automatically."
+        },
+        "S2": {
+          "name": "Syncopation",
+          "cooldownNote": "13 s",
+          "designText": "moves the next pad beat earlier by 0.25 s and provides a small shield pulse to nearby allies on the adjusted beat. Enemies can see the revised countdown."
+        },
+        "R": {
+          "name": "The Long Measure",
+          "cooldownNote": "85 s",
+          "designText": "for 4 beats, allies on Odo's rhythm gain move speed after completing casts; enemies casting exactly while a ripple touches them incur 0.4 s additional **recovery after the cast**, never a denied cast. No global heal/tenacity aura."
+        }
+      }
+    },
+    {
+      "index": 22,
+      "legacyId": "Razeberry",
+      "canonicalId": "mourn-ashwake",
+      "displayName": "Mourn Ashwake",
+      "title": "The Furnace Mourner",
+      "role": "reactive inferno mage",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "furnace-backed mortician pulling ember caskets on chains, black glass face shield; no Shadow-Fiend-style line razes/soul-stack requiem",
+      "combatSignature": "converts **spent battlefield heat** into hazards.",
+      "counterplay": "end spell casts away from clustered patches; lure Mourn out of prepared territory.",
+      "aiCue": "contest where previous spell exchanges created ash, rather than standing still and spamming R.",
+      "abilities": {
+        "P": {
+          "name": "Ash Residue",
+          "cooldownNote": null,
+          "designText": "any completed damaging spell cast within 125 GU leaves an Ash Patch where it ended (once / owner / 4 s, max 4 patches). Mourn sees both teams' visible patches."
+        },
+        "S1": {
+          "name": "Ember Tongs",
+          "cooldownNote": "8 s",
+          "designText": "drags one patch slowly 45 GU, scorching enemies it passes once, or makes a small patch at his own feet if none exist."
+        },
+        "S2": {
+          "name": "Draft Open",
+          "cooldownNote": "12 s",
+          "designText": "opens a furnace vent toward one patch, creating a visibly directional heated current for 3 s that burns enemies walking **against** it."
+        },
+        "R": {
+          "name": "Second Combustion",
+          "cooldownNote": "90 s",
+          "designText": "ignites every active patch in a 140-GU field after 1.0 s, turning them into low moving walls of ember for 3 s. Patches consumed; no large instant fear wave."
+        }
+      }
+    },
+    {
+      "index": 23,
+      "legacyId": "Quakewell",
+      "canonicalId": "dolm-runesunder",
+      "displayName": "Dolm Runesunder",
+      "title": "The Seismic Surveyor",
+      "role": "turning-path punisher / terrain tilt",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "squat seismologist titan with two immense pendulum hammers and a floor-level surveying compass; no Fissure/Echo Slam analogue",
+      "combatSignature": "manipulates **ground slope and turning speed**.",
+      "counterplay": "wait for slope to settle or traverse perpendicular to the downhill vector.",
+      "aiCue": "steer divers away from backline, not stack damage on a five-man cluster.",
+      "abilities": {
+        "P": {
+          "name": "Strain Lines",
+          "cooldownNote": null,
+          "designText": "moving enemy champions that make sharp turns (more than 70°/0.4 s) generate a strain point; max 2 on the ground."
+        },
+        "S1": {
+          "name": "Tilt Plate",
+          "cooldownNote": "9 s",
+          "designText": "raises one 65×65-GU shallow sloping tile. Units crossing it slide an extra 12 GU in their travel direction; exits always remain open, slide has one-hit cooldown."
+        },
+        "S2": {
+          "name": "Pendulum Strike",
+          "cooldownNote": "13 s",
+          "designText": "swings a huge weighted maul across an arc. Enemies on tilted ground are shoved a modest 18 GU; other enemies take normal damage."
+        },
+        "R": {
+          "name": "Continental Drift",
+          "cooldownNote": "95 s",
+          "designText": "lays three **successive** tilted plates over 2.7 s, visibly changing safe movement vectors, with a final 0.55 s stagger for opponents who fail to leave the last tile. No full-screen slam based on nearby unit count."
+        }
+      }
+    },
+    {
+      "index": 24,
+      "legacyId": "Rotisserie",
+      "canonicalId": "garruk-mawsuture",
+      "displayName": "Garruk Mawsuture",
+      "title": "The Jaw Foundry",
+      "role": "trap engineer / containment tank",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "hunched iron-jawed smith operating a strapped cage forge, rotating trap anvils and huge riveted gauntlets; no hook/rot/dismember",
+      "combatSignature": "deploys **mechanical jaws** that divide ground.",
+      "counterplay": "destroy hinge teeth, cross during open beats, fight off the factory floor.",
+      "aiCue": "protect a key crossing with trap spacing, not chase a hooked victim.",
+      "abilities": {
+        "P": {
+          "name": "Scrap Appetite",
+          "cooldownNote": null,
+          "designText": "destroyed enemy deployables or spent jaw traps grant Scrap, maximum 3, each increasing next jaw width by 6 GU."
+        },
+        "S1": {
+          "name": "Set Jaws",
+          "cooldownNote": "9 s",
+          "designText": "plants two hinged iron teeth on ground 50 GU apart, 2 HP each. After 0.55 s, crossing the gap closes them for a 0.5 s root **only once**, then they jam open. Units can attack or skirt them."
+        },
+        "S2": {
+          "name": "Forge Drag",
+          "cooldownNote": "12 s",
+          "designText": "drags one installed tooth 45 GU along a visible chain, scraping a narrow damage lane and reopening a previously triggered jaw with half strength."
+        },
+        "R": {
+          "name": "Factory Floor",
+          "cooldownNote": "90 s",
+          "designText": "lays three staggered **jaw lanes** around Garruk for 5 s. Their timing is sequential (audible clacks), leaving safe corridors; no suppression, unit grab, or poison aura."
+        }
+      }
+    },
+    {
+      "index": 25,
+      "legacyId": "Midnight Equation",
+      "canonicalId": "vesper-nullcode",
+      "displayName": "Vesper Nullcode",
+      "title": "The Inertia Heretic",
+      "role": "mobility-rewriting control mage",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "androgynous angular physicist with a suspended broken gyroscope, indigo measurement robe and luminous chalk-rings; **not** a black-hole channeler",
+      "combatSignature": "rewrites **turning and momentum**, never sucks targets into a singularity.",
+      "counterplay": "stop moving briefly, move against marked vectors, or burst her before the disk is set.",
+      "aiCue": "bend committed enemy approaches away from allied carries / boss pit.",
+      "abilities": {
+        "P": {
+          "name": "Unspent Momentum",
+          "cooldownNote": null,
+          "designText": "enemies traveling 45 GU in a straight line nearby contribute one Momentum sample (max 4, visible)."
+        },
+        "S1": {
+          "name": "Tangent Fault",
+          "cooldownNote": "8 s",
+          "designText": "lays a 60-GU vector tile; a non-unstoppable enemy crossing is gently redirected 20° clockwise or counterclockwise (chosen on cast), maintaining speed. No teleport/stun."
+        },
+        "S2": {
+          "name": "Mass Argument",
+          "cooldownNote": "13 s",
+          "designText": "declares a public high-friction disk for 3 s. Enemy dashes passing through are shortened by at most 20%; ordinary walking is slowed 10%. Does not cancel the dash outright."
+        },
+        "R": {
+          "name": "Borrowed Orbit",
+          "cooldownNote": "93 s",
+          "designText": "consumes Momentum to construct a rotating 145-GU field lasting 4 s. Within it, movement inputs are smoothly biased into an arc of at most 25°/second, telegraphed by floor arrows. Stationary enemies or those who deliberately countersteer can hold position. No forced center pull or AoE wipe."
+        }
+      }
+    },
+    {
+      "index": 26,
+      "legacyId": "Plugsy",
+      "canonicalId": "coiljack-ampfist",
+      "displayName": "Coiljack Ampfist",
+      "title": "The Livewire Turnstile",
+      "role": "anti-dive engineer",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "stocky utility electrician with two folding traffic-bar gauntlets, spooled spring cable and safety visor; not an extending hook robot",
+      "combatSignature": "a **turnstile gate** punishes repeated lunges.",
+      "counterplay": "walk through rather than dash, smash the traffic bars or bait the first gate.",
+      "aiCue": "place bars between enemy diver and ally, hold R for a multi-diver engage.",
+      "abilities": {
+        "P": {
+          "name": "Impact Audit",
+          "cooldownNote": null,
+          "designText": "when an enemy ends a dash within 110 GU, Coiljack gets one Inspection charge (max 2, 4 s lockout per enemy)."
+        },
+        "S1": {
+          "name": "Turnstile Bar",
+          "cooldownNote": "9 s",
+          "designText": "plants a 55-GU breakable spring bar for 3.5 s, showing one open half and one closed half. Walking enemies pass; the first **dash through the closed side** is diverted 20 GU to its safe edge and consumes the bar."
+        },
+        "S2": {
+          "name": "Earth Clip",
+          "cooldownNote": "12 s",
+          "designText": "attaches a grounding clip to an ally for 2.5 s. The next displacement inflicted on that ally is reduced by 40% and the attacker is briefly revealed; no stun/knockup."
+        },
+        "R": {
+          "name": "Inspection Grid",
+          "cooldownNote": "88 s",
+          "designText": "builds two intersecting turnstiles for 5 s. Enemies may walk around or smash either gate, but repeated aggressive dashes spend their movement on detours and trigger a 0.45 s disarm after the second interception."
+        }
+      }
+    },
+    {
+      "index": 27,
+      "legacyId": "Relic Rick",
+      "canonicalId": "talan-slipshot",
+      "displayName": "Talan Slipshot",
+      "title": "The Archive Ballistician",
+      "role": "trick-shot ranged carry",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "rugged surveyor with mechanical ricochet bow-rifle, rangefinder eyepieces and foldable brass mirror drones; no blink and giant piercing beam",
+      "combatSignature": "engineers **reflection angles** with limited shots.",
+      "counterplay": "destroy mirrors or move off predicted bounce routes.",
+      "aiCue": "preview LOS, choose a bounce that hits a protected backliner without crossing an allied blocker.",
+      "abilities": {
+        "P": {
+          "name": "Proof Mark",
+          "cooldownNote": null,
+          "designText": "a direct skillshot hit stamps the target with one Proof Mark for 4 s; marks improve the next reflected shot slightly, one proc per target."
+        },
+        "S1": {
+          "name": "Set Mirror",
+          "cooldownNote": "8 s, two charges",
+          "designText": "places one thin 2-HP projectile reflector at a selected ground point; at most 2 mirrors exist, facing fixed direction."
+        },
+        "S2": {
+          "name": "Evidence Shot",
+          "cooldownNote": "7 s",
+          "designText": "fires a single bolt that may ricochet **once** from one mirror at the previewed angle. Direct and reflected hits deal different capped damage; walls stop shots."
+        },
+        "R": {
+          "name": "Closed Case",
+          "cooldownNote": "78 s",
+          "designText": "chooses one visible target and displays three **public** predicted lines from existing mirrors for 0.8 s. Fires along the selected legal line for high damage; remaining lines are decoys clearly labeled as possible routes. No global shot or aimless auto-hit."
+        }
+      }
+    },
+    {
+      "index": 28,
+      "legacyId": "Bounty Belle",
+      "canonicalId": "calixa-broadwake",
+      "displayName": "Calixa Broadwake",
+      "title": "The Tidebound Privateer",
+      "role": "mobile broadside area carry",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "salt-worn privateer captain with a rectangular bicorne hat and a knee-high clockwork skiff that follows her; two mismatched deck cannons, no spinning gun barrage",
+      "combatSignature": "commits to **port/starboard firing arcs** and makes her orientation consequential.",
+      "counterplay": "approach from the unused broadside, cut off her sailing line, smash buoys, or move between successive volleys.",
+      "aiCue": "keep a flank angle alongside the enemy formation and use the chosen broadside to deny an escape corridor, not always to maximize instantaneous DPS.",
+      "abilities": {
+        "P": {
+          "name": "Hold the Weather",
+          "cooldownNote": null,
+          "designText": "after Calixa moves 45 GU along one heading, her skiff stores one Windward charge (max 2); reversing direction spends the accumulated aim. Visible wake trails announce her broadside side."
+        },
+        "S1": {
+          "name": "Signal Buoy",
+          "cooldownNote": "8 s",
+          "designText": "tosses a floating 2-HP buoy within 140 GU. The buoy marks a 60-GU sea-lane and reveals enemy movement through that lane for 4 s; Calixa's next basic attack passing the buoy gains a small splash. Max two buoys."
+        },
+        "S2": {
+          "name": "Tack Across",
+          "cooldownNote": "12 s",
+          "designText": "Calixa and skiff turn 90° and slide 38 GU *along an unobstructed legal path*. While turning, the skiff fires **one** short range shot from the outward-facing broadside, consuming a Windward charge for extra shove. No dash through obstacles."
+        },
+        "R": {
+          "name": "Port Authority",
+          "cooldownNote": "88 s",
+          "designText": "selects port or starboard and projects **three staggered 85×35-GU broadside lanes** over 3 s. Every 0.8 s the skiff fires into the next visible lane; each hero can be damaged at most once per volley. The lanes follow Calixa's facing **at cast start**, and remain readable even if she walks; do not auto-track fleeing champions."
+        }
+      }
+    },
+    {
+      "index": 29,
+      "legacyId": "Kegory",
+      "canonicalId": "brohm-caskfall",
+      "displayName": "Brohm Caskfall",
+      "title": "The Fermentation King",
+      "role": "terrain-flow tank / pressure shaper",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "colossal cellar mechanic with transparent brass fermentation tanks, pressure-wheel forearms and rubber-stopper boots; no body-slam-and-exploding-barrel combo",
+      "combatSignature": "**liquid pressure** builds currents and forces choices about footing.",
+      "counterplay": "move across—not with—the current, destroy the central cask (3 HP), and exploit Brohm's reduced power away from prepared foam.",
+      "aiCue": "pre-place a flow away from the allied carry or objective entrance, not blindly chase a single enemy with body collisions.",
+      "abilities": {
+        "P": {
+          "name": "Pressure Reserve",
+          "cooldownNote": null,
+          "designText": "damage soaked while standing on his own foam builds Pressure (0–100). Pressure decays outside foam; visibly displays on a back-mounted dial. Reserve cannot grow from damage that Brohm himself creates."
+        },
+        "S1": {
+          "name": "Lay the Head",
+          "cooldownNote": "9 s",
+          "designText": "opens a directional spigot to spill a 90×28-GU **foam strip** for 4 s. Units on the strip retain normal basic movement but slide up to 9 GU along the marked direction after each voluntary movement step; repeated movement resolution caps total drift."
+        },
+        "S2": {
+          "name": "Repressurize",
+          "cooldownNote": "13 s",
+          "designText": "reverses the direction of one active foam strip and gives Brohm a brief damage barrier proportional to Pressure consumed (capped). The reversal is warned by flashing arrows for 0.45 s; opponents may step off it."
+        },
+        "R": {
+          "name": "Cellar Breach",
+          "cooldownNote": "95 s",
+          "designText": "plants a large cask at the junction of up to two foam strips. After 1 s the cask vents in **three sequential directional surges**, each traveling along existing foam channels and displacing enemies modestly perpendicular to the stream. Surges do not stack displacement against the same target inside 0.8 s. Without strips, it creates one weak short surge only."
+        }
+      }
+    },
+    {
+      "index": 30,
+      "legacyId": "Hooklyn",
+      "canonicalId": "mora-fenhook",
+      "displayName": "Mora Fenhook",
+      "title": "The Lantern Ferrier",
+      "role": "tactical extraction support",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "elderly marsh boatwoman beneath a wide oilcloth hood, a segmented oar and a floating narrow spirit skiff; completely remove hooked chains and warden cage",
+      "combatSignature": "an **opt-in, predictable ferry service** enables rescues and flanks.",
+      "counterplay": "deny the embarkation circle, destroy a post, attack exposed passengers after arrival or board to contest the far dock.",
+      "aiCue": "reserve an actual safe embarkation point and allied consent; never autopull a threatened ally or send them into tower range.",
+      "abilities": {
+        "P": {
+          "name": "Crossing Fees",
+          "cooldownNote": null,
+          "designText": "when an allied hero safely finishes a Mora-established route, Mora accrues Fare (max 2), each reducing the next route setup delay by 0.15 s. There is no reward for trapping or dragging enemies."
+        },
+        "S1": {
+          "name": "Mooring Post",
+          "cooldownNote": "8 s, 2 charges",
+          "designText": "plants a small lit mooring within 115 GU. Posts have 2 HP, last 7 s, and are legal only on traversable ground. First post is the departure; second is the arrival. Max one linked pair."
+        },
+        "S2": {
+          "name": "Departing Bell",
+          "cooldownNote": "13 s",
+          "designText": "if two posts exist and a collision-valid traversable path joins them, summons a 2.3 s ferry that follows that path at fixed speed. Allies and enemies **voluntarily board** within 20 GU using a public interaction or AI accepted decision; a boarded unit cannot attack for the trip but may disembark at legal path checkpoints. No forced motion from hard CC."
+        },
+        "R": {
+          "name": "The Last Crossing",
+          "cooldownNote": "86 s",
+          "designText": "temporarily creates two public **emergency moorings** at legal points near Mora, then dispatches a second larger ferry allowing up to two passengers for one journey. It gives passengers a small shield **on arrival**, not invulnerability while traveling; destroying arrival post stops the ferry at its nearest legal earlier dock."
+        }
+      }
+    },
+    {
+      "index": 31,
+      "legacyId": "Arsenaldo",
+      "canonicalId": "mirelle-vane",
+      "displayName": "Mirelle Vane",
+      "title": "The Atelier Prodigy",
+      "role": "geometry-based tactical mage with ten authored fabric patterns",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "sharp-eyed **adult mage girl (early twenties)**, needle-hair comb, short asymmetrical ink-black sleeve, ivory structured waistcoat, oxblood petal-skirt over practical shorts, flat boots, giant folded-paper pattern cape. Her floating helper is a brass bobbin, **not three elemental spheres**",
+      "combatSignature": "draws physical **tailoring pins and stitchwork** that temporarily change battlefield relationships. No elemental combinations, ordered orb recipe, or copy of the Invoker ability keyboard.",
+      "counterplay": "focus a pin as soon as she commits to a triangle, rotate the battle outside her prepared geometry, or force spells when she holds only one pin.",
+      "aiCue": "choose pages by expected ally survival, route safety, projectile timing and objective control—not a fixed spell chain. **Uniqueness gate:** no elemental invocation recipes, no orb passive stat cycling, no Quas/Wex/Exort keyboard layout, no AoE meteor/EMP/ice wall or summoned elemental familiar copied from classic kits.",
+      "abilities": {
+        "P": {
+          "name": "Pattern Memory",
+          "cooldownNote": null,
+          "designText": "Mirelle can maintain **three visible 2-HP tailor pins** at once, each lasting 6 s and anchored to traversable ground; new pins replace the oldest. Two or three pins establish a line/triangle with clear world-projected stitch geometry. Valid layouts must leave legal passage and cannot cross impassable world walls."
+        },
+        "S1": {
+          "name": "Pin the Hem",
+          "cooldownNote": "5 s, max 3 stored pin charges with staggered recharge",
+          "designText": "tosses a pin within 125 GU, causing a small impact sting only if it hits a target; the pin stays on the ground. At least one pin is required for most pages. Pins are marked for **both** teams and can be broken by 2 basic attacks."
+        },
+        "S2": {
+          "name": "Recut",
+          "cooldownNote": "10 s",
+          "designText": "chooses one existing pin and slides it along a visible, collision-valid 40-GU path after a 0.4 s warning. Enemies crossed by the moving thread take one light hit; recasting on empty ground fails without consuming the cooldown. Also cycles the selected **page group** when no pin is targeted, with no cast or mana cost."
+        },
+        "R": {
+          "name": "Pattern Book",
+          "cooldownNote": "global weave lockout 7 s",
+          "designText": "hold/activate a **radial palette** of ten named patterns; choosing a page is input selection, then releasing R makes **one authoritative cast**. Each page has its own cooldown, cost and geometry requirement. The global weave lockout is a post-cast throttle, **not an 80-second ultimate imposed on all ten pages**. Major pages have longer personal cooldowns. A single chosen page cannot be released if its pin geometry or cooldown is invalid; show the reason before committing. Each successfully cast page consumes **exactly its declared pins**."
+        }
+      },
+      "rPageSpells": [
+        {
+          "page": 1,
+          "patternRole": "**Baste Line** — crossing tax",
+          "requirementsAndEffect": "2 pins; creates a temporary stitch seam between them for 3 s. First enemy crossing is slowed 20% for 1 s, taking minor damage. Consumes 2 pins.",
+          "draftCooldown": "16 s",
+          "counterplay": "Cut either pin or walk around the open-ended seam"
+        },
+        {
+          "page": 2,
+          "patternRole": "**Pocket Shelter** — single-ally save",
+          "requirementsAndEffect": "1 pin within 60 GU of a visible ally; projects a directional cloth flap for 2 s that intercepts **one** incoming projectile from the pin-facing side, then tears. Consumes 1.",
+          "draftCooldown": "22 s",
+          "counterplay": "Flank the cloth or bait the single catch"
+        },
+        {
+          "page": 3,
+          "patternRole": "**Held Breath** — projectile scheduling",
+          "requirementsAndEffect": "2 pins; establishes a 2.2 s fabric pocket. An **allied consenting** non-ultimate projectile crossing the seam is held for up to 0.7 s then released along its **original heading** at its original team ownership and capped damage. Can hold only one projectile. Consumes 2.",
+          "draftCooldown": "28 s",
+          "counterplay": "Move while the shot is parked or sever seam; no instant redirect"
+        },
+        {
+          "page": 4,
+          "patternRole": "**Ladder Stitch** — traversable ground hazard bridge",
+          "requirementsAndEffect": "2 pins spanning an enemy *temporary ground hazard* up to 80 GU. For 3 s the seam permits allies to cross that specific hazard with reduced tick damage; it never bridges hard world walls, pits or spawn exclusion. Consumes 2.",
+          "draftCooldown": "32 s",
+          "counterplay": "Destroy one pin or contest bridge exit"
+        },
+        {
+          "page": 5,
+          "patternRole": "**Pleat Fold** — cover angle",
+          "requirementsAndEffect": "3 pins; a triangular drape folds outward from its longest edge for 2.5 s, creating a one-hit projectile obstruction with an openly marked weak vertex. Consumes 3.",
+          "draftCooldown": "38 s",
+          "counterplay": "Fire at the weak vertex or attack from behind"
+        },
+        {
+          "page": 6,
+          "patternRole": "**Serrated Seam** — damage route",
+          "requirementsAndEffect": "2 pins; a thin serrated thread between them vibrates 3 times over 2.4 s. Enemies crossing get one damaging cut per thread pulse **max once per target across the entire spell**; enemies staying still are not repeatedly hit. Consumes 2.",
+          "draftCooldown": "24 s",
+          "counterplay": "Stop crossing or walk around endpoints"
+        },
+        {
+          "page": 7,
+          "patternRole": "**Wrong-Side Hem** — reposition pressure",
+          "requirementsAndEffect": "2 pins; for 2.5 s allies entering one side of the seam gain a brief 15% speed burst **toward its far endpoint** once. Enemies see the arrow but are unaffected. Consumes 2.",
+          "draftCooldown": "26 s",
+          "counterplay": "Hold the destination endpoint / destroy pins"
+        },
+        {
+          "page": 8,
+          "patternRole": "**Tacking Waltz** — formation cue",
+          "requirementsAndEffect": "3 pins; over 3 s, projects three **ordered** steps. Allies who intentionally pass steps 1→2→3 receive a shield upon finishing; skipping a step gives no reward. Consumes 3.",
+          "draftCooldown": "40 s",
+          "counterplay": "Deny a step; the route can be read and contested"
+        },
+        {
+          "page": 9,
+          "patternRole": "**Silhouette Dress** — false threat / information",
+          "requirementsAndEffect": "1 pin; raises a life-size garment cutout for 3.5 s that **visibly advertises** one fake ability windup on Mirelle's next R selection but causes no damage. The fake always has different stitching from a real cast for skilled readers. Consumes 1.",
+          "draftCooldown": "35 s",
+          "counterplay": "Recognize the dotted stitching or destroy the cutout"
+        },
+        {
+          "page": 10,
+          "patternRole": "**Grand Atelier** — teamfight ultimate finish",
+          "requirementsAndEffect": "3 pins spanning a valid triangle, all within 150 GU. After a 1.0 s telegraph, a fabric canopy unfolds for 4 s. Allied units inside gain **direction-dependent** 15% incoming damage reduction and 10% faster recovery from *future* non-ultimate casts. Enemies may move freely; seams can be destroyed to collapse the canopy. Consumes 3.",
+          "draftCooldown": "90 s",
+          "counterplay": "Break a support seam, fight from outside, bait the final layout"
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "legacyId": "Inkognito",
+      "canonicalId": "maelis-chromabloom",
+      "displayName": "Maelis Chromabloom",
+      "title": "The Conservationist of Ruin",
+      "role": "mutable canvas terrain mage",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "older museum conservator, square terracotta paint smock with elaborate ceramic mask repair, enormous collapsible gallery frames; paint is a **structural medium**, not a stream of colored blasts",
+      "combatSignature": "makes **breakable canvas partitions** that change line of sight during fights.",
+      "counterplay": "destroy frames, cross through them on foot, or reposition to the currently open side.",
+      "aiCue": "cut an enemy artillery angle while preserving a planned allied approach; never block the only legal escape route.",
+      "abilities": {
+        "P": {
+          "name": "Surface Memory",
+          "cooldownNote": null,
+          "designText": "when a projectile strikes a Maelis canvas, the canvas stores one imprinted property of that projectile (physical/magic/utility; never copies the ability or exact damage), one property per frame."
+        },
+        "S1": {
+          "name": "Unroll the Canvas",
+          "cooldownNote": "9 s, 2 charges",
+          "designText": "erects a 55-GU-wide 2-HP translucent canvas for 3.5 s. It blocks ordinary projectiles from **both** teams but permits walking through with a 15% brief movement penalty. No invisible walls."
+        },
+        "S2": {
+          "name": "Restore the Missing",
+          "cooldownNote": "13 s",
+          "designText": "repaints a damaged canvas, restoring one HP and changing its surface into a **one-way reveal window** for 2 s; projectiles still obey the same obstruction rules. If no frame exists, instead creates a 30-GU reveal brush stroke (lower power)."
+        },
+        "R": {
+          "name": "Private Exhibition",
+          "cooldownNote": "90 s",
+          "designText": "joins up to three frames into an open-sided gallery for 4 s. Frames rotate one after another every 1.1 s, opening new shooting angles while closing others. Each rotation briefly releases a burst based on the stored property (capped damage or shield pulse, not copied spells). Public arrows preview next positions."
+        }
+      }
+    },
+    {
+      "index": 33,
+      "legacyId": "Hexley",
+      "canonicalId": "axiom-rail",
+      "displayName": "Axiom Rail",
+      "title": "The Scrapline Engineer",
+      "role": "deployable rail-gunner / engineering carry",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "compact mechanic with one offset railcart cannon on the shoulder and a hydraulic knee, not a shapeshifting hammer/rifle",
+      "combatSignature": "builds **temporary train-track firing logistics**.",
+      "counterplay": "break track junctions, approach perpendicular, or wait until the cart's firing window expires.",
+      "aiCue": "route fire around a defensive shield from a legal side lane pocket, not free-fire through terrain.",
+      "abilities": {
+        "P": {
+          "name": "Gauge Check",
+          "cooldownNote": null,
+          "designText": "when Axiom's attack travels within 12 GU of one of his rails it accrues a Gauge token (max 3). Rails are visible to enemies and may be dismantled."
+        },
+        "S1": {
+          "name": "Lay Track",
+          "cooldownNote": "8 s, two charges",
+          "designText": "draws one 65-GU segment on legal ground, with open endpoints and a 2-HP switching junction. Max two segments active for 5 s; rail cannot bisect spawn or an objective collision."
+        },
+        "S2": {
+          "name": "Switch Engine",
+          "cooldownNote": "12 s",
+          "designText": "sends a small unmanned rail cart along connected track for up to 2.5 s. It fires light suppressive bolts **only at targets with direct LOS from the cart**; enemies can destroy it or stand away from the rail."
+        },
+        "R": {
+          "name": "Terminal Delivery",
+          "cooldownNote": "80 s",
+          "designText": "charges a heavy shell on the **furthest linked cart/rail endpoint** for 0.9 s, then fires one broad, telegraphed 95-GU shot aligned to the track. Consumes Gauge for range **not** lethal damage. If no rail survives, R refuses cast and preserves cooldown."
+        }
+      }
+    },
+    {
+      "index": 34,
+      "legacyId": "Knuckleberry",
+      "canonicalId": "brakka-fenn",
+      "displayName": "Brakka Fenn",
+      "title": "The Civic Enforcer",
+      "role": "anti-aggression brawler / custody control",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "heavyset one-eyed town marshal whose gauntlets are giant document stamps, wearing battered city uniform and public warrants",
+      "combatSignature": "applies **behavioral restraining orders** with openly marked exits, not a Vi-style lockdown leap.",
+      "counterplay": "leave the marked disk, switch targets, or lure Brakka away from his escort line.",
+      "aiCue": "punish a real diver focusing the carry, not tag an enemy merely because R is ready.",
+      "abilities": {
+        "P": {
+          "name": "Repeat Offender",
+          "cooldownNote": null,
+          "designText": "an enemy that damages the same ally twice within 3 s gains a public Offender tag for 4 s (once per enemy / 8 s), giving Brakka 10% faster movement when approaching that enemy."
+        },
+        "S1": {
+          "name": "File Complaint",
+          "cooldownNote": "8 s",
+          "designText": "stamps a 45-GU-wide circle on the ground, warning for 0.5 s. Offenders within receive a 0.4 s stagger and ordinary enemies take light damage; nobody is automatically grabbed."
+        },
+        "S2": {
+          "name": "Right of Way",
+          "cooldownNote": "12 s",
+          "designText": "Brakka forms a 55-GU escort path **to one protected ally**, briefly body-blocking incoming basic attacks when physically between attacker and ally. If he leaves the path he loses the guard."
+        },
+        "R": {
+          "name": "Writ Served",
+          "cooldownNote": "84 s",
+          "designText": "targets one Offender in 110 GU and projects a **public 75-GU exclusion disk** around that enemy for 3 s. The tagged enemy is free to walk **out** at any time; if they remain and attack the previously targeted ally, Brakka's counterstamp inflicts one 0.55 s disarm and moderate damage. Not an automatic targeted slam or suppression."
+        }
+      }
+    },
+    {
+      "index": 35,
+      "legacyId": "Boomie",
+      "canonicalId": "pippa-fuseburst",
+      "displayName": "Pippa Fuseburst",
+      "title": "The Firework Stagehand",
+      "role": "explosive showrunner / wave-clear carry",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "short, scarred **adult** stage rigger in fireproof powder-blue jumpsuit, lighting tools, collapsible firing racks and confetti wheels; no Jinx-like weapon swap, zap slow or global rocket execute",
+      "combatSignature": "sets up **staggered stage cues** enemies can read and dodge.",
+      "counterplay": "smash racks before ignition, leave the lit square, or move with the timed sequence instead of remaining trapped.",
+      "aiCue": "create a moving denial screen as allies secure the boss; aim based on predicted routes, not omniscient future positions.",
+      "abilities": {
+        "P": {
+          "name": "Cue Card",
+          "cooldownNote": null,
+          "designText": "Pippa stores one Showstopper token when a **scheduled** explosion catches at least one enemy champion; max 2; one token per cast, no kill-triggered speed frenzy."
+        },
+        "S1": {
+          "name": "Rack and Spark",
+          "cooldownNote": "8 s",
+          "designText": "installs a waist-high fireworks rack for 4 s (2 HP); its indicator previews a thin 45-GU blast lane. After 0.9 s it fires once along that lane, then burns out."
+        },
+        "S2": {
+          "name": "Move the Spotlight",
+          "cooldownNote": "12 s",
+          "designText": "rotates an **unfired** rack 90° after a 0.45 s warning or, with no rack, drops a small no-damage distraction flare that reveals an area for 2 s."
+        },
+        "R": {
+          "name": "Opening Night",
+          "cooldownNote": "88 s",
+          "designText": "lays a 120-GU-wide stage grid with **four sequential firing squares**, each warned 0.75 s before ignition. The final square is chosen from three legal candidates at cast start; consumes Showstopper for an additional shield-break pulse (not more raw burst). At every tick at least one contiguous walkable escape cell must remain."
+        }
+      }
+    },
+    {
+      "index": 36,
+      "legacyId": "Fizzlewing",
+      "canonicalId": "lulla-faespring",
+      "displayName": "Lulla Faespring",
+      "title": "The Keeper of Unfinished Dreams",
+      "role": "spell-recovery controller / anti-combo mage",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "unnervingly calm adult moth archivist with a quilted cloak, waist-hung mechanical bedside clocks and large glass chime ring",
+      "combatSignature": "doesn't stop enemies *casting*; she makes **repeated completed casts leave a visible afterthought**, creating windows her team can exploit",
+      "counterplay": "destroy chimes, cast outside their listening radius, or stagger casts between visible theater beats.",
+      "aiCue": "deploy near a known upcoming enemy combo or objective contest; save R for multiple enemies preparing windups, not as a panic global silence. **Originality gate:** no phase immunity, no untargetability, no teleporting projectile, no area silence, no tether-and-snap punishment.",
+      "abilities": {
+        "P": {
+          "name": "Drowse Ledger",
+          "cooldownNote": null,
+          "designText": "an enemy champion completing a **non-basic-attack ability** within 95 GU of an active Lulla chime accumulates one Drowse note (max 2, 4 s duration). Each unique cast can add at most one note. Notes do not affect the cast that just finished."
+        },
+        "S1": {
+          "name": "Hang the Chime",
+          "cooldownNote": "8 s, two charges",
+          "designText": "places a 2-HP wind chime on legal ground within 125 GU, lasting 5 s. It projects a public 95-GU listening radius. Max two chimes; destroying a chime ends its aura but does not retroactively cancel completed spells."
+        },
+        "S2": {
+          "name": "Borrowed Yawn",
+          "cooldownNote": "13 s",
+          "designText": "consumes one Drowse note on an enemy in 130 GU. On that enemy's **next successfully completed non-basic spell** within 3 s, adds **0.35 s post-cast recovery** after the spell's effect already resolves; if no valid cast happens, the tax expires harmlessly. No silence, disable, cast failure or stealth."
+        },
+        "R": {
+          "name": "Intermission Theater",
+          "cooldownNote": "90 s",
+          "designText": "opens an 135-GU circular dream stage for 4 s, with **three announced chime beats** at 1, 2, and 3 s. Enemy casts which *complete inside* a beat window pay 0.25 s post-cast recovery (subject to the global recovery cap), while allied casts completed during beats gain 12% shorter recovery (never faster windup). Enemy spell results and damage still occur normally."
+        }
+      }
+    },
+    {
+      "index": 37,
+      "legacyId": "Wickety",
+      "canonicalId": "bryx-emberkite",
+      "displayName": "Bryx Emberkite",
+      "title": "The Thermal Sailor",
+      "role": "zone mobility / current shaping",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "sun-battered wind sailor with a damaged one-sided glider board, patched cream sails and bright coral thermal vents; no Sticky Napalm, Flamebreak, Firefly flight path or lasso drag",
+      "combatSignature": "deploys **rising and falling thermal currents** that modify movement **voluntarily**.",
+      "counterplay": "fight sideways to the thermals, destroy vents, exploit his low threat without setup.",
+      "aiCue": "rotate a route toward safety or flank; no free escape over terrain.",
+      "abilities": {
+        "P": {
+          "name": "Read the Updraft",
+          "cooldownNote": null,
+          "designText": "Bryx sees public warm-air flows left by his vents; traveling **with** a current for at least 40 GU gives him one Sailspeed charge (max 2), consumed by next ordinary attack for bonus range."
+        },
+        "S1": {
+          "name": "Plant Thermal",
+          "cooldownNote": "9 s",
+          "designText": "plants a 2-HP 3-s hot-air vent, generating a visible 80×35-GU directional ground current. Walkers keep control; movement in arrow direction receives 15% speed, against it receives 10% slow. Does not lift units over hard walls."
+        },
+        "S2": {
+          "name": "Trim Sail",
+          "cooldownNote": "13 s",
+          "designText": "rotates one active vent by up to 90° after 0.5 s tell. Nearby willing allies may accept one **short airflow boost** along the new direction, capped at 22 GU with full world-collision checks. Enemies get no forced flight."
+        },
+        "R": {
+          "name": "Thermocline Crossing",
+          "cooldownNote": "87 s",
+          "designText": "connects two vents into a broad angled airflow corridor for 4 s; allies crossing end-to-end gain a small evasion-of-next-basic-attack buff, enemies fighting into the current lose some projectile range. Opponents can destroy a vent to end the corridor."
+        }
+      }
+    },
+    {
+      "index": 38,
+      "legacyId": "Hedgehoggin",
+      "canonicalId": "murdle-ridgehide",
+      "displayName": "Murdle Ridgehide",
+      "title": "The Living Palisade",
+      "role": "mobile fortification tank",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "squat scarred **pangolin-like** creature with detachable armored dorsal segments, clay talons and patchwork iron saddle; no Bristleback-like rear damage reduction, sticky goo or warpath attack stacks",
+      "combatSignature": "tears away his own armor to **build small breakable fortifications**.",
+      "counterplay": "hit Murdle while he has shed armor, break the leading plates, or navigate through the deliberate openings.",
+      "aiCue": "trade personal safety for a real allied retreat lane, not spam armor barriers when no threat exists.",
+      "abilities": {
+        "P": {
+          "name": "Plate Accounting",
+          "cooldownNote": null,
+          "designText": "Murdle begins with 4 dorsal plates, each providing 4% damage reduction from any direction. Each deployed plate removes its personal reduction until recovered after expiration or collected. Plate inventory shown openly."
+        },
+        "S1": {
+          "name": "Shed a Wall",
+          "cooldownNote": "8 s",
+          "designText": "detaches one plate and props it as a 40-GU breakable low wall for 4 s. It blocks one ordinary projectile from **either** team, never closes a chokepoint fully. Max two active walls."
+        },
+        "S2": {
+          "name": "Recall Shell",
+          "cooldownNote": "12 s",
+          "designText": "reels one deployed plate along a visible 60-GU path back toward Murdle; units crossed are lightly nudged to nearest free ground but never stunned. Recovered plate re-enters passive armor only upon reaching Murdle; destroyer removes it until its natural recovery timer."
+        },
+        "R": {
+          "name": "Fortress Migration",
+          "cooldownNote": "92 s",
+          "designText": "for 5 s, Murdle can redeploy up to three plates as a **moving staggered palisade** advancing 60 GU. Each plate remains individually destroyable, with gaps at least two hero diameters wide. His own armor drops dramatically while the wall travels."
+        }
+      }
+    },
+    {
+      "index": 39,
+      "legacyId": "Orbiton",
+      "canonicalId": "nemea-halolink",
+      "displayName": "Nemea Halolink",
+      "title": "The Choir Conductor",
+      "role": "spacing / synchronized casting support",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "severe middle-aged maestro holding two tuning forks, no glowing permanent nearest-ally tether; performers are heard as positional *notes*",
+      "combatSignature": "encourages **spread-but-connected choreography** via timed notes.",
+      "counterplay": "contest one destination circle, disrupt the timing, or force allies to cluster.",
+      "aiCue": "check whether at least two allies can reach distinct circles before committing R; do not fire just because five teammates are nearby.",
+      "abilities": {
+        "P": {
+          "name": "Audible Interval",
+          "cooldownNote": null,
+          "designText": "whenever two distinct allies finish spells **within 0.6–1.4 s of each other**, Nemea gains one Harmony note (max 3; one per pair / 8 s). No reward for simultaneous spam; notes are visibly displayed."
+        },
+        "S1": {
+          "name": "First Note",
+          "cooldownNote": "8 s",
+          "designText": "creates a small 35-GU score circle lasting 3 s; the first ally entering receives one **shield-on-next-damage** token valid 2 s. Max two circles; a given ally benefits once per cast."
+        },
+        "S2": {
+          "name": "Second Note",
+          "cooldownNote": "13 s",
+          "designText": "links **two separate score circles** with a luminous 130-GU-max segment. Allies *crossing the segment in either direction* gain 10% movement speed for 1.5 s, once per hero. Enemies can attack circles; the segment is not a tether on bodies."
+        },
+        "R": {
+          "name": "Chorus Arrival",
+          "cooldownNote": "92 s",
+          "designText": "consumes Harmony to lay three successive public beat circles around the team over 3 s. Allies who voluntarily reach their assigned **different circles** on the announced beat receive a capped shield and brief recovery reduction, while clumping in one circle gives only minimal healing. Does not automatically shield the entire team in place."
+        }
+      }
+    },
+    {
+      "index": 40,
+      "legacyId": "Pixabelle",
+      "canonicalId": "thimble-briarwish",
+      "displayName": "Thimble Briarwish",
+      "title": "The Walking Gardener",
+      "role": "portable cover / botanical support",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "tiny elderly fae gardener hauling a giant squeaking terrarium barrow, patched mittens, roots growing through ceramic pots; no polymorph/massive-grow knockup kit",
+      "combatSignature": "grows **movable, low temporary roofs and hedges** while allies navigate them.",
+      "counterplay": "use ground-level attacks, break roofs, or walk behind the gardener's slow cart.",
+      "aiCue": "deploy roof against *known incoming lob trajectories*, not to block basic attacks incorrectly.",
+      "abilities": {
+        "P": {
+          "name": "Seedbank",
+          "cooldownNote": null,
+          "designText": "after an ally uses cover Thimble created to block a projectile, she collects one Seed (max 2; one per source shot). Seeds improve next planter's hit points; never grant permanent ability amp."
+        },
+        "S1": {
+          "name": "Plant Shelter",
+          "cooldownNote": "9 s",
+          "designText": "places a 40-GU dome planter lasting 4 s. It blocks **one arcing/lobbed enemy projectile**, not direct-fire bullets; ally and enemy walkers pass underneath freely. 2 HP baseline."
+        },
+        "S2": {
+          "name": "Wheelbarrow Walk",
+          "cooldownNote": "12 s",
+          "designText": "pushes a planted shelter along a valid 55-GU ground segment for 2.5 s. Allies who stay in its moving shade gain minor HP regeneration; the caster is slowed while pushing. Cannot move through walls."
+        },
+        "R": {
+          "name": "Traveling Orchard",
+          "cooldownNote": "90 s",
+          "designText": "sends **three** small low-roof planters along separate, explicitly visible 70-GU routes for 5 s. Each blocks one overhead attack then crumbles. The gaps remain traversable; Thimble cannot be in three places at once and is vulnerable while directing them."
+        }
+      }
+    },
+    {
+      "index": 41,
+      "legacyId": "Muffleton",
+      "canonicalId": "sevrin-inkseal",
+      "displayName": "Sevrin Inkseal",
+      "title": "The Magistrate of Repetition",
+      "role": "anti-pattern controller / decision tax",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "exhausted court magistrate in layered burgundy robes and a huge tablet pauldron, carrying a multi-headed law stamp; no Death Prophet or Silencer-style global silence",
+      "combatSignature": "penalizes **repeating the same tactical category** in one small jurisdiction.",
+      "counterplay": "cast mixed categories, move out of jurisdiction, destroy its center ink pillar (2 HP), or simply accept a manageable recovery delay.",
+      "aiCue": "use R against predictable repeated mobility/protection chains, not as an interrupt button; evaluate category history from public cast events only.",
+      "abilities": {
+        "P": {
+          "name": "Case Law",
+          "cooldownNote": null,
+          "designText": "observes completed enemy skills within 120 GU and records their declared **server-side category** (`mobility`, `attack`, `protection`, `control`). Only one last category per target, lasting 4 s; does not read hidden cooldowns or private abilities."
+        },
+        "S1": {
+          "name": "Mark Jurisdiction",
+          "cooldownNote": "9 s",
+          "designText": "stamps a 70-GU public court disk around a visible 2-HP breakable ink pillar for 3.5 s. Opponents may enter and cast normally. A champion's **second completed skill of the same category** inside the disk receives 0.25 s post-cast recovery, once / target / disk. A different category resets its local repeat count."
+        },
+        "S2": {
+          "name": "Appeal Granted",
+          "cooldownNote": "13 s",
+          "designText": "relocates an existing court center up to 45 GU after a 0.45 s warning, or if targeting an ally inside, erases **one** pending cast-recovery tax on that ally. Does not silence or imprison anyone."
+        },
+        "R": {
+          "name": "Precedent Review",
+          "cooldownNote": "95 s",
+          "designText": "for 4.5 s expands one active court to 125 GU and publishes the current recorded category above every participating enemy. If an enemy repeats the same category a third time, they take one **small shield-stripping hit** and 0.35 s post-cast recovery (subject to global cap). Switching categories avoids penalty; no global affecting enemies elsewhere."
+        }
+      }
+    },
+    {
+      "index": 42,
+      "legacyId": "Stafford",
+      "canonicalId": "koro-cloudtail",
+      "displayName": "Koro Cloudtail",
+      "title": "The Aerial Polewright",
+      "role": "agile route fighter / temporary team mobility",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "nimble simian scaffold builder with bamboo-jointed pole stilts, chalk measuring rope and light tool satchels; no monkey clone, spinning staff ultimate or extended auto-lock hits",
+      "combatSignature": "builds **vault poles as optional route devices**.",
+      "counterplay": "destroy poles, fight away from vault landing markers, or punish obvious landing recovery.",
+      "aiCue": "plant a reachable escape and one flank pole, and require passenger route acceptance.",
+      "abilities": {
+        "P": {
+          "name": "Measured Landing",
+          "cooldownNote": null,
+          "designText": "landing on legal ground after his own vault grants Koro a 2 s balanced stance; next basic attack has a small shield break bonus. No stacking knockups."
+        },
+        "S1": {
+          "name": "Plant Vault",
+          "cooldownNote": "8 s, 2 charges",
+          "designText": "plants a 2-HP pole at a legal ground point within 110 GU. It stands 5 s, visibly previews a 60-GU landing arc with a collision-tested endpoint. Max two poles."
+        },
+        "S2": {
+          "name": "Pole Transfer",
+          "cooldownNote": "12 s",
+          "designText": "Koro or a **voluntarily consenting nearby ally** vaults from one pole to the previewed legal landing point after a 0.45 s windup. Cannot cross hard walls or tower-blocked zones, cannot initiate in hard CC, landing causes only a small radial shove (no full AoE knockup)."
+        },
+        "R": {
+          "name": "Scaffold Crossing",
+          "cooldownNote": "87 s",
+          "designText": "connects two poles with a visible elevated bamboo runway for 4 s. Eligible allies may **individually choose** to take one fast 65-GU arc between the poles. The crossing is not global teleportation; any pole destruction cancels later crossings, passengers already in flight resolve to nearest safe landing."
+        }
+      }
+    },
+    {
+      "index": 43,
+      "legacyId": "Primate Minister",
+      "canonicalId": "bram-stonebranch",
+      "displayName": "Bram Stonebranch",
+      "title": "The Canopy Regent",
+      "role": "canopy guardian / overhead protection",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "hulking aging simian monarch with a living leaf crown, wide moss-gold shoulder armor and a **short broad jade scepter**; no staff clone army or circle of striking monkey echoes",
+      "combatSignature": "grows **overhead canopy** that changes which projectiles can reach the team.",
+      "counterplay": "flank under roofs, use ground-level attacks, or remove support columns.",
+      "aiCue": "cover allies against genuine predicted aerial strikes (e.g. Ravelle), not against all damage types. **Character distinction:** Koro builds routes for moving *through* space; Bram builds roofs for surviving *under* space.",
+      "abilities": {
+        "P": {
+          "name": "Old Growth",
+          "cooldownNote": null,
+          "designText": "when Bram blocks a *lobbed* projectile with canopy cover, he gains one Sap (max 2), empowering his next small shield. Direct low shots are unaffected by canopy."
+        },
+        "S1": {
+          "name": "Root Column",
+          "cooldownNote": "9 s, 2 charges",
+          "designText": "plants a 2-HP vertical trunk column for 5 s at a legal position, 45-GU radius. Walkers pass around; two columns can support a canopy."
+        },
+        "S2": {
+          "name": "Leaf Intercept",
+          "cooldownNote": "12 s",
+          "designText": "grows a **short overhead roof** between two active columns for 3 s. The roof can absorb up to two **lobbed** enemy projectiles; arching artillery is intercepted, low trajectories pass under. If only one column exists, Bram grants that column a small self-shield instead."
+        },
+        "R": {
+          "name": "Kingdom of Shade",
+          "cooldownNote": "92 s",
+          "designText": "raises three additional short-lived columns forming a 130-GU **open canopy grove** for 5 s. Within it allies take reduced area-splash damage from above, but enemies can walk in, attack the exposed columns, or aim direct projectiles underneath. Canopy doesn't cancel ground hazards."
+        }
+      }
+    },
+    {
+      "index": 44,
+      "legacyId": "Kickswitch",
+      "canonicalId": "toma-bellbreak",
+      "displayName": "Toma Bellbreak",
+      "title": "The Thirteenth Bell",
+      "role": "cast-window counterfighter",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "compact older bell-trained martial artist with heavy bronze wrist bells, battered red canvas and a rooted deliberate stance; no point-click allyward kick ultimate",
+      "combatSignature": "fights using **telegraphed parry timing** instead of generic knockback combos.",
+      "counterplay": "vary windup timing, approach from behind, use ground hazards, or simply disengage during the final bell.",
+      "aiCue": "predict real incoming commit times from current telegraphs; never read exact unobservable player action timing.",
+      "abilities": {
+        "P": {
+          "name": "Listen for the Stroke",
+          "cooldownNote": null,
+          "designText": "an enemy in 105 GU starting a cast with visible windup grants Toma a public Bell Window until commit (max one tracked per enemy). His next basic attack within 1.2 s after that cast's completion restores 5% missing HP, once / enemy / 6 s."
+        },
+        "S1": {
+          "name": "Open Palm",
+          "cooldownNote": "8 s",
+          "designText": "a short 60-GU palm strike that deals modest damage; if it hits during a visible enemy windup, it **does not interrupt**, but grants Toma a parry charge valid 3 s."
+        },
+        "S2": {
+          "name": "Return Stroke",
+          "cooldownNote": "12 s",
+          "designText": "consumes parry charge (or performs a weak dry guard) to create a 0.6 s frontal reaction stance. One incoming targeted non-ultimate hit from that frontal arc is partially reduced; after it lands Toma counterstrikes the attacker for moderate damage. Guard is ineffective from behind and against untargeted AoE."
+        },
+        "R": {
+          "name": "Thirteenth Bell",
+          "cooldownNote": "84 s",
+          "designText": "sets a 1.2 s public dueling rhythm centered on Toma; opponents hear two false chimes then one genuine **final** counter window. If an enemy finishes a damaging cast against Toma during the final 0.25 s, that damage is reduced 35% (not negated) and he sends a non-stunning shockwave outward. Casting earlier or attacking someone else avoids the counter."
+        }
+      }
+    },
+    {
+      "index": 45,
+      "legacyId": "Propella",
+      "canonicalId": "ravelle-skyrake",
+      "displayName": "Ravelle Skyrake",
+      "title": "The Airspace Duchess",
+      "role": "airborne surveillance / conditional bombardment",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "battle-worn aristocratic skiff pilot on a fragile fan-powered observation platform, with optical rangefinder, stripy wing-cloth and small survey markers; not a high-attack-speed hovering flak ADC",
+      "combatSignature": "**reconnaissance determines where timed strikes are legal**.",
+      "counterplay": "leave the visible target grid, move under overhead protection (Thimble/Bram), destroy spotting systems, or pressure her during vulnerable skiff movement.",
+      "aiCue": "mark the objective entrance in advance and schedule cells to make opponents choose between contesting and escaping; do not spam R into unsurveyed fog.",
+      "abilities": {
+        "P": {
+          "name": "Surveyed Grid",
+          "cooldownNote": null,
+          "designText": "Ravelle's basic attacks or visible direct observation mark 1 of 4 public **map sectors** around her for 5 s. Only sectors she has actually seen can be assigned for artillery. Max two marked sectors active."
+        },
+        "S1": {
+          "name": "Spotting Flare",
+          "cooldownNote": "8 s",
+          "designText": "fires a revealing flare into one 60-GU sector for 3.5 s. Does small damage and exposes enemy units who remain in it; does not pierce fog to reveal unrelated sectors."
+        },
+        "S2": {
+          "name": "Reposition Skiff",
+          "cooldownNote": "13 s",
+          "designText": "moves the skiff laterally 50 GU along traversable ground projection, with collision at world walls and towers. During travel, Ravelle cannot basic attack; her previously marked sectors remain but are not auto-updated into fog."
+        },
+        "R": {
+          "name": "Designated Airspace",
+          "cooldownNote": "92 s",
+          "designText": "selects an already-surveyed **2×2 ground grid** totaling 130×130 GU. After a 0.8 s warning, four separate bombardment cells fire sequentially over 3 s **in the declared order**; each cell is shown 0.6 s before it lands, and one guaranteed traversable escape lane remains. Damage is moderate per cell; staying through consecutive cells is costly. All shots use public authoritative sector coordinates, not hidden enemy prediction."
+        }
+      }
+    }
+  ]
+}

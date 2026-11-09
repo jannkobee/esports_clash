@@ -1,0 +1,18 @@
+{
+  "id": "a3352d37-91cb-4757-b403-da09f5ac0017",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "method": "combined-pivot-candidate-reloaded-bends-v1",
+  "files": {
+    "raw-rig.glb": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+    "baseline-report.json": "fabe0de8f9b5e5f183bdf92a54bf0a2b739818ead9a86bb47fb2ceafc0518429",
+    "tools/review_combined_joint_candidate.py": "40873af6f5520957b123826e110a57f8a4f61a29c11edf1993ae89e3f6203de6",
+    "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+    "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+    "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02"
+  }
+}

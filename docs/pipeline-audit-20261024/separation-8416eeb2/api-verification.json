@@ -1,0 +1,118 @@
+{
+    "verification_method": "Canonical API artifact readback and shared Web controller render",
+    "preparation_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+    "candidate_id": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97",
+    "candidate_sha256": "85fba1625bd539ec28c6564a037fa02c4bfb4aa886316afc345c5f05429deace",
+    "candidate_report_sha256": "2a0f49fb0b6081502fa735b1c05a2f566c4551b0110452aea859bb58b1b0439d",
+    "candidate_source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+    "visual_review_id": "0a4e25c9-23ad-4c5a-a58d-db4d4588bd9d",
+    "visual_report_sha256": "b6cdcd68842dbd9bbe310e16a48cd2866568329fa45978d9d099fbd3022ac8fe",
+    "assessment_status": "portable_correction_verified_shape_unresolved",
+    "playback_sha256": "dbbc0810eb315105652188a70b21bb229fb08f14a54dee5606d635eb1138f549",
+    "ancestor_artifacts": [
+        {
+            "id": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97",
+            "sha256": "85fba1625bd539ec28c6564a037fa02c4bfb4aa886316afc345c5f05429deace"
+        },
+        {
+            "id": "f6283980-c4dd-5f34-bcf4-09c08e9e6346",
+            "sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7"
+        },
+        {
+            "id": "d38b680b-3f40-5331-8bdf-992a6ec4f272",
+            "sha256": "9a4a5efd95f5687020797402b9dcf591e3813f0b092526357793387b88b005ab"
+        },
+        {
+            "id": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046",
+            "sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f"
+        },
+        {
+            "id": "a3352d37-91cb-4757-b403-da09f5ac0017",
+            "sha256": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4"
+        }
+    ],
+    "diagnostics": [
+        {
+            "id": "e0a78665-172e-45c9-9f8f-ffd852d5ca81",
+            "method": "retained-corrective-cycle-interpolation-v1",
+            "report_sha256": "880ac6d454c9c68a2151da9cc33d3c4c5db674081391eb220a1d1dc6120f3984",
+            "contact_vertices": 0
+        },
+        {
+            "id": "5271850d-a635-4a23-a147-02060d866fbb",
+            "method": "corrected-morph-contact-map-v1",
+            "report_sha256": "052ac73559a75140e992408a33036008e625f5e69c613a4ddf345a2c0ba6cb01",
+            "contact_vertices": 117
+        },
+        {
+            "id": "8416eeb2-bb79-43fd-8d50-9ea3b564e14d",
+            "method": "rest-sign-shoulder-separation-v1",
+            "report_sha256": "265cd5aed77fd09bf852c75a8cfb7aa4e42195992b6b3caba07c0971ee6e530c",
+            "contact_vertices": 0
+        }
+    ],
+    "controller_status": 200,
+    "preview_uses_exact_bend_file": true,
+    "assessment_visible": true,
+    "candidate_label_visible": true,
+    "hip_study_visible": true,
+    "bound_rejections_visible": true,
+    "skinning_mode_diagnostic_visible": true,
+    "counts_90": [
+        {
+            "joint": "UpperArmL",
+            "intersections": 31
+        },
+        {
+            "joint": "UpperArmR",
+            "intersections": 0
+        },
+        {
+            "joint": "ForearmL",
+            "intersections": 0
+        },
+        {
+            "joint": "ForearmR",
+            "intersections": 0
+        },
+        {
+            "joint": "ThighL",
+            "intersections": 40
+        },
+        {
+            "joint": "ThighR",
+            "intersections": 27
+        },
+        {
+            "joint": "CalfL",
+            "intersections": 0
+        },
+        {
+            "joint": "CalfR",
+            "intersections": 2
+        }
+    ],
+    "severe_stretch_edges": 0,
+    "weight_correspondence": {
+        "before_to_after": {
+            "unmatched_vertices": 0,
+            "max_matching_weight_error": 1.1920928955078125e-7
+        },
+        "after_to_before": {
+            "unmatched_vertices": 0,
+            "max_matching_weight_error": 1.1920928955078125e-7
+        },
+        "verified": true
+    },
+    "rest_surface_roundtrip": {
+        "before_vertices": 23806,
+        "after_vertices": 23832,
+        "max_nearest_distance_m": 3.275714561823406e-7,
+        "rms_nearest_distance_m": 9.241442322056334e-8
+    },
+    "unaffected_bends_unchanged": null,
+    "preparation_status": "needs_review",
+    "qualification_complete": false,
+    "publication_eligible": false,
+    "inspector_sha256": "b53cdbbf1a7ee8cae29c18696ad56eb13e07acc2349f6e41d94e8a0adc9ccb02"
+}

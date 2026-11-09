@@ -18,6 +18,9 @@ test('one siege golem charges the next live enemy tower in front of it', () => {
     { id: 'blue-front', team: 'blue', type: 'inner_tower', isAlive: true, x: 205, y: 380 },
     { id: 'nexus', team: 'red', type: 'nexus', isAlive: true, x: 220, y: 380 },
   ];
+  assert.equal(selectGolemChargeTower({ team: 'blue', x: 100, y: 380 }, structures),undefined);
+  assert.equal(selectGolemChargeTower({ team: 'red', x: 300, y: 380 }, structures),undefined);
+  structures[1].isAlive=false;structures[0].isAlive=false;
   assert.equal(selectGolemChargeTower({ team: 'blue', x: 100, y: 380 }, structures)?.id, 'front');
   assert.equal(selectGolemChargeTower({ team: 'red', x: 300, y: 380 }, structures)?.id, 'blue-front');
   assert.equal(selectGolemChargeTower({ team: 'blue', x: -100, y: 380 }, structures), undefined);

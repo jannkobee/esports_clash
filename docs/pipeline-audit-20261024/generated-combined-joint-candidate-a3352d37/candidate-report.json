@@ -1,0 +1,1218 @@
+{
+  "id": "a3352d37-91cb-4757-b403-da09f5ac0017",
+  "compute": "google",
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "offsets_to_body_height": {
+    "UpperArmL": -0.01,
+    "UpperArmR": -0.01,
+    "ThighL": -0.01,
+    "ThighR": -0.01,
+    "CalfL": 0.0125,
+    "CalfR": 0.0125
+  },
+  "baseline_poses": [
+    {
+      "joint": "UpperArmL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.313019243271038,
+        "largest_extension_to_height": 0.006561898633861539,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 384,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_26",
+            "bone_26"
+          ],
+          "intersections": 135
+        },
+        {
+          "regions": [
+            "bone_26",
+            "bone_3"
+          ],
+          "intersections": 106
+        },
+        {
+          "regions": [
+            "bone_25",
+            "bone_26"
+          ],
+          "intersections": 81
+        },
+        {
+          "regions": [
+            "bone_2",
+            "bone_26"
+          ],
+          "intersections": 62
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 3.9640143699960704,
+        "largest_extension_to_height": 0.016944708458946856,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.6111619237955845,
+        "largest_extension_to_height": 0.006435768728579749,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 368,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_3",
+            "bone_7"
+          ],
+          "intersections": 282
+        },
+        {
+          "regions": [
+            "bone_7",
+            "bone_7"
+          ],
+          "intersections": 31
+        },
+        {
+          "regions": [
+            "bone_6",
+            "bone_7"
+          ],
+          "intersections": 30
+        },
+        {
+          "regions": [
+            "bone_2",
+            "bone_7"
+          ],
+          "intersections": 23
+        },
+        {
+          "regions": [
+            "bone_3",
+            "bone_3"
+          ],
+          "intersections": 2
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.3975357602487306,
+        "largest_extension_to_height": 0.012796830342794743,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.3245173567084811,
+        "largest_extension_to_height": 0.003018592246434753,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.5117502393814635,
+        "largest_extension_to_height": 0.004676502782392299,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.2275814990756135,
+        "largest_extension_to_height": 0.0021950945344367057,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.3081843771464825,
+        "largest_extension_to_height": 0.004006331216327113,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.796881638987849,
+        "largest_extension_to_height": 0.013144083222740013,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 516,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_0",
+            "bone_48"
+          ],
+          "intersections": 338
+        },
+        {
+          "regions": [
+            "bone_48",
+            "bone_48"
+          ],
+          "intersections": 74
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_0"
+          ],
+          "intersections": 59
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 20
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_48"
+          ],
+          "intersections": 17
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_44"
+          ],
+          "intersections": 8
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.528348350525708,
+        "largest_extension_to_height": 0.025829116961775173,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.5489118365386774,
+        "largest_extension_to_height": 0.009704021086726076,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 555,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_0",
+            "bone_44"
+          ],
+          "intersections": 418
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 83
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_0"
+          ],
+          "intersections": 52
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_48"
+          ],
+          "intersections": 1
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_48"
+          ],
+          "intersections": 1
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.2749865331295895,
+        "largest_extension_to_height": 0.02108597008432907,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.7743060221872808,
+        "largest_extension_to_height": 0.006129066837127739,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 94,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_48",
+            "bone_49"
+          ],
+          "intersections": 81
+        },
+        {
+          "regions": [
+            "bone_49",
+            "bone_49"
+          ],
+          "intersections": 10
+        },
+        {
+          "regions": [
+            "bone_48",
+            "bone_48"
+          ],
+          "intersections": 3
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.3073370879606028,
+        "largest_extension_to_height": 0.010047217962295496,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.8598707120893896,
+        "largest_extension_to_height": 0.008394762435634692,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 188,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_44",
+            "bone_45"
+          ],
+          "intersections": 147
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 26
+        },
+        {
+          "regions": [
+            "bone_45",
+            "bone_45"
+          ],
+          "intersections": 15
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.4468889983753415,
+        "largest_extension_to_height": 0.012818786834715665,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    }
+  ],
+  "reloaded_poses": [
+    {
+      "joint": "UpperArmL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.4563115796741424,
+        "largest_extension_to_height": 0.007653005180008142,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 215,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_26",
+            "bone_26"
+          ],
+          "intersections": 70
+        },
+        {
+          "regions": [
+            "bone_2",
+            "bone_26"
+          ],
+          "intersections": 65
+        },
+        {
+          "regions": [
+            "bone_26",
+            "bone_3"
+          ],
+          "intersections": 50
+        },
+        {
+          "regions": [
+            "bone_25",
+            "bone_26"
+          ],
+          "intersections": 30
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.165249378270766,
+        "largest_extension_to_height": 0.01612417301254039,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.6929920185269403,
+        "largest_extension_to_height": 0.006976809844694601,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 137,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_3",
+            "bone_7"
+          ],
+          "intersections": 92
+        },
+        {
+          "regions": [
+            "bone_2",
+            "bone_7"
+          ],
+          "intersections": 32
+        },
+        {
+          "regions": [
+            "bone_7",
+            "bone_7"
+          ],
+          "intersections": 11
+        },
+        {
+          "regions": [
+            "bone_3",
+            "bone_3"
+          ],
+          "intersections": 1
+        },
+        {
+          "regions": [
+            "bone_6",
+            "bone_7"
+          ],
+          "intersections": 1
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.3821048128508298,
+        "largest_extension_to_height": 0.013770542641521137,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.324515454327054,
+        "largest_extension_to_height": 0.003018596791035039,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.5117493600419927,
+        "largest_extension_to_height": 0.00467650547678153,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.2275822901074886,
+        "largest_extension_to_height": 0.002195128127325562,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 1.3081823718278314,
+        "largest_extension_to_height": 0.00400633082447267,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.739778163002051,
+        "largest_extension_to_height": 0.014680376892422188,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 429,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_0",
+            "bone_48"
+          ],
+          "intersections": 288
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_0"
+          ],
+          "intersections": 69
+        },
+        {
+          "regions": [
+            "bone_48",
+            "bone_48"
+          ],
+          "intersections": 56
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_48"
+          ],
+          "intersections": 11
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 4
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_44"
+          ],
+          "intersections": 1
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.402853837016916,
+        "largest_extension_to_height": 0.02843919915211077,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.5035265369969646,
+        "largest_extension_to_height": 0.009478226485017293,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 445,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_0",
+            "bone_44"
+          ],
+          "intersections": 318
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_44"
+          ],
+          "intersections": 75
+        },
+        {
+          "regions": [
+            "bone_0",
+            "bone_0"
+          ],
+          "intersections": 44
+        },
+        {
+          "regions": [
+            "bone_48",
+            "bone_48"
+          ],
+          "intersections": 5
+        },
+        {
+          "regions": [
+            "bone_44",
+            "bone_48"
+          ],
+          "intersections": 3
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 4.114125110986134,
+        "largest_extension_to_height": 0.022027031274179078,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.0744474541641202,
+        "largest_extension_to_height": 0.008532246785690983,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.8669522238316993,
+        "largest_extension_to_height": 0.014503123211188849,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 45,
+      "finite": true,
+      "self_intersections": 0,
+      "triangles_checked": 37578,
+      "top_regions": [],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 2.1713810540030956,
+        "largest_extension_to_height": 0.01142955427715809,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 90,
+      "finite": true,
+      "self_intersections": 2,
+      "triangles_checked": 37578,
+      "top_regions": [
+        {
+          "regions": [
+            "bone_44",
+            "bone_45"
+          ],
+          "intersections": 2
+        }
+      ],
+      "edge_deformation": {
+        "policy": "deformation-edge-stretch-v1",
+        "passed": true,
+        "finite": true,
+        "edges_checked": 56332,
+        "severely_stretched_edges": 0,
+        "maximum_length_ratio": 3.031640006359693,
+        "largest_extension_to_height": 0.018267975013072018,
+        "limits": {
+          "length_ratio": 4,
+          "extension_to_height": 0.05
+        },
+        "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+      }
+    }
+  ],
+  "started_unix": 1793020564.2531173,
+  "unchanged_export_roundtrip": {
+    "before_vertices": 23399,
+    "after_vertices": 23682,
+    "max_nearest_distance": 1.5133419140056503e-07,
+    "rms_nearest_distance": 4.8126255550720416e-08
+  },
+  "artifact": {
+    "sha256": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4",
+    "bytes": 3375724
+  },
+  "candidate_export_roundtrip": {
+    "before_vertices": 23399,
+    "after_vertices": 23682,
+    "max_nearest_distance": 1.7409504948773247e-07,
+    "rms_nearest_distance": 5.766401346106317e-08
+  },
+  "export_delta_vs_unchanged_control": {
+    "max_nearest_distance": 2.2760858087167435e-08,
+    "rms_nearest_distance": 9.537757910342752e-09
+  },
+  "comparison": [
+    {
+      "joint": "UpperArmL",
+      "degrees": 45,
+      "baseline_intersections": 0,
+      "candidate_intersections": 0,
+      "delta": 0,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "UpperArmL",
+      "degrees": 90,
+      "baseline_intersections": 384,
+      "candidate_intersections": 215,
+      "delta": -169,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 45,
+      "baseline_intersections": 0,
+      "candidate_intersections": 0,
+      "delta": 0,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 90,
+      "baseline_intersections": 368,
+      "candidate_intersections": 137,
+      "delta": -231,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 45,
+      "baseline_intersections": 0,
+      "candidate_intersections": 0,
+      "delta": 0,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "ForearmL",
+      "degrees": 90,
+      "baseline_intersections": 0,
+      "candidate_intersections": 0,
+      "delta": 0,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 45,
+      "baseline_intersections": 0,
+      "candidate_intersections": 0,
+      "delta": 0,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "ForearmR",
+      "degrees": 90,
+      "baseline_intersections": 0,
+      "candidate_intersections": 0,
+      "delta": 0,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 45,
+      "baseline_intersections": 0,
+      "candidate_intersections": 0,
+      "delta": 0,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 90,
+      "baseline_intersections": 516,
+      "candidate_intersections": 429,
+      "delta": -87,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 45,
+      "baseline_intersections": 0,
+      "candidate_intersections": 0,
+      "delta": 0,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 90,
+      "baseline_intersections": 555,
+      "candidate_intersections": 445,
+      "delta": -110,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 45,
+      "baseline_intersections": 0,
+      "candidate_intersections": 0,
+      "delta": 0,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "CalfL",
+      "degrees": 90,
+      "baseline_intersections": 94,
+      "candidate_intersections": 0,
+      "delta": -94,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 45,
+      "baseline_intersections": 0,
+      "candidate_intersections": 0,
+      "delta": 0,
+      "candidate_severe_stretch_edges": 0
+    },
+    {
+      "joint": "CalfR",
+      "degrees": 90,
+      "baseline_intersections": 188,
+      "candidate_intersections": 2,
+      "delta": -186,
+      "candidate_severe_stretch_edges": 0
+    }
+  ],
+  "status": "review_required",
+  "scope": "Combined shoulder/hip forward pivots and calf backward pivots, measured after GLB reimport. No full animation clips, repair/retarget chain, appearance fitting or qualification.",
+  "completed_unix": 1793020650.6304352
+}

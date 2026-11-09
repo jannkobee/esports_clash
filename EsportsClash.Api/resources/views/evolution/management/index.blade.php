@@ -3,6 +3,7 @@
 @section('content')
 <div class="page-heading"><div><p class="eyebrow">CONTENT STUDIO &middot; MANUAL CONTROLS</p><h1>{{ ucfirst($kind) }} management</h1><p class="muted">{{ $kind === 'avatar' ? 'Build a character, shape its look, and write a design prompt for every skill.' : 'Create items, set their proposed stats, and describe their appearance and effects.' }}</p></div><a class="button primary" href="{{ route('management.create',$kind) }}">+ Create {{ $kind }}</a></div>
 <div class="notice">These are editable design drafts. Saving or marking ready for review does not publish gameplay changes or start AI / 3D jobs.</div>
+@if($kind==='avatar')<div class="notice"><a href="{{ route('registry.index') }}">Open the published avatar registry</a> for the current roster, engine values, skills and asset status. Existing design drafts below remain available.</div>@endif
 <section class="panel"><div class="section-heading"><div><h2>Start from the existing {{ $kind === 'avatar' ? 'roster' : 'items' }}</h2><p class="muted">Import {{ $kind === 'avatar' ? '45 avatars' : '49 items, including boots' }} as drafts. Existing imported designs are kept, including your edits.</p></div><form method="post" action="{{ route('management.import',$kind) }}">@csrf<button>Import existing {{ $kind === 'avatar' ? 'avatars' : 'items' }}</button></form></div></section>
 <form class="panel manage-filter" method="get">
 <label>Search by name<input name="q" value="{{ request('q') }}" maxlength="100" placeholder="{{ $kind === 'avatar' ? 'e.g. Arsenaldo' : 'e.g. Greatsword' }}"></label>

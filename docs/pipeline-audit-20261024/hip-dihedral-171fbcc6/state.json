@@ -1,0 +1,14 @@
+{
+  "id": "171fbcc6-3398-4417-b1ce-05a226d431aa",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "hip-dihedral",
+  "runtime_id": "6e1278f427958d83715851a16946b047ce0be97f803d9c5c5fba8e4fbb5b4caa",
+  "environment_sha256": "f706010e83a63d36766b0a14b0bc12dce2ff2859a8a45aaec5b765296aa7e365",
+  "started_unix": 1793188237.3905342,
+  "exit_code": 0,
+  "report_sha256": "79391b314471df32e012b4ec98e9010a16714241c0c36ac79b3ceeb7e7bac5a0",
+  "completed_unix": 1793188311.719218
+}

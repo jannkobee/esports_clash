@@ -1,0 +1,95 @@
+{
+  "review_id": "e96c7db2-69b0-4030-9e97-00d4db16a49f",
+  "reviewed_on": "2026-10-30",
+  "reviewer": "/root",
+  "status": "partial_shape_improvement_sampled_collision_pass",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "admit_animation_bake": true,
+  "scope": "19 exact views assessed, including all12 corrected views and hash-identical inspected controls. Modest left-hip contour improvement; admitted only to a separate export/motion experiment, not production qualification.",
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/baseline-ThighL-22.5-orbit3.png",
+      "sha256": "3f1dc3acca6bd2a79ac77619123cf9bd1681c5e753031538bbeff452a86e3a26"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-22.5-orbit1.png",
+      "sha256": "2c82825cc40616adc61512530b85cb36cb6171ac5ebe294a57ff2f878cef465e"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-22.5-orbit3.png",
+      "sha256": "4f057572c8a1925e562cc04abe2897be3abdd63199fe169ad467f0a0f8ed7be3"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-22.5-orbit5.png",
+      "sha256": "bcf6182b1689e83e75a82f13dc818fb2a1837fd8ec7a027a77b50b71bbbaf552"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-45-orbit1.png",
+      "sha256": "853570f442e9f3bdae19249e76c0dcd6caf86d547e8b100c16af7b100b71dccc"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-45-orbit3.png",
+      "sha256": "71878a0b9186103ccb3ef3940b8c325f11fc7246f1e41e03d883161f762eb413"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit1.png",
+      "sha256": "c30a2242fb91407a2e7f565cb0dd2f24a0dedd66bec4e09a36b38f31a6729d53"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit3.png",
+      "sha256": "8d664cc449108998149ecda7712f6d5d8b0ffafb4f37dd5212635ed0a1e68fee"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit5.png",
+      "sha256": "75ac12495d87ae3f28d0c8072764a0edc139c9c897624322022fcc0901204ad6"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-67.5-orbit3.png",
+      "sha256": "5c959f8db87b8264993a37937a2ba3e4e8cbd75b848f69b47326f98639347223"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-67.5-orbit1.png",
+      "sha256": "32662c2d0fcd9234ac736afcbe4e93b0b6523953522d141e4089990213d13ba7"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-67.5-orbit3.png",
+      "sha256": "76cb0d30aa001d3d282f499b172e749f992d312188a57789b5f021e90d826c82"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-67.5-orbit5.png",
+      "sha256": "54588278a20396613c574258e77216e3f62ebf6a3b0cb4ffe3718570937d8c70"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit1.png",
+      "sha256": "aa5c966d839a1036b23d9072a4a7914494fa8199af89d1a55bccab4acd7c7aa5"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit3.png",
+      "sha256": "2477ce27c151e2d52a39b35074e25dc45ee30dffcd3e2609be1b642b3ad17d73"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit5.png",
+      "sha256": "046dd73c434b96590d41102495b140c99790fdd9ac3d367c708ae98fb1fbd541"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit1.png",
+      "sha256": "203d561416150a00be770d7f663517ee57a6d185b9895224effa99bfc96ea360"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit3.png",
+      "sha256": "7663d09506d512084170bc7bd6b4253fd9dda5e56ef49b08f9c27e37af9f9a7a"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit5.png",
+      "sha256": "906b4adc59d1c32320def14c94db2c4e1a257b042a64d064967ebbc024488bda"
+    }
+  ],
+  "observations": [
+    "At quarter strength the hip transition is subtly softer at67.5/90 without the pronounced lip of the original handle or the v3 jagged fold. This is a modest improvement; the deep-bend crease and residual angular silhouette are not fully resolved.",
+    "Upper-pelvis pins retain the waist contour. Original rest pose, outside-region positions and coincident seams remain preserved in the recorded checks.",
+    "Backtracking rejected full strength at56.25 degrees and half strength at90. Quarter strength has zero recorded intersections at eight angles from11.25 through90; continuous motion and twist/knee combinations remain untested.",
+    "No four-influence rig export, actual game clip, outfit, right-hip or shoulder qualification is implied. The saved data are two experimental rest-space corrective targets."
+  ],
+  "next_requirement": "Preserve the exact dense field and two targets through a four-influence fit and standard morph/skin export. Recheck contacts and shape in actual Babylon playback, including knee flexion and held-out combined motion. Do not substitute a two-bone diagnostic rig for the actual avatar or claim all deformation is fixed."
+}

@@ -19,8 +19,34 @@ ROOT.mkdir(exist_ok=True)
 TOKEN = os.environ['ONLINE_WORKER_TOKEN']
 LOCK = threading.Lock()
 PROCESSES = {}
+FRAME_CACHE = {}
+FRAME_CACHE_LOCK = threading.Lock()
 RUN_ID = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
 MANIFEST = json.loads(Path('/online/manifest.json').read_text())
+
+
+def latest_stream_snapshot(folder):
+    """Read each atomic recording revision once, shared by authorized viewers.
+
+    Retain the exact worker JSON rather than decoding/re-encoding its full event
+    history for every viewer every 100 ms. No transport or replay schema change.
+    """
+    path = folder / 'snapshot.json'
+    with FRAME_CACHE_LOCK:
+        try:
+            stat = path.stat()
+        except FileNotFoundError:
+            return None
+        marker = (stat.st_mtime_ns, stat.st_size, stat.st_ino)
+        cached = FRAME_CACHE.get(folder.name)
+        if cached and cached[0] == marker:
+            return cached[1:]
+        raw = path.read_text()
+        sequence = json.loads(raw)['sequence']
+        if folder.name not in FRAME_CACHE and len(FRAME_CACHE) >= 16:
+            del FRAME_CACHE[next(iter(FRAME_CACHE))]
+        FRAME_CACHE[folder.name] = (marker, sequence, raw)
+        return sequence, raw
 
 
 def write_json(path, value):
@@ -51,8 +77,10 @@ class Handler(BaseHTTPRequestHandler):
         folder = ROOT / parts[2]
         with LOCK:
             if method == 'POST':
+                from history_handler import pause_for_live
+                pause_for_live()
                 length = int(self.headers.get('Content-Length', 0))
-                if not 0 < length <= 32768:
+                if not 0 < length <= 2 * 1024 * 1024:
                     return self.reply(413, {'error': 'Allocation exceeds size limit'})
                 try:
                     allocation = json.loads(self.rfile.read(length))
@@ -61,6 +89,17 @@ class Handler(BaseHTTPRequestHandler):
                     assert type(plan['seed']) is int and 0 < plan['seed'] <= 2147483647
                     assert plan['versions'] == {key: MANIFEST[key] for key in ('catalog_version', 'rules_version', 'policy_version', 'observation_version')}
                     assert all(len(plan[side]) == 5 for side in ('blue', 'red'))
+                    assert plan.get('player_profile_schema', 0) in (0, 1)
+                    if plan.get('player_profile_schema') == 1:
+                        profiles = plan.get('player_profiles', {})
+                        ids = [slot['instance_id'] for side in ('blue', 'red') for slot in plan[side]]
+                        assert len(set(ids)) == 10 and set(profiles) == set(ids)
+                        attributes = {'lan', 'tf', 'iq', 'ldr', 'clu', 'sta', 'flx'}
+                        for profile in profiles.values():
+                            assert set(profile['stats']) == attributes
+                            assert all(type(value) in (int, float) and 1 <= value <= 99 for value in profile['stats'].values())
+                            assert type(profile['ovr']) is int and 1 <= profile['ovr'] <= 99
+                            assert 1 <= len(profile['name']) <= 100 and profile['nationality']['code']
                     assert re.fullmatch('[a-f0-9]{64}', allocation['plan_hash'])
                 except (ValueError, KeyError, TypeError, AssertionError):
                     return self.reply(422, {'error': 'Allocation or pinned versions invalid'})
@@ -72,7 +111,7 @@ class Handler(BaseHTTPRequestHandler):
                     write_json(folder / 'allocation.json', allocation)
                     write_json(folder / 'state.json', {'status': 'allocated', 'sequence': 0})
                 state = json.loads((folder / 'state.json').read_text())
-                if state['status'] in ('completed', 'failed'):
+                if state['status'] in ('completed', 'failed', 'interrupted'):
                     return self.reply(200, state)
                 if any(process.poll() is None for key, process in PROCESSES.items() if key != parts[2]):
                     return self.reply(409, {'error': 'Worker busy; allocation remains queued'})
@@ -97,11 +136,17 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(200, json.loads((folder / 'state.json').read_text()))
 
     def do_GET(self):
+        if self.path.startswith('/history/'):
+            from history_handler import handle
+            return handle(self,'GET',TOKEN,ROOT,PROCESSES,LOCK)
         if self.path == '/health':
-            return self.reply(200, {'status': 'ok'})
+            return self.reply(200, {'status': 'ok', 'content_catalog_schema': 1, 'player_profile_schema': 1, 'launch_history_schema': 1, 'rules_version': MANIFEST['rules_version']})
         self.handle_match('GET')
 
     def do_POST(self):
+        if self.path.startswith('/history/'):
+            from history_handler import handle
+            return handle(self,'POST',TOKEN,ROOT,PROCESSES,LOCK)
         self.handle_match('POST')
 
 
@@ -119,14 +164,15 @@ async def stream(socket):
         folder = ROOT / grant['match_id']
         last_sequence = -1
         while True:
-            if (folder / 'snapshot.json').exists():
-                message = json.loads((folder / 'snapshot.json').read_text())
-                if message['sequence'] != last_sequence:
-                    await socket.send(json.dumps(message))
-                    last_sequence = message['sequence']
+            revision = await asyncio.to_thread(latest_stream_snapshot, folder)
+            if revision:
+                sequence, raw = revision
+                if sequence != last_sequence:
+                    await socket.send(raw)
+                    last_sequence = sequence
             if (folder / 'state.json').exists():
                 state = json.loads((folder / 'state.json').read_text())
-                if state['status'] in ('completed', 'failed'):
+                if state['status'] in ('completed', 'failed', 'interrupted'):
                     await socket.send(json.dumps({'type': 'match-ended', 'schema': 1, **state}))
                     return
             try:

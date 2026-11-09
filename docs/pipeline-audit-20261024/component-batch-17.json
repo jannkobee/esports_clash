@@ -1,0 +1,16 @@
+[
+  {
+    "kind": "component",
+    "avatar_id": "c_jinx",
+    "component_id": "firing_rack",
+    "category": "accessory",
+    "binding": "independent",
+    "label": "Collapsible firing rack",
+    "attachment": "independent deployable",
+    "prompt": "Use case: stylized-concept. Static fantasy game inventory prop for Pippa Fuseburst. Attached character image is design reference only. Isolate the complete EMPTY collapsible metal stage-display rack: rectangular riveted brass and steel carrier frame, three empty cylindrical holders, folding braces, brown leather straps and rope handle. No contents in the holders. Preserve pictured rack construction and weathered red-brass-steel palette. No character, body, hands, clothes or other equipment. Show this one complete empty storage carrier centered with 20 percent transparent border all four sides. Neutral product lighting, readable three-quarter view. Genuine transparent background, no floor, shadow, glow, labels, text or scene.",
+    "reference_purpose": "reconstruction",
+    "slug": "pippa-fuseburst",
+    "reference": "C:/Users/User/Documents/Code Projects/Personal/Teamfight/EsportsClash.Web/public/art/avatar-drawings-v1/pippa-fuseburst.png",
+    "path": "docs/pipeline-audit-20261024/upload-assets/pippa-fuseburst-firing_rack-v2.png"
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-24",
+  "scope": "Babylon viewer integration; no all-kit gameplay qualification",
+  "checks": {
+    "build": "passed",
+    "focusedTests": 7,
+    "browser": "docs/babylon-migration/viewer-check.json",
+    "assetInventory": "docs/babylon-migration/asset-inventory.json"
+  },
+  "files": {
+    "EsportsClash.Web/src/match-viewer/ArenaFrame.ts": "de02749a4563f737eac1f8c10fee0eb9c428130c8c5c5bec4448dcbe3b8da8b6",
+    "EsportsClash.Web/src/match-viewer/AvatarAnimationController.ts": "8554bac10202a3b6bdf7efc51beb1cb540a344322480f5482516c2d9d640cb3d",
+    "EsportsClash.Web/src/match-viewer/avatarPresentation.ts": "877aa95fcc73e4d8ef7885396009dd618c91c8754a0c1c8cb57da096d1679636",
+    "EsportsClash.Web/src/match-viewer/BabylonAssets.ts": "5b7afd8763a7306092a6f6ea059dac0d1bcb2d4d7f5e293cb6f604011d49144f",
+    "EsportsClash.Web/src/match-viewer/BabylonBattlefield.ts": "e8e9555371128927457816f82f111941d004616951d48cc4291d0671815a681d",
+    "EsportsClash.Web/src/match-viewer/BabylonEffects.ts": "fb0ebb0617268bf69a23399996eb26567b59609c07fdc9ffa04f18dbf9264847",
+    "EsportsClash.Web/src/match-viewer/BabylonMatchViewer.ts": "c8aa827d9e8250616f776a15040662dcb0d68c9e67d0881777681d86711ea4f8",
+    "EsportsClash.Web/src/match-viewer/BabylonReplayPanel.tsx": "a898f597aebaca705a2e2100bd277112e2edcfc6b085df9b0448ce0f15d1a844",
+    "EsportsClash.Web/src/match-viewer/MatchViewer.ts": "f5dea03352eb68087275232e5cd8666f28e02d7c2dc6847b6e2666fcd14baf2e",
+    "EsportsClash.Web/src/match-viewer/ViewerReplay.ts": "03134897ab9115bc092fd585f267b1f958651983d07387b306d05e0f207f0b41",
+    "EsportsClash.Web/src/components/AramMatchView.tsx": "d970e0ae5d76535bb99b9cfcf631b5c5c82619ba7b97701f851eeb04457dd748",
+    "EsportsClash.Web/src/App.tsx": "b0ab1935115e392b476c34e2f61468f2defba10a9e880ca367f817cbd1eac3ce"
+  }
+}

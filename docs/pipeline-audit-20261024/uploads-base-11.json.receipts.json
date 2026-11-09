@@ -1,0 +1,29 @@
+[
+  {
+    "avatar_id": "c_monkeyking_dota",
+    "id": "base",
+    "sha256": "a448576cc4851501824ad48ea5d2b63d9b2f3c0f26dd4e841e865c797b6e24bf",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "14fc4184b8848edd8220cbe82139c53ff19363d658a5826a878323fec263b23d",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_skybreaker",
+    "id": "base",
+    "sha256": "e239e7943513c1b3d66f964efd4c78209394f8095096bc13f8247c8ce015a2b2",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "b559047d8a389e315b34b14d81fbd8978dcbab37ae9fa43c4a38d9dbc43d674f",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_puck",
+    "id": "base",
+    "sha256": "4329cb89385294ca1878b64598a29d48b4e740460aedb6a3926d777688f26cbb",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "6e4a2b9ca629d50613f929b8b9211644b10876666a7a186932accc31beea093c",
+    "http": 200
+  }
+]

@@ -16,12 +16,13 @@ def character_frame(rig):
     return Matrix((right,forward,up)).transposed().to_quaternion()
 
 def calibrate_arms(source,target,outward_degrees=0):
-    """Match anatomical Idle segment directions without changing either bind pose.
+    """Transfer donor motion around the target's own anatomical rest stance.
 
-    A donor may be authored with lowered arms and reversed bone-tail axes while
-    an inferred rig is in T-pose. Copying local animation deltas alone cannot
-    bridge those reference poses. Preserve the donor's complete world-space
-    motion around a calibrated target stance instead.
+    Native procedural donors can have joint origins crossing the torso even
+    when their separately attached visible parts look reasonable. Their absolute
+    Idle segment directions are not a safe anatomical reference. Retain target
+    bind directions/roll and transfer only reference-relative world rotations.
+    Equipment clearance is an explicit target-space adjustment, not donor stance.
     """
     alignment=character_frame(target)@character_frame(source).inverted()
     result={}
@@ -35,7 +36,7 @@ def calibrate_arms(source,target,outward_degrees=0):
             source_direction=source.matrix_world.to_3x3()@(a.head-source.pose.bones['Forearm'+name[-1]].head)
             target_direction=target.matrix_world.to_3x3()@(b.tail_local-b.head_local)
         if min(source_direction.length,target_direction.length)<1e-7:raise RuntimeError('Collapsed arm calibration segment: '+name)
-        desired=alignment@source_direction
+        desired=target_direction.copy()
         if name.startswith('UpperArm') and outward_degrees:
             # Hold equipment clear of chest/pauldron volume while retaining a
             # lowered guard. This is a pose correction, never a timing change.
@@ -46,7 +47,39 @@ def calibrate_arms(source,target,outward_degrees=0):
                       'stance':stance@(target.matrix_world@b.matrix_local).to_quaternion()}
     return result
 
-def apply_calibrated_arms(source,target,calibration,character_motion=None,phase=0.,clip=None):
+def constrain_arm_rotation(name,rotation):
+    """Bound target-local swing/twist; imported world deltas are not joint limits.
+
+    Blender's bone Y axis follows the bone. Limits are a versioned candidate
+    transfer profile, not an assertion that normalized weights deform well.
+    """
+    limits={'UpperArm':(110,60),'Forearm':(125,35),'Hand':(65,60)}
+    values=next((v for prefix,v in limits.items() if name.startswith(prefix)),None)
+    if values is None:return rotation
+    q=rotation.normalized()
+    if q.w<0:q.negate()
+    twist=Quaternion((q.w,0,q.y,0))
+    if twist.magnitude<1e-8:twist=Quaternion((1,0,0,0))
+    else:twist.normalize()
+    swing=q@twist.inverted()
+    def bounded(value,degrees):
+        maximum=math.radians(degrees)
+        return Quaternion((1,0,0,0)).slerp(value,min(1,maximum/max(value.angle,1e-8)))
+    return (bounded(swing,values[0])@bounded(twist,values[1])).normalized()
+
+
+def clip_arm_reference(source,calibration):
+    """Calibrate discontinuous clip-start stances without importing their pose."""
+    result={}
+    for name,reference in calibration.items():
+        current=(source.matrix_world@source.pose.bones[name].matrix).to_quaternion()
+        result[name]={**reference}
+        if (current@reference['reference'].inverted()).angle>.6:
+            result[name]['reference']=current
+    return result
+
+
+def apply_calibrated_arms(source,target,calibration,character_motion=None,phase=0.,clip=None,constrained=False):
     import bpy
     for name,reference in calibration.items():
         a=source.pose.bones[name];b=target.pose.bones[name]
@@ -59,7 +92,20 @@ def apply_calibrated_arms(source,target,calibration,character_motion=None,phase=
             # Constrain around the calibrated carrying pose, not around T-pose.
             delta=delta@Euler(angles).to_quaternion()
         rotation=target.matrix_world.to_quaternion().inverted()@delta@reference['stance']
+        if constrained:
+            # Native spacer/helpers do not define anatomical joint axes. Bound
+            # rotation against the actual chest/upper-arm/forearm frame instead.
+            parent_name='Chest' if name.startswith('UpperArm') else ('UpperArm' if name.startswith('Forearm') else 'Forearm')+name[-1]
+            parent=target.pose.bones[parent_name]
+            parent_delta=parent.matrix.to_quaternion()@parent.bone.matrix_local.to_quaternion().inverted()
+            anatomical_reference=parent_delta@b.bone.matrix_local.to_quaternion()
+            local=anatomical_reference.inverted()@rotation
+            rotation=anatomical_reference@constrain_arm_rotation(name,local)
         b.matrix=Matrix.LocRotScale(b.head.copy(),rotation,b.matrix.to_scale())
+        if constrained:
+            b.rotation_mode='QUATERNION'
+            b.location=Vector((0,0,0))
+            b.scale=Vector((1,1,1))
         bpy.context.view_layer.update()
 
 def grip_pose(rig,slots):

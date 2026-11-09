@@ -1,0 +1,47 @@
+[
+  {
+    "avatar_id": "c_valkira",
+    "id": "base",
+    "sha256": "4a2d56ba8713713c751bc9df3ef9558df78ad77ee8f6688757c69d406c2054fe",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "1d92b520bf35628789519a3a3a730191d8f16450c932c8b7b5bd4a47b46af4ad",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kage",
+    "id": "base",
+    "sha256": "3ec936de5cae23552f48b252e0ed1d8b6d70c1858a006b42e3ef0c0accb36599",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "bb5321ec76132ba2d1079658437fb73459c696ac4e18fe11da202496389a6e1b",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_kazemaru",
+    "id": "base",
+    "sha256": "c98a3859d135dc9df13d838c57eb6d21d9f98de8073fa0f7887acf0e42e8841a",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "6370917bb2fea70fc5462b131d55dcf84f69a609e128c054c92913db9222a02d",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_cora",
+    "id": "base",
+    "sha256": "57ac6ed8280df87553274063c493591f62a5a23132a6b9cd5411ac21a7dd9c93",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "c6fa875df6ca8ea48cec9554e5bb0def62b50d3779c77d30a95a4801092b550e",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_renn",
+    "id": "base",
+    "sha256": "02331be926f7987af48bf38a9cd56345f34dd9c40d37ac086d904f7cc2532901",
+    "status": "reference_uploaded",
+    "version": 1,
+    "inventory_hash": "6c315e8329468468fe15b65c0755beee34c953e23791c3aa5fbfe09e51d4bbc4",
+    "http": 200
+  }
+]

@@ -1,0 +1,4038 @@
+{
+  "schema": 1,
+  "records": [
+    {
+      "id": "item_guardians_blade",
+      "kind": "item",
+      "payload": {
+        "id": "item_guardians_blade",
+        "name": "Sentinel's Blade",
+        "cost": 500,
+        "tier": "Starting",
+        "icon": "⚔️",
+        "stats": {
+          "ad": 25,
+          "hp": 150,
+          "haste": 10
+        },
+        "passiveName": "Warpath",
+        "passiveDesc": "+10 Ability Haste and early health for lane skirmishes.",
+        "suitableRoles": [
+          "Fighter",
+          "Marksman",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_guardians_orb",
+      "kind": "item",
+      "payload": {
+        "id": "item_guardians_orb",
+        "name": "Aegis Orb",
+        "cost": 500,
+        "tier": "Starting",
+        "icon": "🔮",
+        "stats": {
+          "ap": 45,
+          "hp": 150,
+          "haste": 10,
+          "mana": 55,
+          "manaRegen": 1.5
+        },
+        "passiveName": "Essence Flow",
+        "passiveDesc": "Restores mana over time and empowers poke spells.",
+        "suitableRoles": [
+          "Mage",
+          "Support"
+        ]
+      }
+    },
+    {
+      "id": "item_guardians_horn",
+      "kind": "item",
+      "payload": {
+        "id": "item_guardians_horn",
+        "name": "Bastion Horn",
+        "cost": 500,
+        "tier": "Starting",
+        "icon": "🛡️",
+        "stats": {
+          "hp": 180
+        },
+        "passiveName": "Unyielding",
+        "passiveDesc": "Reduces damage taken from attacks and spells by 15 flat.",
+        "suitableRoles": [
+          "Tank",
+          "Support",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_guardians_hammer",
+      "kind": "item",
+      "payload": {
+        "id": "item_guardians_hammer",
+        "name": "Siphon Mallet",
+        "cost": 500,
+        "tier": "Starting",
+        "icon": "🔨",
+        "stats": {
+          "ad": 25,
+          "hp": 150
+        },
+        "passiveName": "Vampiric Drain",
+        "passiveDesc": "Grants +7% Lifesteal to sustain through minion waves.",
+        "suitableRoles": [
+          "Marksman",
+          "Fighter",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_bf_sword",
+      "kind": "item",
+      "payload": {
+        "id": "item_bf_sword",
+        "name": "Colossal Greatsword",
+        "cost": 1300,
+        "tier": "Component",
+        "icon": "🗡️",
+        "stats": {
+          "ad": 40
+        },
+        "passiveName": "Raw Power",
+        "passiveDesc": "+40 Attack Damage weapon spike.",
+        "suitableRoles": [
+          "Marksman",
+          "Fighter",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_lost_chapter",
+      "kind": "item",
+      "payload": {
+        "id": "item_lost_chapter",
+        "name": "Forgotten Grimoire",
+        "cost": 1100,
+        "tier": "Component",
+        "icon": "📖",
+        "stats": {
+          "ap": 40,
+          "haste": 10,
+          "mana": 90,
+          "manaRegen": 1.8
+        },
+        "passiveName": "Insight",
+        "passiveDesc": "+40 AP and mana surge upon level up.",
+        "suitableRoles": [
+          "Mage",
+          "Support"
+        ]
+      }
+    },
+    {
+      "id": "item_serrated_dirk",
+      "kind": "item",
+      "payload": {
+        "id": "item_serrated_dirk",
+        "name": "Jagged Stiletto",
+        "cost": 1000,
+        "tier": "Component",
+        "icon": "🔪",
+        "stats": {
+          "ad": 30,
+          "lethality": 10
+        },
+        "passiveName": "Lethality",
+        "passiveDesc": "Armor penetration and lethal skirmish damage.",
+        "suitableRoles": [
+          "Assassin",
+          "Marksman",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_bami_cinder",
+      "kind": "item",
+      "payload": {
+        "id": "item_bami_cinder",
+        "name": "Ignis Ember",
+        "cost": 1000,
+        "tier": "Component",
+        "icon": "🔥",
+        "stats": {
+          "hp": 260
+        },
+        "passiveName": "Kindle",
+        "passiveDesc": "Grants early health and area wave burn.",
+        "suitableRoles": [
+          "Tank",
+          "Fighter",
+          "Support"
+        ]
+      }
+    },
+    {
+      "id": "item_chain_vest",
+      "kind": "item",
+      "payload": {
+        "id": "item_chain_vest",
+        "name": "Reinforced Mail",
+        "cost": 800,
+        "tier": "Component",
+        "icon": "🛡️",
+        "stats": {
+          "armor": 40
+        },
+        "passiveName": "Plated Guard",
+        "passiveDesc": "+40 Armor defensive foundation.",
+        "suitableRoles": [
+          "Tank",
+          "Support",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_blasting_wand",
+      "kind": "item",
+      "payload": {
+        "id": "item_blasting_wand",
+        "name": "Ether Wand",
+        "cost": 850,
+        "tier": "Component",
+        "icon": "🪄",
+        "stats": {
+          "ap": 45
+        },
+        "passiveName": "Arcane Spark",
+        "passiveDesc": "+45 Ability Power poke amplification.",
+        "suitableRoles": [
+          "Mage",
+          "Support"
+        ]
+      }
+    },
+    {
+      "id": "item_recurve_bow",
+      "kind": "item",
+      "payload": {
+        "id": "item_recurve_bow",
+        "name": "Composite Longbow",
+        "cost": 700,
+        "tier": "Component",
+        "icon": "🏹",
+        "stats": {
+          "aspd": 0.2
+        },
+        "passiveName": "Steelfiber",
+        "passiveDesc": "+20% Attack Speed rapid fire.",
+        "suitableRoles": [
+          "Marksman",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_caulfield",
+      "kind": "item",
+      "payload": {
+        "id": "item_caulfield",
+        "name": "Striker's War Hammer",
+        "cost": 1100,
+        "tier": "Component",
+        "icon": "🔨",
+        "stats": {
+          "ad": 25,
+          "haste": 10
+        },
+        "passiveName": "Tempered Steel",
+        "passiveDesc": "+25 AD and +10 Ability Haste.",
+        "suitableRoles": [
+          "Fighter",
+          "Assassin",
+          "Marksman"
+        ]
+      }
+    },
+    {
+      "id": "item_last_whisper",
+      "kind": "item",
+      "payload": {
+        "id": "item_last_whisper",
+        "name": "Piercing Whisper",
+        "cost": 1450,
+        "tier": "Component",
+        "icon": "🏹",
+        "stats": {
+          "ad": 20,
+          "armorPen": 18
+        },
+        "passiveName": "Armor Piercing",
+        "passiveDesc": "Ignores 18% of target Armor.",
+        "suitableRoles": [
+          "Marksman",
+          "Assassin",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_noonquiver",
+      "kind": "item",
+      "payload": {
+        "id": "item_noonquiver",
+        "name": "Solar Quiver",
+        "cost": 1300,
+        "tier": "Component",
+        "icon": "🎯",
+        "stats": {
+          "ad": 30,
+          "aspd": 0.2
+        },
+        "passiveName": "Precision Fire",
+        "passiveDesc": "+30 AD and +20% Attack Speed rapid firing.",
+        "suitableRoles": [
+          "Marksman"
+        ]
+      }
+    },
+    {
+      "id": "item_infinity_edge",
+      "kind": "item",
+      "payload": {
+        "id": "item_infinity_edge",
+        "name": "Apex Edge",
+        "cost": 2200,
+        "tier": "Mythic",
+        "icon": "🗡️",
+        "stats": {
+          "ad": 80,
+          "crit": 25
+        },
+        "passiveName": "Perfection",
+        "passiveDesc": "Increases Critical Strike damage from 175% to 225%. Massive DPS hypercarry spike!",
+        "suitableRoles": [
+          "Marksman",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_kraken_slayer",
+      "kind": "item",
+      "payload": {
+        "id": "item_kraken_slayer",
+        "name": "Leviathan Harpoon",
+        "cost": 1950,
+        "tier": "Legendary",
+        "icon": "🔱",
+        "stats": {
+          "ad": 45,
+          "aspd": 0.4,
+          "moveSpeed": 4
+        },
+        "passiveName": "Bring It Down",
+        "passiveDesc": "Every third Attack deals bonus physical damage On-Hit, increased based on their missing Health.",
+        "suitableRoles": [
+          "Marksman",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_ldr",
+      "kind": "item",
+      "payload": {
+        "id": "item_ldr",
+        "name": "Goliath Slayer",
+        "cost": 1950,
+        "tier": "Legendary",
+        "icon": "🏹",
+        "stats": {
+          "ad": 45,
+          "crit": 25,
+          "armorPen": 35
+        },
+        "passiveName": "Giant Slayer",
+        "passiveDesc": "Ignores 35% of target Armor and deals up to +22% bonus damage against high-health tanks.",
+        "suitableRoles": [
+          "Marksman",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_bork",
+      "kind": "item",
+      "payload": {
+        "id": "item_bork",
+        "name": "Sovereign's Ruin",
+        "cost": 2075,
+        "tier": "Legendary",
+        "icon": "🗡️",
+        "stats": {
+          "ad": 40,
+          "aspd": 0.25,
+          "lifesteal": 10
+        },
+        "passiveName": "Mist's Edge",
+        "passiveDesc": "Basic attacks deal 9% of the target’s current HP as bonus physical damage on-hit.",
+        "suitableRoles": [
+          "Marksman",
+          "Fighter",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_mortal_reminder",
+      "kind": "item",
+      "payload": {
+        "id": "item_mortal_reminder",
+        "name": "Fatal Verdict",
+        "cost": 1950,
+        "tier": "Legendary",
+        "icon": "⚔️",
+        "stats": {
+          "ad": 40,
+          "crit": 25,
+          "armorPen": 30
+        },
+        "passiveName": "Grievous Execution",
+        "passiveDesc": "Ignores 30% Armor and applies Grievous Wounds, cutting enemy healing and shields by 40%.",
+        "suitableRoles": [
+          "Marksman",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_phantom_dancer",
+      "kind": "item",
+      "payload": {
+        "id": "item_phantom_dancer",
+        "name": "Ghoststep Rapier",
+        "cost": 1700,
+        "tier": "Legendary",
+        "icon": "💃",
+        "stats": {
+          "ad": 35,
+          "aspd": 0.6,
+          "crit": 25,
+          "moveSpeed": 7
+        },
+        "passiveName": "Spectral Waltz",
+        "passiveDesc": "Grants massive attack speed and ghosting for relentless kiting mobility.",
+        "suitableRoles": [
+          "Marksman"
+        ]
+      }
+    },
+    {
+      "id": "item_runaans",
+      "kind": "item",
+      "payload": {
+        "id": "item_runaans",
+        "name": "Tempest Galebow",
+        "cost": 1700,
+        "tier": "Legendary",
+        "icon": "🌪️",
+        "stats": {
+          "aspd": 0.4,
+          "crit": 25,
+          "moveSpeed": 4
+        },
+        "passiveName": "Wind's Fury",
+        "passiveDesc": "Basic attacks fire secondary bolts at up to 2 nearby enemies for 40% damage with on-hit effects.",
+        "suitableRoles": [
+          "Marksman"
+        ]
+      }
+    },
+    {
+      "id": "item_terminus",
+      "kind": "item",
+      "payload": {
+        "id": "item_terminus",
+        "name": "Equinox Cleaver",
+        "cost": 1950,
+        "tier": "Legendary",
+        "icon": "⚖️",
+        "stats": {
+          "ad": 35,
+          "aspd": 0.3,
+          "armorPen": 30
+        },
+        "passiveName": "Shadow & Light",
+        "passiveDesc": "Alternating attacks shred 30% enemy Armor & MR while granting +25 bonus defensive resistances.",
+        "suitableRoles": [
+          "Marksman",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_collector",
+      "kind": "item",
+      "payload": {
+        "id": "item_collector",
+        "name": "Bounty Collector",
+        "cost": 1950,
+        "tier": "Legendary",
+        "icon": "💰",
+        "stats": {
+          "ad": 55,
+          "crit": 20,
+          "lethality": 12
+        },
+        "passiveName": "Death & Taxes",
+        "passiveDesc": "Executes enemy champions falling below 5% HP and grants +25 extra bonus gold.",
+        "suitableRoles": [
+          "Marksman",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_deathcap",
+      "kind": "item",
+      "payload": {
+        "id": "item_deathcap",
+        "name": "Archmage's Diadem",
+        "cost": 2350,
+        "tier": "Mythic",
+        "icon": "👑",
+        "stats": {
+          "ap": 130
+        },
+        "passiveName": "Magical Opus",
+        "passiveDesc": "Increases total Ability Power by +35%. Pure annihilation burst!",
+        "suitableRoles": [
+          "Mage"
+        ]
+      }
+    },
+    {
+      "id": "item_ludens",
+      "kind": "item",
+      "payload": {
+        "id": "item_ludens",
+        "name": "Thunderclap Staff",
+        "cost": 1950,
+        "tier": "Legendary",
+        "icon": "⚡",
+        "stats": {
+          "ap": 90,
+          "haste": 20,
+          "mana": 130,
+          "manaRegen": 2.4
+        },
+        "passiveName": "Echo Burst",
+        "passiveDesc": "Spells detonate, discharging 110 + 10% AP magic burst to up to 3 nearby enemies.",
+        "suitableRoles": [
+          "Mage",
+          "Support"
+        ]
+      }
+    },
+    {
+      "id": "item_tempest_folio",
+      "kind": "item",
+      "payload": {
+        "id": "item_tempest_folio",
+        "name": "Tempest Folio",
+        "cost": 1625,
+        "tier": "Legendary",
+        "icon": "📘",
+        "stats": {
+          "ap": 65,
+          "haste": 25,
+          "mana": 180,
+          "manaRegen": 3
+        },
+        "passiveName": "Storm Reserve",
+        "passiveDesc": "A deep mana reserve and steady regeneration for repeated spell casts.",
+        "suitableRoles": [
+          "Mage",
+          "Support"
+        ]
+      }
+    },
+    {
+      "id": "item_zhonyas",
+      "kind": "item",
+      "payload": {
+        "id": "item_zhonyas",
+        "name": "Hourglass of Stasis",
+        "cost": 1950,
+        "tier": "Legendary",
+        "icon": "⏳",
+        "stats": {
+          "ap": 80,
+          "armor": 45,
+          "haste": 15
+        },
+        "passiveName": "Golden Stasis",
+        "passiveDesc": "Upon lethal burst damage, enters golden invulnerability for 2.5s (90s CD).",
+        "suitableRoles": [
+          "Mage",
+          "Support",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_void_staff",
+      "kind": "item",
+      "payload": {
+        "id": "item_void_staff",
+        "name": "Void Piercer",
+        "cost": 1825,
+        "tier": "Legendary",
+        "icon": "🔮",
+        "stats": {
+          "ap": 75
+        },
+        "passiveName": "Dissolution",
+        "passiveDesc": "Ignores 40% of the target’s Magic Resistance.",
+        "suitableRoles": [
+          "Mage",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_sunfire",
+      "kind": "item",
+      "payload": {
+        "id": "item_sunfire",
+        "name": "Sunfire Bulwark",
+        "cost": 1825,
+        "tier": "Legendary",
+        "icon": "🔥",
+        "stats": {
+          "hp": 450,
+          "armor": 50
+        },
+        "passiveName": "Immolate",
+        "passiveDesc": "Constantly burns nearby enemy champions and minions for 35 magic damage/sec.",
+        "suitableRoles": [
+          "Tank",
+          "Fighter",
+          "Support"
+        ]
+      }
+    },
+    {
+      "id": "item_warmogs",
+      "kind": "item",
+      "payload": {
+        "id": "item_warmogs",
+        "name": "Titan's Heart",
+        "cost": 2025,
+        "tier": "Mythic",
+        "icon": "❤️",
+        "stats": {
+          "hp": 850,
+          "haste": 10
+        },
+        "passiveName": "Behemoth's Vigor",
+        "passiveDesc": "Rapidly regenerates 5% Max HP per second after 6 seconds out of combat.",
+        "suitableRoles": [
+          "Tank",
+          "Support",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_thornmail",
+      "kind": "item",
+      "payload": {
+        "id": "item_thornmail",
+        "name": "Thorned Cuirass",
+        "cost": 1750,
+        "tier": "Legendary",
+        "icon": "🌵",
+        "stats": {
+          "hp": 350,
+          "armor": 65
+        },
+        "passiveName": "Thorns",
+        "passiveDesc": "Reflects 25 + 10% bonus armor damage back to attackers and inflicts Grievous Wounds.",
+        "suitableRoles": [
+          "Tank",
+          "Support"
+        ]
+      }
+    },
+    {
+      "id": "item_steraks",
+      "kind": "item",
+      "payload": {
+        "id": "item_steraks",
+        "name": "Colossus Gauntlet",
+        "cost": 2025,
+        "tier": "Legendary",
+        "icon": "🥊",
+        "stats": {
+          "hp": 400,
+          "ad": 45
+        },
+        "passiveName": "Lifeline",
+        "passiveDesc": "When dropping below 30% HP, gain a massive 600 HP shield for 4.5 seconds.",
+        "suitableRoles": [
+          "Fighter",
+          "Tank",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_spirit_visage",
+      "kind": "item",
+      "payload": {
+        "id": "item_spirit_visage",
+        "name": "Spirit Shroud",
+        "cost": 1875,
+        "tier": "Legendary",
+        "icon": "🍃",
+        "stats": {
+          "hp": 450,
+          "mr": 55,
+          "haste": 15
+        },
+        "passiveName": "Boundless Vitality",
+        "passiveDesc": "Increases all incoming heals and shields by +25%.",
+        "suitableRoles": [
+          "Tank",
+          "Support",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_echoes_of_helia",
+      "kind": "item",
+      "payload": {
+        "id": "item_echoes_of_helia",
+        "name": "Chime of Renewal",
+        "cost": 1425,
+        "tier": "Legendary",
+        "icon": "🔔",
+        "stats": {
+          "ap": 45,
+          "hp": 200,
+          "haste": 20,
+          "mana": 120,
+          "manaRegen": 2.5
+        },
+        "passiveName": "Soul Spring",
+        "passiveDesc": "Casting abilities heals the lowest health nearby ally for 75 HP and grants brief haste.",
+        "suitableRoles": [
+          "Support",
+          "Mage"
+        ]
+      }
+    },
+    {
+      "id": "item_shurelyas",
+      "kind": "item",
+      "payload": {
+        "id": "item_shurelyas",
+        "name": "Windwalker's Warhorn",
+        "cost": 1500,
+        "tier": "Legendary",
+        "icon": "📯",
+        "stats": {
+          "hp": 250,
+          "haste": 25,
+          "moveSpeed": 6,
+          "manaRegen": 2.5
+        },
+        "passiveName": "Inspiring Rally",
+        "passiveDesc": "Provides +20 movement speed aura to nearby teammates during combat engages.",
+        "suitableRoles": [
+          "Support",
+          "Tank"
+        ]
+      }
+    },
+    {
+      "id": "item_knights_vow",
+      "kind": "item",
+      "payload": {
+        "id": "item_knights_vow",
+        "name": "Warden's Pledge",
+        "cost": 1425,
+        "tier": "Legendary",
+        "icon": "🛡️",
+        "stats": {
+          "hp": 400,
+          "armor": 40,
+          "haste": 15
+        },
+        "passiveName": "Sacrificial Ward",
+        "passiveDesc": "Absorbs 12% of damage dealt to nearby allied carries and rushes to protect them.",
+        "suitableRoles": [
+          "Support",
+          "Tank"
+        ]
+      }
+    },
+    {
+      "id": "item_locket",
+      "kind": "item",
+      "payload": {
+        "id": "item_locket",
+        "name": "Aegis of the Protector",
+        "cost": 1500,
+        "tier": "Legendary",
+        "icon": "🌟",
+        "stats": {
+          "hp": 250,
+          "armor": 35,
+          "mr": 35,
+          "haste": 20
+        },
+        "passiveName": "Prismatic Bastion",
+        "passiveDesc": "Grants a 160 HP protective barrier to nearby allies when teamfights break out.",
+        "suitableRoles": [
+          "Support",
+          "Tank"
+        ]
+      }
+    },
+    {
+      "id": "item_ardent_censer",
+      "kind": "item",
+      "payload": {
+        "id": "item_ardent_censer",
+        "name": "Sunblessed Censer",
+        "cost": 1425,
+        "tier": "Legendary",
+        "icon": "🪔",
+        "stats": {
+          "ap": 50,
+          "haste": 15,
+          "manaRegen": 2,
+          "moveSpeed": 4
+        },
+        "passiveName": "Frenzy Aura",
+        "passiveDesc": "Empowers nearby teammates with +18% Attack Speed and +20 on-hit magic damage.",
+        "suitableRoles": [
+          "Support",
+          "Mage"
+        ]
+      }
+    },
+    {
+      "id": "item_redemption",
+      "kind": "item",
+      "payload": {
+        "id": "item_redemption",
+        "name": "Beacon of Deliverance",
+        "cost": 1500,
+        "tier": "Legendary",
+        "icon": "🕊️",
+        "stats": {
+          "hp": 250,
+          "haste": 20,
+          "manaRegen": 3
+        },
+        "passiveName": "Holy Radiance",
+        "passiveDesc": "Heals the lowest-health nearby ally for 200 HP upon entering critical danger (60s CD).",
+        "suitableRoles": [
+          "Support",
+          "Mage",
+          "Tank"
+        ]
+      }
+    },
+    {
+      "id": "item_black_cleaver",
+      "kind": "item",
+      "payload": {
+        "id": "item_black_cleaver",
+        "name": "Obsidian Cleaver",
+        "cost": 2025,
+        "tier": "Legendary",
+        "icon": "🪓",
+        "stats": {
+          "ad": 55,
+          "hp": 350,
+          "haste": 25
+        },
+        "passiveName": "Carve & Fervor",
+        "passiveDesc": "Dealing physical damage shreds 25% target armor and grants +15 movement speed.",
+        "suitableRoles": [
+          "Fighter",
+          "Assassin",
+          "Tank"
+        ]
+      }
+    },
+    {
+      "id": "item_shojin",
+      "kind": "item",
+      "payload": {
+        "id": "item_shojin",
+        "name": "Dragonheart Glaive",
+        "cost": 2025,
+        "tier": "Legendary",
+        "icon": "🐉",
+        "stats": {
+          "ad": 50,
+          "hp": 300,
+          "haste": 30
+        },
+        "passiveName": "Dragon's Focus",
+        "passiveDesc": "Amplifies basic ability damage by +12% scaling with total Ability Haste.",
+        "suitableRoles": [
+          "Fighter",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_navori",
+      "kind": "item",
+      "payload": {
+        "id": "item_navori",
+        "name": "Chronoblade Quickflicker",
+        "cost": 1950,
+        "tier": "Legendary",
+        "icon": "⏱️",
+        "stats": {
+          "ad": 50,
+          "crit": 25,
+          "haste": 25
+        },
+        "passiveName": "Transcendence",
+        "passiveDesc": "Basic attacks reduce remaining basic ability cooldowns by 15%.",
+        "suitableRoles": [
+          "Marksman",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_cosmic_drive",
+      "kind": "item",
+      "payload": {
+        "id": "item_cosmic_drive",
+        "name": "Cosmic Chronosphere",
+        "cost": 1950,
+        "tier": "Legendary",
+        "icon": "🌌",
+        "stats": {
+          "ap": 80,
+          "hp": 250,
+          "haste": 30,
+          "moveSpeed": 5
+        },
+        "passiveName": "Spelldance",
+        "passiveDesc": "Damaging an enemy with a spell grants +25 movement speed for 3 seconds.",
+        "suitableRoles": [
+          "Mage",
+          "Support",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_ghostblade",
+      "kind": "item",
+      "payload": {
+        "id": "item_ghostblade",
+        "name": "Wraithblade of the Dunes",
+        "cost": 1875,
+        "tier": "Legendary",
+        "icon": "🗡️",
+        "stats": {
+          "ad": 60,
+          "lethality": 18,
+          "haste": 15,
+          "moveSpeed": 5
+        },
+        "passiveName": "Hauntstep",
+        "passiveDesc": "Massive armor penetration and swift out-of-combat ambush speed.",
+        "suitableRoles": [
+          "Assassin",
+          "Marksman",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_duskblade",
+      "kind": "item",
+      "payload": {
+        "id": "item_duskblade",
+        "name": "Duskfang Reaver",
+        "cost": 2025,
+        "tier": "Legendary",
+        "icon": "🌑",
+        "stats": {
+          "ad": 60,
+          "lethality": 18,
+          "haste": 20
+        },
+        "passiveName": "Nightstalker",
+        "passiveDesc": "Abilities deal up to +16% bonus execution damage based on missing enemy health.",
+        "suitableRoles": [
+          "Assassin",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_serpents_fang",
+      "kind": "item",
+      "payload": {
+        "id": "item_serpents_fang",
+        "name": "Fang of the Serpent",
+        "cost": 1700,
+        "tier": "Legendary",
+        "icon": "🐍",
+        "stats": {
+          "ad": 55,
+          "lethality": 15,
+          "haste": 15
+        },
+        "passiveName": "Shield Reaver",
+        "passiveDesc": "Damaging an enemy shatters and halves active defensive shields by 50%.",
+        "suitableRoles": [
+          "Assassin",
+          "Marksman",
+          "Fighter"
+        ]
+      }
+    },
+    {
+      "id": "item_shadowflame",
+      "kind": "item",
+      "payload": {
+        "id": "item_shadowflame",
+        "name": "Cinderflame Diadem",
+        "cost": 1950,
+        "tier": "Legendary",
+        "icon": "🕯️",
+        "stats": {
+          "ap": 90,
+          "magicPen": 18,
+          "hp": 200
+        },
+        "passiveName": "Cinderbloom Detonation",
+        "passiveDesc": "Pierces 18 Magic Resist and critically executes wounded foes (<35% HP).",
+        "suitableRoles": [
+          "Mage",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "item_horizon_focus",
+      "kind": "item",
+      "payload": {
+        "id": "item_horizon_focus",
+        "name": "Astral Spyglass",
+        "cost": 1825,
+        "tier": "Legendary",
+        "icon": "🔭",
+        "stats": {
+          "ap": 85,
+          "haste": 20,
+          "hp": 150
+        },
+        "passiveName": "Hypershot",
+        "passiveDesc": "Landing an ability reveals the target and amplifies all ability damage by 10%.",
+        "suitableRoles": [
+          "Mage",
+          "Support"
+        ]
+      }
+    },
+    {
+      "id": "item_pathfinder_boots",
+      "kind": "item",
+      "payload": {
+        "id": "item_pathfinder_boots",
+        "name": "Pathfinder Boots",
+        "cost": 450,
+        "tier": "Component",
+        "icon": "👢",
+        "stats": {
+          "moveSpeed": 20
+        },
+        "passiveName": "Swift Step",
+        "passiveDesc": "Move faster between waves and objectives.",
+        "suitableRoles": [
+          "Tank",
+          "Mage",
+          "Marksman",
+          "Support",
+          "Fighter",
+          "Assassin"
+        ]
+      }
+    },
+    {
+      "id": "c_solana:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Earned Daylight",
+        "desc": "blocking hostile damage with the front 110° of her shield stocks up to 3 Radiance (1 stack / 3 s). No free stacks for standing still.",
+        "avatarId": "c_solana",
+        "avatarName": "Solenne Vaelor",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_solana:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Sun Dial",
+        "desc": "stakes a 70-GU-wide oriented shield panel for 3.5 s. Intercepts the first two hostile projectiles that cross its front; melee units pass. Opponents may walk around it.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_solana",
+        "avatarName": "Solenne Vaelor",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_solana:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Pivot Order",
+        "desc": "rotates an existing panel up to 100° or, if none exists, rotates Solenne's personal guard and advances 38 GU; Radiance spent gives adjacent allies a 1.5 s directional damage reduction against attacks coming from the chosen side.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_solana",
+        "avatarName": "Solenne Vaelor",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_solana:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Noon Divide",
+        "desc": "from her current panel, projects two slowly separating sunbeams for 4 s, creating a wide **protected wedge**. Allies inside gain 18% damage mitigation from outside; enemies inside can still fight. Spending 3 Radiance gives 1 brief shove at initial expansion (not a mass stun).",
+        "cooldown": 85,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_solana",
+        "avatarName": "Solenne Vaelor",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_astra:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Overtone",
+        "desc": "landing a aimed shot temporarily tunes a visible location, maximum 2, each persisting 5 s. Shots do not globally slow.",
+        "avatarId": "c_astra",
+        "avatarName": "Ivera Frostwhistle",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_astra:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Tuning Shot",
+        "desc": "fires a narrow bolt that installs a crystal fork at its endpoint (terrain or ground); fork has 2 hit points. Can be fired through a champion for light damage, but ends behind them.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_astra",
+        "avatarName": "Ivera Frostwhistle",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_astra:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Singing Ice",
+        "desc": "activates a frost vibration along the line between the two newest forks for 3 s. Enemies *crossing* the line suffer 28% slow for 1.1 s and take one burst; allies firing **parallel** to the line gain a small projectile-speed bonus.",
+        "cooldown": 14,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_astra",
+        "avatarName": "Ivera Frostwhistle",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_astra:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Glass Rapture",
+        "desc": "resonates all active forks in a broad triangular sound field. Over 1.2 s the field forms three visible safe gaps; enemies still on the sounding lines take high damage and a 0.55 s stagger. Consumes forks.",
+        "cooldown": 80,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_astra",
+        "avatarName": "Ivera Frostwhistle",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kyumi:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Witness Marks",
+        "desc": "after an enemy moves 70 GU while visible to Mireth, records its heading as a glowing arrow for 3 s, once per enemy / 6 s.",
+        "avatarId": "c_kyumi",
+        "avatarName": "Mireth Lune",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kyumi:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Counterpath",
+        "desc": "draws a short luminous road across an observed heading. Crossing it in the recorded direction costs 25% move speed for 1 s; crossing opposite grants no penalty. Can be skirted.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_kyumi",
+        "avatarName": "Mireth Lune",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kyumi:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "False Exit",
+        "desc": "places a glass doorway that visually points to safety but openly projects its **actual** exit 75 GU to one side. The first enemy who voluntarily enters is displaced to that endpoint after 0.35 s. Enemy sees both endpoints before entering; no forced input manipulation.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_kyumi",
+        "avatarName": "Mireth Lune",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kyumi:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Map of Might-Have-Beens",
+        "desc": "shows up to three recorded headings as public spectral roads for 4 s; allies gain speed while traversing them opposite the recorded direction, and foes crossing in the old direction receive a short revealed/exposed mark. No auto charm, orb return, or dash chain.",
+        "cooldown": 83,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_kyumi",
+        "avatarName": "Mireth Lune",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_buck:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Structural Survey",
+        "desc": "repeated hits on the same piece of deployable cover mark it as weakened (maximum one mark).",
+        "avatarId": "c_buck",
+        "avatarName": "Bramm Coil",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_buck:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Anchor Ram",
+        "desc": "shoots a riveted anchor 140 GU to a ground point. After 0.6 s the anchor pushes a rectangular 45×90-GU blast **away from its own facing**; hits one time, moves enemies 24 GU, dislodges deployable barriers.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_buck",
+        "avatarName": "Bramm Coil",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_buck:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Brace Exchange",
+        "desc": "Bramm exchanges mobility for steadiness for 3 s. He slows by 25%; each shot fired from the brace creates a short **safe opening** in allied cover that closes after 0.7 s, permitting planned fire without permanently destroying shields.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_buck",
+        "avatarName": "Bramm Coil",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_buck:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Tunnel Cut",
+        "desc": "slowly draws a huge visible straight cutting lane for 1.1 s. It then advances a mechanical ram through the lane over 1.4 s, collapsing temporary structures and forcing units sideways to the nearest free side; never passes world walls.",
+        "cooldown": 76,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_buck",
+        "avatarName": "Bramm Coil",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_valkira:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Outstanding Balance",
+        "desc": "first melee contact with a hero issues a visible 4 s Contract: target receives a 4% damage discount from Kael, but each shield granted during the Contract accumulates *Debt* (capped at 160). Only Kael may collect; no denial of healing.",
+        "avatarId": "c_valkira",
+        "avatarName": "Kael Vespera",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_valkira:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Collection Line",
+        "desc": "short sweeping arc which draws a red boundary on the ground for 2 s. Contracted targets crossing it pay a fraction of Debt as magic damage; staying put avoids payment.",
+        "cooldown": 7,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_valkira",
+        "avatarName": "Kael Vespera",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_valkira:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Witness Required",
+        "desc": "Kael braces for 0.8 s. If the contracted enemy or a defender hits her during the brace, she gains a dashless counter slash and a 1 s damage reduction; otherwise she is vulnerable after bracing.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_valkira",
+        "avatarName": "Kael Vespera",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_valkira:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Terms of Mercy",
+        "desc": "challenges a contracted target for 4 s. Their team can clear the Contract by landing two attacks on Kael, or ignore it and let Kael cash out accrued Debt as a single capped hit. Does not suppress, force 1v1, or execute automatically.",
+        "cooldown": 80,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_valkira",
+        "avatarName": "Kael Vespera",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kage:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Blind Side",
+        "desc": "Nyxara gains a small first-hit bonus when striking from outside the target's *forward* vision cone, once / target / 7 s. Visible directional marker informs defenders when exposed.",
+        "avatarId": "c_kage",
+        "avatarName": "Nyxara Vale",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kage:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Shadow Pin",
+        "desc": "projects a dark triangular plane from a chosen wall or her own location for 4 s. It blocks **line of sight for basic attack acquisition**, not projectiles, and is transparent to all after a unit steps through.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_kage",
+        "avatarName": "Nyxara Vale",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kage:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Light Theft",
+        "desc": "steals illumination from one existing Shadow Pin for 2 s, collapsing that plane into a mobile veil around Nyxara. She remains targetable at close range and leaves bright footsteps; while veiled, her next attack briefly reduces the victim's turn speed.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_kage",
+        "avatarName": "Nyxara Vale",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kage:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Total Eclipse, Partial Truth",
+        "desc": "places three visible *false target silhouettes* along an 80-GU arc. They do not attack, teleport, or explode; enemy targeting systems briefly need fresh line-of-sight confirmation when Nyxara crosses the arc. Her next hit against an isolated foe deals bonus damage, capped.",
+        "cooldown": 85,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_kage",
+        "avatarName": "Nyxara Vale",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kazemaru:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Weather Reading",
+        "desc": "Serrin sees recent incoming projectile headings as faint arrows; after narrowly dodging one, gains one Wind Notch (max 2).",
+        "avatarId": "c_kazemaru",
+        "avatarName": "Serrin Galecrest",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kazemaru:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Compass Slash",
+        "desc": "cuts a 65-GU directional current across a target corridor for 2.2 s. Enemy **non-homing** projectiles crossing it are deflected up to 15°; allied shots get a 10% speed boost.",
+        "cooldown": 7,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_kazemaru",
+        "avatarName": "Serrin Galecrest",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kazemaru:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Tack Change",
+        "desc": "spends a Wind Notch to rotate a current or quickly sidestep 28 GU perpendicular to its path. Cannot pass hard terrain.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_kazemaru",
+        "avatarName": "Serrin Galecrest",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kazemaru:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Eye of the Crosswind",
+        "desc": "maps a 140-GU radius ring with four public directional wind channels for 4 s. Enemy projectile lanes become less reliable; walking normally still works. No blanket projectile deletion, knockup, or blink slashes.",
+        "cooldown": 88,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_kazemaru",
+        "avatarName": "Serrin Galecrest",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kindra:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Scent of Trouble",
+        "desc": "Fen marks heroes who recently damaged Orin's allies, revealing their direction for 3 s (not through fog beyond a short final ping).",
+        "avatarId": "c_kindra",
+        "avatarName": "Orin and Fen",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kindra:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Track Lantern",
+        "desc": "Orin drops a lantern that records the next enemy who passes within 55 GU, pinging their direction; can be destroyed in 2 hits.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_kindra",
+        "avatarName": "Orin and Fen",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kindra:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Fen, Guard",
+        "desc": "sends Fen to a chosen ally or lantern for 3 s. Fen absorbs the next **one** eligible hostile projectile and then withdraws, with a clearly visible charge indicator.",
+        "cooldown": 14,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_kindra",
+        "avatarName": "Orin and Fen",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kindra:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Road Home",
+        "desc": "paints a luminous curved **retreat path** from Orin to one low-HP ally for 4 s. The selected ally may voluntarily follow it for 30% speed and 18% damage reduction while moving toward Orin; leaving the path cancels protection. No HP floor or mass invulnerability.",
+        "cooldown": 90,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_kindra",
+        "avatarName": "Orin and Fen",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_cora:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Airborne Fletching",
+        "desc": "every third aimed attack releases a tiny kite that hangs for 3 s at the shot's endpoint (max 3). Kites are visible and destroyable.",
+        "avatarId": "c_cora",
+        "avatarName": "Quillene Rook",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_cora:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Tetherbolt",
+        "desc": "shoots a kite anchor 150 GU into the air; anchors do not damage when planted.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_cora",
+        "avatarName": "Quillene Rook",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_cora:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Crosswind Stitch",
+        "desc": "ties her two nearest kites into an aerial span for 3 s. Her next two arrows passing through it split into two shallow angled shots at 60% damage each (one-hit cap per target); enemy units may shoot down either kite.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_cora",
+        "avatarName": "Quillene Rook",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_cora:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Harrier Net",
+        "desc": "all active kites fan into a broad descending mesh. Enemies inside may move out but have ranged attack windups increased for 2.5 s; meanwhile allied projectiles from outside the mesh get a slight side-angle adjustment. No untargetable leap, ground feather recall, or root-on-three-feathers.",
+        "cooldown": 85,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_cora",
+        "avatarName": "Quillene Rook",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_renn:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Perfect Partner",
+        "desc": "an ally who follows an Aurelio-created floor arrow gains brief tenacity, once / ally / 6 s.",
+        "avatarId": "c_renn",
+        "avatarName": "Aurelio Vane",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_renn:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Mark the Floor",
+        "desc": "lays two 30-GU glowing steps; an ally crossing them in order gains 22% movement speed for 1.5 s. Enemies see the steps and can deny the route.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_renn",
+        "avatarName": "Aurelio Vane",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_renn:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Change Partners",
+        "desc": "selects an allied hero in 120 GU; for 1.2 s both can voluntarily trade their places by pressing an interaction or by an AI commitment. Cannot trade into walls or out of hard CC.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_renn",
+        "avatarName": "Aurelio Vane",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_renn:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "The Grand Procession",
+        "desc": "reveals a three-turn floor route for 4 s. Allies following it earn a small shield at each turn; enemies who stand on the route are pushed sideways 18 GU once when the procession advances. No AoE charm or automatic ally dash.",
+        "cooldown": 78,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_renn",
+        "avatarName": "Aurelio Vane",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_sylla:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Shared Heartbeat",
+        "desc": "Droven and the tortoise Hark have a shared reserve of 220 guard energy; damage absorbed by Hark drains guard. Hark does not respawn instantly after destruction.",
+        "avatarId": "c_sylla",
+        "avatarName": "Droven Bearmantle",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_sylla:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Hark, Settle",
+        "desc": "directs Hark to a nearby point where he plants as a 55-GU-wide **walk-around obstacle** for 4 s. Hark can be attacked; allies may pass through slowly.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_sylla",
+        "avatarName": "Droven Bearmantle",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_sylla:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Shelter Under Shell",
+        "desc": "Hark opens his shell to cover one nearby ally with 20% incoming-damage redirection to guard energy for 2.5 s. Droven temporarily loses part of his own armor while energy is transferred.",
+        "cooldown": 14,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_sylla",
+        "avatarName": "Droven Bearmantle",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_sylla:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Carry the Line",
+        "desc": "Hark slowly advances 100 GU over 4 s as moving cover. Allies behind his shell gain limited projectile protection; opponents can flank Hark or destroy the shell's guard energy.",
+        "cooldown": 92,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_sylla",
+        "avatarName": "Droven Bearmantle",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_tequoia:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Spores in Soil",
+        "desc": "ability hits leave a nutrient node for 6 s (max 4). Nodes are visible small mushrooms with 2 hit points.",
+        "avatarId": "c_tequoia",
+        "avatarName": "Thalara Rootwright",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_tequoia:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Root Survey",
+        "desc": "grows a narrow mycelial line between Thalara and one node. Allies moving along it gain minor speed; enemies crossing it suffer an initial short slow. One line per node.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_tequoia",
+        "avatarName": "Thalara Rootwright",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_tequoia:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Transplant",
+        "desc": "moves a single active nutrient node up to 60 GU with 0.5 s tell; enemies standing on the displaced line are gently redirected to nearest free space, no stun.",
+        "cooldown": 14,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_tequoia",
+        "avatarName": "Thalara Rootwright",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_tequoia:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "The Living Understory",
+        "desc": "activates the node network for 5 s: allies touching a connected line regenerate modest HP over time; enemy AoE detonations on the web burn one node but trigger a one-time small burst. Opponents can cut the network one node at a time.",
+        "cooldown": 90,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_tequoia",
+        "avatarName": "Thalara Rootwright",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_zal:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Recorded Injury",
+        "desc": "16% of damage suffered by a nearby marked ally is logged as Care Debt for 3 s, capped at 180 per ally. This does not reduce damage by itself.",
+        "avatarId": "c_zal",
+        "avatarName": "Vesper Loom",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_zal:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Suture Tag",
+        "desc": "marks an ally for 4 s; the next qualifying damaging hit is reduced by 15%, and the prevented amount becomes Care Debt (not immediate HP).",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_zal",
+        "avatarName": "Vesper Loom",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_zal:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Stitch Circuit",
+        "desc": "links two allies in range for 2.5 s; healing applied to either is split 70/30 with the other. Link breaks beyond 180 GU. No death prevention.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_zal",
+        "avatarName": "Vesper Loom",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_zal:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Emergency Triage",
+        "desc": "converts up to 200 total Care Debt among nearby allies into a 4 s heal-over-time. Vesper suffers 15% of the converted amount as **nonlethal self-damage** over 4 s. Saves require setup and expose the healer.",
+        "cooldown": 88,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_zal",
+        "avatarName": "Vesper Loom",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_xin:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Return Address",
+        "desc": "attacks place a stamp on enemy champions (1 stamp / enemy / 6 s). Stamps reveal Rux's intended target for 4 s.",
+        "avatarId": "c_xin",
+        "avatarName": "Rux Emberchain",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_xin:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Express Mail",
+        "desc": "throws a volatile letter to an ally, enemy, or ground point. A carrier retains it for up to 3 s; enemies may hand it off to another enemy with a movement interaction to avoid the later blast.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_xin",
+        "avatarName": "Rux Emberchain",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_xin:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Courier's Crossing",
+        "desc": "draws a short path between Rux and a stamped point. Rux can run it at boosted speed but not dash through collision; crossing a carried letter collects it and produces a radial spark burst.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_xin",
+        "avatarName": "Rux Emberchain",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_xin:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Dead Letter Office",
+        "desc": "simultaneously recalls all placed letters **along visible straight routes** toward a central postal seal. Each letter can hit a champion once; safe gaps exist between routes. Enemies can relocate before recall.",
+        "cooldown": 82,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_xin",
+        "avatarName": "Rux Emberchain",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_raijin:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Closed Circuit",
+        "desc": "a successful link between two Teslan rods grants a stored Capacitor charge, maximum 2.",
+        "avatarId": "c_raijin",
+        "avatarName": "Teslan Veyr",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_raijin:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Drive Rod",
+        "desc": "place a destructible rod at a ground point, 140 GU range, 3 s lifetime after the second rod. Two rods generate a clearly drawn current beam between them; crossing once damages lightly.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_raijin",
+        "avatarName": "Teslan Veyr",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_raijin:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Reverse Current",
+        "desc": "flips the circuit to **Repel** or **Conduct** for 2.5 s. Repel deflects enemy projectiles crossing the beam slightly; Conduct increases allied attack speed when standing adjacent to the line. Each hero may benefit once per cast.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_raijin",
+        "avatarName": "Teslan Veyr",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_raijin:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Brownout Protocol",
+        "desc": "consumes Capacitors to briefly shut down **deployables** and delay the next cast windup of enemies who remain on the circuit line (up to 0.5 s); opponents can walk away before the 0.75 s charge finishes. It does not silence globally or auto-pull.",
+        "cooldown": 80,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_raijin",
+        "avatarName": "Teslan Veyr",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kaolin:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Counterweight",
+        "desc": "damage taken fills a limited counterweight bar, up to 100, used only to strengthen hinges.",
+        "avatarId": "c_kaolin",
+        "avatarName": "Joruun Jadecoil",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kaolin:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Raise Slab",
+        "desc": "raises one breakable 60-GU jade slab on a ground edge for 4 s. Slab blocks movement and shots, but can be walked around. Max one slab.",
+        "cooldown": 10,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_kaolin",
+        "avatarName": "Joruun Jadecoil",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kaolin:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Hinge Swing",
+        "desc": "rotates the active slab 90° over 0.65 s, nudging units out of occupied space by at most 24 GU; without slab, Joruun gains a short self-shield but no knockup.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_kaolin",
+        "avatarName": "Joruun Jadecoil",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_kaolin:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "The Great Door",
+        "desc": "plants two hinged slabs 90 GU apart for 5 s, forming a **temporary gate** with an openable middle. Joruun can spend Counterweight to close it once (0.7 s telegraph); units caught in the closing zone are moved to closest free side, never trapped without exit.",
+        "cooldown": 95,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_kaolin",
+        "avatarName": "Joruun Jadecoil",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_inai:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Footfall Record",
+        "desc": "within sight, tracks enemy travel distance over rolling 3 s windows (max 160 GU) with public meter marks.",
+        "avatarId": "c_inai",
+        "avatarName": "Astrax Mire",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_inai:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Measure Out",
+        "desc": "tags one visible enemy for 3 s. Each 35 GU it voluntarily moves adds one Distance Seal (max 3); stationary targets remain safe.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_inai",
+        "avatarName": "Astrax Mire",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_inai:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Mile Marker",
+        "desc": "sets a small stone marker on terrain. Tagged enemies moving **toward** it are slowed lightly; moving away consumes one Distance Seal harmlessly.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_inai",
+        "avatarName": "Astrax Mire",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_inai:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Reckoning of Roads",
+        "desc": "within 140 GU, all tagged enemies receive a visible 1 s verdict countdown. It converts accumulated seals into a capped nonlethal magical burst and movement-speed reduction; seals can be shed by walking away from markers before verdict. Does not teleport, leap, or create rift damage explosions.",
+        "cooldown": 82,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_inai",
+        "avatarName": "Astrax Mire",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_qiyana:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Royal Refraction",
+        "desc": "once / 5 s, landing a blade hit charges her nearest crystal pane with one optical charge.",
+        "avatarId": "c_qiyana",
+        "avatarName": "Prismelle Cade",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_qiyana:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Facet Screen",
+        "desc": "places a 55-GU one-way prismatic pane with 2 HP. Enemy shots that hit it lose 25% damage; allied shots fired through at specific visible angles bend 18°.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_qiyana",
+        "avatarName": "Prismelle Cade",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_qiyana:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Claim the Angle",
+        "desc": "moves to the edge of her existing pane by up to 35 GU and rotates it. It is a **short pathing move**, not free-target dash, and cannot move through walls.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_qiyana",
+        "avatarName": "Prismelle Cade",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_qiyana:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Coronation in Glass",
+        "desc": "creates three panes arranged as a shallow open fan; over 4 s each pane can redirect **one** allied projectile into a separate lane. Enemy champions can smash panes or engage inside the fan.",
+        "cooldown": 86,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_qiyana",
+        "avatarName": "Prismelle Cade",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_locke:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Witness the Hurt",
+        "desc": "every 50 damage one chosen nearby ally takes from an enemy creates one Ember Count on that attacker (max 3); counts expire in 5 s.",
+        "avatarId": "c_locke",
+        "avatarName": "Ashkar Veilhand",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_locke:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Ember Brand",
+        "desc": "marks one attacker with a burn that grows with Ember Count; if they stop attacking the protected ally, the burn ends early.",
+        "cooldown": 7,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_locke",
+        "avatarName": "Ashkar Veilhand",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_locke:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Ash Intercession",
+        "desc": "Ashkar dashes **only to his sworn ally**, landing at a legal adjacent location and briefly blocking the next targeted basic attack for them. No stealth or enemy-target jump.",
+        "cooldown": 14,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_locke",
+        "avatarName": "Ashkar Veilhand",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_locke:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Public Penance",
+        "desc": "announces the top Ember Count attacker for 0.8 s, then creates a circular duel hazard around **that enemy's current position**. Damage ramps only while the accused continues attacking Ashkar's protected ally; they can switch targets or exit. No guaranteed execution.",
+        "cooldown": 86,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_locke",
+        "avatarName": "Ashkar Veilhand",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_senna:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Borrowed Sunlight",
+        "desc": "damage that Maris sees nearby leaves one Waylight mote at its ground position (max 3), pickup grants small shield charge.",
+        "avatarId": "c_senna",
+        "avatarName": "Maris Solquill",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_senna:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Waypoint Lantern",
+        "desc": "shoots a lantern onto the ground. It projects a 50-GU-long path; allies walking its length gain a small burst of healing at the far endpoint (once each).",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_senna",
+        "avatarName": "Maris Solquill",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_senna:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Twilight Survey",
+        "desc": "rotates a placed lantern's path or aligns it toward an ally, granting that ally 1.5 s of vision through nearby obstacles (not global vision) as the line turns.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_senna",
+        "avatarName": "Maris Solquill",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_senna:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "The People's Atlas",
+        "desc": "connects up to three Waylight positions into a visible zig-zag safe trail for 5 s. Allies traversing the **entire route** receive a capped shield and 20% speed; enemies can destroy waypoints or ambush turns. No global damaging beam.",
+        "cooldown": 87,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_senna",
+        "avatarName": "Maris Solquill",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_largo:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "The Beat Goes On",
+        "desc": "Odo displays a repeating 3-beat indicator (1.2 s/beat). Allies who begin a spell within a 0.18 s Good Beat window get 8% shorter cast recovery, once / ability / 6 s.",
+        "avatarId": "c_largo",
+        "avatarName": "Odo Bogsong",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_largo:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Offbeat Drum",
+        "desc": "places a 3-beat drum pad; each beat makes a visible 40-GU ripple for light damage, never stunning automatically.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_largo",
+        "avatarName": "Odo Bogsong",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_largo:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Syncopation",
+        "desc": "moves the next pad beat earlier by 0.25 s and provides a small shield pulse to nearby allies on the adjusted beat. Enemies can see the revised countdown.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_largo",
+        "avatarName": "Odo Bogsong",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_largo:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "The Long Measure",
+        "desc": "for 4 beats, allies on Odo's rhythm gain move speed after completing casts; enemies casting exactly while a ripple touches them incur 0.4 s additional **recovery after the cast**, never a denied cast. No global heal/tenacity aura.",
+        "cooldown": 85,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_largo",
+        "avatarName": "Odo Bogsong",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_shadowfiend:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Ash Residue",
+        "desc": "any completed damaging spell cast within 125 GU leaves an Ash Patch where it ended (once / owner / 4 s, max 4 patches). Mourn sees both teams' visible patches.",
+        "avatarId": "c_shadowfiend",
+        "avatarName": "Mourn Ashwake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_shadowfiend:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Ember Tongs",
+        "desc": "drags one patch slowly 45 GU, scorching enemies it passes once, or makes a small patch at his own feet if none exist.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_shadowfiend",
+        "avatarName": "Mourn Ashwake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_shadowfiend:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Draft Open",
+        "desc": "opens a furnace vent toward one patch, creating a visibly directional heated current for 3 s that burns enemies walking **against** it.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_shadowfiend",
+        "avatarName": "Mourn Ashwake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_shadowfiend:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Second Combustion",
+        "desc": "ignites every active patch in a 140-GU field after 1.0 s, turning them into low moving walls of ember for 3 s. Patches consumed; no large instant fear wave.",
+        "cooldown": 90,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_shadowfiend",
+        "avatarName": "Mourn Ashwake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_earthshaker:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Strain Lines",
+        "desc": "moving enemy champions that make sharp turns (more than 70°/0.4 s) generate a strain point; max 2 on the ground.",
+        "avatarId": "c_earthshaker",
+        "avatarName": "Dolm Runesunder",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_earthshaker:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Tilt Plate",
+        "desc": "raises one 65×65-GU shallow sloping tile. Units crossing it slide an extra 12 GU in their travel direction; exits always remain open, slide has one-hit cooldown.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_earthshaker",
+        "avatarName": "Dolm Runesunder",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_earthshaker:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Pendulum Strike",
+        "desc": "swings a huge weighted maul across an arc. Enemies on tilted ground are shoved a modest 18 GU; other enemies take normal damage.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_earthshaker",
+        "avatarName": "Dolm Runesunder",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_earthshaker:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Continental Drift",
+        "desc": "lays three **successive** tilted plates over 2.7 s, visibly changing safe movement vectors, with a final 0.55 s stagger for opponents who fail to leave the last tile. No full-screen slam based on nearby unit count.",
+        "cooldown": 95,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_earthshaker",
+        "avatarName": "Dolm Runesunder",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_mirehook:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Scrap Appetite",
+        "desc": "destroyed enemy deployables or spent jaw traps grant Scrap, maximum 3, each increasing next jaw width by 6 GU.",
+        "avatarId": "c_mirehook",
+        "avatarName": "Garruk Mawsuture",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_mirehook:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Set Jaws",
+        "desc": "plants two hinged iron teeth on ground 50 GU apart, 2 HP each. After 0.55 s, crossing the gap closes them for a 0.5 s root **only once**, then they jam open. Units can attack or skirt them.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_mirehook",
+        "avatarName": "Garruk Mawsuture",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_mirehook:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Forge Drag",
+        "desc": "drags one installed tooth 45 GU along a visible chain, scraping a narrow damage lane and reopening a previously triggered jaw with half strength.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_mirehook",
+        "avatarName": "Garruk Mawsuture",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_mirehook:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Factory Floor",
+        "desc": "lays three staggered **jaw lanes** around Garruk for 5 s. Their timing is sequential (audible clacks), leaving safe corridors; no suppression, unit grab, or poison aura.",
+        "cooldown": 90,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_mirehook",
+        "avatarName": "Garruk Mawsuture",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_nullweaver:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Unspent Momentum",
+        "desc": "enemies traveling 45 GU in a straight line nearby contribute one Momentum sample (max 4, visible).",
+        "avatarId": "c_nullweaver",
+        "avatarName": "Vesper Nullcode",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_nullweaver:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Tangent Fault",
+        "desc": "lays a 60-GU vector tile; a non-unstoppable enemy crossing is gently redirected 20° clockwise or counterclockwise (chosen on cast), maintaining speed. No teleport/stun.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_nullweaver",
+        "avatarName": "Vesper Nullcode",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_nullweaver:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Mass Argument",
+        "desc": "declares a public high-friction disk for 3 s. Enemy dashes passing through are shortened by at most 20%; ordinary walking is slowed 10%. Does not cancel the dash outright.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_nullweaver",
+        "avatarName": "Vesper Nullcode",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_nullweaver:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Borrowed Orbit",
+        "desc": "consumes Momentum to construct a rotating 145-GU field lasting 4 s. Within it, movement inputs are smoothly biased into an arc of at most 25°/second, telegraphed by floor arrows. Stationary enemies or those who deliberately countersteer can hold position. No forced center pull or AoE wipe.",
+        "cooldown": 93,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_nullweaver",
+        "avatarName": "Vesper Nullcode",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_voltgrip:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Impact Audit",
+        "desc": "when an enemy ends a dash within 110 GU, Coiljack gets one Inspection charge (max 2, 4 s lockout per enemy).",
+        "avatarId": "c_voltgrip",
+        "avatarName": "Coiljack Ampfist",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_voltgrip:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Turnstile Bar",
+        "desc": "plants a 55-GU breakable spring bar for 3.5 s, showing one open half and one closed half. Walking enemies pass; the first **dash through the closed side** is diverted 20 GU to its safe edge and consumes the bar.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_voltgrip",
+        "avatarName": "Coiljack Ampfist",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_voltgrip:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Earth Clip",
+        "desc": "attaches a grounding clip to an ally for 2.5 s. The next displacement inflicted on that ally is reduced by 40% and the attacker is briefly revealed; no stun/knockup.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_voltgrip",
+        "avatarName": "Coiljack Ampfist",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_voltgrip:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Inspection Grid",
+        "desc": "builds two intersecting turnstiles for 5 s. Enemies may walk around or smash either gate, but repeated aggressive dashes spend their movement on detours and trigger a 0.45 s disarm after the second interception.",
+        "cooldown": 88,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_voltgrip",
+        "avatarName": "Coiljack Ampfist",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_aetherbolt:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Proof Mark",
+        "desc": "a direct skillshot hit stamps the target with one Proof Mark for 4 s; marks improve the next reflected shot slightly, one proc per target.",
+        "avatarId": "c_aetherbolt",
+        "avatarName": "Talan Slipshot",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_aetherbolt:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Set Mirror",
+        "desc": "places one thin 2-HP projectile reflector at a selected ground point; at most 2 mirrors exist, facing fixed direction.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_aetherbolt",
+        "avatarName": "Talan Slipshot",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_aetherbolt:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Evidence Shot",
+        "desc": "fires a single bolt that may ricochet **once** from one mirror at the previewed angle. Direct and reflected hits deal different capped damage; walls stop shots.",
+        "cooldown": 7,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_aetherbolt",
+        "avatarName": "Talan Slipshot",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_aetherbolt:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Closed Case",
+        "desc": "chooses one visible target and displays three **public** predicted lines from existing mirrors for 0.8 s. Fires along the selected legal line for high damage; remaining lines are decoys clearly labeled as possible routes. No global shot or aimless auto-hit.",
+        "cooldown": 78,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_aetherbolt",
+        "avatarName": "Talan Slipshot",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_corsara:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Hold the Weather",
+        "desc": "after Calixa moves 45 GU along one heading, her skiff stores one Windward charge (max 2); reversing direction spends the accumulated aim. Visible wake trails announce her broadside side.",
+        "avatarId": "c_corsara",
+        "avatarName": "Calixa Broadwake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_corsara:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Signal Buoy",
+        "desc": "tosses a floating 2-HP buoy within 140 GU. The buoy marks a 60-GU sea-lane and reveals enemy movement through that lane for 4 s; Calixa's next basic attack passing the buoy gains a small splash. Max two buoys.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_corsara",
+        "avatarName": "Calixa Broadwake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_corsara:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Tack Across",
+        "desc": "Calixa and skiff turn 90° and slide 38 GU *along an unobstructed legal path*. While turning, the skiff fires **one** short range shot from the outward-facing broadside, consuming a Windward charge for extra shove. No dash through obstacles.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_corsara",
+        "avatarName": "Calixa Broadwake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_corsara:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Port Authority",
+        "desc": "selects port or starboard and projects **three staggered 85×35-GU broadside lanes** over 3 s. Every 0.8 s the skiff fires into the next visible lane; each hero can be damaged at most once per volley. The lanes follow Calixa's facing **at cast start**, and remain readable even if she walks; do not auto-track fleeing champions.",
+        "cooldown": 88,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_corsara",
+        "avatarName": "Calixa Broadwake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_brewmaw:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Pressure Reserve",
+        "desc": "damage soaked while standing on his own foam builds Pressure (0–100). Pressure decays outside foam; visibly displays on a back-mounted dial. Reserve cannot grow from damage that Brohm himself creates.",
+        "avatarId": "c_brewmaw",
+        "avatarName": "Brohm Caskfall",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_brewmaw:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Lay the Head",
+        "desc": "opens a directional spigot to spill a 90×28-GU **foam strip** for 4 s. Units on the strip retain normal basic movement but slide up to 9 GU along the marked direction after each voluntary movement step; repeated movement resolution caps total drift.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_brewmaw",
+        "avatarName": "Brohm Caskfall",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_brewmaw:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Repressurize",
+        "desc": "reverses the direction of one active foam strip and gives Brohm a brief damage barrier proportional to Pressure consumed (capped). The reversal is warned by flashing arrows for 0.45 s; opponents may step off it.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_brewmaw",
+        "avatarName": "Brohm Caskfall",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_brewmaw:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Cellar Breach",
+        "desc": "plants a large cask at the junction of up to two foam strips. After 1 s the cask vents in **three sequential directional surges**, each traveling along existing foam channels and displacing enemies modestly perpendicular to the stream. Surges do not stack displacement against the same target inside 0.8 s. Without strips, it creates one weak short surge only.",
+        "cooldown": 95,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_brewmaw",
+        "avatarName": "Brohm Caskfall",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_wraithhook:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Crossing Fees",
+        "desc": "when an allied hero safely finishes a Mora-established route, Mora accrues Fare (max 2), each reducing the next route setup delay by 0.15 s. There is no reward for trapping or dragging enemies.",
+        "avatarId": "c_wraithhook",
+        "avatarName": "Mora Fenhook",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_wraithhook:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Mooring Post",
+        "desc": "plants a small lit mooring within 115 GU. Posts have 2 HP, last 7 s, and are legal only on traversable ground. First post is the departure; second is the arrival. Max one linked pair.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_wraithhook",
+        "avatarName": "Mora Fenhook",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_wraithhook:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Departing Bell",
+        "desc": "if two posts exist and a collision-valid traversable path joins them, summons a 2.3 s ferry that follows that path at fixed speed. Allies and enemies **voluntarily board** within 20 GU using a public interaction or AI accepted decision; a boarded unit cannot attack for the trip but may disembark at legal path checkpoints. No forced motion from hard CC.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_wraithhook",
+        "avatarName": "Mora Fenhook",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_wraithhook:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "The Last Crossing",
+        "desc": "temporarily creates two public **emergency moorings** at legal points near Mora, then dispatches a second larger ferry allowing up to two passengers for one journey. It gives passengers a small shield **on arrival**, not invulnerability while traveling; destroying arrival post stops the ferry at its nearest legal earlier dock.",
+        "cooldown": 86,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_wraithhook",
+        "avatarName": "Mora Fenhook",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_invoker:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Pattern Memory",
+        "desc": "Mirelle can maintain **three visible 2-HP tailor pins** at once, each lasting 6 s and anchored to traversable ground; new pins replace the oldest. Two or three pins establish a line/triangle with clear world-projected stitch geometry. Valid layouts must leave legal passage and cannot cross impassable world walls.",
+        "avatarId": "c_invoker",
+        "avatarName": "Mirelle Vane",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_invoker:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Pin the Hem",
+        "desc": "tosses a pin within 125 GU, causing a small impact sting only if it hits a target; the pin stays on the ground. At least one pin is required for most pages. Pins are marked for **both** teams and can be broken by 2 basic attacks.",
+        "cooldown": 5,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_invoker",
+        "avatarName": "Mirelle Vane",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_invoker:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Recut",
+        "desc": "chooses one existing pin and slides it along a visible, collision-valid 40-GU path after a 0.4 s warning. Enemies crossed by the moving thread take one light hit; recasting on empty ground fails without consuming the cooldown. Also cycles the selected **page group** when no pin is targeted, with no cast or mana cost.",
+        "cooldown": 10,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_invoker",
+        "avatarName": "Mirelle Vane",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_invoker:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Pattern Book",
+        "desc": "hold/activate a **radial palette** of ten named patterns; choosing a page is input selection, then releasing R makes **one authoritative cast**. Each page has its own cooldown, cost and geometry requirement. The global weave lockout is a post-cast throttle, **not an 80-second ultimate imposed on all ten pages**. Major pages have longer personal cooldowns. A single chosen page cannot be released if its pin geometry or cooldown is invalid; show the reason before committing. Each successfully cast page consumes **exactly its declared pins**.",
+        "cooldown": 7,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_invoker",
+        "avatarName": "Mirelle Vane",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_hwei:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Surface Memory",
+        "desc": "when a projectile strikes a Maelis canvas, the canvas stores one imprinted property of that projectile (physical/magic/utility; never copies the ability or exact damage), one property per frame.",
+        "avatarId": "c_hwei",
+        "avatarName": "Maelis Chromabloom",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_hwei:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Unroll the Canvas",
+        "desc": "erects a 55-GU-wide 2-HP translucent canvas for 3.5 s. It blocks ordinary projectiles from **both** teams but permits walking through with a 15% brief movement penalty. No invisible walls.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_hwei",
+        "avatarName": "Maelis Chromabloom",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_hwei:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Restore the Missing",
+        "desc": "repaints a damaged canvas, restoring one HP and changing its surface into a **one-way reveal window** for 2 s; projectiles still obey the same obstruction rules. If no frame exists, instead creates a 30-GU reveal brush stroke (lower power).",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_hwei",
+        "avatarName": "Maelis Chromabloom",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_hwei:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Private Exhibition",
+        "desc": "joins up to three frames into an open-sided gallery for 4 s. Frames rotate one after another every 1.1 s, opening new shooting angles while closing others. Each rotation briefly releases a burst based on the stored property (capped damage or shield pulse, not copied spells). Public arrows preview next positions.",
+        "cooldown": 90,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_hwei",
+        "avatarName": "Maelis Chromabloom",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_jayce:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Gauge Check",
+        "desc": "when Axiom's attack travels within 12 GU of one of his rails it accrues a Gauge token (max 3). Rails are visible to enemies and may be dismantled.",
+        "avatarId": "c_jayce",
+        "avatarName": "Axiom Rail",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_jayce:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Lay Track",
+        "desc": "draws one 65-GU segment on legal ground, with open endpoints and a 2-HP switching junction. Max two segments active for 5 s; rail cannot bisect spawn or an objective collision.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_jayce",
+        "avatarName": "Axiom Rail",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_jayce:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Switch Engine",
+        "desc": "sends a small unmanned rail cart along connected track for up to 2.5 s. It fires light suppressive bolts **only at targets with direct LOS from the cart**; enemies can destroy it or stand away from the rail.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_jayce",
+        "avatarName": "Axiom Rail",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_jayce:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Terminal Delivery",
+        "desc": "charges a heavy shell on the **furthest linked cart/rail endpoint** for 0.9 s, then fires one broad, telegraphed 95-GU shot aligned to the track. Consumes Gauge for range **not** lethal damage. If no rail survives, R refuses cast and preserves cooldown.",
+        "cooldown": 80,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_jayce",
+        "avatarName": "Axiom Rail",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_vi:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Repeat Offender",
+        "desc": "an enemy that damages the same ally twice within 3 s gains a public Offender tag for 4 s (once per enemy / 8 s), giving Brakka 10% faster movement when approaching that enemy.",
+        "avatarId": "c_vi",
+        "avatarName": "Brakka Fenn",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_vi:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "File Complaint",
+        "desc": "stamps a 45-GU-wide circle on the ground, warning for 0.5 s. Offenders within receive a 0.4 s stagger and ordinary enemies take light damage; nobody is automatically grabbed.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_vi",
+        "avatarName": "Brakka Fenn",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_vi:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Right of Way",
+        "desc": "Brakka forms a 55-GU escort path **to one protected ally**, briefly body-blocking incoming basic attacks when physically between attacker and ally. If he leaves the path he loses the guard.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_vi",
+        "avatarName": "Brakka Fenn",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_vi:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Writ Served",
+        "desc": "targets one Offender in 110 GU and projects a **public 75-GU exclusion disk** around that enemy for 3 s. The tagged enemy is free to walk **out** at any time; if they remain and attack the previously targeted ally, Brakka's counterstamp inflicts one 0.55 s disarm and moderate damage. Not an automatic targeted slam or suppression.",
+        "cooldown": 84,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_vi",
+        "avatarName": "Brakka Fenn",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_jinx:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Cue Card",
+        "desc": "Pippa stores one Showstopper token when a **scheduled** explosion catches at least one enemy champion; max 2; one token per cast, no kill-triggered speed frenzy.",
+        "avatarId": "c_jinx",
+        "avatarName": "Pippa Fuseburst",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_jinx:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Rack and Spark",
+        "desc": "installs a waist-high fireworks rack for 4 s (2 HP); its indicator previews a thin 45-GU blast lane. After 0.9 s it fires once along that lane, then burns out.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_jinx",
+        "avatarName": "Pippa Fuseburst",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_jinx:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Move the Spotlight",
+        "desc": "rotates an **unfired** rack 90° after a 0.45 s warning or, with no rack, drops a small no-damage distraction flare that reveals an area for 2 s.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_jinx",
+        "avatarName": "Pippa Fuseburst",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_jinx:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Opening Night",
+        "desc": "lays a 120-GU-wide stage grid with **four sequential firing squares**, each warned 0.75 s before ignition. The final square is chosen from three legal candidates at cast start; consumes Showstopper for an additional shield-break pulse (not more raw burst). At every tick at least one contiguous walkable escape cell must remain.",
+        "cooldown": 88,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_jinx",
+        "avatarName": "Pippa Fuseburst",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_puck:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Drowse Ledger",
+        "desc": "an enemy champion completing a **non-basic-attack ability** within 95 GU of an active Lulla chime accumulates one Drowse note (max 2, 4 s duration). Each unique cast can add at most one note. Notes do not affect the cast that just finished.",
+        "avatarId": "c_puck",
+        "avatarName": "Lulla Faespring",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_puck:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Hang the Chime",
+        "desc": "places a 2-HP wind chime on legal ground within 125 GU, lasting 5 s. It projects a public 95-GU listening radius. Max two chimes; destroying a chime ends its aura but does not retroactively cancel completed spells.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_puck",
+        "avatarName": "Lulla Faespring",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_puck:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Borrowed Yawn",
+        "desc": "consumes one Drowse note on an enemy in 130 GU. On that enemy's **next successfully completed non-basic spell** within 3 s, adds **0.35 s post-cast recovery** after the spell's effect already resolves; if no valid cast happens, the tax expires harmlessly. No silence, disable, cast failure or stealth.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_puck",
+        "avatarName": "Lulla Faespring",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_puck:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Intermission Theater",
+        "desc": "opens an 135-GU circular dream stage for 4 s, with **three announced chime beats** at 1, 2, and 3 s. Enemy casts which *complete inside* a beat window pay 0.25 s post-cast recovery (subject to the global recovery cap), while allied casts completed during beats gain 12% shorter recovery (never faster windup). Enemy spell results and damage still occur normally.",
+        "cooldown": 90,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_puck",
+        "avatarName": "Lulla Faespring",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_batrider:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Read the Updraft",
+        "desc": "Bryx sees public warm-air flows left by his vents; traveling **with** a current for at least 40 GU gives him one Sailspeed charge (max 2), consumed by next ordinary attack for bonus range.",
+        "avatarId": "c_batrider",
+        "avatarName": "Bryx Emberkite",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_batrider:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Plant Thermal",
+        "desc": "plants a 2-HP 3-s hot-air vent, generating a visible 80×35-GU directional ground current. Walkers keep control; movement in arrow direction receives 15% speed, against it receives 10% slow. Does not lift units over hard walls.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_batrider",
+        "avatarName": "Bryx Emberkite",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_batrider:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Trim Sail",
+        "desc": "rotates one active vent by up to 90° after 0.5 s tell. Nearby willing allies may accept one **short airflow boost** along the new direction, capped at 22 GU with full world-collision checks. Enemies get no forced flight.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_batrider",
+        "avatarName": "Bryx Emberkite",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_batrider:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Thermocline Crossing",
+        "desc": "connects two vents into a broad angled airflow corridor for 4 s; allies crossing end-to-end gain a small evasion-of-next-basic-attack buff, enemies fighting into the current lose some projectile range. Opponents can destroy a vent to end the corridor.",
+        "cooldown": 87,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_batrider",
+        "avatarName": "Bryx Emberkite",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_bristleback:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Plate Accounting",
+        "desc": "Murdle begins with 4 dorsal plates, each providing 4% damage reduction from any direction. Each deployed plate removes its personal reduction until recovered after expiration or collected. Plate inventory shown openly.",
+        "avatarId": "c_bristleback",
+        "avatarName": "Murdle Ridgehide",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_bristleback:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Shed a Wall",
+        "desc": "detaches one plate and props it as a 40-GU breakable low wall for 4 s. It blocks one ordinary projectile from **either** team, never closes a chokepoint fully. Max two active walls.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_bristleback",
+        "avatarName": "Murdle Ridgehide",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_bristleback:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Recall Shell",
+        "desc": "reels one deployed plate along a visible 60-GU path back toward Murdle; units crossed are lightly nudged to nearest free ground but never stunned. Recovered plate re-enters passive armor only upon reaching Murdle; destroyer removes it until its natural recovery timer.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_bristleback",
+        "avatarName": "Murdle Ridgehide",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_bristleback:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Fortress Migration",
+        "desc": "for 5 s, Murdle can redeploy up to three plates as a **moving staggered palisade** advancing 60 GU. Each plate remains individually destroyable, with gaps at least two hero diameters wide. His own armor drops dramatically while the wall travels.",
+        "cooldown": 92,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_bristleback",
+        "avatarName": "Murdle Ridgehide",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_io:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Audible Interval",
+        "desc": "whenever two distinct allies finish spells **within 0.6–1.4 s of each other**, Nemea gains one Harmony note (max 3; one per pair / 8 s). No reward for simultaneous spam; notes are visibly displayed.",
+        "avatarId": "c_io",
+        "avatarName": "Nemea Halolink",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_io:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "First Note",
+        "desc": "creates a small 35-GU score circle lasting 3 s; the first ally entering receives one **shield-on-next-damage** token valid 2 s. Max two circles; a given ally benefits once per cast.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_io",
+        "avatarName": "Nemea Halolink",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_io:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Second Note",
+        "desc": "links **two separate score circles** with a luminous 130-GU-max segment. Allies *crossing the segment in either direction* gain 10% movement speed for 1.5 s, once per hero. Enemies can attack circles; the segment is not a tether on bodies.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_io",
+        "avatarName": "Nemea Halolink",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_io:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Chorus Arrival",
+        "desc": "consumes Harmony to lay three successive public beat circles around the team over 3 s. Allies who voluntarily reach their assigned **different circles** on the announced beat receive a capped shield and brief recovery reduction, while clumping in one circle gives only minimal healing. Does not automatically shield the entire team in place.",
+        "cooldown": 92,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_io",
+        "avatarName": "Nemea Halolink",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_lulu:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Seedbank",
+        "desc": "after an ally uses cover Thimble created to block a projectile, she collects one Seed (max 2; one per source shot). Seeds improve next planter's hit points; never grant permanent ability amp.",
+        "avatarId": "c_lulu",
+        "avatarName": "Thimble Briarwish",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_lulu:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Plant Shelter",
+        "desc": "places a 40-GU dome planter lasting 4 s. It blocks **one arcing/lobbed enemy projectile**, not direct-fire bullets; ally and enemy walkers pass underneath freely. 2 HP baseline.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_lulu",
+        "avatarName": "Thimble Briarwish",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_lulu:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Wheelbarrow Walk",
+        "desc": "pushes a planted shelter along a valid 55-GU ground segment for 2.5 s. Allies who stay in its moving shade gain minor HP regeneration; the caster is slowed while pushing. Cannot move through walls.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_lulu",
+        "avatarName": "Thimble Briarwish",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_lulu:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Traveling Orchard",
+        "desc": "sends **three** small low-roof planters along separate, explicitly visible 70-GU routes for 5 s. Each blocks one overhead attack then crumbles. The gaps remain traversable; Thimble cannot be in three places at once and is vulnerable while directing them.",
+        "cooldown": 90,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_lulu",
+        "avatarName": "Thimble Briarwish",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_silencer:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Case Law",
+        "desc": "observes completed enemy skills within 120 GU and records their declared **server-side category** (`mobility`, `attack`, `protection`, `control`). Only one last category per target, lasting 4 s; does not read hidden cooldowns or private abilities.",
+        "avatarId": "c_silencer",
+        "avatarName": "Sevrin Inkseal",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_silencer:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Mark Jurisdiction",
+        "desc": "stamps a 70-GU public court disk around a visible 2-HP breakable ink pillar for 3.5 s. Opponents may enter and cast normally. A champion's **second completed skill of the same category** inside the disk receives 0.25 s post-cast recovery, once / target / disk. A different category resets its local repeat count.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_silencer",
+        "avatarName": "Sevrin Inkseal",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_silencer:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Appeal Granted",
+        "desc": "relocates an existing court center up to 45 GU after a 0.45 s warning, or if targeting an ally inside, erases **one** pending cast-recovery tax on that ally. Does not silence or imprison anyone.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_silencer",
+        "avatarName": "Sevrin Inkseal",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_silencer:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Precedent Review",
+        "desc": "for 4.5 s expands one active court to 125 GU and publishes the current recorded category above every participating enemy. If an enemy repeats the same category a third time, they take one **small shield-stripping hit** and 0.35 s post-cast recovery (subject to global cap). Switching categories avoids penalty; no global affecting enemies elsewhere.",
+        "cooldown": 95,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_silencer",
+        "avatarName": "Sevrin Inkseal",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_wukong_lol:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Measured Landing",
+        "desc": "landing on legal ground after his own vault grants Koro a 2 s balanced stance; next basic attack has a small shield break bonus. No stacking knockups.",
+        "avatarId": "c_wukong_lol",
+        "avatarName": "Koro Cloudtail",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_wukong_lol:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Plant Vault",
+        "desc": "plants a 2-HP pole at a legal ground point within 110 GU. It stands 5 s, visibly previews a 60-GU landing arc with a collision-tested endpoint. Max two poles.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_wukong_lol",
+        "avatarName": "Koro Cloudtail",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_wukong_lol:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Pole Transfer",
+        "desc": "Koro or a **voluntarily consenting nearby ally** vaults from one pole to the previewed legal landing point after a 0.45 s windup. Cannot cross hard walls or tower-blocked zones, cannot initiate in hard CC, landing causes only a small radial shove (no full AoE knockup).",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_wukong_lol",
+        "avatarName": "Koro Cloudtail",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_wukong_lol:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Scaffold Crossing",
+        "desc": "connects two poles with a visible elevated bamboo runway for 4 s. Eligible allies may **individually choose** to take one fast 65-GU arc between the poles. The crossing is not global teleportation; any pole destruction cancels later crossings, passengers already in flight resolve to nearest safe landing.",
+        "cooldown": 87,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_wukong_lol",
+        "avatarName": "Koro Cloudtail",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_monkeyking_dota:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Old Growth",
+        "desc": "when Bram blocks a *lobbed* projectile with canopy cover, he gains one Sap (max 2), empowering his next small shield. Direct low shots are unaffected by canopy.",
+        "avatarId": "c_monkeyking_dota",
+        "avatarName": "Bram Stonebranch",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_monkeyking_dota:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Root Column",
+        "desc": "plants a 2-HP vertical trunk column for 5 s at a legal position, 45-GU radius. Walkers pass around; two columns can support a canopy.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_monkeyking_dota",
+        "avatarName": "Bram Stonebranch",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_monkeyking_dota:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Leaf Intercept",
+        "desc": "grows a **short overhead roof** between two active columns for 3 s. The roof can absorb up to two **lobbed** enemy projectiles; arching artillery is intercepted, low trajectories pass under. If only one column exists, Bram grants that column a small self-shield instead.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_monkeyking_dota",
+        "avatarName": "Bram Stonebranch",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_monkeyking_dota:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Kingdom of Shade",
+        "desc": "raises three additional short-lived columns forming a 130-GU **open canopy grove** for 5 s. Within it allies take reduced area-splash damage from above, but enemies can walk in, attack the exposed columns, or aim direct projectiles underneath. Canopy doesn't cancel ground hazards.",
+        "cooldown": 92,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_monkeyking_dota",
+        "avatarName": "Bram Stonebranch",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_stepstone:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Listen for the Stroke",
+        "desc": "an enemy in 105 GU starting a cast with visible windup grants Toma a public Bell Window until commit (max one tracked per enemy). His next basic attack within 1.2 s after that cast's completion restores 5% missing HP, once / enemy / 6 s.",
+        "avatarId": "c_stepstone",
+        "avatarName": "Toma Bellbreak",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_stepstone:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Open Palm",
+        "desc": "a short 60-GU palm strike that deals modest damage; if it hits during a visible enemy windup, it **does not interrupt**, but grants Toma a parry charge valid 3 s.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_stepstone",
+        "avatarName": "Toma Bellbreak",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_stepstone:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Return Stroke",
+        "desc": "consumes parry charge (or performs a weak dry guard) to create a 0.6 s frontal reaction stance. One incoming targeted non-ultimate hit from that frontal arc is partially reduced; after it lands Toma counterstrikes the attacker for moderate damage. Guard is ineffective from behind and against untargeted AoE.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_stepstone",
+        "avatarName": "Toma Bellbreak",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_stepstone:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Thirteenth Bell",
+        "desc": "sets a 1.2 s public dueling rhythm centered on Toma; opponents hear two false chimes then one genuine **final** counter window. If an enemy finishes a damaging cast against Toma during the final 0.25 s, that damage is reduced 35% (not negated) and he sends a non-stunning shockwave outward. Casting earlier or attacking someone else avoids the counter.",
+        "cooldown": 84,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_stepstone",
+        "avatarName": "Toma Bellbreak",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_skybreaker:passive",
+      "kind": "skill",
+      "payload": {
+        "name": "Surveyed Grid",
+        "desc": "Ravelle's basic attacks or visible direct observation mark 1 of 4 public **map sectors** around her for 5 s. Only sectors she has actually seen can be assigned for artillery. Max two marked sectors active.",
+        "avatarId": "c_skybreaker",
+        "avatarName": "Ravelle Skyrake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "passive"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_skybreaker:skill1",
+      "kind": "skill",
+      "payload": {
+        "name": "Spotting Flare",
+        "desc": "fires a revealing flare into one 60-GU sector for 3.5 s. Does small damage and exposes enemy units who remain in it; does not pierce fog to reveal unrelated sectors.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_skybreaker",
+        "avatarName": "Ravelle Skyrake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill1"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_skybreaker:skill2",
+      "kind": "skill",
+      "payload": {
+        "name": "Reposition Skiff",
+        "desc": "moves the skiff laterally 50 GU along traversable ground projection, with collision at world walls and towers. During travel, Ravelle cannot basic attack; her previously marked sectors remain but are not auto-updated into fog.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "avatarId": "c_skybreaker",
+        "avatarName": "Ravelle Skyrake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "skill2"
+      },
+      "version": 1
+    },
+    {
+      "id": "c_skybreaker:ultimate",
+      "kind": "skill",
+      "payload": {
+        "name": "Designated Airspace",
+        "desc": "selects an already-surveyed **2×2 ground grid** totaling 130×130 GU. After a 0.8 s warning, four separate bombardment cells fire sequentially over 3 s **in the declared order**; each cell is shown 0.6 s before it lands, and one guaranteed traversable escape lane remains. Damage is moderate per cell; staying through consecutive cells is costly. All shots use public authoritative sector coordinates, not hidden enemy prediction.",
+        "cooldown": 92,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "avatarId": "c_skybreaker",
+        "avatarName": "Ravelle Skyrake",
+        "abilityRuleset": "original-v3-preview-2",
+        "slot": "ultimate"
+      },
+      "version": 1
+    },
+    {
+      "id": "invoked:glacier-lock",
+      "kind": "skill",
+      "payload": {
+        "name": "Hoarfrost Decree",
+        "desc": "Marks one enemy with a Frost Fracture sigil: 24% slow for 3.2s. Three subsequent allied champion hits consume the mark for a 0.65s root; each target has a short root lockout.",
+        "damage": 145,
+        "cooldown": 12,
+        "damageType": "Magic",
+        "avatarId": "c_kaelen",
+        "avatarName": "Arsenaldo",
+        "slot": "invoked",
+        "spellId": "glacier-lock"
+      },
+      "deleted_at": "2026-10-24 00:00:00"
+    },
+    {
+      "id": "invoked:rime-gale",
+      "kind": "skill",
+      "payload": {
+        "name": "Celestial Undertow",
+        "desc": "A broad advancing ribbon of frozen wind. Each enemy is lifted once for 0.7s, then slowed 20% for 1.4s.",
+        "damage": 165,
+        "cooldown": 13,
+        "damageType": "Magic",
+        "avatarId": "c_kaelen",
+        "avatarName": "Arsenaldo",
+        "slot": "invoked",
+        "spellId": "rime-gale"
+      },
+      "deleted_at": "2026-10-24 00:00:00"
+    },
+    {
+      "id": "invoked:sleetflare",
+      "kind": "skill",
+      "payload": {
+        "name": "Fracture Bloom",
+        "desc": "Erupt a frostfire field after 0.4s. The initial hit damages once; enemies inside the 3.4s field take 34 magic damage every 0.5s and are slowed 22%.",
+        "damage": 155,
+        "cooldown": 14,
+        "damageType": "Magic",
+        "avatarId": "c_kaelen",
+        "avatarName": "Arsenaldo",
+        "slot": "invoked",
+        "spellId": "sleetflare"
+      },
+      "deleted_at": "2026-10-24 00:00:00"
+    },
+    {
+      "id": "invoked:whiteout-step",
+      "kind": "skill",
+      "payload": {
+        "name": "Rimeball Roll",
+        "desc": "Roll a visibly growing snowball through an aimed line. It pierces valid enemies once, dealing damage and slowing 26% for 1.5s.",
+        "damage": 150,
+        "cooldown": 10,
+        "damageType": "Magic",
+        "avatarId": "c_kaelen",
+        "avatarName": "Arsenaldo",
+        "slot": "invoked",
+        "spellId": "whiteout-step"
+      },
+      "deleted_at": "2026-10-24 00:00:00"
+    },
+    {
+      "id": "invoked:primal-tempest",
+      "kind": "skill",
+      "payload": {
+        "name": "Equinox Accord",
+        "desc": "Pulse elemental protection around an allied position. Nearby allies gain a 115 shield for 3.2s and +18 movement speed; it refreshes rather than stacks.",
+        "damage": 0,
+        "cooldown": 16,
+        "damageType": "Magic",
+        "avatarId": "c_kaelen",
+        "avatarName": "Arsenaldo",
+        "slot": "invoked",
+        "spellId": "primal-tempest"
+      },
+      "deleted_at": "2026-10-24 00:00:00"
+    },
+    {
+      "id": "invoked:emberfrost-lance",
+      "kind": "skill",
+      "payload": {
+        "name": "Ashen Hail",
+        "desc": "Fan-shaped frostfire shards strike enemies once. Hits apply a 2.2s burning-frost debuff: 24 magic damage every 0.55s, 16% slow, up to two controlled stacks.",
+        "damage": 145,
+        "cooldown": 11,
+        "damageType": "Magic",
+        "avatarId": "c_kaelen",
+        "avatarName": "Arsenaldo",
+        "slot": "invoked",
+        "spellId": "emberfrost-lance"
+      },
+      "deleted_at": "2026-10-24 00:00:00"
+    },
+    {
+      "id": "invoked:skyshatter",
+      "kind": "skill",
+      "payload": {
+        "name": "Pressure Front",
+        "desc": "A moving pressure wave pushes each enemy 54 units in its travel direction once, terrain-safely, then slows 23% for 1.15s.",
+        "damage": 115,
+        "cooldown": 13,
+        "damageType": "Magic",
+        "avatarId": "c_kaelen",
+        "avatarName": "Arsenaldo",
+        "slot": "invoked",
+        "spellId": "skyshatter"
+      },
+      "deleted_at": "2026-10-24 00:00:00"
+    },
+    {
+      "id": "invoked:ashen-cyclone",
+      "kind": "skill",
+      "payload": {
+        "name": "Static Harvest",
+        "desc": "Charge an electromagnetic field for 0.7s, then pulse once for major damage. The field lingers 2.5s for weaker lightning ticks and an 18% slow. No new mana-drain system is introduced.",
+        "damage": 135,
+        "cooldown": 15,
+        "damageType": "Magic",
+        "avatarId": "c_kaelen",
+        "avatarName": "Arsenaldo",
+        "slot": "invoked",
+        "spellId": "ashen-cyclone"
+      },
+      "deleted_at": "2026-10-24 00:00:00"
+    },
+    {
+      "id": "invoked:sirocco-flare",
+      "kind": "skill",
+      "payload": {
+        "name": "Solar Meteor",
+        "desc": "Telegraph a celestial impact for 0.8s. The meteor deals one high area hit, then leaves a 3s burning crater for 30 damage every 0.5s and an 18% slow.",
+        "damage": 255,
+        "cooldown": 17,
+        "damageType": "Magic",
+        "avatarId": "c_kaelen",
+        "avatarName": "Arsenaldo",
+        "slot": "invoked",
+        "spellId": "sirocco-flare"
+      },
+      "deleted_at": "2026-10-24 00:00:00"
+    },
+    {
+      "id": "invoked:solar-pike",
+      "kind": "skill",
+      "payload": {
+        "name": "Prism Warden",
+        "desc": "Conjure one mobile Prism Warden for 12s. It is killable, attacks nearby enemy champions or minions, and applies a modest slow. Recasting refreshes its lifetime and focus; it never attacks structures.",
+        "damage": 0,
+        "cooldown": 19,
+        "damageType": "Magic",
+        "avatarId": "c_kaelen",
+        "avatarName": "Arsenaldo",
+        "slot": "invoked",
+        "spellId": "solar-pike"
+      },
+      "deleted_at": "2026-10-24 00:00:00"
+    }
+  ]
+}

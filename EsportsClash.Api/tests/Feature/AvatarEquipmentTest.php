@@ -31,7 +31,8 @@ class AvatarEquipmentTest extends TestCase {
     }
     private function operations():array {
         return [
-            'provider'=>'trellis2-gguf',
+            'provider'=>'google-colab',
+            'generation_model'=>'TRELLIS.2-4B',
             'equipment'=>['supported'=>true],
             'active'=>null,
             'models'=>['ready'=>true],

@@ -1,0 +1,23 @@
+{
+  "kind": "instructional-initialization",
+  "revision": 4,
+  "seed": 73150,
+  "synthetic_examples": 36000,
+  "heldout_examples": 4096,
+  "imitation_mse": 0.002824893919751048,
+  "gameplay_improvement_measured": false,
+  "live_teacher_used": false,
+  "playbook_version": 4,
+  "playbook_sha256": "3f00a8c5ef888a3634f3b79b8628361012f69127d0ddfebe4062399e7b037841",
+  "parent_foundation_sha256": "0cefff73901294621af9f55cae80bb2df68c0744a17c777b0d1346edbc891d52",
+  "roles": 6,
+  "avatars": 45,
+  "identity_schema": "arena-identity-224-v2",
+  "reward": "terminal-potential-mastery-v2",
+  "video_examples": 0,
+  "limitations": [
+    "Synthetic examples are authored teaching, not observed expert matches.",
+    "Natural-language directions are displayed; numeric preferences and traits generate the fitted examples.",
+    "Independent complete-match improvement and per-pair mastery remain unproven."
+  ]
+}

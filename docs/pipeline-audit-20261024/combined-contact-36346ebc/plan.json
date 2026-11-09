@@ -1,0 +1,23 @@
+{
+  "id": "36346ebc-09b5-45d8-8fb7-1d1066abcebf",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "method": "rest-and-posed-contact-map-v2",
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "parent_candidate_id": "d38b680b-3f40-5331-8bdf-992a6ec4f272",
+  "parent_candidate_sha256": "9a4a5efd95f5687020797402b9dcf591e3813f0b092526357793387b88b005ab",
+  "files": {
+    "candidate.glb": "9a4a5efd95f5687020797402b9dcf591e3813f0b092526357793387b88b005ab",
+    "candidate-report.json": "87e2bf85ccc55df5456fffcd38663a54398008c14aa483decedff26f1e4ba256",
+    "baseline-report.json": "f653cff75831fb9200d8f143a6a3bcb56af2c653626a60475977f400ec26568c",
+    "backoffice-proof.json": "03d1af2a0378e741365106ac7808811317278d7c37c3ad1faf401aac857c6333",
+    "tools/diagnose_collision_influences.py": "a2519c2c2cb1bdd2edf759de15f1e319e4d6b3cd6b66798a1600395bc01e0932",
+    "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+    "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+    "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+    "supervisor.py": "a7d8b84aee90b341782931998237a77d892a308cdc6abb26c4e159a3b60cf700"
+  }
+}

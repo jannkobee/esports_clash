@@ -1,0 +1,10 @@
+{
+  "review_id": "058d633c-5fa4-44f3-a225-4b0da722bd74",
+  "status": "rejected_visual_evidence",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "reason": "The screenshots contain background/floor because the inspector's default near clipping plane hides the model at close camera radii. Technical render completion and zero browser errors do not establish useful visual evidence.",
+  "superseded_by": "640258b6-72bb-47a9-a6ea-593a48220ad2",
+  "original_report_sha256": "7b41fa7341e956307d7f390bc954491ec817761b3733dc7e585cc9af5ca9dce0",
+  "source_artifacts_changed": false
+}

@@ -1,0 +1,38 @@
+{
+  "id": "72255424-d1c6-4812-9872-9b88ab10f644",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "stages": {
+    "source": "source.glb",
+    "raw": "raw.glb",
+    "early": "early.glb",
+    "corrected": "corrected.glb"
+  },
+  "bone_map": {
+    "Root": "avatar_control_root",
+    "Hips": "bone_0",
+    "Spine": "bone_1",
+    "Chest": "bone_3",
+    "Head": "bone_5",
+    "UpperArmR": "bone_7",
+    "ForearmR": "bone_8",
+    "HandR": "bone_9",
+    "UpperArmL": "bone_26",
+    "ForearmL": "bone_27",
+    "HandL": "bone_28",
+    "ThighR": "bone_44",
+    "CalfR": "bone_45",
+    "FootR": "bone_46",
+    "ThighL": "bone_48",
+    "CalfL": "bone_49",
+    "FootL": "bone_50"
+  },
+  "files": {
+    "source.glb": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+    "raw.glb": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+    "early.glb": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4",
+    "corrected.glb": "85fba1625bd539ec28c6564a037fa02c4bfb4aa886316afc345c5f05429deace",
+    "audit.py": "dd552ef65a69aefd9c00eaa0c56bfb5edbd9e20523f746000e2ac07465be34ef"
+  }
+}

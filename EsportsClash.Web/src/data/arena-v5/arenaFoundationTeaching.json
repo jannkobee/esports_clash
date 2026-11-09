@@ -1,0 +1,15 @@
+{
+  "kind": "general-foundation-factual-input-adapter",
+  "revision": 5,
+  "parent_foundation_sha256": "0cefff73901294621af9f55cae80bb2df68c0744a17c777b0d1346edbc891d52",
+  "playbook_version": 5,
+  "playbook_sha256": "ea12732dc10054358306695858a1b75056343b292e89f01008375250a19b8d6b",
+  "observation_schema": "transferable-kit-facts-224-v3",
+  "avatar_specific_teacher_used": false,
+  "avatar_specific_rewards": false,
+  "new_fitted_examples": 0,
+  "extra_input_weights_initially_zero": true,
+  "gameplay_improvement_measured": false,
+  "video_examples": 0,
+  "limitation": "General starting command preferences are inherited; kit/card context is learned from subsequent self-play."
+}

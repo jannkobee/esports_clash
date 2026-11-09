@@ -1,3 +1,4 @@
+import { mapLayoutY, PLAY_MIN_Y, PLAY_MAX_Y, LANE_Y, laneY } from './arenaLayout.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { CAMP_ROCK_RINGS, ROCK_TERRAIN, rockApproachWaypoint,
@@ -7,18 +8,18 @@ import { ARENA_WIDTH, WELL_X, NEXUS_TOWER_X } from './arenaLayout.ts';
 import { createTerrainRouter } from './terrainRouting.ts';
 
 test('checkpoint restores moving-goal route hysteresis onto cloned actors without sharing mutable caches', () => {
-  const router = createTerrainRouter([{ x: 200, y: 200, radius: 50 }]);
-  const actor = { id: 'camp', x: 120, y: 200 };
-  router(actor, { x: 280, y: 200 });
+  const router = createTerrainRouter([{ x: 200, y: mapLayoutY(200), radius: 50 }]);
+  const actor = { id: 'camp', x: 120, y: mapLayoutY(200) };
+  router(actor, { x: 280, y: mapLayoutY(200) });
   const saved = router.capture([actor]), untouched = structuredClone(saved);
   assert.equal(saved.length, 1);
   const clone = structuredClone(actor);
-  router(clone, { x: 290, y: 200 });
+  router(clone, { x: 290, y: mapLayoutY(200) });
   assert.equal(router.capture([clone])[0].cached.route.goal.x, 290);
   router.restore([clone], saved);
   assert.equal(router.capture([clone])[0].cached.route.goal.x, 280);
   for (let tick = 0; tick < 100; tick++) {
-    const goal = { x: 290, y: 200 + Math.sin(tick / 10) * 2 };
+    const goal = { x: 290, y: mapLayoutY(200) + Math.sin(tick / 10) * 2 };
     const a = router(actor, goal), b = router(clone, goal);
     assert.deepEqual(a, b);
     const step = point => {
@@ -37,7 +38,7 @@ test('checkpoint restores moving-goal route hysteresis onto cloned actors withou
 
 function walkRoute(start, goal, radius = 13) {
   const walker = { x: start.x, y: start.y };
-  for (let tick = 0; tick < 1000; tick++) {
+  for (let tick = 0; tick < 1400; tick++) {
     if (Math.hypot(walker.x - goal.x, walker.y - goal.y) < 8) return true;
     const waypoint = rockApproachWaypoint(walker, goal, radius);
     const distance = Math.hypot(waypoint.x - walker.x, waypoint.y - walker.y);
@@ -48,7 +49,7 @@ function walkRoute(start, goal, radius = 13) {
     }, radius);
     assert.equal(isInsideRockTerrain(next.x, next.y, radius), false);
     // Match the live champion bounds; a route outside them would pin the avatar.
-    Object.assign(walker, { x: Math.max(40, Math.min(ARENA_WIDTH - 40, next.x)), y: Math.max(80, Math.min(620, next.y)) });
+    Object.assign(walker, { x: Math.max(40, Math.min(ARENA_WIDTH - 40, next.x)), y: Math.max(PLAY_MIN_Y, Math.min(PLAY_MAX_Y, next.y)) });
   }
   return false;
 }
@@ -63,9 +64,9 @@ test('all camp-to-camp rotations exit the current enclosure and reach the next c
 
 test('both wells and ramp flanks can reach every camp and return home', () => {
   const failures = [];
-  for (const start of [{ x: WELL_X.blue, y: 380 }, { x: WELL_X.red, y: 380 },
-    { x: NEXUS_TOWER_X.blue + 120, y: 245 }, { x: NEXUS_TOWER_X.red - 120, y: 245 },
-    { x: NEXUS_TOWER_X.blue + 120, y: 515 }, { x: NEXUS_TOWER_X.red - 120, y: 515 }]) {
+  for (const start of [{ x: WELL_X.blue, y: laneY(WELL_X.blue) }, { x: WELL_X.red, y: laneY(WELL_X.red) },
+    { x: NEXUS_TOWER_X.blue + 120, y: laneY(NEXUS_TOWER_X.blue + 120) - 200 }, { x: NEXUS_TOWER_X.red - 120, y: laneY(NEXUS_TOWER_X.red - 120) - 200 },
+    { x: NEXUS_TOWER_X.blue + 120, y: laneY(NEXUS_TOWER_X.blue + 120) + 200 }, { x: NEXUS_TOWER_X.red - 120, y: laneY(NEXUS_TOWER_X.red - 120) + 200 }]) {
     for (const goal of CAMP_ROCK_RINGS) {
       if (!walkRoute(start, goal)) failures.push(`${start.x},${start.y} -> ${goal.id}`);
       if (!walkRoute(goal, start)) failures.push(`${goal.id} -> ${start.x},${start.y}`);
@@ -88,7 +89,7 @@ test('camp approaches recover from every walkable compass side within arena boun
     const angle = side * Math.PI / 6;
     const span = ring.radius + ring.stoneRadius + 25;
     const start = { x: ring.x + Math.cos(angle) * span,
-      y: Math.max(80, Math.min(620, ring.y + Math.sin(angle) * span)) };
+      y: Math.max(PLAY_MIN_Y, Math.min(PLAY_MAX_Y, ring.y + Math.sin(angle) * span)) };
     if (isInsideRockTerrain(start.x, start.y, 13)) continue;
     if (!walkRoute(start, ring)) failures.push(`${ring.id} side ${side}`);
   }
@@ -124,18 +125,18 @@ test('routing repairs embedded positions even when no movement was requested', (
 });
 
 test('a route can be redirected after displacement, a stalled waypoint, or a changed destination', () => {
-  const walker = { x: 576, y: 170 };
+  const walker = { x: 850, y: 460 };
   const oldGoal = CAMP_ROCK_RINGS.find(ring => ring.id === 'j_red_blue_buff');
   for (let tick = 0; tick < 35; tick++) {
     const waypoint = rockApproachWaypoint(walker, oldGoal);
     assert.equal(isInsideRockTerrain(waypoint.x, waypoint.y, 13), false);
   }
-  Object.assign(walker, { x: 667, y: 575 });
+  Object.assign(walker, { x: 950, y: 1140 });
   const waypoint = rockApproachWaypoint(walker, oldGoal);
   assert.equal(isInsideRockTerrain(waypoint.x, waypoint.y, 13), false);
   // Keep the same actor object to exercise cached-route invalidation.
   const newGoal = CAMP_ROCK_RINGS.find(ring => ring.id === 'j_blue_blue_buff');
-  for (let tick = 0; tick < 1000 && Math.hypot(walker.x - newGoal.x, walker.y - newGoal.y) > 5; tick++) {
+  for (let tick = 0; tick < 1400 && Math.hypot(walker.x - newGoal.x, walker.y - newGoal.y) > 5; tick++) {
     const next = rockApproachWaypoint(walker, newGoal);
     const d = Math.hypot(next.x - walker.x, next.y - walker.y);
     assert.ok(d > 0);

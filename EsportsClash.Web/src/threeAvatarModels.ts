@@ -517,20 +517,20 @@ export function bindAvatarModel(body: THREE.Group, resources: AvatarModelResourc
   const bear = parts.get('ironclaw-form'), gunship = parts.get('gunship-fins'), pivot = parts.get('motion-pivot');
   const chest = body.getObjectByName('Chest');
   const elementalColors = { ice: '#8ad9f8', wind: '#b5a4f3', fire: '#ff9960' };
+  // Preserve exported hierarchy as well as animation. standingStance constructs
+  // its controller by reparenting arm helpers, which invalidates retargeted
+  // local tracks even when its per-frame callback is never called.
+  if(options?.preserveNativeMotion) return {body,height,dispose:()=>disposeAvatarRig(body),animate(pose){
+    if(id==='c_invoker'&&pose.kaelenOrbs)orbiters.forEach((orb,i)=>{
+      const element=pose.kaelenOrbs?.[i]??(['ice','wind','fire'] as const)[i];
+      orb.traverse(node=>{if(node instanceof THREE.Mesh)node.material=resources.material(elementalColors[element],true);});
+    });
+  }};
   const stance = standingStance(body, id);
   const combat = combatAnimator(body, id);
   const contacts=avatarContactRig(body,id);
   const abilityForm=voltaireModelForm(body,resources);
   return { body, height, dispose: () => disposeAvatarRig(body), animate(pose, second) {
-    if(options?.preserveNativeMotion){
-      // Imported review clips own every transform. Only live spell colors may
-      // change; contacts/recoil/orbit curves would overwrite the submitted work.
-      if(id==='c_invoker'&&pose.kaelenOrbs)orbiters.forEach((orb,i)=>{
-        const element=pose.kaelenOrbs?.[i]??(['ice','wind','fire'] as const)[i];
-        orb.traverse(node=>{if(node instanceof THREE.Mesh)node.material=resources.material(elementalColors[element],true);});
-      });
-      return;
-    }
     if (!options?.drivenByMixer) {
       contacts.reset();
       const walk = pose.animState === 'walk', attacking = pose.animState === 'attack', casting = pose.animState === 'cast';

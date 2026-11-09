@@ -1,0 +1,18 @@
+{
+  "scope": "Known-seed unchanged-baseline regression",
+  "sourceHash": "9adc4f3ee2cb0c372453606235676ab4a9199a2b5d112d801a155c51306ae353",
+  "referenceFingerprint": "21842714:ef78d297:89b0ba7",
+  "exact": true,
+  "result": {
+    "finished": true,
+    "second": 725.9666666666637,
+    "fingerprint": "21842714:ef78d297:89b0ba7",
+    "randomState": 531446609,
+    "winner": "blue",
+    "controllers": {
+      "blue": "baseline",
+      "red": "baseline"
+    },
+    "v3": null
+  }
+}

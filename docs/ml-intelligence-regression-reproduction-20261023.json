@@ -1,0 +1,153 @@
+{
+  "scope": "Historical regression reproduction, not new generalization evidence",
+  "method": "Recompute frozen decision, task rewards, repeated controls, learned execution and broader rubric",
+  "summary": {
+    "cases": 8,
+    "changed": 1,
+    "negative_changes": 1,
+    "total_reward_delta": -0.18,
+    "execution_and_outcomes_recomputed": true,
+    "promoted": false
+  },
+  "cases": [
+    {
+      "seed": 93,
+      "changed": false,
+      "predictedAdvantage": -0.030674624400379637,
+      "rewardDelta": 0,
+      "broaderOutcome": "no-material-difference"
+    },
+    {
+      "seed": 94,
+      "changed": false,
+      "predictedAdvantage": -0.05764582191573283,
+      "rewardDelta": 0,
+      "broaderOutcome": "no-material-difference"
+    },
+    {
+      "seed": 95,
+      "changed": false,
+      "predictedAdvantage": -0.03092645948248737,
+      "rewardDelta": 0,
+      "broaderOutcome": "no-material-difference"
+    },
+    {
+      "seed": 96,
+      "changed": false,
+      "predictedAdvantage": -0.03870193298657107,
+      "rewardDelta": 0,
+      "broaderOutcome": "no-material-difference"
+    },
+    {
+      "seed": 97,
+      "changed": true,
+      "predictedAdvantage": 0.08258313648357207,
+      "rewardDelta": -0.18,
+      "broaderOutcome": "worse"
+    },
+    {
+      "seed": 98,
+      "changed": false,
+      "predictedAdvantage": -0.03053404897478022,
+      "rewardDelta": 0,
+      "broaderOutcome": "no-material-difference"
+    },
+    {
+      "seed": 99,
+      "changed": false,
+      "predictedAdvantage": -0.035247614808233026,
+      "rewardDelta": 0,
+      "broaderOutcome": "no-material-difference"
+    },
+    {
+      "seed": 100,
+      "changed": false,
+      "predictedAdvantage": -0.03579815327914682,
+      "rewardDelta": 0,
+      "broaderOutcome": "no-material-difference"
+    }
+  ],
+  "authority": {
+    "method": "Existing held-out contexts used only to diagnose prediction/utility units; not the fresh test set",
+    "authority": [
+      {
+        "id": "heldout-87-d0-original",
+        "cardId": "p_bigtail",
+        "gapWithoutLearned": 0.09500228129028965,
+        "predictedRewardAdvantage": 0.08261686288107672,
+        "additiveContribution": 0.003304674515243069,
+        "remainingGap": 0.09169760677504658
+      },
+      {
+        "id": "heldout-88-d0-swapped",
+        "cardId": "p_craps",
+        "gapWithoutLearned": 0.1031651252927902,
+        "predictedRewardAdvantage": -0.03056544241551977,
+        "additiveContribution": -0.0012226176966207908,
+        "remainingGap": 0.10438774298941099
+      },
+      {
+        "id": "heldout-89-d1-original",
+        "cardId": "p_research_oner",
+        "gapWithoutLearned": 0.05389292921726348,
+        "predictedRewardAdvantage": 0.013797406432835464,
+        "additiveContribution": 0.0005518962573134186,
+        "remainingGap": 0.05334103295995006
+      },
+      {
+        "id": "heldout-90-d1-swapped",
+        "cardId": "p_research_oner",
+        "gapWithoutLearned": 0.10677941804860451,
+        "predictedRewardAdvantage": 0.013797406432835464,
+        "additiveContribution": 0.0005518962573134186,
+        "remainingGap": 0.1062275217912911
+      }
+    ]
+  },
+  "manifest": [
+    [
+      "ml-reward-guidance-plan.json",
+      "9118c9abaeda0486b85c6fbebc25c9019b33f3bd8d36f25552c47abbf12ff2c8"
+    ],
+    [
+      "ml-task-candidate.json",
+      "7e2b09e71f945dd619a3e7fc359a363076e94f9536cb06051529eb70a384128f"
+    ],
+    [
+      "ml-reward-fresh-93-d0-original.json",
+      "6f8a96265f29a1c5fcf47c222c951216dfb42a9e4c5f1d4b169f25c236d45af3"
+    ],
+    [
+      "ml-reward-fresh-94-d0-swapped.json",
+      "5e61f849f0d3c75f8d7986c2602c91e4cd4f8352f6416205df60df52cebfb2c2"
+    ],
+    [
+      "ml-reward-fresh-95-d1-original.json",
+      "f479781dae3b248e76eeb768d400e403e4233982f1cb286c462a2e3d14526d6f"
+    ],
+    [
+      "ml-reward-fresh-96-d1-swapped.json",
+      "a4d363620726ddb564024968e0dac0b56b8b2bf23819085c6fdf45b72c39dca0"
+    ],
+    [
+      "ml-reward-fresh-97-d0-original.json",
+      "adca87867e08ba53afe6df690d7cd204d0ffed1ac42120a8883de3591d6b2923"
+    ],
+    [
+      "ml-reward-fresh-98-d0-swapped.json",
+      "3c066a2a1eac6905c80559218e72e4c8febbab4136875f0e2fb311cd87779106"
+    ],
+    [
+      "ml-reward-fresh-99-d1-original.json",
+      "db2942ee995421d8d1035a69a3a8d5c9792611be4be8f47a5b563bd4294a2d11"
+    ],
+    [
+      "ml-reward-fresh-100-d1-swapped.json",
+      "0e26d99d0e563a4e51d7c1d43d1d406e33a6d625e59ed1bb1d4159f2851fecd3"
+    ],
+    [
+      "ml-reward-authority-analysis.json",
+      "93bf7af08147ebbc428bfa9a1741620291f71a29cdd53c02e4cedb238c5de9d3"
+    ]
+  ]
+}

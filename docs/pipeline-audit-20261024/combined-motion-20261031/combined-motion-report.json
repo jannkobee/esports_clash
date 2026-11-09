@@ -1,0 +1,975 @@
+{
+  "method": "exported-combined-motion-v1",
+  "compute": "google",
+  "source_sha256": "42ac17a5740ab76878ca88d49e4b03cbb2d5998e7483acce91160bc0dc6ee597",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "poses": [
+    {
+      "case": "00-ThighL-60-child60-twist-20",
+      "role": "ThighL",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": -20,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.1332393512475392e-07,
+          -0.8660255074501038,
+          -0.4999997615814209
+        ],
+        "target_error_degrees": 1.6683285085330403e-05,
+        "angle_from_down_degrees": 60.000014787793816,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "edge_ratio_min": 0.48840388612106506,
+      "edge_ratio_max": 1.875219080288507,
+      "edge_ratio_p99": 1.3062393937636247,
+      "snapshot": "combined/00-ThighL-60-child60-twist-20.glb",
+      "sha256": "163cc480f8fb6e38bc6056667ea0bb442c319e81034f6c14ab8ad05df0da9e1e",
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "01-ThighL-60-child60-twist0",
+      "role": "ThighL",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": 0,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.1332393512475392e-07,
+          -0.8660255074501038,
+          -0.4999997615814209
+        ],
+        "target_error_degrees": 1.6683285085330403e-05,
+        "angle_from_down_degrees": 60.000014787793816,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "edge_ratio_min": 0.31569685561552796,
+      "edge_ratio_max": 1.993894806698797,
+      "edge_ratio_p99": 1.3059420004574709,
+      "snapshot": "combined/01-ThighL-60-child60-twist0.glb",
+      "sha256": "ea569fcfc1f1e2ebaf768eb31401d5f33a09b914fc03ef20bb1d792493bc1542",
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "02-ThighL-60-child60-twist20",
+      "role": "ThighL",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": 20,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.1332393512475392e-07,
+          -0.8660255074501038,
+          -0.4999997615814209
+        ],
+        "target_error_degrees": 1.6683285085330403e-05,
+        "angle_from_down_degrees": 60.000014787793816,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "edge_ratio_min": 0.18949245899139372,
+      "edge_ratio_max": 2.4441033456194634,
+      "edge_ratio_p99": 1.3084981091207797,
+      "snapshot": "combined/02-ThighL-60-child60-twist20.glb",
+      "sha256": "928b4ffdc6b50201428b16c3fce6d551b8763c67659089c470b593aec0284c2f",
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "03-ThighL-90-child90-twist-20",
+      "role": "ThighL",
+      "bend": 90,
+      "child_local_x_degrees": 90,
+      "twist": -20,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.5497885758341e-07,
+          -1.0,
+          3.116408322512143e-07
+        ],
+        "target_error_degrees": 2.3070658334564236e-05,
+        "angle_from_down_degrees": 90.00001785570441,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "edge_ratio_min": 0.2308625018320199,
+      "edge_ratio_max": 2.292103635436496,
+      "edge_ratio_p99": 1.4600036623778299,
+      "snapshot": "combined/03-ThighL-90-child90-twist-20.glb",
+      "sha256": "240b3d5d726766144ed6b8f0f45271a9dee08b15da9a60c2b7646d4c4ca03ee4",
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "04-ThighL-90-child90-twist0",
+      "role": "ThighL",
+      "bend": 90,
+      "child_local_x_degrees": 90,
+      "twist": 0,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.5497885758341e-07,
+          -1.0,
+          3.116408322512143e-07
+        ],
+        "target_error_degrees": 2.3070658334564236e-05,
+        "angle_from_down_degrees": 90.00001785570441,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "edge_ratio_min": 0.20993037801342568,
+      "edge_ratio_max": 2.4702986819874293,
+      "edge_ratio_p99": 1.4585280619695888,
+      "snapshot": "combined/04-ThighL-90-child90-twist0.glb",
+      "sha256": "3610baa931f78e2cc19ac490c82d47d8f9d2ddcda8bf97ee3dc041780d06e7f2",
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "05-ThighL-90-child90-twist20",
+      "role": "ThighL",
+      "bend": 90,
+      "child_local_x_degrees": 90,
+      "twist": 20,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          2.5497885758341e-07,
+          -1.0,
+          3.116408322512143e-07
+        ],
+        "target_error_degrees": 2.3070658334564236e-05,
+        "angle_from_down_degrees": 90.00001785570441,
+        "joint_center": [
+          -0.05681389942765236,
+          0.01673729345202446,
+          0.0765945315361023
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 42,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_0",
+              "bone_0"
+            ],
+            "intersections": 34
+          },
+          {
+            "regions": [
+              "bone_0",
+              "bone_48"
+            ],
+            "intersections": 8
+          }
+        ]
+      },
+      "edge_ratio_min": 0.18271914593127522,
+      "edge_ratio_max": 2.8740401397951825,
+      "edge_ratio_p99": 1.4585752870457278,
+      "snapshot": "combined/05-ThighL-90-child90-twist20.glb",
+      "sha256": "e37acb0a5beb5d41898bf6d639723787158b243e83c415065f39c945bf3a2d4e",
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "06-ThighR-60-child60-twist-20",
+      "role": "ThighR",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": -20,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.6998586715999409e-07,
+          -0.8660253286361694,
+          -0.5000001192092896
+        ],
+        "target_error_degrees": 1.1895747588168137e-05,
+        "angle_from_down_degrees": 59.99999211317729,
+        "joint_center": [
+          0.060717590153217316,
+          0.01673729531466961,
+          0.07659454643726349
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "edge_ratio_min": 0.31604585315910266,
+      "edge_ratio_max": 2.212998260213537,
+      "edge_ratio_p99": 1.2873158540929777,
+      "snapshot": "combined/06-ThighR-60-child60-twist-20.glb",
+      "sha256": "7d01a7ab6816e5c92d57ab44bf76bd3ce35060dc156c4e10e695b25a31ddda7e",
+      "camera_target_gltf": [
+        0.060717590153217316,
+        0.07659454643726349,
+        -0.01673729531466961
+      ]
+    },
+    {
+      "case": "07-ThighR-60-child60-twist0",
+      "role": "ThighR",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": 0,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.6998586715999409e-07,
+          -0.8660253286361694,
+          -0.5000001192092896
+        ],
+        "target_error_degrees": 1.1895747588168137e-05,
+        "angle_from_down_degrees": 59.99999211317729,
+        "joint_center": [
+          0.060717590153217316,
+          0.01673729531466961,
+          0.07659454643726349
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "edge_ratio_min": 0.1991091673277332,
+      "edge_ratio_max": 1.9598382963110155,
+      "edge_ratio_p99": 1.2768673042211305,
+      "snapshot": "combined/07-ThighR-60-child60-twist0.glb",
+      "sha256": "977367b5851c8a8ff49d1a0af9ec8ac1837c50b3004870f5d13c17823da2301c",
+      "camera_target_gltf": [
+        0.060717590153217316,
+        0.07659454643726349,
+        -0.01673729531466961
+      ]
+    },
+    {
+      "case": "08-ThighR-60-child60-twist20",
+      "role": "ThighR",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": 20,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.6998586715999409e-07,
+          -0.8660253286361694,
+          -0.5000001192092896
+        ],
+        "target_error_degrees": 1.1895747588168137e-05,
+        "angle_from_down_degrees": 59.99999211317729,
+        "joint_center": [
+          0.060717590153217316,
+          0.01673729531466961,
+          0.07659454643726349
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_0",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "edge_ratio_min": 0.3518894192213458,
+      "edge_ratio_max": 1.9407700278519162,
+      "edge_ratio_p99": 1.287932433821604,
+      "snapshot": "combined/08-ThighR-60-child60-twist20.glb",
+      "sha256": "5d714bd4f7d4c328399bc5b04c99b481557ed8f527a52388042bbe14d399d35a",
+      "camera_target_gltf": [
+        0.060717590153217316,
+        0.07659454643726349,
+        -0.01673729531466961
+      ]
+    },
+    {
+      "case": "09-UpperArmL-60-child60-twist-20",
+      "role": "UpperArmL",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": -20,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          5.185567530929802e-08,
+          -0.8660253286361694,
+          -0.5
+        ],
+        "target_error_degrees": 3.4268384493856736e-06,
+        "angle_from_down_degrees": 59.999998028294364,
+        "joint_center": [
+          -0.08032020926475525,
+          0.03240817040205002,
+          0.3077397644519806
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 363,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 314
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 49
+          }
+        ]
+      },
+      "edge_ratio_min": 0.4476579597945551,
+      "edge_ratio_max": 2.7528581857217436,
+      "edge_ratio_p99": 1.1923900163008825,
+      "snapshot": "combined/09-UpperArmL-60-child60-twist-20.glb",
+      "sha256": "4d3e79fb1d460f2a670ad5f2153ef7709180eb685b8a2b5602e14a8c6bfb2099",
+      "camera_target_gltf": [
+        -0.08032020926475525,
+        0.3077397644519806,
+        -0.03240817040205002
+      ]
+    },
+    {
+      "case": "10-UpperArmL-60-child60-twist0",
+      "role": "UpperArmL",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": 0,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          5.185567530929802e-08,
+          -0.8660253286361694,
+          -0.5
+        ],
+        "target_error_degrees": 3.4268384493856736e-06,
+        "angle_from_down_degrees": 59.999998028294364,
+        "joint_center": [
+          -0.08032020926475525,
+          0.03240817040205002,
+          0.3077397644519806
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 364,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 323
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 41
+          }
+        ]
+      },
+      "edge_ratio_min": 0.5125273756773743,
+      "edge_ratio_max": 3.360648521804064,
+      "edge_ratio_p99": 1.1938366342221214,
+      "snapshot": "combined/10-UpperArmL-60-child60-twist0.glb",
+      "sha256": "4a23d50ea40e8ee396bb27d64f77c3096ffb6adb93b46dd62fed94a677eca961",
+      "camera_target_gltf": [
+        -0.08032020926475525,
+        0.3077397644519806,
+        -0.03240817040205002
+      ]
+    },
+    {
+      "case": "11-UpperArmL-60-child60-twist20",
+      "role": "UpperArmL",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": 20,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          5.185567530929802e-08,
+          -0.8660253286361694,
+          -0.5
+        ],
+        "target_error_degrees": 3.4268384493856736e-06,
+        "angle_from_down_degrees": 59.999998028294364,
+        "joint_center": [
+          -0.08032020926475525,
+          0.03240817040205002,
+          0.3077397644519806
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 396,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 363
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 31
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_26"
+            ],
+            "intersections": 2
+          }
+        ]
+      },
+      "edge_ratio_min": 0.46419971090290874,
+      "edge_ratio_max": 3.9177888115190145,
+      "edge_ratio_p99": 1.1974609061931367,
+      "snapshot": "combined/11-UpperArmL-60-child60-twist20.glb",
+      "sha256": "e60499a56b10849c5a1f46a88c6c00f9fa25d95abd9611e2c20ca09cca5dda90",
+      "camera_target_gltf": [
+        -0.08032020926475525,
+        0.3077397644519806,
+        -0.03240817040205002
+      ]
+    },
+    {
+      "case": "12-UpperArmR-60-child60-twist-20",
+      "role": "UpperArmR",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": -20,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.0371134351316869e-07,
+          -0.8660253286361694,
+          -0.5000000596046448
+        ],
+        "target_error_degrees": 6.853676187371101e-06,
+        "angle_from_down_degrees": 59.99999507073616,
+        "joint_center": [
+          0.08422388136386871,
+          0.032408155500888824,
+          0.30773985385894775
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 443,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 311
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 110
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 19
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_2"
+            ],
+            "intersections": 3
+          }
+        ]
+      },
+      "edge_ratio_min": 0.25736937201450555,
+      "edge_ratio_max": 2.788651696090788,
+      "edge_ratio_p99": 1.167140033486488,
+      "snapshot": "combined/12-UpperArmR-60-child60-twist-20.glb",
+      "sha256": "336b6208f5970501d8e0da3ef190d0da1c6cb49c20f0b33411ece81a63d8112f",
+      "camera_target_gltf": [
+        0.08422388136386871,
+        0.30773985385894775,
+        -0.032408155500888824
+      ]
+    },
+    {
+      "case": "13-UpperArmR-60-child60-twist0",
+      "role": "UpperArmR",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": 0,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.0371134351316869e-07,
+          -0.8660253286361694,
+          -0.5000000596046448
+        ],
+        "target_error_degrees": 6.853676187371101e-06,
+        "angle_from_down_degrees": 59.99999507073616,
+        "joint_center": [
+          0.08422388136386871,
+          0.032408155500888824,
+          0.30773985385894775
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 414,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 305
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 100
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 9
+          }
+        ]
+      },
+      "edge_ratio_min": 0.3044880065136997,
+      "edge_ratio_max": 2.4045932425604137,
+      "edge_ratio_p99": 1.1639276018759799,
+      "snapshot": "combined/13-UpperArmR-60-child60-twist0.glb",
+      "sha256": "411aa9c0fcb0e32b8885a96401a236f1fe16fa2bd0383dc65f5db5a77a2647ae",
+      "camera_target_gltf": [
+        0.08422388136386871,
+        0.30773985385894775,
+        -0.032408155500888824
+      ]
+    },
+    {
+      "case": "14-UpperArmR-60-child60-twist20",
+      "role": "UpperArmR",
+      "bend": 60,
+      "child_local_x_degrees": 60,
+      "twist": 20,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -0.8660253882408142,
+          -0.5
+        ],
+        "actual_direction": [
+          1.0371134351316869e-07,
+          -0.8660253286361694,
+          -0.5000000596046448
+        ],
+        "target_error_degrees": 6.853676187371101e-06,
+        "angle_from_down_degrees": 59.99999507073616,
+        "joint_center": [
+          0.08422388136386871,
+          0.032408155500888824,
+          0.30773985385894775
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 386,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 263
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 117
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 6
+          }
+        ]
+      },
+      "edge_ratio_min": 0.3332362816066533,
+      "edge_ratio_max": 2.012531804315329,
+      "edge_ratio_p99": 1.1645558246323753,
+      "snapshot": "combined/14-UpperArmR-60-child60-twist20.glb",
+      "sha256": "d0293203cdd79ea7f9276986f55c17d9e2a6ad243440f6e961de2a43dae12b25",
+      "camera_target_gltf": [
+        0.08422388136386871,
+        0.30773985385894775,
+        -0.032408155500888824
+      ]
+    },
+    {
+      "case": "15-UpperArmL-90-child90-twist0",
+      "role": "UpperArmL",
+      "bend": 90,
+      "child_local_x_degrees": 90,
+      "twist": 0,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          1.5556705079688982e-07,
+          -1.0,
+          2.0742274386975623e-07
+        ],
+        "target_error_degrees": 1.4855559485115552e-05,
+        "angle_from_down_degrees": 90.0000118844478,
+        "joint_center": [
+          -0.08032020926475525,
+          0.03240817040205002,
+          0.3077397644519806
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_25",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 107,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 78
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 29
+          }
+        ]
+      },
+      "edge_ratio_min": 0.2927675077285375,
+      "edge_ratio_max": 4.148332528458451,
+      "edge_ratio_p99": 1.2911838835396774,
+      "snapshot": "combined/15-UpperArmL-90-child90-twist0.glb",
+      "sha256": "da0fb1140c45153d2a885261b3826cdaaffcbbf7bc1d7ef97fc7af3c511ca282",
+      "camera_target_gltf": [
+        -0.08032020926475525,
+        0.3077397644519806,
+        -0.03240817040205002
+      ]
+    },
+    {
+      "case": "16-UpperArmR-90-child90-twist0",
+      "role": "UpperArmR",
+      "bend": 90,
+      "child_local_x_degrees": 90,
+      "twist": 0,
+      "pose_proof": {
+        "target_direction": [
+          0.0,
+          -1.0,
+          -6.123234262925839e-17
+        ],
+        "actual_direction": [
+          -1.5556705079688982e-07,
+          -1.0,
+          4.1484545931780303e-07
+        ],
+        "target_error_degrees": 2.5385189765071314e-05,
+        "angle_from_down_degrees": 90.00002376889397,
+        "joint_center": [
+          0.08422388136386871,
+          0.032408155500888824,
+          0.30773985385894775
+        ],
+        "center_delta_from_rest": 0.0,
+        "parent": "bone_6",
+        "parent_rotation_degrees": 0.0,
+        "child_rotation_degrees": 0.0
+      },
+      "collision": {
+        "finite": true,
+        "self_intersections": 178,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 146
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 31
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 1
+          }
+        ]
+      },
+      "edge_ratio_min": 0.20502533091794373,
+      "edge_ratio_max": 3.005695125935119,
+      "edge_ratio_p99": 1.2468116389757653,
+      "snapshot": "combined/16-UpperArmR-90-child90-twist0.glb",
+      "sha256": "a3716611c7038f16a98d562bcf8c8c02f74e4bec157a32d1175911e8101960c9",
+      "camera_target_gltf": [
+        0.08422388136386871,
+        0.30773985385894775,
+        -0.032408155500888824
+      ]
+    }
+  ],
+  "scope": "Combined diagnostic controls on the exported avatar. Not gameplay clips, anatomical motion limits or continuous collision proof.",
+  "vertices": 23682,
+  "bones": 52,
+  "body_height": 1.0029356479644775,
+  "max_influences": 7,
+  "status": "requires_visual_review",
+  "sampled_contact_pass": false
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "failed-rig-roll-isolation-v1",
+  "id": "db5a27c2-f82c-49f4-b552-e557bf814c2a",
+  "avatar_id": "c_invoker",
+  "source_candidate_id": "1bb641cd-ce80-4e12-9018-e67de0ff6dc3",
+  "source_file": "mirelle-base-animated.glb",
+  "source_sha256": "d75c61014fb21f8fbe3e80e490eda4aba099546dda8e7b201062630afc2bc78e",
+  "source_role": "failed_candidate_diagnostic_only",
+  "compute": "google",
+  "publication_eligible": false,
+  "status": "started",
+  "tools": {
+    "analyze_bind_twist.py": "5a0f2280bf3b95295fe81c6dd1cd4512e80dec1b89e2c230c55828458a0aaeda",
+    "mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+    "supervise.py": "3906ada334e14a84d4f80b28916aceb0f4bfde27e7727c3766003721d810ce6e"
+  },
+  "hypothesis": "Authored arm aim-frame roll or handedness causes shoulder/elbow intersections independently of joint positions; compare isolated changes without altering skin or topology."
+}

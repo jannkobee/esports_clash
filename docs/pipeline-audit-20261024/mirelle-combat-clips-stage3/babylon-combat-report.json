@@ -1,0 +1,1573 @@
+{
+  "compute": "google",
+  "asset_sha256": "f50ba638113fa51c8e966a6c8d3ebbca0eee149f4cec3f54ecc335884d1154c3",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "loaded_clips": [
+    "Idle",
+    "Walk",
+    "Run",
+    "Strafe",
+    "Attack",
+    "Cast",
+    "Hit",
+    "Death",
+    "TurnLeft",
+    "TurnRight"
+  ],
+  "playback": {
+    "clip": "Idle",
+    "from": 0,
+    "to": 150,
+    "frame": 49.692000000178815,
+    "advanced": true
+  },
+  "samples": [
+    {
+      "clip": "Idle",
+      "phase": 0.5,
+      "view": "front",
+      "file": "combat-screenshots/Idle-p050-front.png",
+      "sha256": "226b782740e143ed146ebd8b01a81f243ac8373100d443b3cd38da8105fbad53",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Idle",
+      "phase": 0.5,
+      "view": "side",
+      "file": "combat-screenshots/Idle-p050-side.png",
+      "sha256": "d2b48b75dad79d6badde075267a5684d9cc6f2f6a595e157ddac9d3abf3ea373",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Idle",
+      "phase": 0.5,
+      "view": "perspective",
+      "file": "combat-screenshots/Idle-p050-perspective.png",
+      "sha256": "c9504424d15a769df8a9376d310f257824838f5f804d2c927ea6a26fdf0ecd22",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.25,
+      "view": "front",
+      "file": "combat-screenshots/Walk-p025-front.png",
+      "sha256": "1115387bdedfb9909dbb67d6c6b96e74288de409632060d7d0b8a4cd99ea8771",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.25,
+      "view": "side",
+      "file": "combat-screenshots/Walk-p025-side.png",
+      "sha256": "ac4b224ae0a3a4c6eed6dfbb430fd9fd22b4112611e04938f7db0d97f19886cf",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.25,
+      "view": "perspective",
+      "file": "combat-screenshots/Walk-p025-perspective.png",
+      "sha256": "f4419078af0eb857d4463dfcee40dc4567d1860f4cc63611868dd65d50043101",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.75,
+      "view": "front",
+      "file": "combat-screenshots/Walk-p075-front.png",
+      "sha256": "6a6475926b1aca650e5b56b48f6bda85ea9833463fea88c6c84162744cb327ab",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.75,
+      "view": "side",
+      "file": "combat-screenshots/Walk-p075-side.png",
+      "sha256": "c7fe995291052ffa243e35d64be0b990e88ff1251ec7c9f5058de9f796fd7247",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Walk",
+      "phase": 0.75,
+      "view": "perspective",
+      "file": "combat-screenshots/Walk-p075-perspective.png",
+      "sha256": "9a2f30bf293a4598f1088e2138958df22020476d5045380ba977bee19f1d0bc2",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 0.3,
+      "view": "front",
+      "file": "combat-screenshots/Run-p030-front.png",
+      "sha256": "12ee6e77c11406f7fb713cd57ff4a484b06b88f9ed0a5ebe35b57b6a081bee41",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 0.3,
+      "view": "side",
+      "file": "combat-screenshots/Run-p030-side.png",
+      "sha256": "efb1438919502289bdc6240a28afa9dc91d551221ae5a9265c8e99e974dccd3c",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 0.3,
+      "view": "perspective",
+      "file": "combat-screenshots/Run-p030-perspective.png",
+      "sha256": "9945b4baf6504772b47f1b8291c47417407851bebec61ba75b79a29c88c27fa2",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 0.8,
+      "view": "front",
+      "file": "combat-screenshots/Run-p080-front.png",
+      "sha256": "29da721903250e3d3904615e1ca339df2fde50fb256985de51182a0732ff9764",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 0.8,
+      "view": "side",
+      "file": "combat-screenshots/Run-p080-side.png",
+      "sha256": "ef8f93a165cbf4c5f67294e5a53c8fb316eaa6a37a4817899fb84eaf9bc52b06",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Run",
+      "phase": 0.8,
+      "view": "perspective",
+      "file": "combat-screenshots/Run-p080-perspective.png",
+      "sha256": "4598e3fb9a16b13925d3d60929e7676815bc9690f1918cab6ef0c12d4f4a6d10",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Attack",
+      "phase": 0.42,
+      "view": "front",
+      "file": "combat-screenshots/Attack-p042-front.png",
+      "sha256": "4187e953f39dbe1cb72573e2021799da53a9642cac18e9ab98eebfb185ba2865",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Attack",
+      "phase": 0.42,
+      "view": "side",
+      "file": "combat-screenshots/Attack-p042-side.png",
+      "sha256": "e7de2cf5955361b2e8e7cfb27f733e9640ad36bb59c4d35b6752ab76dd75eb40",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Attack",
+      "phase": 0.42,
+      "view": "perspective",
+      "file": "combat-screenshots/Attack-p042-perspective.png",
+      "sha256": "9f99b80b8bb07f187e12951441e978f596f2be5909915887abefcd5d99569afd",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Cast",
+      "phase": 0.5,
+      "view": "front",
+      "file": "combat-screenshots/Cast-p050-front.png",
+      "sha256": "ca79eb6d24b83611fbb438ee915453637b2140f70279c48854e31103e005a138",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Cast",
+      "phase": 0.5,
+      "view": "side",
+      "file": "combat-screenshots/Cast-p050-side.png",
+      "sha256": "901dafbed216eaad4d6a98bf7b1c855d226ac5218493e19349ce4e27c19e6434",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Cast",
+      "phase": 0.5,
+      "view": "perspective",
+      "file": "combat-screenshots/Cast-p050-perspective.png",
+      "sha256": "414fcf1e93a8bec08a604acd4d19c1da40e90578181c4c47e498faef191c26aa",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Hit",
+      "phase": 0.22,
+      "view": "front",
+      "file": "combat-screenshots/Hit-p022-front.png",
+      "sha256": "40297644f741d53bbc99ec544492b6c6dacaa42ac2685d652a78c5e8762e1ac5",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Hit",
+      "phase": 0.22,
+      "view": "side",
+      "file": "combat-screenshots/Hit-p022-side.png",
+      "sha256": "ea9c7c391a1abbc69e73b70a5ca3eca557f933631bd23e5cea2c6b4aea442117",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Hit",
+      "phase": 0.22,
+      "view": "perspective",
+      "file": "combat-screenshots/Hit-p022-perspective.png",
+      "sha256": "591fc99532da526bc5e17c52958ef3bf20c269cd7555d6d257d7fec9f53b3238",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 0.5,
+      "view": "front",
+      "file": "combat-screenshots/Death-p050-front.png",
+      "sha256": "6b2e11f51718cbb7c68210307b05dcfbca2c3ed52220f71cac36b1a2f4b0d5de",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 0.5,
+      "view": "side",
+      "file": "combat-screenshots/Death-p050-side.png",
+      "sha256": "66061d6525da4d5145677bde5366103ad03060c77e6a139da1aff9f85d181db5",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 0.5,
+      "view": "perspective",
+      "file": "combat-screenshots/Death-p050-perspective.png",
+      "sha256": "1da9c678029838462a6073171c8a502e2159293a3975d90c3af92277247827c5",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 1.0,
+      "view": "front",
+      "file": "combat-screenshots/Death-p100-front.png",
+      "sha256": "ac68d8cc509d5cb8212046682d535c41c5b89b1dd8199f9ade081129b7ac15c8",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 1.0,
+      "view": "side",
+      "file": "combat-screenshots/Death-p100-side.png",
+      "sha256": "8f62cd6fd430488f7b128ca02cc15003014f7a98d991da94a0bd798494b8c27a",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Death",
+      "phase": 1.0,
+      "view": "perspective",
+      "file": "combat-screenshots/Death-p100-perspective.png",
+      "sha256": "a4aa949180112f58d5ecd90c89a2bb5b4a5930547591e4562eeceb4c9c02a5aa",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Strafe",
+      "phase": 0.5,
+      "view": "front",
+      "file": "combat-screenshots/Strafe-p050-front.png",
+      "sha256": "97e25f0a77fd699586b9f1825111f4532b81fa892601fe2cbabcd0dc8c7be972",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Strafe",
+      "phase": 0.5,
+      "view": "side",
+      "file": "combat-screenshots/Strafe-p050-side.png",
+      "sha256": "103732fc9f72c99763682488da3015e7532f8f81b32aa7d2670dcbab9a6cb53c",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "Strafe",
+      "phase": 0.5,
+      "view": "perspective",
+      "file": "combat-screenshots/Strafe-p050-perspective.png",
+      "sha256": "eafd75216b8f684650bbff741948762aba64aa7c6041be0e3c4759537165264e",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "TurnLeft",
+      "phase": 0.5,
+      "view": "front",
+      "file": "combat-screenshots/TurnLeft-p050-front.png",
+      "sha256": "a993dc5316b92fd556759a1e9a261ef3c05e1d3ac2c491d332d4510d0406d74a",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "TurnLeft",
+      "phase": 0.5,
+      "view": "side",
+      "file": "combat-screenshots/TurnLeft-p050-side.png",
+      "sha256": "3ce42f5d0db5f268803a96477f6108e278efb22df19c2aed075642c8162cc694",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "TurnLeft",
+      "phase": 0.5,
+      "view": "perspective",
+      "file": "combat-screenshots/TurnLeft-p050-perspective.png",
+      "sha256": "7d17897195ad9a496a4f87b1e324546965f2aac39196b0cddeb74260be22e4c9",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.999521017074585
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.0004789916274603456
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.9419329762458801
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.058067042380571365
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.6557801365852356
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "TurnRight",
+      "phase": 0.5,
+      "view": "front",
+      "file": "combat-screenshots/TurnRight-p050-front.png",
+      "sha256": "49a0f203139591e5b5dfd41c6e230af3ba64c5ec67bf1277c03a6f0df25c2a0d",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.7993226647377014
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.20067733526229858
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.7749998569488525
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.22500014305114746
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.9955205321311951
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0.004479486495256424
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "TurnRight",
+      "phase": 0.5,
+      "view": "side",
+      "file": "combat-screenshots/TurnRight-p050-side.png",
+      "sha256": "4f4345feba09857317cff684cfa4e89041429a305b6a4fa520ef75e4febf870c",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.7993226647377014
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.20067733526229858
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.7749998569488525
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.22500014305114746
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.9955205321311951
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0.004479486495256424
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    },
+    {
+      "clip": "TurnRight",
+      "phase": 0.5,
+      "view": "perspective",
+      "file": "combat-screenshots/TurnRight-p050-perspective.png",
+      "sha256": "65397f0df95cd9b857a6e261196c702162d12c715aeb0ae890e6482914bbc2cc",
+      "morphs": [
+        [
+          {
+            "name": "HipL_45",
+            "influence": 0.7993226647377014
+          },
+          {
+            "name": "HipL_90",
+            "influence": 0.20067733526229858
+          },
+          {
+            "name": "UpperArmL_60",
+            "influence": 0.7749998569488525
+          },
+          {
+            "name": "UpperArmL_90",
+            "influence": 0.22500014305114746
+          },
+          {
+            "name": "UpperArmR_60",
+            "influence": 0.9955205321311951
+          },
+          {
+            "name": "UpperArmR_90",
+            "influence": 0.004479486495256424
+          },
+          {
+            "name": "HipL_Twist20",
+            "influence": 0
+          }
+        ]
+      ]
+    }
+  ],
+  "errors": [],
+  "loaded": {
+    "clips": [
+      "Idle",
+      "Walk",
+      "Run",
+      "Strafe",
+      "Attack",
+      "Cast",
+      "Hit",
+      "Death",
+      "TurnLeft",
+      "TurnRight"
+    ],
+    "meshes": [
+      {
+        "name": "geometry_0.001",
+        "influences": 8,
+        "bones": 52,
+        "extraWeights": true,
+        "morphs": 7
+      }
+    ]
+  },
+  "status": "rendered_for_visual_review"
+}

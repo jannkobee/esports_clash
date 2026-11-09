@@ -1,0 +1,51 @@
+{
+  "id": "a6af0c71-3de8-4b61-aed4-33d12c5ddfd0",
+  "archive_sha256": "0a67bb42d5555cbec213e5d4b54ce6e43156823c05e01104ee18170931a37d86",
+  "status": "completed",
+  "report_sha256": "5a96236ac2fb1a58c9c363d8f8c715683fb8c9918655a878b3e73714c46f548b",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "error": null,
+  "arap": {
+    "joint": "UpperArmL",
+    "degrees": 90,
+    "eligible_pairs": 31,
+    "seed_vertices": 31,
+    "falloff_vertices": 153,
+    "height_m": 1.0029360055923462,
+    "max_unclamped_delta_m": 0.006232936172675502,
+    "clamp_scale": 0.16090907684713765,
+    "max_added_delta_m": 0.0010029360055923465,
+    "before_intersections": 31,
+    "after_intersections": 31,
+    "top_regions": [
+      {
+        "regions": [
+          "bone_2",
+          "bone_26"
+        ],
+        "intersections": 31
+      }
+    ],
+    "rigid_energy_before": 0.7412098191483701,
+    "rigid_energy_after": 0.701826245042447,
+    "edge_strain_before": 0.4136084087397738,
+    "edge_strain_after": 0.39257255314130013,
+    "seam_spread_m": 0.0,
+    "edge_deformation": {
+      "policy": "deformation-edge-stretch-v1",
+      "passed": true,
+      "finite": true,
+      "edges_checked": 56332,
+      "severely_stretched_edges": 0,
+      "maximum_length_ratio": 4.033889105456021,
+      "largest_extension_to_height": 0.018747231794950622,
+      "limits": {
+        "length_ratio": 4,
+        "extension_to_height": 0.05
+      },
+      "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+    }
+  },
+  "posed_target_artifact": null
+}

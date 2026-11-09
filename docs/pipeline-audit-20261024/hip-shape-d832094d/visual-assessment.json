@@ -1,0 +1,85 @@
+{
+  "review_id": "d832094d-eddb-4b70-8b62-d47553d35d64",
+  "reviewed_on": "2026-10-30",
+  "reviewer": "/root",
+  "status": "rejected_shape_regression",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "admit_animation_bake": false,
+  "scope": "16 of 24 matched Babylon views inspected. This authored local displacement trial fails visual shape review; no animation bake or production candidate admitted.",
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/baseline-ThighL-22.5-orbit3.png",
+      "sha256": "3f1dc3acca6bd2a79ac77619123cf9bd1681c5e753031538bbeff452a86e3a26"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-22.5-orbit3.png",
+      "sha256": "7dafbdca531faa52c21dd873efba95f6e7391c6defd337bcc35cc0d83aeeae43"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-45-orbit1.png",
+      "sha256": "853570f442e9f3bdae19249e76c0dcd6caf86d547e8b100c16af7b100b71dccc"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-45-orbit3.png",
+      "sha256": "71878a0b9186103ccb3ef3940b8c325f11fc7246f1e41e03d883161f762eb413"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit1.png",
+      "sha256": "277d2c71cf52774a78509e3cac533070983def1cb879f615c8006d084f7f91e3"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-45-orbit3.png",
+      "sha256": "15ee1c15b7e47d17eac8704f3860e88d8ae045043c0848bd5a49f7ad9f82e390"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-67.5-orbit1.png",
+      "sha256": "cc255cec37c2421c895a5abcfb2c51d626d208255a8769af83bf65abe024368b"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-67.5-orbit3.png",
+      "sha256": "5c959f8db87b8264993a37937a2ba3e4e8cbd75b848f69b47326f98639347223"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-67.5-orbit1.png",
+      "sha256": "a5f2e4440e7369ca8e414058f7f375c0223dc8fd08616086c3a5606736b5b3c8"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-67.5-orbit3.png",
+      "sha256": "a813bff46804e7b6fae8496a3e67010faa1cf0b214061f7bb77d0334fb668999"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit1.png",
+      "sha256": "aa5c966d839a1036b23d9072a4a7914494fa8199af89d1a55bccab4acd7c7aa5"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit3.png",
+      "sha256": "2477ce27c151e2d52a39b35074e25dc45ee30dffcd3e2609be1b642b3ad17d73"
+    },
+    {
+      "file": "screenshots/baseline-ThighL-90-orbit5.png",
+      "sha256": "046dd73c434b96590d41102495b140c99790fdd9ac3d367c708ae98fb1fbd541"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit1.png",
+      "sha256": "eba93633f3130d95d3c649702063a87c6c86897d5bfbe25d2af4c4c800c47169"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit3.png",
+      "sha256": "d3e6500ab062abbf09dcf2a889af10aa00fe677d58714622cf0f44a1b5a6ee7c"
+    },
+    {
+      "file": "screenshots/sculpt-ThighL-90-orbit5.png",
+      "sha256": "0307265eb05fc4433f12cbb335a14f94be72e6f26c71e70c714dbca4b17db263"
+    }
+  ],
+  "observations": [
+    "At orbit 3, the original rounded front hip transition becomes a raised, squared lip by 45 degrees; the defect is clearer at the held-out 67.5-degree pose.",
+    "At 90 degrees the crease remains, and the corrected front pelvic contour is pushed outward into an angular overhang. Orbit 1 confirms this contour change.",
+    "The rear 90-degree views show no visible change in the inspected rear region, consistent with the bounded front patch. This is not a full-body visual qualification.",
+    "The rest pose and vertices outside the 380-vertex support remain numerically unchanged; coincident seam spread remains zero. These preservation checks do not imply an acceptable joint shape.",
+    "The correction increases some posed edge lengths up to 1.70624 times the baseline and compresses others to 0.51354 at 90 degrees. These are reported diagnostics, not optimized objectives or evidence of improvement."
+  ],
+  "decision": "Reject this target and its activation curve for animation/export; retain the exact inputs and failed shape to prevent repetition.",
+  "next_requirement": "An authored continuous pelvis-to-thigh surface target must improve both front and side contours at 45, 67.5 and 90 degrees. Do not strengthen or widen this one-handle bulge, compress it into four weights, or replicate it to other joints. A technical artist can supply that target on the retained original mesh; no claim that topology alone is the cause."
+}

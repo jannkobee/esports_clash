@@ -37,11 +37,11 @@ export interface SlotDefinition {
 }
 
 export const TEAM_SLOTS: readonly SlotDefinition[] = [
-  { slot: 0, label: 'TOP', role: 'Fighter', icon: '⚔️', description: 'Frontline bruiser & split-pusher' },
-  { slot: 1, label: 'JUNGLE', role: 'Assassin', icon: '🌲', description: 'Ambush roamer & objective secure' },
-  { slot: 2, label: 'MID', role: 'Mage', icon: '🔮', description: 'Burst magic damage & wave control' },
-  { slot: 3, label: 'BOT', role: 'Marksman', icon: '🏹', description: 'Ranged physical DPS carry' },
-  { slot: 4, label: 'SUPPORT', role: 'Support', icon: '🛡️', description: 'Vision control & team protection' }
+  { slot: 0, label: 'FIGHTER', role: 'Fighter', icon: '⚔️', description: 'Frontline bruiser & melee engage' },
+  { slot: 1, label: 'ASSASSIN', role: 'Assassin', icon: '🗡️', description: 'Ambush flanker & objective burst' },
+  { slot: 2, label: 'MAGE', role: 'Mage', icon: '🔮', description: 'Arcane burst damage & zone control' },
+  { slot: 3, label: 'MARKSMAN', role: 'Marksman', icon: '🏹', description: 'Ranged physical DPS carry' },
+  { slot: 4, label: 'SUPPORT', role: 'Support', icon: '🛡️', description: 'Tactical utility & team protection' }
 ] as const;
 
 export interface PlayerDraftTurn {

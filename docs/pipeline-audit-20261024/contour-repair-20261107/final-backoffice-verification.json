@@ -1,0 +1,19 @@
+{
+    "preparation_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+    "preparation_status": "needs_review",
+    "review_count": 5,
+    "stored_artifacts_per_review": {
+        "49848a9d8e26d27843c08f1c1c06c06c7ce7679a7317289b773ce9a92027d6b9": 212,
+        "16fc4ed07ae5395022f47d334c1f791f8867f78f2543818e3405d7fdf18210ac": 175,
+        "e1dc540e46e3c1b32a4e72cd817895da0aa172cfe0a6f45fd36eeb6453622bdc": 216,
+        "7b00d341261b6e25fe8e1b3ce18401ad7e14d220fe6383350f52a98a6d5f48c1": 224,
+        "9efb3404b9b2f06568f27dd6786c8844659c5e1249fcb5dbd037ea8fec9ac272": 192
+    },
+    "preview_status": 200,
+    "api_matches": true,
+    "historical_lineage_preserved": true,
+    "publication_eligible": false,
+    "qualification_complete": false,
+    "cli_memory_limit": "512M",
+    "scope": "Current shared controller/API for all five reviews together; exact artifact readbacks in individual receipts. Not authenticated browser E2E."
+}

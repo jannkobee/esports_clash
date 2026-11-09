@@ -1,0 +1,15 @@
+{
+  "id": "3e82afe8-a0e5-4414-8f42-6595632fa066",
+  "disposition": "runtime_replaced_before_result_retrieval",
+  "compute": "google",
+  "qualification_complete": false,
+  "publication_eligible": false,
+  "original_runtime_id": "9d6d63438ea2f910c5b7039d4a6ed77596c6dbf1843f3f1590afe1b6b86aa4f7",
+  "reconnected_runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "result": "unknown; the prior runtime and its job state were unavailable, and the replacement runtime did not contain the job",
+  "files": {
+    "plan.json": "9a23d94371320ff796bf132f5f4b515dac0e538a2c0bad2856c79c8a381feaeb",
+    "input.zip": "8825c2449f686c5b676fdfc70947cec008eba373e83ee5c51e8e27e49e933f63",
+    "launch.py": "073c05388c71eea6ea93bbe5ee1e62d6d07cb0b3dffddb6c151562b69bf96538"
+  }
+}

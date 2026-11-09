@@ -26,6 +26,9 @@ class PollEvolutionRun implements ShouldQueue, ShouldBeUniqueUntilProcessing
     public function handle(EvolutionService $service): void
     {
         $run = EvolutionRun::findOrFail($this->runId);
+        if ($run->status==='completed'&&in_array($run->plan['version']??0,[3,4],true)&&($run->result['assessment']['status']??'')==='promote') {
+            app(\App\Services\IntelligenceService::class)->activate($run->id,'worker',internal:true);return;
+        }
         if (! in_array($run->status, ['queued', 'running', 'stopping', 'paused_resource'], true)) return;
         $http = Http::withToken(config('evolution.worker_token'))->connectTimeout(3)->timeout(15);
         $base = rtrim(config('evolution.runner_url'), '/').'/runs/'.$run->id;
@@ -33,7 +36,7 @@ class PollEvolutionRun implements ShouldQueue, ShouldBeUniqueUntilProcessing
             $http->delete($base)->throw();
         } else {
             // Idempotent start: runner persists its immutable plan before spawning work.
-            $http->post($base, $run->plan)->throw();
+            $http->withHeaders(['X-Evolution-Resume'=>$run->status==='queued'?'1':'0'])->post($base, $run->plan)->throw();
         }
         $state = $http->get($base)->throw()->json();
         $run = DB::transaction(function () use ($state) {
@@ -48,9 +51,11 @@ class PollEvolutionRun implements ShouldQueue, ShouldBeUniqueUntilProcessing
             return $locked;
         });
         $terminal = in_array($run->status, ['completed', 'failed', 'cancelled'], true);
-        if ($run->status === 'completed') {
+        if ($run->status === 'completed' && !in_array($run->plan['version']??0,[3,4],true)) {
             $service->createReview($run);
-        } elseif (! $terminal) {
+        } elseif($run->status==='completed'&&in_array($run->plan['version']??0,[3,4],true)&&($run->result['assessment']['status']??'')==='promote') {
+            app(\App\Services\IntelligenceService::class)->activate($run->id,'worker',internal:true);
+        } elseif (! $terminal && $run->status !== 'paused_budget') {
             self::dispatch($run->id)->delay(now()->addSeconds(20));
         }
     }

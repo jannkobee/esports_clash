@@ -1,0 +1,15 @@
+{
+  "kind": "reward-only-factual-foundation-revision",
+  "revision": 6,
+  "parent_foundation_sha256": "4160600343a834925aa3d6d86f6baef6a27c3dcab2a800727d2312cdd2e67b0e",
+  "playbook_version": 6,
+  "playbook_sha256": "cc9055ad42add7d93a427cacbf883242a8954403cbef9ed93d6f596242e5c04e",
+  "reward_version": "terminal-potential-outcomes-v2",
+  "actor_version": 3,
+  "input": 224,
+  "new_optimizer_updates": 0,
+  "avatar_specific_teacher_used": false,
+  "avatar_specific_rewards": false,
+  "starting_forward_structure_bias_removed": false,
+  "gameplay_improvement_measured": false
+}

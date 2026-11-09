@@ -1,0 +1,14 @@
+{
+  "id": "7da12d83-c675-4299-9457-f7fcdeb9f1e2",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "shoulder-shape-blend",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "started_unix": 1793101568.0010068,
+  "exit_code": 0,
+  "report_sha256": "547970fc47112eedff73428b2d5d51844096e1bb39e440e44d618f9dab43b595",
+  "completed_unix": 1793101622.22492
+}

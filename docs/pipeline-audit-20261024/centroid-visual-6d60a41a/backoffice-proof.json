@@ -1,0 +1,100 @@
+{
+    "verification_method": "Canonical API artifact readback and shared Web controller render",
+    "preparation_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+    "candidate_id": "e047ce58-9193-49c7-87db-790a0f29dbbf",
+    "candidate_sha256": "74cc2139a1e56cb79d8a9197aab6ac38bc91ae3bb9474365411973f8534ab29d",
+    "candidate_report_sha256": "da69e0a68b33e63885ba1e6e9c82733283b03772bda002c3abb6ad63857e8188",
+    "candidate_source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+    "visual_review_id": "6d60a41a-28f8-4a3a-9d6a-f6d207524d72",
+    "visual_report_sha256": "e452d4c68cfa66288e1f0c06d813ad4544a3184475df22f7553a998e3411cecd",
+    "assessment_status": "lower_contacts_shape_unresolved",
+    "playback_sha256": "4f2cf3eab7c94fff10ccef8505b9916747dded8abf461df7e82ed28ef93792e6",
+    "ancestor_artifacts": [
+        {
+            "id": "e047ce58-9193-49c7-87db-790a0f29dbbf",
+            "sha256": "74cc2139a1e56cb79d8a9197aab6ac38bc91ae3bb9474365411973f8534ab29d"
+        },
+        {
+            "id": "f6283980-c4dd-5f34-bcf4-09c08e9e6346",
+            "sha256": "494cbb1574d50b9a82985738c0f6ef03a3d7d438a5ef9b038a28a40aeaf805c7"
+        },
+        {
+            "id": "d38b680b-3f40-5331-8bdf-992a6ec4f272",
+            "sha256": "9a4a5efd95f5687020797402b9dcf591e3813f0b092526357793387b88b005ab"
+        },
+        {
+            "id": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046",
+            "sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f"
+        },
+        {
+            "id": "a3352d37-91cb-4757-b403-da09f5ac0017",
+            "sha256": "89086aef80758e052542cfaad3bd2768d9aa47e41625a0ac18fa3bfed40866f4"
+        }
+    ],
+    "diagnostics": [],
+    "controller_status": 200,
+    "preview_uses_exact_bend_file": true,
+    "assessment_visible": true,
+    "candidate_label_visible": true,
+    "hip_study_visible": true,
+    "bound_rejections_visible": true,
+    "skinning_mode_diagnostic_visible": true,
+    "contact_topology_visible": true,
+    "counts_90": [
+        {
+            "joint": "UpperArmL",
+            "intersections": 25
+        },
+        {
+            "joint": "UpperArmR",
+            "intersections": 0
+        },
+        {
+            "joint": "ForearmL",
+            "intersections": 0
+        },
+        {
+            "joint": "ForearmR",
+            "intersections": 0
+        },
+        {
+            "joint": "ThighL",
+            "intersections": 40
+        },
+        {
+            "joint": "ThighR",
+            "intersections": 27
+        },
+        {
+            "joint": "CalfL",
+            "intersections": 0
+        },
+        {
+            "joint": "CalfR",
+            "intersections": 2
+        }
+    ],
+    "severe_stretch_edges": 0,
+    "weight_correspondence": {
+        "before_to_after": {
+            "unmatched_vertices": 0,
+            "max_matching_weight_error": 1.1920928955078125e-7
+        },
+        "after_to_before": {
+            "unmatched_vertices": 0,
+            "max_matching_weight_error": 1.1920928955078125e-7
+        },
+        "verified": true
+    },
+    "rest_surface_roundtrip": {
+        "before_vertices": 23806,
+        "after_vertices": 23832,
+        "max_nearest_distance_m": 3.275714561823406e-7,
+        "rms_nearest_distance_m": 9.241442322056334e-8
+    },
+    "unaffected_bends_unchanged": null,
+    "preparation_status": "needs_review",
+    "qualification_complete": false,
+    "publication_eligible": false,
+    "inspector_sha256": "b53cdbbf1a7ee8cae29c18696ad56eb13e07acc2349f6e41d94e8a0adc9ccb02"
+}

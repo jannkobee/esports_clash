@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import { INITIAL_PLAYERS, CHAMPIONS, INITIAL_COACHES } from '../../EsportsClash.Web/src/mockData.ts';
 const sha = data => createHash('sha256').update(data).digest('hex');
 const root = resolve('EsportsClash.Web');
-const files = (await readdir(`${root}/src`, { recursive: true })).filter(file => /\.(tsx?|css)$/.test(file)).sort();
+const files = (await readdir(`${root}/src`, { recursive: true })).filter(file => /\.(tsx?|css|json)$/.test(file)).sort();
 const sources = await Promise.all(files.map(async file => [file.replaceAll('\\', '/'), sha(await readFile(`${root}/src/${file}`))]));
 const chosen = new Set();
 const starter = ['Fighter', 'Assassin', 'Mage', 'Marksman', 'Support'].map(role => {
@@ -17,8 +17,11 @@ const starter = ['Fighter', 'Assassin', 'Mage', 'Marksman', 'Support'].map(role 
 });
 const catalog = { schema: 1, cards: INITIAL_PLAYERS, avatars: CHAMPIONS, coaches: INITIAL_COACHES, starter };
 const bytes = JSON.stringify(catalog, null, 2) + '\n';
+if(process.argv.includes('--rules-only')&&await readFile('EsportsClash.Api/resources/game/catalog.json','utf8')!==bytes)
+  throw Error('Catalog definitions changed; a rules-only update cannot replace owned-card definitions.');
 const manifest = { schema: 1, catalog_version: sha(bytes), rules_version: sha(JSON.stringify(sources)),
-  policy_version: 'rule-baseline-empty-adaptive-v2', observation_version: 'live-spectator-v1', sources };
+  ability_ruleset:'original-v3-preview-2',policy_version: 'original-v3-hybrid-v2', observation_version: 'live-spectator-v1',
+  arena_source_hash:sha(JSON.stringify(sources.map(([file,hash])=>['src/'+file,hash]))),sources };
 await mkdir('EsportsClash.Api/resources/game', { recursive: true });
 await writeFile('EsportsClash.Api/resources/game/catalog.json', bytes);
 await writeFile('EsportsClash.Api/resources/game/manifest.json', JSON.stringify(manifest, null, 2) + '\n');

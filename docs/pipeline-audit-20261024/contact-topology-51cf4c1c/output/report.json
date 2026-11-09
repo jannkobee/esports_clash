@@ -1,0 +1,201 @@
+{
+  "id": "51cf4c1c-3ca8-4572-9271-3f26da367cac",
+  "method": "corrected-contact-topology-v1",
+  "compute": "google",
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "85fba1625bd539ec28c6564a037fa02c4bfb4aa886316afc345c5f05429deace",
+  "parent_candidate_id": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97",
+  "contact_map_id": "5271850d-a635-4a23-a147-02060d866fbb",
+  "qualification_complete": false,
+  "publication_eligible": false,
+  "status": "diagnostic_complete",
+  "poses": [
+    {
+      "joint": "UpperArmL",
+      "degrees": 90,
+      "intersections": 31,
+      "morph_weights": {
+        "Corrective_UpperArmL_90": 0.9999999403953552,
+        "Corrective_UpperArmR_90": 0.0,
+        "Corrective_ThighL_90": 0.0,
+        "Corrective_ThighR_90": 0.0
+      },
+      "regions": [
+        {
+          "pair": "bone_2 / bone_26",
+          "count": 31,
+          "edge_hop_histogram": {
+            ">6": 31
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.04141382730977652,
+            "mean": 0.061894158268984825,
+            "max": 0.08230954778514471
+          }
+        }
+      ]
+    },
+    {
+      "joint": "UpperArmR",
+      "degrees": 90,
+      "intersections": 0,
+      "morph_weights": {
+        "Corrective_UpperArmL_90": 0.0,
+        "Corrective_UpperArmR_90": 0.9999999403953552,
+        "Corrective_ThighL_90": 0.0,
+        "Corrective_ThighR_90": 0.0
+      },
+      "regions": []
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 90,
+      "intersections": 40,
+      "morph_weights": {
+        "Corrective_UpperArmL_90": 0.0,
+        "Corrective_UpperArmR_90": 0.0,
+        "Corrective_ThighL_90": 0.9999999403953552,
+        "Corrective_ThighR_90": 0.0
+      },
+      "regions": [
+        {
+          "pair": "bone_0 / bone_0",
+          "count": 5,
+          "edge_hop_histogram": {
+            ">6": 5
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.004333378428235395,
+            "mean": 0.00580098945436754,
+            "max": 0.009176395905186048
+          }
+        },
+        {
+          "pair": "bone_0 / bone_44",
+          "count": 1,
+          "edge_hop_histogram": {
+            "1": 1
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.01593311443596498,
+            "mean": 0.01593311443596498,
+            "max": 0.01593311443596498
+          }
+        },
+        {
+          "pair": "bone_0 / bone_48",
+          "count": 18,
+          "edge_hop_histogram": {
+            ">6": 12,
+            "1": 6
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.004997382453533796,
+            "mean": 0.011062128843214827,
+            "max": 0.017360943849601417
+          }
+        },
+        {
+          "pair": "bone_44 / bone_44",
+          "count": 4,
+          "edge_hop_histogram": {
+            "1": 4
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.008476245987391638,
+            "mean": 0.010697581022972873,
+            "max": 0.012763940283248672
+          }
+        },
+        {
+          "pair": "bone_44 / bone_48",
+          "count": 1,
+          "edge_hop_histogram": {
+            "1": 1
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.010917625670430559,
+            "mean": 0.010917625670430559,
+            "max": 0.010917625670430559
+          }
+        },
+        {
+          "pair": "bone_48 / bone_48",
+          "count": 11,
+          "edge_hop_histogram": {
+            ">6": 11
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.003940414450509207,
+            "mean": 0.0073875869053179975,
+            "max": 0.0127513086960564
+          }
+        }
+      ]
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 90,
+      "intersections": 27,
+      "morph_weights": {
+        "Corrective_UpperArmL_90": 0.0,
+        "Corrective_UpperArmR_90": 0.0,
+        "Corrective_ThighL_90": 0.0,
+        "Corrective_ThighR_90": 0.9999999403953552
+      },
+      "regions": [
+        {
+          "pair": "bone_0 / bone_44",
+          "count": 7,
+          "edge_hop_histogram": {
+            ">6": 7
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.012764183260522559,
+            "mean": 0.014852023017699282,
+            "max": 0.018583781321934
+          }
+        },
+        {
+          "pair": "bone_44 / bone_44",
+          "count": 16,
+          "edge_hop_histogram": {
+            ">6": 15,
+            "1": 1
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.0053817381888330565,
+            "mean": 0.00904114794051348,
+            "max": 0.014503559176791808
+          }
+        },
+        {
+          "pair": "bone_44 / bone_48",
+          "count": 3,
+          "edge_hop_histogram": {
+            "1": 3
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.00863511776489838,
+            "mean": 0.011561584103810038,
+            "max": 0.014062895291769508
+          }
+        },
+        {
+          "pair": "bone_48 / bone_48",
+          "count": 1,
+          "edge_hop_histogram": {
+            "1": 1
+          },
+          "rest_centroid_distance_m": {
+            "min": 0.012983228524433609,
+            "mean": 0.012983228524433609,
+            "max": 0.012983228524433609
+          }
+        }
+      ]
+    }
+  ],
+  "scope": "Graph hop distances use rest-position seam equivalence and are bounded to six mesh edges; centroid distances are not penetration depth. No geometry modified or visual qualification.",
+  "completed_unix": 1793107952.0333815
+}

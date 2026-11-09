@@ -1,0 +1,14 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+const hash=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
+const design='src/data/v3RosterDesign.json',identity='src/data/heroIdentityV3.json';
+const heroes=JSON.parse(readFileSync(design)).heroes,ids=JSON.parse(readFileSync(identity)).heroes;
+const out=['# All 45 avatars: 2.5D identity and ability reference','','Generated from current original-roster design, not the historical ability catalog. Design prose is not runtime qualification. Read README.md before asset work.','',`Design SHA-256: \`${hash(design)}\``, `Identity SHA-256: \`${hash(identity)}\``,''];
+for(const h of heroes){const id=ids.find(i=>i.canonicalId===h.canonicalId);if(!id)throw Error(h.canonicalId);
+out.push(`## ${h.displayName} — ${h.title}`,'',`Stable ID: \`${id.key}\`. Canonical ID: \`${h.canonicalId}\`. Role: ${h.role}.`,'',`**Appearance:** ${h.artDirection}`,'',`**Combat identity:** ${h.combatSignature}`,'',`**Readable counterplay:** ${h.counterplay}`,'','Animation planning: preserve this silhouette in Idle/Run/Attack/Hit/Death. Author a separate gesture, telegraph, active effect and expiry for each slot below; synchronize the production result to authoritative events. All artwork/motion remains unqualified until reviewed.','');
+for(const [slot,a] of Object.entries(h.abilities))out.push(`### ${slot}: ${a.name}`,'',a.designText,'',`Design cooldown note: ${a.cooldownNote??'passive / no cooldown specified'}. Check executable runtime before timing VFX.`,'');
+for(const p of h.rPageSpells??[])out.push(`### Page ${p.page}: ${p.patternRole}`,'',p.requirementsAndEffect,'',`Design cooldown: ${p.draftCooldown}. Counterplay: ${p.counterplay}.`,'');}
+writeFileSync('../docs/arena-2d/roster-reference.md',out.join('\n'));
+const assets=['public/art/arena-2d/ruins-v1.png','public/art/arena-2d/mirelle-motion-v1.png'].map(path=>({path,sha256:hash(path)}));
+writeFileSync('../docs/arena-2d/assets.json',JSON.stringify({schemaVersion:1,date:'2026-10-24',owner:'/root',workflow:'owner-approved painted-sprite trial',qualification:'unqualified',provider:'built-in image_gen',assets,motion:{avatarId:'c_invoker',canonicalId:'mirelle-vane',width:1402,height:1122,alpha:true,columns:4,rows:4,direction:'screen-right three-quarter',pivot:'approximate cell center; per-frame feet not yet calibrated',states:[{name:'Idle',row:0,frames:4,fps:3,loop:true},{name:'Run',row:1,frames:4,fps:7,loop:true},{name:'Cast',row:2,frames:4,fps:7,loop:true,scope:'review loop only; production casts non-looping'},{name:'Death',row:3,frames:4,fps:5,loop:false}]},limits:['One direction only','Fractional cell boundaries; padding audit pending','Generated gait/costume drift','Not production or live match assets']},null,2)+'\n');
+console.log(`Wrote ${heroes.length} identities, ${heroes.length*4} slots and ${heroes.reduce((n,h)=>n+(h.rPageSpells?.length??0),0)} page briefs.`);

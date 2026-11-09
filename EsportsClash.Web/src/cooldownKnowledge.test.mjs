@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createEnemyCooldownMemory, isObservedCooling, observeCooldownRise } from './cooldownKnowledge.ts';
 import { shouldRetreatLosingFight } from './fightSurvivalRules.ts';
 import { chooseTeamfightTarget } from './combatDecision.ts';
-import { CHAMPIONS } from './mockData.ts';
+import {CHAMPIONS} from './testFixtures/historicalCatalog.mjs';
 
 const kit = name => CHAMPIONS.find(champion => champion.name === name);
 const fighter = (id, name, team, x, hp, iq) => ({

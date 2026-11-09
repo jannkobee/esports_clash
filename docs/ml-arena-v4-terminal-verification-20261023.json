@@ -1,0 +1,68 @@
+{
+  "kind": "terminal-recorder-and-local-UI-verification",
+  "source_hash": "6bdaf0aefa29d91e17cc6063e3e6706fd9dcc946c7e6ca31fb9e6a71ac52066c",
+  "fresh_benefit_evidence": false,
+  "terminal": {
+    "terminal": true,
+    "sameTickRows": 5,
+    "metrics": {
+      "updated": true,
+      "transitions": 5,
+      "actor_loss": -0.0,
+      "value_loss": 0.6865071058273315,
+      "entropy": 1.3628679198518512e-06,
+      "updates": 1,
+      "unrolls": 1,
+      "competitive_improvement_measured": false
+    },
+    "synthetic_engineering_fixture": true,
+    "fresh_benefit_evidence": false
+  },
+  "ui": {
+    "label": "Learning AI: instructional foundation \u00c2\u00b7 30 choices \u00c2\u00b7 30 commands started",
+    "hasDetailedBrief": true,
+    "hasAllThreeBarracks": true,
+    "hasRecallLesson": true,
+    "hasPostFightLesson": true,
+    "ordinaryPrivateBridgeAbsent": true
+  },
+  "checks": {
+    "game_tests": 508,
+    "additional_simulations": 3,
+    "typescript": true,
+    "build": true,
+    "backend_tests": 54,
+    "backend_assertions": 431,
+    "worker_tests": 43,
+    "strategy_gate_tests": 5
+  },
+  "run": {
+    "id": "a0d353cf-5ca3-4690-85e7-b9399780bead",
+    "seed_block": [
+      62001,
+      63000
+    ],
+    "evaluation_seeds": [
+      62257,
+      62288
+    ],
+    "last_observed_stage": "baseline",
+    "last_observed_complete": 0,
+    "baseline_planned": 4
+  },
+  "prior_known_fixture_record": "ml-arena-v4-verification-20261023.json",
+  "artifacts": {
+    "terminal-edge-proof.json": {
+      "sha256": "fe6ff56acdc875c02df73ad848423aac0877b206b1e9ec2d2efd7a2b8ca9ce98",
+      "bytes": 365
+    },
+    "terminal-edge.json": {
+      "sha256": "d9be75508e3b66d87b2ac25102bf6ae8b03f474ef3a59ea43464ad5ee19c40b0",
+      "bytes": 166103
+    },
+    "terminal-edge.request.json": {
+      "sha256": "f1287467239e061a26c9c64fa08fe4ab8db4ce31d2386928e02e9bf3a4689dd2",
+      "bytes": 16513
+    }
+  }
+}

@@ -1,0 +1,30 @@
+[
+    {
+        "kind":  "body",
+        "avatar_id":  "c_kyumi",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/mireth-lune-v2.png",
+        "prompt":  "Edit this reference only: Remove all long scalp hair and decorative fur tufts. Retain intrinsic fox ears, short anatomical fur surface and exactly one tail. Cover torso arms and legs with a plain seamless matte gray close-fitting unitard. Preserve adult identity, proportions and neutral wide A-pose. Neutral gray throughout. True transparent background, no floor, shadow, halo, text or extra objects.",
+        "sha256":  "f550bd21af38bec0ba5091f7bee9e72e17615c11b813b668737e2a11898b603c"
+    },
+    {
+        "kind":  "body",
+        "avatar_id":  "c_buck",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/bramm-coil-v2.png",
+        "prompt":  "Edit this reference only: Remove scalp hair, beard and beard ornaments entirely. Preserve adult broad build, face, right lower leg prosthesis and neutral wide A-pose. Plain seamless gray close-fitting full unitard, no loose fabric. True transparent background, no floor, shadow, halo, text or extra objects.",
+        "sha256":  "e089deb5223e4aa65ab3b7cc4156481c3260e80b08fd78d7d8f29a8c827df8f5"
+    },
+    {
+        "kind":  "body",
+        "avatar_id":  "c_kaolin",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/joruun-jadecoil-v2.png",
+        "prompt":  "Edit this reference only: Preserve intrinsic robot body and neutral pose. Zoom out so entire figure including all fingers has generous 15% clear transparent padding on every edge. True transparent background, no floor, shadow, halo, text or extra objects.",
+        "sha256":  "07940cb0231fc8ed5f081105176124120cc5ed055895f088ff35637745155d78"
+    },
+    {
+        "kind":  "body",
+        "avatar_id":  "c_vi",
+        "path":  "docs/pipeline-audit-20261024/upload-assets/base/brakka-fenn-v2.png",
+        "prompt":  "Edit this reference only: Remove eyepatch and its strap entirely. Preserve scarred closed injured eye underneath, adult identity, body proportions, plain unitard and neutral wide A-pose. Zoom out for 12% padding. True transparent background, no floor, shadow, halo, text or extra objects.",
+        "sha256":  "094d1ff3e6286ea230438310a4af8204188c0f9d245e561e68e67f0fedb61b33"
+    }
+]

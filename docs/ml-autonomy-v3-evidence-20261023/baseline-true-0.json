@@ -1,0 +1,146 @@
+{
+  "status": "terminal",
+  "states": [
+    {
+      "second": 0,
+      "fingerprint": "37923:278dca3a:6b5bd71a",
+      "randomState": 47,
+      "finished": false
+    },
+    {
+      "second": 30.00000000000065,
+      "fingerprint": "1208601:a2a2326:80a37e5e",
+      "randomState": 303638726,
+      "finished": false
+    },
+    {
+      "second": 119.99999999999575,
+      "fingerprint": "3159130:d49f405:aab3b9e1",
+      "randomState": 4069179728,
+      "finished": false
+    },
+    {
+      "second": 481.1333333335005,
+      "fingerprint": "11368090:5968eefb:cf54eadf",
+      "randomState": 1716609252,
+      "finished": true
+    }
+  ],
+  "result": {
+    "winner": "blue",
+    "stats": [
+      {
+        "id": "blue_p_craps",
+        "team": "blue",
+        "player": "p_craps",
+        "champion": "c_silencer",
+        "kills": 2,
+        "deaths": 1,
+        "cs": 7,
+        "gold": 2186.317333332738,
+        "damage": 9566
+      },
+      {
+        "id": "blue_p_ouzi",
+        "team": "blue",
+        "player": "p_ouzi",
+        "champion": "c_astra",
+        "kills": 11,
+        "deaths": 0,
+        "cs": 60,
+        "gold": 2181.374000000092,
+        "damage": 36265
+      },
+      {
+        "id": "blue_p_neko",
+        "team": "blue",
+        "player": "p_neko",
+        "champion": "c_kazemaru",
+        "kills": 0,
+        "deaths": 1,
+        "cs": 1,
+        "gold": 1417.3126666662854,
+        "damage": 2592
+      },
+      {
+        "id": "blue_p_woozy",
+        "team": "blue",
+        "player": "p_woozy",
+        "champion": "c_sylla",
+        "kills": 0,
+        "deaths": 1,
+        "cs": 5,
+        "gold": 1289.1066666665995,
+        "damage": 3954
+      },
+      {
+        "id": "blue_p_mirecle",
+        "team": "blue",
+        "player": "p_mirecle",
+        "champion": "c_inai",
+        "kills": 1,
+        "deaths": 1,
+        "cs": 6,
+        "gold": 106.75399999991873,
+        "damage": 5127
+      },
+      {
+        "id": "red_p_thespicy",
+        "team": "red",
+        "player": "p_thespicy",
+        "champion": "c_valkira",
+        "kills": 1,
+        "deaths": 5,
+        "cs": 8,
+        "gold": 483.0213333335388,
+        "damage": 7300
+      },
+      {
+        "id": "red_p_p1mple",
+        "team": "red",
+        "player": "p_p1mple",
+        "champion": "c_kage",
+        "kills": 1,
+        "deaths": 4,
+        "cs": 3,
+        "gold": 536.7841666663052,
+        "damage": 5309
+      },
+      {
+        "id": "red_p_flaker",
+        "team": "red",
+        "player": "p_flaker",
+        "champion": "c_kyumi",
+        "kills": 1,
+        "deaths": 5,
+        "cs": 9,
+        "gold": 549.0573333330857,
+        "damage": 7220
+      },
+      {
+        "id": "red_p_daft",
+        "team": "red",
+        "player": "p_daft",
+        "champion": "c_cora",
+        "kills": 1,
+        "deaths": 0,
+        "cs": 39,
+        "gold": 711.9960000000774,
+        "damage": 13479
+      },
+      {
+        "id": "red_p_bigtail",
+        "team": "red",
+        "player": "p_bigtail",
+        "champion": "c_io",
+        "kills": 0,
+        "deaths": 1,
+        "cs": 12,
+        "gold": 1558.6906666664552,
+        "damage": 5021
+      }
+    ]
+  },
+  "second": 481.1333333335005,
+  "wall_seconds": 105.575
+}

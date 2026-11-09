@@ -1,0 +1,14 @@
+{
+  "id": "8db702c3-0015-4535-a4b1-f2dd44541ed4",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "runtime_id": "9d6d63438ea2f910c5b7039d4a6ed77596c6dbf1843f3f1590afe1b6b86aa4f7",
+  "environment_sha256": "73928306c86dae9ce21c8fe672abffcebdbb4ee2a654fa3a194a6f466ee8d105",
+  "started_unix": 1793027072.8457513,
+  "stage": "repair-study",
+  "exit_code": 0,
+  "report_sha256": "d980b21f68cfbc56f322dd917e52125b0e6e65d7707a6028c29d241842b1c3ba",
+  "completed_unix": 1793027199.738644
+}

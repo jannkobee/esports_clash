@@ -1,0 +1,364 @@
+{
+  "id": "3833c6cf-ea05-4855-8a32-df433e1a8c5a",
+  "method": "contact-pair-centroid-probe-v1",
+  "compute": "google",
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "85fba1625bd539ec28c6564a037fa02c4bfb4aa886316afc345c5f05429deace",
+  "parent_candidate_id": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97",
+  "contact_map_id": "5271850d-a635-4a23-a147-02060d866fbb",
+  "qualification_complete": false,
+  "publication_eligible": false,
+  "config": {
+    "joint": "UpperArmL",
+    "region_pair": [
+      "bone_2",
+      "bone_26"
+    ],
+    "max_added_height_fraction": 0.001,
+    "falloff_rings": 3,
+    "minimum_centroid_height_fraction": 1e-05
+  },
+  "baseline_reproduction": [
+    {
+      "label": "native",
+      "poses": [
+        {
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "self_intersections": 44,
+          "expected": 44
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "self_intersections": 35,
+          "expected": 35
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 90,
+          "self_intersections": 51,
+          "expected": 51
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 90,
+          "self_intersections": 47,
+          "expected": 47
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 90,
+          "self_intersections": 2,
+          "expected": 2
+        }
+      ],
+      "reproduced": true
+    },
+    {
+      "label": "corrected",
+      "poses": [
+        {
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.21649442613124847,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "self_intersections": 31,
+          "expected": 31,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.9999999403953552,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.21314050257205963,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.9999999403953552,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "ForearmL",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "ForearmR",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.4080709218978882,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "ThighL",
+          "degrees": 90,
+          "self_intersections": 40,
+          "expected": 40,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.9999999403953552,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.40034282207489014
+          }
+        },
+        {
+          "joint": "ThighR",
+          "degrees": 90,
+          "self_intersections": 27,
+          "expected": 27,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.9999999403953552
+          }
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "CalfL",
+          "degrees": 90,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 45,
+          "self_intersections": 0,
+          "expected": 0,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        },
+        {
+          "joint": "CalfR",
+          "degrees": 90,
+          "self_intersections": 2,
+          "expected": 2,
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          }
+        }
+      ],
+      "reproduced": true
+    }
+  ],
+  "status": "diagnostic_complete",
+  "stage": "corrected_CalfR_90",
+  "centroid_probe": {
+    "joint": "UpperArmL",
+    "degrees": 90,
+    "eligible_pairs": 31,
+    "ambiguous_pairs": 0,
+    "seed_vertices": 18,
+    "falloff_vertices": 81,
+    "height_m": 1.0029360055923462,
+    "max_added_delta_m": 0.0010029361255480436,
+    "before_intersections": 31,
+    "after_intersections": 25,
+    "top_regions": [
+      {
+        "regions": [
+          "bone_2",
+          "bone_26"
+        ],
+        "intersections": 25
+      }
+    ],
+    "seam_spread_m": 0.0,
+    "edge_deformation": {
+      "policy": "deformation-edge-stretch-v1",
+      "passed": true,
+      "finite": true,
+      "edges_checked": 56332,
+      "severely_stretched_edges": 0,
+      "maximum_length_ratio": 4.010494572184424,
+      "largest_extension_to_height": 0.018747231794950622,
+      "limits": {
+        "length_ratio": 4,
+        "extension_to_height": 0.05
+      },
+      "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+    },
+    "disposition": "investigate_further"
+  },
+  "scope": "Fixed bounded posed triangle-centroid separation hypothesis, no mesh export or anatomical qualification.",
+  "completed_unix": 1793108728.4960716
+}

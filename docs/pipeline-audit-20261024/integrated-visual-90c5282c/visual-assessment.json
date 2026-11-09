@@ -1,0 +1,105 @@
+{
+  "review_id": "90c5282c-c89b-4d56-8614-82d7c0c11406",
+  "status": "improved_counts_deformation_unresolved",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "scope": "Limited manual review of 20 named/hash-verified rest, skeleton, moderate-bend and paired deep-joint views. No game-motion, appearance or production qualification.",
+  "observations": [
+    "The integrated shoulder/hip pivot candidate reduces 90-degree shoulders 131/81 to 44/35 and hips 255/133 to 51/47 versus the immutable taper. Skin weights and rest surface are preserved. All 16 bends have zero severe-stretch edges; forearms remain 0/0 and calves 0/2.",
+    "Selected front, back, side and skeleton bind views preserve the overall silhouette and supported feet. Selected 45-degree arm/leg front views show the intended independent limb movement without gross collapse.",
+    "Paired 90-degree oblique shoulder views retain a compressed/rounded transition at the shoulder root. Paired hip views and current side views retain abrupt creases and joint-root shape changes. Lower contact counts do not clear the deformation gate.",
+    "Front close hip views have foreground leg occlusion. They show part of the hip/groin transition but cannot independently clear every remaining contact. The exact source-bound map identifies 208 residual contact vertices, including same-region folds and groin/opposite-thigh contacts.",
+    "Both exported diagnostic GLBs reproduce all 16 saved counts; 68 screenshots rendered without browser errors. Only the 20 listed images were manually assessed. These are diagnostic clips, not game animations.",
+    "A separate evaluation-only preserve-volume diagnostic on this exact source improves some joints but worsens right-hip contacts 47 to 67. It is not a portable glTF correction and is not applied to this native GLB."
+  ],
+  "decision": "Retain this as the strongest measured native-GLB diagnostic, preserve all immutable baselines and keep qualification/publication false. Further pivot or transfer tuning is not a demonstrated shape repair. Next isolate a targeted joint-surface/pose-corrective solution on the 208 source-bound vertices, requiring exact GLB reimport and Babylon evidence before the real motion pipeline.",
+  "candidate_disposition": {
+    "id": "f6283980-c4dd-5f34-bcf4-09c08e9e6346",
+    "selection": "diagnostic_only",
+    "immutable_comparator": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046"
+  },
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "bcc7b547cb20fa4ca109a397927469158970158f1a8f6d27e513dcd0262b2749"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighL-90-oblique-detail.png",
+      "sha256": "487d602610a07cecd97f26ec3eed6c3d5ad862bd89816759cf8f6b509acb31d5"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "68fa37a5119c8d85c984db33e01ec8bdf7f0646ebffef59f5810ec02fba6cb04"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-ThighR-90-oblique-detail.png",
+      "sha256": "b44c2f4f33f20da1e01a961a8f07b19c4a053eed3a7c291998e7e35166e5c016"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "72546e053156e003f2140b9289a218d285acf4158a98098478b555f1f1c96e48"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmL-90-oblique-detail.png",
+      "sha256": "b867938b88832147391286d2f6813db0f194cbb09e1691a410dda4c1d44fea11"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "7dad4d431c4d92ff455587b933546c60c54edc8074b7e29e08ba561ef9876cd8"
+    },
+    {
+      "file": "screenshots/parent-verified-bend-UpperArmR-90-oblique-detail.png",
+      "sha256": "5fb29e4626bf1460d2ef501d07e2b79eef80247920f4d1589b1feb2c922849c0"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-side-detail.png",
+      "sha256": "23b8860b0d7008fcc954eb9308dbd5597b1600171602699b245fef45291216f3"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-side-detail.png",
+      "sha256": "fa1319e9e2c7ee7d27dc9826f38a2b776f70c5ad9809fcc339c8b357be553f34"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front.png",
+      "sha256": "790a117f1eb2be086dd6649ab375c906e8e240f0a799f94abe56ba4fae8521ff"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-back.png",
+      "sha256": "61e22918b5c91f72f3ebee65d1fc30188957ae75599582dbb1872fbff171c1be"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-side.png",
+      "sha256": "dfcea01794cdcf7b3011b37943cf4954c137995413de304da93b3ba4f4ac9744"
+    },
+    {
+      "file": "screenshots/current-exact-bind-rest-0-front-skeleton.png",
+      "sha256": "0ce54e7ebdbf7b4f941b09d6aa4a6d8215a99f827901ed246809c2456cd68447"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-45-front.png",
+      "sha256": "c459de8797f464e160618acaa6b84e06709ea908c77e7d7a4b8b68f076fe67e3"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-45-front.png",
+      "sha256": "b4c14de74282c3df2b637589d078bf746e3b1a58086cd26cab775fcd9bdf65a3"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmL-45-front.png",
+      "sha256": "98d7813078304f84109708d98f70303e903e2480611e3a58e089da50a20bd224"
+    },
+    {
+      "file": "screenshots/current-verified-bend-UpperArmR-45-front.png",
+      "sha256": "48f7ba39afdf548e35b7519c1c0243415faf2720fcf06a66548f7724e25e3506"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighL-90-front-detail.png",
+      "sha256": "101e0cc21a6f5cf5dacd657e23e35b7625fd40991954e2ff3d904eba7d44f454"
+    },
+    {
+      "file": "screenshots/current-verified-bend-ThighR-90-front-detail.png",
+      "sha256": "3821769508c11ed36ff117ba429184efb4fa8241c08a8305ba1fb7be2165b57b"
+    }
+  ],
+  "rendered_views": 68,
+  "report_sha256": "0a680b54147fae435ce52c5dcefe2359b7d432feb6c146fc3a9395851ce84ddc"
+}

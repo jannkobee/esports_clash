@@ -30,7 +30,9 @@ export async function preparationRequest(path,request,response,ctx){
         }catch{}
       }
     }catch{}
-    reply(response,200,{engine_sha256:await preparationEngine(),profiles:['humanoid-template-v1','custom-template-v1'],validation_default:'immediate',active:[...children.keys()],cached_rigs});return true;
+    reply(response,200,{engine_sha256:await preparationEngine(),profiles:[],validation_default:'blocked',active:[...children.keys()],cached_rigs,
+      provider:'historical-local-preparation',compute:{selected:'local',automatic_fallback:false},runtime_ready:false,stages:[],
+      blocked_reason:'Local asset processing is disabled. Connect the Google Colab animation and qualification stages.'});return true;
   }
   const match=path.match(/^\/preparations\/([a-f0-9-]+)(?:\/(cancel|validate|resume|reset))?$/);
   if(!match)return false;if(!uuid.test(match[1]))throw Error('Invalid preparation identifier');
@@ -40,6 +42,13 @@ export async function preparationRequest(path,request,response,ctx){
     const child=children.get(id);if(child){await stopOwnedJob(child.pid);await new Promise(resolve=>child.exitCode!==null||child.signalCode!==null?resolve():child.once('exit',resolve));children.delete(id);}
     let state={};try{state=JSON.parse(await readFile(file,'utf8'));}catch{}
     state={...state,id,status:'cancelled',stage:'cancelled',publication_eligible:false};await atomic(file,state);reply(response,200,state);return true;
+  }
+  // This historical worker remains a control/storage/inspection endpoint. An
+  // API admission check alone cannot protect a retry or direct worker request.
+  // New cloud stages use their separately fingerprinted Colab service.
+  if(request.method==='POST'){
+    reply(response,409,{id,status:'waiting_worker',stage:'waiting_for_colab',publication_eligible:false,
+      error:'Local preparation, repair, animation and qualification processing are disabled. Connect the Google Colab preparation service.'});return true;
   }
   if(match[2]==='resume'&&request.method==='POST'){
     for(const f of ['cancelled.json','preparation.json','geometry-qualification.json']){try{await unlink(join(folder,f));}catch{}}

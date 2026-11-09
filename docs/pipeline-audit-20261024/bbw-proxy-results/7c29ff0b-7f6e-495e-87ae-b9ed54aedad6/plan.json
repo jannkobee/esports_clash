@@ -1,0 +1,25 @@
+{
+  "id": "7c29ff0b-7f6e-495e-87ae-b9ed54aedad6",
+  "method": "libigl-voxel-volume-correspondence-v1",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "generation_id": "26713b59-ef49-4f50-9271-35ff929c3e0d",
+  "libigl_version": "2.6.3",
+  "files": {
+    "source.glb": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+    "raw.glb": "a656ab5248f2d8ca3640774fd6745a28bc244e8485be0ced57db8e231a5fe25f",
+    "baseline-report.json": "fabe0de8f9b5e5f183bdf92a54bf0a2b739818ead9a86bb47fb2ceafc0518429",
+    "tools/bbw_solver.py": "bb023ae820b218cdf4bae21bbe630ce4f973a056e62a280ebcf9eee9d4bc1215",
+    "tools/review_bbw_preflight.py": "b603d7825f3a48a2b3e2888f90855edc084bed23cc4d0765170efcb5bc386939",
+    "tools/review_bbw_proxy.py": "f75363be3cd57354bbf5c969a1ce71b65e9bd04b96be2f619c47196a18d485d9",
+    "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+    "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+    "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02"
+  },
+  "proxy_mode": "solid-envelope",
+  "regularize_empty_cells": true
+}

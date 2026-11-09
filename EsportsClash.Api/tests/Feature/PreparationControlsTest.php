@@ -13,7 +13,7 @@ class PreparationControlsTest extends TestCase {
         $source=TrellisGeneration::create(['id'=>(string)Str::uuid(),'avatar_id'=>'c_solana','status'=>'generated_unqualified','plan'=>['seed'=>123],'state'=>['artifact'=>['sha256'=>str_repeat('a',64)]]]);
         return AvatarPreparation::create(['id'=>(string)Str::uuid(),'generation_id'=>$source->id,'avatar_id'=>$source->avatar_id,'status'=>$status,'plan'=>['provider'=>'unirig','profile'=>'unirig-v1','yaw'=>10,'attachments'=>[],'bone_map'=>['Hips'=>'mixamorig:Hips'],'seed'=>123,'source_sha256'=>str_repeat('a',64),'unirig_engine_sha256'=>str_repeat('b',64)],'state'=>['stage'=>'resource_admission']]);
     }
-    private function fakes():void {Queue::fake();Http::fake(['*/cancel'=>Http::response(['status'=>'cancelled']),'*/operations'=>Http::response(['engine_sha256'=>str_repeat('b',64),'runtime_ready'=>true,'models_ready'=>true])]);}
+    private function fakes():void {Queue::fake();Http::fake(['*/cancel'=>Http::response(['status'=>'cancelled']),'*/operations'=>Http::response(['engine_sha256'=>str_repeat('b',64),'runtime_ready'=>true,'models_ready'=>true,'compute'=>['selected'=>'google','automatic_fallback'=>false],'stages'=>['rigging','animation','qualification']])]);}
     private function owner():void {$this->actingAs(User::factory()->create(['is_evolution_admin'=>true]));}
     public function test_pause_waits_for_both_workers_and_resume_creates_one_linked_attempt():void {
         $this->fakes();$old=$this->fixture();$controls=app(AvatarPreparationControlService::class);
@@ -26,7 +26,7 @@ class PreparationControlsTest extends TestCase {
     }
     public function test_retry_cannot_admit_a_replacement_until_stop_acknowledgement():void {
         Queue::fake();$old=$this->fixture('rigging');$controls=app(AvatarPreparationControlService::class);
-        Http::fake(['*/jobs/'.$old->id.'/cancel'=>Http::sequence()->push([],503)->push(['status'=>'cancelled']),'*/preparations/'.$old->id.'/cancel'=>Http::response(['status'=>'cancelled']),'*/operations'=>Http::response(['engine_sha256'=>str_repeat('b',64),'runtime_ready'=>true,'models_ready'=>true])]);
+        Http::fake(['*/jobs/'.$old->id.'/cancel'=>Http::sequence()->push([],503)->push(['status'=>'cancelled']),'*/preparations/'.$old->id.'/cancel'=>Http::response(['status'=>'cancelled']),'*/operations'=>Http::response(['engine_sha256'=>str_repeat('b',64),'runtime_ready'=>true,'models_ready'=>true,'compute'=>['selected'=>'google','automatic_fallback'=>false],'stages'=>['rigging','animation','qualification']])]);
         $controls->request($old,'retry','owner:test');$this->assertSame('cancelling',$old->fresh()->status);$this->assertNull($controls->restart($old->id));$this->assertSame(1,AvatarPreparation::count());
         try{app(AvatarJobCancellationService::class)->synchronize('preparation',$old->id);$this->fail('Stop cannot be acknowledged while GPU is unavailable');}catch(\Illuminate\Http\Client\RequestException){}
         $this->assertSame('cancelling',$old->fresh()->status);Queue::assertNotPushed(RestartAvatarPreparation::class);

@@ -1,0 +1,40 @@
+{
+  "id": "174e79ea-4839-4f91-8733-5b2253065645",
+  "compute": "google",
+  "status": "completed",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "jobs": [
+    {
+      "id": "e44d4c06-f826-4a97-bcf7-b912845094fd",
+      "status": "completed",
+      "stage": "contact-map",
+      "evidence": {
+        "file": "e44d4c06-f826-4a97-bcf7-b912845094fd-evidence.zip",
+        "bytes": 2926687,
+        "sha256": "f5072a57624289a760c3ed8a9c1f290d33db43d3c5580c50eb0dbeeefefa01d6"
+      }
+    },
+    {
+      "id": "b89a083d-6ed1-497c-be5b-c9130b7e7674",
+      "status": "completed",
+      "stage": "contact-map",
+      "evidence": {
+        "file": "b89a083d-6ed1-497c-be5b-c9130b7e7674-evidence.zip",
+        "bytes": 2896955,
+        "sha256": "a878923771179d8d4c1fc4f4ab73ca79de9a5d1c895b04e5ec8115292edc4dce"
+      }
+    },
+    {
+      "id": "90c5282c-c89b-4d56-8614-82d7c0c11406",
+      "status": "completed",
+      "stage": "babylon-render",
+      "evidence": {
+        "file": "90c5282c-c89b-4d56-8614-82d7c0c11406-evidence.zip",
+        "bytes": 16627544,
+        "sha256": "ee8b20c31fbfffd753494f952e7ee051601bb129192d580e8f4126c61c76afbc"
+      }
+    }
+  ],
+  "completed_unix": 1793038062.605437
+}

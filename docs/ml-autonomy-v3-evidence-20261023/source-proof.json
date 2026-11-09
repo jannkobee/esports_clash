@@ -1,0 +1,13 @@
+{
+  "allowlist": [
+    "macroCandidate.ts"
+  ],
+  "sourceHash": "1f85a74eb336f0e666bc6e74853115100fb3350a558788360db493da137a0025",
+  "portablePolicyHash": "6a06c28e2685302301e6b974cb030dd066501efbc93ca80640cf9f81e8512434",
+  "tests": {
+    "typecheck": true,
+    "compiledInterpreterParity": 65
+  },
+  "diff": "New isolated macroCandidate.ts\n// Generated strategic hypothesis: visible-state affine action scores.\nexport function score(x: readonly number[]): number[] {\n  const w=[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,-0.3,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];\n  const b=[0,0,0,0,0];\n  return w.map((r,i)=>r.reduce((v,c,j)=>v+c*x[j],b[i]));\n}\n",
+  "hypothesis": "Change optional same-tier macro preferences using legitimate visible context."
+}

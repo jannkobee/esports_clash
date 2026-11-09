@@ -10,6 +10,7 @@
 <a href="{{ route('management.index',$kind) }}">&larr; {{ ucfirst($kind) }} management</a>
 <div class="page-heading"><div><p class="eyebrow">{{ $kind === 'avatar' ? 'AVATAR BUILDER' : 'ITEM BUILDER' }}</p><h1>{{ $entry?->name ?? 'Create '.$kind }}</h1><p class="muted">Work through the sections, then save your draft. Fields marked * are required.</p></div>@if($entry)<span class="badge">{{ ['draft'=>'Draft','review'=>'Ready for review','archived'=>'Archived'][$entry->status] }} &middot; v{{ $entry->version }}</span>@endif</div>
 <div class="notice">Draft workspace: prompts describe intended behavior and visuals. They do not implement new mechanics, generate images, or publish assets. Mechanical changes need code and balance review; visual jobs remain manual.</div>
+@if($kind==='avatar' && $entry?->source_id)<p><a href="{{ route('registry.edit',$entry->source_id) }}">Compare with the published avatar and engine values</a></p>@endif
 @if($archived)<div class="notice">This design is archived. Restore it below before editing.</div>@endif
 <nav class="manage-steps" aria-label="Builder sections"><a href="#identity">1. Identity & {{ $kind==='avatar'?'look':'effect' }}</a><a href="#details">2. {{ $kind==='avatar'?'Stats & skills':'Stats & roles' }}</a><a href="#save-design">3. Save draft</a>@if($entry)<a href="#review-design">Review & history</a>@endif</nav>
 <form id="content-editor" method="post" action="{{ $entry ? route('management.update',[$kind,$entry]) : route('management.store',$kind) }}" data-content-editor>

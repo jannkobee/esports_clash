@@ -25,8 +25,9 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => $data['password'],
         ]);
+        $user->forceFill(['supporter_trial_ends_at'=>now('UTC')->addMonthNoOverflow(),'supporter_level'=>'beacon'])->save();
 
-        return response()->json($this->tokenResponse($user, $data['device_name'] ?? 'Esports Clash web client'), 201);
+        return response()->json($this->tokenResponse($user, $data['device_name'] ?? 'Hexatrick web client'), 201);
     }
 
     public function login(Request $request): JsonResponse
@@ -42,7 +43,7 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['email' => ['The supplied credentials are incorrect.']]);
         }
 
-        return response()->json($this->tokenResponse($user, $data['device_name'] ?? 'Esports Clash web client'));
+        return response()->json($this->tokenResponse($user, $data['device_name'] ?? 'Hexatrick web client'));
     }
 
     public function logout(Request $request): JsonResponse
@@ -58,7 +59,7 @@ class AuthController extends Controller
         return [
             'token' => $user->createToken($deviceName, ['club:read', 'club:write', 'matches:read', 'matches:write'])->plainTextToken,
             'token_type' => 'Bearer',
-            'user' => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email],
+            'user' => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email,'supporter'=>app(\App\Services\SupporterMembership::class)->status($user),'theme'=>app(\App\Services\PersonalThemes::class)->effective($user)],
         ];
     }
 }

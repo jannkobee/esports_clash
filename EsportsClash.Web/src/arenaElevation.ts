@@ -1,48 +1,71 @@
-import { LANDSCAPE, stoneLaneEdges } from './arenaLandform.ts';
+import { LANDSCAPE, topLaneEdges, botLaneEdges } from './arenaLandform.ts';
+import { ARENA_WIDTH, ARENA_HEIGHT, LANE_Y, laneY, LANE_SLOPE, ACTIVE_MAP_PROFILE, topLaneY, botLaneY } from './arenaLayout.ts';
 
 /** Presentation height only: game positions, ranges, collision and AI stay 2D. */
-export const RIDGE_HEIGHT = 32;
-export const RIDGE_RAMPS = { north: [870, 1110, 1490, 1730], south: [960, 1120, 1480, 1640] } as const;
+export const RIDGE_HEIGHT = 38;
+export const RIDGE_RAMPS = ACTIVE_MAP_PROFILE.ramps;
+
 const smooth = (a: number, b: number, value: number) => {
-  const t = Math.max(0, Math.min(1, (value - a) / (b - a))); return t * t * (3 - 2 * t);
+  const t = Math.max(0, Math.min(1, (value - a) / (b - a)));
+  return t * t * (3 - 2 * t);
 };
+
 export function ridgeRampInfluence(x: number, north: boolean) {
-  let influence=0;
-  for(const center of north?RIDGE_RAMPS.north:RIDGE_RAMPS.south)influence=Math.max(influence,1-smooth(24,62,Math.abs(x-center)));
+  let influence = 0;
+  for (const center of north ? RIDGE_RAMPS.north : RIDGE_RAMPS.south) {
+    influence = Math.max(influence, 1 - smooth(24, 62, Math.abs(x - center)));
+  }
   return influence;
 }
-export function arenaGroundHeight(x: number, y: number) {
-  if (x < 0 || x > 2600 || y < 0 || y > 760) return 0;
-  const homeDistance=Math.min(x,2600-x);
-  if(homeDistance<=LANDSCAPE.left)return RIDGE_HEIGHT;
-  const edge = stoneLaneEdges(x), outside = Math.max(edge.top - y, y - edge.bottom, 0);
-  if(outside<=0)return RIDGE_HEIGHT;
-  if(outside>=90&&homeDistance>=LANDSCAPE.left+56)return 0;
-  const width = 44 + ridgeRampInfluence(x, y < 380) * 46;
-  const lane = 1 - smooth(0, width, outside);
-  const base = 1 - smooth(LANDSCAPE.left, LANDSCAPE.left + 56, homeDistance);
-  return RIDGE_HEIGHT * Math.max(lane, base);
+
+/** Center X of the organic winding river dividing West and East jungles. */
+export function chasmCenterX(y: number) {
+  return ARENA_WIDTH / 2 + Math.sin((y - LANE_Y) * 0.0055) * 26;
 }
 
-/** Same equations are used by the ground mesh and its painted shoulder material. */
-export const arenaElevationGLSL = /* glsl */`
+export function arenaGroundHeight(x: number, y: number): number {
+  if (x < 0 || x > ARENA_WIDTH || y < 0 || y > ARENA_HEIGHT) return 0;
+
+  // Center River Island (1400, 720) & Boss Coves stay at natural ground level
+  const distCenter = Math.hypot(x - ARENA_WIDTH / 2, y - LANE_Y);
+  const islandFactor = 1 - smooth(78, 138, distCenter);
+
+  const distTopPit = Math.hypot(x - ARENA_WIDTH / 2, y - 95);
+  const distBotPit = Math.hypot(x - ARENA_WIDTH / 2, y - 1345);
+  const pitFactor = Math.max(1 - smooth(64, 112, distTopPit), 1 - smooth(64, 112, distBotPit));
+
+  // Top and Bottom organic earthen lanes sit flush with the grassy field (no platform step!)
+  const laneX = Math.max(240, Math.min(ARENA_WIDTH - 240, x));
+  const topY = topLaneY(laneX);
+  const botY = botLaneY(laneX);
+  const distTopLane = Math.hypot(x - laneX, y - topY);
+  const distBotLane = Math.hypot(x - laneX, y - botY);
+  const minLaneDist = Math.min(distTopLane, distBotLane);
+  const halfWidth = ACTIVE_MAP_PROFILE.laneHalfWidth;
+
+  // Base clearings and lanes are at RIDGE_HEIGHT; grassy field is flush with a gentle organic roll (0..1.8 units)
+  const distBlueBase = Math.hypot(x - 200, y - LANE_Y);
+  const distRedBase = Math.hypot(x - (ARENA_WIDTH - 200), y - LANE_Y);
+  const baseKeepFlat = Math.max(1 - smooth(120, 220, Math.min(distBlueBase, distRedBase)), islandFactor, minLaneDist <= halfWidth ? 1 : 0);
+  const organicWave = (Math.cos((x - 1400) * 0.006) * Math.cos((y - 720) * 0.008) - 0.5) * 1.6 * (1 - baseKeepFlat);
+  const groundLevel = RIDGE_HEIGHT + organicWave;
+
+  // River bed gently carved below the grassy field (masked out at river fords, center island, and boss coves)
+  const fordMask = smooth(halfWidth - 8, halfWidth + 58, minLaneDist);
+  const chasmDist = Math.abs(x - chasmCenterX(y)) + Math.sin(y * 0.018) * 8;
+  const riverMask = (1 - smooth(32, 96, chasmDist)) * (1 - islandFactor) * (1 - pitFactor * 0.88) * fordMask;
+  const riverDrop = -50.0 * riverMask;
+
+  return Math.max(-14, groundLevel + riverDrop);
+}
+
+/** Shader elevation equations used for 3D terrain rendering */
+export const arenaElevationGLSL = /* glsl */ `
  vec2 ridgeLaneEdges(float x){
-  float u=clamp((x-${LANDSCAPE.left}.0)/${LANDSCAPE.right-LANDSCAPE.left}.0,0.,1.);
-  return vec2(${LANDSCAPE.laneTop}.0+sin(u*12.5663706)*9.+sin(u*28.2743339)*3.,
-   ${LANDSCAPE.laneBottom}.0+sin(u*9.42477796+.6)*8.+sin(u*21.9911486)*4.);
- }
- float ridgeRamp(float x,bool north){
-  float distanceToRamp=north?
-   min(min(abs(x-870.),abs(x-1110.)),min(abs(x-1490.),abs(x-1730.))):
-   min(min(abs(x-960.),abs(x-1120.)),min(abs(x-1480.),abs(x-1640.)));
-  return 1.-smoothstep(24.,62.,distanceToRamp);
+  float ly = ${LANE_Y}.0;
+  return vec2(ly - 450.0, ly + 450.0);
  }
  float ridgeHeight(vec2 p){
-  vec2 edge=ridgeLaneEdges(p.x);
-  float outside=max(max(edge.x-p.y,p.y-edge.y),0.);
-  float width=44.+ridgeRamp(p.x,p.y<380.)*46.;
-  float lane=1.-smoothstep(0.,width,outside);
-  float base=1.-smoothstep(${LANDSCAPE.left}.0,${LANDSCAPE.left+56}.0,min(p.x,2600.-p.x));
-  return ${RIDGE_HEIGHT}.0*max(lane,base);
+  return ${RIDGE_HEIGHT}.0;
  }
 `;

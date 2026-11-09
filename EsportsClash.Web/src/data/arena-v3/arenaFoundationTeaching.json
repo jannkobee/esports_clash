@@ -1,0 +1,36 @@
+{
+  "kind": "instructional-initialization",
+  "seed": 73149,
+  "synthetic_examples": 61952,
+  "heldout_examples": 2048,
+  "imitation_mse": 0.005335403606295586,
+  "gameplay_improvement_measured": false,
+  "live_teacher_used": false,
+  "revision": 3,
+  "parent": "instructional-foundation-v2",
+  "playbook_sha256": "0598e9d24e0f1e11ff55f697724e660da8a33dc130d26f945a46a912c2e3b01c",
+  "playbook_version": 3,
+  "lessons": [
+    "structures",
+    "farming",
+    "targets",
+    "resources",
+    "positioning",
+    "teamwork",
+    "towers",
+    "objectives",
+    "vision",
+    "recall",
+    "spells",
+    "conversion"
+  ],
+  "brief": [
+    "Win as a team by destroying the opposing Nexus.",
+    "Observe only information available to your team.",
+    "Move, attack, cast, recall and place wards through the legal command interface.",
+    "Use nearby farming and structures to make progress; use spells when they offer value.",
+    "Notice health, mana and tower danger; experience may teach exceptions to the starting advice.",
+    "Complete a useful recall channel unless changing circumstances warrant cancelling it.",
+    "Winning matches matters more than accumulating damage or gold without finishing."
+  ]
+}

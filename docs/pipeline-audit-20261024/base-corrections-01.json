@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "solenne-vaelor",
+    "prompt": "Edit this technical base mannequin. Remove ALL scalp hair completely: completely BALD smooth head, no braids or strands. No facial hair, no jewelry, no accessories. Keep the adult female face, same body proportions, same wide symmetrical straight-arm A-pose, full head-to-feet framing and hand/leg separation. Make the ENTIRE figure a uniform neutral matte gray clay anatomical mannequin, including face and all skin. Keep opaque close-fitting smooth chest/pelvis modesty coverage with no seams, trim or clothing detail. No outfit. Preserve fingers individually separated. Remove the entire background INCLUDING gray halo, shadow, glow and floor; true clear transparent alpha everywhere outside the figure. Only one clean isolated neutral gray mannequin, no labels.",
+    "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-3923f3a6-cef4-4178-83f4-3920f273ee40.png",
+    "destination": "docs/pipeline-audit-20261024/upload-assets/base/solenne-vaelor-v2.png"
+  },
+  {
+    "slug": "ivera-frostwhistle",
+    "prompt": "Edit this technical base mannequin. Remove ALL scalp hair completely: completely BALD smooth head, no braids or strands. No facial hair, no jewelry, no accessories. Keep the adult female face, same body proportions, same wide symmetrical straight-arm A-pose, full head-to-feet framing and hand/leg separation. Make the ENTIRE figure a uniform neutral matte gray clay anatomical mannequin, including face and all skin. Keep opaque close-fitting smooth chest/pelvis modesty coverage with no seams, trim or clothing detail. No outfit. Preserve fingers individually separated. Remove the entire background INCLUDING gray halo, shadow, glow and floor; true clear transparent alpha everywhere outside the figure. Only one clean isolated neutral gray mannequin, no labels.",
+    "source": "C:\\Users\\User\\.codex\\generated_images\\01a16c64-2c6f-7bd0-9054-b259b38c09e1\\exec-d8081e8a-d42f-4f2c-b4a3-668bc25ea61c.png",
+    "destination": "docs/pipeline-audit-20261024/upload-assets/base/ivera-frostwhistle-v2.png"
+  }
+]

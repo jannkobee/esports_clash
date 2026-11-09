@@ -3,6 +3,7 @@
 **/vendor
 **/dist
 EsportsClash.Web/avatar-review-dist
+EsportsClash.Api/public/base-inspector
 **/.env
 **/.env.*
 **/*.log
@@ -11,6 +12,14 @@ EsportsClash.Web/avatar-review-dist
 .browser-ai-audit
 artifacts
 art
+!art/
+art/*
+!art/avatars-v7/
+!art/avatars-v7/**
+!art/avatars-v8/
+!art/avatars-v8/**
+!art/avatars-v9/
+!art/avatars-v9/**
 EsportsClash.Api/database/*.sqlite*
 EsportsClash.Api/storage/logs/*
 EsportsClash.Api/bootstrap/cache/*.php

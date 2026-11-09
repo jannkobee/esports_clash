@@ -1,0 +1,257 @@
+{
+  "status": "prototype mechanics; not complete/qualified characters",
+  "heroes": [
+    {
+      "index": 15,
+      "legacyId": "Voltaire",
+      "canonicalId": "teslan-veyr",
+      "displayName": "Teslan Veyr",
+      "title": "The Storm Circuit",
+      "role": "electrical trap architect",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "coil scientist with portable ground rods, insulated coat with hazard seams, copper articulated monocle",
+      "combatSignature": "constructs **circuits and switches polarity**; no electric ball travel, remnant decoy, or unit vortex.",
+      "counterplay": "destroy a rod, cross before activation or fight outside the line.",
+      "aiCue": "straddle a choke with rods, adapt polarity based on projectile pressure versus allied DPS.",
+      "abilities": {
+        "P": {
+          "name": "Closed Circuit",
+          "cooldownNote": null,
+          "designText": "a successful link between two Teslan rods grants a stored Capacitor charge, maximum 2."
+        },
+        "S1": {
+          "name": "Drive Rod",
+          "cooldownNote": "8 s, two charges",
+          "designText": "place a destructible rod at a ground point, 140 GU range, 3 s lifetime after the second rod. Two rods generate a clearly drawn current beam between them; crossing once damages lightly."
+        },
+        "S2": {
+          "name": "Reverse Current",
+          "cooldownNote": "12 s",
+          "designText": "flips the circuit to **Repel** or **Conduct** for 2.5 s. Repel deflects enemy projectiles crossing the beam slightly; Conduct increases allied attack speed when standing adjacent to the line. Each hero may benefit once per cast."
+        },
+        "R": {
+          "name": "Brownout Protocol",
+          "cooldownNote": "80 s",
+          "designText": "consumes Capacitors to briefly shut down **deployables** and delay the next cast windup of enemies who remain on the circuit line (up to 0.5 s); opponents can walk away before the 0.75 s charge finishes. It does not silence globally or auto-pull."
+        }
+      }
+    },
+    {
+      "index": 25,
+      "legacyId": "Midnight Equation",
+      "canonicalId": "vesper-nullcode",
+      "displayName": "Vesper Nullcode",
+      "title": "The Inertia Heretic",
+      "role": "mobility-rewriting control mage",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "androgynous angular physicist with a suspended broken gyroscope, indigo measurement robe and luminous chalk-rings; **not** a black-hole channeler",
+      "combatSignature": "rewrites **turning and momentum**, never sucks targets into a singularity.",
+      "counterplay": "stop moving briefly, move against marked vectors, or burst her before the disk is set.",
+      "aiCue": "bend committed enemy approaches away from allied carries / boss pit.",
+      "abilities": {
+        "P": {
+          "name": "Unspent Momentum",
+          "cooldownNote": null,
+          "designText": "enemies traveling 45 GU in a straight line nearby contribute one Momentum sample (max 4, visible)."
+        },
+        "S1": {
+          "name": "Tangent Fault",
+          "cooldownNote": "8 s",
+          "designText": "lays a 60-GU vector tile; a non-unstoppable enemy crossing is gently redirected 20° clockwise or counterclockwise (chosen on cast), maintaining speed. No teleport/stun."
+        },
+        "S2": {
+          "name": "Mass Argument",
+          "cooldownNote": "13 s",
+          "designText": "declares a public high-friction disk for 3 s. Enemy dashes passing through are shortened by at most 20%; ordinary walking is slowed 10%. Does not cancel the dash outright."
+        },
+        "R": {
+          "name": "Borrowed Orbit",
+          "cooldownNote": "93 s",
+          "designText": "consumes Momentum to construct a rotating 145-GU field lasting 4 s. Within it, movement inputs are smoothly biased into an arc of at most 25°/second, telegraphed by floor arrows. Stationary enemies or those who deliberately countersteer can hold position. No forced center pull or AoE wipe."
+        }
+      }
+    },
+    {
+      "index": 30,
+      "legacyId": "Hooklyn",
+      "canonicalId": "mora-fenhook",
+      "displayName": "Mora Fenhook",
+      "title": "The Lantern Ferrier",
+      "role": "tactical extraction support",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "elderly marsh boatwoman beneath a wide oilcloth hood, a segmented oar and a floating narrow spirit skiff; completely remove hooked chains and warden cage",
+      "combatSignature": "an **opt-in, predictable ferry service** enables rescues and flanks.",
+      "counterplay": "deny the embarkation circle, destroy a post, attack exposed passengers after arrival or board to contest the far dock.",
+      "aiCue": "reserve an actual safe embarkation point and allied consent; never autopull a threatened ally or send them into tower range.",
+      "abilities": {
+        "P": {
+          "name": "Crossing Fees",
+          "cooldownNote": null,
+          "designText": "when an allied hero safely finishes a Mora-established route, Mora accrues Fare (max 2), each reducing the next route setup delay by 0.15 s. There is no reward for trapping or dragging enemies."
+        },
+        "S1": {
+          "name": "Mooring Post",
+          "cooldownNote": "8 s, 2 charges",
+          "designText": "plants a small lit mooring within 115 GU. Posts have 2 HP, last 7 s, and are legal only on traversable ground. First post is the departure; second is the arrival. Max one linked pair."
+        },
+        "S2": {
+          "name": "Departing Bell",
+          "cooldownNote": "13 s",
+          "designText": "if two posts exist and a collision-valid traversable path joins them, summons a 2.3 s ferry that follows that path at fixed speed. Allies and enemies **voluntarily board** within 20 GU using a public interaction or AI accepted decision; a boarded unit cannot attack for the trip but may disembark at legal path checkpoints. No forced motion from hard CC."
+        },
+        "R": {
+          "name": "The Last Crossing",
+          "cooldownNote": "86 s",
+          "designText": "temporarily creates two public **emergency moorings** at legal points near Mora, then dispatches a second larger ferry allowing up to two passengers for one journey. It gives passengers a small shield **on arrival**, not invulnerability while traveling; destroying arrival post stops the ferry at its nearest legal earlier dock."
+        }
+      }
+    },
+    {
+      "index": 31,
+      "legacyId": "Arsenaldo",
+      "canonicalId": "mirelle-vane",
+      "displayName": "Mirelle Vane",
+      "title": "The Atelier Prodigy",
+      "role": "geometry-based tactical mage with ten authored fabric patterns",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "sharp-eyed **adult mage girl (early twenties)**, needle-hair comb, short asymmetrical ink-black sleeve, ivory structured waistcoat, oxblood petal-skirt over practical shorts, flat boots, giant folded-paper pattern cape. Her floating helper is a brass bobbin, **not three elemental spheres**",
+      "combatSignature": "draws physical **tailoring pins and stitchwork** that temporarily change battlefield relationships. No elemental combinations, ordered orb recipe, or copy of the Invoker ability keyboard.",
+      "counterplay": "focus a pin as soon as she commits to a triangle, rotate the battle outside her prepared geometry, or force spells when she holds only one pin.",
+      "aiCue": "choose pages by expected ally survival, route safety, projectile timing and objective control—not a fixed spell chain. **Uniqueness gate:** no elemental invocation recipes, no orb passive stat cycling, no Quas/Wex/Exort keyboard layout, no AoE meteor/EMP/ice wall or summoned elemental familiar copied from classic kits.",
+      "abilities": {
+        "P": {
+          "name": "Pattern Memory",
+          "cooldownNote": null,
+          "designText": "Mirelle can maintain **three visible 2-HP tailor pins** at once, each lasting 6 s and anchored to traversable ground; new pins replace the oldest. Two or three pins establish a line/triangle with clear world-projected stitch geometry. Valid layouts must leave legal passage and cannot cross impassable world walls."
+        },
+        "S1": {
+          "name": "Pin the Hem",
+          "cooldownNote": "5 s, max 3 stored pin charges with staggered recharge",
+          "designText": "tosses a pin within 125 GU, causing a small impact sting only if it hits a target; the pin stays on the ground. At least one pin is required for most pages. Pins are marked for **both** teams and can be broken by 2 basic attacks."
+        },
+        "S2": {
+          "name": "Recut",
+          "cooldownNote": "10 s",
+          "designText": "chooses one existing pin and slides it along a visible, collision-valid 40-GU path after a 0.4 s warning. Enemies crossed by the moving thread take one light hit; recasting on empty ground fails without consuming the cooldown. Also cycles the selected **page group** when no pin is targeted, with no cast or mana cost."
+        },
+        "R": {
+          "name": "Pattern Book",
+          "cooldownNote": "global weave lockout 7 s",
+          "designText": "hold/activate a **radial palette** of ten named patterns; choosing a page is input selection, then releasing R makes **one authoritative cast**. Each page has its own cooldown, cost and geometry requirement. The global weave lockout is a post-cast throttle, **not an 80-second ultimate imposed on all ten pages**. Major pages have longer personal cooldowns. A single chosen page cannot be released if its pin geometry or cooldown is invalid; show the reason before committing. Each successfully cast page consumes **exactly its declared pins**."
+        }
+      },
+      "rPageSpells": [
+        {
+          "page": 1,
+          "patternRole": "**Baste Line** — crossing tax",
+          "requirementsAndEffect": "2 pins; creates a temporary stitch seam between them for 3 s. First enemy crossing is slowed 20% for 1 s, taking minor damage. Consumes 2 pins.",
+          "draftCooldown": "16 s",
+          "counterplay": "Cut either pin or walk around the open-ended seam"
+        },
+        {
+          "page": 2,
+          "patternRole": "**Pocket Shelter** — single-ally save",
+          "requirementsAndEffect": "1 pin within 60 GU of a visible ally; projects a directional cloth flap for 2 s that intercepts **one** incoming projectile from the pin-facing side, then tears. Consumes 1.",
+          "draftCooldown": "22 s",
+          "counterplay": "Flank the cloth or bait the single catch"
+        },
+        {
+          "page": 3,
+          "patternRole": "**Held Breath** — projectile scheduling",
+          "requirementsAndEffect": "2 pins; establishes a 2.2 s fabric pocket. An **allied consenting** non-ultimate projectile crossing the seam is held for up to 0.7 s then released along its **original heading** at its original team ownership and capped damage. Can hold only one projectile. Consumes 2.",
+          "draftCooldown": "28 s",
+          "counterplay": "Move while the shot is parked or sever seam; no instant redirect"
+        },
+        {
+          "page": 4,
+          "patternRole": "**Ladder Stitch** — traversable ground hazard bridge",
+          "requirementsAndEffect": "2 pins spanning an enemy *temporary ground hazard* up to 80 GU. For 3 s the seam permits allies to cross that specific hazard with reduced tick damage; it never bridges hard world walls, pits or spawn exclusion. Consumes 2.",
+          "draftCooldown": "32 s",
+          "counterplay": "Destroy one pin or contest bridge exit"
+        },
+        {
+          "page": 5,
+          "patternRole": "**Pleat Fold** — cover angle",
+          "requirementsAndEffect": "3 pins; a triangular drape folds outward from its longest edge for 2.5 s, creating a one-hit projectile obstruction with an openly marked weak vertex. Consumes 3.",
+          "draftCooldown": "38 s",
+          "counterplay": "Fire at the weak vertex or attack from behind"
+        },
+        {
+          "page": 6,
+          "patternRole": "**Serrated Seam** — damage route",
+          "requirementsAndEffect": "2 pins; a thin serrated thread between them vibrates 3 times over 2.4 s. Enemies crossing get one damaging cut per thread pulse **max once per target across the entire spell**; enemies staying still are not repeatedly hit. Consumes 2.",
+          "draftCooldown": "24 s",
+          "counterplay": "Stop crossing or walk around endpoints"
+        },
+        {
+          "page": 7,
+          "patternRole": "**Wrong-Side Hem** — reposition pressure",
+          "requirementsAndEffect": "2 pins; for 2.5 s allies entering one side of the seam gain a brief 15% speed burst **toward its far endpoint** once. Enemies see the arrow but are unaffected. Consumes 2.",
+          "draftCooldown": "26 s",
+          "counterplay": "Hold the destination endpoint / destroy pins"
+        },
+        {
+          "page": 8,
+          "patternRole": "**Tacking Waltz** — formation cue",
+          "requirementsAndEffect": "3 pins; over 3 s, projects three **ordered** steps. Allies who intentionally pass steps 1→2→3 receive a shield upon finishing; skipping a step gives no reward. Consumes 3.",
+          "draftCooldown": "40 s",
+          "counterplay": "Deny a step; the route can be read and contested"
+        },
+        {
+          "page": 9,
+          "patternRole": "**Silhouette Dress** — false threat / information",
+          "requirementsAndEffect": "1 pin; raises a life-size garment cutout for 3.5 s that **visibly advertises** one fake ability windup on Mirelle's next R selection but causes no damage. The fake always has different stitching from a real cast for skilled readers. Consumes 1.",
+          "draftCooldown": "35 s",
+          "counterplay": "Recognize the dotted stitching or destroy the cutout"
+        },
+        {
+          "page": 10,
+          "patternRole": "**Grand Atelier** — teamfight ultimate finish",
+          "requirementsAndEffect": "3 pins spanning a valid triangle, all within 150 GU. After a 1.0 s telegraph, a fabric canopy unfolds for 4 s. Allied units inside gain **direction-dependent** 15% incoming damage reduction and 10% faster recovery from *future* non-ultimate casts. Enemies may move freely; seams can be destroyed to collapse the canopy. Consumes 3.",
+          "draftCooldown": "90 s",
+          "counterplay": "Break a support seam, fight from outside, bait the final layout"
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "legacyId": "Fizzlewing",
+      "canonicalId": "lulla-faespring",
+      "displayName": "Lulla Faespring",
+      "title": "The Keeper of Unfinished Dreams",
+      "role": "spell-recovery controller / anti-combo mage",
+      "designSource": "ESPORTSCLASH_ORIGINAL_45_HERO_REDESIGN_V3.md",
+      "source": "proposal / unimplemented",
+      "artDirection": "unnervingly calm adult moth archivist with a quilted cloak, waist-hung mechanical bedside clocks and large glass chime ring",
+      "combatSignature": "doesn't stop enemies *casting*; she makes **repeated completed casts leave a visible afterthought**, creating windows her team can exploit",
+      "counterplay": "destroy chimes, cast outside their listening radius, or stagger casts between visible theater beats.",
+      "aiCue": "deploy near a known upcoming enemy combo or objective contest; save R for multiple enemies preparing windups, not as a panic global silence. **Originality gate:** no phase immunity, no untargetability, no teleporting projectile, no area silence, no tether-and-snap punishment.",
+      "abilities": {
+        "P": {
+          "name": "Drowse Ledger",
+          "cooldownNote": null,
+          "designText": "an enemy champion completing a **non-basic-attack ability** within 95 GU of an active Lulla chime accumulates one Drowse note (max 2, 4 s duration). Each unique cast can add at most one note. Notes do not affect the cast that just finished."
+        },
+        "S1": {
+          "name": "Hang the Chime",
+          "cooldownNote": "8 s, two charges",
+          "designText": "places a 2-HP wind chime on legal ground within 125 GU, lasting 5 s. It projects a public 95-GU listening radius. Max two chimes; destroying a chime ends its aura but does not retroactively cancel completed spells."
+        },
+        "S2": {
+          "name": "Borrowed Yawn",
+          "cooldownNote": "13 s",
+          "designText": "consumes one Drowse note on an enemy in 130 GU. On that enemy's **next successfully completed non-basic spell** within 3 s, adds **0.35 s post-cast recovery** after the spell's effect already resolves; if no valid cast happens, the tax expires harmlessly. No silence, disable, cast failure or stealth."
+        },
+        "R": {
+          "name": "Intermission Theater",
+          "cooldownNote": "90 s",
+          "designText": "opens an 135-GU circular dream stage for 4 s, with **three announced chime beats** at 1, 2, and 3 s. Enemy casts which *complete inside* a beat window pay 0.25 s post-cast recovery (subject to the global recovery cap), while allied casts completed during beats gain 12% shorter recovery (never faster windup). Enemy spell results and damage still occur normally."
+        }
+      }
+    }
+  ]
+}

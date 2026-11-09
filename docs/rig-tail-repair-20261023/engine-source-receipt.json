@@ -1,0 +1,32 @@
+{
+  "files": {
+    "retarget-unirig.py": "03d3c8a2eddd49d851c0a4b4dcda8091ea0573ecf6fda1c947dca67dc510ed7b",
+    "retarget_contacts.py": "ef38bbbec4eada8ea702fb4e9cee7ade6138a812269f4d5cf2c998786eb457a7",
+    "retarget_motion.py": "4980e8b548daa34c06919922e91d40c04a0e0a3f719abe31a28763bd103958b1",
+    "equipment_skin.py": "405111fd5b292aab48d97aa56c1d0376e13c864314b4d077566459ed44642490",
+    "asset_pipeline/cli.py": "5626e490955645a14a97d9410ab1c4e8542a299234d546a65bdce1b880b85706",
+    "asset_pipeline/compute.py": "30e4d7f86b468170866e87c573f4cad6456e1b288ccc9acf6945586ca4087001",
+    "asset_pipeline/deformation.py": "81b0bf320e4d2bbf3819bae2322a91052a62132e0626bbb06ad1510928765777",
+    "asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+    "asset_pipeline/gpu_probe.py": "a332aefadbe7de0e78bdb0bc32b4c949351d324624e878274eb5074fad946705",
+    "asset_pipeline/learning.py": "4a9d7b83c5dbc6244b1051c3f09da729e4cc868ff069ad96b88901a8458e0db6",
+    "asset_pipeline/quality.py": "cea6e98ec8417149149e331a372b6c884e96f7367964539a26321bd541b67346",
+    "asset_pipeline/rig_stages.py": "29a2e2719d67f4df9c1167654c352f184cb01f9e73a0752258d302d60ec0e959",
+    "asset_pipeline/storage.py": "6cede65952b6c39a2ccbdb53ef9e3e5b3a38c353859b094a3598543174609111",
+    "asset_pipeline/store.py": "574739d0f4ccbd694f5fe54e3400dde7cfa240970e5c734eab628a1faef2fc2d",
+    "asset_pipeline/tail_repair.py": "ddb73718d622139618c707ee824538fe7e003e7a26e96724b81713cbd47760ca",
+    "asset_pipeline/train_worker.py": "0367e24755fa89bb82bf2bc4b35ce1c1724d857bb75c0c9f7f5ea24ec2eb2a30",
+    "asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "qualify-prepared.py": "0769a43f37a92019ef657b8eb79ae2b10b187700c3c23e02b36fa4d15939e30d",
+    "browser.mjs": "d04a9e7ee17fa8f93253442ef457ff4d0dd81a683c60f09d8949ebd06038c883",
+    "review-retained-candidate.mjs": "730ce14ae641058b1aea2e00bde135216642edd0fb28f4021ce0f6543a0487a7",
+    "diagnose_retarget.py": "4c1c37f09373112b163a9ea798195671abb42ae582ecd2a7d3ca3f8e59bcd554"
+  },
+  "blender": [
+    "Blender 4.5.3 LTS",
+    "\tbuild date: 2025-09-09",
+    "\tbuild time: 01:38:15",
+    "\tbuild commit date: 2025-09-08"
+  ],
+  "publication_eligible": false
+}

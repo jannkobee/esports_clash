@@ -1,0 +1,248 @@
+{
+  "date": "2026-10-23",
+  "kind": "outcome-reward-and-full-match-storage-engineering",
+  "source_hash": "02b2cc09a2cde19a2d5bd34bd0f9b2c0f58796d47a610a1a75a8c6e670f9b73d",
+  "rules_version": "4f29246adbfff0dd7171f7010571ab99864cc4d7400c0d1f3319c67808a13eb8",
+  "catalog_version": "79f8710120bea9194262c257763a3f9e481caf9626a09551caf4e6023755a3c9",
+  "teaching": {
+    "version": 6,
+    "playbook_sha256": "cc9055ad42add7d93a427cacbf883242a8954403cbef9ed93d6f596242e5c04e",
+    "foundation_sha256": "4160600343a834925aa3d6d86f6baef6a27c3dcab2a800727d2312cdd2e67b0e"
+  },
+  "reward": {
+    "version": "terminal-potential-outcomes-v2",
+    "gamma_second": 0.9998,
+    "gae_lambda_second": 0.98,
+    "terminal_win": 5,
+    "critic_inputs": 7,
+    "potential_weights": {
+      "structures": 0.5,
+      "economy": 0.15,
+      "trades": 0.15,
+      "health": 0.1,
+      "dragon": 0.04,
+      "siege": 0.04,
+      "mana": 0.02
+    },
+    "structure_weights": {
+      "outer_tower": 1,
+      "inner_tower": 1.5,
+      "nexus_tower": 2,
+      "barracks": 1.2,
+      "nexus": 3
+    },
+    "economy_scale": 10000,
+    "death_scale": 10,
+    "objective_scale": 3
+  },
+  "runner_image": "sha256:f77ccee9e0b620103db44f845c11b02225cc29c6015efd3ac1da2bd438f8accb",
+  "online_image": "sha256:103483c33e66a940b61666dbda1962ffc35e0f5873a1cf2f34c8c8649e70f735",
+  "checks": {
+    "game_tests": 522,
+    "additional_simulations": 3,
+    "typescript": true,
+    "production_build": true,
+    "backend_tests": 56,
+    "backend_assertions": 457,
+    "worker_tests": 47,
+    "trajectory_storage_tests": 3
+  },
+  "known_full_match_reproduction": {
+    "kind": "known-failed-case-reproduction",
+    "seed": 63004,
+    "fresh_benefit_evidence": false,
+    "request_sha256": "77020ff779af389247861abe0c212bb734625416f6eab9047013524905bab312",
+    "status": "censored",
+    "seconds": 1199.999999999566,
+    "json_bytes": 51034118,
+    "compressed_rows": 9862,
+    "metrics": {
+      "updated": true,
+      "transitions": 9862,
+      "actor_loss": -0.23524999618530273,
+      "value_loss": 0.0006966688088141382,
+      "entropy": 3.7477290630340576,
+      "updates": 1,
+      "unrolls": 1,
+      "competitive_improvement_measured": false,
+      "identity_experience": [
+        {
+          "avatarId": "c_sylla",
+          "cardId": "p_woozy",
+          "cardName": "Zypoo",
+          "transitions": 1871,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 0.0
+        },
+        {
+          "avatarId": "c_kage",
+          "cardId": "p_mirecle",
+          "cardName": "Mirecle",
+          "transitions": 2154,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 0.0
+        },
+        {
+          "avatarId": "c_raijin",
+          "cardId": "p_godson",
+          "cardName": "Godson",
+          "transitions": 1972,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 0.0
+        },
+        {
+          "avatarId": "c_renn",
+          "cardId": "p_dns",
+          "cardName": "DNS",
+          "transitions": 1996,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 0.0
+        },
+        {
+          "avatarId": "c_buck",
+          "cardId": "p_penz",
+          "cardName": "PenZ",
+          "transitions": 1869,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 0.0
+        }
+      ],
+      "reward_version": "terminal-potential-outcomes-v2",
+      "reward_components": {
+        "outcome": 0.0,
+        "shaping": 2.7716865395254953,
+        "structures": 1.0685785970492099,
+        "economy": 0.6607527783492597,
+        "trades": 0.7008529376651282,
+        "health": 0.31828494600039064,
+        "dragon": 0.0,
+        "siege": 0.0,
+        "mana": 0.02321728046143045,
+        "mastery": 0.0
+      },
+      "reward_gamma_second": 0.9998
+    },
+    "checkpoint_restored": true,
+    "raw_sha256": "ec71da112f34d1bbe363f465b9b5c8604c16f3f1c02cc073d0a8f85e0c34590f"
+  },
+  "synthetic_terminal": {
+    "synthetic_engineering_fixture": true,
+    "fresh_benefit_evidence": false,
+    "metrics": {
+      "updated": true,
+      "transitions": 5,
+      "actor_loss": -0.0,
+      "value_loss": 21.907026290893555,
+      "entropy": 1.3754554402112262e-06,
+      "updates": 1,
+      "unrolls": 1,
+      "competitive_improvement_measured": false,
+      "identity_experience": [
+        {
+          "avatarId": "c_kage",
+          "cardId": "p_p1mple",
+          "cardName": "p1mple",
+          "transitions": 1,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 5.0
+        },
+        {
+          "avatarId": "c_kyumi",
+          "cardId": "p_flaker",
+          "cardName": "Flaker",
+          "transitions": 1,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 5.0
+        },
+        {
+          "avatarId": "c_cora",
+          "cardId": "p_daft",
+          "cardName": "Daft",
+          "transitions": 1,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 5.0
+        },
+        {
+          "avatarId": "c_io",
+          "cardId": "p_bigtail",
+          "cardName": "BigTail",
+          "transitions": 1,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 5.0
+        },
+        {
+          "avatarId": "c_valkira",
+          "cardId": "p_thespicy",
+          "cardName": "TheSpicy",
+          "transitions": 1,
+          "mastery_shaping_sum": 0.0,
+          "terminal_outcome_sum": 5.0
+        }
+      ],
+      "reward_version": "terminal-potential-outcomes-v2",
+      "reward_components": {
+        "outcome": 25.0,
+        "shaping": -3.0865530692797636,
+        "structures": -2.4999249249249247,
+        "economy": -0.00015072499999994307,
+        "trades": 0.0,
+        "health": -0.5,
+        "dragon": 0.0,
+        "siege": 0.0,
+        "mana": -0.08647741935483871,
+        "mastery": 0.0
+      },
+      "reward_gamma_second": 0.9998
+    },
+    "exact_same_tick_outcome": 5
+  },
+  "ordinary_ui": {
+    "label": "Learning AI: instructional foundation \u00b7 30 choices \u00b7 30 commands started",
+    "hasDetailedBrief": true,
+    "hasAllThreeBarracks": true,
+    "hasDiscoveryLesson": true,
+    "hasNoAvatarPlaystyles": true,
+    "hasKitFacts": true,
+    "hasTenCombinations": true,
+    "ordinaryPrivateBridgeAbsent": true,
+    "hasOutcomeRewards": true
+  },
+  "storage_stress": {
+    "bytes": 537238570,
+    "rows": 8194,
+    "former_single_string_limit": 536870888,
+    "enforced_js_heap_mib": 96,
+    "sampled_heap_bytes_during_collection": 7315760,
+    "qualification_evidence": false
+  },
+  "known_seed_47_untrained_world_unchanged_from_v5": true,
+  "previous_study": {
+    "id": "df636984-d7f1-412f-b60c-4e8308e4fb46",
+    "status": "failed",
+    "completed_updates": 3,
+    "cause": "RangeError: Invalid string length in full-match JSON.stringify",
+    "artifacts_preserved": true,
+    "reserved_first": 63001,
+    "reserved_count": 1000
+  },
+  "new_study": {
+    "id": "37558d32-548a-4cd2-95b8-fb985bafdc4d",
+    "teaching_version": 6,
+    "reserved_first": 64001,
+    "reserved_count": 1000,
+    "heldout_first": 64257,
+    "heldout_last": 64288,
+    "last_observed_stage": "software-checks"
+  },
+  "artifact_sha256": {
+    ".local-tools/arena-outcomes-long-20261023/reproduced.request.json": "77020ff779af389247861abe0c212bb734625416f6eab9047013524905bab312",
+    ".local-tools/arena-outcomes-long-20261023/long-verification.json": "0476f18782fd67ed87b849c28721dbf6a1e2d8fbdf344a07da2bda950df0614a",
+    ".local-tools/arena-outcomes-terminal-streaming-20261023/terminal-verification.json": "4c968716b16064a4e93f7b3e79df1a21a21d0463d77802c038d75eee85833f08",
+    ".local-tools/arena-outcomes-ui-20261023/ui-verification.json": "32f4aac75e5490fb2b56688f54e9470058709e513f3dc9b3232694848ac6b379",
+    ".local-tools/arena-outcomes-ui-20261023/spectator.png": "eb75388d6c27b481a32a86171d3e962dab7087f3b8400a87a0302dde032e9ab0",
+    "EsportsClash.Web/src/data/arenaOutcomeRewardV2.json": "095d6857f64e196ea5f12370cff26c63f1777715de33146406fef407c8dc62d6"
+  },
+  "starting_weights_changed": false,
+  "base_clicking_fixed": false,
+  "competitive_improvement_established": false
+}

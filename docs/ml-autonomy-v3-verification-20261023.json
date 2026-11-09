@@ -1,0 +1,106 @@
+{
+  "version": 3,
+  "scope": "Known-seed live integration, excluded from fresh benefit claims",
+  "source_hash": "af343e5d246bcc1adb134d020cf9a110ef4c806f19846117a80e047fb475c14e",
+  "live": {
+    "verified": true,
+    "scope": "Known compatibility seed, excluded from held-out benefit",
+    "baselineBothSidesTerminal": true,
+    "repeatedControls": true,
+    "transitions": 29,
+    "learning": {
+      "eligible": 29,
+      "changed": 20,
+      "executed": 29,
+      "blocked": {
+        "legal-pair": 91944,
+        "commitment": 92237,
+        "defense": 28375,
+        "health": 37306,
+        "influence": 430,
+        "survival": 685,
+        "utility-gap": 8408,
+        "tower": 4753,
+        "danger": 1190,
+        "cooldown": 3195
+      }
+    },
+    "actorInfluencesWorld": true,
+    "productionPromoted": false
+  },
+  "ppo": {
+    "metrics": {
+      "updated": true,
+      "transitions": 29,
+      "actor_loss": -0.0027838903479278088,
+      "value_loss": 0.09786109626293182,
+      "entropy": 0.6778677701950073,
+      "updates": 1
+    },
+    "checkpointRestored": true,
+    "freshBenefitEvidence": false
+  },
+  "artifacts": [
+    {
+      "path": "docs/ml-autonomy-v3-evidence-20261023/verification.json",
+      "sha256": "b513877e5587503f86e83b8066686c21e1e5dec900b9941c2657ac015dca050e",
+      "bytes": 587
+    },
+    {
+      "path": "docs/ml-autonomy-v3-evidence-20261023/ppo-update.json",
+      "sha256": "19a9b4146c5c00e35ed926d51f9a7729cadf5d105e516f715761d9eecf4b7de2",
+      "bytes": 262
+    },
+    {
+      "path": "docs/ml-autonomy-v3-evidence-20261023/actor.json",
+      "sha256": "19ccb4daf2523f465d2a06308fb67c548951001e4907285015aefbee1da5dd4b",
+      "bytes": 9179
+    },
+    {
+      "path": "docs/ml-autonomy-v3-evidence-20261023/self-play.json",
+      "sha256": "d7085b28d4732887a30bf7bec517acf8ec73207ef2dc35e9bbf3f38e28418dbf",
+      "bytes": 55202
+    },
+    {
+      "path": "docs/ml-autonomy-v3-evidence-20261023/source-proof.json",
+      "sha256": "9d4f4b388a882420d8fcd7e1ee6cb746e298f5f59b32810b96380da39852bb12",
+      "bytes": 886
+    },
+    {
+      "path": "docs/ml-autonomy-v3-evidence-20261023/source-manifest.json",
+      "sha256": "e792df703954a15a7f2a2452999e932f985246cc454427990ef38d2a2af235c0",
+      "bytes": 26243
+    },
+    {
+      "path": "docs/ml-autonomy-v3-evidence-20261023/baseline-false-0.json",
+      "sha256": "ad539eb0283b5c1d349844d9c5368b373f299c04e77577f6e72cdc8fe3874e14",
+      "bytes": 3252
+    },
+    {
+      "path": "docs/ml-autonomy-v3-evidence-20261023/baseline-false-1.json",
+      "sha256": "4ba4366aa191727eebeceba6bda4594ea9e47b4a231fc5a01913eae2dc592751",
+      "bytes": 3252
+    },
+    {
+      "path": "docs/ml-autonomy-v3-evidence-20261023/baseline-true-0.json",
+      "sha256": "1063b1113f44cff62e36c97b24e34afc9ec17f0814026d1fee5b51193274624c",
+      "bytes": 3240
+    },
+    {
+      "path": "docs/ml-autonomy-v3-evidence-20261023/baseline-true-1.json",
+      "sha256": "103021c52a87bc5b92b45f73bbb8098b1a93b96e5a762b4484dc8ecc94930974",
+      "bytes": 3239
+    }
+  ],
+  "software_checks": {
+    "game_tests": 498,
+    "simulation_tests": 3,
+    "api_tests": 39,
+    "api_assertions": 323,
+    "worker_tests": 37,
+    "parameter_gate_tests": 4,
+    "build": true
+  },
+  "fresh_fullmatch_improvement_established": false,
+  "production_promoted": false
+}

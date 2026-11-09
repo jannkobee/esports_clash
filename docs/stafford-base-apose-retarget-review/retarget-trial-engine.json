@@ -1,0 +1,13 @@
+{
+  "trial_only": true,
+  "provider": "tokenrig",
+  "source_sha256": "7606b5c57b562457ee616875267315751a33a34d74dbf74f07ab59d708230e8d",
+  "rig_sha256": "bffc47c8cf223c82f4c2644138f146fdef6f7c9934e2a14c12755eacad4c1f0b",
+  "original_retarget_sha256": "559181ad08e2babad337ae9c4e822dad481e963112f7ab988900d134df676cba",
+  "trial_retarget_sha256": "15c63409fee88fe3806e2965bbf50bf97e71ccc202ac86228c1557c9909970c4",
+  "substitutions": {
+    "unirig": "tokenrig",
+    "UniRig": "TokenRig"
+  },
+  "limitation": "Exercises the unchanged retarget algorithm. Does not deploy a TokenRig API provider or qualify the result."
+}

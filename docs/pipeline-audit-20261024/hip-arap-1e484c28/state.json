@@ -1,0 +1,14 @@
+{
+  "id": "1e484c28-1442-4306-8187-d92d68d70a3a",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "hip-fold-arap",
+  "runtime_id": "ddb07188977acba2b815846c5f2ead92802114fe87200f49fa9f665e7d698e10",
+  "environment_sha256": "160e42e63b84d075df53fca9c416775671584a1ed926a9ea81ad71691ab2ebab",
+  "started_unix": 1793110305.6513069,
+  "exit_code": 0,
+  "report_sha256": "301df6fb143a0702bf1e124d27b32451ac4c8452744a5fc7a85cf581c43b3d98",
+  "completed_unix": 1793110366.1562688
+}

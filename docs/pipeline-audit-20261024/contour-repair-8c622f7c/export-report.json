@@ -1,0 +1,1421 @@
+{
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "roundtrip": [
+    {
+      "frame": 0,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 3,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 6,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 9,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 12,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 15,
+      "surface_error": 3.112345721454236e-07
+    },
+    {
+      "frame": 18,
+      "surface_error": 3.035654691221765e-07
+    },
+    {
+      "frame": 21,
+      "surface_error": 3.112345721454236e-07
+    },
+    {
+      "frame": 24,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 27,
+      "surface_error": 4.308471767545033e-07
+    },
+    {
+      "frame": 30,
+      "surface_error": 3.746093836419742e-07
+    },
+    {
+      "frame": 33,
+      "surface_error": 4.308471767545033e-07
+    },
+    {
+      "frame": 36,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 39,
+      "surface_error": 3.2748670840018855e-07
+    },
+    {
+      "frame": 42,
+      "surface_error": 3.665201031043781e-07
+    },
+    {
+      "frame": 45,
+      "surface_error": 3.2748670840018855e-07
+    },
+    {
+      "frame": 48,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 51,
+      "surface_error": 3.885747435809761e-07
+    },
+    {
+      "frame": 54,
+      "surface_error": 3.6010283153040923e-07
+    },
+    {
+      "frame": 57,
+      "surface_error": 3.885747435809761e-07
+    },
+    {
+      "frame": 60,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 63,
+      "surface_error": 3.0683618418267085e-07
+    },
+    {
+      "frame": 66,
+      "surface_error": 3.125693941623424e-07
+    },
+    {
+      "frame": 69,
+      "surface_error": 3.0683618418267085e-07
+    },
+    {
+      "frame": 72,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 75,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 78,
+      "surface_error": 3.0683618418267085e-07
+    },
+    {
+      "frame": 81,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 84,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 87,
+      "surface_error": 3.0514176936874706e-07
+    },
+    {
+      "frame": 90,
+      "surface_error": 3.182017282256875e-07
+    },
+    {
+      "frame": 93,
+      "surface_error": 3.0514176936874706e-07
+    },
+    {
+      "frame": 96,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 99,
+      "surface_error": 3.147649863103254e-07
+    },
+    {
+      "frame": 102,
+      "surface_error": 3.05942854544593e-07
+    },
+    {
+      "frame": 105,
+      "surface_error": 3.147649863103254e-07
+    },
+    {
+      "frame": 108,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 111,
+      "surface_error": 3.1224177939034443e-07
+    },
+    {
+      "frame": 114,
+      "surface_error": 3.057943330162279e-07
+    },
+    {
+      "frame": 117,
+      "surface_error": 3.1224177939034443e-07
+    },
+    {
+      "frame": 120,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 123,
+      "surface_error": 3.1447310339506036e-07
+    },
+    {
+      "frame": 126,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 129,
+      "surface_error": 3.1447310339506036e-07
+    },
+    {
+      "frame": 132,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 135,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 138,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 141,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 144,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 147,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 150,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 153,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 156,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 159,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 162,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 165,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 168,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 171,
+      "surface_error": 3.861564838183691e-07
+    },
+    {
+      "frame": 174,
+      "surface_error": 3.9789169796760945e-07
+    },
+    {
+      "frame": 177,
+      "surface_error": 3.861564838183691e-07
+    },
+    {
+      "frame": 180,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 183,
+      "surface_error": 3.035654691221765e-07
+    },
+    {
+      "frame": 186,
+      "surface_error": 3.035654691221765e-07
+    },
+    {
+      "frame": 189,
+      "surface_error": 3.035654691221765e-07
+    },
+    {
+      "frame": 192,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 195,
+      "surface_error": 4.0566769315785523e-07
+    },
+    {
+      "frame": 198,
+      "surface_error": 3.035654691221765e-07
+    },
+    {
+      "frame": 201,
+      "surface_error": 4.0566769315785523e-07
+    },
+    {
+      "frame": 204,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 207,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 210,
+      "surface_error": 3.218659441216714e-07
+    },
+    {
+      "frame": 213,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 216,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 219,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 222,
+      "surface_error": 4.004643753283229e-07
+    },
+    {
+      "frame": 225,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 228,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 231,
+      "surface_error": 3.072856460109544e-07
+    },
+    {
+      "frame": 234,
+      "surface_error": 4.023313522338867e-07
+    },
+    {
+      "frame": 237,
+      "surface_error": 3.072856460109544e-07
+    },
+    {
+      "frame": 240,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 243,
+      "surface_error": 3.9705373628360714e-07
+    },
+    {
+      "frame": 246,
+      "surface_error": 3.47551816394645e-07
+    },
+    {
+      "frame": 249,
+      "surface_error": 3.9705373628360714e-07
+    },
+    {
+      "frame": 252,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 255,
+      "surface_error": 3.384893146634265e-07
+    },
+    {
+      "frame": 258,
+      "surface_error": 3.931196319542205e-07
+    },
+    {
+      "frame": 261,
+      "surface_error": 3.384893146634265e-07
+    },
+    {
+      "frame": 264,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 267,
+      "surface_error": 3.1224177939034443e-07
+    },
+    {
+      "frame": 270,
+      "surface_error": 3.057943330162279e-07
+    },
+    {
+      "frame": 273,
+      "surface_error": 3.1224177939034443e-07
+    },
+    {
+      "frame": 276,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 279,
+      "surface_error": 3.1320732655371097e-07
+    },
+    {
+      "frame": 282,
+      "surface_error": 4.81067551891742e-07
+    },
+    {
+      "frame": 285,
+      "surface_error": 3.1320732655371097e-07
+    },
+    {
+      "frame": 288,
+      "surface_error": 3.058685806409996e-07
+    },
+    {
+      "frame": 291,
+      "surface_error": 3.0546054441881173e-07
+    },
+    {
+      "frame": 294,
+      "surface_error": 3.0683618418267085e-07
+    },
+    {
+      "frame": 297,
+      "surface_error": 3.0546054441881173e-07
+    },
+    {
+      "frame": 300,
+      "surface_error": 3.058685806409996e-07
+    }
+  ],
+  "exporter_dependency_restored": true,
+  "reimported_contacts": [
+    {
+      "case": "00-Rest-0-child0-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "authored_contacts": 0
+    },
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 340,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 318
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 22
+          }
+        ]
+      },
+      "authored_contacts": 340
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 32,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 28
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 4
+          }
+        ]
+      },
+      "authored_contacts": 32
+    },
+    {
+      "case": "03-UpperArmR-60-child0-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 374,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 283
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 86
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 5
+          }
+        ]
+      },
+      "authored_contacts": 374
+    },
+    {
+      "case": "04-UpperArmR-90-child0-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 88,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 50
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 31
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 4
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_2"
+            ],
+            "intersections": 3
+          }
+        ]
+      },
+      "authored_contacts": 88
+    },
+    {
+      "case": "05-ThighL-60-child60-twist-20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "authored_contacts": 0
+    },
+    {
+      "case": "06-ThighL-60-child60-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "authored_contacts": 0
+    },
+    {
+      "case": "07-ThighL-60-child60-twist20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "authored_contacts": 0
+    },
+    {
+      "case": "08-ThighL-90-child90-twist-20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "authored_contacts": 0
+    },
+    {
+      "case": "09-ThighL-90-child90-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "authored_contacts": 0
+    },
+    {
+      "case": "10-ThighL-90-child90-twist20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 42,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_0",
+              "bone_0"
+            ],
+            "intersections": 34
+          },
+          {
+            "regions": [
+              "bone_0",
+              "bone_48"
+            ],
+            "intersections": 8
+          }
+        ]
+      },
+      "authored_contacts": 42
+    },
+    {
+      "case": "11-ThighR-60-child60-twist-20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "authored_contacts": 0
+    },
+    {
+      "case": "12-ThighR-60-child60-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "authored_contacts": 0
+    },
+    {
+      "case": "13-ThighR-60-child60-twist20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "authored_contacts": 0
+    },
+    {
+      "case": "14-UpperArmL-60-child60-twist-20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 353,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 309
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 44
+          }
+        ]
+      },
+      "authored_contacts": 353
+    },
+    {
+      "case": "15-UpperArmL-60-child60-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 353,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 317
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 36
+          }
+        ]
+      },
+      "authored_contacts": 353
+    },
+    {
+      "case": "16-UpperArmL-60-child60-twist20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 389,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 366
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 19
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_26"
+            ],
+            "intersections": 4
+          }
+        ]
+      },
+      "authored_contacts": 389
+    },
+    {
+      "case": "17-UpperArmR-60-child60-twist-20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 464,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 321
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 94
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 49
+          }
+        ]
+      },
+      "authored_contacts": 464
+    },
+    {
+      "case": "18-UpperArmR-60-child60-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 398,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 297
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 96
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 5
+          }
+        ]
+      },
+      "authored_contacts": 398
+    },
+    {
+      "case": "19-UpperArmR-60-child60-twist20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 377,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 268
+          },
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 109
+          }
+        ]
+      },
+      "authored_contacts": 377
+    },
+    {
+      "case": "20-UpperArmL-90-child90-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 34,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_2",
+              "bone_26"
+            ],
+            "intersections": 31
+          },
+          {
+            "regions": [
+              "bone_26",
+              "bone_3"
+            ],
+            "intersections": 3
+          }
+        ]
+      },
+      "authored_contacts": 34
+    },
+    {
+      "case": "21-UpperArmR-90-child90-twist0",
+      "collision": {
+        "finite": true,
+        "self_intersections": 88,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_3",
+              "bone_7"
+            ],
+            "intersections": 48
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_7"
+            ],
+            "intersections": 33
+          },
+          {
+            "regions": [
+              "bone_7",
+              "bone_7"
+            ],
+            "intersections": 4
+          },
+          {
+            "regions": [
+              "bone_2",
+              "bone_2"
+            ],
+            "intersections": 3
+          }
+        ]
+      },
+      "authored_contacts": 88
+    },
+    {
+      "case": "22-ThighL-90-child90-twist10",
+      "collision": {
+        "finite": true,
+        "self_intersections": 17,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_0",
+              "bone_0"
+            ],
+            "intersections": 17
+          }
+        ]
+      },
+      "authored_contacts": 17
+    },
+    {
+      "case": "23-ThighL-90-child0-twist20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 42,
+        "triangles_checked": 37578,
+        "top_regions": [
+          {
+            "regions": [
+              "bone_0",
+              "bone_0"
+            ],
+            "intersections": 34
+          },
+          {
+            "regions": [
+              "bone_0",
+              "bone_48"
+            ],
+            "intersections": 8
+          }
+        ]
+      },
+      "authored_contacts": 42
+    },
+    {
+      "case": "24-ThighL-75-child60-twist20",
+      "collision": {
+        "finite": true,
+        "self_intersections": 0,
+        "triangles_checked": 37578,
+        "top_regions": []
+      },
+      "authored_contacts": 0
+    }
+  ],
+  "status": "ready_for_babylon_review",
+  "sha256": "f308406eca91586cc8c418b925552c89f5ed438509fbf3fc5b7b83743d837d9a",
+  "samples": [
+    {
+      "case": "00-Rest-0-child0-twist0",
+      "frame": 6,
+      "phase": 0.02,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        0,
+        0.5014678239822388,
+        0
+      ]
+    },
+    {
+      "case": "01-UpperArmL-60-child0-twist0",
+      "frame": 18,
+      "phase": 0.06,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 1.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        -0.08032020926475525,
+        0.3077397644519806,
+        -0.03240817040205002
+      ]
+    },
+    {
+      "case": "02-UpperArmL-90-child0-twist0",
+      "frame": 30,
+      "phase": 0.1,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 1.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        -0.08032020926475525,
+        0.3077397644519806,
+        -0.03240817040205002
+      ]
+    },
+    {
+      "case": "03-UpperArmR-60-child0-twist0",
+      "frame": 42,
+      "phase": 0.14,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 1.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        0.08422388136386871,
+        0.30773985385894775,
+        -0.032408155500888824
+      ]
+    },
+    {
+      "case": "04-UpperArmR-90-child0-twist0",
+      "frame": 54,
+      "phase": 0.18,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 1.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        0.08422388136386871,
+        0.30773985385894775,
+        -0.032408155500888824
+      ]
+    },
+    {
+      "case": "05-ThighL-60-child60-twist-20",
+      "frame": 66,
+      "phase": 0.22,
+      "morphs": {
+        "HipL_45": 0.7407407164573669,
+        "HipL_90": 0.25925925374031067,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "06-ThighL-60-child60-twist0",
+      "frame": 78,
+      "phase": 0.26,
+      "morphs": {
+        "HipL_45": 0.7407407164573669,
+        "HipL_90": 0.25925925374031067,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "07-ThighL-60-child60-twist20",
+      "frame": 90,
+      "phase": 0.3,
+      "morphs": {
+        "HipL_45": 0.7407407164573669,
+        "HipL_90": 0.25925925374031067,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.25925925374031067
+      },
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "08-ThighL-90-child90-twist-20",
+      "frame": 102,
+      "phase": 0.34,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 1.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "09-ThighL-90-child90-twist0",
+      "frame": 114,
+      "phase": 0.38,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 1.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "10-ThighL-90-child90-twist20",
+      "frame": 126,
+      "phase": 0.42,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 1.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 1.0
+      },
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "11-ThighR-60-child60-twist-20",
+      "frame": 138,
+      "phase": 0.46,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        0.060717590153217316,
+        0.07659454643726349,
+        -0.01673729531466961
+      ]
+    },
+    {
+      "case": "12-ThighR-60-child60-twist0",
+      "frame": 150,
+      "phase": 0.5,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        0.060717590153217316,
+        0.07659454643726349,
+        -0.01673729531466961
+      ]
+    },
+    {
+      "case": "13-ThighR-60-child60-twist20",
+      "frame": 162,
+      "phase": 0.54,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        0.060717590153217316,
+        0.07659454643726349,
+        -0.01673729531466961
+      ]
+    },
+    {
+      "case": "14-UpperArmL-60-child60-twist-20",
+      "frame": 174,
+      "phase": 0.58,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 1.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        -0.08032020926475525,
+        0.3077397644519806,
+        -0.03240817040205002
+      ]
+    },
+    {
+      "case": "15-UpperArmL-60-child60-twist0",
+      "frame": 186,
+      "phase": 0.62,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 1.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        -0.08032020926475525,
+        0.3077397644519806,
+        -0.03240817040205002
+      ]
+    },
+    {
+      "case": "16-UpperArmL-60-child60-twist20",
+      "frame": 198,
+      "phase": 0.66,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 1.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        -0.08032020926475525,
+        0.3077397644519806,
+        -0.03240817040205002
+      ]
+    },
+    {
+      "case": "17-UpperArmR-60-child60-twist-20",
+      "frame": 210,
+      "phase": 0.7,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 1.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        0.08422388136386871,
+        0.30773985385894775,
+        -0.032408155500888824
+      ]
+    },
+    {
+      "case": "18-UpperArmR-60-child60-twist0",
+      "frame": 222,
+      "phase": 0.74,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 1.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        0.08422388136386871,
+        0.30773985385894775,
+        -0.032408155500888824
+      ]
+    },
+    {
+      "case": "19-UpperArmR-60-child60-twist20",
+      "frame": 234,
+      "phase": 0.78,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 1.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        0.08422388136386871,
+        0.30773985385894775,
+        -0.032408155500888824
+      ]
+    },
+    {
+      "case": "20-UpperArmL-90-child90-twist0",
+      "frame": 246,
+      "phase": 0.82,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 1.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        -0.08032020926475525,
+        0.3077397644519806,
+        -0.03240817040205002
+      ]
+    },
+    {
+      "case": "21-UpperArmR-90-child90-twist0",
+      "frame": 258,
+      "phase": 0.86,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 0.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 1.0,
+        "HipL_Twist20": 0.0
+      },
+      "camera_target_gltf": [
+        0.08422388136386871,
+        0.30773985385894775,
+        -0.032408155500888824
+      ]
+    },
+    {
+      "case": "22-ThighL-90-child90-twist10",
+      "frame": 270,
+      "phase": 0.9,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 1.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.5
+      },
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "23-ThighL-90-child0-twist20",
+      "frame": 282,
+      "phase": 0.94,
+      "morphs": {
+        "HipL_45": 0.0,
+        "HipL_90": 1.0,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 1.0
+      },
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    },
+    {
+      "case": "24-ThighL-75-child60-twist20",
+      "frame": 294,
+      "phase": 0.98,
+      "morphs": {
+        "HipL_45": 0.25925925374031067,
+        "HipL_90": 0.7407407164573669,
+        "UpperArmL_60": 0.0,
+        "UpperArmL_90": 0.0,
+        "UpperArmR_60": 0.0,
+        "UpperArmR_90": 0.0,
+        "HipL_Twist20": 0.7407407164573669
+      },
+      "camera_target_gltf": [
+        -0.05681389942765236,
+        0.0765945315361023,
+        -0.01673729345202446
+      ]
+    }
+  ],
+  "bones": 52,
+  "clip": "Mirelle_ContourTrial",
+  "morph_targets": 7,
+  "scope": "Sampled diagnostic surface preservation only; no anatomy/game motion/device qualification."
+}

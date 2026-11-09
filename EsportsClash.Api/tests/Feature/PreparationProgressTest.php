@@ -50,7 +50,10 @@ class PreparationProgressTest extends TestCase {
     }
     public function test_poll_records_real_stages_resources_and_deduplicated_messages():void {
         Queue::fake();$run=$this->fixtureRun();$phase='skeleton_prediction';
-        Http::fake(function($request)use($run,&$phase){return Http::response(['id'=>$run->id,'status'=>'rigging','stage'=>$phase,'updated_unix'=>now()->timestamp,'resources'=>['gpu_free_mib'=>9000,'gpu_used_mib'=>3000,'vm_available_mib'=>8000]],200);});
+        Http::fake(function($request)use($run,&$phase){
+            if(str_ends_with($request->url(),'/operations'))return Http::response(['engine_sha256'=>str_repeat('b',64),'runtime_ready'=>true,'models_ready'=>true,'compute'=>['selected'=>'google','automatic_fallback'=>false],'stages'=>['rigging','animation']]);
+            return Http::response(['id'=>$run->id,'status'=>'rigging','stage'=>$phase,'updated_unix'=>now()->timestamp,'resources'=>['gpu_free_mib'=>9000,'gpu_used_mib'=>3000,'vm_available_mib'=>8000]],200);
+        });
         $job=new PollAvatarPreparation($run->id);$service=app(AvatarPreparationService::class);
         $job->handle($service);$job->handle($service);$run->refresh();
         $this->assertSame(2,$run->progress['step']);$this->assertCount(1,$run->progress['events']);$this->assertSame(9000.0,(float)$run->progress['resources']['sample']['gpu_free_mib']);

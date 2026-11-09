@@ -1,0 +1,33 @@
+{
+  "id": "55389b78-27da-4be0-94e3-cf1ee5491597",
+  "archive_sha256": "e4791879a0842bbd94bc88595b3b52dca0bbe02497754ab221b1d2cdbc41f765",
+  "status": "completed",
+  "runtime_id": "ad1939207493c083878091908ac9dea2b8d750bd923ab852d215ebdca85a3d70",
+  "environment_sha256": "f658c5be302b6bef0cea34e8c571d080dc48943e56f786de38976104cb7f37fb",
+  "report_sha256": "4e4697935577d3ab495c39d4a6b7c32725874bba9d3c2fad002f8520affd8b43",
+  "target_sha256": "3c468ccbdc943902b9feb4659d619ec2e191b9b0a67780282f39d21f6a86813c",
+  "mapping": {
+    "native_vertices": 23806,
+    "corrected_vertices": 23832,
+    "unmatched_native": 0,
+    "max_rest_position_error_m": 2.7660124146677845e-07,
+    "max_weight_error": 1.1920928955078125e-07,
+    "max_seam_target_ambiguity_m": 0.0,
+    "max_change_from_hybrid_m": 0.0010029569331252454,
+    "left90_intersections": 31,
+    "edge_deformation": {
+      "policy": "deformation-edge-stretch-v1",
+      "passed": true,
+      "finite": true,
+      "edges_checked": 56332,
+      "severely_stretched_edges": 0,
+      "maximum_length_ratio": 4.03386476073501,
+      "largest_extension_to_height": 0.01874722865505939,
+      "limits": {
+        "length_ratio": 4,
+        "extension_to_height": 0.05
+      },
+      "scope": "Gross stretch only; collision, appendage coverage and visual review remain separate"
+    }
+  }
+}

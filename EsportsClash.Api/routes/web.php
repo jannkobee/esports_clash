@@ -11,6 +11,28 @@ Route::middleware('guest')->group(function () {
 });
 Route::post('/logout', [EvolutionDashboardController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth', EnsureEvolutionOwner::class])->prefix('evolution')->group(function () {
+    Route::post('/avatars/{avatar}/components', [\App\Http\Controllers\AvatarComponentController::class,'save'])->middleware('throttle:30,1')->name('avatar-components.save');
+    Route::get('/avatars/{avatar}/components/{hash}.{format}', [\App\Http\Controllers\AvatarComponentController::class,'file'])->where('hash','[a-f0-9]{64}')->whereIn('format',['png','glb'])->name('avatar-components.file');
+    Route::get('/registry/avatars', [\App\Http\Controllers\AvatarRegistryController::class,'index'])->name('registry.index');
+    Route::get('/registry/avatars/{avatar}', [\App\Http\Controllers\AvatarRegistryController::class,'edit'])->name('registry.edit');
+    Route::put('/registry/avatars/{avatar}', [\App\Http\Controllers\AvatarRegistryController::class,'update'])->name('registry.update');
+    Route::get('/registry/avatars/{avatar}/base/{candidate}', [\App\Http\Controllers\AvatarBaseCandidateController::class,'preview'])->whereUuid('candidate')->name('base-candidates.preview');
+    Route::get('/registry/avatars/{avatar}/base/{candidate}/files/{file}', [\App\Http\Controllers\AvatarBaseCandidateController::class,'file'])->whereUuid('candidate')->name('base-candidates.file');
+    Route::prefix('catalog/{kind}')->whereIn('kind',['item','skill'])->controller(\App\Http\Controllers\GameContentController::class)->group(function () {
+        Route::get('/', 'index')->name('catalog.index');
+        Route::get('/create', 'create')->name('catalog.create');
+        Route::post('/', 'store')->name('catalog.store');
+        Route::get('/{content}/edit', 'edit')->name('catalog.edit');
+        Route::put('/{content}', 'update')->name('catalog.update');
+        Route::delete('/{content}', 'destroy')->name('catalog.destroy');
+        Route::post('/{content}/restore', 'restore')->name('catalog.restore');
+        Route::post('/{content}/assign', 'assign')->name('catalog.assign');
+    });
+    Route::post('/intelligence', [\App\Http\Controllers\IntelligenceController::class,'start'])->name('intelligence.start');
+    Route::post('/intelligence/settings', [\App\Http\Controllers\IntelligenceController::class,'configure'])->name('intelligence.settings');
+    Route::post('/intelligence/{id}/resume', [\App\Http\Controllers\IntelligenceController::class,'resume'])->name('intelligence.resume');
+    Route::post('/intelligence/{id}/activate', [\App\Http\Controllers\IntelligenceController::class,'activate'])->name('intelligence.activate');
+    Route::post('/intelligence/rollback', [\App\Http\Controllers\IntelligenceController::class,'rollback'])->name('intelligence.rollback');
     Route::prefix('management/{kind}')->whereIn('kind',['avatar','item'])->controller(\App\Http\Controllers\ContentManagementController::class)->group(function () {
         Route::get('/', 'index')->name('management.index');
         Route::get('/create', 'create')->name('management.create');
@@ -27,6 +49,7 @@ Route::middleware(['auth', EnsureEvolutionOwner::class])->prefix('evolution')->g
     Route::post('/avatar-jobs/{type}/cancel-all',[\App\Http\Controllers\AvatarJobCancellationController::class,'cancelAll'])->whereIn('type',['generation','preparation','enhancement'])->name('avatar-jobs.cancel-all');
     Route::post('/avatar-jobs/{type}/{id}/cancel',[\App\Http\Controllers\AvatarJobCancellationController::class,'cancel'])->whereIn('type',['generation','preparation','enhancement'])->whereUuid('id')->name('avatar-jobs.cancel');
     Route::get('/avatars/preparation',[\App\Http\Controllers\AvatarPreparationController::class,'index'])->name('preparations.index');
+    Route::get('/avatars/preparation/readiness',\App\Http\Controllers\AvatarPipelineStatusController::class)->name('preparations.readiness')->middleware('throttle:20,1');
     Route::get('/avatars/preparation/live',[\App\Http\Controllers\AvatarPreparationController::class,'live'])->name('preparations.live');
     Route::post('/avatars/preparation/settings',[\App\Http\Controllers\AvatarPreparationController::class,'settings'])->name('preparations.settings');
     Route::post('/avatars/preparation',[\App\Http\Controllers\AvatarPreparationController::class,'start'])->middleware('throttle:6,1')->name('preparations.start');
@@ -55,6 +78,9 @@ Route::middleware(['auth', EnsureEvolutionOwner::class])->prefix('evolution')->g
     Route::get('/avatars/trellis/{generation}/report',[\App\Http\Controllers\TrellisGenerationController::class,'report'])->whereUuid('generation')->name('trellis.report');
     Route::get('/avatars/trellis/{generation}/asset',[\App\Http\Controllers\TrellisGenerationController::class,'asset'])->withTrashed()->whereUuid('generation')->name('trellis.asset');
     Route::get('/avatars/trellis/{generation}/preview',[\App\Http\Controllers\TrellisGenerationController::class,'preview'])->withTrashed()->whereUuid('generation')->name('trellis.preview');
+    Route::get('/battlefield', [\App\Http\Controllers\BattlefieldAssetController::class, 'index'])->name('battlefield.index');
+    Route::get('/battlefield/{asset}', [\App\Http\Controllers\BattlefieldAssetController::class, 'show'])->name('battlefield.show');
+    Route::post('/battlefield/{asset}/generate', [\App\Http\Controllers\BattlefieldAssetController::class, 'generate'])->middleware('throttle:6,1')->name('battlefield.generate');
     Route::get('/avatars', [\App\Http\Controllers\AvatarEvolutionController::class,'index'])->name('avatars.index');
     Route::get('/avatars/reports', [\App\Http\Controllers\AvatarEvolutionController::class,'reports'])->name('avatars.reports');
     Route::post('/avatars/settings', [\App\Http\Controllers\AvatarEvolutionController::class,'settings'])->name('avatars.settings');

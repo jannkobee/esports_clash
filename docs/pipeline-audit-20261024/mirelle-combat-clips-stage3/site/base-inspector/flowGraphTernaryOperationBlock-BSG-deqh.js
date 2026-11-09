@@ -1,0 +1,15 @@
+import { t as e } from "./flowGraphCachedOperationBlock-BsIcMusH.js";
+//#region node_modules/@babylonjs/core/FlowGraph/Blocks/Data/flowGraphTernaryOperationBlock.js
+var t = class extends e {
+	constructor(e, t, n, r, i, a, o) {
+		super(r, o), this._operation = i, this._className = a, this.a = this.registerDataInput("a", e), this.b = this.registerDataInput("b", t), this.c = this.registerDataInput("c", n);
+	}
+	_doOperation(e) {
+		return this._operation(this.a.getValue(e), this.b.getValue(e), this.c.getValue(e));
+	}
+	getClassName() {
+		return this._className;
+	}
+};
+//#endregion
+export { t };

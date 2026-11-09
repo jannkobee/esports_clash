@@ -1,0 +1,167 @@
+{
+  "planHash": "84853e4a06235999064a33dc4fbe4cedded7422beffdba9fc06f443fcb09560b",
+  "promoted": false,
+  "episode": {
+    "status": "terminal",
+    "states": [
+      {
+        "second": 0,
+        "fingerprint": "37923:84192aca:e347c262",
+        "randomState": 47,
+        "finished": false
+      },
+      {
+        "second": 30.00000000000065,
+        "fingerprint": "1201464:b9b0106a:9359e2e",
+        "randomState": 2774616509,
+        "finished": false
+      },
+      {
+        "second": 119.99999999999575,
+        "fingerprint": "2893105:7fbad3bd:81a611e1",
+        "randomState": 3260673067,
+        "finished": false
+      },
+      {
+        "second": 442.4333333334697,
+        "fingerprint": "9954427:f8b6299e:41a095d2",
+        "randomState": 2762397304,
+        "finished": true
+      }
+    ],
+    "result": {
+      "winner": "blue",
+      "stats": [
+        {
+          "id": "blue_p_thespicy",
+          "team": "blue",
+          "player": "p_thespicy",
+          "champion": "c_valkira",
+          "kills": 2,
+          "deaths": 3,
+          "cs": 8,
+          "gold": 1421.1946666669223,
+          "damage": 6591
+        },
+        {
+          "id": "blue_p_p1mple",
+          "team": "blue",
+          "player": "p_p1mple",
+          "champion": "c_kage",
+          "kills": 5,
+          "deaths": 1,
+          "cs": 9,
+          "gold": 2646.0748333330284,
+          "damage": 9834
+        },
+        {
+          "id": "blue_p_flaker",
+          "team": "blue",
+          "player": "p_flaker",
+          "champion": "c_kyumi",
+          "kills": 1,
+          "deaths": 0,
+          "cs": 10,
+          "gold": 2500.8098333332746,
+          "damage": 10553
+        },
+        {
+          "id": "blue_p_daft",
+          "team": "blue",
+          "player": "p_daft",
+          "champion": "c_cora",
+          "kills": 6,
+          "deaths": 0,
+          "cs": 54,
+          "gold": 3957.561999999407,
+          "damage": 21312
+        },
+        {
+          "id": "blue_p_bigtail",
+          "team": "blue",
+          "player": "p_bigtail",
+          "champion": "c_io",
+          "kills": 2,
+          "deaths": 0,
+          "cs": 13,
+          "gold": 2310.1346666667832,
+          "damage": 4735
+        },
+        {
+          "id": "red_p_craps",
+          "team": "red",
+          "player": "p_craps",
+          "champion": "c_silencer",
+          "kills": 1,
+          "deaths": 5,
+          "cs": 6,
+          "gold": 585.9301666666239,
+          "damage": 6623
+        },
+        {
+          "id": "red_p_ouzi",
+          "team": "red",
+          "player": "p_ouzi",
+          "champion": "c_astra",
+          "kills": 2,
+          "deaths": 3,
+          "cs": 38,
+          "gold": 301.02300000013076,
+          "damage": 21769
+        },
+        {
+          "id": "red_p_neko",
+          "team": "red",
+          "player": "p_neko",
+          "champion": "c_kazemaru",
+          "kills": 0,
+          "deaths": 3,
+          "cs": 5,
+          "gold": 370.7758333332965,
+          "damage": 4458
+        },
+        {
+          "id": "red_p_woozy",
+          "team": "red",
+          "player": "p_woozy",
+          "champion": "c_sylla",
+          "kills": 0,
+          "deaths": 3,
+          "cs": 15,
+          "gold": 602.5040000003326,
+          "damage": 3549
+        },
+        {
+          "id": "red_p_mirecle",
+          "team": "red",
+          "player": "p_mirecle",
+          "champion": "c_inai",
+          "kills": 0,
+          "deaths": 2,
+          "cs": 1,
+          "gold": 422.2729999997773,
+          "damage": 2742
+        }
+      ]
+    },
+    "second": 442.4333333334697,
+    "wall_seconds": 85.89
+  },
+  "comparisons": [
+    {
+      "second": 30.00000000000065,
+      "changedWorld": false,
+      "randomStateEqual": true
+    },
+    {
+      "second": 119.99999999999575,
+      "changedWorld": true,
+      "randomStateEqual": false
+    }
+  ],
+  "initialStateMatched": true,
+  "observedInfluence": true,
+  "baselineWinner": "blue",
+  "challengerWinner": "blue",
+  "limitation": "One known integration fixture. Different world trajectories verify influence, not decision-change frequency, generalization, safety or improvement."
+}

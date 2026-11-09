@@ -1,0 +1,14 @@
+{
+  "id": "3833c6cf-ea05-4855-8a32-df433e1a8c5a",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "contact-separation",
+  "runtime_id": "ddb07188977acba2b815846c5f2ead92802114fe87200f49fa9f665e7d698e10",
+  "environment_sha256": "160e42e63b84d075df53fca9c416775671584a1ed926a9ea81ad71691ab2ebab",
+  "started_unix": 1793108670.7571278,
+  "exit_code": 0,
+  "report_sha256": "12e1de5db9a6f7dd50c8162f6dbd4df69fb4a757e55212fe44cb60bb85c9c8e0",
+  "completed_unix": 1793108728.6612234
+}

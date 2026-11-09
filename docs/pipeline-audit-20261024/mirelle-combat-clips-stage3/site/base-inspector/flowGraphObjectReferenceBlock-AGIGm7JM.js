@@ -1,0 +1,25 @@
+import { t as e } from "./flowGraphBlock-BTSj91tT.js";
+import { n as t, u as n } from "./flowGraphRichTypes.pure-BpKU4EZT.js";
+//#region node_modules/@babylonjs/loaders/glTF/2.0/Extensions/KHR_interactivity/flowGraphObjectReferenceBlock.js
+function r(e, t) {
+	let n = t;
+	for (; n;) {
+		let t = e.getObjectReference(n, "nodes");
+		if (t?.startsWith("/nodes/")) return t;
+		n = n.parent;
+	}
+	return "";
+}
+var i = class extends e {
+	constructor(e) {
+		super(e), this.object = this.registerDataInput("object", t), this.value = this.registerDataOutput("value", n, "");
+	}
+	_updateOutputs(e) {
+		this.value.setValue(r(e, this.object.getValue(e)), e);
+	}
+	getClassName() {
+		return "FlowGraphObjectReferenceBlock";
+	}
+};
+//#endregion
+export { i as FlowGraphObjectReferenceBlock, r as GetInteractivityObjectReference };

@@ -1,0 +1,18 @@
+{
+  "engine": "arena-command-v1",
+  "id": "ccb4dfc04c055cb3a71fa6e5d607d04f34dddec743342ea2382c94ac493b4a21",
+  "qualification": "learning",
+  "generation": 5,
+  "run_id": "a0d353cf-5ca3-4690-85e7-b9399780bead",
+  "source_hash": "6bdaf0aefa29d91e17cc6063e3e6706fd9dcc946c7e6ca31fb9e6a71ac52066c",
+  "competitive_improvement_established": false,
+  "ordinary_ui": {
+    "label": "Learning AI: experimental checkpoint \u00c2\u00b7 20 choices \u00c2\u00b7 20 commands started \u00c2\u00b7 update 3",
+    "hasDetailedBrief": true,
+    "hasAllThreeBarracks": true,
+    "hasRecallLesson": true,
+    "hasPostFightLesson": true,
+    "ordinaryPrivateBridgeAbsent": true
+  },
+  "screenshot_sha256": "f4fcd0e3869f5d0748ca33edb4d4bfe2a93a730797aa2b1118aaf036147ec474"
+}

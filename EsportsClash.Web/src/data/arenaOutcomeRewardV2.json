@@ -1,0 +1,26 @@
+{
+  "version": "terminal-potential-outcomes-v2",
+  "gamma_second": 0.9998,
+  "gae_lambda_second": 0.98,
+  "terminal_win": 5,
+  "critic_inputs": 7,
+  "potential_weights": {
+    "structures": 0.5,
+    "economy": 0.15,
+    "trades": 0.15,
+    "health": 0.1,
+    "dragon": 0.04,
+    "siege": 0.04,
+    "mana": 0.02
+  },
+  "structure_weights": {
+    "outer_tower": 1,
+    "inner_tower": 1.5,
+    "nexus_tower": 2,
+    "barracks": 1.2,
+    "nexus": 3
+  },
+  "economy_scale": 10000,
+  "death_scale": 10,
+  "objective_scale": 3
+}

@@ -1,0 +1,65 @@
+{
+  "id": "59039b5f-5e22-4c1e-a6e1-ac91f99b9ac4",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "method": "weight-fixed-hip-socket-placement-v1",
+  "rig_attempt_id": "24e7f704-3abe-42d4-9c47-204627ee9e88",
+  "parent_candidate_id": "d38b680b-3f40-5331-8bdf-992a6ec4f272",
+  "parent_candidate_sha256": "9a4a5efd95f5687020797402b9dcf591e3813f0b092526357793387b88b005ab",
+  "reference_candidate_id": "3fe2b0ca-5d59-4eb7-964a-8b50607f9046",
+  "reference_candidate_sha256": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+  "variants": [
+    "lateral_0p5pct",
+    "medial_0p5pct",
+    "anterior_0p5pct",
+    "posterior_0p5pct",
+    "superior_0p5pct",
+    "inferior_0p5pct",
+    "section_bounds_center"
+  ],
+  "candidate_ids": {
+    "lateral_0p5pct": "83b02d46-0adb-5720-97ec-3bef68148d9a",
+    "medial_0p5pct": "0d69f506-2ff8-5f26-9200-e17635ee5c49",
+    "anterior_0p5pct": "3c8b1e43-3fe4-5a58-97a2-74d6ee27422e",
+    "posterior_0p5pct": "38d92fe6-047c-5acc-aa98-c6a221818d9c",
+    "superior_0p5pct": "c4085fc9-de3b-5e6a-b8e7-31478858702b",
+    "inferior_0p5pct": "9b006635-4a27-550f-b40b-a2a5499b2866",
+    "section_bounds_center": "c1ed7557-4194-55d9-8b5b-e4e6d90e638a"
+  },
+  "constraints": {
+    "maximum_head_displacement_to_height": 0.01,
+    "axial_offset_to_height": 0.005,
+    "inside_source_section_bounds": true,
+    "weights_fixed": true,
+    "unrelated_rest_joints_fixed": true,
+    "section_plane_offsets_to_height": [
+      -0.01,
+      0,
+      0.01,
+      0.02
+    ],
+    "section_radius_to_height": 0.055,
+    "roundtrip_surface_max_m": 1e-06,
+    "weight_match_max_error": 2e-06
+  },
+  "files": {
+    "candidate.glb": "9a4a5efd95f5687020797402b9dcf591e3813f0b092526357793387b88b005ab",
+    "reference.glb": "38cd49d0375ed24af3071bb899cb498b3996c4b18024c161cbd5e6e891c8c68f",
+    "candidate-report.json": "87e2bf85ccc55df5456fffcd38663a54398008c14aa483decedff26f1e4ba256",
+    "reference-report.json": "80755b33dff1b0f674acf0e8f2474cd9453b39bc96028a490f962d9c807e36a6",
+    "baseline-report.json": "f653cff75831fb9200d8f143a6a3bcb56af2c653626a60475977f400ec26568c",
+    "backoffice-proof.json": "ba3f722e68567eb0ab322215c34f8be5964927e4cd13e323fcd7f39efc82eba9",
+    "tools/review_shoulder_socket_study.py": "24cad94f2765c6b93710fb58025815075d647292badf105c832cb3696b4ce81e",
+    "tools/gltf_joint_pivots.py": "f45a3ac35d2c83d9790fe821c11cd77866ffff47f65851a87058e42d504375f9",
+    "tools/inspect_shoulder_sockets.py": "bad7ae4fc0f3f23b73510f31a9a743783c03068fac05a0864dc8326e2ec58930",
+    "tools/review_generated_rig.py": "4e75b528a537cab96dc599d1dcd797e834c8f0416969364e523b82642bddb5e7",
+    "tools/review_collision_weight_candidate.py": "ed72e89f1f9d6314f1c5e90d52b787f700b787139ba5c95401426712c0f96d3c",
+    "tools/review_tapered_weight_candidate.py": "66a76c9304aa0cbacdbc82b8eabc9b84fd333f900350d74fc0ad9a6826b39233",
+    "tools/mesh_validation.py": "a169d578b2475a1a0608163564266586e405290156b584fa2a2824a868396f5a",
+    "tools/bone_mapping.py": "4ab4af470916331b9cf02e089fa9fcdf8c26d1a3dcebac24fe7fdbfe00658c98",
+    "tools/asset_pipeline/__init__.py": "847dc0763a1c3f6b629169a5d8aa0d33b65f922aad00258beff1e5734a59b12b",
+    "tools/asset_pipeline/edge_deformation.py": "1d220984cc64c565522dd7feb3ace413685c576a9ce1997168ed94ecc8e18a02",
+    "supervisor.py": "3b2ac49c6801e2a654b1840394e6f0f8acce5d91f52b29160e2c9f74dc0eb096"
+  }
+}

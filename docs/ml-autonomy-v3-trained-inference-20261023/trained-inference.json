@@ -1,0 +1,23 @@
+{
+  "scope": "Known-seed trained-actor inference; censored120s compatibility fixture, no benefit denominator",
+  "initialStateEqual": true,
+  "worldChanged": true,
+  "learning": {
+    "eligible": 1,
+    "changed": 1,
+    "executed": 1,
+    "blocked": {
+      "legal-pair": 26079,
+      "commitment": 24180,
+      "defense": 9366,
+      "health": 11150,
+      "influence": 37,
+      "survival": 37,
+      "utility-gap": 216,
+      "tower": 431,
+      "danger": 374,
+      "cooldown": 79
+    }
+  },
+  "productionPromoted": false
+}

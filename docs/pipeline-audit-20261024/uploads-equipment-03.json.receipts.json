@@ -1,0 +1,38 @@
+[
+  {
+    "avatar_id": "c_invoker",
+    "id": "hair",
+    "sha256": "216a9dafae1edcd0e5823f13967216f3a6674d98814284a2cb126292b247711c",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "a6072ab3996150916bf89fde86a238e403a5a65f5901ef7fbacef9e768a3eae7",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_invoker",
+    "id": "petal_skirt",
+    "sha256": "1a75cced937b6b2131c83818f5205e8abf4fc9b2d9f2bd4fcbf19a4fffcc01c6",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "335012f8ead4ae1c35c19f612cfd64658bfbe2f95d1cd2247a8e07cbd8bfcd4a",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_invoker",
+    "id": "sleeve",
+    "sha256": "327a10cc1385c22d6b395aff83dba1358f3d54514957fb2f0b3fadd513ea4f85",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "afeca243679711f5dacf006855a0f873bab314fe2c449ae853b0ca11f57c3d69",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_invoker",
+    "id": "waistcoat",
+    "sha256": "59bdfea57e5267c95e89be993767a44c5b7180718aed9786d832def09994b07c",
+    "status": "reference_uploaded",
+    "version": 8,
+    "inventory_hash": "289e029a0b86d547f0e5ead7d375240b2c12723f0bc92468f4ed85fec258f8b5",
+    "http": 200
+  }
+]

@@ -1,0 +1,34 @@
+﻿{
+    "job_id":  "c0c86ecb-ee38-4ca4-8325-406a4e39e83a",
+    "status":  "generated_unqualified",
+    "provider":  "google-colab",
+    "seed":  25001,
+    "reference_sha256":  "c783279b423ac4853d96421445716256c04eeccc80434b9e644fe2dd9870d2dc",
+    "artifact":  {
+                     "file":  "c0c86ecb-ee38-4ca4-8325-406a4e39e83a.glb",
+                     "sha256":  "2022cf8b1d1a8cdee66f84a514f921d451b693e25fa51e59b85499eefc3196ee",
+                     "bytes":  3906312,
+                     "meshes":  1,
+                     "materials":  1,
+                     "images":  2,
+                     "skins":  0,
+                     "animations":  0,
+                     "publication_eligible":  false,
+                     "qualification":  "Generated source only. Blender binding, identity, animations and real-browser performance qualification are still required."
+                 },
+    "execution_seconds":  344.3376615047455,
+    "total_native_seconds":  385.94441533088684,
+    "sampled_peaks":  {
+                          "gpu_used_mib":  2329,
+                          "comfy_tree_rss_mib":  5558.91796875,
+                          "worker_anonymous_mib":  456.796875
+                      },
+    "checkpoints":  23,
+    "diagnostics":  {
+                        "status":  "passed",
+                        "gpu":  "Tesla T4",
+                        "t4_bounded_sparse_launch_profile":  true,
+                        "fdg_int64_input_direct_and_tiled_cuda_extraction":  true
+                    },
+    "engine_sources_match_diagnostics":  true
+}

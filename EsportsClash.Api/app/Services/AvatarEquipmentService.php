@@ -20,8 +20,10 @@ class AvatarEquipmentService {
         $reference=$this->reference($avatar,$slot);
         if(!$reference)throw ValidationException::withMessages(['equipment'=>'Upload a PNG reference for this hand first.']);
         $ops=$source->operations();
+        $source->requireCloudGeneration($ops, 'equipment');
         if(!($ops['equipment']['supported']??false))throw ValidationException::withMessages(['equipment'=>'The equipment generation worker is unavailable.']);
         $plan=['version'=>1,'avatar_id'=>$avatar,'seed'=>random_int(0,2147483647),'reference_sha256'=>$reference['sha256'],'purpose'=>'modular-equipment','equipment_slot'=>$slot];
+        if ($ops['compute']['switching_supported']??false) $plan['compute_preference']='google';
         foreach(['workflow_sha256','pins_sha256','limits_sha256','engine_sha256']as $key){
             if(!preg_match('/^[a-f0-9]{64}$/',$ops[$key]??''))throw ValidationException::withMessages(['equipment'=>'Worker configuration is incomplete.']);
             $plan[$key]=$ops[$key];

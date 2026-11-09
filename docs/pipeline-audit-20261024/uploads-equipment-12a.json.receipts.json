@@ -1,0 +1,146 @@
+[
+  {
+    "avatar_id": "c_puck",
+    "id": "bedside_clocks",
+    "sha256": "b7e0ee04f5841fe4cbff6215a72ee488414664b63cb8ce8c1359ef3baaa516d0",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "6c8c6acfe625909e11f9011b45648e2d2683973da7d6b1dba5ff00b264a161e7",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_puck",
+    "id": "quilted_cloak",
+    "sha256": "c0659d4bb7fabb425115f1bea611b9eb5ec7e35e4973a9f8a2cb88e1c39ae055",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "270672a4150aeadad10f3834630a4345ec27961331e1a78978c25d131f3a0fc3",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_batrider",
+    "id": "wind_sailor_outfit",
+    "sha256": "f06961c841fca923da663946cb9bba1bd35842e4c877910d0b338b38f52d2668",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "b5a2010f30dda9195e122467362ef24c842671ac7a71b8b1cf806327b30099d2",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_bristleback",
+    "id": "iron_saddle",
+    "sha256": "ac7a836710d3c4cde9a8838725110bfc4f52b5d0b84357110351e1733737ae9b",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "5b6f49ba59e9a3d2958ccf82e64a483892513063c378f1d825c8db49f00bd1d2",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_bristleback",
+    "id": "dorsal_armor",
+    "sha256": "a2b36c17f1a6e82b24f2ba16c173a7201623a83725b6e742075f7a9c0be39b0d",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "6643c5c9efbca5257365c681d6040be7763c486baf0e452d90c9bf8a9357f320",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_io",
+    "id": "maestro_outfit",
+    "sha256": "371448152616970d01f0970506bcfc257d25b48fc0bed4cd3388baff2cf8f051",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "426bc2e7a681f84442ea9f02b971ea855bd4c0115a19181e0ccc5d528f896ca1",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_lulu",
+    "id": "terrarium_barrow",
+    "sha256": "530d06fe2db7d5be4dafde6f940202f96498007f9f064c7c9582b8397eb53614",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "66a977ad1007de666599f8eec84ecf7a4338ac8c98efc5334d12a8349544ce29",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_lulu",
+    "id": "gardener_outfit",
+    "sha256": "444f58629a4a23ebf2040d2cab4fc398045dfe4ddc1529eb5837bba9a340803e",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "d71aa5e95839ab9ba0d405d9a0217e6fd1bc7f4f9f904c6d2fe280bd33bb0e25",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_silencer",
+    "id": "tablet_pauldron",
+    "sha256": "a1d6252f1b8782381dccff02a212bf9366a4af41caa7c349f9c0b95ae1b41286",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "99fde38ee98b62c393b8ef7f3cf4afd07ef125ab5d1c23becd51d0d148818121",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_silencer",
+    "id": "magistrate_robes",
+    "sha256": "c22ae9c837fe47089fabecc4f5d5bdfa7177295aa009056eb80fca4088dc40a4",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "ab5172024e5394eb1f0c2dfe3bad317ba48c5b7f5801bcc78ab97073c9fc0ace",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_wukong_lol",
+    "id": "scaffold_outfit",
+    "sha256": "199aa7ee568c455e1ba139fdc8a357f8a254d5140595cf99dc8ec59c80ce7f32",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "adacdc5b25124e13a2881616160bad1e4c4d25ec49deb55e9087a1ca62966afe",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_monkeyking_dota",
+    "id": "monarch_outfit",
+    "sha256": "4b6dbf8c58ca89ecff99deb0f12b437a31dd83ce4b0f2de2a3d1b081d80d3ca2",
+    "status": "reference_uploaded",
+    "version": 4,
+    "inventory_hash": "16162df02c7df1d244f6611233d593c44f8f7d60f283652bcbd48c4a2df0571c",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_skybreaker",
+    "id": "rangefinder",
+    "sha256": "5c8ba04919bff25114b8031bfbe4f110d5bd29b4be69ac799d950ab8983ae195",
+    "status": "reference_uploaded",
+    "version": 6,
+    "inventory_hash": "9829199aa342ec8e5544ad05a6b1291d3aeb627a133658f9b0ac0dd01544b54d",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_puck",
+    "id": "chime_ring",
+    "sha256": "fab2b908f09609330bb8fe10cfee70787633ddf3c8b4e5c23c3f4783695ce6b7",
+    "status": "reference_uploaded",
+    "version": 7,
+    "inventory_hash": "67af7d248ce9518d918d3054f445f4340e79a839531142417b23f2203448fd0b",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_batrider",
+    "id": "glider_board",
+    "sha256": "014cb924628e54322537ea314bbab214eb7092a2126b53909998f6f38877904c",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "cdd2cdfea32b30938bd1ca7a3dc0db871c7c3ffbbd070d822d559e2e701040b4",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_io",
+    "id": "tuning_forks",
+    "sha256": "86e17f3a8a3d6765263e2da06ccfca58e83a4960b7f9551aec99430c7a3963de",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "d3db8e5816646d17e977a62a9fb32eaf18821b55a7b107973e976a8bd9d35d7a",
+    "http": 200
+  }
+]

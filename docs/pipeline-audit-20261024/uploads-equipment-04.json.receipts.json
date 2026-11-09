@@ -1,0 +1,20 @@
+[
+  {
+    "avatar_id": "c_invoker",
+    "id": "boots",
+    "sha256": "5b14675ba8a66d307219ff4b7dfe9752fca0afb95544f42378a6c1b6d67dca2d",
+    "status": "reference_uploaded",
+    "version": 9,
+    "inventory_hash": "8120c5d9579ab7e9d92be56c86718f4e6da1ba3ea0ff71670aaabaaf0981014c",
+    "http": 200
+  },
+  {
+    "avatar_id": "c_skybreaker",
+    "id": "observation_platform",
+    "sha256": "1af3b32270fb41a42bc396700a16051c0f92b5395daa4031989dfc0578ac5c0a",
+    "status": "reference_uploaded",
+    "version": 5,
+    "inventory_hash": "f2ea27573be7474fa18e2b81135585ebe0e45426ac3bbe9b406fca983b92ffbf",
+    "http": 200
+  }
+]

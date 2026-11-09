@@ -67,28 +67,34 @@ class NativeRoutingTests(unittest.TestCase):
         self.assertEqual(infer.call_args.args[0],'google-client')
         self.assertEqual(state['node_progress']['value'],12)
 
-    def test_local_never_contacts_google(self):
+    def test_local_request_never_launches_or_probes(self):
         state, probe, infer = self.run_job('local')
-        self.assertEqual(state['provider'],'trellis2-gguf')
-        self.assertEqual(probe.call_args_list[0].args,('local',))
-        probe.assert_called_once()
-        self.assertEqual(infer.call_args.args[0],'local-client')
+        self.assertEqual(state['status'],'failed')
+        probe.assert_not_called()
+        infer.assert_not_called()
 
-    def test_google_outage_automatically_selects_native_local(self):
-        state, _, infer = self.run_job(google=False)
-        self.assertEqual(state['provider'],'trellis2-gguf')
+    def test_google_outage_waits_even_when_local_is_available(self):
+        state, probe, infer = self.run_job(google=False)
+        self.assertEqual(state['status'],'waiting_worker')
         self.assertEqual(state['compute']['preferred'],'google')
-        self.assertEqual(state['compute']['selected'],'local')
-        self.assertIn('automatically',state['compute']['fallback_reason'])
-        self.assertEqual(infer.call_count,1)
+        self.assertEqual(state['compute']['selected'],'google')
+        self.assertFalse(state['compute']['automatic_fallback'])
+        probe.assert_called_once_with('google')
+        infer.assert_not_called()
 
-    def test_google_inference_failure_falls_back_to_native_local(self):
-        state, _, infer = self.run_job(fail_google=True)
-        self.assertEqual(state['provider'],'trellis2-gguf')
-        self.assertEqual(infer.call_count,2)
-        self.assertEqual(len(state['attempts']),2)
+    def test_google_inference_failure_and_retry_never_use_local(self):
+        state, probe, infer = self.run_job(fail_google=True)
+        self.assertEqual(state['provider'],'google-colab')
+        self.assertEqual(infer.call_count,1)
+        self.assertEqual(len(state['attempts']),1)
         self.assertIn('failed',state['cloud_error'])
-        self.assertEqual(state['status'],'generated_unqualified')
+        self.assertEqual(state['status'],'waiting_worker')
+        probe.assert_called_once_with('google')
+        state, probe, infer = self.run_job(fail_google=True)
+        self.assertEqual(len(state['attempts']),2)
+        self.assertTrue(all(attempt['compute']=='google' for attempt in state['attempts']))
+        self.assertEqual(infer.call_args.args[0],'google-client')
+        self.assertNotIn('artifact',state)
 
     def test_no_backends_retains_job_without_a_fake_mesh(self):
         state, _, infer = self.run_job(google=False,local=False)

@@ -1,0 +1,23 @@
+{
+    "verified_on": "2026-10-29",
+    "comparisons": [
+        {
+            "id": "c579745b-47e3-470f-91b1-0764cf9b5a9c",
+            "artifacts_read_back": 65,
+            "report_sha256": "5848f323c9797a15d16ad9fe0cce72d2ed49daa63467f4b9e074adeb2ab74c84",
+            "assessment_sha256": "a173a4dad6375044db073615e7be37f16f586abaf8ca1c70c81fd74dd13481ca",
+            "weight_sha256": "8d766fe3d9e5df75a06517ff52bd596036bbc38dccd378a50335e1c124b54c52"
+        },
+        {
+            "id": "c4b4d554-8e14-413f-bdd8-433d8fce5580",
+            "artifacts_read_back": 81,
+            "report_sha256": "73972f66aa7a50927ce745822c21a022f7a462989cb7b50821fcffa59cb9dc9b",
+            "assessment_sha256": "b0ae9a7202d1d8822c1a322626330d6eafbb8f2442d26cd2a3bef1823e38905b",
+            "weight_sha256": "e42afed24f19eefef5e715f5378b10b805e4994523e6d63a4c931bd12eac7438"
+        }
+    ],
+    "preview_status": 200,
+    "api_matches": true,
+    "publication_eligible": false,
+    "scope": "Canonical service readback and shared controller rendering, not authenticated browser E2E."
+}

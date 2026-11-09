@@ -1,0 +1,1283 @@
+{
+  "id": "4d516962-da1e-41cf-88e7-1120a7d17663",
+  "method": "corrected-hip-fold-profile-v1",
+  "compute": "google",
+  "source_sha256": "f90efcde69a536fab5c5ec8bb178d1547c2cc3299634029292684557d30781dd",
+  "rig_sha256": "85fba1625bd539ec28c6564a037fa02c4bfb4aa886316afc345c5f05429deace",
+  "parent_candidate_id": "140fe64c-6c59-41a5-9b8b-6bb7a35c8b97",
+  "contact_map_id": "5271850d-a635-4a23-a147-02060d866fbb",
+  "qualification_complete": false,
+  "publication_eligible": false,
+  "status": "diagnostic_complete",
+  "poses": [
+    {
+      "joint": "ThighL",
+      "degrees": 45,
+      "intersections": 0,
+      "morph_weights": {
+        "Corrective_UpperArmL_90": 0.0,
+        "Corrective_UpperArmR_90": 0.0,
+        "Corrective_ThighL_90": 0.4080709218978882,
+        "Corrective_ThighR_90": 0.0
+      },
+      "seed_vertices": 52,
+      "patch_vertices": 257,
+      "patch_edges": 607,
+      "edge_length_ratio": {
+        "min": 0.1767676171677363,
+        "p10": 0.7321828324044729,
+        "median": 0.9705509200761695,
+        "p90": 1.3323585809528282,
+        "max": 2.5698752741302346
+      },
+      "compressed_below_0_5": 7,
+      "expanded_over_1_5": 38,
+      "signed_dihedral_change_degrees": {
+        "min": -41.06501842447435,
+        "p10": -3.8407790942974467,
+        "median": 0.9203983873774378,
+        "p90": 14.836124121788822,
+        "max": 72.50603555377063
+      },
+      "largest_compression_edges": [
+        {
+          "vertices": [
+            12335,
+            12407
+          ],
+          "rest_length_m": 0.0032183992764410092,
+          "posed_length_m": 0.0005689087711908438,
+          "length_ratio": 0.1767676171677363,
+          "rest_dihedral_degrees": 2.680957062847573,
+          "posed_dihedral_degrees": 4.0366687195251,
+          "dihedral_increase_degrees": 1.3557116566775265
+        },
+        {
+          "vertices": [
+            13057,
+            13275
+          ],
+          "rest_length_m": 0.007417285284778238,
+          "posed_length_m": 0.002500654801277635,
+          "length_ratio": 0.33713881902445925,
+          "rest_dihedral_degrees": 3.0446943543193163,
+          "posed_dihedral_degrees": 23.24528044987516,
+          "dihedral_increase_degrees": 20.200586095555845
+        },
+        {
+          "vertices": [
+            12545,
+            12619
+          ],
+          "rest_length_m": 0.004122054058211998,
+          "posed_length_m": 0.0017619257326100383,
+          "length_ratio": 0.4274387739044596,
+          "rest_dihedral_degrees": 11.556296551505618,
+          "posed_dihedral_degrees": 11.650650420051736,
+          "dihedral_increase_degrees": 0.09435386854611849
+        },
+        {
+          "vertices": [
+            12077,
+            12396
+          ],
+          "rest_length_m": 0.008446039163938579,
+          "posed_length_m": 0.0037170704679348006,
+          "length_ratio": 0.44009628605622597,
+          "rest_dihedral_degrees": 0.17943521579126587,
+          "posed_dihedral_degrees": 1.681122850103202,
+          "dihedral_increase_degrees": 1.5016876343119363
+        },
+        {
+          "vertices": [
+            13608,
+            13712
+          ],
+          "rest_length_m": 0.00432204582053144,
+          "posed_length_m": 0.002000676788607187,
+          "length_ratio": 0.46290041144477817,
+          "rest_dihedral_degrees": 21.45455975471694,
+          "posed_dihedral_degrees": 15.830642230579539,
+          "dihedral_increase_degrees": -5.623917524137401
+        },
+        {
+          "vertices": [
+            163,
+            447
+          ],
+          "rest_length_m": 0.005539199777710644,
+          "posed_length_m": 0.0025770413751944076,
+          "length_ratio": 0.46523712424387426,
+          "rest_dihedral_degrees": 14.208772421951991,
+          "posed_dihedral_degrees": 16.39499182352674,
+          "dihedral_increase_degrees": 2.18621940157475
+        },
+        {
+          "vertices": [
+            13287,
+            13426
+          ],
+          "rest_length_m": 0.005766964754375596,
+          "posed_length_m": 0.0027525225155792085,
+          "length_ratio": 0.4772913712522301,
+          "rest_dihedral_degrees": 1.7472667448321075,
+          "posed_dihedral_degrees": 19.377130423962992,
+          "dihedral_increase_degrees": 17.629863679130885
+        },
+        {
+          "vertices": [
+            12972,
+            13094
+          ],
+          "rest_length_m": 0.005660183968603757,
+          "posed_length_m": 0.0029611777495613337,
+          "length_ratio": 0.5231592764451773,
+          "rest_dihedral_degrees": 4.0271975162251135,
+          "posed_dihedral_degrees": 5.551118604345242,
+          "dihedral_increase_degrees": 1.5239210881201286
+        },
+        {
+          "vertices": [
+            310,
+            12077
+          ],
+          "rest_length_m": 0.006813340458517599,
+          "posed_length_m": 0.0036516286477368573,
+          "length_ratio": 0.5359527635481398,
+          "rest_dihedral_degrees": 6.603743614265447,
+          "posed_dihedral_degrees": 14.012108373435682,
+          "dihedral_increase_degrees": 7.408364759170235
+        },
+        {
+          "vertices": [
+            14276,
+            14304
+          ],
+          "rest_length_m": 0.00610362710445826,
+          "posed_length_m": 0.0032786585039857037,
+          "length_ratio": 0.5371655980737879,
+          "rest_dihedral_degrees": 13.462402453487712,
+          "posed_dihedral_degrees": 18.960807151152796,
+          "dihedral_increase_degrees": 5.498404697665084
+        },
+        {
+          "vertices": [
+            13861,
+            13891
+          ],
+          "rest_length_m": 0.004068841620068085,
+          "posed_length_m": 0.00221623206545887,
+          "length_ratio": 0.5446837877709738,
+          "rest_dihedral_degrees": 5.383065552464513,
+          "posed_dihedral_degrees": 1.491260084283171,
+          "dihedral_increase_degrees": -3.8918054681813414
+        },
+        {
+          "vertices": [
+            14667,
+            14752
+          ],
+          "rest_length_m": 0.005038027660464656,
+          "posed_length_m": 0.0027932656520268896,
+          "length_ratio": 0.5544363469749722,
+          "rest_dihedral_degrees": 1.1141471578096303,
+          "posed_dihedral_degrees": 2.199222423074764,
+          "dihedral_increase_degrees": 1.0850752652651336
+        }
+      ],
+      "largest_fold_increase_edges": [
+        {
+          "vertices": [
+            12396,
+            13094
+          ],
+          "rest_length_m": 0.009841144897735766,
+          "posed_length_m": 0.01227737469213926,
+          "length_ratio": 1.2475555252686117,
+          "rest_dihedral_degrees": 1.1066133081083414,
+          "posed_dihedral_degrees": 73.61264886187897,
+          "dihedral_increase_degrees": 72.50603555377063
+        },
+        {
+          "vertices": [
+            15304,
+            15688
+          ],
+          "rest_length_m": 0.007976569188916923,
+          "posed_length_m": 0.008042112920967811,
+          "length_ratio": 1.0082170329747728,
+          "rest_dihedral_degrees": 26.849986732611832,
+          "posed_dihedral_degrees": 72.15138758876195,
+          "dihedral_increase_degrees": 45.30140085615012
+        },
+        {
+          "vertices": [
+            12354,
+            12619
+          ],
+          "rest_length_m": 0.003966120717520082,
+          "posed_length_m": 0.00752867473840371,
+          "length_ratio": 1.8982464918796536,
+          "rest_dihedral_degrees": 29.70601283856114,
+          "posed_dihedral_degrees": 70.19692746699452,
+          "dihedral_increase_degrees": 40.49091462843339
+        },
+        {
+          "vertices": [
+            13608,
+            14031
+          ],
+          "rest_length_m": 0.00886259814725925,
+          "posed_length_m": 0.009709665009601494,
+          "length_ratio": 1.0955777130213447,
+          "rest_dihedral_degrees": 1.1055296925432625,
+          "posed_dihedral_degrees": 38.83204111099085,
+          "dihedral_increase_degrees": 37.726511418447586
+        },
+        {
+          "vertices": [
+            16104,
+            16559
+          ],
+          "rest_length_m": 0.009283486019387697,
+          "posed_length_m": 0.00855892065955796,
+          "length_ratio": 0.9219511551677301,
+          "rest_dihedral_degrees": 29.28290794836945,
+          "posed_dihedral_degrees": 65.31654384830563,
+          "dihedral_increase_degrees": 36.03363589993618
+        },
+        {
+          "vertices": [
+            12334,
+            12354
+          ],
+          "rest_length_m": 0.006741768838502115,
+          "posed_length_m": 0.009386348692715237,
+          "length_ratio": 1.3922679518630148,
+          "rest_dihedral_degrees": 2.8624373582665283,
+          "posed_dihedral_degrees": 38.45371726413766,
+          "dihedral_increase_degrees": 35.59127990587113
+        },
+        {
+          "vertices": [
+            15688,
+            16104
+          ],
+          "rest_length_m": 0.00910094527464347,
+          "posed_length_m": 0.0087750241257104,
+          "length_ratio": 0.9641882091258,
+          "rest_dihedral_degrees": 31.82379361456604,
+          "posed_dihedral_degrees": 66.61360265926344,
+          "dihedral_increase_degrees": 34.78980904469739
+        },
+        {
+          "vertices": [
+            14852,
+            15304
+          ],
+          "rest_length_m": 0.013588112735650327,
+          "posed_length_m": 0.01069018928948711,
+          "length_ratio": 0.7867309829892634,
+          "rest_dihedral_degrees": 3.547191639085176,
+          "posed_dihedral_degrees": 38.27083894963527,
+          "dihedral_increase_degrees": 34.72364731055009
+        },
+        {
+          "vertices": [
+            12545,
+            12897
+          ],
+          "rest_length_m": 0.006647933412709589,
+          "posed_length_m": 0.01050857389147532,
+          "length_ratio": 1.580727910328482,
+          "rest_dihedral_degrees": 8.374538520957753,
+          "posed_dihedral_degrees": 42.93059764731403,
+          "dihedral_increase_degrees": 34.556059126356274
+        },
+        {
+          "vertices": [
+            12854,
+            13057
+          ],
+          "rest_length_m": 0.009368713421578573,
+          "posed_length_m": 0.0092906041249523,
+          "length_ratio": 0.9916627509977658,
+          "rest_dihedral_degrees": 16.540214893060305,
+          "posed_dihedral_degrees": 49.02138121783928,
+          "dihedral_increase_degrees": 32.48116632477897
+        },
+        {
+          "vertices": [
+            15288,
+            15914
+          ],
+          "rest_length_m": 0.010269196203033609,
+          "posed_length_m": 0.010274460361280777,
+          "length_ratio": 1.0005126163862381,
+          "rest_dihedral_degrees": 8.911975599120312,
+          "posed_dihedral_degrees": 40.97053819612409,
+          "dihedral_increase_degrees": 32.05856259700378
+        },
+        {
+          "vertices": [
+            12546,
+            13094
+          ],
+          "rest_length_m": 0.007061919499431638,
+          "posed_length_m": 0.007469975534286683,
+          "length_ratio": 1.0577825950703468,
+          "rest_dihedral_degrees": 9.19249612932606,
+          "posed_dihedral_degrees": 40.91974224302418,
+          "dihedral_increase_degrees": 31.727246113698122
+        }
+      ]
+    },
+    {
+      "joint": "ThighL",
+      "degrees": 90,
+      "intersections": 40,
+      "morph_weights": {
+        "Corrective_UpperArmL_90": 0.0,
+        "Corrective_UpperArmR_90": 0.0,
+        "Corrective_ThighL_90": 0.9999999403953552,
+        "Corrective_ThighR_90": 0.0
+      },
+      "seed_vertices": 52,
+      "patch_vertices": 257,
+      "patch_edges": 607,
+      "edge_length_ratio": {
+        "min": 0.11123645784445417,
+        "p10": 0.5805293066561711,
+        "median": 0.9753703865841368,
+        "p90": 1.658880844546927,
+        "max": 3.849614892541849
+      },
+      "compressed_below_0_5": 35,
+      "expanded_over_1_5": 85,
+      "signed_dihedral_change_degrees": {
+        "min": -64.27137079767151,
+        "p10": -5.8870745945550205,
+        "median": 3.7717466933208215,
+        "p90": 48.63060869823659,
+        "max": 175.15575134287994
+      },
+      "largest_compression_edges": [
+        {
+          "vertices": [
+            13861,
+            13891
+          ],
+          "rest_length_m": 0.004068841620068085,
+          "posed_length_m": 0.0004526035293464641,
+          "length_ratio": 0.11123645784445417,
+          "rest_dihedral_degrees": 5.383065552464513,
+          "posed_dihedral_degrees": 0.28444669194523947,
+          "dihedral_increase_degrees": -5.098618860519273
+        },
+        {
+          "vertices": [
+            12838,
+            12854
+          ],
+          "rest_length_m": 0.004811405166047593,
+          "posed_length_m": 0.0007491399410552259,
+          "length_ratio": 0.15570086392674745,
+          "rest_dihedral_degrees": 21.593777444009884,
+          "posed_dihedral_degrees": 11.09180169438801,
+          "dihedral_increase_degrees": -10.501975749621874
+        },
+        {
+          "vertices": [
+            13370,
+            13492
+          ],
+          "rest_length_m": 0.01255983129163586,
+          "posed_length_m": 0.002876065623799242,
+          "length_ratio": 0.22898919237191823,
+          "rest_dihedral_degrees": 2.8880701829503534,
+          "posed_dihedral_degrees": 67.92720732012845,
+          "dihedral_increase_degrees": 65.03913713717809
+        },
+        {
+          "vertices": [
+            14644,
+            14679
+          ],
+          "rest_length_m": 0.005787237469103227,
+          "posed_length_m": 0.0015909738261289607,
+          "length_ratio": 0.2749107557142446
+        },
+        {
+          "vertices": [
+            14644,
+            14680
+          ],
+          "rest_length_m": 0.005787237469103227,
+          "posed_length_m": 0.0015909738261289607,
+          "length_ratio": 0.2749107557142446
+        },
+        {
+          "vertices": [
+            13502,
+            13608
+          ],
+          "rest_length_m": 0.0066878709566609625,
+          "posed_length_m": 0.002108042338121599,
+          "length_ratio": 0.3152037998014956,
+          "rest_dihedral_degrees": 33.59152620448234,
+          "posed_dihedral_degrees": 10.296741843688054,
+          "dihedral_increase_degrees": -23.29478436079429
+        },
+        {
+          "vertices": [
+            16441,
+            16490
+          ],
+          "rest_length_m": 0.012789799148472607,
+          "posed_length_m": 0.0041769800523248956,
+          "length_ratio": 0.3265868372001543,
+          "rest_dihedral_degrees": 12.284272491517099,
+          "posed_dihedral_degrees": 29.34138302445529,
+          "dihedral_increase_degrees": 17.05711053293819
+        },
+        {
+          "vertices": [
+            262,
+            277
+          ],
+          "rest_length_m": 0.005898233772797661,
+          "posed_length_m": 0.002004677898703678,
+          "length_ratio": 0.3398776609955925,
+          "rest_dihedral_degrees": 4.160104759222192,
+          "posed_dihedral_degrees": 8.561178312004413,
+          "dihedral_increase_degrees": 4.401073552782221
+        },
+        {
+          "vertices": [
+            16424,
+            16559
+          ],
+          "rest_length_m": 0.010649351224370647,
+          "posed_length_m": 0.0036364658233066084,
+          "length_ratio": 0.34147299179922724,
+          "rest_dihedral_degrees": 10.505334116677753,
+          "posed_dihedral_degrees": 22.357092790164565,
+          "dihedral_increase_degrees": 11.851758673486811
+        },
+        {
+          "vertices": [
+            262,
+            12064
+          ],
+          "rest_length_m": 0.005571196559084569,
+          "posed_length_m": 0.0020344745316946303,
+          "length_ratio": 0.3651773025988738,
+          "rest_dihedral_degrees": 2.602570079259163,
+          "posed_dihedral_degrees": 5.845387322733839,
+          "dihedral_increase_degrees": 3.2428172434746765
+        },
+        {
+          "vertices": [
+            13835,
+            13966
+          ],
+          "rest_length_m": 0.011870671715330659,
+          "posed_length_m": 0.004386330728049291,
+          "length_ratio": 0.3695099008074211,
+          "rest_dihedral_degrees": 8.403602049290004,
+          "posed_dihedral_degrees": 15.86657881205789,
+          "dihedral_increase_degrees": 7.462976762767886
+        },
+        {
+          "vertices": [
+            12652,
+            12838
+          ],
+          "rest_length_m": 0.005183087121759318,
+          "posed_length_m": 0.001926699863771138,
+          "length_ratio": 0.371728241974283,
+          "rest_dihedral_degrees": 12.019446091762367,
+          "posed_dihedral_degrees": 9.834513436453001,
+          "dihedral_increase_degrees": -2.1849326553093658
+        }
+      ],
+      "largest_fold_increase_edges": [
+        {
+          "vertices": [
+            12652,
+            13057
+          ],
+          "rest_length_m": 0.005551481517471193,
+          "posed_length_m": 0.008478967829187698,
+          "length_ratio": 1.5273342444721012,
+          "rest_dihedral_degrees": 3.6286979948335163,
+          "posed_dihedral_degrees": 178.78444933771345,
+          "dihedral_increase_degrees": 175.15575134287994
+        },
+        {
+          "vertices": [
+            12824,
+            13620
+          ],
+          "rest_length_m": 0.009427254392350199,
+          "posed_length_m": 0.011187617229319737,
+          "length_ratio": 1.1867312330510562,
+          "rest_dihedral_degrees": 1.973602977625779,
+          "posed_dihedral_degrees": 175.04744706153716,
+          "dihedral_increase_degrees": 173.07384408391138
+        },
+        {
+          "vertices": [
+            12396,
+            13094
+          ],
+          "rest_length_m": 0.009841144897735766,
+          "posed_length_m": 0.015328939711405015,
+          "length_ratio": 1.5576378430249382,
+          "rest_dihedral_degrees": 1.1066133081083414,
+          "posed_dihedral_degrees": 173.31168534462702,
+          "dihedral_increase_degrees": 172.2050720365187
+        },
+        {
+          "vertices": [
+            12407,
+            12559
+          ],
+          "rest_length_m": 0.0054301638787733275,
+          "posed_length_m": 0.012561449444758111,
+          "length_ratio": 2.3132726240291186,
+          "rest_dihedral_degrees": 16.68046414333596,
+          "posed_dihedral_degrees": 178.98692619019008,
+          "dihedral_increase_degrees": 162.3064620468541
+        },
+        {
+          "vertices": [
+            12546,
+            13094
+          ],
+          "rest_length_m": 0.007061919499431638,
+          "posed_length_m": 0.0100494650497369,
+          "length_ratio": 1.4230500716619197,
+          "rest_dihedral_degrees": 9.19249612932606,
+          "posed_dihedral_degrees": 170.18361798704126,
+          "dihedral_increase_degrees": 160.9911218577152
+        },
+        {
+          "vertices": [
+            12824,
+            13811
+          ],
+          "rest_length_m": 0.0131293060021332,
+          "posed_length_m": 0.015821070507201773,
+          "length_ratio": 1.2050195573651208,
+          "rest_dihedral_degrees": 4.777810836757678,
+          "posed_dihedral_degrees": 156.88668163944223,
+          "dihedral_increase_degrees": 152.10887080268455
+        },
+        {
+          "vertices": [
+            16104,
+            16559
+          ],
+          "rest_length_m": 0.009283486019387697,
+          "posed_length_m": 0.007689063759466003,
+          "length_ratio": 0.8282517734618342,
+          "rest_dihedral_degrees": 29.28290794836945,
+          "posed_dihedral_degrees": 175.33285677358893,
+          "dihedral_increase_degrees": 146.04994882521947
+        },
+        {
+          "vertices": [
+            12262,
+            12407
+          ],
+          "rest_length_m": 0.00980481585648595,
+          "posed_length_m": 0.013366514112322397,
+          "length_ratio": 1.3632600864686675,
+          "rest_dihedral_degrees": 14.20821267351843,
+          "posed_dihedral_degrees": 159.966415503678,
+          "dihedral_increase_degrees": 145.75820283015958
+        },
+        {
+          "vertices": [
+            12335,
+            12559
+          ],
+          "rest_length_m": 0.0059907538325139915,
+          "posed_length_m": 0.014927127952712203,
+          "length_ratio": 2.49169442945515,
+          "rest_dihedral_degrees": 19.754391568517953,
+          "posed_dihedral_degrees": 157.89000704896628,
+          "dihedral_increase_degrees": 138.13561548044834
+        },
+        {
+          "vertices": [
+            12396,
+            12681
+          ],
+          "rest_length_m": 0.007420193235476659,
+          "posed_length_m": 0.011438606894895537,
+          "length_ratio": 1.54155107985685,
+          "rest_dihedral_degrees": 9.457611681102685,
+          "posed_dihedral_degrees": 147.4027727421922,
+          "dihedral_increase_degrees": 137.94516106108952
+        },
+        {
+          "vertices": [
+            12077,
+            12546
+          ],
+          "rest_length_m": 0.006198518925755891,
+          "posed_length_m": 0.008782611551597024,
+          "length_ratio": 1.4168887208045444,
+          "rest_dihedral_degrees": 13.919829416250032,
+          "posed_dihedral_degrees": 151.72835345258633,
+          "dihedral_increase_degrees": 137.8085240363363
+        },
+        {
+          "vertices": [
+            12077,
+            12237
+          ],
+          "rest_length_m": 0.008878439603167474,
+          "posed_length_m": 0.004541085993385958,
+          "length_ratio": 0.5114734341117643,
+          "rest_dihedral_degrees": 12.52826317274129,
+          "posed_dihedral_degrees": 149.65389924448579,
+          "dihedral_increase_degrees": 137.1256360717445
+        }
+      ]
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 45,
+      "intersections": 0,
+      "morph_weights": {
+        "Corrective_UpperArmL_90": 0.0,
+        "Corrective_UpperArmR_90": 0.0,
+        "Corrective_ThighL_90": 0.0,
+        "Corrective_ThighR_90": 0.40034282207489014
+      },
+      "seed_vertices": 36,
+      "patch_vertices": 192,
+      "patch_edges": 419,
+      "edge_length_ratio": {
+        "min": 0.2463775668426326,
+        "p10": 0.6474169517100165,
+        "median": 0.9222771124447794,
+        "p90": 1.3942677780503123,
+        "max": 2.1663575250063554
+      },
+      "compressed_below_0_5": 9,
+      "expanded_over_1_5": 28,
+      "signed_dihedral_change_degrees": {
+        "min": -17.36083393036069,
+        "p10": -5.18749114030433,
+        "median": 2.624572421023931,
+        "p90": 14.996261101018092,
+        "max": 62.4680370765556
+      },
+      "largest_compression_edges": [
+        {
+          "vertices": [
+            12627,
+            12640
+          ],
+          "rest_length_m": 0.008508449042186216,
+          "posed_length_m": 0.0020962909726183676,
+          "length_ratio": 0.2463775668426326,
+          "rest_dihedral_degrees": 7.535530242453331,
+          "posed_dihedral_degrees": 4.656672731024908,
+          "dihedral_increase_degrees": -2.878857511428423
+        },
+        {
+          "vertices": [
+            12714,
+            12805
+          ],
+          "rest_length_m": 0.005195758687866667,
+          "posed_length_m": 0.0013521083792680342,
+          "length_ratio": 0.2602330978968536,
+          "rest_dihedral_degrees": 9.630678773851928,
+          "posed_dihedral_degrees": 7.14772345977866,
+          "dihedral_increase_degrees": -2.4829553140732683
+        },
+        {
+          "vertices": [
+            21,
+            215
+          ],
+          "rest_length_m": 0.007573027901951456,
+          "posed_length_m": 0.002349248198938413,
+          "length_ratio": 0.31021253709273233,
+          "rest_dihedral_degrees": 5.392846504598405,
+          "posed_dihedral_degrees": 10.47866119093854,
+          "dihedral_increase_degrees": 5.085814686340135
+        },
+        {
+          "vertices": [
+            12714,
+            12730
+          ],
+          "rest_length_m": 0.008262230538444956,
+          "posed_length_m": 0.0033249985952637953,
+          "length_ratio": 0.4024335292742385
+        },
+        {
+          "vertices": [
+            12713,
+            12731
+          ],
+          "rest_length_m": 0.008262230538444956,
+          "posed_length_m": 0.0033249985952637953,
+          "length_ratio": 0.4024335292742385
+        },
+        {
+          "vertices": [
+            12784,
+            12846
+          ],
+          "rest_length_m": 0.004774048894469926,
+          "posed_length_m": 0.0022813083189635193,
+          "length_ratio": 0.477856085974758,
+          "rest_dihedral_degrees": 5.987867987760219,
+          "posed_dihedral_degrees": 5.212157656044856,
+          "dihedral_increase_degrees": -0.7757103317153629
+        },
+        {
+          "vertices": [
+            163,
+            12077
+          ],
+          "rest_length_m": 0.007217049558327973,
+          "posed_length_m": 0.0035779024093836546,
+          "length_ratio": 0.4957569406261045,
+          "rest_dihedral_degrees": 9.712529827661443,
+          "posed_dihedral_degrees": 6.9978118255883945,
+          "dihedral_increase_degrees": -2.714718002073049
+        },
+        {
+          "vertices": [
+            694,
+            764
+          ],
+          "rest_length_m": 0.003846396636145158,
+          "posed_length_m": 0.0019183404035568296,
+          "length_ratio": 0.4987370219518968,
+          "rest_dihedral_degrees": 7.20954460053666,
+          "posed_dihedral_degrees": 16.264117228329212,
+          "dihedral_increase_degrees": 9.054572627792552
+        },
+        {
+          "vertices": [
+            12385,
+            12652
+          ],
+          "rest_length_m": 0.008511889741828909,
+          "posed_length_m": 0.004246554999526163,
+          "length_ratio": 0.4988968523238561,
+          "rest_dihedral_degrees": 5.934489647489113,
+          "posed_dihedral_degrees": 8.550743960713156,
+          "dihedral_increase_degrees": 2.616254313224043
+        },
+        {
+          "vertices": [
+            447,
+            596
+          ],
+          "rest_length_m": 0.00766334684357122,
+          "posed_length_m": 0.0038760636358961082,
+          "length_ratio": 0.5057925362138264,
+          "rest_dihedral_degrees": 3.31500081041773,
+          "posed_dihedral_degrees": 40.10449451658387,
+          "dihedral_increase_degrees": 36.78949370616614
+        },
+        {
+          "vertices": [
+            310,
+            447
+          ],
+          "rest_length_m": 0.00786805276794715,
+          "posed_length_m": 0.003986935179573261,
+          "length_ratio": 0.5067245095019222,
+          "rest_dihedral_degrees": 8.045672441467644,
+          "posed_dihedral_degrees": 30.371243080950325,
+          "dihedral_increase_degrees": 22.32557063948268
+        },
+        {
+          "vertices": [
+            451,
+            587
+          ],
+          "rest_length_m": 0.00539037198894718,
+          "posed_length_m": 0.002746722512493723,
+          "length_ratio": 0.5095608462877529,
+          "rest_dihedral_degrees": 11.919999939204061,
+          "posed_dihedral_degrees": 27.82072616666469,
+          "dihedral_increase_degrees": 15.90072622746063
+        }
+      ],
+      "largest_fold_increase_edges": [
+        {
+          "vertices": [
+            12784,
+            12879
+          ],
+          "rest_length_m": 0.007295280352548148,
+          "posed_length_m": 0.009740343229026251,
+          "length_ratio": 1.3351568080072582,
+          "rest_dihedral_degrees": 22.94105642043199,
+          "posed_dihedral_degrees": 85.4090934969876,
+          "dihedral_increase_degrees": 62.4680370765556
+        },
+        {
+          "vertices": [
+            12879,
+            13116
+          ],
+          "rest_length_m": 0.009848583814670957,
+          "posed_length_m": 0.012144933740513758,
+          "length_ratio": 1.2331654955732865,
+          "rest_dihedral_degrees": 37.528736004979415,
+          "posed_dihedral_degrees": 86.872296152715,
+          "dihedral_increase_degrees": 49.34356014773558
+        },
+        {
+          "vertices": [
+            12714,
+            12784
+          ],
+          "rest_length_m": 0.002997864718560654,
+          "posed_length_m": 0.006494446792004932,
+          "length_ratio": 2.1663575250063554,
+          "rest_dihedral_degrees": 16.893550391003522,
+          "posed_dihedral_degrees": 66.07150344591045,
+          "dihedral_increase_degrees": 49.17795305490693
+        },
+        {
+          "vertices": [
+            596,
+            1044
+          ],
+          "rest_length_m": 0.008460742376421087,
+          "posed_length_m": 0.007467174232535132,
+          "length_ratio": 0.8825672618687821,
+          "rest_dihedral_degrees": 2.364312677139627,
+          "posed_dihedral_degrees": 45.54236532774818,
+          "dihedral_increase_degrees": 43.17805265060855
+        },
+        {
+          "vertices": [
+            12071,
+            12254
+          ],
+          "rest_length_m": 0.005439645213794801,
+          "posed_length_m": 0.010041128095120368,
+          "length_ratio": 1.8459159927666466,
+          "rest_dihedral_degrees": 4.536820681475915,
+          "posed_dihedral_degrees": 45.531735079146806,
+          "dihedral_increase_degrees": 40.99491439767089
+        },
+        {
+          "vertices": [
+            12284,
+            12640
+          ],
+          "rest_length_m": 0.004849296483950213,
+          "posed_length_m": 0.009898027376418275,
+          "length_ratio": 2.0411264621946548,
+          "rest_dihedral_degrees": 7.388073000327796,
+          "posed_dihedral_degrees": 46.454899777970205,
+          "dihedral_increase_degrees": 39.06682677764241
+        },
+        {
+          "vertices": [
+            447,
+            596
+          ],
+          "rest_length_m": 0.00766334684357122,
+          "posed_length_m": 0.0038760636358961082,
+          "length_ratio": 0.5057925362138264,
+          "rest_dihedral_degrees": 3.31500081041773,
+          "posed_dihedral_degrees": 40.10449451658387,
+          "dihedral_increase_degrees": 36.78949370616614
+        },
+        {
+          "vertices": [
+            43,
+            318
+          ],
+          "rest_length_m": 0.0036100487082661122,
+          "posed_length_m": 0.004755234516541562,
+          "length_ratio": 1.3172217055280333,
+          "rest_dihedral_degrees": 13.274764428303161,
+          "posed_dihedral_degrees": 49.599888220200235,
+          "dihedral_increase_degrees": 36.32512379189707
+        },
+        {
+          "vertices": [
+            587,
+            764
+          ],
+          "rest_length_m": 0.007047670039155529,
+          "posed_length_m": 0.004892086016365349,
+          "length_ratio": 0.694142317842044,
+          "rest_dihedral_degrees": 4.572121829892889,
+          "posed_dihedral_degrees": 39.66210460885808,
+          "dihedral_increase_degrees": 35.089982778965194
+        },
+        {
+          "vertices": [
+            12284,
+            12627
+          ],
+          "rest_length_m": 0.008675994516440032,
+          "posed_length_m": 0.011480664475216324,
+          "length_ratio": 1.3232678344207984,
+          "rest_dihedral_degrees": 5.237528332113701,
+          "posed_dihedral_degrees": 40.22586995954899,
+          "dihedral_increase_degrees": 34.98834162743529
+        },
+        {
+          "vertices": [
+            21,
+            597
+          ],
+          "rest_length_m": 0.007075117608379418,
+          "posed_length_m": 0.013833416214215086,
+          "length_ratio": 1.9552206733399704,
+          "rest_dihedral_degrees": 1.2049803281431746,
+          "posed_dihedral_degrees": 36.019751779617586,
+          "dihedral_increase_degrees": 34.814771451474414
+        },
+        {
+          "vertices": [
+            12627,
+            12731
+          ],
+          "rest_length_m": 0.0032935214768333655,
+          "posed_length_m": 0.0037312197722040733,
+          "length_ratio": 1.132896748495335,
+          "rest_dihedral_degrees": 13.086496584605074,
+          "posed_dihedral_degrees": 45.88573601684636,
+          "dihedral_increase_degrees": 32.799239432241286
+        }
+      ]
+    },
+    {
+      "joint": "ThighR",
+      "degrees": 90,
+      "intersections": 27,
+      "morph_weights": {
+        "Corrective_UpperArmL_90": 0.0,
+        "Corrective_UpperArmR_90": 0.0,
+        "Corrective_ThighL_90": 0.0,
+        "Corrective_ThighR_90": 0.9999999403953552
+      },
+      "seed_vertices": 36,
+      "patch_vertices": 192,
+      "patch_edges": 419,
+      "edge_length_ratio": {
+        "min": 0.05448651104946693,
+        "p10": 0.47434288908367506,
+        "median": 0.9072181335574072,
+        "p90": 2.0760571608321707,
+        "max": 3.6835738222290124
+      },
+      "compressed_below_0_5": 48,
+      "expanded_over_1_5": 86,
+      "signed_dihedral_change_degrees": {
+        "min": -37.15737075783331,
+        "p10": -6.7255766314221725,
+        "median": 9.09585719638493,
+        "p90": 46.797643018058444,
+        "max": 154.8987122648496
+      },
+      "largest_compression_edges": [
+        {
+          "vertices": [
+            12284,
+            12317
+          ],
+          "rest_length_m": 0.006745251066491655,
+          "posed_length_m": 0.0003675251967658262,
+          "length_ratio": 0.05448651104946693,
+          "rest_dihedral_degrees": 11.651937047917738,
+          "posed_dihedral_degrees": 1.5508885651607809,
+          "dihedral_increase_degrees": -10.101048482756957
+        },
+        {
+          "vertices": [
+            12396,
+            12546
+          ],
+          "rest_length_m": 0.004712023924469608,
+          "posed_length_m": 0.000542008709458639,
+          "length_ratio": 0.11502673121924956,
+          "rest_dihedral_degrees": 15.023898943969938,
+          "posed_dihedral_degrees": 37.05936659628151,
+          "dihedral_increase_degrees": 22.035467652311567
+        },
+        {
+          "vertices": [
+            12788,
+            12879
+          ],
+          "rest_length_m": 0.009595327136081013,
+          "posed_length_m": 0.0015687598574159807,
+          "length_ratio": 0.1634920659991905,
+          "rest_dihedral_degrees": 7.380924787564723,
+          "posed_dihedral_degrees": 1.91785459644096,
+          "dihedral_increase_degrees": -5.463070191123763
+        },
+        {
+          "vertices": [
+            879,
+            950
+          ],
+          "rest_length_m": 0.007162755105982141,
+          "posed_length_m": 0.0011801786871078143,
+          "length_ratio": 0.1647660250344397,
+          "rest_dihedral_degrees": 2.117402868879238,
+          "posed_dihedral_degrees": 3.229709176695733,
+          "dihedral_increase_degrees": 1.1123063078164948
+        },
+        {
+          "vertices": [
+            2216,
+            2358
+          ],
+          "rest_length_m": 0.009356485279716317,
+          "posed_length_m": 0.0016330153946542978,
+          "length_ratio": 0.17453299458445895,
+          "rest_dihedral_degrees": 0.7872868218805903,
+          "posed_dihedral_degrees": 7.005860964737993,
+          "dihedral_increase_degrees": 6.218574142857403
+        },
+        {
+          "vertices": [
+            1190,
+            1333
+          ],
+          "rest_length_m": 0.009135951561925964,
+          "posed_length_m": 0.0020226732776549403,
+          "length_ratio": 0.22139711051932695,
+          "rest_dihedral_degrees": 2.081653678289796,
+          "posed_dihedral_degrees": 0.6201762606350908,
+          "dihedral_increase_degrees": -1.4614774176547054
+        },
+        {
+          "vertices": [
+            193,
+            12091
+          ],
+          "rest_length_m": 0.012283877692029016,
+          "posed_length_m": 0.0027268995300359813,
+          "length_ratio": 0.2219901238356892,
+          "rest_dihedral_degrees": 9.371836067188084,
+          "posed_dihedral_degrees": 14.343818867982481,
+          "dihedral_increase_degrees": 4.971982800794397
+        },
+        {
+          "vertices": [
+            2369,
+            2421
+          ],
+          "rest_length_m": 0.014160142201875144,
+          "posed_length_m": 0.0034718403239239514,
+          "length_ratio": 0.24518400129231727,
+          "rest_dihedral_degrees": 3.028278693498711,
+          "posed_dihedral_degrees": 5.02267056615692,
+          "dihedral_increase_degrees": 1.994391872658209
+        },
+        {
+          "vertices": [
+            12714,
+            12730
+          ],
+          "rest_length_m": 0.008262230538444956,
+          "posed_length_m": 0.0021500069270823587,
+          "length_ratio": 0.26022112516446605
+        },
+        {
+          "vertices": [
+            12713,
+            12731
+          ],
+          "rest_length_m": 0.008262230538444956,
+          "posed_length_m": 0.0021500069270823587,
+          "length_ratio": 0.26022112516446605
+        },
+        {
+          "vertices": [
+            12077,
+            12237
+          ],
+          "rest_length_m": 0.008878439603167474,
+          "posed_length_m": 0.002380825288078726,
+          "length_ratio": 0.26815807669957475,
+          "rest_dihedral_degrees": 12.52826317274129,
+          "posed_dihedral_degrees": 5.575995419124063,
+          "dihedral_increase_degrees": -6.952267753617227
+        },
+        {
+          "vertices": [
+            539,
+            566
+          ],
+          "rest_length_m": 0.010649024244693502,
+          "posed_length_m": 0.00298908164330881,
+          "length_ratio": 0.2806906599727477
+        }
+      ],
+      "largest_fold_increase_edges": [
+        {
+          "vertices": [
+            12284,
+            12640
+          ],
+          "rest_length_m": 0.004849296483950213,
+          "posed_length_m": 0.017862741584506195,
+          "length_ratio": 3.6835738222290124,
+          "rest_dihedral_degrees": 7.388073000327796,
+          "posed_dihedral_degrees": 162.2867852651774,
+          "dihedral_increase_degrees": 154.8987122648496
+        },
+        {
+          "vertices": [
+            12714,
+            12805
+          ],
+          "rest_length_m": 0.005195758687866667,
+          "posed_length_m": 0.006142417531084674,
+          "length_ratio": 1.182198385276953,
+          "rest_dihedral_degrees": 9.630678773851928,
+          "posed_dihedral_degrees": 163.6772440185383,
+          "dihedral_increase_degrees": 154.04656524468635
+        },
+        {
+          "vertices": [
+            2080,
+            2253
+          ],
+          "rest_length_m": 0.002304792061973705,
+          "posed_length_m": 0.0028785056969569396,
+          "length_ratio": 1.2489220804118597,
+          "rest_dihedral_degrees": 0.0,
+          "posed_dihedral_degrees": 152.24768418245964,
+          "dihedral_increase_degrees": 152.24768418245964
+        },
+        {
+          "vertices": [
+            12730,
+            12805
+          ],
+          "rest_length_m": 0.0035901319728000028,
+          "posed_length_m": 0.004027586892706387,
+          "length_ratio": 1.1218492588073874,
+          "rest_dihedral_degrees": 4.553326124714268,
+          "posed_dihedral_degrees": 153.4314115463044,
+          "dihedral_increase_degrees": 148.87808542159013
+        },
+        {
+          "vertices": [
+            12788,
+            12928
+          ],
+          "rest_length_m": 0.007715745773955415,
+          "posed_length_m": 0.010622751283366507,
+          "length_ratio": 1.3767627387651524,
+          "rest_dihedral_degrees": 4.57185004361202,
+          "posed_dihedral_degrees": 143.82563675161487,
+          "dihedral_increase_degrees": 139.25378670800285
+        },
+        {
+          "vertices": [
+            12284,
+            12627
+          ],
+          "rest_length_m": 0.008675994516440032,
+          "posed_length_m": 0.012787701307995378,
+          "length_ratio": 1.4739176337380255,
+          "rest_dihedral_degrees": 5.237528332113701,
+          "posed_dihedral_degrees": 140.6305285675013,
+          "dihedral_increase_degrees": 135.3930002353876
+        },
+        {
+          "vertices": [
+            1783,
+            2080
+          ],
+          "rest_length_m": 0.0073612966527195536,
+          "posed_length_m": 0.004786317186233662,
+          "length_ratio": 0.650200285633837,
+          "rest_dihedral_degrees": 22.884290911419683,
+          "posed_dihedral_degrees": 146.63101841765868,
+          "dihedral_increase_degrees": 123.746727506239
+        },
+        {
+          "vertices": [
+            1783,
+            2253
+          ],
+          "rest_length_m": 0.008250052162635713,
+          "posed_length_m": 0.007610678388038605,
+          "length_ratio": 0.922500638542285,
+          "rest_dihedral_degrees": 7.770871491725885,
+          "posed_dihedral_degrees": 125.12859874584349,
+          "dihedral_increase_degrees": 117.3577272541176
+        },
+        {
+          "vertices": [
+            12627,
+            12713
+          ],
+          "rest_length_m": 0.005344837154111716,
+          "posed_length_m": 0.007331538423323786,
+          "length_ratio": 1.371704733358195,
+          "rest_dihedral_degrees": 1.8639189370792566,
+          "posed_dihedral_degrees": 117.08851938230406,
+          "dihedral_increase_degrees": 115.2246004452248
+        },
+        {
+          "vertices": [
+            12317,
+            12640
+          ],
+          "rest_length_m": 0.0069652313344172176,
+          "posed_length_m": 0.01761295507106375,
+          "length_ratio": 2.528696352701605,
+          "rest_dihedral_degrees": 4.200108286934781,
+          "posed_dihedral_degrees": 104.37822194919227,
+          "dihedral_increase_degrees": 100.17811366225749
+        },
+        {
+          "vertices": [
+            12788,
+            13116
+          ],
+          "rest_length_m": 0.005485665616318161,
+          "posed_length_m": 0.013676680844194896,
+          "length_ratio": 2.493167064997727,
+          "rest_dihedral_degrees": 9.561372266099767,
+          "posed_dihedral_degrees": 107.78035371046496,
+          "dihedral_increase_degrees": 98.2189814443652
+        },
+        {
+          "vertices": [
+            12784,
+            12879
+          ],
+          "rest_length_m": 0.007295280352548148,
+          "posed_length_m": 0.011848088048506431,
+          "length_ratio": 1.6240757689823457,
+          "rest_dihedral_degrees": 22.94105642043199,
+          "posed_dihedral_degrees": 119.71632977294753,
+          "dihedral_increase_degrees": 96.77527335251554
+        }
+      ]
+    }
+  ],
+  "completed_unix": 1793110103.4101796,
+  "scope": "Signed contact-map hip patch, three edge rings; edge length and adjacent triangle dihedral changes are exploratory shape measurements, not collision exclusions, penetration depth or visual qualification."
+}

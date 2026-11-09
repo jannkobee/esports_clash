@@ -1,0 +1,603 @@
+{
+  "id": "8c276c78-78b2-4e66-8d67-89a9261fc29c",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "assets": [
+    {
+      "label": "parent",
+      "source_sha256": "85fba1625bd539ec28c6564a037fa02c4bfb4aa886316afc345c5f05429deace",
+      "stress_sha256": "dbbc0810eb315105652188a70b21bb229fb08f14a54dee5606d635eb1138f549",
+      "stress_bytes": 4533828,
+      "poses": [
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.21649442613124847,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.9999999403953552,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 31,
+          "expected": 31
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.21314050257205963,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.9999999403953552,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ForearmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ForearmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ForearmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ForearmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.4080709218978882,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ThighL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.9999999403953552,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ThighL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 40,
+          "expected": 40
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.40034282207489014
+          },
+          "joint": "ThighR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.9999999403953552
+          },
+          "joint": "ThighR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 27,
+          "expected": 27
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "CalfL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "CalfL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "CalfR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "CalfR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 2,
+          "expected": 2
+        }
+      ],
+      "baseline_reproduced": true
+    },
+    {
+      "label": "current",
+      "source_sha256": "7fe68c53010a526b12c69d36720e373cc6407351ede046e55efc781d80ca7a1a",
+      "stress_sha256": "f89099aa05ac26f8e2f16d2ce4c780164b1f717bffaf06be937c1f43f4d9b531",
+      "stress_bytes": 5167236,
+      "poses": [
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.21649442613124847,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "UpperArmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.9999999403953552,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "UpperArmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 31,
+          "expected": 31
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.21314050257205963,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "UpperArmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.9999999403953552,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "UpperArmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ForearmL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ForearmL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ForearmR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ForearmR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.40658682584762573,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ThighL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.9999999403953552,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "ThighL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 38,
+          "expected": 38
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.39992499351501465
+          },
+          "joint": "ThighR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.9999999403953552
+          },
+          "joint": "ThighR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 26,
+          "expected": 26
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "CalfL",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "CalfL",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "CalfR",
+          "degrees": 45,
+          "phase": 0.25,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 12.0,
+          "intersections": 0,
+          "expected": 0
+        },
+        {
+          "morph_weights": {
+            "Corrective_UpperArmL_90": 0.0,
+            "Corrective_UpperArmR_90": 0.0,
+            "Corrective_ThighL_90": 0.0,
+            "Corrective_ThighR_90": 0.0
+          },
+          "joint": "CalfR",
+          "degrees": 90,
+          "phase": 0.5,
+          "imported_frame_range": [
+            0.0,
+            48.0
+          ],
+          "sampled_frame": 24.0,
+          "intersections": 2,
+          "expected": 2
+        }
+      ],
+      "baseline_reproduced": true
+    }
+  ],
+  "status": "diagnostic_clips_exported"
+}

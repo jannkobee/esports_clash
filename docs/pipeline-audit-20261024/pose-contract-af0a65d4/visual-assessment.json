@@ -1,0 +1,101 @@
+{
+  "review_id": "af0a65d4-25d0-4715-9ad1-8a35dfa743b5",
+  "status": "pose_definition_corrected_deformation_unresolved",
+  "reviewed_on": "2026-10-29",
+  "reviewer": "/root",
+  "scope": "20 of 36 exact Babylon screenshots inspected. Static frozen-weight diagnostic only; no animation, anatomical rhythm or production qualification.",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "inspected_screenshots": [
+    {
+      "file": "screenshots/legacy-UpperArmL-45-orbit3.png",
+      "sha256": "edca4a38f2d132958b0759ac7fbe22ecb29d863bfbe9b94caf35f4741215a1d4"
+    },
+    {
+      "file": "screenshots/world_target-UpperArmL-45-orbit1.png",
+      "sha256": "f14c18d0f4abf104d62c0e8a156d2740f5a31377aea2bca41b4584eebcaf0984"
+    },
+    {
+      "file": "screenshots/world_target-UpperArmL-45-orbit3.png",
+      "sha256": "8cdc8ccb951c14e661617160b6db4fa0f72b5b28717b46ec3785aa91f51b7399"
+    },
+    {
+      "file": "screenshots/coordinated-UpperArmL-45-orbit1.png",
+      "sha256": "2c9cde42475d6c62232892adfec4c752251d6fac4e2cadb4f9804f022d26993c"
+    },
+    {
+      "file": "screenshots/coordinated-UpperArmL-45-orbit3.png",
+      "sha256": "fcee0d1af331eedbe739d4dc16905ac9656230c79d28d730c64c0afe75fe1e29"
+    },
+    {
+      "file": "screenshots/legacy-UpperArmL-90-orbit3.png",
+      "sha256": "d3d4b1f5dcd714bdec0177818bfdcce6ddee194343b06ea293845301c5747319"
+    },
+    {
+      "file": "screenshots/world_target-UpperArmL-90-orbit1.png",
+      "sha256": "268b72ae8dbfca74b5c8a0d0fae1b42249f01d3f274d10d9cd9a93de2abe9f75"
+    },
+    {
+      "file": "screenshots/world_target-UpperArmL-90-orbit3.png",
+      "sha256": "f00160af21027da92923fadcd7265f8aa1dd8e62895359282ab4aae417fef20b"
+    },
+    {
+      "file": "screenshots/coordinated-UpperArmL-90-orbit1.png",
+      "sha256": "b2a5f46f7b7cef980f3e4d73035e12ea188c19f84569070975f4f76a940c65f1"
+    },
+    {
+      "file": "screenshots/coordinated-UpperArmL-90-orbit3.png",
+      "sha256": "b3b1927d80bcd9830b675edd6a1da0394e690619fc6d2a78957c909c61ccfe0f"
+    },
+    {
+      "file": "screenshots/legacy-ThighL-90-orbit1.png",
+      "sha256": "f400992d5d4df17764bd8df60eb2e4cb6933be5ea59d539c49ebaefef29872bd"
+    },
+    {
+      "file": "screenshots/world_target-ThighL-90-orbit1.png",
+      "sha256": "aa5c966d839a1036b23d9072a4a7914494fa8199af89d1a55bccab4acd7c7aa5"
+    },
+    {
+      "file": "screenshots/world_target-ThighL-90-orbit3.png",
+      "sha256": "2477ce27c151e2d52a39b35074e25dc45ee30dffcd3e2609be1b642b3ad17d73"
+    },
+    {
+      "file": "screenshots/coordinated-ThighL-90-orbit1.png",
+      "sha256": "92df69fb717a5e8bd4a26c5b6b279234c57f901f9d1ce6e83f09102b2d152a2a"
+    },
+    {
+      "file": "screenshots/coordinated-ThighL-90-orbit3.png",
+      "sha256": "1c448f68d1cafbf9546f68e96744fd6be64dbe4a70fe1dd9a1e01167df2376ec"
+    },
+    {
+      "file": "screenshots/legacy-ThighR-90-orbit3.png",
+      "sha256": "b70606d35a59cdd1a8971c828a385f864cdb8c7b7c0887c436bcfe482af05358"
+    },
+    {
+      "file": "screenshots/world_target-ThighR-90-orbit1.png",
+      "sha256": "0d275ee29d96659d64a7a9f34f58af19fe9c0c5d681f4e7e0d4dd870ccc8657d"
+    },
+    {
+      "file": "screenshots/world_target-ThighR-90-orbit3.png",
+      "sha256": "7763837ec4c954381f3245f21f4f3fd1e74fbeb04334eee9f14fa3eb4a1aee94"
+    },
+    {
+      "file": "screenshots/coordinated-ThighR-90-orbit1.png",
+      "sha256": "c044e4e562d0055dcdbb4069f495c73704ea01372096013961a1561443eab892"
+    },
+    {
+      "file": "screenshots/coordinated-ThighR-90-orbit3.png",
+      "sha256": "825cb19d01964c7f19726b279fdd8b93e4ae19aa1b9f589464e6c0d60cfd8c89"
+    }
+  ],
+  "observations": [
+    "Legacy shoulder 45 rotates from an abducted rest direction; it differs from the explicit sagittal 45 target by approximately 24.05 degrees. This is a test-definition mismatch, not proof of a faulty game animation.",
+    "World-target shoulder poses reach the intended directions, but 90-degree shoulder compression and the flattened transition into the upper arm remain visible at orbits 1 and 3.",
+    "The authored 15-degree clavicle control shifts the shoulder centre and rounds its outer silhouette somewhat; it does not establish acceptable shoulder anatomy or remove the abrupt upper-arm transition.",
+    "Both exact 90-degree hip targets retain the deep upper-thigh/groin crease. Outer-hip views also retain abrupt waist/hip transitions.",
+    "Adding 60 degrees of knee flexion changes the thigh silhouette, but does not visibly resolve the hip-root crease. The pelvis and hip direction remain fixed.",
+    "The 90-degree legacy direction errors are small (about 3.13 shoulder and 0.85 hip degrees). Correcting direction and adding these authored controls do not explain away the persistent deep-bend defects."
+  ],
+  "decision": "Do not fit or publish this dense field. Use explicit measured directions in new comparisons; preserve historical isolated tests unchanged.",
+  "next_requirement": "Define an explicit desired shoulder/hip surface for the measured poses and validate a localized shape repair against independent views and held-out motion. If no credible target can be authored, obtain a technical-art shape pass rather than tune the same proxy again."
+}

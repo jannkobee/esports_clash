@@ -9,7 +9,32 @@ use Illuminate\Validation\ValidationException;
 class TrellisGenerationService
 {
     public const ACTIVE=['queued','waiting_models','waiting_resources','waiting_worker','running'];
-    public function catalog(): array { return app(AvatarEvolutionService::class)->catalog(); }
+    public function catalog(?string $category = null): array
+    {
+        $avatars = app(AvatarEvolutionService::class)->catalog();
+        foreach ($avatars as &$av) {
+            $av['category'] = 'avatar';
+            $av['category_label'] = 'Champions';
+            $av['icon'] = '👑';
+        }
+        unset($av);
+
+        $worldAssets = $this->worldCatalog();
+        $combined = array_merge($avatars, $worldAssets);
+
+        if ($category && $category !== 'all') {
+            return array_values(array_filter($combined, fn($item) => ($item['category'] ?? 'avatar') === $category));
+        }
+
+        return $combined;
+    }
+
+    public function worldCatalog(): array
+    {
+        $path = resource_path('game/world-assets.json');
+        if (!is_file($path)) return [];
+        return json_decode(file_get_contents($path), true, flags: JSON_THROW_ON_ERROR)['assets'] ?? [];
+    }
     private function referenceIndex(): array
     {
         $manifest=resource_path('avatars/generation-reference-index.json');
@@ -27,6 +52,17 @@ class TrellisGenerationService
         $result=[];
         foreach($this->referenceIndex()as $id=>$reference){
             if($path=$this->referenceFile($reference))$result[$id]=[...$reference,'sha256'=>hash_file('sha256',$path)];
+        }
+        $worldDir = resource_path('game/world-references');
+        if (is_dir($worldDir)) {
+            foreach (glob($worldDir . '/*.png') as $file) {
+                $id = basename($file, '.png');
+                $result[$id] = [
+                    'file' => basename($file),
+                    'sha256' => hash_file('sha256', $file),
+                    'provider' => 'system-world',
+                ];
+            }
         }
         return $result;
     }
@@ -61,6 +97,9 @@ class TrellisGenerationService
             if ($digest === $metaSha || hash_equals(hash_file('sha256', $currentPath), $digest)) return $currentPath;
         }
 
+        $worldRef = resource_path('game/world-references/' . $avatar . '.png');
+        if (is_file($worldRef) && hash_equals(hash_file('sha256', $worldRef), $digest)) return $worldRef;
+
         $reference=$this->referenceIndex()[$avatar]??null;
         $path=$reference?$this->referenceFile($reference):null;
         return $path&&hash_equals(hash_file('sha256',$path),$digest)?$path:null;
@@ -81,6 +120,17 @@ class TrellisGenerationService
                     'url' => route('trellis.reference', [$avatar, $data['sha256']]),
                 ];
             }
+        }
+        $worldRef = resource_path('game/world-references/' . $avatar . '.png');
+        if (is_file($worldRef)) {
+            $sha = hash_file('sha256', $worldRef);
+            return [
+                'sha256' => $sha,
+                'provider' => 'system-world',
+                'is_custom' => false,
+                'is_legacy' => false,
+                'url' => route('trellis.reference', [$avatar, $sha]),
+            ];
         }
         $ops = $operations ?? $this->operations();
         $ref = $ops['references'][$avatar] ?? $this->localReferences()[$avatar] ?? null;
@@ -173,13 +223,12 @@ class TrellisGenerationService
     public function endpoint(string $path): string { return rtrim($this->activeTrellisUrl(),'/').$path; }
     public function computePreference(): string
     {
-        $preference = AvatarEvolutionSetting::current()->generation_compute_preference;
-        return in_array($preference, ['google', 'local'], true) ? $preference : 'google';
+        return 'google'; // Historical settings remain evidence; new work is Colab-only.
     }
     public function saveComputePreference(string $preference, string $actor): void
     {
-        if (!in_array($preference, ['google', 'local'], true)) {
-            throw ValidationException::withMessages(['compute_preference' => 'Choose Google Colab or Local.']);
+        if ($preference !== 'google') {
+            throw ValidationException::withMessages(['compute_preference' => 'Google Colab is required. Local asset processing is disabled.']);
         }
         AvatarEvolutionSetting::current()->update(['generation_compute_preference' => $preference]);
         app(EvolutionService::class)->audit('generation-compute', 'trellis.compute-updated', $actor, ['preference' => $preference]);
@@ -192,6 +241,7 @@ class TrellisGenerationService
     {
         $computePreference=$this->computePreference();
         $operations=$this->operations($computePreference);
+        $this->requireCloudGeneration($operations);
         if(!$operations||!in_array($operations['provider']??null,['google-colab','trellis2-gguf','trellis2-router'],true))throw ValidationException::withMessages(['provider'=>'A native TRELLIS.2 generation worker is required.']);
         if (($operations['provider'] ?? null) === 'google-colab' && ($operations['generation_model'] ?? null) !== 'TRELLIS.2-4B') {
             throw ValidationException::withMessages(['provider'=>'Google must run native TRELLIS.2 before body generation can start.']);
@@ -223,7 +273,7 @@ class TrellisGenerationService
         AvatarEvolutionSetting::current();
         return DB::transaction(function()use($plan,$actor,$allowNewInstance){
             AvatarEvolutionSetting::lockForUpdate()->findOrFail(1);
-            if(!$allowNewInstance && TrellisGeneration::withTrashed()->where('avatar_id',$plan['avatar_id'])->where('status','generated_unqualified')->exists())throw ValidationException::withMessages(['avatar_id'=>'This avatar already has a completed generated GLB. Inspect or prepare its existing model instead of queuing another generation. Deleting a report does not delete its model.']);
+            if(!$allowNewInstance && TrellisGeneration::withTrashed()->currentAssets()->where('avatar_id',$plan['avatar_id'])->where('status','generated_unqualified')->exists())throw ValidationException::withMessages(['avatar_id'=>'This avatar already has a completed generated GLB. Inspect or prepare its existing model instead of queuing another generation. Deleting a report does not delete its model.']);
             if(TrellisGeneration::where('avatar_id',$plan['avatar_id'])->whereIn('status',[...self::ACTIVE,'cancelling'])->exists())throw ValidationException::withMessages(['provider'=>'This avatar already has a queued generation or cancellation awaiting acknowledgement.']);
             if(TrellisGeneration::whereIn('status',self::ACTIVE)->count()>=45)throw ValidationException::withMessages(['provider'=>'The generation queue is full.']);
             $run=TrellisGeneration::create(['id'=>(string)Str::uuid(),'avatar_id'=>$plan['avatar_id'],'status'=>'queued','plan'=>$plan]);
@@ -231,6 +281,20 @@ class TrellisGenerationService
             DB::afterCommit(fn()=>PollTrellisGeneration::dispatch($run->id));
             return $run;
         });
+    }
+    public static function cloudGenerationReady(?array $operations): bool
+    {
+        if (($operations['generation_model']??null)!=='TRELLIS.2-4B') return false;
+        if (isset($operations['compute'])) return ($operations['compute']['selected']??null)==='google'
+            && ($operations['compute']['ready']??false)===true
+            && ($operations['compute']['automatic_fallback']??true)===false;
+        return ($operations['provider']??null)==='google-colab' && ($operations['models']['ready']??false)===true;
+    }
+    public function requireCloudGeneration(?array $operations, string $field='provider'): void
+    {
+        if (!self::cloudGenerationReady($operations)) throw ValidationException::withMessages([
+            $field=>'Connect a ready Google Colab TRELLIS.2 runtime with local fallback disabled. No job was queued.'
+        ]);
     }
     public function deleteModel(TrellisGeneration $generation,string $actor,bool $force=false):void
     {

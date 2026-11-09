@@ -1,0 +1,4465 @@
+{
+  "champions": [
+    {
+      "id": "c_solana",
+      "name": "Solana",
+      "displayName": "Dawnna",
+      "title": "The Daybreak Bulwark",
+      "basis": "Leona",
+      "primaryRole": "Tank",
+      "secondaryRole": "Support",
+      "archetype": "Vanguard Tank",
+      "hp": 1250,
+      "ad": 55,
+      "armor": 55,
+      "mr": 48,
+      "aspd": 0.65,
+      "range": 1.5,
+      "passiveDesc": "Sunlight Mark: Marks struck enemies; allies trigger marks for +45 magic damage.",
+      "skill1": {
+        "name": "Solar Shieldbash",
+        "desc": "Stuns target for 1.2s & grants 180 HP solar shield (+5% AD, +6% AP).",
+        "cooldown": 6,
+        "damage": 120,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "skill2": {
+        "name": "Zenith Lance",
+        "desc": "Stuns the target for 1.1s after Solana visibly dashes into lance range (+5% AD, +6% AP).",
+        "cooldown": 8,
+        "damage": 110,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Daybreak Flare",
+        "desc": "Giant solar beam! Stuns the struck cluster for 1.8s (+5% AD, +6% AP).",
+        "cooldown": 55,
+        "damage": 320,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#f59e0b",
+      "accentColor": "#fbbf24"
+    },
+    {
+      "id": "c_astra",
+      "name": "Astra",
+      "displayName": "Aiselle",
+      "title": "The Glacial Regent",
+      "basis": "Ashe",
+      "primaryRole": "Marksman",
+      "secondaryRole": "Support",
+      "archetype": "Utility Marksman",
+      "hp": 780,
+      "ad": 75,
+      "armor": 28,
+      "mr": 30,
+      "aspd": 0.85,
+      "range": 6,
+      "passiveDesc": "Glacial Bite: Basic attacks apply a stacking 25% chill slow.",
+      "skill1": {
+        "name": "Volley Cone",
+        "desc": "Fires 5 frost arrows in a wide forward cone; each arrow deals 90 physical damage and slows targets (+10% AD, +6% AP).",
+        "cooldown": 6,
+        "damage": 90,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Frost Flurry",
+        "desc": "+50% Attack speed & 5-arrow flurry barrage for 4s (+10% AD, +6% AP).",
+        "cooldown": 8,
+        "damage": 140,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Enchanted Crystal Comet",
+        "desc": "Global lane ice arrow! Stuns primary target for 2.5s (+10% AD, +6% AP).",
+        "cooldown": 60,
+        "damage": 350,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "point_or_unit"
+      },
+      "primaryColor": "#38bdf8",
+      "accentColor": "#93c5fd"
+    },
+    {
+      "id": "c_kyumi",
+      "name": "Kyumi",
+      "displayName": "Vixelle",
+      "title": "The Foxfire Enchantress",
+      "basis": "Ahri",
+      "primaryRole": "Mage",
+      "secondaryRole": "Assassin",
+      "archetype": "Burst Mage",
+      "hp": 820,
+      "ad": 60,
+      "armor": 30,
+      "mr": 32,
+      "aspd": 0.7,
+      "range": 5.5,
+      "passiveDesc": "Essence Feast: Restores 12% missing HP after landing combos or scoring takedowns.",
+      "skill1": {
+        "name": "Orb of Illusion",
+        "desc": "Throws a 155-damage magic orb forward, returning with pure TRUE DAMAGE (+5% AD, +10% AP).",
+        "cooldown": 5,
+        "damage": 155,
+        "damageType": "True",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Charm of Longing",
+        "desc": "Charms enemy for 1.4s, forcing them to walk harmlessly toward Kyumi (+5% AD, +10% AP).",
+        "cooldown": 9,
+        "damage": 90,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Spirit Rush",
+        "desc": "Fires homing spirit bolts at a low-health enemy and charms them for 1.6s (+5% AD, +10% AP).",
+        "cooldown": 55,
+        "damage": 380,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "point_or_unit"
+      },
+      "primaryColor": "#ec4899",
+      "accentColor": "#f472b6"
+    },
+    {
+      "id": "c_buck",
+      "name": "Buck",
+      "displayName": "Gritlock",
+      "title": "The Trench Gunslinger",
+      "basis": "Graves",
+      "primaryRole": "Marksman",
+      "secondaryRole": "Fighter",
+      "archetype": "Skirmish Bruiser",
+      "hp": 920,
+      "ad": 88,
+      "armor": 42,
+      "mr": 35,
+      "aspd": 0.72,
+      "range": 3.5,
+      "passiveDesc": "12-Gauge Double Barrel: Basic attacks fire 4 visual shotgun pellets that split one attack's damage.",
+      "skill1": {
+        "name": "Powder Keg Blast",
+        "desc": "160-damage explosive shell detonating in an explosive T-shape AOE (+10% AD, +6% AP).",
+        "cooldown": 6,
+        "damage": 160,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Smoke Screen",
+        "desc": "Deals 60 base magic damage in a 55-radius cloud for 2.5s. Enemies inside have basic-attack range capped at 55 (+10% AD, +6% AP).",
+        "cooldown": 10,
+        "damage": 60,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Collateral Blast",
+        "desc": "Devastating recoil shell blasting front cone and propelling Buck back (+10% AD, +6% AP).",
+        "cooldown": 55,
+        "damage": 440,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#d97706",
+      "accentColor": "#78350f"
+    },
+    {
+      "id": "c_valkira",
+      "name": "Valkira",
+      "displayName": "Bessara",
+      "title": "The Shattered Blade",
+      "basis": "Ambessa",
+      "primaryRole": "Fighter",
+      "secondaryRole": "Assassin",
+      "archetype": "Skirmisher Bruiser",
+      "hp": 980,
+      "ad": 82,
+      "armor": 40,
+      "mr": 36,
+      "aspd": 0.8,
+      "range": 2,
+      "passiveDesc": "Drakehound's Step: Casting skills empowers Valkira's next close-range reach and bleed.",
+      "skill1": {
+        "name": "Crescent Cleave",
+        "desc": "Sweeps twin blades for 150 damage. Outer edge hit deals double damage & deep bleed (+10% AD, +6% AP).",
+        "cooldown": 5,
+        "damage": 150,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "skill2": {
+        "name": "Iron Will Slam",
+        "desc": "Slams blades into the ground for a 200 HP shield and shockwave (+10% AD, +6% AP).",
+        "cooldown": 7,
+        "damage": 100,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Executioner's Descent",
+        "desc": "Slams the selected low-health enemy for a lethal execute (+10% AD, +6% AP).",
+        "cooldown": 60,
+        "damage": 460,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#dc2626",
+      "accentColor": "#991b1b"
+    },
+    {
+      "id": "c_kage",
+      "name": "Kage",
+      "displayName": "Vanta",
+      "title": "The Umbral Executioner",
+      "basis": "Zed",
+      "primaryRole": "Assassin",
+      "secondaryRole": "Fighter",
+      "archetype": "Shadow Assassin",
+      "hp": 860,
+      "ad": 84,
+      "armor": 36,
+      "mr": 32,
+      "aspd": 0.78,
+      "range": 1.8,
+      "passiveDesc": "Dusk Execution: Basic attacks against targets below 50% HP deal +12% maximum HP as bonus magic damage.",
+      "skill1": {
+        "name": "Shadow Shuriken",
+        "desc": "Hurls spinning crimson shurikens in a line dealing heavy physical damage (+10% AD, +6% AP).",
+        "cooldown": 5,
+        "damage": 165,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Shadow Projection",
+        "desc": "Summons a shadow clone that mimics abilities and allows instant swapping (+10% AD, +6% AP).",
+        "cooldown": 12,
+        "damage": 70,
+        "damageType": "Physical",
+        "castType": "point_or_unit"
+      },
+      "ultimate": {
+        "name": "Eclipse Mark",
+        "desc": "Teleports behind victim with crimson death marks, detonating for massive mirror execute after 3s (+10% AD, +6% AP).",
+        "cooldown": 65,
+        "damage": 460,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#b91c1c",
+      "accentColor": "#450a0a"
+    },
+    {
+      "id": "c_kazemaru",
+      "name": "Kazemaru",
+      "displayName": "Galejandro",
+      "title": "The Exiled Gale",
+      "basis": "Yasuo",
+      "primaryRole": "Fighter",
+      "secondaryRole": "Assassin",
+      "archetype": "Wind Skirmisher",
+      "hp": 920,
+      "ad": 78,
+      "armor": 38,
+      "mr": 34,
+      "aspd": 0.82,
+      "range": 2,
+      "passiveDesc": "Gale Walker: Critical strike chance is doubled. Generates a 220 HP wind shield upon taking damage.",
+      "skill1": {
+        "name": "Tempest Thrust & Gale",
+        "desc": "Thrusts katana forward; launches a howling blue tornado that knocks up enemies for 1.5s (+10% AD, +6% AP).",
+        "cooldown": 4,
+        "damage": 145,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Zephyr Barrier",
+        "desc": "Erects a shimmering wall of gusting wind that disintegrates incoming enemy projectiles for 3.5s.",
+        "cooldown": 14,
+        "damage": 0,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Airborne Sever",
+        "desc": "Blinks to airborne enemies, suspending them mid-air for 5 golden blade slashes and 50% armor shred (+10% AD, +6% AP).",
+        "cooldown": 55,
+        "damage": 430,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#0284c7",
+      "accentColor": "#38bdf8"
+    },
+    {
+      "id": "c_kindra",
+      "name": "Kindra",
+      "displayName": "Lambent",
+      "title": "The Twin Verdict",
+      "basis": "Kindred",
+      "primaryRole": "Marksman",
+      "secondaryRole": "Assassin",
+      "archetype": "Spectral Marksman",
+      "hp": 810,
+      "ad": 74,
+      "armor": 32,
+      "mr": 30,
+      "aspd": 0.84,
+      "range": 5.5,
+      "passiveDesc": "Spirit Mark: Damaging a jungle monster or a champion at or below 40% HP grants +15% basic-attack range and damage for 5s. Further marks refresh but do not stack.",
+      "skill1": {
+        "name": "Ghoststep Volley",
+        "desc": "Fires 3 spectral purple arrows for 90 damage each at the 3 closest enemies (+10% AD, +6% AP).",
+        "cooldown": 5,
+        "damage": 90,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "skill2": {
+        "name": "Shadow Pounce",
+        "desc": "Claims a spirit territory where shadowy Wolf furiously lunges and bites enemies (+10% AD, +6% AP).",
+        "cooldown": 10,
+        "damage": 110,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Sanctuary of Eternity",
+        "desc": "Creates a 65-radius sanctuary for 4s: no unit inside can fall below 10% HP. On expiry, allies still inside heal for 450 base HP (rank-scaled).",
+        "cooldown": 75,
+        "damage": 0,
+        "damageType": "True",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#8b5cf6",
+      "accentColor": "#4c1d95"
+    },
+    {
+      "id": "c_cora",
+      "name": "Cora",
+      "displayName": "Plumeira",
+      "title": "The Feather Rebellion",
+      "basis": "Xayah",
+      "primaryRole": "Marksman",
+      "secondaryRole": "Assassin",
+      "archetype": "Feather Marksman",
+      "hp": 800,
+      "ad": 76,
+      "armor": 30,
+      "mr": 30,
+      "aspd": 0.82,
+      "range": 5.5,
+      "passiveDesc": "Quill Ricochet: Attacks pass through targets and leave piercing magenta quill feathers embedded on the ground.",
+      "skill1": {
+        "name": "Twin Plumage",
+        "desc": "Flings two 75-damage penetrating quill feathers in a line that plant in the ground (+10% AD, +6% AP).",
+        "cooldown": 6,
+        "damage": 75,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Feather Recall",
+        "desc": "Recalls all ground feathers back to her hands; hitting enemies with 3+ feathers roots them for 1.3s! (+10% AD, +6% AP).",
+        "cooldown": 8,
+        "damage": 190,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Skyward Plumes",
+        "desc": "Leaps untargetable into the air and rains down 5 piercing quills in a crescent fan (+10% AD, +6% AP).",
+        "cooldown": 65,
+        "damage": 380,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#d946ef",
+      "accentColor": "#a21caf"
+    },
+    {
+      "id": "c_renn",
+      "name": "Renn",
+      "displayName": "Gildan",
+      "title": "The Tidebound Herald",
+      "basis": "Rakan",
+      "primaryRole": "Support",
+      "secondaryRole": "Tank",
+      "archetype": "Initiator Support",
+      "hp": 960,
+      "ad": 58,
+      "armor": 46,
+      "mr": 42,
+      "aspd": 0.68,
+      "range": 2.2,
+      "passiveDesc": "Gilded Cloak: Periodically gains a 180 HP glowing feathered cloak shield.",
+      "skill1": {
+        "name": "Gilded Vault",
+        "desc": "Dashes forward and leaps into the air, knocking up all enemies in a 75px radius for 1.2s (+5% AD, +6% AP).",
+        "cooldown": 9,
+        "damage": 115,
+        "damageType": "Magic",
+        "castType": "point_or_unit"
+      },
+      "skill2": {
+        "name": "Harmonic Waltz",
+        "desc": "Dashes to an allied champion, granting both a 220 HP golden feathered shield.",
+        "cooldown": 8,
+        "damage": 0,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Dazzling Rush",
+        "desc": "Cloaks in hypnotic golden light with +80% speed, charming all enemies he touches for 1.5s! (+5% AD, +6% AP).",
+        "cooldown": 65,
+        "damage": 290,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#f59e0b",
+      "accentColor": "#d97706"
+    },
+    {
+      "id": "c_sylla",
+      "name": "Sylla",
+      "displayName": "Sylvan Solo",
+      "title": "The Wildbound Hermit",
+      "basis": "Lone Druid",
+      "primaryRole": "Fighter",
+      "secondaryRole": "Marksman",
+      "archetype": "Summoner Bruiser",
+      "hp": 880,
+      "ad": 70,
+      "armor": 36,
+      "mr": 34,
+      "aspd": 0.72,
+      "range": 4.5,
+      "passiveDesc": "Entangling Claws: Attacks have a 20% chance to summon emerald roots holding the target immobile for 1.5s.",
+      "skill1": {
+        "name": "Summon Spirit Bear",
+        "desc": "Summons an armored Spirit Bear companion (1800 HP) that charges and brawls alongside him (+10% AD, +6% AP).",
+        "cooldown": 18,
+        "damage": 130,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Savage Roar",
+        "desc": "Sylla and his bear unleash an emerald sonic roar, terrifying nearby enemies to flee for 1.3s (+10% AD, +6% AP).",
+        "cooldown": 12,
+        "damage": 80,
+        "damageType": "Magic",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "True Form",
+        "desc": "Transforms into a gargantuan Ironclaw Bear, gaining +450 Shield, +20 Armor, and cleaving melee sweeps for 12s (+10% AD, +6% AP).",
+        "cooldown": 70,
+        "damage": 340,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#15803d",
+      "accentColor": "#166534"
+    },
+    {
+      "id": "c_tequoia",
+      "name": "Tequoia",
+      "displayName": "Fernanda",
+      "title": "The Stoneweaver Nomad",
+      "basis": "Furion",
+      "primaryRole": "Mage",
+      "secondaryRole": "Marksman",
+      "archetype": "Zone Control Mage",
+      "hp": 840,
+      "ad": 65,
+      "armor": 32,
+      "mr": 34,
+      "aspd": 0.76,
+      "range": 5.8,
+      "passiveDesc": "Forest Guardian: Every 4th attack blooms an emerald seed that restores 50 HP and roots minions.",
+      "skill1": {
+        "name": "Verdant Cage",
+        "desc": "Encircles the target champion in a ring of 8 living oak trees, trapping them inside for 2.8s! (+5% AD, +10% AP).",
+        "cooldown": 10,
+        "damage": 90,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "skill2": {
+        "name": "Nature Link",
+        "desc": "Link enemy champions in a zone for 4 seconds. When one takes health damage, each other linked enemy takes 10% of it as true damage.",
+        "cooldown": 11,
+        "damage": 0,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Nature's Wrath",
+        "desc": "Releases a bouncing green solar lightning sphere that leaps up to 10 times with escalating damage! (+5% AD, +10% AP).",
+        "cooldown": 65,
+        "damage": 410,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#22c55e",
+      "accentColor": "#14532d"
+    },
+    {
+      "id": "c_zal",
+      "name": "Zal",
+      "displayName": "Glimmerick",
+      "title": "The Chronal Shepherd",
+      "basis": "Dazzle",
+      "primaryRole": "Support",
+      "secondaryRole": "Mage",
+      "archetype": "Lifebinder Support",
+      "hp": 830,
+      "ad": 56,
+      "armor": 34,
+      "mr": 38,
+      "aspd": 0.7,
+      "range": 5.2,
+      "passiveDesc": "Weave: Casting abilities shreds nearby enemy armor while fortifying ally armor by +15.",
+      "skill1": {
+        "name": "Venom Hex",
+        "desc": "Spits deep violet venom in a cone that poisons targets and slows them by up to 50% (+5% AD, +10% AP).",
+        "cooldown": 7,
+        "damage": 130,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Shadow Surge",
+        "desc": "Chains vibrant pink healing lightning through allies (+180 HP) that zaps adjacent enemies! (+5% AD, +10% AP).",
+        "cooldown": 6,
+        "damage": 120,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Soul Sanctuary",
+        "desc": "Projects a luminous pink cross over lowest-HP ally: they cannot die and cannot fall below 1 HP for 4.5s!",
+        "cooldown": 70,
+        "damage": 0,
+        "damageType": "True",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#ec4899",
+      "accentColor": "#9d174d"
+    },
+    {
+      "id": "c_xin",
+      "name": "Xin",
+      "displayName": "Cindergent",
+      "title": "The Ember Ascendant",
+      "basis": "Ember Spirit",
+      "primaryRole": "Fighter",
+      "secondaryRole": "Assassin",
+      "archetype": "Flame Skirmisher",
+      "hp": 910,
+      "ad": 80,
+      "armor": 38,
+      "mr": 34,
+      "aspd": 0.8,
+      "range": 2,
+      "passiveDesc": "Flame Guard: Shrouds Xin in blazing fire that absorbs 200 magic damage and burns nearby foes.",
+      "skill1": {
+        "name": "Blazing Bolas",
+        "desc": "Flings flaming bolas that wrap around 2 nearby enemies, burning and rooting them for 1.8s (+10% AD, +6% AP).",
+        "cooldown": 7,
+        "damage": 140,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "skill2": {
+        "name": "Flash Flurry",
+        "desc": "Strikes enemies clustered around the target with rapid fiery slashes (+10% AD, +6% AP).",
+        "cooldown": 6,
+        "damage": 160,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Flame Remnant Charge",
+        "desc": "Drops blazing remnant statues and detonates their fiery shockwaves around the target area (+10% AD, +6% AP).",
+        "cooldown": 55,
+        "damage": 440,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "point_or_unit"
+      },
+      "primaryColor": "#ea580c",
+      "accentColor": "#9a3412"
+    },
+    {
+      "id": "c_raijin",
+      "name": "Raijin",
+      "displayName": "Voltaire",
+      "title": "The Living Tempest",
+      "basis": "Storm Spirit",
+      "primaryRole": "Mage",
+      "secondaryRole": "Assassin",
+      "archetype": "Lightning Burst Mage",
+      "hp": 820,
+      "ad": 60,
+      "armor": 32,
+      "mr": 32,
+      "aspd": 0.74,
+      "range": 5,
+      "passiveDesc": "Overload: Every spell lights his right hand with one charge for 6 seconds. His next basic shot at an avatar or minion consumes it; on impact, lightning bursts within 65 units for 60 base magic damage and slows enemy avatars for 0.75 seconds. New casts refresh one charge rather than stacking it. Structures do not consume the charge.",
+      "skill1": {
+        "name": "Static Remnant",
+        "desc": "Plants a stationary electrical double at his current position. It arms after 0.3 seconds and lasts up to 4 seconds. An enemy avatar entering 65 units triggers one explosion, hitting eligible enemy avatars within 80 units for 140 base magic damage (+5% AD, +10% AP). Enemies outside the blast are not struck; it deals no damage when first placed.",
+        "cooldown": 4,
+        "damage": 140,
+        "damageType": "Magic",
+        "castType": "no_target"
+      },
+      "skill2": {
+        "name": "Electric Vortex",
+        "desc": "Targets one enemy avatar within 120 units. A bright lightning tether and rotating electrical coils hold the victim for 1.4 seconds, pulling them toward Voltaire at 175 units per second until they are 36 units apart. Deals 75 base magic damage on cast (+5% AD, +10% AP). The pull moves the victim over time rather than teleporting them.",
+        "cooldown": 11,
+        "damage": 75,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Ball Lightning",
+        "desc": "Voltaire transforms into a luminous lightning ball and flies along a chosen ground direction for up to 320 units at 540 units per second, for at most 0.75 seconds. He reforms at his actual stopping point. Enemies touched within 28 units, or within 55 units of arrival, take 420 base magic damage once per cast (+5% AD, +10% AP). Rocks and hard control can interrupt travel. No unit target is required; he can use it to engage or escape. The lightning form does not grant immunity or bypass terrain and tower rules.",
+        "cooldown": 3,
+        "damage": 420,
+        "damageType": "Magic",
+        "isUlt": true,
+        "targeting": "none",
+        "castType": "no_target"
+      },
+      "primaryColor": "#06b6d4",
+      "accentColor": "#0891b2"
+    },
+    {
+      "id": "c_kaolin",
+      "name": "Kaolin",
+      "displayName": "TerraByte",
+      "title": "The Jade Remnant",
+      "basis": "Earth Spirit",
+      "primaryRole": "Tank",
+      "secondaryRole": "Fighter",
+      "archetype": "Earth Brawler Tank",
+      "hp": 1180,
+      "ad": 66,
+      "armor": 52,
+      "mr": 46,
+      "aspd": 0.65,
+      "range": 1.8,
+      "passiveDesc": "Stone Remnant: Periodically stores stone remnants that can be smashed, pulled, or rolled through.",
+      "skill1": {
+        "name": "Boulder Smash",
+        "desc": "Kicks a giant jade boulder across 220px, shattering and stunning all struck enemies for 1.5s (+5% AD, +6% AP).",
+        "cooldown": 8,
+        "damage": 135,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Rolling Boulder",
+        "desc": "Curls into a rolling jade stone ball, crashing into enemies for knockback and gaining a 160 HP shield (+5% AD, +6% AP).",
+        "cooldown": 7,
+        "damage": 105,
+        "damageType": "Physical",
+        "castType": "point_or_unit"
+      },
+      "ultimate": {
+        "name": "Magnetize",
+        "desc": "Infects nearby enemies with jade magnetic resonance, pulsing continuous shockwaves for 6s! (+5% AD, +6% AP).",
+        "cooldown": 65,
+        "damage": 370,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#059669",
+      "accentColor": "#064e3b"
+    },
+    {
+      "id": "c_inai",
+      "name": "Inai",
+      "displayName": "Nulliver",
+      "title": "The Veilwalker",
+      "basis": "Void Spirit",
+      "primaryRole": "Assassin",
+      "secondaryRole": "Mage",
+      "archetype": "Void Infiltrator",
+      "hp": 870,
+      "ad": 78,
+      "armor": 36,
+      "mr": 34,
+      "aspd": 0.78,
+      "range": 2.2,
+      "passiveDesc": "Astral Resonance: Hitting abilities grants a physical barrier absorbing 140 damage.",
+      "skill1": {
+        "name": "Aether Remnant",
+        "desc": "Deploys a purple void spirit watcher that pulls enemies across its gaze toward it for 1.4s (+10% AD, +10% AP).",
+        "cooldown": 8,
+        "damage": 125,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Dissimilate",
+        "desc": "Disappears into 7 void portals and crashes down at target portal location in an astral explosion (+10% AD, +10% AP).",
+        "cooldown": 10,
+        "damage": 150,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Astral Step",
+        "desc": "Instantly teleports and slashes through enemies in a line, marking them with an astral rift that detonates for heavy execute! (+10% AD, +10% AP).",
+        "cooldown": 60,
+        "damage": 450,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "point_or_unit"
+      },
+      "primaryColor": "#7c3aed",
+      "accentColor": "#4c1d95"
+    },
+    {
+      "id": "c_qiyana",
+      "name": "Veyara",
+      "displayName": "Crownfetti",
+      "title": "The Elemental Regent",
+      "basis": "Qiyana",
+      "primaryRole": "Assassin",
+      "secondaryRole": "Fighter",
+      "archetype": "Elemental Assassin",
+      "hp": 990,
+      "ad": 83,
+      "armor": 35,
+      "mr": 31,
+      "aspd": 0.76,
+      "range": 1.7,
+      "passiveDesc": "Facet Edge: the first hit on an enemy deals bonus damage.",
+      "skill1": {
+        "name": "Prism Hurl",
+        "desc": "Hurl an elemental blade that wounds and briefly roots (+10% AD, +6% AP).",
+        "cooldown": 5,
+        "damage": 170,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Facet Dash",
+        "desc": "Dash and gain a fresh element, striking the target (+10% AD, +6% AP).",
+        "cooldown": 8,
+        "damage": 95,
+        "damageType": "Physical",
+        "castType": "point_or_unit"
+      },
+      "ultimate": {
+        "name": "Crownfall Surge",
+        "desc": "A sweeping shockwave erupts around clustered enemies (+10% AD, +6% AP).",
+        "cooldown": 65,
+        "damage": 470,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#14b8a6",
+      "accentColor": "#fde047"
+    },
+    {
+      "id": "c_locke",
+      "name": "Cinderbloom",
+      "displayName": "Sootcase",
+      "title": "The Ashen Exorcist",
+      "basis": "Locke",
+      "primaryRole": "Assassin",
+      "secondaryRole": "Fighter",
+      "archetype": "Ash Blade Exorcist",
+      "hp": 1040,
+      "ad": 74,
+      "armor": 36,
+      "mr": 36,
+      "aspd": 0.78,
+      "range": 1.4,
+      "passiveDesc": "Burning Iron: melee strikes burn wounded enemies with magic.",
+      "skill1": {
+        "name": "Cinder Sequence",
+        "desc": "Lunge to a target with ash blades, ignite on the second cast, then critically strike in close melee combat (+10% AD, +6% AP).",
+        "cooldown": 5,
+        "damage": 165,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "skill2": {
+        "name": "Ash Veil",
+        "desc": "Become invisible for a few seconds and gain swift movement until striking from shadows or taking damage.",
+        "cooldown": 9,
+        "damage": 0,
+        "damageType": "Magic",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Cinder Verdict",
+        "desc": "Detonate a great ashen exorcism around the target (+10% AD, +6% AP).",
+        "cooldown": 60,
+        "damage": 445,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#fb923c",
+      "accentColor": "#fef3c7"
+    },
+    {
+      "id": "c_senna",
+      "name": "Solenne",
+      "displayName": "Sennova",
+      "title": "The Waylight Sentinel",
+      "basis": "Senna",
+      "primaryRole": "Support",
+      "secondaryRole": "Marksman",
+      "archetype": "Relic Cannon Support",
+      "hp": 940,
+      "ad": 78,
+      "armor": 31,
+      "mr": 35,
+      "aspd": 0.67,
+      "range": 5.4,
+      "passiveDesc": "Waylight: mist souls strengthen the relic cannon.",
+      "skill1": {
+        "name": "Dusk Lance",
+        "desc": "A light beam damages a foe and heals nearby allies (+5% AD, +6% AP).",
+        "cooldown": 6,
+        "damage": 135,
+        "damageType": "Physical",
+        "castType": "unit"
+      },
+      "skill2": {
+        "name": "Mistbind",
+        "desc": "Dark mist snares the target and nearby enemies (+5% AD, +6% AP).",
+        "cooldown": 10,
+        "damage": 110,
+        "damageType": "Physical",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Daybreak Veil",
+        "desc": "A wide beam damages enemies and shields allies (+5% AD, +6% AP).",
+        "cooldown": 70,
+        "damage": 370,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#14b8a6",
+      "accentColor": "#f8fafc"
+    },
+    {
+      "id": "c_largo",
+      "name": "Croakwell",
+      "displayName": "Basso Croak",
+      "title": "The River Bargainer",
+      "basis": "Largo",
+      "primaryRole": "Support",
+      "secondaryRole": "Tank",
+      "archetype": "Rhythm Support",
+      "hp": 1240,
+      "ad": 57,
+      "armor": 44,
+      "mr": 42,
+      "aspd": 0.64,
+      "range": 1.6,
+      "passiveDesc": "Lingering Chorus: Croakwell keeps his buffs going for longer.",
+      "skill1": {
+        "name": "Ribbon Lash",
+        "desc": "Pull and disrupt a foe with a long tongue (+5% AD, +6% AP).",
+        "cooldown": 7,
+        "damage": 105,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "skill2": {
+        "name": "Bogbeat",
+        "desc": "Froglings stomp an area, interrupting enemies (+5% AD, +6% AP).",
+        "cooldown": 10,
+        "damage": 110,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Marsh Anthem",
+        "desc": "A luminous song heals and empowers the entire team (+5% AD, +6% AP).",
+        "cooldown": 65,
+        "damage": 160,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#84cc16",
+      "accentColor": "#facc15"
+    },
+    {
+      "id": "c_shadowfiend",
+      "name": "Soulscourge",
+      "displayName": "Razeberry",
+      "title": "The Soul Furnace",
+      "basis": "Shadow Fiend",
+      "primaryRole": "Mage",
+      "secondaryRole": "Assassin",
+      "archetype": "Soul Nuker",
+      "combatRoles": {
+        "Nuker": 3,
+        "Disabler": 2,
+        "Carry": 1,
+        "Pusher": 2
+      },
+      "hp": 920,
+      "ad": 84,
+      "armor": 30,
+      "mr": 32,
+      "aspd": 0.73,
+      "range": 5,
+      "passiveDesc": "Soul Hoard: fallen foes feed his damage.",
+      "skill1": {
+        "name": "Gloom Raze",
+        "desc": "Raze the earth in front of him with dark fire (+5% AD, +10% AP).",
+        "cooldown": 5,
+        "damage": 175,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Soul Draw",
+        "desc": "Gather nearby souls for a surge of damage (+5% AD, +10% AP).",
+        "cooldown": 10,
+        "damage": 115,
+        "damageType": "Magic",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Dirge Wave",
+        "desc": "Release concentric soul waves that terrify nearby enemies (+5% AD, +10% AP).",
+        "cooldown": 75,
+        "damage": 490,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#7f1d1d",
+      "accentColor": "#fb7185"
+    },
+    {
+      "id": "c_earthshaker",
+      "name": "Stonewake",
+      "displayName": "Quakewell",
+      "title": "The Faultborn Colossus",
+      "basis": "Earthshaker",
+      "primaryRole": "Tank",
+      "secondaryRole": "Support",
+      "archetype": "Seismic Initiator",
+      "combatRoles": {
+        "Support": 1,
+        "Nuker": 1,
+        "Disabler": 3,
+        "Jungler": 0,
+        "Durable": 2,
+        "Pusher": 0,
+        "Initiator": 3
+      },
+      "hp": 1380,
+      "ad": 69,
+      "armor": 53,
+      "mr": 40,
+      "aspd": 0.6,
+      "range": 1.5,
+      "passiveDesc": "Stone Pulse: every spell sends a tremor through nearby foes.",
+      "skill1": {
+        "name": "Faultline",
+        "desc": "Split the ground with a long stunning ridge (+5% AD, +6% AP).",
+        "cooldown": 9,
+        "damage": 145,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Runic Maul",
+        "desc": "Empower the next blow and stun a nearby enemy (+5% AD, +6% AP).",
+        "cooldown": 8,
+        "damage": 125,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Quake Chorus",
+        "desc": "A giant quake echoes through every enemy in the cluster (+5% AD, +6% AP).",
+        "cooldown": 75,
+        "damage": 410,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#a16207",
+      "accentColor": "#facc15"
+    },
+    {
+      "id": "c_mirehook",
+      "name": "Mirehook",
+      "displayName": "Rotisserie",
+      "title": "The Mire Reaver",
+      "basis": "Pudge",
+      "primaryRole": "Tank",
+      "secondaryRole": "Fighter",
+      "archetype": "Pick Initiator",
+      "hp": 1420,
+      "ad": 76,
+      "armor": 49,
+      "mr": 39,
+      "aspd": 0.58,
+      "range": 1.5,
+      "passiveDesc": "Carrion Feast: takedowns thicken his hide.",
+      "skill1": {
+        "name": "Barbed Chain",
+        "desc": "A dodgeable hook drags the first target closer (+5% AD, +6% AP).",
+        "cooldown": 10,
+        "damage": 150,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Rot Cloud",
+        "desc": "Poison nearby foes and endure the counterattack (+5% AD, +6% AP).",
+        "cooldown": 11,
+        "damage": 95,
+        "damageType": "Magic",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Feast Lock",
+        "desc": "Pin and drain one nearby target (+5% AD, +6% AP).",
+        "cooldown": 70,
+        "damage": 440,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#54704c",
+      "accentColor": "#b5d36b"
+    },
+    {
+      "id": "c_nullweaver",
+      "name": "Nullweaver",
+      "displayName": "Midnight Equation",
+      "title": "The Void Cartographer",
+      "basis": "Enigma",
+      "primaryRole": "Mage",
+      "secondaryRole": "Support",
+      "archetype": "Zone Control",
+      "combatRoles": {
+        "Support": 1,
+        "Nuker": 2,
+        "Disabler": 3,
+        "Initiator": 2,
+        "Pusher": 1
+      },
+      "hp": 980,
+      "ad": 68,
+      "armor": 31,
+      "mr": 40,
+      "aspd": 0.65,
+      "range": 5,
+      "passiveDesc": "Void Echo: spells pull foes toward unstable ground.",
+      "skill1": {
+        "name": "Gravitic Pin",
+        "desc": "A dodgeable orb pins a target in place (+5% AD, +10% AP).",
+        "cooldown": 8,
+        "damage": 140,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Dark Filament",
+        "desc": "Lay a damaging field under clustered foes (+5% AD, +10% AP).",
+        "cooldown": 11,
+        "damage": 115,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Singularity Well",
+        "desc": "Channel a compact black hole for 3.2 seconds, pulling enemies within 105 range. Crowd control interrupts the channel (+5% AD, +10% AP).",
+        "cooldown": 80,
+        "damage": 420,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#34205f",
+      "accentColor": "#a78bfa"
+    },
+    {
+      "id": "c_voltgrip",
+      "name": "Voltgrip",
+      "displayName": "Plugsy",
+      "title": "The Galvanic Grappler",
+      "basis": "Blitzcrank",
+      "primaryRole": "Support",
+      "secondaryRole": "Tank",
+      "archetype": "Catch Support",
+      "hp": 1280,
+      "ad": 70,
+      "armor": 47,
+      "mr": 39,
+      "aspd": 0.61,
+      "range": 1.5,
+      "passiveDesc": "Capacitor: shields flare when danger rises.",
+      "skill1": {
+        "name": "Arc Grapple",
+        "desc": "A narrow dodgeable grapple pulls an enemy (+5% AD, +6% AP).",
+        "cooldown": 12,
+        "damage": 145,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Charged Fist",
+        "desc": "Knock up the caught target (+5% AD, +6% AP).",
+        "cooldown": 8,
+        "damage": 100,
+        "damageType": "Physical",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Thunder Dome",
+        "desc": "A close electrical burst stuns nearby foes (+5% AD, +6% AP).",
+        "cooldown": 66,
+        "damage": 380,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#9a701e",
+      "accentColor": "#fde047"
+    },
+    {
+      "id": "c_aetherbolt",
+      "name": "Aetherbolt",
+      "displayName": "Relic Rick",
+      "title": "The Riftway Explorer",
+      "basis": "Ezreal",
+      "primaryRole": "Marksman",
+      "secondaryRole": "Mage",
+      "archetype": "Mobile Poke",
+      "hp": 930,
+      "ad": 91,
+      "armor": 30,
+      "mr": 31,
+      "aspd": 0.76,
+      "range": 5,
+      "passiveDesc": "Quick Study: precise shots reward mobility.",
+      "skill1": {
+        "name": "Relic Bolt",
+        "desc": "A fast dodgeable shot through the lane (+10% AD, +10% AP).",
+        "cooldown": 5,
+        "damage": 170,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Phase Skip",
+        "desc": "Blink to the side and mark an enemy (+10% AD, +10% AP).",
+        "cooldown": 12,
+        "damage": 80,
+        "damageType": "Magic",
+        "castType": "point_or_unit"
+      },
+      "ultimate": {
+        "name": "Horizon Lance",
+        "desc": "A wide piercing beam crosses the fight (+10% AD, +10% AP).",
+        "cooldown": 72,
+        "damage": 430,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#1d6caa",
+      "accentColor": "#67e8f9"
+    },
+    {
+      "id": "c_corsara",
+      "name": "Corsara",
+      "displayName": "Bounty Belle",
+      "title": "The Scarlet Privateer",
+      "basis": "Miss Fortune",
+      "primaryRole": "Marksman",
+      "secondaryRole": "Mage",
+      "archetype": "Area Barrage",
+      "hp": 970,
+      "ad": 96,
+      "armor": 30,
+      "mr": 31,
+      "aspd": 0.73,
+      "range": 5,
+      "passiveDesc": "Fresh Target: switching targets rewards quick hands.",
+      "skill1": {
+        "name": "Ricochet Round",
+        "desc": "A dodgeable round bursts into nearby foes (+10% AD, +10% AP).",
+        "cooldown": 6,
+        "damage": 160,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Saltstorm",
+        "desc": "Rain shot over an area and slow foes (+10% AD, +10% AP).",
+        "cooldown": 12,
+        "damage": 100,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Broadside Waltz",
+        "desc": "Channel a fixed cone of cannon fire in six waves over three seconds. Crowd control interrupts the channel (+10% AD, +10% AP).",
+        "cooldown": 76,
+        "damage": 360,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#9f263d",
+      "accentColor": "#fb7185"
+    },
+    {
+      "id": "c_brewmaw",
+      "name": "Brewmaw",
+      "displayName": "Kegory",
+      "title": "The Cask Colossus",
+      "basis": "Gragas",
+      "primaryRole": "Tank",
+      "secondaryRole": "Mage",
+      "archetype": "Disruptive Frontline",
+      "hp": 1380,
+      "ad": 74,
+      "armor": 47,
+      "mr": 43,
+      "aspd": 0.61,
+      "range": 1.5,
+      "passiveDesc": "Hearty Brew: casting restores a little health.",
+      "skill1": {
+        "name": "Bursting Cask",
+        "desc": "A dodgeable cask explodes among clustered foes (+5% AD, +10% AP).",
+        "cooldown": 8,
+        "damage": 155,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Barrel Rush",
+        "desc": "Dashes into a target, knocks them up for 0.8s, and restores 90 health on impact (+5% AD, +10% AP).",
+        "cooldown": 10,
+        "damage": 105,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Grand Vintage",
+        "desc": "A huge cask scatters the enemy formation (+5% AD, +10% AP).",
+        "cooldown": 75,
+        "damage": 390,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#783e20",
+      "accentColor": "#f59e0b"
+    },
+    {
+      "id": "c_wraithhook",
+      "name": "Wraithhook",
+      "displayName": "Hooklyn",
+      "title": "The Lantern Collector",
+      "basis": "Thresh",
+      "primaryRole": "Support",
+      "secondaryRole": "Tank",
+      "archetype": "Chain Control",
+      "hp": 1160,
+      "ad": 72,
+      "armor": 43,
+      "mr": 38,
+      "aspd": 0.65,
+      "range": 3,
+      "passiveDesc": "Lantern Souls: gathers protection from fallen foes.",
+      "skill1": {
+        "name": "Spectral Harpoon",
+        "desc": "A dodgeable spectral hook pulls a foe (+5% AD, +6% AP).",
+        "cooldown": 11,
+        "damage": 140,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Guiding Lantern",
+        "desc": "Shield nearby allies and push a foe away (+5% AD, +6% AP).",
+        "cooldown": 12,
+        "damage": 70,
+        "damageType": "Magic",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Lantern Prison",
+        "desc": "Enclose nearby enemies in a slowing spirit cage (+5% AD, +6% AP).",
+        "cooldown": 75,
+        "damage": 370,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#155e58",
+      "accentColor": "#5eead4"
+    },
+    {
+      "id": "c_invoker",
+      "name": "Kaelen",
+      "displayName": "Arsenaldo",
+      "title": "The Conflux Savant",
+      "basis": "Invoker",
+      "primaryRole": "Mage",
+      "secondaryRole": "Support",
+      "archetype": "Arsenal Mage",
+      "hp": 910,
+      "ad": 62,
+      "armor": 29,
+      "mr": 34,
+      "aspd": 0.7,
+      "range": 5.2,
+      "passiveDesc": "Conflux (R): Consume three Ice, Wind, and Fire orbs to invoke one of ten battlefield spells, from Hoarfrost Decree and Celestial Undertow to Solar Meteor and Prism Warden. Orbs cost 5 mana; invoked spells cost 25-40 mana. D/F retain the newest two invocations with independent cooldowns. Conflux costs no mana and cools down in 3s / 2s / 1s / 0s at levels 1 / 7 / 13 / 18. Arsenaldo dynamically preloads, casts, reinvokes, and replans legal sequences instead of following fixed chains.",
+      "skill1": {
+        "name": "Orb of Ice",
+        "desc": "Gather an Ice orb into the three-orb FIFO. Each held Ice orb grants 0.2 health regeneration per second at rank 1, scaling by 25% each rank; its bonus ends when it leaves the FIFO.",
+        "cooldown": 0,
+        "damage": 0,
+        "damageType": "Magic",
+        "targeting": "none",
+        "castType": "no_target"
+      },
+      "skill2": {
+        "name": "Orb of Wind",
+        "desc": "Gather a Wind orb into the three-orb FIFO. Each held Wind orb grants 1 movement speed at rank 1, scaling by 25% each rank; its bonus ends when it leaves the FIFO.",
+        "cooldown": 0,
+        "damage": 0,
+        "damageType": "Magic",
+        "targeting": "none",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Orb of Fire",
+        "desc": "Gather a Fire orb into the three-orb FIFO. Each held Fire orb grants 1% spell amp and damage amp at rank 1, scaling by 25% each rank; its bonus ends when it leaves the FIFO.",
+        "cooldown": 0,
+        "damage": 0,
+        "damageType": "Magic",
+        "targeting": "none",
+        "castType": "no_target"
+      },
+      "primaryColor": "#eab308",
+      "accentColor": "#f97316"
+    },
+    {
+      "id": "c_hwei",
+      "name": "Hweilin",
+      "displayName": "Inkognito",
+      "title": "The Living Canvas",
+      "basis": "Hwei",
+      "primaryRole": "Mage",
+      "secondaryRole": "Support",
+      "archetype": "Artistic Painter",
+      "hp": 920,
+      "ad": 58,
+      "armor": 28,
+      "mr": 33,
+      "aspd": 0.69,
+      "range": 5,
+      "passiveDesc": "Signature Pigment: Landing contrasting paint strokes triggers a radiant explosion on foes.",
+      "skill1": {
+        "name": "Molten Splatter",
+        "desc": "Flings an arc of fiery paint that erupts on impact (+5% AD, +10% AP).",
+        "cooldown": 6,
+        "damage": 175,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Gleaming Wash",
+        "desc": "Paints an energizing river giving movement speed and shields to allies (+5% AD, +10% AP).",
+        "cooldown": 10,
+        "damage": 95,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Vortex of Torment",
+        "desc": "Expands a tragic bloom of spreading paint that grips and detonates (+5% AD, +10% AP).",
+        "cooldown": 75,
+        "damage": 450,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#06b6d4",
+      "accentColor": "#a855f7"
+    },
+    {
+      "id": "c_jayce",
+      "name": "Jaxon",
+      "displayName": "Hexley",
+      "title": "The Twinform Vanguard",
+      "basis": "Jayce",
+      "primaryRole": "Fighter",
+      "secondaryRole": "Marksman",
+      "archetype": "Stance Skirmisher",
+      "hp": 1050,
+      "ad": 88,
+      "armor": 38,
+      "mr": 35,
+      "aspd": 0.75,
+      "range": 3.5,
+      "passiveDesc": "Transform Capacitor: Shifting weapons grants immediate movement speed and armor pen.",
+      "skill1": {
+        "name": "Shock Blast Plasma",
+        "desc": "Fires an accelerated plasma orb through an acceleration field (+10% AD, +6% AP).",
+        "cooldown": 6,
+        "damage": 190,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Thundering Leap",
+        "desc": "Leaps into the fray, dealing impact damage and rooting the struck target for 0.7s (+10% AD, +6% AP).",
+        "cooldown": 9,
+        "damage": 140,
+        "damageType": "Physical",
+        "castType": "point_or_unit"
+      },
+      "ultimate": {
+        "name": "Mercury Overdrive",
+        "desc": "Swaps into cannon mode unleashing rapid fire bursts and shredding defenses (+10% AD, +6% AP).",
+        "cooldown": 45,
+        "damage": 400,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "toggle"
+      },
+      "primaryColor": "#0284c7",
+      "accentColor": "#e0f2fe"
+    },
+    {
+      "id": "c_vi",
+      "name": "Valerie",
+      "displayName": "Knuckleberry",
+      "title": "The Breakline Enforcer",
+      "basis": "Vi",
+      "primaryRole": "Fighter",
+      "secondaryRole": "Assassin",
+      "archetype": "Heavy Bruiser",
+      "hp": 1120,
+      "ad": 86,
+      "armor": 42,
+      "mr": 36,
+      "aspd": 0.72,
+      "range": 1.6,
+      "passiveDesc": "Blast Shield: Landing abilities grants a heavy kinetic protective shield.",
+      "skill1": {
+        "name": "Vault Breaker Punch",
+        "desc": "Charges forward delivering an armor-shattering heavy punch (+10% AD, +6% AP).",
+        "cooldown": 8,
+        "damage": 165,
+        "damageType": "Physical",
+        "castType": "point_or_unit"
+      },
+      "skill2": {
+        "name": "Denting Impact",
+        "desc": "Successive blows crack enemy armor and grant bonus attack speed (+10% AD, +6% AP).",
+        "cooldown": 6,
+        "damage": 110,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Cease and Desist Slam",
+        "desc": "Locks onto a priority enemy target and slams them downward (+10% AD, +6% AP).",
+        "cooldown": 70,
+        "damage": 460,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#ec4899",
+      "accentColor": "#f43f5e"
+    },
+    {
+      "id": "c_jinx",
+      "name": "Jinxy",
+      "displayName": "Boomie",
+      "title": "The Mayhem Artillerist",
+      "basis": "Jinx",
+      "primaryRole": "Marksman",
+      "secondaryRole": "Assassin",
+      "archetype": "Hypercarry Marksman",
+      "hp": 880,
+      "ad": 96,
+      "armor": 28,
+      "mr": 30,
+      "aspd": 0.78,
+      "range": 5.6,
+      "passiveDesc": "Get Excited!: Scored takedowns grant massive decaying movement speed and attack speed.",
+      "skill1": {
+        "name": "Fishbones Rockets",
+        "desc": "Swaps to rocket launcher firing explosive long-range area damage (+10% AD, +6% AP).",
+        "cooldown": 4,
+        "damage": 175,
+        "damageType": "Physical",
+        "castType": "toggle"
+      },
+      "skill2": {
+        "name": "Shock Pistols Zap",
+        "desc": "Fires an electric zapper beam that damages and heavily slows the first enemy (+10% AD, +6% AP).",
+        "cooldown": 7,
+        "damage": 125,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Super Mega Rocket",
+        "desc": "Fires a colossal global missile that executes enemies based on missing health (+10% AD, +6% AP).",
+        "cooldown": 70,
+        "damage": 490,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#3b82f6",
+      "accentColor": "#f43f5e"
+    },
+    {
+      "id": "c_puck",
+      "name": "Paxi",
+      "displayName": "Fizzlewing",
+      "title": "The Dreamrift Trickster",
+      "basis": "Puck",
+      "primaryRole": "Mage",
+      "secondaryRole": "Assassin",
+      "archetype": "Elusive Playmaker",
+      "hp": 890,
+      "ad": 64,
+      "armor": 30,
+      "mr": 34,
+      "aspd": 0.74,
+      "range": 4.8,
+      "passiveDesc": "Phase Shift Reflex: Automatically evades lethal burst by vanishing between dimensions.",
+      "skill1": {
+        "name": "Illusory Orb Jaunt",
+        "desc": "Launches an orb toward the selected position or facing direction; Paxi can jaunt to its current position (+5% AD, +10% AP).",
+        "cooldown": 7,
+        "damage": 160,
+        "damageType": "Magic",
+        "targeting": "ground",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Waning Rift Silence",
+        "desc": "Blasts a wave of fairy dust silencing nearby enemies in a circle (+5% AD, +10% AP).",
+        "cooldown": 9,
+        "damage": 120,
+        "damageType": "Magic",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Dream Coil Tether",
+        "desc": "Tethers enemy champions to an astral spring, stunning and tearing them if broken (+5% AD, +10% AP).",
+        "cooldown": 65,
+        "damage": 410,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#10b981",
+      "accentColor": "#38bdf8"
+    },
+    {
+      "id": "c_batrider",
+      "name": "Batrix",
+      "displayName": "Wickety",
+      "title": "The Cinderwing Raider",
+      "basis": "Batrider",
+      "primaryRole": "Fighter",
+      "secondaryRole": "Mage",
+      "archetype": "Aerial Initiator",
+      "hp": 1100,
+      "ad": 72,
+      "armor": 41,
+      "mr": 38,
+      "aspd": 0.68,
+      "range": 3.2,
+      "passiveDesc": "Sticky Napalm: Each layer of napalm increases fire damage taken by enemies.",
+      "skill1": {
+        "name": "Firefly Scorched Path",
+        "desc": "Takes flight over terrain leaving a deadly burning fire path (+10% AD, +10% AP).",
+        "cooldown": 9,
+        "damage": 150,
+        "damageType": "Magic",
+        "castType": "point_or_unit"
+      },
+      "skill2": {
+        "name": "Flamebreak Grenade",
+        "desc": "Hurls an explosive cocktail knocking back enemies in the area (+10% AD, +10% AP).",
+        "cooldown": 11,
+        "damage": 110,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "ultimate": {
+        "name": "Flaming Lasso Drag",
+        "desc": "Snag an enemy champion with a blazing lasso and drags them into the team (+10% AD, +10% AP).",
+        "cooldown": 75,
+        "damage": 380,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#f97316",
+      "accentColor": "#ef4444"
+    },
+    {
+      "id": "c_bristleback",
+      "name": "Quillback",
+      "displayName": "Hedgehoggin",
+      "title": "The Barbed Vanguard",
+      "basis": "Bristleback",
+      "primaryRole": "Tank",
+      "secondaryRole": "Fighter",
+      "archetype": "Frontline Sponge",
+      "hp": 1480,
+      "ad": 74,
+      "armor": 56,
+      "mr": 44,
+      "aspd": 0.62,
+      "range": 1.5,
+      "passiveDesc": "Bristled Carapace: Reduces incoming damage from the rear and sides, auto-spraying quills.",
+      "skill1": {
+        "name": "Viscous Nasal Slime",
+        "desc": "Covers enemy in sticky goo, slowing and reducing their armor (+5% AD, +6% AP).",
+        "cooldown": 5,
+        "damage": 90,
+        "damageType": "Physical",
+        "castType": "unit"
+      },
+      "skill2": {
+        "name": "Quill Spray Nova",
+        "desc": "Shoots a circle of poisonous quills dealing stacking damage (+5% AD, +6% AP).",
+        "cooldown": 4,
+        "damage": 130,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Warpath Stampede",
+        "desc": "Each spell cast increases movement speed and attack damage dramatically (+5% AD, +6% AP).",
+        "cooldown": 50,
+        "damage": 360,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#84cc16",
+      "accentColor": "#65a30d"
+    },
+    {
+      "id": "c_io",
+      "name": "Aetheris",
+      "displayName": "Orbiton",
+      "title": "The Harmonic Wisp",
+      "basis": "Io",
+      "primaryRole": "Support",
+      "secondaryRole": "Mage",
+      "archetype": "Tether Enhancer",
+      "hp": 950,
+      "ad": 52,
+      "armor": 30,
+      "mr": 38,
+      "aspd": 0.65,
+      "range": 4.8,
+      "passiveDesc": "Harmonic Link: Automatically forms a visible, persistent tether with the nearest living ally within 280 arena units.",
+      "skill1": {
+        "name": "Spirits Orbit Array",
+        "desc": "Summons five bright spirits that orbit Aetheris. Each shot launches a spirit; it bursts on an enemy avatar hit and splashes nearby foes (+5% AD, +10% AP).",
+        "cooldown": 8,
+        "damage": 160,
+        "damageType": "Magic",
+        "targeting": "unit",
+        "castType": "unit"
+      },
+      "skill2": {
+        "name": "Overcharge Surge",
+        "desc": "Tethers the nearest nearby ally in a bright aura, granting a shield and increased attack damage for 5 seconds.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "targeting": "ally",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Resonant Convergence",
+        "desc": "Tethers every living allied avatar within 260 arena units for 5 seconds at rank 1, increasing by 1 second per rank up to 8 seconds at rank 4. Grants each tethered ally an immediate heal and shield.",
+        "cooldown": 70,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "targeting": "self",
+        "castType": "no_target"
+      },
+      "primaryColor": "#38bdf8",
+      "accentColor": "#e0f2fe"
+    },
+    {
+      "id": "c_lulu",
+      "name": "Faelith",
+      "displayName": "Pixabelle",
+      "title": "The Briar Enchanter",
+      "basis": "Lulu",
+      "primaryRole": "Support",
+      "secondaryRole": "Mage",
+      "archetype": "Enchanter Disabler",
+      "combatRoles": {
+        "Support": 3,
+        "Disabler": 2,
+        "Nuker": 1,
+        "Durable": 0
+      },
+      "hp": 940,
+      "ad": 54,
+      "armor": 29,
+      "mr": 37,
+      "aspd": 0.65,
+      "range": 4.7,
+      "passiveDesc": "Briar Spark: a small familiar adds a little damage to basic attacks.",
+      "skill1": {
+        "name": "Glimmerthorn",
+        "desc": "Fire a dodgeable slowing thorn through a target (+5% AD, +10% AP).",
+        "cooldown": 7,
+        "damage": 130,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Mothspell",
+        "desc": "Turn a threatening enemy into a harmless moth briefly and shield a nearby ally.",
+        "cooldown": 12,
+        "damage": 0,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Wildheart Bloom",
+        "desc": "Grow and shield the lowest-health ally, knocking up enemies around them (+5% AD, +10% AP).",
+        "cooldown": 78,
+        "damage": 95,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#a855f7",
+      "accentColor": "#bef264"
+    },
+    {
+      "id": "c_silencer",
+      "name": "Oathmute",
+      "displayName": "Muffleton",
+      "title": "The Silent Edict",
+      "basis": "Silencer",
+      "primaryRole": "Mage",
+      "secondaryRole": "Support",
+      "archetype": "Silence Disabler",
+      "combatRoles": {
+        "Disabler": 3,
+        "Support": 2,
+        "Nuker": 2
+      },
+      "hp": 985,
+      "ad": 62,
+      "armor": 30,
+      "mr": 42,
+      "aspd": 0.67,
+      "range": 4.9,
+      "passiveDesc": "Quiet Ink: repeated spells make enemy casters easier to track.",
+      "skill1": {
+        "name": "Inkblight",
+        "desc": "A dodgeable ink bolt damages a target and nearby enemies (+5% AD, +10% AP).",
+        "cooldown": 8,
+        "damage": 145,
+        "damageType": "Magic",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Last Edict",
+        "desc": "Silence one nearby enemy, preventing ability casts and channels (+5% AD, +10% AP).",
+        "cooldown": 11,
+        "damage": 70,
+        "damageType": "Magic",
+        "castType": "unit"
+      },
+      "ultimate": {
+        "name": "Stillness Decree",
+        "desc": "Briefly silence all living enemies; it can interrupt channeled abilities.",
+        "cooldown": 85,
+        "damage": 0,
+        "damageType": "Magic",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#4338ca",
+      "accentColor": "#ddd6fe"
+    },
+    {
+      "id": "c_wukong_lol",
+      "name": "Cloudtail",
+      "displayName": "Stafford",
+      "title": "The Miststaff Trickster",
+      "basis": "Wukong (League)",
+      "primaryRole": "Fighter",
+      "secondaryRole": "Assassin",
+      "archetype": "Trickster Initiator",
+      "combatRoles": {
+        "Initiator": 3,
+        "Disabler": 2,
+        "Escape": 2,
+        "Jungler": 2
+      },
+      "hp": 1110,
+      "ad": 82,
+      "armor": 41,
+      "mr": 34,
+      "aspd": 0.75,
+      "range": 1.8,
+      "passiveDesc": "Brotherly Rivalry: Cloudtail excels at close, moving fights.",
+      "skill1": {
+        "name": "Longstaff Crack",
+        "desc": "Strike with an extended staff and crack armor (+10% AD, +6% AP).",
+        "cooldown": 6,
+        "damage": 150,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Mist Double",
+        "desc": "Leave a visible decoy and slip sideways under a brief veil.",
+        "cooldown": 13,
+        "damage": 0,
+        "damageType": "Magic",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Cyclone Dance",
+        "desc": "Spin for two seconds, repeatedly hitting and briefly knocking up nearby enemies (+10% AD, +6% AP).",
+        "cooldown": 78,
+        "damage": 320,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "no_target"
+      },
+      "primaryColor": "#c084fc",
+      "accentColor": "#fbbf24"
+    },
+    {
+      "id": "c_monkeyking_dota",
+      "name": "Stonebranch",
+      "displayName": "Primate Minister",
+      "title": "The Canopy Sovereign",
+      "basis": "Monkey King (Dota 2)",
+      "primaryRole": "Fighter",
+      "secondaryRole": "Assassin",
+      "archetype": "Canopy Carry",
+      "combatRoles": {
+        "Carry": 2,
+        "Initiator": 2,
+        "Escape": 2,
+        "Jungler": 2
+      },
+      "hp": 1080,
+      "ad": 86,
+      "armor": 38,
+      "mr": 35,
+      "aspd": 0.78,
+      "range": 1.9,
+      "passiveDesc": "Branch Oath: Stonebranch watches for openings beside his brother Cloudtail.",
+      "skill1": {
+        "name": "Skyroot Strike",
+        "desc": "Slam an extended staff through a short line and stun enemies it crosses (+10% AD, +6% AP).",
+        "cooldown": 9,
+        "damage": 170,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Canopy Bound",
+        "desc": "Leap through the trees toward an enemy and land with an area strike (+10% AD, +6% AP).",
+        "cooldown": 12,
+        "damage": 105,
+        "damageType": "Physical",
+        "castType": "point_or_unit"
+      },
+      "ultimate": {
+        "name": "Court of Branches",
+        "desc": "Summon a stationary circle of staff-wielding echoes that strike enemies entering it (+10% AD, +6% AP).",
+        "cooldown": 82,
+        "damage": 360,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#a16207",
+      "accentColor": "#86efac"
+    },
+    {
+      "id": "c_stepstone",
+      "name": "Stepstone",
+      "displayName": "Kickswitch",
+      "title": "The Quiet Bell",
+      "basis": "Original Martial Arts",
+      "primaryRole": "Fighter",
+      "secondaryRole": "Tank",
+      "archetype": "Mobile Martial Vanguard",
+      "combatRoles": {
+        "Carry": 2,
+        "Durable": 2,
+        "Disabler": 2,
+        "Initiator": 2,
+        "Escape": 1
+      },
+      "hp": 1140,
+      "ad": 84,
+      "armor": 43,
+      "mr": 36,
+      "aspd": 0.72,
+      "range": 1.6,
+      "passiveDesc": "Measured Rhythm: deliberate footwork turns each exchange into a chance to counter.",
+      "skill1": {
+        "name": "Quarry Rush",
+        "desc": "Strike a nearby foe with a driving palm blow (+10% AD, +6% AP).",
+        "cooldown": 7,
+        "damage": 150,
+        "damageType": "Physical",
+        "castType": "unit"
+      },
+      "skill2": {
+        "name": "Crosswind Guard",
+        "desc": "Brace behind a turning guard and strike enemies crowding nearby allies (+10% AD, +6% AP).",
+        "cooldown": 10,
+        "damage": 115,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Bellbreak Kick",
+        "desc": "Deliver a focused turning kick that sends one enemy toward nearby allies, dealing heavy damage and briefly lifting them (+10% AD, +6% AP).",
+        "cooldown": 72,
+        "damage": 420,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "unit"
+      },
+      "primaryColor": "#166534",
+      "accentColor": "#facc15"
+    },
+    {
+      "id": "c_skybreaker",
+      "name": "Skybreaker",
+      "displayName": "Propella",
+      "title": "The Flakwing Ace",
+      "basis": "Original Rotorcraft Gunship",
+      "primaryRole": "Marksman",
+      "secondaryRole": "Fighter",
+      "archetype": "Open-Cockpit Flak Skiff Hypercarry",
+      "combatRoles": {
+        "Carry": 3,
+        "Nuker": 2,
+        "Pusher": 2,
+        "Escape": 1
+      },
+      "hp": 925,
+      "ad": 96,
+      "armor": 28,
+      "mr": 31,
+      "aspd": 0.78,
+      "range": 6.2,
+      "passiveDesc": "Rotary Flak Battery: the flak skiff sprays shrapnel around its target and spools its exposed lift fans, gaining stacking attack speed. Flak splash scales with level.",
+      "skill1": {
+        "name": "Flakburst Cannon",
+        "desc": "Fire a high-velocity flak shell that bursts across a wide enemy cluster (+10% AD, +6% AP).",
+        "cooldown": 6,
+        "damage": 185,
+        "damageType": "Physical",
+        "castType": "area"
+      },
+      "skill2": {
+        "name": "Rotor Overdrive",
+        "desc": "Push the flak skiff past redline for 5 seconds of heavy attack speed, then rake the target with crossfire (+10% AD, +6% AP).",
+        "cooldown": 11,
+        "damage": 110,
+        "damageType": "Physical",
+        "castType": "no_target"
+      },
+      "ultimate": {
+        "name": "Air Superiority",
+        "desc": "Enter full gunship mode, bombard the target formation, and greatly amplify attack speed and flak splash for up to 11 seconds (+10% AD, +6% AP).",
+        "cooldown": 82,
+        "damage": 390,
+        "damageType": "Physical",
+        "isUlt": true,
+        "castType": "area"
+      },
+      "primaryColor": "#1d4ed8",
+      "accentColor": "#f97316"
+    }
+  ],
+  "players": [
+    {
+      "id": "p_thespicy",
+      "name": "TheSpicy",
+      "realName": "TheShy",
+      "origin": "LoL",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 91,
+      "stats": {
+        "lan": 96,
+        "tf": 95,
+        "iq": 85,
+        "clu": 91,
+        "sta": 87,
+        "flx": 88
+      },
+      "personality": "Bush Stalker",
+      "badges": [],
+      "signatureChampions": [
+        "Valkira",
+        "Kazemaru"
+      ],
+      "morale": 88,
+      "fatigue": 25,
+      "level": 40,
+      "currentXp": 600,
+      "maxXp": 4000,
+      "avatarSvg": "theshy",
+      "primaryPersonality": "bush_stalker",
+      "secondaryPersonality": "revenge_driven",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_p1mple",
+      "name": "p1mple",
+      "realName": "s1mple",
+      "origin": "CS",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "GOAT",
+      "ovr": 97,
+      "stats": {
+        "lan": 99,
+        "tf": 97,
+        "iq": 95,
+        "clu": 99,
+        "sta": 90,
+        "flx": 93
+      },
+      "personality": "Bush Stalker",
+      "badges": [],
+      "signatureChampions": [
+        "Kage",
+        "Buck"
+      ],
+      "morale": 92,
+      "fatigue": 15,
+      "level": 52,
+      "currentXp": 2100,
+      "maxXp": 5200,
+      "avatarSvg": "s1mple",
+      "primaryPersonality": "bush_stalker",
+      "secondaryPersonality": "revenge_driven",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_flaker",
+      "name": "Flaker",
+      "realName": "Faker",
+      "origin": "LoL",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "tier": "GOAT",
+      "ovr": 98,
+      "stats": {
+        "lan": 99,
+        "tf": 98,
+        "iq": 98,
+        "clu": 99,
+        "sta": 94,
+        "flx": 96
+      },
+      "personality": "Iron Will",
+      "badges": [],
+      "signatureChampions": [
+        "Kyumi",
+        "Kage",
+        "Raijin"
+      ],
+      "morale": 95,
+      "fatigue": 10,
+      "level": 55,
+      "currentXp": 1200,
+      "maxXp": 5500,
+      "avatarSvg": "faker",
+      "primaryPersonality": "iron_will",
+      "secondaryPersonality": "glue_guy",
+      "playableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "p_daft",
+      "name": "Daft",
+      "realName": "Deft",
+      "origin": "LoL",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 93,
+      "stats": {
+        "lan": 92,
+        "tf": 95,
+        "iq": 91,
+        "clu": 96,
+        "sta": 92,
+        "flx": 89
+      },
+      "personality": "Bush Stalker",
+      "badges": [],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Kindra"
+      ],
+      "morale": 90,
+      "fatigue": 15,
+      "level": 45,
+      "currentXp": 950,
+      "maxXp": 4500,
+      "avatarSvg": "deft",
+      "primaryPersonality": "bush_stalker",
+      "secondaryPersonality": "steal_gambler",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_bigtail",
+      "name": "BigTail",
+      "realName": "N0tail",
+      "origin": "Dota2",
+      "role": "Support",
+      "preferredRole": "Support",
+      "tier": "Diamond",
+      "ovr": 93,
+      "stats": {
+        "lan": 88,
+        "tf": 94,
+        "iq": 97,
+        "clu": 95,
+        "sta": 95,
+        "flx": 95
+      },
+      "personality": "Iron Will",
+      "badges": [],
+      "signatureChampions": [
+        "Solana",
+        "Astra"
+      ],
+      "morale": 92,
+      "fatigue": 14,
+      "level": 47,
+      "currentXp": 1400,
+      "maxXp": 4700,
+      "avatarSvg": "notail",
+      "primaryPersonality": "iron_will",
+      "secondaryPersonality": "egoistic",
+      "playableRoles": [
+        "Support"
+      ]
+    },
+    {
+      "id": "p_craps",
+      "name": "Craps",
+      "realName": "Caps",
+      "origin": "LoL",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "playableRoles": [
+        "Mage"
+      ],
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 93,
+        "tf": 94,
+        "iq": 90,
+        "clu": 91,
+        "sta": 88,
+        "flx": 95
+      },
+      "personality": "Limit Tester",
+      "badges": [],
+      "signatureChampions": [
+        "Kyumi",
+        "Valkira",
+        "Kage"
+      ],
+      "morale": 85,
+      "fatigue": 20,
+      "level": 42,
+      "currentXp": 800,
+      "maxXp": 4200,
+      "avatarSvg": "caps",
+      "primaryPersonality": "limit_tester",
+      "secondaryPersonality": "cold_as_ice"
+    },
+    {
+      "id": "p_ouzi",
+      "name": "Ouzi",
+      "realName": "Uzi",
+      "origin": "LoL",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 94,
+      "stats": {
+        "lan": 98,
+        "tf": 96,
+        "iq": 88,
+        "clu": 92,
+        "sta": 82,
+        "flx": 85
+      },
+      "personality": "Untiltable",
+      "badges": [
+        "Hypercarry"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Buck",
+        "Cora"
+      ],
+      "morale": 82,
+      "fatigue": 30,
+      "level": 46,
+      "currentXp": 1100,
+      "maxXp": 4600,
+      "avatarSvg": "uzi",
+      "primaryPersonality": "untiltable",
+      "secondaryPersonality": "first_blood_hunter",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_neko",
+      "name": "NeKo",
+      "realName": "NiKo",
+      "origin": "CS",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 91,
+      "stats": {
+        "lan": 97,
+        "tf": 93,
+        "iq": 89,
+        "clu": 91,
+        "sta": 89,
+        "flx": 88
+      },
+      "personality": "Short Fuse",
+      "badges": [],
+      "signatureChampions": [
+        "Buck",
+        "Valkira",
+        "Kazemaru"
+      ],
+      "morale": 78,
+      "fatigue": 35,
+      "level": 38,
+      "currentXp": 400,
+      "maxXp": 3800,
+      "avatarSvg": "niko",
+      "primaryPersonality": "short_fuse",
+      "secondaryPersonality": "untiltable",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_woozy",
+      "name": "Zypoo",
+      "realName": "ZywOo",
+      "origin": "CS",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 95,
+      "stats": {
+        "lan": 96,
+        "tf": 96,
+        "iq": 95,
+        "clu": 95,
+        "sta": 95,
+        "flx": 96
+      },
+      "personality": "Momentum Junkie",
+      "badges": [],
+      "signatureChampions": [
+        "Buck",
+        "Kyumi",
+        "Sylla"
+      ],
+      "morale": 95,
+      "fatigue": 5,
+      "level": 48,
+      "currentXp": 1800,
+      "maxXp": 4800,
+      "avatarSvg": "zywoo",
+      "primaryPersonality": "momentum_junkie",
+      "secondaryPersonality": "showman",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_mirecle",
+      "name": "Mirecle",
+      "realName": "Miracle-",
+      "origin": "Dota2",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "GOAT",
+      "ovr": 97,
+      "stats": {
+        "lan": 98,
+        "tf": 99,
+        "iq": 97,
+        "clu": 98,
+        "sta": 92,
+        "flx": 98
+      },
+      "personality": "First Blood Hunter",
+      "badges": [],
+      "signatureChampions": [
+        "Xin",
+        "Inai",
+        "Kage"
+      ],
+      "morale": 94,
+      "fatigue": 12,
+      "level": 54,
+      "currentXp": 3000,
+      "maxXp": 5400,
+      "avatarSvg": "miracle",
+      "primaryPersonality": "first_blood_hunter",
+      "secondaryPersonality": "bush_stalker",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_godson",
+      "name": "Godson",
+      "realName": "Topson",
+      "origin": "Dota2",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "tier": "Diamond",
+      "ovr": 93,
+      "stats": {
+        "lan": 92,
+        "tf": 96,
+        "iq": 96,
+        "clu": 95,
+        "sta": 91,
+        "flx": 99
+      },
+      "personality": "Wave Architect",
+      "badges": [],
+      "signatureChampions": [
+        "Raijin",
+        "Tequoia",
+        "Kyumi"
+      ],
+      "morale": 90,
+      "fatigue": 18,
+      "level": 43,
+      "currentXp": 900,
+      "maxXp": 4300,
+      "avatarSvg": "topson",
+      "primaryPersonality": "wave_architect",
+      "secondaryPersonality": "cold_as_ice",
+      "playableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "p_dns",
+      "name": "DNS",
+      "realName": "FNS",
+      "origin": "Valorant",
+      "role": "Support",
+      "preferredRole": "Support",
+      "tier": "Diamond",
+      "ovr": 90,
+      "stats": {
+        "lan": 82,
+        "tf": 91,
+        "iq": 99,
+        "clu": 96,
+        "sta": 94,
+        "flx": 92
+      },
+      "personality": "Challenger",
+      "badges": [],
+      "signatureChampions": [
+        "Solana",
+        "Zal",
+        "Renn"
+      ],
+      "morale": 92,
+      "fatigue": 10,
+      "level": 41,
+      "currentXp": 750,
+      "maxXp": 4100,
+      "avatarSvg": "fns",
+      "primaryPersonality": "challenger",
+      "secondaryPersonality": "clutch_performer",
+      "playableRoles": [
+        "Support"
+      ]
+    },
+    {
+      "id": "p_penz",
+      "name": "PenZ",
+      "realName": "TenZ",
+      "origin": "Valorant",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 97,
+        "tf": 92,
+        "iq": 88,
+        "clu": 90,
+        "sta": 89,
+        "flx": 91
+      },
+      "personality": "Patient Predator",
+      "badges": [],
+      "signatureChampions": [
+        "Astra",
+        "Buck",
+        "Kindra"
+      ],
+      "morale": 88,
+      "fatigue": 22,
+      "level": 44,
+      "currentXp": 1300,
+      "maxXp": 4400,
+      "avatarSvg": "tenz",
+      "primaryPersonality": "patient_predator",
+      "secondaryPersonality": "short_fuse",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_toaster",
+      "name": "Toaster",
+      "realName": "Boaster",
+      "origin": "Valorant",
+      "role": "Support",
+      "preferredRole": "Support",
+      "tier": "Gold",
+      "ovr": 82,
+      "stats": {
+        "lan": 78,
+        "tf": 85,
+        "iq": 90,
+        "clu": 85,
+        "sta": 92,
+        "flx": 88
+      },
+      "personality": "Bush Stalker",
+      "badges": [],
+      "signatureChampions": [
+        "Solana",
+        "Renn",
+        "Zal"
+      ],
+      "morale": 96,
+      "fatigue": 8,
+      "level": 30,
+      "currentXp": 400,
+      "maxXp": 3000,
+      "avatarSvg": "boaster",
+      "primaryPersonality": "bush_stalker",
+      "secondaryPersonality": "survivalist",
+      "playableRoles": [
+        "Support"
+      ]
+    },
+    {
+      "id": "p_pixelrookie",
+      "name": "PixelRookie",
+      "realName": "Amateur Talent",
+      "origin": "LoL",
+      "role": "Tank",
+      "preferredRole": "Tank",
+      "tier": "Bronze",
+      "ovr": 54,
+      "stats": {
+        "lan": 52,
+        "tf": 54,
+        "iq": 50,
+        "clu": 48,
+        "sta": 55,
+        "flx": 50
+      },
+      "personality": "Patient Predator",
+      "badges": [],
+      "signatureChampions": [
+        "Solana",
+        "Kaolin"
+      ],
+      "morale": 75,
+      "fatigue": 10,
+      "level": 10,
+      "currentXp": 50,
+      "maxXp": 1000,
+      "avatarSvg": "rookie1",
+      "primaryPersonality": "patient_predator",
+      "secondaryPersonality": "cold_as_ice",
+      "playableRoles": [
+        "Tank"
+      ]
+    },
+    {
+      "id": "p_turbogamer",
+      "name": "TurboGamer",
+      "realName": "SoloQ Phenom",
+      "origin": "LoL",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "Silver",
+      "ovr": 66,
+      "stats": {
+        "lan": 68,
+        "tf": 65,
+        "iq": 64,
+        "clu": 66,
+        "sta": 67,
+        "flx": 62
+      },
+      "personality": "Bush Stalker",
+      "badges": [],
+      "signatureChampions": [
+        "Kage",
+        "Kazemaru"
+      ],
+      "morale": 80,
+      "fatigue": 15,
+      "level": 18,
+      "currentXp": 200,
+      "maxXp": 1800,
+      "avatarSvg": "rookie2",
+      "primaryPersonality": "bush_stalker",
+      "secondaryPersonality": "showman",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_kovi",
+      "name": "kovi",
+      "realName": "kovi",
+      "origin": "LoL",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 93,
+        "tf": 94,
+        "iq": 91,
+        "clu": 95,
+        "sta": 89,
+        "flx": 92
+      },
+      "personality": "Clutch Performer",
+      "primaryPersonality": "clutch_performer",
+      "secondaryPersonality": "showman",
+      "badges": [],
+      "signatureChampions": [
+        "Kyumi",
+        "Raijin",
+        "Soulscourge"
+      ],
+      "morale": 90,
+      "fatigue": 14,
+      "level": 42,
+      "currentXp": 800,
+      "maxXp": 4200,
+      "avatarSvg": "kovi",
+      "playableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "p_research_oner",
+      "name": "Own3r",
+      "realName": "Oner",
+      "origin": "LoL",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 90,
+        "tf": 91,
+        "iq": 91,
+        "clu": 90,
+        "sta": 89,
+        "flx": 89
+      },
+      "personality": "Wave Architect",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_oner",
+      "primaryPersonality": "wave_architect",
+      "secondaryPersonality": "siege_closer",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_gumayusi",
+      "name": "Gumayoshi",
+      "realName": "Gumayusi",
+      "origin": "LoL",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 93,
+      "stats": {
+        "lan": 92,
+        "tf": 93,
+        "iq": 90,
+        "clu": 92,
+        "sta": 91,
+        "flx": 91
+      },
+      "personality": "Momentum Junkie",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 43,
+      "currentXp": 0,
+      "maxXp": 4300,
+      "avatarSvg": "research_gumayusi",
+      "primaryPersonality": "momentum_junkie",
+      "secondaryPersonality": "survivalist",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_keria",
+      "name": "Keriax",
+      "realName": "Keria",
+      "origin": "LoL",
+      "role": "Support",
+      "preferredRole": "Support",
+      "tier": "Diamond",
+      "ovr": 94,
+      "stats": {
+        "lan": 94,
+        "tf": 95,
+        "iq": 96,
+        "clu": 94,
+        "sta": 93,
+        "flx": 93
+      },
+      "personality": "Overconfident",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Renn",
+        "Zal",
+        "Croakwell"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 44,
+      "currentXp": 0,
+      "maxXp": 4400,
+      "avatarSvg": "research_keria",
+      "primaryPersonality": "overconfident",
+      "secondaryPersonality": "iron_will",
+      "playableRoles": [
+        "Support"
+      ]
+    },
+    {
+      "id": "p_research_bin",
+      "name": "Dustbin",
+      "realName": "Bin",
+      "origin": "LoL",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 93,
+        "tf": 91,
+        "iq": 87,
+        "clu": 93,
+        "sta": 92,
+        "flx": 92
+      },
+      "personality": "IGL / Shotcaller",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_bin",
+      "primaryPersonality": "igl",
+      "secondaryPersonality": "silent_operator",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_knight",
+      "name": "DarkKnyte",
+      "realName": "knight",
+      "origin": "LoL",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "tier": "Diamond",
+      "ovr": 94,
+      "stats": {
+        "lan": 96,
+        "tf": 94,
+        "iq": 92,
+        "clu": 92,
+        "sta": 95,
+        "flx": 95
+      },
+      "personality": "Bush Stalker",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kyumi",
+        "Raijin",
+        "Soulscourge"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 44,
+      "currentXp": 0,
+      "maxXp": 4400,
+      "avatarSvg": "research_knight",
+      "primaryPersonality": "bush_stalker",
+      "secondaryPersonality": "clutch_performer",
+      "playableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "p_research_elk",
+      "name": "Elko",
+      "realName": "Elk",
+      "origin": "LoL",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 91,
+      "stats": {
+        "lan": 89,
+        "tf": 92,
+        "iq": 87,
+        "clu": 90,
+        "sta": 88,
+        "flx": 93
+      },
+      "personality": "Glue Guy",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 41,
+      "currentXp": 0,
+      "maxXp": 4100,
+      "avatarSvg": "research_elk",
+      "primaryPersonality": "glue_guy",
+      "secondaryPersonality": "bodyguard",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_on",
+      "name": "OFF",
+      "realName": "ON",
+      "origin": "LoL",
+      "role": "Support",
+      "preferredRole": "Support",
+      "tier": "Platinum",
+      "ovr": 88,
+      "stats": {
+        "lan": 87,
+        "tf": 87,
+        "iq": 84,
+        "clu": 88,
+        "sta": 86,
+        "flx": 85
+      },
+      "personality": "Revenge Driven",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Renn",
+        "Zal",
+        "Croakwell"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 38,
+      "currentXp": 0,
+      "maxXp": 3800,
+      "avatarSvg": "research_on",
+      "primaryPersonality": "revenge_driven",
+      "secondaryPersonality": "short_fuse",
+      "playableRoles": [
+        "Support"
+      ]
+    },
+    {
+      "id": "p_research_tarzan",
+      "name": "Tarz4n",
+      "realName": "Tarzan",
+      "origin": "LoL",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 92,
+        "tf": 92,
+        "iq": 93,
+        "clu": 93,
+        "sta": 91,
+        "flx": 90
+      },
+      "personality": "Short Fuse",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_tarzan",
+      "primaryPersonality": "short_fuse",
+      "secondaryPersonality": "showman",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_kanavi",
+      "name": "Kanoodle",
+      "realName": "Kanavi",
+      "origin": "LoL",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 93,
+        "tf": 93,
+        "iq": 89,
+        "clu": 90,
+        "sta": 92,
+        "flx": 91
+      },
+      "personality": "Egoistic",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kage",
+        "Veyara",
+        "Inai",
+        "Cinderbloom"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_kanavi",
+      "primaryPersonality": "egoistic",
+      "secondaryPersonality": "untiltable",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_research_jackeylove",
+      "name": "JackeyLuv",
+      "realName": "JackeyLove",
+      "origin": "LoL",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 93,
+      "stats": {
+        "lan": 95,
+        "tf": 92,
+        "iq": 84,
+        "clu": 92,
+        "sta": 94,
+        "flx": 93
+      },
+      "personality": "Showman",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 43,
+      "currentXp": 0,
+      "maxXp": 4300,
+      "avatarSvg": "research_jackeylove",
+      "primaryPersonality": "showman",
+      "secondaryPersonality": "captain",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_chovy",
+      "name": "Anchovy",
+      "realName": "Chovy",
+      "origin": "LoL",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "tier": "GOAT",
+      "ovr": 96,
+      "stats": {
+        "lan": 94,
+        "tf": 96,
+        "iq": 94,
+        "clu": 96,
+        "sta": 93,
+        "flx": 97
+      },
+      "personality": "Iron Will",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kyumi",
+        "Raijin",
+        "Soulscourge"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 46,
+      "currentXp": 0,
+      "maxXp": 4600,
+      "avatarSvg": "research_chovy",
+      "primaryPersonality": "iron_will",
+      "secondaryPersonality": "captain",
+      "playableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "p_research_canyon",
+      "name": "Cany0n",
+      "realName": "Canyon",
+      "origin": "LoL",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "Diamond",
+      "ovr": 94,
+      "stats": {
+        "lan": 93,
+        "tf": 95,
+        "iq": 94,
+        "clu": 95,
+        "sta": 92,
+        "flx": 96
+      },
+      "personality": "Glue Guy",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kage",
+        "Veyara",
+        "Inai",
+        "Cinderbloom"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 44,
+      "currentXp": 0,
+      "maxXp": 4400,
+      "avatarSvg": "research_canyon",
+      "primaryPersonality": "glue_guy",
+      "secondaryPersonality": "counterpuncher",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_research_ruler",
+      "name": "Protractor",
+      "realName": "Ruler",
+      "origin": "LoL",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 95,
+      "stats": {
+        "lan": 95,
+        "tf": 94,
+        "iq": 93,
+        "clu": 93,
+        "sta": 94,
+        "flx": 92
+      },
+      "personality": "Short Fuse",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 45,
+      "currentXp": 0,
+      "maxXp": 4500,
+      "avatarSvg": "research_ruler",
+      "primaryPersonality": "short_fuse",
+      "secondaryPersonality": "survivalist",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_zeus",
+      "name": "Z3us",
+      "realName": "Zeus",
+      "origin": "LoL",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 93,
+      "stats": {
+        "lan": 94,
+        "tf": 93,
+        "iq": 90,
+        "clu": 92,
+        "sta": 93,
+        "flx": 91
+      },
+      "personality": "Perfectionist",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 43,
+      "currentXp": 0,
+      "maxXp": 4300,
+      "avatarSvg": "research_zeus",
+      "primaryPersonality": "perfectionist",
+      "secondaryPersonality": "siege_closer",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_viper",
+      "name": "Vyper",
+      "realName": "Viper",
+      "origin": "LoL",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 94,
+      "stats": {
+        "lan": 96,
+        "tf": 95,
+        "iq": 91,
+        "clu": 94,
+        "sta": 95,
+        "flx": 93
+      },
+      "personality": "Loyalist",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 44,
+      "currentXp": 0,
+      "maxXp": 4400,
+      "avatarSvg": "research_viper",
+      "primaryPersonality": "loyalist",
+      "secondaryPersonality": "overconfident",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_caedrel",
+      "name": "Cardrel",
+      "realName": "Caedrel",
+      "origin": "LoL",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 90,
+      "stats": {
+        "lan": 88,
+        "tf": 89,
+        "iq": 97,
+        "clu": 91,
+        "sta": 87,
+        "flx": 90
+      },
+      "personality": "Loyalist",
+      "badges": [
+        "Broadcast Brain"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 40,
+      "currentXp": 0,
+      "maxXp": 4000,
+      "avatarSvg": "research_caedrel",
+      "primaryPersonality": "loyalist",
+      "secondaryPersonality": "egoistic",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_tyler1",
+      "name": "BigTonka",
+      "realName": "Tyler1",
+      "origin": "LoL",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Platinum",
+      "ovr": 86,
+      "stats": {
+        "lan": 85,
+        "tf": 86,
+        "iq": 78,
+        "clu": 84,
+        "sta": 84,
+        "flx": 87
+      },
+      "personality": "IGL / Shotcaller",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 36,
+      "currentXp": 0,
+      "maxXp": 3600,
+      "avatarSvg": "research_tyler1",
+      "primaryPersonality": "igl",
+      "secondaryPersonality": "perfectionist",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_yatoro",
+      "name": "Totoro",
+      "realName": "Yatoro",
+      "origin": "Dota2",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "GOAT",
+      "ovr": 96,
+      "stats": {
+        "lan": 96,
+        "tf": 97,
+        "iq": 92,
+        "clu": 95,
+        "sta": 95,
+        "flx": 98
+      },
+      "personality": "Siege Closer",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 46,
+      "currentXp": 0,
+      "maxXp": 4600,
+      "avatarSvg": "research_yatoro",
+      "primaryPersonality": "siege_closer",
+      "secondaryPersonality": "overconfident",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_collapse",
+      "name": "Collapz",
+      "realName": "Collapse",
+      "origin": "Dota2",
+      "role": "Tank",
+      "preferredRole": "Tank",
+      "tier": "Diamond",
+      "ovr": 94,
+      "stats": {
+        "lan": 95,
+        "tf": 93,
+        "iq": 93,
+        "clu": 94,
+        "sta": 94,
+        "flx": 91
+      },
+      "personality": "Siege Closer",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Solana",
+        "Kaolin",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 44,
+      "currentXp": 0,
+      "maxXp": 4400,
+      "avatarSvg": "research_collapse",
+      "primaryPersonality": "siege_closer",
+      "secondaryPersonality": "perfectionist",
+      "playableRoles": [
+        "Tank"
+      ]
+    },
+    {
+      "id": "p_research_miposhka",
+      "name": "Miposhk4",
+      "realName": "Miposhka",
+      "origin": "Dota2",
+      "role": "Support",
+      "preferredRole": "Support",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 94,
+        "tf": 92,
+        "iq": 96,
+        "clu": 93,
+        "sta": 93,
+        "flx": 90
+      },
+      "personality": "Counterpuncher",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Renn",
+        "Zal",
+        "Croakwell"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_miposhka",
+      "primaryPersonality": "counterpuncher",
+      "secondaryPersonality": "captain",
+      "playableRoles": [
+        "Support"
+      ]
+    },
+    {
+      "id": "p_research_skiter",
+      "name": "Skytah",
+      "realName": "skiter",
+      "origin": "Dota2",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 90,
+        "tf": 93,
+        "iq": 87,
+        "clu": 90,
+        "sta": 89,
+        "flx": 91
+      },
+      "personality": "Silent Operator",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_skiter",
+      "primaryPersonality": "silent_operator",
+      "secondaryPersonality": "siege_closer",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_malr1ne",
+      "name": "Submar1ne",
+      "realName": "Malr1ne",
+      "origin": "Dota2",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "tier": "Diamond",
+      "ovr": 93,
+      "stats": {
+        "lan": 92,
+        "tf": 92,
+        "iq": 90,
+        "clu": 92,
+        "sta": 91,
+        "flx": 93
+      },
+      "personality": "Fragile Mental",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kyumi",
+        "Raijin",
+        "Soulscourge"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 43,
+      "currentXp": 0,
+      "maxXp": 4300,
+      "avatarSvg": "research_malr1ne",
+      "primaryPersonality": "fragile_mental",
+      "secondaryPersonality": "steal_gambler",
+      "playableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "p_research_atf",
+      "name": "ATFury",
+      "realName": "ATF",
+      "origin": "Dota2",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 93,
+      "stats": {
+        "lan": 93,
+        "tf": 93,
+        "iq": 85,
+        "clu": 93,
+        "sta": 92,
+        "flx": 94
+      },
+      "personality": "Challenger",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 43,
+      "currentXp": 0,
+      "maxXp": 4300,
+      "avatarSvg": "research_atf",
+      "primaryPersonality": "challenger",
+      "secondaryPersonality": "revenge_driven",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_cr1t",
+      "name": "Spl1t",
+      "realName": "Cr1t-",
+      "origin": "Dota2",
+      "role": "Support",
+      "preferredRole": "Support",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 93,
+        "tf": 93,
+        "iq": 92,
+        "clu": 93,
+        "sta": 92,
+        "flx": 94
+      },
+      "personality": "Challenger",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Renn",
+        "Zal",
+        "Croakwell"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_cr1t",
+      "primaryPersonality": "challenger",
+      "secondaryPersonality": "patient_predator",
+      "playableRoles": [
+        "Support"
+      ]
+    },
+    {
+      "id": "p_research_sneyking",
+      "name": "SneakBro",
+      "realName": "Sneyking",
+      "origin": "Dota2",
+      "role": "Support",
+      "preferredRole": "Support",
+      "tier": "Diamond",
+      "ovr": 91,
+      "stats": {
+        "lan": 93,
+        "tf": 90,
+        "iq": 95,
+        "clu": 89,
+        "sta": 92,
+        "flx": 88
+      },
+      "personality": "First Blood Hunter",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Renn",
+        "Zal",
+        "Croakwell"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 41,
+      "currentXp": 0,
+      "maxXp": 4100,
+      "avatarSvg": "research_sneyking",
+      "primaryPersonality": "first_blood_hunter",
+      "secondaryPersonality": "loyalist",
+      "playableRoles": [
+        "Support"
+      ]
+    },
+    {
+      "id": "p_research_nisha",
+      "name": "Fisha",
+      "realName": "Nisha",
+      "origin": "Dota2",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "tier": "Diamond",
+      "ovr": 95,
+      "stats": {
+        "lan": 93,
+        "tf": 95,
+        "iq": 93,
+        "clu": 94,
+        "sta": 92,
+        "flx": 93
+      },
+      "personality": "Showman",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kyumi",
+        "Raijin",
+        "Soulscourge"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 45,
+      "currentXp": 0,
+      "maxXp": 4500,
+      "avatarSvg": "research_nisha",
+      "primaryPersonality": "showman",
+      "secondaryPersonality": "challenger",
+      "playableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "p_research_micke",
+      "name": "M0cke",
+      "realName": "miCKe",
+      "origin": "Dota2",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 91,
+        "tf": 93,
+        "iq": 89,
+        "clu": 92,
+        "sta": 90,
+        "flx": 91
+      },
+      "personality": "IGL / Shotcaller",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_micke",
+      "primaryPersonality": "igl",
+      "secondaryPersonality": "momentum_junkie",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_saberlight",
+      "name": "SaberLite",
+      "realName": "SaberLight",
+      "origin": "Dota2",
+      "role": "Tank",
+      "preferredRole": "Tank",
+      "tier": "Diamond",
+      "ovr": 90,
+      "stats": {
+        "lan": 90,
+        "tf": 89,
+        "iq": 88,
+        "clu": 91,
+        "sta": 89,
+        "flx": 90
+      },
+      "personality": "Tunnel Vision",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Solana",
+        "Kaolin",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 40,
+      "currentXp": 0,
+      "maxXp": 4000,
+      "avatarSvg": "research_saberlight",
+      "primaryPersonality": "tunnel_vision",
+      "secondaryPersonality": "objective_zealot",
+      "playableRoles": [
+        "Tank"
+      ]
+    },
+    {
+      "id": "p_research_boxi",
+      "name": "Boxxy",
+      "realName": "Boxi",
+      "origin": "Dota2",
+      "role": "Support",
+      "preferredRole": "Support",
+      "tier": "Diamond",
+      "ovr": 91,
+      "stats": {
+        "lan": 92,
+        "tf": 91,
+        "iq": 91,
+        "clu": 89,
+        "sta": 91,
+        "flx": 92
+      },
+      "personality": "Steal Gambler",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Renn",
+        "Zal",
+        "Croakwell"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 41,
+      "currentXp": 0,
+      "maxXp": 4100,
+      "avatarSvg": "research_boxi",
+      "primaryPersonality": "steal_gambler",
+      "secondaryPersonality": "egoistic",
+      "playableRoles": [
+        "Support"
+      ]
+    },
+    {
+      "id": "p_research_sumail",
+      "name": "KingSumail",
+      "realName": "SumaiL",
+      "origin": "Dota2",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "tier": "Diamond",
+      "ovr": 94,
+      "stats": {
+        "lan": 96,
+        "tf": 95,
+        "iq": 90,
+        "clu": 93,
+        "sta": 95,
+        "flx": 96
+      },
+      "personality": "Loyalist",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kyumi",
+        "Raijin",
+        "Soulscourge"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 44,
+      "currentXp": 0,
+      "maxXp": 4400,
+      "avatarSvg": "research_sumail",
+      "primaryPersonality": "loyalist",
+      "secondaryPersonality": "glue_guy",
+      "playableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "p_research_gh",
+      "name": "GeeH",
+      "realName": "GH",
+      "origin": "Dota2",
+      "role": "Support",
+      "preferredRole": "Support",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 90,
+        "tf": 91,
+        "iq": 94,
+        "clu": 92,
+        "sta": 89,
+        "flx": 89
+      },
+      "personality": "Revenge Driven",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Renn",
+        "Zal",
+        "Croakwell"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_gh",
+      "primaryPersonality": "revenge_driven",
+      "secondaryPersonality": "igl",
+      "playableRoles": [
+        "Support"
+      ]
+    },
+    {
+      "id": "p_research_nothingtosay",
+      "name": "PlentyToSay",
+      "realName": "NothingToSay",
+      "origin": "Dota2",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 91,
+        "tf": 92,
+        "iq": 91,
+        "clu": 93,
+        "sta": 90,
+        "flx": 90
+      },
+      "personality": "Counterpuncher",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kyumi",
+        "Raijin",
+        "Soulscourge"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_nothingtosay",
+      "primaryPersonality": "counterpuncher",
+      "secondaryPersonality": "short_fuse",
+      "playableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "p_research_dendi",
+      "name": "Dendimon",
+      "realName": "Dendi",
+      "origin": "Dota2",
+      "role": "Mage",
+      "preferredRole": "Mage",
+      "tier": "Platinum",
+      "ovr": 88,
+      "stats": {
+        "lan": 88,
+        "tf": 89,
+        "iq": 90,
+        "clu": 86,
+        "sta": 87,
+        "flx": 87
+      },
+      "personality": "Patient Predator",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kyumi",
+        "Raijin",
+        "Soulscourge"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 38,
+      "currentXp": 0,
+      "maxXp": 3800,
+      "avatarSvg": "research_dendi",
+      "primaryPersonality": "patient_predator",
+      "secondaryPersonality": "egoistic",
+      "playableRoles": [
+        "Mage"
+      ]
+    },
+    {
+      "id": "p_research_donk",
+      "name": "d4nk",
+      "realName": "donk",
+      "origin": "CS",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "Diamond",
+      "ovr": 94,
+      "stats": {
+        "lan": 95,
+        "tf": 93,
+        "iq": 83,
+        "clu": 93,
+        "sta": 94,
+        "flx": 94
+      },
+      "personality": "Egoistic",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kage",
+        "Veyara",
+        "Inai",
+        "Cinderbloom"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 44,
+      "currentXp": 0,
+      "maxXp": 4400,
+      "avatarSvg": "research_donk",
+      "primaryPersonality": "egoistic",
+      "secondaryPersonality": "silent_operator",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_research_ropz",
+      "name": "flopz",
+      "realName": "ropz",
+      "origin": "CS",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "Diamond",
+      "ovr": 93,
+      "stats": {
+        "lan": 95,
+        "tf": 93,
+        "iq": 93,
+        "clu": 93,
+        "sta": 94,
+        "flx": 94
+      },
+      "personality": "Objective Zealot",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kage",
+        "Veyara",
+        "Inai",
+        "Cinderbloom"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 43,
+      "currentXp": 0,
+      "maxXp": 4300,
+      "avatarSvg": "research_ropz",
+      "primaryPersonality": "objective_zealot",
+      "secondaryPersonality": "captain",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_research_m0nesy",
+      "name": "m0NKEY",
+      "realName": "m0NESY",
+      "origin": "CS",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 94,
+      "stats": {
+        "lan": 92,
+        "tf": 95,
+        "iq": 88,
+        "clu": 95,
+        "sta": 91,
+        "flx": 96
+      },
+      "personality": "Momentum Junkie",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 44,
+      "currentXp": 0,
+      "maxXp": 4400,
+      "avatarSvg": "research_m0nesy",
+      "primaryPersonality": "momentum_junkie",
+      "secondaryPersonality": "fragile_mental",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_sh1ro",
+      "name": "sh1row",
+      "realName": "sh1ro",
+      "origin": "CS",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 92,
+      "stats": {
+        "lan": 91,
+        "tf": 91,
+        "iq": 91,
+        "clu": 90,
+        "sta": 90,
+        "flx": 89
+      },
+      "personality": "Challenger",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 42,
+      "currentXp": 0,
+      "maxXp": 4200,
+      "avatarSvg": "research_sh1ro",
+      "primaryPersonality": "challenger",
+      "secondaryPersonality": "egoistic",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_molodoy",
+      "name": "molod0y",
+      "realName": "molodoy",
+      "origin": "CS",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 90,
+      "stats": {
+        "lan": 90,
+        "tf": 90,
+        "iq": 83,
+        "clu": 89,
+        "sta": 89,
+        "flx": 88
+      },
+      "personality": "Tunnel Vision",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 40,
+      "currentXp": 0,
+      "maxXp": 4000,
+      "avatarSvg": "research_molodoy",
+      "primaryPersonality": "tunnel_vision",
+      "secondaryPersonality": "bush_stalker",
+      "playableRoles": [
+        "Marksman"
+      ]
+    },
+    {
+      "id": "p_research_frozen",
+      "name": "melted",
+      "realName": "frozen",
+      "origin": "CS",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 91,
+      "stats": {
+        "lan": 92,
+        "tf": 92,
+        "iq": 90,
+        "clu": 91,
+        "sta": 91,
+        "flx": 90
+      },
+      "personality": "Fragile Mental",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 41,
+      "currentXp": 0,
+      "maxXp": 4100,
+      "avatarSvg": "research_frozen",
+      "primaryPersonality": "fragile_mental",
+      "secondaryPersonality": "objective_zealot",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_kscerato",
+      "name": "KSCARATO",
+      "realName": "KSCERATO",
+      "origin": "CS",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 91,
+      "stats": {
+        "lan": 93,
+        "tf": 90,
+        "iq": 89,
+        "clu": 92,
+        "sta": 92,
+        "flx": 91
+      },
+      "personality": "Untiltable",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 41,
+      "currentXp": 0,
+      "maxXp": 4100,
+      "avatarSvg": "research_kscerato",
+      "primaryPersonality": "untiltable",
+      "secondaryPersonality": "captain",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_spinx",
+      "name": "Sph1nx",
+      "realName": "Spinx",
+      "origin": "CS",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "Diamond",
+      "ovr": 90,
+      "stats": {
+        "lan": 88,
+        "tf": 90,
+        "iq": 89,
+        "clu": 88,
+        "sta": 87,
+        "flx": 91
+      },
+      "personality": "Short Fuse",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kage",
+        "Veyara",
+        "Inai",
+        "Cinderbloom"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 40,
+      "currentXp": 0,
+      "maxXp": 4000,
+      "avatarSvg": "research_spinx",
+      "primaryPersonality": "short_fuse",
+      "secondaryPersonality": "fragile_mental",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_research_twistzz",
+      "name": "Twistzzy",
+      "realName": "Twistzz",
+      "origin": "CS",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 91,
+      "stats": {
+        "lan": 90,
+        "tf": 92,
+        "iq": 91,
+        "clu": 90,
+        "sta": 89,
+        "flx": 93
+      },
+      "personality": "Captain",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 41,
+      "currentXp": 0,
+      "maxXp": 4100,
+      "avatarSvg": "research_twistzz",
+      "primaryPersonality": "captain",
+      "secondaryPersonality": "momentum_junkie",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_senzu",
+      "name": "SenzuBean",
+      "realName": "Senzu",
+      "origin": "CS",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "Platinum",
+      "ovr": 89,
+      "stats": {
+        "lan": 89,
+        "tf": 88,
+        "iq": 85,
+        "clu": 89,
+        "sta": 88,
+        "flx": 86
+      },
+      "personality": "Silent Operator",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kage",
+        "Veyara",
+        "Inai",
+        "Cinderbloom"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 39,
+      "currentXp": 0,
+      "maxXp": 3900,
+      "avatarSvg": "research_senzu",
+      "primaryPersonality": "silent_operator",
+      "secondaryPersonality": "momentum_junkie",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_research_xantares",
+      "name": "PEEKTARES",
+      "realName": "XANTARES",
+      "origin": "CS",
+      "role": "Fighter",
+      "preferredRole": "Fighter",
+      "tier": "Diamond",
+      "ovr": 91,
+      "stats": {
+        "lan": 92,
+        "tf": 91,
+        "iq": 84,
+        "clu": 92,
+        "sta": 91,
+        "flx": 89
+      },
+      "personality": "Patient Predator",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Stepstone",
+        "Valkira",
+        "Buck",
+        "Stonewake"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 41,
+      "currentXp": 0,
+      "maxXp": 4100,
+      "avatarSvg": "research_xantares",
+      "primaryPersonality": "patient_predator",
+      "secondaryPersonality": "perfectionist",
+      "playableRoles": [
+        "Fighter"
+      ]
+    },
+    {
+      "id": "p_research_yekindar",
+      "name": "YEKINDER",
+      "realName": "YEKINDAR",
+      "origin": "CS",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "Diamond",
+      "ovr": 90,
+      "stats": {
+        "lan": 92,
+        "tf": 91,
+        "iq": 85,
+        "clu": 88,
+        "sta": 91,
+        "flx": 89
+      },
+      "personality": "Showman",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kage",
+        "Veyara",
+        "Inai",
+        "Cinderbloom"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 40,
+      "currentXp": 0,
+      "maxXp": 4000,
+      "avatarSvg": "research_yekindar",
+      "primaryPersonality": "showman",
+      "secondaryPersonality": "survivalist",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_research_xertion",
+      "name": "xert10N",
+      "realName": "xertioN",
+      "origin": "CS",
+      "role": "Assassin",
+      "preferredRole": "Assassin",
+      "tier": "Diamond",
+      "ovr": 90,
+      "stats": {
+        "lan": 88,
+        "tf": 89,
+        "iq": 86,
+        "clu": 89,
+        "sta": 87,
+        "flx": 90
+      },
+      "personality": "Survivalist",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Kage",
+        "Veyara",
+        "Inai",
+        "Cinderbloom"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 40,
+      "currentXp": 0,
+      "maxXp": 4000,
+      "avatarSvg": "research_xertion",
+      "primaryPersonality": "survivalist",
+      "secondaryPersonality": "glue_guy",
+      "playableRoles": [
+        "Assassin"
+      ]
+    },
+    {
+      "id": "p_research_torzsi",
+      "name": "torzsy",
+      "realName": "torzsi",
+      "origin": "CS",
+      "role": "Marksman",
+      "preferredRole": "Marksman",
+      "tier": "Diamond",
+      "ovr": 90,
+      "stats": {
+        "lan": 89,
+        "tf": 90,
+        "iq": 90,
+        "clu": 90,
+        "sta": 88,
+        "flx": 91
+      },
+      "personality": "IGL / Shotcaller",
+      "badges": [
+        "Competitive Veteran"
+      ],
+      "signatureChampions": [
+        "Astra",
+        "Cora",
+        "Solenne"
+      ],
+      "morale": 85,
+      "fatigue": 12,
+      "level": 40,
+      "currentXp": 0,
+      "maxXp": 4000,
+      "avatarSvg": "research_torzsi",
+      "primaryPersonality": "igl",
+      "secondaryPersonality": "silent_operator",
+      "playableRoles": [
+        "Marksman"
+      ]
+    }
+  ]
+}

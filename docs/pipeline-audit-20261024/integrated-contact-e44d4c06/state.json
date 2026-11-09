@@ -1,0 +1,14 @@
+{
+  "id": "e44d4c06-f826-4a97-bcf7-b912845094fd",
+  "compute": "google",
+  "publication_eligible": false,
+  "qualification_complete": false,
+  "status": "completed",
+  "stage": "contact-map",
+  "runtime_id": "9d6d63438ea2f910c5b7039d4a6ed77596c6dbf1843f3f1590afe1b6b86aa4f7",
+  "environment_sha256": "73928306c86dae9ce21c8fe672abffcebdbb4ee2a654fa3a194a6f466ee8d105",
+  "started_unix": 1793037813.2211032,
+  "exit_code": 0,
+  "report_sha256": "c6437651fb9c392edc733cb5ce2eedfa4eb33d925e97ac6f1823f803c79e5c96",
+  "completed_unix": 1793037824.3525167
+}

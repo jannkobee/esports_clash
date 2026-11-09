@@ -6,6 +6,10 @@ use App\Models\AvatarPreparation;
 class PreparationProgressService {
     public const STEPS = ['Queue & resource admission','Extract mesh','Predict skeleton','Predict skin weights','Merge original materials','Retarget native animations','Await qualification request','Run technical qualification','Review identity & equipment','Published'];
     private const STAGES = [
+        'cloud_raw_rig_admission'=>[0,'The owner requested a raw rig for this exact generated body in Google Colab.'],
+        'raw_rig_admission'=>[0,'The frozen source and engine have been admitted to the Colab raw-rig stage.'],
+        'raw_skeleton_and_skin_prediction'=>[2,'TokenRig is predicting the actual generated body skeleton and skin weights in Google Colab.'],
+        'raw_rig_awaiting_deformation_review'=>[4,'The raw rig is retained. Review joint bending before animation transfer; no motion or appearance is qualified.'],
         'manual_admission'=>[0,'The owner requested this job. Waiting for a free GPU and sufficient memory.'],
         'preparing'=>[0,'The requested preparation is queued for worker admission.'],
         'checkpoint_verification'=>[0,'UniRig is verifying its official checkpoint files before inference can start.'],
