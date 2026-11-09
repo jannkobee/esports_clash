@@ -20,7 +20,7 @@ class WorldPlayerIdentity
         abort_unless($definition, 422, 'The player archetype is missing.');
         $original = ! $profiles->enabled() && $preferOriginal && ! OwnedPlayerCard::where('original_identity', $player->definition_id)->exists();
         $name = $original ? $definition['name'] : $this->generatedName($player->id);
-        // The caller holds the shared catalog lock. Unique indexes also protect concurrent identity admission.
+        // The caller holds the shared catalog lock. IDs remain unique; the IGN capacity trigger permits at most three display-name peers.
         $player->update(['persona_name' => $name, 'original_identity' => $original ? $player->definition_id : null]);
         $profiles->initialize($player, $catalog, $source, $nationality);
 

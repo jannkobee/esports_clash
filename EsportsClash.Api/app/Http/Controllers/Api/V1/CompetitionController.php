@@ -9,12 +9,17 @@ use Illuminate\Support\Facades\DB;
 
 class CompetitionController extends Controller
 {
+    public function directory(Request $r,\App\Services\TournamentDirectory $directory,CompetitionCalendar $calendar){
+        $v=$r->validate(['year'=>'nullable|integer|min:2020|max:2200','all_years'=>'nullable|boolean','type'=>'nullable|in:club,national','q'=>'nullable|string|max:100','tier'=>'nullable|integer|between:1,5','phase'=>'nullable|in:upcoming,ongoing,finished,review,cancelled','sort'=>'nullable|in:lifecycle,starts_asc,starts_desc,ends_desc,name,prize','page'=>'nullable|integer|min:1|max:1000000','per_page'=>'nullable|integer|in:20,30,50']);
+        if(!($v['all_years']??false))$v['year']=$v['year']??$calendar->year();else unset($v['year']);$page=$directory->page($v,$v['per_page']??30);
+        return ['data'=>['items'=>$page->items(),'meta'=>['page'=>$page->currentPage(),'last_page'=>$page->lastPage(),'per_page'=>$page->perPage(),'total'=>$page->total()],'counts'=>$directory->counts($v),'years'=>ClubTournament::distinct()->orderByDesc('year')->pluck('year')]];
+    }
     public function index(Request $r,CompetitionCalendar $calendar)
     {
-        $v=$r->validate(['year'=>'nullable|integer|min:2020|max:2200','type'=>'nullable|in:club,national','page'=>'nullable|integer|min:1|max:1000000']);
-        $q=ClubTournament::where('year',$v['year']??$calendar->year());if(isset($v['type']))$q->where('participant_type',$v['type']);
+        $v=$r->validate(['year'=>'nullable|integer|min:2020|max:2200','all_years'=>'nullable|boolean','type'=>'nullable|in:club,national','page'=>'nullable|integer|min:1|max:1000000','q'=>'nullable|string|max:100','tier'=>'nullable|integer|between:1,5','phase'=>'nullable|in:upcoming,ongoing,finished,review,cancelled','sort'=>'nullable|in:lifecycle,starts_asc,starts_desc,ends_desc,name,prize','per_page'=>'nullable|integer|in:20,30,50']);
+        $filters=$v;if(!($v['all_years']??false))$filters['year']=$v['year']??$calendar->year();else unset($filters['year']);$directory=app(\App\Services\TournamentDirectory::class);
         return ['data'=>['year'=>$calendar->year(),'timezone'=>'UTC','inaugural_year'=>$calendar->settings()['inaugural_year'],'play_opens_at'=>$calendar->playOpens($v['year']??$calendar->year()),'annual_program'=>DB::table('competition_year_records')->where('year',$v['year']??$calendar->year())->first(['year','calendar_hash','published_at','play_opens_at']),
-            'editions'=>$q->orderBy('registration_closes_at')->paginate(30),
+            'editions'=>$directory->page($filters,$v['per_page']??30),'lifecycle_counts'=>$directory->counts($filters),'available_years'=>ClubTournament::distinct()->orderByDesc('year')->pluck('year'),
             'definitions'=>CompetitionDefinition::where('status','approved')->orderBy('name')->limit(100)->get(),
             'windows'=>DB::table('competition_windows')->where('year',$v['year']??$calendar->year())->orderBy('starts_at')->get(),
             'nations'=>NationalTeam::with('geography')->orderBy('name')->paginate(50,['*'],'nation_page'),
@@ -42,21 +47,21 @@ class CompetitionController extends Controller
     }
     public function rankings(Request $r,CompetitionRankings $ratings)
     {
-        $d=$r->validate(['system'=>'required|in:HGR,HNR','geography'=>'nullable|integer|exists:competition_geographies,id','page'=>'nullable|integer|min:1|max:1000000']);
-        return ['data'=>$ratings->leaderboard($d['system'],$d['geography']??null,$d['page']??1)];
+        $d=$r->validate(['q'=>'nullable|string|max:100','tier'=>'nullable|integer|between:1,5','minimum_games'=>'nullable|integer|min:0|max:100000','system'=>'required|in:HGR,HNR','geography'=>'nullable|integer|exists:competition_geographies,id','page'=>'nullable|integer|min:1|max:1000000']);
+        return ['data'=>$ratings->leaderboard($d['system'],$d['geography']??null,$d['page']??1,$d)];
     }
-    public function geography() { return ['data'=>CompetitionGeography::orderBy('id')->limit(2000)->get()]; }
+    public function geography() { return ['data'=>CompetitionGeography::orderBy('name')->orderBy('id')->get()]; }
     public function mine(Request $r,OnlineService $online)
     {
         $club=$online->provision($r->user());$year=now('UTC')->year;
         $terms=DB::table('national_manager_terms')->where('user_id',$r->user()->id)->orderByDesc('id')->limit(30)->get();
         return ['data'=>['club_id'=>$club->id,'admin'=>(bool)$r->user()->is_evolution_admin,
-            'rating'=>DB::table('competition_ratings')->where('system','HGR')->where('participant_id',$club->id)->first(),
+            'tier'=>$club->tier,'ranking_context'=>app(CompetitionRankings::class)->context($club->id),'rating'=>DB::table('competition_ratings')->where('system','HGR')->where('participant_id',$club->id)->first(),
             'circuit_points'=>(int)DB::table('competition_circuit_points')->where('club_id',$club->id)->where('year',$year)->sum('points'),
             'invitations'=>DB::table('competition_invitations')->where(fn($q)=>$q->where(fn($q)=>$q->where('participant_type','club')->where('participant_id',$club->id))
                 ->orWhere(fn($q)=>$q->where('participant_type','national')->whereIn('participant_id',$terms->where('status','appointed')->pluck('national_team_id'))))->orderByDesc('id')->limit(50)->get(),
             'entries'=>DB::table('club_tournament_entries')->where('club_id',$club->id)->orderByDesc('id')->limit(50)->get(),
-            'titles'=>ClubTournament::where('champion_id',$club->id)->where('status','completed')->orderByDesc('year')->limit(50)->get(['id','year','name']),
+            'titles'=>ClubTournament::where('champion_id',$club->id)->where('status','completed')->where('ranked',true)->where('provenance','verified')->whereIn('accreditation',['official','verified_ranked','premier'])->orderByDesc('year')->limit(50)->get(['id','year','name']),
             'organizers'=>DB::table('competition_organizers')->where('user_id',$r->user()->id)->get(),
             'terms'=>$terms,'definitions'=>CompetitionDefinition::whereIn('organizer_id',DB::table('competition_organizers')->where('user_id',$r->user()->id)->select('id'))->get(),
         ]];
@@ -178,7 +183,7 @@ class CompetitionController extends Controller
     }
     public function createGeography(Request $r,CompetitionAdministration $admin)
     {
-        $d=$r->validate(['code'=>'required|alpha_dash|max:20|unique:competition_geographies,code','name'=>'required|string|max:100','kind'=>'required|in:continent,region,country,subregion','parent_id'=>'nullable|integer|exists:competition_geographies,id','timezone'=>'required|timezone']);
+        $d=$r->validate(['code'=>['required','alpha_dash','max:20',\Illuminate\Validation\Rule::unique('competition_geographies','code')->where('kind',$r->input('kind'))],'name'=>'required|string|max:100','kind'=>'required|in:continent,region,country,subregion','parent_id'=>'nullable|integer|exists:competition_geographies,id','timezone'=>'required|timezone']);
         return ['data'=>$admin->geography($r->user(),$d)];
     }
     public function verifyNationality(Request $r,CompetitionAdministration $admin)

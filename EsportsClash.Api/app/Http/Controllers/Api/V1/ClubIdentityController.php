@@ -24,7 +24,7 @@ class ClubIdentityController extends Controller
             'identity.nickname' => ['nullable', 'string', 'max:80'],
             'identity.motto' => ['nullable', 'string', 'max:120'],
             'identity.bio' => ['nullable', 'string', 'max:1000'],
-            'identity.country' => ['required', 'string', 'size:2', 'regex:/^[A-Z]{2}$/'],
+            'identity.country' => ['required', 'string', 'size:2', 'regex:/^[A-Z]{2}$/',Rule::exists('competition_geographies','code')->where('kind','country')],
             'identity.city' => ['nullable', 'string', 'max:80'],
             'identity.crest' => ['required', 'array:shape,mark'],
             'identity.crest.shape' => ['required', Rule::in(['shield', 'circle', 'diamond'])],
@@ -53,7 +53,7 @@ class ClubIdentityController extends Controller
                     throw ValidationException::withMessages(['revision' => 'The club changed. Refresh before saving.']);
                 }
                 if(!app(\App\Services\SupporterMembership::class)->status($locked->user)['active']){
-                    foreach(['home_jersey','away_jersey'] as $kit)abort_if($data['identity'][$kit]!==($locked->identity[$kit]??['pattern'=>'solid']),403,'Custom jerseys require Supporter. Existing saved artwork is retained.');
+                    foreach(['home_jersey','away_jersey'] as $kit)abort_if($data['identity'][$kit]!=($locked->identity[$kit]??['pattern'=>'solid']),403,'Custom jerseys require Supporter. Existing saved artwork is retained.');
                 }
                 $data['identity']['assets']=$locked->identity['assets']??[];
                 $geography=\App\Models\CompetitionGeography::where('code',$data['identity']['country'])->where('kind','country')->value('id');

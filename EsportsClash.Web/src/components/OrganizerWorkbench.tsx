@@ -1,7 +1,7 @@
 import {useEffect,useState,type FormEvent,type ReactNode} from 'react';
 import {request} from '../cloudPersistence';
 import {useAccount} from '../AccountContext';
-import {pediaHref,pediaMoney,pediaTime,pediaStatus} from '../avatarpedia';
+import {pediaHref,pediaMoney,pediaTime,pediaStatus} from '../hexapedia';
 import {LabelIcon} from './LabelIcon';
 
 interface Organization {id:number;name:string;status:string}

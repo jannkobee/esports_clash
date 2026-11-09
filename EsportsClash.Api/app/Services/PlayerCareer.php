@@ -24,20 +24,22 @@ class PlayerCareer {
             ->map(fn($row)=>['match_id'=>$row->match_id,'date'=>CarbonImmutable::parse($row->created_at)->toIso8601String(),
                 'competition'=>$row->competition,'club'=>['id'=>$row->club_id,'name'=>$row->club_name],'won'=>(bool)$row->won,
                 'rating'=>(float)$row->rating,'performance'=>json_decode($row->performance,true)]);
-        $honors=[];$appearances=[];
+        $appearances=[];
         $fixtures=ClubFixture::whereIn('match_id',DB::table('club_training_sessions')->where('card_id',$player->id)->select('match_id'))->whereHas('match',fn($q)=>$q->where('status','completed'))->with('match')->orderByDesc('kickoff_at')->limit(100)->get();
         foreach($fixtures as $f){$m=$f->match;foreach(['blue','red'] as $side){if(!in_array($player->id,array_column($m->plan[$side]??[],'instance_id'),true))continue;
             $clubId=$side==='blue'?$f->home_club_id:$f->away_club_id;
             $appearances[]=['fixture_id'=>$f->id,'match_id'=>$m->canSpectate()?$m->id:null,'date'=>$f->kickoff_at,'competition'=>$f->competition,'club'=>['id'=>$clubId,'name'=>$m->plan['clubs'][$side]],'won'=>$m->result['winner']===$side];
-            if($f->tournament_id && $m->result['winner']===$side){$e=ClubTournament::find($f->tournament_id);
-                if($e?->status==='completed' && !CommunityCups::isFun($e) && $e->provenance==='verified' && $e->champion_id===$clubId && !isset($honors[$e->id])){
-                    $last=ClubFixture::where('tournament_id',$e->id)->orderByDesc('kickoff_at')->first();
-                    if($last?->id===$f->id)$honors[$e->id]=['tournament_id'=>$e->id,'name'=>$e->title(),'year'=>$e->year,'club_id'=>$clubId,'basis'=>'Played for the winner in the verified championship final'];
-                }
-            }
         }}
+        // Lifetime final appearances are queried independently of the recent-match page.
+        // Keep the existing winning-final rule; later roster membership never grants a title.
+        $finals=ClubFixture::whereIn('match_id',DB::table('club_training_sessions')->where('card_id',$player->id)->select('match_id'))->whereHas('tournament',fn($q)=>$q->where('status','completed')->where('provenance','verified')->whereNotNull('champion_id'))
+            ->whereHas('match',fn($q)=>$q->where('status','completed'))->whereNotExists(function($q){$q->selectRaw('1')->from('club_fixtures as later')->whereColumn('later.tournament_id','club_fixtures.tournament_id')->where(fn($q)=>$q->whereColumn('later.kickoff_at','>','club_fixtures.kickoff_at')->orWhere(fn($q)=>$q->whereColumn('later.kickoff_at','club_fixtures.kickoff_at')->whereColumn('later.id','>','club_fixtures.id')));})
+            ->with(['match','tournament'])->orderByDesc('kickoff_at')->get();
+        $honors=[];foreach($finals as $f){$e=$f->tournament;$m=$f->match;$side=$m->result['winner'];$clubId=$side==='blue'?$f->home_club_id:$f->away_club_id;
+            if(!CommunityCups::isFun($e)&&$e->champion_id===$clubId&&in_array($player->id,array_column($m->plan[$side]??[],'instance_id'),true))$honors[$e->id]=['tournament_id'=>$e->id,'name'=>$e->title(),'year'=>$e->year,'club_id'=>$clubId,'basis'=>'Played for the winner in the verified championship final'];
+        }
         return ['registered_at'=>$player->created_at?->toIso8601String(),'current_contract'=>$current,'retired_at'=>$player->retired_at,
-            'transfers'=>$transfers,'development'=>$development,'appearances'=>$appearances,'match_ratings'=>$ratings,'form'=>app(PlayerForm::class)->summarize($ratings),'honors'=>array_values($honors),
+            'aliases'=>DB::table('player_presentation_revisions')->where('player_id',$player->id)->orderByDesc('id')->limit(100)->get()->map(function($row){$old=json_decode($row->previous,true);$new=json_decode($row->current,true);return ['previous'=>$old['name'],'current'=>$new['name'],'date'=>$row->created_at];})->filter(fn($row)=>$row['previous']!==$row['current'])->values(),'transfers'=>$transfers,'development'=>$development,'appearances'=>$appearances,'match_ratings'=>$ratings,'form'=>app(PlayerForm::class)->summarize($ratings),'honors'=>array_values($honors),
             'note'=>'Auction dates and fees come from settled listings; direct trades show the completed player movement without assigning a fictional transfer fee. Match ratings use verified final Arena statistics on a 1–10 Hexatrick scale; they are not an official competition award. Form uses up to ten verified appearances within 56 days, with a 21-day recency half-life, appearance decay and two neutral prior appearances. No recent evidence is Unrated. Form does not alter combat attributes. Development observations begin when this record system was introduced. Honors require a verified winning-final appearance; current club membership alone does not award a title.'];
     }
 }

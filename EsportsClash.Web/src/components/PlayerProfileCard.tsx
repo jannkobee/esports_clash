@@ -3,7 +3,7 @@ import type { PlayerCard } from '../types';
 import { avatarDisplayName } from '../avatarDisplayName';
 import { toScale10 } from '../marketBatchEngine';
 import { CHAMPIONS, INITIAL_PLAYERS } from '../mockData';
-import { pediaHref } from '../avatarpedia';
+import { pediaHref } from '../hexapedia';
 import { ChibiAvatar } from './ChibiAvatar';
 import './player-card.css';
 

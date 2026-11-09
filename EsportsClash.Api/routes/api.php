@@ -27,6 +27,7 @@ Route::prefix('v1')->group(function (): void {
     });
     Route::prefix('competitions')->controller(\App\Http\Controllers\Api\V1\CompetitionController::class)->middleware('throttle:90,1')->group(function () {
         Route::get('/', 'index'); Route::get('/rankings','rankings'); Route::get('/geography','geography');
+        Route::get('/directory', [\App\Http\Controllers\Api\V1\CompetitionController::class, 'directory']);
         Route::get('/editions/{id}','show')->whereNumber('id'); Route::get('/nations/{id}','nation')->whereNumber('id');
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('/mine','mine'); Route::get('/organizer-editions','organizerEditions'); Route::post('/editions/{id}/enter','enter')->whereNumber('id');
@@ -42,6 +43,8 @@ Route::prefix('v1')->group(function (): void {
         });
     });
     Route::get('/avatarpedia', [\App\Http\Controllers\Api\V1\AvatarpediaController::class, 'index'])->middleware('throttle:60,1');
+    Route::get('/avatarpedia/awards',[\App\Http\Controllers\Api\V1\PlayerRecordsController::class,'awards'])->middleware('throttle:60,1');
+    Route::get('/avatarpedia/players/{id}/records',[\App\Http\Controllers\Api\V1\PlayerRecordsController::class,'records'])->whereUuid('id')->middleware('throttle:60,1');
     Route::get('/avatarpedia/teams/{id}/games',[\App\Http\Controllers\Api\V1\AvatarpediaController::class,'teamGames'])->whereNumber('id')->middleware('throttle:90,1');
     Route::get('/avatarpedia/world', [\App\Http\Controllers\Api\V1\AvatarpediaController::class, 'world'])->middleware('throttle:60,1');
     Route::get('/avatarpedia/search', [\App\Http\Controllers\Api\V1\AvatarpediaController::class, 'search'])->middleware('throttle:60,1');
@@ -73,10 +76,15 @@ Route::prefix('v1')->group(function (): void {
         Route::put('/online/office/inbox/read',[\App\Http\Controllers\Api\V1\ClubOfficeController::class,'read']);
         Route::get('/online/office/reports',[\App\Http\Controllers\Api\V1\ClubOfficeController::class,'reports']);
         Route::get('/online/fixtures', [\App\Http\Controllers\Api\V1\ClubFixtureController::class, 'index']);
+        Route::get('/online/history',\App\Http\Controllers\Api\V1\ClubHistoryController::class);
         Route::post('/online/fixtures/invites', [\App\Http\Controllers\Api\V1\ClubFixtureController::class, 'invite'])->middleware('throttle:10,1');
         Route::post('/online/fixtures/invites/{id}/accept', [\App\Http\Controllers\Api\V1\ClubFixtureController::class, 'accept'])->whereNumber('id')->middleware('throttle:20,1');
         Route::get('/online/market', [\App\Http\Controllers\Api\V1\ClubMarketController::class, 'index']);
+        Route::get('/online/market/auctions',[\App\Http\Controllers\Api\V1\ClubMarketController::class,'auctions']);
         Route::get('/online/finances', [\App\Http\Controllers\Api\V1\ClubFinanceController::class, 'index']);
+        Route::get('/online/supporter',[\App\Http\Controllers\Api\V1\SupporterController::class,'index']);
+        Route::put('/online/theme',[\App\Http\Controllers\Api\V1\SupporterController::class,'theme']);
+        Route::put('/online/players/{id}/presentation',[\App\Http\Controllers\Api\V1\SupporterController::class,'player'])->whereUuid('id')->middleware('throttle:10,1');
         Route::get('/online/community-cups', [\App\Http\Controllers\Api\V1\CommunityCupController::class, 'index']);
         Route::post('/online/community-cups/{id}/response', [\App\Http\Controllers\Api\V1\CommunityCupController::class, 'respond'])->whereNumber('id')->middleware('throttle:20,1');
         Route::get('/online/market/trade-target', [\App\Http\Controllers\Api\V1\ClubMarketController::class, 'tradeTarget']);
@@ -106,7 +114,7 @@ Route::prefix('v1')->group(function (): void {
         Route::delete('/evolution/runs/{id}', [EvolutionController::class, 'stop']);
         Route::post('/evolution/reviews/{id}/decision', [EvolutionController::class, 'decide']);
         Route::get('/me', fn (Request $request) => response()->json([
-            'data' => ['id' => $request->user()->id, 'name' => $request->user()->name, 'email' => $request->user()->email,'supporter'=>app(\App\Services\SupporterMembership::class)->status($request->user())],
+            'data' => ['id' => $request->user()->id, 'name' => $request->user()->name, 'email' => $request->user()->email,'supporter'=>app(\App\Services\SupporterMembership::class)->status($request->user()),'theme'=>app(\App\Services\PersonalThemes::class)->effective($request->user())],
         ]));
         Route::delete('/auth/token', [AuthController::class, 'logout']);
 

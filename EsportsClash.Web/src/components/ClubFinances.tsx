@@ -1,8 +1,9 @@
+import {onWorldUpdate} from '../worldLive';
 import {useEffect,useState} from 'react';
 import {Wallet,ArrowDownLeft,ArrowUpRight,Landmark,Receipt,Download,RefreshCw,Users,ShieldCheck} from 'lucide-react';
 import {useAccount} from '../AccountContext';
 import {request} from '../cloudPersistence';
-import {pediaMoney,pediaTime} from '../avatarpedia';
+import {pediaMoney,pediaTime} from '../hexapedia';
 
 interface Report {
  month:string;as_of:string;currency:string;cash:{available:number;auction_escrow:number;trade_escrow:number;including_escrow:number};
@@ -17,6 +18,7 @@ const money=(n:number)=>pediaMoney(n);
 export function ClubFinances() {
  const {session}=useAccount();const [month,setMonth]=useState(currentMonth),[page,setPage]=useState(1),[report,setReport]=useState<Report|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true),[revision,setRevision]=useState(0);
  useEffect(()=>{if(!session)return;const c=new AbortController();setLoading(true);setError('');void request<{data:Report}>('/online/finances?month='+month+'&page='+page,session,{signal:c.signal}).then(r=>{if(!c.signal.aborted)setReport(r.data);}).catch(e=>{if(!c.signal.aborted)setError((e as Error).message);}).finally(()=>{if(!c.signal.aborted)setLoading(false);});return()=>c.abort();},[session,month,page,revision]);
+ useEffect(()=>onWorldUpdate(['market','clubs'],()=>setRevision(r=>r+1)),[]);
  const exportLedger=()=>{if(!report)return;const quote=(v:unknown)=>'"'+String(v).replaceAll('"','""')+'"';const csv=[['Date (UTC)','Category','Amount (PHP)','Reference'],...report.ledger.map(e=>[e.created_at,e.kind,(e.amount/100).toFixed(2),e.reference])].map(r=>r.map(quote).join(',')).join('\r\n');const url=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));const link=document.createElement('a');link.href=url;link.download='hexatrick-ledger-'+report.month+'-page-'+report.page+'.csv';link.click();URL.revokeObjectURL(url);};
  return <div className="finance-desk"><header className="finance-toolbar"><div><h2><Wallet size={20}/> Club finances</h2><p>Club transactions and commitments. PHP is virtual club money, with no cash value.</p></div><label>Report month<input type="month" value={month} min="2000-01" max={currentMonth()} onChange={e=>{if(e.target.value){setMonth(e.target.value);setPage(1);}}}/></label><button className="cm-btn" disabled={loading} onClick={()=>setRevision(r=>r+1)}><RefreshCw size={14}/>Refresh</button></header>
  {error&&<p role="alert" className="club-notice">{error}</p>}{loading&&<p role="status">Updating financial report…</p>}

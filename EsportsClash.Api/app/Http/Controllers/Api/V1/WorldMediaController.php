@@ -37,7 +37,7 @@ class WorldMediaController extends Controller
         if(isset($v['before']))$q->where('p.id','<',$v['before']);if(isset($v['kind']))$q->where('p.kind',$v['kind']);if(isset($v['match']))$q->where('p.match_id',$v['match']);
         $q->selectSub(DB::table('world_news_comments as c')->selectRaw('COUNT(*)')->whereColumn('c.post_id','p.id')->whereNull('c.hidden_at'),'comments');
         $posts=$q->orderByDesc('p.id')->addSelect(['p.*','n.name as personality','n.role','n.bio','u.name as manager','m.status as match_status'])->limit(25)->get()->map(function($p){$p->facts=json_decode($p->facts??'{}',true);$p->comments=(int)$p->comments;unset($p->event_key);return $p;});
-        return ['data'=>$posts,'next_before'=>$posts->count()===25?$posts->last()->id:null,'personalities'=>DB::table('world_media_personalities')->get()];
+        return ['data'=>$posts,'next_before'=>$posts->count()===25?$posts->last()->id:null,'personalities'=>DB::table('world_media_personalities')->whereIn('role',['caster','analyst','streamer','host'])->orderBy('id')->limit(12)->get()];
     }
     public function comments(Request $r,int $id){
         $v=$r->validate(['before'=>'nullable|integer|min:1']);abort_unless(DB::table('world_news_posts')->where('id',$id)->whereNull('hidden_at')->exists(),404);
@@ -61,17 +61,28 @@ class WorldMediaController extends Controller
         $p=DB::table('world_news_posts')->find($id);abort_unless($p,404);abort_unless($p->author_id===$r->user()->id || $r->user()->is_evolution_admin,403);
         DB::table('world_news_posts')->where('id',$id)->update(['hidden_at'=>now()]);return response()->noContent();
     }
-    public function broadcasts(){
-        $fixtures=ClubFixture::with(['match','homeClub:id,name,identity,tier','awayClub:id,name,identity,tier','homeNation:id,name','awayNation:id,name'])
-            ->where(fn($q)=>$q->whereBetween('kickoff_at',[now()->subDays(7),now()->addDays(7)]))->orderByDesc('kickoff_at')->limit(100)->get();
+    public function broadcasts(Request $request){
+        $v=$request->validate(['q'=>'nullable|string|max:100','tier'=>'nullable|integer|between:1,5','upcoming_page'=>'nullable|integer|min:1|max:1000000','replay_page'=>'nullable|integer|min:1|max:1000000']);
+        $base=ClubFixture::whereNull('hold_reason')->whereBetween('kickoff_at',[now()->subDays(30),now()->addDays(14)]);
+        if($v['q']??null){$term='%'.mb_strtolower($v['q']).'%';$base->where(fn($q)=>$q->whereRaw('LOWER(competition) LIKE ?',[$term])->orWhereHas('homeClub',fn($q)=>$q->whereRaw('LOWER(name) LIKE ?',[$term]))->orWhereHas('awayClub',fn($q)=>$q->whereRaw('LOWER(name) LIKE ?',[$term]))->orWhereHas('homeNation',fn($q)=>$q->whereRaw('LOWER(name) LIKE ?',[$term]))->orWhereHas('awayNation',fn($q)=>$q->whereRaw('LOWER(name) LIKE ?',[$term])));}
+        if($v['tier']??null)$base->where(fn($q)=>$q->whereHas('homeClub',fn($q)=>$q->where('tier',$v['tier']))->orWhereHas('awayClub',fn($q)=>$q->where('tier',$v['tier'])));
+        $relations=['match','homeClub:id,name,identity,tier','awayClub:id,name,identity,tier','homeNation:id,name','awayNation:id,name'];
+        $liveQuery=(clone $base)->where('kickoff_at','<=',now())->whereHas('match',fn($q)=>$q->where('status','running')->where('spectator_ready',true));
+        $liveTotal=(clone $liveQuery)->count();$live=$liveQuery->with($relations)->orderByDesc('kickoff_at')->limit(30)->get();
+        $upcoming=(clone $base)->where('kickoff_at','>=',now())->where(fn($q)=>$q->whereNull('match_id')->orWhereHas('match',fn($q)=>$q->where('status','allocated')))->with($relations)->orderBy('kickoff_at')->paginate(20,['*'],'upcoming_page',$v['upcoming_page']??1);
+        $replays=(clone $base)->where('kickoff_at','<=',now())->whereHas('match',fn($q)=>$q->whereIn('status',['completed','interrupted'])->where('spectator_ready',true))->with($relations)->orderByDesc('kickoff_at')->paginate(20,['*'],'replay_page',$v['replay_page']??1);
+        $fixtures=$live->concat($upcoming->getCollection())->concat($replays->getCollection());
+        $events=ClubTournament::whereIn('id',$fixtures->pluck('tournament_id')->filter())->get()->keyBy('id');
         $counts=DB::table('world_broadcast_presence')->where('seen_at','>',now()->subSeconds(90))->selectRaw('match_id, COUNT(*) AS viewers')->groupBy('match_id')->pluck('viewers','match_id');
-        $rows=$fixtures->map(function($f)use($counts){$m=$f->match;$event=$f->tournament_id?ClubTournament::find($f->tournament_id):null;
-            return ['fixture_id'=>$f->id,'competition'=>$f->competition,'tournament_id'=>$f->tournament_id,'kickoff_at'=>$f->kickoff_at,'status'=>$f->hold_reason?'review':($m?->status??'scheduled'),
-                'home'=>$f->homeClub?->only(['id','name','identity','tier'])??$f->homeNation?->only(['id','name']),'away'=>$f->awayClub?->only(['id','name','identity','tier'])??$f->awayNation?->only(['id','name']),
+        $crews=DB::table('fixture_talent_assignments as a')->join('world_media_personalities as t','t.id','=','a.talent_id')->whereIn('a.fixture_id',$fixtures->pluck('id'))->get(['a.fixture_id','t.id','t.name','a.role'])->groupBy('fixture_id');
+        $project=function($f)use($events,$counts,$crews){$m=$f->match;$event=$events[$f->tournament_id]??null;
+            return ['fixture_id'=>$f->id,'competition'=>$f->competition,'tournament_id'=>$f->tournament_id,'kickoff_at'=>$f->kickoff_at,'status'=>$m?->status??'scheduled',
+                'home'=>$f->homeClub?->only(['id','name','identity','tier'])??($f->homeNation?->only(['id','name'])?['id'=>$f->homeNation->id,'name'=>$f->homeNation->name,'national'=>true]:null),'away'=>$f->awayClub?->only(['id','name','identity','tier'])??($f->awayNation?->only(['id','name'])?['id'=>$f->awayNation->id,'name'=>$f->awayNation->name,'national'=>true]:null),
                 'watch_id'=>$m?->canSpectate()?$m->id:null,'viewers'=>$m?(int)($counts[$m->id]??0):0,'featured'=>$event?->accreditation==='official'||min($f->homeClub?->tier??5,$f->awayClub?->tier??5)===1,
-                'provenance'=>$event?->provenance??'verified'];});
-        return ['data'=>['live'=>$rows->where('status','running')->whereNotNull('watch_id')->sortByDesc(fn($x)=>($x['featured']?1000000:0)+$x['viewers'])->values(),
-            'upcoming'=>$rows->whereIn('status',['scheduled','allocated'])->sortBy('kickoff_at')->values(),'replays'=>$rows->whereIn('status',['completed','interrupted'])->whereNotNull('watch_id')->take(20)->values()]];
+                'provenance'=>$event?->provenance??'verified','crew'=>$crews[$f->id]??[],'score'=>$m?->status==='completed'?['blue'=>$m->result['report']['blueKills']??null,'red'=>$m->result['report']['redKills']??null]:null,
+                'duration_seconds'=>$m?->status==='completed'?($m->result['report']['durationSeconds']??null):null];};
+        return ['data'=>['live'=>$live->map($project)->sortByDesc(fn($x)=>($x['featured']?1000000:0)+$x['viewers'])->values(),'upcoming'=>$upcoming->getCollection()->map($project),'replays'=>$replays->getCollection()->map($project),
+            'meta'=>['live_total'=>$liveTotal,'upcoming_total'=>$upcoming->total(),'replay_total'=>$replays->total(),'upcoming_pages'=>$upcoming->lastPage(),'replay_pages'=>$replays->lastPage()]]];
     }
     public function presence(Request $r,string $id){
         $m=OnlineMatch::findOrFail($id);abort_unless($m->canSpectate()&&$m->status==='running',409,'This broadcast is not live.');

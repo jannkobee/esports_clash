@@ -1,3 +1,7 @@
+import {canonicalRoute,sectionHref,workspacePath} from './frontendRoutes';
+import {ClubMatchHistory} from './components/ClubMatchHistory';
+import {SupporterStudio} from './components/SupporterStudio';
+import {SupporterBadge} from './components/SupporterBadge';
 import {CommunityCups} from './components/CommunityCups';
 import {ClubFinances} from './components/ClubFinances';
 import {ClubInboxLink} from './components/ClubOfficeDesk';
@@ -89,16 +93,16 @@ import {
 } from 'lucide-react';
 
 type ArenaChoice = 'ai' | 'equalized_ai' | 'dev_random' | 'online' | null;
-type MainSection = 'home' | 'squad' | 'play' | 'market' | 'finances' | 'codex' | 'settings';
+type MainSection = 'home' | 'squad' | 'play' | 'market' | 'finances' | 'hexapedia' | 'history' | 'supporter' | 'settings';
 type SquadSubTab = 'lineup' | 'training' | 'staff' | 'evolutions';
 type PlaySubTab = 'modes' | 'split' | 'community' | 'competitions' | 'news' | 'broadcasts' | 'archive';
 
-const SECTION_HASHES: MainSection[] = ['home', 'squad', 'play', 'market', 'finances', 'codex', 'settings'];
+const SECTION_HASHES: MainSection[] = ['home', 'squad', 'play', 'market', 'finances', 'hexapedia', 'history', 'supporter', 'settings'];
 
 function readInitialSection(): MainSection {
   if (typeof window === 'undefined') return 'home';
-  const raw = window.location.hash.replace(/^#/, '').split(/[/?]/)[0].trim().toLowerCase() as MainSection;
-  if (raw === ('avatarpedia' as MainSection) || raw === ('discover' as MainSection)) return 'codex';
+  const raw = workspacePath(window.location.hash).split(/[/?]/)[0].trim().toLowerCase() as MainSection;
+  if (raw === ('avatarpedia' as MainSection) || raw === ('discover' as MainSection)) return 'hexapedia';
   return SECTION_HASHES.includes(raw) ? raw : 'home';
 }
 
@@ -202,18 +206,18 @@ export function App() {
 
   // Navigation (6 Primary Sections + Clean Sub-tabs)
   const [activeSection, setActiveSectionState] = useState<MainSection>(readInitialSection);
-  const [squadSubTab, setSquadSubTab] = useState<SquadSubTab>(()=>{const tab=new URLSearchParams(window.location.hash.split('?')[1]??'').get('tab');return tab&&['lineup','training','staff'].includes(tab)?tab as SquadSubTab:'lineup';});
-  const [playSubTab, setPlaySubTab] = useState<PlaySubTab>(()=>(['news','broadcasts','archive'].includes(new URLSearchParams(window.location.hash.split('?')[1]??'').get('world')??'')?new URLSearchParams(window.location.hash.split('?')[1]??'').get('world') as PlaySubTab:window.location.hash.includes('community=cups')?'community':window.location.hash.includes('competitions=')?'competitions':window.location.hash.includes('tool=practice')?'modes':'split'));
+  const [squadSubTab, setSquadSubTab] = useState<SquadSubTab>(()=>{const tab=new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').get('tab');return tab&&['lineup','training','staff'].includes(tab)?tab as SquadSubTab:'lineup';});
+  const [playSubTab, setPlaySubTab] = useState<PlaySubTab>(()=>(['news','broadcasts','archive'].includes(new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').get('world')??'')?new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').get('world') as PlaySubTab:workspacePath(window.location.hash).includes('community=cups')?'community':workspacePath(window.location.hash).includes('competitions=')?'competitions':workspacePath(window.location.hash).includes('tool=practice')?'modes':'split'));
   const [watchMatchId, setWatchMatchId] = useState<string | undefined>(() => {
-    const match = new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('match');
+    const match = new URLSearchParams(workspacePath(window.location.hash).split('?')[1] ?? '').get('match');
     return match && /^[a-f0-9-]{36}$/i.test(match) ? match : undefined;
   });
   const [showOnlineNormalSandbox, setShowOnlineNormalSandbox] = useState(false);
 
   const setActiveSection = (section: MainSection) => {
     setActiveSectionState(section);
-    if (typeof window !== 'undefined' && window.location.hash !== `#${section}`) {
-      window.history.replaceState(null, '', `#${section}`);
+    if (typeof window !== 'undefined' && window.location.hash !== sectionHref(section)) {
+      window.history.replaceState(null, '', sectionHref(section));
       window.dispatchEvent(new HashChangeEvent('hashchange'));
     }
   };
@@ -222,16 +226,16 @@ export function App() {
     const onHashChange = () => {
       const next = readInitialSection();
       setActiveSectionState(next);
-      if(next==='squad'){const tab=new URLSearchParams(window.location.hash.split('?')[1]??'').get('tab');if(tab&&['lineup','training','staff'].includes(tab))setSquadSubTab(tab as SquadSubTab);}
-      const params=new URLSearchParams(window.location.hash.split('?')[1]??'');
+      if(next==='squad'){const tab=new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').get('tab');if(tab&&['lineup','training','staff'].includes(tab))setSquadSubTab(tab as SquadSubTab);}
+      const params=new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'');
       const match=params.get('match');if(next==='play'&&match&&/^[a-f0-9-]{36}$/i.test(match)){setWatchMatchId(match);setPlaySubTab('split');}
       const worldTab=params.get('world');
       if(next==='play' && ['news','broadcasts','archive'].includes(worldTab??''))setPlaySubTab(worldTab as PlaySubTab);
-      if(next==='play'&&window.location.hash.includes('community=cups'))setPlaySubTab('community');
-      if(next==='play'&&window.location.hash.includes('tool=practice'))setPlaySubTab('modes');
-      if(next==='play'&&window.location.hash==='#play')setPlaySubTab('split');
-      if(next==='play' && window.location.hash.includes('competitions='))setPlaySubTab('competitions');
-      if(next==='play' && new URLSearchParams(window.location.hash.split('?')[1]??'').has('club')){setPlaySubTab('split');setWatchMatchId(undefined);}
+      if(next==='play'&&workspacePath(window.location.hash).includes('community=cups'))setPlaySubTab('community');
+      if(next==='play'&&workspacePath(window.location.hash).includes('tool=practice'))setPlaySubTab('modes');
+      if(next==='play'&&window.location.hash==='#match-centre')setPlaySubTab('split');
+      if(next==='play' && workspacePath(window.location.hash).includes('competitions='))setPlaySubTab('competitions');
+      if(next==='play' && new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').has('club')){setPlaySubTab('split');setWatchMatchId(undefined);}
     };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
@@ -666,7 +670,9 @@ export function App() {
         : 'Play · Scheduled Matchday',
     finances: 'Finances | Cash, income and expenses',
     market: 'Transfer Exchange · Player signings & club-to-club trades',
-    codex: 'Hexapedia | The Hexatrick reference',
+    hexapedia: 'Hexapedia | The Hexatrick reference',
+    history: 'Match history | Every club fixture',
+    supporter: 'Supporter studio | Identity and themes',
     settings: 'Settings · Club Options & Diagnostics'
   };
 
@@ -747,18 +753,19 @@ export function App() {
           </button>
 
           <button className={`cm-nav-btn ${activeSection==='finances'?'active':''}`} aria-current={activeSection==='finances'?'page':undefined} onClick={()=>{setActiveSection('finances');setInBattle(false);}}><span className="flex items-center gap-2"><LabelIcon name="money"/>Finances</span></button>
+          <button className={`cm-nav-btn ${activeSection==='history'?'active':''}`} aria-current={activeSection==='history'?'page':undefined} onClick={()=>{setActiveSection('history');setInBattle(false);}}><span className="flex items-center gap-2"><LabelIcon name="history"/>Match history</span></button>
           <div className="cm-nav-section">Living world</div>
-          {([['news','The Wire'],['broadcasts','Hexacast'],['archive','Crown 2026']] as const).map(([tab,label])=><button key={tab} className={`cm-nav-btn ${activeSection==='play'&&playSubTab===tab?'active':''}`} onClick={()=>{setActiveSection('play');setPlaySubTab(tab);setInBattle(false);window.location.hash='play?world='+tab;}}><span className="flex items-center gap-2"><LabelIcon name={label}/>{label}</span></button>)}
+          {([['news','The Wire'],['broadcasts','Hexacast'],['archive','Crown 2026']] as const).map(([tab,label])=><button key={tab} className={`cm-nav-btn ${activeSection==='play'&&playSubTab===tab?'active':''}`} onClick={()=>{setActiveSection('play');setPlaySubTab(tab);setInBattle(false);window.location.hash=({news:'wire',broadcasts:'hexacast',archive:'launch-championship'})[tab];}}><span className="flex items-center gap-2"><LabelIcon name={label}/>{label}</span></button>)}
           <div className="cm-nav-section">Scouting &amp; System</div>
           <button
             type="button"
             onClick={() => {
               sound.playClick();
-              setActiveSection('codex');
+              setActiveSection('hexapedia');
               setInBattle(false);
             }}
-            className={`cm-nav-btn ${activeSection === 'codex' ? 'active' : ''}`}
-            aria-current={activeSection === 'codex' ? 'page' : undefined}
+            className={`cm-nav-btn ${activeSection === 'hexapedia' ? 'active' : ''}`}
+            aria-current={activeSection === 'hexapedia' ? 'page' : undefined}
           >
             <span className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 shrink-0" />
@@ -766,6 +773,7 @@ export function App() {
             </span>
           </button>
 
+          <button className={`cm-nav-btn ${activeSection==='supporter'?'active':''}`} aria-current={activeSection==='supporter'?'page':undefined} onClick={()=>{setActiveSection('supporter');setInBattle(false);}}><span className="flex items-center gap-2"><LabelIcon name="supporter"/>Supporter studio</span></button>
           <button
             type="button"
             onClick={() => {
@@ -786,7 +794,7 @@ export function App() {
         <div className="cm-sidebar-footer">
           <div className="flex items-center justify-between mb-1">
             <span>World records:</span>
-            <a href="#codex">Hexapedia</a>
+            <a href="#hexapedia">Hexapedia</a>
           </div>
           <div className="flex items-center justify-between">
             <span>Training:</span>
@@ -801,7 +809,7 @@ export function App() {
         <header className="cm-topbar">
           <div className="cm-breadcrumb" title={sectionTitle[activeSection]}>Club management <span>Manila · UTC+8</span></div>
 
-          <div className="cm-topbar-stats"><ClubInboxLink/>
+          <div className="cm-topbar-stats">{accountSession?.user.supporter?.active&&<SupporterBadge trial={accountSession.user.supporter.kind==='trial'} level={accountSession.user.supporter.level} unlimited={accountSession.user.supporter.unlimited}/>}<ClubInboxLink/>
             <span className="hidden lg:inline text-xs text-slate-400 max-w-36 truncate" title={accountSession?.user.email}>{accountSession?.user.name}</span>
             <button
               type="button"
@@ -838,16 +846,18 @@ export function App() {
         {/* PAGE CONTENT */}
         <main id="main-content" tabIndex={-1} className={`cm-content ${inBattle ? 'cm-content--arena' : ''} ${activeSection === 'play' && inBattle ? 'max-w-[1640px]' : 'max-w-7xl'} mx-auto w-full`}>
           {accountError && <p role="alert" className="club-notice mb-4">{accountError}</p>}
-          {!inBattle && activeSection!=='codex' && !['news','broadcasts','archive'].includes(activeSection==='play'?playSubTab:'') && <div className="cm-page-heading">
+          {!inBattle && activeSection!=='hexapedia' && !['news','broadcasts','archive'].includes(activeSection==='play'?playSubTab:'') && <div className="cm-page-heading">
             <p className="cm-eyebrow">Hexatrick / Club management</p>
-            <h1><LabelIcon name={activeSection} size={24}/>{({ home: 'Club home', squad: 'Your squad', play: 'Match centre', market: 'Transfer Exchange', finances: 'Finances', codex: 'Hexapedia', settings: 'Settings' })[activeSection]}</h1>
+            <h1><LabelIcon name={activeSection} size={24}/>{({ home: 'Club home', squad: 'Your squad', play: 'Match centre', market: 'Transfer Exchange', finances: 'Finances', hexapedia: 'Hexapedia', history: 'Club match history', supporter: 'Supporter studio', settings: 'Settings' })[activeSection]}</h1>
             <p>{({
               home: 'Prepare your club for the next matchday.',
               squad: 'Manage your contracted players, training and official match orders.',
               play: 'Prepare your orders, follow the Arena, and revisit every result.',
               finances: 'Review income, expenses and your payroll commitments.',
               market: 'Buy, sell and develop your club roster.',
-              codex: 'Clubs, competitions, players, and the stories behind the Arena.',
+              hexapedia: 'Clubs, competitions, players, and the stories behind the Arena.',
+              history: 'Follow every fixture, result and recording in your club archive.',
+              supporter: 'Your membership, club cosmetics and player presentation.',
               settings: 'Manage your account, audio, and practice preferences.',
             })[activeSection]}</p>
           </div>}
@@ -855,10 +865,11 @@ export function App() {
               1. CLUB HOME (HATTRICK SCHEDULED FIXTURES & MATCH ORDERS)
              ========================================================= */}
           {activeSection === 'finances' && <ClubFinances/>}
+          {activeSection === 'history' && <ClubMatchHistory onWatch={id=>{setWatchMatchId(id);setInBattle(false);setPlaySubTab('split');setActiveSection('play');window.location.hash='match-centre?match='+encodeURIComponent(id);}}/>}
           {activeSection === 'home' && <ClubHome
-            onPlay={tool=>{setWatchMatchId(undefined);setPlaySubTab('split');setInBattle(false);setActiveSection('play');window.location.hash='play?club='+tool;}}
+            onPlay={tool=>{setWatchMatchId(undefined);setPlaySubTab('split');setInBattle(false);setActiveSection('play');window.location.hash=canonicalRoute('play?club='+tool);}}
             onMarket={()=>setActiveSection('market')}
-            onWatch={id=>{setWatchMatchId(id);setInBattle(false);setPlaySubTab('split');setActiveSection('play');}}
+            onWatch={id=>{setWatchMatchId(id);setInBattle(false);setPlaySubTab('split');setActiveSection('play');window.location.hash='match-centre?match='+encodeURIComponent(id);}}
           />}
           {/* =========================================================
               2. SQUAD (LINEUP & RESERVES + PLAYER EVOLUTIONS)
@@ -930,18 +941,18 @@ export function App() {
           {activeSection === 'play' && (
             <div>
               {!inBattle&&!['news','archive'].includes(playSubTab)&&<nav className="cm-tabs match-centre-nav" aria-label="Match centre">
-                <button className={`cm-tab ${playSubTab==='split'&&!window.location.hash.includes('club=friendly')?'active':''}`} onClick={()=>{setWatchMatchId(undefined);setPlaySubTab('split');window.location.hash='play?club=calendar';}}><LabelIcon name="calendar"/>Fixtures</button>
-                <button className={`cm-tab ${playSubTab==='split'&&window.location.hash.includes('club=friendly')?'active':''}`} onClick={()=>{setWatchMatchId(undefined);setPlaySubTab('split');window.location.hash='play?club=friendly';}}><Swords size={14}/>Scrimmages</button>
-                <button className={`cm-tab ${playSubTab==='competitions'?'active':''}`} onClick={()=>{setPlaySubTab('competitions');window.location.hash='play?competitions=circuit';}}><Trophy size={14}/>Competitions</button>
-                <button className={`cm-tab ${playSubTab==='broadcasts'?'active':''}`} onClick={()=>{setPlaySubTab('broadcasts');window.location.hash='play?world=broadcasts';}}><LabelIcon name="broadcast"/>Hexacast</button>
-                <button className={`cm-tab ${playSubTab==='community'?'active':''}`} onClick={()=>{setPlaySubTab('community');window.location.hash='play?community=cups';}}><Trophy size={14}/>Community cups</button>
+                <button className={`cm-tab ${playSubTab==='split'&&!workspacePath(window.location.hash).includes('club=friendly')?'active':''}`} onClick={()=>{setWatchMatchId(undefined);setPlaySubTab('split');window.location.hash='match-centre?club=calendar';}}><LabelIcon name="calendar"/>Fixtures</button>
+                <button className={`cm-tab ${playSubTab==='split'&&workspacePath(window.location.hash).includes('club=friendly')?'active':''}`} onClick={()=>{setWatchMatchId(undefined);setPlaySubTab('split');window.location.hash='scrimmages';}}><Swords size={14}/>Scrimmages</button>
+                <button className={`cm-tab ${playSubTab==='competitions'?'active':''}`} onClick={()=>{setPlaySubTab('competitions');window.location.hash='competitions?tab=circuit';}}><Trophy size={14}/>Competitions</button>
+                <button className={`cm-tab ${playSubTab==='broadcasts'?'active':''}`} onClick={()=>{setPlaySubTab('broadcasts');window.location.hash='hexacast';}}><LabelIcon name="broadcast"/>Hexacast</button>
+                <button className={`cm-tab ${playSubTab==='community'?'active':''}`} onClick={()=>{setPlaySubTab('community');window.location.hash='community-cups';}}><Trophy size={14}/>Community cups</button>
                 {playSubTab==='modes'&&<span className="cm-tab active">Practice tools</span>}
               </nav>}
               {playSubTab==='community'&&!inBattle&&<CommunityCups/>}
-              {playSubTab==='news'&&!inBattle&&<NewsFeed onWatch={id=>{setWatchMatchId(id);setPlaySubTab('split');window.location.hash='play?match='+id;}}/>}
+              {playSubTab==='news'&&!inBattle&&<NewsFeed onWatch={id=>{setWatchMatchId(id);setPlaySubTab('split');window.location.hash='match-centre?match='+id;}}/>}
               {playSubTab==='broadcasts'&&!inBattle&&<BroadcastHub/>}
-              {playSubTab==='archive'&&!inBattle&&<LaunchArchive onWatch={id=>{setWatchMatchId(id);setPlaySubTab('split');window.location.hash='play?match='+id;}}/>}
-              {playSubTab === 'competitions' && !inBattle && <CompetitionHub onWatch={id=>{setWatchMatchId(id);setPlaySubTab('split');window.location.hash='play?match='+id;}} />}
+              {playSubTab==='archive'&&!inBattle&&<LaunchArchive onWatch={id=>{setWatchMatchId(id);setPlaySubTab('split');window.location.hash='match-centre?match='+id;}}/>}
+              {playSubTab === 'competitions' && !inBattle && <CompetitionHub onWatch={id=>{setWatchMatchId(id);setPlaySubTab('split');window.location.hash='match-centre?match='+id;}} />}
               {playSubTab === 'split' && !inBattle && <OnlineNormalView key={watchMatchId ?? 'calendar'} matchCentre scheduled initialMatchId={watchMatchId} />}
 
               {(playSubTab === 'modes' || inBattle) && (
@@ -1009,7 +1020,7 @@ export function App() {
                                     type="button"
                                     onClick={() => {
                                       sound.playClick();
-                                      window.location.hash='play?competitions=calendar';
+                                      window.location.hash='competitions?tab=calendar';
                                     }}
                                     className="cm-btn"
                                   >
@@ -1666,14 +1677,14 @@ export function App() {
           {/* =========================================================
               5. CODEX (PRO CIRCUIT, AVATARS & LORE, ITEMS & SKILLS)
              ========================================================= */}
-          {activeSection === 'codex' && (
+          {activeSection === 'hexapedia' && (
             <div>
               <Hexapedia laboratory={<ChampionHubView champions={CHAMPIONS} allPlayers={roster}/>} catalogTools={<GameCatalogView/>} onWatch={id => {
                 setWatchMatchId(id);
                 setInBattle(false);
                 setPlaySubTab('split');
                 setActiveSectionState('play');
-                window.location.hash='play?match='+encodeURIComponent(id);
+                window.location.hash='match-centre?match='+encodeURIComponent(id);
               }}/>
             </div>
           )}
@@ -1681,7 +1692,8 @@ export function App() {
           {/* =========================================================
               6. SETTINGS (AUDIO, CLOUD SAVE, CATALOG, DEVELOPER)
              ========================================================= */}
-          {activeSection==='settings'&&<section className="cm-panel mb-4"><h2 className="cm-panel-header"><Swords size={15}/> Practice tools</h2><div className="cm-panel-body"><p className="club-help">Local draft experiments and historical sandbox modes. Club fixtures remain server scheduled.</p><a className="cm-btn" href="#play?tool=practice">Open Arena practice</a></div></section>}
+          {activeSection==='supporter'&&<SupporterStudio/>}
+          {activeSection==='settings'&&<section className="cm-panel mb-4"><h2 className="cm-panel-header"><Swords size={15}/> Practice tools</h2><div className="cm-panel-body"><p className="club-help">Local draft experiments and historical sandbox modes. Club fixtures remain server scheduled.</p><a className="cm-btn" href="#arena-practice">Open Arena practice</a></div></section>}
           {activeSection === 'settings' && (
             <div className="space-y-4 max-w-5xl">
               {/* Audio & Broadcast */}

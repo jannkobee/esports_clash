@@ -25,7 +25,7 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => $data['password'],
         ]);
-        $user->forceFill(['supporter_trial_ends_at'=>now('UTC')->addMonthNoOverflow()])->save();
+        $user->forceFill(['supporter_trial_ends_at'=>now('UTC')->addMonthNoOverflow(),'supporter_level'=>'beacon'])->save();
 
         return response()->json($this->tokenResponse($user, $data['device_name'] ?? 'Hexatrick web client'), 201);
     }
@@ -59,7 +59,7 @@ class AuthController extends Controller
         return [
             'token' => $user->createToken($deviceName, ['club:read', 'club:write', 'matches:read', 'matches:write'])->plainTextToken,
             'token_type' => 'Bearer',
-            'user' => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email,'supporter'=>app(\App\Services\SupporterMembership::class)->status($user)],
+            'user' => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email,'supporter'=>app(\App\Services\SupporterMembership::class)->status($user),'theme'=>app(\App\Services\PersonalThemes::class)->effective($user)],
         ];
     }
 }

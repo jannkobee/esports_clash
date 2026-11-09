@@ -8,13 +8,13 @@ class WorldPyramid {
  public function populate(int $perTier=4):array {
   abort_if($perTier<2||$perTier>8,422,'Use 2 to 8 founding clubs per region and tier.');$created=[];
   $countries=CompetitionGeography::where('kind','country')->where('eligible',true)->get();
-  foreach(CompetitionGeography::where('kind','region')->orderBy('id')->get() as $region){
+  foreach(CompetitionGeography::where('kind','region')->where('eligible',true)->orderBy('id')->get() as $region){
    $origins=$countries->filter(fn($c)=>in_array($region->id,$c->path(),true))->values();if($origins->isEmpty())continue;
    foreach(range(1,5) as $tier){
     $present=OnlineClub::where('is_bot',true)->where('tier',$tier)->whereIn('geography_id',$origins->pluck('id'))->count();
     for($n=$present;$n<$perTier;$n++)$created[]=DB::transaction(function()use($origins,$tier,$region,$n){
      $catalog=OnlineCatalog::where('active',true)->lockForUpdate()->firstOrFail();$key='pyramid:'.$region->id.':'.$tier.':'.$n;
-     $brand=app(WorldClubIdentity::class)->make($key);$attempt=0;while(OnlineClub::where('name',$brand['name'])->exists())$brand=app(WorldClubIdentity::class)->make($key.':'.++$attempt);
+     $brand=app(WorldClubIdentity::class)->make($key);$attempt=0;while(OnlineClub::where('name',$brand['name'])->exists()){$brand=app(WorldClubIdentity::class)->make($key.':'.++$attempt);if($attempt>100)$brand['name'].=' '.strtoupper(base_convert((string)$attempt,10,36));}
      $user=User::create(['name'=>$brand['manager'],'email'=>Str::lower(Str::random(24)).'@world.hexatrick.invalid','password'=>Str::random(64)]);
      $club=app(OnlineService::class)->provision($user,true);$origin=$origins[($n+$tier)%$origins->count()];
      $identity=$brand['identity']+['country'=>$origin->code,'bio'=>$brand['name'].' competes from '.$origin->name.' in the Hexatrick club pyramid.'];
@@ -40,7 +40,7 @@ class WorldPyramid {
  public function openWeek():array {
   $week=CarbonImmutable::now('Asia/Manila')->startOfWeek();if(now()->gte($week->addDays(2)->setTime(18,0)))$week=$week->addWeek();$events=[];
   $organizer=DB::table('competition_organizers')->where('slug','hexatrick')->value('id');if(!$organizer){app(CompetitionCalendar::class)->installDefaults();$organizer=DB::table('competition_organizers')->where('slug','hexatrick')->value('id');}
-  foreach(CompetitionGeography::where('kind','region')->orderBy('id')->get() as $ri=>$region)foreach(range(1,5) as $tier){
+  foreach(CompetitionGeography::where('kind','region')->where('eligible',true)->orderBy('id')->get() as $ri=>$region)foreach(range(1,5) as $tier){
    $definition=CompetitionDefinition::firstOrCreate(['slug'=>'ladder-'.strtolower($region->code).'-'.$tier],['organizer_id'=>$organizer,'name'=>$region->name.' Division '.$tier.' Trials','category'=>'tier_feeder','participant_type'=>'club','official'=>false,'ranked'=>true,'status'=>'approved','version'=>1,'rules'=>['tiers'=>[$tier],'geographies'=>[$region->id],'promotion_tier'=>max(1,$tier-1)],'schedule'=>['cadence'=>'weekly'],'sponsors'=>[]]);
    $event=DB::transaction(function()use($definition,$week,$tier,$region,$ri){
     $scope='ladder:'.$week->toDateString();$existing=ClubTournament::where('definition_id',$definition->id)->where('year',$week->year)->where('scope',$scope)->first();if($existing)return $existing;

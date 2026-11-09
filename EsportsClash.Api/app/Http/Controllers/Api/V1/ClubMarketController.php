@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 class ClubMarketController extends Controller
 {
+    public function auctions(Request $r,OnlineService $online,\App\Services\AuctionDirectory $directory){$v=$r->validate(['q'=>'nullable|string|max:100','role'=>'nullable|string|max:40','nationality'=>'nullable|string|size:2','personality'=>'nullable|string|max:40','minimum'=>'nullable|integer|between:0,10','view'=>'nullable|in:all,mine,leading','sort'=>'nullable|in:closing,price,skill,name','page'=>'nullable|integer|min:1|max:1000000','per_page'=>'nullable|integer|in:20,50']);return ['data'=>$directory->page($online->provision($r->user()),$online->activeCatalog(),$v)];}
     public function index(Request $request, OnlineService $online, ClubMarketService $market)
     {
         $market->expireTrades();
@@ -23,11 +24,11 @@ class ClubMarketController extends Controller
                 $profile = app(\App\Services\WorldPlayerProfiles::class)->definition($card, $players[$card->definition_id]);
                 return ['id' => $card->id, 'name' => $card->persona_name ?? $profile['name'],
                     'role' => $profile['preferredRole'] ?? $profile['role'] ?? null, 'overall' => $profile['ovr'],
-                    'nationality' => $profile['nationality'] ?? null, 'age' => $profile['age'] ?? null,
+                    'primaryPersonality'=>$profile['primaryPersonality']??null,'secondaryPersonality'=>$profile['secondaryPersonality']??null,'presentation'=>$profile['presentation']??null, 'nationality' => $profile['nationality'] ?? null, 'age' => $profile['age'] ?? null,
                     'wage' => $profile['wage'] ?? null, 'stats' => $profile['stats'] ?? []];
             });
         $auctions = ClubAuction::where('status', 'open')->where('closes_at', '>', now())
-            ->with(['card', 'seller:id,name,tag,is_bot', 'bidder:id,name,tag,is_bot'])->orderBy('closes_at')->limit(100)->get()
+            ->with(['card', 'seller:id,name,tag,is_bot', 'bidder:id,name,tag,is_bot'])->orderBy('closes_at')->limit($request->boolean('include_auctions',true)?100:0)->get()
             ->filter(fn($auction)=>$auction->card!==null)->map(function (ClubAuction $auction) use($players,$club){
                 $profile=app(\App\Services\WorldPlayerProfiles::class)->definition($auction->card,$players[$auction->card->definition_id]);
                 return [
@@ -36,7 +37,7 @@ class ClubMarketController extends Controller
                 'player_id' => $auction->card->id, 'seller_id' => $auction->seller_id, 'seller_tag' => $auction->seller->tag,
                 'seller_is_bot' => $auction->seller->is_bot,
                 'bidder' => $auction->bidder?->only(['id', 'name', 'tag', 'is_bot']),
-                'nationality'=>$profile['nationality']??null,'overall'=>$profile['ovr'],'role'=>$profile['preferredRole']??$profile['role']??null,
+                'primaryPersonality'=>$profile['primaryPersonality']??null,'secondaryPersonality'=>$profile['secondaryPersonality']??null,'presentation'=>$profile['presentation']??null,'nationality'=>$profile['nationality']??null,'overall'=>$profile['ovr'],'role'=>$profile['preferredRole']??$profile['role']??null,
                 'age'=>$profile['age']??null,'wage'=>$profile['wage']??null,'stats'=>$profile['stats']??[],
                 'leading' => $auction->bidder_id === $club->id, 'bid' => $auction->bid, 'closes_at' => $auction->closes_at,
                 'minimum' => $auction->bid === null ? $auction->opening_bid : $auction->bid + ClubMarketService::BID_INCREMENT,
@@ -79,7 +80,7 @@ class ClubMarketController extends Controller
                 $profile = app(\App\Services\WorldPlayerProfiles::class)->definition($card, $templates[$card->definition_id]);
                 return ['id' => $card->id, 'name' => $card->persona_name ?? $profile['name'],
                     'overall' => $profile['ovr'], 'role' => $profile['preferredRole'] ?? $profile['role'] ?? null,
-                    'nationality' => $profile['nationality'] ?? null, 'stats' => $profile['stats'] ?? []];
+                    'primaryPersonality'=>$profile['primaryPersonality']??null,'secondaryPersonality'=>$profile['secondaryPersonality']??null,'presentation'=>$profile['presentation']??null, 'nationality' => $profile['nationality'] ?? null, 'stats' => $profile['stats'] ?? []];
             })->values();
         return response()->json(['data' => ['club' => $target->only(['id', 'name', 'tag']), 'players' => $cards]]);
     }

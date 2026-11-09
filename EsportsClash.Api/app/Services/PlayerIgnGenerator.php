@@ -20,6 +20,15 @@ class PlayerIgnGenerator
         elseif($pattern<8)$name=$roots[$bytes[6]%count($roots)].$roots[$bytes[8]%count($roots)];
         if($bytes[9]%12===0)$name=str_replace(['a','e','i','o'],['4','3','1','0'],$name);
         elseif($bytes[9]%16===0)$name.=(string)(2+$bytes[10]%8);
-        return strtolower(substr($name,0,13));
+        return $this->style(substr($name,0,13),$entropy);
+    }
+
+    /** Display casing is varied; collision checks always use the lowercase identity key. */
+    public function style(string $name,string $entropy):string
+    {
+        $name=strtolower($name);$style=hexdec(substr(hash('sha256',$entropy.':display-case'),0,2))%10;
+        if($style<4)return $name;
+        if($style<9)return ucfirst($name);
+        return strlen($name)<=5?strtoupper($name):ucfirst(substr($name,0,3)).ucfirst(substr($name,3));
     }
 }

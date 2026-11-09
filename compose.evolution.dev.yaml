@@ -8,6 +8,7 @@ x-dev-api: &dev-api
   volumes:
     - ./infrastructure/evolution/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
     - ./EsportsClash.Api/app:/app/app:ro
+    - ./EsportsClash.Api/database/seeders:/app/database/seeders:ro
     - ./EsportsClash.Api/bootstrap/app.php:/app/bootstrap/app.php:ro
     - ./EsportsClash.Api/config:/app/config:ro
     - ./EsportsClash.Api/database/migrations:/app/database/migrations:ro

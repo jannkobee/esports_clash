@@ -63,12 +63,14 @@ class WorldPlayerProfiles
         $player->update(['world_profile' => $profile, 'nationality_id' => $nationality]);
         DB::table('player_national_eligibilities')->insertOrIgnore(['player_id' => $player->id, 'geography_id' => $nationality,
             'evidence' => 'Server-generated fictional birth nationality; world profile v1', 'verified_by' => null, 'verified_at' => now()]);
+        app(WorldPersonBiography::class)->initialize($player);
     }
 
     public function definition(OwnedPlayerCard $player, array $template): array
     {
         $out = $template;
         $out['name'] = $player->persona_name ?? $template['name'];
+        $out['presentation'] = $player->presentation;
         $profile = $this->enabled() ? $player->world_profile : null;
         if (! $profile) {
             return $out;

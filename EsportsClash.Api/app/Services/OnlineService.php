@@ -16,9 +16,9 @@ class OnlineService
         return OnlineCatalog::where('active', true)->firstOrFail();
     }
 
-    public function provision(User $user, bool $bot = false): OnlineClub
+    public function provision(User $user, bool $bot = false, bool $allowAdoption = true): OnlineClub
     {
-        return DB::transaction(function () use ($user, $bot) {
+        return DB::transaction(function () use ($user, $bot, $allowAdoption) {
             User::lockForUpdate()->findOrFail($user->id);
             if ($club = OnlineClub::where('user_id', $user->id)->first()) {
                 if (! $club->starters) {
@@ -35,7 +35,7 @@ class OnlineService
             $catalog = $this->activeCatalog();
             // All admissions share the catalog lock with kickoff and ownership transfers.
             $catalog=OnlineCatalog::whereKey($catalog->id)->lockForUpdate()->firstOrFail();
-            if(!$bot && ($adopted=app(BotPopulationService::class)->adopt($user)))return $adopted;
+            if(!$bot && $allowAdoption && ($adopted=app(BotPopulationService::class)->adopt($user)))return $adopted;
             $lineup = [];
             foreach ($catalog->payload['starter'] as $slot) {
                 $source = $bot ? 'bot-scout' : 'starter';
@@ -409,6 +409,7 @@ class OnlineService
                 DB::table('club_player_match_ratings')->insert($rows);
             }
             \App\Jobs\PublishWorldCoverage::dispatch($match->id)->afterCommit();
+            \App\Jobs\RecordPlayerCareers::dispatch($match->id)->afterCommit();
             return $match;
         });
     }

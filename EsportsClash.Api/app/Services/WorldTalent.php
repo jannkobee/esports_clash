@@ -6,11 +6,13 @@ class WorldTalent {
  public function populate():int {
   $first=['Mika','Eli','Tala','Ari','Ren','Kai','Sol','Noa','Dani','Lena','Cami','Jules','Rafi','Aya','Kira','Nico','Bea','Ira','Sora','Paz'];
   $last=['Varela','Santos','Navarro','Mori','Arden','Reyes','Vale','Cruz','Silva','Dela Vega','Rivera','Chen','Torres','Park','Solis','Bautista'];$count=0;
-  foreach(['caster','analyst','streamer','host','referee','observer'] as $role)for($i=0;$i<6;$i++){
-   $seed=hexdec(substr(hash('sha256','talent-v1:'.$role.':'.$i),0,7));$name=$first[$seed%count($first)].' '.$last[intdiv($seed,20)%count($last)];$slug=$role.'-'.strtolower(str_replace(' ','-',$name));
+  $target=max(6,min(128,(int)ceil(\App\Models\OnlineClub::count()/20)));
+  foreach(['caster','analyst','streamer','host','referee','observer'] as $role)for($i=0;$i<$target;$i++){
+   $seed=hexdec(substr(hash('sha256','talent-v1:'.$role.':'.$i),0,7));$name=$first[$seed%count($first)].' '.$last[intdiv($seed,20)%count($last)];$slug=$role.'-'.strtolower(str_replace(' ','-',$name)).'-'.$i;
    $profile=['nationality'=>['PH','KR','JP','BR','FR','ZA'][$seed%6],'languages'=>['English'],'specialty'=>['macro analysis','play-by-play','player development','draft analysis','tournament storytelling','rules and competitive integrity'][$seed%6],'joined_at'=>now()->toIso8601String()];
    $count+=DB::table('world_media_personalities')->insertOrIgnore(['slug'=>$slug,'name'=>$name,'role'=>$role,'style'=>$profile['specialty'],'bio'=>$name.' works across the Hexatrick circuit as a '.$role.', with a focus on '.$profile['specialty'].'.','profile'=>json_encode($profile)]);
   }
+  $managers=[];foreach(\App\Models\OnlineClub::where('is_bot',true)->with('user:id,name')->get(['id','user_id','name','identity']) as $club){$name=$club->user->name;if(preg_match('/bot/i',$name))$name=app(WorldClubIdentity::class)->make('manager:'.$club->id)['manager'];$managers[]=['slug'=>'manager-'.$club->id,'name'=>$name,'role'=>'manager','style'=>'Club management','bio'=>$name.' manages '.$club->name.'.','profile'=>json_encode(['club_id'=>$club->id,'nationality'=>$club->identity['country']??null])];}if($managers)$count+=DB::table('world_media_personalities')->insertOrIgnore($managers);
   return $count;
  }
  public function directory(string $search='',int $page=1,int $perPage=30):array {

@@ -50,6 +50,7 @@ class CompetitionRankings
             }
             DB::table('competition_rating_events')->insert(['result_id'=>$receipt->id,'system'=>$system,'participant_id'=>$id,'opponent_id'=>$op,'before'=>json_encode($r),'after'=>json_encode($after),'created_at'=>$receipt->verified_at]);
         }
+        if($system==='HGR')\App\Jobs\RecordManagerCareers::dispatch((int)$receipt->id)->afterCommit();
     }
 
     public function snapshot(string $system,string $purpose,?CarbonImmutable $cutoff=null): int
@@ -74,11 +75,24 @@ class CompetitionRankings
         },3);
     }
 
-    public function leaderboard(string $system,?int $geography,int $page=1): array
+    public function context(int $clubId):array
+    {
+        $r=DB::table('competition_ratings')->where('system','HGR')->where('participant_id',$clubId)->first();
+        $total=DB::table('competition_ratings')->where('system','HGR')->count();
+        if(!$r)return ['position'=>null,'population'=>$total,'games'=>0,'placement_remaining'=>10,'delta'=>null,'last_played_at'=>null];
+        $above=DB::table('competition_ratings')->where('system','HGR')->where(fn($q)=>$q->where('score','>',$r->score)->orWhere(fn($q)=>$q->where('score',$r->score)->where('participant_id','<',$clubId)))->count();
+        $last=DB::table('competition_rating_events')->where('system','HGR')->where('participant_id',$clubId)->orderByDesc('id')->first();
+        return ['position'=>$above+1,'population'=>$total,'games'=>$r->games,'placement_remaining'=>max(0,10-$r->games),'delta'=>$last?round((json_decode($last->after,true)['score']??0)-(json_decode($last->before,true)['score']??0),2):null,'last_played_at'=>$r->last_played_at,'skill_low'=>round($r->rating-2*$r->deviation),'skill_high'=>round($r->rating+2*$r->deviation)];
+    }
+
+    public function leaderboard(string $system,?int $geography,int $page=1,array $filters=[]): array
     {
         $q=DB::table('competition_ratings as r');
         $table=$system==='HGR'?'online_clubs':'national_teams';
         $q->join($table.' as p','p.id','=','r.participant_id')->where('r.system',$system);
+        if($filters['q']??null)$q->whereRaw('LOWER(p.name) LIKE ?',['%'.mb_strtolower($filters['q']).'%']);
+        if($system==='HGR'&&($filters['tier']??null))$q->where('p.tier',$filters['tier']);
+        if($filters['minimum_games']??null)$q->where('r.games','>=',$filters['minimum_games']);
         if($geography){$descendants=[$geography];$level=[$geography];for($i=0;$i<4 && $level;$i++){$level=DB::table('competition_geographies')->whereIn('parent_id',$level)->pluck('id')->all();$descendants=[...$descendants,...$level];}$q->whereIn('r.geography_id',$descendants);}
         return $q->select('r.*','p.name')->orderByDesc('r.score')->orderBy('r.participant_id')->paginate(50,['*'],'page',$page)->toArray();
     }

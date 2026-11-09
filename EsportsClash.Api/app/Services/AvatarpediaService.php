@@ -16,7 +16,7 @@ class AvatarpediaService
     private ?Collection $avatarRecords = null;
     private ?array $entryCounts = null;
 
-    public const KINDS = ['tournaments', 'teams', 'nations', 'players', 'coaches', 'avatars', 'items', 'releases', 'organizers', 'sponsors', 'talent'];
+    public const KINDS = ['tournaments', 'teams', 'nations', 'players', 'coaches', 'avatars', 'items', 'releases', 'organizers', 'sponsors', 'talent', 'managers'];
 
     private function catalog(): ?OnlineCatalog
     {
@@ -45,6 +45,7 @@ class AvatarpediaService
             'id'=>$owned->id,'name'=>$owned->persona_name??$card['name'],'archetype_id'=>$owned->definition_id,
             'role' => $card['preferredRole'] ?? $card['role'] ?? null,
             'nationality'=>$card['nationality']??null,'status'=>$owned->retired_at?'retired':'active',
+            'presentation'=>$owned->presentation,'personal_details'=>$owned->personal_details,
             'age' => $card['age'] ?? null, 'overall' => $card['ovr'] ?? null,
             'stats' => array_intersect_key($card['stats'] ?? [], array_flip(['lan', 'tf', 'iq', 'ldr', 'clu', 'sta', 'flx'])),
             'primaryPersonality' => $card['primaryPersonality'] ?? null,
@@ -113,7 +114,7 @@ class AvatarpediaService
 
     private function fixtures($query, int $limit = 100): array
     {
-        return $query->with(['homeClub:id,name,tag', 'awayClub:id,name,tag','homeNation:id,name','awayNation:id,name', 'match:id,status,plan,result,spectator_ready,started_at,completed_at'])
+        return $query->with(['homeClub:id,name,tag', 'awayClub:id,name,tag','homeNation:id,name,flag','awayNation:id,name,flag', 'match:id,status,plan,result,spectator_ready,started_at,completed_at'])
             ->limit($limit)->get()->map(function (ClubFixture $fixture) {
                 $match = $fixture->match;
                 $teams = $match?->plan['clubs'] ?? ['blue' => $fixture->homeClub?->name??$fixture->homeNation?->name, 'red' => $fixture->awayClub?->name??$fixture->awayNation?->name];
@@ -122,7 +123,7 @@ class AvatarpediaService
                     'orders_close_at' => $fixture->orders_close_at, 'tournament_id' => $fixture->tournament_id, 'bracket_slot' => $fixture->bracket_slot,
                     'status' => $fixture->hold_reason ? 'review' : ($match?->status ?? 'scheduled'), 'started_at' => $match?->started_at,
                     'watch_match_id' => $match?->canSpectate() ? $match->id : null,
-                    'home' => ['id' => $fixture->home_club_id??$fixture->home_national_team_id, 'name' => $teams['blue'],'national'=>(bool)$fixture->home_national_team_id], 'away' => ['id' => $fixture->away_club_id??$fixture->away_national_team_id, 'name' => $teams['red'],'national'=>(bool)$fixture->away_national_team_id],
+                    'home' => ['id' => $fixture->home_club_id??$fixture->home_national_team_id, 'name' => $teams['blue'],'national'=>(bool)$fixture->home_national_team_id,'flag'=>$fixture->homeNation?->flag], 'away' => ['id' => $fixture->away_club_id??$fixture->away_national_team_id, 'name' => $teams['red'],'national'=>(bool)$fixture->away_national_team_id,'flag'=>$fixture->awayNation?->flag],
                     'winner' => $winner === null ? null : $teams[$winner], 'winner_id' => $winner === null ? null : ($winner === 'blue' ? $fixture->home_club_id : $fixture->away_club_id),
                     'score' => $winner !== null && isset($match->result['report']['blueKills'], $match->result['report']['redKills'])
                         ? ['blue' => $match->result['report']['blueKills'], 'red' => $match->result['report']['redKills']] : null,
@@ -143,13 +144,15 @@ class AvatarpediaService
 
     private function fixtureQuery() { return ClubFixture::query(); }
 
-    public function directory(string $kind, string $search = '', int $page = 1, int $perPage = 30): array
+    public function directory(string $kind, string $search = '', int $page = 1, int $perPage = 30,array $filters=[]): array
     {
         abort_unless(in_array($kind, self::KINDS, true), 404);
         if($kind==='talent')return app(WorldTalent::class)->directory($search,$page,$perPage);
+        if($kind==='managers')return app(ManagerRecordBook::class)->directory($search,$page,$perPage);
         $q = mb_strtolower(trim($search));
         if ($kind === 'teams') {
             $query = OnlineClub::whereNotNull('tag')->orderBy('name');
+            if($filters['tier']??null)$query->where('tier',$filters['tier']);
             if ($q !== '') $query->where(fn ($query) => $query->whereRaw('LOWER(name) LIKE ?', ['%'.$q.'%'])->orWhereRaw('LOWER(tag) LIKE ?', ['%'.$q.'%']));
             $total = (clone $query)->count();
             $rows = $query->offset(($page - 1) * $perPage)->limit($perPage)->get()->map(fn ($club) => $this->club($club));
@@ -157,19 +160,21 @@ class AvatarpediaService
             $query=\App\Models\NationalTeam::orderBy('name');if($q!=='')$query->whereRaw('LOWER(name) LIKE ?',['%'.$q.'%']);
             $total=(clone $query)->count();$rows=$query->offset(($page-1)*$perPage)->limit($perPage)->get(['id','name','flag','geography_id'])->map(fn($n)=>$n->toArray()+['type'=>'National association']);
         } elseif($kind==='players') {
-            $query=OwnedPlayerCard::where('catalog_id',$this->catalog()?->id)->orderBy('persona_name')->orderBy('id');if($q!=='')$query->whereRaw('LOWER(persona_name) LIKE ?',['%'.$q.'%']);
-            $total=(clone $query)->count();$rows=$query->offset(($page-1)*$perPage)->limit($perPage)->get()->map(fn($p)=>$this->worldPlayer($p))->filter();
+            $query=OwnedPlayerCard::where('catalog_id',$this->catalog()?->id)->orderBy('persona_name')->orderBy('id');if($q!=='')$query->where(fn($query)=>$query->whereRaw('LOWER(persona_name) LIKE ?',['%'.$q.'%'])->orWhereRaw('LOWER(CAST(personal_details AS TEXT)) LIKE ?',['%'.$q.'%']));
+            if($filters['nationality']??null)$query->whereIn('nationality_id',DB::table('competition_geographies')->where('kind','country')->where('code',$filters['nationality'])->select('id'));
+            if($filters['role']??null){$ids=collect($this->catalog()?->payload['cards']??[])->filter(fn($c)=>($c['preferredRole']??$c['role']??'')===$filters['role'])->pluck('id');$query->whereIn('definition_id',$ids);}
+            $total=(clone $query)->count();$players=$query->offset(($page-1)*$perPage)->limit($perPage)->get();$clubs=OnlineClub::whereIn('user_id',$players->pluck('user_id'))->get(['id','name','tag','user_id'])->keyBy('user_id');$rows=$players->map(fn($p)=>$this->worldPlayer($p)+['club'=>isset($clubs[$p->user_id])?$clubs[$p->user_id]->only(['id','name','tag']):null])->filter();
         } elseif($kind==='tournaments') {
-            $query=ClubTournament::orderByDesc('year')->orderBy('id');if($q!=='')$query->whereRaw('LOWER(name) LIKE ?',['%'.$q.'%']);
-            $total=(clone $query)->count();$rows=$query->offset(($page-1)*$perPage)->limit($perPage)->get()->map(fn($e)=>$this->tournament($e));
+            $directory=app(TournamentDirectory::class);$options=[...$filters,'q'=>$search,'page'=>$page];$events=$directory->page($options,$perPage);
+            return ['items'=>$events->getCollection()->map(fn($e)=>$this->tournament($e)+['lifecycle'=>$e->lifecycle,'effective_starts_at'=>$e->effective_starts_at,'effective_ends_at'=>$e->effective_ends_at]),'meta'=>['page'=>$page,'per_page'=>$perPage,'total'=>$events->total(),'last_page'=>$events->lastPage()],'counts'=>$directory->counts($options)];
         } else {
             $rows = match ($kind) {
                 'players' => $this->players(), 'coaches' => $this->coaches(), 'avatars' => $this->avatars(), 'items' => $this->items(),
                 'tournaments' => ClubTournament::orderByDesc('year')->orderBy('tier')->get()->map(fn ($event) => $this->tournament($event)),
                 'releases' => OnlineCatalog::latest('updated_at')->get()->map(fn ($release) => $this->release($release)),
-                'organizers' => collect([['id' => 'signal-circuit', 'name' => ClubTournament::ORGANIZER, 'type' => 'Fictional tournament organizer']])->concat(DB::table('competition_organizers')->where('status','verified')->limit(100)->get(['slug','name','category'])->map(fn($o)=>['id'=>$o->slug,'name'=>$o->name,'type'=>$o->category])),
+                'organizers' => collect([['id' => 'signal-circuit', 'name' => ClubTournament::ORGANIZER, 'type' => 'Fictional tournament organizer']])->concat(DB::table('competition_organizers')->where('status','verified')->get(['slug','name','category'])->map(fn($o)=>['id'=>$o->slug,'name'=>$o->name,'type'=>$o->category])),
                 'sponsors' => collect([['id'=>'lantern-relay','name'=>ClubTournament::SPONSOR,'type'=>'Fictional tournament sponsor']])->concat(
-                    \App\Models\CompetitionDefinition::where('status','approved')->limit(500)->get(['sponsors'])->flatMap(fn($d)=>collect($d->sponsors??[])->map(fn($s)=>['id'=>\Illuminate\Support\Str::slug($s['name']),'name'=>$s['name'],'type'=>'Published tournament sponsor'])))->unique('id'),
+                    \App\Models\CompetitionDefinition::where('status','approved')->get(['sponsors'])->flatMap(fn($d)=>collect($d->sponsors??[])->map(fn($s)=>['id'=>\Illuminate\Support\Str::slug($s['name']),'name'=>$s['name'],'type'=>'Published tournament sponsor'])))->unique('id'),
             };
             if ($q !== '') $rows = $rows->filter(fn ($row) => str_contains(mb_strtolower(implode(' ', array_filter([$row['name'] ?? '', $row['role'] ?? '', $row['style'] ?? '', $row['primaryRole'] ?? '', $row['year'] ?? '', $row['tier'] ?? '']))), $q));
             $total = $rows->count();
@@ -210,15 +215,24 @@ class AvatarpediaService
         abort_unless(in_array($kind, self::KINDS, true), 404);
         if (in_array($kind, ['teams', 'tournaments'], true)) abort_if(filter_var($id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false, 404);
         $data = match ($kind) {
-            'talent'=>app(WorldTalent::class)->article($id), 'teams' => $this->teamArticle($id), 'tournaments' => $this->tournamentArticle($id),
+            'managers'=>app(ManagerRecordBook::class)->article($id),'talent'=>app(WorldTalent::class)->article($id), 'teams' => $this->teamArticle($id), 'tournaments' => $this->tournamentArticle($id),
             'nations' => \App\Models\NationalTeam::findOrFail($id)->only(['id','name','flag','geography_id']),
             'players' => $this->playerArticle($id), 'coaches' => $this->coaches()->firstWhere('id', $id), 'avatars' => $this->avatarArticle($id),
             'items' => $this->items()->firstWhere('id', $id),
             'releases' => $this->release(OnlineCatalog::findOrFail($id)),
-            'organizers', 'sponsors' => $this->directory($kind)['items']->firstWhere('id', $id),
+            'organizers', 'sponsors' => $this->directory($kind,'',1,PHP_INT_MAX)['items']->firstWhere('id', $id),
         };
         abort_if($data === null, 404);
-        if (in_array($kind, ['organizers', 'sponsors'], true)) $data['tournaments'] = $this->directory('tournaments', '', 1, 100)['items']->filter(fn($e)=>$kind==='organizers'?$e['organizer_id']===$id:in_array($id,$e['sponsor_ids']??[$e['sponsor_id']],true))->values();
+        if(in_array($kind,['organizers','sponsors'],true)){
+            // Related records are selected before pagination; a directory page boundary cannot hide an association.
+            $events=ClubTournament::query();
+            if($kind==='organizers'){
+                $events->where(function($q)use($id){$q->whereIn('definition_id',DB::table('competition_definitions')->whereIn('organizer_id',DB::table('competition_organizers')->where('slug',$id)->select('id'))->select('id'));if($id==='signal-circuit')$q->orWhereNull('definition_id');});
+            }else{
+                $events->where(function($q)use($data,$id){$q->whereJsonContains('sponsors',[['name'=>$data['name']]]);if($id==='lantern-relay')$q->orWhereNull('definition_id');});
+            }
+            $data['tournaments']=$events->orderByDesc('year')->orderBy('starts_at')->get()->map(fn($e)=>$this->tournament($e));
+        }
         return ['kind' => $kind, 'record' => $data, 'source' => ['catalog_id' => $this->catalog()?->id, 'content_hash' => $this->content()['hash'], 'generated_at' => now()]];
     }
 
@@ -230,7 +244,7 @@ class AvatarpediaService
         $events = ClubTournament::whereIn('id', DB::table('club_tournament_entries')->where('club_id', $club->id)->select('tournament_id'))->orderByDesc('year')->get()->map(fn ($event) => $this->tournament($event));
         $completed = $base()->whereHas('match', fn ($query) => $query->where('status', 'completed'))->with('match:id,result')->get();
         $wins = $completed->filter(fn ($fixture) => ($fixture->match->result['winner'] === 'blue' ? $fixture->home_club_id : $fixture->away_club_id) === $club->id)->count();
-        return [...$this->club($club), 'roster' => $roster, 'tournaments' => $events,
+        return [...$this->club($club), 'manager'=>\App\Models\User::find($club->user_id)?->only(['id','name']), 'roster' => $roster, 'tournaments' => $events,
             'record' => ['played' => $completed->count(), 'wins' => $wins, 'losses' => $completed->count() - $wins],
             'fixtures' => $this->fixtures($base()->orderByDesc('kickoff_at'))];
     }
@@ -265,7 +279,7 @@ class AvatarpediaService
         $teams = $owned->retired_at?collect():OnlineClub::whereNotNull('tag')->where('user_id',$owned->user_id)->get()->map(fn ($club) => $this->club($club));
         $nationality=DB::table('player_national_eligibilities as e')->join('competition_geographies as g','g.id','=','e.geography_id')->where('e.player_id',$owned->id)->get(['g.code','g.name']);
         return [...$player, 'nationalities'=>$nationality, 'international_appearances'=>DB::table('international_appearances')->where('player_id',$owned->id)->count(),
-            'career'=>app(PlayerCareer::class)->show($owned),'teams' => $teams, 'signature_avatars' => $this->avatars()->whereIn('id', $player['signature_avatar_ids'])->values(), ...$this->appearances('instance', $owned->id)];
+            'dossier'=>app(PlayerRecordBook::class)->summary($owned->id),'coverage'=>DB::table('world_news_posts')->where('facts->player_id',$owned->id)->whereNull('hidden_at')->orderByDesc('published_at')->limit(20)->get(['id','headline','body','kind','published_at']),'career'=>app(PlayerCareer::class)->show($owned),'teams' => $teams, 'signature_avatars' => $this->avatars()->whereIn('id', $player['signature_avatar_ids'])->values(), ...$this->appearances('instance', $owned->id)];
     }
 
     private function avatarArticle(string $id): array

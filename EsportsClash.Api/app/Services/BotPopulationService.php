@@ -21,7 +21,7 @@ class BotPopulationService
         for ($i = OnlineClub::where('is_bot', true)->count(); $i < $target; $i++) {
             DB::transaction(function () use (&$created) {
                 $suffix = strtoupper(Str::random(7));
-                $brand=app(WorldClubIdentity::class)->make('population:'.$suffix);
+                $brand=app(WorldClubIdentity::class)->make('population:'.$suffix);$attempt=0;while(OnlineClub::where('name',$brand['name'])->exists()){$brand=app(WorldClubIdentity::class)->make('population:'.$suffix.':'.++$attempt);if($attempt>100)$brand['name'].=' '.$suffix;}
                 $user = User::create(['name' => $brand['manager'], 'email' => strtolower($suffix).'@bots.invalid', 'password' => Str::random(64)]);
                 $club = app(OnlineService::class)->provision($user, true);
                 $countries = CompetitionGeography::where('kind', 'country')->where('eligible', true)->orderBy('id')->get();
@@ -74,7 +74,7 @@ class BotPopulationService
         $club->update(['user_id' => $user->id, 'is_bot' => false, 'revision' => $club->revision + 1]);
         DB::table('club_manager_history')->where('club_id', $club->id)->whereNull('ends_at')->update(['ends_at' => now()]);
         DB::table('club_manager_history')->insert(['club_id' => $club->id, 'user_id' => $user->id, 'kind' => 'human', 'starts_at' => now()]);
-        app(WorldActivityService::class)->record('club:'.$club->id.':human-manager:'.$user->id, 'club', $club, $club->name.' appointed a human manager.', ['team_id' => $club->id]);
+        app(WorldActivityService::class)->record('club:'.$club->id.':human-manager:'.$user->id, 'club', $club, $club->name.' appointed '.$user->name.' as manager.', ['team_id' => $club->id]);
         PopulateBotClubs::dispatch(config('world_players.minimum_bot_population'))->afterCommit();
 
         return $club;

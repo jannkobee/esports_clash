@@ -94,9 +94,10 @@ class CompetitionCalendar
     public function installGeographies(): void
     {
         foreach(config('competitions.geographies') as [$code,$name,$kind,$parent,$timezone]){
-            $geo=\App\Models\CompetitionGeography::firstOrCreate(['code'=>$code],['name'=>$name,'kind'=>$kind,'parent_id'=>$parent?\App\Models\CompetitionGeography::where('code',$parent)->value('id'):null,'timezone'=>$timezone]);
+            $geo=\App\Models\CompetitionGeography::firstOrCreate(['code'=>$code,'kind'=>$kind],['name'=>$name,'parent_id'=>$parent?\App\Models\CompetitionGeography::where('code',$parent)->where('kind',$kind==='region'?'continent':'region')->value('id'):null,'timezone'=>$timezone]);
             if($kind==='country')\App\Models\NationalTeam::firstOrCreate(['geography_id'=>$geo->id],['name'=>$name,'flag'=>$code]);
         }
+        app(CountryCatalog::class)->install();
     }
 
     public function installDefaults(): void
@@ -108,7 +109,7 @@ class CompetitionCalendar
         if (!$organizer) {
             $id=DB::table('competition_organizers')->insertGetId(['slug'=>'hexatrick','name'=>'Hexatrick Championship Circuit','category'=>'official','status'=>'verified','created_at'=>now(),'updated_at'=>now()]);
         } else $id=$organizer->id;
-        foreach(\App\Models\CompetitionGeography::where('kind','region')->get() as $region){
+        foreach(\App\Models\CompetitionGeography::where('kind','region')->where('eligible',true)->get() as $region){
             foreach([['dawn','season-opening','03-02','season-lock'],['zenith','04-01','06-10','03-25'],['dusk','07-20','10-01','07-12']] as [$split,$start,$end,$close]){
                 $regional=CompetitionDefinition::firstOrCreate(['slug'=>'regional-'.strtolower($region->code).'-'.$split],[
                     'version'=>2,'organizer_id'=>$id,'name'=>$region->name.' '.ucfirst($split).' League','category'=>'regional_league',

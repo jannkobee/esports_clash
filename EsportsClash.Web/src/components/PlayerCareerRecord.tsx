@@ -1,5 +1,5 @@
 import {PlayerForm} from './PlayerForm';
-import { pediaHref, pediaMoney, pediaTime, type PlayerCareerData } from '../avatarpedia';
+import { pediaHref, pediaMoney, pediaTime, type PlayerCareerData } from '../hexapedia';
 import { toScale10 } from '../marketBatchEngine';
 import { LabelIcon } from './LabelIcon';
 import { ratingWord } from '../matchRatingScale';
@@ -16,6 +16,7 @@ export function PlayerCareerRecord({ career }: { career?: PlayerCareerData }) {
           <div><dt>Current club</dt><dd>{career.current_contract ? <a href={pediaHref('teams', career.current_contract.id)}>{career.current_contract.name}</a> : 'No active contract'}</dd></div>
           {career.retired_at && <div><dt>Retired</dt><dd>{pediaTime(career.retired_at)}</dd></div>}
         </dl>
+        {!!career.aliases?.length&&<><h3><LabelIcon name="player"/> Previous IGNs</h3><ol className="career-timeline">{career.aliases.map((alias,i)=><li key={i}><time>{pediaTime(alias.date)} Manila</time><strong>{alias.previous} ? {alias.current}</strong></li>)}</ol></>}
         <h3><LabelIcon name="transfers"/> Settled transfers</h3>
         {career.transfers.length ? <ol className="career-timeline">{career.transfers.map(transfer =>
           <li key={transfer.id}>

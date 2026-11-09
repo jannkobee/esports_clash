@@ -38,6 +38,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'supporter_trial_ends_at'=>'immutable_datetime','supporter_until'=>'immutable_datetime','is_game_owner'=>'boolean','theme_preferences'=>'array',
         ];
     }
 }

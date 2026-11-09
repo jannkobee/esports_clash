@@ -62,7 +62,7 @@ class ClubStaffService
             $member = $rows->get($role);
 
             return [
-                'role' => $role,
+                'portrait_key' => $member?->contract_id?'candidate:'.($contracts[$member->contract_id]->candidate_key??$member->name):'staff:'.$member?->id, 'role' => $role,
                 'title' => $definition['title'],
                 'name' => $member->name,
                 'attributes' => $member->ratings,

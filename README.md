@@ -1,3 +1,5 @@
+> Current Hexatrick deployment: [first-deployment initializer and Supporter runbook](docs/hexatrick-first-deployment-and-supporters-20261109.md), [living-world implementation](docs/hexatrick-living-world-ui-20261109.md), and [active handoff](docs/agent-handoff.md). The original prototype overview below is historical.
+
 # hexatrick
 
 A club-management game with real scheduled Arena matches, a shared human/bot transfer market, and Avatarpedia as its public reference. Open the local app at `http://localhost:8088`.

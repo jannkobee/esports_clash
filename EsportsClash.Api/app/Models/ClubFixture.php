@@ -19,6 +19,7 @@ class ClubFixture extends Model
     public function homeClub() { return $this->belongsTo(OnlineClub::class); }
     public function awayClub() { return $this->belongsTo(OnlineClub::class); }
     public function match() { return $this->belongsTo(OnlineMatch::class); }
+    public function tournament() { return $this->belongsTo(ClubTournament::class); }
     public function homeNation() { return $this->belongsTo(NationalTeam::class, 'home_national_team_id'); }
     public function awayNation() { return $this->belongsTo(NationalTeam::class, 'away_national_team_id'); }
 

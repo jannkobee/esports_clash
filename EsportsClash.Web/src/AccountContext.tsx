@@ -52,6 +52,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     return () => { disposed = true; controller.abort(); window.clearTimeout(timeout); };
   }, [session?.token, attempt]);
 
+  useEffect(()=>{const timer=window.setInterval(()=>setSession(current=>{const member=current?.user.supporter;if(!current||!member?.active||!member.ends_at||Date.parse(member.ends_at)>Date.now())return current;return {...current,user:{...current.user,supporter:{...member,active:false,kind:'free',level:'free',label:'Free',features:{custom_logo:false,custom_jerseys:false,themes:false,custom_theme:false,player_identity:false}}}};}),60000);return()=>clearInterval(timer);},[]);
   const signOut = async () => {
     try {
       if (session) await logoutCloudAccount(session);

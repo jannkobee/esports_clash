@@ -14,7 +14,7 @@ class ClubMediaController extends Controller {
   abort_unless(in_array($mime,['image/png','image/jpeg','image/webp'],true),422,'Upload a PNG, JPEG or WebP image.');
   $id=(string)Str::uuid();$path='club-identity/'.$club->id.'/'.$id.'.'.(['image/png'=>'png','image/jpeg'=>'jpg','image/webp'=>'webp'][$mime]);
   $dimensions=getimagesize($image->getRealPath());$sha=hash_file('sha256',$image->getRealPath());
-  Storage::disk('local')->put($path,file_get_contents($image->getRealPath()));
+  abort_unless(Storage::disk('local')->put($path,file_get_contents($image->getRealPath())),500,'The artwork could not be stored. Try again.');
   try{$club=DB::transaction(function()use($club,$r,$v,$id,$path,$mime,$dimensions,$sha){
    $locked=OnlineClub::whereKey($club->id)->lockForUpdate()->firstOrFail();abort_unless(isset($locked->identity['crest'],$locked->identity['colors']),422,'Save your basic club identity before uploading artwork.');abort_if(ClubFixture::awaitingSnapshot($locked->id),409,'A fixture is locking the club identity. Try again shortly.');abort_unless($locked->revision===$v['revision'],409,'The club changed. Refresh before uploading.');
    DB::table('club_identity_assets')->insert(['id'=>$id,'club_id'=>$locked->id,'user_id'=>$r->user()->id,'kind'=>$v['kind'],'path'=>$path,'mime'=>$mime,'sha256'=>$sha,'width'=>$dimensions[0],'height'=>$dimensions[1],'created_at'=>now()]);

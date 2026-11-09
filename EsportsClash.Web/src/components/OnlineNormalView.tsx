@@ -1,3 +1,4 @@
+import {workspacePath} from '../frontendRoutes';
 import {onWorldUpdate} from '../worldLive';
 import {TournamentLogo} from './TournamentLogo';
 import {SquadRoster} from './SquadRoster';
@@ -8,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { isCloudPersistenceConfigured, request } from '../cloudPersistence';
 import { useAccount } from '../AccountContext';
 import { openAuthentication } from '../authNavigation';
-import { pediaHref } from '../avatarpedia';
+import { pediaHref } from '../hexapedia';
 import { acceptOnlineSnapshot, type OnlineSnapshot } from '../onlineSpectator';
 import { OnlineMatchViewer } from './OnlineMatchViewer';
 import type { VisualRelease } from '../avatarVisualRelease';
@@ -16,7 +17,7 @@ import { ClubCrest, ClubIdentityEditor, type ClubIdentity } from './ClubIdentity
 import { Activity, ArrowRight, ClipboardList, Clock3, Swords, Users } from 'lucide-react';
 import './club-management.css';
 
-type MatchClub = { id?:number;identity?:ClubIdentity; name: string; tag?: string; crest?: ClubIdentity['crest']; colors?: ClubIdentity['colors'] };
+type MatchClub = { logo?:string; id?:number;identity?:ClubIdentity; name: string; tag?: string; crest?: ClubIdentity['crest']; colors?: ClubIdentity['colors'] };
 interface FriendlyInvite { id: number; kickoff_at: string; home: MatchClub }
 
 interface Match { id: string; status: string; sequence: number; error?: string;
@@ -63,10 +64,10 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
   const [matchTab, setMatchTab] = useState<'arena' | 'text'>('arena');
   const [clubTab, setClubTab] = useState<'calendar' | 'lineup' | 'identity' | 'friendly'>(()=>{
     if(initialTool)return initialTool;
-    const tab=new URLSearchParams(window.location.hash.split('?')[1]??'').get('club');
+    const tab=new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').get('club');
     return tab==='lineup'||tab==='identity'||tab==='friendly'?tab:'calendar';
   });
-  useEffect(()=>{if(!matchCentre)return;const sync=()=>{const tab=new URLSearchParams(window.location.hash.split('?')[1]??'').get('club');setEditingFixture(null);setClubTab(tab==='friendly'?'friendly':tab==='lineup'?'lineup':tab==='identity'?'identity':'calendar');};window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[matchCentre]);
+  useEffect(()=>{if(!matchCentre)return;const sync=()=>{const tab=new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').get('club');setEditingFixture(null);setClubTab(tab==='friendly'?'friendly':tab==='lineup'?'lineup':tab==='identity'?'identity':'calendar');};window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[matchCentre]);
   const latestSequence = useRef(0);
   const [commentaryEnd,setCommentaryEnd]=useState<number|null>(null);
   const eventTotal=frame?.snapshot.events.length??0;
@@ -193,7 +194,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
           const club = selected.plan.fixture?.clubs[side];
           return <span key={side} className="inline-flex items-center gap-2">
             {side === 'red' && <span className="text-slate-400">vs</span>}
-            {club?.crest && club.colors && <ClubCrest crest={club.crest} colors={club.colors} />}
+            {club?.crest && club.colors && <ClubCrest crest={club.crest} colors={club.colors} logo={club.logo} />}
             {selected.plan.clubs[side]}
             {selected.plan.bot_sides?.includes(side) && <span className="cm-badge cm-badge-blue text-[9px]">BOT</span>}
           </span>;
@@ -215,7 +216,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         <button className={`cm-tab ${matchTab === 'arena' ? 'active' : ''}`} aria-pressed={matchTab === 'arena'} onClick={() => setMatchTab('arena')}>Arena</button>
         <button className={`cm-tab ${matchTab === 'text' ? 'active' : ''}`} aria-pressed={matchTab === 'text'} onClick={() => setMatchTab('text')}>Text broadcast</button>
       </div>
-      {selected.status==='interrupted'&&<p className="club-notice">This Arena was interrupted without a Nexus finish. A separately labeled statistical launch-exhibition result is available in the <a href="#play?world=archive">launch archive</a>. This recording awards no player ratings or training.</p>}
+      {selected.status==='interrupted'&&<p className="club-notice">This Arena was interrupted without a Nexus finish. A separately labeled statistical launch-exhibition result is available in the <a href="#launch-championship">launch archive</a>. This recording awards no player ratings or training.</p>}
       {(frame?.execution?.mode==='owner_requested_fast_forward'||selected.result?.execution?.mode==='owner_requested_fast_forward')&&<p className="club-notice"><Clock3 size={14}/> Owner-requested simulated completion. The original live recording is retained; later Arena coverage is sampled. Event timestamps and the Nexus outcome come from the same simulation.</p>}
       {matchTab === 'arena' && <OnlineMatchViewer message={frame} matchId={selected.id} visuals={selected.plan.visual_releases} live={live&&selected.status==='running'} />}
       <div className="flex flex-wrap items-center gap-2">
@@ -245,10 +246,10 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
     {!broadcastOnly && scheduled && data && clubTab === 'calendar' && <section className="club-panel space-y-3">
       <div className="club-section-heading"><h3><Clock3 size={15}/> Your fixture calendar</h3><span className="club-help">Manila - UTC+8</span></div>
       <nav className="fixture-filters" aria-label="Fixture filter">{(['upcoming','completed','all'] as const).map(f=><button className={fixtureFilter===f?'active':''} onClick={()=>setFixtureFilter(f)} key={f}>{f==='upcoming'?'Upcoming & live':f==='completed'?'Past games':'All games'} <span>{fixtures.filter(g=>f==='all'||(f==='completed'?['Completed','Interrupted'].includes(g.status):!['Completed','Interrupted'].includes(g.status))).length}</span></button>)}</nav>
-      {!fixtures.filter(f=>fixtureFilter==='all'||(fixtureFilter==='completed'?['Completed','Interrupted'].includes(f.status):!['Completed','Interrupted'].includes(f.status))).length&&<div className="club-empty"><h4>{fixtureFilter==='completed'?'No past games in this window':'Your calendar is clear'}</h4><p>Fixtures from the last 30 days and published upcoming games appear here.</p><div className="flex gap-2"><a className="cm-btn" href="#codex/tournaments">Find a tournament</a><button className={button} onClick={()=>{setClubTab('friendly');if(matchCentre)window.location.hash='play?club=friendly';}}>Arrange a scrimmage</button></div></div>}
+      {!fixtures.filter(f=>fixtureFilter==='all'||(fixtureFilter==='completed'?['Completed','Interrupted'].includes(f.status):!['Completed','Interrupted'].includes(f.status))).length&&<div className="club-empty"><h4>{fixtureFilter==='completed'?'No past games in this window':'Your calendar is clear'}</h4><p>Fixtures from the last 30 days and published upcoming games appear here.</p><div className="flex gap-2"><a className="cm-btn" href="#hexapedia/tournaments">Find a tournament</a><button className={button} onClick={()=>{setClubTab('friendly');if(matchCentre)window.location.hash='scrimmages';}}>Arrange a scrimmage</button></div></div>}
       <div className="fixture-desk-list">{fixtures.filter(f=>fixtureFilter==='all'||(fixtureFilter==='completed'?['Completed','Interrupted'].includes(f.status):!['Completed','Interrupted'].includes(f.status))).sort((a,b)=>fixtureFilter==='completed'?Date.parse(b.kickoff_at)-Date.parse(a.kickoff_at):Date.parse(a.kickoff_at)-Date.parse(b.kickoff_at)).map(fixture=><article key={fixture.id} className="fixture-desk-row">
         <header><TournamentLogo id={fixture.tournament_id??'scrimmage'} name={fixture.competition} size={23}/>{fixture.tournament_id?<a href={pediaHref('tournaments',fixture.tournament_id)}>{fixture.competition}</a>:<span>{fixture.competition}</span>}<span className={'fixture-status '+(fixture.status==='Live'?'is-live':'')}>{fixture.status}</span></header>
-        <div className="fixture-desk-teams"><span>{(fixture.clubs.blue.identity||(fixture.clubs.blue.crest&&fixture.clubs.blue.colors))&&<ClubCrest crest={fixture.clubs.blue.identity?.crest??fixture.clubs.blue.crest!} colors={fixture.clubs.blue.identity?.colors??fixture.clubs.blue.colors!}/>}<strong>{fixture.clubs.blue.name}</strong></span><b>vs</b><span>{(fixture.clubs.red.identity||(fixture.clubs.red.crest&&fixture.clubs.red.colors))&&<ClubCrest crest={fixture.clubs.red.identity?.crest??fixture.clubs.red.crest!} colors={fixture.clubs.red.identity?.colors??fixture.clubs.red.colors!}/>}<strong>{fixture.clubs.red.name}</strong></span></div>
+        <div className="fixture-desk-teams"><span>{(fixture.clubs.blue.identity||(fixture.clubs.blue.crest&&fixture.clubs.blue.colors))&&<ClubCrest crest={fixture.clubs.blue.identity?.crest??fixture.clubs.blue.crest!} colors={fixture.clubs.blue.identity?.colors??fixture.clubs.blue.colors!} logo={fixture.clubs.blue.identity?.assets?.logo??fixture.clubs.blue.logo}/>}<strong>{fixture.clubs.blue.name}</strong></span><b>vs</b><span>{(fixture.clubs.red.identity||(fixture.clubs.red.crest&&fixture.clubs.red.colors))&&<ClubCrest crest={fixture.clubs.red.identity?.crest??fixture.clubs.red.crest!} colors={fixture.clubs.red.identity?.colors??fixture.clubs.red.colors!} logo={fixture.clubs.red.identity?.assets?.logo??fixture.clubs.red.logo}/>}<strong>{fixture.clubs.red.name}</strong></span></div>
         <footer><div><time><Clock3 size={12}/>{manilaTime.format(new Date(fixture.kickoff_at))}</time>{fixture.can_submit&&<small>Orders close {manilaTime.format(new Date(fixture.orders_close_at))}</small>}</div><div>{fixture.can_submit&&<button className={`${button} cm-btn-primary`} onClick={()=>{setLineup(fixture.orders??data.club.lineup);setEditingFixture(fixture);setClubTab('lineup');}}><ClipboardList size={13}/>{fixture.orders?'Edit orders':'Set orders'}</button>}{fixture.match_id&&(fixture.can_watch??['Live','Completed'].includes(fixture.status))&&<button className={button} onClick={()=>void openMatch(fixture.match_id!)}>{fixture.status==='Live'?'Watch live':fixture.status==='Interrupted'?'Interrupted recording':'Replay & report'}</button>}</div></footer>
       </article>)}</div>
     </section>}
@@ -272,7 +273,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         <div className="scrimmage-actions">
           <button className={button} disabled={busy} onClick={() => void act('/online/scrimmage-queue', undefined, 'DELETE', 'You left the scrimmage queue.')}>Leave queue</button>
           <button className="cm-btn scrimmage-switch" disabled={busy} onClick={async () => {
-            if (await act('/online/scrimmage-queue', undefined, 'DELETE', 'You left the scrimmage queue.')) window.location.hash = 'play?club=queue';
+            if (await act('/online/scrimmage-queue', undefined, 'DELETE', 'You left the scrimmage queue.')) window.location.hash = 'match-centre?club=queue';
           }}>Leave &amp; find a normal opponent <ArrowRight size={14}/></button>
         </div>
       </div>}
@@ -294,7 +295,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         <div className="scrimmage-actions">
           <button className={`${button} cm-btn-primary`} disabled={busy || data.ticket?.status === 'queued' || data.matches.some(match => ['allocated', 'running'].includes(match.status))}
             onClick={() => void act('/online/scrimmage-queue', undefined, 'POST', 'Joined the same-tier scrimmage queue.')}>Find a same-tier club <ArrowRight size={14}/></button>
-          <a className="cm-btn scrimmage-switch" href="#play?club=queue">Go to normal matchmaking <ArrowRight size={14}/></a>
+          <a className="cm-btn scrimmage-switch" href="#match-centre?club=queue">Go to normal matchmaking <ArrowRight size={14}/></a>
         </div>
       </div>}
       <h3>Invite a club directly</h3>

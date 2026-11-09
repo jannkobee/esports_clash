@@ -421,8 +421,55 @@ Artisan::command('world:community-cups',function(\App\Services\CommunityCups $cu
 Artisan::command('world:pyramid {--populate : Seed missing founding rosters at all five tiers}',function(\App\Services\WorldPyramid $pyramid){
     if(!\Illuminate\Support\Facades\Schema::hasTable('club_tier_movements'))return;
     if($this->option('populate'))$this->line(json_encode($pyramid->populate()));
-    $ids=$pyramid->openWeek();foreach($ids as $id)\App\Jobs\ProcessCompetitionEdition::dispatch($id);
+    $ids=$pyramid->openWeek();\App\Models\ClubTournament::where('regulations->ladder',true)->whereIn('status',['registration','active'])->orderBy('id')->chunkById(100,function($events){foreach($events as $event)\App\Jobs\ProcessCompetitionEdition::dispatch($event->id);});
     $this->info('Published '.count($ids).' future division trials; no results invented.');
 });
-\Illuminate\Support\Facades\Schedule::command('world:pyramid')->hourly()->withoutOverlapping(10);
+\Illuminate\Support\Facades\Schedule::command('world:pyramid')->everyFifteenMinutes()->withoutOverlapping(10);
 Artisan::command('world:talent',function(\App\Services\WorldTalent $talent){$this->info('Added '.$talent->populate().' circuit talent profiles.');});
+
+\Illuminate\Support\Facades\Schedule::command('world:talent')->dailyAt('02:30')->timezone('Asia/Manila')->withoutOverlapping(5);
+Artisan::command('world:refresh-identities',function(){
+    $counts=\Illuminate\Support\Facades\DB::transaction(function(){
+        \App\Models\OnlineCatalog::where('active',true)->lockForUpdate()->firstOrFail();$names=0;$clubs=0;
+        // IGN casing is owned by the generator/player; brand refresh never forces lowercase.
+        foreach(\App\Models\OnlineClub::where('is_bot',true)->where('name','like','Hexa %')->cursor() as $club){
+            $brand=app(\App\Services\WorldClubIdentity::class)->make('rebrand:'.$club->id);$old=$club->name;
+            $identity=$brand['identity']+['country'=>$club->identity['country']??'PH'];
+            $club->update(['name'=>$brand['name'],'identity'=>$identity,'revision'=>$club->revision+1]);$club->user->forceFill(['name'=>$brand['manager']])->save();
+            \Illuminate\Support\Facades\DB::table('competition_audits')->insert(['action'=>'club.identity.refreshed','subject'=>(string)$club->id,'details'=>json_encode(['previous_name'=>$old,'current_name'=>$brand['name'],'history_unchanged'=>true]),'created_at'=>now()]);$clubs++;
+        }
+        $duplicates=\App\Models\OnlineClub::select('name')->groupBy('name')->havingRaw('COUNT(*) > 1')->pluck('name');
+        foreach($duplicates as $duplicate){$group=\App\Models\OnlineClub::where('name',$duplicate)->orderBy('is_bot')->orderBy('id')->get();foreach($group->skip(1)->where('is_bot',true) as $club){
+            $attempt=0;do{$brand=app(\App\Services\WorldClubIdentity::class)->make('distinct:'.$club->id.':'.++$attempt);$newName=$brand['name'].($attempt>100?' '.$club->id:'');}while(\App\Models\OnlineClub::where('name',$newName)->exists());
+            $club->update(['name'=>$newName,'revision'=>$club->revision+1]);
+            \Illuminate\Support\Facades\DB::table('world_media_personalities')->where('slug','manager-'.$club->id)->update(['bio'=>$club->user->name.' manages '.$newName.'.']);
+            \Illuminate\Support\Facades\DB::table('competition_audits')->insert(['action'=>'club.identity.disambiguated','subject'=>(string)$club->id,'details'=>json_encode(['previous_name'=>$duplicate,'current_name'=>$newName,'history_unchanged'=>true]),'created_at'=>now()]);$clubs++;
+        }}
+        return ['generated_igns_changed'=>$names,'club_identities_refreshed'=>$clubs];
+    },3);$this->line(json_encode($counts));
+})->purpose('Refresh generated display identities while preserving permanent player IDs, protected aliases and historical plans');
+
+Artisan::command('game:init {--owner-file= : Private JSON input containing email and password}',function(\App\Services\GameInitialization $init){
+    $code=\Illuminate\Support\Facades\Artisan::call('migrate',['--force'=>true]);if($code!==0){$this->error('Migrations failed. Initialization stopped.');return $code;}
+    $email=(string)config('game_bootstrap.owner_email');$password=(string)config('game_bootstrap.owner_password');
+    if($path=$this->option('owner-file')){$input=json_decode(file_get_contents($path),true,512,JSON_THROW_ON_ERROR);$email=(string)($input['email']??'');$password=(string)($input['password']??'');}
+    $report=$init->run($email,$password);$this->line(json_encode($report,JSON_PRETTY_PRINT));
+})->purpose('Idempotent first deployment: owner club, permanent Beacon, founding divisions, talent and future cups; no historical results');
+
+
+Artisan::command('world:records {--enrich : Add missing fictional biographies and correct untouched generated display casing}',function(\App\Services\PlayerRecordBook $book,\App\Services\WorldPersonBiography $bios){
+    $enriched=0;$cased=0;
+    if($this->option('enrich'))\App\Models\OwnedPlayerCard::whereNull('personal_details')->whereNotNull('world_profile')->orderBy('id')->chunkById(100,function($players)use($bios,&$enriched,&$cased){
+        \Illuminate\Support\Facades\DB::transaction(function()use($players,$bios,&$enriched,&$cased){
+            \App\Models\OnlineCatalog::where('active',true)->lockForUpdate()->firstOrFail();
+            foreach($players as $p){$p=\App\Models\OwnedPlayerCard::whereKey($p->id)->lockForUpdate()->first();if(!$p||$p->personal_details)continue;
+                if(!$p->original_identity&&!$p->name_customized_at){$name=app(\App\Services\PlayerIgnGenerator::class)->style($p->persona_name,$p->id.':casing-v2');if($name!==$p->persona_name){$old=$p->persona_name;$p->update(['persona_name'=>$name]);\Illuminate\Support\Facades\DB::table('competition_audits')->insert(['action'=>'player.display-casing.corrected','subject'=>$p->id,'details'=>json_encode(['previous'=>$old,'current'=>$name,'historical_allocations_unchanged'=>true]),'created_at'=>now()]);$cased++;}}
+                $bios->initialize($p);$enriched++;
+            }
+        },3);
+    });
+    $this->line(json_encode(['biographies_added'=>$enriched,'display_casing_corrected'=>$cased,'verified_performance_rows_indexed'=>$book->backfill(),'manager_results_indexed'=>app(\App\Services\ManagerRecordBook::class)->backfill()]));
+})->purpose('Index real completed match evidence; optionally enrich fictional biographies without changing nationality or history');
+\Illuminate\Support\Facades\Schedule::command('world:records')->everyFifteenMinutes()->withoutOverlapping(10);
+Artisan::command('world:laurels',function(\App\Services\AnnualLaurels $awards){$year=now('Asia/Manila')->year;$awards->refresh($year);if($year>2026)$awards->refresh($year-1);$this->info('Refreshed eligible annual nominations and due January ceremonies; no simulated awards.');});
+\Illuminate\Support\Facades\Schedule::command('world:laurels')->hourly()->withoutOverlapping(10);

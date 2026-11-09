@@ -1,11 +1,13 @@
-/** Original, transparent illustrated portraits. A person's UUID fixes their face through transfers. */
-export function WorldPlayerPortrait({id,name,size=96,jersey='#39728c'}:{id:string;name:string;size?:number;jersey?:string}) {
+import type {PlayerAppearance} from '../supporter';
+/** Original transparent portraits; explicit presentation belongs to the permanent player ID. */
+export function WorldPlayerPortrait({id,name,size=96,jersey='#39728c',appearance={}}:{id:string;name:string;size?:number;jersey?:string;appearance?:PlayerAppearance}) {
   let seed=2166136261;for(const c of id)seed=Math.imul(seed^c.charCodeAt(0),16777619)>>>0;
   const pick=(offset:number,count:number)=>(seed>>>offset)%count;
-  const skin=['#f3ccaa','#dfae85','#c88e64','#ad7050','#88533d','#603f34'][pick(0,6)];
-  const hair=['#272527','#52382b','#805237','#d6b16b','#4a4442','#ad6742'][pick(5,6)];
-  const accent=['#70e1d0','#f0b765','#8bb7ff','#e38ac8','#c9e475'][pick(27,5)];
-  const style=pick(10,7),wide=pick(14,5),glasses=pick(18,5)===0,brow=pick(21,3),headset=pick(25,4)!==0;
+  const skin=['#f3ccaa','#dfae85','#c88e64','#ad7050','#88533d','#603f34'][appearance.skin??pick(0,6)];
+  const hair=['#272527','#52382b','#805237','#d6b16b','#4a4442','#ad6742'][appearance.hair??pick(5,6)];
+  const accent=appearance.accent??['#70e1d0','#f0b765','#8bb7ff','#e38ac8','#c9e475'][pick(27,5)];
+  jersey=appearance.jersey??jersey;
+  const style=appearance.style??pick(10,7),wide=pick(14,5),glasses=appearance.glasses??(pick(18,5)===0),brow=pick(21,3),headset=appearance.headset??(pick(25,4)!==0);
   return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" width={size} height={Math.round(size*7/6)} role="img" aria-label={`${name}, illustrated player portrait`} className="world-player-portrait">
     <g stroke="#302c2a" strokeWidth="1.8" strokeLinejoin="round">
       <path d="M10 140v-15q2-17 29-24h42q27 7 29 24v15" fill={jersey}/>

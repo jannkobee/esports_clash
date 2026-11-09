@@ -24,6 +24,7 @@ export interface CoachAttributes {
 }
 
 export interface PlayerCard {
+  presentation?: import('./supporter').PlayerPresentation | null;
   id: string;
   name: string;
   nationality?: {id?:number;code:string;name:string};

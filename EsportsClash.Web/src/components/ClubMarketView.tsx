@@ -1,3 +1,4 @@
+import {onWorldUpdate} from '../worldLive';
 import { useEffect, useState } from 'react';
 import { isCloudPersistenceConfigured, request } from '../cloudPersistence';
 import { useAccount } from '../AccountContext';
@@ -8,7 +9,8 @@ import {ReserveTransferListing} from './ReserveTransferListing';
 import './transfer-exchange.css';
 import { ArrowLeftRight, Coins, Gavel, GraduationCap, Handshake, Users } from 'lucide-react';
 
-export interface PlayerCard {
+export interface PlayerCard {primaryPersonality?:string|null;secondaryPersonality?:string|null;
+  presentation?:import('../supporter').PlayerPresentation|null;
   id: string; name: string; role?: string | null; overall: number; age?: number | null; wage?: number | null;
   nationality?: { code: string; name: string } | null; stats?: Record<string, number>;
 }
@@ -51,7 +53,7 @@ export function ClubMarketView() {
   const configured = isCloudPersistenceConfigured();
 
   const loadMarket = async (signal?: AbortSignal) => {
-    const result = await request<{ data: Market }>('/online/market', session, { signal });
+    const result = await request<{ data: Market }>('/online/market?include_auctions=0', session, { signal });
     setMarket(result.data);
   };
 
@@ -62,8 +64,9 @@ export function ClubMarketView() {
       if (!controller.signal.aborted) { setNotice((problem as Error).message); setNoticeIsError(true); }
     });
     void load();
-    const timer = window.setInterval(() => void load(), 8000);
-    return () => { controller.abort(); window.clearInterval(timer); };
+    const stopLive=onWorldUpdate(['market'],()=>void load());
+    const timer = window.setInterval(() => void load(), 60000);
+    return () => { controller.abort(); window.clearInterval(timer);stopLive(); };
   }, [session, configured]);
 
   async function submit(path: string, success: string, body?: object, method = 'POST') {
@@ -102,10 +105,10 @@ export function ClubMarketView() {
         <div><p className="cm-eyebrow flex items-center gap-2"><Coins size={14}/> CLUB FINANCE · PHP</p>
           <h2>Available balance</h2><strong className="club-balance">{money(market.available)}</strong>
           <p className="club-help">Open auction bids and pending trade cash offers are already reserved.</p></div>
-        <div className="exchange-account-facts"><span><Gavel size={15}/><strong>{market.auctions.length}</strong> open auctions</span><span><Users size={15}/><strong>{market.reserves.length}</strong> eligible reserves</span><a href="#codex/guide"><ArrowLeftRight size={15}/> Transfer guide</a></div>
+        <div className="exchange-account-facts"><span><Gavel size={15}/><strong>{market.auctions.length}</strong> open auctions</span><span><Users size={15}/><strong>{market.reserves.length}</strong> eligible reserves</span><a href="#hexapedia/guide"><ArrowLeftRight size={15}/> Transfer guide</a></div>
       </section>
 
-      <nav className="exchange-tabs" aria-label="Transfer Exchange sections">{([['auctions','Auctions',Gavel],['sell','Sell a player',Users],['trades','Direct trades',Handshake],['academy','Youth academy',GraduationCap]] as const).map(([key,label,Icon])=><button key={String(key)} className={marketTab===key?'active':''} aria-pressed={marketTab===key} onClick={()=>{setMarketTab(String(key));location.hash='market?tab='+key;}}><Icon size={16}/>{String(label)}</button>)}</nav>
+      <nav className="exchange-tabs" aria-label="Transfer Exchange sections">{([['auctions','Auctions',Gavel],['sell','Sell a player',Users],['trades','Direct trades',Handshake],['academy','Youth academy',GraduationCap]] as const).map(([key,label,Icon])=><button key={String(key)} className={marketTab===key?'active':''} aria-pressed={marketTab===key} onClick={()=>{setMarketTab(String(key));location.hash='transfer-exchange?tab='+key;}}><Icon size={16}/>{String(label)}</button>)}</nav>
       {marketTab==='academy'&&<section className="club-panel exchange-academy">
 
         <div className="club-section-heading"><h3 className="flex items-center gap-2"><GraduationCap size={16}/> Youth academy</h3><span className="club-status">{market.academy_opened_at ? 'Open' : 'Optional'}</span></div>
@@ -117,7 +120,7 @@ export function ClubMarketView() {
           <button className="cm-btn" disabled={busy} onClick={() => void submit('/online/market/academy', 'Youth academy closed.', { open: false }, 'PUT')}>Close academy</button>
         </div> : <button className="cm-btn" disabled={busy} onClick={() => void submit('/online/market/academy', 'Youth academy opened.', { open: true }, 'PUT')}>Open academy for {money(market.academy_opening_fee)}</button>}
       </section>}
-      {marketTab==='sell'&&<ReserveTransferListing players={market.reserves} busy={busy} onList={async(id,opening)=>{const result=await submit('/online/market/auctions','Player listing published.',{card_id:id,opening_bid:opening});if(result.ok){setOwnAuctions(true);setMarketTab('auctions');location.hash='market?tab=auctions';}return result;}}/>}
+      {marketTab==='sell'&&<ReserveTransferListing players={market.reserves} busy={busy} onList={async(id,opening)=>{const result=await submit('/online/market/auctions','Player listing published.',{card_id:id,opening_bid:opening});if(result.ok){setOwnAuctions(true);setMarketTab('auctions');location.hash='transfer-exchange?tab=auctions';}return result;}}/>}
       {marketTab==='auctions'&&<TransferAuctionBoard initialOwnership={ownAuctions?'mine':'all'} auctions={market.auctions} available={market.available} busy={busy} onBid={(id,amount)=>submit('/online/market/auctions/'+id+'/bid','Bid placed.',{amount})}/>}
 
       {marketTab==='trades'&&<section className="club-panel exchange-trades">

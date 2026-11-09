@@ -1,3 +1,4 @@
+import {CountrySelect} from './CountrySelect';
 import { useEffect, useId, useState } from 'react';
 import { request, publicApiAsset, type ApiSession } from '../cloudPersistence';
 
@@ -103,8 +104,8 @@ export function ClubIdentityEditor({ session, club, onSaved }: Props) {
     <div className="grid gap-3 sm:grid-cols-2">
       <label>Club name<input className={field} required maxLength={80} value={name} onChange={event => setName(event.target.value)} /></label>
       <label>Club tag<input className={field} required pattern="[A-Z0-9]{2,12}" value={tag} onChange={event => setTag(event.target.value.toUpperCase())} /></label>
-      {(['nickname', 'motto', 'city', 'country'] as const).map(key => <label key={key}>{key[0].toUpperCase() + key.slice(1)}<input className={field} required={key === 'country'} maxLength={key === 'country' ? 2 : key === 'motto' ? 120 : 80} value={identity[key] ?? ''} onChange={event => setIdentity({ ...identity, [key]: key === 'country' ? event.target.value.toUpperCase() : event.target.value })} /></label>)}
-      <label className="sm:col-span-2">Club bio<textarea className={field} maxLength={1000} value={identity.bio ?? ''} onChange={event => setIdentity({ ...identity, bio: event.target.value })} /></label>
+      {(['nickname', 'motto', 'city'] as const).map(key => <label key={key}>{key[0].toUpperCase() + key.slice(1)}<input className={field} maxLength={key === 'motto' ? 120 : 80} value={identity[key] ?? ''} onChange={event => setIdentity({ ...identity, [key]: event.target.value })} /></label>)}
+      <label>Country<CountrySelect label="Club country" value={identity.country} onChange={country=>setIdentity({...identity,country})} allowEmpty={false} emptyLabel="Choose a country"/></label><label className="sm:col-span-2">Club bio<textarea className={field} maxLength={1000} value={identity.bio ?? ''} onChange={event => setIdentity({ ...identity, bio: event.target.value })} /></label>
       {(['shape','mark'] as const).map(key=><fieldset className="identity-choices" key={key}><legend>Standard crest {key}</legend><div role="group" aria-label={'Crest '+key}>{(key==='shape'?['shield','circle','diamond']:['star','bolt','tower']).map(option=><button type="button" className={identity.crest[key]===option?'selected':''} aria-pressed={identity.crest[key]===option} key={option} onClick={()=>setIdentity({...identity,crest:{...identity.crest,[key]:option}})}>{option}</button>)}</div></fieldset>)}
       <div className="club-palette sm:col-span-2">{(['primary', 'secondary', 'accent'] as const).map(key => <label key={key}>{key[0].toUpperCase() + key.slice(1)} colour<input type="color" value={identity.colors[key]} onChange={event => setIdentity({ ...identity, colors: { ...identity.colors, [key]: event.target.value } })} /></label>)}</div>
       {(['home_jersey', 'away_jersey'] as const).map(key => <fieldset key={key} className="club-kit" disabled={!custom}>

@@ -3,7 +3,7 @@ import type { PlayerCard } from './types';
 
 export interface ApiSession {
   token: string;
-  user: { id: number; name: string; email: string; supporter?:{active:boolean;kind:string;ends_at:string|null;features:{custom_logo:boolean;custom_jerseys:boolean}} };
+  user: { id: number; name: string; email: string; supporter?:import('./supporter').SupporterMembership; theme?:import('./supporter').PersonalTheme };
 }
 
 export interface ClubSnapshot {

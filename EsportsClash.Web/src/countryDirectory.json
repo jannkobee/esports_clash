@@ -1,0 +1,2492 @@
+[
+  {
+    "code": "AF",
+    "name": "Afghanistan",
+    "continent": "Asia",
+    "capital": "Kabul",
+    "region_code": "UN-034",
+    "region_name": "Southern Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "AX",
+    "name": "Aland Islands",
+    "continent": "Europe",
+    "capital": "Mariehamn",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "AL",
+    "name": "Albania",
+    "continent": "Europe",
+    "capital": "Tirana",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "DZ",
+    "name": "Algeria",
+    "continent": "Africa",
+    "capital": "Algiers",
+    "region_code": "UN-015",
+    "region_name": "Northern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "AS",
+    "name": "American Samoa",
+    "continent": "Oceania",
+    "capital": "Pago Pago",
+    "region_code": "UN-061",
+    "region_name": "Polynesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "AD",
+    "name": "Andorra",
+    "continent": "Europe",
+    "capital": "Andorra la Vella",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "AO",
+    "name": "Angola",
+    "continent": "Africa",
+    "capital": "Luanda",
+    "region_code": "UN-017",
+    "region_name": "Middle Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "AI",
+    "name": "Anguilla",
+    "continent": "North America",
+    "capital": "The Valley",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "AQ",
+    "name": "Antarctica",
+    "continent": "",
+    "capital": "",
+    "region_code": "ANT",
+    "region_name": "Antarctica and remote territories",
+    "continent_code": "AN",
+    "active_region": false
+  },
+  {
+    "code": "AG",
+    "name": "Antigua and Barbuda",
+    "continent": "North America",
+    "capital": "St. John's",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "AR",
+    "name": "Argentina",
+    "continent": "South America",
+    "capital": "Buenos Aires",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "AM",
+    "name": "Armenia",
+    "continent": "Asia",
+    "capital": "Yerevan",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "AW",
+    "name": "Aruba",
+    "continent": "South America",
+    "capital": "Oranjestad",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "AU",
+    "name": "Australia",
+    "continent": "Oceania",
+    "capital": "Canberra",
+    "region_code": "UN-053",
+    "region_name": "Australia and New Zealand",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "AT",
+    "name": "Austria",
+    "continent": "Europe",
+    "capital": "Vienna",
+    "region_code": "WE",
+    "region_name": "Western Europe",
+    "continent_code": "EU",
+    "active_region": true
+  },
+  {
+    "code": "AZ",
+    "name": "Azerbaijan",
+    "continent": "Asia",
+    "capital": "Baku",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "BS",
+    "name": "Bahamas",
+    "continent": "North America",
+    "capital": "Nassau",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "BH",
+    "name": "Bahrain",
+    "continent": "Asia",
+    "capital": "Manama",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "BD",
+    "name": "Bangladesh",
+    "continent": "Asia",
+    "capital": "Dhaka",
+    "region_code": "UN-034",
+    "region_name": "Southern Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "BB",
+    "name": "Barbados",
+    "continent": "North America",
+    "capital": "Bridgetown",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "BY",
+    "name": "Belarus",
+    "continent": "Europe",
+    "capital": "Minsk",
+    "region_code": "UN-151",
+    "region_name": "Eastern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "BE",
+    "name": "Belgium",
+    "continent": "Europe",
+    "capital": "Brussels",
+    "region_code": "WE",
+    "region_name": "Western Europe",
+    "continent_code": "EU",
+    "active_region": true
+  },
+  {
+    "code": "BZ",
+    "name": "Belize",
+    "continent": "North America",
+    "capital": "Belmopan",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "BJ",
+    "name": "Benin",
+    "continent": "Africa",
+    "capital": "Porto-Novo",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "BM",
+    "name": "Bermuda",
+    "continent": "North America",
+    "capital": "Hamilton",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "BT",
+    "name": "Bhutan",
+    "continent": "Asia",
+    "capital": "Thimphu",
+    "region_code": "UN-034",
+    "region_name": "Southern Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "BO",
+    "name": "Bolivia",
+    "continent": "South America",
+    "capital": "Sucre",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "BQ",
+    "name": "Bonaire, Sint Eustatius and Saba",
+    "continent": "South America",
+    "capital": "Kralendijk",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "BA",
+    "name": "Bosnia and Herzegovina",
+    "continent": "Europe",
+    "capital": "Sarajevo",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "BW",
+    "name": "Botswana",
+    "continent": "Africa",
+    "capital": "Gaborone",
+    "region_code": "SAF",
+    "region_name": "Southern Africa",
+    "continent_code": "AF",
+    "active_region": true
+  },
+  {
+    "code": "BV",
+    "name": "Bouvet Island",
+    "continent": "",
+    "capital": "",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "BR",
+    "name": "Brazil",
+    "continent": "South America",
+    "capital": "Brasília",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "IO",
+    "name": "British Indian Ocean Territory",
+    "continent": "Asia",
+    "capital": "Diego Garcia",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "BN",
+    "name": "Brunei Darussalam",
+    "continent": "Asia",
+    "capital": "Bandar Seri Begawan",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "BG",
+    "name": "Bulgaria",
+    "continent": "Europe",
+    "capital": "Sofia",
+    "region_code": "UN-151",
+    "region_name": "Eastern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "BF",
+    "name": "Burkina Faso",
+    "continent": "Africa",
+    "capital": "Ouagadougou",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "BI",
+    "name": "Burundi",
+    "continent": "Africa",
+    "capital": "Bujumbura",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "CV",
+    "name": "Cabo Verde",
+    "continent": "Africa",
+    "capital": "Praia",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "KH",
+    "name": "Cambodia",
+    "continent": "Asia",
+    "capital": "Phnom Penh",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "CM",
+    "name": "Cameroon",
+    "continent": "Africa",
+    "capital": "Yaoundé",
+    "region_code": "UN-017",
+    "region_name": "Middle Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "CA",
+    "name": "Canada",
+    "continent": "North America",
+    "capital": "Ottawa",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "KY",
+    "name": "Cayman Islands",
+    "continent": "North America",
+    "capital": "George Town",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "CF",
+    "name": "Central African Republic",
+    "continent": "Africa",
+    "capital": "Bangui",
+    "region_code": "UN-017",
+    "region_name": "Middle Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "TD",
+    "name": "Chad",
+    "continent": "Africa",
+    "capital": "N'Djamena",
+    "region_code": "UN-017",
+    "region_name": "Middle Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "CL",
+    "name": "Chile",
+    "continent": "South America",
+    "capital": "Santiago",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "CN",
+    "name": "China",
+    "continent": "Asia",
+    "capital": "Beijing",
+    "region_code": "EA",
+    "region_name": "East Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "CX",
+    "name": "Christmas Island",
+    "continent": "Asia",
+    "capital": "Flying Fish Cove",
+    "region_code": "UN-053",
+    "region_name": "Australia and New Zealand",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "CC",
+    "name": "Cocos (Keeling) Islands",
+    "continent": "Asia",
+    "capital": "West Island",
+    "region_code": "UN-053",
+    "region_name": "Australia and New Zealand",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "CO",
+    "name": "Colombia",
+    "continent": "South America",
+    "capital": "Bogotá",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "KM",
+    "name": "Comoros",
+    "continent": "Africa",
+    "capital": "Moroni",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "CK",
+    "name": "Cook Islands",
+    "continent": "Oceania",
+    "capital": "Avarua",
+    "region_code": "UN-061",
+    "region_name": "Polynesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "CR",
+    "name": "Costa Rica",
+    "continent": "North America",
+    "capital": "San José",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "HR",
+    "name": "Croatia",
+    "continent": "Europe",
+    "capital": "Zagreb",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "CU",
+    "name": "Cuba",
+    "continent": "North America",
+    "capital": "Havana",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "CW",
+    "name": "Curaçao",
+    "continent": "South America",
+    "capital": "Willemstad",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "CY",
+    "name": "Cyprus",
+    "continent": "Europe",
+    "capital": "Nicosia",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "CZ",
+    "name": "Czech Republic",
+    "continent": "Europe",
+    "capital": "Prague",
+    "region_code": "UN-151",
+    "region_name": "Eastern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "CI",
+    "name": "Côte d'Ivoire",
+    "continent": "Africa",
+    "capital": "Yamoussoukro",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "CD",
+    "name": "Democratic Republic of the Congo",
+    "continent": "Africa",
+    "capital": "Kinshasa",
+    "region_code": "UN-017",
+    "region_name": "Middle Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "DK",
+    "name": "Denmark",
+    "continent": "Europe",
+    "capital": "Copenhagen",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "DJ",
+    "name": "Djibouti",
+    "continent": "Africa",
+    "capital": "Djibouti",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "DM",
+    "name": "Dominica",
+    "continent": "North America",
+    "capital": "Roseau",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "DO",
+    "name": "Dominican Republic",
+    "continent": "North America",
+    "capital": "Santo Domingo",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "EC",
+    "name": "Ecuador",
+    "continent": "South America",
+    "capital": "Quito",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "EG",
+    "name": "Egypt",
+    "continent": "Africa",
+    "capital": "Cairo",
+    "region_code": "UN-015",
+    "region_name": "Northern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "SV",
+    "name": "El Salvador",
+    "continent": "North America",
+    "capital": "San Salvador",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "GQ",
+    "name": "Equatorial Guinea",
+    "continent": "Africa",
+    "capital": "Malabo",
+    "region_code": "UN-017",
+    "region_name": "Middle Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "ER",
+    "name": "Eritrea",
+    "continent": "Africa",
+    "capital": "Asmara",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "EE",
+    "name": "Estonia",
+    "continent": "Europe",
+    "capital": "Tallinn",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "SZ",
+    "name": "Eswatini",
+    "continent": "Africa",
+    "capital": "Lobamba, Mbabane",
+    "region_code": "SAF",
+    "region_name": "Southern Africa",
+    "continent_code": "AF",
+    "active_region": true
+  },
+  {
+    "code": "ET",
+    "name": "Ethiopia",
+    "continent": "Africa",
+    "capital": "Addis Ababa",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "FK",
+    "name": "Falkland Islands",
+    "continent": "South America",
+    "capital": "Stanley",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "FO",
+    "name": "Faroe Islands",
+    "continent": "Europe",
+    "capital": "Tórshavn",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "FM",
+    "name": "Federated States of Micronesia",
+    "continent": "Oceania",
+    "capital": "Palikir",
+    "region_code": "UN-057",
+    "region_name": "Micronesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "FJ",
+    "name": "Fiji",
+    "continent": "Oceania",
+    "capital": "Suva",
+    "region_code": "UN-054",
+    "region_name": "Melanesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "FI",
+    "name": "Finland",
+    "continent": "Europe",
+    "capital": "Helsinki",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "FR",
+    "name": "France",
+    "continent": "Europe",
+    "capital": "Paris",
+    "region_code": "WE",
+    "region_name": "Western Europe",
+    "continent_code": "EU",
+    "active_region": true
+  },
+  {
+    "code": "GF",
+    "name": "French Guiana",
+    "continent": "South America",
+    "capital": "Cayenne",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "PF",
+    "name": "French Polynesia",
+    "continent": "Oceania",
+    "capital": "Papeete",
+    "region_code": "UN-061",
+    "region_name": "Polynesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "TF",
+    "name": "French Southern Territories",
+    "continent": "Africa",
+    "capital": "Saint-Pierre, Réunion",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "GA",
+    "name": "Gabon",
+    "continent": "Africa",
+    "capital": "Libreville",
+    "region_code": "UN-017",
+    "region_name": "Middle Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "GM",
+    "name": "Gambia",
+    "continent": "Africa",
+    "capital": "Banjul",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "GE",
+    "name": "Georgia",
+    "continent": "Asia",
+    "capital": "Tbilisi",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "DE",
+    "name": "Germany",
+    "continent": "Europe",
+    "capital": "Berlin",
+    "region_code": "WE",
+    "region_name": "Western Europe",
+    "continent_code": "EU",
+    "active_region": true
+  },
+  {
+    "code": "GH",
+    "name": "Ghana",
+    "continent": "Africa",
+    "capital": "Accra",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "GI",
+    "name": "Gibraltar",
+    "continent": "Europe",
+    "capital": "Gibraltar",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "GR",
+    "name": "Greece",
+    "continent": "Europe",
+    "capital": "Athens",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "GL",
+    "name": "Greenland",
+    "continent": "North America",
+    "capital": "Nuuk",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "GD",
+    "name": "Grenada",
+    "continent": "North America",
+    "capital": "St. George's",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "GP",
+    "name": "Guadeloupe",
+    "continent": "North America",
+    "capital": "Basse-Terre",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "GU",
+    "name": "Guam",
+    "continent": "Oceania",
+    "capital": "Hagåtña",
+    "region_code": "UN-057",
+    "region_name": "Micronesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "GT",
+    "name": "Guatemala",
+    "continent": "North America",
+    "capital": "Guatemala City",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "GG",
+    "name": "Guernsey",
+    "continent": "Europe",
+    "capital": "Saint Peter Port",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "GN",
+    "name": "Guinea",
+    "continent": "Africa",
+    "capital": "Conakry",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "GW",
+    "name": "Guinea-Bissau",
+    "continent": "Africa",
+    "capital": "Bissau",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "GY",
+    "name": "Guyana",
+    "continent": "South America",
+    "capital": "Georgetown",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "HT",
+    "name": "Haiti",
+    "continent": "North America",
+    "capital": "Port-au-Prince",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "HM",
+    "name": "Heard Island and McDonald Islands",
+    "continent": "",
+    "capital": "",
+    "region_code": "UN-053",
+    "region_name": "Australia and New Zealand",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "VA",
+    "name": "Holy See",
+    "continent": "Europe",
+    "capital": "Vatican City",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "HN",
+    "name": "Honduras",
+    "continent": "North America",
+    "capital": "Tegucigalpa",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "HK",
+    "name": "Hong Kong",
+    "continent": "Asia",
+    "capital": "Hong Kong",
+    "region_code": "EA",
+    "region_name": "East Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "HU",
+    "name": "Hungary",
+    "continent": "Europe",
+    "capital": "Budapest",
+    "region_code": "UN-151",
+    "region_name": "Eastern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "IS",
+    "name": "Iceland",
+    "continent": "Europe",
+    "capital": "Reykjavik",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "IN",
+    "name": "India",
+    "continent": "Asia",
+    "capital": "New Delhi",
+    "region_code": "UN-034",
+    "region_name": "Southern Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "ID",
+    "name": "Indonesia",
+    "continent": "Asia",
+    "capital": "Jakarta",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "IR",
+    "name": "Iran",
+    "continent": "Asia",
+    "capital": "Tehran",
+    "region_code": "UN-034",
+    "region_name": "Southern Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "IQ",
+    "name": "Iraq",
+    "continent": "Asia",
+    "capital": "Baghdad",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "IE",
+    "name": "Ireland",
+    "continent": "Europe",
+    "capital": "Dublin",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "IM",
+    "name": "Isle of Man",
+    "continent": "Europe",
+    "capital": "Douglas",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "IL",
+    "name": "Israel",
+    "continent": "Asia",
+    "capital": "Jerusalem",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "IT",
+    "name": "Italy",
+    "continent": "Europe",
+    "capital": "Rome",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "JM",
+    "name": "Jamaica",
+    "continent": "North America",
+    "capital": "Kingston",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "JP",
+    "name": "Japan",
+    "continent": "Asia",
+    "capital": "Tokyo",
+    "region_code": "EA",
+    "region_name": "East Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "JE",
+    "name": "Jersey",
+    "continent": "Europe",
+    "capital": "Saint Helier",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "JO",
+    "name": "Jordan",
+    "continent": "Asia",
+    "capital": "Amman",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "KZ",
+    "name": "Kazakhstan",
+    "continent": "Asia",
+    "capital": "Astana",
+    "region_code": "UN-143",
+    "region_name": "Central Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "KE",
+    "name": "Kenya",
+    "continent": "Africa",
+    "capital": "Nairobi",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "KI",
+    "name": "Kiribati",
+    "continent": "Oceania",
+    "capital": "South Tarawa",
+    "region_code": "UN-057",
+    "region_name": "Micronesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "KW",
+    "name": "Kuwait",
+    "continent": "Asia",
+    "capital": "Kuwait City",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "KG",
+    "name": "Kyrgyzstan",
+    "continent": "Asia",
+    "capital": "Bishkek",
+    "region_code": "UN-143",
+    "region_name": "Central Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "LA",
+    "name": "Laos",
+    "continent": "Asia",
+    "capital": "Vientiane",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "LV",
+    "name": "Latvia",
+    "continent": "Europe",
+    "capital": "Riga",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "LB",
+    "name": "Lebanon",
+    "continent": "Asia",
+    "capital": "Beirut",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "LS",
+    "name": "Lesotho",
+    "continent": "Africa",
+    "capital": "Maseru",
+    "region_code": "SAF",
+    "region_name": "Southern Africa",
+    "continent_code": "AF",
+    "active_region": true
+  },
+  {
+    "code": "LR",
+    "name": "Liberia",
+    "continent": "Africa",
+    "capital": "Monrovia",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "LY",
+    "name": "Libya",
+    "continent": "Africa",
+    "capital": "Tripoli",
+    "region_code": "UN-015",
+    "region_name": "Northern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "LI",
+    "name": "Liechtenstein",
+    "continent": "Europe",
+    "capital": "Vaduz",
+    "region_code": "WE",
+    "region_name": "Western Europe",
+    "continent_code": "EU",
+    "active_region": true
+  },
+  {
+    "code": "LT",
+    "name": "Lithuania",
+    "continent": "Europe",
+    "capital": "Vilnius",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "LU",
+    "name": "Luxembourg",
+    "continent": "Europe",
+    "capital": "Luxembourg City",
+    "region_code": "WE",
+    "region_name": "Western Europe",
+    "continent_code": "EU",
+    "active_region": true
+  },
+  {
+    "code": "MO",
+    "name": "Macau",
+    "continent": "Asia",
+    "capital": "Macau",
+    "region_code": "EA",
+    "region_name": "East Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "MG",
+    "name": "Madagascar",
+    "continent": "Africa",
+    "capital": "Antananarivo",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "MW",
+    "name": "Malawi",
+    "continent": "Africa",
+    "capital": "Lilongwe",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "MY",
+    "name": "Malaysia",
+    "continent": "Asia",
+    "capital": "Kuala Lumpur",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "MV",
+    "name": "Maldives",
+    "continent": "Asia",
+    "capital": "Malé",
+    "region_code": "UN-034",
+    "region_name": "Southern Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "ML",
+    "name": "Mali",
+    "continent": "Africa",
+    "capital": "Bamako",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "MT",
+    "name": "Malta",
+    "continent": "Europe",
+    "capital": "Valletta",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "MH",
+    "name": "Marshall Islands",
+    "continent": "Oceania",
+    "capital": "Majuro",
+    "region_code": "UN-057",
+    "region_name": "Micronesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "MQ",
+    "name": "Martinique",
+    "continent": "North America",
+    "capital": "Fort-de-France",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "MR",
+    "name": "Mauritania",
+    "continent": "Africa",
+    "capital": "Nouakchott",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "MU",
+    "name": "Mauritius",
+    "continent": "Africa",
+    "capital": "Port Louis",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "YT",
+    "name": "Mayotte",
+    "continent": "Africa",
+    "capital": "Mamoudzou",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "MX",
+    "name": "Mexico",
+    "continent": "North America",
+    "capital": "Mexico City",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "MD",
+    "name": "Moldova",
+    "continent": "Europe",
+    "capital": "Chișinău",
+    "region_code": "UN-151",
+    "region_name": "Eastern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "MC",
+    "name": "Monaco",
+    "continent": "Europe",
+    "capital": "Monaco",
+    "region_code": "WE",
+    "region_name": "Western Europe",
+    "continent_code": "EU",
+    "active_region": true
+  },
+  {
+    "code": "MN",
+    "name": "Mongolia",
+    "continent": "Asia",
+    "capital": "Ulaanbaatar",
+    "region_code": "EA",
+    "region_name": "East Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "ME",
+    "name": "Montenegro",
+    "continent": "Europe",
+    "capital": "Podgorica",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "MS",
+    "name": "Montserrat",
+    "continent": "North America",
+    "capital": "Little Bay, Brades, Plymouth",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "MA",
+    "name": "Morocco",
+    "continent": "Africa",
+    "capital": "Rabat",
+    "region_code": "UN-015",
+    "region_name": "Northern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "MZ",
+    "name": "Mozambique",
+    "continent": "Africa",
+    "capital": "Maputo",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "MM",
+    "name": "Myanmar",
+    "continent": "Asia",
+    "capital": "Naypyidaw",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "NA",
+    "name": "Namibia",
+    "continent": "Africa",
+    "capital": "Windhoek",
+    "region_code": "SAF",
+    "region_name": "Southern Africa",
+    "continent_code": "AF",
+    "active_region": true
+  },
+  {
+    "code": "NR",
+    "name": "Nauru",
+    "continent": "Oceania",
+    "capital": "Yaren District",
+    "region_code": "UN-057",
+    "region_name": "Micronesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "NP",
+    "name": "Nepal",
+    "continent": "Asia",
+    "capital": "Kathmandu",
+    "region_code": "UN-034",
+    "region_name": "Southern Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "NL",
+    "name": "Netherlands",
+    "continent": "Europe",
+    "capital": "Amsterdam",
+    "region_code": "WE",
+    "region_name": "Western Europe",
+    "continent_code": "EU",
+    "active_region": true
+  },
+  {
+    "code": "NC",
+    "name": "New Caledonia",
+    "continent": "Oceania",
+    "capital": "Nouméa",
+    "region_code": "UN-054",
+    "region_name": "Melanesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "NZ",
+    "name": "New Zealand",
+    "continent": "Oceania",
+    "capital": "Wellington",
+    "region_code": "UN-053",
+    "region_name": "Australia and New Zealand",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "NI",
+    "name": "Nicaragua",
+    "continent": "North America",
+    "capital": "Managua",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "NE",
+    "name": "Niger",
+    "continent": "Africa",
+    "capital": "Niamey",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "NG",
+    "name": "Nigeria",
+    "continent": "Africa",
+    "capital": "Abuja",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "NU",
+    "name": "Niue",
+    "continent": "Oceania",
+    "capital": "Alofi",
+    "region_code": "UN-061",
+    "region_name": "Polynesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "NF",
+    "name": "Norfolk Island",
+    "continent": "Oceania",
+    "capital": "Kingston",
+    "region_code": "UN-053",
+    "region_name": "Australia and New Zealand",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "KP",
+    "name": "North Korea",
+    "continent": "Asia",
+    "capital": "Pyongyang",
+    "region_code": "EA",
+    "region_name": "East Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "MK",
+    "name": "North Macedonia",
+    "continent": "Europe",
+    "capital": "Skopje",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "MP",
+    "name": "Northern Mariana Islands",
+    "continent": "Oceania",
+    "capital": "Saipan",
+    "region_code": "UN-057",
+    "region_name": "Micronesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "NO",
+    "name": "Norway",
+    "continent": "Europe",
+    "capital": "Oslo",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "OM",
+    "name": "Oman",
+    "continent": "Asia",
+    "capital": "Muscat",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "PK",
+    "name": "Pakistan",
+    "continent": "Asia",
+    "capital": "Islamabad",
+    "region_code": "UN-034",
+    "region_name": "Southern Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "PW",
+    "name": "Palau",
+    "continent": "Oceania",
+    "capital": "Ngerulmud",
+    "region_code": "UN-057",
+    "region_name": "Micronesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "PA",
+    "name": "Panama",
+    "continent": "North America",
+    "capital": "Panama City",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "PG",
+    "name": "Papua New Guinea",
+    "continent": "Oceania",
+    "capital": "Port Moresby",
+    "region_code": "UN-054",
+    "region_name": "Melanesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "PY",
+    "name": "Paraguay",
+    "continent": "South America",
+    "capital": "Asunción",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "PE",
+    "name": "Peru",
+    "continent": "South America",
+    "capital": "Lima",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "PH",
+    "name": "Philippines",
+    "continent": "Asia",
+    "capital": "Manila",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "PN",
+    "name": "Pitcairn",
+    "continent": "Oceania",
+    "capital": "Adamstown",
+    "region_code": "UN-061",
+    "region_name": "Polynesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "PL",
+    "name": "Poland",
+    "continent": "Europe",
+    "capital": "Warsaw",
+    "region_code": "UN-151",
+    "region_name": "Eastern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "PT",
+    "name": "Portugal",
+    "continent": "Europe",
+    "capital": "Lisbon",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "PR",
+    "name": "Puerto Rico",
+    "continent": "North America",
+    "capital": "San Juan",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "QA",
+    "name": "Qatar",
+    "continent": "Asia",
+    "capital": "Doha",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "CG",
+    "name": "Republic of the Congo",
+    "continent": "Africa",
+    "capital": "Brazzaville",
+    "region_code": "UN-017",
+    "region_name": "Middle Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "RO",
+    "name": "Romania",
+    "continent": "Europe",
+    "capital": "Bucharest",
+    "region_code": "UN-151",
+    "region_name": "Eastern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "RU",
+    "name": "Russia",
+    "continent": "Europe",
+    "capital": "Moscow",
+    "region_code": "UN-151",
+    "region_name": "Eastern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "RW",
+    "name": "Rwanda",
+    "continent": "Africa",
+    "capital": "Kigali",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "RE",
+    "name": "Réunion",
+    "continent": "Africa",
+    "capital": "Saint-Denis",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "BL",
+    "name": "Saint Barthélemy",
+    "continent": "North America",
+    "capital": "Gustavia",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "SH",
+    "name": "Saint Helena, Ascension and Tristan da Cunha",
+    "continent": "Africa",
+    "capital": "Jamestown",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "KN",
+    "name": "Saint Kitts and Nevis",
+    "continent": "North America",
+    "capital": "Basseterre",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "LC",
+    "name": "Saint Lucia",
+    "continent": "North America",
+    "capital": "Castries",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "MF",
+    "name": "Saint Martin",
+    "continent": "North America",
+    "capital": "Marigot",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "PM",
+    "name": "Saint Pierre and Miquelon",
+    "continent": "North America",
+    "capital": "Saint-Pierre",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "VC",
+    "name": "Saint Vincent and the Grenadines",
+    "continent": "North America",
+    "capital": "Kingstown",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "WS",
+    "name": "Samoa",
+    "continent": "Oceania",
+    "capital": "Apia",
+    "region_code": "UN-061",
+    "region_name": "Polynesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "SM",
+    "name": "San Marino",
+    "continent": "Europe",
+    "capital": "San Marino",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "ST",
+    "name": "Sao Tome and Principe",
+    "continent": "Africa",
+    "capital": "São Tomé",
+    "region_code": "UN-017",
+    "region_name": "Middle Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "SA",
+    "name": "Saudi Arabia",
+    "continent": "Asia",
+    "capital": "Riyadh",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "SN",
+    "name": "Senegal",
+    "continent": "Africa",
+    "capital": "Dakar",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "RS",
+    "name": "Serbia",
+    "continent": "Europe",
+    "capital": "Belgrade",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "SC",
+    "name": "Seychelles",
+    "continent": "Africa",
+    "capital": "Victoria",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "SL",
+    "name": "Sierra Leone",
+    "continent": "Africa",
+    "capital": "Freetown",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "SG",
+    "name": "Singapore",
+    "continent": "Asia",
+    "capital": "Singapore",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "SX",
+    "name": "Sint Maarten",
+    "continent": "North America",
+    "capital": "Philipsburg",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "SK",
+    "name": "Slovakia",
+    "continent": "Europe",
+    "capital": "Bratislava",
+    "region_code": "UN-151",
+    "region_name": "Eastern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "SI",
+    "name": "Slovenia",
+    "continent": "Europe",
+    "capital": "Ljubljana",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "SB",
+    "name": "Solomon Islands",
+    "continent": "Oceania",
+    "capital": "Honiara",
+    "region_code": "UN-054",
+    "region_name": "Melanesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "SO",
+    "name": "Somalia",
+    "continent": "Africa",
+    "capital": "Mogadishu",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "ZA",
+    "name": "South Africa",
+    "continent": "Africa",
+    "capital": "Pretoria",
+    "region_code": "SAF",
+    "region_name": "Southern Africa",
+    "continent_code": "AF",
+    "active_region": true
+  },
+  {
+    "code": "GS",
+    "name": "South Georgia and the South Sandwich Islands",
+    "continent": "Antarctica",
+    "capital": "King Edward Point",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "KR",
+    "name": "South Korea",
+    "continent": "Asia",
+    "capital": "Seoul",
+    "region_code": "EA",
+    "region_name": "East Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "SS",
+    "name": "South Sudan",
+    "continent": "Africa",
+    "capital": "Juba",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "ES",
+    "name": "Spain",
+    "continent": "Europe",
+    "capital": "Madrid",
+    "region_code": "UN-039",
+    "region_name": "Southern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "LK",
+    "name": "Sri Lanka",
+    "continent": "Asia",
+    "capital": "Sri Jayawardenepura Kotte, Colombo",
+    "region_code": "UN-034",
+    "region_name": "Southern Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "PS",
+    "name": "State of Palestine",
+    "continent": "Asia",
+    "capital": "Ramallah",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "SD",
+    "name": "Sudan",
+    "continent": "Africa",
+    "capital": "Khartoum",
+    "region_code": "UN-015",
+    "region_name": "Northern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "SR",
+    "name": "Suriname",
+    "continent": "South America",
+    "capital": "Paramaribo",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "SJ",
+    "name": "Svalbard and Jan Mayen",
+    "continent": "Europe",
+    "capital": "Longyearbyen",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "SE",
+    "name": "Sweden",
+    "continent": "Europe",
+    "capital": "Stockholm",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "CH",
+    "name": "Switzerland",
+    "continent": "Europe",
+    "capital": "Bern",
+    "region_code": "WE",
+    "region_name": "Western Europe",
+    "continent_code": "EU",
+    "active_region": true
+  },
+  {
+    "code": "SY",
+    "name": "Syria",
+    "continent": "Asia",
+    "capital": "Damascus",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "TW",
+    "name": "Taiwan",
+    "continent": "Asia",
+    "capital": "Taipei",
+    "region_code": "EA",
+    "region_name": "East Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "TJ",
+    "name": "Tajikistan",
+    "continent": "Asia",
+    "capital": "Dushanbe",
+    "region_code": "UN-143",
+    "region_name": "Central Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "TZ",
+    "name": "Tanzania",
+    "continent": "Africa",
+    "capital": "Dodoma",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "TH",
+    "name": "Thailand",
+    "continent": "Asia",
+    "capital": "Bangkok",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "TL",
+    "name": "Timor-Leste",
+    "continent": "Asia",
+    "capital": "Dili",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "TG",
+    "name": "Togo",
+    "continent": "Africa",
+    "capital": "Lomé",
+    "region_code": "UN-011",
+    "region_name": "Western Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "TK",
+    "name": "Tokelau",
+    "continent": "Oceania",
+    "capital": "Nukunonu, Atafu,Tokelau",
+    "region_code": "UN-061",
+    "region_name": "Polynesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "TO",
+    "name": "Tonga",
+    "continent": "Oceania",
+    "capital": "Nukuʻalofa",
+    "region_code": "UN-061",
+    "region_name": "Polynesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "TT",
+    "name": "Trinidad and Tobago",
+    "continent": "South America",
+    "capital": "Port of Spain",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "TN",
+    "name": "Tunisia",
+    "continent": "Africa",
+    "capital": "Tunis",
+    "region_code": "UN-015",
+    "region_name": "Northern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "TM",
+    "name": "Turkmenistan",
+    "continent": "Asia",
+    "capital": "Ashgabat",
+    "region_code": "UN-143",
+    "region_name": "Central Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "TC",
+    "name": "Turks and Caicos Islands",
+    "continent": "North America",
+    "capital": "Cockburn Town",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "TV",
+    "name": "Tuvalu",
+    "continent": "Oceania",
+    "capital": "Funafuti",
+    "region_code": "UN-061",
+    "region_name": "Polynesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "TR",
+    "name": "Türkiye",
+    "continent": "Asia",
+    "capital": "Ankara",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "UG",
+    "name": "Uganda",
+    "continent": "Africa",
+    "capital": "Kampala",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "UA",
+    "name": "Ukraine",
+    "continent": "Europe",
+    "capital": "Kiev",
+    "region_code": "UN-151",
+    "region_name": "Eastern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "AE",
+    "name": "United Arab Emirates",
+    "continent": "Asia",
+    "capital": "Abu Dhabi",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "GB",
+    "name": "United Kingdom",
+    "continent": "Europe",
+    "capital": "London",
+    "region_code": "UN-154",
+    "region_name": "Northern Europe",
+    "continent_code": "EU",
+    "active_region": false
+  },
+  {
+    "code": "UM",
+    "name": "United States Minor Outlying Islands",
+    "continent": "North America",
+    "capital": "Washington, D.C.",
+    "region_code": "UN-057",
+    "region_name": "Micronesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "US",
+    "name": "United States of America",
+    "continent": "North America",
+    "capital": "Washington, D.C.",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "UY",
+    "name": "Uruguay",
+    "continent": "South America",
+    "capital": "Montevideo",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "UZ",
+    "name": "Uzbekistan",
+    "continent": "Asia",
+    "capital": "Tashkent",
+    "region_code": "UN-143",
+    "region_name": "Central Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "VU",
+    "name": "Vanuatu",
+    "continent": "Oceania",
+    "capital": "Port Vila",
+    "region_code": "UN-054",
+    "region_name": "Melanesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "VE",
+    "name": "Venezuela",
+    "continent": "South America",
+    "capital": "Caracas",
+    "region_code": "SA",
+    "region_name": "South America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "VN",
+    "name": "Vietnam",
+    "continent": "Asia",
+    "capital": "Hanoi",
+    "region_code": "SEA",
+    "region_name": "Southeast Asia",
+    "continent_code": "AS",
+    "active_region": true
+  },
+  {
+    "code": "VG",
+    "name": "Virgin Islands (British)",
+    "continent": "North America",
+    "capital": "Road Town",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "VI",
+    "name": "Virgin Islands (U.S.)",
+    "continent": "North America",
+    "capital": "Charlotte Amalie",
+    "region_code": "NA",
+    "region_name": "North America",
+    "continent_code": "AM",
+    "active_region": true
+  },
+  {
+    "code": "WF",
+    "name": "Wallis and Futuna",
+    "continent": "Oceania",
+    "capital": "Mata-Utu",
+    "region_code": "UN-061",
+    "region_name": "Polynesia",
+    "continent_code": "OC",
+    "active_region": false
+  },
+  {
+    "code": "EH",
+    "name": "Western Sahara",
+    "continent": "Africa",
+    "capital": "Laayoune",
+    "region_code": "UN-015",
+    "region_name": "Northern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "YE",
+    "name": "Yemen",
+    "continent": "Asia",
+    "capital": "Sana'a",
+    "region_code": "UN-145",
+    "region_name": "Western Asia",
+    "continent_code": "AS",
+    "active_region": false
+  },
+  {
+    "code": "ZM",
+    "name": "Zambia",
+    "continent": "Africa",
+    "capital": "Lusaka",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  },
+  {
+    "code": "ZW",
+    "name": "Zimbabwe",
+    "continent": "Africa",
+    "capital": "Harare",
+    "region_code": "UN-014",
+    "region_name": "Eastern Africa",
+    "continent_code": "AF",
+    "active_region": false
+  }
+]

@@ -6,9 +6,12 @@ import { AccountProvider } from './AccountContext.tsx'
 import './hexatrick-reference.css'
 import './hexatrick-crimson.css'
 import './hexatrick-world.css'
+import {PersonalThemeProvider} from './PersonalThemeContext'
+import './personal-theme.css'
+import './hexatrick-records.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AccountProvider><AppRouter /></AccountProvider>
+    <AccountProvider><PersonalThemeProvider><AppRouter /></PersonalThemeProvider></AccountProvider>
   </StrictMode>,
 )
