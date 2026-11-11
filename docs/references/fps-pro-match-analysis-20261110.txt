@@ -1,0 +1,728 @@
+# Counter-Strike 2 Pro Match Analysis → FPS Simulation Mechanics
+
+[Vitality flamZ interview: the next goal is to win Shanghai Major » Esports.gg](https://images.openai.com/static-rsc-4/QAx5uWJQ2HdDdGVLlFhJxNQSAWVtyvhErfmAwQZbRp1ww9iV_HqeRpxwUXpzDqLMJSxf21YS9ztq3iFl41s_AA6X6K8I8zrkPSvV79XGD73vZFIemCUo5cOPkzuEJL03xbO7E1NPFsxwi1WhZBt24V_4q2hak4pMACVQlGrLBng?purpose=inline)
+
+IEM Cologne 2024 — Grand Final
+
+## Team Vitality vs. NAVI
+
+August 18, 2024 · Counter-Strike 2 · Best of five
+
+# 3–1
+
+Vitality defeated NAVI
+
+I identified your video: [GAME OF THE YEAR! Vitality vs NAVI — ESL Highlights](https://www.youtube.com/watch?v=MFenWTrbNWA\&utm_source=chatgpt.com).
+
+I could access the match records, tournament reporting, documented highlight moments, and tactical descriptions, but not directly play and inspect every frame of the YouTube video. Accordingly, the match examples below are grounded in those records; the simulation mechanics are my design recommendations, not claims of frame-by-frame observation.
+
+## 1. What makes this match a great simulation reference?
+
+| Map     | Score (Vitality–NAVI) | Main simulation lesson                                        |
+| ------- | --------------------- | ------------------------------------------------------------- |
+| Nuke    | 16–14                 | Adaptation, trading momentum, late-round clutches             |
+| Dust2   | 10–13                 | Site targeting, defensive recovery, coordinated retakes       |
+| Mirage  | 22–20                 | Pressure, adaptation, unpredictability, overtime mentality    |
+| Inferno | 13–9                  | Territory control, tactical conditioning, attempted comebacks |
+
+The series lasted 117 rounds, including a triple-overtime Mirage. It showcased players recovering from mistakes, teams exploiting defensive weaknesses, tactics evolving across rounds, and individual brilliance changing outcomes.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.hltv.org\&sz=32)
+
+HLTV.org+2
+
+
+
+The most important takeaway for your esports management simulation:
+
+A professional Counter-Strike player should not be a character who walks toward enemies and rolls an accuracy percentage.
+
+A convincing simulated player should have:
+
+- A limited, imperfect understanding of the battlefield.
+- Realistic movement and positioning.
+- Individual mechanical ability and decision-making tendencies.
+- Tactical responsibilities within a five-player unit.
+- Memory of what happened in previous rounds.
+- Emotional and cognitive reactions to success, failure, uncertainty, and pressure.
+- The ability to break from the original game plan when circumstances demand it.
+
+These systems should produce different match situations organically, without scripted outcomes or guaranteed highlights.
+
+## 2. Real match situations worth recreating
+
+These are the most useful documented moments to turn into reusable gameplay systems.
+
+[Counter-Strike 2 oficjalnie zapowiedziany. Wybrańcy zagrają już dzisiaj](https://images.openai.com/static-rsc-4/H8BU7LZtmGbGwhN6eHS7_btlk_gjgnu3UMoOHs_fDvRxQkqMUVd4gsQaNWk2asi-IW_vLUI8_33ip7wfq8MZVFRs7VEtd9w5go16_tZ15LWU4iZQAu__bFZKVEhM8k2fNwjFMC2r9rqcuFtK0HV7VSu8SyQ-ArvD2CnnhdtIHIo?purpose=inline)
+
+Situation A — Dust2: Repeated attacks on a weak site
+
+Vitality repeatedly targeted NAVI's B defense. NAVI recovered with difficult retakes, and b1t ultimately helped secure the map with a decisive defensive hold.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.hltv.org\&sz=32)
+
+HLTV.org+1
+
+
+
+Mechanic: Teams must detect recurring vulnerabilities, exploit them, then decide when the opponent is likely to adapt.
+
+[CS2 Mirage Callouts: Complete Map Guide & Positions 2026](https://images.openai.com/static-rsc-4/BT1R7XtDsqxxapwHUysq-tmpZB1p3_OkV7nU_VheyDiA7My9KCeMhOQRA3bYpWIlZaxZt-QZpRhgJN7D7fMAUZejJnASgCn2mCYctXfdsuFhdg_ixiNE2fnwdbtQ1qp_q4dX8saIeiR-wJCfm-WJ8HjUP9w_23Gmfn-Z7r-1yVk?purpose=inline)
+
+Situation B — Mirage: Changing the opponent's expectations
+
+Vitality disrupted NAVI by appearing in positions different from their normal defensive setups. Later, Aleksib's calls included a B flank through Window and a well-timed A rush.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.hltv.org\&sz=32)
+
+HLTV.org+1
+
+
+
+Mechanic: Players should remember opponent habits, recognize deviations, and execute counterstrategies.
+
+[Позиции на карте de_nuke в CS:2 — MakeFrag.ru](https://images.openai.com/static-rsc-4/R19bmWipp9i8mo9cq5SAkblkLxhGSPSDwLtzEgrbY_sk_JStcsadd_tUXGGS7HpFRBbeMpC5QrkgxS2X_zslhc2LGIQka4EuPSIEncXtfihxUKmDCS0dl_eNVIG0sw1PD1dhkFfKN_OuBo6VB7oSCsjsLk2avbAiyKUseRFYwUo?purpose=inline)
+
+Situation C — Nuke: Recovery and clutch execution
+
+NAVI fought back from a difficult first half, but Vitality recovered and won in overtime. Spinx and ZywOo contributed important clutch rounds, alongside apEX's late entries.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.hltv.org\&sz=32)
+
+HLTV.org
+
+
+
+Mechanic: A team can recover through tactical changes and key individual plays without receiving an artificial comeback bonus.
+
+[Counter-Strike 2’s Animgraph 2 update is live: Everything you need to know ⇒ Pley.gg](https://images.openai.com/static-rsc-4/XRPVipXk7pt52rUEXngbg0i7-NgC1kRbjR8Tj-5Bzmn0O87ALofRwVIj-HRsYhGyR_15dlfBAQYToFzDltrEmDPzXMHLejsz6iVTdSsuBzE9gVP6g4hOoRpVqKQqVqsnPilQf5drS-NSCXPjlqgUsMs96zp8x57eik4l0m7KN0Q?purpose=inline)
+
+Situation D — Inferno: Conditioning and territorial control
+
+Vitality repeatedly won fights around Banana, controlled the first half 10–2, and forced NAVI into recovery mode. NAVI still mounted a six-round streak later.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.hltv.org\&sz=32)
+
+HLTV.org
+
+
+
+Mechanic: Winning a region of the map changes future decisions, rotations, positioning, and utility allocation.
+
+## 3. Human-like movement and mechanics
+
+Human movement needs to be simulated through intent, movement execution, and physical limitations, rather than randomly animated paths.
+
+| Mechanic                     | Behavior your simulation should produce                                            |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
+| Counter-strafing             | Players decelerate before taking an accurate shot; execution quality varies        |
+| Jiggle peeking               | Briefly expose themselves to gather information without committing                 |
+| Shoulder peeking             | Bait a shot, particularly from an AWPer, before repositioning                      |
+| Wide swinging                | Move beyond the expected crosshair position to challenge an angle                  |
+| Tight peeking                | Expose only a small section of the body when checking a position                   |
+| Jump spotting                | Cross or briefly expose a sightline to collect information                         |
+| Crouch peeking               | Alter head height and firing position when situationally useful                    |
+| Crouch jumping               | Reach specific elevated positions with an execution-failure possibility            |
+| Silent walking               | Trade movement speed for reduced footstep information                              |
+| Running                      | Prioritize speed while giving away audible information when applicable             |
+| Stop-and-shoot               | Wait until movement accuracy is acceptable before firing                           |
+| Strafing during duels        | Reposition between shots or bursts instead of staying stationary                   |
+| Pre-aiming                   | Align crosshair with the most likely enemy position before exposure                |
+| Angle clearing               | Clear a sequence of dangerous corners rather than seeing through walls             |
+| Repositioning                | Change location after being spotted, firing, or becoming predictable               |
+| Shoulder-to-shoulder trading | Follow a teammate closely enough to punish an opponent after a kill                |
+| Spacing                      | Maintain appropriate distance for trades, avoiding unnecessary multi-kill exposure |
+| Cover utilization            | Minimize body exposure using walls, boxes, terrain, and vertical structures        |
+| Movement mistakes            | Occasionally misjudge a jump, overexpose an angle, or stop too late                |
+| Weapon-dependent pacing      | AWPers, riflers, and pistol users make different movement commitments              |
+
+These movements should be available to players as context-sensitive tactical actions, not fixed animation loops.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.steamanalyst.com\&sz=32)
+
+SteamAnalyst+1
+
+
+
+### A human-like peek decision
+
+Consider a player holding an angle with incomplete information.
+
+Suspected enemy behind cover
+
+Enemy location is uncertain; an AWP is possible
+
+Jiggle peek
+
+Low commitment, gather information
+
+Wide swing
+
+Commit to a duel, potentially with a trader
+
+Hold angle
+
+Preserve position and wait
+
+Execute and observe
+
+Movement skill, enemy position, timing, and reaction determine what happens next
+
+An aggressive, mechanically gifted player might select a wide swing more often. A disciplined player might gather information first. A nervous player might hesitate, take too long to commit, or expose themselves badly.
+
+However, none should have perfect knowledge of the enemy's exact position.
+
+### Make aim human, not a percentage
+
+Separate these underlying mechanical abilities:
+
+- Crosshair placement: Accuracy of the initial aim position before seeing the target.
+- Reaction time: Delay between perceiving a stimulus and beginning an action.
+- Target acquisition: Ability to identify and align with a newly visible opponent.
+- Microadjustment: Precision of small corrections near the target.
+- Flicking: Ability to acquire a target far from the existing crosshair.
+- Tracking: Ability to follow moving targets.
+- Recoil control: Capacity to compensate for weapon movement during bursts and sprays.
+- Spray transfer: Maintaining recoil control when switching targets.
+- First-bullet precision: Consistency of the first shot after settling.
+- Movement synchronization: Coordination of stopping, aiming, and shooting.
+- Target prioritization: Selecting the most important threat when multiple enemies appear.
+- Weapon familiarity: Different execution quality with rifles, sniper rifles, pistols, and SMGs.
+
+For example, a player could have exceptional flicking but weak crosshair placement. That player would frequently need difficult aim corrections, creating flashy but inconsistent performances.
+
+An efficient rifler with excellent pre-aiming might secure equally important kills with fewer dramatic flicks.
+
+## 4. Map design and environmental intelligence
+
+Do not model a Counter-Strike map as a simple collection of spawn points, bombsites, and shortest paths.
+
+Maps need tactical geometry that players can reason about.
+
+Map-specific principles demonstrated by the series
+
+[Nuke - популярная карта соревновательного режима в КС 2: особенности мапы и тактики игры](https://images.openai.com/static-rsc-4/dXz8qlRTWQ88f8oQjHYXDXgdDlJsDAtHJVF-m75L6kbr4wwETkwQavO-5FZJklwGMY93cOzL2gfSvPP8GnDX6UxxYlo4_YjBF4CueeZwjCj38uzQAeRPay9Zm77s1ck92vGBXM_OKVxusi9-w1ASJRbEPN8IY5fbCYiyL-FY5IA?purpose=inline)
+
+Nuke — Verticality
+
+Upper and lower sites, Heaven, vents, ramp, yard, and complex rotations. A player may hear action above or below without knowing precisely where an opponent is.
+
+[History and Evolution of the Dust 2 Map in Counter-Strike | Profilerr](https://images.openai.com/static-rsc-4/nY5MVrFQcUG7P9OLHqw5kOJ-sq7eXd_MukwsLuJgr5otDCUOWsfc_MRJ4ovSUZLniTqre7TjCeCj1h3aj7HUVXCzdFrwuLjJdFyMFS0-49yexUzitFyW0ET9IXqcFbigvREaUPZTvE-iYvhLrCyl1K9fxJ5MtjItGJ-IJVRxF1s?purpose=inline)
+
+Dust2 — Long sightlines
+
+Long, Mid, Catwalk, Doors, and B Tunnels produce distinct angles, AWP opportunities, and predictable but contestable chokepoints.
+
+[Skinrave.gg | All CS2 Mirage Map Callouts You Need to Know](https://images.openai.com/static-rsc-4/zqda4BhD8T4R91R1Ln0KD02w0rZapWxVlnnUGBEwcPg22-Tn3zEJ0iTRlOfTnUGulxywqpVSK88Hr5OBzYbPfA9O2km2iHa-FbNASlbFkE43SDJIxWB3Xs_3VOIncj779omKNJ_BRWe3dG0f0LL_rMLY6zZxdDrAU1RbIPfRsA0?purpose=inline)
+
+Mirage — Mid control
+
+Window, Connector, Catwalk, Underpass, and Palace create numerous timing-based rotations, splits, and lurk opportunities.
+
+[Skinrave.gg | All Inferno Map Callouts in CS2](https://images.openai.com/static-rsc-4/lzV5a3IkbrTEJUTgq0VoBs9ER6qdTMXdLKL5YQ4wlfd6nkTdUM-rEz5qPoU2B6OV0AmZ2RKirJs2nSXMtLy23XuuBofRR6JSxCIwtsPH85D37yiMV1LVUjVwqz2jfME6IWnF5Yv1zt3i7MgIkBoJnf51MD7CERcv6pd2h_Cl8qg?purpose=inline)
+
+Inferno — Territory and utility
+
+Banana, Apartments, Mid, and the two bombsites reward early map control, delayed executes, and careful grenade allocation.
+
+### Required map intelligence
+
+| System                    | Implementation requirement                                            |
+| ------------------------- | --------------------------------------------------------------------- |
+| Tactical navigation graph | Named areas, connections, traversal costs, elevation, chokepoints     |
+| Continuous positioning    | Actual location, velocity, angle, and collision                       |
+| Line of sight             | Walls, cover, smokes, elevation, and visibility restrictions          |
+| Angle database            | Known holding positions, pre-aim locations, off-angles                |
+| Sound propagation         | Footsteps, gunfire, reloads, drops, and audibility across surfaces    |
+| Utility simulation        | Smoke occlusion, flash effectiveness, explosive damage, fire denial   |
+| Timing model              | Travel time, fastest rotations, opponent arrival estimates            |
+| Cover evaluation          | Exposure to multiple sightlines, available escapes, retrade potential |
+| Bombsite geometry         | Entry routes, plant locations, post-plant positions, defuse access    |
+| Map control               | Who holds or is believed to control an area, with confidence levels   |
+| Alternate routes          | Flanks, boosts, elevated transitions, and safer rotations             |
+| Risk zones                | Areas where enemies may hold crossfires or have positional advantage  |
+
+Critical distinction: The simulation must know the true map geometry, but each simulated player must only know what they could reasonably perceive, remember, or infer.
+
+## 5. Information, awareness, and imperfect knowledge
+
+This may be the single most important improvement you can make to AI decision-making.
+
+A player must never have access to the enemy team's global positions simply because the match engine knows them.
+
+Each player needs a private information model.
+
+| Information         | Example                                   | Confidence behavior                                     |
+| ------------------- | ----------------------------------------- | ------------------------------------------------------- |
+| Direct sighting     | Enemy seen crossing Mid                   | High initially                                          |
+| Recent footstep     | Running heard near B                      | Moderate; direction may be uncertain                    |
+| Gunfire             | Rifle fired near a suspected location     | Provides approximate location and weapon clues          |
+| Teammate callout    | "Two coming A!"                           | Depends on the teammate's observation and communication |
+| Utility clue        | Smoke deployed at Connector               | Suggests a plan, but could be a fake                    |
+| Last-known position | Enemy spotted at Apartments earlier       | Confidence decays as the enemy could move               |
+| Pattern recognition | Opponent repeatedly targets B             | Raises suspicion, not certainty                         |
+| Absence of contact  | No presence detected at a contested angle | Weak evidence; enemies might be hiding                  |
+
+A sighting should create a time-stamped belief, not permanent tracking.
+
+Example:
+
+A player hears three distinct footsteps approaching B, but cannot necessarily distinguish three separate enemies from the sound alone. They may report "multiple B" and request support.
+
+The defending IGL can decide to rotate one player, retain the original setup, or call a gamble stack.
+
+If the sounds were a fake, the offense may exploit the weakened opposite site.
+
+This is how believable tactical deception emerges.
+
+## 6. Team tactics and collective decision-making
+
+Professional teams don't just move as five independent players. Every decision changes the opportunities available to the others.
+
+I would model these as coordinated tactical systems.
+
+| Tactical behavior   | What should happen in a simulated match                                       |
+| ------------------- | ----------------------------------------------------------------------------- |
+| Default setup       | Players spread out to contest space, gather information, and preserve options |
+| Fast execute        | Team commits quickly with prearranged utility and synchronized entry          |
+| Slow execute        | Players hold positions, deny information, and attack after preparation        |
+| Contact play        | Players approach quietly and commit when contact occurs                       |
+| Fake execute        | Utility and pressure deliberately suggest an attack elsewhere                 |
+| Split attack        | Players enter a bombsite from multiple routes                                 |
+| Mid-round calling   | IGL modifies the original plan based on new information                       |
+| Lurking             | One player independently contests a different area or intercepts rotations    |
+| Double peek         | Two teammates coordinate simultaneous exposure                                |
+| Trade setup         | One player challenges an angle while another prepares to trade                |
+| Crossfire           | Defenders hold complementary angles to punish an attacker                     |
+| Defensive stack     | Team deliberately concentrates defenders in one location                      |
+| Information push    | Defender takes controlled risk to discover the attackers' plans               |
+| Rotate              | Defenders abandon or reinforce positions based on the perceived threat        |
+| Counter-rotate      | Team anticipates an opponent's rotation and changes direction                 |
+| Retake              | Defenders coordinate utility and entry to recover a lost bombsite             |
+| Save                | Players preserve equipment rather than attempting an unfavorable retake       |
+| Exit hunting        | Players attack withdrawing enemies to damage the next-round economy           |
+| Anti-eco discipline | Team adjusts engagement ranges and spacing against weaker weapons             |
+| Tactical timeout    | Coach and IGL review patterns, stabilize decision-making, and revise calls    |
+
+### Team tactics must compete with one another
+
+Suppose an attacking team is executing onto B.
+
+The defense does not have one correct answer. It could:
+
+1. Hold and attempt to stop the entry.
+2. Delay using utility and wait for rotations.
+3. Give up the site and organize a retake.
+4. Push another part of the map for information.
+5. Save if the remaining equipment is too valuable to risk.
+
+All five can be reasonable under different circumstances.
+
+The decision should account for player confidence, available grenades, known enemy positions, round timer, economy, and teammate locations.
+
+### Repeated strategies should create readable patterns
+
+The Dust2 match is especially useful here.
+
+When Vitality repeatedly exploited NAVI's B defense, that created a tactical problem NAVI needed to solve. But NAVI still had to avoid overcommitting defenders to B and exposing A.
+
+Implement an opponent-modeling system with:
+
+- Estimated attack frequency by site and route.
+- Common offensive timings.
+- Frequent player positions and habits.
+- Historical success rates of defensive setups.
+- Utility patterns and suspected fakes.
+- Opponent adaptation after a failed attempt.
+- A confidence score representing how reliable each pattern is.
+
+Counterstrategies should be based on observations, not privileged access to enemy plans.
+
+## 7. Mid-round intelligence and emergent situations
+
+A realistic match should be driven by events that invalidate the original plan.
+
+These situations need explicit support:
+
+| Situation                      | Decision-making requirement                                                |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| Early 5v4 advantage            | Decide whether to preserve numbers, seek more control, or accelerate       |
+| Early 4v5 disadvantage         | Seek a trade, regain information, take calculated risk, or change the plan |
+| Bomb dropped in contested area | Decide whether to recover it or establish control first                    |
+| Bomb carrier eliminated        | Teammates adapt routes and determine who recovers the bomb                 |
+| Unexpected enemy flank         | Communicate, hold, turn, retreat, or counterattack                         |
+| Smoke blocking planned entry   | Wait, reroute, exploit the smoke, or cancel                                |
+| Teammate flashed               | Cover the teammate until they recover                                      |
+| Player isolated                | Escape, hold a defensible angle, or attempt a surprise duel                |
+| Low-health teammate            | Reassign entry or support responsibilities contextually                    |
+| AWP holding an important lane  | Seek utility, alternate route, trade, or bait the shot                     |
+| Last 20 seconds                | Prioritize reachable objectives and realistic execute timing               |
+| Late bomb plant                | Choose post-plant positions with limited setup time                        |
+| Failed site defense            | Trigger a retake assessment or save decision                               |
+| Failed retake                  | Update beliefs about opponent positioning and tactics                      |
+| Low ammunition                 | Reload if safe, switch weapons, seek cover, or finish the fight            |
+| Lost utility                   | Adjust the team's execute or defensive capabilities                        |
+| Opponent on match point        | Reassess strategic risk, pressure, and resource expenditure                |
+
+One important characteristic: agents must be able to abandon a plan without immediately losing coherence.
+
+An entry fragger who discovers three defenders shouldn't automatically continue the attack because the original playbook says "push B."
+
+Likewise, the player shouldn't instantly teleport into a new strategy.
+
+They must communicate, turn, move, and coordinate with teammates in real time.
+
+## 8. Human reactions, emotions, and mental states
+
+This was one of the most interesting aspects of the actual final.
+
+On Mirage, w0nderful missed a significant opportunity that contributed to a ZywOo clutch, but subsequently recovered and produced a clutch of his own as NAVI prolonged the map. apEX also spoke afterward about telling his team to stay calm after losing multiple opportunities to close the map.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.hltv.org\&sz=32)
+
+HLTV.org+2
+
+
+
+A simulation should support both reactions naturally.
+
+### Psychological response system
+
+| Emotional or cognitive state | Potential behavioral effect                                           |
+| ---------------------------- | --------------------------------------------------------------------- |
+| Confident                    | More willing to attempt mechanically demanding but reasonable plays   |
+| Nervous                      | Longer deliberation, more conservative choices, occasional hesitation |
+| Frustrated                   | Greater temptation to force a duel or abandon patience                |
+| Focused                      | More consistent adherence to the selected task                        |
+| Overconfident                | Underestimation of risk and greater willingness to overpeek           |
+| Tilted                       | Reduced tactical discipline and increased impulsive decisions         |
+| Fatigued                     | Slower information processing and more execution mistakes             |
+| Under pressure               | More deliberate or more rushed decisions depending on temperament     |
+| Motivated                    | Increased commitment to objectives and coordinated efforts            |
+| Demoralized                  | Reduced initiative or more passive decision-making                    |
+| Composed                     | More reliable decision-making under pressure                          |
+| Distracted                   | Greater chance of missing or misinterpreting relevant information     |
+
+These are possible tendencies, not guaranteed outcomes.
+
+Important: Keep personalities and mechanical ratings separate. A personality should change which actions the player prefers and how they react. It should not directly add artificial headshot accuracy or aim points.
+
+### Mental state should evolve, not reset every round
+
+Example: Player recovery after a mistake
+
+1. Missed crucial shot
+
+   Immediate surprise, frustration, or disappointment depending on the player's temperament.
+2. Next round preparation
+
+   Some players become cautious. Others seek a chance to redeem themselves. A disciplined player may change nothing.
+3. Teammate and coach response
+
+   Reassurance, criticism, tactical changes, or silence influence how the player processes the event.
+4. New opportunity
+
+   The player may execute well, make another mistake, or contribute without taking a duel.
+5. Longer-term response
+
+   Confidence and perceived form change gradually based on multiple experiences, not just one kill.
+
+### Human imperfections are essential
+
+Your AI should occasionally exhibit:
+
+- Miscommunications or delayed callouts.
+- Incorrect threat assessment.
+- Hesitation before peeking.
+- Premature rotations.
+- Overcommitted aggression.
+- Unnecessary re-peeking.
+- Misjudged grenade placement.
+- Missed jumps or movement execution.
+- Failure to notice an exposed opponent.
+- Overconfidence following several successful rounds.
+- Excessive caution following repeated failures.
+- Individual improvisation that conflicts with the team plan.
+
+These mistakes should arise from limited perception, individual traits, timing, and execution ability—not simply from a random chance to behave irrationally.
+
+## 9. Player uniqueness, personalities, specialties, and roles
+
+For your simulation, I would maintain four strictly separate systems.
+
+| Layer             | What it determines                                   | Example                                             |
+| ----------------- | ---------------------------------------------------- | --------------------------------------------------- |
+| Mechanical skills | What the player can execute                          | Excellent flicking, inconsistent recoil control     |
+| Personality       | How the player prefers to behave                     | Patient, opportunistic, impulsive                   |
+| Specialty         | Where the player has developed exceptional expertise | Advanced utility support, strong retake positioning |
+| Assigned role     | What the team currently needs the player to do       | Entry, anchor, lurker, AWPer, IGL                   |
+
+A player may be an aggressive personality, have an excellent utility specialty, and currently play as a defensive anchor.
+
+That should create interesting tension, but it shouldn't make the player incapable of performing the assignment.
+
+### Six possible player identities
+
+The Clinical Duelist
+
+Exceptional crosshair placement, disciplined peeking, strong first-bullet control. Prefers calculated fights rather than needless aggression.
+
+The Explosive Entry
+
+Strong target acquisition and movement synchronization. More willing to force space, especially when teammates can trade.
+
+The Tactical Architect
+
+Excellent strategic understanding and opponent modeling. Prefers structured plays but adapts when evidence contradicts the plan.
+
+The Opportunistic Lurker
+
+Strong spatial awareness, timing, and patience. Exploits gaps in the opponent's rotations rather than searching for constant duels.
+
+The Resilient Anchor
+
+Excellent site positioning and defensive discipline. More comfortable delaying several opponents than pursuing isolated fights.
+
+The Adaptive All-Rounder
+
+Broad mechanical competence and strong situational decision-making. Comfortable switching tasks during a round.
+
+These should be emergent descriptions of skill and behavior combinations, rather than hardcoded character classes.
+
+A player may develop into one of these identities over several seasons, and a coach's system may bring out different aspects of their abilities.
+
+## 10. Economy, match pressure, and long-term consequences
+
+Counter-Strike is not just about who has better aim. Every round changes the next round's resources.
+
+HLTV documented an instance on Dust2 in which an attempt to secure an exit frag had consequences for equipment available in the following round. That is exactly the kind of interconnected decision your simulation needs.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.hltv.org\&sz=32)
+
+HLTV.org
+
+
+
+Implement:
+
+- Team-wide purchase planning and individual buy decisions.
+- Full buys, half buys, force buys, eco rounds, and anti-ecos.
+- Weapon saving and retrieval.
+- Utility allocation based on tactical responsibilities.
+- Loss-bonus progression and equipment preservation.
+- Weapon drops between teammates.
+- Economy-aware risk evaluation during retakes and exits.
+- Low-resource strategic adaptations.
+- Different buying philosophies between teams and IGLs.
+- Appropriate game-version rules for round rewards, equipment, and overtime.
+
+A team may choose to save three rifles even though one surviving defender believes a retake is technically possible. Another team with a risk-seeking identity might try.
+
+Neither choice should be automatically wrong.
+
+Also implement series-level fatigue, confidence, and adaptation, so a best-of-five does not feel like five unrelated matches.
+
+## 11. Recommended decision-making architecture
+
+For your TypeScript match engine, I would use a hierarchical agent system. This lets thousands of decisions emerge from reusable mechanisms rather than scripting every situation individually.
+
+Match World State
+
+Map geometry, time, economy, positions, physics, utility, objectives
+
+Team Brain
+
+Game plan, IGL, coach, team economy, tactical adaptation
+
+Player Perception
+
+Visible enemies, sound, memory, communication, uncertainty
+
+Individual Decision Engine
+
+Skills + personality + specialty + role + mental state + context
+
+Action Selection and Execution
+
+Move, hold, peek, fire, reload, throw utility, communicate, plant, defuse
+
+Simulation Resolution
+
+Movement, collisions, visibility, damage, objective outcomes, event history
+
+Results feed back into player beliefs, team strategy, and future decisions.
+
+### Decision scoring
+
+A possible conceptual model:
+
+\\[ Q(a)=w_1T+w_2O+w_3I+w_4C-w_5R-w_6K \\]
+
+Where:
+
+| Variable | Meaning                                         |
+| -------- | ----------------------------------------------- |
+| \\(T\\)  | Expected tactical benefit                       |
+| \\(O\\)  | Contribution to winning the objective           |
+| \\(I\\)  | Expected information gain                       |
+| \\(C\\)  | Team coordination and trade potential           |
+| \\(R\\)  | Risk of death or losing useful resources        |
+| \\(K\\)  | Opportunity cost, time, and movement commitment |
+
+The weights vary with personality, assignment, team philosophy, and the current situation.
+
+They should not represent static aggression percentages. Each action needs an evaluation of the actual conditions.
+
+For example, an aggressive player may normally favor taking duels. But if the bomb is planted, the opponent has no defuse kit, and the clock is nearly exhausted, even an aggressive player can reasonably choose to hide.
+
+The agent should also have a commitment period and interruption rules. Otherwise, recalculating scores continuously can produce unnatural jittering and constant indecision.
+
+### Example simulated round
+
+Dust2 — Hypothetical B-site attack
+
+Illustrative
+
+Not a reconstruction of a particular recorded round
+
+1. Opening: Attackers take a default setup. B defenders hold their preferred angles while a teammate watches Mid.
+2. Information: A B defender hears movement and reports possible pressure. The defense is not certain whether it is genuine.
+3. Preparation: The attackers deploy utility to restrict vision and delay defenders. One supporting player prepares to trade.
+4. Contact: The entry player clears the first corner. Their crosshair placement, stop timing, enemy reaction, and fire execution determine the duel.
+5. Disruption: The entry player dies but creates enough space for a teammate to trade. Another defender survives and retreats.
+6. Mid-round adjustment: The IGL elects to finish B rather than rotate. The defense chooses to preserve surviving players for a retake.
+7. Post-plant: The attackers choose positions based on known enemy approach routes, available utility, and remaining health.
+8. Resolution: Defenders coordinate a retake. Flash timing, sightlines, communication, duels, and bomb time determine the outcome.
+9. Learning: Both teams update their understanding of B-site defensive tendencies before the next round.
+
+Crucially, the system must support different outcomes at every step. Nothing guarantees a plant, a retake, or even the intended B attack.
+
+## 12. Additional realism systems worth including
+
+Beyond the fundamental mechanics, these would give the management game significantly more depth.
+
+| System                    | What it adds                                                                        |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| Dynamic opponent scouting | Teams identify and prepare against recurring habits                                 |
+| Individual rivalries      | Familiarity with opposing players influences anticipation and decisions             |
+| Team chemistry            | Communication reliability, coordination, and trust                                  |
+| Coach influence           | Tactical preparation, adaptations, and player-role development                      |
+| IGL influence             | Real-time calls, decision clarity, timing, and team alignment                       |
+| Role flexibility          | Players swap responsibilities when the original setup breaks                        |
+| Tactical familiarity      | Rehearsed strategies execute more reliably than unfamiliar ones                     |
+| Map familiarity           | Better route timing, angle knowledge, and utility execution                         |
+| Practice development      | Skills and tactical understanding improve through training                          |
+| Timeouts and pauses       | Teams reset, discuss patterns, and revise tactical priorities                       |
+| Momentum perception       | Players' feelings about a streak affect choices without overriding the match engine |
+| Match importance          | Grand finals and elimination rounds influence mental pressure                       |
+| Arena pressure            | Crowd and stage context may affect concentration and communication                  |
+| Individual consistency    | Differences in performance emerge from conditions and execution variance            |
+| Form and fatigue          | Multi-map performance is affected by prolonged exertion                             |
+| Team identity             | A fast aggressive team behaves differently from a methodical team                   |
+| Tactical deception        | Fakes work because opponents interpret incomplete evidence                          |
+| Mid-round improvisation   | Players adapt intelligently when their original instructions become obsolete        |
+| Communication mistakes    | Unclear or delayed callouts cause believable coordination failures                  |
+| Player development        | Experience and coaching gradually reshape player tendencies                         |
+| Scout reports             | Pre-match research influences initial team beliefs, without perfect accuracy        |
+| Strategic innovation      | Teams experiment with new setups and retain successful adaptations                  |
+| Anti-stratting            | Opponents deliberately counter documented tendencies                                |
+| Broadcast presentation    | Replays, player cameras, contextual highlights, and meaningful commentary           |
+
+## 13. Implementation priorities
+
+I would avoid implementing all of these at once. First establish a reliable underlying match simulation, then add the cognitive and presentation layers.
+
+01
+
+Deterministic match foundation
+
+Authoritative time progression, player physics, weapons, damage, bomb objectives, economy, and event logging.
+
+02
+
+Map intelligence and human movement
+
+Spatial navigation, sightlines, sound, tactical areas, cover, movement limitations, peeking, and shooting.
+
+03
+
+Individual player brains
+
+Private perception, uncertainty, mechanical execution, action evaluation, personality, and situational reactions.
+
+04
+
+Team coordination and adaptation
+
+IGL decisions, playbooks, team plans, role assignments, utility coordination, opponent modeling, and retakes.
+
+05
+
+Psychology and persistent identity
+
+Pressure, fatigue, confidence, team chemistry, coaching influence, progression, and meaningful individual variation.
+
+06
+
+Emergent match presentation
+
+Viewer animations, replays, highlights, match stories, useful statistics, and explanations of tactical decisions.
+
+### How to verify that your simulation is genuinely human-like
+
+You should test more than final scores and player ratings.
+
+A convincing simulation should demonstrate that:
+
+- A team can win despite its best mechanical player having a poor map.
+- A player can make a mistake, recover, and influence later rounds.
+- Two identical lineups can produce different matches without arbitrary winner selection.
+- Opponents can exploit a weak bombsite until the defenders adapt.
+- A successful fake can cause a rotation, but sometimes fails.
+- A disadvantaged defender can choose to save or retake for understandable reasons.
+- Players cannot react to enemies they have not perceived or reasonably inferred.
+- Changing a coach's game plan alters movement, positioning, engagements, and utility use—not merely the scoreboard.
+- Mechanical skill affects how an action is executed, while personality influences whether the player attempts it.
+- A player's distinctive behaviors remain recognizable over multiple matches, even though specific outcomes vary.
+
+For development, preserve seeded simulation replays and decision traces so you can inspect why every player chose an action. Separating simulation logic from the match viewer will also let you run large batches of games quickly and render only selected matches.
+
+## 14. My five highest-value recommendations
+
+For your FPS esports manager, these would provide the greatest improvement in realism:
+
+# 01
+
+Build a perception-driven player AI.
+
+No wallhacks, no global enemy coordinates, and no instant perfect callouts. Player decisions must follow what they know or believe.
+
+# 02
+
+Simulate actual duels and movement instead of rolling kills.
+
+Account for angles, player velocity, stop timing, aim adjustment, recoil, weapon characteristics, and reaction latency.
+
+# 03
+
+Give the IGL and coach meaningful tactical control.
+
+Strategies should influence what agents attempt, while leaving room for local decisions and improvisation.
+
+# 04
+
+Make players adapt and learn opponents' tendencies.
+
+Remember what has worked, where teams are vulnerable, and how reliable the available evidence is. Use short-term learning within a match and longer-term scouting across matches.
+
+# 05
+
+Make human performance variable but explainable.
+
+Pressure, confidence, fatigue, positioning, tactical support, and execution should produce natural inconsistency—not hidden scripted comeback mechanics.
+
+The overall design goal is to create a match engine in which the stories witnessed in Vitality vs. NAVI are possible consequences of the simulation.
+
+A 1v2 clutch, a failed retake, a three-round tactical adjustment, or a reverse sweep attempt should happen because players made decisions, executed with varying ability, and responded to one another—not because the engine selected a dramatic event from a list.
+
+That is the difference between a statistical esports simulator and a believable living competitive FPS simulation.

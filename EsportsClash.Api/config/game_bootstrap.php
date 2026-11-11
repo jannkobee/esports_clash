@@ -1,2 +1,2 @@
 <?php
-return ['owner_email'=>env('HEXATRICK_OWNER_EMAIL',''),'owner_password'=>env('HEXATRICK_OWNER_PASSWORD','')];
+return ['owner_email'=>env('HEXATRICK_OWNER_EMAIL',''),'owner_password'=>env('HEXATRICK_OWNER_PASSWORD',''),'game_url'=>env('HEXATRICK_GAME_URL','http://localhost:8088')];

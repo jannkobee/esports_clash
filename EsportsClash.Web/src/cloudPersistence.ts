@@ -3,7 +3,7 @@ import type { PlayerCard } from './types';
 
 export interface ApiSession {
   token: string;
-  user: { id: number; name: string; email: string; supporter?:import('./supporter').SupporterMembership; theme?:import('./supporter').PersonalTheme };
+  user: { id: number; name: string; email: string; is_evolution_admin?:boolean; supporter?:import('./supporter').SupporterMembership; theme?:import('./supporter').PersonalTheme };
 }
 
 export interface ClubSnapshot {
@@ -16,6 +16,7 @@ export interface ClubSnapshot {
 const API_SESSION_KEY = 'esports-clash-api-session-v1';
 export const API_SESSION_CHANGED = 'esports-clash-account-changed';
 const apiBaseUrl = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
+export const backendPageUrl=(path:string)=>apiBaseUrl.replace(/\/api\/v1$/, '')+path;
 
 export function isCloudPersistenceConfigured(): boolean {
   return apiBaseUrl.length > 0;

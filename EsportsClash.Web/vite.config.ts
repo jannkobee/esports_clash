@@ -34,6 +34,22 @@ export default defineConfig({
     } : {}),
   },
   plugins: [
+    {
+      name: 'moba-availability',
+      configureServer(server) {
+        server.middlewares.use(async (req, res, next) => {
+          if (req.method !== 'POST' || !/^\/api\/rooms(?:\/?|\/[^/]+\/join)$/.test((req.url ?? '').split('?')[0])) return next();
+          try {
+            const base = dockerDev ? 'http://api:8000' : 'http://127.0.0.1:8089';
+            const response = await fetch(`${base}/api/v1/game-modes`, { signal: AbortSignal.timeout(4000) });
+            const manifest = await response.json() as {data?: {moba_enabled?: boolean}};
+            if (response.ok && manifest.data?.moba_enabled === true) return next();
+          } catch {}
+          res.writeHead(403, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'MOBA is disabled by the owner. Existing rooms and recordings are preserved.' }));
+        });
+      },
+    },
     react(),
     tailwindcss(),
     ...(dockerDev ? [{

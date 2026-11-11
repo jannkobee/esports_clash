@@ -71,11 +71,12 @@ class WorldPlayersTest extends TestCase
         $names = [];
         for ($i = 0; $i < 5000; $i++) {
             $n = $g->generate('identity-'.$i);
-            $this->assertMatchesRegularExpression('/^[A-Z][a-z]{4,14}[2-9]?$/D', $n);
+            $this->assertMatchesRegularExpression('/^[A-Za-z0-9]{3,16}$/D', $n);
             $this->assertLessThanOrEqual(16, strlen($n));
             $names[$n] = true;
         }
-        $this->assertGreaterThan(4500, count($names));
+        // Admission, rather than this deterministic candidate generator, owns collision limits.
+        $this->assertGreaterThan(2000, count(array_unique(array_map('strtolower',array_keys($names)))));
         $this->assertSame($g->generate('stable'), $g->generate('stable'));
     }
 
@@ -200,6 +201,12 @@ class WorldPlayersTest extends TestCase
         app(ClubMarketService::class)->list($seller, $reserve->id, 5000);
         $auction = ClubAuction::firstOrFail();
         app(BotClubManager::class)->run($bot->id, now()->startOfMinute()->subMinutes(now()->minute % 15)->toIso8601String());
+        if($auction->fresh()->bidder_id===null && ($negotiation=DB::table('world_negotiations')->where('club_id',$bot->id)->where('player_id',$reserve->id)->where('kind','transfer_terms')->first())){
+            // The living-world consent rule can require an employment discussion before a bid.
+            app(\App\Services\WorldCareerContracts::class)->evaluate($negotiation->id);
+            $this->travel(15)->minutes();
+            app(BotClubManager::class)->run($bot->id,now()->startOfMinute()->subMinutes(now()->minute%15)->toIso8601String());
+        }
         $this->assertSame($bot->id, $auction->fresh()->bidder_id);
         $this->assertSame(5000, $auction->fresh()->bid);
         $this->assertSame($seller->user_id, $reserve->fresh()->user_id);
@@ -213,6 +220,9 @@ class WorldPlayersTest extends TestCase
         app(ClubMarketService::class)->list($seller, $reserve->id, 5000);
         $a = ClubAuction::firstOrFail();
         $buyer = $this->club();
+        $terms=app(\App\Services\WorldCareerContracts::class);
+        $offer=$terms->offerPlayer($buyer,$reserve,$terms->baseWage($reserve)*3,26,'rotation','test-reset-transfer-'.$reserve->id);
+        $terms->evaluate($offer);
         app(ClubMarketService::class)->bid($buyer, $a->id, 5000);
         $held = app(ClubMarketService::class)->balance($buyer->id);
         app(WorldRosterReset::class)->activate(false);

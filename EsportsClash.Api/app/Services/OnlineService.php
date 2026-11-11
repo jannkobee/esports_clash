@@ -18,6 +18,7 @@ class OnlineService
 
     public function provision(User $user, bool $bot = false, bool $allowAdoption = true): OnlineClub
     {
+        if(app(WorldAgents::class)->ready())abort_if(DB::table('world_registry_accounts')->where('user_id',$user->id)->exists(),403,'Registry accounts cannot manage clubs.');
         return DB::transaction(function () use ($user, $bot, $allowAdoption) {
             User::lockForUpdate()->findOrFail($user->id);
             if ($club = OnlineClub::where('user_id', $user->id)->first()) {
@@ -35,6 +36,7 @@ class OnlineService
             $catalog = $this->activeCatalog();
             // All admissions share the catalog lock with kickoff and ownership transfers.
             $catalog=OnlineCatalog::whereKey($catalog->id)->lockForUpdate()->firstOrFail();
+            if($bot)abort_unless(app(LivingWorldEngine::class)->managementAllowed(),409,'Bot management is retired; automatic replacement is disabled.');
             if(!$bot && $allowAdoption && ($adopted=app(BotPopulationService::class)->adopt($user)))return $adopted;
             $lineup = [];
             foreach ($catalog->payload['starter'] as $slot) {
@@ -249,6 +251,13 @@ class OnlineService
                 $coachCards = $draft['coaches'];
             }
             $plan = ['schema' => 1, 'match_id' => $id, 'mode' => 'normal', 'seed' => $seed,
+                'game_mode' => 'fps_mr15_v1',
+                'fps' => [
+                    'format' => 'MR15_TACTICAL_FPS',
+                    'rules_version' => 1,
+                    'simulation_version' => 2,
+                    'map_id' => ['breakwater', 'foundry', 'old-quarter', 'red-mesa', 'northpoint'][$seed % 5],
+                ],
                 'versions' => array_intersect_key($catalog->manifest, array_flip(['catalog_version', 'rules_version', 'policy_version', 'observation_version'])),
                 'blue' => $blue, 'red' => $red,
                 'clubs' => $clubs,
@@ -287,6 +296,10 @@ class OnlineService
                     &&$release['source_hash']===($catalog->manifest['arena_source_hash']??null))?$release:null];
             }
             if ($fixture !== null) $plan['fixture'] = $fixture;
+            if ($blueUser !== null && $redUser !== null && app(FpsIdentityEngine::class)->enabled()) {
+                $plan['fps']['simulation_version']=3;
+                $plan['fps_identity']=app(FpsIdentityEngine::class)->pin($blue,$red,$blueUser,$redUser,collect($catalog->payload['cards'])->keyBy('id')->all());
+            }
             return OnlineMatch::create(['id' => $id, 'blue_user_id' => $blueUser, 'red_user_id' => $redUser,
                 'plan' => $plan, 'plan_hash' => hash('sha256', json_encode($plan, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES))]);
     }
@@ -340,6 +353,7 @@ class OnlineService
     {
         return DB::transaction(function () use ($id, $result, $sequence) {
             $match = OnlineMatch::lockForUpdate()->findOrFail($id);
+            $fps = ($match->plan['game_mode'] ?? null) === 'fps_mr15_v1';
             $hash = hash('sha256', json_encode($result, JSON_THROW_ON_ERROR));
             if ($match->status === 'completed') {
                 if (! hash_equals($match->result_hash, $hash)) $this->invalid('A completed result is immutable.');
@@ -351,18 +365,23 @@ class OnlineService
                 || ! isset($result['report']['durationSeconds']) || $result['report']['durationSeconds'] <= 0
                 || ($result['report']['winner'] ?? '') !== $result['winner']
                 || ($result['report']['seed'] ?? null) !== $match->plan['seed']) $this->invalid('Worker result does not match its allocation.');
-            $nexus = $result['terminal_nexus'] ?? [];
-            // Preserve the live engine's existing red-Nexus-first terminal ordering,
-            // including the rare case where both structures fall in the same tick.
-            $expected = ($nexus['red'] ?? null) === false ? 'blue' : ((($nexus['blue'] ?? null) === false) ? 'red' : null);
-            if (! is_bool($nexus['blue'] ?? null) || ! is_bool($nexus['red'] ?? null) || $expected !== $result['winner']) $this->invalid('A real Nexus finish is required.');
-            foreach (['blue', 'red'] as $side) {
-                $draft = $result['report']['draft'][$side] ?? [];
-                if (array_column(array_column($draft, 'player'), 'id') !== array_column($match->plan[$side], 'card_id')
-                    || array_column(array_column($draft, 'champion'), 'id') !== array_column($match->plan[$side], 'avatar_id')) $this->invalid('Result draft differs from the allocated owned lineup.');
+            if ($fps) {
+                $this->validateFpsReport($result, $match);
+            } else {
+                $nexus = $result['terminal_nexus'] ?? [];
+                // Preserve the live engine's existing red-Nexus-first terminal ordering,
+                // including the rare case where both structures fall in the same tick.
+                $expected = ($nexus['red'] ?? null) === false ? 'blue' : ((($nexus['blue'] ?? null) === false) ? 'red' : null);
+                if (! is_bool($nexus['blue'] ?? null) || ! is_bool($nexus['red'] ?? null) || $expected !== $result['winner']) $this->invalid('A real Nexus finish is required.');
+                foreach (['blue', 'red'] as $side) {
+                    $draft = $result['report']['draft'][$side] ?? [];
+                    if (array_column(array_column($draft, 'player'), 'id') !== array_column($match->plan[$side], 'card_id')
+                        || array_column(array_column($draft, 'champion'), 'id') !== array_column($match->plan[$side], 'avatar_id')) $this->invalid('Result draft differs from the allocated owned lineup.');
+                }
             }
             $performances = $this->validatedPerformances($result, $match);
             $match->update(['status' => 'completed', 'sequence' => $sequence, 'result' => $result, 'result_hash' => $hash, 'completed_at' => now()]);
+            if ($fps && ($match->plan['fixture']['progression']['training']??true)) app(FpsIdentityEngine::class)->apply($match);
             $fixture = null;
             $progression = $match->plan['fixture']['progression'] ?? ['training'=>true,'player_ratings'=>true];
             if (isset($match->plan['fixture'])) {
@@ -380,7 +399,7 @@ class OnlineService
                 if (($fixture = ClubFixture::where('match_id', $match->id)->first()) && $fixture->home_club_id) {
                     $winner = OnlineClub::findOrFail($result['winner'] === 'blue' ? $fixture->home_club_id : $fixture->away_club_id);
                     app(WorldActivityService::class)->record('match:'.$match->id.':completed', 'result', $winner,
-                        ($match->plan['clubs'][$result['winner']] ?? $winner->name).' won a scheduled Arena match.',
+                        ($match->plan['clubs'][$result['winner']] ?? $winner->name).' won a scheduled '.($fps ? 'FPS match.' : 'Arena match.'),
                         ['match_id' => $match->canSpectate() ? $match->id : null, 'team_id' => $winner->id, 'tournament_id' => $fixture->tournament_id]);
                 }
                 if ($fixture?->stage_id) \App\Jobs\ProcessCompetitionEdition::dispatch($fixture->tournament_id)->afterCommit();
@@ -416,6 +435,9 @@ class OnlineService
 
     private function validatedPerformances(array $result, OnlineMatch $match): array
     {
+        if (($match->plan['game_mode'] ?? null) === 'fps_mr15_v1') {
+            return $this->validatedFpsPerformances($result, $match);
+        }
         if (! array_key_exists('player_performance', $result)) {
             return [];
         }
@@ -457,6 +479,114 @@ class OnlineService
         }
         if (count($performance) !== 10) $this->invalid('Worker performance record is incomplete.');
 
+        return $performance;
+    }
+
+    private function validateFpsReport(array $result, OnlineMatch $match): void
+    {
+        $report = $result['report'];
+        $fps = $match->plan['fps'] ?? [];
+        if (($result['game_mode'] ?? null) !== 'fps_mr15_v1'
+            || ($fps['format'] ?? null) !== 'MR15_TACTICAL_FPS'
+            || ($report['format'] ?? null) !== 'MR15_TACTICAL_FPS'
+            || ($report['mapId'] ?? null) !== ($fps['map_id'] ?? null)
+            || ($report['simulationVersion'] ?? 1) !== ($fps['simulation_version'] ?? 1)
+            || ($report['winnerTeam'] ?? null) !== $result['winner']
+            || ($report['winner'] ?? null) !== $result['winner']
+            || ! is_int($report['totalRounds'] ?? null) || $report['totalRounds'] < 1 || $report['totalRounds'] > 1000
+            || ! is_array($report['roundResults'] ?? null) || count($report['roundResults']) !== $report['totalRounds']
+            || ! is_array($report['playerStats'] ?? null) || ! is_array($report['events'] ?? null)
+            || ! is_array($report['finalScore'] ?? null)
+            || ! is_int($report['finalScore']['blue'] ?? null) || ! is_int($report['finalScore']['red'] ?? null)
+            || $report['finalScore'][$result['winner']] < 16
+            || ! is_numeric($report['durationSeconds'] ?? null) || ! is_finite((float) $report['durationSeconds'])
+            || $report['durationSeconds'] > 1000 * 171) {
+            $this->invalid('FPS report does not match its pinned MR15 allocation.');
+        }
+        $rounds = $report['roundResults'];
+        if (($fps['simulation_version']??0)===3) {
+            foreach (['identityExperiment','identityDevelopment','fps_identity','dna'] as $key) if(array_key_exists($key,$report))$this->invalid('Private identity state is forbidden in a public report.');
+            $checkPrivate=function(array $value)use(&$checkPrivate):void {foreach($value as $key=>$item){if($key==='dna')$this->invalid('Private DNA is forbidden in a public report.');if(is_array($item))$checkPrivate($item);}};
+            $checkPrivate($report);
+            foreach($report['events'] as $event) if(($event['type']??null)==='specialty_activated') {
+                $identity=$match->plan['fps_identity']['players'][$event['actorId']??'']??null;
+                if(!$identity || ($event['specialtyId']??null)!==($identity['specialty']['id']??null) || !is_numeric($event['executionBonus']??null) || $event['executionBonus']<=0 || $event['executionBonus']>.04)$this->invalid('Specialty telemetry differs from the pinned identity.');
+            }
+        }
+        $score = ['blue' => 0, 'red' => 0];
+        foreach ($rounds as $index => $round) {
+            if (! is_array($round) || ($round['roundNumber'] ?? null) !== $index + 1
+                || ! in_array($round['winnerTeam'] ?? null, ['blue', 'red'], true)
+                || ! in_array($round['reason'] ?? null, ['attackers_eliminated', 'defenders_eliminated', 'device_exploded', 'device_defused', 'time_expired'], true)
+                || ! is_numeric($round['roundDurationSeconds'] ?? null) || $round['roundDurationSeconds'] <= 0
+                || ! is_int($round['blueScoreAfter'] ?? null) || ! is_int($round['redScoreAfter'] ?? null)) {
+                $this->invalid('FPS report contains an invalid round result.');
+            }
+            $score[$round['winnerTeam']]++;
+            if ($round['blueScoreAfter'] !== $score['blue'] || $round['redScoreAfter'] !== $score['red']) {
+                $this->invalid('FPS report contains an inconsistent round score.');
+            }
+        }
+        if ($score !== $report['finalScore']) $this->invalid('FPS report score does not match its round results.');
+    }
+
+    private function validatedFpsPerformances(array $result, OnlineMatch $match): array
+    {
+        $rows = $result['player_performance'] ?? null;
+        $reportStats = $result['report']['playerStats'] ?? null;
+        if (! is_array($rows) || count($rows) !== 10 || ! is_array($reportStats)) {
+            $this->invalid('FPS performance record must contain ten players.');
+        }
+        $expected = [];
+        foreach (['blue', 'red'] as $side) {
+            foreach ($match->plan[$side] as $slot) $expected[$slot['instance_id']] = $side;
+        }
+        $performance = [];
+        foreach ($rows as $row) {
+            if (! is_array($row) || ! isset($row['instance_id'], $row['team'])
+                || ! isset($expected[$row['instance_id']]) || $expected[$row['instance_id']] !== $row['team']
+                || isset($performance[$row['instance_id']])) {
+                $this->invalid('FPS performance record does not match the allocated players.');
+            }
+            $recorded = $reportStats[$row['instance_id']] ?? null;
+            if (! is_array($recorded) || ($recorded['playerId'] ?? null) !== $row['instance_id']
+                || ($recorded['team'] ?? null) !== $row['team']) {
+                $this->invalid('FPS player statistics do not match the allocated players.');
+            }
+            $stats = [];
+            foreach ([
+                'kills' => 999, 'deaths' => 999, 'assists' => 999, 'damage' => 10000000,
+                'adr' => 100000, 'headshot_rate' => 100, 'plants' => 100, 'defuses' => 100,
+                'first_bloods' => 100, 'trade_kills' => 999, 'clutches_won' => 100,
+                'set_pieces_involved' => 100,
+            ] as $field => $maximum) {
+                $value = $row[$field] ?? null;
+                $reportField = match ($field) {
+                    'headshot_rate' => 'headshotRate',
+                    'first_bloods' => 'firstBloods',
+                    'trade_kills' => 'tradeKills',
+                    'clutches_won' => 'clutchesWon',
+                    'set_pieces_involved' => 'setPiecesInvolved',
+                    default => $field,
+                };
+                if (! is_numeric($value) || ! is_finite((float) $value) || $value < 0 || $value > $maximum
+                    || ! is_numeric($recorded[$reportField] ?? null) || (float) $recorded[$reportField] !== (float) $value) {
+                    $this->invalid('FPS performance record contains an invalid statistic.');
+                }
+                $stats[$field] = (float) $value;
+            }
+            $rating = 5 + ($result['winner'] === $row['team'] ? 1.5 : 0)
+                + min(1.2, $stats['kills'] * 0.18)
+                - min(2, $stats['deaths'] * 0.25)
+                + min(0.8, $stats['adr'] / 100)
+                + min(0.3, $stats['headshot_rate'] / 100)
+                + min(0.2, ($stats['plants'] + $stats['defuses'] + $stats['trade_kills']) * 0.05);
+            $performance[$row['instance_id']] = [
+                'rating' => round(max(1, min(10, $rating)), 2),
+                'stats' => $stats,
+            ];
+        }
+        if (count($performance) !== 10) $this->invalid('FPS performance record is incomplete.');
         return $performance;
     }
 }

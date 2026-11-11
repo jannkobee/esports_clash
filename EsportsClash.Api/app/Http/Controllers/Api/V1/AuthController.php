@@ -59,7 +59,7 @@ class AuthController extends Controller
         return [
             'token' => $user->createToken($deviceName, ['club:read', 'club:write', 'matches:read', 'matches:write'])->plainTextToken,
             'token_type' => 'Bearer',
-            'user' => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email,'supporter'=>app(\App\Services\SupporterMembership::class)->status($user),'theme'=>app(\App\Services\PersonalThemes::class)->effective($user)],
+            'user' => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email,'is_evolution_admin'=>(bool)$user->is_evolution_admin,'supporter'=>app(\App\Services\SupporterMembership::class)->status($user),'theme'=>app(\App\Services\PersonalThemes::class)->effective($user)],
         ];
     }
 }

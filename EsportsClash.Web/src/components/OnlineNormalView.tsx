@@ -2,6 +2,7 @@ import {workspacePath} from '../frontendRoutes';
 import {onWorldUpdate} from '../worldLive';
 import {TournamentLogo} from './TournamentLogo';
 import {SquadRoster} from './SquadRoster';
+import {FpsTacticalSystemEditor} from './FpsTacticalSystemEditor';
 import type {PlayerFormData} from '../playerForm';
 import {WorldPlayerPortrait} from './WorldPlayerPortrait';
 import {FixtureReport} from './FixtureReport';
@@ -12,6 +13,8 @@ import { openAuthentication } from '../authNavigation';
 import { pediaHref } from '../hexapedia';
 import { acceptOnlineSnapshot, type OnlineSnapshot } from '../onlineSpectator';
 import { OnlineMatchViewer } from './OnlineMatchViewer';
+import { FpsMatchView } from './FpsMatchView';
+import type { FpsMatchReport } from '../fps/types';
 import type { VisualRelease } from '../avatarVisualRelease';
 import { ClubCrest, ClubIdentityEditor, type ClubIdentity } from './ClubIdentityEditor';
 import { Activity, ArrowRight, ClipboardList, Clock3, Swords, Users } from 'lucide-react';
@@ -21,8 +24,8 @@ type MatchClub = { logo?:string; id?:number;identity?:ClubIdentity; name: string
 interface FriendlyInvite { id: number; kickoff_at: string; home: MatchClub }
 
 interface Match { id: string; status: string; sequence: number; error?: string;
-  plan: { clubs: { blue: string; red: string }; bot_sides?: ('blue'|'red')[]; fixture?: { id:number; clubs: { blue: MatchClub; red: MatchClub } }; versions: Record<string, string>;visual_releases?:VisualRelease[];
-    intelligence?:{controller:string;release?:{id:string;qualification?:string;generation?:number}|null} }; result?: { winner: string;execution?:{mode:string;notice?:string} } }
+  plan: { clubs: { blue: string; red: string }; game_mode?: string; fps?: { format: string; rules_version: number; map_id: string }; bot_sides?: ('blue'|'red')[]; fixture?: { id:number; clubs: { blue: MatchClub; red: MatchClub } }; versions: Record<string, string>;visual_releases?:VisualRelease[];
+    intelligence?:{controller:string;release?:{id:string;qualification?:string;generation?:number}|null} }; result?: { winner: string; report?: FpsMatchReport; execution?:{mode:string;notice?:string} } }
 interface Dashboard {
   club: { id: number; name: string; tag?: string | null; revision: number; lineup: { instance_id: string }[] };
   cards: { id: string; training_xp: number; form?:PlayerFormData; recent_rating?: number | null; recent_form_rating?: number; recent_form?: ('W'|'L')[]; definition: { id: string; name: string; preferredRole?: string; role?: string; playableRoles?: string[]; ovr: number; wage?:number; nationality?:{code:string;name:string}; stats?:Record<string,number> } }[];
@@ -104,6 +107,10 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
   useEffect(() => {
     if (!session || !selected || !live) return;
     const match = selected; let closed = false, terminal = false, socket: WebSocket | null = null, timer = 0;
+    if (match.plan.game_mode === 'fps_mr15_v1') {
+      setConnection('FPS report');
+      return () => { closed = true; };
+    }
     latestSequence.current = 0; setFrame(null);
     const connect = async () => {
       if (closed) return;
@@ -145,6 +152,16 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
     const timer = window.setInterval(refreshResult, 2000);
     return () => { controller.abort(); window.clearInterval(timer); };
   }, [session, selected?.id, selected?.status, connection]);
+  useEffect(() => {
+    if (!session || selected?.plan.game_mode !== 'fps_mr15_v1' || ['completed', 'failed', 'interrupted'].includes(selected.status)) return;
+    const controller = new AbortController();
+    const refreshMatch = () => void request<{ data: Match }>(`/online/matches/${selected.id}`, session, { signal: controller.signal })
+      .then(result => { if (!controller.signal.aborted) setSelected(current => current?.id === selected.id ? result.data : current); })
+      .catch(problem => { if (!controller.signal.aborted) setError((problem as Error).message); });
+    refreshMatch();
+    const timer = window.setInterval(refreshMatch, 2000);
+    return () => { controller.abort(); window.clearInterval(timer); };
+  }, [session, selected?.id, selected?.status, selected?.plan.game_mode]);
 
   const act = async (path: string, body?: unknown, method = 'POST', success = 'Changes saved.') => {
     setBusy(true); setError(''); setNotice('');
@@ -155,7 +172,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
   };
 
   const replay = async (match = selected, sequence = replaySequence) => {
-    if (!match) return;
+    if (!match || match.plan.game_mode === 'fps_mr15_v1') return;
     setLive(false);
     setReplaySequence(sequence);
     try {
@@ -169,7 +186,8 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
     try {
       const { data: match } = await request<{ data: Match }>(`/online/matches/${id}`, session);
       setFrame(null); setSelected(match);
-      if (['completed','interrupted'].includes(match.status)) await replay(match, match.sequence);
+      if (match.plan.game_mode === 'fps_mr15_v1') setLive(false);
+      else if (['completed','interrupted'].includes(match.status)) await replay(match, match.sequence);
       else setLive(true);
     } catch (problem) { setError((problem as Error).message); }
   }
@@ -200,7 +218,18 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
           </span>;
         })}
       </h3>
-      <p className="club-status">{selected.status === 'interrupted' ? 'Interrupted recording' : selected.status === 'completed' ? 'Final' : live ? connection : 'Replay'} · {Math.floor((frame?.snapshot.second ?? 0) / 60)}:{String(Math.floor((frame?.snapshot.second ?? 0) % 60)).padStart(2, '0')}{selected.result && ` · ${selected.plan.clubs[selected.result.winner as 'blue' | 'red']} wins`}</p>
+      <p className="club-status">{selected.plan.game_mode === 'fps_mr15_v1'
+        ? `${selected.status === 'completed' ? 'Final' : selected.status === 'failed' ? 'Failed' : 'FPS match'}${selected.result ? ` · ${selected.plan.clubs[selected.result.winner as 'blue' | 'red']} wins` : ''}`
+        : <>{selected.status === 'interrupted' ? 'Interrupted recording' : selected.status === 'completed' ? 'Final' : live ? connection : 'Replay'} · {Math.floor((frame?.snapshot.second ?? 0) / 60)}:{String(Math.floor((frame?.snapshot.second ?? 0) % 60)).padStart(2, '0')}{selected.result && ` · ${selected.plan.clubs[selected.result.winner as 'blue' | 'red']} wins`}</>}</p>
+      {selected.plan.game_mode === 'fps_mr15_v1' ? selected.result?.report
+        ? <FpsMatchView
+          report={selected.result.report}
+          blueTeamName={selected.plan.clubs.blue}
+          redTeamName={selected.plan.clubs.red}
+          onExit={() => { setSelected(null); setLive(false); }}
+        />
+        : <p className="club-help">{selected.status === 'completed' ? 'The completed FPS match has no verified replay report.' : 'The FPS match report will appear when server simulation finishes.'}</p>
+        : <>
       {frame && <dl className="club-score">
         {(['blue', 'red'] as const).map(side => {
           const kills = frame.snapshot.frame.champions.filter(unit => unit.team === side).reduce((total, unit) => total + unit.kills, 0);
@@ -231,6 +260,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
           void replay(selected, Math.min(sequence, frame?.sequence??sequence));
         }}><time>{Math.floor(event.second / 60)}:{String(Math.floor(event.second % 60)).padStart(2, '0')}</time><span>{event.text.replace(/^[\p{Extended_Pictographic}\uFE0F ]+/u, '')}</span></button>
       </li>)}</ol></>}
+      </>}
       {selected.status==='completed'&&selected.plan.fixture?.id&&<FixtureReport id={selected.plan.fixture.id}/>}
       <details className="club-technical"><summary>Recording details</summary>
         <p>Server sequence {frame?.sequence ?? 0} · Match {selected.id}</p>
@@ -322,7 +352,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         <div>
           <p className="lineup-workbench__eyebrow"><ClipboardList size={14}/>{editingFixture ? 'FIXTURE ORDERS' : 'SQUAD MANAGEMENT'}</p>
           <h3>{editingFixture ? `${editingFixture.clubs.blue.name} vs ${editingFixture.clubs.red.name}` : 'Your starting five'}</h3>
-          <p className="club-help">{editingFixture ? 'Set the five players for this fixture. Your coaching staff will draft their avatars.' : 'Set your starters and review their full player profiles. Your coaching staff drafts the avatars for each match.'}</p>
+          <p className="club-help">{editingFixture ? 'Set the five players for this tactical FPS fixture.' : 'Set your starters and review their FPS skills, personalities and role fit.'}</p>
         </div>
         <div className="lineup-workbench__badge"><Swords size={15}/><span>STAFF-LED DRAFT</span></div>
       </div>
@@ -343,6 +373,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         {data.ticket?.status === 'queued' && <><p className="text-sm text-amber-200">Searching for another manager. If no one joins in 15 seconds, we’ll match you with an available bot.</p><button className={button} onClick={() => void act('/online/queue', undefined, 'DELETE')}>Leave queue</button></>}
       </div>}
     </section>}
+    {!broadcastOnly && data && session && (!scheduled || clubTab === 'lineup') && !editingFixture && <FpsTacticalSystemEditor session={session} players={data.cards}/>}
     {!scheduled && !!data?.matches.length && <section className="rounded-2xl border border-slate-800 bg-slate-900 p-4"><h3 className="font-black">Match history</h3><div className="mt-3 flex flex-wrap gap-2">{data.matches.map(match => <button key={match.id} className={button} onClick={() => void openMatch(match.id)}>{match.status} · {match.id.slice(0, 8)}</button>)}</div></section>}
   </div>;
 }

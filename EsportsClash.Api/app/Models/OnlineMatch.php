@@ -11,6 +11,14 @@ class OnlineMatch extends Model
     protected $guarded = [];
     protected function casts(): array { return ['plan' => 'array', 'result' => 'array', 'started_at' => 'immutable_datetime', 'completed_at' => 'immutable_datetime', 'spectator_ready' => 'boolean']; }
 
+    public function toArray(): array
+    {
+        $out=parent::toArray();
+        unset($out['plan']['fps_identity']);
+        unset($out['result']['report']['identityExperiment'],$out['result']['report']['identityDevelopment']);
+        return $out;
+    }
+
     public function isBeforeKickoff(): bool
     {
         $kickoff = $this->plan['fixture']['kickoff_at'] ?? null;

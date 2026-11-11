@@ -167,6 +167,7 @@ Artisan::command('fixtures:lock-due', function () {
 
 Artisan::command('market:close-due', function (\App\Services\ClubMarketService $market) {
     if (! \Illuminate\Support\Facades\Schema::hasTable('club_auctions')) return;
+    if(now('UTC')->minute%5===0)app(\App\Services\WorldBusinessEngine::class)->obligations();
     \App\Models\ClubAuction::where('status', 'open')->where('closes_at', '<=', now())->chunkById(100, function ($auctions) use ($market) {
         foreach ($auctions as $auction) $market->close($auction->id);
     });
@@ -223,7 +224,7 @@ Artisan::command('world:rookies {--activate}',function(\App\Services\WorldRoster
 
 Artisan::command('world:populate {--target=32}',function(\App\Services\BotPopulationService $population){
     $target=(int)$this->option('target');abort_if($target<0||$target>10000,422,'Use a target between zero and 10,000 per request.');
-    \App\Jobs\PopulateBotClubs::dispatch($target);$this->info('Queued bounded bot population reviews for target '.$target.'.');
+    \App\Jobs\PopulateBotClubs::dispatch($target, true);$this->info('Queued an explicit founding population request for target '.$target.'.');
 })->purpose('Create a bounded population of unique-player bot clubs and fill open tournament places');
 
 Artisan::command('competitions:year {--partial}',function(\App\Services\CompetitionCalendar $calendar){
@@ -272,21 +273,30 @@ Artisan::command('clubs:weekly', function (\App\Services\ClubDevelopmentService 
         foreach ($clubs as $club) {
             app(\App\Services\StaffContracts::class)->expire($club);
             $market->payroll($club);
-            $development->manageBot($club, $market, $online);
         }
     });
-})->purpose('Post training and payroll and run bot recruitment and lineup selection');
+})->purpose('Post authoritative training, contract expiry and payroll; optional management uses bounded world batches');
 \Illuminate\Support\Facades\Schedule::command('clubs:weekly')->hourly()->withoutOverlapping(30);
 
-Artisan::command('world:tick', function () {
-    if (! \Illuminate\Support\Facades\Schema::hasTable('club_world_turns')) return;
-    $window = now()->startOfMinute()->subMinutes(now()->minute % 15)->utc()->toIso8601String();
-    \App\Models\OnlineClub::where('is_bot', true)->chunkById(100, function ($clubs) use ($window) {
-        foreach ($clubs as $club) \App\Jobs\ManageBotClub::dispatch($club->id, $window);
-    });
-    $this->info('Queued the current Hexatrick bot management window.');
-})->purpose('Review bot recruitment, legal lineups, surplus auctions, needed bids and tournament entries');
-\Illuminate\Support\Facades\Schedule::command('world:tick')->everyFifteenMinutes()->withoutOverlapping(10);
+Artisan::command('world:tick', function (\App\Services\LivingWorldEngine $engine) {
+    if (!$engine->ready() || !config('living_world.enabled',true)) return;
+    \App\Jobs\AdvanceLivingWorld::enqueue();
+    $this->info('Queued one bounded, low-priority living-world batch.');
+})->purpose('Coalesce management and persistent Wire personalities without per-club job fan-out');
+\Illuminate\Support\Facades\Schedule::command('world:tick')->everyFiveMinutes()->withoutOverlapping(4);
+
+Artisan::command('world:obligations',function(\App\Services\WorldBusinessEngine $world){$world->obligations();})
+    ->purpose('Settle binding sponsorship and contract dates even when optional autonomy is paused');
+// Scheduled binding maintenance shares market:close-due's existing process; no extra worker/cron boot.
+
+Artisan::command('world:rehearse {--seed=41} {--days=90} {--clubs=12} {--human-percent=25}',function(){
+    $args=[PHP_BINARY,base_path('tools/rehearse-world.php')];foreach(['seed','days','clubs','human-percent'] as $key)$args[]='--'.$key.'='.$this->option($key);
+    $result=\Illuminate\Support\Facades\Process::timeout(600)->run($args);$this->line($result->output());if(!$result->successful())$this->error($result->errorOutput());return $result->exitCode();
+})->purpose('Run a seeded virtual-clock career/economy/calendar rehearsal in a separate guarded in-memory process');
+
+Artisan::command('world:voices',function(){
+    \App\Jobs\AdvanceLivingWorld::enqueue();
+})->purpose('Advance local character goals, memories and source-linked Wire reactions; no AI provider required');
 
 Artisan::command('avatars:tick',function(\App\Services\AvatarEvolutionService $service){
     $settings=\App\Models\AvatarEvolutionSetting::current();$settings->update(['heartbeat_at'=>now()]);
@@ -377,7 +387,7 @@ Artisan::command('world:launch-championship',function(\App\Services\LaunchChampi
 })->purpose('Create the owner-approved 2026 simulated launch archive; future rounds use scheduled Arena fixtures');
 Artisan::command('world:media-tick',function(\App\Services\LaunchChampionship $archive){
     if(!\Illuminate\Support\Facades\Schema::hasTable('launch_history_games'))return;
-    $archive->tick();\App\Jobs\PublishWorldCoverage::dispatch();
+    $archive->tick();app(\App\Services\WorldMedia::class)->live();
 });
 \Illuminate\Support\Facades\Schedule::command('world:media-tick')->everyMinute()->withoutOverlapping(2);
 

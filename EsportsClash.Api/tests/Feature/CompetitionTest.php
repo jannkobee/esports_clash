@@ -2,7 +2,7 @@
 namespace Tests\Feature;
 
 use App\Jobs\LockClubFixture;
-use App\Models\{ClubFixture,ClubTournament,CompetitionDefinition,NationalTeam,OnlineCatalog,OnlineClub,OwnedPlayerCard,User};
+use App\Models\{ClubFixture,ClubTournament,CompetitionDefinition,NationalTeam,OnlineCatalog,OnlineClub,OnlineMatch,OwnedPlayerCard,User};
 use App\Services\{BotPopulationService,CompetitionAdministration,CompetitionCalendar,CompetitionEngine,CompetitionPairing,CompetitionQualification,CompetitionRankings,GlickoRating,NationalTeamService,OnlineService,WorldPlayerIdentity};
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,20 +23,35 @@ class CompetitionTest extends TestCase
             'registration_opens_at'=>now()->subDay(),'registration_closes_at'=>now()->addDay(),'starts_at'=>now()->addDays(2),'ends_at'=>now()->addMonths(2),'semifinals_at'=>now()->addDays(2),'final_at'=>now()->addMonths(2),'champion_prize'=>0,'runner_up_prize'=>0]);
     }
     private function enter(ClubTournament $e,int $count):array {$ids=[];for($i=0;$i<$count;$i++){$c=$this->club();app(CompetitionQualification::class)->enter($e->id,'club',$c->id,['method'=>'open']);$ids[]=$c->id;}return $ids;}
+    private function fpsResult(OnlineMatch $match): array {
+        $playerStats=[];$performance=[];
+        foreach(['blue','red'] as $side)foreach($match->plan[$side] as $slot){$id=$slot['instance_id'];
+            $playerStats[$id]=['playerId'=>$id,'name'=>$match->plan['player_identities'][$id]??'Alias','team'=>$side,
+                'kills'=>1,'deaths'=>0,'assists'=>0,'damage'=>100,'adr'=>6.25,'headshotRate'=>30,'plants'=>0,'defuses'=>0,
+                'firstBloods'=>0,'tradeKills'=>0,'clutchesWon'=>0,'setPiecesInvolved'=>0];
+            $performance[]=['instance_id'=>$id,'team'=>$side,'kills'=>1,'deaths'=>0,'assists'=>0,'damage'=>100,'adr'=>6.25,
+                'headshot_rate'=>30,'plants'=>0,'defuses'=>0,'first_bloods'=>0,'trade_kills'=>0,'clutches_won'=>0,'set_pieces_involved'=>0];
+        }
+        $rounds=[];for($round=1;$round<=16;$round++)$rounds[]=['roundNumber'=>$round,'winnerTeam'=>'blue','winnerSide'=>'attackers',
+            'reason'=>'attackers_eliminated','roundDurationSeconds'=>75,'blueScoreAfter'=>$round,'redScoreAfter'=>0];
+        return ['match_id'=>$match->id,'game_mode'=>'fps_mr15_v1','seed'=>$match->plan['seed'],'versions'=>$match->plan['versions'],'winner'=>'blue',
+            'report'=>['format'=>'MR15_TACTICAL_FPS','simulationVersion'=>2,'winner'=>'blue','winnerTeam'=>'blue','seed'=>$match->plan['seed'],
+                'mapId'=>$match->plan['fps']['map_id'],'totalRounds'=>16,'durationSeconds'=>1200,'finalScore'=>['blue'=>16,'red'=>0],
+                'roundResults'=>$rounds,'playerStats'=>$playerStats,'events'=>[]],
+            'player_performance'=>$performance];
+    }
     private function settleFixture(ClubFixture $f):void {
         $this->travelTo($f->kickoff_at);(new LockClubFixture($f->id))->handle(app(OnlineService::class));$f->refresh();$this->assertNull($f->hold_reason);$match=$f->match;$this->assertNotNull($match);
-        $draft=[];foreach(['blue','red'] as $side)$draft[$side]=array_map(fn($slot)=>['player'=>['id'=>$slot['card_id']],'champion'=>['id'=>$slot['avatar_id']]],$match->plan[$side]);
-        $result=['match_id'=>$match->id,'seed'=>$match->plan['seed'],'versions'=>$match->plan['versions'],'winner'=>'blue','terminal_nexus'=>['blue'=>true,'red'=>false],
-            'report'=>['durationSeconds'=>1200,'winner'=>'blue','seed'=>$match->plan['seed'],'draft'=>$draft]];
+        $result=$this->fpsResult($match);
         app(OnlineService::class)->settle($match->id,$result,2400);
         app(OnlineService::class)->settle($match->id,$result,2400);
     }
     public function test_real_year_rollover_leap_dates_and_midyear_launch():void {
-        $c=app(CompetitionCalendar::class);$this->assertSame(2027,$c->year());$this->assertCount(4,$c->initialize(2027));$this->assertCount(4,$c->initialize(2027));$this->assertDatabaseCount('club_tournaments',4);
+        $c=app(CompetitionCalendar::class);$this->assertSame(2027,$c->year());$this->assertCount(22,$c->initialize(2027));$this->assertCount(22,$c->initialize(2027));$this->assertDatabaseCount('club_tournaments',22);
         $this->assertSame('2028-02-29',$c->date(2028,'02-29 18:00')->format('Y-m-d'));
         $this->travelTo(CarbonImmutable::parse('2027-12-31T23:59:59Z'));$this->assertSame(2027,$c->year());
-        $this->travelTo(CarbonImmutable::parse('2028-01-01T00:00:00Z'));$this->assertSame(2028,$c->year());$this->assertCount(4,$c->initialize(2028));
-        $this->assertDatabaseCount('club_tournaments',8);
+        $this->travelTo(CarbonImmutable::parse('2028-01-01T00:00:00Z'));$this->assertSame(2028,$c->year());$this->assertCount(22,$c->initialize(2028));
+        $this->assertDatabaseCount('club_tournaments',44);
         $this->travelTo(CarbonImmutable::parse('2029-08-01T00:00:00Z'));$this->assertCount(0,$c->initialize(2029));$this->assertCount(2,$c->initialize(2029,true));
         $this->assertSame(2,ClubTournament::where('year',2029)->count());
     }
@@ -104,7 +119,7 @@ class CompetitionTest extends TestCase
         foreach($clubs as $i=>$club)DB::table('competition_ratings')->insert(['system'=>'HGR','participant_id'=>$club->id,'score'=>300-$i,'geography_path'=>'[]']);
         $paths=[['key'=>'ranked','method'=>'ranking','slots'=>2]];$rules=$e->regulations;$rules['qualification']=$paths;
         $e->update(['qualification'=>$paths,'regulations'=>$rules]);$q=app(CompetitionQualification::class);$q->generate($e->id);
-        (new \App\Jobs\BuildCompetitionRankingSnapshot('HGR','edition:'.$e->id.':ranked'))->handle(app(CompetitionRankings::class));$q->generate($e->id);
+        (new \App\Jobs\BuildCompetitionRankingSnapshot('HGR','edition:'.$e->id.':ranking'))->handle(app(CompetitionRankings::class));$q->generate($e->id);
         $this->assertDatabaseCount('competition_invitations',2);$invite=DB::table('competition_invitations')->where('participant_id',$clubs[0]->id)->first();
         $q->respond($invite->id,false,$clubs[0]->user_id);$q->generate($e->id);
         $this->assertDatabaseHas('competition_invitations',['participant_id'=>$clubs[2]->id,'slot_key'=>$invite->slot_key,'status'=>'pending']);

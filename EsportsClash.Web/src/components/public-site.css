@@ -15,7 +15,8 @@
 .public-brand svg { width: 31px; height: 36px; }
 .public-brand > span { color: var(--public-ink); font-weight: 750; font-size: 12px; letter-spacing: .14em; line-height: 1.4; }
 .public-brand > span > span { display: block; letter-spacing: .29em; }
-.public-nav { display: flex; align-items: center; gap: 30px; font-size: 13px; }
+.public-nav { display: flex; align-items: center; gap: 30px; font-size: 13px; flex-shrink: 0; }
+.public-nav > a { white-space: nowrap; flex-shrink: 0; }
 .public-nav > a:not(.public-button) { color: #b7c5bf; text-decoration: none; }
 .public-nav > a:hover { color: #eaf0ed; }
 .public-button { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 46px; padding: 12px 20px; border-radius: 5px; font-weight: 650; line-height: 1.4; font-size: 13px; text-decoration: none; cursor: pointer; border: 1px solid #ffffff28; transition: background .15s ease; }

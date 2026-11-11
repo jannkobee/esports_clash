@@ -24,7 +24,7 @@ class IndependentOrganizers
             $org=DB::table('competition_organizers')->where('slug',$slug)->first();
             if(!$org){$id=DB::table('competition_organizers')->insertGetId(['slug'=>$slug,'name'=>$name,'category'=>'independent','status'=>'verified','branding'=>json_encode(['fictional'=>true,'managed_by'=>'world-organizer']),'created_at'=>now(),'updated_at'=>now()]);}
             else{$id=$org->id;abort_unless(($org->user_id??null)===null,409,'A human-owned organizer cannot be automated.');}
-            DB::table('world_sponsor_ledger')->insertOrIgnore(['organizer_id'=>$id,'reference'=>'sponsor:'.$id.':'.$now->format('Y-m'),'kind'=>'Monthly fictional sponsorship','amount'=>3000000,'created_at'=>now()]);
+            if(app(WorldCareers::class)->ready())app(WorldSponsorships::class)->fundOrganizer($id,300000,'organizer-grant:'.$id.':'.$now->format('Y-m'));
             if(DB::table('world_sponsor_ledger')->where('organizer_id',$id)->sum('amount')<300000){DB::table('world_organizer_cycles')->where('id',$turn->id)->update(['status'=>'deferred','reason'=>'Sponsorship budget exhausted.']);return;}
             $rules=['capacity'=>8,'minimum'=>4,'fixture_interval_hours'=>1,'geographies'=>[(int)$pool->geography_id],'tiers'=>[(int)$pool->tier],
                 'stages'=>[['format'=>'single_elimination','advance'=>1]],'qualification'=>[['key'=>'open','method'=>'open','slots'=>8]],

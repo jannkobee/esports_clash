@@ -13,6 +13,15 @@ class OnlineTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function agreeTransfer(\App\Models\OnlineClub $club, OwnedPlayerCard $player): void
+    {
+        $service = app(\App\Services\WorldCareerContracts::class);
+        $id = $service->offerPlayer($club, $player, $service->baseWage($player) * 3, 26, 'rotation', 'test-transfer-' . $player->id);
+        $service->evaluate($id);
+        $this->assertDatabaseHas('world_negotiations', ['id' => $id, 'status' => 'accepted']);
+    }
+
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,6 +42,50 @@ class OnlineTest extends TestCase
         $service = app(OnlineService::class);
         $service->queue($this->account());
         return $service->queue($this->account())['match'];
+    }
+
+    private function fpsWorkerResult(OnlineMatch $match): array
+    {
+        $playerStats = [];
+        $performances = [];
+        foreach (['blue', 'red'] as $side) {
+            foreach ($match->plan[$side] as $slot) {
+                $id = $slot['instance_id'];
+                $playerStats[$id] = [
+                    'playerId' => $id, 'name' => $match->plan['player_identities'][$id] ?? 'Alias',
+                    'team' => $side, 'kills' => 1, 'deaths' => 0, 'assists' => 0,
+                    'damage' => 100, 'adr' => 6.25, 'headshotRate' => 30,
+                    'plants' => 0, 'defuses' => 0, 'firstBloods' => 0, 'tradeKills' => 0,
+                    'clutchesWon' => 0, 'setPiecesInvolved' => 0,
+                ];
+                $performances[] = [
+                    'instance_id' => $id, 'team' => $side, 'kills' => 1, 'deaths' => 0,
+                    'assists' => 0, 'damage' => 100, 'adr' => 6.25, 'headshot_rate' => 30,
+                    'plants' => 0, 'defuses' => 0, 'first_bloods' => 0, 'trade_kills' => 0,
+                    'clutches_won' => 0, 'set_pieces_involved' => 0,
+                ];
+            }
+        }
+        $rounds = [];
+        for ($round = 1; $round <= 16; $round++) {
+            $rounds[] = [
+                'roundNumber' => $round, 'winnerTeam' => 'blue', 'winnerSide' => 'attackers',
+                'reason' => 'attackers_eliminated', 'roundDurationSeconds' => 60,
+                'blueScoreAfter' => $round, 'redScoreAfter' => 0,
+            ];
+        }
+        return [
+            'match_id' => $match->id, 'game_mode' => 'fps_mr15_v1',
+            'versions' => $match->plan['versions'], 'seed' => $match->plan['seed'], 'winner' => 'blue',
+            'report' => [
+                'format' => 'MR15_TACTICAL_FPS', 'simulationVersion' => 2, 'winner' => 'blue', 'winnerTeam' => 'blue',
+                'mapId' => $match->plan['fps']['map_id'], 'seed' => $match->plan['seed'],
+                'totalRounds' => 16, 'durationSeconds' => 960,
+                'finalScore' => ['blue' => 16, 'red' => 0],
+                'roundResults' => $rounds, 'playerStats' => $playerStats, 'events' => [],
+            ],
+            'player_performance' => $performances,
+        ];
     }
 
     public function test_hybrid_allocation_pins_baseline_and_does_not_load_an_unqualified_command_model():void {
@@ -77,11 +130,7 @@ class OnlineTest extends TestCase
     }
     private function workerResult(OnlineMatch $match): array
     {
-        $draft = [];
-        foreach (['blue', 'red'] as $side) $draft[$side] = array_map(fn ($slot) => ['player' => ['id' => $slot['card_id']], 'champion' => ['id' => $slot['avatar_id']]], $match->plan[$side]);
-        return ['schema' => 1, 'match_id' => $match->id, 'seed' => $match->plan['seed'], 'versions' => $match->plan['versions'],
-            'winner' => 'blue', 'terminal_nexus' => ['blue' => true, 'red' => false],
-            'report' => ['seed' => $match->plan['seed'], 'winner' => 'blue', 'durationSeconds' => 600, 'draft' => $draft]];
+        return $this->fpsWorkerResult($match);
     }
 
     public function test_match_allocation_pins_visual_versions_for_reconnect_and_replay(): void
@@ -113,6 +162,7 @@ class OnlineTest extends TestCase
     {
         $first = $this->account();
         $club = app(OnlineService::class)->provision($first);
+        $first->forceFill(['supporter_until' => now()->addMonth()])->save();
         $payload = ['revision' => $club->fresh()->revision, 'name' => 'Manila Five', 'tag' => 'MNL', 'identity' => [
             'country' => 'PH', 'crest' => ['shape' => 'shield', 'mark' => 'star'],
             'colors' => ['primary' => '#112233', 'secondary' => '#ffffff', 'accent' => '#ffcc00'],
@@ -127,6 +177,7 @@ class OnlineTest extends TestCase
         $this->putJson('/api/v1/online/club/identity', $payload)->assertUnprocessable();
         $second = $this->account();
         app(OnlineService::class)->provision($second);
+        $second->forceFill(['supporter_until' => now()->addMonth()])->save();
         $this->putJson('/api/v1/online/club/identity', $payload)->assertUnprocessable()->assertJsonValidationErrors('tag');
         $this->assertSame('Manila Five', $club->fresh()->name);
     }
@@ -176,8 +227,12 @@ class OnlineTest extends TestCase
         $this->getJson('/api/v1/clashbook')->assertOk()
             ->assertJsonPath('data.fixtures.0.winner', $match->plan['clubs']['blue'])
             ->assertJsonPath('data.fixtures.0.watch_match_id', $match->id)
-            ->assertJsonPath('data.standings.0.clubs.0.wins', 1)
             ->assertJsonMissingPath('data.fixtures.0.home_orders');
+        $this->assertSame(10, app(\App\Services\PlayerRecordBook::class)->capture($match->id));
+        $career = \Illuminate\Support\Facades\DB::table('player_career_records')->where('match_id', $match->id)->first();
+        $this->assertSame(6.25, (float) $career->adr);
+        $this->assertSame(30.0, (float) $career->headshot_rate);
+        $this->assertSame(1.0, (float) json_decode($career->fps_stats, true)['kills']);
         $this->account();
         $this->getJson('/api/v1/online/matches/'.$match->id)->assertOk()
             ->assertJsonMissingPath('data.plan.blue')->assertJsonMissingPath('data.plan.seed');
@@ -185,7 +240,7 @@ class OnlineTest extends TestCase
         $this->travel(8)->days();
         $this->artisan('clubs:weekly')->assertSuccessful();
         $this->artisan('clubs:weekly')->assertSuccessful();
-        $this->assertSame(10, OwnedPlayerCard::findOrFail($home->lineup[0]['instance_id'])->training_xp);
+        $this->assertSame(17, OwnedPlayerCard::findOrFail($home->lineup[0]['instance_id'])->training_xp);
         $this->assertDatabaseCount('club_money_entries', 4);
     }
 
@@ -210,6 +265,7 @@ class OnlineTest extends TestCase
 
     public function test_bot_club_uses_scouts_and_bids_in_the_shared_market(): void
     {
+        $this->freezeTime();
         $seller = $this->account();
         app(OnlineService::class)->provision($seller);
         $this->artisan('clubs:create-bot', ['tag' => 'BOTMNL', 'name' => 'Manila Relay'])->assertSuccessful();
@@ -223,12 +279,15 @@ class OnlineTest extends TestCase
         $this->postJson('/api/v1/online/market/auctions', ['card_id' => $reserve, 'opening_bid' => 10_000])->assertNoContent();
         $auction = \App\Models\ClubAuction::firstOrFail();
         Sanctum::actingAs($club->user);
+        $this->agreeTransfer($club, $auction->card);
         $this->postJson('/api/v1/online/market/auctions/'.$auction->id.'/bid', ['amount' => 10_000])->assertNoContent();
         $this->assertSame($club->id, $auction->fresh()->bidder_id);
         $this->assertSame(\App\Services\ClubMarketService::OPENING_BALANCE - 10_000, app(\App\Services\ClubMarketService::class)->balance($club->id));
         $this->postJson('/api/v1/online/market/auctions', ['card_id' => $club->lineup[0]['instance_id'], 'opening_bid' => 10_000])->assertUnprocessable();
         $this->artisan('clubs:weekly')->assertSuccessful();
         $this->artisan('clubs:weekly')->assertSuccessful();
+        $this->travel(25)->hours();
+        $this->artisan('market:close-due')->assertSuccessful();
         $this->assertSame(6, OwnedPlayerCard::where('user_id', $club->user_id)->count());
     }
 
@@ -247,9 +306,11 @@ class OnlineTest extends TestCase
         $this->postJson($bid, ['amount' => 10_000])->assertUnprocessable();
         $firstBidder = $this->account();
         $firstClub = $service->provision($firstBidder);
+        $this->agreeTransfer($firstClub, $auction->card);
         $this->postJson($bid, ['amount' => 10_000])->assertNoContent();
         $winner = $this->account();
         $winnerClub = $service->provision($winner);
+        $this->agreeTransfer($winnerClub, $auction->card);
         $this->postJson($bid, ['amount' => 10_001])->assertUnprocessable();
         $this->postJson($bid, ['amount' => 15_000])->assertNoContent();
         $market = app(\App\Services\ClubMarketService::class);
@@ -441,7 +502,7 @@ class OnlineTest extends TestCase
         $this->assertNull($match->fresh()->result);
     }
 
-    public function test_real_terminal_allocation_settles_once_and_cannot_be_rewritten(): void
+    public function test_verified_fps_allocation_settles_once_and_cannot_be_rewritten(): void
     {
         $match = $this->allocated();
         $service = app(OnlineService::class);
@@ -456,14 +517,44 @@ class OnlineTest extends TestCase
         $service->settle($match->id, [...$result, 'winner' => 'red'], 1001);
     }
 
-    public function test_seed_version_draft_and_nexus_mismatches_cannot_settle(): void
+    public function test_fps_allocation_settles_verified_mr15_report_and_rejects_a_wrong_map(): void
+    {
+        $match = $this->allocated();
+        $this->assertSame('fps_mr15_v1', $match->plan['game_mode']);
+        $this->assertContains($match->plan['fps']['map_id'], ['breakwater', 'foundry', 'old-quarter', 'red-mesa', 'northpoint']);
+        $result = $this->fpsWorkerResult($match);
+        $invalid = $result;
+        $invalid['report']['mapId'] = $match->plan['fps']['map_id'] === 'breakwater' ? 'foundry' : 'breakwater';
+        try {
+            app(OnlineService::class)->settle($match->id, $invalid, 100);
+            $this->fail('A report for a different map must not settle.');
+        } catch (\Illuminate\Validation\ValidationException) {
+            $this->assertNull($match->fresh()->result);
+        }
+        app(OnlineService::class)->settle($match->id, $result, 100);
+        $this->assertSame('completed', $match->fresh()->status);
+        $this->assertSame(10, \Illuminate\Support\Facades\DB::table('club_player_match_ratings')->where('match_id', $match->id)->count());
+        $match->update([
+            'spectator_ready' => true,
+            'plan' => [...$match->plan, 'fixture' => ['kickoff_at' => now()->subMinute()->toIso8601String()]],
+        ]);
+        $this->flushHeaders();
+        $this->account();
+        $this->getJson('/api/v1/online/matches/'.$match->id)
+            ->assertOk()
+            ->assertJsonPath('data.plan.game_mode', 'fps_mr15_v1')
+            ->assertJsonPath('data.plan.fps.map_id', $match->plan['fps']['map_id'])
+            ->assertJsonPath('data.result.report.format', 'MR15_TACTICAL_FPS');
+    }
+
+    public function test_seed_version_map_and_score_mismatches_cannot_settle(): void
     {
         $match = $this->allocated();
         $base = $this->workerResult($match);
         $invalid = [array_replace_recursive($base, ['seed' => $base['seed'] + 1]),
             array_replace_recursive($base, ['versions' => ['policy_version' => 'forged']]),
-            array_replace_recursive($base, ['terminal_nexus' => ['red' => true]]),
-            array_replace_recursive($base, ['report' => ['draft' => ['blue' => [['player' => ['id' => 'forged']]]]]])];
+            array_replace_recursive($base, ['report' => ['mapId' => 'forged-map']]),
+            array_replace_recursive($base, ['report' => ['roundResults' => [['blueScoreAfter' => 99]]]])];
         foreach ($invalid as $result) {
             try { app(OnlineService::class)->settle($match->id, $result, 100); $this->fail('Invalid worker result accepted'); }
             catch (\Illuminate\Validation\ValidationException) { $this->assertNull($match->fresh()->result); }

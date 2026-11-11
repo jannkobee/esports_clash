@@ -1,3 +1,4 @@
+import {RouteErrorBoundary} from './components/RouteErrorBoundary';
 import {startWorldLive} from './worldLive';
 import {ClubLoader} from './components/ClubLoader';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
@@ -9,6 +10,7 @@ import { LandingPage } from './components/LandingPage';
 import { AuthenticationPage } from './components/AuthenticationPage';
 import './components/club-management.css';
 
+const FpsSimulationLab=lazy(()=>import('./components/FpsSimulationLab').then(module=>({default:module.FpsSimulationLab})));
 const Workspace = lazy(() => import('./App'));
 const Hexapedia = lazy(() => import('./components/Hexapedia').then(module => ({ default: module.Hexapedia })));
 
@@ -22,7 +24,7 @@ function AccountRedirect() {
   return <ClubLoader label="Opening your club"/>;
 }
 
-export default function AppRouter() {
+function RouterContent() {
   useEffect(startWorldLive,[]);
   const [route, setRoute] = useState(readRoute);
   const { session, checking, connectionError, retry, signOut } = useAccount();
@@ -37,7 +39,7 @@ export default function AppRouter() {
     return () => window.removeEventListener('hashchange', update);
   }, []);
   useEffect(() => {
-    const title = reference ? 'Hexapedia' : workspace ? 'Your club' : route === 'register' ? 'Create an account' : route === 'sign-in' ? 'Sign in' : 'Build your esports club';
+    const title = route === 'fps-simulation' ? 'FPS broadcast room' : reference ? 'Hexapedia' : workspace ? 'Your club' : route === 'register' ? 'Create an account' : route === 'sign-in' ? 'Sign in' : 'Build your esports club';
     if(!reference)document.title = `${title} · Hexatrick`;
     if (route !== 'how-it-works') window.scrollTo({ top: 0 });
   }, [route, workspace]);
@@ -51,6 +53,7 @@ export default function AppRouter() {
     try { await signOut(); } catch (error) { setSignOutError((error as Error).message); } finally { setSigningOut(false); }
   }}>Sign out</button><a className="public-text-link" href="#welcome">Back to the landing page</a></div></section></PublicSiteLayout>;
 
+  if (route==='fps-simulation') return <PublicSiteLayout><Suspense fallback={<ClubLoader label="Opening the FPS simulation"/>}><FpsSimulationLab/></Suspense></PublicSiteLayout>;
   if (workspace) return session ? <Suspense fallback={<ClubLoader label="Opening your club"/>}><GameContentProvider><Workspace /></GameContentProvider></Suspense> : <ClubLoader label="Opening sign-in"/>;
   if (route === 'sign-in' || route === 'register') return session ? <AccountRedirect /> : <PublicSiteLayout><AuthenticationPage mode={route} /></PublicSiteLayout>;
   if (reference) return <PublicSiteLayout><section className="public-avatarpedia"><Suspense fallback={<ClubLoader label="Opening Hexapedia"/>}><Hexapedia onWatch={id => {
@@ -60,3 +63,5 @@ export default function AppRouter() {
   }} /></Suspense></section></PublicSiteLayout>;
   return <PublicSiteLayout><LandingPage /></PublicSiteLayout>;
 }
+
+export default function AppRouter(){return <RouteErrorBoundary><RouterContent/></RouteErrorBoundary>;}

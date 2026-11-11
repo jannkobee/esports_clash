@@ -17,5 +17,6 @@ class ManageBotClub implements ShouldQueue, ShouldBeUniqueUntilProcessing
     public function uniqueId(): string { return $this->clubId.':'.$this->window; }
     public function middleware(): array { return [(new WithoutOverlapping('bot-club:'.$this->clubId))->releaseAfter(20)->expireAfter(90)]; }
     public function backoff(): array { return [10, 60, 120]; }
-    public function handle(BotClubManager $manager): void { $manager->run($this->clubId, $this->window); }
+    // Drain pre-upgrade fan-out safely; all optional work now shares the coordinator budget.
+    public function handle(BotClubManager $manager): void { AdvanceLivingWorld::enqueue(); }
 }

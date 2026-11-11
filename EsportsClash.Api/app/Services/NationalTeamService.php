@@ -71,16 +71,12 @@ class NationalTeamService
 
     public function lineup(int $team,int $eventId,OnlineCatalog $catalog): array
     {
-        $squad=DB::table('national_squads')->where('national_team_id',$team)->where('tournament_id',$eventId)->lockForUpdate()->first();
+        $squad=DB::table('national_squads')->where('national_team_id',$team)->where('tournament_id',$eventId)->lockForUpdate()->first();$automatic=!$squad;
         if(!$squad){
             // Bounded role search over verified owned players. No manufactured players or substitute ownership.
-            $pool=$this->eligiblePool($team)->items();$defs=collect($catalog->payload['cards'])->keyBy('id');
-            $slots=$catalog->payload['starter'];$chosen=[];$used=[];
-            foreach($slots as $slot){$avatar=collect($catalog->payload['avatars'])->firstWhere('id',$slot['avatar_id']);
-                foreach($pool as $player){if(isset($used[$player->id]) || $player->catalog_id!==$catalog->id)continue;$d=$defs->get($player->definition_id);if(!$d)continue;
-                    $roles=array_filter([...($d['playableRoles']??[]),$d['preferredRole']??null,$d['role']??null]);
-                    if(in_array($avatar['primaryRole'],$roles,true)||in_array($avatar['secondaryRole']??'',$roles,true)){$chosen[]=['instance_id'=>$player->id,'avatar_id'=>$slot['avatar_id']];$used[$player->id]=true;break;}}
-            }
+            $pool=app(WorldNationalSelection::class)->order($team,$this->eligiblePool($team)->items());$defs=collect($catalog->payload['cards'])->keyBy('id');
+            $slots=$catalog->payload['starter'];$pool=array_values(array_filter($pool,fn($p)=>$p->catalog_id===$catalog->id));
+            $chosen=app(WorldNationalSelection::class)->assign($pool,$slots,$defs->all(),collect($catalog->payload['avatars'])->keyBy('id')->all());$used=array_fill_keys(array_column($chosen,'instance_id'),true);
             abort_unless(count($chosen)===5,409,'This nation cannot field a legal verified squad; review is required.');
             $id=DB::table('national_squads')->insertGetId(['national_team_id'=>$team,'tournament_id'=>$eventId,'lineup'=>json_encode($chosen),'locked_at'=>now(),'created_at'=>now(),'updated_at'=>now()]);
             DB::table('national_squad_players')->insert(array_map(fn($p)=>['squad_id'=>$id,'player_id'=>$p],array_keys($used)));
@@ -95,6 +91,7 @@ class NationalTeamService
             $commit=DB::table('player_international_commitments')->where('player_id',$slot['instance_id'])->first();
             abort_if($commit && $commit->national_team_id!==$team,422,'International allegiance prevents this call-up.');
         }
+        if($automatic)app(WorldNationalSelection::class)->record($team,$eventId,$lineup,$squad->id);
         return $lineup;
     }
 

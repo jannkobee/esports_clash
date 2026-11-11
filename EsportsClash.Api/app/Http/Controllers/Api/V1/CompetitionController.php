@@ -218,7 +218,8 @@ class CompetitionController extends Controller
     public function populate(Request $r,CompetitionAdministration $admin)
     {
         $admin->admin($r->user());$d=$r->validate(['target'=>'required|integer|min:0|max:10000']);
-        \App\Jobs\PopulateBotClubs::dispatch($d['target']);$admin->audit($r->user(),'bots.population-requested','world',$d);return response()->json(['data'=>['queued'=>true,'target'=>$d['target']]],202);
+        abort_unless(app(\App\Services\LivingWorldEngine::class)->managementAllowed(),409,'Bot management has retired.');
+        \App\Jobs\PopulateBotClubs::dispatch($d['target'],true);$admin->audit($r->user(),'bots.population-requested','world',$d);return response()->json(['data'=>['queued'=>true,'target'=>$d['target']]],202);
     }
     public function wildcard(Request $r,int $id,CompetitionAdministration $admin,CompetitionQualification $qualification)
     {

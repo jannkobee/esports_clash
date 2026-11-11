@@ -14,6 +14,15 @@ class ClubManagementFlowsTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function agreeTransfer(\App\Models\OnlineClub $club, OwnedPlayerCard $player): void
+    {
+        $service = app(\App\Services\WorldCareerContracts::class);
+        $id = $service->offerPlayer($club, $player, $service->baseWage($player) * 3, 26, 'rotation', 'test-transfer-' . $player->id);
+        $service->evaluate($id);
+        $this->assertDatabaseHas('world_negotiations', ['id' => $id, 'status' => 'accepted']);
+    }
+
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -105,7 +114,7 @@ class ClubManagementFlowsTest extends TestCase
         return $online->queue(User::factory()->create())['match'];
     }
 
-    public function test_new_players_start_with_passable_form(): void
+    public function test_new_players_have_no_invented_recent_form(): void
     {
         [$user] = $this->club();
         Sanctum::actingAs($user);
@@ -114,7 +123,7 @@ class ClubManagementFlowsTest extends TestCase
 
         $this->assertCount(5, $players);
         foreach ($players as $player) {
-            $this->assertEquals(6.0, $player['recent_form_rating']);
+            $this->assertNull($player['recent_form_rating']); // No invented match evidence before the first verified game.
             $this->assertSame([], $player['recent_form']);
         }
     }
@@ -190,6 +199,8 @@ class ClubManagementFlowsTest extends TestCase
         $proposerBalance = $market->balance($proposer->id);
         $recipientBalance = $market->balance($recipient->id);
 
+        $this->agreeTransfer($recipient, $offeredPlayer);
+        $this->agreeTransfer($proposer, $requestedPlayer);
         $proposal = $market->proposeTrade($proposer, $recipient, [$offeredPlayer->id], [$requestedPlayer->id], 100_000, 50_000);
 
         $this->assertSame(4_900_000, $market->balance($proposer->id));
@@ -225,6 +236,8 @@ class ClubManagementFlowsTest extends TestCase
         ])->assertUnprocessable();
         $this->assertDatabaseCount('club_trade_proposals', 0);
 
+        $this->agreeTransfer($recipient, $offeredPlayer);
+        $this->agreeTransfer($proposer, $requestedPlayer);
         $rechecked = $market->proposeTrade($proposer, $recipient, [$offeredPlayer->id], [$requestedPlayer->id], 15_000, 0);
         $offeredPlayer->update(['user_id' => $recipient->user_id]);
         try {

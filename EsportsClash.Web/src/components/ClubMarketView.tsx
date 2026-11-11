@@ -1,3 +1,4 @@
+import {fpsRoleFit} from '../fps/fpsRoleFit';
 import {onWorldUpdate} from '../worldLive';
 import { useEffect, useState } from 'react';
 import { isCloudPersistenceConfigured, request } from '../cloudPersistence';
@@ -9,7 +10,7 @@ import {ReserveTransferListing} from './ReserveTransferListing';
 import './transfer-exchange.css';
 import { ArrowLeftRight, Coins, Gavel, GraduationCap, Handshake, Users } from 'lucide-react';
 
-export interface PlayerCard {primaryPersonality?:string|null;secondaryPersonality?:string|null;
+export interface PlayerCard {fpsIdentity?:import('../fps/fpsIdentity').FpsScoutingProfile;primaryPersonality?:string|null;secondaryPersonality?:string|null;
   presentation?:import('../supporter').PlayerPresentation|null;
   id: string; name: string; role?: string | null; overall: number; age?: number | null; wage?: number | null;
   nationality?: { code: string; name: string } | null; stats?: Record<string, number>;
@@ -139,10 +140,10 @@ export function ClubMarketView() {
             <div className="trade-player-columns">
               <fieldset><legend>Your reserve players</legend>{market.reserves.map(player => <label key={player.id} className="trade-player-option">
                 <input type="checkbox" checked={offeredIds.includes(player.id)} onChange={event => setOfferedIds(current => event.target.checked ? [...current, player.id] : current.filter(id => id !== player.id))}/>
-                <span>{player.name}<small>{player.role} · {toScale10(player.overall)}/10</small></span></label>)}</fieldset>
+                <span>{player.name}<small>{fpsRoleFit(player.stats)} · {toScale10(player.overall)}/10</small></span></label>)}</fieldset>
               <fieldset><legend>{target.club.name} · available reserves</legend>{target.players.map(player => <label key={player.id} className="trade-player-option">
                 <input type="checkbox" checked={requestedIds.includes(player.id)} onChange={event => setRequestedIds(current => event.target.checked ? [...current, player.id] : current.filter(id => id !== player.id))}/>
-                <span>{player.name}<small>{player.role} · {toScale10(player.overall)}/10</small></span></label>)}
+                <span>{player.name}<small>{fpsRoleFit(player.stats)} · {toScale10(player.overall)}/10</small></span></label>)}
                 {!target.players.length && <p className="club-help">No eligible reserve players are currently available.</p>}</fieldset>
             </div>
             <div className="flex flex-wrap gap-3">

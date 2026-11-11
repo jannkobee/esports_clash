@@ -1,4 +1,5 @@
 import {PlayerForm} from './PlayerForm';
+import {FPS_ATTRIBUTE_LABELS} from '../fps/fpsPersonality';
 import { pediaHref, pediaMoney, pediaTime, type PlayerCareerData } from '../hexapedia';
 import { toScale10 } from '../marketBatchEngine';
 import { LabelIcon } from './LabelIcon';
@@ -60,7 +61,7 @@ export function PlayerCareerRecord({ career }: { career?: PlayerCareerData }) {
     </section>
     <h3><LabelIcon name="development"/> Observed development</h3>
     {career.development.length ? <div className="pedia-table-scroll"><table className="pedia-table">
-      <thead><tr><th>Observed · Manila</th><th>Overall</th><th>Training XP</th>{['Laning', 'Teamfighting', 'Game sense', 'Leadership', 'Clutch', 'Stamina', 'Flexibility'].map(label => <th key={label}>{label}</th>)}</tr></thead>
+      <thead><tr><th>Observed · Manila</th><th>Overall</th><th>Training XP</th>{Object.values(FPS_ATTRIBUTE_LABELS).map(label => <th key={label}>{label}</th>)}</tr></thead>
       <tbody>{career.development.map(snapshot =>
         <tr key={snapshot.observed_at}><td>{pediaTime(snapshot.observed_at)}</td><td>{toScale10(snapshot.overall)}/10</td><td>{snapshot.training_xp}</td>{['lan', 'tf', 'iq', 'ldr', 'clu', 'sta', 'flx'].map(key => <td key={key}>{toScale10(snapshot.stats[key] ?? 0)}/10</td>)}</tr>)}</tbody>
     </table></div> : <p className="pedia-muted">Development observations start with the next club report. Earlier values are not reconstructed.</p>}

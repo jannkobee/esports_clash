@@ -22,6 +22,7 @@ x-dev-api: &dev-api
     - ./.local-tools/trellis2/data/output:/app/storage/trellis-sources:rw
     - ./EsportsClash.Api/public:/app/public:ro
     - ./EsportsClash.Api/tests:/app/tests:ro
+    - ./EsportsClash.Api/tools:/app/tools:ro
 
 services:
   runner:
@@ -80,7 +81,8 @@ services:
 
   worker:
     <<: *dev-api
-    command: [php, artisan, 'queue:listen', '--sleep=3', '--timeout=30', '--tries=10']
+    # Persistent PHP avoids reloading the framework for every small job. Restart on code changes.
+    command: [php, artisan, 'queue:work', '--queue=default,world', '--sleep=5', '--timeout=30', '--tries=10', '--max-time=3600', '--max-jobs=250', '--memory=192']
 
   scheduler:
     <<: *dev-api
@@ -134,7 +136,7 @@ services:
     cpus: 1
 
   match-worker:
-    image: teamfight-online-worker:lifecycle-stream-20261108
+    image: teamfight-online-worker:fps-identity-v3-20261110
     mem_limit: 3g
     memswap_limit: 4g
     build:

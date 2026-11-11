@@ -23,18 +23,20 @@ class ClubDevelopmentService
                             ->update(['processed_at' => now()]);
                         if ($updated) {
                             OwnedPlayerCard::withoutGlobalScopes()->whereKey($session->card_id)->increment('training_xp', $session->xp);
+                            app(FpsIdentityEngine::class)->train($session->card_id,$session->match_id,(int)$session->xp);
                         }
                     }, 3);
                 }
             });
     }
 
-    public function manageBot(OnlineClub $club, ClubMarketService $market, OnlineService $online): void
+    public function manageBot(OnlineClub $club, ClubMarketService $market, OnlineService $online, ?int $targetRoster = null,bool $allowScouting=true): void
     {
         if (! $club->is_bot) {
             return;
         }
-        if (OwnedPlayerCard::where('user_id', $club->user_id)->count() < config('world_players.scout_target_roster')
+        $targetRoster ??= app(WorldManagerPolicy::class)->assess($club, OwnedPlayerCard::where('user_id', $club->user_id)->count(), $market->balance($club->id), $market->weeklyWages($club))['target_roster'];
+        if ($allowScouting && OwnedPlayerCard::where('user_id', $club->user_id)->count() < $targetRoster
             && $market->balance($club->id) >= $market->weeklyWages($club) * config('world_players.bot_wage_reserve_weeks') + ClubMarketService::SCOUT_COST) {
             try {
                 $market->scout($club, $club->academy_opened_at?->lte(now()->subWeek()) ?? false);

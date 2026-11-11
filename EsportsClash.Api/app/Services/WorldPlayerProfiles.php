@@ -64,6 +64,10 @@ class WorldPlayerProfiles
         DB::table('player_national_eligibilities')->insertOrIgnore(['player_id' => $player->id, 'geography_id' => $nationality,
             'evidence' => 'Server-generated fictional birth nationality; world profile v1', 'verified_by' => null, 'verified_at' => now()]);
         app(WorldPersonBiography::class)->initialize($player);
+        if(app(FpsIdentityEngine::class)->ready()) {
+            $template=collect($catalog->payload['cards'])->firstWhere('id',$player->definition_id);
+            if($template)app(FpsIdentityProfiles::class)->initialize($player,$this->definition($player,$template),true);
+        }
     }
 
     public function definition(OwnedPlayerCard $player, array $template): array
@@ -71,6 +75,10 @@ class WorldPlayerProfiles
         $out = $template;
         $out['name'] = $player->persona_name ?? $template['name'];
         $out['presentation'] = $player->presentation;
+        if (Schema::hasTable('fps_player_identities')) {
+            $identity=DB::table('fps_player_identities')->where('player_id',$player->id)->first();
+            if($identity)$out['fpsIdentity']=app(FpsIdentityProfiles::class)->scouting($identity);
+        }
         $profile = $this->enabled() ? $player->world_profile : null;
         if (! $profile) {
             return $out;

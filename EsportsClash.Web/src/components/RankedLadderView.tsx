@@ -449,7 +449,7 @@ export const RankedLadderView: React.FC<Props> = ({
               <span>Chess-Style Ladder Hierarchy</span>
             </div>
             <div className="cm-panel-body text-xs text-[#313a48] leading-relaxed">
-              Esports Clash utilizes authentic Chess Elo ratings beginning at <strong>300 Rating (Pawn tier)</strong>.
+              Hexatrick uses Chess Elo ratings beginning at <strong>300 Rating (Pawn tier)</strong>.
               Every match evaluates your opponent&apos;s rating relative to yours: triumphing against a higher-rated
               master awards abundant rating, while win streaks accelerate your ascent toward Super Grandmaster.
             </div>

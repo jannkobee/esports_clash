@@ -38,7 +38,17 @@ class CompetitionEngine
             $results=[];
             foreach($fixtures as $f){
                 if($f->match?->status!=='completed')return;
-                abort_unless($f->match->result_hash && (($f->match->result['terminal_nexus']['red']??true)===false || ($f->match->result['terminal_nexus']['blue']??true)===false),409,'Only verified Nexus finishes advance competitions.');
+                $fps=($f->match->plan['game_mode']??null)==='fps_mr15_v1';
+                if($fps){
+                    $report=$f->match->result['report']??[];
+                    abort_unless($f->match->result_hash && ($report['format']??null)==='MR15_TACTICAL_FPS'
+                        && ($report['winnerTeam']??null)===$f->match->result['winner']
+                        && ($report['mapId']??null)===($f->match->plan['fps']['map_id']??null)
+                        && is_int($report['totalRounds']??null)&&$report['totalRounds']>=1
+                        && ($report['finalScore'][$f->match->result['winner']]??0)>=16,409,'Only verified FPS match reports advance competitions.');
+                }else{
+                    abort_unless($f->match->result_hash && (($f->match->result['terminal_nexus']['red']??true)===false || ($f->match->result['terminal_nexus']['blue']??true)===false),409,'Only verified Nexus finishes advance competitions.');
+                }
                 $w=$f->match->result['winner']==='blue'?$f->home_entry_id:$f->away_entry_id;
                 $l=$w===$f->home_entry_id?$f->away_entry_id:$f->home_entry_id;
                 DB::table('competition_results')->insertOrIgnore(['fixture_id'=>$f->id,'match_id'=>$f->match_id,'tournament_id'=>$id,

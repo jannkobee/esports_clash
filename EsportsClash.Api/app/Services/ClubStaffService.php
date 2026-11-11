@@ -35,6 +35,8 @@ class ClubStaffService
         ],
     ];
 
+    public function definitions(): array { return self::ROLES; }
+
     public function ensure(OnlineClub $club): void
     {
         foreach (self::ROLES as $role => $definition) {

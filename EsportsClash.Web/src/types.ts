@@ -51,6 +51,7 @@ export interface PlayerCard {
   personality: string;
   primaryPersonality?: import('./playerPersonality').PersonalityId;
   secondaryPersonality?: import('./playerPersonality').PersonalityId;
+  fpsIdentity?: import('./fps/fpsIdentity.ts').FpsScoutingProfile;
   badges: string[];
   signatureChampions: string[];
   morale: number;   // 0-100

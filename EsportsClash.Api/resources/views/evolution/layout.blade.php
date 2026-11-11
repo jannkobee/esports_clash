@@ -40,6 +40,8 @@
 <main id="main-content">
     @auth
     <nav class="report-nav mechanical-tabs" aria-label="Control sections">
+        <a href="{{ route('game-modes.index') }}" @if(request()->routeIs('game-modes.*')) aria-current="page" @endif><span class="tab-label">GAME MODES</span></a>
+        <a href="{{ route('world.dashboard') }}" @if(request()->routeIs('world.dashboard')) aria-current="page" @endif><span class="tab-idx">H</span><span class="tab-label">HEXATRICK WORLD</span></a>
         <a wire:navigate href="{{ route('registry.index') }}" @if(request()->routeIs('registry.*') || (request()->routeIs('management.*') && request()->route('kind') === 'avatar')) aria-current="page" @endif>
             <span class="tab-idx">01</span><span class="tab-label">AVATARS</span>
         </a>

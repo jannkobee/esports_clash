@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Jobs\PopulateBotClubs;
 use App\Models\ClubTournament;
 use App\Models\CompetitionGeography;
 use App\Models\OnlineClub;
@@ -16,6 +15,7 @@ class BotPopulationService
 {
     public function populate(int $target): array
     {
+        abort_unless(app(LivingWorldEngine::class)->managementAllowed(), 409, 'Bot management has retired. Existing human clubs and Wire personalities remain active.');
         abort_if($target < 0 || $target > 10000, 422, 'Choose a bounded target of up to 10,000 bot clubs per batch.');
         $created = 0;
         for ($i = OnlineClub::where('is_bot', true)->count(); $i < $target; $i++) {
@@ -75,7 +75,7 @@ class BotPopulationService
         DB::table('club_manager_history')->where('club_id', $club->id)->whereNull('ends_at')->update(['ends_at' => now()]);
         DB::table('club_manager_history')->insert(['club_id' => $club->id, 'user_id' => $user->id, 'kind' => 'human', 'starts_at' => now()]);
         app(WorldActivityService::class)->record('club:'.$club->id.':human-manager:'.$user->id, 'club', $club, $club->name.' appointed '.$user->name.' as manager.', ['team_id' => $club->id]);
-        PopulateBotClubs::dispatch(config('world_players.minimum_bot_population'))->afterCommit();
+        app(LivingWorldEngine::class)->takenOver($club);
 
         return $club;
     }
