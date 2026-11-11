@@ -89,6 +89,12 @@ class Handler(BaseHTTPRequestHandler):
                     assert type(plan['seed']) is int and 0 < plan['seed'] <= 2147483647
                     assert plan['versions'] == {key: MANIFEST[key] for key in ('catalog_version', 'rules_version', 'policy_version', 'observation_version')}
                     assert all(len(plan[side]) == 5 for side in ('blue', 'red'))
+                    game_mode = plan.get('game_mode')
+                    assert game_mode in (None, 'fps_mr15_v1')
+                    if game_mode == 'fps_mr15_v1':
+                        assert plan['fps']['format'] == 'MR15_TACTICAL_FPS'
+                        assert plan['fps']['rules_version'] == 1
+                        assert plan['fps']['map_id'] in ('breakwater', 'foundry', 'old-quarter', 'red-mesa', 'northpoint')
                     assert plan.get('player_profile_schema', 0) in (0, 1)
                     if plan.get('player_profile_schema') == 1:
                         profiles = plan.get('player_profiles', {})
@@ -117,7 +123,10 @@ class Handler(BaseHTTPRequestHandler):
                     return self.reply(409, {'error': 'Worker busy; allocation remains queued'})
                 if parts[2] not in PROCESSES or PROCESSES[parts[2]].poll() is not None:
                     with open(folder / 'worker.log', 'ab') as log:
-                        PROCESSES[parts[2]] = subprocess.Popen(['node', '/online/browser-worker.mjs', str(folder)],
+                        worker = (['node', '--experimental-strip-types', '/online/fps-match-worker.mjs', str(folder)]
+                            if plan.get('game_mode') == 'fps_mr15_v1'
+                            else ['node', '/online/browser-worker.mjs', str(folder)])
+                        PROCESSES[parts[2]] = subprocess.Popen(worker,
                             cwd='/workspace/EsportsClash.Web', stdout=log, stderr=subprocess.STDOUT)
                 return self.reply(202, state)
             if not (folder / 'state.json').exists():

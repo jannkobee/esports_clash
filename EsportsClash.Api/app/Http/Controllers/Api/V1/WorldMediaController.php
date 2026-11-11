@@ -31,12 +31,16 @@ class WorldMediaController extends Controller
         },3);return response()->noContent();
     }
     public function feed(Request $r){
-        $v=$r->validate(['before'=>'nullable|integer|min:1','kind'=>'nullable|in:result,tournament,spotlight,launch_archive,community','match'=>'nullable|uuid','post'=>'nullable|integer|min:1']);
-        $q=DB::table('world_news_posts as p')->leftJoin('world_media_personalities as n','n.id','=','p.personality_id')->leftJoin('users as u','u.id','=','p.author_id')->leftJoin('online_matches as m','m.id','=','p.match_id')->whereNull('p.hidden_at');
+        $v=$r->validate(['before'=>'nullable|integer|min:1','kind'=>'nullable|in:result,tournament,spotlight,launch_archive,community,world_activity,arena_update,reaction','account'=>'nullable|integer|min:1','match'=>'nullable|uuid','post'=>'nullable|integer|min:1']);
+        $q=DB::table('world_news_posts as p')->leftJoin('world_media_personalities as n','n.id','=','p.personality_id')->leftJoin('world_wire_accounts as a','a.id','=','p.wire_account_id')->leftJoin('users as u','u.id','=','p.author_id')->leftJoin('online_matches as m','m.id','=','p.match_id')->whereNull('p.hidden_at');
+        if(isset($v['account'])){
+            $account=DB::table('world_wire_accounts')->find($v['account']);abort_unless($account,404);
+            $q->where(function($q)use($account){$q->where('p.wire_account_id',$account->id);if($account->kind==='talent')$q->orWhere('p.personality_id',(int)$account->source_id);});
+        }
         if(isset($v['post']))$q->where('p.id',$v['post']);
         if(isset($v['before']))$q->where('p.id','<',$v['before']);if(isset($v['kind']))$q->where('p.kind',$v['kind']);if(isset($v['match']))$q->where('p.match_id',$v['match']);
         $q->selectSub(DB::table('world_news_comments as c')->selectRaw('COUNT(*)')->whereColumn('c.post_id','p.id')->whereNull('c.hidden_at'),'comments');
-        $posts=$q->orderByDesc('p.id')->addSelect(['p.*','n.name as personality','n.role','n.bio','u.name as manager','m.status as match_status'])->limit(25)->get()->map(function($p){$p->facts=json_decode($p->facts??'{}',true);$p->comments=(int)$p->comments;unset($p->event_key);return $p;});
+        $posts=$q->orderByDesc('p.id')->addSelect(['p.*','n.bio','a.handle','a.kind as account_kind','a.source_id as account_source_id','u.name as manager','m.status as match_status'])->selectRaw('COALESCE(a.name,n.name) as personality, COALESCE(a.role,n.role) as role')->limit(25)->get()->map(function($p){$p->facts=json_decode($p->facts??'{}',true);if(isset($p->facts['source_quote'])&&is_string($p->facts['source_quote']))$p->facts['source_quote_display']=app(\App\Services\WorldNewsPresentation::class)->body($p->facts['source_quote']);$p->comments=(int)$p->comments;$p->published_at=\Illuminate\Support\Carbon::parse($p->published_at,'UTC')->toIso8601String();if($p->personality_id)$p->body=app(\App\Services\WorldNewsPresentation::class)->body($p->body);unset($p->event_key);return $p;});
         return ['data'=>$posts,'next_before'=>$posts->count()===25?$posts->last()->id:null,'personalities'=>DB::table('world_media_personalities')->whereIn('role',['caster','analyst','streamer','host'])->orderBy('id')->limit(12)->get()];
     }
     public function comments(Request $r,int $id){
@@ -54,8 +58,12 @@ class WorldMediaController extends Controller
         DB::table('world_news_comments')->where('id',$id)->update(['hidden_at'=>now()]);return response()->noContent();
     }
     public function publish(Request $r){
-        $v=$r->validate(['body'=>'required|string|min:1|max:2000']);abort_if(trim($v['body'])==='',422);
-        $id=DB::table('world_news_posts')->insertGetId(['event_key'=>'community:'.\Illuminate\Support\Str::uuid(),'author_id'=>$r->user()->id,'kind'=>'community','headline'=>'From the club office','body'=>trim($v['body']),'published_at'=>now()]);return response()->json(['data'=>['id'=>$id]],201);
+        $v=$r->validate(['body'=>'required|string|min:1|max:2000','account_id'=>'nullable|integer|min:1']);abort_if(trim($v['body'])==='',422);
+        if(isset($v['account_id'])){
+            $a=DB::table('world_wire_accounts')->where('id',$v['account_id'])->where('kind','organizer')->first();abort_unless($a,403);
+            $a=app(\App\Services\WireAccounts::class)->refresh($a);abort_unless($a&&$a->owner_id===$r->user()->id,403);
+        }
+        $id=DB::table('world_news_posts')->insertGetId(['event_key'=>'community:'.\Illuminate\Support\Str::uuid(),'author_id'=>$r->user()->id,'wire_account_id'=>$v['account_id']??null,'kind'=>'community','headline'=>isset($v['account_id'])?'From the organizer desk':'From the club office','body'=>trim($v['body']),'published_at'=>now()]);return response()->json(['data'=>['id'=>$id]],201);
     }
     public function hidePost(Request $r,int $id){
         $p=DB::table('world_news_posts')->find($id);abort_unless($p,404);abort_unless($p->author_id===$r->user()->id || $r->user()->is_evolution_admin,403);

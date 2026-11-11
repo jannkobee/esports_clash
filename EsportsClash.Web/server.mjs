@@ -167,6 +167,16 @@ async function serveStatic(req, res, pathname) {
   } catch { json(res, 404, { error: 'Build the site before starting the production server.' }); }
 }
 
+async function requireMobaAvailability() {
+  const contentUrl = process.env.GAME_CONTENT_URL ?? process.env.INTELLIGENCE_POLICY_URL;
+  const modesUrl = process.env.GAME_MODES_URL ?? (contentUrl ? contentUrl.replace(/(game-content|intelligence-policy)$/, 'game-modes') : 'http://api:8000/api/v1/game-modes');
+  try {
+    const response = await fetch(modesUrl, { cache: 'no-store', signal: AbortSignal.timeout(4000) });
+    if (response.ok && (await response.json()).data?.moba_enabled === true) return;
+  } catch {}
+  throw Error('MOBA rooms are disabled. Existing recordings and room data are preserved.');
+}
+
 export function makeServer() {
   return createServer(async (req, res) => {
     try {
@@ -175,6 +185,7 @@ export function makeServer() {
       for (const [code, room] of rooms) if (Date.now() - room.touched > roomLifetimeMs) rooms.delete(code);
       const segments = pathname.split('/').filter(Boolean);
       if (req.method === 'POST' && pathname === '/api/rooms') {
+        await requireMobaAvailability();
         const data = await body(req);
         await refreshRoomIntelligence();
         let contentCatalog;
@@ -188,6 +199,7 @@ export function makeServer() {
       const code = segments[2];
       if (!/^[A-F0-9]{6}$/i.test(code || '')) return json(res, 404, { error: 'Room not found.' });
       if (req.method === 'POST' && segments[3] === 'join') {
+        await requireMobaAvailability();
         const data = await body(req);
         return json(res, 200, joinRoom(code, data.roster, data.coach, data.rating));
       }

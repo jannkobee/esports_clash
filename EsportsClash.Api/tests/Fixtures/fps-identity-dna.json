@@ -1,0 +1,44 @@
+{
+  "00000000-0000-4000-8000-000000000001": {
+    "riskTolerance": 76,
+    "emotionalStability": 76,
+    "coachability": 68,
+    "tacticalDiscipline": 41,
+    "adaptability": 73,
+    "creativity": 19,
+    "confidenceVolatility": 16,
+    "socialTrust": 88,
+    "leadershipInitiative": 84,
+    "competitiveDrive": 44,
+    "teamOrientation": 57,
+    "preparationPreference": 50
+  },
+  "2eb5ab37-64ac-46c5-a641-00ee4a082bd1": {
+    "riskTolerance": 49,
+    "emotionalStability": 5,
+    "coachability": 82,
+    "tacticalDiscipline": 97,
+    "adaptability": 99,
+    "creativity": 67,
+    "confidenceVolatility": 60,
+    "socialTrust": 57,
+    "leadershipInitiative": 94,
+    "competitiveDrive": 53,
+    "teamOrientation": 28,
+    "preparationPreference": 59
+  },
+  "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee": {
+    "riskTolerance": 12,
+    "emotionalStability": 83,
+    "coachability": 77,
+    "tacticalDiscipline": 89,
+    "adaptability": 97,
+    "creativity": 29,
+    "confidenceVolatility": 68,
+    "socialTrust": 25,
+    "leadershipInitiative": 41,
+    "competitiveDrive": 81,
+    "teamOrientation": 71,
+    "preparationPreference": 35
+  }
+}

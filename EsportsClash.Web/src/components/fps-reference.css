@@ -1,0 +1,22 @@
+.fps-reference{padding:24px;max-width:1380px;margin:auto;color:var(--personal-text,#e4e0e1)}
+.fps-reference__heading{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:20px}
+.fps-reference h1{display:flex;gap:10px;align-items:center;font-size:28px;font-weight:750;margin:7px 0}
+.fps-reference p{font-size:14px;line-height:1.7;margin:8px 0;color:inherit}
+.fps-reference__nav{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0}
+.fps-reference__nav a{border:1px solid #605458;padding:9px 13px;border-radius:5px;font-size:13px;text-decoration:none}
+.fps-reference__nav a[aria-current=page]{background:var(--personal-accent,#a62b42);color:#fff;border-color:transparent}
+.fps-reference__intro{display:flex;gap:18px;border-left:3px solid var(--personal-accent,#bd4058);background:var(--personal-surface,#292628);padding:23px;margin:20px 0}
+.fps-reference h2{font-size:18px;font-weight:700;margin:3px 0 10px}
+.fps-reference__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:16px;margin:20px 0}
+.fps-reference__card,.fps-reference__portal{min-width:0;padding:22px;border:1px solid #51474b;border-radius:7px;background:var(--personal-surface,#292628)}
+.fps-reference__portal{display:block;text-decoration:none}.fps-reference__portal h2,.fps-reference__card h2 a{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.fps-reference__card h2 a{text-decoration:none}.fps-reference__category{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#e9a4b3}
+.fps-reference__card dl{margin:17px 0}.fps-reference__card dl>div{display:flex;justify-content:space-between;gap:18px;padding:8px 0;border-bottom:1px solid #50474a;font-size:13px}.fps-reference__card dt{opacity:.75}.fps-reference__card dd{text-align:right;max-width:65%;overflow-wrap:anywhere}
+.fps-reference .fps-reference__note{padding:13px 16px;border:1px solid #51474b;font-size:13px}.fps-reference__tradeoff{opacity:.75}
+.fps-reference__filters{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin:22px 0}.fps-reference__filters label{display:flex;gap:9px;align-items:center}.fps-reference__filters input,.fps-reference__filters select{padding:10px;border:1px solid #675b60;border-radius:4px;background:var(--personal-surface,#292628);color:inherit;max-width:100%}.fps-reference__filters>span{margin-left:auto;font-size:13px}
+.fps-reference__back{display:inline-flex;align-items:center;gap:7px;margin-bottom:15px}.fps-reference :is(a,button,input,select):focus-visible{outline:2px solid #e7a2b4;outline-offset:3px}
+.fps-lab{max-width:1300px;margin:auto;padding:28px}.fps-lab__controls{display:flex;align-items:end;flex-wrap:wrap;gap:16px;margin:22px 0;padding:23px;background:var(--personal-surface,#292628);border:1px solid #51474b;border-radius:7px}.fps-lab__controls label{display:grid;gap:7px;font-size:14px}.fps-lab__controls input,.fps-lab__controls select{padding:10px;background:var(--personal-background,#201e20);color:inherit;border:1px solid #675b60;border-radius:4px;max-width:100%}.fps-lab__report-actions{display:flex;gap:12px;flex-wrap:wrap;margin:15px 0}
+.fps-lab h1{font-size:28px;font-weight:750;margin:8px 0}.fps-lab p{font-size:14px;line-height:1.7;margin:8px 0}
+.fps-lab .cm-btn,.fps-reference .cm-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 15px;border:1px solid #78646c;border-radius:5px;background:var(--personal-surface,#292628);color:inherit;text-decoration:none;font-size:13px;cursor:pointer}
+.fps-lab .cm-btn-primary,.fps-reference .cm-btn-primary{background:var(--personal-accent,#a62b42);color:var(--personal-on-accent,#fff);border-color:transparent}.fps-lab .cm-btn:disabled{opacity:.55;cursor:wait}
+@media(max-width:650px){.fps-reference,.fps-lab{padding:16px}.fps-reference__heading{align-items:flex-start;flex-direction:column}.fps-reference h1{font-size:23px}.fps-reference__intro{padding:16px}.fps-reference__filters label{width:100%}.fps-reference__filters input{width:100%}.fps-reference__filters>span{margin-left:0}.fps-lab__controls label{width:100%}}

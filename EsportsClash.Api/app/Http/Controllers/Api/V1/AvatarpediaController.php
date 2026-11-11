@@ -26,6 +26,7 @@ class AvatarpediaController extends Controller
 
     public function directory(Request $request, string $kind, AvatarpediaService $pedia)
     {
+        if (in_array($kind, \App\Services\GameModes::MOBA_CATEGORIES, true)) app(\App\Services\GameModes::class)->requireMoba();
         $data = $request->validate(['q' => ['nullable', 'string', 'max:100'], 'page' => ['nullable', 'integer', 'min:1', 'max:1000000'],'per_page'=>'nullable|integer|in:20,30,50','tier'=>'nullable|integer|between:1,5','year'=>'nullable|integer|min:2020|max:2200','status'=>'nullable|string|max:30','nationality'=>'nullable|string|size:2','role'=>'nullable|string|max:40','phase'=>'nullable|in:upcoming,ongoing,finished,review,cancelled','sort'=>'nullable|in:lifecycle,starts_asc,starts_desc,ends_desc,name,prize']);
         return response()->json(['data' => Cache::remember('pedia.dir.v4:'.Cache::get('world.public.cache-revision','initial').':'.hash('sha256',json_encode([$kind,$data])),10,fn()=>$pedia->directory($kind, $data['q'] ?? '', (int) ($data['page'] ?? 1),(int)($data['per_page']??30),$data))])->header('Cache-Control', 'public, max-age=3, stale-while-revalidate=5');
     }
@@ -38,6 +39,7 @@ class AvatarpediaController extends Controller
 
     public function article(string $kind, string $id, AvatarpediaService $pedia)
     {
+        if (in_array($kind, \App\Services\GameModes::MOBA_CATEGORIES, true)) app(\App\Services\GameModes::class)->requireMoba();
         return response()->json(['data' => Cache::remember('pedia.article.v3:'.Cache::get('world.public.cache-revision','initial').':'.$kind.':'.$id,10,fn()=>$pedia->article($kind,$id))])->header('Cache-Control', 'public, max-age=3, stale-while-revalidate=5');
     }
 

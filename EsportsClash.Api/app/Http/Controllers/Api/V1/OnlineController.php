@@ -14,6 +14,7 @@ class OnlineController extends Controller
     public function index(Request $request, OnlineService $service)
     {
         $club = $service->provision($request->user());
+        if(app(\App\Services\WorldCareers::class)->ready())DB::table('online_clubs')->where('id',$club->id)->where(fn($q)=>$q->whereNull('manager_seen_at')->orWhere('manager_seen_at','<',now()->subMinutes(10)))->update(['manager_seen_at'=>now()]);
         $catalog = $service->activeCatalog();
         $cards = OwnedPlayerCard::where('user_id', $request->user()->id)->get()->map(function ($owned) use ($catalog) {
             $definition = app(\App\Services\WorldPlayerProfiles::class)->definition($owned,collect($catalog->payload['cards'])->firstWhere('id', $owned->definition_id));
@@ -84,10 +85,18 @@ class OnlineController extends Controller
     {
         $match = $service->participant($request->user(), $id);
         if ($match->belongsToParticipant($request->user()->id)) return response()->json(['data' => $match]);
+        $result = $match->result ? [
+            'winner' => $match->result['winner'],
+            'execution' => array_intersect_key($match->result['execution'] ?? [], array_flip(['mode', 'from_second', 'notice'])),
+        ] : null;
+        if ($result && ($match->plan['game_mode'] ?? null) === 'fps_mr15_v1') {
+            $result['report'] = $match->result['report'];
+            unset($result['report']['identityExperiment'],$result['report']['identityDevelopment']);
+        }
         return response()->json(['data' => [
             ...$match->only(['id', 'status', 'sequence', 'started_at', 'completed_at']),
-            'plan' => array_intersect_key($match->plan, array_flip(['clubs', 'fixture', 'versions', 'visual_releases'])),
-            'result' => $match->result ? ['winner' => $match->result['winner'],'execution'=>array_intersect_key($match->result['execution']??[],array_flip(['mode','from_second','notice']))] : null,
+            'plan' => array_intersect_key($match->plan, array_flip(['clubs', 'fixture', 'versions', 'visual_releases', 'game_mode', 'fps'])),
+            'result' => $result,
         ]]);
     }
 

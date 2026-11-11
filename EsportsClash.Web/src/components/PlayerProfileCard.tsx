@@ -6,6 +6,11 @@ import { CHAMPIONS, INITIAL_PLAYERS } from '../mockData';
 import { pediaHref } from '../hexapedia';
 import { ChibiAvatar } from './ChibiAvatar';
 import './player-card.css';
+import {FPS_ATTRIBUTE_LABELS} from '../fps/fpsPersonality';
+import {PersonalityMarks} from './PersonalityMarks';
+import {FpsIdentityMarks} from './FpsIdentityMarks';
+import {fpsRoleFit} from '../fps/fpsRoleFit';
+import {useGameModes} from '../gameModes';
 
 interface Props {
   card: PlayerCard;
@@ -17,12 +22,10 @@ interface Props {
   actionSlot?: ReactNode;
 }
 
-const attributes = [
-  ['lan', 'Laning'], ['tf', 'Teamfighting'], ['iq', 'Game sense'], ['ldr', 'Leadership'],
-  ['clu', 'Clutch'], ['sta', 'Stamina'], ['flx', 'Flexibility'],
-] as const;
+const attributes = Object.entries(FPS_ATTRIBUTE_LABELS) as [keyof PlayerCard['stats'], string][];
 
 export function PlayerProfileCard({ card, onClick, selected, compact, jerseyNumber, shirtNumber, actionSlot }: Props) {
+  const modes=useGameModes();
   const number = shirtNumber ?? jerseyNumber;
   const role = card.preferredRole ?? card.role;
   const signature = card.signatureChampions.slice(0, 2).map(name => avatarDisplayName(name, CHAMPIONS));
@@ -39,10 +42,11 @@ export function PlayerProfileCard({ card, onClick, selected, compact, jerseyNumb
         <div className="player-card__portrait" aria-hidden="true"><ChibiAvatar avatarType={card.avatarSvg || card.name} size={compact ? 44 : 58} /></div>
         <div className="player-card__identity">
           <h3>{number !== undefined && <span className="player-card__number">{number} </span>}{card.name}</h3>
-          <p>{role}{card.age === undefined ? '' : ` · Age ${card.age}`}{card.nationality?' · '+card.nationality.name:''}</p>
+          <p>{fpsRoleFit(card.stats)}{card.age === undefined ? '' : ` · Age ${card.age}`}{card.nationality?' · '+card.nationality.name:''}</p>
         </div>
         <div className="player-card__rating"><strong>{toScale10(card.ovr)}/10</strong><span>Overall</span></div>
       </header>
+      {card.fpsIdentity?<FpsIdentityMarks profile={card.fpsIdentity}/>:<PersonalityMarks primary={card.primaryPersonality} secondary={card.secondaryPersonality} compact={compact}/>}
       <dl className="player-card__attributes">
         {attributes.map(([key, label]) => {
           const value = toScale10(card.stats[key] ?? 55);
@@ -52,7 +56,7 @@ export function PlayerProfileCard({ card, onClick, selected, compact, jerseyNumb
           </div>;
         })}
       </dl>
-      {!compact && signature.length > 0 && <p className="player-card__signature">Signature avatars · {signature.join(', ')}</p>}
+      {modes.moba_enabled && !compact && signature.length > 0 && <p className="player-card__signature">Signature avatars · {signature.join(', ')}</p>}
     </div>
     {actionSlot && <div className="player-card__actions">{actionSlot}</div>}
     {!compact && catalogPlayer && <footer className="player-card__reference"><a href={pediaHref('players', catalogPlayer.id)}>Hexapedia profile</a></footer>}

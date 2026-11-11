@@ -48,6 +48,7 @@ class AvatarpediaService
             'presentation'=>$owned->presentation,'personal_details'=>$owned->personal_details,
             'age' => $card['age'] ?? null, 'overall' => $card['ovr'] ?? null,
             'stats' => array_intersect_key($card['stats'] ?? [], array_flip(['lan', 'tf', 'iq', 'ldr', 'clu', 'sta', 'flx'])),
+            'fpsIdentity'=>$card['fpsIdentity']??null,
             'primaryPersonality' => $card['primaryPersonality'] ?? null,
             'secondaryPersonality' => $card['secondaryPersonality'] ?? null,
             'signature_avatar_ids' => collect($this->catalog()?->payload['avatars'] ?? [])
@@ -125,8 +126,11 @@ class AvatarpediaService
                     'watch_match_id' => $match?->canSpectate() ? $match->id : null,
                     'home' => ['id' => $fixture->home_club_id??$fixture->home_national_team_id, 'name' => $teams['blue'],'national'=>(bool)$fixture->home_national_team_id,'flag'=>$fixture->homeNation?->flag], 'away' => ['id' => $fixture->away_club_id??$fixture->away_national_team_id, 'name' => $teams['red'],'national'=>(bool)$fixture->away_national_team_id,'flag'=>$fixture->awayNation?->flag],
                     'winner' => $winner === null ? null : $teams[$winner], 'winner_id' => $winner === null ? null : ($winner === 'blue' ? $fixture->home_club_id : $fixture->away_club_id),
-                    'score' => $winner !== null && isset($match->result['report']['blueKills'], $match->result['report']['redKills'])
-                        ? ['blue' => $match->result['report']['blueKills'], 'red' => $match->result['report']['redKills']] : null,
+                    'game_mode' => $match?->plan['game_mode'] ?? 'moba',
+                    'score' => $winner !== null && ($match->plan['game_mode'] ?? null) === 'fps_mr15_v1'
+                        ? ($match->result['report']['finalScore'] ?? null)
+                        : ($winner !== null && isset($match->result['report']['blueKills'], $match->result['report']['redKills'])
+                            ? ['blue' => $match->result['report']['blueKills'], 'red' => $match->result['report']['redKills']] : null),
                     'duration_seconds' => $winner === null ? null : $match->result['report']['durationSeconds'] ?? null];
             })->all();
     }
@@ -185,7 +189,8 @@ class AvatarpediaService
 
     public function search(string $query): array
     {
-        return collect(self::KINDS)->flatMap(fn ($kind) => collect($this->directory($kind, $query, 1, 5)['items'])->map(fn ($row) => ['kind' => $kind, 'id' => $row['id'], 'name' => $row['name']]))->values()->all();
+        $kinds = app(GameModes::class)->state()['moba_enabled'] ? self::KINDS : array_diff(self::KINDS, GameModes::MOBA_CATEGORIES);
+        return collect($kinds)->flatMap(fn ($kind) => collect($this->directory($kind, $query, 1, 5)['items'])->map(fn ($row) => ['kind' => $kind, 'id' => $row['id'], 'name' => $row['name']]))->values()->all();
     }
 
     private function release(OnlineCatalog $release): array

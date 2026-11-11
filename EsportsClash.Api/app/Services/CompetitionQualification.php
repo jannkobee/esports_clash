@@ -19,10 +19,14 @@ class CompetitionQualification
         return $path;
     }
 
-    public function enter(int $eventId,string $type,int $participant,array $source,?int $invitationId=null): void
+    public function enter(int $eventId,string $type,int $participant,array $source,?int $invitationId=null,?int $managementEpoch=null): void
     {
-        DB::transaction(function()use($eventId,$type,$participant,$source,$invitationId){
+        DB::transaction(function()use($eventId,$type,$participant,$source,$invitationId,$managementEpoch){
             $e=ClubTournament::whereKey($eventId)->lockForUpdate()->firstOrFail();
+            if($type==='club' && ($managementEpoch!==null || !empty($source['bot_fill']))) {
+                $controlled=OnlineClub::whereKey($participant)->lockForUpdate()->firstOrFail();
+                abort_unless($controlled->is_bot && ($managementEpoch===null || (int)$controlled->management_epoch===$managementEpoch),409,'Management authority changed.');
+            }
             abort_if(!$e->definition_id || $e->status!=='registration' || $e->registration_closes_at->lte(now()) || $e->registration_opens_at?->isFuture(),409,'Registration is not open.');
             app(AnnualQualificationGraph::class)->assertBound($e);
             $path=$this->eligible($e,$type,$participant);$field=$type==='club'?'club_id':'national_team_id';
@@ -72,9 +76,13 @@ class CompetitionQualification
         }
         // Unattended clubs/nations use the same accepted invitation path, never invented results.
         foreach(DB::table('competition_invitations')->where('tournament_id',$eventId)->where('status','pending')->where('expires_at','>',now())->get() as $invite){
-            $automated=$invite->participant_type==='club' ? OnlineClub::whereKey($invite->participant_id)->where('is_bot',true)->exists()
+            $bot=$invite->participant_type==='club'?OnlineClub::whereKey($invite->participant_id)->where('is_bot',true)->first():null;
+            $automated=$invite->participant_type==='club' ? $bot!==null
                 : !DB::table('national_manager_terms')->where('national_team_id',$invite->participant_id)->where('status','appointed')->where('ends_at','>',now())->exists();
-            if($automated)$this->enter($eventId,$invite->participant_type,$invite->participant_id,[], $invite->id);
+            if($automated){
+                try{$this->enter($eventId,$invite->participant_type,$invite->participant_id,[], $invite->id,$bot?(int)$bot->management_epoch:null);}
+                catch(\Symfony\Component\HttpKernel\Exception\HttpException $error){if($error->getStatusCode()!==409)throw $error;}
+            }
         }
     }
 

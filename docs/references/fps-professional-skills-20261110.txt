@@ -1,0 +1,678 @@
+Complete Counter-Strike 2 Professional Skill Requirements: Micro & Macro
+Playing Counter-Strike 2 professionally requires far more than exceptional aim. Elite players combine mechanical execution, tactical intelligence, positioning, utility management, economic decision-making, communication, and psychological resilience.
+
+Below is a comprehensive breakdown of the skills required for professional-level play, organized into Micro, Macro, Mental, and Role-Specific abilities.
+MICRO
+How effectively a player executes actions
+
+MACRO
+How effectively a player understands and controls the game
+
+MENTAL
+How consistently a player performs under different conditions
+
+
+These are analytical skill categories rather than an official Valve ranking system. Professional roles are flexible, and different players can reach elite performance through different combinations of strengths. 
+HLTV.org+2
+
+Part 1 — Micro Skills
+Micro involves the mechanical abilities and immediate execution decisions a player makes within seconds or fractions of a second.
+1. Aiming and Shooting Mechanics
+Skill	Description
+1. Raw Aim	General ability to place the crosshair accurately on a target.
+2. Crosshair Placement	Maintaining the crosshair at the expected enemy head position before contact.
+3. Headshot Accuracy	Consistently landing headshots rather than relying on body damage.
+4. Flick Accuracy	Quickly moving the crosshair to an unexpected target and landing an accurate shot.
+5. Micro-Adjustments	Making tiny corrections when the crosshair is already near the enemy.
+6. Target Tracking	Keeping the crosshair aligned with an enemy moving across the screen.
+7. Target Acquisition	Identifying, locating, and aiming at an enemy immediately after spotting them.
+8. Reaction Time	How quickly a player begins an appropriate response to a visible or audible threat.
+9. First-Bullet Accuracy	Ability to land the opening shot of an engagement.
+10. Spray Control	Compensating for a weapon's recoil pattern during sustained fire.
+11. Spray Transfer	Moving an ongoing spray from one target to another while controlling recoil.
+12. Burst Control	Firing accurate short bursts without losing control of the weapon.
+13. Tap Shooting	Using individual accurate shots, especially at longer distances.
+14. Recoil Reset Timing	Waiting for recoil and accuracy to recover before firing another burst.
+15. Multi-Kill Execution	Eliminating several opponents in quick succession through precise aim and target switching.
+
+A professional player needs to integrate these skills with movement. Exceptional static aim does not guarantee accurate shots while moving. 
+SteamAnalyst+1
+
+2. Movement and Peeking Mechanics
+Skill	Description
+16. Counter-Strafing	Canceling movement velocity quickly to regain weapon accuracy before shooting.
+17. Strafing Control	Moving left and right precisely during engagements and repositioning.
+18. Wide Peeking	Swinging beyond a commonly held angle to challenge an opponent's crosshair placement.
+19. Jiggle Peeking	Quickly exposing and hiding a small part of the player model to gather information or bait shots.
+20. Shoulder Peeking	Briefly exposing the shoulder to provoke a shot, especially from an AWPer.
+21. Crouch Peeking	Using a crouched position while exposing an angle to change elevation and the expected head position.
+22. Jump Spotting	Using a controlled jump to observe an area with limited commitment.
+23. Air Strafing	Controlling horizontal movement while airborne.
+24. Jump Precision	Performing jumps accurately to reach ledges, cross obstacles, or take positions.
+25. Silent Movement	Moving without unnecessary footstep sounds while maintaining useful timing.
+26. Movement Efficiency	Traversing the map quickly without unnecessary or dangerous movement.
+27. Movement Deception	Using fake movement, pauses, or repeated peeks to manipulate enemy expectations.
+28. Movement-Shooting Synchronization	Matching strafes, stops, crosshair corrections, and firing into one consistent sequence.
+29. Peek Timing	Choosing the exact moment to expose an angle and take an engagement.
+
+3. Individual Combat Execution
+Skill	Description
+30. Angle Clearing	Systematically checking positions where enemies could be hiding.
+31. Pre-Aiming	Positioning the crosshair toward a known or predicted enemy location before seeing them.
+32. Pre-Firing	Firing at a likely enemy position based on information or a strong prediction.
+33. Off-Angle Usage	Holding unconventional positions to disrupt opponents' pre-aim and crosshair placement.
+34. Cover Utilization	Minimizing exposure while using walls, boxes, and other objects for protection.
+35. Exposure Control	Limiting how many angles can attack the player at once.
+36. Duel Isolation	Using movement and positioning to fight one enemy at a time rather than several simultaneously.
+37. Target Prioritization	Selecting the most dangerous or strategically important opponent during an engagement.
+38. Trade Fragging	Quickly killing an opponent who has just eliminated a teammate.
+39. Trade Spacing	Maintaining the right distance from teammates to enable trades without exposing both to the same threat.
+40. Damage Avoidance	Avoiding unnecessary hits through movement, positioning, or disengagement.
+41. Disengagement Execution	Breaking off an unfavorable fight and escaping without being eliminated.
+42. Wallbang Execution	Accurately shooting through penetrable surfaces when appropriate.
+43. Close-Range Combat	Controlling aim and movement during extremely short-distance engagements.
+
+4. Grenade and Utility Mechanics
+Skill	Description
+44. Smoke Lineups	Reproducing precise grenade trajectories to block specified areas.
+45. Flashbang Placement	Throwing flashes that blind opponents while minimizing friendly exposure.
+46. Pop Flash Execution	Delivering a flash that detonates with little opportunity for an enemy to react.
+47. HE Grenade Accuracy	Placing explosive grenades where they can cause meaningful damage.
+48. Molotov/Incendiary Placement	Using fire to clear positions, deny routes, or delay opponents.
+49. Jump-Throw Execution	Reproducing grenade throws involving jumping with consistent timing.
+50. Utility Timing	Detonating or deploying grenades at the correct moment relative to teammate actions.
+51. Utility Combination	Executing coordinated sequences involving several grenades.
+52. Reactive Utility	Quickly using appropriate grenades in response to unexpected enemy actions.
+53. Counter-Utility Execution	Responding to opposing grenades, including using HE grenades to temporarily disperse CS2 smoke.
+
+CS2's volumetric smokes interact with the environment and explosives, making utility mechanics particularly important. 
+counter-strike.net+1
+
+5. Weapon Handling and Specialized Mechanics
+Skill	Description
+54. Rifle Proficiency	Effective use of rifles across close, medium, and long distances.
+55. Pistol Proficiency	Accurate and controlled pistol engagements in pistol, eco, and force-buy rounds.
+56. AWP Proficiency	Accurate sniper shots with efficient angle holding and repositioning.
+57. Quick-Scoping	Rapidly acquiring a target and firing accurately with a scoped weapon.
+58. No-Scope Judgment	Knowing when an unscoped sniper shot is worth the inaccuracy risk.
+59. SMG Proficiency	Using close-range mobility, firing control, and weapon strengths effectively.
+60. Shotgun Proficiency	Exploiting short sightlines and close positions for high-damage engagements.
+61. Weapon Switching	Efficiently changing equipment without becoming unnecessarily vulnerable.
+62. Reload Management	Reloading safely while maintaining awareness of ammunition, cover, and possible threats.
+63. Weapon Recovery	Picking up or exchanging weapons when tactically advantageous without compromising safety.
+
+A current CS2-specific consideration is ammunition management: Valve changed magazine-fed reloading in March 2026 so remaining magazine ammunition is discarded on reload. A September 2026 update also introduced a slower, silent reload option. 
+counter-strike.net+1
+
+6. Perception, Objective and Execution Skills
+Skill	Description
+64. Audio Localization	Determining the direction and approximate location of enemies from sound cues.
+65. Visual Detection	Quickly noticing enemies who are partially hidden or visible for short periods.
+66. Threat Recognition	Identifying whether an observed opponent presents an immediate danger.
+67. Peripheral Awareness	Detecting important activity outside the player's primary focus.
+68. Sound Discipline	Avoiding unnecessary sounds from movement, weapon handling, or equipment.
+69. Bomb Plant Execution	Planting quickly and safely in a location suitable for the team's post-plant strategy.
+70. Defuse Execution	Starting, stopping, or completing a defuse while managing exposure and danger.
+71. Defuse Faking	Using a fake defuse to provoke an opponent into revealing their position.
+72. Weapon Pickup Speed	Performing necessary weapon pickups efficiently in dangerous situations.
+73. Close-Quarter Utility Handling	Using equipment safely and quickly when enemies are nearby.
+
+Micro summary: A professional player must execute these mechanics reliably, not simply demonstrate them in isolated drills. Micro skill is about consistency, precision, and minimizing execution errors under realistic pressure.
+Part 2 — Macro Skills
+Macro involves tactical understanding, game-state evaluation, strategic decisions, opponent prediction, and coordination with teammates.
+
+A mechanically gifted player can win individual duels. A strategically gifted player understands how to create favorable duels, avoid unnecessary risks, and convert advantages into rounds.
+7. Individual Tactical Intelligence
+Skill	Description
+74. Game Sense	Understanding what is happening in the round and anticipating what may happen next.
+75. Situational Awareness	Maintaining an accurate understanding of enemy threats, teammates, available utility, and objectives.
+76. Decision-Making	Selecting the most effective action given the current circumstances.
+77. Risk Assessment	Evaluating the potential reward and consequences of an action before committing.
+78. Fight Selection	Knowing when to challenge an opponent and when to avoid the engagement.
+79. Timing Awareness	Recognizing opportunities created by rotations, utility expiration, opponent movement, or distractions.
+80. Enemy Prediction	Anticipating likely enemy positions and behavior based on available evidence.
+81. Positioning Intelligence	Selecting locations that provide useful information, safe cover, or favorable engagements.
+82. Patience	Waiting for the correct opportunity rather than forcing an unnecessary fight.
+83. Initiative	Recognizing situations where proactively taking action provides an advantage.
+84. Adaptability	Changing decisions when the situation differs from the original expectation.
+85. Discipline	Following a sound tactical plan despite opportunities for unnecessary kills.
+86. Survival Judgment	Determining when preserving a player's life is more valuable than attempting another fight.
+87. Pressure Recognition	Understanding when the opposing team is constrained by time, position, economy, or numbers.
+
+8. Round Strategy and Tactical Planning
+Skill	Description
+88. Pre-Round Planning	Establishing objectives, positioning, equipment distribution, and opening actions before the round begins.
+89. Default Execution	Operating within a structured opening formation that contests important map areas and gathers information.
+90. Opening Strategy	Selecting an appropriate initial approach based on spawn positions, economy, and opponents.
+91. Round Tempo Control	Choosing when to play slowly, accelerate, pause, or execute an attack.
+92. Mid-Round Calling	Modifying strategy after receiving information, securing a kill, or losing map control.
+93. Late-Round Planning	Coordinating the final attack or defense as the round timer decreases.
+94. Site Execution Planning	Organizing player entry paths, utility, trades, and bomb placement for an attack.
+95. Fake Execution	Creating convincing pressure on one objective to draw defenders away from the intended target.
+96. Contact Play	Approaching a contested position quietly, then committing when the team encounters resistance or receives a trigger.
+97. Split Attack Planning	Attacking a site from multiple directions with coordinated timing.
+98. Rush Execution Planning	Organizing an immediate attack designed to exploit speed, surprise, or a weak defense.
+99. Tactical Flexibility	Switching between prepared strategies without losing team structure.
+
+Professional Counter-Strike rounds commonly involve early map control, information gathering, and later coordinated commitments. Teams must also maintain the flexibility to deviate from those phases. 
+MetaBot.GG+1
+
+9. Map Control and Spatial Understanding
+Skill	Description
+100. Map Knowledge	Understanding layouts, callouts, chokepoints, elevations, timings, and playable positions.
+101. Map Control Acquisition	Taking strategically valuable territory from the opposition.
+102. Map Control Retention	Maintaining possession or influence over important locations.
+103. Map Control Denial	Preventing opponents from occupying useful territory.
+104. Chokepoint Management	Controlling narrow entrances and routes through positioning and utility.
+105. Rotation Route Knowledge	Knowing how players can move efficiently between important locations.
+106. Flank Awareness	Recognizing when enemies may approach from behind or through previously controlled territory.
+107. Flank Control	Protecting teammates from enemies approaching through alternate routes.
+108. Space Creation	Forcing enemies away from positions to create movement and engagement opportunities for teammates.
+109. Space Utilization	Converting gained territory into information, pressure, favorable fights, or objective access.
+110. Territory Trading	Deliberately surrendering one area in exchange for control of another or a stronger defensive setup.
+111. Spatial Pressure	Using player presence and utility to restrict the opponent's options.
+112. Map Timing Knowledge	Understanding when enemies can realistically reach particular locations.
+113. Positional Advantage Recognition	Recognizing when elevation, cover, distance, or positioning favors one side.
+
+10. Defensive Strategy — CT Side
+Skill	Description
+114. Site Anchoring	Holding a bombsite with limited assistance while delaying or stopping an attack.
+115. Defensive Setup Selection	Choosing effective starting positions and responsibilities across the map.
+116. Crossfire Planning	Positioning teammates so enemies expose themselves to multiple lines of fire.
+117. Defensive Rotation Timing	Moving defenders toward a threatened area at the appropriate moment.
+118. Rotation Discipline	Avoiding unnecessary rotations based on incomplete or misleading information.
+119. Defensive Information Gathering	Securing information about enemy presence without taking disproportionate risks.
+120. Site Delay Strategy	Using positioning, utility, and controlled resistance to buy time for reinforcements.
+121. Retake Planning	Organizing an attempt to recover a captured bombsite.
+122. Defensive Aggression	Choosing when to push for information, regain territory, or surprise the attacking team.
+123. Stack Decisions	Deliberately concentrating defenders at one site based on opponent tendencies and available information.
+124. Site Concession	Recognizing when abandoning a position creates better survival or retake opportunities.
+125. Defensive Adaptation	Changing setups after opponents repeatedly exploit specific weaknesses.
+
+11. Economy and Resource Management
+Skill	Description
+126. Economy Awareness	Understanding the purchasing power and likely equipment of both teams.
+127. Full-Buy Decisions	Identifying rounds where purchasing a complete competitive loadout is justified.
+128. Force-Buy Decisions	Evaluating when purchasing with limited funds creates a worthwhile strategic opportunity.
+129. Eco Planning	Preserving resources for future rounds while maximizing the current round's limited potential.
+130. Half-Buy Decisions	Balancing partial investment with the money required for subsequent rounds.
+131. Team Economy Coordination	Ensuring teammates make compatible purchasing decisions instead of buying independently without a plan.
+132. Weapon Distribution	Allocating weapons to appropriate players based on roles, positions, and available money.
+133. Utility Investment	Prioritizing necessary grenades relative to weapons, armor, and other equipment.
+134. Save Decisions	Recognizing when preserving weapons and equipment is preferable to an unlikely retake or clutch.
+135. Enemy Economy Estimation	Predicting opponent weapon purchases and available utility from prior-round outcomes.
+136. Long-Term Economy Planning	Evaluating how current spending and round outcomes affect future buying power.
+
+Economy management is fundamental because a round is not strategically independent of the rounds around it. Professional play requires planning across multiple rounds rather than maximizing purchases every time. 
+CS2 Wiki+1
+
+12. Information, Reading and Adaptation
+Skill	Description
+137. Information Gathering	Acquiring useful knowledge through observation, sound, teammate reports, and controlled aggression.
+138. Information Processing	Interpreting available information quickly and accurately.
+139. Information Retention	Remembering previously observed positions, utility, and enemy tendencies.
+140. Information Reliability Assessment	Separating confirmed observations from assumptions and uncertain reports.
+141. Enemy Pattern Recognition	Detecting repeated positioning, strategies, timings, or decision-making tendencies.
+142. Opponent Reading	Predicting the opposing team's intentions from its actions and match history.
+143. Rotation Prediction	Anticipating defensive or offensive movement based on map pressure and information.
+144. Utility Tracking	Remembering important grenades the enemy has used or may still possess.
+145. Enemy Position Tracking	Maintaining an approximate understanding of where visible and unobserved opponents may be.
+146. Enemy Economy Reading	Translating economic information into predictions of likely tactics and weapon choices.
+147. Strategy Recognition	Identifying whether an opponent is executing a rush, default, fake, split, or other plan.
+148. Counter-Strategy Development	Selecting tactical responses that exploit the opponent's current approach.
+149. Deception Detection	Recognizing when enemy activity may be intended to produce a misleading response.
+150. Behavioral Exploitation	Taking advantage of predictable opponent habits.
+151. Adaptation Speed	How quickly a player changes their approach after identifying a tactical problem.
+
+13. Teamwork and Tactical Coordination
+Skill	Description
+152. Communication Clarity	Conveying information accurately without unnecessary explanation.
+153. Communication Speed	Reporting critical information quickly enough for teammates to respond.
+154. Callout Accuracy	Using correct map locations, enemy counts, and relevant details.
+155. Communication Prioritization	Reporting important information without overwhelming teammates with low-value details.
+156. Active Listening	Correctly interpreting teammate calls while continuing to perform individual responsibilities.
+157. Role Understanding	Knowing the responsibilities associated with the player's assigned role.
+158. Role Flexibility	Performing alternative duties when the situation or team composition demands it.
+159. Team Synchronization	Coordinating movement, utility, and engagements with teammates.
+160. Trade Coordination	Organizing positioning and entry order so opponents can be traded effectively.
+161. Utility Coordination	Combining grenade usage across several players to achieve a tactical objective.
+162. Initiative Sharing	Knowing when to lead a play and when to support another teammate's initiative.
+163. Trust and Reliability	Performing expected responsibilities consistently so teammates can plan around them.
+164. Leadership	Directing teammates, resolving confusion, and maintaining tactical focus.
+165. Team Chemistry	Developing mutual understanding that makes coordinated actions more effective.
+166. Tactical Compliance	Following agreed strategies and protocols while exercising appropriate individual judgment.
+
+14. Clutch, Retake and Post-Plant Intelligence
+Skill	Description
+167. Clutch Decision-Making	Choosing appropriate actions when isolated against one or more opponents.
+168. Numerical Advantage Management	Preserving a player advantage without allowing unnecessary isolated engagements.
+169. Numerical Disadvantage Management	Finding opportunities to overcome an unfavorable player count.
+170. Clutch Isolation	Creating separate engagements against multiple opponents to avoid simultaneous fights.
+171. Time Management	Making decisions based on the round timer and, when planted, the bomb timer.
+172. Bomb Control	Maintaining tactical influence over the bomb, bombsite, or defusal area.
+173. Post-Plant Positioning	Selecting defensive positions that protect the planted bomb and complement teammates.
+174. Post-Plant Coordination	Coordinating defensive angles, peek timing, utility, and defuse denial after planting.
+175. Retake Coordination	Synchronizing entry paths, trades, and utility to recapture a site.
+176. Defuse Denial Strategy	Preventing or interrupting a defuse through positioning, gunfire, or utility.
+177. Clutch Deception	Using sound, repositioning, fake actions, or unexpected timing to confuse opponents.
+178. Endgame Risk Calculation	Evaluating whether attempting a clutch, recovering equipment, or saving offers the best overall value.
+179. Advantage Conversion	Turning positional, economic, or numerical advantages into completed round victories.
+
+15. Match-Level Strategy
+Skill	Description
+180. Opponent Preparation	Studying an opposing team's tendencies, map preferences, roles, and strategies.
+181. Map Pool Understanding	Knowing which maps favor a team's strengths and expose its weaknesses.
+182. Map Veto Strategy	Selecting, banning, or prioritizing maps to improve the team's chances in a series.
+183. Side-Specific Preparation	Preparing separate offensive and defensive approaches for each map.
+184. Tactical Diversity	Maintaining several viable strategies rather than repeating the same approach.
+185. Long-Term Adaptation	Adjusting strategy as an opponent learns and counters the team's tendencies.
+186. Opponent Exploitation	Identifying the opposing team's weakest positions, players, or tactical patterns.
+187. Momentum Management	Preventing poor decisions from cascading after consecutive lost rounds.
+188. Series Management	Adjusting preparation, tactical choices, and mental approach across a best-of-three or best-of-five series.
+
+Part 3 — Mental and Psychological Requirements
+Mechanical skill and tactical intelligence determine what a player can do. Mental characteristics influence how reliably those abilities are performed under different conditions.
+16. Mental Strength and Competitive Behavior
+Skill	Description
+189. Composure	Maintaining control when rounds become chaotic or high-pressure.
+190. Confidence	Trusting one's abilities and committing decisively to appropriate actions.
+191. Emotional Regulation	Preventing frustration, anger, or excessive excitement from negatively affecting decisions.
+192. Pressure Resistance	Maintaining performance during elimination matches, overtime, or high-stakes rounds.
+193. Consistency	Reproducing strong performances across rounds, maps, and matches.
+194. Concentration	Maintaining attention throughout long matches and periods of limited action.
+195. Mental Endurance	Avoiding substantial cognitive deterioration during extended competition.
+196. Resilience	Recovering effectively from mistakes, poor performances, and losing streaks.
+197. Self-Awareness	Recognizing individual mistakes, limitations, and recurring weaknesses.
+198. Coachability	Accepting constructive feedback and applying it effectively.
+199. Learning Ability	Acquiring and retaining new mechanics, strategies, and tactical concepts.
+200. Professional Discipline	Maintaining preparation, practice, punctuality, and professional behavior.
+201. Adaptation Under Pressure	Changing strategies without panicking when the original approach fails.
+202. Decisiveness	Making timely decisions rather than hesitating until an opportunity disappears.
+203. Communication Stability	Continuing to communicate clearly during stressful or disappointing situations.
+204. Competitive Motivation	Sustaining the desire to train, improve, and compete at a high level.
+205. Team Orientation	Prioritizing team success over individual statistics when required.
+
+An important distinction: confidence is not the same as aggression. A highly confident player may choose to hold an angle patiently because they trust their judgment. Likewise, an aggressive player is not necessarily mechanically talented.
+
+Part 4 — Role-Specific Requirements
+Professional teams do not require every player to excel equally in all 205 areas. Roles determine which combinations are most valuable.
+
+Modern Counter-Strike roles overlap, and a player may have different responsibilities on the T and CT sides. 
+CSStatLab+2
+
+17. Professional Player Roles
+Role	Primary requirements	Secondary requirements
+Entry Fragger / Opener	Crosshair placement, reactions, counter-strafing, space creation, opening duels	Trade coordination, composure, utility timing
+Trade Fragger / Second Entry	Trade timing, positioning, spray control, team synchronization	Entry execution, utility, target prioritization
+Main AWPer	Sniper accuracy, angle selection, reactions, positioning, survival judgment	Economy, rotations, information gathering
+Secondary AWPer	Sniper proficiency, role flexibility, positioning	Rifling, economy judgment, utility
+Lurker	Timing awareness, information processing, enemy prediction, flank control	Clutching, aim, communication
+Support	Grenade knowledge, utility timing, team synchronization, trade spacing	Composure, role flexibility, positioning
+In-Game Leader	Game sense, opponent reading, macro decisions, economy, mid-round calling	Communication, adaptation, leadership
+Site Anchor	Defensive positioning, patience, delay utility, survival judgment	Multi-kill execution, retakes, communication
+Rotator	Rotation timing, map awareness, information processing	Adaptability, utility, retake coordination
+Closer / Clutch Specialist	Clutch decision-making, isolation, positioning, composure	Mechanical consistency, deception, time management
+Aggressive Playmaker	Initiative, timing, aim, risk assessment	Information gathering, survival judgment, disengagement
+Flex Player	Role adaptability, broad weapon proficiency, tactical understanding	Communication, consistency, utility
+
+These describe responsibilities and specialties, not mutually exclusive classes. An IGL might also be an anchor, while an entry fragger might serve as a CT-side rotator.
+18. Which skills matter most for each role?
+Illustrative importance matrix for player evaluation or simulation design, not measured professional performance data.
+Relative importance by role
+Low
+
+
+
+
+High
+
+Role
+
+
+Aim
+
+
+Move
+
+
+Position
+
+
+Utility
+
+
+Macro
+
+
+Teamwork
+
+
+Mental
+
+
+Execution
+
+
+Entry
+
+
+5
+
+
+5
+
+
+3
+
+
+3
+
+
+4
+
+
+4
+
+
+4
+
+
+5
+
+
+Trade
+
+
+5
+
+
+5
+
+
+4
+
+
+3
+
+
+4
+
+
+5
+
+
+4
+
+
+5
+
+
+AWPer
+
+
+5
+
+
+4
+
+
+5
+
+
+3
+
+
+4
+
+
+3
+
+
+5
+
+
+4
+
+
+Lurker
+
+
+4
+
+
+4
+
+
+5
+
+
+4
+
+
+5
+
+
+3
+
+
+5
+
+
+4
+
+
+Support
+
+
+3
+
+
+3
+
+
+4
+
+
+5
+
+
+5
+
+
+5
+
+
+4
+
+
+5
+
+
+IGL
+
+
+3
+
+
+3
+
+
+5
+
+
+5
+
+
+5
+
+
+5
+
+
+5
+
+
+4
+
+
+Anchor
+
+
+4
+
+
+4
+
+
+5
+
+
+4
+
+
+4
+
+
+4
+
+
+5
+
+
+5
+
+
+Rotator
+
+
+4
+
+
+4
+
+
+5
+
+
+4
+
+
+5
+
+
+5
+
+
+4
+
+
+5
+
+
+
+
+
+
+
+Part 5 — Professional Development Requirements
+Knowing the mechanics is only part of becoming a professional player. A player also needs the infrastructure and habits to develop and maintain those capabilities.
+Requirement	Description
+Structured Aim Training	Regular practice of crosshair placement, accuracy, recoil control, and target acquisition.
+Movement Training	Dedicated practice of counter-strafing, peeking, movement routes, and angle isolation.
+Utility Practice	Learning reliable lineups and practicing their execution in actual tactical situations.
+Demo Review	Examining match recordings to identify positioning, decision-making, or execution mistakes.
+Opponent Analysis	Studying opponents to identify their common tactics, individual tendencies, and weaknesses.
+Team Scrimmages	Practicing coordinated tactics against organized opposition.
+Tactical Rehearsal	Repeating executes, retakes, protocols, and communication sequences until they become reliable.
+Coach Feedback	Receiving external evaluation of individual and team performance.
+Stable Equipment and Settings	Maintaining reliable peripherals, network connectivity, frame rates, and consistent sensitivity settings.
+Physical and Mental Recovery	Managing rest, sleep, ergonomics, fatigue, and training load.
+Performance Measurement	Tracking role-appropriate impact metrics rather than only kills and deaths.
+Continuous Adaptation	Updating strategies and mechanics as opponents, maps, and game mechanics change.
+
+Part 6 — How to Measure Professional-Level Performance
+Not every important skill is directly measurable. However, the following metrics can help evaluate specific dimensions of performance.
+Measurement	What it helps evaluate
+Headshot percentage	Shooting accuracy and target selection
+First-bullet hit rate	Precision of initial shots
+Opening duel success	Effectiveness when taking first contact
+Opening duel attempt rate	Willingness and opportunity to take first contact
+Trade kill percentage	Effectiveness in coordinated engagements
+Traded death percentage	Whether teammates can capitalize on the player's deaths
+Time to damage	Speed of detection, reaction, and shooting
+Utility damage per round	Direct damage contribution from grenades
+Flash assists	Effectiveness of flashbang support
+Unused utility on death	Resource usage and potential inefficiency
+Clutch conversion	Ability to win isolated, disadvantaged situations
+Multi-kill round percentage	Capacity to produce several eliminations in one round
+Survival rate	Ability to stay alive, interpreted relative to role
+Post-plant win rate	Success in defending planted bombs
+Retake participation and success	Contribution to coordinated defensive recoveries
+Round win rate by setup	Effectiveness of specific team strategies
+Map control success	How often assigned areas are gained or maintained
+Buy-round conversion	Effectiveness in rounds with significant equipment investment
+Role-adjusted impact	Overall contribution relative to assigned responsibilities
+
+Metrics require context. A support player with fewer kills can outperform a statistically stronger fragger by consistently creating winning opportunities for teammates.
+
+Part 7 — Using These Skills in an FPS Esports Manager Simulation
+For your esports manager simulation, I would not recommend creating 205 independent numerical attributes. Many of the items overlap, and several are behaviors that should emerge from the interaction of player skills, personality, coaching, and match circumstances.
+
+Instead, use a smaller core of measurable abilities, then derive specific behaviors dynamically.
+Suggested core attribute system
+Player Ability Profile
+Example of a compact underlying attributes model
+Mechanical (8)
+
+Raw Aim, Precision, Reflexes, Recoil Control, Movement, Peeking, Weapon Handling, Utility Execution
+
+Tactical (8)
+
+Game Sense, Positioning, Timing, Awareness, Decision-Making, Adaptability, Map Knowledge, Economy Understanding
+
+Team (5)
+
+Communication, Coordination, Leadership, Role Understanding, Tactical Discipline
+
+Mental (5)
+
+Composure, Concentration, Consistency, Resilience, Learning Capacity
+
+
+
+Total core attributes
+26
+
+
+From these 26 foundational attributes, the simulation can calculate more specialized abilities such as entry execution, clutching, defensive anchoring, or lurking.
+
+For example:
+
+Entry execution depends on aim, reaction speed, movement, positioning, timing, and coordination.
+
+Clutch performance depends on awareness, decision-making, positioning, composure, deception, and remaining resources.
+
+IGL performance depends on game sense, information processing, communication, leadership, and adaptation.
+
+This allows different combinations of player strengths to produce different styles of performance.
+
+Importantly, personality should modify decision preferences rather than directly increase raw mechanical ability. A naturally aggressive player might seek more opening fights, while a patient player might wait for a timing opportunity. Their mechanical skills determine how well they execute those choices.
+
+Coach tactics and team identity can then influence whether those behavioral tendencies help or hurt the team's performance.
+
+The key principle: Professional Counter-Strike performance comes from the interaction of mechanics, tactical decisions, teamwork, and mental stability. These should not be treated as isolated ratings, especially when modeling realistic players.
+
+A mechanically average but intelligent support player may be more valuable to a structured team than an extremely gifted aimer who repeatedly breaks its tactical system.
+
+
+
+
+
+
+
+
+
+
+
+
+Do you like this personality?

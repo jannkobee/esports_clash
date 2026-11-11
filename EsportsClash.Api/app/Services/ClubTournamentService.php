@@ -8,15 +8,16 @@ use Illuminate\Support\Facades\DB;
 
 class ClubTournamentService
 {
-    public function register(int $id, OnlineClub $club): void
+    public function register(int $id, OnlineClub $club, ?int $managementEpoch = null): void
     {
         if (ClubTournament::findOrFail($id)->definition_id) {
-            app(CompetitionQualification::class)->enter($id, 'club', $club->id, ['method'=>'open',...($club->is_bot?['bot_fill'=>true]:[])]);
+            app(CompetitionQualification::class)->enter($id, 'club', $club->id, ['method'=>'open',...($club->is_bot?['bot_fill'=>true]:[])], managementEpoch:$managementEpoch);
             return;
         }
-        DB::transaction(function () use ($id, $club) {
+        DB::transaction(function () use ($id, $club, $managementEpoch) {
             $event = ClubTournament::whereKey($id)->lockForUpdate()->firstOrFail();
-            $club->refresh();
+            $club = OnlineClub::whereKey($club->id)->lockForUpdate()->firstOrFail();
+            if($managementEpoch!==null)abort_unless($club->is_bot && (int)$club->management_epoch===$managementEpoch,409,'Management authority changed.');
             abort_if($event->status !== 'registration' || $event->registration_closes_at->lte(now()), 409, 'Registration has closed.');
             abort_if($club->tier !== $event->tier || ! $club->tag, 422, 'A club identity and matching tier are required.');
             $entries = DB::table('club_tournament_entries')->where('tournament_id', $id);

@@ -11,6 +11,13 @@ use App\Http\Controllers\Api\V1\OnlineController;
 Route::post('/internal/online/authorize-stream', [OnlineController::class, 'authorizeStream'])->middleware('throttle:120,1');
 
 Route::prefix('v1')->group(function (): void {
+    Route::get('/game-modes', [\App\Http\Controllers\GameModeController::class, 'manifest'])->middleware('throttle:90,1');
+    Route::get('/world/simulation', [\App\Http\Controllers\WorldSimulationController::class, 'show'])->middleware('throttle:60,1');
+    Route::get('/world/operations', [\App\Http\Controllers\WorldSimulationController::class, 'operations'])->middleware(['auth:sanctum','throttle:30,1']);
+    Route::get('/world/accounts',[\App\Http\Controllers\Api\V1\WireAccountController::class,'index'])->middleware('throttle:60,1');
+    Route::get('/world/accounts/{id}',[\App\Http\Controllers\Api\V1\WireAccountController::class,'show'])->whereNumber('id')->middleware('throttle:60,1');
+    Route::get('/world/owned-accounts',[\App\Http\Controllers\Api\V1\WireAccountController::class,'owned'])->middleware('auth:sanctum');
+    Route::post('/world/arena-updates',[\App\Http\Controllers\ArenaUpdateController::class,'store'])->middleware(['auth:sanctum','throttle:6,1']);
     Route::get('/world/revision',\App\Http\Controllers\Api\V1\WorldRevisionController::class)->middleware('throttle:90,1');
     Route::get('/club-media/{id}',[\App\Http\Controllers\Api\V1\ClubMediaController::class,'show'])->whereUuid('id');
     Route::prefix('world')->controller(\App\Http\Controllers\Api\V1\WorldMediaController::class)->middleware('throttle:90,1')->group(function(){
@@ -63,6 +70,20 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
     Route::middleware('auth:sanctum')->group(function (): void {
+        Route::get('/online/careers',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'index'])->middleware('throttle:30,1');
+        Route::get('/online/careers/search',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'search'])->middleware('throttle:30,1');
+        Route::post('/online/careers/players/{id}/offer',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'player'])->whereUuid('id')->middleware('throttle:10,1');
+        Route::post('/online/careers/players/{id}/retire',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'retire'])->whereUuid('id')->middleware('throttle:5,1');
+        Route::post('/online/careers/players/{id}/release',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'release'])->whereUuid('id')->middleware('throttle:5,1');
+        Route::post('/online/careers/agreements/{id}',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'respond'])->whereNumber('id')->middleware('throttle:20,1');
+        Route::post('/online/careers/vacancies',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'vacancy'])->middleware('throttle:5,1');
+        Route::post('/online/careers/office/{id}/release',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'releaseOffice'])->whereNumber('id')->middleware('throttle:5,1');
+        Route::post('/online/careers/vacancies/{id}/offer',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'staff'])->whereNumber('id')->middleware('throttle:10,1');
+        Route::post('/online/careers/vacancies/{id}/close',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'closeVacancy'])->whereNumber('id')->middleware('throttle:10,1');
+        Route::post('/online/careers/sponsors',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'sponsor'])->middleware('throttle:5,1');
+        Route::post('/online/careers/sponsors/{id}',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'sponsorResponse'])->whereNumber('id')->middleware('throttle:10,1');
+        Route::put('/online/careers/delegation',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'delegate'])->middleware('throttle:10,1');
+        Route::post('/online/careers/recommendations/{id}',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'recommendation'])->whereNumber('id')->middleware('throttle:10,1');
         Route::get('/online', [OnlineController::class, 'index']);
         Route::post('/online/staff/hire',[\App\Http\Controllers\Api\V1\ClubStaffController::class,'hire'])->middleware('throttle:10,1');
         Route::post('/online/staff/release',[\App\Http\Controllers\Api\V1\ClubStaffController::class,'release'])->middleware('throttle:10,1');
@@ -70,6 +91,10 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/avatarpedia/events/{id}/register', [\App\Http\Controllers\Api\V1\AvatarpediaController::class, 'register'])->whereNumber('id')->middleware('throttle:10,1');
         Route::post('/clashbook/events/{id}/register', [\App\Http\Controllers\Api\V1\AvatarpediaController::class, 'register'])->whereNumber('id')->middleware('throttle:10,1');
         Route::put('/online/club', [OnlineController::class, 'update']);
+        Route::get('/online/fps-identities', [\App\Http\Controllers\Api\V1\FpsIdentityController::class, 'index']);
+        Route::post('/online/fps-identities/prepare', [\App\Http\Controllers\Api\V1\FpsIdentityController::class, 'prepare'])->middleware('throttle:5,1');
+        Route::get('/online/fps-system', [\App\Http\Controllers\Api\V1\FpsTacticalSystemController::class, 'show']);
+        Route::put('/online/fps-system', [\App\Http\Controllers\Api\V1\FpsTacticalSystemController::class, 'update'])->middleware('throttle:20,1');
         Route::put('/online/club/identity', [\App\Http\Controllers\Api\V1\ClubIdentityController::class, 'update']);
         Route::post('/online/club/media',[\App\Http\Controllers\Api\V1\ClubMediaController::class,'upload'])->middleware('throttle:10,1');
         Route::get('/online/office/inbox',[\App\Http\Controllers\Api\V1\ClubOfficeController::class,'inbox']);
@@ -114,7 +139,7 @@ Route::prefix('v1')->group(function (): void {
         Route::delete('/evolution/runs/{id}', [EvolutionController::class, 'stop']);
         Route::post('/evolution/reviews/{id}/decision', [EvolutionController::class, 'decide']);
         Route::get('/me', fn (Request $request) => response()->json([
-            'data' => ['id' => $request->user()->id, 'name' => $request->user()->name, 'email' => $request->user()->email,'supporter'=>app(\App\Services\SupporterMembership::class)->status($request->user()),'theme'=>app(\App\Services\PersonalThemes::class)->effective($request->user())],
+            'data' => ['id' => $request->user()->id, 'name' => $request->user()->name, 'email' => $request->user()->email,'is_evolution_admin'=>(bool)$request->user()->is_evolution_admin,'supporter'=>app(\App\Services\SupporterMembership::class)->status($request->user()),'theme'=>app(\App\Services\PersonalThemes::class)->effective($request->user())],
         ]));
         Route::delete('/auth/token', [AuthController::class, 'logout']);
 

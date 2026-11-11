@@ -1,3 +1,7 @@
+import {RouteErrorBoundary} from './components/RouteErrorBoundary';
+import {backendPageUrl} from './cloudPersistence';
+import {useGameModes} from './gameModes';
+import {WorldDesk} from './components/WorldDesk';
 import {canonicalRoute,sectionHref,workspacePath} from './frontendRoutes';
 import {ClubMatchHistory} from './components/ClubMatchHistory';
 import {SupporterStudio} from './components/SupporterStudio';
@@ -45,6 +49,10 @@ import { HexatrickMark } from './components/HexatrickBrand';
 import { ClubHome } from './components/ClubHome';
 import { DraftPhaseView } from './components/DraftPhaseView';
 import { AramMatchView } from './components/AramMatchView';
+import { FpsMatchView } from './components/FpsMatchView';
+import { simulateFpsMatch } from './fps';
+import { FPS_MAPS } from './fps/maps';
+import type { FpsMapId, FpsMatchReport } from './fps/types';
 import type { MatchReport } from './matchReplay';
 import { refreshMatchReportAvatarPresentation, rerollAfterBalanceGame } from './matchReplay';
 import type { OnlineRoom, OnlineSession } from './onlineRooms';
@@ -92,7 +100,7 @@ import {
   LogOut
 } from 'lucide-react';
 
-type ArenaChoice = 'ai' | 'equalized_ai' | 'dev_random' | 'online' | null;
+type ArenaChoice = 'ai' | 'equalized_ai' | 'dev_random' | 'online' | 'fps_exhibition' | null;
 type MainSection = 'home' | 'squad' | 'play' | 'market' | 'finances' | 'hexapedia' | 'history' | 'supporter' | 'settings';
 type SquadSubTab = 'lineup' | 'training' | 'staff' | 'evolutions';
 type PlaySubTab = 'modes' | 'split' | 'community' | 'competitions' | 'news' | 'broadcasts' | 'archive';
@@ -216,6 +224,7 @@ export function App() {
 
   const setActiveSection = (section: MainSection) => {
     setActiveSectionState(section);
+    if(section!=='play')setInBattle(false);
     if (typeof window !== 'undefined' && window.location.hash !== sectionHref(section)) {
       window.history.replaceState(null, '', sectionHref(section));
       window.dispatchEvent(new HashChangeEvent('hashchange'));
@@ -226,6 +235,7 @@ export function App() {
     const onHashChange = () => {
       const next = readInitialSection();
       setActiveSectionState(next);
+      if(next!=='play')setInBattle(false);
       if(next==='squad'){const tab=new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').get('tab');if(tab&&['lineup','training','staff'].includes(tab))setSquadSubTab(tab as SquadSubTab);}
       const params=new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'');
       const match=params.get('match');if(next==='play'&&match&&/^[a-f0-9-]{36}$/i.test(match)){setWatchMatchId(match);setPlaySubTab('split');}
@@ -245,9 +255,12 @@ export function App() {
   const [audioMuted, setAudioMuted] = useState(() => sound.isMuted());
   const [selectedOpponentTeam] = useState<ProTeam | null>(() => PRO_TEAMS_DATABASE[0] ?? null);
   const [inBattle, setInBattle] = useState<boolean>(false);
+  const modes=useGameModes();
   const [arenaChoice, setArenaChoice] = useState<ArenaChoice>(() =>
     sessionStorage.getItem('esports-clash-online-session') ? 'online' : null
   );
+  const [fpsMapSelection, setFpsMapSelection] = useState<FpsMapId>('breakwater');
+  const [fpsExhibition, setFpsExhibition] = useState<{ report: FpsMatchReport; blueName: string; redName: string } | null>(null);
   const [draftSeed, setDraftSeed] = useState(0);
   const rivalCoach = INITIAL_COACHES[draftSeed % INITIAL_COACHES.length];
   const [equalizedBlueRoster, setEqualizedBlueRoster] = useState<PlayerCard[]>(() => createEqualizedRoster('blue'));
@@ -636,6 +649,26 @@ export function App() {
     handleDraftComplete(matchup.blue, matchup.red, seed);
   };
 
+  const launchFpsExhibition = () => {
+    const blueRoster = startingFive.slice(0, 5);
+    const blueIds = new Set(blueRoster.map(player => player.id));
+    const redRoster = roster.filter(player => !blueIds.has(player.id)).slice(0, 5);
+    if (blueRoster.length !== 5 || redRoster.length !== 5) {
+      setOnlineError('An FPS exhibition requires five distinct players on each side.');
+      return;
+    }
+    const seed = crypto.getRandomValues(new Uint32Array(1))[0];
+    setFpsExhibition({
+      report: simulateFpsMatch(blueRoster, redRoster, fpsMapSelection, seed),
+      blueName: 'Your Club',
+      redName: selectedOpponentTeam?.name ?? 'Practice Opponent'
+    });
+    setArenaChoice('fps_exhibition');
+    setActiveSection('play');
+    setPlaySubTab('modes');
+    setInBattle(true);
+  };
+
   const [v3RosterChoices, setV3RosterChoices] = useState<Record<string, string>>({});
   const launchV3PrototypeMatch = () => {
     const seed = crypto.getRandomValues(new Uint32Array(1))[0];
@@ -844,7 +877,7 @@ export function App() {
         </header>
 
         {/* PAGE CONTENT */}
-        <main id="main-content" tabIndex={-1} className={`cm-content ${inBattle ? 'cm-content--arena' : ''} ${activeSection === 'play' && inBattle ? 'max-w-[1640px]' : 'max-w-7xl'} mx-auto w-full`}>
+        <main id="main-content" tabIndex={-1} className={`cm-content ${activeSection==='play'&&inBattle ? 'cm-content--arena' : ''} ${activeSection === 'play' && inBattle ? 'max-w-[1640px]' : 'max-w-7xl'} mx-auto w-full`}>
           {accountError && <p role="alert" className="club-notice mb-4">{accountError}</p>}
           {!inBattle && activeSection!=='hexapedia' && !['news','broadcasts','archive'].includes(activeSection==='play'?playSubTab:'') && <div className="cm-page-heading">
             <p className="cm-eyebrow">Hexatrick / Club management</p>
@@ -961,6 +994,7 @@ export function App() {
                     <>
                       {arenaChoice === null ? (
                         <div className="space-y-4">
+                          {modes.moba_enabled && <>
                           {/* Hattrick Friendly Scrimmage Arranger Banner */}
                           <div className="cm-panel">
                             <div className="cm-panel-header">
@@ -1042,8 +1076,10 @@ export function App() {
                             </div>
                           </div>
 
-                          {/* 4 Match Mode Selection Cards */}
+                          </>}
+                          {/* Match Mode Selection Cards */}
                           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                            {modes.moba_enabled && <>
                             <div className="cm-panel flex flex-col justify-between">
                               <div className="cm-panel-header">
                                 <span>Single-Player Scrimmage</span>
@@ -1151,6 +1187,36 @@ export function App() {
                                 </button>
                               </div>
                             </div>
+
+                            </>}
+                            <div className="cm-panel flex flex-col justify-between">
+                              <div className="cm-panel-header">
+                                <span>Tactical FPS Exhibition</span>
+                                <span className="cm-badge cm-badge-navy">MR15 · 5v5</span>
+                              </div>
+                              <div className="cm-panel-body flex-1 flex flex-col justify-between space-y-3">
+                                <div>
+                                  <h2 className="text-base font-black text-[#0b1f44]">FPS Match Simulation</h2>
+                                  <p className="text-xs text-[#313a48] mt-1.5 leading-relaxed">
+                                    Run a deterministic local exhibition on one of the five competitive maps. This preview does not affect schedules, standings, or player careers.
+                                  </p>
+                                </div>
+                                <label className="text-xs font-bold text-[#313a48]">
+                                  Map
+                                  <select
+                                    aria-label="FPS exhibition map"
+                                    className="cm-select mt-1 w-full"
+                                    value={fpsMapSelection}
+                                    onChange={event => setFpsMapSelection(event.target.value as FpsMapId)}
+                                  >
+                                    {Object.values(FPS_MAPS).map(map => <option key={map.id} value={map.id}>{map.name}</option>)}
+                                  </select>
+                                </label>
+                                <button type="button" onClick={launchFpsExhibition} className="cm-btn cm-btn-primary w-full">
+                                  Run FPS Exhibition ▸
+                                </button>
+                              </div>
+                            </div>
                           </div>
 
                           {/* Compact Match Replay & Dev Quick Bar */}
@@ -1187,7 +1253,7 @@ export function App() {
                                 </label>
                               </div>
 
-                              {import.meta.env.DEV && (
+                              {import.meta.env.DEV && modes.moba_enabled && (
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -1203,7 +1269,7 @@ export function App() {
                             </div>
                           </div>
                         </div>
-                      ) : arenaChoice === 'dev_random' ? (
+                      ) : !modes.moba_enabled && !replayDraft && arenaChoice !== 'fps_exhibition' ? (<div className="cm-panel"><p>MOBA is disabled. Use the tactical FPS exhibition.</p><button className="cm-btn" onClick={()=>setArenaChoice(null)}>Return to match selection</button></div>) : arenaChoice === 'dev_random' ? (
                         <div className="cm-panel max-w-2xl mx-auto">
                           <div className="cm-panel-header">
                             <span>Developer Random 5v5 Sandbox</span>
@@ -1541,7 +1607,18 @@ export function App() {
                           </button>
                         </div>
                       )}
-                      <AramMatchView
+                      {arenaChoice === 'fps_exhibition' && fpsExhibition ? (
+                        <FpsMatchView
+                          report={fpsExhibition.report}
+                          blueTeamName={fpsExhibition.blueName}
+                          redTeamName={fpsExhibition.redName}
+                          onExit={() => {
+                            setInBattle(false);
+                            setArenaChoice(null);
+                            setFpsExhibition(null);
+                          }}
+                        />
+                      ) : <AramMatchView
                         abilityRuleset={V3_RULESET}
                         contentCatalog={
                           replayDraft ? replayContent : arenaChoice === 'online' ? onlineRoom?.contentCatalog ?? null : undefined
@@ -1659,7 +1736,7 @@ export function App() {
                               }
                             : () => {}
                         }
-                      />
+                      />}
                     </>
                   )}
                 </div>
@@ -1693,7 +1770,8 @@ export function App() {
               6. SETTINGS (AUDIO, CLOUD SAVE, CATALOG, DEVELOPER)
              ========================================================= */}
           {activeSection==='supporter'&&<SupporterStudio/>}
-          {activeSection==='settings'&&<section className="cm-panel mb-4"><h2 className="cm-panel-header"><Swords size={15}/> Practice tools</h2><div className="cm-panel-body"><p className="club-help">Local draft experiments and historical sandbox modes. Club fixtures remain server scheduled.</p><a className="cm-btn" href="#arena-practice">Open Arena practice</a></div></section>}
+          {activeSection==='settings'&&<section className="cm-panel mb-4"><h2 className="cm-panel-header"><Swords size={15}/> Watch the FPS simulation</h2><div className="cm-panel-body space-y-3"><p>Watch the live 3D exhibition with first-person, third-person and automatic broadcast cameras, or inspect a recorded tactical match. Exhibition matches do not change your club records.</p><div className="flex flex-wrap gap-3"><a className="cm-btn cm-btn-primary" href="#fps-simulation">Open FPS broadcast room</a><a className="cm-btn" href="#hexapedia/fps">FPS reference</a><a className="cm-btn" href="#hexapedia/personalities">Personalities</a>{accountSession?.user.is_evolution_admin&&<a className="cm-btn" href={backendPageUrl('/evolution/game-modes')}>Game-mode settings</a>}</div><p className="club-help">Current format: Tactical FPS. MOBA {modes.moba_enabled?'enabled for optional exhibitions':'preserved and disabled'}.</p></div></section>}
+          {activeSection==='settings'&&<RouteErrorBoundary><WorldDesk compact/></RouteErrorBoundary>}
           {activeSection === 'settings' && (
             <div className="space-y-4 max-w-5xl">
               {/* Audio & Broadcast */}
@@ -1755,7 +1833,7 @@ export function App() {
               {/* Backoffice & AI Controller Status */}
               <div className="cm-panel">
                 <div className="cm-panel-header">
-                  <span>Backoffice Catalog &amp; Learned AI Controller</span>
+                  <span>Game catalog &amp; simulation status</span>
                   <span className="cm-badge cm-badge-blue">{catalogConnection.status}</span>
                 </div>
                 <div className="cm-panel-body space-y-3 text-xs">
@@ -1784,15 +1862,13 @@ export function App() {
                   </div>
 
                   <p className="text-[#313a48] leading-relaxed">
-                    <strong>Learning AI in your arena matches:</strong> Movement, combat targets, spells and strategic
-                    choices come from a learned controller (`arenaPlaybookV6.json` / `data/arena-v6`). Open the AI
-                    panel inside the match spectator to inspect live decision scores.
+                    The current FPS uses the deterministic tactical simulator. Skills, equipment, personality preferences and the round situation inform decisions. The historical learned MOBA controller remains preserved for that game mode.
                   </p>
                 </div>
               </div>
 
               {/* Developer & Diagnostics */}
-              <div className="cm-panel">
+              {modes.moba_enabled&&<div className="cm-panel">
                 <div className="cm-panel-header">
                   <span>Developer Diagnostics &amp; Experimental Sandboxes</span>
                   <span className="cm-badge cm-badge-navy">Diagnostics</span>
@@ -1840,7 +1916,7 @@ export function App() {
                     </div>
                   )}
                 </div>
-              </div>
+              </div>}
             </div>
           )}
 

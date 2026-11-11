@@ -78,16 +78,16 @@ export const TrainingCenterView: React.FC<TrainingCenterViewProps> = ({
   }[] = [
     {
       id: 'lan',
-      label: 'Laning & Micro Mechanics',
-      desc: 'Trains 1v1 laning trades, CS precision, and solo mechanical outplays.',
+      label: 'Aim & Weapon Mechanics',
+      desc: 'Trains opening-duel mechanics and precision with FPS weapons.',
       icon: Swords,
       coachStatLabel: 'Mechanical Coaching',
       coachStatVal: coachAttrs.mechanical
     },
     {
       id: 'tf',
-      label: '5v5 Teamfight Coordination',
-      desc: 'Drills target focus, frontline peel, and synchronized AoE wombocombos.',
+      label: 'Trading & Team Coordination',
+      desc: 'Drills spacing, trade follow-up and coordinated site takes.',
       icon: Shield,
       coachStatLabel: 'Mechanical Coaching',
       coachStatVal: coachAttrs.mechanical
@@ -95,7 +95,7 @@ export const TrainingCenterView: React.FC<TrainingCenterViewProps> = ({
     {
       id: 'iq',
       label: 'Macro & Game Sense (IQ)',
-      desc: 'Sharpens objective timers, tower risk math, and grooms future 7+/10 IQ coaches.',
+      desc: 'Develops tactical reading and prepares future 7+/10 IQ coaches.',
       icon: Brain,
       coachStatLabel: 'Tactical Coaching',
       coachStatVal: coachAttrs.tactical
@@ -111,7 +111,7 @@ export const TrainingCenterView: React.FC<TrainingCenterViewProps> = ({
     {
       id: 'clu',
       label: 'Clutch & High-Stakes Nerves',
-      desc: 'Improves Baron/Elder smite composure and late-game Worlds elimination focus.',
+      desc: 'Develops decision-making under pressure in decisive rounds.',
       icon: Flame,
       coachStatLabel: 'Stage Motivation',
       coachStatVal: coachAttrs.motivation
@@ -126,8 +126,8 @@ export const TrainingCenterView: React.FC<TrainingCenterViewProps> = ({
     },
     {
       id: 'flx',
-      label: 'Draft Flexibility & Champion Pool',
-      desc: 'Expands avatar mastery and multi-role swap adaptability.',
+      label: 'Weapon & Role Flexibility',
+      desc: 'Develops adaptability across equipment and tactical assignments.',
       icon: RefreshCw,
       coachStatLabel: 'Conditioning',
       coachStatVal: coachAttrs.conditioning

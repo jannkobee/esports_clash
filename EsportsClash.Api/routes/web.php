@@ -11,6 +11,10 @@ Route::middleware('guest')->group(function () {
 });
 Route::post('/logout', [EvolutionDashboardController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth', EnsureEvolutionOwner::class])->prefix('evolution')->group(function () {
+    Route::get('/game-modes', [\App\Http\Controllers\GameModeController::class, 'index'])->name('game-modes.index');
+    Route::post('/game-modes', [\App\Http\Controllers\GameModeController::class, 'update'])->name('game-modes.update');
+    Route::get('/world', [\App\Http\Controllers\WorldSimulationController::class, 'dashboard'])->name('world.dashboard');
+    Route::post('/world/arena-updates',[\App\Http\Controllers\ArenaUpdateController::class,'store'])->name('world.arena-updates')->middleware('throttle:6,1');
     Route::post('/avatars/{avatar}/components', [\App\Http\Controllers\AvatarComponentController::class,'save'])->middleware('throttle:30,1')->name('avatar-components.save');
     Route::get('/avatars/{avatar}/components/{hash}.{format}', [\App\Http\Controllers\AvatarComponentController::class,'file'])->where('hash','[a-f0-9]{64}')->whereIn('format',['png','glb'])->name('avatar-components.file');
     Route::get('/registry/avatars', [\App\Http\Controllers\AvatarRegistryController::class,'index'])->name('registry.index');

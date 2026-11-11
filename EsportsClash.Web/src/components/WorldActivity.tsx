@@ -1,3 +1,4 @@
+import {apiRecords} from '../apiCollections';
 import {onWorldUpdate} from '../worldLive';
 import { useEffect, useState } from 'react';
 import { Activity, Gavel, UserPlus, Trophy, Radio, ArrowRightLeft } from 'lucide-react';
@@ -21,7 +22,7 @@ export function WorldActivity({onWatch}: {onWatch?:(id:string)=>void}) {
     if(!isCloudPersistenceConfigured())return;
     const controller=new AbortController();
     const load=()=>void request<{data:Feed}>('/avatarpedia/world',null,{signal:controller.signal})
-      .then(response=>{setFeed(response.data);setError('');})
+      .then(response=>{setFeed({...response.data,events:apiRecords(response.data.events)});setError('');})
       .catch(()=>{if(!controller.signal.aborted)setError('World updates are temporarily unavailable.');});
     load();const stopLive=onWorldUpdate(['activity','clubs','market','fixtures'],load);const timer=window.setInterval(load,60000);
     return()=>{controller.abort();window.clearInterval(timer);stopLive();};

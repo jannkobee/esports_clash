@@ -25,6 +25,10 @@ x-api: &api
     EVOLUTION_OWNER_PASSWORD: ${EVOLUTION_OWNER_PASSWORD:?Missing initial owner password}
     HEXATRICK_OWNER_EMAIL: ${HEXATRICK_OWNER_EMAIL:-}
     HEXATRICK_OWNER_PASSWORD: ${HEXATRICK_OWNER_PASSWORD:-}
+    HEXATRICK_GAME_URL: ${HEXATRICK_GAME_URL:-http://localhost:8088}
+    WORLD_VOICES_ENABLED: ${WORLD_VOICES_ENABLED:-true}
+    LIVING_WORLD_ENABLED: ${LIVING_WORLD_ENABLED:-true}
+    WORLD_VOICES_DAILY_POSTS: ${WORLD_VOICES_DAILY_POSTS:-144}
     ONLINE_WORKER_URL: http://match-worker:8092
     ONLINE_WORKER_TOKEN: ${ONLINE_WORKER_TOKEN:-}
     REDIS_HOST: avatar-redis
@@ -54,7 +58,7 @@ services:
       retries: 3
   competition-rankings:
     <<: *api
-    command: [php, artisan, 'queue:listen', competition_rankings, '--queue=competition-rankings', '--sleep=3', '--timeout=950', '--tries=4']
+    command: [php, artisan, 'queue:work', competition_rankings, '--queue=competition-rankings', '--sleep=10', '--timeout=950', '--tries=4', '--max-time=3600', '--max-jobs=25', '--memory=256']
     mem_limit: 384m
     cpus: 0.5
 
@@ -107,7 +111,7 @@ services:
 
   worker:
     <<: *api
-    command: [php, artisan, "queue:work", "--sleep=3", "--timeout=30", "--tries=10", "--max-time=3600"]
+    command: [php, artisan, "queue:work", "--queue=default,world", "--sleep=5", "--timeout=30", "--tries=10", "--max-time=3600", "--max-jobs=250", "--memory=192"]
     depends_on:
       init: {condition: service_completed_successfully}
       runner: {condition: service_healthy}

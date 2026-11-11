@@ -1,0 +1,2 @@
+.role-label{display:inline-flex;align-items:center;gap:5px;vertical-align:middle;line-height:1.4}.role-label>svg{flex-shrink:0;color:var(--account-accent,#d598a0)}
+.role-label__specialties{display:grid;gap:3px}.role-label__secondary{font-size:11px;line-height:1.4;opacity:.72;font-weight:400}

@@ -14,10 +14,12 @@ class ClubMarketService
     public const ACADEMY_OPENING_FEE = 300_000;
     public const YOUTH_COACH_WAGE = 75_000;
 
-    public function weeklyWages(OnlineClub $club,?OnlineCatalog $catalog=null): int
+    public function weeklyWages(OnlineClub $club,?OnlineCatalog $catalog=null,bool $negotiated=true): int
     {
         $catalog??=app(OnlineService::class)->activeCatalog();$templates=collect($catalog->payload['cards'])->keyBy('id');
-        $wages=OwnedPlayerCard::where('user_id',$club->user_id)->get()->sum(fn($p)=>max(0,(int)(app(WorldPlayerProfiles::class)->definition($p,$templates[$p->definition_id])['wage']??45))*100);
+        $base=OwnedPlayerCard::where('user_id',$club->user_id)->get()->mapWithKeys(fn($p)=>[$p->id=>max(0,(int)(app(WorldPlayerProfiles::class)->definition($p,$templates[$p->definition_id])['wage']??45))*100])->all();
+        $wages=array_sum($base);
+        if($negotiated&&app(WorldAgents::class)->ready())$wages+=app(WorldCareerContracts::class)->salaryDelta($club,$base);
         return $wages+($club->academy_opened_at?self::YOUTH_COACH_WAGE:0)+app(StaffContracts::class)->weeklySalary($club->id);
     }
 
@@ -87,7 +89,11 @@ class ClubMarketService
             $key = 'payroll:'.$club->id.':'.$week->copy()->subWeek()->format('o-W');
             if (DB::table('club_money_entries')->where('reference', $key)->exists()) return;
             $club->refresh();
-            $wages=$this->weeklyWages($club,$catalog)-app(StaffContracts::class)->weeklySalary($club->id);
+            $wages=$this->weeklyWages($club,$catalog,false)-app(StaffContracts::class)->weeklySalary($club->id);
+            if(app(WorldAgents::class)->ready()){
+                $wages+=app(WorldCareerContracts::class)->salaryDelta($club,[],$week->copy()->subWeek(),$week);
+                $wages+=app(WorldCareerContracts::class)->basePayrollAdjustment($club,$week->copy()->subWeek(),$week);
+            }
             if($club->academy_opened_at && $club->academy_opened_at->gte($week))$wages-=self::YOUTH_COACH_WAGE;
             $this->balance($club->id);
             $this->entry($club->id, -$wages, 'Weekly payroll', $key);
@@ -136,7 +142,7 @@ class ClubMarketService
 
     public function proposeTrade(OnlineClub $proposer, OnlineClub $recipient, array $offeredIds, array $requestedIds, int $offeredCash, int $requestedCash): ClubTradeProposal
     {
-        abort_if($proposer->id === $recipient->id || $recipient->is_bot, 422, 'Choose another human-managed club.');
+        abort_if($proposer->id === $recipient->id, 422, 'Choose another club.');
         abort_if(count($offeredIds) < 1 || count($requestedIds) < 1 || count($offeredIds) > 5 || count($requestedIds) > 5
             || count(array_unique($offeredIds)) !== count($offeredIds) || count(array_unique($requestedIds)) !== count($requestedIds), 422, 'Offer one to five distinct reserve players from each club.');
         abort_if($offeredCash < 0 || $requestedCash < 0 || $offeredCash > 1_000_000_000 || $requestedCash > 1_000_000_000, 422, 'Cash amounts exceed the transfer limits.');
@@ -145,13 +151,20 @@ class ClubMarketService
             $clubs = OnlineClub::whereKey([$proposer->id, $recipient->id])->orderBy('id')->lockForUpdate()->get()->keyBy('id');
             $seller = $clubs[$proposer->id] ?? null;
             $buyer = $clubs[$recipient->id] ?? null;
-            abort_unless($seller && $buyer && ! $buyer->is_bot, 404);
+            abort_unless($seller && $buyer, 404);
             abort_if($this->queueLocked($seller) || $this->queueLocked($buyer), 409, 'A club must leave matchmaking before proposing a trade.');
             $this->assertTradeable($seller, $offeredIds, $catalog);
             $this->assertTradeable($buyer, $requestedIds, $catalog);
             abort_if($this->balance($seller->id) < $offeredCash, 422, 'Insufficient available money for the offered cash.');
 
             $comparison = $this->tradeComparison($offeredIds, $requestedIds, $offeredCash, $requestedCash, $catalog);
+            if(app(WorldAgents::class)->ready()){
+                $bindings=[];
+                foreach([[$offeredIds,$buyer],[$requestedIds,$seller]] as [$ids,$destination])foreach(OwnedPlayerCard::whereIn('id',$ids)->get() as $p){
+                    abort_unless(app(WorldCareerContracts::class)->consent($p,$destination),422,'A player wants to negotiate employment terms before this trade.');
+                    $bindings[$p->id]=app(WorldCareerContracts::class)->acceptedTransferTerms($p->id,$destination->id);
+                }$comparison['career_terms']=$bindings;
+            }
             $proposal = ClubTradeProposal::create([
                 'proposer_id' => $seller->id,
                 'recipient_id' => $buyer->id,
@@ -160,6 +173,7 @@ class ClubMarketService
                 'offered_cash' => $offeredCash,
                 'requested_cash' => $requestedCash,
                 'comparison' => $comparison,
+                ...(app(WorldAgents::class)->ready()?['proposer_epoch'=>$seller->management_epoch??0,'recipient_epoch'=>$buyer->management_epoch??0]:[]),
                 'status' => 'pending',
                 'expires_at' => now()->addHours(48),
             ]);
@@ -172,11 +186,13 @@ class ClubMarketService
         });
     }
 
-    public function respondToTrade(OnlineClub $club, int $proposalId, string $action): ClubTradeProposal
+    public function respondToTrade(OnlineClub $club, int $proposalId, string $action,?int $managementEpoch=null): ClubTradeProposal
     {
         abort_unless(in_array($action, ['accept', 'decline', 'withdraw'], true), 422);
 
-        return $this->transaction(function (OnlineCatalog $catalog) use ($club, $proposalId, $action): ClubTradeProposal {
+        return $this->transaction(function (OnlineCatalog $catalog) use ($club, $proposalId, $action,$managementEpoch): ClubTradeProposal {
+            $club=OnlineClub::whereKey($club->id)->lockForUpdate()->firstOrFail();
+            if($managementEpoch!==null)app(WorldCareers::class)->authority($club,true,$managementEpoch);
             $proposal = ClubTradeProposal::whereKey($proposalId)->lockForUpdate()->firstOrFail();
             $isProposer = $proposal->proposer_id === $club->id;
             abort_unless($isProposer ? $action === 'withdraw' : $proposal->recipient_id === $club->id && $action !== 'withdraw', 403);
@@ -211,8 +227,8 @@ class ClubMarketService
             $offered = OwnedPlayerCard::whereIn('id', $proposal->offered_player_ids)->where('user_id', $seller->user_id)->lockForUpdate()->get();
             $requested = OwnedPlayerCard::whereIn('id', $proposal->requested_player_ids)->where('user_id', $buyer->user_id)->lockForUpdate()->get();
             abort_unless($offered->count() === count($proposal->offered_player_ids) && $requested->count() === count($proposal->requested_player_ids), 409, 'A player is no longer available for this trade.');
-            foreach ($offered as $card) $card->update(['user_id' => $buyer->user_id]);
-            foreach ($requested as $card) $card->update(['user_id' => $seller->user_id]);
+            foreach ($offered as $card){if(app(WorldAgents::class)->ready())app(WorldAgents::class)->player($card);$card->update(['user_id' => $buyer->user_id]);app(WorldCareerContracts::class)->moved($card,$seller,$buyer,'trade:'.$proposal->id,$proposal->comparison['career_terms'][$card->id]??null);}
+            foreach ($requested as $card){if(app(WorldAgents::class)->ready())app(WorldAgents::class)->player($card);$card->update(['user_id' => $seller->user_id]);app(WorldCareerContracts::class)->moved($card,$buyer,$seller,'trade:'.$proposal->id,$proposal->comparison['career_terms'][$card->id]??null);}
 
             if ($proposal->offered_cash > 0) $this->entry($buyer->id, $proposal->offered_cash, 'Trade cash received', "trade:$proposal->id:offer-transfer");
             if ($proposal->requested_cash > 0) {
@@ -301,13 +317,17 @@ class ClubMarketService
             abort_if($amount < $minimum, 422, 'The bid is below the current minimum.');
             $ownHold = $auction->bidder_id === $bidder->id ? $auction->bid : 0;
             abort_if($amount > $this->balance($bidder->id) + $ownHold, 422, 'Insufficient available money.');
+            if(app(WorldAgents::class)->ready()){
+                $activated=DB::table('living_world_runtime')->value('careers_activated_at');
+                if($activated&&$auction->created_at->gte(\Carbon\Carbon::parse($activated)))abort_unless(app(WorldCareerContracts::class)->consent($auction->card,$bidder),422,'The player wants to discuss employment terms before this move. Submit a transfer-terms offer in the career desk.');
+            }
 
             if ($auction->bidder_id !== null) {
                 $this->entry($auction->bidder_id, $auction->bid, 'Bid released', "auction:$auctionId:release:$auction->bid");
             }
             $this->entry($bidder->id, -$amount, 'Bid reserved', "auction:$auctionId:bid:$amount");
             if($auction->bidder_id && $auction->bidder_id!==$bidder->id)app(ClubOffice::class)->notify($auction->bidder_id,"outbid:$auctionId:$amount",'market','You have been outbid','Your previous reservation was released back to available money. Review the current auction before bidding again.',['type'=>'route','route'=>'market','auction_id'=>$auctionId],$auction->closes_at);
-            $auction->update(['bidder_id' => $bidder->id, 'bid' => $amount]);
+            $auction->update(['bidder_id' => $bidder->id, 'bid' => $amount,...(app(WorldAgents::class)->ready()?['career_negotiation_id'=>app(WorldCareerContracts::class)->acceptedTransferTerms($auction->card_id,$bidder->id)]:[])]);
             app(WorldActivityService::class)->record("auction:$auctionId:bid:$amount", 'bid', $bidder, $bidder->name.' placed a bid in the transfer market.', ['auction_id' => $auctionId, 'player_id' => $auction->card->definition_id, 'player_instance_id' => $auction->card_id, 'amount' => $amount, 'currency' => 'PHP']);
         });
     }
@@ -325,7 +345,9 @@ class ClubMarketService
             $sold = $eligible && $auction->bidder_id !== null;
             if ($sold) {
                 $buyer = OnlineClub::findOrFail($auction->bidder_id);
+                if(app(WorldAgents::class)->ready())app(WorldAgents::class)->player($card);
                 $card->update(['user_id' => $buyer->user_id]);
+                app(WorldCareerContracts::class)->moved($card,$seller,$buyer,'auction:'.$auctionId,$auction->career_negotiation_id);
                 $this->entry($seller->id, $auction->bid, 'Player sale', "auction:$auctionId:sale");
             } elseif ($auction->bidder_id !== null) {
                 $this->entry($auction->bidder_id, $auction->bid, 'Bid refunded', "auction:$auctionId:refund");
@@ -339,6 +361,19 @@ class ClubMarketService
                 ['auction_id' => $auctionId, 'player_id' => $card->definition_id, 'player_instance_id' => $card->id, 'seller_id' => $seller->id,
                     ...($sold ? ['buyer_id' => $buyer->id, 'amount' => $auction->bid, 'currency' => 'PHP'] : [])]);
         });
+    }
+
+    public function assertCareerRelease(OnlineClub $club,array $ids):void {
+        abort_if($this->queueLocked($club)||ClubFixture::awaitingSnapshot($club->id),409,'Finish or leave the current match allocation first.');
+        abort_if(DB::table('competition_player_reservations')->whereIn('player_id',$ids)->where('ends_at','>',now())->exists(),409,'A national call-up or recovery reservation still protects this player.');
+        $catalog=app(OnlineService::class)->activeCatalog();$this->assertTradeable($club,$ids,$catalog);
+        abort_if(OwnedPlayerCard::where('user_id',$club->user_id)->count()-count($ids)<5,409,'A club must retain at least five active players.');
+    }
+    public function releaseReserve(OnlineClub $club,string $player,bool $autonomous=false,?int $epoch=null):void {
+        $this->transaction(fn()=>app(WorldFreeAgency::class)->release($club,$player,$autonomous,$epoch));
+    }
+    public function signFreeAgent(OnlineClub $club,OwnedPlayerCard $player,int $salary,int $agreement):void {
+        $this->transaction(function()use($club,$player,$salary,$agreement){$club=OnlineClub::whereKey($club->id)->lockForUpdate()->firstOrFail();$player=OwnedPlayerCard::whereKey($player->id)->lockForUpdate()->firstOrFail();app(WorldFreeAgency::class)->sign($club,$player,$salary,$agreement);});
     }
 
 }

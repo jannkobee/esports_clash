@@ -12,6 +12,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(\App\Services\WorldPlayerProfiles::class);
+        $this->app->scoped(\App\Services\WorldAgents::class);
+        $this->app->scoped(\App\Services\WorldCareers::class);
     }
 
     /**

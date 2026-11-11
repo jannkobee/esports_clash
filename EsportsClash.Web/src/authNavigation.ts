@@ -5,6 +5,8 @@ export const readRoute=()=>canonicalizeLocation();
 export const isWorkspaceRoute=(route:string)=>workspaceSections.has(workspacePath(route).split(/[/?]/)[0]);
 function safeDestination(value:string):string{
  const route=canonicalRoute(value);
+ if(route==='fps-simulation')return route;
+ if(/^hexapedia\/(?:fps|roles|personalities|weapons|equipment|maps|attributes|rules)(?:\/[a-zA-Z0-9_:%-]{1,150})?$/.test(route))return route;
  if(/^hexapedia\/(?:guide|laboratory|catalog)$/.test(route))return route;
  if(/^hexapedia\/awards(?:\?year=20[0-9]{2})?$/.test(route))return route;
  if(/^hexapedia(?:\/(?:tournaments|teams|nations|players|coaches|avatars|items|releases|organizers|sponsors|talent|managers)(?:\/[a-zA-Z0-9_:%-]{1,150})?)?$/.test(route))return route;

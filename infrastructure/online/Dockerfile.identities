@@ -3,8 +3,10 @@
 ARG ONLINE_BASE=teamfight-online-worker:club-pilot-20261107
 FROM ${ONLINE_BASE}
 COPY infrastructure/online/browser-worker.mjs /online/browser-worker.mjs
+COPY infrastructure/online/fps-match-worker.mjs /online/fps-match-worker.mjs
 COPY infrastructure/online/final-performance.mjs /online/final-performance.mjs
 COPY infrastructure/online/finish-existing-match.mjs /online/finish-existing-match.mjs
 COPY infrastructure/online/server.py /online/server.py
 COPY EsportsClash.Web/src/worldPlayerProfile.ts /workspace/EsportsClash.Web/src/worldPlayerProfile.ts
+COPY EsportsClash.Web/src/fps/ /workspace/EsportsClash.Web/src/fps/
 COPY infrastructure/online/history-match.mjs infrastructure/online/history_handler.py infrastructure/online/history_server.py /online/

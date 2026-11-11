@@ -21,14 +21,21 @@ class OnlineMatchAudit
         $same=function(array $actual)use($ids):bool{$expected=$ids;sort($actual);sort($expected);return $actual===$expected;};
         $fixture=ClubFixture::where('match_id',$id)->first();
         $exhibition=$fixture?->tournament_id&&ClubTournament::find($fixture->tournament_id)?->provenance==='launch_simulation';
+        $fps=($plan['game_mode']??null)==='fps_mr15_v1';
         $nexus=$match->result['terminal_nexus']??[];
-        $winner=($nexus['red']??null)===false?'blue':((($nexus['blue']??null)===false)?'red':null);
+        $report=$match->result['report']??[];
+        $winner=$fps?($report['winnerTeam']??null):(($nexus['red']??null)===false?'blue':((($nexus['blue']??null)===false)?'red':null));
+        $verified=$fps
+            ? ($report['format']??null)==='MR15_TACTICAL_FPS'&&($report['mapId']??null)===($plan['fps']['map_id']??null)
+                &&$winner===($match->result['winner']??null)&&($report['finalScore'][$winner]??0)>=16&&$match->result_hash!==null
+            : is_bool($nexus['blue']??null)&&is_bool($nexus['red']??null)&&$winner!==null
+                &&$winner===($match->result['winner']??null)&&$match->result_hash!==null;
         $checks=[
             'ten_unique_allocated_people'=>count($ids)===10&&count(array_unique($ids))===10,
             'both_staff_snapshots'=>count($plan['staff']['blue']??[])===5&&count($plan['staff']['red']??[])===5,
             'public_recording'=>$match->canSpectate(),
             'real_time_execution'=>$completed?($match->result['execution']['mode']??null)!=='owner_requested_fast_forward':null,
-            'verified_nexus_finish'=>$completed?is_bool($nexus['blue']??null)&&is_bool($nexus['red']??null)&&$winner!==null&&$winner===($match->result['winner']??null)&&$match->result_hash!==null:null,
+            'verified_match_result'=>$completed?$verified:null,
             'ten_exact_performance_people'=>$completed?$same(array_column($match->result['player_performance']??[],'instance_id')):null,
             'ten_exact_rating_people'=>$completed?($community?$ratings->isEmpty():$same($ratings->pluck('card_id')->all())):null,
             'ratings_in_range'=>$completed?($community?$ratings->isEmpty():$ratings->count()===10&&$ratings->every(fn($r)=>$r->rating>=1&&$r->rating<=10)):null,
