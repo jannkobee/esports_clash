@@ -6,7 +6,7 @@ export type LiveWeapon =
   | 'mp9' | 'mac10'
   | 'negev' | 'scout';
 
-export type LiveEquippedWeapon = LiveWeapon | 'knife' | 'flash' | 'smoke';
+export type LiveEquippedWeapon = LiveWeapon | 'knife' | 'flash' | 'smoke' | 'incendiary' | 'bomb';
 
 export interface LiveWeaponStats {
   readonly name: string;
@@ -28,7 +28,7 @@ export const LIVE_KNIFE = { name: 'Dock knife', reach: 1.35, windup: .16, interv
 
 export const liveDrawTime = (weapon: LiveEquippedWeapon): number => {
   if (weapon === 'knife') return LIVE_KNIFE.draw;
-  if (weapon === 'flash' || weapon === 'smoke') return 0.45;
+  if (weapon === 'flash' || weapon === 'smoke' || weapon === 'incendiary') return 0.45;
   if (weapon === 'sniper') return 0.85;
   if (weapon === 'scout') return 0.75;
   if (weapon === 'negev') return 1.1;

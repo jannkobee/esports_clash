@@ -7,7 +7,10 @@ import {freshFpsExhibitionSeed} from './fps/fpsExhibitionSeed.ts';
 import {recordFpsOpponentPattern,knownFpsTendency} from './fps/fpsOpponentPatterns.ts';
 import {launchLiveGrenade,predictLiveGrenade,stepLiveGrenade,LIVE_UTILITY_RULES} from './fps/fpsLiveGrenades.ts';
 import {liveShotSpeedLimit,advanceLiveJump,LIVE_JUMP_VELOCITY} from './fps/fpsLiveMovement.ts';
-import {liveWalkable} from './fps/fpsLiveMap.ts';
+import {liveWalkable,findLivePath,distance,LIVE_FPS_MAP,LIVE_ACTOR_RADIUS} from './fps/fpsLiveMap.ts';
+import {segmentHitsWall} from './fps/fpsSpatialWorld.ts';
+import {createLiveRoutePlanner,assignLiveObjective} from './fps/fpsLivePlanning.ts';
+import {liveOrderActive} from './fps/fpsLiveTactics.ts';
 
 const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
 const coach={...plan,rigidity:.7,communication:.7,leadership:.7,adaptability:.7,development:.5};
@@ -175,4 +178,128 @@ test('flash coordination warns teammates and waits for detonation, not a hidden 
   assert.ok(entry.flashWindow);assert.ok(entry.lookAwayStarts>sim.time);
   sim.time=entry.flashWindow.opens-.2;sim.move(entry,1/30);assert.equal(entry.action,'Waiting for friendly flash');
   sim.time=entry.flashWindow.opens+.01;sim.move(entry,1/30);assert.notEqual(entry.action,'Waiting for friendly flash');
+});
+
+test('approaches and objective roles use the route around the loggia rather than distance through it',()=>{
+  const position={x:-25,z:25.5},behindWall={x:-25,z:27.5},open={x:-30,z:24};
+  assert.ok(distance(position,behindWall)<distance(position,open));
+  const routeTo=createLiveRoutePlanner(position);
+  assert.ok(routeTo(behindWall).distance>routeTo(open).distance*2);
+  const candidates=[{key:'wall',point:behindWall,purpose:'entry'},{key:'open',point:open,purpose:'entry'}];
+  const context={position,role:'entry',remaining:80,judgment:1,allies:[],beliefs:[],committed:false,visited:new Set(),execute:false,routeTo};
+  assert.equal(chooseLiveApproach(candidates,context,()=>0).key,'open');
+  const actors=[{...behindWall,id:'near',slot:0,kit:false,channel:0},{...open,id:'reachable',slot:1,kit:false,channel:0}];
+  assert.equal(assignLiveObjective(actors,position).id,'reachable');
+  assert.equal(assignLiveObjective(actors,position,12,true).id,'reachable');
+  assert.equal(assignLiveObjective(actors,position,10,true),undefined);
+});
+
+test('unreachable approaches cannot survive commitment and assigned teammate goals spread an advance',()=>{
+  const candidates=[{key:'blocked',point:{x:0,z:33},purpose:'entry'},{key:'left',point:{x:-8,z:30},purpose:'entry'},{key:'right',point:{x:8,z:30},purpose:'entry'}];
+  const position={x:0,z:39},context={position,role:'entry',remaining:80,judgment:1,allies:[],beliefs:[],previous:'blocked',committed:true,visited:new Set(),execute:false,routeTo:createLiveRoutePlanner(position)};
+  // Use an actually blocked origin to verify an unreachable route is never a zero-cost trip.
+  assert.equal(assignLiveObjective([{x:0,z:33,id:'trapped',slot:0,kit:true,channel:0}],position),undefined);
+  const options=candidates.slice(1);
+  const plain={...context,previous:undefined,committed:false,routeTo:undefined};
+  assert.equal(chooseLiveApproach(options,{...plain,alliedGoals:[options[0].point]},()=>0).key,'right');
+  const blockedRoute=point=>point===candidates[0].point?{distance:Infinity,seconds:Infinity,path:[],exposure:0}:createLiveRoutePlanner(position)(point);
+  assert.notEqual(chooseLiveApproach(candidates,{...context,routeTo:blockedRoute},()=>0).key,'blocked');
+});
+
+test('fresh route exposure can break commitment even when the destination itself is quiet',()=>{
+  const candidates=[{key:'left',point:{x:-8,z:30},purpose:'entry'},{key:'right',point:{x:8,z:30},purpose:'entry'}];
+  const context={position:{x:0,z:39},role:'entry',remaining:80,judgment:1,allies:[],previous:'left',committed:true,visited:new Set(),execute:false,
+    beliefs:[{x:30,z:-20,age:0,certainty:.9,radius:1}],routeTo:point=>({path:[point],distance:12,seconds:3,exposure:point.x<0?25:0})};
+  assert.equal(chooseLiveApproach(candidates,context,()=>0).key,'right');
+});
+
+test('objective election preserves a viable active channel and includes kits and channel progress',()=>{
+  const target={x:-23,z:21},channeler={...target,id:'channeler',slot:1,kit:false,channel:7},kit={...target,id:'kit',slot:0,kit:true,channel:0};
+  assert.equal(assignLiveObjective([kit,channeler],target,4,true).id,'channeler');
+  assert.equal(assignLiveObjective([kit,{...channeler,channel:0}],target,6,true).id,'kit');
+  assert.equal(assignLiveObjective([kit,channeler],target,2,true),undefined);
+  assert.equal(assignLiveObjective([{...kit,x:target.x+1}],target,5,true).seconds,5,'A player already in interaction range need not reach the exact centre');
+});
+
+test('a defender without a kit keeps covering a teammate who can still finish the defuse',()=>{
+  const sim=game(),p=sim.actors[0],kit=sim.actors[1];
+  sim.actors.forEach(a=>{a.hp=0;});
+  Object.assign(p,{hp:100,x:-23,z:23,kit:false,channel:0,flash:0,smoke:0,target:undefined});
+  Object.assign(kit,{hp:100,x:-23,z:21,kit:true,channel:1});
+  sim.bomb={status:'planted',x:-23,z:21,site:'A',remaining:6};
+  sim.decide(p);
+  assert.notEqual(p.decision,'save');assert.match(p.intent,/Cover the defuser/);
+});
+
+test('the objective channel uses the same viable defuser as the tactical planner',()=>{
+  const sim=game(),slow=sim.actors[0],kit=sim.actors[1];
+  sim.actors.forEach(a=>{a.hp=0;});
+  for(const p of [slow,kit])Object.assign(p,{hp:100,x:-23,z:21,speed:0,vx:0,vz:0,channel:0,smoke:0});
+  slow.kit=false;slow.channel=1;kit.kit=true;
+  sim.bomb={status:'planted',x:-23,z:21,site:'A',remaining:7};
+  assert.equal(sim.objective(slow,1/30),false);assert.equal(slow.channel,0);
+  assert.equal(sim.objective(kit,1/30),true);assert.equal(kit.action,'Defusing');
+});
+
+test('route-based urgency releases slow crouched movement before the fixed final seconds',()=>{
+  const sim=game(),p=sim.actors[0];sim.actors.forEach(a=>{a.hp=0;});
+  Object.assign(p,{hp:100,x:0,z:0,kit:true,crouch:true,channel:0,flash:0,smoke:0,target:undefined});
+  const route=createLiveRoutePlanner(p)({x:-23,z:21});
+  sim.bomb={status:'planted',x:-23,z:21,site:'A',remaining:route.seconds+7};
+  assert.ok(sim.bomb.remaining>12);sim.decide(p);
+  assert.equal(p.objectiveUrgent,true);sim.move(p,1/30);
+  assert.equal(p.crouch,false);assert.equal(p.stance,'run');
+});
+
+test('expired defensive orders release their responders even before the caller thinks again',()=>{
+  const sim=game(),p=sim.actors[1];
+  Object.assign(p,{role:'trade',target:undefined,flash:0,smoke:0,contact:undefined});
+  const order={mode:'reinforce',site:'B',responders:[p.id],until:sim.time-.1,readyAt:sim.time-5,strength:1.5,reason:'Old B pressure'};
+  sim.informationOrders.blue=order;
+  assert.equal(liveOrderActive(order,sim.time),false);
+  assert.equal(liveOrderActive({...order,until:sim.time+1,readyAt:sim.time+1},sim.time),false);
+  sim.decide(p);assert.doesNotMatch(p.intent,/Reinforce B|Rotate B/);
+  assert.ok(p.goal.x<0,'The expired responder should return to its A assignment');
+});
+
+test('new evidence rebuilds an unchanged objective route without replanning it on every decision',()=>{
+  const sim=game(),p=sim.actors[5];
+  sim.actors.forEach(a=>{a.hp=0;});
+  Object.assign(p,{hp:100,x:-19,z:-10,bomb:true,flash:0,smoke:0,target:undefined});
+  sim.site='A';sim.decide(p);const goal={...p.goal},first=p.path;
+  sim.observeIntel(p,{key:'danger',source:'gunfire',observerId:p.id,x:-19,z:10,observed:sim.time,confidence:.95,uncertainty:.5},false);
+  sim.time+=1;sim.decide(p);
+  assert.deepEqual(p.goal,goal);assert.notEqual(p.path,first);assert.ok(p.routeEvidence.includes('danger'));
+  const rebuilt=p.path;sim.decide(p);assert.equal(p.path,rebuilt);
+});
+
+test('navigation destinations and waypoints stay inside the movement bounds',()=>{
+  assert.equal(liveWalkable({x:0,z:43.1}),false);
+  for(const destination of [{x:0,z:43.7},{x:34.4,z:40},{x:-34.4,z:-43.7}]){
+    const path=findLivePath({x:0,z:39},destination);assert.ok(path.length);
+    assert.ok(path.every(p=>Math.abs(p.x)<=34&&Math.abs(p.z)<=43));
+  }
+});
+
+test('actors inside the extra navigation margin can depart without crossing physical walls',()=>{
+  const from={x:17.42489522659554,z:6.104887244385917},to={x:-18,z:9};
+  assert.equal(liveWalkable(from),false);
+  assert.ok(!LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(from,from,w,LIVE_ACTOR_RADIUS)));
+  const path=findLivePath(from,to);assert.ok(path.length);
+  let previous=from;
+  for(const point of path){
+    assert.ok(!LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(previous,point,w,LIVE_ACTOR_RADIUS)));
+    previous=point;
+  }
+  const context={position:from,role:'entry',remaining:80,judgment:1,allies:[],beliefs:[],committed:false,visited:new Set(),execute:false,routeTo:createLiveRoutePlanner({x:0,z:33})};
+  assert.equal(chooseLiveApproach([{key:'entry',point:to,purpose:'entry'}],context,()=>0),undefined);
+});
+
+test('the device cannot be recovered or defused through the thin loggia wall',()=>{
+  for(const attacking of [true,false]){
+    const sim=game(),p=sim.actors[attacking?5:0];
+    Object.assign(p,{x:-25,z:25.9,bomb:false,channel:0,speed:0,vx:0,vz:0});
+    sim.bomb={status:attacking?'dropped':'planted',x:-25,z:26.9,site:'A',remaining:30};
+    assert.equal(sim.objective(p,1/30),false);assert.equal(p.bomb,false);assert.equal(p.channel,0);
+  }
 });

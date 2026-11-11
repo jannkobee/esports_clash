@@ -90,6 +90,92 @@
   color: #94a3b8;
 }
 
+.live-fps__more-controls { position: relative; }
+.live-fps__more-controls summary {
+  cursor: pointer; list-style: none; color: #cbd5e1; padding: 6px 10px;
+  border: 1px solid #334155; border-radius: 6px; background: #111b29;
+}
+.live-fps__more-controls summary::-webkit-details-marker { display: none; }
+.live-fps__more-menu {
+  position: absolute; z-index: 25; top: calc(100% + 7px); right: 0; min-width: 155px;
+  display: grid; gap: 6px; padding: 8px; border: 1px solid #334155; border-radius: 8px;
+  background: #0b1420; box-shadow: 0 12px 30px rgba(0,0,0,.42);
+}
+.live-fps__more-menu button { text-align: left; white-space: nowrap; }
+.live-fps__learning-status { padding: 5px 7px; color: #a5d9c0; font-size: 10px; line-height: 1.6; }
+
+.live-fps__controls button.live-fps__toggle--active {
+  background: rgba(250, 204, 21, 0.14);
+  border-color: rgba(250, 204, 21, 0.5);
+  color: #fde68a;
+}
+
+.blast-pill--incendiary { color: #fdba74; border-color: rgba(249,115,22,.35); }
+.blast-scoreboard__phase { color: #7dd3fc; font-weight: 800; letter-spacing: .08em; }
+.blast-scoreboard__phase--freeze { color: #fbbf24; }
+.blast-scoreboard__phase--post { color: #c4b5fd; }
+
+.live-fps__stage-container {
+  position: relative;
+}
+
+.live-fps__stage-mount {
+  width: 100%;
+}
+
+.live-fps__popout-placeholder {
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 28px 20px;
+  background: radial-gradient(circle at top, rgba(30, 41, 59, 0.65), #070d16 70%);
+  border-bottom: 1px solid #1e293b;
+  text-align: center;
+}
+
+.live-fps__popout-placeholder strong {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #facc15;
+}
+
+.live-fps__popout-placeholder span {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.live-fps__pip-video {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.live-fps__doc-pip-body {
+  margin: 0;
+  background: #080c12;
+  color: #f1f5f9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
+
+.live-fps__doc-pip-shell {
+  width: 100%;
+  height: 100%;
+}
+
+.live-fps__doc-pip-shell .live-fps__stage {
+  width: 100%;
+  height: 100%;
+}
+
 /* 3D Stage */
 .live-fps__stage {
   position: relative;
@@ -98,6 +184,24 @@
   overflow: hidden;
   background: #090d14;
 }
+
+.live-fps__pip-hud-toggle {
+  position: relative;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, .42);
+  border-radius: 5px;
+  background: rgba(8, 15, 26, .88);
+  color: #f8fafc;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.live-fps__pip-hud-toggle:hover { background: #17283a; border-color: #7dd3fc; }
+.live-fps__pip-controls { position: absolute; top: 10px; right: 10px; z-index: 50; display: flex; gap: 6px; }
+.live-fps__stage-hud { display: contents; }
+.live-fps__stage-hud[hidden] { display: none !important; }
 
 .live-fps__canvas {
   display: block;
@@ -924,6 +1028,180 @@
   z-index: 30;
 }
 
+/* Bomb Plant In-Broadcast Picture-in-Picture */
+.blast-pip {
+  position: absolute;
+  right: 16px;
+  bottom: 214px;
+  width: clamp(232px, 24%, 336px);
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border: 1px solid rgba(251, 191, 36, 0.62);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(8, 15, 26, 0.92);
+  z-index: 9;
+  pointer-events: auto;
+}
+
+.blast-pip__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 8px;
+  background: rgba(8, 15, 26, 0.95);
+  border-bottom: 1px solid rgba(251, 191, 36, 0.35);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.blast-pip__title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.blast-pip__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+  animation: blast-pip-pulse 0.85s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.blast-pip__dot--armed {
+  background: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+}
+
+@keyframes blast-pip-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.8); }
+}
+
+.blast-pip__badge {
+  font-weight: 800;
+  color: #fde68a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.blast-pip__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.blast-pip__planter {
+  color: #cbd5e1;
+  font-weight: 600;
+  max-width: 82px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.blast-pip__timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  color: #facc15;
+}
+
+.blast-pip__close {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border-radius: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.9);
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.blast-pip__close:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.blast-pip__hud-toggle,
+.blast-pip__hud-reveal {
+  min-height: 20px;
+  padding: 0 7px;
+  border: 1px solid rgba(251, 191, 36, 0.48);
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #fde68a;
+  font-size: 9px;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.blast-pip__hud-toggle:hover,
+.blast-pip__hud-reveal:hover { background: rgba(120, 53, 15, 0.94); color: #fff7d6; }
+.blast-pip--hud-hidden { border-color: rgba(148, 163, 184, 0.48); }
+.blast-pip__viewport { overflow: hidden; }
+.blast-pip__hud-reveal { position: absolute; top: 7px; right: 7px; z-index: 2; }
+
+.blast-pip__viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: transparent;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.18);
+}
+
+.blast-pip__cam-label {
+  position: absolute;
+  left: 6px;
+  bottom: 5px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: rgba(6, 12, 19, 0.72);
+  color: rgba(248, 250, 252, 0.86);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.blast-pip__footer {
+  padding: 4px 6px;
+  background: rgba(8, 15, 26, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.blast-pip__progress-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.blast-pip__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #facc15);
+  transition: width 0.08s linear;
+}
+
+.blast-pip__progress-fill--armed {
+  background: linear-gradient(90deg, #ef4444, #f97316);
+}
+
 /* Responsive Media Queries */
 @media (max-width: 1150px) {
   .blast-bottom-dock {
@@ -937,6 +1215,11 @@
     grid-column: 1 / -1;
     order: -1;
     margin-bottom: 6px;
+  }
+  .blast-pip {
+    bottom: 248px;
+    right: 10px;
+    width: clamp(190px, 32%, 270px);
   }
 }
 
@@ -968,6 +1251,11 @@
     top: 70px;
     right: 10px;
     max-width: 55%;
+  }
+  .blast-pip {
+    bottom: 196px;
+    right: 8px;
+    width: 184px;
   }
   .blast-player-card__hp {
     font-size: 11px;

@@ -3,6 +3,15 @@ export type LiveAttackPhase='default'|'entry'|'post-plant';
 export type LiveTacticArchetype='rush_b'|'rush_a'|'default_pick'|'split_b'|'split_a'|'fake_execute'|'mid_control';
 export type LiveDefenseSetup='standard'|'stack_b'|'stack_a'|'aggressive_banana'|'mid_push'|'retake_setup';
 
+export interface LiveInformationOrder {
+  mode:'hold'|'watch'|'reinforce'|'rotate'|'recheck'|'probe'|'execute';site?:'A'|'B';
+  responders:string[];until:number;strength:number;reason:string;readyAt?:number;
+  issuedAt?:number;callerId?:string;point?:{x:number;z:number};
+}
+export function liveOrderActive(order:LiveInformationOrder,now:number):boolean {
+  return now>=(order.readyAt??0)&&now<order.until;
+}
+
 export interface LiveRoundHistory {
   round: number;
   attackSite: 'A'|'B';

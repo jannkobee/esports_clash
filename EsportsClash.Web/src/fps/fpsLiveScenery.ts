@@ -3,7 +3,7 @@ import { LIVE_FPS_MAP } from './fpsLiveMap.ts';
 
 /**
  * Runtime map dressing inspired by CS2 Inferno aesthetics:
- * - Octagonal stone central Fountain at B with reflective pool & red brick circular paving.
+ * - Scalloped stone B fountain, planted water basin and blue courtyard mosaic.
  * - Banana curved slipway with overhead festoon string lights, stacked cargo barrels, and stenciled signs.
  * - Overhead stone archways bridging alleys (Banana arch, Port Arch, Church arch, Underpass lintel).
  * - A Courtyard with Tenuta-style arched loggia, Pit revetment railing/steps, and upper wooden gallery balcony.
@@ -11,6 +11,9 @@ import { LIVE_FPS_MAP } from './fpsLiveMap.ts';
  */
 export function buildLiveScenery(scene:Scene,material:(color:string)=>StandardMaterial):Mesh[] {
   const details:Mesh[]=[];
+  const detailMesh=<T extends Mesh>(mesh:T,color:string)=>{
+    mesh.material=material(color);mesh.isPickable=false;details.push(mesh);return mesh;
+  };
   const box=(name:string,x:number,y:number,z:number,w:number,h:number,d:number,color:string)=>{
     const mesh=MeshBuilder.CreateBox(name,{width:w,height:h,depth:d},scene);mesh.position.set(x,y,z);mesh.material=material(color);details.push(mesh);return mesh;
   };
@@ -61,39 +64,133 @@ export function buildLiveScenery(scene:Scene,material:(color:string)=>StandardMa
     }
   }
 
-  // 1. Central Octagonal Stone Fountain at B Bombsite (Authentic CS2 Mediterranean Design)
+  // 1. Central scalloped stone fountain at B. Its complete silhouette stays
+  // inside the existing 4.6 m collision footprint in LIVE_FPS_MAP.
   const fx=23, fz=21;
-  const fCurb=box('fountain-curb',fx,.45,fz,4.8,.9,4.8,'#7c8380');
-  const fWater=MeshBuilder.CreateGround('fountain-water',{width:3.8,height:3.8},scene);
-  fWater.position.set(fx,.78,fz);
-  const waterMat=new StandardMaterial('fountain-water-mat',scene);
-  waterMat.diffuseColor=new Color3(.21,.48,.56);waterMat.specularColor=new Color3(.4,.6,.7);
-  fWater.material=waterMat;fWater.isPickable=false;
-
-  // Authentic stone central fountain: pedestal, wide ornamental tiered bowl, upper water pool, and sculpted finial
-  const fPedestal=MeshBuilder.CreateCylinder('fountain-pedestal',{height:1.1,diameter:1.2,tessellation:12},scene);
-  fPedestal.position.set(fx,.55,fz);fPedestal.material=material('#a89d87');
-  const fBowl=MeshBuilder.CreateCylinder('fountain-bowl',{height:.35,diameterTop:1.9,diameterBottom:1.1,tessellation:14},scene);
-  fBowl.position.set(fx,1.25,fz);fBowl.material=material('#b8ac95');
-  const fUpperWater=MeshBuilder.CreateDisc('fountain-upper-water',{radius:.85,tessellation:14},scene);
-  fUpperWater.position.set(fx,1.38,fz);fUpperWater.rotation.x=Math.PI/2;fUpperWater.material=waterMat;fUpperWater.isPickable=false;
-  const fFinial=MeshBuilder.CreateCylinder('fountain-finial',{height:.7,diameterTop:.3,diameterBottom:.65,tessellation:10},scene);
-  fFinial.position.set(fx,1.75,fz);fFinial.material=material('#a89d87');
-  const fSpire=MeshBuilder.CreateSphere('fountain-spire',{diameter:.38,segments:8},scene);
-  fSpire.position.set(fx,2.15,fz);fSpire.material=material('#c2b7a0');
-  // Lion head relief water spouts around bowl perimeter
-  for(const [lx,lz] of [[fx+.9,fz],[fx-.9,fz],[fx,fz+.9],[fx,fz-.9]]) {
-    const spout=box(`fountain-spout-${lx}-${lz}`,lx,1.26,lz,.16,.14,.16,'#8a7f6c');
-    spout.freezeWorldMatrix();
+  const fBase=detailMesh(MeshBuilder.CreateCylinder('fountain-stepped-base',{height:.24,diameter:4.25,tessellation:24},scene),'#777a70');
+  fBase.position.set(fx,.15,fz);
+  const fCurb=detailMesh(MeshBuilder.CreateCylinder('fountain-basin-shell',{height:.58,diameterTop:4.02,diameterBottom:3.7,tessellation:24},scene),'#b5aa91');
+  fCurb.position.set(fx,.55,fz);
+  const rim=detailMesh(MeshBuilder.CreateTorus('fountain-scalloped-rim',{diameter:3.77,thickness:.14,tessellation:32},scene),'#e0d3b5');
+  rim.position.set(fx,.91,fz);rim.rotation.x=Math.PI/2;
+  // Low rounded stone lobes make the basin outline read as the flower-like
+  // scalloped rim in the reference without extending beyond the collision box.
+  for(let i=0;i<12;i++) {
+    const angle=(i/12)*Math.PI*2;
+    const lobe=detailMesh(MeshBuilder.CreateSphere(`fountain-rim-lobe-${i}`,{diameter:.34,segments:8},scene),'#d0c5aa');
+    lobe.position.set(fx+Math.cos(angle)*1.88,.82,fz+Math.sin(angle)*1.88);
+    lobe.scaling.y=.42;
   }
-  fCurb.freezeWorldMatrix();fPedestal.freezeWorldMatrix();fBowl.freezeWorldMatrix();fFinial.freezeWorldMatrix();fSpire.freezeWorldMatrix();
+  const fWater=detailMesh(MeshBuilder.CreateCylinder('fountain-water',{height:.035,diameter:3.25,tessellation:32},scene),'#477d81');
+  fWater.position.set(fx,.87,fz);
+  const waterMat=new StandardMaterial('fountain-water-mat',scene);
+  waterMat.diffuseColor=new Color3(.28,.54,.57);waterMat.specularColor=new Color3(.4,.6,.62);
+  waterMat.emissiveColor=new Color3(.025,.045,.045);waterMat.alpha=.86;
+  fWater.material=waterMat;
 
-  // Circular red brick pattern around B Fountain on the floor (Image 5)
-  const fFloorRing=MeshBuilder.CreateDisc('fountain-floor-ring',{radius:4.6,tessellation:32},scene);
-  fFloorRing.position.set(fx,.018,fz);fFloorRing.rotation.x=Math.PI/2;
-  const ringMat=new StandardMaterial('fountain-ring-mat',scene);
-  ringMat.diffuseColor=Color3.FromHexString('#983e32');ringMat.specularColor=Color3.Black();
-  fFloorRing.material=ringMat;fFloorRing.receiveShadows=true;fFloorRing.isPickable=false;
+  // Tiered central jet and shallow upper bowl.
+  const fPedestal=detailMesh(MeshBuilder.CreateCylinder('fountain-pedestal',{height:.66,diameter:.72,tessellation:12},scene),'#a89d87');
+  fPedestal.position.set(fx,1.18,fz);
+  const fBowl=detailMesh(MeshBuilder.CreateCylinder('fountain-upper-bowl',{height:.24,diameterTop:1.42,diameterBottom:.78,tessellation:16},scene),'#c2b69e');
+  fBowl.position.set(fx,1.6,fz);
+  const fUpperWater=detailMesh(MeshBuilder.CreateCylinder('fountain-upper-water',{height:.025,diameter:1.2,tessellation:16},scene),'#5e9a99');
+  fUpperWater.position.set(fx,1.735,fz);fUpperWater.material=waterMat;
+  const fFinial=detailMesh(MeshBuilder.CreateCylinder('fountain-finial',{height:.42,diameterTop:.2,diameterBottom:.4,tessellation:12},scene),'#a89d87');
+  fFinial.position.set(fx,1.96,fz);
+  const fSpire=detailMesh(MeshBuilder.CreateSphere('fountain-spire',{diameter:.32,segments:10},scene),'#d0c5aa');
+  fSpire.position.set(fx,2.2,fz);
+
+  // Lily pads and small flowers add life at a distance without particle clutter.
+  const flowerColors=['#e9d8c2','#c78270','#e0bc67'];
+  for(let i=0;i<10;i++) {
+    const angle=i*2.399, radius=.58+(i%3)*.27;
+    const x=fx+Math.cos(angle)*radius,z=fz+Math.sin(angle)*radius;
+    const pad=detailMesh(MeshBuilder.CreateSphere(`fountain-lily-${i}`,{diameter:.38,segments:8},scene),'#647e4c');
+    pad.position.set(x,.91,z);pad.scaling.y=.12;
+    const petal=detailMesh(MeshBuilder.CreateSphere(`fountain-flower-${i}`,{diameter:.14,segments:6},scene),flowerColors[i%flowerColors.length]);
+    petal.position.set(x+.07,.96,z-.04);petal.scaling.y=.45;
+  }
+
+  // B courtyard backdrop: weathered ochre plaster, an inset timber door,
+  // shuttered window, flower box and a compact rack of steel utility drums.
+  // Every piece is dressing on the existing b-screen collision volume.
+  const wallFaceZ=26.43, windowX=14.95, doorX=16.75, rackX=[18.22,18.78,19.34];
+  box('b-screen-window-reveal',windowX,2.22,wallFaceZ,1.28,.98,.055,'#d0bd9b');
+  box('b-screen-window-shadow',windowX,2.23,wallFaceZ-.035,1.05,.76,.035,'#344449');
+  for(const side of [-1,1]) {
+    box(`b-screen-window-shutter-${side}`,windowX+side*.72,2.22,wallFaceZ-.065,.28,.92,.055,'#52634e');
+    for(let slat=0;slat<6;slat++)box(`b-screen-window-slat-${side}-${slat}`,windowX+side*.72,1.87+slat*.14,wallFaceZ-.1,.22,.035,.025,'#879071');
+  }
+  box('b-screen-window-sill',windowX,1.68,wallFaceZ-.12,1.55,.13,.3,'#d7c8a9');
+  box('b-screen-flower-trough',windowX,1.52,wallFaceZ-.22,1.24,.2,.27,'#9a5037');
+  for(let i=0;i<5;i++) {
+    const blossom=detailMesh(MeshBuilder.CreateSphere(`b-screen-window-flower-${i}`,{diameter:.14,segments:6},scene),i%2?'#e4c16d':'#bd6653');
+    blossom.position.set(windowX-.48+i*.24,1.68,wallFaceZ-.24);
+    blossom.scaling.y=.6;
+  }
+  box('b-screen-door-frame',doorX,1.15,wallFaceZ,1.48,2.34,.07,'#d7c8a9');
+  box('b-screen-door',doorX,1.08,wallFaceZ-.05,1.18,2.1,.065,'#604535');
+  for(let slat=0;slat<5;slat++)box(`b-screen-door-board-${slat}`,doorX-.46+slat*.23,1.08,wallFaceZ-.09,.045,1.98,.025,'#896247');
+  box('b-screen-door-crossbar-top',doorX,1.78,wallFaceZ-.105,1.08,.1,.035,'#503b2d');
+  box('b-screen-door-crossbar-low',doorX,.66,wallFaceZ-.105,1.08,.1,.035,'#503b2d');
+  box('b-screen-door-awning',doorX,2.43,wallFaceZ-.26,1.78,.13,.58,'#a94b36');
+  for(let stripe=0;stripe<4;stripe++)box(`b-screen-door-awning-stripe-${stripe}`,doorX-.63+stripe*.42,2.435,wallFaceZ-.265,.18,.14,.57,'#e2d2ad');
+  const doorHandle=detailMesh(MeshBuilder.CreateSphere('b-screen-door-handle',{diameter:.1,segments:8},scene),'#c5a35e');
+  doorHandle.position.set(doorX+.42,1.05,wallFaceZ-.15);
+  box('b-screen-lantern-bracket',18.65,2.62,wallFaceZ-.14,.08,.2,.24,'#343835');
+  const siteLantern=MeshBuilder.CreateBox('b-screen-lantern-glass',{width:.18,height:.27,depth:.18},scene);
+  const siteLanternMaterial=new StandardMaterial('b-screen-lantern-material',scene);
+  siteLanternMaterial.diffuseColor=new Color3(.89,.68,.35);siteLanternMaterial.emissiveColor=new Color3(.6,.32,.09);siteLanternMaterial.specularColor=Color3.Black();
+  siteLantern.material=siteLanternMaterial;siteLantern.isPickable=false;details.push(siteLantern);
+  siteLantern.position.set(18.65,2.43,wallFaceZ-.24);
+  for(let row=0;row<3;row++)for(let column=0;column<3;column++) {
+    const x=rackX[column],y=.75+row*.62,z=wallFaceZ-.19;
+    const drum=detailMesh(MeshBuilder.CreateCylinder(`b-screen-drum-${row}-${column}`,{height:.42,diameter:.43,tessellation:12},scene),row%2?'#a9aaa0':'#818d88');
+    drum.position.set(x,y,z);drum.rotation.x=Math.PI/2;
+    const ring=detailMesh(MeshBuilder.CreateTorus(`b-screen-drum-rim-${row}-${column}`,{diameter:.45,thickness:.035,tessellation:12},scene),'#454c49');
+    ring.position.set(x,y,z-.22);
+  }
+
+  // Blue harbor barrels sit on the existing Coffins cover stack, clear of the
+  // traversable floor. The cover itself remains their only collision volume.
+  const bSiteBarrelMat=material('#326188'), bSiteBarrelHoopMat=material('#252f38');
+  for(const [index,bx,by,bz] of [[0,14.05,3.25,25.65],[1,14.86,3.25,25.65],[2,15.28,4.13,26.15]] as [number,number,number,number][]) {
+    const barrel=MeshBuilder.CreateCylinder(`b-site-blue-barrel-${index}`,{height:.9,diameter:.66,tessellation:14},scene);
+    barrel.position.set(bx,by,bz);barrel.material=bSiteBarrelMat;barrel.isPickable=false;details.push(barrel);
+    for(const bandY of [by-.28,by+.28]) {
+      const hoop=MeshBuilder.CreateTorus(`b-site-blue-barrel-hoop-${index}-${bandY}`,{diameter:.68,thickness:.045,tessellation:14},scene);
+      hoop.position.set(bx,bandY,bz);hoop.rotation.x=Math.PI/2;hoop.material=bSiteBarrelHoopMat;hoop.isPickable=false;details.push(hoop);
+    }
+  }
+
+  // Clay-tile gable caps break up the flat skyline on the map's four house
+  // blocks. They are scenery only; all roof and wall collision stays as authored.
+  const roofTexture=new DynamicTexture('breakwater-terracotta-roof-tiles',{width:512,height:512},scene,false);
+  const roofContext=roofTexture.getContext() as unknown as CanvasRenderingContext2D;
+  const roofColors=['#914336','#a24b39','#aa5540','#8a3f34','#b45b43'];
+  roofContext.fillStyle='#533b32';roofContext.fillRect(0,0,512,512);
+  for(let row=0;row<16;row++)for(let column=0;column<16;column++) {
+    const x=column*32+(row%2)*16-16,y=row*32;
+    roofContext.fillStyle=roofColors[(row*5+column*3)%roofColors.length];roofContext.fillRect(x+1,y+1,30,29);
+    roofContext.strokeStyle='#673b31';roofContext.lineWidth=2;roofContext.beginPath();roofContext.moveTo(x+1,y+29);roofContext.lineTo(x+31,y+29);roofContext.stroke();
+    roofContext.fillStyle='rgba(238,171,119,.16)';roofContext.fillRect(x+4,y+4,22,2);
+  }
+  roofTexture.update();roofTexture.uScale=1.5;roofTexture.vScale=4;
+  const roofMaterial=new StandardMaterial('breakwater-terracotta-roof-material',scene);
+  roofMaterial.diffuseTexture=roofTexture;roofMaterial.specularColor=Color3.Black();
+  const roofIds=new Set(['loading-office','pump-house','apartments-north','freight-office-east']);
+  for(const wall of LIVE_FPS_MAP.solids.filter(candidate=>roofIds.has(candidate.id))) {
+    const x=(wall.minX+wall.maxX)/2,z=(wall.minZ+wall.maxZ)/2;
+    const width=wall.maxX-wall.minX,depth=wall.maxZ-wall.minZ,angle=.27,panelWidth=width/2+.35;
+    const halfRise=Math.sin(angle)*(panelWidth/2),base=wall.height+.05;
+    for(const side of [-1,1]) {
+      const roof=MeshBuilder.CreateBox(`${wall.id}-terracotta-pitch-${side}`,{width:panelWidth,height:.16,depth:depth+.35},scene);
+      roof.position.set(x+side*width/4,base+halfRise,z);roof.rotation.z=side<0?angle:-angle;
+      roof.material=roofMaterial;roof.isPickable=false;details.push(roof);
+    }
+    const ridge=MeshBuilder.CreateBox(`${wall.id}-terracotta-ridge`,{width:.28,height:.18,depth:depth+.42},scene);
+    ridge.position.set(x,base+halfRise+Math.sin(angle)*panelWidth/2,z);ridge.material=roofMaterial;ridge.isPickable=false;details.push(ridge);
+  }
 
   // 2. Banana Festoon Overhead String Lights (Image 6)
   const lightZ=[-14,-6,2];

@@ -2,6 +2,8 @@
 
 Latest local rules: [exhibition v6 and the revised 25-ability profile](fps-attributes-25-20261111.md). Omitting test profiles retains the local v5 adapter; official contextual v3 remains separate.
 
+Latest presentation pass: [frame pacing, CT/T proxy animation, spreading utility, C4 blast, buy timing, post-round movement, camera and controls](fps-live-presentation-and-round-effects-20261111.md). This changes only the browser-local viewer/exhibition; it does not qualify character assets or change official match paths.
+
 Latest local pass: [exhibition v5 information-driven play](fps-information-play-20261110.md), with bounded beliefs, evidence-based calls and source-aware observer explanations.
 
 Latest v4 correction: [stable crosshair placement and adopted pro-match reference](fps-crosshair-reference-20261110.md).
@@ -34,7 +36,7 @@ Focused verification, without the full game suite or production build:
 - `.local-tools/fps-live-improvement-smoke.mjs`: 9,000 fixed steps on two identical seeds; exact snapshot agreement, valid/reachable tactical positions, wall exclusion, differentiated attribute formulas and private-DNA exclusion. The sample reached round 5 at 2–2 with 36 kills. This is not balance or pro-AI qualification.
 - `.local-tools/fps-live-browser-smoke.mjs`: isolated headless Chromium opened the real local page and 3D renderer, clock advanced from 0:15 to 0:13, zero application exceptions. Overview screenshot was inspected at `.local-tools/fps-live-improvement-browser/overview.png`; result is alongside it. The initial browser harness needed sandbox-compatible launch flags and corrected CDP close handling; these are test-harness changes only.
 
-Player models remain collision proxies. Navigation/combat remain on a flat plane with body hitscan and simplified utility deployments; only the previously documented three specialty shot hooks are spatially integrated. Full-match browser behavior, mobile presentation of this pass, long-term balance, sound, production assets and shared online broadcasting remain unqualified or unfinished.
+Player models remain collision proxies. Navigation/combat remain on a flat plane with body hitscan and simplified utility deployments; only the previously documented three specialty shot hooks are spatially integrated. The local exhibition now has generated WebAudio gunfire and footstep cues; recorded firearm samples, full-match browser behavior, mobile presentation of this pass, long-term balance, production assets and shared online broadcasting remain unqualified or unfinished.
 
 ## Current implementation boundary
 
@@ -57,7 +59,7 @@ Rendering uses runtime collision markers only, not generated character meshes, s
 ## Work remaining
 
 1. Extend verification beyond the focused checks above: full production build, objective timing and interruption, side changes/overtime, camera lifecycle, complete desktop/mobile matches and performance.
-2. Expand the spatial game beyond the current flat movement plane and body hitscan: elevation, stance, richer weapon handling, utility trajectories, sound, seven-role coordination and full contextual specialty parity. Current flashes/smokes are simplified immediate deployments and behavior is a prototype rather than pro-level FPS AI.
+2. Expand the spatial game beyond the current flat movement plane and body hitscan: elevation, stance, richer weapon handling, utility trajectories, recorded sound assets, seven-role coordination and full contextual specialty parity. Current flashes/smokes are simplified immediate deployments and behavior is a prototype rather than pro-level FPS AI.
 3. Improve and qualify the map and broadcast presentation against the owner's references. Collision capsules are not finished player models; no Counter-Strike-level fidelity is claimed.
 4. Integrate a separately versioned official worker, persistent live delivery, recovery and spectator synchronization; preserve existing v2/v3 allocations and replay. Verify settlement, security, reproducibility, performance and migration before activation.
 5. Obtain and qualify original character assets through the existing owner-started Colab-only generation, rigging and animation workflow. Current avatar candidates are unqualified; no local generation, rigging, animation processing or asset publication is authorized.

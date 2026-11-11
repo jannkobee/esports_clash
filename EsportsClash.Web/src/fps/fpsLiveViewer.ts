@@ -1,41 +1,98 @@
-import { Engine, Scene, FreeCamera, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, StandardMaterial, MeshBuilder, DynamicTexture, ShadowGenerator, TransformNode, type Mesh, type LinesMesh } from '@babylonjs/core';
-import { LIVE_FPS_MAP, distance, liveSightline } from './fpsLiveMap.ts';
+import { Engine, Scene, FreeCamera, Viewport, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, StandardMaterial, MeshBuilder, DynamicTexture, ShadowGenerator, TransformNode, type Mesh, type LinesMesh } from '@babylonjs/core';
+import { LIVE_FPS_MAP } from './fpsLiveMap.ts';
 import { segmentHitsWall } from './fpsSpatialWorld.ts';
 import type { LiveSnapshot, LivePlayer } from './fpsLiveSimulation.ts';
 import { buildLiveScenery } from './fpsLiveScenery.ts';
 import { LIVE_KNIFE, type LiveEquippedWeapon } from './fpsLiveWeapons.ts';
+import { LIVE_WEAPONS } from './fpsLiveWeapons.ts';
 import type { FpsTeamId } from './types.ts';
+import {
+  computeBombPlantPipPose,
+  computeOverviewCameraPose,
+  computeThirdPersonCameraPose,
+  createDirectorState,
+  evaluateBroadcastDirector,
+  type BombPlantPipState,
+  type DirectorState,
+  type LiveCameraMode,
+  type NormalizedViewport,
+} from './fpsBroadcastDirector.ts';
 
-export type LiveCameraMode='director'|'first'|'third'|'overview';
+export type { LiveCameraMode, BombPlantPipState, NormalizedViewport };
+export interface LiveRenderResult {
+  followedId: string;
+  effectiveMode: Exclude<LiveCameraMode, 'director'>;
+  pip: BombPlantPipState;
+}
 const blue='#4bc5ef',red='#ed8d68';
 const mix=(a:number,b:number,t:number)=>a+(b-a)*t;
+const ease01=(value:number)=>{const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);};
 
 interface OperativeView {
   root: TransformNode;
+  spine: TransformNode;
+  headPivot: TransformNode;
+  leftArmPivot: TransformNode;
+  rightArmPivot: TransformNode;
+  leftLegPivot: TransformNode;
+  rightLegPivot: TransformNode;
+  leftKneePivot: TransformNode;
+  rightKneePivot: TransformNode;
   torso: Mesh;
   leftLeg: Mesh;
   rightLeg: Mesh;
   leftArm: Mesh;
   rightArm: Mesh;
   head: Mesh;
+  magazine: Mesh;
+  crouchPose: number;
+  stridePhase: number;
+  lastX:number;
+  lastZ:number;
+  hasMotion:boolean;
 }
 
 interface ActorView {
   operative: OperativeView;
   gunNode?: TransformNode;
   gunWeapon?: LiveEquippedWeapon;
+  muzzleFlash?:Mesh;
 }
+
+interface SmokeView { root:TransformNode; lobes:Mesh[]; material:StandardMaterial; phases:number[] }
+interface FireView { root:TransformNode; ground:Mesh; groundFlames:Mesh[]; groundFlameMaterials:StandardMaterial[]; flames:Mesh[]; groundMaterial:StandardMaterial; flameMaterials:StandardMaterial[] }
+interface ViewmodelReloadParts { arm:TransformNode; magazine:Mesh }
+interface WeaponViewMetadata {muzzle?:TransformNode;reloadParts?:ViewmodelReloadParts;name?:string}
+interface TracerView {world:LinesMesh;firstPerson?:LinesMesh;actorId:string}
 
 function createTacticalOperativeMesh(team: FpsTeamId, id: string, scene: Scene, getMat: (hex: string) => StandardMaterial): OperativeView {
   const root = new TransformNode(`operative-${id}`, scene);
+  const spine = new TransformNode(`${id}-spine-pivot`, scene); spine.parent=root; spine.position.set(0,1.05,0);
+  const headPivot = new TransformNode(`${id}-head-pivot`, scene); headPivot.parent=root; headPivot.position.set(0,1.54,0);
+  const leftArmPivot = new TransformNode(`${id}-arm-l-pivot`, scene); leftArmPivot.parent=root; leftArmPivot.position.set(-.28,1.31,0);
+  const rightArmPivot = new TransformNode(`${id}-arm-r-pivot`, scene); rightArmPivot.parent=root; rightArmPivot.position.set(.28,1.31,0);
+  const leftLegPivot = new TransformNode(`${id}-leg-l-pivot`, scene); leftLegPivot.parent=root; leftLegPivot.position.set(-.11,.74,0);
+  const rightLegPivot = new TransformNode(`${id}-leg-r-pivot`, scene); rightLegPivot.parent=root; rightLegPivot.position.set(.11,.74,0);
+  const leftKneePivot = new TransformNode(`${id}-knee-l-pivot`, scene); leftKneePivot.parent=leftLegPivot; leftKneePivot.position.set(0,-.36,0);
+  const rightKneePivot = new TransformNode(`${id}-knee-r-pivot`, scene); rightKneePivot.parent=rightLegPivot; rightKneePivot.position.set(0,-.36,0);
 
   const add = (m: Mesh, x: number, y: number, z: number, rx = 0, ry = 0, rz = 0) => {
-    m.parent = root;
-    m.position.set(x, y, z);
+    const name=m.name;
+    const parent=name.includes('head')||name.includes('helmet')||name.includes('goggles')||name.includes('faceslit')||name.includes('shades')||name.includes('beanie')?headPivot
+      :name.includes('arm-l')||name.includes('glove-l')||name.includes('bare-l')?leftArmPivot
+      :name.includes('arm-r')||name.includes('glove-r')||name.includes('bare-r')?rightArmPivot
+      :name.includes('leg-l')||name.includes('pocket-l')?leftLegPivot
+      :name.includes('leg-r')||name.includes('pocket-r')?rightLegPivot
+      :spine;
+    m.parent = parent;
+    m.position.set(x-parent.position.x, y-parent.position.y, z-parent.position.z);
     if (rx || ry || rz) m.rotation.set(rx, ry, rz);
     m.isPickable = false;
     m.receiveShadows = true;
     return m;
+  };
+  const addKneePart = (m:Mesh,pivot:TransformNode,x:number,y:number,z:number) => {
+    m.parent=pivot;m.position.set(x,y,z);m.isPickable=false;m.receiveShadows=true;return m;
   };
 
   if (team === 'blue') {
@@ -59,6 +116,11 @@ function createTacticalOperativeMesh(team: FpsTeamId, id: string, scene: Scene, 
     const radio = MeshBuilder.CreateBox(`${id}-radio`, { width: 0.08, height: 0.16, depth: 0.08 }, scene);
     radio.material = darkGear; add(radio, -0.18, 1.18, 0.14);
 
+    const shoulderL=MeshBuilder.CreateSphere(`${id}-shoulder-l`,{diameter:.25,segments:8},scene);
+    shoulderL.scaling.set(1,.68,1.18);shoulderL.material=plateCarrier;add(shoulderL,-.25,1.28,0);
+    const shoulderR=MeshBuilder.CreateSphere(`${id}-shoulder-r`,{diameter:.25,segments:8},scene);
+    shoulderR.scaling.set(1,.68,1.18);shoulderR.material=plateCarrier;add(shoulderR,.25,1.28,0);
+
     const patchL = MeshBuilder.CreateBox(`${id}-patch-l`, { width: 0.02, height: 0.09, depth: 0.08 }, scene);
     patchL.material = cyanPatch; add(patchL, -0.23, 1.22, 0);
 
@@ -77,23 +139,26 @@ function createTacticalOperativeMesh(team: FpsTeamId, id: string, scene: Scene, 
     const gogglesBand = MeshBuilder.CreateBox(`${id}-goggles-band`, { width: 0.31, height: 0.04, depth: 0.28 }, scene);
     gogglesBand.material = darkGear; add(gogglesBand, 0, 1.54, 0);
 
-    const leftLeg = MeshBuilder.CreateBox(`${id}-leg-l`, { width: 0.15, height: 0.64, depth: 0.17 }, scene);
-    leftLeg.material = navy; add(leftLeg, -0.11, 0.42, 0);
+    const leftLeg = MeshBuilder.CreateBox(`${id}-leg-l`, { width: 0.15, height: 0.36, depth: 0.17 }, scene);
+    leftLeg.material = navy; add(leftLeg, -0.11, 0.56, 0);
 
-    const rightLeg = MeshBuilder.CreateBox(`${id}-leg-r`, { width: 0.15, height: 0.64, depth: 0.17 }, scene);
-    rightLeg.material = navy; add(rightLeg, 0.11, 0.42, 0);
+    const rightLeg = MeshBuilder.CreateBox(`${id}-leg-r`, { width: 0.15, height: 0.36, depth: 0.17 }, scene);
+    rightLeg.material = navy; add(rightLeg, 0.11, 0.56, 0);
+
+    const leftShin=MeshBuilder.CreateBox(`${id}-shin-l`,{width:.14,height:.36,depth:.16},scene);leftShin.material=navy;addKneePart(leftShin,leftKneePivot,0,-.18,0);
+    const rightShin=MeshBuilder.CreateBox(`${id}-shin-r`,{width:.14,height:.36,depth:.16},scene);rightShin.material=navy;addKneePart(rightShin,rightKneePivot,0,-.18,0);
 
     const kneeL = MeshBuilder.CreateBox(`${id}-knee-l`, { width: 0.16, height: 0.12, depth: 0.06 }, scene);
-    kneeL.material = darkGear; add(kneeL, -0.11, 0.42, 0.09);
+    kneeL.material = darkGear; addKneePart(kneeL,leftKneePivot,0,0,.09);
 
     const kneeR = MeshBuilder.CreateBox(`${id}-knee-r`, { width: 0.16, height: 0.12, depth: 0.06 }, scene);
-    kneeR.material = darkGear; add(kneeR, 0.11, 0.42, 0.09);
+    kneeR.material = darkGear; addKneePart(kneeR,rightKneePivot,0,0,.09);
 
     const bootL = MeshBuilder.CreateBox(`${id}-boot-l`, { width: 0.16, height: 0.16, depth: 0.24 }, scene);
-    bootL.material = darkGear; add(bootL, -0.11, 0.08, 0.03);
+    bootL.material = darkGear; addKneePart(bootL,leftKneePivot,0,-.27,.03);
 
     const bootR = MeshBuilder.CreateBox(`${id}-boot-r`, { width: 0.16, height: 0.16, depth: 0.24 }, scene);
-    bootR.material = darkGear; add(bootR, 0.11, 0.08, 0.03);
+    bootR.material = darkGear; addKneePart(bootR,rightKneePivot,0,-.27,.03);
 
     const leftArm = MeshBuilder.CreateBox(`${id}-arm-l`, { width: 0.13, height: 0.52, depth: 0.14 }, scene);
     leftArm.material = navy; add(leftArm, -0.28, 1.05, 0);
@@ -107,7 +172,9 @@ function createTacticalOperativeMesh(team: FpsTeamId, id: string, scene: Scene, 
     const gloveR = MeshBuilder.CreateBox(`${id}-glove-r`, { width: 0.135, height: 0.14, depth: 0.145 }, scene);
     gloveR.material = darkGear; add(gloveR, 0.28, 0.84, 0);
 
-    return { root, torso, leftLeg, rightLeg, leftArm, rightArm, head };
+    const magazine=MeshBuilder.CreateBox(`${id}-reload-magazine`,{width:.07,height:.18,depth:.055},scene);
+    magazine.material=darkGear;magazine.parent=root;magazine.isPickable=false;magazine.setEnabled(false);
+    return { root,spine,headPivot,leftArmPivot,rightArmPivot,leftLegPivot,rightLegPivot,leftKneePivot,rightKneePivot,torso,leftLeg,rightLeg,leftArm,rightArm,head,magazine,crouchPose:0,stridePhase:id.length*.7,lastX:0,lastZ:0,hasMotion:false };
   } else {
     // T Force (Terrorist Strike Force / Militia Guerrilla Jacket & Balaclava)
     const crimsonShirt = getMat('#832720');
@@ -128,6 +195,9 @@ function createTacticalOperativeMesh(team: FpsTeamId, id: string, scene: Scene, 
     const strap = MeshBuilder.CreateBox(`${id}-strap`, { width: 0.12, height: 0.56, depth: 0.32 }, scene);
     strap.material = harnessMat; add(strap, 0.04, 1.06, 0, 0, 0, 0.28);
 
+    const collar=MeshBuilder.CreateBox(`${id}-jacket-collar`,{width:.32,height:.12,depth:.28},scene);
+    collar.material=crimsonShirt;add(collar,0,1.34,0);
+
     const pouches = MeshBuilder.CreateBox(`${id}-pouches`, { width: 0.34, height: 0.15, depth: 0.08 }, scene);
     pouches.material = harnessMat; add(pouches, 0, 0.95, 0.18);
 
@@ -146,11 +216,14 @@ function createTacticalOperativeMesh(team: FpsTeamId, id: string, scene: Scene, 
     const beanie = MeshBuilder.CreateSphere(`${id}-beanie`, { diameter: 0.3, segments: 8 }, scene);
     beanie.scaling.y = 0.75; beanie.material = balaclavaMat; add(beanie, 0, 1.62, 0);
 
-    const leftLeg = MeshBuilder.CreateBox(`${id}-leg-l`, { width: 0.15, height: 0.64, depth: 0.17 }, scene);
-    leftLeg.material = olivePants; add(leftLeg, -0.11, 0.42, 0);
+    const leftLeg = MeshBuilder.CreateBox(`${id}-leg-l`, { width: 0.15, height: 0.36, depth: 0.17 }, scene);
+    leftLeg.material = olivePants; add(leftLeg, -0.11, 0.56, 0);
 
-    const rightLeg = MeshBuilder.CreateBox(`${id}-leg-r`, { width: 0.15, height: 0.64, depth: 0.17 }, scene);
-    rightLeg.material = olivePants; add(rightLeg, 0.11, 0.42, 0);
+    const rightLeg = MeshBuilder.CreateBox(`${id}-leg-r`, { width: 0.15, height: 0.36, depth: 0.17 }, scene);
+    rightLeg.material = olivePants; add(rightLeg, 0.11, 0.56, 0);
+
+    const leftShin=MeshBuilder.CreateBox(`${id}-shin-l`,{width:.14,height:.36,depth:.16},scene);leftShin.material=olivePants;addKneePart(leftShin,leftKneePivot,0,-.18,0);
+    const rightShin=MeshBuilder.CreateBox(`${id}-shin-r`,{width:.14,height:.36,depth:.16},scene);rightShin.material=olivePants;addKneePart(rightShin,rightKneePivot,0,-.18,0);
 
     const pocketL = MeshBuilder.CreateBox(`${id}-pocket-l`, { width: 0.05, height: 0.15, depth: 0.15 }, scene);
     pocketL.material = olivePants; add(pocketL, -0.18, 0.45, 0);
@@ -159,10 +232,10 @@ function createTacticalOperativeMesh(team: FpsTeamId, id: string, scene: Scene, 
     pocketR.material = olivePants; add(pocketR, 0.18, 0.45, 0);
 
     const bootL = MeshBuilder.CreateBox(`${id}-boot-l`, { width: 0.16, height: 0.16, depth: 0.24 }, scene);
-    bootL.material = bootsMat; add(bootL, -0.11, 0.08, 0.03);
+    bootL.material = bootsMat; addKneePart(bootL,leftKneePivot,0,-.27,.03);
 
     const bootR = MeshBuilder.CreateBox(`${id}-boot-r`, { width: 0.16, height: 0.16, depth: 0.24 }, scene);
-    bootR.material = bootsMat; add(bootR, 0.11, 0.08, 0.03);
+    bootR.material = bootsMat; addKneePart(bootR,rightKneePivot,0,-.27,.03);
 
     const leftArm = MeshBuilder.CreateBox(`${id}-arm-l`, { width: 0.13, height: 0.52, depth: 0.14 }, scene);
     leftArm.material = crimsonShirt; add(leftArm, -0.28, 1.05, 0);
@@ -182,11 +255,13 @@ function createTacticalOperativeMesh(team: FpsTeamId, id: string, scene: Scene, 
     const gloveR = MeshBuilder.CreateBox(`${id}-glove-r`, { width: 0.13, height: 0.12, depth: 0.14 }, scene);
     gloveR.material = bootsMat; add(gloveR, 0.28, 0.76, 0);
 
-    return { root, torso, leftLeg, rightLeg, leftArm, rightArm, head };
+    const magazine=MeshBuilder.CreateBox(`${id}-reload-magazine`,{width:.07,height:.18,depth:.055},scene);
+    magazine.material=bootsMat;magazine.parent=root;magazine.isPickable=false;magazine.setEnabled(false);
+    return { root,spine,headPivot,leftArmPivot,rightArmPivot,leftLegPivot,rightLegPivot,leftKneePivot,rightKneePivot,torso,leftLeg,rightLeg,leftArm,rightArm,head,magazine,crouchPose:0,stridePhase:id.length*.7,lastX:0,lastZ:0,hasMotion:false };
   }
 }
 
-function create3DWeaponMesh(weapon: LiveEquippedWeapon, id: string, scene: Scene, getMat: (hex: string) => StandardMaterial): TransformNode {
+export function create3DWeaponMesh(weapon: LiveEquippedWeapon, id: string, scene: Scene, getMat: (hex: string) => StandardMaterial): TransformNode {
   const root = new TransformNode(`weapon-${id}`, scene);
   const darkMetal = getMat('#1a1c20');
   const gunmetal = getMat('#2d3238');
@@ -210,9 +285,9 @@ function create3DWeaponMesh(weapon: LiveEquippedWeapon, id: string, scene: Scene
     const blade=MeshBuilder.CreateCylinder(`${id}-knife-blade`,{height:.25,diameterTop:0,diameterBottom:.065,tessellation:4},scene);
     blade.scaling.z=.18;blade.material=silver;add(blade,0,0,.21,Math.PI/2);
     root.metadata={name:LIVE_KNIFE.name};
-  } else if (weapon === 'flash' || weapon === 'smoke') {
+  } else if (weapon === 'flash' || weapon === 'smoke' || weapon === 'incendiary') {
     const can = MeshBuilder.CreateCylinder(`${id}-grenade-body`, { height: .13, diameter: .062, tessellation: 12 }, scene);
-    can.material = weapon === 'flash' ? darkMetal : olive; add(can, 0, 0, 0);
+    can.material = weapon === 'flash' ? darkMetal : weapon==='incendiary'?getMat('#d84a19'):olive; add(can, 0, 0, 0);
     const cap = MeshBuilder.CreateCylinder(`${id}-grenade-cap`, { height: .025, diameter: .038, tessellation: 10 }, scene);
     cap.material = gunmetal; add(cap, 0, .075, 0);
     const lever = MeshBuilder.CreateBox(`${id}-grenade-lever`, { width: .018, height: .09, depth: .035 }, scene);
@@ -351,10 +426,23 @@ function create3DWeaponMesh(weapon: LiveEquippedWeapon, id: string, scene: Scene
     stock.material = olive; add(stock, 0, 0.015, -0.32);
   }
 
+  if(Object.hasOwn(LIVE_WEAPONS,weapon)) {
+    // The socket comes from the actual forward barrel/suppressor geometry,
+    // including each weapon's bore height and muzzle brake length.
+    const barrels=root.getChildMeshes().filter(mesh=>/-(barrel|silencer|muzzle|brake|shroud)$/.test(mesh.name));
+    for(const part of barrels)part.computeWorldMatrix(true);
+    barrels.sort((a,b)=>b.getBoundingInfo().boundingBox.maximumWorld.z-a.getBoundingInfo().boundingBox.maximumWorld.z);
+    const barrel=barrels[0];
+    if(barrel){
+      const muzzle=new TransformNode(`${id}-muzzle-socket`,scene);muzzle.parent=root;
+      muzzle.position.set(barrel.position.x,barrel.position.y,barrel.getBoundingInfo().boundingBox.maximumWorld.z);
+      root.metadata={...root.metadata,muzzle} satisfies WeaponViewMetadata;
+    }
+  }
   return root;
 }
 
-function createViewmodelMesh(weapon: LiveEquippedWeapon, team: FpsTeamId, id: string, scene: Scene, getMat: (hex: string) => StandardMaterial): TransformNode {
+export function createViewmodelMesh(weapon: LiveEquippedWeapon, team: FpsTeamId, id: string, scene: Scene, getMat: (hex: string) => StandardMaterial): TransformNode {
   const root = new TransformNode(`viewmodel-${id}`, scene);
 
   // 1. Weapon model
@@ -383,7 +471,7 @@ function createViewmodelMesh(weapon: LiveEquippedWeapon, team: FpsTeamId, id: st
   const isSmgWeapon = weapon === 'smg' || weapon === 'mp9' || weapon === 'mac10';
   const isRifleWeapon = weapon === 'rifle' || weapon === 'm4a1_s' || weapon === 'ak47' || weapon === 'mag7' || weapon === 'nova' || weapon === 'negev';
   const isSniperWeapon = weapon === 'sniper' || weapon === 'scout';
-  const isGrenade = weapon === 'flash' || weapon === 'smoke';
+  const isGrenade = weapon === 'flash' || weapon === 'smoke' || weapon === 'incendiary';
 
   const gripPos = isGrenade ? { x: 0, y: -0.04, z: 0.02 }
     : weapon === 'knife' ? { x: 0, y: -0.01, z: 0.01 }
@@ -527,6 +615,13 @@ function createViewmodelMesh(weapon: LiveEquippedWeapon, team: FpsTeamId, id: st
     }
   }
 
+  const reloadArm=new TransformNode(`${id}-reload-arm`,scene);reloadArm.parent=root;reloadArm.setEnabled(false);
+  const reloadSleeve=MeshBuilder.CreateBox(`${id}-reload-sleeve`,{width:.075,height:.085,depth:.24},scene);reloadSleeve.material=sleeveMat;reloadSleeve.parent=reloadArm;reloadSleeve.position.z=-.12;reloadSleeve.isPickable=false;
+  const reloadHand=MeshBuilder.CreateBox(`${id}-reload-hand`,{width:.075,height:.062,depth:.09},scene);reloadHand.material=gloveMat;reloadHand.parent=reloadArm;reloadHand.position.z=.035;reloadHand.isPickable=false;
+  const reloadMagazine=MeshBuilder.CreateBox(`${id}-reload-magazine`,{width:.045,height:.15,depth:.05},scene);reloadMagazine.material=strapMat;reloadMagazine.parent=root;reloadMagazine.isPickable=false;reloadMagazine.setEnabled(false);
+  root.metadata={muzzle:(gun.metadata as WeaponViewMetadata|undefined)?.muzzle,
+    reloadParts:{arm:reloadArm,magazine:reloadMagazine}} satisfies WeaponViewMetadata;
+
   return root;
 }
 
@@ -535,11 +630,14 @@ export class FpsLiveViewer {
   private engine:Engine;
   private scene:Scene;
   private camera:FreeCamera;
+  private pipCamera:FreeCamera;
   private resize:ResizeObserver;
   private actors=new Map<string,ActorView>();
   private droppedMeshes=new Map<number,{root:TransformNode;ring:Mesh}>();
-  private smokes=new Map<number,Mesh>();
-  private tracers=new Map<number,LinesMesh>();
+  private smokes=new Map<number,SmokeView>();
+  private fires=new Map<number,FireView>();
+  private smokeTexture?:DynamicTexture;
+  private tracers=new Map<number,TracerView>();
   private grenades=new Map<number,Mesh>();
   private materials=new Map<string,StandardMaterial>();
   private fpGunRoot?:TransformNode;
@@ -548,31 +646,78 @@ export class FpsLiveViewer {
   private currentEyeY=1.6;
   private fpMuzzleFlash?:Mesh;
   private device:Mesh;
-  private followed='';
-  private cutAt=-100;
+  private explosionSphere?:Mesh;
+  private explosionRing?:Mesh;
+  private explosionMaterials?:StandardMaterial[];
+  private explosionRound=0;
+  private explosionStartedAt=0;
+  private director:DirectorState=createDirectorState();
   private disposed=false;
   private shadows!:ShadowGenerator;
   private previousCamera='';
   private previousRound=0;
+  private previousPipKey='';
   private cameraTarget=new Vector3(0,0,4);
+  private pipTarget=new Vector3(0,.8,0);
+  private pipViewport:NormalizedViewport|null=null;
+  private pipActive=false;
+  private readonly fullViewport=new Viewport(0,0,1,1);
+  private mainHiddenIds=new Set<string>();
+  private mainFpEnabled=false;
+  private mainMuzzleEnabled=false;
+  private mainFollowedId='';
   effectiveMode:Exclude<LiveCameraMode,'director'>='overview';
 
   constructor(canvas:HTMLCanvasElement,onLost:()=>void) {
     this.engine=new Engine(canvas,true,{preserveDrawingBuffer:false,stencil:true});
     this.scene=new Scene(this.engine);
     this.camera=new FreeCamera('broadcast-camera',new Vector3(0,72,-63),this.scene);
+    this.pipCamera=new FreeCamera('bomb-plant-pip-camera',new Vector3(0,3,0),this.scene);
     this.device=MeshBuilder.CreateBox('objective-device',{width:.5,height:.2,depth:.35},this.scene);
     this.resize=new ResizeObserver(()=>{if(!this.disposed)this.engine.resize();});
     try {
-      this.engine.setHardwareScalingLevel(1/Math.min(1.5,window.devicePixelRatio||1));
+      // Render near CSS-pixel resolution instead of supersampling the whole 3D scene on retina screens.
+      this.engine.setHardwareScalingLevel(Math.max(1,(window.devicePixelRatio||1)/1.25));
       this.scene.clearColor=new Color4(.58,.74,.82,1);
       this.scene.fogMode=Scene.FOGMODE_EXP2;this.scene.fogDensity=.0026;this.scene.fogColor=new Color3(.58,.74,.82);
       this.scene.imageProcessingConfiguration.contrast=1.15;this.scene.imageProcessingConfiguration.exposure=1.08;
       this.camera.minZ=.06;this.camera.maxZ=300;this.camera.fov=1.12;
+      this.camera.viewport=this.fullViewport;
+      this.pipCamera.minZ=.08;this.pipCamera.maxZ=220;this.pipCamera.fov=.9;
+      this.pipCamera.viewport=new Viewport(.72,.26,.25,.22);
       this.scene.activeCamera=this.camera;
+      this.scene.activeCameras=[this.camera];
+      this.scene.onBeforeCameraRenderObservable.add(cam=>{
+        if(this.disposed)return;
+        if(cam===this.pipCamera){
+          const rw=this.engine.getRenderWidth();
+          const rh=this.engine.getRenderHeight();
+          const vp=this.pipCamera.viewport;
+          const sx=Math.max(0,Math.floor(vp.x*rw));
+          const sy=Math.max(0,Math.floor(vp.y*rh));
+          const sw=Math.max(1,Math.ceil(vp.width*rw));
+          const sh=Math.max(1,Math.ceil(vp.height*rh));
+          // Clear color + depth + stencil strictly within the PIP box so main-view geometry does not leak behind the sky.
+          this.engine.scissorClear(sx,sy,sw,sh,this.scene.clearColor);
+          for(const id of this.mainHiddenIds){
+            const v=this.actors.get(id);
+            if(v){v.operative.root.setEnabled(true);v.gunNode?.setEnabled(true);}
+          }
+          this.fpGunRoot?.setEnabled(false);
+          this.fpMuzzleFlash?.setEnabled(false);
+        } else {
+          for(const id of this.mainHiddenIds){
+            const v=this.actors.get(id);
+            if(v){v.operative.root.setEnabled(false);v.gunNode?.setEnabled(false);}
+          }
+          this.fpGunRoot?.setEnabled(this.mainFpEnabled);
+          this.fpMuzzleFlash?.setEnabled(this.mainMuzzleEnabled);
+        }
+        this.setTracerCamera(cam!==this.pipCamera&&this.mainFpEnabled);
+      });
       const sky=new HemisphericLight('harbor-sky',Vector3.Up(),this.scene);sky.intensity=.68;sky.groundColor=new Color3(.32,.34,.32);
       const sun=new DirectionalLight('mediterranean-sun',new Vector3(-.55,-1,.32),this.scene);sun.position.set(35,65,-35);sun.intensity=1.35;sun.diffuse=new Color3(1,.94,.82);
-      this.shadows=new ShadowGenerator(1024,sun);this.shadows.usePercentageCloserFiltering=true;this.shadows.filteringQuality=ShadowGenerator.QUALITY_LOW;this.shadows.bias=.002;this.shadows.normalBias=.1;this.shadows.setDarkness(.32);
+      this.shadows=new ShadowGenerator(512,sun);this.shadows.usePercentageCloserFiltering=true;this.shadows.filteringQuality=ShadowGenerator.QUALITY_LOW;this.shadows.bias=.002;this.shadows.normalBias=.1;this.shadows.setDarkness(.32);
       const floor=MeshBuilder.CreateGround('harbor-paving',{width:72,height:92},this.scene);
       const paving=new StandardMaterial('paving',this.scene);
       const texture=new DynamicTexture('paving-cobblestone',{width:512,height:512},this.scene,false);
@@ -603,11 +748,35 @@ export class FpsLiveViewer {
         roof.receiveShadows=false;
       }
       buildLiveScenery(this.scene,color=>this.material(color));
+      const mosaicTexture=new DynamicTexture('b-basin-blue-mosaic',{width:512,height:512},this.scene,false);
+      const mosaicContext=mosaicTexture.getContext() as unknown as CanvasRenderingContext2D;
+      const tileColors=['#28648a','#34789a','#3d81a0','#2d6b91','#4a87a1'];
+      mosaicContext.fillStyle='#c6c1af';mosaicContext.fillRect(0,0,512,512);
+      for(let row=0;row<16;row++)for(let column=0;column<16;column++) {
+        const x=column*32,y=row*32,shade=(row*7+column*11)%tileColors.length;
+        mosaicContext.fillStyle=tileColors[shade];mosaicContext.fillRect(x+2,y+2,28,28);
+        mosaicContext.strokeStyle='#b6b4a8';mosaicContext.lineWidth=1;mosaicContext.strokeRect(x+2.5,y+2.5,27,27);
+        if(row%4===1&&column%4===1) {
+          mosaicContext.fillStyle='#bac8bd';mosaicContext.beginPath();mosaicContext.moveTo(x+16,y+7);mosaicContext.lineTo(x+25,y+16);mosaicContext.lineTo(x+16,y+25);mosaicContext.lineTo(x+7,y+16);mosaicContext.closePath();mosaicContext.fill();
+          mosaicContext.fillStyle='#597f88';mosaicContext.fillRect(x+14,y+14,4,4);
+        }
+      }
+      mosaicTexture.update();mosaicTexture.uScale=8;mosaicTexture.vScale=8;
+      const mosaicMaterial=new StandardMaterial('b-basin-mosaic-material',this.scene);
+      mosaicMaterial.diffuseTexture=mosaicTexture;mosaicMaterial.specularColor=new Color3(.13,.16,.16);
       for(const [site,position] of Object.entries(LIVE_FPS_MAP.sites)) {
-        const pad=MeshBuilder.CreateGround(`site-${site}`,{width:8.5,height:8.5},this.scene);pad.position.set(position.x,.025,position.z);pad.material=this.material(site==='A'?'#9e4536':'#7a3227');pad.receiveShadows=true;
+        const siteSize=site==='B'?15.8:8.5;
+        const pad=MeshBuilder.CreateGround(`site-${site}`,{width:siteSize,height:siteSize},this.scene);pad.position.set(position.x,.025,position.z);pad.material=site==='B'?mosaicMaterial:this.material('#9e4536');pad.receiveShadows=true;pad.isPickable=false;
+        if(site==='B')for(const [edgeX,edgeZ,width,depth] of [
+          [position.x,position.z-7.76,15.8,.28],[position.x,position.z+7.76,15.8,.28],
+          [position.x-7.76,position.z,.28,15.8],[position.x+7.76,position.z,.28,15.8],
+        ] as [number,number,number,number][]) {
+          const border=MeshBuilder.CreateBox(`b-basin-stone-border-${edgeX}-${edgeZ}`,{width,height:.018,depth},this.scene);
+          border.position.set(edgeX,.04,edgeZ);border.material=this.material('#d2c7ad');border.isPickable=false;border.receiveShadows=true;
+        }
         const label=MeshBuilder.CreateGround(`site-${site}-label`,{width:4.2,height:4.2},this.scene);label.position.set(position.x,.04,position.z);
         const mat=new StandardMaterial(`site-${site}-type`,this.scene),tex=new DynamicTexture(`site-${site}-text`,256,this.scene,false);
-        tex.hasAlpha=true;tex.drawText(site,null,195,'bold 190px sans-serif','#fff4dc','transparent',true);mat.diffuseTexture=tex;mat.useAlphaFromDiffuseTexture=true;mat.specularColor=Color3.Black();label.material=mat;
+        tex.hasAlpha=true;tex.drawText(site,null,195,'bold 190px sans-serif','#fff4dc','transparent',true);mat.diffuseTexture=tex;mat.useAlphaFromDiffuseTexture=true;mat.specularColor=Color3.Black();label.material=mat;label.isPickable=false;
       }
       // Non-collidable line markings are drawn flush with the floor.
       for(const x of [-32,32]) {
@@ -623,33 +792,96 @@ export class FpsLiveViewer {
     const material=new StandardMaterial(hex,this.scene);material.diffuseColor=Color3.FromHexString(hex);material.specularColor=new Color3(.08,.08,.08);
     this.materials.set(hex,material);return material;
   }
-  render(previous:LiveSnapshot,current:LiveSnapshot,alpha:number,mode:LiveCameraMode,selected:string,elapsed=1/60):string {
-    if(this.disposed)return '';
+  private smokeVolumeTexture():DynamicTexture {
+    if(this.smokeTexture)return this.smokeTexture;
+    const texture=new DynamicTexture('smoke-volume-cloud-texture',{width:256,height:256},this.scene,false);
+    texture.hasAlpha=true;
+    const ctx=texture.getContext() as unknown as CanvasRenderingContext2D;
+    ctx.clearRect(0,0,256,256);
+    let state=0x51f15e;
+    const random=()=>{state^=state<<13;state^=state>>>17;state^=state<<5;return (state>>>0)/4294967296;};
+    ctx.globalCompositeOperation='lighter';
+    for(let i=0;i<54;i++){
+      const x=30+random()*196,y=30+random()*196,radius=18+random()*42;
+      const gradient=ctx.createRadialGradient(x,y,0,x,y,radius);
+      gradient.addColorStop(0,`rgba(255,255,255,${.07+random()*.13})`);
+      gradient.addColorStop(.55,'rgba(255,255,255,.055)');
+      gradient.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=gradient;ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalCompositeOperation='destination-in';
+    const edge=ctx.createRadialGradient(128,128,28,128,128,132);
+    edge.addColorStop(0,'rgba(255,255,255,.96)');edge.addColorStop(.68,'rgba(255,255,255,.78)');edge.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=edge;ctx.fillRect(0,0,256,256);ctx.globalCompositeOperation='source-over';
+    texture.update();this.smokeTexture=texture;return texture;
+  }
+  setPipViewport(rect:NormalizedViewport|null) {
+    this.pipViewport=rect;
+    if(rect){
+      this.pipCamera.viewport.x=rect.x;
+      this.pipCamera.viewport.y=rect.y;
+      this.pipCamera.viewport.width=rect.width;
+      this.pipCamera.viewport.height=rect.height;
+    }
+  }
+  resizeNow() {
+    if(!this.disposed)this.engine.resize();
+  }
+  private createMuzzleFlash(name:string,socket:TransformNode):Mesh {
+    const flash=MeshBuilder.CreateSphere(name,{diameter:.11,segments:6},this.scene);
+    const material=this.material('#ffefa8');material.emissiveColor=new Color3(1,.85,.3);material.specularColor=Color3.Black();
+    flash.material=material;flash.isPickable=false;flash.parent=socket;
+    flash.position.set(0,0,.045);flash.scaling.set(.7,.7,1.6);flash.setEnabled(false);
+    return flash;
+  }
+  private muzzlePosition(root:TransformNode|undefined):Vector3|undefined {
+    const muzzle=(root?.metadata as WeaponViewMetadata|undefined)?.muzzle;
+    if(!root||!muzzle||muzzle.isDisposed())return undefined;
+    root.computeWorldMatrix(true);muzzle.computeWorldMatrix(true);
+    return muzzle.getAbsolutePosition().clone();
+  }
+  private setTracerCamera(firstPerson:boolean) {
+    for(const tracer of this.tracers.values()){
+      const showFirst=firstPerson&&tracer.actorId===this.mainFollowedId&&!!tracer.firstPerson;
+      tracer.world.setEnabled(!showFirst);tracer.firstPerson?.setEnabled(showFirst);
+    }
+  }
+  private updateShotTracers(current:LiveSnapshot) {
+    const shots=current.shots.filter(shot=>current.time-shot.time<.1),ids=new Set(shots.map(shot=>shot.id));
+    for(const [id,tracer] of this.tracers)if(!ids.has(id)){
+      tracer.world.dispose();tracer.firstPerson?.dispose();this.tracers.delete(id);
+    }
+    for(const shot of shots){
+      const actor=this.actors.get(shot.actorId);
+      const origin=this.muzzlePosition(actor?.gunWeapon===shot.weapon?actor.gunNode:undefined)
+        ??new Vector3(shot.from.x,shot.fromY,shot.from.z);
+      const endpoint=new Vector3(shot.to.x,shot.toY,shot.to.z);
+      let tracer=this.tracers.get(shot.id);
+      if(!tracer){
+        const world=MeshBuilder.CreateLines(`shot-${shot.id}`,{points:[origin,endpoint],updatable:true},this.scene);
+        world.color=Color3.FromHexString(shot.team==='blue'?'#b1efff':'#ffe1aa');world.isPickable=false;
+        tracer={world,actorId:shot.actorId};this.tracers.set(shot.id,tracer);
+      }else MeshBuilder.CreateLines(`shot-${shot.id}`,{points:[origin,endpoint],instance:tracer.world});
+      const firstOrigin=this.mainFpEnabled&&shot.actorId===this.mainFollowedId&&this.fpGunWeapon===shot.weapon?this.muzzlePosition(this.fpGunRoot):undefined;
+      if(firstOrigin){
+        if(!tracer.firstPerson){
+          tracer.firstPerson=MeshBuilder.CreateLines(`fp-shot-${shot.id}`,{points:[firstOrigin,endpoint],updatable:true},this.scene);
+          tracer.firstPerson.color=tracer.world.color;tracer.firstPerson.isPickable=false;
+        }else MeshBuilder.CreateLines(`fp-shot-${shot.id}`,{points:[firstOrigin,endpoint],instance:tracer.firstPerson});
+      }
+    }
+  }
+  render(previous:LiveSnapshot,current:LiveSnapshot,alpha:number,mode:LiveCameraMode,selected:string,elapsed=1/60,allowPip=true):LiveRenderResult {
+    if(this.disposed)return {followedId:selected,effectiveMode:'overview',pip:{active:false,phase:'planting',progress:0,duration:3.2,spot:{x:0,z:0}}};
     const players=current.players.map(p=>{
       const before=previous.round===current.round?previous.players.find(a=>a.id===p.id):undefined;
       if(!before)return p;
       const delta=Math.atan2(Math.sin(p.yaw-before.yaw),Math.cos(p.yaw-before.yaw));
-      return {...p,x:mix(before.x,p.x,alpha),z:mix(before.z,p.z,alpha),yaw:before.yaw+delta*alpha};
+      return {...p,x:mix(before.x,p.x,alpha),z:mix(before.z,p.z,alpha),yaw:before.yaw+delta*alpha,jumpY:mix(before.jumpY??0,p.jumpY??0,alpha)};
     });
-    const alive=players.filter(p=>p.hp>0);
-    if(mode==='director') {
-      const value=(p:LivePlayer)=>{
-        const combat=Math.max(0,3-(current.time-p.lastShot))*1.5;
-        const action=p.channel>0?10:0;
-        const nearby=alive.some(a=>a.team!==p.team&&distance(p,a)<22&&liveSightline(p,a))?1.5:0;
-        return action+combat+nearby+(p.bomb?.6:0);
-      };
-      const focus=[...alive].sort((a,b)=>value(b)-value(a))[0]??players[0];
-      const existing=players.find(p=>p.id===this.followed);
-      if(!existing || existing.hp<=0 || (current.time-this.cutAt>6 && value(focus)>value(existing)+.8) || (focus.channel>0&&current.time-this.cutAt>1.5)){
-        if(this.followed!==focus.id){this.followed=focus.id;this.cutAt=current.time;}
-      }
-    } else {
-      const selectedPlayer=players.find(p=>p.id===selected);
-      this.followed=(selectedPlayer&&selectedPlayer.hp>0?selectedPlayer:alive.find(p=>p.team===selectedPlayer?.team)??alive[0]??players[0]).id;
-    }
-    const followed=players.find(p=>p.id===this.followed)??players[0];
-    const effectiveMode=mode==='director'?(current.phase!=='live'?'overview':current.time-followed.lastShot<3?'first':'third'):mode;
+    const decision=evaluateBroadcastDirector({...current,players},this.director,mode,selected);
+    const followed=players.find(p=>p.id===decision.followedId)??players[0];
+    const effectiveMode=decision.effectiveMode;
     this.effectiveMode=effectiveMode;
     for(const player of players) {
       let view=this.actors.get(player.id);
@@ -664,81 +896,117 @@ export class FpsLiveViewer {
         view.gunNode?.dispose();
         view.gunNode=create3DWeaponMesh(player.equipped,`proxy-gun-${player.id}`,this.scene,hex=>this.material(hex));
         view.gunWeapon=player.equipped;
+        const muzzle=(view.gunNode.metadata as WeaponViewMetadata|undefined)?.muzzle;
+        view.muzzleFlash=muzzle?this.createMuzzleFlash(`muzzle-${player.id}`,muzzle):undefined;
       }
-      let hidden=player.hp<=0 || (effectiveMode==='first' && followed.id===player.id);
-      if(effectiveMode==='first' && !hidden && player.team===followed.team) {
-        const camDist=Vector3.Distance(this.camera.position, view.operative.root.position);
-        if(camDist<1.05) hidden=true;
-      }
-      view.operative.root.setEnabled(!hidden);
-      view.gunNode.setEnabled(!hidden);
+      const alivePlayer=player.hp>0;
+      view.operative.root.setEnabled(alivePlayer);
+      view.gunNode.setEnabled(alivePlayer);
+      view.muzzleFlash?.setEnabled(alivePlayer&&current.time-player.lastShot<.07);
 
       const jumpY = player.jumpY ?? 0;
       view.operative.root.position.set(player.x,jumpY,player.z);
       view.operative.root.rotation.y=player.yaw;
 
-      if(!hidden) {
+      if(alivePlayer) {
         const isCrouching=player.crouch;
-        const crouchDrop=isCrouching?0.38:0;
+        const blend=1-Math.exp(-Math.max(0,Math.min(.1,elapsed))*13);
+        view.operative.crouchPose=mix(view.operative.crouchPose,isCrouching?1:0,blend);
+        const crouchPose=view.operative.crouchPose;
         const throwElapsed=player.throwAt===undefined?-1:current.time-player.throwAt;
-        const throwPhase=throwElapsed<0||throwElapsed>.55?undefined:throwElapsed/.55;
-        const throwLift=throwPhase===undefined?0:throwPhase<.35?throwPhase/.35:Math.max(0,1-(throwPhase-.35)/.65);
-        const throwRelease=throwPhase===undefined||throwPhase<.35?0:Math.sin(((throwPhase-.35)/.65)*Math.PI);
-
-        view.operative.torso.position.y=1.05-crouchDrop;
-        view.operative.head.position.y=1.54-crouchDrop;
-        view.operative.leftArm.position.y=1.05-crouchDrop;
-        view.operative.rightArm.position.y=1.05-crouchDrop;
-        view.operative.leftLeg.scaling.y=isCrouching?0.62:1.0;
-        view.operative.rightLeg.scaling.y=isCrouching?0.62:1.0;
-        view.operative.leftLeg.position.y=isCrouching?0.26:0.42;
-        view.operative.rightLeg.position.y=isCrouching?0.26:0.42;
+        const throwPhase=throwElapsed<0||throwElapsed>.65?undefined:throwElapsed/.65;
+        const throwLift=throwPhase===undefined?0:throwPhase<.3?ease01(throwPhase/.3):1-ease01((throwPhase-.3)/.7);
+        const throwRelease=throwPhase===undefined||throwPhase<.3?0:1-ease01((throwPhase-.3)/.2);
+        const weaponStats=LIVE_WEAPONS[player.weapon];
+        const reloadProgress=player.reload>0?1-Math.max(0,Math.min(1,player.reload/weaponStats.reload)):0;
+        const reloadWeight=player.reload>0?Math.sin(reloadProgress*Math.PI):0;
+        view.operative.spine.position.y=1.05-.23*crouchPose;
+        view.operative.spine.rotation.x=.16*crouchPose+.04*reloadWeight;
+        view.operative.headPivot.position.y=1.54-.37*crouchPose;
+        view.operative.headPivot.rotation.x=-.06*crouchPose;
+        view.operative.leftArmPivot.position.y=1.31-.23*crouchPose;
+        view.operative.rightArmPivot.position.y=1.31-.23*crouchPose;
+        view.operative.leftLegPivot.position.y=.74-.12*crouchPose;
+        view.operative.rightLegPivot.position.y=.74-.12*crouchPose;
+        view.operative.leftKneePivot.position.y=-.36+.05*crouchPose;
+        view.operative.rightKneePivot.position.y=-.36+.05*crouchPose;
+        view.operative.leftKneePivot.rotation.x=-.62*crouchPose;
+        view.operative.rightKneePivot.rotation.x=-.62*crouchPose;
 
         // Weapon holding arm poses
         if(player.equipped==='knife') {
           const swing=Math.sin(Math.min(1,Math.max(0,(current.time-player.lastSwing)/.35))*Math.PI);
-          view.operative.rightArm.rotation.x=-0.65+swing*0.9;
-          view.operative.rightArm.rotation.y=-0.2;
-          view.operative.leftArm.rotation.x=-0.4;
-          view.operative.leftArm.rotation.y=0.3;
+          view.operative.rightArmPivot.rotation.x=-0.48+swing*0.9;
+          view.operative.rightArmPivot.rotation.y=-0.2;
+          view.operative.leftArmPivot.rotation.x=-0.52-reloadWeight*.35-throwLift*.18;
+          view.operative.leftArmPivot.rotation.y=0.3;
         } else {
-          view.operative.rightArm.rotation.x=-0.72-throwLift*.82+throwRelease*1.35;
-          view.operative.rightArm.rotation.y=-0.28+throwRelease*.24;
-          view.operative.leftArm.rotation.x=-0.82;
-          view.operative.leftArm.rotation.y=0.42;
+          view.operative.rightArmPivot.rotation.x=-0.50-throwLift*.82+throwRelease*1.35+reloadWeight*.18;
+          view.operative.rightArmPivot.rotation.y=-0.28+throwRelease*.24;
+          view.operative.leftArmPivot.rotation.x=-0.58-reloadWeight*.7-throwLift*.22;
+          view.operative.leftArmPivot.rotation.y=0.42-reloadWeight*.2-throwRelease*.12;
         }
         if(player.equipped==='knife') {
-          view.operative.rightArm.rotation.x-=throwLift*.3;
-          view.operative.rightArm.rotation.z=throwRelease*.35;
-        } else {
-          view.operative.rightArm.rotation.z=-throwLift*.2+throwRelease*.3;
+          view.operative.rightArmPivot.rotation.x-=throwLift*.3;
         }
 
-        // Natural stride animation when moving or tucking when jumping
+        // Footfall phase follows actual travel distance, so reverse and side steps read correctly.
+        const dx=view.operative.hasMotion?player.x-view.operative.lastX:0;
+        const dz=view.operative.hasMotion?player.z-view.operative.lastZ:0;
+        view.operative.lastX=player.x;view.operative.lastZ=player.z;view.operative.hasMotion=true;
+        const forward=Math.sin(player.yaw)*dx+Math.cos(player.yaw)*dz;
+        const lateral=Math.cos(player.yaw)*dx-Math.sin(player.yaw)*dz;
+        const sampleDt=Math.max(.001,Math.min(.1,elapsed));
+        const walkAmount=Math.max(0,Math.min(1,player.speed/(crouchPose>.5?1.8:2.8)));
+        if(player.speed>.12)view.operative.stridePhase+=(forward<-.002?-1:1)*Math.hypot(dx,dz)*(crouchPose>.5?3.7:4.8);
+        const cycle=Math.sin(view.operative.stridePhase)*walkAmount*(1-crouchPose*.5);
+        const lateralStep=Math.max(-1,Math.min(1,(lateral/sampleDt)/(crouchPose>.5?1.8:2.8)));
+        const shuffle=Math.max(0,Math.min(1,Math.abs(lateralStep)));
+        const legSwing=cycle*(1-shuffle*.72);
+        view.operative.spine.rotation.z=-lateralStep*.065;
+        view.operative.spine.rotation.y=throwLift*.055;
+        view.operative.headPivot.rotation.z=lateralStep*.025;
+        view.operative.leftLegPivot.rotation.z=.1*lateralStep+.025*cycle;
+        view.operative.rightLegPivot.rotation.z=-.1*lateralStep-.025*cycle;
+        view.operative.leftArmPivot.rotation.z=-.035*lateralStep-throwLift*.2+throwRelease*.3;
+        view.operative.rightArmPivot.rotation.z=-.025*lateralStep-throwLift*.2+throwRelease*.3;
         if(jumpY > 0.06) {
-          view.operative.leftLeg.rotation.x=-0.38;
-          view.operative.rightLeg.rotation.x=-0.28;
-          view.operative.leftArm.rotation.x=-0.6;
-          view.operative.rightArm.rotation.x=-0.5;
-        } else if(player.speed>.15) {
-          const strideRate=player.speed>2.5?12:(isCrouching?6:7);
-          const cycle=Math.sin(current.time*strideRate);
-          view.operative.leftLeg.rotation.x=cycle*(isCrouching?0.22:0.38);
-          view.operative.rightLeg.rotation.x=-cycle*(isCrouching?0.22:0.38);
-          view.operative.leftArm.rotation.x+=-cycle*0.12;
-          view.operative.rightArm.rotation.x+=cycle*0.08;
+          view.operative.leftLegPivot.rotation.x=-.32+.38*crouchPose;
+          view.operative.rightLegPivot.rotation.x=-.22+.38*crouchPose;
+          view.operative.leftKneePivot.rotation.x=-.48-.25*crouchPose;
+          view.operative.rightKneePivot.rotation.x=-.56-.25*crouchPose;
+          view.operative.leftArmPivot.rotation.x=-.52;
+          view.operative.rightArmPivot.rotation.x=-.45;
         } else {
-          view.operative.leftLeg.rotation.x=0;
-          view.operative.rightLeg.rotation.x=0;
+          view.operative.leftLegPivot.rotation.x=legSwing*.48+.13*crouchPose;
+          view.operative.rightLegPivot.rotation.x=-legSwing*.48+.13*crouchPose;
+          view.operative.leftKneePivot.rotation.x=-.62*crouchPose+Math.max(0,legSwing)*.42;
+          view.operative.rightKneePivot.rotation.x=-.62*crouchPose+Math.max(0,-legSwing)*.42;
+          if(player.equipped==='knife') {
+            view.operative.leftArmPivot.rotation.x=-.52-reloadWeight*.35-throwLift*.18-cycle*.035;
+            view.operative.rightArmPivot.rotation.x=-.48+Math.sin(Math.min(1,Math.max(0,(current.time-player.lastSwing)/.35))*Math.PI)*.9+throwLift*.5+cycle*.035;
+          } else {
+            const armSwing=cycle*.055*(1-shuffle*.8)*(1-throwLift*.7);
+            view.operative.leftArmPivot.rotation.x=-.58-reloadWeight*.7-throwLift*.22-armSwing;
+            view.operative.rightArmPivot.rotation.x=-.50-throwLift*.82+throwRelease*1.35+reloadWeight*.18+armSwing;
+          }
         }
 
         const rightX=Math.cos(player.yaw), rightZ=-Math.sin(player.yaw);
         const forwardX=Math.sin(player.yaw), forwardZ=Math.cos(player.yaw);
-        const gunY=(isCrouching?0.68:1.05)+jumpY;
+        const gunY=(1.05-.25*crouchPose)+jumpY-reloadWeight*.12;
         view.gunNode.position.set(player.x+forwardX*.35+rightX*.2, gunY, player.z+forwardZ*.35+rightZ*.2);
         view.gunNode.rotation.y=player.yaw;
-        view.gunNode.rotation.x=player.weaponReady>0?.5:0;
+        view.gunNode.rotation.x=(player.weaponReady>0?.5:0)+reloadWeight*.42;
         view.gunNode.rotation.z=player.equipped==='knife'?Math.sin(Math.min(1,Math.max(0,(current.time-player.lastSwing)/.35))*Math.PI):0;
+        const magazineOut=player.reload>0&&reloadProgress>.12&&reloadProgress<.7;
+        view.operative.magazine.setEnabled(magazineOut);
+        if(magazineOut){
+          const offset=-.16+Math.min(.15,Math.abs(reloadProgress-.42)*.42);
+          view.operative.magazine.position.set(forwardX*.36+rightX*.12,gunY+offset,forwardZ*.36+rightZ*.12);
+          view.operative.magazine.rotation.y=player.yaw;
+          view.operative.magazine.rotation.x=.25+reloadWeight*.65;
+        }
       }
     }
     // Ground dropped weapons
@@ -766,54 +1034,155 @@ export class FpsLiveViewer {
         }
       }
     }
-    for(const [id,mesh] of this.smokes)if(!current.smokes.some(s=>s.id===id)){mesh.material?.dispose();mesh.dispose();this.smokes.delete(id);}
+    for(const [id,cloud] of this.smokes)if(!current.smokes.some(s=>s.id===id)){cloud.root.dispose(false,false);cloud.material.dispose(false,false);this.smokes.delete(id);}
     for(const smoke of current.smokes) {
       if(!this.smokes.has(smoke.id)) {
-        const mesh=MeshBuilder.CreateSphere(`smoke-${smoke.id}`,{diameter:smoke.radius*2,segments:12},this.scene);
-        mesh.position.set(smoke.x,smoke.y,smoke.z);
-        const mat=new StandardMaterial(`smoke-material-${smoke.id}`,this.scene);mat.diffuseColor=new Color3(.7,.74,.73);mat.alpha=.92;mat.specularColor=Color3.Black();mesh.material=mat;
-        this.smokes.set(smoke.id,mesh);
+        const root=new TransformNode(`smoke-cloud-${smoke.id}`,this.scene);root.position.set(smoke.x,smoke.y,smoke.z);
+        const lobes:Mesh[]=[],phases:number[]=[];
+        const cloudTexture=this.smokeVolumeTexture();
+        const material=new StandardMaterial(`smoke-material-${smoke.id}`,this.scene);material.diffuseColor=new Color3(.72,.75,.76);material.emissiveColor=new Color3(.12,.14,.15);material.diffuseTexture=cloudTexture;material.useAlphaFromDiffuseTexture=true;material.alpha=.62;material.backFaceCulling=false;material.disableLighting=true;material.specularColor=Color3.Black();
+        for(let i=0;i<9;i++){
+          const mesh=MeshBuilder.CreateSphere(`smoke-${smoke.id}-${i}`,{diameter:1,segments:12},this.scene);mesh.parent=root;mesh.isPickable=false;
+          mesh.material=material;
+          const phase=(smoke.id*2.399+i*4.17)%(Math.PI*2);phases.push(phase);mesh.position.set(0,.05+(i%3)*.12,0);
+          mesh.scaling.set(.4,.34,.4);lobes.push(mesh);
+        }
+        this.smokes.set(smoke.id,{root,lobes,material,phases});
+      }
+      const cloud=this.smokes.get(smoke.id)!;cloud.root.position.set(smoke.x,smoke.y,smoke.z);
+      const fade=smoke.expires>current.time?Math.min(1,(smoke.expires-current.time)/1.5):0;
+      for(let i=0;i<cloud.lobes.length;i++){
+        const phase=cloud.phases[i],angle=phase+current.time*.045,spread=i===0?0:.22+(i%3)*.065;
+        const width=smoke.radius*(i===0?.62:.45+(i%3)*.035),wobble=Math.sin(current.time*.48+phase);
+        cloud.lobes[i].position.set(Math.cos(angle)*smoke.radius*spread+Math.sin(current.time*.37+phase)*smoke.radius*.025,smoke.radius*(.015+(i%4)*.055)+wobble*smoke.radius*.025,Math.sin(angle)*smoke.radius*spread+Math.cos(current.time*.31+phase)*smoke.radius*.025);
+        cloud.lobes[i].rotation.y=phase+current.time*.025;
+        cloud.lobes[i].scaling.set(width,width*(.7+(i%3)*.07),width);
+      }
+      cloud.material.alpha=.58*Math.min(1,fade+.2);
+    }
+    for(const [id,view] of this.fires)if(!current.fires?.some(f=>f.id===id)){view.root.dispose(false,true);this.fires.delete(id);}
+    for(const fire of current.fires??[]) {
+      let view=this.fires.get(fire.id);
+      if(!view){
+        const root=new TransformNode(`fire-zone-${fire.id}`,this.scene);root.position.set(fire.x,.07,fire.z);
+        const ground=MeshBuilder.CreateCylinder(`fire-ground-${fire.id}`,{height:.035,diameter:1,tessellation:32},this.scene);ground.parent=root;ground.position.y=.02;ground.isPickable=false;
+        const groundMaterial=new StandardMaterial(`fire-ground-material-${fire.id}`,this.scene);groundMaterial.diffuseColor=new Color3(1,.24,.012);groundMaterial.emissiveColor=new Color3(1,.18,.005);groundMaterial.alpha=.5;groundMaterial.disableLighting=true;groundMaterial.specularColor=Color3.Black();ground.material=groundMaterial;
+        const groundFlames:Mesh[]=[],groundFlameMaterials:StandardMaterial[]=[],patchColors=[new Color3(1,.17,.012),new Color3(1,.32,.015),new Color3(1,.58,.045)];
+        for(let i=0;i<12;i++){
+          const patch=MeshBuilder.CreateSphere(`fire-ground-flame-${fire.id}-${i}`,{diameter:1,segments:8},this.scene);patch.parent=root;patch.isPickable=false;
+          const material=new StandardMaterial(`fire-ground-flame-material-${fire.id}-${i}`,this.scene);material.diffuseColor=patchColors[i%patchColors.length];material.emissiveColor=patchColors[i%patchColors.length];material.alpha=.68;material.disableLighting=true;material.specularColor=Color3.Black();patch.material=material;
+          groundFlames.push(patch);groundFlameMaterials.push(material);
+        }
+        const flames:Mesh[]=[],flameMaterials:StandardMaterial[]=[];
+        for(let i=0;i<7;i++){
+          const flame=MeshBuilder.CreateCylinder(`fire-flame-${fire.id}-${i}`,{height:.62+(i%3)*.12,diameterTop:.015,diameterBottom:.38,tessellation:7},this.scene);flame.parent=root;flame.isPickable=false;
+          const material=new StandardMaterial(`fire-flame-material-${fire.id}-${i}`,this.scene);material.diffuseColor=i%2?new Color3(1,.55,.05):new Color3(1,.2,.015);material.emissiveColor=new Color3(1,.24,.02);material.alpha=.82;material.disableLighting=true;material.specularColor=Color3.Black();flame.material=material;
+          const theta=i/7*Math.PI*2;flame.position.set(Math.cos(theta)*.36,.35,Math.sin(theta)*.36);flames.push(flame);flameMaterials.push(material);
+        }
+        view={root,ground,groundFlames,groundFlameMaterials,flames,groundMaterial,flameMaterials};this.fires.set(fire.id,view);
+      }
+      view.root.position.set(fire.x,.045,fire.z);view.ground.scaling.set(fire.radius*2,1,fire.radius*2);
+      const fade=Math.min(1,(fire.expires-current.time)/1.2);view.groundMaterial.alpha=.5*Math.min(1,fade+.2);
+      for(let i=0;i<view.groundFlames.length;i++){
+        const phase=i*2.399,theta=phase+Math.sin(current.time*2.3+phase)*.08,radial=.12+(i%4)*.17,pulse=.78+Math.sin(current.time*6.2+phase)*.18;
+        const width=fire.radius*(.12+(i%3)*.025);
+        view.groundFlames[i].position.set(Math.cos(theta)*fire.radius*radial,.025+Math.max(0,Math.sin(current.time*5.4+phase))*.012,Math.sin(theta)*fire.radius*radial);
+        view.groundFlames[i].scaling.set(width,.035,width*(.7+(i%2)*.15));view.groundFlameMaterials[i].alpha=.66*Math.min(1,fade+.2)*pulse;
+      }
+      for(let i=0;i<view.flames.length;i++){
+        const theta=i/7*Math.PI*2+Math.sin(current.time*2.6+i)*.12,scale=fire.radius/4.2;
+        view.flames[i].position.set(Math.cos(theta)*fire.radius*.56,.29+Math.sin(current.time*8+i)*.065,Math.sin(theta)*fire.radius*.56);
+        view.flames[i].scaling.set(scale*(.9+Math.sin(current.time*7+i)*.1),scale*(.72+Math.sin(current.time*7+i)*.12),scale);view.flameMaterials[i].alpha=.82*Math.min(1,fade+.2);
       }
     }
     for(const [id,mesh] of this.grenades)if(!current.grenades.some(g=>g.id===id)){mesh.dispose();this.grenades.delete(id);}
     for(const grenade of current.grenades) {
       let mesh=this.grenades.get(grenade.id);
-      if(!mesh){mesh=MeshBuilder.CreateSphere(`grenade-${grenade.id}`,{diameter:.22,segments:8},this.scene);mesh.material=this.material(grenade.kind==='flash'?'#e4d6a3':'#687e78');this.grenades.set(grenade.id,mesh);}
-      mesh.position.set(grenade.x,grenade.y,grenade.z);
-    }
-    for(const [id,mesh] of this.tracers)if(!current.shots.some(s=>s.id===id)){mesh.dispose();this.tracers.delete(id);}
-    for(const shot of current.shots)if(!this.tracers.has(shot.id)) {
-      const line=MeshBuilder.CreateLines(`shot-${shot.id}`,{points:[new Vector3(shot.from.x,1.45,shot.from.z),new Vector3(shot.to.x,1.45,shot.to.z)]},this.scene);
-      line.color=Color3.FromHexString(shot.team==='blue'?'#b1efff':'#ffe1aa');this.tracers.set(shot.id,line);
+      if(!mesh){mesh=MeshBuilder.CreateSphere(`grenade-${grenade.id}`,{diameter:.22,segments:8},this.scene);mesh.material=this.material(grenade.kind==='flash'?'#e4d6a3':grenade.kind==='smoke'?'#687e78':'#f97316');this.grenades.set(grenade.id,mesh);}
+      if(current.time<grenade.releaseAt) {
+        const thrower=current.players.find(player=>player.id===grenade.actorId);
+        if(thrower) {
+          const forwardX=Math.sin(thrower.yaw),forwardZ=Math.cos(thrower.yaw),rightX=Math.cos(thrower.yaw),rightZ=-Math.sin(thrower.yaw);
+          mesh.position.set(thrower.x+forwardX*.2+rightX*.16,1.55+(thrower.jumpY??0),thrower.z+forwardZ*.2+rightZ*.16);
+        } else mesh.position.set(grenade.x,grenade.y,grenade.z);
+      } else mesh.position.set(grenade.x,grenade.y,grenade.z);
     }
     this.device.setEnabled(current.bomb.status==='planted'||current.bomb.status==='dropped');this.device.position.set(current.bomb.x,.15,current.bomb.z);
+    if(current.bomb.status==='exploded'&&this.explosionRound!==current.round){
+      this.explosionRound=current.round;this.explosionStartedAt=current.time;
+      this.explosionSphere=MeshBuilder.CreateSphere('bomb-explosion-flash',{diameter:1,segments:10},this.scene);this.explosionSphere.position.set(current.bomb.x,.8,current.bomb.z);
+      this.explosionRing=MeshBuilder.CreateTorus('bomb-explosion-ring',{diameter:1,thickness:.18,tessellation:24},this.scene);this.explosionRing.position.set(current.bomb.x,.1,current.bomb.z);
+      const flashMaterial=new StandardMaterial('bomb-explosion-flash-material',this.scene);flashMaterial.emissiveColor=new Color3(1,.48,.06);flashMaterial.diffuseColor=new Color3(1,.64,.14);flashMaterial.alpha=.9;flashMaterial.disableLighting=true;
+      const ringMaterial=new StandardMaterial('bomb-explosion-ring-material',this.scene);ringMaterial.emissiveColor=new Color3(1,.18,.015);ringMaterial.diffuseColor=new Color3(1,.3,.025);ringMaterial.alpha=.88;ringMaterial.disableLighting=true;
+      this.explosionSphere.material=flashMaterial;this.explosionRing.material=ringMaterial;this.explosionMaterials=[flashMaterial,ringMaterial];
+    }
+    if(this.explosionSphere&&this.explosionRing&&this.explosionMaterials){
+      const age=current.time-this.explosionStartedAt;const life=Math.max(0,1-age/1.25);
+      this.explosionSphere.setEnabled(life>0);this.explosionRing.setEnabled(life>0);
+      const flashScale=.5+Math.max(0,age)*3.2;this.explosionSphere.scaling.set(flashScale,flashScale*.72,flashScale);
+      this.explosionRing.scaling.set(1+Math.max(0,age)*9,1,1+Math.max(0,age)*9);
+      this.explosionMaterials[0].alpha=.9*life;this.explosionMaterials[1].alpha=.88*life;
+    }
     const zoom=effectiveMode==='first'&&followed.equipped==='sniper'&&followed.action==='Engaging';
-    const desiredFov=effectiveMode==='overview'?.95:zoom?.6:1.12;
     const cameraKey=`${effectiveMode}:${followed.id}`,cut=cameraKey!==this.previousCamera||this.previousRound!==current.round;
     const blend=cut?1:1-Math.exp(-Math.max(0,Math.min(.1,elapsed))*9);
-    this.camera.fov=mix(this.camera.fov,desiredFov,blend);
     if(effectiveMode==='overview') {
-      this.camera.position=Vector3.Lerp(this.camera.position,new Vector3(0,68,-52),blend);
-      this.cameraTarget=Vector3.Lerp(this.cameraTarget,new Vector3(0,0,2),blend);this.camera.setTarget(this.cameraTarget);
-    } else this.followCamera(followed,effectiveMode==='first',blend,current.time);
+      const overviewPose=computeOverviewCameraPose();
+      this.camera.fov=mix(this.camera.fov,overviewPose.fov,blend);
+      this.camera.position=Vector3.Lerp(this.camera.position,new Vector3(overviewPose.position.x,overviewPose.position.y,overviewPose.position.z),blend);
+      this.cameraTarget=Vector3.Lerp(this.cameraTarget,new Vector3(overviewPose.target.x,overviewPose.target.y,overviewPose.target.z),blend);
+      this.camera.setTarget(this.cameraTarget);
+    } else this.followCamera(followed,effectiveMode==='first',blend,current.time,zoom);
     this.previousCamera=cameraKey;this.previousRound=current.round;
-    // First-person viewmodel and muzzle flash
+
+    this.mainHiddenIds.clear();
     if(effectiveMode==='first' && followed.hp>0) {
+      this.mainHiddenIds.add(followed.id);
+      for(const player of players) {
+        if(player.hp>0 && player.id!==followed.id && player.team===followed.team) {
+          const view=this.actors.get(player.id);
+          if(view && Vector3.Distance(this.camera.position,view.operative.root.position)<1.05) {
+            this.mainHiddenIds.add(player.id);
+          }
+        }
+      }
+    }
+
+    // First-person viewmodel and muzzle flash (isolated to main camera via onBeforeCameraRenderObservable)
+    this.mainFpEnabled=effectiveMode==='first' && followed.hp>0;
+    this.mainFollowedId=followed.id;
+    this.mainMuzzleEnabled=false;
+    if(this.mainFpEnabled) {
       if(!this.fpGunRoot || this.fpGunWeapon!==followed.equipped || this.fpGunTeam!==followed.team) {
+        this.fpMuzzleFlash?.dispose();this.fpMuzzleFlash=undefined;
         this.fpGunRoot?.dispose();
         this.fpGunRoot=createViewmodelMesh(followed.equipped,followed.team,'viewmodel-gun',this.scene,hex=>this.material(hex));
         this.fpGunWeapon=followed.equipped;
         this.fpGunTeam=followed.team;
       }
       this.fpGunRoot.setEnabled(true);
-      const firing=followed.equipped!=='knife'&&current.time-followed.lastShot<.08;
+      const firing=Object.hasOwn(LIVE_WEAPONS,followed.equipped)&&current.time-followed.lastShot<.08;
       const swing=followed.equipped==='knife'?Math.sin(Math.min(1,Math.max(0,(current.time-followed.lastSwing)/.35))*Math.PI):0;
       const throwElapsed=followed.throwAt===undefined?-1:current.time-followed.throwAt;
-      const throwPhase=throwElapsed<0||throwElapsed>.55?undefined:throwElapsed/.55;
-      const throwLift=throwPhase===undefined?0:throwPhase<.35?throwPhase/.35:Math.max(0,1-(throwPhase-.35)/.65);
-      const throwRelease=throwPhase===undefined||throwPhase<.35?0:Math.sin(((throwPhase-.35)/.65)*Math.PI);
+      const throwPhase=throwElapsed<0||throwElapsed>.65?undefined:throwElapsed/.65;
+      const throwLift=throwPhase===undefined?0:throwPhase<.3?ease01(throwPhase/.3):1-ease01((throwPhase-.3)/.7);
+      const throwRelease=throwPhase===undefined||throwPhase<.3?0:1-ease01((throwPhase-.3)/.2);
       const draw=Math.min(1,followed.weaponReady/.45);
-      const reload=followed.reload>0?Math.sin(Math.min(1,followed.reload/3.1)*Math.PI):0;
+      const reloadProgress=followed.reload>0?1-Math.max(0,Math.min(1,followed.reload/LIVE_WEAPONS[followed.weapon].reload)):0;
+      const reload=followed.reload>0?Math.sin(reloadProgress*Math.PI):0;
+      const reloadParts=(this.fpGunRoot.metadata as {reloadParts?:ViewmodelReloadParts}|undefined)?.reloadParts;
+      if(reloadParts){
+        const inReloadMotion=followed.reload>0&&reloadProgress>.1&&reloadProgress<.86;
+        reloadParts.arm.setEnabled(inReloadMotion);
+        reloadParts.magazine.setEnabled(followed.reload>0&&reloadProgress>.18&&reloadProgress<.68);
+        const reach=Math.max(0,Math.min(1,(reloadProgress-.1)/.2));
+        const recover=Math.max(0,Math.min(1,(reloadProgress-.68)/.18));
+        const reachBlend=reach*(1-recover);
+        reloadParts.arm.position.set(-.27+.13*reachBlend,-.24+.12*reachBlend,-.06+.12*reachBlend);
+        reloadParts.arm.rotation.x=-.35*reachBlend;
+        reloadParts.magazine.position.set(-.05,-.2+Math.min(.13,Math.abs(reloadProgress-.42)*.42),.04);
+        reloadParts.magazine.rotation.x=.28+reload*1.1;
+      }
       const kick=firing?.04:0;
       const kickPitch=firing?.06:0;
 
@@ -831,27 +1200,47 @@ export class FpsLiveViewer {
       this.fpGunRoot.rotation.x=kickPitch+draw*.5+reload*.4-throwLift*.28+throwRelease*.68;
       this.fpGunRoot.rotation.z=swing*1.1+reload*.4-throwLift*.2+throwRelease*.35;
 
-      if(!this.fpMuzzleFlash) {
-        this.fpMuzzleFlash=MeshBuilder.CreateSphere('fp-muzzle-flash',{diameter:.11,segments:6},this.scene);
-        const flashMat=new StandardMaterial('flash-mat',this.scene);
-        flashMat.emissiveColor=new Color3(1,.85,.3);
-        flashMat.diffuseColor=new Color3(1,.9,.4);
-        flashMat.specularColor=Color3.Black();
-        this.fpMuzzleFlash.material=flashMat;
-        this.fpMuzzleFlash.isPickable=false;
-      }
-      this.fpMuzzleFlash.setEnabled(firing);
-      if(firing) {
-        const barrelOffset=followed.equipped==='sniper'?.85:followed.equipped==='rifle'?.6:.32;
-        this.fpMuzzleFlash.position.copyFrom(vp.add(fwd.scale(barrelOffset)));
-      }
+      const muzzle=(this.fpGunRoot.metadata as WeaponViewMetadata|undefined)?.muzzle;
+      if(!this.fpMuzzleFlash&&muzzle)this.fpMuzzleFlash=this.createMuzzleFlash('fp-muzzle-flash',muzzle);
+      this.mainMuzzleEnabled=firing&&!!this.fpMuzzleFlash;
+      this.fpMuzzleFlash?.setEnabled(this.mainMuzzleEnabled);
     } else {
       this.fpGunRoot?.setEnabled(false);
       this.fpMuzzleFlash?.setEnabled(false);
     }
-    this.scene.render();return followed.id;
+    // Resolve both views after their weapon poses, recoil and camera transforms.
+    this.updateShotTracers(current);
+
+    // Secondary Bomb-Plant PIP camera: strictly active only during C4 plant/settle beat.
+    const pipShouldRender=allowPip && decision.pip.active && this.pipViewport!==null;
+    if(decision.pip.active) {
+      const pipPose=computeBombPlantPipPose(decision.pip,players);
+      const pipKey=`${current.round}:${decision.pip.site??''}:${decision.pip.planterId??''}`;
+      const pipCut=pipKey!==this.previousPipKey;
+      const pipBlend=pipCut?1:1-Math.exp(-Math.max(0,Math.min(.1,elapsed))*7);
+      const desiredPipPos=new Vector3(pipPose.position.x,pipPose.position.y,pipPose.position.z);
+      const desiredPipTarget=new Vector3(pipPose.target.x,pipPose.target.y,pipPose.target.z);
+      this.pipCamera.position=Vector3.Lerp(this.pipCamera.position,desiredPipPos,pipBlend);
+      this.pipTarget=Vector3.Lerp(this.pipTarget,desiredPipTarget,pipBlend);
+      this.pipCamera.setTarget(this.pipTarget);
+      this.pipCamera.fov=mix(this.pipCamera.fov,pipPose.fov,pipBlend);
+      this.previousPipKey=pipKey;
+    } else {
+      this.previousPipKey='';
+    }
+
+    if(pipShouldRender && !this.pipActive) {
+      this.scene.activeCameras=[this.camera,this.pipCamera];
+      this.pipActive=true;
+    } else if(!pipShouldRender && this.pipActive) {
+      this.scene.activeCameras=[this.camera];
+      this.pipActive=false;
+    }
+
+    this.scene.render();
+    return decision;
   }
-  private followCamera(player:LivePlayer,first:boolean,blend:number,time:number) {
+  private followCamera(player:LivePlayer,first:boolean,blend:number,time:number,zoom:boolean) {
     const dx=Math.sin(player.yaw),dz=Math.cos(player.yaw);
     const jumpOffset=player.jumpY??0;
     const clampedX=Math.max(-33.5,Math.min(33.5,player.x));
@@ -860,20 +1249,20 @@ export class FpsLiveViewer {
       const targetY=(player.crouch?1.08:1.6)+jumpOffset;
       this.currentEyeY=mix(this.currentEyeY,targetY,Math.min(1,blend*2.2));
       const bob=player.speed>2.5?Math.sin(time*12)*.015:(player.crouch&&player.speed>.3?Math.sin(time*7)*.008:0);
+      this.camera.fov=mix(this.camera.fov,zoom?.6:1.12,blend);
       this.camera.position.set(clampedX,this.currentEyeY+bob,clampedZ);
       this.cameraTarget.set(clampedX+dx*20,this.currentEyeY+bob,clampedZ+dz*20);
       this.camera.setTarget(this.cameraTarget);
       return;
     }
-    let offset=5;
-    while(offset>.3 && LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(player,{x:clampedX-dx*offset,z:clampedZ-dz*offset},w,.15)))offset-=.2;
-    const targetY=(player.crouch?1.85:2.5)+jumpOffset;
-    const desired=new Vector3(Math.max(-33.5,Math.min(33.5,clampedX-dx*offset)),targetY+offset*.14,Math.max(-42.5,Math.min(42.5,clampedZ-dz*offset)));
+    const pose=computeThirdPersonCameraPose(player);
+    this.camera.fov=mix(this.camera.fov,pose.fov,blend);
+    const desired=new Vector3(pose.position.x,pose.position.y,pose.position.z);
     const smooth=Vector3.Lerp(this.camera.position,desired,blend);
-    // A smooth camera still cannot travel through the wall around a corner.
-    const crosses=LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(player,{x:smooth.x,z:smooth.z},w,.15));
+    // Keep camera close to the model's back without letting lerp sweep through a wall corner.
+    const crosses=LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(player,{x:smooth.x,z:smooth.z},w,.22));
     this.camera.position.copyFrom(crosses?desired:smooth);
-    this.cameraTarget=Vector3.Lerp(this.cameraTarget,new Vector3(clampedX+dx*3,(player.crouch?0.85:1.25)+jumpOffset,clampedZ+dz*3),blend);
+    this.cameraTarget=Vector3.Lerp(this.cameraTarget,new Vector3(pose.target.x,pose.target.y,pose.target.z),blend);
     this.camera.setTarget(this.cameraTarget);
   }
   dispose() {

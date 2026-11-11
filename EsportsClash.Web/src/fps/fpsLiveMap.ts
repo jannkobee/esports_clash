@@ -80,8 +80,8 @@ solid('a-loggia-east-column', -18.5, 26, .45, .45, 2.8, '#cfc3a7'),
 // B Site Basin & Central Fountain
 solid('b-fountain', 23, 21, 4.6, 4.6, 1.5, '#6e807e'),
 solid('b-coffins', 15, 26, 3, 4.5, 2.8, '#a77a55'),
-solid('b-screen', 17, 28, 5, 3, 3.5, '#536b71'),
-solid('b-dark-wall', 30, 24, 4, 3, 3, '#9a805a'),
+solid('b-screen', 17, 28, 5, 3, 3.5, '#b5a36d'),
+solid('b-dark-wall', 30, 24, 4, 3, 3, '#a99267'),
 solid('b-retake-cover', 27, 34, 4, 3, 2.5, '#8b927f'),
 
 // Mid Backstop & North Divider (Speedway & Customs Yard)
@@ -155,10 +155,10 @@ return [...LIVE_CALLOUTS].sort((a,b)=>distance(p,a)-distance(p,b))[0].name;
 export const LIVE_ACTOR_RADIUS = .35;
 export const distance = (a: FpsPoint, b: FpsPoint) => Math.hypot(a.x-b.x, a.z-b.z);
 const clear = (a: FpsPoint, b: FpsPoint) => !LIVE_FPS_MAP.solids.some(w => segmentHitsWall(a,b,w,LIVE_ACTOR_RADIUS+.08));
-export const liveWalkable=(point:FpsPoint)=>Math.abs(point.x)<=34.5 && Math.abs(point.z)<=43.8 && clear(point,point);
+export const liveWalkable=(point:FpsPoint)=>Math.abs(point.x)<=34 && Math.abs(point.z)<=43 && clear(point,point);
 const nodes: FpsPoint[] = [];
 const grid = new Map<string, number>();
-for (let z = -44; z <= 44; z += 2) for (let x = -34; x <= 34; x += 2) {
+for (let z = -42; z <= 42; z += 2) for (let x = -34; x <= 34; x += 2) {
   const point = { x, z };
   if (clear(point, point)) { grid.set(`${x},${z}`, nodes.length); nodes.push(point); }
 }
@@ -169,16 +169,21 @@ const neighbors = nodes.map(p => [[2, 0], [-2, 0], [0, 2], [0, -2]].flatMap(([x,
 
 export function findLivePath(from: FpsPoint, destination: FpsPoint, threats:readonly FpsPoint[]=[], caution=0): FpsPoint[] {
   const to=liveWalkable(destination)?destination:safeLivePoint(destination);
-  if (clear(from,to) && !threats.length) return [{ ...to }];
-  const nearest = (p: FpsPoint) => {
+  // Physical motion can leave an actor within the extra navigation margin.
+  // Its departure may use physical clearance; the rest of the graph keeps the margin.
+  const fromHasMargin=liveWalkable(from);
+  const departureClear=(target:FpsPoint)=>fromHasMargin?clear(from,target)
+    :!LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(from,target,w,LIVE_ACTOR_RADIUS));
+  if (departureClear(to) && !threats.length) return [{ ...to }];
+  const nearest = (p: FpsPoint,departing=false) => {
     let best=-1, cost=Infinity;
     nodes.forEach((node,index) => {
       const d=distance(p,node);
-      if(d<cost && clear(p,node)) { best=index; cost=d; }
+      if(d<cost && (departing?departureClear(node):clear(p,node))) { best=index; cost=d; }
     });
     return best;
   };
-  const start=nearest(from), end=nearest(to);
+  const start=nearest(from,true), end=nearest(to);
   if(start<0 || end<0) return [];
   const parent=new Int32Array(nodes.length).fill(-1), cost=new Float64Array(nodes.length).fill(Infinity);
   const open:{node:number;score:number}[]=[];
@@ -201,7 +206,7 @@ export function findLivePath(from: FpsPoint, destination: FpsPoint, threats:read
   path.push(nodes[start]);path.reverse();
   const result:FpsPoint[]=[]; let anchor=from;
   for(let i=0;i<path.length;) {
-    let far=i; while(far+1<path.length && clear(anchor,path[far+1]) && (!threats.length || distance(anchor,path[far+1])<4)) far++;
+    let far=i; while(far+1<path.length && (anchor===from?departureClear(path[far+1]):clear(anchor,path[far+1])) && (!threats.length || distance(anchor,path[far+1])<4)) far++;
     result.push({...path[far]});anchor=path[far];i=far+1;
   }
   return result;
