@@ -1,14 +1,62 @@
 import * as THREE from 'three';
 import {AvatarAssetLibrary} from './avatarModelAssets.ts';
 import {AvatarModelResources} from './threeAvatarModels.ts';
-import {CHAMPIONS} from './mockData.ts';
 import {combatDuration} from './avatarCombatMotion.ts';
 import {contactGait} from './avatarContactProfiles.ts';
 import {ArenaAbilityEffects} from './threeAbilityEffects.ts';
 
+type ReviewAvatarMeta = { id: string; name: string; displayName: string; accentColor: string };
+const REVIEW_AVATARS: Record<string, ReviewAvatarMeta> = {
+  c_solana: { id: 'c_solana', name: 'Solana', displayName: 'Solenne Vaelor', accentColor: '#fbbf24' },
+  c_astra: { id: 'c_astra', name: 'Astra', displayName: 'Ivera Frostwhistle', accentColor: '#93c5fd' },
+  c_kyumi: { id: 'c_kyumi', name: 'Kyumi', displayName: 'Mireth Lune', accentColor: '#f472b6' },
+  c_buck: { id: 'c_buck', name: 'Buck', displayName: 'Bramm Coil', accentColor: '#78350f' },
+  c_valkira: { id: 'c_valkira', name: 'Valkira', displayName: 'Kael Vespera', accentColor: '#991b1b' },
+  c_kage: { id: 'c_kage', name: 'Kage', displayName: 'Nyxara Vale', accentColor: '#450a0a' },
+  c_kazemaru: { id: 'c_kazemaru', name: 'Kazemaru', displayName: 'Serrin Galecrest', accentColor: '#38bdf8' },
+  c_kindra: { id: 'c_kindra', name: 'Kindra', displayName: 'Orin and Fen', accentColor: '#4c1d95' },
+  c_cora: { id: 'c_cora', name: 'Cora', displayName: 'Quillene Rook', accentColor: '#a21caf' },
+  c_renn: { id: 'c_renn', name: 'Renn', displayName: 'Aurelio Vane', accentColor: '#d97706' },
+  c_sylla: { id: 'c_sylla', name: 'Sylla', displayName: 'Droven Bearmantle', accentColor: '#166534' },
+  c_tequoia: { id: 'c_tequoia', name: 'Tequoia', displayName: 'Thalara Rootwright', accentColor: '#14532d' },
+  c_zal: { id: 'c_zal', name: 'Zal', displayName: 'Vesper Loom', accentColor: '#9d174d' },
+  c_xin: { id: 'c_xin', name: 'Xin', displayName: 'Rux Emberchain', accentColor: '#9a3412' },
+  c_raijin: { id: 'c_raijin', name: 'Raijin', displayName: 'Teslan Veyr', accentColor: '#0891b2' },
+  c_kaolin: { id: 'c_kaolin', name: 'Kaolin', displayName: 'Joruun Jadecoil', accentColor: '#064e3b' },
+  c_inai: { id: 'c_inai', name: 'Inai', displayName: 'Astrax Mire', accentColor: '#4c1d95' },
+  c_qiyana: { id: 'c_qiyana', name: 'Veyara', displayName: 'Prismelle Cade', accentColor: '#fde047' },
+  c_locke: { id: 'c_locke', name: 'Cinderbloom', displayName: 'Ashkar Veilhand', accentColor: '#fef3c7' },
+  c_senna: { id: 'c_senna', name: 'Solenne', displayName: 'Maris Solquill', accentColor: '#f8fafc' },
+  c_largo: { id: 'c_largo', name: 'Croakwell', displayName: 'Odo Bogsong', accentColor: '#facc15' },
+  c_shadowfiend: { id: 'c_shadowfiend', name: 'Soulscourge', displayName: 'Mourn Ashwake', accentColor: '#fb7185' },
+  c_earthshaker: { id: 'c_earthshaker', name: 'Stonewake', displayName: 'Dolm Runesunder', accentColor: '#facc15' },
+  c_mirehook: { id: 'c_mirehook', name: 'Mirehook', displayName: 'Garruk Mawsuture', accentColor: '#b5d36b' },
+  c_nullweaver: { id: 'c_nullweaver', name: 'Nullweaver', displayName: 'Vesper Nullcode', accentColor: '#a78bfa' },
+  c_voltgrip: { id: 'c_voltgrip', name: 'Voltgrip', displayName: 'Coiljack Ampfist', accentColor: '#fde047' },
+  c_aetherbolt: { id: 'c_aetherbolt', name: 'Aetherbolt', displayName: 'Talan Slipshot', accentColor: '#67e8f9' },
+  c_corsara: { id: 'c_corsara', name: 'Corsara', displayName: 'Calixa Broadwake', accentColor: '#fb7185' },
+  c_brewmaw: { id: 'c_brewmaw', name: 'Brewmaw', displayName: 'Brohm Caskfall', accentColor: '#f59e0b' },
+  c_wraithhook: { id: 'c_wraithhook', name: 'Wraithhook', displayName: 'Mora Fenhook', accentColor: '#5eead4' },
+  c_invoker: { id: 'c_invoker', name: 'Kaelen', displayName: 'Mirelle Vane', accentColor: '#f97316' },
+  c_hwei: { id: 'c_hwei', name: 'Hweilin', displayName: 'Maelis Chromabloom', accentColor: '#a855f7' },
+  c_jayce: { id: 'c_jayce', name: 'Jaxon', displayName: 'Axiom Rail', accentColor: '#e0f2fe' },
+  c_vi: { id: 'c_vi', name: 'Valerie', displayName: 'Brakka Fenn', accentColor: '#f43f5e' },
+  c_jinx: { id: 'c_jinx', name: 'Jinxy', displayName: 'Pippa Fuseburst', accentColor: '#f43f5e' },
+  c_puck: { id: 'c_puck', name: 'Paxi', displayName: 'Lulla Faespring', accentColor: '#38bdf8' },
+  c_batrider: { id: 'c_batrider', name: 'Batrix', displayName: 'Bryx Emberkite', accentColor: '#ef4444' },
+  c_bristleback: { id: 'c_bristleback', name: 'Quillback', displayName: 'Murdle Ridgehide', accentColor: '#65a30d' },
+  c_io: { id: 'c_io', name: 'Aetheris', displayName: 'Nemea Halolink', accentColor: '#e0f2fe' },
+  c_lulu: { id: 'c_lulu', name: 'Faelith', displayName: 'Thimble Briarwish', accentColor: '#bef264' },
+  c_silencer: { id: 'c_silencer', name: 'Oathmute', displayName: 'Sevrin Inkseal', accentColor: '#ddd6fe' },
+  c_wukong_lol: { id: 'c_wukong_lol', name: 'Cloudtail', displayName: 'Koro Cloudtail', accentColor: '#fbbf24' },
+  c_monkeyking_dota: { id: 'c_monkeyking_dota', name: 'Stonebranch', displayName: 'Bram Stonebranch', accentColor: '#86efac' },
+  c_stepstone: { id: 'c_stepstone', name: 'Stepstone', displayName: 'Toma Bellbreak', accentColor: '#facc15' },
+  c_skybreaker: { id: 'c_skybreaker', name: 'Skybreaker', displayName: 'Ravelle Skyrake', accentColor: '#f97316' },
+};
+
 const query=new URLSearchParams(location.search),run=query.get('run')??'',candidate=query.get('candidate')??'baseline',id=query.get('avatar')??'c_invoker';
 if(!/^[a-f0-9-]{36}$/.test(run)||!/^(baseline|candidate-\d{2})$/.test(candidate))throw Error('Invalid review asset');
-const kit=CHAMPIONS.find(a=>a.id===id);if(!kit)throw Error('Unknown avatar');
+const kit=REVIEW_AVATARS[id];if(!kit)throw Error('Unknown avatar');
 const root=location.pathname.split('/viewer/')[0],url=`${root}/files/${run}/${candidate}.glb`;
 const host=document.querySelector<HTMLDivElement>('#stage')!,status=document.querySelector<HTMLDivElement>('#status')!;
 const resources=new AvatarModelResources(),library=new AvatarAssetLibrary(resources,()=>url),scene=new THREE.Scene();

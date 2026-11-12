@@ -1,5 +1,5 @@
 import type { CoachCard, PlayerCard, AvatarRole, CardTier, GameOrigin } from './types.ts';
-import { CHAMPIONS, INITIAL_PLAYERS } from './mockData.ts';
+import { INITIAL_PLAYERS } from './mockData.ts';
 import { personalityOf } from './playerPersonality.ts';
 
 export const EQUALIZED_COACH_BLUE: CoachCard = {
@@ -64,7 +64,6 @@ export const PLAYER_DRAFT_TURNS: readonly PlayerDraftTurn[] = [
 ] as const;
 
 export function equalizePlayerCard(card: PlayerCard): PlayerCard {
-  const allChampionNames = CHAMPIONS.map((c) => c.name);
   return {
     ...card,
     ovr: 100,
@@ -82,7 +81,7 @@ export function equalizePlayerCard(card: PlayerCard): PlayerCard {
       flx: 100
     },
     playableRoles: ['Tank', 'Mage', 'Marksman', 'Support', 'Fighter', 'Assassin'] as AvatarRole[],
-    signatureChampions: allChampionNames,
+    signatureChampions: [],
     morale: 100,
     fatigue: 0
   };
@@ -174,7 +173,6 @@ export function createEqualizedRoster(side: 'blue' | 'red'): PlayerCard[] {
   ];
 
   const profiles = side === 'blue' ? blueProfiles : redProfiles;
-  const allChampionNames = CHAMPIONS.map((c) => c.name);
 
   return profiles.map((p, idx) => ({
     id: `eq_${side}_${idx + 1}`,
@@ -198,7 +196,7 @@ export function createEqualizedRoster(side: 'blue' | 'red'): PlayerCard[] {
     primaryPersonality: idx === 0 ? 'igl' : idx === 1 ? 'clutch_performer' : idx === 2 ? 'perfectionist' : idx === 3 ? 'siege_closer' : 'bodyguard',
     secondaryPersonality: idx === 0 ? 'untiltable' : idx === 1 ? 'limit_tester' : idx === 2 ? 'cold_as_ice' : idx === 3 ? 'wave_architect' : 'loyalist',
     badges: [],
-    signatureChampions: allChampionNames,
+    signatureChampions: [],
     morale: 100,
     fatigue: 0,
     level: 60,

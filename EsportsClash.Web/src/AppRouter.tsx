@@ -4,7 +4,6 @@ import {ClubLoader} from './components/ClubLoader';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useAccount } from './AccountContext';
 import { authenticationDestination, isWorkspaceRoute, openAuthentication, readRoute } from './authNavigation';
-import { GameContentProvider } from './GameContentContext';
 import { PublicSiteLayout } from './components/PublicSiteLayout';
 import { LandingPage } from './components/LandingPage';
 import { AuthenticationPage } from './components/AuthenticationPage';
@@ -54,7 +53,7 @@ function RouterContent() {
   }}>Sign out</button><a className="public-text-link" href="#welcome">Back to the landing page</a></div></section></PublicSiteLayout>;
 
   if (route==='fps-simulation') return <PublicSiteLayout><Suspense fallback={<ClubLoader label="Opening the FPS simulation"/>}><FpsSimulationLab/></Suspense></PublicSiteLayout>;
-  if (workspace) return session ? <Suspense fallback={<ClubLoader label="Opening your club"/>}><GameContentProvider><Workspace /></GameContentProvider></Suspense> : <ClubLoader label="Opening sign-in"/>;
+  if (workspace) return session ? <Suspense fallback={<ClubLoader label="Opening your club"/>}><Workspace /></Suspense> : <ClubLoader label="Opening sign-in"/>;
   if (route === 'sign-in' || route === 'register') return session ? <AccountRedirect /> : <PublicSiteLayout><AuthenticationPage mode={route} /></PublicSiteLayout>;
   if (reference) return <PublicSiteLayout><section className="public-avatarpedia"><Suspense fallback={<ClubLoader label="Opening Hexapedia"/>}><Hexapedia onWatch={id => {
     const destination = `match-centre?match=${encodeURIComponent(id)}`;

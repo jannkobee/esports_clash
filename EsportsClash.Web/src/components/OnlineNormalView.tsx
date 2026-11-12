@@ -6,16 +6,13 @@ import {FpsTacticalSystemEditor} from './FpsTacticalSystemEditor';
 import type {PlayerFormData} from '../playerForm';
 import {WorldPlayerPortrait} from './WorldPlayerPortrait';
 import {FixtureReport} from './FixtureReport';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isCloudPersistenceConfigured, request } from '../cloudPersistence';
 import { useAccount } from '../AccountContext';
 import { openAuthentication } from '../authNavigation';
 import { pediaHref } from '../hexapedia';
-import { acceptOnlineSnapshot, type OnlineSnapshot } from '../onlineSpectator';
-import { OnlineMatchViewer } from './OnlineMatchViewer';
 import { FpsMatchView } from './FpsMatchView';
 import type { FpsMatchReport } from '../fps/types';
-import type { VisualRelease } from '../avatarVisualRelease';
 import { ClubCrest, ClubIdentityEditor, type ClubIdentity } from './ClubIdentityEditor';
 import { Activity, ArrowRight, ClipboardList, Clock3, Swords, Users } from 'lucide-react';
 import './club-management.css';
@@ -24,7 +21,7 @@ type MatchClub = { logo?:string; id?:number;identity?:ClubIdentity; name: string
 interface FriendlyInvite { id: number; kickoff_at: string; home: MatchClub }
 
 interface Match { id: string; status: string; sequence: number; error?: string;
-  plan: { clubs: { blue: string; red: string }; game_mode?: string; fps?: { format: string; rules_version: number; map_id: string }; bot_sides?: ('blue'|'red')[]; fixture?: { id:number; clubs: { blue: MatchClub; red: MatchClub } }; versions: Record<string, string>;visual_releases?:VisualRelease[];
+  plan: { clubs: { blue: string; red: string }; game_mode?: string; fps?: { format: string; rules_version: number; map_id: string }; bot_sides?: ('blue'|'red')[]; fixture?: { id:number; clubs: { blue: MatchClub; red: MatchClub } }; versions: Record<string, string>;
     intelligence?:{controller:string;release?:{id:string;qualification?:string;generation?:number}|null} }; result?: { winner: string; report?: FpsMatchReport; execution?:{mode:string;notice?:string} } }
 interface Dashboard {
   club: { id: number; name: string; tag?: string | null; revision: number; lineup: { instance_id: string }[] };
@@ -56,28 +53,18 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
   const [error, setError] = useState(''), [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const [data, setData] = useState<Dashboard | null>(null), [selected, setSelected] = useState<Match | null>(null);
-  const [frame, setFrame] = useState<OnlineSnapshot | null>(null), [connection, setConnection] = useState('Disconnected');
   const [refresh, setRefresh] = useState(0), [clubName, setClubName] = useState(''), [lineup, setLineup] = useState<Dashboard['club']['lineup']>([]);
-  const [live, setLive] = useState(true), [replaySequence, setReplaySequence] = useState(1);
   const [fixtures, setFixtures] = useState<Fixture[]>([]);
   useEffect(()=>onWorldUpdate(['fixtures','clubs','players'],()=>setRefresh(v=>v+1)),[]);
   const [fixtureFilter,setFixtureFilter]=useState<'upcoming'|'completed'|'all'>('upcoming');
   const [invites, setInvites] = useState<FriendlyInvite[]>([]);
   const [editingFixture, setEditingFixture] = useState<Fixture | null>(null);
-  const [matchTab, setMatchTab] = useState<'arena' | 'text'>('arena');
   const [clubTab, setClubTab] = useState<'calendar' | 'lineup' | 'identity' | 'friendly'>(()=>{
     if(initialTool)return initialTool;
     const tab=new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').get('club');
     return tab==='lineup'||tab==='identity'||tab==='friendly'?tab:'calendar';
   });
   useEffect(()=>{if(!matchCentre)return;const sync=()=>{const tab=new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').get('club');setEditingFixture(null);setClubTab(tab==='friendly'?'friendly':tab==='lineup'?'lineup':tab==='identity'?'identity':'calendar');};window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[matchCentre]);
-  const latestSequence = useRef(0);
-  const [commentaryEnd,setCommentaryEnd]=useState<number|null>(null);
-  const eventTotal=frame?.snapshot.events.length??0;
-  const eventEnd=Math.min(commentaryEnd??eventTotal,eventTotal);
-  const eventStart=Math.max(0,eventEnd-100);
-  const commentary=frame?.snapshot.events.slice(eventStart,eventEnd)??[];
-  useEffect(()=>setCommentaryEnd(null),[selected?.id]);
 
   useEffect(() => {
     if (!session || broadcastOnly || !isCloudPersistenceConfigured()) return;
@@ -105,54 +92,6 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
   }, [data, selected, scheduled]);
 
   useEffect(() => {
-    if (!session || !selected || !live) return;
-    const match = selected; let closed = false, terminal = false, socket: WebSocket | null = null, timer = 0;
-    if (match.plan.game_mode === 'fps_mr15_v1') {
-      setConnection('FPS report');
-      return () => { closed = true; };
-    }
-    latestSequence.current = 0; setFrame(null);
-    const connect = async () => {
-      if (closed) return;
-      setConnection('Connecting');
-      try {
-        const response = await request<{ data: { grant: string; path: string } }>(`/online/matches/${match.id}/stream`, session, { method: 'POST' });
-        if (closed) return;
-        const url = new URL(response.data.path, location.href); url.protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-        socket = new WebSocket(url);
-        socket.onopen = () => { socket?.send(JSON.stringify({ grant: response.data.grant })); setConnection('Live'); };
-        socket.onmessage = event => {
-          try {
-            const message = JSON.parse(event.data);
-            if (acceptOnlineSnapshot(message, match.id, match.plan.versions, latestSequence.current)) {
-              latestSequence.current = message.sequence; setFrame(message);
-            } else if (message.type === 'match-ended') {
-              terminal = true;
-              setConnection(message.status);
-              setRefresh(value => value + 1);
-            }
-          } catch { setError('The server sent an invalid match frame.'); }
-        };
-        socket.onclose = () => { if (!closed && !terminal) { setConnection('Reconnecting'); timer = window.setTimeout(() => void connect(), 2000); } };
-      } catch (problem) { if (!closed) { setError((problem as Error).message); timer = window.setTimeout(() => void connect(), 5000); } }
-    };
-    void connect();
-    return () => { closed = true; clearTimeout(timer); socket?.close(); };
-  }, [session, selected?.id, live]);
-
-  useEffect(() => {
-    if (!session || !selected || !['completed', 'failed', 'interrupted'].includes(connection) || selected.status === connection) return;
-    const matchId = selected.id;
-    const controller = new AbortController();
-    const refreshResult = () => void request<{ data: Match }>(`/online/matches/${matchId}`, session, { signal: controller.signal })
-      .then(result => {
-        if (!controller.signal.aborted) setSelected(current => current?.id === matchId ? result.data : current);
-      }).catch(problem => { if (!controller.signal.aborted) setError((problem as Error).message); });
-    refreshResult();
-    const timer = window.setInterval(refreshResult, 2000);
-    return () => { controller.abort(); window.clearInterval(timer); };
-  }, [session, selected?.id, selected?.status, connection]);
-  useEffect(() => {
     if (!session || selected?.plan.game_mode !== 'fps_mr15_v1' || ['completed', 'failed', 'interrupted'].includes(selected.status)) return;
     const controller = new AbortController();
     const refreshMatch = () => void request<{ data: Match }>(`/online/matches/${selected.id}`, session, { signal: controller.signal })
@@ -171,24 +110,10 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
     return false;
   };
 
-  const replay = async (match = selected, sequence = replaySequence) => {
-    if (!match || match.plan.game_mode === 'fps_mr15_v1') return;
-    setLive(false);
-    setReplaySequence(sequence);
-    try {
-      const response = await request<{ data: { frames: OnlineSnapshot[] } }>(`/online/matches/${match.id}/replay?after=${Math.max(0, sequence - 1)}&limit=1`, session);
-      const message = response.data.frames[0];
-      if (acceptOnlineSnapshot(message, match.id, match.plan.versions, 0)) setFrame(message);
-    } catch (problem) { setError((problem as Error).message); }
-  };
-
   async function openMatch(id: string) {
     try {
       const { data: match } = await request<{ data: Match }>(`/online/matches/${id}`, session);
-      setFrame(null); setSelected(match);
-      if (match.plan.game_mode === 'fps_mr15_v1') setLive(false);
-      else if (['completed','interrupted'].includes(match.status)) await replay(match, match.sequence);
-      else setLive(true);
+      setSelected(match);
     } catch (problem) { setError((problem as Error).message); }
   }
 
@@ -206,7 +131,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
     {error && <p role="alert" className="club-notice">{error}</p>}
     {notice && <p role="status" className="club-notice">{notice}</p>}
     {selected && <section className="club-panel space-y-3">
-      <div className="club-section-heading"><p className="cm-eyebrow">Match coverage</p>{!broadcastOnly&&<button className={button} onClick={() => { setSelected(null); setLive(false); }}>Back to fixtures</button>}</div>
+      <div className="club-section-heading"><p className="cm-eyebrow">Match coverage</p>{!broadcastOnly&&<button className={button} onClick={() => setSelected(null)}>Back to fixtures</button>}</div>
       <h3 className="flex flex-wrap items-center gap-2 font-black">
         {(['blue', 'red'] as const).map(side => {
           const club = selected.plan.fixture?.clubs[side];
@@ -218,54 +143,22 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
           </span>;
         })}
       </h3>
-      <p className="club-status">{selected.plan.game_mode === 'fps_mr15_v1'
-        ? `${selected.status === 'completed' ? 'Final' : selected.status === 'failed' ? 'Failed' : 'FPS match'}${selected.result ? ` · ${selected.plan.clubs[selected.result.winner as 'blue' | 'red']} wins` : ''}`
-        : <>{selected.status === 'interrupted' ? 'Interrupted recording' : selected.status === 'completed' ? 'Final' : live ? connection : 'Replay'} · {Math.floor((frame?.snapshot.second ?? 0) / 60)}:{String(Math.floor((frame?.snapshot.second ?? 0) % 60)).padStart(2, '0')}{selected.result && ` · ${selected.plan.clubs[selected.result.winner as 'blue' | 'red']} wins`}</>}</p>
+      <p className="club-status">{`${selected.status === 'completed' ? 'Final' : selected.status === 'failed' ? 'Failed' : selected.status === 'interrupted' ? 'Interrupted recording' : 'FPS match'}${selected.result ? ` · ${selected.plan.clubs[selected.result.winner as 'blue' | 'red']} wins` : ''}`}</p>
       {selected.plan.game_mode === 'fps_mr15_v1' ? selected.result?.report
         ? <FpsMatchView
           report={selected.result.report}
           blueTeamName={selected.plan.clubs.blue}
           redTeamName={selected.plan.clubs.red}
-          onExit={() => { setSelected(null); setLive(false); }}
+          onExit={() => setSelected(null)}
         />
         : <p className="club-help">{selected.status === 'completed' ? 'The completed FPS match has no verified replay report.' : 'The FPS match report will appear when server simulation finishes.'}</p>
         : <>
-      {frame && <dl className="club-score">
-        {(['blue', 'red'] as const).map(side => {
-          const kills = frame.snapshot.frame.champions.filter(unit => unit.team === side).reduce((total, unit) => total + unit.kills, 0);
-          const towers = frame.snapshot.frame.structures.filter(structure => structure.team !== side && !structure.isAlive && structure.type.includes('tower')).length;
-          return <div key={side}>
-            <dt className="font-bold">{selected.plan.clubs[side]}</dt>
-            <dd>{kills} kills · {towers} towers destroyed</dd>
-          </div>;
-        })}
-      </dl>}
       {selected.error && <p className="text-sm text-red-300">{selected.error}</p>}
-      <div className="cm-tabs" aria-label="Match coverage">
-        <button className={`cm-tab ${matchTab === 'arena' ? 'active' : ''}`} aria-pressed={matchTab === 'arena'} onClick={() => setMatchTab('arena')}>Arena</button>
-        <button className={`cm-tab ${matchTab === 'text' ? 'active' : ''}`} aria-pressed={matchTab === 'text'} onClick={() => setMatchTab('text')}>Text broadcast</button>
-      </div>
-      {selected.status==='interrupted'&&<p className="club-notice">This Arena was interrupted without a Nexus finish. A separately labeled statistical launch-exhibition result is available in the <a href="#launch-championship">launch archive</a>. This recording awards no player ratings or training.</p>}
-      {(frame?.execution?.mode==='owner_requested_fast_forward'||selected.result?.execution?.mode==='owner_requested_fast_forward')&&<p className="club-notice"><Clock3 size={14}/> Owner-requested simulated completion. The original live recording is retained; later Arena coverage is sampled. Event timestamps and the Nexus outcome come from the same simulation.</p>}
-      {matchTab === 'arena' && <OnlineMatchViewer message={frame} matchId={selected.id} visuals={selected.plan.visual_releases} live={live&&selected.status==='running'} />}
-      <div className="flex flex-wrap items-center gap-2">
-        <label className="text-xs">Replay snapshot<input type="number" min={1} max={Math.max(1, selected.sequence)} value={replaySequence} onChange={event => setReplaySequence(Number(event.target.value))} className="ml-2 w-24 rounded bg-slate-950 p-2" /></label>
-        <button className={button} onClick={() => void replay()}>View saved snapshot</button>
-        {!live && selected.status!=='interrupted' && <button className={button} onClick={() => selected.status === 'completed' ? void replay(selected, selected.sequence) : setLive(true)}>{selected.status === 'completed' ? 'Final frame' : 'Return to live'}</button>}
-      </div>
-      {matchTab === 'text' && <><p className="club-help">Select a report to view the Arena at that moment.</p>{!frame?.snapshot.events.length && <p className="club-help py-4">Commentary will appear as events unfold.</p>}<div className="club-commentary-pages"><button className={button} disabled={eventStart===0} onClick={()=>setCommentaryEnd(eventStart)}>Older events</button><span>Events {eventTotal?eventStart+1:0}-{eventEnd} of {eventTotal}</span><button className={button} disabled={eventEnd>=eventTotal} onClick={()=>setCommentaryEnd(eventEnd+100>=eventTotal?null:eventEnd+100)}>Newer events</button>{commentaryEnd!==null&&<button className={button} onClick={()=>setCommentaryEnd(null)}>Follow latest</button>}</div><ol className="club-commentary">{commentary.map((event, index) => <li key={event.sequence ?? eventStart+index}>
-        <button onClick={() => {
-          setMatchTab('arena');
-          const sequence = Math.ceil(event.tick === undefined ? event.second * 2 : event.tick / 15) + 1;
-          void replay(selected, Math.min(sequence, frame?.sequence??sequence));
-        }}><time>{Math.floor(event.second / 60)}:{String(Math.floor(event.second % 60)).padStart(2, '0')}</time><span>{event.text.replace(/^[\p{Extended_Pictographic}\uFE0F ]+/u, '')}</span></button>
-      </li>)}</ol></>}
+      <p className="club-notice">This archived match uses the retired MOBA ruleset. Historical results and fixture reports remain recorded below.</p>
       </>}
       {selected.status==='completed'&&selected.plan.fixture?.id&&<FixtureReport id={selected.plan.fixture.id}/>}
       <details className="club-technical"><summary>Recording details</summary>
-        <p>Server sequence {frame?.sequence ?? 0} · Match {selected.id}</p>
-        {selected.plan.intelligence?.controller === 'arena' && <p>Controller {selected.plan.intelligence.release?.qualification ?? 'instructional foundation'}. The server keeps this version fixed for the match. Competitive improvement is unproven.</p>}
-        {selected.plan.intelligence?.controller === 'hybrid' && <p>Coordinated gameplay baseline with learning. The server freezes the controller for this match.</p>}
+        <p>Match {selected.id}</p>
       </details>
     </section>}
     {!broadcastOnly && !initialTool && !matchCentre && scheduled && data && <nav className="cm-tabs" aria-label="Club tools">

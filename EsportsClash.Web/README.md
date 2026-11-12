@@ -1,6 +1,6 @@
-# Esports Clash Web
+# Esports Clash Web (`hexatrick`)
 
-React and TypeScript front end for the Esports Clash manager game. Run these commands from `EsportsClash.Web`:
+React, TypeScript, and Babylon.js front end for the Hexatrick club management and tactical FPS broadcast web app. Run commands from `EsportsClash.Web`:
 
 ```bash
 npm install
@@ -9,23 +9,16 @@ npm run build
 npm test
 ```
 
-For online **Vs Player**, run the room service and the Vite app in separate terminals:
+## Verification & Tooling
 
-```bash
-npm run room-server
-npm run dev
-```
+- `npm run check:game`: Runs `scripts/validate-design.js`, all `src/*.test.mjs` suites, and `tsc -b`.
+- `npm run build`: Type-checks (`tsc -b`) and builds the production Vite bundle (`dist/`).
+- `npm run build:base-inspector`: Builds the Colab 3D base mannequin inspector bundle.
+- `vite build --config vite.avatar.config.ts`: Builds the Three.js GLB avatar evolution reviewer used by the Laravel backoffice (`avatar-review-dist/`).
+- `npm run lint`: Runs `oxlint`.
 
-Vite proxies `/api` to the room service on port 4174. For a production build, run `npm run build` and `npm run serve`; the same Node service serves the built app and room API from one origin. Set `PORT` in the hosting environment if needed. Both players must use that same server URL; a static-only deployment cannot host online rooms. Rooms currently live in server memory for up to two hours of inactivity and clear on restart. Online players draft separately, then watch the same seeded AI match.
+## Key Modules
 
-The playable draft launches `AramMatchView`. Its combat decisions live in `src/combatDecision.ts`. Players act on their own during matches: card IQ affects target priority, retreats, objectives, and when to use skills; TF affects teamfight target execution, while LAN and IQ affect skillshot dodging. The blue squad uses the same decision rules as the opponent. Pause and speed controls remain available for viewing the match.
-
-The larger map has three turrets and three barracks per side. Destroying a barracks empowers the matching melee, ranged, or catapult minions in later waves. Jungle camps fight back, and Embermaw is the upper dragon objective. Every champion casts a second skill and has visible effects for all three abilities. The layout and barracks rules are in `src/arenaRules.ts`.
-
-Jungle camps now animate their idle, chase, windup, strike and hit states. Turrets hit diving avatars harder and switch aggro when an avatar attacks a defender inside their range. The club reserves have a searchable, filterable card grid; card faces use distinct fictional names without source-name labels.
-
-The match also has a lower Gravemarch golem objective, four blue and red crest buff camps, five-shot nexus volleys with a reload, a home-only shop, six combat items plus boots and a free ward slot, and a docked squad HUD. Early turret plating and the nexus shield create siege stages. Income, farm, recalls, and player ratings determine item timing.
-
-Use **Replay** to rerun the same draft and random seed. **Export** saves a match report that can be loaded from the draft screen. **Run 25** runs live arena simulations in side-swapped seed pairs; **Export balance** saves the resulting metrics and event timelines. See `../docs/arena-mechanics.md` for the gameplay invariants and source references.
-
-The arena dashboard now starts with **Vs AI** and **Vs Player**. Both use one ban per side and alternating picks. Rival AI drafts from player roles, signatures, teamfight composition, and coach style; it varies close choices by seed. Player card ratings now affect avatar health, attacks, defenses, attack speed and skill damage, with smaller role and signature bonuses. Skill damage, direct healing, shields, and cooldowns also grow across ability ranks. Matches have no fixed duration. Mid game begins at minute 4 and late game at minute 8. Tower plating fades by minute 8 so a team with a pushed wave can finish sooner. Balance reports record actual item counts at minutes 8, 10, 12 and 13 when matches last that long.
+- `src/fps/`: Tactical 5v5 FPS round/match engine, AI brains, economy, weapons, map geometry, and Babylon.js 3D live broadcast viewer.
+- `src/components/FpsLiveBroadcast.tsx` / `FpsMatchView.tsx` / `FpsSimulationLab.tsx`: Real-time 3D FPS match viewer, BLAST-style broadcast HUD, PIP feed, and local FPS simulation lab (`#fps-simulation`).
+- `src/components/Club*.tsx` / `World*.tsx` / `CompetitionHub.tsx` / `Hexapedia.tsx`: Club management workspace, transfer market, world wire, tournaments, dossiers, and public encyclopedia.
