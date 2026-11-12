@@ -8,6 +8,7 @@ import { LIVE_FPS_MAP } from '../fps/fpsLiveMap';
 import { FpsLiveSimulation, LIVE_FPS_STEP, LIVE_WEAPONS, type LivePlayer, type LiveSnapshot } from '../fps/fpsLiveSimulation';
 import { FpsBroadcastAudio } from '../fps/fpsBroadcastAudio';
 import { readFpsLearning, saveFpsLearningRound } from '../fps/fpsLiveLearningStorage';
+import { readFpsMechanicsLearning, saveFpsMechanicsRound } from '../fps/fpsLiveMechanicsLearningStorage';
 import { domRectToBabylonViewport } from '../fps/fpsBroadcastDirector';
 import type { BombPlantPipState, LiveCameraMode } from '../fps/fpsLiveViewer';
 import { liveImpactRate } from '../fps/fpsLiveImpact';
@@ -49,7 +50,7 @@ const cameraModes:LiveCameraMode[]=['director','first','third','overview'];
 
 function WeaponSilhouette({ weapon }: { weapon: LiveEquippedWeapon }) {
   if (weapon === 'knife') return <svg viewBox="0 0 40 16" className="blast-weapon-icon" fill="currentColor" aria-label="Knife"><path d="M2 9h10l12-3c4 0 8 3 8 3s-4 3-8 3L12 9H2zM3 7h7v4H3z" /></svg>;
-  if (weapon === 'flash' || weapon === 'smoke' || weapon === 'incendiary') return <svg viewBox="0 0 24 24" className="blast-weapon-icon" fill="currentColor" aria-label={weapon}><rect x="7" y="6" width="10" height="14" rx="2" /><rect x="10" y="2" width="4" height="4" />{weapon === 'incendiary' ? <path d="M12 8c-4 4 2 4-1 8 5-1 6-7 1-8z" /> : <line x1="14" y1="4" x2="18" y2="4" stroke="currentColor" strokeWidth="2" />}</svg>;
+  if (weapon === 'flash' || weapon === 'smoke' || weapon === 'incendiary' || weapon==='he') return <svg viewBox="0 0 24 24" className="blast-weapon-icon" fill="currentColor" aria-label={weapon}><rect x="7" y="6" width="10" height="14" rx="2" /><rect x="10" y="2" width="4" height="4" />{weapon === 'incendiary' ? <path d="M12 8c-4 4 2 4-1 8 5-1 6-7 1-8z" /> : weapon==='he'?<path d="M8 12h8M12 8v8" stroke="currentColor" strokeWidth="2" /> : <line x1="14" y1="4" x2="18" y2="4" stroke="currentColor" strokeWidth="2" />}</svg>;
   if (weapon === 'bomb') return <svg viewBox="0 0 28 22" className="blast-weapon-icon" fill="currentColor" aria-label="C4 explosion"><path d="M9 3h10v3l3 3v9l-3 2H9l-3-2V9l3-3z" /><path d="M11 1h6v2h-6zM10 10h8v2h-8zM10 14h8v2h-8z" fill="#111827" /></svg>;
   const silhouettes:Record<LiveWeapon,string>={
     pistol:'M3 9h11l3-3h11v3h-4v3h-7l-2 5h-5l1-4H4z',
@@ -72,8 +73,8 @@ function WeaponSilhouette({ weapon }: { weapon: LiveEquippedWeapon }) {
   return <svg viewBox="0 0 62 22" className="blast-weapon-icon" fill="currentColor" role="img" aria-label={title}><title>{title}</title><path d={silhouettes[weapon]} /></svg>;
 }
 
-function TacticalAvatar({ team, isDead }: { team: FpsTeamId; isDead: boolean }) {
-  const isCT = team === 'blue';
+function TacticalAvatar({ attacking, isDead }: { attacking:boolean; isDead: boolean }) {
+  const isCT = !attacking;
   return (
     <div className={`blast-avatar ${isCT ? 'is-ct' : 'is-t'} ${isDead ? 'is-dead' : ''}`}>
       <svg viewBox="0 0 48 48" className="blast-avatar-svg" aria-hidden="true">
@@ -135,7 +136,7 @@ function BlastPlayerCard({
       aria-label={`${p.name} · ${p.hp} HP · ${p.role}`}
     >
       {isObserved && <span className="blast-player-card__pointer">▲</span>}
-      <TacticalAvatar team={p.team} isDead={isDead} />
+      <TacticalAvatar attacking={p.attacking} isDead={isDead} />
       <div className="blast-player-card__hp-wrap">
         <span className="blast-player-card__hp">{isDead ? '0' : Math.ceil(p.hp)}</span>
         <div className="blast-player-card__health-bar">
@@ -154,6 +155,7 @@ function BlastPlayerCard({
           {p.flash > 0 && <span className="blast-pill blast-pill--flash" title={`${p.flash} Flashbang`}>⚡{p.flash > 1 ? p.flash : ''}</span>}
           {p.smoke > 0 && <span className="blast-pill blast-pill--smoke" title={`${p.smoke} Smoke`}>💨</span>}
           {p.incendiary > 0 && <span className="blast-pill blast-pill--incendiary" title={`${p.incendiary} ${p.attacking ? 'Molotov' : 'Incendiary'}`}>🔥</span>}
+          {p.he > 0 && <span className="blast-pill blast-pill--he" title={`${p.he} HE grenade`}>HE</span>}
           {p.armor > 0 && <span className="blast-pill blast-pill--armor" title={`Armor: ${p.armor}`}>🛡️</span>}
           {p.kit && <span className="blast-pill blast-pill--kit" title="Defuse Kit">✂️</span>}
           {p.bomb && <span className="blast-pill blast-pill--bomb" title="Carrying Device">💣</span>}
@@ -193,7 +195,7 @@ function BlastCenterFocusCard({
         <div className="blast-focus-card__ammo-box">
           {observed.equipped === 'knife' ? (
             <span className="blast-focus-card__ammo-val">MELEE</span>
-          ) : observed.equipped === 'flash' || observed.equipped === 'smoke' || observed.equipped === 'incendiary' ? (
+          ) : observed.equipped === 'flash' || observed.equipped === 'smoke' || observed.equipped === 'incendiary' || observed.equipped==='he' ? (
             <span className="blast-focus-card__ammo-val">UTILITY</span>
           ) : (
             <span className="blast-focus-card__ammo-val">
@@ -202,7 +204,7 @@ function BlastCenterFocusCard({
             </span>
           )}
           <span className="blast-focus-card__weapon-name">
-            {observed.equipped === 'knife' ? LIVE_KNIFE.name : observed.equipped === 'flash' ? 'Flashbang' : observed.equipped === 'smoke' ? 'Smoke grenade' : observed.equipped === 'incendiary' ? (observed.attacking ? 'Molotov' : 'Incendiary') : LIVE_WEAPONS[observed.weapon].name}
+            {observed.equipped === 'knife' ? LIVE_KNIFE.name : observed.equipped === 'flash' ? 'Flashbang' : observed.equipped === 'smoke' ? 'Smoke grenade' : observed.equipped === 'incendiary' ? (observed.attacking ? 'Molotov' : 'Incendiary') : observed.equipped==='he'?'HE grenade':LIVE_WEAPONS[observed.weapon].name}
           </span>
         </div>
       </div>
@@ -321,7 +323,8 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
     () => {
       const activeSeed = freshFpsExhibitionSeed(seed);
       return { activeSeed, simulation: new FpsLiveSimulation(blue, red, activeSeed, identity, { skillProfiles,
-        learning:learningEnabled?{mode:'learn',model:readFpsLearning(),onRound:round=>{saveFpsLearningRound(round);}}:undefined }) };
+        learning:learningEnabled?{mode:'learn',model:readFpsLearning(),onRound:round=>{saveFpsLearningRound(round);}}:undefined,
+        mechanicsLearning:learningEnabled?{model:readFpsMechanicsLearning(),onRound:round=>{saveFpsMechanicsRound(round);}}:undefined }) };
     },
     [blue, red, seed, identity, skillProfiles, learningEnabled, attempt]
   );
@@ -664,7 +667,7 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
     if(next)audioRef.current?.activate();
   };
   const downloadDiagnostics = () => {
-    const data = { format: 'hexatrick-local-fps-diagnostics-v2', seed: activeSeed, skillProfiles,
+    const data = { format: 'hexatrick-local-fps-diagnostics-v3', seed: activeSeed, skillProfiles,
       learning:simulation.learningDiagnostics(),snapshot: simulation.snapshot() };
     const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
     const link = document.createElement('a');
@@ -675,6 +678,10 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
   };
 
   const observed = frame.players.find(p => p.id === followed) ?? frame.players[0];
+  const scopeKind = effectiveCamera === 'first' && observed.hp > 0 && observed.speed < .65
+    && ['Engaging','Holding','Crouch-holding'].includes(observed.action)
+    ? observed.equipped === 'sniper' || observed.equipped === 'scout' ? observed.equipped : undefined
+    : undefined;
   const recent = frame.events.filter(e => frame.time - e.time < 12 && e.kind !== 'round').slice(-6);
   const roundOver = frame.phase === 'post' || frame.phase === 'finished';
   const aliveBlue = frame.players.filter(p => p.team === 'blue' && p.hp > 0).length;
@@ -733,7 +740,8 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
           <details className="live-fps__more-controls">
             <summary>More</summary>
             <div className="live-fps__more-menu">
-              {frame.learning&&<span className="live-fps__learning-status" role="status">Local learning · {frame.learning.rounds} rounds<br/>{frame.learning.updates} learned updates · {frame.learning.explorations} route experiments</span>}
+              {frame.learning&&<span className="live-fps__learning-status" role="status">Movement routes · {frame.learning.rounds} rounds<br/>{frame.learning.updates} updates · {frame.learning.explorations} route experiments</span>}
+              {frame.mechanicsLearning&&<span className="live-fps__learning-status" role="status">Combat mechanics · {frame.mechanicsLearning.rounds} rounds<br/>{frame.mechanicsLearning.updates} cadence updates · {frame.mechanicsLearning.explorations} experiments</span>}
               <button type="button" className={soundEnabled ? 'live-fps__toggle--active' : undefined} aria-pressed={soundEnabled} onClick={toggleSound}>FPS sound: {soundEnabled ? 'On' : 'Off'}</button>
               <button type="button" className={autoPipEnabled ? 'live-fps__toggle--active' : undefined} aria-pressed={autoPipEnabled} onClick={() => setAutoPipEnabled(value => !value)}>Bomb PIP: {autoPipEnabled ? 'On' : 'Off'}</button>
               <button type="button" className={popoutKind !== 'none' ? 'live-fps__toggle--active' : undefined} disabled={!ready || !!error} onClick={() => void togglePopoutPip()}>{popoutKind !== 'none' ? 'Close pop-out' : 'Pop-out video'}</button>
@@ -902,7 +910,10 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
         </div>
 
         {/* In-Eye Crosshair & Flashbang Blind */}
-        {effectiveCamera === 'first' && <div className="live-fps__crosshair" aria-hidden="true" />}
+        {scopeKind && <div className={`live-fps__scope live-fps__scope--${scopeKind}`} aria-label={`${LIVE_WEAPONS[scopeKind].name} scope`}>
+          <span className="live-fps__scope-lens"><span className="live-fps__scope-reticle" /></span>
+        </div>}
+        {effectiveCamera === 'first' && !scopeKind && <div className="live-fps__crosshair" aria-hidden="true" />}
         {observed.blinded > .2 && effectiveCamera === 'first' && (
           <div className="live-fps__flash" style={{ opacity: Math.min(.85, observed.blinded / 3) }} aria-hidden="true" />
         )}
@@ -1068,7 +1079,7 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
             </tbody>
           </table>
         </div>
-        <p>Opening attempts count players firing before the first elimination. Headshots show total direct headshot impacts and headshot-to-hit ratio. First-shot samples start on target acquisition; damage time starts at detection. Trades use a 1.5-second window. Flash assists require an ally's active blind. Utility counts currently cover flashes and smokes. Survival uses completed rounds.</p>
+        <p>Opening attempts count players firing before the first elimination. Headshots show total direct headshot impacts and headshot-to-hit ratio. First-shot samples start on target acquisition; damage time starts at detection. Trades use a 1.5-second window. Flash assists require an ally's active blind. Utility counts cover flashes, smokes, fire and HE grenades. Survival uses completed rounds.</p>
       </details>
 
       <footer className="live-fps__footer">

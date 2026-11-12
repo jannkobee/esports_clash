@@ -2,6 +2,7 @@ import type { LiveWeapon } from './fpsLiveWeapons.ts';
 
 export type FpsAudioCue =
   | { kind: 'gunshot'; weapon: LiveWeapon; x: number; z: number }
+  | { kind: 'reload'; x: number; z: number }
   | { kind: 'footstep'; stance: 'walk' | 'run' | 'crouch'; x: number; z: number };
 
 export interface FpsAudioListener { x: number; z: number; yaw: number }
@@ -44,6 +45,7 @@ export class FpsBroadcastAudio {
     const spatial = this.spatial(cue.x, cue.z, listener);
     if (spatial.gain < .004) return;
     if (cue.kind === 'gunshot') this.playGunshot(context, cue.weapon, spatial.gain, spatial.pan);
+    else if (cue.kind === 'reload') this.playReload(context, spatial.gain, spatial.pan);
     else this.playFootstep(context, cue.stance, spatial.gain, spatial.pan);
   }
 
@@ -134,5 +136,15 @@ export class FpsBroadcastAudio {
     const thud = context.createOscillator(); thud.type = 'sine'; thud.frequency.setValueAtTime(run ? 86 : 68, now); thud.frequency.exponentialRampToValueAtTime(38, now + .09);
     const thudEnvelope = context.createGain(); thudEnvelope.gain.setValueAtTime(.0001, now); thudEnvelope.gain.linearRampToValueAtTime(level * .48, now + .006); thudEnvelope.gain.exponentialRampToValueAtTime(.0001, now + .1);
     thud.connect(thudEnvelope); this.voice(thudEnvelope, pan, 1); thud.start(now); this.releaseVoice(thud, now + .11);
+  }
+  private playReload(context:AudioContext,distanceGain:number,pan:number):void {
+    const now=context.currentTime;
+    const click=context.createOscillator();click.type='square';click.frequency.setValueAtTime(660,now);click.frequency.exponentialRampToValueAtTime(230,now+.045);
+    const envelope=context.createGain();envelope.gain.setValueAtTime(.0001,now);envelope.gain.linearRampToValueAtTime(.10*distanceGain,now+.003);envelope.gain.exponentialRampToValueAtTime(.0001,now+.06);
+    click.connect(envelope);this.voice(envelope,pan,1);click.start(now);this.releaseVoice(click,now+.065);
+    const metal=context.createBufferSource();metal.buffer=this.noise!;
+    const filter=context.createBiquadFilter();filter.type='bandpass';filter.frequency.value=1850;filter.Q.value=2.4;
+    const rattle=context.createGain();rattle.gain.setValueAtTime(.0001,now+.09);rattle.gain.linearRampToValueAtTime(.065*distanceGain,now+.1);rattle.gain.exponentialRampToValueAtTime(.0001,now+.17);
+    metal.connect(filter);filter.connect(rattle);this.voice(rattle,pan,1);metal.start(now+.09);this.releaseVoice(metal,now+.18);
   }
 }

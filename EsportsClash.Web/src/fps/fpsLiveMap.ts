@@ -1,13 +1,13 @@
 import { hasFpsLineOfSight, segmentHitsWall, type FpsPoint, type FpsWall } from './fpsSpatialWorld.ts';
 
-export interface LiveSolid extends FpsWall { id: string; height: number; color: string }
-const solid = (id: string, x: number, z: number, width: number, depth: number, height: number, color: string): LiveSolid =>
-({ id, minX: x-width/2, maxX: x+width/2, minZ: z-depth/2, maxZ: z+depth/2, height, color });
+export interface LiveSolid extends FpsWall { id: string; height: number; color: string; bulletPenetration?:number }
+const solid = (id: string, x: number, z: number, width: number, depth: number, height: number, color: string,bulletPenetration=0): LiveSolid =>
+({ id, minX: x-width/2, maxX: x+width/2, minZ: z-depth/2, maxZ: z+depth/2, height, color,bulletPenetration });
 
 /** Original collision layout inspired by the tactical depth and non-linear routing of Inferno.
-* Combines Breakwater Yard's shipyard theme with authentic chicanes, Underpass connector,
-* curved Banana slipway, central B Fountain, deep A Pit revetment, and upper Warehouse Gallery.
-* Rendering and navigation use these exact same dimensions. */
+* Movement/navigation use these solid bounds. Sight and bullets clip by solid height, with the B
+* Fountain's radial model geometry replacing its conservative movement rectangle.
+* The custom map combines chicanes, Underpass, Banana, B Fountain, A Pit and Warehouse Gallery. */
 export const LIVE_FPS_MAP = {
 id: 'breakwater-live-v4', name: 'Breakwater Yard', width: 72, depth: 92,
 spawns:{attackers:{x:0,z:-33},defenders:{x:0,z:41}},
@@ -50,13 +50,13 @@ solid('customs-warehouse-east', 8.5, -10, 11, 16, 8, '#98aaa8'),
 solid('freight-office-east', 9.5, 14, 13, 16, 7, '#90a6ac'),
 
 // Banana Slipway: curved approach to B with Logs, Car, and Sandbag bastion
-solid('b-logs', 14, -11, 3, 4, 1.8, '#a36f50'),
+solid('b-logs', 14, -11, 3, 4, 1.8, '#a36f50',.42),
 solid('b-car', 18, -2, 4, 5, 2.4, '#537778'),
 solid('b-sandbags', 24, 4, 4, 2.5, 1.3, '#c3a574'),
 
 // Containers & outer gate walls
-solid('west-container', -25, 1, 6, 14, 3, '#537778'),
-solid('east-container', 25, 3, 6, 14, 3, '#a36f50'),
+solid('west-container', -25, 1, 6, 14, 3, '#537778',.28),
+solid('east-container', 25, 3, 6, 14, 3, '#a36f50',.38),
 solid('west-outer-gate', -35, 4, 2, 8, 3.5, '#9e9682'),
 solid('east-outer-gate', 35, 6, 2, 8, 3.5, '#8da1a8'),
 solid('west-lane-dogleg', -32, -15, 8, 3, 3, '#9e9682'),
@@ -67,7 +67,7 @@ solid('east-staging-cover', 18, -20, 3, 3, 2.4, '#947c5f'),
 // A Site Courtyard & Pit
 solid('a-generator', -33, 12, 3, 5, 2.5, '#627577'),
 solid('a-pit-revetment', -30, 16, 3, 1.5, 1.2, '#8b927f'),
-solid('a-crates', -28, 20, 5, 5, 2.7, '#9a805a'),
+solid('a-crates', -28, 20, 5, 5, 2.7, '#9a805a',.38),
 solid('a-screen', -17, 28, 5, 3, 3.5, '#536b71'),
 solid('a-retake-cover', -11, 34, 4, 3, 2.5, '#8b927f'),
 // The terracotta loggia used to be render-only: actors and bullets passed through it.
@@ -79,7 +79,7 @@ solid('a-loggia-east-column', -18.5, 26, .45, .45, 2.8, '#cfc3a7'),
 
 // B Site Basin & Central Fountain
 solid('b-fountain', 23, 21, 4.6, 4.6, 1.5, '#6e807e'),
-solid('b-coffins', 15, 26, 3, 4.5, 2.8, '#a77a55'),
+solid('b-coffins', 15, 26, 3, 4.5, 2.8, '#a77a55',.38),
 solid('b-screen', 17, 28, 5, 3, 3.5, '#b5a36d'),
 solid('b-dark-wall', 30, 24, 4, 3, 3, '#a99267'),
 solid('b-retake-cover', 27, 34, 4, 3, 2.5, '#8b927f'),
@@ -109,6 +109,13 @@ holds:[{x:23,z:29},{x:32,z:26},{x:18,z:24}],
 postPlant:[{x:22,z:14},{x:32,z:15},{x:23,z:28},{x:19,z:26},{x:19,z:8}],
 }
 };
+/** Repeatable attack-side smoke setups. Throws release from the named staging point. */
+export const LIVE_SMOKE_LINEUPS = [
+{ id:'b-speedway',site:'B',name:'Banana to Speedway',position:{x:20,z:8},target:{x:18,z:25} },
+{ id:'b-church',site:'B',name:'B choke to Church',position:{x:23,z:9},target:{x:27,z:24} },
+{ id:'a-arch',site:'A',name:'A main to Arch',position:{x:-19,z:8},target:{x:-16,z:24} },
+{ id:'a-library',site:'A',name:'A outer to Library',position:{x:-29,z:9},target:{x:-11,z:30} },
+] as const;
 export const LIVE_MID={
 approach:{x:0,z:-21},
 control:{x:0,z:1},
@@ -236,24 +243,77 @@ export function findLiveCover(from:FpsPoint,threat:FpsPoint,allies:readonly FpsP
   return candidates[0];
 }
 
-export function liveSightline(a:FpsPoint,b:FpsPoint,eyeA=1.6,eyeB=1.6):boolean {
-  // Clip the segment against all three slabs. Sampling at a wall's centre misses
-  // sloping sightlines that enter its near face below the roof.
-  for (const solid of LIVE_FPS_MAP.solids) {
-    let enter=0,exit=1;
-    for(const [origin,delta,min,max] of [
-      [a.x,b.x-a.x,solid.minX,solid.maxX],
-      [a.z,b.z-a.z,solid.minZ,solid.maxZ],
-      [eyeA,eyeB-eyeA,0,solid.height],
-    ]) {
-      if(Math.abs(delta)<1e-9){if(origin<min||origin>max){exit=-1;break;}continue;}
-      const near=(min-origin)/delta,far=(max-origin)/delta;
-      enter=Math.max(enter,Math.min(near,far));exit=Math.min(exit,Math.max(near,far));
-      if(enter>exit)break;
-    }
-    if(enter<=exit)return false;
+export interface LiveWorldPoint extends FpsPoint {y:number}
+export interface LiveWallIntersection {wall:LiveSolid;t:number}
+
+type RadialShape={x:number;z:number;minY:number;maxY:number;radius:number;innerRadius?:number};
+// The fountain is a round, open basin with a tiered centre. Its visible mesh is
+// not a filled square wall: shots/sightlines pass over the low lip and through
+// the water opening, while the stone ring and central tiers remain solid.
+const FOUNTAIN_SHAPES:readonly RadialShape[]=[
+  {x:23,z:21,minY:.03,maxY:.27,radius:2.125}, // stepped stone base
+  {x:23,z:21,minY:.26,maxY:.86,radius:2.01,innerRadius:1.84}, // basin shell
+  {x:23,z:21,minY:.76,maxY:.98,radius:2.05,innerRadius:1.70}, // scalloped rim
+  {x:23,z:21,minY:.85,maxY:1.51,radius:.36}, // pedestal
+  {x:23,z:21,minY:1.48,maxY:1.72,radius:.71}, // upper bowl
+  {x:23,z:21,minY:1.75,maxY:2.17,radius:.20}, // finial
+  {x:23,z:21,minY:2.04,maxY:2.36,radius:.16}, // stone spire
+];
+
+function radialShapeHit(from:LiveWorldPoint,to:LiveWorldPoint,shape:RadialShape):number|undefined {
+  const dx=to.x-from.x,dy=to.y-from.y,dz=to.z-from.z;
+  const cuts=[0,1];
+  if(Math.abs(dy)>1e-10)for(const y of [shape.minY,shape.maxY]){const t=(y-from.y)/dy;if(t>0&&t<1)cuts.push(t);}
+  const a=dx*dx+dz*dz,b=2*((from.x-shape.x)*dx+(from.z-shape.z)*dz);
+  const addCircleRoots=(radius:number)=>{
+    const c=(from.x-shape.x)**2+(from.z-shape.z)**2-radius*radius;
+    if(a<1e-12)return;
+    const discriminant=b*b-4*a*c;if(discriminant<0)return;
+    const root=Math.sqrt(discriminant);for(const t of [(-b-root)/(2*a),(-b+root)/(2*a)])if(t>0&&t<1)cuts.push(t);
+  };
+  addCircleRoots(shape.radius);if(shape.innerRadius)addCircleRoots(shape.innerRadius);
+  cuts.sort((left,right)=>left-right);
+  for(let i=0;i<cuts.length-1;i++){
+    const start=cuts[i],end=cuts[i+1],mid=(start+end)/2;
+    const x=from.x+dx*mid-shape.x,z=from.z+dz*mid-shape.z,y=from.y+dy*mid,r2=x*x+z*z;
+    if(y<shape.minY||y>shape.maxY||r2>shape.radius*shape.radius||(shape.innerRadius!==undefined&&r2<shape.innerRadius*shape.innerRadius))continue;
+    return start;
   }
-  return true;
+  return undefined;
+}
+
+function boxSegmentHit(from:LiveWorldPoint,to:LiveWorldPoint,wall:LiveSolid):number|undefined {
+  let enter=0,exit=1;
+  for(const [origin,delta,min,max] of [
+    [from.x,to.x-from.x,wall.minX,wall.maxX],
+    [from.z,to.z-from.z,wall.minZ,wall.maxZ],
+    [from.y,to.y-from.y,0,wall.height],
+  ]) {
+    if(Math.abs(delta)<1e-10){if(origin<min||origin>max)return undefined;continue;}
+    const a=(min-origin)/delta,b=(max-origin)/delta;
+    enter=Math.max(enter,Math.min(a,b));exit=Math.min(exit,Math.max(a,b));
+    if(enter>exit)return undefined;
+  }
+  return enter<=exit?enter:undefined;
+}
+
+export function liveWallSegmentHit(from:LiveWorldPoint,to:LiveWorldPoint,wall:LiveSolid):number|undefined {
+  if(wall.id==='b-fountain'){
+    let nearest:number|undefined;
+    for(const shape of FOUNTAIN_SHAPES){const hit=radialShapeHit(from,to,shape);if(hit!==undefined&&(nearest===undefined||hit<nearest))nearest=hit;}
+    return nearest;
+  }
+  return boxSegmentHit(from,to,wall);
+}
+
+export function liveWallIntersections(from:LiveWorldPoint,to:LiveWorldPoint):LiveWallIntersection[] {
+  return LIVE_FPS_MAP.solids.flatMap(wall=>{
+    const t=liveWallSegmentHit(from,to,wall);return t===undefined?[]:[{wall,t}];
+  }).sort((a,b)=>a.t-b.t);
+}
+
+export function liveSightline(a:FpsPoint,b:FpsPoint,eyeA=1.6,eyeB=1.6):boolean {
+  return liveWallIntersections({...a,y:eyeA},{...b,y:eyeB}).length===0;
 }
 
 export function livePathLength(from:FpsPoint,to:FpsPoint):number {

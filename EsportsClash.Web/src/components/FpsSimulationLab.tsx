@@ -13,6 +13,7 @@ import type {PlayerCard} from '../types';
 import {FpsSkillEditor,useFpsLabProfiles} from './FpsSkillEditor';
 import type {FpsSkillProfile} from '../fps/fpsSkillProfile';
 import {readFpsLearning,resetFpsLearning} from '../fps/fpsLiveLearningStorage';
+import {readFpsMechanicsLearning,resetFpsMechanicsLearning} from '../fps/fpsLiveMechanicsLearningStorage';
 import './fps-reference.css';
 
 const tacticalSystems: Record<string, {coach:FpsCoach;plan:FpsGameplan}> = {
@@ -32,6 +33,7 @@ export function FpsSimulationLab() {
   const [profileMode,setProfileMode]=useState<'varied'|'equalized'>('varied');
   const [learningEnabled,setLearningEnabled]=useState(true);
   const [learnedModel,setLearnedModel]=useState(()=>readFpsLearning());
+  const [learnedMechanicsModel,setLearnedMechanicsModel]=useState(()=>readFpsMechanicsLearning());
   const supportedSpecialties=FPS_SPECIALTIES;
   const [identities,setIdentities]=useState<Record<string,{personality:string;specialty:string}>>(()=>Object.fromEntries([...blueRoster,...redRoster].map((card,index)=>[card.id,{personality:FPS_IDENTITY_PERSONALITIES[index % FPS_IDENTITY_PERSONALITIES.length].id,specialty:''}])));
   const [report,setReport]=useState<FpsMatchReport|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
@@ -66,7 +68,7 @@ export function FpsSimulationLab() {
     const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
     const link=document.createElement('a');link.href=url;link.download=`fps-${report.mapId}-${report.seed}.json`;link.click();URL.revokeObjectURL(url);
   };
-  if(live)return <FpsLiveBroadcast blue={live.blue} red={live.red} seed={live.seed} identity={live.identity} skillProfiles={live.skillProfiles} learningEnabled={live.learningEnabled} onExit={()=>{setLearnedModel(readFpsLearning());setLive(null);}}/>;
+  if(live)return <FpsLiveBroadcast blue={live.blue} red={live.red} seed={live.seed} identity={live.identity} skillProfiles={live.skillProfiles} learningEnabled={live.learningEnabled} onExit={()=>{setLearnedModel(readFpsLearning());setLearnedMechanicsModel(readFpsMechanicsLearning());setLive(null);}}/>;
   return <section className="fps-lab" aria-label="FPS simulation viewer">
     {!report&&<section className="fps-lab__live-entry" aria-label="Live 3D exhibition">
       <p className="pedia-eyebrow">HEXATRICK · REAL-TIME 3D</p>
@@ -74,10 +76,18 @@ export function FpsSimulationLab() {
       <p>Watch ten AI players contest Breakwater Yard at normal speed. Follow a player in first or third person, or let the automatic director choose the view.</p>
       <div className="fps-lab__mode"><button type="button" className="cm-btn cm-btn-primary" disabled={busy} onClick={()=>launch('live')}><Play size={16}/>Watch live 3D match</button><span>15-second buy phase · 115-second rounds · 40-second device timer</span></div>
       <p>Each launch uses a fresh seed with the systems and player identities selected below. This local exhibition uses fictional test profiles and does not change official results, club cards, or careers.</p>
-      <details className="fps-lab__learning"><summary>Local bot learning · {learnedModel?.rounds??0} completed rounds</summary>
-        <label><input type="checkbox" checked={learningEnabled} onChange={event=>setLearningEnabled(event.target.checked)}/> Learn route choices from exhibition rounds</label>
-        <p>Bots try different approaches and update their route preferences from progress, health changes and round results. Completed experience is saved on this browser and reused in new exhibitions.</p>
-        <button type="button" className="cm-btn" disabled={!learnedModel} onClick={()=>{resetFpsLearning();setLearnedModel(undefined);}}>Reset learned routes</button>
+      <details className="fps-lab__learning"><summary>Local bot learning reports</summary>
+        <label><input type="checkbox" checked={learningEnabled} onChange={event=>setLearningEnabled(event.target.checked)}/> Learn movement and combat choices from exhibition rounds</label>
+        <section aria-label="Movement route learning report"><h3>Movement routes</h3>
+          <p>Bots compare legal approaches using route progress, health changes and round results. These route reports and weights use their own local checkpoint.</p>
+          <p role="status">{learnedModel?.rounds??0} completed rounds · {learnedModel?.updates??0} route updates</p>
+          <button type="button" className="cm-btn" disabled={!learnedModel} onClick={()=>{resetFpsLearning();setLearnedModel(undefined);}}>Reset route learning</button>
+        </section>
+        <section aria-label="Combat mechanics learning report"><h3>Combat mechanics</h3>
+          <p>Rifle users learn when to choose a two-shot burst or sustained spray from range, movement and magazine state. Reports and weights are stored separately from route learning; damage, accuracy and weapon limits stay fixed.</p>
+          <p role="status">{learnedMechanicsModel?.rounds??0} completed rounds · {learnedMechanicsModel?.updates??0} cadence updates</p>
+          <button type="button" className="cm-btn" disabled={!learnedMechanicsModel} onClick={()=>{resetFpsMechanicsLearning();setLearnedMechanicsModel(undefined);}}>Reset combat learning</button>
+        </section>
       </details>
       <div className="fps-lab__profile-panel">
         <div className="fps-lab__profile-heading"><div><h2>Live ability profiles</h2><p>Choose varied profiles or equalize abilities to compare team identity.</p></div><label>Profile set<select value={profileMode} onChange={e=>setProfileMode(e.target.value as 'varied'|'equalized')}><option value="varied">Varied demonstration profiles</option><option value="equalized">Equal abilities · identity comparison</option></select></label></div>

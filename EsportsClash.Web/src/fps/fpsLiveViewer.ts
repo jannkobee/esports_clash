@@ -1,11 +1,13 @@
 import { Engine, Scene, FreeCamera, Viewport, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, StandardMaterial, MeshBuilder, DynamicTexture, ShadowGenerator, TransformNode, type Mesh, type LinesMesh } from '@babylonjs/core';
 import { LIVE_FPS_MAP } from './fpsLiveMap.ts';
 import { segmentHitsWall } from './fpsSpatialWorld.ts';
-import type { LiveSnapshot, LivePlayer } from './fpsLiveSimulation.ts';
+import { stepLiveGrenade } from './fpsLiveGrenades.ts';
+import type { LiveSnapshot, LivePlayer, LiveBlast } from './fpsLiveSimulation.ts';
 import { buildLiveScenery } from './fpsLiveScenery.ts';
 import { LIVE_KNIFE, type LiveEquippedWeapon } from './fpsLiveWeapons.ts';
 import { LIVE_WEAPONS } from './fpsLiveWeapons.ts';
 import type { FpsTeamId } from './types.ts';
+import { liveSmokeCloudLobes } from './fpsLiveBrain.ts';
 import {
   computeBombPlantPipPose,
   computeOverviewCameraPose,
@@ -54,18 +56,20 @@ interface OperativeView {
 
 interface ActorView {
   operative: OperativeView;
+  force:'ct'|'t';
   gunNode?: TransformNode;
   gunWeapon?: LiveEquippedWeapon;
   muzzleFlash?:Mesh;
 }
 
-interface SmokeView { root:TransformNode; lobes:Mesh[]; material:StandardMaterial; phases:number[] }
+interface SmokeView { root:TransformNode; lobes:Mesh[]; material:StandardMaterial }
 interface FireView { root:TransformNode; ground:Mesh; groundFlames:Mesh[]; groundFlameMaterials:StandardMaterial[]; flames:Mesh[]; groundMaterial:StandardMaterial; flameMaterials:StandardMaterial[] }
+interface BlastView {sphere:Mesh;ring:Mesh;sphereMaterial:StandardMaterial;ringMaterial:StandardMaterial}
 interface ViewmodelReloadParts { arm:TransformNode; magazine:Mesh }
 interface WeaponViewMetadata {muzzle?:TransformNode;reloadParts?:ViewmodelReloadParts;name?:string}
 interface TracerView {world:LinesMesh;firstPerson?:LinesMesh;actorId:string}
 
-function createTacticalOperativeMesh(team: FpsTeamId, id: string, scene: Scene, getMat: (hex: string) => StandardMaterial): OperativeView {
+function createTacticalOperativeMesh(force:'ct'|'t', id: string, scene: Scene, getMat: (hex: string) => StandardMaterial): OperativeView {
   const root = new TransformNode(`operative-${id}`, scene);
   const spine = new TransformNode(`${id}-spine-pivot`, scene); spine.parent=root; spine.position.set(0,1.05,0);
   const headPivot = new TransformNode(`${id}-head-pivot`, scene); headPivot.parent=root; headPivot.position.set(0,1.54,0);
@@ -95,7 +99,7 @@ function createTacticalOperativeMesh(team: FpsTeamId, id: string, scene: Scene, 
     m.parent=pivot;m.position.set(x,y,z);m.isPickable=false;m.receiveShadows=true;return m;
   };
 
-  if (team === 'blue') {
+  if (force === 'ct') {
     // CT Force (Counter-Terrorist Operative / Tactical Navy Plate Carrier)
     const navy = getMat('#182633');
     const plateCarrier = getMat('#111a24');
@@ -285,9 +289,9 @@ export function create3DWeaponMesh(weapon: LiveEquippedWeapon, id: string, scene
     const blade=MeshBuilder.CreateCylinder(`${id}-knife-blade`,{height:.25,diameterTop:0,diameterBottom:.065,tessellation:4},scene);
     blade.scaling.z=.18;blade.material=silver;add(blade,0,0,.21,Math.PI/2);
     root.metadata={name:LIVE_KNIFE.name};
-  } else if (weapon === 'flash' || weapon === 'smoke' || weapon === 'incendiary') {
+  } else if (weapon === 'flash' || weapon === 'smoke' || weapon === 'incendiary' || weapon==='he') {
     const can = MeshBuilder.CreateCylinder(`${id}-grenade-body`, { height: .13, diameter: .062, tessellation: 12 }, scene);
-    can.material = weapon === 'flash' ? darkMetal : weapon==='incendiary'?getMat('#d84a19'):olive; add(can, 0, 0, 0);
+    can.material = weapon === 'flash' ? darkMetal : weapon==='incendiary'?getMat('#d84a19'):weapon==='he'?getMat('#59624f'):olive; add(can, 0, 0, 0);
     const cap = MeshBuilder.CreateCylinder(`${id}-grenade-cap`, { height: .025, diameter: .038, tessellation: 10 }, scene);
     cap.material = gunmetal; add(cap, 0, .075, 0);
     const lever = MeshBuilder.CreateBox(`${id}-grenade-lever`, { width: .018, height: .09, depth: .035 }, scene);
@@ -471,7 +475,7 @@ export function createViewmodelMesh(weapon: LiveEquippedWeapon, team: FpsTeamId,
   const isSmgWeapon = weapon === 'smg' || weapon === 'mp9' || weapon === 'mac10';
   const isRifleWeapon = weapon === 'rifle' || weapon === 'm4a1_s' || weapon === 'ak47' || weapon === 'mag7' || weapon === 'nova' || weapon === 'negev';
   const isSniperWeapon = weapon === 'sniper' || weapon === 'scout';
-  const isGrenade = weapon === 'flash' || weapon === 'smoke' || weapon === 'incendiary';
+  const isGrenade = weapon === 'flash' || weapon === 'smoke' || weapon === 'incendiary' || weapon==='he';
 
   const gripPos = isGrenade ? { x: 0, y: -0.04, z: 0.02 }
     : weapon === 'knife' ? { x: 0, y: -0.01, z: 0.01 }
@@ -636,9 +640,11 @@ export class FpsLiveViewer {
   private droppedMeshes=new Map<number,{root:TransformNode;ring:Mesh}>();
   private smokes=new Map<number,SmokeView>();
   private fires=new Map<number,FireView>();
+  private blasts=new Map<number,BlastView>();
   private smokeTexture?:DynamicTexture;
   private tracers=new Map<number,TracerView>();
   private grenades=new Map<number,Mesh>();
+  private grenadeTrails=new Map<number,LinesMesh>();
   private materials=new Map<string,StandardMaterial>();
   private fpGunRoot?:TransformNode;
   private fpGunWeapon?:LiveEquippedWeapon;
@@ -801,11 +807,11 @@ export class FpsLiveViewer {
     let state=0x51f15e;
     const random=()=>{state^=state<<13;state^=state>>>17;state^=state<<5;return (state>>>0)/4294967296;};
     ctx.globalCompositeOperation='lighter';
-    for(let i=0;i<54;i++){
+    for(let i=0;i<72;i++){
       const x=30+random()*196,y=30+random()*196,radius=18+random()*42;
       const gradient=ctx.createRadialGradient(x,y,0,x,y,radius);
-      gradient.addColorStop(0,`rgba(255,255,255,${.07+random()*.13})`);
-      gradient.addColorStop(.55,'rgba(255,255,255,.055)');
+      gradient.addColorStop(0,`rgba(255,255,255,${.48+random()*.28})`);
+      gradient.addColorStop(.55,'rgba(255,255,255,.32)');
       gradient.addColorStop(1,'rgba(255,255,255,0)');
       ctx.fillStyle=gradient;ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();
     }
@@ -852,9 +858,8 @@ export class FpsLiveViewer {
       tracer.world.dispose();tracer.firstPerson?.dispose();this.tracers.delete(id);
     }
     for(const shot of shots){
-      const actor=this.actors.get(shot.actorId);
-      const origin=this.muzzlePosition(actor?.gunWeapon===shot.weapon?actor.gunNode:undefined)
-        ??new Vector3(shot.from.x,shot.fromY,shot.from.z);
+      // Tracers use the same recorded origin and impact point as hit resolution.
+      const origin=new Vector3(shot.from.x,shot.fromY,shot.from.z);
       const endpoint=new Vector3(shot.to.x,shot.toY,shot.to.z);
       let tracer=this.tracers.get(shot.id);
       if(!tracer){
@@ -862,7 +867,7 @@ export class FpsLiveViewer {
         world.color=Color3.FromHexString(shot.team==='blue'?'#b1efff':'#ffe1aa');world.isPickable=false;
         tracer={world,actorId:shot.actorId};this.tracers.set(shot.id,tracer);
       }else MeshBuilder.CreateLines(`shot-${shot.id}`,{points:[origin,endpoint],instance:tracer.world});
-      const firstOrigin=this.mainFpEnabled&&shot.actorId===this.mainFollowedId&&this.fpGunWeapon===shot.weapon?this.muzzlePosition(this.fpGunRoot):undefined;
+      const firstOrigin=this.mainFpEnabled&&shot.actorId===this.mainFollowedId?origin:undefined;
       if(firstOrigin){
         if(!tracer.firstPerson){
           tracer.firstPerson=MeshBuilder.CreateLines(`fp-shot-${shot.id}`,{points:[firstOrigin,endpoint],updatable:true},this.scene);
@@ -877,7 +882,7 @@ export class FpsLiveViewer {
       const before=previous.round===current.round?previous.players.find(a=>a.id===p.id):undefined;
       if(!before)return p;
       const delta=Math.atan2(Math.sin(p.yaw-before.yaw),Math.cos(p.yaw-before.yaw));
-      return {...p,x:mix(before.x,p.x,alpha),z:mix(before.z,p.z,alpha),yaw:before.yaw+delta*alpha,jumpY:mix(before.jumpY??0,p.jumpY??0,alpha)};
+      return {...p,x:mix(before.x,p.x,alpha),z:mix(before.z,p.z,alpha),yaw:before.yaw+delta*alpha,pitch:mix(before.pitch??0,p.pitch??0,alpha),jumpY:mix(before.jumpY??0,p.jumpY??0,alpha)};
     });
     const decision=evaluateBroadcastDirector({...current,players},this.director,mode,selected);
     const followed=players.find(p=>p.id===decision.followedId)??players[0];
@@ -885,11 +890,17 @@ export class FpsLiveViewer {
     this.effectiveMode=effectiveMode;
     for(const player of players) {
       let view=this.actors.get(player.id);
-      if(!view) {
-        const operative=createTacticalOperativeMesh(player.team,player.id,this.scene,hex=>this.material(hex));
+      const force=player.attacking?'t':'ct';
+      if(!view||view.force!==force) {
+        if(view){
+          this.shadows.removeShadowCaster(view.operative.torso);
+          this.shadows.removeShadowCaster(view.operative.head);
+          view.operative.root.dispose();view.gunNode?.dispose();view.muzzleFlash?.dispose();
+        }
+        const operative=createTacticalOperativeMesh(force,player.id,this.scene,hex=>this.material(hex));
         this.shadows.addShadowCaster(operative.torso);
         this.shadows.addShadowCaster(operative.head);
-        view={operative};
+        view={operative,force};
         this.actors.set(player.id,view);
       }
       if(!view.gunNode || view.gunWeapon!==player.equipped) {
@@ -918,7 +929,7 @@ export class FpsLiveViewer {
         const throwLift=throwPhase===undefined?0:throwPhase<.3?ease01(throwPhase/.3):1-ease01((throwPhase-.3)/.7);
         const throwRelease=throwPhase===undefined||throwPhase<.3?0:1-ease01((throwPhase-.3)/.2);
         const weaponStats=LIVE_WEAPONS[player.weapon];
-        const reloadProgress=player.reload>0?1-Math.max(0,Math.min(1,player.reload/weaponStats.reload)):0;
+      const reloadProgress=player.reload>0?1-Math.max(0,Math.min(1,player.reload/(player.reloadDuration||weaponStats.reload))):0;
         const reloadWeight=player.reload>0?Math.sin(reloadProgress*Math.PI):0;
         view.operative.spine.position.y=1.05-.23*crouchPose;
         view.operative.spine.rotation.x=.16*crouchPose+.04*reloadWeight;
@@ -1038,27 +1049,26 @@ export class FpsLiveViewer {
     for(const smoke of current.smokes) {
       if(!this.smokes.has(smoke.id)) {
         const root=new TransformNode(`smoke-cloud-${smoke.id}`,this.scene);root.position.set(smoke.x,smoke.y,smoke.z);
-        const lobes:Mesh[]=[],phases:number[]=[];
+        const lobes:Mesh[]=[];
         const cloudTexture=this.smokeVolumeTexture();
-        const material=new StandardMaterial(`smoke-material-${smoke.id}`,this.scene);material.diffuseColor=new Color3(.72,.75,.76);material.emissiveColor=new Color3(.12,.14,.15);material.diffuseTexture=cloudTexture;material.useAlphaFromDiffuseTexture=true;material.alpha=.62;material.backFaceCulling=false;material.disableLighting=true;material.specularColor=Color3.Black();
-        for(let i=0;i<9;i++){
+        const material=new StandardMaterial(`smoke-material-${smoke.id}`,this.scene);material.diffuseColor=new Color3(.72,.75,.76);material.emissiveColor=new Color3(.12,.14,.15);material.diffuseTexture=cloudTexture;material.useAlphaFromDiffuseTexture=true;material.alpha=.94;material.backFaceCulling=false;material.disableLighting=true;material.specularColor=Color3.Black();
+        for(let i=0;i<15;i++){
           const mesh=MeshBuilder.CreateSphere(`smoke-${smoke.id}-${i}`,{diameter:1,segments:12},this.scene);mesh.parent=root;mesh.isPickable=false;
           mesh.material=material;
-          const phase=(smoke.id*2.399+i*4.17)%(Math.PI*2);phases.push(phase);mesh.position.set(0,.05+(i%3)*.12,0);
+          mesh.position.set(0,.05+(i%3)*.12,0);
           mesh.scaling.set(.4,.34,.4);lobes.push(mesh);
         }
-        this.smokes.set(smoke.id,{root,lobes,material,phases});
+        this.smokes.set(smoke.id,{root,lobes,material});
       }
       const cloud=this.smokes.get(smoke.id)!;cloud.root.position.set(smoke.x,smoke.y,smoke.z);
-      const fade=smoke.expires>current.time?Math.min(1,(smoke.expires-current.time)/1.5):0;
+      const cloudLobes=liveSmokeCloudLobes(smoke,current.time);
       for(let i=0;i<cloud.lobes.length;i++){
-        const phase=cloud.phases[i],angle=phase+current.time*.045,spread=i===0?0:.22+(i%3)*.065;
-        const width=smoke.radius*(i===0?.62:.45+(i%3)*.035),wobble=Math.sin(current.time*.48+phase);
-        cloud.lobes[i].position.set(Math.cos(angle)*smoke.radius*spread+Math.sin(current.time*.37+phase)*smoke.radius*.025,smoke.radius*(.015+(i%4)*.055)+wobble*smoke.radius*.025,Math.sin(angle)*smoke.radius*spread+Math.cos(current.time*.31+phase)*smoke.radius*.025);
-        cloud.lobes[i].rotation.y=phase+current.time*.025;
-        cloud.lobes[i].scaling.set(width,width*(.7+(i%3)*.07),width);
+        const lobe=cloudLobes[i];
+        cloud.lobes[i].position.set(lobe.x,lobe.y,lobe.z);
+        cloud.lobes[i].rotation.y=0;
+        cloud.lobes[i].scaling.set(lobe.scaleX,lobe.scaleY,lobe.scaleZ);
       }
-      cloud.material.alpha=.58*Math.min(1,fade+.2);
+      cloud.material.alpha=.94*(1-.08*Math.min(1,smoke.disturbance??0));
     }
     for(const [id,view] of this.fires)if(!current.fires?.some(f=>f.id===id)){view.root.dispose(false,true);this.fires.delete(id);}
     for(const fire of current.fires??[]) {
@@ -1095,10 +1105,28 @@ export class FpsLiveViewer {
         view.flames[i].scaling.set(scale*(.9+Math.sin(current.time*7+i)*.1),scale*(.72+Math.sin(current.time*7+i)*.12),scale);view.flameMaterials[i].alpha=.82*Math.min(1,fade+.2);
       }
     }
+    const liveBlasts:LiveBlast[]=current.blasts??[];
+    for(const [id,view] of this.blasts)if(!liveBlasts.some(blast=>blast.id===id)){view.sphere.dispose();view.ring.dispose();view.sphereMaterial.dispose();view.ringMaterial.dispose();this.blasts.delete(id);}
+    for(const blast of liveBlasts){
+      let view=this.blasts.get(blast.id);
+      if(!view){
+        const sphere=MeshBuilder.CreateSphere(`he-blast-${blast.id}`,{diameter:1,segments:10},this.scene);
+        const ring=MeshBuilder.CreateTorus(`he-blast-ring-${blast.id}`,{diameter:1,thickness:.08,tessellation:24},this.scene);
+        const sphereMaterial=new StandardMaterial(`he-blast-material-${blast.id}`,this.scene);sphereMaterial.diffuseColor=new Color3(1,.68,.2);sphereMaterial.emissiveColor=new Color3(1,.32,.04);sphereMaterial.alpha=.7;sphereMaterial.disableLighting=true;sphere.material=sphereMaterial;
+        const ringMaterial=new StandardMaterial(`he-blast-ring-material-${blast.id}`,this.scene);ringMaterial.diffuseColor=new Color3(1,.28,.04);ringMaterial.emissiveColor=new Color3(1,.2,.015);ringMaterial.alpha=.78;ringMaterial.disableLighting=true;ring.material=ringMaterial;
+        sphere.isPickable=false;ring.isPickable=false;view={sphere,ring,sphereMaterial,ringMaterial};this.blasts.set(blast.id,view);
+      }
+      const age=Math.max(0,current.time-blast.startedAt),life=Math.max(0,(blast.endsAt-current.time)/(blast.endsAt-blast.startedAt));
+      const scale=.35+age*13;
+      view.sphere.position.set(blast.x,.75,blast.z);view.sphere.scaling.set(scale,scale*.45,scale);
+      view.ring.position.set(blast.x,.08,blast.z);view.ring.scaling.set(scale*1.1,1,scale*1.1);
+      view.sphereMaterial.alpha=.7*life;view.ringMaterial.alpha=.78*life;
+    }
     for(const [id,mesh] of this.grenades)if(!current.grenades.some(g=>g.id===id)){mesh.dispose();this.grenades.delete(id);}
+    for(const [id,line] of this.grenadeTrails)if(!current.grenades.some(g=>g.id===id&&current.time>=g.releaseAt)){line.dispose();this.grenadeTrails.delete(id);}
     for(const grenade of current.grenades) {
       let mesh=this.grenades.get(grenade.id);
-      if(!mesh){mesh=MeshBuilder.CreateSphere(`grenade-${grenade.id}`,{diameter:.22,segments:8},this.scene);mesh.material=this.material(grenade.kind==='flash'?'#e4d6a3':grenade.kind==='smoke'?'#687e78':'#f97316');this.grenades.set(grenade.id,mesh);}
+      if(!mesh){mesh=MeshBuilder.CreateSphere(`grenade-${grenade.id}`,{diameter:.22,segments:8},this.scene);mesh.material=this.material(grenade.kind==='flash'?'#e4d6a3':grenade.kind==='smoke'?'#687e78':grenade.kind==='he'?'#71805e':'#f97316');this.grenades.set(grenade.id,mesh);}
       if(current.time<grenade.releaseAt) {
         const thrower=current.players.find(player=>player.id===grenade.actorId);
         if(thrower) {
@@ -1106,6 +1134,22 @@ export class FpsLiveViewer {
           mesh.position.set(thrower.x+forwardX*.2+rightX*.16,1.55+(thrower.jumpY??0),thrower.z+forwardZ*.2+rightZ*.16);
         } else mesh.position.set(grenade.x,grenade.y,grenade.z);
       } else mesh.position.set(grenade.x,grenade.y,grenade.z);
+      if(current.time>=grenade.releaseAt) {
+        const forecast={...grenade};
+        const points=[new Vector3(forecast.x,forecast.y,forecast.z)];
+        const remaining=Math.max(0,grenade.detonateAt-current.time);
+        for(let elapsed=0;elapsed<remaining-1e-8;elapsed+=1/30){
+          stepLiveGrenade(forecast,Math.min(1/30,remaining-elapsed));
+          points.push(new Vector3(forecast.x,forecast.y,forecast.z));
+        }
+        if(points.length>1) {
+          let trail=this.grenadeTrails.get(grenade.id);
+          if(!trail)trail=MeshBuilder.CreateLines(`grenade-lineup-${grenade.id}`,{points,updatable:true},this.scene);
+          else trail=MeshBuilder.CreateLines(`grenade-lineup-${grenade.id}`,{points,instance:trail}) as LinesMesh;
+          trail.color=Color3.FromHexString(grenade.team===current.attackTeam?'#ec4899':'#3b82f6');
+          trail.alpha=.88;trail.isPickable=false;this.grenadeTrails.set(grenade.id,trail);
+        }
+      }
     }
     this.device.setEnabled(current.bomb.status==='planted'||current.bomb.status==='dropped');this.device.position.set(current.bomb.x,.15,current.bomb.z);
     if(current.bomb.status==='exploded'&&this.explosionRound!==current.round){
@@ -1123,7 +1167,10 @@ export class FpsLiveViewer {
       this.explosionRing.scaling.set(1+Math.max(0,age)*9,1,1+Math.max(0,age)*9);
       this.explosionMaterials[0].alpha=.9*life;this.explosionMaterials[1].alpha=.88*life;
     }
-    const zoom=effectiveMode==='first'&&followed.equipped==='sniper'&&followed.action==='Engaging';
+    const sniper=followed.equipped==='sniper'||followed.equipped==='scout';
+    const scopedActions=['Engaging','Holding','Crouch-holding'];
+    const zoom=effectiveMode==='first'&&sniper&&followed.hp>0&&scopedActions.includes(followed.action)&&followed.speed<.65
+      ?followed.equipped==='scout'?.28:.18:false;
     const cameraKey=`${effectiveMode}:${followed.id}`,cut=cameraKey!==this.previousCamera||this.previousRound!==current.round;
     const blend=cut?1:1-Math.exp(-Math.max(0,Math.min(.1,elapsed))*9);
     if(effectiveMode==='overview') {
@@ -1168,7 +1215,7 @@ export class FpsLiveViewer {
       const throwLift=throwPhase===undefined?0:throwPhase<.3?ease01(throwPhase/.3):1-ease01((throwPhase-.3)/.7);
       const throwRelease=throwPhase===undefined||throwPhase<.3?0:1-ease01((throwPhase-.3)/.2);
       const draw=Math.min(1,followed.weaponReady/.45);
-      const reloadProgress=followed.reload>0?1-Math.max(0,Math.min(1,followed.reload/LIVE_WEAPONS[followed.weapon].reload)):0;
+      const reloadProgress=followed.reload>0?1-Math.max(0,Math.min(1,followed.reload/(followed.reloadDuration||LIVE_WEAPONS[followed.weapon].reload))):0;
       const reload=followed.reload>0?Math.sin(reloadProgress*Math.PI):0;
       const reloadParts=(this.fpGunRoot.metadata as {reloadParts?:ViewmodelReloadParts}|undefined)?.reloadParts;
       if(reloadParts){
@@ -1240,7 +1287,7 @@ export class FpsLiveViewer {
     this.scene.render();
     return decision;
   }
-  private followCamera(player:LivePlayer,first:boolean,blend:number,time:number,zoom:boolean) {
+  private followCamera(player:LivePlayer,first:boolean,blend:number,time:number,zoom:number|false) {
     const dx=Math.sin(player.yaw),dz=Math.cos(player.yaw);
     const jumpOffset=player.jumpY??0;
     const clampedX=Math.max(-33.5,Math.min(33.5,player.x));
@@ -1249,9 +1296,10 @@ export class FpsLiveViewer {
       const targetY=(player.crouch?1.08:1.6)+jumpOffset;
       this.currentEyeY=mix(this.currentEyeY,targetY,Math.min(1,blend*2.2));
       const bob=player.speed>2.5?Math.sin(time*12)*.015:(player.crouch&&player.speed>.3?Math.sin(time*7)*.008:0);
-      this.camera.fov=mix(this.camera.fov,zoom?.6:1.12,blend);
+      this.camera.fov=mix(this.camera.fov,zoom||1.12,blend);
       this.camera.position.set(clampedX,this.currentEyeY+bob,clampedZ);
-      this.cameraTarget.set(clampedX+dx*20,this.currentEyeY+bob,clampedZ+dz*20);
+      const pitch=player.pitch??0,horizontal=Math.cos(pitch)*20;
+      this.cameraTarget.set(clampedX+dx*horizontal,this.currentEyeY+bob+Math.sin(pitch)*20,clampedZ+dz*horizontal);
       this.camera.setTarget(this.cameraTarget);
       return;
     }
@@ -1270,6 +1318,7 @@ export class FpsLiveViewer {
     this.fpGunRoot?.dispose();this.fpMuzzleFlash?.dispose();
     for(const item of this.droppedMeshes.values()){item.root.dispose();item.ring.dispose();}
     this.droppedMeshes.clear();
+    for(const trail of this.grenadeTrails.values())trail.dispose();this.grenadeTrails.clear();
     for(const view of this.actors.values()){
       view.operative.root.dispose();
       view.gunNode?.dispose();

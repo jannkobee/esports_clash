@@ -1,6 +1,6 @@
 import type { FpsPoint } from './fpsSpatialWorld.ts';
 
-export type LiveIntelSource='sight'|'footstep'|'gunfire'|'melee'|'damage'|'utility';
+export type LiveIntelSource='sight'|'footstep'|'gunfire'|'melee'|'reload'|'damage'|'utility';
 export type LiveIntelArea='A'|'B'|'Mid';
 export interface LiveIntelContact extends FpsPoint {
   key:string;enemyId?:string;observerId:string;source:LiveIntelSource;via?:string;
@@ -12,8 +12,8 @@ export interface LiveAreaEvidence {strength:number;identified:number;confirmed:n
 export type LiveIntelAssessment=Record<LiveIntelArea,LiveAreaEvidence>;
 
 const distance=(a:FpsPoint,b:FpsPoint)=>Math.hypot(a.x-b.x,a.z-b.z);
-const lifetimes:Record<LiveIntelSource,number>={sight:6,footstep:2.6,gunfire:3.6,melee:2.6,damage:3.5,utility:3};
-const weights:Record<LiveIntelSource,number>={sight:1,footstep:.32,gunfire:.52,melee:.35,damage:.7,utility:.22};
+const lifetimes:Record<LiveIntelSource,number>={sight:6,footstep:2.6,gunfire:3.6,melee:2.6,reload:2.8,damage:3.5,utility:3};
+const weights:Record<LiveIntelSource,number>={sight:1,footstep:.32,gunfire:.52,melee:.35,reload:.4,damage:.7,utility:.22};
 export const emptyLiveIntel=():LiveIntelMemory=>({contacts:[]});
 export const liveIntelArea=(point:FpsPoint):LiveIntelArea=>point.z>-18&&point.x<-10?'A':point.z>-18&&point.x>10?'B':'Mid';
 
@@ -81,7 +81,7 @@ export function clearLiveIntel(memory:LiveIntelMemory,now:number,observable:(poi
 export function describeLiveIntel(memory:LiveIntelMemory,from:FpsPoint,now:number):string {
   const best=strongestLiveIntel(memory,from,now);if(!best)return 'No current contact — watch the assigned angle';
   const area=liveIntelArea(best),evidence=assessLiveIntel(memory,now)[area];
-  const source=best.via?'Teammate report':best.source==='sight'?'Own sight':best.source==='footstep'?'Footsteps':best.source==='gunfire'?'Gunfire':best.source==='melee'?'Nearby knife swing':best.source==='damage'?'Taking fire':'Utility cue';
+  const source=best.via?'Teammate report':best.source==='sight'?'Own sight':best.source==='footstep'?'Footsteps':best.source==='gunfire'?'Gunfire':best.source==='reload'?'Reload':best.source==='melee'?'Nearby knife swing':best.source==='damage'?'Taking fire':'Utility cue';
   const certainty=best.certainty>=.7?'recent':best.certainty>=.35?'uncertain':'fading';
   const count=evidence.identified>0?` · ${evidence.identified} last seen`:'';
   return `${source} · ${area}${count} · ${certainty} (${Math.floor(best.age)}s ago)`;

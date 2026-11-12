@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {FpsLiveSimulation} from './fps/fpsLiveSimulation.ts';
-import {LIVE_FPS_MAP,LIVE_TACTICAL,LIVE_MID,LIVE_CHOKES,livePathLength,findLivePath,liveWalkable,liveSightline} from './fps/fpsLiveMap.ts';
+import {LIVE_FPS_MAP,LIVE_TACTICAL,LIVE_MID,LIVE_CHOKES,livePathLength,findLivePath,liveWalkable,liveSightline,liveWallIntersections,liveWallSegmentHit} from './fps/fpsLiveMap.ts';
+import {liveRayDirection,traceLiveActorHit} from './fps/fpsLiveBallistics.ts';
 import {segmentHitsWall,moveFpsActor} from './fps/fpsSpatialWorld.ts';
 import {LIVE_KNIFE} from './fps/fpsLiveWeapons.ts';
 import {advanceLiveVelocity,liveShotSpeedLimit,LIVE_RUN_SPEED,LIVE_WALK_SPEED,LIVE_CROUCH_SPEED} from './fps/fpsLiveMovement.ts';
@@ -80,6 +81,51 @@ test('A-site terracotta loggia blocks sight, bullets, blades, flashes and moveme
   assert.ok(sim.shots.every(s=>s.to.z<26.5));
   const route=findLivePath({x:-25,z:24},{x:-25,z:29});assert.ok(route.length);
   let previous={x:-25,z:24};for(const point of route){assert.ok(liveSightline(previous,point));previous=point;}
+});
+
+test('3D gun rays pass over low cover only when the visible shot line clears its height',()=>{
+  const wall=LIVE_FPS_MAP.solids.find(s=>s.id==='b-sandbags');
+  const from={x:24,z:0},to={x:24,z:8};
+  assert.ok(wall);
+  assert.equal(liveWallSegmentHit({...from,y:1.54},{...to,y:1.54},wall),undefined);
+  assert.ok(liveWallSegmentHit({...from,y:1.0},{...to,y:1.0},wall)!==undefined);
+});
+
+test('B fountain vision and projectile walls follow its round open basin and visible centrepiece',()=>{
+  const grazingFrom={x:20,z:18.7},grazingTo={x:26,z:18.7};
+  assert.equal(liveSightline(grazingFrom,grazingTo,1.54,1.54),true,'the square collision corners are outside the rendered round fountain');
+  assert.equal(liveWallIntersections({...grazingFrom,y:1.54},{...grazingTo,y:1.54}).some(hit=>hit.wall.id==='b-fountain'),false);
+
+  const centreFrom={x:16,z:21},centreTo={x:30,z:21};
+  assert.equal(liveSightline(centreFrom,centreTo,1.54,1.54),false,'the ray crosses the rendered upper bowl');
+  assert.ok(liveWallIntersections({...centreFrom,y:1.54},{...centreTo,y:1.54}).some(hit=>hit.wall.id==='b-fountain'));
+});
+
+test('3D actor traces distinguish head hits from body hits by the actual impact height',()=>{
+  const target={x:0,z:10,crouch:false,jumpY:0},from={x:0,y:1.54,z:0};
+  const head=traceLiveActorHit(from,liveRayDirection(0,0),20,target);
+  const body=traceLiveActorHit({x:0,y:1,z:0},liveRayDirection(0,0),20,target);
+  assert.equal(head?.region,'head');assert.equal(body?.region,'body');
+  assert.equal(traceLiveActorHit({x:0,y:1.9,z:0},liveRayDirection(0,0),20,target),undefined);
+});
+
+test('a precise shot aimed at the visible head resolves and traces the same head impact',()=>{
+  const {sim,p,enemy}=encounter();
+  Object.assign(p,{x:0,z:0,yaw:0,pitch:0,weapon:'sniper',ammo:5,reserve:0,acquired:sim.time,burst:0});
+  Object.assign(enemy,{x:0,z:10,hp:100,crouch:false,jumpY:0});
+  sim.fire(p,enemy);
+  const shot=sim.shots.at(-1);
+  assert.equal(shot.targetId,enemy.id);assert.equal(shot.hitRegion,'head');
+  assert.ok(shot.to.z<enemy.z);assert.equal(p.impact.headshots,1);assert.ok(enemy.hp<100);
+});
+
+test('the B fountain centrepiece stops a head-level round before its target',()=>{
+  const {sim,p,enemy}=encounter();
+  Object.assign(p,{x:16,z:21,yaw:Math.PI/2,pitch:0,weapon:'ak47',ammo:30,reserve:0,acquired:sim.time,burst:0});
+  Object.assign(enemy,{x:30,z:21,hp:100,crouch:false,jumpY:0});
+  sim.fire(p,enemy);
+  const shot=sim.shots.at(-1);
+  assert.equal(shot.targetId,undefined);assert.ok(shot.to.x<enemy.x);assert.equal(enemy.hp,100);
 });
 
 test('stopping near a teammate does not inject separation drift into aim or objective channels',()=>{
@@ -222,10 +268,42 @@ test('actors can throw from their own utility decision and publish a throw-anima
   const sim=game(),p=sim.actors[0];sim.time=20;
   Object.assign(p,{hp:100,flash:1,reload:0,utilityAt:0,x:-19,z:-7});
   assert.equal(sim.throwUtility(p,'flash',{x:-14,z:-4}),true);
-  assert.equal(p.throwAt,20);assert.equal(p.throwKind,'flash');
+  assert.equal(p.throwAt,undefined);assert.equal(p.throwKind,'flash');
+  assert.equal(p.utilityPreparation.readyAt,20.55,'the grenade should remain in the equip/setup phase');
   const publicPlayer=sim.snapshot().players.find(player=>player.id===p.id);
-  assert.equal(publicPlayer.throwAt,20);assert.equal(publicPlayer.throwKind,'flash');
+  assert.equal(publicPlayer.throwAt,undefined);assert.equal(publicPlayer.throwKind,'flash');
+  assert.equal(publicPlayer.utilityPrep.releaseAt,20.75);
+  sim.time=20.55;sim.releaseUtilityPreparation(p);
+  assert.equal(p.throwAt,20.55,'the throw animation begins after grenade equip');
+  assert.equal(p.flash,0);
   assert.equal(sim.protocol.phase,'default','A throw must not wait for or advance a scripted utility phase');
+});
+
+test('utility setup is rejected during visible combat and ally damage scales across rifle fire and HE',()=>{
+  const {sim,p,enemy}=encounter(),ally=sim.actors[1];
+  p.flash=1;p.utilityAt=0;
+  assert.equal(sim.throwUtility(p,'flash',{x:-14,z:-4}),false,'visible contact should keep the gun out');
+  assert.equal(p.utilityPreparation,undefined);
+
+  enemy.hp=0;p.target=undefined;p.weapon='ak47';p.ammo=30;p.equipped='ak47';p.yaw=0;
+  Object.assign(ally,{hp:100,team:p.team,x:-19,z:-6,armor:0});
+  sim.fire(p,ally);
+  assert.ok(ally.hp<100,'a teammate hit by rifle fire must lose health');
+  assert.equal(p.impact.damage,0,'friendly damage must not inflate enemy performance reports');
+  assert.equal(p.kills,0,'friendly damage must not grant an enemy kill');
+});
+
+test('HE blasts damage self and teammates at reduced rates while retaining full enemy damage',()=>{
+  const {sim,p,enemy}=encounter(),ally=sim.actors[1];
+  Object.assign(p,{hp:100,x:1,z:0,armor:0});
+  Object.assign(ally,{hp:100,x:-1,z:0,armor:0,team:p.team});
+  Object.assign(enemy,{hp:100,x:0,z:1,armor:0});
+  const before={self:p.hp,ally:ally.hp,enemy:enemy.hp};
+  sim.time=20;
+  sim.grenades=[{id:901,kind:'he',actorId:p.id,team:p.team,x:0,y:.1,z:0,vx:0,vy:0,vz:0,releaseAt:18,detonateAt:19,coordinated:false}];
+  sim.stepGrenades(1/30);
+  const loss={self:before.self-p.hp,ally:before.ally-ally.hp,enemy:before.enemy-enemy.hp};
+  assert.ok(loss.ally>0&&loss.ally<loss.self&&loss.self<loss.enemy,JSON.stringify(loss));
 });
 
 test('autonomous tactical movement remains deterministic and mechanically bounded',()=>{
@@ -309,6 +387,9 @@ test('support throws proactive pop-flash ahead of entry teammate',()=>{
   Object.assign(entry,{hp:100,role:'entry',attacking:true,x:19,z:-5,yaw:0});
   sim.observeIntel(support,{key:'enemy:reported',observerId:support.id,source:'sight',x:20,z:-4,observed:sim.time,confidence:.9,uncertainty:1});
   const intent=sim.useInformationUtility(support,sim.actors.filter(a=>a.team===support.team&&a.hp>0));
+  assert.equal(support.flash,1);assert.equal(support.utilityPreparation.kind,'flash');
+  assert.equal(sim.grenades.length,0,'the flash should not leave the hand before its equip/setup delay');
+  sim.time+=.55;sim.releaseUtilityPreparation(support);
   assert.equal(support.flash,0);
   assert.equal(sim.grenades.length,1);
   assert.equal(sim.grenades[0].kind,'flash');

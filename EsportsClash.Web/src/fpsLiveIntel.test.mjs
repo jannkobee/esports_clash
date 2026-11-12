@@ -132,7 +132,9 @@ test('attack redirects from a reported stack without reading hidden defense and 
 test('reported pressure spends real delay utility without giving the defender a visible target',()=>{
   const sim=game(),p=sim.actors[3];Object.assign(p,{x:32,z:26,role:'anchor',smoke:1,utilityAt:0,target:undefined});
   addStack(sim,p,'B',2);const reason=sim.useInformationUtility(p,sim.actors.slice(0,5));
-  assert.match(reason,/Delay reported B/);assert.equal(p.smoke,0);assert.equal(sim.grenades.length,1);assert.equal(sim.grenades[0].kind,'smoke');assert.equal(p.target,undefined);
+  assert.match(reason,/Delay reported B/);assert.equal(p.smoke,1);assert.equal(sim.grenades.length,0);assert.equal(p.utilityPreparation.kind,'smoke');assert.equal(p.target,undefined);
+  sim.time+=.55;sim.releaseUtilityPreparation(p);
+  assert.equal(p.smoke,0);assert.equal(sim.grenades.length,1);assert.equal(sim.grenades[0].kind,'smoke');
 });
 
 test('confirmed death removes the known threat and late reports cannot resurrect it; public snapshots exclude raw memory',()=>{
@@ -141,7 +143,7 @@ test('confirmed death removes the known threat and late reports cannot resurrect
   sim.observeIntel(p,sight(enemy.id,-19,-5),false);
   sim.fire(p,enemy);assert.equal(enemy.hp,0);assert.ok(!p.intel.contacts.some(c=>c.enemyId===enemy.id));
   sim.observeIntel(p,sight(enemy.id,-19,-5,19),false);assert.equal(p.intel.contacts.length,0);
-  const snapshot=sim.snapshot();assert.equal(snapshot.version,'hexatrick-live-exhibition-v7');
+  const snapshot=sim.snapshot();assert.equal(snapshot.version,'hexatrick-live-exhibition-v9');
   assert.equal('intel' in snapshot.players[0],false);assert.equal('sentReports' in snapshot.players[0],false);assert.equal('informationOrders' in snapshot,false);
   assert.ok(!JSON.stringify(snapshot).includes('riskTolerance'));assert.equal(typeof snapshot.players[0].information,'string');
 });

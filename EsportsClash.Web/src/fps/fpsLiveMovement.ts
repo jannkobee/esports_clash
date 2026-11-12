@@ -26,10 +26,13 @@ export function advanceLiveJump(state: LiveJumpState, dt: number): LiveJumpState
   }
   return { jump: true, jumpY: y, jumpVy: vy };
 }
-export function advanceLiveVelocity(current:LiveVelocity,wish:FpsPoint,dt:number,mechanics:number):LiveVelocity {
+export function advanceLiveVelocity(current:LiveVelocity,wish:FpsPoint,dt:number,mechanics:number,airborne=false):LiveVelocity {
   const dx=wish.x-current.vx,dz=wish.z-current.vz,d=Math.hypot(dx,dz);
   const braking=Math.hypot(wish.x,wish.z)<.01;
-  const acceleration=braking?16+Math.max(0,Math.min(1,mechanics))*20:24;
+  // Air steering is deliberately weaker than ground acceleration. It lets a jump
+  // retain launch momentum while still allowing bounded direction correction.
+  const control=Math.max(0,Math.min(1,mechanics));
+  const acceleration=airborne?(braking?2+control*2:5+control*5):braking?16+control*20:24;
   const step=Math.min(d,acceleration*dt);
   return d<1e-8?{vx:wish.x,vz:wish.z}:{vx:current.vx+dx/d*step,vz:current.vz+dz/d*step};
 }

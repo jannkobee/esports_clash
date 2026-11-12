@@ -4,14 +4,15 @@ import { evaluatePlayerAction, resolveTacticalExecution, type FpsPrimaryRole, ty
 import { hydrateFpsIdentityContext, observedPersonalityTriggers } from './fpsIdentityMatch.ts';
 import { FPS_ROLES } from './fpsRoleFit.ts';
 import { moveFpsActor, type FpsPoint } from './fpsSpatialWorld.ts';
-import { LIVE_ACTOR_RADIUS, LIVE_FPS_MAP, LIVE_TACTICAL, LIVE_MID, LIVE_CHOKES, LIVE_BOOST_SPOTS, distance, findLivePath, livePathLength, liveSightline, findLiveCover, safeLivePoint, liveCallout, findLivePeek, liveClearAngles } from './fpsLiveMap.ts';
+import { LIVE_ACTOR_RADIUS, LIVE_FPS_MAP, LIVE_TACTICAL, LIVE_MID, LIVE_CHOKES, LIVE_BOOST_SPOTS, LIVE_SMOKE_LINEUPS, distance, findLivePath, livePathLength, liveSightline, liveWallIntersections, findLiveCover, safeLivePoint, liveCallout, findLivePeek, liveClearAngles } from './fpsLiveMap.ts';
+import {liveActorHeadY,liveRayDirection,traceLiveActorHit} from './fpsLiveBallistics.ts';
 import { liveSkills, liveDecisionInterval, liveReactionTime, livePressure, liveAimSpread, liveReportDelay, type LiveSkills } from './fpsLiveAttributes.ts';
 import { emptyLiveImpact, type LiveImpact } from './fpsLiveImpact.ts';
 import { LIVE_WEAPONS, LIVE_KNIFE, liveDrawTime, type LiveWeapon, type LiveEquippedWeapon } from './fpsLiveWeapons.ts';
 import { buyLiveTeam, type LiveBuyMode, type LiveBuyPlayer } from './fpsLiveEconomy.ts';
 import { advanceLiveVelocity, liveShotSpeedLimit, LIVE_RUN_SPEED, LIVE_WALK_SPEED, LIVE_CROUCH_SPEED, LIVE_JUMP_VELOCITY, advanceLiveJump, type LiveStance } from './fpsLiveMovement.ts';
 import { chooseLiveTactic, createLiveProtocol, liveOrderActive, type LiveInformationOrder, type LiveAttackProtocol, type LiveAttackStyle, type LiveAttackPhase, type LiveTacticArchetype, type LiveDefenseSetup, type LiveRoundHistory } from './fpsLiveTactics.ts';
-import { LIVE_UTILITY_RULES, predictLiveGrenade, launchLiveGrenade, stepLiveGrenade, liveGrenadeSightline, type LiveGrenade } from './fpsLiveGrenades.ts';
+import { LIVE_UTILITY_RULES, LIVE_HE_RULES, LIVE_FRIENDLY_FIRE_RULES, predictLiveGrenade, launchLiveGrenade, stepLiveGrenade, liveGrenadeSightline, type LiveGrenade, type LiveGrenadeKind, type LiveThrowStyle } from './fpsLiveGrenades.ts';
 import { advanceLiveAimYaw, liveRouteLookAhead } from './fpsLiveAim.ts';
 import { emptyLiveIntel, rememberLiveIntel, strongestLiveIntel, assessLiveIntel, clearLiveIntel, liveIntelArea, describeLiveIntel, liveIntelBeliefs, type LiveIntelContact, type LiveIntelMemory } from './fpsLiveIntel.ts';
 import { pinFpsSkillProfile, fpsAbilityUnit, fpsDetailedRoleFit, fpsSkillRandom, type FpsSkillProfile, type FpsAbility } from './fpsSkillProfile.ts';
@@ -21,16 +22,18 @@ import { canInvestigateLiveContact, shouldFakeLiveDefuse, chooseLiveApproach, li
 import { assignLiveObjective, createLiveRoutePlanner, liveRouteEvidenceKey, planLivePlant, livePlantSite, LIVE_PLANT_RULES } from './fpsLivePlanning.ts';
 import type { FpsAudioCue } from './fpsBroadcastAudio.ts';
 import { FpsLiveLearner, fpsLearningModelHash, type FpsLearningOptions, type FpsLearningStats } from './fpsLiveLearning.ts';
+import { FpsLiveMechanicsLearner, fpsFireContext, type FpsFireCadence, type FpsMechanicsOptions, type FpsMechanicsStats } from './fpsLiveMechanicsLearning.ts';
 export { LIVE_WEAPONS } from './fpsLiveWeapons.ts';
 export type { LiveWeapon } from './fpsLiveWeapons.ts';
 
 export const LIVE_FPS_STEP = 1/30;
 export interface LivePlayer extends FpsPoint {
-  id:string; name:string; team:FpsTeamId; attacking:boolean; role:FpsPrimaryRole; yaw:number;
-  hp:number; armor:number; cash:number; weapon:LiveWeapon; ammo:number; reserve:number; reload:number;
-  kills:number; deaths:number; action:string; bomb:boolean; kit:boolean; flash:number; smoke:number; incendiary:number;
+  id:string; name:string; team:FpsTeamId; attacking:boolean; role:FpsPrimaryRole; yaw:number;pitch?:number;
+  hp:number; armor:number; cash:number; weapon:LiveWeapon; ammo:number; reserve:number; reload:number;reloadDuration:number;reloadSilent:boolean;
+  kills:number; deaths:number; action:string; bomb:boolean; kit:boolean; flash:number; smoke:number; incendiary:number;he:number;
   blinded:number; channel:number; personality:string; specialty?:string; lastShot:number;
-  throwAt?:number;throwKind?:'flash'|'smoke'|'incendiary';
+  throwAt?:number;throwKind?:LiveGrenadeKind;
+  utilityPrep?:{kind:LiveGrenadeKind;releaseAt:number};teamKills?:number;
   callout:string; intent:string; skills:LiveSkills; exertion:number;
   impact:LiveImpact;
   speed:number;stance:LiveStance;crouch:boolean;
@@ -44,11 +47,12 @@ interface Actor extends LivePlayer {
   reaction:number; slot:number; target?:string; acquired:number; nextShot:number;
   nextThink:number; decision:TacticalAction; goal?:FpsPoint; path:FpsPoint[]; contact?:FpsPoint;
   contactAt:number; lastMoved:number; utilityAt:number; damageAt:number; flashedBy?:string;
+  smokeLineupGoal?:FpsPoint;
   seenAt:number;nextSense:number;burst:number;pressure:number;retreatUntil:number;
   reportAt:number;stuckFor:number;watchPoint?:FpsPoint;
   engagementShots:number;engagementDamaged:boolean;openingAttempted:boolean;
-  vx:number;vz:number;nextFootstep:number;nextAudioFootstep:number;nextPeek:number;peek?:{home:FpsPoint;out:FpsPoint;back:boolean;until:number;pause:number};
-  jump:boolean;jumpY:number;jumpVy:number;nextJump:number;strafeDirection:1|-1;strafeUntil:number;
+  vx:number;vz:number;nextFootstep:number;nextAudioFootstep:number;nextPeek:number;peek?:{home:FpsPoint;out:FpsPoint;back:boolean;until:number;pause:number;style:'shoulder'|'crouch-swing'|'ferrari'|'double-pump'|'bait'|'fake';pumps:number;prefired:number};
+  jump:boolean;jumpY:number;jumpVy:number;nextJump:number;jumpQueued:boolean;jumpChain:number;strafeDirection:1|-1;strafeUntil:number;glockBurstRemaining:number;
   cleared:Set<string>;clearUntil:number;clearPoint?:FpsPoint;lookAwayUntil:number;
   crouch:boolean;crouchUntil:number;
   lookAwayPoint?:FpsPoint;lookAwayStarts?:number;
@@ -60,34 +64,38 @@ interface Actor extends LivePlayer {
   previousSight?:FpsPoint&{at:number;id:string};trackingPoint?:FpsPoint;planAssessmentAt?:number;
   visualCueAt?:number;
   probeGoal?:string;probeVisited:Set<string>;holdingSince?:number;
-  freezeDelay?:number;buyAt?:number;postRoamAt?:number;fakeDefuseDone?:boolean;fakeDefuseHoldUntil?:number;triggerDisciplineUntil?:number;
+  freezeDelay?:number;buyAt?:number;postRoamAt?:number;fakeDefuseDone?:boolean;halfDefuseDone?:boolean;fakeDefuseHoldUntil?:number;fakePlantDone?:boolean;fakePlantHoldUntil?:number;triggerDisciplineUntil?:number;
   approachUntil?:number;radioAt?:number;acknowledgedOrder?:number;strafeSettleUntil?:number;
   knownSmokes:LiveSmoke[];flashWindow?:{point:FpsPoint;opens:number;expires:number};
+  reloadRounds:number;
   routeEvidence?:string;routeUpdatedAt?:number;objectiveUrgent?:boolean;
+  utilityPreparation?:{kind:LiveGrenadeKind;target:FpsPoint;startedAt:number;readyAt:number;throwStyle:LiveThrowStyle};
   noticedEnemies:{id:string;x:number;z:number;hp:number;reload:number;blinded:number;lastShot:number;channel:number}[];
 }
-export interface LiveSimulationOptions {skillProfiles?:Record<string,FpsSkillProfile>;learning?:FpsLearningOptions}
+export interface LiveSimulationOptions {skillProfiles?:Record<string,FpsSkillProfile>;learning?:FpsLearningOptions;mechanicsLearning?:FpsMechanicsOptions}
 export interface DroppedWeapon extends FpsPoint { id:number; weapon:LiveWeapon; ammo:number; reserve:number }
 export interface LiveEvent {
   id:number; time:number; kind:'kill'|'round'|'objective'|'utility'|'economy'; text:string;
   team?:FpsTeamId; actorId?:string; targetId?:string; headshot?:boolean; weapon?:LiveEquippedWeapon;
 }
-export interface LiveShot { id:number; time:number; actorId:string;weapon:LiveWeapon;from:FpsPoint;to:FpsPoint;fromY:number;toY:number;team:FpsTeamId }
-export interface LiveSmoke extends FpsPoint { id:number; startedAt:number; expires:number; radius:number;y:number }
+export interface LiveShot { id:number; time:number; actorId:string;weapon:LiveWeapon;from:FpsPoint;to:FpsPoint;fromY:number;toY:number;team:FpsTeamId;targetId?:string;hitRegion?:'head'|'body' }
+export interface LiveSmoke extends FpsPoint { id:number; startedAt:number; expires:number; radius:number;y:number;disturbedUntil?:number;disturbance?:number }
 export interface LiveFire extends FpsPoint { id:number; ownerId:string; team:FpsTeamId; startedAt:number; expires:number; nextDamageAt:number; radius:number }
+export interface LiveBlast extends FpsPoint {id:number;startedAt:number;endsAt:number;radius:number}
 export interface LiveTeamPlan {buy:LiveBuyMode;buyReason:string;style:LiveAttackStyle|'defense';phase:LiveAttackPhase|'hold';site?:'A'|'B';information:string}
 export interface LiveSnapshot {
-  version:'hexatrick-live-exhibition-v7'; time:number; round:number;
+  version:'hexatrick-live-exhibition-v9'; time:number; round:number;
   phase:'freeze'|'live'|'post'|'finished'; remaining:number; score:Record<FpsTeamId,number>;
   winner?:FpsTeamId; roundWinner?:FpsTeamId; roundReason:string; attackTeam:FpsTeamId;
-  players:LivePlayer[]; events:LiveEvent[]; shots:LiveShot[]; smokes:LiveSmoke[]; fires:LiveFire[];
+  players:LivePlayer[]; events:LiveEvent[]; shots:LiveShot[]; smokes:LiveSmoke[]; fires:LiveFire[];blasts:LiveBlast[];
   grenades:LiveGrenade[];teams:Record<FpsTeamId,LiveTeamPlan>;
   droppedWeapons:DroppedWeapon[];
   bomb:{status:'carried'|'dropped'|'planted'|'defused'|'exploded';x:number;z:number;remaining:number;site?:'A'|'B'};
-  learning?:FpsLearningStats;
+  learning?:FpsLearningStats;mechanicsLearning?:FpsMechanicsStats;
 }
 const other=(team:FpsTeamId):FpsTeamId=>team==='blue'?'red':'blue';
 const clamp=(x:number,min:number,max:number)=>Math.max(min,Math.min(max,x));
+const localHash=(text:string)=>{let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return(h>>>0).toString(16).padStart(8,'0');};
 const angle=(a:number)=>Math.atan2(Math.sin(a),Math.cos(a));
 const heading=(a:FpsPoint,b:FpsPoint)=>Math.atan2(b.x-a.x,b.z-a.z);
 
@@ -116,6 +124,7 @@ export class FpsLiveSimulation {
   private shots:LiveShot[]=[];
   private smokes:LiveSmoke[]=[];
   private fires:LiveFire[]=[];
+  private blasts:LiveBlast[]=[];
   private droppedWeapons:DroppedWeapon[]=[];
   private reports:{team:FpsTeamId;at:number;source:string;contact:LiveIntelContact}[]=[];
   private informationOrders:Record<FpsTeamId,LiveInformationOrder>={blue:{mode:'hold',responders:[],until:0,strength:0,reason:'Hold the opening setup'},red:{mode:'hold',responders:[],until:0,strength:0,reason:'Gather information in the default'}};
@@ -129,15 +138,17 @@ export class FpsLiveSimulation {
   private defenseSetup:LiveDefenseSetup='standard';
   private grenades:LiveGrenade[]=[];
   private audioCues:FpsAudioCue[]=[];
+  private noiseMasks:{x:number;z:number;until:number;radius:number}[]=[];
   private teamBuys:Record<FpsTeamId,{mode:LiveBuyMode;reason:string}>={blue:{mode:'pistol',reason:''},red:{mode:'pistol',reason:''}};
   private pendingBuys=new Map<string,LiveBuyPlayer>();
   private detailed:boolean;
   private observationRandom:()=>number;
   private executionRandom:()=>number;
   private worldRandom:()=>number;
-  private hitRandom:()=>number;
   private learner?:FpsLiveLearner;
+  private mechanicsLearner?:FpsLiveMechanicsLearner;
   private learningRandom:()=>number;
+  private mechanicsRandom:()=>number;
   private learningEpisode='';
   private learningPlansRemaining=1;
 
@@ -151,19 +162,22 @@ export class FpsLiveSimulation {
     this.observationRandom=this.detailed?fpsSkillRandom(seed,'observation-v1'):this.random;
     this.executionRandom=this.detailed?fpsSkillRandom(seed,'execution-v1'):this.random;
     this.worldRandom=this.detailed?fpsSkillRandom(seed,'world-v1'):this.random;
-    this.hitRandom=this.detailed?fpsSkillRandom(seed,'hit-classification-v1'):this.random;
     this.learningRandom=fpsSkillRandom(seed,'navigation-learning-v1');
-    if(options.learning){this.learner=new FpsLiveLearner(options.learning);this.learningEpisode=`${seed}:${fpsLearningModelHash(this.learner.initial)}`;}
+    this.mechanicsRandom=fpsSkillRandom(seed,'combat-mechanics-learning-v1');
+    if(options.learning)this.learner=new FpsLiveLearner(options.learning);
+    if(options.mechanicsLearning)this.mechanicsLearner=new FpsLiveMechanicsLearner(options.mechanicsLearning);
+    const learningState=[this.learner?fpsLearningModelHash(this.learner.initial):'',this.mechanicsLearner?localHash(JSON.stringify(this.mechanicsLearner.initial)): ''].join(':');
+    this.learningEpisode=`${seed}:${localHash(learningState)}`;
     this.actors=[...blue,...red].map<Actor>((card,index)=>({
       id:card.id,name:card.name,team:index<5?'blue':'red',attacking:index>=5,role:'trade',slot:index%5,
-      x:0,z:0,yaw:0,hp:100,armor:0,cash:800,weapon:'pistol',ammo:12,reserve:60,reload:0,
-      kills:0,deaths:0,action:'Buying',bomb:false,kit:false,flash:0,smoke:0,incendiary:0,blinded:0,channel:0,
+      x:0,z:0,yaw:0,pitch:0,hp:100,armor:0,cash:800,weapon:'pistol',ammo:12,reserve:60,reload:0,reloadDuration:0,reloadSilent:false,reloadRounds:0,
+      kills:0,deaths:0,action:'Buying',bomb:false,kit:false,flash:0,smoke:0,incendiary:0,he:0,blinded:0,channel:0,
       personality:this.identity.players[card.id].personality.name,specialty:this.identity.players[card.id].specialty?.name,
       reaction:.45-clamp((card.stats.iq??50)/100,0,1)*.2,
       skills:liveSkills(card.stats),exertion:0,callout:'Harbor gates',intent:'Prepare the round',
       impact:emptyLiveImpact(),engagementShots:0,engagementDamaged:false,openingAttempted:false,
       speed:0,stance:'hold',crouch:false,crouchUntil:0,vx:0,vz:0,nextFootstep:0,nextAudioFootstep:0,nextPeek:0,cleared:new Set(),clearUntil:0,lookAwayUntil:0,
-      jump:false,jumpY:0,jumpVy:0,nextJump:0,strafeDirection:1,strafeUntil:0,
+      jump:false,jumpY:0,jumpVy:0,nextJump:0,jumpQueued:false,jumpChain:0,strafeDirection:1,strafeUntil:0,glockBurstRemaining:0,
       equipped:'pistol',weaponReady:0,lastSwing:-100,reactionVariation:1,equipUntil:0,
       information:'No current contact — watch the assigned angle',intel:emptyLiveIntel(),intelManaged:false,sentReports:new Map(),
       profile:options.skillProfiles?pinFpsSkillProfile(options.skillProfiles[card.id],card.id):undefined,
@@ -204,6 +218,7 @@ export class FpsLiveSimulation {
   }
   private startRound() {
     this.learner?.abandonRound();
+    this.mechanicsLearner?.abandonRound();
     this.phase='freeze';this.remaining=15;this.liveElapsed=0;this.roundWinner=undefined;this.roundReason='';
     // Regulation: Red attacks in 1..15, Blue attacks in 16..30 (side swap). Overtime MR3 swaps every 3 rounds.
     this.attackTeam=this.round<=30?(this.round<=15?'red':'blue'):((Math.floor((this.round-31)/3)%2)===0?'red':'blue');
@@ -231,12 +246,12 @@ export class FpsLiveSimulation {
     this.defenseSetup=defenseSetup;
 
     this.nextInformationProbe={blue:this.time+25,red:this.time+25};
-    this.smokes=[];this.fires=[];this.shots=[];this.reports=[];this.droppedWeapons=[];this.pendingBuys.clear();this.planCommit=0;this.roundSiteKills={blue:0,red:0};this.eliminations=[];this.grenades=[];
+    this.smokes=[];this.fires=[];this.blasts=[];this.shots=[];this.noiseMasks=[];this.reports=[];this.droppedWeapons=[];this.pendingBuys.clear();this.planCommit=0;this.roundSiteKills={blue:0,red:0};this.eliminations=[];this.grenades=[];
     if(reset)this.losses={blue:0,red:0};
     for(const p of this.actors) {
       p.attacking=p.team===this.attackTeam;
-      if(reset){p.cash=this.round>=31?10000:800;p.weapon=p.attacking?'glock':'usp_s';p.armor=0;p.kit=false;p.flash=0;p.smoke=0;p.incendiary=0;}
-      if(p.hp<=0){p.weapon=p.attacking?'glock':'usp_s';p.armor=0;p.kit=false;p.flash=0;p.smoke=0;p.incendiary=0;}
+      if(reset){p.cash=this.round>=31?10000:800;p.weapon=p.attacking?'glock':'usp_s';p.armor=0;p.kit=false;p.flash=0;p.smoke=0;p.incendiary=0;p.he=0;}
+      if(p.hp<=0){p.weapon=p.attacking?'glock':'usp_s';p.armor=0;p.kit=false;p.flash=0;p.smoke=0;p.incendiary=0;p.he=0;}
       if(p.attacking) {
         const spawn=LIVE_FPS_MAP.spawns.attackers;
         p.x=spawn.x+(p.slot-2)*2.2;
@@ -258,21 +273,24 @@ export class FpsLiveSimulation {
       p.freezeDelay=p.slot*0.08;
       p.isBoosted=false;
       p.boostSpot=undefined;
-      p.approachUntil=0;p.radioAt=-100;p.acknowledgedOrder=undefined;p.strafeSettleUntil=0;p.knownSmokes=[];p.flashWindow=undefined;p.lookAwayStarts=undefined;
+      p.approachUntil=0;p.radioAt=-100;p.acknowledgedOrder=undefined;p.strafeSettleUntil=0;p.knownSmokes=[];p.flashWindow=undefined;p.lookAwayStarts=undefined;p.smokeLineupGoal=undefined;
       p.routeEvidence=undefined;p.routeUpdatedAt=undefined;p.objectiveUrgent=false;
       if(reset)p.patterns=[];
       p.fakeDefuseDone=false;
+      p.halfDefuseDone=false;
       p.fakeDefuseHoldUntil=undefined;
+      p.fakePlantDone=false;
+      p.fakePlantHoldUntil=undefined;
       p.triggerDisciplineUntil=undefined;
       if(!this.identity.players[p.id].assignedRole){if(!p.attacking&&p.role==='entry')p.role='anchor';else if(p.attacking&&p.role==='anchor')p.role='entry';}
-      p.hp=100;p.reload=0;p.blinded=0;p.channel=0;p.bomb=false;p.path=[];p.goal=undefined;p.contact=undefined;
+      p.hp=100;p.reload=0;p.reloadDuration=0;p.reloadSilent=false;p.reloadRounds=0;p.blinded=0;p.channel=0;p.bomb=false;p.path=[];p.goal=undefined;p.contact=undefined;
       p.target=undefined;p.flashedBy=undefined;p.nextThink=this.time;p.nextShot=this.time;p.contactAt=-100;p.lastMoved=-100;p.lastShot=-100;
       p.nextSense=this.time;p.seenAt=-100;p.burst=0;p.pressure=0;p.retreatUntil=0;p.reportAt=-100;p.stuckFor=0;
       p.watchPoint=undefined;p.aimFocus=undefined;p.exertion=p.profile?p.mentalState.exertion:0;p.intent='Prepare the round';
       p.engagementShots=0;p.engagementDamaged=false;p.openingAttempted=false;
       p.vx=0;p.vz=0;p.speed=0;p.stance='hold';p.crouch=false;p.crouchUntil=0;p.peek=undefined;p.nextPeek=this.time+17;p.nextFootstep=0;p.nextAudioFootstep=0;
-      p.jump=false;p.jumpY=0;p.jumpVy=0;p.nextJump=this.time+16+this.executionRandom()*3;p.strafeDirection=1;p.strafeUntil=0;
-      p.cleared.clear();p.clearUntil=0;p.clearPoint=undefined;p.lookAwayUntil=0;p.lookAwayPoint=undefined;p.probeGoal=undefined;p.probeVisited.clear();p.holdingSince=undefined;
+      p.jump=false;p.jumpY=0;p.jumpVy=0;p.nextJump=this.time+16+this.executionRandom()*3;p.jumpQueued=false;p.jumpChain=0;p.strafeDirection=1;p.strafeUntil=0;p.glockBurstRemaining=0;
+      p.cleared.clear();p.clearUntil=0;p.clearPoint=undefined;p.lookAwayUntil=0;p.lookAwayPoint=undefined;p.probeGoal=undefined;p.probeVisited.clear();p.holdingSince=undefined;p.utilityPreparation=undefined;p.throwAt=undefined;p.throwKind=undefined;
       p.utilityAt=this.time+15;p.throwAt=undefined;p.throwKind=undefined;p.damageAt=-100;p.action='Buying';p.decision='prepare';
       p.buyAt=this.time+0.8+p.slot*.72+(p.team==='red'?.18:0);
       p.aimPoint=undefined;p.reactionVariation=1;p.swingAt=undefined;p.lastSwing=-100;p.equipUntil=0;p.weaponReady=0;
@@ -314,30 +332,109 @@ export class FpsLiveSimulation {
       :this.actors.some(p=>p.attacking&&p.hp>0&&(p.target!==undefined||distance(p,LIVE_FPS_MAP.sites[this.site])<16))?'entry':'default';
     if(phase!==this.protocol.phase){this.protocol.phase=phase;this.protocol.phaseAt=this.time;}
   }
-  private throwUtility(p:Actor,kind:'flash'|'smoke'|'incendiary',target:FpsPoint):boolean {
-    if(p.hp<=0||p.reload>0||this.time<p.utilityAt||distance(p,target)>40||p[kind]<=0)return false;
-    if(kind==='smoke'&&(p.knownSmokes.some(s=>s.expires>this.time+2&&distance(s,target)<s.radius)||this.grenades.some(g=>g.team===p.team&&g.kind==='smoke'&&distance(predictLiveGrenade(g,this.time),target)<3)))return false;
-    const releaseAt=this.time+.2;
-    const forecast=predictLiveGrenade(launchLiveGrenade(-1,kind,p.id,p.team,p,target,releaseAt),releaseAt);
-    if(kind==='flash'&&this.actors.some(a=>a.team===p.team&&a.hp>0&&a.channel>0&&distance(a,forecast)<LIVE_UTILITY_RULES.flashRadius&&liveGrenadeSightline(forecast,{x:a.x,y:(a.crouch?1.08:1.6)+(a.jumpY??0),z:a.z})))return false;
-    if(p.profile){const desired=target;target=detailedThrowPoint(p.profile,p,target,this.executionRandom);p.motor.throws++;p.motor.throwErrorSum+=distance(desired,target);}
-    p[kind]--;p.utilityAt=this.time+8;p.throwAt=this.time;p.throwKind=kind;
-    p.equipped=kind;p.weaponReady=0.45;p.equipUntil=this.time+0.45;
-    const handPoint={x:p.x+Math.sin(p.yaw)*.2+Math.cos(p.yaw)*.16,z:p.z+Math.cos(p.yaw)*.2-Math.sin(p.yaw)*.16};
-    const grenade=launchLiveGrenade(++this.sequence,kind,p.id,p.team,handPoint,target,releaseAt);
-    this.grenades.push(grenade);
-    const landing=predictLiveGrenade(grenade,this.time);
-    if(kind==='flash')for(const ally of this.actors.filter(a=>a.team===p.team&&a.hp>0&&distance(a,landing)<22)){
+  private inImmediateFight(p:Actor):boolean {
+    if(this.time-p.damageAt<1.35)return true;
+    const selected=this.actors.find(enemy=>enemy.id===p.target&&enemy.team!==p.team&&enemy.hp>0);
+    if(selected&&distance(p,selected)<22&&(this.visible(p,selected,false)||this.time-p.acquired<1.2))return true;
+    return this.actors.some(enemy=>enemy.team!==p.team&&enemy.hp>0&&distance(p,enemy)<22&&this.visible(p,enemy,false));
+  }
+  private previewUtility(p:Actor,kind:LiveGrenadeKind,target:FpsPoint,style:LiveThrowStyle,equipDelay=.55):LiveGrenade {
+    const releaseAt=this.time+equipDelay+.2;
+    const momentum={x:0,z:0};
+    return predictLiveGrenade(launchLiveGrenade(-1,kind,p.id,p.team,p,target,releaseAt,false,style,1.55+(p.jumpY??0),momentum),releaseAt);
+  }
+  private safeUtilitySetup(p:Actor,kind:LiveGrenadeKind,forecast:LiveGrenade):boolean {
+    const allies=this.actors.filter(a=>a.team===p.team&&a.hp>0);
+    if(kind==='flash'&&allies.some(a=>a.channel>0&&distance(a,forecast)<LIVE_UTILITY_RULES.flashRadius
+      &&liveGrenadeSightline(forecast,{x:a.x,y:(a.crouch?1.08:1.6)+(a.jumpY??0),z:a.z})))return false;
+    const hazardRadius=kind==='he'?LIVE_HE_RULES.damageRadius:kind==='incendiary'?LIVE_UTILITY_RULES.fireRadius:0;
+    if(hazardRadius>0&&allies.some(a=>distance(a,forecast)<hazardRadius))return false;
+    return true;
+  }
+  private prepareFlashTeam(p:Actor,forecast:LiveGrenade):void {
+    for(const ally of this.actors.filter(a=>a.team===p.team&&a.hp>0&&distance(a,forecast)<22)){
       const delay=.12+(1-this.skill(p,'communication',p.skills.teamwork))*.3;
-      ally.lookAwayStarts=Math.max(this.time+delay,grenade.detonateAt-.35);ally.lookAwayUntil=grenade.detonateAt+.05;ally.lookAwayPoint={x:landing.x,z:landing.z};
+      ally.lookAwayStarts=Math.max(this.time+delay,forecast.detonateAt-.35);ally.lookAwayUntil=forecast.detonateAt+.05;ally.lookAwayPoint={x:forecast.x,z:forecast.z};
       if(ally!==p){
         const release=.08+(1-this.skill(ally,'coordination',ally.skills.teamwork))*.35;
-        ally.flashWindow={point:{x:landing.x,z:landing.z},opens:grenade.detonateAt+release,expires:grenade.detonateAt+1.15};
+        ally.flashWindow={point:{x:forecast.x,z:forecast.z},opens:forecast.detonateAt+release,expires:forecast.detonateAt+1.15};
         if(ally.profile)ally.motor.entryReleaseDelay=release;
       }
     }
-    this.radio(p,kind==='flash'?`Flash for ${liveCallout(landing)} - turn, swing on the pop!`:kind==='smoke'?`Smoke for ${liveCallout(landing)} - blocks vision, keep watching the edges.`:`Fire for ${liveCallout(landing)} - deny the crossing!`);
-    this.emit('utility',`${p.name} throws ${kind}`,p.team,p.id);return true;
+  }
+  private throwUtility(p:Actor,kind:LiveGrenadeKind,target:FpsPoint):boolean {
+    if(p.utilityPreparation)return p.utilityPreparation.kind===kind;
+    if(p.hp<=0||p.reload>0||this.time<p.utilityAt||distance(p,target)>40||p[kind]<=0||this.inImmediateFight(p))return false;
+    if(kind==='smoke'&&(p.knownSmokes.some(s=>s.expires>this.time+2&&distance(s,target)<s.radius)||this.grenades.some(g=>g.team===p.team&&g.kind==='smoke'&&distance(predictLiveGrenade(g,this.time),target)<3)))return false;
+    const blockedThrow=!liveSightline(p,target);
+    const throwStyle:LiveThrowStyle=p.jump&&p.crouch?'crouch-jump':p.jump?'jump':p.crouch?'crouch':p.speed>2.5?'running-bounce':p.speed>.65?'walk':distance(p,target)<6?'underhand':distance(p,target)<13?'medium':blockedThrow?'banked':distance(p,target)>24?'overhead':'step';
+    if(p.profile){const desired=target;target=detailedThrowPoint(p.profile,p,target,this.executionRandom);p.motor.throws++;p.motor.throwErrorSum+=distance(desired,target);}
+    const forecast=this.previewUtility(p,kind,target,throwStyle);
+    if(!this.safeUtilitySetup(p,kind,forecast))return false;
+    p.utilityPreparation={kind,target:{...target},startedAt:this.time,readyAt:this.time+.55,throwStyle};
+    p.throwKind=kind;p.equipped=kind;p.weaponReady=.55;p.equipUntil=this.time+1.2;p.action=`Setting up ${kind}`;p.intent='Equip utility, check teammates, then release';
+    if(kind==='flash')this.prepareFlashTeam(p,forecast);
+    this.radio(p,kind==='flash'?`Flash setup - turn away, swing on the pop!`:`Preparing ${kind} for ${liveCallout(forecast)} - hold the lane.`);
+    this.emit('utility',`${p.name} equips ${kind}`,p.team,p.id);
+    return true;
+  }
+  private cancelUtilityPreparation(p:Actor):void {
+    p.utilityPreparation=undefined;p.throwKind=undefined;p.throwAt=undefined;p.equipUntil=this.time;
+    this.equip(p,p.weapon);p.weaponReady=0;p.action='Cancelling utility setup';
+  }
+  private releaseUtilityPreparation(p:Actor):void {
+    const preparation=p.utilityPreparation;if(!preparation)return;
+    if(p.hp<=0||p[preparation.kind]<=0||this.inImmediateFight(p)){this.cancelUtilityPreparation(p);return;}
+    const forecast=this.previewUtility(p,preparation.kind,preparation.target,preparation.throwStyle,0);
+    if(!this.safeUtilitySetup(p,preparation.kind,forecast)){this.cancelUtilityPreparation(p);return;}
+    const target=preparation.target,kind=preparation.kind,releaseAt=this.time+.2;
+    p.utilityPreparation=undefined;p[kind]--;p.utilityAt=this.time+8;p.throwAt=this.time;p.throwKind=kind;
+    p.equipped=kind;p.weaponReady=.65;p.equipUntil=this.time+.65;
+    const handPoint={x:p.x+Math.sin(p.yaw)*.2+Math.cos(p.yaw)*.16,z:p.z+Math.cos(p.yaw)*.2-Math.sin(p.yaw)*.16};
+    const grenade=launchLiveGrenade(++this.sequence,kind,p.id,p.team,handPoint,target,releaseAt,false,preparation.throwStyle,1.55+(p.jumpY??0),{x:0,z:0});
+    this.grenades.push(grenade);
+    const landing=predictLiveGrenade(grenade,this.time);
+    if(kind==='flash')this.prepareFlashTeam(p,landing);
+    this.radio(p,kind==='flash'?`Flash for ${liveCallout(landing)} - turn, swing on the pop!`:kind==='smoke'?`Smoke for ${liveCallout(landing)} - blocks vision, keep watching the edges.`:kind==='he'?`HE for ${liveCallout(landing)} - clear the position, watch the blast!`:`Fire for ${liveCallout(landing)} - deny the crossing!`);
+    this.emit('utility',`${p.name} throws ${kind}`,p.team,p.id);
+  }
+  private disturbSmoke(smoke:LiveSmoke,strength:number,until:number) {
+    smoke.disturbance=Math.max(smoke.disturbance??0,strength);
+    smoke.disturbedUntil=Math.max(smoke.disturbedUntil??0,until);
+  }
+  private disturbSmokesAlongShot(from:FpsPoint,to:FpsPoint) {
+    const dx=to.x-from.x,dz=to.z-from.z,length2=dx*dx+dz*dz||1;
+    for(const smoke of this.smokes){
+      const t=clamp(((smoke.x-from.x)*dx+(smoke.z-from.z)*dz)/length2,0,1);
+      const closest={x:from.x+dx*t,z:from.z+dz*t};
+      if(distance(smoke,closest)<=smoke.radius+.35)this.disturbSmoke(smoke,LIVE_HE_RULES.shotSmokeDisturbance,this.time+.72);
+    }
+  }
+  private extinguishFire(point:FpsPoint) {
+    const count=this.fires.filter(fire=>distance(point,fire)<=LIVE_HE_RULES.smokeClearanceRadius).length;
+    if(!count)return;
+    this.fires=this.fires.filter(fire=>distance(point,fire)>LIVE_HE_RULES.smokeClearanceRadius);
+    this.emit('utility',`Smoke extinguishes ${count===1?'incendiary fire':`${count} incendiary zones`}`);
+  }
+  private beginReload(p:Actor) {
+    const weapon=LIVE_WEAPONS[p.weapon];
+    if(p.reload>0||p.reserve<=0||p.ammo>=weapon.magazine)return;
+    const nearbyEnemy=this.actors.some(a=>a.team!==p.team&&a.hp>0&&distance(a,p)<20);
+    const visiblePressure=this.actors.some(a=>a.team!==p.team&&a.hp>0&&distance(a,p)<20&&this.visible(p,a,false));
+    const livingAllies=this.actors.filter(a=>a.team===p.team&&a.hp>0).length;
+    const livingEnemies=this.actors.filter(a=>a.team!==p.team&&a.hp>0).length;
+    const clutch=livingAllies<=1&&livingEnemies<=2;
+    const silent=!visiblePressure&&(clutch||nearbyEnemy||p.role==='lurker');
+    p.reloadRounds=Math.min(weapon.magazine,p.reserve);
+    p.reserve-=p.reloadRounds;
+    p.ammo=0;
+    p.reloadSilent=silent;
+    p.reloadDuration=weapon.reload*(silent?1.55:1);
+    p.reload=p.reloadDuration;
+    if(!silent){
+      this.audioCues.push({kind:'reload',x:p.x,z:p.z});
+      this.hear(p,17,'reload');
+    }
   }
   private stepGrenades(dt:number) {
     for(const grenade of this.grenades) {
@@ -349,9 +446,13 @@ export class FpsLiveSimulation {
       if(this.time<grenade.detonateAt)continue;
       // Sample the detonation cue before its new smoke/flash blocks the observer's perception.
       const cueObservers=this.actors.filter(a=>a.team!==grenade.team&&a.hp>0&&distance(a,grenade)<24&&this.observablePoint(a,grenade));
-      if(grenade.kind==='smoke')this.smokes.push({id:grenade.id,x:grenade.x,z:grenade.z,y:grenade.y+1.35,startedAt:this.time,radius:.35,expires:this.time+LIVE_UTILITY_RULES.smokeDuration});
-      else if(grenade.kind==='incendiary')this.fires.push({id:grenade.id,ownerId:grenade.actorId,team:grenade.team,x:grenade.x,z:grenade.z,startedAt:this.time,nextDamageAt:this.time+.25,radius:.55,expires:this.time+LIVE_UTILITY_RULES.fireDuration});
-      else {
+      if(grenade.kind==='smoke'){
+        this.smokes.push({id:grenade.id,x:grenade.x,z:grenade.z,y:grenade.y+1.35,startedAt:this.time,radius:.35,expires:this.time+LIVE_UTILITY_RULES.smokeDuration});
+        this.extinguishFire(grenade);
+      } else if(grenade.kind==='incendiary'){
+        const coveredBySmoke=this.smokes.some(smoke=>distance(smoke,grenade)<LIVE_HE_RULES.smokeClearanceRadius);
+        if(!coveredBySmoke)this.fires.push({id:grenade.id,ownerId:grenade.actorId,team:grenade.team,x:grenade.x,z:grenade.z,startedAt:this.time,nextDamageAt:this.time+.25,radius:.55,expires:this.time+LIVE_UTILITY_RULES.fireDuration});
+      } else if(grenade.kind==='flash') {
         for(const actor of this.actors.filter(a=>a.hp>0)) {
           const eyeY=(actor.crouch?1.08:1.6)+(actor.jumpY??0);
           const range=Math.hypot(distance(actor,grenade),grenade.y-eyeY);
@@ -360,8 +461,23 @@ export class FpsLiveSimulation {
           const duration=(facing>0?LIVE_UTILITY_RULES.flashFacingDuration:LIVE_UTILITY_RULES.flashTurnedDuration)*Math.max(.25,1-range/16);
           if(duration>=actor.blinded){actor.blinded=duration;actor.flashedBy=grenade.actorId;}
         }
+      } else {
+        this.blasts.push({id:grenade.id,x:grenade.x,z:grenade.z,startedAt:this.time,endsAt:this.time+.48,radius:LIVE_HE_RULES.damageRadius});
+        for(const smoke of this.smokes)if(distance(smoke,grenade)<smoke.radius+LIVE_HE_RULES.smokeClearanceRadius)
+          this.disturbSmoke(smoke,LIVE_HE_RULES.smokeDisturbance,this.time+LIVE_HE_RULES.smokeDisturbance);
+        const owner=this.actors.find(actor=>actor.id===grenade.actorId);
+        if(owner)for(const actor of this.actors.filter(a=>a.hp>0)){
+          const eyeY=(actor.crouch?1.08:1.6)+(actor.jumpY??0);
+          const range=Math.hypot(distance(actor,grenade),grenade.y-eyeY);
+          if(range>=LIVE_HE_RULES.damageRadius)continue;
+          let damage=LIVE_HE_RULES.maxDamage*Math.pow(1-range/LIVE_HE_RULES.damageRadius,.55);
+          if(!liveGrenadeSightline(grenade,{x:actor.x,y:eyeY,z:actor.z}))damage*=LIVE_HE_RULES.wallDamageScale;
+          if(actor.armor>0)damage*=.78;
+          const friendlyScale=actor.team===grenade.team?(actor.id===owner.id?LIVE_FRIENDLY_FIRE_RULES.selfUtilityDamageScale:LIVE_FRIENDLY_FIRE_RULES.teammateUtilityDamageScale):1;
+          this.damage(owner,actor,damage,false,'he',false,undefined,friendlyScale);
+        }
       }
-      this.emit('utility',`${grenade.kind==='flash'?'Flash detonates':grenade.kind==='smoke'?'Smoke blooms':'Incendiary spreads'} · ${liveCallout(grenade)}`,grenade.team,grenade.actorId);
+      this.emit('utility',`${grenade.kind==='flash'?'Flash detonates':grenade.kind==='smoke'?'Smoke blooms':grenade.kind==='he'?'HE explodes':'Incendiary spreads'} · ${liveCallout(grenade)}`,grenade.team,grenade.actorId);
       // A visible/audible hostile utility cue suggests pressure, never an identified enemy count.
       for(const listener of cueObservers){
         this.observeIntel(listener,
@@ -370,6 +486,7 @@ export class FpsLiveSimulation {
       }
     }
     this.grenades=this.grenades.filter(g=>g.detonateAt>this.time);
+    this.blasts=this.blasts.filter(blast=>blast.endsAt>this.time);
   }
 
   step() {
@@ -381,7 +498,9 @@ export class FpsLiveSimulation {
     for(const smoke of this.smokes){
       const spread=Math.min(1,Math.max(0,(this.time-smoke.startedAt)/LIVE_UTILITY_RULES.smokeSpread));
       const fade=Math.min(1,Math.max(0,(smoke.expires-this.time)/1.5));
-      smoke.radius=LIVE_UTILITY_RULES.smokeRadius*spread*Math.min(1,fade+.2);
+      const disturbance=(smoke.disturbedUntil??0)>this.time?(smoke.disturbance??0)*Math.min(1,((smoke.disturbedUntil??this.time)-this.time)/1.1):0;
+      smoke.disturbance=disturbance;
+      smoke.radius=LIVE_UTILITY_RULES.smokeRadius*spread*fade*Math.max(0,1-.72*disturbance);
     }
     this.fires=this.fires.filter(f=>f.expires>this.time);
     for(const fire of this.fires){
@@ -394,7 +513,7 @@ export class FpsLiveSimulation {
         const buy=this.pendingBuys.get(p.id);
         if(!buy||this.time<(p.buyAt??Infinity))continue;
         Object.assign(p,{cash:buy.cash,weapon:buy.weapon,armor:buy.armor,kit:buy.kit,
-          flash:buy.flash,smoke:buy.smoke,incendiary:buy.incendiary});
+          flash:buy.flash,smoke:buy.smoke,incendiary:buy.incendiary,he:buy.he});
         p.ammo=LIVE_WEAPONS[p.weapon].magazine;p.reserve=LIVE_WEAPONS[p.weapon].reserve;
         p.equipped=p.weapon;p.buyAt=undefined;p.action='Checking equipment';this.pendingBuys.delete(p.id);
         this.emit('economy',`${p.name} finished buying ${LIVE_WEAPONS[p.weapon].name}${p.armor?' · armor':''}${p.kit?' · defuse kit':''}`,p.team,p.id,undefined,undefined,p.weapon);
@@ -411,15 +530,19 @@ export class FpsLiveSimulation {
       return;
     }
     this.liveElapsed+=dt;
-    this.updateProtocol();this.stepGrenades(dt);
+    this.noiseMasks=this.noiseMasks.filter(mask=>mask.until>this.time);
+    this.updateProtocol();
+    for(const actor of this.actors)if(actor.utilityPreparation)this.releaseUtilityPreparation(actor);
+    this.stepGrenades(dt);
     for(const fire of this.fires){
       if(this.time<fire.nextDamageAt)continue;
       fire.nextDamageAt=this.time+.25;
       const owner=this.actors.find(p=>p.id===fire.ownerId);
       if(!owner)continue;
       for(const target of this.actors){
-        if(target.hp<=0||target.team===fire.team||distance(target,fire)>fire.radius)continue;
-        this.damage(owner,target,LIVE_UTILITY_RULES.fireDamagePerSecond*.25,false,'incendiary',false);
+        if(target.hp<=0||distance(target,fire)>fire.radius)continue;
+        const friendlyScale=target.team===fire.team?(target.id===owner.id?LIVE_FRIENDLY_FIRE_RULES.selfUtilityDamageScale:LIVE_FRIENDLY_FIRE_RULES.teammateUtilityDamageScale):1;
+        this.damage(owner,target,LIVE_UTILITY_RULES.fireDamagePerSecond*.25,false,'incendiary',false,undefined,friendlyScale);
       }
     }
     for(const report of this.reports.filter(r=>r.at<=this.time)) {
@@ -447,19 +570,27 @@ export class FpsLiveSimulation {
         p.pendingCues=p.pendingCues.filter(c=>c.at>this.time);
       }else p.exertion=clamp(p.exertion+(p.speed>2.5?.025:p.speed>.2?.008:-.06)*dt,0,1);
       if(!p.isBoosted && (p.jump || p.jumpY>0)){
+        const wasAirborne=p.jumpY>0;
         const jumpState=advanceLiveJump({jump:p.jump,jumpY:p.jumpY,jumpVy:p.jumpVy},dt);
         p.jump=jumpState.jump;p.jumpY=jumpState.jumpY;p.jumpVy=jumpState.jumpVy;
+        if(wasAirborne&&!p.jump&&p.jumpChain>0&&p.jumpChain<3)p.jumpQueued=true;
+        if(wasAirborne&&!p.jump&&p.jumpChain>=3){p.jumpChain=0;p.jumpQueued=false;}
         if(p.jump)p.stance='jump';
+        if(p.jump&&p.jumpVy<0&&p.jumpY<.55&&(p.peek?.style==='crouch-swing'||p.jumpQueued))p.crouch=true;
       }
       if(this.time-p.lastShot>.55)p.burst=0;
       p.blinded=Math.max(0,p.blinded-dt);
       p.weaponReady=Math.max(0,p.weaponReady-dt);
       if(p.swingAt!==undefined&&this.time>=p.swingAt){p.swingAt=undefined;if(p.equipped==='knife'&&p.blinded<.2)this.strikeKnife(p);}
-      if(p.reload>0){p.reload=Math.max(0,p.reload-dt);if(p.reload===0){const take=Math.min(LIVE_WEAPONS[p.weapon].magazine-p.ammo,p.reserve);p.ammo+=take;p.reserve-=take;}}
+      if(p.reload>0){p.reload=Math.max(0,p.reload-dt);if(p.reload===0){p.ammo=p.reloadRounds;p.reloadRounds=0;p.reloadSilent=false;}}
       if(p.throwAt!==undefined&&this.time-p.throwAt>.65){p.throwAt=undefined;p.throwKind=undefined;}
-      if((p.equipped==='flash'||p.equipped==='smoke'||p.equipped==='incendiary')&&this.time>=p.equipUntil){this.equip(p,p.weapon);}
+      if((p.equipped==='flash'||p.equipped==='smoke'||p.equipped==='incendiary'||p.equipped==='he')&&this.time>=p.equipUntil){this.equip(p,p.weapon);}
       if(this.time>=p.nextSense){this.perceive(p);p.nextSense=this.time+(p.profile?detailedSenseInterval(p.profile,p.mentalState):.12+(1-p.skills.gameSense)*.18);}
       if(this.time>=p.nextThink){this.decide(p);p.nextThink=this.time+(p.profile?.55+(1-this.skill(p,'decisionMaking',p.skills.gameSense))*.55:liveDecisionInterval(p.skills));}
+      if(p.utilityPreparation){
+        p.channel=0;this.applyMotion(p,{x:0,z:0},dt,'brake');p.action=`Equipping ${p.utilityPreparation.kind}`;
+        continue;
+      }
       const target=this.actors.find(t=>t.id===p.target&&t.hp>0);
       this.chooseEquipment(p,target);
       const urgentChannel=!p.attacking&&p.channel>0&&this.time-p.damageAt>.4&&this.bomb.remaining<(p.kit?7:12);
@@ -470,7 +601,7 @@ export class FpsLiveSimulation {
         this.learner?.close(p,this.time);
         if(p.profile&&this.time-p.acquired<p.reaction){this.applyMotion(p,{x:p.vx,z:p.vz},dt,p.stance);p.action='Responding to contact';continue;}
         if(p.profile&&p.motor.responseAt<p.acquired)p.motor.responseAt=this.time;
-        p.channel=0;p.action=p.reload>0?'Reloading':'Engaging';
+      p.channel=0;p.action=p.reload>0?(p.reloadSilent?'Silent reloading':'Reloading'):'Engaging';
         if(p.equipped==='knife') {
           const d=distance(p,target),aim=p.profile?(p.trackingPoint??p.aimPoint??p.contact??p):(p.aimPoint??p.contact??p);
           this.turn(p,heading(p,aim));
@@ -483,7 +614,7 @@ export class FpsLiveSimulation {
           }
           continue;
         }
-        if(p.ammo===0 && p.reserve>0 && !p.reload){p.reload=LIVE_WEAPONS[p.weapon].reload;p.nextThink=this.time;}
+        if(p.ammo===0 && p.reserve>0 && !p.reload){this.beginReload(p);p.nextThink=this.time;}
         if(p.crouch&&this.time>p.crouchUntil&&p.burst===0)p.crouch=false;
         if(p.burst>=2 && LIVE_WEAPONS[p.weapon].category!=='pistol') {
           p.crouch=true;
@@ -496,7 +627,7 @@ export class FpsLiveSimulation {
           const side=p.slot%2===0?1:-1,dx=target.x-p.x,dz=target.z-p.z,d=Math.hypot(dx,dz)||1;
           this.applyMotion(p,{x:dz/d*side*2,z:-dx/d*side*2},dt,'peek');
           p.action='Clearing the firing lane';
-        } else if(p.retreatUntil>this.time || p.reload>0){this.move(p,dt,true);p.action=p.reload>0?'Reloading in cover':'Disengaging';}
+        } else if(p.retreatUntil>this.time || p.reload>0){this.move(p,dt,true);p.action=p.reload>0?(p.reloadSilent?'Silent reloading in cover':'Reloading in cover'):'Disengaging';}
         else {
           const dx=target.x-p.x,dz=target.z-p.z,d=Math.hypot(dx,dz)||1;
           const strafe=liveCombatStrafe(this.time,p.strafeUntil,p.strafeSettleUntil??0,!p.crouch&&!p.jump&&p.decision==='pressure'&&d<22);
@@ -511,8 +642,13 @@ export class FpsLiveSimulation {
             else if(p.crouch)p.action=p.burst>=2?'Crouch-spraying':'Crouching';
           }
         }
-        const aim=p.profile?(p.trackingPoint??p.aimPoint??p.contact??p):(p.aimPoint??p.contact??p);
+        const intendedAim=p.profile?(p.trackingPoint??p.aimPoint??p.contact??p):(p.aimPoint??p.contact??p);
+        const aim=distance(p,intendedAim)>.01?intendedAim:target;
         const turningFromFlash=p.lookAwayUntil>this.time&&this.time>=(p.lookAwayStarts??0);
+        if(!turningFromFlash){
+          const eyeY=(p.crouch?1.08:1.6)+(p.jumpY??0);
+          p.pitch=Math.atan2(liveActorHeadY(target)-eyeY,distance(p,aim));
+        }
         this.turn(p,turningFromFlash?heading(p,p.lookAwayPoint??p)+Math.PI:heading(p,aim));
         if(turningFromFlash)p.action='Turning from friendly flash';
         if(p.weaponReady>0)p.action='Drawing weapon';
@@ -532,13 +668,27 @@ export class FpsLiveSimulation {
       p.channel=0;
       const contactFresh=this.time-p.contactAt<3+this.skill(p,'informationReading',p.skills.gameSense)*3;
       const covered=p.contact&&!liveSightline(p,p.contact);
-      if(p.ammo<LIVE_WEAPONS[p.weapon].magazine/3 && p.reserve>0 && !p.reload && (p.ammo===0||!contactFresh||covered))p.reload=LIVE_WEAPONS[p.weapon].reload;
+      if(p.ammo<LIVE_WEAPONS[p.weapon].magazine/3 && p.reserve>0 && !p.reload && (p.ammo===0||!contactFresh||covered))this.beginReload(p);
       if(p.speed>1.3 || p.action==='Taking space' || p.action==='Rotating' || p.action==='Disengaging' || p.equipped==='knife') {
         p.crouch=false;
       } else if(this.time>p.crouchUntil && p.burst===0 && p.speed>0.35) {
         p.crouch=false;
       }
       this.move(p,dt);
+      const contactBelief=strongestLiveIntel(p.intel,p,this.time);
+      const knownContact=!!p.contact&&!!contactBelief&&contactBelief.age<2.25
+        &&(contactBelief.source==='sight'||contactBelief.source==='damage');
+      const smokeSpam=knownContact&&p.knownSmokes.some(s=>s.expires>this.time
+        &&liveSmokeOccludes(p,p.contact!,p.crouch?1.08:1.6,1.25,s,this.time));
+      const peekPrefire=knownContact&&p.peek&&!p.peek.back&&p.peek.prefired<3;
+      if((smokeSpam||peekPrefire)&&p.contact&&p.ammo>0&&!p.reload&&!p.channel&&p.blinded<.2
+        &&p.speed<=liveShotSpeedLimit(p.weapon,p.profile?.5:p.skills.mechanics)
+        &&Math.abs(angle(heading(p,p.contact)-p.yaw))<.1&&this.time>=p.nextShot){
+        const ghost={id:`known:${p.id}`,team:other(p.team),x:p.contact.x,z:p.contact.z,yaw:0,hp:100,blinded:0,lastShot:-100,channel:0,flashedBy:undefined,crouch:false,jumpY:0,speed:0} as Actor;
+        if(peekPrefire)p.peek!.prefired++;
+        p.action=smokeSpam?'Controlled smoke spam':peekPrefire&&p.peek!.prefired>1?'Pre-fire spray':'Pre-firing the reported angle';
+        this.fire(p,ghost);
+      }
       if(p.bomb){this.bomb.x=p.x;this.bomb.z=p.z;}
       if(this.droppedWeapons.length>0) {
         const tiers:Record<LiveWeapon,number>={
@@ -555,7 +705,7 @@ export class FpsLiveSimulation {
           p.weapon=picked.weapon;
           p.ammo=picked.ammo;
           p.reserve=picked.reserve;
-          p.reload=0;
+          p.reload=0;p.reloadDuration=0;p.reloadSilent=false;p.reloadRounds=0;
           this.equip(p,p.weapon);
           if(oldWeapon!=='pistol' && oldWeapon!=='usp_s' && oldWeapon!=='glock') {
             this.droppedWeapons.push({id:++this.sequence,weapon:oldWeapon,ammo:oldAmmo,reserve:oldReserve,x:p.x,z:p.z});
@@ -585,7 +735,7 @@ export class FpsLiveSimulation {
       player.damageAt=this.time;player.channel=0;
       if(player.hp===0){
         player.deaths++;
-        player.impact.unusedUtilityOnDeath+=player.flash+player.smoke+player.incendiary;
+        player.impact.unusedUtilityOnDeath+=player.flash+player.smoke+player.incendiary+player.he;
         player.bomb=false;
         this.emit('kill',`C4 blast eliminates ${player.name}`,this.attackTeam,undefined,player.id,false,'bomb');
         if(player.weapon!=='pistol'&&player.weapon!=='usp_s'&&player.weapon!=='glock')this.droppedWeapons.push({id:++this.sequence,weapon:player.weapon,ammo:player.ammo,reserve:player.reserve,x:player.x,z:player.z});
@@ -627,17 +777,17 @@ export class FpsLiveSimulation {
     if(pickupIndex<0)return;
     const pickup=this.droppedWeapons.splice(pickupIndex,1)[0];
     const old={weapon:player.weapon,ammo:player.ammo,reserve:player.reserve};
-    player.weapon=pickup.weapon;player.ammo=pickup.ammo;player.reserve=pickup.reserve;player.reload=0;this.equip(player,player.weapon);
+    player.weapon=pickup.weapon;player.ammo=pickup.ammo;player.reserve=pickup.reserve;player.reload=0;player.reloadDuration=0;player.reloadSilent=false;player.reloadRounds=0;this.equip(player,player.weapon);
     if(old.weapon!=='pistol'&&old.weapon!=='usp_s'&&old.weapon!=='glock')this.droppedWeapons.push({...old,id:++this.sequence,x:player.x,z:player.z});
     this.emit('economy',`${player.name} recovered ${LIVE_WEAPONS[player.weapon].name} after the round`,player.team,player.id,undefined,undefined,player.weapon);
   }
 
   private visible(p:Actor,target:Actor,fov=true) {
     if(p.blinded>.2 || distance(p,target)>55)return false;
-    const eyeY=(p.crouch?1.08:1.6)+(p.jumpY??0),targetY=(target.crouch?1.08:1.6)+(target.jumpY??0);
+    const eyeY=(p.crouch?1.08:1.6)+(p.jumpY??0),targetY=liveActorHeadY(target);
     if(!liveSightline(p,target,eyeY,targetY))return false;
     if(fov && Math.abs(angle(heading(p,target)-p.yaw))>0.82)return false;
-    return !this.smokes.some(s=>liveSmokeOccludes(p,target,eyeY,targetY,s));
+    return !this.smokes.some(s=>liveSmokeOccludes(p,target,eyeY,targetY,s,this.time));
   }
   private segmentNear(a:FpsPoint,b:FpsPoint,p:FpsPoint) {
     const dx=b.x-a.x,dz=b.z-a.z,t=clamp(((p.x-a.x)*dx+(p.z-a.z)*dz)/(dx*dx+dz*dz||1),0,1);
@@ -680,7 +830,7 @@ export class FpsLiveSimulation {
   private observablePoint(p:Actor,point:FpsPoint):boolean {
     const eyeY=(p.crouch?1.08:1.6)+(p.jumpY??0);
     return p.blinded<.2&&distance(p,point)<55&&Math.abs(angle(heading(p,point)-p.yaw))<0.82&&liveSightline(p,point,eyeY,1.6)
-      &&!this.smokes.some(s=>liveSmokeOccludes(p,point,eyeY,1.6,s));
+      &&!this.smokes.some(s=>liveSmokeOccludes(p,point,eyeY,1.6,s,this.time));
   }
   private callFromInformation(p:Actor,allies:Actor[]) {
     const assessment=p.profile?interpretFpsInformation(p.profile,p.intel,this.time):assessLiveIntel(p.intel,this.time),order=this.informationOrders[p.team];
@@ -765,6 +915,27 @@ export class FpsLiveSimulation {
     if(p.profile&&changed){p.motor.commands++;p.motor.commandDelay=(this.informationOrders[p.team].readyAt??this.time)-this.time;}
     if(changed){for(const ally of allies)ally.nextThink=this.time;if(mode!=='hold')this.radio(p,`IGL: ${reason}`,true);}
   }
+  private usePostPlantUtility(p:Actor,allies:Actor[]):string|undefined {
+    if(this.time<p.utilityAt||p.reload>0||p.blinded>.2||p.channel>0||this.bomb.status!=='planted')return;
+    const known=strongestLiveIntel(p.intel,p,this.time);
+    const nearBomb=known&&known.age<1.8&&known.certainty>=.48&&distance(known,this.bomb)<12;
+    const covered=this.smokes.some(smoke=>distance(smoke,this.bomb)<smoke.radius+1);
+    const fireAtBomb=this.fires.some(fire=>distance(fire,this.bomb)<fire.radius+1);
+    if(!p.attacking&&p.incendiary&&nearBomb&&known.source==='sight'&&!fireAtBomb){
+      if(this.throwUtility(p,'incendiary',{x:this.bomb.x,z:this.bomb.z}))return 'Deny the reported bomb defuse with fire';
+    }
+    if(p.attacking&&p.smoke&&this.bomb.remaining>12&&nearBomb&&known.source==='sight'&&!covered){
+      if(this.throwUtility(p,'smoke',{x:this.bomb.x,z:this.bomb.z}))return 'Smoke the device to protect the post-plant';
+    }
+    if(p.he&&nearBomb&&known.source==='sight'){
+      if(this.throwUtility(p,'he',{x:known.x,z:known.z}))return 'HE the reported post-plant contest';
+    }
+    if(p.flash&&nearBomb&&known.source==='sight'&&distance(p,this.bomb)<18){
+      const target={x:this.bomb.x,z:this.bomb.z};
+      if(this.throwUtility(p,'flash',target))return 'Flash the reported post-plant contest';
+    }
+    return;
+  }
   private useInformationUtility(p:Actor,allies:Actor[]):string|undefined {
     if(this.time<p.utilityAt||p.reload>0||p.blinded>.2||this.bomb.status==='planted')return;
     const tendency=knownFpsTendency(p.patterns,this.round);
@@ -775,10 +946,39 @@ export class FpsLiveSimulation {
         return 'Anticipate previously observed early pressure with delay smoke';
       }
     }
+    if(p.attacking&&p.smoke&&p.channel===0&&this.remaining>20&&distance(p,LIVE_FPS_MAP.sites[this.site])<28) {
+      const lineups=LIVE_SMOKE_LINEUPS.filter(lineup=>lineup.site===this.site
+        &&!this.smokes.some(s=>s.expires>this.time+2&&distance(s,lineup.target)<s.radius)
+        &&!this.grenades.some(g=>g.team===p.team&&g.kind==='smoke'&&distance(predictLiveGrenade(g,this.time),lineup.target)<3));
+      const throwers=allies.filter(a=>a.attacking&&a.hp>0&&a.smoke>0&&a.channel===0)
+        .sort((a,b)=>Number(b.role==='support')-Number(a.role==='support')||Number(b.role==='caller')-Number(a.role==='caller')||a.slot-b.slot);
+      const lineup=lineups[throwers.indexOf(p)];
+      if(lineup) {
+        p.smokeLineupGoal=lineup.position;
+        const atLineup=distance(p,lineup.position)<1.05;
+        const lineupYaw=heading(p,lineup.target);
+        if(atLineup){
+          this.turn(p,lineupYaw);
+          p.aimFocus={point:lineup.target,source:'hold',until:this.time+.5,from:{x:p.x,z:p.z}};
+        }
+        if(atLineup&&p.speed<.5&&Math.abs(angle(lineupYaw-p.yaw))<.08&&this.throwUtility(p,'smoke',lineup.target)) {
+          p.smokeLineupGoal=undefined;
+          p.radioMessage=`${lineup.name} smoke lineup sent`;
+          this.emit('objective',`${p.name}: "${lineup.name} smoke lineup sent!"`,p.team,p.id);
+          return `Run the ${lineup.name} smoke lineup`;
+        }
+      } else p.smokeLineupGoal=undefined;
+    } else p.smokeLineupGoal=undefined;
     const known=strongestLiveIntel(p.intel,p,this.time);if(!known||known.age>3||known.certainty<.48)return;
     const area=liveIntelArea(known);if(area==='Mid')return;
     const evidence=assessLiveIntel(p.intel,this.time)[area];
     const gate=LIVE_TACTICAL[area].entries[p.slot%2];
+
+    // HE grenades punish recent, bounded contact evidence and can briefly open a smoke lane.
+    if(p.he&&known.age<1.8&&known.certainty>=.5&&distance(p,known)<24
+      &&(known.source==='sight'||known.source==='damage'||evidence.identified>0||evidence.corroborated)){
+      if(this.throwUtility(p,'he',{x:known.x,z:known.z}))return evidence.identified>=2||evidence.corroborated?'Stack HE on corroborated contact evidence':`HE the recent ${area} contact`;
+    }
 
     // Incendiary fire expands into a broad, damaging denial zone over its first seconds.
     if(p.incendiary&&known.age<2.2&&known.certainty>=.55&&distance(p,known)<22
@@ -802,18 +1002,6 @@ export class FpsLiveSimulation {
             return `Delay reported ${choke.area} pressure while support arrives`;
           }
         }
-      }
-    }
-
-    // 3. Attackers tactical execution smokes on defender rotation routes
-    if(p.attacking && p.smoke && distance(p,LIVE_FPS_MAP.sites[this.site])<24) {
-      const siteRotations=this.site==='B'
-        ?[{name:'Speedway',point:{x:18,z:25}},{name:'Church',point:{x:27,z:24}}]
-        :[{name:'Arch',point:{x:-16,z:24}},{name:'Library',point:{x:-11,z:30}}];
-      const unsmoked=siteRotations.find(r=>!this.smokes.some(s=>distance(r.point,s)<s.radius)&&distance(p,r.point)<25);
-      if(unsmoked && this.throwUtility(p,'smoke',unsmoked.point)) {
-        this.emit('objective',`${p.name}: "Smoking ${unsmoked.name} for ${this.site} execute!"`,p.team,p.id);
-        return `Smoke off defender ${unsmoked.name} crossfire`;
       }
     }
 
@@ -841,11 +1029,15 @@ export class FpsLiveSimulation {
     }
   }
   private perceive(p:Actor) {
-    p.knownSmokes=p.knownSmokes.filter(s=>s.expires>this.time&&(this.smokes.some(actual=>actual.id===s.id)||!this.observablePoint(p,s)));
+    p.knownSmokes=p.knownSmokes.flatMap(known=>{
+      const actual=this.smokes.find(smoke=>smoke.id===known.id);
+      return actual?[{...actual}]:known.expires>this.time&&!this.observablePoint(p,known)?[known]:[];
+    });
     for(const smoke of this.smokes){
       const d=distance(p,smoke),edge={x:smoke.x+(p.x-smoke.x)/(d||1)*Math.min(smoke.radius,d),z:smoke.z+(p.z-smoke.z)/(d||1)*Math.min(smoke.radius,d)};
       if(p.blinded<.2&&d<30&&(d<smoke.radius||Math.abs(angle(heading(p,edge)-p.yaw))<.82)&&liveSightline(p,edge)) {
-        if(!p.knownSmokes.some(s=>s.id===smoke.id))p.knownSmokes.push({...smoke,expires:this.time+LIVE_UTILITY_RULES.smokeDuration});
+        const existing=p.knownSmokes.find(s=>s.id===smoke.id);
+        if(existing)Object.assign(existing,smoke);else p.knownSmokes.push({...smoke});
       }
     }
     const visible=this.actors.filter(t=>t.team!==p.team&&t.hp>0&&this.visible(p,t));
@@ -856,7 +1048,7 @@ export class FpsLiveSimulation {
     clearLiveIntel(p.intel,this.time,point=>this.observablePoint(p,point),visible);
     this.refreshIntel(p);
     const target=visible[0];
-    if(target?.id!==p.target){p.target=target?.id;p.acquired=this.time;p.strafeUntil=0;p.strafeSettleUntil=this.time+.3;p.triggerDisciplineUntil=undefined;p.engagementShots=0;p.engagementDamaged=false;p.aimPoint=undefined;p.previousSight=undefined;p.trackingPoint=undefined;
+    if(target?.id!==p.target){p.target=target?.id;if(!target)p.pitch=0;p.acquired=this.time;p.strafeUntil=0;p.strafeSettleUntil=this.time+.3;p.triggerDisciplineUntil=undefined;p.engagementShots=0;p.engagementDamaged=false;p.aimPoint=undefined;p.previousSight=undefined;p.trackingPoint=undefined;
       p.reactionVariation=p.profile?1:.85+this.random()*.35;p.reaction=this.reactionDelay(p)*p.reactionVariation;
       if(p.profile&&target){p.motor.noticedAt=this.time;p.motor.cueAt=p.visualCueAt??this.time;p.motor.responseAt=-1;p.motor.reactionDelay=p.reaction;}}
     if(target){
@@ -910,7 +1102,9 @@ export class FpsLiveSimulation {
     if(p.target && this.time>=p.utilityAt) this.useUtility(p);
     const caller=[...allies].sort((a,b)=>Number(b.role==='caller')-Number(a.role==='caller')||this.skill(b,'calling',b.skills.leadership)-this.skill(a,'calling',a.skills.leadership))[0];
     if(p===caller)this.callFromInformation(p,allies);
-    const utilityIntent=!seen.length?this.useInformationUtility(p,allies):undefined;
+    const utilityIntent=!seen.length
+      ?this.bomb.status==='planted'?this.usePostPlantUtility(p,allies):this.useInformationUtility(p,allies)
+      :undefined;
     let goal:FpsPoint;
     const primary=LIVE_FPS_MAP.sites[this.site];
     const plantPlan=p.bomb&&this.bomb.status==='carried'?planLivePlant(p,livePlantSite(p)??this.site,beliefs,p.goal):undefined;
@@ -1056,6 +1250,9 @@ export class FpsLiveSimulation {
       const cover=findLiveCover(p,p.contact!,allies.filter(a=>a!==p),p.profile?this.skill(p,'positioning',p.skills.gameSense):undefined,beliefs.filter(c=>c.certainty>.35));
       if(cover){goal=cover;p.retreatUntil=this.time+1.4;p.intent=p.ammo===0||p.reload>0?'Break sight before reloading':p.hp<38?'Low HP — fall back behind cover':'Reposition behind cover';if(p.profile){p.motor.coverChoices++;p.motor.coverExposureSum+=beliefs.filter(c=>c.certainty>.35&&liveSightline(c,cover)).length;}}
     } else if(!objectiveUrgent && p.retreatUntil>this.time && p.goal)goal=p.goal;
+    if(!objectiveUrgent&&p.attacking&&!seen.length&&!memoryFresh&&p.smokeLineupGoal){
+      goal=p.smokeLineupGoal;p.intent=`Setting up a smoke at ${liveCallout(p.smokeLineupGoal)}`;
+    }
     p.objectiveUrgent=objectiveUrgent;
     if(objectiveUrgent){p.retreatUntil=0;p.peek=undefined;p.clearUntil=0;}
     if(!objectiveUrgent && p.role==='entry' && p.attacking && !p.target && !p.bomb && this.time>=p.nextPeek) {
@@ -1080,7 +1277,10 @@ export class FpsLiveSimulation {
         const error=p.profile?(this.executionRandom()*2-1)*(.05+(1-this.skill(p,'peeking',1))*.7):0;
         const dx=out.x-p.x,dz=out.z-p.z,d=Math.hypot(dx,dz)||1;
         if(p.profile)p.motor.peekError=Math.abs(error);
-        p.peek={home:{x:p.x,z:p.z},out:p.profile?safeLivePoint({x:out.x+dx/d*error,z:out.z+dz/d*error}):out,back:false,until:this.time+3,pause:0};
+        const style:'shoulder'|'crouch-swing'|'ferrari'|'double-pump'|'bait'|'fake'=p.role==='entry'&&p.speed>2.4?'ferrari'
+          :p.role==='sniper'?'shoulder':p.role==='trade'?'crouch-swing'
+          :this.executionRandom()<.18?'double-pump':this.executionRandom()<.38?'bait':this.executionRandom()<.55?'fake':'shoulder';
+        p.peek={home:{x:p.x,z:p.z},out:p.profile?safeLivePoint({x:out.x+dx/d*error,z:out.z+dz/d*error}):out,back:false,until:this.time+3,pause:0,style,pumps:0,prefired:0};
       }
     }
     // A known map angle is a world position, not an angle measured from a future goal.
@@ -1120,7 +1320,7 @@ export class FpsLiveSimulation {
   private equip(p:Actor,weapon:LiveEquippedWeapon) {
     if(p.equipped===weapon)return;
     p.equipped=weapon;p.weaponReady=liveDrawTime(weapon);p.equipUntil=this.time+1;
-    p.reload=0;p.swingAt=undefined;p.burst=0;
+    p.reload=0;p.reloadDuration=0;p.reloadSilent=false;p.reloadRounds=0;p.swingAt=undefined;p.burst=0;
   }
   private chooseEquipment(p:Actor,target?:Actor) {
     if(p.profile&&target&&this.time-p.acquired<p.reaction)return;
@@ -1253,7 +1453,7 @@ export class FpsLiveSimulation {
         };
       }
     }
-    const velocity=advanceLiveVelocity(p,wish,dt,p.profile?.5:p.skills.mechanics);
+    const velocity=advanceLiveVelocity(p,wish,dt,p.profile?.5:p.skills.mechanics,p.jumpY>0);
     let moved=moveFpsActor(p,{x:velocity.vx*dt,z:velocity.vz*dt},LIVE_ACTOR_RADIUS,LIVE_FPS_MAP.solids);
     if(occupied(moved))moved={x:p.x,z:p.z};
     moved.x=Math.max(-34.0,Math.min(34.0,moved.x));
@@ -1287,22 +1487,38 @@ export class FpsLiveSimulation {
     if(p.peek&&(!keepAim||p.peek.back)) {
       const target=p.peek.back?p.peek.home:p.peek.out,d=distance(p,target);
       if(d<.22){
-        if(p.peek.back){p.peek=undefined;this.applyMotion(p,{x:0,z:0},dt,'hold');return;}
-        if(!p.peek.pause)p.peek.pause=this.time+.16;
+        if(p.peek.back){
+          if(p.peek.pumps===0&&(p.peek.style==='double-pump'||p.peek.style==='fake'||p.peek.style==='bait')){p.peek.pumps=1;p.peek.back=false;p.peek.pause=0;p.peek.prefired=0;}
+          else {p.peek=undefined;p.crouch=false;this.applyMotion(p,{x:0,z:0},dt,'hold');return;}
+        }
+        if(!p.peek.pause)p.peek.pause=this.time+(p.peek.style==='ferrari'?.08:p.peek.style==='bait'?.42:p.peek.style==='double-pump'?.12:.16);
         if(this.time>=p.peek.pause)p.peek.back=true;
+        if(p.peek.style==='crouch-swing')p.crouch=!p.peek.back;
         this.applyMotion(p,{x:0,z:0},dt,'peek');
-      } else this.applyMotion(p,{x:(target.x-p.x)/d*LIVE_WALK_SPEED,z:(target.z-p.z)/d*LIVE_WALK_SPEED},dt,'peek');
-      if(p.contact)this.turn(p,heading(p,p.contact));p.action='Jiggle peeking';return;
+      } else {
+        const speed=p.peek.style==='ferrari'?LIVE_RUN_SPEED:p.peek.style==='crouch-swing'?LIVE_CROUCH_SPEED:LIVE_WALK_SPEED;
+        if(p.peek.style==='crouch-swing')p.crouch=!p.peek.back;
+        this.applyMotion(p,{x:(target.x-p.x)/d*speed,z:(target.z-p.z)/d*speed},dt,p.peek.style==='crouch-swing'?'crouch':p.peek.style==='ferrari'?'run':'peek');
+      }
+      if(p.contact)this.turn(p,heading(p,p.contact));p.action=p.peek?.style==='ferrari'?'Ferrari swing':p.peek?.style==='crouch-swing'?'Crouch-swing':p.peek?.style==='fake'&&p.peek.pumps?'Fake re-peeking':'Jiggle peeking';return;
     }
     if(!p.jump&&!p.isBoosted&&this.time>=p.nextJump&&!keepAim&&!p.bomb&&!p.reload&&p.hp>45&&p.contact&&this.time-p.contactAt<3&&!p.target) {
       const eye=(p.crouch?1.08:1.6),gain=LIVE_JUMP_VELOCITY*LIVE_JUMP_VELOCITY/(2*12.5);
-      if(!liveSightline(p,p.contact,eye,1.6)&&liveSightline(p,p.contact,eye+gain,1.6)&&!p.knownSmokes.some(s=>liveSmokeOccludes(p,p.contact!,eye+gain,1.6,s))){
+      if(!liveSightline(p,p.contact,eye,1.6)&&liveSightline(p,p.contact,eye+gain,1.6)&&!p.knownSmokes.some(s=>liveSmokeOccludes(p,p.contact!,eye+gain,1.6,s,this.time))){
         p.jump=true;p.jumpVy=LIVE_JUMP_VELOCITY;p.nextJump=this.time+5;
         p.action='Jump peeking';this.radio(p,'Jump-checking over cover - hold the trade.');
       }
     }
     while(p.path.length&&distance(p,p.path[0])<.3)p.path.shift();
     const next=p.path[0];
+    const nearRouteEdge=!!next&&p.path.length>1&&distance(p,next)<.8;
+    if(!p.jump&&!p.isBoosted&&this.time>=p.nextJump&&!keepAim&&!p.target&&!p.bomb&&!p.reload&&p.hp>45
+      &&p.path.length>0&&p.speed>2.35&&(p.jumpQueued||nearRouteEdge||this.executionRandom()<.035)){
+      p.jump=true;p.jumpVy=LIVE_JUMP_VELOCITY;p.jumpQueued=false;p.jumpChain++;
+      if(p.jumpChain>3)p.jumpChain=1;
+      p.nextJump=this.time+(p.jumpChain<3?.35:4.5);
+      if(p.speed>3.1)p.action='Momentum jump';
+    }
     if(!next){
       if(!p.attacking && (p.action==='Holding'||p.action==='Crouch-holding') && (distance(p,LIVE_FPS_MAP.sites.A)<14 || distance(p,LIVE_FPS_MAP.sites.B)<14)) {
         p.crouch=true;
@@ -1336,7 +1552,7 @@ export class FpsLiveSimulation {
     const livingEnemies=this.actors.filter(a=>a.team!==p.team&&a.hp>0).length;
     const isClutch=livingAllies<=1&&livingEnemies<=2;
     const flashGo=!!p.flashWindow&&this.time>=p.flashWindow.opens&&this.time<p.flashWindow.expires;
-    const smoke=p.knownSmokes.find(s=>s.expires>this.time+1&&distance(p,s)<s.radius+2&&distance(p,s)>s.radius+.3&&liveSmokeOccludes(p,next,1.6,1.6,s));
+    const smoke=p.knownSmokes.find(s=>s.expires>this.time+1&&distance(p,s)<s.radius+2&&distance(p,s)>s.radius+.3&&liveSmokeOccludes(p,next,1.6,1.6,s,this.time));
     if(smoke&&!urgent&&!flashGo&&!keepAim){
       this.applyMotion(p,{x:0,z:0},dt,'brake');this.preAim(p,true);p.action='Watching smoke edge';p.intent='Smoke conceals the crossing - wait for support or expiry';return;
     }
@@ -1345,11 +1561,22 @@ export class FpsLiveSimulation {
     const speed=p.crouch?LIVE_CROUCH_SPEED:p.reload>0?2.2:quiet?LIVE_WALK_SPEED:p.equipped==='knife'?LIVE_KNIFE.runSpeed:LIVE_RUN_SPEED;
     this.applyMotion(p,{x:(next.x-p.x)/d*Math.min(speed,d/dt),z:(next.z-p.z)/d*Math.min(speed,d/dt)},dt,p.crouch?'crouch':quiet?'walk':'run');
     if(!keepAim)this.preAim(p,false);
-    p.action=p.reload>0?'Reloading':p.weaponReady>0?'Drawing weapon':p.crouch?(quiet?'Crouch-walking':'Crouching'):quiet?'Walking quietly':p.equipped==='knife'?'Running with knife':p.attacking?'Taking space':'Rotating';
+    p.action=p.reload>0?(p.reloadSilent?'Silent reloading':'Reloading'):p.weaponReady>0?'Drawing weapon':p.crouch?(quiet?'Crouch-walking':'Crouching'):quiet?'Walking quietly':p.equipped==='knife'?'Running with knife':p.attacking?'Taking space':'Rotating';
   }
   private objective(p:Actor,dt:number):boolean {
     if(p.attacking && this.bomb.status==='dropped' && distance(p,this.bomb)<1.2&&liveSightline(p,this.bomb)){p.bomb=true;this.bomb.status='carried';this.emit('objective',`${p.name} recovered the device`,p.team,p.id);}
     if(p.bomb && this.bomb.status==='carried') {
+      if(p.fakePlantHoldUntil!==undefined&&this.time<p.fakePlantHoldUntil){
+        this.applyMotion(p,{x:0,z:0},dt,'hold');
+        p.action='Holding fake plant';p.intent='Cancel the plant sound and hold for the reported peek';
+        const reported=strongestLiveIntel(p.intel,p,this.time);
+        if(reported?.source==='sight'&&reported.age<2.2&&distance(p,reported)<18){
+          p.aimFocus={point:{x:reported.x,z:reported.z},source:'contact',until:p.fakePlantHoldUntil,from:{x:p.x,z:p.z}};
+          this.turn(p,heading(p,reported));
+        }
+        return true;
+      }
+      p.fakePlantHoldUntil=undefined;
       const site=livePlantSite(p);
       if(site&&(p.jump||p.isBoosted)){p.channel=0;return false;}
       if(site&&this.remaining>0){
@@ -1362,10 +1589,23 @@ export class FpsLiveSimulation {
       }
       if(site && this.remaining>0){this.applyMotion(p,{x:0,z:0},dt,'brake');if(p.speed>.12){p.channel=0;p.action='Settling to plant';return true;}}
       if(site && this.remaining>0){
+        const starting=p.channel===0;
         p.action='Planting';p.crouch=true;p.channel+=dt;
+        if(starting){this.hear(p,22,'utility');this.emit('objective',`${p.name} started planting`,p.team,p.id);}
         // Ninja plant concealment smoke
         if(p.smoke && !this.smokes.some(s=>distance(p,s)<s.radius)&&this.throwUtility(p,'smoke',{x:p.x,z:p.z})) {
           this.emit('objective',`${p.name}: "Smoking site for ninja plant!"`,p.team,p.id);
+        }
+        const reported=strongestLiveIntel(p.intel,p,this.time);
+        if(!p.fakePlantDone&&p.channel>=.45&&this.remaining>LIVE_PLANT_RULES.seconds+10
+          &&reported?.source==='sight'&&reported.age<1.8&&distance(p,reported)<14
+          &&this.skill(p,'decisionMaking',p.skills.gameSense)>.48
+          &&this.executionRandom()<.3+this.skill(p,'informationReading',p.skills.gameSense)*.35){
+          p.fakePlantDone=true;p.channel=0;p.fakePlantHoldUntil=this.time+1.4;
+          p.action='Holding fake plant';p.intent='Cancel the plant sound and hold for the reported peek';
+          p.radioMessage='Fake plant tapped — hold the angle!';
+          this.emit('objective',`${p.name}: "[RADIO] Fake plant tapped — hold the angle!"`,p.team,p.id);
+          return true;
         }
         if(p.channel>=LIVE_PLANT_RULES.seconds){p.bomb=false;p.channel=0;this.bomb={status:'planted',x:p.x,z:p.z,remaining:40,site};p.cash=Math.min(16000,p.cash+300);p.impact.plants++;this.emit('objective',`${p.name} planted at ${site}`,p.team,p.id);for(const actor of this.actors)actor.nextThink=this.time;}return true;
       }
@@ -1410,6 +1650,16 @@ export class FpsLiveSimulation {
         this.emit('objective',`${p.name}: "[RADIO] Fake defuse tapped — holding angle!"`,p.team,p.id);
         return true;
       }
+      const halfway=p.kit?2.5:5;
+      const reportedThreat=liveIntelBeliefs(p.intel,this.time).some(b=>b.age<1.4&&b.certainty>=.45&&distance(p,b)<18);
+      if(!p.halfDefuseDone&&p.channel>=halfway&&this.bomb.remaining>(p.kit?5:10)-p.channel+1&&reportedThreat){
+        p.halfDefuseDone=true;p.channel=0;p.fakeDefuseHoldUntil=this.time+1.1;
+        p.action='Half-defuse bait';p.intent='Half-defuse sound drawn a peek; clear the reported threat before recommitting';
+        const report=strongestLiveIntel(p.intel,p,this.time);
+        if(report){p.aimFocus={point:{x:report.x,z:report.z},source:'contact',until:p.fakeDefuseHoldUntil,from:{x:p.x,z:p.z}};this.turn(p,heading(p,report));}
+        this.emit('objective',`${p.name} cancels a half defuse to clear a reported threat`,p.team,p.id);
+        return true;
+      }
       // Ninja defuse concealment smoke
       if(p.smoke && !this.smokes.some(s=>distance(this.bomb,s)<s.radius) && this.actors.some(a=>a.attacking&&a.hp>0)) {
         this.throwUtility(p,'smoke',{x:this.bomb.x,z:this.bomb.z});
@@ -1434,21 +1684,24 @@ export class FpsLiveSimulation {
       this.throwUtility(p,'smoke',{x:(p.x+target.x)/2,z:(p.z+target.z)/2});
     }
   }
-  private hear(source:Actor,radius:number) {
+  private hear(source:Actor,radius:number,signal?:'gunfire'|'footstep'|'melee'|'reload'|'utility') {
+    const kind=signal??(radius>=24?'gunfire':radius<10?'melee':'footstep');
+    if(kind==='gunfire'||kind==='utility')this.noiseMasks.push({x:source.x,z:source.z,until:this.time+(kind==='gunfire'?.65:1.1),radius:kind==='gunfire'?13:16});
     for(const actor of this.actors.filter(a=>a.team!==source.team&&a.hp>0)) {
       const range=distance(actor,source),audible=liveSightline(actor,source)?radius:radius*.65;
       if(range>audible||this.time-actor.seenAt<.4)continue;
+      if(kind==='footstep'&&this.noiseMasks.some(mask=>mask.until>this.time&&distance(actor,mask)<=mask.radius))continue;
       const reading=this.skill(actor,'informationReading',actor.skills.gameSense);
-      const kind=radius>=24?'gunfire':radius<10?'melee':'footstep',error=(kind==='gunfire'?1.4:2.3)+range*(.06+(1-reading)*.13);
+      const error=(kind==='gunfire'?1.4:kind==='reload'?1.8:kind==='utility'?2.8:2.3)+range*(.06+(1-reading)*.13);
       const bearing=this.observationRandom()*Math.PI*2,offset=Math.sqrt(this.observationRandom())*error;
       const point=safeLivePoint({x:source.x+Math.cos(bearing)*offset,z:source.z+Math.sin(bearing)*offset});
       // No source ID: a listener cannot count several runners from an exact hidden identity.
       const contact:LiveIntelContact={key:`sound:${kind}:${Math.round(point.x/7)}:${Math.round(point.z/7)}`,observerId:actor.id,source:kind,
-        ...point,observed:this.time,confidence:kind==='gunfire'?.64:.5,uncertainty:error};
+        ...point,observed:this.time,confidence:kind==='gunfire'?.64:kind==='reload'?.48:kind==='utility'?.28:.5,uncertainty:error};
       if(actor.profile)actor.pendingCues.push({at:this.time+.04+(1-this.skill(actor,'awareness',0))*.2,contact});
       else this.observeIntel(actor,contact);
       actor.nextThink=Math.min(actor.nextThink,this.time+.15+(1-reading)*.3);
-      if((kind==='footstep'||kind==='gunfire')&&!actor.target&&(actor.action==='Holding'||actor.action==='Crouch-holding'||actor.action==='Settling')) {
+      if((kind==='footstep'||kind==='gunfire'||kind==='utility')&&!actor.target&&(actor.action==='Holding'||actor.action==='Crouch-holding'||actor.action==='Settling')) {
         const toSource=heading(actor,point);
         if(Math.cos(toSource-actor.yaw)<-0.35) {
           actor.aimFocus={point:{...point},source:'contact',until:this.time+0.85,from:{x:actor.x,z:actor.z}};
@@ -1458,7 +1711,8 @@ export class FpsLiveSimulation {
     }
   }
   private fire(p:Actor,target:Actor) {
-    const weapon=LIVE_WEAPONS[p.weapon];p.ammo--;p.nextShot=this.time+weapon.interval;p.lastShot=this.time;
+    const weapon=LIVE_WEAPONS[p.weapon],continuingGlockBurst=p.glockBurstRemaining>0;
+    p.ammo--;p.nextShot=this.time+weapon.interval;p.lastShot=this.time;
     const equippedWeapon=Object.hasOwn(LIVE_WEAPONS,p.equipped)?p.equipped as LiveWeapon:p.weapon;
     this.audioCues.push({kind:'gunshot',weapon:equippedWeapon,x:p.x,z:p.z});
     const firstShot=p.engagementShots===0;p.engagementShots++;p.impact.shots++;
@@ -1467,10 +1721,18 @@ export class FpsLiveSimulation {
     p.burst++;
     const shotBurst=p.burst;
     const d=distance(p,target);
+    const unscopedSniper=(p.weapon==='sniper'||p.weapon==='scout')&&d>=4.5&&d<10;
+    if(unscopedSniper){p.action='No-scoping';p.intent='Take the close shot without the optic';}
+    const startsGlockBurst=p.weapon==='glock'&&!continuingGlockBurst&&d<8&&p.ammo>=2&&this.skill(p,'decisionMaking',p.skills.gameSense)>.58;
+    if(continuingGlockBurst){p.glockBurstRemaining--;p.nextShot=this.time+(p.glockBurstRemaining>0?.055:weapon.interval);}
+    else if(startsGlockBurst){p.glockBurstRemaining=2;p.nextShot=this.time+.055;}
     const isRifle=p.weapon==='rifle'||p.weapon==='ak47'||p.weapon==='m4a1_s';
+    const fireCadence:FpsFireCadence=isRifle
+      ?this.mechanicsLearner?.choose(p.id,target.id,p.team,fpsFireContext(d,p.speed,p.ammo,weapon.magazine),this.mechanicsRandom)??(d>20?'burst':'sustain')
+      :'sustain';
     if(isRifle){
-      if(d>20&&p.burst>=2){p.nextShot+=0.22+(1-this.skill(p,'recoilControl',p.skills.mechanics))*0.12;p.burst=0;}
-      else if(p.burst>=(p.profile?5:4+Math.round(p.skills.mechanics*3))){p.nextShot+=p.profile?.3:.22+(1-p.skills.mechanics)*.18;p.burst=0;}
+      if(fireCadence==='burst'&&p.burst>=2){p.nextShot+=.22+(1-this.skill(p,'recoilControl',p.skills.mechanics))*.12;p.burst=0;}
+      else if(fireCadence==='sustain'&&p.burst>=(p.profile?5:4+Math.round(p.skills.mechanics*3))){p.nextShot+=p.profile?.3:.22+(1-p.skills.mechanics)*.18;p.burst=0;}
     }
     if(p.weapon==='deagle'&&d>12){p.nextShot+=0.32;}
     const opportunities=new Set<FpsSpecialtyOpportunity>();
@@ -1480,31 +1742,37 @@ export class FpsLiveSimulation {
     const identity=this.identity.players[p.id];
     const effect=resolveTacticalExecution(identity.specialty,opportunities,identity.specialtyProficiency??.5);
     const movement=p.speed/(LIVE_WEAPONS[p.weapon].category==='smg'?8:LIVE_RUN_SPEED);
-    const spread=(p.profile?weapon.spread+Math.max(0,Math.min(1,movement))*.022:liveAimSpread(p.skills,weapon.spread,p.pressure,p.exertion,movement,shotBurst)*(1-(effect?.executionBonus??0)))*(p.crouch?0.72:1.0)*(p.jump?2.5:1.0);
+    const sniperScopeWindow=(p.weapon==='sniper'||p.weapon==='scout')&&d>=10?this.time-p.acquired:Infinity;
+    const quickScope=sniperScopeWindow>=.1&&sniperScopeWindow<.5;
+    const scopedPrecision=sniperScopeWindow>=.5 ? .68 : quickScope ? .88 : 1;
+    if(sniperScopeWindow!==Infinity)p.action=quickScope?'Quick-scoping':sniperScopeWindow>=.5?'Holding the scope':'Fast scope snap';
+    const spread=((p.profile?weapon.spread+Math.max(0,Math.min(1,movement))*.022:liveAimSpread(p.skills,weapon.spread,p.pressure,p.exertion,movement,shotBurst)*(1-(effect?.executionBonus??0)))+(unscopedSniper?.12:0))*scopedPrecision*(p.crouch?0.72:1.0)*(p.jump?2.5:1.0);
     const input=p.profile?detailedInputError(p.profile,p.pressure,this.executionRandom)*(1-(effect?.executionBonus??0)):0;
     const yaw=p.yaw+(this.executionRandom()+this.executionRandom()-1)*spread+input+(p.profile?p.recoil:0);
-    if(p.profile){p.motor.inputSamples++;p.motor.inputErrorSum+=input;p.motor.inputErrorSquareSum+=input*input;p.motor.recoilSamples++;p.motor.recoilResidualSum+=Math.abs(p.recoil);p.recoil+=detailedRecoilImpulse(p.weapon,shotBurst);}
-    const ray={x:Math.sin(yaw),z:Math.cos(yaw)};
-    let range=65, victim:Actor|undefined;
-    for(const wall of LIVE_FPS_MAP.solids) {
-      let enter=0,exit=65;
-      for(const [origin,dir,min,max] of [[p.x,ray.x,wall.minX,wall.maxX],[p.z,ray.z,wall.minZ,wall.maxZ]]) {
-        if(Math.abs(dir)<1e-8){if(origin<min||origin>max){enter=Infinity;break;}}
-        else {const a=(min-origin)/dir,b=(max-origin)/dir;enter=Math.max(enter,Math.min(a,b));exit=Math.min(exit,Math.max(a,b));}
-      }
-      if(enter<=exit)range=Math.min(range,enter);
-    }
-    for(const actor of this.actors.filter(a=>a!==p&&a.hp>0)) {
-      const dx=actor.x-p.x,dz=actor.z-p.z,along=dx*ray.x+dz*ray.z,perpendicular=dx*dx+dz*dz-along*along;
-      if(along<0 || perpendicular>LIVE_ACTOR_RADIUS*LIVE_ACTOR_RADIUS)continue;
-      const hit=Math.max(0,along-Math.sqrt(Math.max(0,LIVE_ACTOR_RADIUS*LIVE_ACTOR_RADIUS-perpendicular)));
-      if(hit<range){range=hit;victim=actor;}
-    }
     const fromY=(p.crouch?1.08:1.6)+(p.jumpY??0);
-    const toY=victim?(victim.crouch?.82:1.25)+(victim.jumpY??0):fromY;
+    const desiredPitch=Math.atan2(liveActorHeadY(target)-fromY,d||1);
+    const pitch=(p.pitch??desiredPitch)+(this.executionRandom()+this.executionRandom()-1)*spread;
+    if(p.profile){p.motor.inputSamples++;p.motor.inputErrorSum+=input;p.motor.inputErrorSquareSum+=input*input;p.motor.recoilSamples++;p.motor.recoilResidualSum+=Math.abs(p.recoil);p.recoil+=detailedRecoilImpulse(p.weapon,shotBurst);}
+    const origin={x:p.x,y:fromY,z:p.z},direction=liveRayDirection(yaw,pitch),farPoint={x:p.x+direction.x*65,y:fromY+direction.y*65,z:p.z+direction.z*65};
+    const wallHits=liveWallIntersections(origin,farPoint),opaqueWall=wallHits.find(hit=>!hit.wall.bulletPenetration);
+    const wallRange=opaqueWall?opaqueWall.t*65:65;
+    let victim:Actor|undefined,victimHit:{distance:number;region:'head'|'body'}|undefined,victimDamageScale=1;
+    for(const actor of this.actors.filter(a=>a!==p&&a.hp>0)) {
+      const hit=traceLiveActorHit(origin,direction,wallRange,actor);
+      if(!hit||hit.distance>=wallRange||(victimHit&&hit.distance>=victimHit.distance))continue;
+      const wallsBefore=wallHits.filter(wall=>wall.t*65<hit.distance-1e-5);
+      if(wallsBefore.some(wall=>!wall.wall.bulletPenetration))continue;
+      const penetration=wallsBefore[0];
+      if(penetration&&hit.distance-penetration.t*65>30)continue;
+      victim=actor;victimHit=hit;victimDamageScale=penetration?.wall.bulletPenetration??1;
+    }
+    const range=victimHit?.distance??wallRange;
+    const to={x:origin.x+direction.x*range,z:origin.z+direction.z*range};
+    const toY=origin.y+direction.y*range;
     this.shots.push({id:++this.sequence,time:this.time,actorId:p.id,weapon:equippedWeapon,
-      from:{x:p.x,z:p.z},to:{x:p.x+ray.x*range,z:p.z+ray.z*range},fromY,toY,team:p.team});
-    // Teammates block shots; this exhibition does not apply friendly damage.
+      from:{x:origin.x,z:origin.z},to,fromY:origin.y,toY,team:p.team,
+      ...(victim&&victimHit?{targetId:victim.id,hitRegion:victimHit.region}:{})});
+    this.disturbSmokesAlongShot(p,to);
     if(p.weapon==='sniper'){
       p.retreatUntil=this.time+1.25;
       const nearbyCover=findLiveCover(p,target,this.actors.filter(a=>a!==p));
@@ -1512,36 +1780,36 @@ export class FpsLiveSimulation {
         p.goal=nearbyCover;
         p.path=findLivePath(p,nearbyCover,[target],this.skill(p,'positioning',p.skills.gameSense));
       }
-      p.intent='Shoot and scoot — cycling sniper bolt in cover';
-      p.action='Cycling bolt in cover';
+      p.intent=unscopedSniper?'No-scope shot — reposition while cycling the bolt':'Shoot and scoot — cycling sniper bolt in cover';
+      p.action=unscopedSniper?'No-scoping':'Cycling bolt in cover';
       p.radioMessage='Shot fired — cycling bolt behind cover!';
       this.emit('objective',`${p.name}: "[RADIO] Shot fired — cycling bolt behind cover!"`,p.team,p.id);
     }
-    if(victim && victim.team!==p.team) {
-      // Existing flat-plane hit classification remains simplified; detailed Precision cannot award headshot probability.
-      const baseHsChance=p.profile?.44:0.18+p.skills.mechanics*0.38;
-      const rangeFactor=Math.max(0,1-distance(p,victim)/48);
-      const burstFactor=Math.max(0.35,1-shotBurst*0.1);
-      const movingFactor=victim.speed>2.5?0.72:1.0;
-      const crouchFactor=p.crouch?1.15:1.0;
-      const jumpFactor=p.jump?0.35:1.0;
-      const hsChance=clamp(baseHsChance*rangeFactor*burstFactor*movingFactor*crouchFactor*jumpFactor,0.04,0.75);
-      const isHeadshot=this.hitRandom()<hsChance;
-      if(isHeadshot)p.impact.headshots++;
+    if(victim&&victimHit) {
+      const isHeadshot=victimHit.region==='head';
+      if(isHeadshot&&victim.team!==p.team)p.impact.headshots++;
       const multiplier=isHeadshot?weapon.headshotMultiplier:1.0;
-      const rawDamage=weapon.damage*multiplier;
-      this.damage(p,victim,rawDamage,isHeadshot,p.weapon,firstShot,target.id);
+      const pelletHits=weapon.pellets?weapon.pellets*Math.max(.08,1-d/15):1;
+      const rawDamage=weapon.damage*multiplier*pelletHits*victimDamageScale;
+      this.damage(p,victim,rawDamage,isHeadshot,p.weapon,firstShot,victim.id,
+        victim.team===p.team?LIVE_FRIENDLY_FIRE_RULES.bulletDamageScale:1);
     }
     // Nearby gunfire is audible even outside the viewer's/AI's forward cone.
     this.hear(p,24);
   }
-  private damage(p:Actor,victim:Actor,rawDamage:number,isHeadshot:boolean,weaponId:LiveEquippedWeapon,firstShot:boolean,sampleTarget?:string) {
-    const damage=rawDamage*(victim.armor>0?.78:1);
-    if(weaponId!=='knife')p.impact.hits++;p.impact.damage+=Math.min(victim.hp,damage);
-    if(firstShot)p.impact.firstShotHits++;
-    if(!p.engagementDamaged && weaponId!=='knife' && victim.id===sampleTarget){p.engagementDamaged=true;p.impact.timeToDamageSamples++;p.impact.timeToDamageMs+=Math.max(0,this.time-p.acquired)*1000;}
-    victim.armor=Math.max(0,victim.armor-rawDamage*.25);victim.hp=Math.max(0,victim.hp-damage);victim.damageAt=this.time;
-    if(victim.hp>0){
+  private damage(p:Actor,victim:Actor,rawDamage:number,isHeadshot:boolean,weaponId:LiveEquippedWeapon,firstShot:boolean,sampleTarget?:string,friendlyDamageScale=1) {
+    const friendly=p.team===victim.team,scaledRawDamage=rawDamage*(friendly?clamp(friendlyDamageScale,0,1):1);
+    const damage=scaledRawDamage*(victim.armor>0?.78:1),actualDamage=Math.min(victim.hp,damage);
+    const rifleShot=weaponId==='rifle'||weaponId==='ak47'||weaponId==='m4a1_s';
+    if(!friendly){
+      if(weaponId!=='knife')p.impact.hits++;
+      p.impact.damage+=actualDamage;
+      if(firstShot)p.impact.firstShotHits++;
+      if(!p.engagementDamaged&&weaponId!=='knife'&&victim.id===sampleTarget){p.engagementDamaged=true;p.impact.timeToDamageSamples++;p.impact.timeToDamageMs+=Math.max(0,this.time-p.acquired)*1000;}
+      if(rifleShot){this.mechanicsLearner?.recordDamage(p.id,victim.id,actualDamage);this.mechanicsLearner?.recordIncoming(victim.id,p.id,actualDamage);}
+    }
+    victim.armor=Math.max(0,victim.armor-scaledRawDamage*.25);victim.hp=Math.max(0,victim.hp-damage);victim.damageAt=this.time;
+    if(victim.hp>0&&!friendly){
       const identified=this.visible(victim,p),error=identified?0:3+distance(p,victim)*.12;
       const bearing=this.observationRandom()*Math.PI*2,point=identified?{x:p.x,z:p.z}:safeLivePoint({x:p.x+Math.cos(bearing)*error*.7,z:p.z+Math.sin(bearing)*error*.7});
       this.observeIntel(victim,{key:identified?`enemy:${p.id}`:`damage:${Math.round(point.x/7)}:${Math.round(point.z/7)}`,
@@ -1550,18 +1818,20 @@ export class FpsLiveSimulation {
     }
     if(victim.hp===0) {
       this.learner?.close(victim,this.time);
-      p.kills++;p.cash=Math.min(16000,p.cash+300);victim.deaths++;victim.channel=0;
-      for(const ally of this.actors.filter(a=>a.team===victim.team&&a.profile))ally.mentalState.setback=Math.min(1,ally.mentalState.setback+(ally===victim?.3:.08));
-      if(!this.eliminations.length)p.impact.openingKills++;
-      const trades=this.eliminations.filter(e=>e.killer===victim!.id && !e.traded && this.time-e.at<=1.5 && this.actors.some(a=>a.id===e.victim&&a.team===p.team));
+      if(!friendly){p.kills++;p.cash=Math.min(16000,p.cash+300);this.mechanicsLearner?.recordKill(p.id,victim.id);}
+      else if(p!==victim)p.teamKills=(p.teamKills??0)+1;
+      victim.deaths++;victim.channel=0;
+      if(!friendly){for(const ally of this.actors.filter(a=>a.team===victim.team&&a.profile))ally.mentalState.setback=Math.min(1,ally.mentalState.setback+(ally===victim?.3:.08));}
+      if(!friendly&&!this.eliminations.length)p.impact.openingKills++;
+      const trades=friendly?[]:this.eliminations.filter(e=>e.killer===victim!.id&&!e.traded&&this.time-e.at<=1.5&&this.actors.some(a=>a.id===e.victim&&a.team===p.team));
       if(trades.length){p.impact.tradeKills++;for(const trade of trades){trade.traded=true;this.actors.find(a=>a.id===trade.victim)!.impact.tradedDeaths++;}}
-      const flashHelper=this.actors.find(a=>a.id===victim!.flashedBy&&a.id!==p.id&&a.team===p.team);
-      if(victim.blinded>.2 && flashHelper)flashHelper.impact.flashAssists++;
-      victim.impact.unusedUtilityOnDeath+=victim.flash+victim.smoke+victim.incendiary;
-      this.eliminations.push({killer:p.id,victim:victim.id,team:p.team,at:this.time,traded:false});
+      const flashHelper=friendly?undefined:this.actors.find(a=>a.id===victim!.flashedBy&&a.id!==p.id&&a.team===p.team);
+      if(victim.blinded>.2&&flashHelper)flashHelper.impact.flashAssists++;
+      victim.impact.unusedUtilityOnDeath+=victim.flash+victim.smoke+victim.incendiary+victim.he;
+      if(!friendly)this.eliminations.push({killer:p.id,victim:victim.id,team:p.team,at:this.time,traded:false});
       // Trade Fragger Instant Re-Frag Reflex:
       // When an ally is eliminated, the closest living trade fragger (or teammate within 18m) immediately snaps to the killer
-      const tradeAlly=this.actors.filter(a=>a.team===victim.team&&a.hp>0&&a!==victim&&distance(a,victim)<18&&distance(a,p)<28)
+      const tradeAlly=friendly?undefined:this.actors.filter(a=>a.team===victim.team&&a.hp>0&&a!==victim&&distance(a,victim)<18&&distance(a,p)<28)
         .sort((a,b)=>(Number(b.role==='trade')-Number(a.role==='trade'))||distance(a,victim)-distance(b,victim))[0];
       if(tradeAlly){
         tradeAlly.target=p.id;
@@ -1577,10 +1847,10 @@ export class FpsLiveSimulation {
       }
       // Confirmed eliminations are public; their hidden location is not broadcast by this removal.
       for(const actor of this.actors){actor.intel.contacts=actor.intel.contacts.filter(c=>c.enemyId!==victim.id);actor.noticedEnemies=actor.noticedEnemies.filter(c=>c.id!==victim.id);this.refreshIntel(actor);}
-      if(victim.attacking&&distance(victim,LIVE_FPS_MAP.sites[this.site])<22)this.roundSiteKills[victim.team]++;
+      if(!friendly&&victim.attacking&&distance(victim,LIVE_FPS_MAP.sites[this.site])<22)this.roundSiteKills[victim.team]++;
       const hsBadge=isHeadshot?' ⌖':'';
-      const weaponName = weaponId === 'knife' ? LIVE_KNIFE.name : weaponId === 'flash' ? 'Flashbang' : weaponId === 'smoke' ? 'Smoke' : weaponId === 'incendiary' ? 'Incendiary' : weaponId === 'bomb' ? 'C4' : LIVE_WEAPONS[weaponId].name;
-      this.emit('kill',`${p.name} [${weaponName}]${hsBadge} ${victim.name}`,p.team,p.id,victim.id,isHeadshot,weaponId);
+      const weaponName = weaponId === 'knife' ? LIVE_KNIFE.name : weaponId === 'flash' ? 'Flashbang' : weaponId === 'smoke' ? 'Smoke' : weaponId === 'incendiary' ? 'Incendiary' : weaponId==='he'?'HE grenade':weaponId === 'bomb' ? 'C4' : LIVE_WEAPONS[weaponId].name;
+      this.emit('kill',friendly?`${p===victim?'SELF DAMAGE':'TEAMKILL'} · ${p.name} [${weaponName}]${hsBadge} ${victim.name}`:`${p.name} [${weaponName}]${hsBadge} ${victim.name}`,p.team,p.id,victim.id,isHeadshot,weaponId);
       if(victim.weapon!=='pistol' && victim.weapon!=='usp_s' && victim.weapon!=='glock') {
         this.droppedWeapons.push({
           id:++this.sequence,
@@ -1597,6 +1867,8 @@ export class FpsLiveSimulation {
   private finishRound(team:FpsTeamId,reason:string) {
     const learnedRound=this.learner?.completeRound(this.actors,team,this.time,`${this.learningEpisode}:${this.round}`);
     if(learnedRound){try{this.learner?.options.onRound?.(learnedRound);}catch{/* Optional persistence must not interrupt a completed round. */}}
+    const mechanicsRound=this.mechanicsLearner?.completeRound(team,`${this.learningEpisode||'local'}:combat:${this.round}`);
+    if(mechanicsRound){try{this.mechanicsLearner?.options.onRound?.(mechanicsRound);}catch{/* Independent local mechanics persistence must not interrupt a completed round. */}}
     this.grenades=[];
     this.roundHistory.push({
       round: this.round,
@@ -1619,20 +1891,23 @@ export class FpsLiveSimulation {
   snapshot():LiveSnapshot {
     const teamPlan=(team:FpsTeamId):LiveTeamPlan=>({buy:this.teamBuys[team].mode,buyReason:this.teamBuys[team].reason,style:team===this.attackTeam?this.protocol.style:'defense',phase:team===this.attackTeam?this.protocol.phase:'hold',site:team===this.attackTeam?this.site:undefined,
       information:this.bomb.status==='planted'?team===this.attackTeam?`Device planted ${this.bomb.site} — protect the post-plant`:`Device confirmed ${this.bomb.site} — assess the retake and clock`:this.informationOrders[team].reason});
-    return {version:'hexatrick-live-exhibition-v7',time:this.time,round:this.round,phase:this.phase,
+    return {version:'hexatrick-live-exhibition-v9',time:this.time,round:this.round,phase:this.phase,
       ...(this.learner?{learning:this.learner.stats()}:{}),
+      ...(this.mechanicsLearner?{mechanicsLearning:this.mechanicsLearner.stats()}:{}),
       remaining:this.phase==='live'&&this.bomb.status==='planted'?this.bomb.remaining:this.remaining,score:{...this.score},winner:this.winner,
       roundWinner:this.roundWinner,roundReason:this.roundReason,attackTeam:this.attackTeam,
-      players:this.actors.map(p=>({id:p.id,name:p.name,team:p.team,attacking:p.attacking,role:p.role,x:p.x,z:p.z,yaw:p.yaw,
+      players:this.actors.map(p=>({id:p.id,name:p.name,team:p.team,attacking:p.attacking,role:p.role,x:p.x,z:p.z,yaw:p.yaw,pitch:p.pitch??0,
         hp:p.hp,armor:p.armor,cash:p.cash,weapon:p.weapon,ammo:p.ammo,reserve:p.reserve,reload:p.reload,kills:p.kills,deaths:p.deaths,
         equipped:p.equipped,weaponReady:p.weaponReady,lastSwing:p.lastSwing,information:p.information,
         jump:p.jump,jumpY:p.jumpY,jumpVy:p.jumpVy,radioMessage:p.radioMessage,
         isBoosted:p.isBoosted,boostSpot:p.boostSpot,
         ...(p.profile?{skillProfile:{version:p.profile.version,revision:p.profile.revision,source:p.profile.source},diagnostics:{...p.motor},mental:{...p.mentalState}}:{}),
-        action:p.action,bomb:p.bomb,kit:p.kit,flash:p.flash,smoke:p.smoke,incendiary:p.incendiary,blinded:p.blinded,channel:p.channel,throwAt:p.throwAt,throwKind:p.throwKind,
+        action:p.action,bomb:p.bomb,kit:p.kit,flash:p.flash,smoke:p.smoke,incendiary:p.incendiary,he:p.he,blinded:p.blinded,channel:p.channel,throwAt:p.throwAt,throwKind:p.throwKind,
+        utilityPrep:p.utilityPreparation?{kind:p.utilityPreparation.kind,releaseAt:p.utilityPreparation.readyAt+.2}:undefined,teamKills:p.teamKills??0,
+        reloadDuration:p.reloadDuration,reloadSilent:p.reloadSilent,
         personality:p.personality,specialty:p.specialty,lastShot:p.lastShot,callout:liveCallout(p),intent:p.intent,skills:{...p.skills},exertion:p.exertion,impact:{...p.impact},speed:p.speed,stance:p.stance,crouch:p.crouch})),
       events:this.events.map(e=>({...e})),shots:this.shots.map(s=>({...s,from:{...s.from},to:{...s.to}})),
-      smokes:this.smokes.map(s=>({...s})),fires:this.fires.map(f=>({...f})),grenades:this.grenades.map(g=>({...g})),teams:{blue:teamPlan('blue'),red:teamPlan('red')},
+      smokes:this.smokes.map(s=>({...s})),fires:this.fires.map(f=>({...f})),blasts:this.blasts.map(b=>({...b})),grenades:this.grenades.map(g=>({...g})),teams:{blue:teamPlan('blue'),red:teamPlan('red')},
       droppedWeapons:this.droppedWeapons.map(w=>({...w})),bomb:{...this.bomb}};
   }
 
@@ -1643,8 +1918,11 @@ export class FpsLiveSimulation {
   }
 
   learningDiagnostics() {
-    return this.learner?{initial:structuredClone(this.learner.initial),current:this.learner.checkpoint(),stats:this.learner.stats(),
+    const route=this.learner?{initial:structuredClone(this.learner.initial),current:this.learner.checkpoint(),stats:this.learner.stats(),
       settings:{mode:this.learner.options.mode,exploration:this.learner.options.exploration??null}}:undefined;
+    const combat=this.mechanicsLearner?{initial:structuredClone(this.mechanicsLearner.initial),current:this.mechanicsLearner.checkpoint(),stats:this.mechanicsLearner.stats()}:undefined;
+    if(!route&&!combat)return undefined;
+    return {...route,combatMechanics:combat,reports:{movementRoutes:route?.stats,combatMechanics:combat?.stats}};
   }
 
   audioListener(id:string):{x:number;z:number;yaw:number}|undefined {

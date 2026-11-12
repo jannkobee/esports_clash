@@ -111,6 +111,7 @@
 }
 
 .blast-pill--incendiary { color: #fdba74; border-color: rgba(249,115,22,.35); }
+.blast-pill--he { color: #fef3c7; border-color: rgba(251,191,36,.5); font-size: 9px; font-weight: 900; }
 .blast-scoreboard__phase { color: #7dd3fc; font-weight: 800; letter-spacing: .08em; }
 .blast-scoreboard__phase--freeze { color: #fbbf24; }
 .blast-scoreboard__phase--post { color: #c4b5fd; }
@@ -542,6 +543,65 @@
   filter: drop-shadow(0 0 1px #000);
   z-index: 5;
 }
+
+.live-fps__scope {
+  --scope-size: min(84vh, 88vw, 1080px);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.live-fps__scope-lens {
+  position: relative;
+  width: var(--scope-size);
+  aspect-ratio: 1;
+  border: 1px solid rgba(5, 8, 10, .8);
+  border-radius: 50%;
+  box-shadow: 0 0 0 9999px #000, inset 0 0 34px 10px rgba(0, 0, 0, .3);
+}
+
+.live-fps__scope-reticle,
+.live-fps__scope-reticle::before,
+.live-fps__scope-reticle::after {
+  position: absolute;
+  display: block;
+  background: rgba(10, 12, 13, .86);
+}
+
+.live-fps__scope-reticle {
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: 100%;
+  transform: translate(-50%, -50%);
+}
+
+.live-fps__scope-reticle::before {
+  content: '';
+  left: 50%;
+  top: 50%;
+  width: 100vw;
+  height: 1px;
+  transform: translate(-50%, -50%);
+}
+
+.live-fps__scope-reticle::after {
+  content: '';
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border: 1px solid rgba(10, 12, 13, .86);
+  border-radius: 50%;
+  background: transparent;
+  transform: translate(-50%, -50%);
+}
+
+.live-fps__scope--scout { --scope-size: min(76vh, 78vw, 920px); }
 
 .live-fps__flash {
   position: absolute;

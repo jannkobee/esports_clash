@@ -38,7 +38,7 @@ test('muzzle sockets follow the gun position, crouch height, yaw and scale',()=>
   }finally{f.dispose();}
 });
 
-test('first-person and world tracers originate at their own animated muzzles and stay isolated per camera',()=>{
+test('first-person and world tracers share the authoritative shot ray from simulation to impact',()=>{
   const f=sceneFixture();
   try{
     const gun=create3DWeaponMesh('m4a1_s','world',f.scene,f.getMat);
@@ -54,9 +54,10 @@ test('first-person and world tracers originate at their own animated muzzles and
     const tracer=viewer.tracers.get(1);
     const checkOrigins=()=>{
       const world=tracer.world.getVerticesData('position'),fp=tracer.firstPerson.getVerticesData('position');
-      pointClose(new Vector3(...world.slice(0,3)),viewer.muzzlePosition(gun));
-      pointClose(new Vector3(...fp.slice(0,3)),viewer.muzzlePosition(first));
-      assert.notDeepEqual(world.slice(0,3),fp.slice(0,3));
+      const authoritativeOrigin=new Vector3(shot.from.x,shot.fromY,shot.from.z);
+      pointClose(new Vector3(...world.slice(0,3)),authoritativeOrigin);
+      pointClose(new Vector3(...fp.slice(0,3)),authoritativeOrigin);
+      assert.deepEqual(world.slice(0,3),fp.slice(0,3));
       pointClose(new Vector3(...world.slice(3,6)),new Vector3(20,.82,30));
       pointClose(new Vector3(...fp.slice(3,6)),new Vector3(20,.82,30));
     };

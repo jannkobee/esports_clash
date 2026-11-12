@@ -47,8 +47,8 @@ test('new profiles are pinned without mutating legacy cards, and absent profiles
   const inputs=profiles(),before=structuredClone(cards),sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity,{skillProfiles:inputs});
   inputs[cards[0].id].values.reactions=1;assert.equal(sim.actors[0].profile.values.reactions,5.5);
   assert.ok(Object.isFrozen(sim.actors[0].profile.values));assert.deepEqual(cards,before);
-  assert.equal(sim.snapshot().version,'hexatrick-live-exhibition-v7');
-  assert.equal(new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity).snapshot().version,'hexatrick-live-exhibition-v7');
+  assert.equal(sim.snapshot().version,'hexatrick-live-exhibition-v9');
+  assert.equal(new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity).snapshot().version,'hexatrick-live-exhibition-v9');
   assert.throws(()=>new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity,{skillProfiles:{}}));
 });
 
@@ -117,7 +117,7 @@ test('Movement Control changes braking-input delay while physical speed and shot
 });
 
 test('Utility Execution changes a chosen throw error while retaining inventory, fuse and ballistic flight',()=>{
-  const run=utilityExecution=>{const {sim,p}=encounter({utilityExecution});p.smoke=1;p.utilityAt=0;const target={x:-19,z:2};assert.equal(sim.throwUtility(p,'smoke',target),true);return {p,g:sim.grenades[0]};};
+  const run=utilityExecution=>{const {sim,p,enemy}=encounter({utilityExecution});enemy.hp=0;p.target=undefined;p.smoke=1;p.utilityAt=0;const target={x:-19,z:2};assert.equal(sim.throwUtility(p,'smoke',target),true);sim.time+=.55;sim.releaseUtilityPreparation(p);return {p,g:sim.grenades[0]};};
   const low=run(1),high=run(10);assert.ok(low.p.motor.throwErrorSum>high.p.motor.throwErrorSum);assert.equal(low.p.smoke,0);assert.equal(high.p.smoke,0);
   assert.ok(low.g.detonateAt>20);assert.ok(Math.abs(low.g.vz)>0);assert.equal(low.g.kind,high.g.kind);
   const from={x:-19,z:-10},target={x:-19,z:2},r1=fpsSkillRandom(1,'throw'),r2=fpsSkillRandom(1,'throw');

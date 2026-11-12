@@ -71,12 +71,39 @@ export function shouldFakeLiveDefuse(remaining:number,kit:boolean,covered:boolea
     &&beliefs.some(b=>b.age<3&&b.certainty>=.45&&distance(position,b)<20);
 }
 
-export interface LiveSmokeVolume extends FpsPoint {y:number;radius:number;expires:number}
-/** Smoke blocks sight, not bullets, movement, or sound. Heights follow the actual ray. */
-export function liveSmokeOccludes(from:FpsPoint,to:FpsPoint,fromY:number,toY:number,smoke:LiveSmokeVolume):boolean {
-  const dx=to.x-from.x,dz=to.z-from.z,dy=toY-fromY;
-  const t=Math.max(0,Math.min(1,((smoke.x-from.x)*dx+(smoke.z-from.z)*dz+(smoke.y-fromY)*dy)/(dx*dx+dz*dz+dy*dy||1)));
-  return Math.hypot(from.x+t*dx-smoke.x,from.z+t*dz-smoke.z,fromY+t*dy-smoke.y)<smoke.radius;
+export interface LiveSmokeVolume extends FpsPoint {id?:number;y:number;radius:number;expires:number;startedAt?:number;disturbance?:number}
+export interface LiveSmokeCloudLobe {x:number;y:number;z:number;scaleX:number;scaleY:number;scaleZ:number}
+/** The viewer renders these exact ellipsoids; AI sight tests the same animated volume. */
+export function liveSmokeCloudLobes(smoke:LiveSmokeVolume,now:number):LiveSmokeCloudLobe[] {
+  const result:LiveSmokeCloudLobe[]=[];
+  for(let i=0;i<15;i++){
+    const phase=((smoke.id??0)*2.399+i*4.17)%(Math.PI*2),angle=phase+now*.045;
+    const spread=i===0?0:.17+(i%4)*.055,wobble=Math.sin(now*.48+phase);
+    const width=smoke.radius*(i===0?.62:.45+(i%3)*.035);
+    result.push({
+      x:Math.cos(angle)*smoke.radius*spread+Math.sin(now*.37+phase)*smoke.radius*.025,
+      y:smoke.radius*(.015+(i%4)*.055)+wobble*smoke.radius*.025,
+      z:Math.sin(angle)*smoke.radius*spread+Math.cos(now*.31+phase)*smoke.radius*.025,
+      scaleX:width,scaleY:width*(.7+(i%3)*.07),scaleZ:width,
+    });
+  }
+  return result;
+}
+function segmentHitsSmokeLobe(from:FpsPoint,to:FpsPoint,fromY:number,toY:number,smoke:LiveSmokeVolume,lobe:LiveSmokeCloudLobe):boolean {
+  const rx=Math.max(.001,lobe.scaleX*.5),ry=Math.max(.001,lobe.scaleY*.5),rz=Math.max(.001,lobe.scaleZ*.5);
+  const ox=(from.x-smoke.x-lobe.x)/rx,oy=(fromY-smoke.y-lobe.y)/ry,oz=(from.z-smoke.z-lobe.z)/rz;
+  const dx=(to.x-from.x)/rx,dy=(toY-fromY)/ry,dz=(to.z-from.z)/rz;
+  const a=dx*dx+dy*dy+dz*dz,c=ox*ox+oy*oy+oz*oz-1;
+  if(a<1e-12)return c<=0;
+  const b=2*(ox*dx+oy*dy+oz*dz),discriminant=b*b-4*a*c;
+  if(discriminant<0)return false;
+  const root=Math.sqrt(discriminant),entry=(-b-root)/(2*a),exit=(-b+root)/(2*a);
+  return exit>=0&&entry<=1;
+}
+/** Smoke blocks only the visible cloud volume; it does not block bullets, movement, or sound. */
+export function liveSmokeOccludes(from:FpsPoint,to:FpsPoint,fromY:number,toY:number,smoke:LiveSmokeVolume,now=smoke.startedAt??0):boolean {
+  if(smoke.expires<=now||smoke.radius<=.02)return false;
+  return liveSmokeCloudLobes(smoke,now).some(lobe=>segmentHitsSmokeLobe(from,to,fromY,toY,smoke,lobe));
 }
 
 /** Move briefly, then leave enough braking/aim time to shoot. A strafe is not a permanent state. */

@@ -2,7 +2,7 @@ import type { FpsPrimaryRole, FpsGameplan } from './fpsIdentity.ts';
 import { LIVE_WEAPONS, type LiveWeapon } from './fpsLiveWeapons.ts';
 
 export type LiveBuyMode='pistol'|'eco'|'half'|'force'|'full';
-export interface LiveBuyPlayer {id:string;role:FpsPrimaryRole;cash:number;weapon:LiveWeapon;armor:number;kit:boolean;flash:number;smoke:number;incendiary:number;attacking:boolean}
+export interface LiveBuyPlayer {id:string;role:FpsPrimaryRole;cash:number;weapon:LiveWeapon;armor:number;kit:boolean;flash:number;smoke:number;incendiary:number;he:number;attacking:boolean}
 export interface LiveBuyResult {mode:LiveBuyMode;players:LiveBuyPlayer[];spent:number;gifts:{from:string;to:string;weapon:LiveWeapon}[];reason:string}
 
 const isPistol = (w: LiveWeapon) => w === 'pistol' || w === 'usp_s' || w === 'glock' || w === 'deagle';
@@ -11,8 +11,8 @@ const isPistol = (w: LiveWeapon) => w === 'pistol' || w === 'usp_s' || w === 'gl
 export function buyLiveTeam(input:readonly LiveBuyPlayer[],plan:FpsGameplan,round:number,lossStreak:number,mustContest:boolean):LiveBuyResult {
   // Callers may pass richer Actor objects. Purchases own only these economy fields;
   // copying the whole actor can later restore stale bomb, channel and decision state.
-  const players=input.map(({id,role,cash,weapon,armor,kit,flash,smoke,incendiary,attacking})=>
-    ({id,role,cash,weapon,armor,kit,flash,smoke,incendiary,attacking}));
+  const players=input.map(({id,role,cash,weapon,armor,kit,flash,smoke,incendiary,he,attacking})=>
+    ({id,role,cash,weapon,armor,kit,flash,smoke,incendiary,he,attacking}));
   const cash=players.reduce((n,p)=>n+p.cash,0);
   const armed=players.filter(p=>!isPistol(p.weapon)).length,armored=players.filter(p=>p.armor>=50).length;
   const fullCost=Math.max(0,4-armed)*2700+Math.max(0,4-armored)*650+1000;
@@ -60,9 +60,12 @@ export function buyLiveTeam(input:readonly LiveBuyPlayer[],plan:FpsGameplan,roun
   const equipment=[...players].sort((a,b)=>Number(b.role==='support')-Number(a.role==='support')||a.id.localeCompare(b.id));
   for(const p of equipment) {
     const support=p.role==='support'||p.role==='caller';
-    if(support){if(!p.flash&&pay(p,200))p.flash=1;if(!p.smoke&&mode!=='eco'&&pay(p,300))p.smoke=1;}
+    if(support){if(!p.flash&&pay(p,200))p.flash=1;if(!p.smoke&&mode!=='eco'&&pay(p,300))p.smoke=1;
+      // A spare smoke is a purchased reserve for a second lane/late retake, not a free refill.
+      if(mode==='full'&&p.smoke===1&&pay(p,300))p.smoke=2;}
     if(support&&mode!=='eco'&&!p.incendiary&&pay(p,600))p.incendiary=1;
     if(p.armor<50&&mode!=='eco'&&pay(p,650))p.armor=100;
+    if(mode!=='eco'&&mode!=='pistol'&&!p.he&&pay(p,300))p.he=1;
     if(!p.attacking&&!p.kit&&mode!=='eco'&&players.filter(a=>!a.attacking&&a.kit).length<2&&pay(p,400))p.kit=true;
     if(!p.flash&&mode!=='eco'&&pay(p,200))p.flash=1;
   }
