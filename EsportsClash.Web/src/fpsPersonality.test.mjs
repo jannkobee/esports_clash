@@ -7,9 +7,9 @@ import {
   rankFpsPlayers, shouldSaveFpsRetake, updateFpsPsychology,
 } from './fps/fpsPersonality.ts';
 import { initializePlayerState, simulateFpsMatch } from './fps/fpsSimulationEngine.ts';
-import { calculateDuelHitDamage, executeSetPiece, generateSetPieceCall } from './fps/setPieceRules.ts';
+import { calculateDuelHitDamage, executeSetPiece, generateSetPieceCall } from './fps/fpsSetPieceRules.ts';
 import { determineTeamBuyDecision, executePlayerPurchases } from './fps/fpsEconomy.ts';
-import { FPS_MAPS } from './fps/maps.ts';
+import { FPS_MAPS } from './fps/fpsMaps.ts';
 import { getFpsReplayState } from './fps/fpsMatchViewModel.ts';
 
 function player(id, trait = 'cold_as_ice', side = 'attackers', secondary = trait) {

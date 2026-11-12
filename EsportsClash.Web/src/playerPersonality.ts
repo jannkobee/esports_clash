@@ -43,9 +43,9 @@ const PERSONALITY_DETAILS: Record<PersonalityId, Pick<PersonalityDefinition, 'st
   tunnel_vision: { strengths: ['focus persistence'], weaknesses: ['reassessment'], observableEffects: ['keeps a current visible target'] },
   objective_zealot: { strengths: ['objective focus'], weaknesses: ['contest bias'], observableEffects: ['prioritizes legal objective regrouping'] },
   steal_gambler: { strengths: ['late secure awareness'], weaknesses: ['contest risk'], observableEffects: ['only favors a low-health objective finish'] },
-  siege_closer: { strengths: ['structure conversion'], weaknesses: ['push depth'], observableEffects: ['uses a safe won-fight structure window'] },
-  wave_architect: { strengths: ['wave preparation'], weaknesses: ['delayed pressure'], observableEffects: ['clears a wave before optional siege'] },
-  bush_stalker: { strengths: ['ambush setup'], weaknesses: ['isolation'], observableEffects: ['holds a safe bush for an isolated target'] },
+  siege_closer: { strengths: ['site conversion'], weaknesses: ['over-aggression'], observableEffects: ['uses a safe advantage to close the round'] },
+  wave_architect: { strengths: ['set-play preparation'], weaknesses: ['delayed pressure'], observableEffects: ['clears angles before optional executes'] },
+  bush_stalker: { strengths: ['ambush setup'], weaknesses: ['isolation'], observableEffects: ['holds a tight off-angle for an isolated target'] },
   survivalist: { strengths: ['recovery discipline'], weaknesses: ['early exit'], observableEffects: ['adverse fights favor retreat'] },
 };
 
@@ -77,11 +77,11 @@ export const PERSONALITIES: Record<PersonalityId, PersonalityDefinition> = {
   bodyguard: define('bodyguard', 'Bodyguard', 'Peels danger away from vulnerable teammates.', { peel: 4, engage: -1 }, .7, 4, 1, ['loyalist','captain','glue_guy']),
   patient_predator: define('patient_predator', 'Patient Predator', 'Waits for isolated enemies and ambush windows.', { engage: 1, regroup: -1 }, .6, 0, 0, ['cold_as_ice','bush_stalker','silent_operator']),
   tunnel_vision: define('tunnel_vision', 'Tunnel Vision', 'Sticks to a chosen target more than is ideal.', { chase: 2 }, 1.15, -2, 0, ['revenge_driven','egoistic','limit_tester']),
-  objective_zealot: define('objective_zealot', 'Objective Zealot', 'Values Embermaw and Gravemarch contests highly.', { objective: 4, regroup: 1 }, .9, 2, 2, ['steal_gambler','igl','iron_will']),
-  steal_gambler: define('steal_gambler', 'Steal Gambler', 'Looks for meaningful low-health objective steals.', { objective: 3 }, 1.1, -1, 0, ['objective_zealot','limit_tester','clutch_performer']),
-  siege_closer: define('siege_closer', 'Siege Closer', 'Converts wins into structures, sometimes too far.', { siege: 4, chase: 1 }, 1, 1, 1, ['overconfident','wave_architect','igl']),
-  wave_architect: define('wave_architect', 'Wave Architect', 'Prepares the main-lane wave before siege windows.', { wave: 4, siege: 1 }, .65, 2, 1, ['siege_closer','perfectionist','objective_zealot']),
-  bush_stalker: define('bush_stalker', 'Bush Stalker', 'Uses safe vision gaps and bushes for ambushes.', { engage: 1, regroup: -1 }, .9, -1, 0, ['patient_predator','counterpuncher','first_blood_hunter']),
+  objective_zealot: define('objective_zealot', 'Objective Zealot', 'Values site objective contests highly.', { objective: 4, regroup: 1 }, .9, 2, 2, ['steal_gambler','igl','iron_will']),
+  steal_gambler: define('steal_gambler', 'Steal Gambler', 'Looks for decisive low-time objective steals.', { objective: 3 }, 1.1, -1, 0, ['objective_zealot','limit_tester','clutch_performer']),
+  siege_closer: define('siege_closer', 'Siege Closer', 'Converts openings into site takes, sometimes too deep.', { siege: 4, chase: 1 }, 1, 1, 1, ['overconfident','wave_architect','igl']),
+  wave_architect: define('wave_architect', 'Wave Architect', 'Prepares map control before execute windows.', { wave: 4, siege: 1 }, .65, 2, 1, ['siege_closer','perfectionist','objective_zealot']),
+  bush_stalker: define('bush_stalker', 'Off-Angle Stalker', 'Uses safe vision gaps and off-angles for ambushes.', { engage: 1, regroup: -1 }, .9, -1, 0, ['patient_predator','counterpuncher','first_blood_hunter']),
   survivalist: define('survivalist', 'Survivalist', 'Prioritizes safe positioning, disengage, and recovery.', { retreat: 4, regroup: 1 }, .72, 1, 0, ['fragile_mental','bodyguard','cold_as_ice']),
 };
 

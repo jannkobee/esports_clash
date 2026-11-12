@@ -14,8 +14,8 @@ import type {
   FpsSide,
   FpsTeamId,
   FpsWeaponId
-} from './types.ts';
-import { getFpsMap } from './maps.ts';
+} from './fpsTypes.ts';
+import { getFpsMap } from './fpsMaps.ts';
 import {
   BOMB_PLANT_ATTACKER_BONUS,
   determineTeamBuyDecision,
@@ -26,7 +26,7 @@ import {
   ROUND_WIN_REWARD,
   STARTING_CASH
 } from './fpsEconomy.ts';
-import { executeSetPiece, generateSetPieceCall } from './setPieceRules.ts';
+import { executeSetPiece, generateSetPieceCall } from './fpsSetPieceRules.ts';
 import { assignFpsTeamRoles, initialFpsPsychology, rankFpsPlayers, updateFpsPsychology, updateContextualFpsPsychology } from './fpsPersonality.ts';
 import { developFpsChemistry, developFpsFamiliarity, evaluatePlayerAction, evolveFpsTeamIdentity } from './fpsIdentity.ts';
 import {assignContextualRoles,hydrateFpsIdentityContext} from './fpsIdentityMatch.ts';

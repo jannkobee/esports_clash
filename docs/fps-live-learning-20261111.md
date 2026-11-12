@@ -27,7 +27,7 @@ Only completed rounds update the function. Up to 40 segments per actor / 400 per
 - `fpsLiveLearningStorage.ts` validates compatible bounded checkpoints and saves anonymous numerical parameters in browser-local storage. Compatibility binds the feature version, physical map geometry, spawns/sites and mechanical weapon/objective facts. Round batches merge onto the latest saved model and recent episode IDs deduplicate commits. Cross-tab writes are not transactionally serialized; the normal broadcast and its Document PIP share one owner.
 - A running exhibition pins a cloned starting checkpoint. Other local writes do not change it mid-round. The same seed, identities, profiles, settings and starting checkpoint reproduce choices and updates. Bare simulation constructors remain unchanged unless their learning option is supplied; `mode: 'frozen'` enables explicit evaluation without training.
 - `FpsSimulationLab.tsx` enables local learning by default, offers a checkbox and reset inside one collapsed Local bot learning panel, and reloads saved parameters for a new exhibition. `FpsLiveBroadcast.tsx` shows completed learning rounds, updates and experiments under More. Diagnostics v2 exports the initial/current checkpoint and learning settings along with the existing seed/profile data.
-- Storage failure leaves the running in-memory learner operational; durable cross-device/cloud learning is not implemented. Official/contextual/historical matches and the separate MOBA learned controller do not use this model.
+- Storage failure leaves the running in-memory learner operational; durable cross-device/cloud learning is not implemented. Official/contextual/historical matches and the separate frozen ML controller do not use this model.
 
 ## Verification
 
@@ -51,6 +51,6 @@ Headless training-run step timings were approximately 0.23–0.28 ms at the medi
 
 Required `npm run check:game` passes: design invariants, all 165 main test files, the separate three-case match simulation suite (including its ten-seed batch) and TypeScript. Direct execution establishes the 13 learning subtests above because the parent runner reports file totals. `npm run build` passes (Vite 8.89 seconds) with its existing >500 kB chunk warning, and `git diff --check` passes. Browser-rendered acceptance, broad match-strength gains, automatic discovery of all FPS tricks, official activation and deployment are not claimed.
 
-Local evidence: `.local-tools/fps-learning-evaluation.mjs`, `fps-learning-evaluation.jsonl`, `fps-learning-contract.log`, `fps-learning-game.log` and `fps-learning-build.log`. These are local diagnostics, not published player evaluations or frozen MOBA training artifacts.
+Local evidence: `.local-tools/fps-learning-evaluation.mjs`, `fps-learning-evaluation.jsonl`, `fps-learning-contract.log`, `fps-learning-game.log` and `fps-learning-build.log`. These are local diagnostics, not published player evaluations or frozen ML training artifacts.
 
-Preserve private DNA, parody aliases, stable detailed abilities, inert Economy Judgment, careers, official/historical results, MOBA availability and owner-started Colab-only character asset processing. Unrelated dirty workspace work is retained.
+Preserve private DNA, parody aliases, stable detailed abilities, inert Economy Judgment, careers, official/historical results, `/evolution/game-modes` availability and owner-started Colab-only character asset processing. Unrelated dirty workspace work is retained.

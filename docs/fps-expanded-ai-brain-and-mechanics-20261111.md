@@ -107,4 +107,4 @@ Enforced strict map boundaries across all systems:
 ## 6. Verification
 - `npm run build`: Production build completed cleanly with exit code 0 (`tsc -b && vite build` in 19.81s).
 - Tests skipped per user's explicit instruction (`"Skip tests"`).
-- All core gameplay invariants, parody aliases (`Cardrel`, `Zypoo`, `d4nk`, `flopz`, etc.), and MOBA gates preserved.
+- All core gameplay invariants, parody aliases (`Cardrel`, `Zypoo`, `d4nk`, `flopz`, etc.), `/evolution/game-modes` and Colab gates preserved.

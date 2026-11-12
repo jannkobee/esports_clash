@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {fpsReferenceEntries,searchFpsReference,FPS_REFERENCE_SECTIONS} from './fps/fpsReference.ts';
 import {FPS_ROLES,rankFpsRoleFits} from './fps/fpsRoleFit.ts';
 import {FPS_PERSONALITIES,FPS_PERSONALITY_CATEGORIES} from './fps/fpsPersonality.ts';
-import {FPS_WEAPONS} from './fps/weapons.ts';
+import {FPS_WEAPONS} from './fps/fpsWeapons.ts';
 import {FPS_IDENTITY_PERSONALITIES} from './fps/fpsIdentity.ts';
 import {PERSONALITY_IDS} from './playerPersonality.ts';
 import {readPediaRoute} from './hexapedia.ts';
@@ -28,7 +28,7 @@ test('leadership and mechanics produce distinct primary/secondary specialties wi
   for(const role of FPS_ROLES)assert.ok(Math.abs(Object.values(role.weights).reduce((a,b)=>a+b,0)-1)<1e-8);
 });
 
-test('every FPS directory and record address resolves without entering a disabled MOBA page',()=>{
+test('every FPS directory and record address resolves cleanly',()=>{
   const previous=globalThis.window;
   try{
     for(const section of Object.keys(FPS_REFERENCE_SECTIONS)){

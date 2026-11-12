@@ -8,7 +8,7 @@ Exact supplied source: [revised 25-ability proposal](references/fps-attribute-mo
 
 The local lab now has a separate version-1 FPS skill profile with the revised 25 keys: 9 execution, 7 tactical/information, 4 team and 5 mental. `weaponHandling` is absent. Values use a 1–10 display with fractional internal precision. Profile metadata includes player ID, revision, seed, creation time and generated/custom/imputed provenance. Invalid, incomplete, wrong-player and out-of-range profiles fail validation. A live match clones and freezes its inputs.
 
-Providing ten profiles explicitly enables `hexatrick-live-exhibition-v6`; omitting them retains the explicit local v5 seven-attribute adapter. The lab offers this choice. Official contextual v2/v3 allocation, worker, settlement and historical replay paths do not consume these profiles. Shared `PlayerAttributes`, roster values, stored legacy CLU/LDR semantics, MOBA and career processing remain intact. No database migration, official activation or deployment was performed.
+Providing ten profiles explicitly enables `hexatrick-live-exhibition-v6`; omitting them retains the explicit local v5 seven-attribute adapter. The lab offers this choice. Official contextual v2/v3 allocation, worker, settlement and historical replay paths do not consume these profiles. Shared `PlayerAttributes`, roster values, stored legacy CLU/LDR semantics and career processing remain intact. No database migration, official activation or deployment was performed.
 
 The supported registry exposes **24 active bounded consumers and one reserved ability**. Active means that a distinct local mechanism is connected and tested; it is not competitive balance, complete simulation fidelity or official scouting qualification.
 

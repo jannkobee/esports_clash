@@ -1,5 +1,5 @@
 import { segmentHitsWall, type FpsPoint } from './fpsSpatialWorld.ts';
-import type { FpsTeamId } from './types.ts';
+import type { FpsTeamId } from './fpsTypes.ts';
 import type { FpsPrimaryRole } from './fpsIdentity.ts';
 import type { LiveIntelBelief } from './fpsLiveIntel.ts';
 import { LIVE_FPS_MAP, LIVE_ACTOR_RADIUS, distance, liveWalkable } from './fpsLiveMap.ts';

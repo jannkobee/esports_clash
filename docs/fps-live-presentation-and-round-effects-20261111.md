@@ -17,7 +17,7 @@ The actors remain collision-volume proxy meshes, not production character models
 
 Affected code: `EsportsClash.Web/src/components/FpsLiveBroadcast.tsx`, `src/components/fps-live-broadcast.css`, `src/fps/fpsLiveSimulation.ts`, `src/fps/fpsLiveViewer.ts`, `src/fps/fpsLiveWeapons.ts`, `src/fps/fpsLiveEconomy.ts`, `src/fps/fpsLiveGrenades.ts`, and `src/fps/fpsBroadcastDirector.ts`.
 
-Preserve official and historical paths, private DNA, aliases, careers, MOBA, the Colab asset gate, collision-authoritative gameplay, and the current map/tactical planning work.
+Preserve official and historical paths, private DNA, aliases, careers, `/evolution/game-modes`, the Colab asset gate, collision-authoritative gameplay, and the current map/tactical planning work.
 ## Local FPS audio and animation correction (11 November 2026)
 
 The live exhibition now generates weapon-family gunshots and walk/run/crouch footsteps with a separate WebAudio engine. Sounds pan and attenuate from the currently followed operative; the sound toggle is available in More and in the floating PIP, and its preference is stored locally. These are synthesized effects rather than recorded samples. Shot/step cues are emitted from the simulation without changing its seeded decisions or AI hearing.

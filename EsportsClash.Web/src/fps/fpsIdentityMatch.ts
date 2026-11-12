@@ -1,7 +1,7 @@
 import {FPS_ROLES} from './fpsRoleFit.ts';
 import {FPS_IDENTITY_PERSONALITIES,FPS_SPECIALTIES,type FpsPrimaryRole,type PersonalityTrigger} from './fpsIdentity.ts';
 import {initialFpsPsychology} from './fpsPersonality.ts';
-import type {FpsIdentityExperiment,FpsPlayerState} from './types.ts';
+import type {FpsIdentityExperiment,FpsPlayerState} from './fpsTypes.ts';
 
 /** Fail closed on incomplete private allocations; never generate replacement match DNA. */
 export function hydrateFpsIdentityContext(input:FpsIdentityExperiment, ids:string[]):FpsIdentityExperiment {

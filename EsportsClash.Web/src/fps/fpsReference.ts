@@ -1,8 +1,8 @@
 import {FPS_ROLES} from './fpsRoleFit.ts';
 import {FPS_IDENTITY_PERSONALITIES,FPS_SPECIALTIES} from './fpsIdentity.ts';
 import {FPS_PERSONALITIES,FPS_PERSONALITY_CATEGORIES,FPS_ATTRIBUTE_LABELS} from './fpsPersonality.ts';
-import {FPS_WEAPONS} from './weapons.ts';
-import {FPS_MAPS} from './maps.ts';
+import {FPS_WEAPONS} from './fpsWeapons.ts';
+import {FPS_MAPS} from './fpsMaps.ts';
 import {STARTING_CASH,MAX_CASH,ROUND_WIN_REWARD,OVERTIME_STARTING_CASH,LOSS_BONUS_LADDER} from './fpsEconomy.ts';
 
 export const FPS_REFERENCE_SECTIONS = {

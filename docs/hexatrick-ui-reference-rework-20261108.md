@@ -1,6 +1,6 @@
 # Transfer Exchange, The Wire and Hexapedia rework
 
-8 November 2026, Asia/Manila. The owner supplied screenshots and requested a presentation and navigation pass. No Arena, learning, Colab, asset qualification or auction settlement rules changed.
+8 November 2026, Asia/Manila. The owner supplied screenshots and requested a presentation and navigation pass. No FPS simulation, learning, Colab, asset qualification or auction settlement rules changed.
 
 ## Delivered interface
 
@@ -22,7 +22,7 @@ The guide has 14 chapters: first matchday, players/attributes, lineup/draft, sta
 Specific bugs corrected:
 
 1. AppRouter was rewriting signed-in canonical nested reference URLs to #codex. Only legacy aliases are normalized now; directories, articles and resource tabs retain their destination.
-2. Authentication preserves resource routes and allowlisted market tab/player links. Explicit workspace URLs take precedence over a stale practice-session flag. Reference-to-Arena links retain the match UUID in the URL.
+2. Authentication preserves resource routes and allowlisted market tab/player links. Explicit workspace URLs take precedence over a stale practice-session flag. Reference-to-match links retain the match UUID in the URL.
 3. Missing/invalid dates display an announcement placeholder instead of throwing.
 4. Tournament facts use published capacity, stages, dates and open-tier labels instead of describing every event as a four-club semifinal bracket.
 5. Embedded edition/national pages have real overview/source anchors instead of links to nonexistent legacy sections.

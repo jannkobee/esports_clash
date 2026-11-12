@@ -1,6 +1,6 @@
-import type { FpsMap, FpsMatchEvent, FpsMatchSettings, FpsPlayerState, FpsRoundEndReason, FpsSide, FpsWeaponId, SetPieceCall } from './types.ts';
-import type { SetPieceResolution } from './setPieceRules.ts';
-import { getWeaponDef } from './weapons.ts';
+import type { FpsMap, FpsMatchEvent, FpsMatchSettings, FpsPlayerState, FpsRoundEndReason, FpsSide, FpsWeaponId, SetPieceCall } from './fpsTypes.ts';
+import type { SetPieceResolution } from './fpsSetPieceRules.ts';
+import { getWeaponDef } from './fpsWeapons.ts';
 import { shouldSaveFpsRetake } from './fpsPersonality.ts';
 import { evaluatePlayerAction, resolveTacticalExecution, type FpsSpecialtyOpportunity, type PersonalityTrigger } from './fpsIdentity.ts';
 import {observedPersonalityTriggers} from './fpsIdentityMatch.ts';

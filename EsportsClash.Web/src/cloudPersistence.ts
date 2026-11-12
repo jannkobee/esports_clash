@@ -1,4 +1,3 @@
-import type { MatchReport } from './matchReplay';
 import type { PlayerCard } from './types';
 
 export interface ApiSession {
@@ -89,11 +88,5 @@ export async function saveCloudClub(session: ApiSession, roster: PlayerCard[], s
   return response.data;
 }
 
-export async function saveCloudMatchReport(session: ApiSession, report: MatchReport): Promise<{ id: number; created_at: string }> {
-  const response = await request<{ data: { id: number; created_at: string } }>('/matches', session, {
-    method: 'POST', body: JSON.stringify({ report }),
-  });
-  return response.data;
-}
 
 export const publicApiAsset=(path:string)=>path.startsWith('/club-media/')?apiBaseUrl+path:'';

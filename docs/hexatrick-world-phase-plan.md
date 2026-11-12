@@ -12,7 +12,7 @@ The owner added the global competition brief and unique-player/bot-takeover cond
 
 # Hexatrick living-world phases
 
-The owner renamed the app to **Hexatrick**, requested a classic management/wiki interface using the supplied screenshots, and explicitly allowed bot clubs to list and bid on players. This supersedes the previous no-bot-market policy. Protected Arena rules, fictional aliases, frozen artifacts and the Colab-only avatar workflow remain in force.
+The owner renamed the app to **Hexatrick**, requested a classic management/wiki interface using the supplied screenshots, and explicitly allowed bot clubs to list and bid on players. This supersedes the previous no-bot-market policy. Protected FPS rules, fictional aliases, frozen artifacts and the Colab-only avatar workflow remain in force.
 
 ## Completed foundation — navigation, identity and real club home
 
@@ -25,7 +25,7 @@ The owner renamed the app to **Hexatrick**, requested a classic management/wiki 
 
 `world:tick` dispatches one `ManageBotClub` job per bot per 15-minute UTC review window. A database receipt is unique by club/window. Market and lineup decisions commit with that receipt under the existing catalog lock. Queue uniqueness and overlap middleware provide additional protection. Reviews over 30 minutes old are skipped instead of replaying a historical backlog.
 
-This is rule-based club management, not a new learned Arena controller. It uses the same catalog/ownership records that supply Avatarpedia and calls existing domain services:
+This is rule-based club management, not a new learned match controller. It uses the same catalog/ownership records that supply Avatarpedia and calls existing domain services:
 
 1. Use weekly-limited scouting/academy intake and choose stronger legal default starters. Listed players are excluded from candidates. Fixture locks take precedence.
 2. Reserve two weeks of current player wages and youth-coach salary. Available money already excludes bid holds.
@@ -44,15 +44,15 @@ Bot and human auctions share ownership checks, bid limits, escrow, refunds, clos
 
 The additive `2026_11_08_000007_create_club_world_activity` migration created event and review tables. A fresh local backup is retained in ignored `.local-tools/matchday-rehearsal/hexatrick-world-pre-migration-20261108.dump`. Only that migration was applied.
 
-Before refreshing the default queue worker, zero active official matches and zero reserved default jobs were observed. Only the default club-job worker was gracefully refreshed. Arena worker images, ML runners, Colab services and avatar workers were not restarted. The first real window completed three bot reviews, published three auctions and made two tournament entries. Zero pending default jobs/recent queue failures were observed afterward. This is operational activation evidence, not a comprehensive test result.
+Before refreshing the default queue worker, zero active official matches and zero reserved default jobs were observed. Only the default club-job worker was gracefully refreshed. Online match worker images, ML runners, Colab services and avatar workers were not restarted. The first real window completed three bot reviews, published three auctions and made two tournament entries. Zero pending default jobs/recent queue failures were observed afterward. This is operational activation evidence, not a comprehensive test result.
 
-Production build/TypeScript and PHP syntax checks pass. Automated suites and browser interaction/visual checks remain deferred at the owner's request. Existing large Arena bundle warnings remain. New routes/theme do not inherit older browser acceptance evidence.
+Production build/TypeScript and PHP syntax checks pass. Automated suites and browser interaction/visual checks remain deferred at the owner's request. Existing large bundle warnings remain. New routes/theme do not inherit older browser acceptance evidence.
 
 ## Next build phase — official Squad, player careers, staff and inbox
 
 1. **Official Squad.** Unify owned profiles, reserves, defaults and fixture orders in one account-backed screen. Move practice collections behind their own entry.
 2. **Player careers.** Link each contracted player to its stable owned-player identity, verified appearances, club history and actual transfer events. Retain catalog profiles as reference/archetype pages and preserve established aliases/IDs. Do not invent past careers.
-3. **Staff and youth.** Add real coach appointments/contracts, salaries and academy cohorts. Display current XP and weekly posting honestly; changing Arena attributes or training formulas is separate work.
+3. **Staff and youth.** Add real coach appointments/contracts, salaries and academy cohorts. Display current XP and weekly posting honestly; changing FPS attributes or training formulas is separate work.
 4. **Club inbox.** Deliver persistent bid/outbid/sale, fixture deadline and academy notices to the relevant manager, with read state/preferences. Do not fabricate messages.
 5. **Competition life.** Add organizer tools, published seasons and safe bot/human friendly scheduling through the fixture service. Overlapping-match expansion still depends on deferred capacity/recovery work.
 

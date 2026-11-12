@@ -6,19 +6,13 @@ Reuse the existing generation/preparation pipeline. The owner explicitly require
 
 ## Current visual direction (2026-10-24)
 
-The owner superseded the painted-sprite production direction with actual modeled geometry and Babylon.js animation/effects. Existing pictures are references for the world rebuild; follow [the single active visual plan](babylon-visual-rebuild.md). The earlier sprite trial below is historical. All anatomy, base-first, rig/deformation, appearance and qualification gates in this document still apply, including to code-authored meshes and rigs. Removed generated planning guides are preserved as exact historical content in [the reset receipt](visual-reset-20261024.json); use current identity/kit JSON and supplied specifications for factual sources. No new candidate is qualified by this direction change.
+The owner superseded the painted-sprite production direction with actual modeled geometry and Babylon.js animation/effects. Follow [the single active visual plan](babylon-visual-rebuild.md). All anatomy, base-first, rig/deformation, appearance and qualification gates in this document still apply, including to code-authored meshes and rigs. Use current identity/kit JSON and supplied specifications for factual sources. No new candidate is qualified by this direction change.
 
-## Separate painted 2.5D trial (2026-10-24)
+## Current owner override: fresh assets reset (2026-10-24)
 
-Subsequent owner instruction: **make it live, arena first, then Mirelle**. This authorizes the limited painted terrain/scenery and two-facing Mirelle sprite presentation in the existing Babylon match and replay. It supersedes the preview-only/opt-in staging for these assets, not the 3D qualification gates. The sprite has four-frame motions and shared attack/cast gesture; full animation qualification remains pending. See [live integration evidence](arena-2d/live-integration.md).
+The owner explicitly requested deleting all existing avatar model/rig/animation/reference/preview binaries and restarting with Mirelle Vane (`c_invoker`). This supersedes earlier retention instructions **for those binaries**. Historical plans, hashes, reports and revisions remain audit evidence; their former binary links may now be absent. Do not restore Stafford or legacy geometry as Mirelle's source. Old visual releases are inactive. The new Mirelle candidate is private and **unqualified**. All base-first, anatomy, deformation and publication gates below still apply.
 
-The owner explicitly approved a separate painted-sprite workflow with its own animation checks for the Babylon arena trial. Its character illustrations do not require the 3D base-rig gate; 3D assets still do. Read [the shared 2.5D reference](arena-2d/README.md) before sprite work. Mirelle's new painted draft and all failed 3D candidates remain unqualified; no live visual release follows from this exception.
-
-## Current owner override: fresh assets for all 45 (2026-10-24)
-
-The owner explicitly requested deleting all existing avatar model/rig/animation/reference/preview binaries and restarting with Mirelle Vane (`c_invoker`). This supersedes earlier retention instructions **for those binaries**. Historical plans, hashes, reports and revisions remain audit evidence; their former binary links may now be absent. Do not restore Stafford or legacy geometry as Mirelle's source. Old visual releases are inactive. The new Mirelle candidate is private and **unqualified**. See [reset receipts and stage ownership](avatar-rework/asset-reset-20261024.md). All base-first, anatomy, deformation and publication gates below still apply.
-
-Owner decision: 2026-10-21. This is the required workflow for all avatar asset work and all agents. Read the latest [agent handoff](agent-handoff.md) before acting; [arena mechanics](arena-mechanics.md) remains authoritative for protected gameplay behavior.
+Owner decision: 2026-10-21. This is the required workflow for all avatar asset work and all agents. Read the latest [agent handoff](agent-handoff.md) before acting.
 
 ## Base first, appearance later
 
@@ -100,9 +94,9 @@ The prompt implementation now uses contract `base-first-a-pose-v1`:
 - [base-anatomy.json](../EsportsClash.Api/resources/avatars/base-anatomy.json) supplies explicit anatomy entries for all 45 catalog avatars. Unknown avatars or missing anatomy fail explicitly rather than falling back to costume text.
 - [AvatarAssetPromptService.php](../EsportsClash.Api/app/Services/AvatarAssetPromptService.php) builds the anatomy-only default body prompt and a fourth `outfit` prompt for later appearance work. Legacy body overrides are archived and ignored by the new body contract; their original text remains readable. Older three-field saves preserve an existing optional outfit brief.
 - [asset-editor.blade.php](../EsportsClash.Api/resources/views/evolution/avatars/asset-editor.blade.php) sends imported selected-design context only to outfit/equipment briefs, keeping it out of the clean body prompt.
-- [avatar-base-first-prompts.json](avatar-base-first-prompts.json) records the prompt export for all 45 avatars.
+- Legacy base prompt export JSON was removed during the 2026-11-12 legacy-mode cleanup (`EsportsClash.Api` prompt services retain anatomy-first contracts).
 
-The new selected Stafford reference is [stafford-base-apose-v1.png](../infrastructure/trellis2/references/stafford-base-apose-v1.png), generated with imagegen and retained as a separate artifact with SHA-256 `43c2464d7af854a76e703d40e0bdd3783b5aa4b533335ca899ce2f87a34581a4`. Its Google-generated source `d0ba4c6c-f06e-4047-90ab-5f29de0cb11d` succeeded: GLB SHA-256 `7606b5c57b562457ee616875267315751a33a34d74dbf74f07ab59d708230e8d`, 37,474 triangles, and zero glTF errors/warnings.
+The new selected Stafford reference is `infrastructure/trellis2/references/stafford-base-apose-v1.png`, generated with imagegen and retained as a separate artifact with SHA-256 `43c2464d7af854a76e703d40e0bdd3783b5aa4b533335ca899ce2f87a34581a4`. Its Google-generated source `d0ba4c6c-f06e-4047-90ab-5f29de0cb11d` succeeded: GLB SHA-256 `7606b5c57b562457ee616875267315751a33a34d74dbf74f07ab59d708230e8d`, 37,474 triangles, and zero glTF errors/warnings.
 
 The new isolated cloud TokenRig raw rig succeeded in 121.38 seconds inclusive, with 4499.47 MiB peak allocation, 52 joints, normalized weights with at most four influences, and no unweighted body vertices. Its SHA-256 is `bffc47c8cf223c82f4c2644138f146fdef6f7c9934e2a14c12755eacad4c1f0b`; six raw rest/stress views in [stafford-base-apose-raw-views](stafford-base-apose-raw-views/) were inspected clean. The base and raw rig are promising results for the new input policy, with limited inspection rather than final combat qualification.
 
@@ -130,7 +124,7 @@ Fixed-weight socket study `65f0062a` completes seven bounded shoulder placements
 
 The signed-contact surface probes completed and produced portable corrective candidate `140fe64c` on `f6283980`. Its four baked corrective morphs and exact diagnostic playback survive GLB validation, Babylon review and 104 sampled native/corrective interpolation poses, but limited manual review still finds broad shoulder roots and hip creases; it remains unqualified. The first intermediate-motion job lost its runtime before result retrieval and remains unknown; replacement `e0a78665` records its own runtime provenance. Preserve every attempt and stop blind transfer/pivot tuning or repeated cap rebasing.
 
-Use [the complete Mirelle regression lock](avatar-rework/mirelle-deformation-regression-lock-20261026.md) for the immutable source/parent/candidate IDs and hashes, exact Colab runtime provenance, failure history, comparison values, backoffice registration, and ordered next work. The lock is authoritative for continuing Mirelle's deformation work; update it and the chronological handoff after each new attempt. Keep the API preparation record as the single source of truth for candidate/report state consumed by Web.
+Keep the API preparation record as the single source of truth for candidate/report state consumed by Web, preserving all immutable source/parent/candidate IDs, hashes, Colab runtime provenance, and failure history.
 
 ## Agent coordination protocol
 

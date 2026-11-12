@@ -4,8 +4,41 @@ import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { avatarDesign } from './avatarDesigns.ts';
 import { bindAvatarModel, disposeAvatarRig, type AvatarModel, type AvatarModelResources, type AvatarPose } from './threeAvatarModels.ts';
 import { avatarModelUrl,type AvatarModelVariant } from './avatarModelUrl.ts';
-import { disposeArenaTerrainResources } from './threeArenaTerrain.ts';
 import {loadVisualReleases,visualReleaseUrl,reportVisualHealth,type VisualRelease} from './avatarVisualRelease.ts';
+
+function collectObjectTexture(value: unknown, textures: Set<THREE.Texture>): void {
+  if (value instanceof THREE.Texture) textures.add(value);
+  else if (Array.isArray(value)) value.forEach(entry => collectObjectTexture(entry, textures));
+}
+
+function disposeSceneResources(root: THREE.Object3D): void {
+  const geometries = new Set<THREE.BufferGeometry>();
+  const materials = new Set<THREE.Material>();
+  const textures = new Set<THREE.Texture>();
+  const skeletons = new Set<THREE.Skeleton>();
+  root.traverse(object => {
+    if (object instanceof THREE.InstancedMesh) object.dispose();
+    if (object instanceof THREE.SkinnedMesh) skeletons.add(object.skeleton);
+    const renderObject = object as THREE.Object3D & { geometry?: THREE.BufferGeometry; material?: THREE.Material | THREE.Material[] };
+    if (renderObject.geometry) geometries.add(renderObject.geometry);
+    const objectMaterials = Array.isArray(renderObject.material) ? renderObject.material : renderObject.material ? [renderObject.material] : [];
+    objectMaterials.forEach(material => {
+      materials.add(material);
+      Object.values(material).forEach(value => collectObjectTexture(value, textures));
+      const uniforms = (material as THREE.ShaderMaterial).uniforms;
+      if (uniforms) Object.values(uniforms).forEach(uniform => collectObjectTexture(uniform.value, textures));
+    });
+  });
+  const bitmaps = new Set<ImageBitmap>();
+  textures.forEach(texture => {
+    if (typeof ImageBitmap !== 'undefined' && texture.image instanceof ImageBitmap) bitmaps.add(texture.image);
+    texture.dispose();
+  });
+  bitmaps.forEach(bitmap => bitmap.close());
+  skeletons.forEach(skeleton => skeleton.dispose());
+  materials.forEach(material => material.dispose());
+  geometries.forEach(geometry => geometry.dispose());
+}
 import {bindSubmittedArsenaldo} from './submittedArsenaldo.ts';
 import {avatarSecondaryMotion} from './avatarSecondaryMotion.ts';
 import {contactGait} from './avatarContactProfiles.ts';
@@ -49,7 +82,7 @@ export class AvatarAssetLibrary {
           const file=await this.loader.loadAsync(avatarModelUrl(id,variant));this.resolvedURLs.set(key,avatarModelUrl(id,variant));return file;}throw error;}
       }).then(file => {
         if (this.closed) {
-          disposeAvatarRig(file.scene); disposeArenaTerrainResources(file.scene); return false;
+          disposeAvatarRig(file.scene); disposeSceneResources(file.scene); return false;
         }
         this.files.set(key, file); this.owner.add(file.scene);
         if(id==='c_invoker'&&variant==='claude')this.nativeImports.add(file);
@@ -113,11 +146,9 @@ export class AvatarAssetLibrary {
     const bounds = hasMesh ? meshBounds : new THREE.Box3().setFromObject(scene);
     const rawHeight = bounds.max.y - bounds.min.y;
     const baseHeight = avatarDesign(id)?.height ?? 70;
-    // Procedural champions feature stylized chunky/heroic MOBA silhouettes.
-    // Neural AI meshes (e.g. TRELLIS 7.5-8 heads tall) need a top-down readability presence
-    // multiplier (1.25x) so their screen volume and head silhouette match top-down orthographic view.
-    const mobaPresenceMultiplier = 1.25;
-    const targetHeight = baseHeight * mobaPresenceMultiplier;
+    // Neural AI meshes benefit from a slight presence multiplier (1.25x) so proportions read cleanly in camera framing.
+    const presenceScaleMultiplier = 1.25;
+    const targetHeight = baseHeight * presenceScaleMultiplier;
     const scaleFactor = rawHeight > 0.1 ? targetHeight / rawHeight : 40;
     const strideDistances:Record<string,number>={};
     for(const state of ['walk','run','strafe']){

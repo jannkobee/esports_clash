@@ -60,5 +60,5 @@ The owner requested:
   - `node --test EsportsClash.Web/src/fpsLiveIntel.test.mjs`: **13/13 passed**.
   - `node --test EsportsClash.Web/src/fpsIdentity.test.mjs EsportsClash.Web/src/fpsSkillProfile.test.mjs EsportsClash.Web/src/fpsPersonality.test.mjs EsportsClash.Web/src/fpsRoundSimulation.test.mjs EsportsClash.Web/src/fpsMatchSimulation.test.mjs`: **60/60 passed**.
   - Total FPS test suite: **100/100 tests passed**.
-  - `npm --prefix EsportsClash.Web run check:game`: **746 MOBA/arena tests, 3 multi-seed simulation checks, design validation all passed**.
+  - `npm --prefix EsportsClash.Web run check:game`: **746 legacy suite tests (frontend suite removed 2026-11-12), 3 multi-seed simulation checks, design validation all passed**.
   - `npm --prefix EsportsClash.Web run build` (`tsc -b && vite build`): **Passed cleanly in 7.36s with zero errors**.

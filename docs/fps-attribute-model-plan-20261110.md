@@ -111,7 +111,7 @@ Retain a compact card, with an expandable full FPS profile using full names grou
 | STA | Stamina |
 | FLX | Adaptability |
 
-Once the new profile is authoritative, summaries are derived for display/role fit and do not get applied again as simulation modifiers. Their exact weights need calibration and UI review. Existing MOBA meanings, stored fields, historical cards/results and pinned official profiles remain intact. No summary or new attribute is a universal best-player score. Role fit must use the relevant detailed abilities: for example, an entry values preparation/reaction/peeking/movement, a trader values spacing/awareness/follow-up aim, a support values utility/communication/coordination, and a caller values information/decisions/calling.
+Once the new profile is authoritative, summaries are derived for display/role fit and do not get applied again as simulation modifiers. Their exact weights need calibration and UI review. Existing stored meanings, stored fields, historical cards/results and pinned official profiles remain intact. No summary or new attribute is a universal best-player score. Role fit must use the relevant detailed abilities: for example, an entry values preparation/reaction/peeking/movement, a trader values spacing/awareness/follow-up aim, a support values utility/communication/coordination, and a caller values information/decisions/calling.
 
 ## Data, migration and scouting plan
 
@@ -141,7 +141,7 @@ Once the new profile is authoritative, summaries are derived for display/role fi
 - High skills remain fallible; different low/high combinations yield distinguishable strengths and tradeoffs. A player can be fast but poorly prepared, or well positioned but slower to react.
 - Role fit and outcomes are evaluated over multiple contexts, not raw kill-only ranking. No identity/personality combination is a universal strongest class.
 - Attribute averages do not accidentally apply twice through summaries, role fits, specialties or legacy adapters.
-- Public scouting never reveals raw DNA; generation is stable, development idempotent, and historical official/MOBA paths retain exact behavior.
+- Public scouting never reveals raw DNA; generation is stable, development idempotent, and historical official/`/evolution/game-modes` paths retain exact behavior.
 - Run targeted diagnostics plus repository-required game checks/build during implementation; planning-only documentation does not require executing gameplay tests.
 
 Recommendation for approval: adopt the 26-attribute target and consistent 1–10 FPS presentation, preserve seven compact summaries, and implement the 12 Phase-1 consumers in the local exhibition before any official profile migration.

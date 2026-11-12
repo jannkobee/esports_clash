@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { avatarDesign, type AvatarDesign } from './avatarDesigns.ts';
-import type { ChampionKit } from './types.ts';
 import { beveledPanel, clothCape, loftSurface, taperedCurve } from './avatarSurfaceGeometry.ts';
 import { sculptAvatarBody } from './avatarSculptBody.ts';
 import { arsenaldoElements } from './arsenaldoModel.ts';
@@ -100,7 +99,7 @@ export class AvatarModelResources {
 const FALLBACK: AvatarDesign = { body: 'scout', width: 11, height: 68, skin: '#bf9679', hair: '#354253',
   silhouette: 'Expedition scout', costume: 'Layered tunic and boots', signature: 'Scout blade' };
 
-export function buildAvatarModel(kit: Pick<ChampionKit, 'id' | 'primaryColor' | 'accentColor'>,
+export function buildAvatarModel(kit: { id: string; primaryColor: string; accentColor: string },
   resources: AvatarModelResources, options: { externalAnatomy?: boolean; externalOutfit?: boolean } = {}): AvatarModel {
   const id = kit.id;
   const d = avatarDesign(id) ?? FALLBACK;

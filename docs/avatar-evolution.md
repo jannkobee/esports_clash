@@ -1,8 +1,8 @@
 # Autonomous Avatar Evolution Engine
 
-**Latest owner steering (2026-10-18):** TRELLIS.2 work and the Arsenaldo visual-generation schedule are paused while using the [supplied static Arsenaldo GLB](arsenaldo-supplied-model.md). Avatar/VFX manual approvals were superseded by [problem-driven automatic publication](autonomous-art-evolution.md), which published V3/V4 before this pause. Gameplay balance approvals are unchanged. First-cycle/manual-review sections below describe historical checkpoints.
+**Latest owner steering (2026-10-18):** TRELLIS.2 work and the Arsenaldo visual-generation schedule are paused. First-cycle/manual-review sections below describe historical checkpoints.
 
-Owner priority, 2026-10-18: defer the remaining ML validation work and implement Part 6 first, including animation and ability visuals. The ML Docker study/schedule remain independent. The supplied autonomy proposal is retained verbatim in [avatar-evolution-autonomy-specification.md](avatar-evolution-autonomy-specification.md).
+Owner priority, 2026-10-18: defer the remaining ML validation work and implement Part 6 first, including animation and ability visuals. The ML Docker study/schedule remain independent.
 
 Model reports now have their own owner archive at **http://localhost:8089/evolution/avatars/reports**, with model JSON downloads separate from ML reports. See [docker-development.md](docker-development.md) for report separation and the active Docker development hot reload setup.
 
@@ -63,7 +63,7 @@ Avatar work has a separate persistent volume and worker capped at one CPU / 1280
 
 Owner operations require the designated Laravel session, CSRF, validated inputs and audit records. Approval rechecks the worker manifest/report, candidate pass status and current parent version under database locks. Rollback is atomic. Public downloads expose only approved, hash-verified releases; arbitrary private file paths and artifact symlinks are rejected. Source files and scripts are versioned, and the Blender archive checksum is pinned in the Dockerfile.
 
-No mechanical balance, hitbox, range, cooldown, damage, team identity, tower/well/Nexus safety, objective behavior, anti-oscillation or Player Card alias is changed. Animation and ability mutations remain presentation-only.
+No mechanical balance, hitbox, range, cooldown, damage, team identity, objective behavior, anti-oscillation or Player Card alias is changed. Animation mutations remain presentation-only.
 
 ## Implementation and verification status
 
@@ -75,7 +75,7 @@ The final renderer reproduced the original recorded model poses for the baseline
 
 Actual resource snapshot: roughly **66.7 MiB** of avatar artifacts including compatibility witnesses; idle anonymous RAM **73.5 MiB**, cgroup lifetime peak **1023.8 MiB**, under the 1280 MiB cap. These are scoped Docker measurements, not Windows physical RAM or GPU measurements. Automatic generation is enabled at 60 minutes and the scheduler heartbeat advances independently. The current Arsenaldo cycle waits for owner review.
 
-Evidence: [complete first cycle](avatar-evolution-first-cycle.json), [frozen execution](avatar-evolution-execution.json), [artifact/deployment verification](avatar-evolution-deployment-verification.json), [final renderer qualification](avatar-evolution-renderer-qualification.json), [owner browser verification](avatar-evolution-ui-verification.json), [desktop comparison](avatar-evolution-owner-dashboard.png), [phone comparison](avatar-evolution-owner-mobile.png).
+Historical first-cycle evidence logs/screenshots were removed in the 2026-11-12 MOBA cleanup.
 
 Compatibility passing does **not** establish overall technical or artistic improvement. Baseline bind-pose BVH pairs were 11,546; candidate counts range from 11,543 to 12,269, including intentional garment overlaps. Foot-joint drift proxies were unchanged; animation candidates slightly increased the sampled blend displacement within the configured allowance. These tradeoffs remain visible for review. The archived first report's initial-generation improvement flag compared against an empty search population, not the original model; it is not improvement evidence. Subsequent first generations record that comparison as unavailable. The archived report was retained unchanged.
 

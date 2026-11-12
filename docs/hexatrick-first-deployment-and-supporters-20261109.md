@@ -1,6 +1,6 @@
 # Hexatrick first deployment and Supporter studio
 
-Implemented 9 November 2026. This is the current operational entry point for creating the playable world. Existing historical Arena, ML and visual evidence is preserved.
+Implemented 9 November 2026. This is the current operational entry point for creating the playable world. Existing historical match, ML and visual evidence is preserved.
 
 See the later [dossiers, mixed-case IGNs, Laurels and Hexacast update](hexatrick-dossiers-laurels-hexacast-20261109.md) for the current display-name policy and record features.
 
@@ -44,7 +44,7 @@ Current local admission: owner email `jkobe415@gmail.com`, user 4, club 4, **RAT
 
 New regular registrations receive one calendar month of Beacon, using calendar-aware month addition. The initialized owner has permanent Beacon. Server checks enforce every feature; hiding a button is not the authorization boundary. Expired memberships cannot save customizations. Saved player/club artwork and identity history remain attached to their existing records. Effective interface themes revert to Cinder when membership expires; saved preferences remain available for renewal. Checkout, pricing, recurring billing and entitlement webhooks are not enabled by this work.
 
-Settings → **Supporter studio** contains both benefit cards, membership status/expiry, Cinder/Deepwater/Evergreen/Nocturne themes, the Beacon palette builder, compact/comfortable record spacing, and the player presentation editor. Theme preferences live on the account and return through login, `/me` and `/online/supporter`. Custom text must meet 4.5:1 contrast against both chosen canvas and panel backgrounds. Accent button text is selected for legibility. Theme overrides target management/reference surfaces, not Arena team colors or gameplay state.
+Settings → **Supporter studio** contains both benefit cards, membership status/expiry, Cinder/Deepwater/Evergreen/Nocturne themes, the Beacon palette builder, compact/comfortable record spacing, and the player presentation editor. Theme preferences live on the account and return through login, `/me` and `/online/supporter`. Custom text must meet 4.5:1 contrast against both chosen canvas and panel backgrounds. Accent button text is selected for legibility. Theme overrides target management/reference surfaces, not match team colors or gameplay state.
 
 ## Player identity and portraits
 
@@ -52,7 +52,7 @@ After clarification, the owner explicitly chose **no nationality customization**
 
 Editable IGNs are 3 to 14 alphanumeric characters with manager-selected casing. At most three global identities may share an IGN; same-club collisions and reserved catalog aliases are rejected. Protected historical/parody aliases, including Cardrel, remain protected. Transfers retain the same player UUID, customization cooldowns and career. A rename adds immutable revision history and appears under previous IGNs in the canonical career record. Biographies are plain text, limited to 600 characters, and explicitly labeled club-provided on Hexapedia.
 
-Portraits use the existing original transparent SVG system, with bounded skin/hair palettes, seven hair silhouettes, optional glasses/headset and jersey/trim colors. These are 2D player portraits, separate from the protected 3D Arena-avatar pipeline. Current squad/home/market/reference projections read the same presentation record. Historical allocations/reports are not rewritten, and no current presentation is fetched into an old recording as a substitute for its pinned data.
+Portraits use the existing original transparent SVG system, with bounded skin/hair palettes, seven hair silhouettes, optional glasses/headset and jersey/trim colors. These are 2D player portraits, separate from the protected 3D avatar pipeline. Current squad/home/market/reference projections read the same presentation record. Historical allocations/reports are not rewritten, and no current presentation is fetched into an old recording as a substitute for its pinned data.
 
 Edits require Beacon and ownership. Catalog/club/player locking serializes changes against allocation/transfers; queued matches, a fixture awaiting its snapshot, open auctions and pending trades block edits. Each player has separate 30-day IGN and seven-day biography/portrait cooldowns, retained through transfers. Every actual change appends `player_presentation_revisions` and increments the club revision. Cosmetic edits never modify stats, nationality, training XP, form or money.
 
@@ -62,6 +62,6 @@ Main implementation: `GameInitialization.php`, `FirstDeploymentSeeder.php`, `Per
 
 Production TypeScript/Vite build passes. Touched PHP/Node syntax and initializer PowerShell parsing are checked separately; no test suites or test matches are run, per owner direction. Read-only inspection confirmed owner membership, one club, valid private password hash comparison, the two plan records/four presets, five editable owner players, public presentation projection and alias-history projection. Current population at inspection: 138 clubs, including 131 managed opponents (24 in each Tier 1–4 and 35 in Tier 5); the active player population changes as legitimate management jobs scout and trade. There were no recent failed jobs.
 
-Migration 000010 is applied. The initialization service has been exercised against the existing development world, including its no-op repeat. A completely empty production database has not been rehearsed. No claim is made that payment processing, end-to-end paid renewal, live cooldown editing, full scheduled Arena settlement or 50,000-club capacity has been accepted. Windows Computer Use/browser access was unavailable, so rendered and signed-in interaction acceptance remains pending.
+Migration 000010 is applied. The initialization service has been exercised against the existing development world, including its no-op repeat. A completely empty production database has not been rehearsed. No claim is made that payment processing, end-to-end paid renewal, live cooldown editing, full scheduled match settlement or 50,000-club capacity has been accepted. Windows Computer Use/browser access was unavailable, so rendered and signed-in interaction acceptance remains pending.
 
 Protected interrupted match `157691b0-c281-407d-8771-1d53dff55ed8` remains interrupted at sequence 3,472 with no verified result. No game was started, resumed, statistically settled or accelerated by this initialization.

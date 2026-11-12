@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { simulateFpsMatch } from './fps/fpsSimulationEngine.ts';
 import { findFpsRoute } from './fps/fpsRoundSimulation.ts';
-import { FPS_MAPS } from './fps/maps.ts';
+import { FPS_MAPS } from './fps/fpsMaps.ts';
 import { getFpsReplayState, getFpsRoundEvents } from './fps/fpsMatchViewModel.ts';
 import { fpsRoleFit } from './fps/fpsRoleFit.ts';
 import { createEqualizedRoster } from './equalizedMode.ts';
@@ -67,7 +67,7 @@ test('replay uses recorded damage and legal movement and consumes actual carried
   }
 });
 
-test('FPS scouting role fits do not expose historical MOBA classes',()=>{
+test('FPS scouting role fits map attributes to FPS specialties',()=>{
   assert.equal(fpsRoleFit(),'Unscouted');
   assert.equal(fpsRoleFit({lan:99,flx:99,tf:30,iq:30,clu:30}),'Entry Fragger');
   assert.equal(fpsRoleFit({lan:30,flx:30,tf:99,iq:30,clu:30}),'Trade Fragger');

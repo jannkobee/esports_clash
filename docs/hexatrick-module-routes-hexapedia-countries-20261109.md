@@ -1,4 +1,4 @@
-﻿# Frontend module routes, Hexapedia repairs and complete country flags — 9 November 2026
+# Frontend module routes, Hexapedia repairs and complete country flags — 9 November 2026
 
 ## Owner request
 
@@ -24,12 +24,12 @@ Rename frontend routes to the actual module names (especially codex → hexapedi
 | Competitions | `#competitions?tab=<section>` |
 | Community cups | `#community-cups` |
 | Scrimmages | `#scrimmages` |
-| Arena practice | `#arena-practice` |
+| Practice lab | `#fps-simulation` |
 | Settings | `#settings` |
 
 Old `#codex`, `#avatarpedia`, `#discover`, `#play`, `#market`, `#home`, `#history` and `#supporter` bookmarks are canonicalized with `history.replaceState`. Match IDs, thread/report IDs, competition tabs and supported query parameters survive the change. Auth return destinations validate the named module and retain those parameters. Workspace view state remains separate from the URL adapter; no match lifecycle moves into the frontend.
 
-`avatarpedia.ts` has been renamed to **hexapedia.ts**, and source imports and outgoing links updated. Existing backend `/avatarpedia` endpoints remain supported; the owner requested frontend URL renaming.
+The reference helper is **hexapedia.ts**. Existing compatibility backend `/avatarpedia` endpoints remain supported separately.
 
 ## Hexapedia repairs
 

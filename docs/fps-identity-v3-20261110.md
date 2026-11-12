@@ -32,7 +32,7 @@ The manager desk exposes coach fit, gameplan fit, chemistry, familiarity, role l
 
 ## Privacy and compatibility
 
-The private allocation stays server-side. The worker removes initial/final raw identity state from public reports, settlement rejects raw DNA, and model/API serialization redacts private identity inputs. Public round snapshots include only role, personality/specialty names and match mindset. Event-driven replay supports v2 and v3, including recovered equipment. MOBA remains fully retained and owner-disabled; aliases, historical matches, frozen ML and Colab-only asset gates are preserved.
+The private allocation stays server-side. The worker removes initial/final raw identity state from public reports, settlement rejects raw DNA, and model/API serialization redacts private identity inputs. Public round snapshots include only role, personality/specialty names and match mindset. Event-driven replay supports v2 and v3, including recovered equipment. `/evolution/game-modes` compatibility remains retained (legacy frontend views removed 2026-11-12); aliases, historical matches, frozen ML and Colab-only asset gates are preserved.
 
 ## Verification
 

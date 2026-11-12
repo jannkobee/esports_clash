@@ -1,6 +1,6 @@
 # Live exhibition v5: playing from information
 
-On 10 November 2026 the owner asked to solidify how the FPS players play from information. `/root` owns perception/memory, information-based calling, utility, observer UI and verification; no agents or asset jobs were dispatched. This advances the browser-local exhibition to `hexatrick-live-exhibition-v5` on the existing `breakwater-live-v4` geometry. Official contextual FPS v3, historical matches/replays, career settlement, private DNA, preserved owner-disabled MOBA and Colab asset gates remain unchanged.
+On 10 November 2026 the owner asked to solidify how the FPS players play from information. `/root` owns perception/memory, information-based calling, utility, observer UI and verification; no agents or asset jobs were dispatched. This advances the browser-local exhibition to `hexatrick-live-exhibition-v5` on the existing `breakwater-live-v4` geometry. Official contextual FPS v3, historical matches/replays, career settlement, private DNA, preserved `/evolution/game-modes` and Colab asset gates remain unchanged.
 
 The prior single `contact` point let new sounds overwrite sightings and supplied little evidence for team decisions. The new implementation keeps that point only as a selected movement/aim bridge over bounded, source-aware memory. The adopted [pro-match reference](fps-crosshair-reference-20261110.md) and [professional skill mapping](fps-professional-skill-reference.md) remain the design references.
 

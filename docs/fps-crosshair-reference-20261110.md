@@ -31,7 +31,7 @@ Code: `src/fps/fpsLiveAim.ts`, `fpsLiveSimulation.ts`, `fpsLiveViewer.ts`, `src/
 | Mental responses and adaptation must be explainable | Existing pressure/exertion/contextual identity inputs remain. No artificial comeback bonus, guaranteed highlight, new persistent emotional system or series-level learning was added. |
 | Economy and historical reproducibility matter | Existing real-wallet buys, conserved drops/ammunition, survival equipment and deterministic seeded simulation remain. This reference does not adopt CS2 reward, round-count, patch or overtime rules implicitly. |
 
-The broader priorities are adopted as future behavioral guidance alongside [the professional skill mapping](fps-professional-skill-reference.md). They do not authorize changing historical artifacts, publishing unqualified assets, exposing private DNA, duplicating career development or altering the preserved MOBA rules. Character generation/rigging/animation remains owner-started through the existing Colab-only pipeline.
+The broader priorities are adopted as future behavioral guidance alongside [the professional skill mapping](fps-professional-skill-reference.md). They do not authorize changing historical artifacts, publishing unqualified assets, exposing private DNA, duplicating career development or altering `/evolution/game-modes` rules. Character generation/rigging/animation remains owner-started through the existing Colab-only pipeline.
 
 ## Verification
 
