@@ -1,7 +1,7 @@
 import { LIVE_FPS_MAP, distance, liveSightline } from './fpsLiveMap.ts';
 import { segmentHitsWall } from './fpsSpatialWorld.ts';
 import type { LivePlayer, LiveSnapshot } from './fpsLiveSimulation.ts';
-import type { FpsTeamId } from './types.ts';
+import type { FpsTeamId } from './fpsTypes.ts';
 
 export type LiveCameraMode = 'director' | 'first' | 'third' | 'overview';
 

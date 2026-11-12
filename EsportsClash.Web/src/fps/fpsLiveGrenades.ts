@@ -1,6 +1,6 @@
 import { LIVE_FPS_MAP, distance } from './fpsLiveMap.ts';
 import { segmentHitsWall, type FpsPoint } from './fpsSpatialWorld.ts';
-import type { FpsTeamId } from './types.ts';
+import type { FpsTeamId } from './fpsTypes.ts';
 
 /** Shared gameplay facts consumed by both physics and the local utility planner. */
 export const LIVE_UTILITY_RULES=Object.freeze({smokeRadius:4.8,smokeDuration:18,smokeSpread:1.8,fireRadius:4.2,fireDuration:7,fireSpread:1.25,fireDamagePerSecond:38,flashRadius:13,flashFacingDuration:2.2,flashTurnedDuration:.45,gravity:18});

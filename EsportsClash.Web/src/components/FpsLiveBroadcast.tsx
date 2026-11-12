@@ -2,7 +2,7 @@ import { LIVE_KNIFE } from '../fps/fpsLiveWeapons.ts';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { freshFpsExhibitionSeed } from '../fps/fpsExhibitionSeed';
 import type { PlayerCard } from '../types';
-import type { FpsIdentityExperiment, FpsTeamId } from '../fps/types';
+import type { FpsIdentityExperiment, FpsTeamId } from '../fps/fpsTypes';
 import { FpsFixedStepClock } from '../fps/fpsSpatialWorld';
 import { LIVE_FPS_MAP } from '../fps/fpsLiveMap';
 import { FpsLiveSimulation, LIVE_FPS_STEP, LIVE_WEAPONS, type LivePlayer, type LiveSnapshot } from '../fps/fpsLiveSimulation';

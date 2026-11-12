@@ -29,9 +29,8 @@ import { HexatrickMark } from './components/HexatrickBrand';
 import { ClubHome } from './components/ClubHome';
 import { FpsMatchView } from './components/FpsMatchView';
 import { simulateFpsMatch } from './fps';
-import { FPS_MAPS } from './fps/maps';
-import type { FpsMapId, FpsMatchReport } from './fps/types';
-import { PRO_TEAMS_DATABASE, type ProTeam } from './proTeamsDatabase';
+import { FPS_MAPS } from './fps/fpsMaps';
+import type { FpsMapId, FpsMatchReport } from './fps/fpsTypes';
 import { ClubMarketView } from './components/ClubMarketView';
 import { sound } from './audio';
 import {
@@ -131,7 +130,6 @@ export function App() {
 
   const [musicEnabled, setMusicEnabled] = useState(() => sound.isMusicEnabled());
   const [audioMuted, setAudioMuted] = useState(() => sound.isMuted());
-  const [selectedOpponentTeam] = useState<ProTeam | null>(() => PRO_TEAMS_DATABASE[0] ?? null);
   const [inBattle, setInBattle] = useState<boolean>(false);
   const modes = useGameModes();
   const [fpsMapSelection, setFpsMapSelection] = useState<FpsMapId>('breakwater');
@@ -160,7 +158,7 @@ export function App() {
     setFpsExhibition({
       report: simulateFpsMatch(blueRoster, redRoster, fpsMapSelection, seed),
       blueName: 'Your Club',
-      redName: selectedOpponentTeam?.name ?? 'Practice Opponent'
+      redName: 'Practice Opponent'
     });
     setActiveSection('play');
     setPlaySubTab('modes');

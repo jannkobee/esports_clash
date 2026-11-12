@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { FPS_MAPS } from './fps/maps.ts';
+import { FPS_MAPS } from './fps/fpsMaps.ts';
 import { simulateFpsMatch } from './fps/fpsSimulationEngine.ts';
 import { createEqualizedRoster } from './equalizedMode.ts';
 import {

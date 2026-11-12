@@ -49,6 +49,6 @@ Only the existing smoke/flash arsenal is modeled here. HE, incendiary and decoy 
 
 ## Boundaries
 
-No rendered visual acceptance, professional-strength benchmark, long-term training, cross-session opponent database, new network protocol or official deployment is claimed. Current utility/retake/boost/ballistics remain simplified exhibition mechanics. Timers still enforce actual cooldowns, signal delay, commitments and urgency; eliminating fixed plays does not mean eliminating physical timing. Preserve official/historical matches, career idempotency, parody aliases, private DNA, inert Economy Judgment, stable profiles, MOBA availability and owner-started Colab asset gates.
+No rendered visual acceptance, professional-strength benchmark, long-term training, cross-session opponent database, new network protocol or official deployment is claimed. Current utility/retake/boost/ballistics remain simplified exhibition mechanics. Timers still enforce actual cooldowns, signal delay, commitments and urgency; eliminating fixed plays does not mean eliminating physical timing. Preserve official/historical matches, career idempotency, parody aliases, private DNA, inert Economy Judgment, stable profiles, `/evolution/game-modes` availability and owner-started Colab asset gates.
 
 Affected code: `fpsLiveBrain.ts`, `fpsLiveSimulation.ts`, `fpsOpponentPatterns.ts`, `fpsLiveGrenades.ts`, `fpsLiveMovement.ts`; tests `fpsLiveBrain.test.mjs` and updated `fpsLiveTactics.test.mjs`.

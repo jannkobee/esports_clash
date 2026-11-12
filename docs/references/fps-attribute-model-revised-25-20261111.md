@@ -30,7 +30,7 @@ Reported coupling risks in the current bridge:
 - **Teamwork** affects reporting, spacing, contact support, and flash safety.
 - **Clutch/stamina/flexibility/leadership** cover broad states or duties without independent scouted skills.
 
-Files referenced by the supplied proposal: `src/fps/fpsLiveAttributes.ts`, `fpsLiveSimulation.ts`, `fpsLiveAim.ts`, `fpsLiveMovement.ts`, `fpsLiveIntel.ts`, `fpsRoleFit.ts`, `src/components/FpsSimulationLab.tsx`, backend `FpsIdentityProfiles`, and `FpsIdentityEngine`. Resolve actual paths and implementations in the repository before editing. **Official contextual v3 is a separate, version-pinned engine and requires an explicit later adapter.** Preserve historical official v2/v3 and MOBA behavior.
+Files referenced by the supplied proposal: `src/fps/fpsLiveAttributes.ts`, `fpsLiveSimulation.ts`, `fpsLiveAim.ts`, `fpsLiveMovement.ts`, `fpsLiveIntel.ts`, `fpsRoleFit.ts`, `src/components/FpsSimulationLab.tsx`, backend `FpsIdentityProfiles`, and `FpsIdentityEngine`. Resolve actual paths and implementations in the repository before editing. **Official contextual v3 is a separate, version-pinned engine and requires an explicit later adapter.** Preserve historical official v2/v3 and `/evolution/game-modes` behavior.
 
 ## 3. The 25 core attributes
 
@@ -207,7 +207,7 @@ Do not reverse-engineer 25 truths from seven displays. In the lab, show authorit
 5. Where possible use separated deterministic random streams for distinct mechanics (observation, action selection, physical execution, environment) so controlled experiments do not accidentally change unrelated randomness.
 6. Keep an explicit **behaviorally supported / reserved** registry for each skill. Do not show an attribute as active when no real consumer exists; especially gate Recoil Control, Utility Execution, Peeking, and Economy Judgment behind their required world mechanics.
 7. All additions should be protected by feature flags and run first through local exhibition/shadow mode. Avoid unannounced production activation, hidden profile changes, or interference with transfer/economy/career systems.
-8. Keep backward-compatible read/render paths for old card values, historical results, official v2/v3 replays, and MOBA profiles. A new `CLU`/`LDR` summary meaning must not rewrite stored legacy meaning.
+8. Keep backward-compatible read/render paths for old card values, historical results, official v2/v3 replays, and `/evolution/game-modes` compatibility profiles. A new `CLU`/`LDR` summary meaning must not rewrite stored legacy meaning.
 
 ## 11. Delivery sequence after approval
 
@@ -255,7 +255,7 @@ Calibrate generation/backfill and tier distributions. Add scouting estimates, sp
 | Economy | Purchases respect budget/availability and team authority; no effect if player cannot influence buys. |
 | Coach/role fit | Different valid plans reward different skill mixes; no universal best personality or team composition. |
 | Longitudinal | Stable generation, opportunity-grounded training, uncertain scouting, idempotent progression/settlement. |
-| Version compatibility | Legacy official/MOBA/replay paths produce unchanged results under their pinned versions. |
+| Version compatibility | Legacy official/`/evolution/game-modes`/replay paths produce unchanged results under their pinned versions. |
 
 **Failure conditions:** An attribute increases K/D by multiplying a generic win chance; any omniscient or through-wall knowledge appears; attribute summaries are applied twice; inactive attributes appear functional; a 10 never fails; archetypes become forced classes; decision policies jitter every tick; backfill purports to recover 25 true ratings from seven aggregates; replays or historical game modes change without version activation.
 
@@ -263,4 +263,4 @@ Calibrate generation/backfill and tier distributions. Add scouting estimates, sp
 
 **Approve the 25-attribute target as the future FPS skills taxonomy, not as 25 instantly active ratings.** Remove `weaponHandling` unless the repo audit finds a genuine independent consumer. Keep conditional `economyJudgment`. Prioritize real knowledge constraints, action commitment, opponent adaptation, team/system fit, telemetry, and seeded tests because these systems will generate more believable player differences than adding further attributes.
 
-Implement through the local exhibition first; publish detailed ratings as gameplay-effective only when their distinct mechanic is demonstrably supported. Preserve all historical official and MOBA paths until deliberately versioned migration and validation.
+Implement through the local exhibition first; publish detailed ratings as gameplay-effective only when their distinct mechanic is demonstrably supported. Preserve all historical official and `/evolution/game-modes` compatibility paths until deliberately versioned migration and validation.

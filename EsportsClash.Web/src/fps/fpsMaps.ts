@@ -1,4 +1,4 @@
-import type { FpsMap, FpsMapId } from './types.ts';
+import type { FpsMap, FpsMapId } from './fpsTypes.ts';
 
 export const FPS_MAPS: Record<FpsMapId, FpsMap> = {
   breakwater: {

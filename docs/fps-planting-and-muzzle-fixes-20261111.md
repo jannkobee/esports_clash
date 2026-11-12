@@ -41,4 +41,4 @@ Local artifacts: `.local-tools/fps-planting-audit.mjs`, `fps-planting-before.jso
 
 Affected code: `fpsLiveEconomy.ts`, `fpsLivePlanning.ts`, `fpsLiveBrain.ts`, `fpsLiveSimulation.ts`, `fpsLiveViewer.ts`, `fpsLivePlanting.test.mjs`, `fpsLiveMuzzle.test.mjs` and `fpsBroadcastDirector.test.mjs`.
 
-Official/historical matches, career writes, private DNA, aliases, detailed profile provenance, inert Economy Judgment, MOBA and owner-started Colab asset gates remain preserved. Unrelated dirty workspace changes are retained.
+Official/historical matches, career writes, private DNA, aliases, detailed profile provenance, inert Economy Judgment, `/evolution/game-modes` and owner-started Colab asset gates remain preserved. Unrelated dirty workspace changes are retained.

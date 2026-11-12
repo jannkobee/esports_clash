@@ -1,6 +1,6 @@
 # Docker development and report separation
 
-**Current visual state (2026-10-18):** the [supplied Arsenaldo model](arsenaldo-supplied-model.md) is served through the existing frontend bind mount/HMR. TRELLIS scaffolding is paused and has no deployed service. Art now has private Redis (`avatar-redis`, `avatar-queue-worker`, `avatars` queue); ML retains its database queue and pinned runner. Visual generation is currently paused by the owner. Worker/reviewer changes require deliberate image rebuilds between runs; game and Laravel sources support development reload.
+**Historical visual setup (2026-10-18):** TRELLIS scaffolding is paused and has no deployed service. Art now has private Redis (`avatar-redis`, `avatar-queue-worker`, `avatars` queue); ML retains its database queue and pinned runner. Visual generation is currently paused by the owner. Worker/reviewer changes require deliberate image rebuilds between runs; game and Laravel sources support development reload.
 
 Large GLBs under `/models/` are served directly by nginx from a separate read-only public-model mount. Source changes still appear in development, while Vite handles application modules/HMR. This avoids stalled concurrent Node streams for the new 31.74 MiB model. No secret or private artifact directories are exposed through that mount.
 
@@ -42,7 +42,7 @@ This stops the development frontend and returns API/queue/scheduler/web to their
 
 Backend report-isolation tests cover owner access, pagination, escaped model content, distinct downloads, and cross-engine run IDs returning 404. Game checks and the production build cover the Vite configuration's non-development behavior. `node infrastructure/evolution/verify-dev.mjs` checks the real owner browser and temporarily edits/restores a Blade view, CSS, PHP controller and React module to exercise actual reloads. It writes `evolution-reports-dev-verification.json` and a mobile report screenshot; it does not approve candidates or change automation settings.
 
-Verified 2026-10-18: 41 backend tests / 320 assertions, 439 game tests and three deterministic simulation checks pass. Actual Chromium verifies the two report sections, the five-candidate JSON download, 390px mobile layout, Blade/CSS/PHP reloads and React HMR without a full page reload. All temporary source markers were restored. See [evolution-reports-dev-verification.json](evolution-reports-dev-verification.json).
+Verified 2026-10-18: 41 backend tests / 320 assertions, 439 game tests and three deterministic simulation checks pass. Actual Chromium verifies the two report sections, the five-candidate JSON download, 390px mobile layout, Blade/CSS/PHP reloads and React HMR without a full page reload. All temporary source markers were restored.
 
 ## Preparation and cancellation controls (2026-10-19)
 

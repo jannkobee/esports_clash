@@ -1,4 +1,4 @@
-import type { FpsWeaponDef, FpsWeaponId } from './types.ts';
+import type { FpsWeaponDef, FpsWeaponId } from './fpsTypes.ts';
 
 export const FPS_WEAPONS: Record<FpsWeaponId, FpsWeaponDef> = {
   sidearm_standard: {

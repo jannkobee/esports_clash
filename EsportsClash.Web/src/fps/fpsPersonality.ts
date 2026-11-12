@@ -1,6 +1,6 @@
 import type { PlayerCard } from '../types.ts';
 import { personalityOf, type PersonalityId } from '../playerPersonality.ts';
-import type { FpsPlayerState } from './types.ts';
+import type { FpsPlayerState } from './fpsTypes.ts';
 
 export const FPS_ATTRIBUTE_LABELS = {
   lan: 'Aim & mechanics', tf: 'Trading & coordination', iq: 'Game sense',
@@ -27,7 +27,7 @@ export interface FpsPersonalityDefinition {
   preferences: Partial<FpsPreferences>;
 }
 
-// FPS interpretations preserve the underlying identity and historical MOBA definitions.
+// FPS interpretations preserve the underlying stable identity keys.
 const FPS_PERSONALITY_BASE: Record<PersonalityId, Omit<FpsPersonalityDefinition, 'id'|'category'>> = {
   igl: { name: 'IGL / Shotcaller', description: 'Prefers coordinated site calls and prepared utility.', tradeoff: 'Can persist with a committed plan.', preferences: { coordination: .8, utility: .6, leadership: 1 } },
   captain: { name: 'Captain', description: 'Keeps the team together and helps teammates recover after lost rounds.', tradeoff: 'Favors preparation over immediate pressure.', preferences: { coordination: 1, patience: .5, leadership: .8 } },

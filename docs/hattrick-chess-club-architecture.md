@@ -40,17 +40,17 @@ All player, scout, and coach attributes across the entire Club UI use a clean, i
 | **9 / 10** | *World Class* | `#7c3aed` (Royal Purple) | `88–94` |
 | **10 / 10** | *Divine (GOAT)* | `#ca8a04` (Championship Gold) | `95–99` |
 
-> **Simulation Compatibility Note**: A deterministic converter (`toScale10` / `fromScale10`) maps between the user-facing `1–10` scale and the internal `1–99` combat simulation math (`playerCardPower.ts`, `towerDiveRules.ts`) so all existing arena physics and tests remain 100% intact.
+> **Simulation Compatibility Note**: A deterministic converter (`toScale10` / `fromScale10`) maps between the user-facing `1–10` scale and the internal `1–99` simulation math so match physics and tests stay cleanly bridged.
 
 ### 1.3 Core 7 Player Attributes (`1–10` Scale)
 Every athlete dossier displays **7 core attributes (`1–10`)**:
-1. **Mechanics & Laning (`LAN`, `1–10`)**: Micro skillshots, CS timing, and laning trades.
-2. **Teamfighting (`TF`, `1–10`)**: 5v5 positioning, target focus, and combo layering.
-3. **Game Sense & Macro (`IQ`, `1–10`)**: Objective timing, map rotations, tower risk judgment, **and future Coach Tactical Playbook ceiling**.
+1. **Aim & Mechanics (`LAN`, `1–10`)**: Precision aim, recoil control, and first-bullet opening duels.
+2. **Trading & Coordination (`TF`, `1–10`)**: 5v5 spacing, trade-fragging, crossfire positioning, and utility layering.
+3. **Game Sense & Macro (`IQ`, `1–10`)**: Objective timing, map rotations, economy judgment, **and future Coach Tactical Playbook ceiling**.
 4. **Leadership (`LDR`, `1–10`)**: Shotcalling, team morale aura, tilt prevention, **and future Coach Chemistry ceiling**.
-5. **Clutch (`CLU`, `1–10`)**: Execution in high-pressure late-game and Baron/Dragon steals.
+5. **Clutch (`CLU`, `1–10`)**: Execution in high-pressure 1vX and late-round post-plant/defuse situations.
 6. **Stamina (`STA`, `1–10`)**: Resistance to matchday fatigue and mental tilt.
-7. **Flexibility (`FLX`, `1–10`)**: Ability to pilot off-role and wider avatar pools.
+7. **Flexibility (`FLX`, `1–10`)**: Ability to pilot secondary weapons and multiple tactical roles.
 
 ---
 
@@ -82,7 +82,7 @@ flowchart LR
    - **Playbook Bonus**: `+3%` per point of `IQ` above 5 (up to `+15%` at `IQ 10/10`).
    - **Chemistry Bonus**: `+3` per point of `LDR` above 5 (up to `+15` at `LDR 10/10`).
    - **Extra Draft Ban**: Unlocked if the player's `IQ >= 9/10` (*World Class / Divine* mastermind).
-   - **Tactical Archetype**: Inherited from the player's primary role & personality (e.g., Tank/Support with high `IQ` → *Objective Macro*; Assassin/Fighter → *Aggressive Dive*; Mage/Marksman → *Scaling Poke* or *Dynamic Adapt*).
+   - **Tactical Archetype**: Inherited from the player's primary FPS role & personality (e.g., IGL/Support with high `IQ` → *Structured Default*; Entry/Fragger → *Aggressive Execute*; AWPer/Lurker → *Pick & Map Control*).
 
 ---
 
@@ -92,7 +92,7 @@ flowchart LR
 - **Replaced By — 4-Division Hattrick Series Pyramid + Clash Knockout Cup**:
   - **Series I (Global Premier)** · **Series II (Continental Elite)** · **Series III (National Pro)** · **Series IV (Regional Challenger)**.
   - **8 Clubs per Series · 14 Rounds (Double Round-Robin)**:
-    - `3 pts` per win, `0 pts` per loss, sorted by **Points → Net Kill Differential (`K - D`) → Towers Destroyed**.
+    - `3 pts` per win, `0 pts` per loss, sorted by **Points → Net Kill Differential (`K - D`) → Round Differential**.
     - All 4 fixtures in your 8-club Series resolve each round so the league table is a living ecosystem.
     - **Top 2 (Green Zone)** promote to the higher Series; **Bottom 2 (Red Zone)** relegate.
   - **Clash Knockout Cup**: 16-club single-elimination bracket (`Round of 16` → `Quarterfinals` → `Semifinals` → `Grand Final`) running parallel to the league split.
@@ -103,12 +103,12 @@ flowchart LR
 
 Instead of gacha duplicates, players develop through **Club Training Regimens** and **Match Experience**:
 - **Primary Training Focus** (choose 1 active regiment):
-  1. **Laning & Mechanics (`LAN`)**
-  2. **5v5 Teamfight Coordination (`TF`)**
+  1. **Aim & Mechanics (`LAN`)**
+  2. **Trading & Coordination (`TF`)**
   3. **Tactical Macro & Game Sense (`IQ`)** *(also helps groom future coaches!)*
   4. **Leadership & Shotcalling Workshop (`LDR` + `CLU`)**
   5. **Endurance & Conditioning (`STA`)**
-  6. **Draft & Champion Pool Expansion (`FLX`)**
+  6. **Weapon & Role Flexibility (`FLX`)**
 - **Training Intensity (`50%–100%`) & Stamina Share (`10%–30%`)**.
 - **Slot & Age Multipliers**:
   - **Starters in Focus Role**: `100%` training speed.

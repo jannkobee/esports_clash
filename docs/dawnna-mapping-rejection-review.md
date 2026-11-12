@@ -17,4 +17,4 @@ This supports a false rejection by the automatic topology detector, rather than 
 
 Recommended correction: recognize a pelvis-root humanoid conservatively, represent the required control root as an explicit adapter operation rather than a duplicate joint assignment, and classify torso branches by their paths rather than their first points alone. Regression fixtures must cover root-as-pelvis, clavicles, fingers, arbitrary names/order, scale/translation, missing toes, ambiguous branches and reversed facing. The report should expose the actual mapping_review reason instead of presenting every unresolved target name as a missing source bone.
 
-Review only: the production mapper, frozen job, rig, skin, qualification gates and live release were not changed, and no new inference/preparation was admitted. The current tower, attribution, objective, anti-oscillation and parody-alias rules are unaffected.
+Review only: the production mapper, frozen job, rig, skin, qualification gates and live release were not changed, and no new inference/preparation was admitted. Gameplay rules and parody-alias boundaries are unaffected.

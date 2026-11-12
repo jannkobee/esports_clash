@@ -1,4 +1,4 @@
-import { getFpsMap as getMapById } from './maps.ts';
+import { getFpsMap as getMapById } from './fpsMaps.ts';
 import type { FpsRoundTactics } from './fpsPersonality.ts';
 import type {
   FpsMap,
@@ -8,7 +8,7 @@ import type {
   FpsRoundPlayerSnapshot,
   FpsSide,
   FpsTeamId
-} from './types.ts';
+} from './fpsTypes.ts';
 
 export interface FpsMapPoint {
   x: number;

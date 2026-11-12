@@ -1,8 +1,8 @@
-import type { FpsPlayerState, FpsSide, FpsWeaponId } from './types.ts';
-import { FPS_WEAPONS } from './weapons.ts';
+import type { FpsPlayerState, FpsSide, FpsWeaponId } from './fpsTypes.ts';
+import { FPS_WEAPONS } from './fpsWeapons.ts';
 import { getFpsPreferences } from './fpsPersonality.ts';
 import {evaluatePlayerAction} from './fpsIdentity.ts';
-import type {FpsIdentityExperiment} from './types.ts';
+import type {FpsIdentityExperiment} from './fpsTypes.ts';
 
 export const MAX_CASH = 16000;
 export const STARTING_CASH = 800;

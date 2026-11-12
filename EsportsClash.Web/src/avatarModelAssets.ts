@@ -146,11 +146,9 @@ export class AvatarAssetLibrary {
     const bounds = hasMesh ? meshBounds : new THREE.Box3().setFromObject(scene);
     const rawHeight = bounds.max.y - bounds.min.y;
     const baseHeight = avatarDesign(id)?.height ?? 70;
-    // Procedural champions feature stylized chunky/heroic MOBA silhouettes.
-    // Neural AI meshes (e.g. TRELLIS 7.5-8 heads tall) need a top-down readability presence
-    // multiplier (1.25x) so their screen volume and head silhouette match top-down orthographic view.
-    const mobaPresenceMultiplier = 1.25;
-    const targetHeight = baseHeight * mobaPresenceMultiplier;
+    // Neural AI meshes benefit from a slight presence multiplier (1.25x) so proportions read cleanly in camera framing.
+    const presenceScaleMultiplier = 1.25;
+    const targetHeight = baseHeight * presenceScaleMultiplier;
     const scaleFactor = rawHeight > 0.1 ? targetHeight / rawHeight : 40;
     const strideDistances:Record<string,number>={};
     for(const state of ['walk','run','strafe']){

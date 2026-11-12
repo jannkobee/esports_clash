@@ -5,7 +5,7 @@ import type { LiveSnapshot, LivePlayer } from './fpsLiveSimulation.ts';
 import { buildLiveScenery } from './fpsLiveScenery.ts';
 import { LIVE_KNIFE, type LiveEquippedWeapon } from './fpsLiveWeapons.ts';
 import { LIVE_WEAPONS } from './fpsLiveWeapons.ts';
-import type { FpsTeamId } from './types.ts';
+import type { FpsTeamId } from './fpsTypes.ts';
 import {
   computeBombPlantPipPose,
   computeOverviewCameraPose,

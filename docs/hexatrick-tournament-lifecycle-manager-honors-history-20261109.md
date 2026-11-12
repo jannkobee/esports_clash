@@ -1,4 +1,4 @@
-﻿# Tournament lifecycle, manager honors and club match history — 9 November 2026
+# Tournament lifecycle, manager honors and club match history — 9 November 2026
 
 ## Owner request and decisions
 
@@ -12,11 +12,11 @@ The Competition Hub uses the new public `/api/v1/competitions/directory` endpoin
 
 Observed current data: **33 editions, 32 upcoming, one ongoing launch exhibition, zero completed, zero review and zero cancelled**. The previous undifferentiated 30-row page hid the final three editions behind pagination; there are no confirmed completed events to recover or fabricate. Reading page two with 20 rows returns the remaining 13. The ongoing launch exhibition retains its simulation provenance and is excluded from official rankings/rewards.
 
-Main files: `TournamentDirectory.php`, `CompetitionController.php`, `AvatarpediaService.php`, `AvatarpediaController.php`, `routes/api.php`, `TournamentEditionTable.tsx`, `CompetitionHub.tsx`, `Hexapedia.tsx`, `avatarpedia.ts`, `hexatrick-records.css`.
+Main files: `TournamentDirectory.php`, `CompetitionController.php`, `Hexapedia` compatibility services, `routes/api.php`, `TournamentEditionTable.tsx`, `CompetitionHub.tsx`, `Hexapedia.tsx`, `hexapedia.ts`, `hexatrick-records.css`.
 
 ## Manager records and annual honors
 
-Migration `2026_11_09_000012_manager_records_and_annual_honors.php` adds durable manager result receipts and annual award entries. `CompetitionRankings` dispatches `RecordManagerCareers` after the rating transaction commits. `ManagerRecordBook` accepts matching hashed, completed Nexus results from verified non-community club competitions with HGR receipts. It uses **blue_user_id/red_user_id pinned at allocation**, not the club's current owner. Each result/club receipt is unique. Repeat-opponent HGR no-op results remain recorded with counted=false and do not count toward manager eligibility.
+Migration `2026_11_09_000012_manager_records_and_annual_honors.php` adds durable manager result receipts and annual award entries. `CompetitionRankings` dispatches `RecordManagerCareers` after the rating transaction commits. `ManagerRecordBook` accepts matching hashed, completed match results from verified non-community club competitions with HGR receipts. It uses **blue_user_id/red_user_id pinned at allocation**, not the club's current owner. Each result/club receipt is unique. Repeat-opponent HGR no-op results remain recorded with counted=false and do not count toward manager eligibility.
 
 `ManagerLaurels` adds two categories to the existing Hexatrick Laurels ceremony (second Saturday of January, 20:00 Manila for the previous calendar year):
 
@@ -33,11 +33,11 @@ Observed: **138 manager profiles, zero eligible manager receipts and zero manage
 
 `#history` is a dedicated signed-in workspace page in the sidebar and Club Home. Its authenticated `/api/v1/online/history` endpoint scopes every fixture/archive lookup to the requesting manager's club. It includes past games, verified results, wins/losses, interruptions, upcoming games and all fixtures; filters cover game type, full-query club/competition search, inclusive Manila date range, sort direction and page size.
 
-Large rows show the teams, competition/logo, scheduled time, actual state, recorded kills/duration and available Arena/report actions. Names prefer the allocated match plan; current crests are a fallback where historical art was not pinned. Verified summary wins/losses require completed status, source hash, a legal winner and opposing terminal Nexus destruction. A legacy completed recording with incomplete evidence is labeled separately rather than assigned a verified win.
+Large rows show the teams, competition/logo, scheduled time, actual state, recorded kills/duration and available match/report actions. Names prefer the allocated match plan; current crests are a fallback where historical art was not pinned. Verified summary wins/losses require completed status, source hash, a legal winner and verified match resolution. A legacy completed recording with incomplete evidence is labeled separately rather than assigned a verified win.
 
-**Launch archive** is a separate view; simulation outcomes never enter verified totals. Statistical exhibition resolutions attached to interrupted fixtures link to their own report while retaining the interrupted Arena recording. Archive `game` permalinks now open and scroll to the selected report.
+**Launch archive** is a separate view; simulation outcomes never enter verified totals. Statistical exhibition resolutions attached to interrupted fixtures link to their own report while retaining the interrupted match recording. Archive `game` permalinks now open and scroll to the selected report.
 
-Read-only examples: the owner's unconfigured RAT CITY's Club has no fixtures, verified results or archive games yet. Rosegate Rooks has one interrupted fixture and four launch simulations. The interrupted fixture is unresolved as an Arena result and links both recording `157691b0-c281-407d-8771-1d53dff55ed8` and statistical exhibition report 30. Search, November date range and tournament-kind queries retain this fixture; verified wins return zero.
+Read-only examples: the owner's unconfigured RAT CITY's Club has no fixtures, verified results or archive games yet. Rosegate Rooks has one interrupted fixture and four launch simulations. The interrupted fixture is unresolved as an official match result and links both recording `157691b0-c281-407d-8771-1d53dff55ed8` and statistical exhibition report 30. Search, November date range and tournament-kind queries retain this fixture; verified wins return zero.
 
 Main files: `ClubMatchHistory.php`, `ClubHistoryController.php`, `ClubMatchHistory.tsx`, `WorldMedia.tsx`, `App.tsx`, `ClubHome.tsx`, `authNavigation.ts`.
 
@@ -56,4 +56,4 @@ This navigation supersedes the earlier location described in the first-deploymen
 - `world:records` indexed zero missing manager/player results; `world:laurels` refreshed actual nominations without manufacturing awards. No recent failed jobs were observed.
 - A new route action initially caused an API boot error. Its declaration was corrected to an explicit controller action; the API and dependent PHP services recovered. No game was started or settled for validation.
 - Per owner direction, no test suites or new simulation/test games ran. A native visual review was attempted using the computer-use skill; `sky.list_apps()` reports the native pipe unavailable (`os error 2`). Rendered/signed-in interaction is therefore **not visually qualified**. Positive eligible manager capture, populated yearly honors and a real future ceremony remain unverified until qualifying real results exist.
-- The interrupted exhibition remains interrupted at sequence **3,472**, result null. No protected Nexus/all-three-barracks rule, scheduled gameplay, attributes, training, finances, qualification, ML/Colab/3D evidence or unrelated dirty work was changed by this task.
+- The interrupted exhibition remains interrupted at sequence **3,472**, result null. No protected FPS/match rules, scheduled gameplay, attributes, training, finances, qualification, ML/Colab/3D evidence or unrelated dirty work was changed by this task.

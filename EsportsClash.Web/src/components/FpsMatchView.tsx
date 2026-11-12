@@ -6,9 +6,9 @@ import {
   getFpsReplayState,
   getFpsRoundEvents
 } from '../fps/fpsMatchViewModel.ts';
-import { getFpsMap } from '../fps/maps.ts';
+import { getFpsMap } from '../fps/fpsMaps.ts';
 import { FPS_PERSONALITIES, FPS_ROLE_LABELS } from '../fps/fpsPersonality.ts';
-import type { FpsMatchEvent, FpsMatchReport, FpsTeamId } from '../fps/types.ts';
+import type { FpsMatchEvent, FpsMatchReport, FpsTeamId } from '../fps/fpsTypes.ts';
 import './fps-match-view.css';
 
 export interface FpsMatchViewProps {

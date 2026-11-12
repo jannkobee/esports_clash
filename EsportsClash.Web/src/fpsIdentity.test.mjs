@@ -5,8 +5,8 @@ import {FPS_IDENTITY_PERSONALITIES,FPS_SPECIALTIES,generatePlayerDNA,evaluatePla
 import {hydrateFpsIdentityContext,observedPersonalityTriggers,assignContextualRoles} from './fps/fpsIdentityMatch.ts';
 import {simulateFpsMatch,createFpsPrng,initializePlayerState} from './fps/fpsSimulationEngine.ts';
 import {simulateFpsRound} from './fps/fpsRoundSimulation.ts';
-import {generateSetPieceCall} from './fps/setPieceRules.ts';
-import {FPS_MAPS} from './fps/maps.ts';
+import {generateSetPieceCall} from './fps/fpsSetPieceRules.ts';
+import {FPS_MAPS} from './fps/fpsMaps.ts';
 
 const plan={tempo:.4,structure:.7,aggression:.4,preparation:.8,freedom:.3,economy:.6};
 const coach={tempo:.4,rigidity:.8,aggression:.4,preparation:.8,freedom:.3,economy:.6,communication:.7,leadership:.7,adaptability:.5,development:.7};

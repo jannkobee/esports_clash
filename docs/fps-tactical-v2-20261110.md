@@ -1,14 +1,14 @@
-# Tactical FPS v2 and reversible MOBA availability
+# Tactical FPS v2 and `/evolution/game-modes` availability
 
-Owner direction on 10 November 2026: replace active MOBA preferences with FPS roles, preserve the entire MOBA game, disable it through Laravel settings, and finish the tactical simulation. This supersedes earlier deletion/retirement plans. `/root` owns this pass; no agents or asset-processing stages were dispatched.
+Owner direction on 10 November 2026: replace active preferences with FPS roles and finish the tactical simulation while retaining the Laravel `/evolution/game-modes` toggle (note: frontend legacy simulation/viewer/art/tests were permanently removed on 2026-11-12 per owner instruction while `/evolution/game-modes` and frozen ML playbooks remain preserved). `/root` owns this pass; no agents or asset-processing stages were dispatched.
 
 ## Availability and player views
 
-Laravel's owner-only **Game modes** page at `/evolution/game-modes` controls persistent MOBA availability, default off. `/api/v1/game-modes` exposes the uncached public state. Tactical FPS remains active. Disabling hides MOBA launch cards, avatar/item/release tabs, public laboratory/catalog links and avatar signatures. Direct public category requests return 409; search excludes them. New room creation/join is denied while existing rooms and replay reads remain available. The live Vite gateway enforces this without restarting the room process or losing its memory.
+Laravel's owner-only **Game modes** page at `/evolution/game-modes` controls the legacy mode manifest (`moba_enabled` default off, `fps_enabled` on). `/api/v1/game-modes` exposes the uncached public state while tactical FPS stays active on Web (legacy frontend views, simulation, and tests were subsequently removed on 2026-11-12).
 
-Squad, club home, profiles/dossiers, training and transfer views show FPS scouting role fits from current skills. Historical role values remain intact. Match assignments still consider the whole lineup and bounded personality preferences. Unsupported MOBA role filters were removed rather than filtering only one page of a global registry. No database player/career rewrite occurred.
+Squad, club home, profiles/dossiers, training and transfer views show FPS scouting role fits from current skills. Historical role values remain intact. Match assignments still consider the whole lineup and bounded personality preferences. Unsupported legacy role filters were removed rather than filtering only one page of a global registry. No database player/career rewrite occurred.
 
-New official allocations pin `fps.simulation_version: 2`; settlement rejects a mismatched report. FPS fixture scores use `finalScore` and a round label; old MOBA retains its kill score. Existing reports remain unchanged.
+New official allocations pin `fps.simulation_version: 2`; settlement rejects a mismatched report. FPS fixture scores use `finalScore` and a round label; existing historical reports remain unchanged.
 
 ## Round simulation and replay
 
@@ -26,14 +26,14 @@ Replay consumes recorded movement, HP, armor, utility and device state. Firing d
 
 Focused FPS tests: 34 passing, covering maps/routes, deterministic output, event-derived statistics, objective timers, timeout, personality boundaries, saves, worker execution, historical compatibility and scouting roles. Backend tests: 49 passing / 551 assertions for modes, online settlement and competitions. Full game check: 649 passed, 22 skipped, plus three simulation checks. Production build passed. Final projection/UI checks are recorded in the latest handoff.
 
-Backup `.local-tools/teamfight-before-fps-v2-20261110.dump` is retained (11,550,398 bytes). The additive game-mode migration is applied and MOBA persistently disabled. Zero active matches and reserved default/world jobs preceded the scoped match-worker deployment and idle default-worker refresh. Existing peer room memory and history/ML/avatar workers were preserved.
+Backup `.local-tools/teamfight-before-fps-v2-20261110.dump` is retained (11,550,398 bytes). The additive game-mode migration was applied with legacy MOBA mode defaulted off (and frontend MOBA permanently removed on 2026-11-12). Zero active matches and reserved default/world jobs preceded the scoped match-worker deployment and idle default-worker refresh. Existing peer room memory and history/ML/avatar workers were preserved.
 
 Deployed image: `teamfight-online-worker:fps-tactical-v2-20261110`, digest `sha256:7a745e877b58fdf8ab91e222b048a52977d76857b9c10750ec12b3036e423c7b`. Its private HTTP launcher completed diagnostic `b2706220-a568-402f-a9a2-7d6560d8acac`: 24 rounds, 16-8, simulation v2, recorded kills reconciled. The diagnostic creates no official fixture or career settlement; evidence remains separate. `infrastructure/online/verify-fps-runtime.py` keeps its worker token inside the container.
 
-Live same-origin checks: mode manifest 200 with FPS active/MOBA disabled, avatar/item directories 409 and new MOBA room creation 403. API, frontend and replacement match worker were healthy after refresh.
+Live same-origin checks: mode manifest 200 with FPS active and `/evolution/game-modes` toggled off, avatar/item directories 409 and legacy room creation 403. API, frontend and replacement match worker were healthy after refresh.
 
 ## Limits
 
 This completes the first-playable tactical simulation boundary, not a controllable first-person 3D shooter. Cover/sightlines are zone abstractions. Physical projectile/recoil/reload simulation, detailed independent lurking, polished 3D presentation, FPS-trained ML and competitive balance remain unqualified. Live official fixtures were not fabricated; isolated backend tests cover settlement/competition and a separate runtime diagnostic covers the deployed worker. No new rendered desktop/mobile acceptance is claimed.
 
-Colab-only generation/rigging/animation processing and base-before-appearance gates remain authoritative. No generation, rigging, animation, asset publication, deleted-binary restoration or frozen ML rewrite occurred. Preserve MOBA for owner re-enabling; never delete it as a migration shortcut.
+Colab-only generation/rigging/animation processing and base-before-appearance gates remain authoritative. No generation, rigging, animation, asset publication, deleted-binary restoration or frozen ML rewrite occurred. Preserve `/evolution/game-modes` and frozen backend artifacts (frontend MOBA views/simulation removed on 2026-11-12).

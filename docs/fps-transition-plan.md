@@ -1,18 +1,18 @@
 # FPS Match Transition Plan
 
-**Status:** Tactical simulation v2 and reversible MOBA disabling deployed; see [current verification](fps-tactical-v2-20261110.md). Implementation authorized. Phases 0–3 implemented; the personality continuation is implemented with local verification recorded in the latest handoff. Phase 4 and deployment validation remain pending.
+**Status:** Tactical simulation active and legacy MOBA frontend permanently removed (2026-11-12); see [current verification](fps-tactical-v2-20261110.md). Phases 0–3 and local 3D broadcast presentation implemented.
 **Prepared:** 2026-11-10
 **Authorized Mechanic Additions:** "Set piece" coordinated bombsite execute system requested and integrated.
 
 ## Goal
 
-Replace the MOBA match experience with an original competitive tactical FPS inspired by the Counter-Strike format, while retaining the surrounding esports club-management and living-world game. Start with a lightweight, testable match simulation and five original competitive maps. Keep the player roster, identities, personalities, and the 3D asset workflow useful for a later animated 3D presentation.
+Run an original competitive tactical FPS inspired by the Counter-Strike format alongside the surrounding esports club-management and living-world game, with a testable match simulation and five original competitive maps. Keep the player roster, identities, personalities, and the 3D asset workflow useful for animated 3D presentation.
 
 “Counter-Strike 2-like” is a genre and match-format reference, not a request to copy its maps, art, interface, audio, weapon names, or other protected content.
 
 ## Scope and guardrails
 
-- FPS is now the format for newly allocated exhibitions, scheduled fixtures, and tournament matches. Preserve legacy MOBA recordings and their replay code until the Phase 5 retirement checks pass.
+- FPS is the format for newly allocated exhibitions, scheduled fixtures, and tournament matches. Historical `/evolution/game-modes` API controls and frozen `arena-v2..v6` ML playbooks remain separate backend/training artifacts.
 - Preserve the management layer: clubs, players, staff, careers, competitions, schedules, records, and player-facing identity. Update only its match-facing terminology and integrations as needed.
 - Keep stable player/card IDs, display names and aliases, nationalities, career histories, and primary/secondary personality IDs. Do not expose real names where current presentation rules require parody aliases (e.g. `Cardrel`, `p1mple`, `TheSpicy`, `Flaker`).
 - Translate the meaning of existing attributes and personalities through a new FPS rules layer; do not silently overwrite historical values or make personality a substitute for mechanical skill.
@@ -20,7 +20,7 @@ Replace the MOBA match experience with an original competitive tactical FPS insp
 - Start with a deterministic 2D/tactical simulation. Keep its map, event, and actor data independent of rendering so a later 3D/Babylon presentation can use the same match outcomes.
 - Preserve the approved 3D pipeline and evidence. The active asset direction requires Google Colab for generation, rigging, and animation processing; Babylon.js is for rendering and playback. Do not add a parallel local asset-processing pipeline or automatic local fallback.
 - Important asset constraint: the existing handoff records a reset that deleted legacy avatar model/rig/animation/reference binaries and says not to restore them. Preserve the pipeline, surviving authorized assets, metadata, and historical evidence; do not claim deleted rigs are available or restore them from historical records.
-- Keep old MOBA designs and artifacts as clearly marked historical evidence. Do not rewrite frozen ML artifacts, historical reports, or reset receipts to make them appear FPS-native.
+- Keep frozen ML artifacts, historical receipts, or reset records strictly accurate.
 
 ## Locked First Playable Rules
 
@@ -64,7 +64,7 @@ The first-playable rules are locked as follows:
     1. *Tactical Call & Setup:* Attacking IGL/Coach calls `set_piece_a`, `set_piece_b`, `fake_execute`, `fast_rush`, or `default_probe`.
     2. *Utility Layering:* Utility throwers expend smokes to block sightlines/rotations and flashes to blind defensive site anchors. Smokes mitigate defender crossfire advantage by 75%; flashes lower defender initial shot accuracy.
     3. *Entry Breach:* The designated entry fragger (high LAN/mechanics) pushes the site choke point first to initiate contact.
-    4. *Trade Frag Window:* Close teammates (high TF/teamfight execution) swing within the trade window (1.0–1.5s). If the entry fragger falls, trade fraggers immediately challenge the anchor with trade bonuses.
+    4. *Trade Frag Window:* Close teammates (high trading execution) swing within the trade window (1.0–1.5s). If the entry fragger falls, trade fraggers immediately challenge the anchor with trade bonuses.
     5. *Device Plant & Post-Plant Crossfire:* Once site control is secured, the bomb carrier plants under team cover. Attackers immediately transition to post-plant perimeter positions.
     6. *Defender Retake:* Surviving defenders group up, utilize remaining utility, and execute a coordinated retake against the planted site before the 40-second bomb timer expires.
 
@@ -87,7 +87,7 @@ The existing roster and personality attributes map cleanly into tactical FPS rol
 | Existing concept | FPS interpretation | Tactical Gameplay Effect |
 |---|---|---|
 | LAN (mechanics) | Aim, recoil control, first-bullet accuracy | Headshot probability, opening duel win rate, entry fragging power |
-| TF (teamfight execution) | Spacing, trade-fragging, crossfire coordination | Trade frag success within the Set Piece trade window, retake synergy |
+| TF (team fight execution) | Spacing, trade-fragging, crossfire coordination | Trade frag success within the Set Piece trade window, retake synergy |
 | IQ (game sense) | Utility placement, rotation timing, economy | Set Piece call quality, bomb plant positioning, site read accuracy |
 | CLU (clutch) | Decision making in 1vX scenarios | Accuracy and composure buff when isolated as the last surviving player |
 | STA (stamina/tilt resistance) | Half-time consistency and round fatigue | Preserves aim accuracy across long 30-round matches and overtimes |
@@ -100,23 +100,23 @@ Personalities influence strategic preferences (e.g. "Solo Carry" prioritizes agg
 
 ### Phase 0 — Inventory and freeze the boundary (COMPLETE)
 
-- Audit completed: active match entry points identified (`AramMatchView.tsx`, `matchSimulationEngine.ts`, `AppRouter.tsx`).
-- MOBA vs FPS boundary frozen: existing MOBA engine files and design checks remain untouched and passing. The new FPS domain types, maps, economy, and simulation engine live independently in `src/fps/`.
+- Audit completed and legacy MOBA match entry points have since been removed from Web (`AppRouter.tsx` / `App.tsx` now route directly to tactical FPS views).
+- The FPS domain types, maps, economy, and simulation engine live cleanly in `src/fps/`.
 - First playable rules and the "Set piece" bombsite execute mechanic locked.
 
 **Exit Check:** migration inventory reviewed, first-playable rules frozen, and isolated Phase 1 authorized.
 
 ### Phase 1 — FPS domain model and isolated simulation (COMPLETE)
 
-- Add versioned FPS types (`src/fps/types.ts`) for match, round, side, player state, equipment, map, objective, event, and result.
-- Implement authoritative weapon and equipment catalog (`src/fps/weapons.ts`).
-- Implement the five original competitive maps (`src/fps/maps.ts`).
-- Implement the "Set piece" execute and retake rules (`src/fps/setPieceRules.ts`).
+- Add versioned FPS types (`src/fps/fpsTypes.ts`) for match, round, side, player state, equipment, map, objective, event, and result.
+- Implement authoritative weapon and equipment catalog (`src/fps/fpsWeapons.ts`).
+- Implement the five original competitive maps (`src/fps/fpsMaps.ts`).
+- Implement the "Set piece" execute and retake rules (`src/fps/fpsSetPieceRules.ts`).
 - Implement MR15 economy rules (`src/fps/fpsEconomy.ts`).
 - Implement deterministic headless FPS simulation engine (`src/fps/fpsSimulationEngine.ts`).
 - Add comprehensive automated test suite (`src/fpsMatchSimulation.test.mjs`) verifying MR15 scoring, side swaps, plant/defuse/elimination win conditions, economy, maps, Set Piece executions, and deterministic replay.
 
-**Exit Check:** repeatable headless matches produce valid reports and event streams for every end condition without invoking MOBA rules.
+**Exit Check:** repeatable headless matches produce valid reports and event streams for every end condition cleanly inside the FPS simulation.
 
 ### Phase 2 — Five-map competitive pool (COMPLETE)
 
@@ -129,7 +129,7 @@ Personalities influence strategic preferences (e.g. "Solo Carry" prioritizes agg
 - Local exhibitions run the deterministic simulator without affecting careers or standings. Server allocations are versioned as `fps_mr15_v1`; the online worker executes the same TypeScript engine for new matches.
 - Scheduled results validate the pinned map, MR15 score progression, and all ten allocated-player stat lines before match completion. Verified reports advance tournaments and create FPS career-stat receipts while keeping stable player IDs and parody aliases.
 - Existing primary/secondary personality facts now shape tactical call preferences and IGL selection through the shared personality definitions; they do not alter mechanical skill stats.
-- Spectators receive the persisted FPS report; the match centre uses the FPS viewer instead of the MOBA snapshot stream for FPS allocations.
+- Spectators receive the persisted FPS report and watch through the FPS broadcast/match viewer.
 - Repeated MR3 overtime swaps sides every three rounds and continues until a winner is decided. The official worker rejects a draw.
 - Component/replay tests, deterministic worker integration test, API settlement/career coverage, and tournament progression tests were added.
 
@@ -143,10 +143,10 @@ All 30 existing trait IDs now have FPS interpretations, bounded role/caller/call
 
 - Connect to Google Colab avatar generation/rigging pipeline and Babylon 3D renderer.
 
-### Phase 5 - Preserve and disable MOBA (OWNER CORRECTION, IMPLEMENTED)
+### Phase 5 - Remove legacy MOBA frontend & retain /evolution/game-modes (COMPLETED 2026-11-12)
 
-- Preserve all MOBA code, catalogs, pipelines, historical roles and recordings. The owner explicitly rejects deleting the MOBA game.
-- The Laravel Game modes setting disables fresh MOBA entry and reference surfaces reversibly. FPS is active.
+- Removed all frontend MOBA simulation, viewer, art, audio, tests, and MOBA-only documentation.
+- The Laravel `/evolution/game-modes` route and frozen `arena-v2..v6` ML playbooks remain preserved separately.
 - See [tactical FPS v2, deployed checks and limits](fps-tactical-v2-20261110.md).
 
 ### FPS reference and watch access (10 November 2026)
@@ -158,12 +158,10 @@ The owner supplied role/personality examples and requested complete current refe
 Active Phase 3 surfaces:
 
 - [FPS simulation and report types](../EsportsClash.Web/src/fps/)
-- [Tactical FPS viewer](../EsportsClash.Web/src/components/FpsMatchView.tsx) and [scheduled match centre](../EsportsClash.Web/src/components/OnlineNormalView.tsx)
+- [Tactical FPS viewer](../EsportsClash.Web/src/components/FpsMatchView.tsx), [live 3D broadcast](../EsportsClash.Web/src/components/FpsLiveBroadcast.tsx), and [scheduled match centre](../EsportsClash.Web/src/components/OnlineNormalView.tsx)
 - [Server allocation, settlement, and FPS worker](../EsportsClash.Api/app/Services/OnlineService.php) and [online worker](../infrastructure/online/fps-match-worker.mjs)
-- [Agent handoff](./agent-handoff.md) and [arena mechanics](./arena-mechanics.md) for current gameplay decisions
+- [Agent handoff](./agent-handoff.md) for current gameplay decisions
 - [Character asset pipeline](./character-asset-pipeline.md) and [Babylon visual rebuild plan](./babylon-visual-rebuild.md) for the later 3D stage
-
-The legacy MOBA renderer and historical report paths remain preserved. The owner corrected Phase 5 to reversible disabling, never deletion.
 
 ## Acceptance criteria for a future implementation
 

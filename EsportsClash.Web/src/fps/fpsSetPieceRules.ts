@@ -6,13 +6,13 @@ import type {
   FpsWeaponId,
   SetPieceCall,
   SetPieceStrategy
-} from './types.ts';
-import { getWeaponDef } from './weapons.ts';
+} from './fpsTypes.ts';
+import { getWeaponDef } from './fpsWeapons.ts';
 import { simulateFpsRound } from './fpsRoundSimulation.ts';
-import type { FpsMatchSettings, FpsRoundEndReason, FpsSide } from './types.ts';
+import type { FpsMatchSettings, FpsRoundEndReason, FpsSide } from './fpsTypes.ts';
 import { getFpsPreferences, rankFpsPlayers, shouldSaveFpsRetake } from './fpsPersonality.ts';
 import { evaluatePlayerAction, type PersonalityTrigger, type ScoredTacticalAction } from './fpsIdentity.ts';
-import type { FpsIdentityExperiment } from './types.ts';
+import type { FpsIdentityExperiment } from './fpsTypes.ts';
 
 export interface SetPieceResolution {
   call: SetPieceCall;

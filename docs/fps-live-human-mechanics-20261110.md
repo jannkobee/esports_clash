@@ -2,7 +2,7 @@
 
 On 10 November 2026 the owner requested more human-like mechanics, additional map detail, knives and bug fixes, with https://www.youtube.com/watch?v=MFenWTrbNWA as reference. The owner then identified the red/orange A-site wall allowing shots through it. `/root` owns this implementation and verification; no agents or avatar asset-processing stages were dispatched.
 
-New browser-local exhibitions identify as `hexatrick-live-exhibition-v4` on `breakwater-live-v4`. Official contextual FPS v3, historical workers/replays, private DNA, idempotent careers and preserved owner-disabled MOBA remain unchanged. No deployment or asset qualification is implied.
+New browser-local exhibitions identify as `hexatrick-live-exhibition-v4` on `breakwater-live-v4`. Official contextual FPS v3, historical workers/replays, private DNA, idempotent careers and preserved `/evolution/game-modes` remain unchanged. No deployment or asset qualification is implied.
 
 ## Mechanics
 

@@ -6,18 +6,18 @@ export type MacroRegion = 'ASIA' | 'EUROPE' | 'AFRICA' | 'AMERICAS';
 export type TacticalArchetype = 'Aggressive Dive' | 'Objective Macro' | 'Scaling Poke' | 'Pick & Burst' | 'Dynamic Adapt';
 
 export interface PlayerAttributes {
-  lan: number; // Mechanics & Micro Skillshots (1-99 internal, 1-10 UI)
-  tf: number;  // 5v5 Teamfight Execution (1-99 internal, 1-10 UI)
+  lan: number; // Aim & Micro Mechanics (1-99 internal, 1-10 UI)
+  tf: number;  // 5v5 Trading & Execution (1-99 internal, 1-10 UI)
   iq: number;  // Game Sense & Objective Timing (1-99 internal, 1-10 UI)
   clu: number; // Clutch Factor under Pressure (1-99 internal, 1-10 UI)
   sta: number; // Stamina & Tilt Resistance (1-99 internal, 1-10 UI)
-  flx: number; // Champion Pool Flexibility (1-99 internal, 1-10 UI)
+  flx: number; // Loadout & Role Flexibility (1-99 internal, 1-10 UI)
   ldr?: number; // Leadership & Shotcalling (1-99 internal, 1-10 UI)
 }
 
 export interface CoachAttributes {
   tactical: number;         // 1-10: Boosts IQ & Leadership training speed
-  mechanical: number;       // 1-10: Boosts Laning & Teamfight training speed
+  mechanical: number;       // 1-10: Boosts Mechanics & Trading training speed
   conditioning: number;     // 1-10: Boosts Clutch, Stamina & Flexibility training speed
   youthDevelopment: number; // 1-10: Extra training speed for players aged <= 20
   motivation: number;       // 1-10: Global training efficiency multiplier
@@ -173,9 +173,8 @@ export interface TrainingRegimen {
 }
 
 // ==========================================
-// RIOT GLOBAL CIRCUIT & SCALING PYRAMID
+// GLOBAL CIRCUIT & SCALING PYRAMID
 // ==========================================
-export type RiotSplitKey = 'opening' | 'spring' | 'summer';
 export type InternationalEventKey = 'Hexatrick Vanguard Cup' | 'Hexatrick Summit Masters' | 'Hexatrick Crown Championship';
 
 export interface ThirdPartyCup {

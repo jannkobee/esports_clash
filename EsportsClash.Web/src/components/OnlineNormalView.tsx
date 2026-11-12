@@ -12,7 +12,7 @@ import { useAccount } from '../AccountContext';
 import { openAuthentication } from '../authNavigation';
 import { pediaHref } from '../hexapedia';
 import { FpsMatchView } from './FpsMatchView';
-import type { FpsMatchReport } from '../fps/types';
+import type { FpsMatchReport } from '../fps/fpsTypes';
 import { ClubCrest, ClubIdentityEditor, type ClubIdentity } from './ClubIdentityEditor';
 import { Activity, ArrowRight, ClipboardList, Clock3, Swords, Users } from 'lucide-react';
 import './club-management.css';
@@ -154,7 +154,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         : <p className="club-help">{selected.status === 'completed' ? 'The completed FPS match has no verified replay report.' : 'The FPS match report will appear when server simulation finishes.'}</p>
         : <>
       {selected.error && <p className="text-sm text-red-300">{selected.error}</p>}
-      <p className="club-notice">This archived match uses the retired MOBA ruleset. Historical results and fixture reports remain recorded below.</p>
+      <p className="club-notice">This archived match uses a legacy ruleset. Historical results and fixture reports remain recorded below.</p>
       </>}
       {selected.status==='completed'&&selected.plan.fixture?.id&&<FixtureReport id={selected.plan.fixture.id}/>}
       <details className="club-technical"><summary>Recording details</summary>

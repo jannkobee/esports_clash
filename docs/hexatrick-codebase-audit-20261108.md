@@ -10,17 +10,17 @@ The owner authorized the repairs after this audit. The [lifecycle repair record]
 
 The latest checkout already includes:
 
-- Hexatrick branding and the **Hexapedia** public reference name. `#codex` is canonical; older Avatarpedia routes/API names remain compatibility aliases. Do not rename the encyclopedia back based on older prompts/documents.
+- Hexatrick branding and the **Hexapedia** public reference name. `#codex` is canonical; older compatibility aliases remain documented separately.
 - Unique rookie players with nationalities, original IGNs and portraits; bot management, bidding/listing and human takeover.
-- Server-owned scheduled fixtures, immutable allocations/results, Arena replay and synchronized text.
+- Server-owned scheduled fixtures, immutable allocations/results, live/replay streaming and synchronized text.
 - Annual competition snapshots, regional/international definitions, independent organizers, invitations, rankings and national-team infrastructure.
 - Club inbox, read state, weekly finance/training reports, observed player development, career appearances/transfers/honors, organizer forms, The Wire and Hexacast.
-- Five persisted staff roles and coach-led Avatar drafts; managers select players. Staff/coach choices are pinned into new allocations.
+- Five persisted staff roles and coach-led preparation; managers select players. Staff/coach choices are pinned into new allocations.
 - Normal matchmaking with human priority and delayed eligible-bot fallback; a separate same-tier scheduled scrimmage queue.
 - Transfer Exchange, reserve listings, player/cash trades and verified-stat-based rating/form support.
-- Graphite/petrol/copper reference styling in `EsportsClash.Web/src/hexatrick-reference.css`, original geometric branding and leading icons. `classic-manager.css` was replaced, not the Arena rendering pipeline.
+- Graphite/petrol/copper reference styling in `EsportsClash.Web/src/hexatrick-reference.css`, original geometric branding and leading icons.
 
-Latest decisions are in the newest entries of [agent-handoff.md](agent-handoff.md) and [arena-mechanics.md](arena-mechanics.md). The earlier [world phase plan](hexatrick-world-phase-plan.md), [global competition report](hexatrick-global-competitions.md), [rookie report](hexatrick-rookie-world.md) and [calendar/media report](hexatrick-calendar-media.md) contain useful history but do not individually describe the entire present checkout.
+Latest decisions are in the newest entries of [agent-handoff.md](agent-handoff.md). The earlier [world phase plan](hexatrick-world-phase-plan.md), [global competition report](hexatrick-global-competitions.md), [rookie report](hexatrick-rookie-world.md) and [calendar/media report](hexatrick-calendar-media.md) contain useful history but do not individually describe the entire present checkout.
 
 ## Highest-priority corrections and completion work
 
@@ -54,7 +54,7 @@ Observed local deployment: both `2026_11_09_000001` and `000002` migrations are 
 
 Evidence: `browser-worker.mjs` caps the real execution loop at 45 minutes and rejects simulation clocks over 1,800 seconds. The latest handoff explicitly says that the current staff-drafted path has no completed new authenticated live acceptance run.
 
-Finish: inspect the retained failed-run timing/recording evidence, establish the actual worker/source versions, then arrange an authorized fresh scheduled match and follow it through draft, Arena/text, Nexus finish, ten player ratings, training and idempotent settlement. Preserve failed history. Do not award a timeout/gold-lead winner or change protected combat/learning rules to get a pass. Single-worker overlapping-game capacity remains a separate concern.
+Finish: inspect the retained failed-run timing/recording evidence, establish the actual worker/source versions, then arrange an authorized fresh scheduled match and follow it through draft, match/text, verified finish, ten player ratings, training and idempotent settlement. Preserve failed history. Do not award a timeout/gold-lead winner or change protected combat/learning rules to get a pass. Single-worker overlapping-game capacity remains a separate concern.
 
 ## Important follow-up work
 
@@ -80,7 +80,7 @@ Finish: inspect the retained failed-run timing/recording evidence, establish the
 
 ### 9. P2 product completion — richer narratives and social/broadcast operation
 
-`WorldMedia` currently publishes templates for actual results, edition status, live threads, HGR leaders and player appearance spotlights. It does not yet implement richer rivalry histories, fixture previews or observed-development emergence stories. These must reference actual records and retain simulated-archive provenance. Moderation endpoints exist; a complete moderator/report/block workflow, notifications/preferences and larger social operating policy remain unfinished. Hexacast is an Arena live/replay directory, not an external video-ingest platform; do not describe it as full Twitch infrastructure.
+`WorldMedia` currently publishes templates for actual results, edition status, live threads, HGR leaders and player appearance spotlights. It does not yet implement richer rivalry histories, fixture previews or observed-development emergence stories. These must reference actual records and retain simulated-archive provenance. Moderation endpoints exist; a complete moderator/report/block workflow, notifications/preferences and larger social operating policy remain unfinished. Hexacast is a match live/replay directory, not an external video-ingest platform; do not describe it as full Twitch infrastructure.
 
 ### 10. P2 product policy — global club economy still uses PHP
 

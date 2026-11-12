@@ -1,5 +1,5 @@
 import type { PlayerCard } from '../types.ts';
-import type { FpsIdentityExperiment, FpsTeamId } from './types.ts';
+import type { FpsIdentityExperiment, FpsTeamId } from './fpsTypes.ts';
 import { evaluatePlayerAction, resolveTacticalExecution, type FpsPrimaryRole, type TacticalAction, type FpsSpecialtyOpportunity } from './fpsIdentity.ts';
 import { hydrateFpsIdentityContext, observedPersonalityTriggers } from './fpsIdentityMatch.ts';
 import { FPS_ROLES } from './fpsRoleFit.ts';

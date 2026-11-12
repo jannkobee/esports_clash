@@ -20,13 +20,13 @@ All model inference, skeleton/skin prediction, geometry repair, animation author
 
 Retain owner-started visual jobs; selecting this workflow is not an instruction to auto-run the roster queue. Persist execution location, provider/runtime/engine hashes, source hashes, seed, stage and output hashes with each new attempt. Historical jobs/plans stay immutable; do not rewrite them to say Google. A previous cached rig may be historical evidence, not a fresh Colab-produced output.
 
-Follow `character-asset-pipeline.md`: clean adult neutral base in the required A-pose, anatomy-appropriate exceptions, rig and controlled deformation review before appearance fitting. Mirelle's failed candidate remains private/unqualified; it cannot pass by changing compute or importing successfully. Do not restore deleted avatar binaries. Preserve stable identities, anatomy, handedness, companions, kit definitions, card aliases and current release controls.
+Follow `character-asset-pipeline.md`: clean adult neutral base in the required A-pose, anatomy-appropriate exceptions, rig and controlled deformation review before appearance fitting. Mirelle's failed candidate remains private/unqualified; it cannot pass by changing compute or importing successfully. Do not restore deleted avatar binaries. Preserve stable identities, anatomy, handedness, card aliases, and current release controls.
 
-Keep the current 2600 by 1440 map, collision, lane/camp/brush/structure positions, tower damage/attribution, all-three-barracks order, learned-controller decisions and frozen ML artifacts. Babylon effects consume actual events and simulation time; they cannot invent hits, damage or gameplay RNG draws.
+Preserve learned-controller decisions and frozen ML artifacts. Babylon effects consume actual events and simulation time; they cannot invent hits, damage or gameplay RNG draws.
 
 ## Phase 0 - Documentation reset
 
-Completed: five obsolete generated visual planning/reference Markdown guides were removed with exact historical content/hashes in `visual-reset-20261024.json`. Gameplay rules, supplied specifications, historical implementation/verification records, PNG references, manifests, logs and failed-asset evidence remain. The prior live sprite implementation remains runtime code until its replacements pass; the documentation reset did not remove it.
+Obsolete visual guides were permanently removed. Historical manifests, PNG references, logs and failed-asset evidence for the Colab pipeline remain preserved cleanly.
 
 ## Phase 1 - Ready the existing pipeline for Colab-only production
 
@@ -54,35 +54,35 @@ Author/retarget/bake Idle, Walk, Run, Turn, Basic Attack, S1, S2, Ultimate, Hit,
 
 **Exit:** one recognizable, fully moving Mirelle at close-up and normal spectator scale, with dressed deformation and contact evidence. No model publication from clip names or a structural pass alone.
 
-## Phase 4 - Finish Mirelle's Babylon ability effects
+## Phase 4 - Finish interactive character effects
 
-Build actual modeled pins, thread/stitch geometry, trails, particles, warning/active/impact/expiry choreography and destruction/disabled states. Cover passive pin state, S1, Recut and each of the ten ultimate patterns. Use real ownership, geometry, lifetime, release and confirmed hit events. Safe strips/endpoints and attackable devices remain readable. Avoid floating painted ability icons and generic elemental substitutes.
+Build actual modeled projectiles, trails, particles, warning/active/impact/expiry choreography and disabled states using real ownership, geometry, lifetime, release and confirmed hit events. Effects stay visible against terrain without hiding combatants.
 
-**Exit:** the complete kit reads in actual match playback and replay, including misses, interruptions, disabled/destroyed supports and expiry. Effects stay visible against terrain without hiding combatants or implying new danger areas.
+**Exit:** effects read clearly in actual match playback and replay, including misses, interruptions and expiry.
 
-## Phase 5 - Replace arena placeholders
+## Phase 5 - Replace match environment placeholders
 
-First finish one tower and one lane/jungle-edge section to establish material, scale, lighting and shadow quality. Then replace all structure/base types, distinct barracks, Nexus, wells, minion classes, wards, camps/bosses, rocks, bushes, trees, cliff/soil/water transitions and distant surroundings. Use modeled volumes and coherent materials; pictures remain references rather than pasted world scenery. Instancing may share approved repeated geometry.
+Replace placeholder world volumes with coherent modeled scenery, cover geometry and distant surroundings using coherent materials; pictures remain references rather than pasted world scenery. Instancing may share approved repeated geometry.
 
-Track each object type as placeholder, modeled, animated, verified or complete, with real rendered evidence. Preserve current geography and all mechanical footprints. Include damage/destruction, firing, spawn/death and respawn states where applicable.
+Track each object type as placeholder, modeled, animated, verified or complete, with real rendered evidence. Preserve current geography and collision footprints.
 
-**Exit:** actual match camera traversal shows coherent modeled scenery with no unintended primitive towers/mobs, cutout trees, paving seams or empty backdrop boundaries. Review target visibility, occlusion and ground contact.
+**Exit:** actual match camera traversal shows coherent modeled scenery with no unintended cutout trees, paving seams or empty backdrop boundaries. Review target visibility, occlusion and ground contact.
 
-## Phase 6 - Complete the other 44 avatars
+## Phase 6 - Complete the remaining avatars
 
-After Mirelle passes, finish a creature/nonhumanoid and a companion/rider/vehicle identity to prove the pipeline handles unlike anatomy. Select them from the canonical roster; do not force all species onto one humanoid rig. Then complete the remaining 42 avatars in seven batches of six using the same Colab workflow.
+After Mirelle passes, finish a creature/nonhumanoid and another distinct identity to prove the pipeline handles unlike anatomy. Then complete the remaining avatars in batches using the same Colab workflow.
 
-Every avatar needs its own model, anatomy/rig gate, fitted appearance, complete movement/combat/death set, four ability slots, actual-match integration and evidence. Reuse compatible rig families and tools without reducing identities to recolors. Track all 45 stable IDs and gates individually; do not finish all bodies while leaving every kit unfinished.
+Every avatar needs its own model, anatomy/rig gate, fitted appearance, complete movement/combat/death animation set, actual-match integration and evidence. Reuse compatible rig families and tools without reducing identities to recolors.
 
-**Exit:** 45 verified modeled characters, distinct silhouettes, correct contacts/facing/motion and readable actual kit behavior. Record per-character failures rather than blanket qualifying a batch.
+**Exit:** verified modeled characters with distinct silhouettes and correct contacts/facing/motion. Record per-character failures rather than blanket qualifying a batch.
 
 ## Phase 7 - Live cutover and performance qualification
 
-Use qualified pipeline outputs in the existing Babylon asset loader and release controls. Remove illustration-first `PaintedRoster` selection and `PaintedAbilities` from the finished world path, then retire painted scenery compositing as its modeled replacements pass. A missing qualified asset cannot silently become a pasted image labeled finished. Keep artwork/reference files and historical evidence outside runtime dependencies.
+Use qualified pipeline outputs in the existing Babylon asset loader and release controls. A missing qualified asset cannot silently become a pasted image labeled finished. Keep artwork/reference files and historical evidence outside runtime dependencies.
 
-Verify ten independent champions, waves, structures and simultaneous effects in a natural match, along with replay, pause/seek, transparency, context recovery, asset loading and disposal. Measure frame time, draw calls and memory on named desktop/mobile devices; provisional 60/30 fps goals are not measured results. Run `npm run check:game` and `npm run build` for integration changes, and update handoff/mechanics with actual evidence and remaining limits.
+Verify ten independent combatants and simultaneous effects in a natural match, along with replay, pause/seek, transparency, context recovery, asset loading and disposal. Measure frame time, draw calls and memory on named desktop/mobile devices; provisional 60/30 fps goals are not measured results. Run `npm run check:game` and `npm run build` for integration changes, and update handoff with actual evidence and remaining limits.
 
-**Exit:** no unintentional placeholder world objects or billboard avatars, all 45 gates recorded, complete kit review and natural-match/device evidence. Generation success is not release qualification.
+**Exit:** no unintentional placeholder world objects or billboard avatars, all gates recorded, complete visual review and natural-match/device evidence. Generation success is not release qualification.
 
 ## Immediate next work
 
@@ -135,11 +135,11 @@ Three controlled Colab experiments on the existing failed authored Mirelle sourc
 
 Fixed a retention omission that endangered recorded base-candidate evidence; 14 exact-hash files for the fresh failed candidate are present again. Backoffice improvements now show shared cloud readiness and candidate-specific diagnostic comparisons, and provide a packaged Babylon inspector with exact-time seeking, views, overlays and lifecycle cleanup. Fixed readiness checks for unavailable compute/missing models, camera framing, and the missing API Docker bundle build. Actual Colab browser playback passes all seven inspector checks with zero page errors; the original source's visible shoulder deformation remains. Evidence: `pipeline-audit-20261024/inspector-review-7d8de8be/`, `backoffice-readiness-20261026.json`, `colab-tokenrig-readiness-20261026.json`, and `retained-base-evidence-20261026.json`.
 
-Phase 1 and the rig/deformation gate are still incomplete. Continue by connecting production cloud preparation and retaining each raw/repair/calibration/retarget stage, then resolve controlled elbow/skin failures and densely review exported motion/contact. Only afterward fit appearance and admit the wider roster. The inspector and declared reference uploads are completed supporting work, not a finished avatar or arena.
+Phase 1 and the rig/deformation gate are still incomplete. Continue by connecting production cloud preparation and retaining each raw/repair/calibration/retarget stage, then resolve controlled elbow/skin failures and densely review exported motion/contact. Only afterward fit appearance and admit the wider roster. The inspector and declared reference uploads are completed supporting work, not a finished avatar.
 
 ### Mirelle deformation regression lock (2026-10-26)
 
-The active source, raw rig, pivot/weight candidates, paired Babylon assessments and current contact map are recorded with exact IDs/hashes in [the Mirelle deformation regression lock](avatar-rework/mirelle-deformation-regression-lock-20261026.md). The latest taper review adds 60 whole-body/detail and eight oblique views in Colab. Limited manual comparison does not establish a convincing correction of the compressed joint transitions despite lower counts (131/81 shoulders, 255/133 hips). A new map binds 517 contact-vertex records to the exact source and distinguishes rest from posed bounds. Game animation/repair/retarget review remains pending. Both candidates are **unqualified**; no clothing fitting or live use.
+The active source, raw rig, pivot/weight candidates, paired Babylon assessments and current contact map are recorded in the retained backoffice state and `pipeline-audit-20261024/`. The latest taper review adds 60 whole-body/detail and eight oblique views in Colab. Limited manual comparison does not establish a convincing correction of the compressed joint transitions despite lower counts (131/81 shoulders, 255/133 hips). A new map binds 517 contact-vertex records to the exact source and distinguishes rest from posed bounds. Game animation/repair/retarget review remains pending. Both candidates are **unqualified**; no clothing fitting or live use.
 
 Update 2026-10-27: two signed, rest-corresponding shoulder transfers are completed and rejected. Arm-favoring `8db702c3` produces 137/81 shoulder intersections and torso-return `7a692c3c` produces 149/88 versus taper's 131/81. Other bends remain unchanged. Each has a 68-view Colab Babylon record and a limited six-view manual assessment; neither shows a convincing shape correction. Exact candidate/report/playback hashes and backoffice readbacks are in the regression lock. The canonical API retains both as rejected experiments, with no qualification, publication or change to the preserved taper.
 
@@ -153,7 +153,7 @@ The replacement Colab runtime has the pinned preparation setup and retained its 
 
 One separately frozen half-strength shoulder correction `51e2aadf` was baked and compared directly with `140fe64c` in 68 Babylon captures. It makes only a subtle visible change while increasing measured deep-bend shoulder contacts from 31/0 to 34/17; limited manual review still finds the shoulder/hip shape unresolved. Both remain diagnostics, with no automatic selection or release. Exact evidence and hashes are in the regression lock.
 
-The corrected model now has its own Colab contact map `5271850d`, measured with the actual baked morph channels active. It retains 117 signed rest-space vertices and distinguishes the remaining torso–arm, pelvis–thigh and same-region contacts. The first packaging attempt failed due to a missing module and is retained separately. This new map guides an anatomical repair but does not itself fix or qualify the avatar.
+The corrected model now has its own Colab contact map `5271850d`, measured with the actual baked morph channels active. It retains 117 signed rest-space vertices and distinguishes the remaining torsoâarm, pelvisâthigh and same-region contacts. The first packaging attempt failed due to a missing module and is retained separately. This new map guides an anatomical repair but does not itself fix or qualify the avatar.
 
 The first targeted rest-side-normal shoulder separation prototype `8416eeb2` increased left-shoulder contacts from 31 to 50 despite closed seams. It is rejected; no model was exported or replaced. Its earlier import-name mismatch and both attempts are retained with exact evidence in the regression lock. A different shape-repair method is needed before the visual gate can pass.
 
@@ -171,13 +171,13 @@ The owner asked for a considered plan after repeated small corrective experiment
 2. **Choose the smallest credible branch.** If the unrigged source has problematic geometry or surface continuity at the joint, test an improved source within the existing generation/preparation pipeline or a source-bound topology repair in Colab; inspect rest silhouette and image identity before rigging. If the source is suitable but the raw rig fails, address joint placement/skin weights or evaluate a verified cloud rig provider in isolation. If the raw rig passes but a later stage fails, fix that named repair/retarget operation. Keep a fixed reference and separate versioned evidence for every branch; do not treat a different historical asset as a fresh source.
 3. **Validate a base and rig, not a proxy score.** Test controlled front/side/rear and unoccluded hip/shoulder views at rest and in 45/90-degree and combined poses, transitions and loops. Verify deformations in both Colab and Babylon, rest/skin/seam and GLB structure, and compare visually with the same source/pose. Use contact and stretch numbers as diagnostics; a model only advances after the whole joint shape visibly works. Keep limitations explicit and stop a branch if the geometry or cloud provider cannot produce a credible result.
 4. **Connect and isolate cloud production animation.** Verify actual generation, rigging, animation and qualification services via the backoffice; TokenRig candidate connectivity is not production readiness. Preserve separate raw, cleanup, calibration, retarget and export artifacts, then test the actual idle, walk, run, attack, cast, hit and death clips, including transitions and root motion. Confirm corrective morphs are genuinely driven by the delivered game clips and playback in Babylon, not just stress clips.
-5. **Finish one avatar before scaling.** Only after the clean base and full-motion review, assemble Mirelle's separate outfit and equipment and retest the dressed character, abilities, performance and backoffice/API/Web consistency. Keep the current 45-avatar roster untouched, then use this proven workflow for additional bodies and equipment; do not imply the roster or live arena is finished from Mirelle's diagnostic pass.
+5. **Finish one avatar before scaling.** Only after the clean base and full-motion review, assemble Mirelle's separate outfit and equipment and retest the dressed character, performance and backoffice/API/Web consistency. Keep the current roster untouched, then use this proven workflow for additional bodies and equipment; do not imply the roster or live presentation is finished from Mirelle's diagnostic pass.
 
 This entry records the plan; no experiment or game-asset cutover was performed as part of it.
 
 ### Stage-isolation progress (2026-10-28)
 
-Read-only Colab geometry audit `302da020-d6fe-4343-9c58-20ad2d0ae193` compares the actual generated Mirelle source `f90efcde…`, raw TokenRig result `a656ab52…`, early pivot candidate `89086aef…` and corrective candidate `85fba162…`. The canonical preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` stores the complete report and verifies the source and candidate hashes before registration. Evidence and frozen input hashes are in [the stage audit](pipeline-audit-20261024/stage-geometry-302da020/report.json); report SHA-256 is `d89b32416e7769c5e06b481abfd0de94d3fbedf28de4a4f9bfdc58e771d5f6fe`.
+Read-only Colab geometry audit `302da020-d6fe-4343-9c58-20ad2d0ae193` compares the actual generated Mirelle source `f90efcdeâ¦`, raw TokenRig result `a656ab52â¦`, early pivot candidate `89086aefâ¦` and corrective candidate `85fba162â¦`. The canonical preparation `24e7f704-3abe-42d4-9c47-204627ee9e88` stores the complete report and verifies the source and candidate hashes before registration. Evidence and frozen input hashes are in [the stage audit](pipeline-audit-20261024/stage-geometry-302da020/report.json); report SHA-256 is `d89b32416e7769c5e06b481abfd0de94d3fbedf28de4a4f9bfdc58e771d5f6fe`.
 
 The source has 18,749 imported vertices, 37,576 faces, four boundary and 41 non-manifold edges, five connected components, zero zero-area faces and no detected rest self-intersections in the earlier source review. The raw rig's symmetric vertex nearest-neighbour distance to that source has maximum `1.60e-7` and RMS `4.74e-8` in imported world coordinates. This is a vertex measurement, not a surface Hausdorff distance or proof of suitable deformation topology. Imported rig meshes split vertices at attribute/skin seams, so their approximately 12,000 boundary edges are not evidence of actual holes without a seam-aware analysis.
 
@@ -197,7 +197,7 @@ Decision: retain all stages as unqualified and stop treating incremental contact
 
 The existing pinned UniRig source and public skeleton and skin checkpoints have been downloaded and hash-verified in the replacement Colab runtime for an independent experiment; [the receipt](pipeline-audit-20261024/joint-seams-72255424/unirig-model-provision.json) records the checkpoint pins. This is source/checkpoint staging only: its T4-compatible runtime, cloud service, inference and side-by-side result are not yet established. The CUDA 12.8 toolkit is installed, while the new RPC kernel could not retrieve the previously configured Hugging Face secret. The backoffice generation stage remains blocked until its complete installation and diagnostics pass.
 
-### Revised rigging repair plan — 2026-10-28 (planning only)
+### Revised rigging repair plan â 2026-10-28 (planning only)
 
 This work order supersedes the open-ended independent-rig/topology recommendation above. Objective: one Mirelle base whose shoulders and hips visibly preserve plausible shape through required movement in the exported Babylon asset. No new compute, provider change or release is performed by this planning update. Use the actual generated source and raw TokenRig baseline; all mesh, rig and animation processing stays in Colab. Backoffice stores the authoritative versions and evidence; Web consumes those exact versions.
 
@@ -217,7 +217,7 @@ First executable task: Phase 1's anatomy-aware pose contract, then the bounded U
 
 Technical references checked for this planning revision: [UniRig upstream](https://github.com/VAST-AI-Research/UniRig) describes separate skeleton/skin inference and dependencies; [FlashAttention upstream](https://github.com/Dao-AILab/flash-attention) documents hardware support; [Blender armature documentation](https://docs.blender.org/manual/en/latest/modeling/modifiers/deform/armature.html) explains weighted deformation and preserve-volume behavior. These references guide checks; they do not establish compatibility or quality of the project's pinned builds.
 
-### libigl weighting integration — 2026-10-28
+### libigl weighting integration â 2026-10-28
 
 The owner selected a bounded Blender/libigl weighting trial. Added a byte-only package builder, pinned Colab-only `libigl==2.6.3` volume weighting kernel, actual-source geometry admission, and immutable backoffice registration. `weight_solver_reviews` is part of the canonical preparation state returned by its existing report endpoint and rendered by the shared preview. Installing libigl in `/content/teamfight-bbw/packages` leaves the preparation environment's packages intact. The solver contract requires explicit positive tetrahedra and anatomical boundary constraints; it checks finite, bounded, normalized weights and reproduction of constraints. The supplied kernel is not a complete avatar rebinding/export path.
 
@@ -227,11 +227,11 @@ Evidence: [report](pipeline-audit-20261024/bbw-trial-b218ffe0/report.json), SHA 
 
 Reasoning review trigger: after two experiments fail the visible objective without new evidence separating the hypotheses, pause parameter tuning and state the unresolved question, evidence and next discriminating test. Recommend an independent reasoning review when needed, but do not present a model switch as a guaranteed fix or substitute for missing geometry, runtime access or an artist-authored result. Model adequacy should be judged against observed task outcomes, not asserted in advance.
 
-### Closed computational proxy and actual BBW weights — 2026-10-28
+### Closed computational proxy and actual BBW weights â 2026-10-28
 
 Completed the next Colab stages against the same source/raw rig, without editing the visible body or joint transforms. Winding-based proxy `1f73a848` is rejected: its largest classified component had only 88 cells and correspondence errors up to 0.59 source units. Face-orientation and direct solid-angle checks did not establish orientation repair as a remedy. A separately versioned solid-envelope construction voxelizes the source, applies one face-connected closing and fills the interior. Its first result `ee2919e1` contained all body vertices but had two non-manifold digital contacts near the feet. The final `7c29ff0b-7f6e-495e-87ae-b9ed54aedad6` removes only two cells containing no source vertices, under a fixed eight-empty-cell repair limit. It has 18,394 nodes, 81,486 positive tetrahedra and zero invalid boundary edges. All 23,399 body vertices map inside with zero projection displacement; tetrahedral reconstruction error is at most `1.16e-16`. Maximum proxy-boundary distance to the source is `0.016865` source units, within the fixed two-cell limit. These checks qualify the domain only for the next computational experiment, not for appearance or deformation.
 
-Four sagittal [source/proxy sections](pipeline-audit-20261024/bbw-solve-results/7c29ff0b-7f6e-495e-87ae-b9ed54aedad6/proxy-sections.png) show inner and outer source contours and the solid computational envelope. This is limited section evidence; it does not prove a deformation cause or review the entire proxy. The visible source was never solidified. All three proxy reports and NPZ artifacts are retained in backoffice, with authenticated, lineage- and hash-checked download links. Local copies are under `pipeline-audit-20261024/bbw-proxy-results/`.
+Four sagittal source/proxy sections showed inner and outer source contours and the solid computational envelope (`pipeline-audit-20261024/bbw-proxy-results/`). This is limited section evidence; it does not prove a deformation cause or review the entire proxy. The visible source was never solidified. All three proxy reports and NPZ artifacts are retained in backoffice, with authenticated, lineage- and hash-checked download links. Local copies are under `pipeline-audit-20261024/bbw-proxy-results/`.
 
 An initial constraint run `f31b17fa` failed because Blender's imported display tail was used as an anatomical limb endpoint. Actual child-joint heads differ substantially from some display tails. Corrected run `1a8d5ad6-a597-4be2-92a8-13d4ae8c8ece` uses child-head endpoints, branch means and leaf heads, with the unchanged 3%-height node-distance cap. The ten-minute-bounded BBW solve completed and produced 22-channel weights for all 23,399 body vertices. Weights are finite and nonnegative, with maximum normalization error `4.45e-16`; this is a numerical result, not a visual quality pass. The report, 22 constraints and weight NPZ are retained in canonical preparation state/storage and `pipeline-audit-20261024/bbw-solve-results/`.
 
@@ -239,7 +239,7 @@ Regional export adoption was attempted on fixed shoulder/hip spheres (radius 8% 
 
 Next discriminating step: inspect the computed support and fit four-influence weights under explicit deformation-error constraints, or improve bone-segment boundary constraints before another bounded solve. A simple top-four truncation has now been tested and rejected. Preserve the existing geometry, skeleton, region boundaries and error budget; only export/replay a candidate after a compatible weight representation is demonstrated. Existing game qualification rejects more than four influences. Do not silently switch to eight influences or label computed weights as a usable avatar. Focused backoffice tests pass 10 / 78 assertions, including proxy download tampering/lineage refusal; Blade/PHP and Python syntax checks pass.
 
-### Four-influence representation and weight-field diagnosis — 2026-10-29
+### Four-influence representation and weight-field diagnosis â 2026-10-29
 
 The four-support fit `1f59dbc4-b1a1-4955-ba5f-9db35f36fc5d` produced a diagnostic GLB on the unchanged raw body and skeleton (SHA `a8842ab894738194008007ba06af8cd268f3b150d5426810990a3bb33c2edccb`). Its held-out maximum deformation error against the dense regional target is `3.5204e-5` source units, relative maximum 0.3510%. This is a new direct deformation-fidelity criterion under redistribution, not a claim to satisfy the prior discarded-mass limit. Babylon review `1ef0fbe2` retained 48 views and rejected production quality: a sharper outer hip notch at 45 degrees, unresolved deep hip compression, and compressed shoulder shape. Passing the fit does not establish that its target deformation is desirable.
 
@@ -255,7 +255,7 @@ Colab runtime `gpu-t4-s-usw1b2-2q0z03j5gpanv` was connected but empty. Only the 
 
 Final verification: all 48 artifacts read back with matching hashes, shared preview returned 200, and report API contained the same report SHA. After the memory fix, `AvatarCloudRawRigTest` passes 13 tests / 99 assertions; Blade cache and Python syntax checks pass. [Readback receipt](pipeline-audit-20261024/bbw-field-de01d1ec/backoffice-verification.json). This verifies the canonical service and shared controller, not an authenticated browser E2E.
 
-### Influence-defined BBW transition correction � 2026-10-29
+### Influence-defined BBW transition correction  2026-10-29
 
 Implemented and tested a replacement for spherical regional adoption on the exact Mirelle raw rig. All weight computation, mesh export and Babylon rendering remained in Colab. `bounded_bbw_field.py` derives the adoption strength from existing upper-arm/thigh influence mass: zero at 0.05, full at 0.5, with a smooth transition. This is a heuristic based on the current weights, not artist-labelled anatomy. It preserves complete original rows on 3,128 hand/finger vertices and 1,651 core torso vertices. Both the weight differences and their position differences in the four inspected poses are zero for those protected regions; this does not mean the entire torso is protected or finger articulation is qualified.
 

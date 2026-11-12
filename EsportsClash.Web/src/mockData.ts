@@ -3,7 +3,7 @@ import { createResearchedCards } from './rosterResearch.ts';
 import { normalizePlayerPersonality } from './playerPersonality.ts';
 
 const BASE_PLAYERS: PlayerCard[] = [
-  // === STARTING FIVE (TOP, JUNGLE, MID, BOT, SUPPORT) ===
+  // === STARTING FIVE ===
   {
     id: 'p_thespicy',
     name: 'TheSpicy',
@@ -15,7 +15,7 @@ const BASE_PLAYERS: PlayerCard[] = [
     ovr: 91,
     stats: { lan: 96, tf: 95, iq: 85, clu: 91, sta: 87, flx: 88 },
     personality: 'Solo Carry',
-    badges: ['Aggro Diver', 'Laning Demon'],
+    badges: ['Aggro Diver', 'Entry Demon'],
     signatureChampions: ['Valkira', 'Kazemaru'],
     morale: 88,
     fatigue: 25,
@@ -55,7 +55,7 @@ const BASE_PLAYERS: PlayerCard[] = [
     ovr: 98,
     stats: { lan: 99, tf: 98, iq: 98, clu: 99, sta: 94, flx: 96 },
     personality: 'Stoic Mastermind',
-    badges: ['Clutch King', 'Unkillable Demon', 'Baron Steal'],
+    badges: ['Clutch King', 'Unkillable Demon', 'Clutch Steal'],
     signatureChampions: ['Kyumi', 'Kage', 'Raijin'],
     morale: 95,
     fatigue: 10,
@@ -138,7 +138,7 @@ const BASE_PLAYERS: PlayerCard[] = [
     ovr: 94,
     stats: { lan: 98, tf: 96, iq: 88, clu: 92, sta: 82, flx: 85 },
     personality: 'Solo Carry',
-    badges: ['Laning Demon', 'Hypercarry'],
+    badges: ['Aim Demon', 'Hypercarry'],
     signatureChampions: ['Astra', 'Buck', 'Cora'],
     morale: 82,
     fatigue: 30,
@@ -318,7 +318,7 @@ const BASE_PLAYERS: PlayerCard[] = [
     ovr: 66,
     stats: { lan: 68, tf: 65, iq: 64, clu: 66, sta: 67, flx: 62 },
     personality: 'Tilt-Prone Grinder',
-    badges: ['Laning Demon'],
+    badges: ['Entry Demon'],
     signatureChampions: ['Kage', 'Kazemaru'],
     morale: 80,
     fatigue: 15,
@@ -393,7 +393,7 @@ export const INITIAL_COACHES: CoachCard[] = [
     chemistryBonus: 10,
     playbookBonus: 8,
     extraBans: 0,
-    quote: 'The lane is always ours to gank.',
+    quote: 'Control the map, control the round.',
     avatarSvg: 'bengi'
   }
 ];

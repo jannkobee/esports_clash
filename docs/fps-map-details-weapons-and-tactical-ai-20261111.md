@@ -54,4 +54,4 @@ Owner requested polishing map scenery (fixing "hanging box" archway lintels, cla
 ### 8. Verification & Invariant Protection
 - **Build Verification**: `npm --prefix EsportsClash.Web run build` (`tsc -b && vite build`) passed cleanly in 7.17s.
 - **Testing**: Skipped per explicit owner instruction ("Skip testing").
-- **Protected Invariants**: Parody aliases, private DNA, careers, MOBA and Colab gates, clamped map boundaries $[-34, 34] \times [-43, 43]$ preserved.
+- **Protected Invariants**: Parody aliases, private DNA, careers, `/evolution/game-modes` and Colab gates, clamped map boundaries $[-34, 34] \times [-43, 43]$ preserved.

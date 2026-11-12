@@ -1,6 +1,6 @@
 # Shared FPS tactics, decisions and map planning review (11 November 2026)
 
-The owner requested reviewing and improving shared tactical architecture, the decision engine and map-aware planning. This pass changes the browser-local live FPS exhibition. Official contextual simulations, historical replays and MOBA remain on their existing paths. `/root` owns this pass; no agents or asset processing were used.
+The owner requested reviewing and improving shared tactical architecture, the decision engine and map-aware planning. This pass changes the browser-local live FPS exhibition. Official contextual simulations, historical replays and `/evolution/game-modes` remain on their existing paths. `/root` owns this pass; no agents or asset processing were used.
 
 ## Findings and corrections
 
@@ -42,4 +42,4 @@ Regression coverage includes the real A-loggia route detour; unreachable routes;
 
 Travel time uses nominal run speed and the authored navigation grid. It is an estimate, not a promise that future congestion, recoil settling, blindness or combat will allow an objective to finish. Route exposure samples remembered threat positions and uncertainty; it does not predict unseen enemy motion. The planner remains heuristic and does not establish professional-strength play or balance. No browser/visual acceptance, official activation, deployment or production-asset qualification is claimed.
 
-Preserve personal vision and sampled acquisition, delayed deduplicated reports, stable world-space aim, private DNA, pinned skill provenance, inert Economy Judgment, parody aliases, careers and historical results, MOBA availability and owner-started Colab-only asset gates. Unrelated dirty broadcast, theme and API work is retained.
+Preserve personal vision and sampled acquisition, delayed deduplicated reports, stable world-space aim, private DNA, pinned skill provenance, inert Economy Judgment, parody aliases, careers and historical results, `/evolution/game-modes` availability and owner-started Colab-only asset gates. Unrelated dirty broadcast, theme and API work is retained.
