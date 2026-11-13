@@ -1,0 +1,15 @@
+[Unit]
+Description=Loopback health endpoint for FPS headless training
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/python3 /opt/fps-learning/infrastructure/automatic-learning/host-health.py
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/proc/meminfo /opt/fps-learning/EsportsClash.Api/storage/app/automatic-learning

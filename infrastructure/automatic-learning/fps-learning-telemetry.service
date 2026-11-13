@@ -1,0 +1,14 @@
+[Unit]
+Description=Collect Lightsail CPU burst and FPS host telemetry
+After=docker.service fps-learning-health.service
+
+[Service]
+Type=oneshot
+User=root
+Environment=HOME=/root
+Environment=AWS_PROFILE=lightsail-monitor
+Environment=AWS_REGION=ap-southeast-1
+Environment=LEARNING_INSTANCE_NAME=Ubuntu-1-2GB
+Environment=LEARNING_DATA=/opt/fps-learning/EsportsClash.Api/storage/app/automatic-learning
+Environment=LEARNING_HEALTH_URL=http://127.0.0.1:8095/health
+ExecStart=/usr/bin/node /opt/fps-learning/infrastructure/automatic-learning/telemetry.mjs

@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh FPS host and Lightsail burst telemetry every minute
+
+[Timer]
+OnBootSec=15s
+OnUnitActiveSec=60s
+AccuracySec=5s
+Unit=fps-learning-telemetry.service
+
+[Install]
+WantedBy=timers.target
