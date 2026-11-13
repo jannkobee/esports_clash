@@ -1,6 +1,6 @@
 # Continuous FPS learning
 
-The isolated Node worker runs the live spatial engine at its fixed 30 Hz step without rendering. It trains navigation and rifle cadence on synthetic profiles. Official allocations, careers, player abilities and asset processing are unaffected.
+The isolated Node worker runs the live spatial engine at its fixed 30 Hz step without rendering. It trains navigation, rifle cadence and a separate movement-choice model on synthetic profiles. Movement choices select among existing duel tactics (strafe, hold, crouch-strafe) and peek styles (shoulder, crouch-swing, ferrari, double-pump, bait, fake). Existing movement and weapon rules remain authoritative: profile attributes still control their established execution, including braking input, peek endpoint error, aim, recoil and weapon handling. The learner cannot change attributes, weapon rules, collision or information access. Official allocations, careers, player abilities and asset processing are unaffected.
 
 ## Files and operation
 
@@ -14,11 +14,13 @@ node infrastructure/automatic-learning/coordinator.mjs
 
 SQLite WAL commits model changes and permanent ingestion digests together. Completed-round experience survives incomplete matches. Interrupted matches are recorded as aborted rather than silently replayed. Frozen team policies never explore or update. Hourly UTC JSONL gzip archives contain samples, round outcomes, starts and match results; checksummed summaries survive 30-day raw retention. The ledger is intentionally retained after raw deletion. Back up the volume, including SQLite through its backup API or with the service stopped.
 
+On upgrade from a v1 learning database, validated navigation and combat checkpoints are preserved and the new movement checkpoint starts from its built-in prior. An in-progress job or candidate cycle is migrated the same way; a checkpoint that fails its learner validator stops startup for review.
+
 Create a `PAUSE` file in the data directory to pause new matches; remove it to resume after five healthy minutes. `heartbeat.json` reports state. SIGTERM stops the active match gracefully. Model incompatibility stops the worker for explicit review; never silently reuse incompatible training history.
 
 Each 100 completed training matches freezes a candidate. Evaluation uses 200 seed pairs against each of incumbent and original baseline, with swapped teams (800 matches). The evaluation seed range is disjoint from training. Results include paired normal-approximation confidence intervals, profile groups and attacking/defending results. Timeouts invalidate the candidate. Passing screening requires positive incumbent lower bound and a baseline interval that does not establish regression.
 
-Passing screening schedules 200 swapped seed pairs each for route-only and combat-only comparisons against the incumbent. Reports retain separate ablation intervals and require both comparisons to complete before review. No measured improvement or throughput claim is made.
+Passing screening schedules 200 swapped seed pairs each for route-only, combat-only and movement-only comparisons against the incumbent (1,200 additional matches). Each ablation uses only the named candidate model and pins the other two models to the incumbent. Reports retain separate paired intervals and require all comparisons to complete before review. A candidate is never activated automatically. No measured improvement or throughput claim is made.
 
 ## Lightsail Ubuntu-1
 
@@ -40,6 +42,10 @@ Run `node infrastructure/automatic-learning/export.mjs` manually, or set `LEARNI
 Reports push to `automatic-learning/data` from an isolated checkout. Candidate review branches carry screening results and the ablation requirement. Export failures leave durable files for retry. Ensure deployment automation runs only for explicitly approved application branches; data/review branches must not trigger deployment.
 
 After ablations and owner review, save a compatible bundle in `models/<sha256>.json`, where the hash covers exact file bytes. Update active.json's bundle and sha256 through normal review/deployment. The API serves only that file. Rollback restores the previous manifest. New exhibitions fetch once and pin the bundle; network failures use the separate compatible approved cache, then built-in defaults. Browser experiment storage remains separate.
+
+## Movement model interpretation
+
+Movement samples are attributed to the action selected in a bounded context (duel or peek, distance band, and health band). Actual enemy damage, incoming damage, kills and the round result provide feedback. Training explores only the listed existing choices. Evaluation pins both teams and the model, and its seeds are separate from training. A passing movement ablation is evidence about the movement model in this simulator, not proof of professional-level play or an individual-attribute upgrade.
 
 ## Verification and pending deployment
 

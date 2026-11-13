@@ -14,6 +14,7 @@ import {FpsSkillEditor,useFpsLabProfiles} from './FpsSkillEditor';
 import type {FpsSkillProfile} from '../fps/fpsSkillProfile';
 import {readFpsLearning,resetFpsLearning} from '../fps/fpsLiveLearningStorage';
 import {readFpsMechanicsLearning,resetFpsMechanicsLearning} from '../fps/fpsLiveMechanicsLearningStorage';
+import {readFpsMovementLearning,resetFpsMovementLearning} from '../fps/fpsLiveMovementLearningStorage';
 import {fetchApprovedLearning} from '../fps/fpsApprovedLearning';
 import './fps-reference.css';
 
@@ -35,6 +36,7 @@ export function FpsSimulationLab() {
   const [learningEnabled,setLearningEnabled]=useState(false);
   const [learnedModel,setLearnedModel]=useState(()=>readFpsLearning());
   const [learnedMechanicsModel,setLearnedMechanicsModel]=useState(()=>readFpsMechanicsLearning());
+  const [learnedMovementModel,setLearnedMovementModel]=useState(()=>readFpsMovementLearning());
   const supportedSpecialties=FPS_SPECIALTIES;
   const [identities,setIdentities]=useState<Record<string,{personality:string;specialty:string}>>(()=>Object.fromEntries([...blueRoster,...redRoster].map((card,index)=>[card.id,{personality:FPS_IDENTITY_PERSONALITIES[index % FPS_IDENTITY_PERSONALITIES.length].id,specialty:''}])));
   const [report,setReport]=useState<FpsMatchReport|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
@@ -69,7 +71,7 @@ export function FpsSimulationLab() {
     const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
     const link=document.createElement('a');link.href=url;link.download=`fps-${report.mapId}-${report.seed}.json`;link.click();URL.revokeObjectURL(url);
   };
-  if(live)return <FpsLiveBroadcast blue={live.blue} red={live.red} seed={live.seed} identity={live.identity} skillProfiles={live.skillProfiles} learningEnabled={live.learningEnabled} approvedModel={live.approvedModel} onExit={()=>{setLearnedModel(readFpsLearning());setLearnedMechanicsModel(readFpsMechanicsLearning());setLive(null);}}/>;
+  if(live)return <FpsLiveBroadcast blue={live.blue} red={live.red} seed={live.seed} identity={live.identity} skillProfiles={live.skillProfiles} learningEnabled={live.learningEnabled} approvedModel={live.approvedModel} onExit={()=>{setLearnedModel(readFpsLearning());setLearnedMechanicsModel(readFpsMechanicsLearning());setLearnedMovementModel(readFpsMovementLearning());setLive(null);}}/>;
   return <section className="fps-lab" aria-label="FPS simulation viewer">
     {!report&&<section className="fps-lab__live-entry" aria-label="Live 3D exhibition">
       <p className="pedia-eyebrow">HEXATRICK · REAL-TIME 3D</p>
@@ -88,6 +90,11 @@ export function FpsSimulationLab() {
           <p>Rifle users learn when to choose a two-shot burst or sustained spray from range, movement and magazine state. Reports and weights are stored separately from route learning; damage, accuracy and weapon limits stay fixed.</p>
           <p role="status">{learnedMechanicsModel?.rounds??0} completed rounds · {learnedMechanicsModel?.updates??0} cadence updates</p>
           <button type="button" className="cm-btn" disabled={!learnedMechanicsModel} onClick={()=>{resetFpsMechanicsLearning();setLearnedMechanicsModel(undefined);}}>Reset combat learning</button>
+        </section>
+        <section aria-label="Movement choice learning report"><h3>Movement choices</h3>
+          <p>The learner compares existing strafing and peek styles using damage, incoming damage, kills and round results. Player attributes still govern execution quality; movement learning does not increase their ratings or change physical limits.</p>
+          <p role="status">{learnedMovementModel?.rounds??0} completed rounds · {learnedMovementModel?.updates??0} movement updates</p>
+          <button type="button" className="cm-btn" disabled={!learnedMovementModel} onClick={()=>{resetFpsMovementLearning();setLearnedMovementModel(undefined);}}>Reset movement learning</button>
         </section>
       </details>
       <div className="fps-lab__profile-panel">

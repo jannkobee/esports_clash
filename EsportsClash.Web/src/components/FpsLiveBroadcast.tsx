@@ -10,6 +10,7 @@ import { FpsLiveSimulation, LIVE_FPS_STEP, LIVE_WEAPONS, type LivePlayer, type L
 import { FpsBroadcastAudio } from '../fps/fpsBroadcastAudio';
 import { readFpsLearning, saveFpsLearningRound } from '../fps/fpsLiveLearningStorage';
 import { readFpsMechanicsLearning, saveFpsMechanicsRound } from '../fps/fpsLiveMechanicsLearningStorage';
+import { readFpsMovementLearning, saveFpsMovementRound } from '../fps/fpsLiveMovementLearningStorage';
 import { domRectToBabylonViewport } from '../fps/fpsBroadcastDirector';
 import type { BombPlantPipState, LiveCameraMode } from '../fps/fpsLiveViewer';
 import { liveImpactRate } from '../fps/fpsLiveImpact';
@@ -326,7 +327,8 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
       const activeSeed = freshFpsExhibitionSeed(seed);
       return { activeSeed, simulation: new FpsLiveSimulation(blue, red, activeSeed, identity, { skillProfiles,
         learning:learningEnabled?{mode:'learn',model:readFpsLearning(),onRound:round=>{saveFpsLearningRound(round);}}:{mode:'frozen',model:approvedModel?.navigation},
-        mechanicsLearning:learningEnabled?{model:readFpsMechanicsLearning(),onRound:round=>{saveFpsMechanicsRound(round);}}:{mode:'frozen',model:approvedModel?.combat} }) };
+        mechanicsLearning:learningEnabled?{model:readFpsMechanicsLearning(),onRound:round=>{saveFpsMechanicsRound(round);}}:{mode:'frozen',model:approvedModel?.combat},
+        movementLearning:learningEnabled?{model:readFpsMovementLearning(),onRound:round=>{saveFpsMovementRound(round);}}:{mode:'frozen',model:approvedModel?.movement} }) };
     },
     [blue, red, seed, identity, skillProfiles, learningEnabled, approvedModel, attempt]
   );
@@ -669,7 +671,7 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
     if(next)audioRef.current?.activate();
   };
   const downloadDiagnostics = () => {
-    const data = { format: 'hexatrick-local-fps-diagnostics-v3', seed: activeSeed, skillProfiles,
+    const data = { format: 'hexatrick-local-fps-diagnostics-v4', seed: activeSeed, skillProfiles,
       learning:simulation.learningDiagnostics(),snapshot: simulation.snapshot() };
     const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
     const link = document.createElement('a');
@@ -744,6 +746,7 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
             <div className="live-fps__more-menu">
               {frame.learning&&<span className="live-fps__learning-status" role="status">Movement routes · {frame.learning.rounds} rounds<br/>{frame.learning.updates} updates · {frame.learning.explorations} route experiments</span>}
               {frame.mechanicsLearning&&<span className="live-fps__learning-status" role="status">Combat mechanics · {frame.mechanicsLearning.rounds} rounds<br/>{frame.mechanicsLearning.updates} cadence updates · {frame.mechanicsLearning.explorations} experiments</span>}
+              {frame.movementLearning&&<span className="live-fps__learning-status" role="status">Movement choices · {frame.movementLearning.decisions} decisions<br/>{frame.movementLearning.explorations} experiments · {frame.movementLearning.updates} updates</span>}
               <button type="button" className={soundEnabled ? 'live-fps__toggle--active' : undefined} aria-pressed={soundEnabled} onClick={toggleSound}>FPS sound: {soundEnabled ? 'On' : 'Off'}</button>
               <button type="button" className={autoPipEnabled ? 'live-fps__toggle--active' : undefined} aria-pressed={autoPipEnabled} onClick={() => setAutoPipEnabled(value => !value)}>Bomb PIP: {autoPipEnabled ? 'On' : 'Off'}</button>
               <button type="button" className={popoutKind !== 'none' ? 'live-fps__toggle--active' : undefined} disabled={!ready || !!error} onClick={() => void togglePopoutPip()}>{popoutKind !== 'none' ? 'Close pop-out' : 'Pop-out video'}</button>

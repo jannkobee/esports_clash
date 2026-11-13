@@ -4,7 +4,7 @@ import {createWriteStream} from 'node:fs';
 import {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 import {createGzip} from 'node:zlib';
-import {baseline,validateBundle,applySample,sha} from './model.mjs';
+import {baseline,validateBundle,upgradeTrainingBundle,applySample,sha} from './model.mjs';
 export function atomic(path,value){
   const bytes=typeof value==='string'?value:JSON.stringify(value,null,2)+'\n';
   writeFileSync(path+'.tmp',bytes);const fd=openSync(path+'.tmp','r');fsyncSync(fd);closeSync(fd);renameSync(path+'.tmp',path);
@@ -20,19 +20,31 @@ export class Store{
       CREATE TABLE IF NOT EXISTS ledger(id TEXT PRIMARY KEY,digest TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS archives(hour TEXT PRIMARY KEY,manifest TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY,body TEXT NOT NULL,result TEXT);`);
-    if(!this.get('model'))this.set('model',baseline());
+    const current=this.get('model');
+    if(!current)this.set('model',baseline());
+    else this.set('model',upgradeTrainingBundle(current));
+    for(const key of ['cycle']){
+      const cycle=this.get(key);
+      if(cycle?.model&&cycle?.incumbent){
+        cycle.model=upgradeTrainingBundle(cycle.model);cycle.incumbent=upgradeTrainingBundle(cycle.incumbent);this.set(key,cycle);
+      }
+    }
+    const activeJob=this.get('activeJob');
+    if(activeJob?.blue&&activeJob?.red){
+      activeJob.blue=upgradeTrainingBundle(activeJob.blue);activeJob.red=upgradeTrainingBundle(activeJob.red);this.set('activeJob',activeJob);
+    }
     validateBundle(this.get('model'));
   }
   get(key){const row=this.db.prepare('SELECT value FROM state WHERE key=?').get(key);return row?JSON.parse(row.value):null;}
   set(key,value){this.db.prepare('INSERT OR REPLACE INTO state VALUES (?,?)').run(key,JSON.stringify(value));}
   transaction(fn){this.db.exec('BEGIN IMMEDIATE');try{const result=fn();this.db.exec('COMMIT');return result;}catch(e){this.db.exec('ROLLBACK');throw e;}}
   append(record,learn=false,now=new Date()){
-    if(!record||typeof record.id!=='string'||record.id.length>128||!['navigation','combat','start','round','result','error'].includes(record.kind))throw Error('Invalid experience envelope');
+    if(!record||typeof record.id!=='string'||record.id.length>128||!['navigation','combat','movement','start','round','result','error'].includes(record.kind))throw Error('Invalid experience envelope');
     const body=JSON.stringify(record),digest=sha(body),hour=now.toISOString().slice(0,13);
     return this.transaction(()=>{
       const previous=this.db.prepare('SELECT digest FROM ledger WHERE id=?').get(record.id);
       if(previous){if(previous.digest!==digest)throw Error('Conflicting duplicate record');return false;}
-      if(learn&&['navigation','combat'].includes(record.kind)){const bundle=this.get('model');applySample(bundle,record);this.set('model',bundle);}
+      if(learn&&['navigation','combat','movement'].includes(record.kind)){const bundle=this.get('model');applySample(bundle,record);this.set('model',bundle);}
       if(this.db.prepare('SELECT hour FROM archives WHERE hour=?').get(hour))throw Error('Cannot append to a finalized hour');
       this.db.prepare('INSERT INTO ledger VALUES (?,?)').run(record.id,digest);
       this.db.prepare('INSERT INTO records VALUES (?,?,?,?)').run(record.id,hour,record.kind,body);
@@ -54,11 +66,22 @@ export class Store{
       renameSync(path+'.tmp',path);
       const results=this.db.prepare("SELECT body FROM records WHERE hour=? AND kind='result'").all(hour).map(r=>JSON.parse(r.body).payload);
       const rounds=this.db.prepare("SELECT COUNT(*) AS n FROM records WHERE hour=? AND kind='round'").get(hour).n;
+      const learningSamples={};
+      for(const kind of ['navigation','combat','movement']){
+        learningSamples[kind]=0;
+        for(const row of this.db.prepare('SELECT body FROM records WHERE hour=? AND kind=?').all(hour,kind)){
+          learningSamples[kind]+=JSON.parse(row.body).payload.samples?.length??0;
+        }
+      }
+      const movementActions={};
+      for(const row of this.db.prepare("SELECT body FROM records WHERE hour=? AND kind='movement'").all(hour)){
+        for(const sample of JSON.parse(row.body).payload.samples??[])movementActions[sample.action]=(movementActions[sample.action]??0)+1;
+      }
       const manifest={version:1,hour,sha256:sha(readFileSync(path)),records:this.db.prepare('SELECT COUNT(*) AS n FROM records WHERE hour=?').get(hour).n,
         available:true,rounds,completed:results.filter(r=>r.status==='completed').length,aborted:results.filter(r=>r.status!=='completed').length,
         wins:{blue:results.filter(r=>r.winner==='blue').length,red:results.filter(r=>r.winner==='red').length},
         metrics:Object.fromEntries(['plants','defuses','friendlyDamage','teamKills','stalledActorSeconds','simulatedSeconds','wallSeconds'].map(k=>[k,results.reduce((n,r)=>n+(r[k]??0),0)])),
-        errors:results.filter(r=>r.failure).map(r=>r.failure)};
+        learningSamples,movementActions,errors:results.filter(r=>r.failure).map(r=>r.failure)};
       manifest.completionRate=results.length?manifest.completed/results.length:null;
       manifest.simulationSpeed=manifest.metrics.wallSeconds?manifest.metrics.simulatedSeconds/manifest.metrics.wallSeconds:null;
       atomic(this.directory+'/reports/'+hour+'.json',manifest);

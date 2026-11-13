@@ -23,6 +23,7 @@ import { assignLiveObjective, createLiveRoutePlanner, liveRouteEvidenceKey, plan
 import type { FpsAudioCue } from './fpsBroadcastAudio.ts';
 import { FpsLiveLearner, fpsLearningModelHash, type FpsLearningOptions, type FpsLearningStats } from './fpsLiveLearning.ts';
 import { FpsLiveMechanicsLearner, fpsFireContext, type FpsFireCadence, type FpsMechanicsOptions, type FpsMechanicsStats } from './fpsLiveMechanicsLearning.ts';
+import { FpsLiveMovementLearner, fpsMovementContext, type FpsMovementAction, type FpsPeekMovementAction, type FpsMovementOptions, type FpsMovementStats } from './fpsLiveMovementLearning.ts';
 export { LIVE_WEAPONS } from './fpsLiveWeapons.ts';
 export type { LiveWeapon } from './fpsLiveWeapons.ts';
 
@@ -73,7 +74,7 @@ interface Actor extends LivePlayer {
   noticedEnemies:{id:string;x:number;z:number;hp:number;reload:number;blinded:number;lastShot:number;channel:number}[];
 }
 export interface LiveRoundTelemetry {round:number;winner:FpsTeamId;attackTeam:FpsTeamId;reason:string;planted:boolean;time:number}
-export interface LiveSimulationOptions {episodeId?:string;onRoundComplete?:(round:LiveRoundTelemetry)=>void;teamLearning?:Partial<Record<FpsTeamId,{learning?:FpsLearningOptions;mechanicsLearning?:FpsMechanicsOptions}>>;skillProfiles?:Record<string,FpsSkillProfile>;learning?:FpsLearningOptions;mechanicsLearning?:FpsMechanicsOptions}
+export interface LiveSimulationOptions {episodeId?:string;onRoundComplete?:(round:LiveRoundTelemetry)=>void;teamLearning?:Partial<Record<FpsTeamId,{learning?:FpsLearningOptions;mechanicsLearning?:FpsMechanicsOptions;movementLearning?:FpsMovementOptions}>>;skillProfiles?:Record<string,FpsSkillProfile>;learning?:FpsLearningOptions;mechanicsLearning?:FpsMechanicsOptions;movementLearning?:FpsMovementOptions}
 export interface DroppedWeapon extends FpsPoint { id:number; weapon:LiveWeapon; ammo:number; reserve:number }
 export interface LiveEvent {
   id:number; time:number; kind:'kill'|'round'|'objective'|'utility'|'economy'; text:string;
@@ -86,14 +87,14 @@ export interface LiveBlast extends FpsPoint {id:number;startedAt:number;endsAt:n
 export interface LiveBloodMark extends FpsPoint {id:number;startedAt:number;region:'head'|'body';radius:number}
 export interface LiveTeamPlan {buy:LiveBuyMode;buyReason:string;style:LiveAttackStyle|'defense';phase:LiveAttackPhase|'hold';site?:'A'|'B';information:string}
 export interface LiveSnapshot {
-  version:'hexatrick-live-exhibition-v10'; time:number; round:number;
+  version:'hexatrick-live-exhibition-v11'; time:number; round:number;
   phase:'freeze'|'live'|'post'|'finished'; remaining:number; score:Record<FpsTeamId,number>;
   winner?:FpsTeamId; roundWinner?:FpsTeamId; roundReason:string; attackTeam:FpsTeamId;
   players:LivePlayer[]; events:LiveEvent[]; shots:LiveShot[]; smokes:LiveSmoke[]; fires:LiveFire[];blasts:LiveBlast[];bloodMarks:LiveBloodMark[];
   grenades:LiveGrenade[];teams:Record<FpsTeamId,LiveTeamPlan>;
   droppedWeapons:DroppedWeapon[];
   bomb:{status:'carried'|'dropped'|'planted'|'defused'|'exploded';x:number;z:number;remaining:number;site?:'A'|'B'};
-  learning?:FpsLearningStats;mechanicsLearning?:FpsMechanicsStats;
+  learning?:FpsLearningStats;mechanicsLearning?:FpsMechanicsStats;movementLearning?:FpsMovementStats;
 }
 const other=(team:FpsTeamId):FpsTeamId=>team==='blue'?'red':'blue';
 const clamp=(x:number,min:number,max:number)=>Math.max(min,Math.min(max,x));
@@ -159,13 +160,17 @@ export class FpsLiveSimulation {
   private worldRandom:()=>number;
   private learner?:FpsLiveLearner;
   private mechanicsLearner?:FpsLiveMechanicsLearner;
+  private movementLearnerGlobal?:FpsLiveMovementLearner;
   private teamLearners:Partial<Record<FpsTeamId,FpsLiveLearner>>={};
   private teamMechanics:Partial<Record<FpsTeamId,FpsLiveMechanicsLearner>>={};
+  private teamMovement:Partial<Record<FpsTeamId,FpsLiveMovementLearner>>={};
   private onRoundComplete?:LiveSimulationOptions['onRoundComplete'];
   private routeLearner(team:FpsTeamId){return this.teamLearners[team]??this.learner;}
   private combatLearner(team:FpsTeamId){return this.teamMechanics[team]??this.mechanicsLearner;}
+  private movementLearner(team:FpsTeamId){return this.teamMovement[team]??this.movementLearnerGlobal;}
   private learningRandom:()=>number;
   private mechanicsRandom:()=>number;
+  private movementRandom:()=>number;
   private learningEpisode='';
   private learningPlansRemaining=1;
 
@@ -181,15 +186,20 @@ export class FpsLiveSimulation {
     this.worldRandom=this.detailed?fpsSkillRandom(seed,'world-v1'):this.random;
     this.learningRandom=fpsSkillRandom(seed,'navigation-learning-v1');
     this.mechanicsRandom=fpsSkillRandom(seed,'combat-mechanics-learning-v1');
+    const movementRandom=fpsSkillRandom(seed,'movement-choice-learning-v1');
+    this.movementRandom=movementRandom;
     if(options.learning)this.learner=new FpsLiveLearner(options.learning);
     if(options.mechanicsLearning)this.mechanicsLearner=new FpsLiveMechanicsLearner(options.mechanicsLearning);
+    if(options.movementLearning)this.movementLearnerGlobal=new FpsLiveMovementLearner(options.movementLearning);
     this.onRoundComplete=options.onRoundComplete;
     for(const team of ['blue','red'] as const){
       const settings=options.teamLearning?.[team];
       if(settings?.learning)this.teamLearners[team]=new FpsLiveLearner(settings.learning);
       if(settings?.mechanicsLearning)this.teamMechanics[team]=new FpsLiveMechanicsLearner(settings.mechanicsLearning);
+      if(settings?.movementLearning)this.teamMovement[team]=new FpsLiveMovementLearner(settings.movementLearning);
     }
-    const learningState=[this.learner?fpsLearningModelHash(this.learner.initial):'',this.mechanicsLearner?localHash(JSON.stringify(this.mechanicsLearner.initial)): ''].join(':');
+    const learningState=[this.learner?fpsLearningModelHash(this.learner.initial):'',this.mechanicsLearner?localHash(JSON.stringify(this.mechanicsLearner.initial)): '',
+      this.movementLearnerGlobal?localHash(JSON.stringify(this.movementLearnerGlobal.model)): ''].join(':');
     this.learningEpisode=options.episodeId??`${seed}:${localHash(learningState)}`;
     if(this.learningEpisode.length>80)throw Error('Episode identifier too long');
     this.actors=[...blue,...red].map<Actor>((card,index)=>({
@@ -243,8 +253,10 @@ export class FpsLiveSimulation {
   private startRound() {
     for(const learner of Object.values(this.teamLearners))learner.abandonRound();
     for(const learner of Object.values(this.teamMechanics))learner.abandonRound();
+    for(const learner of Object.values(this.teamMovement))learner.abandonRound();
     this.learner?.abandonRound();
     this.mechanicsLearner?.abandonRound();
+    this.movementLearnerGlobal?.abandonRound();
     this.phase='freeze';this.remaining=15;this.liveElapsed=0;this.roundWinner=undefined;this.roundReason='';
     this.nextBombTick=-1;
     // Regulation: Red attacks in 1..15, Blue attacks in 16..30 (side swap). Overtime MR3 swaps every 3 rounds.
@@ -665,16 +677,25 @@ export class FpsLiveSimulation {
         } else if(p.retreatUntil>this.time || p.reload>0){this.move(p,dt,true);p.action=p.reload>0?(p.reloadSilent?'Silent reloading in cover':'Reloading in cover'):'Disengaging';}
         else {
           const dx=target.x-p.x,dz=target.z-p.z,d=Math.hypot(dx,dz)||1;
-          const strafe=liveCombatStrafe(this.time,p.strafeUntil,p.strafeSettleUntil??0,!p.crouch&&!p.jump&&p.decision==='pressure'&&d<22);
+          const canChooseMovement=!p.jump&&p.decision==='pressure'&&d<22;
+          const movement=this.movementLearner(p.team);
+          const movementChoice=movement&&canChooseMovement
+            ?movement.choose(p.id,target.id,p.team,fpsMovementContext('duel',d,p.hp),this.movementRandom)
+            :undefined;
+          if(movement&&!canChooseMovement)movement.close(p.id);
+          if(movementChoice==='crouch-strafe'){p.crouch=true;p.crouchUntil=this.time+.24;}
+          const canStrafe=movementChoice?movementChoice!=='hold':!p.crouch&&!p.jump&&p.decision==='pressure'&&d<22;
+          const strafe=liveCombatStrafe(this.time,p.strafeUntil,p.strafeSettleUntil??0,canStrafe);
           if(strafe==='start'||strafe==='move') {
             if(strafe==='start'){p.strafeDirection=p.strafeDirection===1?-1:1;p.strafeUntil=this.time+.18+this.executionRandom()*.16;p.strafeSettleUntil=p.strafeUntil+.55+LIVE_WEAPONS[p.weapon].interval;}
             const perpX=-dz/d*p.strafeDirection,perpZ=dx/d*p.strafeDirection;
-            this.applyMotion(p,{x:perpX*LIVE_WALK_SPEED,z:perpZ*LIVE_WALK_SPEED},dt,'strafe');
-            p.action='Strafing';
+            this.applyMotion(p,{x:perpX*LIVE_WALK_SPEED,z:perpZ*LIVE_WALK_SPEED},dt,movementChoice==='crouch-strafe'?'crouch':'strafe');
+            p.action=movementChoice==='crouch-strafe'?'Crouch-strafing':movementChoice==='hold'?'Holding aim':'Strafing';
           } else {
             this.applyMotion(p,{x:0,z:0},dt,'brake');
             if(p.speed>liveShotSpeedLimit(p.weapon,p.profile?.5:p.skills.mechanics))p.action='Counter-strafing';
             else if(p.crouch)p.action=p.burst>=2?'Crouch-spraying':'Crouching';
+            else if(movementChoice==='hold')p.action='Holding aim';
           }
         }
         const intendedAim=p.profile?(p.trackingPoint??p.aimPoint??p.contact??p):(p.aimPoint??p.contact??p);
@@ -908,7 +929,7 @@ export class FpsLiveSimulation {
         const reason=lostEntry?`Entry losses at ${this.site}; regroup toward ${alternate}`:`${pressure.identified} last seen ${this.site}; redirect toward ${alternate}`;
         this.site=alternate;this.planCommit=this.liveElapsed;this.roundSiteKills[p.team]=0;
         this.protocol.site=this.site;this.protocol.phase='default';this.protocol.phaseAt=this.time;
-        for(const ally of allies){ally.peek=undefined;ally.aimFocus=undefined;ally.probeGoal=undefined;ally.probeVisited.clear();ally.nextThink=this.time;}
+      for(const ally of allies){ally.peek=undefined;this.movementLearner(ally.team)?.close(ally.id);ally.aimFocus=undefined;ally.probeGoal=undefined;ally.probeVisited.clear();ally.nextThink=this.time;}
         this.informationOrders[p.team]={mode:'rotate',site:alternate,responders:allies.map(a=>a.id),until:this.time+6,strength:pressure.strength,reason,issuedAt:this.time,callerId:p.id,readyAt:p.profile?this.time+(1-this.skill(p,'calling',p.skills.leadership))*.8:undefined};
         if(p.profile){p.motor.commands++;p.motor.commandDelay=(this.informationOrders[p.team].readyAt??this.time)-this.time;}
         this.radio(p,`IGL: ${reason}`,true);
@@ -1104,7 +1125,7 @@ export class FpsLiveSimulation {
     clearLiveIntel(p.intel,this.time,point=>this.observablePoint(p,point),visible);
     this.refreshIntel(p);
     const target=visible[0];
-    if(target?.id!==p.target){p.target=target?.id;if(!target)p.pitch=0;p.acquired=this.time;p.strafeUntil=0;p.strafeSettleUntil=this.time+.3;p.triggerDisciplineUntil=undefined;p.engagementShots=0;p.engagementDamaged=false;p.aimPoint=undefined;p.previousSight=undefined;p.trackingPoint=undefined;
+    if(target?.id!==p.target){this.movementLearner(p.team)?.close(p.id);p.target=target?.id;if(!target)p.pitch=0;p.acquired=this.time;p.strafeUntil=0;p.strafeSettleUntil=this.time+.3;p.triggerDisciplineUntil=undefined;p.engagementShots=0;p.engagementDamaged=false;p.aimPoint=undefined;p.previousSight=undefined;p.trackingPoint=undefined;
       p.reactionVariation=p.profile?1:.85+this.random()*.35;p.reaction=this.reactionDelay(p)*p.reactionVariation;
       if(p.profile&&target){p.motor.noticedAt=this.time;p.motor.cueAt=p.visualCueAt??this.time;p.motor.responseAt=-1;p.motor.reactionDelay=p.reaction;}}
     if(target){
@@ -1313,7 +1334,7 @@ export class FpsLiveSimulation {
       goal=p.smokeLineupGoal;p.intent=`Setting up a smoke at ${liveCallout(p.smokeLineupGoal)}`;
     }
     p.objectiveUrgent=objectiveUrgent;
-    if(objectiveUrgent){p.retreatUntil=0;p.peek=undefined;p.clearUntil=0;}
+    if(objectiveUrgent){p.retreatUntil=0;p.peek=undefined;this.movementLearner(p.team)?.close(p.id);p.clearUntil=0;}
     if(!objectiveUrgent && p.role==='entry' && p.attacking && !p.target && !p.bomb && this.time>=p.nextPeek) {
       const corners=this.site==='B'
         ?[{id:'car',point:{x:21,z:-2},label:'Car'},{id:'sandbags',point:{x:21,z:4},label:'Sandbags'},{id:'dark',point:{x:18,z:27},label:'Dark'}]
@@ -1336,9 +1357,12 @@ export class FpsLiveSimulation {
         const error=p.profile?(this.executionRandom()*2-1)*(.05+(1-this.skill(p,'peeking',1))*.7):0;
         const dx=out.x-p.x,dz=out.z-p.z,d=Math.hypot(dx,dz)||1;
         if(p.profile)p.motor.peekError=Math.abs(error);
-        const style:'shoulder'|'crouch-swing'|'ferrari'|'double-pump'|'bait'|'fake'=p.role==='entry'&&p.speed>2.4?'ferrari'
+        const preferred:FpsMovementAction=p.role==='entry'&&p.speed>2.4?'ferrari'
           :p.role==='sniper'?'shoulder':p.role==='trade'?'crouch-swing'
           :this.executionRandom()<.18?'double-pump':this.executionRandom()<.38?'bait':this.executionRandom()<.55?'fake':'shoulder';
+        const targetKey=`peek:${this.round}:${Math.round(p.contact.x*2)}:${Math.round(p.contact.z*2)}:${Math.round(this.time*2)}`;
+        const style:FpsPeekMovementAction=this.movementLearner(p.team)
+          ?.choose(p.id,targetKey,p.team,fpsMovementContext('peek',distance(p,p.contact),p.hp),this.movementRandom,preferred) as FpsPeekMovementAction??preferred;
         p.peek={home:{x:p.x,z:p.z},out:p.profile?safeLivePoint({x:out.x+dx/d*error,z:out.z+dz/d*error}):out,back:false,until:this.time+3,pause:0,style,pumps:0,prefired:0};
       }
     }
@@ -1545,13 +1569,13 @@ export class FpsLiveSimulation {
     if(flash&&this.time<flash.opens&&flash.opens-this.time<.55&&!keepAim&&!p.target&&p.channel===0){
       this.applyMotion(p,{x:0,z:0},dt,'brake');this.preAim(p,true);p.action='Waiting for friendly flash';return;
     }
-    if(p.peek&&p.peek.until<this.time)p.peek=undefined;
+    if(p.peek&&p.peek.until<this.time){p.peek=undefined;this.movementLearner(p.team)?.close(p.id);}
     if(p.peek&&(!keepAim||p.peek.back)) {
       const target=p.peek.back?p.peek.home:p.peek.out,d=distance(p,target);
       if(d<.22){
         if(p.peek.back){
           if(p.peek.pumps===0&&(p.peek.style==='double-pump'||p.peek.style==='fake'||p.peek.style==='bait')){p.peek.pumps=1;p.peek.back=false;p.peek.pause=0;p.peek.prefired=0;}
-          else {p.peek=undefined;p.crouch=false;this.applyMotion(p,{x:0,z:0},dt,'hold');return;}
+          else {p.peek=undefined;p.crouch=false;this.movementLearner(p.team)?.close(p.id);this.applyMotion(p,{x:0,z:0},dt,'hold');return;}
         }
         if(!p.peek.pause)p.peek.pause=this.time+(p.peek.style==='ferrari'?.08:p.peek.style==='bait'?.42:p.peek.style==='double-pump'?.12:.16);
         if(this.time>=p.peek.pause)p.peek.back=true;
@@ -1676,7 +1700,7 @@ export class FpsLiveSimulation {
           const defenders=this.actors.filter(actor=>!actor.attacking&&actor.hp>0);
           for(const actor of this.actors){
             actor.nextThink=this.time;
-            if(actor.attacking){actor.peek=undefined;actor.goal=undefined;actor.path=[];actor.probeGoal=undefined;actor.approachUntil=0;actor.retreatUntil=0;}
+            if(actor.attacking){actor.peek=undefined;this.movementLearner(actor.team)?.close(actor.id);actor.goal=undefined;actor.path=[];actor.probeGoal=undefined;actor.approachUntil=0;actor.retreatUntil=0;}
           }
           for(const defender of defenders)defender.information=`Bomb planted at ${site} — retake now`;
           const caller=defenders.find(actor=>actor.role==='caller')??defenders.find(actor=>actor.role==='anchor')??defenders[0];
@@ -1913,6 +1937,8 @@ export class FpsLiveSimulation {
       p.impact.damage+=actualDamage;
       if(firstShot)p.impact.firstShotHits++;
       if(!p.engagementDamaged&&weaponId!=='knife'&&victim.id===sampleTarget){p.engagementDamaged=true;p.impact.timeToDamageSamples++;p.impact.timeToDamageMs+=Math.max(0,this.time-p.acquired)*1000;}
+      this.movementLearner(p.team)?.recordDamage(p.id,victim.id,actualDamage);
+      this.movementLearner(victim.team)?.recordIncoming(victim.id,p.id,actualDamage);
       if(rifleShot){this.combatLearner(p.team)?.recordDamage(p.id,victim.id,actualDamage);this.combatLearner(victim.team)?.recordIncoming(victim.id,p.id,actualDamage);}
     }
     victim.armor=Math.max(0,victim.armor-scaledRawDamage*.25);victim.hp=Math.max(0,victim.hp-damage);victim.damageAt=this.time;
@@ -1925,7 +1951,8 @@ export class FpsLiveSimulation {
     }
     if(victim.hp===0) {
       this.routeLearner(victim.team)?.close(victim,this.time);
-      if(!friendly){p.kills++;p.cash=Math.min(16000,p.cash+300);this.combatLearner(p.team)?.recordKill(p.id,victim.id);}
+      this.movementLearner(victim.team)?.close(victim.id);
+      if(!friendly){p.kills++;p.cash=Math.min(16000,p.cash+300);this.combatLearner(p.team)?.recordKill(p.id,victim.id);this.movementLearner(p.team)?.recordKill(p.id,victim.id);}
       else if(p!==victim)p.teamKills=(p.teamKills??0)+1;
       victim.deaths++;victim.channel=0;
       if(!friendly){for(const ally of this.actors.filter(a=>a.team===victim.team&&a.profile))ally.mentalState.setback=Math.min(1,ally.mentalState.setback+(ally===victim?.3:.08));}
@@ -1976,12 +2003,16 @@ export class FpsLiveSimulation {
     if(learnedRound){try{this.learner?.options.onRound?.(learnedRound);}catch{/* Optional persistence must not interrupt a completed round. */}}
     const mechanicsRound=this.mechanicsLearner?.completeRound(team,`${this.learningEpisode||'local'}:combat:${this.round}`);
     if(mechanicsRound){try{this.mechanicsLearner?.options.onRound?.(mechanicsRound);}catch{/* Independent local mechanics persistence must not interrupt a completed round. */}}
+    const movementRound=this.movementLearnerGlobal?.completeRound(team,`${this.learningEpisode||'local'}:movement:${this.round}`);
+    if(movementRound){try{this.movementLearnerGlobal?.options.onRound?.(movementRound);}catch{/* Optional movement persistence must not interrupt a completed round. */}}
     for(const side of ['blue','red'] as const){
-      const route=this.teamLearners[side],combat=this.teamMechanics[side];
+      const route=this.teamLearners[side],combat=this.teamMechanics[side],movement=this.teamMovement[side];
       const navigation=route?.completeRound(this.actors.filter(p=>p.team===side),team,this.time,`${this.learningEpisode}:${this.round}:${side}:route`);
       if(navigation)route?.options.onRound?.(navigation);
       const mechanics=combat?.completeRound(team,`${this.learningEpisode}:${this.round}:${side}:combat`);
       if(mechanics)combat?.options.onRound?.(mechanics);
+      const movementRound=movement?.completeRound(team,`${this.learningEpisode}:${this.round}:${side}:movement`);
+      if(movementRound){try{movement?.options.onRound?.(movementRound);}catch{/* A worker callback failure must not interrupt a completed round. */}}
     }
     this.onRoundComplete?.({round:this.round,winner:team,attackTeam:this.attackTeam,reason,planted:['planted','exploded','defused'].includes(this.bomb.status),time:this.time});
     this.grenades=[];
@@ -2007,9 +2038,10 @@ export class FpsLiveSimulation {
   snapshot():LiveSnapshot {
     const teamPlan=(team:FpsTeamId):LiveTeamPlan=>({buy:this.teamBuys[team].mode,buyReason:this.teamBuys[team].reason,style:team===this.attackTeam?this.protocol.style:'defense',phase:team===this.attackTeam?this.protocol.phase:'hold',site:team===this.attackTeam?this.site:undefined,
       information:this.bomb.status==='planted'?team===this.attackTeam?`Device planted ${this.bomb.site} — protect the post-plant`:`Device confirmed ${this.bomb.site} — assess the retake and clock`:this.informationOrders[team].reason});
-    return {version:'hexatrick-live-exhibition-v10',time:this.time,round:this.round,phase:this.phase,
+    return {version:'hexatrick-live-exhibition-v11',time:this.time,round:this.round,phase:this.phase,
       ...(this.learner?{learning:this.learner.stats()}:{}),
       ...(this.mechanicsLearner?{mechanicsLearning:this.mechanicsLearner.stats()}:{}),
+      ...(this.movementLearnerGlobal?{movementLearning:this.movementLearnerGlobal.stats()}:{}),
       remaining:this.phase==='live'&&this.bomb.status==='planted'?this.bomb.remaining:this.remaining,score:{...this.score},winner:this.winner,
       roundWinner:this.roundWinner,roundReason:this.roundReason,attackTeam:this.attackTeam,
       players:this.actors.map(p=>({id:p.id,name:p.name,team:p.team,attacking:p.attacking,role:p.role,x:p.x,z:p.z,yaw:p.yaw,pitch:p.pitch??0,
@@ -2037,15 +2069,17 @@ export class FpsLiveSimulation {
   trainingDiagnostics(){return {friendlyDamage:this.friendlyDamage};}
 
   teamLearningDiagnostics() {
-    return Object.fromEntries((['blue','red'] as const).map(team=>[team,{navigation:this.routeLearner(team)?.checkpoint(),combat:this.combatLearner(team)?.checkpoint()}]));
+    return Object.fromEntries((['blue','red'] as const).map(team=>[team,{navigation:this.routeLearner(team)?.checkpoint(),combat:this.combatLearner(team)?.checkpoint(),
+      movement:this.movementLearner(team)?.checkpoint()}]));
   }
 
   learningDiagnostics() {
     const route=this.learner?{initial:structuredClone(this.learner.initial),current:this.learner.checkpoint(),stats:this.learner.stats(),
       settings:{mode:this.learner.options.mode,exploration:this.learner.options.exploration??null}}:undefined;
     const combat=this.mechanicsLearner?{initial:structuredClone(this.mechanicsLearner.initial),current:this.mechanicsLearner.checkpoint(),stats:this.mechanicsLearner.stats()}:undefined;
-    if(!route&&!combat)return undefined;
-    return {...route,combatMechanics:combat,reports:{movementRoutes:route?.stats,combatMechanics:combat?.stats}};
+    const movement=this.movementLearnerGlobal?{initial:structuredClone(this.movementLearnerGlobal.initial),current:this.movementLearnerGlobal.checkpoint(),stats:this.movementLearnerGlobal.stats()}:undefined;
+    if(!route&&!combat&&!movement)return undefined;
+    return {...route,combatMechanics:combat,movementLearning:movement,reports:{movementRoutes:route?.stats,combatMechanics:combat?.stats,movementChoices:movement?.stats}};
   }
 
   audioListener(id:string):{x:number;z:number;yaw:number}|undefined {

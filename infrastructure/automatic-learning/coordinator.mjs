@@ -56,6 +56,25 @@ function evaluationReport(cycle){
   }
   return {version:1,candidate:cycle.id,opponents,invalid,passed:!invalid&&opponents.incumbent.lower>0&&opponents.baseline.upper>=0,ablationRequired:true};
 }
+function ablationReport(cycle,phase){
+  const values=[],groups={},candidateSides={blue:{wins:0,matches:0},red:{wins:0,matches:0}};
+  const roundSides={attack:{wins:0,rounds:0},defend:{wins:0,rounds:0}};let complete=true;
+  for(let pair=0;pair<config.evaluationPairs;pair++){
+    let wins=0;
+    for(const side of ['blue','red']){
+      const result=store.result(`${cycle.id}-${phase}-${pair}-${side}`);
+      if(result?.status!=='completed')complete=false;
+      if(result?.winner===side){wins++;candidateSides[side].wins++;}
+      candidateSides[side].matches++;
+      for(const role of ['attack','defend']){
+        roundSides[role].wins+=result?.roundSides?.[role]?.wins??0;
+        roundSides[role].rounds+=result?.roundSides?.[role]?.rounds??0;
+      }
+    }
+    const score=wins/2-.5;values.push(score);(groups[pair%4]??=[]).push(score);
+  }
+  return {...interval(values),complete,groups:Object.fromEntries(Object.entries(groups).map(([key,scores])=>[key,interval(scores)])),candidateSides,roundSides};
+}
 try{
   while(!stopping){
     await store.archive(new Date(),config.retentionDays);
@@ -71,7 +90,10 @@ try{
         const index=cycle.index,opponent=cycle.phase??(index<config.evaluationPairs*2?'incumbent':'baseline');
         const pair=Math.floor(index/2)%config.evaluationPairs,side=index%2?'red':'blue';
         const rival=opponent==='baseline'?baseline():cycle.incumbent;
-        const contender=cycle.phase?{...cycle.model,[cycle.phase==='route-only'?'combat':'navigation']:cycle.incumbent[cycle.phase==='route-only'?'combat':'navigation']}:cycle.model;
+        const contender={...cycle.model};
+        if(cycle.phase==='route-only'){contender.combat=cycle.incumbent.combat;contender.movement=cycle.incumbent.movement;}
+        if(cycle.phase==='combat-only'){contender.navigation=cycle.incumbent.navigation;contender.movement=cycle.incumbent.movement;}
+        if(cycle.phase==='movement-only'){contender.navigation=cycle.incumbent.navigation;contender.combat=cycle.incumbent.combat;}
         job={id:`${cycle.id}-${opponent}-${pair}-${side}`,seed:1500000000+pair,group:pair%4,mode:'frozen',candidateTeam:side,
           blue:side==='blue'?contender:rival,red:side==='red'?contender:rival};
       }else{
@@ -103,16 +125,12 @@ try{
         cycle.report=evaluationReport(cycle);
         if(cycle.report.passed){cycle.phase='route-only';cycle.index=0;store.set('cycle',cycle);continue;}
       }else{
-        const values=[];let complete=true;
-        for(let pair=0;pair<config.evaluationPairs;pair++){
-          let wins=0;
-          for(const side of ['blue','red']){const r=store.result(`${cycle.id}-${cycle.phase}-${pair}-${side}`);if(r?.status!=='completed')complete=false;if(r?.winner===side)wins++;}
-          values.push(wins/2-.5);
-        }
-        cycle.report.ablations??={};cycle.report.ablations[cycle.phase]={...interval(values),complete};
+        const phase=cycle.phase,summary=ablationReport(cycle,phase);
+        cycle.report.ablations??={};cycle.report.ablations[phase]=summary;
         if(cycle.phase==='route-only'){cycle.phase='combat-only';cycle.index=0;store.set('cycle',cycle);continue;}
+        if(cycle.phase==='combat-only'){cycle.phase='movement-only';cycle.index=0;store.set('cycle',cycle);continue;}
         cycle.report.ablationRequired=false;
-        cycle.report.passed&&=Object.values(cycle.report.ablations).every(r=>r.complete);
+        cycle.report.passed&&=Object.values(cycle.report.ablations).length===3&&Object.values(cycle.report.ablations).every(r=>r.complete);
       }
       atomic(directory+'/candidates/'+cycle.id+'.json',{model:cycle.model,sha256:sha(cycle.model),report:cycle.report});
       atomic(directory+'/reports/evaluation-'+cycle.id+'.json',cycle.report);store.set('cycle',null);

@@ -10,7 +10,8 @@ export async function runMatch(job,emit=()=>{},cancelled=()=>false){
   const roundSides={attack:{wins:0,rounds:0},defend:{wins:0,rounds:0}};
   const teamLearning=Object.fromEntries(['blue','red'].map(team=>[team,{
     learning:{mode:job.mode,updateModel:false,model:job[team].navigation,onRound:payload=>emit({id:payload.id,kind:'navigation',payload})},
-    mechanicsLearning:{mode:job.mode,updateModel:false,model:job[team].combat,onRound:payload=>emit({id:payload.id,kind:'combat',payload})}
+    mechanicsLearning:{mode:job.mode,updateModel:false,model:job[team].combat,onRound:payload=>emit({id:payload.id,kind:'combat',payload})},
+    movementLearning:{mode:job.mode,updateModel:false,model:job[team].movement,onRound:payload=>emit({id:payload.id,kind:'movement',payload})}
   }]));
   const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),job.seed,identity,{skillProfiles:profiles,episodeId:job.id,teamLearning,onRoundComplete:round=>{
     rounds++;if(round.planted)plants++;if(/defus/i.test(round.reason))defuses++;

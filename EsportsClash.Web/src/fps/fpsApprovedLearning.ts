@@ -1,12 +1,13 @@
 import {loadFpsLearningModel} from './fpsLiveLearning.ts';
 import {loadFpsMechanicsModel} from './fpsLiveMechanicsLearning.ts';
-const key='hexatrick:approved-fps-bundle:v1';
+import {loadFpsMovementModel} from './fpsLiveMovementLearning.ts';
+const key='hexatrick:approved-fps-bundle:v2';
 export function compatibleApproved(raw:unknown){
   if(!raw||typeof raw!=='object')return;
-  const value=raw as {version?:number;navigation?:unknown;combat?:unknown};
-  if(value.version!==1)return;
-  const navigation=loadFpsLearningModel(value.navigation),combat=loadFpsMechanicsModel(value.combat);
-  if(navigation&&combat)return {navigation,combat};
+  const value=raw as {version?:number;navigation?:unknown;combat?:unknown;movement?:unknown};
+  if(value.version!==2)return;
+  const navigation=loadFpsLearningModel(value.navigation),combat=loadFpsMechanicsModel(value.combat),movement=loadFpsMovementModel(value.movement);
+  if(navigation&&combat&&movement)return {navigation,combat,movement};
 }
 export async function fetchApprovedLearning(){
   let cached:unknown;
