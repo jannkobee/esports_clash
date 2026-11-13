@@ -51,4 +51,4 @@ Movement samples are attributed to the action selected in a bounded context (due
 
 Focused storage/frozen-mode/headless tests are in `EsportsClash.Web/src/fpsAutomaticLearning.test.mjs`. Run `npm run check:game` and `npm run build` from the root.
 
-Cloud discovery attempted on 13 November 2026 failed with `UnrecognizedClientException` (invalid AWS security token). No remote deployment, one-hour benchmark, 24-hour soak or model activation has been performed. PHP controller integration testing requires Composer dependencies, absent in this workspace at implementation time.
+At initial implementation, AWS discovery on 13 November 2026 failed with `UnrecognizedClientException` (invalid AWS security token). A later follow-up confirmed `Ubuntu-1-2GB` is running in `ap-southeast-1`, but the Lightsail-generated SSH key was rejected with `Permission denied (publickey)`. The movement extension is pushed as commit `67c0a58`, but has not been deployed to the instance. No one-hour benchmark, 24-hour soak or model activation has been performed. PHP controller integration testing requires Composer dependencies, absent in this workspace at implementation time.

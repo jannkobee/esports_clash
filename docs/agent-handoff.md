@@ -8,7 +8,7 @@ Verification: focused storage, frozen combat and deterministic short headless te
 
 Owner requested movement decisions that can improve through experience while player attributes continue to shape execution. Added a separate bounded action-value learner for existing duel strafes and existing contact-peek styles. It uses damage, incoming damage, kills and round outcome rewards; training samples contain no player identity or hidden enemy coordinates. Navigation, combat cadence, and movement are now checkpoints in bundle v2. Passing candidates receive separate route-only, combat-only and movement-only paired ablations before human review. Browser-local experiments have their own movement checkpoint and reset control; new default exhibitions pin the approved movement checkpoint frozen.
 
-Read [the movement learning implementation record](fps-live-movement-learning-20261113.md). Production build and TypeScript compilation pass. Game/learner tests were not run for this extension. Do not claim measured gameplay improvement, complete-match throughput, Lightsail rollout, or model approval from compilation alone.
+Read [the movement learning implementation record](fps-live-movement-learning-20261113.md). Production build and TypeScript compilation pass. Game/learner tests were not run for this extension. Commit `67c0a58` is pushed to `automatic-learning/implementation`. AWS reports `Ubuntu-1-2GB` running in Singapore, but its Lightsail-generated SSH key and the configured local SSH identities were rejected. No instance changes or deployment were made. Do not claim measured gameplay improvement, complete-match throughput, Lightsail deployment, or model approval from compilation alone.
 
 ## Recoil Control as an individual live ability (13 November 2026)
 
