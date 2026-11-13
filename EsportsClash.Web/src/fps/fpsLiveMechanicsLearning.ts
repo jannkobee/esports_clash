@@ -16,7 +16,7 @@ export interface FpsMechanicsModel {
 }
 export interface FpsMechanicsSample {context:FpsFireContext;action:FpsFireCadence;reward:number}
 export interface FpsMechanicsRound {id:string;samples:FpsMechanicsSample[]}
-export interface FpsMechanicsOptions {model?:unknown;onRound?:(round:FpsMechanicsRound)=>void}
+export interface FpsMechanicsOptions {mode?:'learn'|'frozen';updateModel?:boolean;model?:unknown;onRound?:(round:FpsMechanicsRound)=>void}
 export interface FpsMechanicsStats {revision:number;rounds:number;updates:number;decisions:number;explorations:number;burstSelections:number;sustainSelections:number}
 interface ActiveChoice {targetId:string;context:FpsFireContext;action:FpsFireCadence;outcome:number;team:FpsTeamId;}
 interface PendingChoice extends FpsMechanicsSample {team:FpsTeamId}
@@ -70,7 +70,7 @@ export class FpsLiveMechanicsLearner {
     if(existing)this.settle(actorId);
     const values=this.model.values[context],greedy=values.burst>=values.sustain?'burst':'sustain';
     const epsilon=Math.max(.025,.10/Math.sqrt(1+this.model.rounds/60));
-    const exploring=random()<epsilon,action=exploring?(greedy==='burst'?'sustain':'burst'):greedy;
+    const exploring=this.options.mode!=='frozen'&&random()<epsilon,action=exploring?(greedy==='burst'?'sustain':'burst'):greedy;
     this.active.set(actorId,{targetId,team,context,action,outcome:0});this.decisions++;if(exploring)this.explorations++;
     if(action==='burst')this.burstSelections++;else this.sustainSelections++;
     return action;
@@ -78,7 +78,7 @@ export class FpsLiveMechanicsLearner {
   recordDamage(actorId:string,targetId:string,damage:number):void {const active=this.active.get(actorId);if(active?.targetId===targetId)active.outcome=bounded(active.outcome+Math.min(38,Math.max(0,damage))*.012);}
   recordIncoming(actorId:string,attackerId:string,damage:number):void {const active=this.active.get(actorId);if(active?.targetId===attackerId)active.outcome=bounded(active.outcome-Math.min(32,Math.max(0,damage))*.012);}
   recordKill(actorId:string,targetId:string):void {const active=this.active.get(actorId);if(active?.targetId===targetId)active.outcome=bounded(active.outcome+.2);}
-  private settle(actorId:string):void {const active=this.active.get(actorId);if(!active)return;this.active.delete(actorId);this.pending.push({context:active.context,action:active.action,reward:active.outcome,team:active.team});}
+  private settle(actorId:string):void {const active=this.active.get(actorId);if(!active)return;this.active.delete(actorId);if(this.options.mode!=='frozen')this.pending.push({context:active.context,action:active.action,reward:active.outcome,team:active.team});}
   completeRound(winner:FpsTeamId,id:string):FpsMechanicsRound|undefined {
     for(const actorId of this.active.keys())this.settle(actorId);
     const samples=this.pending.map(({team,...sample})=>({...sample,reward:bounded(sample.reward+(team===winner?.18:-.18))}));
@@ -86,7 +86,7 @@ export class FpsLiveMechanicsLearner {
     // route learner's report, model, or storage to absorb combat outcomes.
     this.pending=[];
     if(!samples.length)return;
-    const round={id,samples};applyFpsMechanicsRound(this.model,round);return round;
+    const round={id,samples:samples.slice(-200)};if(this.options.updateModel!==false)applyFpsMechanicsRound(this.model,round);return round;
   }
   abandonRound():void {this.active.clear();this.pending=[];}
   stats():FpsMechanicsStats {return {revision:this.model.revision,rounds:this.model.rounds,updates:this.model.updates,decisions:this.decisions,explorations:this.explorations,burstSelections:this.burstSelections,sustainSelections:this.sustainSelections};}

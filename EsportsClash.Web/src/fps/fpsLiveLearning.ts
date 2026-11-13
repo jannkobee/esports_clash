@@ -23,7 +23,7 @@ export interface FpsLearningModel {
 }
 export interface FpsLearningSample {context:FpsLearningContext;features:number[];target:number}
 export interface FpsLearningRound {id:string;samples:FpsLearningSample[]}
-export interface FpsLearningOptions {mode:'learn'|'frozen';model?:unknown;exploration?:number;onRound?:(round:FpsLearningRound)=>void}
+export interface FpsLearningOptions {mode:'learn'|'frozen';updateModel?:boolean;model?:unknown;exploration?:number;onRound?:(round:FpsLearningRound)=>void}
 export interface FpsLearningStats {mode:'learn'|'frozen';revision:number;rounds:number;updates:number;decisions:number;explorations:number;lastValue:number}
 
 export function createFpsLearningModel():FpsLearningModel {
@@ -182,7 +182,7 @@ export class FpsLiveLearner {
     }
     this.episodes.clear();
     if(!samples.length)return;
-    const round={id,samples};applyFpsLearningRound(this.model,round);return round;
+    const round={id,samples};if(this.options.updateModel!==false)applyFpsLearningRound(this.model,round);return round;
   }
   abandonRound():void {this.active.clear();this.episodes.clear();}
   stats():FpsLearningStats {return {mode:this.options.mode,revision:this.model.revision,rounds:this.model.rounds,updates:this.model.updates,decisions:this.decisions,explorations:this.explorations,lastValue:this.lastValue};}

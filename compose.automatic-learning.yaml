@@ -1,0 +1,26 @@
+services:
+  automatic-learning:
+    build:
+      context: .
+      dockerfile: infrastructure/automatic-learning/Dockerfile
+    init: true
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 512m
+    pids_limit: 64
+    stop_grace_period: 60s
+    environment:
+      LEARNING_DATA: /data
+      LEARNING_REQUIRE_TELEMETRY: "true"
+    volumes:
+      - ./EsportsClash.Api/storage/app/automatic-learning:/data
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test: [CMD, node, -e, "const h=JSON.parse(require('fs').readFileSync('/data/heartbeat.json'));process.exit(Date.now()-Date.parse(h.at)<120000?0:1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

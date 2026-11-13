@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "candidateEveryMatches": 100,
+  "evaluationPairs": 200,
+  "retentionDays": 30,
+  "maxSimulatedSeconds": 18000,
+  "maxMatchWallSeconds": 1800,
+  "healthyResumeSeconds": 300,
+  "minimumMemoryFraction": 0.2,
+  "minimumDiskFraction": 0.15,
+  "minimumBurstPercent": 20,
+  "healthFailureLimit": 3,
+  "targetMatchesPerHour": 200
+}

@@ -49,3 +49,6 @@ __pycache__/
 
 # Built from Web sources by the API Docker image or build:base-inspector
 EsportsClash.Api/public/base-inspector/
+
+# Continuous FPS experience and worker credentials stay outside Git.
+EsportsClash.Api/storage/app/automatic-learning/

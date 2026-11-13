@@ -1,3 +1,4 @@
+import type {fetchApprovedLearning} from '../fps/fpsApprovedLearning';
 import { LIVE_KNIFE } from '../fps/fpsLiveWeapons.ts';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { freshFpsExhibitionSeed } from '../fps/fpsExhibitionSeed';
@@ -42,6 +43,7 @@ interface Props {
   identity: FpsIdentityExperiment;
   skillProfiles?: Record<string, FpsSkillProfile>;
   learningEnabled?:boolean;
+  approvedModel?:Awaited<ReturnType<typeof fetchApprovedLearning>>;
   onExit: () => void;
 }
 
@@ -317,16 +319,16 @@ function BlastScoreboard({
   );
 }
 
-export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, learningEnabled=true, onExit }: Props) {
+export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, learningEnabled=false, approvedModel, onExit }: Props) {
   const [attempt, setAttempt] = useState(0);
   const { simulation, activeSeed } = useMemo(
     () => {
       const activeSeed = freshFpsExhibitionSeed(seed);
       return { activeSeed, simulation: new FpsLiveSimulation(blue, red, activeSeed, identity, { skillProfiles,
-        learning:learningEnabled?{mode:'learn',model:readFpsLearning(),onRound:round=>{saveFpsLearningRound(round);}}:undefined,
-        mechanicsLearning:learningEnabled?{model:readFpsMechanicsLearning(),onRound:round=>{saveFpsMechanicsRound(round);}}:undefined }) };
+        learning:learningEnabled?{mode:'learn',model:readFpsLearning(),onRound:round=>{saveFpsLearningRound(round);}}:{mode:'frozen',model:approvedModel?.navigation},
+        mechanicsLearning:learningEnabled?{model:readFpsMechanicsLearning(),onRound:round=>{saveFpsMechanicsRound(round);}}:{mode:'frozen',model:approvedModel?.combat} }) };
     },
-    [blue, red, seed, identity, skillProfiles, learningEnabled, attempt]
+    [blue, red, seed, identity, skillProfiles, learningEnabled, approvedModel, attempt]
   );
   const [frame, setFrame] = useState(() => simulation.snapshot());
   const [paused, setPaused] = useState(false);

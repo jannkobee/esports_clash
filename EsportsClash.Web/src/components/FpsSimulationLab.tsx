@@ -14,6 +14,7 @@ import {FpsSkillEditor,useFpsLabProfiles} from './FpsSkillEditor';
 import type {FpsSkillProfile} from '../fps/fpsSkillProfile';
 import {readFpsLearning,resetFpsLearning} from '../fps/fpsLiveLearningStorage';
 import {readFpsMechanicsLearning,resetFpsMechanicsLearning} from '../fps/fpsLiveMechanicsLearningStorage';
+import {fetchApprovedLearning} from '../fps/fpsApprovedLearning';
 import './fps-reference.css';
 
 const tacticalSystems: Record<string, {coach:FpsCoach;plan:FpsGameplan}> = {
@@ -31,20 +32,20 @@ export function FpsSimulationLab() {
   const roster=[...blueRoster,...redRoster];
   const [skillProfiles,setSkillProfiles]=useFpsLabProfiles(roster);
   const [profileMode,setProfileMode]=useState<'varied'|'equalized'>('varied');
-  const [learningEnabled,setLearningEnabled]=useState(true);
+  const [learningEnabled,setLearningEnabled]=useState(false);
   const [learnedModel,setLearnedModel]=useState(()=>readFpsLearning());
   const [learnedMechanicsModel,setLearnedMechanicsModel]=useState(()=>readFpsMechanicsLearning());
   const supportedSpecialties=FPS_SPECIALTIES;
   const [identities,setIdentities]=useState<Record<string,{personality:string;specialty:string}>>(()=>Object.fromEntries([...blueRoster,...redRoster].map((card,index)=>[card.id,{personality:FPS_IDENTITY_PERSONALITIES[index % FPS_IDENTITY_PERSONALITIES.length].id,specialty:''}])));
   const [report,setReport]=useState<FpsMatchReport|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
-  const [live,setLive]=useState<{seed:number;identity:FpsIdentityExperiment;blue:PlayerCard[];red:PlayerCard[];skillProfiles?:Record<string,FpsSkillProfile>;learningEnabled:boolean}|null>(null);
+  const [live,setLive]=useState<{seed:number;identity:FpsIdentityExperiment;blue:PlayerCard[];red:PlayerCard[];skillProfiles?:Record<string,FpsSkillProfile>;learningEnabled:boolean;approvedModel?:Awaited<ReturnType<typeof fetchApprovedLearning>>}|null>(null);
   const timer=useRef<number|undefined>(undefined);
   useEffect(()=>()=>window.clearTimeout(timer.current),[]);
   const launch=(mode:'live'|'recorded'='recorded')=>{
     const value=mode==='live'?1:Number(seed);
     if(!Number.isInteger(value)||value<1||value>2147483647){setError('Use a whole-number seed from 1 to 2147483647.');return;}
     setBusy(true);setError('');
-    timer.current=window.setTimeout(()=>{
+    timer.current=window.setTimeout(async ()=>{
       try{
         const blue=blueRoster;
         const red=redRoster;
@@ -55,7 +56,7 @@ export function FpsSimulationLab() {
           const profiles=Object.fromEntries(roster.map(card=>{
             const p=skillProfiles[card.id];return [card.id,profileMode==='equalized'?{...p,source:'lab-custom-v1' as const,values:Object.fromEntries(Object.keys(p.values).map(key=>[key,10])) as FpsSkillProfile['values']}:{...p,values:{...p.values}}];
           }));
-          setLive({seed:value,identity:identityExperiment,blue,red,skillProfiles:profiles,learningEnabled});
+          setLive({seed:value,identity:identityExperiment,blue,red,skillProfiles:profiles,learningEnabled,approvedModel:learningEnabled?undefined:await fetchApprovedLearning()});
         }
         else setReport(simulateFpsMatch(blue,red,map,value,experimental?{identityExperiment}:{}));
       }
@@ -68,7 +69,7 @@ export function FpsSimulationLab() {
     const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
     const link=document.createElement('a');link.href=url;link.download=`fps-${report.mapId}-${report.seed}.json`;link.click();URL.revokeObjectURL(url);
   };
-  if(live)return <FpsLiveBroadcast blue={live.blue} red={live.red} seed={live.seed} identity={live.identity} skillProfiles={live.skillProfiles} learningEnabled={live.learningEnabled} onExit={()=>{setLearnedModel(readFpsLearning());setLearnedMechanicsModel(readFpsMechanicsLearning());setLive(null);}}/>;
+  if(live)return <FpsLiveBroadcast blue={live.blue} red={live.red} seed={live.seed} identity={live.identity} skillProfiles={live.skillProfiles} learningEnabled={live.learningEnabled} approvedModel={live.approvedModel} onExit={()=>{setLearnedModel(readFpsLearning());setLearnedMechanicsModel(readFpsMechanicsLearning());setLive(null);}}/>;
   return <section className="fps-lab" aria-label="FPS simulation viewer">
     {!report&&<section className="fps-lab__live-entry" aria-label="Live 3D exhibition">
       <p className="pedia-eyebrow">HEXATRICK · REAL-TIME 3D</p>
@@ -77,7 +78,7 @@ export function FpsSimulationLab() {
       <div className="fps-lab__mode"><button type="button" className="cm-btn cm-btn-primary" disabled={busy} onClick={()=>launch('live')}><Play size={16}/>Watch live 3D match</button><span>15-second buy phase · 115-second rounds · 40-second device timer</span></div>
       <p>Each launch uses a fresh seed with the systems and player identities selected below. This local exhibition uses fictional test profiles and does not change official results, club cards, or careers.</p>
       <details className="fps-lab__learning"><summary>Local bot learning reports</summary>
-        <label><input type="checkbox" checked={learningEnabled} onChange={event=>setLearningEnabled(event.target.checked)}/> Learn movement and combat choices from exhibition rounds</label>
+        <label><input type="checkbox" checked={learningEnabled} onChange={event=>setLearningEnabled(event.target.checked)}/> Experiment with browser-local learning (default uses approved frozen models)</label>
         <section aria-label="Movement route learning report"><h3>Movement routes</h3>
           <p>Bots compare legal approaches using route progress, health changes and round results. These route reports and weights use their own local checkpoint.</p>
           <p role="status">{learnedModel?.rounds??0} completed rounds · {learnedModel?.updates??0} route updates</p>

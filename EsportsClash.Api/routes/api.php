@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\OnlineController;
 Route::post('/internal/online/authorize-stream', [OnlineController::class, 'authorizeStream'])->middleware('throttle:120,1');
 
 Route::prefix('v1')->group(function (): void {
+    Route::get('/automatic-learning/approved', [\App\Http\Controllers\AutomaticLearningController::class, 'show'])->middleware('throttle:60,1');
     Route::get('/game-modes', [\App\Http\Controllers\GameModeController::class, 'manifest'])->middleware('throttle:90,1');
     Route::get('/world/simulation', [\App\Http\Controllers\WorldSimulationController::class, 'show'])->middleware('throttle:60,1');
     Route::get('/world/operations', [\App\Http\Controllers\WorldSimulationController::class, 'operations'])->middleware(['auth:sanctum','throttle:30,1']);

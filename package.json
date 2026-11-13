@@ -6,7 +6,9 @@
   "scripts": {
     "build": "npm --prefix EsportsClash.Web run build",
     "test": "npm --prefix EsportsClash.Web test",
-    "check:game": "npm --prefix EsportsClash.Web run check:game"
+    "check:game": "npm --prefix EsportsClash.Web run check:game",
+    "learning:run": "node infrastructure/automatic-learning/coordinator.mjs",
+    "learning:test": "node --test EsportsClash.Web/src/fpsAutomaticLearning.test.mjs",
+    "learning:export": "node infrastructure/automatic-learning/export.mjs"
   }
 }
-
