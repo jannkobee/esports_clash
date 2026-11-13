@@ -64,6 +64,7 @@ interface ActorView {
 
 interface SmokeView { root:TransformNode; lobes:Mesh[]; material:StandardMaterial }
 interface FireView { root:TransformNode; ground:Mesh; groundFlames:Mesh[]; groundFlameMaterials:StandardMaterial[]; flames:Mesh[]; groundMaterial:StandardMaterial; flameMaterials:StandardMaterial[] }
+interface BloodView { splats:Mesh[] }
 interface BlastView {sphere:Mesh;ring:Mesh;sphereMaterial:StandardMaterial;ringMaterial:StandardMaterial}
 interface ViewmodelReloadParts { arm:TransformNode; magazine:Mesh }
 interface WeaponViewMetadata {muzzle?:TransformNode;reloadParts?:ViewmodelReloadParts;name?:string}
@@ -638,6 +639,8 @@ export class FpsLiveViewer {
   private resize:ResizeObserver;
   private actors=new Map<string,ActorView>();
   private droppedMeshes=new Map<number,{root:TransformNode;ring:Mesh}>();
+  private bloodMeshes=new Map<number,BloodView>();
+  private bloodMaterials:StandardMaterial[]=[];
   private smokes=new Map<number,SmokeView>();
   private fires=new Map<number,FireView>();
   private blasts=new Map<number,BlastView>();
@@ -874,6 +877,33 @@ export class FpsLiveViewer {
           tracer.firstPerson.color=tracer.world.color;tracer.firstPerson.isPickable=false;
         }else MeshBuilder.CreateLines(`fp-shot-${shot.id}`,{points:[firstOrigin,endpoint],instance:tracer.firstPerson});
       }
+    }
+  }
+  private updateBloodMarks(current:LiveSnapshot) {
+    const marks=current.bloodMarks??[],ids=new Set(marks.map(mark=>mark.id));
+    for(const [id,view] of this.bloodMeshes)if(!ids.has(id)){for(const splat of view.splats)splat.dispose();this.bloodMeshes.delete(id);}
+    if(marks.length&&!this.bloodMaterials.length){
+      for(const [index,hex] of ['#55181c','#792128','#a33a3c'].entries()){
+        const material=new StandardMaterial(`round-blood-${index}`,this.scene);
+        material.diffuseColor=Color3.FromHexString(hex);material.emissiveColor=Color3.FromHexString(hex).scale(.18);
+        material.alpha=.76;material.disableLighting=true;material.backFaceCulling=false;
+        this.bloodMaterials.push(material);
+      }
+    }
+    for(const mark of marks){
+      if(this.bloodMeshes.has(mark.id))continue;
+      const splats:Mesh[]=[];
+      for(let index=0;index<4;index++){
+        const angle=(mark.id*1.731+index*2.399)% (Math.PI*2);
+        const reach=index===0?0:mark.radius*(.25+((mark.id+index*3)%7)/12);
+        const size=mark.radius*(index===0 ? .9 : .24+((mark.id+index)%4)*.055);
+        const splat=MeshBuilder.CreateDisc(`blood-${mark.id}-${index}`,{radius:1,tessellation:14},this.scene);
+        splat.rotation.x=Math.PI/2;splat.position.set(mark.x+Math.cos(angle)*reach,.036+index*.0004,mark.z+Math.sin(angle)*reach);
+        splat.scaling.set(size*(index===0?1.25:.72),size*(index===0 ? .72 : .5),1);
+        splat.material=this.bloodMaterials[(mark.id+index+(mark.region==='head'?1:0))%this.bloodMaterials.length];
+        splat.isPickable=false;splats.push(splat);
+      }
+      this.bloodMeshes.set(mark.id,{splats});
     }
   }
   render(previous:LiveSnapshot,current:LiveSnapshot,alpha:number,mode:LiveCameraMode,selected:string,elapsed=1/60,allowPip=true):LiveRenderResult {
@@ -1257,6 +1287,7 @@ export class FpsLiveViewer {
     }
     // Resolve both views after their weapon poses, recoil and camera transforms.
     this.updateShotTracers(current);
+    this.updateBloodMarks(current);
 
     // Secondary Bomb-Plant PIP camera: strictly active only during C4 plant/settle beat.
     const pipShouldRender=allowPip && decision.pip.active && this.pipViewport!==null;
@@ -1318,6 +1349,8 @@ export class FpsLiveViewer {
     this.fpGunRoot?.dispose();this.fpMuzzleFlash?.dispose();
     for(const item of this.droppedMeshes.values()){item.root.dispose();item.ring.dispose();}
     this.droppedMeshes.clear();
+    for(const view of this.bloodMeshes.values())for(const splat of view.splats)splat.dispose();
+    this.bloodMeshes.clear();for(const material of this.bloodMaterials)material.dispose();this.bloodMaterials=[];
     for(const trail of this.grenadeTrails.values())trail.dispose();this.grenadeTrails.clear();
     for(const view of this.actors.values()){
       view.operative.root.dispose();

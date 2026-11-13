@@ -8,15 +8,15 @@ import { LIVE_ACTOR_RADIUS, LIVE_FPS_MAP, LIVE_TACTICAL, LIVE_MID, LIVE_CHOKES, 
 import {liveActorHeadY,liveRayDirection,traceLiveActorHit} from './fpsLiveBallistics.ts';
 import { liveSkills, liveDecisionInterval, liveReactionTime, livePressure, liveAimSpread, liveReportDelay, type LiveSkills } from './fpsLiveAttributes.ts';
 import { emptyLiveImpact, type LiveImpact } from './fpsLiveImpact.ts';
-import { LIVE_WEAPONS, LIVE_KNIFE, liveDrawTime, type LiveWeapon, type LiveEquippedWeapon } from './fpsLiveWeapons.ts';
+import { LIVE_WEAPONS, LIVE_KNIFE, liveDrawTime, liveWeaponRecoilKick, advanceLiveRecoil, type LiveWeapon, type LiveEquippedWeapon } from './fpsLiveWeapons.ts';
 import { buyLiveTeam, type LiveBuyMode, type LiveBuyPlayer } from './fpsLiveEconomy.ts';
 import { advanceLiveVelocity, liveShotSpeedLimit, LIVE_RUN_SPEED, LIVE_WALK_SPEED, LIVE_CROUCH_SPEED, LIVE_JUMP_VELOCITY, advanceLiveJump, type LiveStance } from './fpsLiveMovement.ts';
-import { chooseLiveTactic, createLiveProtocol, liveOrderActive, type LiveInformationOrder, type LiveAttackProtocol, type LiveAttackStyle, type LiveAttackPhase, type LiveTacticArchetype, type LiveDefenseSetup, type LiveRoundHistory } from './fpsLiveTactics.ts';
+import { chooseLiveTactic, chooseLiveDefenseSetup, createLiveProtocol, liveOrderActive, type LiveInformationOrder, type LiveAttackProtocol, type LiveAttackStyle, type LiveAttackPhase, type LiveTacticArchetype, type LiveDefenseSetup, type LiveRoundHistory } from './fpsLiveTactics.ts';
 import { LIVE_UTILITY_RULES, LIVE_HE_RULES, LIVE_FRIENDLY_FIRE_RULES, predictLiveGrenade, launchLiveGrenade, stepLiveGrenade, liveGrenadeSightline, type LiveGrenade, type LiveGrenadeKind, type LiveThrowStyle } from './fpsLiveGrenades.ts';
 import { advanceLiveAimYaw, liveRouteLookAhead } from './fpsLiveAim.ts';
 import { emptyLiveIntel, rememberLiveIntel, strongestLiveIntel, assessLiveIntel, clearLiveIntel, liveIntelArea, describeLiveIntel, liveIntelBeliefs, type LiveIntelContact, type LiveIntelMemory } from './fpsLiveIntel.ts';
 import { pinFpsSkillProfile, fpsAbilityUnit, fpsDetailedRoleFit, fpsSkillRandom, type FpsSkillProfile, type FpsAbility } from './fpsSkillProfile.ts';
-import { detailedReactionDelay, detailedSenseInterval, detailedAimYaw, detailedInputError, preparedAngleError, detailedThrowPoint, tickFpsMentalState, advanceDetailedRecoil, detailedRecoilImpulse, emptyFpsSkillDiagnostics, type FpsMentalState, type FpsSkillDiagnostics } from './fpsDetailedExecution.ts';
+import { detailedReactionDelay, detailedSenseInterval, detailedAimYaw, detailedInputError, preparedAngleError, detailedThrowPoint, tickFpsMentalState, advanceDetailedRecoil, emptyFpsSkillDiagnostics, type FpsMentalState, type FpsSkillDiagnostics } from './fpsDetailedExecution.ts';
 import { recordFpsOpponentPattern, knownFpsTendency, knownFpsPattern, interpretFpsInformation, type FpsOpponentPattern } from './fpsOpponentPatterns.ts';
 import { canInvestigateLiveContact, shouldFakeLiveDefuse, chooseLiveApproach, liveCombatStrafe, liveSmokeOccludes, shouldCommitLivePlant, type LiveApproach } from './fpsLiveBrain.ts';
 import { assignLiveObjective, createLiveRoutePlanner, liveRouteEvidenceKey, planLivePlant, livePlantSite, LIVE_PLANT_RULES } from './fpsLivePlanning.ts';
@@ -51,7 +51,7 @@ interface Actor extends LivePlayer {
   seenAt:number;nextSense:number;burst:number;pressure:number;retreatUntil:number;
   reportAt:number;stuckFor:number;watchPoint?:FpsPoint;
   engagementShots:number;engagementDamaged:boolean;openingAttempted:boolean;
-  vx:number;vz:number;nextFootstep:number;nextAudioFootstep:number;nextPeek:number;peek?:{home:FpsPoint;out:FpsPoint;back:boolean;until:number;pause:number;style:'shoulder'|'crouch-swing'|'ferrari'|'double-pump'|'bait'|'fake';pumps:number;prefired:number};
+  vx:number;vz:number;nextFootstep:number;nextAudioFootstep:number;stillSince:number;wasCrouched:boolean;nextPeek:number;peek?:{home:FpsPoint;out:FpsPoint;back:boolean;until:number;pause:number;style:'shoulder'|'crouch-swing'|'ferrari'|'double-pump'|'bait'|'fake';pumps:number;prefired:number};
   jump:boolean;jumpY:number;jumpVy:number;nextJump:number;jumpQueued:boolean;jumpChain:number;strafeDirection:1|-1;strafeUntil:number;glockBurstRemaining:number;
   cleared:Set<string>;clearUntil:number;clearPoint?:FpsPoint;lookAwayUntil:number;
   crouch:boolean;crouchUntil:number;
@@ -60,7 +60,7 @@ interface Actor extends LivePlayer {
   aimFocus?:{point:FpsPoint;source:'contact'|'route'|'hold'|'clear';until:number;from:FpsPoint};
   intel:LiveIntelMemory;intelManaged:boolean;sentReports:Map<string,number>;
   profile?:FpsSkillProfile;motor:FpsSkillDiagnostics;mentalState:FpsMentalState;patterns:FpsOpponentPattern[];
-  pendingCues:{at:number;contact:LiveIntelContact}[];recoil:number;brakeAt?:number;preparedError:number;
+  pendingCues:{at:number;contact:LiveIntelContact}[];recoil:number;recoilPitch:number;brakeAt?:number;preparedError:number;
   previousSight?:FpsPoint&{at:number;id:string};trackingPoint?:FpsPoint;planAssessmentAt?:number;
   visualCueAt?:number;
   probeGoal?:string;probeVisited:Set<string>;holdingSince?:number;
@@ -82,12 +82,13 @@ export interface LiveShot { id:number; time:number; actorId:string;weapon:LiveWe
 export interface LiveSmoke extends FpsPoint { id:number; startedAt:number; expires:number; radius:number;y:number;disturbedUntil?:number;disturbance?:number }
 export interface LiveFire extends FpsPoint { id:number; ownerId:string; team:FpsTeamId; startedAt:number; expires:number; nextDamageAt:number; radius:number }
 export interface LiveBlast extends FpsPoint {id:number;startedAt:number;endsAt:number;radius:number}
+export interface LiveBloodMark extends FpsPoint {id:number;startedAt:number;region:'head'|'body';radius:number}
 export interface LiveTeamPlan {buy:LiveBuyMode;buyReason:string;style:LiveAttackStyle|'defense';phase:LiveAttackPhase|'hold';site?:'A'|'B';information:string}
 export interface LiveSnapshot {
-  version:'hexatrick-live-exhibition-v9'; time:number; round:number;
+  version:'hexatrick-live-exhibition-v10'; time:number; round:number;
   phase:'freeze'|'live'|'post'|'finished'; remaining:number; score:Record<FpsTeamId,number>;
   winner?:FpsTeamId; roundWinner?:FpsTeamId; roundReason:string; attackTeam:FpsTeamId;
-  players:LivePlayer[]; events:LiveEvent[]; shots:LiveShot[]; smokes:LiveSmoke[]; fires:LiveFire[];blasts:LiveBlast[];
+  players:LivePlayer[]; events:LiveEvent[]; shots:LiveShot[]; smokes:LiveSmoke[]; fires:LiveFire[];blasts:LiveBlast[];bloodMarks:LiveBloodMark[];
   grenades:LiveGrenade[];teams:Record<FpsTeamId,LiveTeamPlan>;
   droppedWeapons:DroppedWeapon[];
   bomb:{status:'carried'|'dropped'|'planted'|'defused'|'exploded';x:number;z:number;remaining:number;site?:'A'|'B'};
@@ -98,6 +99,12 @@ const clamp=(x:number,min:number,max:number)=>Math.max(min,Math.min(max,x));
 const localHash=(text:string)=>{let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return(h>>>0).toString(16).padStart(8,'0');};
 const angle=(a:number)=>Math.atan2(Math.sin(a),Math.cos(a));
 const heading=(a:FpsPoint,b:FpsPoint)=>Math.atan2(b.x-a.x,b.z-a.z);
+function closestShotApproach(point:{x:number;y:number;z:number},from:{x:number;y:number;z:number},to:{x:number;y:number;z:number}) {
+  const dx=to.x-from.x,dy=to.y-from.y,dz=to.z-from.z,length=dx*dx+dy*dy+dz*dz||1;
+  const t=clamp(((point.x-from.x)*dx+(point.y-from.y)*dy+(point.z-from.z)*dz)/length,0,1);
+  const x=from.x+dx*t,y=from.y+dy*t,z=from.z+dz*t;
+  return {distance:Math.hypot(point.x-x,point.y-y,point.z-z),x,z};
+}
 
 /** Browser-local live exhibition. Never creates an official match report or career write. */
 export class FpsLiveSimulation {
@@ -120,11 +127,13 @@ export class FpsLiveSimulation {
   private liveElapsed=0;
   private roundLiveAt=0;
   private bomb:LiveSnapshot['bomb']={status:'carried',x:0,z:-38,remaining:40};
+  private nextBombTick=-1;
   private events:LiveEvent[]=[];
   private shots:LiveShot[]=[];
   private smokes:LiveSmoke[]=[];
   private fires:LiveFire[]=[];
   private blasts:LiveBlast[]=[];
+  private bloodMarks:LiveBloodMark[]=[];
   private droppedWeapons:DroppedWeapon[]=[];
   private reports:{team:FpsTeamId;at:number;source:string;contact:LiveIntelContact}[]=[];
   private informationOrders:Record<FpsTeamId,LiveInformationOrder>={blue:{mode:'hold',responders:[],until:0,strength:0,reason:'Hold the opening setup'},red:{mode:'hold',responders:[],until:0,strength:0,reason:'Gather information in the default'}};
@@ -136,6 +145,7 @@ export class FpsLiveSimulation {
   private roundHistory:LiveRoundHistory[]=[];
   private tacticArchetype:LiveTacticArchetype='default_pick';
   private defenseSetup:LiveDefenseSetup='standard';
+  private postPlantPlanterId?:string;
   private grenades:LiveGrenade[]=[];
   private audioCues:FpsAudioCue[]=[];
   private noiseMasks:{x:number;z:number;until:number;radius:number}[]=[];
@@ -176,12 +186,12 @@ export class FpsLiveSimulation {
       reaction:.45-clamp((card.stats.iq??50)/100,0,1)*.2,
       skills:liveSkills(card.stats),exertion:0,callout:'Harbor gates',intent:'Prepare the round',
       impact:emptyLiveImpact(),engagementShots:0,engagementDamaged:false,openingAttempted:false,
-      speed:0,stance:'hold',crouch:false,crouchUntil:0,vx:0,vz:0,nextFootstep:0,nextAudioFootstep:0,nextPeek:0,cleared:new Set(),clearUntil:0,lookAwayUntil:0,
+      speed:0,stance:'hold',crouch:false,crouchUntil:0,vx:0,vz:0,nextFootstep:0,nextAudioFootstep:0,stillSince:0,wasCrouched:false,nextPeek:0,cleared:new Set(),clearUntil:0,lookAwayUntil:0,
       jump:false,jumpY:0,jumpVy:0,nextJump:0,jumpQueued:false,jumpChain:0,strafeDirection:1,strafeUntil:0,glockBurstRemaining:0,
       equipped:'pistol',weaponReady:0,lastSwing:-100,reactionVariation:1,equipUntil:0,
       information:'No current contact — watch the assigned angle',intel:emptyLiveIntel(),intelManaged:false,sentReports:new Map(),
       profile:options.skillProfiles?pinFpsSkillProfile(options.skillProfiles[card.id],card.id):undefined,
-      motor:emptyFpsSkillDiagnostics(),mentalState:{setback:0,attentionDebt:0,exertion:0},patterns:[],pendingCues:[],recoil:0,preparedError:0,
+      motor:emptyFpsSkillDiagnostics(),mentalState:{setback:0,attentionDebt:0,exertion:0},patterns:[],pendingCues:[],recoil:0,recoilPitch:0,preparedError:0,
       noticedEnemies:[],probeVisited:new Set(),knownSmokes:[],
       acquired:0,nextShot:0,nextThink:0,decision:'prepare',path:[],contactAt:-100,
       lastMoved:-100,lastShot:-100,utilityAt:0,damageAt:-100,
@@ -220,6 +230,7 @@ export class FpsLiveSimulation {
     this.learner?.abandonRound();
     this.mechanicsLearner?.abandonRound();
     this.phase='freeze';this.remaining=15;this.liveElapsed=0;this.roundWinner=undefined;this.roundReason='';
+    this.nextBombTick=-1;
     // Regulation: Red attacks in 1..15, Blue attacks in 16..30 (side swap). Overtime MR3 swaps every 3 rounds.
     this.attackTeam=this.round<=30?(this.round<=15?'red':'blue'):((Math.floor((this.round-31)/3)%2)===0?'red':'blue');
     const reset=this.round===16 || (this.round>=31 && (this.round-31)%3===0);
@@ -237,16 +248,11 @@ export class FpsLiveSimulation {
     else if(archetype==='fake_execute')this.site='B';
     else this.site=this.worldRandom()<.5?'A':'B';
 
-    let defenseSetup:LiveDefenseSetup='standard';
-    if(bAttacks>=2)defenseSetup='stack_b';
-    else if(aAttacks>=2)defenseSetup='stack_a';
-    else if(recentAttacks.length>0){
-      defenseSetup=this.worldRandom()<.5?'aggressive_banana':'mid_push';
-    } else defenseSetup='standard';
+    const defenseSetup=chooseLiveDefenseSetup(this.roundHistory,this.attackTeam,{A:aAttacks,B:bAttacks},this.worldRandom);
     this.defenseSetup=defenseSetup;
 
     this.nextInformationProbe={blue:this.time+25,red:this.time+25};
-    this.smokes=[];this.fires=[];this.blasts=[];this.shots=[];this.noiseMasks=[];this.reports=[];this.droppedWeapons=[];this.pendingBuys.clear();this.planCommit=0;this.roundSiteKills={blue:0,red:0};this.eliminations=[];this.grenades=[];
+    this.smokes=[];this.fires=[];this.blasts=[];this.bloodMarks=[];this.postPlantPlanterId=undefined;this.shots=[];this.noiseMasks=[];this.reports=[];this.droppedWeapons=[];this.pendingBuys.clear();this.planCommit=0;this.roundSiteKills={blue:0,red:0};this.eliminations=[];this.grenades=[];
     if(reset)this.losses={blue:0,red:0};
     for(const p of this.actors) {
       p.attacking=p.team===this.attackTeam;
@@ -288,14 +294,14 @@ export class FpsLiveSimulation {
       p.nextSense=this.time;p.seenAt=-100;p.burst=0;p.pressure=0;p.retreatUntil=0;p.reportAt=-100;p.stuckFor=0;
       p.watchPoint=undefined;p.aimFocus=undefined;p.exertion=p.profile?p.mentalState.exertion:0;p.intent='Prepare the round';
       p.engagementShots=0;p.engagementDamaged=false;p.openingAttempted=false;
-      p.vx=0;p.vz=0;p.speed=0;p.stance='hold';p.crouch=false;p.crouchUntil=0;p.peek=undefined;p.nextPeek=this.time+17;p.nextFootstep=0;p.nextAudioFootstep=0;
-      p.jump=false;p.jumpY=0;p.jumpVy=0;p.nextJump=this.time+16+this.executionRandom()*3;p.jumpQueued=false;p.jumpChain=0;p.strafeDirection=1;p.strafeUntil=0;p.glockBurstRemaining=0;
+      p.vx=0;p.vz=0;p.speed=0;p.stance='hold';p.crouch=false;p.crouchUntil=0;p.peek=undefined;p.nextPeek=this.time+17;p.nextFootstep=0;p.nextAudioFootstep=0;p.stillSince=this.time;p.wasCrouched=false;
+      p.jump=false;p.jumpY=0;p.jumpVy=0;p.nextJump=this.time+24+this.executionRandom()*16;p.jumpQueued=false;p.jumpChain=0;p.strafeDirection=1;p.strafeUntil=0;p.glockBurstRemaining=0;
       p.cleared.clear();p.clearUntil=0;p.clearPoint=undefined;p.lookAwayUntil=0;p.lookAwayPoint=undefined;p.probeGoal=undefined;p.probeVisited.clear();p.holdingSince=undefined;p.utilityPreparation=undefined;p.throwAt=undefined;p.throwKind=undefined;
       p.utilityAt=this.time+15;p.throwAt=undefined;p.throwKind=undefined;p.damageAt=-100;p.action='Buying';p.decision='prepare';
       p.buyAt=this.time+0.8+p.slot*.72+(p.team==='red'?.18:0);
       p.aimPoint=undefined;p.reactionVariation=1;p.swingAt=undefined;p.lastSwing=-100;p.equipUntil=0;p.weaponReady=0;
       p.intel=emptyLiveIntel();p.intelManaged=false;p.sentReports.clear();p.information='No current contact — watch the assigned angle';
-      p.pendingCues=[];p.recoil=0;p.brakeAt=undefined;p.preparedError=0;p.previousSight=undefined;p.trackingPoint=undefined;p.planAssessmentAt=undefined;p.visualCueAt=undefined;p.noticedEnemies=[];
+      p.pendingCues=[];p.recoil=0;p.recoilPitch=0;p.brakeAt=undefined;p.preparedError=0;p.previousSight=undefined;p.trackingPoint=undefined;p.planAssessmentAt=undefined;p.visualCueAt=undefined;p.noticedEnemies=[];
     }
     for(const team of ['blue','red'] as const) {
       const result=buyLiveTeam(this.actors.filter(p=>p.team===team),this.identity.teams[team].plan,this.round,this.losses[team],this.score[other(team)]>=15||this.round===15||this.round===30);
@@ -309,6 +315,7 @@ export class FpsLiveSimulation {
       :defenseSetup==='stack_a'?'Ts favored A — stacking A site crossfires'
       :defenseSetup==='aggressive_banana'?'Taking early Banana contest with utility'
       :defenseSetup==='mid_push'?'Pushing Mid / Underpass to catch Ts off guard'
+      :defenseSetup==='retake_setup'?'Flexible connector setup — keep a fast rotate ready'
       :'Standard 2-1-2 defense setup — hold opening angles';
     const atkReason=`Initial lean ${this.site} - gather information, create space and adapt to the call`;
 
@@ -553,7 +560,15 @@ export class FpsLiveSimulation {
       }
     }
     this.reports=this.reports.filter(r=>r.at>this.time);
-    if(this.bomb.status==='planted')this.bomb.remaining=Math.max(0,this.bomb.remaining-dt);
+    if(this.bomb.status==='planted'){
+      this.bomb.remaining=Math.max(0,this.bomb.remaining-dt);
+      if(this.time>=this.nextBombTick){
+        const urgency=this.bomb.remaining<=4?'final':this.bomb.remaining<=13?'urgent':'normal';
+        this.audioCues.push({kind:'bombTick',urgency,x:this.bomb.x,z:this.bomb.z});
+        const interval=this.bomb.remaining<=4?.14:this.bomb.remaining<=10?.28:this.bomb.remaining<=20?.5:.9;
+        this.nextBombTick=this.time+interval;
+      }
+    }
     else this.remaining=Math.max(0,this.remaining-dt);
     // Rotate update order to avoid giving the same slot every simultaneous shot advantage.
     const start=this.tickNumber%this.actors.length;
@@ -563,20 +578,24 @@ export class FpsLiveSimulation {
       if(p.profile){
         p.mentalState=tickFpsMentalState(p.profile,p.mentalState,dt,p.speed,!!p.target,Math.min(this.liveElapsed,this.time-Math.max(p.seenAt,p.contactAt)));p.exertion=p.mentalState.exertion;
         p.recoil=advanceDetailedRecoil(p.recoil,p.profile,dt);
+        p.recoilPitch=advanceDetailedRecoil(p.recoilPitch,p.profile,dt);
         const available=this.actors.some(t=>t.team!==p.team&&t.hp>0&&this.visible(p,t));
         if(available&&p.visualCueAt===undefined)p.visualCueAt=this.time;
         if(!available)p.visualCueAt=undefined;
         for(const cue of p.pendingCues.filter(c=>c.at<=this.time))this.observeIntel(p,cue.contact);
         p.pendingCues=p.pendingCues.filter(c=>c.at>this.time);
-      }else p.exertion=clamp(p.exertion+(p.speed>2.5?.025:p.speed>.2?.008:-.06)*dt,0,1);
+      }else {
+        p.exertion=clamp(p.exertion+(p.speed>2.5?.025:p.speed>.2?.008:-.06)*dt,0,1);
+        p.recoil=advanceLiveRecoil(p.recoil,p.skills.recoilControl,dt);
+        p.recoilPitch=advanceLiveRecoil(p.recoilPitch,p.skills.recoilControl,dt);
+      }
       if(!p.isBoosted && (p.jump || p.jumpY>0)){
         const wasAirborne=p.jumpY>0;
         const jumpState=advanceLiveJump({jump:p.jump,jumpY:p.jumpY,jumpVy:p.jumpVy},dt);
         p.jump=jumpState.jump;p.jumpY=jumpState.jumpY;p.jumpVy=jumpState.jumpVy;
-        if(wasAirborne&&!p.jump&&p.jumpChain>0&&p.jumpChain<3)p.jumpQueued=true;
-        if(wasAirborne&&!p.jump&&p.jumpChain>=3){p.jumpChain=0;p.jumpQueued=false;}
+        if(wasAirborne&&!p.jump){this.jumpSound(p,'landing');p.jumpChain=0;p.jumpQueued=false;}
         if(p.jump)p.stance='jump';
-        if(p.jump&&p.jumpVy<0&&p.jumpY<.55&&(p.peek?.style==='crouch-swing'||p.jumpQueued))p.crouch=true;
+        if(p.jump&&p.jumpVy<0&&p.jumpY<.55&&p.peek?.style==='crouch-swing')p.crouch=true;
       }
       if(this.time-p.lastShot>.55)p.burst=0;
       p.blinded=Math.max(0,p.blinded-dt);
@@ -800,6 +819,27 @@ export class FpsLiveSimulation {
   }
   private defenseHome(p:Actor):'A'|'B' {
     return this.defenseSetup==='stack_b'?(p.slot<4?'B':'A'):this.defenseSetup==='stack_a'?(p.slot<4?'A':'B'):p.slot<3?'A':'B';
+  }
+  private openingDefenseAssignment(p:Actor):{point:FpsPoint;intent:string}|undefined {
+    if(this.bomb.status==='planted'||this.liveElapsed>22)return undefined;
+    if(this.defenseSetup==='aggressive_banana') {
+      const points:Record<number,FpsPoint>={3:{x:17,z:-10},4:{x:23,z:-6}};
+      const point=points[p.slot];return point?{point,intent:'Aggressive Banana pair — take the early lane, then fall back to B'}:undefined;
+    }
+    if(this.defenseSetup==='mid_push') {
+      const points:Record<number,FpsPoint>={2:LIVE_MID.underpass.west,4:LIVE_MID.underpass.east};
+      const point=points[p.slot];return point?{point,intent:'Mid pair — take brief control, report contact, then rotate'}:undefined;
+    }
+    if(this.defenseSetup==='retake_setup'&&p.slot===2)
+      return {point:{x:0,z:25},intent:'Connector flex — keep both sites reachable for the retake'};
+    return undefined;
+  }
+  private postPlantIntent(p:Actor):string {
+    if(p.id===this.postPlantPlanterId)return 'Priority 1 — planter holds the close crossfire and stays alive';
+    if(p.role==='anchor')return 'Priority 2 — anchor the assigned site lane; do not chase';
+    if(p.role==='entry'||p.role==='trade')return 'Priority 3 — hold the trade angle and stop the retake';
+    if(p.role==='support'||p.role==='caller')return 'Priority 4 — delay the retake with utility and cover';
+    return 'Priority 5 — hold the flank route; report, do not roam';
   }
   private acknowledge(p:Actor,order:LiveInformationOrder) {
     if(order.issuedAt===undefined||p.acknowledgedOrder===order.issuedAt||this.time<(order.readyAt??0))return;
@@ -1109,18 +1149,18 @@ export class FpsLiveSimulation {
     const primary=LIVE_FPS_MAP.sites[this.site];
     const plantPlan=p.bomb&&this.bomb.status==='carried'?planLivePlant(p,livePlantSite(p)??this.site,beliefs,p.goal):undefined;
     p.intent=p.attacking?'Act on personal information':'Hold the assigned angle';
-    if(p.decision==='save') {
+    if(p.decision==='save'&&!(p.attacking&&this.bomb.status==='planted')) {
       const spawn=LIVE_FPS_MAP.spawns[p.attacking?'attackers':'defenders'];goal={x:spawn.x+(p.slot-2)*3,z:spawn.z};p.intent='Preserve equipment: defuse time is gone';
     } else if(this.bomb.status==='planted') {
       const site=this.bomb.site??this.site,positions=LIVE_TACTICAL[site];
-      if(p.attacking){goal=positions.postPlant[p.slot%positions.postPlant.length];p.intent='Protect the planted device';}
+      if(p.attacking){goal=positions.postPlant[p.slot%positions.postPlant.length];p.intent=this.postPlantIntent(p);}
       else {
         const defuser=allies.find(a=>a.id===defuseAssignment?.id);
         if(p===defuser) {
           goal=this.bomb;p.intent='Reach and defuse the device';
         } else {
           // Synchronized retake rally and coordinated breach
-          const retakeReady = this.bomb.remaining < 26 || allies.filter(a => a !== defuser && distance(a, this.bomb) < 14).length >= Math.min(2, allies.length - 1);
+          const retakeReady = this.bomb.remaining < 35.5 || allies.filter(a => a !== defuser && distance(a, this.bomb) < 14).length >= Math.min(2, allies.length - 1);
           if (retakeReady) {
             const retakeAngles = site === 'B' ? [{ x: 18, z: 25 }, { x: 27, z: 24 }] : [{ x: -16, z: 24 }, { x: -11, z: 30 }];
             goal = retakeAngles[p.slot % retakeAngles.length];
@@ -1235,6 +1275,8 @@ export class FpsLiveSimulation {
           }
         }
       }
+      const opening=!activeOrder&&!seen.length?this.openingDefenseAssignment(p):undefined;
+      if(opening){goal=opening.point;p.intent=opening.intent;}
     }
     const teamOrder=this.informationOrders[p.team];
     if(p.isBoosted && (p.damageAt===this.time || (p.attacking ? this.bomb.status==='dropped' : this.bomb.status==='planted' || (liveOrderActive(teamOrder,this.time)&&teamOrder.site && teamOrder.site!==this.defenseHome(p))))){
@@ -1248,7 +1290,8 @@ export class FpsLiveSimulation {
     const needCover=!objectiveUrgent&&!carrierCanAdvance&&memoryFresh&&p.contact&&(p.reload>0||p.ammo===0||(p.hp<38)||(p.hp<55&&p.decision==='prepare')||(Math.max(seen.length,knownNearby)>1&&this.skill(p,'positioning',p.skills.gameSense)>.45));
     if(needCover && p.decision!=='save') {
       const cover=findLiveCover(p,p.contact!,allies.filter(a=>a!==p),p.profile?this.skill(p,'positioning',p.skills.gameSense):undefined,beliefs.filter(c=>c.certainty>.35));
-      if(cover){goal=cover;p.retreatUntil=this.time+1.4;p.intent=p.ammo===0||p.reload>0?'Break sight before reloading':p.hp<38?'Low HP — fall back behind cover':'Reposition behind cover';if(p.profile){p.motor.coverChoices++;p.motor.coverExposureSum+=beliefs.filter(c=>c.certainty>.35&&liveSightline(c,cover)).length;}}
+      const staysNearPostPlant=!p.attacking||this.bomb.status!=='planted'||!!cover&&distance(cover,this.bomb)<9;
+      if(cover&&staysNearPostPlant){goal=cover;p.retreatUntil=this.time+1.4;p.intent=p.ammo===0||p.reload>0?'Break sight before reloading':p.hp<38?'Low HP — fall back behind cover':'Reposition behind cover';if(p.profile){p.motor.coverChoices++;p.motor.coverExposureSum+=beliefs.filter(c=>c.certainty>.35&&liveSightline(c,cover)).length;}}
     } else if(!objectiveUrgent && p.retreatUntil>this.time && p.goal)goal=p.goal;
     if(!objectiveUrgent&&p.attacking&&!seen.length&&!memoryFresh&&p.smokeLineupGoal){
       goal=p.smokeLineupGoal;p.intent=`Setting up a smoke at ${liveCallout(p.smokeLineupGoal)}`;
@@ -1287,7 +1330,7 @@ export class FpsLiveSimulation {
     // Post-plant attackers watch the retake routes rather than turning back to the site centre.
     const watchedSite=this.bomb.status==='planted'?(this.bomb.site??this.site):p.attacking?this.site:distance(goal,LIVE_FPS_MAP.sites.A)<distance(goal,LIVE_FPS_MAP.sites.B)?'A':'B';
     const watch=p.attacking
-      ?LIVE_TACTICAL[watchedSite].holds[p.slot%3]
+      ?this.bomb.status==='planted'?LIVE_TACTICAL[watchedSite].postPlant[p.slot%5]:LIVE_TACTICAL[watchedSite].holds[p.slot%3]
       :this.bomb.status==='planted'?LIVE_TACTICAL[watchedSite].postPlant[p.slot%5]:LIVE_TACTICAL[watchedSite].entries[p.slot%2];
     p.watchPoint={...watch};
     if(p.profile){const pattern=knownFpsPattern(p.patterns,p,this.round);if(pattern&&this.skill(p,'informationReading',0)>.5&&liveSightline(p,pattern)&&Math.abs(angle(heading(p,pattern)-heading(p,watch)))<.7){p.watchPoint={x:pattern.x,z:pattern.z};p.intent+=' · prepare for a previously observed hold';}}
@@ -1402,7 +1445,7 @@ export class FpsLiveSimulation {
     this.turn(p,heading(p,p.aimFocus!.point)+(p.profile?p.preparedError:0));
   }
   private applyMotion(p:Actor,wish:FpsPoint,dt:number,stance:LiveStance) {
-    if(p.isBoosted&&Math.hypot(wish.x,wish.z)>.1){p.isBoosted=false;p.boostSpot=undefined;p.jump=true;p.jumpVy=0;}
+    if(p.isBoosted&&Math.hypot(wish.x,wish.z)>.1){p.isBoosted=false;p.boostSpot=undefined;p.jump=true;p.jumpVy=0;this.jumpSound(p,'takeoff');}
 
     if(p.profile){
       if(Math.hypot(wish.x,wish.z)<.1&&p.speed>.03){
@@ -1459,6 +1502,8 @@ export class FpsLiveSimulation {
     moved.x=Math.max(-34.0,Math.min(34.0,moved.x));
     moved.z=Math.max(-43.0,Math.min(43.0,moved.z));
     p.vx=(moved.x-p.x)/dt;p.vz=(moved.z-p.z)/dt;p.speed=Math.hypot(p.vx,p.vz);
+    if(p.speed>.12||p.jump||p.jumpY>.05||p.crouch!==p.wasCrouched)p.stillSince=this.time;
+    p.wasCrouched=p.crouch;
     if(p.speed>.03 || allyMovingAhead){p.lastMoved=this.time;p.stuckFor=0;}else if(Math.hypot(wish.x,wish.z)>.1)p.stuckFor+=dt;
     p.x=moved.x;p.z=moved.z;p.stance=Math.hypot(wish.x,wish.z)<.1?(p.speed>.12?'brake':p.crouch?'crouch':'hold'):stance;
     if(p.bomb){this.bomb.x=p.x;this.bomb.z=p.z;}
@@ -1505,7 +1550,7 @@ export class FpsLiveSimulation {
     if(!p.jump&&!p.isBoosted&&this.time>=p.nextJump&&!keepAim&&!p.bomb&&!p.reload&&p.hp>45&&p.contact&&this.time-p.contactAt<3&&!p.target) {
       const eye=(p.crouch?1.08:1.6),gain=LIVE_JUMP_VELOCITY*LIVE_JUMP_VELOCITY/(2*12.5);
       if(!liveSightline(p,p.contact,eye,1.6)&&liveSightline(p,p.contact,eye+gain,1.6)&&!p.knownSmokes.some(s=>liveSmokeOccludes(p,p.contact!,eye+gain,1.6,s,this.time))){
-        p.jump=true;p.jumpVy=LIVE_JUMP_VELOCITY;p.nextJump=this.time+5;
+        p.jump=true;p.jumpVy=LIVE_JUMP_VELOCITY;p.nextJump=this.time+18+this.executionRandom()*8;this.jumpSound(p,'takeoff');
         p.action='Jump peeking';this.radio(p,'Jump-checking over cover - hold the trade.');
       }
     }
@@ -1513,10 +1558,9 @@ export class FpsLiveSimulation {
     const next=p.path[0];
     const nearRouteEdge=!!next&&p.path.length>1&&distance(p,next)<.8;
     if(!p.jump&&!p.isBoosted&&this.time>=p.nextJump&&!keepAim&&!p.target&&!p.bomb&&!p.reload&&p.hp>45
-      &&p.path.length>0&&p.speed>2.35&&(p.jumpQueued||nearRouteEdge||this.executionRandom()<.035)){
-      p.jump=true;p.jumpVy=LIVE_JUMP_VELOCITY;p.jumpQueued=false;p.jumpChain++;
-      if(p.jumpChain>3)p.jumpChain=1;
-      p.nextJump=this.time+(p.jumpChain<3?.35:4.5);
+      &&p.path.length>0&&p.speed>2.65&&nearRouteEdge&&this.executionRandom()<.1){
+      p.jump=true;p.jumpVy=LIVE_JUMP_VELOCITY;p.jumpQueued=false;p.jumpChain=0;this.jumpSound(p,'takeoff');
+      p.nextJump=this.time+26+this.executionRandom()*14;
       if(p.speed>3.1)p.action='Momentum jump';
     }
     if(!next){
@@ -1607,7 +1651,23 @@ export class FpsLiveSimulation {
           this.emit('objective',`${p.name}: "[RADIO] Fake plant tapped — hold the angle!"`,p.team,p.id);
           return true;
         }
-        if(p.channel>=LIVE_PLANT_RULES.seconds){p.bomb=false;p.channel=0;this.bomb={status:'planted',x:p.x,z:p.z,remaining:40,site};p.cash=Math.min(16000,p.cash+300);p.impact.plants++;this.emit('objective',`${p.name} planted at ${site}`,p.team,p.id);for(const actor of this.actors)actor.nextThink=this.time;}return true;
+        if(p.channel>=LIVE_PLANT_RULES.seconds){
+          p.bomb=false;p.channel=0;this.postPlantPlanterId=p.id;this.bomb={status:'planted',x:p.x,z:p.z,remaining:40,site};
+          this.nextBombTick=this.time+.15;
+          p.cash=Math.min(16000,p.cash+300);p.impact.plants++;
+          this.emit('objective',`${p.name} planted at ${site}`,p.team,p.id);
+          const defenders=this.actors.filter(actor=>!actor.attacking&&actor.hp>0);
+          for(const actor of this.actors){
+            actor.nextThink=this.time;
+            if(actor.attacking){actor.peek=undefined;actor.goal=undefined;actor.path=[];actor.probeGoal=undefined;actor.approachUntil=0;actor.retreatUntil=0;}
+          }
+          for(const defender of defenders)defender.information=`Bomb planted at ${site} — retake now`;
+          const caller=defenders.find(actor=>actor.role==='caller')??defenders.find(actor=>actor.role==='anchor')??defenders[0];
+          if(caller)this.radio(caller,`Bomb planted at ${site}! Regroup and start the retake now.`,true);
+          const postPlantCaller=this.actors.find(actor=>actor.attacking&&actor.hp>0&&actor.role==='caller')
+            ??this.actors.find(actor=>actor.attacking&&actor.hp>0&&actor.role==='support')??p;
+          this.radio(postPlantCaller,'Post-plant priorities: 1 planter stays alive, 2 anchor crossfire, 3 trade, 4 delay with utility, 5 hold flank — no solo chase.',true);
+        }return true;
       }
     }
     if(!p.attacking && this.bomb.status==='planted' && distance(p,this.bomb)<1.5&&liveSightline(p,this.bomb)) {
@@ -1710,6 +1770,10 @@ export class FpsLiveSimulation {
       }
     }
   }
+  private jumpSound(player:Actor,phase:'takeoff'|'landing') {
+    this.audioCues.push({kind:'jump',phase,x:player.x,z:player.z});
+    this.hear(player,phase==='landing'?14:18,'footstep');
+  }
   private fire(p:Actor,target:Actor) {
     const weapon=LIVE_WEAPONS[p.weapon],continuingGlockBurst=p.glockBurstRemaining>0;
     p.ammo--;p.nextShot=this.time+weapon.interval;p.lastShot=this.time;
@@ -1731,8 +1795,9 @@ export class FpsLiveSimulation {
       ?this.mechanicsLearner?.choose(p.id,target.id,p.team,fpsFireContext(d,p.speed,p.ammo,weapon.magazine),this.mechanicsRandom)??(d>20?'burst':'sustain')
       :'sustain';
     if(isRifle){
-      if(fireCadence==='burst'&&p.burst>=2){p.nextShot+=.22+(1-this.skill(p,'recoilControl',p.skills.mechanics))*.12;p.burst=0;}
-      else if(fireCadence==='sustain'&&p.burst>=(p.profile?5:4+Math.round(p.skills.mechanics*3))){p.nextShot+=p.profile?.3:.22+(1-p.skills.mechanics)*.18;p.burst=0;}
+      const recoilControl=this.skill(p,'recoilControl',p.skills.recoilControl);
+      if(fireCadence==='burst'&&p.burst>=2){p.nextShot+=.22+(1-recoilControl)*.12;p.burst=0;}
+      else if(fireCadence==='sustain'&&p.burst>=4+Math.round(recoilControl*3)){p.nextShot+=.22+(1-recoilControl)*.18;p.burst=0;}
     }
     if(p.weapon==='deagle'&&d>12){p.nextShot+=0.32;}
     const opportunities=new Set<FpsSpecialtyOpportunity>();
@@ -1746,13 +1811,22 @@ export class FpsLiveSimulation {
     const quickScope=sniperScopeWindow>=.1&&sniperScopeWindow<.5;
     const scopedPrecision=sniperScopeWindow>=.5 ? .68 : quickScope ? .88 : 1;
     if(sniperScopeWindow!==Infinity)p.action=quickScope?'Quick-scoping':sniperScopeWindow>=.5?'Holding the scope':'Fast scope snap';
-    const spread=((p.profile?weapon.spread+Math.max(0,Math.min(1,movement))*.022:liveAimSpread(p.skills,weapon.spread,p.pressure,p.exertion,movement,shotBurst)*(1-(effect?.executionBonus??0)))+(unscopedSniper?.12:0))*scopedPrecision*(p.crouch?0.72:1.0)*(p.jump?2.5:1.0);
+    const stationary=p.speed<=.12&&!p.jump&&(p.jumpY??0)<=.04;
+    const settleWindow=p.crouch?.14:.22;
+    const precisionReady=stationary&&this.time-p.stillSince>=settleWindow;
+    const precisionWeapon=['pistol','rifle','sniper'].includes(weapon.category??'');
+    const settlingPenalty=precisionWeapon&&!precisionReady?1.5+Math.max(0,Math.min(1,movement))*2.0:1;
+    const stanceAccuracy=p.crouch?(precisionReady?.64:.92):1;
+    const sprayBloom=1+Math.min(8,Math.max(0,shotBurst-1))*.055;
+    const spread=((p.profile?weapon.spread+Math.max(0,Math.min(1,movement))*.022:liveAimSpread(p.skills,weapon.spread,p.pressure,p.exertion,movement,shotBurst)*(1-(effect?.executionBonus??0)))+(unscopedSniper?.12:0))*scopedPrecision*stanceAccuracy*settlingPenalty*sprayBloom*(p.jump?2.5:1.0);
     const input=p.profile?detailedInputError(p.profile,p.pressure,this.executionRandom)*(1-(effect?.executionBonus??0)):0;
-    const yaw=p.yaw+(this.executionRandom()+this.executionRandom()-1)*spread+input+(p.profile?p.recoil:0);
+    const yaw=p.yaw+(this.executionRandom()+this.executionRandom()-1)*spread+input+p.recoil;
     const fromY=(p.crouch?1.08:1.6)+(p.jumpY??0);
     const desiredPitch=Math.atan2(liveActorHeadY(target)-fromY,d||1);
-    const pitch=(p.pitch??desiredPitch)+(this.executionRandom()+this.executionRandom()-1)*spread;
-    if(p.profile){p.motor.inputSamples++;p.motor.inputErrorSum+=input;p.motor.inputErrorSquareSum+=input*input;p.motor.recoilSamples++;p.motor.recoilResidualSum+=Math.abs(p.recoil);p.recoil+=detailedRecoilImpulse(p.weapon,shotBurst);}
+    const pitch=(p.pitch??desiredPitch)+(this.executionRandom()+this.executionRandom()-1)*spread+p.recoilPitch;
+    if(p.profile){p.motor.inputSamples++;p.motor.inputErrorSum+=input;p.motor.inputErrorSquareSum+=input*input;p.motor.recoilSamples++;p.motor.recoilResidualSum+=Math.abs(p.recoil)+Math.abs(p.recoilPitch);}
+    const recoilKick=liveWeaponRecoilKick(p.weapon,shotBurst);
+    p.recoil+=recoilKick.yaw;p.recoilPitch+=recoilKick.pitch;
     const origin={x:p.x,y:fromY,z:p.z},direction=liveRayDirection(yaw,pitch),farPoint={x:p.x+direction.x*65,y:fromY+direction.y*65,z:p.z+direction.z*65};
     const wallHits=liveWallIntersections(origin,farPoint),opaqueWall=wallHits.find(hit=>!hit.wall.bulletPenetration);
     const wallRange=opaqueWall?opaqueWall.t*65:65;
@@ -1772,6 +1846,16 @@ export class FpsLiveSimulation {
     this.shots.push({id:++this.sequence,time:this.time,actorId:p.id,weapon:equippedWeapon,
       from:{x:origin.x,z:origin.z},to,fromY:origin.y,toY,team:p.team,
       ...(victim&&victimHit?{targetId:victim.id,hitRegion:victimHit.region}:{})});
+    if(!victim){
+      let closest:{distance:number;x:number;z:number}|undefined;
+      for(const actor of this.actors.filter(a=>a!==p&&a.team!==p.team&&a.hp>0)){
+        for(const y of [liveActorHeadY(actor),.92+(actor.jumpY??0)]){
+          const sample=closestShotApproach({x:actor.x,y,z:actor.z},origin,{x:to.x,y:toY,z:to.z});
+          if(!closest||sample.distance<closest.distance)closest=sample;
+        }
+      }
+      if(closest&&closest.distance<1.05)this.audioCues.push({kind:'nearMiss',x:closest.x,z:closest.z});
+    }
     this.disturbSmokesAlongShot(p,to);
     if(p.weapon==='sniper'){
       p.retreatUntil=this.time+1.25;
@@ -1800,6 +1884,11 @@ export class FpsLiveSimulation {
   private damage(p:Actor,victim:Actor,rawDamage:number,isHeadshot:boolean,weaponId:LiveEquippedWeapon,firstShot:boolean,sampleTarget?:string,friendlyDamageScale=1) {
     const friendly=p.team===victim.team,scaledRawDamage=rawDamage*(friendly?clamp(friendlyDamageScale,0,1):1);
     const damage=scaledRawDamage*(victim.armor>0?.78:1),actualDamage=Math.min(victim.hp,damage);
+    if(actualDamage>0&&(Object.hasOwn(LIVE_WEAPONS,weaponId)||weaponId==='knife')){
+      const region=isHeadshot?'head':'body',lethal=actualDamage>=victim.hp;
+      this.bloodMarks.push({id:++this.sequence,x:victim.x,z:victim.z,startedAt:this.time,region,radius:region==='head'?.46:.34});
+      this.audioCues.push({kind:'impact',region,lethal,x:victim.x,z:victim.z});
+    }
     const rifleShot=weaponId==='rifle'||weaponId==='ak47'||weaponId==='m4a1_s';
     if(!friendly){
       if(weaponId!=='knife')p.impact.hits++;
@@ -1875,6 +1964,7 @@ export class FpsLiveSimulation {
       attackTeam: this.attackTeam,
       attackSite: this.site,
       tactic: this.tacticArchetype,
+      defenseSetup:this.defenseSetup,
       bombPlanted: this.bomb.status==='planted'||this.bomb.status==='exploded'||this.bomb.status==='defused',
       winner: team,
     });
@@ -1891,23 +1981,24 @@ export class FpsLiveSimulation {
   snapshot():LiveSnapshot {
     const teamPlan=(team:FpsTeamId):LiveTeamPlan=>({buy:this.teamBuys[team].mode,buyReason:this.teamBuys[team].reason,style:team===this.attackTeam?this.protocol.style:'defense',phase:team===this.attackTeam?this.protocol.phase:'hold',site:team===this.attackTeam?this.site:undefined,
       information:this.bomb.status==='planted'?team===this.attackTeam?`Device planted ${this.bomb.site} — protect the post-plant`:`Device confirmed ${this.bomb.site} — assess the retake and clock`:this.informationOrders[team].reason});
-    return {version:'hexatrick-live-exhibition-v9',time:this.time,round:this.round,phase:this.phase,
+    return {version:'hexatrick-live-exhibition-v10',time:this.time,round:this.round,phase:this.phase,
       ...(this.learner?{learning:this.learner.stats()}:{}),
       ...(this.mechanicsLearner?{mechanicsLearning:this.mechanicsLearner.stats()}:{}),
       remaining:this.phase==='live'&&this.bomb.status==='planted'?this.bomb.remaining:this.remaining,score:{...this.score},winner:this.winner,
       roundWinner:this.roundWinner,roundReason:this.roundReason,attackTeam:this.attackTeam,
       players:this.actors.map(p=>({id:p.id,name:p.name,team:p.team,attacking:p.attacking,role:p.role,x:p.x,z:p.z,yaw:p.yaw,pitch:p.pitch??0,
         hp:p.hp,armor:p.armor,cash:p.cash,weapon:p.weapon,ammo:p.ammo,reserve:p.reserve,reload:p.reload,kills:p.kills,deaths:p.deaths,
-        equipped:p.equipped,weaponReady:p.weaponReady,lastSwing:p.lastSwing,information:p.information,
+        equipped:p.equipped,weaponReady:p.weaponReady,lastSwing:p.lastSwing,
+        information:this.bomb.status==='planted'&&!p.attacking?`Bomb planted at ${this.bomb.site??'site'} — retake now`:p.information,
         jump:p.jump,jumpY:p.jumpY,jumpVy:p.jumpVy,radioMessage:p.radioMessage,
         isBoosted:p.isBoosted,boostSpot:p.boostSpot,
         ...(p.profile?{skillProfile:{version:p.profile.version,revision:p.profile.revision,source:p.profile.source},diagnostics:{...p.motor},mental:{...p.mentalState}}:{}),
         action:p.action,bomb:p.bomb,kit:p.kit,flash:p.flash,smoke:p.smoke,incendiary:p.incendiary,he:p.he,blinded:p.blinded,channel:p.channel,throwAt:p.throwAt,throwKind:p.throwKind,
         utilityPrep:p.utilityPreparation?{kind:p.utilityPreparation.kind,releaseAt:p.utilityPreparation.readyAt+.2}:undefined,teamKills:p.teamKills??0,
         reloadDuration:p.reloadDuration,reloadSilent:p.reloadSilent,
-        personality:p.personality,specialty:p.specialty,lastShot:p.lastShot,callout:liveCallout(p),intent:p.intent,skills:{...p.skills},exertion:p.exertion,impact:{...p.impact},speed:p.speed,stance:p.stance,crouch:p.crouch})),
+        personality:p.personality,specialty:p.specialty,lastShot:p.lastShot,callout:liveCallout(p),intent:p.intent,skills:{...p.skills,recoilControl:this.skill(p,'recoilControl',p.skills.recoilControl)},exertion:p.exertion,impact:{...p.impact},speed:p.speed,stance:p.stance,crouch:p.crouch})),
       events:this.events.map(e=>({...e})),shots:this.shots.map(s=>({...s,from:{...s.from},to:{...s.to}})),
-      smokes:this.smokes.map(s=>({...s})),fires:this.fires.map(f=>({...f})),blasts:this.blasts.map(b=>({...b})),grenades:this.grenades.map(g=>({...g})),teams:{blue:teamPlan('blue'),red:teamPlan('red')},
+      smokes:this.smokes.map(s=>({...s})),fires:this.fires.map(f=>({...f})),blasts:this.blasts.map(b=>({...b})),bloodMarks:this.bloodMarks.map(b=>({...b})),grenades:this.grenades.map(g=>({...g})),teams:{blue:teamPlan('blue'),red:teamPlan('red')},
       droppedWeapons:this.droppedWeapons.map(w=>({...w})),bomb:{...this.bomb}};
   }
 

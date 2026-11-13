@@ -9,6 +9,7 @@ import {advanceLiveVelocity,liveShotSpeedLimit,LIVE_RUN_SPEED,LIVE_WALK_SPEED,LI
 import {buyLiveTeam} from './fps/fpsLiveEconomy.ts';
 import {launchLiveGrenade,stepLiveGrenade,liveGrenadeSightline} from './fps/fpsLiveGrenades.ts';
 import {FPS_IDENTITY_PERSONALITIES,generatePlayerDNA} from './fps/fpsIdentity.ts';
+import {chooseLiveDefenseSetup} from './fps/fpsLiveTactics.ts';
 
 const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
 const coach={tempo:.6,rigidity:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8,communication:.7,leadership:.7,adaptability:.7,development:.5};
@@ -16,6 +17,27 @@ const chemistry={trust:.6,communication:.6,understanding:.6,leadershipAcceptance
 const cards=Array.from({length:10},(_,i)=>({id:`tactics-${i}`,name:`Player ${i}`,stats:{lan:80,iq:80,tf:80,clu:80,sta:80,flx:80,ldr:80}}));
 const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
 const game=()=>new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity);
+
+test('CT opening formations rotate instead of repeating the same setup',()=>{
+  const history=[];let previous;
+  for(let round=1;round<=6;round++){
+    const setup=chooseLiveDefenseSetup(history,'red',{A:0,B:0},()=>.5);
+    assert.notEqual(setup,previous);
+    history.push({round,attackTeam:'red',attackSite:'A',tactic:'default_pick',defenseSetup:setup,bombPlanted:false,winner:'blue'});
+    previous=setup;
+  }
+});
+
+test('post-plant Ts hold their assigned crossfire instead of investigating stale contacts',()=>{
+  const sim=game(),player=sim.actors.find(actor=>actor.attacking);
+  Object.assign(sim,{phase:'live',time:40,liveElapsed:25,attackTeam:player.team,site:'A',
+    bomb:{status:'planted',x:-23,z:21,site:'A',remaining:28}});
+  Object.assign(player,{hp:100,target:undefined,contact:{x:0,z:-21},contactAt:sim.time,intelManaged:false,
+    path:[],goal:undefined,peek:undefined,probeGoal:undefined});
+  sim.decide(player);
+  assert.deepEqual(player.goal,LIVE_TACTICAL.A.postPlant[player.slot%5]);
+  assert.match(player.intent,/Priority [1-5]/);
+});
 
 const encounter=()=>{
   const sim=game(),p=sim.actors[0],enemy=sim.actors[5];
@@ -117,6 +139,17 @@ test('a precise shot aimed at the visible head resolves and traces the same head
   const shot=sim.shots.at(-1);
   assert.equal(shot.targetId,enemy.id);assert.equal(shot.hitRegion,'head');
   assert.ok(shot.to.z<enemy.z);assert.equal(p.impact.headshots,1);assert.ok(enemy.hp<100);
+  assert.equal(sim.snapshot().bloodMarks.length,1,'hit stains should remain in the live round snapshot');
+  assert.ok(sim.drainAudioCues().some(cue=>cue.kind==='impact'&&cue.region==='head'));
+});
+
+test('a close bullet miss produces a spatial near-miss cue',()=>{
+  const {sim,p,enemy}=encounter();
+  Object.assign(p,{x:0,z:0,yaw:0,pitch:0,weapon:'ak47',ammo:30,reserve:0,acquired:sim.time,burst:0});
+  Object.assign(enemy,{x:.7,z:10,hp:100,crouch:false,jumpY:0});
+  sim.fire(p,enemy);
+  assert.equal(sim.shots.at(-1).targetId,undefined);
+  assert.ok(sim.drainAudioCues().some(cue=>cue.kind==='nearMiss'));
 });
 
 test('the B fountain centrepiece stops a head-level round before its target',()=>{
@@ -472,15 +505,14 @@ test('an urgent device contest releases a previous retreat commitment',()=>{
 });
 
 
-test('defensive stacks learn confirmed sites rather than secret failed calls',()=>{
-  const sim=game();
-  sim.round=4;
-  sim.roundHistory=[1,2,3].map(round=>({round,attackTeam:'red',attackSite:'B',tactic:'rush_b',bombPlanted:false,winner:'blue'}));
-  sim.startRound();
-  assert.equal(sim.defenseSetup,'standard');
-  sim.roundHistory=sim.roundHistory.map(h=>({...h,bombPlanted:true}));
-  sim.startRound();
-  assert.equal(sim.defenseSetup,'stack_b');
-  sim.round=16;sim.startRound();
-  assert.equal(sim.defenseSetup,'standard','Side switch must not reuse the other attackers? history');
+test('defensive stacks weight confirmed plants, ignore failed calls, and scope history to the current attackers',()=>{
+  const missed=[1,2,3].map(round=>({round,attackTeam:'red',attackSite:'B',tactic:'rush_b',bombPlanted:false,winner:'blue'}));
+  const missedAtA=missed.map(round=>({...round,attackSite:'A'}));
+  const a=chooseLiveDefenseSetup(missed,'red',{A:0,B:0},()=>.42);
+  const b=chooseLiveDefenseSetup(missedAtA,'red',{A:0,B:0},()=>.42);
+  assert.equal(a,b,'unplanted site calls are not exposed to the defense');
+  const planted=missed.map(round=>({...round,bombPlanted:true}));
+  assert.equal(chooseLiveDefenseSetup(planted,'red',{A:0,B:3},()=>.5),'stack_b');
+  assert.equal(chooseLiveDefenseSetup(planted,'blue',{A:0,B:0},()=>.42),chooseLiveDefenseSetup([],'blue',{A:0,B:0},()=>.42),
+    'a side switch does not reuse information from the other attacking team');
 });

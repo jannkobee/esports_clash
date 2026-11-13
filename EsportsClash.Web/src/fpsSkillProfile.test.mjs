@@ -47,8 +47,11 @@ test('new profiles are pinned without mutating legacy cards, and absent profiles
   const inputs=profiles(),before=structuredClone(cards),sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity,{skillProfiles:inputs});
   inputs[cards[0].id].values.reactions=1;assert.equal(sim.actors[0].profile.values.reactions,5.5);
   assert.ok(Object.isFrozen(sim.actors[0].profile.values));assert.deepEqual(cards,before);
-  assert.equal(sim.snapshot().version,'hexatrick-live-exhibition-v9');
-  assert.equal(new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity).snapshot().version,'hexatrick-live-exhibition-v9');
+  assert.equal(sim.snapshot().players[0].skills.recoilControl,.5,'the snapshot exposes the independent profile rating normalized to 0–1');
+  const custom=profiles({recoilControl:10}),customSim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity,{skillProfiles:custom});
+  assert.equal(customSim.snapshot().players[0].skills.recoilControl,1);
+  assert.equal(sim.snapshot().version,'hexatrick-live-exhibition-v10');
+  assert.equal(new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity).snapshot().version,'hexatrick-live-exhibition-v10');
   assert.throws(()=>new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity,{skillProfiles:{}}));
 });
 
@@ -107,6 +110,10 @@ test('Recoil Control compensates an actual accumulated impulse and affects subse
   const fire=(recoilControl,residual)=>{const {sim,p,enemy}=encounter({recoilControl});p.weapon='rifle';p.recoil=residual;sim.fire(p,enemy);return {shot:sim.shots[0],p};};
   const slow=fire(1,a),fast=fire(10,b);assert.ok(slow.p.motor.recoilResidualSum>fast.p.motor.recoilResidualSum);
   assert.notEqual(slow.shot.to.x,fast.shot.to.x);assert.equal(slow.p.ammo,fast.p.ammo);
+  const cadence=recoilControl=>{const {sim,p,enemy}=encounter({recoilControl});p.weapon='rifle';p.burst=3;sim.fire(p,enemy);return p;};
+  const lowControl=cadence(1),highControl=cadence(10);
+  assert.equal(lowControl.burst,0,'low recoil control settles after a shorter spray');assert.equal(highControl.burst,4,'high recoil control sustains a longer spray');
+  assert.ok(lowControl.nextShot>highControl.nextShot,'low recoil control requires more settling time');
 });
 
 test('Movement Control changes braking-input delay while physical speed and shot thresholds stay fixed',()=>{

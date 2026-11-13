@@ -66,3 +66,22 @@ export const LIVE_WEAPONS: Record<LiveWeapon, LiveWeaponStats> = {
   negev: { name: 'Negev', cost: 1700, magazine: 100, reserve: 200, damage: 30, interval: .075, spread: .020, reload: 4.2, headshotMultiplier: 2.5, side: 'both', category: 'heavy' },
   scout: { name: 'SSG 08', cost: 1700, magazine: 10, reserve: 40, damage: 75, interval: 1.10, spread: .006, reload: 2.8, headshotMultiplier: 3.8, side: 'both', category: 'sniper' },
 };
+
+/** A bounded per-weapon spray pattern in radians for the local exhibition. */
+export function liveWeaponRecoilKick(weapon: LiveWeapon, shot: number): { yaw: number; pitch: number } {
+  const family = LIVE_WEAPONS[weapon].category;
+  const pitchBase = weapon === 'ak47' ? .038 : weapon === 'm4a1_s' || weapon === 'rifle' ? .032
+    : weapon === 'deagle' ? .035 : family === 'smg' ? .021 : family === 'sniper' ? .006
+      : family === 'shotgun' ? .016 : family === 'heavy' ? .019 : .014;
+  const sideBase = weapon === 'ak47' ? .018 : weapon === 'm4a1_s' || weapon === 'rifle' ? .014
+    : family === 'smg' ? .012 : family === 'sniper' ? .004 : family === 'heavy' ? .01 : .008;
+  const sidePattern = [-.24, .12, .34, -.42, .5, -.18, .32, -.38];
+  const index = Math.max(0, Math.floor(shot) - 1);
+  const climb = .82 + Math.min(index, 6) * .105;
+  return { yaw: sidePattern[index % sidePattern.length] * sideBase, pitch: pitchBase * climb };
+}
+
+export function advanceLiveRecoil(recoil: number, control: number, dt: number): number {
+  const recovery = (.008 + Math.max(0, Math.min(1, control)) * .075) * dt;
+  return Math.sign(recoil) * Math.max(0, Math.abs(recoil) - recovery);
+}

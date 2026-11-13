@@ -3,7 +3,11 @@ import type { LiveWeapon } from './fpsLiveWeapons.ts';
 export type FpsAudioCue =
   | { kind: 'gunshot'; weapon: LiveWeapon; x: number; z: number }
   | { kind: 'reload'; x: number; z: number }
-  | { kind: 'footstep'; stance: 'walk' | 'run' | 'crouch'; x: number; z: number };
+  | { kind: 'footstep'; stance: 'walk' | 'run' | 'crouch'; x: number; z: number }
+  | { kind: 'jump'; phase: 'takeoff' | 'landing'; x: number; z: number }
+  | { kind: 'bombTick'; urgency: 'normal' | 'urgent' | 'final'; x: number; z: number }
+  | { kind: 'impact'; region:'head'|'body'; lethal:boolean; x:number; z:number }
+  | { kind: 'nearMiss'; x:number; z:number };
 
 export interface FpsAudioListener { x: number; z: number; yaw: number }
 
@@ -43,10 +47,16 @@ export class FpsBroadcastAudio {
     const context = this.getContext();
     if (!context || context.state !== 'running') return;
     const spatial = this.spatial(cue.x, cue.z, listener);
+    if ((cue.kind === 'bombTick' && spatial.range > 22) || (cue.kind === 'jump' && spatial.range > 25)
+      || (cue.kind === 'impact' && spatial.range > 24) || (cue.kind === 'nearMiss' && spatial.range > 16)) return;
     if (spatial.gain < .004) return;
     if (cue.kind === 'gunshot') this.playGunshot(context, cue.weapon, spatial.gain, spatial.pan);
     else if (cue.kind === 'reload') this.playReload(context, spatial.gain, spatial.pan);
-    else this.playFootstep(context, cue.stance, spatial.gain, spatial.pan);
+    else if (cue.kind === 'footstep') this.playFootstep(context, cue.stance, spatial.gain, spatial.pan);
+    else if (cue.kind === 'jump') this.playJump(context, cue.phase, spatial.gain, spatial.pan);
+    else if(cue.kind==='bombTick')this.playBombTick(context, cue.urgency, spatial.gain, spatial.pan);
+    else if(cue.kind==='impact')this.playImpact(context,cue.region,cue.lethal,spatial.gain,spatial.pan);
+    else this.playNearMiss(context,spatial.gain,spatial.pan);
   }
 
   private getContext(): AudioContext | undefined {
@@ -68,14 +78,14 @@ export class FpsBroadcastAudio {
     return context;
   }
 
-  private spatial(x: number, z: number, listener: FpsAudioListener): { gain: number; pan: number } {
+  private spatial(x: number, z: number, listener: FpsAudioListener): { gain: number; pan: number; range: number } {
     const dx = x - listener.x, dz = z - listener.z;
     const range = Math.hypot(dx, dz);
     const direction = range > .001 ? Math.atan2(dx, dz) : listener.yaw;
     const pan = clamp(Math.sin(direction - listener.yaw), -1, 1);
     // Map units are approximately metres. The quadratic falloff keeps distant reports audible without overpowering close cues.
     const falloff = clamp(1 - range / 72, 0, 1);
-    return { gain: falloff * falloff, pan };
+    return { gain: falloff * falloff, pan, range };
   }
 
   private voice<T extends AudioNode>(node: T, pan: number, gain: number): T {
@@ -146,5 +156,61 @@ export class FpsBroadcastAudio {
     const filter=context.createBiquadFilter();filter.type='bandpass';filter.frequency.value=1850;filter.Q.value=2.4;
     const rattle=context.createGain();rattle.gain.setValueAtTime(.0001,now+.09);rattle.gain.linearRampToValueAtTime(.065*distanceGain,now+.1);rattle.gain.exponentialRampToValueAtTime(.0001,now+.17);
     metal.connect(filter);filter.connect(rattle);this.voice(rattle,pan,1);metal.start(now+.09);this.releaseVoice(metal,now+.18);
+  }
+
+  private playJump(context:AudioContext,phase:'takeoff'|'landing',distanceGain:number,pan:number):void {
+    const now=context.currentTime,landing=phase==='landing';
+    const thud=context.createOscillator();thud.type='triangle';
+    thud.frequency.setValueAtTime(landing?78:112,now);thud.frequency.exponentialRampToValueAtTime(landing?34:48,now+.12);
+    const envelope=context.createGain();envelope.gain.setValueAtTime(.0001,now);
+    envelope.gain.linearRampToValueAtTime((landing?.28:.18)*distanceGain,now+.006);
+    envelope.gain.exponentialRampToValueAtTime(.0001,now+(landing?.16:.11));
+    thud.connect(envelope);this.voice(envelope,pan,1);thud.start(now);this.releaseVoice(thud,now+(landing?.17:.12));
+    const grit=context.createBufferSource();grit.buffer=this.noise!;
+    const filter=context.createBiquadFilter();filter.type='lowpass';filter.frequency.value=landing?420:650;
+    const gritEnvelope=context.createGain();gritEnvelope.gain.setValueAtTime(.0001,now);
+    gritEnvelope.gain.linearRampToValueAtTime((landing?.10:.07)*distanceGain,now+.008);
+    gritEnvelope.gain.exponentialRampToValueAtTime(.0001,now+(landing?.12:.08));
+    grit.connect(filter);filter.connect(gritEnvelope);this.voice(gritEnvelope,pan,1);grit.start(now);this.releaseVoice(grit,now+(landing?.13:.09));
+  }
+
+  private playBombTick(context:AudioContext,urgency:'normal'|'urgent'|'final',distanceGain:number,pan:number):void {
+    const now=context.currentTime;
+    const tone=urgency==='final'?1480:urgency==='urgent'?1180:920;
+    for(const [offset,frequency] of [[0,tone],[.07,tone*.78]] as const){
+      const oscillator=context.createOscillator();oscillator.type='square';
+      oscillator.frequency.setValueAtTime(frequency,now+offset);
+      const envelope=context.createGain();envelope.gain.setValueAtTime(.0001,now+offset);
+      envelope.gain.linearRampToValueAtTime((urgency==='final'?.18:urgency==='urgent'?.14:.11)*distanceGain,now+offset+.004);
+      envelope.gain.exponentialRampToValueAtTime(.0001,now+offset+.04);
+      oscillator.connect(envelope);this.voice(envelope,pan,1);oscillator.start(now+offset);this.releaseVoice(oscillator,now+offset+.045);
+    }
+  }
+  private playImpact(context:AudioContext,region:'head'|'body',lethal:boolean,distanceGain:number,pan:number):void {
+    const now=context.currentTime,head=region==='head',duration=lethal ? .13 : .09;
+    const click=context.createOscillator();click.type=head?'triangle':'sine';
+    click.frequency.setValueAtTime(head ? 310 : 180,now);
+    click.frequency.exponentialRampToValueAtTime(head?92:58,now+duration);
+    const clickEnvelope=context.createGain();clickEnvelope.gain.setValueAtTime(.0001,now);
+    clickEnvelope.gain.linearRampToValueAtTime((head?.19:.14)*distanceGain,now+.003);
+    clickEnvelope.gain.exponentialRampToValueAtTime(.0001,now+duration);
+    click.connect(clickEnvelope);this.voice(clickEnvelope,pan,1);click.start(now);this.releaseVoice(click,now+duration+.01);
+
+    const splat=context.createBufferSource();splat.buffer=this.noise!;
+    const filter=context.createBiquadFilter();filter.type='bandpass';filter.frequency.value=head?1280:760;filter.Q.value=head?1.15:.72;
+    const envelope=context.createGain();envelope.gain.setValueAtTime(.0001,now);
+    envelope.gain.linearRampToValueAtTime((head?.14:.2)*(lethal?1.2:1)*distanceGain,now+.006);
+    envelope.gain.exponentialRampToValueAtTime(.0001,now+(lethal?.17:.12));
+    splat.connect(filter);filter.connect(envelope);this.voice(envelope,pan,1);splat.start(now);this.releaseVoice(splat,now+.18);
+  }
+  private playNearMiss(context:AudioContext,distanceGain:number,pan:number):void {
+    const now=context.currentTime,whoosh=context.createBufferSource();whoosh.buffer=this.noise!;
+    const filter=context.createBiquadFilter();filter.type='bandpass';filter.frequency.setValueAtTime(2100,now);filter.frequency.exponentialRampToValueAtTime(620,now+.105);filter.Q.value=.8;
+    const envelope=context.createGain();envelope.gain.setValueAtTime(.0001,now);
+    envelope.gain.linearRampToValueAtTime(.16*distanceGain,now+.008);envelope.gain.exponentialRampToValueAtTime(.0001,now+.11);
+    whoosh.connect(filter);filter.connect(envelope);this.voice(envelope,pan,1);whoosh.start(now);this.releaseVoice(whoosh,now+.12);
+    const tail=context.createOscillator();tail.type='sine';tail.frequency.setValueAtTime(260,now);tail.frequency.exponentialRampToValueAtTime(90,now+.09);
+    const tailEnvelope=context.createGain();tailEnvelope.gain.setValueAtTime(.0001,now);tailEnvelope.gain.linearRampToValueAtTime(.045*distanceGain,now+.004);tailEnvelope.gain.exponentialRampToValueAtTime(.0001,now+.095);
+    tail.connect(tailEnvelope);this.voice(tailEnvelope,pan,1);tail.start(now);this.releaseVoice(tail,now+.105);
   }
 }

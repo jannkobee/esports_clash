@@ -1,4 +1,4 @@
-import type { FpsTeamId } from './types.ts';
+import type { FpsTeamId } from './fpsTypes.ts';
 
 export type FpsFireCadence='burst'|'sustain';
 export type FpsFireContext=`${'near'|'far'}:${'steady'|'moving'}:${'loaded'|'low'}`;

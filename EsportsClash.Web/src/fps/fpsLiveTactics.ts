@@ -16,6 +16,7 @@ export interface LiveRoundHistory {
   round: number;
   attackSite: 'A'|'B';
   tactic: LiveTacticArchetype;
+  defenseSetup?:LiveDefenseSetup;
   firstBloodSite?: 'A'|'B'|'Mid';
   bombPlanted: boolean;
   winner: 'blue'|'red';
@@ -36,6 +37,32 @@ export function chooseLiveTactic(history:readonly LiveRoundHistory[],team:'blue'
   });
   let roll=random()*weights.reduce((a,b)=>a+b,0);
   return choices.find((_,index)=>(roll-=weights[index])<0)??choices[choices.length-1];
+}
+
+/** Vary the opening CT formation while biasing toward only confirmed opponent plants. */
+export function chooseLiveDefenseSetup(
+  history:readonly LiveRoundHistory[],
+  attackTeam:'blue'|'red',
+  confirmedPlants:{A:number;B:number},
+  random:()=>number,
+):LiveDefenseSetup {
+  const recent=history.filter(round=>round.attackTeam===attackTeam).slice(-5);
+  const previous=recent.at(-1)?.defenseSetup;
+  const choices:LiveDefenseSetup[]=['standard','stack_a','stack_b','aggressive_banana','mid_push','retake_setup'];
+  const available=choices.filter(setup=>setup!==previous);
+  const weighted=available.map(setup=>{
+    const repeatCount=recent.slice(-3).filter(round=>round.defenseSetup===setup).length;
+    let weight=1;
+    if(setup==='stack_a')weight+=Math.min(1.8,Math.max(0,confirmedPlants.A-1)*.65);
+    if(setup==='stack_b')weight+=Math.min(1.8,Math.max(0,confirmedPlants.B-1)*.65);
+    if(setup==='mid_push')weight=1.05;
+    if(setup==='retake_setup')weight=.95;
+    weight*=repeatCount===0?1:repeatCount===1?.38:.16;
+    return {setup,weight};
+  });
+  const total=weighted.reduce((sum,item)=>sum+item.weight,0);
+  let roll=random()*total;
+  return weighted.find(item=>(roll-=item.weight)<0)?.setup??available[0]??'standard';
 }
 
 export interface LiveAttackProtocol {

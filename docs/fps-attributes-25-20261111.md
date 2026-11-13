@@ -21,7 +21,7 @@ The supported registry exposes **24 active bounded consumers and one reserved ab
 | Flicking | Finite large acquired-target correction. | Removed correction angle and controlled large-angle acquisition. |
 | Tracking | Motion estimate from personally observed samples and sustained correction. | Observed-sample tracking error/samples; estimates do not follow hidden movement. |
 | Precision | Terminal correction and residual motor-input error. | Fine correction, signed error, squared error and sample count; weapon dispersion remains. |
-| Recoil Control | Actor compensation between identical actual weapon-yaw impulses. | Accumulated recoil, residual before shots, changed physical shot rays. This is horizontal recoil, not a complete vertical/spray model. |
+| Recoil Control | Actor compensation for accumulated yaw/pitch recoil, plus rifle spray length and settling delay. | Residual before shots, changed physical shot rays, and different burst/settling cadence. Weapon impulses remain fixed; this is not a full Counter-Strike spray-pattern model. |
 | Movement Control | Delay before issuing the brake input. | Brake-input delay and stop-to-shot timing with common physical acceleration/speed/weapon thresholds. |
 | Peeking | Endpoint execution error for an already selected collision-constrained jiggle. | Planned endpoint error, actual movement/exposure and return. Shoulder/wide/jump peek catalogs are not supplied by this consumer. |
 | Utility Execution | Placement error before launching the chosen real grenade. | Throw error/attempts, inventory spend, fuse and ballistic positions. |

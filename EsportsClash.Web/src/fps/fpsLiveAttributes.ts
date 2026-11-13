@@ -1,9 +1,10 @@
 import type { PlayerAttributes } from '../types.ts';
 
 const unit=(value:number|undefined)=>Math.max(0,Math.min(1,(value??50)/100));
-export interface LiveSkills { mechanics:number;gameSense:number;teamwork:number;clutch:number;stamina:number;flexibility:number;leadership:number }
+export interface LiveSkills { mechanics:number;recoilControl:number;gameSense:number;teamwork:number;clutch:number;stamina:number;flexibility:number;leadership:number }
 export function liveSkills(stats:PlayerAttributes):LiveSkills {
-  return {mechanics:unit(stats.lan),gameSense:unit(stats.iq),teamwork:unit(stats.tf),clutch:unit(stats.clu),stamina:unit(stats.sta),flexibility:unit(stats.flx),leadership:unit(stats.ldr??(stats.iq*.6+stats.tf*.4))};
+  // Legacy cards have no standalone recoil rating; retain LAN only as their explicit compatibility estimate.
+  return {mechanics:unit(stats.lan),recoilControl:unit(stats.lan),gameSense:unit(stats.iq),teamwork:unit(stats.tf),clutch:unit(stats.clu),stamina:unit(stats.sta),flexibility:unit(stats.flx),leadership:unit(stats.ldr??(stats.iq*.6+stats.tf*.4))};
 }
 /** Attributes change the quality/timing of an attempt, never guarantee the selected outcome. */
 export function liveDecisionInterval(skills:LiveSkills):number {return 1.65-skills.gameSense*.45-skills.flexibility*.5;}

@@ -913,7 +913,7 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
         {scopeKind && <div className={`live-fps__scope live-fps__scope--${scopeKind}`} aria-label={`${LIVE_WEAPONS[scopeKind].name} scope`}>
           <span className="live-fps__scope-lens"><span className="live-fps__scope-reticle" /></span>
         </div>}
-        {effectiveCamera === 'first' && !scopeKind && <div className="live-fps__crosshair" aria-hidden="true" />}
+        {effectiveCamera === 'first' && !scopeKind && !['sniper','scout'].includes(observed.equipped) && <div className="live-fps__crosshair" aria-hidden="true" />}
         {observed.blinded > .2 && effectiveCamera === 'first' && (
           <div className="live-fps__flash" style={{ opacity: Math.min(.85, observed.blinded / 3) }} aria-hidden="true" />
         )}

@@ -143,7 +143,7 @@ test('confirmed death removes the known threat and late reports cannot resurrect
   sim.observeIntel(p,sight(enemy.id,-19,-5),false);
   sim.fire(p,enemy);assert.equal(enemy.hp,0);assert.ok(!p.intel.contacts.some(c=>c.enemyId===enemy.id));
   sim.observeIntel(p,sight(enemy.id,-19,-5,19),false);assert.equal(p.intel.contacts.length,0);
-  const snapshot=sim.snapshot();assert.equal(snapshot.version,'hexatrick-live-exhibition-v9');
+  const snapshot=sim.snapshot();assert.equal(snapshot.version,'hexatrick-live-exhibition-v10');
   assert.equal('intel' in snapshot.players[0],false);assert.equal('sentReports' in snapshot.players[0],false);assert.equal('informationOrders' in snapshot,false);
   assert.ok(!JSON.stringify(snapshot).includes('riskTolerance'));assert.equal(typeof snapshot.players[0].information,'string');
 });

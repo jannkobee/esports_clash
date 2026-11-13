@@ -40,6 +40,8 @@ export interface DirectorState {
   lastKillAtById: Record<string, number>;
   lastKillHeadshotById: Record<string, boolean>;
   lastKillCutAt: number;
+  fightLockId?: string;
+  fightLockUntil: number;
   bombPlantSettledUntil: number;
   bombPlantSettleSite?: 'A' | 'B';
   bombPlantSettleSpot?: { x: number; z: number };
@@ -59,6 +61,8 @@ export const PLANT_CHANNEL_DURATION = 3.2;
 export const PLANT_SETTLE_WINDOW = 1.2;
 export const DIRECTOR_MIN_CUT_INTERVAL = 1.2;
 export const DIRECTOR_POST_KILL_BEAT = 1.4;
+export const DIRECTOR_PREDICTIVE_CUT_INTERVAL = 0.28;
+export const DIRECTOR_FIGHT_LOCK_DURATION = 2.2;
 export const THIRD_PERSON_BACK_OFFSET = 2.15;
 export const THIRD_PERSON_RIGHT_OFFSET = 0.52;
 export const THIRD_PERSON_MIN_BACK = 0.22;
@@ -80,6 +84,7 @@ export function createDirectorState(): DirectorState {
     lastKillAtById: {},
     lastKillHeadshotById: {},
     lastKillCutAt: -100,
+    fightLockUntil: -100,
     bombPlantSettledUntil: -100,
   };
 }
@@ -105,6 +110,8 @@ function resetForNewMatch(state: DirectorState, snapshot: LiveSnapshot): void {
   state.lastKillAtById = {};
   state.lastKillHeadshotById = {};
   state.lastKillCutAt = -100;
+  state.fightLockId = undefined;
+  state.fightLockUntil = -100;
   state.bombPlantSettledUntil = -100;
   state.bombPlantSettleSite = undefined;
   state.bombPlantSettleSpot = undefined;
@@ -242,7 +249,13 @@ export function scoreDirectorKillPriority(
       const aimBonus = aimDot > 0.9 ? 2.6 : aimDot > 0.72 ? 1.3 : 0;
       const finishBonus = enemy.hp <= 45 ? 2.1 : 0;
       const mutualShot = snapshot.time - enemy.lastShot < 0.9 ? 1.8 : 0;
-      const candidateDuel = sightBase + aimBonus + finishBonus + mutualShot;
+      const enemyLookX = Math.sin(enemy.yaw);
+      const enemyLookZ = Math.cos(enemy.yaw);
+      const enemyAimDot = (player.x - enemy.x) * invLen * enemyLookX + (player.z - enemy.z) * invLen * enemyLookZ;
+      const preFightBonus = dist < 23
+        ? (aimDot > 0.74 ? 2.8 : aimDot > 0.52 ? 1.5 : 0) + (enemyAimDot > 0.72 ? 1.6 : 0)
+        : 0;
+      const candidateDuel = sightBase + aimBonus + finishBonus + mutualShot + preFightBonus;
       if (candidateDuel > duelScore) duelScore = candidateDuel;
     } else if (dist < 11) {
       // Tight pre-contact corner tension before a swing.
@@ -277,6 +290,20 @@ export function scoreDirectorKillPriority(
   const roleBias = player.role === 'entry' || player.role === 'sniper' || player.role === 'trade' ? 0.25 : 0;
 
   return duelScore + firingScore + killMomentum + combatRoleBonus + planterPenalty + stickyBonus + roleBias;
+}
+
+function predictsDirectorFight(player: LivePlayer, snapshot: LiveSnapshot): boolean {
+  if (player.hp <= 0) return false;
+  const lookX = Math.sin(player.yaw), lookZ = Math.cos(player.yaw);
+  return snapshot.players.some((enemy) => {
+    if (enemy.hp <= 0 || enemy.team === player.team) return false;
+    const dist = distance(player, enemy);
+    if (dist > 23 || !liveSightline(player, enemy)) return false;
+    const invLen = dist > 0.01 ? 1 / dist : 0;
+    const aimDot = (enemy.x - player.x) * invLen * lookX + (enemy.z - player.z) * invLen * lookZ;
+    const enemyAimDot = Math.cos(Math.atan2(player.x - enemy.x, player.z - enemy.z) - enemy.yaw);
+    return (dist < 15 && aimDot > 0.48) || (aimDot > 0.72 && enemyAimDot > 0.58);
+  });
 }
 
 function findLivingKillerOf(victimId: string, snapshot: LiveSnapshot): LivePlayer | undefined {
@@ -330,6 +357,10 @@ function pickDirectorFollowedPlayer(snapshot: LiveSnapshot, state: DirectorState
     return best.player;
   }
 
+  const lockedFight = players.find((p) => p.id === state.fightLockId && p.hp > 0 && !isActivelyPlanting(p));
+  if (lockedFight && snapshot.time < state.fightLockUntil) return lockedFight;
+  state.fightLockId = undefined;
+
   const existingEntry = ranked.find((entry) => entry.player.id === existing.id);
   const existingScore = existingEntry?.score ?? scoreDirectorKillPriority(existing, snapshot, state, state.followedId);
   const sinceCut = snapshot.time - state.cutAt;
@@ -343,15 +374,28 @@ function pickDirectorFollowedPlayer(snapshot: LiveSnapshot, state: DirectorState
     existingScore < 7.0 &&
     sinceCut >= 0.4;
 
+  const bestPredictsFight = predictsDirectorFight(best.player, snapshot);
+  const predictiveCut = best.player.id !== existing.id && bestPredictsFight && !predictsDirectorFight(existing, snapshot)
+    && sinceCut >= DIRECTOR_PREDICTIVE_CUT_INTERVAL;
   const tacticalCut =
     best.player.id !== existing.id &&
-    sinceCut >= DIRECTOR_MIN_CUT_INTERVAL &&
+    sinceCut >= (bestPredictsFight ? DIRECTOR_PREDICTIVE_CUT_INTERVAL : DIRECTOR_MIN_CUT_INTERVAL) &&
     best.score > existingScore + 1.15;
 
-  if (urgentKillCut || tacticalCut) {
+  if (urgentKillCut || predictiveCut || tacticalCut) {
     state.followedId = best.player.id;
     state.cutAt = snapshot.time;
+    if (bestPredictsFight) {
+      state.fightLockId = best.player.id;
+      state.fightLockUntil = snapshot.time + DIRECTOR_FIGHT_LOCK_DURATION;
+    }
     return best.player;
+  }
+
+  const activeExchange = snapshot.time - existing.lastShot < 0.85 || existing.action === 'Engaging' || existing.action === 'Trading';
+  if (activeExchange && predictsDirectorFight(existing, snapshot)) {
+    state.fightLockId = existing.id;
+    state.fightLockUntil = snapshot.time + DIRECTOR_FIGHT_LOCK_DURATION;
   }
 
   return existing;
@@ -401,6 +445,8 @@ export function evaluateBroadcastDirector(
     state.round = snapshot.round;
     state.cutAt = -100;
     state.lastKillCutAt = -100;
+    state.fightLockId = undefined;
+    state.fightLockUntil = -100;
     state.bombPlantSettledUntil = -100;
     state.lastBombStatus = snapshot.bomb.status;
   }
