@@ -1,68 +1,214 @@
-import { MeshBuilder, Mesh, Vector3, StandardMaterial, DynamicTexture, Color3, type Scene } from '@babylonjs/core';
-import { LIVE_FPS_MAP } from './fpsLiveMap.ts';
+import { MeshBuilder, Mesh, Vector3, StandardMaterial, Color3, DynamicTexture, type Scene } from '@babylonjs/core';
+import { liveBoxSurfaceUV, LIVE_SURFACE_METRES, type LiveSurface, type LiveSurfaceLibrary } from './fpsLiveGraphics.ts';
+import { LIVE_B_APARTMENTS, LIVE_BRIDGE, LIVE_RIVER, LIVE_CANAL_BANK, liveCutPavingRect } from './fpsLiveTerrain.ts';
+import { buildVillageArchitecture } from './fpsVillageArchitecture.ts';
+import { buildCanalWaterfront } from './fpsCanalWaterfront.ts';
+import { buildMidWindowScenery } from './fpsMidWindowScenery.ts';
+import {batchStaticLiveGeometry} from './fpsLiveRenderOptimization.ts';
 
-/**
- * Runtime map dressing inspired by CS2 Inferno aesthetics:
- * - Scalloped stone B fountain, planted water basin and blue courtyard mosaic.
- * - Banana curved slipway with overhead festoon string lights, stacked cargo barrels, and stenciled signs.
- * - Overhead stone archways bridging alleys (Banana arch, Port Arch, Church arch, Underpass lintel).
- * - A Courtyard with Tenuta-style arched loggia, Pit revetment railing/steps, and upper wooden gallery balcony.
- * - Walkable-space collision geometry remains strictly matched to the authoritative map.
- */
-export function buildLiveScenery(scene:Scene,material:(color:string)=>StandardMaterial):Mesh[] {
+export const LIVE_FESTOON_SPANS = [
+  { id:'banana-south', from:{x:14.04,y:5.1,z:-14}, to:{x:33.49,y:4.7,z:-14}, sag:.68 },
+  { id:'banana-mid', from:{x:14.04,y:5.1,z:-6}, to:{x:21.96,y:4.7,z:-6}, sag:.68 },
+  { id:'banana-north', from:{x:16.04,y:4.8,z:7.2}, to:{x:20.96,y:4.8,z:7.2}, sag:.52 },
+  { id:'fountain-gallery', from:{x:16.04,y:4.25,z:15}, to:{x:30.4,y:4.25,z:15}, sag:.42 },
+  { id:'mid-pizzeria', from:{x:-2.0,y:5.05,z:-13.5}, to:{x:3.0,y:5.15,z:-13.5}, sag:.38 },
+] as const;
+export function liveFestoonCablePoint(span:typeof LIVE_FESTOON_SPANS[number],t:number):Vector3 {
+  return new Vector3(span.from.x+(span.to.x-span.from.x)*t,
+    span.from.y+(span.to.y-span.from.y)*t-4*span.sag*t*(1-t),span.from.z+(span.to.z-span.from.z)*t);
+}
+
+/** Original Fontessa village: public market, civic courtyard and residential streets. */
+export function buildLiveScenery(scene:Scene,material:(color:string)=>StandardMaterial,surfaces?:LiveSurfaceLibrary):Mesh[] {
   const details:Mesh[]=[];
   const detailMesh=<T extends Mesh>(mesh:T,color:string)=>{
-    mesh.material=material(color);mesh.isPickable=false;details.push(mesh);return mesh;
+    mesh.material=material(color);mesh.isPickable=false;mesh.receiveShadows=true;details.push(mesh);return mesh;
   };
   const box=(name:string,x:number,y:number,z:number,w:number,h:number,d:number,color:string)=>{
-    const mesh=MeshBuilder.CreateBox(name,{width:w,height:h,depth:d},scene);mesh.position.set(x,y,z);mesh.material=material(color);details.push(mesh);return mesh;
+    const kind:LiveSurface|undefined=/tile-roof|terracotta-eave|ridge|chimney-pot|coping/.test(name)?'clay':/door-board|crossbar|crate|gallery|balcony|side-shutter|side-slat|shutter-\d|shutter--1|rafter|corbel|door-leaf/.test(name)?'timber'
+      :/arch-|loggia-|plinth|capital|side-sill|side-frame|mortar|quoin|stringcourse|cornice|pilaster|window-frame|door-surround|door-cornice|window-sill|edicola|chimney-shaft|chimney-cap/.test(name)?'stone':undefined;
+    const mesh=MeshBuilder.CreateBox(name,{width:w,height:h,depth:d,...(kind?{faceUV:liveBoxSurfaceUV(w,h,d,LIVE_SURFACE_METRES[kind])}:{})},scene);
+    mesh.position.set(x,y,z);mesh.material=kind&&surfaces?surfaces.material(kind,color):material(color);
+    mesh.isPickable=false;mesh.receiveShadows=true;details.push(mesh);return mesh;
   };
-  const plate=(name:string,x:number,y:number,z:number,w:number,h:number,color:string)=>box(name,x,y,z,w,h,.035,color);
 
-  // Facade plates & architectural trims hugging all buildings
-  for(const wall of LIVE_FPS_MAP.solids.filter(w=>!w.id.endsWith('wall')&&!w.id.startsWith('a-loggia'))) {
-    const width=wall.maxX-wall.minX,depth=wall.maxZ-wall.minZ,x=(wall.minX+wall.maxX)/2,z=(wall.minZ+wall.maxZ)/2;
-    for(const face of [-1,1]) {
-      const faceZ=face<0?wall.minZ-.022:wall.maxZ+.022;
-      plate(`${wall.id}-base-${face}`,x,.35,faceZ,width,.7,'#67736e');
-      if(wall.id.includes('container')||wall.id.includes('screen')) {
-        for(let at=wall.minX+.25;at<wall.maxX;at+=.5)plate(`${wall.id}-rib-${face}-${at}`,at,wall.height/2,faceZ,.045,wall.height-.18,'#50666b');
-        plate(`${wall.id}-serial-${face}`,x,wall.height-.5,faceZ,width*.55,.24,'#d0bd91');
-      } else if(wall.id.includes('fountain')) {
-        // Basin curb is handled specially below
-      } else if(wall.height>=4) {
-        const doorWidth=Math.min(3,width*.5);
-        plate(`${wall.id}-loading-door-${face}`,x,1.6,faceZ,doorWidth,3.1,'#435b60');
-        for(let i=0;i<8;i++)plate(`${wall.id}-shutter-${face}-${i}`,x,.25+i*.37,faceZ+face*.023,doorWidth,.035,'#758984');
-        if(wall.height>5)for(let at=wall.minX+2;at<wall.maxX-1;at+=3.5) {
-          plate(`${wall.id}-window-frame-${face}-${at}`,at,wall.height-2,faceZ,2.2,1.5,'#d0c7ad');
-          plate(`${wall.id}-window-${face}-${at}`,at,wall.height-2,faceZ+face*.025,1.95,1.24,'#334f5d');
-          plate(`${wall.id}-mullion-${face}-${at}`,at,wall.height-2,faceZ+face*.05,.06,1.24,'#8b9995');
-          // Mediterranean green wooden shutters flanking windows
-          plate(`${wall.id}-shutter-l-${face}-${at}`,at-1.15,wall.height-2,faceZ+face*.03,.4,1.4,'#3a5944');
-          plate(`${wall.id}-shutter-r-${face}-${at}`,at+1.15,wall.height-2,faceZ+face*.03,.4,1.4,'#3a5944');
-        }
-      } else {
-        for(const at of [wall.minX+.2,wall.maxX-.2])plate(`${wall.id}-crate-edge-${face}-${at}`,at,wall.height/2,faceZ,.12,wall.height,'#c3a574');
-        plate(`${wall.id}-crate-rail-${face}`,x,wall.height*.5,faceZ,width,.12,'#b59b73');
+  buildVillageArchitecture(scene,{box,detail:detailMesh},material,surfaces);
+  buildCanalWaterfront(scene,{box,detail:detailMesh},surfaces);
+  buildMidWindowScenery(scene,{box,detail:detailMesh});
+
+  // The attackers start in an actual dining room with a clear central departure aisle.
+  box('trattoria-ceiling-beam',0,4.28,-31.5,18,.18,.2,'#69503a');
+  box('trattoria-ceiling-beam-rear',0,4.28,-37,18,.18,.2,'#69503a');
+  for(const side of [-1,1]){
+    const x=side*6,z=-37;
+    box(`trattoria-table-top-${side}`,x,.8,z,1.7,.08,1.2,'#8d6848');
+    for(const sx of [-1,1])for(const sz of [-1,1])box(`trattoria-table-leg-${side}-${sx}-${sz}`,x+sx*.7,.38,z+sz*.45,.08,.76,.08,'#65503b');
+    for(const seat of [-1,1]){
+      const plate=detailMesh(MeshBuilder.CreateCylinder(`trattoria-plate-${side}-${seat}`,{height:.018,diameter:.32,tessellation:20},scene),'#e1dcc7');plate.position.set(x+seat*.45,.853,z);
+      const cup=detailMesh(MeshBuilder.CreateCylinder(`trattoria-cup-${side}-${seat}`,{height:.14,diameter:.1,tessellation:12},scene),'#c1b692');cup.position.set(x+seat*.45,.914,z+.27);
+      box(`trattoria-stool-${side}-${seat}`,x+seat*.5,.24,z+.42,.34,.48,.34,'#786248');
+    }
+    const cable=detailMesh(MeshBuilder.CreateCylinder(`trattoria-lamp-cable-${side}`,{height:1.05,diameter:.014,tessellation:6},scene),'#3e4340');cable.position.set(side*3,3.83,-36);
+    const shade=detailMesh(MeshBuilder.CreateCylinder(`trattoria-lamp-shade-${side}`,{height:.2,diameterTop:.12,diameterBottom:.4,tessellation:16},scene),'#a18550');shade.position.set(side*3,3.23,-36);
+  }
+  // Original Jade Lantern frontage: brick piers, jade tile eave and gold lettering.
+  const paintedSign=(name:string,text:string,x:number,y:number,z:number,w:number,h:number,bg:string,fg:string)=>{
+    const texture=new DynamicTexture(`${name}-paint`,{width:1024,height:256},scene,false);
+    const fontPx=Math.max(46,Math.min(112,Math.floor(880/Math.max(1,text.length*.68))));
+    texture.drawText(text,null,Math.round(128+fontPx*.36),`bold ${fontPx}px Georgia`,fg,bg,true);
+    const mat=new StandardMaterial(`${name}-material`,scene);mat.diffuseTexture=texture;mat.specularColor=Color3.Black();
+    const panel=box(name,x,y,z,w,h,.035,bg);panel.material=mat;return panel;
+  };
+  paintedSign('jade-lantern-gold-sign','JADE LANTERN',0,3.87,-29.28,10.8,.72,'#293f37','#dfc38c');
+  paintedSign('port-customs-name','DOGANA / PORTO FONTESSA',0,.51,43.9,6.8,.4,'#3d5c58','#e4d1a6');
+  paintedSign('jade-lantern-subtitle','NOODLE HOUSE  /  FONTESSA',0,3.35,-29.24,8,.24,'#293f37','#dbcaa4');
+  // Italian neighborhood shop signage & architectural landmarks across Mid and B Square.
+  const pizzeriaSign=paintedSign('pizzeria-rusticanella-sign','RUSTICANELLA  •  PIZZERIA',-1.95,3.25,-15,3.8,.62,'#f2ead8','#8f392d');
+  pizzeriaSign.rotation.y=Math.PI/2;
+  const pizzeriaMenu=paintedSign('pizzeria-wall-menu','PIZZA  /  VINO',-1.95,1.1,-17.5,.66,.92,'#2a3531','#ede4cc');
+  pizzeriaMenu.rotation.y=Math.PI/2;
+  const formaggiSign=paintedSign('formaggi-market-sign','FORMAGGI  &  SALUMI',2.94,3.22,-12.5,3.6,.56,'#efe4c8','#8c3b2f');
+  formaggiSign.rotation.y=Math.PI/2;
+  const albergoSign=paintedSign('albergo-blade-sign','ALBERGO',-9.82,4.9,-6.2,1.1,.45,'#c64d38','#f8f1e3');
+  albergoSign.rotation.z=Math.PI/2;
+  box('albergo-blade-bracket',-9.92,4.9,-6.2,.24,.045,.045,'#3d4541');
+  box('farmacia-cross-back',-1.96,3.15,-6.8,.05,.62,.62,'#e5decb');
+  box('farmacia-cross-v',-1.92,3.15,-6.8,.04,.46,.14,'#2d7a4d');
+  box('farmacia-cross-h',-1.92,3.15,-6.8,.04,.14,.46,'#2d7a4d');
+  paintedSign('mercato-arch-sign','MERCATO  DI  FONTESSA',18.5,3.19,7.77,3.1,.38,'#354e41','#ead8ad');
+  paintedSign('casa-dolce-vigna-sign','CASA  DOLCE  VIGNA',17.55,4.62,26.44,3.3,.46,'#e8e0ca','#5c4d3c');
+  box('pizzeria-trattoria-cloth-west',-6,.843,-37,1.4,.012,1.24,'#b94c42');
+  box('pizzeria-trattoria-cloth-east',6,.843,-37,1.4,.012,1.24,'#b94c42');
+  for(const side of [-1,1]){
+    for(let row=0;row<13;row++)for(let col=0;col<5;col++){
+      const x=side*6+(col-2)*.99+(row%2?.25:0);
+      box(`jade-brick-${side}-${row}-${col}`,x,.2+row*.215,-29.33,.96,.195,.05,row%3?'#a56d52':'#996044');
+    }
+    for(const x of [side*3.15,side*8.78])box(`jade-front-pier-${x}`,x,1.48,-29.22,.16,2.9,.17,'#354d42');
+    // Display windows reveal warm shelves; they are glass, not pretend doorways.
+    box(`jade-display-dark-${side}`,side*6,1.6,-29.25,4.85,1.45,.07,'#243e3c');
+    for(const offset of [-2.45,0,2.45])box(`jade-display-mullion-${side}-${offset}`,side*6+offset,1.6,-29.17,.065,1.56,.075,'#b7985f');
+    box(`jade-display-sill-${side}`,side*6,.85,-29.15,5.1,.15,.18,'#b79c70');
+    for(let shelf=0;shelf<2;shelf++){
+      box(`jade-window-shelf-${side}-${shelf}`,side*6,1.2+shelf*.55,-29.15,4.6,.045,.08,'#95744b');
+      for(let bowl=0;bowl<5;bowl++){
+        const vessel=detailMesh(MeshBuilder.CreateCylinder(`jade-display-bowl-${side}-${shelf}-${bowl}`,{height:.12,diameterTop:.24,diameterBottom:.14,tessellation:10},scene),'#d6c99b');
+        vessel.position.set(side*6-1.65+bowl*.8,1.28+shelf*.55,-29.1);
       }
     }
-    // Dress the long side elevations too: recessed shutters, stone sills, rain pipes.
-    // Keep volumes within the actor clearance margin; no walk-through cover props.
-    if(wall.height>=4)for(const side of [-1,1]) {
-      const faceX=side<0?wall.minX-.025:wall.maxX+.025;
-      box(`${wall.id}-side-plinth-${side}`,faceX,.3,z,.04,.6,depth,'#877f70');
-      for(let at=wall.minZ+1.8;at<wall.maxZ-1;at+=3.3) {
-        box(`${wall.id}-side-frame-${side}-${at}`,faceX,3.5,at,.055,1.5,1.35,'#d0c7ad');
-        box(`${wall.id}-side-shutter-${side}-${at}`,faceX+side*.03,3.5,at,.035,1.3,1.15,'#3a5944');
-        for(let slat=0;slat<6;slat++)box(`${wall.id}-side-slat-${side}-${at}-${slat}`,faceX+side*.05,2.98+slat*.2,at,.02,.035,1.1,'#60715e');
-        box(`${wall.id}-side-sill-${side}-${at}`,faceX,2.72,at,.14,.12,1.55,'#b7aa90');
-      }
-      box(`${wall.id}-downpipe-${side}`,faceX,wall.height/2,wall.minZ+.35,.09,wall.height-.2,.09,'#545f59');
-      // Subtle plaster repairs add age without reducing target contrast.
-      box(`${wall.id}-repair-${side}`,faceX,.95,wall.maxZ-.8,.035,.55,.9,'#a39c88');
+    const lantern=detailMesh(MeshBuilder.CreateSphere(`jade-red-lantern-${side}`,{diameter:.48,segments:12},scene),'#a94335');lantern.scaling.y=1.25;lantern.position.set(side*3.6,2.67,-28.55);
+    box(`jade-lantern-tassel-${side}`,side*3.6,2.24,-28.55,.05,.3,.05,'#c6a45b');
+    box(`jade-lantern-hanger-${side}`,side*3.6,3.01,-28.55,.025,.32,.025,'#403b2f');
+    const x=side*6.5,z=-26.8;
+    box(`jade-outside-table-top-${side}`,x,.74,z,1.4,.08,1.2,'#84613e');
+    for(const sx of [-1,1])for(const sz of [-1,1])box(`jade-outside-table-leg-${side}-${sx}-${sz}`,x+sx*.56,.35,z+sz*.46,.07,.7,.07,'#4f5547');
+    for(const sx of [-1,1]){
+      box(`jade-outside-bench-${side}-${sx}`,x,.43,z+sx*.5,1.25,.06,.24,'#ac8654');
+      for(const dx of [-.45,.45])box(`jade-outside-bench-leg-${side}-${sx}-${dx}`,x+dx,.2,z+sx*.5,.075,.4,.18,'#4f5547');
+      const bowl=detailMesh(MeshBuilder.CreateCylinder(`jade-outside-bowl-${side}-${sx}`,{height:.12,diameterTop:.24,diameterBottom:.12,tessellation:12},scene),'#dcd2b5');bowl.position.set(x+sx*.32,.85,z);
     }
   }
+  for(let i=0;i<58;i++){
+    const tile=detailMesh(MeshBuilder.CreateCylinder(`jade-eave-tile-${i}`,{height:1.82,diameter:.32,tessellation:8},scene),i%3?'#4d8578':'#3f6d67');
+    tile.rotation.x=Math.PI/2;tile.position.set(-9.2+i*.322,3.25,-28.9);
+  }
+  box('jade-eave-gold-edge',0,3.08,-28,18.9,.09,.1,'#bea367');
+  paintedSign('jade-street-menu','NOODLES / TEA',-10.5,1.35,-30.55,.78,.72,'#253c34','#d9c998');
+  for(const side of [-1,1])box(`jade-menu-foot-${side}`,-10.5+side*.29,.56,-30.8,.06,1.12,.38,'#6e583a');
+
+  // The lower central bridge uses one masonry vocabulary, from arch to stair cheeks.
+  for(const side of [-1,1]){
+    for(const [span,[a,b]] of [[LIVE_RIVER.minZ,LIVE_RIVER.maxZ],[2.9,5.6]].entries())for(let i=0;i<24;i++){
+      const t=(i+.5)/24*Math.PI,half=(b-a)/2,centre=(a+b)/2,rise=span===0?2.82:.82,spring=span===0?-2.1:-.1;
+      const z=centre-Math.cos(t)*half,y=spring+Math.sin(t)*rise;
+      const stone=box(`bridge-arch-dressed-stone-${side}-${span}-${i}`,side*1.67,y+.055,z,.22,.22,span===0?.38:.17,i%3?'#c4b294':'#dac8a6');
+      stone.rotation.x=Math.atan2(-Math.cos(t)*rise,Math.sin(t)*half);
+    }
+    box(`bridge-coping-river-${side}`,side*1.65,LIVE_BRIDGE.parapetY+.045,(LIVE_RIVER.minZ+LIVE_RIVER.maxZ)/2,.34,.1,LIVE_RIVER.maxZ-LIVE_RIVER.minZ+.18,'#d2bf9e');
+    box(`bridge-coping-bank-${side}`,side*1.65,LIVE_BRIDGE.parapetY+.045,4.25,.34,.1,2.8,'#d2bf9e');
+    for(const z of [LIVE_RIVER.minZ,2.85,5.62]){
+      box(`bridge-pilaster-${side}-${z}`,side*1.66,1.45,z,.32,.9,.3,'#b3a083');
+      box(`bridge-pilaster-cap-${side}-${z}`,side*1.66,1.96,z,.43,.13,.42,'#d2bf9e');
+      box(`bridge-lantern-post-${side}-${z}`,side*1.66,2.14,z,.035,.24,.035,'#414a3b');
+      box(`bridge-lantern-cage-${side}-${z}`,side*1.66,2.38,z,.17,.27,.17,'#4e5040');
+      box(`bridge-lantern-glass-${side}-${z}`,side*1.66,2.38,z,.13,.2,.18,'#d8ac60');
+      const cap=detailMesh(MeshBuilder.CreateCylinder(`bridge-lantern-roof-${side}-${z}`,{height:.1,diameterTop:0,diameterBottom:.28,tessellation:4},scene),'#47513e');cap.position.set(side*1.66,2.56,z);
+    }
+    box(`bridge-civic-banner-${side}`,side*1.79,1.4,-1.7,.025,.6,.72,'#834747');
+    box(`bridge-civic-banner-trim-${side}`,side*1.81,1.4,-1.7,.025,.51,.045,'#c2a363');
+    for(const north of [false,true])for(let i=0;i<5;i++){
+      const h=(north?5-i:i+1)*.2,z=(north?5.6:LIVE_BRIDGE.southApproach)+(i+.5)*.8;
+      box(`bridge-stair-coping-${side}-${north}-${i}`,side*1.7,h+.89,z,.32,.08,.81,'#d2bf9e');
+      box(`bridge-stair-nosing-${side}-${north}-${i}`,0,h+.012,z-.37,3.2,.025,.07,'#d8c7a6');
+    }
+    for(let i=0;i<21;i++){
+      const leaf=detailMesh(MeshBuilder.CreateSphere(`bridge-ivy-${side}-${i}`,{diameter:.17+(i%3)*.04,segments:5},scene),i%2?'#61794a':'#7f8c50');leaf.scaling.set(1,.4,.7);leaf.position.set(side*1.83,.98-(i%6)*.15,-1.2+Math.floor(i/6)*.34);
+    }
+  }
+  // Waterline masonry, service inlets and restrained weathering give the quay a purpose.
+  for(const x of [-18,-10,-3,7,15,27]){
+    box(`canal-waterline-stain-${x}`,x,-1.49,2.792,2.8,.16,.015,'#647a62');
+    box(`canal-quay-sill-${x}`,x,-.18,5.581,1.2,.12,.06,'#a9ac95');
+    box(`canal-wall-drain-${x}`,x,-.7,5.572,.42,.36,.025,'#3d504b');
+    for(let bar=0;bar<4;bar++)box(`canal-drain-grille-${x}-${bar}`,x-.15+bar*.1,-.7,5.553,.023,.31,.018,'#718077');
+    box(`canal-wall-sconce-${x}`,x,-.22,5.54,.15,.23,.16,'#4a5549');
+    box(`canal-wall-sconce-glass-${x}`,x,-.22,5.45,.09,.15,.02,'#d0ad68');
+    for(let moss=0;moss<5;moss++)box(`canal-joint-moss-${x}-${moss}`,x-1.2+moss*.46,-1.12+(moss%3)*.08,5.571,.2,.026,.015,'#697c54');
+  }
+  for(const z of [-5,-3,-1,1])for(const x of [-16,12,28]){
+    const rock=detailMesh(MeshBuilder.CreateSphere(`river-rounded-bed-stone-${x}-${z}`,{diameter:.3,segments:6},scene),'#7a8573');rock.position.set(x+(z%2)*.2,LIVE_RIVER.bedY+.09,z);rock.scaling.set(1,.5,.7);rock.metadata={castShadow:false};
+  }
+  for(let x=-18;x<29;x+=3){
+    box(`canal-edge-coping-${x}`,x,-.7,2.98,2.9,.15,.16,'#c3baa0');
+  }
+  for(const x of [-18,-12,-6,3,9,15,22,27]){
+    const post=detailMesh(MeshBuilder.CreateCylinder(`canal-iron-bollard-${x}`,{diameter:.17,height:.85,tessellation:8},scene),'#697260');post.position.set(x,-.775,3.04);
+  }
+  for(const [a,b] of [[-18,-12],[-12,-6],[-6,3],[3,9],[9,15],[15,22],[22,27]]){
+    const chain=detailMesh(MeshBuilder.CreateTube(`canal-safety-chain-${a}`,{path:Array.from({length:9},(_,i)=>{const t=i/8;return new Vector3(a+(b-a)*t,-.43-.14*4*t*(1-t),3.04);}),radius:.016,tessellation:5},scene),'#626b5d');chain.metadata={castShadow:false};
+  }
+  // Paving is visible at the lower level, with drainage strips against the bank.
+  box('canal-lower-drain',4,-1.185,5.42,48,.025,.13,'#737f72');
+  const lower=MeshBuilder.CreateGround('canal-lower-paving',{width:LIVE_CANAL_BANK.maxX-LIVE_CANAL_BANK.minX,height:2.7},scene);lower.position.set((LIVE_CANAL_BANK.minX+LIVE_CANAL_BANK.maxX)/2,-1.188,4.25);lower.material=surfaces?.material('paving','#a19e85')??material('#a19e85');lower.isPickable=false;lower.receiveShadows=true;details.push(lower);
+
+  // A real raised gallery, reached by the shared ten-tread staircase on its south side.
+  // Decorations stay on its solid back wall, columns, parapet and roof.
+  const gallery=LIVE_B_APARTMENTS;
+  const galleryFloor=MeshBuilder.CreateGround('b-apartments-tiled-floor',{width:2.84,height:7.72},scene);
+  galleryFloor.position.set(31.94,gallery.height+.014,17.9);
+  galleryFloor.material=surfaces?.material('clay','#b29d7e')??material('#b29d7e');
+  galleryFloor.setVerticesData('uv',[0,0,.9,0,0,2.4,.9,2.4]);galleryFloor.isPickable=false;galleryFloor.receiveShadows=true;details.push(galleryFloor);
+  for(const z of [15.5,18,20.5]) {
+    box(`b-apartments-window-reveal-${z}`,33.47,3.12,z,.05,1.38,1.32,'#d7c8a9');
+    box(`b-apartments-window-inset-${z}`,33.43,3.12,z,.035,1.15,1.08,'#334b50');
+    for(const side of [-1,1]) {
+      box(`b-apartments-side-shutter-${z}-${side}`,33.39,3.12,z+side*.29,.04,1.12,.52,'#47716b');
+      for(let slat=0;slat<8;slat++)box(`b-apartments-side-slat-${z}-${side}-${slat}`,33.36,2.65+slat*.13,z+side*.29,.025,.035,.46,'#739189');
+    }
+    box(`b-apartments-stone-sill-${z}`,33.36,2.4,z,.24,.12,1.48,'#ded0af');
+    const arch=detailMesh(MeshBuilder.CreateTube(`b-apartments-window-arch-${z}`,{path:Array.from({length:17},(_,i)=>{
+      const angle=i/16*Math.PI;return new Vector3(33.42,3.8+Math.sin(angle)*.4,z+Math.cos(angle)*.65);
+    }),radius:.065,tessellation:6},scene),'#d7c8a9');
+    arch.freezeWorldMatrix();
+  }
+  for(const z of [14.9,21.6]) {
+    box(`b-apartments-column-plinth-${z}`,30.4,1.9,z,.38,.2,.38,'#d7c8a9');
+    box(`b-apartments-column-capital-${z}`,30.4,4.22,z,.4,.15,.4,'#e2d5b7');
+  }
+  for(const z of [14.3,16.4,18.5,20.6])box(`b-apartments-roof-beam-${z}`,31.95,4.31,z,3.5,.08,.13,'#66513c');
+  box('b-apartments-front-cornice',30.3,4.5,18,.34,.2,8.65,'#dfcaa4');
+  box('b-apartments-parapet-coping',30.4,2.51,18.3,.3,.06,7.04,'#e1d2b2');
+  for(let step=0;step<gallery.steps;step++) {
+    const z=gallery.stairStart+step*(gallery.stairEnd-gallery.stairStart)/gallery.steps+.025;
+    box(`b-apartments-stair-nosing-${step}`,29.4,(step+1)*gallery.height/gallery.steps+.006,z,2,.012,.08,'#dfd2b7');
+  }
+  // Upper shutters and terracotta eaves complete the apartment facade above the gallery.
+  for(const z of [15.7,18.4,21]) {
+    box(`b-apartments-upper-frame-${z}`,33.47,5.7,z,.055,1.36,1.32,'#e4d3b0');
+    box(`b-apartments-upper-shutter-${z}`,33.42,5.7,z,.045,1.16,1.08,'#3e625f');
+    box(`b-apartments-upper-mullion-${z}`,33.38,5.7,z,.035,1.16,.05,'#92a79a');
+  }
+  box('b-apartments-terracotta-eave',38.5,7.04,18,10.3,.16,8.65,'#ae6447');
 
   // 1. Central scalloped stone fountain at B. Its complete silhouette stays
   // inside the existing 4.6 m collision footprint in LIVE_FPS_MAP.
@@ -72,7 +218,7 @@ export function buildLiveScenery(scene:Scene,material:(color:string)=>StandardMa
   const fCurb=detailMesh(MeshBuilder.CreateCylinder('fountain-basin-shell',{height:.58,diameterTop:4.02,diameterBottom:3.7,tessellation:24},scene),'#b5aa91');
   fCurb.position.set(fx,.55,fz);
   const rim=detailMesh(MeshBuilder.CreateTorus('fountain-scalloped-rim',{diameter:3.77,thickness:.14,tessellation:32},scene),'#e0d3b5');
-  rim.position.set(fx,.91,fz);rim.rotation.x=Math.PI/2;
+  rim.position.set(fx,.91,fz);
   // Low rounded stone lobes make the basin outline read as the flower-like
   // scalloped rim in the reference without extending beyond the collision box.
   for(let i=0;i<12;i++) {
@@ -83,9 +229,9 @@ export function buildLiveScenery(scene:Scene,material:(color:string)=>StandardMa
   }
   const fWater=detailMesh(MeshBuilder.CreateCylinder('fountain-water',{height:.035,diameter:3.25,tessellation:32},scene),'#477d81');
   fWater.position.set(fx,.87,fz);
-  const waterMat=new StandardMaterial('fountain-water-mat',scene);
+  const waterMat=surfaces?.water('#477d81')??new StandardMaterial('fountain-water-mat',scene);
   waterMat.diffuseColor=new Color3(.28,.54,.57);waterMat.specularColor=new Color3(.4,.6,.62);
-  waterMat.emissiveColor=new Color3(.025,.045,.045);waterMat.alpha=.86;
+  waterMat.emissiveColor=new Color3(.025,.045,.045);
   fWater.material=waterMat;
 
   // Tiered central jet and shallow upper bowl.
@@ -111,325 +257,41 @@ export function buildLiveScenery(scene:Scene,material:(color:string)=>StandardMa
     petal.position.set(x+.07,.96,z-.04);petal.scaling.y=.45;
   }
 
-  // B courtyard backdrop: weathered ochre plaster, an inset timber door,
-  // shuttered window, flower box and a compact rack of steel utility drums.
-  // Every piece is dressing on the existing b-screen collision volume.
-  const wallFaceZ=26.43, windowX=14.95, doorX=16.75, rackX=[18.22,18.78,19.34];
-  box('b-screen-window-reveal',windowX,2.22,wallFaceZ,1.28,.98,.055,'#d0bd9b');
-  box('b-screen-window-shadow',windowX,2.23,wallFaceZ-.035,1.05,.76,.035,'#344449');
-  for(const side of [-1,1]) {
-    box(`b-screen-window-shutter-${side}`,windowX+side*.72,2.22,wallFaceZ-.065,.28,.92,.055,'#52634e');
-    for(let slat=0;slat<6;slat++)box(`b-screen-window-slat-${side}-${slat}`,windowX+side*.72,1.87+slat*.14,wallFaceZ-.1,.22,.035,.025,'#879071');
-  }
-  box('b-screen-window-sill',windowX,1.68,wallFaceZ-.12,1.55,.13,.3,'#d7c8a9');
-  box('b-screen-flower-trough',windowX,1.52,wallFaceZ-.22,1.24,.2,.27,'#9a5037');
-  for(let i=0;i<5;i++) {
-    const blossom=detailMesh(MeshBuilder.CreateSphere(`b-screen-window-flower-${i}`,{diameter:.14,segments:6},scene),i%2?'#e4c16d':'#bd6653');
-    blossom.position.set(windowX-.48+i*.24,1.68,wallFaceZ-.24);
-    blossom.scaling.y=.6;
-  }
-  box('b-screen-door-frame',doorX,1.15,wallFaceZ,1.48,2.34,.07,'#d7c8a9');
-  box('b-screen-door',doorX,1.08,wallFaceZ-.05,1.18,2.1,.065,'#604535');
-  for(let slat=0;slat<5;slat++)box(`b-screen-door-board-${slat}`,doorX-.46+slat*.23,1.08,wallFaceZ-.09,.045,1.98,.025,'#896247');
-  box('b-screen-door-crossbar-top',doorX,1.78,wallFaceZ-.105,1.08,.1,.035,'#503b2d');
-  box('b-screen-door-crossbar-low',doorX,.66,wallFaceZ-.105,1.08,.1,.035,'#503b2d');
-  box('b-screen-door-awning',doorX,2.43,wallFaceZ-.26,1.78,.13,.58,'#a94b36');
-  for(let stripe=0;stripe<4;stripe++)box(`b-screen-door-awning-stripe-${stripe}`,doorX-.63+stripe*.42,2.435,wallFaceZ-.265,.18,.14,.57,'#e2d2ad');
-  const doorHandle=detailMesh(MeshBuilder.CreateSphere('b-screen-door-handle',{diameter:.1,segments:8},scene),'#c5a35e');
-  doorHandle.position.set(doorX+.42,1.05,wallFaceZ-.15);
-  box('b-screen-lantern-bracket',18.65,2.62,wallFaceZ-.14,.08,.2,.24,'#343835');
-  const siteLantern=MeshBuilder.CreateBox('b-screen-lantern-glass',{width:.18,height:.27,depth:.18},scene);
-  const siteLanternMaterial=new StandardMaterial('b-screen-lantern-material',scene);
-  siteLanternMaterial.diffuseColor=new Color3(.89,.68,.35);siteLanternMaterial.emissiveColor=new Color3(.6,.32,.09);siteLanternMaterial.specularColor=Color3.Black();
-  siteLantern.material=siteLanternMaterial;siteLantern.isPickable=false;details.push(siteLantern);
-  siteLantern.position.set(18.65,2.43,wallFaceZ-.24);
-  for(let row=0;row<3;row++)for(let column=0;column<3;column++) {
-    const x=rackX[column],y=.75+row*.62,z=wallFaceZ-.19;
-    const drum=detailMesh(MeshBuilder.CreateCylinder(`b-screen-drum-${row}-${column}`,{height:.42,diameter:.43,tessellation:12},scene),row%2?'#a9aaa0':'#818d88');
-    drum.position.set(x,y,z);drum.rotation.x=Math.PI/2;
-    const ring=detailMesh(MeshBuilder.CreateTorus(`b-screen-drum-rim-${row}-${column}`,{diameter:.45,thickness:.035,tessellation:12},scene),'#454c49');
-    ring.position.set(x,y,z-.22);
-  }
-
-  // Blue harbor barrels sit on the existing Coffins cover stack, clear of the
-  // traversable floor. The cover itself remains their only collision volume.
-  const bSiteBarrelMat=material('#326188'), bSiteBarrelHoopMat=material('#252f38');
-  for(const [index,bx,by,bz] of [[0,14.05,3.25,25.65],[1,14.86,3.25,25.65],[2,15.28,4.13,26.15]] as [number,number,number,number][]) {
-    const barrel=MeshBuilder.CreateCylinder(`b-site-blue-barrel-${index}`,{height:.9,diameter:.66,tessellation:14},scene);
-    barrel.position.set(bx,by,bz);barrel.material=bSiteBarrelMat;barrel.isPickable=false;details.push(barrel);
-    for(const bandY of [by-.28,by+.28]) {
-      const hoop=MeshBuilder.CreateTorus(`b-site-blue-barrel-hoop-${index}-${bandY}`,{diameter:.68,thickness:.045,tessellation:14},scene);
-      hoop.position.set(bx,bandY,bz);hoop.rotation.x=Math.PI/2;hoop.material=bSiteBarrelHoopMat;hoop.isPickable=false;details.push(hoop);
-    }
-  }
-
-  // Clay-tile gable caps break up the flat skyline on the map's four house
-  // blocks. They are scenery only; all roof and wall collision stays as authored.
-  const roofTexture=new DynamicTexture('breakwater-terracotta-roof-tiles',{width:512,height:512},scene,false);
-  const roofContext=roofTexture.getContext() as unknown as CanvasRenderingContext2D;
-  const roofColors=['#914336','#a24b39','#aa5540','#8a3f34','#b45b43'];
-  roofContext.fillStyle='#533b32';roofContext.fillRect(0,0,512,512);
-  for(let row=0;row<16;row++)for(let column=0;column<16;column++) {
-    const x=column*32+(row%2)*16-16,y=row*32;
-    roofContext.fillStyle=roofColors[(row*5+column*3)%roofColors.length];roofContext.fillRect(x+1,y+1,30,29);
-    roofContext.strokeStyle='#673b31';roofContext.lineWidth=2;roofContext.beginPath();roofContext.moveTo(x+1,y+29);roofContext.lineTo(x+31,y+29);roofContext.stroke();
-    roofContext.fillStyle='rgba(238,171,119,.16)';roofContext.fillRect(x+4,y+4,22,2);
-  }
-  roofTexture.update();roofTexture.uScale=1.5;roofTexture.vScale=4;
-  const roofMaterial=new StandardMaterial('breakwater-terracotta-roof-material',scene);
-  roofMaterial.diffuseTexture=roofTexture;roofMaterial.specularColor=Color3.Black();
-  const roofIds=new Set(['loading-office','pump-house','apartments-north','freight-office-east']);
-  for(const wall of LIVE_FPS_MAP.solids.filter(candidate=>roofIds.has(candidate.id))) {
-    const x=(wall.minX+wall.maxX)/2,z=(wall.minZ+wall.maxZ)/2;
-    const width=wall.maxX-wall.minX,depth=wall.maxZ-wall.minZ,angle=.27,panelWidth=width/2+.35;
-    const halfRise=Math.sin(angle)*(panelWidth/2),base=wall.height+.05;
-    for(const side of [-1,1]) {
-      const roof=MeshBuilder.CreateBox(`${wall.id}-terracotta-pitch-${side}`,{width:panelWidth,height:.16,depth:depth+.35},scene);
-      roof.position.set(x+side*width/4,base+halfRise,z);roof.rotation.z=side<0?angle:-angle;
-      roof.material=roofMaterial;roof.isPickable=false;details.push(roof);
-    }
-    const ridge=MeshBuilder.CreateBox(`${wall.id}-terracotta-ridge`,{width:.28,height:.18,depth:depth+.42},scene);
-    ridge.position.set(x,base+halfRise+Math.sin(angle)*panelWidth/2,z);ridge.material=roofMaterial;ridge.isPickable=false;details.push(ridge);
-  }
-
-  // 2. Banana Festoon Overhead String Lights (Image 6)
-  const lightZ=[-14,-6,2];
+  // Every bulb hangs from its cable, and each cable ends on an actual wall/column.
   const bulbMat=new StandardMaterial('festoon-bulb-mat',scene);
-  bulbMat.emissiveColor=new Color3(1,.88,.55);bulbMat.diffuseColor=new Color3(1,.92,.65);bulbMat.specularColor=Color3.Black();
-  for(const z of lightZ) {
-    const cable=MeshBuilder.CreateLines(`banana-cable-${z}`,{points:[
-      new Vector3(14,4.4,z),new Vector3(16.5,4.05,z),new Vector3(21.5,4.1,z),new Vector3(24.5,4.35,z)
-    ]},scene);
-    cable.color=new Color3(.15,.15,.15);cable.isPickable=false;
-    for(const x of [15.5,17.5,19.5,21.5,23.5]) {
-      const bulb=MeshBuilder.CreateSphere(`festoon-bulb-${z}-${x}`,{diameter:.2,segments:6},scene);
-      bulb.position.set(x,4.08,z);bulb.material=bulbMat;bulb.isPickable=false;
+  bulbMat.emissiveColor=new Color3(1,.69,.26);bulbMat.diffuseColor=new Color3(1,.9,.64);bulbMat.specularColor=new Color3(.6,.5,.3);
+  for(const span of LIVE_FESTOON_SPANS) {
+    const cable=detailMesh(MeshBuilder.CreateTube(`festoon-cable-${span.id}`,{path:Array.from({length:33},(_,i)=>liveFestoonCablePoint(span,i/32)),radius:.012,tessellation:4},scene),'#303731');
+    cable.freezeWorldMatrix();
+    for(const [index,point] of [span.from,span.to].entries())box(`festoon-wall-anchor-${span.id}-${index}`,point.x,point.y,point.z,.12,.18,.18,'#424b45');
+    for(let i=1;i<=8;i++) {
+      const point=liveFestoonCablePoint(span,i/9);
+      const drop=detailMesh(MeshBuilder.CreateCylinder(`festoon-drop-${span.id}-${i}`,{height:.12,diameter:.022,tessellation:5},scene),'#303731');
+      drop.position.copyFrom(point);drop.position.y-=.06;
+      const socket=detailMesh(MeshBuilder.CreateCylinder(`festoon-socket-${span.id}-${i}`,{height:.075,diameter:.065,tessellation:8},scene),'#4c5148');
+      socket.position.copyFrom(point);socket.position.y-=.145;
+      const bulb=MeshBuilder.CreateSphere(`festoon-bulb-${span.id}-${i}`,{diameter:.135,segments:10},scene);
+      bulb.position.copyFrom(point);bulb.position.y-=.235;bulb.scaling.y=1.25;bulb.material=bulbMat;bulb.isPickable=false;details.push(bulb);
     }
   }
 
-  // 3. Stacked Wooden Cargo Barrels at Banana Logs (Image 6)
-  const barrelMat=material('#784f2c'), hoopMat=material('#2b2c2c');
-  for(const [bx,by,bz] of [[13.8,.475,-11.75],[13.8,.475,-11.05],[13.8,1.425,-11.4]] as number[][]) {
-    const barrel=MeshBuilder.CreateCylinder(`barrel-${bx}-${bz}`,{height:.95,diameter:.7,tessellation:12},scene);
-    barrel.position.set(bx,by,bz);barrel.material=barrelMat;barrel.receiveShadows=true;barrel.isPickable=false;barrel.freezeWorldMatrix();
-    for(const hoopY of [by-.3,by+.3]) {
-      const hoop=MeshBuilder.CreateCylinder(`barrel-hoop-${bx}-${bz}-${hoopY}`,{height:.06,diameter:.72,tessellation:12},scene);
-      hoop.position.set(bx,hoopY,bz);hoop.material=hoopMat;hoop.isPickable=false;hoop.freezeWorldMatrix();
+  // Distinct paving belongs to residential streets, the market square and the civic forecourt.
+  for(const [name,x,z,w,d,color] of [
+    ['market-street-south',20,-15,12,22,'#aaa084'],['market-street-north',23,5,16,18,'#aaa084'],
+    ['market-square',23,21,19,20,'#c0b292'],['civic-courtyard',-23,21,20,24,'#c9bda1'],
+    ['residential-lane',0,-6,6,48,'#aca991'],['residential-passage',-8,-14,4,22,'#a6a18b'],
+    ['civic-cross-street',12,35,24,5,'#b7ae96'],
+  ] as [string,number,number,number,number,string][]){
+    for(const [i,r] of liveCutPavingRect({minX:x-w/2,maxX:x+w/2,minZ:z-d/2,maxZ:z+d/2}).entries()){
+    const width=r.maxX-r.minX,depth=r.maxZ-r.minZ;
+    const lane=MeshBuilder.CreateGround(`${name}-${i}`,{width,height:depth},scene);lane.position.set((r.minX+r.maxX)/2,.012,(r.minZ+r.maxZ)/2);
+    lane.material=surfaces?.material('paving',color)??material(color);lane.isPickable=false;lane.receiveShadows=true;
+    lane.setVerticesData('uv',[0,0,width/4,0,0,depth/4,width/4,depth/4]);lane.metadata={castShadow:false};details.push(lane);
     }
   }
-
-  // 4. Overhead Stone Archways with Grounded Supporting Pillars (Eliminating Floating Boxes)
-  // Banana archway spanning entrance to B
-  box('banana-arch-lintel',20,3.9,7,7,1.2,1.2,'#b6aa92').freezeWorldMatrix();
-  box('banana-arch-keystone',20,4.6,7,.8,.4,1.25,'#c8bd9f').freezeWorldMatrix();
-  // Vertical stone piers grounding Banana archway to the pavement
-  // Structural pier rendered from shared map geometry.
-  box('banana-arch-plinth-l',16.7,.25,7,.9,.5,1.35,'#8a7f6c').freezeWorldMatrix();
-  box('banana-arch-capital-l',16.7,3.2,7,.85,.2,1.3,'#c4b79b').freezeWorldMatrix();
-  // Structural pier rendered from shared map geometry.
-  box('banana-arch-plinth-r',23.3,.25,7,.9,.5,1.35,'#8a7f6c').freezeWorldMatrix();
-  box('banana-arch-capital-r',23.3,3.2,7,.85,.2,1.3,'#c4b79b').freezeWorldMatrix();
-
-  // Port Archway connecting Mid to CT Customs
-  box('port-arch-lintel',-4,4.1,22,5.5,1.2,1.2,'#b0a48e').freezeWorldMatrix();
-  box('port-arch-keystone',-4,4.8,22,.8,.4,1.25,'#c4b79b').freezeWorldMatrix();
-  // Structural pier rendered from shared map geometry.
-  box('port-arch-plinth-l',-6.6,.25,22,.85,.5,1.35,'#7c7360').freezeWorldMatrix();
-  box('port-arch-capital-l',-6.6,3.4,22,.8,.2,1.3,'#c4b79b').freezeWorldMatrix();
-  // Structural pier rendered from shared map geometry.
-  box('port-arch-plinth-r',-1.4,.25,22,.85,.5,1.35,'#7c7360').freezeWorldMatrix();
-  box('port-arch-capital-r',-1.4,3.4,22,.8,.2,1.3,'#c4b79b').freezeWorldMatrix();
-
-  // Church / Ruins archway at B North exit
-  box('church-arch-lintel',22,3.9,32,6,1.2,1.2,'#a89f8b').freezeWorldMatrix();
-  // Structural pier rendered from shared map geometry.
-  box('church-arch-plinth-l',19.2,.25,32,.9,.5,1.35,'#7c7360').freezeWorldMatrix();
-  // Structural pier rendered from shared map geometry.
-  box('church-arch-plinth-r',24.8,.25,32,.9,.5,1.35,'#7c7360').freezeWorldMatrix();
-
-  // Underpass low stone lintel over the Sluice passage
-  box('underpass-sluice-lintel',-4.75,2.6,-10,3.5,.7,.9,'#88928c').freezeWorldMatrix();
-  // Structural pier rendered from shared map geometry.
-  // Structural pier rendered from shared map geometry.
-
-  // 5. A Site Arched Colonnade Loggia (Inspired by Tenuta Auti, Image 7)
-  const loggiaX=-23, loggiaZ=26;
-  box('loggia-roof',loggiaX,3.4,loggiaZ,10,1.1,.9,'#bfae92').freezeWorldMatrix();
-  // Wall and columns are rendered from LIVE_FPS_MAP.solids, also used for bullets/navigation.
-  for(const colX of [-27.5,-23,-18.5]) {
-    box(`loggia-cap-${colX}`,colX,2.85,loggiaZ,.65,.18,.65,'#ded4b9').freezeWorldMatrix();
+  for(const mesh of details){
+    mesh.metadata={...(mesh.metadata??{}),castShadow:mesh.metadata?.castShadow!==false&&!mesh.name.startsWith('village-outside')};
   }
-  for(const z of [26.33,26.51]) {
-    plate(`loggia-stone-base-${z}`,-23,.22,z,9.6,.44,'#9e826b');
-    plate(`loggia-stone-band-${z}`,-23,2.9,z,9.6,.12,'#d0b99b');
-  }
-
-  // 6. A Pit Revetment Railing & Steps (Images 4, 7)
-  const pitX=-30, pitZ=16;
-  box('pit-wood-rail',pitX,1.3,pitZ,3,.1,.1,'#5e432c').freezeWorldMatrix();
-  box('pit-post-l',pitX-1.4,.7,pitZ,.1,1.3,.1,'#5e432c').freezeWorldMatrix();
-  box('pit-post-r',pitX+1.4,.7,pitZ,.1,1.3,.1,'#5e432c').freezeWorldMatrix();
-  for(let step=0;step<3;step++) {
-    box(`pit-step-${step}`,pitX+1.8,(.12+step*.14)/2,pitZ-step*.3,1,.12+step*.14,.35,'#8b927f').freezeWorldMatrix();
-  }
-
-  // 7. Warehouse Gallery Wooden Balcony (Apartments, Images 3, 4)
-  const balX=-16, balZ=12;
-  box('gallery-balcony-floor',balX,2.35,balZ,3.8,.18,1.8,'#63472c').freezeWorldMatrix();
-  box('gallery-balcony-rail',balX,2.95,balZ+.85,3.8,.08,.08,'#4a341e').freezeWorldMatrix();
-  for(const bPost of [balX-1.8,balX,balX+1.8]) {
-    box(`gallery-balcony-post-${bPost}`,bPost,2.65,balZ+.85,.08,.6,.08,'#4a341e').freezeWorldMatrix();
-    box(`gallery-balcony-corbel-${bPost}`,bPost,2.0,balZ-.1,Math.max(.12,(-16-bPost)*2+.12),.6,.8,'#4a341e').freezeWorldMatrix();
-  }
-
-  // 8. Wrought-Iron Wall Lanterns with Warm Amber Glow (Images 3, 5, 6)
-  const lanternLocs:[number,number,number][]=[[13.5,2.4,-6],[-4.5,2.5,-4],[-21,2.4,16],[14,2.5,24],[-15.2,2.4,4]];
-  for(let i=0;i<lanternLocs.length;i++) {
-    const [lx,ly,lz]=lanternLocs[i];
-    box(`lantern-bracket-${i}`,lx,ly,lz,.1,.24,.24,'#1f2427').freezeWorldMatrix();
-    const glass=box(`lantern-glass-${i}`,lx,ly-.12,lz,.14,.22,.14,'#e8a846');
-    const glassMat=material('#e8a846');glassMat.emissiveColor=new Color3(.85,.55,.2);glass.material=glassMat;glass.freezeWorldMatrix();
-  }
-
-  // 9. Terracotta Flower Planter Boxes & Lush Shrubbery (Images 3, 4, 7)
-  const planterLocs:[number,number,number][]=[[-12.5,4.2,-6.05],[-11.5,4.2,5.95],[9.5,4.2,5.95]];
-  for(let i=0;i<planterLocs.length;i++) {
-    const [px,py,pz]=planterLocs[i];
-    box(`planter-shelf-${i}`,px,py-.2,pz,1.55,.08,.55,'#726b5e');
-    for(const offset of [-.5,.5])box(`planter-bracket-${i}-${offset}`,px+offset,py-.4,pz,.08,.4,.45,'#464c43');
-    // Terracotta rectangular trough
-    box(`planter-pot-${i}`,px,py,pz,1.4,.32,.45,'#b05336').freezeWorldMatrix();
-    // Mound of vibrant Mediterranean foliage
-    box(`planter-bush-${i}`,px,py+.26,pz,1.3,.24,.4,'#355c27').freezeWorldMatrix();
-    // Vibrant flower blossoms (red, yellow, orange)
-    box(`planter-flower-a-${i}`,px-.35,py+.42,pz,.22,.12,.22,'#c92828').freezeWorldMatrix();
-    box(`planter-flower-b-${i}`,px+.35,py+.42,pz,.22,.12,.22,'#e8b62c').freezeWorldMatrix();
-  }
-
-  // 10. Striped Shopfront Fabric Awnings & Supply Tarps (Images 3, 5)
-  // Pizzeria / Gelateria awning in Mid
-  box('mid-shop-awning-red',-6.5,3.15,-2,4.2,.12,1.4,'#a63529').freezeWorldMatrix();
-  box('mid-shop-awning-cream',-6.5,3.18,-2,4.0,.13,1.35,'#ebd9ba').freezeWorldMatrix();
-  // Blue supply tarp draped over cargo crates at B site
-  box('b-site-tarp-blue',15,2.77,26,2.6,.05,3.8,'#2a5b88').freezeWorldMatrix();
-
-  // 11. Stacked Shipping Pallets & Crates (Images 4, 7)
-  for(const [palX,palZ] of [[-28,20],[18,-20]]) {
-    for(const offset of [-.45,.45])box(`pallet-runner-${palX}-${palZ}-${offset}`,palX+offset,.18,palZ,.12,.36,1.3,'#63472c');
-    for(let layer=0;layer<3;layer++) {
-      box(`pallet-${palX}-${palZ}-${layer}`,palX,.08+layer*.14,palZ,1.3,.08,1.3,'#8a6845').freezeWorldMatrix();
-    }
-  }
-
-  // Authentic Mediterranean market crates & supply boxes
-  for(const [cx,cz,cy] of [[15.2,-10,.25],[15.2,-9.2,.25],[15.2,-9.6,.65],[-20,-14,.25],[-20,-14,.65],[20.5,14,.25]] as [number,number,number][]) {
-    box(`market-crate-${cx}-${cz}-${cy}`,cx,cy,cz,.65,.45,.65,'#8b6538').freezeWorldMatrix();
-  }
-
-  // Stone pavement curbings defining streets
-  for(const [curbX,curbZ,curbW,curbD] of [
-    [14.6,-3,.18,16],[25.4,-3,.18,16],[-3.2,-6,.18,36],[3.2,-6,.18,36],[-10,-14,.18,20]
-  ] as [number,number,number,number][]) {
-    box(`pavement-curb-${curbX}-${curbZ}`,curbX,.035,curbZ,curbW,.06,curbD,'#756d5e').freezeWorldMatrix();
-  }
-
-  // Flush drainage grates and expansion joints: detail without small movement snags.
-  for(const [x,z] of [[-19,-14],[0,-10],[20,-15],[31,14],[-23,23],[12,35]]) {
-    box(`drain-frame-${x}-${z}`,x,.019,z,.65,.018,1.1,'#575c57');
-    for(let i=0;i<7;i++)box(`drain-slot-${x}-${z}-${i}`,x,.03,z-.43+i*.14,.5,.008,.055,'#292f2c');
-  }
-
-  // Mortar courses and mooring plates sit against existing cover, never in a lane.
-  for(const wall of LIVE_FPS_MAP.solids.filter(w=>w.height>=4&&!w.id.endsWith('wall'))) {
-    const x=(wall.minX+wall.maxX)/2,width=wall.maxX-wall.minX;
-    for(const face of [-1,1]) {
-      const z=face<0?wall.minZ-.045:wall.maxZ+.045;
-      for(const y of [.16,.48,.8])box(`${wall.id}-mortar-${face}-${y}`,x,y,z,width,.018,.015,'#766f60');
-      box(`${wall.id}-utility-plate-${face}`,x,.95,z,.34,.42,.035,'#555f58');
-      for(const offset of [-.11,.11])box(`${wall.id}-plate-bolt-${face}-${offset}`,x+offset,1.08,z+face*.025,.035,.035,.025,'#b3ad96');
-    }
-  }
-
-  // Merge static facade pieces by material to keep runtime rendering inexpensive
-  const groups=new Map<StandardMaterial,Mesh[]>();
-  for(const mesh of details){mesh.computeWorldMatrix(true);const mat=mesh.material as StandardMaterial;groups.set(mat,[...(groups.get(mat)??[]),mesh]);}
-  const merged:Mesh[]=[];
-  for(const group of groups.values()) {
-    const mesh=Mesh.MergeMeshes(group,true,true);if(mesh){mesh.isPickable=false;mesh.receiveShadows=false;mesh.freezeWorldMatrix();merged.push(mesh);}
-  }
-
-  // Harbor waterfront exterior
-  const water=MeshBuilder.CreateGround('harbor-water',{width:48,height:160},scene);water.position.set(64,-.8,0);water.material=material('#427c88');
-  const bank=box('harbor-quay',39,-1,0,6,2,110,'#596f74');bank.freezeWorldMatrix();
-  const exterior:Mesh[]=[water,bank];
-  for(const [x,z,height] of [[-48,-12,12],[-49,27,9],[4,60,13],[29,58,10]] as number[][]) {
-    exterior.push(box(`skyline-${x}-${z}`,x,height/2,z,12,height,20,'#8f9d99'));
-  }
-  for(const z of [-25,22]) {
-    const x=51;
-    exterior.push(box(`crane-tower-${z}`,x,12,z,1.4,24,1.4,'#bd9862'));
-    exterior.push(box(`crane-jib-${z}`,x-7,24,z,20,.9,1,'#bd9862'));
-    exterior.push(box(`crane-hook-${z}`,x-15,18,z,.08,11,.08,'#404f56'));
-  }
-  for(const x of [-37.5,37.5])for(const z of [-34,0,34]) {
-    exterior.push(box(`lamp-pole-${x}-${z}`,x,4,z,.16,8,.16,'#465d63'));
-    const lamp=box(`lamp-head-${x}-${z}`,x,8,z,1,.18,.5,'#f1d4a1');exterior.push(lamp);
-  }
-  // 12. Tuscan Hills Cypress Trees along Horizon Skyline (Image 5)
-  const cypressMat=material('#203b22');
-  for(const [cx,cz] of [[-42,42],[-38,48],[16,56],[24,54],[32,58]] as [number,number][]) {
-    const trunk=box(`cypress-trunk-${cx}-${cz}`,cx,1.5,cz,.35,3,.35,'#4d3725');
-    const foliage=MeshBuilder.CreateCylinder(`cypress-foliage-${cx}-${cz}`,{height:8,diameterTop:.1,diameterBottom:1.6,tessellation:8},scene);
-    foliage.position.set(cx,6,cz);foliage.material=cypressMat;
-    exterior.push(trunk,foliage);
-  }
-  for(const mesh of exterior){mesh.isPickable=false;mesh.freezeWorldMatrix();}
-
-  // Walkway paving ground planes defining tactical avenues
-  for(const [name,x,z,width,depth,color] of [
-    ['Banana Slipway S',18,-16,7,22,'#857b6a'],
-    ['Banana Slipway Mid',20,-3,8,16,'#807666'],
-    ['Banana Slipway N',22,8,8,12,'#887d6b'],
-    ['B Basin Piazza',23,21,17,17,'#928a78'],
-    ['A Quayside Courtyard',-23,21,18,22,'#968c77'],
-    ['Mid Lane Paving',0,-6,6,48,'#8e9688'],
-    ['Second Mid Canal',-8,-14,4,22,'#7c8682'],
-    ['Underpass Sluice Paving',-4.75,-10,4.5,4,'#67706d'],
-    ['Speedway Dock Paving',12,35,24,5,'#828d92'],
-  ] as [string,number,number,number,number,string][]) {
-    const lane=MeshBuilder.CreateGround(name,{width,height:depth},scene);lane.position.set(x,.012,z);lane.material=material(color);lane.receiveShadows=true;lane.isPickable=false;
-  }
-
-  // Wayfinding text markers on the ground
-  for(const [label,x,z] of [
-    ['A MAIN',-19,-9],['BANANA',18,-15],['CAR / SANDBAGS',20,-1],
-    ['MID',0,-21],['UNDERPASS',-4.75,-10],['MID CROSS',0,2],['SPEEDWAY',12,35]
-  ] as [string,number,number][]) {
-    const mark=MeshBuilder.CreateGround(`wayfinding-${label}`,{width:4.5,height:1.4},scene);mark.position.set(x,.028,z);
-    const mat=new StandardMaterial(`wayfinding-material-${label}`,scene),tex=new DynamicTexture(`wayfinding-text-${label}`,{width:512,height:128},scene,false);
-    tex.hasAlpha=true;tex.drawText(label,null,82,'bold 52px sans-serif','#ded4b6','transparent',true);mat.diffuseTexture=tex;mat.useAlphaFromDiffuseTexture=true;mat.specularColor=Color3.Black();mark.material=mat;mark.isPickable=false;
-  }
-
-  // Stenciled Banana sign with icon on Banana corner (Image 6)
-  const bSign=MeshBuilder.CreatePlane('sign-banana-wall',{width:3.2,height:2},scene);
-  bSign.position.set(14.035,2.4,-8);bSign.rotation.y=Math.PI/2;
-  const bMat=new StandardMaterial('sign-banana-mat',scene),bTex=new DynamicTexture('sign-banana-tex',{width:512,height:320},scene,false);
-  bTex.drawText('BANANA',null,120,'bold 64px sans-serif','#f4d35e','#2a2d30',true);
-  bTex.drawText('➔ B SITE',null,240,'bold 48px sans-serif','#ffffff','transparent',true);
-  bMat.diffuseTexture=bTex;bMat.backFaceCulling=false;bMat.specularColor=Color3.Black();bSign.material=bMat;bSign.isPickable=false;
-
-  // Stenciled "B ➔" directional spray on wall (Image 6)
-  const bArrow=MeshBuilder.CreatePlane('sign-b-arrow',{width:2.2,height:1.6},scene);
-  bArrow.position.set(16.035,2.5,14);bArrow.rotation.y=Math.PI/2;
-  const baMat=new StandardMaterial('sign-b-arrow-mat',scene),baTex=new DynamicTexture('sign-b-arrow-tex',{width:256,height:256},scene,false);
-  baTex.hasAlpha=true;baTex.drawText('B ➔',null,160,'bold 110px sans-serif','#d9483b','transparent',true);
-  baMat.diffuseTexture=baTex;baMat.useAlphaFromDiffuseTexture=true;baMat.specularColor=Color3.Black();bArrow.material=baMat;bArrow.isPickable=false;
-
-  // District overhead banners
-  for(const [label,x,z] of [['A · QUAYSIDE / PIT',-23,45.96],['B · FOUNTAIN BASIN',23,45.96],['HEXATRICK  /  BREAKWATER',0,-45.96]] as [string,number,number][]) {
-    const sign=MeshBuilder.CreatePlane(`sign-${label}`,{width:11,height:1.8},scene);sign.position.set(x,3.6,z);sign.rotation.y=z<0?Math.PI:0;
-    const mat=new StandardMaterial(`sign-material-${label}`,scene),tex=new DynamicTexture(`sign-text-${label}`,{width:1024,height:192},scene,false);
-    tex.drawText(label,null,115,'bold 44px sans-serif','#e4dac0','#253e48',true);mat.diffuseTexture=tex;mat.backFaceCulling=false;mat.specularColor=Color3.Black();sign.material=mat;sign.isPickable=false;
-  }
-  return merged;
+  const batched=batchStaticLiveGeometry(details);
+  return batched.meshes.filter(mesh=>mesh.metadata?.castShadow!==false&&!mesh.material?.name.startsWith('water:')&&!/bulb|lantern/.test(mesh.material?.name??''));
 }

@@ -89,7 +89,7 @@ class WorldBusinessEngine {
         $p=OwnedPlayerCard::withoutGlobalScopes()->find($agent->source_id);$agent->update(['review_at'=>now()->addWeek()]);if(!$p)return;
         if(!$p->retired_at){
             $catalog=app(OnlineService::class)->activeCatalog();$template=collect($catalog->payload['cards'])->firstWhere('id',$p->definition_id);$stats=app(WorldPlayerProfiles::class)->definition($p,$template)['stats']??[];
-            if($stats)$agent->update(['skills'=>['analysis'=>($stats['iq']??20)/10,'coaching'=>($stats['ldr']??20)/10,'development'=>($stats['flx']??20)/10,'competition'=>array_sum($stats)/max(10,count($stats)*10)]]);
+            if($stats)$agent->update(['skills'=>['analysis'=>($stats['positioning']??20)/10,'coaching'=>($stats['shotcalling']??20)/10,'development'=>($stats['utility']??20)/10,'competition'=>array_sum($stats)/max(10,count($stats)*10)]]);
         }
         if($p->retired_at){
             foreach(['analyst','assistant_coach','head_coach'] as $role)if(app(WorldCareers::class)->qualified($agent,$role)){

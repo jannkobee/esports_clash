@@ -146,7 +146,7 @@ export function getFpsReplayState(
     if (event.zone) {
       const actor = event.actorId ? playerById.get(event.actorId) : undefined;
       const target = event.targetId ? playerById.get(event.targetId) : undefined;
-      if (actor && (report.simulationVersion !== 2 && report.simulationVersion !== 3 || ['player_moved', 'plant_started', 'plant_completed', 'defuse_started', 'defuse_completed'].includes(event.type))) actor.zone = event.zone;
+      if (actor && (report.simulationVersion !== 2 && report.simulationVersion !== 3 && report.simulationVersion !== 4 || ['player_moved', 'plant_started', 'plant_completed', 'defuse_started', 'defuse_completed'].includes(event.type))) actor.zone = event.zone;
       if (target) target.zone = event.zone;
     }
 
@@ -206,7 +206,7 @@ export function getFpsReplayState(
     : event && roundStart
       ? Math.max(0, event.second - roundStart.second)
       : 0;
-  const secondsRemaining = bomb.status === 'planted' ? bomb.remainingSeconds ?? 0 : Math.max(0, 115 - elapsedSeconds + ((report.simulationVersion === 2 || report.simulationVersion === 3) ? 15 : 0));
+  const secondsRemaining = bomb.status === 'planted' ? bomb.remainingSeconds ?? 0 : Math.max(0, 115 - elapsedSeconds + ((report.simulationVersion === 2 || report.simulationVersion === 3 || report.simulationVersion === 4) ? 15 : 0));
   const minutes = Math.floor(secondsRemaining / 60);
   const seconds = Math.floor(secondsRemaining % 60);
   if (visibleEvents.some(event => event.type === 'round_end')) {

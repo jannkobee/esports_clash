@@ -1,3 +1,4 @@
+import {FPS_T_POSITIONS,FPS_CT_POSITIONS} from './fps/fpsPlayerArchitecture.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {FpsLiveSimulation} from './fps/fpsLiveSimulation.ts';
@@ -15,8 +16,8 @@ import {liveOrderActive} from './fps/fpsLiveTactics.ts';
 const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
 const coach={...plan,rigidity:.7,communication:.7,leadership:.7,adaptability:.7,development:.5};
 const chemistry={trust:.6,communication:.6,understanding:.6,leadershipAcceptance:.6,roleCompetition:.3};
-const cards=Array.from({length:10},(_,i)=>({id:`brain-${i}`,name:`Player ${i}`,stats:{lan:80,iq:80,tf:80,clu:80,sta:80,flx:80,ldr:80}}));
-const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
+const cards=Array.from({length:10},(_,i)=>({id:`brain-${i}`,name:`Player ${i}`,stats:{rifling:80,positioning:80,entry:80,sniping:80,utility:80,shotcalling:80}}));
+const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,assignments:{t:FPS_T_POSITIONS[(i)%5],ct:FPS_CT_POSITIONS[(i)%5]},personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
 const game=()=>{const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity);sim.phase='live';sim.time=40;sim.liveElapsed=25;sim.remaining=90;return sim;};
 const contact=(round,overrides={})=>({key:'enemy:known',enemyId:'known',observerId:'scout',source:'sight',x:20,z:10,observed:round*100,confidence:.9,uncertainty:.5,...overrides});
 
@@ -146,8 +147,8 @@ test('jump physics lands and actors do not jump merely for passing a map landmar
 
 test('a jump peek is chosen when height can reveal a remembered angle over low cover',()=>{
   const sim=game(),p=sim.actors[5];
-  Object.assign(p,{x:-30,z:14.8,bomb:false,crouch:true,role:'entry',nextJump:0,target:undefined,
-    contact:{x:-30,z:17.2},contactAt:sim.time,path:[],peek:undefined});
+  Object.assign(p,{x:-13,z:-38.45,bomb:false,crouch:true,role:'entry',nextJump:0,target:undefined,
+    contact:{x:-13,z:-36.3},contactAt:sim.time,path:[],peek:undefined});
   sim.move(p,1/30);
   assert.equal(p.jump,true);assert.equal(p.jumpVy,LIVE_JUMP_VELOCITY);
   assert.equal(p.target,undefined,'Height creates a chance to observe, not an automatic target');
@@ -175,16 +176,18 @@ test('flash coordination warns teammates and waits for detonation, not a hidden 
   Object.assign(p,{x:-19,z:-10,flash:1,utilityAt:0,reload:0});
   Object.assign(entry,{x:-19,z:-6,target:undefined,bomb:false,path:[{x:-19,z:4}]});
   assert.equal(sim.throwUtility(p,'flash',{x:-19,z:0}),true);
+  assert.equal(entry.flashWindow,undefined,'No warning is issued before committed release');
+  sim.time=p.utilityPreparation.readyAt;sim.releaseUtilityPreparation(p);
   assert.ok(entry.flashWindow);assert.ok(entry.lookAwayStarts>sim.time);
   sim.time=entry.flashWindow.opens-.2;sim.move(entry,1/30);assert.equal(entry.action,'Waiting for friendly flash');
   sim.time=entry.flashWindow.opens+.01;sim.move(entry,1/30);assert.notEqual(entry.action,'Waiting for friendly flash');
 });
 
-test('approaches and objective roles use the route around the loggia rather than distance through it',()=>{
-  const position={x:-25,z:25.5},behindWall={x:-25,z:27.5},open={x:-30,z:24};
+test('approaches and objective roles use the route around the civic clock tower rather than distance through it',()=>{
+  const position={x:-31.1,z:20},behindWall={x:-24.9,z:20},open={x:-31.1,z:27};
   assert.ok(distance(position,behindWall)<distance(position,open));
   const routeTo=createLiveRoutePlanner(position);
-  assert.ok(routeTo(behindWall).distance>routeTo(open).distance*2);
+  assert.ok(routeTo(behindWall).distance>routeTo(open).distance*1.5);
   const candidates=[{key:'wall',point:behindWall,purpose:'entry'},{key:'open',point:open,purpose:'entry'}];
   const context={position,role:'entry',remaining:80,judgment:1,allies:[],beliefs:[],committed:false,visited:new Set(),execute:false,routeTo};
   assert.equal(chooseLiveApproach(candidates,context,()=>0).key,'open');
@@ -282,7 +285,7 @@ test('navigation destinations and waypoints stay inside the movement bounds',()=
 });
 
 test('actors inside the extra navigation margin can depart without crossing physical walls',()=>{
-  const from={x:17.42489522659554,z:6.104887244385917},to={x:-18,z:9};
+  const from={x:-30.9,z:20},to={x:-18,z:9};
   assert.equal(liveWalkable(from),false);
   assert.ok(!LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(from,from,w,LIVE_ACTOR_RADIUS)));
   const path=findLivePath(from,to);assert.ok(path.length);

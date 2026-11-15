@@ -55,12 +55,14 @@ class ClubDevelopmentService
             $club->lineup,
         );
         $listed = ClubAuction::where('seller_id', $club->id)->whereNotNull('active_card_id')->pluck('active_card_id')->all();
-        $candidates = $owned->reject(fn ($card) => in_array($card->id, $listed, true))->sortByDesc(fn ($card) => $definitions[$card->id]['ovr'] ?? 0);
+        $tacticalPlan=json_decode(DB::table('fps_team_systems')->where('club_id',$club->id)->value('gameplan')??'{}',true);
+        $lineupScore=fn($id)=>($definitions[$id]['ovr']??0)+12*(app(FpsPlayerArchitecture::class)->recruitmentFit($definitions[$id]??[],$tacticalPlan)-.5);
+        $candidates = $owned->reject(fn ($card) => in_array($card->id, $listed, true))->sortByDesc(fn ($card) => $lineupScore($card->id));
         foreach ($lineup as $index => $slot) {
             $starter = $owned[$slot['instance_id']] ?? null;
-            $rating = $definitions[$starter?->id]['ovr'] ?? 0;
+            $rating = $lineupScore($starter?->id);
             foreach ($candidates as $candidate) {
-                if (($definitions[$candidate->id]['ovr'] ?? 0) <= $rating) {
+                if ($lineupScore($candidate->id) <= $rating) {
                     break;
                 }
                 if (in_array($candidate->id, array_column($lineup, 'instance_id'), true)) {

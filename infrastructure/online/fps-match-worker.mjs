@@ -20,8 +20,8 @@ try {
   if (plan.game_mode !== 'fps_mr15_v1' || plan.fps?.format !== 'MR15_TACTICAL_FPS' || plan.fps.rules_version !== 1) {
     throw new Error('Unsupported FPS ruleset.');
   }
-  if (plan.fps.simulation_version !== undefined && ![2,3].includes(plan.fps.simulation_version)) throw new Error('Unsupported pinned FPS simulation revision.');
-  if (plan.fps.simulation_version === 3 && !plan.fps_identity) throw new Error('Missing pinned identity state.');
+  if (plan.fps.simulation_version!==4) throw new Error('Unsupported pinned FPS simulation revision.');
+  if (plan.fps.simulation_version === 4 && !plan.fps_identity) throw new Error('Missing pinned identity state.');
   if (!Number.isInteger(plan.seed) || plan.seed <= 0 || !/^[a-f0-9]{64}$/.test(planHash)) {
     throw new Error('Invalid pinned match allocation.');
   }
@@ -41,9 +41,7 @@ try {
       ...(profile ? {
         tier: profile.tier,
         ovr: profile.ovr,
-        stats: profile.stats,
-        primaryPersonality: definition.primaryPersonality,
-        secondaryPersonality: definition.secondaryPersonality
+        stats: profile.stats
       } : {})
     };
   };
@@ -57,7 +55,7 @@ try {
   const startedAt = new Date().toISOString();
   await atomic('state.json', { status: 'running', sequence: 0, started_at: startedAt, public_replay: Boolean(plan.fixture) });
 
-  const simulation = simulateFpsMatch(blue, red, plan.fps.map_id, plan.seed, plan.fps.simulation_version===3 ? {identityExperiment:plan.fps_identity} : {});
+  const simulation = simulateFpsMatch(blue, red, plan.fps.map_id, plan.seed, plan.fps.simulation_version===4 ? {identityExperiment:plan.fps_identity} : {});
   // Private DNA and coach inputs stay in the trusted allocation, never in replay.
   delete simulation.identityExperiment;
   delete simulation.identityDevelopment;

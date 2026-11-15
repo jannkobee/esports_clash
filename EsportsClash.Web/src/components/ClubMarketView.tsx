@@ -10,7 +10,7 @@ import {ReserveTransferListing} from './ReserveTransferListing';
 import './transfer-exchange.css';
 import { ArrowLeftRight, Coins, Gavel, GraduationCap, Handshake, Users } from 'lucide-react';
 
-export interface PlayerCard {fpsIdentity?:import('../fps/fpsIdentity').FpsScoutingProfile;primaryPersonality?:string|null;secondaryPersonality?:string|null;
+export interface PlayerCard {fpsIdentity?:import('../fps/fpsIdentity').FpsScoutingProfile;
   presentation?:import('../supporter').PlayerPresentation|null;
   id: string; name: string; role?: string | null; overall: number; age?: number | null; wage?: number | null;
   nationality?: { code: string; name: string } | null; stats?: Record<string, number>;

@@ -176,7 +176,7 @@ export type FpsEventType =
   | 'utility_deployed'
   | 'contact_spotted'
   | 'duel_engagement'
-  | 'specialty_activated'
+  | 'behavior_observation'
   | 'tactical_decision'
   | 'weapon_recovered'
   | 'kill'
@@ -209,8 +209,7 @@ export interface FpsMatchEvent {
   targetHp?: number;
   targetArmor?: number;
   fromZone?: string;
-  specialtyId?: string;
-  executionBonus?: number;
+  observation?:{metric:import('./fpsPlayerArchitecture.ts').FpsBehaviorMetric;attempted:boolean};
   decision?: import('./fpsIdentity.ts').PlayerDecisionResult;
   text: string;
 }
@@ -251,7 +250,7 @@ export interface FpsMatchSettings {
 export interface FpsMatchReport {
   version: 1;
   personalityVersion?: 1;
-  simulationVersion?: 2 | 3;
+  simulationVersion?: 2 | 3 | 4;
   identityExperiment?: FpsIdentityExperiment;
   identityDevelopment?: FpsIdentityExperiment;
   format: 'MR15_TACTICAL_FPS';

@@ -5,7 +5,6 @@ import {useAccount} from '../AccountContext';
 import {request} from '../cloudPersistence';
 import {onWorldUpdate} from '../worldLive';
 import {FPS_ATTRIBUTE_LABELS} from '../fps/fpsPersonality';
-import {PersonalityMarks} from './PersonalityMarks';
 import {FPS_IDENTITY_PERSONALITIES} from '../fps/fpsIdentity';
 import {FpsIdentityMarks} from './FpsIdentityMarks';
 import {useEffect,useState} from 'react';
@@ -26,7 +25,7 @@ function AuctionRow({auction:a,open,onOpen,busy,available,onBid}:{auction:Auctio
   const cents=Math.round(Number(amount)*100),valid=Number.isFinite(cents)&&cents>=a.minimum&&cents<=available&&cents<=1000000000;
   return <article className={'exchange-auction'+(open?' exchange-auction--open':'')}>
     <div className="exchange-auction-main">
-      <div className="exchange-person"><WorldPlayerPortrait id={a.player_id} name={a.player} appearance={a.presentation?.appearance} size={76}/><div><a className="exchange-player-name" href={pediaHref('players',a.player_id)}>{a.player}<ArrowUpRight size={13}/></a><p>{fpsRoleFit(a.stats)} · {a.nationality?<CountryFlag code={a.nationality.code} name={a.nationality.name}/>:'Nationality unlisted'}{a.age?' · '+a.age+' years':''}</p><span className="exchange-overall"><strong>{toScale10(a.overall)}</strong> / 10 overall</span><>{a.fpsIdentity?<FpsIdentityMarks profile={a.fpsIdentity}/>:<PersonalityMarks primary={a.primaryPersonality} secondary={a.secondaryPersonality}/>}</></div></div>
+      <div className="exchange-person"><WorldPlayerPortrait id={a.player_id} name={a.player} appearance={a.presentation?.appearance} size={76}/><div><a className="exchange-player-name" href={pediaHref('players',a.player_id)}>{a.player}<ArrowUpRight size={13}/></a><p>{fpsRoleFit(a.stats)} · {a.nationality?<CountryFlag code={a.nationality.code} name={a.nationality.name}/>:'Nationality unlisted'}{a.age?' · '+a.age+' years':''}</p><span className="exchange-overall"><strong>{toScale10(a.overall)}</strong> / 10 overall</span><>{a.fpsIdentity?<FpsIdentityMarks profile={a.fpsIdentity}/>:null}</></div></div>
       <ExchangeSkills stats={a.stats}/>
       <div className="exchange-auction-price"><small>{a.bid===null?'Opening price':'Current bid'}</small><strong>{pediaMoney(a.bid??a.minimum)}</strong><span>{a.wage==null?'Wage unlisted':pediaMoney(a.wage*100)+' / week'}</span></div>
       <div className="exchange-auction-deadline"><small><Clock3 size={12}/> Closes · Manila</small><time dateTime={a.closes_at}>{pediaTime(a.closes_at)}</time>{a.leading?<span className="exchange-leading"><Check size={12}/> You're leading</span>:a.your_listing?<span>Your listing</span>:<span>Next bid {pediaMoney(a.minimum)}</span>}</div>

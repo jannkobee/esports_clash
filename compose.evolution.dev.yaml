@@ -15,6 +15,7 @@ x-dev-api: &dev-api
     - ./EsportsClash.Api/routes:/app/routes:ro
     - ./EsportsClash.Api/resources/views:/app/resources/views:ro
     - ./EsportsClash.Api/resources/game:/app/resources/game:ro
+    - ./EsportsClash.Api/resources/fps-player-architecture-v4.json:/app/resources/fps-player-architecture-v4.json:ro
     - ./infrastructure/trellis2/references:/app/resources/avatars/generation-references:ro
     - ./infrastructure/trellis2/reference-index.json:/app/resources/avatars/generation-reference-index.json:ro
     - ./EsportsClash.Api/resources/avatars/base-anatomy.json:/app/resources/avatars/base-anatomy.json:ro

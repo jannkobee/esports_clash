@@ -24,7 +24,7 @@ class ClubMarketController extends Controller
                 $profile = app(\App\Services\WorldPlayerProfiles::class)->definition($card, $players[$card->definition_id]);
                 return ['id' => $card->id, 'name' => $card->persona_name ?? $profile['name'],
                     'role' => $profile['preferredRole'] ?? $profile['role'] ?? null, 'overall' => $profile['ovr'],
-                    'fpsIdentity'=>$profile['fpsIdentity']??null,'primaryPersonality'=>$profile['primaryPersonality']??null,'secondaryPersonality'=>$profile['secondaryPersonality']??null,'presentation'=>$profile['presentation']??null, 'nationality' => $profile['nationality'] ?? null, 'age' => $profile['age'] ?? null,
+                    'fpsIdentity'=>$profile['fpsIdentity']??null,'presentation'=>$profile['presentation']??null, 'nationality' => $profile['nationality'] ?? null, 'age' => $profile['age'] ?? null,
                     'wage' => $profile['wage'] ?? null, 'stats' => $profile['stats'] ?? []];
             });
         $auctions = ClubAuction::where('status', 'open')->where('closes_at', '>', now())
@@ -37,7 +37,7 @@ class ClubMarketController extends Controller
                 'player_id' => $auction->card->id, 'seller_id' => $auction->seller_id, 'seller_tag' => $auction->seller->tag,
                 'seller_is_bot' => $auction->seller->is_bot,
                 'bidder' => $auction->bidder?->only(['id', 'name', 'tag', 'is_bot']),
-                'fpsIdentity'=>$profile['fpsIdentity']??null,'primaryPersonality'=>$profile['primaryPersonality']??null,'secondaryPersonality'=>$profile['secondaryPersonality']??null,'presentation'=>$profile['presentation']??null,'nationality'=>$profile['nationality']??null,'overall'=>$profile['ovr'],'role'=>$profile['preferredRole']??$profile['role']??null,
+                'fpsIdentity'=>$profile['fpsIdentity']??null,'presentation'=>$profile['presentation']??null,'nationality'=>$profile['nationality']??null,'overall'=>$profile['ovr'],'role'=>$profile['preferredRole']??$profile['role']??null,
                 'age'=>$profile['age']??null,'wage'=>$profile['wage']??null,'stats'=>$profile['stats']??[],
                 'leading' => $auction->bidder_id === $club->id, 'bid' => $auction->bid, 'closes_at' => $auction->closes_at,
                 'minimum' => $auction->bid === null ? $auction->opening_bid : $auction->bid + ClubMarketService::BID_INCREMENT,
@@ -80,7 +80,7 @@ class ClubMarketController extends Controller
                 $profile = app(\App\Services\WorldPlayerProfiles::class)->definition($card, $templates[$card->definition_id]);
                 return ['id' => $card->id, 'name' => $card->persona_name ?? $profile['name'],
                     'overall' => $profile['ovr'], 'role' => $profile['preferredRole'] ?? $profile['role'] ?? null,
-                    'fpsIdentity'=>$profile['fpsIdentity']??null,'primaryPersonality'=>$profile['primaryPersonality']??null,'secondaryPersonality'=>$profile['secondaryPersonality']??null,'presentation'=>$profile['presentation']??null, 'nationality' => $profile['nationality'] ?? null, 'stats' => $profile['stats'] ?? []];
+                    'fpsIdentity'=>$profile['fpsIdentity']??null,'presentation'=>$profile['presentation']??null, 'nationality' => $profile['nationality'] ?? null, 'stats' => $profile['stats'] ?? []];
             })->values();
         return response()->json(['data' => ['club' => $target->only(['id', 'name', 'tag']), 'players' => $cards]]);
     }

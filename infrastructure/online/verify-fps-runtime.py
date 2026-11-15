@@ -22,12 +22,12 @@ plan = {
 }
 if simulation_version == 3:
     source = """
-import {FPS_IDENTITY_PERSONALITIES,FPS_SPECIALTIES,generatePlayerDNA} from './src/fps/index.ts';
+import {FPS_IDENTITY_PERSONALITIES,FPS_T_POSITIONS,FPS_CT_POSITIONS,generatePlayerDNA} from './src/fps/index.ts';
 let input='';for await(const chunk of process.stdin)input+=chunk;
 const ids=JSON.parse(input),plan={tempo:.5,structure:.5,aggression:.5,preparation:.5,freedom:.5,economy:.5};
 const coach={tempo:.5,rigidity:.5,aggression:.5,preparation:.5,freedom:.5,economy:.5,communication:.5,leadership:.5,adaptability:.5,development:.5};
 const chemistry={trust:.5,communication:.5,understanding:.5,leadershipAcceptance:.5,roleCompetition:.5};
-const players=Object.fromEntries(ids.map((id,i)=>[id,{id,personality:FPS_IDENTITY_PERSONALITIES[i%24],specialty:FPS_SPECIALTIES[i%21],intensity:.7,dna:generatePlayerDNA(id),roleSuitability:.5,familiarity:.2}]));
+const players=Object.fromEntries(ids.map((id,i)=>[id,{id,personality:FPS_IDENTITY_PERSONALITIES[i%54],assignments:{t:FPS_T_POSITIONS[i%5],ct:FPS_CT_POSITIONS[i%5]},dna:generatePlayerDNA(id),roleSuitability:.5,familiarity:.2}]));
 console.log(JSON.stringify({players,teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}}));
 """
     generated = subprocess.run(['node','--experimental-strip-types','--input-type=module','-e',source], input=json.dumps([s['instance_id'] for s in slots]), text=True, capture_output=True, check=True, cwd='/workspace/EsportsClash.Web')

@@ -14,7 +14,7 @@ class PlayerIgnGenerator
         $name = $starts[$bytes[0] % count($starts)].$vowels[$bytes[1] % count($vowels)]
             .$starts[$bytes[2] % count($starts)].$vowels[$bytes[3] % count($vowels)].$ends[$bytes[4] % count($ends)];
         $roots=['hush','rift','cinder','vex','fable','nori','lumen','wisp','onyx','sora','quill','kairo','vel','echo','jolt','mori','nox','piko','sable','kest','nyro','flux','rune','vesper','aero','zeph','tavi','neon','ember','clove','vanta','lyra','miso','volt','roan','kova','dash','cove','lark','prism'];
-        $tails=['','x','z','n','s','io','en','ix','o','y','er','in','a','u','iq','sy'];
+        $tails=['','x','z','n','s','io','en','ix','o','y','er','in','a','u','positioning','sy'];
         $pattern=$bytes[5]%10;
         if($pattern<5)$name=$roots[$bytes[6]%count($roots)].$tails[$bytes[7]%count($tails)];
         elseif($pattern<8)$name=$roots[$bytes[6]%count($roots)].$roots[$bytes[8]%count($roots)];

@@ -7,8 +7,21 @@ use Illuminate\Support\Facades\DB;
 /** Bounded fictional organizer decisions, separate from the annual official program. */
 class IndependentOrganizers
 {
+    private const IDENTITIES = [
+        ['harbor-stage','Harbor Stage','Harbor Open','Copperline'],
+        ['meridian-relay','Meridian Relay','Meridian Cup','Northglass'],
+        ['patchline-studio','Patchline Studio','Patchline Series','Beacon Works'],
+    ];
     public function tick():void{
         DB::transaction(function(){
+            // Publish system identities independently of whether this week has a legal event window.
+            foreach(self::IDENTITIES as [$slug,$name]){
+                DB::table('competition_organizers')->insertOrIgnore([
+                    'slug'=>$slug,'name'=>$name,'category'=>'independent','status'=>'verified',
+                    'branding'=>json_encode(['fictional'=>true,'managed_by'=>'world-organizer','broadcast'=>OrganizerBroadcastIdentity::profile($slug,$name)]),
+                    'created_at'=>now(),'updated_at'=>now(),
+                ]);
+            }
             $now=CarbonImmutable::now('UTC');$cycle=$now->format('o-\WW');
             DB::table('world_organizer_cycles')->insertOrIgnore(['cycle'=>$cycle,'status'=>'reviewing','created_at'=>now()]);
             $turn=DB::table('world_organizer_cycles')->where('cycle',$cycle)->lockForUpdate()->first();if($turn->status!=='reviewing')return;
@@ -19,10 +32,10 @@ class IndependentOrganizers
             $pools=OnlineClub::whereNotNull('tag')->whereNotNull('geography_id')->selectRaw('geography_id,tier,COUNT(*) as clubs')->groupBy('geography_id','tier')->havingRaw('COUNT(*) >= 4')->orderByDesc('clubs')->orderBy('geography_id')->orderBy('tier')->get();
             $pool=$pools->isEmpty()?null:$pools[$now->weekOfYear%$pools->count()];
             if(!$pool){DB::table('world_organizer_cycles')->where('id',$turn->id)->update(['status'=>'deferred','reason'=>'Insufficient eligible published clubs.']);return;}
-            $names=[['harbor-stage','Harbor Stage','Harbor Open','Copperline'],['meridian-relay','Meridian Relay','Meridian Cup','Northglass'],['patchline-studio','Patchline Studio','Patchline Series','Beacon Works']];
+            $names=self::IDENTITIES;
             [$slug,$name,$title,$sponsor]=$names[$now->weekOfYear%3];
             $org=DB::table('competition_organizers')->where('slug',$slug)->first();
-            if(!$org){$id=DB::table('competition_organizers')->insertGetId(['slug'=>$slug,'name'=>$name,'category'=>'independent','status'=>'verified','branding'=>json_encode(['fictional'=>true,'managed_by'=>'world-organizer']),'created_at'=>now(),'updated_at'=>now()]);}
+            if(!$org){$id=DB::table('competition_organizers')->insertGetId(['slug'=>$slug,'name'=>$name,'category'=>'independent','status'=>'verified','branding'=>json_encode(['fictional'=>true,'managed_by'=>'world-organizer','broadcast'=>OrganizerBroadcastIdentity::profile($slug,$name)]),'created_at'=>now(),'updated_at'=>now()]);}
             else{$id=$org->id;abort_unless(($org->user_id??null)===null,409,'A human-owned organizer cannot be automated.');}
             if(app(WorldCareers::class)->ready())app(WorldSponsorships::class)->fundOrganizer($id,300000,'organizer-grant:'.$id.':'.$now->format('Y-m'));
             if(DB::table('world_sponsor_ledger')->where('organizer_id',$id)->sum('amount')<300000){DB::table('world_organizer_cycles')->where('id',$turn->id)->update(['status'=>'deferred','reason'=>'Sponsorship budget exhausted.']);return;}

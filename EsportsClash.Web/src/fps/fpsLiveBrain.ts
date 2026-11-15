@@ -1,7 +1,8 @@
 import type { FpsPoint } from './fpsSpatialWorld.ts';
 import type { FpsPrimaryRole } from './fpsIdentity.ts';
 import type { LiveIntelBelief } from './fpsLiveIntel.ts';
-import { distance } from './fpsLiveMap.ts';
+import { distance, LIVE_TACTICAL, LIVE_MARKET_PASSAGE, LIVE_MID, liveWalkable, liveSightline } from './fpsLiveMap.ts';
+import { liveGroundHeight } from './fpsLiveTerrain.ts';
 import type { LiveRoutePlan } from './fpsLivePlanning.ts';
 import { LIVE_PLANT_RULES } from './fpsLivePlanning.ts';
 
@@ -19,21 +20,65 @@ export function shouldCommitLivePlant(position:FpsPoint,threats:readonly LivePla
 
 export interface LiveApproach {key:string;point:FpsPoint;purpose:'entry'|'control'|'flank'|'clear'}
 export interface LiveApproachContext {
+  behavior?:import('./fpsPlayerArchitecture.ts').FpsBehaviorPreferences;decision?:string;
   position:FpsPoint;role:FpsPrimaryRole;remaining:number;judgment:number;
   allies:readonly FpsPoint[];beliefs:readonly LiveIntelBelief[];
   previous?:string;committed:boolean;visited:ReadonlySet<string>;execute:boolean;
   routeTo?:(point:FpsPoint)=>LiveRoutePlan;alliedGoals?:readonly FpsPoint[];
+  objective?:FpsPoint;health?:number;entrySkill?:number;utilitySkill?:number;
+  firepower?:number;preferredRange?:number;
+  phase?:'regroup'|'breach'|'retake';
+}
+
+/** Map affordances, not a sequence: each actor evaluates the reachable options. */
+export function liveAssaultApproaches(site:'A'|'B',from:FpsPoint):LiveApproach[] {
+  const positions=LIVE_TACTICAL[site];
+  return [
+    ...positions.entries.map((point,i)=>({key:`${site}:entry:${i}`,point,purpose:'entry' as const})).filter(c=>c.point.z>=from.z+2),
+    ...positions.holds.map((point,i)=>({key:`${site}:clear:${i}`,point,purpose:'clear' as const})),
+    ...(from.z>=-18?(site==='A'?[
+      {key:'A:west-flank',point:{x:-34,z:12},purpose:'flank' as const},
+      {key:'A:pit-pocket',point:{x:-29,z:16},purpose:'entry' as const},
+      ...(from.z<4?[{key:'A:mid-underpass',point:{x:-8.5,z:-8},purpose:'flank' as const}]:[]),
+    ]:[
+      {key:'B:flower-alley',point:{x:14.5,z:23},purpose:'flank' as const},
+      {key:'B:apartments-ramp',point:{x:32,z:14},purpose:'entry' as const},
+      ...(from.z<4?[{key:'B:banana-car',point:{x:20,z:-4},purpose:'clear' as const}]:[]),
+    ]):[]),
+    ...(site==='B'&&from.z<19?[{key:'B:market-passage',point:LIVE_MARKET_PASSAGE.center,purpose:'flank' as const}]:[]),
+    ...(from.z<3?[{key:`${site}:mid-split`,point:LIVE_MID.splits[site],purpose:'flank' as const}]:[]),
+  ];
+}
+
+export function liveRetakeApproaches(site:'A'|'B',bomb:FpsPoint):LiveApproach[] {
+  const positions=LIVE_TACTICAL[site];
+  const points=[...positions.holds,...positions.postPlant,
+    ...(site==='A'?[{x:-29,z:16},{x:-34,z:16},{x:-25,z:26}]:[LIVE_MARKET_PASSAGE.north,LIVE_MARKET_PASSAGE.center,{x:14.5,z:23},{x:11.5,z:25}]),
+    ...Array.from({length:6},(_,i)=>({x:bomb.x+Math.sin(i*Math.PI/3)*7,z:bomb.z+Math.cos(i*Math.PI/3)*7}))];
+  return points.filter((p,i)=>liveWalkable(p)&&distance(p,bomb)>3&&distance(p,bomb)<19
+    &&points.findIndex(q=>distance(p,q)<.5)===i
+    &&liveSightline(p,bomb,liveGroundHeight(p)+1.55,liveGroundHeight(bomb)+.5))
+    .map((point,i)=>({key:`retake:${site}:${i}`,point,purpose:'clear'}));
 }
 
 /** A bounded local planner. No world opponents, secret orders or future outcomes are inputs. */
 export function chooseLiveApproach(candidates:readonly LiveApproach[],context:LiveApproachContext,random:()=>number):LiveApproach|undefined {
+  // A committed quiet route needs only its own reachability checked. Do not
+  // construct every alternative again until there is a reason to reassess.
+  const previous=context.committed?candidates.find(c=>c.key===context.previous&&!context.visited.has(c.key)):undefined;
+  if(previous&&!context.beliefs.some(b=>b.age<3&&b.certainty>=.55)){
+    const urgent=context.remaining<=20&&!context.objective,allowed=!urgent||previous.purpose==='entry'||previous.purpose==='clear';
+    const route=context.routeTo?.(previous.point);
+    if(allowed&&(!route||Number.isFinite(route.distance)&&route.seconds+(context.phase==='retake'?0:5)<context.remaining))return previous;
+  }
   const legal=candidates.filter(c=>!context.routeTo||Number.isFinite(context.routeTo(c.point).distance));
   const available=legal.filter(c=>!context.visited.has(c.key));
   const unvisited=available.length?available:legal;
-  const urgent=context.remaining<35||context.execute;
+  const urgent=context.remaining<=20&&!context.objective;
   const direct=unvisited.filter(c=>c.purpose==='entry'||c.purpose==='clear');
   const choices=urgent&&direct.length?direct:unvisited;
-  const feasible=choices.filter(c=>!context.routeTo||context.routeTo(c.point).seconds+5<context.remaining);
+  const feasible=choices.filter(c=>!context.routeTo||context.routeTo(c.point).seconds+(context.phase==='retake'?0:5)<context.remaining);
+  if(context.phase==='retake'&&!feasible.length)return undefined;
   const pool=feasible.length?feasible:choices;
   if(!pool.length)return undefined;
   const retained=pool.find(c=>c.key===context.previous);
@@ -50,14 +95,28 @@ export function chooseLiveApproach(candidates:readonly LiveApproach[],context:Li
     const crowd=context.allies.filter(a=>distance(a,candidate.point)<5).length;
     const reservations=context.alliedGoals?.filter(a=>distance(a,candidate.point)<5).length??0;
     const danger=dangerAt(candidate);
-    const urgency=detour?(context.remaining<35?6:context.execute?4:0):0;
-    return {candidate,score:roleValue-(context.routeTo?.(candidate.point).distance??distance(context.position,candidate.point))*.12-crowd*1.5-reservations*.8
-      -danger*(.5+context.judgment)-urgency+(candidate.key===context.previous?.4:0)};
+    const urgency=detour?(context.remaining<35?6:context.execute?.8:0):0;
+    const behavior=context.behavior;
+    const preference=!behavior?0:candidate.purpose==='entry'?(behavior.initiative-.5)*1.2+(context.decision==='pressure'?.8:0):candidate.purpose==='flank'?(1-behavior.coordination)*.5+(context.decision==='improvise'?.8:0):candidate.purpose==='control'?(.5-behavior.initiative)*.6:behavior.deliberation*.2;
+    const health=context.health??100,initiative=behavior?.initiative??.5;
+    const capability=candidate.purpose==='entry'?(context.entrySkill??.5)*.7
+      :candidate.purpose==='control'?(context.utilitySkill??.5)*.6:context.judgment*.3;
+    const progress=context.objective?distance(candidate.point,context.objective)*.08:0;
+    const risk=.5+context.judgment+(1-health/100)*1.4+(behavior?(1-initiative)*.7:0)+(1-(context.firepower??1))*.5;
+    const rangeFit=context.objective&&context.preferredRange!==undefined&&candidate.purpose==='clear'
+      ?Math.abs(distance(candidate.point,context.objective)-context.preferredRange)*(.04+context.judgment*.04):0;
+    return {candidate,score:roleValue+preference+capability-(context.routeTo?.(candidate.point).distance??distance(context.position,candidate.point))*.12-crowd*1.5-reservations*.8
+      -danger*risk-urgency-progress-rangeFit+(candidate.key===context.previous?.4:0)};
   });
   scored.sort((a,b)=>b.score-a.score||a.candidate.key.localeCompare(b.candidate.key));
-  // Variety breaks close calls; it cannot make a clearly inferior route win.
-  const plausible=scored.filter(c=>c.score>=scored[0].score-(.15+(1-context.judgment)*.35));
-  return plausible[Math.min(plausible.length-1,Math.floor(random()*plausible.length))].candidate;
+  // Seeded weighted variation among sensible options. Deliberate players vary
+  // less, but no temperament is forced to follow an identical route each round.
+  const spread=context.behavior?1.2+(1-context.behavior.deliberation)*1.4+(1-context.judgment)*.4:.15+(1-context.judgment)*.35;
+  const plausible=scored.filter(c=>c.score>=scored[0].score-spread);
+  const temperature=context.behavior?.deliberation===undefined ? .45 : .45+(1-context.behavior.deliberation)*.8;
+  const weights=plausible.map(c=>Math.exp((c.score-scored[0].score)/temperature));
+  let roll=random()*weights.reduce((sum,w)=>sum+w,0);
+  return (plausible.find((_,i)=>(roll-=weights[i])<0)??plausible[plausible.length-1]).candidate;
 }
 
 export function canInvestigateLiveContact(from:FpsPoint,belief:LiveIntelBelief|undefined,remaining:number,lurker=false):boolean {
@@ -73,37 +132,85 @@ export function shouldFakeLiveDefuse(remaining:number,kit:boolean,covered:boolea
 
 export interface LiveSmokeVolume extends FpsPoint {id?:number;y:number;radius:number;expires:number;startedAt?:number;disturbance?:number}
 export interface LiveSmokeCloudLobe {x:number;y:number;z:number;scaleX:number;scaleY:number;scaleZ:number}
+const smokeLobeCache=new Map<string,LiveSmokeCloudLobe[]>();
 /** The viewer renders these exact ellipsoids; AI sight tests the same animated volume. */
 export function liveSmokeCloudLobes(smoke:LiveSmokeVolume,now:number):LiveSmokeCloudLobe[] {
+  const key=`${smoke.id??0}:${smoke.radius}:${now}`,cached=smokeLobeCache.get(key);
+  if(cached)return cached;
   const result:LiveSmokeCloudLobe[]=[];
   for(let i=0;i<15;i++){
     const phase=((smoke.id??0)*2.399+i*4.17)%(Math.PI*2),angle=phase+now*.045;
-    const spread=i===0?0:.17+(i%4)*.055,wobble=Math.sin(now*.48+phase);
-    const width=smoke.radius*(i===0?.62:.45+(i%3)*.035);
-    result.push({
-      x:Math.cos(angle)*smoke.radius*spread+Math.sin(now*.37+phase)*smoke.radius*.025,
-      y:smoke.radius*(.015+(i%4)*.055)+wobble*smoke.radius*.025,
-      z:Math.sin(angle)*smoke.radius*spread+Math.cos(now*.31+phase)*smoke.radius*.025,
-      scaleX:width,scaleY:width*(.7+(i%3)*.07),scaleZ:width,
-    });
+    const wobble=Math.sin(now*.28+phase);
+    if(i===0){
+      const width=smoke.radius*1.35;
+      result.push({
+        x:Math.sin(now*.37+phase)*smoke.radius*.025,
+        y:smoke.radius*.02+wobble*smoke.radius*.01,
+        z:Math.cos(now*.31+phase)*smoke.radius*.025,
+        scaleX:width,scaleY:Math.min(3.65,smoke.radius*.94),scaleZ:width,
+      });
+    }else if(i<=8){
+      // Grounded lower skirt & mid-body billows so the smoke sits flush on stone/earth.
+      const spread=.28+(i%4)*.045,width=smoke.radius*(.94+(i%3)*.045);
+      result.push({
+        x:Math.cos(angle)*smoke.radius*spread+Math.sin(now*.37+phase)*smoke.radius*.022,
+        y:-smoke.radius*.06+(i%3)*smoke.radius*.035+wobble*smoke.radius*.012,
+        z:Math.sin(angle)*smoke.radius*spread+Math.cos(now*.31+phase)*smoke.radius*.022,
+        scaleX:width,scaleY:Math.min(3.25,smoke.radius*(.78+(i%3)*.04)),scaleZ:width,
+      });
+    }else{
+      // Upper crown billows give a natural three-dimensional silhouette and block steep highground angles.
+      const spread=.20+(i%3)*.05,width=smoke.radius*(.88+(i%2)*.05);
+      result.push({
+        x:Math.cos(angle)*smoke.radius*spread+Math.sin(now*.37+phase)*smoke.radius*.022,
+        y:smoke.radius*(.04+(i%3)*.03)+wobble*smoke.radius*.012,
+        z:Math.sin(angle)*smoke.radius*spread+Math.cos(now*.31+phase)*smoke.radius*.022,
+        scaleX:width,scaleY:Math.min(3.65,smoke.radius*(.92+(i%2)*.04)),scaleZ:width,
+      });
+    }
   }
+  smokeLobeCache.set(key,result);if(smokeLobeCache.size>64)smokeLobeCache.delete(smokeLobeCache.keys().next().value!);
   return result;
 }
-function segmentHitsSmokeLobe(from:FpsPoint,to:FpsPoint,fromY:number,toY:number,smoke:LiveSmokeVolume,lobe:LiveSmokeCloudLobe):boolean {
+function segmentSmokeLobeContribution(from:FpsPoint,to:FpsPoint,fromY:number,toY:number,smoke:LiveSmokeVolume,lobe:LiveSmokeCloudLobe):{chord:number;optical:number} {
+  const floorY=smoke.y-1.42,dyWorld=toY-fromY;
+  let minT=0,maxT=1;
+  if(Math.abs(dyWorld)<1e-6){
+    if(fromY<floorY)return {chord:0,optical:0};
+  }else{
+    const tFloor=(floorY-fromY)/dyWorld;
+    if(dyWorld>0)minT=Math.max(0,tFloor);
+    else maxT=Math.min(1,tFloor);
+  }
+  if(minT>=maxT)return {chord:0,optical:0};
   const rx=Math.max(.001,lobe.scaleX*.5),ry=Math.max(.001,lobe.scaleY*.5),rz=Math.max(.001,lobe.scaleZ*.5);
   const ox=(from.x-smoke.x-lobe.x)/rx,oy=(fromY-smoke.y-lobe.y)/ry,oz=(from.z-smoke.z-lobe.z)/rz;
-  const dx=(to.x-from.x)/rx,dy=(toY-fromY)/ry,dz=(to.z-from.z)/rz;
+  const dx=(to.x-from.x)/rx,dy=dyWorld/ry,dz=(to.z-from.z)/rz;
   const a=dx*dx+dy*dy+dz*dz,c=ox*ox+oy*oy+oz*oz-1;
-  if(a<1e-12)return c<=0;
+  if(a<1e-12)return c<=0?{chord:1,optical:1}:{chord:0,optical:0};
   const b=2*(ox*dx+oy*dy+oz*dz),discriminant=b*b-4*a*c;
-  if(discriminant<0)return false;
-  const root=Math.sqrt(discriminant),entry=(-b-root)/(2*a),exit=(-b+root)/(2*a);
-  return exit>=0&&entry<=1;
+  if(discriminant<0)return {chord:0,optical:0};
+  const root=Math.sqrt(discriminant),entry=Math.max(minT,(-b-root)/(2*a)),exit=Math.min(maxT,(-b+root)/(2*a));
+  if(exit<=entry)return {chord:0,optical:0};
+  const chord=(exit-entry)*Math.hypot(to.x-from.x,dyWorld,to.z-from.z);
+  const midT=.5*(entry+exit),mx=ox+dx*midT,my=oy+dy*midT,mz=oz+dz*midT;
+  const r2=Math.min(1,mx*mx+my*my+mz*mz),radial=(1-r2)*(1-r2);
+  return {chord,optical:chord*(.28+.72*radial)};
 }
-/** Smoke blocks only the visible cloud volume; it does not block bullets, movement, or sound. */
+export function liveSmokeDepth(from:FpsPoint,to:FpsPoint,fromY:number,toY:number,smoke:LiveSmokeVolume,now=smoke.startedAt??0):number {
+  if(smoke.expires<=now||smoke.radius<=.02)return 0;
+  const fade=Math.min(1,Math.max(0,(smoke.expires-now)/1.2));
+  let opticalSum=0;
+  for(const lobe of liveSmokeCloudLobes(smoke,now)){
+    const part=segmentSmokeLobeContribution(from,to,fromY,toY,smoke,lobe);
+    opticalSum+=part.optical;
+  }
+  // Base optical integral directly tracks shader opticalDepth without maxChord inflating thin wispy rim chords.
+  return opticalSum*.52*fade;
+}
+/** Smoke blocks only the dense visible cloud volume matching Spectator alpha; wispy outer edges remain transparent. */
 export function liveSmokeOccludes(from:FpsPoint,to:FpsPoint,fromY:number,toY:number,smoke:LiveSmokeVolume,now=smoke.startedAt??0):boolean {
-  if(smoke.expires<=now||smoke.radius<=.02)return false;
-  return liveSmokeCloudLobes(smoke,now).some(lobe=>segmentHitsSmokeLobe(from,to,fromY,toY,smoke,lobe));
+  return liveSmokeDepth(from,to,fromY,toY,smoke,now)>.48;
 }
 
 /** Move briefly, then leave enough braking/aim time to shoot. A strafe is not a permanent state. */

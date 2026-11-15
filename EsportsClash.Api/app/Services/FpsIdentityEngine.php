@@ -11,8 +11,8 @@ class FpsIdentityEngine
     public const PLAN = ['tempo'=>.5,'structure'=>.5,'aggression'=>.5,'preparation'=>.5,'freedom'=>.5,'economy'=>.5];
     public const CHEMISTRY = ['trust'=>.5,'communication'=>.5,'understanding'=>.5,'leadershipAcceptance'=>.5,'roleCompetition'=>.5];
 
-    public function ready(): bool { return Schema::hasTable('fps_identity_applications'); }
-    public function enabled(): bool { return $this->ready() && (bool) DB::table('fps_identity_settings')->where('id',1)->value('enabled'); }
+    public function ready(): bool { return Schema::hasColumn('fps_player_identities','personality'); }
+    public function enabled(): bool { return $this->ready(); }
 
     public function coach(OnlineClub $club): array
     {
@@ -35,12 +35,28 @@ class FpsIdentityEngine
     {
         $profiles=app(FpsIdentityProfiles::class); $players=[]; $teams=[];
         foreach (['blue'=>[$blue,$blueUser],'red'=>[$red,$redUser]] as $side=>[$slots,$user]) {
+            if($user===null){
+                $definitions=[];foreach($slots as $slot){$card=OwnedPlayerCard::find($slot['instance_id']);$definitions[$slot['instance_id']]=$card?app(WorldPlayerProfiles::class)->definition($card,$templates[$card->definition_id]):($templates[$slot['card_id']??'']??[]);}
+                $assignments=app(FpsPlayerArchitecture::class)->recommendedAssignments($definitions,self::PLAN);
+                $teams[$side]=['coach'=>['tempo'=>.5,'rigidity'=>.5,'aggression'=>.5,'preparation'=>.5,'freedom'=>.5,'economy'=>.5,'communication'=>.5,'leadership'=>.5,'adaptability'=>.5,'development'=>.5],'plan'=>self::PLAN,'culture'=>self::PLAN,'coachKey'=>'neutral-v4','clubId'=>null,'chemistry'=>self::CHEMISTRY];
+                foreach($slots as $slot){$id=$slot['instance_id'];$player=OwnedPlayerCard::find($id);if($player)$profiles->initialize($player,$templates[$player->definition_id]??[]);$row=DB::table('fps_player_identities')->where('player_id',$id)->first();$players[$id]=['id'=>$id,'personality'=>$row?json_decode($row->personality,true):app(FpsPlayerArchitecture::class)->generate($id),'assignments'=>$assignments[$id],'dna'=>$row?json_decode($row->dna,true):$profiles->dna($id),'roleSuitability'=>.5,'familiarity'=>0];}
+                continue;
+            }
             $club=OnlineClub::where('user_id',$user)->firstOrFail();
             $system=DB::table('fps_team_systems')->where('club_id',$club->id)->first();
             $plan=$system ? json_decode($system->gameplan,true) : self::PLAN;
             $culture=$system ? json_decode($system->culture,true) : self::PLAN;
             $instructions=$system?->instructions ? json_decode($system->instructions,true) : [];
             $coach=$this->coach($club); $ids=array_column($slots,'instance_id');
+            try{$assignments=app(FpsPlayerArchitecture::class)->assignments($ids,$instructions);}
+            catch(\Illuminate\Validation\ValidationException $error){
+                if(!$club->is_bot)throw $error;
+                // The AI manager chooses its own team roles, just as a human manager must.
+                $definitions=OwnedPlayerCard::whereIn('id',$ids)->get()->mapWithKeys(fn($p)=>[$p->id=>app(WorldPlayerProfiles::class)->definition($p,$templates[$p->definition_id])])->all();
+                $assignments=app(FpsPlayerArchitecture::class)->recommendedAssignments($definitions,$plan);
+                foreach($assignments as $id=>$assignment)$instructions[$id]=array_replace($instructions[$id]??['instruction'=>'balanced','training'=>'system'],$assignment);
+                DB::table('fps_team_systems')->updateOrInsert(['club_id'=>$club->id],['revision'=>(int)($system?->revision??0)+1,'gameplan'=>json_encode($plan),'culture'=>json_encode($culture),'instructions'=>json_encode($instructions),'created_at'=>$system?->created_at??now(),'updated_at'=>now()]);
+            }
             $relations=DB::table('fps_player_relationships')->whereIn('player_id',$ids)->whereIn('teammate_id',$ids)->get();
             $chemistry=self::CHEMISTRY;
             if ($relations->isNotEmpty()) foreach ($chemistry as $key=>$value) $chemistry[$key]=$relations->avg(fn($r)=>json_decode($r->relationship,true)[$key]??$value);
@@ -53,47 +69,49 @@ class FpsIdentityEngine
                 $key=hash('sha256',json_encode($plan));
                 $familiarity=$development['systems'][$key]??0;
                 if (($development['coach_key']??$coach['key'])!==$coach['key']) $familiarity*=.8;
-                $players[$player->id]=['id'=>$player->id,'personality'=>['id'=>$row->personality_id??'slow_burner'],
-                    'specialty'=>$row->specialty_id ? ['id'=>$row->specialty_id] : null,'dna'=>$dna,
-                    'intensity'=>.4+$dna['competitiveDrive']/200,'specialtyProficiency'=>$development['specialty_proficiency']??.5,
+                $players[$player->id]=['id'=>$player->id,'personality'=>json_decode($row->personality,true),'assignments'=>$assignments[$player->id],
+                    'observed'=>json_decode($row->behavior??'null',true),'dna'=>$dna,
                     'roleSuitability'=>.5,'familiarity'=>$familiarity,'roleFamiliarity'=>$development['role_familiarity']??[],
-                    'assignedRole'=>$instructions[$player->id]['role']??null,'instruction'=>$instructions[$player->id]['instruction']??'balanced','trainingFocus'=>$instructions[$player->id]['training']??'system'];
+                    'instruction'=>$instructions[$player->id]['instruction']??'balanced','trainingFocus'=>$instructions[$player->id]['training']??'system'];
             }
         }
-        return ['schema'=>1,'players'=>$players,'teams'=>$teams];
+        return ['schema'=>4,'players'=>$players,'teams'=>$teams];
     }
 
     public function apply(OnlineMatch $match): void
     {
-        if (($match->plan['fps']['simulation_version']??0)!==3) return;
+        if (($match->plan['fps']['simulation_version']??0)!==4) return;
         abort_unless($match->status==='completed',409,'Identity development requires a verified completed match.');
         if (!DB::table('fps_identity_applications')->insertOrIgnore(['match_id'=>$match->id,'created_at'=>now()])) return;
         $pin=$match->plan['fps_identity']; $events=$match->result['report']['events'];
         $rounds=$match->result['report']['totalRounds'];
         foreach (['blue','red'] as $side) {
-            $team=$pin['teams'][$side]; $ids=array_column($match->plan[$side],'instance_id');
+            $team=$pin['teams'][$side];if(empty($team['clubId']))continue; $ids=array_column($match->plan[$side],'instance_id');
             foreach ($ids as $id) {
                 $row=DB::table('fps_player_identities')->where('player_id',$id)->lockForUpdate()->first();
                 $dev=json_decode($row->development,true); $dna=json_decode($row->dna,true);
                 $systemKey=hash('sha256',json_encode($team['plan']));
                 $old=$dev['systems'][$systemKey]??0;
                 if (($dev['coach_key']??$team['coachKey'])!==$team['coachKey']) $old*=.8;
-                $dev['systems'][$systemKey]=min(1,$old+(1-$old)*min(.08,$rounds*(.002+.003*$dna['adaptability']/100)));
-                // Keep bounded history of systems without changing personality or specialty.
+                $dev['systems'][$systemKey]=min(1,$old+(1-$old)*min(.08,$rounds*(.002+.003*.5)));
+                // Keep bounded history of systems without changing permanent personality.
                 if (count($dev['systems'])>24) array_shift($dev['systems']);
-                $activations=count(array_filter($events,fn($e)=>($e['type']??'')==='specialty_activated'&&($e['actorId']??'')===$id));
-                $proficiency=$dev['specialty_proficiency']??.5;
-                $dev['specialty_proficiency']=min(1,$proficiency+(1-$proficiency)*min(.015,$activations*.0005));
+                $behavior=json_decode($row->behavior??'null',true)??['version'=>4,'matches'=>0,'metrics'=>[]];
+                $behavior['matches']++;
+                foreach($events as $event)if(($event['type']??'')==='behavior_observation'&&($event['actorId']??null)===$id){
+                    $o=$event['observation'];$metric=$o['metric'];$item=$behavior['metrics'][$metric]??['opportunities'=>0,'attempts'=>0];
+                    $item['opportunities']++;if($o['attempted'])$item['attempts']++;$behavior['metrics'][$metric]=$item;
+                }
                 $dev['appearances']=($dev['appearances']??0)+1; $dev['coach_key']=$team['coachKey'];
                 $observations=[];
-                foreach ($events as $event) if (($event['actorId']??null)===$id && in_array($event['type'],['tactical_decision','specialty_activated'],true)) $observations[]=$event['text'];
+                foreach ($events as $event) if (($event['actorId']??null)===$id && in_array($event['type'],['tactical_decision'],true)) $observations[]=$event['text'];
                 $dev['recent_observations']=array_slice($observations,-5);
                 foreach ($match->result['report']['roundSnapshots']??[] as $snapshot) if ($snapshot['playerId']===$id) {
-                    $role=$snapshot['tactics']['role']??null;
+                    $role=$snapshot['tactics']['position']??null;
                     if ($role) { $value=$dev['role_familiarity'][$role]??0; $dev['role_familiarity'][$role]=$value+(1-$value)*.002; }
                 }
-                $dna['adaptability']+=.03*(1-$dna['adaptability']/100)*$team['coach']['development'];
-                DB::table('fps_player_identities')->where('player_id',$id)->update(['dna'=>json_encode($dna),'development'=>json_encode($dev),'updated_at'=>now()]);
+
+                DB::table('fps_player_identities')->where('player_id',$id)->update(['dna'=>json_encode($dna),'development'=>json_encode($dev),'behavior'=>json_encode($behavior),'updated_at'=>now()]);
             }
             // Relationship learning uses recorded trades; a loss alone is not a chemistry penalty.
             foreach ($events as $event) if (($event['type']??'')==='trade_kill' && in_array($event['actorId']??null,$ids,true)) {
@@ -123,8 +141,7 @@ class FpsIdentityEngine
             $system=DB::table('fps_team_systems')->where('club_id',$team['clubId'])->lockForUpdate()->first();
             $culture=json_decode($system->culture,true);
             foreach (self::PLAN as $key=>$value) {
-                $trait=match($key){'structure'=>'tacticalDiscipline','preparation'=>'preparationPreference','freedom'=>'creativity',default=>'riskTolerance'};
-                $roster=array_sum(array_map(fn($id)=>$pin['players'][$id]['dna'][$trait]/100,$ids))/count($ids);
+                $roster=array_sum(array_map(function($id)use($pin,$key){$p=$pin['players'][$id]['personality'];return match($key){'tempo','aggression'=>match($p['playstyle']){'AGGRESSIVE'=>.9,'PASSIVE'=>.1,default=>.5},'structure'=>$p['mindset']==='TEAM_FIRST'?.85:.25,'preparation'=>match($p['decisionStyle']){'METHODICAL'=>.85,'INSTINCTIVE'=>.15,default=>.5},'freedom'=>match($p['decisionStyle']){'METHODICAL'=>.15,'INSTINCTIVE'=>.85,default=>.5},default=>.5};},$ids))/count($ids);
                 $target=($team['plan'][$key]+$roster+($team['coach'][match($key){'structure'=>'rigidity',default=>$key}]??.5))/3;
                 $culture[$key]+=max(-.03,min(.03,($target-$culture[$key])*.08));
             }
@@ -136,17 +153,14 @@ class FpsIdentityEngine
     {
         if(!$this->ready())return;
         $match=OnlineMatch::find($matchId);
-        if(($match?->plan['fps']['simulation_version']??0)!==3)return;
+        if(($match?->plan['fps']['simulation_version']??0)!==4)return;
         $pin=$match->plan['fps_identity'];$identity=$pin['players'][$playerId]??null;
         if(!$identity)return;
         $row=DB::table('fps_player_identities')->where('player_id',$playerId)->lockForUpdate()->first();
         if(!$row)return;
         $dev=json_decode($row->development,true);$amount=min(.02,max(0,$xp)*.0002);$focus=$identity['trainingFocus']??'system';
-        if($focus==='specialty') {
-            $used=collect($match->result['report']['events'])->contains(fn($e)=>($e['actorId']??null)===$playerId&&$e['type']==='specialty_activated');
-            if($used){$value=$dev['specialty_proficiency']??.5;$dev['specialty_proficiency']=$value+(1-$value)*$amount;}
-        } elseif($focus!=='system') {
-            $value=$dev['role_familiarity'][$focus]??0;$dev['role_familiarity'][$focus]=$value+(1-$value)*$amount;
+        if($focus!=='system') {
+            $value=$dev['attribute_practice'][$focus]??0;$dev['attribute_practice'][$focus]=$value+(1-$value)*$amount;
         } else {
             $side=in_array($playerId,array_column($match->plan['blue'],'instance_id'),true)?'blue':'red';
             $key=hash('sha256',json_encode($pin['teams'][$side]['plan']));$value=$dev['systems'][$key]??0;$dev['systems'][$key]=$value+(1-$value)*$amount;

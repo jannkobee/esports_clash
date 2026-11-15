@@ -1,6 +1,6 @@
 import {segmentHitsWall} from '../../EsportsClash.Web/src/fps/fpsSpatialWorld.ts';
 import {FpsLiveSimulation,LIVE_FPS_STEP} from '../../EsportsClash.Web/src/fps/fpsLiveSimulation.ts';
-import {LIVE_FPS_MAP,LIVE_ACTOR_RADIUS} from '../../EsportsClash.Web/src/fps/fpsLiveMap.ts';
+import {liveActorSolids,LIVE_ACTOR_RADIUS} from '../../EsportsClash.Web/src/fps/fpsLiveMap.ts';
 import {fixture} from './fixtures.mjs';
 import {validateBundle,sha} from './model.mjs';
 export async function runMatch(job,emit=()=>{},cancelled=()=>false){
@@ -26,7 +26,7 @@ export async function runMatch(job,emit=()=>{},cancelled=()=>false){
       snapshot=sim.snapshot();
       for(const p of snapshot.players){
         if(![p.x,p.z,p.hp].every(Number.isFinite)||Math.abs(p.x)>34.01||Math.abs(p.z)>43.01)throw Error('Position/health invariant');
-        if(p.hp>0&&!p.isBoosted&&!p.jump&& LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(p,p,w,LIVE_ACTOR_RADIUS-0.001)))throw Error('Collision invariant');
+        if(p.hp>0&&!p.isBoosted&&!p.jump&&liveActorSolids(p,p.jumpY??0,p.crouch?1.3:1.72).some(w=>segmentHitsWall(p,p,w,LIVE_ACTOR_RADIUS-0.001)))throw Error('Collision invariant');
         if(snapshot.phase==='live'&&p.hp>0&&p.speed<.1&&/moving|advanc|rotat|push/i.test(p.action))stalledActorSeconds++;
       }
       if(snapshot.bomb.status==='carried'&&snapshot.players.filter(p=>p.hp>0&&p.bomb).length!==1)throw Error('Bomb ownership invariant');

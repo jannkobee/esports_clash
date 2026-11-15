@@ -40,7 +40,7 @@ interface StaffDesk {
 const icons = [GraduationCap, Users, Brain, Activity, ShieldCheck];
 const labels: Record<string, string> = {
   tactics: 'Tactical planning',
-  drafting: 'Drafting',
+  drafting: 'Gameplan setup',
   leadership: 'Leadership',
   adaptation: 'Adaptation',
   preparation: 'Preparation',
@@ -49,7 +49,7 @@ const labels: Record<string, string> = {
   teamwork: 'Teamwork',
   meta_reading: 'Meta reading',
   scouting: 'Scouting',
-  counter_pick: 'Counter-picking',
+  counter_pick: 'Counter-tactics',
   data_quality: 'Data quality',
   conditioning: 'Conditioning',
   recovery: 'Recovery',
@@ -89,7 +89,7 @@ export function ClubStaffRoom() {
     <section className="cm-panel">
       <h2 className="cm-panel-header flex items-center gap-2"><Users size={17}/> Staff cabinet</h2>
       <div className="cm-panel-body">
-        <p className="club-help">Your staff prepare each Arena draft from player-role fit and the verified meta. You select the five starters; staff select their avatars for each match. Draft recommendations are pinned into the match plan before the Arena starts.</p>
+        <p className="club-help">Your staff support your tactical system from player execution strengths and verified match trends. You select the five starters and assign their T and CT responsibilities; staff attributes and coach compatibility are pinned into the match plan before allocation.</p>
         <div className="staff-roster-rows">{desk.staff.map((member,index)=>{const Icon=icons[index]??Users;return <article className="staff-person-row" key={member.role}><PersonPortrait id={member.portrait_key??'staff:'+session.user.id+':'+member.role} name={member.name} size={76}/><div className="staff-person-details"><span><Icon size={15}/>{member.title}</span><h3>{member.name}</h3><small>{member.arrangement}</small>{member.contract_ends_at&&<small>Contract through {pediaTime(member.contract_ends_at)}</small>}</div><dl className="staff-person-attributes">{Object.entries(member.attributes).map(([key,value])=><div key={key}><dt>{labels[key]??key}</dt><dd><strong>{value}</strong><small>/10</small><span className="staff-rating-track"><span style={{width:value*10+'%'}}/></span></dd></div>)}</dl><aside><span>Weekly salary</span><strong>{pediaMoney(member.weekly_salary)}</strong>{member.contract_id?<button className="cm-btn" disabled={busy} onClick={()=>void act('/online/staff/release',{role:member.role})}>End contract</button>:<small>Founding agreement</small>}</aside></article>;})}</div>
       </div>
     </section>

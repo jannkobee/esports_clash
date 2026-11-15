@@ -318,7 +318,7 @@ export function App() {
           <div className="cm-breadcrumb" title={sectionTitle[activeSection]}>Club management <span>Manila · UTC+8</span></div>
 
           <div className="cm-topbar-stats">{accountSession?.user.supporter?.active && <SupporterBadge trial={accountSession.user.supporter.kind === 'trial'} level={accountSession.user.supporter.level} unlimited={accountSession.user.supporter.unlimited}/>}<ClubInboxLink/>
-            <span className="hidden lg:inline text-xs text-slate-400 max-w-36 truncate" title={accountSession?.user.email}>{accountSession?.user.name}</span>
+            <span className="hidden lg:inline text-xs cm-muted max-w-36 truncate" title={accountSession?.user.email}>{accountSession?.user.name}</span>
             <button
               type="button"
               onClick={() => {
@@ -451,12 +451,12 @@ export function App() {
                       </div>
                       <div className="cm-panel-body flex-1 flex flex-col justify-between space-y-3">
                         <div>
-                          <h2 className="text-base font-black text-[#0b1f44]">FPS Match Simulation</h2>
-                          <p className="text-xs text-[#313a48] mt-1.5 leading-relaxed">
+                          <h2 className="text-base font-extrabold">FPS Match Simulation</h2>
+                          <p className="text-xs cm-muted mt-1.5 leading-relaxed">
                             Run a deterministic local exhibition on one of the five competitive maps. This preview does not affect schedules, standings, or player careers.
                           </p>
                         </div>
-                        <label className="text-xs font-bold text-[#313a48]">
+                        <label className="text-xs font-bold cm-muted">
                           Map
                           <select
                             aria-label="FPS exhibition map"
@@ -467,7 +467,7 @@ export function App() {
                             {Object.values(FPS_MAPS).map(map => <option key={map.id} value={map.id}>{map.name}</option>)}
                           </select>
                         </label>
-                        {practiceError && <p role="alert" className="text-xs font-bold text-[#b91c1c]">{practiceError}</p>}
+                        {practiceError && <p role="alert" className="text-xs cm-error-text">{practiceError}</p>}
                         <button type="button" onClick={launchFpsExhibition} className="cm-btn cm-btn-primary w-full">
                           Run FPS Exhibition ▸
                         </button>
@@ -568,7 +568,7 @@ export function App() {
                   <span className="cm-badge cm-badge-blue">Tactical FPS</span>
                 </div>
                 <div className="cm-panel-body space-y-3 text-xs">
-                  <p className="text-[#313a48] leading-relaxed">
+                  <p className="cm-muted leading-relaxed">
                     Hexatrick uses the deterministic tactical FPS simulator. Skills, equipment, personality preferences and the round situation inform decisions.
                   </p>
                   <div className="flex flex-wrap items-center gap-2">
@@ -582,7 +582,7 @@ export function App() {
                     </button>
                   </div>
                   {showOnlineNormalSandbox && (
-                    <div className="pt-3 border-t border-[#c4cbd6]">
+                    <div className="pt-3 border-t border-[var(--cm-border)]">
                       <OnlineNormalView />
                     </div>
                   )}

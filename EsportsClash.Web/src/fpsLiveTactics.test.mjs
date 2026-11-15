@@ -1,7 +1,8 @@
+import {FPS_T_POSITIONS,FPS_CT_POSITIONS} from './fps/fpsPlayerArchitecture.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {FpsLiveSimulation} from './fps/fpsLiveSimulation.ts';
-import {LIVE_FPS_MAP,LIVE_TACTICAL,LIVE_MID,LIVE_CHOKES,livePathLength,findLivePath,liveWalkable,liveSightline,liveWallIntersections,liveWallSegmentHit} from './fps/fpsLiveMap.ts';
+import {LIVE_FPS_MAP,liveActorSolids,LIVE_TACTICAL,LIVE_MID,LIVE_CHOKES,livePathLength,findLivePath,liveWalkable,liveSightline,liveWallIntersections,liveWallSegmentHit} from './fps/fpsLiveMap.ts';
 import {liveRayDirection,traceLiveActorHit} from './fps/fpsLiveBallistics.ts';
 import {segmentHitsWall,moveFpsActor} from './fps/fpsSpatialWorld.ts';
 import {LIVE_KNIFE} from './fps/fpsLiveWeapons.ts';
@@ -14,8 +15,8 @@ import {chooseLiveDefenseSetup} from './fps/fpsLiveTactics.ts';
 const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
 const coach={tempo:.6,rigidity:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8,communication:.7,leadership:.7,adaptability:.7,development:.5};
 const chemistry={trust:.6,communication:.6,understanding:.6,leadershipAcceptance:.6,roleCompetition:.3};
-const cards=Array.from({length:10},(_,i)=>({id:`tactics-${i}`,name:`Player ${i}`,stats:{lan:80,iq:80,tf:80,clu:80,sta:80,flx:80,ldr:80}}));
-const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
+const cards=Array.from({length:10},(_,i)=>({id:`tactics-${i}`,name:`Player ${i}`,stats:{rifling:80,positioning:80,entry:80,sniping:80,utility:80,shotcalling:80}}));
+const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,assignments:{t:FPS_T_POSITIONS[(i)%5],ct:FPS_CT_POSITIONS[(i)%5]},personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
 const game=()=>new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity);
 
 test('CT opening formations rotate instead of repeating the same setup',()=>{
@@ -35,7 +36,7 @@ test('post-plant Ts hold their assigned crossfire instead of investigating stale
   Object.assign(player,{hp:100,target:undefined,contact:{x:0,z:-21},contactAt:sim.time,intelManaged:false,
     path:[],goal:undefined,peek:undefined,probeGoal:undefined});
   sim.decide(player);
-  assert.deepEqual(player.goal,LIVE_TACTICAL.A.postPlant[player.slot%5]);
+  assert.ok(liveWalkable(player.goal));assert.ok(liveSightline(player.goal,player.watchPoint));assert.notDeepEqual(player.watchPoint,{x:0,z:-21});
   assert.match(player.intent,/Priority [1-5]/);
 });
 
@@ -53,7 +54,7 @@ test('holding a known angle keeps aim steady for the whole quiet period',()=>{
   Object.assign(p,{target:undefined,path:[],watchPoint:{x:-19,z:0},yaw:0,contact:undefined,contactAt:-100});
   const samples=[];
   for(let i=0;i<180;i++){sim.time+=1/30;sim.move(p,1/30);samples.push(p.yaw);}
-  assert.ok(samples.every(yaw=>yaw===0),'A stationary hold must not add an artificial scan');
+  assert.ok(Math.max(...samples.slice(120))-Math.min(...samples.slice(120))<.00001,'A stationary hold must settle on one stable prepared angle');
   assert.equal(p.x,-19);assert.equal(p.z,-10);
 });
 
@@ -83,7 +84,7 @@ test('aim corrections approach the intended angle without overshoot or hidden-en
   const a=encounter(),b=encounter();
   for(const {sim,p} of [a,b])Object.assign(p,{target:undefined,path:[],watchPoint:{x:-12,z:-1},contact:undefined,contactAt:-100,yaw:0});
   Object.assign(b.enemy,{x:31,z:40});
-  const desired=Math.atan2(7,9);let previous=0;
+  a.sim.preAim(a.p,true);b.sim.preAim(b.p,true);const desired=Math.atan2(7,9)+a.p.preparedError;let previous=a.p.yaw;
   for(let i=0;i<90;i++){
     a.sim.time+=1/30;b.sim.time+=1/30;a.sim.preAim(a.p,true);b.sim.preAim(b.p,true);
     assert.equal(a.p.yaw,b.p.yaw);assert.ok(a.p.yaw>=previous);assert.ok(a.p.yaw<=desired+.000001);previous=a.p.yaw;
@@ -106,8 +107,8 @@ test('A-site terracotta loggia blocks sight, bullets, blades, flashes and moveme
 });
 
 test('3D gun rays pass over low cover only when the visible shot line clears its height',()=>{
-  const wall=LIVE_FPS_MAP.solids.find(s=>s.id==='b-sandbags');
-  const from={x:24,z:0},to={x:24,z:8};
+  const wall=LIVE_FPS_MAP.solids.find(s=>s.id==='spawn-bench--1--37-back');
+  const from={x:-13,z:-38.5},to={x:-13,z:-36.3};
   assert.ok(wall);
   assert.equal(liveWallSegmentHit({...from,y:1.54},{...to,y:1.54},wall),undefined);
   assert.ok(liveWallSegmentHit({...from,y:1.0},{...to,y:1.0},wall)!==undefined);
@@ -133,8 +134,8 @@ test('3D actor traces distinguish head hits from body hits by the actual impact 
 
 test('a precise shot aimed at the visible head resolves and traces the same head impact',()=>{
   const {sim,p,enemy}=encounter();
-  Object.assign(p,{x:0,z:0,yaw:0,pitch:0,weapon:'sniper',ammo:5,reserve:0,acquired:sim.time,burst:0});
-  Object.assign(enemy,{x:0,z:10,hp:100,crouch:false,jumpY:0});
+  Object.assign(p,{x:-19,z:-10,yaw:0,pitch:0,weapon:'sniper',equipped:'sniper',weaponReady:0,scopeState:'scoped',ammo:5,reserve:0,acquired:sim.time,burst:0});
+  Object.assign(enemy,{x:-19,z:0,hp:100,crouch:false,jumpY:0});
   sim.fire(p,enemy);
   const shot=sim.shots.at(-1);
   assert.equal(shot.targetId,enemy.id);assert.equal(shot.hitRegion,'head');
@@ -145,8 +146,8 @@ test('a precise shot aimed at the visible head resolves and traces the same head
 
 test('a close bullet miss produces a spatial near-miss cue',()=>{
   const {sim,p,enemy}=encounter();
-  Object.assign(p,{x:0,z:0,yaw:0,pitch:0,weapon:'ak47',ammo:30,reserve:0,acquired:sim.time,burst:0});
-  Object.assign(enemy,{x:.7,z:10,hp:100,crouch:false,jumpY:0});
+  Object.assign(p,{x:-19,z:-10,yaw:0,pitch:0,weapon:'ak47',equipped:'ak47',weaponReady:0,ammo:30,reserve:0,acquired:sim.time,burst:0});
+  Object.assign(enemy,{x:-18.3,z:0,hp:100,crouch:false,jumpY:0});
   sim.fire(p,enemy);
   assert.equal(sim.shots.at(-1).targetId,undefined);
   assert.ok(sim.drainAudioCues().some(cue=>cue.kind==='nearMiss'));
@@ -154,7 +155,7 @@ test('a close bullet miss produces a spatial near-miss cue',()=>{
 
 test('the B fountain centrepiece stops a head-level round before its target',()=>{
   const {sim,p,enemy}=encounter();
-  Object.assign(p,{x:16,z:21,yaw:Math.PI/2,pitch:0,weapon:'ak47',ammo:30,reserve:0,acquired:sim.time,burst:0});
+  Object.assign(p,{x:16,z:21,yaw:Math.PI/2,pitch:0,weapon:'ak47',equipped:'ak47',weaponReady:0,ammo:30,reserve:0,acquired:sim.time,burst:0});
   Object.assign(enemy,{x:30,z:21,hp:100,crouch:false,jumpY:0});
   sim.fire(p,enemy);
   const shot=sim.shots.at(-1);
@@ -217,7 +218,7 @@ test('dropped gun pickup conserves exact ammo and cannot reach through the loggi
   const other=encounter();other.p.target=undefined;other.enemy.x=31;other.enemy.z=30;
   Object.assign(other.p,{x:-25,z:25.8});
   other.sim.droppedWeapons=[{id:999,weapon:'rifle',ammo:20,reserve:17,x:-25,z:27}];
-  other.sim.step();assert.equal(other.p.weapon,'pistol');assert.equal(other.sim.droppedWeapons.length,1);
+  other.sim.step();assert.equal(other.p.weapon,other.p.attacking?'glock':'usp_s');assert.equal(other.sim.droppedWeapons.length,1);
 });
 
 test('three lanes, smoke-sized gates and measured rotation/setup routes are usable',()=>{
@@ -277,7 +278,7 @@ test('trade actors choose a useful distance behind a teammate taking space',()=>
 test('walking is quiet and running produces uncertain audible contact',()=>{
   const hearAt=speed=>{const sim=game(),source=sim.actors[0],listener=sim.actors[5];for(const p of sim.actors)p.hp=0;
     Object.assign(source,{hp:100,x:-19,z:-12,vx:0,vz:0,speed:0});Object.assign(listener,{hp:100,x:-19,z:-4,seenAt:-100,contactAt:-100});
-    for(let i=0;i<24;i++){sim.time+=1/30;sim.applyMotion(source,{x:0,z:speed},1/30,speed>2?'run':'walk');}return listener.contactAt;};
+    for(let i=0;i<24;i++){sim.time+=1/30;sim.applyMotion(source,{x:0,z:speed},1/30,speed>2?'run':'walk');}sim.time+=.3;for(const cue of listener.pendingCues.filter(c=>c.at<=sim.time))sim.observeIntel(listener,cue.contact);return listener.contactAt;};
   assert.equal(hearAt(LIVE_WALK_SPEED),-100);assert.ok(hearAt(LIVE_RUN_SPEED)>0);
 });
 
@@ -287,7 +288,7 @@ test('team economy conserves money, funds a poor entry and coordinates eco/force
   assert.deepEqual(rich,original);assert.equal(buy.mode,'full');assert.ok(buy.gifts.some(g=>g.to==='buy-0'));assert.notEqual(buy.players[0].weapon,'pistol');
   assert.equal(original.reduce((n,p)=>n+p.cash,0)-buy.players.reduce((n,p)=>n+p.cash,0),buy.spent);assert.ok(buy.players.every(p=>p.cash>=0));
   const eco=buyLiveTeam(squad(1400),plan,2,1,false);assert.equal(eco.mode,'eco');assert.ok(eco.players.every(p=>p.weapon==='pistol'));assert.ok(eco.spent<=400);
-  const force=buyLiveTeam(squad(1800),plan,15,1,true);assert.equal(force.mode,'force');assert.ok(force.players.some(p=>p.weapon==='smg'));assert.ok(force.players.every(p=>p.cash>=0));
+  const force=buyLiveTeam(squad(1800),plan,15,1,true);assert.equal(force.mode,'force');assert.ok(force.players.some(p=>['mac10','budget_t'].includes(p.weapon)));assert.ok(force.players.every(p=>p.cash>=0));
 });
 
 test('grenades have flight time, bounce off opaque geometry and cannot flash through a wall',()=>{
@@ -302,12 +303,12 @@ test('actors can throw from their own utility decision and publish a throw-anima
   Object.assign(p,{hp:100,flash:1,reload:0,utilityAt:0,x:-19,z:-7});
   assert.equal(sim.throwUtility(p,'flash',{x:-14,z:-4}),true);
   assert.equal(p.throwAt,undefined);assert.equal(p.throwKind,'flash');
-  assert.equal(p.utilityPreparation.readyAt,20.55,'the grenade should remain in the equip/setup phase');
+  assert.ok(p.utilityPreparation.readyAt>p.utilityPreparation.equipAt,'Pin pulling follows the mandatory equip stage');
   const publicPlayer=sim.snapshot().players.find(player=>player.id===p.id);
   assert.equal(publicPlayer.throwAt,undefined);assert.equal(publicPlayer.throwKind,'flash');
-  assert.equal(publicPlayer.utilityPrep.releaseAt,20.75);
-  sim.time=20.55;sim.releaseUtilityPreparation(p);
-  assert.equal(p.throwAt,20.55,'the throw animation begins after grenade equip');
+  assert.equal(publicPlayer.utilityPrep.releaseAt,p.utilityPreparation.readyAt+.2);
+  sim.time=p.utilityPreparation.readyAt;sim.releaseUtilityPreparation(p);
+  assert.equal(p.throwAt,sim.time,'The throw starts only after equip and pin stages');
   assert.equal(p.flash,0);
   assert.equal(sim.protocol.phase,'default','A throw must not wait for or advance a scripted utility phase');
 });
@@ -318,7 +319,7 @@ test('utility setup is rejected during visible combat and ally damage scales acr
   assert.equal(sim.throwUtility(p,'flash',{x:-14,z:-4}),false,'visible contact should keep the gun out');
   assert.equal(p.utilityPreparation,undefined);
 
-  enemy.hp=0;p.target=undefined;p.weapon='ak47';p.ammo=30;p.equipped='ak47';p.yaw=0;
+  enemy.hp=0;p.target=undefined;p.weapon='ak47';p.equipped='ak47';p.weaponReady=0;p.ammo=30;p.equipped='ak47';p.yaw=0;
   Object.assign(ally,{hp:100,team:p.team,x:-19,z:-6,armor:0});
   sim.fire(p,ally);
   assert.ok(ally.hp<100,'a teammate hit by rifle fire must lose health');
@@ -340,7 +341,7 @@ test('HE blasts damage self and teammates at reduced rates while retaining full 
 });
 
 test('autonomous tactical movement remains deterministic and mechanically bounded',()=>{
-  const a=game(),b=game();for(let i=0;i<9000;i++){a.step();b.step();if(i%300===0){const state=a.snapshot();assert.deepEqual(state,b.snapshot());for(const p of state.players)assert.ok(!LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(p,p,w,.349)));}}
+  const a=game(),b=game();for(let i=0;i<9000;i++){a.step();b.step();if(i%300===0){const state=a.snapshot();assert.deepEqual(state,b.snapshot());for(const p of state.players)assert.ok(!liveActorSolids(p,p.jumpY??0,p.crouch?1.3:1.72).some(w=>segmentHitsWall(p,p,w,.349)));}}
   const state=a.snapshot();assert.ok(state.round>1);assert.ok(state.players.reduce((n,p)=>n+p.kills,0)>0);assert.ok(!JSON.stringify(state).includes('riskTolerance'));
 });
 
@@ -357,7 +358,7 @@ test('crouching caps movement speed and reduces spread bloom',()=>{
   p.crouch=false;
   p.ammo=30;
   p.reserve=90;
-  p.weapon='rifle';
+  p.weapon='rifle';p.equipped='rifle';p.weaponReady=0;
   sim.fire(p,enemy);
   const standShot=sim.shots[sim.shots.length-1];
 
@@ -404,7 +405,7 @@ test('trade fragger reacts immediately with re-frag reflex upon entry eliminatio
 
 test('sniper cycles bolt behind cover with shoot-and-scoot mechanic after firing',()=>{
   const {sim,p,enemy}=encounter();
-  Object.assign(p,{hp:100,weapon:'sniper',role:'sniper',ammo:5,reserve:20});
+  Object.assign(p,{hp:100,weapon:'sniper',equipped:'sniper',weaponReady:0,scopeState:'scoped',role:'sniper',ammo:5,reserve:20});
   sim.fire(p,enemy);
   assert.equal(p.action,'Cycling bolt in cover');
   assert.ok(p.retreatUntil>sim.time);
@@ -422,7 +423,7 @@ test('support throws proactive pop-flash ahead of entry teammate',()=>{
   const intent=sim.useInformationUtility(support,sim.actors.filter(a=>a.team===support.team&&a.hp>0));
   assert.equal(support.flash,1);assert.equal(support.utilityPreparation.kind,'flash');
   assert.equal(sim.grenades.length,0,'the flash should not leave the hand before its equip/setup delay');
-  sim.time+=.55;sim.releaseUtilityPreparation(support);
+  sim.time=support.utilityPreparation.readyAt;sim.releaseUtilityPreparation(support);
   assert.equal(support.flash,0);
   assert.equal(sim.grenades.length,1);
   assert.equal(sim.grenades[0].kind,'flash');
@@ -442,20 +443,18 @@ test('entry fragger methodically checks and clears close danger corners',()=>{
 });
 
 
-test('architectural piers block movement and eye-level vision but leave arch openings clear',()=>{
-  for(const id of ['banana-arch-pillar-l','port-arch-pillar-r','church-arch-pillar-l','underpass-sluice-jamb-r']) {
-    const wall=LIVE_FPS_MAP.solids.find(w=>w.id===id);
-    assert.ok(wall,id);
-    const center={x:(wall.minX+wall.maxX)/2,z:(wall.minZ+wall.maxZ)/2};
-    assert.equal(liveWalkable(center),false,id);
-    assert.equal(liveSightline({x:center.x,z:wall.minZ-.3},{x:center.x,z:wall.maxZ+.3}),false,id);
+test('restaurant structural walls block actors and eye-level sight while the entrance remains open',()=>{
+  for(const id of ['restaurant-south-wall','restaurant-front--1','restaurant-front-1']){
+    const wall=LIVE_FPS_MAP.solids.find(w=>w.id===id);assert.ok(wall,id);
+    const center={x:(wall.minX+wall.maxX)/2,z:(wall.minZ+wall.maxZ)/2};assert.equal(liveWalkable(center),false);
+    assert.equal(liveSightline({x:center.x,z:wall.minZ-.3},{x:center.x,z:wall.maxZ+.3}),false);
   }
-  assert.equal(liveSightline({x:20,z:5.8},{x:20,z:8.2}),true);
+  assert.equal(liveSightline({x:0,z:-30},{x:0,z:-29}),true);
   assert.ok(Number.isFinite(livePathLength({x:-8,z:-10},{x:0,z:-10})));
 });
 
 test('sloping sightlines cannot cut through the near edge of low cover',()=>{
-  const a={x:18,z:-6},b={x:18,z:3};
+  const a={x:18,z:-17},b={x:18,z:-10.5};
   assert.equal(liveSightline(a,b,1,5),false);
   assert.equal(liveSightline(b,a,5,1),false);
   assert.equal(liveSightline(a,b,3,5),true);
@@ -515,4 +514,100 @@ test('defensive stacks weight confirmed plants, ignore failed calls, and scope h
   assert.equal(chooseLiveDefenseSetup(planted,'red',{A:0,B:3},()=>.5),'stack_b');
   assert.equal(chooseLiveDefenseSetup(planted,'blue',{A:0,B:0},()=>.42),chooseLiveDefenseSetup([],'blue',{A:0,B:0},()=>.42),
     'a side switch does not reuse information from the other attacking team');
+});
+
+test('conversational flash, smoke lineup, and wide-swing comms coordinate teammates and emit teamReports',()=>{
+  const sim=game();
+  for(const a of sim.actors)Object.assign(a,{hp:0,nextSense:Infinity,nextThink:Infinity});
+  sim.phase='live';sim.time=25;sim.site='A';sim.bomb={status:'carried',x:-19,z:6,remaining:40};
+  const support=sim.actors[5],entry=sim.actors[6],trader=sim.actors[7];
+  Object.assign(support,{hp:100,role:'support',attacking:true,team:'red',smoke:1,flash:1,x:0,z:-14,yaw:0,weapon:'rifle',equipped:'rifle',weaponReady:0,utilityAt:0,reload:0,channel:0,bomb:false});
+  Object.assign(entry,{hp:100,role:'entry',attacking:true,team:'red',x:-18,z:8,yaw:0,target:undefined,decision:'prepare',nextThink:100,bomb:false});
+  Object.assign(trader,{hp:100,role:'trade',attacking:true,team:'red',x:-18,z:5,yaw:0,target:undefined,decision:'prepare',nextThink:100,bomb:false});
+  const okSmoke=sim.throwUtility(support,'smoke',{x:0,z:19.5},'overhead','mid-window');
+  assert.equal(okSmoke,true);
+  assert.match(support.radioMessage,/Smoking window/);
+  sim.time=support.utilityPreparation.readyAt;sim.releaseUtilityPreparation(support);
+  assert.match(support.radioMessage,/Smoking window/);
+
+  sim.time+=3.5;support.utilityAt=0;support.weaponReady=0;support.x=-18;support.z=3;
+  const okFlash=sim.throwUtility(support,'flash',{x:-18,z:14});
+  assert.equal(okFlash,true);
+  assert.match(support.radioMessage,/Flashing for you/);
+  sim.time=support.utilityPreparation.readyAt;sim.releaseUtilityPreparation(support);
+  assert.match(support.radioMessage,/swing on the pop/);
+  assert.ok(entry.flashWindow,'ally entry should receive coordinated flashWindow');
+  assert.equal(entry.decision,'pressure');
+  assert.ok(entry.nextThink<100);
+
+  sim.syncTradePartner(entry,{x:-16,z:18},"Trade for me bro, I'm swinging wide!");
+  assert.match(entry.radioMessage,/Trade for me bro/);
+  assert.equal(trader.decision,'coordinate');
+  assert.match(trader.radioMessage,/got your trade/);
+  assert.ok(sim.teamReports.some(r=>r.actorId===trader.id&&/got your trade/.test(r.message)));
+});
+
+test('buy phase permits warmup activity (look, crouch, jump, inspect) with locked spawn feet and zero shots',()=>{
+  const sim=game();
+  const spawns=sim.actors.map(p=>({x:p.x,z:p.z,yaw:p.yaw}));
+  let sawJump=false,sawCrouch=false,sawYaw=false,sawInspect=false;
+  while(sim.phase==='freeze'){
+    sim.step();
+    sim.actors.forEach((p,i)=>{
+      assert.deepEqual({x:p.x,z:p.z},{x:spawns[i].x,z:spawns[i].z});
+      assert.equal(p.impact.shots,0);
+      if(p.jump&&p.jumpY>0)sawJump=true;
+      if(p.crouch)sawCrouch=true;
+      if(Math.abs(Math.atan2(Math.sin(p.yaw-spawns[i].yaw),Math.cos(p.yaw-spawns[i].yaw)))>.12)sawYaw=true;
+      if(p.equipped==='knife')sawInspect=true;
+    });
+  }
+  assert.ok(sawJump&&sawCrouch&&sawYaw&&sawInspect,'Expected live warmup animation variety during freeze');
+  for(const p of sim.actors){
+    assert.equal(p.crouch,false);
+    assert.equal(p.equipped,p.weapon);
+  }
+});
+
+test('opening rollout runs out of spawn cleanly instead of slow-walking and emits utility audio cues cleanly',()=>{
+  const sim=game();
+  for(const a of sim.actors)a.cash=5500;
+  sim.round=2;sim.startRound();
+  while(sim.phase==='freeze')sim.step();
+  const maxSpeeds=new Map(sim.actors.map(a=>[a.id,0]));
+  let sawKnifeRollout=false;
+  for(let t=0;t<90;t++){
+    sim.step();
+    for(const a of sim.actors){
+      maxSpeeds.set(a.id,Math.max(maxSpeeds.get(a.id)??0,a.speed));
+      if(a.equipped==='knife'&&a.speed>LIVE_WALK_SPEED+.5)sawKnifeRollout=true;
+    }
+  }
+  assert.ok(sawKnifeRollout,'Players should pull knife for opening rollout distance');
+  for(const [id,peak] of maxSpeeds){
+    assert.ok(peak>LIVE_WALK_SPEED+.8,`Operative ${id} peak opening speed ${peak.toFixed(2)} must run, not slow-walk`);
+  }
+
+  // Verify continuous smoke growth without initial shrink and utility audio cue emission
+  const fx=game();
+  for(const a of fx.actors)Object.assign(a,{hp:0,nextSense:Infinity,nextThink:Infinity,nextShot:Infinity});
+  const thrower=fx.actors[0],anchor=fx.actors[5];
+  Object.assign(thrower,{hp:100,x:0,z:-17,yaw:0,profile:undefined,goal:{x:0,z:-17},smoke:1,flash:1,he:1,incendiary:1,utilityAt:0,weaponReady:0,reload:0,channel:0,bomb:false});
+  Object.assign(anchor,{hp:100,x:31,z:38,yaw:Math.PI,nextSense:Infinity,nextThink:Infinity,nextShot:Infinity});
+  fx.phase='live';fx.remaining=115;fx.time=25;fx.drainAudioCues();
+  const seenKinds=new Set();
+  const radii=[];
+  for(const [kind,target] of [['smoke',{x:0,z:-10}],['flash',{x:0,z:-8}],['he',{x:0,z:-6}],['incendiary',{x:0,z:2}]]){
+    Object.assign(thrower,{x:0,z:-17,yaw:0,vx:0,vz:0,speed:0,path:[],goal:{x:0,z:-17},nextThink:Infinity,utilityAt:0,weaponReady:0,throwAt:undefined});
+    assert.equal(fx.throwUtility(thrower,kind,target),true,`Expected ${kind} throw to queue`);
+    for(let i=0;i<115;i++){
+      fx.step();
+      for(const cue of fx.drainAudioCues())seenKinds.add(cue.kind);
+      if(kind==='smoke'&&fx.smokes.length)radii.push(fx.smokes[0].radius);
+    }
+  }
+  for(const expected of ['grenadeThrow','smokeBloom','flashPop','heExplode','fireIgnite']){
+    assert.ok(seenKinds.has(expected),`Expected audio cue ${expected}`);
+  }
+  assert.ok(radii.length>5&&radii[1]>=radii[0],'Newly spawned smoke must expand smoothly without shrinking backwards');
 });

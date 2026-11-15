@@ -10,7 +10,6 @@ import {ManagerProfile} from './ManagerProfile';
 import {TOURNAMENT_PHASES,TournamentPhaseFilters} from './TournamentEditionTable';
 import {PlayerDossier} from './PlayerDossier';
 import {AwardsHall} from './AwardsHall';
-import {PersonalityMark,PersonalityMarks} from './PersonalityMarks';
 import {FpsIdentityMarks} from './FpsIdentityMarks';
 import {PersonPortrait} from './PersonPortrait';
 import {onWorldUpdate} from '../worldLive';
@@ -33,8 +32,7 @@ import { ReferenceIcon, ReferenceMark } from './ReferenceIcon';
 import { WorldActivity } from './WorldActivity';
 import { CompetitionHub } from './CompetitionHub';
 import {GameGuide} from './GameGuide';
-import { PERSONALITIES, type PersonalityId } from '../playerPersonality';
-import { FPS_ATTRIBUTE_LABELS, FPS_PERSONALITIES } from '../fps/fpsPersonality';
+import { FPS_ATTRIBUTE_LABELS } from '../fps/fpsPersonality';
 
 interface Props { onWatch: (id: string) => void }
 const attributes: Record<string, string> = FPS_ATTRIBUTE_LABELS;
@@ -57,13 +55,7 @@ function PlayerAttributes({stats}: {stats?:Record<string,number>}) {
   return <dl className="pedia-attributes">{Object.entries(attributes).map(([key,label])=>{const value=stats?.[key];return <div key={key}><dt><LabelIcon name={label} size={13}/>{label}</dt><dd>{typeof value==='number'?<><meter min={0} max={10} value={toScale10(value)} aria-label={label}/><strong>{toScale10(value)}/10</strong></>:<span className="pedia-muted">Not published</span>}</dd></div>;})}</dl>;
 }
 
-function PlayerPersonalities({primary,secondary}: {primary?:string|null;secondary?:string|null}) {
-  const entries = [
-    {id:primary, label:'Core personality', Icon:Brain},
-    {id:secondary, label:'Secondary personality', Icon:Sparkles},
-  ].filter((entry): entry is typeof entry & {id:PersonalityId} => !!entry.id && entry.id in PERSONALITIES);
-  return <div className="pedia-personality-grid">{entries.map(({id,label,Icon})=><article key={label}><h3><Icon size={16}/>{label}</h3><PersonalityMark id={id}/><p>{FPS_PERSONALITIES[id].description}</p><small>{FPS_PERSONALITIES[id].tradeoff}</small></article>)}</div>;
-}
+
 function RecordDescription({kind,row}: {kind:PediaKind;row:PediaRow}) {
   if(kind==='managers')return <>Club manager · <a href={pediaHref('managers',row.id)}>Management record & honors</a></>;
   if(kind==='talent')return <><RoleLabel role={row.role}/>{row.style?' - '+row.style:''}</>;
@@ -177,7 +169,7 @@ function Directory({kind}: {kind:PediaKind}) {
     {kind==='talent'&&<nav className="talent-role-chips" aria-label="Talent roles">{['','caster','analyst','streamer','host','referee','observer','manager'].map(role=><button key={role} className={query===role?'selected':''} onClick={()=>{setQuery(role);setPage(1);}}>{role?<RoleLabel role={role}/>:'Everyone'}</button>)}</nav>}
     {error&&<p role="alert" className="pedia-empty">{error}</p>}
     {result&&!result.items.length&&<Empty>No matching records. Try another name or return to the main page.</Empty>}
-    {kind==='tournaments'?groups.filter(g=>g.rows.length).map(g=><Section key={g.key} id={g.key} title={g.label}><TournamentTable events={g.rows as PediaTournament[]}/></Section>):kind==='teams'?<TeamCards teams={(result?.items??[]) as PediaTeam[]}/>:<div className="pedia-table-scroll"><table className="pedia-table"><thead><tr><th>Name</th><th>Information</th></tr></thead><tbody>{result?.items.map(row=><tr key={row.id}><th scope="row"><a href={pediaHref(kind,row.id)}>{kind==='players'?<WorldPlayerPortrait id={String(row.id)} name={row.name} appearance={row.presentation?.appearance} size={48}/>:kind==='talent'||kind==='coaches'||kind==='managers'?<PersonPortrait id={kind==='talent'?'talent-'+row.id:kind==='managers'?'manager-'+row.id:'coach-'+row.id} name={row.name} role={row.role??'staff'} size={48}/>:kind==='nations'?<CountryFlag code={row.flag} name={row.name}/>:<ReferenceMark kind={kind} id={row.id} name={row.name}/>}<span>{row.name}{row.personal_details&&<small className="directory-real-name">{row.personal_details.real_name}</small>}</span></a></th><td><RecordDescription kind={kind} row={row}/>{kind==='players'&&(row.fpsIdentity?<FpsIdentityMarks profile={row.fpsIdentity}/>:<PersonalityMarks primary={row.primaryPersonality} secondary={row.secondaryPersonality}/>)} {row.personal_details&&<small className="directory-residence">{row.personal_details.residence.city}, {row.personal_details.residence.country} · {row.personal_details.languages.join(', ')}</small>}</td></tr>)}</tbody></table></div>}
+    {kind==='tournaments'?groups.filter(g=>g.rows.length).map(g=><Section key={g.key} id={g.key} title={g.label}><TournamentTable events={g.rows as PediaTournament[]}/></Section>):kind==='teams'?<TeamCards teams={(result?.items??[]) as PediaTeam[]}/>:<div className="pedia-table-scroll"><table className="pedia-table"><thead><tr><th>Name</th><th>Information</th></tr></thead><tbody>{result?.items.map(row=><tr key={row.id}><th scope="row"><a href={pediaHref(kind,row.id)}>{kind==='players'?<WorldPlayerPortrait id={String(row.id)} name={row.name} appearance={row.presentation?.appearance} size={48}/>:kind==='talent'||kind==='coaches'||kind==='managers'?<PersonPortrait id={kind==='talent'?'talent-'+row.id:kind==='managers'?'manager-'+row.id:'coach-'+row.id} name={row.name} role={row.role??'staff'} size={48}/>:kind==='nations'?<CountryFlag code={row.flag} name={row.name}/>:<ReferenceMark kind={kind} id={row.id} name={row.name}/>}<span>{row.name}{row.personal_details&&<small className="directory-real-name">{row.personal_details.real_name}</small>}</span></a></th><td><RecordDescription kind={kind} row={row}/>{kind==='players'&&(row.fpsIdentity?<FpsIdentityMarks profile={row.fpsIdentity}/>:null)} {row.personal_details&&<small className="directory-residence">{row.personal_details.residence.city}, {row.personal_details.residence.country} · {row.personal_details.languages.join(', ')}</small>}</td></tr>)}</tbody></table></div>}
     {result&&result.meta.last_page>1&&<div className="pedia-pagination"><button disabled={page<=1} onClick={()=>setPage(value=>value-1)}>Previous</button><span>Page {page} of {result.meta.last_page}</span><button disabled={page>=result.meta.last_page} onClick={()=>setPage(value=>value+1)}>Next</button></div>}
   </div>;
 }
@@ -193,6 +185,7 @@ function InfoBox({article}: {article:PediaArticle}) {
   if(kind==='nations')facts.push(['Type','National association'],['Team',<CountryFlag code={r.flag} name={r.name} showName/>]);
   if(kind==='coaches')facts.push(['Style',r.style],['Tier',r.tier],['Rating',r.rating10===undefined?'Not published':`${r.rating10}/10`]);
   if(kind==='organizers'||kind==='sponsors')facts.push(['Type',r.type],['Published events',r.tournaments?.length??0]);
+  if(kind==='organizers'&&r.broadcast)facts.push(['Broadcast package',r.broadcast.package],['Presentation',pediaStatus(r.broadcast.layout)]);
   return <aside className="pedia-infobox" aria-label="Article information"><h2>{r.name}</h2><div className="pedia-identity">{kind==='nations'?<CountryFlag code={r.flag} name={r.name}/>:kind==='managers'?<PersonPortrait id={'manager-'+r.id} name={r.name} role="manager" size={150}/>:kind==='talent'?<PersonPortrait id={'talent-'+r.id} name={r.name} role={r.role} size={150}/>:kind==='players'?<WorldPlayerPortrait id={String(r.id)} name={r.name} appearance={r.presentation?.appearance} size={170}/>:kind==='coaches'?<PersonPortrait id={'coach-'+r.id} name={r.name} size={150}/>:kind==='teams'&&r.identity?<ClubCrest crest={r.identity.crest} colors={r.identity.colors} logo={r.identity.assets?.logo}/>:<ReferenceMark kind={kind} id={r.id} name={r.name}/>}</div><h3>{kind==='players'?'Player information':kind==='tournaments'?'Tournament information':'At a glance'}</h3><dl>{facts.map(([label,value])=><div key={label}><dt><LabelIcon name={label} size={12}/>{label}</dt><dd>{value}</dd></div>)}</dl><p>Times shown in Manila · UTC+8</p></aside>;
 }
 
@@ -216,6 +209,12 @@ function ArticleBody({article,onWatch,register,joining}: {article:PediaArticle;o
       kind==='coaches'?<><p><strong>{r.name}</strong> is a {r.style} coaching profile in the current Hexatrick catalog.</p>{r.quote&&<blockquote>{r.quote}</blockquote>}</>:
       <p><strong>{r.name}</strong> is a {r.type?.toLowerCase()} in the Hexatrick circuit. The published tournaments associated with this record are listed below.</p>}
     </Section>
+    {kind==='organizers'&&r.broadcast&&<Section id="broadcast" title="Broadcast identity">
+      <div className="pedia-organizer-broadcast" style={{borderLeft:`4px solid ${r.broadcast.accent}`}}>
+        <small>{r.broadcast.package} · {pediaStatus(r.broadcast.layout)}</small><h3 style={{color:r.broadcast.accent}}>{r.broadcast.intro}</h3>
+        <p>{r.broadcast.round}</p><a href="#fps-simulation">Watch a local exhibition</a>
+      </div><p>This organizer’s colors, roster arrangement and round presentation travel with its Hexapedia identity.</p>
+    </Section>}
     {kind==='tournaments'&&r.provenance!=='launch_simulation'&&<>
       <Section id="participants" title="Participating teams"><TeamCards teams={r.teams??[]} rosters/></Section>
       <Section id="bracket" title="Knockout bracket"><div className="pedia-bracket">{[1,2,3].map(slot=>{const match=r.fixtures?.find(fixture=>fixture.bracket_slot===slot);return <article key={slot}><h3>{slot===3?'Grand final':`Semifinal ${slot}`}</h3>{match?<><p><TeamLink team={match.home}/></p><p><TeamLink team={match.away}/></p><p className="pedia-winner">{match.winner?`${match.winner} advances`:pediaStatus(match.status)}</p></>:<p className="pedia-muted">Teams to be confirmed</p>}<time>{pediaTime(slot===1?r.semifinals_at!:slot===2?r.second_semifinal_at!:r.final_at!)}</time></article>;})}</div><p className="pedia-muted">Each fixture is one match. Bracket positions appear when the server publishes the draw.</p></Section>
@@ -224,7 +223,7 @@ function ArticleBody({article,onWatch,register,joining}: {article:PediaArticle;o
       <Section id="rules" title="Tournament rules"><p>{r.rules}</p>{!r.definition_id&&<p>Tier {r.tier} clubs with a published club identity may register. The champion advances one tier when eligible. Interrupted or conflicting fixtures require organizer review.</p>}</Section>
     </>}
     {kind==='teams'&&<><Section id="roster" title="Current roster">{r.roster?.length?<div className="pedia-table-scroll"><table className="pedia-table"><thead><tr><th>Player</th><th>Role</th><th>Overall</th><th>Training XP</th></tr></thead><tbody>{r.roster.map((slot,index)=><tr key={`${slot.player.id}:${index}`}><th scope="row"><a href={pediaHref('players',slot.player.id)}><WorldPlayerPortrait id={String(slot.player.id)} name={slot.player.name} appearance={slot.player.presentation?.appearance} size={35}/>{slot.player.name}</a></th><td><FpsPlayerRole stats={slot.player.stats}/></td><td>{slot.player.overall?`${toScale10(slot.player.overall)}/10`:'—'}</td><td>{slot.training_xp}</td></tr>)}</tbody></table></div>:<Empty>No current-catalog roster is published.</Empty>}<p className="pedia-muted">All contracted players are shown. Private match orders and locked starting selections are not published here.</p></Section><Section id="schedule" title="Fixtures & results"><TeamGameHistory id={Number(r.id)} onWatch={onWatch}/></Section><Section id="competitions" title="Tournament participation"><TournamentTable events={r.tournaments??[]}/></Section></>}
-    {kind==='players'&&<><PlayerDossier article={article} onWatch={onWatch}/>{r.presentation?.bio&&<Section id="biography" title="Player biography"><p className="whitespace-pre-wrap">{r.presentation.bio}</p><small className="pedia-muted">Player biography provided by their club.</small></Section>}<Section id="career" title="Career record"><PlayerCareerRecord career={r.career}/></Section><Section id="attributes" title="Player skills & personality"><PlayerAttributes stats={r.stats}/><>{r.fpsIdentity?<FpsIdentityMarks profile={r.fpsIdentity}/>:<PlayerPersonalities primary={r.primaryPersonality} secondary={r.secondaryPersonality}/>}</></Section><Stats article={article}/><Section id="teams" title="Current clubs"><TeamCards teams={r.teams??[]}/></Section><Section id="schedule" title="Recent verified results"><MatchList fixtures={r.fixtures??[]} onWatch={onWatch}/></Section></>}
+    {kind==='players'&&<><PlayerDossier article={article} onWatch={onWatch}/>{r.presentation?.bio&&<Section id="biography" title="Player biography"><p className="whitespace-pre-wrap">{r.presentation.bio}</p><small className="pedia-muted">Player biography provided by their club.</small></Section>}<Section id="career" title="Career record"><PlayerCareerRecord career={r.career}/></Section><Section id="attributes" title="Player skills & personality"><PlayerAttributes stats={r.stats}/><>{r.fpsIdentity?<FpsIdentityMarks profile={r.fpsIdentity}/>:null}</></Section><Stats article={article}/><Section id="teams" title="Current clubs"><TeamCards teams={r.teams??[]}/></Section><Section id="schedule" title="Recent verified results"><MatchList fixtures={r.fixtures??[]} onWatch={onWatch}/></Section></>}
     {kind==='coaches'&&<Section id="attributes" title="Published coaching attributes">{r.coachAttributes?<dl className="pedia-stat-grid">{Object.entries(r.coachAttributes).map(([key,value])=><div key={key}><dt>{key.replace(/([A-Z])/g,' $1')}</dt><dd>{value}/10</dd></div>)}</dl>:<Empty>No individual coaching attributes are published in this catalog.</Empty>}<dl className="pedia-provenance">{([['Chemistry bonus',r.chemistryBonus],['Playbook bonus',r.playbookBonus],['Extra bans',r.extraBans]] as const).filter(([,value])=>value!==undefined).map(([label,value])=><div key={label}><dt><LabelIcon name={label} size={12}/>{label}</dt><dd>{value}</dd></div>)}</dl></Section>}
     {(kind==='organizers'||kind==='sponsors')&&<Section id="competitions" title="Published tournaments"><TournamentTable events={r.tournaments??[]}/></Section>}
   </>;

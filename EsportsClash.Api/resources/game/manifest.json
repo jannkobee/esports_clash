@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "catalog_version": "41d18be3d22349e5bc622c37f6446dbccb8de978f3774b302e091492b1c6177f",
+  "catalog_version": "6dc470dbc522ee94f7cbdfa29ab4729faaa887f0c3c0d42d2bbe3ebc403e400c",
   "rules_version": "e98fc0bd6158794c59321b2b81c39c21b33ad2cd6aa5a9d3a0a5617215d92604",
   "ability_ruleset": "original-v3-preview-2",
   "policy_version": "original-v3-hybrid-v2",
@@ -1087,5 +1087,6 @@
       "waveClearRules.ts",
       "4cde733198a47b43f655daf0a279e720c3ec2482e42e99e1c9c98b431eaa8013"
     ]
-  ]
+  ],
+  "fps_player_architecture": 4
 }

@@ -93,7 +93,7 @@ export function generateSetPieceCall(
       {action:'probe',legal:true,tacticalValue:.45,instruction:1-environment.plan.tempo*2},
       {action:'coordinate',legal:totalSmokes+totalFlashes>=4,tacticalValue:.55,instruction:environment.plan.structure*2-1},
     ];
-    const decision=evaluatePlayerAction(identity,{triggers,opportunities:new Set(),teamIdentity:environment.culture,confidence:(mood?.confidence ?? 50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,actions,random);
+    const decision=evaluatePlayerAction(identity,{triggers,teamIdentity:environment.culture,confidence:(mood?.confidence ?? 50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,actions,random);
     strategy='default_probe';
     identityReason=` ${identity.personality.name}: ${decision.triggers.length ? 'situational tendency considered' : 'no personality trigger'}; the opening stays adaptive while each player responds to observed information (${decision.action}).`;
   }
@@ -113,7 +113,7 @@ export function generateSetPieceCall(
   const confidence = Math.min(
     0.95,
     0.50 +
-      ((igl?.card.stats.iq || 70) - 70) * 0.005 +
+      ((igl?.card.stats.positioning || 70) - 70) * 0.005 +
       (totalSmokes + totalFlashes) * 0.04
   );
 
@@ -147,7 +147,7 @@ export function calculateDuelHitDamage(
   const def = getWeaponDef(weaponId);
 
   // Baseline headshot chance based on LAN mechanics
-  let headshotChance = (shooter.card.stats.lan / 100) * 0.35;
+  let headshotChance = (shooter.card.stats.rifling / 100) * 0.35;
   if (def.category === 'sniper') headshotChance = 0.65;
   if (shooterHasAdvantage) headshotChance += 0.15;
   if (targetIsBlinded) headshotChance += 0.25;

@@ -8,7 +8,7 @@ export function liveRouteLookAhead(from:FpsPoint,path:readonly FpsPoint[],metres
   let previous=from,remaining=metres;
   for(const point of path){
     const d=Math.hypot(point.x-previous.x,point.z-previous.z);
-    if(d>=remaining&&d>0)return {x:previous.x+(point.x-previous.x)*remaining/d,z:previous.z+(point.z-previous.z)*remaining/d};
+    if(d>=remaining&&d>0)return {x:previous.x+(point.x-previous.x)*remaining/d,z:previous.z+(point.z-previous.z)*remaining/d,level:point.level};
     remaining-=d;previous=point;
   }
   return path.length?{...path[path.length-1]}:undefined;

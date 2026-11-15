@@ -29,7 +29,7 @@ import {
 import { executeSetPiece, generateSetPieceCall } from './fpsSetPieceRules.ts';
 import { assignFpsTeamRoles, initialFpsPsychology, rankFpsPlayers, updateFpsPsychology, updateContextualFpsPsychology } from './fpsPersonality.ts';
 import { developFpsChemistry, developFpsFamiliarity, evaluatePlayerAction, evolveFpsTeamIdentity } from './fpsIdentity.ts';
-import {assignContextualRoles,hydrateFpsIdentityContext} from './fpsIdentityMatch.ts';
+import {createFpsIdentityContext,assignContextualRoles,hydrateFpsIdentityContext} from './fpsIdentityMatch.ts';
 
 export function createFpsPrng(seed: number): () => number {
   let state = seed >>> 0;
@@ -90,9 +90,9 @@ export function simulateFpsMatch(
   seed: number = 1337,
   settings: FpsMatchSettings = {}
 ): FpsMatchReport {
-  const initialIdentity=settings.identityExperiment ? hydrateFpsIdentityContext(settings.identityExperiment,[...blueRoster,...redRoster].map(p=>p.id)) : undefined;
-  if (initialIdentity) settings={...settings,identityExperiment:structuredClone(initialIdentity)};
   if (blueRoster.length !== 5 || redRoster.length !== 5 || new Set([...blueRoster, ...redRoster].map(p => p.id)).size !== 10) throw Error('FPS requires ten distinct players, five per side.');
+  const initialIdentity=hydrateFpsIdentityContext(settings.identityExperiment??createFpsIdentityContext(blueRoster,redRoster),[...blueRoster,...redRoster].map(p=>p.id));
+  if (initialIdentity) settings={...settings,identityExperiment:structuredClone(initialIdentity)};
   if (!Number.isInteger(seed)) throw Error('FPS seed must be an integer.');
   if (settings.roundSeconds !== undefined && (!Number.isFinite(settings.roundSeconds) || settings.roundSeconds < 1 || settings.roundSeconds > 115)) throw Error('Invalid round timer.');
   if (settings.bombSeconds !== undefined && (!Number.isFinite(settings.bombSeconds) || settings.bombSeconds < 1 || settings.bombSeconds > 40)) throw Error('Invalid device timer.');
@@ -140,7 +140,7 @@ export function simulateFpsMatch(
     extra: Partial<FpsMatchEvent> = {}
   ) => {
     currentTick += 10;
-    currentSecond += 0.33;
+    // Metadata shares the current simulation timestamp; log volume cannot lengthen a round.
     events.push({
       tick: currentTick,
       second: Math.round(currentSecond * 10) / 10,
@@ -286,7 +286,7 @@ export function simulateFpsMatch(
       if (!experiment || currentRound===1 || currentRound===16 || (opponentScore>=15 && opponentScore>ownScore) || avgCash<2000 || avgCash>=4200) return baseline;
       const leader=team.find(p=>p.tactics?.isCaller) ?? team[0], identity=experiment.players[leader.playerId], environment=experiment.teams[leader.team];
       if (!identity || !environment) return baseline;
-      const decision=evaluatePlayerAction(identity,{triggers:new Set(['economicTrouble','futureBuy']),opportunities:new Set(),teamIdentity:environment.culture,confidence:(leader.psychology?.confidence ?? 50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,[
+      const decision=evaluatePlayerAction(identity,{triggers:new Set(['economicTrouble','futureBuy']),teamIdentity:environment.culture,confidence:(leader.psychology?.confidence ?? 50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,[
         {action:'force',legal:true,tacticalValue:avgCash/4200*.55,instruction:1-environment.plan.economy*2},
         {action:'save',legal:true,tacticalValue:(1-avgCash/4200)*.55,instruction:environment.plan.economy*2-1},
       ],prng);
@@ -415,7 +415,7 @@ export function simulateFpsMatch(
       }
     }
 
-    const roundDuration = Math.round((currentSecond + .33 - roundStartedAt) * 10) / 10;
+    const roundDuration = Math.round((currentSecond - roundStartedAt) * 10) / 10;
 
     const roundResult: FpsRoundResult = {
       roundNumber: currentRound,
@@ -449,13 +449,11 @@ export function simulateFpsMatch(
         const environment=experiment.teams[roster[0].team];
         const identities=roster.map(p=>experiment.players[p.playerId]).filter(p=>p!==undefined);
         for (const identity of identities) {
-          identity.familiarity=developFpsFamiliarity(identity.familiarity,1,identity.dna.adaptability/100);
-          const activations=resolution.events.filter(event=>event.type==='specialty_activated' && event.actorId===identity.id && event.specialtyId===identity.specialty?.id).length;
-          if (activations) identity.specialtyProficiency=developFpsFamiliarity(identity.specialtyProficiency ?? .5,Math.min(1,activations/5),identity.dna.adaptability/100);
+          identity.familiarity=developFpsFamiliarity(identity.familiarity,1,.5);
         }
         const actualTrade=resolution.events.some(event=>event.type==='trade_kill' && roster.some(p=>p.playerId===event.actorId));
         if (actualTrade) environment.chemistry=developFpsChemistry(environment.chemistry,{coordinated:true,roleConflict:false});
-        environment.culture=evolveFpsTeamIdentity(environment.culture ?? {...environment.plan},environment.coach,environment.plan,identities.map(p=>p.dna));
+        environment.culture=evolveFpsTeamIdentity(environment.culture ?? {...environment.plan},environment.coach,environment.plan,identities.map(p=>p.personality));
       }
     }
 
@@ -508,10 +506,11 @@ export function simulateFpsMatch(
     };
   }
 
+  for(const identity of Object.values(settings.identityExperiment!.players))if(identity.observed)identity.observed.matches++;
   return {
     version: 1,
     personalityVersion: 1,
-    simulationVersion: settings.identityExperiment ? 3 : 2,
+    simulationVersion: 4,
     ...(initialIdentity ? {identityExperiment: initialIdentity, identityDevelopment: structuredClone(settings.identityExperiment!)} : {}),
     format: 'MR15_TACTICAL_FPS',
     seed,

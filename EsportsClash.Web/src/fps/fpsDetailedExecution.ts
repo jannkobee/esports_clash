@@ -1,4 +1,4 @@
-import { fpsAbilityUnit, type FpsAbility, type FpsSkillProfile } from './fpsSkillProfile.ts';
+import { fpsAbilityUnit, type FpsExecutionChannel, type FpsSkillProfile } from './fpsSkillProfile.ts';
 import { liveAimAngle } from './fpsLiveAim.ts';
 import type { FpsPoint } from './fpsSpatialWorld.ts';
 import type { LiveWeapon } from './fpsLiveWeapons.ts';
@@ -13,8 +13,8 @@ export interface FpsSkillDiagnostics {
   coverChoices:number;coverExposureSum:number;followSpacing:number;entryReleaseDelay:number;commandDelay:number;planAssessmentDelay:number;
 }
 export const emptyFpsSkillDiagnostics=():FpsSkillDiagnostics=>({noticedAt:-1,cueAt:-1,responseAt:-1,reactionDelay:0,preAimError:0,inputErrorSum:0,inputSamples:0,reportDelaySum:0,reports:0,throwErrorSum:0,throws:0,recoilSamples:0,recoilResidualSum:0,brakeDelay:0,peekError:0,planAssessments:0,commands:0,decisions:0,timingWindows:0,inputErrorSquareSum:0,trackingErrorSum:0,trackingSamples:0,flickAngleRemoved:0,fineAngleRemoved:0,coverChoices:0,coverExposureSum:0,followSpacing:0,entryReleaseDelay:0,commandDelay:0,planAssessmentDelay:0});
-export const ability=(p:FpsSkillProfile,key:FpsAbility)=>fpsAbilityUnit(p,key);
-export const detailedReactionDelay=(p:FpsSkillProfile)=>.45-ability(p,'reactions')*.27;
+export const ability=(p:FpsSkillProfile,key:FpsExecutionChannel,sniper=false)=>fpsAbilityUnit(p,key,sniper);
+export const detailedReactionDelay=(p:FpsSkillProfile,sniper=false)=>.16+.64*Math.pow(1-ability(p,'reactions',sniper),1.25);
 export function tickFpsMentalState(p:FpsSkillProfile,state:FpsMentalState,dt:number,speed:number,engaged:boolean,quiet:number):FpsMentalState {
   const stamina=ability(p,'stamina'),focus=ability(p,'concentration'),resilience=ability(p,'resilience');
   return {setback:Math.max(0,state.setback-dt*(.018+resilience*.075)),
@@ -24,29 +24,29 @@ export function tickFpsMentalState(p:FpsSkillProfile,state:FpsMentalState,dt:num
 export function detailedSenseInterval(p:FpsSkillProfile,state:FpsMentalState):number {
   return .08+(1-ability(p,'awareness'))*.24+state.attentionDebt*.18+state.setback*.14+state.exertion*.08;
 }
-export function detailedAimYaw(yaw:number,desired:number,p:FpsSkillProfile,phase:'flick'|'track'|'fine',dt:number):number {
-  const error=liveAimAngle(desired-yaw),key=phase==='flick'?'flicking':phase==='track'?'tracking':'precision',skill=ability(p,key);
+export function detailedAimYaw(yaw:number,desired:number,p:FpsSkillProfile,phase:'flick'|'track'|'fine',dt:number,sniper=false):number {
+  const error=liveAimAngle(desired-yaw),key=phase==='flick'?'flicking':phase==='track'?'tracking':'precision',skill=ability(p,key,sniper);
   const maxStep=(phase==='flick'?2.5+skill*5:phase==='track'?2+skill*4:1.5+skill*3)*dt;
   const eased=error*(1-Math.exp(-(phase==='fine'?7+skill*17:10+skill*8)*dt));
   return Math.abs(error)<.001?desired:liveAimAngle(yaw+Math.max(-maxStep,Math.min(maxStep,eased)));
 }
 /** Symmetric input error has zero mean. No clipping of latent skill or favorable-outcome selection. */
-export function detailedInputError(p:FpsSkillProfile,pressure:number,random:()=>number):number {
-  const precision=.001+(1-ability(p,'precision'))*.016;
+export function detailedInputError(p:FpsSkillProfile,pressure:number,random:()=>number,sniper=false):number {
+  const precision=.001+(1-ability(p,'precision',sniper))*.016;
   const pressureNoise=pressure*(1-ability(p,'composure'))*.013;
   const variance=.65+(1-ability(p,'consistency'))*.7;
   return (random()+random()-1)*(precision+pressureNoise)*variance;
 }
-export const preparedAngleError=(p:FpsSkillProfile,random:()=>number)=>(random()*2-1)*(.004+(1-ability(p,'crosshairPlacement'))*.16);
+export const preparedAngleError=(p:FpsSkillProfile,random:()=>number,sniper=false)=>(random()*2-1)*(.004+(1-ability(p,'crosshairPlacement',sniper))*.16);
 export function detailedThrowPoint(p:FpsSkillProfile,from:FpsPoint,target:FpsPoint,random:()=>number):FpsPoint {
   const radius=.08+(1-ability(p,'utilityExecution'))*(.4+Math.hypot(target.x-from.x,target.z-from.z)*.075);
   const angle=random()*Math.PI*2,r=Math.sqrt(random())*radius;
   return {x:target.x+Math.cos(angle)*r,z:target.z+Math.sin(angle)*r};
 }
-export function advanceDetailedRecoil(recoil:number,p:FpsSkillProfile,dt:number):number {
+export function advanceDetailedRecoil(recoil:number,p:FpsSkillProfile,dt:number,age=Infinity):number {
   // Identical weapon impulses; the actor supplies compensation input between shots.
-  const compensation=(.015+ability(p,'recoilControl')*.11)*dt;
-  return Math.sign(recoil)*Math.max(0,Math.abs(recoil)-compensation);
+  const compensation=(.012+ability(p,'recoilControl')*.15)*Math.max(0,dt);
+  return Math.sign(recoil)*Math.max(0,Math.abs(recoil)-compensation)*(age>.18?Math.exp(-10*Math.max(0,dt)):1);
 }
 export function detailedRecoilImpulse(weapon:LiveWeapon,burst:number):number {
   const magnitude=weapon==='rifle'?.018:weapon==='smg'?.012:weapon==='sniper'?.03:.006;

@@ -1,0 +1,70 @@
+{
+  "slow": [],
+  "totals": {
+    "updateExecute": {
+      "count": 9910,
+      "totalMs": 24.19310000000712,
+      "maxMs": 0.5468000000000757
+    },
+    "objective": {
+      "count": 70680,
+      "totalMs": 141.1062000000726,
+      "maxMs": 0.7944999999999709
+    },
+    "move": {
+      "count": 69891,
+      "totalMs": 2161.276999999836,
+      "maxMs": 2.5570000000000164
+    },
+    "openingUtility": {
+      "count": 3023,
+      "totalMs": 6.237200000053235,
+      "maxMs": 1.3420999999999594
+    },
+    "useInformationUtility": {
+      "count": 2414,
+      "totalMs": 65.19879999998875,
+      "maxMs": 2.8618999999998778
+    },
+    "decide": {
+      "count": 3278,
+      "totalMs": 5523.178800000027,
+      "maxMs": 16.958799999999997
+    },
+    "inImmediateFight": {
+      "count": 754,
+      "totalMs": 4.137799999971776,
+      "maxMs": 0.5425000000000182
+    },
+    "workSmokeLineup": {
+      "count": 56,
+      "totalMs": 14.141300000000456,
+      "maxMs": 5.822799999999916
+    },
+    "safeUtilitySetup": {
+      "count": 50,
+      "totalMs": 2.927200000000653,
+      "maxMs": 0.6225000000004002
+    },
+    "throwUtility": {
+      "count": 76,
+      "totalMs": 29.176799999995637,
+      "maxMs": 5.5832000000000335
+    },
+    "releaseUtilityPreparation": {
+      "count": 587,
+      "totalMs": 30.93940000000441,
+      "maxMs": 6.299800000000232
+    },
+    "previewUtility": {
+      "count": 42,
+      "totalMs": 21.64689999998859,
+      "maxMs": 3.4915000000000873
+    },
+    "postPlantAssignment": {
+      "count": 358,
+      "totalMs": 90.29089999999906,
+      "maxMs": 5.542599999999766
+    }
+  }
+}

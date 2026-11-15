@@ -71,10 +71,8 @@ test('canBecomeCoach strictly enforces Age >= 23, IQ >= 7/10 and Leadership >= 6
     origin: 'LoL',
     tier: 'Gold',
     ovr: 88,
-    stats: { lan: 95, tf: 90, iq: 85, clu: 85, sta: 85, flx: 80, ldr: 80 },
+    stats: { rifling: 95, entry: 90, positioning: 85, sniping: 85, utility: 85, shotcalling: 80 },
     age: 18,
-    badges: [],
-    signatureChampions: [],
     morale: 90,
     fatigue: 0,
     level: 20,
@@ -92,7 +90,7 @@ test('canBecomeCoach strictly enforces Age >= 23, IQ >= 7/10 and Leadership >= 6
   const lowIqVeteran = {
     ...youngProdigy,
     age: 24,
-    stats: { ...youngProdigy.stats, iq: 55, ldr: 80 }
+    stats: { ...youngProdigy.stats, positioning: 55, shotcalling: 80 }
   };
   const lowIqCheck = canBecomeCoach(lowIqVeteran);
   assert.equal(lowIqCheck.eligible, false);
@@ -102,7 +100,7 @@ test('canBecomeCoach strictly enforces Age >= 23, IQ >= 7/10 and Leadership >= 6
   const lowLdrVeteran = {
     ...youngProdigy,
     age: 24,
-    stats: { ...youngProdigy.stats, iq: 75, ldr: 45 }
+    stats: { ...youngProdigy.stats, positioning: 75, shotcalling: 45 }
   };
   const lowLdrCheck = canBecomeCoach(lowLdrVeteran);
   assert.equal(lowLdrCheck.eligible, false);
@@ -112,7 +110,7 @@ test('canBecomeCoach strictly enforces Age >= 23, IQ >= 7/10 and Leadership >= 6
   const qualifiedVeteran = {
     ...youngProdigy,
     age: 24,
-    stats: { ...youngProdigy.stats, iq: 78, ldr: 68 }
+    stats: { ...youngProdigy.stats, positioning: 78, shotcalling: 68 }
   };
   const qualifiedCheck = canBecomeCoach(qualifiedVeteran);
   assert.equal(qualifiedCheck.eligible, true);
@@ -123,15 +121,11 @@ test('convertPlayerToCoach creates an authentic CoachCard with derived stats and
     id: 'p_tactician',
     name: 'OldMaster',
     realName: 'Master',
-    origin: 'LoL',
+    origin: 'CS',
     tier: 'Diamond',
     ovr: 89,
-    role: 'Support',
-    preferredRole: 'Support',
-    stats: { lan: 60, tf: 70, iq: 96, clu: 85, sta: 70, flx: 80, ldr: 88 }, // IQ 10/10, LDR 9/10
+    stats: { rifling: 60, entry: 70, positioning: 96, sniping: 85, utility: 70, shotcalling: 88 }, // IQ 10/10, LDR 9/10
     age: 26,
-    badges: [],
-    signatureChampions: ['Solana'],
     morale: 95,
     fatigue: 0,
     level: 45,
@@ -154,8 +148,8 @@ test('convertPlayerToCoach creates an authentic CoachCard with derived stats and
 });
 
 test('resolveTeamCaptain picks the player with the highest combined LDR + IQ', () => {
-  const p1 = { id: 'p1', name: 'MicroGod', stats: { lan: 99, tf: 95, iq: 70, clu: 80, sta: 80, flx: 80, ldr: 50 } };
-  const p2 = { id: 'p2', name: 'VocalLeader', stats: { lan: 80, tf: 85, iq: 85, clu: 85, sta: 85, flx: 85, ldr: 92 } };
+  const p1 = { id: 'p1', name: 'MicroGod', stats: { rifling: 99, entry: 95, positioning: 70, sniping: 80, utility: 80, shotcalling: 50 } };
+  const p2 = { id: 'p2', name: 'VocalLeader', stats: { rifling: 80, entry: 85, positioning: 85, sniping: 85, utility: 85, shotcalling: 92 } };
 
   const captain = resolveTeamCaptain([p1, p2]);
   assert.ok(captain);
@@ -190,7 +184,7 @@ test('evaluateProspectWithScout reveals fog-of-war bounds determined by scout at
     ovr: 75, // 7/10
     potentialOvr: 92, // 9/10
     wage: 50,
-    stats: { lan: 75, tf: 75, iq: 75, clu: 75, sta: 75, flx: 75, ldr: 75 }
+    stats: { rifling: 75, entry: 75, positioning: 75, sniping: 75, utility: 75, shotcalling: 75 }
   };
 
   const dossier = evaluateProspectWithScout(prospect, eliteScout, 1);
@@ -237,8 +231,8 @@ test('applyHattrickTrainingTick boosts targeted attributes with youth bonus and 
     name: 'Youth',
     age: 17,
     ovr: 65,
-    stats: { lan: 65, tf: 65, iq: 65, clu: 65, sta: 65, flx: 65, ldr: 65 },
-    trainingProgress: { lan: 85 }
+    stats: { rifling: 65, entry: 65, positioning: 65, sniping: 65, utility: 65, shotcalling: 65 },
+    trainingProgress: { rifling: 85 }
   };
 
   const veteranBench = {
@@ -246,12 +240,12 @@ test('applyHattrickTrainingTick boosts targeted attributes with youth bonus and 
     name: 'Veteran',
     age: 26,
     ovr: 75,
-    stats: { lan: 75, tf: 75, iq: 75, clu: 75, sta: 75, flx: 75, ldr: 75 },
-    trainingProgress: { lan: 85 }
+    stats: { rifling: 75, entry: 75, positioning: 75, sniping: 75, utility: 75, shotcalling: 75 },
+    trainingProgress: { rifling: 85 }
   };
 
   const regimen = {
-    primaryFocus: 'lan',
+    primaryFocus: 'rifling',
     intensityPercent: 100,
     staminaSharePercent: 10
   };
@@ -269,8 +263,8 @@ test('applyHattrickTrainingTick boosts targeted attributes with youth bonus and 
   assert.ok(updatedYouth);
   assert.ok(updatedVet);
   // Youth should level up LAN (85 + >20 >= 100)
-  assert.equal(updatedYouth.stats.lan, 66);
-  assert.ok(updatedYouth.trainingProgress.lan < 85);
+  assert.equal(updatedYouth.stats.rifling, 66);
+  assert.ok(updatedYouth.trainingProgress.rifling < 85);
 });
 
 test('getCoachAttributes and applyRealMatchTrainingImpact multiply training speed from coach 1-10 attributes and real games', () => {
@@ -297,7 +291,7 @@ test('getCoachAttributes and applyRealMatchTrainingImpact multiply training spee
 
   const attrs = getCoachAttributes(coach);
   assert.equal(attrs.mechanical, 10);
-  const boost = getCoachFocusBoost(coach, 'lan');
+  const boost = getCoachFocusBoost(coach, 'rifling');
   assert.ok(boost.speedBonusPercent >= 60);
 
   const starter = {
@@ -305,9 +299,9 @@ test('getCoachAttributes and applyRealMatchTrainingImpact multiply training spee
     name: 'StarterPro',
     age: 19,
     ovr: 75,
-    stats: { lan: 75, tf: 75, iq: 75, clu: 75, sta: 75, flx: 75, ldr: 75 },
+    stats: { rifling: 75, entry: 75, positioning: 75, sniping: 75, utility: 75, shotcalling: 75 },
     matchesPlayedThisWeek: 0,
-    trainingProgress: { lan: 10 }
+    trainingProgress: { rifling: 10 }
   };
 
   const bench = {
@@ -315,20 +309,20 @@ test('getCoachAttributes and applyRealMatchTrainingImpact multiply training spee
     name: 'BenchPro',
     age: 21,
     ovr: 70,
-    stats: { lan: 70, tf: 70, iq: 70, clu: 70, sta: 70, flx: 70, ldr: 70 },
+    stats: { rifling: 70, entry: 70, positioning: 70, sniping: 70, utility: 70, shotcalling: 70 },
     matchesPlayedThisWeek: 0,
-    trainingProgress: { lan: 10 }
+    trainingProgress: { rifling: 10 }
   };
 
-  const regimen = { primaryFocus: 'lan', intensityPercent: 100, staminaSharePercent: 15 };
+  const regimen = { primaryFocus: 'rifling', intensityPercent: 100, staminaSharePercent: 15 };
   const afterMatch = applyRealMatchTrainingImpact([starter, bench], ['p_starter'], regimen, coach, true);
   const updatedStarter = afterMatch.updatedRoster.find((p) => p.id === 'p_starter');
   const updatedBench = afterMatch.updatedRoster.find((p) => p.id === 'p_bench');
 
   assert.equal(updatedStarter.matchesPlayedThisWeek, 1);
-  assert.ok(updatedStarter.trainingProgress.lan > 35);
+  assert.ok(updatedStarter.trainingProgress.rifling > 35);
   assert.equal(updatedBench.matchesPlayedThisWeek, 0);
-  assert.equal(updatedBench.trainingProgress.lan, 10);
+  assert.equal(updatedBench.trainingProgress.rifling, 10);
 });
 
 test('mapToMacroRegion and global circuit / friends catalogs cover ASIA, EUROPE, AFRICA, AMERICAS', () => {

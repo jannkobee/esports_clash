@@ -1,8 +1,9 @@
+import {observeFpsBehavior,emptyFpsObservedBehavior,type FpsBehaviorMetric} from './fpsPlayerArchitecture.ts';
 import type { FpsMap, FpsMatchEvent, FpsMatchSettings, FpsPlayerState, FpsRoundEndReason, FpsSide, FpsWeaponId, SetPieceCall } from './fpsTypes.ts';
 import type { SetPieceResolution } from './fpsSetPieceRules.ts';
 import { getWeaponDef } from './fpsWeapons.ts';
 import { shouldSaveFpsRetake } from './fpsPersonality.ts';
-import { evaluatePlayerAction, resolveTacticalExecution, type FpsSpecialtyOpportunity, type PersonalityTrigger } from './fpsIdentity.ts';
+import { evaluatePlayerAction, type PersonalityTrigger } from './fpsIdentity.ts';
 import {observedPersonalityTriggers} from './fpsIdentityMatch.ts';
 
 /** Shortest legal route on the authored map. No movement can cross a missing edge. */
@@ -57,6 +58,11 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
     const second = Math.round((secondOffset + t) * 10) / 10;
     events.push({ type, text, second, tick: Math.max(tickOffset + Math.round(t*30), (events.at(-1)?.tick ?? tickOffset) + 1), roundNumber, ...extra });
   };
+  const observe=(p:FpsPlayerState,metric:FpsBehaviorMetric,attempted:boolean)=>{
+    const identity=settings.identityExperiment?.players[p.playerId];if(!identity)return;
+    identity.observed??=emptyFpsObservedBehavior();observeFpsBehavior(identity.observed,metric,attempted);
+    emit('behavior_observation',`${p.name}: ${metric} ${attempted?'attempted':'declined'}`,{actorId:p.playerId,observation:{metric,attempted}});
+  };
   const visible = (a: FpsPlayerState, b: FpsPlayerState) => a.currentZone === b.currentZone ||
     (map.zones[a.currentZone]?.connectedZones.includes(b.currentZone) && (smoke.get(a.currentZone) ?? 0) <= t && (smoke.get(b.currentZone) ?? 0) <= t);
   const damage = (shooter: FpsPlayerState | undefined, target: FpsPlayerState, amount: number, weaponId?: FpsWeaponId, headshot = false) => {
@@ -106,23 +112,10 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
     const route = findFpsRoute(map, p.currentZone, destination);
     if (route.length < 2) return;
     const next = route[1], seconds = map.rotationTimes[p.currentZone]?.[next] ?? 3;
-    const moveOpportunities=new Set<FpsSpecialtyOpportunity>();
-    if (p.loadout.primaryWeapon==='rifle_sniper' && t-(lastSniperShot.get(p.playerId) ?? -100)<=5) moveOpportunities.add('exposedSniperRelocation');
-    const opponents=living(p.side==='attackers'?defenders:attackers), allies=living(p.side==='attackers'?attackers:defenders);
-    const nextExposed=opponents.some(enemy=>enemy.currentZone===next || (map.zones[next].connectedZones.includes(enemy.currentZone) && (smoke.get(next) ?? 0)<=t && (smoke.get(enemy.currentZone) ?? 0)<=t));
-    if (p.side==='attackers' && !nextExposed && !opponents.some(enemy=>visible(p,enemy)) && opponents.some(enemy=>allies.some(ally=>ally!==p && visible(ally,enemy)))) moveOpportunities.add('infiltrationWindow');
-    const gap=vacated.get(next);
-    if(gap && t-gap.time<=4 && gap.observedBy.has(p.team) && !nextExposed)moveOpportunities.add('coverageGap');
-    const knownRotation=[...rotations.values()].some(rotation=>t-rotation.time<=5 && rotation.observedBy.has(p.team));
-    if(p.tactics?.isCaller && knownRotation)moveOpportunities.add('knownRotation');
-    if(p.tactics?.isCaller && contactDecisions.get(p.playerId)?.action==='improvise' && !living(attackers).some(ally=>ally.playerId===call.entryFraggerId) && map.zones[p.currentZone].connectedZones.length>=2)moveOpportunities.add('compromisedPlan');
-    if(p.tactics?.isCaller && call.strategy==='fake_execute' && living(attackers).some(ally=>ally.currentZone===otherSite) && living(attackers).some(ally=>ally.currentZone===site || ally.currentZone===call.entryChokeZone))moveOpportunities.add('supportedDoubleFake');
-    const activation=resolveTacticalExecution(settings.identityExperiment?.players[p.playerId]?.specialty,moveOpportunities,settings.identityExperiment?.players[p.playerId]?.specialtyProficiency ?? .5);
-    if (activation?.active && (travel.get(p.playerId) ?? 0)===0) emit('specialty_activated',`${p.name} used ${settings.identityExperiment!.players[p.playerId].specialty!.name} while moving.`,{actorId:p.playerId,actorName:p.name,zone:next,specialtyId:activation.specialtyId,executionBonus:activation.executionBonus});
     const progress = (travel.get(p.playerId) ?? 0) + .5;
     // Movement is sampled at half-second steps. Convert a small speed advantage
     // into a bounded chance of arriving one step earlier, preserving its mean size.
-    const early=progress<seconds && progress+.5>=seconds && (activation?.executionBonus ?? 0)>0 && random()<Math.min(1,seconds*activation!.executionBonus/.5);
+    const early=false;
     if (progress < seconds && !early) { travel.set(p.playerId, progress); return; }
     travel.set(p.playerId, 0);
     const fromZone = p.currentZone;
@@ -163,11 +156,11 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
         saveConsidered=true;
         const leader=def.find(p=>p.tactics?.isCaller) ?? def[0], identity=settings.identityExperiment.players[leader.playerId], environment=settings.identityExperiment.teams[leader.team];
         if (identity && environment) {
-          const decision=evaluatePlayerAction(identity,{triggers:new Set(['poorRetake']),opportunities:new Set(),teamIdentity:environment.culture,confidence:(leader.psychology?.confidence ?? 50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,[
+          const decision=evaluatePlayerAction(identity,{triggers:new Set(['poorRetake']),teamIdentity:environment.culture,confidence:(leader.psychology?.confidence ?? 50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,[
             {action:'save',legal:true,tacticalValue:.5,instruction:environment.plan.economy*2-1},
             {action:'react',legal:true,tacticalValue:.4,instruction:1-environment.plan.economy*2},
           ],random);
-          saving=decision.action==='save';
+          saving=decision.action==='save';observe(leader,'retake',!saving);
           emit('tactical_decision',`${leader.name} called ${saving?'a save':'a retake'} in a ${def.length}v${atk.length}.`,{actorId:leader.playerId,actorName:leader.name,site:call.targetSite,decision});
         }
       }
@@ -208,14 +201,18 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
               const triggers=observedPersonalityTriggers({round:roundNumber,elapsed:t,quietSeconds:t-(lastContact.get(p.playerId)??0),allies:living(attackers).length,enemies:visibleEnemies.length,winStreak:p.psychology?.winStreak??0,lossStreak:p.psychology?.lossStreak??0,earlyDeath:p.lastRoundEarlyDeath,advantage:visibleEnemies.some(e=>(blind.get(e.playerId)??0)>t),disrupted:visibleEnemies.some(e=>(blind.get(e.playerId)??0)>t),prepared:t>=setupTime,planCompromised:compromised,callerAlive:living(attackers).some(ally=>ally.tactics?.isCaller),allyContact:supported&&contact});
               const urgent=p.loadout.hasBomb && roundLimit-t<20;
               const freedom=identity.instruction==='initiative'?1:environment.plan.freedom;
-              const decision=evaluatePlayerAction(identity,{triggers,opportunities:new Set(),teamIdentity:environment.culture,confidence:(p.psychology?.confidence ?? 50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,[
+              const decision=evaluatePlayerAction(identity,{triggers,teamIdentity:environment.culture,confidence:(p.psychology?.confidence ?? 50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,[
                 {action:'pressure',legal:true,tacticalValue:urgent?2:supported ? .65 : .35,instruction:environment.plan.aggression*2-1},
                 {action:'coordinate',legal:!urgent,tacticalValue:supported ? .5 : .4,instruction:identity.instruction==='support'?1:environment.plan.structure*2-1},
                 {action:'react',legal:!urgent&&contact,tacticalValue:.45,instruction:identity.instruction==='hold'?1:1-environment.plan.tempo*2},
                 {action:'prepare',legal:!urgent,tacticalValue:.25,instruction:environment.plan.preparation*2-1},
-                {action:'probe',legal:!contact,tacticalValue:.6+(p.card.stats.iq/100)*.3,instruction:1-environment.plan.tempo*2},
+                {action:'probe',legal:!contact,tacticalValue:.6+(p.card.stats.positioning/100)*.3,instruction:1-environment.plan.tempo*2},
                 {action:'improvise',legal:!p.loadout.hasBomb && compromised && map.zones[p.currentZone].connectedZones.length>=2,tacticalValue:.5,instruction:freedom*2-1},
               ],random);
+              if(contact)observe(p,'engagement',['pressure','react'].includes(decision.action));
+              if(supported)observe(p,'coordination',decision.action==='coordinate');
+              if(compromised)observe(p,'failedExecuteAdjustment',decision.action==='improvise');
+              observe(p,'improvisation',decision.action==='improvise');
               const direct=findFpsRoute(map,p.currentZone,target)[1];
               choice={until:t+4,advance:!contact||['pressure','probe','improvise'].includes(decision.action),action:decision.action,waypoint:decision.action==='improvise'?map.zones[p.currentZone].connectedZones.filter(zone=>zone!==direct && findFpsRoute(map,zone,target).length>0).sort()[0]:undefined}; contactDecisions.set(p.playerId,choice);
               emit('tactical_decision',`${p.name} chose ${decision.action}${decision.triggers.length?' with '+identity.personality.name+' active':''}.`,{actorId:p.playerId,actorName:p.name,zone:p.currentZone,decision});
@@ -237,7 +234,8 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
             const travelTime=route.reduce((sum,zone,index)=>index?sum+(map.rotationTimes[route[index-1]]?.[zone]??3):0,0);
             const urgent=devicePlanted && plantedAt!+bombLimit-t<=travelTime+(p.loadout.hasDefuseKit?5:10)+4;
             const triggers=observedPersonalityTriggers({round:roundNumber,elapsed:t,quietSeconds:t-(lastContact.get(p.playerId)??0),allies:def.length,enemies:atk.length,winStreak:p.psychology?.winStreak??0,lossStreak:p.psychology?.lossStreak??0,earlyDeath:p.lastRoundEarlyDeath,planCompromised:true,callerAlive:def.some(ally=>ally.tactics?.isCaller),poorRetake:eligibleRetake(def,atk),prepared:false});
-            const decision=evaluatePlayerAction(identity,{triggers,opportunities:new Set(),confidence:(p.psychology?.confidence??50)/100,fatigue:0,teamIdentity:environment.culture},environment.coach,environment.plan,environment.chemistry,[{action:'coordinate',legal:true,tacticalValue:.8,instruction:environment.plan.structure},{action:'react',legal:!urgent,tacticalValue:.3,instruction:1-environment.plan.tempo},{action:'pressure',legal:true,tacticalValue:.6,instruction:environment.plan.aggression}],random);
+            const decision=evaluatePlayerAction(identity,{triggers,confidence:(p.psychology?.confidence??50)/100,fatigue:0,teamIdentity:environment.culture},environment.coach,environment.plan,environment.chemistry,[{action:'coordinate',legal:true,tacticalValue:.8,instruction:environment.plan.structure},{action:'react',legal:!urgent,tacticalValue:.3,instruction:1-environment.plan.tempo},{action:'pressure',legal:true,tacticalValue:.6,instruction:environment.plan.aggression}],random);
+            observe(p,'rotation',decision.action!=='react');
             choice={until:t+4,advance:decision.action!=='react',action:decision.action};contactDecisions.set(p.playerId,choice);
             emit('tactical_decision',`${p.name} chose ${decision.action} during the rotation.`,{actorId:p.playerId,actorName:p.name,zone:p.currentZone,decision});
           }
@@ -251,7 +249,7 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
         const gear=droppedWeapons.get(p.currentZone);
         if(gear?.length) {
           const identity=settings.identityExperiment.players[p.playerId], environment=settings.identityExperiment.teams[p.team];
-          const decision=evaluatePlayerAction(identity,{triggers:new Set(['recoverableGear']),opportunities:new Set(),confidence:.5,fatigue:0},environment.coach,environment.plan,environment.chemistry,[{action:'save',legal:true,tacticalValue:1,instruction:environment.plan.economy},{action:'react',legal:true,tacticalValue:0,instruction:0}],random);
+          const decision=evaluatePlayerAction(identity,{triggers:new Set(['recoverableGear']),confidence:.5,fatigue:0},environment.coach,environment.plan,environment.chemistry,[{action:'save',legal:true,tacticalValue:1,instruction:environment.plan.economy},{action:'react',legal:true,tacticalValue:0,instruction:0}],random);
           if(decision.action==='save') {p.loadout.primaryWeapon=gear.shift();emit('weapon_recovered',`${p.name} recovered a dropped weapon.`,{actorId:p.playerId,actorName:p.name,weaponId:p.loadout.primaryWeapon,zone:p.currentZone,decision});}
         }
       }
@@ -271,15 +269,8 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
       if (p.playerId === plantingId || p.playerId === defusingId) continue;
       const grenade = p.loadout.utilities[0];
       if (grenade) {
-        p.loadout.utilities.shift(); utilityUsed++;
-        const utilityOpportunities=new Set<FpsSpecialtyOpportunity>();
-        if (grenade==='utility_smoke' && p.currentZone!==target.currentZone && map.zones[p.currentZone].connectedZones.includes(target.currentZone)) utilityOpportunities.add('smokeCoverage');
-        if (grenade==='utility_flash' && p.side==='attackers' && living(attackers).some(ally=>ally.playerId===call.entryFraggerId && ally!==p && ally.currentZone===p.currentZone && visible(ally,target))) utilityOpportunities.add('coordinatedFlash');
-        if (devicePlanted && p.side==='defenders' && siteZones.includes(target.currentZone)) utilityOpportunities.add('retakeUtility');
-        if (p.side==='defenders' && siteZones.includes(p.currentZone) && siteZones.includes(target.currentZone) && grenade==='utility_molotov') utilityOpportunities.add('siteDelay');
-        const utilityActivation=resolveTacticalExecution(settings.identityExperiment?.players[p.playerId]?.specialty,utilityOpportunities,settings.identityExperiment?.players[p.playerId]?.specialtyProficiency ?? .5);
-        const utilityFactor=1+(utilityActivation?.executionBonus ?? 0);
-        if (utilityActivation?.active) emit('specialty_activated',`${p.name} used ${settings.identityExperiment!.players[p.playerId].specialty!.name} with deployed utility.`,{actorId:p.playerId,actorName:p.name,zone:target.currentZone,specialtyId:utilityActivation.specialtyId,executionBonus:utilityActivation.executionBonus});
+        p.loadout.utilities.shift(); utilityUsed++;observe(p,'utilitySupport',true);
+        const utilityFactor=1;
         emit('utility_deployed', `${p.name} deployed ${getWeaponDef(grenade).name}.`, { actorId: p.playerId, actorName: p.name, weaponId: grenade, zone: target.currentZone, site: call.targetSite });
         if (grenade === 'utility_smoke') smoke.set(target.currentZone, t+15*utilityFactor);
         if (grenade === 'utility_flash') for (const e of enemies) { blind.set(e.playerId,t+2*utilityFactor); flashSource.set(e.playerId,p.playerId); }
@@ -290,37 +281,14 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
       const weaponId = p.loadout.primaryWeapon ?? p.loadout.secondaryWeapon, weapon = getWeaponDef(weaponId);
       const distance = map.zones[target.currentZone].engagementDistance;
       const cover = map.zones[target.currentZone].coverQuality;
-      const fatigue = Math.max(.8, 1-Math.max(0,roundNumber-15)*(.0015+(100-p.card.stats.sta)*.000025));
-      const flex = weapon.category === 'sidearm' || weapon.category === 'smg' ? .85+p.card.stats.flx*.0015 : 1;
-      const opportunities = new Set<FpsSpecialtyOpportunity>();
-      // These facts come from live events and positions, not from the specialty badge.
-      if ((blind.get(target.playerId) ?? 0)>t && flashSource.has(target.playerId) && flashSource.get(target.playerId)!==p.playerId && players.some(ally=>ally.playerId===flashSource.get(target.playerId) && ally.team===p.team)) opportunities.add('allyFlashWindow');
-      if (recentKills.some(k=>k.killer===target.playerId && k.team===p.team && t-k.time<=1.5)) opportunities.add('immediateTrade');
-      const allies=living(p.side==='attackers'?attackers:defenders).filter(ally=>ally!==p);
-      const prepared=(t-(enteredZoneAt.get(p.playerId) ?? 0))>=3;
-      const targetPrepared=(t-(enteredZoneAt.get(target.playerId) ?? 0))>=3;
-      if (firstKill && p.side==='attackers' && target.side==='defenders' && targetPrepared && siteZones.includes(target.currentZone) && allies.some(ally=>ally.currentZone===p.currentZone)) opportunities.add('coordinatedBreach');
-      if (weapon.category==='sniper' && distance==='long' && prepared) {
-        opportunities.add('preparedLongAngle');
-        if (t<=30 && firstKill) opportunities.add('openingSightline');
-      }
-      if (p.side==='attackers' && p.playerId!==call.entryFraggerId && allies.some(ally=>ally.playerId===call.entryFraggerId && ally.currentZone===p.currentZone && visible(ally,target))) opportunities.add('entryFollowup');
-      if (p.side==='defenders' && allies.some(ally=>ally.currentZone!==p.currentZone && visible(ally,target))) opportunities.add('defensiveCrossfire');
-      if (p.side==='attackers' && allies.some(ally=>visible(ally,target)) && enemies.some(enemy=>enemy!==target && enemy.currentZone!==target.currentZone && visible(p,enemy))) opportunities.add('breakCrossfire');
-      if (p.side==='defenders' && siteZones.includes(p.currentZone) && siteZones.includes(target.currentZone) && !living(defenders).some(ally=>ally!==p && ally.currentZone===p.currentZone)) opportunities.add('isolatedSiteHold');
-      const rotation=rotations.get(target.playerId);
-      if(rotation && t-rotation.time<=5 && rotation.observedBy.has(p.team) && [rotation.from,rotation.to].includes(p.currentZone))opportunities.add('interceptableRotation');
-      const assignedFlank=p.side==='attackers'&&devicePlanted?call.entryChokeZone:otherChoke;
-      if((p.tactics?.role==='lurker'||settings.identityExperiment?.players[p.playerId]?.instruction==='hold') && p.currentZone===assignedFlank && allies.some(ally=>siteZones.includes(ally.currentZone)) && !siteZones.includes(target.currentZone))opportunities.add('assignedFlankCoverage');
-      const activation=resolveTacticalExecution(settings.identityExperiment?.players[p.playerId]?.specialty,opportunities,settings.identityExperiment?.players[p.playerId]?.specialtyProficiency ?? .5);
-      const specialtyBonus=activation?.executionBonus ?? 0;
-      const accuracy = Math.max(.08, Math.min(.94, weapon.accuracy*(.45+p.card.stats.lan/150)*(1-cover*.25)*fatigue*flex*((blind.get(p.playerId) ?? 0)>t ? .25 : 1)+specialtyBonus));
-      if (activation?.active) emit('specialty_activated', `${p.name} used ${settings.identityExperiment!.players[p.playerId].specialty!.name} in a qualifying engagement.`, {actorId:p.playerId,actorName:p.name,targetId:target.playerId,zone:p.currentZone,specialtyId:activation.specialtyId,executionBonus:specialtyBonus});
+      const fatigue=Math.max(.9,1-Math.max(0,roundNumber-15)*.002);
+      const flex=1;
+      const accuracy = Math.max(.08, Math.min(.94, weapon.accuracy*(.45+(weapon.category==='sniper'?p.card.stats.sniping:p.card.stats.rifling)/150)*(1-cover*.25)*fatigue*flex*((blind.get(p.playerId) ?? 0)>t ? .25 : 1)));
       emit('duel_engagement', `${p.name} engaged ${target.name}.`, { actorId: p.playerId, actorName: p.name, targetId: target.playerId, targetName: target.name, zone: target.currentZone, weaponId });
       cooldown.set(p.playerId,t+(weapon.category === 'sniper' ? 2 : 1));
       if (weapon.category==='sniper') lastSniperShot.set(p.playerId,t);
       if (random() > accuracy) continue;
-      const headshot = random() < .08+p.card.stats.lan*.003;
+      const headshot = random() < .08+p.card.stats.rifling*.003;
       let amount = weapon.baseDamage*(headshot ? weapon.headshotMultiplier : 1);
       if (distance === 'long' && weapon.range === 'close') amount *= .65;
       if (distance === 'close' && weapon.range === 'close') amount *= 1.25;

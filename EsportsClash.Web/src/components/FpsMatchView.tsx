@@ -1,3 +1,4 @@
+import {FPS_POSITION_LABELS} from '../fps/fpsPlayerArchitecture';
 import { useEffect, useMemo, useState } from 'react';
 import {
   buildFpsMapLayout,
@@ -7,7 +8,7 @@ import {
   getFpsRoundEvents
 } from '../fps/fpsMatchViewModel.ts';
 import { getFpsMap } from '../fps/fpsMaps.ts';
-import { FPS_PERSONALITIES, FPS_ROLE_LABELS } from '../fps/fpsPersonality.ts';
+import { FPS_ROLE_LABELS } from '../fps/fpsPersonality.ts';
 import type { FpsMatchEvent, FpsMatchReport, FpsTeamId } from '../fps/fpsTypes.ts';
 import './fps-match-view.css';
 
@@ -27,7 +28,6 @@ function eventKind(event: FpsMatchEvent): string {
   if (event.type === 'set_piece_call') return 'SET PIECE';
   if (event.type === 'utility_deployed') return 'UTILITY';
   if (event.type === 'duel_engagement') return 'ENTRY';
-  if (event.type === 'specialty_activated') return 'SPECIALTY';
   if (event.type === 'tactical_decision') return 'DECISION';
   if (event.type === 'trade_kill') return 'TRADE';
   if (event.type.startsWith('plant_')) return 'PLANT';
@@ -269,15 +269,15 @@ export function FpsMatchView({ report, blueTeamName, redTeamName, onExit, autoPl
                           {snapshot?.loadout.hasBomb && <span className="fps-view__gear-badge is-bomb-carrier">BOMB</span>}
                         </div>
                         {snapshot?.tactics && <details className="fps-view__personality">
-                          <summary>{snapshot.tactics.isCaller ? 'IGL · ' : ''}{FPS_ROLE_LABELS[snapshot.tactics.role]} · Round mindset</summary>
+                          <summary>{snapshot.tactics.isCaller ? 'IGL · ' : ''}{snapshot.tactics.position?FPS_POSITION_LABELS[snapshot.tactics.position]:FPS_ROLE_LABELS[snapshot.tactics.role]} · Round mindset</summary>
                           <p>{snapshot.tactics.reason}</p>
                           <div className="fps-view__mindset">
                             <span>Confidence <b>{Math.round(snapshot.tactics.mood.confidence)}</b></span>
                             <span>Composure <b>{Math.round(snapshot.tactics.mood.composure)}</b></span>
                             <span>Frustration <b>{Math.round(snapshot.tactics.mood.frustration)}</b></span>
                           </div>
-                          {snapshot.tactics.traits.map(id => <p key={id}><strong>{FPS_PERSONALITIES[id].name}:</strong> {FPS_PERSONALITIES[id].description}</p>)}
-                          {snapshot.tactics.identity&&<p><strong>{snapshot.tactics.identity.personality}</strong> · {snapshot.tactics.identity.intensity} tendency{snapshot.tactics.identity.specialty?' · '+snapshot.tactics.identity.specialty:''}</p>}
+
+                          {snapshot.tactics.identity&&<p><strong>{snapshot.tactics.identity.personality}</strong>{snapshot.tactics.identity.natural?' · '+snapshot.tactics.identity.natural:''}</p>}
                         </details>}
                       </article>
                     );

@@ -1,0 +1,36 @@
+}
+/** Authoritative ballistic flight with deterministic wall/roof/ground bounces. */
+export function stepLiveGrenade(g:LiveGrenade,dt:number):void {
+  const before={x:g.x,y:g.y,z:g.z};
+  g.x+=g.vx*dt;g.y+=g.vy*dt-.5*LIVE_UTILITY_RULES.gravity*dt*dt;g.z+=g.vz*dt;g.vy-=LIVE_UTILITY_RULES.gravity*dt;
+  for(const w of LIVE_COLLISION_SOLIDS) {
+    if(Math.min(before.y,g.y)>w.height+.09 || Math.max(before.y,g.y)<(w.baseY??0)-.09 || !segmentHitsWall(before,g,w,.09))continue;
+    const inside=g.x>w.minX-.09&&g.x<w.maxX+.09&&g.z>w.minZ-.09&&g.z<w.maxZ+.09;
+    if(before.y>=w.height+.089&&g.y<=w.height+.09&&inside){g.y=w.height+.09;g.vy=Math.abs(g.vy)*.3;g.vx*=.7;g.vz*=.7;}
+    else if(w.baseY!==undefined&&before.y<=(w.baseY??0)-.089&&g.y>=(w.baseY??0)-.09&&inside){g.y=(w.baseY??0)-.09;g.vy=-Math.abs(g.vy)*.3;g.vx*=.7;g.vz*=.7;}
+    else if(before.y<w.height+.09) {
+      if(before.x<=w.minX-.089||before.x>=w.maxX+.089)g.vx*=-.45;else g.vz*=-.45;
+      g.x=before.x;g.z=before.z;
+    }
+  }
+  const floor=liveFloorAt(g,g.y)+.09;
+  if(g.y<floor){g.y=floor;g.vy=Math.abs(g.vy)*.3;g.vx*=.68;g.vz*=.68;if(g.vy<.8)g.vy=0;}
+  g.level=liveCanalArea(g)&&g.y<liveGroundHeight({...g,level:undefined})-.05?'canal':undefined;
+}
+
+/** Forecast our own throw against known static geometry, without moving the real grenade. */
+export function predictLiveGrenade(grenade:LiveGrenade,now:number):LiveGrenade {
+  const predicted={...grenade};
+  for(let at=Math.max(now,grenade.releaseAt);at<grenade.detonateAt-1e-8;at+=1/30)stepLiveGrenade(predicted,Math.min(1/30,grenade.detonateAt-at));
+  return predicted;
+}
+export function liveGrenadeSightline(from:FpsPoint&{y:number},to:FpsPoint&{y:number}):boolean {
+  return !LIVE_COLLISION_SOLIDS.some(w=>{
+    let enter=0,exit=1;
+    for(const [origin,delta,min,max] of [[from.x,to.x-from.x,w.minX,w.maxX],[from.z,to.z-from.z,w.minZ,w.maxZ],[from.y,to.y-from.y,w.baseY??0,w.height]]) {
+      if(Math.abs(delta)<1e-9){if(origin<min||origin>max)return false;}
+      else {const a=(min-origin)/delta,b=(max-origin)/delta;enter=Math.max(enter,Math.min(a,b));exit=Math.min(exit,Math.max(a,b));if(enter>exit)return false;}
+    }
+    return enter<=exit;
+  });
+}

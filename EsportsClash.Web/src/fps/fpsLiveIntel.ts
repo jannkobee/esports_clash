@@ -2,9 +2,11 @@ import type { FpsPoint } from './fpsSpatialWorld.ts';
 
 export type LiveIntelSource='sight'|'footstep'|'gunfire'|'melee'|'reload'|'damage'|'utility';
 export type LiveIntelArea='A'|'B'|'Mid';
+export type LiveWeaponHint='sniper'|'suppressed'|'eco'|'rifle';
 export interface LiveIntelContact extends FpsPoint {
   key:string;enemyId?:string;observerId:string;source:LiveIntelSource;via?:string;
   observed:number;confidence:number;uncertainty:number;
+  weaponHint?:LiveWeaponHint;carryingBomb?:boolean;utilityKind?:string;
 }
 export interface LiveIntelMemory {contacts:LiveIntelContact[]}
 export interface LiveIntelBelief extends LiveIntelContact {certainty:number;radius:number;age:number}
@@ -35,7 +37,12 @@ export function rememberLiveIntel(memory:LiveIntelMemory,contact:LiveIntelContac
     if(contact.observed===previous.observed&&contact.confidence<=previous.confidence)return;
     // A weak sound cannot erase a fresh visual identification, even if it happens later.
     if(contact.source!=='sight'&&previous.source==='sight'&&now-previous.observed<2)return;
-    memory.contacts[at]={...contact};
+    memory.contacts[at]={
+      ...contact,
+      weaponHint:contact.weaponHint??previous.weaponHint,
+      carryingBomb:contact.carryingBomb!==undefined?contact.carryingBomb:(contact.source==='sight'?undefined:previous.carryingBomb),
+      utilityKind:contact.utilityKind??previous.utilityKind,
+    };
   } else memory.contacts.push({...contact});
   const priority=(c:LiveIntelContact)=>c.confidence*Math.exp(-Math.max(0,now-c.observed)/lifetimes[c.source])*(c.enemyId?2:1);
   memory.contacts.sort((a,b)=>priority(b)-priority(a)||b.observed-a.observed||a.key.localeCompare(b.key));
@@ -51,7 +58,7 @@ export function assessLiveIntel(memory:LiveIntelMemory,now:number):LiveIntelAsse
     const area=liveIntelArea(belief),entry=areas[area],value=belief.certainty*weights[belief.source];
     if(belief.enemyId&&belief.certainty>=.35){entry.identified++;if(belief.source==='sight'&&belief.age<3&&belief.certainty>=.6)entry.confirmed++;entry.strength+=value;}
     else if(belief.age<4&&belief.certainty>=.25)anonymous[area][belief.source]=Math.max(anonymous[area][belief.source]??0,value);
-    if(value>(best[area]??0)){best[area]=value;entry.point={x:belief.x,z:belief.z};}
+    if(value>(best[area]??0)){best[area]=value;entry.point={x:belief.x,z:belief.z,level:belief.level};}
   }
   for(const area of ['A','B','Mid'] as const){
     areas[area].strength+=Math.min(.85,Object.values(anonymous[area]).reduce((sum,value)=>sum+value,0));
@@ -70,12 +77,29 @@ export function clearLiveIntel(memory:LiveIntelMemory,now:number,observable:(poi
   for(const belief of liveIntelBeliefs(memory,now)){
     if(belief.age<.35||belief.radius>3||visibleEnemies.some(p=>distance(p,belief)<=belief.radius+1))continue;
     const r=Math.max(.8,belief.radius);
-    const samples=[belief,{x:belief.x-r,z:belief.z},{x:belief.x+r,z:belief.z},{x:belief.x,z:belief.z-r},{x:belief.x,z:belief.z+r}];
+    const samples=[belief,{x:belief.x-r,z:belief.z,level:belief.level},{x:belief.x+r,z:belief.z,level:belief.level},{x:belief.x,z:belief.z-r,level:belief.level},{x:belief.x,z:belief.z+r,level:belief.level}];
     if(samples.every(observable)){
       const stored=memory.contacts.find(c=>c.key===belief.key&&c.observed===belief.observed);
       if(stored)stored.confidence*=.2;
     }
   }
+}
+
+export function hasObservedBomb(memory:LiveIntelMemory,now:number):LiveIntelBelief|undefined {
+  return liveIntelBeliefs(memory,now)
+    .filter(c=>(c.carryingBomb||c.key==='dropped-bomb')&&c.certainty>=.45&&c.age<6.5)
+    .sort((a,b)=>b.certainty-a.certainty||b.observed-a.observed)[0];
+}
+
+export function inferEnemyWeaponProfile(memory:LiveIntelMemory,now:number):{sniperCount:number;ecoSignal:number;suppressedCount:number} {
+  let sniperCount=0,ecoSignal=0,suppressedCount=0;
+  for(const belief of liveIntelBeliefs(memory,now)){
+    if(belief.age>8.5||belief.certainty<.25)continue;
+    if(belief.weaponHint==='sniper')sniperCount++;
+    else if(belief.weaponHint==='eco')ecoSignal+=belief.certainty;
+    else if(belief.weaponHint==='suppressed')suppressedCount++;
+  }
+  return {sniperCount,ecoSignal,suppressedCount};
 }
 
 export function describeLiveIntel(memory:LiveIntelMemory,from:FpsPoint,now:number):string {

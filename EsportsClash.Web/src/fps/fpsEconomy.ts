@@ -66,8 +66,9 @@ export function executePlayerPurchases(
   // If player already survived with a primary weapon, keep it!
   const hasExistingPrimary = Boolean(player.loadout.primaryWeapon);
   const identity=identityContext?.players[player.playerId],environment=identityContext?.teams[player.team];
+  const prefersSniper=player.tactics?.role==='sniper'||Boolean(player.tactics?.position?.endsWith('FLEX')&&player.card.stats.sniping>player.card.stats.rifling);
   if(identity && environment && buyDecision!=='eco_save') {
-    const decision=evaluatePlayerAction(identity,{triggers:new Set(['rolePurchase',...(environment.plan.preparation>=.5?['utilityExecute' as const]:[])]),opportunities:new Set(),confidence:(player.psychology?.confidence??50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,[
+    const decision=evaluatePlayerAction(identity,{triggers:new Set(['rolePurchase',...(environment.plan.preparation>=.5?['utilityExecute' as const]:[])]),confidence:(player.psychology?.confidence??50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,[
       {action:'invest',legal:player.loadout.utilities.length<3&&player.cash>=200,tacticalValue:player.tactics?.role==='support' ? .7 : .35,instruction:environment.plan.preparation},
       {action:'prepare',legal:true,tacticalValue:.55,instruction:environment.plan.structure},
       {action:'equip',legal:true,tacticalValue:.5,instruction:environment.plan.structure},
@@ -75,7 +76,7 @@ export function executePlayerPurchases(
     onDecision?.(decision);
     if(decision.action==='equip' && !isPistolRound) {
       const role=player.tactics?.role;
-      const weapon=role==='sniper'?'rifle_sniper':role==='entry'||role==='trade'?'rifle_assault':undefined;
+      const weapon=prefersSniper?'rifle_sniper':role==='entry'||role==='trade'?'rifle_assault':undefined;
       if(weapon && !player.loadout.primaryWeapon && player.cash>=FPS_WEAPONS[weapon].cost) {player.cash-=FPS_WEAPONS[weapon].cost;player.loadout.primaryWeapon=weapon;}
       if(role==='support'&&player.side==='defenders'&&!player.loadout.hasDefuseKit&&player.cash>=FPS_WEAPONS.gear_defuse_kit.cost){player.cash-=FPS_WEAPONS.gear_defuse_kit.cost;player.loadout.hasDefuseKit=true;}
     }
@@ -137,7 +138,7 @@ export function executePlayerPurchases(
     if (!player.loadout.primaryWeapon) {
       // Weapon affinity uses FPS skills/preparation, independent of historical avatar roles.
       const wantsSniper = player.cash >= FPS_WEAPONS.rifle_sniper.cost + 800
-        && (contextual ? player.tactics?.role==='sniper' : player.card.stats.lan >= 85 && player.card.stats.clu >= 75 && preferences.patience >= .25 && player.tactics?.role !== 'entry');
+        && prefersSniper;
       if (wantsSniper && player.cash >= FPS_WEAPONS.rifle_sniper.cost) {
         player.cash -= FPS_WEAPONS.rifle_sniper.cost;
         player.loadout.primaryWeapon = 'rifle_sniper';

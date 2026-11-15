@@ -8,7 +8,7 @@ import { request } from '../cloudPersistence';
 import { pediaHref } from '../hexapedia';
 import { toScale10 } from '../marketBatchEngine';
 
-interface Trainee {id:string;definition:{name:string;ovr:number;age:number;preferredRole?:string;role?:string;nationality?:{code?:string;name:string};stats:Record<string,number>};training_xp:number;training_progress:{earned_xp:number;skill_steps:number;next_step_at:number}|null}
+interface Trainee {id:string;definition:{name:string;ovr:number;age:number;nationality?:{code?:string;name:string};stats:Record<string,number>};training_xp:number;training_progress:{earned_xp:number;skill_steps:number;next_step_at:number}|null}
 const skills=Object.entries(FPS_ATTRIBUTE_LABELS);
 
 export function ClubTrainingView(){

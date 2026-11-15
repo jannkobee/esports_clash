@@ -10,7 +10,10 @@
     "build": "tsc -b && vite build",
     "build:base-inspector": "vite build --config vite.base-inspection.config.ts",
     "test": "node --experimental-strip-types --test src/*.test.mjs",
-    "check:game": "node scripts/validate-design.js && node --experimental-strip-types --test src/*.test.mjs && tsc -b",
+    "test:pro-regression": "node --experimental-strip-types --test src/fpsProTacticsRegression.test.mjs",
+    "test:fps-baseline": "node scripts/test-fps-baseline.mjs",
+    "test:fps-baseline:soak": "node scripts/test-fps-baseline.mjs --soak",
+    "check:game": "node scripts/sync-fps-player-architecture.mjs --check && node scripts/validate-design.js && node --experimental-strip-types --test src/*.test.mjs && tsc -b",
     "lint": "oxlint",
     "preview": "vite preview"
   },

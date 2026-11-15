@@ -18,7 +18,7 @@ test('authored FPS routes visit only connected map zones', () => {
 test('all five maps produce event-derived kills, damage, deaths and headshot rates without group wipe shortcuts', () => {
   for(const map of Object.keys(FPS_MAPS)) {
     const report=simulateFpsMatch(createEqualizedRoster('blue'),createEqualizedRoster('red'),map,814);
-    assert.equal(report.simulationVersion,2);
+    assert.equal(report.simulationVersion,4);
     for(const p of Object.values(report.playerStats)) {
       const kills=report.events.filter(e=>['kill','trade_kill'].includes(e.type)&&e.actorId===p.playerId);
       const deaths=report.events.filter(e=>['kill','trade_kill','player_eliminated'].includes(e.type)&&e.targetId===p.playerId);
@@ -51,7 +51,7 @@ test('the live timer expires at its actual deadline without a fabricated kill or
   assert.equal(report.roundResults[0].reason,'time_expired');
   assert.equal(report.roundResults[0].devicePlanted,false);
   assert.equal(report.events.some(e=>e.type==='kill'),false);
-  assert.ok(Math.abs(report.roundResults[0].roundDurationSeconds-16.66)<.15);
+  assert.ok(Math.abs(report.roundResults[0].roundDurationSeconds-16)<.15);
 });
 
 test('replay uses recorded damage and legal movement and consumes actual carried utility', () => {
@@ -67,11 +67,11 @@ test('replay uses recorded damage and legal movement and consumes actual carried
   }
 });
 
-test('FPS scouting role fits map attributes to FPS specialties',()=>{
+test('FPS execution strengths do not classify behavioral identities',()=>{
   assert.equal(fpsRoleFit(),'Unscouted');
-  assert.equal(fpsRoleFit({lan:99,flx:99,tf:30,iq:30,clu:30}),'Entry Fragger');
-  assert.equal(fpsRoleFit({lan:30,flx:30,tf:99,iq:30,clu:30}),'Trade Fragger');
-  assert.equal(fpsRoleFit({lan:30,flx:30,tf:80,iq:99,clu:30}),'Utility Support');
+  assert.equal(fpsRoleFit({rifling:99,entry:30,positioning:30,sniping:30}),'Rifling execution');
+  assert.equal(fpsRoleFit({rifling:30,entry:99,positioning:30,sniping:30}),'Entry execution');
+  assert.equal(fpsRoleFit({rifling:30,entry:80,positioning:99,sniping:30}),'Positioning execution');
 });
 
 test('invalid rosters and impossible timers cannot produce an official FPS report',()=>{

@@ -14,7 +14,7 @@ class FpsIdentityController extends Controller
 {
     public function index(Request $request, FpsIdentityProfiles $profiles, OnlineService $online)
     {
-        abort_unless(Schema::hasTable('fps_player_identities'),503,'Identity storage is not installed.');
+        abort_unless(app(\App\Services\FpsIdentityEngine::class)->ready(),503,'Identity storage is not installed.');
         $ids=OwnedPlayerCard::where('user_id',$request->user()->id)->pluck('id');
         $club=$online->provision($request->user());
         $plan=DB::table('fps_team_systems')->where('club_id',$club->id)->value('gameplan');
@@ -22,12 +22,13 @@ class FpsIdentityController extends Controller
         $coach=app(\App\Services\FpsIdentityEngine::class)->coach($club);
         $relationships=DB::table('fps_player_relationships')->whereIn('player_id',$ids)->whereIn('teammate_id',$ids)->get();
         $chemistry=$relationships->isEmpty()?'unestablished':($relationships->avg(fn($r)=>json_decode($r->relationship,true)['trust']??.5)>.7?'established':'developing');
-        return ['data'=>DB::table('fps_player_identities')->whereIn('player_id',$ids)->get()->map(fn($row)=>[...$profiles->scouting($row,$plan,$coach['profile']),'team_chemistry'=>$chemistry])->values()];
+        $orders=json_decode(DB::table('fps_team_systems')->where('club_id',$club->id)->value('instructions')??'{}',true);
+        return ['data'=>DB::table('fps_player_identities')->whereIn('player_id',$ids)->get()->map(fn($row)=>[...$profiles->scouting($row,$plan,$coach['profile']),'team_chemistry'=>$chemistry,'assignments'=>array_filter(array_intersect_key($orders[$row->player_id]??[],array_flip(['t','ct'])))?:null])->values()];
     }
 
     public function prepare(Request $request, OnlineService $online, FpsIdentityProfiles $profiles)
     {
-        abort_unless(Schema::hasTable('fps_player_identities'),503,'Identity storage is not installed.');
+        abort_unless(app(\App\Services\FpsIdentityEngine::class)->ready(),503,'Identity storage is not installed.');
         $online->provision($request->user());
         $catalog=$online->activeCatalog();
         $templates=collect($catalog->payload['cards'])->keyBy('id');

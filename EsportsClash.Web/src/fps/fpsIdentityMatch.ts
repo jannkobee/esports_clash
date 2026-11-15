@@ -1,63 +1,44 @@
-import {FPS_ROLES} from './fpsRoleFit.ts';
-import {FPS_IDENTITY_PERSONALITIES,FPS_SPECIALTIES,type FpsPrimaryRole,type PersonalityTrigger} from './fpsIdentity.ts';
-import {initialFpsPsychology} from './fpsPersonality.ts';
+import {generatePlayerDNA,type FpsPlayer} from './fpsIdentity.ts';
+import {validateFpsPersonality,generateFpsPersonality,defaultFpsAssignments,validateFpsLineup,fpsExecutionRole,naturalFpsIdentity,emptyFpsObservedBehavior} from './fpsPlayerArchitecture.ts';
+import {initialFpsPsychology,getFpsPreferences} from './fpsPersonality.ts';
 import type {FpsIdentityExperiment,FpsPlayerState} from './fpsTypes.ts';
-
-/** Fail closed on incomplete private allocations; never generate replacement match DNA. */
-export function hydrateFpsIdentityContext(input:FpsIdentityExperiment, ids:string[]):FpsIdentityExperiment {
-  const result=structuredClone(input);
-  if (!result || !result.players || !result.teams || Object.keys(result.players).sort().join()!==[...ids].sort().join()) throw Error('Identity allocation must contain exactly ten allocated players.');
-  const dnaKeys=['riskTolerance','emotionalStability','coachability','tacticalDiscipline','adaptability','creativity','confidenceVolatility','socialTrust','leadershipInitiative','competitiveDrive','teamOrientation','preparationPreference'];
-  for(const id of ids) {
-    const player=result.players[id];
-    const personality=FPS_IDENTITY_PERSONALITIES.find(item=>item.id===player.personality?.id);
-    const specialty=player.specialty ? FPS_SPECIALTIES.find(item=>item.id===player.specialty?.id) : undefined;
-    if(player.id!==id || !personality || (player.specialty&&!specialty) || !dnaKeys.every(key=>Number.isFinite(player.dna?.[key as keyof typeof player.dna]) && player.dna[key as keyof typeof player.dna]>=0 && player.dna[key as keyof typeof player.dna]<=100)) throw Error('Invalid pinned player identity.');
-    for(const value of [player.intensity,player.familiarity,player.roleSuitability,player.specialtyProficiency??.5,...Object.values(player.roleFamiliarity??{})]) if(!Number.isFinite(value)||value<0||value>1) throw Error('Invalid identity development.');
-    if(player.assignedRole && !FPS_ROLES.some(role=>role.id===player.assignedRole)) throw Error('Invalid assigned FPS role.');
-    if(player.instruction && !['balanced','hold','initiative','support'].includes(player.instruction))throw Error('Invalid individual instruction.');
-    if(Object.keys(player.roleFamiliarity??{}).some(key=>!FPS_ROLES.some(role=>role.id===key)))throw Error('Invalid role familiarity.');
-    player.personality={...personality};player.specialty=specialty?{...specialty}:undefined;
-  }
-  for(const side of ['blue','red'] as const) {
-    const team=result.teams[side];
-    if(!team || !team.coach || !team.plan || !team.chemistry) throw Error('Missing pinned tactical system.');
-    const required:[Record<string,number>,string[]][]=[
-      [team.coach as unknown as Record<string,number>,['tempo','rigidity','aggression','preparation','freedom','economy','communication','leadership','adaptability','development']],
-      [team.plan as unknown as Record<string,number>,['tempo','structure','aggression','preparation','freedom','economy']],
-      [team.chemistry as unknown as Record<string,number>,['trust','communication','understanding','leadershipAcceptance','roleCompetition']],
-      [(team.culture??team.plan) as unknown as Record<string,number>,['tempo','structure','aggression','preparation','freedom','economy']],
-    ];
-    for(const [group,keys] of required) for(const key of keys){const value=group[key];if(!Number.isFinite(value)||value<0||value>1) throw Error('Invalid tactical system dimension.');}
-  }
-  return result;
+import type {PersonalityTrigger} from './fpsIdentity.ts';
+import type {PlayerCard} from '../types.ts';
+/** Offline exhibition preset; official matches supply a manager-locked allocation. */
+export function createFpsIdentityContext(blue:PlayerCard[],red:PlayerCard[]):FpsIdentityExperiment {
+ const team=()=>({coach:{tempo:.5,rigidity:.5,aggression:.5,preparation:.5,freedom:.5,economy:.5,communication:.5,leadership:.5,adaptability:.5,development:.5},plan:{tempo:.5,structure:.5,aggression:.5,preparation:.5,freedom:.5,economy:.5},chemistry:{trust:.5,communication:.5,understanding:.5,leadershipAcceptance:.5,roleCompetition:.5}});
+ const players:Record<string,FpsPlayer>={};
+ for(const roster of [blue,red]){
+  const supplied=roster.some(p=>Object.keys(p.fpsIdentity?.assignments??{}).length>0);
+  const assignments=supplied?Object.fromEntries(roster.map(p=>[p.id,p.fpsIdentity?.assignments as import('./fpsPlayerArchitecture.ts').FpsAssignments])):defaultFpsAssignments(roster.map(p=>p.id));
+  validateFpsLineup(roster.map(p=>({id:p.id,assignments:assignments[p.id]})));
+  for(const card of roster)players[card.id]={id:card.id,personality:card.fpsIdentity?.personality??generateFpsPersonality(card.id),assignments:assignments[card.id],observed:emptyFpsObservedBehavior(),dna:generatePlayerDNA(card.id),roleSuitability:.5,familiarity:0};
+ }
+ return {players,teams:{blue:team(),red:team()}};
 }
-
-export function assignContextualRoles(players:FpsPlayerState[], context:FpsIdentityExperiment):void {
-  const ordered=[...players].sort((a,b)=>a.playerId.localeCompare(b.playerId));
-  const score=(p:FpsPlayerState,role:FpsPrimaryRole)=>{
-    const definition=FPS_ROLES.find(r=>r.id===role)!;
-    const skill=Object.entries(definition.weights).reduce((sum,[key,weight])=>sum+(p.card.stats[key as keyof typeof p.card.stats]??50)*weight!,0);
-    return skill+(context.players[p.playerId].roleFamiliarity?.[role]??0)*3;
-  };
-  const requestedCaller=ordered.find(p=>context.players[p.playerId].assignedRole==='caller');
-  const assigned=new Map<string,FpsPrimaryRole>();
-  for(const player of ordered) {const role=context.players[player.playerId].assignedRole;if(role)assigned.set(player.playerId,role);}
-  const jobs:FpsPrimaryRole[]=players[0].side==='attackers'?['entry','support','trade','sniper','lurker']:['anchor','support','trade','sniper','lurker'];
-  for(const role of jobs) {
-    if([...assigned.values()].includes(role))continue;
-    const candidate=ordered.filter(p=>!assigned.has(p.playerId)).sort((a,b)=>score(b,role)-score(a,role)||a.playerId.localeCompare(b.playerId))[0];
-    if(candidate)assigned.set(candidate.playerId,role);
-  }
-  const caller=requestedCaller??[...ordered].sort((a,b)=>score(b,'caller')-score(a,'caller') || Number(assigned.get(b.playerId)==='support')-Number(assigned.get(a.playerId)==='support') || a.playerId.localeCompare(b.playerId))[0];
-  for(const player of ordered) {
-    const identity=context.players[player.playerId], role=assigned.get(player.playerId)??'trade';
-    identity.roleSuitability=Math.max(0,Math.min(1,score(player,role)/100));
-    const mood=player.psychology??initialFpsPsychology();
-    player.tactics={role,isCaller:player===caller,traits:[],mood:{...mood},preferences:{aggression:0,patience:0,utility:0,coordination:0,conservation:0,leadership:0},reason:identity.assignedRole?'Manager assignment':'Lineup assignment from skills and role familiarity',identity:{personality:identity.personality.name,specialty:identity.specialty?.name,intensity:identity.intensity>.7?'strong':'moderate'}};
-  }
+/** Fail closed; a match consumes the personality and side assignments frozen at allocation. */
+export function hydrateFpsIdentityContext(input:FpsIdentityExperiment,ids:string[]):FpsIdentityExperiment {
+ const result=structuredClone(input);
+ if(!result?.players||!result.teams||ids.length!==10||new Set(ids).size!==10||Object.keys(result.players).sort().join()!==[...ids].sort().join())throw Error('Identity allocation must contain exactly ten allocated players');
+ const dnaKeys=Object.keys(generatePlayerDNA('validation')) as (keyof import('./fpsIdentity.ts').FpsPlayerDNA)[];
+ for(const id of ids){const player=result.players[id];player.personality=validateFpsPersonality(player.personality);
+  if(player.id!==id||!dnaKeys.every(key=>Number.isFinite(player.dna?.[key])&&player.dna[key]>=0&&player.dna[key]<=100))throw Error('Invalid pinned player identity');
+  for(const value of [player.familiarity,player.roleSuitability,...Object.values(player.roleFamiliarity??{})])if(!Number.isFinite(value)||value<0||value>1)throw Error('Invalid identity development');
+  if(player.instruction&&!['balanced','hold','initiative','support'].includes(player.instruction))throw Error('Invalid individual instruction');
+ }
+ for(const group of [ids.slice(0,5),ids.slice(5)])validateFpsLineup(group.map(id=>({id,assignments:result.players[id].assignments!})));
+ for(const side of ['blue','red'] as const){const team=result.teams[side];if(!team?.coach||!team.plan||!team.chemistry)throw Error('Missing pinned tactical system');
+  const groups:[Record<string,number>,string[]][]=[[team.coach as unknown as Record<string,number>,['tempo','rigidity','aggression','preparation','freedom','economy','communication','leadership','adaptability','development']],[team.plan as unknown as Record<string,number>,['tempo','structure','aggression','preparation','freedom','economy']],[team.chemistry as unknown as Record<string,number>,['trust','communication','understanding','leadershipAcceptance','roleCompetition']]];
+  for(const [values,keys] of groups)for(const key of keys)if(!Number.isFinite(values[key])||values[key]<0||values[key]>1)throw Error('Invalid tactical system dimension');
+ }
+ return result;
 }
-
+export function assignContextualRoles(players:FpsPlayerState[],context:FpsIdentityExperiment):void {
+ validateFpsLineup(players.map(p=>({id:p.playerId,assignments:context.players[p.playerId].assignments!})));
+ for(const player of players){const identity=context.players[player.playerId],position=identity.assignments![player.side==='attackers'?'t':'ct'],role=fpsExecutionRole(position),mood=player.psychology??initialFpsPsychology();
+  player.tactics={role,position,isCaller:position.endsWith('IGL'),traits:[],mood:{...mood},preferences:getFpsPreferences({...player.card,fpsIdentity:{...player.card.fpsIdentity,personality:identity.personality} as any},mood),reason:'Match-locked '+position+' responsibility; movement remains contextual',identity:{personality:identity.personality.name,dimensions:{...identity.personality},natural:naturalFpsIdentity(identity.personality,position)}};
+ }
+}
 export interface FpsObservedContext {
   round:number; elapsed:number; quietSeconds:number; allies:number; enemies:number; winStreak:number; lossStreak:number;
   earlyDeath?:boolean; advantage?:boolean; disrupted?:boolean; prepared?:boolean; planCompromised?:boolean;

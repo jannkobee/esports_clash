@@ -16,14 +16,13 @@ class WorldSocialMind
     public function traits(object $actor): array {
         $profile=json_decode($actor->profile,true)??[];$traits=[];
         foreach(['expression','curiosity','caution','teamwork','ambition'] as $key)$traits[$key]=0.25+0.5*$this->noise($actor->source_key.':'.$key);
-        $groups=[
-            'expression'=>['showman'=>.35,'short_fuse'=>.2,'silent_operator'=>-.35,'cold_as_ice'=>-.2,'bush_stalker'=>-.18],
-            'curiosity'=>['limit_tester'=>.3,'challenger'=>.28,'perfectionist'=>.2,'counterpuncher'=>.2,'tunnel_vision'=>-.2],
-            'caution'=>['survivalist'=>.3,'patient_predator'=>.3,'fragile_mental'=>.2,'perfectionist'=>.2,'overconfident'=>-.3,'steal_gambler'=>-.25,'first_blood_hunter'=>-.2],
-            'teamwork'=>['captain'=>.35,'glue_guy'=>.35,'loyalist'=>.3,'bodyguard'=>.3,'igl'=>.25,'egoistic'=>-.3,'silent_operator'=>-.2],
-            'ambition'=>['iron_will'=>.3,'clutch_performer'=>.25,'momentum_junkie'=>.25,'revenge_driven'=>.2,'siege_closer'=>.2,'objective_zealot'=>.2,'wave_architect'=>.15],
-        ];
-        foreach($groups as $trait=>$effects)foreach(['primary_personality'=>1,'secondary_personality'=>.5] as $field=>$weight)$traits[$trait]+=($effects[$profile[$field]??'']??0)*$weight;
+        $p=$profile['personality']??null;
+        if(is_array($p)&&$actor->role==='player'){
+            $traits['expression']+=match($p['temperament']){'VOLATILE'=>.15,'ICE_COLD'=>-.15,default=>0};
+            $traits['caution']+=match($p['playstyle']){'PASSIVE'=>.15,'AGGRESSIVE'=>-.15,default=>0};
+            $traits['teamwork']+=$p['mindset']==='TEAM_FIRST'?.15:0;
+            $traits['curiosity']+=match($p['decisionStyle']){'ADAPTIVE'=>.12,'INSTINCTIVE'=>.06,default=>0};
+        }
         if($actor->role==='analyst'){$traits['curiosity']+=.2;$traits['caution']+=.15;}
         if($actor->role==='streamer'){$traits['expression']+=.2;$traits['curiosity']+=.15;}
         if(in_array($actor->role,['manager','general_manager'])&&!empty($profile['management_traits'])){
@@ -46,7 +45,7 @@ class WorldSocialMind
     }
 
     public function decide(object $actor,array $signal,array $state,array $recent,float $relevance,float $familiarity): array {
-        $traits=$state['traits'];$interests=$state['interests'];$topic=$signal['topic_key'];
+        $traits=$this->traits($actor);$interests=$state['interests'];$topic=$signal['topic_key'];
         $same=array_values(array_filter($recent,fn($m)=>$m['topic_key']===$topic));
         $posted=array_values(array_filter($same,fn($m)=>$m['outcome']==='published'));
         $novelty=max(0,1-.38*count($same)-.35*count($posted));

@@ -1,0 +1,380 @@
+{
+  "version": 4,
+  "temperaments": [
+    "VOLATILE",
+    "STEADY",
+    "ICE_COLD"
+  ],
+  "playstyles": [
+    "PASSIVE",
+    "BALANCED",
+    "AGGRESSIVE"
+  ],
+  "mindsets": [
+    "INDIVIDUALIST",
+    "TEAM_FIRST"
+  ],
+  "decisionStyles": [
+    "INSTINCTIVE",
+    "METHODICAL",
+    "ADAPTIVE"
+  ],
+  "tPositions": [
+    "T_IGL",
+    "T_ENTRY",
+    "T_SUPPORT",
+    "T_LURKER",
+    "T_FLEX"
+  ],
+  "ctPositions": [
+    "CT_IGL",
+    "CT_ROTATOR",
+    "CT_ANCHOR_A",
+    "CT_ANCHOR_B",
+    "CT_FLEX"
+  ],
+  "profiles": [
+    {
+      "id": 1,
+      "name": "Patient Opportunist",
+      "t": {
+        "T_IGL": "Reactive IGL",
+        "T_ENTRY": "Counterpunch Entry",
+        "T_SUPPORT": "Reactive Support",
+        "T_LURKER": "Patient Opportunist Lurker",
+        "T_FLEX": "Reactive Flex"
+      },
+      "ct": {
+        "CT_IGL": "Reactive Defensive IGL",
+        "CT_ROTATOR": "Ambush Rotator",
+        "CT_ANCHOR_A": "Ambush Anchor",
+        "CT_ANCHOR_B": "Ambush Anchor",
+        "CT_FLEX": "Angle Opportunist"
+      },
+      "tendency": "Patiently exploits openings but can react prematurely."
+    },
+    {
+      "id": 2,
+      "name": "Calculated Duelist",
+      "t": {
+        "T_IGL": "Calculated IGL",
+        "T_ENTRY": "Precision Entry",
+        "T_SUPPORT": "Calculated Support",
+        "T_LURKER": "Calculated Lurker",
+        "T_FLEX": "Disciplined Marksman"
+      },
+      "ct": {
+        "CT_IGL": "Calculated Defensive IGL",
+        "CT_ROTATOR": "Measured Rotator",
+        "CT_ANCHOR_A": "Methodical Anchor",
+        "CT_ANCHOR_B": "Methodical Anchor",
+        "CT_FLEX": "Disciplined Marksman"
+      },
+      "tendency": "Seeks carefully selected personal duels but can miss timing windows."
+    },
+    {
+      "id": 3,
+      "name": "Selective Playmaker",
+      "t": {
+        "T_IGL": "Opportunistic IGL",
+        "T_ENTRY": "Selective Entry",
+        "T_SUPPORT": "Situational Support",
+        "T_LURKER": "Selective Lurker",
+        "T_FLEX": "Selective Flex"
+      },
+      "ct": {
+        "CT_IGL": "Opportunistic Defensive IGL",
+        "CT_ROTATOR": "Selective Rotator",
+        "CT_ANCHOR_A": "Selective Anchor",
+        "CT_ANCHOR_B": "Selective Anchor",
+        "CT_FLEX": "Adaptive Defensive Flex"
+      },
+      "tendency": "Adjusts routes for favorable personal opportunities but can surrender initiative."
+    },
+    {
+      "id": 4,
+      "name": "Reactive Teammate",
+      "t": {
+        "T_IGL": "Reactive Coordinator",
+        "T_ENTRY": "Trade-Ready Entry",
+        "T_SUPPORT": "Covering Support",
+        "T_LURKER": "Reactive Pressure Lurker",
+        "T_FLEX": "Responsive Flex"
+      },
+      "ct": {
+        "CT_IGL": "Reactive Defensive Coordinator",
+        "CT_ROTATOR": "Backup Rotator",
+        "CT_ANCHOR_A": "Responsive Anchor",
+        "CT_ANCHOR_B": "Responsive Anchor",
+        "CT_FLEX": "Responsive Flex"
+      },
+      "tendency": "Reacts rapidly to teammates’ needs but may rely on others for initiative."
+    },
+    {
+      "id": 5,
+      "name": "Disciplined Operator",
+      "t": {
+        "T_IGL": "Tactical IGL",
+        "T_ENTRY": "System Entry",
+        "T_SUPPORT": "Tactical Support",
+        "T_LURKER": "Disciplined Lurker",
+        "T_FLEX": "System Flex"
+      },
+      "ct": {
+        "CT_IGL": "Defensive Strategist",
+        "CT_ROTATOR": "Disciplined Rotator",
+        "CT_ANCHOR_A": "Hard Site Anchor",
+        "CT_ANCHOR_B": "Hard Site Anchor",
+        "CT_FLEX": "Defensive Marksman"
+      },
+      "tendency": "Follows deliberate team plans but can become predictable."
+    },
+    {
+      "id": 6,
+      "name": "Flexible Stabilizer",
+      "t": {
+        "T_IGL": "Adaptive IGL",
+        "T_ENTRY": "Adaptive Entry",
+        "T_SUPPORT": "Adaptive Support",
+        "T_LURKER": "Adaptive Lurker",
+        "T_FLEX": "Adaptive Flex"
+      },
+      "ct": {
+        "CT_IGL": "Adaptive Defensive IGL",
+        "CT_ROTATOR": "Adaptive Rotator",
+        "CT_ANCHOR_A": "Adaptive Anchor",
+        "CT_ANCHOR_B": "Adaptive Anchor",
+        "CT_FLEX": "Adaptive Marksman"
+      },
+      "tendency": "Maintains team structure while adjusting responsibilities but can be overly cautious."
+    },
+    {
+      "id": 7,
+      "name": "Independent Playmaker",
+      "t": {
+        "T_IGL": "Initiative IGL",
+        "T_ENTRY": "Solo-Tempo Entry",
+        "T_SUPPORT": "Combat Support",
+        "T_LURKER": "Independent Playmaking Lurker",
+        "T_FLEX": "Independent Marksman"
+      },
+      "ct": {
+        "CT_IGL": "Initiative Defender IGL",
+        "CT_ROTATOR": "Free-Roam Rotator",
+        "CT_ANCHOR_A": "Playmaking Anchor",
+        "CT_ANCHOR_B": "Playmaking Anchor",
+        "CT_FLEX": "Independent Marksman"
+      },
+      "tendency": "Makes spontaneous independent plays but can disrupt coordination."
+    },
+    {
+      "id": 8,
+      "name": "Calculated Playmaker",
+      "t": {
+        "T_IGL": "Duel-Oriented IGL",
+        "T_ENTRY": "Methodical Duelist Entry",
+        "T_SUPPORT": "Calculated Combat Support",
+        "T_LURKER": "Calculated Closer",
+        "T_FLEX": "Calculated Marksman"
+      },
+      "ct": {
+        "CT_IGL": "Duel-Oriented Defensive IGL",
+        "CT_ROTATOR": "Measured Duel Rotator",
+        "CT_ANCHOR_A": "Calculated Fighting Anchor",
+        "CT_ANCHOR_B": "Calculated Fighting Anchor",
+        "CT_FLEX": "Calculated Sniper"
+      },
+      "tendency": "Plans individual plays carefully but can overprepare."
+    },
+    {
+      "id": 9,
+      "name": "Dynamic Opportunist",
+      "t": {
+        "T_IGL": "Adaptive Fragging IGL",
+        "T_ENTRY": "Opportunistic Entry",
+        "T_SUPPORT": "Improvising Combat Support",
+        "T_LURKER": "Opportunistic Lurker",
+        "T_FLEX": "Dynamic Playmaker"
+      },
+      "ct": {
+        "CT_IGL": "Adaptive Fragging CT IGL",
+        "CT_ROTATOR": "Playmaking Rotator",
+        "CT_ANCHOR_A": "Opportunistic Anchor",
+        "CT_ANCHOR_B": "Opportunistic Anchor",
+        "CT_FLEX": "Adaptive Playmaker"
+      },
+      "tendency": "Changes approach to find personal impact but can disrupt team timing."
+    },
+    {
+      "id": 10,
+      "name": "Responsive Team Player",
+      "t": {
+        "T_IGL": "Responsive IGL",
+        "T_ENTRY": "Trade Entry",
+        "T_SUPPORT": "Trade Support",
+        "T_LURKER": "Team-Pressure Lurker",
+        "T_FLEX": "Team Flex"
+      },
+      "ct": {
+        "CT_IGL": "Responsive Defensive IGL",
+        "CT_ROTATOR": "Trade Rotator",
+        "CT_ANCHOR_A": "Team Anchor",
+        "CT_ANCHOR_B": "Team Anchor",
+        "CT_FLEX": "Team Marksman"
+      },
+      "tendency": "Responds quickly to team-created opportunities but can commit prematurely."
+    },
+    {
+      "id": 11,
+      "name": "Structured Team Player",
+      "t": {
+        "T_IGL": "Systems IGL",
+        "T_ENTRY": "Structured Entry",
+        "T_SUPPORT": "Structured Support",
+        "T_LURKER": "System Lurker",
+        "T_FLEX": "Structured Flex"
+      },
+      "ct": {
+        "CT_IGL": "Structure-First IGL",
+        "CT_ROTATOR": "System Rotator",
+        "CT_ANCHOR_A": "Structured Anchor",
+        "CT_ANCHOR_B": "Structured Anchor",
+        "CT_FLEX": "Structure Marksman"
+      },
+      "tendency": "Executes structured team decisions but can hesitate to improvise."
+    },
+    {
+      "id": 12,
+      "name": "Versatile Coordinator",
+      "t": {
+        "T_IGL": "Adaptive Tactical IGL",
+        "T_ENTRY": "Adaptive Team Entry",
+        "T_SUPPORT": "Versatile Support",
+        "T_LURKER": "Coordinated Lurker",
+        "T_FLEX": "Versatile Flex"
+      },
+      "ct": {
+        "CT_IGL": "Adaptive Tactical Defender",
+        "CT_ROTATOR": "Flexible Rotator",
+        "CT_ANCHOR_A": "Versatile Anchor",
+        "CT_ANCHOR_B": "Versatile Anchor",
+        "CT_FLEX": "Versatile Marksman"
+      },
+      "tendency": "Adjusts responsibilities to help the team but can over-adjust."
+    },
+    {
+      "id": 13,
+      "name": "Fearless Duelist",
+      "t": {
+        "T_IGL": "Fragging IGL",
+        "T_ENTRY": "Explosive Entry",
+        "T_SUPPORT": "Fragging Support",
+        "T_LURKER": "Aggressive Lurker",
+        "T_FLEX": "Aggressive Duelist"
+      },
+      "ct": {
+        "CT_IGL": "Fragging CT IGL",
+        "CT_ROTATOR": "Aggressive Rotator",
+        "CT_ANCHOR_A": "Fragging Anchor",
+        "CT_ANCHOR_B": "Fragging Anchor",
+        "CT_FLEX": "Aggressive Marksman"
+      },
+      "tendency": "Frequently seeks direct combat but risks overextension."
+    },
+    {
+      "id": 14,
+      "name": "Assertive Duelist",
+      "t": {
+        "T_IGL": "Calculated Fragging IGL",
+        "T_ENTRY": "Calculated Aggressive Entry",
+        "T_SUPPORT": "Assertive Combat Support",
+        "T_LURKER": "Pressure Lurker",
+        "T_FLEX": "Assertive Marksman"
+      },
+      "ct": {
+        "CT_IGL": "Calculated Fragging CT IGL",
+        "CT_ROTATOR": "Planned Contest Rotator",
+        "CT_ANCHOR_A": "Proactive Anchor",
+        "CT_ANCHOR_B": "Proactive Anchor",
+        "CT_FLEX": "Calculated Aggressive Marksman"
+      },
+      "tendency": "Engineers planned aggressive engagements but can become predictable."
+    },
+    {
+      "id": 15,
+      "name": "Hunting Playmaker",
+      "t": {
+        "T_IGL": "Playmaking IGL",
+        "T_ENTRY": "Hunting Entry",
+        "T_SUPPORT": "Playmaking Support",
+        "T_LURKER": "Hunting Lurker",
+        "T_FLEX": "Playmaking Marksman"
+      },
+      "ct": {
+        "CT_IGL": "Playmaking CT IGL",
+        "CT_ROTATOR": "Hunting Rotator",
+        "CT_ANCHOR_A": "Hunting Anchor",
+        "CT_ANCHOR_B": "Hunting Anchor",
+        "CT_FLEX": "Hunting Marksman"
+      },
+      "tendency": "Hunts engagements dynamically but can lose focus on team objectives."
+    },
+    {
+      "id": 16,
+      "name": "Frontline Initiator",
+      "t": {
+        "T_IGL": "Leading-From-Front IGL",
+        "T_ENTRY": "Selfless Entry",
+        "T_SUPPORT": "Aggressive Trade Support",
+        "T_LURKER": "Distraction Lurker",
+        "T_FLEX": "Initiating Flex"
+      },
+      "ct": {
+        "CT_IGL": "Proactive Commander",
+        "CT_ROTATOR": "Proactive Rotator",
+        "CT_ANCHOR_A": "Contesting Anchor",
+        "CT_ANCHOR_B": "Contesting Anchor",
+        "CT_FLEX": "Proactive Marksman"
+      },
+      "tendency": "Creates space for teammates but risks advancing beyond support."
+    },
+    {
+      "id": 17,
+      "name": "System Aggressor",
+      "t": {
+        "T_IGL": "Execute-Driven IGL",
+        "T_ENTRY": "Coordinated Entry",
+        "T_SUPPORT": "Execute Support",
+        "T_LURKER": "Pressure-Control Lurker",
+        "T_FLEX": "Structured Attacker"
+      },
+      "ct": {
+        "CT_IGL": "Proactive Tactical IGL",
+        "CT_ROTATOR": "Planned Pressure Rotator",
+        "CT_ANCHOR_A": "Utility-Pressure Anchor",
+        "CT_ANCHOR_B": "Utility-Pressure Anchor",
+        "CT_FLEX": "Structured Aggressive Marksman"
+      },
+      "tendency": "Executes coordinated aggressive plans but can overcommit."
+    },
+    {
+      "id": 18,
+      "name": "Proactive Playmaker",
+      "t": {
+        "T_IGL": "Proactive IGL",
+        "T_ENTRY": "Playmaking Entry",
+        "T_SUPPORT": "Adaptive Playmaking Support",
+        "T_LURKER": "Active Lurker",
+        "T_FLEX": "Playmaking Flex"
+      },
+      "ct": {
+        "CT_IGL": "Adaptive Aggressive IGL",
+        "CT_ROTATOR": "Adaptive Aggressive Rotator",
+        "CT_ANCHOR_A": "Adaptive Fighting Anchor",
+        "CT_ANCHOR_B": "Adaptive Fighting Anchor",
+        "CT_FLEX": "Adaptive Playmaking Marksman"
+      },
+      "tendency": "Creates proactive pressure while adapting but can disrupt synchronization."
+    }
+  ]
+}

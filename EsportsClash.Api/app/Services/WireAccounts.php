@@ -52,8 +52,7 @@ class WireAccounts
         $club=OnlineClub::where('user_id',$player->user_id)->first(['id','name']);
         return $this->save('player',$player->id,$player->persona_name??$template['name']??'Player','player',[
             'bio'=>'Arena player · '.($template['preferredRole']??$template['role']??'Role unlisted'),
-            'primary_personality'=>$template['primaryPersonality']??$template['personality']??'Not recorded',
-            'secondary_personality'=>$template['secondaryPersonality']??null,'player_id'=>$player->id,
+            'personality'=>app(FpsPlayerArchitecture::class)->generate($player->id),'player_id'=>$player->id,
             'preferred_role'=>$template['preferredRole']??$template['role']??null,
             'club_id'=>$club?->id,'club_name'=>$club?->name,
             'interests'=>$template['signatureChampions']??[],

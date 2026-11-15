@@ -46,8 +46,8 @@ function rayCylinderHit(from:LiveWorldPoint,direction:LiveRayDirection,x:number,
 /** Intersects the animated proxy model's head and torso separately. The first surface hit owns the hit region. */
 export function traceLiveActorHit(from:LiveWorldPoint,direction:LiveRayDirection,maxDistance:number,target:LiveHitTarget):LiveActorHit|undefined {
   const jumpY=target.jumpY??0,head=raySphereHit(from,direction,{x:target.x,y:liveActorHeadY(target),z:target.z},.17,maxDistance);
-  const top=target.crouch?1.32:1.50;
-  const body=rayCylinderHit(from,direction,target.x,target.z,.30,.30+jumpY,top+jumpY,maxDistance);
+  const top=target.crouch?1.10:1.36;
+  const body=rayCylinderHit(from,direction,target.x,target.z,.25,.12+jumpY,top+jumpY,maxDistance);
   if(head===undefined&&body===undefined)return undefined;
   return head!==undefined&&(body===undefined||head<=body)?{distance:head,region:'head'}:{distance:body!,region:'body'};
 }

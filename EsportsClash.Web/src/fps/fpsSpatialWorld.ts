@@ -1,14 +1,15 @@
 /** Geometry and fixed-step clock for the experimental live FPS. Coordinates are metres. */
-export interface FpsPoint { x: number; z: number }
+export interface FpsPoint { x: number; z: number; level?: 'street'|'canal' }
 export interface FpsWall { minX: number; maxX: number; minZ: number; maxZ: number }
 
 /** Intersection of a finite segment and a closed axis-aligned box, including its edges. */
 export function segmentHitsWall(from: FpsPoint, to: FpsPoint, wall: FpsWall, radius = 0): boolean {
+  if(Math.max(from.x,to.x)<wall.minX-radius||Math.min(from.x,to.x)>wall.maxX+radius
+    ||Math.max(from.z,to.z)<wall.minZ-radius||Math.min(from.z,to.z)>wall.maxZ+radius)return false;
   let enter = 0, exit = 1;
-  for (const [origin, delta, min, max] of [
-    [from.x, to.x - from.x, wall.minX - radius, wall.maxX + radius],
-    [from.z, to.z - from.z, wall.minZ - radius, wall.maxZ + radius]
-  ]) {
+  for(let axis=0;axis<2;axis++){
+    const origin=axis===0?from.x:from.z,delta=axis===0?to.x-from.x:to.z-from.z;
+    const min=(axis===0?wall.minX:wall.minZ)-radius,max=(axis===0?wall.maxX:wall.maxZ)+radius;
     if (Math.abs(delta) < 1e-9) {
       if (origin < min || origin > max) return false;
       continue;
@@ -44,11 +45,12 @@ export class FpsFixedStepClock {
     if (!Number.isFinite(stepSeconds) || stepSeconds <= 0) throw new RangeError('Invalid fixed step');
     this.stepSeconds=stepSeconds;
   }
-  advance(seconds: number, tick: (seconds: number) => void, maxSteps = 300): number {
+  advance(seconds: number, tick: (seconds: number) => void, maxSteps = 300, canContinue?:()=>boolean): number {
     if (!Number.isFinite(seconds) || seconds < 0 || !Number.isInteger(maxSteps) || maxSteps < 1) throw new RangeError('Invalid clock advance');
     this.accumulated += seconds;
     let steps = 0;
     while (this.accumulated + 1e-10 >= this.stepSeconds && steps < maxSteps) {
+      if(steps>0&&canContinue&&!canContinue())break;
       tick(this.stepSeconds);
       this.accumulated = Math.max(0, this.accumulated - this.stepSeconds);
       steps++;

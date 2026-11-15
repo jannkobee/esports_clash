@@ -18,7 +18,7 @@ import { toScale10 } from '../marketBatchEngine';
 import './club-office.css';
 
 type Tool='calendar'|'lineup'|'identity'|'friendly';
-interface HomeClub {club:{id:number;name:string;tag:string|null;tier:number;identity:ClubIdentity|null;lineup:{instance_id:string;avatar_id:string}[]};cards:{id:string;training_xp:number;definition:{presentation?:import('../supporter').PlayerPresentation|null;id:string;name:string;ovr:number;stats?:Record<string,number>;role:string;preferredRole?:string;nationality?:{code:string;name:string}}}[]}
+interface HomeClub {club:{id:number;name:string;tag:string|null;tier:number;identity:ClubIdentity|null;lineup:{instance_id:string;avatar_id:string}[]};cards:{id:string;training_xp:number;definition:{presentation?:import('../supporter').PlayerPresentation|null;id:string;name:string;ovr:number;stats?:Record<string,number>;nationality?:{code:string;name:string}}}[]}
 interface Fixture {id:number;competition:string;kickoff_at:string;orders_close_at:string;status:string;can_submit:boolean;match_id:string|null;clubs:{blue:{name:string};red:{name:string}}}
 interface Money {available:number;academy_opened_at:string|null;youth_coach_wage:number}
 

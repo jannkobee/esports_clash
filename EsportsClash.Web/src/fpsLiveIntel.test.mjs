@@ -1,3 +1,4 @@
+import {FPS_T_POSITIONS,FPS_CT_POSITIONS} from './fps/fpsPlayerArchitecture.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {FpsLiveSimulation} from './fps/fpsLiveSimulation.ts';
@@ -8,8 +9,8 @@ import {launchLiveGrenade} from './fps/fpsLiveGrenades.ts';
 const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
 const coach={...plan,rigidity:.7,communication:.7,leadership:.7,adaptability:.7,development:.5};
 const chemistry={trust:.6,communication:.6,understanding:.6,leadershipAcceptance:.6,roleCompetition:.3};
-const cards=Array.from({length:10},(_,i)=>({id:`intel-${i}`,name:`Player ${i}`,stats:{lan:80,iq:80,tf:80,clu:80,sta:80,flx:80,ldr:80}}));
-const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
+const cards=Array.from({length:10},(_,i)=>({id:`intel-${i}`,name:`Player ${i}`,stats:{rifling:80,positioning:80,entry:80,sniping:80,utility:80,shotcalling:80}}));
+const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,assignments:{t:FPS_T_POSITIONS[(i)%5],ct:FPS_CT_POSITIONS[(i)%5]},personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
 const game=()=>{const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity);sim.time=20;return sim;};
 const sight=(id,x,z,observed=20)=>({key:`enemy:${id}`,enemyId:id,observerId:'observer',source:'sight',x,z,observed,confidence:.98,uncertainty:.45});
 const addStack=(sim,p,site,count)=>{
@@ -85,7 +86,7 @@ test('a visible smoke detonation creates an anonymous utility cue before the smo
   const sim=game(),listener=sim.actors[0];for(const a of sim.actors)a.hp=0;
   Object.assign(listener,{hp:100,x:-19,z:-10,yaw:0,target:undefined});
   sim.grenades=[launchLiveGrenade(1,'smoke','unseen-thrower','red',{x:-19,z:-6},{x:-19,z:-5},20)];
-  for(let i=0;i<35;i++){sim.time+=1/30;sim.stepGrenades(1/30);}
+  for(let i=0;i<45;i++){sim.time+=1/30;sim.stepGrenades(1/30);}
   assert.equal(sim.smokes.length,1);assert.ok(listener.intel.contacts.some(c=>c.source==='utility'&&!c.enemyId));
   assert.equal(listener.target,undefined);assert.equal(assessLiveIntel(listener.intel,sim.time).A.identified,0);
 });
@@ -98,7 +99,7 @@ test('defense holds against a sound cue, reinforces confirmed pressure, preserve
   sim.time=20.2;addStack(sim,caller,'B',2);
   sim.callFromInformation(caller,allies);const order=sim.informationOrders.blue;
   assert.equal(order.mode,'reinforce');assert.equal(order.responders.length,1);assert.ok(!order.responders.includes(allies[0].id));
-  const responder=allies.find(p=>order.responders.includes(p.id));sim.decide(responder);
+  const responder=allies.find(p=>order.responders.includes(p.id));sim.time=Math.max(sim.time,order.readyAt??sim.time)+.01;sim.decide(responder);
   assert.ok(responder.goal.x>10);assert.match(responder.intent,/Reinforce B/);
   sim.time=20.5;sim.observeIntel(caller,{key:'other-noise',observerId:caller.id,source:'footstep',x:-20,z:14,observed:20.5,confidence:.5,uncertainty:4},false);
   sim.callFromInformation(caller,allies);assert.equal(sim.informationOrders.blue.site,'B');
@@ -124,16 +125,18 @@ test('attack redirects from a reported stack without reading hidden defense and 
   }
   for(const enemy of b.actors.slice(0,5)){enemy.x=31;enemy.z=35;}
   a.callFromInformation(a.actors[5],a.actors.slice(5));b.callFromInformation(b.actors[5],b.actors.slice(5));
+  for(const sim of [a,b]){sim.time=sim.actors[5].planAssessmentAt+.01;sim.callFromInformation(sim.actors[5],sim.actors.slice(5));}
   assert.equal(a.site,'B');assert.equal(b.site,'B');assert.deepEqual(a.informationOrders.red,b.informationOrders.red);
   a.time=47;a.liveElapsed=32;addStack(a,a.actors[5],'B',3);
   a.callFromInformation(a.actors[5],a.actors.slice(5));assert.equal(a.site,'B');
 });
 
 test('reported pressure spends real delay utility without giving the defender a visible target',()=>{
-  const sim=game(),p=sim.actors[3];Object.assign(p,{x:32,z:26,role:'anchor',smoke:1,utilityAt:0,target:undefined});
+  // Throw from the open east return; the taller grocer now correctly blocks the old line.
+  const sim=game(),p=sim.actors[3];Object.assign(p,{x:33,z:27,role:'anchor',smoke:1,utilityAt:0,target:undefined});
   addStack(sim,p,'B',2);const reason=sim.useInformationUtility(p,sim.actors.slice(0,5));
   assert.match(reason,/Delay reported B/);assert.equal(p.smoke,1);assert.equal(sim.grenades.length,0);assert.equal(p.utilityPreparation.kind,'smoke');assert.equal(p.target,undefined);
-  sim.time+=.55;sim.releaseUtilityPreparation(p);
+  sim.time=p.utilityPreparation.readyAt;sim.releaseUtilityPreparation(p);
   assert.equal(p.smoke,0);assert.equal(sim.grenades.length,1);assert.equal(sim.grenades[0].kind,'smoke');
 });
 
@@ -143,7 +146,7 @@ test('confirmed death removes the known threat and late reports cannot resurrect
   sim.observeIntel(p,sight(enemy.id,-19,-5),false);
   sim.fire(p,enemy);assert.equal(enemy.hp,0);assert.ok(!p.intel.contacts.some(c=>c.enemyId===enemy.id));
   sim.observeIntel(p,sight(enemy.id,-19,-5,19),false);assert.equal(p.intel.contacts.length,0);
-  const snapshot=sim.snapshot();assert.equal(snapshot.version,'hexatrick-live-exhibition-v10');
+  const snapshot=sim.snapshot();assert.equal(snapshot.version,'hexatrick-live-exhibition-v19');
   assert.equal('intel' in snapshot.players[0],false);assert.equal('sentReports' in snapshot.players[0],false);assert.equal('informationOrders' in snapshot,false);
   assert.ok(!JSON.stringify(snapshot).includes('riskTolerance'));assert.equal(typeof snapshot.players[0].information,'string');
 });

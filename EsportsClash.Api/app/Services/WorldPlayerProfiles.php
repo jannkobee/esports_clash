@@ -15,7 +15,7 @@ class WorldPlayerProfiles
 
     public const VERSION = 1;
 
-    public const ATTRIBUTES = ['lan', 'tf', 'iq', 'ldr', 'clu', 'sta', 'flx'];
+    public const ATTRIBUTES = ['rifling', 'entry', 'positioning', 'shotcalling', 'sniping', 'utility'];
 
     public function enabled(): bool
     {
@@ -39,6 +39,10 @@ class WorldPlayerProfiles
 
     public function initialize(OwnedPlayerCard $player, OnlineCatalog $catalog, string $source = 'starter', ?int $nationality = null): void
     {
+        if(app(FpsIdentityEngine::class)->ready()){
+            $identityTemplate=collect($catalog->payload['cards'])->firstWhere('id',$player->definition_id);
+            if($identityTemplate)app(FpsIdentityProfiles::class)->initialize($player,$identityTemplate,true);
+        }
         if (! $this->enabled() || $player->world_profile) {
             return;
         }
@@ -73,11 +77,12 @@ class WorldPlayerProfiles
     public function definition(OwnedPlayerCard $player, array $template): array
     {
         $out = $template;
+        unset($out['primaryPersonality'],$out['secondaryPersonality']);
         $out['name'] = $player->persona_name ?? $template['name'];
         $out['presentation'] = $player->presentation;
-        if (Schema::hasTable('fps_player_identities')) {
+        if (app(FpsIdentityEngine::class)->ready()) {
             $identity=DB::table('fps_player_identities')->where('player_id',$player->id)->first();
-            if($identity)$out['fpsIdentity']=app(FpsIdentityProfiles::class)->scouting($identity);
+            if($identity){$out['fpsIdentity']=[...app(FpsIdentityProfiles::class)->scouting($identity),'assignments'=>app(FpsIdentityProfiles::class)->assignmentsFor($player)];$out['personality']=$out['fpsIdentity']['personality']['name'];}
         }
         $profile = $this->enabled() ? $player->world_profile : null;
         if (! $profile) {

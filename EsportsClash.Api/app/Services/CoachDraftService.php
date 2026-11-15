@@ -100,7 +100,7 @@ class CoachDraftService
             }
             $score = $primaryFit ? 38 : 22;
             if (in_array($avatar['name'], $player['signatureChampions'] ?? [], true)) {
-                $score += 10 + (float) ($player['stats']['flx'] ?? 50) / 20
+                $score += 10 + (float) ($player['stats']['utility'] ?? 50) / 20
                     + $coach['drafting'] / 5
                     + $analyst['scouting'] / 10
                     + $assistant['preparation'] / 10;
@@ -119,7 +119,7 @@ class CoachDraftService
                 $score += 7 * $coach['adaptation'] / 10;
             }
             if (in_array($avatar['primaryRole'], ['Tank', 'Fighter', 'Support'], true)) {
-                $score += (float) ($player['stats']['tf'] ?? 50) / 20 * $assistant['teamwork'] / 10;
+                $score += (float) ($player['stats']['entry'] ?? 50) / 20 * $assistant['teamwork'] / 10;
             }
             if ($opponent) {
                 $threat = count(array_filter($opponent, fn (array $pick) =>

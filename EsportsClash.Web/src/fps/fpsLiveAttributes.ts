@@ -4,7 +4,7 @@ const unit=(value:number|undefined)=>Math.max(0,Math.min(1,(value??50)/100));
 export interface LiveSkills { mechanics:number;recoilControl:number;gameSense:number;teamwork:number;clutch:number;stamina:number;flexibility:number;leadership:number }
 export function liveSkills(stats:PlayerAttributes):LiveSkills {
   // Legacy cards have no standalone recoil rating; retain LAN only as their explicit compatibility estimate.
-  return {mechanics:unit(stats.lan),recoilControl:unit(stats.lan),gameSense:unit(stats.iq),teamwork:unit(stats.tf),clutch:unit(stats.clu),stamina:unit(stats.sta),flexibility:unit(stats.flx),leadership:unit(stats.ldr??(stats.iq*.6+stats.tf*.4))};
+  return {mechanics:unit(stats.rifling),recoilControl:unit(stats.rifling),gameSense:unit(stats.positioning),teamwork:unit(stats.entry),clutch:.5,stamina:.5,flexibility:.5,leadership:unit(stats.shotcalling??(stats.positioning*.6+stats.entry*.4))};
 }
 /** Attributes change the quality/timing of an attempt, never guarantee the selected outcome. */
 export function liveDecisionInterval(skills:LiveSkills):number {return 1.65-skills.gameSense*.45-skills.flexibility*.5;}
@@ -24,9 +24,9 @@ export function liveReportDelay(skills:LiveSkills,communication:number):number {
 
 /** Deliberately fictional demonstration profiles, paired to keep team averages comparable. */
 export const LIVE_DEMO_ATTRIBUTES:PlayerAttributes[]=[
-  {lan:88,tf:72,iq:66,clu:78,sta:80,flx:83,ldr:63},
-  {lan:91,tf:68,iq:79,clu:88,sta:71,flx:72,ldr:65},
-  {lan:73,tf:86,iq:91,clu:82,sta:78,flx:80,ldr:93},
-  {lan:85,tf:90,iq:76,clu:72,sta:88,flx:70,ldr:73},
-  {lan:70,tf:87,iq:86,clu:77,sta:86,flx:88,ldr:85},
+  {rifling:88,entry:72,positioning:66,sniping:78,utility:80,shotcalling:63},
+  {rifling:91,entry:68,positioning:79,sniping:88,utility:71,shotcalling:65},
+  {rifling:73,entry:86,positioning:91,sniping:82,utility:78,shotcalling:93},
+  {rifling:85,entry:90,positioning:76,sniping:72,utility:88,shotcalling:73},
+  {rifling:70,entry:87,positioning:86,sniping:77,utility:86,shotcalling:85},
 ];

@@ -1,10 +1,9 @@
 // src/marketBatchEngine.ts
 // Chess.com × Hattrick Club Management Engine:
 // 1-10 Attribute Scale, Veteran-to-Coach Lifecycle, Batch Player Generator,
-// Live Bidding Escrow, Scouting Network, Hattrick Training & Series Pyramid.
+// Live Bidding Escrow, Scouting Network & Hattrick Training.
 
 import type {
-  AvatarRole,
   CardTier,
   CoachAttributes,
   CoachCard,
@@ -16,15 +15,10 @@ import type {
   PlayerCard,
   ScoutCard,
   ScoutReportDossier,
-  SeriesDivision,
-  SeriesDivisionTier,
-  SeriesFixture,
-  SeriesTeam,
   TacticalArchetype,
   ThirdPartyCup,
   TrainingFocus,
-  TrainingRegimen,
-  ClashCupBracket
+  TrainingRegimen
 } from './types';
 
 // ==========================================
@@ -118,7 +112,7 @@ export function getCoachAttributes(coach?: CoachCard): CoachAttributes {
     };
   }
   const base = coach.rating10 ?? (coach.tier === 'GOAT' ? 9 : coach.tier === 'Diamond' ? 8 : coach.tier === 'Platinum' ? 7 : 6);
-  const isMacro = coach.style === 'Objective Macro' || coach.style === 'Scaling Poke';
+  const isMacro = coach.style === 'Objective Macro' || coach.style === 'Utility Execute';
   const isDive = coach.style === 'Aggressive Dive' || coach.style === 'Pick & Burst';
   return {
     tactical: Math.min(10, isMacro ? base + 1 : base),
@@ -142,16 +136,16 @@ export function getCoachFocusBoost(
   let primaryAttrLabel = 'Tactical Coaching';
   let primaryAttrValue = attrs.tactical;
 
-  if (focus === 'lan' || focus === 'tf') {
+  if (focus === 'rifling' || focus === 'entry') {
     primaryAttrLabel = 'Mechanical Drills';
     primaryAttrValue = attrs.mechanical;
-  } else if (focus === 'iq' || focus === 'ldr') {
+  } else if (focus === 'positioning' || focus === 'shotcalling') {
     primaryAttrLabel = 'Tactical Macro';
     primaryAttrValue = attrs.tactical;
-  } else if (focus === 'clu') {
+  } else if (focus === 'sniping') {
     primaryAttrLabel = 'Stage Motivation';
     primaryAttrValue = attrs.motivation;
-  } else if (focus === 'sta' || focus === 'flx') {
+  } else if (focus === 'utility') {
     primaryAttrLabel = 'Conditioning & Flex';
     primaryAttrValue = attrs.conditioning;
   }
@@ -170,8 +164,8 @@ export function getCoachFocusBoost(
 
 export function canBecomeCoach(player: PlayerCard): { eligible: boolean; reason?: string } {
   const age = player.age ?? 21;
-  const iq10 = toScale10(player.stats.iq);
-  const ldr10 = toScale10(player.stats.ldr ?? 55);
+  const iq10 = toScale10(player.stats.positioning);
+  const ldr10 = toScale10(player.stats.shotcalling ?? 55);
 
   if (age < 23) {
     return { eligible: false, reason: `Player must be at least 23 years old (currently ${age} yo).` };
@@ -192,12 +186,12 @@ export function canBecomeCoach(player: PlayerCard): { eligible: boolean; reason?
 }
 
 export function convertPlayerToCoach(player: PlayerCard): CoachCard {
-  const iq10 = toScale10(player.stats.iq);
-  const ldr10 = toScale10(player.stats.ldr ?? 55);
-  const lan10 = toScale10(player.stats.lan);
-  const tf10 = toScale10(player.stats.tf);
-  const sta10 = toScale10(player.stats.sta);
-  const clu10 = toScale10(player.stats.clu);
+  const iq10 = toScale10(player.stats.positioning);
+  const ldr10 = toScale10(player.stats.shotcalling ?? 55);
+  const lan10 = toScale10(player.stats.rifling);
+  const tf10 = toScale10(player.stats.entry);
+  const sta10 = toScale10(player.stats.utility);
+  const clu10 = toScale10(player.stats.sniping);
 
   const coachRating10 = Math.max(1, Math.min(10, Math.round(0.55 * iq10 + 0.45 * ldr10)));
   const playbookBonus = Math.max(0, (iq10 - 5) * 3); // up to +15%
@@ -205,11 +199,10 @@ export function convertPlayerToCoach(player: PlayerCard): CoachCard {
   const extraBans = iq10 >= 9 ? 1 : 0;
 
   let style: TacticalArchetype = 'Dynamic Adapt';
-  const role = player.preferredRole || player.role;
-  if (role === 'Tank' || role === 'Support') style = 'Objective Macro';
-  else if (role === 'Fighter' || role === 'Assassin') style = 'Aggressive Dive';
-  else if (role === 'Mage') style = 'Scaling Poke';
-  else if (role === 'Marksman') style = 'Pick & Burst';
+  if (iq10 >= 8 && ldr10 >= 8) style = 'Objective Macro';
+  else if (tf10 >= 8) style = 'Aggressive Dive';
+  else if (sta10 >= 8) style = 'Utility Execute';
+  else if (clu10 >= 8 || lan10 >= 8) style = 'Pick & Burst';
 
   const tier: CardTier =
     coachRating10 >= 9 ? 'GOAT' : coachRating10 >= 8 ? 'Diamond' : coachRating10 >= 7 ? 'Platinum' : 'Gold';
@@ -231,7 +224,7 @@ export function convertPlayerToCoach(player: PlayerCard): CoachCard {
     chemistryBonus,
     playbookBonus,
     extraBans,
-    quote: `Former ${role} veteran bringing ${iq10}/10 IQ and ${ldr10}/10 leadership to the coaching staff.`,
+    quote: `Former competitor bringing ${iq10}/10 positioning and ${ldr10}/10 shotcalling to the coaching staff.`,
     avatarSvg: player.avatarSvg || player.name,
     rating10: coachRating10,
     coachAttributes,
@@ -247,11 +240,11 @@ export function resolveTeamCaptain(startingFive: PlayerCard[]): {
 } | null {
   if (!startingFive.length) return null;
   let best = startingFive[0];
-  let bestScore = toScale10(best.stats.iq) + toScale10(best.stats.ldr ?? 55);
+  let bestScore = toScale10(best.stats.positioning) + toScale10(best.stats.shotcalling ?? 55);
 
   for (let i = 1; i < startingFive.length; i++) {
     const p = startingFive[i];
-    const score = toScale10(p.stats.iq) + toScale10(p.stats.ldr ?? 55);
+    const score = toScale10(p.stats.positioning) + toScale10(p.stats.shotcalling ?? 55);
     if (score > bestScore) {
       bestScore = score;
       best = p;
@@ -286,13 +279,6 @@ const REGIONS: ('LCK' | 'LPL' | 'LEC' | 'LCS' | 'Challengers')[] = [
   'LCK', 'LPL', 'LEC', 'LCS', 'Challengers'
 ];
 
-const ROLES: AvatarRole[] = ['Tank', 'Fighter', 'Assassin', 'Mage', 'Marksman', 'Support'];
-
-const SIGNATURES_POOL = [
-  'Solana', 'Astra', 'Kyumi', 'Buck', 'Valkira', 'Kage', 'Kazemaru', 'Kindra',
-  'Cora', 'Renn', 'Sylla', 'Tequoia', 'Zal', 'Xin', 'Raijin', 'Kaolin'
-];
-
 function pseudoRandom(seed: number) {
   let s = seed % 2147483647;
   if (s <= 0) s += 2147483646;
@@ -305,10 +291,9 @@ function pseudoRandom(seed: number) {
 export function generateSinglePlayer(
   rng: () => number,
   idSuffix: string,
-  options: { isYouth?: boolean; forcedRegion?: 'LCK' | 'LPL' | 'LEC' | 'LCS' | 'Challengers'; forcedRole?: AvatarRole } = {}
+  options: { isYouth?: boolean; forcedRegion?: 'LCK' | 'LPL' | 'LEC' | 'LCS' | 'Challengers' } = {}
 ): PlayerCard {
-  const role = options.forcedRole || ROLES[Math.floor(rng() * ROLES.length)];
-  const origin = options.forcedRegion ? (options.forcedRegion === 'LCK' || options.forcedRegion === 'LPL' ? 'LoL' : 'Dota2') : 'LoL';
+  const origin = options.forcedRegion ? (options.forcedRegion === 'LCK' || options.forcedRegion === 'LPL' ? 'LoL' : 'CS') : 'CS';
   const name1 = PARODY_FIRST[Math.floor(rng() * PARODY_FIRST.length)];
   const name2 = PARODY_LAST[Math.floor(rng() * PARODY_LAST.length)];
   const name = `${name1}_${name2}`;
@@ -331,23 +316,22 @@ export function generateSinglePlayer(
   const jitter = () => Math.round((rng() - 0.5) * 12);
 
   const stats: PlayerAttributes = {
-    lan: Math.max(20, Math.min(99, baseStat99 + jitter())),
-    tf: Math.max(20, Math.min(99, baseStat99 + jitter())),
-    iq: Math.max(20, Math.min(99, baseStat99 + jitter())),
-    clu: Math.max(20, Math.min(99, baseStat99 + jitter())),
-    sta: Math.max(20, Math.min(99, baseStat99 + jitter())),
-    flx: Math.max(20, Math.min(99, baseStat99 + jitter())),
-    ldr: Math.max(20, Math.min(99, baseStat99 + jitter()))
+    rifling: Math.max(20, Math.min(99, baseStat99 + jitter())),
+    entry: Math.max(20, Math.min(99, baseStat99 + jitter())),
+    positioning: Math.max(20, Math.min(99, baseStat99 + jitter())),
+    sniping: Math.max(20, Math.min(99, baseStat99 + jitter())),
+    utility: Math.max(20, Math.min(99, baseStat99 + jitter())),
+    shotcalling: Math.max(20, Math.min(99, baseStat99 + jitter()))
   };
 
   const calculatedOvr99 = Math.round(
-    stats.lan * 0.25 + stats.tf * 0.25 + stats.iq * 0.15 + stats.clu * 0.15 + stats.sta * 0.1 + stats.flx * 0.1
+    stats.rifling * 0.25 + stats.entry * 0.25 + stats.positioning * 0.15 + stats.sniping * 0.15 + stats.utility * 0.1 + stats.shotcalling * 0.1
   );
 
   const tier: CardTier =
     targetOvr10 >= 10 ? 'GOAT' : targetOvr10 >= 9 ? 'Diamond' : targetOvr10 >= 8 ? 'Platinum' : targetOvr10 >= 6 ? 'Gold' : 'Silver';
 
-  const weeklyWage = Math.round(15 + targetOvr10 * 18 + (stats.ldr ?? 50) * 0.5);
+  const weeklyWage = Math.round(15 + targetOvr10 * 18 + (stats.shotcalling ?? 50) * 0.5);
   const macroRegion: MacroRegion = options.forcedRegion
     ? mapToMacroRegion(options.forcedRegion)
     : (['ASIA', 'EUROPE', 'AFRICA', 'AMERICAS'] as MacroRegion[])[Math.floor(rng() * 4)];
@@ -358,20 +342,13 @@ export function generateSinglePlayer(
     realName: name1,
     origin,
     macroRegion,
-    role,
-    preferredRole: role,
     tier,
     ovr: calculatedOvr99,
     stats,
     age,
     potentialOvr: fromScale10(potentialOvr10),
     wage: weeklyWage,
-    personality: 'Tactical Flex',
-    badges: isYouth ? ['Youth Prodigy', 'High Ceiling'] : ['Proven Competitor'],
-    signatureChampions: [
-      SIGNATURES_POOL[Math.floor(rng() * SIGNATURES_POOL.length)],
-      SIGNATURES_POOL[Math.floor(rng() * SIGNATURES_POOL.length)]
-    ],
+    personality: 'Unset',
     morale: 88,
     fatigue: 10,
     level: isYouth ? 15 : 35,
@@ -448,7 +425,6 @@ export const DEFAULT_SCOUTS: ScoutCard[] = [
     name: 'Peter Dun (Elite Talent Eye)',
     avatarSvg: 'notail',
     specialtyRegion: 'LEC',
-    preferredRole: 'Any',
     weeklySalary: 85,
     hiringCost: 450,
     judgingAbility: 8,
@@ -458,7 +434,6 @@ export const DEFAULT_SCOUTS: ScoutCard[] = [
     negotiation: 7,
     networkReach: 4,
     assignedRegion: 'LEC',
-    assignedRole: 'Any',
     activeMission: true
   },
   {
@@ -466,7 +441,6 @@ export const DEFAULT_SCOUTS: ScoutCard[] = [
     name: 'Edgar Cho (Korean Dynasty Scout)',
     avatarSvg: 'faker',
     specialtyRegion: 'LCK',
-    preferredRole: 'Fighter',
     weeklySalary: 110,
     hiringCost: 600,
     judgingAbility: 9,
@@ -476,7 +450,6 @@ export const DEFAULT_SCOUTS: ScoutCard[] = [
     negotiation: 8,
     networkReach: 4,
     assignedRegion: 'LCK',
-    assignedRole: 'Fighter',
     activeMission: true
   },
   {
@@ -484,7 +457,6 @@ export const DEFAULT_SCOUTS: ScoutCard[] = [
     name: 'Tony Inero (North American Developer)',
     avatarSvg: 'theshy',
     specialtyRegion: 'LCS',
-    preferredRole: 'Marksman',
     weeklySalary: 65,
     hiringCost: 300,
     judgingAbility: 7,
@@ -494,7 +466,6 @@ export const DEFAULT_SCOUTS: ScoutCard[] = [
     negotiation: 8,
     networkReach: 3,
     assignedRegion: 'LCS',
-    assignedRole: 'Marksman',
     activeMission: false
   }
 ];
@@ -683,7 +654,7 @@ export function applyHattrickTrainingTick(
   const starterIds = new Set(startingFive.map((p) => p.id));
   const levelUps: { playerName: string; attribute: string; from: number; to: number }[] = [];
 
-  const focus = regimen.primaryFocus; // 'lan' | 'tf' | 'iq' | 'ldr' | 'clu' | 'sta' | 'flx'
+  const focus = regimen.primaryFocus; // 'rifling' | 'entry' | 'positioning' | 'shotcalling' | 'sniping' | 'utility'
   const intensityFactor = regimen.intensityPercent / 100; // 0.5 to 1.0
   const coachBoost = coach ? getCoachFocusBoost(coach, focus) : null;
   const coachMultiplier = coachBoost ? 1 + coachBoost.speedBonusPercent / 100 : 1.0;
@@ -709,7 +680,7 @@ export function applyHattrickTrainingTick(
       const youthCoachAdd = coachBoost ? coachBoost.youthBonusPercent / 200 : 0;
       ageMultiplier = 1.45 + youthCoachAdd;
     } else if (age >= 23) {
-      ageMultiplier = focus === 'iq' || focus === 'ldr' ? 1.20 : 0.45;
+      ageMultiplier = focus === 'positioning' || focus === 'shotcalling' ? 1.20 : 0.45;
     }
 
     const currentStat = player.stats[focus] ?? 50;
@@ -747,12 +718,12 @@ export function applyHattrickTrainingTick(
     };
 
     const newOvr = Math.round(
-      newStats.lan * 0.25 +
-      newStats.tf * 0.25 +
-      newStats.iq * 0.15 +
-      newStats.clu * 0.15 +
-      newStats.sta * 0.1 +
-      newStats.flx * 0.1
+      newStats.rifling * 0.25 +
+      newStats.entry * 0.25 +
+      newStats.positioning * 0.15 +
+      newStats.sniping * 0.15 +
+      newStats.utility * 0.1 +
+      newStats.utility * 0.1
     );
 
     return {
@@ -798,7 +769,7 @@ export function applyRealMatchTrainingImpact(
     if (age <= 18) {
       ageMultiplier = 1.35 + coachBoost.youthBonusPercent / 200;
     } else if (age >= 23) {
-      ageMultiplier = focus === 'iq' || focus === 'ldr' ? 1.20 : 0.65;
+      ageMultiplier = focus === 'positioning' || focus === 'shotcalling' ? 1.20 : 0.65;
     }
 
     const currentStat = player.stats[focus] ?? 50;
@@ -831,12 +802,12 @@ export function applyRealMatchTrainingImpact(
     };
 
     const newOvr = Math.round(
-      newStats.lan * 0.25 +
-      newStats.tf * 0.25 +
-      newStats.iq * 0.15 +
-      newStats.clu * 0.15 +
-      newStats.sta * 0.1 +
-      newStats.flx * 0.1
+      newStats.rifling * 0.25 +
+      newStats.entry * 0.25 +
+      newStats.positioning * 0.15 +
+      newStats.sniping * 0.15 +
+      newStats.utility * 0.1 +
+      newStats.utility * 0.1
     );
 
     return {
@@ -1005,195 +976,3 @@ export const INITIAL_FRIEND_CHALLENGES: FriendChallenge[] = [
     status: 'pending'
   }
 ];
-
-// ==========================================
-// 7. HATTRICK 4-DIVISION SERIES PYRAMID & CLASH CUP
-// ==========================================
-
-export const DEFAULT_SERIES_DIVISIONS: Record<SeriesDivisionTier, SeriesDivision> = {
-  'Series IV': {
-    tier: 'Series IV',
-    title: 'Series IV · Regional Challengers',
-    description: 'Starting competitive division for emerging clubs. Top 2 clubs earn direct promotion to Series III.',
-    prestigeOvrCap: 8, // FFP: Cannot directly sign 9/10 or 10/10 open-market players; must scout & develop youth!
-    currentRound: 1,
-    maxRounds: 14,
-    teams: [
-      { id: 'my_club', name: 'Your Club', isPlayer: true, avgOvr: 78, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's4_team1', name: 'Berlin Brawlers', isPlayer: false, avgOvr: 79, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's4_team2', name: 'Seoul Sparks', isPlayer: false, avgOvr: 80, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's4_team3', name: 'Austin Outlaws', isPlayer: false, avgOvr: 77, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's4_team4', name: 'Kyoto Ronin', isPlayer: false, avgOvr: 79, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's4_team5', name: 'Lyon Lions', isPlayer: false, avgOvr: 76, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's4_team6', name: 'Madrid Matadors', isPlayer: false, avgOvr: 78, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's4_team7', name: 'Nordic Nomads', isPlayer: false, avgOvr: 81, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] }
-    ],
-    fixtures: generateSeriesRoundRobin([
-      'my_club', 's4_team1', 's4_team2', 's4_team3',
-      's4_team4', 's4_team5', 's4_team6', 's4_team7'
-    ])
-  },
-  'Series III': {
-    tier: 'Series III',
-    title: 'Series III · National Pro Circuit',
-    description: 'National contender division. Top 2 promote to Series II; Bottom 2 relegate to Series IV.',
-    prestigeOvrCap: 9,
-    currentRound: 1,
-    maxRounds: 14,
-    teams: [
-      { id: 's3_team1', name: 'Warsaw Vanguards', isPlayer: false, avgOvr: 85, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's3_team2', name: 'Cologne Titans', isPlayer: false, avgOvr: 86, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's3_team3', name: 'Tokyo Phantoms', isPlayer: false, avgOvr: 87, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's3_team4', name: 'Manchester Monarchs', isPlayer: false, avgOvr: 84, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's3_team5', name: 'Toronto Frost', isPlayer: false, avgOvr: 85, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's3_team6', name: 'Stockholm Blades', isPlayer: false, avgOvr: 86, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's3_team7', name: 'Busan Wave', isPlayer: false, avgOvr: 87, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] },
-      { id: 's3_team8', name: 'Shanghai Dragons', isPlayer: false, avgOvr: 88, wins: 0, losses: 0, points: 0, kills: 0, deaths: 0, towersDestroyed: 0, form: [] }
-    ],
-    fixtures: []
-  },
-  'Series II': {
-    tier: 'Series II',
-    title: 'Series II · Continental Elite',
-    description: 'Continental powerhouses. Top 2 promote to Series I; Bottom 2 relegate to Series III.',
-    prestigeOvrCap: 10,
-    currentRound: 1,
-    maxRounds: 14,
-    teams: [],
-    fixtures: []
-  },
-  'Series I': {
-    tier: 'Series I',
-    title: 'Series I · Global Premier League',
-    description: 'The pinnacle of club esports. Champions lift the Global Aegis; Bottom 2 relegate.',
-    prestigeOvrCap: 10,
-    currentRound: 1,
-    maxRounds: 14,
-    teams: [],
-    fixtures: []
-  }
-};
-
-function generateSeriesRoundRobin(teamIds: string[]): SeriesFixture[] {
-  const fixtures: SeriesFixture[] = [];
-  const n = teamIds.length;
-  let fixtureCounter = 1;
-
-  for (let round = 1; round <= 14; round++) {
-    // 4 matches per round
-    const half = n / 2;
-    for (let i = 0; i < half; i++) {
-      const homeIdx = (round + i) % (n - 1);
-      let awayIdx = (n - 1 - i + round) % (n - 1);
-      if (i === 0) awayIdx = n - 1;
-
-      const homeId = teamIds[homeIdx];
-      const awayId = teamIds[awayIdx];
-
-      fixtures.push({
-        id: `fix_r${round}_${fixtureCounter++}`,
-        round,
-        homeTeamId: round % 2 === 0 ? awayId : homeId,
-        homeTeamName: round % 2 === 0 ? awayId : homeId,
-        awayTeamId: round % 2 === 0 ? homeId : awayId,
-        awayTeamName: round % 2 === 0 ? homeId : awayId,
-        isPlayerMatch: homeId === 'my_club' || awayId === 'my_club',
-        played: false
-      });
-    }
-  }
-
-  return fixtures;
-}
-
-export function simulateSeriesRound(
-  division: SeriesDivision,
-  playerMatchResult?: { homeKills: number; awayKills: number; winnerId: string }
-): SeriesDivision {
-  const currentRound = division.currentRound;
-  const roundFixtures = division.fixtures.filter((f) => f.round === currentRound);
-
-  const updatedTeams = [...division.teams];
-  const updatedFixtures = division.fixtures.map((f) => {
-    if (f.round !== currentRound) return f;
-
-    let homeKills: number;
-    let awayKills: number;
-    let winnerId: string;
-
-    if (f.isPlayerMatch && playerMatchResult) {
-      homeKills = playerMatchResult.homeKills;
-      awayKills = playerMatchResult.awayKills;
-      winnerId = playerMatchResult.winnerId;
-    } else {
-      // Deterministic simulation for AI fixtures based on seed
-      const rng = pseudoRandom(currentRound * 100 + parseInt(f.id.replace(/\D/g, '') || '1'));
-      const homeTeam = updatedTeams.find((t) => t.id === f.homeTeamId);
-      const awayTeam = updatedTeams.find((t) => t.id === f.awayTeamId);
-      const homeOvr = homeTeam?.avgOvr ?? 80;
-      const awayOvr = awayTeam?.avgOvr ?? 80;
-
-      const homeWinProb = 0.5 + (homeOvr - awayOvr) * 0.03;
-      const isHomeWin = rng() < homeWinProb;
-
-      homeKills = Math.round(10 + rng() * 15 + (isHomeWin ? 5 : 0));
-      awayKills = Math.round(8 + rng() * 14 + (!isHomeWin ? 5 : 0));
-      winnerId = isHomeWin ? f.homeTeamId : f.awayTeamId;
-    }
-
-    const homeTeam = updatedTeams.find((t) => t.id === f.homeTeamId);
-    const awayTeam = updatedTeams.find((t) => t.id === f.awayTeamId);
-
-    if (homeTeam && awayTeam) {
-      homeTeam.kills += homeKills;
-      homeTeam.deaths += awayKills;
-      awayTeam.kills += awayKills;
-      awayTeam.deaths += homeKills;
-
-      if (winnerId === f.homeTeamId) {
-        homeTeam.wins += 1;
-        homeTeam.points += 3;
-        homeTeam.form = [('W' as const), ...homeTeam.form.slice(0, 4)];
-        awayTeam.losses += 1;
-        awayTeam.form = [('L' as const), ...awayTeam.form.slice(0, 4)];
-      } else {
-        awayTeam.wins += 1;
-        awayTeam.points += 3;
-        awayTeam.form = [('W' as const), ...awayTeam.form.slice(0, 4)];
-        homeTeam.losses += 1;
-        homeTeam.form = [('L' as const), ...homeTeam.form.slice(0, 4)];
-      }
-    }
-
-    return {
-      ...f,
-      homeKills,
-      awayKills,
-      winnerId,
-      played: true
-    };
-  });
-
-  return {
-    ...division,
-    currentRound: Math.min(division.maxRounds, currentRound + 1),
-    teams: updatedTeams,
-    fixtures: updatedFixtures
-  };
-}
-
-export const INITIAL_CLASH_CUP: ClashCupBracket = {
-  season: 1,
-  currentStage: 'Round of 16',
-  prizePool: 5000,
-  matches: [
-    { id: 'cup_m1', stageName: 'Round of 16', homeTeamName: 'Your Club', awayTeamName: 'Berlin Brawlers', isPlayerMatch: true, played: false },
-    { id: 'cup_m2', stageName: 'Round of 16', homeTeamName: 'Seoul Sparks', awayTeamName: 'Kyoto Ronin', played: false },
-    { id: 'cup_m3', stageName: 'Round of 16', homeTeamName: 'Austin Outlaws', awayTeamName: 'Nordic Nomads', played: false },
-    { id: 'cup_m4', stageName: 'Round of 16', homeTeamName: 'Warsaw Vanguards', awayTeamName: 'Cologne Titans', played: false },
-    { id: 'cup_m5', stageName: 'Round of 16', homeTeamName: 'Tokyo Phantoms', awayTeamName: 'Manchester Monarchs', played: false },
-    { id: 'cup_m6', stageName: 'Round of 16', homeTeamName: 'Stockholm Blades', awayTeamName: 'Busan Wave', played: false },
-    { id: 'cup_m7', stageName: 'Round of 16', homeTeamName: 'Shanghai Dragons', awayTeamName: 'Toronto Frost', played: false },
-    { id: 'cup_m8', stageName: 'Round of 16', homeTeamName: 'Lyon Lions', awayTeamName: 'Madrid Matadors', played: false }
-  ]
-};

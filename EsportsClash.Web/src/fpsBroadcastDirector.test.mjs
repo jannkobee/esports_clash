@@ -1,3 +1,4 @@
+import {FPS_T_POSITIONS,FPS_CT_POSITIONS} from './fps/fpsPlayerArchitecture.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -5,7 +6,10 @@ import {
   PLANT_SETTLE_WINDOW,
   THIRD_PERSON_BACK_OFFSET,
   THIRD_PERSON_LOOK_AHEAD,
+  DIRECTOR_WIDE_DURATION,
+  DIRECTOR_WIDE_COOLDOWN,
   computeBombPlantPipPose,
+  computeFreezeShowcasePose,
   computeThirdPersonCameraPose,
   createDirectorState,
   domRectToBabylonViewport,
@@ -13,7 +17,8 @@ import {
   selectBombPlantPip,
 } from './fps/fpsBroadcastDirector.ts';
 import { FPS_IDENTITY_PERSONALITIES, generatePlayerDNA } from './fps/fpsIdentity.ts';
-import { LIVE_FPS_MAP } from './fps/fpsLiveMap.ts';
+import { LIVE_FPS_MAP, LIVE_COLLISION_SOLIDS, liveWallSegmentHit } from './fps/fpsLiveMap.ts';
+import { LIVE_MID_WINDOW } from './fps/fpsLiveTerrain.ts';
 import { FpsLiveSimulation } from './fps/fpsLiveSimulation.ts';
 import { segmentHitsWall } from './fps/fpsSpatialWorld.ts';
 
@@ -23,7 +28,7 @@ const chemistry = { trust: 0.6, communication: 0.6, understanding: 0.6, leadersh
 const cards = Array.from({ length: 10 }, (_, i) => ({
   id: `dir-${i}`,
   name: `Op ${i}`,
-  stats: { lan: 80, iq: 80, tf: 80, clu: 80, sta: 80, flx: 80, ldr: 80 },
+  stats: { rifling: 80, positioning: 80, entry: 80, sniping: 80, utility: 80, shotcalling: 80 },
 }));
 const identity = {
   players: Object.fromEntries(
@@ -31,7 +36,7 @@ const identity = {
       p.id,
       {
         id: p.id,
-        personality: FPS_IDENTITY_PERSONALITIES[i],
+        assignments:{t:FPS_T_POSITIONS[(i)%5],ct:FPS_CT_POSITIONS[(i)%5]},personality: FPS_IDENTITY_PERSONALITIES[i],
         dna: generatePlayerDNA(p.id),
         intensity: 0.6,
         roleSuitability: 0.6,
@@ -79,6 +84,18 @@ function makeLiveSnapshot(time = 35) {
   });
   return snap;
 }
+
+function makeSplitFightSnapshot(time=35){
+  const snap=makeLiveSnapshot(time),blue=snap.players.filter(p=>p.team==='blue'),red=snap.players.filter(p=>p.team==='red');
+  for(const p of snap.players)p.hp=0;
+  for(const [p,point] of [[blue[0],{x:-19,z:10,yaw:0}],[red[0],{x:-19,z:17,yaw:Math.PI}],
+    [blue[1],{x:20,z:12,yaw:0}],[red[1],{x:20,z:17,yaw:Math.PI}]]){
+    Object.assign(p,point,{hp:100,lastShot:time-.1,action:'Engaging'});
+  }
+  return snap;
+}
+
+function continueSplitFights(snap,time){snap.time=time;for(const p of snap.players)if(p.hp>0)p.lastShot=time-.1;}
 
 test('bomb-plant PIP activates strictly on bomb plants and brief planted confirmation, never defuses or fights', () => {
   const state = createDirectorState();
@@ -211,11 +228,11 @@ test('main director camera prioritizes kills and never dwells on an active bomb 
   assert.equal(killHandoff.followedId, killer.id);
 });
 
-test('director camera uses close-back third-person for quiet navigation and overview for freeze/post settle', () => {
+test('director camera uses close-back third-person for quiet navigation and third person for freeze and cinematic post settle', () => {
   const state = createDirectorState();
   const snap = makeLiveSnapshot(20);
   snap.phase = 'freeze';
-  assert.equal(evaluateBroadcastDirector(snap, state, 'director', snap.players[0].id).effectiveMode, 'overview');
+  assert.equal(evaluateBroadcastDirector(snap, state, 'director', snap.players[0].id).effectiveMode, 'third');
 
   snap.phase = 'live';
   snap.time = 25;
@@ -229,7 +246,7 @@ test('director camera uses close-back third-person for quiet navigation and over
   state.lastKillCutAt = 25.5;
   assert.equal(evaluateBroadcastDirector(snap, state, 'director', snap.players[0].id).effectiveMode, 'first');
   snap.time = 27.6;
-  assert.equal(evaluateBroadcastDirector(snap, state, 'director', snap.players[0].id).effectiveMode, 'overview');
+  assert.equal(evaluateBroadcastDirector(snap, state, 'director', snap.players[0].id).effectiveMode, 'cinematic');
 });
 
 test('solidified 3rd-person camera sits close on the model back and respects walls', () => {
@@ -248,18 +265,29 @@ test('solidified 3rd-person camera sits close on the model back and respects wal
   assert.ok(openPose.position.z < p.z, 'camera should be behind facing +Z player');
   assert.ok(Math.abs(openPose.target.z-p.z-THIRD_PERSON_LOOK_AHEAD)<1e-6, 'camera should use the authored downrange look-ahead');
 
-  // Near south-wall (minZ = -47..maxZ = -46) or west wall container, camera pulls forward without intersecting solid
+  // The arrival kiosk is real shoulder-height cover behind this grounded player.
+  // The former mid-backstop fixture is now the enterable elevated window room.
   p.x = 0;
-  p.z = -18.5;
-  // Mid-approach-screen is at (0, -25) 4x3; place player right in front of mid-backstop (0, 18.5) 6x3 (z in [17, 20])
-  p.x = 0;
-  p.z = 20.6;
+  p.z = -22.9;
   p.yaw = 0;
   const nearWallPose = computeThirdPersonCameraPose(p);
   const hitsWall = LIVE_FPS_MAP.solids.some((w) =>
     segmentHitsWall(p, { x: nearWallPose.position.x, z: nearWallPose.position.z }, w, 0.2),
   );
   assert.equal(hitsWall, false);
+  assert.ok(Math.hypot(nearWallPose.position.x-p.x,nearWallPose.position.z-p.z)<horizDist-.5,'The nearby kiosk must actually shorten the shoulder camera');
+});
+
+test('third-person camera inside the raised Mid window room clears 3D walls, floor and roof',()=>{
+  const p=makeLiveSnapshot(30).players[0];
+  const padded=(wall)=>({...wall,minX:wall.minX-.2,maxX:wall.maxX+.2,minZ:wall.minZ-.2,maxZ:wall.maxZ+.2,baseY:(wall.baseY??0)-.2,height:wall.height+.2});
+  for(const crouch of [false,true])for(const yaw of [0,Math.PI/2,Math.PI,-Math.PI/2]){
+    Object.assign(p,{x:2.4,z:20.5,jumpY:LIVE_MID_WINDOW.height,crouch,yaw});
+    const pose=computeThirdPersonCameraPose(p),eye={x:p.x,y:p.jumpY+(crouch?1.24:1.64),z:p.z};
+    assert.ok(pose.position.y>LIVE_MID_WINDOW.height+.2);
+    assert.ok(pose.position.y<LIVE_MID_WINDOW.roofY-.2);
+    assert.ok(!LIVE_COLLISION_SOLIDS.some(w=>liveWallSegmentHit(eye,pose.position,padded(w))!==undefined),JSON.stringify({yaw,crouch,pose}));
+  }
 });
 
 test('bomb plant PIP camera finds unobstructed 3/4 site framing around A crates and B fountain', () => {
@@ -308,4 +336,179 @@ test('domRectToBabylonViewport converts DOM coordinates cleanly to bottom-left W
   assert.ok(Math.abs(vp.height - 0.3) < 0.001);
 
   assert.equal(domRectToBabylonViewport({ left: 0, top: 0, width: 0, height: 0 }, { left: 0, top: 0, width: 1000, height: 500 }), null);
+});
+
+test('bomb plant PIP hides when the main camera observes the bomb planter', () => {
+  const state = createDirectorState();
+  const snap = makeLiveSnapshot(48);
+  const attackers = snap.players.filter((p) => p.attacking);
+  const planter = attackers[0];
+  const teammate = attackers[1];
+
+  planter.bomb = true;
+  planter.x = -23;
+  planter.z = 21;
+  planter.action = 'Planting';
+  planter.channel = 1.8;
+
+  // Observing someone else -> Bomb PIP renders
+  const watchingOther = evaluateBroadcastDirector(snap, state, 'first', teammate.id);
+  assert.equal(watchingOther.followedId, teammate.id);
+  assert.equal(watchingOther.pip.active, true);
+  assert.equal(watchingOther.pip.planterId, planter.id);
+
+  // Observing the bomb planter -> Bomb PIP hides cleanly
+  const watchingPlanter1P = evaluateBroadcastDirector(snap, state, 'first', planter.id);
+  assert.equal(watchingPlanter1P.followedId, planter.id);
+  assert.equal(watchingPlanter1P.pip.active, false);
+
+  const watchingPlanter3P = evaluateBroadcastDirector(snap, state, 'third', planter.id);
+  assert.equal(watchingPlanter3P.followedId, planter.id);
+  assert.equal(watchingPlanter3P.pip.active, false);
+});
+
+test('auto director rotates off stale walkers to active snipers, utility executes, and imminent preview action', () => {
+  const state = createDirectorState();
+  const snap = makeLiveSnapshot(40);
+  const blueA = snap.players[0];
+  const redSniper = snap.players.find((p) => p.attacking);
+  assert.ok(redSniper);
+
+  // BlueA has been dwelled on >5s while completely idle
+  state.followedId = blueA.id;
+  state.cutAt = 34.0;
+
+  // RedSniper is scoped with an enemy in front within range or throwing utility execute
+  redSniper.equipped = 'sniper';
+  redSniper.scopeState = 'scoped';
+  redSniper.x = 0;
+  redSniper.z = -4;
+  redSniper.yaw = 0;
+  const targetCt = snap.players.find((p) => !p.attacking && p.id !== blueA.id);
+  assert.ok(targetCt);
+  targetCt.x = 0;
+  targetCt.z = 14;
+  targetCt.yaw = Math.PI;
+
+  const preview = makeLiveSnapshot(40.6);
+  const decision = evaluateBroadcastDirector(snap, state, 'director', blueA.id, preview);
+  assert.notEqual(decision.followedId, blueA.id);
+  assert.equal(decision.effectiveMode, 'first');
+});
+
+test('auto director showcases both CT and T across buy-phase freeze and quiet rounds with creative showcase and tactical views', () => {
+  const state = createDirectorState();
+  const snap = makeLiveSnapshot(0);
+  snap.phase = 'freeze';
+  snap.remaining = 15;
+  snap.players[2].weapon = 'sniper';
+  snap.players[7].weapon = 'deagle';
+  snap.players[5].action = 'Passing a bought weapon';
+
+  const seenFreezeTeams = new Set();
+  const seenFreezePlayers = new Set();
+  for (let t = 0.2; t <= 14.2; t += 1.2) {
+    snap.time = t;
+    snap.remaining = 15 - t;
+    const dec = evaluateBroadcastDirector(snap, state, 'director', snap.players[0].id);
+    assert.equal(dec.effectiveMode, 'third');
+    const p = snap.players.find((pl) => pl.id === dec.followedId);
+    assert.ok(p);
+    seenFreezeTeams.add(p.attacking ? 'T' : 'CT');
+    seenFreezePlayers.add(p.id);
+    const pose = computeFreezeShowcasePose(p, t);
+    assert.ok(Math.hypot(pose.position.x - p.x, pose.position.z - p.z) >= 0.2);
+  }
+  assert.equal(seenFreezeTeams.size, 2, 'Buy-phase freeze AUTO cam must alternate across both CT and T teams');
+  assert.ok(seenFreezePlayers.size >= 4, `Buy-phase freeze AUTO cam should rotate across buyers; saw ${seenFreezePlayers.size}`);
+
+  // Live quiet navigation also rotates between teams even when neither side has shot yet
+  snap.phase = 'live';
+  const liveTeams = new Set();
+  for (let t = 15.2; t <= 28.0; t += 1.5) {
+    snap.time = t;
+    const dec = evaluateBroadcastDirector(snap, state, 'director', snap.players[0].id);
+    const p = snap.players.find((pl) => pl.id === dec.followedId);
+    if (p) liveTeams.add(p.attacking ? 'T' : 'CT');
+  }
+  assert.equal(liveTeams.size, 2, 'Quiet live AUTO cam should balance coverage across both T and CT');
+
+  // Separated live engagements unlock WIDE tactical coverage
+  const split=makeSplitFightSnapshot(35);
+  const wideDec = evaluateBroadcastDirector(split, state, 'director', split.players[0].id);
+  assert.equal(wideDec.effectiveMode, 'tactical');
+});
+
+test('AUTO WIDE has a fixed deadline and stays in player view throughout a continuing split fight',()=>{
+  const snap=makeSplitFightSnapshot(),state=createDirectorState();
+  assert.equal(evaluateBroadcastDirector(snap,state,'director',snap.players[0].id).effectiveMode,'tactical');
+  const deadline=state.wideUntil;
+  assert.equal(deadline,snap.time+DIRECTOR_WIDE_DURATION);
+  for(let i=1;i<=300;i++){
+    continueSplitFights(snap,35+i*.1);
+    const decision=evaluateBroadcastDirector(snap,state,'director',snap.players[0].id);
+    if(snap.time<deadline){assert.equal(decision.effectiveMode,'tactical');assert.equal(state.wideUntil,deadline);}
+    else assert.equal(decision.effectiveMode,'first','A sustained exchange cannot renew WIDE');
+  }
+});
+
+test('an imminent kill interrupts AUTO WIDE immediately for the selected killer POV',()=>{
+  const snap=makeSplitFightSnapshot(),state=createDirectorState();
+  assert.equal(evaluateBroadcastDirector(snap,state,'director',snap.players[0].id).effectiveMode,'tactical');
+  continueSplitFights(snap,35.4);
+  const preview=structuredClone(snap),killer=snap.players.find(p=>p.team==='red'&&p.hp>0),victim=snap.players.find(p=>p.team==='blue'&&p.hp>0);
+  preview.time=36;preview.events.push({id:900,time:35.8,kind:'kill',team:killer.team,actorId:killer.id,targetId:victim.id,text:'Eliminated'});
+  const decision=evaluateBroadcastDirector(snap,state,'director',snap.players[0].id,preview);
+  assert.equal(decision.effectiveMode,'first');assert.equal(decision.followedId,killer.id);
+  assert.equal(state.wideUntil,0);
+});
+
+test('utility-only activity in separated areas cannot be mistaken for simultaneous exchanges',()=>{
+  const snap=makeLiveSnapshot(),state=createDirectorState(),blue=snap.players.filter(p=>p.team==='blue');
+  Object.assign(blue[0],{x:-19,z:17,utilityPrep:{kind:'smoke',releaseAt:36,phase:'pin'}});
+  Object.assign(blue[1],{x:20,z:17,utilityPrep:{kind:'flash',releaseAt:36,phase:'pin'}});
+  assert.notEqual(evaluateBroadcastDirector(snap,state,'director',blue[0].id).effectiveMode,'tactical');
+});
+
+test('AUTO WIDE requires both a cooldown and a new split-fight episode before returning',()=>{
+  const snap=makeSplitFightSnapshot(),state=createDirectorState();
+  evaluateBroadcastDirector(snap,state,'director',snap.players[0].id);
+  assert.equal(state.wideCooldownUntil,35+DIRECTOR_WIDE_DURATION+DIRECTOR_WIDE_COOLDOWN);
+  const quiet=time=>{
+    snap.time=time;for(const p of snap.players){p.lastShot=-100;p.action='Advancing';}
+    return evaluateBroadcastDirector(snap,state,'director',snap.players[0].id);
+  };
+  quiet(37);quiet(39.1);
+  continueSplitFights(snap,40);
+  assert.notEqual(evaluateBroadcastDirector(snap,state,'director',snap.players[0].id).effectiveMode,'tactical');
+  continueSplitFights(snap,49);
+  assert.notEqual(evaluateBroadcastDirector(snap,state,'director',snap.players[0].id).effectiveMode,'tactical','A delayed overview cannot interrupt the same fight after cooldown');
+  quiet(50);quiet(52.1);continueSplitFights(snap,53);
+  assert.equal(evaluateBroadcastDirector(snap,state,'director',snap.players[0].id).effectiveMode,'tactical');
+});
+
+test('AUTO leaves WIDE as soon as the secondary exchange stops and ignores a brief reappearance',()=>{
+  const snap=makeSplitFightSnapshot(),state=createDirectorState();
+  evaluateBroadcastDirector(snap,state,'director',snap.players[0].id);
+  snap.time=35.2;for(const p of snap.players)if(p.x>0){p.lastShot=-100;p.action='Advancing';}
+  assert.equal(evaluateBroadcastDirector(snap,state,'director',snap.players[0].id).effectiveMode,'first');
+  continueSplitFights(snap,35.4);
+  assert.equal(evaluateBroadcastDirector(snap,state,'director',snap.players[0].id).effectiveMode,'first');
+});
+
+test('manual WIDE remains available and returning to AUTO cannot resume an old overview',()=>{
+  const snap=makeSplitFightSnapshot(),state=createDirectorState();
+  evaluateBroadcastDirector(snap,state,'director',snap.players[0].id);
+  for(const time of [36,40,60]){
+    continueSplitFights(snap,time);
+    assert.equal(evaluateBroadcastDirector(snap,state,'tactical',snap.players[0].id).effectiveMode,'tactical');
+  }
+  assert.equal(evaluateBroadcastDirector(snap,state,'director',snap.players[0].id).effectiveMode,'first');
+});
+
+test('a new round resets AUTO WIDE episode and cooldown state',()=>{
+  const snap=makeSplitFightSnapshot(),state=createDirectorState();
+  evaluateBroadcastDirector(snap,state,'director',snap.players[0].id);
+  snap.round++;continueSplitFights(snap,40);
+  assert.equal(evaluateBroadcastDirector(snap,state,'director',snap.players[0].id).effectiveMode,'tactical');
 });

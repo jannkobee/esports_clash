@@ -24,7 +24,7 @@ class NationalTeamService
             ->select($columns)
             ->orderBy('owned_player_cards.id')->paginate(50,['*'],'page',$page);
         $defs=collect(OnlineCatalog::where('active',true)->first()?->payload['cards']??[])->keyBy('id');
-        foreach($pool->items() as $player){$template=$defs->get($player->definition_id);$d=$template?$profiles->definition($player,$template):[];$player->setAttribute('name',$d['name']??$player->persona_name);$player->setAttribute('role',$d['preferredRole']??$d['role']??null);$player->setAttribute('skills',array_intersect_key($d['stats']??[],array_flip(['lan','tf','iq','ldr','clu','sta','flx'])));$player->setAttribute('nationality',$d['nationality']??null);$player->makeHidden(['world_profile','persona_name','nationality_id']);}
+        foreach($pool->items() as $player){$template=$defs->get($player->definition_id);$d=$template?$profiles->definition($player,$template):[];$player->setAttribute('name',$d['name']??$player->persona_name);$player->setAttribute('role',$d['preferredRole']??$d['role']??null);$player->setAttribute('skills',array_intersect_key($d['stats']??[],array_flip(['rifling','entry','positioning','shotcalling','sniping','utility'])));$player->setAttribute('nationality',$d['nationality']??null);$player->makeHidden(['world_profile','persona_name','nationality_id']);}
         return $pool;
     }
 

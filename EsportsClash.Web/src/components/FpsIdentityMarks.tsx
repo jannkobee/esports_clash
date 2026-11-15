@@ -1,12 +1,10 @@
-import {Brain,Focus} from 'lucide-react';
-import {FPS_IDENTITY_PERSONALITIES,FPS_SPECIALTIES,type FpsScoutingProfile} from '../fps/fpsIdentity';
-
+import {Brain} from 'lucide-react';
+import {FPS_BASE_BEHAVIORAL_PROFILES,fpsBaseProfileId,naturalFpsIdentity,observedFpsIdentity,personalityLabel,FPS_POSITION_LABELS,type FpsScoutingProfile} from '../fps/fpsIdentity';
 export function FpsIdentityMarks({profile}:{profile?:FpsScoutingProfile}) {
-  if(!profile)return null;
-  const personality=FPS_IDENTITY_PERSONALITIES.find(item=>item.id===profile.personality_id),specialty=FPS_SPECIALTIES.find(item=>item.id===profile.specialty_id);
-  const provenance=profile.legacy_primary?(profile.mapping==='approximate_legacy_v1'?' Approximate conversion of ':' Historical badge retained: ')+profile.legacy_primary+'.':'';
-  return <div className="personality-marks">
-    {personality&&<span className="personality-mark" title={`${personality.description} ${personality.drawback}${provenance}`}><Brain size={14}/>{personality.name}</span>}
-    {specialty&&<span className="personality-mark" title={specialty.description+' Applies only when its opportunity exists.'}><Focus size={14}/>{specialty.name}</span>}
-  </div>;
+ if(!profile?.personality)return null;
+ const p=profile.personality,observed=observedFpsIdentity(profile.observed);
+ return <div className="personality-marks"><span className="personality-mark" title={FPS_BASE_BEHAVIORAL_PROFILES[fpsBaseProfileId(p)-1].tendency}><Brain size={14}/>{[p.temperament,p.playstyle,p.mindset,p.decisionStyle].map(personalityLabel).join(' / ')}</span>
+   <span className="personality-mark">{profile.assignments?.t?`${FPS_POSITION_LABELS[profile.assignments.t]} · ${naturalFpsIdentity(p,profile.assignments.t)}`:'T: Unassigned'}</span>
+   <span className="personality-mark">{profile.assignments?.ct?`${FPS_POSITION_LABELS[profile.assignments.ct]} · ${naturalFpsIdentity(p,profile.assignments.ct)}`:'CT: Unassigned'}</span>
+   {observed&&<span className="personality-mark">Observed: {observed}</span>}</div>;
 }

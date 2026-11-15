@@ -1,0 +1,312 @@
+{
+    "date":  "2026-11-14",
+    "sourceStable":  true,
+    "comparableOutcomesUnchanged":  true,
+    "auditExitCode":  0,
+    "totalTicks":  54000,
+    "sources":  [
+                    {
+                        "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveSimulation.ts",
+                        "Hash":  "D731CAEB9FE6B69E4BBE3BF91D2414CA3789E8351765E1A57E97BCB4BAA95E06"
+                    },
+                    {
+                        "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveEconomy.ts",
+                        "Hash":  "C7ABFF05715237EAB840DC64BFA30A67871903091B18F3A6EB8F40A5FA52CA1B"
+                    },
+                    {
+                        "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveTactics.ts",
+                        "Hash":  "F25FC26AC2A68AE3DD0847CFE7F91E089A00E3AE63A575A960D0D90220003E75"
+                    },
+                    {
+                        "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveLineupDecisions.ts",
+                        "Hash":  "FDD9B7B5D7AFD2609C39E0D9762DC25B4409861AD2998B1BDBADB67574505E20"
+                    },
+                    {
+                        "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveScenery.ts",
+                        "Hash":  "62420D6BA6869A1345616E729874776308FA3CAFDC7789013CAB4643563C7BD7"
+                    },
+                    {
+                        "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveGrenades.ts",
+                        "Hash":  "F0E66BD7F1B2C1F68B757E84B11E7DB8A1F5299F7170316B20C551CF35195224"
+                    },
+                    {
+                        "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveLineups.ts",
+                        "Hash":  "AA09A7367F3318C16510CD846C03490E53F84D38EAAD64397C9F2AB8948BBE3C"
+                    }
+                ],
+    "results":  [
+                    {
+                        "seed":  17,
+                        "steps":  18000,
+                        "audited":  true,
+                        "startupMs":  19.040099999999995,
+                        "all":  {
+                                    "count":  18000,
+                                    "totalMs":  22897.180099999936,
+                                    "p50":  0.8173999999999069,
+                                    "p95":  3.8214000000007218,
+                                    "p99":  8.817499999999882,
+                                    "max":  33.11230000000069,
+                                    "over16ms":  26,
+                                    "over33ms":  0
+                                },
+                        "live":  {
+                                     "count":  14251,
+                                     "totalMs":  21627.28849999992,
+                                     "p50":  0.9902000000001863,
+                                     "p95":  4.298099999999977,
+                                     "p99":  9.905900000001566,
+                                     "max":  33.11230000000069,
+                                     "over16ms":  26,
+                                     "over33ms":  0
+                                 },
+                        "worst":  [
+                                      {
+                                          "tick":  11343,
+                                          "time":  378.13333333341853,
+                                          "round":  4,
+                                          "phase":  "live",
+                                          "ms":  33.11230000000069
+                                      },
+                                      {
+                                          "tick":  3906,
+                                          "time":  130.23333333332852,
+                                          "round":  2,
+                                          "phase":  "live",
+                                          "ms":  30.1904999999997
+                                      },
+                                      {
+                                          "tick":  689,
+                                          "time":  23.000000000000302,
+                                          "round":  1,
+                                          "phase":  "live",
+                                          "ms":  28.99869999999987
+                                      },
+                                      {
+                                          "tick":  4207,
+                                          "time":  140.26666666666128,
+                                          "round":  2,
+                                          "phase":  "live",
+                                          "ms":  24.59609999999975
+                                      },
+                                      {
+                                          "tick":  4228,
+                                          "time":  140.96666666666124,
+                                          "round":  2,
+                                          "phase":  "live",
+                                          "ms":  24.07850000000053
+                                      },
+                                      {
+                                          "tick":  450,
+                                          "time":  15.03333333333329,
+                                          "round":  1,
+                                          "phase":  "live",
+                                          "ms":  23.270999999999958
+                                      },
+                                      {
+                                          "tick":  10648,
+                                          "time":  354.96666666673343,
+                                          "round":  4,
+                                          "phase":  "live",
+                                          "ms":  23.102100000000064
+                                      },
+                                      {
+                                          "tick":  8054,
+                                          "time":  268.49999999999795,
+                                          "round":  3,
+                                          "phase":  "live",
+                                          "ms":  21.374300000001313
+                                      }
+                                  ],
+                        "round":  6,
+                        "score":  {
+                                      "blue":  2,
+                                      "red":  3
+                                  },
+                        "events":  100,
+                        "shots":  433
+                    },
+                    {
+                        "seed":  42,
+                        "steps":  18000,
+                        "audited":  true,
+                        "startupMs":  1.0709999999999127,
+                        "all":  {
+                                    "count":  18000,
+                                    "totalMs":  27226.394599999327,
+                                    "p50":  1.0339999999996508,
+                                    "p95":  4.386999999995169,
+                                    "p99":  8.845499999995809,
+                                    "max":  29.909499999994296,
+                                    "over16ms":  44,
+                                    "over33ms":  0
+                                },
+                        "live":  {
+                                     "count":  13560,
+                                     "totalMs":  25506.229399999535,
+                                     "p50":  1.3105999999970663,
+                                     "p95":  4.936799999999494,
+                                     "p99":  10.283300000002782,
+                                     "max":  29.909499999994296,
+                                     "over16ms":  44,
+                                     "over33ms":  0
+                                 },
+                        "worst":  [
+                                      {
+                                          "tick":  8793,
+                                          "time":  293.1333333333509,
+                                          "round":  4,
+                                          "phase":  "live",
+                                          "ms":  29.909499999994296
+                                      },
+                                      {
+                                          "tick":  14256,
+                                          "time":  475.2333333334958,
+                                          "round":  6,
+                                          "phase":  "live",
+                                          "ms":  28.545799999999872
+                                      },
+                                      {
+                                          "tick":  8609,
+                                          "time":  287.0000000000127,
+                                          "round":  4,
+                                          "phase":  "live",
+                                          "ms":  27.622300000002724
+                                      },
+                                      {
+                                          "tick":  13656,
+                                          "time":  455.2333333334799,
+                                          "round":  6,
+                                          "phase":  "live",
+                                          "ms":  25.793500000007043
+                                      },
+                                      {
+                                          "tick":  1606,
+                                          "time":  53.56666666666619,
+                                          "round":  1,
+                                          "phase":  "live",
+                                          "ms":  24.850800000000163
+                                      },
+                                      {
+                                          "tick":  1570,
+                                          "time":  52.366666666666255,
+                                          "round":  1,
+                                          "phase":  "live",
+                                          "ms":  24.360999999997148
+                                      },
+                                      {
+                                          "tick":  8803,
+                                          "time":  293.4666666666845,
+                                          "round":  4,
+                                          "phase":  "live",
+                                          "ms":  23.37829999999667
+                                      },
+                                      {
+                                          "tick":  3143,
+                                          "time":  104.79999999999661,
+                                          "round":  2,
+                                          "phase":  "live",
+                                          "ms":  23.153700000002573
+                                      }
+                                  ],
+                        "round":  7,
+                        "score":  {
+                                      "blue":  0,
+                                      "red":  7
+                                  },
+                        "events":  100,
+                        "shots":  558
+                    },
+                    {
+                        "seed":  1337,
+                        "steps":  18000,
+                        "audited":  true,
+                        "startupMs":  0.7580000000016298,
+                        "all":  {
+                                    "count":  18000,
+                                    "totalMs":  20003.221000000893,
+                                    "p50":  0.7646999999997206,
+                                    "p95":  3.2220999999990454,
+                                    "p99":  6.742300000012619,
+                                    "max":  38.79639999999199,
+                                    "over16ms":  22,
+                                    "over33ms":  2
+                                },
+                        "live":  {
+                                     "count":  12931,
+                                     "totalMs":  18334.485700000536,
+                                     "p50":  0.9952999999950407,
+                                     "p95":  3.8954000000012456,
+                                     "p99":  7.718699999997625,
+                                     "max":  38.79639999999199,
+                                     "over16ms":  22,
+                                     "over33ms":  2
+                                 },
+                        "worst":  [
+                                      {
+                                          "tick":  15233,
+                                          "time":  507.8000000001884,
+                                          "round":  7,
+                                          "phase":  "live",
+                                          "ms":  38.79639999999199
+                                      },
+                                      {
+                                          "tick":  5699,
+                                          "time":  189.9999999999918,
+                                          "round":  3,
+                                          "phase":  "live",
+                                          "ms":  33.971599999997125
+                                      },
+                                      {
+                                          "tick":  1443,
+                                          "time":  48.13333333333316,
+                                          "round":  1,
+                                          "phase":  "live",
+                                          "ms":  24.69670000000042
+                                      },
+                                      {
+                                          "tick":  5731,
+                                          "time":  191.0666666666584,
+                                          "round":  3,
+                                          "phase":  "live",
+                                          "ms":  23.862600000000384
+                                      },
+                                      {
+                                          "tick":  5739,
+                                          "time":  191.33333333332504,
+                                          "round":  3,
+                                          "phase":  "live",
+                                          "ms":  23.235500000002503
+                                      },
+                                      {
+                                          "tick":  5714,
+                                          "time":  190.49999999999176,
+                                          "round":  3,
+                                          "phase":  "live",
+                                          "ms":  21.875300000006973
+                                      },
+                                      {
+                                          "tick":  5779,
+                                          "time":  192.6666666666583,
+                                          "round":  3,
+                                          "phase":  "live",
+                                          "ms":  20.09150000000227
+                                      },
+                                      {
+                                          "tick":  5787,
+                                          "time":  192.93333333332495,
+                                          "round":  3,
+                                          "phase":  "live",
+                                          "ms":  20.016600000002654
+                                      }
+                                  ],
+                        "round":  8,
+                        "score":  {
+                                      "blue":  0,
+                                      "red":  7
+                                  },
+                        "events":  100,
+                        "shots":  396
+                    }
+                ]
+}

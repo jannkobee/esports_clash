@@ -47,10 +47,8 @@ class AvatarpediaService
             'nationality'=>$card['nationality']??null,'status'=>$owned->retired_at?'retired':'active',
             'presentation'=>$owned->presentation,'personal_details'=>$owned->personal_details,
             'age' => $card['age'] ?? null, 'overall' => $card['ovr'] ?? null,
-            'stats' => array_intersect_key($card['stats'] ?? [], array_flip(['lan', 'tf', 'iq', 'ldr', 'clu', 'sta', 'flx'])),
+            'stats' => array_intersect_key($card['stats'] ?? [], array_flip(['rifling', 'entry', 'positioning', 'shotcalling', 'sniping', 'utility'])),
             'fpsIdentity'=>$card['fpsIdentity']??null,
-            'primaryPersonality' => $card['primaryPersonality'] ?? null,
-            'secondaryPersonality' => $card['secondaryPersonality'] ?? null,
             'signature_avatar_ids' => collect($this->catalog()?->payload['avatars'] ?? [])
                 ->filter(fn ($avatar) => in_array($avatar['name'], $card['signatureChampions'] ?? [], true))->pluck('id')->values()->all(),
         ];
@@ -176,7 +174,7 @@ class AvatarpediaService
                 'players' => $this->players(), 'coaches' => $this->coaches(), 'avatars' => $this->avatars(), 'items' => $this->items(),
                 'tournaments' => ClubTournament::orderByDesc('year')->orderBy('tier')->get()->map(fn ($event) => $this->tournament($event)),
                 'releases' => OnlineCatalog::latest('updated_at')->get()->map(fn ($release) => $this->release($release)),
-                'organizers' => collect([['id' => 'signal-circuit', 'name' => ClubTournament::ORGANIZER, 'type' => 'Fictional tournament organizer']])->concat(DB::table('competition_organizers')->where('status','verified')->get(['slug','name','category'])->map(fn($o)=>['id'=>$o->slug,'name'=>$o->name,'type'=>$o->category])),
+                'organizers' => collect([['id' => 'signal-circuit', 'name' => ClubTournament::ORGANIZER, 'type' => 'Fictional tournament organizer', 'broadcast' => OrganizerBroadcastIdentity::profile('signal-circuit', ClubTournament::ORGANIZER)]])->concat(DB::table('competition_organizers')->where('status','verified')->get(['slug','name','category','branding'])->map(fn($o)=>['id'=>$o->slug,'name'=>$o->name,'type'=>$o->category,'broadcast'=>OrganizerBroadcastIdentity::profile($o->slug,$o->name,$o->branding)])),
                 'sponsors' => collect([['id'=>'lantern-relay','name'=>ClubTournament::SPONSOR,'type'=>'Fictional tournament sponsor']])->concat(
                     \App\Models\CompetitionDefinition::where('status','approved')->get(['sponsors'])->flatMap(fn($d)=>collect($d->sponsors??[])->map(fn($s)=>['id'=>\Illuminate\Support\Str::slug($s['name']),'name'=>$s['name'],'type'=>'Published tournament sponsor'])))->unique('id'),
             };

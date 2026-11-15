@@ -160,6 +160,10 @@ class OnlineService
             }
             $club = OnlineClub::where('user_id', $user->id)->firstOrFail();
             $lineup = $this->validatedStarters($user->id, $club->starters ?? $club->lineup, $catalog);
+            if(!$club->is_bot&&app(FpsIdentityEngine::class)->ready()){
+                $orders=json_decode(DB::table('fps_team_systems')->where('club_id',$club->id)->value('instructions')??'{}',true);
+                app(FpsPlayerArchitecture::class)->assignments(array_column($lineup,'instance_id'),$orders);
+            }
             $ticket = NormalQueueTicket::updateOrCreate(['user_id' => $user->id], ['status' => 'queued',
                 'catalog_id' => $catalog->id, 'lineup' => $lineup, 'club_name' => $club->name, 'match_id' => null]);
             $opponent = NormalQueueTicket::where('status', 'queued')->where('catalog_id', $catalog->id)
@@ -255,7 +259,7 @@ class OnlineService
                 'fps' => [
                     'format' => 'MR15_TACTICAL_FPS',
                     'rules_version' => 1,
-                    'simulation_version' => 2,
+                    'simulation_version' => 4,
                     'map_id' => ['breakwater', 'foundry', 'old-quarter', 'red-mesa', 'northpoint'][$seed % 5],
                 ],
                 'versions' => array_intersect_key($catalog->manifest, array_flip(['catalog_version', 'rules_version', 'policy_version', 'observation_version'])),
@@ -296,8 +300,8 @@ class OnlineService
                     &&$release['source_hash']===($catalog->manifest['arena_source_hash']??null))?$release:null];
             }
             if ($fixture !== null) $plan['fixture'] = $fixture;
-            if ($blueUser !== null && $redUser !== null && app(FpsIdentityEngine::class)->enabled()) {
-                $plan['fps']['simulation_version']=3;
+            if (app(FpsIdentityEngine::class)->enabled()) {
+                $plan['fps']['simulation_version']=4;
                 $plan['fps_identity']=app(FpsIdentityEngine::class)->pin($blue,$red,$blueUser,$redUser,collect($catalog->payload['cards'])->keyBy('id')->all());
             }
             return OnlineMatch::create(['id' => $id, 'blue_user_id' => $blueUser, 'red_user_id' => $redUser,
@@ -504,14 +508,16 @@ class OnlineService
             $this->invalid('FPS report does not match its pinned MR15 allocation.');
         }
         $rounds = $report['roundResults'];
-        if (($fps['simulation_version']??0)===3) {
+        if (($fps['simulation_version']??0)>=3) {
             foreach (['identityExperiment','identityDevelopment','fps_identity','dna'] as $key) if(array_key_exists($key,$report))$this->invalid('Private identity state is forbidden in a public report.');
             $checkPrivate=function(array $value)use(&$checkPrivate):void {foreach($value as $key=>$item){if($key==='dna')$this->invalid('Private DNA is forbidden in a public report.');if(is_array($item))$checkPrivate($item);}};
             $checkPrivate($report);
-            foreach($report['events'] as $event) if(($event['type']??null)==='specialty_activated') {
-                $identity=$match->plan['fps_identity']['players'][$event['actorId']??'']??null;
-                if(!$identity || ($event['specialtyId']??null)!==($identity['specialty']['id']??null) || !is_numeric($event['executionBonus']??null) || $event['executionBonus']<=0 || $event['executionBonus']>.04)$this->invalid('Specialty telemetry differs from the pinned identity.');
+            foreach($report['events'] as $event)if(($event['type']??null)==='behavior_observation'){
+                $o=$event['observation']??[];
+                if(!isset($match->plan['fps_identity']['players'][$event['actorId']??''])||!in_array($o['metric']??null,['engagement','firstContact','coordination','rotation','improvisation','failedExecuteAdjustment','opponentAdjustment','sacrifice','retake','utilitySupport','lurkTiming','risk','strategyCompliance'],true)||!is_bool($o['attempted']??null))$this->invalid('Invalid behavioral observation.');
             }
+
+            foreach($report['events'] as $event)if(($event['type']??null)==='specialty_activated')$this->invalid('Retired specialty telemetry is forbidden.');
         }
         $score = ['blue' => 0, 'red' => 0];
         foreach ($rounds as $index => $round) {

@@ -1,0 +1,6 @@
+from pathlib import Path
+import json,hashlib
+p=Path('EsportsClash.Api/resources/game/catalog.json');payload=json.loads(p.read_text(encoding='utf-8'));data=(json.dumps(payload,ensure_ascii=False,indent=2)+'\n').encode('utf-8');p.write_bytes(data)
+p=Path('EsportsClash.Api/resources/game/manifest.json');manifest=json.loads(p.read_text(encoding='utf-8'));manifest['catalog_version']=hashlib.sha256(data).hexdigest();manifest['fps_player_architecture']=4;p.write_bytes((json.dumps(manifest,ensure_ascii=False,indent=2)+'\n').encode('utf-8'))
+p=Path('EsportsClash.Api/database/migrations/2026_11_14_000001_replace_fps_player_architecture.php');s=p.read_text(encoding='utf-8');s=s.replace("$archive('catalog',$row->id,json_decode($row->payload,true));DB::table('online_catalogs')->where('id',$row->id)->update(['payload'=>json_encode($payload)]);", "$archive('catalog',$row->id,(array)$row);$encoded=json_encode($payload,JSON_THROW_ON_ERROR);$manifest=json_decode($row->manifest,true);$manifest['catalog_version']=hash('sha256',$encoded);$manifest['fps_player_architecture']=4;DB::table('online_catalogs')->where('id',$row->id)->update(['payload'=>$encoded,'manifest'=>json_encode($manifest)]);")
+p.write_bytes(s.replace('\r\n','\n').encode('utf-8'))

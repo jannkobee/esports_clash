@@ -12,9 +12,9 @@ export interface WorldPlayerProfile {
   nationality: {id: number; code: string; name: string};
 }
 
-const attributes = ['lan', 'tf', 'iq', 'ldr', 'clu', 'sta', 'flx'] as const;
+const attributes = ['rifling', 'entry', 'positioning', 'shotcalling', 'sniping', 'utility'] as const;
 
-/** Consume only server-pinned person attributes; catalog IDs/roles and kit mechanics stay intact. */
+/** Consume only server-pinned person attributes; catalog IDs and competitive traits stay intact. */
 export function applyWorldPlayerProfile(template: PlayerCard, profile?: WorldPlayerProfile, legacyName?: string): PlayerCard {
   if (!profile) return legacyName ? {...template, name: legacyName} : template;
   if (!profile.name || profile.name.length > 100 || profile.tier !== 'Bronze' || !/^[A-Z]{2}$/.test(profile.nationality?.code ?? '')) {
@@ -32,7 +32,7 @@ export function applyWorldPlayerProfile(template: PlayerCard, profile?: WorldPla
     name: profile.name, tier: profile.tier, stats: {...profile.stats}, ovr: profile.ovr,
     age: profile.age, wage: profile.wage, potentialOvr: profile.potentialOvr,
     nationality: {...profile.nationality}, avatarSvg: profile.avatarSvg,
-    badges: [], signatureChampions: [], level: 1, currentXp: 0, maxXp: 100,
+    level: 1, currentXp: 0, maxXp: 100,
     morale: 70, fatigue: 0, isEvo: false, evolutionLevel: 0, evolutionHistory: [],
   };
 }

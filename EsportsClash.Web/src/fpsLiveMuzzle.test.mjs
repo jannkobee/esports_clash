@@ -14,8 +14,8 @@ function sceneFixture(){
 
 test('every firearm socket matches its actual barrel, brake or suppressor tip',()=>{
   const f=sceneFixture();
-  const expected={pistol:[.038,.19],glock:[.038,.19],usp_s:[.038,.305],deagle:[.04,.24],
-    rifle:[.035,.585],ak47:[.035,.585],m4a1_s:[.035,.54],sniper:[.038,.82],scout:[.035,.67],
+  const expected={pistol:[.038,.19],glock:[.038,.19],usp_s:[.038,.305],p250:[.036,.18],fiveseven:[.038,.22],tec9:[.036,.255],cz75:[.038,.21],deagle:[.04,.24],
+    rifle:[.035,.585],ak47:[.035,.585],m4a1_s:[.035,.54],budget_ct:[.035,.462],budget_t:[.035,.585],sniper:[.038,.82],scout:[.035,.67],
     smg:[.03,.35],mp9:[.035,.24],mac10:[.03,.22],mag7:[.045,.33],nova:[.042,.535],negev:[.04,.47]};
   try{
     for(const weapon of Object.keys(LIVE_WEAPONS)){

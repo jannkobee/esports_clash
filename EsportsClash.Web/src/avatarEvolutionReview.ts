@@ -3,7 +3,6 @@ import {AvatarAssetLibrary} from './avatarModelAssets.ts';
 import {AvatarModelResources} from './threeAvatarModels.ts';
 import {combatDuration} from './avatarCombatMotion.ts';
 import {contactGait} from './avatarContactProfiles.ts';
-import {ArenaAbilityEffects} from './threeAbilityEffects.ts';
 
 type ReviewAvatarMeta = { id: string; name: string; displayName: string; accentColor: string };
 const REVIEW_AVATARS: Record<string, ReviewAvatarMeta> = {
@@ -66,7 +65,7 @@ renderer.debug.onShaderError=()=>{shaderErrors.push('Actual WebGL shader compila
 renderer.outputColorSpace=THREE.SRGBColorSpace;host.replaceChildren(renderer.domElement);
 scene.add(new THREE.HemisphereLight('#e8f5ff','#252b43',2.2));const light=new THREE.DirectionalLight('#ffe8cc',3);light.position.set(-80,150,130);scene.add(light);
 const rim=new THREE.DirectionalLight('#85bbed',2);rim.position.set(90,70,-100);scene.add(rim);
-const camera=new THREE.OrthographicCamera(-60,60,60,-60,.1,1200),effects=new ArenaAbilityEffects();scene.add(effects.root);
+const camera=new THREE.OrthographicCamera(-60,60,60,-60,.1,1200);
 const variant=id==='c_invoker'?'claude':'current';
 if(!await library.request(id,undefined,variant))throw Error('Asset failed to load');
 const model=library.instantiate(id,variant);if(!model)throw Error('Rig failed to bind');scene.add(model.body);
@@ -79,10 +78,6 @@ function draw(phase=0,angle=yaw,state=pose,gameplay=false) {
   if(!moving)model!.body.position.set(0,0,0);
   model!.animate({animState:state==='Ability'?'cast':state.toLowerCase(),motionState:state==='Ability'?'cast':state.toLowerCase(),motionTime:phase*duration,
     animTimer:phase*duration,gaitPhase:phase%1,plantFeet:moving,moveX:0,moveZ:70},phase*duration);
-  const ability=state==='Ability',p=phase%1;
-  effects.update([],ability?[{id:'review-ability',x:0,y:0,radius:30,color:kit!.accentColor,avatarName:kit!.name,
-    duration:1-p,maxDuration:1,sourceUnitId:'review',sourceX:0,sourceY:0}]:[],phase,
-    [{id:'review',x:0,y:0,isAlive:true,champion:{name:kit!.name},visualEvolution:model!.body.userData.visualEvolution}]);
   model!.body.updateMatrixWorld(true);for(const m of meshes)if(m instanceof THREE.SkinnedMesh)m.skeleton.update();
   // Studio views must contain the actual equipped pose. Keep the standardized
   // gameplay camera unchanged so readability/performance checks stay comparable.
@@ -148,7 +143,7 @@ async function evaluate() {
       return !!image&&typeof image.width==='number'&&image.width>0&&typeof image.height==='number'&&image.height>0;
     }))missingDetailMaps++;}
   if(missingDetailMaps)issues.push('Generated PBR maps did not decode/load');if(shaderErrors.length)issues.push(...shaderErrors);
-  draw(.45,.6,'Ability');const ability={effects:effects.stats(),triangles:renderer.info.render.triangles};
+  draw(.45,.6,'Ability');const ability={effects:{},triangles:renderer.info.render.triangles};
   draw(.2,.6,'Idle');const frameTimes:number[]=[];const context=renderer.getContext();
   for(let i=0;i<12;i++){const started=performance.now();draw(.2+i*.001,.6,'Idle');context.finish();frameTimes.push(performance.now()-started);}
   const mean=frameTimes.reduce((sum,x)=>sum+x,0)/frameTimes.length;

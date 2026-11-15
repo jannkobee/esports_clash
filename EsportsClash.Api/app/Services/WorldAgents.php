@@ -26,7 +26,7 @@ class WorldAgents {
         $wire=app(WireAccounts::class)->player($player);
         $profile=$player->world_profile??[];$stats=$profile['stats']??[];
         $agent=$this->identity('player:'.$player->id,'player',$player->id,$player->persona_name??'Circuit player','player',[
-            'analysis'=>(float)($stats['iq']??20)/10,'coaching'=>(float)($stats['ldr']??20)/10,'development'=>(float)($stats['flx']??20)/10,'competition'=>array_sum($stats)/max(10,count($stats)*10)],$club?->id,$wire);
+            'analysis'=>(float)($stats['positioning']??20)/10,'coaching'=>(float)($stats['shotcalling']??20)/10,'development'=>(float)($stats['utility']??20)/10,'competition'=>array_sum($stats)/max(10,count($stats)*10)],$club?->id,$wire);
         if($agent->club_id!==$club?->id)$agent->update(['club_id'=>$club?->id]);
         if($club&&!DB::table('world_employments')->where('active_agent_id',$agent->id)->exists())$this->employ($agent,$club,'player','player-admission:'.$player->id,['arrangement'=>'Existing roster registration; no new wage or expiry imposed.'],$this->joinedAt($player,$club));
         return $agent;

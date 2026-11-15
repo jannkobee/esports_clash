@@ -46,6 +46,14 @@ class BotClubManager
                 $avatars = collect($catalog->payload['avatars'])->keyBy('id');
                 $owned = OwnedPlayerCard::where('user_id', $club->user_id)->where('catalog_id', $catalog->id)->get();
                 $definitions = $owned->mapWithKeys(fn ($player) => [$player->id => app(WorldPlayerProfiles::class)->definition($player, $templates[$player->definition_id])]);
+                // The same persisted tactical orders used by human clubs are prepared by AI managers.
+                $activeIds=array_column($club->starters??$club->lineup,'instance_id');
+                $system=DB::table('fps_team_systems')->where('club_id',$club->id)->first();
+                $coach=app(FpsIdentityEngine::class)->coach($club)['profile'];
+                $gameplan=$system?json_decode($system->gameplan,true):['tempo'=>$coach['tempo'],'structure'=>$coach['rigidity'],'aggression'=>$coach['aggression'],'preparation'=>$coach['preparation'],'freedom'=>$coach['freedom'],'economy'=>$coach['economy']];
+                $orders=$system?json_decode($system->instructions??'{}',true):[];
+                foreach(app(FpsPlayerArchitecture::class)->recommendedAssignments($definitions->only($activeIds)->all(),$gameplan) as $id=>$assignment)$orders[$id]=array_replace($orders[$id]??['instruction'=>'balanced','training'=>'system'],$assignment);
+                DB::table('fps_team_systems')->updateOrInsert(['club_id'=>$club->id],['revision'=>(int)($system?->revision??0)+1,'gameplan'=>json_encode($gameplan),'culture'=>$system?->culture??json_encode($gameplan),'instructions'=>json_encode($orders),'created_at'=>$system?->created_at??now(),'updated_at'=>now()]);
                 $listed = ClubAuction::where('seller_id', $clubId)->whereNotNull('active_card_id')->pluck('active_card_id')->all();
                 $wages = $this->market->weeklyWages($club, $catalog);
                 $spendable = max(0, $this->market->balance($clubId) - config('world_players.bot_wage_reserve_weeks') * $wages);
@@ -146,6 +154,7 @@ class BotClubManager
             return;
         }
         $byId = $owned->keyBy('id');
+        $tacticalPlan=json_decode(DB::table('fps_team_systems')->where('club_id',$club->id)->value('gameplan')??'{}',true);
         $best = null;
         foreach (ClubAuction::where('status', 'open')->where('closes_at', '>', now())->where('seller_id', '<>', $club->id)
             ->where(fn ($query) => $query->whereNull('bidder_id')->orWhere('bidder_id', '<>', $club->id))
@@ -165,7 +174,7 @@ class BotClubManager
                     continue;
                 }
                 $starter = $byId[$slot['instance_id']] ?? null;
-                $improvement = ($player['ovr'] ?? 0) - ($definitions[$starter?->id]['ovr'] ?? 0);
+                $improvement = ($player['ovr'] ?? 0) - ($definitions[$starter?->id]['ovr'] ?? 0)+12*(app(FpsPlayerArchitecture::class)->recruitmentFit($player,$tacticalPlan)-app(FpsPlayerArchitecture::class)->recruitmentFit($definitions[$starter?->id]??[],$tacticalPlan));
                 if ($improvement >= $policy['minimum_improvement']) {
                     $need = max($need, 200 + $improvement);
                 }

@@ -29,7 +29,7 @@ export function CloudSavePanel({
           <span>Cloud Roster Backup (Optional)</span>
           <span className="cm-badge cm-badge-blue">Local Browser Storage Active</span>
         </div>
-        <div className="cm-panel-body text-xs text-[#313a48]">
+        <div className="cm-panel-body text-xs cm-muted">
           Cloud backup is currently unavailable. Your practice roster remains saved in this browser.
         </div>
       </section>
@@ -70,10 +70,10 @@ export function CloudSavePanel({
     <section className="cm-panel">
       <div className="cm-panel-header">
         <span>Practice roster backup</span>
-        {session && <span className="text-xs text-slate-400">{session.user.name}</span>}
+        {session && <span className="text-xs cm-muted">{session.user.name}</span>}
       </div>
       <div className="cm-panel-body space-y-3 text-xs">
-        <p className="text-[#313a48]">
+        <p className="cm-muted">
           Save or restore your practice collection with your account. Your official club roster is managed in Matchday.
         </p>
         {!session ? <button type="button" className="cm-btn" onClick={() => openAuthentication('sign-in', 'settings')}>Go to sign-in</button> : <div className="flex flex-wrap gap-2">
@@ -81,7 +81,7 @@ export function CloudSavePanel({
           <button type="button" disabled={busy} onClick={() => void restore()} className="cm-btn">Restore practice roster</button>
         </div>}
         {message && (
-          <p role="status" className="text-xs font-bold text-[#0b1f44]">
+          <p role="status" className="text-xs font-bold">
             {message}
           </p>
         )}

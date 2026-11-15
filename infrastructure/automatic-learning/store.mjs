@@ -7,7 +7,12 @@ import {createGzip} from 'node:zlib';
 import {baseline,validateBundle,upgradeTrainingBundle,applySample,sha} from './model.mjs';
 export function atomic(path,value){
   const bytes=typeof value==='string'?value:JSON.stringify(value,null,2)+'\n';
-  writeFileSync(path+'.tmp',bytes);const fd=openSync(path+'.tmp','r');fsyncSync(fd);closeSync(fd);renameSync(path+'.tmp',path);
+  writeFileSync(path+'.tmp',bytes);
+  // Windows FlushFileBuffers needs a writable handle. Keep the durability
+  // barrier before rename, and close the descriptor even if the flush fails.
+  const fd=openSync(path+'.tmp','r+');
+  try{fsyncSync(fd);}finally{closeSync(fd);}
+  renameSync(path+'.tmp',path);
 }
 export class Store{
   constructor(directory){

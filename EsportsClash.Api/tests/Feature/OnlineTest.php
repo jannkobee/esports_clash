@@ -78,7 +78,7 @@ class OnlineTest extends TestCase
             'match_id' => $match->id, 'game_mode' => 'fps_mr15_v1',
             'versions' => $match->plan['versions'], 'seed' => $match->plan['seed'], 'winner' => 'blue',
             'report' => [
-                'format' => 'MR15_TACTICAL_FPS', 'simulationVersion' => 2, 'winner' => 'blue', 'winnerTeam' => 'blue',
+                'format' => 'MR15_TACTICAL_FPS', 'simulationVersion'=>$match->plan['fps']['simulation_version'], 'winner' => 'blue', 'winnerTeam' => 'blue',
                 'mapId' => $match->plan['fps']['map_id'], 'seed' => $match->plan['seed'],
                 'totalRounds' => 16, 'durationSeconds' => 960,
                 'finalScore' => ['blue' => 16, 'red' => 0],

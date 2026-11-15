@@ -1,3 +1,4 @@
+import {createFpsIdentityContext} from './fps/fpsIdentityMatch.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
@@ -24,13 +25,14 @@ test('authoritative FPS worker writes a deterministic MR15 report with allocated
     mode: 'normal',
     game_mode: 'fps_mr15_v1',
     seed: 1337,
-    fps: { format: 'MR15_TACTICAL_FPS', rules_version: 1, map_id: 'breakwater' },
+    fps: { format: 'MR15_TACTICAL_FPS', simulation_version:4,rules_version: 1, map_id: 'breakwater' },
     versions: { catalog_version: 'test', rules_version: 'test', policy_version: 'test', observation_version: 'test' },
     blue: slots.slice(0, 5),
     red: slots.slice(5),
     player_profile_schema: 0,
     player_identities: Object.fromEntries(slots.map((slot, index) => [slot.instance_id, selected[index].name]))
   };
+  const playerCards=slots.map((slot,i)=>({...selected[i],id:slot.instance_id}));plan.fps_identity=createFpsIdentityContext(playerCards.slice(0,5),playerCards.slice(5));
   await writeFile(resolve(folder, 'allocation.json'), JSON.stringify({ plan, plan_hash: 'a'.repeat(64) }));
 
   try {

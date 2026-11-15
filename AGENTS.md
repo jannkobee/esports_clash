@@ -1,5 +1,41 @@
 # Repository handoff
 
+## Decision-making, buying and utility polish (2026-11-14)
+
+Read [the decision-making pass](docs/fps-decision-making-polish-20261114.md). Preserve own-lane buy context, armor/objective-kit reserves, paid upgrade/restock/gift accounting, individual holstered weapon cooldowns, legal-information/time-aware IGL redirects, and urgent objective priority. Smoke fire uses bounded evidence-based bursts and checks the continuing ray for allies; it cannot track hidden bodies or learn invented target IDs. Lineups require useful travel/setup time and retain a stable feasible threat-aware execute order. Skipped/covered setups are separate from actual releases; finished plans cannot keep pooling spare smokes. Grenade forecasts use indexed candidates with exact original collision/order/bounce checks. Keep real paid grenade physics, release-only trails, manager-selected roles and prior navigation/runtime/animation work. Structural/CPU checks do not qualify GPU FPS or competitive intelligence.
+
+## AUTO WIDE broadcast pacing (2026-11-14)
+
+Read [the AUTO WIDE correction](docs/fps-auto-wide-camera-20261114.md). Automatic overviews have a fixed 1.25-second deadline, then player coverage; continuing fights cannot renew it. Require cooldown and a new split-fight episode, and prioritize kills/clutches/objective channels. Utility-only or isolated allied activity is not a separate engagement. Manual WIDE remains available. Preserve gameplay and prior runtime/animation work.
+
+## Runtime cost and smooth display animation (2026-11-14)
+
+Read [the runtime/animation pass](docs/fps-runtime-cost-and-animation-smoothing-20261114.md). Preserve exact collision after indexed candidate lookup, fixed-step backlog under display work budgets, bounded weapon/trail resource reuse, buy-phase static route warm-up, interpolated display clocks and smooth body pose transitions without added crosshair sway. Existing material batches are extended across structural geometry; the recorded spatial batching trial increased submitted groups and was rejected. CPU spikes remain and GPU FPS is unverified; do not claim universal lag elimination from structural tests.
+
+## Doorway traffic and window furnishings (2026-11-14)
+
+Read [the routing/interior correction](docs/fps-doorway-routing-and-window-interior-20261114.md). Fontessa v12 preserves capsule-clear corner consumption, bounded stale-route repair and teammate yielding for crossing traffic; do not restore symmetric deadlocks or label blocked movement as running. Substantial window-room furnishings come from `fpsMidWindowInterior.ts` and share map, rendering and projectile geometry. Preserve all three walkable window entrances and the firing line. Snapshot v19 remains unchanged; no GPU or competitive qualification is implied.
+
+## Adaptive routes and released-only utility trails (2026-11-14)
+
+Read [the current route/trail correction](docs/fps-adaptive-routes-and-released-utility-20261114.md). Preserve the fine B market-house/produce-stall passage, distance-based navigation costs, individual execute/retake choices from legal information and manager responsibilities, and stable seeded variation. Do not restore fixed human/actor lane completion, player-slot retake staging/cover, or trajectory previews during equip/pin/ready. Utility trails begin only after release and stop at elapsed flight. Team coordination and physical authored smoke knowledge remain; this does not establish competitive or GPU qualification.
+
+## Current tactical player architecture v4 (2026-11-14)
+
+Players start without a designated team role. Human managers explicitly choose and save T/CT responsibilities using player strengths; suggestions remain editable drafts until saved. Do not restore automatic human lineup-role completion. Require complete unique assignments when entering matchmaking or allocating a match; keep generation, scouting strengths and match-specific exhibition presets separate. Read [the manager-role clarification](docs/fps-manager-chosen-roles-20261114.md).
+
+Owner explicitly replaced the prior attribute, personality and specialty systems while preserving the FPS mechanics. Read [the v4 implementation and verification record](docs/fps-player-architecture-v4-20261114.md). Active players use exactly Rifling, Sniping, Entry, Utility, Positioning and Shotcalling; four personality dimensions support 54 combinations and 540 descriptive identities. Five unique T and CT positions are frozen per match. Retired specialties, the 25-rating lab and old trait/threshold classifications must not be restored. Internal execution channels are derived from the six attributes, not additional ratings. Preserve observed/natural identity separation, lawful information, private DNA, career guards, aliases and Colab boundaries. Historical documents below remain evidence and are superseded on the active player schema.
+
+## Pro-Tactics AI Overhaul, 4-Slot Loadouts, Live Grenade Trails, Elevation Drops & CT/T Kit Detail (2026-11-14)
+
+Owner requested fixing wall-scoping snipers, fixing ahead-of-flight grenade trajectory lines and fast equip timing, finer CT/T model details, window/ledge drop jumps & more direct pathing, full 4-slot loadout with mid-fight handgun swaps, and pro-reference regression testing (`Vitality`, `MOUZ`, `Spirit`, `NAVI`, `Astralis`):
+- **Sniper Anti-Wall Scope & Smoke Pivot (`fpsLiveSimulation.ts`)**: `forwardClearance` prevents scoping within close walls (`< 5.5m` idle / `< 1.8m` duel) or smoked sightlines, forces immediate `'lowering'` if blocked while scoped, fixes wall-staring `preAim` fallbacks, and pivots blocked CT/post-plant AWPers off smoked sightlines to open crossfires.
+- **Grenade Timing & Incremental Flight Trails (`fpsLiveWeapons.ts`, `fpsLiveSimulation.ts`, `fpsLiveViewer.ts`, `FpsLiveBroadcast.tsx`)**: Slowed grenade `liveDrawTime` (`0.68s`) and pin pull (`0.48..0.78s`), omitted `'equip'` aim previews, clamped pre-throw aim cues, grew `computeLiveGrenadeTrajectoryPoints` trails up to `renderTime` without spoiling landing destinations early, and revealed impact rings only in the final `0.22s`.
+- **Detailed CT/T Kit (`fpsLiveViewer.ts`)**: Added CT NVGs/IR strobe/placard/PTT/defuse cutters, T beard/shades temples/keffiyeh drape/bandolier/wrist wraps, and shared holster pistol/chest knife/canisters/PRC radio/dump pouch/tourniquet/cargo pockets/gloves/boot tongues in `finishOperativeKit`.
+- **Elevation Vault Drops & Direct Pathing (`fpsLiveMap.ts`, `fpsLiveSimulation.ts`)**: Exported `LIVE_ELEVATION_DROPS` (`mid-window-drop`, `b-apartments-west-drop`, `b-apartments-north-drop`, `market-terrace-drop`, `bridge-canal-drop`), executed crouch-jump `vaultDrop` in `move()`, lowered `nextJump` cooldowns, and tuned `findLivePath` caution multiplier (`*3`).
+- **4-Slot Loadout & Handgun Swaps (`fpsLiveSimulation.ts`)**: Exported `primaryWeapon`/`secondaryWeapon`/`secondaryAmmo`/`secondaryReserve`/`meleeWeapon` on `LivePlayer`, preserved `sidearmLoadout`, and swapped to pistol whenever any non-pistol primary hits `ammo === 0` mid-fight.
+- **Pro Regression Tests (`fpsProTacticsRegression.test.mjs`, `package.json`, `fpsLiveTactics.test.mjs`)**: Added NAVI/Spirit early CT smoke conservation and MOUZ smoke-fade readiness plus dedicated `"test:pro-regression"` script. Preserve parody aliases, private DNA, careers, and Colab gates.
+
 ## Comprehensive Testing Verification and AI Brain Mechanics Polish (2026-11-11)
 
 Owner requested thorough testing and polishing the AI brain mechanics:

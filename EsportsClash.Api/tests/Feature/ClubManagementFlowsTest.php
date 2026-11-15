@@ -68,42 +68,7 @@ class ClubManagementFlowsTest extends TestCase
 
     private function workerResult(OnlineMatch $match): array
     {
-        $draft = [];
-        $performance = [];
-        foreach (['blue', 'red'] as $side) {
-            $draft[$side] = array_map(fn (array $slot) => [
-                'player' => ['id' => $slot['card_id']],
-                'champion' => ['id' => $slot['avatar_id']],
-            ], $match->plan[$side]);
-            foreach ($match->plan[$side] as $slot) {
-                $performance[] = [
-                    'instance_id' => $slot['instance_id'],
-                    'team' => $side,
-                    'kills' => 1,
-                    'deaths' => 0,
-                    'assists' => 2,
-                    'cs' => 100,
-                    'gold' => 10000,
-                    'damage' => 10000,
-                ];
-            }
-        }
-
-        return [
-            'schema' => 1,
-            'match_id' => $match->id,
-            'seed' => $match->plan['seed'],
-            'versions' => $match->plan['versions'],
-            'winner' => 'blue',
-            'terminal_nexus' => ['blue' => true, 'red' => false],
-            'report' => [
-                'seed' => $match->plan['seed'],
-                'winner' => 'blue',
-                'durationSeconds' => 600,
-                'draft' => $draft,
-            ],
-            'player_performance' => $performance,
-        ];
+        return \Tests\Support\FpsWorkerResult::forMatch($match);
     }
 
     private function allocatedMatch(): OnlineMatch

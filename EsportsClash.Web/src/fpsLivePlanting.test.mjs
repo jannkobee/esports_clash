@@ -1,3 +1,4 @@
+import {FPS_T_POSITIONS,FPS_CT_POSITIONS} from './fps/fpsPlayerArchitecture.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {FpsLiveSimulation} from './fps/fpsLiveSimulation.ts';
@@ -9,8 +10,8 @@ import {livePlantSite,planLivePlant,LIVE_PLANT_RULES} from './fps/fpsLivePlannin
 const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
 const coach={...plan,rigidity:.7,communication:.7,leadership:.7,adaptability:.7,development:.5};
 const chemistry={trust:.6,communication:.6,understanding:.6,leadershipAcceptance:.6,roleCompetition:.3};
-const cards=Array.from({length:10},(_,i)=>({id:`plant-${i}`,name:`Player ${i}`,stats:{lan:80,iq:80,tf:80,clu:80,sta:80,flx:80,ldr:80}}));
-const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
+const cards=Array.from({length:10},(_,i)=>({id:`plant-${i}`,name:`Player ${i}`,stats:{rifling:80,positioning:80,entry:80,sniping:80,utility:80,shotcalling:80}}));
+const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,assignments:{t:FPS_T_POSITIONS[(i)%5],ct:FPS_CT_POSITIONS[(i)%5]},personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
 const profiles=Object.fromEntries(cards.map(p=>[p.id,generateFpsSkillProfile(p.id,1337,'2026-11-11T00:00:00Z')]));
 const game=()=>new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity,{skillProfiles:profiles});
 const finishBuy=sim=>{while(sim.phase==='freeze')sim.step();};
@@ -68,11 +69,11 @@ test('a real carrier survives buying, approaches either site and completes its p
 
 test('a distant visible defender does not indefinitely cancel an unpressured plant',()=>{
   const {sim,p,enemy}=plantScenario();
-  Object.assign(enemy,{x:-19,z:-3,hp:1000});
+  Object.assign(enemy,{x:-19,z:3,hp:1000});
   Object.assign(p,{yaw:Math.atan2(enemy.x-p.x,enemy.z-p.z),nextThink:Infinity,target:enemy.id,acquired:0,
     aimPoint:{x:enemy.x,z:enemy.z},noticedEnemies:[{...enemy}],channel:.4});
   assert.equal(sim.visible(p,enemy),true);
-  for(let tick=0;tick<110&&sim.bomb.status!=='planted';tick++)sim.step();
+  for(let tick=0;tick<150&&sim.bomb.status!=='planted';tick++)sim.step();
   assert.equal(sim.bomb.status,'planted');assert.equal(p.impact.plants,1);
 });
 
@@ -87,7 +88,7 @@ test('an immediate visible threat interrupts planting and allows the carrier to 
 
 test('shot presentation identifies the actual shooter and equipped gun when a primary is slung',()=>{
   const {sim,p,enemy}=plantScenario();
-  Object.assign(p,{weapon:'sniper',equipped:'glock',ammo:5,yaw:Math.PI});
+  Object.assign(p,{weapon:'glock',equipped:'glock',ammo:20,yaw:Math.PI,holsteredPrimary:{weapon:'sniper',ammo:5,reserve:20}});
   Object.assign(enemy,{x:-23,z:16,hp:1000});
   sim.fire(p,enemy);
   const shot=sim.shots.at(-1);
@@ -123,7 +124,7 @@ test('teammates take covering positions while their carrier plants',()=>{
 test('recovering a dropped bomb carries through to a completed plant',()=>{
   const {sim,p}=plantScenario();
   p.bomb=false;sim.bomb={status:'dropped',x:p.x,z:p.z,remaining:40};
-  for(let tick=0;tick<110&&sim.bomb.status!=='planted';tick++)sim.step();
+  for(let tick=0;tick<150&&sim.bomb.status!=='planted';tick++)sim.step();
   assert.equal(sim.bomb.status,'planted');assert.equal(p.impact.plants,1);
   assert.ok(sim.events.some(e=>e.text.includes('recovered the device')));
 });

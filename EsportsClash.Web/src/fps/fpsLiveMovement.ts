@@ -15,16 +15,19 @@ export interface LiveJumpState {
   jump: boolean;
   jumpY: number;
   jumpVy: number;
+  groundY?: number;
 }
 
 export function advanceLiveJump(state: LiveJumpState, dt: number): LiveJumpState {
-  if (!state.jump && state.jumpY <= 0) return { jump: false, jumpY: 0, jumpVy: 0 };
+  const ground = state.groundY ?? 0;
+  const support = state.groundY === undefined ? {} : { groundY: ground };
+  if (!state.jump && state.jumpY <= ground) return { ...support, jump: false, jumpY: ground, jumpVy: 0 };
   let vy = state.jumpVy - LIVE_JUMP_GRAVITY * dt;
   let y = state.jumpY + vy * dt;
-  if (y <= 0) {
-    return { jump: false, jumpY: 0, jumpVy: 0 };
+  if (y <= ground) {
+    return { ...support, jump: false, jumpY: ground, jumpVy: 0 };
   }
-  return { jump: true, jumpY: y, jumpVy: vy };
+  return { ...support, jump: true, jumpY: y, jumpVy: vy };
 }
 export function advanceLiveVelocity(current:LiveVelocity,wish:FpsPoint,dt:number,mechanics:number,airborne=false):LiveVelocity {
   const dx=wish.x-current.vx,dz=wish.z-current.vz,d=Math.hypot(dx,dz);
@@ -39,6 +42,17 @@ export function advanceLiveVelocity(current:LiveVelocity,wish:FpsPoint,dt:number
 export function liveShotSpeedLimit(weapon:string,mechanics:number):number {
   const category=LIVE_WEAPONS[weapon as LiveWeapon]?.category;
   if(category==='smg')return 2.1;
+  if(weapon==='tec9')return 1.85;
   if(category==='pistol'&&weapon!=='deagle')return 1.25;
   return category==='sniper'?.28+(1-Math.max(0,Math.min(1,mechanics)))*.35:.3+(1-Math.max(0,Math.min(1,mechanics)))*.8;
+}
+
+export const liveAccuracySettleTime=(crouch:boolean):number=>crouch?.14:.22;
+
+/** Use the same stationary recovery window as ballistic spread before a precision shot. */
+export function liveAccurateShotReady(weapon:LiveWeapon,speed:number,airborne:boolean,stillFor:number,crouch:boolean,range:number):boolean {
+  const category=LIVE_WEAPONS[weapon].category;
+  const precision=category==='rifle'||category==='sniper'||category==='heavy'||weapon==='deagle';
+  if(!precision||range<=8)return true;
+  return !airborne&&speed<=.12&&stillFor>=liveAccuracySettleTime(crouch);
 }

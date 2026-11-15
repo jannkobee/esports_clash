@@ -111,7 +111,7 @@ class WorldPlayersTest extends TestCase
         $before = $profiles->definition($p, $template);
         $p->increment('training_xp', 160);
         $after = $profiles->definition($p->fresh(), $template);
-        $this->assertSame($before['stats']['lan'] + 2, $after['stats']['lan']);
+        $this->assertSame($before['stats']['rifling'] + 2, $after['stats']['rifling']);
         $this->assertSame($before['name'], $after['name']);
         $this->assertSame($before['nationality'], $after['nationality']);
     }

@@ -11,12 +11,12 @@
       "tier": "Diamond",
       "ovr": 91,
       "stats": {
-        "lan": 96,
-        "tf": 95,
-        "iq": 85,
-        "clu": 91,
-        "sta": 87,
-        "flx": 88
+        "rifling": 96,
+        "sniping": 93,
+        "entry": 96,
+        "utility": 92,
+        "positioning": 85,
+        "shotcalling": 85
       },
       "personality": "Bush Stalker",
       "badges": [],
@@ -30,8 +30,6 @@
       "currentXp": 600,
       "maxXp": 4000,
       "avatarSvg": "theshy",
-      "primaryPersonality": "bush_stalker",
-      "secondaryPersonality": "revenge_driven",
       "playableRoles": [
         "Fighter"
       ]
@@ -46,12 +44,12 @@
       "tier": "GOAT",
       "ovr": 97,
       "stats": {
-        "lan": 99,
-        "tf": 97,
-        "iq": 95,
-        "clu": 99,
-        "sta": 90,
-        "flx": 93
+        "rifling": 99,
+        "sniping": 99,
+        "entry": 98,
+        "utility": 95,
+        "positioning": 95,
+        "shotcalling": 95
       },
       "personality": "Bush Stalker",
       "badges": [],
@@ -65,8 +63,6 @@
       "currentXp": 2100,
       "maxXp": 5200,
       "avatarSvg": "s1mple",
-      "primaryPersonality": "bush_stalker",
-      "secondaryPersonality": "revenge_driven",
       "playableRoles": [
         "Assassin"
       ]
@@ -81,12 +77,12 @@
       "tier": "GOAT",
       "ovr": 98,
       "stats": {
-        "lan": 99,
-        "tf": 98,
-        "iq": 98,
-        "clu": 99,
-        "sta": 94,
-        "flx": 96
+        "rifling": 99,
+        "sniping": 99,
+        "entry": 99,
+        "utility": 97,
+        "positioning": 98,
+        "shotcalling": 98
       },
       "personality": "Iron Will",
       "badges": [],
@@ -101,8 +97,6 @@
       "currentXp": 1200,
       "maxXp": 5500,
       "avatarSvg": "faker",
-      "primaryPersonality": "iron_will",
-      "secondaryPersonality": "glue_guy",
       "playableRoles": [
         "Mage"
       ]
@@ -117,12 +111,12 @@
       "tier": "Diamond",
       "ovr": 93,
       "stats": {
-        "lan": 92,
-        "tf": 95,
-        "iq": 91,
-        "clu": 96,
-        "sta": 92,
-        "flx": 89
+        "rifling": 92,
+        "sniping": 93,
+        "entry": 93,
+        "utility": 92,
+        "positioning": 91,
+        "shotcalling": 91
       },
       "personality": "Bush Stalker",
       "badges": [],
@@ -137,8 +131,6 @@
       "currentXp": 950,
       "maxXp": 4500,
       "avatarSvg": "deft",
-      "primaryPersonality": "bush_stalker",
-      "secondaryPersonality": "steal_gambler",
       "playableRoles": [
         "Marksman"
       ]
@@ -153,12 +145,12 @@
       "tier": "Diamond",
       "ovr": 93,
       "stats": {
-        "lan": 88,
-        "tf": 94,
-        "iq": 97,
-        "clu": 95,
-        "sta": 95,
-        "flx": 95
+        "rifling": 88,
+        "sniping": 91,
+        "entry": 90,
+        "utility": 95,
+        "positioning": 97,
+        "shotcalling": 97
       },
       "personality": "Iron Will",
       "badges": [],
@@ -172,8 +164,6 @@
       "currentXp": 1400,
       "maxXp": 4700,
       "avatarSvg": "notail",
-      "primaryPersonality": "iron_will",
-      "secondaryPersonality": "egoistic",
       "playableRoles": [
         "Support"
       ]
@@ -191,12 +181,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 93,
-        "tf": 94,
-        "iq": 90,
-        "clu": 91,
-        "sta": 88,
-        "flx": 95
+        "rifling": 93,
+        "sniping": 92,
+        "entry": 93,
+        "utility": 95,
+        "positioning": 90,
+        "shotcalling": 90
       },
       "personality": "Limit Tester",
       "badges": [],
@@ -210,9 +200,7 @@
       "level": 42,
       "currentXp": 800,
       "maxXp": 4200,
-      "avatarSvg": "caps",
-      "primaryPersonality": "limit_tester",
-      "secondaryPersonality": "cold_as_ice"
+      "avatarSvg": "caps"
     },
     {
       "id": "p_ouzi",
@@ -224,12 +212,12 @@
       "tier": "Diamond",
       "ovr": 94,
       "stats": {
-        "lan": 98,
-        "tf": 96,
-        "iq": 88,
-        "clu": 92,
-        "sta": 82,
-        "flx": 85
+        "rifling": 98,
+        "sniping": 95,
+        "entry": 97,
+        "utility": 91,
+        "positioning": 88,
+        "shotcalling": 88
       },
       "personality": "Untiltable",
       "badges": [
@@ -246,8 +234,6 @@
       "currentXp": 1100,
       "maxXp": 4600,
       "avatarSvg": "uzi",
-      "primaryPersonality": "untiltable",
-      "secondaryPersonality": "first_blood_hunter",
       "playableRoles": [
         "Marksman"
       ]
@@ -262,12 +248,12 @@
       "tier": "Diamond",
       "ovr": 91,
       "stats": {
-        "lan": 97,
-        "tf": 93,
-        "iq": 89,
-        "clu": 91,
-        "sta": 89,
-        "flx": 88
+        "rifling": 97,
+        "sniping": 94,
+        "entry": 95,
+        "utility": 91,
+        "positioning": 89,
+        "shotcalling": 89
       },
       "personality": "Short Fuse",
       "badges": [],
@@ -282,8 +268,6 @@
       "currentXp": 400,
       "maxXp": 3800,
       "avatarSvg": "niko",
-      "primaryPersonality": "short_fuse",
-      "secondaryPersonality": "untiltable",
       "playableRoles": [
         "Fighter"
       ]
@@ -298,12 +282,12 @@
       "tier": "Diamond",
       "ovr": 95,
       "stats": {
-        "lan": 96,
-        "tf": 96,
-        "iq": 95,
-        "clu": 95,
-        "sta": 95,
-        "flx": 96
+        "rifling": 96,
+        "sniping": 96,
+        "entry": 96,
+        "utility": 96,
+        "positioning": 95,
+        "shotcalling": 95
       },
       "personality": "Momentum Junkie",
       "badges": [],
@@ -318,8 +302,6 @@
       "currentXp": 1800,
       "maxXp": 4800,
       "avatarSvg": "zywoo",
-      "primaryPersonality": "momentum_junkie",
-      "secondaryPersonality": "showman",
       "playableRoles": [
         "Fighter"
       ]
@@ -334,12 +316,12 @@
       "tier": "GOAT",
       "ovr": 97,
       "stats": {
-        "lan": 98,
-        "tf": 99,
-        "iq": 97,
-        "clu": 98,
-        "sta": 92,
-        "flx": 98
+        "rifling": 98,
+        "sniping": 98,
+        "entry": 98,
+        "utility": 99,
+        "positioning": 97,
+        "shotcalling": 97
       },
       "personality": "First Blood Hunter",
       "badges": [],
@@ -354,8 +336,6 @@
       "currentXp": 3000,
       "maxXp": 5400,
       "avatarSvg": "miracle",
-      "primaryPersonality": "first_blood_hunter",
-      "secondaryPersonality": "bush_stalker",
       "playableRoles": [
         "Assassin"
       ]
@@ -370,12 +350,12 @@
       "tier": "Diamond",
       "ovr": 93,
       "stats": {
-        "lan": 92,
-        "tf": 96,
-        "iq": 96,
-        "clu": 95,
-        "sta": 91,
-        "flx": 99
+        "rifling": 92,
+        "sniping": 93,
+        "entry": 94,
+        "utility": 98,
+        "positioning": 96,
+        "shotcalling": 96
       },
       "personality": "Wave Architect",
       "badges": [],
@@ -390,8 +370,6 @@
       "currentXp": 900,
       "maxXp": 4300,
       "avatarSvg": "topson",
-      "primaryPersonality": "wave_architect",
-      "secondaryPersonality": "cold_as_ice",
       "playableRoles": [
         "Mage"
       ]
@@ -406,12 +384,12 @@
       "tier": "Diamond",
       "ovr": 90,
       "stats": {
-        "lan": 82,
-        "tf": 91,
-        "iq": 99,
-        "clu": 96,
-        "sta": 94,
-        "flx": 92
+        "rifling": 82,
+        "sniping": 89,
+        "entry": 86,
+        "utility": 92,
+        "positioning": 99,
+        "shotcalling": 99
       },
       "personality": "Challenger",
       "badges": [],
@@ -426,8 +404,6 @@
       "currentXp": 750,
       "maxXp": 4100,
       "avatarSvg": "fns",
-      "primaryPersonality": "challenger",
-      "secondaryPersonality": "clutch_performer",
       "playableRoles": [
         "Support"
       ]
@@ -442,12 +418,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 97,
-        "tf": 92,
-        "iq": 88,
-        "clu": 90,
-        "sta": 89,
-        "flx": 91
+        "rifling": 97,
+        "sniping": 94,
+        "entry": 95,
+        "utility": 92,
+        "positioning": 88,
+        "shotcalling": 88
       },
       "personality": "Patient Predator",
       "badges": [],
@@ -462,8 +438,6 @@
       "currentXp": 1300,
       "maxXp": 4400,
       "avatarSvg": "tenz",
-      "primaryPersonality": "patient_predator",
-      "secondaryPersonality": "short_fuse",
       "playableRoles": [
         "Marksman"
       ]
@@ -478,12 +452,12 @@
       "tier": "Gold",
       "ovr": 82,
       "stats": {
-        "lan": 78,
-        "tf": 85,
-        "iq": 90,
-        "clu": 85,
-        "sta": 92,
-        "flx": 88
+        "rifling": 78,
+        "sniping": 82,
+        "entry": 81,
+        "utility": 87,
+        "positioning": 90,
+        "shotcalling": 90
       },
       "personality": "Bush Stalker",
       "badges": [],
@@ -498,8 +472,6 @@
       "currentXp": 400,
       "maxXp": 3000,
       "avatarSvg": "boaster",
-      "primaryPersonality": "bush_stalker",
-      "secondaryPersonality": "survivalist",
       "playableRoles": [
         "Support"
       ]
@@ -514,12 +486,12 @@
       "tier": "Bronze",
       "ovr": 54,
       "stats": {
-        "lan": 52,
-        "tf": 54,
-        "iq": 50,
-        "clu": 48,
-        "sta": 55,
-        "flx": 50
+        "rifling": 52,
+        "sniping": 50,
+        "entry": 53,
+        "utility": 52,
+        "positioning": 50,
+        "shotcalling": 50
       },
       "personality": "Patient Predator",
       "badges": [],
@@ -533,8 +505,6 @@
       "currentXp": 50,
       "maxXp": 1000,
       "avatarSvg": "rookie1",
-      "primaryPersonality": "patient_predator",
-      "secondaryPersonality": "cold_as_ice",
       "playableRoles": [
         "Tank"
       ]
@@ -549,12 +519,12 @@
       "tier": "Silver",
       "ovr": 66,
       "stats": {
-        "lan": 68,
-        "tf": 65,
-        "iq": 64,
-        "clu": 66,
-        "sta": 67,
-        "flx": 62
+        "rifling": 68,
+        "sniping": 67,
+        "entry": 67,
+        "utility": 64,
+        "positioning": 64,
+        "shotcalling": 64
       },
       "personality": "Bush Stalker",
       "badges": [],
@@ -568,8 +538,6 @@
       "currentXp": 200,
       "maxXp": 1800,
       "avatarSvg": "rookie2",
-      "primaryPersonality": "bush_stalker",
-      "secondaryPersonality": "showman",
       "playableRoles": [
         "Assassin"
       ]
@@ -584,16 +552,14 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 93,
-        "tf": 94,
-        "iq": 91,
-        "clu": 95,
-        "sta": 89,
-        "flx": 92
+        "rifling": 93,
+        "sniping": 94,
+        "entry": 93,
+        "utility": 93,
+        "positioning": 91,
+        "shotcalling": 91
       },
       "personality": "Clutch Performer",
-      "primaryPersonality": "clutch_performer",
-      "secondaryPersonality": "showman",
       "badges": [],
       "signatureChampions": [
         "Kyumi",
@@ -620,12 +586,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 90,
-        "tf": 91,
-        "iq": 91,
-        "clu": 90,
-        "sta": 89,
-        "flx": 89
+        "rifling": 90,
+        "sniping": 90,
+        "entry": 90,
+        "utility": 90,
+        "positioning": 91,
+        "shotcalling": 91
       },
       "personality": "Wave Architect",
       "badges": [
@@ -643,8 +609,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_oner",
-      "primaryPersonality": "wave_architect",
-      "secondaryPersonality": "siege_closer",
       "playableRoles": [
         "Fighter"
       ]
@@ -659,12 +623,12 @@
       "tier": "Diamond",
       "ovr": 93,
       "stats": {
-        "lan": 92,
-        "tf": 93,
-        "iq": 90,
-        "clu": 92,
-        "sta": 91,
-        "flx": 91
+        "rifling": 92,
+        "sniping": 92,
+        "entry": 92,
+        "utility": 92,
+        "positioning": 90,
+        "shotcalling": 90
       },
       "personality": "Momentum Junkie",
       "badges": [
@@ -681,8 +645,6 @@
       "currentXp": 0,
       "maxXp": 4300,
       "avatarSvg": "research_gumayusi",
-      "primaryPersonality": "momentum_junkie",
-      "secondaryPersonality": "survivalist",
       "playableRoles": [
         "Marksman"
       ]
@@ -697,12 +659,12 @@
       "tier": "Diamond",
       "ovr": 94,
       "stats": {
-        "lan": 94,
-        "tf": 95,
-        "iq": 96,
-        "clu": 94,
-        "sta": 93,
-        "flx": 93
+        "rifling": 94,
+        "sniping": 94,
+        "entry": 94,
+        "utility": 94,
+        "positioning": 96,
+        "shotcalling": 96
       },
       "personality": "Overconfident",
       "badges": [
@@ -719,8 +681,6 @@
       "currentXp": 0,
       "maxXp": 4400,
       "avatarSvg": "research_keria",
-      "primaryPersonality": "overconfident",
-      "secondaryPersonality": "iron_will",
       "playableRoles": [
         "Support"
       ]
@@ -735,12 +695,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 93,
-        "tf": 91,
-        "iq": 87,
-        "clu": 93,
-        "sta": 92,
-        "flx": 92
+        "rifling": 93,
+        "sniping": 92,
+        "entry": 92,
+        "utility": 92,
+        "positioning": 87,
+        "shotcalling": 87
       },
       "personality": "IGL / Shotcaller",
       "badges": [
@@ -758,8 +718,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_bin",
-      "primaryPersonality": "igl",
-      "secondaryPersonality": "silent_operator",
       "playableRoles": [
         "Fighter"
       ]
@@ -774,12 +732,12 @@
       "tier": "Diamond",
       "ovr": 94,
       "stats": {
-        "lan": 96,
-        "tf": 94,
-        "iq": 92,
-        "clu": 92,
-        "sta": 95,
-        "flx": 95
+        "rifling": 96,
+        "sniping": 94,
+        "entry": 95,
+        "utility": 95,
+        "positioning": 92,
+        "shotcalling": 92
       },
       "personality": "Bush Stalker",
       "badges": [
@@ -796,8 +754,6 @@
       "currentXp": 0,
       "maxXp": 4400,
       "avatarSvg": "research_knight",
-      "primaryPersonality": "bush_stalker",
-      "secondaryPersonality": "clutch_performer",
       "playableRoles": [
         "Mage"
       ]
@@ -812,12 +768,12 @@
       "tier": "Diamond",
       "ovr": 91,
       "stats": {
-        "lan": 89,
-        "tf": 92,
-        "iq": 87,
-        "clu": 90,
-        "sta": 88,
-        "flx": 93
+        "rifling": 89,
+        "sniping": 89,
+        "entry": 90,
+        "utility": 93,
+        "positioning": 87,
+        "shotcalling": 87
       },
       "personality": "Glue Guy",
       "badges": [
@@ -834,8 +790,6 @@
       "currentXp": 0,
       "maxXp": 4100,
       "avatarSvg": "research_elk",
-      "primaryPersonality": "glue_guy",
-      "secondaryPersonality": "bodyguard",
       "playableRoles": [
         "Marksman"
       ]
@@ -850,12 +804,12 @@
       "tier": "Platinum",
       "ovr": 88,
       "stats": {
-        "lan": 87,
-        "tf": 87,
-        "iq": 84,
-        "clu": 88,
-        "sta": 86,
-        "flx": 85
+        "rifling": 87,
+        "sniping": 87,
+        "entry": 87,
+        "utility": 86,
+        "positioning": 84,
+        "shotcalling": 84
       },
       "personality": "Revenge Driven",
       "badges": [
@@ -872,8 +826,6 @@
       "currentXp": 0,
       "maxXp": 3800,
       "avatarSvg": "research_on",
-      "primaryPersonality": "revenge_driven",
-      "secondaryPersonality": "short_fuse",
       "playableRoles": [
         "Support"
       ]
@@ -888,12 +840,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 92,
-        "tf": 92,
-        "iq": 93,
-        "clu": 93,
-        "sta": 91,
-        "flx": 90
+        "rifling": 92,
+        "sniping": 92,
+        "entry": 92,
+        "utility": 91,
+        "positioning": 93,
+        "shotcalling": 93
       },
       "personality": "Short Fuse",
       "badges": [
@@ -911,8 +863,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_tarzan",
-      "primaryPersonality": "short_fuse",
-      "secondaryPersonality": "showman",
       "playableRoles": [
         "Fighter"
       ]
@@ -927,12 +877,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 93,
-        "tf": 93,
-        "iq": 89,
-        "clu": 90,
-        "sta": 92,
-        "flx": 91
+        "rifling": 93,
+        "sniping": 92,
+        "entry": 93,
+        "utility": 92,
+        "positioning": 89,
+        "shotcalling": 89
       },
       "personality": "Egoistic",
       "badges": [
@@ -950,8 +900,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_kanavi",
-      "primaryPersonality": "egoistic",
-      "secondaryPersonality": "untiltable",
       "playableRoles": [
         "Assassin"
       ]
@@ -966,12 +914,12 @@
       "tier": "Diamond",
       "ovr": 93,
       "stats": {
-        "lan": 95,
-        "tf": 92,
-        "iq": 84,
-        "clu": 92,
-        "sta": 94,
-        "flx": 93
+        "rifling": 95,
+        "sniping": 93,
+        "entry": 94,
+        "utility": 93,
+        "positioning": 84,
+        "shotcalling": 84
       },
       "personality": "Showman",
       "badges": [
@@ -988,8 +936,6 @@
       "currentXp": 0,
       "maxXp": 4300,
       "avatarSvg": "research_jackeylove",
-      "primaryPersonality": "showman",
-      "secondaryPersonality": "captain",
       "playableRoles": [
         "Marksman"
       ]
@@ -1004,12 +950,12 @@
       "tier": "GOAT",
       "ovr": 96,
       "stats": {
-        "lan": 94,
-        "tf": 96,
-        "iq": 94,
-        "clu": 96,
-        "sta": 93,
-        "flx": 97
+        "rifling": 94,
+        "sniping": 95,
+        "entry": 95,
+        "utility": 97,
+        "positioning": 94,
+        "shotcalling": 94
       },
       "personality": "Iron Will",
       "badges": [
@@ -1026,8 +972,6 @@
       "currentXp": 0,
       "maxXp": 4600,
       "avatarSvg": "research_chovy",
-      "primaryPersonality": "iron_will",
-      "secondaryPersonality": "captain",
       "playableRoles": [
         "Mage"
       ]
@@ -1042,12 +986,12 @@
       "tier": "Diamond",
       "ovr": 94,
       "stats": {
-        "lan": 93,
-        "tf": 95,
-        "iq": 94,
-        "clu": 95,
-        "sta": 92,
-        "flx": 96
+        "rifling": 93,
+        "sniping": 94,
+        "entry": 94,
+        "utility": 96,
+        "positioning": 94,
+        "shotcalling": 94
       },
       "personality": "Glue Guy",
       "badges": [
@@ -1065,8 +1009,6 @@
       "currentXp": 0,
       "maxXp": 4400,
       "avatarSvg": "research_canyon",
-      "primaryPersonality": "glue_guy",
-      "secondaryPersonality": "counterpuncher",
       "playableRoles": [
         "Assassin"
       ]
@@ -1081,12 +1023,12 @@
       "tier": "Diamond",
       "ovr": 95,
       "stats": {
-        "lan": 95,
-        "tf": 94,
-        "iq": 93,
-        "clu": 93,
-        "sta": 94,
-        "flx": 92
+        "rifling": 95,
+        "sniping": 94,
+        "entry": 95,
+        "utility": 93,
+        "positioning": 93,
+        "shotcalling": 93
       },
       "personality": "Short Fuse",
       "badges": [
@@ -1103,8 +1045,6 @@
       "currentXp": 0,
       "maxXp": 4500,
       "avatarSvg": "research_ruler",
-      "primaryPersonality": "short_fuse",
-      "secondaryPersonality": "survivalist",
       "playableRoles": [
         "Marksman"
       ]
@@ -1119,12 +1059,12 @@
       "tier": "Diamond",
       "ovr": 93,
       "stats": {
-        "lan": 94,
-        "tf": 93,
-        "iq": 90,
-        "clu": 92,
-        "sta": 93,
-        "flx": 91
+        "rifling": 94,
+        "sniping": 93,
+        "entry": 94,
+        "utility": 92,
+        "positioning": 90,
+        "shotcalling": 90
       },
       "personality": "Perfectionist",
       "badges": [
@@ -1142,8 +1082,6 @@
       "currentXp": 0,
       "maxXp": 4300,
       "avatarSvg": "research_zeus",
-      "primaryPersonality": "perfectionist",
-      "secondaryPersonality": "siege_closer",
       "playableRoles": [
         "Fighter"
       ]
@@ -1158,12 +1096,12 @@
       "tier": "Diamond",
       "ovr": 94,
       "stats": {
-        "lan": 96,
-        "tf": 95,
-        "iq": 91,
-        "clu": 94,
-        "sta": 95,
-        "flx": 93
+        "rifling": 96,
+        "sniping": 95,
+        "entry": 96,
+        "utility": 94,
+        "positioning": 91,
+        "shotcalling": 91
       },
       "personality": "Loyalist",
       "badges": [
@@ -1180,8 +1118,6 @@
       "currentXp": 0,
       "maxXp": 4400,
       "avatarSvg": "research_viper",
-      "primaryPersonality": "loyalist",
-      "secondaryPersonality": "overconfident",
       "playableRoles": [
         "Marksman"
       ]
@@ -1196,12 +1132,12 @@
       "tier": "Diamond",
       "ovr": 90,
       "stats": {
-        "lan": 88,
-        "tf": 89,
-        "iq": 97,
-        "clu": 91,
-        "sta": 87,
-        "flx": 90
+        "rifling": 88,
+        "sniping": 90,
+        "entry": 88,
+        "utility": 90,
+        "positioning": 97,
+        "shotcalling": 97
       },
       "personality": "Loyalist",
       "badges": [
@@ -1219,8 +1155,6 @@
       "currentXp": 0,
       "maxXp": 4000,
       "avatarSvg": "research_caedrel",
-      "primaryPersonality": "loyalist",
-      "secondaryPersonality": "egoistic",
       "playableRoles": [
         "Fighter"
       ]
@@ -1235,12 +1169,12 @@
       "tier": "Platinum",
       "ovr": 86,
       "stats": {
-        "lan": 85,
-        "tf": 86,
-        "iq": 78,
-        "clu": 84,
-        "sta": 84,
-        "flx": 87
+        "rifling": 85,
+        "sniping": 84,
+        "entry": 85,
+        "utility": 87,
+        "positioning": 78,
+        "shotcalling": 78
       },
       "personality": "IGL / Shotcaller",
       "badges": [
@@ -1258,8 +1192,6 @@
       "currentXp": 0,
       "maxXp": 3600,
       "avatarSvg": "research_tyler1",
-      "primaryPersonality": "igl",
-      "secondaryPersonality": "perfectionist",
       "playableRoles": [
         "Fighter"
       ]
@@ -1274,12 +1206,12 @@
       "tier": "GOAT",
       "ovr": 96,
       "stats": {
-        "lan": 96,
-        "tf": 97,
-        "iq": 92,
-        "clu": 95,
-        "sta": 95,
-        "flx": 98
+        "rifling": 96,
+        "sniping": 95,
+        "entry": 96,
+        "utility": 98,
+        "positioning": 92,
+        "shotcalling": 92
       },
       "personality": "Siege Closer",
       "badges": [
@@ -1296,8 +1228,6 @@
       "currentXp": 0,
       "maxXp": 4600,
       "avatarSvg": "research_yatoro",
-      "primaryPersonality": "siege_closer",
-      "secondaryPersonality": "overconfident",
       "playableRoles": [
         "Marksman"
       ]
@@ -1312,12 +1242,12 @@
       "tier": "Diamond",
       "ovr": 94,
       "stats": {
-        "lan": 95,
-        "tf": 93,
-        "iq": 93,
-        "clu": 94,
-        "sta": 94,
-        "flx": 91
+        "rifling": 95,
+        "sniping": 94,
+        "entry": 94,
+        "utility": 92,
+        "positioning": 93,
+        "shotcalling": 93
       },
       "personality": "Siege Closer",
       "badges": [
@@ -1334,8 +1264,6 @@
       "currentXp": 0,
       "maxXp": 4400,
       "avatarSvg": "research_collapse",
-      "primaryPersonality": "siege_closer",
-      "secondaryPersonality": "perfectionist",
       "playableRoles": [
         "Tank"
       ]
@@ -1350,12 +1278,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 94,
-        "tf": 92,
-        "iq": 96,
-        "clu": 93,
-        "sta": 93,
-        "flx": 90
+        "rifling": 94,
+        "sniping": 94,
+        "entry": 93,
+        "utility": 91,
+        "positioning": 96,
+        "shotcalling": 96
       },
       "personality": "Counterpuncher",
       "badges": [
@@ -1372,8 +1300,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_miposhka",
-      "primaryPersonality": "counterpuncher",
-      "secondaryPersonality": "captain",
       "playableRoles": [
         "Support"
       ]
@@ -1388,12 +1314,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 90,
-        "tf": 93,
-        "iq": 87,
-        "clu": 90,
-        "sta": 89,
-        "flx": 91
+        "rifling": 90,
+        "sniping": 90,
+        "entry": 91,
+        "utility": 92,
+        "positioning": 87,
+        "shotcalling": 87
       },
       "personality": "Silent Operator",
       "badges": [
@@ -1410,8 +1336,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_skiter",
-      "primaryPersonality": "silent_operator",
-      "secondaryPersonality": "siege_closer",
       "playableRoles": [
         "Marksman"
       ]
@@ -1426,12 +1350,12 @@
       "tier": "Diamond",
       "ovr": 93,
       "stats": {
-        "lan": 92,
-        "tf": 92,
-        "iq": 90,
-        "clu": 92,
-        "sta": 91,
-        "flx": 93
+        "rifling": 92,
+        "sniping": 92,
+        "entry": 92,
+        "utility": 93,
+        "positioning": 90,
+        "shotcalling": 90
       },
       "personality": "Fragile Mental",
       "badges": [
@@ -1448,8 +1372,6 @@
       "currentXp": 0,
       "maxXp": 4300,
       "avatarSvg": "research_malr1ne",
-      "primaryPersonality": "fragile_mental",
-      "secondaryPersonality": "steal_gambler",
       "playableRoles": [
         "Mage"
       ]
@@ -1464,12 +1386,12 @@
       "tier": "Diamond",
       "ovr": 93,
       "stats": {
-        "lan": 93,
-        "tf": 93,
-        "iq": 85,
-        "clu": 93,
-        "sta": 92,
-        "flx": 94
+        "rifling": 93,
+        "sniping": 92,
+        "entry": 93,
+        "utility": 94,
+        "positioning": 85,
+        "shotcalling": 85
       },
       "personality": "Challenger",
       "badges": [
@@ -1487,8 +1409,6 @@
       "currentXp": 0,
       "maxXp": 4300,
       "avatarSvg": "research_atf",
-      "primaryPersonality": "challenger",
-      "secondaryPersonality": "revenge_driven",
       "playableRoles": [
         "Fighter"
       ]
@@ -1503,12 +1423,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 93,
-        "tf": 93,
-        "iq": 92,
-        "clu": 93,
-        "sta": 92,
-        "flx": 94
+        "rifling": 93,
+        "sniping": 93,
+        "entry": 93,
+        "utility": 94,
+        "positioning": 92,
+        "shotcalling": 92
       },
       "personality": "Challenger",
       "badges": [
@@ -1525,8 +1445,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_cr1t",
-      "primaryPersonality": "challenger",
-      "secondaryPersonality": "patient_predator",
       "playableRoles": [
         "Support"
       ]
@@ -1541,12 +1459,12 @@
       "tier": "Diamond",
       "ovr": 91,
       "stats": {
-        "lan": 93,
-        "tf": 90,
-        "iq": 95,
-        "clu": 89,
-        "sta": 92,
-        "flx": 88
+        "rifling": 93,
+        "sniping": 92,
+        "entry": 92,
+        "utility": 89,
+        "positioning": 95,
+        "shotcalling": 95
       },
       "personality": "First Blood Hunter",
       "badges": [
@@ -1563,8 +1481,6 @@
       "currentXp": 0,
       "maxXp": 4100,
       "avatarSvg": "research_sneyking",
-      "primaryPersonality": "first_blood_hunter",
-      "secondaryPersonality": "loyalist",
       "playableRoles": [
         "Support"
       ]
@@ -1579,12 +1495,12 @@
       "tier": "Diamond",
       "ovr": 95,
       "stats": {
-        "lan": 93,
-        "tf": 95,
-        "iq": 93,
-        "clu": 94,
-        "sta": 92,
-        "flx": 93
+        "rifling": 93,
+        "sniping": 93,
+        "entry": 94,
+        "utility": 94,
+        "positioning": 93,
+        "shotcalling": 93
       },
       "personality": "Showman",
       "badges": [
@@ -1601,8 +1517,6 @@
       "currentXp": 0,
       "maxXp": 4500,
       "avatarSvg": "research_nisha",
-      "primaryPersonality": "showman",
-      "secondaryPersonality": "challenger",
       "playableRoles": [
         "Mage"
       ]
@@ -1617,12 +1531,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 91,
-        "tf": 93,
-        "iq": 89,
-        "clu": 92,
-        "sta": 90,
-        "flx": 91
+        "rifling": 91,
+        "sniping": 91,
+        "entry": 92,
+        "utility": 92,
+        "positioning": 89,
+        "shotcalling": 89
       },
       "personality": "IGL / Shotcaller",
       "badges": [
@@ -1639,8 +1553,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_micke",
-      "primaryPersonality": "igl",
-      "secondaryPersonality": "momentum_junkie",
       "playableRoles": [
         "Marksman"
       ]
@@ -1655,12 +1567,12 @@
       "tier": "Diamond",
       "ovr": 90,
       "stats": {
-        "lan": 90,
-        "tf": 89,
-        "iq": 88,
-        "clu": 91,
-        "sta": 89,
-        "flx": 90
+        "rifling": 90,
+        "sniping": 90,
+        "entry": 90,
+        "utility": 90,
+        "positioning": 88,
+        "shotcalling": 88
       },
       "personality": "Tunnel Vision",
       "badges": [
@@ -1677,8 +1589,6 @@
       "currentXp": 0,
       "maxXp": 4000,
       "avatarSvg": "research_saberlight",
-      "primaryPersonality": "tunnel_vision",
-      "secondaryPersonality": "objective_zealot",
       "playableRoles": [
         "Tank"
       ]
@@ -1693,12 +1603,12 @@
       "tier": "Diamond",
       "ovr": 91,
       "stats": {
-        "lan": 92,
-        "tf": 91,
-        "iq": 91,
-        "clu": 89,
-        "sta": 91,
-        "flx": 92
+        "rifling": 92,
+        "sniping": 91,
+        "entry": 92,
+        "utility": 92,
+        "positioning": 91,
+        "shotcalling": 91
       },
       "personality": "Steal Gambler",
       "badges": [
@@ -1715,8 +1625,6 @@
       "currentXp": 0,
       "maxXp": 4100,
       "avatarSvg": "research_boxi",
-      "primaryPersonality": "steal_gambler",
-      "secondaryPersonality": "egoistic",
       "playableRoles": [
         "Support"
       ]
@@ -1731,12 +1639,12 @@
       "tier": "Diamond",
       "ovr": 94,
       "stats": {
-        "lan": 96,
-        "tf": 95,
-        "iq": 90,
-        "clu": 93,
-        "sta": 95,
-        "flx": 96
+        "rifling": 96,
+        "sniping": 94,
+        "entry": 96,
+        "utility": 96,
+        "positioning": 90,
+        "shotcalling": 90
       },
       "personality": "Loyalist",
       "badges": [
@@ -1753,8 +1661,6 @@
       "currentXp": 0,
       "maxXp": 4400,
       "avatarSvg": "research_sumail",
-      "primaryPersonality": "loyalist",
-      "secondaryPersonality": "glue_guy",
       "playableRoles": [
         "Mage"
       ]
@@ -1769,12 +1675,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 90,
-        "tf": 91,
-        "iq": 94,
-        "clu": 92,
-        "sta": 89,
-        "flx": 89
+        "rifling": 90,
+        "sniping": 91,
+        "entry": 90,
+        "utility": 90,
+        "positioning": 94,
+        "shotcalling": 94
       },
       "personality": "Revenge Driven",
       "badges": [
@@ -1791,8 +1697,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_gh",
-      "primaryPersonality": "revenge_driven",
-      "secondaryPersonality": "igl",
       "playableRoles": [
         "Support"
       ]
@@ -1807,12 +1711,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 91,
-        "tf": 92,
-        "iq": 91,
-        "clu": 93,
-        "sta": 90,
-        "flx": 90
+        "rifling": 91,
+        "sniping": 92,
+        "entry": 91,
+        "utility": 91,
+        "positioning": 91,
+        "shotcalling": 91
       },
       "personality": "Counterpuncher",
       "badges": [
@@ -1829,8 +1733,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_nothingtosay",
-      "primaryPersonality": "counterpuncher",
-      "secondaryPersonality": "short_fuse",
       "playableRoles": [
         "Mage"
       ]
@@ -1845,12 +1747,12 @@
       "tier": "Platinum",
       "ovr": 88,
       "stats": {
-        "lan": 88,
-        "tf": 89,
-        "iq": 90,
-        "clu": 86,
-        "sta": 87,
-        "flx": 87
+        "rifling": 88,
+        "sniping": 88,
+        "entry": 88,
+        "utility": 88,
+        "positioning": 90,
+        "shotcalling": 90
       },
       "personality": "Patient Predator",
       "badges": [
@@ -1867,8 +1769,6 @@
       "currentXp": 0,
       "maxXp": 3800,
       "avatarSvg": "research_dendi",
-      "primaryPersonality": "patient_predator",
-      "secondaryPersonality": "egoistic",
       "playableRoles": [
         "Mage"
       ]
@@ -1883,12 +1783,12 @@
       "tier": "Diamond",
       "ovr": 94,
       "stats": {
-        "lan": 95,
-        "tf": 93,
-        "iq": 83,
-        "clu": 93,
-        "sta": 94,
-        "flx": 94
+        "rifling": 95,
+        "sniping": 93,
+        "entry": 94,
+        "utility": 94,
+        "positioning": 83,
+        "shotcalling": 83
       },
       "personality": "Egoistic",
       "badges": [
@@ -1906,8 +1806,6 @@
       "currentXp": 0,
       "maxXp": 4400,
       "avatarSvg": "research_donk",
-      "primaryPersonality": "egoistic",
-      "secondaryPersonality": "silent_operator",
       "playableRoles": [
         "Assassin"
       ]
@@ -1922,12 +1820,12 @@
       "tier": "Diamond",
       "ovr": 93,
       "stats": {
-        "lan": 95,
-        "tf": 93,
-        "iq": 93,
-        "clu": 93,
-        "sta": 94,
-        "flx": 94
+        "rifling": 95,
+        "sniping": 94,
+        "entry": 94,
+        "utility": 94,
+        "positioning": 93,
+        "shotcalling": 93
       },
       "personality": "Objective Zealot",
       "badges": [
@@ -1945,8 +1843,6 @@
       "currentXp": 0,
       "maxXp": 4300,
       "avatarSvg": "research_ropz",
-      "primaryPersonality": "objective_zealot",
-      "secondaryPersonality": "captain",
       "playableRoles": [
         "Assassin"
       ]
@@ -1961,12 +1857,12 @@
       "tier": "Diamond",
       "ovr": 94,
       "stats": {
-        "lan": 92,
-        "tf": 95,
-        "iq": 88,
-        "clu": 95,
-        "sta": 91,
-        "flx": 96
+        "rifling": 92,
+        "sniping": 93,
+        "entry": 93,
+        "utility": 96,
+        "positioning": 88,
+        "shotcalling": 88
       },
       "personality": "Momentum Junkie",
       "badges": [
@@ -1983,8 +1879,6 @@
       "currentXp": 0,
       "maxXp": 4400,
       "avatarSvg": "research_m0nesy",
-      "primaryPersonality": "momentum_junkie",
-      "secondaryPersonality": "fragile_mental",
       "playableRoles": [
         "Marksman"
       ]
@@ -1999,12 +1893,12 @@
       "tier": "Diamond",
       "ovr": 92,
       "stats": {
-        "lan": 91,
-        "tf": 91,
-        "iq": 91,
-        "clu": 90,
-        "sta": 90,
-        "flx": 89
+        "rifling": 91,
+        "sniping": 91,
+        "entry": 91,
+        "utility": 90,
+        "positioning": 91,
+        "shotcalling": 91
       },
       "personality": "Challenger",
       "badges": [
@@ -2021,8 +1915,6 @@
       "currentXp": 0,
       "maxXp": 4200,
       "avatarSvg": "research_sh1ro",
-      "primaryPersonality": "challenger",
-      "secondaryPersonality": "egoistic",
       "playableRoles": [
         "Marksman"
       ]
@@ -2037,12 +1929,12 @@
       "tier": "Diamond",
       "ovr": 90,
       "stats": {
-        "lan": 90,
-        "tf": 90,
-        "iq": 83,
-        "clu": 89,
-        "sta": 89,
-        "flx": 88
+        "rifling": 90,
+        "sniping": 89,
+        "entry": 90,
+        "utility": 89,
+        "positioning": 83,
+        "shotcalling": 83
       },
       "personality": "Tunnel Vision",
       "badges": [
@@ -2059,8 +1951,6 @@
       "currentXp": 0,
       "maxXp": 4000,
       "avatarSvg": "research_molodoy",
-      "primaryPersonality": "tunnel_vision",
-      "secondaryPersonality": "bush_stalker",
       "playableRoles": [
         "Marksman"
       ]
@@ -2075,12 +1965,12 @@
       "tier": "Diamond",
       "ovr": 91,
       "stats": {
-        "lan": 92,
-        "tf": 92,
-        "iq": 90,
-        "clu": 91,
-        "sta": 91,
-        "flx": 90
+        "rifling": 92,
+        "sniping": 91,
+        "entry": 92,
+        "utility": 91,
+        "positioning": 90,
+        "shotcalling": 90
       },
       "personality": "Fragile Mental",
       "badges": [
@@ -2098,8 +1988,6 @@
       "currentXp": 0,
       "maxXp": 4100,
       "avatarSvg": "research_frozen",
-      "primaryPersonality": "fragile_mental",
-      "secondaryPersonality": "objective_zealot",
       "playableRoles": [
         "Fighter"
       ]
@@ -2114,12 +2002,12 @@
       "tier": "Diamond",
       "ovr": 91,
       "stats": {
-        "lan": 93,
-        "tf": 90,
-        "iq": 89,
-        "clu": 92,
-        "sta": 92,
-        "flx": 91
+        "rifling": 93,
+        "sniping": 92,
+        "entry": 92,
+        "utility": 91,
+        "positioning": 89,
+        "shotcalling": 89
       },
       "personality": "Untiltable",
       "badges": [
@@ -2137,8 +2025,6 @@
       "currentXp": 0,
       "maxXp": 4100,
       "avatarSvg": "research_kscerato",
-      "primaryPersonality": "untiltable",
-      "secondaryPersonality": "captain",
       "playableRoles": [
         "Fighter"
       ]
@@ -2153,12 +2039,12 @@
       "tier": "Diamond",
       "ovr": 90,
       "stats": {
-        "lan": 88,
-        "tf": 90,
-        "iq": 89,
-        "clu": 88,
-        "sta": 87,
-        "flx": 91
+        "rifling": 88,
+        "sniping": 88,
+        "entry": 89,
+        "utility": 91,
+        "positioning": 89,
+        "shotcalling": 89
       },
       "personality": "Short Fuse",
       "badges": [
@@ -2176,8 +2062,6 @@
       "currentXp": 0,
       "maxXp": 4000,
       "avatarSvg": "research_spinx",
-      "primaryPersonality": "short_fuse",
-      "secondaryPersonality": "fragile_mental",
       "playableRoles": [
         "Assassin"
       ]
@@ -2192,12 +2076,12 @@
       "tier": "Diamond",
       "ovr": 91,
       "stats": {
-        "lan": 90,
-        "tf": 92,
-        "iq": 91,
-        "clu": 90,
-        "sta": 89,
-        "flx": 93
+        "rifling": 90,
+        "sniping": 90,
+        "entry": 91,
+        "utility": 93,
+        "positioning": 91,
+        "shotcalling": 91
       },
       "personality": "Captain",
       "badges": [
@@ -2215,8 +2099,6 @@
       "currentXp": 0,
       "maxXp": 4100,
       "avatarSvg": "research_twistzz",
-      "primaryPersonality": "captain",
-      "secondaryPersonality": "momentum_junkie",
       "playableRoles": [
         "Fighter"
       ]
@@ -2231,12 +2113,12 @@
       "tier": "Platinum",
       "ovr": 89,
       "stats": {
-        "lan": 89,
-        "tf": 88,
-        "iq": 85,
-        "clu": 89,
-        "sta": 88,
-        "flx": 86
+        "rifling": 89,
+        "sniping": 89,
+        "entry": 89,
+        "utility": 87,
+        "positioning": 85,
+        "shotcalling": 85
       },
       "personality": "Silent Operator",
       "badges": [
@@ -2254,8 +2136,6 @@
       "currentXp": 0,
       "maxXp": 3900,
       "avatarSvg": "research_senzu",
-      "primaryPersonality": "silent_operator",
-      "secondaryPersonality": "momentum_junkie",
       "playableRoles": [
         "Assassin"
       ]
@@ -2270,12 +2150,12 @@
       "tier": "Diamond",
       "ovr": 91,
       "stats": {
-        "lan": 92,
-        "tf": 91,
-        "iq": 84,
-        "clu": 92,
-        "sta": 91,
-        "flx": 89
+        "rifling": 92,
+        "sniping": 91,
+        "entry": 92,
+        "utility": 90,
+        "positioning": 84,
+        "shotcalling": 84
       },
       "personality": "Patient Predator",
       "badges": [
@@ -2293,8 +2173,6 @@
       "currentXp": 0,
       "maxXp": 4100,
       "avatarSvg": "research_xantares",
-      "primaryPersonality": "patient_predator",
-      "secondaryPersonality": "perfectionist",
       "playableRoles": [
         "Fighter"
       ]
@@ -2309,12 +2187,12 @@
       "tier": "Diamond",
       "ovr": 90,
       "stats": {
-        "lan": 92,
-        "tf": 91,
-        "iq": 85,
-        "clu": 88,
-        "sta": 91,
-        "flx": 89
+        "rifling": 92,
+        "sniping": 90,
+        "entry": 92,
+        "utility": 90,
+        "positioning": 85,
+        "shotcalling": 85
       },
       "personality": "Showman",
       "badges": [
@@ -2332,8 +2210,6 @@
       "currentXp": 0,
       "maxXp": 4000,
       "avatarSvg": "research_yekindar",
-      "primaryPersonality": "showman",
-      "secondaryPersonality": "survivalist",
       "playableRoles": [
         "Assassin"
       ]
@@ -2348,12 +2224,12 @@
       "tier": "Diamond",
       "ovr": 90,
       "stats": {
-        "lan": 88,
-        "tf": 89,
-        "iq": 86,
-        "clu": 89,
-        "sta": 87,
-        "flx": 90
+        "rifling": 88,
+        "sniping": 88,
+        "entry": 88,
+        "utility": 90,
+        "positioning": 86,
+        "shotcalling": 86
       },
       "personality": "Survivalist",
       "badges": [
@@ -2371,8 +2247,6 @@
       "currentXp": 0,
       "maxXp": 4000,
       "avatarSvg": "research_xertion",
-      "primaryPersonality": "survivalist",
-      "secondaryPersonality": "glue_guy",
       "playableRoles": [
         "Assassin"
       ]
@@ -2387,12 +2261,12 @@
       "tier": "Diamond",
       "ovr": 90,
       "stats": {
-        "lan": 89,
-        "tf": 90,
-        "iq": 90,
-        "clu": 90,
-        "sta": 88,
-        "flx": 91
+        "rifling": 89,
+        "sniping": 89,
+        "entry": 89,
+        "utility": 91,
+        "positioning": 90,
+        "shotcalling": 90
       },
       "personality": "IGL / Shotcaller",
       "badges": [
@@ -2409,8 +2283,6 @@
       "currentXp": 0,
       "maxXp": 4000,
       "avatarSvg": "research_torzsi",
-      "primaryPersonality": "igl",
-      "secondaryPersonality": "silent_operator",
       "playableRoles": [
         "Marksman"
       ]

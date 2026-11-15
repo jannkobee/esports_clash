@@ -1,3 +1,4 @@
+import {validateFpsPersonality} from './fps/fpsPlayerArchitecture.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -193,15 +194,14 @@ test('FPS tactical calls reflect existing personality preferences without changi
   const makeAttackers = personality => createEqualizedRoster('blue').map(card => {
     const player = initializePlayerState({
       ...card,
-      primaryPersonality: personality,
-      secondaryPersonality: personality
+      fpsIdentity:{personality:validateFpsPersonality({temperament:'STEADY',playstyle:personality==='aggressive'?'AGGRESSIVE':'PASSIVE',mindset:'TEAM_FIRST',decisionStyle:personality==='aggressive'?'INSTINCTIVE':'METHODICAL'})}
     }, 'blue', 'attackers', 800);
     player.loadout.primaryWeapon = 'rifle_assault';
     return player;
   });
-  const aggressive = makeAttackers('short_fuse');
-  const disciplined = makeAttackers('captain');
-  const baselineLan = aggressive[0].card.stats.lan;
+  const aggressive = makeAttackers('aggressive');
+  const disciplined = makeAttackers('passive');
+  const baselineLan = aggressive[0].card.stats.rifling;
   const random = () => 0.35;
 
   const aggressiveCall = generateSetPieceCall(aggressive, [], FPS_MAPS.breakwater, 1, random);
@@ -209,5 +209,5 @@ test('FPS tactical calls reflect existing personality preferences without changi
 
   assert.equal(aggressiveCall.strategy, 'fast_rush');
   assert.equal(disciplinedCall.strategy, 'default_probe');
-  assert.equal(aggressive[0].card.stats.lan, baselineLan);
+  assert.equal(aggressive[0].card.stats.rifling, baselineLan);
 });

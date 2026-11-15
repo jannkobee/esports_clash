@@ -1,109 +1,96 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createEqualizedRoster} from './equalizedMode.ts';
-import {FPS_IDENTITY_PERSONALITIES,FPS_SPECIALTIES,generatePlayerDNA,evaluatePlayerAction,scoreTacticalActions,resolveTacticalExecution,developFpsFamiliarity} from './fps/fpsIdentity.ts';
-import {hydrateFpsIdentityContext,observedPersonalityTriggers,assignContextualRoles} from './fps/fpsIdentityMatch.ts';
-import {simulateFpsMatch,createFpsPrng,initializePlayerState} from './fps/fpsSimulationEngine.ts';
-import {simulateFpsRound} from './fps/fpsRoundSimulation.ts';
-import {generateSetPieceCall} from './fps/fpsSetPieceRules.ts';
-import {FPS_MAPS} from './fps/fpsMaps.ts';
+import {FPS_IDENTITY_PERSONALITIES,FPS_BASE_BEHAVIORAL_PROFILES,FPS_T_POSITIONS,FPS_CT_POSITIONS,naturalFpsIdentity,generateFpsPersonality,defaultFpsAssignments,validateFpsLineup,validateFpsPersonality,emptyFpsObservedBehavior,observeFpsBehavior,observedFpsIdentity} from './fps/fpsPlayerArchitecture.ts';
+import {createFpsIdentityContext,hydrateFpsIdentityContext} from './fps/fpsIdentityMatch.ts';
+import {scoreTacticalActions,evaluatePlayerAction} from './fps/fpsIdentity.ts';
+import {FpsLiveSimulation} from './fps/fpsLiveSimulation.ts';
+import {simulateFpsMatch,createFpsPrng} from './fps/fpsSimulationEngine.ts';
+import {generateFpsSkillProfile} from './fps/fpsSkillProfile.ts';
+import {detailedInputError} from './fps/fpsDetailedExecution.ts';
+const cards=Array.from({length:10},(_,i)=>({id:`architecture-${i}`,name:`Alias ${i}`,stats:{rifling:40,sniping:60,entry:70,utility:60,positioning:70,shotcalling:80}}));
+const context=()=>createFpsIdentityContext(cards.slice(0,5),cards.slice(5));
+const actions=['pressure','prepare','react','coordinate','improvise','probe'].map(action=>({action,legal:true,tacticalValue:.5,instruction:.5}));
+const state={triggers:new Set(),opportunities:new Set(),confidence:.5,fatigue:0};
+const personality=(overrides={})=>validateFpsPersonality({temperament:'STEADY',playstyle:'AGGRESSIVE',mindset:'INDIVIDUALIST',decisionStyle:'INSTINCTIVE',...overrides});
 
-const plan={tempo:.4,structure:.7,aggression:.4,preparation:.8,freedom:.3,economy:.6};
-const coach={tempo:.4,rigidity:.8,aggression:.4,preparation:.8,freedom:.3,economy:.6,communication:.7,leadership:.7,adaptability:.5,development:.7};
-const chemistry={trust:.5,communication:.5,understanding:.5,leadershipAcceptance:.5,roleCompetition:.5};
-const rosters=[createEqualizedRoster('blue'),createEqualizedRoster('red')];
-const context=()=>({players:Object.fromEntries(rosters.flat().map((p,i)=>[p.id,{id:p.id,personality:FPS_IDENTITY_PERSONALITIES[i%24],specialty:FPS_SPECIALTIES[i%21],intensity:.8,dna:generatePlayerDNA(p.id),roleSuitability:.5,familiarity:.2}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}});
-const actions=['pressure','prepare','react','coordinate','improvise','save','invest','equip','force','probe'].map(action=>({action,legal:true,tacticalValue:.5,instruction:0}));
-
-test('all 24 personalities condition a probability rather than skill or legality',()=>{
-  assert.equal(FPS_IDENTITY_PERSONALITIES.length,24);
-  for(const personality of FPS_IDENTITY_PERSONALITIES) {
-    const player={...Object.values(context().players)[0],personality};const before=structuredClone(player);
-    const state={triggers:new Set(),opportunities:new Set(),confidence:.5,fatigue:0};
-    const inactive=scoreTacticalActions(player,state,coach,plan,chemistry,actions);
-    const active=scoreTacticalActions(player,{...state,triggers:new Set([personality.trigger])},coach,plan,chemistry,actions);
-    assert.ok(active.find(a=>a.action===personality.action).probability>inactive.find(a=>a.action===personality.action).probability,personality.id);
-    assert.ok(active.every(a=>a.probability>0&&a.probability<1));
-    const decision=evaluatePlayerAction(player,{...state,triggers:new Set([personality.trigger])},coach,plan,chemistry,actions.map(a=>({...a,legal:a.action!==personality.action})),()=>.2);
-    assert.notEqual(decision.action,personality.action);
-    assert.deepEqual(player,before);
-  }
-});
-test('all 21 specialties are inactive without their opportunity and bounded when active',()=>{
-  assert.equal(FPS_SPECIALTIES.length,21);
-  for(const specialty of FPS_SPECIALTIES) {
-    assert.equal(resolveTacticalExecution(specialty,new Set(),1).executionBonus,0);
-    const activation=resolveTacticalExecution(specialty,new Set([specialty.opportunity]),1);
-    assert.equal(activation.active,true);assert.equal(activation.executionBonus,.04);
-    assert.equal(resolveTacticalExecution(specialty,new Set([specialty.opportunity]),0).executionBonus,0);
-  }
-});
-test('observed-context adapter supplies each personality trigger across appropriate situations',()=>{
-  const observed={round:30,elapsed:100,quietSeconds:10,allies:1,enemies:3,winStreak:3,lossStreak:2,earlyDeath:true,advantage:true,disrupted:true,prepared:true,planCompromised:true,callerAlive:false,allyContact:true,poorRetake:true,utilityNeeded:true,economicTrouble:true,futureBuy:true,recoverableGear:true,rolePurchase:true};
-  const triggers=observedPersonalityTriggers(observed);
-  for(const trigger of observedPersonalityTriggers({...observed,round:1,enemies:0}))triggers.add(trigger);
-  for(const personality of FPS_IDENTITY_PERSONALITIES)assert.ok(triggers.has(personality.trigger),personality.id);
-});
-test('coach, gameplan, DNA and chemistry affect decisions without an overall mechanical multiplier',()=>{
-  const player=Object.values(context().players)[0],state={triggers:new Set(),opportunities:new Set(),confidence:.5,fatigue:0};
-  const candidates=actions.map(a=>({...a,instruction:a.action==='coordinate'?1:-.5}));
-  const a=scoreTacticalActions(player,state,coach,plan,chemistry,candidates);
-  const b=scoreTacticalActions({...player,dna:{...player.dna,coachability:0}},state,coach,plan,chemistry,candidates);
-  assert.notDeepEqual(a,b);
-  assert.notDeepEqual(a,scoreTacticalActions(player,state,coach,{...plan,structure:0,freedom:1},chemistry,candidates));
-  assert.notDeepEqual(a,scoreTacticalActions(player,state,{...coach,rigidity:0,freedom:1},{...plan,structure:0}, {...chemistry,trust:0,understanding:0},candidates));
-  assert.notDeepEqual(generatePlayerDNA('a'),generatePlayerDNA('b'));
-  let familiarity=.2;for(let i=0;i<10000;i++)familiarity=developFpsFamiliarity(familiarity,1,1);assert.ok(familiarity<=1&&familiarity>.2);
-});
-test('contextual rounds open with adaptive probing instead of a timed set-piece sequence',()=>{
-  const input=context(),map=FPS_MAPS.breakwater;
-  const attackers=rosters[0].map(card=>initializePlayerState(card,'blue','attackers',800));
-  const defenders=rosters[1].map(card=>initializePlayerState(card,'red','defenders',800));
-  assignContextualRoles(attackers,input);assignContextualRoles(defenders,input);
-  for(const player of attackers){player.currentZone=map.attackerSpawnZone;player.loadout.primaryWeapon='rifle_assault';}
-  for(const player of defenders){player.currentZone=map.defenderSpawnZone;player.loadout.primaryWeapon='rifle_assault';}
-  attackers[0].loadout.hasBomb=true;
-  const call=generateSetPieceCall(attackers,defenders,map,4,()=>.999,input);
-  assert.equal(call.strategy,'default_probe');
-  const result=simulateFpsRound(call,attackers,defenders,map,4,0,0,()=>.999,{identityExperiment:input,roundSeconds:8,bombSeconds:8});
-  const firstMove=result.events.find(event=>event.type==='player_moved');
-  assert.ok(firstMove);assert.ok(firstMove.second<15,'Contextual actors should not wait in a timed rally phase');
-});
-test('v3 matches preserve inputs, role responsibilities, event-derived results and deterministic replay',()=>{
-  const input=context(),before=structuredClone(input);
-  const report=simulateFpsMatch(...rosters,'breakwater',709,{identityExperiment:input});
-  assert.equal(report.simulationVersion,3);assert.deepEqual(input,before);
-  assert.deepEqual(report,simulateFpsMatch(...rosters,'breakwater',709,{identityExperiment:input}));
-  const roles=new Set(report.roundSnapshots.map(s=>s.tactics.role));
-  for(const role of ['entry','trade','support','sniper','lurker','anchor'])assert.ok(roles.has(role),role);
-  assert.ok(report.events.some(e=>e.type==='tactical_decision'));
-  assert.ok(report.events.some(e=>e.type==='specialty_activated'));
-  for(const e of report.events.filter(e=>e.type==='specialty_activated'))assert.ok(e.executionBonus>0&&e.executionBonus<=.04);
-  for(const stats of Object.values(report.playerStats))assert.equal(stats.kills,report.events.filter(e=>['kill','trade_kill'].includes(e.type)&&e.actorId===stats.playerId).length);
-  for(const [id,player] of Object.entries(report.identityDevelopment.players))assert.ok(player.familiarity>=input.players[id].familiarity);
-  const rng=createFpsPrng(33);assert.deepEqual(Array.from({length:10},()=>rng()),Array.from({length:10},createFpsPrng(33)));
-});
-test('private identity allocations fail closed on missing IDs, invalid roles and hidden trait bounds',()=>{
-  const input=context(),ids=rosters.flat().map(p=>p.id);
-  delete input.players[ids[0]];assert.throws(()=>hydrateFpsIdentityContext(input,ids));
-  const invalid=context();invalid.players[ids[0]].dna.riskTolerance=101;assert.throws(()=>hydrateFpsIdentityContext(invalid,ids));
-  const missing=structuredClone(context());delete missing.teams.blue.coach.tempo;assert.throws(()=>hydrateFpsIdentityContext(missing,ids));
-  const caller=context();caller.players[ids[0]].assignedRole='caller';
-  const report=simulateFpsMatch(...rosters,'foundry',21,{identityExperiment:caller});
-  assert.ok(report.roundSnapshots.some(s=>s.playerId===ids[0]&&s.tactics.role==='caller'&&s.tactics.isCaller));
+test('exhibitions preserve supplied manager roles and never fill a partially assigned roster',()=>{
+ const roster=structuredClone(cards),roles=defaultFpsAssignments(roster.slice(0,5).map(p=>p.id));
+ [roles[roster[0].id].t,roles[roster[1].id].t]=[roles[roster[1].id].t,roles[roster[0].id].t];
+ for(const card of roster.slice(0,5))card.fpsIdentity={personality:personality(),assignments:roles[card.id]};
+ const ctx=createFpsIdentityContext(roster.slice(0,5),roster.slice(5));assert.equal(ctx.players[roster[0].id].assignments.t,'T_ENTRY');
+ delete roster[1].fpsIdentity.assignments.ct;
+ assert.throws(()=>createFpsIdentityContext(roster.slice(0,5),roster.slice(5)),/five unique/);
 });
 
-test('a caller can rebuild a failed execute only with a surviving caller and an alternative route',()=>{
-  const input=context(),map=FPS_MAPS.breakwater;
-  const blue=rosters[0].map(card=>initializePlayerState(card,'blue','attackers',800));
-  const red=rosters[1].map(card=>initializePlayerState(card,'red','defenders',800));
-  assignContextualRoles(blue,input);assignContextualRoles(red,input);
-  const caller=blue.find(p=>p.tactics.isCaller),entry=blue.find(p=>p.tactics.role==='entry');
-  assert.notEqual(caller,entry);
-  for(const player of [...blue,...red]){player.currentZone=map.siteAZones[0];player.loadout.primaryWeapon='rifle_assault';}
-  const call=generateSetPieceCall(blue,red,map,8,()=>.999,input);call.strategy='set_piece_execute';call.targetSite='A';call.callerId=caller.playerId;call.entryFraggerId=entry.playerId;
-  entry.isAlive=false;
-  input.players[caller.playerId].specialty=FPS_SPECIALTIES.find(s=>s.id==='midround_rebuilder');
-  const result=simulateFpsRound(call,blue,red,map,8,0,0,()=>.999,{identityExperiment:input,roundSeconds:8});
-  assert.ok(result.events.some(e=>e.type==='specialty_activated'&&e.specialtyId==='midround_rebuilder'));
+test('54 composable personalities, 18 profiles and all 540 position identities round-trip and run',()=>{
+ assert.equal(FPS_BASE_BEHAVIORAL_PROFILES.length,18);assert.equal(FPS_IDENTITY_PERSONALITIES.length,54);assert.equal(new Set(FPS_IDENTITY_PERSONALITIES.map(p=>p.id)).size,54);
+ let configurations=0;
+ for(const personality of FPS_IDENTITY_PERSONALITIES){
+  const ctx=context();for(const p of Object.values(ctx.players))p.personality=personality;
+  assert.deepEqual(hydrateFpsIdentityContext(JSON.parse(JSON.stringify(ctx)),cards.map(p=>p.id)),ctx);
+  const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),414,ctx);sim.step();sim.remaining=.01;sim.step();for(let tick=0;tick<30;tick++)sim.step();
+  const match=simulateFpsMatch(cards.slice(0,5),cards.slice(5),'breakwater',414,{identityExperiment:ctx,maxRounds:1,roundSeconds:8,overtimeEnabled:false});assert.equal(match.totalRounds,1);
+  for(const position of [...FPS_T_POSITIONS,...FPS_CT_POSITIONS]){assert.ok(naturalFpsIdentity(personality,position));configurations++;}
+ }
+ assert.equal(configurations,540);
+ const generated=new Set(Array.from({length:4000},(_,i)=>generateFpsPersonality('generated-'+i).id));assert.equal(generated.size,54);
+});
+
+test('Fragging IGL identity and intention do not depend on rifle skill or results',()=>{
+ const p=personality();assert.equal(naturalFpsIdentity(p,'T_IGL'),'Steady Fragging IGL');
+ const ctx=context(),player={...ctx.players[cards[0].id],personality:p},team=ctx.teams.blue;
+ const low={...player,rifling:4,kills:0,deaths:40},high={...player,rifling:9,kills:40,deaths:0};
+ assert.deepEqual(scoreTacticalActions(low,state,team.coach,team.plan,team.chemistry,actions),scoreTacticalActions(high,state,team.coach,team.plan,team.chemistry,actions));
+ assert.equal(naturalFpsIdentity({...p,playstyle:'PASSIVE',mindset:'TEAM_FIRST',decisionStyle:'METHODICAL'},'T_IGL'),'Steady Tactical IGL');
+});
+
+test('personality has statistically observable seeded consequences without changing execution',()=>{
+ const ctx=context(),team=ctx.teams.blue;const run=p=>{const random=createFpsPrng(913);let pressure=0;for(let i=0;i<6000;i++)if(evaluatePlayerAction({...ctx.players[cards[0].id],personality:p},state,team.coach,team.plan,team.chemistry,actions,random).action==='pressure')pressure++;return pressure;};
+ const aggressive=run(personality()),passive=run(personality({playstyle:'PASSIVE',mindset:'TEAM_FIRST',decisionStyle:'METHODICAL'}));assert.ok(aggressive>passive*3,`${aggressive} vs ${passive}`);
+ const profile=generateFpsSkillProfile('same',1,'2026-11-14T00:00:00Z');
+ assert.equal(detailedInputError(profile,.9,()=>.8),detailedInputError({...profile,personality:personality({temperament:'ICE_COLD'})},.9,()=>.8));
+});
+
+test('all decision styles react to lawful evidence; temperament changes pressure decisions without aim bonuses',()=>{
+ const ctx=context(),base=ctx.players[cards[0].id],team=ctx.teams.blue;
+ for(const decisionStyle of ['INSTINCTIVE','METHODICAL','ADAPTIVE']){
+  const p={...base,personality:personality({decisionStyle})},before=scoreTacticalActions(p,state,team.coach,team.plan,team.chemistry,actions),after=scoreTacticalActions(p,{...state,triggers:new Set(['contradictedCall','setback'])},team.coach,team.plan,team.chemistry,actions);
+  assert.ok(after.find(x=>x.action==='react').score>before.find(x=>x.action==='react').score);
+  assert.equal(evaluatePlayerAction(p,state,team.coach,team.plan,team.chemistry,[{action:'save',legal:true,tacticalValue:0,instruction:0},{action:'pressure',legal:false,tacticalValue:99,instruction:1}],()=>0).action,'save');
+ }
+ const scores=temperament=>scoreTacticalActions({...base,personality:personality({temperament})},{...state,confidence:.1,triggers:new Set(['pressure'])},team.coach,team.plan,team.chemistry,actions);
+ assert.notDeepEqual(scores('VOLATILE'),scores('ICE_COLD'));
+});
+
+test('lineups lock both complete sides, reject duplicate slots and permit different responsibilities',()=>{
+ const assignments=defaultFpsAssignments(cards.slice(0,5).map(p=>p.id)),players=cards.slice(0,5).map(p=>({id:p.id,assignments:assignments[p.id]}));validateFpsLineup(players);
+ assert.throws(()=>validateFpsLineup(players.slice(1)));assert.throws(()=>validateFpsLineup([...players.slice(1),players[1]]));
+ const bad=structuredClone(players);bad[1].assignments.ct=bad[0].assignments.ct;assert.throws(()=>validateFpsLineup(bad));
+ const ctx=context();[ctx.players[cards[0].id].assignments.ct,ctx.players[cards[3].id].assignments.ct]=[ctx.players[cards[3].id].assignments.ct,ctx.players[cards[0].id].assignments.ct];
+ const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),97,ctx);assert.equal(sim.snapshot().players[0].position,'CT_ANCHOR_B');
+ sim.actors[0].x=20;sim.actors[0].z=-10;assert.equal(sim.snapshot().players[0].position,'CT_ANCHOR_B');
+ assert.equal(ctx.players[cards[0].id].assignments.t,'T_IGL');
+});
+
+test('observed identity requires sustained opportunity-normalized decisions, not K/D',()=>{
+ const high=emptyFpsObservedBehavior(),low=emptyFpsObservedBehavior();high.matches=low.matches=5;
+ for(let i=0;i<40;i++){observeFpsBehavior(high,'engagement',i<32);observeFpsBehavior(low,'engagement',i<10);}
+ assert.match(observedFpsIdentity(high),/Proactive/);assert.match(observedFpsIdentity(low),/Selective/);
+ high.matches=1;assert.equal(observedFpsIdentity(high),undefined);assert.equal(observedFpsIdentity({...low,kills:999,deaths:0}),observedFpsIdentity(low));
+});
+
+test('recorded matches pin v4 identities and positions, preserve inputs and reproduce events',()=>{
+ const ctx=context(),before=structuredClone(ctx);const run=()=>simulateFpsMatch(cards.slice(0,5),cards.slice(5),'breakwater',311,{identityExperiment:ctx,maxRounds:4,overtimeEnabled:false});
+ const a=run(),b=run();assert.deepEqual(a,b);assert.deepEqual(ctx,before);assert.equal(a.simulationVersion,4);assert.ok(a.events.some(e=>e.type==='behavior_observation'));
+ assert.ok(!a.events.some(e=>e.type==='specialty_activated'));for(const s of a.roundSnapshots)assert.ok(s.tactics.position);
+});
+
+test('live decisions change actual intention distributions across multiple seeds',()=>{
+ const run=personality=>{let pressure=0;for(let seed=1;seed<=40;seed++){
+  const ctx=context();ctx.players[cards[5].id].personality=personality;
+  const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),seed,ctx),actor=sim.actors[5];
+  sim.phase='live';sim.time=20;sim.liveElapsed=5;sim.remaining=100;
+  for(let i=0;i<15;i++){sim.decide(actor);if(actor.decision==='pressure')pressure++;}
+ }return pressure;};
+ const aggressive=run(personality()),passive=run(personality({playstyle:'PASSIVE',mindset:'TEAM_FIRST',decisionStyle:'METHODICAL'}));assert.ok(aggressive>passive*2,`${aggressive} vs ${passive}`);
 });

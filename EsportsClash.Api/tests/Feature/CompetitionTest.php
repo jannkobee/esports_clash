@@ -35,7 +35,7 @@ class CompetitionTest extends TestCase
         $rounds=[];for($round=1;$round<=16;$round++)$rounds[]=['roundNumber'=>$round,'winnerTeam'=>'blue','winnerSide'=>'attackers',
             'reason'=>'attackers_eliminated','roundDurationSeconds'=>75,'blueScoreAfter'=>$round,'redScoreAfter'=>0];
         return ['match_id'=>$match->id,'game_mode'=>'fps_mr15_v1','seed'=>$match->plan['seed'],'versions'=>$match->plan['versions'],'winner'=>'blue',
-            'report'=>['format'=>'MR15_TACTICAL_FPS','simulationVersion'=>2,'winner'=>'blue','winnerTeam'=>'blue','seed'=>$match->plan['seed'],
+            'report'=>['format'=>'MR15_TACTICAL_FPS','simulationVersion'=>$match->plan['fps']['simulation_version'],'winner'=>'blue','winnerTeam'=>'blue','seed'=>$match->plan['seed'],
                 'mapId'=>$match->plan['fps']['map_id'],'totalRounds'=>16,'durationSeconds'=>1200,'finalScore'=>['blue'=>16,'red'=>0],
                 'roundResults'=>$rounds,'playerStats'=>$playerStats,'events'=>[]],
             'player_performance'=>$performance];

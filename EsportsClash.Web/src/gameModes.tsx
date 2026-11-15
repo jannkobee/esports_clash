@@ -4,7 +4,6 @@ export interface GameModes { active: 'fps'; fps_enabled: boolean; moba_enabled: 
 const defaults: GameModes = { active: 'fps', fps_enabled: true, moba_enabled: false, historical_replays_enabled: true };
 const Context = createContext(defaults);
 export const useGameModes = () => useContext(Context);
-export const isMobaReference = (kind?: string | null) => ['avatars', 'items', 'releases', 'laboratory', 'catalog'].includes(kind ?? '');
 
 export function GameModesProvider({ children }: { children: ReactNode }) {
   const [modes, setModes] = useState(defaults);

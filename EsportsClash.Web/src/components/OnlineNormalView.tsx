@@ -25,7 +25,7 @@ interface Match { id: string; status: string; sequence: number; error?: string;
     intelligence?:{controller:string;release?:{id:string;qualification?:string;generation?:number}|null} }; result?: { winner: string; report?: FpsMatchReport; execution?:{mode:string;notice?:string} } }
 interface Dashboard {
   club: { id: number; name: string; tag?: string | null; revision: number; lineup: { instance_id: string }[] };
-  cards: { id: string; training_xp: number; form?:PlayerFormData; recent_rating?: number | null; recent_form_rating?: number; recent_form?: ('W'|'L')[]; definition: { id: string; name: string; preferredRole?: string; role?: string; playableRoles?: string[]; ovr: number; wage?:number; nationality?:{code:string;name:string}; stats?:Record<string,number> } }[];
+  cards: { id: string; training_xp: number; form?:PlayerFormData; recent_rating?: number | null; recent_form_rating?: number; recent_form?: ('W'|'L')[]; definition: { id: string; name: string; ovr: number; wage?:number; nationality?:{code:string;name:string}; stats?:Record<string,number> } }[];
   ticket?: { status: string; match_id?: string }; matches: Match[];
   scrimmage_ticket?: { status: string; rating: number; tier: number; fixture_id?: number | null };
 }
@@ -121,7 +121,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
     if (session && initialMatchId) void openMatch(initialMatchId);
   }, [initialMatchId, session]);
 
-  if (!isCloudPersistenceConfigured()) return <p className="rounded-xl bg-slate-900 p-5 text-sm text-slate-300">Open the local Docker app at localhost:8088 for server-owned Normal matches.</p>;
+  if (!isCloudPersistenceConfigured()) return <p className="cm-panel cm-panel-body text-sm cm-muted">Open the local Docker app at localhost:8088 for server-owned Normal matches.</p>;
   if (!session) return <section className="club-panel"><h2>Open your club</h2><p className="club-help mb-3">Sign in to manage your fixtures and match orders.</p><button className={button} onClick={() => openAuthentication('sign-in', 'play')}>Go to sign-in</button></section>;
   return <div className="club-workspace space-y-5 pb-10">
     {!broadcastOnly&&<section className="club-panel club-account club-account--signed-in">
@@ -136,7 +136,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         {(['blue', 'red'] as const).map(side => {
           const club = selected.plan.fixture?.clubs[side];
           return <span key={side} className="inline-flex items-center gap-2">
-            {side === 'red' && <span className="text-slate-400">vs</span>}
+            {side === 'red' && <span className="cm-muted">vs</span>}
             {club?.crest && club.colors && <ClubCrest crest={club.crest} colors={club.colors} logo={club.logo} />}
             {selected.plan.clubs[side]}
             {selected.plan.bot_sides?.includes(side) && <span className="cm-badge cm-badge-blue text-[9px]">BOT</span>}
@@ -153,7 +153,7 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         />
         : <p className="club-help">{selected.status === 'completed' ? 'The completed FPS match has no verified replay report.' : 'The FPS match report will appear when server simulation finishes.'}</p>
         : <>
-      {selected.error && <p className="text-sm text-red-300">{selected.error}</p>}
+      {selected.error && <p className="text-sm cm-error-text">{selected.error}</p>}
       <p className="club-notice">This archived match uses a legacy ruleset. Historical results and fixture reports remain recorded below.</p>
       </>}
       {selected.status==='completed'&&selected.plan.fixture?.id&&<FixtureReport id={selected.plan.fixture.id}/>}
@@ -257,16 +257,16 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
           await act('/online/club', { lineup, revision: data.club.revision, ...(scheduled ? {} : { name: clubName }) }, 'PUT', 'Default lineup saved.');
         }
       }}>
-        {!scheduled && <label className="mt-3 block text-xs">Club name<input required minLength={2} maxLength={80} value={clubName} onChange={event => setClubName(event.target.value)} className="ml-3 max-w-full rounded bg-slate-950 p-2" /></label>}
+        {!scheduled && <label className="mt-3 block text-xs">Club name<input required minLength={2} maxLength={80} value={clubName} onChange={event => setClubName(event.target.value)} className="cm-input ml-3 max-w-full" /></label>}
         <SquadRoster cards={data.cards} lineup={lineup} saved={editingFixture?.orders??data.club.lineup} onChange={setLineup} busy={busy||(!editingFixture&&(data.ticket?.status==='queued'||data.scrimmage_ticket?.status==='queued'))} fixture={!!editingFixture} onReset={()=>setLineup(editingFixture?.orders??data.club.lineup)}/>
         {editingFixture&&<button type="button" className="cm-btn" onClick={()=>{setEditingFixture(null);setClubTab('calendar');}}>Back to fixtures</button>}
       </form>
       {!scheduled && <div className="mt-4 flex flex-wrap items-center gap-3">
         <button className={button} disabled={busy || data.ticket?.status === 'queued' || data.matches.some(match => ['allocated', 'running'].includes(match.status))} onClick={() => void act('/online/queue')}>Find opponent</button>
-        {data.ticket?.status === 'queued' && <><p className="text-sm text-amber-200">Searching for another manager. If no one joins in 15 seconds, we’ll match you with an available bot.</p><button className={button} onClick={() => void act('/online/queue', undefined, 'DELETE')}>Leave queue</button></>}
+        {data.ticket?.status === 'queued' && <><p className="text-sm text-[var(--hx-copper)]">Searching for another manager. If no one joins in 15 seconds, we’ll match you with an available bot.</p><button className={button} onClick={() => void act('/online/queue', undefined, 'DELETE')}>Leave queue</button></>}
       </div>}
     </section>}
     {!broadcastOnly && data && session && (!scheduled || clubTab === 'lineup') && !editingFixture && <FpsTacticalSystemEditor session={session} players={data.cards}/>}
-    {!scheduled && !!data?.matches.length && <section className="rounded-2xl border border-slate-800 bg-slate-900 p-4"><h3 className="font-black">Match history</h3><div className="mt-3 flex flex-wrap gap-2">{data.matches.map(match => <button key={match.id} className={button} onClick={() => void openMatch(match.id)}>{match.status} · {match.id.slice(0, 8)}</button>)}</div></section>}
+    {!scheduled && !!data?.matches.length && <section className="cm-panel cm-panel-body"><h3 className="font-black">Match history</h3><div className="mt-3 flex flex-wrap gap-2">{data.matches.map(match => <button key={match.id} className={button} onClick={() => void openMatch(match.id)}>{match.status} · {match.id.slice(0, 8)}</button>)}</div></section>}
   </div>;
 }

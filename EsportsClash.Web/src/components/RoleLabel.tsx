@@ -1,10 +1,10 @@
-import {Shield,Swords,ScanEye,Sparkles,Crosshair,HeartHandshake,Radio,ChartNoAxesCombined,Video,Mic,Gavel,Eye,BriefcaseBusiness,GraduationCap,HeartPulse,Brain,UserRound,Flag,Trophy,Gamepad2} from 'lucide-react';
+import {HeartHandshake,Radio,ChartNoAxesCombined,Video,Mic,Gavel,Eye,BriefcaseBusiness,GraduationCap,HeartPulse,Brain,UserRound,Flag,Trophy,Gamepad2,ScanEye} from 'lucide-react';
 import './role-label.css';
 
 const roles={
-  tank:[Shield,'Tank'],fighter:[Swords,'Fighter'],assassin:[ScanEye,'Assassin'],mage:[Sparkles,'Mage'],marksman:[Crosshair,'Marksman'],support:[HeartHandshake,'Support'],
+  support:[HeartHandshake,'Support'],
   caster:[Radio,'Caster'],analyst:[ChartNoAxesCombined,'Analyst'],streamer:[Video,'Streamer'],host:[Mic,'Host'],referee:[Gavel,'Referee'],observer:[Eye,'Observer'],manager:[BriefcaseBusiness,'Manager'],
-  player:[UserRound,'Player'],organizer:[Flag,'Organizer'],tournament:[Trophy,'Tournament'],game:[Gamepad2,'Arena game'],
+  player:[UserRound,'Player'],organizer:[Flag,'Organizer'],tournament:[Trophy,'Tournament'],game:[Gamepad2,'Tactical FPS'],
   general_manager:[BriefcaseBusiness,'General manager'],player_agent:[BriefcaseBusiness,'Player agent'],scout:[ScanEye,'Scout'],sponsor:[Flag,'Sponsor'],psychologist:[Brain,'Team psychologist'],
   head_coach:[GraduationCap,'Head coach'],assistant_coach:[GraduationCap,'Assistant coach'],meta_analyst:[ChartNoAxesCombined,'Meta analyst'],performance_coach:[HeartPulse,'Performance coach'],team_psychologist:[Brain,'Team psychologist'],
 } as const;

@@ -1,3 +1,6 @@
+import {FPS_T_POSITIONS,FPS_CT_POSITIONS} from './fps/fpsPlayerArchitecture.ts';
+import {liveActorSolids} from './fps/fpsLiveMap.ts';
+import {liveGroundHeight,liveTerrainPathClear} from './fps/fpsLiveTerrain.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createFpsLearningModel,loadFpsLearningModel,fpsLearningModelHash,learnFpsActionValue,applyFpsLearningRound,
@@ -12,8 +15,8 @@ import {segmentHitsWall} from './fps/fpsSpatialWorld.ts';
 const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
 const coach={...plan,rigidity:.7,communication:.7,leadership:.7,adaptability:.7,development:.5};
 const chemistry={trust:.6,communication:.6,understanding:.6,leadershipAcceptance:.6,roleCompetition:.3};
-const cards=Array.from({length:10},(_,i)=>({id:`learner-${i}`,name:`Player ${i}`,stats:{lan:80,iq:80,tf:80,clu:80,sta:80,flx:80,ldr:80}}));
-const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
+const cards=Array.from({length:10},(_,i)=>({id:`learner-${i}`,name:`Player ${i}`,stats:{rifling:80,positioning:80,entry:80,sniping:80,utility:80,shotcalling:80}}));
+const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,assignments:{t:FPS_T_POSITIONS[(i)%5],ct:FPS_CT_POSITIONS[(i)%5]},personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
 const profiles=Object.fromEntries(cards.map(p=>[p.id,generateFpsSkillProfile(p.id,1337,'2026-11-11T00:00:00Z')]));
 const game=learning=>new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity,{skillProfiles:profiles,learning});
 const actor={id:'anonymous',team:'red',attacking:true,x:-19,z:0,hp:100,yaw:0,role:'trade',bomb:false,ammo:20,reload:0};
@@ -61,13 +64,23 @@ test('learning validates an entire round before updating and deduplicates comple
 });
 
 test('navigation alternatives are collision-safe routes to the existing goal and use bounded features',()=>{
-  for(const c of [context(),context({actor:{...actor,x:19,z:12},goal:{x:23,z:17.9}})]){
-    const choices=liveNavigationChoices(c);assert.ok(choices.length>=2&&choices.length<=5);
+  // Parapets and the covered B alley may leave one legal local action. Open
+  // site pockets must still offer alternatives; never invent a route through a wall.
+  for(const [c,minimum] of [[context(),1],[context({actor:{...actor,x:19,z:12},goal:{x:23,z:17.9}}),1],
+    [context({actor:{...actor,x:-30,z:23},goal:{x:-23,z:18.1}}),2],
+    [context({actor:{...actor,x:23,z:29},goal:{x:23,z:17.9}}),2]]){
+    const choices=liveNavigationChoices(c);assert.ok(choices.length>=minimum&&choices.length<=5);
     for(const choice of choices){
       assert.equal(choice.features.length,FPS_LEARNING_FEATURES);
       assert.ok(choice.features.every(n=>Number.isFinite(n)&&Math.abs(n)<=1));
       let previous=c.actor;
-      for(const point of choice.path){assert.ok(!LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(previous,point,w,LIVE_ACTOR_RADIUS)));previous=point;}
+      for(const point of choice.path){
+        assert.ok(liveTerrainPathClear(previous,point));
+        const steps=Math.max(1,Math.ceil(distance(previous,point)/.1));
+        for(let i=0;i<=steps;i++){const t=i/steps,p={x:previous.x+(point.x-previous.x)*t,z:previous.z+(point.z-previous.z)*t,level:i===steps?point.level:previous.level};
+          assert.ok(!liveActorSolids(p,liveGroundHeight(p)).some(w=>segmentHitsWall(p,p,w,LIVE_ACTOR_RADIUS-.001)));}
+        previous=point;
+      }
       assert.ok(distance(previous,c.goal)<.01);
     }
   }

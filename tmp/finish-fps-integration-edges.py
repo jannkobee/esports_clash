@@ -1,0 +1,19 @@
+from pathlib import Path
+import re
+p=Path('EsportsClash.Api/tests/Feature/ClubManagementFlowsTest.php');s=p.read_text(encoding='utf-8');a=s.index('    private function workerResult(');z=s.index('    private function allocatedMatch(',a);s=s[:a]+'''    private function workerResult(OnlineMatch $match): array
+    {
+        return \\Tests\\Support\\FpsWorkerResult::forMatch($match);
+    }
+
+'''+s[z:];p.write_bytes(s.replace('\r\n','\n').encode('utf-8'))
+p=Path('EsportsClash.Api/app/Services/WorldPlayerProfiles.php');s=p.read_text(encoding='utf-8').replace("if($identity)$out['fpsIdentity']=[...app(FpsIdentityProfiles::class)->scouting($identity),'assignments'=>app(FpsIdentityProfiles::class)->assignmentsFor($player)];", "if($identity){$out['fpsIdentity']=[...app(FpsIdentityProfiles::class)->scouting($identity),'assignments'=>app(FpsIdentityProfiles::class)->assignmentsFor($player)];$out['personality']=$out['fpsIdentity']['personality']['name'];}");p.write_bytes(s.replace('\r\n','\n').encode('utf-8'))
+# No-club and national lineups use the same persistent player dimensions and neutral team instructions.
+p=Path('EsportsClash.Api/app/Services/FpsIdentityEngine.php');s=p.read_text(encoding='utf-8');s=s.replace("'plan'=>self::PLAN,'chemistry'=>self::CHEMISTRY];", "'plan'=>self::PLAN,'culture'=>self::PLAN,'coachKey'=>'neutral-v4','clubId'=>null,'chemistry'=>self::CHEMISTRY];")
+s=s.replace("foreach($slots as $slot){$id=$slot['instance_id'];$players[$id]=['id'=>$id,'personality'=>app(FpsPlayerArchitecture::class)->generate($id),'assignments'=>$assignments[$id],'dna'=>$profiles->dna($id),'roleSuitability'=>.5,'familiarity'=>0];}", """foreach($slots as $slot){$id=$slot['instance_id'];$player=OwnedPlayerCard::find($id);if($player)$profiles->initialize($player,$templates[$player->definition_id]??[]);$row=DB::table('fps_player_identities')->where('player_id',$id)->first();$players[$id]=['id'=>$id,'personality'=>$row?json_decode($row->personality,true):app(FpsPlayerArchitecture::class)->generate($id),'assignments'=>$assignments[$id],'dna'=>$row?json_decode($row->dna,true):$profiles->dna($id),'roleSuitability'=>.5,'familiarity'=>0];}""")
+s=s.replace("            $team=$pin['teams'][$side]; $ids=", "            $team=$pin['teams'][$side];if(empty($team['clubId']))continue; $ids=")
+p.write_bytes(s.replace('\r\n','\n').encode('utf-8'))
+# Preserve public dimensional values in the live snapshot as well as natural labels.
+p=Path('EsportsClash.Web/src/fps/fpsLiveSimulation.ts');s=p.read_text(encoding='utf-8').replace('personality:string;position?:','personality:string;personalityDimensions?:import(\'./fpsPlayerArchitecture.ts\').FpsPersonality;position?:').replace('personality:p.personality,position:', 'personality:p.personality,personalityDimensions:{...this.identity.players[p.id].personality},position:');p.write_bytes(s.replace('\r\n','\n').encode('utf-8'))
+p=Path('EsportsClash.Web/src/components/FpsMatchView.tsx');s=p.read_text(encoding='utf-8');s="import {FPS_POSITION_LABELS} from '../fps/fpsPlayerArchitecture';\n"+s;s=s.replace('{FPS_ROLE_LABELS[snapshot.tactics.role]}', '{snapshot.tactics.position?FPS_POSITION_LABELS[snapshot.tactics.position]:FPS_ROLE_LABELS[snapshot.tactics.role]}');p.write_bytes(s.replace('\r\n','\n').encode('utf-8'))
+# Exercise every complete combination through live decisions and a recorded round, not just metadata.
+p=Path('EsportsClash.Web/src/fpsIdentity.test.mjs');s=p.read_text(encoding='utf-8').replace('sim.step();\n  for(const position', "sim.step();sim.remaining=.01;sim.step();for(let tick=0;tick<30;tick++)sim.step();\n  const match=simulateFpsMatch(cards.slice(0,5),cards.slice(5),'breakwater',414,{identityExperiment:ctx,maxRounds:1,roundSeconds:8,overtimeEnabled:false});assert.equal(match.totalRounds,1);\n  for(const position");p.write_bytes(s.replace('\r\n','\n').encode('utf-8'))

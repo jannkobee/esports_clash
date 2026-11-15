@@ -1,0 +1,67 @@
+﻿{
+    "exitCode":  0,
+    "finishedUtc":  "2026-11-14T05:42:39.7286036Z",
+    "startedUtc":  "2026-11-14T05:41:46.0079918Z",
+    "sourceAfter":  [
+                        {
+                            "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveSimulation.ts",
+                            "Hash":  "52B755E9B93E084A8528FF7FCEB2430FDA8AE7D344129AD75099649E06037801"
+                        },
+                        {
+                            "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveGrenades.ts",
+                            "Hash":  "D7FEDCB5DEEF633CD3DA621219AF33735A52FFA12446C0F37CB6E58A23C7CD15"
+                        },
+                        {
+                            "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveLineups.ts",
+                            "Hash":  "C0F405313116DA69FB77814AAA90D8865645770F31E037B9A0B9B99A7A5F42DC"
+                        },
+                        {
+                            "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsSmokeLineupDefinitions.ts",
+                            "Hash":  "4130E1A4779576D3A5B7AD06708BD1133EB6866FA0BC4C4DB4B22DF636C91BDC"
+                        },
+                        {
+                            "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveMap.ts",
+                            "Hash":  "C6AB4AE205BDE928ABCF50355ECE01411CDF97EE39F0637013A8BE33EE127FD5"
+                        },
+                        {
+                            "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveTerrain.ts",
+                            "Hash":  "B689D311EC9B551334C9506662565549E31E5F00A3DE0D038AEB167229F1B487"
+                        },
+                        {
+                            "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveTactics.ts",
+                            "Hash":  "F1892A553EDD1E04A8C1D5991073312794F6C0A52DB37350434C19076660FB3C"
+                        }
+                    ],
+    "sourceBefore":  [
+                         {
+                             "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveSimulation.ts",
+                             "Hash":  "52B755E9B93E084A8528FF7FCEB2430FDA8AE7D344129AD75099649E06037801"
+                         },
+                         {
+                             "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveGrenades.ts",
+                             "Hash":  "D7FEDCB5DEEF633CD3DA621219AF33735A52FFA12446C0F37CB6E58A23C7CD15"
+                         },
+                         {
+                             "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveLineups.ts",
+                             "Hash":  "C0F405313116DA69FB77814AAA90D8865645770F31E037B9A0B9B99A7A5F42DC"
+                         },
+                         {
+                             "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsSmokeLineupDefinitions.ts",
+                             "Hash":  "4130E1A4779576D3A5B7AD06708BD1133EB6866FA0BC4C4DB4B22DF636C91BDC"
+                         },
+                         {
+                             "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveMap.ts",
+                             "Hash":  "C6AB4AE205BDE928ABCF50355ECE01411CDF97EE39F0637013A8BE33EE127FD5"
+                         },
+                         {
+                             "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveTerrain.ts",
+                             "Hash":  "B689D311EC9B551334C9506662565549E31E5F00A3DE0D038AEB167229F1B487"
+                         },
+                         {
+                             "Path":  "C:\\Users\\User\\Documents\\Code Projects\\Personal\\Teamfight\\EsportsClash.Web\\src\\fps\\fpsLiveTactics.ts",
+                             "Hash":  "F1892A553EDD1E04A8C1D5991073312794F6C0A52DB37350434C19076660FB3C"
+                         }
+                     ],
+    "command":  "node --experimental-strip-types scripts/benchmark-live-fps.mjs --steps=18000 --seeds=17,42,1337 --audit=true",
+    "sourceUnchanged":  true
+}
