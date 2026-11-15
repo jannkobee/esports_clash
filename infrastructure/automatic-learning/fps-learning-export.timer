@@ -1,0 +1,11 @@
+[Unit]
+Description=Periodically push automatic FPS learning reports to Git
+
+[Timer]
+OnBootSec=5m
+OnUnitActiveSec=30m
+AccuracySec=1m
+Unit=fps-learning-export.service
+
+[Install]
+WantedBy=timers.target

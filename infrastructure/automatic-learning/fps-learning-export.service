@@ -1,0 +1,13 @@
+[Unit]
+Description=Export automatic FPS learning reports to Git main branch
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/opt/fps-learning
+Environment=HOME=/home/ubuntu
+Environment=LEARNING_DATA=/opt/fps-learning/EsportsClash.Api/storage/app/automatic-learning
+Environment=LEARNING_GIT_BRANCH=main
+ExecStart=/usr/bin/node /opt/fps-learning/infrastructure/automatic-learning/export.mjs

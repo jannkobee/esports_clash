@@ -20,6 +20,9 @@ export function upgradeTrainingBundle(value){
   }
   return validateBundle(value);
 }
+export function isUntrainedBundle(value){
+  return (value?.navigation?.updates??0)===0&&(value?.combat?.updates??0)===0&&(value?.movement?.updates??0)===0;
+}
 export function validateBundle(value,engine=engineHash()){
   if(value?.version!==2||value.engine!==engine||!loadFpsLearningModel(value.navigation)||!loadFpsMechanicsModel(value.combat)||!loadFpsMovementModel(value.movement))throw Error('Incompatible or invalid learning bundle');
   return structuredClone(value);

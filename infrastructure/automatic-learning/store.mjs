@@ -4,7 +4,7 @@ import {createWriteStream} from 'node:fs';
 import {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 import {createGzip} from 'node:zlib';
-import {baseline,validateBundle,upgradeTrainingBundle,applySample,sha} from './model.mjs';
+import {baseline,validateBundle,upgradeTrainingBundle,isUntrainedBundle,applySample,sha} from './model.mjs';
 export function atomic(path,value){
   const bytes=typeof value==='string'?value:JSON.stringify(value,null,2)+'\n';
   writeFileSync(path+'.tmp',bytes);
@@ -27,7 +27,14 @@ export class Store{
       CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY,body TEXT NOT NULL,result TEXT);`);
     const current=this.get('model');
     if(!current)this.set('model',baseline());
-    else this.set('model',upgradeTrainingBundle(current));
+    else{
+      try{this.set('model',upgradeTrainingBundle(current));}
+      catch(error){
+        if((this.get('completed')??0)===0&&isUntrainedBundle(current)&&!this.get('cycle')&&!this.get('activeJob')){
+          this.set('model',baseline());
+        }else throw error;
+      }
+    }
     for(const key of ['cycle']){
       const cycle=this.get(key);
       if(cycle?.model&&cycle?.incumbent){

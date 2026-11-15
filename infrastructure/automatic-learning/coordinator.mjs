@@ -7,30 +7,55 @@ import {Store,atomic} from './store.mjs';
 import {root,baseline,approved,sha} from './model.mjs';
 const config=JSON.parse(readFileSync(root+'EsportsClash.Api/AutomaticLearning/config/default.json'));
 const directory=process.env.LEARNING_DATA??root+'EsportsClash.Api/storage/app/automatic-learning';
-const store=new Store(directory);let stopping=false,child,healthySince=0;
+const minBurstPercent=process.env.LEARNING_MIN_BURST_PERCENT!==undefined&&process.env.LEARNING_MIN_BURST_PERCENT!==''?Number(process.env.LEARNING_MIN_BURST_PERCENT):config.minimumBurstPercent;
+const healthyResumeSeconds=process.env.LEARNING_HEALTHY_RESUME_SECONDS!==undefined&&process.env.LEARNING_HEALTHY_RESUME_SECONDS!==''?Number(process.env.LEARNING_HEALTHY_RESUME_SECONDS):config.healthyResumeSeconds;
+const failureLimit=Math.max(1,config.healthFailureLimit??3);
+let store;
+try{store=new Store(directory);}catch(error){
+  try{atomic(directory+'/heartbeat.json',{at:new Date().toISOString(),paused:'model-incompatible',error:String(error?.message??error),healthySince:0,completed:0});}catch{}
+  throw error;
+}
+let stopping=false,child,healthySince=0,running=false,consecutiveFailures=0;
 process.on('SIGTERM',()=>{stopping=true;child?.kill('SIGTERM');});process.on('SIGINT',()=>{stopping=true;child?.kill('SIGTERM');});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function writeHeartbeat(reason){
+  atomic(directory+'/heartbeat.json',{at:new Date().toISOString(),paused:reason,healthySince,completed:store.get('completed')??0});
+}
 async function healthy(){
   const disk=statfsSync(directory);let reason=null;
   if(existsSync(directory+'/PAUSE'))reason='manual';
   if(freemem()/totalmem()<config.minimumMemoryFraction)reason='memory';
   if(disk.bavail/disk.blocks<config.minimumDiskFraction)reason='disk';
   if(process.env.LEARNING_REQUIRE_TELEMETRY==='true'){
-    try{const t=JSON.parse(readFileSync(directory+'/telemetry.json'));if(Date.now()-t.at>120000||t.burstPercent<config.minimumBurstPercent||!t.applicationHealthy||t.memoryFraction<config.minimumMemoryFraction)reason='host-health';}catch{reason='missing-telemetry';}
+    try{const t=JSON.parse(readFileSync(directory+'/telemetry.json'));if(Date.now()-t.at>180000||t.burstPercent<minBurstPercent||!t.applicationHealthy||t.memoryFraction<config.minimumMemoryFraction)reason='host-health';}catch{reason='missing-telemetry';}
   }
-  if(reason)healthySince=0;else healthySince ||=Date.now();
-  atomic(directory+'/heartbeat.json',{at:new Date().toISOString(),paused:reason,healthySince,completed:store.get('completed')??0});
-  return !reason&&Date.now()-healthySince>=config.healthyResumeSeconds*1000;
+  const immediate=reason==='manual'||reason==='memory'||reason==='disk';
+  if(reason){
+    consecutiveFailures++;
+    if(!running||immediate||consecutiveFailures>=failureLimit){healthySince=0;running=false;}
+    else reason=null;
+  }else{
+    consecutiveFailures=0;
+    healthySince ||=Date.now();
+  }
+  const ready=!reason&&Date.now()-healthySince>=healthyResumeSeconds*1000;
+  if(ready)running=true;
+  writeHeartbeat(reason);
+  return ready;
 }
 function execute(job){
   return new Promise((resolve,reject)=>{
     child=fork(new URL('./match.mjs',import.meta.url),[],{stdio:['ignore','inherit','inherit','ipc']});let result;
     const timer=setTimeout(()=>child.kill('SIGKILL'),(config.maxMatchWallSeconds+30)*1000);
+    // Keep heartbeat fresh during long matches so host-health.py and Docker healthcheck do not trip at 120s.
+    const heartbeatTimer=setInterval(()=>{try{writeHeartbeat(null);}catch{}},20000);
     child.on('message',message=>{try{
       if(message.type==='record')store.append(message.record,job.mode==='learn');
       if(message.type==='result')result=message.result;
     }catch(e){child.kill('SIGKILL');reject(e);}});
-    child.on('error',reject);child.on('exit',()=>{clearTimeout(timer);resolve(result??{status:'aborted',failure:'worker-exit',rounds:0});});child.send(job);
+    child.on('error',error=>{clearTimeout(timer);clearInterval(heartbeatTimer);reject(error);});
+    child.on('exit',()=>{clearTimeout(timer);clearInterval(heartbeatTimer);resolve(result??{status:'aborted',failure:'worker-exit',rounds:0});});
+    child.send(job);
   });
 }
 export function interval(values){
@@ -75,13 +100,17 @@ function ablationReport(cycle,phase){
   }
   return {...interval(values),complete,groups:Object.fromEntries(Object.entries(groups).map(([key,scores])=>[key,interval(scores)])),candidateSides,roundSides};
 }
+async function runGitExport(){
+  if(process.env.LEARNING_GIT_EXPORT!=='true')return false;
+  const code=await new Promise(resolve=>{const exporter=fork(new URL('./export.mjs',import.meta.url),[],{stdio:'inherit'});exporter.on('exit',resolve);exporter.on('error',()=>resolve(1));});
+  return code===0;
+}
 try{
   while(!stopping){
     await store.archive(new Date(),config.retentionDays);
-    const exportDay=new Date().toISOString().slice(0,10);
-    if(process.env.LEARNING_GIT_EXPORT==='true'&&store.get('exportDay')!==exportDay){
-      const code=await new Promise(resolve=>{const exporter=fork(new URL('./export.mjs',import.meta.url),[],{stdio:'inherit'});exporter.on('exit',resolve);exporter.on('error',()=>resolve(1));});
-      if(code===0)store.set('exportDay',exportDay);
+    const exportHour=new Date().toISOString().slice(0,13);
+    if(process.env.LEARNING_GIT_EXPORT==='true'&&store.get('exportHour')!==exportHour){
+      if(await runGitExport())store.set('exportHour',exportHour);
     }
     if(!await healthy()){await sleep(10000);continue;}
     let cycle=store.get('cycle'),job=store.get('activeJob');
@@ -134,6 +163,7 @@ try{
       }
       atomic(directory+'/candidates/'+cycle.id+'.json',{model:cycle.model,sha256:sha(cycle.model),report:cycle.report});
       atomic(directory+'/reports/evaluation-'+cycle.id+'.json',cycle.report);store.set('cycle',null);
+      await runGitExport();
     }
   }
 }finally{store.close();}
