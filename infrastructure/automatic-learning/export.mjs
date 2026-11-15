@@ -1,7 +1,8 @@
 import {execFileSync} from 'node:child_process';
 import {mkdirSync,cpSync,existsSync,readdirSync,readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
-import {root} from './model.mjs';
+import {fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('../../',import.meta.url));
 const directory=process.env.LEARNING_DATA??root+'EsportsClash.Api/storage/app/automatic-learning';
 const checkout=resolve(directory,'exports/checkout');
 const branch=process.env.LEARNING_GIT_BRANCH||'main';
@@ -10,7 +11,7 @@ const git=(...args)=>execFileSync('git',args,{cwd:checkout,stdio:'pipe',env:gitE
 function resolveRemote(){
   if(process.env.LEARNING_GIT_REMOTE)return process.env.LEARNING_GIT_REMOTE;
   try{
-    const origin=execFileSync('git',['-C',root,'remote','get-url','origin'],{stdio:'pipe',env:gitEnv,encoding:'utf8',timeout:10000}).trim();
+    const origin=execFileSync('git',['-c','safe.directory=*','-C',root,'remote','get-url','origin'],{stdio:'pipe',env:gitEnv,encoding:'utf8',timeout:10000}).trim();
     if(origin)return origin;
   }catch{}
   return 'https://github.com/jannkobee/esports_clash.git';
