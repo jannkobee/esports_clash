@@ -2,7 +2,7 @@ import type {FpsPoint} from './fpsSpatialWorld.ts';
 
 export interface LiveSmokeLineup {
   id:string;name:string;phase:'opening'|'execute'|'control';attacking:boolean;site:'A'|'B'|'Mid';
-  position:FpsPoint;target:FpsPoint;
+  position:FpsPoint;target:FpsPoint;mapId?:'fontessa'|'spillway';
 }
 /** Authored map knowledge, not observations of hidden enemies. Positions are
  * actual dry launch points; targets are useful crossings at their real floor. */

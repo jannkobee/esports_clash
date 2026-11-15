@@ -60,7 +60,7 @@ test('surface maps repeat, share GPU resources across colors, and reproduce dete
         assert.ok(Math.abs(length - 1) < .015); assert.equal(pixels[at + 3], 255);
       }
     }
-    assert.equal(a.scene.textures.length, 12, 'Each surface owns one shared albedo and one shared normal map');
+    assert.equal(a.scene.textures.length, Object.keys(LIVE_SURFACE_METRES).length * 2, 'Each surface owns one shared albedo and one shared normal map');
   } finally { a.dispose(); b.dispose(); }
 });
 

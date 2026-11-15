@@ -1,6 +1,7 @@
-import { LIVE_FPS_MAP, distance, liveSightline } from './fpsLiveMap.ts';
+import { FONTESSA_MAP_RUNTIME, distance } from './fpsLiveMap.ts';
+import { getLiveMapRuntime } from './fpsLiveMapRegistry.ts';
+import type { LiveMapRuntime } from './fpsLiveMapTypes.ts';
 import { segmentHitsWall } from './fpsSpatialWorld.ts';
-import { LIVE_TERRAIN_SOLIDS } from './fpsLiveTerrain.ts';
 import type { LivePlayer, LiveSnapshot } from './fpsLiveSimulation.ts';
 import type { FpsTeamId } from './fpsTypes.ts';
 
@@ -68,7 +69,7 @@ export interface DirectorDecision {
 }
 
 /** Spectator-only grouping: connected exchanges form one fight, not one fight per pair. */
-function simultaneousFights(snapshot:LiveSnapshot,preview?:LiveSnapshot):{x:number;z:number;points:{x:number;z:number}[]}[] {
+function simultaneousFights(snapshot:LiveSnapshot,preview?:LiveSnapshot,map:LiveMapRuntime=getLiveMapRuntime(snapshot.mapId??'fontessa')):{x:number;z:number;points:{x:number;z:number}[]}[] {
   const alive=snapshot.players.filter(p=>p.hp>0);
   const groups:{ids:Set<string>;x:number;z:number;weight:number}[]=[];
   for(let i=0;i<alive.length;i++)for(let j=i+1;j<alive.length;j++){
@@ -77,7 +78,7 @@ function simultaneousFights(snapshot:LiveSnapshot,preview?:LiveSnapshot):{x:numb
     const imminent=preview?.events.some(e=>e.kind==='kill'&&e.time>snapshot.time&&e.time<snapshot.time+.9
       &&((e.actorId===a.id&&e.targetId===b.id)||(e.actorId===b.id&&e.targetId===a.id)));
     const shooting=snapshot.time-a.lastShot<.65||snapshot.time-b.lastShot<.65;
-    if(!(imminent||shooting)||!liveSightline(a,b,(a.crouch?1.08:1.6)+(a.jumpY??0),(b.crouch?1.08:1.6)+(b.jumpY??0)))continue;
+    if(!(imminent||shooting)||!map.sightline(a,b,(a.crouch?1.08:1.6)+(a.jumpY??0),(b.crouch?1.08:1.6)+(b.jumpY??0)))continue;
     const x=(a.x+b.x)/2,z=(a.z+b.z)/2,weight=imminent?3:1;
     const touching=groups.filter(g=>g.ids.has(a.id)||g.ids.has(b.id)||distance(g,{x,z})<10);
     if(!touching.length){groups.push({ids:new Set([a.id,b.id]),x,z,weight});continue;}
@@ -107,9 +108,6 @@ export const THIRD_PERSON_RIGHT_OFFSET = 0.52;
 export const THIRD_PERSON_MIN_BACK = 0.22;
 export const THIRD_PERSON_LOOK_AHEAD = 3.4;
 
-const MAP_LIMIT_X = 33.5;
-const MAP_LIMIT_Z = 42.5;
-
 const clamp = (value: number, min: number, max: number): number =>
   Math.max(min, Math.min(max, value));
 
@@ -137,8 +135,8 @@ export function isActivelyPlanting(player: Pick<LivePlayer, 'hp' | 'bomb' | 'att
   return player.hp > 0 && player.bomb && player.attacking && (isPlantingAction(player.action) || player.channel > 0);
 }
 
-export function resolveBombSite(spot: { x: number; z: number }): 'A' | 'B' {
-  return distance(spot, LIVE_FPS_MAP.sites.A) <= distance(spot, LIVE_FPS_MAP.sites.B) ? 'A' : 'B';
+export function resolveBombSite(spot: { x: number; z: number }, runtime: LiveMapRuntime = FONTESSA_MAP_RUNTIME): 'A' | 'B' {
+  return distance(spot, runtime.definition.sites.A) <= distance(spot, runtime.definition.sites.B) ? 'A' : 'B';
 }
 
 function resetForNewMatch(state: DirectorState, snapshot: LiveSnapshot): void {
@@ -210,8 +208,9 @@ export function selectBombPlantPip(snapshot: LiveSnapshot, state: DirectorState)
     snapshot.bomb.status === 'planted' &&
     ((state.lastBombStatus !== undefined && state.lastBombStatus !== 'planted') || Boolean(plantEvent));
 
+  const map = getLiveMapRuntime(snapshot.mapId ?? 'fontessa');
   if (justPlanted) {
-    const site = snapshot.bomb.site ?? resolveBombSite(snapshot.bomb);
+    const site = snapshot.bomb.site ?? resolveBombSite(snapshot.bomb, map);
     state.bombPlantSettledUntil = snapshot.time + PLANT_SETTLE_WINDOW;
     state.bombPlantSettleSite = site;
     state.bombPlantSettleSpot = { x: snapshot.bomb.x, z: snapshot.bomb.z };
@@ -225,7 +224,7 @@ export function selectBombPlantPip(snapshot: LiveSnapshot, state: DirectorState)
   state.lastBombStatus = snapshot.bomb.status;
 
   if (activePlanter) {
-    const site = resolveBombSite(activePlanter);
+    const site = resolveBombSite(activePlanter, map);
     state.bombPlantSettlePlanterId = activePlanter.id;
     state.bombPlantSettlePlanterName = activePlanter.name;
     state.bombPlantSettleTeam = activePlanter.team;
@@ -252,7 +251,7 @@ export function selectBombPlantPip(snapshot: LiveSnapshot, state: DirectorState)
       planterId: state.bombPlantSettlePlanterId,
       planterName: state.bombPlantSettlePlanterName,
       team: state.bombPlantSettleTeam ?? snapshot.attackTeam,
-      site: state.bombPlantSettleSite ?? snapshot.bomb.site ?? resolveBombSite(snapshot.bomb),
+      site: state.bombPlantSettleSite ?? snapshot.bomb.site ?? resolveBombSite(snapshot.bomb, map),
       progress: 1,
       duration: PLANT_CHANNEL_DURATION,
       spot: state.bombPlantSettleSpot ?? { x: snapshot.bomb.x, z: snapshot.bomb.z },
@@ -275,6 +274,8 @@ export function scoreDirectorKillPriority(
 ): number {
   if (player.hp <= 0) return -999;
 
+  const map = getLiveMapRuntime(snapshot.mapId ?? 'fontessa');
+  const playerEyeY = (player.crouch ? 1.08 : 1.6) + (player.jumpY ?? map.terrain.groundHeight(player));
   const enemies = snapshot.players.filter((e) => e.hp > 0 && e.team !== player.team);
   const lookX = Math.sin(player.yaw);
   const lookZ = Math.cos(player.yaw);
@@ -286,7 +287,8 @@ export function scoreDirectorKillPriority(
     const dist = distance(player, enemy);
     if (dist < nearestThreat) nearestThreat = dist;
 
-    if (dist < 38 && liveSightline(player, enemy)) {
+    const enemyEyeY = (enemy.crouch ? 1.08 : 1.6) + (enemy.jumpY ?? map.terrain.groundHeight(enemy));
+    if (dist < 38 && map.sightline(player, enemy, playerEyeY, enemyEyeY)) {
       const invLen = dist > 0.01 ? 1 / dist : 0;
       const aimDot = (enemy.x - player.x) * invLen * lookX + (enemy.z - player.z) * invLen * lookZ;
       const sightBase = 5.8 + clamp((34 - dist) / 34, 0, 1) * 2.2;
@@ -327,7 +329,7 @@ export function scoreDirectorKillPriority(
       const dist = distance(player, enemy);
       if (dist > 44 || dist < 0.1) return false;
       const aimDot = ((enemy.x - player.x) * lookX + (enemy.z - player.z) * lookZ) / dist;
-      return aimDot > 0.35 && liveSightline(player, enemy);
+      return aimDot > 0.35 && map.sightline(player, enemy, playerEyeY, (enemy.crouch ? 1.08 : 1.6) + (enemy.jumpY ?? map.terrain.groundHeight(enemy)));
     });
     const watchingDirection = enemies.some((enemy) => {
       const dist = distance(player, enemy);
@@ -350,7 +352,7 @@ export function scoreDirectorKillPriority(
   else if (snapshot.bomb.status === 'planted' && (player.action === 'Retaking' || player.action === 'Holding post-plant')) combatRoleBonus = 1.35;
 
   const targetSite = snapshot.teams[snapshot.attackTeam]?.site ?? snapshot.bomb.site ?? 'A';
-  const siteDist = distance(player, LIVE_FPS_MAP.sites[targetSite]);
+  const siteDist = distance(player, map.definition.sites[targetSite]);
   const attackPushBonus = player.attacking && nearestThreat > 11 && siteDist < 26
     ? clamp((26 - siteDist) / 26, 0, 1) * (player.role === 'entry' || player.bomb ? 0.85 : 0.55)
     : 0;
@@ -383,11 +385,13 @@ export function scoreDirectorKillPriority(
 
 function predictsDirectorFight(player: LivePlayer, snapshot: LiveSnapshot): boolean {
   if (player.hp <= 0) return false;
+  const map = getLiveMapRuntime(snapshot.mapId ?? 'fontessa');
+  const playerEyeY = (player.crouch ? 1.08 : 1.6) + (player.jumpY ?? map.terrain.groundHeight(player));
   const lookX = Math.sin(player.yaw), lookZ = Math.cos(player.yaw);
   return snapshot.players.some((enemy) => {
     if (enemy.hp <= 0 || enemy.team === player.team) return false;
     const dist = distance(player, enemy);
-    if (dist > 23 || !liveSightline(player, enemy)) return false;
+    if (dist > 23 || !map.sightline(player, enemy, playerEyeY, (enemy.crouch ? 1.08 : 1.6) + (enemy.jumpY ?? map.terrain.groundHeight(enemy)))) return false;
     const invLen = dist > 0.01 ? 1 / dist : 0;
     const aimDot = (enemy.x - player.x) * invLen * lookX + (enemy.z - player.z) * invLen * lookZ;
     const enemyAimDot = Math.cos(Math.atan2(player.x - enemy.x, player.z - enemy.z) - enemy.yaw);
@@ -618,9 +622,10 @@ export function chooseDirectorCameraMode(
     followed.action === 'Holding' ||
     followed.action === 'Holding post-plant';
 
-  const followedEyeY = (followed.crouch ? 1.08 : 1.6) + (followed.jumpY ?? 0);
+  const map = getLiveMapRuntime(snapshot.mapId ?? 'fontessa');
+  const followedEyeY = (followed.crouch ? 1.08 : 1.6) + (followed.jumpY ?? map.terrain.groundHeight(followed));
   const enemies = snapshot.players.filter((e) => e.hp > 0 && e.team !== followed.team);
-  const hasSightline = enemies.some((e) => distance(followed, e) < 38 && liveSightline(followed, e, followedEyeY, (e.crouch ? 1.08 : 1.6) + (e.jumpY ?? 0)));
+  const hasSightline = enemies.some((e) => distance(followed, e) < 38 && map.sightline(followed, e, followedEyeY, (e.crouch ? 1.08 : 1.6) + (e.jumpY ?? map.terrain.groundHeight(e))));
   const previewDuel = preview?.events.some((event) => event.kind === 'kill' && (event.actorId === followed.id || event.targetId === followed.id) && event.time > snapshot.time && event.time <= snapshot.time + 1.4)
     || preview?.shots?.some((shot) => shot.actorId === followed.id && shot.time > snapshot.time && shot.time <= snapshot.time + 0.9);
   const imminentContact = Boolean(previewDuel) || enemies.some((e) => distance(followed, e) < 12.5);
@@ -701,41 +706,81 @@ export function evaluateBroadcastDirector(
 }
 
 /** Post-round & landmark compositions: multi-angle framing across sites and mid, smooth drift, clear foregrounds. */
-export function computeCinematicCameraPose(time:number,round:number,site?:'A'|'B'):CameraPose {
-  const area=site??(round%2?'A':'B');
-  const beat=Math.floor(time/4.5+round)%3;
-  const target=beat===2&&!site?{x:0,y:1.5,z:4}:area==='A'?{x:-23,y:2.8,z:25.2}:{x:23,y:1.6,z:20.1};
-  const candidates=beat===2&&!site
-    ?[{x:-4.2,y:3.6,z:-5.5},{x:4.4,y:3.8,z:12.8}]
-    :area==='A'
-      ?[{x:-20.6,y:3.4,z:19.3},{x:-24.2,y:3.5,z:17.2},{x:-17.5,y:3.9,z:29.5}]
-      :[{x:26.7,y:2.6,z:15.5},{x:19.8,y:2.6,z:16.2},{x:27.5,y:3.2,z:25.4}];
-  if(round%2===0)candidates.reverse();
-  const position=candidates.find(point=>liveSightline(point,target,point.y,target.y))??{...candidates[0],y:candidates[0].y+2};
-  const drift=Math.sin(time*.38)*.32;
-  const shifted={x:position.x+drift,y:position.y+Math.cos(time*.24)*.08,z:position.z};
-  return {position:liveSightline(shifted,target,shifted.y,target.y)?shifted:position,target,fov:.82};
+export function computeCinematicCameraPose(
+  time: number,
+  round: number,
+  site?: 'A' | 'B',
+  runtime: LiveMapRuntime = FONTESSA_MAP_RUNTIME,
+): CameraPose {
+  const area = site ?? (round % 2 ? 'A' : 'B');
+  const beat = Math.floor(time / 4.5 + round) % 3;
+  if (runtime.id === 'fontessa') {
+    const target = beat === 2 && !site ? { x: 0, y: 1.5, z: 4 } : area === 'A' ? { x: -23, y: 2.8, z: 25.2 } : { x: 23, y: 1.6, z: 20.1 };
+    const candidates = beat === 2 && !site
+      ? [{ x: -4.2, y: 3.6, z: -5.5 }, { x: 4.4, y: 3.8, z: 12.8 }]
+      : area === 'A'
+        ? [{ x: -20.6, y: 3.4, z: 19.3 }, { x: -24.2, y: 3.5, z: 17.2 }, { x: -17.5, y: 3.9, z: 29.5 }]
+        : [{ x: 26.7, y: 2.6, z: 15.5 }, { x: 19.8, y: 2.6, z: 16.2 }, { x: 27.5, y: 3.2, z: 25.4 }];
+    if (round % 2 === 0) candidates.reverse();
+    const position = candidates.find((point) => runtime.sightline(point, target, point.y, target.y)) ?? { ...candidates[0], y: candidates[0].y + 2 };
+    const drift = Math.sin(time * .38) * .32;
+    const shifted = { x: position.x + drift, y: position.y + Math.cos(time * .24) * .08, z: position.z };
+    return { position: runtime.sightline(shifted, target, shifted.y, target.y) ? shifted : position, target, fov: .82 };
+  }
+
+  const sitePt = runtime.definition.sites[area];
+  const siteGround = runtime.terrain.groundHeight(sitePt);
+  const showcase = runtime.definition.broadcast.showcasePoses;
+  let target = { x: sitePt.x, y: siteGround + 1.8, z: sitePt.z };
+  let candidates: { x: number; y: number; z: number }[] = [
+    { x: sitePt.x + 7.5, y: siteGround + 4.2, z: sitePt.z - 7.5 },
+    { x: sitePt.x - 7.5, y: siteGround + 4.4, z: sitePt.z - 6.5 },
+    { x: sitePt.x + 5.5, y: siteGround + 4.8, z: sitePt.z + 7.5 },
+  ];
+  if (beat === 2 && !site && showcase.length > 0) {
+    const pick = showcase[(round + Math.floor(time / 9)) % showcase.length];
+    target = { ...pick.target };
+    candidates = [{ ...pick.position }, ...candidates];
+  } else if (showcase.length > 0) {
+    const areaShowcase = showcase.filter((pose) => distance(pose.target, sitePt) < 26);
+    if (areaShowcase.length > 0) {
+      const pick = areaShowcase[round % areaShowcase.length];
+      target = { ...pick.target };
+      candidates = [{ ...pick.position }, ...areaShowcase.map((p) => ({ ...p.position })), ...candidates];
+    }
+  }
+  if (round % 2 === 0 && candidates.length > 1) candidates.reverse();
+  const position = candidates.find((point) => runtime.sightline(point, target, point.y, target.y)) ?? { ...candidates[0], y: candidates[0].y + 2 };
+  const drift = Math.sin(time * .38) * .32;
+  const shifted = { x: position.x + drift, y: position.y + Math.cos(time * .24) * .08, z: position.z };
+  return { position: runtime.sightline(shifted, target, shifted.y, target.y) ? shifted : position, target, fov: .84 };
 }
 
 /**
  * Hero front-3/4 broadcast showcase cam for FREEZE/BUY PHASE: frames the buyer,
  * dropped weapons, and utility prep with a gentle orbital pan instead of static back walls.
  */
-export function computeFreezeShowcasePose(player: LivePlayer, time: number): CameraPose {
-  const clampedX = clamp(player.x, -MAP_LIMIT_X, MAP_LIMIT_X);
-  const clampedZ = clamp(player.z, -MAP_LIMIT_Z, MAP_LIMIT_Z);
-  const jumpOffset = player.jumpY ?? 0;
+export function computeFreezeShowcasePose(
+  player: LivePlayer,
+  time: number,
+  runtime: LiveMapRuntime = FONTESSA_MAP_RUNTIME,
+): CameraPose {
+  const bounds = runtime.definition.bounds;
+  const clampedX = clamp(player.x, bounds.clampMinX, bounds.clampMaxX);
+  const clampedZ = clamp(player.z, bounds.clampMinZ, bounds.clampMaxZ);
+  const jumpOffset = player.jumpY ?? runtime.terrain.groundHeight(player);
   const orbit = Math.sin(time * 0.52) * 0.48;
   const frontOffsets = [0.65, -0.65, 1.15, -1.15, 2.2, -2.2];
   const radii = [2.25, 1.85, 1.45];
+  const obstacles = [...runtime.definition.solids, ...runtime.terrain.terrainSolids];
 
   for (const radius of radii) {
     for (const baseOffset of frontOffsets) {
       const theta = player.yaw + baseOffset + orbit * 0.4;
-      const cx = clamp(clampedX + Math.sin(theta) * radius, -MAP_LIMIT_X, MAP_LIMIT_X);
-      const cz = clamp(clampedZ + Math.cos(theta) * radius, -MAP_LIMIT_Z, MAP_LIMIT_Z);
+      const cx = clamp(clampedX + Math.sin(theta) * radius, bounds.clampMinX, bounds.clampMaxX);
+      const cz = clamp(clampedZ + Math.cos(theta) * radius, bounds.clampMinZ, bounds.clampMaxZ);
       const camY = (player.crouch ? 1.18 : 1.42) + jumpOffset;
-      const blocked = [...LIVE_FPS_MAP.solids, ...LIVE_TERRAIN_SOLIDS].some(
+      const blocked = obstacles.some(
         (w) => camY >= (w.baseY ?? 0) - 0.22 && camY <= w.height + 0.22 && segmentHitsWall(player, { x: cx, z: cz }, w, 0.24),
       );
       if (!blocked && Math.hypot(cx - clampedX, cz - clampedZ) >= 1.15) {
@@ -747,25 +792,82 @@ export function computeFreezeShowcasePose(player: LivePlayer, time: number): Cam
       }
     }
   }
-  return computeThirdPersonCameraPose(player);
+  return computeThirdPersonCameraPose(player, runtime);
 }
 
 /** Oblique coverage fitted to the two exchanges, with space reserved for the HUD. */
-export function computeTacticalCameraPose(points:readonly {x:number;z:number}[],aspect:number):CameraPose {
-  const minX=Math.min(...points.map(p=>p.x))-7,maxX=Math.max(...points.map(p=>p.x))+7;
-  const minZ=Math.min(...points.map(p=>p.z))-8,maxZ=Math.max(...points.map(p=>p.z))+8;
-  const x=(minX+maxX)/2,z=(minZ+maxZ)/2;
-  const half=Math.max((maxX-minX)/2/Math.max(.6,aspect),(maxZ-minZ)*.43+3)*1.22;
-  const range=half/Math.tan(.49);
-  return {position:{x,y:1.6+range*.85,z:z-range*.53},target:{x,y:1.6,z},fov:.98};
+export function computeTacticalCameraPose(
+  points: readonly { x: number; z: number }[],
+  aspect: number,
+  runtime: LiveMapRuntime = FONTESSA_MAP_RUNTIME,
+): CameraPose {
+  const minX = Math.min(...points.map((p) => p.x)) - 7, maxX = Math.max(...points.map((p) => p.x)) + 7;
+  const minZ = Math.min(...points.map((p) => p.z)) - 8, maxZ = Math.max(...points.map((p) => p.z)) + 8;
+  const x = (minX + maxX) / 2, z = (minZ + maxZ) / 2;
+  const half = Math.max((maxX - minX) / 2 / Math.max(.6, aspect), (maxZ - minZ) * .43 + 3) * 1.22;
+  const range = half / Math.tan(.49);
+  const baseY = runtime.id === 'fontessa' || points.length === 0
+    ? 0
+    : points.reduce((sum, p) => sum + runtime.terrain.groundHeight(p), 0) / points.length;
+  return { position: { x, y: baseY + 1.6 + range * .85, z: z - range * .53 }, target: { x, y: baseY + 1.6, z }, fov: .98 };
 }
 
-export function computeOverviewCameraPose(aspect=16/9): CameraPose {
-  const halfHeight=Math.max(49,45/Math.max(.35,aspect))*1.15;
+export function computeOverviewCameraPose(
+  aspect = 16 / 9,
+  runtime: LiveMapRuntime = FONTESSA_MAP_RUNTIME,
+): CameraPose {
+  if (runtime.id === 'fontessa') {
+    const halfHeight = Math.max(49, 45 / Math.max(.35, aspect)) * 1.15;
+    return {
+      position: { x: 0, y: halfHeight / Math.tan(.49), z: -9 },
+      target: { x: 0, y: 0, z: 0 },
+      fov: .98,
+    };
+  }
+  const overview = runtime.definition.broadcast.overviewCamera;
+  const bounds = runtime.definition.bounds;
+  const safeAspect = Math.max(.35, aspect);
+  const tanHalf = Math.tan(overview.fov * .5);
+  let y = Math.max(
+    overview.position.y,
+    (Math.max(runtime.definition.depth * .54, (runtime.definition.width * .52) / safeAspect) * 1.14) / tanHalf,
+  );
+  // Fit all eight map bounding-box corners cleanly inside the frustum across landscape & portrait canvases.
+  for (let pass = 0; pass < 3; pass++) {
+    const fx = overview.target.x - overview.position.x;
+    const fy = overview.target.y - y;
+    const fz = overview.target.z - overview.position.z;
+    const fl = Math.hypot(fx, fy, fz) || 1;
+    const fux = fx / fl, fuy = fy / fl, fuz = fz / fl;
+    const rLen = Math.hypot(fuz, -fux) || 1;
+    const rx = fuz / rLen, rz = -fux / rLen;
+    const ux = fuy * rz, uy = fuz * rx - fux * rz, uz = -fuy * rx;
+    let maxRatio = 0;
+    for (const bx of [bounds.minX, bounds.maxX]) {
+      for (const bz of [bounds.minZ, bounds.maxZ]) {
+        for (const by of [0, 8]) {
+          const vx = bx - overview.position.x, vy = by - y, vz = bz - overview.position.z;
+          const depth = Math.max(1, vx * fux + vy * fuy + vz * fuz);
+          const half = depth * tanHalf;
+          maxRatio = Math.max(
+            maxRatio,
+            Math.abs((vx * rx + vz * rz) / (half * safeAspect)),
+            Math.abs((vx * ux + vy * uy + vz * uz) / half),
+          );
+        }
+      }
+    }
+    if (maxRatio <= .92) break;
+    y = overview.target.y + (y - overview.target.y) * (maxRatio / .9);
+  }
   return {
-    position: { x: 0, y: halfHeight/Math.tan(.49), z: -9 },
-    target: { x: 0, y: 0, z: 0 },
-    fov: .98,
+    position: {
+      x: overview.position.x,
+      y,
+      z: overview.position.z,
+    },
+    target: { ...overview.target },
+    fov: overview.fov,
   };
 }
 
@@ -773,25 +875,30 @@ export function computeOverviewCameraPose(aspect=16/9): CameraPose {
  * Computes a tight over-the-back / right-shoulder third-person chase camera close to the
  * operative model, pulling forward cleanly before intersecting any map solid.
  */
-export function computeThirdPersonCameraPose(player: LivePlayer): CameraPose {
+export function computeThirdPersonCameraPose(
+  player: LivePlayer,
+  runtime: LiveMapRuntime = FONTESSA_MAP_RUNTIME,
+): CameraPose {
+  const bounds = runtime.definition.bounds;
   const dx = Math.sin(player.yaw);
   const dz = Math.cos(player.yaw);
   // Babylon LHS (+X right, +Z forward): right axis from yaw is (cos(yaw), -sin(yaw)).
   const rx = Math.cos(player.yaw);
   const rz = -Math.sin(player.yaw);
 
-  const clampedX = clamp(player.x, -MAP_LIMIT_X, MAP_LIMIT_X);
-  const clampedZ = clamp(player.z, -MAP_LIMIT_Z, MAP_LIMIT_Z);
-  const jumpOffset = player.jumpY ?? 0;
+  const clampedX = clamp(player.x, bounds.clampMinX, bounds.clampMaxX);
+  const clampedZ = clamp(player.z, bounds.clampMinZ, bounds.clampMaxZ);
+  const jumpOffset = player.jumpY ?? runtime.terrain.groundHeight(player);
+  const obstacles = [...runtime.definition.solids, ...runtime.terrain.terrainSolids];
 
   let backOffset = THIRD_PERSON_BACK_OFFSET;
   let shoulderOffset = THIRD_PERSON_RIGHT_OFFSET;
 
   const isBlocked = (back: number, right: number): boolean => {
-    const camX = clamp(clampedX - dx * back + rx * right, -MAP_LIMIT_X, MAP_LIMIT_X);
-    const camZ = clamp(clampedZ - dz * back + rz * right, -MAP_LIMIT_Z, MAP_LIMIT_Z);
-    const eyeY=(player.crouch?1.24:1.64)+jumpOffset;
-    return [...LIVE_FPS_MAP.solids,...LIVE_TERRAIN_SOLIDS].some((w) => eyeY>=(w.baseY??0)-.22&&eyeY<=w.height+.22&&segmentHitsWall(player, { x: camX, z: camZ }, w, 0.22));
+    const camX = clamp(clampedX - dx * back + rx * right, bounds.clampMinX, bounds.clampMaxX);
+    const camZ = clamp(clampedZ - dz * back + rz * right, bounds.clampMinZ, bounds.clampMaxZ);
+    const eyeY = (player.crouch ? 1.24 : 1.64) + jumpOffset;
+    return obstacles.some((w) => eyeY >= (w.baseY ?? 0) - .22 && eyeY <= w.height + .22 && segmentHitsWall(player, { x: camX, z: camZ }, w, 0.22));
   };
 
   while (backOffset > THIRD_PERSON_MIN_BACK && isBlocked(backOffset, shoulderOffset)) {
@@ -811,12 +918,12 @@ export function computeThirdPersonCameraPose(player: LivePlayer): CameraPose {
   const tightLift = backOffset < 0.78 ? (0.78 - backOffset) * 0.44 : 0;
   const totalPitch = (player.pitch ?? 0) + (player.recoilPitch ?? 0);
   const baseEyeY = (player.crouch ? 1.24 : 1.64) + jumpOffset + tightLift - Math.max(0, Math.sin(totalPitch)) * 0.26;
-  const camX = clamp(clampedX - dx * backOffset + rx * shoulderOffset, -MAP_LIMIT_X, MAP_LIMIT_X);
-  const camZ = clamp(clampedZ - dz * backOffset + rz * shoulderOffset, -MAP_LIMIT_Z, MAP_LIMIT_Z);
+  const camX = clamp(clampedX - dx * backOffset + rx * shoulderOffset, bounds.clampMinX, bounds.clampMaxX);
+  const camZ = clamp(clampedZ - dz * backOffset + rz * shoulderOffset, bounds.clampMinZ, bounds.clampMaxZ);
 
   const horizLookAhead = THIRD_PERSON_LOOK_AHEAD * Math.max(0.35, Math.cos(totalPitch));
-  const targetX = clamp(clampedX + dx * horizLookAhead + rx * (shoulderOffset * 0.35), -MAP_LIMIT_X - 2, MAP_LIMIT_X + 2);
-  const targetZ = clamp(clampedZ + dz * horizLookAhead + rz * (shoulderOffset * 0.35), -MAP_LIMIT_Z - 2, MAP_LIMIT_Z + 2);
+  const targetX = clamp(clampedX + dx * horizLookAhead + rx * (shoulderOffset * 0.35), bounds.clampMinX - 2, bounds.clampMaxX + 2);
+  const targetZ = clamp(clampedZ + dz * horizLookAhead + rz * (shoulderOffset * 0.35), bounds.clampMinZ - 2, bounds.clampMaxZ + 2);
   const targetY = (player.crouch ? .92 : 1.28) + jumpOffset + Math.sin(totalPitch) * THIRD_PERSON_LOOK_AHEAD;
 
   return {
@@ -833,11 +940,16 @@ export function computeThirdPersonCameraPose(player: LivePlayer): CameraPose {
 export function computeBombPlantPipPose(
   pip: BombPlantPipState,
   players: readonly LivePlayer[],
+  runtime: LiveMapRuntime = FONTESSA_MAP_RUNTIME,
 ): CameraPose {
+  const bounds = runtime.definition.bounds;
   const planter = pip.planterId ? players.find((p) => p.id === pip.planterId && p.hp > 0) : undefined;
-  const spot = planter ? { x: planter.x, z: planter.z } : pip.spot;
+  const spot = planter ? { x: planter.x, z: planter.z, level: planter.level } : pip.spot;
   const baseYaw = planter ? planter.yaw : 0;
-  const jumpOffset = planter?.jumpY ?? 0;
+  const siteHeight = pip.site ? runtime.definition.broadcast.pipAnchorHeights[pip.site] : runtime.terrain.groundHeight(spot);
+  const baseFloor = planter ? runtime.terrain.groundHeight(spot) : siteHeight;
+  const elev = planter?.jumpY !== undefined ? Math.max(baseFloor, planter.jumpY) : baseFloor;
+  const obstacles = [...runtime.definition.solids, ...runtime.terrain.terrainSolids];
 
   // Prefer 3/4 front-diagonal angles so the viewer sees the crouched operative planting and site context.
   const angleOffsets = [
@@ -850,13 +962,16 @@ export function computeBombPlantPipPose(
       const theta = baseYaw + delta;
       const cx = spot.x + Math.sin(theta) * r;
       const cz = spot.z + Math.cos(theta) * r;
-      if (Math.abs(cx) > MAP_LIMIT_X || Math.abs(cz) > MAP_LIMIT_Z) continue;
+      if (cx < bounds.clampMinX || cx > bounds.clampMaxX || cz < bounds.clampMinZ || cz > bounds.clampMaxZ) continue;
       const camPt = { x: cx, z: cz };
-      const blocked = LIVE_FPS_MAP.solids.some((w) => segmentHitsWall(spot, camPt, w, 0.28));
+      const camY = baseFloor + 2.35 + Math.max(0, elev - baseFloor) * 0.4;
+      const targetY = (planter?.crouch ? 0.68 : 0.95) + elev;
+      const blocked = !runtime.sightline(spot, camPt, targetY, camY)
+        || obstacles.some((w) => (w.baseY ?? 0) <= camY + 0.18 && w.height >= targetY - 0.12 && segmentHitsWall(spot, camPt, w, 0.28));
       if (!blocked) {
         return {
-          position: { x: cx, y: 2.35 + jumpOffset * 0.4, z: cz },
-          target: { x: spot.x, y: (planter?.crouch ? 0.68 : 0.95) + jumpOffset, z: spot.z },
+          position: { x: cx, y: camY, z: cz },
+          target: { x: spot.x, y: targetY, z: spot.z },
           fov: 0.9,
         };
       }
@@ -864,11 +979,11 @@ export function computeBombPlantPipPose(
   }
 
   // Fallback high overhead close-angle on the site if surrounded tightly by site props.
-  const fx = clamp(spot.x + 0.9, -MAP_LIMIT_X, MAP_LIMIT_X);
-  const fz = clamp(spot.z - 1.4, -MAP_LIMIT_Z, MAP_LIMIT_Z);
+  const fx = clamp(spot.x + 0.9, bounds.clampMinX, bounds.clampMaxX);
+  const fz = clamp(spot.z - 1.4, bounds.clampMinZ, bounds.clampMaxZ);
   return {
-    position: { x: fx, y: 3.9, z: fz },
-    target: { x: spot.x, y: 0.65, z: spot.z },
+    position: { x: fx, y: baseFloor + 3.9, z: fz },
+    target: { x: spot.x, y: baseFloor + 0.65, z: spot.z },
     fov: 0.92,
   };
 }

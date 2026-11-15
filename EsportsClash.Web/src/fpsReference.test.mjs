@@ -2,7 +2,10 @@ import {FPS_T_POSITIONS,FPS_CT_POSITIONS} from './fps/fpsPlayerArchitecture.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {fpsReferenceEntries,searchFpsReference,FPS_REFERENCE_SECTIONS} from './fps/fpsReference.ts';
+import {FPS_MAPS} from './fps/fpsMaps.ts';
 import {FPS_WEAPONS} from './fps/fpsWeapons.ts';
+import {LIVE_WEAPONS,canBuyLiveWeapon} from './fps/fpsLiveWeapons.ts';
+import {listLiveMaps} from './fps/fpsLiveMapRegistry.ts';
 import {FPS_IDENTITY_PERSONALITIES} from './fps/fpsIdentity.ts';
 import {readPediaRoute} from './hexapedia.ts';
 import {displayMetrics} from './displayMetrics.ts';
@@ -10,9 +13,17 @@ import {apiRecords} from './apiCollections.ts';
 
 test('current FPS reference covers actual personalities, equipment, roles and maps',()=>{
   assert.deepEqual(fpsReferenceEntries('personalities').map(x=>x.id).sort(),FPS_IDENTITY_PERSONALITIES.map(p=>p.id).sort());
-  assert.equal(fpsReferenceEntries('maps').length,5);
-  assert.deepEqual([...fpsReferenceEntries('weapons'),...fpsReferenceEntries('equipment')].map(x=>x.id).sort(),Object.keys(FPS_WEAPONS).sort());
+  const expectedMaps=[...listLiveMaps().map(m=>m.id),...Object.keys(FPS_MAPS)].sort();
+  assert.deepEqual(fpsReferenceEntries('maps').map(x=>x.id).sort(),expectedMaps);
+  const expectedLiveWeapons=Object.keys(LIVE_WEAPONS).filter(id=>canBuyLiveWeapon(id,true)||canBuyLiveWeapon(id,false));
+  const expectedGear=[...Object.keys(FPS_WEAPONS),...expectedLiveWeapons,'live_knife','live_smoke','live_flash','live_incendiary','live_he','live_c4'].sort();
+  assert.deepEqual([...fpsReferenceEntries('weapons'),...fpsReferenceEntries('equipment')].map(x=>x.id).sort(),expectedGear);
+  assert.ok(fpsReferenceEntries('liveSimulation').length>=5);
+  assert.ok(fpsReferenceEntries('roles').length===FPS_T_POSITIONS.length+FPS_CT_POSITIONS.length);
   for(const section of Object.keys(FPS_REFERENCE_SECTIONS))for(const item of fpsReferenceEntries(section))assert.ok(item.name&&item.summary&&item.id);
+  assert.ok(searchFpsReference('Spillway').some(r=>r.href==='#hexapedia/maps/spillway'));
+  assert.ok(searchFpsReference('Influence').some(r=>r.href.startsWith('#hexapedia/liveSimulation/')));
+  assert.ok(searchFpsReference('Death-Callout').some(r=>r.href.startsWith('#hexapedia/liveSimulation/')));
 });
 
 test('every FPS directory and record address resolves cleanly',()=>{

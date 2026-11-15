@@ -1,12 +1,16 @@
 import {createLiveRagdoll,stepLiveRagdoll,type LiveRagdoll,type RagJoint} from './fpsLiveRagdoll.ts';
-import { Engine, Scene, FreeCamera, Viewport, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, StandardMaterial, MeshBuilder, DynamicTexture, Texture, ShadowGenerator, TransformNode, Mesh, type LinesMesh } from '@babylonjs/core';
-import { LIVE_FPS_MAP } from './fpsLiveMap.ts';
+import { Engine, Scene, FreeCamera, Viewport, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, PointLight, StandardMaterial, MeshBuilder, DynamicTexture, Texture, ShadowGenerator, TransformNode, Mesh, type LinesMesh } from '@babylonjs/core';
+import { FONTESSA_MAP_RUNTIME } from './fpsLiveMap.ts';
+import { getLiveMapRuntime } from './fpsLiveMapRegistry.ts';
+import type { LiveMapId, LiveMapRuntime } from './fpsLiveMapTypes.ts';
 import {FreeMapControls} from './fpsFreeCamera.ts';
 import { segmentHitsWall } from './fpsSpatialWorld.ts';
 import type { LiveSnapshot, LivePlayer, LiveBlast } from './fpsLiveSimulation.ts';
 import { buildLiveScenery } from './fpsLiveScenery.ts';
+import { buildSpillwayScenery } from './fpsSpillwayScenery.ts';
 import { buildLiveSky, liveBoxSurfaceUV, LIVE_SURFACE_METRES, LiveSurfaceLibrary, type LiveSurface } from './fpsLiveGraphics.ts';
-import { LIVE_TERRAIN_SOLIDS, LIVE_CANAL as LIVE_RIVER, LIVE_PORT, LIVE_CANAL_CROSSINGS as LIVE_RIVER_BRIDGES, liveCutPavingRect, liveGroundHeight } from './fpsLiveTerrain.ts';
+import { LIVE_CANAL as LIVE_RIVER, LIVE_PORT, liveCutPavingRect, LIVE_CANAL_CROSSINGS as LIVE_RIVER_BRIDGES } from './fpsLiveTerrain.ts';
+import { SPILLWAY_SHALLOW_WATERS } from './fpsSpillwayTerrain.ts';
 import { liveVillageAsset } from './fpsVillageDesign.ts';
 import { createLiveSmokeRenderVolume, updateLiveSmokeRenderVolume, type LiveSmokeRenderVolume } from './fpsSmokeRendering.ts';
 import { LIVE_KNIFE, type LiveEquippedWeapon } from './fpsLiveWeapons.ts';
@@ -17,7 +21,12 @@ import { stepLiveGrenade, type LiveGrenade, type LiveGrenadeKind } from './fpsLi
 import {batchStaticLiveGeometry,interpolateLivePlayer,LiveRenderCache} from './fpsLiveRenderOptimization.ts';
 import {buildVariantOperativeDetails,resolveOperativeStyle,resolveOperativeVariantIndex,type OperativeStyleProfile} from './fpsOperativeDesign.ts';
 
-export function computeLiveGrenadeTrajectoryPoints(grenade: LiveGrenade, startTime = grenade.releaseAt, endTime = grenade.detonateAt): Vector3[] {
+export function computeLiveGrenadeTrajectoryPoints(
+  grenade: LiveGrenade,
+  startTime = grenade.releaseAt,
+  endTime = grenade.detonateAt,
+  runtime: LiveMapRuntime = FONTESSA_MAP_RUNTIME,
+): Vector3[] {
   const simulated: LiveGrenade = { ...grenade };
   const start = Math.max(startTime, grenade.releaseAt);
   const clampedEnd = Math.min(endTime, grenade.detonateAt);
@@ -25,7 +34,7 @@ export function computeLiveGrenadeTrajectoryPoints(grenade: LiveGrenade, startTi
   if (clampedEnd <= start + 1e-6) return points;
   const step = 1 / 30;
   for (let at = start; at < clampedEnd - 1e-6; at += step) {
-    stepLiveGrenade(simulated, Math.min(step, clampedEnd - at));
+    stepLiveGrenade(simulated, Math.min(step, clampedEnd - at), runtime);
     const prev = points[points.length - 1];
     if (Math.hypot(simulated.x - prev.x, simulated.y - prev.y, simulated.z - prev.z) >= 0.08 || at + step >= clampedEnd - 1e-6) {
       points.push(new Vector3(simulated.x, simulated.y, simulated.z));
@@ -35,7 +44,7 @@ export function computeLiveGrenadeTrajectoryPoints(grenade: LiveGrenade, startTi
 }
 import {
   computeBombPlantPipPose,
-  computeCinematicCameraPose,computeFreezeShowcasePose,computeTacticalCameraPose,
+  computeCinematicCameraPose,computeFreezeShowcasePose,computeOverviewCameraPose,computeTacticalCameraPose,
   computeThirdPersonCameraPose,
   createDirectorState,
   evaluateBroadcastDirector,
@@ -418,7 +427,8 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
     : 0;
   const isBlinded = player.blinded > .15 && !defusing && !planting && !isReloading && !inUtilityPrep && !isThrowing;
   const blindBlend = isBlinded ? Math.min(1, (player.blinded - .15) / .5) : 0;
-  const isRadioCalling = Boolean(player.radioMessage) && !isReloading && !inUtilityPrep && !isThrowing && !defusing && !planting && !isBlinded && !boltCycling && player.weaponReady <= 0 && !hasRecentShot;
+  const sinceRadio = player.radioAt === undefined ? -1 : currentTime - player.radioAt;
+  const isRadioCalling = Boolean(player.radioMessage) && sinceRadio >= 0 && sinceRadio < 1.15 && (player.stance === 'run' || player.stance === 'walk') && !isReloading && !inUtilityPrep && !isThrowing && !defusing && !planting && !isBlinded && !boltCycling && player.weaponReady <= 0 && !hasRecentShot;
 
   const pistolGrip = isPistolEquipped(player.equipped);
   const heavyGrip = isHeavyEquipped(player.equipped);
@@ -1543,6 +1553,54 @@ export function createViewmodelMesh(
   return root;
 }
 
+const SPILLWAY_SCULPTED_SOLIDS = new Set([
+  'b-silo-pillar',
+  'b-pump-west',
+  'b-pump-east',
+  'gardens-fountain',
+  'gardens-pergola-roof',
+  't-service-truck',
+  'a-response-truck',
+  'ct-security-van',
+  'gardens-tree-sw',
+  'promenade-tree-mid',
+  'terrace-tree-nw',
+  'hq-tree-east',
+]);
+
+function toRenderSurface(surface: string | undefined, fallback: LiveSurface = 'stone'): LiveSurface {
+  if (surface === 'wood') return 'timber';
+  if (surface === 'brick') return 'clay';
+  if (surface === 'dirt' || surface === 'water') return 'stone';
+  if (surface === 'plaster' || surface === 'stone' || surface === 'paving' || surface === 'timber' || surface === 'metal' || surface === 'clay' || surface === 'concrete' || surface === 'grass') {
+    return surface;
+  }
+  return fallback;
+}
+
+function cutRectHoles(
+  rect: { minX: number; maxX: number; minZ: number; maxZ: number },
+  holes: readonly { minX: number; maxX: number; minZ: number; maxZ: number }[],
+) {
+  let parts = [rect];
+  for (const hole of holes) {
+    parts = parts.flatMap(r => {
+      const a = Math.max(r.minX, hole.minX);
+      const b = Math.min(r.maxX, hole.maxX);
+      const c = Math.max(r.minZ, hole.minZ);
+      const d = Math.min(r.maxZ, hole.maxZ);
+      if (a >= b || c >= d) return [r];
+      return [
+        { minX: r.minX, maxX: a, minZ: r.minZ, maxZ: r.maxZ },
+        { minX: b, maxX: r.maxX, minZ: r.minZ, maxZ: r.maxZ },
+        { minX: a, maxX: b, minZ: r.minZ, maxZ: c },
+        { minX: a, maxX: b, minZ: d, maxZ: r.maxZ },
+      ].filter(p => p.maxX - p.minX > .005 && p.maxZ - p.minZ > .005);
+    });
+  }
+  return parts;
+}
+
 /** Presentation only: collision-volume proxies, never generated or qualified character assets. */
 export class FpsLiveViewer {
   private engine:Engine;
@@ -1577,11 +1635,28 @@ export class FpsLiveViewer {
   private fpMoveBlend=0;
   private currentEyeY=1.6;
   private fpMuzzleFlash?:Mesh;
-  private fpWeaponViews=new LiveRenderCache<string,{root:TransformNode;flash?:Mesh}>(6,value=>{value.flash?.material?.dispose();value.root.dispose();});
+  private fpWeaponViews=new LiveRenderCache<string,{root:TransformNode;flash?:Mesh}>(48,value=>{value.flash?.material?.dispose();value.root.dispose();});
+  private prewarmedSig='';
+  private readonly scratchVecA=new Vector3();
+  private readonly scratchVecB=new Vector3();
+  private readonly scratchVecC=new Vector3();
   private device:TransformNode;
   private corpseViews=new Map<number,{operative:OperativeView;rag:LiveRagdoll;borrowed:boolean}>();
   private utilityDrops=new Map<number,TransformNode>();
-  private riverFlow?:Texture;
+  private waterFlows:Texture[]=[];
+  private mapMeshes:Mesh[]=[];
+  private cutawayMeshes:Mesh[]=[];
+  private mapLights:PointLight[]=[];
+  private mapTextures:Texture[]=[];
+  private mapMaterials:StandardMaterial[]=[];
+  private cutawayEnabled=false;
+  private debugEnabled=false;
+  private overviewEnabled=false;
+  private debugRoot?:TransformNode;
+  private debugMaterials:StandardMaterial[]=[];
+  private mapRuntime:LiveMapRuntime=FONTESSA_MAP_RUNTIME;
+  private skyLight!:HemisphericLight;
+  private sunLight!:DirectionalLight;
   private deviceClock?:DynamicTexture;private deviceSecond=-1;
   private explosionSphere?:Mesh;
   private explosionRing?:Mesh;
@@ -1625,7 +1700,6 @@ export class FpsLiveViewer {
       this.scene.clearColor=new Color4(.74,.81,.82,1);
       this.scene.fogMode=Scene.FOGMODE_EXP2;this.scene.fogDensity=.0032;this.scene.fogColor=new Color3(.74,.81,.82);
       this.scene.imageProcessingConfiguration.contrast=1.08;this.scene.imageProcessingConfiguration.exposure=1.02;
-      buildLiveSky(this.scene);
       this.camera.minZ=.06;this.camera.maxZ=300;this.camera.fov=1.12;
       this.camera.viewport=this.fullViewport;
       this.pipCamera.minZ=.08;this.pipCamera.maxZ=220;this.pipCamera.fov=.9;
@@ -1660,10 +1734,165 @@ export class FpsLiveViewer {
         }
         this.setTracerCamera(cam!==this.pipCamera&&this.mainFpEnabled);
       });
-      const sky=new HemisphericLight('harbor-sky',Vector3.Up(),this.scene);sky.intensity=.72;sky.diffuse=new Color3(.83,.91,1);sky.groundColor=new Color3(.34,.29,.23);
-      const sun=new DirectionalLight('mediterranean-sun',new Vector3(-.55,-1,.32),this.scene);sun.position.set(35,65,-35);sun.intensity=1.08;sun.diffuse=new Color3(1,.91,.77);
-      sun.autoCalcShadowZBounds=true;sun.shadowOrthoScale=.02;
-      this.shadows=new ShadowGenerator(2048,sun);this.shadows.usePercentageCloserFiltering=true;this.shadows.filteringQuality=ShadowGenerator.QUALITY_MEDIUM;this.shadows.bias=.0032;this.shadows.normalBias=.05;this.shadows.setDarkness(.22);const shadowMap=this.shadows.getShadowMap();if(shadowMap)shadowMap.refreshRate=1;
+      this.skyLight=new HemisphericLight('harbor-sky',Vector3.Up(),this.scene);
+      this.sunLight=new DirectionalLight('mediterranean-sun',new Vector3(-.55,-1,.32),this.scene);
+      this.sunLight.autoCalcShadowZBounds=false;this.sunLight.shadowMinZ=10;this.sunLight.shadowMaxZ=220;this.sunLight.shadowOrthoScale=.04;
+      this.shadows=new ShadowGenerator(1024,this.sunLight);this.shadows.usePercentageCloserFiltering=true;this.shadows.filteringQuality=ShadowGenerator.QUALITY_LOW;this.shadows.bias=.0032;this.shadows.normalBias=.05;this.shadows.setDarkness(.22);const shadowMap=this.shadows.getShadowMap();if(shadowMap)shadowMap.refreshRate=1;
+      const display=this.device.getChildMeshes().find(m=>m.name.endsWith('-c4-display'));
+      if(display){this.deviceClock=new DynamicTexture('device-countdown',{width:128,height:64},this.scene,false);const mat=new StandardMaterial('device-countdown-screen',this.scene);mat.diffuseTexture=this.deviceClock;mat.emissiveTexture=this.deviceClock;mat.disableLighting=true;display.material=mat;}
+      this.buildMapEnvironment(this.mapRuntime);
+      this.engine.onContextLostObservable.add(()=>{if(!this.disposed)onLost();});
+      this.resize.observe(canvas);this.engine.resize();
+    } catch(error){this.dispose();throw error;}
+  }
+  getMapId():LiveMapId {
+    return this.mapRuntime.id;
+  }
+  setMap(mapId:LiveMapId):void {
+    if(this.disposed)return;
+    const runtime=getLiveMapRuntime(mapId);
+    if(runtime.id===this.mapRuntime.id && this.mapMeshes.length>0)return;
+    this.prewarmedSig='';
+    this.buildMapEnvironment(runtime);
+  }
+  setCutawayRoofs(enabled:boolean):void {
+    this.cutawayEnabled=enabled;
+    for(const mesh of this.cutawayMeshes){
+      if(!mesh.isDisposed())mesh.setEnabled(!enabled);
+    }
+  }
+  setOverview(enabled:boolean):void {
+    this.overviewEnabled=enabled;
+  }
+  setDebugOverlays(enabled:boolean):void {
+    this.debugEnabled=enabled;
+    this.rebuildDebugOverlays();
+  }
+  private clearDebugOverlays():void {
+    if(this.debugRoot){
+      this.debugRoot.dispose(false,false);
+      this.debugRoot=undefined;
+    }
+    for(const mat of this.debugMaterials)mat.dispose();
+    this.debugMaterials=[];
+  }
+  private rebuildDebugOverlays():void {
+    this.clearDebugOverlays();
+    if(this.disposed||!this.debugEnabled)return;
+    const root=new TransformNode('tactical-debug-root',this.scene);
+    this.debugRoot=root;
+    const makeMat=(name:string,hex:string,alpha=.86)=>{
+      const m=new StandardMaterial(`dbg-${name}`,this.scene);
+      const c=Color3.FromHexString(hex);
+      m.diffuseColor=c;m.emissiveColor=c;m.disableLighting=true;m.alpha=alpha;
+      this.debugMaterials.push(m);
+      return m;
+    };
+    const matStreet=makeMat('nav-street','#38bdf8');
+    const matUpper=makeMat('nav-upper','#f59e0b');
+    const matCanal=makeMat('nav-canal','#14b8a6');
+    const matDrop=makeMat('drop','#f43f5e');
+    const matPerch=makeMat('perch','#84cc16');
+    const matSite=makeMat('site','#f97316',.72);
+    const rt=this.mapRuntime;
+
+    for(const [i,node] of rt.navNodes.entries()){
+      const marker=MeshBuilder.CreateDisc(`dbg-nav-${i}`,{radius:.24,tessellation:8},this.scene);
+      marker.rotation.x=Math.PI/2;
+      marker.position.set(node.x,rt.terrain.groundHeight(node)+.16,node.z);
+      marker.material=node.level==='upper'?matUpper:node.level==='canal'?matCanal:matStreet;
+      marker.isPickable=false;marker.parent=root;
+    }
+
+    const lines:Vector3[][]=[];
+    for(let i=0;i<rt.navNodes.length;i++){
+      const a=rt.navNodes[i];
+      const ay=rt.terrain.groundHeight(a)+.2;
+      for(const j of rt.neighbors[i]??[]){
+        if(j<=i)continue;
+        const b=rt.navNodes[j];
+        const by=rt.terrain.groundHeight(b)+.2;
+        lines.push([new Vector3(a.x,ay,a.z),new Vector3(b.x,by,b.z)]);
+      }
+    }
+    if(lines.length){
+      const net=MeshBuilder.CreateLineSystem('dbg-nav-links',{lines},this.scene);
+      net.color=new Color3(.22,.74,.97);
+      net.alpha=.48;net.isPickable=false;net.parent=root;
+    }
+
+    for(const [site,pt] of Object.entries(rt.definition.sites) as ['A'|'B',{x:number;z:number}][]){
+      const rad=rt.definition.siteRadii?.[site]??4.5;
+      const ring=MeshBuilder.CreateTorus(`dbg-site-${site}`,{diameter:rad*2,thickness:.12,tessellation:36},this.scene);
+      ring.position.set(pt.x,rt.terrain.groundHeight(pt)+.1,pt.z);
+      ring.material=matSite;ring.isPickable=false;ring.parent=root;
+    }
+
+    for(const drop of rt.elevationDrops){
+      const fx=(drop.from.minX+drop.from.maxX)/2,fz=(drop.from.minZ+drop.from.maxZ)/2;
+      const fy=rt.terrain.groundHeight({x:fx,z:fz,level:drop.fromLevel})+.25;
+      const ly=rt.terrain.groundHeight(drop.landing)+.25;
+      const arc=MeshBuilder.CreateLines(`dbg-drop-${drop.id}`,{points:[new Vector3(fx,fy,fz),new Vector3((fx+drop.landing.x)/2,Math.max(fy,ly)+.7,(fz+drop.landing.z)/2),new Vector3(drop.landing.x,ly,drop.landing.z)]},this.scene);
+      arc.color=new Color3(.96,.25,.37);arc.isPickable=false;arc.parent=root;
+      const target=MeshBuilder.CreateTorus(`dbg-drop-target-${drop.id}`,{diameter:.75,thickness:.07,tessellation:16},this.scene);
+      target.position.set(drop.landing.x,ly-.12,drop.landing.z);target.material=matDrop;target.isPickable=false;target.parent=root;
+    }
+
+    for(const perch of rt.jumpablePerches){
+      const ring=MeshBuilder.CreateTorus(`dbg-perch-${perch.id}`,{diameter:.82,thickness:.07,tessellation:16},this.scene);
+      ring.position.set(perch.top.x,perch.height+.08,perch.top.z);ring.material=matPerch;ring.isPickable=false;ring.parent=root;
+    }
+  }
+  private clearMapEnvironment():void {
+    this.clearDebugOverlays();
+    const skyDome=this.scene.getMeshByName('harbor-atmosphere-dome');
+    if(skyDome){
+      const skyMat=skyDome.material as StandardMaterial|null;
+      skyMat?.emissiveTexture?.dispose();
+      skyMat?.diffuseTexture?.dispose();
+      skyMat?.dispose();
+      skyDome.dispose();
+    }
+    for(const mesh of this.mapMeshes){
+      this.shadows.removeShadowCaster(mesh);
+      if(!mesh.isDisposed())mesh.dispose();
+    }
+    this.mapMeshes=[];
+    for(const mesh of this.cutawayMeshes){
+      this.shadows.removeShadowCaster(mesh);
+      if(!mesh.isDisposed())mesh.dispose();
+    }
+    this.cutawayMeshes=[];
+    for(const tex of this.waterFlows)if(!this.mapTextures.includes(tex))tex.dispose();
+    this.waterFlows=[];
+    for(const tex of this.mapTextures)tex.dispose();
+    this.mapTextures=[];
+    for(const mat of this.mapMaterials)mat.dispose();
+    this.mapMaterials=[];
+    for(const light of this.mapLights)light.dispose();
+    this.mapLights=[];
+    for(const view of this.bloodMeshes.values())for(const splat of view.splats)splat.dispose();
+    this.bloodMeshes.clear();
+  }
+  private buildMapEnvironment(runtime:LiveMapRuntime):void {
+    this.clearMapEnvironment();
+    this.mapRuntime=runtime;
+    this.freeControls.setBounds(runtime.definition.bounds);
+    this.director=createDirectorState();
+    this.directorKey='';
+    this.previousCamera='';
+    this.previousPipKey='';
+
+    const atm=runtime.definition.atmosphere;
+    buildLiveSky(this.scene,atm.sky);
+
+    if(runtime.id==='fontessa'){
+      this.scene.clearColor=new Color4(.74,.81,.82,1);
+      this.scene.fogDensity=.0032;this.scene.fogColor=new Color3(.74,.81,.82);
+      this.skyLight.intensity=.72;this.skyLight.diffuse=new Color3(.83,.91,1);this.skyLight.groundColor=new Color3(.34,.29,.23);
+      this.sunLight.direction=new Vector3(-.55,-1,.32);this.sunLight.position.set(35,65,-35);
+      this.sunLight.intensity=1.08;this.sunLight.diffuse=new Color3(1,.91,.77);
+
       const staticStart=this.scene.meshes.length;
       for(const [index,rect] of liveCutPavingRect({minX:-36,maxX:36,minZ:-46,maxZ:46}).entries()){
         const w=rect.maxX-rect.minX,d=rect.maxZ-rect.minZ;
@@ -1672,10 +1901,12 @@ export class FpsLiveViewer {
       }
       const river=MeshBuilder.CreateGround('fontessa-canal',{width:230,height:LIVE_RIVER.maxZ-LIVE_RIVER.minZ},this.scene);river.position.set(0,LIVE_RIVER.waterY,(LIVE_RIVER.minZ+LIVE_RIVER.maxZ)/2);
       const riverMat=new StandardMaterial('canal-water',this.scene);riverMat.diffuseColor=new Color3(.17,.38,.34);riverMat.specularColor=new Color3(.65,.8,.75);riverMat.specularPower=92;riverMat.alpha=.96;river.material=riverMat;river.isPickable=false;
+      this.mapMaterials.push(riverMat);
       const riverBed=MeshBuilder.CreateGround('canal-stone-bed',{width:230,height:LIVE_RIVER.maxZ-LIVE_RIVER.minZ},this.scene);riverBed.position.set(0,LIVE_RIVER.bedY,(LIVE_RIVER.minZ+LIVE_RIVER.maxZ)/2);riverBed.material=this.surfaces.material('stone','#697d69');riverBed.isPickable=false;
       const harbor=MeshBuilder.CreateGround('ct-port-water',{width:LIVE_PORT.maxX-LIVE_PORT.minX,height:LIVE_PORT.maxZ-LIVE_PORT.minZ},this.scene);harbor.position.set(0,LIVE_PORT.waterY,(LIVE_PORT.minZ+LIVE_PORT.maxZ)/2);harbor.material=riverMat;harbor.isPickable=false;
       harbor.setVerticesData('uv',[0,0,1,0,0,16,1,16]);
-      const flow=new DynamicTexture('river-flow-lines',{width:256,height:128},this.scene,false),flowContext=flow.getContext() as unknown as CanvasRenderingContext2D;flowContext.fillStyle='#3b756c';flowContext.fillRect(0,0,256,128);for(let i=0;i<22;i++){flowContext.strokeStyle=i%3?'#5a8d7d':'#83a493';flowContext.lineWidth=i%3?1:2;flowContext.beginPath();flowContext.moveTo((i*71)%256,(i*37)%128);flowContext.bezierCurveTo((i*71)%256+10,(i*37)%128+4,(i*71)%256+22,(i*37)%128-4,(i*71)%256+34,(i*37)%128);flowContext.stroke();}flow.update();flow.uScale=40;flow.vScale=1;riverMat.diffuseTexture=flow;this.riverFlow=flow;
+      const flow=new DynamicTexture('river-flow-lines',{width:256,height:128},this.scene,false),flowContext=flow.getContext() as unknown as CanvasRenderingContext2D;flowContext.fillStyle='#3b756c';flowContext.fillRect(0,0,256,128);for(let i=0;i<22;i++){flowContext.strokeStyle=i%3?'#5a8d7d':'#83a493';flowContext.lineWidth=i%3?1:2;flowContext.beginPath();flowContext.moveTo((i*71)%256,(i*37)%128);flowContext.bezierCurveTo((i*71)%256+10,(i*37)%128+4,(i*71)%256+22,(i*37)%128-4,(i*71)%256+34,(i*37)%128);flowContext.stroke();}flow.update();flow.uScale=40;flow.vScale=1;riverMat.diffuseTexture=flow;
+      this.waterFlows.push(flow);this.mapTextures.push(flow);
       for(const [i,[minX,maxX,z]] of [[-115,115,LIVE_RIVER.minZ],[-115,-20.5,LIVE_RIVER.maxZ],[30.4,115,LIVE_RIVER.maxZ]].entries()){
         const bank=MeshBuilder.CreateBox(`canal-masonry-bank-${i}`,{width:maxX-minX,height:-LIVE_RIVER.bedY,depth:.12},this.scene);
         bank.position.set((minX+maxX)/2,LIVE_RIVER.bedY/2,z);bank.material=this.surfaces.material('stone','#8d9b8e');bank.isPickable=false;
@@ -1683,7 +1914,7 @@ export class FpsLiveViewer {
       for(const [i,bridge] of LIVE_RIVER_BRIDGES.entries()){
         if(i!==4)continue;const width=bridge.maxX-bridge.minX,deck=MeshBuilder.CreateBox(`canal-street-crossing-${i}`,{width,height:.22,depth:LIVE_RIVER.maxZ-LIVE_RIVER.minZ},this.scene);deck.position.set((bridge.minX+bridge.maxX)/2,1.8-.11,(LIVE_RIVER.minZ+LIVE_RIVER.maxZ)/2);deck.material=this.surfaces.material('stone','#c3b99b');deck.receiveShadows=true;deck.isPickable=false;
       }
-      for(const wall of [...LIVE_FPS_MAP.solids,...LIVE_TERRAIN_SOLIDS]) {
+      for(const wall of [...runtime.definition.solids,...runtime.terrain.terrainSolids]) {
         // The fountain's visible radial geometry is built below; its rectangle is movement clearance only.
         if(wall.id==='b-fountain'||wall.id==='mid-window-front-pier-west'||(wall.id.startsWith('restaurant-table-')||wall.id.startsWith('restaurant-outside-table-'))||wall.id.startsWith('village-tree-')||wall.id.startsWith('village-bin-'))continue;
         let minX=wall.minX,maxX=wall.maxX,minZ=wall.minZ,maxZ=wall.maxZ,top=wall.height;
@@ -1702,11 +1933,13 @@ export class FpsLiveViewer {
         mesh.position.set((minX+maxX)/2,base+height/2,(minZ+maxZ)/2);mesh.material=this.surfaces.material(kind,wall.color);
         mesh.isPickable=false;mesh.receiveShadows=true;if(top>.05)this.shadows.addShadowCaster(mesh);mesh.freezeWorldMatrix();
         mesh.metadata={purpose:design?.purpose??'Walkable apartment stair or deck'};
+        if(wall.cutawayGroup){mesh.setEnabled(!this.cutawayEnabled);this.cutawayMeshes.push(mesh);}
       }
       for(const mesh of buildLiveScenery(this.scene,color=>this.material(color),this.surfaces)){
         if(mesh.metadata?.castShadow!==false&&Math.abs(mesh.position.x)<=42&&Math.abs(mesh.position.z)<=50&&!/paving|floor|court|road|street|cloth|plaque|paint/.test(mesh.name))this.shadows.addShadowCaster(mesh);
       }
       const mosaicTexture=new DynamicTexture('b-basin-blue-mosaic',{width:512,height:512},this.scene,false);
+      this.mapTextures.push(mosaicTexture);
       const mosaicContext=mosaicTexture.getContext() as unknown as CanvasRenderingContext2D;
       const tileColors=['#28648a','#34789a','#3d81a0','#2d6b91','#4a87a1'];
       mosaicContext.fillStyle='#c6c1af';mosaicContext.fillRect(0,0,512,512);
@@ -1723,7 +1956,8 @@ export class FpsLiveViewer {
       mosaicTexture.wrapU=mosaicTexture.wrapV=Texture.WRAP_ADDRESSMODE;mosaicTexture.anisotropicFilteringLevel=8;
       const mosaicMaterial=new StandardMaterial('b-basin-mosaic-material',this.scene);
       mosaicMaterial.diffuseTexture=mosaicTexture;mosaicMaterial.specularColor=new Color3(.13,.16,.16);
-      for(const [site,position] of Object.entries(LIVE_FPS_MAP.sites)) {
+      this.mapMaterials.push(mosaicMaterial);
+      for(const [site,position] of Object.entries(runtime.definition.sites)) {
         const siteSize=site==='B'?6.2:8.5;
         const pad=MeshBuilder.CreateGround(`site-${site}`,{width:siteSize,height:siteSize},this.scene);pad.position.set(position.x,.025,position.z);pad.material=site==='B'?mosaicMaterial:this.surfaces.material('paving','#d0c5aa');pad.receiveShadows=true;pad.isPickable=false;
         if(site==='A'){const repeat=siteSize/LIVE_SURFACE_METRES.paving;pad.setVerticesData('uv',[0,0,repeat,0,0,repeat,repeat,repeat]);}
@@ -1735,12 +1969,73 @@ export class FpsLiveViewer {
           border.position.set(edgeX,.04,edgeZ);border.material=this.material('#d2c7ad');border.isPickable=false;border.receiveShadows=true;
         }
       }
-      const display=this.device.getChildMeshes().find(m=>m.name.endsWith('-c4-display'));
-      if(display){this.deviceClock=new DynamicTexture('device-countdown',{width:128,height:64},this.scene,false);const mat=new StandardMaterial('device-countdown-screen',this.scene);mat.diffuseTexture=this.deviceClock;mat.emissiveTexture=this.deviceClock;mat.disableLighting=true;display.material=mat;}
-      batchStaticLiveGeometry(this.scene.meshes.slice(staticStart).filter((mesh):mesh is Mesh=>mesh instanceof Mesh),this.shadows);
-      this.engine.onContextLostObservable.add(()=>{if(!this.disposed)onLost();});
-      this.resize.observe(canvas);this.engine.resize();
-    } catch(error){this.dispose();throw error;}
+      const cutawaySet=new Set<Mesh>(this.cutawayMeshes);
+      batchStaticLiveGeometry(this.scene.meshes.slice(staticStart).filter((mesh):mesh is Mesh=>mesh instanceof Mesh&&!cutawaySet.has(mesh)),this.shadows);
+      this.mapMeshes=this.scene.meshes.slice(staticStart).filter((mesh):mesh is Mesh=>mesh instanceof Mesh);
+    } else {
+      const fogColor=Color3.FromHexString(atm.fogHex);
+      this.scene.clearColor=new Color4(fogColor.r,fogColor.g,fogColor.b,1);
+      this.scene.fogColor=fogColor;this.scene.fogDensity=atm.fogDensity;
+      this.skyLight.intensity=atm.hemiIntensity;
+      this.skyLight.diffuse=Color3.FromHexString(atm.hemiSkyHex);
+      this.skyLight.groundColor=Color3.FromHexString(atm.hemiGroundHex);
+      const sd=atm.sunDirection;
+      this.sunLight.direction=new Vector3(sd.x,sd.y,sd.z).normalize();
+      this.sunLight.position=new Vector3(-sd.x*68,82,-sd.z*68);
+      this.sunLight.intensity=atm.sunIntensity;
+      this.sunLight.diffuse=Color3.FromHexString(atm.sunHex);
+
+      const staticStart=this.scene.meshes.length;
+      const baseHoles=runtime.id==='spillway'?SPILLWAY_SHALLOW_WATERS:[];
+      for(const [index,rect] of cutRectHoles({minX:-120,maxX:120,minZ:-120,maxZ:120},baseHoles).entries()){
+        const w=rect.maxX-rect.minX,d=rect.maxZ-rect.minZ;
+        const floor=MeshBuilder.CreateGround(`${runtime.id}-ground-${index}`,{width:w,height:d},this.scene);
+        floor.position.set((rect.minX+rect.maxX)/2,-.002,(rect.minZ+rect.maxZ)/2);
+        const uScale=LIVE_SURFACE_METRES[atm.baseGroundSurface];
+        floor.setVerticesData('uv',[0,0,w/uScale,0,0,d/uScale,w/uScale,d/uScale]);
+        floor.material=this.surfaces.material(atm.baseGroundSurface,atm.baseGroundHex);
+        floor.receiveShadows=true;floor.isPickable=false;
+      }
+
+      const staticCandidates:Mesh[]=[];
+      for(const wall of [...runtime.definition.solids,...runtime.terrain.terrainSolids]){
+        if(runtime.id==='spillway'&&SPILLWAY_SCULPTED_SOLIDS.has(wall.id))continue;
+        const base=wall.baseY??0,height=wall.height-base;
+        if(height<=.005)continue;
+        const width=wall.maxX-wall.minX,depth=wall.maxZ-wall.minZ;
+        const design=runtime.definition.resolveAssetStyle?.(wall.id);
+        const kind=toRenderSurface(wall.surface??design?.surface,'concrete');
+        const hex=wall.color||design?.color||'#8c9092';
+        const mesh=MeshBuilder.CreateBox(wall.id,{width,height,depth,faceUV:liveBoxSurfaceUV(width,height,depth,LIVE_SURFACE_METRES[kind])},this.scene);
+        mesh.position.set((wall.minX+wall.maxX)/2,base+height/2,(wall.minZ+wall.maxZ)/2);
+        mesh.material=this.surfaces.material(kind,hex);
+        mesh.isPickable=false;mesh.receiveShadows=true;
+        if(wall.height>.05)this.shadows.addShadowCaster(mesh);
+        mesh.freezeWorldMatrix();
+        if(design?.purpose)mesh.metadata={purpose:design.purpose};
+        if(wall.cutawayGroup){
+          mesh.setEnabled(!this.cutawayEnabled);
+          this.cutawayMeshes.push(mesh);
+        } else {
+          staticCandidates.push(mesh);
+        }
+      }
+      batchStaticLiveGeometry(staticCandidates,this.shadows);
+
+      if(runtime.id==='spillway'){
+        const built=buildSpillwayScenery(this.scene,color=>this.material(color),this.surfaces);
+        for(const mesh of built.cutawayMeshes){
+          mesh.setEnabled(!this.cutawayEnabled);
+          this.cutawayMeshes.push(mesh);
+        }
+        for(const caster of built.shadowCasters)this.shadows.addShadowCaster(caster);
+        this.waterFlows.push(...built.waterTextures);
+        this.mapTextures.push(...built.waterTextures);
+        this.mapLights.push(...built.lights);
+      }
+      this.mapMeshes=this.scene.meshes.slice(staticStart).filter((mesh):mesh is Mesh=>mesh instanceof Mesh);
+    }
+    this.rebuildDebugOverlays();
   }
   private material(hex:string):StandardMaterial {
     const existing=this.materials.get(hex);if(existing)return existing;
@@ -1853,7 +2148,7 @@ export class FpsLiveViewer {
     if (existing) {
       existing.fadeUntil = now + 1.5;
       if (endTime - existing.builtUntil >= 0.04 || (endTime >= detonateAt - 0.02 && existing.builtUntil < endTime - 0.005)) {
-        const points = computeLiveGrenadeTrajectoryPoints(grenade, startTime, endTime);
+        const points = computeLiveGrenadeTrajectoryPoints(grenade, startTime, endTime, this.mapRuntime);
         if (points.length >= 2) {
           for(let i=0;i<existing.path.length;i++)existing.path[i].copyFrom(points[points.length>existing.path.length?Math.round(i*(points.length-1)/(existing.path.length-1)):Math.min(i,points.length-1)]);
           MeshBuilder.CreateTube(`lineup-tube-${key}`, { path: existing.path, instance:existing.tube }, this.scene);
@@ -1866,7 +2161,7 @@ export class FpsLiveViewer {
       existing.ring.setEnabled(now >= detonateAt - 0.22);
       return;
     }
-    const points = computeLiveGrenadeTrajectoryPoints(grenade, startTime, endTime);
+    const points = computeLiveGrenadeTrajectoryPoints(grenade, startTime, endTime, this.mapRuntime);
     if (points.length < 2) return;
     const path=Array.from({length:192},(_,i)=>points[points.length>192?Math.round(i*(points.length-1)/191):Math.min(i,points.length-1)].clone());
     const baseTubeAlpha = 0.72;
@@ -1966,7 +2261,7 @@ export class FpsLiveViewer {
         const operative=existing??createTacticalOperativeMesh(corpse.attacking?'t':'ct',`body-${corpse.id}`,this.scene,hex=>this.material(hex),variantHint);
         operative.root.position.setAll(0);operative.root.rotation.setAll(0);operative.root.setEnabled(true);
         for(const pivot of [operative.leftElbowPivot,operative.rightElbowPivot,operative.leftKneePivot,operative.rightKneePivot])pivot.parent=operative.root;
-        operative.magazine.setEnabled(false);view={operative,rag:createLiveRagdoll(corpse),borrowed:!!existing};this.corpseViews.set(corpse.id,view);
+        operative.magazine.setEnabled(false);view={operative,rag:createLiveRagdoll(corpse,this.mapRuntime),borrowed:!!existing};this.corpseViews.set(corpse.id,view);
       }
       if(view.rag.age>4)continue;
       stepLiveRagdoll(view.rag,delta);const p=view.rag.points,o=view.operative;
@@ -1995,7 +2290,7 @@ export class FpsLiveViewer {
         const reach=index===0?0:mark.radius*(.25+((mark.id+index*3)%7)/12);
         const size=mark.radius*(index===0 ? .9 : .24+((mark.id+index)%4)*.055);
         const splat=MeshBuilder.CreateDisc(`blood-${mark.id}-${index}`,{radius:1,tessellation:14},this.scene);
-        splat.rotation.x=Math.PI/2;splat.position.set(mark.x+Math.cos(angle)*reach,liveGroundHeight(mark)+.036+index*.0018,mark.z+Math.sin(angle)*reach);
+        splat.rotation.x=Math.PI/2;splat.position.set(mark.x+Math.cos(angle)*reach,this.mapRuntime.terrain.groundHeight(mark)+.036+index*.0018,mark.z+Math.sin(angle)*reach);
         splat.scaling.set(size*(index===0?1.25:.72),size*(index===0 ? .72 : .5),1);
         splat.material=this.bloodMaterials[(mark.id+index+(mark.region==='head'?1:0))%this.bloodMaterials.length];
         splat.isPickable=false;splats.push(splat);
@@ -2005,12 +2300,14 @@ export class FpsLiveViewer {
   }
   render(previous:LiveSnapshot,current:LiveSnapshot,alpha:number,mode:LiveCameraMode,selected:string,elapsed=1/60,allowPip=true,lookAhead?:LiveSnapshot,showLineups=true):LiveRenderResult {
     if(this.disposed)return {followedId:selected,effectiveMode:'cinematic',pip:{active:false,phase:'planting',progress:0,duration:3.2,spot:{x:0,z:0}}};
+    const nextMap=current.mapId??'fontessa';
+    if(nextMap!==this.mapRuntime.id)this.setMap(nextMap);
     const renderTime=previous.round===current.round&&current.time>=previous.time?mix(previous.time,current.time,alpha):current.time;
     if(this.animationRound!==current.round){
       this.animationRound=current.round;
       for(const view of this.actors.values())this.resetOperativeMotion(view.operative,true);
     }
-    this.surfaces.update(renderTime);if(this.riverFlow)this.riverFlow.uOffset=renderTime*.035;
+    this.surfaces.update(renderTime);for(const tex of this.waterFlows)tex.uOffset=renderTime*.035;
     const players=current.players.map(p=>interpolateLivePlayer(previous.round===current.round?previous.players.find(a=>a.id===p.id):undefined,p,alpha));
     const playerVariants=new Map<string,number>();
     let ctSlot=0,tSlot=0;
@@ -2073,7 +2370,7 @@ export class FpsLiveViewer {
       let mesh=this.utilityDrops.get(item.id);
       if(!mesh){mesh=create3DWeaponMesh(item.kind,`utility-stock-${item.id}`,this.scene,hex=>this.material(hex),item.team===current.attackTeam);mesh.rotation.set(Math.PI/2,item.id*.7,0);this.utilityDrops.set(item.id,mesh);}
       const t=item.airUntil?Math.max(0,Math.min(1,1-(item.airUntil-current.time)/.7)):1,from=item.from??item;
-      mesh.position.set(mix(from.x,item.x,t),mix(item.fromY??liveGroundHeight(from)+.14,liveGroundHeight(item)+.14,t)+Math.sin(t*Math.PI)*.4,mix(from.z,item.z,t));
+      mesh.position.set(mix(from.x,item.x,t),mix(item.fromY??this.mapRuntime.terrain.groundHeight(from)+.14,this.mapRuntime.terrain.groundHeight(item)+.14,t)+Math.sin(t*Math.PI)*.4,mix(from.z,item.z,t));
     }
     // Roll lays the firearm on its side; yaw rotates it in the floor plane. Bounds keep every part above stone.
     for(const [id,item] of this.droppedMeshes)if(!current.droppedWeapons.some(w=>w.id===id)){item.root.dispose();item.ring.dispose();this.droppedMeshes.delete(id);}
@@ -2082,11 +2379,11 @@ export class FpsLiveViewer {
       if(!item){
         const root=create3DWeaponMesh(dropped.weapon,`dropped-${dropped.id}`,this.scene,hex=>this.material(hex));root.rotation.set(0,((dropped.id*73)%360)*Math.PI/180,Math.PI/2);root.computeWorldMatrix(true);
         let minY=Infinity;for(const mesh of root.getChildMeshes()){mesh.computeWorldMatrix(true);minY=Math.min(minY,mesh.getBoundingInfo().boundingBox.minimumWorld.y);}
-        const ring=MeshBuilder.CreateTorus(`drop-ring-${dropped.id}`,{diameter:.65,thickness:.012,tessellation:16},this.scene);ring.position.set(dropped.x,liveGroundHeight(dropped)+.024,dropped.z);ring.material=this.material('#93836b');ring.isPickable=false;ring.freezeWorldMatrix();
+        const ring=MeshBuilder.CreateTorus(`drop-ring-${dropped.id}`,{diameter:.65,thickness:.012,tessellation:16},this.scene);ring.position.set(dropped.x,this.mapRuntime.terrain.groundHeight(dropped)+.024,dropped.z);ring.material=this.material('#93836b');ring.isPickable=false;ring.freezeWorldMatrix();
         item={root,ring,lift:Number.isFinite(minY)?.035-minY:.12};this.droppedMeshes.set(dropped.id,item);
       }
       const t=dropped.airUntil?Math.max(0,Math.min(1,1-(dropped.airUntil-current.time)/.7)):1,from=dropped.from??dropped;
-      const x=mix(from.x,dropped.x,t),z=mix(from.z,dropped.z,t),y=mix(dropped.fromY??liveGroundHeight(from)+item.lift,liveGroundHeight(dropped)+item.lift,t)+Math.sin(t*Math.PI)*.45;
+      const x=mix(from.x,dropped.x,t),z=mix(from.z,dropped.z,t),y=mix(dropped.fromY??this.mapRuntime.terrain.groundHeight(from)+item.lift,this.mapRuntime.terrain.groundHeight(dropped)+item.lift,t)+Math.sin(t*Math.PI)*.45;
       item.root.position.set(x,y,z);item.ring.setEnabled(t>=1);
     }
     for(const [id,cloud] of this.smokes)if(!current.smokes.some(s=>s.id===id)){cloud.root.dispose(false,false);cloud.material.dispose(false,false);this.smokes.delete(id);}
@@ -2144,7 +2441,7 @@ export class FpsLiveViewer {
         }
         view={root,ground,groundFlames,groundFlameMaterials,flames,groundMaterial,flameMaterials};this.fires.set(fire.id,view);
       }
-      view.root.position.set(fire.x,liveGroundHeight(fire)+.045,fire.z);view.ground.scaling.set(fireRadius*2,1,fireRadius*2);
+      view.root.position.set(fire.x,this.mapRuntime.terrain.groundHeight(fire)+.045,fire.z);view.ground.scaling.set(fireRadius*2,1,fireRadius*2);
       const fade=Math.min(1,Math.max(0,(fire.expires-renderTime)/1.2));view.groundMaterial.alpha=.5*Math.min(1,fade+.2);
       for(let i=0;i<view.groundFlames.length;i++){
         const phase=i*2.399,theta=phase+Math.sin(renderTime*2.3+phase)*.08,radial=.12+(i%4)*.17,pulse=.78+Math.sin(renderTime*6.2+phase)*.18;
@@ -2171,8 +2468,8 @@ export class FpsLiveViewer {
       }
       const age=Math.max(0,renderTime-blast.startedAt),life=Math.max(0,Math.min(1,(blast.endsAt-renderTime)/Math.max(.01,blast.endsAt-blast.startedAt)));
       const scale=.35+age*13;
-      view.sphere.position.set(blast.x,liveGroundHeight(blast)+.75,blast.z);view.sphere.scaling.set(scale,scale*.45,scale);
-      view.ring.position.set(blast.x,liveGroundHeight(blast)+.08,blast.z);view.ring.scaling.set(scale*1.1,1,scale*1.1);
+      view.sphere.position.set(blast.x,this.mapRuntime.terrain.groundHeight(blast)+.75,blast.z);view.sphere.scaling.set(scale,scale*.45,scale);
+      view.ring.position.set(blast.x,this.mapRuntime.terrain.groundHeight(blast)+.08,blast.z);view.ring.scaling.set(scale*1.1,1,scale*1.1);
       view.sphereMaterial.alpha=.7*life;view.ringMaterial.alpha=.78*life;
     }
     for(const [id,mesh] of this.grenades)if(!current.grenades.some(g=>g.id===id)){mesh.dispose();this.grenades.delete(id);}
@@ -2194,12 +2491,12 @@ export class FpsLiveViewer {
       } else mesh.position.set(grenade.x,grenade.y,grenade.z);
     }
 
-    this.device.setEnabled(current.bomb.status==='planted'||current.bomb.status==='dropped');this.device.position.set(current.bomb.x,liveGroundHeight(current.bomb)+.14,current.bomb.z);
+    this.device.setEnabled(current.bomb.status==='planted'||current.bomb.status==='dropped');this.device.position.set(current.bomb.x,this.mapRuntime.terrain.groundHeight(current.bomb)+.14,current.bomb.z);
     const second=Math.ceil(current.bomb.remaining);if(this.deviceClock&&this.deviceSecond!==second){this.deviceSecond=second;this.deviceClock.drawText(second.toString().padStart(2,'0')+':00',8,48,'bold 48px monospace','#b5ffba','#142b25',true);}
     if(current.bomb.status==='exploded'&&this.explosionRound!==current.round){
       this.explosionRound=current.round;this.explosionStartedAt=current.time;
-      this.explosionSphere=MeshBuilder.CreateSphere('bomb-explosion-flash',{diameter:1,segments:10},this.scene);this.explosionSphere.position.set(current.bomb.x,liveGroundHeight(current.bomb)+.8,current.bomb.z);
-      this.explosionRing=MeshBuilder.CreateTorus('bomb-explosion-ring',{diameter:1,thickness:.18,tessellation:24},this.scene);this.explosionRing.position.set(current.bomb.x,liveGroundHeight(current.bomb)+.1,current.bomb.z);
+      this.explosionSphere=MeshBuilder.CreateSphere('bomb-explosion-flash',{diameter:1,segments:10},this.scene);this.explosionSphere.position.set(current.bomb.x,this.mapRuntime.terrain.groundHeight(current.bomb)+.8,current.bomb.z);
+      this.explosionRing=MeshBuilder.CreateTorus('bomb-explosion-ring',{diameter:1,thickness:.18,tessellation:24},this.scene);this.explosionRing.position.set(current.bomb.x,this.mapRuntime.terrain.groundHeight(current.bomb)+.1,current.bomb.z);
       const flashMaterial=new StandardMaterial('bomb-explosion-flash-material',this.scene);flashMaterial.emissiveColor=new Color3(1,.48,.06);flashMaterial.diffuseColor=new Color3(1,.64,.14);flashMaterial.alpha=.9;flashMaterial.disableLighting=true;flashMaterial.disableDepthWrite=true;
       const ringMaterial=new StandardMaterial('bomb-explosion-ring-material',this.scene);ringMaterial.emissiveColor=new Color3(1,.18,.015);ringMaterial.diffuseColor=new Color3(1,.3,.025);ringMaterial.alpha=.88;ringMaterial.disableLighting=true;ringMaterial.disableDepthWrite=true;ringMaterial.zOffset=-1;
       this.explosionSphere.material=flashMaterial;this.explosionRing.material=ringMaterial;this.explosionMaterials=[flashMaterial,ringMaterial];
@@ -2212,29 +2509,45 @@ export class FpsLiveViewer {
       this.explosionMaterials[0].alpha=.9*life;this.explosionMaterials[1].alpha=.88*life;
     }
     const sniper=followed.equipped==='sniper'||followed.equipped==='scout';
-    const zoom=effectiveMode==='first'&&followed.hp>0?(sniper&&followed.scopeState==='scoped'?(followed.scopeLevel===2?.16:.28):false):false;
-    const cameraKey=`${effectiveMode}:${effectiveMode==='cinematic'?`film-${current.round}`:effectiveMode==='tactical'?'wide':followed.id}`,cut=cameraKey!==this.previousCamera||this.previousRound!==current.round;
+    const zoom=effectiveMode==='first'&&!this.overviewEnabled&&followed.hp>0?(sniper&&followed.scopeState==='scoped'?(followed.scopeLevel===2?.16:.28):false):false;
+    const activeView=this.overviewEnabled&&effectiveMode!=='free'?'overview':effectiveMode;
+    const cameraKey=`${this.mapRuntime.id}:${activeView}:${activeView==='cinematic'?`film-${current.round}`:activeView==='tactical'||activeView==='overview'?'wide':followed.id}`,cut=cameraKey!==this.previousCamera||this.previousRound!==current.round;
     if(cut)this.fpMoveBlend=0;
     const blend=cut?1:1-Math.exp(-Math.max(0,Math.min(.1,elapsed))*9);
     const flight=this.freeControls.update(effectiveMode==='free',elapsed);
+    const aspect=this.engine.getRenderWidth()/Math.max(1,this.engine.getRenderHeight());
     if(effectiveMode==='free'){
       this.camera.fov=1.1;this.camera.position.set(flight.x,flight.y,flight.z);
       this.camera.rotation.set(flight.pitch,flight.yaw,0);
+    }else if(this.overviewEnabled){
+      const pose=computeOverviewCameraPose(aspect,this.mapRuntime);
+      this.camera.fov=mix(this.camera.fov,pose.fov,blend);
+      this.scratchVecA.set(pose.position.x,pose.position.y,pose.position.z);
+      Vector3.LerpToRef(this.camera.position,this.scratchVecA,blend,this.camera.position);
+      this.scratchVecB.set(pose.target.x,pose.target.y,pose.target.z);
+      Vector3.LerpToRef(this.cameraTarget,this.scratchVecB,blend,this.cameraTarget);
+      this.camera.setTarget(this.cameraTarget);
     }else if(effectiveMode==='tactical'){
-      const pose=computeTacticalCameraPose(decision.engagements?.length?decision.engagements:[followed],this.engine.getRenderWidth()/Math.max(1,this.engine.getRenderHeight()));
-      this.camera.fov=mix(this.camera.fov,pose.fov,blend);this.camera.position=Vector3.Lerp(this.camera.position,new Vector3(pose.position.x,pose.position.y,pose.position.z),blend);
-      this.cameraTarget=Vector3.Lerp(this.cameraTarget,new Vector3(pose.target.x,pose.target.y,pose.target.z),blend);this.camera.setTarget(this.cameraTarget);
+      const pose=computeTacticalCameraPose(decision.engagements?.length?decision.engagements:[followed],aspect,this.mapRuntime);
+      this.camera.fov=mix(this.camera.fov,pose.fov,blend);
+      this.scratchVecA.set(pose.position.x,pose.position.y,pose.position.z);
+      Vector3.LerpToRef(this.camera.position,this.scratchVecA,blend,this.camera.position);
+      this.scratchVecB.set(pose.target.x,pose.target.y,pose.target.z);
+      Vector3.LerpToRef(this.cameraTarget,this.scratchVecB,blend,this.cameraTarget);
+      this.camera.setTarget(this.cameraTarget);
     }else if(effectiveMode==='cinematic') {
-      const cinematicPose=computeCinematicCameraPose(current.time,current.round,current.bomb.site??current.teams[current.attackTeam].site);
+      const cinematicPose=computeCinematicCameraPose(current.time,current.round,current.bomb.site??current.teams[current.attackTeam].site,this.mapRuntime);
       this.camera.fov=mix(this.camera.fov,cinematicPose.fov,blend);
-      this.camera.position=Vector3.Lerp(this.camera.position,new Vector3(cinematicPose.position.x,cinematicPose.position.y,cinematicPose.position.z),blend);
-      this.cameraTarget=Vector3.Lerp(this.cameraTarget,new Vector3(cinematicPose.target.x,cinematicPose.target.y,cinematicPose.target.z),blend);
+      this.scratchVecA.set(cinematicPose.position.x,cinematicPose.position.y,cinematicPose.position.z);
+      Vector3.LerpToRef(this.camera.position,this.scratchVecA,blend,this.camera.position);
+      this.scratchVecB.set(cinematicPose.target.x,cinematicPose.target.y,cinematicPose.target.z);
+      Vector3.LerpToRef(this.cameraTarget,this.scratchVecB,blend,this.cameraTarget);
       this.camera.setTarget(this.cameraTarget);
     } else this.followCamera(followed,effectiveMode==='first',blend,renderTime,zoom,mode==='director'&&current.phase==='freeze');
     this.previousCamera=cameraKey;this.previousRound=current.round;
 
     this.mainHiddenIds.clear();
-    if(effectiveMode==='first' && followed.hp>0) {
+    if(effectiveMode==='first' && !this.overviewEnabled && followed.hp>0) {
       this.mainHiddenIds.add(followed.id);
       for(const player of players) {
         if(player.hp>0 && player.id!==followed.id && player.team===followed.team) {
@@ -2247,7 +2560,7 @@ export class FpsLiveViewer {
     }
 
     // First-person viewmodel and muzzle flash (isolated to main camera via onBeforeCameraRenderObservable)
-    this.mainFpEnabled=effectiveMode==='first' && followed.hp>0;
+    this.mainFpEnabled=effectiveMode==='first' && !this.overviewEnabled && followed.hp>0;
     this.mainFollowedId=followed.id;
     this.mainMuzzleEnabled=false;
     if(this.mainFpEnabled) {
@@ -2407,6 +2720,7 @@ export class FpsLiveViewer {
       this.fpGunRoot?.setEnabled(false);
       this.fpMuzzleFlash?.setEnabled(false);
     }
+    this.prewarmNextViewmodel(players,playerVariants,current.round);
     // Resolve both views after their weapon poses, recoil and camera transforms.
     this.updateShotTracers({...current,time:renderTime});
     if (showLineups) {
@@ -2420,14 +2734,14 @@ export class FpsLiveViewer {
     const watchingPlanter = Boolean(decision.pip.planterId && decision.followedId === decision.pip.planterId && (effectiveMode === 'first' || effectiveMode === 'third'));
     const pipShouldRender = effectiveMode !== 'free' && allowPip && decision.pip.active && !watchingPlanter && this.pipViewport !== null;
     if(decision.pip.active) {
-      const pipPose=computeBombPlantPipPose(decision.pip,players);
+      const pipPose=computeBombPlantPipPose(decision.pip,players,this.mapRuntime);
       const pipKey=`${current.round}:${decision.pip.site??''}:${decision.pip.planterId??''}`;
       const pipCut=pipKey!==this.previousPipKey;
       const pipBlend=pipCut?1:1-Math.exp(-Math.max(0,Math.min(.1,elapsed))*7);
-      const desiredPipPos=new Vector3(pipPose.position.x,pipPose.position.y,pipPose.position.z);
-      const desiredPipTarget=new Vector3(pipPose.target.x,pipPose.target.y,pipPose.target.z);
-      this.pipCamera.position=Vector3.Lerp(this.pipCamera.position,desiredPipPos,pipBlend);
-      this.pipTarget=Vector3.Lerp(this.pipTarget,desiredPipTarget,pipBlend);
+      this.scratchVecA.set(pipPose.position.x,pipPose.position.y,pipPose.position.z);
+      this.scratchVecB.set(pipPose.target.x,pipPose.target.y,pipPose.target.z);
+      Vector3.LerpToRef(this.pipCamera.position,this.scratchVecA,pipBlend,this.pipCamera.position);
+      Vector3.LerpToRef(this.pipTarget,this.scratchVecB,pipBlend,this.pipTarget);
       this.pipCamera.setTarget(this.pipTarget);
       this.pipCamera.fov=mix(this.pipCamera.fov,pipPose.fov,pipBlend);
       this.previousPipKey=pipKey;
@@ -2455,8 +2769,9 @@ export class FpsLiveViewer {
   }
   private followCamera(player:LivePlayer,first:boolean,blend:number,_time:number,zoom:number|false,freezeShowcase=false) {
     const jumpOffset=player.jumpY??0;
-    const clampedX=Math.max(-33.5,Math.min(33.5,player.x));
-    const clampedZ=Math.max(-42.5,Math.min(42.5,player.z));
+    const b=this.mapRuntime.definition.bounds;
+    const clampedX=Math.max(b.clampMinX,Math.min(b.clampMaxX,player.x));
+    const clampedZ=Math.max(b.clampMinZ,Math.min(b.clampMaxZ,player.z));
     if(first){
       const eyeY=player.crouch?1.08:1.6;
       this.currentEyeY=eyeY;
@@ -2468,20 +2783,53 @@ export class FpsLiveViewer {
       this.camera.setTarget(this.cameraTarget);
       return;
     }
-    const pose=freezeShowcase?computeFreezeShowcasePose(player,_time):computeThirdPersonCameraPose(player);
+    const pose=freezeShowcase?computeFreezeShowcasePose(player,_time,this.mapRuntime):computeThirdPersonCameraPose(player,this.mapRuntime);
     const trackBlend=blend>=1?1:Math.min(1,blend*1.85);
     this.camera.fov=mix(this.camera.fov,pose.fov,trackBlend);
-    const desired=new Vector3(pose.position.x,pose.position.y,pose.position.z);
-    const smooth=Vector3.Lerp(this.camera.position,desired,trackBlend);
+    this.scratchVecA.set(pose.position.x,pose.position.y,pose.position.z);
+    Vector3.LerpToRef(this.camera.position,this.scratchVecA,trackBlend,this.scratchVecB);
     // Keep camera close to the model's back without letting lerp sweep through a wall corner.
     const eyeY=(player.crouch?1.08:1.6)+(player.jumpY??0);
-    const crosses=[...LIVE_FPS_MAP.solids,...LIVE_TERRAIN_SOLIDS].some(w=>eyeY>=(w.baseY??0)-.22&&eyeY<=w.height+.22&&segmentHitsWall(player,{x:smooth.x,z:smooth.z},w,.22));
-    this.camera.position.copyFrom(crosses?desired:smooth);
-    this.cameraTarget=Vector3.Lerp(this.cameraTarget,new Vector3(pose.target.x,pose.target.y,pose.target.z),Math.min(1,trackBlend*1.2));
+    const hitsWall=(w:typeof this.mapRuntime.definition.solids[number])=>eyeY>=(w.baseY??0)-.22&&eyeY<=w.height+.22&&segmentHitsWall(player,{x:this.scratchVecB.x,z:this.scratchVecB.z},w,.22);
+    const crosses=this.mapRuntime.definition.solids.some(hitsWall)||this.mapRuntime.terrain.terrainSolids.some(hitsWall);
+    this.camera.position.copyFrom(crosses?this.scratchVecA:this.scratchVecB);
+    this.scratchVecC.set(pose.target.x,pose.target.y,pose.target.z);
+    Vector3.LerpToRef(this.cameraTarget,this.scratchVecC,Math.min(1,trackBlend*1.2),this.cameraTarget);
     this.camera.setTarget(this.cameraTarget);
+  }
+  /** Incrementally build at most one uncached FP viewmodel per frame to prevent POV switch hitches. */
+  private prewarmNextViewmodel(players:readonly LivePlayer[],playerVariants:Map<string,number>,round:number):void {
+    const sig=`${round}:${players.map(p=>`${p.id}:${p.equipped}:${p.primaryWeapon ?? ''}:${p.secondaryWeapon ?? ''}`).join('|')}`;
+    if(this.prewarmedSig===sig)return;
+    for(const player of players){
+      const force=player.attacking?'t':'ct';
+      const op=this.actors.get(player.id)?.operative;
+      const variantIdx=op?.variantIndex??playerVariants.get(player.id)??resolveOperativeVariantIndex(force,player.id);
+      const variantStyle=op?.variantStyle??resolveOperativeStyle(force,player.id,variantIdx);
+      const candidates:LiveEquippedWeapon[]=[player.equipped,'knife'];
+      if(player.primaryWeapon)candidates.push(player.primaryWeapon);
+      if(player.secondaryWeapon)candidates.push(player.secondaryWeapon);
+      for(const eq of candidates){
+        const key=`${player.attacking}:${player.team}:${eq}:${variantIdx}`;
+        if(!this.fpWeaponViews.has(key)){
+          this.fpWeaponViews.get(key,()=>{
+            const root=createViewmodelMesh(eq,player.team,'viewmodel-gun',this.scene,hex=>this.material(hex),player.attacking,variantStyle);
+            root.setEnabled(false);
+            const muzzle=(root.metadata as WeaponViewMetadata|undefined)?.muzzle;
+            const flash=muzzle?this.createMuzzleFlash('fp-muzzle-flash',muzzle):undefined;
+            flash?.setEnabled(false);
+            return {root,flash};
+          });
+          return;
+        }
+      }
+    }
+    this.prewarmedSig=sig;
   }
   dispose() {
     if(this.disposed)return;this.disposed=true;this.resize.disconnect();
+    this.clearMapEnvironment();
+    this.shadows.dispose();
     this.freeControls.dispose();
     this.fpWeaponViews.clear();
     for(const item of this.droppedMeshes.values()){item.root.dispose();item.ring.dispose();}

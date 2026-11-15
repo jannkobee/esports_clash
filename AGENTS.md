@@ -1,5 +1,9 @@
 # Repository handoff
 
+## Spillway battlefield, lawful death-callout trading, cam-switch lag & Hexapedia/FE sync (2026-11-16)
+
+Read [the Spillway & FE sync record](docs/fps-spillway-20261116.md). Preserve `fontessa` as default (`getLiveMapRuntime()`), Spillway's 3-level Overpass-inspired layout (`fpsSpillwayMap.ts`/`Scenery`/`Terrain`), `3.82m` Control Deck rails with 2-1-2 B rotation, lawful observed-only death cover callouts (`describeNearbyDeathCover`, no unseen killer leaks), `radioAt` PTT release timing, `fpWeaponViews` LRU cache (`48`) + incremental prewarming, PiP 3D sightline checks, Hexapedia `liveSimulation` / live map / live weapon entries, and Manager FE live 3D practice launch with `createFpsIdentityContext` validation (keep manual unique role assignment intact). Structural/CPU/NullEngine checks do not verify browser GPU FPS.
+
 ## Decision-making, buying and utility polish (2026-11-14)
 
 Read [the decision-making pass](docs/fps-decision-making-polish-20261114.md). Preserve own-lane buy context, armor/objective-kit reserves, paid upgrade/restock/gift accounting, individual holstered weapon cooldowns, legal-information/time-aware IGL redirects, and urgent objective priority. Smoke fire uses bounded evidence-based bursts and checks the continuing ray for allies; it cannot track hidden bodies or learn invented target IDs. Lineups require useful travel/setup time and retain a stable feasible threat-aware execute order. Skipped/covered setups are separate from actual releases; finished plans cannot keep pooling spare smokes. Grenade forecasts use indexed candidates with exact original collision/order/bounce checks. Keep real paid grenade physics, release-only trails, manager-selected roles and prior navigation/runtime/animation work. Structural/CPU checks do not qualify GPU FPS or competitive intelligence.

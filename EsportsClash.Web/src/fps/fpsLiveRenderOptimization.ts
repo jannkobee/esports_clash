@@ -7,6 +7,7 @@ export class LiveRenderCache<K,V>{
   private readonly limit:number;
   private readonly disposeValue:(value:V)=>void;
   constructor(limit:number,disposeValue:(value:V)=>void){this.limit=limit;this.disposeValue=disposeValue;}
+  has(key:K):boolean{return this.values.has(key);}
   get(key:K,create:()=>V):V{
     let value=this.values.get(key);
     if(value===undefined)value=create();

@@ -9,8 +9,8 @@ test('free flight uses wall-clock input, equal diagonal speed, vertical controls
   assert.ok(advanceFreeFlight(p,new Set(['KeyE']),.1).y>p.y);
   assert.ok(advanceFreeFlight(p,new Set(['KeyQ']),.1).y<p.y);
   assert.ok(advanceFreeFlight(p,new Set(['KeyW','ShiftLeft']),.1).z>forward.z);
-  const edge=advanceFreeFlight({...p,x:34,z:43,y:65},new Set(['KeyW','KeyD','KeyE']),10);
-  assert.equal(edge.x,34);assert.equal(edge.z,43);assert.equal(edge.y,65);
+  const edge=advanceFreeFlight({...p,x:38,z:47,y:85},new Set(['KeyW','KeyD','KeyE']),10);
+  assert.equal(edge.x,38);assert.equal(edge.z,47);assert.equal(edge.y,85);
 });
 test('free camera input ignores inactive controls and clears on blur and disposal',()=>{
   const doc=new EventTarget(),canvas=new EventTarget();Object.assign(canvas,{ownerDocument:doc});doc.activeElement=canvas;

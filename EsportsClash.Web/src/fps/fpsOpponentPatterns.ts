@@ -1,11 +1,11 @@
 import type { FpsPoint } from './fpsSpatialWorld.ts';
-import { liveIntelArea, type LiveIntelContact, type LiveIntelMemory, assessLiveIntel, liveIntelBeliefs } from './fpsLiveIntel.ts';
+import { liveIntelArea, type LiveIntelClassifier, type LiveIntelContact, type LiveIntelMemory, assessLiveIntel, liveIntelBeliefs } from './fpsLiveIntel.ts';
 import { fpsAbilityUnit, type FpsSkillProfile } from './fpsSkillProfile.ts';
 
 export interface FpsOpponentPattern extends FpsPoint {key:string;rounds:number[];lastObserved:number;earlyRounds?:number[]}
-export function recordFpsOpponentPattern(patterns:FpsOpponentPattern[],contact:LiveIntelContact,round:number,elapsed=Infinity):void {
+export function recordFpsOpponentPattern(patterns:FpsOpponentPattern[],contact:LiveIntelContact,round:number,elapsed=Infinity,classifier:LiveIntelClassifier=liveIntelArea):void {
   if(contact.source!=='sight'||!contact.enemyId||contact.confidence<.55)return;
-  const key=`${liveIntelArea(contact)}:${Math.round(contact.x/5)}:${Math.round(contact.z/5)}`;
+  const key=`${classifier(contact)}:${Math.round(contact.x/5)}:${Math.round(contact.z/5)}`;
   let pattern=patterns.find(p=>p.key===key);
   if(!pattern){pattern={key,x:contact.x,z:contact.z,rounds:[],lastObserved:contact.observed};patterns.push(pattern);}
   if(!pattern.rounds.includes(round))pattern.rounds.push(round);
@@ -15,9 +15,9 @@ export function recordFpsOpponentPattern(patterns:FpsOpponentPattern[],contact:L
 }
 
 /** Repeated sightings in one round or echoed reports cannot manufacture a tendency. */
-export function knownFpsTendency(patterns:readonly FpsOpponentPattern[],round:number) {
+export function knownFpsTendency(patterns:readonly FpsOpponentPattern[],round:number,classifier:LiveIntelClassifier=liveIntelArea) {
   return (['A','B','Mid'] as const).map(area=>{
-    const matching=patterns.filter(p=>liveIntelArea(p)===area);
+    const matching=patterns.filter(p=>classifier(p)===area);
     const rounds=new Set(matching.flatMap(p=>p.rounds).filter(r=>r<round&&r>=round-6));
     const early=new Set(matching.flatMap(p=>p.earlyRounds??[]).filter(r=>rounds.has(r)));
     return {area,samples:rounds.size,early:early.size,confidence:Math.min(.8,rounds.size/6)};
@@ -28,10 +28,10 @@ export function knownFpsPattern(patterns:readonly FpsOpponentPattern[],from:FpsP
     .sort((a,b)=>b.rounds.length-a.rounds.length||b.lastObserved-a.lastObserved)[0];
 }
 /** Poor interpretation can over-weight old anonymous activity; it cannot identify opponents or refresh timestamps. */
-export function interpretFpsInformation(profile:FpsSkillProfile,memory:LiveIntelMemory,now:number) {
-  const assessment=assessLiveIntel(memory,now),reading=fpsAbilityUnit(profile,'informationReading');
+export function interpretFpsInformation(profile:FpsSkillProfile,memory:LiveIntelMemory,now:number,classifier:LiveIntelClassifier=liveIntelArea) {
+  const assessment=assessLiveIntel(memory,now,classifier),reading=fpsAbilityUnit(profile,'informationReading');
   for(const area of ['A','B','Mid'] as const){
-    const ambiguous=liveIntelBeliefs(memory,now).filter(c=>liveIntelArea(c)===area&&(!c.enemyId||c.age>3));
+    const ambiguous=liveIntelBeliefs(memory,now).filter(c=>classifier(c)===area&&(!c.enemyId||c.age>3));
     assessment[area].strength+=Math.min(.55,ambiguous.reduce((n,c)=>n+c.certainty*.18*(1-reading),0));
   }
   return assessment;

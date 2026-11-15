@@ -28,9 +28,14 @@ import { ClubStaffRoom } from './components/ClubStaffRoom';
 import { HexatrickMark } from './components/HexatrickBrand';
 import { ClubHome } from './components/ClubHome';
 import { FpsMatchView } from './components/FpsMatchView';
+import { FpsLiveBroadcast } from './components/FpsLiveBroadcast';
 import { simulateFpsMatch } from './fps';
 import { FPS_MAPS } from './fps/fpsMaps';
-import type { FpsMapId, FpsMatchReport } from './fps/fpsTypes';
+import { listLiveMaps } from './fps/fpsLiveMapRegistry';
+import type { LiveMapId } from './fps/fpsLiveMapTypes';
+import { createFpsIdentityContext } from './fps/fpsIdentityMatch';
+import { fpsSkillProfileFromAttributes, type FpsSkillProfile } from './fps/fpsSkillProfile';
+import type { FpsIdentityExperiment, FpsMapId, FpsMatchReport } from './fps/fpsTypes';
 import { ClubMarketView } from './components/ClubMarketView';
 import { sound } from './audio';
 import {
@@ -133,7 +138,9 @@ export function App() {
   const [inBattle, setInBattle] = useState<boolean>(false);
   const modes = useGameModes();
   const [fpsMapSelection, setFpsMapSelection] = useState<FpsMapId>('breakwater');
+  const [liveMapSelection, setLiveMapSelection] = useState<LiveMapId>('fontessa');
   const [fpsExhibition, setFpsExhibition] = useState<{ report: FpsMatchReport; blueName: string; redName: string } | null>(null);
+  const [livePracticeMatch, setLivePracticeMatch] = useState<{ mapId: LiveMapId; blue: PlayerCard[]; red: PlayerCard[]; seed: number; identity: FpsIdentityExperiment; skillProfiles: Record<string, FpsSkillProfile> } | null>(null);
   const [practiceError, setPracticeError] = useState('');
 
   const [roster, setRoster] = useState<PlayerCard[]>(() => reconcileClubRoster(INITIAL_PLAYERS, [KOVI_PLAYER_CARD]));
@@ -155,6 +162,7 @@ export function App() {
     }
     setPracticeError('');
     const seed = crypto.getRandomValues(new Uint32Array(1))[0];
+    setLivePracticeMatch(null);
     setFpsExhibition({
       report: simulateFpsMatch(blueRoster, redRoster, fpsMapSelection, seed),
       blueName: 'Your Club',
@@ -163,6 +171,42 @@ export function App() {
     setActiveSection('play');
     setPlaySubTab('modes');
     setInBattle(true);
+  };
+
+  const launchLive3dPractice = () => {
+    const blueRoster = startingFive.slice(0, 5);
+    const blueIds = new Set(blueRoster.map(player => player.id));
+    const redRoster = roster.filter(player => !blueIds.has(player.id)).slice(0, 5);
+    if (blueRoster.length !== 5 || redRoster.length !== 5) {
+      setPracticeError('A live 3D practice broadcast requires five distinct players on each side.');
+      return;
+    }
+    try {
+      const seed = crypto.getRandomValues(new Uint32Array(1))[0] % 2147483646 + 1;
+      const identity = createFpsIdentityContext(blueRoster, redRoster);
+      const createdAt = new Date().toISOString();
+      const skillProfiles = Object.fromEntries(
+        [...blueRoster, ...redRoster].map(player => [
+          player.id,
+          fpsSkillProfileFromAttributes(player.id, player.stats, seed, createdAt),
+        ])
+      );
+      setPracticeError('');
+      setFpsExhibition(null);
+      setLivePracticeMatch({
+        mapId: liveMapSelection,
+        blue: blueRoster,
+        red: redRoster,
+        seed,
+        identity,
+        skillProfiles,
+      });
+      setActiveSection('play');
+      setPlaySubTab('modes');
+      setInBattle(true);
+    } catch (error) {
+      setPracticeError((error as Error).message || 'Assign complete unique T and CT roles to your starting five before launching.');
+    }
   };
 
   const sectionTitle: Record<MainSection, string> = {
@@ -266,6 +310,7 @@ export function App() {
           <button className={`cm-nav-btn ${activeSection === 'history' ? 'active' : ''}`} aria-current={activeSection === 'history' ? 'page' : undefined} onClick={() => { setActiveSection('history'); setInBattle(false); }}><span className="flex items-center gap-2"><LabelIcon name="history"/>Match history</span></button>
           <div className="cm-nav-section">Living world</div>
           {([['news', 'The Wire'], ['broadcasts', 'Hexacast'], ['archive', 'Crown 2026']] as const).map(([tab, label]) => <button key={tab} className={`cm-nav-btn ${activeSection === 'play' && playSubTab === tab ? 'active' : ''}`} onClick={() => { setActiveSection('play'); setPlaySubTab(tab); setInBattle(false); window.location.hash = ({ news: 'wire', broadcasts: 'hexacast', archive: 'launch-championship' })[tab]; }}><span className="flex items-center gap-2"><LabelIcon name={label}/>{label}</span></button>)}
+          <a className="cm-nav-btn" href="#fps-simulation"><span className="flex items-center gap-2"><Swords className="w-4 h-4 shrink-0" /><span>3D Broadcast Lab</span></span></a>
           <div className="cm-nav-section">Scouting &amp; System</div>
           <button
             type="button"
@@ -432,7 +477,7 @@ export function App() {
                 <button className={`cm-tab ${playSubTab === 'competitions' ? 'active' : ''}`} onClick={() => { setPlaySubTab('competitions'); window.location.hash = 'competitions?tab=circuit'; }}><Trophy size={14}/>Competitions</button>
                 <button className={`cm-tab ${playSubTab === 'broadcasts' ? 'active' : ''}`} onClick={() => { setPlaySubTab('broadcasts'); window.location.hash = 'hexacast'; }}><LabelIcon name="broadcast"/>Hexacast</button>
                 <button className={`cm-tab ${playSubTab === 'community' ? 'active' : ''}`} onClick={() => { setPlaySubTab('community'); window.location.hash = 'community-cups'; }}><Trophy size={14}/>Community cups</button>
-                {playSubTab === 'modes' && <span className="cm-tab active">Practice tools</span>}
+                <button className={`cm-tab ${playSubTab === 'modes' ? 'active' : ''}`} onClick={() => { setPlaySubTab('modes'); setInBattle(false); setLivePracticeMatch(null); setFpsExhibition(null); window.location.hash = 'match-centre?tool=practice'; }}><Swords size={14}/>Practice &amp; 3D Sim</button>
               </nav>}
               {playSubTab === 'community' && !inBattle && <CommunityCups/>}
               {playSubTab === 'news' && !inBattle && <NewsFeed onWatch={id => { setWatchMatchId(id); setPlaySubTab('split'); window.location.hash = 'match-centre?match=' + id; }}/>}
@@ -444,35 +489,85 @@ export function App() {
               {(playSubTab === 'modes' || inBattle) && (
                 <div>
                   {!inBattle ? (
-                    <div className="cm-panel max-w-xl flex flex-col justify-between">
-                      <div className="cm-panel-header">
-                        <span>Tactical FPS Exhibition</span>
-                        <span className="cm-badge cm-badge-navy">MR15 · 5v5</span>
-                      </div>
-                      <div className="cm-panel-body flex-1 flex flex-col justify-between space-y-3">
-                        <div>
-                          <h2 className="text-base font-extrabold">FPS Match Simulation</h2>
-                          <p className="text-xs cm-muted mt-1.5 leading-relaxed">
-                            Run a deterministic local exhibition on one of the five competitive maps. This preview does not affect schedules, standings, or player careers.
-                          </p>
+                    <div className="space-y-4 max-w-5xl">
+                      {practiceError && <p role="alert" className="text-xs cm-error-text">{practiceError}</p>}
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div className="cm-panel flex flex-col justify-between">
+                          <div className="cm-panel-header">
+                            <span>Live 3D Practice Broadcast</span>
+                            <span className="cm-badge cm-badge-blue">3D · AI Sim</span>
+                          </div>
+                          <div className="cm-panel-body flex-1 flex flex-col justify-between space-y-3">
+                            <div>
+                              <h2 className="text-base font-extrabold">Real-Time 3D Scrimmage</h2>
+                              <p className="text-xs cm-muted mt-1.5 leading-relaxed">
+                                Watch your starting five play live in 3D on Fontessa or 3-level Spillway with 4-slot loadouts, vault drops, Influence Maps, Blackboards, death-callout trading, and prewarmed 1P/3P/Director/PiP cameras. Does not alter careers or funds.
+                              </p>
+                            </div>
+                            <label className="text-xs font-bold cm-muted">
+                              3D Battlefield
+                              <select
+                                aria-label="Live 3D practice map"
+                                className="cm-select mt-1 w-full"
+                                value={liveMapSelection}
+                                onChange={event => setLiveMapSelection(event.target.value as LiveMapId)}
+                              >
+                                {listLiveMaps().map(map => <option key={map.id} value={map.id}>{map.name}</option>)}
+                              </select>
+                            </label>
+                            <div className="flex flex-wrap gap-2">
+                              <button type="button" onClick={launchLive3dPractice} className="cm-btn cm-btn-primary flex-1">
+                                Launch 3D Broadcast ▸
+                              </button>
+                              <a className="cm-btn" href="#fps-simulation">Open 3D Lab</a>
+                              <a className="cm-btn" href="#hexapedia/liveSimulation">3D &amp; AI Guide</a>
+                            </div>
+                          </div>
                         </div>
-                        <label className="text-xs font-bold cm-muted">
-                          Map
-                          <select
-                            aria-label="FPS exhibition map"
-                            className="cm-select mt-1 w-full"
-                            value={fpsMapSelection}
-                            onChange={event => setFpsMapSelection(event.target.value as FpsMapId)}
-                          >
-                            {Object.values(FPS_MAPS).map(map => <option key={map.id} value={map.id}>{map.name}</option>)}
-                          </select>
-                        </label>
-                        {practiceError && <p role="alert" className="text-xs cm-error-text">{practiceError}</p>}
-                        <button type="button" onClick={launchFpsExhibition} className="cm-btn cm-btn-primary w-full">
-                          Run FPS Exhibition ▸
-                        </button>
+
+                        <div className="cm-panel flex flex-col justify-between">
+                          <div className="cm-panel-header">
+                            <span>Recorded Tactical Match</span>
+                            <span className="cm-badge cm-badge-navy">MR15 · 2D Replay</span>
+                          </div>
+                          <div className="cm-panel-body flex-1 flex flex-col justify-between space-y-3">
+                            <div>
+                              <h2 className="text-base font-extrabold">Deterministic 2D Exhibition</h2>
+                              <p className="text-xs cm-muted mt-1.5 leading-relaxed">
+                                Run a deterministic local 2D exhibition across the five league maps to inspect round logs, economy decisions, and role assignments without changing schedules or careers.
+                              </p>
+                            </div>
+                            <label className="text-xs font-bold cm-muted">
+                              Competitive Map
+                              <select
+                                aria-label="FPS exhibition map"
+                                className="cm-select mt-1 w-full"
+                                value={fpsMapSelection}
+                                onChange={event => setFpsMapSelection(event.target.value as FpsMapId)}
+                              >
+                                {Object.values(FPS_MAPS).map(map => <option key={map.id} value={map.id}>{map.name}</option>)}
+                              </select>
+                            </label>
+                            <button type="button" onClick={launchFpsExhibition} className="cm-btn w-full">
+                              Run 2D Recorded Exhibition ▸
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                  ) : livePracticeMatch ? (
+                    <FpsLiveBroadcast
+                      mapId={livePracticeMatch.mapId}
+                      blue={livePracticeMatch.blue}
+                      red={livePracticeMatch.red}
+                      seed={livePracticeMatch.seed}
+                      identity={livePracticeMatch.identity}
+                      skillProfiles={livePracticeMatch.skillProfiles}
+                      onExit={() => {
+                        setInBattle(false);
+                        setLivePracticeMatch(null);
+                      }}
+                    />
                   ) : fpsExhibition ? (
                     <FpsMatchView
                       report={fpsExhibition.report}
@@ -504,7 +599,7 @@ export function App() {
           )}
 
           {activeSection === 'supporter' && <SupporterStudio/>}
-          {activeSection === 'settings' && <section className="cm-panel mb-4"><h2 className="cm-panel-header"><Swords size={15}/> Watch the FPS simulation</h2><div className="cm-panel-body space-y-3"><p>Watch the live 3D exhibition with first-person, third-person and automatic broadcast cameras, or inspect a recorded tactical match. Exhibition matches do not change your club records.</p><div className="flex flex-wrap gap-3"><a className="cm-btn cm-btn-primary" href="#fps-simulation">Open FPS broadcast room</a><a className="cm-btn" href="#hexapedia/fps">FPS reference</a><a className="cm-btn" href="#hexapedia/personalities">Personalities</a>{accountSession?.user.is_evolution_admin && <a className="cm-btn" href={backendPageUrl('/evolution/game-modes')}>Game-mode settings</a>}</div><p className="club-help">Current format: Tactical FPS ({modes.fps_enabled ? 'active' : 'configured'}).</p></div></section>}
+          {activeSection === 'settings' && <section className="cm-panel mb-4"><h2 className="cm-panel-header"><Swords size={15}/> 3D Simulation &amp; Broadcast Lab</h2><div className="cm-panel-body space-y-3"><p>Watch real-time 3D exhibitions on Fontessa and 3-level Spillway with 4-slot weapons, Influence Maps, Blackboards, Behavior Trees, lawful death-callout trading, and prewarmed 1P, 3P, Free, PiP, and Auto Director cameras. Exhibition matches do not change club records.</p><div className="flex flex-wrap gap-3"><a className="cm-btn cm-btn-primary" href="#fps-simulation">Open FPS broadcast room</a><a className="cm-btn" href="#match-centre?tool=practice">Club 3D Practice</a><a className="cm-btn" href="#hexapedia/liveSimulation">3D &amp; AI Guide</a><a className="cm-btn" href="#hexapedia/fps">FPS reference</a>{accountSession?.user.is_evolution_admin && <a className="cm-btn" href={backendPageUrl('/evolution/game-modes')}>Game-mode settings</a>}</div><p className="club-help">Current format: Tactical FPS ({modes.fps_enabled ? 'active' : 'configured'}).</p></div></section>}
           {activeSection === 'settings' && <RouteErrorBoundary><WorldDesk compact/></RouteErrorBoundary>}
           {activeSection === 'settings' && (
             <div className="space-y-4 max-w-5xl">

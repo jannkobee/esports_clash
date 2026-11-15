@@ -80,5 +80,6 @@ export function liveVillageAsset(id:string):VillageAsset {
   if(id.startsWith('spawn-bench'))return asset('Spawn courtyard storage bench',id.endsWith('-back')?'pier':'bench','#987d55','timber');
   if(/pillar|jamb|column/.test(id))return asset('Structural column or window pier','pier','#cfc1a2','stone');
   if(id.startsWith('b-apartments-'))return asset('Market apartment gallery','gallery','#cfc1a2','stone');
-  throw Error(`Village asset has no purpose: ${id}`);
+  if(/-patch-\d+/.test(id))return asset('Admitted terrain patch and retaining masonry','wall','#cfc1a2','stone');
+  return asset('Admitted live-map terrain masonry','wall','#cfc1a2','stone');
 }

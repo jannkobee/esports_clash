@@ -11,6 +11,7 @@ import {SIGNAL_CIRCUIT,fpsBroadcastPresentation,fpsBroadcastText} from './fps/fp
 
 test('every live collider has a village purpose, civic A differs from market B, and spawns remain free',()=>{
   for(const solid of LIVE_FPS_MAP.solids){const asset=liveVillageAsset(solid.id);assert.ok(asset.purpose.length>10);assert.ok(asset.surface);}
+  const fallback=liveVillageAsset('fontessa-patch-73');assert.equal(fallback.kind,'wall');assert.ok(fallback.purpose.length>10);
   assert.equal(liveVillageAsset('a-crates').kind,'clock');assert.equal(liveVillageAsset('b-fountain').kind,'fountain');
   assert.equal(LIVE_FPS_MAP.solids.some(w=>w.id==='b-sandbags'),false);
   assert.equal(LIVE_BOOST_SPOTS.length,0);for(const spot of LIVE_BOOST_SPOTS)assert.ok(liveWalkable(spot),'Crate perches use admitted physical terrain');

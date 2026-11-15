@@ -24,11 +24,12 @@ export function tickFpsMentalState(p:FpsSkillProfile,state:FpsMentalState,dt:num
 export function detailedSenseInterval(p:FpsSkillProfile,state:FpsMentalState):number {
   return .08+(1-ability(p,'awareness'))*.24+state.attentionDebt*.18+state.setback*.14+state.exertion*.08;
 }
-export function detailedAimYaw(yaw:number,desired:number,p:FpsSkillProfile,phase:'flick'|'track'|'fine',dt:number,sniper=false):number {
-  const error=liveAimAngle(desired-yaw),key=phase==='flick'?'flicking':phase==='track'?'tracking':'precision',skill=ability(p,key,sniper);
+export function detailedAimYaw(yaw:number,desired:number,p:FpsSkillProfile,phase:'flick'|'track'|'fine',dt:number,sniper=false,overshootBias=0):number {
+  const targetYaw=overshootBias&&(phase==='flick'||phase==='track')?liveAimAngle(desired+overshootBias):desired;
+  const error=liveAimAngle(targetYaw-yaw),key=phase==='flick'?'flicking':phase==='track'?'tracking':'precision',skill=ability(p,key,sniper);
   const maxStep=(phase==='flick'?2.5+skill*5:phase==='track'?2+skill*4:1.5+skill*3)*dt;
   const eased=error*(1-Math.exp(-(phase==='fine'?7+skill*17:10+skill*8)*dt));
-  return Math.abs(error)<.001?desired:liveAimAngle(yaw+Math.max(-maxStep,Math.min(maxStep,eased)));
+  return Math.abs(error)<.001?targetYaw:liveAimAngle(yaw+Math.max(-maxStep,Math.min(maxStep,eased)));
 }
 /** Symmetric input error has zero mean. No clipping of latent skill or favorable-outcome selection. */
 export function detailedInputError(p:FpsSkillProfile,pressure:number,random:()=>number,sniper=false):number {

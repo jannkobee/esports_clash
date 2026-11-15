@@ -1,8 +1,8 @@
 import type { FpsPoint } from './fpsSpatialWorld.ts';
 import type { FpsPrimaryRole } from './fpsIdentity.ts';
 import type { LiveIntelBelief } from './fpsLiveIntel.ts';
-import { distance, LIVE_TACTICAL, LIVE_MARKET_PASSAGE, LIVE_MID, liveWalkable, liveSightline } from './fpsLiveMap.ts';
-import { liveGroundHeight } from './fpsLiveTerrain.ts';
+import { distance, FONTESSA_MAP_RUNTIME } from './fpsLiveMap.ts';
+import type { LiveMapRuntime } from './fpsLiveMapTypes.ts';
 import type { LiveRoutePlan } from './fpsLivePlanning.ts';
 import { LIVE_PLANT_RULES } from './fpsLivePlanning.ts';
 
@@ -28,36 +28,29 @@ export interface LiveApproachContext {
   objective?:FpsPoint;health?:number;entrySkill?:number;utilitySkill?:number;
   firepower?:number;preferredRange?:number;
   phase?:'regroup'|'breach'|'retake';
+  heatAt?:(point:FpsPoint)=>number;
+  uncertaintyAt?:(point:FpsPoint)=>number;
 }
 
 /** Map affordances, not a sequence: each actor evaluates the reachable options. */
-export function liveAssaultApproaches(site:'A'|'B',from:FpsPoint):LiveApproach[] {
-  const positions=LIVE_TACTICAL[site];
+export function liveAssaultApproaches(site:'A'|'B',from:FpsPoint,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME):LiveApproach[] {
+  const positions=runtime.definition.tactical[site];
+  const extras=runtime.definition.tactical.assaultExtras(site,from).map(c=>({key:c.key,point:c.point,purpose:c.purpose}));
   return [
     ...positions.entries.map((point,i)=>({key:`${site}:entry:${i}`,point,purpose:'entry' as const})).filter(c=>c.point.z>=from.z+2),
     ...positions.holds.map((point,i)=>({key:`${site}:clear:${i}`,point,purpose:'clear' as const})),
-    ...(from.z>=-18?(site==='A'?[
-      {key:'A:west-flank',point:{x:-34,z:12},purpose:'flank' as const},
-      {key:'A:pit-pocket',point:{x:-29,z:16},purpose:'entry' as const},
-      ...(from.z<4?[{key:'A:mid-underpass',point:{x:-8.5,z:-8},purpose:'flank' as const}]:[]),
-    ]:[
-      {key:'B:flower-alley',point:{x:14.5,z:23},purpose:'flank' as const},
-      {key:'B:apartments-ramp',point:{x:32,z:14},purpose:'entry' as const},
-      ...(from.z<4?[{key:'B:banana-car',point:{x:20,z:-4},purpose:'clear' as const}]:[]),
-    ]):[]),
-    ...(site==='B'&&from.z<19?[{key:'B:market-passage',point:LIVE_MARKET_PASSAGE.center,purpose:'flank' as const}]:[]),
-    ...(from.z<3?[{key:`${site}:mid-split`,point:LIVE_MID.splits[site],purpose:'flank' as const}]:[]),
+    ...extras,
   ];
 }
 
-export function liveRetakeApproaches(site:'A'|'B',bomb:FpsPoint):LiveApproach[] {
-  const positions=LIVE_TACTICAL[site];
+export function liveRetakeApproaches(site:'A'|'B',bomb:FpsPoint,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME):LiveApproach[] {
+  const positions=runtime.definition.tactical[site];
   const points=[...positions.holds,...positions.postPlant,
-    ...(site==='A'?[{x:-29,z:16},{x:-34,z:16},{x:-25,z:26}]:[LIVE_MARKET_PASSAGE.north,LIVE_MARKET_PASSAGE.center,{x:14.5,z:23},{x:11.5,z:25}]),
-    ...Array.from({length:6},(_,i)=>({x:bomb.x+Math.sin(i*Math.PI/3)*7,z:bomb.z+Math.cos(i*Math.PI/3)*7}))];
-  return points.filter((p,i)=>liveWalkable(p)&&distance(p,bomb)>3&&distance(p,bomb)<19
+    ...positions.retakeExtras,
+    ...Array.from({length:6},(_,i)=>({x:bomb.x+Math.sin(i*Math.PI/3)*7,z:bomb.z+Math.cos(i*Math.PI/3)*7,level:bomb.level}))];
+  return points.filter((p,i)=>runtime.walkable(p)&&distance(p,bomb)>3&&distance(p,bomb)<19
     &&points.findIndex(q=>distance(p,q)<.5)===i
-    &&liveSightline(p,bomb,liveGroundHeight(p)+1.55,liveGroundHeight(bomb)+.5))
+    &&runtime.sightline(p,bomb,runtime.terrain.groundHeight(p)+1.55,runtime.terrain.groundHeight(bomb)+.5))
     .map((point,i)=>({key:`retake:${site}:${i}`,point,purpose:'clear'}));
 }
 
@@ -83,7 +76,8 @@ export function chooseLiveApproach(candidates:readonly LiveApproach[],context:Li
   if(!pool.length)return undefined;
   const retained=pool.find(c=>c.key===context.previous);
   const dangerAt=(candidate:LiveApproach)=>context.beliefs.reduce((sum,b)=>sum+(distance(b,candidate.point)<b.radius+5?b.certainty:0),0)
-    +(context.routeTo?.(candidate.point).exposure??0)*.06;
+    +(context.routeTo?.(candidate.point).exposure??0)*.06
+    +(context.heatAt?.(candidate.point)??0)*.9;
   const dangerChanged=retained&&context.beliefs.some(b=>b.age<3&&b.certainty>=.55)
     &&pool.some(c=>dangerAt(c)+.5<dangerAt(retained));
   if(retained&&context.committed&&!dangerChanged)return retained;
@@ -105,8 +99,11 @@ export function chooseLiveApproach(candidates:readonly LiveApproach[],context:Li
     const risk=.5+context.judgment+(1-health/100)*1.4+(behavior?(1-initiative)*.7:0)+(1-(context.firepower??1))*.5;
     const rangeFit=context.objective&&context.preferredRange!==undefined&&candidate.purpose==='clear'
       ?Math.abs(distance(candidate.point,context.objective)-context.preferredRange)*(.04+context.judgment*.04):0;
+    const reconBonus=!context.execute&&context.remaining>28
+      ?(context.uncertaintyAt?.(candidate.point)??0)*(context.role==='lurker'||context.role==='support'||context.role==='caller'||context.role==='anchor'?1.8:.85)
+      :0;
     return {candidate,score:roleValue+preference+capability-(context.routeTo?.(candidate.point).distance??distance(context.position,candidate.point))*.12-crowd*1.5-reservations*.8
-      -danger*risk-urgency-progress-rangeFit+(candidate.key===context.previous?.4:0)};
+      -danger*risk-urgency-progress-rangeFit+reconBonus+(candidate.key===context.previous?.4:0)};
   });
   scored.sort((a,b)=>b.score-a.score||a.candidate.key.localeCompare(b.candidate.key));
   // Seeded weighted variation among sensible options. Deliberate players vary

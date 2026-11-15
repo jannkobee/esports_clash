@@ -2,7 +2,8 @@ import { segmentHitsWall, type FpsPoint } from './fpsSpatialWorld.ts';
 import type { FpsTeamId } from './fpsTypes.ts';
 import type { FpsPrimaryRole } from './fpsIdentity.ts';
 import type { LiveIntelBelief } from './fpsLiveIntel.ts';
-import { LIVE_FPS_MAP, LIVE_ACTOR_RADIUS, distance, liveWalkable } from './fpsLiveMap.ts';
+import { FONTESSA_MAP_RUNTIME, LIVE_ACTOR_RADIUS, distance } from './fpsLiveMap.ts';
+import type { LiveMapRuntime } from './fpsLiveMapTypes.ts';
 import { createLiveRoutePlanner, LIVE_PLANT_RULES } from './fpsLivePlanning.ts';
 import { LIVE_RUN_SPEED } from './fpsLiveMovement.ts';
 import { LIVE_WEAPONS } from './fpsLiveWeapons.ts';
@@ -13,9 +14,19 @@ export type FpsLearningContext=typeof contexts[number];
 export const FPS_LEARNING_FEATURES=76;
 export const FPS_LEARNING_DISCOUNT=.995;
 const hash=(text:string)=>{let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return (h>>>0).toString(16).padStart(8,'0');};
-const learningMap={id:LIVE_FPS_MAP.id,width:LIVE_FPS_MAP.width,depth:LIVE_FPS_MAP.depth,spawns:LIVE_FPS_MAP.spawns,sites:LIVE_FPS_MAP.sites,
-  geometry:LIVE_FPS_MAP.solids.map(({id,minX,maxX,minZ,maxZ,height})=>({id,minX,maxX,minZ,maxZ,height}))};
-export const FPS_LEARNING_COMPATIBILITY=hash(JSON.stringify(['fps-navigation-value-v1',FPS_LEARNING_FEATURES,learningMap,LIVE_RUN_SPEED,LIVE_PLANT_RULES,LIVE_WEAPONS]));
+const compatibilityCache=new Map<string,string>();
+export function fpsLearningCompatibility(runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME):string {
+  if(runtime.id==='fontessa')return FPS_LEARNING_COMPATIBILITY;
+  const hit=compatibilityCache.get(runtime.id);if(hit)return hit;
+  const learningMap={id:runtime.id,width:runtime.definition.width,depth:runtime.definition.depth,spawns:runtime.definition.spawns,sites:runtime.definition.sites,
+    geometry:runtime.walls.map(({id,minX,maxX,minZ,maxZ,height})=>({id,minX,maxX,minZ,maxZ,height}))};
+  const code=hash(JSON.stringify(['fps-navigation-value-v1',FPS_LEARNING_FEATURES,learningMap,LIVE_RUN_SPEED,LIVE_PLANT_RULES,LIVE_WEAPONS]));
+  compatibilityCache.set(runtime.id,code);
+  return code;
+}
+const fontessaMap={id:FONTESSA_MAP_RUNTIME.id,width:FONTESSA_MAP_RUNTIME.definition.width,depth:FONTESSA_MAP_RUNTIME.definition.depth,spawns:FONTESSA_MAP_RUNTIME.definition.spawns,sites:FONTESSA_MAP_RUNTIME.definition.sites,
+  geometry:FONTESSA_MAP_RUNTIME.walls.map(({id,minX,maxX,minZ,maxZ,height})=>({id,minX,maxX,minZ,maxZ,height}))};
+export const FPS_LEARNING_COMPATIBILITY=hash(JSON.stringify(['fps-navigation-value-v1',FPS_LEARNING_FEATURES,fontessaMap,LIVE_RUN_SPEED,LIVE_PLANT_RULES,LIVE_WEAPONS]));
 
 export interface FpsLearningModel {
   kind:'fps-navigation-value';version:1;compatibility:string;revision:number;rounds:number;updates:number;
@@ -26,18 +37,18 @@ export interface FpsLearningRound {id:string;samples:FpsLearningSample[]}
 export interface FpsLearningOptions {mode:'learn'|'frozen';updateModel?:boolean;model?:unknown;exploration?:number;onRound?:(round:FpsLearningRound)=>void}
 export interface FpsLearningStats {mode:'learn'|'frozen';revision:number;rounds:number;updates:number;decisions:number;explorations:number;lastValue:number}
 
-export function createFpsLearningModel():FpsLearningModel {
+export function createFpsLearningModel(compatibility=FPS_LEARNING_COMPATIBILITY):FpsLearningModel {
   // Mutable geometric priors keep a fresh learner purposeful. Training can change
   // every coefficient, including the initially zero map-cell/context features.
   const initial=()=>{const w=Array(FPS_LEARNING_FEATURES).fill(0);w[1]=.55;w[2]=-.25;w[3]=-.18;w[4]=-.1;w[5]=.04;w[6]=-.2;w[7]=.2;return w;};
-  return {kind:'fps-navigation-value',version:1,compatibility:FPS_LEARNING_COMPATIBILITY,revision:0,rounds:0,updates:0,
+  return {kind:'fps-navigation-value',version:1,compatibility,revision:0,rounds:0,updates:0,
     weights:Object.fromEntries(contexts.map(key=>[key,initial()])) as FpsLearningModel['weights'],recentEpisodes:[]};
 }
 const validFeatures=(value:unknown):value is number[]=>Array.isArray(value)&&value.length===FPS_LEARNING_FEATURES&&value.every(n=>typeof n==='number'&&Number.isFinite(n)&&Math.abs(n)<=1);
-export function loadFpsLearningModel(raw:unknown):FpsLearningModel|undefined {
+export function loadFpsLearningModel(raw:unknown,compatibility=FPS_LEARNING_COMPATIBILITY):FpsLearningModel|undefined {
   if(!raw||typeof raw!=='object'||Array.isArray(raw))return;
   const m=raw as FpsLearningModel;
-  if(m.kind!=='fps-navigation-value'||m.version!==1||m.compatibility!==FPS_LEARNING_COMPATIBILITY
+  if(m.kind!=='fps-navigation-value'||m.version!==1||m.compatibility!==compatibility
     ||![m.revision,m.rounds,m.updates].every(n=>Number.isSafeInteger(n)&&n>=0&&n<=1e9)
     ||!m.weights||Object.keys(m.weights).length!==4
     ||!contexts.every(key=>Array.isArray(m.weights[key])&&m.weights[key].length===FPS_LEARNING_FEATURES&&m.weights[key].every(n=>typeof n==='number'&&Number.isFinite(n)&&Math.abs(n)<=4))
@@ -85,25 +96,28 @@ function ahead(from:FpsPoint,path:readonly FpsPoint[],metres:number):FpsPoint {
 
 /** Candidate generation sees static geometry, allies and the actor's own bounded
  * beliefs. No world-opponent list or hidden positions enter the learner. */
-export function liveNavigationChoices(c:FpsNavigationContext):FpsNavigationChoice[] {
-  const routeTo=createLiveRoutePlanner(c.actor,c.beliefs,c.caution),direct=routeTo(c.goal);
+export function liveNavigationChoices(c:FpsNavigationContext,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME):FpsNavigationChoice[] {
+  const routeTo=createLiveRoutePlanner(c.actor,c.beliefs,c.caution,undefined,runtime),direct=routeTo(c.goal);
   if(!Number.isFinite(direct.distance)||direct.distance<3)return [];
-  const goalDistance=c.caution>0?createLiveRoutePlanner(c.actor)(c.goal).distance:direct.distance;
+  const goalDistance=c.caution>0?createLiveRoutePlanner(c.actor,undefined,0,undefined,runtime)(c.goal).distance:direct.distance;
   const front=ahead(c.actor,direct.path,6),dx=front.x-c.actor.x,dz=front.z-c.actor.z,len=Math.hypot(dx,dz)||1;
-  const fx=dx/len,fz=dz/len,rx=fz,rz=-fx;
-  const points=[front,...([-1,1] as const).flatMap(side=>[
-    {x:c.actor.x+fx*4+rx*side*5,z:c.actor.z+fz*4+rz*side*5},
-    {x:c.actor.x-fx*2+rx*side*6,z:c.actor.z-fz*2+rz*side*6},
+  const fx=dx/len,fz=dz/len,rx=fz,rz=-fx,probeLevel=front.level??c.actor.level;
+  const points:FpsPoint[]=[front,...([-1,1] as const).flatMap(side=>[
+    {x:c.actor.x+fx*4+rx*side*5,z:c.actor.z+fz*4+rz*side*5,level:probeLevel},
+    {x:c.actor.x-fx*2+rx*side*6,z:c.actor.z-fz*2+rz*side*6,level:probeLevel},
   ])];
-  const site=distance(c.goal,LIVE_FPS_MAP.sites.A)<distance(c.goal,LIVE_FPS_MAP.sites.B)?'A':'B';
+  const site=distance(c.goal,runtime.definition.sites.A)<distance(c.goal,runtime.definition.sites.B)?'A':'B';
   const context:FpsLearningContext=`${c.actor.attacking?'attack':'defend'}:${site}`;
+  const bounds=runtime.definition.bounds;
+  const midX=(bounds.clampMinX+bounds.clampMaxX)/2,halfW=Math.max(1,(bounds.clampMaxX-bounds.clampMinX)/2);
+  const midZ=(bounds.clampMinZ+bounds.clampMaxZ)/2,halfD=Math.max(1,(bounds.clampMaxZ-bounds.clampMinZ)/2);
   const out:FpsNavigationChoice[]=[];
   for(let i=0;i<points.length;i++){
-    const point=points[i];if(!liveWalkable(point)||out.some(option=>distance(option.point,point)<1))continue;
+    const point=points[i];if(!runtime.walkable(point)||out.some(option=>distance(option.point,point)<1))continue;
     // Local alternatives are directly reachable steps. Crossing a wall is not a
     // local action; the existing route gets the actor to the next opening first.
-    if(i>0&&LIVE_FPS_MAP.solids.some(w=>segmentHitsWall(c.actor,point,w,LIVE_ACTOR_RADIUS+.08)))continue;
-    const prefix=routeTo(point),suffix=createLiveRoutePlanner(point,c.beliefs,c.caution)(c.goal);
+    if(i>0&&runtime.movementSolidsAt(c.actor,point,LIVE_ACTOR_RADIUS+.08).some(w=>segmentHitsWall(c.actor,point,w,LIVE_ACTOR_RADIUS+.08)))continue;
+    const prefix=routeTo(point),suffix=createLiveRoutePlanner(point,c.beliefs,c.caution,undefined,runtime)(c.goal);
     if(!Number.isFinite(prefix.distance+suffix.distance))continue;
     const exposure=bounded(prefix.exposure/12,0,1),crowd=bounded(c.allies.filter(a=>distance(a,point)<3).length/3,0,1);
     const support=bounded(c.allies.filter(a=>distance(a,point)>=3&&distance(a,point)<9).length/3,0,1);
@@ -113,11 +127,11 @@ export function liveNavigationChoices(c:FpsNavigationContext):FpsNavigationChoic
     f.splice(0,28,1,progress,bounded((prefix.distance+suffix.distance-direct.distance)/20,0,1),exposure,crowd,support,
       (1-c.actor.hp/100)*exposure,(1-bounded(c.remaining/115,0,1))*progress,danger,
       bounded(((point.x-c.actor.x)*Math.sin(c.actor.yaw)+(point.z-c.actor.z)*Math.cos(c.actor.yaw))/8),lateral,
-      +c.actor.bomb*exposure,+c.actor.bomb,bounded(direct.distance/80,0,1),c.goal.x/34,c.goal.z/43,point.x/34,point.z/43,
+      +c.actor.bomb*exposure,+c.actor.bomb,bounded(direct.distance/80,0,1),(c.goal.x-midX)/halfW,(c.goal.z-midZ)/halfD,(point.x-midX)/halfW,(point.z-midZ)/halfD,
       +(c.actor.ammo===0)*exposure,+(c.actor.reload>0)*exposure,
       +(c.actor.role==='entry')*progress,+(c.actor.role==='trade')*support,+(c.actor.role==='support')*exposure,
       +(c.actor.role==='lurker')*lateral,+(c.actor.role==='sniper')*exposure,+(c.actor.role==='anchor')*f[2],+(c.actor.role==='caller')*support,+c.planted*progress);
-    const column=Math.min(5,Math.max(0,Math.floor((point.x+34)/68*6))),row=Math.min(7,Math.max(0,Math.floor((point.z+43)/86*8)));
+    const column=Math.min(5,Math.max(0,Math.floor((point.x-bounds.clampMinX)/(halfW*2)*6))),row=Math.min(7,Math.max(0,Math.floor((point.z-bounds.clampMinZ)/(halfD*2)*8)));
     f[28+row*6+column]=1;
     f[25]=+(c.actor.role==='anchor')*f[2];
     out.push({point:{...point},path:i===0?direct.path:[...prefix.path,...suffix.path],features:f.map(value=>bounded(value)),context,goalDistance});
@@ -138,19 +152,21 @@ interface ActiveRoute {choice:FpsNavigationChoice;goal:FpsPoint;evidence:string;
 interface ObservedStep {context:FpsLearningContext;features:number[];reward:number;at:number;ended:number;team:FpsTeamId}
 export class FpsLiveLearner {
   readonly options:FpsLearningOptions;
+  readonly runtime:LiveMapRuntime;
+  readonly compatibility:string;
   readonly initial:FpsLearningModel;
   readonly model:FpsLearningModel;
   private active=new Map<string,ActiveRoute>();
   private episodes=new Map<string,ObservedStep[]>();
   private decisions=0;private explorations=0;private lastValue=0;
-  constructor(options:FpsLearningOptions){this.options=options;this.model=loadFpsLearningModel(options.model)??createFpsLearningModel();this.initial=loadFpsLearningModel(this.model)!;}
+  constructor(options:FpsLearningOptions,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME){this.options=options;this.runtime=runtime;this.compatibility=fpsLearningCompatibility(runtime);this.model=loadFpsLearningModel(options.model,this.compatibility)??createFpsLearningModel(this.compatibility);this.initial=loadFpsLearningModel(this.model,this.compatibility)!;}
   route(c:FpsNavigationContext,random:()=>number,allowNew=true):{choice:FpsNavigationChoice;retained:boolean;exploring:boolean;value:number}|undefined {
     const current=this.active.get(c.actor.id);
     if(current&&distance(current.goal,c.goal)<1&&current.evidence===c.evidence&&(!allowNew||c.time<current.until
       &&(distance(c.actor,current.choice.point)>.6||c.time<current.at+.5)))return {choice:current.choice,retained:true,exploring:current.exploring,value:current.value};
     this.close(c.actor,c.time);
     if(!allowNew)return;
-    const choices=liveNavigationChoices(c);
+    const choices=liveNavigationChoices(c,this.runtime);
     const epsilon=this.options.mode==='frozen'?0:this.options.exploration??Math.max(.03,.1/Math.sqrt(1+this.model.rounds/80));
     const selected=chooseLearnedNavigation(this.model,choices,random,epsilon);if(!selected)return;
     const choice=choices[selected.index];
@@ -161,7 +177,7 @@ export class FpsLiveLearner {
   close(actor:Pick<FpsNavigationActor,'id'|'x'|'z'|'hp'>,now:number):void {
     const previous=this.active.get(actor.id);if(!previous)return;this.active.delete(actor.id);
     if(this.options.mode!=='learn')return;
-    const remaining=createLiveRoutePlanner(actor)(previous.goal).distance;
+    const remaining=createLiveRoutePlanner(actor,undefined,0,undefined,this.runtime)(previous.goal).distance;
     const progress=Number.isFinite(remaining)?bounded((previous.choice.goalDistance-remaining)/12):0;
     const reward=.08*progress+.2*bounded((actor.hp-previous.hp)/100)-.001*Math.min(8,Math.max(0,now-previous.at));
     const history=this.episodes.get(actor.id)??[];
@@ -186,5 +202,5 @@ export class FpsLiveLearner {
   }
   abandonRound():void {this.active.clear();this.episodes.clear();}
   stats():FpsLearningStats {return {mode:this.options.mode,revision:this.model.revision,rounds:this.model.rounds,updates:this.model.updates,decisions:this.decisions,explorations:this.explorations,lastValue:this.lastValue};}
-  checkpoint():FpsLearningModel {return loadFpsLearningModel(this.model)!;}
+  checkpoint():FpsLearningModel {return loadFpsLearningModel(this.model,this.compatibility)!;}
 }

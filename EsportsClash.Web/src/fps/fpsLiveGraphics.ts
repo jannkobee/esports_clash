@@ -1,8 +1,18 @@
 import { Color3, DynamicTexture, Mesh, MeshBuilder, StandardMaterial, Texture, Vector4, type Scene } from '@babylonjs/core';
 
-export type LiveSurface = 'plaster' | 'stone' | 'paving' | 'timber' | 'metal' | 'clay';
+export type LiveSurface = 'plaster' | 'stone' | 'paving' | 'timber' | 'metal' | 'clay' | 'concrete' | 'grass';
 export const LIVE_SURFACE_METRES: Record<LiveSurface, number> = {
-  plaster: 3.2, stone: 4, paving: 4, timber: 2, metal: 3, clay: 3.2,
+  plaster: 3.2, stone: 4, paving: 4, timber: 2, metal: 3, clay: 3.2, concrete: 4, grass: 3.2,
+};
+
+export interface LiveSkyAtmosphere {
+  stops: readonly [number, string][];
+  cloudTint: string;
+}
+
+export const FONTESSA_SKY_ATMOSPHERE: LiveSkyAtmosphere = {
+  stops: [[0, '#3982b4'], [.3, '#75b5d7'], [.5, '#d3dcd5'], [.65, '#b2c5c7'], [1, '#91afb7']],
+  cloudTint: 'rgba(255,250,232,0.23)',
 };
 
 /** Box face ordering follows Babylon's front/back/right/left/top/bottom UVs. */
@@ -58,7 +68,7 @@ export class LiveSurfaceLibrary {
     const color = new DynamicTexture(`${kind}-albedo`, size, this.scene, true, Texture.TRILINEAR_SAMPLINGMODE);
     const normal = new DynamicTexture(`${kind}-normal`, size, this.scene, true, Texture.TRILINEAR_SAMPLINGMODE);
     const ctx = color.getContext() as unknown as CanvasRenderingContext2D, pixels = ctx.createImageData(size, size);
-    const seeds: Record<LiveSurface, number> = { plaster: 17, stone: 31, paving: 53, timber: 79, metal: 97, clay: 113 };
+    const seeds: Record<LiveSurface, number> = { plaster: 17, stone: 31, paving: 53, timber: 79, metal: 97, clay: 113, concrete: 137, grass: 163 };
     const seed = seeds[kind];
     for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
       const grain = noise(x, y, seed) - .5;
@@ -73,6 +83,19 @@ export class LiveSurfaceLibrary {
         const block = noise(Math.floor(shiftedX / cellW), row, seed);
         shade = .67 + bevel * (.17 + block * .15) + grain * .045 + patch * .035;
         height = .12 + bevel * (.38 + block * .04) + grain * .018;
+      } else if (kind === 'concrete') {
+        const sx = x % 256, sy = y % 128;
+        const seam = sx < 2 || sy < 2 ? .82 : 1;
+        const tieDist = Math.hypot((x % 256) - 128, (y % 128) - 64);
+        const tieShade = tieDist < 5 ? .76 : 1;
+        const streak = mottling(x, Math.floor(y * .4), 10, size, seed + 5);
+        shade = (.82 + patch * .11 + streak * .07 + grain * .085) * seam * tieShade;
+        height = (.48 + grain * .04 + patch * .04) * seam * tieShade;
+      } else if (kind === 'grass') {
+        const blade = Math.sin(x * .65 + Math.cos(y * .32) * 1.4 + patch * 4);
+        const tuft = mottling(x, y, 16, size, seed + 9);
+        shade = .74 + patch * .14 + tuft * .11 + blade * .045 + grain * .07;
+        height = .38 + tuft * .22 + blade * .09 + grain * .06;
       } else if (kind === 'timber') {
         const fibre = Math.sin(x * Math.PI / 8 + Math.sin(y * Math.PI / 128) * .8 + patch * 2);
         const seam = x % 64 < 2 ? .58 : 1;
@@ -132,12 +155,11 @@ export class LiveSurfaceLibrary {
   }
 }
 
-export function buildLiveSky(scene: Scene): void {
+export function buildLiveSky(scene: Scene, atmosphere: LiveSkyAtmosphere = FONTESSA_SKY_ATMOSPHERE): void {
   const texture = new DynamicTexture('harbor-atmosphere', { width: 1024, height: 512 }, scene, true);
   const ctx = texture.getContext() as unknown as CanvasRenderingContext2D;
   const gradient = ctx.createLinearGradient(0, 0, 0, 512);
-  gradient.addColorStop(0, '#3982b4'); gradient.addColorStop(.3, '#75b5d7');
-  gradient.addColorStop(.5, '#d3dcd5'); gradient.addColorStop(.65, '#b2c5c7'); gradient.addColorStop(1, '#91afb7');
+  for (const [offset, hex] of atmosphere.stops) gradient.addColorStop(offset, hex);
   ctx.fillStyle = gradient; ctx.fillRect(0, 0, 1024, 512);
   // Broad, quiet clouds stay above the playable skyline and away from the UV seam.
   for (let i = 0; i < 20; i++) {
@@ -145,7 +167,7 @@ export function buildLiveSky(scene: Scene): void {
     const radius = 28 + noise(i, 3, 41) * 45;
     ctx.save(); ctx.translate(x, y); ctx.scale(2.1, .35);
     const cloud = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-    cloud.addColorStop(0, 'rgba(255,250,232,0.23)'); cloud.addColorStop(1, 'rgba(255,250,232,0)');
+    cloud.addColorStop(0, atmosphere.cloudTint); cloud.addColorStop(1, 'rgba(255,250,232,0)');
     ctx.fillStyle = cloud; ctx.fillRect(-radius, -radius, radius * 2, radius * 2); ctx.restore();
   }
   texture.update(false);

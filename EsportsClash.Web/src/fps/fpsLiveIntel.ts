@@ -2,6 +2,7 @@ import type { FpsPoint } from './fpsSpatialWorld.ts';
 
 export type LiveIntelSource='sight'|'footstep'|'gunfire'|'melee'|'reload'|'damage'|'utility';
 export type LiveIntelArea='A'|'B'|'Mid';
+export type LiveIntelClassifier=(point:FpsPoint)=>LiveIntelArea;
 export type LiveWeaponHint='sniper'|'suppressed'|'eco'|'rifle';
 export interface LiveIntelContact extends FpsPoint {
   key:string;enemyId?:string;observerId:string;source:LiveIntelSource;via?:string;
@@ -17,7 +18,8 @@ const distance=(a:FpsPoint,b:FpsPoint)=>Math.hypot(a.x-b.x,a.z-b.z);
 const lifetimes:Record<LiveIntelSource,number>={sight:6,footstep:2.6,gunfire:3.6,melee:2.6,reload:2.8,damage:3.5,utility:3};
 const weights:Record<LiveIntelSource,number>={sight:1,footstep:.32,gunfire:.52,melee:.35,reload:.4,damage:.7,utility:.22};
 export const emptyLiveIntel=():LiveIntelMemory=>({contacts:[]});
-export const liveIntelArea=(point:FpsPoint):LiveIntelArea=>point.z>-18&&point.x<-10?'A':point.z>-18&&point.x>10?'B':'Mid';
+const defaultIntelArea=(point:FpsPoint):LiveIntelArea=>point.z>-18&&point.x<-10?'A':point.z>-18&&point.x>10?'B':'Mid';
+export const liveIntelArea=(point:FpsPoint,classifier:(p:FpsPoint)=>LiveIntelArea=defaultIntelArea):LiveIntelArea=>classifier(point);
 
 export function liveIntelBeliefs(memory:LiveIntelMemory,now:number):LiveIntelBelief[] {
   return memory.contacts.map(c=>{
@@ -49,13 +51,13 @@ export function rememberLiveIntel(memory:LiveIntelMemory,contact:LiveIntelContac
   memory.contacts=memory.contacts.slice(0,16);
 }
 
-export function assessLiveIntel(memory:LiveIntelMemory,now:number):LiveIntelAssessment {
+export function assessLiveIntel(memory:LiveIntelMemory,now:number,classifier?:(p:FpsPoint)=>LiveIntelArea):LiveIntelAssessment {
   const areas:LiveIntelAssessment={A:{strength:0,identified:0,confirmed:0,corroborated:false},B:{strength:0,identified:0,confirmed:0,corroborated:false},Mid:{strength:0,identified:0,confirmed:0,corroborated:false}};
   // Anonymous noises can suggest pressure, but footsteps never become an exact enemy count.
   const anonymous:Record<LiveIntelArea,Partial<Record<LiveIntelSource,number>>>={A:{},B:{},Mid:{}};
   const best:Partial<Record<LiveIntelArea,number>>={};
   for(const belief of liveIntelBeliefs(memory,now)){
-    const area=liveIntelArea(belief),entry=areas[area],value=belief.certainty*weights[belief.source];
+    const area=liveIntelArea(belief,classifier),entry=areas[area],value=belief.certainty*weights[belief.source];
     if(belief.enemyId&&belief.certainty>=.35){entry.identified++;if(belief.source==='sight'&&belief.age<3&&belief.certainty>=.6)entry.confirmed++;entry.strength+=value;}
     else if(belief.age<4&&belief.certainty>=.25)anonymous[area][belief.source]=Math.max(anonymous[area][belief.source]??0,value);
     if(value>(best[area]??0)){best[area]=value;entry.point={x:belief.x,z:belief.z,level:belief.level};}
@@ -102,9 +104,9 @@ export function inferEnemyWeaponProfile(memory:LiveIntelMemory,now:number):{snip
   return {sniperCount,ecoSignal,suppressedCount};
 }
 
-export function describeLiveIntel(memory:LiveIntelMemory,from:FpsPoint,now:number):string {
+export function describeLiveIntel(memory:LiveIntelMemory,from:FpsPoint,now:number,classifier?:(p:FpsPoint)=>LiveIntelArea):string {
   const best=strongestLiveIntel(memory,from,now);if(!best)return 'No current contact — watch the assigned angle';
-  const area=liveIntelArea(best),evidence=assessLiveIntel(memory,now)[area];
+  const area=liveIntelArea(best,classifier),evidence=assessLiveIntel(memory,now,classifier)[area];
   const source=best.via?'Teammate report':best.source==='sight'?'Own sight':best.source==='footstep'?'Footsteps':best.source==='gunfire'?'Gunfire':best.source==='reload'?'Reload':best.source==='melee'?'Nearby knife swing':best.source==='damage'?'Taking fire':'Utility cue';
   const certainty=best.certainty>=.7?'recent':best.certainty>=.35?'uncertain':'fading';
   const count=evidence.identified>0?` · ${evidence.identified} last seen`:'';

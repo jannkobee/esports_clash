@@ -1,22 +1,48 @@
+import type { FpsTerrainLevel, LiveSurfaceAcoustic } from './fpsSpatialWorld.ts';
+import type { LiveMapAudioProfile } from './fpsLiveMapTypes.ts';
 import type { LiveWeapon } from './fpsLiveWeapons.ts';
 import type { LiveGrenadeKind, LiveThrowStyle } from './fpsLiveGrenades.ts';
 
+export interface SurfaceAudioCharacteristics {
+  surface: LiveSurfaceAcoustic;
+  filterHz: number;
+  heelPitch: number;
+  grit: number;
+  resonanceHz?: number;
+  splash: boolean;
+  metalPing: boolean;
+}
+
+const SURFACE_CHARACTERISTICS: Record<LiveSurfaceAcoustic, SurfaceAudioCharacteristics> = {
+  stone: { surface: 'stone', filterHz: 3200, heelPitch: 1, grit: 1, splash: false, metalPing: false },
+  concrete: { surface: 'concrete', filterHz: 3650, heelPitch: 1.07, grit: 1.08, splash: false, metalPing: false },
+  brick: { surface: 'brick', filterHz: 2950, heelPitch: .96, grit: 1.15, splash: false, metalPing: false },
+  wood: { surface: 'wood', filterHz: 2150, heelPitch: .84, grit: .72, resonanceHz: 195, splash: false, metalPing: false },
+  metal: { surface: 'metal', filterHz: 4600, heelPitch: 1.18, grit: .82, resonanceHz: 680, splash: false, metalPing: true },
+  grass: { surface: 'grass', filterHz: 1850, heelPitch: .76, grit: 1.32, splash: false, metalPing: false },
+  water: { surface: 'water', filterHz: 2500, heelPitch: .72, grit: 1.4, splash: true, metalPing: false },
+};
+
+export function surfaceAudioCharacteristics(surface: LiveSurfaceAcoustic = 'stone'): SurfaceAudioCharacteristics {
+  return SURFACE_CHARACTERISTICS[surface] ?? SURFACE_CHARACTERISTICS.stone;
+}
+
 export type FpsAudioCue =
-  | { kind: 'gunshot'; weapon: LiveWeapon; x: number; z: number }
+  | { kind: 'gunshot'; weapon: LiveWeapon; x: number; z: number; y?: number }
   | { kind: 'reload'; x: number; z: number }
-  | { kind: 'footstep'; stance: 'walk' | 'run' | 'crouch'; x: number; z: number }
-  | { kind: 'jump'; phase: 'takeoff' | 'landing'; x: number; z: number }
+  | { kind: 'footstep'; stance: 'walk' | 'run' | 'crouch'; x: number; z: number; y?: number; level?: FpsTerrainLevel; surface?: LiveSurfaceAcoustic }
+  | { kind: 'jump'; phase: 'takeoff' | 'landing'; x: number; z: number; y?: number; level?: FpsTerrainLevel; surface?: LiveSurfaceAcoustic }
   | { kind: 'bombTick'; urgency: 'normal' | 'urgent' | 'final'; x: number; z: number }
   | { kind: 'impact'; region: 'head' | 'body'; lethal: boolean; x: number; z: number }
   | { kind: 'nearMiss'; x: number; z: number }
-  | { kind: 'grenadeThrow'; grenade: LiveGrenadeKind; x: number; z: number; throwStyle?: LiveThrowStyle }
-  | { kind: 'smokeBloom'; x: number; z: number }
-  | { kind: 'flashPop'; x: number; z: number }
-  | { kind: 'heExplode'; x: number; z: number }
-  | { kind: 'fireIgnite'; x: number; z: number }
+  | { kind: 'grenadeThrow'; grenade: LiveGrenadeKind; x: number; y?: number; z: number; throwStyle?: LiveThrowStyle }
+  | { kind: 'smokeBloom'; x: number; y?: number; z: number }
+  | { kind: 'flashPop'; x: number; y?: number; z: number }
+  | { kind: 'heExplode'; x: number; y?: number; z: number }
+  | { kind: 'fireIgnite'; x: number; y?: number; z: number }
   | { kind: 'bombPlant'; phase: 'start' | 'complete'; x: number; z: number }
   | { kind: 'bombDefuse'; phase: 'start' | 'tick' | 'complete'; x: number; z: number }
-  | { kind: 'bombExplode'; x: number; z: number };
+  | { kind: 'bombExplode'; x: number; y?: number; z: number };
 
 export interface FpsAudioListener { x: number; z: number; yaw: number }
 
@@ -167,6 +193,43 @@ export class FpsBroadcastAudio {
   private enabled = true;
   private activeVoices = 0;
   private footstepParity = 0;
+  private mapProfile?: LiveMapAudioProfile;
+  private wetFilter?: BiquadFilterNode;
+  private wetConvolver?: ConvolverNode;
+
+  setMapProfile(profile: LiveMapAudioProfile): void {
+    this.mapProfile = profile;
+    const context = this.context;
+    if (!context) return;
+    if (this.wetBus) {
+      this.wetBus.gain.setTargetAtTime(profile.reverbWet, context.currentTime, .04);
+    }
+    if (this.wetFilter) {
+      this.wetFilter.frequency.setTargetAtTime(clamp(profile.lowpassHz * .45, 500, 1800), context.currentTime, .04);
+    }
+    if (this.wetConvolver) {
+      this.wetConvolver.buffer = this.buildImpulseBuffer(context, profile);
+    }
+  }
+
+  private buildImpulseBuffer(context: AudioContext, profile?: LiveMapAudioProfile): AudioBuffer {
+    const delaySec = clamp((profile?.reverbDelayMs ?? 38) / 1000, .018, .12);
+    const decay = clamp(profile?.gunshotTailDecay ?? .42, .25, .85);
+    const impulseLen = Math.ceil(context.sampleRate * Math.max(.36, decay * 1.15));
+    const impulse = context.createBuffer(2, impulseLen, context.sampleRate);
+    const tap1 = Math.floor(delaySec * .6 * context.sampleRate);
+    const tap2 = Math.floor(delaySec * 1.3 * context.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = impulse.getChannelData(ch);
+      for (let i = 0; i < impulseLen; i++) {
+        const t = i / context.sampleRate;
+        const earlyTap = (i === tap1 || i === tap2) ? .45 : 0;
+        const tail = Math.exp(-t * (4.8 / decay)) * (Math.random() * 2 - 1) * .28;
+        data[i] = earlyTap + tail;
+      }
+    }
+    return impulse;
+  }
 
   setEnabled(enabled: boolean): void {
     this.enabled = enabled;
@@ -187,6 +250,8 @@ export class FpsBroadcastAudio {
     this.master = undefined;
     this.dryBus = undefined;
     this.wetBus = undefined;
+    this.wetFilter = undefined;
+    this.wetConvolver = undefined;
     this.noise = undefined;
     this.pinkNoise = undefined;
     this.footstepsBuffer = undefined;
@@ -218,8 +283,8 @@ export class FpsBroadcastAudio {
     switch (cue.kind) {
       case 'gunshot': this.playGunshot(context, cue.weapon, spatial.gain, spatial.pan, spatial.range); break;
       case 'reload': this.playReload(context, spatial.gain, spatial.pan); break;
-      case 'footstep': this.playFootstep(context, cue.stance, spatial.gain, spatial.pan, spatial.range); break;
-      case 'jump': this.playJump(context, cue.phase, spatial.gain, spatial.pan); break;
+      case 'footstep': this.playFootstep(context, cue.stance, spatial.gain, spatial.pan, spatial.range, cue.surface ?? this.mapProfile?.defaultSurface); break;
+      case 'jump': this.playJump(context, cue.phase, spatial.gain, spatial.pan, cue.surface ?? this.mapProfile?.defaultSurface); break;
       case 'bombTick': this.playBombTick(context, cue.urgency, spatial.gain, spatial.pan); break;
       case 'impact': this.playImpact(context, cue.region, cue.lethal, spatial.gain, spatial.pan); break;
       case 'nearMiss': this.playNearMiss(context, spatial.gain, spatial.pan); break;
@@ -264,25 +329,14 @@ export class FpsBroadcastAudio {
     dryBus.gain.value = 1;
     dryBus.connect(shaper);
 
-    // Subtle stone-courtyard early-reflection slapback bus
+    // Subtle courtyard/urban early-reflection slapback bus
     const wetBus = context.createGain();
-    wetBus.gain.value = .19;
-    const impulseLen = Math.ceil(context.sampleRate * .42);
-    const impulse = context.createBuffer(2, impulseLen, context.sampleRate);
-    for (let ch = 0; ch < 2; ch++) {
-      const data = impulse.getChannelData(ch);
-      for (let i = 0; i < impulseLen; i++) {
-        const t = i / context.sampleRate;
-        const earlyTap = (i === Math.floor(.024 * context.sampleRate) || i === Math.floor(.052 * context.sampleRate)) ? .45 : 0;
-        const tail = Math.exp(-t * 11) * (Math.random() * 2 - 1) * .28;
-        data[i] = earlyTap + tail;
-      }
-    }
+    wetBus.gain.value = this.mapProfile?.reverbWet ?? .19;
     const convolver = context.createConvolver();
-    convolver.buffer = impulse;
+    convolver.buffer = this.buildImpulseBuffer(context, this.mapProfile);
     const wetFilter = context.createBiquadFilter();
     wetFilter.type = 'bandpass';
-    wetFilter.frequency.value = 950;
+    wetFilter.frequency.value = this.mapProfile ? clamp(this.mapProfile.lowpassHz * .45, 500, 1800) : 950;
     wetFilter.Q.value = .55;
     wetBus.connect(convolver);
     convolver.connect(wetFilter);
@@ -307,6 +361,8 @@ export class FpsBroadcastAudio {
     this.master = master;
     this.dryBus = dryBus;
     this.wetBus = wetBus;
+    this.wetFilter = wetFilter;
+    this.wetConvolver = convolver;
     this.noise = noise;
     this.pinkNoise = pinkNoise;
     void this.loadAudioSamples(context);
@@ -611,7 +667,7 @@ export class FpsBroadcastAudio {
     return chosen;
   }
 
-  private playFootstep(context: AudioContext, stance: 'walk' | 'run' | 'crouch', _distanceGain: number, pan: number, range: number): void {
+  private playFootstep(context: AudioContext, stance: 'walk' | 'run' | 'crouch', _distanceGain: number, pan: number, range: number, surface?: LiveSurfaceAcoustic): void {
     const now = context.currentTime;
     const run = stance === 'run', crouch = stance === 'crouch';
     const maxRange = crouch ? 11 : run ? 30 : 22;
@@ -621,15 +677,49 @@ export class FpsBroadcastAudio {
     const crowdScale = this.lastFootstepAt >= 0 && now - this.lastFootstepAt < .042 ? .48 : 1;
     this.lastFootstepAt = now;
     this.footstepParity ^= 1;
-    const parityPitch = this.footstepParity ? 1.035 : .965;
+    const acoustic = surfaceAudioCharacteristics(surface ?? this.mapProfile?.defaultSurface ?? 'stone');
+    const parityPitch = (this.footstepParity ? 1.035 : .965) * acoustic.heelPitch;
     const microPan = clamp(pan + (this.footstepParity ? .035 : -.035) * stepGain, -1, 1);
     const soleDelay = crouch ? .044 : run ? .026 : .034;
-    const gritGain = crouch ? .22 : run ? .34 : .26;
+    const gritGain = (crouch ? .22 : run ? .34 : .26) * acoustic.grit;
+
+    if (acoustic.splash) {
+      const splashLevel = (crouch ? .075 : run ? .22 : .135) * stepGain * crowdScale;
+      this.playNoiseBurst(context, now, run ? .11 : .08, microPan, splashLevel, 'bandpass', crouch ? 1250 : 1850, crouch ? 680 : 940, .85, true, .14);
+      this.playNoiseBurst(context, now + .018, run ? .14 : .09, microPan, splashLevel * .55, 'highpass', 2400, 1450, .75, false, .12);
+      this.playTone(context, 'sine', now + .006, .055, 360 * parityPitch, 145 * parityPitch, splashLevel * .28, microPan, .08);
+      this.playTone(context, 'triangle', now, .025, 115, 48, splashLevel * .25, microPan, .04);
+      return;
+    }
+
+    if (acoustic.metalPing) {
+      const metalLevel = (crouch ? .055 : run ? .16 : .1) * stepGain * crowdScale;
+      this.synthesizeBootImpact(context, now, metalLevel * .82, microPan, parityPitch, soleDelay, gritGain);
+      this.playTone(context, 'triangle', now, .055, 680 * parityPitch, 610 * parityPitch, metalLevel * .24, microPan, .16);
+      this.playTone(context, 'sine', now + .004, .048, 1420 * parityPitch, 1340 * parityPitch, metalLevel * .11, microPan, .14);
+      return;
+    }
+
+    if (acoustic.surface === 'grass') {
+      const grassLevel = (crouch ? .05 : run ? .145 : .09) * stepGain * crowdScale;
+      this.playNoiseBurst(context, now, crouch ? .045 : .065, microPan, grassLevel * .95, 'bandpass', acoustic.filterHz * parityPitch, 1120, .85, true, .04);
+      this.playNoiseBurst(context, now + soleDelay * .7, .05, microPan, grassLevel * .45, 'highpass', 2450 * parityPitch, 1850, .8, false, .03);
+      this.playTone(context, 'triangle', now, .022, 82, 38, grassLevel * .32, microPan, .02);
+      return;
+    }
+
+    if (acoustic.surface === 'wood') {
+      const woodLevel = (crouch ? .055 : run ? .155 : .095) * stepGain * crowdScale;
+      this.synthesizeBootImpact(context, now, woodLevel * .78, microPan, parityPitch, soleDelay, gritGain);
+      this.playTone(context, 'triangle', now + .002, .052, 205 * parityPitch, 118 * parityPitch, woodLevel * .42, microPan, .12);
+      return;
+    }
+
     if (this.footstepsBuffer && this.footstepSlices.length > 0) {
       const idx = this.pickFootstepSliceIndex(stance);
       const slice = this.footstepSlices[idx];
       const sampleLevel = (crouch ? .085 : run ? .24 : .145) * stepGain * crowdScale;
-      const filterFreq = crouch ? 1750 : run ? 4400 : 3200;
+      const filterFreq = Math.min(acoustic.filterHz, crouch ? 1750 : run ? 4400 : 3200);
       const rate = parityPitch * (run ? 1.05 : crouch ? .92 : .985);
       this.playBufferSlice(context, this.footstepsBuffer, now, slice.start, slice.duration, microPan, sampleLevel, rate, 'lowpass', filterFreq, .09, 95);
       const heelLevel = (crouch ? .028 : run ? .062 : .042) * stepGain * crowdScale;
@@ -650,24 +740,50 @@ export class FpsBroadcastAudio {
     this.playNoiseBurst(context, now + .18, .048, pan, .12 * distanceGain, 'bandpass', 2600, 1500, 2.5, false, .08);
   }
 
-  private playJump(context: AudioContext, phase: 'takeoff' | 'landing', distanceGain: number, pan: number): void {
+  private playJump(context: AudioContext, phase: 'takeoff' | 'landing', distanceGain: number, pan: number, surface?: LiveSurfaceAcoustic): void {
     const now = context.currentTime, landing = phase === 'landing';
+    const acoustic = surfaceAudioCharacteristics(surface ?? this.mapProfile?.defaultSurface ?? 'stone');
     if (landing) {
-      if (this.footstepsBuffer && this.footstepSlices.length > 0) {
+      if (acoustic.splash) {
+        const splashHeavy = .28 * distanceGain;
+        this.playNoiseBurst(context, now, .16, pan, splashHeavy, 'bandpass', 1650, 720, .8, true, .2);
+        this.playNoiseBurst(context, now + .02, .2, pan, splashHeavy * .65, 'highpass', 2300, 1250, .7, false, .18);
+        this.playTone(context, 'sine', now + .008, .085, 340, 120, splashHeavy * .32, pan, .12);
+        return;
+      }
+      if (acoustic.metalPing) {
+        const heavy = .22 * distanceGain;
+        this.synthesizeBootImpact(context, now, heavy * .88, pan, 1.08, .022, .38);
+        this.playTone(context, 'triangle', now, .085, 680, 590, heavy * .36, pan, .22);
+        this.playTone(context, 'sine', now + .008, .065, 1380, 1290, heavy * .18, pan, .18);
+        return;
+      }
+      if (acoustic.surface === 'grass') {
+        const heavy = .2 * distanceGain;
+        this.playNoiseBurst(context, now, .095, pan, heavy * .95, 'bandpass', 1600, 820, .85, true, .06);
+        this.playTone(context, 'triangle', now, .035, 88, 36, heavy * .42, pan, .04);
+        return;
+      }
+      if (this.footstepsBuffer && this.footstepSlices.length > 0 && acoustic.surface !== 'wood') {
         const idx = this.pickFootstepSliceIndex('run');
         const slice = this.footstepSlices[idx];
-        this.playBufferSlice(context, this.footstepsBuffer, now, slice.start, Math.min(.22, slice.duration), pan, .28 * distanceGain, .88, 'lowpass', 3600, .14, 95);
+        this.playBufferSlice(context, this.footstepsBuffer, now, slice.start, Math.min(.22, slice.duration), pan, .28 * distanceGain, .88 * acoustic.heelPitch, 'lowpass', Math.min(3600, acoustic.filterHz), .14, 95);
         this.playNoiseBurst(context, now + .012, .085, pan, .075 * distanceGain, 'bandpass', 640, 380, 1.1, true, .06);
         return;
       }
-      // Staggered two-boot stone landing + gear settle
+      // Staggered two-boot landing + gear settle
       const heavy = .22 * distanceGain;
-      this.synthesizeBootImpact(context, now, heavy, pan, .92, .022, .42);
-      this.synthesizeBootImpact(context, now + .026, heavy * .82, pan, 1.03, .022, .38);
+      this.synthesizeBootImpact(context, now, heavy, pan, .92 * acoustic.heelPitch, .022, .42 * acoustic.grit);
+      this.synthesizeBootImpact(context, now + .026, heavy * .82, pan, 1.03 * acoustic.heelPitch, .022, .38 * acoustic.grit);
+      if (acoustic.surface === 'wood') this.playTone(context, 'triangle', now, .075, 195, 108, heavy * .44, pan, .16);
       this.playNoiseBurst(context, now + .01, .085, pan, .085 * distanceGain, 'bandpass', 640, 380, 1.1, true, .06);
     } else {
       // Push-off boot scuff + cloth shift
-      this.playNoiseBurst(context, now, .048, pan, .11 * distanceGain, 'bandpass', 1750, 820, 1.35, false, .06);
+      if (acoustic.splash) {
+        this.playNoiseBurst(context, now, .09, pan, .14 * distanceGain, 'bandpass', 1900, 950, .85, true, .1);
+      } else {
+        this.playNoiseBurst(context, now, .048, pan, .11 * distanceGain, 'bandpass', Math.min(2400, 1750 * acoustic.heelPitch), 820, 1.35, false, .06);
+      }
       this.playNoiseBurst(context, now + .006, .065, pan, .08 * distanceGain, 'lowpass', 520, 240, .9, true, .05);
     }
   }

@@ -1,4 +1,5 @@
 import type { FpsGameplan } from './fpsIdentity.ts';
+import type { FpsPoint } from './fpsSpatialWorld.ts';
 
 export type LiveAttackStyle='adaptive';
 export type LiveAttackPhase='default'|'entry'|'post-plant';
@@ -8,7 +9,7 @@ export type LiveDefenseSetup='standard'|'stack_b'|'stack_a'|'aggressive_banana'|
 export interface LiveInformationOrder {
   mode:'hold'|'watch'|'reinforce'|'rotate'|'recheck'|'probe'|'execute';site?:'A'|'B';
   responders:string[];until:number;strength:number;reason:string;readyAt?:number;
-  issuedAt?:number;callerId?:string;point?:{x:number;z:number};
+  issuedAt?:number;callerId?:string;point?:FpsPoint;
   executePhase?:'regroup'|'utility'|'breach';phaseAt?:number;smokesSent?:number;flashSent?:boolean;breachAt?:number;
   smokeLineupOrder?:string[];smokeLineupDone?:string[];
   entryId?:string;lanes?:Record<string,number>;nextUtilityAt?:number;

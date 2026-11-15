@@ -1,5 +1,7 @@
 /** Geometry and fixed-step clock for the experimental live FPS. Coordinates are metres. */
-export interface FpsPoint { x: number; z: number; level?: 'street'|'canal' }
+export type FpsTerrainLevel = 'street' | 'canal' | 'upper';
+export type LiveSurfaceAcoustic = 'stone' | 'concrete' | 'brick' | 'wood' | 'metal' | 'water' | 'grass';
+export interface FpsPoint { x: number; z: number; level?: FpsTerrainLevel }
 export interface FpsWall { minX: number; maxX: number; minZ: number; maxZ: number }
 
 /** Intersection of a finite segment and a closed axis-aligned box, including its edges. */

@@ -1,11 +1,8 @@
 import type {FpsPoint} from './fpsSpatialWorld.ts';
-import {LIVE_COLLISION_SOLIDS,distance,liveWalkable} from './fpsLiveMap.ts';
-import {liveGroundHeight} from './fpsLiveTerrain.ts';
-import {createLiveGeometryIndex} from './fpsStaticGeometry.ts';
+import {FONTESSA_MAP_RUNTIME,distance} from './fpsLiveMap.ts';
+import type {LiveMapRuntime} from './fpsLiveMapTypes.ts';
 import {LIVE_UTILITY_RULES,computeLiveThrowAngles,launchLiveGrenade,liveGrenadeSightline,predictLiveGrenade,stepLiveGrenade,type LiveGrenade,type LiveGrenadeKind,type LiveThrowStyle} from './fpsLiveGrenades.ts';
 export {LIVE_AUTHORED_SMOKE_LINEUPS,type LiveSmokeLineup} from './fpsSmokeLineupDefinitions.ts';
-
-const lineupSolidsAt=createLiveGeometryIndex(LIVE_COLLISION_SOLIDS);
 
 export interface LiveSmokeSolution {
   target:FpsPoint;aimTarget?:FpsPoint;throwStyle:LiveThrowStyle;flightTime:number;forecast:LiveGrenade;launchYaw:number;launchPitch:number;isBankedPop?:boolean;
@@ -25,12 +22,13 @@ export function solveLiveGrenadeThrow(
   height:number,
   preferredStyle?:LiveThrowStyle,
   maxError:number=kind==='flash'?2.5:3,
+  runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME,
 ):LiveSmokeSolution|undefined {
   if(!Number.isFinite(from.x+from.z+target.x+target.z+height)||distance(from,target)>LIVE_SMOKE_SOLUTION_LIMITS.maxRange
-    ||!liveWalkable(from)||(kind==='smoke'&&!liveWalkable(target)))return;
-  const dist=distance(from,target),floor=liveGroundHeight(target);
+    ||!runtime.walkable(from)||(kind==='smoke'&&!runtime.walkable(target)))return;
+  const dist=distance(from,target),floor=runtime.terrain.groundHeight(target);
   // Check chest/head clearance above ground curbs/canals so only real walls/buildings force high-arc sky lobs.
-  const unobstructed=liveGrenadeSightline({x:from.x,y:height,z:from.z},{x:target.x,y:Math.max(height-.15,floor+1.45),z:target.z});
+  const unobstructed=liveGrenadeSightline({x:from.x,y:height,z:from.z},{x:target.x,y:Math.max(height-.15,floor+1.45),z:target.z},runtime);
   const styleOrder:LiveThrowStyle[]=preferredStyle
     ?(unobstructed
       ?[preferredStyle,'underhand','medium','standard','walk','overhead','jump','walk-jump','run-jump']
@@ -49,7 +47,7 @@ export function solveLiveGrenadeThrow(
               :dist<=36.2
                 ?['jump','walk-jump','run-jump']
                 :['walk-jump','run-jump','jump'];
-  const key=[kind,from.x,from.z,from.level??'',target.x,target.z,target.level??'',height,maxError,styleOrder[0],unobstructed?'clear':'blocked'].join(':');
+  const key=[runtime.id,kind,from.x,from.z,from.level??'',target.x,target.z,target.level??'',height,maxError,styleOrder[0],unobstructed?'clear':'blocked'].join(':');
   if(solutionCache.has(key))return copySolution(solutionCache.get(key));
   const targetEye={x:target.x,y:floor+1.5,z:target.z};
   const aimScales=kind!=='smoke'?[1]:dist>28?[1,.92,.84,.76,.68,.96,.88,.80,.72,.64,1.06,1.14]:[1,.92,.84,.76,.68,.96,.88,.80,.72,.64];
@@ -60,7 +58,7 @@ export function solveLiveGrenadeThrow(
     let best:LiveSmokeSolution|undefined;
     let bestScore=Infinity;
     for(const throwStyle of styleOrder){
-      const initial=launchLiveGrenade(-1,kind,'lineup','blue',from,target,0,false,throwStyle,height);
+      const initial=launchLiveGrenade(-1,kind,'lineup','blue',from,target,0,false,throwStyle,height,{x:0,z:0},undefined,runtime);
       // High-arc overhead, jump, walk-jump, and run-jump throws clear multi-storey roofs across the map.
       const highArc=throwStyle==='overhead'||throwStyle==='jump'||throwStyle==='walk-jump'||throwStyle==='run-jump';
       const flights=kind==='flash'
@@ -77,19 +75,19 @@ export function solveLiveGrenadeThrow(
         for(const flightTime of flights){
           for(const scale of aimScales){
             const aimTarget:FpsPoint=scale===1&&lat===0?{...target}:{x:from.x+(baseTarget.x-from.x)*scale,z:from.z+(baseTarget.z-from.z)*scale,level:baseTarget.level};
-            const grenade=launchLiveGrenade(-1,kind,'lineup','blue',from,aimTarget,0,false,throwStyle,height,{x:0,z:0},flightTime);
+            const grenade=launchLiveGrenade(-1,kind,'lineup','blue',from,aimTarget,0,false,throwStyle,height,{x:0,z:0},flightTime,runtime);
             if(Math.hypot(grenade.vx,grenade.vy,grenade.vz)>LIVE_SMOKE_SOLUTION_LIMITS.maxLaunchSpeed)continue;
-            const forecast=predictLiveGrenade(grenade,0),floorOffset=forecast.y-floor,err=distance(forecast,target);
+            const forecast=predictLiveGrenade(grenade,0,runtime),floorOffset=forecast.y-floor,err=distance(forecast,target);
             // XZ alone accepts grenades bursting on an eight-metre roof above the entry.
             // Require settled ground smokes near destination floor, floor-impact fires, or clear air pop-flashes.
             const validLanding=kind==='smoke'
               ?err<=maxError&&floorOffset>=.04&&floorOffset<=LIVE_SMOKE_SOLUTION_LIMITS.maxFloorOffset+.1
               :kind==='flash'
                 ?(err<=maxError&&floorOffset>=-.1&&floorOffset<=2.6)
-                  ||(err<=maxError+2.5&&floorOffset>=.25&&floorOffset<=flashMaxHeight&&liveGrenadeSightline(forecast,targetEye))
+                  ||(err<=maxError+2.5&&floorOffset>=.25&&floorOffset<=flashMaxHeight&&liveGrenadeSightline(forecast,targetEye,runtime))
                 :kind==='he'
                   ?(err<=maxError&&floorOffset>=-.1&&floorOffset<=2.6)
-                    ||(err<=maxError+(unobstructed?0:1.2)&&floorOffset>=.04&&floorOffset<=(unobstructed?4.5:7.5)&&liveGrenadeSightline(forecast,targetEye))
+                    ||(err<=maxError+(unobstructed?0:1.2)&&floorOffset>=.04&&floorOffset<=(unobstructed?4.5:7.5)&&liveGrenadeSightline(forecast,targetEye,runtime))
                   :err<=maxError&&floorOffset>=.04&&floorOffset<=1.0;
             if(!validLanding)continue;
             const airAirburst=kind==='flash'?floorOffset>5.5:kind==='he'?floorOffset>2.6:false;
@@ -118,8 +116,11 @@ export function solveLiveGrenadeThrow(
   return copySolution(solution);
 }
 
-export function solveLiveSmokeThrow(from:FpsPoint,target:FpsPoint,height:number,preferredStyle?:LiveThrowStyle,maxError:number=LIVE_SMOKE_SOLUTION_LIMITS.maxLandingError):LiveSmokeSolution|undefined {
-  return solveLiveGrenadeThrow('smoke',from,target,height,preferredStyle,maxError);
+export function solveLiveSmokeThrow(
+  from:FpsPoint,target:FpsPoint,height:number,preferredStyle?:LiveThrowStyle,
+  maxError:number=LIVE_SMOKE_SOLUTION_LIMITS.maxLandingError,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME,
+):LiveSmokeSolution|undefined {
+  return solveLiveGrenadeThrow('smoke',from,target,height,preferredStyle,maxError,runtime);
 }
 
 export interface PopFlashAllyEye {x:number;z:number;yaw:number;crouch?:boolean;jumpY?:number}
@@ -130,16 +131,17 @@ export function solveLivePopFlash(
   target:FpsPoint,
   height:number,
   allies:readonly PopFlashAllyEye[]=[],
+  runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME,
 ):LiveSmokeSolution|undefined {
-  if(!Number.isFinite(from.x+from.z+target.x+target.z+height)||distance(from,target)>LIVE_SMOKE_SOLUTION_LIMITS.maxRange||!liveWalkable(from))return;
-  const floor=liveGroundHeight(target),targetEye={x:target.x,y:floor+1.55,z:target.z};
+  if(!Number.isFinite(from.x+from.z+target.x+target.z+height)||distance(from,target)>LIVE_SMOKE_SOLUTION_LIMITS.maxRange||!runtime.walkable(from))return;
+  const floor=runtime.terrain.groundHeight(target),targetEye={x:target.x,y:floor+1.55,z:target.z};
   const mid={x:(from.x+target.x)/2,z:(from.z+target.z)/2};
   const candidates:{aim:FpsPoint;style:LiveThrowStyle;flight:number}[]=[];
 
   // Wall-bank reflections off nearby opaque walls accounting for .52 normal / .82 tangent wall restitution
   const seenWalls=new Set<string>();
-  const nearWalls=[...lineupSolidsAt(from,mid,9),...lineupSolidsAt(from,target,10)]
-    .filter(w=>{if(seenWalls.has(w.id))return false;seenWalls.add(w.id);return w.height>=2.0&&(w.baseY??0)<=height+.4;});
+  const nearWalls=[...runtime.collisionSolidsAt(from,mid,9),...runtime.collisionSolidsAt(from,target,10)]
+    .filter(w=>{if(seenWalls.has(w.id))return false;seenWalls.add(w.id);return w.height>=floor+2.0&&(w.baseY??0)<=height+.4;});
   for(const w of nearWalls.slice(0,6)){
     const planes:{aim:FpsPoint}[]=[];
     if(from.x<w.minX&&target.x<w.minX)planes.push({aim:{x:(w.minX-.12)+(w.minX-.12-target.x)/.52,z:from.z+(target.z-from.z)*1.12}});
@@ -164,25 +166,26 @@ export function solveLivePopFlash(
 
   let best:LiveSmokeSolution|undefined,bestScore=-Infinity;
   for(const cand of candidates){
-    const grenade=launchLiveGrenade(-1,'flash','popflash','blue',from,cand.aim,0,false,cand.style,height,{x:0,z:0},cand.flight);
+    const grenade=launchLiveGrenade(-1,'flash','popflash','blue',from,cand.aim,0,false,cand.style,height,{x:0,z:0},cand.flight,runtime);
     if(Math.hypot(grenade.vx,grenade.vy,grenade.vz)>LIVE_SMOKE_SOLUTION_LIMITS.maxLaunchSpeed)continue;
-    const forecast=predictLiveGrenade(grenade,0);
+    const forecast=predictLiveGrenade(grenade,0,runtime);
     const range=Math.hypot(distance(forecast,target),forecast.y-targetEye.y);
     if(range>=LIVE_UTILITY_RULES.flashRadius-1.0)continue;
     if(forecast.y<floor+.55||forecast.y>floor+5.0)continue;
-    if(!liveGrenadeSightline(forecast,targetEye))continue;
+    if(!liveGrenadeSightline(forecast,targetEye,runtime))continue;
 
     const prePop={...grenade};
     const preEnd=Math.max(0,grenade.detonateAt-.30);
-    for(let at=0;at<preEnd-1e-8;at+=1/30)stepLiveGrenade(prePop,Math.min(1/30,preEnd-at));
-    const surprisePop=!liveGrenadeSightline(prePop,targetEye);
+    for(let at=0;at<preEnd-1e-8;at+=1/30)stepLiveGrenade(prePop,Math.min(1/30,preEnd-at),runtime);
+    const surprisePop=!liveGrenadeSightline(prePop,targetEye,runtime);
     const bounced=(forecast.vx*grenade.vx+forecast.vz*grenade.vz)<0||Math.hypot(forecast.vx-grenade.vx,forecast.vz-grenade.vz)>3.5;
 
     let allyHazard=0;
     for(const a of allies){
-      const eyeY=(a.crouch?1.08:1.6)+(a.jumpY??0);
+      const allyFloor=runtime.terrain.groundHeight(a);
+      const eyeY=allyFloor+(a.crouch?1.08:1.6)+(a.jumpY??0);
       const allyDist=Math.hypot(distance(a,forecast),forecast.y-eyeY);
-      if(allyDist<12&&liveGrenadeSightline(forecast,{x:a.x,y:eyeY,z:a.z})){
+      if(allyDist<12&&liveGrenadeSightline(forecast,{x:a.x,y:eyeY,z:a.z},runtime)){
         const facing=Math.cos(Math.atan2(forecast.x-a.x,forecast.z-a.z)-a.yaw);
         if(facing>.25)allyHazard+=(facing>.45?28:18)*facing;
       }

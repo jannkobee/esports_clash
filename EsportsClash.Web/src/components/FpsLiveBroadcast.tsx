@@ -7,8 +7,8 @@ import { freshFpsExhibitionSeed } from '../fps/fpsExhibitionSeed';
 import type { PlayerCard } from '../types';
 import type { FpsIdentityExperiment, FpsTeamId } from '../fps/fpsTypes';
 import { FpsFixedStepClock } from '../fps/fpsSpatialWorld';
-import { LIVE_FPS_MAP } from '../fps/fpsLiveMap';
-import { LIVE_B_APARTMENTS, LIVE_TERRAIN_SOLIDS } from '../fps/fpsLiveTerrain';
+import { getLiveMapRuntime } from '../fps/fpsLiveMapRegistry';
+import type { LiveMapId } from '../fps/fpsLiveMapTypes';
 import { SIGNAL_CIRCUIT, fpsBroadcastPresentation, fpsBroadcastText, type FpsBroadcastOrganizer } from '../fps/fpsBroadcastPresentation';
 import { FpsLiveSimulation, LIVE_FPS_STEP, LIVE_WEAPONS, type LivePlayer, type LiveSnapshot } from '../fps/fpsLiveSimulation';
 import { predictLiveGrenade } from '../fps/fpsLiveGrenades';
@@ -49,6 +49,7 @@ function cloneDocumentStylesToPipWindow(sourceDoc: Document, targetDoc: Document
 }
 
 interface Props {
+  mapId?: LiveMapId;
   blue: PlayerCard[];
   red: PlayerCard[];
   seed: number;
@@ -422,10 +423,12 @@ function BroadcastArmoryModal({
 function BroadcastCenterFocusCard({
   observed,
   mode,
+  mapId,
   onSelectCamera,
 }: {
   observed: LivePlayer;
   mode: LiveCameraMode;
+  mapId: LiveMapId;
   onSelectCamera: (m: LiveCameraMode) => void;
 }) {
   const isCT = !observed.attacking;
@@ -455,15 +458,15 @@ function BroadcastCenterFocusCard({
       </div>
       <div className="broadcast-focus-card__meta">
         <span className="broadcast-focus-card__kda" title="Kills / Deaths / Assists">{observed.kills} / {observed.deaths} / {observed.assists??0}</span>
-        <span className="broadcast-focus-card__action-line" title={[observed.action,observed.actionSkill?`${FPS_ABILITY_LABELS[observed.actionSkill.ability]} ${observed.actionSkill.value}/10`:'',fpsBroadcastText(observed.intent),fpsBroadcastText(observed.radioMessage??'')].filter(Boolean).join(' / ')}>
+        <span className="broadcast-focus-card__action-line" title={[observed.action,observed.actionSkill?`${FPS_ABILITY_LABELS[observed.actionSkill.ability]} ${observed.actionSkill.value}/10`:'',fpsBroadcastText(observed.intent, mapId),fpsBroadcastText(observed.radioMessage??'', mapId)].filter(Boolean).join(' / ')}>
           {observed.hp<=0?'Eliminated':observed.action}{observed.channel>0?` (${observed.channel.toFixed(1)}s)`:''}
         </span>
         {observed.enemyRemaining!==undefined&&<span className="broadcast-focus-card__forces" title="Confirmed opponents remaining">{observed.enemyRemaining} left</span>}
       </div>
       {observed.radioMessage && observed.hp > 0 && (
-        <div className="broadcast-focus-card__radio" title={fpsBroadcastText(observed.radioMessage)}>
+        <div className="broadcast-focus-card__radio" title={fpsBroadcastText(observed.radioMessage, mapId)}>
           <span className="broadcast-focus-card__radio-tag">COMMS</span>
-          <span>{fpsBroadcastText(observed.radioMessage)}</span>
+          <span>{fpsBroadcastText(observed.radioMessage, mapId)}</span>
         </div>
       )}
       <div className="broadcast-focus-card__cams" role="group" aria-label="Spectator cameras">
@@ -584,6 +587,8 @@ interface BroadcastHudOptions {
   callouts: boolean;
   playerDock: boolean;
   lineups: boolean;
+  cutawayRoofs: boolean;
+  debugOverlays: boolean;
 }
 
 const DEFAULT_HUD_OPTIONS: BroadcastHudOptions = {
@@ -593,6 +598,8 @@ const DEFAULT_HUD_OPTIONS: BroadcastHudOptions = {
   callouts: true,
   playerDock: true,
   lineups: true,
+  cutawayRoofs: false,
+  debugOverlays: false,
 };
 
 function loadHudOptions(): BroadcastHudOptions {
@@ -606,30 +613,33 @@ function loadHudOptions(): BroadcastHudOptions {
   }
 }
 
-export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, learningEnabled=false, approvedModel, onExit }: Props) {
+export function FpsLiveBroadcast({ mapId = 'fontessa', blue, red, seed, identity, skillProfiles, learningEnabled=false, approvedModel, onExit }: Props) {
   const [attempt, setAttempt] = useState(0);
   const { simulation, activeSeed } = useMemo(
     () => {
       const activeSeed = freshFpsExhibitionSeed(seed);
-      return { activeSeed, simulation: new FpsLiveSimulation(blue, red, activeSeed, identity, { skillProfiles,
+      return { activeSeed, simulation: new FpsLiveSimulation(blue, red, activeSeed, identity, { mapId, skillProfiles,
         learning:learningEnabled?{mode:'learn',model:readFpsLearning(),onRound:round=>{saveFpsLearningRound(round);}}:{mode:'frozen',model:approvedModel?.navigation},
         mechanicsLearning:learningEnabled?{model:readFpsMechanicsLearning(),onRound:round=>{saveFpsMechanicsRound(round);}}:{mode:'frozen',model:approvedModel?.combat},
         movementLearning:learningEnabled?{model:readFpsMovementLearning(),onRound:round=>{saveFpsMovementRound(round);}}:{mode:'frozen',model:approvedModel?.movement} }) };
     },
-    [blue, red, seed, identity, skillProfiles, learningEnabled, approvedModel, attempt]
+    [mapId, blue, red, seed, identity, skillProfiles, learningEnabled, approvedModel, attempt]
   );
   const [frame, setFrame] = useState(() => simulation.snapshot());
+  const activeMapId: LiveMapId = frame.mapId ?? mapId;
+  const mapRuntime = useMemo(() => getLiveMapRuntime(activeMapId), [activeMapId]);
   const [paused, setPaused] = useState(false);
   const [fullscreen,setFullscreen]=useState(false);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [mode, setMode] = useState<LiveCameraMode>('director');
+  const [overviewCam, setOverviewCam] = useState(false);
   const [organizers,setOrganizers]=useState<FpsBroadcastOrganizer[]>([SIGNAL_CIRCUIT]);
   const [producer,setProducer]=useState<string>(()=>{
     try{return window.localStorage.getItem('hexatrick:fps-presentation')??SIGNAL_CIRCUIT.id;}catch{return SIGNAL_CIRCUIT.id;}
   });
-  const presentation=fpsBroadcastPresentation(producer,organizers);
+  const presentation=fpsBroadcastPresentation(producer,organizers,activeMapId);
   const presentationStyle={'--presentation-accent':presentation.accent} as CSSProperties;
   useEffect(()=>{
     if(!isCloudPersistenceConfigured())return;
@@ -677,8 +687,8 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
   if(!audioRef.current)audioRef.current=new FpsBroadcastAudio();
   const audioFollowedId = useRef(blue[0].id);
   const scheduleFrameRef = useRef<(() => void) | null>(null);
-  const controls = useRef({ paused, mode, selected, autoPipEnabled, lineups: hudOptions.lineups, ready, error, phase:frame.phase, players:frame.players });
-  controls.current = { paused, mode, selected, autoPipEnabled, lineups: hudOptions.lineups, ready, error, phase:frame.phase, players:frame.players };
+  const controls = useRef({ paused, mode, selected, autoPipEnabled, lineups: hudOptions.lineups, cutawayRoofs: hudOptions.cutawayRoofs, debugOverlays: hudOptions.debugOverlays, overviewCam, ready, error, phase:frame.phase, players:frame.players });
+  controls.current = { paused, mode, selected, autoPipEnabled, lineups: hudOptions.lineups, cutawayRoofs: hudOptions.cutawayRoofs, debugOverlays: hudOptions.debugOverlays, overviewCam, ready, error, phase:frame.phase, players:frame.players };
 
   const toggleHudOption = useCallback((key: keyof BroadcastHudOptions) => {
     setHudOptions(prev => {
@@ -687,6 +697,22 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
       return next;
     });
   }, []);
+
+  useEffect(() => {
+    audioRef.current?.setMapProfile(mapRuntime.definition.audio);
+  }, [mapRuntime]);
+
+  useEffect(() => {
+    viewerRef.current?.setCutawayRoofs(hudOptions.cutawayRoofs);
+  }, [ready, hudOptions.cutawayRoofs]);
+
+  useEffect(() => {
+    viewerRef.current?.setDebugOverlays(hudOptions.debugOverlays);
+  }, [ready, hudOptions.debugOverlays]);
+
+  useEffect(() => {
+    viewerRef.current?.setOverview(overviewCam);
+  }, [ready, overviewCam]);
 
   useEffect(() => {
     audioRef.current?.setEnabled(soundEnabled);
@@ -785,6 +811,10 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
         setPaused(true);
         setError('The 3D graphics context was lost. Restart the exhibition to reconnect.');
       });
+      viewer.setMap(current.mapId ?? mapId);
+      viewer.setCutawayRoofs(controls.current.cutawayRoofs);
+      viewer.setDebugOverlays(controls.current.debugOverlays);
+      viewer.setOverview(controls.current.overviewCam);
       viewerRef.current = viewer;
       setReady(true);
       last = undefined;
@@ -819,10 +849,10 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
           if (pipChanged || now - lastHud >= 100) {
             lastPipActive = result.pip.active;
             setFrame(current);
-            setFollowed(result.followedId);
+            setFollowed(prev => prev === result.followedId ? prev : result.followedId);
             audioFollowedId.current=result.followedId;
-            setEffectiveCamera(result.effectiveMode);
-            setPlantPip(result.pip.active ? result.pip : EMPTY_PLANT_PIP);
+            setEffectiveCamera(prev => prev === result.effectiveMode ? prev : result.effectiveMode);
+            setPlantPip(prev => result.pip.active ? result.pip : (prev.active ? EMPTY_PLANT_PIP : prev));
             if (!result.pip.active) viewer?.setPipViewport(null);
             lastHud = now;
           }
@@ -973,8 +1003,18 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
   };
 
   const observe = useCallback((p: LivePlayer) => {
+    const prevMode = controls.current.mode;
+    const nextMode = prevMode === 'director' || prevMode === 'cinematic' ? 'first' : prevMode;
+    controls.current.selected = p.id;
+    controls.current.mode = nextMode;
+    audioFollowedId.current = p.id;
     setSelected(p.id);
-    if (controls.current.mode === 'director' || controls.current.mode === 'cinematic') setMode('first');
+    setFollowed(p.id);
+    if (nextMode !== prevMode) {
+      setMode(nextMode);
+      setEffectiveCamera(nextMode === 'free' ? 'free' : nextMode === 'tactical' ? 'tactical' : nextMode === 'third' ? 'third' : 'first');
+    }
+    scheduleFrameRef.current?.();
   },[]);
   const togglePause = useCallback(() => {
     if(!controls.current.ready||controls.current.error||controls.current.phase==='finished')return;
@@ -1007,7 +1047,8 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
       if(key==='f'){event.preventDefault();toggleFullscreen();return;}
       if(!state.ready||state.error)return;
       if(event.code==='Space'){event.preventDefault();togglePause();return;}
-      if(key==='c'){event.preventDefault();setMode(value=>cameraModes[(cameraModes.indexOf(value)+1)%cameraModes.length]);}
+      if(key==='c'){event.preventDefault();setOverviewCam(false);setMode(value=>cameraModes[(cameraModes.indexOf(value)+1)%cameraModes.length]);}
+      if(key==='o'){event.preventDefault();setOverviewCam(value=>!value);}
       if(key==='p'){event.preventDefault();setAutoPipEnabled(value=>!value);}
       const slot='1234567890'.indexOf(event.key);
       if(slot>=0&&state.players[slot]?.hp>0){event.preventDefault();observe(state.players[slot]);}
@@ -1069,6 +1110,143 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
   const blueReports = (frame.teamReports ?? []).filter(r => r.team === ctTeam && frame.time - r.at < 14).slice(-3).reverse();
   const redReports = (frame.teamReports ?? []).filter(r => r.team === tTeam && frame.time - r.at < 14).slice(-3).reverse();
 
+  const radarStaticLayers = useMemo(() => {
+    const vb = mapRuntime.definition.broadcast.radarViewBox;
+    const b = mapRuntime.definition.bounds;
+    const rx = (x: number) => x - b.minX;
+    const ry = (z: number) => b.maxZ - z;
+    const rScale = vb.width / 72;
+    const siteRadii = { A: mapRuntime.definition.siteRadii?.A ?? 5.5, B: mapRuntime.definition.siteRadii?.B ?? 5.5 };
+    return (
+      <>
+        <rect x={vb.minX} y={vb.minY} width={vb.width} height={vb.height} fill="#08111beb" rx={4 * rScale} />
+        {[-36, -24, -12, 0, 12, 24, 36].filter(gx => gx > b.minX && gx < b.maxX).map(gx => (
+          <line key={`gx-${gx}`} x1={rx(gx)} y1={vb.minY} x2={rx(gx)} y2={vb.minY + vb.height} stroke="#14283b" strokeWidth={0.28 * rScale} />
+        ))}
+        {[-36, -18, 0, 18, 36].filter(gz => gz > b.minZ && gz < b.maxZ).map(gz => (
+          <line key={`gz-${gz}`} x1={vb.minX} y1={ry(gz)} x2={vb.minX + vb.width} y2={ry(gz)} stroke="#14283b" strokeWidth={0.28 * rScale} />
+        ))}
+        {activeMapId === 'fontessa' ? (
+          <>
+            <rect x="0" y="43.2" width="72" height="2.2" fill="#367f90" opacity=".82" />
+            <path d="M34.4 45.4h3.2v-4.8h19.2v2.2H37.6v2.6" fill="#83938b" stroke="#adc1ba" strokeWidth=".3" />
+            <circle cx={rx(23)} cy={ry(21)} r="2.4" fill="#1b2f3d" stroke="#487894" strokeWidth=".35" />
+            <rect x={rx(-30) - 1.5} y={ry(16) - 1.5} width="3" height="4.5" fill="#18232c" stroke="#425769" strokeWidth=".3" />
+            <rect x={rx(-4.75) - 1.75} y={ry(-10) - 1.5} width="3.5" height="3" fill="#152432" stroke="#3f6685" strokeWidth=".3" strokeDasharray="1 .8" />
+          </>
+        ) : (
+          <>
+            {mapRuntime.terrain.groundPatches.filter(p => p.layer !== 'upper').map((p, pi) => (
+              <rect
+                key={p.id ?? `patch-${pi}`}
+                x={rx(p.minX)}
+                y={ry(p.maxZ)}
+                width={p.maxX - p.minX}
+                height={p.maxZ - p.minZ}
+                fill={p.stair ? '#263f54' : p.height >= 4.5 ? '#192b3d' : p.height >= 2 ? '#122130' : '#0d1924'}
+                fillOpacity={p.stair ? '.9' : '.72'}
+                stroke={p.stair ? '#487496' : '#1f3448'}
+                strokeWidth={0.22 * rScale}
+              />
+            ))}
+            <rect x={rx(11)} y={ry(-5)} width={34} height={18} fill="#1f5866" fillOpacity=".78" stroke="#388ea1" strokeWidth={0.25 * rScale} />
+            <rect x={rx(13.5)} y={ry(14)} width={6} height={19} fill="#1f5866" fillOpacity=".78" stroke="#388ea1" strokeWidth={0.25 * rScale} />
+          </>
+        )}
+        {(['A', 'B'] as const).map(site => {
+          const pos = mapRuntime.definition.sites[site];
+          const rad = siteRadii[site];
+          return (
+            <rect
+              key={`zone-${site}`}
+              x={rx(pos.x) - rad}
+              y={ry(pos.z) - rad}
+              width={rad * 2}
+              height={rad * 2}
+              rx={1.8 * rScale}
+              fill="#7a2525"
+              fillOpacity=".32"
+              stroke="#ef4444"
+              strokeWidth={0.45 * rScale}
+              strokeDasharray={`${1.6 * rScale} ${1.2 * rScale}`}
+            />
+          );
+        })}
+        {mapRuntime.definition.solids.map(w => (
+          <rect
+            key={w.id}
+            x={rx(w.minX)}
+            y={ry(w.maxZ)}
+            width={w.maxX - w.minX}
+            height={w.maxZ - w.minZ}
+            fill={w.cutawayGroup ? '#334e66' : '#253b50'}
+            fillOpacity={w.cutawayGroup ? (hudOptions.cutawayRoofs ? '.12' : '.36') : '1'}
+            stroke={w.cutawayGroup ? '#6084a3' : '#486680'}
+            strokeDasharray={w.cutawayGroup ? `${1.1 * rScale} ${0.8 * rScale}` : undefined}
+            strokeWidth={0.32 * rScale}
+          />
+        ))}
+        {activeMapId === 'fontessa' ? (
+          <g aria-label="Elevated B apartments and staircase">
+            {mapRuntime.terrain.terrainSolids.filter(w => !w.baseY && !w.cutawayGroup).map(w => (
+              <rect key={w.id} x={rx(w.minX)} y={ry(w.maxZ)} width={w.maxX - w.minX} height={w.maxZ - w.minZ} fill="#426d7d" stroke="#79a4ad" strokeWidth=".18" />
+            ))}
+            <text x={rx(31.8)} y={ry(14) + .6} textAnchor="middle" fontSize="2" fill="#e5dfbd">↑</text>
+          </g>
+        ) : (
+          <g aria-label="Cantilevered Control Deck upper layer">
+            {mapRuntime.terrain.groundPatches.filter(p => p.layer === 'upper').map((p, ui) => (
+              <rect
+                key={p.id ?? `upper-${ui}`}
+                x={rx(p.minX)}
+                y={ry(p.maxZ)}
+                width={p.maxX - p.minX}
+                height={p.maxZ - p.minZ}
+                fill="#234857"
+                fillOpacity=".68"
+                stroke="#38bdf8"
+                strokeDasharray={`${1.2 * rScale} ${0.8 * rScale}`}
+                strokeWidth={0.35 * rScale}
+              />
+            ))}
+          </g>
+        )}
+        {activeMapId === 'fontessa' ? (
+          <>
+            <text x="36" y="42.5" fill="#7da1bd" fillOpacity=".7" fontSize="2.4" fontWeight="800" textAnchor="middle">MID</text>
+            <text x="36" y="25.5" fill="#7da1bd" fillOpacity=".68" fontSize="2.1" fontWeight="700" textAnchor="middle">WINDOW</text>
+            <text x="15" y="44.9" fill="#9bd7e5" fillOpacity=".72" fontSize="2" fontWeight="700" textAnchor="middle">CANAL</text>
+            <text x="58" y="54.5" fill="#7da1bd" fillOpacity=".68" fontSize="2" fontWeight="700" textAnchor="middle">APTS</text>
+          </>
+        ) : (
+          mapRuntime.definition.tactical.callouts.map(c => (
+            <text
+              key={c.name}
+              x={rx(c.x)}
+              y={ry(c.z)}
+              fill={c.level === 'upper' ? '#7dd3fc' : '#7da1bd'}
+              fillOpacity=".7"
+              fontSize={2.2 * rScale}
+              fontWeight="700"
+              textAnchor="middle"
+            >
+              {c.name.split(' (')[0].toUpperCase()}
+            </text>
+          ))
+        )}
+        {(Object.entries(mapRuntime.definition.sites) as ['A' | 'B', { x: number; z: number }][]).map(([site, p]) => {
+          const sz = 5.6 * rScale;
+          return (
+            <g key={site}>
+              <rect x={rx(p.x) - sz / 2} y={ry(p.z) - sz / 2} width={sz} height={sz} rx={1.2 * rScale} fill="#dc2626" stroke="#ffffff" strokeWidth={0.4 * rScale} />
+              <text x={rx(p.x)} y={ry(p.z) + 1.6 * rScale} fill="#ffffff" fontSize={4.2 * rScale} fontWeight="900" textAnchor="middle">{site}</text>
+            </g>
+          );
+        })}
+      </>
+    );
+  }, [activeMapId, mapRuntime, hudOptions.cutawayRoofs]);
+
   return (
     <section
       className={`live-fps ${fullscreen ? 'is-fullscreen' : ''}`}
@@ -1103,12 +1281,15 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
           <span className="broadcast-series-brand">{presentation.name}</span>
           <span className="broadcast-series-divider">/</span>
           <span className="broadcast-series-event">EXHIBITION</span>
-          <span className="broadcast-series-map">{LIVE_FPS_MAP.name}</span>
+          <span className="broadcast-series-map">{mapRuntime.definition.broadcast.displayName}</span>
         </div>
 
         {/* In-Game Top-Right Broadcast Options & Controls */}
         <div className="broadcast-stage-controls" role="toolbar" aria-label="In-game broadcast options">
-          <button type="button" className={mode==='free' ? 'is-active' : undefined} disabled={!ready||!!error} onClick={()=>setMode(value=>value==='free'?'director':'free')} title="Toggle Free Camera">
+          <button type="button" className={overviewCam ? 'is-active' : undefined} disabled={!ready||!!error} onClick={()=>setOverviewCam(value=>!value)} title="Toggle Full-Map Overview Camera (O)" aria-pressed={overviewCam}>
+            Overview
+          </button>
+          <button type="button" className={mode==='free' ? 'is-active' : undefined} disabled={!ready||!!error} onClick={()=>{setOverviewCam(false);setMode(value=>value==='free'?'director':'free');}} title="Toggle Free Camera">
             {mode === 'free' ? 'Auto cam' : 'Free cam'}
           </button>
           <button type="button" className={paused ? 'is-paused' : undefined} disabled={!ready || !!error || frame.phase === 'finished'} onClick={togglePause} title="Pause or resume (Space)" aria-pressed={paused}>
@@ -1145,13 +1326,16 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
                 <label><input type="checkbox" checked={hudOptions.callouts} onChange={() => toggleHudOption('callouts')} /> Team Callouts (CT / T)</label>
                 <label><input type="checkbox" checked={hudOptions.playerDock} onChange={() => toggleHudOption('playerDock')} /> Player Dock &amp; Focus</label>
                 <label><input type="checkbox" checked={hudOptions.lineups} onChange={() => toggleHudOption('lineups')} /> Grenade Lineup Lines</label>
+                <label><input type="checkbox" checked={hudOptions.cutawayRoofs} onChange={() => toggleHudOption('cutawayRoofs')} /> Cutaway Roofs &amp; Overpasses</label>
+                <label><input type="checkbox" checked={hudOptions.debugOverlays} onChange={() => toggleHudOption('debugOverlays')} /> Tactical Nav &amp; Drop Overlays</label>
+                <label><input type="checkbox" checked={overviewCam} onChange={() => setOverviewCam(v => !v)} /> Map Overview Cam</label>
                 <label><input type="checkbox" checked={autoPipEnabled} onChange={() => setAutoPipEnabled(v => !v)} /> Bomb Plant PIP</label>
                 <label><input type="checkbox" checked={soundEnabled} onChange={toggleSound} /> FPS Audio</label>
               </div>
               <div className="broadcast-hud-menu__actions">
                 <label className="live-fps__presentation-select">Broadcast theme
                   <select value={presentation.id} onChange={event=>{
-                    const id=fpsBroadcastPresentation(event.target.value,organizers).id;setProducer(id);
+                    const id=fpsBroadcastPresentation(event.target.value,organizers,activeMapId).id;setProducer(id);
                     try{window.localStorage.setItem('hexatrick:fps-presentation',id);}catch{}
                   }}>{organizers.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select>
                 </label>
@@ -1163,7 +1347,7 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
                 <a className="broadcast-hud-menu__link" href={pediaHref('organizers',presentation.id)}>Organizer in Hexapedia</a>
               </div>
               {frame.learning&&<span className="live-fps__learning-status" role="status">Routes · {frame.learning.rounds}r · {frame.learning.updates} upd</span>}
-              <p className="live-fps__shortcut-hint"><kbd>Space</kbd> pause · <kbd>B</kbd> buy list · <kbd>F</kbd> full · <kbd>C</kbd> cam · <kbd>1-0</kbd> POV · <kbd>P</kbd> PIP</p>
+              <p className="live-fps__shortcut-hint"><kbd>Space</kbd> pause · <kbd>O</kbd> overview · <kbd>B</kbd> buy list · <kbd>F</kbd> full · <kbd>C</kbd> cam · <kbd>1-0</kbd> POV · <kbd>P</kbd> PIP</p>
             </div>
           )}
         </div>
@@ -1174,7 +1358,8 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
           <small>{roundOver?`${frame.roundWinner===ctTeam?'CT FORCE':'T FORCE'} · ${frame.roundReason}`:`ROUND ${frame.round} · BLUE ${frame.score.blue} — ${frame.score.red} RED`}</small>
         </div>}
 
-        {effectiveCamera==='tactical'&&<div className="broadcast-coverage-label">MULTIPLE ENGAGEMENTS</div>}
+        {overviewCam && mode !== 'free' && <div className="broadcast-coverage-label">OVERVIEW · {mapRuntime.definition.broadcast.displayName.toUpperCase()}</div>}
+        {!overviewCam && effectiveCamera==='tactical'&&<div className="broadcast-coverage-label">MULTIPLE ENGAGEMENTS</div>}
         {mode==='free'&&<div className="broadcast-coverage-label" style={{pointerEvents:'none'}}>FREE CAM · Click map · WASD move · Q/E down/up · Drag to look · Shift faster · Space pause</div>}
         {paused && ready && !error && frame.phase !== 'finished' && (
           <div className="broadcast-pause-banner" role="status" aria-live="polite">
@@ -1202,124 +1387,99 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
         )}
 
         {/* Enlarged Tactical Minimap Radar (Top Left below series badge) */}
-        {hudOptions.minimap && (
-        <svg className="broadcast-radar" viewBox="0 0 72 92" role="img" aria-label="Tactical minimap">
-          <rect width="72" height="92" fill="#08111beb" rx="4" />
-          {[-24, -12, 0, 12, 24].map(gx => <line key={`gx-${gx}`} x1={gx + 36} y1="0" x2={gx + 36} y2="92" stroke="#14283b" strokeWidth=".28" />)}
-          {[-36, -18, 0, 18, 36].map(gz => <line key={`gz-${gz}`} x1="0" y1={46 - gz} x2="72" y2={46 - gz} stroke="#14283b" strokeWidth=".28" />)}
+        {hudOptions.minimap && (() => {
+          const vb = mapRuntime.definition.broadcast.radarViewBox;
+          const b = mapRuntime.definition.bounds;
+          const rx = (x: number) => x - b.minX;
+          const ry = (z: number) => b.maxZ - z;
+          const rScale = vb.width / 72;
+          return (
+            <svg className="broadcast-radar" viewBox={`${vb.minX} ${vb.minY} ${vb.width} ${vb.height}`} role="img" aria-label={`${mapRuntime.definition.broadcast.displayName} tactical minimap`}>
+              {radarStaticLayers}
 
-          {/* Bombsites A and B tactical capture zones */}
-          <rect x={-23 + 36 - 6.5} y={46 - 21 - 6.5} width="13" height="13" rx="2" fill="#7a2525" fillOpacity=".35" stroke="#ef4444" strokeWidth=".45" strokeDasharray="1.6 1.2" />
-          <rect x={23 + 36 - 6.5} y={46 - 21 - 6.5} width="13" height="13" rx="2" fill="#7a2525" fillOpacity=".35" stroke="#ef4444" strokeWidth=".45" strokeDasharray="1.6 1.2" />
+              {/* Smokes & Fire */}
+              {frame.smokes.map(s => <circle key={s.id} cx={rx(s.x)} cy={ry(s.z)} r={s.radius} fill="#cbd5e1" opacity=".52" />)}
+              {frame.fires.map(f => <circle key={f.id} cx={rx(f.x)} cy={ry(f.z)} r={f.radius} fill="#f97316" opacity=".4" />)}
 
-          {/* Landmarks */}
-          <circle cx={23 + 36} cy={46 - 21} r="2.4" fill="#1b2f3d" stroke="#487894" strokeWidth=".35" />
-          <rect x={-30 + 36 - 1.5} y={46 - 16 - 1.5} width="3" height="4.5" fill="#18232c" stroke="#425769" strokeWidth=".3" />
-          <rect x={-4.75 + 36 - 1.75} y={46 - (-10) - 1.5} width="3.5" height="3" fill="#152432" stroke="#3f6685" strokeWidth=".3" strokeDasharray="1 .8" />
+              {/* Released utility only; preparation never reveals a trajectory. */}
+              {hudOptions.lineups && frame.grenades.map(g => {
+                if (frame.time < g.releaseAt) return null;
+                const stroke = g.team === frame.attackTeam ? '#fb7185' : '#60a5fa';
+                const gx = rx(g.x);
+                const gy = ry(g.z);
+                const elapsed = Math.min(0.16, Math.max(0, frame.time - g.releaseAt));
+                const tx = rx(g.x - g.vx * elapsed);
+                const ty = ry(g.z - g.vz * elapsed);
+                const nearDetonation = g.detonateAt - frame.time <= 0.22;
+                const forecast = nearDetonation ? predictLiveGrenade(g, frame.time, mapRuntime) : undefined;
+                return (
+                  <g key={`grenade-line-${g.id}`} opacity=".92">
+                    <line x1={tx} y1={ty} x2={gx} y2={gy} stroke={stroke} strokeWidth={0.7 * rScale} strokeDasharray={`${1.6 * rScale} ${0.9 * rScale}`} />
+                    {forecast && <circle cx={rx(forecast.x)} cy={ry(forecast.z)} r={1.3 * rScale} fill="none" stroke={stroke} strokeWidth={0.48 * rScale} />}
+                    <circle cx={gx} cy={gy} r={0.8 * rScale} fill="#ffffff" stroke={stroke} strokeWidth={0.4 * rScale} />
+                  </g>
+                );
+              })}
 
-          {/* Map solids */}
-          <rect x="0" y="43.2" width="72" height="2.2" fill="#367f90" opacity=".82" />
-          <path d="M34.4 45.4h3.2v-4.8h19.2v2.2H37.6v2.6" fill="#83938b" stroke="#adc1ba" strokeWidth=".3" />
-          {LIVE_FPS_MAP.solids.map(w => <rect key={w.id} x={w.minX + 36} y={46 - w.maxZ} width={w.maxX - w.minX} height={w.maxZ - w.minZ} fill="#253b50" stroke="#486680" strokeWidth=".32" />)}
-          <g aria-label="Elevated B apartments and staircase">
-            {LIVE_TERRAIN_SOLIDS.filter(w=>!w.baseY).map(w=><rect key={w.id} x={w.minX+36} y={46-w.maxZ} width={w.maxX-w.minX} height={w.maxZ-w.minZ} fill="#426d7d" stroke="#79a4ad" strokeWidth=".18" />)}
-            <text x={LIVE_B_APARTMENTS.hold.x+36} y={46-LIVE_B_APARTMENTS.hold.z+.6} textAnchor="middle" fontSize="2" fill="#e5dfbd">↑</text>
-          </g>
+              {/* Dropped weapons */}
+              {frame.droppedWeapons?.map(w => (
+                <g key={w.id}>
+                  <circle cx={rx(w.x)} cy={ry(w.z)} r={1.1 * rScale} fill="#eab308" stroke="#ffffff" strokeWidth={0.25 * rScale} />
+                  <text x={rx(w.x)} y={ry(w.z) + 0.4 * rScale} fill="#000000" fontSize={1.0 * rScale} fontWeight="bold" textAnchor="middle">W</text>
+                </g>
+              ))}
 
-          {/* Tactical callout zone watermarks */}
-          <text x="36" y="42.5" fill="#7da1bd" fillOpacity=".7" fontSize="2.4" fontWeight="800" textAnchor="middle">MID</text>
-          <text x="36" y="25.5" fill="#7da1bd" fillOpacity=".68" fontSize="2.1" fontWeight="700" textAnchor="middle">WINDOW</text>
-          <text x="15" y="44.9" fill="#9bd7e5" fillOpacity=".72" fontSize="2" fontWeight="700" textAnchor="middle">CANAL</text>
-          <text x="58" y="54.5" fill="#7da1bd" fillOpacity=".68" fontSize="2" fontWeight="700" textAnchor="middle">APTS</text>
+              {/* Players with strict eye-level vision cones & slot numbers */}
+              {frame.players.map((p, idx) => {
+                const px = rx(p.x), pz = ry(p.z);
+                if (p.hp <= 0) {
+                  return (
+                    <text key={p.id} x={px} y={pz + 0.9 * rScale} fill={p.attacking ? '#fca5a5' : '#93c5fd'} fillOpacity=".55" fontSize={2.3 * rScale} fontWeight="900" textAnchor="middle">×</text>
+                  );
+                }
+                const coneLen = 4.6 * rScale;
+                const halfFov = 0.82; // 47 degree half-angle
+                const leftAngle = p.yaw - halfFov, rightAngle = p.yaw + halfFov;
+                const lx = px + Math.sin(leftAngle) * coneLen, lz = pz - Math.cos(leftAngle) * coneLen;
+                const rxCone = px + Math.sin(rightAngle) * coneLen, rzCone = pz - Math.cos(rightAngle) * coneLen;
+                const teamColor = p.attacking ? '#ef4444' : '#38bdf8';
+                const slotNum = String((idx + 1) % 10);
+                const isObs = p.id === followed;
+                const onUpper = p.level === 'upper';
+                return (
+                  <g key={p.id}>
+                    <polygon points={`${px},${pz} ${lx},${lz} ${rxCone},${rzCone}`} fill={teamColor} fillOpacity={isObs ? '.34' : '.2'} />
+                    {onUpper && <circle cx={px} cy={pz} r={2.65 * rScale} fill="none" stroke="#facc15" strokeWidth={0.45 * rScale} strokeDasharray={`${0.9 * rScale} ${0.6 * rScale}`} />}
+                    <circle cx={px} cy={pz} r={(isObs ? 2.45 : 1.75) * rScale} fill={teamColor} stroke={isObs ? '#facc15' : '#060c13'} strokeWidth={(isObs ? .75 : .45) * rScale} />
+                    <line x1={px} y1={pz} x2={px + Math.sin(p.yaw) * 3.5 * rScale} y2={pz - Math.cos(p.yaw) * 3.5 * rScale} stroke="#ffffff" strokeWidth={0.45 * rScale} />
+                    <text x={px} y={pz + 0.8 * rScale} fill="#ffffff" fontSize={2.2 * rScale} fontWeight="900" textAnchor="middle">{slotNum}</text>
+                  </g>
+                );
+              })}
 
-          {/* Site badges */}
-          {Object.entries(LIVE_FPS_MAP.sites).map(([site, p]) => (
-            <g key={site}>
-              <rect x={p.x + 36 - 2.8} y={46 - p.z - 2.8} width="5.6" height="5.6" rx="1.2" fill="#dc2626" stroke="#ffffff" strokeWidth=".4" />
-              <text x={p.x + 36} y={46 - p.z + 1.8} fill="#ffffff" fontSize="4.4" fontWeight="900" textAnchor="middle">{site}</text>
-            </g>
-          ))}
-
-          {/* Smokes & Fire */}
-          {frame.smokes.map(s => <circle key={s.id} cx={s.x + 36} cy={46 - s.z} r={s.radius} fill="#cbd5e1" opacity=".52" />)}
-          {frame.fires.map(f => <circle key={f.id} cx={f.x + 36} cy={46 - f.z} r={f.radius} fill="#f97316" opacity=".4" />)}
-
-          {/* Released utility only; preparation never reveals a trajectory. */}
-          {hudOptions.lineups && frame.grenades.map(g => {
-            if (frame.time < g.releaseAt) return null;
-            const stroke = g.team === frame.attackTeam ? '#fb7185' : '#60a5fa';
-            const gx = g.x + 36;
-            const gy = 46 - g.z;
-            const elapsed = Math.min(0.16, Math.max(0, frame.time - g.releaseAt));
-            const tx = g.x - g.vx * elapsed + 36;
-            const ty = 46 - (g.z - g.vz * elapsed);
-            const nearDetonation = g.detonateAt - frame.time <= 0.22;
-            const forecast = nearDetonation ? predictLiveGrenade(g, frame.time) : undefined;
-            return (
-              <g key={`grenade-line-${g.id}`} opacity=".92">
-                <line x1={tx} y1={ty} x2={gx} y2={gy} stroke={stroke} strokeWidth=".7" strokeDasharray="1.6 .9" />
-                {forecast && <circle cx={forecast.x + 36} cy={46 - forecast.z} r="1.3" fill="none" stroke={stroke} strokeWidth=".48" />}
-                <circle cx={gx} cy={gy} r=".8" fill="#ffffff" stroke={stroke} strokeWidth=".4" />
-              </g>
-            );
-          })}
-
-          {/* Dropped weapons */}
-          {frame.droppedWeapons?.map(w => (
-            <g key={w.id}>
-              <circle cx={w.x + 36} cy={46 - w.z} r="1.1" fill="#eab308" stroke="#ffffff" strokeWidth=".25" />
-              <text x={w.x + 36} y={46 - w.z + .4} fill="#000000" fontSize="1.0" fontWeight="bold" textAnchor="middle">W</text>
-            </g>
-          ))}
-
-          {/* Players with strict eye-level vision cones & slot numbers */}
-          {frame.players.map((p, idx) => {
-            const px = p.x + 36, pz = 46 - p.z;
-            if (p.hp <= 0) {
-              return (
-                <text key={p.id} x={px} y={pz + .9} fill={p.attacking ? '#fca5a5' : '#93c5fd'} fillOpacity=".55" fontSize="2.3" fontWeight="900" textAnchor="middle">×</text>
-              );
-            }
-            const coneLen = 4.6;
-            const halfFov = 0.82; // 47 degree half-angle
-            const leftAngle = p.yaw - halfFov, rightAngle = p.yaw + halfFov;
-            const lx = px + Math.sin(leftAngle) * coneLen, lz = pz - Math.cos(leftAngle) * coneLen;
-            const rx = px + Math.sin(rightAngle) * coneLen, rz = pz - Math.cos(rightAngle) * coneLen;
-            const teamColor = p.attacking ? '#ef4444' : '#38bdf8';
-            const slotNum = String((idx + 1) % 10);
-            const isObs = p.id === followed;
-            return (
-              <g key={p.id}>
-                <polygon points={`${px},${pz} ${lx},${lz} ${rx},${rz}`} fill={teamColor} fillOpacity={isObs ? '.34' : '.2'} />
-                <circle cx={px} cy={pz} r={isObs ? 2.45 : 1.75} fill={teamColor} stroke={isObs ? '#facc15' : '#060c13'} strokeWidth={isObs ? '.75' : '.45'} />
-                <line x1={px} y1={pz} x2={px + Math.sin(p.yaw) * 3.5} y2={pz - Math.cos(p.yaw) * 3.5} stroke="#ffffff" strokeWidth=".45" />
-                <text x={px} y={pz + .8} fill="#ffffff" fontSize="2.2" fontWeight="900" textAnchor="middle">{slotNum}</text>
-              </g>
-            );
-          })}
-
-          {/* Bomb indicator */}
-          {(frame.bomb.status === 'planted' || frame.bomb.status === 'dropped') && (
-            <g>
-              <rect x={frame.bomb.x + 34.3} y={44.3 - frame.bomb.z} width="3.4" height="3.4" rx=".7" fill="#facc15" stroke="#1e293b" strokeWidth=".4" />
-              <circle cx={frame.bomb.x + 36} cy={46 - frame.bomb.z} r=".8" fill="#ef4444" />
-            </g>
-          )}
-        </svg>
-        )}
+              {/* Bomb indicator */}
+              {(frame.bomb.status === 'planted' || frame.bomb.status === 'dropped') && (
+                <g>
+                  <rect x={rx(frame.bomb.x) - 1.7 * rScale} y={ry(frame.bomb.z) - 1.7 * rScale} width={3.4 * rScale} height={3.4 * rScale} rx={0.7 * rScale} fill="#facc15" stroke="#1e293b" strokeWidth={0.4 * rScale} />
+                  <circle cx={rx(frame.bomb.x)} cy={ry(frame.bomb.z)} r={0.8 * rScale} fill="#ef4444" />
+                </g>
+              )}
+            </svg>
+          );
+        })()}
 
         {/* In-Game Left Team Callouts (CT / BLUE) */}
         {hudOptions.callouts && (
           <aside className="broadcast-callout-feed broadcast-callout-feed--blue" aria-label="CT Force in-game callouts">
             <div className="broadcast-callout-feed__head">
               <span className="broadcast-callout-feed__team">CT / BLUE COMMS</span>
-              <span className="broadcast-callout-feed__plan">{fpsBroadcastText(frame.teams[ctTeam].information)}</span>
+              <span className="broadcast-callout-feed__plan">{fpsBroadcastText(frame.teams[ctTeam].information, activeMapId)}</span>
             </div>
             <div className="broadcast-callout-feed__list">
               {blueReports.map(r => (
                 <div key={r.id} className="broadcast-callout-feed__item broadcast-callout-feed__item--blue">
                   <span className="broadcast-callout-feed__sender">{r.name}</span>
-                  <span className="broadcast-callout-feed__msg">{fpsBroadcastText(r.message)}</span>
+                  <span className="broadcast-callout-feed__msg">{fpsBroadcastText(r.message, activeMapId)}</span>
                   <time className="broadcast-callout-feed__age">{Math.max(0, Math.floor(frame.time - r.at))}s</time>
                 </div>
               ))}
@@ -1425,14 +1585,14 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
           {hudOptions.callouts && (
             <aside className="broadcast-callout-feed broadcast-callout-feed--red" aria-label="T Force in-game callouts">
               <div className="broadcast-callout-feed__head">
-                <span className="broadcast-callout-feed__plan">{fpsBroadcastText(frame.teams[tTeam].information)}</span>
                 <span className="broadcast-callout-feed__team">T / RED COMMS</span>
+                <span className="broadcast-callout-feed__plan">{fpsBroadcastText(frame.teams[tTeam].information, activeMapId)}</span>
               </div>
               <div className="broadcast-callout-feed__list">
                 {redReports.map(r => (
                   <div key={r.id} className="broadcast-callout-feed__item broadcast-callout-feed__item--red">
                     <time className="broadcast-callout-feed__age">{Math.max(0, Math.floor(frame.time - r.at))}s</time>
-                    <span className="broadcast-callout-feed__msg">{fpsBroadcastText(r.message)}</span>
+                    <span className="broadcast-callout-feed__msg">{fpsBroadcastText(r.message, activeMapId)}</span>
                     <span className="broadcast-callout-feed__sender">{r.name}</span>
                   </div>
                 ))}
@@ -1456,7 +1616,7 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
         {(!ready || error) && (
           <div className="live-fps__loading" role={error ? 'alert' : 'status'}>
             <h2>{error ? 'Broadcast unavailable' : 'Opening the 3D broadcast'}</h2>
-            <p>{error || 'Preparing Fontessa village…'}</p>
+            <p>{error || `Preparing ${mapRuntime.definition.broadcast.displayName}…`}</p>
             {error && <button type="button" onClick={() => setAttempt(v => v + 1)}>Restart exhibition</button>}
           </div>
         )}
@@ -1476,7 +1636,8 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
             <BroadcastCenterFocusCard
               observed={observed}
               mode={mode}
-              onSelectCamera={setMode}
+              mapId={activeMapId}
+              onSelectCamera={cm => { setOverviewCam(false); setMode(cm); }}
             />
           )}
 
@@ -1553,8 +1714,8 @@ export function FpsLiveBroadcast({ blue, red, seed, identity, skillProfiles, lea
       </details>
 
       <footer className="live-fps__footer">
-        <span>{presentation.name} presentation · Fontessa village · Local exhibition</span>
-        <span>Click any player card to observe · Space: pause · B: buy list · C: camera · P: plant PIP · 1–0: players</span>
+        <span>{presentation.name} presentation · {mapRuntime.definition.broadcast.displayName} · {mapRuntime.definition.broadcast.subtitle} · Local exhibition</span>
+        <span>Click any player card to observe · Space: pause · O: overview · B: buy list · C: camera · P: plant PIP · 1–0: players</span>
       </footer>
       {notice && <p className="live-fps__notice" role="status">{notice}</p>}
     </section>
